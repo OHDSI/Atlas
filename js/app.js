@@ -1,7 +1,6 @@
 define([
 	'jquery',
 	'knockout',
-	'components/webapi-configuration',
 	'bootstrap',
 	'facets'
 ], function ($, ko) {
