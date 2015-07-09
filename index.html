@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+	<script data-main="js/main" src="js/require.js"></script>
+	<title>ATLAS</title>
+</head>
+
+<body>
+	<div id="wrapperLeftMenu">
+		<div id="wrapperLogo"><img src="images/atlas.png">ATLAS</div>
+		<ul>
+			<li>
+				<a href="#/search"><i class="fa fa-search"></i>Vocabulary Search</a>
+			</li>
+			<ul data-bind="foreach:recentSearch">
+				<li>
+					<a data-bind="attr: {href:'#/search/' + query}, text: caption + ' (' + resultLength + ')'"></a>
+				</li>
+			</ul>
+			<li>
+				<a href="#"><i class="fa fa-history"></i>Recent Concepts</a>
+			</li>
+			<ul data-bind="foreach:recentConcept">
+				<li>
+					<a data-bind="text: CONCEPT_NAME, attr: { href: '#/concept/' + CONCEPT_ID}"></a>
+				</li>
+			</ul>
+			<li data-bind="click: function() {currentView('conceptset'); document.location='#';}">
+				<a href="#"><i class="fa fa-shopping-cart"></i>Concept Set</a>
+				<span data-bind="if: selectedConcepts().length > 0">
+					<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
+				</span>
+			</li>
+			<li data-bind="click: function() { currentView('import'); document.location='#' }">
+				<a href="#"><i class="fa fa-upload"></i>Import</a>
+			</li>
+			<li>
+				<a href="#/cohortdefinitions"><i class="fa fa-language"></i>Cohort Definitions</a>
+			</li>
+			<li>
+				<a href="#/reports"><i class="fa fa-area-chart"></i>Cohort Reporting</a>
+			</li>
+			<li>
+				<a href="#/calculations"><i class="fa fa-calculator"></i>Advanced Calculations</a>
+			</li>
+			<li>
+				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
+			</li>
+			<li>
+				<a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
+			</li>
+		</ul>
+	</div>
+	<div id="wrapperMainWindow">
+		<div id="wrapperMainWindowContainer">
+
+			<div id="wrapperInitializing" data-bind="if: currentView() == 'initializing'">
+				<div class="wrapperTitle">
+					<i class="fa fa-refresh fa-spin"></i> Initializing...
+				</div>
+			</div>
+
+			<div id="wrapperLoading" data-bind="if: currentView() == 'loading'">
+				<div class="wrapperTitle">
+					<i class="fa fa-refresh fa-spin"></i> Loading...
+				</div>
+			</div>
+
+			<atlas-search params="{model: pageModel}"></atlas-search>
+			<atlas-concept params="{model: pageModel}"></atlas-concept>
+
+		</div>
+	</div>
+</body>
+
+</html>

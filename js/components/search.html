@@ -1,0 +1,99 @@
+<div id="wrapperSearch" data-bind="if: model.currentView() == 'search'">
+	<div class="wrapperTitle"><i class="fa fa-search"></i> Vocabulary Search</div>
+	<div class="paddedWrapper">
+		<input id="querytext" placeholder="type your search here" class="form-control" type="text" data-bind="event: { keyup: checkExecuteSearch}" />
+
+		<div id="helpMinimumQueryLength" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<p>Search string must be at least 3 characters long</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="modalNoSearchResults" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<p>Your search had no results.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="wrapperSearchResults" data-bind="if: model.currentView() == 'searchResults'">
+	<div>
+		<div class="wrapperTitle" data-bind="text: 'Search Results for ' + decodeURI(model.currentSearch())"></div>
+	</div>
+	<div style="position:relative;">
+		<div id="wrapperSearchResultsFilter" class="feFilter" data-bind="with: model.feSearch">
+			<div data-bind="foreach:Facets">
+				<div class="facetName" data-bind="text:caption"></div>
+				<div class="facetScrollBox" data-bind="foreach:Members">
+					<div class="facetMemberName" data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, click: function() { model.updateSearchFilters(); }, css : {selected: Selected}, text:Name + ' (' + ActiveCount + ')'">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="wrapperSearchResultsTable">
+		<table id="tableSearchResults" width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+            data: model.searchResultsConcepts(),
+            options: {
+							dom: 'Clfiprt',
+							language: {
+								search: 'Filter: '
+							},
+							rowCallback: contextSensitiveLinkColor,
+							lengthMenu: [[20, 50, 100, -1], [20, 50, 100,'All']],
+							orderClasses: false,
+							ordering: true,
+							order: [[ 2, 'asc' ]],
+							columns: [
+									{ title: '', render: renderConceptSelector, orderable:false, searchable:false},
+									{ title: 'Concept Id', data: 'CONCEPT_ID', visible: false},
+									{ title: 'Concept Code', data: 'CONCEPT_CODE', visible: false},
+									{ title: 'Concept Name', data: 'CONCEPT_NAME', render: renderLink, width: '50%'},
+									{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
+									{ title: 'Standard Concept Caption', data: 'STANDARD_CONCEPT_CAPTION', visible: false},
+									{ title: 'Standard Concept Code', data: 'STANDARD_CONCEPT', visible: false},
+									{ title: 'Data Density', data: 'DENSITY', className:'numeric'},
+									{ title: 'Domain', data: 'DOMAIN_ID' },
+									{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
+							]
+					}
+        }">
+		</table>
+		<div class="linkLegend">
+			<div class="linkLegendItem">
+				<div class="swatch standard">
+				</div>
+				<div class="linkLegendTitle">Standard</div>
+			</div>
+			<div class="linkLegendItem">
+				<div class="swatch nonStandard">
+				</div>
+				<div class="linkLegendTitle">Non-Standard</div>
+			</div>
+			<div class="linkLegendItem">
+				<div class="swatch classification">
+				</div>
+				<div class="linkLegendTitle">Classification</div>
+			</div>
+		</div>
+		<button type="button" onclick="selectAllSearchResults()" class="btn btn-sm btn-primary selectAllButton">Select All Search Results</button>
+	</div>
+</div>
