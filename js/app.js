@@ -2,7 +2,10 @@ define([
 	'jquery',
 	'knockout',
 	'bootstrap',
-	'facets'
+	'facets',
+	'css!styles/atlas.dataTables.css',
+	'css!styles/jquery.dataTables.colVis.css',
+	'css!styles/jquery.dataTables.min.css'
 ], function ($, ko) {
 	var appModel = function () {
 		var self = this;
@@ -38,7 +41,6 @@ define([
 			'Drug Exposure',
 			'Procedure',
 			'Death'
-			//'Measurement'
 		]);
 
 		self.loadCohortDefinition = function (cohortDefinitionId) {
@@ -281,133 +283,6 @@ define([
 			});
 		}
 
-		self.loadConcept = function (conceptId) {
-			self.currentView('loading');
-
-			var conceptPromise = $.ajax({
-				url: self.vocabularyUrl() + 'concept/' + conceptId,
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (c, status, xhr) {
-					var exists = false;
-					for (i = 0; i < self.recentConcept().length; i++) {
-						if (self.recentConcept()[i].CONCEPT_ID == c.CONCEPT_ID)
-							exists = true;
-					}
-					if (!exists) {
-						self.recentConcept.unshift(c);
-					}
-					if (self.recentConcept().length > 7) {
-						self.recentConcept.pop();
-					}
-
-					self.currentConcept(c);
-					self.currentView('concept');
-				},
-				error: function () {
-					alert('An error occurred while attempting to load the concept from your currently configured provider.  Please check the status of your selection from the configuration button in the top right corner.');
-				}
-			});
-
-			// load related concepts once the concept is loaded
-			self.loadingRelated(true);
-			var relatedPromise = $.Deferred();
-
-			$.when(conceptPromise).done(function () {
-				metarchy = {
-					parents: ko.observableArray(),
-					children: ko.observableArray(),
-					synonyms: ko.observableArray()
-				};
-
-				$.getJSON(self.vocabularyUrl() + 'concept/' + conceptId + '/related', function (related) {
-					self.relatedConcepts(related);
-
-					var feTemp = new FacetEngine({
-						Facets: [
-							{
-								'caption': 'Vocabulary',
-								'binding': function (o) {
-									return o.VOCABULARY_ID;
-								}
-							},
-							{
-								'caption': 'Standard Concept',
-								'binding': function (o) {
-									return o.STANDARD_CONCEPT_CAPTION;
-								}
-							},
-							{
-								'caption': 'Invalid Reason',
-								'binding': function (o) {
-									return o.INVALID_REASON_CAPTION;
-								}
-							},
-							{
-								'caption': 'Class',
-								'binding': function (o) {
-									return o.CONCEPT_CLASS_ID;
-								}
-							},
-							{
-								'caption': 'Domain',
-								'binding': function (o) {
-									return o.DOMAIN_ID;
-								}
-							},
-							{
-								'caption': 'Relationship',
-								'binding': function (o) {
-									values = [];
-									for (i = 0; i < o.RELATIONSHIPS.length; i++) {
-										values.push(o.RELATIONSHIPS[i].RELATIONSHIP_NAME);
-									}
-									return values;
-								}
-							},
-							{
-								'caption': 'Distance',
-								'binding': function (o) {
-									values = [];
-									for (i = 0; i < o.RELATIONSHIPS.length; i++) {
-										if (values.indexOf(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE) == -1) {
-											values.push(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE);
-										}
-									}
-									return values;
-								}
-							}
-						]
-					});
-
-					for (c = 0; c < related.length; c++) {
-						feTemp.Process(related[c]);
-						metagorize(metarchy, related[c]);
-					}
-
-					self.metarchy = metarchy;
-
-					feTemp.MemberSortFunction = function () {
-						return this.ActiveCount;
-					};
-					feTemp.sortFacetMembers();
-
-					self.feRelated(feTemp);
-					self.relatedConcepts(self.feRelated().GetCurrentObjects());
-					relatedPromise.resolve();
-				});
-			});
-
-			$.when(relatedPromise).done(function () {
-				self.loadingRelated(false);
-			});
-
-			// triggers once our async loading of the concept and related concepts is complete
-			$.when(conceptPromise).done(function () {
-				self.currentView('concept');
-			});
-		}
-
 		self.reportCohortDefinitionId = ko.observable();
 		self.reportReportName = ko.observable();
 		self.reportSourceKey = ko.observable();
@@ -452,6 +327,7 @@ define([
 		self.evidenceUrl = ko.observable();
 		self.resultsUrl = ko.observable();
 		self.currentConcept = ko.observable();
+		self.currentConceptId = ko.observable();
 		self.currentConceptMode = ko.observable('details');
 		self.currentConceptMode.subscribe(function (newMode) {
 			switch (newMode) {

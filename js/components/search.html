@@ -42,7 +42,7 @@
 			<div data-bind="foreach:Facets">
 				<div class="facetName" data-bind="text:caption"></div>
 				<div class="facetScrollBox" data-bind="foreach:Members">
-					<div class="facetMemberName" data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, click: function() { model.updateSearchFilters(); }, css : {selected: Selected}, text:Name + ' (' + ActiveCount + ')'">
+					<div class="facetMemberName" data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, click: function() { $component.model.updateSearchFilters(); }, css : {selected: Selected}, text:Name + ' (' + ActiveCount + ')'">
 					</div>
 				</div>
 			</div>

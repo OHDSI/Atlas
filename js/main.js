@@ -21,14 +21,15 @@ requirejs.config({
 		"jquery": "http://code.jquery.com/jquery-1.11.2.min",
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"knockout": "knockout.min",
+		"datatables" : "jquery.dataTables.min",
 		"director": "director.min",
 		"search" : "components/search",
-		"concept" : "components/concept",
-		"configuration" : "components/configuration"
+		"configuration" : "components/configuration",
+		"concept-manager" : "components/concept-manager"
 	}
 });
 
-requirejs(['knockout', 'app', 'director', 'search', 'concept', "configuration"], function (ko, app) {
+requirejs(['knockout', 'app', 'director', 'search', "configuration", "concept-manager"], function (ko, app) {
 	var pageModel = new app();
 
 	var routerOptions = {
@@ -38,7 +39,9 @@ requirejs(['knockout', 'app', 'director', 'search', 'concept', "configuration"],
 	}
 
 	var routes = {
-		'/concept/:conceptId:': pageModel.loadConcept,
+		'/concept/:conceptId:': function(conceptId) {
+			pageModel.currentConceptId(conceptId);
+		},
 		'/cohortdefinitions': function () {
 			pageModel.currentView('cohortdefinitions');
 		},

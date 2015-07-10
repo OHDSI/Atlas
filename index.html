@@ -8,10 +8,10 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
 
 	<script data-main="js/main" src="js/require.js"></script>
 	<title>ATLAS</title>
@@ -79,7 +79,8 @@
 			</div>
 
 			<atlas-search params="{model: pageModel}"></atlas-search>
-			<atlas-concept params="{model: pageModel}"></atlas-concept>
+
+			<concept-manager params="{model: pageModel, currentConceptId: pageModel.currentConceptId}"></concept-manager>
 
 			<div data-bind="if: currentView() == 'configure'">
 				<div class="wrapperTitle">

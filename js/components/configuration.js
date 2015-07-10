@@ -1,4 +1,4 @@
-define(['knockout', 'text!./concept.html'], function (ko, view) {
+define(['knockout', 'text!./configuration.html'], function (ko, view) {
 	function configuration(params) {
 		var self = this;
 		self.services = params.services();
