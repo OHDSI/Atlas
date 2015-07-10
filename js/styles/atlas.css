@@ -175,12 +175,12 @@ pre span.key {
 
 #wrapperLogo {
 	position: relative;
-	height: 50px;
+	height: 46px;
 	padding: 0px 10px 0px 10px;
-	line-height: 50px;
-	font-size: 14px;
+	line-height: 47px;
+	font-size: 18px;
 	background-color: #fff;
-	color: #222;
+	color: #1F4159;
 	border-bottom: solid 1px #ccc;
 }
 
@@ -212,11 +212,11 @@ div#wrapperMainWindowContainer {}
 .wrapperTitle {
 	position: relative;
 	background-color: #222;
-	height: 50px;
+	height: 46px;
 	color: #FFFFFF;
-	line-height: 60px;
+	line-height: 47px;
 	padding: 0px 10px 0px 10px;
-	font-size: 14px;
+	font-size: 18px;
 	border-bottom: solid 1px #ccc;
 }
 
@@ -376,7 +376,7 @@ table.datatable td.numeric {
 }
 
 #wrapperLeftMenu .fa {
-	font-size: 1.3em;
+	font-size: 16px;
 	padding-right: 5px;
 }
 
@@ -645,8 +645,8 @@ ul.ColVis_collection li {
 }
 
 .wrapperTitle .fa {
-	font-size: 24px;
-	padding-right: 7px;
+	font-size: 18px;
+	padding-right: 3px;
 }
 
 #wrapperCohortDefinition .fa-check-circle {

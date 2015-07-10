@@ -1,0 +1,49 @@
+<div data-bind="foreach:services">
+	<div data-bind="if:available==true">
+		<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
+	</div>
+
+	<div data-bind="if:available==false">
+		<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
+	</div>
+
+	<span class="serviceName" data-bind="text:name"></span> (
+	<span class="serviceUrl" data-bind="text:url"></span>)
+	<div data-bind="if:available==false">
+		<div class="error" data-bind="text:xhr.statusText"></div>
+	</div>
+	<table data-bind="if:$data.sources.length > 0" class="configureSourceTable">
+		<thead>
+			<th></th>
+			<th>Source Name</th>
+			<th>Vocabulary Version</th>
+			<th>Dialect</th>
+			<th class="centered">Vocabulary</th>
+			<th class="centered">Evidence</th>
+			<th class="centered">Density</th>
+			<th class="centered">Incidence</th>
+		</thead>
+		<tbody data-bind="foreach:$data.sources">
+			<tr>
+				<td><i class="fa" data-bind="if:!initialized, attr: { title : error }, css: { 'fa-check-circle': initialized, 'fa-exclamation-circle': !initialized }"></i>
+					<span data-bind="text:error"></span>
+				</td>
+				<td data-bind="text:sourceName"></td>
+				<td data-bind="text:version"></td>
+				<td data-bind="text:sourceDialect"></td>
+				<td class="configureRadio">
+					<input type="radio" name="radioSource" data-bind="disable:!hasVocabulary, checkedValue:vocabularyUrl, checked:pageModel.vocabularyUrl">
+				</td>
+				<td class="configureRadio">
+					<input type="radio" name="radioEvidence" data-bind="disable:!hasEvidence, checkedValue:evidenceUrl, checked:pageModel.evidenceUrl">
+				</td>
+				<td class="configureRadio">
+					<input type="radio" name="radioDensity" data-bind="disable:!hasResults, checkedValue:resultsUrl, checked:pageModel.resultsUrl">
+				</td>
+				<td class="configureCheckbox">
+					<input type="checkbox" name="checkResults" data-bind="disable:!hasResults, checked:hasResults">
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

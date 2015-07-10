@@ -23,11 +23,12 @@ requirejs.config({
 		"knockout": "knockout.min",
 		"director": "director.min",
 		"search" : "components/search",
-		"concept" : "components/concept"
+		"concept" : "components/concept",
+		"configuration" : "components/configuration"
 	}
 });
 
-requirejs(['knockout', 'app', 'director', 'search', 'concept'], function (ko, app) {
+requirejs(['knockout', 'app', 'director', 'search', 'concept', "configuration"], function (ko, app) {
 	var pageModel = new app();
 
 	var routerOptions = {

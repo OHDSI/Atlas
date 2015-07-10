@@ -81,6 +81,21 @@
 			<atlas-search params="{model: pageModel}"></atlas-search>
 			<atlas-concept params="{model: pageModel}"></atlas-concept>
 
+			<div data-bind="if: currentView() == 'configure'">
+				<div class="wrapperTitle">
+					Configure
+				</div>
+
+				<div id="wrapperConfigure">
+					<div data-bind="if:appInitializationFailed">
+						<div class="heading">Application Initialization Failed</div>
+						<div class="error">Unable to connect to an instance of the WebAPI. Please contact your administrator to resolve this issue.</div>
+					</div>
+					<div class="heading">Configured Services</div>
+					<ohdsi-configuration params="{services: pageModel.services}"></ohdsi-configuration>
+				</div>
+			</div>
+
 		</div>
 	</div>
 </body>
