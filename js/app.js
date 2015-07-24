@@ -14,9 +14,45 @@ define([
 
 		self.appInitializationFailed = ko.observable(false);
 		self.initPromises = [];
+
+		// change timeouts after code complete
 		self.initComplete = function () {
 			self.currentView('search');
 			self.router.init();
+
+			setTimeout(function () {
+				$('#splash').fadeOut();
+			}, 0);
+
+			setTimeout(function () {
+				$('body').addClass('initialized');
+				$('#wrapperLeftMenu').fadeIn();
+				$('#wrapperMainWindow').fadeIn();
+			}, 0);
+		}
+
+		self.contextSensitiveLinkColor = function (row, data) {
+			var switchContext;
+
+			if (data.STANDARD_CONCEPT == undefined) {
+				switchContext = data.concept.STANDARD_CONCEPT;
+			} else {
+				switchContext = data.STANDARD_CONCEPT;
+			}
+
+			switch (switchContext) {
+			case 'N':
+				$('a', row).css('color', '#800');
+				break;
+			case 'C':
+				$('a', row).css('color', '#080');
+				break;
+			}
+		}
+
+		self.renderLink = function (s, p, d) {
+			var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+			return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 		}
 
 		self.loadingRelated = ko.observable(false);
@@ -392,13 +428,25 @@ define([
 				break;
 			}
 		});
+
 		self.renderCurrentConceptSelector = function () {
 			var css = '';
 			if (self.selectedConceptsIndex[self.currentConcept().CONCEPT_ID] == 1) {
 				css = ' selected';
 			}
 			return '<i class="fa fa-shopping-cart' + css + '"></i>';
+		};
+
+		self.renderConceptSelector = function (s, p, d) {
+			var css = '';
+			var icon = 'fa-shopping-cart';
+
+			if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+				css = ' selected';
+			}
+			return '<i class="fa ' + icon + ' ' + css + '"></i>';
 		}
+
 		self.currentConceptSetMode = ko.observable('details');
 		self.currentImportMode = ko.observable('identifiers');
 		self.feRelated = ko.observable();

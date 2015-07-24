@@ -14,25 +14,6 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding'], functi
 			}
 		};
 
-		self.contextSensitiveLinkColor = function (row, data) {
-			var switchContext;
-
-			if (data.STANDARD_CONCEPT == undefined) {
-				switchContext = data.concept.STANDARD_CONCEPT;
-			} else {
-				switchContext = data.STANDARD_CONCEPT;
-			}
-
-			switch (switchContext) {
-			case 'N':
-				$('a', row).css('color', '#800');
-				break;
-			case 'C':
-				$('a', row).css('color', '#080');
-				break;
-			}
-		}
-
 		self.renderConceptSelector = function (s,p,d) {
 			var css = '';
 			var icon = 'fa-shopping-cart';
@@ -41,11 +22,6 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding'], functi
 				css = ' selected';
 			}
 			return '<i class="fa ' + icon + ' ' + css + '"></i>';
-		}
-
-		self.renderLink = function (s, p, d) {
-			var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-			return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 		}
 	}
 

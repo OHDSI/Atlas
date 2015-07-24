@@ -30,6 +30,8 @@ requirejs.config({
 });
 
 requirejs(['knockout', 'app', 'director', 'search', "configuration", "concept-manager"], function (ko, app) {
+	$('#splash').fadeIn();
+
 	var pageModel = new app();
 
 	var routerOptions = {

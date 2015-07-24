@@ -35,7 +35,7 @@
 									language: {
 										search: 'Filter Broader Concepts: '
 									},
-									rowCallback: contextSensitiveLinkColor,
+									rowCallback: model.contextSensitiveLinkColor,
 									lengthMenu: [[-1], ['All']],
 									orderClasses: false,
 									ordering: true,
@@ -57,7 +57,7 @@
 		</div>
 		<div id="wrapperHierarchyAnchor" data-bind="text:model.currentConcept().CONCEPT_NAME">
 		</div>
-		<div id="wrapperChildren" data-bind="with:metarchy">
+		<div id="wrapperChildren">
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
 								data: model.metarchy.children(),
 								language: {
@@ -65,7 +65,7 @@
 								},
 								options: {
 									dom: 't',
-									rowCallback: contextSensitiveLinkColor,
+									rowCallback: model.contextSensitiveLinkColor,
 									lengthMenu: [[-1], ['All']],
 									orderClasses: false,
 									ordering: true,
@@ -171,7 +171,7 @@
 	</div>
 
 	<div id="wrapperRelatedConcepts" data-bind="if: model.currentConceptMode() == 'related' && !model.loadingRelated()">
-		<div id="wrapperRelatedConceptsFilter" class="feFilter" data-bind="with: feRelated">
+		<div id="wrapperRelatedConceptsFilter" class="feFilter" data-bind="with: model.feRelated">
 			<div data-bind="foreach:Facets">
 				<div class="facetName" data-bind="text:caption"></div>
 				<div class="facetScrollBox" data-bind="foreach:Members">
@@ -196,7 +196,7 @@
 								showAll: 'Show All Columns',
 								restore: 'Reset Columns'
 							},
-							rowCallback: contextSensitiveLinkColor,
+							rowCallback: model.contextSensitiveLinkColor,
 							lengthMenu: [[20, 50, 100, -1], [20, 50, 100,'All']],
 							orderClasses: false,
 							deferRender: true,
@@ -204,7 +204,7 @@
 							ordering: true,
 							order: [[ 2, 'asc' ]],
 							columns: [
-									{ title: '<li onclick=\'selectAllRelated();\' class=\'fa fa-shopping-cart\'></li>', render: model.renderConceptSelector, orderable:false, searchable:false},
+									{ title: '<li onclick=\'model.selectAllRelated();\' class=\'fa fa-shopping-cart\'></li>', render: model.renderConceptSelector, orderable:false, searchable:false},
 									{ title: 'Concept Id', data: 'CONCEPT_ID', visible: false},
 									{ title: 'Concept Code', data: 'CONCEPT_CODE', visible: false},
 									{ title: 'Concept Name', data: 'CONCEPT_NAME', render: model.renderLink},

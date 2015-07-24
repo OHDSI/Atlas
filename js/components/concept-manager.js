@@ -41,7 +41,7 @@ define(['knockout', 'text!./concept-manager.html'], function (ko, view) {
 			var relatedPromise = $.Deferred();
 
 			$.when(conceptPromise).done(function () {
-				metarchy = {
+				self.model.metarchy = {
 					parents: ko.observableArray(),
 					children: ko.observableArray(),
 					synonyms: ko.observableArray()
@@ -109,10 +109,8 @@ define(['knockout', 'text!./concept-manager.html'], function (ko, view) {
 
 					for (c = 0; c < related.length; c++) {
 						feTemp.Process(related[c]);
-						self.metagorize(metarchy, related[c]);
+						self.metagorize(self.model.metarchy, related[c]);
 					}
-
-					self.metarchy = metarchy;
 
 					feTemp.MemberSortFunction = function () {
 						return this.ActiveCount;

@@ -57,7 +57,7 @@
 							language: {
 								search: 'Filter: '
 							},
-							rowCallback: contextSensitiveLinkColor,
+							rowCallback: model.contextSensitiveLinkColor,
 							lengthMenu: [[20, 50, 100, -1], [20, 50, 100,'All']],
 							orderClasses: false,
 							ordering: true,
@@ -66,7 +66,7 @@
 									{ title: '', render: renderConceptSelector, orderable:false, searchable:false},
 									{ title: 'Concept Id', data: 'CONCEPT_ID', visible: false},
 									{ title: 'Concept Code', data: 'CONCEPT_CODE', visible: false},
-									{ title: 'Concept Name', data: 'CONCEPT_NAME', render: renderLink, width: '50%'},
+									{ title: 'Concept Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
 									{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 									{ title: 'Standard Concept Caption', data: 'STANDARD_CONCEPT_CAPTION', visible: false},
 									{ title: 'Standard Concept Code', data: 'STANDARD_CONCEPT', visible: false},

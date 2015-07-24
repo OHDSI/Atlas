@@ -3,8 +3,15 @@ body {
 	font-size: 12px;
 	margin: 0px;
 	padding: 0px;
+}
+
+body.initialized {
 	background: url(../../images/background.png);
 	background-repeat: repeat-y;
+}
+
+#splash {
+	display:none;
 }
 
 #wrapperLeftMenu {
@@ -13,6 +20,7 @@ body {
 	top: 0px;
 	width: 200px;
 	color: #fff;
+	display: none;
 }
 
 .importedTable {
@@ -189,6 +197,8 @@ pre span.key {
 	top: 0px;
 	right: 0px;
 	/* bottom: 10; */
+
+	display: none;
 }
 
 #wrapperCohortDefinition {
@@ -1123,4 +1133,26 @@ pre {
 
 .carousel-caption {
 	text-shadow: none
+}
+
+div#stage {
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 25px;
+}
+
+#splash #heading {
+	color: #20425A;
+	font-size: 40px;
+	text-align: center;
+	font-variant: small-caps;
+	padding-top: 20px;
+}
+
+#splash #status {
+	color: #20425A;
+	font-size: 14px;
+	text-align: center;
+	font-variant: small-caps;
+	padding-top: 10px;
 }

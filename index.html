@@ -15,9 +15,42 @@
 
 	<script data-main="js/main" src="js/require.js"></script>
 	<title>ATLAS</title>
+	<!--Adobe Edge Runtime-->
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<script type="text/javascript" charset="utf-8" src="http://animate.adobe.com/runtime/5.0.1/edge.5.0.1.min.js"></script>
+	<style>
+		.edgeLoad-EDGE-8182598 {
+			visibility: hidden;
+		}
+	</style>
+	<script>
+		AdobeEdge.loadComposition('atlas%20animation', 'EDGE-8182598', {
+			scaleToFit: "none",
+			centerStage: "none",
+			minW: "0",
+			maxW: "undefined",
+			width: "400px",
+			height: "400px"
+		}, {
+			"dom": {}
+		}, {
+			"dom": {}
+		});
+	</script>
+	<!--Adobe Edge Runtime End-->
 </head>
 
 <body>
+
+	<div id="splash">
+		<div id="heading">
+			<div>ATLAS</div>
+		</div>
+		<div id="stage" class="EDGE-8182598">
+		</div>
+		<div id="status">initializing</div>
+	</div>
+
 	<div id="wrapperLeftMenu">
 		<div id="wrapperLogo"><img src="images/atlas.png">ATLAS</div>
 		<ul>
@@ -53,7 +86,7 @@
 				<a href="#/reports"><i class="fa fa-area-chart"></i>Cohort Reporting</a>
 			</li>
 			<li>
-				<a href="#/calculations"><i class="fa fa-calculator"></i>Advanced Calculations</a>
+				<a href="#/calculations"><i class="fa fa-calculator"></i>Analytics</a>
 			</li>
 			<li>
 				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
