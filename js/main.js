@@ -7,42 +7,67 @@ requirejs.config({
 		}
 	},
 	shim: {
+		"colorbrewer": {
+			exports: 'colorbrewer'
+		},
 		"bootstrap": {
 			"deps": [
 				'jquery',
 			]
 		},
-		"facets" : {
-			"deps" : ['jquery'],
-			exports : 'FacetEngine'
+		"facets": {
+			"deps": ['jquery'],
+			exports: 'FacetEngine'
 		}
 	},
 	paths: {
 		"jquery": "http://code.jquery.com/jquery-1.11.2.min",
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"knockout": "knockout.min",
-		"datatables" : "jquery.dataTables.min",
+		"datatables": "jquery.dataTables.min",
 		"director": "director.min",
-		"search" : "components/search",
-		"configuration" : "components/configuration",
-		"concept-manager" : "components/concept-manager"
+		"search": "components/search",
+		"configuration": "components/configuration",
+		"concept-manager": "components/concept-manager",
+		"conceptset-manager": "components/conceptset-manager",
+		"job-manager": "components/job-manager",
+		"importer": "components/importer",
+		"cohort-definitions": "components/cohort-definitions",
+		"cohort-definition-manager": "components/cohort-definition-manager",
+		"report-manager": "components/report-manager",
+		"analytics-manager": "components/analytics-manager",
+		"jnj_chart" : "jnj.chart",
+		"d3": "d3.min",
+		"d3_tip" : "d3.tip",
+		"lodash" : "lodash.min"
 	}
 });
 
-requirejs(['knockout', 'app', 'director', 'search', "configuration", "concept-manager"], function (ko, app) {
+requirejs(['knockout', 'app', 'director', 'search',
+					 "configuration",
+					 "concept-manager",
+					 "conceptset-manager",
+					 "job-manager",
+					 "importer",
+					 "cohort-definitions",
+					 "cohort-definition-manager",
+					 "report-manager",
+					 "analytics-manager"
+				], function (ko, app) {
 	$('#splash').fadeIn();
 
 	var pageModel = new app();
 
 	var routerOptions = {
-		notfound: function() {
-			console.log('unknown route');
+		notfound: function () {
+			pageModel.currentView('search');
 		}
 	}
 
 	var routes = {
-		'/concept/:conceptId:': function(conceptId) {
+		'/concept/:conceptId:': function (conceptId) {
 			pageModel.currentConceptId(conceptId);
+			pageModel.loadConcept(conceptId);
 		},
 		'/cohortdefinitions': function () {
 			pageModel.currentView('cohortdefinitions');
@@ -57,6 +82,18 @@ requirejs(['knockout', 'app', 'director', 'search', "configuration", "concept-ma
 		'reports': function () {
 			pageModel.currentView('reports');
 		},
+		'import': function () {
+			pageModel.currentView('import');
+		},
+		'conceptset': function () {
+			pageModel.currentView('conceptset');
+		},
+		'analytics': function () {
+			pageModel.currentView('analytics');
+		},
+		'splash': function () {
+			pageModel.currentView('splash');
+		},
 		'/cohortdefinition/:cohortDefinitionId:': pageModel.loadCohortDefinition,
 		'/search/:query:': pageModel.search,
 		'/search': function () {
@@ -68,7 +105,17 @@ requirejs(['knockout', 'app', 'director', 'search', "configuration", "concept-ma
 	window.pageModel = pageModel;
 
 	pageModel.currentView.subscribe(function (newView) {
+		console.log('switching to ' + newView);
+
+		if (newView != 'splash') {
+			$('#splash').hide();
+		}
+
 		switch (newView) {
+		case 'splash':
+			// switching back to atlas splash for activity view
+			$('#splash').show();
+			break;
 		case 'conceptset':
 			pageModel.resolveConceptSetExpression();
 
@@ -129,9 +176,6 @@ requirejs(['knockout', 'app', 'director', 'search', "configuration", "concept-ma
 			break;
 		}
 	});
-
-	// default view
-	pageModel.currentView('initializing');
 
 	// handle selections with shopping cart icon
 	$(document).on('click', '.wrapperTitle .fa-shopping-cart, .conceptTable i.fa.fa-shopping-cart', function () {

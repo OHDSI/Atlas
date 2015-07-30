@@ -1,17 +1,16 @@
-body {
+body.splash {
 	font-family: 'Arial';
 	font-size: 12px;
 	margin: 0px;
 	padding: 0px;
+	background: none;
 }
 
-body.initialized {
-	background: url(../../images/background.png);
-	background-repeat: repeat-y;
-}
+body {
+	/* background: url(../../images/background.png); */
+	/* background-repeat: repeat-y; */
 
-#splash {
-	display:none;
+	font-family: Arial;
 }
 
 #wrapperLeftMenu {
@@ -179,10 +178,11 @@ pre span.key {
 	height: 46px;
 	padding: 0px 10px 0px 10px;
 	line-height: 49px;
-	font-size: 18px;
+	font-size: 14px;
 	background-color: #fff;
 	color: #1F4159;
 	border-bottom: solid 1px #ccc;
+	cursor: pointer;
 }
 
 #wrapperLogo img {
@@ -218,8 +218,8 @@ div#wrapperMainWindowContainer {}
 	height: 46px;
 	color: #FFFFFF;
 	line-height: 47px;
-	padding: 0px 10px 0px 6px;
-	font-size: 16px;
+	padding: 0px 10px 0px 10px;
+	font-size: 14px;
 	border-bottom: solid 1px #ccc;
 }
 
@@ -228,12 +228,13 @@ div#wrapperMainWindowContainer {}
 }
 
 #wrapperLeftMenu li {
-	border-left: solid 2px #888;
-	margin-bottom: 1px;
+	border-right: solid 1px #888;
+	border-bottom: solid 1px #888;
 	background-color: #222;
 	list-style: none;
 	text-indent: 0px;
-	padding: 7px;
+	padding: 5px;
+	/* cursor: pointer; */
 }
 
 #wrapperLeftMenu li a {
@@ -246,7 +247,7 @@ div#wrapperMainWindowContainer {}
 }
 
 #wrapperLeftMenu li:hover {
-	border-left: solid 2px #ccc;
+	background-color: #333;
 }
 
 #wrapperLeftMenu li ul {
@@ -403,6 +404,10 @@ td .fa-shopping-cart {
 
 .fa-shopping-cart.selected {
 	color: #F19119;
+}
+
+.hidden {
+	display: none;
 }
 
 .conceptDetail {
@@ -656,8 +661,28 @@ ul.ColVis_collection li {
 	color: #080;
 }
 
+#activityTimeline {
+	display:none;
+	padding:3px;
+	background-color:#eee;
+	height:128px;
+	width: 100%;
+	bottom: 0px;
+	position: absolute;
+	border-top:solid 1px #ccc;
+	z-index: 100;
+}
+
+.edgeLoad-EDGE-8182598 {
+	visibility: hidden;
+}
+
 #wrapperCohortDefinition .fa-exclamation-circle {
 	color: #800;
+}
+
+#leftMenuBackground {
+	background-color:#fff;
 }
 
 #analysisStatus td {
@@ -705,6 +730,7 @@ ul.ColVis_collection li {
 }
 
 .form-control {
+	padding:0px;
 	margin-bottom: 3px;
 	font-size: 12px;
 	background-color: #FFF;
@@ -1141,18 +1167,37 @@ div#stage {
 	margin-top: 25px;
 }
 
+#splash {
+	padding-top: 50px;
+}
+
 #splash #heading {
 	color: #20425A;
-	font-size: 40px;
+	font-size: 20px;
 	text-align: center;
 	font-variant: small-caps;
-	padding-top: 20px;
+	padding-top: 10px;
 }
 
 #splash #status {
-	color: #20425A;
+	color: #A5B3BD;
 	font-size: 14px;
 	text-align: center;
 	font-variant: small-caps;
 	padding-top: 10px;
+}
+
+body {
+    font-size: 12px;
+}
+
+#splash a, #splash a:hover {
+    text-shadow: #888 1px 1px 1px;
+    text-decoration: none;
+}
+
+#wrapperLogo a, #wrapperLogo a:hover {
+    text-shadow: #888 1px 1px 1px;
+    text-decoration: none;
+    font-size:16px;
 }
