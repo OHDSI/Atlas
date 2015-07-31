@@ -153,7 +153,7 @@ requirejs(['knockout', 'app', 'director', 'search',
 		switch (newMode) {
 		case 'included':
 			$.ajax({
-				url: pageModel.vocabularyUrl() + 'lookup',
+				url: pageModel.vocabularyUrl() + 'lookup/identifiers',
 				method: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),

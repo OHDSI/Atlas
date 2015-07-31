@@ -22,16 +22,30 @@ define(['knockout', 'text!./importer.html', 'knockout.dataTables.binding'], func
 		self.importConceptIdentifiers = function () {
 			var identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
 			$.ajax({
-				url: self.model.vocabularyUrl() + 'lookup',
+				url: self.model.vocabularyUrl() + 'lookup/identifiers',
 				method: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(identifers),
 				success: function (data) {
 					self.model.importedConcepts(data);
-					$('#wrapperImportConceptIdentifiers .fa-shopping-cart').trigger('click');
 				}
 			});
 		}
+
+		self.importSourcecodes = function () {
+			var sourcecodes = $('#textImportSourcecodes').val().match(/[0-9a-zA-Z\.-]+/g); 
+			console.log(sourcecodes);
+			$.ajax({
+				url: self.model.vocabularyUrl() + 'lookup/sourcecodes',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(sourcecodes),
+				success: function (data) {
+					self.model.importedConcepts(data);
+				}
+			});
+		}
+
 	}
 
 	var component = {

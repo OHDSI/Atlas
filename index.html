@@ -8,6 +8,7 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" type="text/css" href="js/styles/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
@@ -32,7 +33,8 @@
 		</div>
 	</div>
 
-	<div data-bind="if:currentView() != 'splash'" id="wrapperLeftMenu">
+	<!-- ko if: pageModel.currentView() != 'splash' -->
+	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible:true;">
 		<div id="wrapperLogo">
 			<a href="#/splash"><img src="images/atlas.png">ATLAS</a>
 		</div>
@@ -45,6 +47,7 @@
 					<a data-bind="attr: {href:'#/search/' + query}, text: caption + ' (' + resultLength + ')'"></a>
 				</li>
 			</ul>
+			<!-- ko if: recentConcept().length > 0 -->
 			<li>
 				<a href="#"><i class="fa fa-history"></i>Recent Concepts</a>
 			</li>
@@ -53,12 +56,15 @@
 					<a data-bind="text: CONCEPT_NAME, attr: { href: '#/concept/' + CONCEPT_ID}"></a>
 				</li>
 			</ul>
+			<!-- /ko -->
+			<!-- ko if: selectedConcepts().length > 0 -->
 			<li>
-				<a href="#/conceptset"><i class="fa fa-shopping-cart"></i>Concept Set</a>
+				<a href="#/conceptset"><i class="fa fa-shopping-cart"></i>Selected Concepts</a>
 				<span data-bind="if: selectedConcepts().length > 0">
 					<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 				</span>
 			</li>
+			<!-- /ko -->
 			<li>
 				<a href="#/import"><i class="fa fa-upload"></i>Import</a>
 			</li>
@@ -68,9 +74,11 @@
 			<li>
 				<a href="#/reports"><i class="fa fa-area-chart"></i>Cohort Reporting</a>
 			</li>
+			<!--
 			<li>
 				<a href="#/analytics"><i class="fa fa-calculator"></i>Analytics</a>
 			</li>
+			-->
 			<li>
 				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
 			</li>
@@ -79,6 +87,8 @@
 			</li>
 		</ul>
 	</div>
+	<!-- /ko -->
+
 	<div data-bind="if:currentView() != 'splash'" id="wrapperMainWindow">
 		<div id="wrapperMainWindowContainer">
 			<div id="wrapperLoading" data-bind="if: currentView() == 'loading'">
@@ -107,7 +117,7 @@
 
 			<div data-bind="if: currentView() == 'configure'">
 				<div class="wrapperTitle">
-					Configure
+					<i class="fa fa-cogs"></i>Configure
 				</div>
 
 				<div id="wrapperConfigure">

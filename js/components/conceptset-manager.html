@@ -11,6 +11,11 @@
 				<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
 				<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
 		</li>
+		<li role="presentation" data-bind="click: function() {model.currentConceptSetMode('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
+			<a>Included Source Codes
+				<span class="badge" data-bind="if: !model.resolvingSourcecodes()"><span data-bind="text:model.sourcecodeInclusionCount()"></span></span>
+				<span class="badge" data-bind="if: model.resolvingSourcecodes();"><i class="fa fa-refresh fa-spin"></i></span></a>
+		</li>
 		<li role="presentation" data-bind="click: function() {model.currentConceptSetMode('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
 		</li>
 		<li role="presentation" data-bind="click: function() {model.currentConceptSetMode('analysis');}, attr: {class: model.currentConceptSetMode() == 'analysis' ? 'active disabled' : 'disabled'}"><a>Analysis</a>
@@ -19,7 +24,9 @@
 	<div id="wrapperConceptSetAnalysis" data-bind="if: model.currentConceptSetMode() == 'analysis'">
 		<div id="wrapperAnalysisVisualization"></div>
 	</div>
-	<div id="wrapperConceptSetIncluded" data-bind="if: model.currentConceptSetMode() == 'included'">
+	
+	<div class="paddedWrapper" data-bind="if: model.currentConceptSetMode() == 'included'">
+		<div class="heading">Included Concepts</div>
 		<div id="wrapperIncludedTable">
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
             data: model.includedConcepts(),
@@ -41,8 +48,8 @@
 								order: [[ 2, 'asc' ]],
 								columns: [
 										{ title: '', render: model.renderConceptSelector, orderable:false, searchable:false},
-										{ title: 'Concept Id', data: 'CONCEPT_ID', visible: false},
-										{ title: 'Concept Code', data: 'CONCEPT_CODE', visible: false},
+										{ title: 'Concept Id', data: 'CONCEPT_ID'},
+										{ title: 'Concept Code', data: 'CONCEPT_CODE'},
 										{ title: 'Concept Name', data: 'CONCEPT_NAME', render: model.renderLink},
 										{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 										{ title: 'Standard Concept Caption', data: 'STANDARD_CONCEPT_CAPTION', visible: false},
@@ -73,7 +80,65 @@
 			</div>
 		</div>
 	</div>
-	<div id="wrapperConceptSet" data-bind="if: model.currentConceptSetMode() == 'details'">
+	
+	<div class="paddedWrapper" data-bind="if: model.currentConceptSetMode() == 'sourcecodes'">
+		<div class="heading">Included Source Code Concepts</div>
+		<div id="wrapperIncludedTable">
+			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+            data: model.includedSourcecodes(),
+            options: {
+							dom: 'Clfiprt',
+								colVis: {
+									buttonText: 'Change Columns',
+									align: 'right',
+									overlayFade: 0,
+									showAll: 'Show All Columns',
+									restore: 'Reset Columns'
+								},
+								rowCallback: model.contextSensitiveLinkColor,
+								lengthMenu: [[20, 50, 100, -1], [20, 50, 100,'All']],
+								orderClasses: false,
+								deferRender: true,
+								autoWidth: false,
+								ordering: true,
+								order: [[ 2, 'asc' ]],
+								columns: [
+										{ title: '', render: model.renderConceptSelector, orderable:false, searchable:false},
+										{ title: 'Concept Id', data: 'CONCEPT_ID'},
+										{ title: 'Concept Code', data: 'CONCEPT_CODE'},
+										{ title: 'Concept Name', data: 'CONCEPT_NAME', render: model.renderLink},
+										{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
+										{ title: 'Standard Concept Caption', data: 'STANDARD_CONCEPT_CAPTION', visible: false},
+										{ title: 'Standard Concept Code', data: 'STANDARD_CONCEPT', visible: false},
+										{ title: 'Domain', data: 'DOMAIN_ID' },
+										{ title: 'Vocabulary', data: 'VOCABULARY_ID' }
+								]
+						}
+        }">
+			</table>
+
+			<div class="linkLegend">
+				<div class="linkLegendItem">
+					<div class="swatch standard">
+					</div>
+					<div class="linkLegendTitle">Standard</div>
+				</div>
+				<div class="linkLegendItem">
+					<div class="swatch nonStandard">
+					</div>
+					<div class="linkLegendTitle">Non-Standard</div>
+				</div>
+				<div class="linkLegendItem">
+					<div class="swatch classification">
+					</div>
+					<div class="linkLegendTitle">Classification</div>
+				</div>
+			</div>
+		</div>
+	</div>	
+	
+	<div class="paddedWrapper" data-bind="if: model.currentConceptSetMode() == 'details'">
+		<div class="heading">Concept Set Expression</div>
 		<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
             data: model.selectedConcepts(),
             options: {
@@ -93,7 +158,7 @@
 							order: [[3, 'desc']],
               columns: [
 									{ title: '<li class=\'fa fa-shopping-cart\'></li>', render: model.renderConceptSetItemSelector, orderable:false, searchable:false},
-									{ title: 'Concept Id', data: 'concept.CONCEPT_ID', visible:false},
+									{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
 									{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
                   { title: 'Concept Name', render: model.renderBoundLink},
                   { title: 'Domain', data: 'concept.DOMAIN_ID' },

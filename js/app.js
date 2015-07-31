@@ -416,6 +416,20 @@ define([
 				method: 'POST',
 				contentType: 'application/json',
 				success: function (info) {
+					var identifiers = info;
+					self.resolvingSourcecodes(true);
+					$.ajax({
+						url: self.vocabularyUrl() + 'lookup/mapped',
+						data: JSON.stringify(identifiers),
+						method: 'POST',
+						contentType: 'application/json',
+						success: function (sourcecodes) {
+							self.sourcecodeInclusionCount(sourcecodes.length);
+							self.includedSourcecodes(sourcecodes);
+							self.resolvingSourcecodes(false);
+						}
+					});
+
 					self.conceptSetInclusionIdentifiers(info);
 					self.currentIncludedConceptIdentifierList(info.join(','));
 					self.conceptSetInclusionCount(info.length);
@@ -766,10 +780,12 @@ define([
 		self.relatedConcepts = ko.observableArray();
 		self.importedConcepts = ko.observableArray();
 		self.includedConcepts = ko.observableArray();
+		self.includedSourcecodes = ko.observableArray();
 		self.cohortDefinitions = ko.observableArray();
 		self.currentCohortDefinition = ko.observable();
 		self.currentCohortDefinitionInfo = ko.observable();
 		self.resolvingConceptSetExpression = ko.observable();
+		self.resolvingSourcecodes = ko.observable();
 		self.evidence = ko.observableArray();
 		self.services = ko.observableArray([
 			/*
@@ -968,29 +984,8 @@ define([
 			return conceptSetItem;
 		};
 		self.conceptSetInclusionCount = ko.observable(0);
-		self.resolveConceptSetExpression = function () {
-			self.resolvingConceptSetExpression(true);
-			var conceptSetExpression = '{"items" :' + ko.toJSON(self.selectedConcepts()) + '}';
-			var highlightedJson = self.syntaxHighlight(conceptSetExpression);
-			self.currentConceptSetExpressionJson(highlightedJson);
+		self.sourcecodeInclusionCount = ko.observable(0);
 
-			$.ajax({
-				url: self.vocabularyUrl() + 'resolveConceptSetExpression',
-				data: conceptSetExpression,
-				method: 'POST',
-				contentType: 'application/json',
-				success: function (info) {
-					self.conceptSetInclusionIdentifiers(info);
-					self.currentIncludedConceptIdentifierList(info.join(','));
-					self.conceptSetInclusionCount(info.length);
-					self.resolvingConceptSetExpression(false);
-				},
-				error: function (err) {
-					alert(err);
-					self.resolvingConceptSetExpression(false);
-				}
-			});
-		};
 		self.syntaxHighlight = function (json) {
 			if (typeof json != 'string') {
 				json = JSON.stringify(json, undefined, 2);

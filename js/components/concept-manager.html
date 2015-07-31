@@ -1,6 +1,7 @@
 <div id="wrapperConcept" data-bind="if: model.currentConcept() && model.currentView() == 'concept'">
 	<div class="wrapperTitle">
-		<span data-bind="css: {invalid: model.currentConcept().STANDARD_CONCEPT!='S'}, html:model.renderCurrentConceptSelector() + ' ' + model.currentConcept().CONCEPT_NAME"></span>
+		<span data-bind="html: model.renderCurrentConceptSelector()"></span>
+		<span data-bind="css: {invalid: model.currentConcept().STANDARD_CONCEPT!='S'}, text:model.currentConcept().CONCEPT_NAME"></span>
 	</div>
 
 	<ul class="nav nav-tabs">

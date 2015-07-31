@@ -8,7 +8,8 @@
 		<select class="form-control" data-bind="css : { invalid: $component.model.reportCohortDefinitionId()==undefined }, options:$component.model.cohortDefinitions, optionsText:'name', optionsValue:'id', optionsCaption:'Select a Cohort Definition', value:$component.model.reportCohortDefinitionId"></select>
 		<select class="form-control" data-bind="css : { invalid: $component.model.reportReportName()==undefined }, options:$component.model.reports(), optionsCaption:'Select a Report', value:$component.model.reportReportName"></select>
 		<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.model.services()[0].sources.filter($component.model.hasResults), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
-		<input type="button" class="btn btn-default" data-bind="click: $component.runReport, enable: $component.model.reportValid(), value: $component.model.loadingReport() ? 'Loading...' : 'Run Report'">
+		<button class="btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'Run Report'"></button>
+		<div class="clear"></div>
 	</div>
 
 	<div id="reportPerson" data-bind="if: model.currentReport() == 'Person' && !model.loadingReport()">
