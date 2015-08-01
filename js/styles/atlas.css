@@ -287,8 +287,10 @@ div#wrapperMainWindowContainer {}
 #wrapperLeftMenu ul ul li {
 	/* background-color: #444; */
 
-	font-size: 11px;
-	padding: 5px 3px 2px 17px;
+	
+	font-size: 10px;
+	/* color: #ccc; */
+	padding: 5px 3px 2px 35px;
 }
 
 .feFilter {
@@ -757,7 +759,7 @@ ul.ColVis_collection li {
 }
 
 #wrapperMiniBar i.fa {
-	font-size: 22px;
+	font-size: 16px;
 }
 
 #wrapperReportMenu {
@@ -1285,4 +1287,14 @@ tbody {
 
 i.fa.fa-compress {
     cursor: pointer;
+}
+
+
+#wrapperMiniBar img {
+    width: 32px;
+    padding-top: 7px;
+}
+
+#wrapperLeftMenu ul ul li a {
+    color: #aaa;
 }
