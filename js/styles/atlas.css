@@ -19,6 +19,36 @@ body {
 	border-right: solid 1px #ccc;
 }
 
+#wrapperMiniBar {
+	position: absolute;
+	text-align: center;
+	left: 0px;
+	top: 0px;
+	width: 50px;
+	bottom: 0px;
+	border-right: solid 1px #ccc;
+}
+
+#wrapperMiniBar ul {
+	padding: 0px;
+}
+
+#wrapperMiniBar li {
+	list-style: none;
+	text-indent: 0px;
+	padding: 12px 6px 0px 6px;
+	color: #000;
+}
+
+#wrapperMiniBar li a {
+	color: #184756;
+	text-decoration: none;
+}
+
+#wrapperMiniBar li a:hover {
+	text-decoration: none;
+}
+
 .importedTable {
 	padding: 10px;
 }
@@ -105,7 +135,7 @@ body {
 }
 
 textarea {
-	padding:10px;
+	padding: 10px;
 }
 
 #wrapperSearch #querytext {
@@ -170,6 +200,7 @@ pre span.key {
 	background-color: #fff;
 	color: #1F4159;
 	/* border-bottom: solid 1px #ccc; */
+
 	cursor: pointer;
 }
 
@@ -221,10 +252,12 @@ div#wrapperMainWindowContainer {}
 	/* border-right: solid 1px #888; */
 	/* border-bottom: solid 1px #ccc; */
 	/* background-color: #222; */
+
 	list-style: none;
 	text-indent: 0px;
 	padding: 12px 6px 0px 10px;
 	/* cursor: pointer; */
+
 	color: #000;
 }
 
@@ -253,6 +286,7 @@ div#wrapperMainWindowContainer {}
 
 #wrapperLeftMenu ul ul li {
 	/* background-color: #444; */
+
 	font-size: 11px;
 	padding: 5px 3px 2px 17px;
 }
@@ -562,6 +596,7 @@ ul.ColVis_collection li {
 .linkLegend {
 	padding: 10px 10px 50px 10px;
 	/* float: left; */
+
 	margin-bottom: 10px;
 }
 
@@ -705,6 +740,10 @@ ul.ColVis_collection li {
 	font-weight: normal;
 }
 
+.fa .fa-compress {
+	cursor: pointer;
+}
+
 #analysisStatus input[type="checkbox"] {
 	/* margin-top: 19px; */
 }
@@ -715,6 +754,10 @@ ul.ColVis_collection li {
 
 #wrapperLeftMenu i.fa {
 	width: 24px;
+}
+
+#wrapperMiniBar i.fa {
+	font-size: 22px;
 }
 
 #wrapperReportMenu {
@@ -841,6 +884,7 @@ table#analysisStatus {
 .reportControls {
 	background-color: #eee;
 	/* padding-bottom: 0px; */
+
 	margin-left: 0px;
 	border-bottom: solid #ccc 1px;
 }
@@ -1211,19 +1255,19 @@ div#stage {
 }
 
 table.dataTable {
-    background-color: #eee;
+	background-color: #eee;
 }
 
 .dataTables_wrapper {
-    margin: 10px 3px 5px 3px;
+	margin: 10px 3px 5px 3px;
 }
 
 textarea.form-control {
-    padding: 5px;
+	padding: 5px;
 }
 
 .dataTables_paginate {
-	margin-bottom:10px;
+	margin-bottom: 10px;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
@@ -1232,5 +1276,13 @@ textarea.form-control {
 }
 
 tbody {
-    border-bottom-color: #ccc;
+	border-bottom-color: #ccc;
+}
+
+#wrapperMainWindow.minibar {
+	left: 49px;
+}
+
+i.fa.fa-compress {
+    cursor: pointer;
 }

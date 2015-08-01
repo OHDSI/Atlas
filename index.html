@@ -34,7 +34,50 @@
 	</div>
 
 	<!-- ko if: pageModel.currentView() != 'splash' -->
-	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible:true;">
+	<div id="wrapperMiniBar" style="display:none;" data-bind="visible:minibar()">
+		<div>
+			<img src="images/atlas.png">
+			<ul>
+				<li>
+					<a href="#/search"><i class="fa fa-search"></i></a>
+				</li>
+				<!-- ko if: selectedConcepts().length > 0 -->
+				<li>
+					<a href="#/conceptset"><i class="fa fa-shopping-cart"></i></a>
+					<span data-bind="if: selectedConcepts().length > 0">
+					<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
+					</span>
+				</li>
+				<!-- /ko -->
+				<li>
+					<a href="#/import"><i class="fa fa-upload"></i></a>
+				</li>
+				<li>
+					<a href="#/cohortdefinitions"><i class="fa fa-language"></i></a>
+				</li>
+				<li>
+					<a href="#/reports"><i class="fa fa-area-chart"></i></a>
+				</li>
+				<!--
+			<li>
+				<a href="#/analytics"><i class="fa fa-calculator"></i>Analytics</a>
+			</li>
+			-->
+				<li>
+					<a href="#/jobs"><i class="fa fa-tasks"></i></a>
+				</li>
+				<li>
+					<a href="#/configure"><i class="fa fa-cogs"></i></a>
+				</li>
+				<li>
+					<a href=""><i data-bind="click: function() {minibar(false);}" class="fa fa-expand"></i></a>
+				</li>
+			</ul>
+
+		</div>
+	</div>
+
+	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible:!pageModel.minibar();">
 		<div id="wrapperLogo">
 			<a href="#/splash"><img src="images/atlas.png">ATLAS</a>
 		</div>
@@ -85,11 +128,14 @@
 			<li>
 				<a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
 			</li>
+			<li>
+				<i data-bind="click: function() {minibar(true);}" class="fa fa-compress"></i>
+			</li>
 		</ul>
 	</div>
 	<!-- /ko -->
 
-	<div data-bind="if:currentView() != 'splash'" id="wrapperMainWindow">
+	<div data-bind="if:currentView() != 'splash', css: { minibar: minibar() }" id="wrapperMainWindow">
 		<div id="wrapperMainWindowContainer">
 			<div id="wrapperLoading" data-bind="if: currentView() == 'loading'">
 				<div class="wrapperTitle">

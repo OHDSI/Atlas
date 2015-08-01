@@ -18,6 +18,7 @@ define([
 		self.initPromises = [];
 
 		self.applicationStatus = ko.observable('initializing');
+		self.minibar = ko.observable(false);
 
 		// change timeouts after code complete
 		self.initComplete = function () {
