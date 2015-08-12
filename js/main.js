@@ -25,6 +25,7 @@ requirejs.config({
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"knockout": "knockout.min",
 		"datatables": "jquery.dataTables.min",
+		"colvis": "jquery.DataTables.colVis.min",
 		"director": "director.min",
 		"search": "components/search",
 		"configuration": "components/configuration",
@@ -36,6 +37,7 @@ requirejs.config({
 		"cohort-definition-manager": "components/cohort-definition-manager",
 		"report-manager": "components/report-manager",
 		"analytics-manager": "components/analytics-manager",
+		"faceted-datatable": "components/faceted-datatable",
 		"jnj_chart" : "jnj.chart",
 		"d3": "d3.min",
 		"d3_tip" : "d3.tip",
@@ -52,7 +54,8 @@ requirejs(['knockout', 'app', 'director', 'search',
 					 "cohort-definitions",
 					 "cohort-definition-manager",
 					 "report-manager",
-					 "analytics-manager"
+					 "analytics-manager",
+					 "faceted-datatable"
 				], function (ko, app) {
 	$('#splash').fadeIn();
 
@@ -105,8 +108,6 @@ requirejs(['knockout', 'app', 'director', 'search',
 	window.pageModel = pageModel;
 
 	pageModel.currentView.subscribe(function (newView) {
-		console.log('switching to ' + newView);
-
 		if (newView != 'splash') {
 			$('#splash').hide();
 		}

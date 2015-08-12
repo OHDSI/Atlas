@@ -84,7 +84,7 @@ define(['jquery', 'knockout', 'datatables'], function ($, ko) {
 			if (data.length > 0)
 				table.rows.add(data);
 
-			table.draw();
+			table.columns.adjust().draw();
 		}
 	};
 });

@@ -34,7 +34,6 @@ Array.prototype.sortBy = function (f) {
 }
 
 function FacetEngine(params) {
-
 	this.PageSize = 15;
 	this.MemberSortFunction = function () {
 		return this.Name
@@ -83,7 +82,7 @@ function FacetEngine(params) {
 			membership = this.Facets[facet_index].binding(object);
 
 			if (Array.isArray(membership)) {
-				for (i = 0; i < membership.length; i++) {
+				for (var i = 0; i < membership.length; i++) {
 					member_index = this.AddMember(membership[i]);
 					this.Facets[facet_index].Members[member_index].Indices.push(object_index);
 					this.Facets[facet_index].Members[member_index].ActiveCount++;
@@ -151,7 +150,7 @@ function FacetEngine(params) {
 
 			facet_member = this.Facets[path_data[0]].Members[path_data[1]];
 			facet_member.Selected = true;
-			for (i = 0; i < facet_member.Indices.length; i++) {
+			for (var i = 0; i < facet_member.Indices.length; i++) {
 				this.Facets[path_data[0]].FilteredIndices.push(facet_member.Indices[i]);
 			}
 		}
@@ -194,7 +193,7 @@ function FacetEngine(params) {
 		}
 
 
-		for (i = 0; i < intersection.length; i++) {
+		for (var i = 0; i < intersection.length; i++) {
 			this.FilteredObjects.push(this.Objects[intersection[i]]);
 			this.FilteredIndices.push(intersection[i]);
 		}
@@ -205,7 +204,7 @@ function FacetEngine(params) {
 				this.Facets[f].Members[mi].FilteredCount = 0;
 				this.Facets[f].Members[mi].ActiveCount = 0;
 
-				for (i = 0; i < this.Facets[f].Members[mi].Indices.length; i++) {
+				for (var i = 0; i < this.Facets[f].Members[mi].Indices.length; i++) {
 					if (this.FilteredIndices.indexOf(this.Facets[f].Members[mi].Indices[i]) > -1) {
 						this.Facets[f].Members[mi].FilteredCount++;
 					}

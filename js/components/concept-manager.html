@@ -5,17 +5,24 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-		<li role="presentation" data-bind="click: function() {model.currentConceptMode('details');}, attr: {class: model.currentConceptMode() == 'details' ? 'active' : ''}"><a>Concept Details</a>
+		<li role="presentation" data-bind="click: function() {model.currentConceptMode('details');}, attr: {class: model.currentConceptMode() == 'details' ? 'active' : ''}"><a>Details</a>
 		</li>
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('related');}, attr: {class: model.currentConceptMode() == 'related' ? 'active' : ''}">
 			<a><span data-bind="if:model.loadingRelated();">
 							<i class="fa fa-refresh fa-spin"></i>
 						</span>Related Concepts</a>
 		</li>
+		
+		<li role="presentation" data-bind="visible: model.relatedSourcecodes().length>0, click: function() {model.currentConceptMode('sourcecodes');}, attr: {class: model.currentConceptMode() == 'sourcecodes' ? 'active' : ''}">
+			<a><span data-bind="if:model.loadingSourcecodes();">
+							<i class="fa fa-refresh fa-spin"></i>
+						</span>Related Source Codes</a>
+		</li>		
+		
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('hierarchy');}, attr: {class: model.currentConceptMode() == 'hierarchy' ? 'active' : ''}">
 			<a><span data-bind="if:model.loadingRelated();">
 							<i class="fa fa-refresh fa-spin"></i>
-						</span>Hierarchy Viewer</a>
+						</span>Hierarchy</a>
 		</li>
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('evidence');}, attr: {class: model.currentConceptMode() == 'evidence' ? 'active disabled' : 'disabled'}">
 			<a>
@@ -23,10 +30,14 @@
 							<i class="fa fa-refresh fa-spin"></i>
 						</span>Evidence</a>
 		</li>
-		<li role="presentation" data-bind="click: function() {model.currentConceptMode('data');}, attr: {class: model.currentConceptMode() == 'data' ? 'active disabled' : 'disabled'}"><a>Concept Incidence</a>
+		<li role="presentation" data-bind="click: function() {model.currentConceptMode('data');}, attr: {class: model.currentConceptMode() == 'data' ? 'active disabled' : 'disabled'}"><a>Incidence</a>
 		</li>
 	</ul>
 
+	<div data-bind="visible:model.currentConceptMode() == 'sourcecodes' && !model.loadingSourcecodes()">
+		<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.relatedSourcecodes }"></faceted-datatable>
+	</div>
+	
 	<div id="wrapperConceptHierarchy" data-bind="if:model.currentConceptMode() == 'hierarchy' && !model.loadingRelated()">
 		<div id="wrapperParents">
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
@@ -56,7 +67,7 @@
 						}">
 			</table>
 		</div>
-		<div id="wrapperHierarchyAnchor" data-bind="text:model.currentConcept().CONCEPT_NAME">
+		<div id="wrapperHierarchyAnchor" class="heading" data-bind="text:model.currentConcept().CONCEPT_NAME">
 		</div>
 		<div id="wrapperChildren">
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
@@ -171,71 +182,7 @@
 		</table>
 	</div>
 
-	<div id="wrapperRelatedConcepts" data-bind="if: model.currentConceptMode() == 'related' && !model.loadingRelated()">
-		<div id="wrapperRelatedConceptsFilter" class="feFilter" data-bind="with: model.feRelated">
-			<div data-bind="foreach:Facets">
-				<div class="facetName" data-bind="text:caption"></div>
-				<div class="facetScrollBox" data-bind="foreach:Members">
-					<div class="facetMemberName" data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, click: function() { $component.model.updateRelatedFilters(); }, css : {selected: Selected}, text:Name + ' (' + ActiveCount + ')'">
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="wrapperRelatedConceptsTable">
-			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-            data: model.relatedConcepts(),
-						language: {
-							search: 'Filter: '
-						},
-            options: {
-							dom: 'Clfiprt',
-							colVis: {
-								buttonText: 'Change Columns',
-								align: 'right',
-								overlayFade: 0,
-								showAll: 'Show All Columns',
-								restore: 'Reset Columns'
-							},
-							rowCallback: model.contextSensitiveLinkColor,
-							lengthMenu: [[20, 50, 100, -1], [20, 50, 100,'All']],
-							orderClasses: false,
-							deferRender: true,
-							autoWidth: false,
-							ordering: true,
-							order: [[ 2, 'asc' ]],
-							columns: [
-									{ title: '<li onclick=\'model.selectAllRelated();\' class=\'fa fa-shopping-cart\'></li>', render: model.renderConceptSelector, orderable:false, searchable:false},
-									{ title: 'Concept Id', data: 'CONCEPT_ID', visible: false},
-									{ title: 'Concept Code', data: 'CONCEPT_CODE', visible: false},
-									{ title: 'Concept Name', data: 'CONCEPT_NAME', render: model.renderLink},
-									{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-									{ title: 'Standard Concept Caption', data: 'STANDARD_CONCEPT_CAPTION', visible: false},
-									{ title: 'Standard Concept Code', data: 'STANDARD_CONCEPT', visible: false},
-									{ title: 'Domain', data: 'DOMAIN_ID' },
-									{ title: 'Vocabulary', data: 'VOCABULARY_ID' }
-							]
-					}
-        }">
-			</table>
-			<div class="linkLegend">
-				<div class="linkLegendItem">
-					<div class="swatch standard">
-					</div>
-					<div class="linkLegendTitle">Standard</div>
-				</div>
-				<div class="linkLegendItem">
-					<div class="swatch nonStandard">
-					</div>
-					<div class="linkLegendTitle">Non-Standard</div>
-				</div>
-				<div class="linkLegendItem">
-					<div class="swatch classification">
-					</div>
-					<div class="linkLegendTitle">Classification</div>
-				</div>
-			</div>
-			<button type="button" onclick="selectAllRelated()" class="btn btn-sm btn-primary selectAllButton">Select All Related</button>
-		</div>
+	<div data-bind="visible: model.currentConceptMode() == 'related' && !model.loadingRelated()">
+		<faceted-datatable params="{columns: model.relatedConceptsColumns, options: model.relatedConceptsOptions, reference: model.relatedConcepts }"></faceted-datatable>
 	</div>
 </div>

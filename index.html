@@ -11,8 +11,11 @@
 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" type="text/css" href="js/styles/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.min.css">		
+	<link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.colVis.css">	
+	<link rel="stylesheet" type="text/css" href="js/styles/atlas.dataTables.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/chart.css">
 
@@ -90,24 +93,18 @@
 					<a data-bind="attr: {href:'#/search/' + query}, text: caption + ' (' + resultLength + ')'"></a>
 				</li>
 			</ul>
-			<!-- ko if: recentConcept().length > 0 -->
 			<li>
-				<a href="#"><i class="fa fa-history"></i>Recent Concepts</a>
+				<i class="fa fa-history"></i>Recent Concepts
 			</li>
 			<ul data-bind="foreach:recentConcept">
 				<li>
 					<a data-bind="text: CONCEPT_NAME, attr: { href: '#/concept/' + CONCEPT_ID}"></a>
 				</li>
 			</ul>
-			<!-- /ko -->
-			<!-- ko if: selectedConcepts().length > 0 -->
 			<li>
 				<a href="#/conceptset"><i class="fa fa-shopping-cart"></i>Selected Concepts</a>
-				<span data-bind="if: selectedConcepts().length > 0">
-					<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
-				</span>
+				<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 			</li>
-			<!-- /ko -->
 			<li>
 				<a href="#/import"><i class="fa fa-upload"></i>Import</a>
 			</li>

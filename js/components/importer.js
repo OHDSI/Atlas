@@ -34,7 +34,6 @@ define(['knockout', 'text!./importer.html', 'knockout.dataTables.binding'], func
 
 		self.importSourcecodes = function () {
 			var sourcecodes = $('#textImportSourcecodes').val().match(/[0-9a-zA-Z\.-]+/g); 
-			console.log(sourcecodes);
 			$.ajax({
 				url: self.model.vocabularyUrl() + 'lookup/sourcecodes',
 				method: 'POST',

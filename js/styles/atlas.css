@@ -156,7 +156,7 @@ textarea {
 }
 
 #wrapperConceptDetails {
-	padding: 5px;
+	/* padding: 5px; */
 }
 
 #wrapperConceptDetails table {
@@ -198,9 +198,7 @@ pre span.key {
 	line-height: 49px;
 	font-size: 14px;
 	background-color: #fff;
-	color: #1F4159;
-	/* border-bottom: solid 1px #ccc; */
-
+	color: #1F4159;	
 	cursor: pointer;
 }
 
@@ -217,8 +215,6 @@ pre span.key {
 	left: 199px;
 	top: 0px;
 	right: 0px;
-	/* bottom: 10; */
-	
 	display: none;
 }
 
@@ -228,7 +224,6 @@ pre span.key {
 
 #wrapperMainWindowContainer {
 	position: relative;
-	/* height: 90%; */
 }
 
 div#wrapperMainWindowContainer {}
@@ -248,17 +243,25 @@ div#wrapperMainWindowContainer {}
 	padding: 0px;
 }
 
+.nav-tabs>li.active>a,
+.nav-tabs>li.active>a:focus,
+.nav-tabs>li.active>a:hover {
+	background-color: #003142;
+	color: #fff;
+	border: solid 1px #003142;
+}
+
 #wrapperLeftMenu li {
 	/* border-right: solid 1px #888; */
 	/* border-bottom: solid 1px #ccc; */
 	/* background-color: #222; */
-
+	
 	list-style: none;
 	text-indent: 0px;
 	padding: 12px 6px 0px 10px;
 	/* cursor: pointer; */
-
-	color: #000;
+	
+	color: #184756;
 }
 
 #wrapperLeftMenu li a {
@@ -268,10 +271,6 @@ div#wrapperMainWindowContainer {}
 
 #wrapperLeftMenu li a:hover {
 	text-decoration: none;
-}
-
-#wrapperLeftMenu li:hover {
-	/* background-color: #333; */
 }
 
 #wrapperLeftMenu li ul {
@@ -285,23 +284,20 @@ div#wrapperMainWindowContainer {}
 }
 
 #wrapperLeftMenu ul ul li {
-	/* background-color: #444; */
-
-	
 	font-size: 10px;
-	/* color: #ccc; */
 	padding: 5px 3px 2px 35px;
 }
 
 .feFilter {
 	position: absolute;
 	width: 200px;
-	background-color: #ddd;
-	top: 0px;
+	/* background-color: #ddd; */
+	top: 105px;
 	border-left: 1px solid #ccc;
 	left: -1px;
 	min-height: 100%;
 	z-index: 1000;
+	border-right: solid 1px #ccc;
 }
 
 .fa.fa-refresh.fa-spin {
@@ -309,24 +305,23 @@ div#wrapperMainWindowContainer {}
 }
 
 .feFilter .facetName {
-	background-color: #20425A;
-	margin: 0px 0px 1px 0px;
-	padding: 3px;
-	color: #fff;
+	/* background-color: #20425A; */
+	margin: 5px 0px 0px 0px;
+	padding: 2px 2px 0px 3px;
+	color: #337ab7;
+	font-size: 12px;
+	font-weight: bold;
 }
 
 .feFilter .facetMemberName {
-	font-size: 11px;
-	/* line-height: 18px; */
-	
+	font-size: 10px;
 	cursor: pointer;
-	padding: 2px 3px 2px 5px;
-	border-bottom: solid 1px #ccc;
-	/* border-left: solid 2px #ccc; */
+	padding: 0px 2px 0px 5px;
+	/* border-bottom: solid 1px #ccc; */
 }
 
 .feFilter .facetMemberName:hover {
-	background-color: #F3E1A0;
+	/* background-color: #F3E1A0; */
 }
 
 .feFilter .facetMemberName.selected {
@@ -334,9 +329,9 @@ div#wrapperMainWindowContainer {}
 }
 
 .feFilter .facetScrollBox {
-	max-height: 125px;
+	max-height: 70px;
 	overflow-y: auto;
-	border-bottom: solid 1px #ccc;
+	/* border-bottom: solid 1px #ccc; */
 	margin-bottom: ;
 }
 
@@ -346,7 +341,7 @@ div#wrapperMainWindowContainer {}
 	padding: 7px;
 	width: 100%;
 	margin-left: -200px;
-	padding-left: 205px;
+	padding-left: 196px;
 	padding-top: 5px;
 }
 
@@ -375,6 +370,15 @@ div#wrapperMainWindowContainer {}
 	font-size: 11px;
 }
 
+.facetedDataTable {
+	position: absolute;
+	left: 200px;
+	padding: 6px;
+	padding-left: 197px;
+	width: 100%;
+	margin-left: -200px;
+}
+
 .conceptWarning .fa {
 	color: rgb(136, 0, 0);
 	font-size: 20px;
@@ -396,10 +400,6 @@ table.datatable td.numeric {
 #wrapperSearchResultsTable table {
 	font-size: 11px;
 	width: 100%;
-}
-
-#wrapperConceptEvidence {
-	padding: 7px;
 }
 
 #wrapperConceptEvidence table {
@@ -461,8 +461,9 @@ span.invalid {
 
 .nav-tabs>li {
 	background-color: #eee;
-	margin-left: 2px;
+	margin-left: 5px;
 	cursor: pointer;
+	/* margin: 2px; */
 }
 
 .nav-tabs>li>a {
@@ -502,8 +503,8 @@ label {
 	background-color: #fee;
 	margin: 7px;
 }
-/* circle packing */
 
+/* circle packing */
 text {
 	font-size: 6px;
 	pointer-events: none;
@@ -511,12 +512,6 @@ text {
 
 text.parent {
 	fill: #1f77b4;
-}
-
-circle {
-	/* fill: #F19119; */
-	/* stroke: #999; */
-	/* pointer-events: all; */
 }
 
 circle.parent {
@@ -598,7 +593,7 @@ ul.ColVis_collection li {
 .linkLegend {
 	padding: 10px 10px 50px 10px;
 	/* float: left; */
-
+	
 	margin-bottom: 10px;
 }
 
@@ -648,7 +643,7 @@ ul.ColVis_collection li {
 }
 
 #wrapperConceptHierarchy {
-	padding: 5px;
+	/* padding: 5px; */
 }
 
 #wrapperParents {
@@ -680,10 +675,7 @@ ul.ColVis_collection li {
 	padding-bottom: 10px;
 	padding-top: 10px;
 	font-size: 14px;
-	background-color: #eee;
 	padding-left: 10px;
-	border-top: solid 1px #222;
-	border-bottom: solid 1px #222;
 	margin-bottom: 20px;
 }
 
@@ -813,14 +805,10 @@ input.btn.btn-default {
 	font-size: 14px;
 	margin-bottom: 25px;
 	margin-top: 0px;
-	/* padding: 5px; */
-	/* border-bottom: solid 2px #333; */
 }
 
 .reportSectionHeading {
 	font-size: 13px;
-	/* font-weight: bold; */
-	
 	border-bottom: solid 1px #ccc;
 	margin-top: 10px;
 	margin-bottom: 0px;
@@ -858,11 +846,14 @@ g.trellisLegend {}
 
 ul.nav.nav-tabs {
 	/* margin-top: 5px; */
-	/* margin-bottom: 10px; */
 	
-	background-color: #fff;
-	padding: 10px 10px 0px 10px;
+	margin-bottom: 2px;
+	background-color: #FFFFFF;
+	padding: 10px 10px 1px 10px;
+	border-bottom: solid 1px #003142;
 }
+
+ul.nav.nav-tabs {}
 
 div.loader {
 	margin-top: 20px;
@@ -886,7 +877,7 @@ table#analysisStatus {
 .reportControls {
 	background-color: #eee;
 	/* padding-bottom: 0px; */
-
+	
 	margin-left: 0px;
 	border-bottom: solid #ccc 1px;
 }
@@ -1261,7 +1252,7 @@ table.dataTable {
 }
 
 .dataTables_wrapper {
-	margin: 10px 3px 5px 3px;
+	margin: 5px 3px 5px 3px;
 }
 
 textarea.form-control {
@@ -1286,15 +1277,38 @@ tbody {
 }
 
 i.fa.fa-compress {
-    cursor: pointer;
+	cursor: pointer;
 }
 
-
 #wrapperMiniBar img {
-    width: 32px;
-    padding-top: 7px;
+	width: 32px;
+	padding-top: 7px;
 }
 
 #wrapperLeftMenu ul ul li a {
-    color: #aaa;
+	color: #aaa;
+}
+
+tr {
+    border-bottom: solid 1px #ccc;
+}
+
+table.dataTable.no-footer {
+    border-bottom: solid 1px #ccc !important;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+    border-bottom: solid 1px #ccc !important;
+}
+
+.facetMemberName:hover i.fa {
+    color: #f00;
+}
+
+.nav>li>a {
+    padding: 5px 10px 5px 10px;
+}
+
+.facetName i.fa.fa-filter {
+    margin-right: 3px;
 }

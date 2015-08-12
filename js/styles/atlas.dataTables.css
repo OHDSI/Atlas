@@ -44,8 +44,8 @@ table.dataTable.hover tbody tr.odd:hover,
 table.dataTable.display tbody tr.odd:hover {
 	background-color: #f0f0f0;
 }
-/* colVis formatting */
 
+/* colVis formatting */
 ul.ColVis_collection {
 	width: 200px;
 	right: 0px;

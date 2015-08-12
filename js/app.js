@@ -4,10 +4,7 @@ define([
 	'jnj_chart',
 	'd3',
 	'bootstrap',
-	'facets',
-	'css!styles/atlas.dataTables.css',
-	'css!styles/jquery.dataTables.colVis.css',
-	'css!styles/jquery.dataTables.min.css'
+	'facets'
 ], function ($, ko, jnj_chart, d3) {
 	var appModel = function () {
 		var self = this;
@@ -43,7 +40,7 @@ define([
 				contentType: 'application/json',
 				success: function (c, status, xhr) {
 					var exists = false;
-					for (i = 0; i < self.recentConcept().length; i++) {
+					for (var i = 0; i < self.recentConcept().length; i++) {
 						if (self.recentConcept()[i].CONCEPT_ID == c.CONCEPT_ID)
 							exists = true;
 					}
@@ -64,7 +61,9 @@ define([
 
 			// load related concepts once the concept is loaded
 			self.loadingRelated(true);
+			self.loadingSourcecodes(true);
 			var relatedPromise = $.Deferred();
+			var sourcecodesPromise = $.Deferred();
 
 			$.when(conceptPromise).done(function () {
 				self.metarchy = {
@@ -73,80 +72,38 @@ define([
 					synonyms: ko.observableArray()
 				};
 
-				$.getJSON(self.vocabularyUrl() + 'concept/' + conceptId + '/related', function (related) {
-					self.relatedConcepts(related);
-
-					var feTemp = new FacetEngine({
-						Facets: [
-							{
-								'caption': 'Vocabulary',
-								'binding': function (o) {
-									return o.VOCABULARY_ID;
-								}
-							},
-							{
-								'caption': 'Standard Concept',
-								'binding': function (o) {
-									return o.STANDARD_CONCEPT_CAPTION;
-								}
-							},
-							{
-								'caption': 'Invalid Reason',
-								'binding': function (o) {
-									return o.INVALID_REASON_CAPTION;
-								}
-							},
-							{
-								'caption': 'Class',
-								'binding': function (o) {
-									return o.CONCEPT_CLASS_ID;
-								}
-							},
-							{
-								'caption': 'Domain',
-								'binding': function (o) {
-									return o.DOMAIN_ID;
-								}
-							},
-							{
-								'caption': 'Relationship',
-								'binding': function (o) {
-									values = [];
-									for (i = 0; i < o.RELATIONSHIPS.length; i++) {
-										values.push(o.RELATIONSHIPS[i].RELATIONSHIP_NAME);
-									}
-									return values;
-								}
-							},
-							{
-								'caption': 'Distance',
-								'binding': function (o) {
-									values = [];
-									for (i = 0; i < o.RELATIONSHIPS.length; i++) {
-										if (values.indexOf(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE) == -1) {
-											values.push(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE);
-										}
-									}
-									return values;
-								}
-							}
-						]
-					});
-
-					for (c = 0; c < related.length; c++) {
-						feTemp.Process(related[c]);
-						self.metagorize(self.metarchy, related[c]);
+				// load mapped 
+				var identifiers = [];
+				identifiers.push(conceptId);
+				$.ajax({
+					url: self.vocabularyUrl() + 'lookup/mapped',
+					method: 'POST',
+					data: JSON.stringify(identifiers),
+					contentType: 'application/json',
+					success: function (sourcecodes) {
+						self.relatedSourcecodes(sourcecodes);
+						sourcecodesPromise.resolve();
+						self.loadingSourcecodes(false);
 					}
-
-					feTemp.MemberSortFunction = function () {
-						return this.ActiveCount;
-					};
-					feTemp.sortFacetMembers();
-
-					self.feRelated(feTemp);
-					self.relatedConcepts(self.feRelated().GetCurrentObjects());
-					relatedPromise.resolve();
 				});
+
+				$.ajax({
+					url: self.vocabularyUrl() + 'concept/' + conceptId + '/related',
+					method: 'GET',
+					contentType: 'application/json',
+					success: function (related) {
+						for (var i = 0; i < related.length; i++) {
+							self.metagorize(self.metarchy, related[i]);
+						}
+						var densityPromise = self.loadDensity(related);
+
+						$.when(densityPromise).done(function () {
+							self.relatedConcepts(related);
+							relatedPromise.resolve();
+						});
+					}
+				});
+
 			});
 
 			$.when(relatedPromise).done(function () {
@@ -172,6 +129,321 @@ define([
 				}
 			}
 		}
+
+		self.searchConceptsOptions = {
+			Facets: [
+				{
+					'caption': 'Vocabulary',
+					'binding': function (o) {
+						return o.VOCABULARY_ID;
+					}
+						},
+				{
+					'caption': 'Class',
+					'binding': function (o) {
+						return o.CONCEPT_CLASS_ID;
+					}
+						},
+				{
+					'caption': 'Domain',
+					'binding': function (o) {
+						return o.DOMAIN_ID;
+					}
+						},
+				{
+					'caption': 'Standard Concept',
+					'binding': function (o) {
+						return o.STANDARD_CONCEPT_CAPTION;
+					}
+						},
+				{
+					'caption': 'Invalid Reason',
+					'binding': function (o) {
+						return o.INVALID_REASON_CAPTION;
+					}
+						},
+				{
+					'caption': 'Has Data',
+					'binding': function (o) {
+						return o.DENSITY > 0;
+					}
+						}
+					]
+		};
+
+		self.relatedConceptsOptions = {
+			Facets: [
+				{
+					'caption': 'Vocabulary',
+					'binding': function (o) {
+						return o.VOCABULARY_ID;
+					}
+							},
+				{
+					'caption': 'Standard Concept',
+					'binding': function (o) {
+						return o.STANDARD_CONCEPT_CAPTION;
+					}
+							},
+				{
+					'caption': 'Invalid Reason',
+					'binding': function (o) {
+						return o.INVALID_REASON_CAPTION;
+					}
+							},
+				{
+					'caption': 'Class',
+					'binding': function (o) {
+						return o.CONCEPT_CLASS_ID;
+					}
+							},
+				{
+					'caption': 'Domain',
+					'binding': function (o) {
+						return o.DOMAIN_ID;
+					}
+							},
+				{
+					'caption': 'Relationship',
+					'binding': function (o) {
+						values = [];
+						for (var i = 0; i < o.RELATIONSHIPS.length; i++) {
+							values.push(o.RELATIONSHIPS[i].RELATIONSHIP_NAME);
+						}
+						return values;
+					}
+				},
+				{
+					'caption': 'Has Data',
+					'binding': function (o) {
+						return o.DENSITY > 0;
+					}
+				},
+				{
+					'caption': 'Distance',
+					'binding': function (o) {
+						values = [];
+						for (var i = 0; i < o.RELATIONSHIPS.length; i++) {
+							if (values.indexOf(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE) == -1) {
+								values.push(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE);
+							}
+						}
+						return values;
+					}
+							}
+						]
+		};
+
+		self.searchConceptsColumns = [
+			{
+				title: '',
+				render: function (s, p, d) {
+					var css = '';
+					var icon = 'fa-shopping-cart';
+
+					if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+						css = ' selected';
+					}
+					return '<i class="fa ' + icon + ' ' + css + '"></i>';
+				},
+				orderable: false,
+				searchable: false
+			},
+			{
+				title: 'Concept Id',
+				data: 'CONCEPT_ID',
+				visible: false
+			},
+			{
+				title: 'Concept Code',
+				data: 'CONCEPT_CODE',
+				visible: false
+			},
+			{
+				title: 'Concept Name',
+				data: 'CONCEPT_NAME',
+				render: function (s, p, d) {
+					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+				},
+				width: '50%'
+			},
+			{
+				title: 'Class',
+				data: 'CONCEPT_CLASS_ID'
+			},
+			{
+				title: 'Standard Concept Caption',
+				data: 'STANDARD_CONCEPT_CAPTION',
+				visible: false
+			},
+			{
+				title: 'Standard Concept Code',
+				data: 'STANDARD_CONCEPT',
+				visible: false
+			},
+			{
+				title: 'Data Density',
+				data: 'DENSITY',
+				className: 'numeric'
+			},
+			{
+				title: 'Domain',
+				data: 'DOMAIN_ID'
+			},
+			{
+				title: 'Vocabulary',
+				data: 'VOCABULARY_ID',
+				width: '100px'
+			}
+		];
+
+		self.relatedConceptsColumns = [
+			{
+				title: '<li onclick=\'model.selectAllRelated();\' class=\'fa fa-shopping-cart\'></li>',
+				render: function (s, p, d) {
+					var css = '';
+					var icon = 'fa-shopping-cart';
+
+					if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+						css = ' selected';
+					}
+					return '<i class="fa ' + icon + ' ' + css + '"></i>';
+				},
+				orderable: false,
+				searchable: false
+			},
+			{
+				title: 'Concept Id',
+				data: 'CONCEPT_ID',
+				visible: false
+			},
+			{
+				title: 'Concept Code',
+				data: 'CONCEPT_CODE',
+				visible: false
+			},
+			{
+				title: 'Concept Name',
+				data: 'CONCEPT_NAME',
+				render: function (s, p, d) {
+					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+				}
+			},
+			{
+				title: 'Class',
+				data: 'CONCEPT_CLASS_ID'
+			},
+			{
+				title: 'Standard Concept Caption',
+				data: 'STANDARD_CONCEPT_CAPTION',
+				visible: false
+			},
+			{
+				title: 'Data Density',
+				data: 'DENSITY',
+				className: 'numeric'
+			},			
+			{
+				title: 'Standard Concept Code',
+				data: 'STANDARD_CONCEPT',
+				visible: false
+			},
+			{
+				title: 'Domain',
+				data: 'DOMAIN_ID'
+			},
+			{
+				title: 'Vocabulary',
+				data: 'VOCABULARY_ID'
+			}
+							];
+
+		self.relatedSourcecodesColumns = [
+			{
+				title: '',
+				render: function (s, p, d) {
+					var css = '';
+					var icon = 'fa-shopping-cart';
+
+					if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+						css = ' selected';
+					}
+					return '<i class="fa ' + icon + ' ' + css + '"></i>';
+				},
+				orderable: false,
+				searchable: false
+			},
+			{
+				title: 'Concept Id',
+				data: 'CONCEPT_ID'
+			},
+			{
+				title: 'Concept Code',
+				data: 'CONCEPT_CODE'
+			},
+			{
+				title: 'Concept Name',
+				data: 'CONCEPT_NAME',
+				render: function (s, p, d) {
+					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+				}
+			},
+			{
+				title: 'Class',
+				data: 'CONCEPT_CLASS_ID'
+			},
+			{
+				title: 'Standard Concept Caption',
+				data: 'STANDARD_CONCEPT_CAPTION',
+				visible: false
+			},
+			{
+				title: 'Standard Concept Code',
+				data: 'STANDARD_CONCEPT',
+				visible: false
+			},
+			{
+				title: 'Domain',
+				data: 'DOMAIN_ID'
+			},
+			{
+				title: 'Vocabulary',
+				data: 'VOCABULARY_ID',
+				width: '100px'
+			}
+		];
+
+		self.relatedSourcecodesOptions = {
+			Facets: [
+				{
+					'caption': 'Vocabulary',
+					'binding': function (o) {
+						return o.VOCABULARY_ID;
+					}
+				},
+				{
+					'caption': 'Invalid Reason',
+					'binding': function (o) {
+						return o.INVALID_REASON_CAPTION;
+					}
+				},
+				{
+					'caption': 'Class',
+					'binding': function (o) {
+						return o.CONCEPT_CLASS_ID;
+					}
+				},
+				{
+					'caption': 'Domain',
+					'binding': function (o) {
+						return o.DOMAIN_ID;
+					}
+				}
+			]
+		};
 
 		self.metatrix = {
 			'RxNorm.Ingredient': {
@@ -447,6 +719,7 @@ define([
 			return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); pageModel.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="glyphicon glyphicon-ok"></span>';
 		}
 
+		self.loadingSourcecodes = ko.observable(false);
 		self.loadingRelated = ko.observable(false);
 		self.loadingEvidence = ko.observable(false);
 		self.loadingReport = ko.observable(false);
@@ -621,6 +894,46 @@ define([
 			return result;
 		}
 
+		self.loadDensity = function (results) {
+			var searchResultIdentifiers = [];
+			for (c = 0; c < results.length; c++) {
+				searchResultIdentifiers.push(results[c].CONCEPT_ID);
+			}
+
+			// load data density
+			var densityPromise = $.Deferred();
+			var densityIndex = {};
+
+			$.ajax({
+				url: self.resultsUrl() + 'conceptDensity',
+				method: 'POST',
+				contentType: 'application/json',
+				timeout: 10000,
+				data: JSON.stringify(searchResultIdentifiers),
+				success: function (entries) {
+					for (var e = 0; e < entries.length; e++) {
+						densityIndex[entries[e].key] = entries[e].value;
+					}
+
+					for (c = 0; c < results.length; c++) {
+						var concept = results[c];
+						if (densityIndex[concept.CONCEPT_ID] != undefined) {
+							concept.DENSITY = densityIndex[concept.CONCEPT_ID];
+						} else {
+							concept.DENSITY = 0;
+						}
+					}
+
+					densityPromise.resolve();
+				},
+				error: function (error) {
+					densityPromise.resolve();
+				}
+			});
+
+			return densityPromise;
+		}
+
 		self.search = function (query) {
 			self.currentView('loading');
 
@@ -636,92 +949,9 @@ define([
 						return;
 					}
 
-					var searchResultIdentifiers = [];
-					for (c = 0; c < results.length; c++) {
-						searchResultIdentifiers.push(results[c].CONCEPT_ID);
-					}
-
-					// load data density
-					var densityPromise = $.Deferred();
-					var densityIndex = {};
-
-					$.ajax({
-						url: self.resultsUrl() + 'conceptDensity',
-						method: 'POST',
-						contentType: 'application/json',
-						timeout: 10000,
-						data: JSON.stringify(searchResultIdentifiers),
-						success: function (entries) {
-							for (var e = 0; e < entries.length; e++) {
-								densityIndex[entries[e].key] = entries[e].value;
-							}
-							densityPromise.resolve();
-						},
-						error: function (error) {
-							densityPromise.resolve();
-						}
-					});
+					var densityPromise = self.loadDensity(results);
 
 					$.when(densityPromise).done(function () {
-						feTemp = new FacetEngine({
-							Facets: [
-								{
-									'caption': 'Vocabulary',
-									'binding': function (o) {
-										return o.VOCABULARY_ID;
-									}
-						},
-								{
-									'caption': 'Class',
-									'binding': function (o) {
-										return o.CONCEPT_CLASS_ID;
-									}
-						},
-								{
-									'caption': 'Domain',
-									'binding': function (o) {
-										return o.DOMAIN_ID;
-									}
-						},
-								{
-									'caption': 'Standard Concept',
-									'binding': function (o) {
-										return o.STANDARD_CONCEPT_CAPTION;
-									}
-						},
-								{
-									'caption': 'Invalid Reason',
-									'binding': function (o) {
-										return o.INVALID_REASON_CAPTION;
-									}
-						},
-								{
-									'caption': 'Has Data',
-									'binding': function (o) {
-										return o.DENSITY > 0;
-									}
-						}
-					]
-						});
-
-						for (c = 0; c < results.length; c++) {
-							var concept = results[c];
-							if (densityIndex[concept.CONCEPT_ID] != undefined) {
-								concept.DENSITY = densityIndex[concept.CONCEPT_ID];
-							} else {
-								concept.DENSITY = 0;
-							}
-
-							feTemp.Process(concept);
-						}
-
-						feTemp.MemberSortFunction = function () {
-							return this.ActiveCount
-						};
-						feTemp.sortFacetMembers();
-
-						self.feSearch(feTemp);
-
 						var tempCaption;
 
 						if (decodeURI(query).length > 20) {
@@ -738,7 +968,7 @@ define([
 						self.currentSearch(query);
 
 						var exists = false;
-						for (i = 0; i < self.recentSearch().length; i++) {
+						for (var i = 0; i < self.recentSearch().length; i++) {
 							if (self.recentSearch()[i].query == query)
 								exists = true;
 						}
@@ -750,7 +980,7 @@ define([
 						}
 
 						self.currentView('searchResults');
-						self.searchResultsConcepts(self.feSearch().GetCurrentObjects());
+						self.searchResultsConcepts(results);
 					});
 				},
 				error: function (xhr, message) {
@@ -779,6 +1009,7 @@ define([
 		self.currentIncludedConceptIdentifierList = ko.observable();
 		self.searchResultsConcepts = ko.observableArray();
 		self.relatedConcepts = ko.observableArray();
+		self.relatedSourcecodes = ko.observableArray();
 		self.importedConcepts = ko.observableArray();
 		self.includedConcepts = ko.observableArray();
 		self.includedSourcecodes = ko.observableArray();
@@ -1021,19 +1252,7 @@ define([
 			// update table data binding
 			self.searchResultsConcepts(self.feSearch().GetCurrentObjects());
 		};
-		self.updateRelatedFilters = function () {
-			$(event.target).toggleClass('selected');
 
-			var filters = [];
-			$('#wrapperRelatedConceptsFilter .facetMemberName.selected').each(function (i, d) {
-				filters.push(d.id);
-			});
-			self.feRelated().SetFilter(filters);
-			// update filter data binding
-			self.feRelated(self.feRelated());
-			// update table data binding
-			self.relatedConcepts(self.feRelated().GetCurrentObjects());
-		};
 		self.selectConcept = function (concept) {
 			document.location = '#/concept/' + concept.CONCEPT_ID;
 		};

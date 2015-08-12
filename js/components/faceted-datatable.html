@@ -1,0 +1,49 @@
+<div style="position:relative;">
+	<div class="feFilter" data-bind="with: $component.facetEngine">
+		<div data-bind="foreach:Facets">
+			<div class="facetName"><i class="fa fa-filter"></i><span data-bind="text:caption"></span></div>
+			<div class="facetScrollBox" data-bind="foreach:Members">
+				<div class="facetMemberName" data-bind="click: function() { $component.updateFilters();}, css : {selected: Selected}">
+					<span data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, text:Name + ' (' + ActiveCount + ')'"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="facetedDataTable">
+
+	<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+            data: $component.data,
+            options: {
+							dom: 'Clfiprt',
+							language: {
+								search: 'Filter: '
+							},
+							rowCallback: $root.contextSensitiveLinkColor,
+							lengthMenu: [[20, 50, 100, -1], [20, 50, 100,'All']],
+							orderClasses: false,
+							ordering: true,
+							order: [[ 2, 'asc' ]],
+							columns: $component.columns
+					}
+        }">
+	</table>
+	<div class="linkLegend">
+		<div class="linkLegendItem">
+			<div class="swatch standard">
+			</div>
+			<div class="linkLegendTitle">Standard</div>
+		</div>
+		<div class="linkLegendItem">
+			<div class="swatch nonStandard">
+			</div>
+			<div class="linkLegendTitle">Non-Standard</div>
+		</div>
+		<div class="linkLegendItem">
+			<div class="swatch classification">
+			</div>
+			<div class="linkLegendTitle">Classification</div>
+		</div>
+	</div>
+</div>

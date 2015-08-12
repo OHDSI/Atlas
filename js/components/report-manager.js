@@ -173,7 +173,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
-						console.log(data);
 					}
 				});
 				break;
@@ -281,7 +280,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								gettitle: function (node) {
 									var title = '',
 										steps = node.path.split('||');
-									for (i = 0; i < steps.length - 1; i++) {
+									for (var i = 0; i < steps.length - 1; i++) {
 										title += ' <div class="pathstep">' + Array(i + 1).join('&nbsp;&nbsp') + steps[i] + ' </div>';
 									}
 									return title;
@@ -403,7 +402,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								gettitle: function (node) {
 									var title = '',
 										steps = node.path.split('||');
-									for (i = 0; i < steps.length - 1; i++) {
+									for (var i = 0; i < steps.length - 1; i++) {
 										title += ' <div class="pathstep">' + Array(i + 1).join('&nbsp;&nbsp') + steps[i] + ' </div>';
 									}
 									return title;
@@ -518,7 +517,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								gettitle: function (node) {
 									var title = '',
 										steps = node.path.split('||');
-									for (i = 0; i < steps.length - 1; i++) {
+									for (var i = 0; i < steps.length - 1; i++) {
 										title += ' <div class="pathstep">' + Array(i + 1).join('&nbsp;&nbsp') + steps[i] + ' </div>';
 									}
 									return title;
@@ -638,7 +637,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								gettitle: function (node) {
 									var title = '',
 										steps = node.path.split('||');
-									for (i = 0; i < steps.length - 1; i++) {
+									for (var i = 0; i < steps.length - 1; i++) {
 										title += ' <div class="pathstep">' + Array(i + 1).join('&nbsp;&nbsp') + steps[i] + ' </div>';
 									}
 									return title;
@@ -1018,7 +1017,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								gettitle: function (node) {
 									var title = '',
 										steps = node.path.split('||');
-									for (i = 0; i < steps.length - 1; i++) {
+									for (var i = 0; i < steps.length - 1; i++) {
 										title += ' <div class="pathstep">' + Array(i + 1).join('&nbsp;&nbsp') + steps[i] + ' </div>';
 									}
 									return title;
@@ -1152,7 +1151,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 									gettitle: function (node) {
 										var title = '',
 											steps = node.path.split('||');
-										for (i = 0; i < steps.length - 1; i++) {
+										for (var i = 0; i < steps.length - 1; i++) {
 											title += ' <div class="pathstep">' + Array(i + 1).join('&nbsp;&nbsp') + steps[i] + ' </div>';
 										}
 										return title;
@@ -1292,7 +1291,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 									gettitle: function (node) {
 										var title = '',
 											steps = node.path.split('||');
-										for (i = 0; i < steps.length - 1; i++) {
+										for (var i = 0; i < steps.length - 1; i++) {
 											title += ' <div class="pathstep">' + Array(i + 1).join('&nbsp;&nbsp') + steps[i] + ' </div>';
 										}
 										return title;
@@ -1427,7 +1426,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 									gettitle: function (node) {
 										var title = '',
 											steps = node.path.split('||');
-										for (i = 0; i < steps.length - 1; i++) {
+										for (var i = 0; i < steps.length - 1; i++) {
 											title += ' <div class="pathstep">' + Array(i + 1).join('&nbsp;&nbsp') + steps[i] + ' </div>';
 										}
 										return title;
@@ -1744,7 +1743,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					var bpseries = [];
 					var bpdata = self.normalizeArray(data.ageAtFirstDiagnosis, true);
 					if (!bpdata.empty) {
-						for (i = 0; i < bpdata.category.length; i++) {
+						for (var i = 0; i < bpdata.category.length; i++) {
 							bpseries.push({
 								Category: bpdata.category[i],
 								min: bpdata.minValue[i],
@@ -2246,7 +2245,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					var bpseries = [];
 					var bpdata = self.normalizeArray(data.ageAtFirstOccurrence);
 					if (!bpdata.empty) {
-						for (i = 0; i < bpdata.category.length; i++) {
+						for (var i = 0; i < bpdata.category.length; i++) {
 							bpseries.push({
 								Category: bpdata.category[i],
 								min: bpdata.minValue[i],
@@ -2458,7 +2457,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				"children": []
 			};
 
-			for (i = 0; i < data.percentPersons.length; i++) {
+			for (var i = 0; i < data.percentPersons.length; i++) {
 				total += data.percentPersons[i];
 			}
 
@@ -2519,7 +2518,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				"children": []
 			};
 
-			for (i = 0; i < data.percentPersons.length; i++) {
+			for (var i = 0; i < data.percentPersons.length; i++) {
 				total += data.percentPersons[i];
 			}
 
@@ -2794,7 +2793,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 			if (!data.empty) {
 				var bpdata = self.normalizeDataframe(data);
 
-				for (i = 0; i < bpdata.category.length; i++) {
+				for (var i = 0; i < bpdata.category.length; i++) {
 					bpseries.push({
 						Category: bpdata.category[i],
 						min: bpdata.minValue[i],
