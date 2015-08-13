@@ -38,10 +38,10 @@ requirejs.config({
 		"report-manager": "components/report-manager",
 		"analytics-manager": "components/analytics-manager",
 		"faceted-datatable": "components/faceted-datatable",
-		"jnj_chart" : "jnj.chart",
+		"jnj_chart": "jnj.chart",
 		"d3": "d3.min",
-		"d3_tip" : "d3.tip",
-		"lodash" : "lodash.min"
+		"d3_tip": "d3.tip",
+		"lodash": "lodash.min"
 	}
 });
 
@@ -159,7 +159,11 @@ requirejs(['knockout', 'app', 'director', 'search',
 				contentType: 'application/json',
 				data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
 				success: function (data) {
-					pageModel.includedConcepts(data);
+					var densityPromise = pageModel.loadDensity(data);
+
+					$.when(densityPromise).done(function () {
+						pageModel.includedConcepts(data);
+					});
 				}
 			});
 			break;

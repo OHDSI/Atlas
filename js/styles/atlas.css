@@ -284,7 +284,7 @@ div#wrapperMainWindowContainer {}
 }
 
 #wrapperLeftMenu ul ul li {
-	font-size: 10px;
+	font-size: 11px;
 	padding: 5px 3px 2px 35px;
 }
 
@@ -292,12 +292,13 @@ div#wrapperMainWindowContainer {}
 	position: absolute;
 	width: 200px;
 	/* background-color: #ddd; */
-	top: 105px;
+	/* top: 105px; */
 	border-left: 1px solid #ccc;
 	left: -1px;
 	min-height: 100%;
 	z-index: 1000;
 	border-right: solid 1px #ccc;
+	/* padding-top: 5px; */
 }
 
 .fa.fa-refresh.fa-spin {
@@ -306,17 +307,18 @@ div#wrapperMainWindowContainer {}
 
 .feFilter .facetName {
 	/* background-color: #20425A; */
-	margin: 5px 0px 0px 0px;
-	padding: 2px 2px 0px 3px;
+	/* margin: 0px 0px 0px 0px; */
+	padding: 10px 2px 0px 3px;
 	color: #337ab7;
 	font-size: 12px;
 	font-weight: bold;
 }
 
 .feFilter .facetMemberName {
-	font-size: 10px;
+	font-size: 11px;
 	cursor: pointer;
 	padding: 0px 2px 0px 5px;
+	margin: 1px 0px 1px 0px;
 	/* border-bottom: solid 1px #ccc; */
 }
 
@@ -329,9 +331,10 @@ div#wrapperMainWindowContainer {}
 }
 
 .feFilter .facetScrollBox {
-	max-height: 70px;
+	max-height: 125px;
 	overflow-y: auto;
-	/* border-bottom: solid 1px #ccc; */
+	border-bottom: solid 1px #eee;
+	/* border-top: solid 1px #ddd; */
 	margin-bottom: ;
 }
 
@@ -492,7 +495,9 @@ label {
 }
 
 .nav-tabs span.badge {
-	background-color: #20425A;
+	background-color: #ddd;
+	color: #003142;
+	margin-left: 10px;
 }
 
 .error {
@@ -647,8 +652,8 @@ ul.ColVis_collection li {
 }
 
 #wrapperParents {
-	padding-left: 10px;
-	padding-bottom: 20px;
+	padding-left: 5px;
+	padding-bottom: 10px;
 }
 
 #wrapperSelf {
@@ -659,7 +664,7 @@ ul.ColVis_collection li {
 }
 
 #wrapperChildren {
-	padding-left: 100px;
+	padding-left: 90px;
 }
 
 .configureSourceTable i.fa {
@@ -671,7 +676,7 @@ ul.ColVis_collection li {
 }
 
 #wrapperHierarchyAnchor {
-	margin-left: 50px;
+	margin-left: 30px;
 	padding-bottom: 10px;
 	padding-top: 10px;
 	font-size: 14px;
@@ -1084,6 +1089,8 @@ pre {
 .badge {
 	border-radius: 0;
 	background-color: #F19119;
+	border: solid 1px #ccc;
+	padding: 2px 7px;
 }
 
 .container .jumbotron {
@@ -1252,7 +1259,7 @@ table.dataTable {
 }
 
 .dataTables_wrapper {
-	margin: 5px 3px 5px 3px;
+	margin: 5px 3px 5px 10px;
 }
 
 textarea.form-control {
@@ -1311,4 +1318,17 @@ table.dataTable thead th, table.dataTable thead td {
 
 .facetName i.fa.fa-filter {
     margin-right: 3px;
+}
+
+
+.dataTables_length {
+    /* padding-left: 10px; */
+}
+
+.dataTables_info {
+    /* padding-left: 10px; */
+}
+
+.badge .fa {
+    font-size: 11px;
 }

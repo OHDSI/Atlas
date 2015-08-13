@@ -12,18 +12,19 @@
 							<i class="fa fa-refresh fa-spin"></i>
 						</span>Related Concepts</a>
 		</li>
-		
-		<li role="presentation" data-bind="visible: model.relatedSourcecodes().length>0, click: function() {model.currentConceptMode('sourcecodes');}, attr: {class: model.currentConceptMode() == 'sourcecodes' ? 'active' : ''}">
+
+		<li role="presentation" data-bind="click: function() {model.currentConceptMode('sourcecodes');}, attr: {class: model.currentConceptMode() == 'sourcecodes' ? 'active' : ''}">
 			<a><span data-bind="if:model.loadingSourcecodes();">
 							<i class="fa fa-refresh fa-spin"></i>
 						</span>Related Source Codes</a>
-		</li>		
-		
+		</li>
+
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('hierarchy');}, attr: {class: model.currentConceptMode() == 'hierarchy' ? 'active' : ''}">
 			<a><span data-bind="if:model.loadingRelated();">
 							<i class="fa fa-refresh fa-spin"></i>
 						</span>Hierarchy</a>
 		</li>
+		<!--
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('evidence');}, attr: {class: model.currentConceptMode() == 'evidence' ? 'active disabled' : 'disabled'}">
 			<a>
 				<span data-bind="if:model.loadingEvidence();">
@@ -32,14 +33,17 @@
 		</li>
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('data');}, attr: {class: model.currentConceptMode() == 'data' ? 'active disabled' : 'disabled'}"><a>Incidence</a>
 		</li>
+		-->
 	</ul>
 
 	<div data-bind="visible:model.currentConceptMode() == 'sourcecodes' && !model.loadingSourcecodes()">
 		<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.relatedSourcecodes }"></faceted-datatable>
 	</div>
-	
+
 	<div id="wrapperConceptHierarchy" data-bind="if:model.currentConceptMode() == 'hierarchy' && !model.loadingRelated()">
+
 		<div id="wrapperParents">
+			<div class="heading">Parents</div>
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
 								data: model.metarchy.parents(),
 								options: {
@@ -54,12 +58,11 @@
 									order: [[ 2, 'asc' ]],
 									columns: [
 											{ title: '', render: model.renderConceptSelector, orderable:false, searchable:false},
-											{ title: 'Concept Id', data: 'CONCEPT_ID', visible: false},
-											{ title: 'Concept Code', data: 'CONCEPT_CODE', visible: false},
+											{ title: 'Concept Id', data: 'CONCEPT_ID'},
+											{ title: 'Concept Code', data: 'CONCEPT_CODE'},
 											{ title: 'Concept Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-											{ title: 'Standard Concept Caption', data: 'STANDARD_CONCEPT_CAPTION', visible: false},
-											{ title: 'Standard Concept Code', data: 'STANDARD_CONCEPT', visible: false},
+											{ title: 'Density', data: 'DENSITY'},																																															 
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]
@@ -67,9 +70,10 @@
 						}">
 			</table>
 		</div>
-		<div id="wrapperHierarchyAnchor" class="heading" data-bind="text:model.currentConcept().CONCEPT_NAME">
+		<div id="wrapperHierarchyAnchor" class="heading" data-bind="text:model.currentConcept().CONCEPT_CODE + ' ' + model.currentConcept().CONCEPT_NAME">
 		</div>
 		<div id="wrapperChildren">
+			<div class="heading">Children</div>			
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
 								data: model.metarchy.children(),
 								language: {
@@ -84,12 +88,11 @@
 									order: [[ 2, 'asc' ]],
 									columns: [
 											{ title: '', render: model.renderConceptSelector, orderable:false, searchable:false},
-											{ title: 'Concept Id', data: 'CONCEPT_ID', visible: false},
-											{ title: 'Concept Code', data: 'CONCEPT_CODE', visible: false},
+											{ title: 'Concept Id', data: 'CONCEPT_ID'},
+											{ title: 'Concept Code', data: 'CONCEPT_CODE'},
 											{ title: 'Concept Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-											{ title: 'Standard Concept Caption', data: 'STANDARD_CONCEPT_CAPTION', visible: false},
-											{ title: 'Standard Concept Code', data: 'STANDARD_CONCEPT', visible: false},
+											{ title: 'Density', data: 'DENSITY'},																																															 
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]

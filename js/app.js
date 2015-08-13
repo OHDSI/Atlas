@@ -315,13 +315,11 @@ define([
 			},
 			{
 				title: 'Concept Id',
-				data: 'CONCEPT_ID',
-				visible: false
+				data: 'CONCEPT_ID'
 			},
 			{
 				title: 'Concept Code',
-				data: 'CONCEPT_CODE',
-				visible: false
+				data: 'CONCEPT_CODE'
 			},
 			{
 				title: 'Concept Name',
@@ -344,7 +342,7 @@ define([
 				title: 'Data Density',
 				data: 'DENSITY',
 				className: 'numeric'
-			},			
+			},
 			{
 				title: 'Standard Concept Code',
 				data: 'STANDARD_CONCEPT',
@@ -446,6 +444,39 @@ define([
 		};
 
 		self.metatrix = {
+			'ICD9CM.5-dig billing code': {
+				childRelationships: [{
+					name: 'Subsumes',
+					range: [0, 1]
+				}],
+				parentRelationships: [{
+					name: 'Is a',
+					range: [0, 1]
+				}]
+			},
+			'ICD9CM.4-dig nonbill code': {
+				childRelationships: [{
+					name: 'Subsumes',
+					range: [0, 1]
+				}],
+				parentRelationships: [{
+					name: 'Is a',
+					range: [0, 1]
+				}, {
+					name: 'Non-standard to Standard map (OMOP)',
+					range: [0, 1]
+				}]
+			},
+			'ICD9CM.3-dig nonbill code': {
+				childRelationships: [{
+					name: 'Subsumes',
+					range: [0, 1]
+				}],
+				parentRelationships: [{
+					name: 'Non-standard to Standard map (OMOP)',
+					range: [0, 999]
+				}]
+			},
 			'RxNorm.Ingredient': {
 				childRelationships: [{
 					name: 'Ingredient of (RxNorm)',
@@ -493,98 +524,104 @@ define([
 				}]
 			},
 			'CPT4.CPT4': {
-				childRelationships: [],
+				childRelationships: [{
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
 				parentRelationships: [{
-					name: 'Is a',
-					range: [0, 999]
-		}],
-				synonymRelationships: []
+					name: 'Has ancestor of',
+					range: [0, 1]
+				}]
 			},
 			'CPT4.CPT4 Hierarchy': {
 				childRelationships: [{
-					name: 'Subsumes',
-					range: [0, 999]
-		}],
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
 				parentRelationships: [{
-					name: 'Is a',
-					range: [0, 999]
-		}]
+					name: 'Has ancestor of',
+					range: [0, 1]
+				}]
 			},
 			'ETC.ETC': {
 				childRelationships: [{
-					name: 'Subsumes',
-					range: [0, 999]
-		}, {
-					name: 'Inferred drug class of (OMOP)',
-					range: [0, 999]
-		}],
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
 				parentRelationships: [{
-					name: 'Is a',
-					range: [0, 999]
-		}, {
 					name: 'Has ancestor of',
-					range: [0, 999]
-		}]
+					range: [0, 1]
+				}]
 			},
 			'MedDRA.LLT': {
-				childRelationships: [],
+				childRelationships: [{
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-		}, {
-					name: 'Is a',
-					range: [0, 1]
-		}]
+				}]
 			},
 			'MedDRA.PT': {
 				childRelationships: [{
-					name: 'Subsumes',
-					range: [0, 999]
-		}],
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
-					range: [0, 999]
-		}]
+					range: [0, 1]
+				}]
 			},
 			'MedDRA.HLT': {
 				childRelationships: [{
-					name: 'Subsumes',
-					range: [0, 999]
-		}],
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
-					range: [0, 999]
-		}]
+					range: [0, 1]
+				}]
 			},
 			'MedDRA.SOC': {
 				childRelationships: [{
-					name: 'Subsumes',
-					range: [0, 999]
-		}],
-				parentRelationships: []
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
+				parentRelationships: [{
+					name: 'Has ancestor of',
+					range: [0, 1]
+				}]
 			},
 			'MedDRA.HLGT': {
 				childRelationships: [{
-					name: 'Subsumes',
-					range: [0, 999]
-		}],
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
 				parentRelationships: [{
-					name: 'Is a',
-					range: [0, 999]
-		}]
+					name: 'Has ancestor of',
+					range: [0, 1]
+				}]
 			},
 			'SNOMED.Clinical Finding': {
 				childRelationships: [{
-					name: 'Subsumes',
-					range: [0, 999]
-		}],
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
 				parentRelationships: [{
-					name: 'Is a',
-					range: [0, 999]
-		}, {
 					name: 'Has ancestor of',
 					range: [0, 1]
-		}]
+				}]
+			},
+			'SNOMED.Procedure': {
+				childRelationships: [{
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
+				parentRelationships: [{
+					name: 'Has ancestor of',
+					range: [0, 1]
+				}]
 			}
 		};
 
