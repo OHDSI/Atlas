@@ -940,6 +940,11 @@ define([
 			// load data density
 			var densityPromise = $.Deferred();
 			var densityIndex = {};
+			
+			if (results.length == 0) {
+				densityPromise.resolve();
+				return densityPromise;
+			}
 
 			$.ajax({
 				url: self.resultsUrl() + 'conceptDensity',
@@ -952,7 +957,7 @@ define([
 						densityIndex[entries[e].key] = entries[e].value;
 					}
 
-					for (c = 0; c < results.length; c++) {
+					for (var c = 0; c < results.length; c++) {
 						var concept = results[c];
 						if (densityIndex[concept.CONCEPT_ID] != undefined) {
 							concept.DENSITY = densityIndex[concept.CONCEPT_ID];

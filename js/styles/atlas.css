@@ -1332,3 +1332,7 @@ table.dataTable thead th, table.dataTable thead td {
 .badge .fa {
     font-size: 11px;
 }
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    color: #003142 !important;
+}

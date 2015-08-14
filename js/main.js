@@ -45,17 +45,21 @@ requirejs.config({
 	}
 });
 
-requirejs(['knockout', 'app', 'director', 'search',
-					 "configuration",
-					 "concept-manager",
-					 "conceptset-manager",
-					 "job-manager",
-					 "importer",
-					 "cohort-definitions",
-					 "cohort-definition-manager",
-					 "report-manager",
-					 "analytics-manager",
-					 "faceted-datatable"
+requirejs(['knockout', 
+					 'app', 
+					 'jquery',					 
+					 'director', 
+					 'search',
+					 'configuration',
+					 'concept-manager',
+					 'conceptset-manager',
+					 'job-manager',
+					 'importer',
+					 'cohort-definitions',
+					 'cohort-definition-manager',
+					 'report-manager',
+					 'analytics-manager',
+					 'faceted-datatable'
 				], function (ko, app) {
 	$('#splash').fadeIn();
 
@@ -89,6 +93,7 @@ requirejs(['knockout', 'app', 'director', 'search',
 			pageModel.currentView('import');
 		},
 		'conceptset': function () {
+			pageModel.currentConceptSetMode('details');
 			pageModel.currentView('conceptset');
 		},
 		'analytics': function () {
