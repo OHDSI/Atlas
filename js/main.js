@@ -21,8 +21,8 @@ requirejs.config({
 		}
 	},
 	paths: {
-		"jquery": "http://code.jquery.com/jquery-1.11.2.min",
-		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
+		"jquery": "jquery-1.11.3.min",
+		"bootstrap": "bootstrap.min",
 		"knockout": "knockout.min",
 		"datatables": "jquery.dataTables.min",
 		"colvis": "jquery.DataTables.colVis.min",
@@ -61,7 +61,7 @@ requirejs(['knockout',
 					 'analytics-manager',
 					 'faceted-datatable'
 				], function (ko, app) {
-	$('#splash').fadeIn();
+	$('#splash').show();
 
 	var pageModel = new app();
 
