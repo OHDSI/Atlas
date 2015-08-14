@@ -14,7 +14,7 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding'], functi
 			}
 		};
 
-		self.renderConceptSelector = function (s, p, d) {
+		self.renderConceptSelector = function (s,p,d) {
 			var css = '';
 			var icon = 'fa-shopping-cart';
 
