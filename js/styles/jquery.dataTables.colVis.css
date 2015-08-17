@@ -12,7 +12,7 @@ ul.ColVis_collection li {
 	position: relative;
 	float: left;
 	margin-right: 3px;
-	padding: 5px 8px;
+	/* padding: 5px 8px; */
 	border: 1px solid #999;
 	cursor: pointer;
 	*cursor: hand;

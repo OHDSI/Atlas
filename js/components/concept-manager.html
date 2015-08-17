@@ -1,7 +1,7 @@
 <div id="wrapperConcept" data-bind="if: model.currentConcept() && model.currentView() == 'concept'">
-	<div class="wrapperTitle">
-		<span data-bind="html: model.renderCurrentConceptSelector()"></span>
-		<span data-bind="css: {invalid: model.currentConcept().STANDARD_CONCEPT!='S'}, text:model.currentConcept().CONCEPT_NAME"></span>
+	<div class="wrapperTitle" data-bind="with:model.currentConcept()">
+		<span data-bind="html: $root.renderCurrentConceptSelector()"></span>
+		<span data-bind="css: {invalid: STANDARD_CONCEPT!='S'}, text:CONCEPT_NAME"></span>
 	</div>
 
 	<ul class="nav nav-tabs">
@@ -58,9 +58,9 @@
 									order: [[ 2, 'asc' ]],
 									columns: [
 											{ title: '', render: model.renderConceptSelector, orderable:false, searchable:false},
-											{ title: 'Concept Id', data: 'CONCEPT_ID'},
-											{ title: 'Concept Code', data: 'CONCEPT_CODE'},
-											{ title: 'Concept Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
+											{ title: 'Id', data: 'CONCEPT_ID'},
+											{ title: 'Code', data: 'CONCEPT_CODE'},
+											{ title: 'Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'Density', data: 'DENSITY'},																																															 
 											{ title: 'Domain', data: 'DOMAIN_ID' },
@@ -88,9 +88,9 @@
 									order: [[ 2, 'asc' ]],
 									columns: [
 											{ title: '', render: model.renderConceptSelector, orderable:false, searchable:false},
-											{ title: 'Concept Id', data: 'CONCEPT_ID'},
-											{ title: 'Concept Code', data: 'CONCEPT_CODE'},
-											{ title: 'Concept Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
+											{ title: 'Id', data: 'CONCEPT_ID'},
+											{ title: 'Code', data: 'CONCEPT_CODE'},
+											{ title: 'Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'Density', data: 'DENSITY'},																																															 
 											{ title: 'Domain', data: 'DOMAIN_ID' },

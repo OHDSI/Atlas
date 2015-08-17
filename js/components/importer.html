@@ -1,4 +1,4 @@
-<div data-bind="if: model.currentView() == 'import'">
+<div data-bind="visible: model.currentView() == 'import'">
 	<div class="wrapperTitle">
 		<i class="fa fa-upload"></i> Import
 	</div>
@@ -27,61 +27,10 @@
 		<div class="clear"></div>
 	</div>
 
-	<!-- ko if: (model.currentImportMode() == 'sourcecodes' || model.currentImportMode() == 'identifiers') && model.importedConcepts().length > 0 -->
-	<div class="paddedWrapper">
-		<div class="heading">Imported Concepts</div>
-		<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-            data: model.importedConcepts(),
-            options: {
-							dom: 'Clfiprt',
-							colVis: {
-								buttonText: 'Change Columns',
-								align: 'right',
-								overlayFade: 0,
-								showAll: 'Show All Columns',
-								restore: 'Reset Columns'
-							},
-							rowCallback: model.contextSensitiveLinkColor,
-							lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
-							orderClasses: false,
-							deferRender: true,
-							autoWidth: false,
-							ordering: true,
-							order: [[ 2, 'asc' ]],
-							columns: [
-								{ title: '', render: model.renderConceptSelector, orderable:false, searchable:false},
-								{ title: 'Concept Id', data: 'CONCEPT_ID', visible: false},
-								{ title: 'Concept Code', data: 'CONCEPT_CODE', visible: false},
-								{ title: 'Concept Name', data: 'CONCEPT_NAME', render: model.renderLink},
-								{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-								{ title: 'Standard Concept Caption', data: 'STANDARD_CONCEPT_CAPTION', visible: false},
-								{ title: 'Standard Concept Code', data: 'STANDARD_CONCEPT', visible: false},
-								{ title: 'Domain', data: 'DOMAIN_ID' },
-								{ title: 'Vocabulary', data: 'VOCABULARY_ID' }
-						]
-					}
-        }">
-		</table>
-
-		<div class="linkLegend">
-			<div class="linkLegendItem">
-				<div class="swatch standard">
-				</div>
-				<div class="linkLegendTitle">Standard</div>
-			</div>
-			<div class="linkLegendItem">
-				<div class="swatch nonStandard">
-				</div>
-				<div class="linkLegendTitle">Non-Standard</div>
-			</div>
-			<div class="linkLegendItem">
-				<div class="swatch classification">
-				</div>
-				<div class="linkLegendTitle">Classification</div>
-			</div>
-		</div>
+	<div data-bind="visible: (model.currentImportMode() == 'sourcecodes' || model.currentImportMode() == 'identifiers') && model.importedConcepts().length > 0">
+		<div class="heading paddedWrapper">Imported Concepts</div>
+		<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.importedConcepts }"></faceted-datatable>
 	</div>
-	<!-- /ko -->
 
 	<div id="wrapperImportConceptSet" class="paddedWrapper form-group" data-bind="if:model.currentImportMode() == 'conceptset'">
 		<div class="heading">Concept Set Expression JSON</div>

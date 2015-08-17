@@ -250,17 +250,15 @@ define([
 				searchable: false
 			},
 			{
-				title: 'Concept Id',
-				data: 'CONCEPT_ID',
-				visible: false
+				title: 'Id',
+				data: 'CONCEPT_ID'
 			},
 			{
-				title: 'Concept Code',
-				data: 'CONCEPT_CODE',
-				visible: false
+				title: 'Code',
+				data: 'CONCEPT_CODE'
 			},
 			{
-				title: 'Concept Name',
+				title: 'Name',
 				data: 'CONCEPT_NAME',
 				render: function (s, p, d) {
 					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
@@ -278,12 +276,7 @@ define([
 				visible: false
 			},
 			{
-				title: 'Standard Concept Code',
-				data: 'STANDARD_CONCEPT',
-				visible: false
-			},
-			{
-				title: 'Data Density',
+				title: 'Density',
 				data: 'DENSITY',
 				className: 'numeric'
 			},
@@ -300,7 +293,7 @@ define([
 
 		self.relatedConceptsColumns = [
 			{
-				title: '<li onclick=\'model.selectAllRelated();\' class=\'fa fa-shopping-cart\'></li>',
+				title: '',
 				render: function (s, p, d) {
 					var css = '';
 					var icon = 'fa-shopping-cart';
@@ -314,15 +307,15 @@ define([
 				searchable: false
 			},
 			{
-				title: 'Concept Id',
+				title: 'Id',
 				data: 'CONCEPT_ID'
 			},
 			{
-				title: 'Concept Code',
+				title: 'Code',
 				data: 'CONCEPT_CODE'
 			},
 			{
-				title: 'Concept Name',
+				title: 'Name',
 				data: 'CONCEPT_NAME',
 				render: function (s, p, d) {
 					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
@@ -339,14 +332,9 @@ define([
 				visible: false
 			},
 			{
-				title: 'Data Density',
+				title: 'Density',
 				data: 'DENSITY',
 				className: 'numeric'
-			},
-			{
-				title: 'Standard Concept Code',
-				data: 'STANDARD_CONCEPT',
-				visible: false
 			},
 			{
 				title: 'Domain',
@@ -374,15 +362,15 @@ define([
 				searchable: false
 			},
 			{
-				title: 'Concept Id',
+				title: 'Id',
 				data: 'CONCEPT_ID'
 			},
 			{
-				title: 'Concept Code',
+				title: 'Code',
 				data: 'CONCEPT_CODE'
 			},
 			{
-				title: 'Concept Name',
+				title: 'Name',
 				data: 'CONCEPT_NAME',
 				render: function (s, p, d) {
 					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
@@ -396,11 +384,6 @@ define([
 			{
 				title: 'Standard Concept Caption',
 				data: 'STANDARD_CONCEPT_CAPTION',
-				visible: false
-			},
-			{
-				title: 'Standard Concept Code',
-				data: 'STANDARD_CONCEPT',
 				visible: false
 			},
 			{
@@ -932,13 +915,19 @@ define([
 		}
 
 		self.loadDensity = function (results) {
+			var densityPromise = $.Deferred();
+
+			// nothing to look up
+			if (results.length == 0) {
+				densityPromise.resolve();
+				return densityPromise;
+			}
+
 			var searchResultIdentifiers = [];
 			for (c = 0; c < results.length; c++) {
 				searchResultIdentifiers.push(results[c].CONCEPT_ID);
 			}
 
-			// load data density
-			var densityPromise = $.Deferred();
 			var densityIndex = {};
 
 			$.ajax({
@@ -952,7 +941,7 @@ define([
 						densityIndex[entries[e].key] = entries[e].value;
 					}
 
-					for (c = 0; c < results.length; c++) {
+					for (var c = 0; c < results.length; c++) {
 						var concept = results[c];
 						if (densityIndex[concept.CONCEPT_ID] != undefined) {
 							concept.DENSITY = densityIndex[concept.CONCEPT_ID];
@@ -964,6 +953,10 @@ define([
 					densityPromise.resolve();
 				},
 				error: function (error) {
+					for (var c = 0; c < results.length; c++) {
+						var concept = results[c];
+						concept.DENSITY = 'timeout';
+					}
 					densityPromise.resolve();
 				}
 			});

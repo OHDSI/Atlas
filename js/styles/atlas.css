@@ -1332,3 +1332,27 @@ table.dataTable thead th, table.dataTable thead td {
 .badge .fa {
     font-size: 11px;
 }
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    color: #000 !important;
+}
+
+table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd {
+    background-color: #fff;
+}
+
+table.dataTable.stripe tbody tr.even, table.dataTable.display tbody tr.even {
+    background-color: #f0f0f0;
+}
+
+table.dataTable.stripe tbody tr.odd:hover, table.dataTable.display tbody tr.odd:hover {
+    background-color: #fff;
+}
+
+table.dataTable.stripe tbody tr.even:hover, table.dataTable.display tbody tr.even:hover {
+    background-color: #f0f0f0;
+}
+
+ul.ColVis_collection li {
+    padding: 3px 10px 3px 7px;
+}
