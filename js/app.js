@@ -699,6 +699,7 @@ define([
 
 		self.resolveConceptSetExpression = function () {
 			self.resolvingConceptSetExpression(true);
+			
 			var conceptSetExpression = '{"items" :' + ko.toJSON(self.selectedConcepts()) + '}';
 			var highlightedJson = self.syntaxHighlight(conceptSetExpression);
 			self.currentConceptSetExpressionJson(highlightedJson);
@@ -798,6 +799,42 @@ define([
 					}
 					sourceAnalysesStatus.ready = true;
 					pageModel.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
+				}
+			});
+		}
+
+		self.loadConceptSet = function (conceptSetId) {
+			self.currentView('loading');
+
+			self.currentConceptSet(null);
+			self.selectedConcepts([]);
+			self.selectedConceptsIndex = {};
+			
+			$.ajax({
+				url: self.services()[0].url + 'conceptset/' + conceptSetId,
+				method: 'GET',
+				contentType: 'application/json',
+				success: function (conceptset) {
+					$.ajax({
+						url: self.services()[0].url + 'conceptset/' + conceptSetId + '/expression',
+						method: 'GET',
+						contentType: 'application/json',
+						success: function (expression) {
+							for (var i = 0; i < expression.items.length; i++) {
+								var conceptSetItem = expression.items[i];
+								conceptSetItem.isExcluded = ko.observable(conceptSetItem.isExcluded);
+								conceptSetItem.includeDescendants = ko.observable(conceptSetItem.includeDescendants);
+								conceptSetItem.includeMapped = ko.observable(conceptSetItem.includeMapped);
+								self.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;								
+								self.selectedConcepts.push(conceptSetItem);
+							}
+
+							self.analyzeSelectedConcepts();							
+							pageModel.currentConceptSetMode('details');
+							pageModel.currentView('conceptset');
+							pageModel.currentConceptSet(conceptset);
+						}
+					});
 				}
 			});
 		}
@@ -1036,6 +1073,7 @@ define([
 		self.conceptSetInclusionIdentifiers = ko.observableArray();
 		self.currentConceptSetExpressionJson = ko.observable();
 		self.currentConceptIdentifierList = ko.observable();
+		self.currentConceptSet = ko.observable();
 		self.currentIncludedConceptIdentifierList = ko.observable();
 		self.searchResultsConcepts = ko.observableArray();
 		self.relatedConcepts = ko.observableArray();
@@ -1163,10 +1201,12 @@ define([
 		};
 
 		self.clearConceptSet = function () {
+			self.currentConceptSet(null);
 			self.selectedConcepts([]);
 			self.selectedConceptsIndex = {};
 			self.analyzeSelectedConcepts();
 			self.resolveConceptSetExpression();
+			document.location = '#/conceptset';
 		}
 
 		self.renderHierarchyLink = function (d) {
@@ -1269,6 +1309,7 @@ define([
 				return '<span class="' + cls + '">' + match + '</span>';
 			});
 		};
+
 		self.updateSearchFilters = function () {
 			$(event.target).toggleClass('selected');
 

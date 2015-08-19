@@ -1,6 +1,11 @@
 <div data-bind="if: model.currentView() == 'conceptset'">
 	<div class="wrapperTitle">
-		Concept Set
+		<div data-bind="if:model.currentConceptSet()">
+			<span data-bind="text:model.currentConceptSet().name"></span>
+		</div>
+		<div data-bind="if:!model.currentConceptSet()">
+			<span>Selected Concepts</span>
+		</div>
 	</div>
 
 	<ul class="nav nav-tabs">
@@ -23,6 +28,7 @@
 		</li>
 		-->
 	</ul>
+
 	<div id="wrapperConceptSetAnalysis" data-bind="if: model.currentConceptSetMode() == 'analysis'">
 		<div id="wrapperAnalysisVisualization"></div>
 	</div>
@@ -68,6 +74,7 @@
            }
         }">
 		</table>
+
 		<div class="linkLegend">
 			<div class="linkLegendItem">
 				<div class="swatch standard">
@@ -85,7 +92,11 @@
 				<div class="linkLegendTitle">Classification</div>
 			</div>
 		</div>
+
+		<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { saveClick(); }">Save Concept Set</button>
+		<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { loadConceptSets(); }">Load Concept Set</button>		
 		<button type="button" data-bind="click: function() {model.clearConceptSet();}" class="btn btn-sm btn-primary selectAllButton">Clear Concept Set</button>
+
 		<div id="wrapperConceptSetWarnings" data-bind="visible: model.selectedConceptsWarnings().length > 0">
 			<div class="heading">Concept Set Warnings</div>
 			<table data-bind="foreach:model.selectedConceptsWarnings">
@@ -106,6 +117,44 @@
 		<pre data-bind="html: model.currentConceptIdentifierList"></pre>
 		<div class="heading">Included Concept Identifer List</div>
 		<pre data-bind="html: model.currentIncludedConceptIdentifierList"></pre>
+	</div>
+
+	<div class="modal fade" id="conceptSetSaveDialog" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-header">Save Concept Set</div>
+			<div class="modal-content">
+				<div class="paddedWrapper">
+					<input type="text" id="saveConceptSetName" class="form-control" placeholder="concept set name" data-bind="value:$component.conceptSetName">
+					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() {saveConceptSet();}">Save</button>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="conceptSetLoadDialog" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="paddedWrapper">
+					<div class="modal-header">Load Concept Set</div>
+
+					<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+								data: $component.conceptSets,
+								options: {
+									dom: 'lfiprt',
+									lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+									orderClasses: false,
+									deferRender: true,
+									autoWidth: false,
+									columns: [
+											{ title: 'Name', render: renderLink }
+									]
+							 }
+						}">
+					</table>
+				</div>
+			</div>
+		</div>
 	</div>
 
 </div>

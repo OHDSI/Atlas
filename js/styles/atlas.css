@@ -311,6 +311,7 @@ div#wrapperMainWindowContainer {}
 	padding: 10px 2px 0px 3px;
 	color: #337ab7;
 	font-size: 12px;
+	border-bottom: solid 1px;
 	font-weight: bold;
 }
 
@@ -323,7 +324,7 @@ div#wrapperMainWindowContainer {}
 }
 
 .feFilter .facetMemberName:hover {
-	/* background-color: #F3E1A0; */
+	background-color: #ddd;
 }
 
 .feFilter .facetMemberName.selected {
@@ -774,7 +775,7 @@ ul.ColVis_collection li {
 }
 
 .form-control {
-	padding: 0px;
+	padding: 3px;
 	margin-bottom: 3px;
 	font-size: 12px;
 	background-color: #FFF;
@@ -1355,4 +1356,11 @@ table.dataTable.stripe tbody tr.even:hover, table.dataTable.display tbody tr.eve
 
 ul.ColVis_collection li {
     padding: 3px 10px 3px 7px;
+}
+
+.modal-header {
+    background-color: #003142;
+    color: #fff;
+    border-bottom: none;
+    /* padding: 0px; */
 }

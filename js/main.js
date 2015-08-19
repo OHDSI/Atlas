@@ -92,6 +92,7 @@ requirejs(['knockout', 'app', 'director', 'search',
 			pageModel.currentConceptSetMode('details');
 			pageModel.currentView('conceptset');
 		},
+		'conceptset/:conceptSetId': pageModel.loadConceptSet,
 		'analytics': function () {
 			pageModel.currentView('analytics');
 		},
