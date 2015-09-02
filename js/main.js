@@ -38,14 +38,18 @@ requirejs.config({
 		"report-manager": "components/report-manager",
 		"analytics-manager": "components/analytics-manager",
 		"faceted-datatable": "components/faceted-datatable",
-		"jnj_chart": "jnj.chart",
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
-		"lodash": "lodash.min"
+		"jnj_chart": "jnj.chart",
+		"lodash": "lodash.min",
+		"packinghierarchy": "visualization.packinghierarchy",
+		"forcedirectedgraph": "visualization.forcedirectedgraph",
+		"kerneldensity" : "visualization.kerneldensity"
 	}
 });
 
-requirejs(['knockout', 'app', 'director', 'search',
+requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneldensity',
+					 'director', 'search',
 					 "configuration",
 					 "concept-manager",
 					 "conceptset-manager",
@@ -56,7 +60,7 @@ requirejs(['knockout', 'app', 'director', 'search',
 					 "report-manager",
 					 "analytics-manager",
 					 "faceted-datatable"
-				], function (ko, app) {
+				], function (ko, app, visualizations, fdg, kd) {
 	$('#splash').fadeIn();
 
 	var pageModel = new app();
@@ -103,6 +107,16 @@ requirejs(['knockout', 'app', 'director', 'search',
 		'/search/:query:': pageModel.search,
 		'/search': function () {
 			pageModel.currentView('search');
+		},
+		'/template': function() {
+			pageModel.currentView('template');
+			$.ajax({
+				url: pageModel.services()[0].url + 'OPTUM/cohortresults/44/experimentalCovariates',
+				success: function(covariates) {
+					kd.kernelDensity('#kernelDensityContainer', covariates);					
+				}
+			});
+
 		}
 	}
 
@@ -170,16 +184,21 @@ requirejs(['knockout', 'app', 'director', 'search',
 			});
 			break;
 		case 'analysis':
-			$.ajax({
-				url: pageModel.resultsUrl() + 'conceptRecordCount',
-				method: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
-				success: function (root) {
-					var ph = new packingHierarchy();
-					ph.render('#wrapperAnalysisVisualization', root);
-				}
-			});
+			if (pageModel.conceptSetInclusionIdentifiers().length > 0) {
+				$.ajax({
+					url: pageModel.resultsUrl() + 'denseSiblings',
+					method: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
+					success: function (denseConcepts) {
+						var densityPromise = pageModel.loadDensity(denseConcepts);
+
+						$.when(densityPromise).done(function () {
+							pageModel.denseSiblings(denseConcepts);
+						});
+					}
+				});
+			}
 			break;
 		}
 	});

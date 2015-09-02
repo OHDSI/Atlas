@@ -804,6 +804,8 @@ define([
 		}
 
 		self.loadConceptSet = function (conceptSetId) {
+			$('body').removeClass('modal-open');
+			
 			self.currentView('loading');
 
 			self.currentConceptSet(null);
@@ -1080,6 +1082,7 @@ define([
 		self.relatedSourcecodes = ko.observableArray();
 		self.importedConcepts = ko.observableArray();
 		self.includedConcepts = ko.observableArray();
+		self.denseSiblings = ko.observableArray();
 		self.includedSourcecodes = ko.observableArray();
 		self.cohortDefinitions = ko.observableArray();
 		self.currentCohortDefinition = ko.observable();

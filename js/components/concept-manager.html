@@ -13,12 +13,15 @@
 						</span>Related Concepts</a>
 		</li>
 
+		<!--
+			to-do: remove this mode completely
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('sourcecodes');}, attr: {class: model.currentConceptMode() == 'sourcecodes' ? 'active' : ''}">
 			<a><span data-bind="if:model.loadingSourcecodes();">
 							<i class="fa fa-refresh fa-spin"></i>
 						</span>Related Source Codes</a>
 		</li>
-
+		-->
+		
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('hierarchy');}, attr: {class: model.currentConceptMode() == 'hierarchy' ? 'active' : ''}">
 			<a><span data-bind="if:model.loadingRelated();">
 							<i class="fa fa-refresh fa-spin"></i>

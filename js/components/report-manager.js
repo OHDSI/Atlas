@@ -14,6 +14,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 		self.donutWidth = 500;
 		self.donutHeight = 300;
 
+		self.datatables = {};
+		
 		self.runReport = function runReport() {
 			self.model.loadingReport(true);
 			self.model.activeReportDrilldown(false);
@@ -985,7 +987,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							$(document).on('click', '.dataTable tbody tr', function () {
 								var data = $('.dataTable').DataTable().row(this).data();
 								if (data) {
-									conditionEraDrilldown(data.concept_id, data.snomed);
+									self.conditionEraDrilldown(data.concept_id, data.snomed);
 								}
 							});
 
@@ -993,7 +995,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							var treemap = new jnj_chart.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
 								onclick: function (node) {
-									conditionEraDrilldown(node.id, node.name);
+									self.conditionEraDrilldown(node.id, node.name);
 								},
 								getsizevalue: function (node) {
 									return node.num_persons;
@@ -1065,14 +1067,12 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								}, drugEraPrevalenceData);
 
 								$(document).on('click', '.treemap_table tbody tr', function () {
-									$('.treemap_table tbody tr.selected').removeClass('selected');
-									$(this).addClass('selected');
-									var datatable = datatables[$(this).parents('.treemap_table').attr('id')];
+									var datatable = self.datatables[$(this).parents('.treemap_table').attr('id')];
 									var data = datatable.data()[datatable.row(this)[0]];
 									if (data) {
 										var did = data.concept_id;
 										var concept_name = data.name;
-										drilldown(did, concept_name, $(this).parents('.treemap_table').attr('type'));
+										self.drilldown(did, concept_name, $(this).parents('.treemap_table').attr('type'));
 									}
 								});
 
@@ -1115,13 +1115,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 									deferRender: true,
 									destroy: true
 								});
-								datatables['drugera_table'] = datatable;
+								self.datatables['drugera_table'] = datatable;
 
 								tree = self.buildHierarchyFromJSON(drugEraPrevalence, threshold);
 								treemap = new jnj_chart.treemap();
 								treemap.render(tree, '#treemap_container', width, height, {
 									onclick: function (node) {
-										drilldown(node.id, node.name, 'drug');
+										self.drilldown(node.id, node.name, 'drug');
 									},
 									getsizevalue: function (node) {
 										return node.num_persons;
@@ -1200,16 +1200,14 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 										risk_difference: self.formatFixed(this.riskDiffAfterBefore[i])
 									};
 								}, conditionOccurrencePrevalence);
-
+								
 								$(document).on('click', '.treemap_table tbody tr', function () {
-									$('.treemap_table tbody tr.selected').removeClass('selected');
-									$(this).addClass('selected');
-									var datatable = datatables[$(this).parents('.treemap_table').attr('id')];
+									var datatable = self.datatables[$(this).parents('.treemap_table').attr('id')];
 									var data = datatable.data()[datatable.row(this)[0]];
 									if (data) {
 										var did = data.concept_id;
 										var concept_name = data.name;
-										drilldown(did, concept_name, $(this).parents('.treemap_table').attr('type'));
+										self.drilldown(did, concept_name, $(this).parents('.treemap_table').attr('type'));
 									}
 								});
 
@@ -1255,13 +1253,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 									deferRender: true,
 									destroy: true
 								});
-								datatables['condition_table'] = datatable;
+								self.datatables['condition_table'] = datatable;
 
 								tree = self.buildHierarchyFromJSON(conditionOccurrencePrevalence, threshold);
 								treemap = new jnj_chart.treemap();
 								treemap.render(tree, '#treemap_container', width, height, {
 									onclick: function (node) {
-										drilldown(node.id, node.name, 'condition');
+										self.drilldown(node.id, node.name, 'condition');
 									},
 									getsizevalue: function (node) {
 										return node.num_persons;
@@ -1340,14 +1338,12 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								}, procedureOccurrencePrevalence);
 
 								$(document).on('click', '.treemap_table tbody tr', function () {
-									$('.treemap_table tbody tr.selected').removeClass('selected');
-									$(this).addClass('selected');
-									var datatable = datatables[$(this).parents('.treemap_table').attr('id')];
+									var datatable = self.datatables[$(this).parents('.treemap_table').attr('id')];
 									var data = datatable.data()[datatable.row(this)[0]];
 									if (data) {
 										var did = data.concept_id;
 										var concept_name = data.name;
-										drilldown(did, concept_name, $(this).parents('.treemap_table').attr('type'));
+										self.drilldown(did, concept_name, $(this).parents('.treemap_table').attr('type'));
 									}
 								});
 
@@ -1390,13 +1386,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 									deferRender: true,
 									destroy: true
 								});
-								datatables['procedure_table'] = datatable;
+								self.datatables['procedure_table'] = datatable;
 
 								tree = self.buildHierarchyFromJSON(procedureOccurrencePrevalence, threshold);
 								treemap = new jnj_chart.treemap();
 								treemap.render(tree, '#treemap_container', width, height, {
 									onclick: function (node) {
-										drilldown(node.id, node.name, 'procedure');
+										self.drilldown(node.id, node.name, 'procedure');
 									},
 									getsizevalue: function (node) {
 										return node.num_persons;
@@ -1889,10 +1885,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
 
-					boxplotHelper(data.ageAtFirstExposure, '#ageAtFirstExposure', boxplotWidth, boxplotHeight, 'Gender', 'Age at First Exposure');
-					boxplotHelper(data.daysSupplyDistribution, '#daysSupplyDistribution', boxplotWidth, boxplotHeight, 'Days Supply', 'Days');
-					boxplotHelper(data.quantityDistribution, '#quantityDistribution', boxplotWidth, boxplotHeight, 'Quantity', 'Quantity');
-					boxplotHelper(data.refillsDistribution, '#refillsDistribution', boxplotWidth, boxplotHeight, 'Refills', 'Refills');
+					self.boxplotHelper(data.ageAtFirstExposure, '#ageAtFirstExposure', boxplotWidth, boxplotHeight, 'Gender', 'Age at First Exposure');
+					self.boxplotHelper(data.daysSupplyDistribution, '#daysSupplyDistribution', boxplotWidth, boxplotHeight, 'Days Supply', 'Days');
+					self.boxplotHelper(data.quantityDistribution, '#quantityDistribution', boxplotWidth, boxplotHeight, 'Quantity', 'Quantity');
+					self.boxplotHelper(data.refillsDistribution, '#refillsDistribution', boxplotWidth, boxplotHeight, 'Refills', 'Refills');
 
 					// drug  type visualization
 					var donut = new jnj_chart.donut();
@@ -2018,8 +2014,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 					$('#conditionEraDrilldown').html(concept_name + ' Drilldown Report');
 
-					boxplotHelper(data.ageAtFirstDiagnosis, '#conditioneras_age_at_first_diagnosis', 500, 300, 'Gender', 'Age at First Diagnosis');
-					boxplotHelper(data.lengthOfEra, '#conditioneras_length_of_era', 500, 300, '', 'Days');
+					self.boxplotHelper(data.ageAtFirstDiagnosis, '#conditioneras_age_at_first_diagnosis', 500, 300, 'Gender', 'Age at First Diagnosis');
+					self.boxplotHelper(data.lengthOfEra, '#conditioneras_length_of_era', 500, 300, '', 'Days');
 
 					// prevalence by month
 					var byMonth = self.normalizeArray(data.prevalenceByMonth, true);
@@ -2130,8 +2126,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					$('#drugeraDrilldown').html(concept_name + ' Drilldown Report');
 
 					// age at first exposure visualization
-					boxplotHelper(data.ageAtFirstExposure, '#drugeras_age_at_first_exposure', 500, 200, 'Gender', 'Age at First Exposure');
-					boxplotHelper(data.lengthOfEra, '#drugeras_length_of_era', 500, 200, '', 'Days');
+					self.boxplotHelper(data.ageAtFirstExposure, '#drugeras_age_at_first_exposure', 500, 200, 'Gender', 'Age at First Exposure');
+					self.boxplotHelper(data.lengthOfEra, '#drugeras_length_of_era', 500, 200, '', 'Days');
 
 					// prevalence by month
 					var byMonth = self.normalizeArray(data.prevalenceByMonth, true);
@@ -2382,7 +2378,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 			}).done(function (result) {
 				if (result && result.length > 0) {
 					$("#" + type + "DrilldownScatterplot").empty();
-					var normalized = dataframeToArray(self.normalizeArray(result));
+					var normalized = self.dataframeToArray(self.normalizeArray(result));
 
 					// nest dataframe data into key->values pair
 					var totalRecordsData = d3.nest()

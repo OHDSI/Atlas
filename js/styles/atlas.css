@@ -510,31 +510,6 @@ label {
 	margin: 7px;
 }
 
-/* circle packing */
-text {
-	font-size: 6px;
-	pointer-events: none;
-}
-
-text.parent {
-	fill: #1f77b4;
-}
-
-circle.parent {
-	fill: #21435B;
-	fill-opacity: .1;
-	stroke: steelblue;
-}
-
-circle.parent:hover {
-	stroke: #ff7f0e;
-	stroke-width: .5px;
-}
-
-circle.child {
-	pointer-events: none;
-}
-
 .helpText {
 	color: #888;
 	font-style: italic;
@@ -831,6 +806,8 @@ input.btn.btn-default {
 	padding: 10px;
 	text-align: center;
 	background-color: #fff
+;
+	font-size: 8px;
 }
 
 .pad-10 {
@@ -859,7 +836,9 @@ ul.nav.nav-tabs {
 	border-bottom: solid 1px #003142;
 }
 
-ul.nav.nav-tabs {}
+ul.nav.nav-tabs {
+    white-space: nowrap;
+}
 
 div.loader {
 	margin-top: 20px;
@@ -1362,5 +1341,41 @@ ul.ColVis_collection li {
     background-color: #003142;
     color: #fff;
     border-bottom: none;
-    /* padding: 0px; */
+    font-size: 14px;
+}
+
+circle {
+    fill: #fff;
+    stroke: #888;
+    transition: fill .5s;
+}
+
+circle.hovered {
+	fill:#A8D7FF !important;
+}
+
+circle.child.selected {
+    stroke: #ccc;
+    stroke-width: 1px;
+    fill: #F19119;
+}
+
+circle.parent {
+	fill: #fff;
+	stroke: #aaa;
+	stroke-width: 1px;
+}
+
+circle.child {
+	fill: #eee;
+}
+
+#kernelDensityContainer text {
+    font-size: 10px;
+}
+
+.axis path, .axis line {
+    stroke: rgba(200,200,200,64) !important;
+    stroke-width: .5px !important;
+    /* color: #fff; */
 }
