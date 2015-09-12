@@ -73,6 +73,12 @@ body {
 	margin: 10px;
 }
 
+.linkish {
+	text-decoration: underline;
+	color: #337ab7;
+	cursor: pointer;
+}
+
 .serviceName {
 	font-weight: bold;
 	float: left;
@@ -142,7 +148,6 @@ textarea {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	/* margin-left: 10px; */
-	
 	padding-left: 10px;
 }
 
@@ -198,7 +203,7 @@ pre span.key {
 	line-height: 49px;
 	font-size: 14px;
 	background-color: #fff;
-	color: #1F4159;	
+	color: #1F4159;
 	cursor: pointer;
 }
 
@@ -252,15 +257,9 @@ div#wrapperMainWindowContainer {}
 }
 
 #wrapperLeftMenu li {
-	/* border-right: solid 1px #888; */
-	/* border-bottom: solid 1px #ccc; */
-	/* background-color: #222; */
-	
 	list-style: none;
 	text-indent: 0px;
 	padding: 12px 6px 0px 10px;
-	/* cursor: pointer; */
-	
 	color: #184756;
 }
 
@@ -288,26 +287,13 @@ div#wrapperMainWindowContainer {}
 	padding: 5px 3px 2px 35px;
 }
 
-.feFilter {
-	position: absolute;
-	width: 200px;
-	/* background-color: #ddd; */
-	/* top: 105px; */
-	border-left: 1px solid #ccc;
-	left: -1px;
-	min-height: 100%;
-	z-index: 1000;
-	border-right: solid 1px #ccc;
-	/* padding-top: 5px; */
-}
+.feFilter {}
 
 .fa.fa-refresh.fa-spin {
 	font-weight: normal;
 }
 
 .feFilter .facetName {
-	/* background-color: #20425A; */
-	/* margin: 0px 0px 0px 0px; */
 	padding: 10px 2px 0px 3px;
 	color: #337ab7;
 	font-size: 12px;
@@ -320,7 +306,6 @@ div#wrapperMainWindowContainer {}
 	cursor: pointer;
 	padding: 0px 2px 0px 5px;
 	margin: 1px 0px 1px 0px;
-	/* border-bottom: solid 1px #ccc; */
 }
 
 .feFilter .facetMemberName:hover {
@@ -375,12 +360,7 @@ div#wrapperMainWindowContainer {}
 }
 
 .facetedDataTable {
-	position: absolute;
-	left: 200px;
-	padding: 6px;
-	padding-left: 197px;
 	width: 100%;
-	margin-left: -200px;
 }
 
 .conceptWarning .fa {
@@ -467,7 +447,6 @@ span.invalid {
 	background-color: #eee;
 	margin-left: 5px;
 	cursor: pointer;
-	/* margin: 2px; */
 }
 
 .nav-tabs>li>a {
@@ -481,9 +460,11 @@ label {
 
 .glyphicon-ok {
 	cursor: pointer;
-	color: #ccc;
+	color: #eee;
 	background-color: #fff;
 	padding: 2px;
+	border: solid 1px #888;
+	border-radius: 2px;
 }
 
 .glyphicon-ok.selected {
@@ -572,10 +553,10 @@ ul.ColVis_collection li {
 }
 
 .linkLegend {
-	padding: 10px 10px 50px 10px;
+	padding: 10px 10px 15px 10px;
 	/* float: left; */
-	
-	margin-bottom: 10px;
+	/* margin-bottom: 10px; */
+	clear: both;
 }
 
 .linkLegend .swatch {
@@ -615,12 +596,6 @@ ul.ColVis_collection li {
 .clear {
 	clear: both;
 	height: 7px;
-}
-
-.selectAllButton {
-	float: left;
-	margin-left: 40px;
-	margin-top: 5px;
 }
 
 #wrapperConceptHierarchy {
@@ -753,9 +728,9 @@ ul.ColVis_collection li {
 	padding: 3px;
 	margin-bottom: 3px;
 	font-size: 12px;
-	background-color: #FFF;
-	border: solid 1px #ccc;
-	height: 24px;
+	/* background-color: #FFF; */
+	/* border: solid 1px #ccc; */
+	/* height: 24px; */
 	color: #000;
 }
 
@@ -805,8 +780,7 @@ input.btn.btn-default {
 .evidenceVisualization {
 	padding: 10px;
 	text-align: center;
-	background-color: #fff
-;
+	background-color: #fff;
 	font-size: 8px;
 }
 
@@ -829,7 +803,6 @@ g.trellisLegend {}
 
 ul.nav.nav-tabs {
 	/* margin-top: 5px; */
-	
 	margin-bottom: 2px;
 	background-color: #FFFFFF;
 	padding: 10px 10px 1px 10px;
@@ -837,7 +810,15 @@ ul.nav.nav-tabs {
 }
 
 ul.nav.nav-tabs {
-    white-space: nowrap;
+	white-space: nowrap;
+}
+
+.loading {
+	color: #A5B3BD;
+	font-size: 20px;
+	text-align: center;
+	font-variant: small-caps;
+	padding-top: 10px;
 }
 
 div.loader {
@@ -862,7 +843,6 @@ table#analysisStatus {
 .reportControls {
 	background-color: #eee;
 	/* padding-bottom: 0px; */
-	
 	margin-left: 0px;
 	border-bottom: solid #ccc 1px;
 }
@@ -894,10 +874,6 @@ div#trellisLinePlot {
 	flex-shrink: 1;
 }
 
-.dataTable tr td {
-	cursor: pointer;
-}
-
 .img-thumbnail {
 	border-radius: 0
 }
@@ -911,12 +887,11 @@ pre {
 }
 
 .form-control {
-	border-radius: 0
+	border-radius: 2px;
 }
 
 .form-control:focus {
 	/* border-color:#66afe9; */
-	
 	outline: thin dotted #333;
 	outline: 5px auto -webkit-focus-ring-color;
 	outline-offset: -2px;
@@ -1067,7 +1042,7 @@ pre {
 }
 
 .badge {
-	border-radius: 0;
+	border-radius: 2px;
 	background-color: #F19119;
 	border: solid 1px #ccc;
 	padding: 2px 7px;
@@ -1227,11 +1202,12 @@ div#stage {
 
 .btn {
 	background-image: none;
-	margin-right: 5px;
-	margin-top: 5px;
-	float: right;
+	/* margin-right: 5px; */
+	/* margin-top: 5px; */
+	/* float: right; */
 	clear: both;
-	border-radius: 0
+	border-radius: 2px;
+	color: #fff;
 }
 
 table.dataTable {
@@ -1277,87 +1253,91 @@ i.fa.fa-compress {
 }
 
 tr {
-    border-bottom: solid 1px #ccc;
+	border-bottom: solid 1px #ccc;
 }
 
 table.dataTable.no-footer {
-    border-bottom: solid 1px #ccc !important;
+	border-bottom: solid 1px #ccc !important;
 }
 
-table.dataTable thead th, table.dataTable thead td {
-    border-bottom: solid 1px #ccc !important;
+table.dataTable thead th,
+table.dataTable thead td {
+	border-bottom: solid 1px #ccc !important;
 }
 
 .facetMemberName:hover i.fa {
-    color: #f00;
+	color: #f00;
 }
 
 .nav>li>a {
-    padding: 5px 10px 5px 10px;
+	padding: 5px 10px 5px 10px;
 }
 
 .facetName i.fa.fa-filter {
-    margin-right: 3px;
+	margin-right: 3px;
 }
 
-
 .dataTables_length {
-    /* padding-left: 10px; */
+	/* padding-left: 10px; */
 }
 
 .dataTables_info {
-    /* padding-left: 10px; */
+	/* padding-left: 10px; */
 }
 
 .badge .fa {
-    font-size: 11px;
+	font-size: 11px;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    color: #000 !important;
+	color: #000 !important;
 }
 
-table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd {
-    background-color: #fff;
+table.dataTable.stripe tbody tr.odd,
+table.dataTable.display tbody tr.odd {
+	background-color: #fff;
 }
 
-table.dataTable.stripe tbody tr.even, table.dataTable.display tbody tr.even {
-    background-color: #f0f0f0;
+table.dataTable.stripe tbody tr.even,
+table.dataTable.display tbody tr.even {
+	background-color: #f0f0f0;
 }
 
-table.dataTable.stripe tbody tr.odd:hover, table.dataTable.display tbody tr.odd:hover {
-    background-color: #fff;
+table.dataTable.stripe tbody tr.odd:hover,
+table.dataTable.display tbody tr.odd:hover {
+	background-color: #fff;
 }
 
-table.dataTable.stripe tbody tr.even:hover, table.dataTable.display tbody tr.even:hover {
-    background-color: #f0f0f0;
+table.dataTable.stripe tbody tr.even:hover,
+table.dataTable.display tbody tr.even:hover {
+	background-color: #f0f0f0;
 }
 
 ul.ColVis_collection li {
-    padding: 3px 10px 3px 7px;
+	padding: 3px 10px 3px 7px;
 }
 
 .modal-header {
-    background-color: #003142;
-    color: #fff;
-    border-bottom: none;
-    font-size: 14px;
+	background-color: #003142;
+	color: #fff;
+	border-bottom: none;
+	font-size: 14px;
 }
 
 circle {
-    fill: #fff;
-    stroke: #888;
-    transition: fill .5s;
+	fill: #fff;
+	stroke: #888;
+	transition: fill .5s;
 }
 
 circle.hovered {
-	fill:#A8D7FF !important;
+	fill: #A8D7FF !important;
 }
 
 circle.child.selected {
-    stroke: #ccc;
-    stroke-width: 1px;
-    fill: #F19119;
+	stroke: #ccc;
+	stroke-width: 1px;
+	fill: #F19119;
 }
 
 circle.parent {
@@ -1371,11 +1351,12 @@ circle.child {
 }
 
 #kernelDensityContainer text {
-    font-size: 10px;
+	font-size: 10px;
 }
 
-.axis path, .axis line {
-    stroke: rgba(200,200,200,64) !important;
-    stroke-width: .5px !important;
-    /* color: #fff; */
+.axis path,
+.axis line {
+	stroke: rgba(200, 200, 200, 64) !important;
+	stroke-width: .5px !important;
+	/* color: #fff; */
 }

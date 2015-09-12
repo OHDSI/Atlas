@@ -2,7 +2,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
-
+		
+		self.model.reportCohortDefinitionId.subscribe(function(d) {
+			$('#cohortDefinitionChooser').modal('hide');
+		});
+		
 		self.formatPercent = d3.format('.2%');
 		self.formatFixed = d3.format('.2f');
 		self.formatComma = d3.format(',');
@@ -11,11 +15,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 		self.boxplotWidth = 200;
 		self.boxplotHeight = 125;
 
+		self.showBrowser = function () {
+			$('#cohortDefinitionChooser').modal('show');
+		};
+
 		self.donutWidth = 500;
 		self.donutHeight = 300;
 
 		self.datatables = {};
-		
+
 		self.runReport = function runReport() {
 			self.model.loadingReport(true);
 			self.model.activeReportDrilldown(false);
@@ -1200,7 +1208,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 										risk_difference: self.formatFixed(this.riskDiffAfterBefore[i])
 									};
 								}, conditionOccurrencePrevalence);
-								
+
 								$(document).on('click', '.treemap_table tbody tr', function () {
 									var datatable = self.datatables[$(this).parents('.treemap_table').attr('id')];
 									var data = datatable.data()[datatable.row(this)[0]];

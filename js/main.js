@@ -24,6 +24,8 @@ requirejs.config({
 		"jquery": "http://code.jquery.com/jquery-1.11.2.min",
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"knockout": "knockout.min",
+		"knockout-mapping": "knockout.mapping",		
+		"knockout-persist": "knockout.persist",
 		"datatables": "jquery.dataTables.min",
 		"colvis": "jquery.DataTables.colVis.min",
 		"director": "director.min",
@@ -35,6 +37,7 @@ requirejs.config({
 		"importer": "components/importer",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
+		"cohort-definition-browser" : "components/cohort-definition-browser",
 		"report-manager": "components/report-manager",
 		"analytics-manager": "components/analytics-manager",
 		"faceted-datatable": "components/faceted-datatable",
@@ -44,7 +47,7 @@ requirejs.config({
 		"lodash": "lodash.min",
 		"packinghierarchy": "visualization.packinghierarchy",
 		"forcedirectedgraph": "visualization.forcedirectedgraph",
-		"kerneldensity" : "visualization.kerneldensity"
+		"kerneldensity": "visualization.kerneldensity"
 	}
 });
 
@@ -57,6 +60,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 					 "importer",
 					 "cohort-definitions",
 					 "cohort-definition-manager",
+					 "cohort-definition-browser",
 					 "report-manager",
 					 "analytics-manager",
 					 "faceted-datatable"
@@ -108,12 +112,12 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 		'/search': function () {
 			pageModel.currentView('search');
 		},
-		'/template': function() {
+		'/template': function () {
 			pageModel.currentView('template');
 			$.ajax({
 				url: pageModel.services()[0].url + 'OPTUM/cohortresults/44/experimentalCovariates',
-				success: function(covariates) {
-					kd.kernelDensity('#kernelDensityContainer', covariates);					
+				success: function (covariates) {
+					kd.kernelDensity('#kernelDensityContainer', covariates);
 				}
 			});
 
@@ -144,16 +148,6 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 
 			break;
 		case 'reports':
-			$.ajax({
-				url: pageModel.services()[0].url + 'cohortdefinition',
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (cohortDefinitions) {
-					pageModel.cohortDefinitions(cohortDefinitions);
-				}
-			});
-			break;
-		case 'cohortdefinitions':
 			$.ajax({
 				url: pageModel.services()[0].url + 'cohortdefinition',
 				method: 'GET',

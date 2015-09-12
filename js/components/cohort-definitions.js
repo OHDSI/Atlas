@@ -2,9 +2,11 @@ define(['knockout', 'text!./cohort-definitions.html', 'knockout.dataTables.bindi
 	function cohortDefinitions(params) {
 		var self = this;
 		self.model = params.model;
-		self.renderCohortDefinitionLink = function (s, p, d) {
-			return '<a href=\"#/cohortdefinition/' + d.id + '\">' + d.name + '</a>';
-		}
+		self.cohortDefinitionId = ko.observable();
+		
+		self.cohortDefinitionId.subscribe(function(d) {
+			document.location = "#/cohortdefinition/" + d;
+		});	
 	}
 
 	var component = {

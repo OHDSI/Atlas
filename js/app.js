@@ -4,7 +4,8 @@ define([
 	'jnj_chart',
 	'd3',
 	'bootstrap',
-	'facets'
+	'facets',
+	'knockout-persist'
 ], function ($, ko, jnj_chart, d3) {
 	var appModel = function () {
 		var self = this;
@@ -730,7 +731,7 @@ define([
 					self.resolvingConceptSetExpression(false);
 				},
 				error: function (err) {
-					alert(err);
+					self.currentView('configure');
 					self.resolvingConceptSetExpression(false);
 				}
 			});
@@ -1100,6 +1101,10 @@ define([
 			{
 				name: 'Local',
 				url: 'http://localhost:8080/WebAPI/'
+			},
+			{
+				name: 'OHDSI Public',
+				url: 'http://api.ohdsi.org/WebAPI/'
 			}
 		]);
 		self.initializationErrors = 0;
@@ -1196,8 +1201,7 @@ define([
 		self.feRelated = ko.observable();
 		self.feSearch = ko.observable();
 		self.metarchy = {};
-		self.prompts = ko.observableArray(); // todo: remove?
-		self.selectedConcepts = ko.observableArray(null);
+		self.selectedConcepts = ko.observableArray(null); //.extend({ persist: 'atlas.selectedConcepts' });
 		self.selectedConceptsWarnings = ko.observableArray();
 		self.checkCurrentSource = function (source) {
 			return source.url == self.curentVocabularyUrl();

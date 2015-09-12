@@ -4,11 +4,43 @@
 		<span data-bind="if:$component.model.loadingReport()"><i class="fa fa-refresh fa-spin"></i></span> Cohort Reporting
 	</div>
 
+	<div class="modal fade" id="cohortDefinitionChooser" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">Choose Cohort Definition</div>
+				<div class="modal-body">
+					<cohort-definition-browser params="{services: pageModel.services, cohortDefinitionId: $component.model.reportCohortDefinitionId}"></cohort-definition-browser>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="reportControls pad-5">
-		<select class="form-control" data-bind="css : { invalid: $component.model.reportCohortDefinitionId()==undefined }, options:$component.model.cohortDefinitions, optionsText:'name', optionsValue:'id', optionsCaption:'Select a Cohort Definition', value:$component.model.reportCohortDefinitionId"></select>
-		<select class="form-control" data-bind="css : { invalid: $component.model.reportReportName()==undefined }, options:$component.model.reports(), optionsCaption:'Select a Report', value:$component.model.reportReportName"></select>
-		<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.model.services()[0].sources.filter($component.model.hasResults), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
-		<button class="btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'Run Report'"></button>
+		<div class="row">
+			<div class="col-xs-10">
+				<select class="form-control" data-bind="css : { invalid: $component.model.reportCohortDefinitionId()==undefined }, options:$component.model.cohortDefinitions, optionsText:'name', optionsValue:'id', optionsCaption:'Select a Cohort Definition', value:$component.model.reportCohortDefinitionId"></select>
+			</div>
+			<div class="col-xs-2">
+				<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.showBrowser, text:'Browse'"></button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-10">
+				<select class="form-control" data-bind="css : { invalid: $component.model.reportReportName()==undefined }, options:$component.model.reports(), optionsCaption:'Select a Report', value:$component.model.reportReportName"></select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-10">
+				<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.model.services()[0].sources.filter($component.model.hasResults), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-10"></div>
+			<div class="col-xs-2">
+				<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'View Report'"></button>
+			</div>
+		</div>
+
 		<div class="clear"></div>
 	</div>
 

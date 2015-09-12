@@ -3,37 +3,7 @@
 		<i class="fa fa-language"></i> Cohort Definitions
 	</div>
 
-	<div id="wrapperCohort">
-		<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-            data: model.cohortDefinitions(),
-            options: {
-						dom: 'Clfiprt',
-						language: {
-							search : 'Filter Cohort Definitions:'
-						},
-						colVis: {
-							buttonText: 'Change Columns',
-							align: 'right',
-							overlayFade: 0,
-							showAll: 'Show All Columns',
-							restore: 'Reset Columns'
-						},
-						lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
-						orderClasses: false,
-						deferRender: true,
-						autoWidth: false,
-						ordering: true,
-						order: [[ 2, 'asc' ]],
-						columns: [
-								{ title: 'Id', data: 'id' },
-								{ title: 'Name', render: renderCohortDefinitionLink },
-								{ title: 'Description', data: 'description'},
-								{ title: 'Expression Type', data: 'expressionType', visible: false },
-								{ title: 'Created', data: 'createdDate'},
-								{ title: 'Last Modified', data: 'modifiedDate', visible: false}
-						]
-				}
-        }">
-		</table>
+	<div class="paddedWrapper">
+		<cohort-definition-browser params="{services: pageModel.services, cohortDefinitionId: cohortDefinitionId}"></cohort-definition-browser>
 	</div>
 </div>
