@@ -823,6 +823,8 @@ ul.nav.nav-tabs {
 
 div.loader {
 	margin-top: 20px;
+	font-size: 20px;
+	text-align: center;
 }
 
 g rect {

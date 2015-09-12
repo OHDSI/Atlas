@@ -140,7 +140,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						// death type
 						if (data.deathByType && data.deathByType.length > 0) {
 							var genderDonut = new jnj_chart.donut();
-							genderDonut.render(self.mapConceptData(data.deathByType), "#deathByType", donutWidth, donutHeight, {
+							genderDonut.render(self.mapConceptData(data.deathByType), "#deathByType", self.donutWidth, self.donutHeight, {
 								margin: {
 									top: 5,
 									left: 5,
@@ -168,7 +168,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 									UIF: bpdata.p90Value[i]
 								});
 							}
-							boxplot.render(bpseries, "#ageAtDeath", boxplotWidth, boxplotHeight, {
+							boxplot.render(bpseries, "#ageAtDeath", self.boxplotWidth, self.boxplotHeight, {
 								xLabel: 'Gender',
 								yLabel: 'Age at Death'
 							});
@@ -380,7 +380,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							$(document).on('click', '.dataTable tbody tr', function () {
 								var data = $('.dataTable').DataTable().row(this).data();
 								if (data) {
-									drugExposureDrilldown(data.concept_id, data.rxnorm);
+									self.drugExposureDrilldown(data.concept_id, data.rxnorm);
 								}
 							});
 
@@ -388,7 +388,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							var treemap = new jnj_chart.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
 								onclick: function (node) {
-									drugExposureDrilldown(node.id, node.name);
+									self.drugExposureDrilldown(node.id, node.name);
 								},
 								getsizevalue: function (node) {
 									return node.num_persons;
@@ -503,7 +503,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							var treemap = new jnj_chart.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
 								onclick: function (node) {
-									drugeraDrilldown(node.id, node.name);
+									self.drugeraDrilldown(node.id, node.name);
 								},
 								getsizevalue: function (node) {
 									return node.num_persons;
@@ -1569,7 +1569,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						// persons in cohort from start to end
 						var personsInCohortFromCohortStartToEnd = self.normalizeArray(data.personsInCohortFromCohortStartToEnd);
 						if (!personsInCohortFromCohortStartToEnd.empty) {
-							var personsInCohortFromCohortStartToEndSeries = map30DayDataToSeries(personsInCohortFromCohortStartToEnd, {
+							var personsInCohortFromCohortStartToEndSeries = self.map30DayDataToSeries(personsInCohortFromCohortStartToEnd, {
 								dateField: 'monthYear',
 								yValue: 'countValue',
 								yPercent: 'percentValue'
@@ -1586,8 +1586,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 						// render trellis
 						var trellisData = self.normalizeArray(data.numPersonsByCohortStartByGenderByAge, true);
-
-						console.log(trellisData);
 
 						if (!trellisData.empty) {
 							var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -1893,15 +1891,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
 
-					self.boxplotHelper(data.ageAtFirstExposure, '#ageAtFirstExposure', boxplotWidth, boxplotHeight, 'Gender', 'Age at First Exposure');
-					self.boxplotHelper(data.daysSupplyDistribution, '#daysSupplyDistribution', boxplotWidth, boxplotHeight, 'Days Supply', 'Days');
-					self.boxplotHelper(data.quantityDistribution, '#quantityDistribution', boxplotWidth, boxplotHeight, 'Quantity', 'Quantity');
-					self.boxplotHelper(data.refillsDistribution, '#refillsDistribution', boxplotWidth, boxplotHeight, 'Refills', 'Refills');
+					self.boxplotHelper(data.ageAtFirstExposure, '#ageAtFirstExposure', self.boxplotWidth, self.boxplotHeight, 'Gender', 'Age at First Exposure');
+					self.boxplotHelper(data.daysSupplyDistribution, '#daysSupplyDistribution', self.boxplotWidth, self.boxplotHeight, 'Days Supply', 'Days');
+					self.boxplotHelper(data.quantityDistribution, '#quantityDistribution', self.boxplotWidth, self.boxplotHeight, 'Quantity', 'Quantity');
+					self.boxplotHelper(data.refillsDistribution, '#refillsDistribution', self.boxplotWidth, self.boxplotHeight, 'Refills', 'Refills');
 
 					// drug  type visualization
 					var donut = new jnj_chart.donut();
 					var drugsByType = self.mapConceptData(data.drugsByType);
-					donut.render(drugsByType, "#drugsByType", donutWidth, donutHeight, {
+					donut.render(drugsByType, "#drugsByType", self.donutWidth, self.donutHeight, {
 						margin: {
 							top: 5,
 							left: 5,
@@ -2261,7 +2259,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								UIF: bpdata.p90Value[i]
 							});
 						}
-						boxplot.render(bpseries, "#ageAtFirstOccurrence", boxplotWidth, boxplotHeight, {
+						boxplot.render(bpseries, "#ageAtFirstOccurrence", self.boxplotWidth, self.boxplotHeight, {
 							xLabel: 'Gender',
 							yLabel: 'Age at First Occurrence'
 						});
@@ -2291,7 +2289,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					// procedure type visualization
 					if (data.proceduresByType && data.proceduresByType.length > 0) {
 						var donut = new jnj_chart.donut();
-						donut.render(self.mapConceptData(data.proceduresByType), "#proceduresByType", donutWidth, donutHeight, {
+						donut.render(self.mapConceptData(data.proceduresByType), "#proceduresByType", self.donutWidth, self.donutHeight, {
 							margin: {
 								top: 5,
 								left: 5,
