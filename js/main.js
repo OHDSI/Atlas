@@ -24,7 +24,7 @@ requirejs.config({
 		"jquery": "http://code.jquery.com/jquery-1.11.2.min",
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"knockout": "knockout.min",
-		"knockout-mapping": "knockout.mapping",		
+		"knockout-mapping": "knockout.mapping",
 		"knockout-persist": "knockout.persist",
 		"datatables": "jquery.dataTables.min",
 		"colvis": "jquery.DataTables.colVis.min",
@@ -37,7 +37,10 @@ requirejs.config({
 		"importer": "components/importer",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
-		"cohort-definition-browser" : "components/cohort-definition-browser",
+		"cohort-definition-browser": "components/cohort-definition-browser",
+		"feasibility-manager": "components/feasibility-manager",
+		"feasibility-browser": "components/feasibility-browser",
+		"feasibility-analyzer": "components/feasibility-analyzer",
 		"report-manager": "components/report-manager",
 		"analytics-manager": "components/analytics-manager",
 		"faceted-datatable": "components/faceted-datatable",
@@ -51,17 +54,14 @@ requirejs.config({
 	}
 });
 
+// todo - remove overall requirements and move to route based lazy loaded requires
 requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneldensity',
 					 'director', 'search',
-					 "configuration",
 					 "concept-manager",
 					 "conceptset-manager",
-					 "job-manager",
-					 "importer",
 					 "cohort-definitions",
 					 "cohort-definition-manager",
 					 "cohort-definition-browser",
-					 "report-manager",
 					 "analytics-manager",
 					 "faceted-datatable"
 				], function (ko, app, visualizations, fdg, kd) {
@@ -84,17 +84,25 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 			pageModel.currentView('cohortdefinitions');
 		},
 		'/configure': function () {
-			pageModel.currentView('configure');
+			require(['configuration'], function () {
+				pageModel.currentView('configure');
+			});
 		},
 		'/jobs': function () {
-			pageModel.currentView('loading');
-			pageModel.loadJobs();
+			require(['job-manager'], function () {
+				pageModel.currentView('loading');
+				pageModel.loadJobs();
+			});
 		},
 		'reports': function () {
-			pageModel.currentView('reports');
+			require(['report-manager'], function () {
+				pageModel.currentView('reports');
+			});
 		},
 		'import': function () {
-			pageModel.currentView('import');
+			require(['importer'], function () {
+				pageModel.currentView('import');
+			});
 		},
 		'conceptset': function () {
 			pageModel.currentConceptSetMode('details');
@@ -112,6 +120,17 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 		'/search': function () {
 			pageModel.currentView('search');
 		},
+		'/feasibility': function () {
+			require(['feasibility-manager', 'feasibility-browser'], function () {
+				pageModel.currentView('feasibilities');
+			});
+		},
+		'/feasibility/:feasibilityId:': function (feasibilityId) {
+			require(['feasibility-analyzer'], function () {
+				pageModel.currentView('feasibility');
+				pageModel.feasibilityId(feasibilityId);
+			});
+		},		
 		'/template': function () {
 			pageModel.currentView('template');
 			$.ajax({

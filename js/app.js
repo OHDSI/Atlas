@@ -277,7 +277,7 @@ define([
 				visible: false
 			},
 			{
-				title: 'Density',
+				title: 'Record Count',
 				data: 'DENSITY',
 				className: 'numeric'
 			},
@@ -333,7 +333,7 @@ define([
 				visible: false
 			},
 			{
-				title: 'Density',
+				title: 'Record Count',
 				data: 'DENSITY',
 				className: 'numeric'
 			},
@@ -1088,6 +1088,7 @@ define([
 		self.cohortDefinitions = ko.observableArray();
 		self.currentCohortDefinition = ko.observable();
 		self.currentCohortDefinitionInfo = ko.observable();
+		self.feasibilityId = ko.observable();
 		self.resolvingConceptSetExpression = ko.observable();
 		self.resolvingSourcecodes = ko.observable();
 		self.evidence = ko.observableArray();

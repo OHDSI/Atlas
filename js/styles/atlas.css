@@ -373,8 +373,27 @@ table.datatable {
 	width: 100%;
 }
 
-table.datatable td.numeric {
+td.numeric {
 	text-align: right;
+}
+
+#feasibilityResultTable {
+	width: 100%;
+}
+
+#feasibilityResultTable td {
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+#feasibilityResultTable th {
+	white-space: nowrap;
+	background-color: #eee;
+	border: solid 1px #444;
+}
+
+#feasibilityResultTable td {
+	border: solid 1px #444;
 }
 
 #wrapperRelatedConcepts {

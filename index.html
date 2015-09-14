@@ -67,6 +67,9 @@
 			</li>
 			-->
 				<li>
+					<a href="/#feasibility"><i class="fa fa-dot-circle-o"></i></a>
+				</li>
+				<li>
 					<a href="#/jobs"><i class="fa fa-tasks"></i></a>
 				</li>
 				<li>
@@ -120,6 +123,9 @@
 			</li>
 			-->
 			<li>
+				<a href="#/feasibility"><i class="fa fa-dot-circle-o"></i>Feasibility</a>
+			</li>
+			<li>
 				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
 			</li>
 			<li>
@@ -145,7 +151,9 @@
 				</div>
 			</div>
 
-			<importer params="{model: pageModel}"></importer>
+			<div data-bind="if:pageModel.currentView()=='import'">
+				<importer params="{model: pageModel}"></importer>
+			</div>
 
 			<conceptset-manager params="{model: pageModel}"></conceptset-manager>
 
@@ -153,15 +161,28 @@
 
 			<concept-manager params="{model: pageModel, currentConceptId: pageModel.currentConceptId}"></concept-manager>
 
-			<job-manager params="{model: pageModel}"></job-manager>
+			<div data-bind="if:pageModel.currentView()=='jobs'">
+				<job-manager params="{model: pageModel}"></job-manager>
+			</div>
 
 			<cohort-definitions params="{model: pageModel}"></cohort-definitions>
 
 			<cohort-definition-manager params="{model: pageModel}"></cohort-definition-manager>
-			
-			<report-manager params="{model: pageModel}"></report-manager>
 
+			<div data-bind="if: pageModel.currentView() == 'reports'">
+				<report-manager params="{model: pageModel}"></report-manager>
+			</div>
+			
 			<analytics-manager params="{model: pageModel}"></analytics-manager>
+
+			<div data-bind="if:pageModel.currentView() == 'feasibilities'">
+				<feasibility-manager></feasibility-manager>
+			</div>
+			
+			<div data-bind="if:pageModel.currentView() == 'feasibility'">
+				<feasibility-analyzer params="services: pageModel.services, feasibilityId: pageModel.feasibilityId"></feasibility-analyzer>
+			</div>
+
 
 			<div data-bind="if: currentView() == 'configure'">
 				<div class="wrapperTitle">
