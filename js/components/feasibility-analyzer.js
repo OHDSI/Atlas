@@ -9,6 +9,7 @@ define(['knockout', 'text!./feasibility-analyzer.html'], function (ko, view) {
 		self.sources = ko.observableArray();
 		self.report = ko.observable();
 		self.isNoData = ko.observable(false);
+		self.tabMode = ko.observable('definition');
 		self.results = {};
 
 		self.lookupCount = function (inclusionRuleIndex, sourceKey) {
@@ -42,7 +43,7 @@ define(['knockout', 'text!./feasibility-analyzer.html'], function (ko, view) {
 						self.loading(false);
 						return;
 					}
-					
+
 					var dataCount = 0;
 					for (var i = 0; i < fi.length; i++) {
 						var source = self.getSource(fi[i].generationInfo.id.sourceId);

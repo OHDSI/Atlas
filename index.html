@@ -105,7 +105,7 @@
 				</li>
 			</ul>
 			<li>
-				<a href="#/conceptset"><i class="fa fa-shopping-cart"></i>Selected Concepts</a>
+				<a href="#/conceptset"><i class="fa fa-shopping-cart"></i>Concept Set</a>
 				<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 			</li>
 			<li>
@@ -157,7 +157,9 @@
 
 			<conceptset-manager params="{model: pageModel}"></conceptset-manager>
 
-			<atlas-search params="{model: pageModel}"></atlas-search>
+			<div data-bind="visible: pageModel.currentView() == 'search'">
+				<search params="{model: pageModel}"></search>
+			</div>
 
 			<concept-manager params="{model: pageModel, currentConceptId: pageModel.currentConceptId}"></concept-manager>
 
@@ -172,13 +174,13 @@
 			<div data-bind="if: pageModel.currentView() == 'reports'">
 				<report-manager params="{model: pageModel}"></report-manager>
 			</div>
-			
+
 			<analytics-manager params="{model: pageModel}"></analytics-manager>
 
 			<div data-bind="if:pageModel.currentView() == 'feasibilities'">
 				<feasibility-manager></feasibility-manager>
 			</div>
-			
+
 			<div data-bind="if:pageModel.currentView() == 'feasibility'">
 				<feasibility-analyzer params="services: pageModel.services, feasibilityId: pageModel.feasibilityId"></feasibility-analyzer>
 			</div>

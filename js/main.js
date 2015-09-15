@@ -56,7 +56,7 @@ requirejs.config({
 
 // todo - remove overall requirements and move to route based lazy loaded requires
 requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneldensity',
-					 'director', 'search',
+					 'director', 
 					 "concept-manager",
 					 "conceptset-manager",
 					 "cohort-definitions",
@@ -76,6 +76,10 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 	}
 
 	var routes = {
+		'/' : function() {
+			// default to search for now
+			document.location = "#/search";
+		},
 		'/concept/:conceptId:': function (conceptId) {
 			pageModel.currentConceptId(conceptId);
 			pageModel.loadConcept(conceptId);
@@ -116,9 +120,16 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 			pageModel.currentView('splash');
 		},
 		'/cohortdefinition/:cohortDefinitionId:': pageModel.loadCohortDefinition,
-		'/search/:query:': pageModel.search,
+		'/search/:query:': function (query) {
+			require(['search'], function () {
+				pageModel.currentView('search');								
+				pageModel.currentSearch(query);
+			});
+		},
 		'/search': function () {
-			pageModel.currentView('search');
+			require(['search'], function () {
+				pageModel.currentView('search');
+			});
 		},
 		'/feasibility': function () {
 			require(['feasibility-manager', 'feasibility-browser'], function () {
@@ -130,7 +141,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 				pageModel.currentView('feasibility');
 				pageModel.feasibilityId(feasibilityId);
 			});
-		},		
+		},
 		'/template': function () {
 			pageModel.currentView('template');
 			$.ajax({

@@ -2,83 +2,97 @@
 	<div class="wrapperTitle" data-bind="text:model.currentCohortDefinition().name">
 	</div>
 
-	<div id="wrapperCohortDefinition">
-		<div class="heading">Cohort Definition</div>
+	<div class="paddedWrapper">
 		<div class="cohortDescription" data-bind="text:model.currentCohortDefinition().description"></div>
 
-		<div class="heading">Cohort Generation Status</div>
-		<table class="configureSourceTable">
-			<thead>
-				<th>Source Name</th>
-				<th class="centered">Generated</th>
-				<th>Generation Status</th>
-				<th>Distinct People</th>
-				<th>Generated</th>
-				<th>Generation Duration</th>
-			</thead>
-			<tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
-				<tr>
-					<td data-bind="text:name"></td>
-					<td class="statusIndicator">
-						<div class="fa" data-bind="css: { 'fa-check-circle' : isValid, 'fa-exclamation-circle' : !isValid }"></div>
-					</td>
-					<td class="rightaligned">
-						<div data-bind="text: status"></div>
-					</td>
-					<td class="rightaligned">
-						<div><span data-bind="html: distinctPeople"></span>
-						</div>
-					</td>
-					<td class="rightaligned">
-						<div data-bind="text: startTime"></div>
-					</td>
-					<td class="rightaligned">
-						<div data-bind="text: executionDuration"></div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<ul class="nav nav-tabs">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition') };"><a>Definition</a>
+			</li>
 
-		<div class="heading">Cohort Analysis Status</div>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation') };"><a>Generation Status</a>
+			</li>
 
-		<table id="analysisStatus">
-			<thead>
-				<th>Analysis Type</th>
-				<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
-				<th data-bind="text:sourceName"></th>
-				<!-- /ko -->
-			</thead>
-			<tbody>
-				<!-- ko foreach:$component.model.cohortAnalyses -->
-				<tr>
-					<td data-bind="text:name"></td>
-					<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
-					<td class="statusIndicator">
-						<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().ready -->
-						<i class="fa" data-bind="css: { 'fa-check-circle' : $component.model.sourceAnalysesStatus[sourceKey]()[$parent.name] > 0, 'fa-exclamation-triangle' : $component.model.sourceAnalysesStatus[sourceKey]()[$parent.name] == 0 }"></i>
-						<input data-bind="attr: { name : sourceKey, value : $parent.name }" type="checkbox">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'analysis' }, click: function() { $component.tabMode('analysis') };"><a>Analysis Status</a>
+			</li>
+		</ul>
+
+		<div class="tab-content">
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'definition' }" class="tab-pane">
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'generation' }" class="tab-pane">
+				<table class="configureSourceTable">
+					<thead>
+						<th>Source Name</th>
+						<th class="centered">Generated</th>
+						<th>Generation Status</th>
+						<th>Distinct People</th>
+						<th>Generated</th>
+						<th>Generation Duration</th>
+					</thead>
+					<tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
+						<tr>
+							<td data-bind="text:name"></td>
+							<td class="statusIndicator">
+								<div class="fa" data-bind="css: { 'fa-check-circle' : isValid, 'fa-exclamation-circle' : !isValid }"></div>
+							</td>
+							<td class="rightaligned">
+								<div data-bind="text: status"></div>
+							</td>
+							<td class="rightaligned">
+								<div><span data-bind="html: distinctPeople"></span>
+								</div>
+							</td>
+							<td class="rightaligned">
+								<div data-bind="text: startTime"></div>
+							</td>
+							<td class="rightaligned">
+								<div data-bind="text: executionDuration"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'analysis' }" class="tab-pane">
+				<table id="analysisStatus">
+					<thead>
+						<th>Analysis Type</th>
+						<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
+						<th data-bind="text:sourceName"></th>
 						<!-- /ko -->
-						<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().checking -->
-						<i class="fa fa-refresh fa-spin"></i>
+					</thead>
+					<tbody>
+						<!-- ko foreach:$component.model.cohortAnalyses -->
+						<tr>
+							<td data-bind="text:name"></td>
+							<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
+							<td class="statusIndicator">
+								<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().ready -->
+								<i class="fa" data-bind="css: { 'fa-check-circle' : $component.model.sourceAnalysesStatus[sourceKey]()[$parent.name] > 0, 'fa-exclamation-triangle' : $component.model.sourceAnalysesStatus[sourceKey]()[$parent.name] == 0 }"></i>
+								<input data-bind="attr: { name : sourceKey, value : $parent.name }" type="checkbox">
+								<!-- /ko -->
+								<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().checking -->
+								<i class="fa fa-refresh fa-spin"></i>
+								<!-- /ko -->
+								<!-- ko if:!$component.model.sourceAnalysesStatus[sourceKey]().checking && !$component.model.sourceAnalysesStatus[sourceKey]().ready -->
+								<i class="fa fa-exclamation-circle"></i>
+								<!-- /ko -->
+							</td>
+							<!-- /ko -->
+						</tr>
 						<!-- /ko -->
-						<!-- ko if:!$component.model.sourceAnalysesStatus[sourceKey]().checking && !$component.model.sourceAnalysesStatus[sourceKey]().ready -->
-						<i class="fa fa-exclamation-circle"></i>
-						<!-- /ko -->
-					</td>
-					<!-- /ko -->
-				</tr>
-				<!-- /ko -->
-				<tr>
-					<td style="border-bottom:0px;"></td>
-					<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
-					<td style="border-bottom:0px;padding:5px;" class="statusIndicator">
-						<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().ready -->
-						<input data-bind="click:$component.generateAnalyses" type="button" value="Generate">
-						<!-- /ko -->
-					</td>
-					<!-- /ko -->
-				</tr>
-			</tbody>
-		</table>
+						<tr>
+							<td style="border-bottom:0px;"></td>
+							<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
+							<td style="border-bottom:0px;padding:5px;" class="statusIndicator">
+								<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().ready -->
+								<input data-bind="click:$component.generateAnalyses" type="button" value="Generate">
+								<!-- /ko -->
+							</td>
+							<!-- /ko -->
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 </div>

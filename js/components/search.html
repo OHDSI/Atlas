@@ -1,8 +1,73 @@
-<div id="wrapperSearch" data-bind="if: model.currentView() == 'search'">
-	<div class="wrapperTitle"><i class="fa fa-search"></i> Vocabulary Search</div>
-	<div class="paddedWrapper">
-		<input id="querytext" placeholder="type your search here" class="form-control" type="text" data-bind="event: { keyup: checkExecuteSearch}" />
+<div class="wrapperTitle" data-bind="visible:loading">
+	<i class="fa fa-refresh fa-spin"></i> Loading...
+</div>
 
+<div data-bind="visible:!loading()">
+	<div class="wrapperTitle">
+		<i class="fa fa-search"></i> Vocabulary Search
+	</div>
+
+	<div class="paddedWrapper">
+		<ul class="nav nav-tabs">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'simple' }, click: function() { $component.tabMode('simple') };"><a>Simple</a>
+			</li>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'advanced' }, click: function() { $component.tabMode('advanced') };"><a>Advanced</a>
+			</li>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a>
+			</li>
+		</ul>
+
+		<div class="tab-content">
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'simple' }" class="tab-pane">
+				<input id="querytext" placeholder="type your search here" class="form-control" type="text" data-bind="event: { keyup: checkExecuteSearch}" />
+			</div>
+
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'advanced' }" class="tab-pane">
+				<div class="heading">Query</div>
+				<input placeholder="type your search here" class="form-control" type="text" data-bind="value:advancedQuery" />
+
+				<div class="heading">Vocabularies</div>
+				<div class="checkboxListing">
+					<!-- ko foreach: vocabularies -->
+					<div>
+						<input type="checkbox" name="vocabularyId" data-bind="value: VOCABULARY_ID"> <span data-bind="text: VOCABULARY_NAME"></span>
+					</div>
+					<!-- /ko -->
+				</div>
+				
+				<div class="heading">Domains</div>
+				<div class="checkboxListing">
+					<!-- ko foreach: domains -->
+					<div>
+						<input type="checkbox" name="domainId" data-bind="value: DOMAIN_ID"> <span data-bind="text: DOMAIN_NAME"></span>
+					</div>
+					<!-- /ko -->
+				</div>
+				
+				<div class="btn btn-small btn-primary pull-right" data-bind="click:executeAdvancedSearch">Search</div>
+			</div>
+
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'results' }" class="tab-pane">
+				<div class="heading" data-bind="text: 'Search Results for ' + decodeURI(model.currentSearch())">
+				</div>
+				<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.searchResultsConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
+			</div>
+		</div>
+
+		<div id="modalError" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<p id="helpErrorMessage"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 		<div id="helpMinimumQueryLength" class="modal fade">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -31,11 +96,4 @@
 			</div>
 		</div>
 	</div>
-</div>
-
-<div id="wrapperSearchResults" data-bind="visible: model.currentView() == 'searchResults'">
-	<div>
-		<div class="wrapperTitle" data-bind="text: 'Search Results for ' + decodeURI(model.currentSearch())"></div>
-	</div>
-	<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.searchResultsConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
 </div>

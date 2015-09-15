@@ -3,6 +3,8 @@ define(['knockout', 'text!./cohort-definition-manager.html', 'knockout.dataTable
 		var self = this;
 		self.model = params.model;
 
+		self.tabMode = ko.observable('definition');
+		
 		self.generateAnalyses = function (data, event) {
 			console.log(event.target);
 			$(event.target).prop("disabled", true);

@@ -73,6 +73,11 @@ body {
 	margin: 10px;
 }
 
+.paddedFloater {
+	margin-right:10px;
+	margin-top:5px;
+}
+
 .linkish {
 	text-decoration: underline;
 	color: #337ab7;
@@ -147,7 +152,6 @@ textarea {
 #wrapperSearch #querytext {
 	margin-top: 10px;
 	margin-bottom: 10px;
-	/* margin-left: 10px; */
 	padding-left: 10px;
 }
 
@@ -221,10 +225,6 @@ pre span.key {
 	top: 0px;
 	right: 0px;
 	display: none;
-}
-
-#wrapperCohortDefinition {
-	padding: 5px;
 }
 
 #wrapperMainWindowContainer {
@@ -663,7 +663,7 @@ ul.ColVis_collection li {
 	padding-right: 3px;
 }
 
-#wrapperCohortDefinition .fa-check-circle {
+.fa-check-circle {
 	color: #080;
 }
 
@@ -1380,4 +1380,12 @@ circle.child {
 	stroke: rgba(200, 200, 200, 64) !important;
 	stroke-width: .5px !important;
 	/* color: #fff; */
+}
+
+.checkboxListing {
+	overflow-y: scroll;
+	height:300px;
+	border-top: solid 1px #ddd;
+	border-bottom:solid 1px #ddd;
+	margin-bottom:10px;
 }

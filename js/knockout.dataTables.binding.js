@@ -37,7 +37,6 @@ define(['jquery', 'knockout', 'datatables'], function ($, ko) {
 					binding.options.columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected }
 					$(element).on("click","td > span.glyphicon-ok-sign", function () {
 						$(this).toggleClass('selected');
-						console.log(this);
 					});
 				}
 

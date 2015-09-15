@@ -1004,61 +1004,6 @@ define([
 			return densityPromise;
 		}
 
-		self.search = function (query) {
-			self.currentView('loading');
-
-			filters = [];
-			$('#querytext').blur();
-
-			$.ajax({
-				url: self.vocabularyUrl() + 'search/' + query,
-				success: function (results) {
-					if (results.length == 0) {
-						self.currentView('search');
-						$('#modalNoSearchResults').modal('show');
-						return;
-					}
-
-					var densityPromise = self.loadDensity(results);
-
-					$.when(densityPromise).done(function () {
-						var tempCaption;
-
-						if (decodeURI(query).length > 20) {
-							tempCaption = decodeURI(query).substring(0, 20) + '...';
-						} else {
-							tempCaption = decodeURI(query);
-						}
-
-						lastQuery = {
-							query: query,
-							caption: tempCaption,
-							resultLength: results.length
-						};
-						self.currentSearch(query);
-
-						var exists = false;
-						for (var i = 0; i < self.recentSearch().length; i++) {
-							if (self.recentSearch()[i].query == query)
-								exists = true;
-						}
-						if (!exists) {
-							self.recentSearch.unshift(lastQuery);
-						}
-						if (self.recentSearch().length > 7) {
-							self.recentSearch.pop();
-						}
-
-						self.currentView('searchResults');
-						self.searchResultsConcepts(results);
-					});
-				},
-				error: function (xhr, message) {
-					alert('error while searching ' + message);
-				}
-			});
-		}
-
 		self.reportCohortDefinitionId = ko.observable();
 		self.reportReportName = ko.observable();
 		self.reportSourceKey = ko.observable();
