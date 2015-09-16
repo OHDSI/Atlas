@@ -1,7 +1,6 @@
 define(['knockout', 'text!./cohort-definition-browser.html', 'faceted-datatable'], function (ko, view) {
 	function cohortDefinitionBrowser(params) {
 		var self = this;
-		self.model = params.model;
 		self.services = params.services;
 		self.currentService = ko.observable();
 		self.reference = ko.observableArray();
@@ -9,7 +8,6 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'faceted-datatable'
 		self.loading = ko.observable(false);
 
 		self.currentService.subscribe(function (d) {
-
 			self.loading(true);
 
 			$.ajax({
@@ -20,7 +18,6 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'faceted-datatable'
 					self.reference(d);
 				}
 			});
-
 		});
 
 		self.options = {

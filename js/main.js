@@ -56,7 +56,7 @@ requirejs.config({
 
 // todo - remove overall requirements and move to route based lazy loaded requires
 requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneldensity',
-					 'director', 
+					 'director',
 					 "concept-manager",
 					 "conceptset-manager",
 					 "cohort-definitions",
@@ -76,7 +76,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 	}
 
 	var routes = {
-		'/' : function() {
+		'/': function () {
 			// default to search for now
 			document.location = "#/search";
 		},
@@ -119,10 +119,14 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 		'splash': function () {
 			pageModel.currentView('splash');
 		},
-		'/cohortdefinition/:cohortDefinitionId:': pageModel.loadCohortDefinition,
+		'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
+			require([''], function () {
+				pageModel.loadCohortDefinition(cohortDefinitionId)
+			});
+		},
 		'/search/:query:': function (query) {
 			require(['search'], function () {
-				pageModel.currentView('search');								
+				pageModel.currentView('search');
 				pageModel.currentSearch(query);
 			});
 		},

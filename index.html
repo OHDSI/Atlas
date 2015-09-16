@@ -157,7 +157,7 @@
 
 			<conceptset-manager params="{model: pageModel}"></conceptset-manager>
 
-			<div data-bind="visible: pageModel.currentView() == 'search'">
+			<div data-bind="if: pageModel.currentView() == 'search'">
 				<search params="{model: pageModel}"></search>
 			</div>
 

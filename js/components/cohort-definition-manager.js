@@ -6,7 +6,6 @@ define(['knockout', 'text!./cohort-definition-manager.html', 'knockout.dataTable
 		self.tabMode = ko.observable('definition');
 		
 		self.generateAnalyses = function (data, event) {
-			console.log(event.target);
 			$(event.target).prop("disabled", true);
 
 			var requestedAnalysisTypes = [];
@@ -49,7 +48,7 @@ define(['knockout', 'text!./cohort-definition-manager.html', 'knockout.dataTable
 				console.log(cohortJob);
 
 				$.ajax({
-					url: pageModel.services()[0].url + 'cohortanalysis',
+					url: self.model.services()[0].url + 'cohortanalysis',
 					data: JSON.stringify(cohortJob),
 					method: 'POST',
 					contentType: 'application/json',

@@ -35,7 +35,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
-						console.log(data);
 					}
 				});
 				break;
