@@ -27,7 +27,7 @@ requirejs.config({
 		"knockout-mapping": "knockout.mapping",
 		"knockout-persist": "knockout.persist",
 		"datatables": "jquery.dataTables.min",
-		"colvis": "jquery.DataTables.colVis.min",
+		"colvis": "jquery.dataTables.colVis.min",
 		"director": "director.min",
 		"search": "components/search",
 		"configuration": "components/configuration",
