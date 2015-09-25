@@ -15,12 +15,12 @@
 	<table data-bind="if:$data.sources.length > 0" class="configureSourceTable">
 		<thead>
 			<th></th>
-			<th>Source Name</th>
+			<th>Source Name [Source Key]</th>
 			<th>Vocabulary Version</th>
 			<th>Dialect</th>
 			<th class="centered">Vocabulary</th>
 			<th class="centered">Evidence</th>
-			<th class="centered">Density</th>
+			<th class="centered">Record Counts (RC / DRC)</th>
 			<th class="centered">Incidence</th>
 		</thead>
 		<tbody data-bind="foreach:$data.sources">
@@ -28,7 +28,7 @@
 				<td><i class="fa" data-bind="if:!initialized, attr: { title : error }, css: { 'fa-check-circle': initialized, 'fa-exclamation-circle': !initialized }"></i>
 					<span data-bind="text:error"></span>
 				</td>
-				<td data-bind="text:sourceName"></td>
+				<td data-bind="text:sourceName + ' [' + sourceKey + ']'"></td>
 				<td data-bind="text:version"></td>
 				<td data-bind="text:sourceDialect"></td>
 				<td class="configureRadio">

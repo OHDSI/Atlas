@@ -2,6 +2,7 @@
 
 table.dataTable.hover tbody tr td {
 	border-bottom: solid 1px #eee;
+	border-left: solid 1px #fff;
 }
 table.dataTable td {
 	cursor: default;

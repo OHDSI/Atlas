@@ -853,7 +853,7 @@ g rect {
 g rect:hover {}
 
 .tab-content {
-	padding: 5px 5px 15px 5px;
+	padding: 2px 2px 15px 2px;
 	background-color: #fff;
 }
 
@@ -1284,6 +1284,7 @@ table.dataTable.no-footer {
 table.dataTable thead th,
 table.dataTable thead td {
 	border-bottom: solid 1px #ccc !important;
+	border-left: solid 1px #fff;
 }
 
 .facetMemberName:hover i.fa {

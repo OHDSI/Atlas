@@ -13,34 +13,47 @@
 						</span>Related Concepts</a>
 		</li>
 
-		<!--
-			to-do: remove this mode completely
-		<li role="presentation" data-bind="click: function() {model.currentConceptMode('sourcecodes');}, attr: {class: model.currentConceptMode() == 'sourcecodes' ? 'active' : ''}">
-			<a><span data-bind="if:model.loadingSourcecodes();">
-							<i class="fa fa-refresh fa-spin"></i>
-						</span>Related Source Codes</a>
-		</li>
-		-->
-		
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('hierarchy');}, attr: {class: model.currentConceptMode() == 'hierarchy' ? 'active' : ''}">
 			<a><span data-bind="if:model.loadingRelated();">
 							<i class="fa fa-refresh fa-spin"></i>
 						</span>Hierarchy</a>
 		</li>
-		<!--
-		<li role="presentation" data-bind="click: function() {model.currentConceptMode('evidence');}, attr: {class: model.currentConceptMode() == 'evidence' ? 'active disabled' : 'disabled'}">
-			<a>
-				<span data-bind="if:model.loadingEvidence();">
-							<i class="fa fa-refresh fa-spin"></i>
-						</span>Evidence</a>
+
+		<li role="presentation" data-bind="click:$component.loadRecordCounts, attr: {class: model.currentConceptMode() == 'recordcounts' ? 'active' : ''}">
+			<a>Record Counts</a>
 		</li>
-		<li role="presentation" data-bind="click: function() {model.currentConceptMode('data');}, attr: {class: model.currentConceptMode() == 'data' ? 'active disabled' : 'disabled'}"><a>Incidence</a>
-		</li>
-		-->
 	</ul>
 
 	<div data-bind="visible:model.currentConceptMode() == 'sourcecodes' && !model.loadingSourcecodes()">
 		<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.relatedSourcecodes }"></faceted-datatable>
+	</div>
+
+	<div class="paddedWrapper" data-bind="if:model.currentConceptMode() == 'recordcounts' ">
+
+		<div data-bind="visible:loadingSourceCounts()" class="loading">loading</div>
+
+		<div data-bind="visible:!loadingSourceCounts()">
+			<div class="heading">Record Counts across Sources</div>
+			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+								data: sourceCounts(),
+								options: {
+									dom: 't',
+									language: {
+										search: 'Filter Sources: '
+									},
+									lengthMenu: [[-1], ['All']],
+									orderClasses: false,
+									ordering: true,
+									order: [[ 2, 'asc' ]],
+									columns: [
+											{ title: 'Source Name', data: 'sourceName', width: '50%'},
+											{ title: 'RC', data: 'recordCount'},																																															 
+											{ title: 'DRC', data: 'descendantRecordCount'}
+									]
+							}
+						}">
+			</table>
+		</div>
 	</div>
 
 	<div id="wrapperConceptHierarchy" data-bind="if:model.currentConceptMode() == 'hierarchy' && !model.loadingRelated()">
@@ -65,7 +78,8 @@
 											{ title: 'Code', data: 'CONCEPT_CODE'},
 											{ title: 'Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-											{ title: 'Record Count', data: 'DENSITY'},																																															 
+											{ title: 'RC', data: 'RECORD_COUNT'},																																															 
+											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},																																															 
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]
@@ -76,7 +90,7 @@
 		<div id="wrapperHierarchyAnchor" class="heading" data-bind="text:model.currentConcept().CONCEPT_CODE + ' ' + model.currentConcept().CONCEPT_NAME">
 		</div>
 		<div id="wrapperChildren">
-			<div class="heading">Children</div>			
+			<div class="heading">Children</div>
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
 								data: model.metarchy.children(),
 								language: {
@@ -95,7 +109,8 @@
 											{ title: 'Code', data: 'CONCEPT_CODE'},
 											{ title: 'Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-											{ title: 'Record Count', data: 'DENSITY'},																																															 
+											{ title: 'RC', data: 'RECORD_COUNT'},																																															 
+											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},																																															 																																															 
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]
@@ -103,44 +118,6 @@
 						}">
 			</table>
 		</div>
-	</div>
-
-	<div id="wrapperConceptEvidence" data-bind="if:model.currentConceptMode() == 'evidence' && !model.loadingEvidence()">
-
-		<div class="heading">Evidence Scatter</div>
-		<div style="background-color:#eee;padding:5px;">
-			<div id="conceptEvidenceScatter"></div>
-		</div>
-
-		<div class="heading">Evidence Records</div>
-		<table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
-            data: model.evidence(),
-            options: {
-							dom: 'Clfiprt',
-							colVis: {
-								buttonText: 'Change Columns',
-								align: 'right',
-								overlayFade: 0,
-								showAll: 'Show All Columns',
-								restore: 'Reset Columns'
-							},
-							lengthMenu: [[20, 50, 100, -1], [20, 50, 100,'All']],
-							deferRender: true,
-							orderClasses: false,
-							autoWidth: false,
-							ordering: true,
-							order: [[ 2, 'asc' ]],
-							columns: [
-									{ title: 'Evidence Type', data: 'evidenceType'},
-									{ title: 'Link Out', data: 'linkout'},
-									{ title: 'Drug Name', data: 'drugName'},
-									{ title: 'Condition Name', data: 'conditionName'},
-									{ title: 'Value', data: 'value' }
-							]
-					}
-        }">
-		</table>
-
 	</div>
 
 	<div id="wrapperConceptDetails" data-bind="if:model.currentConceptMode() == 'details'">

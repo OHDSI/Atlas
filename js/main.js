@@ -231,9 +231,34 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 		}
 	});
 
-	// handle selections with shopping cart icon
-	$(document).on('click', '.wrapperTitle .fa-shopping-cart, .conceptTable i.fa.fa-shopping-cart', function () {
+	// handle select all 
+	$(document).on('click', 'th i.fa.fa-shopping-cart', function () {
+		var table = $(this).closest('.dataTable').DataTable();
+		var concepts = table.rows({search:'applied'}).data();
+		var selectedConcepts = pageModel.selectedConcepts();
 
+		for (var i=0; i<concepts.length; i++) {
+			var concept = concepts[i];
+			if (pageModel.selectedConceptsIndex[concept.CONCEPT_ID]) {
+				// ignore if already selected
+				
+				/*
+				delete pageModel.selectedConceptsIndex[concept.CONCEPT_ID];
+				pageModel.selectedConcepts.remove(function (i) {
+					return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
+				});
+				*/				
+			} else {
+				var conceptSetItem = pageModel.createConceptSetItem(concept);				
+				pageModel.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
+				selectedConcepts.push(conceptSetItem)
+			}
+		}
+		pageModel.selectedConcepts(selectedConcepts);
+		ko.contextFor(this).$component.reference.valueHasMutated();
+	});
+	
+	$(document).on('click', 'td i.fa.fa-shopping-cart', function () {
 		$(this).toggleClass('selected');
 		var concept = ko.contextFor(this).$data;
 

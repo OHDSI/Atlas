@@ -166,7 +166,7 @@ define([
 				{
 					'caption': 'Has Data',
 					'binding': function (o) {
-						return o.DENSITY > 0;
+						return o.RECORD_COUNT > 0 || o.DESCENDANT_RECORD_COUNT > 0;
 					}
 						}
 					]
@@ -217,7 +217,7 @@ define([
 				{
 					'caption': 'Has Data',
 					'binding': function (o) {
-						return o.DENSITY > 0;
+						return o.RECORD_COUNT > 0 || o.DESCENDANT_RECORD_COUNT;
 					}
 				},
 				{
@@ -237,7 +237,7 @@ define([
 
 		self.searchConceptsColumns = [
 			{
-				title: '',
+				title: '<i class="fa fa-shopping-cart"></i>',
 				render: function (s, p, d) {
 					var css = '';
 					var icon = 'fa-shopping-cart';
@@ -277,10 +277,15 @@ define([
 				visible: false
 			},
 			{
-				title: 'Record Count',
-				data: 'DENSITY',
+				title: 'RC',
+				data: 'RECORD_COUNT',
 				className: 'numeric'
 			},
+			{
+				title: 'DRC',
+				data: 'DESCENDANT_RECORD_COUNT',
+				className: 'numeric'
+			},			
 			{
 				title: 'Domain',
 				data: 'DOMAIN_ID'
@@ -294,7 +299,7 @@ define([
 
 		self.relatedConceptsColumns = [
 			{
-				title: '',
+				title: '<i class="fa fa-shopping-cart"></i>',
 				render: function (s, p, d) {
 					var css = '';
 					var icon = 'fa-shopping-cart';
@@ -333,10 +338,15 @@ define([
 				visible: false
 			},
 			{
-				title: 'Record Count',
-				data: 'DENSITY',
+				title: 'RC',
+				data: 'RECORD_COUNT',
 				className: 'numeric'
 			},
+			{
+				title: 'DRC',
+				data: 'DESCENDANT_RECORD_COUNT',
+				className: 'numeric'
+			},			
 			{
 				title: 'Domain',
 				data: 'DOMAIN_ID'
@@ -680,7 +690,7 @@ define([
 			}
 			return false;
 		}
-
+		
 		self.renderConceptSetItemSelector = function (s, p, d) {
 			var css = '';
 			if (pageModel.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
@@ -956,7 +966,7 @@ define([
 
 		self.loadDensity = function (results) {
 			var densityPromise = $.Deferred();
-
+			
 			// nothing to look up
 			if (results.length == 0) {
 				densityPromise.resolve();
@@ -965,18 +975,23 @@ define([
 
 			var searchResultIdentifiers = [];
 			for (c = 0; c < results.length; c++) {
+				// optimization - only lookup standard concepts as non standard concepts will not have records
+				if (results[c].STANDARD_CONCEPT_CAPTION == 'Standard' || results[c].STANDARD_CONCEPT_CAPTION == 'Classification') {
 				searchResultIdentifiers.push(results[c].CONCEPT_ID);
+				}
 			}
 
 			var densityIndex = {};
 
 			$.ajax({
-				url: self.resultsUrl() + 'conceptDensity',
+				url: self.resultsUrl() + 'conceptRecordCount',
 				method: 'POST',
 				contentType: 'application/json',
 				timeout: 10000,
 				data: JSON.stringify(searchResultIdentifiers),
 				success: function (entries) {
+					var formatComma = d3.format(',');			
+					
 					for (var e = 0; e < entries.length; e++) {
 						densityIndex[entries[e].key] = entries[e].value;
 					}
@@ -984,9 +999,11 @@ define([
 					for (var c = 0; c < results.length; c++) {
 						var concept = results[c];
 						if (densityIndex[concept.CONCEPT_ID] != undefined) {
-							concept.DENSITY = densityIndex[concept.CONCEPT_ID];
+							concept.RECORD_COUNT = formatComma(densityIndex[concept.CONCEPT_ID][0]);
+							concept.DESCENDANT_RECORD_COUNT = formatComma(densityIndex[concept.CONCEPT_ID][1]);
 						} else {
-							concept.DENSITY = 0;
+							concept.RECORD_COUNT = 0;
+							concept.DESCENDANT_RECORD_COUNT = 0;
 						}
 					}
 
@@ -995,7 +1012,8 @@ define([
 				error: function (error) {
 					for (var c = 0; c < results.length; c++) {
 						var concept = results[c];
-						concept.DENSITY = 'timeout';
+						concept.RECORD_COUNT = 'timeout';
+						concept.DESCENDANT_RECORD_COUNT = 'timeout';
 					}
 					densityPromise.resolve();
 				}
@@ -1047,10 +1065,6 @@ define([
 			{
 				name: 'Local',
 				url: 'http://localhost:8080/WebAPI/'
-			},
-			{
-				name: 'OHDSI Public',
-				url: 'http://api.ohdsi.org/WebAPI/'
 			}
 		]);
 		self.initializationErrors = 0;
