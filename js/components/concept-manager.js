@@ -10,11 +10,17 @@ define(['knockout', 'text!./concept-manager.html'], function (ko, view) {
 		self.currentConceptId.subscribe(function(value) {
 			self.loadRecordCounts();
 		});
+		
+		self.model.currentConceptMode.subscribe(function(mode) {
+			switch (mode) {
+				case 'recordcounts':
+					self.loadRecordCounts();
+					break;
+			}
+		});
 
 		self.loadRecordCounts = function () {
 			self.loadingSourceCounts(true);
-
-			self.model.currentConceptMode('recordcounts');
 			var sources = self.model.services()[0].sources;
 
 			var allCounts = $.Deferred();

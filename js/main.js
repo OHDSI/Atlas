@@ -195,60 +195,60 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 		}
 	});
 
+	pageModel.loadIncluded = function () {
+		pageModel.loadingIncluded(true);
+		var includedPromise = $.Deferred();
+		
+		$.ajax({
+			url: pageModel.vocabularyUrl() + 'lookup/identifiers',
+			method: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
+			success: function (data) {
+				var densityPromise = pageModel.loadDensity(data);
+
+				$.when(densityPromise).done(function () {
+					pageModel.includedConcepts(data);
+					includedPromise.resolve();
+					pageModel.loadingIncluded(false);
+				});
+			}
+		});
+		
+		return includedPromise;
+	}
+
+	pageModel.loadSourcecodes = function () {
+		pageModel.loadingSourcecodes(true);
+
+		// load mapped
+		var identifiers = [];
+		var concepts = pageModel.includedConcepts();
+		for (var i = 0; i < concepts.length; i++) {
+			identifiers.push(concepts[i].CONCEPT_ID);
+		}
+
+		return $.ajax({
+			url: pageModel.vocabularyUrl() + 'lookup/mapped',
+			method: 'POST',
+			data: JSON.stringify(identifiers),
+			contentType: 'application/json',
+			success: function (sourcecodes) {
+				pageModel.includedSourcecodes(sourcecodes);
+				pageModel.loadingSourcecodes(false);
+			}
+		});
+	}
+
 	pageModel.currentConceptSetMode.subscribe(function (newMode) {
 		switch (newMode) {
 		case 'included':
-			pageModel.loadingIncluded(true);
-			$.ajax({
-				url: pageModel.vocabularyUrl() + 'lookup/identifiers',
-				method: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
-				success: function (data) {
-					var densityPromise = pageModel.loadDensity(data);
-
-					$.when(densityPromise).done(function () {
-						pageModel.includedConcepts(data);
-						pageModel.loadingIncluded(false);
-					});
-				}
-			});
-			break;
-		case 'analysis':
-			if (pageModel.conceptSetInclusionIdentifiers().length > 0) {
-				$.ajax({
-					url: pageModel.resultsUrl() + 'denseSiblings',
-					method: 'POST',
-					contentType: 'application/json',
-					data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
-					success: function (denseConcepts) {
-						var densityPromise = pageModel.loadDensity(denseConcepts);
-
-						$.when(densityPromise).done(function () {
-							pageModel.denseSiblings(denseConcepts);
-						});
-					}
-				});
-			}
+			pageModel.loadIncluded();
 			break;
 		case 'sourcecodes':
-			pageModel.loadingSourcecodes(true);
-			// load mapped
-			var identifiers = [];
-			var concepts = pageModel.selectedConcepts();
-			for (var i=0; i<concepts.length; i++) {
-				identifiers.push(concepts[i].concept.CONCEPT_ID);
-			}
-
-			$.ajax({
-				url: pageModel.vocabularyUrl() + 'lookup/mapped',
-				method: 'POST',
-				data: JSON.stringify(identifiers),
-				contentType: 'application/json',
-				success: function (sourcecodes) {
-					pageModel.includedSourcecodes(sourcecodes);
-					pageModel.loadingSourcecodes(false);
-				}
+			var includedPromise =	pageModel.loadIncluded();
+			$.when(includedPromise).done(function() {
+				pageModel.loadSourcecodes();
 			});
 			break;
 		}
@@ -266,13 +266,6 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 			var concept = concepts[i];
 			if (pageModel.selectedConceptsIndex[concept.CONCEPT_ID]) {
 				// ignore if already selected
-
-				/*
-				delete pageModel.selectedConceptsIndex[concept.CONCEPT_ID];
-				pageModel.selectedConcepts.remove(function (i) {
-					return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
-				});
-				*/
 			} else {
 				var conceptSetItem = pageModel.createConceptSetItem(concept);
 				pageModel.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
@@ -283,7 +276,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 		ko.contextFor(this).$component.reference.valueHasMutated();
 	});
 
-	$(document).on('click', 'td i.fa.fa-shopping-cart', function () {
+	$(document).on('click', 'td i.fa.fa-shopping-cart, .wrapperTitle i.fa.fa-shopping-cart', function () {
 		$(this).toggleClass('selected');
 		var concept = ko.contextFor(this).$data;
 

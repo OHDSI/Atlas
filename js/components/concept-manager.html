@@ -19,7 +19,7 @@
 						</span>Hierarchy</a>
 		</li>
 
-		<li role="presentation" data-bind="click:$component.loadRecordCounts, attr: {class: model.currentConceptMode() == 'recordcounts' ? 'active' : ''}">
+		<li role="presentation" data-bind="click: function() {model.currentConceptMode('recordcounts');}, attr: {class: model.currentConceptMode() == 'recordcounts' ? 'active' : ''}">
 			<a>Record Counts</a>
 		</li>
 	</ul>

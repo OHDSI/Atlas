@@ -27,14 +27,13 @@
 		<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.denseSiblings}"></faceted-datatable>
 	</div>
 
-	<div class="loading" data-bind="if:model.loadingIncluded">loading</div>
+	<div class="loading" data-bind="if:model.loadingSourcecodes() || model.loadingIncluded">loading</div>
+	
 	<div data-bind="visible: model.currentConceptSetMode() == 'included' && !model.loadingIncluded()">
 		<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
 	</div>
 
-	<div class="loading" data-bind="if:model.loadingSourcecodes">loading</div>
-
-	<div data-bind="visible: model.currentConceptSetMode() == 'sourcecodes' && !model.loadingSourcecodes()">
+	<div data-bind="visible: model.currentConceptSetMode() == 'sourcecodes' && !model.loadingSourcecodes() && !model.loadingIncluded()">
 		<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
 	</div>
 

@@ -1058,69 +1058,6 @@ define([
 		self.currentConcept = ko.observable();
 		self.currentConceptId = ko.observable();
 		self.currentConceptMode = ko.observable('details');
-		self.currentConceptMode.subscribe(function (newMode) {
-			switch (newMode) {
-			case 'evidence':
-				// load evidence
-				self.loadingEvidence(true);
-				var evidencePromise = $.ajax({
-					url: self.evidenceUrl() + self.currentConcept().CONCEPT_ID,
-					method: 'GET',
-					contentType: 'application/json',
-					success: function (evidence) {
-						self.evidence(evidence);
-						self.loadingEvidence(false);
-
-						var evidenceData = [];
-						var evidenceSource = {
-							name: 'source',
-							values: []
-						};
-						evidenceData.push(evidenceSource);
-						var evidenceCount = 0;
-						for (var i = 0; i < evidence.length; i++) {
-							if (evidence[i].evidenceType == 'MEDLINE_MeSH_CR') {
-								var e = {
-									evidenceType: evidence[i].evidenceType,
-									label: evidence[i].drugName,
-									xValue: evidenceCount++,
-									yValue: evidence[i].value
-								};
-								evidenceSource.values.push(e);
-							}
-						}
-
-						var scatter = new jnj_chart.scatterplot();
-						scatter.render(evidenceData, "#conceptEvidenceScatter", 460, 150, {
-							yFormat: d3.format('0'),
-							xValue: "xValue",
-							yValue: "yValue",
-							xLabel: "Drugs",
-							yLabel: "Raw Value",
-							seriesName: "evidenceType",
-							showLegend: false,
-							tooltips: [{
-								label: 'Drug',
-								accessor: function (o) {
-									return o.label;
-								}
-						}, {
-								label: 'Raw Value',
-								accessor: function (o) {
-									return o.yValue;
-								}
-						}],
-							colors: d3.scale.category10(),
-							showXAxis: false
-						});
-					},
-					error: function () {
-						self.loadingEvidence(false);
-					}
-				});
-				break;
-			}
-		});
 
 		self.renderCurrentConceptSelector = function () {
 			var css = '';
