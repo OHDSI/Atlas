@@ -1382,3 +1382,12 @@ circle.child {
 	border-bottom:solid 1px #ddd;
 	margin-bottom:10px;
 }
+
+
+#wrapperLeftMenu li a {
+    cursor: pointer;
+}
+
+#wrapperMiniBar li a {
+    cursor: pointer;
+}

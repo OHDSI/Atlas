@@ -44,14 +44,12 @@
 				<li>
 					<a href="#/search"><i class="fa fa-search"></i></a>
 				</li>
-				<!-- ko if: selectedConcepts().length > 0 -->
 				<li>
-					<a href="#/conceptset"><i class="fa fa-shopping-cart"></i></a>
+					<a data-bind="click:routeToConceptSet"><i class="fa fa-shopping-cart"></i></a>
 					<span data-bind="if: selectedConcepts().length > 0">
 					<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 					</span>
 				</li>
-				<!-- /ko -->
 				<li>
 					<a href="#/import"><i class="fa fa-upload"></i></a>
 				</li>
@@ -105,7 +103,7 @@
 				</li>
 			</ul>
 			<li>
-				<a href="#/conceptset"><i class="fa fa-shopping-cart"></i>Concept Set</a>
+				<a data-bind="click:routeToConceptSet"><i class="fa fa-shopping-cart"></i>Concept Set</a>
 				<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 			</li>
 			<li>

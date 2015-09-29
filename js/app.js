@@ -17,7 +17,8 @@ define([
 
 		self.applicationStatus = ko.observable('initializing');
 		self.minibar = ko.observable(false);
-
+		self.searchTabMode = ko.observable('simple');
+		
 		// change timeouts after code complete
 		self.initComplete = function () {
 			self.router.init('/');
@@ -692,6 +693,9 @@ define([
 			return '<a href=\"#/concept/' + d.concept.CONCEPT_ID + '\">' + d.concept.CONCEPT_NAME + '</a>';
 		}
 
+		// for the current selected concepts:
+		// update the export panel
+		// resolve the included concepts and update the include concept set identifier list
 		self.resolveConceptSetExpression = function () {
 			self.resolvingConceptSetExpression(true);
 
@@ -699,7 +703,7 @@ define([
 			var highlightedJson = self.syntaxHighlight(conceptSetExpression);
 			self.currentConceptSetExpressionJson(highlightedJson);
 
-			$.ajax({
+			var resolvingPromise = $.ajax({
 				url: self.vocabularyUrl() + 'resolveConceptSetExpression',
 				data: conceptSetExpression,
 				method: 'POST',
@@ -716,6 +720,8 @@ define([
 					self.resolvingConceptSetExpression(false);
 				}
 			});
+
+			return resolvingPromise;
 		};
 
 		self.renderCheckbox = function (field) {
@@ -764,6 +770,14 @@ define([
 			return $.ajax(pageModel.services()[0].url + sourceKey + '/cohortresults/' + cohortDefinitionId + '/distinctPersonCount', {});
 		}
 
+		self.routeToConceptSet = function () {
+			if (self.currentConceptSet() == undefined) {
+				document.location = "#/conceptset/0/details";
+			} else {
+				document.location = "#/conceptset/" + self.currentConceptSet().id + "/details";
+			}
+		}
+
 		self.getCompletedAnalyses = function (source) {
 			var cohortDefinitionId = pageModel.currentCohortDefinition().id;
 
@@ -787,14 +801,18 @@ define([
 			});
 		}
 
-		self.loadConceptSet = function (conceptSetId) {
+		self.loadConceptSet = function (conceptSetId, mode) {
 			$('body').removeClass('modal-open');
 
-			self.currentView('loading');
+			// don't load if it is already loaded or a new concept set
+			if (conceptSetId == 0 || (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId)) {
+				self.analyzeSelectedConcepts();
+				pageModel.currentConceptSetMode(mode);
+				pageModel.currentView('conceptset');
+				return;
+			}
 
-			self.currentConceptSet(null);
-			self.selectedConcepts([]);
-			self.selectedConceptsIndex = {};
+			self.currentView('loading');
 
 			$.ajax({
 				url: self.services()[0].url + 'conceptset/' + conceptSetId,
@@ -816,14 +834,18 @@ define([
 							}
 
 							self.analyzeSelectedConcepts();
-							pageModel.currentConceptSetMode('details');
 							pageModel.currentView('conceptset');
 							pageModel.currentConceptSet(conceptset);
+							var resolvingPromise = pageModel.resolveConceptSetExpression();
+							$.when(resolvingPromise).done(function () {
+								pageModel.currentConceptSetMode(mode);
+								$('#conceptSetLoadDialog').modal('hide');
+							});
 						}
 					});
 				}
 			});
-		}
+		};
 
 		self.loadCohortDefinition = function (cohortDefinitionId) {
 			self.currentView('loading');
@@ -1094,7 +1116,6 @@ define([
 			self.selectedConceptsIndex = {};
 			self.analyzeSelectedConcepts();
 			self.resolveConceptSetExpression();
-			document.location = '#/conceptset';
 		}
 
 		self.renderHierarchyLink = function (d) {

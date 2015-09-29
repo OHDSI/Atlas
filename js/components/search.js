@@ -3,12 +3,12 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding'], functi
 		var self = this;
 		self.model = params.model;
 		self.loading = ko.observable(false);
-		self.tabMode = ko.observable('simple');
+		self.tabMode = self.model.searchTabMode;
 		self.advancedQuery = ko.observable('');
 		self.initialized = false;
 		self.vocabularies = ko.observableArray();
 		self.domains = ko.observableArray();
-
+		
 		self.model.currentSearch.subscribe(function (query) {
 			self.executeSearch(query);
 		});

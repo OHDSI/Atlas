@@ -109,11 +109,9 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 				pageModel.currentView('import');
 			});
 		},
-		'conceptset': function () {
-			pageModel.currentConceptSetMode('details');
-			pageModel.currentView('conceptset');
+		'conceptset/:conceptSetId/:mode': function(conceptSetId,mode) {
+			pageModel.loadConceptSet(conceptSetId,mode);
 		},
-		'conceptset/:conceptSetId': pageModel.loadConceptSet,
 		'analytics': function () {
 			pageModel.currentView('analytics');
 		},
@@ -134,6 +132,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 		'/search': function () {
 			require(['search'], function () {
 				pageModel.currentView('search');
+				pageModel.searchTabMode('simple');
 			});
 		},
 		'/feasibility': function () {
@@ -171,16 +170,6 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 		case 'splash':
 			// switching back to atlas splash for activity view
 			$('#splash').show();
-			break;
-		case 'conceptset':
-			pageModel.resolveConceptSetExpression();
-
-			var identifiers = [];
-			for (var c = 0; c < pageModel.selectedConcepts().length; c++) {
-				identifiers.push(pageModel.selectedConcepts()[c].concept.CONCEPT_ID);
-			}
-			pageModel.currentConceptIdentifierList(identifiers.join(','));
-
 			break;
 		case 'reports':
 			$.ajax({

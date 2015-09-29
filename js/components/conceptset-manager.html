@@ -1,4 +1,4 @@
-<div data-bind="if: model.currentView() == 'conceptset'">
+<div data-bind="visible: model.currentView() == 'conceptset'">
 	<div class="wrapperTitle">
 		<div data-bind="if:model.currentConceptSet()">
 			<span data-bind="text:model.currentConceptSet().name"></span>
@@ -9,17 +9,17 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-		<li role="presentation" data-bind="click: function() {model.currentConceptSetMode('details');}, attr: {class: model.currentConceptSetMode() == 'details' ? 'active' : ''}"><a>Concept Set Expression</a>
+		<li role="presentation" data-bind="click: function() {$component.routeTo('details');}, attr: {class: model.currentConceptSetMode() == 'details' ? 'active' : ''}"><a>Concept Set Expression</a>
 		</li>
-		<li role="presentation" data-bind="click: function() {model.currentConceptSetMode('included');}, attr: {class: model.currentConceptSetMode() == 'included' ? 'active' : ''}">
+		<li role="presentation" data-bind="click: function() {$component.routeTo('included');}, attr: {class: model.currentConceptSetMode() == 'included' ? 'active' : ''}">
 			<a>Included Concepts
 				<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
 				<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
 		</li>
-		<li role="presentation" data-bind="click: function() {model.currentConceptSetMode('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
+		<li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
 			<a>Included Source Codes</a>
 		</li>
-		<li role="presentation" data-bind="click: function() {model.currentConceptSetMode('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
+		<li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
 		</li>
 	</ul>
 
@@ -28,7 +28,7 @@
 	</div>
 
 	<div class="loading" data-bind="if:model.loadingSourcecodes() || model.loadingIncluded">loading</div>
-	
+
 	<div data-bind="visible: model.currentConceptSetMode() == 'included' && !model.loadingIncluded()">
 		<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
 	</div>

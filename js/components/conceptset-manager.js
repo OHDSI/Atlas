@@ -6,7 +6,6 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 		self.conceptSets = ko.observableArray();
 
 		self.loadConceptSets = function () {
-
 			$.ajax({
 				method: 'GET',
 				url: self.model.services()[0].url + 'conceptset/',
@@ -19,7 +18,7 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 		}
 
 		self.renderLink = function (s, p, d) {
-			return '<a href=\"#/conceptset/' + d.id + '\">' + d.name + '</a>';
+			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
 		}
 
 		self.saveClick = function () {
@@ -30,6 +29,14 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 			}
 		}
 
+		self.routeTo = function(mode) {
+			if (self.model.currentConceptSet() == undefined) {
+				document.location = '#/conceptset/0/' + mode;
+			} else {
+				document.location = '#/conceptset/' + self.model.currentConceptSet().id + '/' + mode;
+			}
+		}
+		
 		self.saveConceptSet = function () {
 			var conceptSet = {};
 
