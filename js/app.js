@@ -62,9 +62,8 @@ define([
 
 			// load related concepts once the concept is loaded
 			self.loadingRelated(true);
-			self.loadingSourcecodes(true);
+
 			var relatedPromise = $.Deferred();
-			var sourcecodesPromise = $.Deferred();
 
 			$.when(conceptPromise).done(function () {
 				self.metarchy = {
@@ -72,21 +71,6 @@ define([
 					children: ko.observableArray(),
 					synonyms: ko.observableArray()
 				};
-
-				// load mapped 
-				var identifiers = [];
-				identifiers.push(conceptId);
-				$.ajax({
-					url: self.vocabularyUrl() + 'lookup/mapped',
-					method: 'POST',
-					data: JSON.stringify(identifiers),
-					contentType: 'application/json',
-					success: function (sourcecodes) {
-						self.relatedSourcecodes(sourcecodes);
-						sourcecodesPromise.resolve();
-						self.loadingSourcecodes(false);
-					}
-				});
 
 				$.ajax({
 					url: self.vocabularyUrl() + 'concept/' + conceptId + '/related',
@@ -285,7 +269,7 @@ define([
 				title: 'DRC',
 				data: 'DESCENDANT_RECORD_COUNT',
 				className: 'numeric'
-			},			
+			},
 			{
 				title: 'Domain',
 				data: 'DOMAIN_ID'
@@ -346,7 +330,7 @@ define([
 				title: 'DRC',
 				data: 'DESCENDANT_RECORD_COUNT',
 				className: 'numeric'
-			},			
+			},
 			{
 				title: 'Domain',
 				data: 'DOMAIN_ID'
@@ -690,7 +674,7 @@ define([
 			}
 			return false;
 		}
-		
+
 		self.renderConceptSetItemSelector = function (s, p, d) {
 			var css = '';
 			if (pageModel.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
@@ -710,7 +694,7 @@ define([
 
 		self.resolveConceptSetExpression = function () {
 			self.resolvingConceptSetExpression(true);
-			
+
 			var conceptSetExpression = '{"items" :' + ko.toJSON(self.selectedConcepts()) + '}';
 			var highlightedJson = self.syntaxHighlight(conceptSetExpression);
 			self.currentConceptSetExpressionJson(highlightedJson);
@@ -722,19 +706,6 @@ define([
 				contentType: 'application/json',
 				success: function (info) {
 					var identifiers = info;
-					self.resolvingSourcecodes(true);
-					$.ajax({
-						url: self.vocabularyUrl() + 'lookup/mapped',
-						data: JSON.stringify(identifiers),
-						method: 'POST',
-						contentType: 'application/json',
-						success: function (sourcecodes) {
-							self.sourcecodeInclusionCount(sourcecodes.length);
-							self.includedSourcecodes(sourcecodes);
-							self.resolvingSourcecodes(false);
-						}
-					});
-
 					self.conceptSetInclusionIdentifiers(info);
 					self.currentIncludedConceptIdentifierList(info.join(','));
 					self.conceptSetInclusionCount(info.length);
@@ -751,6 +722,8 @@ define([
 			return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); pageModel.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="glyphicon glyphicon-ok"></span>';
 		}
 
+		self.enableRecordCounts = ko.observable(true);
+		self.loadingIncluded = ko.observable(false);
 		self.loadingSourcecodes = ko.observable(false);
 		self.loadingRelated = ko.observable(false);
 		self.loadingEvidence = ko.observable(false);
@@ -816,13 +789,13 @@ define([
 
 		self.loadConceptSet = function (conceptSetId) {
 			$('body').removeClass('modal-open');
-			
+
 			self.currentView('loading');
 
 			self.currentConceptSet(null);
 			self.selectedConcepts([]);
 			self.selectedConceptsIndex = {};
-			
+
 			$.ajax({
 				url: self.services()[0].url + 'conceptset/' + conceptSetId,
 				method: 'GET',
@@ -838,11 +811,11 @@ define([
 								conceptSetItem.isExcluded = ko.observable(conceptSetItem.isExcluded);
 								conceptSetItem.includeDescendants = ko.observable(conceptSetItem.includeDescendants);
 								conceptSetItem.includeMapped = ko.observable(conceptSetItem.includeMapped);
-								self.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;								
+								self.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
 								self.selectedConcepts.push(conceptSetItem);
 							}
 
-							self.analyzeSelectedConcepts();							
+							self.analyzeSelectedConcepts();
 							pageModel.currentConceptSetMode('details');
 							pageModel.currentView('conceptset');
 							pageModel.currentConceptSet(conceptset);
@@ -966,7 +939,18 @@ define([
 
 		self.loadDensity = function (results) {
 			var densityPromise = $.Deferred();
-			
+
+			// skip record counts if disabled on configuration screen
+			if (!self.enableRecordCounts()) {
+				for (c = 0; c < results.length; c++) {
+					results[c].RECORD_COUNT = '-';
+					results[c].DESCENDANT_RECORD_COUNT = '-';
+				}
+
+				densityPromise.resolve();
+				return densityPromise;
+			}
+
 			// nothing to look up
 			if (results.length == 0) {
 				densityPromise.resolve();
@@ -977,7 +961,7 @@ define([
 			for (c = 0; c < results.length; c++) {
 				// optimization - only lookup standard concepts as non standard concepts will not have records
 				if (results[c].STANDARD_CONCEPT_CAPTION == 'Standard' || results[c].STANDARD_CONCEPT_CAPTION == 'Classification') {
-				searchResultIdentifiers.push(results[c].CONCEPT_ID);
+					searchResultIdentifiers.push(results[c].CONCEPT_ID);
 				}
 			}
 
@@ -990,8 +974,8 @@ define([
 				timeout: 10000,
 				data: JSON.stringify(searchResultIdentifiers),
 				success: function (entries) {
-					var formatComma = d3.format(',');			
-					
+					var formatComma = d3.format(',');
+
 					for (var e = 0; e < entries.length; e++) {
 						densityIndex[entries[e].key] = entries[e].value;
 					}

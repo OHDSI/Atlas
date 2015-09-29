@@ -914,10 +914,9 @@ pre {
 .form-control:focus {
 	/* border-color:#66afe9; */
 	outline: thin dotted #333;
-	outline: 5px auto -webkit-focus-ring-color;
+	outline: 5px auto;
 	outline-offset: -2px;
-	-webkit-box-shadow: none;
-	box-shadow: none
+	box-shadow: none;
 }
 
 .input-sm {
@@ -939,7 +938,7 @@ pre {
 
 .dropdown-menu {
 	border-radius: 0;
-	-webkit-box-shadow: none;
+	box-shadow: none;
 	box-shadow: none
 }
 
@@ -1083,13 +1082,11 @@ pre {
 
 .progress {
 	border-radius: 0;
-	-webkit-box-shadow: none;
-	box-shadow: none
+	box-shadow: none;
 }
 
 .progress-bar {
-	-webkit-box-shadow: none;
-	box-shadow: none
+	box-shadow: none;
 }
 
 .list-group-item:first-child {
@@ -1104,8 +1101,7 @@ pre {
 
 .panel {
 	border-radius: 0;
-	-webkit-box-shadow: none;
-	box-shadow: none
+	box-shadow: none;
 }
 
 .panel-heading {
@@ -1124,8 +1120,7 @@ pre {
 
 .well {
 	border-radius: 0;
-	-webkit-box-shadow: none;
-	box-shadow: none
+	box-shadow: none;
 }
 
 .well-lg {
@@ -1142,14 +1137,12 @@ pre {
 
 .modal-content {
 	border-radius: 0;
-	-webkit-box-shadow: none;
-	box-shadow: none
+	box-shadow: none;
 }
 
 @media screen and (min-width: 768px) {
 	.modal-content {
-		-webkit-box-shadow: none;
-		box-shadow: none
+		box-shadow: none;
 	}
 }
 
@@ -1159,8 +1152,7 @@ pre {
 
 .popover {
 	border-radius: 0;
-	-webkit-box-shadow: none;
-	box-shadow: none
+	box-shadow: none;
 }
 
 .popover-title {

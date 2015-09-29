@@ -1,4 +1,5 @@
 requirejs.config({
+	urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: 'js',
 	map: {
 		'*': {
@@ -197,6 +198,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 	pageModel.currentConceptSetMode.subscribe(function (newMode) {
 		switch (newMode) {
 		case 'included':
+			pageModel.loadingIncluded(true);
 			$.ajax({
 				url: pageModel.vocabularyUrl() + 'lookup/identifiers',
 				method: 'POST',
@@ -207,6 +209,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 
 					$.when(densityPromise).done(function () {
 						pageModel.includedConcepts(data);
+						pageModel.loadingIncluded(false);
 					});
 				}
 			});
@@ -228,28 +231,50 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 				});
 			}
 			break;
+		case 'sourcecodes':
+			pageModel.loadingSourcecodes(true);
+			// load mapped
+			var identifiers = [];
+			var concepts = pageModel.selectedConcepts();
+			for (var i=0; i<concepts.length; i++) {
+				identifiers.push(concepts[i].concept.CONCEPT_ID);
+			}
+
+			$.ajax({
+				url: pageModel.vocabularyUrl() + 'lookup/mapped',
+				method: 'POST',
+				data: JSON.stringify(identifiers),
+				contentType: 'application/json',
+				success: function (sourcecodes) {
+					pageModel.includedSourcecodes(sourcecodes);
+					pageModel.loadingSourcecodes(false);
+				}
+			});
+			break;
 		}
 	});
 
 	// handle select all 
 	$(document).on('click', 'th i.fa.fa-shopping-cart', function () {
 		var table = $(this).closest('.dataTable').DataTable();
-		var concepts = table.rows({search:'applied'}).data();
+		var concepts = table.rows({
+			search: 'applied'
+		}).data();
 		var selectedConcepts = pageModel.selectedConcepts();
 
-		for (var i=0; i<concepts.length; i++) {
+		for (var i = 0; i < concepts.length; i++) {
 			var concept = concepts[i];
 			if (pageModel.selectedConceptsIndex[concept.CONCEPT_ID]) {
 				// ignore if already selected
-				
+
 				/*
 				delete pageModel.selectedConceptsIndex[concept.CONCEPT_ID];
 				pageModel.selectedConcepts.remove(function (i) {
 					return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
 				});
-				*/				
+				*/
 			} else {
-				var conceptSetItem = pageModel.createConceptSetItem(concept);				
+				var conceptSetItem = pageModel.createConceptSetItem(concept);
 				pageModel.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
 				selectedConcepts.push(conceptSetItem)
 			}
@@ -257,7 +282,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 		pageModel.selectedConcepts(selectedConcepts);
 		ko.contextFor(this).$component.reference.valueHasMutated();
 	});
-	
+
 	$(document).on('click', 'td i.fa.fa-shopping-cart', function () {
 		$(this).toggleClass('selected');
 		var concept = ko.contextFor(this).$data;

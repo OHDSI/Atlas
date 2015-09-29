@@ -17,14 +17,8 @@
 				<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
 		</li>
 		<li role="presentation" data-bind="click: function() {model.currentConceptSetMode('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
-			<a>Included Source Codes
-				<span class="badge" data-bind="if: !model.resolvingSourcecodes()"><span data-bind="text:model.sourcecodeInclusionCount()"></span></span>
-				<span class="badge" data-bind="if: model.resolvingSourcecodes();"><i class="fa fa-refresh fa-spin"></i></span></a>
+			<a>Included Source Codes</a>
 		</li>
-		<!--
-		<li role="presentation" data-bind="click: function() {model.currentConceptSetMode('analysis');}, attr: {class: model.currentConceptSetMode() == 'analysis' ? 'active' : ''}"><a>Potential Additions</a>
-		</li>
-		-->
 		<li role="presentation" data-bind="click: function() {model.currentConceptSetMode('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
 		</li>
 	</ul>
@@ -33,11 +27,14 @@
 		<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.denseSiblings}"></faceted-datatable>
 	</div>
 
-	<div data-bind="visible: model.currentConceptSetMode() == 'included'">
+	<div class="loading" data-bind="if:model.loadingIncluded">loading</div>
+	<div data-bind="visible: model.currentConceptSetMode() == 'included' && !model.loadingIncluded()">
 		<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
 	</div>
 
-	<div data-bind="visible: model.currentConceptSetMode() == 'sourcecodes'">
+	<div class="loading" data-bind="if:model.loadingSourcecodes">loading</div>
+
+	<div data-bind="visible: model.currentConceptSetMode() == 'sourcecodes' && !model.loadingSourcecodes()">
 		<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
 	</div>
 
