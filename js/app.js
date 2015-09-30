@@ -8,8 +8,8 @@ define([
 	'knockout-persist'
 ], function ($, ko, jnj_chart, d3) {
 	var appModel = function () {
-		var self = this;
 		$.support.cors = true;
+		var self = this;
 		$('#querytext').focus();
 
 		self.appInitializationFailed = ko.observable(false);
@@ -18,7 +18,7 @@ define([
 		self.applicationStatus = ko.observable('initializing');
 		self.minibar = ko.observable(false);
 		self.searchTabMode = ko.observable('simple');
-		
+
 		// change timeouts after code complete
 		self.initComplete = function () {
 			self.router.init('/');
