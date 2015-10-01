@@ -1,10 +1,11 @@
 requirejs.config({
 	urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: 'js',
-	map: {
-		'*': {
-			'css': 'plugins/css.min',
-			'text': 'plugins/text'
+	config: {
+		text: {
+			useXhr: function (url, protocol, hostname, port) {
+				return true;
+			}
 		}
 	},
 	shim: {
@@ -24,6 +25,7 @@ requirejs.config({
 	paths: {
 		"jquery": "http://code.jquery.com/jquery-1.11.2.min",
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
+		"text": "plugins/text",
 		"knockout": "knockout.min",
 		"knockout-mapping": "knockout.mapping",
 		"knockout-persist": "knockout.persist",
@@ -67,7 +69,6 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 					 "faceted-datatable"
 				], function (ko, app, visualizations, fdg, kd) {
 	$('#splash').fadeIn();
-
 	var pageModel = new app();
 
 	var routerOptions = {
@@ -109,8 +110,8 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 				pageModel.currentView('import');
 			});
 		},
-		'conceptset/:conceptSetId/:mode': function(conceptSetId,mode) {
-			pageModel.loadConceptSet(conceptSetId,mode);
+		'conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
+			pageModel.loadConceptSet(conceptSetId, mode);
 		},
 		'analytics': function () {
 			pageModel.currentView('analytics');
@@ -187,7 +188,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 	pageModel.loadIncluded = function () {
 		pageModel.loadingIncluded(true);
 		var includedPromise = $.Deferred();
-		
+
 		$.ajax({
 			url: pageModel.vocabularyUrl() + 'lookup/identifiers',
 			method: 'POST',
@@ -203,7 +204,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 				});
 			}
 		});
-		
+
 		return includedPromise;
 	}
 
@@ -235,8 +236,8 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 			pageModel.loadIncluded();
 			break;
 		case 'sourcecodes':
-			var includedPromise =	pageModel.loadIncluded();
-			$.when(includedPromise).done(function() {
+			var includedPromise = pageModel.loadIncluded();
+			$.when(includedPromise).done(function () {
 				pageModel.loadSourcecodes();
 			});
 			break;
