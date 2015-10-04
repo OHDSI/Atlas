@@ -1,5 +1,5 @@
 requirejs.config({
-	urlArgs: "bust=" + (new Date()).getTime(),
+	//urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: 'js',
 	config: {
 		text: {
@@ -47,6 +47,7 @@ requirejs.config({
 		"report-manager": "components/report-manager",
 		"analytics-manager": "components/analytics-manager",
 		"faceted-datatable": "components/faceted-datatable",
+		"profile-manager": "components/profile-manager",
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
@@ -110,6 +111,11 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 				pageModel.currentView('import');
 			});
 		},
+		'profiles': function () {
+			require(['profile-manager'], function () {
+				pageModel.currentView('profiles');
+			});
+		},		
 		'conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
 			pageModel.loadConceptSet(conceptSetId, mode);
 		},
@@ -321,6 +327,7 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 					source.hasVocabulary = false;
 					source.hasEvidence = false;
 					source.hasResults = false;
+					source.hasCDM = false;
 					source.vocabularyUrl = '';
 					source.evidenceUrl = '';
 					source.resultsUrl = '';
@@ -359,6 +366,11 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 								pageModel.resultsUrl(source.resultsUrl);
 							}
 						}
+						
+						// evaluate cdm daimons
+						if (daimon.daimonType == 'CDM') {
+							source.hasCDM = true;
+						}						
 					}
 
 					service.sources.push(source);

@@ -74,8 +74,8 @@ body {
 }
 
 .paddedFloater {
-	margin-right:10px;
-	margin-top:5px;
+	margin-right: 10px;
+	margin-top: 5px;
 }
 
 .linkish {
@@ -287,7 +287,9 @@ div#wrapperMainWindowContainer {}
 	padding: 5px 3px 2px 35px;
 }
 
-.feFilter {}
+.feFilter {
+	padding-left: 0px;
+}
 
 .fa.fa-refresh.fa-spin {
 	font-weight: normal;
@@ -1228,7 +1230,7 @@ table.dataTable {
 }
 
 .dataTables_wrapper {
-	margin: 5px 3px 5px 10px;
+	margin: 5px 3px 5px 3px;
 }
 
 textarea.form-control {
@@ -1377,17 +1379,68 @@ circle.child {
 
 .checkboxListing {
 	overflow-y: scroll;
-	height:300px;
+	height: 300px;
 	border-top: solid 1px #ddd;
-	border-bottom:solid 1px #ddd;
-	margin-bottom:10px;
+	border-bottom: solid 1px #ddd;
+	margin-bottom: 10px;
 }
 
-
 #wrapperLeftMenu li a {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 #wrapperMiniBar li a {
-    cursor: pointer;
+	cursor: pointer;
+}
+
+.timewave-condition {
+	stroke: #192B33;
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+	stroke-linecap: round;
+}
+
+.timewave-drug {
+	stroke: #FF8000;
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+	stroke-linecap: round;
+}
+
+.timewave-observation {
+	stroke: #8FB359;
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+	stroke-linecap: round;
+}
+
+.timewave-line {
+	stroke: #ccc;
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+	stroke-linecap: round;
+}
+
+div.timewave {
+	text-align: center;
+}
+
+div.scatter {
+	text-align: center;
+}
+
+.scatter rect.drug {
+	fill: blue;
+}
+
+.scatter rect.condition {
+	fill: #F19119;
+}
+
+.scatter rect.observation {
+	fill: #11f111;
+}
+
+.scatter rect.visit {
+	fill: #f1f111;
 }

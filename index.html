@@ -53,9 +53,11 @@
 				<li>
 					<a href="#/import"><i class="fa fa-upload"></i></a>
 				</li>
-
 				<li>
 					<a href="#/cohortdefinitions"><i class="fa fa-language"></i></a>
+				</li>
+				<li>
+					<a href="#/profiles"><i class="fa fa-user"></i></a>
 				</li>
 				<li>
 					<a href="#/reports"><i class="fa fa-area-chart"></i></a>
@@ -113,6 +115,9 @@
 				<a href="#/cohortdefinitions"><i class="fa fa-language"></i>Cohort Definitions</a>
 			</li>
 			<li>
+				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
+			</li>
+			<li>
 				<a href="#/reports"><i class="fa fa-area-chart"></i>Cohort Reporting</a>
 			</li>
 			<!--
@@ -167,6 +172,10 @@
 				<report-manager params="{model: pageModel}"></report-manager>
 			</div>
 
+			<div data-bind="if:pageModel.currentView() == 'profiles'">
+				<profile-manager params="services: pageModel.services"></profile-manager>
+			</div>
+			
 			<analytics-manager params="{model: pageModel}"></analytics-manager>
 
 			<div data-bind="if:pageModel.currentView() == 'feasibilities'">

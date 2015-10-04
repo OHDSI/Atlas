@@ -5,7 +5,6 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 
 		self.reference = params.reference;
 		self.options = params.options;
-		self.model = params.model;
 		self.columns = params.columns;
 		self.rowCallback = params.rowCallback;
 		self.rowClick = params.rowClick;
