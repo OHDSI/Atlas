@@ -100,6 +100,16 @@ body {
 	color: green;
 }
 
+#scatter rect.drug { fill: #7EB1DC; }
+#scatter rect.condition { fill: #5393C8; }
+#scatter rect.observation { fill: #1265AB; }
+#scatter rect.visit { fill: #094B83; }
+
+#scatter text.drug { fill: #7EB1DC; }
+#scatter text.condition { fill: #5393C8; }
+#scatter text.observation { fill: #1265AB; }
+#scatter text.visit { fill: #094B83; }
+
 .serviceUnavailable {
 	color: red;
 }
@@ -848,12 +858,6 @@ div.loader {
 	text-align: center;
 }
 
-g rect {
-	cursor: pointer;
-}
-
-g rect:hover {}
-
 .tab-content {
 	padding: 2px 2px 15px 2px;
 	background-color: #fff;
@@ -1460,3 +1464,16 @@ div.scatter {
   shape-rendering: crispEdges;
 }
 
+#scatter .focus {
+	opacity: 1;
+}
+
+#scatter .axis text {
+	font-size:10px;
+}
+
+#scatter {
+    text-align: center;
+    /* background-color: #eee; */
+    border-bottom: solid 1px #ccc;
+}

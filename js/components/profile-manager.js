@@ -7,7 +7,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 		self.loading = ko.observable(false);
 		self.loadingCohort = ko.observable(false);
 		self.loadingProfile = ko.observable(false);
-		self.sourceKey = ko.observable('TRUVENMDCR');
+		self.sourceKey = ko.observable();
 		self.members = ko.observableArray();
 		self.personId = ko.observable();
 		self.currentMemberIndex = 0;
@@ -66,8 +66,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 
 		self.loadCohort = function () {
 			$.ajax({
-				// url: self.services()[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members',
-				url: self.services()[0].url + self.sourceKey() + '/cohortresults/5/members',
+				url: self.services()[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members',
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (members) {
@@ -145,20 +144,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 			}
 		];
 
-		self.plotAxis = function (target) {
-			/*
-			var axis = target
-				.append("div")
-				.append("svg")
-				.attr("width", width + margin.left + margin.right)
-				.attr("height", margin.top + margin.bottom)
-				.append("g")
-				.attr("class", "axis")
-				.attr("transform", "translate(" + padding.left + ",0)")
-				.call(xAxis);
-			*/
-		}
-
 		self.parseDate = function (value) {
 			var re = /-?\d+/;
 			var m = re.exec(value);
@@ -167,112 +152,165 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 
 		self.plotScatter = function (records, startDate, endDate) {
 			var margin = {
-				top: 0,
-				right: 0,
-				bottom: 0,
-				left: 0
-			};
-			var width = 800;
-			var height = 100;
+					top: 10,
+					right: 10,
+					bottom: 100,
+					left: 10
+				},
+				margin2 = {
+					top: 330,
+					right: 10,
+					bottom: 20,
+					left: 10
+				},
+				width = 800 - margin.left - margin.right,
+				height = 400 - margin.top - margin.bottom,
+				height2 = 400 - margin2.top - margin2.bottom;
 
-			self.xScale = d3.scale.linear()
-				.domain([startDate, endDate])
-				.range([0, width]);
+			var x = d3.time.scale().range([0, width]),
+				x2 = d3.time.scale().range([0, width]),
+				y = d3.scale.linear().range([height, 0]),
+				y2 = d3.scale.linear().range([height2, 0]);
 
-			self.focusBrush = d3.svg.brush()
-				.x(self.xScale)
-				.on("brush", function() {
-				})
-				.on("brushend", function () {
-					var e1 = self.focusBrush.extent()[0];
-					var e2 = self.focusBrush.extent()[1];
+			var xAxis = d3.svg.axis().scale(x).orient("bottom"),
+				xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
+				yAxis = d3.svg.axis().scale(y).orient("left");
 
-					e1 = self.xScale(e1);
-					e2 = self.xScale(e2);
+			var brushed = function () {
+				x.domain(brush.empty() ? x2.domain() : brush.extent());
+				focus.selectAll('rect')
+					.attr('x', function (d) {
+						return x(d.startDate);
+					});
+				focus.select(".x.axis").call(xAxis);
+			}
 
-					console.log(e1 + ',' + e2);
+			var brush = d3.svg.brush()
+				.x(x2)
+				.on("brush", brushed);
 
-					self.scatterSvg.attr('viewBox',e1 + ' 0 ' + (e2-e1) + '  100');
-				});
+			$('#scatter').empty();
+				
+			var svg = d3.select("#scatter").append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom);
 
-			self.focusTip = d3.tip()
+			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
 				.html(function (d) {
 					return d.conceptName;
 				});
 
-			$('#scatter').empty();
+			svg.call(focusTip);
 
-			self.vertical = function (d) {
-				switch (d.recordType) {
-				case 'drug':
-					return .5;
-					break;
-				case 'condition':
-					return 1.5;
-					break;
-				case 'observation':
-					return 2.5;
-					break;
-				default:
-					return 3.5;
-					break;
-				};
-			};
-
-			var container = d3.select("#scatter")
-				.append("div")
-				.attr("class", "scatter");
-
-			var div = container
-				.append("div");
-
-
-			self.scatterSvg = div.append("svg")
+			svg.append("defs").append("clipPath")
+				.attr("id", "clip")
+				.append("rect")
 				.attr("width", width)
 				.attr("height", height);
 
-			self.controlBar = div.append("svg")
-				.attr("width", "100%")
-				.attr("height", 30);
+			var focus = svg.append("g")
+				.attr("class", "focus")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-			self.focus = self.controlBar.append("g")
-    		.attr("class", "focus");
+			var context = svg.append("g")
+				.attr("class", "context")
+				.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
-			self.controlBar.append("rect")
-				.attr("width","100%")
-				.attr("height",30)
-				.attr("stroke","black")
-				.call(self.focusBrush);
+			x.domain([startDate, endDate]);
+			y.domain([0, 5]);
+			x2.domain(x.domain());
+			y2.domain(y.domain());
 
-			var yScale = d3.scale.linear()
-				.domain([0, 4])
-				.range([0, height]);
-
-			self.scatterSvg.call(self.focusTip);
-
-			self.scatterSvg.selectAll("rect")
+			// place your data into the focus area
+			focus.selectAll("rect")
 				.data(records)
 				.enter()
 				.append("rect")
 				.attr('x', function (d) {
-					return self.xScale(d.startDate);
+					return x(d.startDate);
 				})
 				.attr('y', function (d) {
-					return yScale(self.vertical(d));
+					switch (d.recordType) {
+					case 'drug':
+						return y(4);
+						break;
+					case 'condition':
+						return y(3);
+						break;
+					case 'observation':
+						return y(2);
+						break;
+					case 'visit':
+						return y(1);
+						break;
+					}
 				})
-				.attr('width', 3)
-				.attr('height', 3)
+				.attr('width', 5)
+				.attr('height', 5)
 				.attr('class', function (d) {
 					return d.recordType;
 				})
 				.on('mouseover', function (d) {
-					self.focusTip.show(d);
+					focusTip.show(d);
 				})
 				.on('mouseout', function (d) {
-					self.focusTip.hide(d);
+					focusTip.hide(d);
 				});
+
+			focus.append("text").text('Visits').attr('class','visit').attr('x',0).attr('y',function (d) { return y(1.2); });
+			focus.append("text").text('Observations').attr('class','observation').attr('x',0).attr('y',function (d) { return y(2.2); });
+			focus.append("text").text('Conditions').attr('class','condition').attr('x',0).attr('y',function (d) { return y(3.2); });
+			focus.append("text").text('Drugs').attr('class','drug').attr('x',0).attr('y',function (d) { return y(4.2); });
+			
+			// and focus area
+			context.selectAll("rect")
+				.data(records)
+				.enter()
+				.append("rect")
+				.attr('x', function (d) {
+					return x2(d.startDate);
+				})
+				.attr('y', function (d) {
+					switch (d.recordType) {
+					case 'drug':
+						return y2(4);
+						break;
+					case 'condition':
+						return y2(3);
+						break;
+					case 'observation':
+						return y2(2);
+						break;
+					case 'visit':
+						return y2(1);
+						break;
+					}
+				})
+				.attr('width', 2)
+				.attr('height', 2)
+				.attr('class', function (d) {
+					return d.recordType;
+				});
+
+
+			focus.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis);
+
+			context.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height2 + ")")
+				.call(xAxis2);
+
+			context.append("g")
+				.attr("class", "x brush")
+				.call(brush)
+				.selectAll("rect")
+				.attr("y", -6)
+				.attr("height", height2 + 7);
 		}
 
 		self.plotTimewave = function (tw, startDate, endDate) {
@@ -389,8 +427,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 
 			self.plotAxis(timewave_container);
 		}
-
-		self.loadCohort(5);
 	}
 
 	var component = {
