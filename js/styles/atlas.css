@@ -1421,12 +1421,21 @@ circle.child {
 	stroke-linecap: round;
 }
 
+.overlay {
+	fill: none;
+	cursor: crosshair;
+}
+
 div.timewave {
 	text-align: center;
 }
 
 div.scatter {
 	text-align: center;
+}
+
+.scatter rect.focus {
+	fill: purple;
 }
 
 .scatter rect.drug {
@@ -1444,3 +1453,10 @@ div.scatter {
 .scatter rect.visit {
 	fill: #f1f111;
 }
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+

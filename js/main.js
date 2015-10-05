@@ -101,28 +101,34 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 				pageModel.loadJobs();
 			});
 		},
-		'reports': function () {
+		'/reports': function () {
 			require(['report-manager'], function () {
 				pageModel.currentView('reports');
 			});
 		},
-		'import': function () {
+		'/import': function () {
 			require(['importer'], function () {
 				pageModel.currentView('import');
 			});
 		},
-		'profiles': function () {
+		'/profiles': function () {
 			require(['profile-manager'], function () {
 				pageModel.currentView('profiles');
 			});
 		},		
-		'conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
+		'/profiles/cohort/:cohortDefinitionId:' : function(cohortDefinitionId) {
+			require(['profile-manager'], function () {
+				pageModel.currentCohortDefinition(cohortDefinitionId);
+				pageModel.currentView('profiles');
+			});
+		},
+		'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
 			pageModel.loadConceptSet(conceptSetId, mode);
 		},
 		'analytics': function () {
 			pageModel.currentView('analytics');
 		},
-		'splash': function () {
+		'/splash': function () {
 			pageModel.currentView('splash');
 		},
 		'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
@@ -161,7 +167,6 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 					kd.kernelDensity('#kernelDensityContainer', covariates);
 				}
 			});
-
 		}
 	}
 

@@ -7,7 +7,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 		self.loading = ko.observable(false);
 		self.loadingCohort = ko.observable(false);
 		self.loadingProfile = ko.observable(false);
-		self.sourceKey = ko.observable();
+		self.sourceKey = ko.observable('TRUVENMDCR');
 		self.members = ko.observableArray();
 		self.personId = ko.observable();
 		self.currentMemberIndex = 0;
@@ -66,7 +66,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 
 		self.loadCohort = function () {
 			$.ajax({
-				url: self.services()[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members',
+				// url: self.services()[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members',
+				url: self.services()[0].url + self.sourceKey() + '/cohortresults/5/members',
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (members) {
@@ -162,37 +163,48 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 			var re = /-?\d+/;
 			var m = re.exec(value);
 			return new Date(parseInt(m[0]));
-
 		}
 
 		self.plotScatter = function (records, startDate, endDate) {
 			var margin = {
-					top: 0,
-					right: 0,
-					bottom: 0,
-					left: 0
-				},
-				width = 800,
-				height = 100;
-
-			var padding = {
 				top: 0,
+				right: 0,
+				bottom: 0,
 				left: 0
 			};
+			var width = 800;
+			var height = 100;
 
-			var focusTip = d3.tip()
+			self.xScale = d3.scale.linear()
+				.domain([startDate, endDate])
+				.range([0, width]);
+
+			self.focusBrush = d3.svg.brush()
+				.x(self.xScale)
+				.on("brush", function() {
+				})
+				.on("brushend", function () {
+					var e1 = self.focusBrush.extent()[0];
+					var e2 = self.focusBrush.extent()[1];
+
+					e1 = self.xScale(e1);
+					e2 = self.xScale(e2);
+
+					console.log(e1 + ',' + e2);
+
+					self.scatterSvg.attr('viewBox',e1 + ' 0 ' + (e2-e1) + '  100');
+				});
+
+			self.focusTip = d3.tip()
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
 				.html(function (d) {
 					return d.conceptName;
 				});
 
-			var xScale = d3.scale.linear()
-				.domain([startDate, endDate])
-				.range([0, width]);
 			$('#scatter').empty();
 
-			var vertical = function (d) {
+			self.vertical = function (d) {
 				switch (d.recordType) {
 				case 'drug':
 					return .5;
@@ -216,33 +228,39 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 			var div = container
 				.append("div");
 
-			var svg = div.append("svg")
+
+			self.scatterSvg = div.append("svg")
 				.attr("width", width)
 				.attr("height", height);
-			
-			var overlay = svg.append("rect")
-				.attr("x", 0)
-				.attr("y", 0)
-				.attr("width", width)
-				.attr("height", height)
-				.attr("class", "overlay")
-				.call(focus_brush);
+
+			self.controlBar = div.append("svg")
+				.attr("width", "100%")
+				.attr("height", 30);
+
+			self.focus = self.controlBar.append("g")
+    		.attr("class", "focus");
+
+			self.controlBar.append("rect")
+				.attr("width","100%")
+				.attr("height",30)
+				.attr("stroke","black")
+				.call(self.focusBrush);
 
 			var yScale = d3.scale.linear()
 				.domain([0, 4])
 				.range([0, height]);
 
-			svg.call(focusTip);
+			self.scatterSvg.call(self.focusTip);
 
-			svg.selectAll("rect")
+			self.scatterSvg.selectAll("rect")
 				.data(records)
 				.enter()
 				.append("rect")
 				.attr('x', function (d) {
-					return xScale(d.startDate);
+					return self.xScale(d.startDate);
 				})
 				.attr('y', function (d) {
-					return yScale(vertical(d));
+					return yScale(self.vertical(d));
 				})
 				.attr('width', 3)
 				.attr('height', 3)
@@ -250,10 +268,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 					return d.recordType;
 				})
 				.on('mouseover', function (d) {
-					focusTip.show(d);
+					self.focusTip.show(d);
 				})
 				.on('mouseout', function (d) {
-					focusTip.hide(d);
+					self.focusTip.hide(d);
 				});
 		}
 
@@ -369,26 +387,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				}
 			}
 
-			/*
-			overlay = bucketgroup.append("rect")
-				.attr("x", 0)
-				.attr("y", 0)
-				.attr("width", width)
-				.attr("height", height)
-				.attr("class", "overlay")
-				.call(focus_brush);
-
-			focus = bucketgroup.append("rect")
-				.attr("x", 0)
-				.attr("y", 0)
-				.attr("width", 0)
-				.attr("height", height)
-				.attr("class", "focus");
-			*/
-
 			self.plotAxis(timewave_container);
 		}
 
+		self.loadCohort(5);
 	}
 
 	var component = {
