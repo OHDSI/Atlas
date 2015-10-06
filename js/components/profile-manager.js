@@ -19,20 +19,20 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 		self.navigatePrevious = function () {
 			if (self.currentMemberIndex > 0) {
 				self.currentMemberIndex--;
-				self.personId(self.members()[self.currentMemberIndex]);
+				self.personId(self.members()[self.currentMemberIndex].personId);
 			} else {
 				self.currentMemberIndex = self.members().length - 1;
-				self.personId(self.members()[self.currentMemberIndex]);
+				self.personId(self.members()[self.currentMemberIndex].personId);
 			}
 		}
 
 		self.navigateNext = function () {
 			if (self.currentMemberIndex < self.members().length - 1) {
 				self.currentMemberIndex++;
-				self.personId(self.members()[self.currentMemberIndex]);
+				self.personId(self.members()[self.currentMemberIndex].personId);
 			} else {
 				self.currentMemberIindex = 0;
-				self.personId(self.members()[self.currentMemberIndex]);
+				self.personId(self.members()[self.currentMemberIndex].personId);
 			}
 		}
 
@@ -73,7 +73,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 					self.members(members);
 					// default to first person in the cohort
 					self.currentMemberIndex = 0;
-					self.personId(members[self.currentMemberIndex]);
+					self.personId(members[self.currentMemberIndex].personId);
 				}
 			});
 		};
@@ -154,18 +154,18 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 			var margin = {
 					top: 10,
 					right: 10,
-					bottom: 100,
+					bottom: 150,
 					left: 10
 				},
 				margin2 = {
-					top: 330,
+					top: 430,
 					right: 10,
 					bottom: 20,
 					left: 10
 				},
-				width = 800 - margin.left - margin.right,
-				height = 400 - margin.top - margin.bottom,
-				height2 = 400 - margin2.top - margin2.bottom;
+				width = 900 - margin.left - margin.right,
+				height = 500 - margin.top - margin.bottom,
+				height2 = 500 - margin2.top - margin2.bottom;
 
 			var x = d3.time.scale().range([0, width]),
 				x2 = d3.time.scale().range([0, width]),
@@ -180,8 +180,15 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				x.domain(brush.empty() ? x2.domain() : brush.extent());
 				focus.selectAll('rect')
 					.attr('x', function (d) {
-						return x(d.startDate);
+						return x(d.startDate)-2.5;
 					});
+			var member = self.members()[self.currentMemberIndex];
+			focus.selectAll("line")
+				.attr('x1', function(d) {return x(d)})
+				.attr('y1', 0)
+				.attr('x2',function(d) {return x(d)})
+				.attr('y2',height)
+				.attr('class','observation-period');					
 				focus.select(".x.axis").call(xAxis);
 			}
 
@@ -194,7 +201,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 			var svg = d3.select("#scatter").append("svg")
 				.attr("width", width + margin.left + margin.right)
 				.attr("height", height + margin.top + margin.bottom);
-
+			
 			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
@@ -203,12 +210,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				});
 
 			svg.call(focusTip);
-
-			svg.append("defs").append("clipPath")
-				.attr("id", "clip")
-				.append("rect")
-				.attr("width", width)
-				.attr("height", height);
 
 			var focus = svg.append("g")
 				.attr("class", "focus")
@@ -219,9 +220,21 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
 			x.domain([startDate, endDate]);
-			y.domain([0, 5]);
+			y.domain([0, 5]);	
 			x2.domain(x.domain());
 			y2.domain(y.domain());
+
+			// plot observation window lines
+			var member = self.members()[self.currentMemberIndex];
+			focus.selectAll("line")
+				.data([member.startDate, member.endDate])
+				.enter()
+				.append("line")
+				.attr('x1', function(d) {return x(d)})
+				.attr('y1', 0)
+				.attr('x2',function(d) {return x(d)})
+				.attr('y2',height)
+				.attr('class','observation-period');
 
 			// place your data into the focus area
 			focus.selectAll("rect")
@@ -229,7 +242,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				.enter()
 				.append("rect")
 				.attr('x', function (d) {
-					return x(d.startDate);
+					return x(d.startDate) - 2.5;
 				})
 				.attr('y', function (d) {
 					switch (d.recordType) {
@@ -265,6 +278,16 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 			focus.append("text").text('Drugs').attr('class','drug').attr('x',0).attr('y',function (d) { return y(4.2); });
 			
 			// and focus area
+			context.selectAll("line")
+				.data([member.startDate, member.endDate])
+				.enter()
+				.append("line")
+				.attr('x1', function(d) {return x2(d)})
+				.attr('y1', 0)
+				.attr('x2',function(d) {return x2(d)})
+				.attr('y2',height2)
+				.attr('class','observation-period');
+			
 			context.selectAll("rect")
 				.data(records)
 				.enter()
