@@ -31,7 +31,9 @@
 							lengthMenu: [[15, 30, 45, -1], [15, 30, 45,'All']],
 							orderClasses: false,
 							ordering: true,
-							columns: $component.columns,																																						 	
+							order: [[ $component.orderColumn, 'desc' ]],
+							columns: $component.columns,
+							autoWidth: true
 					},
 					onRowClick: $component.rowClick
         }">

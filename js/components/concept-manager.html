@@ -24,10 +24,6 @@
 		</li>
 	</ul>
 
-	<div data-bind="visible:model.currentConceptMode() == 'sourcecodes' && !model.loadingSourcecodes()">
-		<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.relatedSourcecodes }"></faceted-datatable>
-	</div>
-
 	<div class="paddedWrapper" data-bind="if:model.currentConceptMode() == 'recordcounts' ">
 
 		<div data-bind="visible:loadingSourceCounts()" class="loading">loading</div>
@@ -44,7 +40,7 @@
 									lengthMenu: [[-1], ['All']],
 									orderClasses: false,
 									ordering: true,
-									order: [[ 2, 'asc' ]],
+									order: [[ 2, 'desc' ]],
 									columns: [
 											{ title: 'Source Name', data: 'sourceName', width: '50%'},
 											{ title: 'RC', data: 'recordCount'},																																															 
@@ -71,7 +67,7 @@
 									lengthMenu: [[-1], ['All']],
 									orderClasses: false,
 									ordering: true,
-									order: [[ 2, 'asc' ]],
+									order: [[ 6, 'desc' ]],
 									columns: [
 											{ title: '', render: model.renderConceptSelector, orderable:false, searchable:false},
 											{ title: 'Id', data: 'CONCEPT_ID'},
@@ -102,7 +98,7 @@
 									lengthMenu: [[-1], ['All']],
 									orderClasses: false,
 									ordering: true,
-									order: [[ 2, 'asc' ]],
+									order: [[ 6, 'desc' ]],
 									columns: [
 											{ title: '', render: model.renderConceptSelector, orderable:false, searchable:false},
 											{ title: 'Id', data: 'CONCEPT_ID'},
@@ -166,6 +162,6 @@
 	</div>
 
 	<div data-bind="visible: model.currentConceptMode() == 'related' && !model.loadingRelated()">
-		<faceted-datatable params="{columns: model.relatedConceptsColumns, options: model.relatedConceptsOptions, reference: model.relatedConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
+		<faceted-datatable params="{orderColumn: 7, columns: model.relatedConceptsColumns, options: model.relatedConceptsOptions, reference: model.relatedConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
 	</div>
 </div>

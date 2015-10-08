@@ -212,13 +212,15 @@ pre span.key {
 
 #wrapperLogo {
 	position: relative;
-	height: 46px;
+	height: 40px;
 	padding: 0px 10px 0px 10px;
-	line-height: 49px;
+	line-height: 40px;
 	font-size: 14px;
-	background-color: #fff;
-	color: #1F4159;
+	background-color: #003142;
+	color: #fff;
 	cursor: pointer;
+	text-align: center;
+	border-bottom: solid 1px #ccc;
 }
 
 #wrapperLogo img {
@@ -246,9 +248,9 @@ div#wrapperMainWindowContainer {}
 .wrapperTitle {
 	position: relative;
 	background-color: #003142;
-	height: 46px;
+	height: 40px;
 	color: #FFFFFF;
-	line-height: 47px;
+	line-height: 40px;
 	padding: 0px 0px 0px 10px;
 	font-size: 14px;
 	border-bottom: solid 1px #ccc;
@@ -671,7 +673,7 @@ ul.ColVis_collection li {
 }
 
 .wrapperTitle .fa {
-	font-size: 18px;
+	font-size: 16px;
 	padding-right: 3px;
 }
 
@@ -1217,6 +1219,7 @@ div#stage {
 	font-size: 16px;
 	font-weight: bold;
 	letter-spacing: 5px;
+	color: #fff;
 }
 
 .btn {

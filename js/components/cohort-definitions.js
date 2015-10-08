@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-definitions.html', 'knockout.dataTables.binding'], function (ko, view) {
+define(['knockout', 'text!./cohort-definitions.html', 'knockout.dataTables.binding','faceted-datatable'], function (ko, view) {
 	function cohortDefinitions(params) {
 		var self = this;
 		self.model = params.model;

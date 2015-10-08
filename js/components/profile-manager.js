@@ -1,4 +1,4 @@
-define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dataTables.binding'], function (ko, view, d3) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dataTables.binding','faceted-datatable'], function (ko, view, d3) {
 	function profileManager(params) {
 		var self = this;
 		self.services = params.services;

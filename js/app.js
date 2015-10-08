@@ -14,15 +14,122 @@ define([
 
 		self.appInitializationFailed = ko.observable(false);
 		self.initPromises = [];
-
 		self.applicationStatus = ko.observable('initializing');
 		self.minibar = ko.observable(false);
 		self.searchTabMode = ko.observable('simple');
+		self.pendingSearch = ko.observable(false);
 
-		// change timeouts after code complete
 		self.initComplete = function () {
-			self.router.init('/');
-			self.applicationStatus('running');
+			if (!self.appInitializationFailed()) {
+				var routerOptions = {
+					notfound: function () {
+						self.currentView('search');
+					}
+				};
+				var routes = {
+					'/': function () {
+						// default to search for now
+						document.location = "#/search";
+					},
+					'/concept/:conceptId:': function (conceptId) {
+						require(['concept-manager'], function () {
+							self.currentConceptId(conceptId);
+							self.loadConcept(conceptId);
+						});
+					},
+					'/cohortdefinitions': function () {
+						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
+							self.currentView('cohortdefinitions');
+						});
+					},
+					'/configure': function () {
+						require(['configuration'], function () {
+							self.currentView('configure');
+						});
+					},
+					'/jobs': function () {
+						require(['job-manager'], function () {
+							self.currentView('loading');
+							self.loadJobs();
+						});
+					},
+					'/reports': function () {
+						require(['report-manager'], function () {
+							self.currentView('reports');
+						});
+					},
+					'/import': function () {
+						require(['importer'], function () {
+							self.currentView('import');
+						});
+					},
+					'/profiles': function () {
+						require(['profile-manager', 'cohort-definition-browser'], function () {
+							self.currentView('profiles');
+						});
+					},
+					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
+						require(['conceptset-manager'], function () {
+							self.loadConceptSet(conceptSetId, mode);
+						});
+					},
+					'analytics': function () {
+						require(['analytics-manager'], function () {
+							self.currentView('analytics');
+						});
+					},
+					'/splash': function () {
+						self.currentView('splash');
+					},
+					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
+						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
+							self.currentView('cohortdefinitions');
+							self.loadCohortDefinition(cohortDefinitionId);
+						});
+					},
+					'/search/:query:': function (query) {
+						require(['search'], function (search) {
+							self.currentView('search');
+							self.currentSearch(query);
+						});
+					},
+					'/search': function () {
+						require(['search'], function (search) {
+							self.currentSearch('');
+							self.searchTabMode('simple');
+							self.currentView('search');
+						});
+					},
+					'/feasibility': function () {
+						require(['feasibility-manager', 'feasibility-browser'], function () {
+							self.currentView('feasibilities');
+						});
+					},
+					'/feasibility/:feasibilityId:': function (feasibilityId) {
+						require(['feasibility-analyzer'], function () {
+							self.currentView('feasibility');
+							self.feasibilityId(feasibilityId);
+						});
+					},
+					'/template': function () {
+						self.currentView('template');
+						$.ajax({
+							url: self.services()[0].url + 'OPTUM/cohortresults/44/experimentalCovariates',
+							success: function (covariates) {
+								kd.kernelDensity('#kernelDensityContainer', covariates);
+							}
+						});
+					}
+				}
+				self.router = new Router(routes).configure(routerOptions);
+				
+				self.router.init('/');
+				self.applicationStatus('running');
+			} else {
+				self.currentView('configure');
+				self.applicationStatus('initialization error');
+			}
+
 			setTimeout(function () {
 				$('#splash').hide();
 			}, 0);
@@ -31,6 +138,7 @@ define([
 				$('#wrapperLeftMenu').fadeIn();
 				$('#wrapperMainWindow').fadeIn();
 			}, 10);
+
 		}
 
 		self.loadConcept = function (conceptId) {
@@ -202,7 +310,7 @@ define([
 				{
 					'caption': 'Has Data',
 					'binding': function (o) {
-						return o.RECORD_COUNT > 0 || o.DESCENDANT_RECORD_COUNT;
+						return o.RECORD_COUNT > 0 || o.DESCENDANT_RECORD_COUNT > 0;
 					}
 				},
 				{
@@ -216,8 +324,8 @@ define([
 						}
 						return values;
 					}
-							}
-						]
+				}
+			]
 		};
 
 		self.searchConceptsColumns = [
@@ -249,8 +357,7 @@ define([
 				render: function (s, p, d) {
 					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-				},
-				width: '50%'
+				}
 			},
 			{
 				title: 'Class',
@@ -277,8 +384,7 @@ define([
 			},
 			{
 				title: 'Vocabulary',
-				data: 'VOCABULARY_ID',
-				width: '100px'
+				data: 'VOCABULARY_ID'
 			}
 		];
 
@@ -388,8 +494,7 @@ define([
 			},
 			{
 				title: 'Vocabulary',
-				data: 'VOCABULARY_ID',
-				width: '100px'
+				data: 'VOCABULARY_ID'
 			}
 		];
 
@@ -678,7 +783,7 @@ define([
 
 		self.renderConceptSetItemSelector = function (s, p, d) {
 			var css = '';
-			if (pageModel.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
+			if (self.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
 				css = ' selected';
 			}
 			return '<i class="fa fa-shopping-cart' + css + '"></i>';
@@ -756,7 +861,7 @@ define([
 		]);
 
 		self.getSourceInfo = function (source) {
-			var info = pageModel.currentCohortDefinitionInfo();
+			var info = self.currentCohortDefinitionInfo();
 			for (var i = 0; i < info.length; i++) {
 				if (info[i].id.sourceId == source.sourceId) {
 					return info[i];
@@ -766,8 +871,8 @@ define([
 
 		self.getCohortCount = function (source) {
 			var sourceKey = source.sourceKey;
-			var cohortDefinitionId = pageModel.currentCohortDefinition().id;
-			return $.ajax(pageModel.services()[0].url + sourceKey + '/cohortresults/' + cohortDefinitionId + '/distinctPersonCount', {});
+			var cohortDefinitionId = self.currentCohortDefinition().id;
+			return $.ajax(self.services()[0].url + sourceKey + '/cohortresults/' + cohortDefinitionId + '/distinctPersonCount', {});
 		}
 
 		self.routeToConceptSet = function () {
@@ -779,24 +884,24 @@ define([
 		}
 
 		self.getCompletedAnalyses = function (source) {
-			var cohortDefinitionId = pageModel.currentCohortDefinition().id;
+			var cohortDefinitionId = self.currentCohortDefinition().id;
 
-			$.ajax(pageModel.services()[0].url + source.sourceKey + '/cohortresults/' + cohortDefinitionId + '/analyses', {
+			$.ajax(self.services()[0].url + source.sourceKey + '/cohortresults/' + cohortDefinitionId + '/analyses', {
 				success: function (analyses) {
 					sourceAnalysesStatus = {};
 
 					// initialize cohort analyses status
-					for (var i = 0; i < pageModel.cohortAnalyses().length; i++) {
-						sourceAnalysesStatus[pageModel.cohortAnalyses()[i].name] = 0;
+					for (var i = 0; i < self.cohortAnalyses().length; i++) {
+						sourceAnalysesStatus[self.cohortAnalyses()[i].name] = 0;
 					}
 
 					// capture statistics on the number of each analysis type that was completed
 					for (var a = 0; a < analyses.length; a++) {
-						var analysisType = pageModel.analysisLookup[analyses[a]];
+						var analysisType = self.analysisLookup[analyses[a]];
 						sourceAnalysesStatus[analysisType] = sourceAnalysesStatus[analysisType] + 1;
 					}
 					sourceAnalysesStatus.ready = true;
-					pageModel.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
+					self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
 				}
 			});
 		}
@@ -807,8 +912,8 @@ define([
 			// don't load if it is already loaded or a new concept set
 			if (conceptSetId == 0 || (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId)) {
 				self.analyzeSelectedConcepts();
-				pageModel.currentConceptSetMode(mode);
-				pageModel.currentView('conceptset');
+				self.currentConceptSetMode(mode);
+				self.currentView('conceptset');
 				return;
 			}
 
@@ -834,11 +939,11 @@ define([
 							}
 
 							self.analyzeSelectedConcepts();
-							pageModel.currentView('conceptset');
-							pageModel.currentConceptSet(conceptset);
-							var resolvingPromise = pageModel.resolveConceptSetExpression();
+							self.currentView('conceptset');
+							self.currentConceptSet(conceptset);
+							var resolvingPromise = self.resolveConceptSetExpression();
 							$.when(resolvingPromise).done(function () {
-								pageModel.currentConceptSetMode(mode);
+								self.currentConceptSetMode(mode);
 								$('#conceptSetLoadDialog').modal('hide');
 							});
 						}

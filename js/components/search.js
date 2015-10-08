@@ -1,20 +1,28 @@
-define(['knockout', 'text!./search.html', 'knockout.dataTables.binding'], function (ko, view) {
+define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view) {
 	function search(params) {
 		var self = this;
+		if (params.controller) {
+			params.controller(this);
+		}
+
 		self.model = params.model;
 		self.loading = ko.observable(false);
-		self.tabMode = self.model.searchTabMode;
 		self.advancedQuery = ko.observable('');
 		self.initialized = false;
 		self.vocabularies = ko.observableArray();
 		self.domains = ko.observableArray();
-		
+		self.tabMode = self.model.searchTabMode;
+
 		self.model.currentSearch.subscribe(function (query) {
-			self.executeSearch(query);
+			if (self.model.currentSearch().length > 2) {
+				document.location = "#/search/" + self.model.currentSearch();
+				self.executeSearch();
+			}
 		});
 
 		self.tabMode.subscribe(function (value) {
-			if (value == 'advanced') {
+			switch (value) {
+			case 'advanced':
 				if (!self.initialized) {
 					self.loading(true);
 
@@ -37,12 +45,13 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding'], functi
 						self.initialized = true;
 					});
 				}
+				break;
 			}
 		});
 
 		self.executeAdvancedSearch = function () {
 			self.loading(true);
-			
+
 			var advancedSearch = {
 				"QUERY": self.advancedQuery()
 			};
@@ -56,7 +65,7 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding'], functi
 			if (vocabs.length > 0) {
 				advancedSearch["VOCABULARY_ID"] = vocabs;
 			}
-			
+
 			var domains = [];
 			var domainElements = $('[name="domainId"]input:checkbox:checked');
 			for (var i = 0; i < domainElements.length; i++) {
@@ -85,7 +94,8 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding'], functi
 			});
 		};
 
-		self.executeSearch = function (query) {
+		self.executeSearch = function () {
+			var query = self.model.currentSearch();
 			self.loading(true);
 
 			filters = [];
@@ -144,20 +154,16 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding'], functi
 			});
 		}
 
-		// handle race condition
-		if (self.model.currentSearch()) {
-			self.executeSearch(self.model.currentSearch());
-		}
-
 		self.checkExecuteSearch = function (data, e) {
+			/*
 			if (e.keyCode == 13) { // enter
-				var query = $('#querytext').val();
-				if (query.length > 2) {
-					document.location = "#/search/" + encodeURI(query);
+				if (self.model.currentSearch().length > 2) {
+					document.location = "#/search/" + encodeURI(self.model.currentSearch());
 				} else {
 					$('#helpMinimumQueryLength').modal('show');
 				}
 			}
+			*/
 		};
 
 		self.renderConceptSelector = function (s, p, d) {
@@ -168,6 +174,11 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding'], functi
 				css = ' selected';
 			}
 			return '<i class="fa ' + icon + ' ' + css + '"></i>';
+		}
+
+		// handle race condition
+		if (self.model.currentSearch()) {
+			self.executeSearch(self.model.currentSearch());
 		}
 	}
 

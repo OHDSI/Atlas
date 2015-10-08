@@ -19,10 +19,7 @@ define(['jquery', 'knockout', 'datatables'], function ($, ko) {
 	}
 
 	ko.bindingHandlers.dataTable = {
-
 		init: function (element, valueAccessor) {
-
-
 			var binding = ko.utils.unwrapObservable(valueAccessor());
 
 			// If the binding is an object with an options field,
@@ -50,7 +47,7 @@ define(['jquery', 'knockout', 'datatables'], function ($, ko) {
 					});
 				}
 			}
-
+						
 			return {
 				controlsDescendantBindings: true
 			};
