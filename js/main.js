@@ -1,5 +1,5 @@
 requirejs.config({
-	urlArgs: "bust=" + (new Date()).getTime(),
+	//urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: 'js',
 	config: {
 		text: {
@@ -47,120 +47,138 @@ requirejs.config({
 		"report-manager": "components/report-manager",
 		"analytics-manager": "components/analytics-manager",
 		"faceted-datatable": "components/faceted-datatable",
+		"profile-manager": "components/profile-manager",
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
-		"lodash": "lodash.min",
-		"packinghierarchy": "visualization.packinghierarchy",
-		"forcedirectedgraph": "visualization.forcedirectedgraph",
-		"kerneldensity": "visualization.kerneldensity"
+		"lodash": "lodash.min"
 	}
 });
 
 // todo - remove overall requirements and move to route based lazy loaded requires
-requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneldensity',
-					 'director',
-					 "concept-manager",
-					 "conceptset-manager",
-					 "cohort-definitions",
-					 "cohort-definition-manager",
-					 "cohort-definition-browser",
-					 "analytics-manager",
-					 "faceted-datatable"
-				], function (ko, app, visualizations, fdg, kd) {
+requirejs(['knockout', 'app', 'director','search'], function (ko, app) {
+	
 	$('#splash').fadeIn();
 	var pageModel = new app();
-
-	var routerOptions = {
-		notfound: function () {
-			pageModel.currentView('search');
-		}
-	}
-
-	var routes = {
-		'/': function () {
-			// default to search for now
-			document.location = "#/search";
-		},
-		'/concept/:conceptId:': function (conceptId) {
-			pageModel.currentConceptId(conceptId);
-			pageModel.loadConcept(conceptId);
-		},
-		'/cohortdefinitions': function () {
-			pageModel.currentView('cohortdefinitions');
-		},
-		'/configure': function () {
-			require(['configuration'], function () {
-				pageModel.currentView('configure');
-			});
-		},
-		'/jobs': function () {
-			require(['job-manager'], function () {
-				pageModel.currentView('loading');
-				pageModel.loadJobs();
-			});
-		},
-		'reports': function () {
-			require(['report-manager'], function () {
-				pageModel.currentView('reports');
-			});
-		},
-		'import': function () {
-			require(['importer'], function () {
-				pageModel.currentView('import');
-			});
-		},
-		'conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
-			pageModel.loadConceptSet(conceptSetId, mode);
-		},
-		'analytics': function () {
-			pageModel.currentView('analytics');
-		},
-		'splash': function () {
-			pageModel.currentView('splash');
-		},
-		'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
-			require([''], function () {
-				pageModel.loadCohortDefinition(cohortDefinitionId)
-			});
-		},
-		'/search/:query:': function (query) {
-			require(['search'], function () {
-				pageModel.currentView('search');
-				pageModel.currentSearch(query);
-			});
-		},
-		'/search': function () {
-			require(['search'], function () {
-				pageModel.currentView('search');
-				pageModel.searchTabMode('simple');
-			});
-		},
-		'/feasibility': function () {
-			require(['feasibility-manager', 'feasibility-browser'], function () {
-				pageModel.currentView('feasibilities');
-			});
-		},
-		'/feasibility/:feasibilityId:': function (feasibilityId) {
-			require(['feasibility-analyzer'], function () {
-				pageModel.currentView('feasibility');
-				pageModel.feasibilityId(feasibilityId);
-			});
-		},
-		'/template': function () {
-			pageModel.currentView('template');
-			$.ajax({
-				url: pageModel.services()[0].url + 'OPTUM/cohortresults/44/experimentalCovariates',
-				success: function (covariates) {
-					kd.kernelDensity('#kernelDensityContainer', covariates);
-				}
-			});
-
-		}
-	}
-
-	pageModel.router = new Router(routes).configure(routerOptions);
 	window.pageModel = pageModel;
+	ko.applyBindings(pageModel);			
+	
+	// establish base priorities for daimons
+	var evidencePriority = 0;
+	var vocabularyPriority = 0;
+	var densityPriority = 0;
+
+	// initialize all service information asynchronously
+	$.each(pageModel.services(), function (serviceIndex, service) {
+		service.sources = [];
+		var servicePromise = $.Deferred();
+		pageModel.initPromises.push(servicePromise);
+
+		$.ajax({
+			url: service.url + 'source/sources',
+			method: 'GET',
+			contentType: 'application/json',
+			success: function (sources) {
+				service.available = true;
+				var completedSources = 0;
+
+				$.each(sources, function (sourceIndex, source) {
+					source.hasVocabulary = false;
+					source.hasEvidence = false;
+					source.hasResults = false;
+					source.hasCDM = false;
+					source.vocabularyUrl = '';
+					source.evidenceUrl = '';
+					source.resultsUrl = '';
+					source.error = '';
+
+					source.initialized = true;
+					for (var d = 0; d < source.daimons.length; d++) {
+						var daimon = source.daimons[d];
+
+						// evaluate vocabulary daimons
+						if (daimon.daimonType == 'Vocabulary') {
+							source.hasVocabulary = true;
+							source.vocabularyUrl = service.url + source.sourceKey + '/vocabulary/';
+							if (daimon.priority >= vocabularyPriority) {
+								vocabularyPriority = daimon.priority;
+								pageModel.vocabularyUrl(source.vocabularyUrl);
+							}
+						}
+
+						// evaluate evidence daimons
+						if (daimon.daimonType == 'Evidence') {
+							source.hasEvidence = true;
+							source.evidenceUrl = service.url + source.sourceKey + '/evidence/';
+							if (daimon.priority >= evidencePriority) {
+								evidencePriority = daimon.priority;
+								pageModel.evidenceUrl(source.evidenceUrl);
+							}
+						}
+
+						// evaluate results daimons
+						if (daimon.daimonType == 'Results') {
+							source.hasResults = true;
+							source.resultsUrl = service.url + source.sourceKey + '/cdmresults/';
+							if (daimon.priority >= densityPriority) {
+								densityPriority = daimon.priority;
+								pageModel.resultsUrl(source.resultsUrl);
+							}
+						}
+
+						// evaluate cdm daimons
+						if (daimon.daimonType == 'CDM') {
+							source.hasCDM = true;
+						}
+					}
+
+					service.sources.push(source);
+
+					$.ajax({
+						url: service.url + source.sourceKey + '/vocabulary/info',
+						timeout: 5000,
+						method: 'GET',
+						contentType: 'application/json',
+						success: function (info) {
+							completedSources++;
+							source.version = info.version;
+							source.dialect = info.dialect;
+
+							if (completedSources == sources.length) {
+								servicePromise.resolve();
+							}
+						},
+						error: function (err) {
+							completedSources++;
+							source.initialized = false;
+							pageModel.initializationErrors++;
+							source.error = err.statusText;
+							source.version = 'unknown';
+							source.dialect = 'unknown';
+							source.url = service.url + source.sourceKey + '/';
+							if (completedSources == sources.length) {
+								servicePromise.resolve();
+							}
+						}
+					});
+				});
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				service.available = false;
+				service.xhr = xhr;
+				service.thrownError = thrownError;
+
+				pageModel.appInitializationFailed(true);
+				pageModel.currentView('configure');
+
+				servicePromise.resolve();
+			}
+		});
+	});
+
+	$.when.apply($, pageModel.initPromises).done(function () {	
+		pageModel.initComplete();
+	});	
 
 	pageModel.currentView.subscribe(function (newView) {
 		if (newView != 'splash') {
@@ -298,112 +316,4 @@ requirejs(['knockout', 'app', 'packinghierarchy', 'forcedirectedgraph', 'kerneld
 		pageModel.analyzeSelectedConcepts();
 	});
 
-	// establish base priorities for daimons
-	var evidencePriority = 0;
-	var vocabularyPriority = 0;
-	var densityPriority = 0;
-
-	// initialize all service information asynchronously
-	$.each(pageModel.services(), function (serviceIndex, service) {
-		service.sources = [];
-		var servicePromise = $.Deferred();
-		pageModel.initPromises.push(servicePromise);
-
-		$.ajax({
-			url: service.url + 'source/sources',
-			method: 'GET',
-			contentType: 'application/json',
-			success: function (sources) {
-				service.available = true;
-				var completedSources = 0;
-
-				$.each(sources, function (sourceIndex, source) {
-					source.hasVocabulary = false;
-					source.hasEvidence = false;
-					source.hasResults = false;
-					source.vocabularyUrl = '';
-					source.evidenceUrl = '';
-					source.resultsUrl = '';
-					source.error = '';
-
-					source.initialized = true;
-					for (var d = 0; d < source.daimons.length; d++) {
-						var daimon = source.daimons[d];
-
-						// evaluate vocabulary daimons
-						if (daimon.daimonType == 'Vocabulary') {
-							source.hasVocabulary = true;
-							source.vocabularyUrl = service.url + source.sourceKey + '/vocabulary/';
-							if (daimon.priority >= vocabularyPriority) {
-								vocabularyPriority = daimon.priority;
-								pageModel.vocabularyUrl(source.vocabularyUrl);
-							}
-						}
-
-						// evaluate evidence daimons
-						if (daimon.daimonType == 'Evidence') {
-							source.hasEvidence = true;
-							source.evidenceUrl = service.url + source.sourceKey + '/evidence/';
-							if (daimon.priority >= evidencePriority) {
-								evidencePriority = daimon.priority;
-								pageModel.evidenceUrl(source.evidenceUrl);
-							}
-						}
-
-						// evaluate results daimons
-						if (daimon.daimonType == 'Results') {
-							source.hasResults = true;
-							source.resultsUrl = service.url + source.sourceKey + '/cdmresults/';
-							if (daimon.priority >= densityPriority) {
-								densityPriority = daimon.priority;
-								pageModel.resultsUrl(source.resultsUrl);
-							}
-						}
-					}
-
-					service.sources.push(source);
-
-					$.ajax({
-						url: service.url + source.sourceKey + '/vocabulary/info',
-						timeout: 5000,
-						method: 'GET',
-						contentType: 'application/json',
-						success: function (info) {
-							completedSources++;
-							source.version = info.version;
-							source.dialect = info.dialect;
-
-							if (completedSources == sources.length) {
-								servicePromise.resolve();
-							}
-						},
-						error: function (err) {
-							completedSources++;
-							source.initialized = false;
-							pageModel.initializationErrors++;
-							source.error = err.statusText;
-							source.version = 'unknown';
-							source.dialect = 'unknown';
-							source.url = service.url + source.sourceKey + '/';
-							if (completedSources == sources.length) {
-								servicePromise.resolve();
-							}
-						}
-					});
-				});
-			},
-			error: function (xhr, ajaxOptions, thrownError) {
-				service.available = false;
-				service.xhr = xhr;
-				service.thrownError = thrownError;
-				servicePromise.resolve();
-
-				pageModel.appInitializationFailed(true);
-				pageModel.currentView('configure');
-			}
-		});
-	});
-
-	$.when.apply($, pageModel.initPromises).done(pageModel.initComplete);
-	ko.applyBindings(pageModel);
 });

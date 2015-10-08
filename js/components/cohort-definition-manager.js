@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-definition-manager.html', 'knockout.dataTables.binding'], function (ko, view) {
+define(['knockout', 'text!./cohort-definition-manager.html', 'knockout.dataTables.binding','faceted-datatable'], function (ko, view) {
 	function cohortDefinitionManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -44,16 +44,13 @@ define(['knockout', 'text!./cohort-definition-manager.html', 'knockout.dataTable
 				cohortJob.observationConceptIds = [];
 				cohortJob.measurementConceptIds = [];
 
-				console.log("Submitting to cohort analysis service:");
-				console.log(cohortJob);
-
 				$.ajax({
 					url: self.model.services()[0].url + 'cohortanalysis',
 					data: JSON.stringify(cohortJob),
 					method: 'POST',
 					contentType: 'application/json',
 					success: function (info) {
-						console.log(info);
+						// to do - handle returned reference to job
 					}
 				});
 			} else {

@@ -1,4 +1,4 @@
-define(['knockout', 'text!./feasibility-analyzer.html'], function (ko, view) {
+define(['knockout', 'text!./feasibility-analyzer.html','faceted-datatable'], function (ko, view) {
 	function feasibilityAnalyzer(params) {
 		var self = this;
 

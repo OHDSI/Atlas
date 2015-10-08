@@ -4,7 +4,7 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'faceted-datatable'
 		self.services = params.services;
 		self.currentService = ko.observable();
 		self.reference = ko.observableArray();
-		self.selected = params.cohortDefinitionId;
+		self.selected = params.cohortDefinitionSelected;
 		self.loading = ko.observable(false);
 
 		self.currentService.subscribe(function (d) {

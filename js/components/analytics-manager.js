@@ -1,4 +1,4 @@
-define(['knockout', 'text!./analytics-manager.html', 'knockout.dataTables.binding'], function (ko, view) {
+define(['knockout', 'text!./analytics-manager.html', 'knockout.dataTables.binding','faceted-datatable'], function (ko, view) {
 	function analyticsManager(params) {
 		var self = this;
 		self.model = params.model;

@@ -1,4 +1,4 @@
-define(['knockout', 'text!./concept-manager.html'], function (ko, view) {
+define(['knockout', 'text!./concept-manager.html','faceted-datatable'], function (ko, view) {
 	function conceptManager(params) {
 		var self = this;
 		self.model = params.model;

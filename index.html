@@ -53,9 +53,11 @@
 				<li>
 					<a href="#/import"><i class="fa fa-upload"></i></a>
 				</li>
-
 				<li>
 					<a href="#/cohortdefinitions"><i class="fa fa-language"></i></a>
+				</li>
+				<li>
+					<a href="#/profiles"><i class="fa fa-user"></i></a>
 				</li>
 				<li>
 					<a href="#/reports"><i class="fa fa-area-chart"></i></a>
@@ -83,7 +85,7 @@
 
 	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible:!pageModel.minibar();">
 		<div id="wrapperLogo">
-			<a href="#/splash"><img src="images/atlas.png">ATLAS</a>
+			<a href="#/splash">ATLAS</a>
 		</div>
 		<ul>
 			<li>
@@ -111,6 +113,9 @@
 			</li>
 			<li>
 				<a href="#/cohortdefinitions"><i class="fa fa-language"></i>Cohort Definitions</a>
+			</li>
+			<li>
+				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
 			</li>
 			<li>
 				<a href="#/reports"><i class="fa fa-area-chart"></i>Cohort Reporting</a>
@@ -147,27 +152,39 @@
 				<importer params="{model: pageModel}"></importer>
 			</div>
 
-			<conceptset-manager params="{model: pageModel}"></conceptset-manager>
-
-			<div data-bind="if: pageModel.currentView() == 'search'">
-				<search params="{model: pageModel}"></search>
+			<div data-bind="if: pageModel.currentView() == 'conceptset'">			
+				<conceptset-manager params="{model: pageModel}"></conceptset-manager>
+			</div>
+			
+			<div data-bind="visible: pageModel.currentView() == 'search'">
+				<search id="componentSearch" params="{model: pageModel}"></search>
 			</div>
 
-			<concept-manager params="{model: pageModel, currentConceptId: pageModel.currentConceptId}"></concept-manager>
+			<div data-bind="if: pageModel.currentView() == 'concept'">
+				<concept-manager params="{model: pageModel, currentConceptId: pageModel.currentConceptId}"></concept-manager>
+			</div>
 
 			<div data-bind="if:pageModel.currentView()=='jobs'">
 				<job-manager params="{model: pageModel}"></job-manager>
 			</div>
 
-			<cohort-definitions params="{model: pageModel}"></cohort-definitions>
-
-			<cohort-definition-manager params="{model: pageModel}"></cohort-definition-manager>
-
+			<div data-bind="if: pageModel.currentView() == 'cohortdefinitions'">
+				<cohort-definitions params="{model: pageModel}"></cohort-definitions>
+			</div>
+			
+			<div data-bind="if: pageModel.currentView() == 'cohortdefinition'">
+				<cohort-definition-manager params="{model: pageModel}"></cohort-definition-manager>
+			</div>
+			
 			<div data-bind="if: pageModel.currentView() == 'reports'">
 				<report-manager params="{model: pageModel}"></report-manager>
 			</div>
 
-			<analytics-manager params="{model: pageModel}"></analytics-manager>
+			<div data-bind="if:pageModel.currentView() == 'profiles'">
+				<profile-manager params="services: pageModel.services"></profile-manager>
+			</div>
+
+			<analytics-manager data-bind="if:pageModel.currentView()== 'analytics'" params="{model: pageModel}"></analytics-manager>
 
 			<div data-bind="if:pageModel.currentView() == 'feasibilities'">
 				<feasibility-manager></feasibility-manager>
