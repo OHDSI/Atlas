@@ -71,6 +71,7 @@ define([
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
 						require(['conceptset-manager'], function () {
 							self.loadConceptSet(conceptSetId, mode);
+							self.resolveConceptSetExpression();
 						});
 					},
 					'analytics': function () {
@@ -807,6 +808,13 @@ define([
 			var conceptSetExpression = '{"items" :' + ko.toJSON(self.selectedConcepts()) + '}';
 			var highlightedJson = self.syntaxHighlight(conceptSetExpression);
 			self.currentConceptSetExpressionJson(highlightedJson);
+
+			var conceptIdentifierList = [];
+			for (var i=0; i<self.selectedConcepts().length; i++)
+			{
+				conceptIdentifierList.push(self.selectedConcepts()[i].concept.CONCEPT_ID);
+			}
+			self.currentConceptIdentifierList(conceptIdentifierList.join(','));
 
 			var resolvingPromise = $.ajax({
 				url: self.vocabularyUrl() + 'resolveConceptSetExpression',

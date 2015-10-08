@@ -290,8 +290,8 @@ requirejs(['knockout', 'app', 'director','search'], function (ko, app) {
 
 		if ($(this).hasClass('selected')) {
 			var conceptSetItem = pageModel.createConceptSetItem(concept);
-			pageModel.selectedConcepts.push(conceptSetItem);
 			pageModel.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
+			pageModel.selectedConcepts.push(conceptSetItem);
 		} else {
 			delete pageModel.selectedConceptsIndex[concept.CONCEPT_ID];
 			pageModel.selectedConcepts.remove(function (i) {
