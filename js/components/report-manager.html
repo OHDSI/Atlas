@@ -17,10 +17,7 @@
 <div class="reportControls pad-5">
 	<div class="row">
 		<div class="col-xs-10">
-			<select class="form-control" data-bind="css : { invalid: $component.model.reportCohortDefinitionId()==undefined }, options:$component.model.cohortDefinitions, optionsText:'name', optionsValue:'id', optionsCaption:'Select a Cohort Definition', value:$component.model.reportCohortDefinitionId"></select>
-		</div>
-		<div class="col-xs-2">
-			<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.showBrowser, text:'Browse'"></button>
+			<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.showBrowser, text:$component.cohortCaption"></button>
 		</div>
 	</div>
 	<div class="row">
@@ -34,9 +31,10 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-xs-10"></div>
+		<div class="col-xs-8"></div>
+
 		<div class="col-xs-2">
-			<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'View Report'"></button>
+			<button class="pull-right form-control btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'View Report'"></button>
 		</div>
 	</div>
 

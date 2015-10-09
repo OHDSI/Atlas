@@ -255,6 +255,7 @@ div#wrapperMainWindowContainer {}
 	font-size: 14px;
 	border-bottom: solid 1px #ccc;
 	vertical-align: middle;
+	white-space: nowrap;
 }
 
 #wrapperLeftMenu ul {

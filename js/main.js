@@ -55,7 +55,6 @@ requirejs.config({
 	}
 });
 
-// todo - remove overall requirements and move to route based lazy loaded requires
 requirejs(['knockout', 'app', 'director','search'], function (ko, app) {
 	
 	$('#splash').fadeIn();

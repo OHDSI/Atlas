@@ -68,7 +68,7 @@ define([
 						});
 					},
 					'/reports': function () {
-						require(['report-manager'], function () {
+						require(['report-manager','cohort-definition-manager', 'cohort-definition-browser'], function () {
 							self.currentView('reports');
 						});
 					},

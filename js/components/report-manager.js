@@ -2,8 +2,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
+		self.cohortCaption = ko.observable('Click Here to Choose a Cohort');
 		
 		self.model.reportCohortDefinitionId.subscribe(function(d) {
+			self.cohortCaption(pageModel.cohortDefinitions().filter(function(value) {return value.id == d;})[0].name);
 			$('#cohortDefinitionChooser').modal('hide');
 		});
 		
