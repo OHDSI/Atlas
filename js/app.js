@@ -10,6 +10,20 @@ define([
 	var appModel = function () {
 		$.support.cors = true;
 		var self = this;
+		
+		self.services = ko.observableArray([
+			/*
+			{
+				name: 'HixBeta Multihomed',
+				url: 'http://hixbeta.jnj.com:8081/WebAPI/'
+			},
+			*/
+			{
+				name: 'Local',
+				url: 'http://localhost:8080/WebAPI/'
+			}
+		]);
+		
 		$('#querytext').focus();
 
 		self.appInitializationFailed = ko.observable(false);
@@ -1174,18 +1188,6 @@ define([
 		self.resolvingConceptSetExpression = ko.observable();
 		self.resolvingSourcecodes = ko.observable();
 		self.evidence = ko.observableArray();
-		self.services = ko.observableArray([
-			/*
-			{
-				name: 'HixBeta Multihomed',
-				url: 'http://hixbeta.jnj.com:8081/WebAPI/'
-			},
-			*/
-			{
-				name: 'Local',
-				url: 'http://localhost:8080/WebAPI/'
-			}
-		]);
 		self.initializationErrors = 0;
 		self.vocabularyUrl = ko.observable();
 		self.evidenceUrl = ko.observable();

@@ -1,4 +1,4 @@
-define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dataTables.binding','faceted-datatable'], function (ko, view, d3) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, d3) {
 	function profileManager(params) {
 		var self = this;
 		self.services = params.services;
@@ -37,7 +37,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 		}
 
 		self.personId.subscribe(function (value) {
-			self.loadProfile(value);
+			if (value) {
+				self.loadProfile(value);
+			}
 		});
 
 		self.cohortDefinitionSelected = function (cohortDefinitionId) {
@@ -70,10 +72,17 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (members) {
-					self.members(members);
-					// default to first person in the cohort
-					self.currentMemberIndex = 0;
-					self.personId(members[self.currentMemberIndex].personId);
+					if (members.length == 0) {
+						self.personId(null);
+						self.loadingProfile(false);
+						$('#modalNoMembers').modal('show');
+						self.members([]);
+					} else {
+						self.members(members);
+						// default to first person in the cohort
+						self.currentMemberIndex = 0;
+						self.personId(members[self.currentMemberIndex].personId);
+					}
 				}
 			});
 		};
@@ -180,15 +189,19 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				x.domain(brush.empty() ? x2.domain() : brush.extent());
 				focus.selectAll('rect')
 					.attr('x', function (d) {
-						return x(d.startDate)-2.5;
+						return x(d.startDate) - 2.5;
 					});
-			var member = self.members()[self.currentMemberIndex];
-			focus.selectAll("line")
-				.attr('x1', function(d) {return x(d)})
-				.attr('y1', 0)
-				.attr('x2',function(d) {return x(d)})
-				.attr('y2',height)
-				.attr('class','observation-period');					
+				var member = self.members()[self.currentMemberIndex];
+				focus.selectAll("line")
+					.attr('x1', function (d) {
+						return x(d)
+					})
+					.attr('y1', 0)
+					.attr('x2', function (d) {
+						return x(d)
+					})
+					.attr('y2', height)
+					.attr('class', 'observation-period');
 				focus.select(".x.axis").call(xAxis);
 			}
 
@@ -197,11 +210,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				.on("brush", brushed);
 
 			$('#scatter').empty();
-				
+
 			var svg = d3.select("#scatter").append("svg")
 				.attr("width", width + margin.left + margin.right)
 				.attr("height", height + margin.top + margin.bottom);
-			
+
 			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
@@ -220,7 +233,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
 			x.domain([startDate, endDate]);
-			y.domain([0, 5]);	
+			y.domain([0, 5]);
 			x2.domain(x.domain());
 			y2.domain(y.domain());
 
@@ -230,11 +243,15 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				.data([member.startDate, member.endDate])
 				.enter()
 				.append("line")
-				.attr('x1', function(d) {return x(d)})
+				.attr('x1', function (d) {
+					return x(d)
+				})
 				.attr('y1', 0)
-				.attr('x2',function(d) {return x(d)})
-				.attr('y2',height)
-				.attr('class','observation-period');
+				.attr('x2', function (d) {
+					return x(d)
+				})
+				.attr('y2', height)
+				.attr('class', 'observation-period');
 
 			// place your data into the focus area
 			focus.selectAll("rect")
@@ -272,22 +289,34 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 					focusTip.hide(d);
 				});
 
-			focus.append("text").text('Visits').attr('class','visit').attr('x',0).attr('y',function (d) { return y(1.2); });
-			focus.append("text").text('Observations').attr('class','observation').attr('x',0).attr('y',function (d) { return y(2.2); });
-			focus.append("text").text('Conditions').attr('class','condition').attr('x',0).attr('y',function (d) { return y(3.2); });
-			focus.append("text").text('Drugs').attr('class','drug').attr('x',0).attr('y',function (d) { return y(4.2); });
-			
+			focus.append("text").text('Visits').attr('class', 'visit').attr('x', 0).attr('y', function (d) {
+				return y(1.2);
+			});
+			focus.append("text").text('Observations').attr('class', 'observation').attr('x', 0).attr('y', function (d) {
+				return y(2.2);
+			});
+			focus.append("text").text('Conditions').attr('class', 'condition').attr('x', 0).attr('y', function (d) {
+				return y(3.2);
+			});
+			focus.append("text").text('Drugs').attr('class', 'drug').attr('x', 0).attr('y', function (d) {
+				return y(4.2);
+			});
+
 			// and focus area
 			context.selectAll("line")
 				.data([member.startDate, member.endDate])
 				.enter()
 				.append("line")
-				.attr('x1', function(d) {return x2(d)})
+				.attr('x1', function (d) {
+					return x2(d)
+				})
 				.attr('y1', 0)
-				.attr('x2',function(d) {return x2(d)})
-				.attr('y2',height2)
-				.attr('class','observation-period');
-			
+				.attr('x2', function (d) {
+					return x2(d)
+				})
+				.attr('y2', height2)
+				.attr('class', 'observation-period');
+
 			context.selectAll("rect")
 				.data(records)
 				.enter()

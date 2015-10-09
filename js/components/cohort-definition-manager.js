@@ -75,6 +75,7 @@ define(['knockout', 'text!./cohort-definition-manager.html', 'knockout.dataTable
 			}
 			return false;
 		}
+
 	}
 
 	var component = {

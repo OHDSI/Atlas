@@ -33,28 +33,44 @@
 		</div>
 	</div>
 
-	<div class="paddedWrapper" data-bind="visible:$component.personId">
-		<div class="row">
-			<div class="col-xs-2 text-left">
-				<div data-bind="click:$component.navigatePrevious" class="btn btn-small btn-primary"><i class="fa fa-chevron-left"></i></div>
+	<div data-bind="visible:$component.personId">
+		<div class="paddedWrapper">
+			<div class="row">
+				<div class="col-xs-2 text-left">
+					<div data-bind="click:$component.navigatePrevious" class="btn btn-sm btn-primary"><i class="fa fa-chevron-left"></i></div>
+				</div>
+				<div class="col-xs-8 text-center heading">
+					<i class="fa fa-user"></i> <span data-bind="text:$component.personId"></span>
+				</div>
+				<div class="col-xs-2 text-right">
+					<div data-bind="click:$component.navigateNext" class="btn btn-sm btn-primary"><i class="fa fa-chevron-right"></i></div>
+				</div>
 			</div>
-			<div class="col-xs-8 text-center heading">
-				<i class="fa fa-user"></i> <span data-bind="text:$component.personId"></span>
-			</div>
-			<div class="col-xs-2 text-right">
-				<div data-bind="click:$component.navigateNext" class="btn btn-small btn-primary"><i class="fa fa-chevron-right"></i></div>
+		</div>
+
+		<div data-bind="visible:$component.loadingProfile()" class="loading">loading</div>
+
+		<div class="paddedWrapper" data-bind="visible:!$component.loadingProfile()">
+			<div data-bind="visible:$component.reference().length > 0">
+				<div id="timewave"></div>
+				<div id="scatter"></div>
+				<div class="heading">Profile Records</div>
+				<faceted-datatable params="{reference: $component.reference, columns: $component.columns, options: $component.options}"></faceted-datatable>
 			</div>
 		</div>
 	</div>
 
-	<div data-bind="visible:$component.loadingProfile()" class="loading">loading</div>
-	
-	<div class="paddedWrapper" data-bind="visible:!$component.loadingProfile()">
-		<div data-bind="visible:$component.reference().length > 0">
-			<div id="timewave"></div>
-			<div id="scatter"></div>
-			<div class="heading">Profile Records</div>
-			<faceted-datatable params="{reference: $component.reference, columns: $component.columns, options: $component.options}"></faceted-datatable>
+	<div id="modalNoMembers" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					This cohort has no members available to view. Please check the generation status in the Cohort Definition section of Atlas.
+				</div>
+			</div>
 		</div>
 	</div>
 

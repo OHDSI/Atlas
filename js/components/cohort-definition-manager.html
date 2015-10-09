@@ -86,7 +86,9 @@
 							<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
 							<td style="border-bottom:0px;padding:5px;" class="statusIndicator">
 								<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().ready -->
-								<input data-bind="click:$component.generateAnalyses" type="button" value="Generate">
+								<div data-bind="click:$component.generateAnalyses" class="btn btn-sm btn-primary">Generate</div>
+
+								<a class="btn btn-sm btn-success" data-bind="attr: {href: $component.model.services()[0].url + sourceKey + '/cohortresults/' + $component.model.currentCohortDefinition().id + '/export.zip'}"><i class="fa fa-cloud-download"></i> Export</a>
 								<!-- /ko -->
 							</td>
 							<!-- /ko -->

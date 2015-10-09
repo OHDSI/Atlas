@@ -254,6 +254,7 @@ div#wrapperMainWindowContainer {}
 	padding: 0px 0px 0px 10px;
 	font-size: 14px;
 	border-bottom: solid 1px #ccc;
+	vertical-align: middle;
 }
 
 #wrapperLeftMenu ul {
@@ -935,15 +936,6 @@ pre {
 	border-radius: 0
 }
 
-.btn-lg {
-	border-radius: 0
-}
-
-.btn-sm,
-.btn-xs {
-	border-radius: 0
-}
-
 .dropdown-menu {
 	border-radius: 0;
 	box-shadow: none;
@@ -1224,12 +1216,9 @@ div#stage {
 
 .btn {
 	background-image: none;
-	/* margin-right: 5px; */
-	/* margin-top: 5px; */
-	/* float: right; */
-	clear: both;
 	border-radius: 2px;
 	color: #fff;
+	margin:2px
 }
 
 table.dataTable {
@@ -1349,7 +1338,6 @@ ul.ColVis_collection li {
 
 circle {
 	fill: #fff;
-	stroke: #888;
 	transition: fill .5s;
 }
 

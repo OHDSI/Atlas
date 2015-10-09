@@ -135,6 +135,9 @@
 				<a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
 			</li>
 			<li>
+				<a target="_blank" href="http://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
+			</li>
+			<li>
 				<i data-bind="click: function() {minibar(true);}" class="fa fa-compress"></i>
 			</li>
 		</ul>
@@ -152,10 +155,10 @@
 				<importer params="{model: pageModel}"></importer>
 			</div>
 
-			<div data-bind="if: pageModel.currentView() == 'conceptset'">			
+			<div data-bind="if: pageModel.currentView() == 'conceptset'">
 				<conceptset-manager params="{model: pageModel}"></conceptset-manager>
 			</div>
-			
+
 			<div data-bind="visible: pageModel.currentView() == 'search'">
 				<search id="componentSearch" params="{model: pageModel}"></search>
 			</div>
@@ -171,11 +174,11 @@
 			<div data-bind="if: pageModel.currentView() == 'cohortdefinitions'">
 				<cohort-definitions params="{model: pageModel}"></cohort-definitions>
 			</div>
-			
+
 			<div data-bind="if: pageModel.currentView() == 'cohortdefinition'">
 				<cohort-definition-manager params="{model: pageModel}"></cohort-definition-manager>
 			</div>
-			
+
 			<div data-bind="if: pageModel.currentView() == 'reports'">
 				<report-manager params="{model: pageModel}"></report-manager>
 			</div>
