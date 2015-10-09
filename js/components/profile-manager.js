@@ -107,7 +107,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 			$('#cohortDefinitionChooser').modal('show');
 		};
 
-		self.cohortDefinitionButtonText = ko.observable('Select a Cohort');
+		self.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
 
 		self.options = {
 			Facets: [
