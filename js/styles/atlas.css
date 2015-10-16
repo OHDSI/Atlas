@@ -273,8 +273,9 @@ div#wrapperMainWindowContainer {}
 #wrapperLeftMenu li {
 	list-style: none;
 	text-indent: 0px;
-	padding: 12px 6px 0px 10px;
+	padding: 4px 6px 4px 10px;
 	color: #184756;
+	border-top: solid 1px #eee;
 }
 
 #wrapperLeftMenu li a {

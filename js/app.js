@@ -10,7 +10,7 @@ define([
 	var appModel = function () {
 		$.support.cors = true;
 		var self = this;
-		
+
 		self.services = ko.observableArray([
 			/*
 			{
@@ -23,7 +23,7 @@ define([
 				url: 'http://localhost:8080/WebAPI/'
 			}
 		]);
-		
+
 		$('#querytext').focus();
 
 		self.appInitializationFailed = ko.observable(false);
@@ -68,7 +68,7 @@ define([
 						});
 					},
 					'/reports': function () {
-						require(['report-manager','cohort-definition-manager', 'cohort-definition-browser'], function () {
+						require(['report-manager', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
 							self.currentView('reports');
 						});
 					},
@@ -134,10 +134,15 @@ define([
 								kd.kernelDensity('#kernelDensityContainer', covariates);
 							}
 						});
+					},
+					'/r': function () {
+						require(['r-manager'], function () {
+							self.currentView('r');
+						});
 					}
 				}
 				self.router = new Router(routes).configure(routerOptions);
-				
+
 				self.router.init('/');
 				self.applicationStatus('running');
 			} else {
@@ -824,8 +829,7 @@ define([
 			self.currentConceptSetExpressionJson(highlightedJson);
 
 			var conceptIdentifierList = [];
-			for (var i=0; i<self.selectedConcepts().length; i++)
-			{
+			for (var i = 0; i < self.selectedConcepts().length; i++) {
 				conceptIdentifierList.push(self.selectedConcepts()[i].concept.CONCEPT_ID);
 			}
 			self.currentConceptIdentifierList(conceptIdentifierList.join(','));
