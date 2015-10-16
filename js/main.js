@@ -1,5 +1,5 @@
 requirejs.config({
-	urlArgs: "bust=" + (new Date()).getTime(),
+	//urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: 'js',
 	config: {
 		text: {
@@ -48,20 +48,23 @@ requirejs.config({
 		"analytics-manager": "components/analytics-manager",
 		"faceted-datatable": "components/faceted-datatable",
 		"profile-manager": "components/profile-manager",
+		"r-manager" : "components/r-manager",
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
-		"lodash": "lodash.min"
+		"lodash": "lodash.min",
+		"lscache": "lscache.min",
+		"localStorageExtender": "localStorageExtender"
 	}
 });
 
-requirejs(['knockout', 'app', 'director','search'], function (ko, app) {
-	
+requirejs(['knockout', 'app', 'director', 'search'], function (ko, app) {
+
 	$('#splash').fadeIn();
 	var pageModel = new app();
 	window.pageModel = pageModel;
-	ko.applyBindings(pageModel);			
-	
+	ko.applyBindings(pageModel);
+
 	// establish base priorities for daimons
 	var evidencePriority = 0;
 	var vocabularyPriority = 0;
@@ -135,7 +138,7 @@ requirejs(['knockout', 'app', 'director','search'], function (ko, app) {
 
 					$.ajax({
 						url: service.url + source.sourceKey + '/vocabulary/info',
-						timeout: 5000,
+						timeout: 20000,
 						method: 'GET',
 						contentType: 'application/json',
 						success: function (info) {
@@ -149,9 +152,7 @@ requirejs(['knockout', 'app', 'director','search'], function (ko, app) {
 						},
 						error: function (err) {
 							completedSources++;
-							source.initialized = false;
 							pageModel.initializationErrors++;
-							source.error = err.statusText;
 							source.version = 'unknown';
 							source.dialect = 'unknown';
 							source.url = service.url + source.sourceKey + '/';
@@ -175,9 +176,9 @@ requirejs(['knockout', 'app', 'director','search'], function (ko, app) {
 		});
 	});
 
-	$.when.apply($, pageModel.initPromises).done(function () {	
+	$.when.apply($, pageModel.initPromises).done(function () {
 		pageModel.initComplete();
-	});	
+	});
 
 	pageModel.currentView.subscribe(function (newView) {
 		if (newView != 'splash') {

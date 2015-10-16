@@ -74,6 +74,9 @@
 					<a href="#/jobs"><i class="fa fa-tasks"></i></a>
 				</li>
 				<li>
+					<a href="#/r"><i class="fa fa-registered"></i></a>
+				</li>
+				<li>
 					<a href="#/configure"><i class="fa fa-cogs"></i></a>
 				</li>
 				<li>
@@ -130,6 +133,9 @@
 			</li>
 			<li>
 				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
+			</li>
+			<li>
+				<a href="#/r"><i class="fa fa-registered"></i>R Services</a>
 			</li>
 			<li>
 				<a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
@@ -197,6 +203,9 @@
 				<feasibility-analyzer params="services: pageModel.services, feasibilityId: pageModel.feasibilityId"></feasibility-analyzer>
 			</div>
 
+			<div data-bind="if:pageModel.currentView() == 'r'">
+				<r-manager></r-manager>
+			</div>
 
 			<div data-bind="if: currentView() == 'configure'">
 				<div class="wrapperTitle">
