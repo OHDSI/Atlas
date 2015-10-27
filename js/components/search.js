@@ -13,10 +13,18 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
 		self.domains = ko.observableArray();
 		self.tabMode = self.model.searchTabMode;
 
+		self.updateCurrentSearchValue = function () {
+			self.model.currentSearchValue(escape(self.model.currentSearch()));
+			self.model.currentSearch('');
+		}
+
+		self.model.currentSearchValue.subscribe(function (value) {
+			self.executeSearch();
+		});
+
 		self.model.currentSearch.subscribe(function (query) {
 			if (self.model.currentSearch().length > 2) {
-				document.location = "#/search/" + self.model.currentSearch();
-				self.executeSearch();
+				document.location='#/search/' + escape(query);
 			}
 		});
 
@@ -95,14 +103,14 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
 		};
 
 		self.executeSearch = function () {
-			var query = self.model.currentSearch();
+			var query = self.model.currentSearchValue();
 			self.loading(true);
 
 			filters = [];
 			$('#querytext').blur();
 
 			$.ajax({
-				url: self.model.vocabularyUrl() + 'search/' + query,
+				url: self.model.vocabularyUrl() + 'search/' + escape(query),
 				success: function (results) {
 					var tempCaption;
 
@@ -113,7 +121,7 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
 					}
 
 					lastQuery = {
-						query: query,
+						query: escape(query),
 						caption: tempCaption,
 						resultLength: results.length
 					};
@@ -154,18 +162,6 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
 			});
 		}
 
-		self.checkExecuteSearch = function (data, e) {
-			/*
-			if (e.keyCode == 13) { // enter
-				if (self.model.currentSearch().length > 2) {
-					document.location = "#/search/" + encodeURI(self.model.currentSearch());
-				} else {
-					$('#helpMinimumQueryLength').modal('show');
-				}
-			}
-			*/
-		};
-
 		self.renderConceptSelector = function (s, p, d) {
 			var css = '';
 			var icon = 'fa-shopping-cart';
@@ -176,9 +172,8 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
 			return '<i class="fa ' + icon + ' ' + css + '"></i>';
 		}
 
-		// handle race condition
-		if (self.model.currentSearch()) {
-			self.executeSearch(self.model.currentSearch());
+		if (self.model.currentSearchValue()) {
+			self.executeSearch();
 		}
 	}
 

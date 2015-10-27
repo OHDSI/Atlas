@@ -493,7 +493,7 @@ label {
 	font-size: 11px;
 }
 
-.glyphicon-ok {
+.fa-check {
 	cursor: pointer;
 	color: #eee;
 	background-color: #fff;
@@ -502,7 +502,7 @@ label {
 	border-radius: 2px;
 }
 
-.glyphicon-ok.selected {
+.fa-check.selected {
 	color: #F19119;
 }
 
