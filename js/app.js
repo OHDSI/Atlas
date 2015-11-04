@@ -32,6 +32,7 @@ define([
 		self.minibar = ko.observable(false);
 		self.searchTabMode = ko.observable('simple');
 		self.pendingSearch = ko.observable(false);
+		self.studyReportSections = ko.observableArray().extend({ localStoragePersist: ['studyReportSections', '30']});;
 
 		self.initComplete = function () {
 			if (!self.appInitializationFailed()) {
@@ -60,6 +61,9 @@ define([
 						require(['configuration'], function () {
 							self.currentView('configure');
 						});
+					},
+					'/studyreport': function () {
+						self.currentView('studyreport');
 					},
 					'/jobs': function () {
 						require(['job-manager'], function () {
@@ -263,26 +267,32 @@ define([
 					'binding': function (o) {
 						return o.DOMAIN_ID;
 					}
-						},
+				},
 				{
 					'caption': 'Standard Concept',
 					'binding': function (o) {
 						return o.STANDARD_CONCEPT_CAPTION;
 					}
-						},
+				},
 				{
 					'caption': 'Invalid Reason',
 					'binding': function (o) {
 						return o.INVALID_REASON_CAPTION;
 					}
-						},
+				},
 				{
-					'caption': 'Has Data',
+					'caption': 'Has Records',
 					'binding': function (o) {
-						return o.RECORD_COUNT > 0 || o.DESCENDANT_RECORD_COUNT > 0;
+						return parseInt(o.RECORD_COUNT.toString().replace(',','')) > 0;
 					}
-						}
-					]
+				},
+				{
+					'caption': 'Has Descendant Records',
+					'binding': function (o) {
+						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',','')) > 0;
+					}
+				}
+			]
 		};
 
 		self.relatedConceptsOptions = {
@@ -328,9 +338,15 @@ define([
 					}
 				},
 				{
-					'caption': 'Has Data',
+					'caption': 'Has Records',
 					'binding': function (o) {
-						return o.RECORD_COUNT > 0 || o.DESCENDANT_RECORD_COUNT > 0;
+						return parseInt(o.RECORD_COUNT.toString().replace(',','')) > 0;
+					}
+				},
+				{
+					'caption': 'Has Descendant Records',
+					'binding': function (o) {
+						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',','')) > 0;
 					}
 				},
 				{

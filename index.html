@@ -76,6 +76,11 @@
 				<li>
 					<a href="#/r"><i class="fa fa-registered"></i></a>
 				</li>
+				<!--
+				<li>
+					<a href="#/studyreport"><i class="fa fa-book"></i></a>
+				</li>
+				-->
 				<li>
 					<a href="#/configure"><i class="fa fa-cogs"></i></a>
 				</li>
@@ -137,6 +142,11 @@
 			<li>
 				<a href="#/r"><i class="fa fa-registered"></i>R Services</a>
 			</li>
+			<!--
+			<li>
+				<a href="#/studyreport"><i class="fa fa-book"></i>Study Report</a>
+			</li>
+			-->
 			<li>
 				<a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
 			</li>
@@ -207,6 +217,12 @@
 				<r-manager></r-manager>
 			</div>
 
+			<!--
+			<div data-bind="visible: currentView() == 'studyreport'">
+				<studyreport-manager params="{sections: pageModel.studyReportSections}"></studyreport-manager>
+			</div>
+			-->
+
 			<div data-bind="if: currentView() == 'configure'">
 				<div class="wrapperTitle">
 					<i class="fa fa-cogs"></i>Configure
@@ -226,7 +242,6 @@
 				<div class="wrapperTitle">
 					Template
 				</div>
-				<div id="kernelDensityContainer" class="paddedWrapper"></div>
 			</div>
 
 		</div>

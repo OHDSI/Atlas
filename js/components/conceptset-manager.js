@@ -36,7 +36,7 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 				document.location = '#/conceptset/' + self.model.currentConceptSet().id + '/' + mode;
 			}
 		}
-		
+
 		self.saveConceptSet = function () {
 			var conceptSet = {};
 
@@ -77,12 +77,12 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 						contentType: 'application/json',
 						success: function (itemSave) {
 							$('#conceptSetSaveDialog').modal('hide');
-							document.location = '#/conceptset/' + data.id;
+							document.location = '#/conceptset/' + data.id + '/details';
 						}
 					});
 				}
 			});
-			
+
 		}
 	}
 

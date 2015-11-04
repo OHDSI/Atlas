@@ -48,7 +48,8 @@ requirejs.config({
 		"analytics-manager": "components/analytics-manager",
 		"faceted-datatable": "components/faceted-datatable",
 		"profile-manager": "components/profile-manager",
-		"r-manager" : "components/r-manager",
+		"r-manager": "components/r-manager",
+		"studyreport-manager": "components/studyreport-manager",
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
@@ -58,7 +59,7 @@ requirejs.config({
 	}
 });
 
-requirejs(['knockout', 'app', 'director', 'search'], function (ko, app) {
+requirejs(['knockout', 'app', 'director', 'localStorageExtender', 'search', 'studyreport-manager'], function (ko, app) {
 
 	$('#splash').fadeIn();
 	var pageModel = new app();

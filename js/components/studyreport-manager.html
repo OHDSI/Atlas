@@ -1,0 +1,36 @@
+<style>
+	.studyReportSource {
+		margin-top: 5px;
+		font-size: .8em;
+		color: #888;
+		text-align: right;
+		padding-right: 10px;
+	}
+
+	#studyReportContents .heading {
+		font-size: 1.1em;
+		font-weight: bold;
+		color: #000;
+	}
+
+	.warning {
+		border: solid 1px red;
+		background-color:#fee;
+		padding:20px;
+	}
+
+</style>
+<div class="wrapperTitle">
+	<span><i class="fa fa-book"></i></span> Study Report
+</div>
+
+
+<div class="paddedWrapper warning">
+	Study Report is an experimental feature used to collect STATIC copies of various pieces of evidence into a Study Report. It is cached locally for 30 minutes (will survive a browser refresh).
+</div>
+
+<div id="studyReportContents" class="paddedWrapper" data-bind="foreach:sections">
+	<div class="heading" data-bind="text:title"></div>
+	<div data-bind="html:content"></div>
+	<div class="studyReportSource" data-bind="text:source"></div>
+</div>
