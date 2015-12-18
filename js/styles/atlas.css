@@ -506,6 +506,10 @@ label {
 	color: #F19119;
 }
 
+.glyphicon-ok-sign.selected {
+	color: #F19119;
+}
+
 .badge {
 	font-weight: normal;
 	line-height: .9;
@@ -1234,15 +1238,6 @@ textarea.form-control {
 	padding: 5px;
 }
 
-.dataTables_paginate {
-	margin-bottom: 10px;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	padding: 3px 5px 3px 5px !important;
-	background-image: none !important;
-}
-
 tbody {
 	border-bottom-color: #ccc;
 }
@@ -1262,10 +1257,6 @@ i.fa.fa-compress {
 
 #wrapperLeftMenu ul ul li a {
 	color: #aaa;
-}
-
-tr {
-	border-bottom: solid 1px #ccc;
 }
 
 table.dataTable.no-footer {
@@ -1300,10 +1291,6 @@ table.dataTable thead td {
 
 .badge .fa {
 	font-size: 11px;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-	color: #000 !important;
 }
 
 table.dataTable.stripe tbody tr.odd,
