@@ -137,31 +137,39 @@ requirejs(['knockout', 'app', 'director', 'localStorageExtender', 'search', 'stu
 
 					service.sources.push(source);
 
-					$.ajax({
-						url: service.url + source.sourceKey + '/vocabulary/info',
-						timeout: 20000,
-						method: 'GET',
-						contentType: 'application/json',
-						success: function (info) {
-							completedSources++;
-							source.version = info.version;
-							source.dialect = info.dialect;
+					if (source.hasVocabulary) {
+						$.ajax({
+							url: service.url + source.sourceKey + '/vocabulary/info',
+							timeout: 20000,
+							method: 'GET',
+							contentType: 'application/json',
+							success: function (info) {
+								completedSources++;
+								source.version = info.version;
+								source.dialect = info.dialect;
 
-							if (completedSources == sources.length) {
-								servicePromise.resolve();
+								if (completedSources == sources.length) {
+									servicePromise.resolve();
+								}
+							},
+							error: function (err) {
+								completedSources++;
+								pageModel.initializationErrors++;
+								source.version = 'unknown';
+								source.dialect = 'unknown';
+								source.url = service.url + source.sourceKey + '/';
+								if (completedSources == sources.length) {
+									servicePromise.resolve();
+								}
 							}
-						},
-						error: function (err) {
-							completedSources++;
-							pageModel.initializationErrors++;
-							source.version = 'unknown';
-							source.dialect = 'unknown';
-							source.url = service.url + source.sourceKey + '/';
-							if (completedSources == sources.length) {
-								servicePromise.resolve();
-							}
+						});
+					} else {
+						completedSources++;
+						source.version = 'not available'
+						if (completedSources == sources.length) {
+							servicePromise.resolve();
 						}
-					});
+					}
 				});
 			},
 			error: function (xhr, ajaxOptions, thrownError) {

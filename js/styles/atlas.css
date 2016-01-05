@@ -533,11 +533,12 @@ label {
 }
 
 .configureSourceTable td {
-	line-height: 20px;
+	/* line-height: 20px; */
 	padding-left: 7px;
 	padding-right: 7px;
 	font-size: 11px;
 	border-bottom: 1px solid #ccc;
+	text-align: left;
 }
 
 th {
@@ -564,6 +565,7 @@ table.configureSourceTable {
 
 .configureSourceTable tbody td {
 	cursor: default;
+	/* vertical-align: middle; */
 }
 
 th.centered {
@@ -1475,4 +1477,11 @@ line.observation-period {
     stroke: #F19119;
     stroke-width: 1px;
     stroke-opacity: 1;
+}
+
+
+input[type="radio"] {
+    vertical-align: middle;
+    margin: 0px;
+    /* line-height: 30px; */
 }
