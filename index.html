@@ -89,6 +89,9 @@
 		</div>
 		<ul>
 			<li>
+				<a href="#/datasources"><i class="fa fa-database"></i>Data Sources</a>
+			</li>
+			<li>
 				<a href="#/search"><i class="fa fa-search"></i>Vocabulary Search</a>
 			</li>
 			<ul data-bind="foreach:recentSearch">
@@ -173,6 +176,10 @@
 
 			<div data-bind="if: pageModel.currentView() == 'cohortdefinitions'">
 				<cohort-definitions params="{model: pageModel}"></cohort-definitions>
+			</div>
+
+			<div data-bind="if: pageModel.currentView() == 'datasources'">
+				<data-sources params="{model: pageModel}"></data-sources>
 			</div>
 
 			<div data-bind="if: pageModel.currentView() == 'cohortdefinition'">

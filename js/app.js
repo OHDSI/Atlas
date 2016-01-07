@@ -51,6 +51,11 @@ define([
 							self.loadConcept(conceptId);
 						});
 					},
+					'/datasources': function () {
+						require(['data-sources'], function () {
+							self.currentView('datasources');
+						});
+					},
 					'/cohortdefinitions': function () {
 						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
 							self.currentView('cohortdefinitions');
