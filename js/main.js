@@ -23,7 +23,7 @@ requirejs.config({
 		}
 	},
 	paths: {
-		"jquery": "http://code.jquery.com/jquery-1.11.2.min",
+		"jquery": "https://code.jquery.com/jquery-1.11.2.min",
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"text": "plugins/text",
 		"knockout": "knockout.min",
