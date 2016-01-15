@@ -17,7 +17,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 		self.data = ko.observableArray();
 		self.facetEngine = ko.observable();
 
-		self.updateFilters = function () {
+		self.updateFilters = function (data, event) {
 			$(event.target).closest('.facetMemberName').toggleClass('selected');
 
 			var filters = [];
