@@ -1,4 +1,4 @@
-define(['knockout', 'text!./concept-manager.html'], function (ko, view) {
+define(['knockout', 'text!./concept-manager.html', 'faceted-datatable'], function (ko, view) {
 	function conceptManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -6,16 +6,18 @@ define(['knockout', 'text!./concept-manager.html'], function (ko, view) {
 		self.loadingSourceCounts = ko.observable(false);
 
 		self.currentConceptId = params.currentConceptId;
-		
-		self.currentConceptId.subscribe(function(value) {
-			self.loadRecordCounts();
+
+		self.currentConceptId.subscribe(function (value) {
+			if (self.model.currentConceptMode() == 'recordcounts') {
+				self.loadRecordCounts();
+			}
 		});
-		
-		self.model.currentConceptMode.subscribe(function(mode) {
+
+		self.model.currentConceptMode.subscribe(function (mode) {
 			switch (mode) {
-				case 'recordcounts':
-					self.loadRecordCounts();
-					break;
+			case 'recordcounts':
+				self.loadRecordCounts();
+				break;
 			}
 		});
 
@@ -67,7 +69,7 @@ define(['knockout', 'text!./concept-manager.html'], function (ko, view) {
 			}
 
 			$.when(allCounts).done(function () {
-				self.loadingSourceCounts(false);				
+				self.loadingSourceCounts(false);
 				self.sourceCounts(sourceData);
 			});
 		}

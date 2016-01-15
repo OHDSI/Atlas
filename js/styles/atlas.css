@@ -74,8 +74,8 @@ body {
 }
 
 .paddedFloater {
-	margin-right:10px;
-	margin-top:5px;
+	margin-right: 10px;
+	margin-top: 5px;
 }
 
 .linkish {
@@ -99,6 +99,16 @@ body {
 .serviceAvailable {
 	color: green;
 }
+
+#scatter rect.drug { fill: #7EB1DC; }
+#scatter rect.condition { fill: #5393C8; }
+#scatter rect.observation { fill: #1265AB; }
+#scatter rect.visit { fill: #094B83; }
+
+#scatter text.drug { fill: #7EB1DC; }
+#scatter text.condition { fill: #5393C8; }
+#scatter text.observation { fill: #1265AB; }
+#scatter text.visit { fill: #094B83; }
 
 .serviceUnavailable {
 	color: red;
@@ -202,13 +212,15 @@ pre span.key {
 
 #wrapperLogo {
 	position: relative;
-	height: 46px;
+	height: 40px;
 	padding: 0px 10px 0px 10px;
-	line-height: 49px;
+	line-height: 40px;
 	font-size: 14px;
-	background-color: #fff;
-	color: #1F4159;
+	background-color: #003142;
+	color: #fff;
 	cursor: pointer;
+	text-align: center;
+	border-bottom: solid 1px #ccc;
 }
 
 #wrapperLogo img {
@@ -236,12 +248,14 @@ div#wrapperMainWindowContainer {}
 .wrapperTitle {
 	position: relative;
 	background-color: #003142;
-	height: 46px;
+	height: 40px;
 	color: #FFFFFF;
-	line-height: 47px;
+	line-height: 40px;
 	padding: 0px 0px 0px 10px;
 	font-size: 14px;
 	border-bottom: solid 1px #ccc;
+	vertical-align: middle;
+	white-space: nowrap;
 }
 
 #wrapperLeftMenu ul {
@@ -287,7 +301,9 @@ div#wrapperMainWindowContainer {}
 	padding: 5px 3px 2px 35px;
 }
 
-.feFilter {}
+.feFilter {
+	padding-left: 0px;
+}
 
 .fa.fa-refresh.fa-spin {
 	font-weight: normal;
@@ -477,7 +493,7 @@ label {
 	font-size: 11px;
 }
 
-.glyphicon-ok {
+.fa-check {
 	cursor: pointer;
 	color: #eee;
 	background-color: #fff;
@@ -486,7 +502,7 @@ label {
 	border-radius: 2px;
 }
 
-.glyphicon-ok.selected {
+.fa-check.selected {
 	color: #F19119;
 }
 
@@ -659,7 +675,7 @@ ul.ColVis_collection li {
 }
 
 .wrapperTitle .fa {
-	font-size: 18px;
+	font-size: 16px;
 	padding-right: 3px;
 }
 
@@ -846,12 +862,6 @@ div.loader {
 	text-align: center;
 }
 
-g rect {
-	cursor: pointer;
-}
-
-g rect:hover {}
-
 .tab-content {
 	padding: 2px 2px 15px 2px;
 	background-color: #fff;
@@ -924,15 +934,6 @@ pre {
 }
 
 .input-lg {
-	border-radius: 0
-}
-
-.btn-lg {
-	border-radius: 0
-}
-
-.btn-sm,
-.btn-xs {
 	border-radius: 0
 }
 
@@ -1211,16 +1212,14 @@ div#stage {
 	font-size: 16px;
 	font-weight: bold;
 	letter-spacing: 5px;
+	color: #fff;
 }
 
 .btn {
 	background-image: none;
-	/* margin-right: 5px; */
-	/* margin-top: 5px; */
-	/* float: right; */
-	clear: both;
 	border-radius: 2px;
 	color: #fff;
+	margin:2px
 }
 
 table.dataTable {
@@ -1228,7 +1227,7 @@ table.dataTable {
 }
 
 .dataTables_wrapper {
-	margin: 5px 3px 5px 10px;
+	margin: 5px 3px 5px 3px;
 }
 
 textarea.form-control {
@@ -1340,7 +1339,6 @@ ul.ColVis_collection li {
 
 circle {
 	fill: #fff;
-	stroke: #888;
 	transition: fill .5s;
 }
 
@@ -1377,17 +1375,103 @@ circle.child {
 
 .checkboxListing {
 	overflow-y: scroll;
-	height:300px;
+	height: 300px;
 	border-top: solid 1px #ddd;
-	border-bottom:solid 1px #ddd;
-	margin-bottom:10px;
+	border-bottom: solid 1px #ddd;
+	margin-bottom: 10px;
 }
 
-
 #wrapperLeftMenu li a {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 #wrapperMiniBar li a {
-    cursor: pointer;
+	cursor: pointer;
+}
+
+.timewave-condition {
+	stroke: #192B33;
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+	stroke-linecap: round;
+}
+
+.timewave-drug {
+	stroke: #FF8000;
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+	stroke-linecap: round;
+}
+
+.timewave-observation {
+	stroke: #8FB359;
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+	stroke-linecap: round;
+}
+
+.timewave-line {
+	stroke: #ccc;
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+	stroke-linecap: round;
+}
+
+.overlay {
+	fill: none;
+	cursor: crosshair;
+}
+
+div.timewave {
+	text-align: center;
+}
+
+div.scatter {
+	text-align: center;
+}
+
+.scatter rect.focus {
+	fill: purple;
+}
+
+.scatter rect.drug {
+	fill: blue;
+}
+
+.scatter rect.condition {
+	fill: #F19119;
+}
+
+.scatter rect.observation {
+	fill: #11f111;
+}
+
+.scatter rect.visit {
+	fill: #f1f111;
+}
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+#scatter .focus {
+	opacity: 1;
+}
+
+#scatter .axis text {
+	font-size:10px;
+}
+
+#scatter {
+    text-align: center;
+    /* background-color: #eee; */
+    border-bottom: solid 1px #ccc;
+}
+
+line.observation-period {
+    stroke: #F19119;
+    stroke-width: 1px;
+    stroke-opacity: 1;
 }

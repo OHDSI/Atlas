@@ -19,7 +19,7 @@
 
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'simple' }" class="tab-pane">
-				<input id="querytext" placeholder="type your search here" class="form-control" type="text" data-bind="event: { keyup: checkExecuteSearch}" />
+				<input id="querytext" placeholder="type your search here" class="form-control" type="text" data-bind="value:model.currentSearch" />
 			</div>
 
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'advanced' }" class="tab-pane">
@@ -44,13 +44,13 @@
 					<!-- /ko -->
 				</div>
 				
-				<div class="btn btn-small btn-primary pull-right" data-bind="click:executeAdvancedSearch">Search</div>
+				<div class="btn btn-sm btn-primary pull-right" data-bind="click:executeAdvancedSearch">Search</div>
 			</div>
 
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'results' }" class="tab-pane">
 				<div class="heading" data-bind="text: 'Search Results for ' + decodeURI(model.currentSearch())">
 				</div>
-				<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.searchResultsConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
+				<faceted-datatable params="{orderColumn: 7, columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.searchResultsConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
 			</div>
 		</div>
 

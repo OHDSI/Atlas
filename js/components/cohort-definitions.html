@@ -1,10 +1,9 @@
 <div data-bind="if: model.currentView() == 'cohortdefinitions'">
 	<div class="wrapperTitle">
 		<i class="fa fa-language"></i> Cohort Definitions
-		<div class="paddedFloater pull-right btn btn-primary btn-small">New Cohort Definition</div>
 	</div>
 
 	<div class="paddedWrapper">
-		<cohort-definition-browser params="{services: pageModel.services, cohortDefinitionId: cohortDefinitionId}"></cohort-definition-browser>
+		<cohort-definition-browser params="{services: pageModel.services, cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
 	</div>
 </div>

@@ -1,7 +1,7 @@
 define(['jquery', 'knockout', 'datatables'], function ($, ko) {
 
 	function renderSelected(s, p, d) {
-		return '<span class="glyphicon glyphicon-ok-sign"></span>';
+		return '<span class="fa fa-check"></span>';
 	}
 
 	function _getSelectedData(element)
@@ -19,10 +19,7 @@ define(['jquery', 'knockout', 'datatables'], function ($, ko) {
 	}
 
 	ko.bindingHandlers.dataTable = {
-
 		init: function (element, valueAccessor) {
-
-
 			var binding = ko.utils.unwrapObservable(valueAccessor());
 
 			// If the binding is an object with an options field,
@@ -35,7 +32,7 @@ define(['jquery', 'knockout', 'datatables'], function ($, ko) {
 				// test for 'select' column (must be first column in column definition
 				if (binding.options.columns && binding.options.columns[0] == 'select') {
 					binding.options.columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected }
-					$(element).on("click","td > span.glyphicon-ok-sign", function () {
+					$(element).on("click","td > span.fa-check", function () {
 						$(this).toggleClass('selected');
 					});
 				}

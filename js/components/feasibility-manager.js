@@ -1,4 +1,4 @@
-define(['knockout', 'text!./feasibility-manager.html'], function (ko, view) {
+define(['knockout', 'text!./feasibility-manager.html','faceted-datatable'], function (ko, view) {
 	function feasibilityManager(params) {
 		var self = this;
 		self.feasibilityId = ko.observable();

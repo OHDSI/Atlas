@@ -8,7 +8,7 @@
 		<div class="modal-content">
 			<div class="modal-header">Choose Cohort Definition</div>
 			<div class="modal-body">
-				<cohort-definition-browser params="{services: pageModel.services, cohortDefinitionId: $component.model.reportCohortDefinitionId}"></cohort-definition-browser>
+				<cohort-definition-browser params="{services: pageModel.services, cohortDefinitionSelected: $component.model.reportCohortDefinitionId}"></cohort-definition-browser>
 			</div>
 		</div>
 	</div>
@@ -16,27 +16,25 @@
 
 <div class="reportControls pad-5">
 	<div class="row">
-		<div class="col-xs-10">
-			<select class="form-control" data-bind="css : { invalid: $component.model.reportCohortDefinitionId()==undefined }, options:$component.model.cohortDefinitions, optionsText:'name', optionsValue:'id', optionsCaption:'Select a Cohort Definition', value:$component.model.reportCohortDefinitionId"></select>
-		</div>
-		<div class="col-xs-2">
-			<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.showBrowser, text:'Browse'"></button>
+		<div class="col-xs-12">
+			<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.showBrowser, text:$component.cohortCaption"></button>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-xs-10">
+		<div class="col-xs-12">
 			<select class="form-control" data-bind="css : { invalid: $component.model.reportReportName()==undefined }, options:$component.model.reports(), optionsCaption:'Select a Report', value:$component.model.reportReportName"></select>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-xs-10">
+		<div class="col-xs-12">
 			<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.model.services()[0].sources.filter($component.model.hasResults), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-xs-10"></div>
+
 		<div class="col-xs-2">
-			<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'View Report'"></button>
+			<button class="pull-right form-control btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'View Report'"></button>
 		</div>
 	</div>
 

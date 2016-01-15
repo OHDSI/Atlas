@@ -5,11 +5,15 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 
 		self.reference = params.reference;
 		self.options = params.options;
-		self.model = params.model;
 		self.columns = params.columns;
 		self.rowCallback = params.rowCallback;
 		self.rowClick = params.rowClick;
 		
+		self.orderColumn = 1;
+		if (params.orderColumn) {
+			self.orderColumn = params.orderColumn;
+		}
+
 		self.data = ko.observableArray();
 		self.facetEngine = ko.observable();
 

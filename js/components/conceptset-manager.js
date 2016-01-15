@@ -1,4 +1,4 @@
-define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.binding', 'bootstrap'], function (ko, view) {
+define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.binding', 'bootstrap','faceted-datatable'], function (ko, view) {
 	function conceptsetManager(params) {
 		var self = this;
 		self.model = params.model;
