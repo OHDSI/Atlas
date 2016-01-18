@@ -46,6 +46,19 @@ table.dataTable.display tbody tr.odd:hover {
 	background-color: #f0f0f0;
 }
 
+.dataTables_paginate {
+	margin-bottom: 10px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 3px 5px 3px 5px !important;
+	background-image: none !important;
+}
+
+.dataTables_wrapper .dataTables_paginate a.paginate_button:hover {
+	color: #000 !important;
+}
+
 /* colVis formatting */
 ul.ColVis_collection {
 	width: 200px;
