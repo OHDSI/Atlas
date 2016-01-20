@@ -3,9 +3,10 @@ define([
 	'knockout',
 	'jnj_chart',
 	'd3',
-	'bootstrap',
 	'facets',
-	'knockout-persist'
+	'knockout-persist',
+	'css!styles/tabs.css',
+	'css!styles/buttons.css',
 ], function ($, ko, jnj_chart, d3) {
 	var appModel = function () {
 		$.support.cors = true;
@@ -97,7 +98,7 @@ define([
 						self.currentView('splash');
 					},
 					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
-						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
+						require(['components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
 							self.currentView('cohortdefinitions');
 							self.loadCohortDefinition(cohortDefinitionId);
 						});
@@ -893,7 +894,7 @@ define([
 
 		self.getCohortCount = function (source) {
 			var sourceKey = source.sourceKey;
-			var cohortDefinitionId = self.currentCohortDefinition().id;
+			var cohortDefinitionId = self.currentCohortDefinition().id();
 			return $.ajax(self.services()[0].url + sourceKey + '/cohortresults/' + cohortDefinitionId + '/distinctPersonCount', {});
 		}
 
@@ -906,7 +907,7 @@ define([
 		}
 
 		self.getCompletedAnalyses = function (source) {
-			var cohortDefinitionId = self.currentCohortDefinition().id;
+			var cohortDefinitionId = self.currentCohortDefinition().id();
 
 			$.ajax(self.services()[0].url + source.sourceKey + '/cohortresults/' + cohortDefinitionId + '/analyses', {
 				success: function (analyses) {
@@ -977,102 +978,105 @@ define([
 		self.loadCohortDefinition = function (cohortDefinitionId) {
 			self.currentView('loading');
 
-			var definitionPromise = $.ajax({
-				url: self.services()[0].url + 'cohortdefinition/' + cohortDefinitionId,
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (cohortDefinition) {
-					self.currentCohortDefinition(cohortDefinition);
-				}
-			});
-
-			var infoPromise = $.ajax({
-				url: self.services()[0].url + 'cohortdefinition/' + cohortDefinitionId + '/info',
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (generationInfo) {
-					self.currentCohortDefinitionInfo(generationInfo);
-				}
-			});
-
-			$.when(infoPromise, definitionPromise).done(function (ip, dp) {
-				// now that we have required information lets compile them into data objects for our view
-				var cdmSources = self.services()[0].sources.filter(self.hasCDM);
-				var results = [];
-
-				for (var s = 0; s < cdmSources.length; s++) {
-					var source = cdmSources[s];
-
-					self.sourceAnalysesStatus[source.sourceKey] = ko.observable({
-						ready: false,
-						checking: false
-					});
-
-					var sourceInfo = self.getSourceInfo(source);
-					var cdsi = {};
-					cdsi.name = cdmSources[s].sourceName;
-
-					if (sourceInfo != null) {
-						cdsi.isValid = sourceInfo.isValid;
-						cdsi.status = sourceInfo.status;
-						var date = new Date(sourceInfo.startTime);
-						cdsi.startTime = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-						cdsi.executionDuration = (sourceInfo.executionDuration / 1000) + 's'
-						cdsi.distinctPeople = self.asyncComputed(self.getCohortCount, this, source);
-					} else {
-						cdsi.isValid = false;
-						cdsi.status = 'n/a';
-						cdsi.startTime = 'n/a';
-						cdsi.executionDuration = 'n/a';
-						cdsi.distinctPeople = 'n/a';
-					}
-
-					results.push(cdsi);
-				}
-
-				self.cohortDefinitionSourceInfo(results);
-
-				// load universe of analyses
-				var analysesPromise = $.ajax({
-					url: self.services()[0].url + 'cohortanalysis/',
+			requirejs(['cohortbuilder/CohortDefinition'],function(CohortDefinition) {
+				var definitionPromise = $.ajax({
+					url: self.services()[0].url + 'cohortdefinition/' + cohortDefinitionId,
 					method: 'GET',
 					contentType: 'application/json',
-					success: function (analyses) {
-						var index = {};
-						var nestedAnalyses = [];
-
-						for (var a = 0; a < analyses.length; a++) {
-							var analysis = analyses[a];
-
-							if (index[analysis.analysisType] == undefined) {
-								var analysisType = {
-									name: analysis.analysisType,
-									analyses: []
-								};
-								nestedAnalyses.push(analysisType);
-								index[analysis.analysisType] = nestedAnalyses.indexOf(analysisType);
-							}
-							self.analysisLookup[analysis.analysisId] = analysis.analysisType;
-							nestedAnalyses[index[analysis.analysisType]].analyses.push(analysis);
-						}
-
-						self.cohortAnalyses(nestedAnalyses);
-
-						// obtain completed result status for each source
-						for (var s = 0; s < cdmSources.length; s++) {
-							var source = cdmSources[s];
-							var info = self.getSourceInfo(source);
-							if (info) {
-								var sourceAnalysesStatus = {};
-								sourceAnalysesStatus.checking = true;
-								self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
-								self.getCompletedAnalyses(source);
-							}
-						}
+					success: function (cohortDefinition) {
+						cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+						self.currentCohortDefinition(new CohortDefinition(cohortDefinition));
 					}
 				});
 
-				self.currentView('cohortdefinition');
+				var infoPromise = $.ajax({
+					url: self.services()[0].url + 'cohortdefinition/' + cohortDefinitionId + '/info',
+					method: 'GET',
+					contentType: 'application/json',
+					success: function (generationInfo) {
+						self.currentCohortDefinitionInfo(generationInfo);
+					}
+				});
+
+				$.when(infoPromise, definitionPromise).done(function (ip, dp) {
+					// now that we have required information lets compile them into data objects for our view
+					var cdmSources = self.services()[0].sources.filter(self.hasCDM);
+					var results = [];
+
+					for (var s = 0; s < cdmSources.length; s++) {
+						var source = cdmSources[s];
+
+						self.sourceAnalysesStatus[source.sourceKey] = ko.observable({
+							ready: false,
+							checking: false
+						});
+
+						var sourceInfo = self.getSourceInfo(source);
+						var cdsi = {};
+						cdsi.name = cdmSources[s].sourceName;
+
+						if (sourceInfo != null) {
+							cdsi.isValid = sourceInfo.isValid;
+							cdsi.status = sourceInfo.status;
+							var date = new Date(sourceInfo.startTime);
+							cdsi.startTime = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+							cdsi.executionDuration = (sourceInfo.executionDuration / 1000) + 's'
+							cdsi.distinctPeople = self.asyncComputed(self.getCohortCount, this, source);
+						} else {
+							cdsi.isValid = false;
+							cdsi.status = 'n/a';
+							cdsi.startTime = 'n/a';
+							cdsi.executionDuration = 'n/a';
+							cdsi.distinctPeople = 'n/a';
+						}
+
+						results.push(cdsi);
+					}
+
+					self.cohortDefinitionSourceInfo(results);
+
+					// load universe of analyses
+					var analysesPromise = $.ajax({
+						url: self.services()[0].url + 'cohortanalysis/',
+						method: 'GET',
+						contentType: 'application/json',
+						success: function (analyses) {
+							var index = {};
+							var nestedAnalyses = [];
+
+							for (var a = 0; a < analyses.length; a++) {
+								var analysis = analyses[a];
+
+								if (index[analysis.analysisType] == undefined) {
+									var analysisType = {
+										name: analysis.analysisType,
+										analyses: []
+									};
+									nestedAnalyses.push(analysisType);
+									index[analysis.analysisType] = nestedAnalyses.indexOf(analysisType);
+								}
+								self.analysisLookup[analysis.analysisId] = analysis.analysisType;
+								nestedAnalyses[index[analysis.analysisType]].analyses.push(analysis);
+							}
+
+							self.cohortAnalyses(nestedAnalyses);
+
+							// obtain completed result status for each source
+							for (var s = 0; s < cdmSources.length; s++) {
+								var source = cdmSources[s];
+								var info = self.getSourceInfo(source);
+								if (info) {
+									var sourceAnalysesStatus = {};
+									sourceAnalysesStatus.checking = true;
+									self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
+									self.getCompletedAnalyses(source);
+								}
+							}
+						}
+					});
+
+					self.currentView('cohortdefinition');
+				});
 			});
 		}
 

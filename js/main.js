@@ -8,13 +8,23 @@ requirejs.config({
 			}
 		}
 	},
+	packages: [
+		{
+			name: "databindings",
+			location: "https://rawgit.com/OHDSI/Circe/master/js/modules/databindings"
+		},
+		{
+			name: "cohortdefinitionviewer",
+			location: "https://rawgit.com/OHDSI/Circe/master/js/modules/cohortdefinitionviewer"
+		}
+	],	
 	shim: {
 		"colorbrewer": {
 			exports: 'colorbrewer'
 		},
 		"bootstrap": {
 			"deps": [
-				'jquery',
+				'jquery'
 			]
 		},
 		"facets": {
@@ -22,11 +32,26 @@ requirejs.config({
 			exports: 'FacetEngine'
 		}
 	},
+	map: {
+		"*": {
+			'jquery-ui/sortable' : 'jquery-ui',
+			'jquery-ui/draggable' : 'jquery-ui',
+			'jquery-ui/dialog' : 'jquery-ui',
+			'jquery-ui/autocomplate': 'jquery-ui',
+			'jquery-ui/tabs': 'jquery-ui'
+		}
+	},	
+	deps: ['css!styles/jquery.dataTables.min',
+				 'css!styles/jquery.dataTables.colVis.css'
+	],
 	paths: {
 		"jquery": "https://code.jquery.com/jquery-1.11.2.min",
+		"jquery-ui": "https://code.jquery.com/ui/1.11.4/jquery-ui.min",
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"text": "plugins/text",
+		"css": "plugins/css.min",
 		"knockout": "knockout.min",
+		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/0.11.0/knockout-sortable",
 		"knockout-mapping": "knockout.mapping",
 		"knockout-persist": "knockout.persist",
 		"datatables": "jquery.dataTables.min",
@@ -51,11 +76,18 @@ requirejs.config({
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
-		"lodash": "lodash.min"
+		"lodash": "lodash.min",
+		"cohortbuilder": "https://rawgit.com/OHDSI/Circe/master/js/modules/cohortbuilder",
+		"conceptsetbuilder": "https://rawgit.com/OHDSI/Circe/master/js/modules/conceptsetbuilder",
+		"conceptpicker": "https://rawgit.com/OHDSI/Circe/master/js/modules/conceptpicker",
+		"webapi" : "https://rawgit.com/OHDSI/Circe/master/js/modules/WebAPIProvider",
+		"vocabularyprovider": "https://rawgit.com/OHDSI/Circe/master/js/modules/WebAPIProvider/VocabularyProvider",
+		"appConfig" : "config"
 	}
 });
 
-requirejs(['knockout', 'app', 'director','search'], function (ko, app) {
+requirejs(['bootstrap'], function () { // bootstrap must come first
+requirejs(['knockout', 'app', 'director', 'search', 'jquery.ui.autocomplete.scroll'], function (ko, app) {
 	
 	$('#splash').fadeIn();
 	var pageModel = new app();
@@ -315,4 +347,5 @@ requirejs(['knockout', 'app', 'director','search'], function (ko, app) {
 		pageModel.analyzeSelectedConcepts();
 	});
 
+});
 });
