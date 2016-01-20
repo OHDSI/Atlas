@@ -32,6 +32,15 @@ requirejs.config({
 			exports: 'FacetEngine'
 		}
 	},
+	map: {
+		"*": {
+			'jquery-ui/sortable' : 'jquery-ui',
+			'jquery-ui/draggable' : 'jquery-ui',
+			'jquery-ui/dialog' : 'jquery-ui',
+			'jquery-ui/autocomplate': 'jquery-ui',
+			'jquery-ui/tabs': 'jquery-ui'
+		}
+	},	
 	deps: ['css!styles/jquery.dataTables.min',
 				 'css!styles/jquery.dataTables.colVis.css'
 	],
@@ -42,6 +51,7 @@ requirejs.config({
 		"text": "plugins/text",
 		"css": "plugins/css.min",
 		"knockout": "knockout.min",
+		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/0.11.0/knockout-sortable",
 		"knockout-mapping": "knockout.mapping",
 		"knockout-persist": "knockout.persist",
 		"datatables": "jquery.dataTables.min",
