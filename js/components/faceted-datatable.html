@@ -4,7 +4,7 @@
 			<div data-bind="foreach:Facets">
 				<div class="facetName"><i class="fa fa-filter"></i><span data-bind="text:caption"></span></div>
 				<div class="facetScrollBox" data-bind="foreach:Members">
-					<div class="facetMemberName" data-bind="click: function() { $component.updateFilters();}, css : {selected: Selected}">
+					<div class="facetMemberName" data-bind="click: function(data, event) { $component.updateFilters($data, event);}, css : {selected: Selected}">
 						<span data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, text:Name + ' (' + ActiveCount + ')'"></span>
 					</div>
 				</div>
