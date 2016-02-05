@@ -510,6 +510,10 @@ label {
 	color: #F19119;
 }
 
+.glyphicon-ok.selected {
+	color: #F19119;
+}
+
 .badge {
 	font-weight: normal;
 	line-height: .9;
