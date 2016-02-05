@@ -122,11 +122,8 @@ define(['knockout',
 		});
 		
 
-		self.addConceptSet = function (item) {
-			self.tabWidget().tabs("option", "active", 1); // index 1 is the Concept Set Tab.
-			var fieldObservable = item.CodesetId;
-			var newConceptId = self.conceptSetEditor().createConceptSet().id;
-			fieldObservable(newConceptId);
+		self.handleConceptSetSelect = function (item) {
+			alert(item);
 		}
 
 		self.reload = function () {

@@ -11,11 +11,11 @@ requirejs.config({
 	packages: [
 		{
 			name: "databindings",
-			location: "https://rawgit.com/OHDSI/Circe/master/js/modules/databindings"
+			location: "/circe/js/modules/databindings"
 		},
 		{
 			name: "cohortdefinitionviewer",
-			location: "https://rawgit.com/OHDSI/Circe/master/js/modules/cohortdefinitionviewer"
+			location: "/circe/js/modules/cohortdefinitionviewer"
 		}
 	],	
 	shim: {
@@ -77,11 +77,11 @@ requirejs.config({
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
 		"lodash": "lodash.min",
-		"cohortbuilder": "https://rawgit.com/OHDSI/Circe/master/js/modules/cohortbuilder",
-		"conceptsetbuilder": "https://rawgit.com/OHDSI/Circe/master/js/modules/conceptsetbuilder",
-		"conceptpicker": "https://rawgit.com/OHDSI/Circe/master/js/modules/conceptpicker",
-		"webapi" : "https://rawgit.com/OHDSI/Circe/master/js/modules/WebAPIProvider",
-		"vocabularyprovider": "https://rawgit.com/OHDSI/Circe/master/js/modules/WebAPIProvider/VocabularyProvider",
+		"cohortbuilder": "/circe/js/modules/cohortbuilder",
+		"conceptsetbuilder": "/circe/js/modules/conceptsetbuilder",
+		"conceptpicker": "/circe/js/modules/conceptpicker",
+		"webapi" : "/circe/js/modules/WebAPIProvider",
+		"vocabularyprovider": "/circe/js/modules/WebAPIProvider/VocabularyProvider",
 		"appConfig" : "config"
 	}
 });
