@@ -1,5 +1,5 @@
 <div data-bind="if: model.currentView() == 'cohortdefinition'">
-	<div class="wrapperTitle" data-bind="text:model.currentCohortDefinition().name">
+	<div class="wrapperTitle" data-bind="text:'Cohort Definition For: ' + model.currentCohortDefinition().name()">
 	</div>
 
 	<div class="paddedWrapper">

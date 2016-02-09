@@ -6,9 +6,9 @@ define(['knockout',
 				'cohortbuilder/components',
 				'conceptsetbuilder/components',
 				'knockout-jqueryui/tabs',
-				'cohortdefinitionviewer'
+				'cohortdefinitionviewer',
+                'cohortconceptselector'
 ], function (ko, view, config, CohortDefinition, chortDefinitionAPI) {
-	
 	
 	function dirtyFlag(root, isInitiallyDirty) {
 		var result = function () {},
@@ -123,8 +123,21 @@ define(['knockout',
 		
 
 		self.handleConceptSetSelect = function (item) {
-			alert(item);
+			//alert(item);
+            self.model.criteriaContext(item);            
+            $('#conceptSetSelectorDialog').modal('show');
 		}
+        
+        self.onAtlasConceptSetSelectAction = function(result) {
+            console.log(result);
+            $('#conceptSetSelectorDialog').modal('hide');
+
+            if (result.action=='add')
+                //self.addConceptSet();
+                alert("Add Concept Set Selected");
+
+            self.model.criteriaContext(null);
+        }
 
 		self.reload = function () {
 			var updatedExpression = JSON.parse(self.modifiedJSON);
