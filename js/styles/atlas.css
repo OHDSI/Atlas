@@ -165,10 +165,6 @@ textarea {
 	padding-left: 10px;
 }
 
-#wrapperLeftMenu .badge {
-	margin-left: 20px;
-}
-
 #wrapperConcept .nav.nav-pills {
 	padding: 7px;
 	cursor: pointer;
@@ -1484,4 +1480,8 @@ input[type="radio"] {
     vertical-align: middle;
     margin: 0px;
     /* line-height: 30px; */
+}
+
+li.assetlink {
+	background-color:#eee;
 }

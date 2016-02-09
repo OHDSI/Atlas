@@ -32,7 +32,9 @@ define([
 		self.minibar = ko.observable(false);
 		self.searchTabMode = ko.observable('simple');
 		self.pendingSearch = ko.observable(false);
-		self.studyReportSections = ko.observableArray().extend({ localStoragePersist: ['studyReportSections', '30']});;
+		self.studyReportSections = ko.observableArray().extend({
+			localStoragePersist: ['studyReportSections', '30']
+		});;
 
 		self.initComplete = function () {
 			if (!self.appInitializationFailed()) {
@@ -90,6 +92,11 @@ define([
 						require(['conceptset-manager'], function () {
 							self.loadConceptSet(conceptSetId, mode);
 							self.resolveConceptSetExpression();
+						});
+					},
+					'/conceptsets': function () {
+						require([], function () {
+							self.currentView('conceptsets');
 						});
 					},
 					'analytics': function () {
@@ -283,13 +290,13 @@ define([
 				{
 					'caption': 'Has Records',
 					'binding': function (o) {
-						return parseInt(o.RECORD_COUNT.toString().replace(',','')) > 0;
+						return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
 					}
 				},
 				{
 					'caption': 'Has Descendant Records',
 					'binding': function (o) {
-						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',','')) > 0;
+						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
 					}
 				}
 			]
@@ -340,13 +347,13 @@ define([
 				{
 					'caption': 'Has Records',
 					'binding': function (o) {
-						return parseInt(o.RECORD_COUNT.toString().replace(',','')) > 0;
+						return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
 					}
 				},
 				{
 					'caption': 'Has Descendant Records',
 					'binding': function (o) {
-						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',','')) > 0;
+						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
 					}
 				},
 				{
