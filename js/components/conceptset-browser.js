@@ -8,18 +8,8 @@ define(['knockout', 'text!./conceptset-browser.html', 'bootstrap', 'cohortconcep
         }
         
         self.onRespositoryConceptSetSelected = function(conceptSet) {
-            alert('Respository Concept Set Selected: ' + conceptSet);
-            self.sendToConceptSetEditor(conceptSet.id);
-        }
-        
-        self.onCohortConceptSetSelected = function(conceptSet) {
-            alert('Cohort Concept Set Selected: ' + conceptSet);
-            self.sendToConceptSetEditor(conceptSet.id);
-        }
-        
-        self.sendToConceptSetEditor = function(id) {
             window.location.href = "#/conceptset/" + id + '/details';            
-        }
+        }                
     }
 
 	var component = {
