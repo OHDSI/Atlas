@@ -8,7 +8,7 @@ define(['knockout', 'text!./conceptset-browser.html', 'bootstrap', 'cohortconcep
         }
         
         self.onRespositoryConceptSetSelected = function(conceptSet) {
-            window.location.href = "#/conceptset/" + id + '/details';            
+            window.location.href = "#/conceptset/" + conceptSet.id + '/details';            
         }                
     }
 
