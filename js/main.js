@@ -64,6 +64,7 @@ requirejs.config({
 		"search": "components/search",
 		"configuration": "components/configuration",
 		"concept-manager": "components/concept-manager",
+        "conceptset-browser": "components/conceptset-browser",
 		"conceptset-manager": "components/conceptset-manager",
 		"job-manager": "components/job-manager",
 		"importer": "components/importer",

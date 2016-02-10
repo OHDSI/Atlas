@@ -41,7 +41,7 @@ define(['knockout', 'text!./r-manager.html'], function (ko, view) {
 
 		self.loadNodes = function () {
 			$.ajax({
-				url: 'http://hixbeta.jnj.com:8081/rpooli/api/v1/nodes',
+				url: 'http://hixbeta.jnj.com:8999/rpooli/api/v1/nodes',
 				method: 'GET',
 				success: function (response) {
 					self.nodes(response.nodes);
@@ -51,7 +51,7 @@ define(['knockout', 'text!./r-manager.html'], function (ko, view) {
 
 		self.loadSystemInfo = function () {
 			$.ajax({
-				url: 'http://hixbeta.jnj.com:8081/rsb/api/rest/system/info',
+				url: 'http://hixbeta.jnj.com:8999/rsb/api/rest/system/info',
 				method: 'GET',
 				headers: {
 					'Accept': 'application/vnd.rsb+json'
@@ -64,7 +64,7 @@ define(['knockout', 'text!./r-manager.html'], function (ko, view) {
 
 		/*
 		$.ajax({
-			url: 'http://hixbeta.jnj.com:8081/rsb/api/rest/admin/system/rservi_pools',
+			url: 'http://hixbeta.jnj.com:8999/rsb/api/rest/admin/system/rservi_pools',
 			method: 'GET',
 			headers: {
 				'Accept' : 'application/vnd.rsb+json'

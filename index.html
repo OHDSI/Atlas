@@ -2,79 +2,79 @@
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="">
-	<meta name="author" content="">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
-	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" type="text/css" href="js/styles/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap-theme.min.css">
-	<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
-	<link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.min.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.colVis.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/atlas.dataTables.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/chart.css">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="js/styles/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="js/styles/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="js/styles/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.colVis.css">
+    <link rel="stylesheet" type="text/css" href="js/styles/atlas.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
+    <link rel="stylesheet" type="text/css" href="js/styles/chart.css">
 
-	<title>ATLAS</title>
-	<!--Adobe Edge Runtime-->
-	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>ATLAS</title>
+    <!--Adobe Edge Runtime-->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
 </head>
 
 <body>
-	<div id="splash">
-		<div id="stage" class="EDGE-8182598">
-		</div>
-		<div id="heading">
-			<a href="#/search">ATLAS</a>
-		</div>
-		<div data-bind="text:applicationStatus" id="status"></div>
-		<div id="activityTimeline" data-bind="if:applicationStatus=='running'">
-		</div>
-	</div>
+    <div id="splash">
+        <div id="stage" class="EDGE-8182598">
+        </div>
+        <div id="heading">
+            <a href="#/search">ATLAS</a>
+        </div>
+        <div data-bind="text:applicationStatus" id="status"></div>
+        <div id="activityTimeline" data-bind="if:applicationStatus=='running'">
+        </div>
+    </div>
 
-	<!-- ko if: pageModel.currentView() != 'splash' -->
-	<div id="wrapperMiniBar" style="display:none;" data-bind="visible:minibar()">
-		<div>
-			<img src="images/atlas.png">
-			<ul>
-				<li>
-					<a href="#/search"><i class="fa fa-search"></i></a>
-				</li>
-				<li>
-					<a data-bind="click:routeToConceptSet"><i class="fa fa-shopping-cart"></i></a>
-					<span data-bind="if: selectedConcepts().length > 0">
+    <!-- ko if: pageModel.currentView() != 'splash' -->
+    <div id="wrapperMiniBar" style="display:none;" data-bind="visible:minibar()">
+        <div>
+            <img src="images/atlas.png">
+            <ul>
+                <li>
+                    <a href="#/search"><i class="fa fa-search"></i></a>
+                </li>
+                <li>
+                    <a data-bind="click:routeToConceptSet"><i class="fa fa-shopping-cart"></i></a>
+                    <span data-bind="if: selectedConcepts().length > 0">
 					<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
-					</span>
-				</li>
-				<li>
-					<a href="#/import"><i class="fa fa-upload"></i></a>
-				</li>
-				<li>
-					<a href="#/cohortdefinitions"><i class="fa fa-language"></i></a>
-				</li>
-				<li>
-					<a href="#/profiles"><i class="fa fa-user"></i></a>
-				</li>
-				<li>
-					<a href="#/reports"><i class="fa fa-area-chart"></i></a>
-				</li>
-				<!--
+                    </span>
+                </li>
+                <li>
+                    <a href="#/import"><i class="fa fa-upload"></i></a>
+                </li>
+                <li>
+                    <a href="#/cohortdefinitions"><i class="fa fa-language"></i></a>
+                </li>
+                <li>
+                    <a href="#/profiles"><i class="fa fa-user"></i></a>
+                </li>
+                <li>
+                    <a href="#/reports"><i class="fa fa-area-chart"></i></a>
+                </li>
+                <!--
 				<li>
 					<a href="#/analytics"><i class="fa fa-calculator"></i>Analytics</a>
 				</li>
 				-->
-				<li>
-					<a href="/#feasibility"><i class="fa fa-dot-circle-o"></i></a>
-				</li>
-				<li>
-					<a href="#/jobs"><i class="fa fa-tasks"></i></a>
-				</li>
-				<!--
+                <li>
+                    <a href="/#feasibility"><i class="fa fa-dot-circle-o"></i></a>
+                </li>
+                <li>
+                    <a href="#/jobs"><i class="fa fa-tasks"></i></a>
+                </li>
+                <!--
 				<li>
 					<a href="#/r"><i class="fa fa-registered"></i></a>
 				</li>
@@ -82,79 +82,79 @@
 					<a href="#/studyreport"><i class="fa fa-book"></i></a>
 				</li>
 				-->
-				<li>
-					<a href="#/configure"><i class="fa fa-cogs"></i></a>
-				</li>
-				<li>
-					<a href=""><i data-bind="click: function() {minibar(false);}" class="fa fa-expand"></i></a>
-				</li>
-			</ul>
-		</div>
-	</div>
+                <li>
+                    <a href="#/configure"><i class="fa fa-cogs"></i></a>
+                </li>
+                <li>
+                    <a href=""><i data-bind="click: function() {minibar(false);}" class="fa fa-expand"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible:!pageModel.minibar();">
-		<div id="wrapperLogo">
-			<a href="#/splash">ATLAS</a>
-		</div>
-		<ul>
-			<li>
-				<a href="#/search"><i class="fa fa-search"></i>Vocabulary Search</a>
-			</li>
-			<ul data-bind="foreach:recentSearch">
-				<li>
-					<a data-bind="attr: {href:'#/search/' + query}, text: caption + ' (' + resultLength + ')'"></a>
-				</li>
-			</ul>
-			<li>
-				<i class="fa fa-history"></i>Recent Concepts
-			</li>
-			<ul data-bind="foreach:recentConcept">
-				<li>
-					<a data-bind="text: CONCEPT_NAME, attr: { href: '#/concept/' + CONCEPT_ID}"></a>
-				</li>
-			</ul>
-			<li>
-				<a href="#/conceptsets"><i class="fa fa-shopping-cart"></i>Concept Sets</a>
-			</li>
-			
-			<!-- ko if: pageModel.currentConceptSet() -->
-			<li class="assetlink">
-				<a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
-				<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>				
-			</li>
-			<!-- /ko -->
-			
-			<li>
-				<a href="#/import"><i class="fa fa-upload"></i>Import</a>
-			</li>
-			<li>
-				<a href="#/cohortdefinitions"><i class="fa fa-language"></i>Cohort Definitions</a>
-			</li>
-			
-			<!-- ko if: pageModel.currentCohortDefinition() -->
-			<li class="assetlink">
-				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id}, text:pageModel.currentCohortDefinition().name"></a>
-			</li>
-			<!-- /ko -->			
-			
-			<li>
-				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
-			</li>
-			<li>
-				<a href="#/reports"><i class="fa fa-area-chart"></i>Cohort Reporting</a>
-			</li>
-			<!--
+    <div id="wrapperLeftMenu" style="display:none;" data-bind="visible:!pageModel.minibar();">
+        <div id="wrapperLogo">
+            <a href="#/splash">ATLAS</a>
+        </div>
+        <ul>
+            <li>
+                <a href="#/search"><i class="fa fa-search"></i>Vocabulary Search</a>
+            </li>
+            <ul data-bind="foreach:recentSearch">
+                <li>
+                    <a data-bind="attr: {href:'#/search/' + query}, text: caption + ' (' + resultLength + ')'"></a>
+                </li>
+            </ul>
+            <li>
+                <i class="fa fa-history"></i>Recent Concepts
+            </li>
+            <ul data-bind="foreach:recentConcept">
+                <li>
+                    <a data-bind="text: CONCEPT_NAME, attr: { href: '#/concept/' + CONCEPT_ID}"></a>
+                </li>
+            </ul>
+            <li>
+                <a href="#/conceptsets"><i class="fa fa-shopping-cart"></i>Concept Sets</a>
+            </li>
+
+            <!-- ko if: pageModel.currentConceptSet() -->
+            <li class="assetlink">
+                <a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
+                <span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
+            </li>
+            <!-- /ko -->
+
+            <li>
+                <a href="#/import"><i class="fa fa-upload"></i>Import</a>
+            </li>
+            <li>
+                <a href="#/cohortdefinitions"><i class="fa fa-language"></i>Cohort Definitions</a>
+            </li>
+
+            <!-- ko if: pageModel.currentCohortDefinition() -->
+            <li class="assetlink">
+                <a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text:pageModel.currentCohortDefinition().name"></a>
+            </li>
+            <!-- /ko -->
+
+            <li>
+                <a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
+            </li>
+            <li>
+                <a href="#/reports"><i class="fa fa-area-chart"></i>Cohort Reporting</a>
+            </li>
+            <!--
 			<li>
 				<a href="#/analytics"><i class="fa fa-calculator"></i>Analytics</a>
 			</li>
 			-->
-			<li>
-				<a href="#/feasibility"><i class="fa fa-dot-circle-o"></i>Feasibility</a>
-			</li>
-			<li>
-				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
-			</li>
-			<!--
+            <li>
+                <a href="#/feasibility"><i class="fa fa-dot-circle-o"></i>Feasibility</a>
+            </li>
+            <li>
+                <a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
+            </li>
+            <!--
 			<li>
 				<a href="#/r"><i class="fa fa-registered"></i>R Services</a>
 			</li>
@@ -162,125 +162,126 @@
 				<a href="#/studyreport"><i class="fa fa-book"></i>Study Report</a>
 			</li>
 			-->
-			<li>
-				<a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
-			</li>
-			<li>
-				<a target="_blank" href="http://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
-			</li>
-			<li>
-				<i data-bind="click: function() {minibar(true);}" class="fa fa-compress"></i>
-			</li>
-		</ul>
-	</div>
-	<!-- /ko -->
-	<div data-bind="if:currentView() != 'splash', css: { minibar: minibar() }" id="wrapperMainWindow">
-		<div id="wrapperMainWindowContainer">
-			<div id="wrapperLoading" data-bind="if: currentView() == 'loading'">
-				<div class="wrapperTitle">
-					<i class="fa fa-refresh fa-spin"></i> Loading...
-				</div>
-			</div>
+            <li>
+                <a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
+            </li>
+            <li>
+                <a target="_blank" href="http://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
+            </li>
+            <li>
+                <i data-bind="click: function() {minibar(true);}" class="fa fa-compress"></i>
+            </li>
+        </ul>
+    </div>
+    <!-- /ko -->
+    <div data-bind="if:currentView() != 'splash', css: { minibar: minibar() }" id="wrapperMainWindow">
+        <div id="wrapperMainWindowContainer">
+            <div id="wrapperLoading" data-bind="if: currentView() == 'loading'">
+                <div class="wrapperTitle">
+                    <i class="fa fa-refresh fa-spin"></i> Loading...
+                </div>
+            </div>
 
-			<div data-bind="if:pageModel.currentView()=='import'">
-				<importer params="{model: pageModel}"></importer>
-			</div>
+            <div data-bind="if:pageModel.currentView()=='import'">
+                <importer params="{model: pageModel}"></importer>
+            </div>
 
-			<div data-bind="if: pageModel.currentView() == 'conceptsets'">
-			</div>
-			
-			<div data-bind="if: pageModel.currentView() == 'conceptset'">
-				<conceptset-manager params="{model: pageModel}"></conceptset-manager>
-			</div>
+            <div data-bind="if:pageModel.currentView()=='conceptsets'">
+                <conceptset-browser params="{model: pageModel}"></conceptset-browser>                
+            </div>
 
-			<div data-bind="visible: pageModel.currentView() == 'search'">
-				<search id="componentSearch" params="{model: pageModel}"></search>
-			</div>
+            <div data-bind="if: pageModel.currentView() == 'conceptset'">
+                <conceptset-manager params="{model: pageModel}"></conceptset-manager>
+            </div>
 
-			<div data-bind="if: pageModel.currentView() == 'concept'">
-				<concept-manager params="{model: pageModel, currentConceptId: pageModel.currentConceptId}"></concept-manager>
-			</div>
+            <div data-bind="visible: pageModel.currentView() == 'search'">
+                <search id="componentSearch" params="{model: pageModel}"></search>
+            </div>
 
-			<div data-bind="if:pageModel.currentView()=='jobs'">
-				<job-manager params="{model: pageModel}"></job-manager>
-			</div>
+            <div data-bind="if: pageModel.currentView() == 'concept'">
+                <concept-manager params="{model: pageModel, currentConceptId: pageModel.currentConceptId}"></concept-manager>
+            </div>
 
-			<div data-bind="if: pageModel.currentView() == 'cohortdefinitions'">
-				<cohort-definitions params="{model: pageModel}"></cohort-definitions>
-			</div>
+            <div data-bind="if:pageModel.currentView()=='jobs'">
+                <job-manager params="{model: pageModel}"></job-manager>
+            </div>
 
-			<div data-bind="if: pageModel.currentView() == 'cohortdefinition'">
-				<cohort-definition-manager params="{model: pageModel}"></cohort-definition-manager>
-			</div>
+            <div data-bind="if: pageModel.currentView() == 'cohortdefinitions'">
+                <cohort-definitions params="{model: pageModel}"></cohort-definitions>
+            </div>
 
-			<div data-bind="if: pageModel.currentView() == 'reports'">
-				<report-manager params="{model: pageModel}"></report-manager>
-			</div>
+            <div data-bind="if: pageModel.currentView() == 'cohortdefinition'">
+                <cohort-definition-manager params="{model: pageModel}"></cohort-definition-manager>
+            </div>
 
-			<div data-bind="if:pageModel.currentView() == 'profiles'">
-				<profile-manager params="services: pageModel.services"></profile-manager>
-			</div>
+            <div data-bind="if: pageModel.currentView() == 'reports'">
+                <report-manager params="{model: pageModel}"></report-manager>
+            </div>
 
-			<analytics-manager data-bind="if:pageModel.currentView()== 'analytics'" params="{model: pageModel}"></analytics-manager>
+            <div data-bind="if:pageModel.currentView() == 'profiles'">
+                <profile-manager params="services: pageModel.services"></profile-manager>
+            </div>
 
-			<div data-bind="if:pageModel.currentView() == 'feasibilities'">
-				<feasibility-manager></feasibility-manager>
-			</div>
+            <analytics-manager data-bind="if:pageModel.currentView()== 'analytics'" params="{model: pageModel}"></analytics-manager>
 
-			<div data-bind="if:pageModel.currentView() == 'feasibility'">
-				<feasibility-analyzer params="services: pageModel.services, feasibilityId: pageModel.feasibilityId"></feasibility-analyzer>
-			</div>
+            <div data-bind="if:pageModel.currentView() == 'feasibilities'">
+                <feasibility-manager></feasibility-manager>
+            </div>
 
-			<div data-bind="if:pageModel.currentView() == 'r'">
-				<r-manager></r-manager>
-			</div>
+            <div data-bind="if:pageModel.currentView() == 'feasibility'">
+                <feasibility-analyzer params="services: pageModel.services, feasibilityId: pageModel.feasibilityId"></feasibility-analyzer>
+            </div>
 
-			<!--
+            <div data-bind="if:pageModel.currentView() == 'r'">
+                <r-manager></r-manager>
+            </div>
+
+            <!--
 			<div data-bind="visible: currentView() == 'studyreport'">
 				<studyreport-manager params="{sections: pageModel.studyReportSections}"></studyreport-manager>
 			</div>
 			-->
 
-			<div data-bind="if: currentView() == 'configure'">
-				<div class="wrapperTitle">
-					<i class="fa fa-cogs"></i>Configure
-				</div>
+            <div data-bind="if: currentView() == 'configure'">
+                <div class="wrapperTitle">
+                    <i class="fa fa-cogs"></i>Configure
+                </div>
 
-				<div id="wrapperConfigure">
-					<div data-bind="if:appInitializationFailed">
-						<div class="heading">Application Initialization Failed</div>
-						<div class="error">Unable to connect to an instance of the WebAPI. Please contact your administrator to resolve this issue.</div>
-					</div>
-					<div class="heading">Configured Services</div>
-					<ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
-				</div>
-			</div>
+                <div id="wrapperConfigure">
+                    <div data-bind="if:appInitializationFailed">
+                        <div class="heading">Application Initialization Failed</div>
+                        <div class="error">Unable to connect to an instance of the WebAPI. Please contact your administrator to resolve this issue.</div>
+                    </div>
+                    <div class="heading">Configured Services</div>
+                    <ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
+                </div>
+            </div>
 
-			<div data-bind="if: currentView() == 'template'">
-				<div class="wrapperTitle">
-					Template
-				</div>
-			</div>
+            <div data-bind="if: currentView() == 'template'">
+                <div class="wrapperTitle">
+                    Template
+                </div>
+            </div>
 
-		</div>
-	</div>
-	<script data-main="js/main" src="js/require.js"></script>
-	<script type="text/javascript" charset="utf-8" src="//animate.adobe.com/runtime/5.0.1/edge.5.0.1.min.js"></script>
-	<script>
-		AdobeEdge.loadComposition('atlas%20animation', 'EDGE-8182598', {
-			scaleToFit: "none",
-			centerStage: "none",
-			minW: "0",
-			maxW: "undefined",
-			width: "400px",
-			height: "400px"
-		}, {
-			"dom": {}
-		}, {
-			"dom": {}
-		});
-	</script>
-	<!--Adobe Edge Runtime End-->
+        </div>
+    </div>
+    <script data-main="js/main" src="js/require.js"></script>
+    <script type="text/javascript" charset="utf-8" src="//animate.adobe.com/runtime/5.0.1/edge.5.0.1.min.js"></script>
+    <script>
+        AdobeEdge.loadComposition('atlas%20animation', 'EDGE-8182598', {
+            scaleToFit: "none",
+            centerStage: "none",
+            minW: "0",
+            maxW: "undefined",
+            width: "400px",
+            height: "400px"
+        }, {
+            "dom": {}
+        }, {
+            "dom": {}
+        });
+    </script>
+    <!--Adobe Edge Runtime End-->
 </body>
 
 </html>

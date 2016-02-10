@@ -13,17 +13,17 @@ define([
 		var self = this;
 
 		self.services = ko.observableArray([
+			/*
 			{
 				name: 'Local',
 				url: 'http://localhost:8080/WebAPI/'
 			}
-			/*
             ,
+			*/
 			{
 				name: 'HixBeta Multihomed',
-				url: 'http://hixbeta.jnj.com:8081/WebAPI/'
+				url: 'http://hixbeta.jnj.com:8999/WebAPI/'
 			}
-			*/
 		]);
 
 		$('#querytext').focus();
@@ -97,7 +97,7 @@ define([
 						});
 					},
 					'/conceptsets': function () {
-						require([], function () {
+						require(['conceptset-browser'], function () {
 							self.currentView('conceptsets');
 						});
 					},

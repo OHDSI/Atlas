@@ -9,7 +9,7 @@ define(['knockout',
 				'cohortdefinitionviewer',
                 'cohortconceptselector'
 ], function (ko, view, config, CohortDefinition, chortDefinitionAPI) {
-	
+    
 	function dirtyFlag(root, isInitiallyDirty) {
 		var result = function () {},
 			_initialState = ko.observable(ko.toJSON(root, pruneJSON)),
@@ -84,6 +84,7 @@ define(['knockout',
 		}
 		
 		self.model = params.model;
+        self.tabMode = ko.observable('expression');
 		self.tabWidget = ko.observable();
 		self.conceptSetEditor = ko.observable();
 		self.cohortExpressionEditor = ko.observable();
@@ -251,6 +252,19 @@ define(['knockout',
 		self.getExpressionJSON = function () {
 			return ko.toJSON(self.model.currentCohortDefinition().Expression, pruneJSON, 2)
 		}
+        
+        self.onConceptSetTabRespositoryConceptSetSelected = function(conceptSet){
+            self.sendToConceptSetEditor(conceptSet.id);
+        }
+        
+        self.onConceptSetTabCohortConceptSetSelected = function(conceptSet) {
+            alert("How do I keep the context?");
+        }
+        
+        self.sendToConceptSetEditor = function(id) {
+            window.location.href = "#/conceptset/" + id + '/details';            
+        }
+        
 	}
 
 	var component = {
