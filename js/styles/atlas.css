@@ -261,9 +261,16 @@ div#wrapperMainWindowContainer {}
 .nav-tabs>li.active>a,
 .nav-tabs>li.active>a:focus,
 .nav-tabs>li.active>a:hover {
-	background-color: #003142;
+	background-color: #337AB7;
 	color: #fff;
-	border: solid 1px #003142;
+	border-top: solid 1px #003142;
+	border-left: solid 1px #003142;
+	border-right: solid 1px #003142;
+}
+
+.nav-tabs>li {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
 }
 
 #wrapperLeftMenu li {
@@ -995,7 +1002,8 @@ pre {
 }
 
 .nav-tabs>li>a {
-	border-radius: 0
+	border-top-left-radius:2px;
+	border-top-right-radius:2px;
 }
 
 .nav-pills>li>a {
@@ -1475,4 +1483,11 @@ input[type="radio"] {
 
 li.assetlink {
 	background-color:#eee;
+}
+
+table.conceptsetviewer th {
+}
+
+table.conceptsetviewer th.fixed-width {
+	width:75px;
 }

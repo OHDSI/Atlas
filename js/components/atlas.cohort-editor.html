@@ -1,118 +1,120 @@
 <table width="99%">
-    <col width="100%" />
-    <tr>
-        <td style="vertical-align: top">
-            <div data-bind="if: model.currentCohortDefinition()">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <textarea maxlength="250" rows="1" style="font-size: 18px; width: 500px; resize: none; overflow: hidden; word-wrap: break-word;" class="inputField" data-bind="textInput: model.currentCohortDefinition().name, jqAutoresize: {append: ''}, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></textarea>
-                            </td>
-                            <td>
-                                <button class="button button-small" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'button-flat-primary': !dirtyFlag().isDirty, 'button-flat-caution': dirtyFlag().isDirty}">Save</button>
-                                <!-- ko if: model.currentCohortDefinition().id() != null -->
-                                <button class="button button-small button-flat-primary" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
-                                <!-- ko ifnot: isRunning -->
-                                <button class="button button-small button-flat-caution" data-bind="click: $component.delete">Delete</button>
-                                <!-- /ko -->
-                                <!-- ko if: isRunning -->
-                                <img class="spin" src="images/running.png" />Generating...
-                                <!-- /ko -->
-                                <!-- /ko -->
-                                <button class="button button-small button-flat-primary" data-bind="click: showSql">Show SQL</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan=2>Description:
-                                <br/>
-                                <textarea maxlength="1000" rows="1" style="font-size: 1em; width: 800px; resize: none; overflow: hidden; word-wrap: break-word;" class="inputField" data-bind="textInput: model.currentCohortDefinition().description, jqAutoresize: {append: ''}"></textarea>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </td>
-    </tr>
+	<col width="100%" />
+	<tr>
+		<td style="vertical-align: top">
+			<div data-bind="if: model.currentCohortDefinition()">
+				<table>
+					<tbody>
+						<tr>
+							<td>
+								<textarea maxlength="250" rows="1" style="font-size: 18px; width: 500px; resize: none; overflow: hidden; word-wrap: break-word;" class="inputField" data-bind="textInput: model.currentCohortDefinition().name, jqAutoresize: {append: ''}, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></textarea>
+							</td>
+							<td>
+								<button class="btn btn-sm btn-success" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
+								<!-- ko if: model.currentCohortDefinition().id() != null -->
+								<button class="btn btn-sm btn-primary" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
+								<!-- ko ifnot: isRunning -->
+								<button class="btn btn-sm btn-danger" data-bind="click: $component.delete">Delete</button>
+								<!-- /ko -->
+								<!-- ko if: isRunning -->
+								<img class="spin" src="images/running.png" />Generating...
+								<!-- /ko -->
+								<!-- /ko -->
+								<button class="btn btn-sm btn-primary" data-bind="click: showSql">Show SQL</button>
+							</td>
+						</tr>
+						<tr>
+							<td colspan=2>Description:
+								<br/>
+								<textarea maxlength="1000" rows="1" style="font-size: 1em; width: 800px; resize: none; overflow: hidden; word-wrap: break-word;" class="inputField" data-bind="textInput: model.currentCohortDefinition().description, jqAutoresize: {append: ''}"></textarea>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</td>
+	</tr>
 </table>
 <div class="paddedWrapper">
-    <ul class="nav nav-tabs">
-        <li role="presentation" data-bind="css: { active: $component.tabMode() == 'expression' }, click: function() { $component.tabMode('expression') };"><a>Expression</a>
-        </li>
+	<ul class="nav nav-tabs">
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'expression' }, click: function() { $component.tabMode('expression') };"><a>Expression</a>
+		</li>
 
-        <li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets') };"><a>Concept Sets</a>
-        </li>
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets') };"><a>Concept Sets</a>
+		</li>
 
-        <li role="presentation" data-bind="css: { active: $component.tabMode() == 'printfriendly' }, click: function() { $component.tabMode('printfriendly') };"><a>Print Friendly</a>
-        </li>
-    </ul>
-    <div class="tab-content">
-        <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'expression' }" class="tab-pane">
-            <div data-bind="attr: { id: 'criteria' }, eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">
-                <cohort-expression-editor params="expression: model.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
-                <div class="modal fade" id="conceptSetSelectorDialog" tabindex="-1" role="dialog">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">Select Concept Set...</div>
-                                <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
-                        </div>
-                    </div>
-                </div>
-            </div>            
-            <!-- ko if: isGeneratedOpen -->
-            <div title="Generated Sql..." data-bind="dialog: { isOpen: isGeneratedOpen, modal: true, width:700, height:500 }">
-                <div class="tabs" data-bind="tabs: {}">
-                    <ul>
-                        <li data-bind="attr: { 'aria-controls': 'sql_server' }">
-                            <a data-bind="attr: { title: 'MSSQL Server', href: '#sql_server' }, text: 'MSSQL Server'"></a>
-                        </li>
-                        <li data-bind="attr: { 'aria-controls': 'sql_aps' }">
-                            <a data-bind="attr: { title: 'MS APS', href: '#ms_aps' }, text: 'MS APS'"></a>
-                        </li>
-                        <li data-bind="attr: { 'aria-controls': 'oracle' }">
-                            <a data-bind="attr: { title: 'Oracle', href: '#oracle' }, text: 'Oracle'"></a>
-                        </li>
-                        <li data-bind="attr: { 'aria-controls': 'postgres' }">
-                            <a data-bind="attr: { title: 'Postgres', href: '#postgres' }, text: 'Postgres'"></a>
-                        </li>
-                        <li data-bind="attr: { 'aria-controls': 'redshift' }">
-                            <a data-bind="attr: { title: 'Red Shift', href: '#redshift' }, text: 'Red Shift'"></a>
-                        </li>
-                    </ul>
-                    <div data-bind="attr: { id: 'sql_server' }">
-                        <pre data-bind="text: generatedSql.mssql"></pre>
-                    </div>
-                    <div data-bind="attr: { id: 'ms_aps' }">
-                        <pre data-bind="text: generatedSql.msaps"></pre>
-                    </div>
-                    <div data-bind="attr: { id: 'oracle' }">
-                        <pre data-bind="text: generatedSql.oracle"></pre>
-                    </div>
-                    <div data-bind="attr: { id: 'postgres' }">
-                        <pre data-bind="text: generatedSql.postgres"></pre>
-                    </div>
-                    <div data-bind="attr: { id: 'redshift' }">
-                        <pre data-bind="text: generatedSql.redshift"></pre>
-                    </div>
-                </div>
-            </div>
-            <!-- /ko -->
-        </div>
-        <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }" class="tab-pane">
-            <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition() && model.currentCohortDefinition().expression().ConceptSets, onRespositoryConceptSetSelected: $component.onConceptSetTabRespositoryConceptSetSelected, onCohortConceptSetSelected: $component.onConceptSetTabCohortConceptSetSelected"></cohort-concept-set-browser>
-        </div>
-        <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'printfriendly' }" class="tab-pane">
-            <cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
-            <br/>
-            <div style="font-size:1.3em">Appendix 1: Concept Set Definitions</div>
-            <br/>
-            <!-- ko foreach: model.currentCohortDefinition().expression().ConceptSets.sorted -->
-            <div style="font-size: 1.15em"><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
-            <div style="padding-left:20px">
-            <conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
-            <br/>
-            </div>
-            <!-- /ko -->
-        </div>
-    </div>
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'printfriendly' }, click: function() { $component.tabMode('printfriendly') };"><a>Print Friendly</a>
+		</li>
+	</ul>
+	<div class="tab-content">
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'expression' }" class="tab-pane">
+			<div data-bind="attr: { id: 'criteria' }, eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">
+				<cohort-expression-editor params="expression: model.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
+				<div class="modal fade" id="conceptSetSelectorDialog" tabindex="-1" role="dialog">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">Select Concept Set...</div>
+							<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- ko if: isGeneratedOpen -->
+			<div title="Generated Sql..." data-bind="dialog: { isOpen: isGeneratedOpen, modal: true, width:700, height:500 }">
+				<div class="tabs" data-bind="tabs: {}">
+					<ul>
+						<li data-bind="attr: { 'aria-controls': 'sql_server' }">
+							<a data-bind="attr: { title: 'MSSQL Server', href: '#sql_server' }, text: 'MSSQL Server'"></a>
+						</li>
+						<li data-bind="attr: { 'aria-controls': 'sql_aps' }">
+							<a data-bind="attr: { title: 'MS APS', href: '#ms_aps' }, text: 'MS APS'"></a>
+						</li>
+						<li data-bind="attr: { 'aria-controls': 'oracle' }">
+							<a data-bind="attr: { title: 'Oracle', href: '#oracle' }, text: 'Oracle'"></a>
+						</li>
+						<li data-bind="attr: { 'aria-controls': 'postgres' }">
+							<a data-bind="attr: { title: 'Postgres', href: '#postgres' }, text: 'Postgres'"></a>
+						</li>
+						<li data-bind="attr: { 'aria-controls': 'redshift' }">
+							<a data-bind="attr: { title: 'Red Shift', href: '#redshift' }, text: 'Red Shift'"></a>
+						</li>
+					</ul>
+					<div data-bind="attr: { id: 'sql_server' }">
+						<pre data-bind="text: generatedSql.mssql"></pre>
+					</div>
+					<div data-bind="attr: { id: 'ms_aps' }">
+						<pre data-bind="text: generatedSql.msaps"></pre>
+					</div>
+					<div data-bind="attr: { id: 'oracle' }">
+						<pre data-bind="text: generatedSql.oracle"></pre>
+					</div>
+					<div data-bind="attr: { id: 'postgres' }">
+						<pre data-bind="text: generatedSql.postgres"></pre>
+					</div>
+					<div data-bind="attr: { id: 'redshift' }">
+						<pre data-bind="text: generatedSql.redshift"></pre>
+					</div>
+				</div>
+			</div>
+			<!-- /ko -->
+		</div>
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }" class="tab-pane">
+			<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition() && model.currentCohortDefinition().expression().ConceptSets, onRespositoryConceptSetSelected: $component.onConceptSetTabRespositoryConceptSetSelected, onCohortConceptSetSelected: $component.onConceptSetTabCohortConceptSetSelected"></cohort-concept-set-browser>
+		</div>
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'printfriendly' }" class="tab-pane">
+			<div class="paddedWrapper">
+				<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
+				<br/>
+				<div>Appendix 1: Concept Set Definitions</div>
+				<br/>
+				<!-- ko foreach: model.currentCohortDefinition().expression().ConceptSets.sorted -->
+				<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
+				<div style="padding-left:20px">
+					<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+					<br/>
+				</div>
+				<!-- /ko -->
+			</div>
+		</div>
+	</div>
 </div>
