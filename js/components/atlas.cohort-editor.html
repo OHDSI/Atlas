@@ -1,40 +1,26 @@
-<table width="99%">
-	<col width="100%" />
-	<tr>
-		<td style="vertical-align: top">
-			<div data-bind="if: model.currentCohortDefinition()">
-				<table>
-					<tbody>
-						<tr>
-							<td>
-								<textarea maxlength="250" rows="1" style="font-size: 18px; width: 500px; resize: none; overflow: hidden; word-wrap: break-word;" class="inputField" data-bind="textInput: model.currentCohortDefinition().name, jqAutoresize: {append: ''}, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></textarea>
-							</td>
-							<td>
-								<button class="btn btn-sm btn-success" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
-								<!-- ko if: model.currentCohortDefinition().id() != null -->
-								<button class="btn btn-sm btn-primary" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
-								<!-- ko ifnot: isRunning -->
-								<button class="btn btn-sm btn-danger" data-bind="click: $component.delete">Delete</button>
-								<!-- /ko -->
-								<!-- ko if: isRunning -->
-								<img class="spin" src="images/running.png" />Generating...
-								<!-- /ko -->
-								<!-- /ko -->
-								<button class="btn btn-sm btn-primary" data-bind="click: showSql">Show SQL</button>
-							</td>
-						</tr>
-						<tr>
-							<td colspan=2>Description:
-								<br/>
-								<textarea maxlength="1000" rows="1" style="font-size: 1em; width: 800px; resize: none; overflow: hidden; word-wrap: break-word;" class="inputField" data-bind="textInput: model.currentCohortDefinition().description, jqAutoresize: {append: ''}"></textarea>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</td>
-	</tr>
-</table>
+<div class="paddedWrapper clear" data-bind="if: model.currentCohortDefinition()">
+
+	<!-- ko if: model.currentCohortDefinition().id() != null -->
+	<!-- ko ifnot: isRunning -->
+	<button class="btn btn-sm btn-danger pull-right" data-bind="click: $component.delete">Delete Cohort Definition</button>
+	<!-- /ko -->
+	<button class="btn btn-sm btn-primary pull-right" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
+	<!-- ko if: isRunning -->
+	<img class="spin" src="images/running.png" />Generating...
+	<!-- /ko -->
+	<!-- /ko -->
+	<button class="btn btn-sm btn-primary pull-right" data-bind="click: showSql">Show SQL</button>
+	<button class="btn btn-sm btn-success pull-right" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
+</div>
+
+<div class="paddedWrapper">
+	<div class="heading">
+		Description:
+	</div>
+	<textarea maxlength="1000" rows="5" style="font-size: 1em; width: 500px; resize: none; overflow: hidden; word-wrap: break-word;" class="inputField" data-bind="textInput: model.currentCohortDefinition().description, jqAutoresize: {append: ''}"></textarea>
+</div>
+
+
 <div class="paddedWrapper">
 	<ul class="nav nav-tabs">
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'expression' }, click: function() { $component.tabMode('expression') };"><a>Expression</a>

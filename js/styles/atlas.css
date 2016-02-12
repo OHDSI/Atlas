@@ -100,15 +100,37 @@ body {
 	color: green;
 }
 
-#scatter rect.drug { fill: #7EB1DC; }
-#scatter rect.condition { fill: #5393C8; }
-#scatter rect.observation { fill: #1265AB; }
-#scatter rect.visit { fill: #094B83; }
+#scatter rect.drug {
+	fill: #7EB1DC;
+}
 
-#scatter text.drug { fill: #7EB1DC; }
-#scatter text.condition { fill: #5393C8; }
-#scatter text.observation { fill: #1265AB; }
-#scatter text.visit { fill: #094B83; }
+#scatter rect.condition {
+	fill: #5393C8;
+}
+
+#scatter rect.observation {
+	fill: #1265AB;
+}
+
+#scatter rect.visit {
+	fill: #094B83;
+}
+
+#scatter text.drug {
+	fill: #7EB1DC;
+}
+
+#scatter text.condition {
+	fill: #5393C8;
+}
+
+#scatter text.observation {
+	fill: #1265AB;
+}
+
+#scatter text.visit {
+	fill: #094B83;
+}
 
 .serviceUnavailable {
 	color: red;
@@ -241,6 +263,10 @@ pre span.key {
 
 div#wrapperMainWindowContainer {}
 
+.panel-heading a {
+	color: #003142;
+}
+
 .wrapperTitle {
 	position: relative;
 	background-color: #003142;
@@ -256,12 +282,13 @@ div#wrapperMainWindowContainer {}
 
 #wrapperLeftMenu ul {
 	padding: 0px;
+	margin-bottom:0px;
 }
 
 .nav-tabs>li.active>a,
 .nav-tabs>li.active>a:focus,
 .nav-tabs>li.active>a:hover {
-	background-color: #337AB7;
+	background-color: #003142;
 	color: #fff;
 	border-top: solid 1px #003142;
 	border-left: solid 1px #003142;
@@ -334,6 +361,11 @@ div#wrapperMainWindowContainer {}
 
 .feFilter .facetMemberName.selected {
 	background-color: #F9B813;
+}
+
+.panel-default > .panel-highlighted {
+	background-color:#F9B813;
+	background-image:none;
 }
 
 .feFilter .facetScrollBox {
@@ -1002,8 +1034,8 @@ pre {
 }
 
 .nav-tabs>li>a {
-	border-top-left-radius:2px;
-	border-top-right-radius:2px;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
 }
 
 .nav-pills>li>a {
@@ -1122,8 +1154,10 @@ pre {
 
 .panel-heading {
 	border-top-right-radius: 0;
-	border-top-left-radius: 0
+	border-top-left-radius: 0;
+	padding:3px 5px 3px 10px;
 }
+
 
 .panel-footer {
 	border-bottom-right-radius: 0;
@@ -1234,7 +1268,7 @@ div#stage {
 	background-image: none;
 	border-radius: 2px;
 	color: #fff;
-	margin:2px
+	margin: 2px
 }
 
 table.dataTable {
@@ -1449,9 +1483,9 @@ div.scatter {
 }
 
 .brush .extent {
-  stroke: #fff;
-  fill-opacity: .125;
-  shape-rendering: crispEdges;
+	stroke: #fff;
+	fill-opacity: .125;
+	shape-rendering: crispEdges;
 }
 
 #scatter .focus {
@@ -1459,35 +1493,53 @@ div.scatter {
 }
 
 #scatter .axis text {
-	font-size:10px;
+	font-size: 10px;
 }
 
 #scatter {
-    text-align: center;
-    /* background-color: #eee; */
-    border-bottom: solid 1px #ccc;
+	text-align: center;
+	/* background-color: #eee; */
+	border-bottom: solid 1px #ccc;
 }
 
 line.observation-period {
-    stroke: #F19119;
-    stroke-width: 1px;
-    stroke-opacity: 1;
+	stroke: #F19119;
+	stroke-width: 1px;
+	stroke-opacity: 1;
 }
 
-
 input[type="radio"] {
-    vertical-align: middle;
-    margin: 0px;
-    /* line-height: 30px; */
+	vertical-align: middle;
+	margin: 0px;
+	/* line-height: 30px; */
 }
 
 li.assetlink {
-	background-color:#eee;
+	background-color: #eee;
 }
 
-table.conceptsetviewer th {
-}
+table.conceptsetviewer th {}
 
 table.conceptsetviewer th.fixed-width {
-	width:75px;
+	width: 75px;
+}
+
+.panel-group {
+	margin-bottom: 0px;
+}
+
+.cohortDefinitionNameTextArea {
+	font-size: 14px;
+	width: 500px;
+	resize: none;
+	overflow: hidden;
+	word-wrap: break-word;
+	border-bottom: dotted 1px #ccc;
+	border-left: none;
+	border-top: none;
+	border-right: none;
+	outline: none;
+	padding: 0px;
+	height: 28px;
+	background-color: transparent;
 }
