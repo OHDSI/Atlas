@@ -56,6 +56,12 @@ define([
 							self.loadConcept(conceptId);
 						});
 					},
+                    '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
+                        require(['cohort-conceptset-manager', 'conceptset-editor'], function () {
+                            self.currentConceptSetMode(mode)
+							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortconceptset');
+                        });
+                    },
 					'/cohortdefinitions': function () {
 						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
 							self.currentView('cohortdefinitions');
@@ -111,8 +117,8 @@ define([
 					},
 					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
 						require(['components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
-							self.currentView('cohortdefinitions');
-							self.loadCohortDefinition(cohortDefinitionId);
+							self.currentView('cohortdefinition');
+							self.loadCohortDefinition(cohortDefinitionId, null, 'cohortdefinition');
 						});
 					},
 					'/search/:query:': function (query) {
@@ -1003,9 +1009,38 @@ define([
 				}
 			});
 		};
+                
+        
+        // TODO: revise loadConceptSet to use this function
+        self.setConceptSet = function(conceptset, expressionItems){
+            for (var i = 0; i < expressionItems.length; i++) {
+                var conceptSetItem = expressionItems[i];
+                conceptSetItem.isExcluded = ko.observable(conceptSetItem.isExcluded);
+                conceptSetItem.includeDescendants = ko.observable(conceptSetItem.includeDescendants);
+                conceptSetItem.includeMapped = ko.observable(conceptSetItem.includeMapped);
+                self.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
+                self.selectedConcepts.push(conceptSetItem);
+            }
 
-		self.loadCohortDefinition = function (cohortDefinitionId) {
+            self.analyzeSelectedConcepts();
+            self.currentConceptSet(conceptset);
+        }
+
+		self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow) {
 			self.currentView('loading');
+
+            // don't load if it is already loaded or a new concept set
+			if (self.currentCohortDefinition() && self.currentCohortDefinition().id() == cohortDefinitionId) 
+			{
+				if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId) {
+					self.currentView(viewToShow);
+					return;					
+				}
+				else if (conceptSetId != null) {
+					self.loadCohortConceptSet(conceptSetId, viewToShow, 'details');
+					return;
+				}
+			}
 
 			requirejs(['cohortbuilder/CohortDefinition'],function(CohortDefinition) {
 				var definitionPromise = $.ajax({
@@ -1031,7 +1066,7 @@ define([
 					// now that we have required information lets compile them into data objects for our view
 					var cdmSources = self.services()[0].sources.filter(self.hasCDM);
 					var results = [];
-
+                    
 					for (var s = 0; s < cdmSources.length; s++) {
 						var source = cdmSources[s];
 
@@ -1104,11 +1139,52 @@ define([
 						}
 					});
 
-					self.currentView('cohortdefinition');
+                    if (conceptSetId != null) {
+                        self.loadCohortConceptSet(conceptSetId, viewToShow, 'details');
+                    } else {
+                        self.currentView(viewToShow);
+                    }
 				});
-			});
+			});            
 		}
 
+        self.loadCohortConceptSet = function(conceptSetId, viewToShow, mode) {
+            // Load up the selected concept set from the cohort definition
+            var conceptSet = self.currentCohortDefinition().expression().ConceptSets()[conceptSetId];
+
+            // TODO: The conceptSet that is loaded from the cohort definition is incomplete. 
+            // The inner ConceptSetItem object that is exposed in the conceptSet.expression.items()[x]
+            // doesn't contain all of the properties that the Atlas concept set editor expects. So,
+            // we'll need to take the list of all concept_ids that are in the items() collection
+            // and then call out to the
+            // http://hixbeta.jnj.com:8999/WebAPI/VOCAB_20160121/vocabulary/lookup/identifiers
+            // service to get the complete concept information and replace each item's concept property
+            var identifiers = $.makeArray(
+                $(conceptSet.expression.items()).map(
+                    function() { 
+                        return this.concept.CONCEPT_ID; 
+                    })
+                );
+
+            var conceptPromise = $.ajax({
+                url: self.vocabularyUrl() + 'lookup/identifiers',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(identifiers),
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        conceptSet.expression.items()[i].concept = data[i];
+                    }
+                }
+            });
+
+            $.when(conceptPromise).done(function(cp) {
+                // Reconstruct the expression items
+                self.setConceptSet(conceptSet, conceptSet.expression.items());
+                self.currentView(viewToShow);
+            });            
+        }
+        
 		self.asyncComputed = function (evaluator, owner, args) {
 			var result = ko.observable('<i class="fa fa-refresh fa-spin"></i>');
 

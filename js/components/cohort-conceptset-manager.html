@@ -1,0 +1,42 @@
+<div data-bind="visible: model.currentView() == 'cohortconceptset'">
+	<div class="wrapperTitle">
+        <span>Cohort Concept Set Editor</span>
+	</div>
+
+	<ul class="nav nav-tabs">
+		<li role="presentation" data-bind="click: function() {$component.routeTo('details');}, attr: {class: model.currentConceptSetMode() == 'details' ? 'active' : ''}"><a>Concept Set Expression</a>
+		</li>
+		<li role="presentation" data-bind="click: function() {$component.routeTo('included');}, attr: {class: model.currentConceptSetMode() == 'included' ? 'active' : ''}">
+			<a>Included Concepts
+				<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
+				<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
+		</li>
+		<li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
+			<a>Included Source Codes</a>
+		</li>
+		<li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
+		</li>
+	</ul>
+	<div data-bind="if: model.currentView() != 'loading' && model.currentConceptSetMode() == 'details'">
+		<div class="paddedWrapper">
+			<div class="heading">
+				Cohort Concept Set Expression Details
+			</div>
+            <conceptset-editor params="model: model, conceptSets: model.selectedConcepts"></conceptset-editor>
+        </div>
+    </div>
+    
+	<div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
+
+	<div data-bind="visible: model.currentConceptSetMode() == 'included' && !model.loadingIncluded()">
+        Included Codes
+	</div>
+
+	<div data-bind="visible: model.currentConceptSetMode() == 'sourcecodes' && !model.loadingSourcecodes() && !model.loadingIncluded()">
+        Source Codes
+    </div>
+
+    <div id="wrapperConceptSetExport" data-bind="if: model.currentConceptSetMode() == 'export'">
+        Export
+    </div>
+</div>

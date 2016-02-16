@@ -257,12 +257,8 @@ define(['knockout',
             self.sendToConceptSetEditor(conceptSet.id);
         }
         
-        self.onConceptSetTabCohortConceptSetSelected = function(conceptSet) {
-            alert("How do I keep the context?");
-        }
-        
         self.sendToConceptSetEditor = function(id) {
-            window.location.href = "#/conceptset/" + id + '/details';            
+            window.location.href = "#/cohortdefinition/" + self.model.currentCohortDefinition().id() + "/conceptset/" + id + '/details';            
         }
         
 	}
