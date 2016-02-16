@@ -3,12 +3,12 @@ define([], function () {
 
 	config.services = [
 		{
-			name: 'HixBeta Multihomed',
-			url: 'http://hixbeta.jnj.com:8999/WebAPI/'
-			},
-		{
 			name: 'Local',
 			url: 'http://localhost:8080/WebAPI/'
+          },
+		  {
+			name: 'HixBeta Multihomed',
+			url: 'http://hixbeta.jnj.com:8999/WebAPI/'
 			}
 		];
 

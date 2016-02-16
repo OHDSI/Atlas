@@ -16,7 +16,11 @@ requirejs.config({
 		{
 			name: "cohortdefinitionviewer",
 			location: "/circe/js/modules/cohortdefinitionviewer"
-		}
+		},
+        {
+            name: "cohortconceptselector",
+            location: "/circe/js/modules/circe"
+        }
 	],	
 	shim: {
 		"colorbrewer": {
