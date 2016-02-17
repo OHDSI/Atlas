@@ -60,6 +60,9 @@
 					<a href="#/profiles"><i class="fa fa-user"></i></a>
 				</li>
 				<li>
+					<a href="#/panacea"><i class="fa fa-briefcase"></i></a>
+				</li>
+				<li>
 					<a href="#/reports"><i class="fa fa-area-chart"></i></a>
 				</li>
 				<!--
@@ -116,6 +119,9 @@
 			</li>
 			<li>
 				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
+			</li>
+			<li>
+				<a href="#/panacea"><i class="fa fa-briefcase"></i>Panacea</a>
 			</li>
 			<li>
 				<a href="#/reports"><i class="fa fa-area-chart"></i>Cohort Reporting</a>
@@ -187,6 +193,14 @@
 				<profile-manager params="services: pageModel.services"></profile-manager>
 			</div>
 
+			<div data-bind="if:pageModel.currentView() == 'panacea'">
+				<panacea params="{services: pageModel.services, model: pageModel}"></panacea>
+			</div>
+
+			<div data-bind="if:pageModel.currentView() == 'panaceadef'">
+				<panacea-study-def-manager params="{services: pageModel.services, model: pageModel}"></panacea-study-def-manager>
+			</div>
+			
 			<analytics-manager data-bind="if:pageModel.currentView()== 'analytics'" params="{model: pageModel}"></analytics-manager>
 
 			<div data-bind="if:pageModel.currentView() == 'feasibilities'">

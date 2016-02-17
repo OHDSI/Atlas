@@ -82,6 +82,17 @@ define([
 							self.currentView('profiles');
 						});
 					},
+					'/panacea': function () {
+						require(['panacea', 'panacea-browser', 'panacea-study-def-manager'], function () {
+							self.currentView('panacea');
+						});
+					},
+					'/panaceadef/:panaceaStudyId': function (panaceaStudyId) {
+						require(['panacea', 'panacea-browser', 'panacea-study-def-manager'], function () {
+							self.panaceaStudyId = panaceaStudyId;
+							self.currentView('panaceadef');
+						});
+					},
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
 						require(['conceptset-manager'], function () {
 							self.loadConceptSet(conceptSetId, mode);

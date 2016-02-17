@@ -1,0 +1,56 @@
+<div data-bind="if:show">
+	<div class="wrapperTitle">
+		<i class="fa fa-briefcase"></i> Panacea
+	</div>
+
+
+	<div class="paddedWrapper" style="padding-top: 20px; padding-right: 50px; padding-bottom: 20px; padding-left: 50px;">
+
+		<label class="heading">Study Name</label>
+		<br/>
+		<input type="text" id="pncStyNm" data-bind="value: currentStudy.studyName">
+		<br/>
+
+		<label class="heading">Description</label>
+		<br/>
+		<textarea class="form-control" rows="3" id="pncStyDesc" data-bind="value: currentStudy.studyDesc"></textarea>
+		<br/>
+
+		<label class="heading">Population</label>
+		<br/>
+		<select class="form-control" id="pncChrtSlct" data-bind="value:currentStudy.cohortDefId">
+			<option>123</option>
+			<option>456</option>
+			<option>789</option>
+		</select>
+		<br/>
+
+		<label class="heading">Treatment of Interest</label>
+		<br/>
+		<span>to be developed...</span>
+		<br/>
+		
+		<label class="heading">Calendar start date (Optional)</label>
+		<input type="date" id="pncStdStDt" data-bind="value:currentStudy.startDate"/>
+		<label class="heading">Calendar end date (Optional)</label>
+		<input type="date" id="pncStdEndDt" data-bind="value:currentStudy.endDate"/>
+		<br/>
+		
+		<label class="heading">Overlap Period to Consider a Drug Switch Event</label>
+		<br/>
+		<input type="text" id="pncStySwtchWndw" data-bind="value: currentStudy.switchWindow">
+		<span>(e.g., Mark drugs "Discontinued" after 90 days of overlap with another drug.)</span>
+		<br/>
+
+		<div class="row" style="padding-top:20px;">
+ 			<div class="col-xs-2">
+				<button type="button" class="btn btn-sm btn-primary form-control" id="pncStdySbmt" data-bind="click:function() {saveStudy();}">Submit</button>
+			</div>
+ 			<div class="col-xs-2">
+				<button type="button" class="btn btn-sm btn-danger form-control" id="pncStdyCncl" data-bind="click:function() {cancelStudy();}">Cancel</button>
+			</div>
+		</div>	
+<!-- 		<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() { saveClick(); }" id="pncStdySbmt">Submit</button> -->
+
+	</div>
+</div>

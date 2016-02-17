@@ -1,0 +1,10 @@
+<!-- <faceted-datatable data-bind="visible:loading()==false" params="reference:reference, columns: columns, options:options, rowClick:rowClick"> -->
+<!-- </faceted-datatable> -->
+
+<faceted-datatable params="reference:reference, columns: columns, rowClick:rowClick, options:options" data-bind="visible: panaceaView() =='review'">
+</faceted-datatable> 
+
+<div data-bind="visible: panaceaView() =='edit'">
+	<div><span>this is a test...</span></div>
+	<panacea-study-def-manager params="{services: pageModel.services, panaceaStudy: selectedPanaceaStudy}"></panacea-study-def-manager>
+</div>
