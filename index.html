@@ -58,11 +58,16 @@
 							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text:pageModel.currentCohortDefinition().name"></a>
 						</li>
 						<!-- /ko -->
-						<!-- ko if: pageModel.currentConceptSet() -->
-						<li>
-							<a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
-							<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
-						</li>
+						<!-- ko if: pageModel.currentConceptSet()  -->
+                        <li>
+                            <!-- ko if: pageModel.currentConceptSetSource() == 'repository' -->
+                            <a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
+                            <!-- /ko -->
+                            <!-- ko if: pageModel.currentConceptSetSource() == 'cohort' -->
+                            <a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
+                            <!-- /ko -->
+                            <span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
+                        </li>
 						<!-- /ko -->
 					</ul>
 				</div>

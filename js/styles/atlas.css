@@ -806,9 +806,9 @@ ul.ColVis_collection li {
 }
 
 .form-control {
-	padding: 3px;
-	margin-bottom: 3px;
-	font-size: 12px;
+	/* padding: 3px; */
+	/* margin-bottom: 3px; */
+	/* font-size: 12px; */
 	/* background-color: #FFF; */
 	/* border: solid 1px #ccc; */
 	/* height: 24px; */
@@ -964,7 +964,7 @@ pre {
 }
 
 .form-control {
-	border-radius: 2px;
+	/* border-radius: 2px; */
 }
 
 .form-control:focus {
@@ -1268,7 +1268,7 @@ div#stage {
 	background-image: none;
 	border-radius: 2px;
 	color: #fff;
-	margin: 2px
+	margin: 2px;
 }
 
 table.dataTable {

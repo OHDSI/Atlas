@@ -59,7 +59,7 @@ define([
                     '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
                         require(['cohort-conceptset-manager', 'conceptset-editor'], function () {
                             self.currentConceptSetMode(mode)
-							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortconceptset');
+							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortconceptset', mode);
                         });
                     },
 					'/cohortdefinitions': function () {
@@ -118,7 +118,7 @@ define([
 					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
 						require(['components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
 							self.currentView('cohortdefinition');
-							self.loadCohortDefinition(cohortDefinitionId, null, 'cohortdefinition');
+							self.loadCohortDefinition(cohortDefinitionId, null, 'cohortdefinition', 'details');
 						});
 					},
 					'/search/:query:': function (query) {
@@ -978,7 +978,7 @@ define([
             self.currentConceptSet(conceptset);
         }
 
-		self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow) {
+		self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow, mode) {
 			self.currentView('loading');
 
             // don't load if it is already loaded or a new concept set
@@ -991,7 +991,7 @@ define([
 					return;					
 				}
 				else if (conceptSetId != null) {
-					self.loadConceptSet(conceptSetId, viewToShow, 'cohort', 'details');
+					self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 					return;
 				}
 			}
@@ -1094,7 +1094,7 @@ define([
 					});
 
                     if (conceptSetId != null) {
-                        self.loadConceptSet(conceptSetId, viewToShow, 'cohort', 'details');
+                        self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
                     } else {
                         self.currentView(viewToShow);
                     }
@@ -1108,6 +1108,7 @@ define([
             	&& self.currentConceptSet() 
             	&& self.currentConceptSet().id == conceptSetId) {
                 self.currentView(viewToShow);
+                self.currentConceptSetMode(mode);
                 return;
             }
             
@@ -1207,6 +1208,12 @@ define([
                 // Reconstruct the expression items
                 self.setConceptSet(conceptSet, conceptSet.expression.items());
                 self.currentView(viewToShow);
+
+                var resolvingPromise = self.resolveConceptSetExpression();
+                $.when(resolvingPromise).done(function () {
+                    self.currentConceptSetMode(mode);
+                    $('#conceptSetLoadDialog').modal('hide');
+                });
             });            
         }
         
