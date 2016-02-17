@@ -5,14 +5,34 @@ define(['knockout', 'text!./panacea-study-def-manager.html'], function (ko, view
 		self.services = params.services;
 		self.panaceaStudyId = ko.observable();
 		self.show = ko.observable(false);
+		self.loading = ko.observable(true);
+		self.cohortDefinitions = ko.observableArray(); 
+		
+		$.ajax({
+			url: self.services()[0].url + 'cohortdefinition',
+			method: 'GET',
+			success: function (d) {
+				self.cohortDefinitions(d);
+				
+				if(self.panaceaStudyId()){
+					self.loading(false);
+				}
+			}
+		});
 		
 		self.panaceaStudyId.subscribe(function (d) {
+			self.loading(true);
+			
 			$.ajax({
 				url: self.services()[0].url + 'panacea/' + self.panaceaStudyId(),
 				method: 'GET',
 				success: function (d) {
 					self.currentStudy = d;
 					self.show(true);
+
+					if(self.cohortDefinitions().length > 0){
+						self.loading(false);
+					}
 				}
 			});
 		});		

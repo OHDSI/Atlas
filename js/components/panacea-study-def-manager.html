@@ -18,16 +18,17 @@
 
 		<label class="heading">Population</label>
 		<br/>
-		<select class="form-control" id="pncChrtSlct" data-bind="value:currentStudy.cohortDefId">
-			<option>123</option>
-			<option>456</option>
-			<option>789</option>
-		</select>
+		<div data-bind="if:loading()==false">
+			<select class="form-control" id="pncChrtSlct" data-bind="options:cohortDefinitions, optionsText: function(item) {
+                       return item.id + ' - ' + item.name + ')'
+                   }, optionsValue:'id', value:currentStudy.cohortDefId">
+			</select>
+		</div>
 		<br/>
 
 		<label class="heading">Treatment of Interest</label>
 		<br/>
-		<span>to be developed...</span>
+		<textarea class="form-control" rows="5" id="pncStyCncptStDf" data-bind="value: currentStudy.concepSetDef"></textarea>
 		<br/>
 		
 		<label class="heading">Calendar start date (Optional)</label>
