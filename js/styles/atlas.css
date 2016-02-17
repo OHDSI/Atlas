@@ -55,8 +55,8 @@ body {
 
 .heading {
 	font-size: 12px;
-	color: #337ab7;
-	font-weight: bold;
+	color: #003142;
+	font-weight: normal;
 	margin-top: 10px;
 	margin-bottom: 5px;
 }
@@ -282,7 +282,7 @@ div#wrapperMainWindowContainer {}
 
 #wrapperLeftMenu ul {
 	padding: 0px;
-	margin-bottom:0px;
+	margin-bottom: 0px;
 }
 
 .nav-tabs>li.active>a,
@@ -364,8 +364,8 @@ div#wrapperMainWindowContainer {}
 }
 
 .panel-default > .panel-highlighted {
-	background-color:#F9B813;
-	background-image:none;
+	background-color: #F9B813;
+	background-image: none;
 }
 
 .feFilter .facetScrollBox {
@@ -1155,9 +1155,12 @@ pre {
 .panel-heading {
 	border-top-right-radius: 0;
 	border-top-left-radius: 0;
-	padding:3px 5px 3px 10px;
+	padding: 4px 5px 4px 10px;
 }
 
+.panel-default {
+	border: solid 1px #ccc;
+}
 
 .panel-footer {
 	border-bottom-right-radius: 0;
@@ -1166,6 +1169,11 @@ pre {
 
 .panel-group .panel {
 	border-radius: 0
+}
+
+.panel-group .panel+.panel {
+	margin-top: 0px;
+	border-top: solid 1px #888;
 }
 
 .well {
@@ -1542,4 +1550,9 @@ table.conceptsetviewer th.fixed-width {
 	padding: 0px;
 	height: 28px;
 	background-color: transparent;
+}
+
+a:focus,
+a:hover {
+	text-decoration: none;
 }

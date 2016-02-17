@@ -46,20 +46,21 @@
 		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="false">
 			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
 			<div class="panel panel-default">
-				<div class="panel-heading panel-highlighted" role="tab" id="headingStuff">
-					<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseStuff">
-					Active Research
+				<div class="panel-heading panel-highlighted" role="tab" id="headingActive">
+					<a role="button" >
+					Current Assets
         </a>
 				</div>
-				<div id="collapseStuff" class="panel-collapse collapse in" role="tabpanel">
+				<div id="collapsActive" class="" role="tabpanel">
 					<ul>
 						<!-- ko if: pageModel.currentCohortDefinition() -->
 						<li>
-							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text:pageModel.currentCohortDefinition().name"></a>
+							<i class="fa fa-language"></i><a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text:pageModel.currentCohortDefinition().name"></a>
 						</li>
 						<!-- /ko -->
 						<!-- ko if: pageModel.currentConceptSet()  -->
                         <li>
+														<i class="fa fa-shopping-cart"></i>
                             <!-- ko if: pageModel.currentConceptSetSource() == 'repository' -->
                             <a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
                             <!-- /ko -->
@@ -77,7 +78,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading" role="tab" id="headingTwo">
 					<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-					Research Topics
+					All Assets
         </a>
 				</div>
 				<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">

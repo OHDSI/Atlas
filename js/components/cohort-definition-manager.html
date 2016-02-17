@@ -23,8 +23,8 @@
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'generation' }" class="tab-pane">
 				<table class="configureSourceTable">
 					<thead>
+						<th></th>
 						<th>Source Name</th>
-						<th class="centered">Generated</th>
 						<th>Generation Status</th>
 						<th>Distinct People</th>
 						<th>Generated</th>
@@ -32,12 +32,10 @@
 					</thead>
 					<tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
 						<tr>
+							<td><div class="btn btn-xs btn-success" data-bind="click:$component.generateCohort"><i class="fa fa-play"></i></div></td>
 							<td data-bind="text:name"></td>
-							<td class="statusIndicator">
-								<div class="fa" data-bind="css: { 'fa-check-circle' : isValid, 'fa-exclamation-circle' : !isValid }"></div>
-							</td>
-							<td class="rightaligned">
-								<div data-bind="text: status"></div>
+							<td class="statusIndicator rightaligned">
+								<span class="fa" data-bind="css: { 'fa-check-circle' : isValid, 'fa-exclamation-circle' : !isValid }"></span>&nbsp;<span data-bind="text: status"></span>
 							</td>
 							<td class="rightaligned">
 								<div><span data-bind="html: distinctPeople"></span>

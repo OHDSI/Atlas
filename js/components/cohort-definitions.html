@@ -4,6 +4,9 @@
 	</div>
 
 	<div class="paddedWrapper">
-		<cohort-definition-browser params="{services: pageModel.services, cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
+		<span class="pull-right btn btn-sm btn-success" data-bind="click:$component.newDefinition">New Cohort Definition</span>
+		<div class="clear">
+			<cohort-definition-browser params="{services: pageModel.services, cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
+		</div>
 	</div>
 </div>

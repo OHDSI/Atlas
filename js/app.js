@@ -56,12 +56,12 @@ define([
 							self.loadConcept(conceptId);
 						});
 					},
-                    '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
-                        require(['cohort-conceptset-manager', 'conceptset-editor'], function () {
-                            self.currentConceptSetMode(mode)
+					'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
+						require(['cohort-conceptset-manager', 'conceptset-editor'], function () {
+							self.currentConceptSetMode(mode)
 							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortconceptset', mode);
-                        });
-                    },
+						});
+					},
 					'/cohortdefinitions': function () {
 						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
 							self.currentView('cohortdefinitions');
@@ -116,7 +116,7 @@ define([
 						self.currentView('splash');
 					},
 					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
-						require(['components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
+						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function (CohortDefinition) {
 							self.currentView('cohortdefinition');
 							self.loadCohortDefinition(cohortDefinitionId, null, 'cohortdefinition', 'details');
 						});
@@ -899,8 +899,8 @@ define([
 		self.loadingReportDrilldown = ko.observable(false);
 
 		self.activeReportDrilldown = ko.observable(false);
-        self.criteriaContext = ko.observable();
-        
+		self.criteriaContext = ko.observable();
+
 		self.cohortAnalyses = ko.observableArray();
 		self.currentReport = ko.observable();
 		self.reports = ko.observableArray([
@@ -964,63 +964,76 @@ define([
 			});
 		}
 
-        self.setConceptSet = function(conceptset, expressionItems){
-            for (var i = 0; i < expressionItems.length; i++) {
-                var conceptSetItem = expressionItems[i];
-                conceptSetItem.isExcluded = ko.observable(conceptSetItem.isExcluded);
-                conceptSetItem.includeDescendants = ko.observable(conceptSetItem.includeDescendants);
-                conceptSetItem.includeMapped = ko.observable(conceptSetItem.includeMapped);
-                self.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
-                self.selectedConcepts.push(conceptSetItem);
-            }
+		self.setConceptSet = function (conceptset, expressionItems) {
+			for (var i = 0; i < expressionItems.length; i++) {
+				var conceptSetItem = expressionItems[i];
+				conceptSetItem.isExcluded = ko.observable(conceptSetItem.isExcluded);
+				conceptSetItem.includeDescendants = ko.observable(conceptSetItem.includeDescendants);
+				conceptSetItem.includeMapped = ko.observable(conceptSetItem.includeMapped);
+				self.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
+				self.selectedConcepts.push(conceptSetItem);
+			}
 
-            self.analyzeSelectedConcepts();
-            self.currentConceptSet(conceptset);
-        }
+			self.analyzeSelectedConcepts();
+			self.currentConceptSet(conceptset);
+		}
 
 		self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow, mode) {
 			self.currentView('loading');
 
-            // don't load if it is already loaded or a new concept set
-			if (self.currentCohortDefinition() && self.currentCohortDefinition().id() == cohortDefinitionId) 
-			{
-				if (self.currentConceptSet() 
-					&& self.currentConceptSet().id == conceptSetId
-					&& self.currentConceptSetSource() == 'cohort') {
+			// don't load if it is already loaded or a new concept set
+			if (self.currentCohortDefinition() && self.currentCohortDefinition().id() == cohortDefinitionId) {
+				if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId && self.currentConceptSetSource() == 'cohort') {
 					self.currentView(viewToShow);
-					return;					
-				}
-				else if (conceptSetId != null) {
+					return;
+				} else if (conceptSetId != null) {
 					self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 					return;
 				}
 			}
 
-			requirejs(['cohortbuilder/CohortDefinition'],function(CohortDefinition) {
-				var definitionPromise = $.ajax({
-					url: self.services()[0].url + 'cohortdefinition/' + cohortDefinitionId,
-					method: 'GET',
-					contentType: 'application/json',
-					success: function (cohortDefinition) {
-						cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
-						self.currentCohortDefinition(new CohortDefinition(cohortDefinition));
-					}
-				});
+			var definitionPromise, infoPromise;
 
-				var infoPromise = $.ajax({
-					url: self.services()[0].url + 'cohortdefinition/' + cohortDefinitionId + '/info',
-					method: 'GET',
-					contentType: 'application/json',
-					success: function (generationInfo) {
-						self.currentCohortDefinitionInfo(generationInfo);
-					}
-				});
+			requirejs(['cohortbuilder/CohortDefinition'], function (CohortDefinition) {
+				if (cohortDefinitionId == 'new') {
+					var def = new CohortDefinition({
+						"Title": "New Definition",
+						"Type": "SIMPLE_DEFINITION"
+					});
+
+					self.currentCohortDefinition(def);
+					definitionPromise = $.Deferred();
+					definitionPromise.resolve();
+					
+					self.currentCohortDefinitionInfo([]);
+					infoPromise = $.Deferred();
+					infoPromise.resolve();
+				} else {
+					definitionPromise = $.ajax({
+						url: self.services()[0].url + 'cohortdefinition/' + cohortDefinitionId,
+						method: 'GET',
+						contentType: 'application/json',
+						success: function (cohortDefinition) {
+							cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+							self.currentCohortDefinition(new CohortDefinition(cohortDefinition));
+						}
+					});
+
+					infoPromise = $.ajax({
+						url: self.services()[0].url + 'cohortdefinition/' + cohortDefinitionId + '/info',
+						method: 'GET',
+						contentType: 'application/json',
+						success: function (generationInfo) {
+							self.currentCohortDefinitionInfo(generationInfo);
+						}
+					});
+				}
 
 				$.when(infoPromise, definitionPromise).done(function (ip, dp) {
 					// now that we have required information lets compile them into data objects for our view
 					var cdmSources = self.services()[0].sources.filter(self.hasCDM);
 					var results = [];
-                    
+
 					for (var s = 0; s < cdmSources.length; s++) {
 						var source = cdmSources[s];
 
@@ -1032,7 +1045,8 @@ define([
 						var sourceInfo = self.getSourceInfo(source);
 						var cdsi = {};
 						cdsi.name = cdmSources[s].sourceName;
-
+						cdsi.key = cdmSources[s].sourceKey;
+						
 						if (sourceInfo != null) {
 							cdsi.isValid = sourceInfo.isValid;
 							cdsi.status = sourceInfo.status;
@@ -1093,39 +1107,37 @@ define([
 						}
 					});
 
-                    if (conceptSetId != null) {
-                        self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
-                    } else {
-                        self.currentView(viewToShow);
-                    }
+					if (conceptSetId != null) {
+						self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
+					} else {
+						self.currentView(viewToShow);
+					}
 				});
-			});            
+			});
 		}
 
 		self.loadConceptSet = function (conceptSetId, viewToShow, loadingSource, mode) {
-            // If we're attempting to load the concept set that is already loaded, exit
-            if (self.currentConceptSetSource() == loadingSource 
-            	&& self.currentConceptSet() 
-            	&& self.currentConceptSet().id == conceptSetId) {
-                self.currentView(viewToShow);
-                self.currentConceptSetMode(mode);
-                return;
-            }
-            
-            // Clear any existing concept set
-            self.clearConceptSet();
-            
-            // Set the current conceptset source property to indicate if a concept set 
-            // was loaded from the repository or the cohort definition
-            self.currentConceptSetSource(loadingSource);
-            if (loadingSource == "repository") {
-                self.loadRepositoryConceptSet(conceptSetId, viewToShow, mode);
-            } else if (loadingSource == "cohort") {
-                self.loadCohortConceptSet(conceptSetId, viewToShow, mode);
-            }
+			// If we're attempting to load the concept set that is already loaded, exit
+			if (self.currentConceptSetSource() == loadingSource && self.currentConceptSet() && self.currentConceptSet().id == conceptSetId) {
+				self.currentView(viewToShow);
+				self.currentConceptSetMode(mode);
+				return;
+			}
+
+			// Clear any existing concept set
+			self.clearConceptSet();
+
+			// Set the current conceptset source property to indicate if a concept set 
+			// was loaded from the repository or the cohort definition
+			self.currentConceptSetSource(loadingSource);
+			if (loadingSource == "repository") {
+				self.loadRepositoryConceptSet(conceptSetId, viewToShow, mode);
+			} else if (loadingSource == "cohort") {
+				self.loadCohortConceptSet(conceptSetId, viewToShow, mode);
+			}
 		};
-        
-        self.loadRepositoryConceptSet = function(conceptSetId, viewToShow, mode) {
+
+		self.loadRepositoryConceptSet = function (conceptSetId, viewToShow, mode) {
 			$('body').removeClass('modal-open');
 
 			// don't load if it is already loaded or a new concept set
@@ -1148,7 +1160,7 @@ define([
 						method: 'GET',
 						contentType: 'application/json',
 						success: function (expression) {
-                            self.setConceptSet(conceptset, expression.items);
+							self.setConceptSet(conceptset, expression.items);
 							/*
                             for (var i = 0; i < expression.items.length; i++) {
 								var conceptSetItem = expression.items[i];
@@ -1172,51 +1184,51 @@ define([
 					});
 				}
 			});
-            
-        }
-        
-        self.loadCohortConceptSet = function(conceptSetId, viewToShow, mode) {
-            // Load up the selected concept set from the cohort definition
-            var conceptSet = self.currentCohortDefinition().expression().ConceptSets()[conceptSetId];
 
-            // The conceptSet that is loaded from the cohort definition may be incomplete. 
-            // The inner ConceptSetItem object that is exposed in the conceptSet.expression.items()[x]
-            // doesn't contain all of the properties that the Atlas concept set editor expects. So,
-            // we'll need to take the list of all concept_ids that are in the items() collection
-            // and then call out to the /vocabulary/lookup/identifiers
-            // service to get the complete concept information and replace each item's concept property
-            var identifiers = $.makeArray(
-                $(conceptSet.expression.items()).map(
-                    function() { 
-                        return this.concept.CONCEPT_ID; 
-                    })
-                );
+		}
 
-            var conceptPromise = $.ajax({
-                url: self.vocabularyUrl() + 'lookup/identifiers',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(identifiers),
-                success: function (data) {
-                    for (var i = 0; i < data.length; i++) {
-                        conceptSet.expression.items()[i].concept = data[i];
-                    }
-                }
-            });
+		self.loadCohortConceptSet = function (conceptSetId, viewToShow, mode) {
+			// Load up the selected concept set from the cohort definition
+			var conceptSet = self.currentCohortDefinition().expression().ConceptSets()[conceptSetId];
 
-            $.when(conceptPromise).done(function(cp) {
-                // Reconstruct the expression items
-                self.setConceptSet(conceptSet, conceptSet.expression.items());
-                self.currentView(viewToShow);
+			// The conceptSet that is loaded from the cohort definition may be incomplete. 
+			// The inner ConceptSetItem object that is exposed in the conceptSet.expression.items()[x]
+			// doesn't contain all of the properties that the Atlas concept set editor expects. So,
+			// we'll need to take the list of all concept_ids that are in the items() collection
+			// and then call out to the /vocabulary/lookup/identifiers
+			// service to get the complete concept information and replace each item's concept property
+			var identifiers = $.makeArray(
+				$(conceptSet.expression.items()).map(
+					function () {
+						return this.concept.CONCEPT_ID;
+					})
+			);
 
-                var resolvingPromise = self.resolveConceptSetExpression();
-                $.when(resolvingPromise).done(function () {
-                    self.currentConceptSetMode(mode);
-                    $('#conceptSetLoadDialog').modal('hide');
-                });
-            });            
-        }
-        
+			var conceptPromise = $.ajax({
+				url: self.vocabularyUrl() + 'lookup/identifiers',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(identifiers),
+				success: function (data) {
+					for (var i = 0; i < data.length; i++) {
+						conceptSet.expression.items()[i].concept = data[i];
+					}
+				}
+			});
+
+			$.when(conceptPromise).done(function (cp) {
+				// Reconstruct the expression items
+				self.setConceptSet(conceptSet, conceptSet.expression.items());
+				self.currentView(viewToShow);
+
+				var resolvingPromise = self.resolveConceptSetExpression();
+				$.when(resolvingPromise).done(function () {
+					self.currentConceptSetMode(mode);
+					$('#conceptSetLoadDialog').modal('hide');
+				});
+			});
+		}
+
 		self.asyncComputed = function (evaluator, owner, args) {
 			var result = ko.observable('<i class="fa fa-refresh fa-spin"></i>');
 
@@ -1315,7 +1327,7 @@ define([
 		self.currentConceptSetExpressionJson = ko.observable();
 		self.currentConceptIdentifierList = ko.observable();
 		self.currentConceptSet = ko.observable();
-        self.currentConceptSetSource = ko.observable('repository');
+		self.currentConceptSetSource = ko.observable('repository');
 		self.currentIncludedConceptIdentifierList = ko.observable();
 		self.searchResultsConcepts = ko.observableArray();
 		self.relatedConcepts = ko.observableArray();

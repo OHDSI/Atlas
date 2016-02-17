@@ -40,7 +40,9 @@
 					<div class="modal-dialog modal-lg">
 						<div class="modal-content">
 							<div class="modal-header">Select Concept Set...</div>
-							<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
+							<div class="paddedWrapper">
+								<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -85,8 +87,7 @@
 			<!-- /ko -->
 		</div>
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
-            <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" 
-                data-bind="dataTable:{
+			<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
                     data: model.currentCohortDefinition() && model.currentCohortDefinition().expression().ConceptSets,
                     options: {
                         deferRender: true,
@@ -106,7 +107,7 @@
                         }
                     }
                  }">
-            </table>
+			</table>
 		</div>
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'printfriendly' }" class="tab-pane">
 			<div class="paddedWrapper">

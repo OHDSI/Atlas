@@ -5,6 +5,15 @@ define(['knockout', 'text!./cohort-definition-manager.html', 'knockout.dataTable
 
 		self.tabMode = ko.observable('definition');
 		
+		self.generateCohort = function(data,event) {
+			var route = self.model.services()[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + data.key;
+			$.ajax(route,{
+				success: function(data) {
+					console.log(data);
+				}
+			});
+		}
+		
 		self.generateAnalyses = function (data, event) {
 			$(event.target).prop("disabled", true);
 

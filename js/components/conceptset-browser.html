@@ -1,9 +1,11 @@
 <div class="wrapperTitle">
-    <div data-bind="if:model.currentConceptSet()">
-        <span data-bind="text:model.currentConceptSet().name"></span>
-    </div>
-    <div data-bind="if:!model.currentConceptSet()">
-        <span>Concept Sets</span>
-    </div>
+	<div data-bind="if:model.currentConceptSet()">
+		<span data-bind="text:model.currentConceptSet().name"></span>
+	</div>
+	<div data-bind="if:!model.currentConceptSet()">
+		<span>Concept Sets</span>
+	</div>
 </div>
-<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null, onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected"></cohort-concept-set-browser>
+<div class="paddedWrapper">
+	<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null, onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected"></cohort-concept-set-browser>
+</div>
