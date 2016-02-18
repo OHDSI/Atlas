@@ -1,18 +1,3 @@
-<div class="paddedWrapper clear" data-bind="if: model.currentCohortDefinition()">
-
-	<!-- ko if: model.currentCohortDefinition().id() != null -->
-	<!-- ko ifnot: isRunning -->
-	<button class="btn btn-sm btn-danger pull-right" data-bind="click: $component.delete">Delete Cohort Definition</button>
-	<!-- /ko -->
-	<button class="btn btn-sm btn-primary pull-right" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
-	<!-- ko if: isRunning -->
-	<img class="spin" src="images/running.png" />Generating...
-	<!-- /ko -->
-	<!-- /ko -->
-	<button class="btn btn-sm btn-primary pull-right" data-bind="click: showSql">Show SQL</button>
-	<button class="btn btn-sm btn-success pull-right" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
-</div>
-
 <div class="paddedWrapper">
 	<div class="heading">
 		Description:
@@ -22,106 +7,16 @@
 
 
 <div class="paddedWrapper">
-	<ul class="nav nav-tabs">
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'expression' }, click: function() { $component.tabMode('expression') };"><a>Expression</a>
-		</li>
-
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets') };"><a>Concept Sets</a>
-		</li>
-
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'printfriendly' }, click: function() { $component.tabMode('printfriendly') };"><a>Print Friendly</a>
-		</li>
-	</ul>
-	<div class="tab-content">
-		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'expression' }" class="tab-pane">
-			<div data-bind="attr: { id: 'criteria' }, eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">
-				<cohort-expression-editor params="expression: model.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
-				<div class="modal fade" id="conceptSetSelectorDialog" tabindex="-1" role="dialog">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header">Select Concept Set...</div>
-							<div class="paddedWrapper">
-								<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
-							</div>
-						</div>
+	<div data-bind="eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">
+		<cohort-expression-editor params="expression: model.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
+		<div class="modal fade" id="conceptSetSelectorDialog" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">Select Concept Set...</div>
+					<div class="paddedWrapper">
+						<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
 					</div>
 				</div>
-			</div>
-			<!-- ko if: isGeneratedOpen -->
-			<div title="Generated Sql..." data-bind="dialog: { isOpen: isGeneratedOpen, modal: true, width:700, height:500 }">
-				<div class="tabs" data-bind="tabs: {}">
-					<ul>
-						<li data-bind="attr: { 'aria-controls': 'sql_server' }">
-							<a data-bind="attr: { title: 'MSSQL Server', href: '#sql_server' }, text: 'MSSQL Server'"></a>
-						</li>
-						<li data-bind="attr: { 'aria-controls': 'sql_aps' }">
-							<a data-bind="attr: { title: 'MS APS', href: '#ms_aps' }, text: 'MS APS'"></a>
-						</li>
-						<li data-bind="attr: { 'aria-controls': 'oracle' }">
-							<a data-bind="attr: { title: 'Oracle', href: '#oracle' }, text: 'Oracle'"></a>
-						</li>
-						<li data-bind="attr: { 'aria-controls': 'postgres' }">
-							<a data-bind="attr: { title: 'Postgres', href: '#postgres' }, text: 'Postgres'"></a>
-						</li>
-						<li data-bind="attr: { 'aria-controls': 'redshift' }">
-							<a data-bind="attr: { title: 'Red Shift', href: '#redshift' }, text: 'Red Shift'"></a>
-						</li>
-					</ul>
-					<div data-bind="attr: { id: 'sql_server' }">
-						<pre data-bind="text: generatedSql.mssql"></pre>
-					</div>
-					<div data-bind="attr: { id: 'ms_aps' }">
-						<pre data-bind="text: generatedSql.msaps"></pre>
-					</div>
-					<div data-bind="attr: { id: 'oracle' }">
-						<pre data-bind="text: generatedSql.oracle"></pre>
-					</div>
-					<div data-bind="attr: { id: 'postgres' }">
-						<pre data-bind="text: generatedSql.postgres"></pre>
-					</div>
-					<div data-bind="attr: { id: 'redshift' }">
-						<pre data-bind="text: generatedSql.redshift"></pre>
-					</div>
-				</div>
-			</div>
-			<!-- /ko -->
-		</div>
-		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
-			<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
-                    data: model.currentCohortDefinition() && model.currentCohortDefinition().expression().ConceptSets,
-                    options: {
-                        deferRender: true,
-                        orderClasses: false,
-                        autoWidth: false,
-                        order: [ 1, 'asc' ],
-                        columnDefs: [
-                            { width: '25px', targets: 0},
-                            { width: '100%', targets: 1},
-                        ],
-                        columns: [
-                            { data: 'id', title: 'Id', width: '25px'},
-                            { data: 'name', title: 'Title', width: '100%', className: 'repositoryConceptSetItem' },
-                        ],
-                        language: {
-                            search: 'Filter Repository Concept Sets:'
-                        }
-                    }
-                 }">
-			</table>
-		</div>
-		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'printfriendly' }" class="tab-pane">
-			<div class="paddedWrapper">
-				<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
-				<br/>
-				<div>Appendix 1: Concept Set Definitions</div>
-				<br/>
-				<!-- ko foreach: model.currentCohortDefinition().expression().ConceptSets.sorted -->
-				<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
-				<div style="padding-left:20px">
-					<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
-					<br/>
-				</div>
-				<!-- /ko -->
 			</div>
 		</div>
 	</div>
