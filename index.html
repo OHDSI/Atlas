@@ -47,7 +47,7 @@
 			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
 			<div class="panel panel-default">
 				<div class="panel-heading panel-highlighted" role="tab" id="headingActive">
-					<a role="button" >
+					<a role="button">
 					Current Assets
         </a>
 				</div>
@@ -55,20 +55,21 @@
 					<ul>
 						<!-- ko if: pageModel.currentCohortDefinition() -->
 						<li>
-							<i class="fa fa-language"></i><a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text:pageModel.currentCohortDefinition().name"></a>
+							<i class="fa fa-language"></i>
+							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text:pageModel.currentCohortDefinition().name"></a>
 						</li>
 						<!-- /ko -->
 						<!-- ko if: pageModel.currentConceptSet()  -->
-                        <li>
-														<i class="fa fa-shopping-cart"></i>
-                            <!-- ko if: pageModel.currentConceptSetSource() == 'repository' -->
-                            <a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
-                            <!-- /ko -->
-                            <!-- ko if: pageModel.currentConceptSetSource() == 'cohort' -->
-                            <a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
-                            <!-- /ko -->
-                            <span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
-                        </li>
+						<li>
+							<i class="fa fa-shopping-cart"></i>
+							<!-- ko if: pageModel.currentConceptSetSource() == 'repository' -->
+							<a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
+							<!-- /ko -->
+							<!-- ko if: pageModel.currentConceptSetSource() == 'cohort' -->
+							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
+							<!-- /ko -->
+							<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
+						</li>
 						<!-- /ko -->
 					</ul>
 				</div>
@@ -207,10 +208,10 @@
 				<cohort-definition-manager params="{model: pageModel}"></cohort-definition-manager>
 			</div>
 
-            <div data-bind="if: pageModel.currentView() == 'cohortconceptset'">
-                <cohort-conceptset-manager params="{model: pageModel}"></cohort-conceptset-manager>
-            </div>
-            
+			<div data-bind="if: pageModel.currentView() == 'cohortconceptset'">
+				<cohort-conceptset-manager params="{model: pageModel}"></cohort-conceptset-manager>
+			</div>
+
 			<div data-bind="if: pageModel.currentView() == 'reports'">
 				<report-manager params="{model: pageModel}"></report-manager>
 			</div>
