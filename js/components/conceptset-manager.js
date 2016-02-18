@@ -5,28 +5,12 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
 
-		self.loadConceptSets = function () {
-			$.ajax({
-				method: 'GET',
-				url: self.model.services()[0].url + 'conceptset/',
-				dataType: 'json',
-				success: function (data) {
-					self.conceptSets(data);
-					$('#conceptSetLoadDialog').modal('show');
-				}
-			});
-		}
-
 		self.renderLink = function (s, p, d) {
 			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
 		}
 
 		self.saveClick = function () {
-			if (self.model.currentConceptSet() == undefined) {
-				$('#conceptSetSaveDialog').modal('show');
-			} else {
-				self.saveConceptSet();
-			}
+			self.saveConceptSet();
 		}
 
 		self.routeTo = function(mode) {

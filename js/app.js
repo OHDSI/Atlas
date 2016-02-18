@@ -1004,7 +1004,7 @@ define([
 					self.currentCohortDefinition(def);
 					definitionPromise = $.Deferred();
 					definitionPromise.resolve();
-					
+
 					self.currentCohortDefinitionInfo([]);
 					infoPromise = $.Deferred();
 					infoPromise.resolve();
@@ -1046,7 +1046,7 @@ define([
 						var cdsi = {};
 						cdsi.name = cdmSources[s].sourceName;
 						cdsi.key = cdmSources[s].sourceKey;
-						
+
 						if (sourceInfo != null) {
 							cdsi.isValid = sourceInfo.isValid;
 							cdsi.status = sourceInfo.status;
@@ -1127,7 +1127,7 @@ define([
 			// Clear any existing concept set
 			self.clearConceptSet();
 
-			// Set the current conceptset source property to indicate if a concept set 
+			// Set the current conceptset source property to indicate if a concept set
 			// was loaded from the repository or the cohort definition
 			self.currentConceptSetSource(loadingSource);
 			if (loadingSource == "repository") {
@@ -1161,19 +1161,6 @@ define([
 						contentType: 'application/json',
 						success: function (expression) {
 							self.setConceptSet(conceptset, expression.items);
-							/*
-                            for (var i = 0; i < expression.items.length; i++) {
-								var conceptSetItem = expression.items[i];
-								conceptSetItem.isExcluded = ko.observable(conceptSetItem.isExcluded);
-								conceptSetItem.includeDescendants = ko.observable(conceptSetItem.includeDescendants);
-								conceptSetItem.includeMapped = ko.observable(conceptSetItem.includeMapped);
-								self.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
-								self.selectedConcepts.push(conceptSetItem);
-							}
-
-							self.analyzeSelectedConcepts();
-							self.currentConceptSet(conceptset);
-                            */
 							self.currentView(viewToShow);
 							var resolvingPromise = self.resolveConceptSetExpression();
 							$.when(resolvingPromise).done(function () {
@@ -1191,7 +1178,7 @@ define([
 			// Load up the selected concept set from the cohort definition
 			var conceptSet = self.currentCohortDefinition().expression().ConceptSets()[conceptSetId];
 
-			// The conceptSet that is loaded from the cohort definition may be incomplete. 
+			// The conceptSet that is loaded from the cohort definition may be incomplete.
 			// The inner ConceptSetItem object that is exposed in the conceptSet.expression.items()[x]
 			// doesn't contain all of the properties that the Atlas concept set editor expects. So,
 			// we'll need to take the list of all concept_ids that are in the items() collection

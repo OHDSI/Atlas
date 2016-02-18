@@ -1,7 +1,7 @@
 <div data-bind="visible: model.currentView() == 'conceptset'">
 	<div class="wrapperTitle">
 		<div data-bind="if:model.currentConceptSet()">
-			<span data-bind="text:model.currentConceptSet().name"></span>
+			<input type="text" data-bind="value:model.currentConceptSet().name"/>
 		</div>
 		<div data-bind="if:!model.currentConceptSet()">
 			<span>Concept Sets</span>
@@ -39,10 +39,6 @@
 
 	<div data-bind="if: model.currentConceptSetMode() == 'details'">
 		<div class="paddedWrapper">
-			<div class="heading">
-				Concept Set Expression Details
-			</div>
-
 			<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
             data: model.selectedConcepts(),
             options: {
@@ -95,18 +91,7 @@
 			</div>
 
 			<div class="clear"></div>
-
-			<div class="row">
-				<div class="col-xs-offset-6 col-xs-2">
-					<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() { saveClick(); }">Save Concept Set</button>
-				</div>
-				<div class="col-xs-2">
-					<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() { loadConceptSets(); }">Load Concept Set</button>
-				</div>
-				<div class="col-xs-2">
-					<button type="button" class="btn btn-sm btn-danger form-control" data-bind="click:function() { model.clearConceptSet();}">Clear Concept Set</button>
-				</div>
-			</div>
+			<button type="button" class="btn btn-sm btn-success pull-right" data-bind="click:function() { saveClick(); }">Save Concept Set</button>
 		</div>
 
 		<div id="wrapperConceptSetWarnings" data-bind="visible: model.selectedConceptsWarnings().length > 0">
@@ -129,44 +114,6 @@
 		<pre data-bind="html: model.currentConceptIdentifierList"></pre>
 		<div class="heading">Included Concept Identifer List</div>
 		<pre data-bind="html: model.currentIncludedConceptIdentifierList"></pre>
-	</div>
-
-	<div class="modal fade" id="conceptSetSaveDialog" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-header">Save Concept Set</div>
-			<div class="modal-content">
-				<div class="paddedWrapper">
-					<input type="text" id="saveConceptSetName" class="form-control" placeholder="concept set name" data-bind="value:$component.conceptSetName">
-					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() {saveConceptSet();}">Save</button>
-					<div class="clear"></div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade" id="conceptSetLoadDialog" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-
-				<div class="modal-header">Load Concept Set</div>
-
-				<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
-								data: $component.conceptSets,
-								options: {
-									dom: 'lfiprt',
-									lengthMenu: [[15, 30, 45, -1], [15, 30, 45,'All']],
-									orderClasses: false,
-									deferRender: true,
-									autoWidth: false,
-									columns: [
-											{ title: 'Name', render: renderLink }
-									]
-							 }
-						}">
-				</table>
-			</div>
-
-		</div>
 	</div>
 
 </div>

@@ -365,7 +365,7 @@ div#wrapperMainWindowContainer {}
 
 .panel-default > .panel-highlighted {
 	background-color: #F9B813;
-	background-image: none;
+	background-image: linear-gradient(to bottom,#F9B813 0,#EFAB00 100%);
 }
 
 .feFilter .facetScrollBox {
@@ -1159,7 +1159,7 @@ pre {
 }
 
 .panel-default {
-	border: solid 1px #ccc;
+	/* border: solid 1px #ccc; */
 }
 
 .panel-footer {
@@ -1555,4 +1555,20 @@ table.conceptsetviewer th.fixed-width {
 a:focus,
 a:hover {
 	text-decoration: none;
+}
+
+.wrapperTitle input[type="text"] {
+    color: #fff;
+    height: 30px;
+    line-height: 30px;
+    border-bottom: dotted 1px #fff;
+    background-color: #003142;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    width: 250px;
+}
+
+.wrapperTitle input[type="text"]:focus {
+	outline:none;
 }

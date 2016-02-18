@@ -309,7 +309,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 		});
 
-		// handle select all 
+		// handle select all
 		$(document).on('click', 'th i.fa.fa-shopping-cart', function () {
 			var table = $(this).closest('.dataTable').DataTable();
 			var concepts = table.rows({
@@ -331,7 +331,13 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			ko.contextFor(this).$component.reference.valueHasMutated();
 		});
 
+		// handling concept set selections
 		$(document).on('click', 'td i.fa.fa-shopping-cart, .wrapperTitle i.fa.fa-shopping-cart', function () {
+			if (pageModel.currentConceptSet() == undefined) {
+				pageModel.currentConceptSet({name: 'New Concept Set', id: 0});
+				pageModel.currentConceptSetSource('repository');
+			}
+
 			$(this).toggleClass('selected');
 			var concept = ko.contextFor(this).$data;
 
