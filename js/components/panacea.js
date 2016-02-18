@@ -10,7 +10,9 @@ define(['knockout', 'text!./panacea.html'], function (ko, view) {
 			document.location = "#/panaceadef/" + d;
 		});	
 
-
+		self.createStudy = function () {
+			document.location = "#/panaceadef/undefined";
+		};
 	}
 
 	var component = {

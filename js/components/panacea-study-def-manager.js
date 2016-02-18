@@ -23,18 +23,31 @@ define(['knockout', 'text!./panacea-study-def-manager.html'], function (ko, view
 		self.panaceaStudyId.subscribe(function (d) {
 			self.loading(true);
 			
-			$.ajax({
-				url: self.services()[0].url + 'panacea/' + self.panaceaStudyId(),
-				method: 'GET',
-				success: function (d) {
-					self.currentStudy = d;
-					self.show(true);
-
-					if(self.cohortDefinitions().length > 0){
+			if(self.panaceaStudyId() == 'undefined'){
+				$.ajax({
+					url: self.services()[0].url + 'panacea/getemptynewstudy',
+					method: 'GET',
+					success: function (d) {
+						self.currentStudy = d;
+						self.show(true);
 						self.loading(false);
 					}
-				}
-			});
+				});
+				
+			}else{
+				$.ajax({
+					url: self.services()[0].url + 'panacea/' + self.panaceaStudyId(),
+					method: 'GET',
+					success: function (d) {
+						self.currentStudy = d;
+						self.show(true);
+
+						if(self.cohortDefinitions().length > 0){
+							self.loading(false);
+						}
+					}
+				});
+			}
 		});		
 		
 		if (self.model != null && self.model.hasOwnProperty('panaceaStudyId')){
@@ -42,7 +55,16 @@ define(['knockout', 'text!./panacea-study-def-manager.html'], function (ko, view
 		}
 		
 		self.saveStudy = function () {
-			document.location = "#/panacea";
+			$.ajax({
+				method: 'POST',
+				url: self.services()[0].url + 'panacea/savestudy',
+				contentType: 'application/json',
+				data: JSON.stringify(self.currentStudy),
+				dataType: 'json',
+				success: function (savedStudy) {
+					document.location = "#/panacea";
+				}
+			});			
 		}
 
 		self.cancelStudy = function () {

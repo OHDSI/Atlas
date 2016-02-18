@@ -31,6 +31,11 @@
 		<textarea class="form-control" rows="5" id="pncStyCncptStDf" data-bind="value: currentStudy.concepSetDef"></textarea>
 		<br/>
 		
+		<label class="heading">Duration from Index Date</label>
+		<input type="number" data-bind="value: currentStudy.studyDuration"></input>
+		<span>(e.g., 180 days after the patient first met the criteria.)</span>
+		<br/>
+		
 		<label class="heading">Calendar start date (Optional)</label>
 		<input type="date" id="pncStdStDt" data-bind="value:currentStudy.startDate"/>
 		<label class="heading">Calendar end date (Optional)</label>
