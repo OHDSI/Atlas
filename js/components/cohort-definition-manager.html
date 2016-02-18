@@ -5,35 +5,36 @@
 	</div>
 
 	<div class="paddedWrapper">
-		<div class="paddedWrapper" style="position: absolute; right:0px">
 
-			<!-- ko if: model.currentCohortDefinition().id() != null -->
-			<!-- ko ifnot: isRunning -->
-			<button class="btn btn-sm btn-danger pull-right" data-bind="click: $component.delete">Delete Cohort Definition</button>
-			<!-- /ko -->
-			<button class="btn btn-sm btn-primary pull-right" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
-			<!-- ko if: isRunning -->
-			<img class="spin" src="images/running.png" />Generating...
-			<!-- /ko -->
-			<!-- /ko -->
-			<button class="btn btn-sm btn-primary pull-right" data-bind="click: showSql">Show SQL</button>
-			<button class="btn btn-sm btn-success pull-right" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
-		</div>
+		<!-- ko if: model.currentCohortDefinition().id() != null -->
+		<!-- ko ifnot: isRunning -->
+		<button class="btn btn-sm btn-danger pull-right" data-bind="click: $component.delete">Delete Cohort Definition</button>
+		<!-- /ko -->
+		<button class="btn btn-sm btn-primary pull-right" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
+		<!-- ko if: isRunning -->
+		<img class="spin" src="images/running.png" />Generating...
+		<!-- /ko -->
+		<!-- /ko -->
+		<button class="btn btn-sm btn-primary pull-right" data-bind="click: showSql">Show SQL</button>
+		<button class="btn btn-sm btn-success pull-right" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
+
 		<ul class="nav nav-tabs">
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition') };"><a>Definition</a>
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets') };"><a>Concept Sets</a>
 			</li>
-			
+
+
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation') };"><a>Generation</a>
+			</li>
+
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'analysis' }, click: function() { $component.tabMode('analysis') };"><a>Analysis</a>
+			</li>
+
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'printfriendly' }, click: function() { $component.tabMode('printfriendly') };"><a>Print Friendly</a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation') };"><a>Generation Status</a>
-			</li>
-
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'analysis' }, click: function() { $component.tabMode('analysis') };"><a>Analysis Status</a>
-			</li>
 		</ul>
 		<!-- ko if: isGeneratedOpen -->
 		<div title="Generated Sql..." data-bind="dialog: { isOpen: isGeneratedOpen, modal: true, width:700, height:500 }">
@@ -99,7 +100,7 @@
 											}
 									 }">
 				</table>
-			</div>			
+			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'printfriendly' }" class="tab-pane">
 				<div class="paddedWrapper">
 					<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
@@ -127,7 +128,9 @@
 					</thead>
 					<tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
 						<tr>
-							<td><div class="btn btn-xs btn-success" data-bind="click:$component.generateCohort"><i class="fa fa-play"></i></div></td>
+							<td>
+								<div class="btn btn-xs btn-success" data-bind="click:$component.generateCohort"><i class="fa fa-play"></i></div>
+							</td>
 							<td data-bind="text:name"></td>
 							<td class="statusIndicator rightaligned">
 								<span class="fa" data-bind="css: { 'fa-check-circle' : isValid, 'fa-exclamation-circle' : !isValid }"></span>&nbsp;<span data-bind="text: status"></span>

@@ -676,7 +676,7 @@ ul.ColVis_collection li {
 
 .clear {
 	clear: both;
-	height: 7px;
+	height: 2px;
 }
 
 #wrapperConceptHierarchy {
@@ -883,11 +883,11 @@ input.btn.btn-default {
 g.trellisLegend {}
 
 ul.nav.nav-tabs {
-	/* margin-top: 5px; */
 	margin-bottom: 2px;
 	background-color: #FFFFFF;
-	padding: 10px 10px 1px 10px;
+	padding: 3px 10px 1px 10px;
 	border-bottom: solid 1px #003142;
+	clear:right;
 }
 
 ul.nav.nav-tabs {
