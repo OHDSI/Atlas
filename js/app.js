@@ -997,8 +997,7 @@ define([
 			requirejs(['cohortbuilder/CohortDefinition'], function (CohortDefinition) {
 				if (cohortDefinitionId == 'new') {
 					var def = new CohortDefinition({
-						"Title": "New Definition",
-						"Type": "SIMPLE_DEFINITION"
+						name: 'New Cohort Definition'
 					});
 
 					self.currentCohortDefinition(def);
