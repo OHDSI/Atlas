@@ -1003,7 +1003,7 @@ define([
             }
 
             self.analyzeSelectedConcepts();
-            self.currentConceptSet({name: ko.observable(conceptSet.name), id: conceptSet.id});
+            self.currentConceptSet({name: ko.observable(conceptset.name), id: conceptset.id});
         }
 
         self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow, mode) {
@@ -1390,7 +1390,17 @@ define([
         self.metarchy = {};
         self.selectedConcepts = ko.observableArray(null); //.extend({ persist: 'atlas.selectedConcepts' });
         self.selectedConceptsWarnings = ko.observableArray();
-        self.currentConceptSetDirtyFlag = ko.observable(self.currentConceptSet() && new self.dirtyFlag(self.currentConceptSet()) || self.selectedConcepts() && new self.dirtyFlag(self.selectedConcepts()));        
+        self.currentConceptSetDirtyFlags = ko.observableArray([
+        	self.currentConceptSet() && new self.dirtyFlag(self.currentConceptSet()),
+        	self.selectedConcepts() && new self.dirtyFlag(self.selectedConcepts())
+        ]);
+		self.currentConceptSetIsDirty = ko.pureComputed(function () {
+				var conceptSetDirty = self.currentConceptSetDirtyFlags() && self.currentConceptSetDirtyFlags()[0] && self.currentConceptSetDirtyFlags()[0].isDirty();
+				var selectedConceptsDirty = self.currentConceptSetDirtyFlags() && self.currentConceptSetDirtyFlags()[1] && self.currentConceptSetDirtyFlags()[1].isDirty();
+				return conceptSetDirty || selectedConceptsDirty;
+			}).extend({
+				rateLimit: 500
+			});;        
         self.checkCurrentSource = function (source) {
             return source.url == self.curentVocabularyUrl();
         };
@@ -1524,14 +1534,15 @@ define([
         
 		
         self.currentConceptSetSubscription = self.currentConceptSet.subscribe(function (newValue) {
-            //self.currentConceptSetDirtyFlag(new self.dirtyFlag(newValue) && self.selectedConcepts() && new self.dirtyFlag(self.selectedConcepts()));
             if (newValue != null) {
-            	self.currentConceptSetDirtyFlag(self.currentConceptSet() && new self.dirtyFlag(self.currentConceptSet()));            	
+            	self.currentConceptSetDirtyFlags()[0] = new self.dirtyFlag(self.currentConceptSet());
             }
         });
 
         self.selectedConceptsSubscription = self.selectedConcepts.subscribe(function (newValue) {
-            self.currentConceptSetDirtyFlag(new self.dirtyFlag(newValue) && self.currentConceptSet() && new self.dirtyFlag(self.currentConceptSet()));
+        	if (newValue != null) {
+            	self.currentConceptSetDirtyFlags()[1] = new self.dirtyFlag(self.selectedConcepts());
+        	}
         });        
     }
     return appModel;
