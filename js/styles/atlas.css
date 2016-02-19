@@ -1573,14 +1573,14 @@ a:hover {
 	outline:none;
 }
 
-@media(max-width:1010px) {
-	.shiftdown {
-		margin-top: 36px
-	}
+div.button-overlay {
+	position: absolute;
+	right: 5px;
+	padding-top: 2px;
 }
 
-@media(max-width:560px) {
-	.shiftdown {
-		margin-top: 72px
+@media(max-width:1010px) {
+	.button-overlay {
+		position: relative !important
 	}
 }
