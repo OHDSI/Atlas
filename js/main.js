@@ -334,7 +334,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		// handling concept set selections
 		$(document).on('click', 'td i.fa.fa-shopping-cart, .wrapperTitle i.fa.fa-shopping-cart', function () {
 			if (pageModel.currentConceptSet() == undefined) {
-				pageModel.currentConceptSet({name: 'New Concept Set', id: 0});
+				pageModel.currentConceptSet({name: ko.observable('New Concept Set'), id: 0});
 				pageModel.currentConceptSetSource('repository');
 			}
 
