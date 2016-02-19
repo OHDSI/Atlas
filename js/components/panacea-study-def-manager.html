@@ -1,6 +1,6 @@
 <div data-bind="if:show">
 	<div class="wrapperTitle">
-		<i class="fa fa-briefcase"></i> Panacea
+		<i class="fa fa-briefcase"></i> Pathways
 	</div>
 
 
@@ -16,7 +16,7 @@
 		<textarea class="form-control" rows="3" id="pncStyDesc" data-bind="value: currentStudy.studyDesc"></textarea>
 		<br/>
 
-		<label class="heading">Population</label>
+		<label class="heading">Cohort</label>
 		<br/>
 		<div data-bind="if:loading()==false">
 			<select class="form-control" id="pncChrtSlct" data-bind="options:cohortDefinitions, optionsText: function(item) {
@@ -26,9 +26,27 @@
 		</div>
 		<br/>
 
-		<label class="heading">Treatment of Interest</label>
+		<label class="heading">Treatment Concept Set</label>
 		<br/>
-		<textarea class="form-control" rows="5" id="pncStyCncptStDf" data-bind="value: currentStudy.concepSetDef"></textarea>
+<!-- 		<select class="form-control" data-bind="options:conceptsets, optionsText: function(item) { -->
+<!--                        return item.id + ' - ' + item.name + ')' -->
+<!--                    }, optionsValue:'id'"> -->
+<!--         </select> -->
+<!--         <input type="text" data-bind="value: conceptSetName,  -->
+<!-- 			ko_autocomplete: { source: getConceptSets()}"> -->
+<!--         </input> -->
+<!-- 		<input data-bind="jqAuto: { source: conceptsets, value: conceptSetName, inputProp: 'name', valueProp: 'name', labelProp: 'name'  }" /> -->
+<!--  		<input style="width:300px;" data-bind="jqAuto: { source: conceptsets, value: currentConceptSet, inputProp: 'name', valueProp: 'id', labelProp: 'name'}" /> -->
+		<div data-bind="if:show">
+			<input style="width:300px;" data-bind="jqAuto: { source: conceptsets, value: currentConceptSet, labelProp: 'name'}" />
+		</div>
+		<br/>
+		<div style="padding-top:10px;">
+			<span class="linkish" style="font-size:14px; font-weight: bold;" data-bind="click:function(){toggleShowConcetpSetImporter();}">Import Concept Set</span>
+		</div>
+		<div data-bind="visible: showConceptSetImporter" style="padding-top:10px;">
+			<textarea class="form-control" rows="5" id="pncStyCncptStDf" data-bind="value: currentConceptsExpression"></textarea>
+		</div>
 		<br/>
 		
 		<label class="heading">Duration from Index Date</label>
