@@ -26,7 +26,7 @@ define(['jquery','knockout'], function($,ko) {
 		});;
 
 		result.reset = function () {
-			_initialState(ko.toJSON(root));
+			_initialState(ko.toJSON(root, _pruneJSON));
 			_isInitiallyDirty(false);
 		};
 

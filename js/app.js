@@ -3,11 +3,12 @@ define([
 	'knockout',
 	'jnj_chart',
 	'd3',
+    'ohdsi.util',
 	'facets',
 	'knockout-persist',
 	'css!styles/tabs.css',
 	'css!styles/buttons.css',
-], function ($, ko, jnj_chart, d3) {
+], function ($, ko, jnj_chart, d3, util) {
     var appModel = function () {
         $.support.cors = true;
         var self = this;
@@ -940,7 +941,7 @@ define([
                 document.location = "#/conceptset/" + self.currentConceptSet().id + "/details";
             }
         }
-
+/*
         self.pruneJSON = function (key, value) {
             if (value === 0 || value) {
                 return value;
@@ -958,7 +959,7 @@ define([
 				return _isInitiallyDirty() || _initialState() !== ko.toJSON(root, self.pruneJSON);
 			}).extend({
 				rateLimit: 500
-			});;
+			});
 
             result.reset = function () {
                 _initialState(ko.toJSON(root));
@@ -967,7 +968,7 @@ define([
 
             return result;
         }
-
+*/
 
         self.getCompletedAnalyses = function (source) {
             var cohortDefinitionId = self.currentCohortDefinition().id();
@@ -1390,17 +1391,22 @@ define([
         self.metarchy = {};
         self.selectedConcepts = ko.observableArray(null); //.extend({ persist: 'atlas.selectedConcepts' });
         self.selectedConceptsWarnings = ko.observableArray();
+		self.currentConceptSetDirtyFlag = new util.dirtyFlag({header: self.currentConceptSet, details: self.selectedConcepts});
+        /*
         self.currentConceptSetDirtyFlags = ko.observableArray([
-        	self.currentConceptSet() && new self.dirtyFlag(self.currentConceptSet()),
-        	self.selectedConcepts() && new self.dirtyFlag(self.selectedConcepts())
+        	self.currentConceptSet() && new util.dirtyFlag(self.currentConceptSet()),
+        	self.selectedConcepts() && new util.dirtyFlag(self.selectedConcepts())
         ]);
 		self.currentConceptSetIsDirty = ko.pureComputed(function () {
+				return self.currentConceptSetDirtyFlags() && self.currentConceptSetDirtyFlags()[1] && self.currentConceptSetDirtyFlags()[1].isDirty();
+				/*
 				var conceptSetDirty = self.currentConceptSetDirtyFlags() && self.currentConceptSetDirtyFlags()[0] && self.currentConceptSetDirtyFlags()[0].isDirty();
 				var selectedConceptsDirty = self.currentConceptSetDirtyFlags() && self.currentConceptSetDirtyFlags()[1] && self.currentConceptSetDirtyFlags()[1].isDirty();
 				return conceptSetDirty || selectedConceptsDirty;
 			}).extend({
-				rateLimit: 500
-			});;        
+				rateLimit: 200
+			});        
+		*/
         self.checkCurrentSource = function (source) {
             return source.url == self.curentVocabularyUrl();
         };
@@ -1535,15 +1541,20 @@ define([
 		
         self.currentConceptSetSubscription = self.currentConceptSet.subscribe(function (newValue) {
             if (newValue != null) {
-            	self.currentConceptSetDirtyFlags()[0] = new self.dirtyFlag(self.currentConceptSet());
+				self.currentConceptSetDirtyFlag = new util.dirtyFlag({header: self.currentConceptSet, details: self.selectedConcepts});
+            	//self.currentConceptSetDirtyFlags()[0] = new util.dirtyFlag(self.currentConceptSet());
+            	//self.currentConceptSetDirtyFlags()[1] = self.selectedConcepts() && new util.dirtyFlag(self.selectedConcepts());
             }
         });
 
+		
         self.selectedConceptsSubscription = self.selectedConcepts.subscribe(function (newValue) {
-        	if (newValue != null) {
-            	self.currentConceptSetDirtyFlags()[1] = new self.dirtyFlag(self.selectedConcepts());
-        	}
-        });        
+        	console.log('selected concept: ' + newValue);
+        	//if (newValue != null) {
+            	//self.currentConceptSetDirtyFlags()[1] = new self.dirtyFlag(self.selectedConcepts());
+        	//}
+        });
+                
     }
     return appModel;
 });
