@@ -4,8 +4,7 @@
 		<textarea maxlength="250" rows="1" class="cohortDefinitionNameTextArea" data-bind="textInput: model.currentCohortDefinition().name, jqAutoresize: {append: ''}, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></textarea>
 	</div>
 
-	<div class="paddedWrapper">
-
+	<div style="position: absolute; right:0px; padding-top:2px">
 		<!-- ko if: model.currentCohortDefinition().id() != null -->
 		<!-- ko ifnot: isRunning -->
 		<button class="btn btn-sm btn-danger pull-right" data-bind="click: $component.delete">Delete Cohort Definition</button>
@@ -17,8 +16,9 @@
 		<!-- /ko -->
 		<button class="btn btn-sm btn-primary pull-right" data-bind="click: showSql">Show SQL</button>
 		<button class="btn btn-sm btn-success pull-right" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
-
-		<ul class="nav nav-tabs">
+	</div>
+	<div class="paddedWrapper">
+		<ul class="nav nav-tabs shiftdown">
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition') };"><a>Definition</a>
 			</li>
 

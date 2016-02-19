@@ -1572,3 +1572,15 @@ a:hover {
 .wrapperTitle input[type="text"]:focus {
 	outline:none;
 }
+
+@media(max-width:1010px) {
+	.shiftdown {
+		margin-top: 36px
+	}
+}
+
+@media(max-width:560px) {
+	.shiftdown {
+		margin-top: 72px
+	}
+}
