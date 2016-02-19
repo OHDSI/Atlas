@@ -4,7 +4,7 @@
 		<textarea maxlength="250" rows="1" class="cohortDefinitionNameTextArea" data-bind="textInput: model.currentCohortDefinition().name, jqAutoresize: {append: ''}, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></textarea>
 	</div>
 
-	<div style="position: absolute; right:0px; padding-top:2px">
+	<div style="position: absolute; right:5px; padding-top:2px">
 		<!-- ko if: model.currentCohortDefinition().id() != null -->
 		<!-- ko ifnot: isRunning -->
 		<button class="btn btn-sm btn-danger pull-right" data-bind="click: $component.delete">Delete Cohort Definition</button>
