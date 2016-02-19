@@ -1584,3 +1584,19 @@ div.button-overlay {
 		position: relative !important
 	}
 }
+
+.divtext {
+	border: ridge 2px;
+	padding: 5px;
+	width: 90%;
+	min-height: 1.2em;
+	max-height: 120px;
+	overflow: auto;
+	white-space: pre-wrap; 
+	border: 1px solid rgb(204, 204, 204);
+	background-color: rgb(238, 238, 238);
+}
+
+[contenteditable]:focus {
+    outline: none;
+}

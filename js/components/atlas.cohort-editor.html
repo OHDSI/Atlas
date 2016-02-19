@@ -2,7 +2,7 @@
 	<div class="heading">
 		Description:
 	</div>
-	<textarea maxlength="1000" rows="5" style="font-size: 1em; width: 500px; resize: none; overflow: hidden; word-wrap: break-word;" class="inputField" data-bind="textInput: model.currentCohortDefinition().description, jqAutoresize: {append: ''}"></textarea>
+	<div contenteditable class="divtext" data-bind="htmlValue:model.currentCohortDefinition().description"></div>
 </div>
 
 

@@ -6,7 +6,8 @@ define(['knockout',
 				'conceptsetbuilder/components',
 				'knockout-jqueryui/tabs',
 				'cohortdefinitionviewer',
-                'cohortconceptselector'
+        'cohortconceptselector',
+				'databindings'
 ], function (ko, view, config, CohortDefinition) {
     
 	function cohortEditor(params) {
