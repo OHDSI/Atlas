@@ -3,28 +3,10 @@ define(['knockout',
 				'appConfig',
 				'cohortbuilder/CohortDefinition',
 				'webapi/CohortDefinitionAPI',
+				'ohdsi.util',
 				'knockout.dataTables.binding',
 				'faceted-datatable'
-], function (ko, view, config, CohortDefinition, chortDefinitionAPI) {
-	
-	function dirtyFlag(root, isInitiallyDirty) {
-		var result = function () {},
-			_initialState = ko.observable(ko.toJSON(root, pruneJSON)),
-			_isInitiallyDirty = ko.observable(isInitiallyDirty);
-
-		result.isDirty = ko.pureComputed(function () {
-			return _isInitiallyDirty() || _initialState() !== ko.toJSON(root, pruneJSON);
-		}).extend({
-			rateLimit: 500
-		});;
-
-		result.reset = function () {
-			_initialState(ko.toJSON(root));
-			_isInitiallyDirty(false);
-		};
-
-		return result;
-	}	
+], function (ko, view, config, CohortDefinition, chortDefinitionAPI, ohdsiUtil) {
 	
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -57,7 +39,7 @@ define(['knockout',
 		
 		self.model = params.model;
 		self.tabMode = ko.observable('definition');
-		self.dirtyFlag = ko.observable(self.model.currentCohortDefinition() && new dirtyFlag(self.model.currentCohortDefinition()));
+		self.dirtyFlag = ko.observable(self.model.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.model.currentCohortDefinition()));
 		self.sources = ko.observableArray();
 		self.isGeneratedOpen = ko.observable(false);
 		self.generatedSql = {};
@@ -71,7 +53,7 @@ define(['knockout',
 		});
 
 		self.currentCohortDefinitionSubscription = self.model.currentCohortDefinition.subscribe(function (newValue) {
-			self.dirtyFlag(new dirtyFlag(newValue));
+			self.dirtyFlag(new ohdsiUtil.dirtyFlag(newValue));
 		});
 		
 		// model behaviors
