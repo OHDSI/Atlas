@@ -55,7 +55,7 @@
 					<ul>
 						<!-- ko if: pageModel.currentCohortDefinition() -->
 						<li>
-							<i class="fa fa-language"></i>
+							<i class="fa fa-users"></i>
 							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text:pageModel.currentCohortDefinition().name"></a>
 						</li>
 						<!-- /ko -->
@@ -79,47 +79,19 @@
 			<div class="panel panel-default">
 				<div class="panel-heading" role="tab" id="headingTwo">
 					<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-					All Assets
+					Knowledge Library
         </a>
 				</div>
-				<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-					<ul>
-						<li>
-							<a href="#/cohortdefinitions"><i class="fa fa-language"></i>Cohort Definitions</a>
-						</li>
-						<li>
-							<a href="#/conceptsets"><i class="fa fa-shopping-cart"></i>Concept Sets</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-
-			<div class="panel panel-default">
-				<div class="panel-heading" role="tab" id="headingOne">
-					<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-					Vocabulary
-        </a>
-				</div>
-				<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+				<div id="collapseTwo" class="panel-collapse collapse-in" role="tabpanel" aria-labelledby="headingTwo">
 					<ul>
 						<li>
 							<a href="#/search"><i class="fa fa-search"></i>Vocabulary Search</a>
 						</li>
-						<ul data-bind="foreach:recentSearch">
-							<li>
-								<a data-bind="attr: {href:'#/search/' + query}, text: caption + ' (' + resultLength + ')'"></a>
-							</li>
-						</ul>
 						<li>
-							<i class="fa fa-history"></i>Recent Concepts
+							<a href="#/conceptsets"><i class="fa fa-shopping-cart"></i>Concept Sets</a>
 						</li>
-						<ul data-bind="foreach:recentConcept">
-							<li>
-								<a data-bind="text: CONCEPT_NAME, attr: { href: '#/concept/' + CONCEPT_ID}"></a>
-							</li>
-						</ul>
 						<li>
-							<a href="#/import"><i class="fa fa-upload"></i>Import</a>
+							<a href="#/cohortdefinitions"><i class="fa fa-users"></i>Cohorts</a>
 						</li>
 					</ul>
 				</div>
@@ -128,7 +100,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading" role="tab" id="headingOther">
 					<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOther">
-					Other
+					Analyses
         </a>
 				</div>
 				<div id="collapseOther" class="panel-collapse collapse" role="tabpanel">
@@ -147,23 +119,36 @@
 						<li>
 							<a href="#/feasibility"><i class="fa fa-dot-circle-o"></i>Feasibility</a>
 						</li>
-						<li>
-							<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
-						</li>
 						<!--
 			<li>
 				<a href="#/r"><i class="fa fa-registered"></i>R Services</a>
 			</li>
 			-->
+					</ul>
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="headingJobs">
+					<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseJobs">
+					Jobs &amp; Settings
+        </a>
+				</div>
+				<div id="collapseJobs" class="panel-collapse collapse" role="tabpanel">
+					<ul>
 						<li>
-							<a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
+							<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
 						</li>
 						<li>
-							<a target="_blank" href="http://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
+							<a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
 						</li>
 					</ul>
 				</div>
 			</div>
+
+			<li>
+				<a target="_blank" href="http://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
+			</li>
 
 		</div>
 	</div>

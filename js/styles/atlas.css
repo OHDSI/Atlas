@@ -1173,7 +1173,7 @@ pre {
 
 .panel-group .panel+.panel {
 	margin-top: 0px;
-	border-top: solid 1px #888;
+	border-top: solid 1px #eee;
 }
 
 .well {
