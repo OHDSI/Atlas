@@ -21,6 +21,11 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 			}
 		}
 
+		self.closeConceptSet = function() {
+			pageModel.clearConceptSet();
+			document.location = "#/conceptsets";
+		};
+		
 		self.saveConceptSet = function () {
 			var conceptSet = {};
 

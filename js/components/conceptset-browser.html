@@ -1,7 +1,9 @@
 <div class="wrapperTitle">
 	Concept Sets
 </div>
-
+<div class="paddedWrapper">
+	<span class="pull-right btn btn-sm btn-success" data-bind="click:$component.newConceptSet">New Concept Set</span>
+</div>
 <div class="paddedWrapper">
 	<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null, onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected"></cohort-concept-set-browser>
 </div>
