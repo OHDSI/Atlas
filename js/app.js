@@ -1018,6 +1018,9 @@ define([
                 } else if (conceptSetId != null) {
                     self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
                     return;
+                } else {
+                	self.currentView(viewToShow);
+                	return;
                 }
             }
 
