@@ -1392,6 +1392,7 @@ define([
         self.selectedConcepts = ko.observableArray(null); //.extend({ persist: 'atlas.selectedConcepts' });
         self.selectedConceptsWarnings = ko.observableArray();
 		self.currentConceptSetDirtyFlag = new util.dirtyFlag({header: self.currentConceptSet, details: self.selectedConcepts});
+        self.cohortDefinitionManager = ko.observable();
         /*
         self.currentConceptSetDirtyFlags = ko.observableArray([
         	self.currentConceptSet() && new util.dirtyFlag(self.currentConceptSet()),
