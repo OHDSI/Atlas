@@ -267,6 +267,10 @@ div#wrapperMainWindowContainer {}
 	color: #003142;
 }
 
+#wrapperLeftMenu .panel {
+	border:0px;
+}
+
 .wrapperTitle {
 	position: relative;
 	background-color: #003142;
@@ -1592,11 +1596,18 @@ div.button-overlay {
 	min-height: 1.2em;
 	max-height: 120px;
 	overflow: auto;
-	white-space: pre-wrap; 
+	white-space: pre-wrap;
 	border: 1px solid rgb(204, 204, 204);
 	background-color: rgb(238, 238, 238);
 }
 
 [contenteditable]:focus {
     outline: none;
+}
+
+.nav-tabs li a, .nav-tabs li a:hover {
+    color: #888888;
+    border-left: solid 1px #ccc;
+    border-right: solid 1px #ccc;
+    border-top: solid 1px #ccc;
 }
