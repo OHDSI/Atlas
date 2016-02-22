@@ -930,8 +930,10 @@ define([
 
         self.getCohortCount = function (source) {
             var sourceKey = source.sourceKey;
-            var cohortDefinitionId = self.currentCohortDefinition().id();
-            return $.ajax(self.services()[0].url + sourceKey + '/cohortresults/' + cohortDefinitionId + '/distinctPersonCount', {});
+            var cohortDefinitionId = self.currentCohortDefinition() && self.currentCohortDefinition().id();
+            if (cohortDefinitionId != undefined) {
+            	return $.ajax(self.services()[0].url + sourceKey + '/cohortresults/' + cohortDefinitionId + '/distinctPersonCount', {});
+            }
         }
 
         self.routeToConceptSet = function () {
@@ -941,34 +943,6 @@ define([
                 document.location = "#/conceptset/" + self.currentConceptSet().id + "/details";
             }
         }
-/*
-        self.pruneJSON = function (key, value) {
-            if (value === 0 || value) {
-                return value;
-            } else {
-                return
-            }
-        }
-
-        self.dirtyFlag = function (root, isInitiallyDirty) {
-            var result = function () {},
-                _initialState = ko.observable(ko.toJSON(root, self.pruneJSON)),
-                _isInitiallyDirty = ko.observable(isInitiallyDirty);
-
-			result.isDirty = ko.pureComputed(function () {
-				return _isInitiallyDirty() || _initialState() !== ko.toJSON(root, self.pruneJSON);
-			}).extend({
-				rateLimit: 500
-			});
-
-            result.reset = function () {
-                _initialState(ko.toJSON(root));
-                _isInitiallyDirty(false);
-            };
-
-            return result;
-        }
-*/
 
         self.getCompletedAnalyses = function (source) {
             var cohortDefinitionId = self.currentCohortDefinition().id();
@@ -1022,6 +996,19 @@ define([
                 	self.currentView(viewToShow);
                 	return;
                 }
+            }
+            
+            // if we are loading a cohort definition, unload any active concept set that was loaded from 
+            // a respository. If it is dirty, prompt the user to save and exit.
+            if (self.currentConceptSet() && self.currentConceptSetSource() == 'repository') {
+				if (self.currentConceptSetDirtyFlag && self.currentConceptSetDirtyFlag.isDirty() && !confirm("Concept set changes are not saved. Would you like to continue?"))
+				{
+					window.location.href = "#/cohortdefinitions";
+					return;
+				};
+                
+                // If we continue, then clear the concept set
+                self.clearConceptSet();
             }
 
             var definitionPromise, infoPromise;
@@ -1154,9 +1141,15 @@ define([
                 self.currentConceptSetMode(mode);
                 return;
             }
-
+            
             // Clear any existing concept set
             self.clearConceptSet();
+
+            // If we're attempting to load a repository concept set, unload any cohort defintions
+            // that may be active
+            if (self.currentCohortDefinition() && loadingSource == "repository") {
+                self.currentCohortDefinition(null);
+            }
 
             // Set the current conceptset source property to indicate if a concept set
             // was loaded from the repository or the cohort definition
@@ -1395,22 +1388,6 @@ define([
         self.selectedConcepts = ko.observableArray(null); //.extend({ persist: 'atlas.selectedConcepts' });
         self.selectedConceptsWarnings = ko.observableArray();
 		self.currentConceptSetDirtyFlag = new util.dirtyFlag({header: self.currentConceptSet, details: self.selectedConcepts});
-        self.cohortDefinitionManager = ko.observable();
-        /*
-        self.currentConceptSetDirtyFlags = ko.observableArray([
-        	self.currentConceptSet() && new util.dirtyFlag(self.currentConceptSet()),
-        	self.selectedConcepts() && new util.dirtyFlag(self.selectedConcepts())
-        ]);
-		self.currentConceptSetIsDirty = ko.pureComputed(function () {
-				return self.currentConceptSetDirtyFlags() && self.currentConceptSetDirtyFlags()[1] && self.currentConceptSetDirtyFlags()[1].isDirty();
-				/*
-				var conceptSetDirty = self.currentConceptSetDirtyFlags() && self.currentConceptSetDirtyFlags()[0] && self.currentConceptSetDirtyFlags()[0].isDirty();
-				var selectedConceptsDirty = self.currentConceptSetDirtyFlags() && self.currentConceptSetDirtyFlags()[1] && self.currentConceptSetDirtyFlags()[1].isDirty();
-				return conceptSetDirty || selectedConceptsDirty;
-			}).extend({
-				rateLimit: 200
-			});        
-		*/
         self.checkCurrentSource = function (source) {
             return source.url == self.curentVocabularyUrl();
         };
@@ -1546,19 +1523,8 @@ define([
         self.currentConceptSetSubscription = self.currentConceptSet.subscribe(function (newValue) {
             if (newValue != null) {
 				self.currentConceptSetDirtyFlag = new util.dirtyFlag({header: self.currentConceptSet, details: self.selectedConcepts});
-            	//self.currentConceptSetDirtyFlags()[0] = new util.dirtyFlag(self.currentConceptSet());
-            	//self.currentConceptSetDirtyFlags()[1] = self.selectedConcepts() && new util.dirtyFlag(self.selectedConcepts());
             }
         });
-
-		
-        self.selectedConceptsSubscription = self.selectedConcepts.subscribe(function (newValue) {
-        	console.log('selected concept: ' + newValue);
-        	//if (newValue != null) {
-            	//self.currentConceptSetDirtyFlags()[1] = new self.dirtyFlag(self.selectedConcepts());
-        	//}
-        });
-                
     }
     return appModel;
 });
