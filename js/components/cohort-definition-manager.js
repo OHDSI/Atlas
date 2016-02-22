@@ -39,7 +39,7 @@ define(['knockout',
 		
 		self.model = params.model;
 		self.tabMode = ko.observable('definition');
-		self.dirtyFlag = ko.observable(self.model.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.model.currentCohortDefinition()));
+		self.dirtyFlag = self.model.currentCohortDefinitionDirtyFlag;
 		self.sources = ko.observableArray();
 		self.isGeneratedOpen = ko.observable(false);
 		self.generatedSql = {};
@@ -51,11 +51,11 @@ define(['knockout',
 		self.isSaveable = ko.pureComputed(function () {
 			return self.dirtyFlag() && self.dirtyFlag().isDirty() && self.isRunning();
 		});
-
+/*
 		self.currentCohortDefinitionSubscription = self.model.currentCohortDefinition.subscribe(function (newValue) {
 			self.dirtyFlag(new ohdsiUtil.dirtyFlag(newValue));
 		});
-		
+*/		
 		// model behaviors
 		self.onConceptSetTabRespositoryConceptSetSelected = function(conceptSet){
 				self.sendToConceptSetEditor(conceptSet.id);
@@ -257,7 +257,7 @@ define(['knockout',
 		// dispose subscriptions
 		self.dispose = function()
 		{
-			self.currentCohortDefinitionSubscription.dispose();
+			//self.currentCohortDefinitionSubscription.dispose();
 		}
 		
 	}

@@ -53,7 +53,7 @@
 				</div>
 				<div id="collapsActive" class="" role="tabpanel">
 					<ul>
-						<!-- ko if: pageModel.currentCohortDefinition() -->
+						<!-- ko if: pageModel.currentCohortDefinition() != null -->
 						<li>
 							<i class="fa fa-users"></i>
 							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text:pageModel.currentCohortDefinition().name"></a>
@@ -66,7 +66,7 @@
 							<a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
 							<!-- /ko -->
 							<!-- ko if: pageModel.currentConceptSetSource() == 'cohort' -->
-							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
+							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name()"></a>
 							<!-- /ko -->
 							<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 						</li>
