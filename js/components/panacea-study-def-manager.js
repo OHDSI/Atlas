@@ -7,6 +7,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		self.show = ko.observable(false);
 		self.loading = ko.observable(true);
 		self.cohortDefinitions = ko.observableArray();
+		self.currentCohort = ko.observable();
 		self.conceptsets = ko.observableArray();
 		self.showConceptSetImporter = ko.observable(false);
 		self.currentConceptSet = ko.observable();
@@ -16,9 +17,20 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 			url: self.services()[0].url + 'cohortdefinition',
 			method: 'GET',
 			success: function (d) {
+				jQuery.each(d, function( i, val ) {
+					val.showLabel = val.id + ' - ' + val.name;
+				});
+				
 				self.cohortDefinitions(d);
 				
 				if(self.panaceaStudyId()){
+					var cohortById = $.grep(self.cohortDefinitions(), function(item){ 
+						return item.id === self.currentStudy.cohortDefId; 
+					});
+					if (cohortById.length > 0) {
+						self.currentCohort(cohortById[0]);
+					}
+					
 					self.loading(false);
 				}
 			}
@@ -42,7 +54,10 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 					success: function (d) {
 						self.currentStudy = d;
 						self.show(true);
-						self.loading(false);
+
+						if(self.cohortDefinitions().length > 0){
+							self.loading(false);
+						}
 					}
 				});
 				
@@ -56,6 +71,13 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 						self.show(true);
 
 						if(self.cohortDefinitions().length > 0){
+							var cohortById = $.grep(self.cohortDefinitions(), function(item){ 
+								return item.id === self.currentStudy.cohortDefId; 
+							});
+							if (cohortById.length > 0) {
+								self.currentCohort(cohortById[0]);
+							}
+
 							self.loading(false);
 						}
 					}
@@ -81,6 +103,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		
 		self.saveStudy = function () {
 			self.currentStudy.concepSetDef = self.currentConceptsExpression();
+			self.currentStudy.cohortDefId = self.currentCohort().id;
 			
 			$.ajax({
 				method: 'POST',

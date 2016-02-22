@@ -19,10 +19,12 @@
 		<label class="heading">Cohort</label>
 		<br/>
 		<div data-bind="if:loading()==false">
-			<select class="form-control" id="pncChrtSlct" data-bind="options:cohortDefinitions, optionsText: function(item) {
-                       return item.id + ' - ' + item.name + ')'
-                   }, optionsValue:'id', value:currentStudy.cohortDefId">
-			</select>
+<!-- 			<select class="form-control" id="pncChrtSlct" data-bind="options:cohortDefinitions, optionsText: function(item) { -->
+<!--                        return item.id + ' - ' + item.name + ')' -->
+<!--                    }, optionsValue:'id', value:currentStudy.cohortDefId"> -->
+<!-- 			</select> -->
+
+			<input style="width:300px;" data-bind="jqAuto: { source: cohortDefinitions, value: currentCohort, labelProp: 'showLabel' }" />
 		</div>
 		<br/>
 
@@ -32,11 +34,6 @@
 <!--                        return item.id + ' - ' + item.name + ')' -->
 <!--                    }, optionsValue:'id'"> -->
 <!--         </select> -->
-<!--         <input type="text" data-bind="value: conceptSetName,  -->
-<!-- 			ko_autocomplete: { source: getConceptSets()}"> -->
-<!--         </input> -->
-<!-- 		<input data-bind="jqAuto: { source: conceptsets, value: conceptSetName, inputProp: 'name', valueProp: 'name', labelProp: 'name'  }" /> -->
-<!--  		<input style="width:300px;" data-bind="jqAuto: { source: conceptsets, value: currentConceptSet, inputProp: 'name', valueProp: 'id', labelProp: 'name'}" /> -->
 		<div data-bind="if:show">
 			<input style="width:300px;" data-bind="jqAuto: { source: conceptsets, value: currentConceptSet, labelProp: 'name'}" />
 		</div>
