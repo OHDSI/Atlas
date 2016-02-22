@@ -1000,14 +1000,16 @@ define([
             
             // if we are loading a cohort definition, unload any active concept set that was loaded from 
             // a respository. If it is dirty, prompt the user to save and exit.
-            if (self.currentConceptSet() && self.currentConceptSetSource() == 'repository') {
-				if (self.currentConceptSetDirtyFlag && self.currentConceptSetDirtyFlag.isDirty() && !confirm("Concept set changes are not saved. Would you like to continue?"))
-				{
-					window.location.href = "#/cohortdefinitions";
-					return;
-				};
+            if (self.currentConceptSet()) {
+                if (self.currentConceptSetSource() == 'repository') {
+                    if (self.currentConceptSetDirtyFlag && self.currentConceptSetDirtyFlag.isDirty() && !confirm("Concept set changes are not saved. Would you like to continue?"))
+                    {
+                        window.location.href = "#/cohortdefinitions";
+                        return;
+                    };                    
+                }
                 
-                // If we continue, then clear the concept set
+                // If we continue, then clear the loaded concept set
                 self.clearConceptSet();
             }
 
