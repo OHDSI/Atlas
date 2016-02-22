@@ -8,7 +8,7 @@ define([
 	'knockout-persist',
 	'css!styles/tabs.css',
 	'css!styles/buttons.css',
-], function ($, ko, jnj_chart, d3, util) {
+], function ($, ko, jnj_chart, d3, ohdsiUtil) {
     var appModel = function () {
         $.support.cors = true;
         var self = this;
@@ -1142,14 +1142,23 @@ define([
                 return;
             }
             
-            // Clear any existing concept set
-            self.clearConceptSet();
-
             // If we're attempting to load a repository concept set, unload any cohort defintions
             // that may be active
             if (self.currentCohortDefinition() && loadingSource == "repository") {
-                self.currentCohortDefinition(null);
+				if (self.currentCohortDefinitionDirtyFlag() && self.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Cohort changes are not saved. Would you like to continue?"))
+				{
+					window.location.href = "#/conceptsets";
+					return;
+				} else {
+            		self.clearConceptSet();
+					self.cohortDefinitionSourceInfo(null);
+					self.currentCohortDefinition(null);					
+				}
+            } else {
+				// Clear any existing concept set
+				self.clearConceptSet();            	
             }
+
 
             // Set the current conceptset source property to indicate if a concept set
             // was loaded from the repository or the cohort definition
@@ -1171,7 +1180,7 @@ define([
                 self.currentView(viewToShow);
                 return;
             }
-
+            
             self.currentView('loading');
 
             $.ajax({
@@ -1244,7 +1253,9 @@ define([
             var result = ko.observable('<i class="fa fa-refresh fa-spin"></i>');
 
             ko.computed(function () {
-                evaluator.call(owner, args).done(result);
+            	if (evaluator.call(owner, args)) {
+                	evaluator.call(owner, args).done(result);
+            	}
             });
 
             return result;
@@ -1350,6 +1361,7 @@ define([
         self.cohortDefinitions = ko.observableArray();
         self.currentCohortDefinition = ko.observable();
         self.currentCohortDefinitionInfo = ko.observable();
+        self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
         self.feasibilityId = ko.observable();
         self.resolvingConceptSetExpression = ko.observable();
         self.resolvingSourcecodes = ko.observable();
@@ -1387,7 +1399,7 @@ define([
         self.metarchy = {};
         self.selectedConcepts = ko.observableArray(null); //.extend({ persist: 'atlas.selectedConcepts' });
         self.selectedConceptsWarnings = ko.observableArray();
-		self.currentConceptSetDirtyFlag = new util.dirtyFlag({header: self.currentConceptSet, details: self.selectedConcepts});
+		self.currentConceptSetDirtyFlag = new ohdsiUtil.dirtyFlag({header: self.currentConceptSet, details: self.selectedConcepts});
         self.checkCurrentSource = function (source) {
             return source.url == self.curentVocabularyUrl();
         };
@@ -1518,13 +1530,18 @@ define([
         self.selectConcept = function (concept) {
             document.location = '#/concept/' + concept.CONCEPT_ID;
         };
-        
-		
+        	
         self.currentConceptSetSubscription = self.currentConceptSet.subscribe(function (newValue) {
             if (newValue != null) {
-				self.currentConceptSetDirtyFlag = new util.dirtyFlag({header: self.currentConceptSet, details: self.selectedConcepts});
+				self.currentConceptSetDirtyFlag = new ohdsiUtil.dirtyFlag({header: self.currentConceptSet, details: self.selectedConcepts});
             }
         });
+        
+		self.currentCohortDefinitionSubscription = self.currentCohortDefinition.subscribe(function (newValue) {
+            if (newValue != null) {
+                self.currentCohortDefinitionDirtyFlag(new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
+            }
+		});        
     }
     return appModel;
 });
