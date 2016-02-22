@@ -38,7 +38,8 @@ define(['knockout',
 		var pollTimeout = null;
 		
 		self.model = params.model;
-		self.tabMode = ko.observable('definition');
+		self.tabMode = self.model.currentCohortDefinitionMode; //ko.observable('definition');
+        self.conceptSetTabMode = self.model.currentConceptSetMode; //ko.observable('details');
 		self.dirtyFlag = self.model.currentCohortDefinitionDirtyFlag;
 		self.sources = ko.observableArray();
 		self.isGeneratedOpen = ko.observable(false);
@@ -58,14 +59,17 @@ define(['knockout',
 */		
 		// model behaviors
 		self.onConceptSetTabRespositoryConceptSetSelected = function(conceptSet){
-				self.sendToConceptSetEditor(conceptSet.id);
+			self.model.loadConceptSet(conceptSet.id, 'cohortdefinition', 'cohort', 'details');
+            //self.sendToConceptSetEditor(conceptSet.id);
 		}
-
+        
+/*
 		self.sendToConceptSetEditor = function(id) {
-				window.location.href = "#/cohortdefinition/" + self.model.currentCohortDefinition().id() + "/conceptset/" + id + '/details';            
+			window.location.href = "#/cohortdefinition/" + self.model.currentCohortDefinition().id() + "/conceptset/" + id + '/details';            
 		}
 
-		self.pollForInfo = function() {
+*/
+        self.pollForInfo = function() {
 			if (pollTimeout)
 				clearTimeout(pollTimeout);
 

@@ -58,10 +58,18 @@ define([
                         });
                     },
                     '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
+                        /*
                         require(['cohort-conceptset-manager', 'conceptset-editor'], function () {
                             self.currentConceptSetMode(mode)
                             self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortconceptset', mode);
                         });
+                        */
+                        require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor'], function (CohortDefinition) {
+                            self.currentView('cohortdefinition');
+                            self.currentCohortDefinitionMode('conceptsets');
+                            self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortdefinition', 'details');
+                        });
+                        
                     },
                     '/cohortdefinitions': function () {
                         require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
@@ -117,8 +125,9 @@ define([
                         self.currentView('splash');
                     },
                     '/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
-                        require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function (CohortDefinition) {
+                        require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor'], function (CohortDefinition) {
                             self.currentView('cohortdefinition');
+                            self.currentCohortDefinitionMode('definition');
                             self.loadCohortDefinition(cohortDefinitionId, null, 'cohortdefinition', 'details');
                         });
                     },
@@ -998,6 +1007,12 @@ define([
                 }
             }
             
+			if (self.currentCohortDefinitionDirtyFlag() && self.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Cohort changes are not saved. Would you like to continue?"))
+			{
+				window.location.href = "#/cohortdefinitions";
+				return;
+			};                    
+            
             // if we are loading a cohort definition, unload any active concept set that was loaded from 
             // a respository. If it is dirty, prompt the user to save and exit.
             if (self.currentConceptSet()) {
@@ -1395,6 +1410,7 @@ define([
         }
 
         self.currentConceptSetMode = ko.observable('details');
+        self.currentCohortDefinitionMode = ko.observable('definition');
         self.currentImportMode = ko.observable('identifiers');
         self.feRelated = ko.observable();
         self.feSearch = ko.observable();

@@ -100,6 +100,90 @@
 											}
 									 }">
 				</table>
+                <!-- ko if: model.currentConceptSet() && model.currentConceptSetSource() == 'cohort' -->
+                <hr/>
+                <ul class="nav nav-tabs">
+                    <li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'details'}, click: function() {$component.conceptSetTabMode('details')};">       
+                        <a>Concept Set Expression</a>
+                    </li>
+                    <li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'included'}, click: function() {$component.conceptSetTabMode('included')};">
+                        <a>Included Concepts
+                            <span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
+                            <span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
+                    </li>
+                    <li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'sourcecodes'}, click: function() {$component.conceptSetTabMode('sourcecodes')};">
+                        <a>Included Source Codes</a>
+                    </li>
+                    <li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'export'}, click: function() {$component.conceptSetTabMode('export')};">         <a>Export</a>
+                    </li>
+                </ul>
+                
+                <div data-bind="if: model.currentView() != 'loading' && $component.conceptSetTabMode() == 'details'">
+                    <div class="paddedWrapper">
+                        <div class="heading">
+                            Cohort Concept Set Expression Details
+                        </div>
+                        <conceptset-editor params="model: model, conceptSets: model.selectedConcepts"></conceptset-editor>
+
+                        <div class="clear"></div>
+
+                        <div class="row">
+                            <div class="col-xs-offset-6 col-xs-2">
+                                <button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() { alert('coming soon'); }">Close Concept Set</button>
+                            </div>
+                            <div class="col-xs-2">
+                                <!-- Split button -->
+                                <div class="btn-group">
+                                  <button type="button" class="btn btn-success" data-bind="click:function() { alert('save local concept set - coming soon'); }">Save Concept Set</button>
+                                  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                  </button>
+                                  <ul class="dropdown-menu">
+                                    <li><a data-bind="click:function() { alert('save local concept set - coming soon'); }">Save Concept Set to Cohort</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a data-bind="click:function() { alert('save to repository - coming soon'); }">Save to repository</a></li>
+                                  </ul>
+                                </div>
+                            </div>
+                            <div class="col-xs-2">
+                                <button type="button" class="btn btn-sm btn-danger form-control" data-bind="click:function() { alert('coming soon');}">Delete Concept Set</button>
+                            </div>                
+                        </div>
+
+                        <div id="wrapperConceptSetWarnings" data-bind="visible: model.selectedConceptsWarnings().length > 0">
+                            <div class="heading">Concept Set Warnings</div>
+                            <table data-bind="foreach:model.selectedConceptsWarnings">
+                                <tr class="conceptWarning">
+                                    <td><i class="fa fa-exclamation-triangle"></i>
+                                    </td>
+                                    <td><span class="conceptWarningText" data-bind="text:$data"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
+
+                <div data-bind="visible: $component.conceptSetTabMode() == 'included' && !model.loadingIncluded()">
+                    <faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
+                </div>
+
+                <div data-bind="visible: $component.conceptSetTabMode() == 'sourcecodes' && !model.loadingSourcecodes() && !model.loadingIncluded()">
+                    <faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
+                </div>
+
+                <div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() == 'export'">
+                    <div class="heading">Concept Set Expression JSON</div>
+                    <pre data-bind="html: model.currentConceptSetExpressionJson"></pre>
+                    <div class="heading">Concept Identifer List</div>
+                    <pre data-bind="html: model.currentConceptIdentifierList"></pre>
+                    <div class="heading">Included Concept Identifer List</div>
+                    <pre data-bind="html: model.currentIncludedConceptIdentifierList"></pre>
+                </div>
+                <!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'printfriendly' }" class="tab-pane">
 				<div class="paddedWrapper">
