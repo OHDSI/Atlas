@@ -246,6 +246,20 @@ define(['knockout',
 			}
 			return false;
 		}
+        
+        self.closeConceptSet = function() {
+            self.model.clearConceptSet()
+        }
+        
+        self.deleteConceptSet = function () {
+            self.model.currentCohortDefinition().expression().ConceptSets.remove(
+            	function(item) {
+            		return item.id == self.model.currentConceptSet().id;
+            	}
+            );
+        	self.closeConceptSet();
+        }
+
 
 		// dispose subscriptions
 		self.dispose = function()
