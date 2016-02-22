@@ -121,8 +121,9 @@
                 <div data-bind="if: model.currentView() != 'loading' && $component.conceptSetTabMode() == 'details'">
                     <div class="paddedWrapper">
                         <div class="heading">
-                            Cohort Concept Set Expression Details
+                            Name:
                         </div>
+                        <div contenteditable class="divtext" data-bind="htmlValue:model.currentConceptSet().name"></div>
                         <conceptset-editor params="model: model, conceptSets: model.selectedConcepts"></conceptset-editor>
 
                         <div class="clear"></div>

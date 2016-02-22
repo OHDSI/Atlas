@@ -1226,7 +1226,7 @@ define([
 
         self.loadCohortConceptSet = function (conceptSetId, viewToShow, mode) {
             // Load up the selected concept set from the cohort definition
-            var conceptSet = self.currentCohortDefinition().expression().ConceptSets()[conceptSetId];
+            var conceptSet = self.currentCohortDefinition().expression().ConceptSets().filter(function(item) { return item.id == conceptSetId })[0];
 
             // The conceptSet that is loaded from the cohort definition may be incomplete.
             // The inner ConceptSetItem object that is exposed in the conceptSet.expression.items()[x]
@@ -1250,12 +1250,19 @@ define([
                     for (var i = 0; i < data.length; i++) {
                         conceptSet.expression.items()[i].concept = data[i];
                     }
+                    conceptSet.expression.items.valueHasMutated();
                 }
             });
 
             $.when(conceptPromise).done(function (cp) {
                 // Reconstruct the expression items
-                self.setConceptSet(conceptSet, conceptSet.expression.items());
+                //self.setConceptSet(conceptSet, conceptSet.expression.items());
+                for (var i = 0; i < conceptSet.expression.items().length; i++) {
+                    self.selectedConceptsIndex[conceptSet.expression.items()[i].concept.CONCEPT_ID] = 1;
+                }
+                self.selectedConcepts(conceptSet.expression.items());
+                self.analyzeSelectedConcepts();
+                self.currentConceptSet({name: conceptSet.name, id: conceptSet.id});
                 self.currentView(viewToShow);
 
                 var resolvingPromise = self.resolveConceptSetExpression();
