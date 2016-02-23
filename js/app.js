@@ -1212,11 +1212,16 @@ define([
 					self.cohortDefinitionSourceInfo(null);
 					self.currentCohortDefinition(null);					
 				}
+            } else if (self.currentConceptSetSource() == "repository" && self.currentConceptSet() && loadingSource == "repository" && self.currentConceptSetDirtyFlag.isDirty() && !confirm("Concept set changes are not saved. Would you like to continue?")) {
+				// If we're attempting to load a new repository concept set and 
+				// we have a repository concept set loaded with unsaved changes 
+				// then prompt the user to save their work before moving forward
+				window.location.href = "#/conceptsets";
+				return;
             } else {
 				// Clear any existing concept set
 				self.clearConceptSet();            	
             }
-
 
             // Set the current conceptset source property to indicate if a concept set
             // was loaded from the repository or the cohort definition

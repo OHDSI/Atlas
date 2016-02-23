@@ -56,7 +56,7 @@
 						<!-- ko if: pageModel.currentCohortDefinition() != null -->
 						<li>
 							<i class="fa fa-users"></i>
-							<a data-bind="click: function() {pageModel.currentCohortDefinitionMode('definition')}; attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text: pageModel.currentCohortDefinition().name"></a>
+							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text: pageModel.currentCohortDefinition().name"></a>
 						</li>
 						<!-- /ko -->
 						<!-- ko if: pageModel.currentConceptSet()  -->
