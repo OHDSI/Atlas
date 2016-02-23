@@ -1065,6 +1065,47 @@ define([
                 }
 
                 $.when(infoPromise, definitionPromise).done(function (ip, dp) {
+                    // Now that we have loaded up the cohort definition, we'll need to 
+                    // resolve all of the concepts embedded in the concept set collection
+                    // to ensure they have all of the proper properties for editing in the cohort
+                    // editior
+                    if (self.currentCohortDefinition().expression().ConceptSets()) {
+                        var identifiers = $.makeArray(
+                        	$(self.currentCohortDefinition().expression().ConceptSets()).map(function (cs) { 
+								var allConceptIDs = $.makeArray(
+									$(this.expression.items()).map(
+										function (item) {
+											return this.concept.CONCEPT_ID;
+										})
+								);
+								return allConceptIDs;
+                        	})
+                        );
+
+                        var conceptPromise = $.ajax({
+                            url: self.vocabularyUrl() + 'lookup/identifiers',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(identifiers),
+                            success: function (data) {
+                                // Update each concept set
+                                for (var i = 0; i < self.currentCohortDefinition().expression().ConceptSets().length; i++) {
+                                    // Update each of the concept set items
+                                    var currentConceptSet = self.currentCohortDefinition().expression().ConceptSets()[i]; 
+                                    for (var j = 0; j < currentConceptSet.expression.items().length; j++) {
+                                        var selectedConcept = $(data).filter(function(item) { 
+                                        	console.log(this.CONCEPT_ID);
+                                        	return this.CONCEPT_ID == currentConceptSet.expression.items()[j].concept.CONCEPT_ID 
+                                        });
+                                        currentConceptSet.expression.items()[j].concept = selectedConcept[0];
+                                    }
+                                    currentConceptSet.expression.items.valueHasMutated();                                    
+                                }
+                                self.currentCohortDefinitionDirtyFlag().reset();
+                            }
+                        });
+                    }
+                    
                     // now that we have required information lets compile them into data objects for our view
                     var cdmSources = self.services()[0].sources.filter(self.hasCDM);
                     var results = [];
@@ -1228,48 +1269,19 @@ define([
             // Load up the selected concept set from the cohort definition
             var conceptSet = self.currentCohortDefinition().expression().ConceptSets().filter(function(item) { return item.id == conceptSetId })[0];
 
-            // The conceptSet that is loaded from the cohort definition may be incomplete.
-            // The inner ConceptSetItem object that is exposed in the conceptSet.expression.items()[x]
-            // doesn't contain all of the properties that the Atlas concept set editor expects. So,
-            // we'll need to take the list of all concept_ids that are in the items() collection
-            // and then call out to the /vocabulary/lookup/identifiers
-            // service to get the complete concept information and replace each item's concept property
-            var identifiers = $.makeArray(
-                $(conceptSet.expression.items()).map(
-                    function () {
-                        return this.concept.CONCEPT_ID;
-                    })
-            );
+            // Reconstruct the expression items
+            for (var i = 0; i < conceptSet.expression.items().length; i++) {
+                self.selectedConceptsIndex[conceptSet.expression.items()[i].concept.CONCEPT_ID] = 1;
+            }
+            self.selectedConcepts(conceptSet.expression.items());
+            self.analyzeSelectedConcepts();
+            self.currentConceptSet({name: conceptSet.name, id: conceptSet.id});
+            self.currentView(viewToShow);
 
-            var conceptPromise = $.ajax({
-                url: self.vocabularyUrl() + 'lookup/identifiers',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(identifiers),
-                success: function (data) {
-                    for (var i = 0; i < data.length; i++) {
-                        conceptSet.expression.items()[i].concept = data[i];
-                    }
-                    conceptSet.expression.items.valueHasMutated();
-                }
-            });
-
-            $.when(conceptPromise).done(function (cp) {
-                // Reconstruct the expression items
-                //self.setConceptSet(conceptSet, conceptSet.expression.items());
-                for (var i = 0; i < conceptSet.expression.items().length; i++) {
-                    self.selectedConceptsIndex[conceptSet.expression.items()[i].concept.CONCEPT_ID] = 1;
-                }
-                self.selectedConcepts(conceptSet.expression.items());
-                self.analyzeSelectedConcepts();
-                self.currentConceptSet({name: conceptSet.name, id: conceptSet.id});
-                self.currentView(viewToShow);
-
-                var resolvingPromise = self.resolveConceptSetExpression();
-                $.when(resolvingPromise).done(function () {
-                    self.currentConceptSetMode(mode);
-                    $('#conceptSetLoadDialog').modal('hide');
-                });
+            var resolvingPromise = self.resolveConceptSetExpression();
+            $.when(resolvingPromise).done(function () {
+                self.currentConceptSetMode(mode);
+                $('#conceptSetLoadDialog').modal('hide');
             });
         }
 
@@ -1501,7 +1513,7 @@ define([
 
             if (includeNonStandard) {
                 self.selectedConceptsWarnings.push('Your saved concepts include Non-Standard or Classification concepts.  Typically concept sets should only include Standard concepts unless advanced use of this concept set is planned.');
-            }
+            }            
         };
         self.selectedConceptsIndex = {};
         self.createConceptSetItem = function (concept) {

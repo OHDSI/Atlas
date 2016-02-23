@@ -353,6 +353,13 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 
 			pageModel.analyzeSelectedConcepts();
+            
+            // If we are updating a concept set that is part of a cohort definition
+            // then we need to notify any dependent observables about this change in the concept set
+            if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
+                var conceptSet = pageModel.currentCohortDefinition().expression().ConceptSets().filter(function(item) { return item.id == pageModel.currentConceptSet().id })[0];
+                conceptSet.expression.items.valueHasMutated();
+            }
 		});
 
 		// concept set selector handling
