@@ -9,10 +9,10 @@ define(['knockout',
         'cohortconceptselector',
 				'databindings'
 ], function (ko, view, config, CohortDefinition) {
-    
+
 	function cohortEditor(params) {
 		var self = this;
-		
+
 		self.model = params.model;
 		self.tabMode = ko.observable('expression');
 		self.tabWidget = ko.observable();
@@ -34,13 +34,13 @@ define(['knockout',
 		});
 
 		// model behaviors
-		
+
 		self.handleConceptSetSelect = function (item) {
 			//alert(item);
-            self.model.criteriaContext(item);            
+            self.model.criteriaContext(item);
             $('#conceptSetSelectorDialog').modal('show');
 		}
-        
+
 		self.onAtlasConceptSetSelectAction = function(result) {
 				console.log(result);
 				$('#conceptSetSelectorDialog').modal('hide');
@@ -58,7 +58,7 @@ define(['knockout',
 		}
 
 		self.onGenerate = function (generateComponent) {
-			var generatePromise = chortDefinitionAPI.generate(self.model.currentCohortDefinition().id(), generateComponent.source.sourceKey);
+			var generatePromise = cohortDefinitionAPI.generate(self.model.currentCohortDefinition().id(), generateComponent.source.sourceKey);
 			generatePromise.then(function (result) {
 				pollForInfo();
 			});

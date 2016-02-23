@@ -1,13 +1,13 @@
-define(['knockout', 
-				'text!./cohort-definition-manager.html', 
+define(['knockout',
+				'text!./cohort-definition-manager.html',
 				'appConfig',
 				'cohortbuilder/CohortDefinition',
 				'webapi/CohortDefinitionAPI',
 				'ohdsi.util',
 				'knockout.dataTables.binding',
 				'faceted-datatable'
-], function (ko, view, config, CohortDefinition, chortDefinitionAPI, ohdsiUtil) {
-	
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil) {
+
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
 			url: config.webAPIRoot + 'sqlrender/translate',
@@ -36,33 +36,35 @@ define(['knockout',
 		var self = this;
 
 		var pollTimeout = null;
-		
+
 		self.model = params.model;
 		self.tabMode = self.model.currentCohortDefinitionMode;
-        self.conceptSetTabMode = self.model.currentConceptSetMode;
+		self.conceptSetTabMode = self.model.currentConceptSetMode;
 		self.dirtyFlag = self.model.currentCohortDefinitionDirtyFlag;
 		self.sources = ko.observableArray();
 		self.isGeneratedOpen = ko.observable(false);
 		self.generatedSql = {};
 		self.isRunning = ko.pureComputed(function () {
-			return self.sources().filter(function (source) {
+			var result = self.sources().filter(function (source) {
 				return source.info() && source.info().status != "COMPLETE";
 			}).length > 0;
+			console.log(result);
+			return result;
 		});
 		self.isSaveable = ko.pureComputed(function () {
 			return self.dirtyFlag() && self.dirtyFlag().isDirty() && self.isRunning();
 		});
-        
+
 		// model behaviors
-		self.onConceptSetTabRespositoryConceptSetSelected = function(conceptSet){
+		self.onConceptSetTabRespositoryConceptSetSelected = function (conceptSet) {
 			self.model.loadConceptSet(conceptSet.id, 'cohortdefinition', 'cohort', 'details');
 		}
-        
-        self.pollForInfo = function() {
+
+		self.pollForInfo = function () {
 			if (pollTimeout)
 				clearTimeout(pollTimeout);
 
-			chortDefinitionAPI.getInfo(self.selectedDefinition().id()).then(function (infoList) {
+			cohortDefinitionAPI.getInfo(pageModel.currentCohortDefinition().id()).then(function (infoList) {
 				var hasPending = false;
 				infoList.forEach(function (info) {
 					var source = self.sources().filter(function (s) {
@@ -82,17 +84,17 @@ define(['knockout',
 				}
 			});
 		}
-		
+
 		self.delete = function () {
 			clearTimeout(pollTimeout);
 
 			// reset view after save
-			chortDefinitionAPI.deleteCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
+			cohortDefinitionAPI.deleteCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
 				console.log("Deleted...");
-				document.location = "#/cohortdefinitions" 
+				document.location = "#/cohortdefinitions"
 			});
 		}
-		
+
 		self.save = function () {
 			clearTimeout(pollTimeout);
 
@@ -102,7 +104,7 @@ define(['knockout',
 			definition.expression = ko.toJSON(definition.expression, pruneJSON);
 
 			// reset view after save
-			chortDefinitionAPI.saveCohortDefinition(definition).then(function (result) {
+			cohortDefinitionAPI.saveCohortDefinition(definition).then(function (result) {
 				console.log("Saved...");
 				result.expression = JSON.parse(result.expression);
 				var definition = new CohortDefinition(result);
@@ -117,12 +119,12 @@ define(['knockout',
 			clearTimeout(pollTimeout);
 
 			// reset view after save
-			chortDefinitionAPI.copyCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
+			cohortDefinitionAPI.copyCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
 				console.log("Copied...");
 				document.location = "#/cohortdefinition/" + result.id;
 			});
 		}
-		
+
 		self.showSql = function () {
 			self.generatedSql.mssql = null;
 			self.generatedSql.oracle = null;
@@ -132,7 +134,7 @@ define(['knockout',
 
 
 			var expression = ko.toJS(self.model.currentCohortDefinition().expression, pruneJSON);
-			var templateSqlPromise = chortDefinitionAPI.getSql(expression);
+			var templateSqlPromise = cohortDefinitionAPI.getSql(expression);
 
 			templateSqlPromise.then(function (result) {
 
@@ -167,15 +169,15 @@ define(['knockout',
 			});
 		}
 
-		self.generateCohort = function(data,event) {
+		self.generateCohort = function (data, event) {
 			var route = self.model.services()[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + data.key;
-			$.ajax(route,{
-				success: function(data) {
-					console.log(data);
+			$.ajax(route, {
+				success: function (data) {
+					// self.pollForInfo();
 				}
 			});
 		}
-		
+
 		self.generateAnalyses = function (data, event) {
 			$(event.target).prop("disabled", true);
 
@@ -262,11 +264,10 @@ define(['knockout',
 
 
 		// dispose subscriptions
-		self.dispose = function()
-		{
+		self.dispose = function () {
 			//self.currentCohortDefinitionSubscription.dispose();
 		}
-		
+
 	}
 
 	var component = {

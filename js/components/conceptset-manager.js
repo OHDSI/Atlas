@@ -48,7 +48,7 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 				});
 			}
 
-			var json = JSON.stringify(conceptSet);
+			var json = ko.toJSON(conceptSet);
 
 			$.ajax({
 				method: 'POST',

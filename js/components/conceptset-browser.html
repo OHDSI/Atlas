@@ -2,8 +2,13 @@
 	Concept Sets
 </div>
 <div class="paddedWrapper">
-	<span class="pull-right btn btn-sm btn-success" data-bind="click:$component.newConceptSet">New Concept Set</span>
+	<span class="pull-right btn btn-sm btn-success" data-bind="click:$component.newConceptSet, css: {disabled: pageModel.currentConceptSet() != undefined}">New Concept Set</span>
 </div>
-<div class="paddedWrapper">
-	<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null, onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected"></cohort-concept-set-browser>
+<div class="clear">
+	<div class="paddedWrapper">
+		<div class="heading">
+			Concept Set Repository
+		</div>
+		<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null, onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected"></cohort-concept-set-browser>
+	</div>
 </div>

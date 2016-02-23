@@ -7,7 +7,7 @@
 	<div class="button-overlay">
 		<!-- ko if: model.currentCohortDefinition().id() != null -->
 		<!-- ko ifnot: isRunning -->
-		<button class="btn btn-sm btn-danger pull-right" data-bind="click: $component.delete">Delete Cohort Definition</button>
+		<button class="btn btn-sm btn-danger pull-right" data-bind="click: $component.delete">Delete Cohort</button>
 		<!-- /ko -->
 		<button class="btn btn-sm btn-primary pull-right" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
 		<!-- ko if: isRunning -->
@@ -100,79 +100,79 @@
 											}
 									 }">
 				</table>
-                <!-- ko if: model.currentConceptSet() && model.currentConceptSetSource() == 'cohort' -->
-                <hr/>
-                <ul class="nav nav-tabs">
-                    <li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'details'}, click: function() {$component.conceptSetTabMode('details')};">       
-                        <a>Concept Set Expression</a>
-                    </li>
-                    <li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'included'}, click: function() {$component.conceptSetTabMode('included')};">
-                        <a>Included Concepts
+				<!-- ko if: model.currentConceptSet() && model.currentConceptSetSource() == 'cohort' -->
+				<hr/>
+				<ul class="nav nav-tabs">
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'details'}, click: function() {$component.conceptSetTabMode('details')};">
+						<a>Concept Set Expression</a>
+					</li>
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'included'}, click: function() {$component.conceptSetTabMode('included')};">
+						<a>Included Concepts
                             <span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
                             <span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
-                    </li>
-                    <li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'sourcecodes'}, click: function() {$component.conceptSetTabMode('sourcecodes')};">
-                        <a>Included Source Codes</a>
-                    </li>
-                    <li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'export'}, click: function() {$component.conceptSetTabMode('export')};">         <a>Export</a>
-                    </li>
-                </ul>
-                
-                <div data-bind="if: model.currentView() != 'loading' && $component.conceptSetTabMode() == 'details'">
-                    <div class="paddedWrapper">
-                        <div class="heading">
-                            Name:
-                        </div>
-                        <div contenteditable class="divtext" data-bind="htmlValue:model.currentConceptSet().name"></div>
-                        <conceptset-editor params="model: model, conceptSets: model.selectedConcepts"></conceptset-editor>
+					</li>
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'sourcecodes'}, click: function() {$component.conceptSetTabMode('sourcecodes')};">
+						<a>Included Source Codes</a>
+					</li>
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'export'}, click: function() {$component.conceptSetTabMode('export')};"> <a>Export</a>
+					</li>
+				</ul>
 
-                        <div class="clear"></div>
+				<div data-bind="if: model.currentView() != 'loading' && $component.conceptSetTabMode() == 'details'">
+					<div class="paddedWrapper">
+						<div class="heading">
+							Name:
+						</div>
+						<div contenteditable class="divtext" data-bind="htmlValue:model.currentConceptSet().name"></div>
+						<conceptset-editor params="model: model, conceptSets: model.selectedConcepts"></conceptset-editor>
 
-                        <div class="row">
-                            <div class="col-xs-offset-6 col-xs-2">
-                                <button type="button" class="btn btn-sm btn-primary form-control" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
-                            </div>
-                            <div class="col-xs-2">
-                                <button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() { alert('copy')};">Copy To Repository</button>
-                            </div>                
-                            <div class="col-xs-2">
-                                <button type="button" class="btn btn-sm btn-danger form-control" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
-                            </div>                
-                        </div>
+						<div class="clear"></div>
 
-                        <div id="wrapperConceptSetWarnings" data-bind="visible: model.selectedConceptsWarnings().length > 0">
-                            <div class="heading">Concept Set Warnings</div>
-                            <table data-bind="foreach:model.selectedConceptsWarnings">
-                                <tr class="conceptWarning">
-                                    <td><i class="fa fa-exclamation-triangle"></i>
-                                    </td>
-                                    <td><span class="conceptWarningText" data-bind="text:$data"></span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+						<div class="row">
+							<div class="col-xs-offset-6 col-xs-2">
+								<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
+							</div>
+							<div class="col-xs-2">
+								<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() { alert('copy')};">Copy To Repository</button>
+							</div>
+							<div class="col-xs-2">
+								<button type="button" class="btn btn-sm btn-danger form-control" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
+							</div>
+						</div>
 
-                <div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
+						<div id="wrapperConceptSetWarnings" data-bind="visible: model.selectedConceptsWarnings().length > 0">
+							<div class="heading">Concept Set Warnings</div>
+							<table data-bind="foreach:model.selectedConceptsWarnings">
+								<tr class="conceptWarning">
+									<td><i class="fa fa-exclamation-triangle"></i>
+									</td>
+									<td><span class="conceptWarningText" data-bind="text:$data"></span>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
 
-                <div data-bind="visible: $component.conceptSetTabMode() == 'included' && !model.loadingIncluded()">
-                    <faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
-                </div>
+				<div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
 
-                <div data-bind="visible: $component.conceptSetTabMode() == 'sourcecodes' && !model.loadingSourcecodes() && !model.loadingIncluded()">
-                    <faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
-                </div>
+				<div data-bind="visible: $component.conceptSetTabMode() == 'included' && !model.loadingIncluded()">
+					<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
+				</div>
 
-                <div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() == 'export'">
-                    <div class="heading">Concept Set Expression JSON</div>
-                    <pre data-bind="html: model.currentConceptSetExpressionJson"></pre>
-                    <div class="heading">Concept Identifer List</div>
-                    <pre data-bind="html: model.currentConceptIdentifierList"></pre>
-                    <div class="heading">Included Concept Identifer List</div>
-                    <pre data-bind="html: model.currentIncludedConceptIdentifierList"></pre>
-                </div>
-                <!-- /ko -->
+				<div data-bind="visible: $component.conceptSetTabMode() == 'sourcecodes' && !model.loadingSourcecodes() && !model.loadingIncluded()">
+					<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
+				</div>
+
+				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() == 'export'">
+					<div class="heading">Concept Set Expression JSON</div>
+					<pre data-bind="html: model.currentConceptSetExpressionJson"></pre>
+					<div class="heading">Concept Identifer List</div>
+					<pre data-bind="html: model.currentConceptIdentifierList"></pre>
+					<div class="heading">Included Concept Identifer List</div>
+					<pre data-bind="html: model.currentIncludedConceptIdentifierList"></pre>
+				</div>
+				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'printfriendly' }" class="tab-pane">
 				<div class="paddedWrapper">
@@ -203,6 +203,7 @@
 						<tr>
 							<td>
 								<div class="btn btn-xs btn-success" data-bind="click:$component.generateCohort"><i class="fa fa-play"></i></div>
+								<div class="btn btn-xs btn-warning" data-bind="visible:$component.isRunning, css : {enabled:false}"><i class="fa fa-cog fa-spin"></i></div>
 							</td>
 							<td data-bind="text:name"></td>
 							<td class="statusIndicator rightaligned">
