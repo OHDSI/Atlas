@@ -30,10 +30,6 @@ requirejs.config({
 			"deps": [
 				'jquery'
 			]
-		},
-		"facets": {
-			"deps": ['jquery'],
-			exports: 'FacetEngine'
 		}
 	},
 	map: {
