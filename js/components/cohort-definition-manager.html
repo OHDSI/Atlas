@@ -1,4 +1,4 @@
-<div data-bind="if: model.currentView() == 'cohortdefinition'">
+<div data-bind="if: model.currentCohortDefinition() && model.currentView() == 'cohortdefinition'">
 	<div class="wrapperTitle">
 		<i class="fa fa-users"></i>
 		<textarea maxlength="250" rows="1" class="cohortDefinitionNameTextArea" data-bind="textInput: model.currentCohortDefinition().name, jqAutoresize: {append: ''}, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></textarea>
@@ -14,6 +14,7 @@
 		<img class="spin" src="images/running.png" />Generating...
 		<!-- /ko -->
 		<!-- /ko -->
+		<button class="btn btn-sm btn-primary pull-right" data-bind="click: close">Close</button>
 		<button class="btn btn-sm btn-primary pull-right" data-bind="click: showSql">Show SQL</button>
 		<button class="btn btn-sm btn-success pull-right" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
 	</div>

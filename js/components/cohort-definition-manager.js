@@ -48,7 +48,6 @@ define(['knockout',
 			var result = self.sources().filter(function (source) {
 				return source.info() && source.info().status != "COMPLETE";
 			}).length > 0;
-			console.log(result);
 			return result;
 		});
 		self.isSaveable = ko.pureComputed(function () {
@@ -113,6 +112,14 @@ define(['knockout',
 				else
 					self.model.currentCohortDefinition(definition);
 			});
+		}
+
+		self.close = function() {
+			document.location = "#/cohortdefinitions"
+			self.model.currentConceptSet(null);
+			self.model.currentConceptSetDirtyFlag.reset();
+			self.model.currentCohortDefinition(null);
+			self.model.currentCohortDefinitionDirtyFlag().reset();
 		}
 
 		self.copy = function () {

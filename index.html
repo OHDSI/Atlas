@@ -57,16 +57,22 @@
 						<li>
 							<i class="fa fa-users"></i>
 							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text: pageModel.currentCohortDefinition().name"></a>
+							<!-- ko if: pageModel.currentConceptSet() != null && pageModel.currentConceptSetSource() == 'cohort' -->
+							<ul>
+								<li>
+									<i class="fa fa-shopping-cart"></i>
+									<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name()"></a>
+									<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
+								</li>
+							</ul>
+							<!-- /ko -->
 						</li>
 						<!-- /ko -->
-						<!-- ko if: pageModel.currentConceptSet()  -->
+						<!-- ko if: pageModel.currentConceptSet() && pageModel.currentConceptSetSource() == 'repository'  -->
 						<li>
 							<i class="fa fa-shopping-cart"></i>
 							<!-- ko if: pageModel.currentConceptSetSource() == 'repository' -->
 							<a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
-							<!-- /ko -->
-							<!-- ko if: pageModel.currentConceptSetSource() == 'cohort' -->
-							<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name()"></a>
 							<!-- /ko -->
 							<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 						</li>

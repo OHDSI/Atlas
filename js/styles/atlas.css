@@ -277,11 +277,16 @@ div#wrapperMainWindowContainer {}
 	height: 40px;
 	color: #FFFFFF;
 	line-height: 40px;
-	padding: 0px 0px 0px 10px;
+	padding: 3px 0px 0px 30px;
 	font-size: 14px;
 	border-bottom: solid 1px #ccc;
-	vertical-align: middle;
 	white-space: nowrap;
+}
+
+.wrapperTitle textarea {
+	position:absolute;
+	top: 2px;
+	left: 35px;
 }
 
 #wrapperLeftMenu ul {
@@ -307,9 +312,8 @@ div#wrapperMainWindowContainer {}
 #wrapperLeftMenu li {
 	list-style: none;
 	text-indent: 0px;
-	padding: 4px 6px 4px 10px;
+	padding: 2px 0px 2px 4px;
 	color: #184756;
-	border-top: solid 1px #eee;
 }
 
 #wrapperLeftMenu li a {
@@ -322,18 +326,7 @@ div#wrapperMainWindowContainer {}
 }
 
 #wrapperLeftMenu li ul {
-	text-indent: 0px;
-	margin: 1px;
-	padding: 2px 2px 2px 20px;
-	list-style: none;
-	line-height: 20px;
-	background-color: #444;
-	cursor: pointer;
-}
-
-#wrapperLeftMenu ul ul li {
-	font-size: 11px;
-	padding: 5px 3px 2px 35px;
+	padding-left:10px;
 }
 
 .feFilter {
@@ -466,8 +459,8 @@ td.numeric {
 }
 
 #wrapperLeftMenu .fa {
-	font-size: 16px;
-	padding-right: 5px;
+	font-size: 14px;
+	padding-right: 0px;
 }
 
 th .fa {
@@ -552,11 +545,6 @@ label {
 
 .glyphicon-ok.selected {
 	color: #F19119;
-}
-
-.badge {
-	font-weight: normal;
-	line-height: .9;
 }
 
 .nav-tabs span.badge {
@@ -727,6 +715,9 @@ ul.ColVis_collection li {
 .wrapperTitle .fa {
 	font-size: 16px;
 	padding-right: 3px;
+	position:absolute;
+	top: 12px;
+	left: 10px;
 }
 
 .fa-check-circle {
@@ -788,7 +779,8 @@ ul.ColVis_collection li {
 }
 
 #wrapperLeftMenu i.fa {
-	width: 24px;
+	width: 18px;
+	line-height:20px;
 }
 
 #wrapperMiniBar i.fa {
@@ -888,7 +880,7 @@ g.trellisLegend {}
 
 ul.nav.nav-tabs {
 	margin-bottom: 2px;
-	background-color: #FFFFFF;
+	background-color: #fff;
 	padding: 3px 10px 1px 10px;
 	border-bottom: solid 1px #003142;
 	clear:right;
@@ -1114,10 +1106,10 @@ pre {
 }
 
 .badge {
-	border-radius: 2px;
+	border-radius: 10px;
 	background-color: #F19119;
-	border: solid 1px #ccc;
-	padding: 2px 7px;
+	font-size: 0.8em;
+	font-weight: normal;
 }
 
 .container .jumbotron {
@@ -1310,10 +1302,6 @@ i.fa.fa-compress {
 #wrapperMiniBar img {
 	width: 32px;
 	padding-top: 7px;
-}
-
-#wrapperLeftMenu ul ul li a {
-	color: #aaa;
 }
 
 table.dataTable.no-footer {
@@ -1570,7 +1558,7 @@ a:hover {
     border-top: none;
     border-left: none;
     border-right: none;
-    width: 250px;
+    width: 500px;
 }
 
 .wrapperTitle input[type="text"]:focus {

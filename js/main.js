@@ -64,12 +64,12 @@ requirejs.config({
 		"search": "components/search",
 		"configuration": "components/configuration",
 		"concept-manager": "components/concept-manager",
-        "conceptset-browser": "components/conceptset-browser",
-        "conceptset-editor": "components/conceptset-editor",
+		"conceptset-browser": "components/conceptset-browser",
+		"conceptset-editor": "components/conceptset-editor",
 		"conceptset-manager": "components/conceptset-manager",
 		"job-manager": "components/job-manager",
 		"importer": "components/importer",
-        "cohort-conceptset-manager": "components/cohort-conceptset-manager",
+		"cohort-conceptset-manager": "components/cohort-conceptset-manager",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definition-browser",
@@ -311,6 +311,13 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		// handle select all
 		$(document).on('click', 'th i.fa.fa-shopping-cart', function () {
+			if (pageModel.currentConceptSet() == undefined) {
+				var newConceptSet = {
+					name: ko.observable("New Concept Set"),
+					id: 0
+				}
+			}
+
 			var table = $(this).closest('.dataTable').DataTable();
 			var concepts = table.rows({
 				search: 'applied'
@@ -338,7 +345,10 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					name: ko.observable("New Concept Set"),
 					id: 0
 				}
-				pageModel.currentConceptSet({name: ko.observable('New Concept Set'), id: 0});
+				pageModel.currentConceptSet({
+					name: ko.observable('New Concept Set'),
+					id: 0
+				});
 				pageModel.currentConceptSetSource('repository');
 			}
 
@@ -357,13 +367,15 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 
 			pageModel.analyzeSelectedConcepts();
-            
-            // If we are updating a concept set that is part of a cohort definition
-            // then we need to notify any dependent observables about this change in the concept set
-            if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
-                var conceptSet = pageModel.currentCohortDefinition().expression().ConceptSets().filter(function(item) { return item.id == pageModel.currentConceptSet().id })[0];
-                conceptSet.expression.items.valueHasMutated();
-            }
+
+			// If we are updating a concept set that is part of a cohort definition
+			// then we need to notify any dependent observables about this change in the concept set
+			if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
+				var conceptSet = pageModel.currentCohortDefinition().expression().ConceptSets().filter(function (item) {
+					return item.id == pageModel.currentConceptSet().id
+				})[0];
+				conceptSet.expression.items.valueHasMutated();
+			}
 		});
 
 		// concept set selector handling
