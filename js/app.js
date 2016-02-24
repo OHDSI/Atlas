@@ -1069,6 +1069,8 @@ define([
                     // resolve all of the concepts embedded in the concept set collection
                     // to ensure they have all of the proper properties for editing in the cohort
                     // editior
+                    var conceptPromise;
+                    
                     if (self.currentCohortDefinition().expression().ConceptSets()) {
                         var identifiers = $.makeArray(
                         	$(self.currentCohortDefinition().expression().ConceptSets()).map(function (cs) { 
@@ -1082,7 +1084,7 @@ define([
                         	})
                         );
 
-                        var conceptPromise = $.ajax({
+                        conceptPromise = $.ajax({
                             url: self.vocabularyUrl() + 'lookup/identifiers',
                             method: 'POST',
                             contentType: 'application/json',
@@ -1104,90 +1106,96 @@ define([
                                 self.currentCohortDefinitionDirtyFlag().reset();
                             }
                         });
+                    } else {
+                        conceptPromise = $.Deferred();
+                        conceptPromise.resolve();
                     }
                     
-                    // now that we have required information lets compile them into data objects for our view
-                    var cdmSources = self.services()[0].sources.filter(self.hasCDM);
-                    var results = [];
+                    $.when(conceptPromise).done(function(cp) {
+                        // now that we have required information lets compile them into data objects for our view
+                        var cdmSources = self.services()[0].sources.filter(self.hasCDM);
+                        var results = [];
 
-                    for (var s = 0; s < cdmSources.length; s++) {
-                        var source = cdmSources[s];
+                        for (var s = 0; s < cdmSources.length; s++) {
+                            var source = cdmSources[s];
 
-                        self.sourceAnalysesStatus[source.sourceKey] = ko.observable({
-                            ready: false,
-                            checking: false
+                            self.sourceAnalysesStatus[source.sourceKey] = ko.observable({
+                                ready: false,
+                                checking: false
+                            });
+
+                            var sourceInfo = self.getSourceInfo(source);
+                            var cdsi = {};
+                            cdsi.name = cdmSources[s].sourceName;
+                            cdsi.key = cdmSources[s].sourceKey;
+
+                            if (sourceInfo != null) {
+                                cdsi.isValid = sourceInfo.isValid;
+                                cdsi.status = sourceInfo.status;
+                                var date = new Date(sourceInfo.startTime);
+                                cdsi.startTime = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                                cdsi.executionDuration = (sourceInfo.executionDuration / 1000) + 's'
+                                cdsi.distinctPeople = self.asyncComputed(self.getCohortCount, this, source);
+                            } else {
+                                cdsi.isValid = false;
+                                cdsi.status = 'n/a';
+                                cdsi.startTime = 'n/a';
+                                cdsi.executionDuration = 'n/a';
+                                cdsi.distinctPeople = 'n/a';
+                            }
+
+                            results.push(cdsi);
+                        }
+
+                        self.cohortDefinitionSourceInfo(results);
+
+                        // load universe of analyses
+                        var analysesPromise = $.ajax({
+                            url: self.services()[0].url + 'cohortanalysis/',
+                            method: 'GET',
+                            contentType: 'application/json',
+                            success: function (analyses) {
+                                var index = {};
+                                var nestedAnalyses = [];
+
+                                for (var a = 0; a < analyses.length; a++) {
+                                    var analysis = analyses[a];
+
+                                    if (index[analysis.analysisType] == undefined) {
+                                        var analysisType = {
+                                            name: analysis.analysisType,
+                                            analyses: []
+                                        };
+                                        nestedAnalyses.push(analysisType);
+                                        index[analysis.analysisType] = nestedAnalyses.indexOf(analysisType);
+                                    }
+                                    self.analysisLookup[analysis.analysisId] = analysis.analysisType;
+                                    nestedAnalyses[index[analysis.analysisType]].analyses.push(analysis);
+                                }
+
+                                self.cohortAnalyses(nestedAnalyses);
+
+                                // obtain completed result status for each source
+                                for (var s = 0; s < cdmSources.length; s++) {
+                                    var source = cdmSources[s];
+                                    var info = self.getSourceInfo(source);
+                                    if (info) {
+                                        var sourceAnalysesStatus = {};
+                                        sourceAnalysesStatus.checking = true;
+                                        self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
+                                        self.getCompletedAnalyses(source);
+                                    }
+                                }
+                            }
                         });
 
-                        var sourceInfo = self.getSourceInfo(source);
-                        var cdsi = {};
-                        cdsi.name = cdmSources[s].sourceName;
-                        cdsi.key = cdmSources[s].sourceKey;
-
-                        if (sourceInfo != null) {
-                            cdsi.isValid = sourceInfo.isValid;
-                            cdsi.status = sourceInfo.status;
-                            var date = new Date(sourceInfo.startTime);
-                            cdsi.startTime = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-                            cdsi.executionDuration = (sourceInfo.executionDuration / 1000) + 's'
-                            cdsi.distinctPeople = self.asyncComputed(self.getCohortCount, this, source);
+                        if (conceptSetId != null) {
+                            self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
                         } else {
-                            cdsi.isValid = false;
-                            cdsi.status = 'n/a';
-                            cdsi.startTime = 'n/a';
-                            cdsi.executionDuration = 'n/a';
-                            cdsi.distinctPeople = 'n/a';
+                            self.currentView(viewToShow);
                         }
-
-                        results.push(cdsi);
-                    }
-
-                    self.cohortDefinitionSourceInfo(results);
-
-                    // load universe of analyses
-                    var analysesPromise = $.ajax({
-                        url: self.services()[0].url + 'cohortanalysis/',
-                        method: 'GET',
-                        contentType: 'application/json',
-                        success: function (analyses) {
-                            var index = {};
-                            var nestedAnalyses = [];
-
-                            for (var a = 0; a < analyses.length; a++) {
-                                var analysis = analyses[a];
-
-                                if (index[analysis.analysisType] == undefined) {
-                                    var analysisType = {
-                                        name: analysis.analysisType,
-                                        analyses: []
-                                    };
-                                    nestedAnalyses.push(analysisType);
-                                    index[analysis.analysisType] = nestedAnalyses.indexOf(analysisType);
-                                }
-                                self.analysisLookup[analysis.analysisId] = analysis.analysisType;
-                                nestedAnalyses[index[analysis.analysisType]].analyses.push(analysis);
-                            }
-
-                            self.cohortAnalyses(nestedAnalyses);
-
-                            // obtain completed result status for each source
-                            for (var s = 0; s < cdmSources.length; s++) {
-                                var source = cdmSources[s];
-                                var info = self.getSourceInfo(source);
-                                if (info) {
-                                    var sourceAnalysesStatus = {};
-                                    sourceAnalysesStatus.checking = true;
-                                    self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
-                                    self.getCompletedAnalyses(source);
-                                }
-                            }
-                        }
+                        
                     });
-
-                    if (conceptSetId != null) {
-                        self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
-                    } else {
-                        self.currentView(viewToShow);
-                    }
                 });
             });
         }
