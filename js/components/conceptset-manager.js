@@ -22,8 +22,12 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 		}
 
 		self.closeConceptSet = function() {
-			pageModel.clearConceptSet();
-			document.location = "#/conceptsets";
+            if (self.model.currentConceptSetDirtyFlag.isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
+                return;
+            } else {                
+                pageModel.clearConceptSet();
+                document.location = "#/conceptsets";
+            }
 		};
 		
 		self.saveConceptSet = function () {

@@ -115,11 +115,15 @@ define(['knockout',
 		}
 
 		self.close = function() {
-			document.location = "#/cohortdefinitions"
-			self.model.currentConceptSet(null);
-			self.model.currentConceptSetDirtyFlag.reset();
-			self.model.currentCohortDefinition(null);
-			self.model.currentCohortDefinitionDirtyFlag().reset();
+            if (self.model.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Your cohort changes are not saved. Would you like to continue?")) {
+                return;
+            } else {                
+                document.location = "#/cohortdefinitions"
+                self.model.currentConceptSet(null);
+                self.model.currentConceptSetDirtyFlag.reset();
+                self.model.currentCohortDefinition(null);
+                self.model.currentCohortDefinitionDirtyFlag().reset();
+            }
 		}
 
 		self.copy = function () {
