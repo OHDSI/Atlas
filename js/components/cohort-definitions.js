@@ -12,7 +12,7 @@ define(['knockout', 'text!./cohort-definitions.html', 'knockout.dataTables.bindi
 		});
 
 		self.newDefinition = function (data, event) {
-			self.cohortDefinitionId('new');
+			self.cohortDefinitionId('0');
 		}
 	}
 

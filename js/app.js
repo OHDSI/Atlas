@@ -1010,7 +1010,7 @@ define([
 				}
 			}
 
-			if (self.currentCohortDefinitionDirtyFlag() && self.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Cohort changes are not saved. Would you like to continue?")) {
+			if (self.currentCohortDefinition() && self.currentCohortDefinitionDirtyFlag() && self.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Cohort changes are not saved. Would you like to continue?")) {
 				window.location.href = "#/cohortdefinitions";
 				return;
 			};
@@ -1032,8 +1032,9 @@ define([
 			var definitionPromise, infoPromise;
 
 			requirejs(['cohortbuilder/CohortDefinition'], function (CohortDefinition) {
-				if (cohortDefinitionId == 'new') {
+				if (cohortDefinitionId == '0') {
 					var def = new CohortDefinition({
+                        id: '0',
 						name: 'New Cohort Definition'
 					});
 
@@ -1243,8 +1244,16 @@ define([
 		self.loadRepositoryConceptSet = function (conceptSetId, viewToShow, mode) {
 			$('body').removeClass('modal-open');
 
+			if (conceptSetId == 0 && !self.currentConceptSet()) {
+				// Create a new concept set 
+				self.currentConceptSet({
+					name: ko.observable('New Concept Set'),
+					id: 0
+				});
+			}
+
 			// don't load if it is already loaded or a new concept set
-			if (conceptSetId == 0 || (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId)) {
+			if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId) {
 				self.analyzeSelectedConcepts();
 				self.currentConceptSetMode(mode);
 				self.currentView(viewToShow);
