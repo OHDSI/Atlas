@@ -96,6 +96,12 @@ define(['knockout',
 
 		self.save = function () {
 			clearTimeout(pollTimeout);
+            
+            // If we are saving a new cohort definition (id ==0) then clear
+            // the id field before saving
+            if (self.model.currentCohortDefinition().id() == 0) {
+                self.model.currentCohortDefinition().id(undefined);
+            }
 
 			var definition = ko.toJS(self.model.currentCohortDefinition());
 
@@ -107,10 +113,11 @@ define(['knockout',
 				console.log("Saved...");
 				result.expression = JSON.parse(result.expression);
 				var definition = new CohortDefinition(result);
-				if (!definition.id)
-					document.location = "#/cohortdefinition/" + result.id;
-				else
-					self.model.currentCohortDefinition(definition);
+				var redirectWhenComplete = definition.id() != self.model.currentCohortDefinition().id();
+				self.model.currentCohortDefinition(definition);
+				if (redirectWhenComplete) {
+					document.location = "#/cohortdefinition/" + definition.id();			
+				}
 			});
 		}
 
