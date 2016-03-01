@@ -4,45 +4,78 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		self.model = params.model;
 		self.services = params.services;
 		self.panaceaStudyId = ko.observable();
+		self.currentStudy = ko.observable();
 		self.show = ko.observable(false);
 		self.loading = ko.observable(true);
 		self.cohortDefinitions = ko.observableArray();
-		self.currentCohort = ko.observable();
+		self.currentCohort = ko.observable().extend({ panaceaRequired: "Please pick a cohort"});
 		self.conceptsets = ko.observableArray();
 		self.showConceptSetImporter = ko.observable(false);
 		self.currentConceptSet = ko.observable();
 		self.currentConceptsExpression = ko.observable();
+		self.studyName = ko.observable().extend({ panaceaRequired: "Please enter a study name"});
+		self.studyDesc = ko.observable();
+//		self.studyDuration = ko.observable().extend({ panaceaRequired: "Please enter study duration", panaceaInteger: "Please enter an integer number"});
+		self.studyDuration = ko.observable().extend({ panaceaRequired: "Please enter study duration"});
+		self.switchWindow = ko.observable().extend({ panaceaRequired: "Please enter switch window"});
+		self.startDate = ko.observable();
+		self.endDate = ko.observable();
+		self.isAllValid =  ko.computed(function() {
+	        if(self.studyName() && self.currentCohort() && self.studyDuration() && self.switchWindow()){
+	        	return true;
+	        }
+	        else{
+	        	return false;
+	        }
+	    }, this);
 		
-		$.ajax({
-			url: self.services()[0].url + 'cohortdefinition',
-			method: 'GET',
-			success: function (d) {
-				jQuery.each(d, function( i, val ) {
-					val.showLabel = val.id + ' - ' + val.name;
-				});
-				
-				self.cohortDefinitions(d);
-				
-				if(self.panaceaStudyId()){
-					var cohortById = $.grep(self.cohortDefinitions(), function(item){ 
-						return item.id === self.currentStudy.cohortDefId; 
+		self.currentStudy.subscribe(function (d) {
+			$.ajax({
+				url: self.services()[0].url + 'cohortdefinition',
+				method: 'GET',
+				success: function (d) {
+					jQuery.each(d, function( i, val ) {
+						val.showLabel = val.id + ' - ' + val.name;
 					});
-					if (cohortById.length > 0) {
-						self.currentCohort(cohortById[0]);
+					
+					self.cohortDefinitions(d);
+					
+					if(self.panaceaStudyId() && self.panaceaStudyId() != 'undefined'){
+						var cohortById = $.grep(self.cohortDefinitions(), function(item){
+							return item.id === self.currentStudy().cohortDefId; 
+						});
+						if (cohortById.length > 0) {
+							self.currentCohort(cohortById[0]);
+						}
 					}
 					
-					self.loading(false);
+					if(self.cohortDefinitions().length > 0 && self.conceptsets().length > 0){
+						self.loading(false);
+					}
 				}
-			}
-		});
-		
-		$.ajax({
-			url: self.services()[0].url + 'conceptset',
-			method: 'GET',
-			success: function (d) {
-				self.conceptsets(d);
-			}
-		});
+			});
+			
+			$.ajax({
+				url: self.services()[0].url + 'conceptset',
+				method: 'GET',
+				success: function (d) {
+					self.conceptsets(d);
+					
+					if(self.panaceaStudyId() && self.panaceaStudyId() != 'undefined'){
+						var conceptSetById = $.grep(self.conceptsets(), function(item){
+							return item.id === self.currentStudy().conceptSetId; 
+						});
+						if (conceptSetById.length > 0) {
+							self.currentConceptSet(conceptSetById[0]);
+						}
+					}
+					
+					if(self.cohortDefinitions().length > 0 && self.conceptsets().length > 0){
+						self.loading(false);
+					}						
+				}
+			});
+		});	
 		
 		self.panaceaStudyId.subscribe(function (d) {
 			self.loading(true);
@@ -52,12 +85,8 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 					url: self.services()[0].url + 'panacea/getemptynewstudy',
 					method: 'GET',
 					success: function (d) {
-						self.currentStudy = d;
+						self.currentStudy(d);
 						self.show(true);
-
-						if(self.cohortDefinitions().length > 0){
-							self.loading(false);
-						}
 					}
 				});
 				
@@ -66,20 +95,23 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 					url: self.services()[0].url + 'panacea/' + self.panaceaStudyId(),
 					method: 'GET',
 					success: function (d) {
-						self.currentStudy = d;
+						self.currentStudy(d);
+						self.studyName(d.studyName);
+						self.studyDesc(d.studyDesc);
+						self.studyDuration(d.studyDuration);
+						self.switchWindow(d.switchWindow);
 						self.currentConceptsExpression(d.concepSetDef);
-						self.show(true);
-
-						if(self.cohortDefinitions().length > 0){
-							var cohortById = $.grep(self.cohortDefinitions(), function(item){ 
-								return item.id === self.currentStudy.cohortDefId; 
-							});
-							if (cohortById.length > 0) {
-								self.currentCohort(cohortById[0]);
-							}
-
-							self.loading(false);
+						if(d.startDate){
+							self.startDate(new Date(d.startDate).toISOString().split('T')[0]);
+						}else{
+							self.startDate(null);
 						}
+						if(d.endDate){
+							self.endDate(new Date(d.endDate).toISOString().split('T')[0]);
+						}else{
+							self.endDate(null);
+						}
+						self.show(true);
 					}
 				});
 			}
@@ -102,14 +134,33 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		}
 		
 		self.saveStudy = function () {
-			self.currentStudy.concepSetDef = self.currentConceptsExpression();
-			self.currentStudy.cohortDefId = self.currentCohort().id;
+			self.currentStudy().concepSetDef = self.currentConceptsExpression();
+			self.currentStudy().cohortDefId = self.currentCohort().id;
+			self.currentStudy().studyName = self.studyName();
+			self.currentStudy().studyDesc = self.studyDesc();
+			self.currentStudy().studyDuration = self.studyDuration();
+			self.currentStudy().switchWindow = self.switchWindow();
+			self.currentStudy().conceptSetId = self.currentConceptSet().id;
+			
+			var unwrappedStart = ko.utils.unwrapObservable(self.startDate());
+		    if(unwrappedStart === undefined || unwrappedStart === null) {
+		    	self.currentStudy().startDate = null;
+		    } else {
+		    	self.currentStudy().startDate = unwrappedStart;
+		    }
+			
+			var unwrappedEnd = ko.utils.unwrapObservable(self.endDate());
+		    if(unwrappedEnd === undefined || unwrappedEnd === null) {
+		    	self.currentStudy().endDate = null;
+		    } else {
+		    	self.currentStudy().endDate = unwrappedEnd;
+		    }
 			
 			$.ajax({
 				method: 'POST',
 				url: self.services()[0].url + 'panacea/savestudy',
 				contentType: 'application/json',
-				data: JSON.stringify(self.currentStudy),
+				data: JSON.stringify(self.currentStudy()),
 				dataType: 'json',
 				success: function (savedStudy) {
 					document.location = "#/panacea";
@@ -123,9 +174,59 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		
 		self.toggleShowConcetpSetImporter = function(){
 			self.showConceptSetImporter(!self.showConceptSetImporter());
-	    };	    
+	    };
 	}
 
+	ko.extenders.panaceaRequired = function(target, overrideMessage) {
+	    //add some sub-observables to our observable
+	    target.hasError = ko.observable();
+	    target.validationMessage = ko.observable();
+	 
+	    //define a function to do validation
+	    function validate(newValue) {
+	       target.hasError(newValue ? false : true);
+	       target.validationMessage(newValue ? "" : overrideMessage || "This field is required");
+	    }
+	 
+	    //initial validation
+	    validate(target());
+	 
+	    //validate whenever the value changes
+	    target.subscribe(validate);
+	 
+	    //return the original observable
+	    return target;
+	};
+	 
+	ko.extenders.panaceaInteger = function(target) {
+	    //create a writable computed observable to intercept writes to our observable
+	    var result = ko.pureComputed({
+	        read: target,  //always return the original observables value
+	        write: function(newValue) {
+	            var current = target(),
+	                roundingMultiplier = Math.pow(10, 0),
+	                newValueAsNum = isNaN(newValue) ? 0 : parseFloat(+newValue),
+	                valueToWrite = Math.round(newValueAsNum * roundingMultiplier) / roundingMultiplier;
+	 
+	            //only write if it changed
+	            if (valueToWrite !== current) {
+	                target(valueToWrite);
+	            } else {
+	                //if the rounded value is the same, but a different value was written, force a notification for the current field
+	                if (newValue !== current) {
+	                    target.notifySubscribers(valueToWrite);
+	                }
+	            }
+	        }
+	    }).extend({ notify: 'always' });
+	 
+	    //initialize with current value to make sure it is rounded appropriately
+	    result(target());
+	 
+	    //return the new computed observable
+	    return result;
+	};
+	
 	var component = {
 			viewModel: panaceaStudyDefManager,
 			template: view

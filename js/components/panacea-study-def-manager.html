@@ -8,12 +8,13 @@
 
 		<label class="heading">Study Name</label>
 		<br/>
-		<input type="text" id="pncStyNm" data-bind="value: currentStudy.studyName">
+		<input type="text" id="pncStyNm" data-bind='value: studyName, valueUpdate: "afterkeydown"'>
+		<span data-bind='visible: studyName.hasError, text: studyName.validationMessage'> </span>
 		<br/>
 
 		<label class="heading">Description</label>
 		<br/>
-		<textarea class="form-control" rows="3" id="pncStyDesc" data-bind="value: currentStudy.studyDesc"></textarea>
+		<textarea class="form-control" rows="3" id="pncStyDesc" data-bind="value: studyDesc"></textarea>
 		<br/>
 
 		<label class="heading">Cohort</label>
@@ -25,6 +26,7 @@
 <!-- 			</select> -->
 
 			<input style="width:300px;" data-bind="jqAuto: { source: cohortDefinitions, value: currentCohort, labelProp: 'showLabel' }" />
+			<span data-bind='visible: currentCohort.hasError, text: currentCohort.validationMessage'> </span>
 		</div>
 		<br/>
 
@@ -38,34 +40,36 @@
 			<input style="width:300px;" data-bind="jqAuto: { source: conceptsets, value: currentConceptSet, labelProp: 'name'}" />
 		</div>
 		<br/>
-		<div style="padding-top:10px;">
-			<span class="linkish" style="font-size:14px; font-weight: bold;" data-bind="click:function(){toggleShowConcetpSetImporter();}">Import Concept Set</span>
-		</div>
-		<div data-bind="visible: showConceptSetImporter" style="padding-top:10px;">
-			<textarea class="form-control" rows="5" id="pncStyCncptStDf" data-bind="value: currentConceptsExpression"></textarea>
-		</div>
-		<br/>
+<!-- 		<div style="padding-top:10px;"> -->
+<!-- 			<span class="linkish" style="font-size:14px; font-weight: bold;" data-bind="click:function(){toggleShowConcetpSetImporter();}">Import Concept Set</span> -->
+<!-- 		</div> -->
+<!-- 		<div data-bind="visible: showConceptSetImporter" style="padding-top:10px;"> -->
+<!-- 			<textarea class="form-control" rows="5" id="pncStyCncptStDf" data-bind="value: currentConceptsExpression"></textarea> -->
+<!-- 		</div> -->
+<!-- 		<br/> -->
 		
-		<label class="heading">Duration from Index Date</label>
-		<input type="number" data-bind="value: currentStudy.studyDuration"></input>
-		<span>(e.g., 180 days after the patient first met the criteria.)</span>
-		<br/>
-		
-		<label class="heading">Calendar start date (Optional)</label>
-		<input type="date" id="pncStdStDt" data-bind="value:currentStudy.startDate"/>
-		<label class="heading">Calendar end date (Optional)</label>
-		<input type="date" id="pncStdEndDt" data-bind="value:currentStudy.endDate"/>
+		<label class="heading">Study Duration</label>
+		<input type="number" data-bind='value: studyDuration, valueUpdate: "afterkeydown"'></input>
+		<span>Days (e.g., 180 days after the patient first met the criteria.)</span>
+		<span data-bind='visible: studyDuration.hasError, text: studyDuration.validationMessage'> </span>
 		<br/>
 		
 		<label class="heading">Overlap Period to Consider a Drug Switch Event</label>
 		<br/>
-		<input type="text" id="pncStySwtchWndw" data-bind="value: currentStudy.switchWindow">
+		<input type="number" id="pncStySwtchWndw" data-bind='value: switchWindow, valueUpdate: "afterkeydown"'>
 		<span>(e.g., Mark drugs "Discontinued" after 90 days of overlap with another drug.)</span>
+		<span data-bind='visible: switchWindow.hasError, text: switchWindow.validationMessage'> </span>
 		<br/>
 
+		<label class="heading">Calendar start date (Optional)</label>
+		<input type="date" id="pncStdStDt" data-bind="value:startDate"/>
+		<label class="heading">Calendar end date (Optional)</label>
+		<input type="date" id="pncStdEndDt" data-bind="value:endDate"/>
+		<br/>
+		
 		<div class="row" style="padding-top:20px;">
  			<div class="col-xs-2">
-				<button type="button" class="btn btn-sm btn-primary form-control" id="pncStdySbmt" data-bind="click:function() {saveStudy();}">Submit</button>
+				<button type="button" class="btn btn-sm btn-primary form-control" id="pncStdySbmt" data-bind="click:function() {saveStudy();}, enable: isAllValid ">Submit</button>
 			</div>
  			<div class="col-xs-2">
 				<button type="button" class="btn btn-sm btn-danger form-control" id="pncStdyCncl" data-bind="click:function() {cancelStudy();}">Cancel</button>
