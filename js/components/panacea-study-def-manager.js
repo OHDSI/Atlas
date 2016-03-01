@@ -20,6 +20,10 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		self.switchWindow = ko.observable().extend({ panaceaRequired: "Please enter switch window"});
 		self.startDate = ko.observable();
 		self.endDate = ko.observable();
+		self.selectedConcepts = ko.observableArray();
+		self.minUnitDays = ko.observable();
+		self.minUnitCounts = ko.observable();
+		self.gapThreshold = ko.observable();
 		self.isAllValid =  ko.computed(function() {
 	        if(self.studyName() && self.currentCohort() && self.studyDuration() && self.switchWindow()){
 	        	return true;
@@ -111,6 +115,9 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 						}else{
 							self.endDate(null);
 						}
+						self.minUnitDays(d.minUnitDays);
+						self.minUnitCounts(d.minUnitCounts);
+						self.gapThreshold(d.gapThreshold);
 						self.show(true);
 					}
 				});
@@ -124,6 +131,20 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 					method: 'GET',
 					success: function (d) {
 						self.currentConceptsExpression(JSON.stringify(d));
+						
+						self.selectedConcepts.removeAll();
+						for (var i = 0; i < d.items.length; i++) {
+							var conceptSetItem = {};
+
+							conceptSetItem.concept = d.items[i].concept;
+							conceptSetItem.isExcluded = ko.observable(d.items[i].isExcluded);
+							conceptSetItem.includeDescendants = ko.observable(d.items[i].includeDescendants);
+							conceptSetItem.includeMapped = ko.observable(d.items[i].includeMapped);
+
+							
+//							selectedConceptsIndex[d[i].concept.CONCEPT_ID] = 1;
+							self.selectedConcepts.push(conceptSetItem);
+						}
 					}
 				});
 			}
@@ -141,7 +162,10 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 			self.currentStudy().studyDuration = self.studyDuration();
 			self.currentStudy().switchWindow = self.switchWindow();
 			self.currentStudy().conceptSetId = self.currentConceptSet().id;
-			
+			self.currentStudy().minUnitDays = self.minUnitDays();
+			self.currentStudy().minUnitCounts = self.minUnitCounts();
+			self.currentStudy().gapThreshold = self.gapThreshold();
+	
 			var unwrappedStart = ko.utils.unwrapObservable(self.startDate());
 		    if(unwrappedStart === undefined || unwrappedStart === null) {
 		    	self.currentStudy().startDate = null;
@@ -175,6 +199,10 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		self.toggleShowConcetpSetImporter = function(){
 			self.showConceptSetImporter(!self.showConceptSetImporter());
 	    };
+	}
+	
+	self.renderConceptSetCheckBox = function(field){
+		return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check"></span>';
 	}
 
 	ko.extenders.panaceaRequired = function(target, overrideMessage) {
