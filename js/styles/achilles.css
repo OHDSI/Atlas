@@ -1,0 +1,394 @@
+/* Global Styles */
+
+/* ------------------------------- */
+
+body {
+	margin-right: 15px;
+	margin-left: 15px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	font-family: Arial;
+}
+#wrapper {
+	width: 99%;
+}
+#page-wrapper {
+	padding: 0 5px;
+	min-height: 568px;
+	background-color: #fff;
+}
+@media(min-width:768px) {
+	#page-wrapper {
+		position: inherit;
+		margin: 0 0 0 250px;
+		padding: 0 5px;
+		min-height: 1300px;
+		border-left: 1px solid #e7e7e7;
+	}
+}
+.navbar-static-side ul li {
+	border-bottom: 1px solid #888;
+}
+/* Navigation */
+
+/* ------------------------------- */
+
+/* Top Right Navigation Dropdown Styles */
+
+.navbar-top-links li {
+	display: inline-block;
+}
+.navbar-top-links li:last-child {
+	margin-right: 15px;
+}
+.navbar-top-links li a {
+	padding: 15px;
+	min-height: 50px;
+}
+.navbar-top-links .dropdown-menu li {
+	display: block;
+}
+.navbar-top-links .dropdown-menu li:last-child {
+	margin-right: 0;
+}
+.navbar-top-links .dropdown-menu li a {
+	padding: 3px 20px;
+	min-height: 0;
+}
+.navbar-top-links .dropdown-menu li a div {
+	white-space: normal;
+}
+.navbar-top-links .dropdown-messages,
+.navbar-top-links .dropdown-tasks,
+.navbar-top-links .dropdown-alerts {
+	width: 310px;
+	min-width: 0;
+}
+.navbar-top-links .dropdown-messages {
+	margin-left: 5px;
+}
+.navbar-top-links .dropdown-tasks {
+	margin-left: -59px;
+}
+.navbar-top-links .dropdown-alerts {
+	margin-left: -123px;
+}
+.navbar-top-links .dropdown-user {
+	right: 0;
+	left: auto;
+}
+.navbar-brand {
+	white-space: nowrap;
+}
+.navbar-brand img {
+	margin-top: -5px;
+	margin-right: 5px;
+}
+/* ------------------------------- */
+
+.btn-outline {
+	color: inherit;
+	background-color: transparent;
+	transition: all .5s;
+}
+.btn-primary.btn-outline {
+	color: #428bca;
+}
+.btn-success.btn-outline {
+	color: #5cb85c;
+}
+.btn-info.btn-outline {
+	color: #5bc0de;
+}
+.btn-warning.btn-outline {
+	color: #f0ad4e;
+}
+.btn-danger.btn-outline {
+	color: #d9534f;
+}
+.btn-primary.btn-outline:hover,
+.btn-success.btn-outline:hover,
+.btn-info.btn-outline:hover,
+.btn-warning.btn-outline:hover,
+.btn-danger.btn-outline:hover {
+	color: #fff;
+}
+/* Bootstrap Overrides */
+
+.fa {
+	margin-right: 7px;
+}
+.panel {
+	margin-bottom: 10px;
+}
+.panel-default {
+	border-color: #888;
+}
+.panel-table {
+	min-width: 800px;
+}
+.panel-default .panel-heading {
+	background-color: #ddd;
+}
+.panel-body {
+	padding: 15px;
+}
+.panel-heading {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.col-xs-1,
+.col-sm-1,
+.col-md-1,
+.col-lg-1,
+.col-xs-2,
+.col-sm-2,
+.col-md-2,
+.col-lg-2,
+.col-xs-3,
+.col-sm-3,
+.col-md-3,
+.col-lg-3,
+.col-xs-4,
+.col-sm-4,
+.col-md-4,
+.col-lg-4,
+.col-xs-5,
+.col-sm-5,
+.col-md-5,
+.col-lg-5,
+.col-xs-6,
+.col-sm-6,
+.col-md-6,
+.col-lg-6,
+.col-xs-7,
+.col-sm-7,
+.col-md-7,
+.col-lg-7,
+.col-xs-8,
+.col-sm-8,
+.col-md-8,
+.col-lg-8,
+.col-xs-9,
+.col-sm-9,
+.col-md-9,
+.col-lg-9,
+.col-xs-10,
+.col-sm-10,
+.col-md-10,
+.col-lg-10,
+.col-xs-11,
+.col-sm-11,
+.col-md-11,
+.col-lg-11,
+.col-xs-12,
+.col-sm-12,
+.col-md-12,
+.col-lg-12 {
+	position: relative;
+	min-height: 1px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+.row {
+	margin-right: -5px;
+	margin-left: -5px;
+}
+/* Report Styles */
+
+.reportTitle {
+	font-size: 14px;
+	font-weight: bold;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+#wrapper {
+	padding: 5px;
+	width: 98%;
+}
+div.personSummary .row div:first-child {
+	text-align: right;
+	font-weight: bold;
+}
+div.personSummary .row div {
+	padding-left: 2px;
+	padding-right: 2px;
+	font-size: 16px;
+}
+.report {
+	display: none;
+	width: 96%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 0px;
+}
+/* D3 Tip Styles */
+
+.d3-tip {
+	/*white-space: nowrap;*/
+	line-height: 1;
+	font-size: 10px;
+	padding: 12px;
+	background: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	border-radius: 2px;
+	pointer-events: none;
+	max-width: 400px;
+}
+/* Creates a small triangle extender for the tooltip */
+
+.d3-tip:after {
+	box-sizing: border-box;
+	display: inline;
+	font-size: 10px;
+	width: 100%;
+	line-height: 1;
+	color: rgba(0, 0, 0, 0.8);
+	position: absolute;
+	pointer-events: none;
+}
+/* Northward tooltips */
+
+.d3-tip.n:after {
+	content: "\25BC";
+	margin: -1px 0 0 0;
+	top: 100%;
+	left: 0;
+	text-align: center;
+}
+/* Eastward tooltips */
+
+.d3-tip.e:after {
+	content: "\25C0";
+	margin: -4px 0 0 0;
+	top: 50%;
+	left: -8px;
+}
+/* Southward tooltips */
+
+.d3-tip.s:after {
+	content: "\25B2";
+	margin: 0 0 1px 0;
+	top: -8px;
+	left: 0;
+	text-align: center;
+}
+/* Westward tooltips */
+
+.d3-tip.w:after {
+	content: "\25B6";
+	margin: -4px 0 0 -1px;
+	top: 50%;
+	left: 100%;
+}
+.tab-pane {
+	padding: 7px 7px 7px 7px;
+}
+.clear {
+	clear: both;
+}
+/* Condition Occurrence Report */
+
+.pathleaf {
+	font-size: 14px;
+	color: #333;
+	font-weight: bold;
+	margin-bottom: 3px;
+}
+.pathleafstat {
+	font-size: 12px;
+	color: #666;
+	font-family: "Courier New";
+	margin-bottom: 2px;
+}
+.pathstep {
+	font-size: 12px;
+	color: #333;
+	margin-bottom: 1px;
+}
+hr.path {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+#condition_table tr {
+	cursor: pointer;
+}
+#treemap_container rect {
+	cursor: pointer;
+}
+th {
+	white-space: nowrap;
+}
+.dropdown-menu li {
+	display: block;
+	padding: 3px 20px;
+	clear: both;
+	font-weight: normal;
+	line-height: 1.42857143;
+	color: #333;
+	white-space: nowrap;
+	cursor: pointer;
+}
+.dropdown-menu li:hover {
+	background-color: #eee;
+}
+.numeric {
+	text-align: right;
+}
+.hidden {
+	display: none;
+}
+table.dataTable tbody td {
+	padding: 2px 4px;
+	vertical-align: top;
+}
+#datasourceTitle {
+	margin-top: 65px;
+	font-size: 16px;
+	font-weight: bold;
+}
+/* datatables.colvis override */
+
+ul.ColVis_collection {
+	width: 200px;
+}
+button.ColVis_Button {
+	margin-left: 10px;
+	height: 25px;
+	-webkit-box-shadow: 1px 1px 1px #ccc;
+	-moz-box-shadow: 1px 1px 1px #ccc;
+	-ms-box-shadow: 1px 1px 1px #ccc;
+	-o-box-shadow: 1px 1px 1px #ccc;
+	box-shadow: 1px 1px 1px #ccc;
+}
+
+table.dataTable.hover tbody tr:hover.selected,
+table.dataTable.hover tbody tr.odd:hover.selected,
+table.dataTable.hover tbody tr.even:hover.selected, table.dataTable.display tbody tr:hover.selected,
+table.dataTable.display tbody tr.odd:hover.selected,
+table.dataTable.display tbody tr.even:hover.selected {
+	background-color:  rgba(89, 159, 216, 0.5);
+}
+
+table.dataTable.stripe tbody tr.odd.selected, table.dataTable.display tbody tr.odd.selected {
+	background-color:  rgba(89, 159, 216, 0.5);
+}
+
+table.dataTable tbody tr.even.selected,
+table.dataTable tbody tr.odd.selected {
+	background-color:  rgba(89, 159, 216, 0.5);
+}
+
+.sorting_1 {
+	background-color: rgba(89, 159, 216, 0.3) !important;
+}
+.sorting_2 {
+	background-color: rgba(89, 159, 216, 0.2) !important;
+}
+.sorting_3 {
+	background-color: rgba(89, 159, 216, 0.1) !important;
+}
+.popover {
+	max-width: 800px;
+	z-index: 1040;
+}

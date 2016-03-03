@@ -29,8 +29,10 @@ requirejs.config({
 		"knockout": "knockout.min",
 		"knockout-mapping": "knockout.mapping",
 		"knockout-persist": "knockout.persist",
+        /* "knockout-amd-helpers": "knockout-amd-helpers.min", */
 		"datatables": "jquery.dataTables.min",
 		"colvis": "jquery.dataTables.colVis.min",
+		"tabletools": "dataTables.tableTools.min",
 		"director": "director.min",
 		"search": "components/search",
 		"configuration": "components/configuration",
@@ -52,7 +54,11 @@ requirejs.config({
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
-		"lodash": "lodash.min"
+		"lodash": "lodash.min",
+		"achilles":"components/datasources/app/achilles",
+		"common":"components/datasources/app/common",
+		"reports": "components/datasources/app/reports",
+        "sammy": "sammy-0.7.5.min"
 	}
 });
 
