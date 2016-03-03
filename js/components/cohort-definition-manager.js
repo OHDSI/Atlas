@@ -130,6 +130,9 @@ define(['knockout',
                 self.model.currentConceptSetDirtyFlag.reset();
                 self.model.currentCohortDefinition(null);
                 self.model.currentCohortDefinitionDirtyFlag().reset();
+            	self.model.reportCohortDefinitionId(null);
+            	self.model.reportReportName(null);
+            	self.model.reportSourceKey(null);
             }
 		}
 
@@ -203,20 +206,24 @@ define(['knockout',
 			$('input[type="checkbox"][name="' + data.sourceKey + '"]:checked').each(function () {
 				requestedAnalysisTypes.push($(this).val());
 			});
+            
 			var analysisIdentifiers = [];
 
 			var analysesTypes = pageModel.cohortAnalyses();
 			for (var i = 0; i < analysesTypes.length; i++) {
 				if (requestedAnalysisTypes.indexOf(analysesTypes[i].name) >= 0) {
+                    analysisIdentifiers.push.apply(analysisIdentifiers, analysesTypes[i].analyses);
+                    /*
 					for (var j = 0; j < analysesTypes[i].analyses.length; j++) {
 						analysisIdentifiers.push(analysesTypes[i].analyses[j].analysisId);
 					}
+                    */
 				}
 			}
 
 			if (analysisIdentifiers.length > 0) {
 				$(event.target).prop('value', 'Starting job...');
-				var cohortDefinitionId = pageModel.currentCohortDefinition().id;
+				var cohortDefinitionId = pageModel.currentCohortDefinition().id();
 				var cohortJob = {};
 
 				cohortJob.jobName = 'HERACLES' + '_COHORT_' + cohortDefinitionId + '_' + data.sourceKey;
@@ -278,6 +285,16 @@ define(['knockout',
             	}
             );
         	self.closeConceptSet();
+        }
+        
+        self.viewReport = function(sourceKey, reportName) {
+            // TODO: Should we prevent running an analysis on an unsaved cohort definition?
+            if (self.model.currentCohortDefinition().id() > 0) {            	
+            	self.model.reportCohortDefinitionId(self.model.currentCohortDefinition().id());
+            	self.model.reportReportName(reportName);
+            	self.model.reportSourceKey(sourceKey);
+            	self.model.reportTriggerRun(true);
+            }
         }
 
 

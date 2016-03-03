@@ -30,7 +30,7 @@
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation') };"><a>Generation</a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'analysis' }, click: function() { $component.tabMode('analysis') };"><a>Analysis</a>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.tabMode('reporting') };"><a>Reporting</a>
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'printfriendly' }, click: function() { $component.tabMode('printfriendly') };"><a>Print Friendly</a>
@@ -216,10 +216,10 @@
 					</tbody>
 				</table>
 			</div>
-			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'analysis' }" class="tab-pane">
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'reporting' }" class="tab-pane">
 				<table id="analysisStatus">
 					<thead>
-						<th>Analysis Type</th>
+						<th>Report</th>
 						<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
 						<th data-bind="text:sourceName"></th>
 						<!-- /ko -->
@@ -227,7 +227,7 @@
 					<tbody>
 						<!-- ko foreach:$component.model.cohortAnalyses -->
 						<tr>
-							<td data-bind="text:name"></td>
+							<td class="reportName" data-bind="text:name"></td>
 							<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
 							<td class="statusIndicator">
 								<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().ready -->
@@ -240,6 +240,9 @@
 								<!-- ko if:!$component.model.sourceAnalysesStatus[sourceKey]().checking && !$component.model.sourceAnalysesStatus[sourceKey]().ready -->
 								<i class="fa fa-exclamation-circle"></i>
 								<!-- /ko -->
+                                <!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]()[$parent.name] > 0 -->
+                                <div data-bind="click: $component.viewReport.bind($data, sourceKey, $parent.name)" class="btn btn-xs btn-primary">view</div>
+                                <!-- /ko -->
 							</td>
 							<!-- /ko -->
 						</tr>
@@ -258,6 +261,8 @@
 						</tr>
 					</tbody>
 				</table>
+                <div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingReport()">loading</div>
+                <report-manager params="{model: pageModel, showSelectionArea: false}"></report-manager>
 			</div>
 		</div>
 	</div>

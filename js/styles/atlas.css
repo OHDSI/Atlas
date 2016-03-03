@@ -148,8 +148,11 @@ body {
 }
 
 .statusIndicator {
-	text-align: center;
 	vertical-align: middle;
+	/* width: 100px; */
+	/* text-align: center; */
+	padding-left: 20px;
+	margin-left:  20px;
 }
 
 .configureRadio {
@@ -771,11 +774,15 @@ ul.ColVis_collection li {
 }
 
 #analysisStatus input[type="checkbox"] {
-	/* margin-top: 19px; */
+	/*margin-top: 19px;*/
 }
 
 #analysisStatus td div {
-	/* vertical-align: middle; */
+	vertical-align: middle;
+}
+
+#analysisStatus td.reportName {
+    width: 200px;
 }
 
 #wrapperLeftMenu i.fa {
