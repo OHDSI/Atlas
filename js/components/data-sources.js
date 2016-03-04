@@ -15,7 +15,6 @@ define([
     function dataSources(params) {
         var self = this;
 
-        debugger;
         self.model = pageModel;
         self.dashboardData = ko.observable();
         self.conditionsData = ko.observable();
@@ -25,8 +24,22 @@ define([
         self.datasource = ko.observable({
             name: 'loading...'
         });
-        self.datasources = [];
-
+        self.datasources = ko.observableArray();
+        self.dataSourceReports = [{id: 'dashboard', name: 'Dashboard'},
+            {id: 'achillesheel', name: 'Achilles Heel'},
+            {id: 'observationperiods', name: 'Observation Periods'},
+            {id: 'datadensity', name: 'Data Density'},
+            {id: 'conditions', name: 'Conditions'},
+            {id: 'conditioneras', name: 'Condition Eras'},
+            {id: 'measurement', name: 'Measurement'},
+            {id: 'observations', name: 'Observations'},
+            {id: 'drugeras', name: 'Drug Eras'},
+            {id: 'drugs', name: 'Drug Exposures'},
+            {id: 'procedures', name: 'Procedures'},
+            {id: 'visits', name: 'Visits'},
+            {id: 'death', name: 'Death'}
+        ];
+        self.dataSourceReport = ko.observable();
         self.formatSI = function (d, p) {
             if (d < 1) {
                 return d3.round(d, p);
@@ -85,29 +98,38 @@ define([
                     self.conditionsData(data);
                 }
             });
-        }
+        };
 
+        self.dashboardData.subscribe(function (newData) {
+            updateDashboard(newData);
+        });
+
+        self.conditionsData.subscribe(function (newData) {
+            updateConditions(newData);
+        });
+
+        self.personData.subscribe(function (newData) {
+            updatePerson(newData);
+        });
+
+        self.observationPeriodsData.subscribe(function (newData) {
+            updateObservationPeriods(newData);
+        });
+
+        $.ajax({
+            type:'GET',
+            url: pageModel.dataSourcesLocation,
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                self.datasources(data.datasources);
+                var datasources = self.datasources(),
+                    datasource = datasources[0];
+                if(self.datasources().length > 0) {
+                    self.datasource(datasource);
+                }
+            }
+        });
     }
-
-    var viewModel = new dataSources();
-    page_vm = viewModel;
-
-    viewModel.dashboardData.subscribe(function (newData) {
-        updateDashboard(newData);
-    });
-    viewModel.conditionsData.subscribe(function (newData) {
-        updateConditions(newData);
-    });
-    viewModel.personData.subscribe(function (newData) {
-        updatePerson(newData);
-    });
-    viewModel.observationPeriodsData.subscribe(function (newData) {
-        updateObservationPeriods(newData);
-    });
-
-    viewModel.loadDashboard();
-    $('#reportDashboard').show();
-    report = 'dashboard';
 
     function updateDashboard(data) {
         var result = data;
@@ -449,158 +471,158 @@ define([
 
     /* define(["knockout-amd-helpers"], function () {
      ko.amdTemplateEngine.defaultPath = "/components/datasources/templates";
-     ko.applyBindings(viewModel);
+     ko.applyBindings(self.;
      }); */
 
     define(['sammy'], function (Sammy) {
      var app = Sammy(function () {
      this.get('#/:name/dashboard', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
-     viewModel.loadDashboard();
+     self.loadDashboard();
      $('#reportDashboard').show();
      report = 'dashboard';
      });
 
      this.get('#/:name/achillesheel', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.AchillesHeel.render(viewModel.datasource());
+     reports.AchillesHeel.render(self.datasource());
      $('#reportAchillesHeel').show();
      report = 'achillesheel';
      });
 
      this.get('#/:name/person', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
-     viewModel.loadPerson();
+     self.loadPerson();
      $('#reportPerson').show();
      report = 'person';
      });
 
      this.get('#/:name/conditions', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.ConditionOccurrence.render(viewModel.datasource());
+     reports.ConditionOccurrence.render(self.datasource());
      $('#reportConditionOccurrences').show();
      report = 'conditions';
      });
 
      this.get('#/:name/conditioneras', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.ConditionEra.render(viewModel.datasource());
+     reports.ConditionEra.render(self.datasource());
      $('#reportConditionEras').show();
      report = 'conditioneras';
      });
 
      this.get('#/:name/drugs', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.DrugExposure.render(viewModel.datasource());
+     reports.DrugExposure.render(self.datasource());
      $('#reportDrugExposures').show();
      report = 'drugs';
      });
 
      this.get('#/:name/drugeras', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.DrugEra.render(viewModel.datasource());
+     reports.DrugEra.render(self.datasource());
      $('#reportDrugEras').show();
      report = 'drugeras';
      });
 
      this.get('#/:name/procedures', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.ProcedureOccurrence.render(viewModel.datasource());
+     reports.ProcedureOccurrence.render(self.datasource());
      $('#reportProcedureOccurrences').show();
      report = 'procedures';
      });
 
      this.get('#/:name/observationperiods', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
-     viewModel.loadObservationPeriods();
+     self.loadObservationPeriods();
      $('#reportObservationPeriods').show();
      report = 'observationperiods';
      });
 
      this.get('#/:name/datadensity', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.DataDensity.render(viewModel.datasource());
+     reports.DataDensity.render(self.datasource());
      $('#reportDataDensity').show();
      report = 'datadensity';
      });
 
      this.get('#/:name/observations', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.Observation.render(viewModel.datasource());
+     reports.Observation.render(self.datasource());
      $('#reportObservations').show();
      report = 'observations';
      });
 
      this.get('#/:name/visits', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.VisitOccurrence.render(viewModel.datasource());
+     reports.VisitOccurrence.render(self.datasource());
      $('#reportVisitOccurrences').show();
      report = 'visits';
      });
 
      this.get('#/:name/death', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.Death.render(viewModel.datasource());
+     reports.Death.render(self.datasource());
      $('#reportDeath').show();
      report = 'death';
      });
 
      this.get('#/:name/measurement', function (context) {
      $('.report').hide();
-     viewModel.datasource(viewModel.datasources.filter(function (d) {
+     self.datasource(self.datasources.filter(function (d) {
      return d.name == this.params['name'];
      }, this)[0]);
 
-     reports.Measurement.render(viewModel.datasource());
+     reports.Measurement.render(self.datasource());
      $('#reportMeasurement').show();
      report = 'measurement';
      });
@@ -614,13 +636,13 @@ define([
      url: datasourcepath,
      contentType: "application/json; charset=utf-8"
      }).done(function (root) {
-     viewModel.datasources = root.datasources;
+     self.datasources = root.datasources;
 
      for (i = 0; i < root.datasources.length; i++) {
      $('#dropdown-datasources').append('<li onclick="setDatasource(' + i + ');">' + root.datasources[i].name + '</li>');
      }
-     viewModel.datasource(viewModel.datasources[0]);
-     app.run('#/' + viewModel.datasource().name + '/dashboard');
+     self.datasource(self.datasources[0]);
+     app.run('#/' + self.datasource().name + '/dashboard');
      });
 
      });
@@ -633,7 +655,7 @@ define([
     };
 
     ko.components.register('data-sources', component);
-    return viewModel;
+    return component;
 
 });
 

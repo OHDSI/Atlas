@@ -24,6 +24,8 @@ define([
 				url: 'http://localhost:8080/WebAPI/'
 			}
 		]);
+
+		self.dataSourcesLocation = '/AchillesWeb/data/datasources.json';
 		
 		$('#querytext').focus();
 

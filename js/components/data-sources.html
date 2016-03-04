@@ -22,27 +22,16 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data Sources <b class="caret"></b></a>
                         <ul id="dropdown-datasources" class="dropdown-menu">
+                            <li data-bind="foreach: datasources, click: function(){datasource($data)}">
+                                <span data-bind="text: name"></span>
+                            </li>
                         </ul>
                     </li>
                     <li>
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li onclick="updateReport('dashboard');">Dashboard</li>
-                            <li onclick="updateReport('achillesheel');">Achilles Heel</li>
-                            <li onclick="updateReport('person');">Person</li>
-                            <li onclick="updateReport('observationperiods');">Observation Periods</li>
-                            <li onclick="updateReport('datadensity');">Data Density</li>
-                            <li onclick="updateReport('conditions');">Conditions</li>
-                            <li onclick="updateReport('conditioneras');">Condition Eras</li>
-                            <!-- ko if: (datasource() && datasource().cdmVersion) == 5 -->
-                            <li onclick="updateReport('measurement');">Measurement</li>
-                            <!-- /ko -->
-                            <li onclick="updateReport('observations');">Observations</li>
-                            <li onclick="updateReport('drugeras');">Drug Eras</li>
-                            <li onclick="updateReport('drugs');">Drug Exposures</li>
-                            <li onclick="updateReport('procedures');">Procedures</li>
-                            <li onclick="updateReport('visits');">Visits</li>
-                            <li onclick="updateReport('death');">Death</li>
+                        <ul class="dropdown-menu" data-bind="foreach: dataSourceReports">
+                            <li data-bind="text: name, click=updateReport($data.id)">
+                            </li>
                         </ul>
                     </li>
                 </ul>
