@@ -14,8 +14,9 @@ define([
 ], function ($, d3, ko, common, reports, jnj_chart, view) {
     function dataSources(params) {
         var self = this;
-debugger;
-        self.model = params.model;
+
+        debugger;
+        self.model = pageModel;
         self.dashboardData = ko.observable();
         self.conditionsData = ko.observable();
 
@@ -104,8 +105,9 @@ debugger;
         updateObservationPeriods(newData);
     });
 
-
-
+    viewModel.loadDashboard();
+    $('#reportDashboard').show();
+    report = 'dashboard';
 
     function updateDashboard(data) {
         var result = data;
@@ -450,7 +452,7 @@ debugger;
      ko.applyBindings(viewModel);
      }); */
 
-    /* define(['sammy'], function (Sammy) {
+    define(['sammy'], function (Sammy) {
      var app = Sammy(function () {
      this.get('#/:name/dashboard', function (context) {
      $('.report').hide();
@@ -622,16 +624,16 @@ debugger;
      });
 
      });
-     }); */
+     });
     /* return viewModel; */
 
     var component = {
-        viewModel: datasources,
+        viewModel: dataSources,
         template: view
     };
 
     ko.components.register('data-sources', component);
-    return component;
+    return viewModel;
 
 });
 
@@ -647,6 +649,7 @@ var collectionFormats = {
     "procedures"	: "procedure_{id}.json",
     "visits"		: "visit_{id}.json"
 }
+
 
 function getUrlFromData(datasource, name){
 
@@ -716,4 +719,11 @@ function getUrlFromDataCollection(datasource, name, id){
     }
 
     return pth;
+}
+
+function setDatasource(index) {
+    page_vm.datasource(page_vm.datasources[index]);
+
+    $('.reportDrilldown').addClass('hidden');
+    document.location = '#/' + page_vm.datasource().name + '/' + report;
 }
