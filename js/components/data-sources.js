@@ -43,7 +43,7 @@ debugger;
             {id: 'death', name: 'Death'}
         ]);
 
-        ko.amdTemplateEngine.defaultPath = "/components/datasources/templates";
+        ko.amdTemplateEngine.defaultPath = "/Atlas/js/components/datasources/templates";
 
         self.formatSI = function (d, p) {
             if (d < 1) {

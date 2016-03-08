@@ -136,6 +136,7 @@ body {
 .panel-heading {
 	padding-top: 5px;
 	padding-bottom: 5px;
+	font-size: 14px;
 }
 .col-xs-1,
 .col-sm-1,
@@ -215,7 +216,7 @@ div.personSummary .row div {
 	padding-right: 2px;
 	font-size: 16px;
 }
-.report {
+.dataSourceReport {
 	display: none;
 	width: 96%;
 	margin-left: auto;
@@ -343,7 +344,8 @@ table.dataTable tbody td {
 	vertical-align: top;
 }
 #datasourceTitle {
-	margin-top: 65px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 	font-size: 16px;
 	font-weight: bold;
 }
