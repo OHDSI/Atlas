@@ -117,7 +117,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 						}
 						self.minUnitDays(d.minUnitDays);
 						self.minUnitCounts(d.minUnitCounts);
-						self.gapThreshold(d.gapThreshold);
+						self.gapThreshold(100 - d.gapThreshold);
 						self.show(true);
 					}
 				});
@@ -164,7 +164,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 			self.currentStudy().conceptSetId = self.currentConceptSet().id;
 			self.currentStudy().minUnitDays = self.minUnitDays();
 			self.currentStudy().minUnitCounts = self.minUnitCounts();
-			self.currentStudy().gapThreshold = self.gapThreshold();
+			self.currentStudy().gapThreshold = 100 - self.gapThreshold();
 	
 			var unwrappedStart = ko.utils.unwrapObservable(self.startDate());
 		    if(unwrappedStart === undefined || unwrappedStart === null) {

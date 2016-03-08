@@ -92,20 +92,40 @@
 		<span data-bind='visible: switchWindow.hasError, text: switchWindow.validationMessage'> </span>
 		<br/>
 
-		<label class="heading">Calendar start date (Optional)</label>
-		<input type="date" id="pncStdStDt" data-bind="value:startDate"/>
-		<label class="heading">Calendar end date (Optional)</label>
-		<input type="date" id="pncStdEndDt" data-bind="value:endDate"/>
-		<br/>
+		<div class="optional-filters">
+			<h4>Optional Filters</h4>
+<!-- 			<div class="form-group"> -->
+<!-- 				<label for="filter-1" class="input-label">Minimum Days</label> -->
+<!-- 				<input id="filter-1" type="text"> -->
+<!-- 			</div> -->
+<!-- 			<div class="form-group"> -->
+<!-- 				<label for="filter-2" class="input-label">Minimum Patients</label> -->
+<!-- 				<input id="filter-2" type="text"> -->
+<!-- 			</div> -->
+			
+			<div class="form-group">
+				<label class="input-label">Calendar start date (Optional)</label>
+				<input type="date" id="pncStdStDt" data-bind="value:startDate"/>
+				<label class=class="input-label">Calendar end date (Optional)</label>
+				<input type="date" id="pncStdEndDt" data-bind="value:endDate"/>
+			</div>
 		
-		<label class="heading">Filtering constraint:</label>
-		<br/>
-		<label class="heading">Minimum unit duration days: </label><input type="number" data-bind="value: minUnitDays">
-		<br/>
-		<label class="heading">Minimum unit patient count: </label><input type="number" data-bind="value: minUnitCounts">
-		<br/>
-		<label class="heading">Maximum unit gap day percentage: </label><input type="number" data-bind="value: gapThreshold">
-		<br/>
+			<div class="form-group">
+				<label class="input-label">Minimum unit duration days: </label><input type="number" data-bind="value: minUnitDays">
+			</div>
+			
+			<div class="form-group">
+				<label class="input-label">Minimum unit patient count: </label><input type="number" data-bind="value: minUnitCounts">
+			</div>
+			
+<!-- 			<div class="form-group"> -->
+<!-- 			<label class="input-label">Maximum unit gap day percentage: </label><input type="number" data-bind="value: gapThreshold"> -->
+<!-- 			</div> -->
+
+			<div class="form-group">
+				<label class="input-label">Minimum adherence percentage: </label><input type="number" data-bind="value: gapThreshold">
+			</div>
+		</div>
 		
 		<div class="row" style="padding-top:20px;">
  			<div class="col-xs-2">

@@ -15,9 +15,11 @@
 									deferRender: true,
 									autoWidth: false, 
 									columns: [
-											{ title: 'Study Name', render: renderStudyNameLink },
-											{ title: 'Create time', render: renderStudyCreateTime },
-											{ title: 'Last run time', render: renderLastRunTime },
+											{ title: 'Results', render: renderStudyResultsLink, 'bSortable': false, width: '3%' },
+											{ title: 'Clone', render: renderStudyCloneLink, 'bSortable': false, width: '3%' },
+											{ title: 'Study Name', render: renderStudyNameLink, width: '44%' },
+											{ title: 'Create time', render: renderStudyCreateTime, width: '25%'  },
+											{ title: 'Last run time', render: renderLastRunTime, width: '25%'  },
 											{ title: 'Study ID', render: renderStudyId, visible: false }
 									]
 							 },

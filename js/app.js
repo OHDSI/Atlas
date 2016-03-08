@@ -93,6 +93,17 @@ define([
 							self.currentView('panaceadef');
 						});
 					},
+					'/panaceaclone/:panaceaStudyId': function (panaceaStudyId) {
+						require(['panacea', 'panacea-browser'], function () {
+							$.ajax({
+								url: self.services()[0].url + 'panacea/cloneStudy/' + panaceaStudyId,
+								method: 'GET',
+								success: function (d) {
+									self.currentView('panacea');
+								}
+							});							
+						});
+					},
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
 						require(['conceptset-manager'], function () {
 							self.loadConceptSet(conceptSetId, mode);
