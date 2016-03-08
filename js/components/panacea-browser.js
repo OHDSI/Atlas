@@ -14,7 +14,8 @@ define(['knockout', 'text!./panacea-browser.html', 'faceted-datatable'], functio
 
 			if(self.panaceaView() == 'review'){
 				$.ajax({
-					url: self.services()[0].url + 'panacea/getAllStudy',
+					//url: self.services()[0].url + 'panacea/getAllStudy',
+					url: self.services()[0].url + 'panacea/getAllStudyWithLastRunTime',
 					method: 'GET',
 					success: function (d) {
 						self.reference(d);
@@ -50,32 +51,49 @@ define(['knockout', 'text!./panacea-browser.html', 'faceted-datatable'], functio
 		self.panaceaView('review');
 		
 		self.options = {
+				"sDom": 'rtp',
 				Facets: [
-							{
-								'caption': 'Start date',
-								'binding': function (o) {
-									var daysSinceModification = (new Date().getTime() - new Date(o.startDate).getTime()) / 1000 / 60 / 60 / 24;
-									if (daysSinceModification < 7) {
-										return 'This Week';
-									} else if (daysSinceModification < 14) {
-										return 'Last Week';
-									} else {
-										return '2+ Weeks Ago';
-									}
-								}
-							},
-							{
-								'caption': 'Name',
-								'binding': function (o) {
-									return o.studyName;
-								}
-							}
+//							{
+//								'caption': 'Start date',
+//								'binding': function (o) {
+//									var daysSinceModification = (new Date().getTime() - new Date(o.startDate).getTime()) / 1000 / 60 / 60 / 24;
+//									if (daysSinceModification < 7) {
+//										return 'This Week';
+//									} else if (daysSinceModification < 14) {
+//										return 'Last Week';
+//									} else {
+//										return '2+ Weeks Ago';
+//									}
+//								}
+//							},
+//							{
+//								'caption': 'Name',
+//								'binding': function (o) {
+//									return o.studyName;
+//								}
+//							}
 						]
-
 		};
 
 		self.renderStudyNameLink = function (s, p, d) {
-			return '<span class="linkish">' + d.studyName + '</span>';
+			//return '<span class="linkish" data-bind="click: function(d) { rowClick(d); }">' + d.studyName + '</span>';
+			return '<span class="linkish" >' + d.studyName + '</span>';
+		}
+		
+		self.renderStudyId = function(s, p, d) {
+			return d.studyId;
+		}
+		
+		self.renderStudyCreateTime = function(s, p, d) {
+			return new Date(d.createTime).toLocaleDateString() + " " + new Date(d.createTime).toLocaleTimeString();
+		}
+		
+		self.renderLastRunTime = function(s, p, d) {
+			if(d.lastRunTime != null){
+				return new Date(d.lastRunTime).toLocaleDateString() + " " + new Date(d.lastRunTime).toLocaleTimeString();
+			}else{
+				return null;
+			}
 		}
 
 		self.rowClick = function (d) {
@@ -83,6 +101,10 @@ define(['knockout', 'text!./panacea-browser.html', 'faceted-datatable'], functio
 			self.selected(d.studyId);
 //            self.panaceaView('edit');
 		}
+		
+		self.createStudy = function () {
+			document.location = "#/panaceadef/undefined";
+		};
 
 		self.columns = [
 			{
@@ -94,7 +116,6 @@ define(['knockout', 'text!./panacea-browser.html', 'faceted-datatable'], functio
 				render: self.renderStudyNameLink
 			}
 		];
-
 	}
 
 	var component = {

@@ -1,8 +1,29 @@
+<div class="paddedFloater pull-right btn btn-primary btn-sm" style="margin-bottom:10px;" data-bind="click:function() {createStudy();}">New Pathways Study</div>
+
 <!-- <faceted-datatable data-bind="visible:loading()==false" params="reference:reference, columns: columns, options:options, rowClick:rowClick"> -->
 <!-- </faceted-datatable> -->
 
-<faceted-datatable params="reference:reference, columns: columns, rowClick:rowClick, options:options" data-bind="visible: panaceaView() =='review'">
-</faceted-datatable> 
+<!-- <faceted-datatable id="allStudyDatatable" params="reference:reference, columns: columns, rowClick:rowClick, options:model.searchConceptsOptions" data-bind="visible: panaceaView() =='review'"> -->
+<!-- </faceted-datatable> -->
+
+				<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+								data: reference,
+								options: {
+									dom: 'Clfiprt',
+									lengthMenu: [[15, 30, 45, -1], [15, 30, 45,'All']],
+									orderClasses: false,
+									deferRender: true,
+									autoWidth: false, 
+									columns: [
+											{ title: 'Study Name', render: renderStudyNameLink },
+											{ title: 'Create time', render: renderStudyCreateTime },
+											{ title: 'Last run time', render: renderLastRunTime },
+											{ title: 'Study ID', render: renderStudyId, visible: false }
+									]
+							 },
+							 onRowClick: rowClick
+						}">
+				</table>
 
 <div data-bind="visible: panaceaView() =='edit'">
 	<div><span>this is a test...</span></div>
