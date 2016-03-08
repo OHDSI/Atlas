@@ -10,12 +10,14 @@ define([
     'jnj_chart',
     'text!./data-sources.html',
     'bootstrap',
-    'd3_tip'
+    'd3_tip',
+    'knockout-amd-helpers'
 ], function ($, d3, ko, common, reports, jnj_chart, view) {
     function dataSources(params) {
         var self = this;
-
-        self.model = pageModel;
+debugger;
+        //self.model = pageModel;
+        self.model = params.model;
         self.dashboardData = ko.observable();
         self.conditionsData = ko.observable();
 
@@ -25,7 +27,8 @@ define([
             name: 'loading...'
         });
         self.datasources = ko.observableArray();
-        self.dataSourceReports = [{id: 'dashboard', name: 'Dashboard'},
+        self.datasourceReport = ko.observable();
+        self.datasourceReports = ko.observableArray([{id: 'dashboard', name: 'Dashboard'},
             {id: 'achillesheel', name: 'Achilles Heel'},
             {id: 'observationperiods', name: 'Observation Periods'},
             {id: 'datadensity', name: 'Data Density'},
@@ -38,8 +41,10 @@ define([
             {id: 'procedures', name: 'Procedures'},
             {id: 'visits', name: 'Visits'},
             {id: 'death', name: 'Death'}
-        ];
-        self.dataSourceReport = ko.observable();
+        ]);
+
+        ko.amdTemplateEngine.defaultPath = "/components/datasources/templates";
+
         self.formatSI = function (d, p) {
             if (d < 1) {
                 return d3.round(d, p);
@@ -116,25 +121,33 @@ define([
             updateObservationPeriods(newData);
         });
 
+
         $.ajax({
             type:'GET',
             url: pageModel.dataSourcesLocation,
             contentType: "application/json; charset=utf-8",
             success: function (data) {
                 self.datasources(data.datasources);
-                var datasources = self.datasources(),
+                var datasources = self.datasources();
                     datasource = datasources[0];
+                var datasourceReports = self.datasourceReports();
+                datasourceReport = datasourceReports[0];
+
                 if(self.datasources().length > 0) {
                     self.datasource(datasource);
+                    self.datasourceReport(datasourceReport);
+                    self.loadDashboard();
+                    document.location = '#/datasources/' + datasource.name + '/' + datasourceReport.id;
                 }
             }
         });
+
     }
 
     function updateDashboard(data) {
         var result = data;
 
-        define(["jnj_chart", "common"], function (jnj_chart, common) {
+        //define(['jnj_chart', 'common'], function (jnj_chart, common) {
             d3.selectAll("#reportDashboard #genderPie svg").remove();
             genderDonut = new jnj_chart.donut();
             genderDonut.render(common.mapConceptData(result.GENDER_DATA), "#reportDashboard #genderPie", 260, 100, {
@@ -206,7 +219,7 @@ define([
                 yLabel: "People"
             });
 
-        });
+        //});
     }
 
     function updateObservationPeriods(data) {
@@ -471,10 +484,10 @@ define([
 
     /* define(["knockout-amd-helpers"], function () {
      ko.amdTemplateEngine.defaultPath = "/components/datasources/templates";
-     ko.applyBindings(self.;
+     ko.applyBindings(viewModel);
      }); */
 
-    define(['sammy'], function (Sammy) {
+    /* define(['sammy'], function (Sammy) {
      var app = Sammy(function () {
      this.get('#/:name/dashboard', function (context) {
      $('.report').hide();
@@ -646,7 +659,7 @@ define([
      });
 
      });
-     });
+     }); */
     /* return viewModel; */
 
     var component = {
@@ -675,6 +688,7 @@ var collectionFormats = {
 
 function getUrlFromData(datasource, name){
 
+    /*
     if( datasource === undefined ){
         console.error("datasource is undefined.");
         return;
@@ -684,7 +698,9 @@ function getUrlFromData(datasource, name){
         return;
     }
     var parent = "";
+
     if( datasource.parentUrl !== undefined) parent += datasource.parentUrl+"/";
+
     var pth = "";
 
     if( datasource.map !== undefined){
@@ -710,10 +726,18 @@ function getUrlFromData(datasource, name){
     }else if ( datasource.folder !== undefined){
         pth += "data/" + datasource.folder + "/" + name;
         if ( simpledata.indexOf(name) >= 0 ) pth += ".json";
-    }else{
+    } else{
         console.error("Could not construct path from map, datasource.url or datasource.folder");
         return;
     }
+    */
+
+    var parent = "";
+    var pth = "";
+
+    parent = pageModel.dataSourcesRoot;
+    pth = parent + "/" + datasource.folder + "/" + name + ".json"
+
 
     return pth;
 }
@@ -743,9 +767,4 @@ function getUrlFromDataCollection(datasource, name, id){
     return pth;
 }
 
-function setDatasource(index) {
-    page_vm.datasource(page_vm.datasources[index]);
 
-    $('.reportDrilldown').addClass('hidden');
-    document.location = '#/' + page_vm.datasource().name + '/' + report;
-}

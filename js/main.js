@@ -29,7 +29,7 @@ requirejs.config({
 		"knockout": "knockout.min",
 		"knockout-mapping": "knockout.mapping",
 		"knockout-persist": "knockout.persist",
-        /* "knockout-amd-helpers": "knockout-amd-helpers.min", */
+        "knockout-amd-helpers": "knockout-amd-helpers.min",
 		"datatables": "jquery.dataTables.min",
 		"colvis": "jquery.dataTables.colVis.min",
 		"tabletools": "dataTables.tableTools.min",

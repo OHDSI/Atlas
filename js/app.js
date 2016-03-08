@@ -26,6 +26,7 @@ define([
 		]);
 
 		self.dataSourcesLocation = '/AchillesWeb/data/datasources.json';
+        self.dataSourcesRoot = '/AchillesWeb/data';
 		
 		$('#querytext').focus();
 
@@ -57,6 +58,11 @@ define([
 					'/datasources': function () {
 						require(['data-sources'], function () {
 							self.currentView('datasources');
+						});
+					},
+					'/datasources/:sourceName/:report': function (sourceName, report) {
+						require(['data-sources'], function () {
+							self.loadDatasources(sourceName, report);
 						});
 					},
 					'/cohortdefinitions': function () {
@@ -1359,6 +1365,12 @@ define([
 
 		self.selectConcept = function (concept) {
 			document.location = '#/concept/' + concept.CONCEPT_ID;
+		};
+
+		self.loadDatasources = function (sourceName, report) {
+			//self.loadDashboard();
+			$('#reportDashboard').show();
+			report = 'dashboard';
 		};
 	}
 	return appModel;
