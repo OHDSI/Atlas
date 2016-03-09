@@ -29,6 +29,7 @@ requirejs.config({
 		"knockout": "knockout.min",
 		"knockout-mapping": "knockout.mapping",
 		"knockout-persist": "knockout.persist",
+		"knockout-jqAutocomplete": "components/knockout-jqAutocomplete",
 		"datatables": "jquery.dataTables.min",
 		"colvis": "jquery.dataTables.colVis.min",
 		"director": "director.min",
