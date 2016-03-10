@@ -7,3 +7,42 @@
 .input-label {
 	margin-right: 5px;
 }
+
+.pnc-path {
+  stroke: #fff;
+  fill-rule: evenodd;
+}
+
+.pnc-legend {
+    font-size: 12px;
+  }
+.pnc-rect {
+    stroke-width: 2;
+  }
+
+.pnc-tooltip {
+  background: #eee;
+  box-shadow: 0 0 5px #999999;
+  color: #333;
+  display: none;
+  font-size: 12px;
+//  left: 130px;
+  left: 400px;
+  padding: 10px;
+  position: absolute;
+  text-align: center;
+//  top: 95px;
+  top: 350px;
+  width: 145px;
+  z-index: 10;
+}
+
+.pnc-tooltip-label {
+  color: black;
+  font-size: 12px;
+}
+
+.pnc-tooltip-duration {
+  color: black;
+  font-size: 12px;
+}

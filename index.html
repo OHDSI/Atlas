@@ -202,6 +202,10 @@
 				<panacea-study-def-manager params="{services: pageModel.services, model: pageModel}"></panacea-study-def-manager>
 			</div>
 			
+			<div data-bind="if:pageModel.currentView() == 'panaceasunburst'">
+				<panacea-sunburst-result params="{services: pageModel.services, model: pageModel}"></panacea-sunburst-result>
+			</div>
+			
 			<analytics-manager data-bind="if:pageModel.currentView()== 'analytics'" params="{model: pageModel}"></analytics-manager>
 
 			<div data-bind="if:pageModel.currentView() == 'feasibilities'">

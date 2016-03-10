@@ -97,7 +97,11 @@ define(['knockout', 'text!./panacea-browser.html', 'faceted-datatable'], functio
 		}
 
 		self.renderStudyResultsLink = function(s, p, d) {
-			return '<a href="#/panacea"><i class="fa fa-file"></i></a>';
+			if(d.lastRunTime == null){
+				return null;
+			}else{
+				return '<a href="#/panaceasunburstresult/' + d.studyId + '"><i class="fa fa-file"></i></a>';
+			}
 		}
 		
 		self.renderStudyCloneLink = function(s, p, d) {

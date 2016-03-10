@@ -104,6 +104,12 @@ define([
 							});							
 						});
 					},
+					'/panaceasunburstresult/:panaceaStudyId': function (panaceaStudyId) {
+						require(['panacea-sunburst-result'], function () {
+							self.panaceaResultStudyId = panaceaStudyId;
+							self.currentView('panaceasunburst');
+						});
+					},
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
 						require(['conceptset-manager'], function () {
 							self.loadConceptSet(conceptSetId, mode);

@@ -52,6 +52,7 @@ requirejs.config({
 		"panacea": "components/panacea",
 		"panacea-browser": "components/panacea-browser",
 		"panacea-study-def-manager": "components/panacea-study-def-manager",
+		"panacea-sunburst-result": "components/panacea-sunburst-result",
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
