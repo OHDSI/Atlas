@@ -15,7 +15,7 @@ define([
 ], function ($, d3, ko, common, reports, jnj_chart, view) {
     function dataSources(params) {
         var self = this;
-debugger;
+
         //self.model = pageModel;
         self.model = params.model;
         self.dashboardData = ko.observable();
@@ -24,7 +24,9 @@ debugger;
         self.personData = ko.observable();
         self.observationPeriodsData = ko.observable();
         self.datasource = ko.observable({
-            name: 'loading...'
+            name: 'loading...',
+            folder: 'loading...'
+
         });
         self.datasources = ko.observableArray();
         self.datasourceReport = ko.observable();
@@ -121,7 +123,6 @@ debugger;
             updateObservationPeriods(newData);
         });
 
-
         $.ajax({
             type:'GET',
             url: pageModel.dataSourcesLocation,
@@ -142,7 +143,33 @@ debugger;
             }
         });
 
+        self.setDatasource = function(data) {
+
+            self.datasource(data);
+            self.loadDashboard();
+
+            //document.location = '#/datasources/' + data.name + '/' + self.datasourceReport.id;
+            document.location = '#/datasources/' + data.name + '/dashboard';
+        }
+
+        self.setReport = function(report) {
+            self.datasourceReport(report);
+
+            if (report == 'dashboard')
+                self.loadDashboard();
+            if (report == 'achillesheel')
+                self.loadDashboard();
+            if (report == 'observationperiods')
+                self.loadObservationPeriods();
+
+
+            //document.location = '#/datasources/' + data.name + '/' + self.datasourceReport.id;
+            document.location = '#/datasources/' + self.datasource().name + '/' + report;
+        }
+
     }
+
+
 
     function updateDashboard(data) {
         var result = data;

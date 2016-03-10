@@ -62,6 +62,7 @@ define([
 					},
 					'/datasources/:sourceName/:report': function (sourceName, report) {
 						require(['data-sources'], function () {
+							self.currentView('datasources');
 							self.loadDatasources(sourceName, report);
 						});
 					},
@@ -1369,8 +1370,14 @@ define([
 
 		self.loadDatasources = function (sourceName, report) {
 			//self.loadDashboard();
-			$('#reportDashboard').show();
-			report = 'dashboard';
+
+			if (report == 'dashboard')
+				$('#reportDashboard').show();
+            //if (report == 'achillesheel')
+                //$('#reportAchillesHeel').show();
+			//if (report == 'observationperiods')
+				//$('#reportObservationPeriods').show();
+
 		};
 	}
 	return appModel;
