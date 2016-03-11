@@ -144,8 +144,8 @@ define([
             self.datasource(data);
             self.loadDashboard();
 
-            //document.location = '#/datasources/' + data.name + '/' + self.datasourceReport.id;
-            document.location = '#/datasources/' + data.name + '/dashboard';
+            document.location = '#/datasources/' + data.name + '/' + self.datasourceReport().id;
+            //document.location = '#/datasources/' + data.name + '/dashboard';
         }
 
         self.setReport = function(report) {
@@ -158,6 +158,26 @@ define([
                 reports.AchillesHeel.render(self.datasource());
             if (reportId == 'observationperiods')
                 self.loadObservationPeriods();
+            if (reportId == 'datadensity')
+                reports.DataDensity.render(self.datasource());
+            if (reportId == 'conditions')
+                reports.ConditionOccurrence.render(self.datasource());
+            if (reportId == 'conditioneras')
+                reports.ConditionEra.render(self.datasource());
+            if (reportId == 'measurement')
+                reports.Measurement.render(self.datasource());
+            if (reportId == 'observations')
+                reports.Observation.render(self.datasource());
+            if (reportId == 'drugeras')
+                reports.DrugEra.render(self.datasource());
+            if (reportId == 'drugs')
+                reports.DrugExposure.render(self.datasource());
+            if (reportId == 'procedures')
+                reports.ProcedureOccurrence.render(self.datasource());
+            if (reportId == 'visits')
+                reports.VisitOccurrence.render(self.datasource());
+            if (reportId == 'death')
+                reports.Death.render(self.datasource());
             document.location = '#/datasources/' + self.datasource().name + '/' + reportId;
         }
 

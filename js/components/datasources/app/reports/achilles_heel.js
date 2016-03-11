@@ -31,7 +31,7 @@
 							datatable = $('#achillesheel_table').DataTable({
 								dom: 'lfrt<"row"<"col-sm-4" i ><"col-sm-4" T ><"col-sm-4" p >>',
 								tableTools: {
-            			"sSwfPath": "js/swf/copy_csv_xls_pdf.swf"
+            			"sSwfPath": "js/components/datasources/swf/copy_csv_xls_pdf.swf"
         				},
 								data: table_data,
 								columns: [
