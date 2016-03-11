@@ -63,7 +63,6 @@ define([
 					'/datasources/:sourceName/:report': function (sourceName, report) {
 						require(['data-sources'], function () {
 							self.currentView('datasources');
-							self.loadDatasources(sourceName, report);
 						});
 					},
 					'/cohortdefinitions': function () {
@@ -1368,17 +1367,6 @@ define([
 			document.location = '#/concept/' + concept.CONCEPT_ID;
 		};
 
-		self.loadDatasources = function (sourceName, report) {
-			//self.loadDashboard();
-
-			if (report == 'dashboard')
-				$('#reportDashboard').show();
-            //if (report == 'achillesheel')
-                //$('#reportAchillesHeel').show();
-			//if (report == 'observationperiods')
-				//$('#reportObservationPeriods').show();
-
-		};
 	}
 	return appModel;
 });
