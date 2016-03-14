@@ -28,6 +28,7 @@ define([
         self.datasourceReport = ko.observable();
         self.datasourceReports = ko.observableArray([{id: 'dashboard', name: 'Dashboard'},
             {id: 'achillesheel', name: 'Achilles Heel'},
+            {id: 'person', name: 'Person'},
             {id: 'observationperiods', name: 'Observation Periods'},
             {id: 'datadensity', name: 'Data Density'},
             {id: 'conditions', name: 'Conditions'},
@@ -156,6 +157,8 @@ define([
                 self.loadDashboard();
             if (reportId == 'achillesheel')
                 reports.AchillesHeel.render(self.datasource());
+            if (reportId == 'person')
+                self.loadPerson();
             if (reportId == 'observationperiods')
                 self.loadObservationPeriods();
             if (reportId == 'datadensity')
