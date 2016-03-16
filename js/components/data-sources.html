@@ -1,0 +1,1365 @@
+<div data-bind="if: model.currentView() == 'datasources'">
+    <div class="wrapperTitle">
+        <i class="fa fa-database"></i> Data Sources
+    </div>
+
+    <div class="paddedWrapper">
+        <!--<nav class="navbar navbar-default navbar-fixed-top" role="navigation">-->
+        <div class="container-fluid">
+            <!-- <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapse-menu">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href class="navbar-brand">
+                    <img src="images/ohdsi.png" alt="OHDSI">Achilles</a>
+            </div> -->
+
+            <div class="collapse navbar-collapse" id="collapse-menu">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Data Sources <b class="caret"></b></a>
+                        <ul class="dropdown-menu" data-bind="foreach: datasources">
+                            <li data-bind="text: name, click: $parent.setDatasource">
+                        </ul>
+
+                    <li>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
+                        <ul class="dropdown-menu" data-bind="foreach: datasourceReports">
+                            <li data-bind="text: name, click: $parent.setReport">
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--</nav>-->
+        <div data-bind="if: datasource()">
+         <div id="datasourceTitle" data-bind="text:datasource().name"></div>
+        </div>
+
+        <div data-bind="if:datasourceReport()">
+
+         <div id="reportAchillesHeel" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'achillesheel'">
+             <div class="reportTitle">Achilles Heel Report</div>
+             <div class="row">
+                 <div class="col-sm-12">
+                     <div class="panel panel-default">
+                         <div class="panel-heading">
+                             Data Quality Messages
+                         </div>
+                         <div class="panel-body">
+                             <div class="col-sm-12">
+                                 <table id="achillesheel_table" class="display">
+                                     <thead>
+                                     <tr>
+                                         <th>Message Type</th>
+                                         <th>Message</th>
+                                     </tr>
+                                     </thead>
+                                 </table>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+         <div id="reportObservationPeriods" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'observationperiods'">
+             <div class="reportTitle">Observation Periods</div>
+
+             <div class="row">
+                 <div class="col-sm-8">
+                     <div class="panel panel-default">
+                         <div class="panel-heading">
+                             Age at First Observation
+                         </div>
+                         <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="ageatfirstobservation" class="chartcontainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Age by Gender
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="agebygender" class="chartcontainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Observation Length
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="observationlength" class="chartcontainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Duration By Gender
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="opbygender" class="chartcontainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Cumulative Observation
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="cumulativeobservation" class="chartcontainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Duration By Age Decile
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="opbyage" class="chartcontainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Persons With Continuous Observation By Year
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="oppeoplebyyear" class="chartcontainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Observation Periods per Person
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="opperperson" class="chartcontainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Persons With Continuous Observation By Month
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="oppeoplebymonthsingle" class="chartcontainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div id="reportPerson" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'person'">
+            <div class="reportTitle">Person</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Person Summary
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12 personSummary">
+                                <div data-bind="template: {if: personData, name: 'attributeValueTable', data: function() { return personData().SUMMARY}}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Year of Birth
+                        </div>
+                        <div class="panel-body">
+                            <div id="birthyearhist" class="chartcontainer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Population by Gender
+                        </div>
+                        <div class="panel-body">
+                            <div id="genderPie" style="text-align:center"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Population by Race
+                        </div>
+                        <div class="panel-body">
+                            <div id="raceTypePie" style="text-align: center; width: auto"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Population by Ethnicity
+                        </div>
+                        <div class="panel-body">
+                            <div id="ethnicityTypePie" style="text-align: center; width: auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reportDrugEras" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'drugeras'">
+            <div class="reportTitle">Drug Era Report</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Drug Prevalence
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="active"><a href="#drugera_treemap_panel">Treemap</a>
+                                    </li>
+                                    <li><a href="#drugera_table_panel">Table</a>
+                                    </li>
+                                </ul>
+                                <div id='content' class="tab-content">
+                                    <div class="tab-pane active" id="drugera_treemap_panel">
+                                        <div id="treemap_container">
+                                            <div class="treemap_zoomtarget"></div>
+                                        </div>
+                                        <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+                                    </div>
+                                    <div class="tab-pane" id="drugera_table_panel">
+                                        <table id="drugera_table" class="display">
+                                            <thead>
+                                            <tr>
+                                                <th>Concept Id</th>
+                                                <th>ATC 1</th>
+                                                <th>ATC 3</th>
+                                                <th>ATC 5</th>
+                                                <th>Ingredient</th>
+                                                <th>Person Count</th>
+                                                <th>Prevalence</th>
+                                                <th>Length of Era</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="reportDrugErasDrilldown" class="hidden reportDrilldown">
+                <div id="drugeraDrilldownTitle" class="reportTitle"></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelDrugEraPrevalence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Drug Prevalence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="trellisLinePlot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelDrugEraPrevalenceByMonth" class="panel panel-default">
+                            <div class="panel-heading">
+                                Drug Exposure Prevalence by Month
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="drugPrevalenceByMonth"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="panelDrugEraAgeAtFirstExposure" class="panel panel-default">
+                            <div class="panel-heading">
+                                Age At First Exposure
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="drugeraAgeAtFirstExposure"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="panelDrugEraLengthOfEra" class="panel panel-default">
+                            <div class="panel-heading">
+                                Length of Era Distribution
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="drugeraLengthOfEra"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reportDrugExposures" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'drugs'">
+            <div class="reportTitle">Drug Exposure Report</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Drug Prevalence
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="active"><a href="#drug_treemap_panel">Treemap</a>
+                                    </li>
+                                    <li><a href="#drug_table_panel">Table</a>
+                                    </li>
+                                </ul>
+                                <div id='content' class="tab-content">
+                                    <div class="tab-pane active" id="drug_treemap_panel">
+                                        <div id="treemap_container">
+                                            <div class="treemap_zoomtarget"></div>
+                                        </div>
+
+                                        <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+                                    </div>
+                                    <div class="tab-pane" id="drug_table_panel">
+                                        <table id="drug_table" class="display">
+                                            <thead>
+                                            <tr>
+                                                <th>Concept Id</th>
+                                                <th>ATC 1</th>
+                                                <th>ATC 3</th>
+                                                <th>ATC 5</th>
+                                                <th>Ingredient</th>
+                                                <th>RxNorm</th>
+                                                <th>Person Count</th>
+                                                <th>Prevalence</th>
+                                                <th>Records per Person</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="reportDrugExposuresDrilldown" class="hidden reportDrilldown">
+                <div id="drugDrilldownTitle" class="reportTitle"></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelDrugPrevalence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Drug Prevalence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="trellisLinePlot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelDrugExposurePrevalenceByMonth" class="panel panel-default">
+                            <div class="panel-heading">
+                                Drug Exposure Prevalence by Month
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="drugPrevalenceByMonth"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div id="panelAgeAtFirstDiagnosis" class="panel panel-default">
+                            <div class="panel-heading">
+                                Age at First Exposure
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="ageAtFirstExposure"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div id="panelDaysSupplyDistribution" class="panel panel-default">
+                            <div class="panel-heading">
+                                Days Supply
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="daysSupplyDistribution"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div id="panelQuantityDistribution" class="panel panel-default">
+                            <div class="panel-heading">
+                                Quantity
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="quantityDistribution"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div id="panelRefillsDistribution" class="panel panel-default">
+                            <div class="panel-heading">
+                                Refills
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="refillsDistribution"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="panelDrugsByType" class="panel panel-default">
+                            <div class="panel-heading">
+                                Drugs by Type
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="drugsByType"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reportConditionEras" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'conditioneras'">
+            <div class="reportTitle">Condition Eras</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default panel-table">
+                        <div class="panel-heading">
+                            Condition Prevalence
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="active"><a href="#conditionera-treemap-panel">Treemap</a>
+                                    </li>
+                                    <li><a href="#conditionera-table-panel">Table</a>
+                                    </li>
+                                </ul>
+                                <div id='content' class="tab-content">
+                                    <div class="tab-pane active" id="conditionera-treemap-panel">
+                                        <div id="treemap_container">
+                                            <div class="treemap_zoomtarget"></div>
+                                        </div>
+                                        <div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+                                    </div>
+                                    <div class="tab-pane" id="conditionera-table-panel">
+                                        <table id="conditionera_table" class="display">
+                                            <thead>
+                                            <tr>
+                                                <th>Concept Id</th>
+                                                <th>SOC</th>
+                                                <th>HLGT</th>
+                                                <th>HLT</th>
+                                                <th>PT</th>
+                                                <th>SNOMED</th>
+                                                <th>Person Count</th>
+                                                <th>Prevalence</th>
+                                                <th>Length of Era</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="reportConditionErasDrilldown" class="hidden reportDrilldown">
+                <div id="conditionerasDrilldownTitle" class="reportTitle"></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelConditionEraPrevalence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Condition Prevalence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="trellisLinePlot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelConditionEraPrevalenceByMonth" class="panel panel-default">
+                            <div class="panel-heading">
+                                Condition Prevalence by Month
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="conditioneraPrevalenceByMonth"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="panelAgeAtFirstDiagnosis" class="panel panel-default">
+                            <div class="panel-heading">
+                                Age at First Diagnosis
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="conditioneras_age_at_first_diagnosis"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="panelConditionEraLengthOfEra" class="panel panel-default">
+                            <div class="panel-heading">
+                                Length of Condition Era
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="conditioneras_length_of_era"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reportConditionOccurrences" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'conditions'">
+            <div class="reportTitle">Conditions</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default panel-table">
+                        <div class="panel-heading">
+                            Condition Prevalence
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="active"><a href="#condition-treemap-panel">Treemap</a>
+                                    </li>
+                                    <li><a href="#condition-table-panel">Table</a>
+                                    </li>
+                                </ul>
+                                <div id='content' class="tab-content">
+                                    <div class="tab-pane active" id="condition-treemap-panel">
+                                        <div id="treemap_container">
+                                            <div class="treemap_zoomtarget"></div>
+                                        </div>
+                                        <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+                                    </div>
+                                    <div class="tab-pane" id="condition-table-panel">
+                                        <table id="condition_table" class="display">
+                                            <thead>
+                                            <tr>
+                                                <th>Concept Id</th>
+                                                <th>SOC</th>
+                                                <th>HLGT</th>
+                                                <th>HLT</th>
+                                                <th>PT</th>
+                                                <th>SNOMED</th>
+                                                <th>Person Count</th>
+                                                <th>Prevalence</th>
+                                                <th>Records per Person</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="reportConditionOccurrencesDrilldown" class="hidden reportDrilldown">
+                <div id="conditionDrilldownTitle" class="reportTitle"></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelConditionPrevalence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Condition Prevalence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="trellisLinePlot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelConditionOccurrencePrevalenceByMonth" class="panel panel-default">
+                            <div class="panel-heading">
+                                Condition Prevalence by Month
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="conditionPrevalenceByMonth"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="panelConditionsByType" class="panel panel-default">
+                            <div class="panel-heading">
+                                Conditions by Type
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="conditionsByType"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="panelAgeAtFirstDiagnosis" class="panel panel-default">
+                            <div class="panel-heading">
+                                Age at First Diagnosis
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="ageAtFirstDiagnosis"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reportProcedureOccurrences" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'procedures'">
+            <div class="reportTitle">Procedures</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Procedure Prevalence
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="active"><a href="#procedure-treemap-panel">Treemap</a>
+                                    </li>
+                                    <li><a href="#procedure-table-panel">Table</a>
+                                    </li>
+                                </ul>
+                                <div id='content' class="tab-content">
+                                    <div class="tab-pane active" id="procedure-treemap-panel">
+                                        <div id="treemap_container">
+                                            <div class="treemap_zoomtarget"></div>
+                                        </div>
+                                        <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+                                    </div>
+                                    <div class="tab-pane" id="procedure-table-panel">
+                                        <table id="procedure_table" class="display">
+                                            <thead>
+                                            <tr>
+                                                <th>Concept Id</th>
+                                                <th>Level 4</th>
+                                                <th>Level 3</th>
+                                                <th>Level 2</th>
+                                                <th>Procedure</th>
+                                                <th>Person Count</th>
+                                                <th>Prevalence</th>
+                                                <th>Records per Person</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="reportProcedureOccurrencesDrilldown" class="hidden reportDrilldown">
+                <div id="procedureDrilldownTitle" class="reportTitle"></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelProcedurePrevalence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Procedure Prevalence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="trellisLinePlot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelProcedureOccurrencePrevalenceByMonth" class="panel panel-default">
+                            <div class="panel-heading">
+                                Procedure Prevalence by Month
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="procedurePrevalenceByMonth"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="panelProceduresByType" class="panel panel-default">
+                            <div class="panel-heading">
+                                Procedures by Type
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="proceduresByType"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="panelAgeAtFirstOccurrence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Age at First Occurrence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="ageAtFirstOccurrence"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reportObservations" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'observations'">
+            <div class="reportTitle">Observations</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Observation Prevalence
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="active"><a href="#observation-treemap-panel">Treemap</a>
+                                    </li>
+                                    <li><a href="#observation-table-panel">Table</a>
+                                    </li>
+                                </ul>
+                                <div id='content' class="tab-content">
+                                    <div class="tab-pane active" id="observation-treemap-panel">
+                                        <div id="treemap_container">
+                                            <div class="treemap_zoomtarget"></div>
+                                        </div>
+                                        <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+                                    </div>
+                                    <div class="tab-pane" id="observation-table-panel">
+                                        <table id="observation_table" class="display">
+                                            <thead>
+                                            <tr>
+                                                <th>Concept Id</th>
+                                                <th>Level 4</th>
+                                                <th>Level 3</th>
+                                                <th>Level 2</th>
+                                                <th>Observation</th>
+                                                <th>Person Count</th>
+                                                <th>Prevalence</th>
+                                                <th>Records per Person</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="reportObservationDrilldown" class="hidden reportDrilldown">
+                <div id="observationDrilldownTitle" class="reportTitle"></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelObservationPrevalence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Observation Prevalence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="trellisLinePlot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelObservationPrevalenceByMonth" class="panel panel-default">
+                            <div class="panel-heading">
+                                Observation Prevalence by Month
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="observationPrevalenceByMonth"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="panelObservationsByType" class="panel panel-default">
+                            <div class="panel-heading">
+                                Observations by Type
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="observationsByType"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="panelAgeAtFirstOccurrence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Age at First Occurrence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="ageAtFirstOccurrence"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ko if: (datasource() && (datasource().cdmVersion || 4)) == 4 -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="panelObservationsByType" class="panel panel-default">
+                            <div class="panel-heading">
+                                Observation Records by Unit
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="recordsByUnit"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="panelAgeAtFirstOccurrence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Observation Value Distribution
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="observationValues"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div id="panelObservationsByType" class="panel panel-default">
+                            <div class="panel-heading">
+                                Lower limit Distribution
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="lowerLimit"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div id="panelAgeAtFirstOccurrence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Upper Limit Distribution
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="upperLimit"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div id="panelAgeAtFirstOccurrence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Values Relative to Normal Range
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="relativeToNorm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /ko -->
+            </div>
+        </div>
+
+        <div id="reportDashboard" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'dashboard'">
+            <div class="reportTitle">Dashboard</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            CDM Summary
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12 personSummary">
+                                <div data-bind="template: {if: dashboardData, name: 'attributeValueTable', data: function() { return dashboardData().SUMMARY}}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Population by Gender
+                        </div>
+                        <div class="panel-body">
+                            <div id="genderPie" style="text-align:center"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Age at First Observation
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div id="ageatfirstobservation" class="chartcontainer"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Cumulative Observation
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div id="cumulativeobservation" class="chartcontainer"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.col-lg-6 -->
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Persons With Continuous Observation By Month
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div id="oppeoplebymonthsingle" class="chartcontainer"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.col-lg-6 -->
+            </div>
+        </div>
+
+        <div id="reportDataDensity" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'datadensity'">
+            <div class="reportTitle">Data Density</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Total Rows
+                        </div>
+                        <div class="panel-body">
+                            <div id="totalrecords"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Records Per Person
+                        </div>
+                        <div class="panel-body">
+                            <div id="recordsperperson"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Concepts Per Person
+                        </div>
+                        <div class="panel-body">
+                            <div id="conceptsperperson"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reportVisitOccurrences" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'visits'">
+            <div class="reportTitle">Visits</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Visit Prevalence
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="active"><a href="#visit-treemap-panel">Treemap</a>
+                                    </li>
+                                    <li><a href="#visit-table-panel">Table</a>
+                                    </li>
+                                </ul>
+                                <div id='content' class="tab-content">
+                                    <div class="tab-pane active" id="visit-treemap-panel">
+                                        <div id="treemap_container">
+                                            <div class="treemap_zoomtarget"></div>
+                                        </div>
+                                        <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+                                    </div>
+                                    <div class="tab-pane" id="visit-table-panel">
+                                        <table id="visit_table" class="display">
+                                            <thead>
+                                            <tr>
+                                                <th>Concept Id</th>
+                                                <th>Visit Type</th>
+                                                <th>Person Count</th>
+                                                <th>Prevalence</th>
+                                                <th>Records per Person</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="reportVisitOccurrencesDrilldown" class="hidden reportDrilldown">
+                <div id="visitDrilldownTitle" class="reportTitle"></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelVisitPrevalence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Visit Prevalence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="trellisLinePlot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelVisitOccurrencePrevalenceByMonth" class="panel panel-default">
+                            <div class="panel-heading">
+                                Visit Prevalence by Month
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="visitPrevalenceByMonth"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="panelVisitDurationByType" class="panel panel-default">
+                            <div class="panel-heading">
+                                Visit Duration by Type
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="visitDurationByType"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="panelAgeAtFirstOccurrence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Age at First Occurrence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="ageAtFirstOccurrence"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reportDeath" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'death'">
+            <div class="reportTitle">Death</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Death Prevalence by Age, Gender, Year
+                        </div>
+                        <div class="panel-body">
+                            <div id="trellisLinePlot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Death Prevalence by Month
+                        </div>
+                        <div class="panel-body">
+                            <div class="drilldown" id="deathPrevalenceByMonth"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div id="panelVisitDurationByType" class="panel panel-default">
+                        <div class="panel-heading">
+                            Death by Type
+                        </div>
+                        <div class="panel-body">
+                            <div id="deathByType"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div id="panelAgeAtDeath" class="panel panel-default">
+                        <div class="panel-heading">
+                            Age at Death
+                        </div>
+                        <div class="panel-body">
+                            <div id="ageAtDeath"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reportMeasurements" class="dataSourceReport" data-bind="visible: datasourceReport().id == 'measurements'">
+            <div class="reportTitle">Measurements</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Measurement Prevalence
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="active"><a href="#measurement-treemap-panel">Treemap</a>
+                                    </li>
+                                    <li><a href="#measurement-table-panel">Table</a>
+                                    </li>
+                                </ul>
+                                <div id='content' class="tab-content">
+                                    <div class="tab-pane active" id="measurement-treemap-panel">
+                                        <div id="treemap_container">
+                                            <div class="treemap_zoomtarget"></div>
+                                        </div>
+                                        <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+                                    </div>
+                                    <div class="tab-pane" id="measurement-table-panel">
+                                        <table id="measurement_table" class="display">
+                                            <thead>
+                                            <tr>
+                                                <th>Concept Id</th>
+                                                <th>Level 4</th>
+                                                <th>Level 3</th>
+                                                <th>Level 2</th>
+                                                <th>Measurement</th>
+                                                <th>Person Count</th>
+                                                <th>Prevalence</th>
+                                                <th>Records per Person</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="reportMeasurementDrilldown" class="hidden reportDrilldown">
+                <div id="measurementDrilldownTitle" class="reportTitle"></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelMeasurementPrevalence" class="panel panel-default">
+                            <div class="panel-heading">
+                                Measurement Prevalence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="trellisLinePlot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="panelMeasurementPrevalenceByMonth" class="panel panel-default">
+                            <div class="panel-heading">
+                                Measurement Prevalence by Month
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="measurementPrevalenceByMonth"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="panelMeasurementByType" class="panel panel-default">
+                            <div class="panel-heading">
+                                Measurement by Type
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="measurementsByType"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Age at First Occurrence
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="ageAtFirstOccurrence"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Measurement Records by Unit
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="recordsByUnit"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Measurement Value Distribution
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="measurementValues"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Lower limit Distribution
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="lowerLimit"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Upper Limit Distribution
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="upperLimit"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Values Relative to Normal Range
+                            </div>
+                            <div class="panel-body">
+                                <div class="drilldown" id="relativeToNorm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+</div>

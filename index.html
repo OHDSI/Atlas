@@ -14,10 +14,12 @@
 	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap-theme.min.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/jquery.datatables.tabletools.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.colVis.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/atlas.dataTables.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/chart.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/achilles.css">
 
 	<title>ATLAS</title>
 	<!--Adobe Edge Runtime-->
@@ -41,6 +43,9 @@
 		<div>
 			<img src="images/atlas.png">
 			<ul>
+				<li>
+					<a href="#/datasources"><i class="fa fa-database"></i></a>
+				</li>
 				<li>
 					<a href="#/search"><i class="fa fa-search"></i></a>
 				</li>
@@ -88,6 +93,9 @@
 			<a href="#/splash">ATLAS</a>
 		</div>
 		<ul>
+			<li>
+				<a href="#/datasources"><i class="fa fa-database"></i>Data Sources</a>
+			</li>
 			<li>
 				<a href="#/search"><i class="fa fa-search"></i>Vocabulary Search</a>
 			</li>
@@ -173,6 +181,10 @@
 
 			<div data-bind="if: pageModel.currentView() == 'cohortdefinitions'">
 				<cohort-definitions params="{model: pageModel}"></cohort-definitions>
+			</div>
+
+			<div data-bind="if: pageModel.currentView() == 'datasources'">
+				<data-sources params="{model: pageModel}"></data-sources>
 			</div>
 
 			<div data-bind="if: pageModel.currentView() == 'cohortdefinition'">

@@ -23,6 +23,9 @@ define([
 				url: 'http://localhost:8080/WebAPI/'
 			}
 		]);
+
+		self.dataSourcesLocation = '/AchillesWeb/data/datasources.json';
+        self.dataSourcesRoot = '/AchillesWeb/data';
 		
 		$('#querytext').focus();
 
@@ -49,6 +52,16 @@ define([
 						require(['concept-manager'], function () {
 							self.currentConceptId(conceptId);
 							self.loadConcept(conceptId);
+						});
+					},
+					'/datasources': function () {
+						require(['data-sources'], function () {
+							self.currentView('datasources');
+						});
+					},
+					'/datasources/:sourceName/:report': function (sourceName, report) {
+						require(['data-sources'], function () {
+							self.currentView('datasources');
 						});
 					},
 					'/cohortdefinitions': function () {
