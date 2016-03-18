@@ -387,5 +387,11 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			pageModel.resolveConceptSetExpression();
 			pageModel.analyzeSelectedConcepts();
 		});
+		
+		$(window).bind('beforeunload', function () {
+			if ((pageModel.currentCohortDefinitionDirtyFlag() && pageModel.currentCohortDefinitionDirtyFlag().isDirty())  || 
+					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()))
+				return "Changes will be lost if you do not save.";
+		});		
 	});
 });
