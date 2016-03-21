@@ -3,10 +3,19 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 		var self = this;
 		self.model = params.model;
 		self.cohortCaption = ko.observable('Click Here to Choose a Cohort');
-		
+        self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
+
+        self.reportTriggerRunSuscription = self.model.reportTriggerRun.subscribe(function (newValue) {
+        	if (newValue) {
+        		self.runReport();
+        	}
+        });
+
 		self.model.reportCohortDefinitionId.subscribe(function(d) {
-			self.cohortCaption(pageModel.cohortDefinitions().filter(function(value) {return value.id == d;})[0].name);
-			$('#cohortDefinitionChooser').modal('hide');
+			if (self.showSelectionArea) {
+				self.cohortCaption(pageModel.cohortDefinitions().filter(function(value) {return value.id == d;})[0].name);
+				$('#cohortDefinitionChooser').modal('hide');				
+			}
 		});
 		
 		self.formatPercent = d3.format('.2%');
@@ -29,6 +38,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 		self.runReport = function runReport() {
 			self.model.loadingReport(true);
 			self.model.activeReportDrilldown(false);
+			self.model.reportTriggerRun(false);
 
 			switch (self.model.reportReportName()) {
 			case 'Template':
@@ -2818,6 +2828,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 			}
 		}
 
+        self.dispose = function () {
+			self.reportTriggerRunSuscription.dispose();
+		}
 	}
 
 	var component = {
