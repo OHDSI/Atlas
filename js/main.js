@@ -11,16 +11,16 @@ requirejs.config({
 	packages: [
 		{
 			name: "databindings",
-			location: "/circe/js/modules/databindings"
+			location: "modules/databindings"
 		},
 		{
 			name: "cohortdefinitionviewer",
-			location: "/circe/js/modules/cohortdefinitionviewer"
+			location: "modules/cohortdefinitionviewer"
 		},
 		{
-			name: "cohortconceptselector",
-			location: "/circe/js/modules/circe"
-        }
+			name: "circe",
+			location: "modules/circe"
+    }
 	],
 	shim: {
 		"colorbrewer": {
@@ -84,11 +84,11 @@ requirejs.config({
 		"lodash": "lodash.min",
 		"lscache": "lscache.min",
 		"localStorageExtender": "localStorageExtender",
-		"cohortbuilder": "/circe/js/modules/cohortbuilder",
-		"conceptsetbuilder": "/circe/js/modules/conceptsetbuilder",
-		"conceptpicker": "/circe/js/modules/conceptpicker",
-		"webapi": "/circe/js/modules/WebAPIProvider",
-		"vocabularyprovider": "/circe/js/modules/WebAPIProvider/VocabularyProvider",
+		"cohortbuilder": "modules/cohortbuilder",
+		"conceptsetbuilder": "modules/conceptsetbuilder",
+		"conceptpicker": "modules/conceptpicker",
+		"webapi": "modules/WebAPIProvider",
+		"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
 		"appConfig": "config"
 	}
 });

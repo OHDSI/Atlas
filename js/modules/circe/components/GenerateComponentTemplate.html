@@ -1,0 +1,6 @@
+<!-- ko ifnot: isRunning -->
+<button class="btn btn-sm btn-primary button-flat-primary button-small generate" data-bind="css: {disable: dirtyFlag().isDirty}, disable: dirtyFlag().isDirty">Generate</button>
+<!-- /ko -->
+<!-- ko if: isRunning -->
+<img class="spin" src="images/running.png" />Generating...
+<!-- /ko -->

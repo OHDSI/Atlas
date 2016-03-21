@@ -542,11 +542,11 @@ label {
 	color: #F19119;
 }
 
-.glyphicon-ok-sign.selected {
-	color: #F19119;
+td.select .fa-check-circle {
+	color: #000;
 }
 
-.glyphicon-ok.selected {
+td.select .fa-check-circle.selected {
 	color: #F19119;
 }
 

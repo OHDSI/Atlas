@@ -1,4 +1,4 @@
-define(['knockout', 'text!./conceptset-browser.html', 'bootstrap', 'cohortconceptselector'], function (ko, view) {
+define(['knockout', 'text!./conceptset-browser.html', 'bootstrap', 'circe'], function (ko, view) {
 	function conceptsetBrowser(params) {
 		var self = this;
 		self.model = params.model;

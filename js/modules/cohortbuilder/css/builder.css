@@ -1,0 +1,202 @@
+div.criteriaGroup {
+	position: relative;
+	margin-top: 15px;
+	margin-bottom: 9px;
+	padding-top: 15px;
+	padding-right: 0px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	border-left: solid 1px #888;
+	border-top: solid 1px #888;
+	border-right: solid 0px black;
+	border-bottom: solid 1px #888;
+}
+div.criteriaGroup div.criteriaHeading {
+	position: absolute;
+	display: inline;
+	top: -14px;
+	margin-left: 10px;
+	padding: 0px 3px 0px 3px;
+	background-color: white;
+}
+div.criteriaGroup div.additionalCriteria {
+	position: relative;
+}
+div.criteriaGroup div.occurrenceSection {
+	position: absolute;
+	top: .5em;
+	left: 1em;
+}
+div.criteriaGroup div.occurrenceSection button {
+	line-height: 1.1em;	
+}
+div.criteriaGroup div.indexWindowSection {
+	position: absolute;
+	bottom: .5em;
+	left: 1em;
+}
+div.criteriaGroup div.additionalCriteria > div > div.criteriaSection {
+	padding-top: 2em;
+	padding-bottom: 2.5em;
+	padding-left: 15px;
+}
+div.criteriaGroup table {
+	width: 100%;
+}
+div.criteriaSection {
+	position: relative;
+	background-color: #eee;
+	border: solid 1px #ccc;
+	padding: 5px;
+	margin: 3px;
+}
+div.criteriaSection > div.addCriterion {
+	position: absolute;
+	top: 3px;
+	right: 5px;
+}
+input.dateField {
+	width: 90px;
+	padding: 0px;
+	line-height: .9em;
+}
+input.codeInput {
+	width: 100px;
+}
+div.ui-datepicker {
+	font-size: 12px;
+}
+img.criteriaType {
+	width: 16px;
+	height: 16px;
+	margin-right: 3px;
+}
+.emptyInput {
+	background-color: #ccc;
+	border: solid 1px #f00 !important;
+}
+.criteriaAddLink {
+	font-size: 10px;
+	color: blue;
+	text-decoration: underline;
+	text-align: right;
+	cursor: pointer;
+	padding-left: 10px;
+}
+img.deleteIcon {
+	padding-bottom: 3px;
+	vertical-align: middle;
+	cursor: pointer;
+}
+table.criteriaTable tbody tr td:first-child {
+	width: 16px;
+	vertical-align: top;
+	padding-top: 4px;
+}
+.numericInputField {
+	padding-left: 3px;
+	padding-right: 3px;
+	margin-right: 3px;
+	line-height: 19px;
+	min-width: 12px;
+	border: solid 1px;
+	display: inline-block;
+	background-color: white;
+	color: black;
+	border-color: gray;
+	text-indent: 0px;
+}
+.dropdown {
+	padding-right: 18px;
+	background-image: url(images/arrow_down.png);
+	background-position: center right;
+	background-repeat: no-repeat;
+}
+.smallInputField {
+	width: 100px;
+}
+.mediumInputField {
+	width: 250px;
+}
+.inputField {
+	background-color: #eee;
+	border-bottom: solid 1px #ccc;
+	border-left: none;
+	border-top: none;
+	border-right: none;
+	padding: 3px;
+	padding-left: 10px;
+	outline: none;
+}
+button.icon {
+	padding: 0px 2px;
+	padding-top: 3px;
+}
+button.icon img {
+	width: 20px;
+	height: 20px;
+}
+button.deletegroup {
+	position: absolute;
+	top: 8px;
+	right: 10px;
+	border-left: solid 3px white;
+	border-right: solid 3px white;
+}
+button.deletecriteria {
+	position: absolute;
+	bottom: 5px;
+	right: 10px;
+}
+
+button.addConceptSet
+{
+	font-size: 10px;
+	color: #000;
+	height: 21px;
+	padding: 0px 4px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 3px;
+	margin-left: -1px;
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
+}
+
+span.conceptList {
+	line-height: 2em;
+}
+.conceptList span.conceptItem {
+	white-space: nowrap;
+	border: solid 1px black;
+	padding: 3px;
+	margin-bottom: 2px;
+	margin-top: 2px;
+	border-radius: 2px 2px 10px 2px;
+	background-color: white;
+}
+.codesetLink {
+	color: blue;
+	cursor: pointer;
+}
+img.codesetLink {
+	vertical-align: sub;
+}
+col.rule {} col.options {
+	width: 250px;
+}
+col.delete {
+	width: 130px;
+}
+.ui-menu {
+	border: solid 1px gray;
+}
+.ui-autocomplete li.ui-menu-item {
+	font-family: arial;
+	font-size: 16px;
+}
+
+.ui-widget {
+	font-family: Verdana, Arial, sans-serif;
+	font-size: .9em;
+}
