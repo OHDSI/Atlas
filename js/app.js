@@ -86,8 +86,7 @@ define([
                     },
                     '/jobs': function () {
                         require(['job-manager'], function () {
-                            self.currentView('loading');
-                            self.loadJobs();
+                            self.currentView('jobs');
                         });
                     },
                     '/reports': function () {
@@ -1512,28 +1511,6 @@ define([
         self.renderHierarchyLink = function (d) {
             var valid = d.INVALID_REASON_CAPTION == 'Invalid' || d.STANDARD_CONCEPT != 'S' ? 'invalid' : '';
             return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-        };
-        self.loadJobs = function () {
-            $.ajax({
-                url: self.services()[0].url + 'job/execution?comprehensivePage=true',
-                method: 'GET',
-                contentType: 'application/json',
-                success: function (jobs) {
-                    for (var j = 0; j < jobs.content.length; j++) {
-                        var startDate = new Date(jobs.content[j].startDate);
-                        jobs.content[j].startDate = startDate.toLocaleDateString() + ' ' + startDate.toLocaleTimeString();
-
-                        var endDate = new Date(jobs.content[j].endDate);
-                        jobs.content[j].endDate = endDate.toLocaleDateString() + ' ' + endDate.toLocaleTimeString();
-
-                        if (jobs.content[j].jobParameters.jobName == undefined) {
-                            jobs.content[j].jobParameters.jobName = 'n/a';
-                        }
-                    }
-                    self.jobs(jobs.content);
-                    self.currentView('jobs');
-                }
-            });
         };
         self.analyzeSelectedConcepts = function () {
             self.selectedConceptsWarnings.removeAll();
