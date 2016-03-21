@@ -3,6 +3,8 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		var self = this;
 		self.model = params.model;
 		self.services = params.services;
+		self.sources = self.services()[0].sources;
+		self.currentRunSource = ko.observable(self.sources[0]);
 		self.panaceaStudyId = ko.observable();
 		self.currentStudy = ko.observable();
 		self.show = ko.observable(false);
@@ -198,6 +200,26 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 
 		self.cancelStudy = function () {
 			document.location = "#/panacea";
+		}
+		
+		self.runStudy = function() {
+			$.ajax({
+				url: self.services()[0].url + 'panacea/runPncTasklet/' + self.currentRunSource().sourceKey + '/' + self.panaceaStudyId(),
+				method: 'GET',
+				success: function () {
+					document.location = "#/panacea";
+				}
+			});
+		}
+		
+		self.runGenerateStudySum = function() {
+			$.ajax({
+				url: self.services()[0].url + 'panacea/runPncFilterSummaryTasklet/' + self.currentRunSource().sourceKey + '/' + self.panaceaStudyId(),
+				method: 'GET',
+				success: function () {
+					document.location = "#/panacea";
+				}
+			});
 		}
 		
 		self.toggleShowConcetpSetImporter = function(){

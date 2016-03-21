@@ -127,6 +127,26 @@
 			</div>
 		</div>
 		
+		<div class="optional-filters" data-bind="if:panaceaStudyId">
+			<h4>Run study</h4>
+			<div class="form-group">
+				<select class="form-control" data-bind="options:sources, optionsText: function(item) {
+                        return item.sourceName;
+                    }, value: currentRunSource" style="width: 150px !important;">
+        		</select>
+        		
+        		<div class="row" style="padding-top:20px;">
+		 			<div class="col-xs-2">
+						<button type="button" class="btn btn-sm btn-primary form-control" style="background" data-bind="click:function() {runGenerateStudySum();} ">Generate study summary</button>
+					</div>
+	 				<div class="col-xs-2">
+						<button type="button" class="btn btn-sm btn-warning form-control" data-bind="click:function() {runStudy();}">Run study</button>
+					</div>
+				</div>
+			</div>
+		
+		</div>
+		
 		<div class="row" style="padding-top:20px;">
  			<div class="col-xs-2">
 				<button type="button" class="btn btn-sm btn-primary form-control" id="pncStdySbmt" data-bind="click:function() {saveStudy();}, enable: isAllValid ">Save</button>
