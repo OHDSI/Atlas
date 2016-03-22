@@ -19,7 +19,7 @@
  */
 /*jslint sloppy: true, white: true, vars: true, nomen: true, eqeq: true, browser: true, plusplus: true */
 /*globals $, jQuery, isInitialisedKey, ko*/
-define(['jquery', 'knockout', 'datatables'], function ($, ko) {
+define(['jquery', 'knockout', 'datatables.net'], function ($, ko) {
 	ko.bindingHandlers.templateDataTable = {
 		'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
 

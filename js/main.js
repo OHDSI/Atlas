@@ -54,7 +54,6 @@ requirejs.config({
 		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/0.11.0/knockout-sortable",
 		"knockout-mapping": "knockout.mapping",
 		"knockout-persist": "knockout.persist",
-		"datatables": "jquery.dataTables.min",
 		"datatables.net": "jquery.dataTables.min",
 		"datatables.net-buttons" : "jquery.dataTables.buttons.min",
 		"datatables.net-buttons-html5" : "jquery.dataTables.buttons.html5.min",
