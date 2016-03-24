@@ -71,6 +71,7 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 						success: function (itemSave) {
 							$('#conceptSetSaveDialog').modal('hide');
 							document.location = '#/conceptset/' + data.id + '/details';
+							self.model.currentConceptSetDirtyFlag.reset();
 						}
 					});
 				}

@@ -67,7 +67,6 @@ requirejs.config({
 		"conceptset-manager": "components/conceptset-manager",
 		"job-manager": "components/job-manager",
 		"importer": "components/importer",
-		"cohort-conceptset-manager": "components/cohort-conceptset-manager",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definition-browser",
