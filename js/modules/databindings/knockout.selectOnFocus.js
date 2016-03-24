@@ -28,10 +28,10 @@
 })(function (ko) {
     function getOptions(valueAccessor) {
         var options = ko.utils.unwrapObservable(valueAccessor());
-        if (options.pattern) {
-            return options;
+        if (options instanceof RegExp) {
+           return {pattern: options};
         } else {
-            return {pattern: options};
+            return options;
         }
     }
 
@@ -56,11 +56,13 @@
     ko.bindingHandlers.selectOnFocus = {
         init: function (element, valueAccessor) {
             var firstFocus = true;
-
+						var options = getOptions(valueAccessor);
+						var events = ko.utils.unwrapObservable(options.events) || ['focus'];
+						var pattern = ko.utils.unwrapObservable(options.pattern);
+					
             function selectContentAsync() {
                 setTimeout(function () {
-                    var options = getOptions(valueAccessor);
-                    var pattern = ko.utils.unwrapObservable(options.pattern);
+										
                     var onlySelectOnFirstFocus = ko.utils.unwrapObservable(options.onlySelectOnFirstFocus);
 
                     if (!onlySelectOnFirstFocus || firstFocus) {
@@ -92,9 +94,11 @@
                 selectContentAsync();
             }
 
-            ko.utils.registerEventHandler(element, 'focus', function (e) {
+            events.forEach(function (e) {
+							ko.utils.registerEventHandler(element, e, function (e) {
                 selectContentAsync();
-            });
+            	});
+						});
         }
     };
 });
