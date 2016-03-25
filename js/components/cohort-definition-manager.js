@@ -5,7 +5,8 @@ define(['knockout',
 				'webapi/CohortDefinitionAPI',
 				'ohdsi.util',
 				'knockout.dataTables.binding',
-				'faceted-datatable'
+				'faceted-datatable',
+				'databindings'
 ], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil) {
 
 	function translateSql(sql, dialect) {

@@ -159,11 +159,11 @@
 
 				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() == 'export'">
 					<div class="heading">Concept Set Expression JSON</div>
-					<pre data-bind="html: model.currentConceptSetExpressionJson"></pre>
+					<pre data-bind="html: model.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']"></pre>
 					<div class="heading">Concept Identifer List</div>
-					<pre data-bind="html: model.currentConceptIdentifierList"></pre>
+					<pre data-bind="html: model.currentConceptIdentifierList, selectOnFocus: {events: ['click']"></pre>
 					<div class="heading">Included Concept Identifer List</div>
-					<pre data-bind="html: model.currentIncludedConceptIdentifierList"></pre>
+					<pre data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']"></pre>
 				</div>
 				<!-- /ko -->
 			</div>
