@@ -59,8 +59,10 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
 				method: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(identifers),
-				success: function (data) {
-					self.model.importedConcepts(data);
+				success: function (data) {                    
+                    // Automatically add these concepts to the active concept set
+                    self.initConceptSet(data);
+					self.model.importedConcepts(data);                    
 				}
 			});
 		}
@@ -73,10 +75,33 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
 				contentType: 'application/json',
 				data: JSON.stringify(sourcecodes),
 				success: function (data) {
+                    // Automatically add these concepts to the active concept set
+                    self.initConceptSet(data);                    
 					self.model.importedConcepts(data);
 				}
 			});
 		}
+        
+        self.initConceptSet = function(conceptSetItems) {
+            if (self.model.currentConceptSet() == undefined) {
+                self.model.currentConceptSet({
+                    name: ko.observable("New Concept Set"),
+                    id: 0
+                });
+                self.model.currentConceptSetSource('repository');
+            }
+
+            for (var i = 0; i < conceptSetItems.length; i++) {
+                var conceptSetItem = self.model.createConceptSetItem(conceptSetItems[i]);                        
+                self.model.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
+                self.model.selectedConcepts.push(conceptSetItem);
+            }
+        }
+        
+        self.clearImportedConceptSet = function(textArea) {
+            $(textArea).val('');
+            self.model.importedConcepts([]);
+        }
 
 		self.tabMode.subscribe(function (value) {
 			switch (value) {
