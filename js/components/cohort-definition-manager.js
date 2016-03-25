@@ -89,6 +89,7 @@ define(['knockout',
 
 			// reset view after save
 			cohortDefinitionAPI.deleteCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
+				self.model.currentCohortDefinition(null);
 				console.log("Deleted...");
 				document.location = "#/cohortdefinitions"
 			});
