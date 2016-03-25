@@ -92,9 +92,11 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
             }
 
             for (var i = 0; i < conceptSetItems.length; i++) {
-                var conceptSetItem = self.model.createConceptSetItem(conceptSetItems[i]);                        
-                self.model.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
-                self.model.selectedConcepts.push(conceptSetItem);
+                if (self.model.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] != 1) {
+                    self.model.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
+                    var conceptSetItem = self.model.createConceptSetItem(conceptSetItems[i]);
+                    self.model.selectedConcepts.push(conceptSetItem);
+                }
             }
         }
         
