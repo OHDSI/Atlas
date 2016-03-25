@@ -58,12 +58,6 @@ define([
                         });
                     },
                     '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
-                        /*
-                        require(['cohort-conceptset-manager', 'conceptset-editor'], function () {
-                            self.currentConceptSetMode(mode)
-                            self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortconceptset', mode);
-                        });
-                        */
                         require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor'], function (CohortDefinition) {
                             self.currentView('cohortdefinition');
                             self.currentCohortDefinitionMode('conceptsets');
