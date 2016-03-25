@@ -1358,7 +1358,7 @@ define([
             // resolve it with the vocabulary web service to ensure we have all of the appropriate 
             // properties
             var conceptPromise;
-            if (conceptSet.expression.items() && !conceptSet.expression.items()[0].concept.STANDARD_CONCEPT) {
+            if (conceptSet.expression.items() && conceptSet.expression.items().length > 0 &&  !conceptSet.expression.items()[0].concept.STANDARD_CONCEPT) {
                 var identifiers = $.makeArray(
                     $(conceptSet.expression.items()).map(
                         function () {
