@@ -31,6 +31,14 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
 		self.importConceptSetExpression = function () {
 			var expressionJson = $('#textImportConceptSet').val();
 			var items = JSON.parse(expressionJson).items;
+			if (pageModel.currentConceptSet() == undefined) {
+				pageModel.currentConceptSet({
+					name: ko.observable('New Concept Set'),
+					id: 0
+				});
+				pageModel.currentConceptSetSource('repository');
+			}			
+			
 			for (var i = 0; i < items.length; i++) {
 				var conceptSetItem = {}
 
