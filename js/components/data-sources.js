@@ -26,6 +26,7 @@ define([
         self.datasource = ko.observable();
         self.datasources = ko.observableArray();
         self.datasourceReport = ko.observable();
+        self.reportView = ko.observable('treemap');
         self.datasourceReports = ko.observableArray([{id: 'dashboard', name: 'Dashboard'},
             {id: 'achillesheel', name: 'Achilles Heel'},
             {id: 'person', name: 'Person'},
@@ -147,6 +148,10 @@ define([
 
             document.location = '#/datasources/' + data.name + '/' + self.datasourceReport().id;
             //document.location = '#/datasources/' + data.name + '/dashboard';
+        }
+
+        self.setReportView = function(viewName) {
+            self.reportView(viewName);
         }
 
         self.setReport = function(report) {
