@@ -293,19 +293,17 @@
                         <div class="panel-body">
                             <div class="col-sm-12">
                                 <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active"><a href="#drugera_treemap_panel">Treemap</a>
-                                    </li>
-                                    <li><a href="#drugera_table_panel">Table</a>
-                                    </li>
+                                    <li><a data-bind="click: function() { setReportView('treemap'); }">Treemap</a></li>
+                                    <li><a data-bind="click: function() { setReportView('table'); }">Table</a></li>
                                 </ul>
                                 <div id='content' class="tab-content">
-                                    <div class="tab-pane active" id="drugera_treemap_panel">
+                                    <div id="drugera-treemap-panel" data-bind="visible: reportView() == 'treemap'">
                                         <div id="treemap_container">
                                             <div class="treemap_zoomtarget"></div>
                                         </div>
                                         <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
                                     </div>
-                                    <div class="tab-pane" id="drugera_table_panel">
+                                    <div id="drugera-table-panel" data-bind="visible: reportView() == 'table'">
                                         <table id="drugera_table" class="display">
                                             <thead>
                                             <tr>
@@ -389,20 +387,18 @@
                         <div class="panel-body">
                             <div class="col-sm-12">
                                 <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active"><a href="#drug_treemap_panel">Treemap</a>
-                                    </li>
-                                    <li><a href="#drug_table_panel">Table</a>
-                                    </li>
+                                    <li><a data-bind="click: function() { setReportView('treemap'); }">Treemap</a></li>
+                                    <li><a data-bind="click: function() { setReportView('table'); }">Table</a></li>
                                 </ul>
                                 <div id='content' class="tab-content">
-                                    <div class="tab-pane active" id="drug_treemap_panel">
+                                    <div id="drug-treemap-panel" data-bind="visible: reportView() == 'treemap'">
                                         <div id="treemap_container">
                                             <div class="treemap_zoomtarget"></div>
                                         </div>
 
                                         <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
                                     </div>
-                                    <div class="tab-pane" id="drug_table_panel">
+                                    <div id="drug-table-panel" data-bind="visible: reportView() == 'table'">
                                         <table id="drug_table" class="display">
                                             <thead>
                                             <tr>
@@ -519,19 +515,17 @@
                         <div class="panel-body">
                             <div class="col-sm-12">
                                 <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active"><a href="#conditionera-treemap-panel">Treemap</a>
-                                    </li>
-                                    <li><a href="#conditionera-table-panel">Table</a>
-                                    </li>
+                                    <li><a data-bind="click: function() { setReportView('treemap'); }">Treemap</a></li>
+                                    <li><a data-bind="click: function() { setReportView('table'); }">Table</a></li>
                                 </ul>
                                 <div id='content' class="tab-content">
-                                    <div class="tab-pane active" id="conditionera-treemap-panel">
+                                    <div id="conditionera-treemap-panel" data-bind="visible: reportView() == 'treemap'">
                                         <div id="treemap_container">
                                             <div class="treemap_zoomtarget"></div>
                                         </div>
                                         <div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
                                     </div>
-                                    <div class="tab-pane" id="conditionera-table-panel">
+                                    <div id="conditionera-table-panel" data-bind="visible: reportView() == 'table'">
                                         <table id="conditionera_table" class="display">
                                             <thead>
                                             <tr>
@@ -616,19 +610,17 @@
                         <div class="panel-body">
                             <div class="col-sm-12">
                                 <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active"><a href="#condition-treemap-panel">Treemap</a>
-                                    </li>
-                                    <li><a href="#condition-table-panel">Table</a>
-                                    </li>
+                                    <li><a data-bind="click: function() { setReportView('treemap'); }">Treemap</a></li>
+                                    <li><a data-bind="click: function() { setReportView('table'); }">Table</a></li>
                                 </ul>
                                 <div id='content' class="tab-content">
-                                    <div class="tab-pane active" id="condition-treemap-panel">
+                                    <div id="condition-treemap-panel" data-bind="visible: reportView() == 'treemap'">
                                         <div id="treemap_container">
                                             <div class="treemap_zoomtarget"></div>
                                         </div>
                                         <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
                                     </div>
-                                    <div class="tab-pane" id="condition-table-panel">
+                                    <div id="condition-table-panel" data-bind="visible: reportView() == 'table'">
                                         <table id="condition_table" class="display">
                                             <thead>
                                             <tr>
@@ -713,19 +705,17 @@
                         <div class="panel-body">
                             <div class="col-sm-12">
                                 <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active"><a href="#procedure-treemap-panel">Treemap</a>
-                                    </li>
-                                    <li><a href="#procedure-table-panel">Table</a>
-                                    </li>
+                                    <li><a data-bind="click: function() { setReportView('treemap'); }">Treemap</a></li>
+                                    <li><a data-bind="click: function() { setReportView('table'); }">Table</a></li>
                                 </ul>
                                 <div id='content' class="tab-content">
-                                    <div class="tab-pane active" id="procedure-treemap-panel">
+                                    <div id="procedure-treemap-panel" data-bind="visible: reportView() == 'treemap'">
                                         <div id="treemap_container">
                                             <div class="treemap_zoomtarget"></div>
                                         </div>
                                         <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
                                     </div>
-                                    <div class="tab-pane" id="procedure-table-panel">
+                                    <div id="procedure-table-panel" data-bind="visible: reportView() == 'table'">
                                         <table id="procedure_table" class="display">
                                             <thead>
                                             <tr>
@@ -809,19 +799,17 @@
                         <div class="panel-body">
                             <div class="col-sm-12">
                                 <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active"><a href="#observation-treemap-panel">Treemap</a>
-                                    </li>
-                                    <li><a href="#observation-table-panel">Table</a>
-                                    </li>
+                                    <li><a data-bind="click: function() { setReportView('treemap'); }">Treemap</a></li>
+                                    <li><a data-bind="click: function() { setReportView('table'); }">Table</a></li>
                                 </ul>
                                 <div id='content' class="tab-content">
-                                    <div class="tab-pane active" id="observation-treemap-panel">
+                                    <div id="observation-treemap-panel" data-bind="visible: reportView() == 'treemap'">
                                         <div id="treemap_container">
                                             <div class="treemap_zoomtarget"></div>
                                         </div>
                                         <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
                                     </div>
-                                    <div class="tab-pane" id="observation-table-panel">
+                                    <div id="observation-table-panel" data-bind="visible: reportView() == 'table'">
                                         <table id="observation_table" class="display">
                                             <thead>
                                             <tr>
@@ -1078,19 +1066,17 @@
                         <div class="panel-body">
                             <div class="col-sm-12">
                                 <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active"><a href="#visit-treemap-panel">Treemap</a>
-                                    </li>
-                                    <li><a href="#visit-table-panel">Table</a>
-                                    </li>
+                                    <li><a data-bind="click: function() { setReportView('treemap'); }">Treemap</a></li>
+                                    <li><a data-bind="click: function() { setReportView('table'); }">Table</a></li>
                                 </ul>
                                 <div id='content' class="tab-content">
-                                    <div class="tab-pane active" id="visit-treemap-panel">
+                                    <div id="visit-treemap-panel" data-bind="visible: reportView() == 'treemap'">
                                         <div id="treemap_container">
                                             <div class="treemap_zoomtarget"></div>
                                         </div>
                                         <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
                                     </div>
-                                    <div class="tab-pane" id="visit-table-panel">
+                                    <div id="visit-table-panel" data-bind="visible: reportView() == 'table'">
                                         <table id="visit_table" class="display">
                                             <thead>
                                             <tr>
@@ -1221,19 +1207,17 @@
                         <div class="panel-body">
                             <div class="col-sm-12">
                                 <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active"><a href="#measurement-treemap-panel">Treemap</a>
-                                    </li>
-                                    <li><a href="#measurement-table-panel">Table</a>
-                                    </li>
+                                    <li><a data-bind="click: function() { setReportView('treemap'); }">Treemap</a></li>
+                                    <li><a data-bind="click: function() { setReportView('table'); }">Table</a></li>
                                 </ul>
                                 <div id='content' class="tab-content">
-                                    <div class="tab-pane active" id="measurement-treemap-panel">
+                                    <div id="measurement-treemap-panel" data-bind="visible: reportView() == 'treemap'">
                                         <div id="treemap_container">
                                             <div class="treemap_zoomtarget"></div>
                                         </div>
                                         <div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Blue to Orange = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
                                     </div>
-                                    <div class="tab-pane" id="measurement-table-panel">
+                                    <div id="measurement-table-panel" data-bind="visible: reportView() == 'table'">
                                         <table id="measurement_table" class="display">
                                             <thead>
                                             <tr>

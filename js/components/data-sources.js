@@ -26,6 +26,7 @@ define([
         self.datasource = ko.observable();
         self.datasources = ko.observableArray();
         self.datasourceReport = ko.observable();
+        self.reportView = ko.observable('treemap');
         self.datasourceReports = ko.observableArray([{id: 'dashboard', name: 'Dashboard'},
             {id: 'achillesheel', name: 'Achilles Heel'},
             {id: 'person', name: 'Person'},
@@ -149,6 +150,10 @@ define([
             //document.location = '#/datasources/' + data.name + '/dashboard';
         }
 
+        self.setReportView = function(viewName) {
+            self.reportView(viewName);
+        }
+
         self.setReport = function(report) {
             self.datasourceReport(report);
             var reportId = report.id;
@@ -165,20 +170,28 @@ define([
                 reports.DataDensity.render(self.datasource());
             if (reportId == 'conditions')
                 reports.ConditionOccurrence.render(self.datasource());
+                self.setReportView('treemap');
             if (reportId == 'conditioneras')
                 reports.ConditionEra.render(self.datasource());
+                self.setReportView('treemap');
             if (reportId == 'measurement')
                 reports.Measurement.render(self.datasource());
+                self.setReportView('treemap');
             if (reportId == 'observations')
                 reports.Observation.render(self.datasource());
+                self.setReportView('treemap');
             if (reportId == 'drugeras')
                 reports.DrugEra.render(self.datasource());
+                self.setReportView('treemap');
             if (reportId == 'drugs')
                 reports.DrugExposure.render(self.datasource());
+                self.setReportView('treemap');
             if (reportId == 'procedures')
                 reports.ProcedureOccurrence.render(self.datasource());
+                self.setReportView('treemap');
             if (reportId == 'visits')
                 reports.VisitOccurrence.render(self.datasource());
+                self.setReportView('treemap');
             if (reportId == 'death')
                 reports.Death.render(self.datasource());
             document.location = '#/datasources/' + self.datasource().name + '/' + reportId;
@@ -768,9 +781,6 @@ function getUrlFromData(datasource, name){
         return;
     }
 
-    var parent = "";
-    var pth = "";
-
     parent = pageModel.dataSourcesRoot;
     pth = parent + "/" + datasource.folder + "/" + name + ".json"
 
@@ -799,6 +809,10 @@ function getUrlFromDataCollection(datasource, name, id){
     }else if ( datasource.folder !== undefined){
         pth += "data/" + datasource.folder + "/" + name + "/" + collectionFormats[name].replace("{id}", id);
     }
+
+
+    parent = pageModel.dataSourcesRoot;
+    pth = parent + "/" + datasource.folder + "/" + name + "/" + collectionFormats[name].replace("{id}", id);
 
     return pth;
 }

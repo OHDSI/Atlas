@@ -55,7 +55,7 @@
 
 					$.ajax({
 						type: "GET",
-						url:  getUrlFromDataCollection(page_vm.datasource(), "drugeras", concept_id),
+						url:  getUrlFromDataCollection(self.datasource, "drugeras", concept_id),
 						success: function (data) {
 
 							// boxplots

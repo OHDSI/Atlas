@@ -26,7 +26,7 @@
 
 					$.ajax({
 						type: "GET",
-						url: getUrlFromDataCollection(page_vm.datasource(), "visits", concept_id),
+						url: getUrlFromDataCollection(self.datasource, "visits", concept_id),
 						success: function (data) {
 
 							// render trellis

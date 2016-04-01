@@ -8,6 +8,7 @@ define([
 	'knockout-persist'
 ], function ($, ko, jnj_chart, d3) {
 	var appModel = function () {
+
 		$.support.cors = true;
 		var self = this;
 		
@@ -1365,6 +1366,7 @@ define([
 		self.selectConcept = function (concept) {
 			document.location = '#/concept/' + concept.CONCEPT_ID;
 		};
+
 	}
 	return appModel;
 });

@@ -26,7 +26,7 @@
 
 					$.ajax({
 						type: "GET",
-						url: getUrlFromDataCollection(page_vm.datasource(), "conditions", concept_id),
+						url: getUrlFromDataCollection(self.datasource, "conditions", concept_id),
 						success: function (data) {
 							// age at first diagnosis visualization
 							var boxplot = new jnj_chart.boxplot();
