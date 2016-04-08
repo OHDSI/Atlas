@@ -29,9 +29,24 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
                 document.location = "#/conceptsets";
             }
 		};
+
+		self.conceptSetNameChanged = self.model.currentConceptSet().name.subscribe(function (newValue) {
+            if ($.trim(newValue) == "New Concept Set") {
+            	$("#txtConceptSetName").css({'background-color' : '#FF0000'});
+            } else {
+            	$("#txtConceptSetName").css({'background-color' : ''});
+            }
+        }); 
 		
 		self.saveConceptSet = function () {
 			var conceptSet = {};
+
+			if (self.model.currentConceptSet() && self.model.currentConceptSet().name() == "New Concept Set") {
+				self.model.currentConceptSet().name.valueHasMutated();
+				alert('Please provide a different name for your concept set');
+				$("#txtConceptSetName").focus();
+				return;
+			}
 
 			if (self.model.currentConceptSet() == undefined) {
 				conceptSet.name = self.conceptSetName();
