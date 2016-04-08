@@ -17,6 +17,7 @@ define(['knockout',
 		self.tabMode = ko.observable('expression');
 		self.tabWidget = ko.observable();
 		self.cohortExpressionEditor = ko.observable();
+        /*
 		self.modifiedJSON = "";
 		self.expressionJSON = ko.pureComputed({
 			read: function () {
@@ -32,7 +33,8 @@ define(['knockout',
 				self.modifiedJSON = value;
 			}
 		});
-
+        */
+        
 		// model behaviors
 
 		self.handleConceptSetSelect = function (item) {
@@ -52,11 +54,13 @@ define(['knockout',
 				self.model.criteriaContext(null);
 		}
 
+        /*
 		self.reload = function () {
 			var updatedExpression = JSON.parse(self.modifiedJSON);
 			self.model.currentCohortDefinition().expression(new CohortExpression(updatedExpression));
 		}
-
+        */
+        
 		self.onGenerate = function (generateComponent) {
 			var generatePromise = cohortDefinitionAPI.generate(self.model.currentCohortDefinition().id(), generateComponent.source.sourceKey);
 			generatePromise.then(function (result) {

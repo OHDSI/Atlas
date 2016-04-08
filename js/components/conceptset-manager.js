@@ -44,7 +44,7 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 			if (self.model.currentConceptSet() && self.model.currentConceptSet().name() == "New Concept Set") {
 				self.model.currentConceptSet().name.valueHasMutated();
 				alert('Please provide a different name for your concept set');
-				$("#txtConceptSetName").focus();
+				$("#txtConceptSetName").select().focus();
 				return;
 			}
 

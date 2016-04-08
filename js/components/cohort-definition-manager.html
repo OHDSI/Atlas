@@ -35,6 +35,9 @@
 
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'printfriendly' }, click: function() { $component.tabMode('printfriendly') };"><a>Print Friendly</a>
 			</li>
+            
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>JSON</a>
+			</li>
 
 		</ul>
 		<!-- ko if: isGeneratedOpen -->
@@ -264,6 +267,10 @@
                 <div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingReport()">loading</div>
                 <report-manager params="{model: pageModel, showSelectionArea: false}"></report-manager>
 			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
+                <textarea style="width: 100%; height: 500px" data-bind="textInput: $component.expressionJSON"></textarea>
+				<div style="text-align: right"><button class="btn btn-sm btn-primary" data-bind="click: $component.reload">Reload</button></div>
+			</div>            
 		</div>
 	</div>
 </div>

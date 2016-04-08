@@ -4,10 +4,11 @@ define(['knockout',
 				'cohortbuilder/CohortDefinition',
 				'webapi/CohortDefinitionAPI',
 				'ohdsi.util',
+                'cohortbuilder/CohortExpression',
 				'knockout.dataTables.binding',
 				'faceted-datatable',
 				'databindings'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil, CohortExpression) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -53,6 +54,22 @@ define(['knockout',
 		});
 		self.isSaveable = ko.pureComputed(function () {
 			return self.dirtyFlag() && self.dirtyFlag().isDirty() && self.isRunning();
+		});
+
+        self.modifiedJSON = "";
+		self.expressionJSON = ko.pureComputed({
+			read: function () {
+				return ko.toJSON(self.model.currentCohortDefinition().expression(), function (key, value) {
+					if (value === 0 || value) {
+						return value;
+					} else {
+						return
+					}
+				}, 2);
+			},
+			write: function (value) {
+				self.modifiedJSON = value;
+			}
 		});
 
 		// model behaviors
@@ -299,6 +316,10 @@ define(['knockout',
             }
         }
 
+        self.reload = function () {
+			var updatedExpression = JSON.parse(self.modifiedJSON);
+			self.model.currentCohortDefinition().expression(new CohortExpression(updatedExpression));
+		}
 
 		// dispose subscriptions
 		self.dispose = function () {
