@@ -55,10 +55,8 @@ requirejs.config({
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
 		"lodash": "lodash.min",
-		"achilles":"components/datasources/app/achilles",
 		"common":"components/datasources/app/common",
-		"reports": "components/datasources/app/reports",
-        "sammy": "sammy-0.7.5.min"
+		"reports": "components/datasources/app/reports"
 	}
 });
 

@@ -202,7 +202,6 @@ define([
     function updateDashboard(data) {
         var result = data;
 
-        //define(['jnj_chart', 'common'], function (jnj_chart, common) {
             d3.selectAll("#reportDashboard #genderPie svg").remove();
             genderDonut = new jnj_chart.donut();
             genderDonut.render(common.mapConceptData(result.GENDER_DATA), "#reportDashboard #genderPie", 260, 100, {
@@ -273,8 +272,6 @@ define([
                 xLabel: "Date",
                 yLabel: "People"
             });
-
-        //});
     }
 
     function updateObservationPeriods(data) {
@@ -533,186 +530,6 @@ define([
         });
     }
 
-    /* define(["knockout-amd-helpers"], function () {
-     ko.amdTemplateEngine.defaultPath = "/components/datasources/templates";
-     ko.applyBindings(viewModel);
-     }); */
-
-    /* define(['sammy'], function (Sammy) {
-     var app = Sammy(function () {
-     this.get('#/:name/dashboard', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-     self.loadDashboard();
-     $('#reportDashboard').show();
-     report = 'dashboard';
-     });
-
-     this.get('#/:name/achillesheel', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.AchillesHeel.render(self.datasource());
-     $('#reportAchillesHeel').show();
-     report = 'achillesheel';
-     });
-
-     this.get('#/:name/person', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-     self.loadPerson();
-     $('#reportPerson').show();
-     report = 'person';
-     });
-
-     this.get('#/:name/conditions', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.ConditionOccurrence.render(self.datasource());
-     $('#reportConditionOccurrences').show();
-     report = 'conditions';
-     });
-
-     this.get('#/:name/conditioneras', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.ConditionEra.render(self.datasource());
-     $('#reportConditionEras').show();
-     report = 'conditioneras';
-     });
-
-     this.get('#/:name/drugs', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.DrugExposure.render(self.datasource());
-     $('#reportDrugExposures').show();
-     report = 'drugs';
-     });
-
-     this.get('#/:name/drugeras', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.DrugEra.render(self.datasource());
-     $('#reportDrugEras').show();
-     report = 'drugeras';
-     });
-
-     this.get('#/:name/procedures', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.ProcedureOccurrence.render(self.datasource());
-     $('#reportProcedureOccurrences').show();
-     report = 'procedures';
-     });
-
-     this.get('#/:name/observationperiods', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-     self.loadObservationPeriods();
-     $('#reportObservationPeriods').show();
-     report = 'observationperiods';
-     });
-
-     this.get('#/:name/datadensity', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.DataDensity.render(self.datasource());
-     $('#reportDataDensity').show();
-     report = 'datadensity';
-     });
-
-     this.get('#/:name/observations', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.Observation.render(self.datasource());
-     $('#reportObservations').show();
-     report = 'observations';
-     });
-
-     this.get('#/:name/visits', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.VisitOccurrence.render(self.datasource());
-     $('#reportVisitOccurrences').show();
-     report = 'visits';
-     });
-
-     this.get('#/:name/death', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.Death.render(self.datasource());
-     $('#reportDeath').show();
-     report = 'death';
-     });
-
-     this.get('#/:name/measurement', function (context) {
-     $('.report').hide();
-     self.datasource(self.datasources.filter(function (d) {
-     return d.name == this.params['name'];
-     }, this)[0]);
-
-     reports.Measurement.render(self.datasource());
-     $('#reportMeasurement').show();
-     report = 'measurement';
-     });
-
-     });
-
-     $(function () {
-     $.ajax({
-     cache: false,
-     type: "GET",
-     url: datasourcepath,
-     contentType: "application/json; charset=utf-8"
-     }).done(function (root) {
-     self.datasources = root.datasources;
-
-     for (i = 0; i < root.datasources.length; i++) {
-     $('#dropdown-datasources').append('<li onclick="setDatasource(' + i + ');">' + root.datasources[i].name + '</li>');
-     }
-     self.datasource(self.datasources[0]);
-     app.run('#/' + self.datasource().name + '/dashboard');
-     });
-
-     });
-     }); */
-    /* return viewModel; */
-
     var component = {
         viewModel: dataSources,
         template: view
@@ -722,7 +539,6 @@ define([
     return component;
 
 });
-
 
 var	simpledata = [ "achillesheel", "condition_treemap", "conditionera_treemap", "dashboard", "datadensity", "death", "drug_treemap", "drugera_treemap", "measurement_treemap", "observation_treemap", "observationperiod", "person", "procedure_treemap", "visit_treemap"];
 var collectionFormats = {
