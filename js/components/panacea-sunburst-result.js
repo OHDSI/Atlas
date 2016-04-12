@@ -4,6 +4,8 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3'], func
 		self.model = params.model;
 		self.services = params.services;
 		self.panaceaResultStudyId = ko.observable();
+		self.sources = self.services()[0].sources;
+		self.currentResultSource = ko.observable();
 
 		if (self.model != null && self.model.hasOwnProperty('panaceaResultStudyId')){
 			self.panaceaResultStudyId(params.model.panaceaResultStudyId);
@@ -36,88 +38,99 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3'], func
 			.innerRadius(function(d) { return Math.max(0, y(d.y)); })
 			.outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-//TODO !!! -- add sourceId
-		var url = self.services()[0].url + 'panacea/getStudySummary/' + self.panaceaResultStudyId() + '/1';
-		d3.json(url, function(error, root) {
-			if (error) {
-				throw error;
-			}
+//		var url = self.services()[0].url + 'panacea/getStudySummary/' + self.panaceaResultStudyId() + '/' + self.currentResultSource().sourceId;
+		
+		self.currentResultSource.subscribe(function (d) {
+			
+			var url = self.services()[0].url + 'panacea/getStudySummary/' + self.panaceaResultStudyId() + '/' + self.currentResultSource().sourceId;
+			
+			d3.json(url, function(error, root) {
+				if (error) {
+					svg.selectAll("path").remove();
+					svg.selectAll("g").remove();
+				}else{
+					svg.selectAll("path").remove();
+					svg.selectAll("g").remove();
+					
+					if(!(root["studyResultFiltered"] === undefined || root["studyResultFiltered"] === null)) {
+						var changedRoot = JSON.parse(root["studyResultFiltered"]);
+						
+						var path = svg.selectAll("path")
+							.data(partition.nodes(changedRoot))
+							.enter().append("path")
+							.attr("d", arc)
+							.style("fill-rule", "evenodd")
+							.style("fill", function(d) { return color(d.conceptName); })
+						;
+						//comment out for not letting zoom in/out
+						//      .on("click", click);
 
-			var changedRoot = JSON.parse(root["studyResultFiltered"]);
-  
-			var path = svg.selectAll("path")
-				.data(partition.nodes(changedRoot))
-				.enter().append("path")
-				.attr("d", arc)
-				.style("fill-rule", "evenodd")
-				.style("fill", function(d) { return color(d.conceptName); })
-			;
-//comment out for not letting zoom in/out
-			//      .on("click", click);
 
+						//draw legend below.....
+						var legendRectSize = 18;
+						var legendSpacing = 4;
 
-			//draw legend below.....
-			var legendRectSize = 18;
-			var legendSpacing = 4;
+						var legend = svg.selectAll('.legend')
+							.data(color.domain())
+							.enter()
+							.append('g')
+							.attr('class', 'pnc-legend')
+							.attr('transform', function(d, i) {
+								var height = legendRectSize + legendSpacing;
+								var offset =  height * color.domain().length / 2;
+								//var horz = -2 * legendRectSize;
+								var horz = -25 * legendRectSize;
+								var vert = i * height - offset;
 
-			var legend = svg.selectAll('.legend')
-				.data(color.domain())
-				.enter()
-				.append('g')
-				.attr('class', 'pnc-legend')
-				.attr('transform', function(d, i) {
-					var height = legendRectSize + legendSpacing;
-					var offset =  height * color.domain().length / 2;
-					//var horz = -2 * legendRectSize;
-					var horz = -25 * legendRectSize;
-					var vert = i * height - offset;
+								if(i == 0)
+									return 'translate(-1000,-1000)';
+								return 'translate(' + horz + ',' + vert + ')';
+							});
 
-					if(i == 0)
-						return 'translate(-1000,-1000)';
-					return 'translate(' + horz + ',' + vert + ')';
-				});
+						legend.append('rect')
+							.attr('width', legendRectSize)
+							.attr('height', legendRectSize)
+							.attr('class','pnc-rect')
+							.style('fill', color)
+							.style('stroke', color);
 
-			legend.append('rect')
-				.attr('width', legendRectSize)
-				.attr('height', legendRectSize)
-				.attr('class','pnc-rect')
-				.style('fill', color)
-				.style('stroke', color);
+						legend.append('text')
+							.attr('x', legendRectSize + legendSpacing)
+							.attr('y', legendRectSize - legendSpacing)
+							.text(function(d) { return d; });
+						//draw legend done.........
 
-			legend.append('text')
-				.attr('x', legendRectSize + legendSpacing)
-				.attr('y', legendRectSize - legendSpacing)
-				.text(function(d) { return d; });
-			//draw legend done.........
+						//add tootip here.....
+						var tooltip = d3.select("body")
+							.append('div')
+							.attr('class', 'pnc-tooltip');
 
-			//add tootip here.....
-			var tooltip = d3.select("body")
-				.append('div')
-				.attr('class', 'pnc-tooltip');
+						tooltip.append('div')
+							.attr('class', 'pnc-tooltip-label');
 
-			tooltip.append('div')
-				.attr('class', 'pnc-tooltip-label');
+						tooltip.append('div')
+							.attr('class', 'pnc-tooltip-duration');
 
-			tooltip.append('div')
-				.attr('class', 'pnc-tooltip-duration');
+						path.on('mouseover', function(d) {
+							tooltip.select('.pnc-tooltip-label').html(d.conceptName + ":" + d.patientCount + ":" + d.percentage + "%");
+							tooltip.select('.pnc-tooltip-duration').html( d.avgDuration + " days:" + d.avgGapDay + ":" + d.gapPercent + "%");
+							tooltip.style('display', 'block');
+						});
 
-			path.on('mouseover', function(d) {
-				tooltip.select('.pnc-tooltip-label').html(d.conceptName + ":" + d.patientCount + ":" + d.percentage + "%");
-				tooltip.select('.pnc-tooltip-duration').html( d.avgDuration + " days:" + d.avgGapDay + ":" + d.gapPercent + "%");
-				tooltip.style('display', 'block');
+						path.on('mouseout', function() {
+							tooltip.style('display', 'none');
+						});
+						//tooltip done here......
+
+						self.click = function (d) {
+							path.transition()
+							.duration(750)
+							.attrTween("d", arcTween(d));
+						}			
+					}
+				}
 			});
-
-			path.on('mouseout', function() {
-				tooltip.style('display', 'none');
-			});
-			//tooltip done here......
-
-			self.click = function (d) {
-				path.transition()
-				.duration(750)
-				.attrTween("d", arcTween(d));
-			}
-		});
+		});	
 
 		d3.select(self.frameElement).style("height", height + "px");
 

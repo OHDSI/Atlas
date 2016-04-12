@@ -3,6 +3,14 @@
 		<i class="fa fa-briefcase"></i> Pathways
 	</div>
 
+	<div class="form-group">
+		<label class="heading">Result Source</label>
+		<select class="form-control" data-bind="options:sources, optionsText: function(item) {
+                      return item.sourceName;
+                  }, value: currentResultSource" style="width: 150px !important;">
+   		</select>
+	</div>
+
 	<div id="pnc_sunburst_result_div">
 	</div>
 
