@@ -45,9 +45,9 @@ requirejs.config({
 				 'css!styles/jquery.dataTables.colVis.css'
 	],
 	paths: {
-		"jquery": "//code.jquery.com/jquery-1.11.2.min",
-		"jquery-ui": "//code.jquery.com/ui/1.11.4/jquery-ui.min",
-		"bootstrap": "//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
+		"jquery": "https://code.jquery.com/jquery-1.11.2.min",
+		"jquery-ui": "https://code.jquery.com/ui/1.11.4/jquery-ui.min",
+		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"text": "plugins/text",
 		"css": "plugins/css.min",
 		"knockout": "knockout.min",

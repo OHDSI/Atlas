@@ -4,6 +4,7 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 		self.model = params.model;
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
+		self.defaultConceptSetName = "New Concept Set";
 
 		self.renderLink = function (s, p, d) {
 			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
@@ -31,7 +32,7 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 		};
 
 		self.conceptSetNameChanged = self.model.currentConceptSet().name.subscribe(function (newValue) {
-            if ($.trim(newValue) == "New Concept Set") {
+            if ($.trim(newValue) == self.defaultConceptSetName) {
             	$("#txtConceptSetName").css({'background-color' : '#FF0000'});
             } else {
             	$("#txtConceptSetName").css({'background-color' : ''});
@@ -40,59 +41,90 @@ define(['knockout', 'text!./conceptset-manager.html', 'knockout.dataTables.bindi
 		
 		self.saveConceptSet = function () {
 			var conceptSet = {};
+            var abortSave = false;
 
-			if (self.model.currentConceptSet() && self.model.currentConceptSet().name() == "New Concept Set") {
-				self.model.currentConceptSet().name.valueHasMutated();
-				alert('Please provide a different name for your concept set');
-				$("#txtConceptSetName").select().focus();
+            // Do not allow someone to save a concept set with the default name of "New Concept Set
+			if (self.model.currentConceptSet() && self.model.currentConceptSet().name() == self.defaultConceptSetName) {
+                self.raiseConceptSetNameProblem('Please provide a different name for your concept set');
 				return;
 			}
-
+            
 			if (self.model.currentConceptSet() == undefined) {
 				conceptSet.name = self.conceptSetName();
-
 			} else {
 				conceptSet = self.model.currentConceptSet();
 			}
+            
+            // Next check to see that a concept set with this name does not already exist
+            // in the database. Also pass the conceptSetId so we can make sure that the
+            // current concept set is excluded in this check.
+            var conceptSetId = conceptSet.id;
+            var urlEncoded = encodeURI(self.model.services()[0].url + 'conceptset/' + conceptSetId + '/' + conceptSet.name() + "/exists");
+            var existanceCheckPromise = $.ajax({
+                url: urlEncoded,
+                method: 'GET',
+                contentType: 'application/json',
+                success: function (results) {
+                    if (results.length > 0) {
+                        self.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.');
+                        abortSave = true;
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while attempting to load the concept from your currently configured provider.  Please check the status of your selection from the configuration button in the top right corner.');
+                }
+            });
+            
+            $.when(existanceCheckPromise).done(function () {
+                if (abortSave) {
+                    return;
+                }
+                
+                var conceptSetItems = [];
 
-			var conceptSetItems = [];
+                for (var i = 0; i < self.model.selectedConcepts().length; i++) {
+                    var item = self.model.selectedConcepts()[i];
+                    conceptSetItems.push({
+                        conceptId: item.concept.CONCEPT_ID,
+                        isExcluded: +item.isExcluded(),
+                        includeDescendants: +item.includeDescendants(),
+                        includeMapped: +item.includeMapped()
+                    });
+                }
 
-			for (var i = 0; i < self.model.selectedConcepts().length; i++) {
-				var item = self.model.selectedConcepts()[i];
-				conceptSetItems.push({
-					conceptId: item.concept.CONCEPT_ID,
-					isExcluded: +item.isExcluded(),
-					includeDescendants: +item.includeDescendants(),
-					includeMapped: +item.includeMapped()
-				});
-			}
+                var json = ko.toJSON(conceptSet);
 
-			var json = ko.toJSON(conceptSet);
+                $.ajax({
+                    method: 'POST',
+                    url: self.model.services()[0].url + 'conceptset/',
+                    contentType: 'application/json',
+                    data: json,
+                    dataType: 'json',
+                    success: function (data) {
 
-			$.ajax({
-				method: 'POST',
-				url: self.model.services()[0].url + 'conceptset/',
-				contentType: 'application/json',
-				data: json,
-				dataType: 'json',
-				success: function (data) {
-
-					$.ajax({
-						method: 'POST',
-						url: self.model.services()[0].url + 'conceptset/' + data.id + '/items',
-						data: JSON.stringify(conceptSetItems),
-						dataType: 'json',
-						contentType: 'application/json',
-						success: function (itemSave) {
-							$('#conceptSetSaveDialog').modal('hide');
-							document.location = '#/conceptset/' + data.id + '/details';
-							self.model.currentConceptSetDirtyFlag.reset();
-						}
-					});
-				}
-			});
-
+                        $.ajax({
+                            method: 'POST',
+                            url: self.model.services()[0].url + 'conceptset/' + data.id + '/items',
+                            data: JSON.stringify(conceptSetItems),
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (itemSave) {
+                                $('#conceptSetSaveDialog').modal('hide');
+                                document.location = '#/conceptset/' + data.id + '/details';
+                                self.model.currentConceptSetDirtyFlag.reset();
+                            }
+                        });
+                    }
+                });
+                
+            });
 		}
+        
+        self.raiseConceptSetNameProblem = function(msg) {
+            self.model.currentConceptSet().name.valueHasMutated();
+            alert(msg);
+            $("#txtConceptSetName").select().focus();            
+        }
 	}
 
 	var component = {
