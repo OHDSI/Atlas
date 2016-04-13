@@ -1,4 +1,4 @@
-define(['knockout', 'text!./concept-manager.html', 'faceted-datatable'], function (ko, view) {
+define(['knockout', 'text!./concept-manager.html', 'appConfig', 'faceted-datatable'], function (ko, view, config) {
 	function conceptManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -23,7 +23,7 @@ define(['knockout', 'text!./concept-manager.html', 'faceted-datatable'], functio
 
 		self.loadRecordCounts = function () {
 			self.loadingSourceCounts(true);
-			var sources = self.model.services()[0].sources;
+			var sources = config.services[0].sources;
 
 			var allCounts = $.Deferred();
 			var totalCounts = 0;

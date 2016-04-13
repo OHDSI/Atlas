@@ -1,4 +1,4 @@
-define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'knockout.dataTables.binding'], function (ko, view, d3, jnj_chart, colorbrewer, _) {
+define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding'], function (ko, view, d3, jnj_chart, colorbrewer, _, config) {
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -43,7 +43,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 			switch (self.model.reportReportName()) {
 			case 'Template':
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -52,7 +52,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Death':
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/death',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/death',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -190,7 +190,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				// not yet implemented
 			case 'Measurement':
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/measurement',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/measurement',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -205,7 +205,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 				$.ajax({
 					type: "GET",
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/procedure',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/procedure',
 					contentType: "application/json; charset=utf-8",
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
@@ -320,7 +320,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 				$.ajax({
 					type: "GET",
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drug',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drug',
 					contentType: "application/json; charset=utf-8",
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
@@ -441,7 +441,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				threshold = minimum_area / (width * height);
 
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drugera',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drugera',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -556,7 +556,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				threshold = minimum_area / (width * height);
 
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/condition',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/condition',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -671,7 +671,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Observation Periods':
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/observationperiod',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/observationperiod',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -936,7 +936,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				var threshold = minimum_area / (width * height);
 
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/conditionera',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/conditionera',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1051,7 +1051,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Drugs by Index':
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1185,7 +1185,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Conditions by Index':
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1323,7 +1323,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Procedures by Index':
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1456,7 +1456,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Cohort Specific':
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1671,7 +1671,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Person':
 				$.ajax({
-					url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/person',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/person',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1744,7 +1744,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/condition/' + concept_id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/condition/' + concept_id,
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -1896,7 +1896,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drug/' + concept_id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drug/' + concept_id,
 				success: function (data) {
 					$('#drugExposureDrilldown').text(concept_name);
 					self.model.loadingReportDrilldown(false);
@@ -2024,7 +2024,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/conditionera/' + concept_id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/conditionera/' + concept_id,
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2135,7 +2135,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drugera/' + concept_id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drugera/' + concept_id,
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2247,7 +2247,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/procedure/' + concept_id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/procedure/' + concept_id,
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2390,7 +2390,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: self.model.services()[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific' + type + "/" + id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific' + type + "/" + id,
 				contentType: "application/json; charset=utf-8"
 			}).done(function (result) {
 				if (result && result.length > 0) {

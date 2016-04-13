@@ -1,10 +1,9 @@
-define(['knockout',
-				'text!./cohort-definition-manager.html',
+define(['knockout', 'text!./cohort-definition-manager.html',
 				'appConfig',
 				'cohortbuilder/CohortDefinition',
 				'webapi/CohortDefinitionAPI',
 				'ohdsi.util',
-                'cohortbuilder/CohortExpression',
+        'cohortbuilder/CohortExpression',
 				'knockout.dataTables.binding',
 				'faceted-datatable',
 				'databindings'
@@ -39,6 +38,7 @@ define(['knockout',
 
 		var pollTimeout = null;
 
+		self.config = config;
 		self.model = params.model;
 		self.tabMode = self.model.currentCohortDefinitionMode;
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
@@ -210,7 +210,7 @@ define(['knockout',
 		}
 
 		self.generateCohort = function (data, event) {
-			var route = self.model.services()[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + data.key;
+			var route = config.services[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + data.key;
 			$.ajax(route, {
 				success: function (data) {
 					// self.pollForInfo();
@@ -262,7 +262,7 @@ define(['knockout',
 				cohortJob.measurementConceptIds = [];
 
 				$.ajax({
-					url: self.model.services()[0].url + 'cohortanalysis',
+					url: config[0].url + 'cohortanalysis',
 					data: JSON.stringify(cohortJob),
 					method: 'POST',
 					contentType: 'application/json',

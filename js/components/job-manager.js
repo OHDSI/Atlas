@@ -1,4 +1,4 @@
-define(['knockout', 'text!./job-manager.html', 'knockout.dataTables.binding'], function (ko, view) {
+define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables.binding'], function (ko, view, config) {
 	function jobManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -6,7 +6,7 @@ define(['knockout', 'text!./job-manager.html', 'knockout.dataTables.binding'], f
 			self.model.jobs([]);
 
 			$.ajax({
-				url: self.model.services()[0].url + 'job/execution?comprehensivePage=true',
+				url: config.services[0].url + 'job/execution?comprehensivePage=true',
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (jobs) {

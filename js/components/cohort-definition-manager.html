@@ -35,7 +35,7 @@
 
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'printfriendly' }, click: function() { $component.tabMode('printfriendly') };"><a>Print Friendly</a>
 			</li>
-            
+
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>JSON</a>
 			</li>
 
@@ -133,8 +133,8 @@
 
 						<div class="clear"></div>
 
-                        <button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
-                        <button type="button" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
+						<button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
+						<button type="button" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
 
 						<div id="wrapperConceptSetWarnings" data-bind="visible: model.selectedConceptsWarnings().length > 0">
 							<div class="heading">Concept Set Warnings</div>
@@ -223,7 +223,7 @@
 				<table id="analysisStatus">
 					<thead>
 						<th>Report</th>
-						<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
+						<!-- ko foreach: $component.config.services[0].sources.filter($component.model.hasCDM) -->
 						<th data-bind="text:sourceName"></th>
 						<!-- /ko -->
 					</thead>
@@ -231,7 +231,7 @@
 						<!-- ko foreach:$component.model.cohortAnalyses -->
 						<tr>
 							<td class="reportName" data-bind="text:name"></td>
-							<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
+							<!-- ko foreach: $component.config.services[0].sources.filter($component.model.hasCDM) -->
 							<td class="statusIndicator">
 								<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().ready -->
 								<i class="fa" data-bind="css: { 'fa-check-circle' : $component.model.sourceAnalysesStatus[sourceKey]()[$parent.name] > 0, 'fa-exclamation-triangle' : $component.model.sourceAnalysesStatus[sourceKey]()[$parent.name] == 0 }"></i>
@@ -243,34 +243,36 @@
 								<!-- ko if:!$component.model.sourceAnalysesStatus[sourceKey]().checking && !$component.model.sourceAnalysesStatus[sourceKey]().ready -->
 								<i class="fa fa-exclamation-circle"></i>
 								<!-- /ko -->
-                                <!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]()[$parent.name] > 0 -->
-                                <div data-bind="click: $component.viewReport.bind($data, sourceKey, $parent.name)" class="btn btn-xs btn-primary">view</div>
-                                <!-- /ko -->
+								<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]()[$parent.name] > 0 -->
+								<div data-bind="click: $component.viewReport.bind($data, sourceKey, $parent.name)" class="btn btn-xs btn-primary">view</div>
+								<!-- /ko -->
 							</td>
 							<!-- /ko -->
 						</tr>
 						<!-- /ko -->
 						<tr>
 							<td style="border-bottom:0px;"></td>
-							<!-- ko foreach: $component.model.services()[0].sources.filter($component.model.hasCDM) -->
+							<!-- ko foreach: $component.config.services[0].sources.filter($component.model.hasCDM) -->
 							<td style="border-bottom:0px;padding:5px;" class="statusIndicator">
 								<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().ready -->
 								<div data-bind="click:$component.generateAnalyses" class="btn btn-sm btn-primary">Generate</div>
 
-								<a class="btn btn-sm btn-success" data-bind="attr: {href: $component.model.services()[0].url + sourceKey + '/cohortresults/' + $component.model.currentCohortDefinition().id + '/export.zip'}"><i class="fa fa-cloud-download"></i> Export</a>
+								<a class="btn btn-sm btn-success" data-bind="attr: {href: $component.config.services[0].url + sourceKey + '/cohortresults/' + $component.model.currentCohortDefinition().id + '/export.zip'}"><i class="fa fa-cloud-download"></i> Export</a>
 								<!-- /ko -->
 							</td>
 							<!-- /ko -->
 						</tr>
 					</tbody>
 				</table>
-                <div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingReport()">loading</div>
-                <report-manager params="{model: pageModel, showSelectionArea: false}"></report-manager>
+				<div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingReport()">loading</div>
+				<report-manager params="{model: pageModel, showSelectionArea: false}"></report-manager>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
-                <textarea style="width: 100%; height: 500px" data-bind="textInput: $component.expressionJSON"></textarea>
-				<div style="text-align: right"><button class="btn btn-sm btn-primary" data-bind="click: $component.reload">Reload</button></div>
-			</div>            
+				<textarea style="width: 100%; height: 500px" data-bind="textInput: $component.expressionJSON"></textarea>
+				<div style="text-align: right">
+					<button class="btn btn-sm btn-primary" data-bind="click: $component.reload">Reload</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

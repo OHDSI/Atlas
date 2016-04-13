@@ -95,7 +95,7 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'studyreport-manager'], function (ko, app) {
+	requirejs(['knockout', 'app', 'appConfig', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll'], function (ko, app, config) {
 		$('#splash').fadeIn();
 		var pageModel = new app();
 		window.pageModel = pageModel;
@@ -107,7 +107,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		var densityPriority = 0;
 
 		// initialize all service information asynchronously
-		$.each(pageModel.services(), function (serviceIndex, service) {
+		$.each(config.services, function (serviceIndex, service) {
 			service.sources = [];
 			var servicePromise = $.Deferred();
 			pageModel.initPromises.push(servicePromise);
@@ -236,7 +236,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				break;
 			case 'reports':
 				$.ajax({
-					url: pageModel.services()[0].url + 'cohortdefinition',
+					url: config.services[0].url + 'cohortdefinition',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (cohortDefinitions) {

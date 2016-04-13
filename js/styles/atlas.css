@@ -315,8 +315,9 @@ div#wrapperMainWindowContainer {}
 #wrapperLeftMenu li {
 	list-style: none;
 	text-indent: 0px;
-	padding: 2px 0px 2px 4px;
+	padding: 2px 0px 2px 12px;
 	color: #184756;
+	line-height: 14px;
 }
 
 #wrapperLeftMenu li a {
@@ -518,6 +519,7 @@ span.invalid {
 	background-color: #eee;
 	margin-left: 5px;
 	cursor: pointer;
+	line-height: 14px;
 }
 
 .nav-tabs>li>a {
@@ -812,16 +814,7 @@ ul.ColVis_collection li {
 	padding: 3px;
 	margin-bottom: 3px;
 	font-size: 12px;
-	/* background-color: #FFF; */
-	/* border: solid 1px #ccc; */
-	/* height: 24px; */
 	color: #000;
-}
-
-.form-control:focus {
-	outline: 1px auto;
-	outline-offset: 0px;
-	border: solid 1px #ccc;
 }
 
 .form-control.invalid {
@@ -888,7 +881,7 @@ g.trellisLegend {}
 ul.nav.nav-tabs {
 	margin-bottom: 2px;
 	background-color: #fff;
-	padding: 3px 10px 1px 10px;
+	padding: 5px 10px 1px 5px;
 	border-bottom: solid 1px #003142;
 	clear:right;
 }
@@ -944,6 +937,7 @@ input.btn.btn-default:disabled {
 }
 
 i.fa.fa-refresh.fa-spin {
+	font-size:.9em;
 	padding-right: 0px;
 }
 
@@ -971,10 +965,9 @@ pre {
 }
 
 .form-control:focus {
-	/* border-color:#66afe9; */
-	outline: thin dotted #333;
-	outline: 5px auto;
-	outline-offset: -2px;
+	outline: 1px;
+	outline-offset: 0px;
+	border: solid 1px #F9B813;
 	box-shadow: none;
 }
 
@@ -1115,7 +1108,7 @@ pre {
 .badge {
 	border-radius: 10px;
 	background-color: #F19119;
-	font-size: 0.8em;
+	font-size: .8em;
 	font-weight: normal;
 }
 
@@ -1605,4 +1598,18 @@ div.button-overlay {
     border-left: solid 1px #ccc;
     border-right: solid 1px #ccc;
     border-top: solid 1px #ccc;
+    line-height: 15px;
 }
+
+.panel-default>.panel-heading {
+    background-image: none;
+    background-color:#ddd;
+    border-bottom:solid 1px #ccc;
+    line-height: 14px;
+}
+
+.panel-collapse {
+    border-bottom: solid 1px #ccc;
+}
+
+li {}

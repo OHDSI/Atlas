@@ -6,7 +6,7 @@
 	<div class="paddedWrapper">
 		<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined}">New Cohort</span>
 		<div class="clear">
-			<cohort-definition-browser params="{services: pageModel.services, cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
+			<cohort-definition-browser params="{cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
 		</div>
 	</div>
 </div>
