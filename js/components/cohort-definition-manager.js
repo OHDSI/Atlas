@@ -262,7 +262,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.measurementConceptIds = [];
 
 				$.ajax({
-					url: config[0].url + 'cohortanalysis',
+					url: config.services[0].url + 'cohortanalysis',
 					data: JSON.stringify(cohortJob),
 					method: 'POST',
 					contentType: 'application/json',
