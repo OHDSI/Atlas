@@ -43,13 +43,13 @@
 			<div class="indexWindowSection">
 				occurring between <window-input params="Window: StartWindow"></window-input> index
 			</div>
-			<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Filter</button>
+			<button class="deletecriteria btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Filter</button>
 		</div>
 	</div>
 	<!-- ko foreach: group().Groups -->
 	<div style="padding-top: 5px; position:relative">
 		<criteria-group params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group()}"></criteria-group>
-		<button class="deletegroup btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().Groups, data) }">Delete Group</button>
+		<button class="deletegroup btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().Groups, data) }">Delete Group</button>
 	</div>
 	<!-- /ko -->
 </div>

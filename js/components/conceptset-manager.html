@@ -1,34 +1,27 @@
 <div data-bind="visible: model.currentView() == 'conceptset'">
 	<div class="wrapperTitle">
-		<div data-bind="if:model.currentConceptSet()">
-			<input id="txtConceptSetName" type="text" data-bind="textInput: model.currentConceptSet().name" />
-		</div>
-		<div data-bind="if:!model.currentConceptSet()">
-			<span>Concept Sets</span>
-		</div>
+		<i class="fa fa-shopping-cart"></i> Concept Set
+	</div>
+	<div class="asset-heading" data-bind="if: model.currentConceptSet">
+		<input id="txtConceptSetName" type="text" data-bind="textInput: model.currentConceptSet().name" />
+		<button type="button" class="btn btn-xs btn-success pull-right" data-bind="click:function() { saveClick(); }, css: {disabled:model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty()}">Save</button>
+		<button type="button" class="btn btn-xs btn-primary pull-right" data-bind="click:function() { closeConceptSet(); }">Close</button>
 	</div>
 
-	<div class="button-overlay">
-		<button type="button" class="btn btn-sm btn-success pull-right" data-bind="click:function() { saveClick(); }, css: {disabled:model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty()}">Save</button>
-		<button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click:function() { closeConceptSet(); }">Close</button>
-	</div>
-
-	<div class="paddedWrapper">
-		<ul class="nav nav-tabs">
-			<li role="presentation" data-bind="click: function() {$component.routeTo('details');}, attr: {class: model.currentConceptSetMode() == 'details' ? 'active' : ''}"><a>Concept Set Expression</a>
-			</li>
-			<li role="presentation" data-bind="click: function() {$component.routeTo('included');}, attr: {class: model.currentConceptSetMode() == 'included' ? 'active' : ''}">
-				<a>Included Concepts
+	<ul class="nav nav-tabs">
+		<li role="presentation" data-bind="click: function() {$component.routeTo('details');}, attr: {class: model.currentConceptSetMode() == 'details' ? 'active' : ''}"><a>Concept Set Expression</a>
+		</li>
+		<li role="presentation" data-bind="click: function() {$component.routeTo('included');}, attr: {class: model.currentConceptSetMode() == 'included' ? 'active' : ''}">
+			<a>Included Concepts
 				<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
 				<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
-			</li>
-			<li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
-				<a>Included Source Codes</a>
-			</li>
-			<li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
-			</li>
-		</ul>
-	</div>
+		</li>
+		<li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
+			<a>Included Source Codes</a>
+		</li>
+		<li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
+		</li>
+	</ul>
 
 	<div id="wrapperConceptSetAnalysis" data-bind="if: model.currentConceptSetMode() == 'analysis'">
 		<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.denseSiblings}"></faceted-datatable>

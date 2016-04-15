@@ -53,10 +53,10 @@
 	<div data-bind="if: AdditionalCriteria">
 		<div style="font-weight: bold">For people matching the Primary Events, include:</div>
 		<criteria-group params="{expression: $data, group: AdditionalCriteria}"></criteria-group>
-		<button class="btn btn-sm btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove Additional Filters</button>
+		<button class="btn btn-xs btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove Additional Filters</button>
 	</div>
 	<div data-bind="ifnot: AdditionalCriteria">
-		<button class="btn btn-sm btn-primary" data-bind="click: function () { $component.addAdditionalCriteria() }">Add Additional Filters</button>
+		<button class="btn btn-xs btn-primary" data-bind="click: function () { $component.addAdditionalCriteria() }">Add Additional Filters</button>
 	</div>
 </div>
 

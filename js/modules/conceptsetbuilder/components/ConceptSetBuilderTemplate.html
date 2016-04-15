@@ -65,7 +65,7 @@
 					}">
 					</table>
 				</div>
-				<concept-picker params="onAdd: $component.addConcepts"></concept-picker><button class="btn btn-danger btn-sm" data-bind="click: function () { $component.removeSelected() }">Remove Selected</button>
+				<concept-picker params="onAdd: $component.addConcepts"></concept-picker><button class="btn btn-danger btn-xs" data-bind="click: function () { $component.removeSelected() }">Remove Selected</button>
 			</div>
 			<div data-bind="attr: { id: 'csIncluded' }">
 				<div style="padding: 5px;">
@@ -87,7 +87,7 @@
 				<textarea style="width: 100%; height: 100%; resize: none" data-bind="textInput: importValues"></textarea>
 			</div>
 			<div style="position: relative; margin-top: -30px; height: 30px; clear: both;">
-				<button class="btn btn-sm btn-primary" data-bind="click: doImport">Import</button>
+				<button class="btn btn-xs btn-primary" data-bind="click: doImport">Import</button>
 			</div>		
 		</div>
 		<!-- /ko -->

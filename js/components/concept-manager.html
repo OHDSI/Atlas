@@ -1,5 +1,9 @@
 <div id="wrapperConcept" data-bind="if: model.currentConcept() && model.currentView() == 'concept'">
-	<div class="wrapperTitle" data-bind="with:model.currentConcept()">
+	<div class="wrapperTitle">
+		<i class="fa fa-search"></i> Concept
+	</div>
+
+	<div class="asset-heading" data-bind="with:model.currentConcept()">
 		<span data-bind="html: $root.renderCurrentConceptSelector()"></span>
 		<span data-bind="css: {invalid: STANDARD_CONCEPT!='S'}, text:CONCEPT_NAME"></span>
 	</div>
@@ -43,7 +47,7 @@
 									order: [[ 2, 'desc' ]],
 									columns: [
 											{ title: 'Source Name', data: 'sourceName', width: '50%'},
-											{ title: 'RC', data: 'recordCount'},																																															 
+											{ title: 'RC', data: 'recordCount'},
 											{ title: 'DRC', data: 'descendantRecordCount'}
 									]
 							}
@@ -74,8 +78,8 @@
 											{ title: 'Code', data: 'CONCEPT_CODE'},
 											{ title: 'Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-											{ title: 'RC', data: 'RECORD_COUNT'},																																															 
-											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},																																															 
+											{ title: 'RC', data: 'RECORD_COUNT'},
+											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]
@@ -105,8 +109,8 @@
 											{ title: 'Code', data: 'CONCEPT_CODE'},
 											{ title: 'Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-											{ title: 'RC', data: 'RECORD_COUNT'},																																															 
-											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},																																															 																																															 
+											{ title: 'RC', data: 'RECORD_COUNT'},
+											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]
