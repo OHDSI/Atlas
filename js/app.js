@@ -1030,11 +1030,16 @@ define([
 			}
 		}
 
-		self.getCohortCount = function (source) {
+		self.getCohortCount = function (source, observable) {
 			var sourceKey = source.sourceKey;
 			var cohortDefinitionId = self.currentCohortDefinition() && self.currentCohortDefinition().id();
 			if (cohortDefinitionId != undefined) {
-				return $.ajax(config.services[0].url + sourceKey + '/cohortresults/' + cohortDefinitionId + '/distinctPersonCount', {});
+				$.ajax(config.services[0].url + sourceKey + '/cohortresults/' + cohortDefinitionId + '/distinctPersonCount', {
+					observable: observable,
+					success: function(result) {
+						this.observable(result);
+					}
+				});
 			}
 		}
 
@@ -1221,15 +1226,18 @@ define([
 							var sourceInfo = self.getSourceInfo(source);
 							var cdsi = {};
 							cdsi.name = cdmSources[s].sourceName;
-							cdsi.key = cdmSources[s].sourceKey;
+							cdsi.sourceKey = cdmSources[s].sourceKey;
 
 							if (sourceInfo != null) {
-								cdsi.isValid = sourceInfo.isValid;
-								cdsi.status = sourceInfo.status;
+								cdsi.isValid = ko.observable(sourceInfo.isValid);
+								cdsi.sourceId = sourceInfo.id.sourceId;
+								cdsi.status = ko.observable(sourceInfo.status);
 								var date = new Date(sourceInfo.startTime);
-								cdsi.startTime = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-								cdsi.executionDuration = (sourceInfo.executionDuration / 1000) + 's'
-								cdsi.distinctPeople = self.asyncComputed(self.getCohortCount, this, source);
+								cdsi.startTime = ko.observable(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+								cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
+								cdsi.distinctPeople = ko.observable('...');
+
+								self.getCohortCount(source,cdsi.distinctPeople);
 							} else {
 								cdsi.isValid = false;
 								cdsi.status = 'n/a';
@@ -1459,18 +1467,6 @@ define([
 					$('#conceptSetLoadDialog').modal('hide');
 				});
 			});
-		}
-
-		self.asyncComputed = function (evaluator, owner, args) {
-			var result = ko.observable('<i class="fa fa-refresh fa-spin"></i>');
-
-			ko.computed(function () {
-				if (evaluator.call(owner, args)) {
-					evaluator.call(owner, args).done(result);
-				}
-			});
-
-			return result;
 		}
 
 		self.loadDensity = function (results) {

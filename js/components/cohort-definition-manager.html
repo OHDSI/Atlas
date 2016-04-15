@@ -10,9 +10,6 @@
 		<button class="btn btn-xs btn-danger pull-right" data-bind="click: $component.delete">Delete Cohort</button>
 		<!-- /ko -->
 		<button class="btn btn-xs btn-primary pull-right" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
-		<!-- ko if: isRunning -->
-		<img class="spin" src="images/running.png" />Generating...
-		<!-- /ko -->
 		<!-- /ko -->
 		<button class="btn btn-xs btn-primary pull-right" data-bind="click: close">Close</button>
 		<button class="btn btn-xs btn-primary pull-right" data-bind="click: showSql">Show SQL</button>
@@ -113,8 +110,8 @@
 				</li>
 				<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'included'}, click: function() {$component.conceptSetTabMode('included')};">
 					<a>Included Concepts
-                            <span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
-                            <span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
+					<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
+					<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
 				</li>
 				<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'sourcecodes'}, click: function() {$component.conceptSetTabMode('sourcecodes')};">
 					<a>Included Source Codes</a>
@@ -185,6 +182,7 @@
 				<!-- /ko -->
 			</div>
 		</div>
+
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'generation' }" class="tab-pane">
 			<table class="configureSourceTable">
 				<thead>
@@ -198,22 +196,20 @@
 				<tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
 					<tr>
 						<td>
-							<div class="btn btn-xs btn-success" data-bind="click:$component.generateCohort"><i class="fa fa-play"></i></div>
-							<div class="btn btn-xs btn-warning" data-bind="visible:$component.isRunning, css : {enabled:false}"><i class="fa fa-cog fa-spin"></i></div>
+							<!-- ko ifnot: $component.isRunning -->
+							<div class="btn btn-xs btn-success" data-bind="css: {'disabled':$component.dirtyFlag().isDirty()}, click:$component.generateCohort"><i class="fa fa-play"></i>Generate</div>
+							<!-- /ko -->
+							<div class="btn btn-xs btn-success" data-bind="visible:$component.isRunning"><i class="fa fa-spinner fa-spin"></i></div>
 						</td>
 						<td data-bind="text:name"></td>
-						<td class="statusIndicator rightaligned">
+						<td class="statusIndicator">
 							<span class="fa" data-bind="css: { 'fa-check-circle' : isValid, 'fa-exclamation-circle' : !isValid }"></span>&nbsp;<span data-bind="text: status"></span>
 						</td>
-						<td class="rightaligned">
-							<div><span data-bind="html: distinctPeople"></span>
-							</div>
+						<td class="text-right" data-bind="html: distinctPeople()">
 						</td>
-						<td class="rightaligned">
-							<div data-bind="text: startTime"></div>
+						<td class="text-right" data-bind="text: startTime">
 						</td>
-						<td class="rightaligned">
-							<div data-bind="text: executionDuration"></div>
+						<td class="text-right" data-bind="text: executionDuration">
 						</td>
 					</tr>
 				</tbody>

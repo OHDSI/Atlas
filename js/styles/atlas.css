@@ -583,12 +583,10 @@ td.select .fa-check-circle.selected {
 }
 
 .configureSourceTable td {
-	/* line-height: 20px; */
 	padding-left: 7px;
 	padding-right: 7px;
 	font-size: 11px;
 	border-bottom: 1px solid #ccc;
-	text-align: left;
 }
 
 th {
@@ -707,9 +705,9 @@ ul.ColVis_collection li {
 }
 
 .configureSourceTable i.fa {
-	line-height: 20px;
+	line-height: 9px;
 	font-size: 10px;
-	margin: 1px 3px 1px 3px;
+	margin: 0px 3px 0px 3px;
 }
 
 .configureSourceTable i.fa.fa-exclamation-circle {
@@ -771,10 +769,6 @@ ul.ColVis_collection li {
 	padding-right: 7px;
 	font-size: 11px;
 	border-bottom: 1px solid #ccc;
-}
-
-.rightaligned {
-	text-align: right;
 }
 
 .indicator {
@@ -1643,4 +1637,11 @@ li {}
 
 li.current-asset {
     background-color: #00465F;
+}
+
+
+.configureSourceTable i.fa.fa-spinner.fa-spin {
+    font-size: 14px;
+    color: #FFF;
+    line-height: 14px;
 }
