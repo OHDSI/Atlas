@@ -43,7 +43,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 			switch (self.model.reportReportName()) {
 			case 'Template':
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -52,7 +52,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Death':
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/death',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/death?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -190,7 +190,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				// not yet implemented
 			case 'Measurement':
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/measurement',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/measurement?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -205,7 +205,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 				$.ajax({
 					type: "GET",
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/procedure',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/procedure?refresh=true',
 					contentType: "application/json; charset=utf-8",
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
@@ -230,6 +230,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								order: [5, 'desc'],
 								dom: 'T<"clear">lfrtip',
 								data: table_data,
+                                "createdRow": function( row, data, dataIndex ) {
+                                      $(row).addClass( 'procedure_table_selector' );
+                                  },                                
 								columns: [
 									{
 										data: 'concept_id'
@@ -266,12 +269,14 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								destroy: true
 							});
 
+                            /*
 							$(document).on('click', '.dataTable tbody tr', function () {
 								var data = $('.dataTable').DataTable().row(this).data();
 								if (data) {
 									self.procedureDrilldown(data.concept_id, data.procedure_name);
 								}
 							});
+                            */
 
 							var tree = self.buildHierarchyFromJSON(normalizedData, threshold);
 							var treemap = new jnj_chart.treemap();
@@ -320,7 +325,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 				$.ajax({
 					type: "GET",
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drug',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drug?refresh=true',
 					contentType: "application/json; charset=utf-8",
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
@@ -348,6 +353,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								order: [6, 'desc'],
 								dom: 'T<"clear">lfrtip',
 								data: table_data,
+                                "createdRow": function( row, data, dataIndex ) {
+                                      $(row).addClass( 'drug_table_selector' );
+                                  },
 								columns: [
 									{
 										data: 'concept_id'
@@ -388,13 +396,14 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								destroy: true
 							});
 
+/*
 							$(document).on('click', '.dataTable tbody tr', function () {
 								var data = $('.dataTable').DataTable().row(this).data();
 								if (data) {
 									self.drugExposureDrilldown(data.concept_id, data.rxnorm);
 								}
 							});
-
+*/
 							var tree = self.buildHierarchyFromJSON(data, threshold);
 							var treemap = new jnj_chart.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
@@ -441,7 +450,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				threshold = minimum_area / (width * height);
 
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drugera',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drugera?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -467,6 +476,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								order: [5, 'desc'],
 								dom: 'T<"clear">lfrtip',
 								data: table_data,
+                                "createdRow": function( row, data, dataIndex ) {
+                                      $(row).addClass( 'drugera_table_selector' );
+                                  },                                
 								columns: [
 									{
 										data: 'concept_id'
@@ -503,12 +515,14 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								destroy: true
 							});
 
+                            /*
 							$(document).on('click', '.dataTable tbody tr', function () {
 								var data = $('.dataTable').DataTable().row(this).data();
 								if (data) {
 									drugeraDrilldown(data.concept_id, data.ingredient);
 								}
 							});
+                            */
 
 							var tree = self.eraBuildHierarchyFromJSON(data, threshold);
 							var treemap = new jnj_chart.treemap();
@@ -556,7 +570,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				threshold = minimum_area / (width * height);
 
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/condition',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/condition?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -583,6 +597,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								order: [6, 'desc'],
 								dom: 'T<"clear">lfrtip',
 								data: table_data,
+                                "createdRow": function( row, data, dataIndex ) {
+                                      $(row).addClass( 'condition_table_selector' );
+                                  },                                
 								columns: [
 									{
 										data: 'concept_id'
@@ -623,13 +640,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								destroy: true
 							});
 
+                            /*
 							$(document).on('click', '.dataTable tbody tr', function () {
-								var data = $('.dataTable').DataTable().row(this).data();
+								var data = $('.dataTable').DataTable().row(this.rowIndex).data();
 								if (data) {
 									self.conditionDrilldown(data.concept_id, data.snomed);
 								}
 							});
-
+                            */
+                            
 							tree = self.buildHierarchyFromJSON(data, threshold);
 							var treemap = new jnj_chart.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
@@ -671,7 +690,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Observation Periods':
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/observationperiod',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/observationperiod?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -936,7 +955,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				var threshold = minimum_area / (width * height);
 
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/conditionera',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/conditionera?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -963,6 +982,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								order: [6, 'desc'],
 								dom: 'T<"clear">lfrtip',
 								data: table_data,
+                                "createdRow": function( row, data, dataIndex ) {
+                                      $(row).addClass( 'conditionera_table_selector' );
+                                  },                                
 								columns: [
 									{
 										data: 'concept_id'
@@ -1003,13 +1025,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								destroy: true
 							});
 
+                            /*
 							$(document).on('click', '.dataTable tbody tr', function () {
 								var data = $('.dataTable').DataTable().row(this).data();
 								if (data) {
 									self.conditionEraDrilldown(data.concept_id, data.snomed);
 								}
 							});
-
+                            */
+                            
 							var tree = self.eraBuildHierarchyFromJSON(data, threshold);
 							var treemap = new jnj_chart.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
@@ -1051,7 +1075,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Drugs by Index':
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1185,7 +1209,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Conditions by Index':
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1323,7 +1347,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Procedures by Index':
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1456,7 +1480,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Cohort Specific':
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1671,7 +1695,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				break;
 			case 'Person':
 				$.ajax({
-					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/person',
+					url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/person?refresh=true',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
@@ -1744,7 +1768,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/condition/' + concept_id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/condition/' + concept_id + "?refresh=true",
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -1896,7 +1920,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drug/' + concept_id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drug/' + concept_id + '?refresh=true',
 				success: function (data) {
 					$('#drugExposureDrilldown').text(concept_name);
 					self.model.loadingReportDrilldown(false);
@@ -2024,7 +2048,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/conditionera/' + concept_id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/conditionera/' + concept_id + '?refresh=true',
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2135,7 +2159,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drugera/' + concept_id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/drugera/' + concept_id + '?refresh=true',
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2247,7 +2271,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/procedure/' + concept_id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/procedure/' + concept_id + '?refresh=true',
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2390,7 +2414,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 			$.ajax({
 				type: "GET",
-				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific' + type + "/" + id,
+				url: config.services[0].url + self.model.reportSourceKey() + '/cohortresults/' + self.model.reportCohortDefinitionId() + '/cohortspecific' + type + "/" + id + '?refresh=true',
 				contentType: "application/json; charset=utf-8"
 			}).done(function (result) {
 				if (result && result.length > 0) {
@@ -2831,6 +2855,46 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
         self.dispose = function () {
 			self.reportTriggerRunSuscription.dispose();
 		}
+        
+        self.handleDrugTableClick = function(element, valueAccessor) {
+            var dataTable = $("#drug_table").DataTable();
+            var rowIndex = valueAccessor.target._DT_CellIndex.row; 
+            var data = dataTable.row(rowIndex).data();
+			
+            self.drugExposureDrilldown(data.concept_id, data.rxnorm);
+        }
+        
+        self.handleProcedureTableClick = function(element, valueAccessor) {
+            var dataTable = $("#procedure_table").DataTable();
+            var rowIndex = valueAccessor.target._DT_CellIndex.row; 
+            var data = dataTable.row(rowIndex).data();
+			
+            self.procedureDrilldown(data.concept_id, data.procedure_name);
+        }
+        
+        self.handleDrugEraTableClick = function(element, valueAccessor) {
+            var dataTable = $("#drugera_table").DataTable();
+            var rowIndex = valueAccessor.target._DT_CellIndex.row; 
+            var data = dataTable.row(rowIndex).data();
+			
+            self.drugeraDrilldown(data.concept_id, data.ingredient);
+        }
+        
+        self.handleConditionTableClick = function(element, valueAccessor) {
+            var dataTable = $("#condition_table").DataTable();
+            var rowIndex = valueAccessor.target._DT_CellIndex.row; 
+            var data = dataTable.row(rowIndex).data();
+			
+            self.conditionDrilldown(data.concept_id, data.snomed);
+        }
+        
+        self.handleConditionEraTableClick  = function(element, valueAccessor) {
+            var dataTable = $("#conditionera_table").DataTable();
+            var rowIndex = valueAccessor.target._DT_CellIndex.row; 
+            var data = dataTable.row(rowIndex).data();
+			
+            self.conditionEraDrilldown(data.concept_id, data.snomed);
+        }
 	}
 
 	var component = {

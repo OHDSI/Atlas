@@ -151,20 +151,20 @@
 		<div class="reportSectionHeading">Drug Era Prevalence</div>
 
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
-			<li class="active" id="treemap-tab"><a href="#drugera-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+			<li class="active" id="treemap-tab"><a href="#drugs-by-index-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
 			</li>
-			<li><a href="#drugera-table-panel" role="tab" data-toggle="tab">Table</a>
+			<li><a href="#drugs-by-index-table-panel" role="tab" data-toggle="tab">Table</a>
 			</li>
 		</ul>
 		<div id='content' class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="drugera-treemap-panel">
+			<div role="tabpanel" class="tab-pane active" id="drugs-by-index-treemap-panel">
 				<div id="treemap_container">
 					<div class="treemap_zoomtarget"></div>
 				</div>
 				<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="drugera-table-panel">
-				<table id="drugera_table" class="display treemap_table" type="drug">
+			<div role="tabpanel" class="tab-pane" id="drugs-by-index-table-panel">
+				<table id="drugs-by-index-table" class="display treemap_table" type="drug">
 					<thead>
 						<tr>
 							<th>Concept Id</th>
@@ -253,7 +253,7 @@
 				</div>
 				<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="conditionera-table-panel">
+			<div role="tabpanel" class="tab-pane" id="conditionera-table-panel" data-bind="eventListener: { event: 'click', selector: '.conditionera_table_selector', callback: handleConditionEraTableClick}">
 				<table id="conditionera_table" class="display">
 					<thead>
 						<tr>
@@ -361,7 +361,7 @@
 				</div>
 				<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="condition-table-panel">
+			<div role="tabpanel" class="tab-pane" id="condition-table-panel" data-bind="eventListener: { event: 'click', selector: '.condition_table_selector', callback: handleConditionTableClick}">
 				<table id="condition_table" class="display">
 					<thead>
 						<tr>
@@ -423,7 +423,7 @@
 				</div>
 				<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="drugera-table-panel">
+			<div role="tabpanel" class="tab-pane" id="drugera-table-panel" data-bind="eventListener: { event: 'click', selector: '.drugera_table_selector', callback: handleDrugEraTableClick}">
 				<table id="drugera_table" class="display">
 					<thead>
 						<tr>
@@ -485,7 +485,7 @@
 
 				<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div class="tab-pane" id="drug_table_panel">
+			<div class="tab-pane" id="drug_table_panel" data-bind="eventListener: { event: 'click', selector: '.drug_table_selector', callback: handleDrugTableClick}">
 				<table id="drug_table" class="display">
 					<thead>
 						<tr>
@@ -559,7 +559,7 @@
 				</div>
 				<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div class="tab-pane" role="tabpanel" id="procedure-table-panel">
+			<div class="tab-pane" role="tabpanel" id="procedure-table-panel" data-bind="eventListener: { event: 'click', selector: '.procedure_table_selector', callback: handleProcedureTableClick}">
 				<table id="procedure_table" class="display">
 					<thead>
 						<tr>
