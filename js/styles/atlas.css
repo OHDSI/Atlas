@@ -1,5 +1,5 @@
 .asset-heading {
-	background-color: #aaa;
+	background-color: #333333;
 	padding: 10px;
 	white-space: nowrap;
 	color: #fff;
@@ -886,7 +886,7 @@ g.trellisLegend {}
 
 ul.nav.nav-tabs {
 	margin-bottom: 2px;
-	background-color: #aaa;
+	background-color: #333;
 	padding: 5px 10px 1px 5px;
 	border-bottom: solid 1px #FFFFFF;
 	clear:right;
