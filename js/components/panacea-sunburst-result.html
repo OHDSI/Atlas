@@ -39,13 +39,21 @@
 	</div>
 	
 	<div class="paddedWrapper" data-bind="visible:resultMode() == 'report', if:currentStudy() && !loading() " style="padding: 10px;">
-<!-- 		<label class="heading">Cohort</label> -->
-<!-- 		<br/> -->
-<!-- 		<div data-bind="if:loading()==false"> -->
-<!-- 			<input style="width:300px;" data-bind="jqAuto: { source: cohortDefinitions, value: currentCohort, labelProp: 'showLabel' }" /> -->
-<!-- 			<span data-bind='visible: currentCohort.hasError, text: currentCohort.validationMessage'> </span> -->
-<!-- 		</div> -->
-<!-- 		<br/> -->
+		<div class="paddedWrapper">
+			<label class="heading">Cohort</label>
+			<br/>
+			<cohort-expression-viewer params="expression: cohortDefinition().expression"></cohort-expression-viewer>
+			<br/>
+  			<div>Appendix 1: Concept Set Definitions</div>
+			<br/>
+			<!-- ko foreach: cohortDefinition().expression().ConceptSets.sorted -->
+			<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
+			<div style="padding-left:20px">
+				<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+				<br/>
+			</div>
+			<!-- /ko -->                                                                                                                                                         
+  		</div>
 
 		<label class="heading">Treatment Concept Set</label>
 		<br/>

@@ -1,4 +1,8 @@
-define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appConfig'], function (ko, view, $, d3, config) {
+define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appConfig', 'cohortbuilder/CohortDefinition', 'cohortdefinitionviewer'
+        ,'knockout.dataTables.binding'
+        ,'faceted-datatable'
+        ,'databindings'
+], function (ko, view, $, d3, config, CohortDefinition) {
 	function panaceaSunburstResult(params) {
 		var self = this;
 		self.model = params.model;
@@ -12,6 +16,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 		self.endDate = ko.observable();
 		self.gapThreshold = ko.observable();
 		self.selectedConcepts = ko.observableArray();
+		self.cohortDefinition = ko.observable();
 		self.loading = ko.observable(true);
 		
 		if (self.model != null && self.model.hasOwnProperty('panaceaResultStudyId')){
@@ -65,7 +70,24 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 						self.selectedConcepts.push(conceptSetItem);
 					}
 					
-					self.loading(false);
+//					if(self.selectedConcepts() !=null && self.cohortDefinition() != null){
+						self.loading(false);
+//					}
+				}
+			});
+			
+			$.ajax({
+				url: config.services[0].url + 'cohortdefinition/' + self.currentStudy().cohortDefId,
+				method: 'GET',
+				contentType: 'application/json',
+				success: function (cohortDefinition) {
+					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+					self.cohortDefinition(new CohortDefinition(cohortDefinition));
+//					self.model.currentCohortDefinition(cohortDefinition);
+
+//					if(self.selectedConcepts() !=null && self.cohortDefinition() != null){
+//						self.loading(false);
+//					}
 				}
 			});
 		});	
