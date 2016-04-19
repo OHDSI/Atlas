@@ -3,20 +3,118 @@
 		<i class="fa fa-briefcase"></i> Pathways
 	</div>
 
-	<div class="form-group">
+	<ul class="nav nav-tabs">
+		<li role="presentation" data-bind="click: function() {routeTo('report');}, attr: {class: resultMode() == 'report' ? 'active' : ''}">
+			<a>Report</a>
+		</li>
+		<li role="presentation" data-bind="click: function() {routeTo('sunburst');}, attr: {class: resultMode() == 'sunburst' ? 'active' : ''}">
+			<a>Sunburst chart</a>
+		</li>
+	</ul>
+	
+	<div class="row" style="padding:10px;">
+		<div class="col-xs-2">
+			<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() {back();}">Back</button>
+		</div>
+	</div>
+		
+	<div class="form-group" style="padding:10px;">
 		<label class="heading">Result Source</label>
 		<select class="form-control" data-bind="options:sources, optionsText: function(item) {
                       return item.sourceName;
                   }, value: currentResultSource" style="width: 150px !important;">
    		</select>
 	</div>
+	
+	<div style="padding:10px;" data-bind='if:currentStudy()'>
+		<div>
+			<label class="heading">Study Name</label>
+			<br/>
+			<span data-bind='text: currentStudy().studyName'/>
+			<br/>
 
-	<div id="pnc_sunburst_result_div">
+			<label class="heading">Description</label>
+			<span data-bind="text: currentStudy().studyDesc"/>
+		</div>
+	</div>
+	
+	<div class="paddedWrapper" data-bind="visible:resultMode() == 'report', if:currentStudy() && !loading() " style="padding: 10px;">
+<!-- 		<label class="heading">Cohort</label> -->
+<!-- 		<br/> -->
+<!-- 		<div data-bind="if:loading()==false"> -->
+<!-- 			<input style="width:300px;" data-bind="jqAuto: { source: cohortDefinitions, value: currentCohort, labelProp: 'showLabel' }" /> -->
+<!-- 			<span data-bind='visible: currentCohort.hasError, text: currentCohort.validationMessage'> </span> -->
+<!-- 		</div> -->
+<!-- 		<br/> -->
+
+		<label class="heading">Treatment Concept Set</label>
+		<br/>
+<!-- 		<span style="width:300px;" data-bind="jqAuto: { source: conceptsets, value: currentConceptSet, labelProp: 'name'}" /> -->
+		<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+             data: selectedConcepts, 
+             options: { 
+ 							dom: 'Clfiprt', 
+ 							colVis: { 
+ 								buttonText: 'Change Columns', 
+ 								align: 'right', 
+ 								overlayFade: 0, 
+ 								showAll: 'Show All Columns', 
+ 								restore: 'Reset Columns' 
+ 							}, 
+ 							rowCallback: model.contextSensitiveLinkColor, 
+ 							lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']], 
+ 							orderClasses: false, 
+ 							deferRender: true, 
+ 							autoWidth: false, 
+ 							order: [[3, 'desc']], 
+               columns: [ 
+ 									{ title: 'Concept Id', data: 'concept.CONCEPT_ID'}, 
+ 									{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'}, 
+                   { title: 'Concept Name', data: 'concept.CONCEPT_NAME'}, 
+                   { title: 'Domain', data: 'concept.DOMAIN_ID' }, 
+ 									{ title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false }, 
+ 									{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' }, 
+ 									{ title: 'Exclude', class:'text-center', orderable:false,render: function() { return renderConceptSetCheckBox('isExcluded');} }, 
+ 									{ title: 'Descendants', class:'text-center', orderable:false,render: function() { return renderConceptSetCheckBox('includeDescendants');} }, 
+ 									{ title: 'Mapped', class:'text-center', orderable:false,render: function() { return renderConceptSetCheckBox('includeMapped');} } 
+               ] 
+            } 
+         }"> 
+ 		</table> 
+ 		<br/> 
+		
+		<label class="heading">Study Duration</label>
+		<span data-bind='text: currentStudy().studyDuration'></span>
+		<br/>
+		
+		<label class="heading">Overlap Period to Consider a Drug Switch Event</label>
+		<span data-bind='text: currentStudy().switchWindow'></span>
+		<br/>
+
+		<div class="form-group">
+			<label class="input-label">Calendar start date (Optional)</label>
+			<span data-bind="text:startDate()"/>
+			<br/>
+			<label class=class="input-label">Calendar end date (Optional)</label>
+			<span data-bind="text:endDate()"/>
+		</div>
+		
+		<div class="form-group">
+			<label class="input-label">Minimum unit duration days: </label><span data-bind="text: currentStudy().minUnitDays">
+		</div>
+			
+		<div class="form-group">
+			<label class="input-label">Minimum unit patient count: </label><span data-bind="text: currentStudy().minUnitCounts">
+		</div>
+			
+		<div class="form-group">
+			<label class="input-label">Minimum adherence percentage: </label><span data-bind="text: gapThreshold()">
+		</div>
+	</div>
+	
+	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'sunburst'">
+		<div id="pnc_sunburst_result_div">
+		</div>
 	</div>
 
-	<div class="row" style="padding-top:20px;">
-		<div class="col-xs-2">
-			<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() {back();}">Back</button>
-		</div>
-	</div>	
 </div>

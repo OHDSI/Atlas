@@ -6,11 +6,70 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3'], func
 		self.panaceaResultStudyId = ko.observable();
 		self.sources = self.services()[0].sources;
 		self.currentResultSource = ko.observable();
-
+		self.resultMode = ko.observable('report');
+		self.currentStudy = ko.observable();
+		self.startDate = ko.observable();
+		self.endDate = ko.observable();
+		self.gapThreshold = ko.observable();
+		self.selectedConcepts = ko.observableArray();
+		self.loading = ko.observable(true);
+		
 		if (self.model != null && self.model.hasOwnProperty('panaceaResultStudyId')){
 			self.panaceaResultStudyId(params.model.panaceaResultStudyId);
+			
+			$.ajax({
+				url: self.services()[0].url + 'panacea/' + self.panaceaResultStudyId(),
+				method: 'GET',
+				success: function (d) {
+					self.currentStudy(d);
+//					self.studyName(d.studyName);
+//					self.studyDesc(d.studyDesc);
+//					self.studyDuration(d.studyDuration);
+//					self.switchWindow(d.switchWindow);
+//					self.currentConceptsExpression(d.concepSetDef);
+					if(d.startDate){
+						self.startDate(new Date(d.startDate).toISOString().split('T')[0]);
+					}else{
+						self.startDate(null);
+					}
+					if(d.endDate){
+						self.endDate(new Date(d.endDate).toISOString().split('T')[0]);
+					}else{
+						self.endDate(null);
+					}
+//					self.minUnitDays(d.minUnitDays);
+//					self.minUnitCounts(d.minUnitCounts);
+					if(d.gapThreshold != null){
+						self.gapThreshold(100 - d.gapThreshold);
+					}
+				}
+			});
 		}
 
+		self.currentStudy.subscribe(function (d) {
+			$.ajax({
+				url: self.services()[0].url + 'conceptset/' + self.currentStudy().conceptSetId  +'/expression',
+				method: 'GET',
+				success: function (d) {
+					self.selectedConcepts.removeAll();
+					for (var i = 0; i < d.items.length; i++) {
+						var conceptSetItem = {};
+
+						conceptSetItem.concept = d.items[i].concept;
+						conceptSetItem.isExcluded = ko.observable(d.items[i].isExcluded);
+						conceptSetItem.includeDescendants = ko.observable(d.items[i].includeDescendants);
+						conceptSetItem.includeMapped = ko.observable(d.items[i].includeMapped);
+
+						
+//						selectedConceptsIndex[d[i].concept.CONCEPT_ID] = 1;
+						self.selectedConcepts.push(conceptSetItem);
+					}
+					
+					self.loading(false);
+				}
+			});
+		});	
+		
 		var width = 960,
 		height = 700,
 		radius = Math.min(width, height) / 2;
@@ -144,6 +203,14 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3'], func
 				};
 			};
 		}
+	
+		self.renderConceptSetCheckBox = function(field){
+			return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check"></span>';
+		}
+		
+		self.routeTo = function (resultMode) {
+			self.resultMode(resultMode);
+		} 
 		
 		self.back = function () {
 			document.location = "#/panacea";
