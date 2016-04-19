@@ -8,13 +8,14 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" type="text/css" href="js/styles/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
 	<link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.min.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.colVis.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/buttons.dataTables.min.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/atlas.dataTables.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/chart.css">
@@ -38,88 +39,42 @@
 	</div>
 
 	<!-- ko if: pageModel.currentView() != 'splash' -->
-	<div id="wrapperMiniBar" style="display:none;" data-bind="visible:minibar()">
-		<div>
-			<img src="images/atlas.png">
-			<ul>
-				<li>
-					<a href="#/search"><i class="fa fa-search"></i></a>
-				</li>
-				<li>
-					<a data-bind="click:routeToConceptSet"><i class="fa fa-shopping-cart"></i></a>
-					<span data-bind="if: selectedConcepts().length > 0">
-					<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
-					</span>
-				</li>
-				<li>
-					<a href="#/import"><i class="fa fa-upload"></i></a>
-				</li>
-				<li>
-					<a href="#/cohortdefinitions"><i class="fa fa-language"></i></a>
-				</li>
-				<li>
-					<a href="#/profiles"><i class="fa fa-user"></i></a>
-				</li>
-				<li>
-					<a href="#/panacea"><i class="fa fa-briefcase"></i></a>
-				</li>
-				<li>
-					<a href="#/reports"><i class="fa fa-area-chart"></i></a>
-				</li>
-				<!--
-				<li>
-					<a href="#/analytics"><i class="fa fa-calculator"></i>Analytics</a>
-				</li>
-				-->
-				<li>
-					<a href="/#feasibility"><i class="fa fa-dot-circle-o"></i></a>
-				</li>
-				<li>
-					<a href="#/jobs"><i class="fa fa-tasks"></i></a>
-				</li>
-				<li>
-					<a href="#/configure"><i class="fa fa-cogs"></i></a>
-				</li>
-				<li>
-					<a href=""><i data-bind="click: function() {minibar(false);}" class="fa fa-expand"></i></a>
-				</li>
-			</ul>
-		</div>
-	</div>
-
 	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible:!pageModel.minibar();">
 		<div id="wrapperLogo">
 			<a href="#/splash">ATLAS</a>
 		</div>
 		<ul>
-			<li>
-				<a href="#/search"><i class="fa fa-search"></i>Vocabulary Search</a>
+			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
+			<!-- ko if: pageModel.currentCohortDefinition() != null -->
+			<li class="current-asset">
+				<i class="fa fa-users"></i>
+				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text: pageModel.currentCohortDefinition().name"></a>
+				<!-- ko if: pageModel.currentConceptSet() != null && pageModel.currentConceptSetSource() == 'cohort' -->
+				<ul>
+					<li>
+						<i class="fa fa-shopping-cart"></i>
+						<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name()"></a>
+						<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
+					</li>
+				</ul>
+				<!-- /ko -->
 			</li>
-			<ul data-bind="foreach:recentSearch">
-				<li>
-					<a data-bind="attr: {href:'#/search/' + query}, text: caption + ' (' + resultLength + ')'"></a>
-				</li>
-			</ul>
-			<li>
-				<i class="fa fa-history"></i>Recent Concepts
-			</li>
-			<ul data-bind="foreach:recentConcept">
-				<li>
-					<a data-bind="text: CONCEPT_NAME, attr: { href: '#/concept/' + CONCEPT_ID}"></a>
-				</li>
-			</ul>
-			<li>
-				<a data-bind="click:routeToConceptSet"><i class="fa fa-shopping-cart"></i>Concept Set</a>
+			<!-- /ko -->
+			<!-- ko if: pageModel.currentConceptSet() && pageModel.currentConceptSetSource() == 'repository'  -->
+			<li class="current-asset">
+				<i class="fa fa-shopping-cart"></i>
+				<!-- ko if: pageModel.currentConceptSetSource() == 'repository' -->
+				<a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
+				<!-- /ko -->
 				<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 			</li>
+			<!-- /ko -->
+			<!-- /ko -->
 			<li>
-				<a href="#/import"><i class="fa fa-upload"></i>Import</a>
+				<a href="#/home"><i class="fa fa-home"></i>Home</a>
 			</li>
 			<li>
-				<a href="#/cohortdefinitions"><i class="fa fa-language"></i>Cohort Definitions</a>
-			</li>
-			<li>
-				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
+				<a href="#/search"><i class="fa fa-search"></i>Vocabulary</a>
 			</li>
 			<li>
 				<a href="#/panacea"><i class="fa fa-briefcase"></i>Pathways</a>
@@ -127,25 +82,20 @@
 			<li>
 				<a href="#/reports"><i class="fa fa-area-chart"></i>Cohort Reporting</a>
 			</li>
-			<!--
 			<li>
-				<a href="#/analytics"><i class="fa fa-calculator"></i>Analytics</a>
+				<a href="#/conceptsets"><i class="fa fa-shopping-cart"></i>Concept Sets</a>
 			</li>
-			-->
 			<li>
-				<a href="#/feasibility"><i class="fa fa-dot-circle-o"></i>Feasibility</a>
+				<a href="#/cohortdefinitions"><i class="fa fa-users"></i>Cohorts</a>
 			</li>
 			<li>
 				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
 			</li>
 			<li>
-				<a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
+				<a href="#/configure"><i class="fa fa-cogs"></i>Configuration</a>
 			</li>
 			<li>
-				<a target="_blank" href="http://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
-			</li>
-			<li>
-				<i data-bind="click: function() {minibar(true);}" class="fa fa-compress"></i>
+				<a target="_blank" href="https://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
 			</li>
 		</ul>
 	</div>
@@ -160,6 +110,14 @@
 
 			<div data-bind="if:pageModel.currentView()=='import'">
 				<importer params="{model: pageModel}"></importer>
+			</div>
+
+			<div data-bind="if:pageModel.currentView()=='home'">
+				<home params="{model: pageModel}"></home>
+			</div>
+			
+			<div data-bind="if:pageModel.currentView()=='conceptsets'">
+				<conceptset-browser params="{model: pageModel}"></conceptset-browser>
 			</div>
 
 			<div data-bind="if: pageModel.currentView() == 'conceptset'">
@@ -216,6 +174,9 @@
 				<feasibility-analyzer params="services: pageModel.services, feasibilityId: pageModel.feasibilityId"></feasibility-analyzer>
 			</div>
 
+			<div data-bind="if:pageModel.currentView() == 'r'">
+				<r-manager></r-manager>
+			</div>
 
 			<div data-bind="if: currentView() == 'configure'">
 				<div class="wrapperTitle">
@@ -236,13 +197,12 @@
 				<div class="wrapperTitle">
 					Template
 				</div>
-				<div id="kernelDensityContainer" class="paddedWrapper"></div>
 			</div>
 
 		</div>
 	</div>
 	<script data-main="js/main" src="js/require.js"></script>
-	<script type="text/javascript" charset="utf-8" src="//animate.adobe.com/runtime/5.0.1/edge.5.0.1.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="https://animate.adobe.com/runtime/5.0.1/edge.5.0.1.min.js"></script>
 	<script>
 		AdobeEdge.loadComposition('atlas%20animation', 'EDGE-8182598', {
 			scaleToFit: "none",

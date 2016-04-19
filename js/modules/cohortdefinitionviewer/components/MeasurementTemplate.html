@@ -1,0 +1,56 @@
+<!-- ko with: Criteria -->
+a measurement of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Measurement'}"></conceptset-reference>
+<ul>
+<!-- ko if: First() != null -->
+	<li>for the first time in the person's history</li>
+<!-- /ko -->
+<!-- ko if: OccurrenceStartDate() != null -->
+	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: MeasurementType() != null -->
+	<li>measurement type is any of: <concept-list-viewer params="ConceptList: MeasurementType()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: Operator() != null -->
+	<li>measurement value operator is any of: <concept-list-viewer params="ConceptList: Operator()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ValueAsNumber() != null -->
+	<li>with value as number <numeric-range-viewer params="Range: ValueAsNumber"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ValueAsConcept() != null -->
+	<li>value as concept is any of: <concept-list-viewer params="ConceptList: ValueAsConcept()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: Unit() != null -->
+	<li>unit is any of: <concept-list-viewer params="ConceptList: Unit()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: RangeLow() != null -->
+	<li>with lower range <numeric-range-viewer params="Range: RangeLow"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: RangeLowRatio() != null -->
+	<li>with lower range ratio <numeric-range-viewer params="Range: RangeLowRatio"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: RangeHigh() != null -->
+	<li>with high range <numeric-range-viewer params="Range: RangeHigh"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: RangeHighRatio() != null -->
+	<li>with high range ratio <numeric-range-viewer params="Range: RangeHighRatio"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Abnormal() != null -->
+	<li>with an abnormal result</li>
+<!-- /ko -->
+<!-- ko if: MeasurementSourceConcept() != null -->
+	<li>Measurement Source Concept is <conceptset-reference params="{conceptSetId: MeasurementSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: Age() != null -->
+	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Gender() != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: Gender()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ProviderSpecialty() != null -->
+	<li>provider specialty is any of: <concept-list-viewer params="ConceptList: ProviderSpecialty()"></concept-list></li>
+<!-- /ko -->
+<!-- ko if: VisitType() != null -->
+	<li>visit occurrance is any of: <concept-list-viewer params="ConceptList: VisitType()"></concept-list-viewer></li>
+<!-- /ko -->
+</ul>
+<!-- /ko -->

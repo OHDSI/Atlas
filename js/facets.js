@@ -1,6 +1,8 @@
 // written and developed by frank j. defalco
 // frank acknowledges Christopher A. Knoll
+// AMD form by Christopher A Knoll
 
+define ([], function() {
 // http://stackoverflow.com/users/80720/rafael
 // http://stackoverflow.com/questions/1960473/unique-values-in-an-array
 Array.prototype.getUnique = function () {
@@ -256,3 +258,9 @@ function FacetEngine(params) {
 		}
 	}
 }
+
+return FacetEngine;
+
+});
+
+	

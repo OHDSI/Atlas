@@ -1,4 +1,4 @@
-define(['knockout', 'text!./panacea-browser.html', 'faceted-datatable'], function (ko, view) {
+define(['knockout', 'text!./panacea-browser.html', 'appConfig', 'faceted-datatable'], function (ko, view, config) {
 	function panaceaBrowser(params) {
 		var self = this;
 		self.model = params.model;
@@ -15,7 +15,7 @@ define(['knockout', 'text!./panacea-browser.html', 'faceted-datatable'], functio
 			if(self.panaceaView() == 'review'){
 				$.ajax({
 					//url: self.services()[0].url + 'panacea/getAllStudy',
-					url: self.services()[0].url + 'panacea/getAllStudyWithLastRunTime',
+					url: config.services[0].url + 'panacea/getAllStudyWithLastRunTime',
 					method: 'GET',
 					success: function (d) {
 						self.reference(d);

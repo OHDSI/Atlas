@@ -1,10 +1,10 @@
-define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3'], function (ko, view, $, d3) {
+define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appConfig'], function (ko, view, $, d3, config) {
 	function panaceaSunburstResult(params) {
 		var self = this;
 		self.model = params.model;
 		self.services = params.services;
 		self.panaceaResultStudyId = ko.observable();
-		self.sources = self.services()[0].sources;
+		self.sources = config.services[0].sources;
 		self.currentResultSource = ko.observable();
 		self.resultMode = ko.observable('report');
 		self.currentStudy = ko.observable();
@@ -18,7 +18,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3'], func
 			self.panaceaResultStudyId(params.model.panaceaResultStudyId);
 			
 			$.ajax({
-				url: self.services()[0].url + 'panacea/' + self.panaceaResultStudyId(),
+				url: config.services[0].url + 'panacea/' + self.panaceaResultStudyId(),
 				method: 'GET',
 				success: function (d) {
 					self.currentStudy(d);
@@ -48,7 +48,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3'], func
 
 		self.currentStudy.subscribe(function (d) {
 			$.ajax({
-				url: self.services()[0].url + 'conceptset/' + self.currentStudy().conceptSetId  +'/expression',
+				url: config.services[0].url + 'conceptset/' + self.currentStudy().conceptSetId  +'/expression',
 				method: 'GET',
 				success: function (d) {
 					self.selectedConcepts.removeAll();
@@ -101,7 +101,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3'], func
 		
 		self.currentResultSource.subscribe(function (d) {
 			
-			var url = self.services()[0].url + 'panacea/getStudySummary/' + self.panaceaResultStudyId() + '/' + self.currentResultSource().sourceId;
+			var url = config.services[0].url + 'panacea/getStudySummary/' + self.panaceaResultStudyId() + '/' + self.currentResultSource().sourceId;
 			
 			d3.json(url, function(error, root) {
 				if (error) {

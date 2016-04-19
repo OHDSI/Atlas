@@ -1,11 +1,11 @@
-define(['knockout', 'text!./cohort-definition-browser.html', 'faceted-datatable'], function (ko, view) {
+define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'faceted-datatable'], function (ko, view, config) {
 	function cohortDefinitionBrowser(params) {
 		var self = this;
-		self.services = params.services;
 		self.currentService = ko.observable();
 		self.reference = ko.observableArray();
 		self.selected = params.cohortDefinitionSelected;
 		self.loading = ko.observable(false);
+		self.config = config;
 
 		self.currentService.subscribe(function (d) {
 			self.loading(true);

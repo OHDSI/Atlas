@@ -1,0 +1,35 @@
+<!-- ko with: Criteria -->
+a device exposure of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Device'}"></conceptset-reference>
+<ul>
+<!-- ko if: First() != null -->
+	<li>for the first time in the person's history</li>
+<!-- /ko -->
+<!-- ko if: OccurrenceStartDate() != null -->
+	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: OccurrenceEndDate() != null -->
+	<li>occurrence end is <date-range-viewer params="Range: OccurrenceEndDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: DeviceType() != null -->
+	<li>device type is any of: <concept-list-viewer params="ConceptList: DeviceType()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: UniqueDeviceId() != null -->
+	<li>with a unique device id <text-filter-viewer params="Filter: UniqueDeviceId"></text-filter-viewer></li>
+<!-- /ko -->
+<!-- ko if: Quantity() != null -->
+	<li>with quantity <numeric-range-viewer params="Range: Quantity"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Age() != null -->
+	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Gender() != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: Gender()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ProviderSpecialty() != null -->
+	<li>provider specialty is any of: <concept-list-viewer params="ConceptList: ProviderSpecialty()"></concept-list></li>
+<!-- /ko -->
+<!-- ko if: VisitType() != null -->
+	<li>visit occurrance is any of: <concept-list-viewer params="ConceptList: VisitType()"></concept-list-viewer></li>
+<!-- /ko -->
+</ul>
+<!-- /ko -->

@@ -1,0 +1,52 @@
+<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+            data: conceptSets(),
+            options: {
+							dom: 'Clfiprt',
+							colVis: {
+								buttonText: 'Change Columns',
+								align: 'right',
+								overlayFade: 0,
+								showAll: 'Show All Columns',
+								restore: 'Reset Columns'
+							},
+							rowCallback: model.contextSensitiveLinkColor,
+							lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+							orderClasses: false,
+							deferRender: true,
+							autoWidth: false,
+							order: [[3, 'desc']],
+              columns: [
+									{ title: '<li class=\'fa fa-shopping-cart\'></li>', render: model.renderConceptSetItemSelector, orderable:false, searchable:false},
+									{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
+									{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
+                  { title: 'Concept Name', render: model.renderBoundLink},
+                  { title: 'Domain', data: 'concept.DOMAIN_ID' },
+									{ title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
+									{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
+									{ title: 'Exclude', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('isExcluded');} },
+									{ title: 'Descendants', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('includeDescendants');} },
+									{ title: 'Mapped', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('includeMapped');} }
+              ]
+           }
+        }">
+</table>
+
+<div class="linkLegend">
+    <div class="linkLegendItem">
+        <div class="swatch standard">
+        </div>
+        <div class="linkLegendTitle">Standard</div>
+    </div>
+    <div class="linkLegendItem">
+        <div class="swatch nonStandard">
+        </div>
+        <div class="linkLegendTitle">Non-Standard</div>
+    </div>
+    <div class="linkLegendItem">
+        <div class="swatch classification">
+        </div>
+        <div class="linkLegendTitle">Classification</div>
+    </div>
+</div>
+
+<div class="clear"></div>

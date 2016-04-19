@@ -1,9 +1,9 @@
-define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout-jqAutocomplete', 'jquery-ui'], function (ko, view, $, jqAuto) {
+define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout-jqAutocomplete', 'appConfig', 'jquery-ui'], function (ko, view, $, jqAuto, config) {
 	function panaceaStudyDefManager(params) {
 		var self = this;
 		self.model = params.model;
 		self.services = params.services;
-		self.sources = self.services()[0].sources;
+		self.sources = config.services[0].sources;
 		self.currentRunSource = ko.observable(self.sources[0]);
 		self.panaceaStudyId = ko.observable();
 		self.currentStudy = ko.observable();
@@ -37,7 +37,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		
 		self.currentStudy.subscribe(function (d) {
 			$.ajax({
-				url: self.services()[0].url + 'cohortdefinition',
+				url: config.services[0].url + 'cohortdefinition',
 				method: 'GET',
 				success: function (d) {
 					jQuery.each(d, function( i, val ) {
@@ -62,7 +62,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 			});
 			
 			$.ajax({
-				url: self.services()[0].url + 'conceptset',
+				url: config.services[0].url + 'conceptset',
 				method: 'GET',
 				success: function (d) {
 					self.conceptsets(d);
@@ -88,7 +88,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 			
 			if(self.panaceaStudyId() == 'undefined'){
 				$.ajax({
-					url: self.services()[0].url + 'panacea/getemptynewstudy',
+					url: config.services[0].url + 'panacea/getemptynewstudy',
 					method: 'GET',
 					success: function (d) {
 						self.currentStudy(d);
@@ -98,7 +98,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 				
 			}else{
 				$.ajax({
-					url: self.services()[0].url + 'panacea/' + self.panaceaStudyId(),
+					url: config.services[0].url + 'panacea/' + self.panaceaStudyId(),
 					method: 'GET',
 					success: function (d) {
 						self.currentStudy(d);
@@ -131,7 +131,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		self.currentConceptSet.subscribe(function(){
 			if(typeof self.currentConceptSet() === 'object'){
 				$.ajax({
-					url: self.services()[0].url + 'conceptset/' + self.currentConceptSet().id  +'/expression',
+					url: config.services[0].url + 'conceptset/' + self.currentConceptSet().id  +'/expression',
 					method: 'GET',
 					success: function (d) {
 						self.currentConceptsExpression(JSON.stringify(d));
@@ -188,7 +188,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 			
 			$.ajax({
 				method: 'POST',
-				url: self.services()[0].url + 'panacea/savestudy',
+				url: config.services[0].url + 'panacea/savestudy',
 				contentType: 'application/json',
 				data: JSON.stringify(self.currentStudy()),
 				dataType: 'json',
@@ -204,7 +204,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		
 		self.runStudy = function() {
 			$.ajax({
-				url: self.services()[0].url + 'panacea/runPncTasklet/' + self.currentRunSource().sourceKey + '/' + self.panaceaStudyId(),
+				url: config.services[0].url + 'panacea/runPncTasklet/' + self.currentRunSource().sourceKey + '/' + self.panaceaStudyId(),
 				method: 'GET',
 				success: function () {
 					document.location = "#/panacea";
@@ -214,7 +214,7 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		
 		self.runGenerateStudySum = function() {
 			$.ajax({
-				url: self.services()[0].url + 'panacea/runPncFilterSummaryTasklet/' + self.currentRunSource().sourceKey + '/' + self.panaceaStudyId(),
+				url: config.services[0].url + 'panacea/runPncFilterSummaryTasklet/' + self.currentRunSource().sourceKey + '/' + self.panaceaStudyId(),
 				method: 'GET',
 				success: function () {
 					document.location = "#/panacea";

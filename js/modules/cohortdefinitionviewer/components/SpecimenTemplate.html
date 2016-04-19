@@ -1,0 +1,35 @@
+<!-- ko with: Criteria -->
+a a specimen of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Specimen'}"></conceptset-reference>
+<ul>
+<!-- ko if: First() != null -->
+	<li>for the first time in the person's history</li>
+<!-- /ko -->
+<!-- ko if: OccurrenceStartDate() != null -->
+	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: SpecimenType() != null -->
+	<li>specimen type is any of: <concept-list-viewer params="ConceptList: SpecimenType()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: Quantity() != null -->
+	<li>with quantity <numeric-range-viewer params="Range: Quantity"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Unit() != null -->
+	<li>unit is any of: <concept-list-viewer params="ConceptList: Unit()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: AnatomicSite() != null -->
+	<li>anatomic site is any of: <concept-list-viewer params="ConceptList: AnatomicSite()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: DiseaseStatus() != null -->
+	<li>disease status is any of: <concept-list-viewer params="ConceptList: DiseaseStatus()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: SourceId() != null -->
+	<li>with a source ID <text-filter-viewer params="Filter: SourceId"></text-filter-viewer></li>
+<!-- /ko -->
+<!-- ko if: Age() != null -->
+	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Gender() != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: Gender()"></concept-list-viewer></li>
+<!-- /ko -->
+</ul>
+<!-- /ko -->

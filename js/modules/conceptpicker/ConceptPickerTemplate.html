@@ -1,0 +1,46 @@
+<button class="btn btn-primary btn-xs" data-bind="click: open, disable: isOpen">Add</button>
+<!-- ko ifnot: isImportEnabled -->
+<button class="btn btn-primary btn-xs" data-bind="click: function() { isImportEnabled(true); }">Import</button>
+<!-- /ko -->
+<!-- ko if: isImportEnabled -->
+<div title="Import Concepts...." data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500 }">
+<textarea rows="1" style="width: 650px; height:400px; resize: none; overflow: auto; word-wrap: break-word"  data-bind=" textInput: importValues"></textarea>
+<button class="btn btn-primary btn-xs" data-bind="click: doImport">Done</button>
+</div>
+<!-- /ko -->
+<!-- ko if: isOpen -->
+<div class="conceptsearch" title="Select Concept..." data-bind="dialog: { isOpen: isOpen, modal: true, width:'80%', height:600 }">
+	<div data-bind="if: ProviderReady()">
+		<div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+			<input placeholder="Search…" data-bind="value: searchText, valueUpdate: 'input', event: { keyup: searchKeyUp }" />
+			<select data-bind="options: $component.DomainOptions, value: SelectedDomain" />
+		</div>
+		<table class="stripe compact hover" cellspacing="0" width="100%" 
+					 data-bind="dataTable:{
+											data: results,
+											api: dtApi,
+											options: {
+												deferRender: true,
+												autoWidth: false,
+												order: [ 2, 'asc' ],
+												columns: [
+													'select',
+													{ data: 'CONCEPT_ID', title: 'Concept Id' },
+													{ data: 'CONCEPT_CODE', title: 'Code' },
+													{ data: 'CONCEPT_NAME', title: 'Concept Name' },
+													{ data: 'STANDARD_CONCEPT', title: 'Standard Type' },
+													{ data: 'VOCABULARY_ID', title: 'Vocabulary' },
+													{ data: 'DOMAIN_ID', title: 'Domain' }											
+												],
+												language: {
+													search: 'Filter records:'
+												}
+											}
+										 }"></table>
+		<div style="text-align: right; padding: 5px"><button class="btn btn-primary btn-xs" data-bind="click: add">Add Selected</button> <button class="btn btn-primary btn-xs" data-bind="click: addAndClose">Add And Close</button> <button class="btn btn-primary btn-xs" data-bind="click: function() { this.isOpen(false);}">Close</button></div>
+	</div>
+	<div data-bind="if: !ProviderReady()">
+		Please wait while the Vocabulary Provider initalizes....
+	</div>
+</div>
+<!-- /ko -->

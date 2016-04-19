@@ -1,0 +1,3 @@
+<select data-bind="options: $component.operationOptions, optionsText: 'name', optionsValue: 'id', value: Range().Op"></select> 
+<span contenteditable="true" class="numericInputField" data-bind="htmlValue: Range().Value.numeric()"></span>
+<span data-bind="if: Range().Op().substr(-2) == 'bt'"> and <span contenteditable="true" class="numericInputField" data-bind="htmlValue: Range().Extent.numeric()"></span></span>

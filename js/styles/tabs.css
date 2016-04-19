@@ -1,0 +1,35 @@
+.tabs
+{
+	background: transparent;
+	border-width:0;
+}
+
+	.tabs .ui-widget-header
+	{
+		background: transparent;
+		border: none;
+		border-bottom: 1px solid #c0c0c0;
+		-moz-border-radius: 0px;
+		-webkit-border-radius: 0px;
+		border-radius: 0px;
+		font-size: 15px;
+	}
+
+	.tabs .ui-widget-content
+	{
+		border-width: 0;
+		font-size: 14px;
+	}
+
+.ui-tabs .ui-tabs-panel
+{
+	display: block;
+	border-width: 0;
+	padding: 0px;
+	background: none;
+}
+
+.ui-tabs .ui-state-disabled
+{
+	display: none; /* disabled tabs don't show up */
+}

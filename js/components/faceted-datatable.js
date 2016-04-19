@@ -8,7 +8,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 		self.columns = params.columns;
 		self.rowCallback = params.rowCallback;
 		self.rowClick = params.rowClick;
-		
+
 		self.orderColumn = 1;
 		if (params.orderColumn) {
 			self.orderColumn = params.orderColumn;
@@ -31,7 +31,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 		};
 
 		self.reference.subscribe(function () {
-			self.feTemp = new FacetEngine(self.options);
+			self.feTemp = new facetEngine(self.options);
 
 			for (var i = 0; i < self.reference().length; i++) {
 				self.feTemp.Process(self.reference()[i]);
@@ -44,6 +44,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 			self.facetEngine(self.feTemp);
 			self.data(self.reference());
 		});
+
 	};
 
 	var component = {
