@@ -34,8 +34,7 @@ define([
 				};
 				var routes = {
 					'/': function () {
-						// default to search for now
-						document.location = "#/search";
+						document.location = "#/home";
 					},
 					'/concept/:conceptId:': function (conceptId) {
 						require(['concept-manager'], function () {
@@ -59,6 +58,11 @@ define([
 					'/configure': function () {
 						require(['configuration'], function () {
 							self.currentView('configure');
+						});
+					},
+					'/home': function () {
+						require(['home'], function () {
+							self.currentView('home');
 						});
 					},
 					'/studyreport': function () {
@@ -1036,7 +1040,7 @@ define([
 			if (cohortDefinitionId != undefined) {
 				$.ajax(config.services[0].url + sourceKey + '/cohortresults/' + cohortDefinitionId + '/distinctPersonCount', {
 					observable: observable,
-					success: function(result) {
+					success: function (result) {
 						this.observable(result);
 					}
 				});
@@ -1237,7 +1241,7 @@ define([
 								cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
 								cdsi.distinctPeople = ko.observable('...');
 
-								self.getCohortCount(source,cdsi.distinctPeople);
+								self.getCohortCount(source, cdsi.distinctPeople);
 							} else {
 								cdsi.isValid = false;
 								cdsi.status = 'n/a';

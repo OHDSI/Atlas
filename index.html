@@ -70,6 +70,9 @@
 			<!-- /ko -->
 			<!-- /ko -->
 			<li>
+				<a href="#/home"><i class="fa fa-home"></i>Home</a>
+			</li>
+			<li>
 				<a href="#/search"><i class="fa fa-search"></i>Vocabulary</a>
 			</li>
 			<li>
@@ -82,7 +85,7 @@
 				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
 			</li>
 			<li>
-				<a href="#/configure"><i class="fa fa-cogs"></i>Configure</a>
+				<a href="#/configure"><i class="fa fa-cogs"></i>Configuration</a>
 			</li>
 			<li>
 				<a target="_blank" href="https://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
@@ -102,6 +105,10 @@
 				<importer params="{model: pageModel}"></importer>
 			</div>
 
+			<div data-bind="if:pageModel.currentView()=='home'">
+				<home params="{model: pageModel}"></home>
+			</div>
+			
 			<div data-bind="if:pageModel.currentView()=='conceptsets'">
 				<conceptset-browser params="{model: pageModel}"></conceptset-browser>
 			</div>

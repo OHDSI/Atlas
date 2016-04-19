@@ -90,7 +90,8 @@ requirejs.config({
 		"conceptpicker": "modules/conceptpicker",
 		"webapi": "modules/WebAPIProvider",
 		"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
-		"appConfig": "config"
+		"appConfig": "config",
+		"home" : "components/home"
 	}
 });
 
