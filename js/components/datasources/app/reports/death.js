@@ -8,7 +8,7 @@
 
 			$.ajax({
 				type: "GET",
-				url:  getUrlFromData(datasource, "death"),
+				url: common.getUrlFromData(datasource, "death"),
 				contentType: "application/json; charset=utf-8",
 			}).done(function (result) {
 

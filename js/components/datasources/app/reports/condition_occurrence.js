@@ -26,7 +26,7 @@
 
 					$.ajax({
 						type: "GET",
-						url: getUrlFromDataCollection(self.datasource, "conditions", concept_id),
+						url: common.getUrlFromDataCollection(self.datasource, "conditions", concept_id),
 						success: function (data) {
 							// age at first diagnosis visualization
 							var boxplot = new jnj_chart.boxplot();
@@ -166,7 +166,7 @@
 
 					$.ajax({
 						type: "GET",
-						url:  getUrlFromData(datasource, 'condition_treemap'),
+						url: common.getUrlFromData(datasource, 'condition_treemap'),
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
 							var normalizedData = common.normalizeDataframe(data);

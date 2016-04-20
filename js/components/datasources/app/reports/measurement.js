@@ -339,7 +339,7 @@ define(["jquery", "d3", "jnj_chart", "common", "datatables.net", "colvis"], func
 
 		$.ajax({
 			type: "GET",
-			url: getUrlFromData(datasource, "measurement_treemap"),
+			url: common.getUrlFromData(datasource, "measurement_treemap"),
 			contentType: "application/json; charset=utf-8",
 			success: function (data) {
 				var normalizedData = common.normalizeDataframe(data);

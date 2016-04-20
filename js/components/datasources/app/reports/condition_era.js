@@ -53,7 +53,7 @@
 
 					$.ajax({
 						type: "GET",
-						url: getUrlFromDataCollection(self.datasource, "conditioneras", concept_id),
+						url: common.getUrlFromDataCollection(self.datasource, "conditioneras", concept_id),
 						success: function (data) {
 							// age at first diagnosis visualization
 							boxplot_helper(data.AGE_AT_FIRST_DIAGNOSIS,'#conditioneras_age_at_first_diagnosis',500,300,'Gender','Age at First Diagnosis');
@@ -164,7 +164,7 @@
 
 					$.ajax({
 						type: "GET",
-						url: getUrlFromData(datasource, "conditionera_treemap"),
+						url: common.getUrlFromData(datasource, "conditionera_treemap"),
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
 							var normalizedData = common.normalizeDataframe(data);

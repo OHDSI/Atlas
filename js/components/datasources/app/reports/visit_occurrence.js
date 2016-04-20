@@ -26,7 +26,7 @@
 
 					$.ajax({
 						type: "GET",
-						url: getUrlFromDataCollection(self.datasource, "visits", concept_id),
+						url: common.getUrlFromDataCollection(self.datasource, "visits", concept_id),
 						success: function (data) {
 
 							// render trellis
@@ -176,7 +176,7 @@
 
 					$.ajax({
 						type: "GET",
-						url: getUrlFromData(datasource, 'visit_treemap'),
+						url: common.getUrlFromData(datasource, 'visit_treemap'),
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
 							data = common.normalizeDataframe(data);

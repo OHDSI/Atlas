@@ -55,7 +55,7 @@
 
 					$.ajax({
 						type: "GET",
-						url:  getUrlFromDataCollection(self.datasource, "drugeras", concept_id),
+						url: common.getUrlFromDataCollection(self.datasource, "drugeras", concept_id),
 						success: function (data) {
 
 							// boxplots
@@ -167,7 +167,7 @@
 
 					$.ajax({
 						type: "GET",
-						url: getUrlFromData(datasource, "drugera_treemap"),
+						url: common.getUrlFromData(datasource, "drugera_treemap"),
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
 							var normalizedData = common.normalizeDataframe(data);

@@ -1,5 +1,5 @@
 		(function () {
-			define(["jquery", "datatables.net", "colvis"], function ($) {
+			define(["jquery", "common", "datatables.net", "colvis"], function ($, common) {
 				var achilles_heel = {};
 
 				achilles_heel.render = function (datasource) {
@@ -7,7 +7,7 @@
 				
 					$.ajax({
 						type: "GET",
-						url: getUrlFromData(datasource, "achillesheel"),
+						url: common.getUrlFromData(datasource, "achillesheel"),
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
 							table_data = [];

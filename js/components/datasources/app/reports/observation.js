@@ -343,7 +343,7 @@
 
 					$.ajax({
 						type: "GET",
-						url: getUrlFromData(datasource, "observation_treemap"),
+						url: common.getUrlFromData(datasource, "observation_treemap"),
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
 							var normalizedData = common.normalizeDataframe(data);

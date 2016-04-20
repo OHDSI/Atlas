@@ -9,7 +9,7 @@
 			console.log("DD: " + datasource.folder + "/" + datasource.name);
 			$.ajax({
 				type: "GET",
-				url:  getUrlFromData(datasource, 'datadensity'),
+				url: common.getUrlFromData(datasource, 'datadensity'),
 				contentType: "application/json; charset=utf-8",
 			}).done(function (result) {
 				
