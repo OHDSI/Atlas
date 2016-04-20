@@ -54,6 +54,7 @@ requirejs.config({
 		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/0.11.0/knockout-sortable",
 		"knockout-mapping": "knockout.mapping",
 		"knockout-persist": "knockout.persist",
+    "knockout-amd-helpers": "knockout-amd-helpers.min",
 		"datatables.net": "jquery.dataTables.min",
 		"datatables.net-buttons" : "jquery.dataTables.buttons.min",
 		"datatables.net-buttons-html5" : "jquery.dataTables.buttons.html5.min",
@@ -67,6 +68,7 @@ requirejs.config({
 		"conceptset-manager": "components/conceptset-manager",
 		"job-manager": "components/job-manager",
 		"importer": "components/importer",
+		"data-sources": "components/data-sources",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definition-browser",
@@ -91,7 +93,10 @@ requirejs.config({
 		"webapi": "modules/WebAPIProvider",
 		"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
 		"appConfig": "config",
-		"home" : "components/home"
+		"home" : "components/home",
+		"lodash": "lodash.min",
+		"common":"components/datasources/app/common",
+		"reports": "components/datasources/app/reports"
 	}
 });
 

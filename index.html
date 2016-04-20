@@ -19,6 +19,7 @@
 	<link rel="stylesheet" type="text/css" href="js/styles/atlas.dataTables.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/chart.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/achilles.css">
 
 	<title>ATLAS</title>
 	<!--Adobe Edge Runtime-->
@@ -72,6 +73,9 @@
 			<li>
 				<a href="#/home"><i class="fa fa-home"></i>Home</a>
 			</li>
+			<li>
+				<a href="#/datasources"><i class="fa fa-database"></i>Data Sources</a>
+			</li>	
 			<li>
 				<a href="#/search"><i class="fa fa-search"></i>Vocabulary</a>
 			</li>
@@ -131,6 +135,10 @@
 
 			<div data-bind="if: pageModel.currentView() == 'cohortdefinitions'">
 				<cohort-definitions params="{model: pageModel}"></cohort-definitions>
+			</div>
+
+			<div data-bind="if: pageModel.currentView() == 'datasources'">
+				<data-sources params="{model: pageModel}"></data-sources>
 			</div>
 
 			<div data-bind="if: pageModel.currentView() == 'cohortdefinition'">

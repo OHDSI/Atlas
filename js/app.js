@@ -11,9 +11,9 @@ define([
 	'css!styles/buttons.css',
 ], function ($, ko, jnj_chart, d3, ohdsiUtil, config) {
 	var appModel = function () {
-		$.support.cors = true;
-		var self = this;
 
+		$.support.cors = true;
+		var self = this;		
 		$('#querytext').focus();
 		self.appInitializationFailed = ko.observable(false);
 		self.initPromises = [];
@@ -48,7 +48,16 @@ define([
 							self.currentCohortDefinitionMode('conceptsets');
 							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortdefinition', 'details');
 						});
-
+					},
+					'/datasources': function () {
+						require(['data-sources'], function () {
+							self.currentView('datasources');
+						});
+					},
+					'/datasources/:sourceName/:report': function (sourceName, report) {
+						require(['data-sources'], function () {
+							self.currentView('datasources');
+						});
 					},
 					'/cohortdefinitions': function () {
 						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {

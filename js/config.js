@@ -16,6 +16,9 @@ define([], function () {
 
 	config.webAPIRoot = config.services[0].url;
 
+	config.dataSourcesLocation = 'http://hix.jnj.com/achilles/data/datasources.json';
+  config.dataSourcesRoot = 'http://hix.jnj.com/achilles/data';
+	
 	return config;
 
 });
