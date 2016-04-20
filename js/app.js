@@ -1627,6 +1627,7 @@ define([
 			self.selectedConceptsIndex = {};
 			self.analyzeSelectedConcepts();
 			self.resolveConceptSetExpression();
+            self.currentConceptSetDirtyFlag.reset();
 		}
 
 		self.renderHierarchyLink = function (d) {
