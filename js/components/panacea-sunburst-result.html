@@ -39,8 +39,8 @@
 	</div>
 	
 	<div class="paddedWrapper" data-bind="visible:resultMode() == 'report', if:currentStudy() && !loading() " style="padding: 10px;">
-		<div class="paddedWrapper">
-			<label class="heading">Cohort</label>
+<!-- 		<div class="paddedWrapper"> -->
+			<label class="heading">Cohort: </label><span style='margin-left:5px;' data-bind='text:cohortDefinition().name()'/>
 			<br/>
 			<cohort-expression-viewer params="expression: cohortDefinition().expression"></cohort-expression-viewer>
 			<br/>
@@ -53,7 +53,7 @@
 				<br/>
 			</div>
 			<!-- /ko -->                                                                                                                                                         
-  		</div>
+<!--   		</div> -->
 
 		<label class="heading">Treatment Concept Set</label>
 		<br/>
