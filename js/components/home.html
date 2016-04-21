@@ -3,9 +3,35 @@
 </div>
 
 <div class="paddedWrapper">
-	Welcome to ATLAS Version 1.0
-	
-	<div>
-		Release Notes
+	<h4>Welcome to ATLAS</h4> ATLAS is an open source application developed as a part of <a href="www.ohdsi.org">OHDSI</a> intended to provide a unified interface to patient level data and analytics.
+	<div class="home-getting-started">
+		<h4>Getting Started</h4>
+		<span class="btn btn-sm btn-success disabled" data-bind="click:$component.newCohortDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined}">Define a New Cohort</span> Begin performing research by defining the group of people you intend to study
+		<span class="btn btn-sm btn-success disabled" data-bind="click:$component.browseVocabulary, css: {disabled: pageModel.currentCohortDefinition() != undefined}">Search the Vocabulary</span> Search the different ontologies used to describe patient level data around the world		
+	</div>
+
+	<div class="release-notes">
+		<h4>Release Notes</h4>
+
+		<div>
+			Version 1.0 Current Release Notes
+			<ul>
+				<li>Integrated Data Source Characterization (project achilles)</li>
+				<li>Integrated Cohort Definitions (project circe)</li>
+				<li>Integrated Cohort Reporting (project heracles)</li>
+				<li>Bug Fixes listed in Additional Details below</li>
+			</ul>
+		</div>
+
+		<div>
+			Additional Details:
+			<br/> This latest release contains <strong data-bind="text:github_status().length"></strong> feature enhancements and issue resolutions.
+		</div>
+		<div class="github-issue-container" data-bind="foreach:github_status">
+			<div class="github-issue">
+				<a target="_blank" data-bind="attr:{href: html_url, title: title}, text:title"></a>
+				<img class="github-avatar" data-bind="attr:{src: user.avatar_url}" />
+			</div>
+		</div>
 	</div>
 </div>

@@ -25,6 +25,7 @@ body {
 	width: 200px;
 	bottom: 0px;
 	background-color: #003142;
+	border-right: solid 1px #888;
 }
 
 #wrapperMiniBar {
@@ -1644,4 +1645,46 @@ li.current-asset {
     font-size: 14px;
     color: #FFF;
     line-height: 14px;
+}
+
+.github-issue {
+	/* border-bottom:solid 1px #ddd; */
+	margin-bottom:3px;
+	position: relative;
+	clear: both;
+	line-height: 16px;
+}
+
+.github-avatar {
+	width: 16px;
+	height: 16px;
+	box-shadow: #003142 1px 1px 2px;
+	float: left;
+	margin-right: 10px;
+}
+
+.github-issue-container {
+	overflow-y: scroll;
+	height:200px;
+	border: solid 1px #ccc;
+}
+
+.home-getting-started {
+	margin:10px 3px 30px 3px;
+	background-color: #003142;
+	color:#fff;
+	padding:20px;
+	line-height:75px;
+}
+
+.home-getting-started .btn {
+	width:200px;
+	margin-right:50px;
+}
+
+.release-notes {
+	background-color:#eee;
+	margin:3px;
+	padding:5px;
+	border: solid 1px #ddd;
 }
