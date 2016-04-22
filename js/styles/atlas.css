@@ -1688,3 +1688,7 @@ li.current-asset {
 	padding:5px;
 	border: solid 1px #ddd;
 }
+
+.home-welcome {
+	margin: 7px;
+}
