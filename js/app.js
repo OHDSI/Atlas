@@ -1252,11 +1252,11 @@ define([
 
 								self.getCohortCount(source, cdsi.distinctPeople);
 							} else {
-								cdsi.isValid = false;
-								cdsi.status = 'n/a';
-								cdsi.startTime = 'n/a';
-								cdsi.executionDuration = 'n/a';
-								cdsi.distinctPeople = 'n/a';
+								cdsi.isValid = ko.observable(false);
+								cdsi.status = ko.observable('n/a');
+								cdsi.startTime = ko.observable('n/a');
+								cdsi.executionDuration = ko.observable('n/a');
+								cdsi.distinctPeople = ko.observable('n/a');
 							}
 
 							results.push(cdsi);
