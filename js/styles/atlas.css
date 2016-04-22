@@ -1696,3 +1696,7 @@ li.current-asset {
 .home-documentation {
 	margin: 10px;
 }
+
+.home-documentation .fa {
+    font-size: 18px;
+}
