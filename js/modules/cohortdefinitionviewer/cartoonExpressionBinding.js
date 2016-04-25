@@ -68,9 +68,30 @@ define(['knockout','d3'], function (ko, d3) {
           .style('stroke','black')
 
       var criteriaGroup = valueAccessor()().AdditionalCriteria();
+      var domain = {min: 0, max: 0};
+      var getEndPoints = function(cg) {
+        var s = cg.StartWindow.Start.Days() *
+                cg.StartWindow.Start.Coeff();
+        var e = cg.StartWindow.End.Days() *
+                cg.StartWindow.End.Coeff();
+        domain.min = Math.min(domain.min, s);
+        domain.max = Math.max(domain.max, e);
+      };
+      criteriaGroupWalk(criteriaGroup, getEndPoints);
+      debugger;
       drawCartoon(g, criteriaGroup, 1)
 		}
 	};
+  function criteriaGroupWalk(criteriaGroup, cb) {
+    var list = criteriaGroup.CriteriaList();
+    for (var i = 0; i < list.length; i++) {
+      cb(list[i]);
+    }
+    var groups = criteriaGroup.Groups();
+    for (var i = 0; i < groups.length; i++) {
+      criteriaGroupWalk(groups[i], cb);
+    }
+  }
   function drawCartoon(selection, data, linesdown) {
       //console.log("cartoon update", ko.toJS(valueAccessor), ko.toJS(allBindingsAccessor));
       console.log("draw", linesdown);
@@ -91,6 +112,7 @@ define(['knockout','d3'], function (ko, d3) {
                 .attr('stroke-width', 4)
                 .attr('stroke', 'blue')
       console.log(g[0]);
+      debugger;
       var groups = data.Groups();
       for (var i = 0; i < groups.length; i++) {
         console.log('subgroup');
