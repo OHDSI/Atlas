@@ -1,3 +1,4 @@
+
 <span data-bind="if: parentGroup">
 	<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? 'And' : 'Or'"></span> people having</span>
 	<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">People having</span>
@@ -6,22 +7,28 @@
 <ul>
 <!-- ko foreach: group().CriteriaList -->
 	<li>
-		<span data-bind="if: ($index() > 0)"><span data-bind="	text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span><span data-bind="text: $component.getOccurrenceType(Occurrence.Type())" /> 
-		<span data-bind="text: Occurrence.Count"></span> <span data-bind="text: Occurrence.IsDistinct() ? 'distinct' : ''"></span>
-		occurrence<span data-bind="text: Occurrence.Count != 1 ? 's' : ''"></span> of
-		<span data-bind="component: { 
-							name: $component.getCriteriaComponent($data.Criteria), 
-							params: {expression: $component.expression, criteria: $data.Criteria }
-						}"></span>
-		occurring between <window-input-viewer params="Window: StartWindow"></window-input-viewer> index		
-	</li>		
+		<div data-bind="event: { 
+								mouseover: function() { $component.selectedFragment && $component.selectedFragment($data) }, 
+								mouseout: function() { $component.selectedFragment && $component.selectedFragment(null);}
+							}, 
+							css: {highlighted: ($component.selectedFragment && $component.selectedFragment()) === $data}">
+			<span data-bind="if: ($index() > 0)"><span data-bind="	text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span><span data-bind="text: $component.getOccurrenceType(Occurrence.Type())" /> 
+			<span data-bind="text: Occurrence.Count"></span> <span data-bind="text: Occurrence.IsDistinct() ? 'distinct' : ''"></span>
+			occurrence<span data-bind="text: Occurrence.Count != 1 ? 's' : ''"></span> of
+			<span data-bind="component: { 
+								name: $component.getCriteriaComponent($data.Criteria), 
+								params: {expression: $component.expression, criteria: $data.Criteria }
+							}"></span>
+			occurring between <window-input-viewer params="Window: StartWindow"></window-input-viewer> index
+		</div>	
+	</li>
 <!-- /ko -->
 </ul>	
 <ul>
 <!-- ko foreach: group().Groups -->
 	<li>
 		<div style="padding-top: 5px; position:relative">
-			<criteria-group-viewer params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group()}"></criteria-group-viewer>
+			<criteria-group-viewer params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group(), selectedFragment: $component.selectedFragment}"></criteria-group-viewer>
 		</div>
 	</li>
 <!-- /ko -->

@@ -38,7 +38,8 @@
 
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'cartoon' }, click: function() { $component.tabMode('cartoon') };"><a>Cartoon</a>
 		</li>
-
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'demo' }, click: function() { $component.tabMode('demo') };"><a>Demo</a>
+		</li>
 	</ul>
 	<!-- ko if: isGeneratedOpen -->
 	<div title="Generated Sql..." data-bind="dialog: { isOpen: isGeneratedOpen, modal: true, width:700, height:500 }">
@@ -289,5 +290,15 @@
 				<!-- /ko -->
 			</div>
 		</div>
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'demo' }" class="tab-pane">
+			<div class="paddedWrapper">
+				<div style="width: 50%; overflow:auto; float: left; border-right: solid 1px black">
+					<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression, selectedFragment: selectedFragment"></cohort-expression-viewer>
+				</div>
+				<div style="margin-left: 50%; padding-left: 5px; overflow: auto">
+					<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression, selectedFragment: selectedFragment"></cohort-expression-viewer>
+				</div>			
+			</div>
+		</div>		
 	</div>
 </div>
