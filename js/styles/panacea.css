@@ -46,3 +46,24 @@
   color: black;
   font-size: 12px;
 }
+
+.container {
+    max-width: 100%;
+}
+
+.detail-container {
+    width: auto;
+}
+
+.cohort-description {
+    color: #898989;
+    padding: 2px;
+}
+
+.summary-grouper {
+    padding: 2px;
+}
+
+.cohort-desc {
+	padding-right: 4px;
+}

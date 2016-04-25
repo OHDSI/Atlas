@@ -83,6 +83,7 @@ requirejs.config({
 		"panacea-browser": "components/panacea-browser",
 		"panacea-study-def-manager": "components/panacea-study-def-manager",
 		"panacea-sunburst-result": "components/panacea-sunburst-result",
+		"panacea-cohort-result": "components/panacea-cohort-result",
 		"r-manager": "components/r-manager",
 		"studyreport-manager": "components/studyreport-manager",
 		"d3": "d3.min",

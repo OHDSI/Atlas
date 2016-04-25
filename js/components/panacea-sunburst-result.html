@@ -7,6 +7,12 @@
 		<li role="presentation" data-bind="click: function() {routeTo('report');}, attr: {class: resultMode() == 'report' ? 'active' : ''}">
 			<a>Report</a>
 		</li>
+		<li role="presentation" data-bind="click: function() {routeTo('cohortreport');}, attr: {class: resultMode() == 'cohortreport' ? 'active' : ''}">
+			<a>Cohort Report</a>
+		</li>
+		<li role="presentation" data-bind="click: function() {routeTo('visualization');}, attr: {class: resultMode() == 'visualization' ? 'active' : ''}">
+			<a>Pathway Report</a>
+		</li>
 		<li role="presentation" data-bind="click: function() {routeTo('sunburst');}, attr: {class: resultMode() == 'sunburst' ? 'active' : ''}">
 			<a>Sunburst chart</a>
 		</li>
@@ -40,7 +46,7 @@
 	
 	<div class="paddedWrapper" data-bind="visible:resultMode() == 'report', if:currentStudy() && !loading() " style="padding: 10px;">
 <!-- 		<div class="paddedWrapper"> -->
-			<label class="heading">Cohort: </label><span style='margin-left:5px;' data-bind='text:cohortDefinition().name()'/>
+			<label class="heading">Cohort: </label><span style='margin-left:5px;' data-bind='text:cohortDefinition().name'/>
 			<br/>
 			<cohort-expression-viewer params="expression: cohortDefinition().expression"></cohort-expression-viewer>
 			<br/>
@@ -120,9 +126,21 @@
 		</div>
 	</div>
 	
+	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'cohortreport' && !loading(), if: !loading()">
+		<div id="pnc_cohortreport_div">
+			<panacea-cohort-result params="{services: pageModel.services, model: pageModel, panaceaResultStudyId: panaceaResultStudyId(), 
+				resultMode: resultMode(), currentResultSource: currentResultSource(), currentStudy: currentStudy(),
+				cohortDefinition: cohortDefinition(), loading: loading(), }"></panacea-cohort-result>
+		</div>
+	</div>
+	
+	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'visualization'">
+		<div id="pnc_visualization_div">
+		</div>
+	</div>
+	
 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'sunburst'">
 		<div id="pnc_sunburst_result_div">
 		</div>
 	</div>
-
 </div>

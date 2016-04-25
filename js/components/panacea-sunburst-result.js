@@ -10,14 +10,19 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 		self.panaceaResultStudyId = ko.observable();
 		self.sources = config.services[0].sources;
 		self.currentResultSource = ko.observable();
+		self.currentResultSource.extend({ notify: 'always' });
 		self.resultMode = ko.observable('report');
+		self.resultMode.extend({ notify: 'always' });
 		self.currentStudy = ko.observable();
+		self.currentStudy.extend({ notify: 'always' });
 		self.startDate = ko.observable();
 		self.endDate = ko.observable();
 		self.gapThreshold = ko.observable();
 		self.selectedConcepts = ko.observableArray();
 		self.cohortDefinition = ko.observable();
+		self.cohortDefinition.extend({ notify: 'always' });
 		self.loading = ko.observable(true);
+		self.loading.extend({ notify: 'always' });
 		
 		if (self.model != null && self.model.hasOwnProperty('panaceaResultStudyId')){
 			self.panaceaResultStudyId(params.model.panaceaResultStudyId);
@@ -70,9 +75,9 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 						self.selectedConcepts.push(conceptSetItem);
 					}
 					
-//					if(self.selectedConcepts() !=null && self.cohortDefinition() != null){
+					if(self.selectedConcepts() !=null && self.cohortDefinition() != null){
 						self.loading(false);
-//					}
+					}
 				}
 			});
 			
@@ -85,9 +90,9 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 					self.cohortDefinition(new CohortDefinition(cohortDefinition));
 //					self.model.currentCohortDefinition(cohortDefinition);
 
-//					if(self.selectedConcepts() !=null && self.cohortDefinition() != null){
-//						self.loading(false);
-//					}
+					if(self.selectedConcepts() !=null && self.cohortDefinition() != null){
+						self.loading(false);
+					}
 				}
 			});
 		});	
