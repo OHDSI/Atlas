@@ -4,6 +4,7 @@ define(['knockout', 'cohortbuilder/CriteriaTypes','cohortbuilder/CriteriaGroup',
 		var self = this;
 
 		self.expression = ko.utils.unwrapObservable(params.expression);
+    //if (!params.parentGroup) debugger;
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;
 		self.options = options;

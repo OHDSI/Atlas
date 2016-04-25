@@ -5,6 +5,9 @@ define(function (require, exports) {
 	var expressionViewer = require('./components/CohortExpressionViewer');
 	ko.components.register('cohort-expression-viewer', expressionViewer);
 	
+	var cartoonViewer = require('./components/CartoonViewer');
+	ko.components.register('cartoon-viewer', cartoonViewer);
+	
 	var criteriaGroup = require('./components/CriteriaGroup');
 	ko.components.register('criteria-group-viewer', criteriaGroup);
 
