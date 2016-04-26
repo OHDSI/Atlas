@@ -8,8 +8,29 @@ define(['knockout','d3'], function (ko, d3) {
     init: function (element, valueAccessor, allBindingsAccessor) {
       var expression = valueAccessor()[0];
       var selectedFragment = valueAccessor()[1];
-      d3.select(element)
-        .append('svg')
+      var svg = d3.select(element).append('svg');
+      svg.append('marker')
+          .attr('id', 'right-arrow')
+          .attr('viewBox', '0 0 10 10')
+          .attr('refX', 0)
+          .attr('refY', 5)
+          .attr('markerUnits', 'strokeWidth')
+          .attr('markerWidth', 4)
+          .attr('markerHeight', 3)
+          .attr('orient', 'auto')
+          .append('path')
+            .attr('d', 'M 0 0 L 10 5 L 0 10 z')
+      svg.append('marker')
+          .attr('id', 'left-arrow')
+          .attr('viewBox', '0 0 10 10')
+          .attr('refX', 10)
+          .attr('refY', 5)
+          .attr('markerUnits', 'strokeWidth')
+          .attr('markerWidth', 4)
+          .attr('markerHeight', 3)
+          .attr('orient', 'auto')
+          .append('path')
+            .attr('d', 'M 10 0 L 10 10 L 0 5 z')
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
       var expression = valueAccessor()[0];
@@ -51,6 +72,8 @@ define(['knockout','d3'], function (ko, d3) {
           .attr('stroke-width', 4)
           .attr('fill', 'pink')
           .attr('stroke', 'blue')
+          .style('marker-start', 'url(#left-arrow)')
+          .style('marker-end', 'url(#right-arrow)')
       g.append('circle')
           .attr('r', 8)
           .attr('cx', 0)
