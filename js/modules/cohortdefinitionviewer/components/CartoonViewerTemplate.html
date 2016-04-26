@@ -1,4 +1,8 @@
-<div id="primary-criteria" style="width:60%">
+<div style="width:60%" data-bind="event: { 
+                  mouseover: function() { selectedFragment && selectedFragment(expression().PrimaryCriteria()) }, 
+                  mouseout: function() { selectedFragment && selectedFragment(null);}
+                }, 
+                css: {highlighted: selectedFragment && selectedFragment() === expression().PrimaryCriteria()}">
   People having any of the following:<br>
 
   <ul>
@@ -19,15 +23,21 @@
 <br/>
 
 <div data-bind="with: expression">
-	<div data-bind="if: AdditionalCriteria">
-		<div style="font-weight: bold">For people matching the Primary Events, include:</div>
-		<criteria-group-viewer params="{expression: $data, group: AdditionalCriteria}"></criteria-group-viewer>
-	</div>
+  <div data-bind="if: AdditionalCriteria">
+    <div style="font-weight: bold">For people matching the Primary Events, include:</div>
+    <criteria-group-viewer params="{expression: $data, group: AdditionalCriteria, selectedFragment: $component.selectedFragment}"></criteria-group-viewer>
+  </div>
 </div>
 
-<div data-bind="with: expression().ExpressionLimit">Limit cohort expression results to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
+<div data-bind="with: expression().ExpressionLimit, 
+                event: {
+                  mouseover: function () { $component.selectedFragment && $component.selectedFragment(expression().PrimaryCriteria()) },
+                  mouseout: function() { $component.selectedFragment && $component.selectedFragment(null);}
+                }, 
+                css: {highlighted: $component.selectedFragment && $component.selectedFragment() === expression().PrimaryCriteria()} ">Limit cohort expression results to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
+
 
 <div data-bind="height:$component.cartoonHeight, width:$component.cartoonWidth" style="right: 30px; top: 160px; position:fixed; border: 1px solid red">
-  <div data-bind="cartoonExpression:expression">
+  <div data-bind="cartoonExpression:[expression,$component.selectedFragment]">
   </div>
 </div>
