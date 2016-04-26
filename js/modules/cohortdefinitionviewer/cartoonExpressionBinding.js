@@ -74,27 +74,7 @@ define(['knockout','d3'], function (ko, d3) {
                 .attr('class','primary')
                 .attr('transform', 
                       'translate(0,' + lineHeight + ')')
-              .on('mouseover', function() {
-                d3.select("#primary-criteria")
-                  .style('background-color', 'pink')
-                d3.select('#cartoon-primary-criteria')
-                  .style('fill', 'pink')
-              })
-              .on('mouseout', function() {
-                d3.select("#primary-criteria")
-                  .style('background-color', null)
-                d3.select('#cartoon-primary-criteria')
-                  .style('fill', 'white')
-              })
 
-      g.append('rect')
-          .attr('width', width)
-          .attr('height', 50)
-          .attr('x', -150)
-          .attr('y', -25)
-          .style('fill','white')
-          .style('opacity',.3)
-          .attr('id', 'cartoon-primary-criteria')
       g.append('line')
           .attr('x1', scale(-expression().PrimaryCriteria()
                         .ObservationWindow.PriorDays())) 
@@ -107,6 +87,12 @@ define(['knockout','d3'], function (ko, d3) {
           .attr('stroke', 'blue')
           .style('marker-start', 'url(#left-arrow)')
           .style('marker-end', 'url(#right-arrow)')
+          .classed('highlighted', function(d) {
+            return expression().PrimaryCriteria() === selectedFragment();
+          })
+          .on('mouseover', function(d) {
+            selectedFragment(expression().PrimaryCriteria());
+          })
       g.append('circle')
           .attr('r', 8)
           .attr('cx', scale(0))
@@ -180,10 +166,6 @@ define(['knockout','d3'], function (ko, d3) {
                 .classed('highlighted', function(d) {
                   return d === selectedFragment();
                 })
-                //.attr('stroke', 'blue')
-                //.attr('stroke', function(d) {
-                  //return d === selectedFragment() ?  'red' : 'blue';
-                //})
                 .on('mouseover', function(d) {
                   selectedFragment(d);
                 })

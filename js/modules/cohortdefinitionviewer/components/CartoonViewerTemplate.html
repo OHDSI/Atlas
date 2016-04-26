@@ -37,7 +37,7 @@
                 css: {highlighted: $component.selectedFragment && $component.selectedFragment() === expression().PrimaryCriteria()} ">Limit cohort expression results to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
 
 
-<div data-bind="height:$component.cartoonHeight, width:$component.cartoonWidth" style="right: 30px; top: 160px; position:fixed; border: 1px solid red">
+<div data-bind="height:$component.cartoonHeight, width:$component.cartoonWidth" style="right: 30px; top: 160px; position:fixed; ">
   <div data-bind="cartoonExpression:[expression,$component.selectedFragment]">
   </div>
 </div>
