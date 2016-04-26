@@ -1,5 +1,9 @@
 
+line, marker {
+  stroke: blue;
+}
 .highlighted {
   fill: pink;
+  stroke: pink;
   background-color: pink;
 }
