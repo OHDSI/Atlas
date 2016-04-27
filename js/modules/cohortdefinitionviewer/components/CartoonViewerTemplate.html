@@ -22,14 +22,14 @@
 </div>
 <br/>
 
-<div data-bind="with: expression">
+<div style="width:60%" data-bind="with: expression">
   <div data-bind="if: AdditionalCriteria">
     <div style="font-weight: bold">For people matching the Primary Events, include:</div>
     <criteria-group-viewer params="{expression: $data, group: AdditionalCriteria, selectedFragment: $component.selectedFragment}"></criteria-group-viewer>
   </div>
 </div>
 
-<div data-bind="with: expression().ExpressionLimit, 
+<div style="width:60%" data-bind="with: expression().ExpressionLimit, 
                 event: {
                   mouseover: function () { $component.selectedFragment && $component.selectedFragment(expression().PrimaryCriteria()) },
                   mouseout: function() { $component.selectedFragment && $component.selectedFragment(null);}
@@ -37,7 +37,7 @@
                 css: {highlighted: $component.selectedFragment && $component.selectedFragment() === expression().PrimaryCriteria()} ">Limit cohort expression results to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
 
 
-<div data-bind="height:$component.cartoonHeight, width:$component.cartoonWidth" style="right: 30px; top: 160px; position:fixed; ">
+<div style="width:30%; right:10px; top:160px; position:fixed; ">
   <div data-bind="cartoonExpression:[expression,$component.selectedFragment]">
   </div>
 </div>

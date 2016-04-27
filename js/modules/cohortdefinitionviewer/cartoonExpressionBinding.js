@@ -1,15 +1,17 @@
 "use strict";
 define(['knockout','d3'], function (ko, d3) {
   window.d3 = d3;
-  var width = 300;
-  var height = 150;
-  var lineHeight = 14;
+  var width = 400;
+  var height = 450;
+  var lineHeight = 20;
 
   ko.bindingHandlers.cartoonExpression = {
     init: function (element, valueAccessor, allBindingsAccessor) {
       var expression = valueAccessor()[0];
       var selectedFragment = valueAccessor()[1];
-      var svg = d3.select(element).append('svg');
+      var svg = d3.select(element).append('svg')
+                    .attr('width',width)
+                    .attr('height',height)
       svg.append('marker')
           .attr('id', 'right-arrow')
           .attr('viewBox', '0 0 10 10')
@@ -65,7 +67,7 @@ define(['knockout','d3'], function (ko, d3) {
       criteriaGroupWalk(criteriaGroup, getEndPoints);
       var scale = d3.scale.linear()
                     .domain([domain.min, domain.max])
-                    .range([0.05 * width, 0.9 * width]);
+                    .range([0.10 * width, 0.85 * width]);
 
       var svg = d3.select(element).select('svg');
       //svg.select('g.primary').remove();
@@ -103,14 +105,23 @@ define(['knockout','d3'], function (ko, d3) {
       drawCartoon(g, criteriaGroup, 2, scale, selectedFragment, primaryWindow)
     }
   };
-  function criteriaGroupWalk(criteriaGroup, cb) {
+  function criteriaGroupWalk(criteriaGroup, cb, parentKey) {
     var list = criteriaGroup.CriteriaList();
     for (var i = 0; i < list.length; i++) {
-      cb(list[i]);
+      var key = [i + 1];
+      if (parentKey)
+        key.unshift(parentKey);
+      key = key.join('.');
+      list[i].key = key;
+      cb(list[i], key);
     }
     var groups = criteriaGroup.Groups();
     for (var i = 0; i < groups.length; i++) {
-      criteriaGroupWalk(groups[i], cb);
+      var key = [list.length + i + 1];
+      if (parentKey)
+        key.unshift(parentKey);
+      key = key.join('.');
+      criteriaGroupWalk(groups[i], cb, key);
     }
   }
   function drawCartoon(selection, data, linesdown, scale, selectedFragment, primaryWindow) {
@@ -123,6 +134,27 @@ define(['knockout','d3'], function (ko, d3) {
       g.selectAll('g.additional')
               .data(data.CriteriaList())
                 .enter()
+              .append('g')
+                .attr('class','additional')
+      g.selectAll('g.additional')
+        .append('rect')
+          .attr('width', width * 0.9)
+          .attr('height', lineHeight)
+          .attr('y', function(d,i) { return lineHeight * (i - 0.5); })
+          //.style('fill-opacity', 0.2)
+          //.style('stroke','white')
+          //.style('stroke-width', 2)
+          .classed('highlighted', function(d) {
+            return d === selectedFragment();
+          })
+          .on('mouseover', function(d) {
+            selectedFragment(d);
+          })
+          .on('mouseout', function(d) {
+            // DOESN'T FIRE, don't know why
+            selectedFragment(null);
+          })
+      g.selectAll('g.additional')
               .append('line')
                 .style('marker-start', function(cg) {
                   var days = cg.StartWindow.Start.Days();
@@ -163,15 +195,25 @@ define(['knockout','d3'], function (ko, d3) {
                 .attr('y1', function(d,i) { return i*lineHeight;})
                 .attr('y2', function(d,i) { return i*lineHeight;})
                 .attr('stroke-width', 4)
+                /*
                 .classed('highlighted', function(d) {
                   return d === selectedFragment();
                 })
                 .on('mouseover', function(d) {
                   selectedFragment(d);
                 })
+                */
+      g.selectAll('g.additional')
+        .append('text')
+          //.attr('x', -20)
+          .attr('y', function(d,i) { return lineHeight * (0.26+i); })
+          .attr('x', 5)
+          .text(function(d) { 
+            return d.key;
+          })
       var groups = data.Groups();
       for (var i = 0; i < groups.length; i++) {
-        drawCartoon(g, groups[i], data.CriteriaList().length, scale, selectedFragment, primaryWindow);
+        drawCartoon(g, groups[i], data.CriteriaList().length + 2*i, scale, selectedFragment, primaryWindow);
       }
   }
 });
