@@ -12,6 +12,7 @@
 								mouseout: function() { $component.selectedFragment && $component.selectedFragment(null);}
 							}, 
 							css: {highlighted: ($component.selectedFragment && $component.selectedFragment()) === $data}">
+      <span style="font-weight:bold" data-bind="text: '(' + $data.key + ')'"></span>
 			<span data-bind="if: ($index() > 0)"><span data-bind="	text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span><span data-bind="text: $component.getOccurrenceType(Occurrence.Type())" /> 
 			<span data-bind="text: Occurrence.Count"></span> <span data-bind="text: Occurrence.IsDistinct() ? 'distinct' : ''"></span>
 			occurrence<span data-bind="text: Occurrence.Count != 1 ? 's' : ''"></span> of
