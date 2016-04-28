@@ -6,14 +6,16 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
     window.d3 = d3;
 		var self = this;
     self.config = config;
-		self.services = params.services;
+		self.services = [params.services];
 		self.reference = ko.observableArray([]);
-		self.cohortDefinitionId = ko.observable();
+		//self.cohortDefinitionId = ko.observable();
+		self.cohortDefinitionId = ko.observable(params.model.currentCohortDefinition().id());
 		self.loading = ko.observable(false);
 		self.loadingCohort = ko.observable(false);
 		self.loadingProfile = ko.observable(false);
-		self.sourceKey = ko.observable();
-		self.members = ko.observableArray([{personId:423, startDate:1203724800000, endDate:1293580800000}]); // TEMPORARY HACK
+		self.sourceKey = ko.observable(params.services.sources[0].sourceKey);
+		//self.members = ko.observableArray([{personId:423, startDate:1203724800000, endDate:1293580800000}]); // TEMPORARY HACK
+		self.members = ko.observableArray();
 		self.personId = ko.observable();
 		self.currentMemberIndex = 0;
 
@@ -24,20 +26,22 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 		self.navigatePrevious = function () {
 			if (self.currentMemberIndex > 0) {
 				self.currentMemberIndex--;
-				self.personId(self.members()[self.currentMemberIndex].personId);
+				//self.personId(self.members()[self.currentMemberIndex].personId);
+				self.personId(self.members()[self.currentMemberIndex].subjectId);
 			} else {
 				self.currentMemberIndex = self.members().length - 1;
-				self.personId(self.members()[self.currentMemberIndex].personId);
+				//self.personId(self.members()[self.currentMemberIndex].personId);
+				self.personId(self.members()[self.currentMemberIndex].subjectId);
 			}
 		}
 
 		self.navigateNext = function () {
 			if (self.currentMemberIndex < self.members().length - 1) {
 				self.currentMemberIndex++;
-				self.personId(self.members()[self.currentMemberIndex].personId);
+				self.personId(self.members()[self.currentMemberIndex].subjectId);
 			} else {
 				self.currentMemberIindex = 0;
-				self.personId(self.members()[self.currentMemberIndex].personId);
+				self.personId(self.members()[self.currentMemberIndex].subjectId);
 			}
 		}
 
@@ -52,7 +56,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 			$('#cohortDefinitionChooser').modal('hide');
 
 			$.ajax({
-				url: self.services()[0].url + 'cohortdefinition/' + self.cohortDefinitionId(),
+				url: self.services[0].url + 'cohortdefinition/' + self.cohortDefinitionId(),
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (definition) {
@@ -73,7 +77,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 
 		self.loadCohort = function () {
 			$.ajax({
-				url: self.services()[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members',
+				//url: self.services[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members',
+				url: self.services[0].url + 'cohort/' + self.cohortDefinitionId(),
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (members) {
@@ -83,22 +88,28 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 						$('#modalNoMembers').modal('show');
 						self.members([]);
 					} else {
+            members.forEach(function(m) {
+              m.startDate = m.cohortStartDate;
+              m.endDate = m.cohortEndDate;
+            });
 						self.members(members);
 						// default to first person in the cohort
 						self.currentMemberIndex = 0;
-						self.personId(members[self.currentMemberIndex].personId);
+						//self.personId(members[self.currentMemberIndex].personId);
+						self.personId(members[self.currentMemberIndex].subjectId);
 					}
 				}
 			});
 		};
+    self.loadCohort();
 
 		self.loadProfile = function (personId) {
 			self.loadingProfile(true);
 
-      self.personId(423); // TEMPORARY HACK
+      //self.personId(423); // TEMPORARY HACK
 			$.ajax({
-				//url: self.services()[0].url + self.sourceKey() + '/person/' + personId,
-        url: "http://api.ohdsi.org/WebAPI/CS1/person/423", // TEMPORARY HACK
+				url: self.services[0].url + self.sourceKey() + '/person/' + personId,
+        //url: "http://api.ohdsi.org/WebAPI/CS1/person/423", // TEMPORARY HACK
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (profile) {
@@ -109,7 +120,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				}
 			});
 		};
-    self.loadProfile(0); // TEMPORARY HACK
+    //self.loadProfile(0); // TEMPORARY HACK
 
 		self.showBrowser = function () {
 			$('#cohortDefinitionChooser').modal('show');
