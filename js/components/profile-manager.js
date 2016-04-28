@@ -1,3 +1,6 @@
+// lines labeled "TEMPORARY HACK" are to get the profile to display
+// while using the public api, which has some bug interfering with
+// cohort loading
 define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, d3, config) {
 	function profileManager(params) {
     window.d3 = d3;
@@ -10,7 +13,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 		self.loadingCohort = ko.observable(false);
 		self.loadingProfile = ko.observable(false);
 		self.sourceKey = ko.observable();
-		self.members = ko.observableArray([{personId:423, startDate:1203724800000, endDate:1293580800000}]);
+		self.members = ko.observableArray([{personId:423, startDate:1203724800000, endDate:1293580800000}]); // TEMPORARY HACK
 		self.personId = ko.observable();
 		self.currentMemberIndex = 0;
 
@@ -92,9 +95,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 		self.loadProfile = function (personId) {
 			self.loadingProfile(true);
 
+      self.personId(423); // TEMPORARY HACK
 			$.ajax({
 				//url: self.services()[0].url + self.sourceKey() + '/person/' + personId,
-        url: "http://api.ohdsi.org/WebAPI/CS1/person/423",
+        url: "http://api.ohdsi.org/WebAPI/CS1/person/423", // TEMPORARY HACK
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (profile) {
@@ -105,7 +109,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				}
 			});
 		};
-    self.loadProfile(0);
+    self.loadProfile(0); // TEMPORARY HACK
 
 		self.showBrowser = function () {
 			$('#cohortDefinitionChooser').modal('show');
