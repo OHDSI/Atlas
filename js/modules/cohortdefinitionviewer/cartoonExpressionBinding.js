@@ -77,6 +77,23 @@ define(['knockout','d3'], function (ko, d3) {
                 .attr('transform', 
                       'translate(0,' + lineHeight + ')')
 
+      g.append('rect')
+          .attr('width', width * 0.9)
+          .attr('height', lineHeight)
+          .attr('y', function(d,i) { return lineHeight * (i - 0.5); })
+          //.style('fill-opacity', 0.2)
+          //.style('stroke','white')
+          //.style('stroke-width', 2)
+          .classed('highlighted', function(d) {
+            return d === selectedFragment();
+          })
+          .on('mouseover', function(d) {
+            selectedFragment(d);
+          })
+          .on('mouseout', function(d) {
+            // DOESN'T FIRE, don't know why
+            selectedFragment(null);
+          })
       g.append('line')
           .attr('x1', scale(-expression().PrimaryCriteria()
                         .ObservationWindow.PriorDays())) 
