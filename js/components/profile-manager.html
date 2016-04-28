@@ -28,12 +28,13 @@
 		</div>
 		<div class="row">
 			<div class="col-xs-12">
-				<select class="form-control" data-bind="css : { invalid: $component.sourceKey()==undefined }, options:$component.services()[0].sources.filter($component.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.sourceKey, optionsCaption:'Select a Source'"></select>
+				<select class="form-control" data-bind="css : { invalid: $component.sourceKey()==undefined }, options:$component.config.services[0].sources.filter($component.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.sourceKey, optionsCaption:'Select a Source'"></select>
 			</div>
 		</div>
 	</div>
 
-	<div data-bind="visible:$component.personId">
+	<!--div data-bind="visible:$component.personId"-->
+	<div data-bind="visible:true">
 		<div class="paddedWrapper">
 			<div class="row">
 				<div class="col-xs-2 text-left">

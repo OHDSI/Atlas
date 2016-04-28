@@ -1,6 +1,8 @@
-define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, d3) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, d3, config) {
 	function profileManager(params) {
+    window.d3 = d3;
 		var self = this;
+    self.config = config;
 		self.services = params.services;
 		self.reference = ko.observableArray([]);
 		self.cohortDefinitionId = ko.observable();
@@ -8,7 +10,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 		self.loadingCohort = ko.observable(false);
 		self.loadingProfile = ko.observable(false);
 		self.sourceKey = ko.observable();
-		self.members = ko.observableArray();
+		self.members = ko.observableArray([{personId:423, startDate:1203724800000, endDate:1293580800000}]);
 		self.personId = ko.observable();
 		self.currentMemberIndex = 0;
 
@@ -91,7 +93,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 			self.loadingProfile(true);
 
 			$.ajax({
-				url: self.services()[0].url + self.sourceKey() + '/person/' + personId,
+				//url: self.services()[0].url + self.sourceKey() + '/person/' + personId,
+        url: "http://api.ohdsi.org/WebAPI/CS1/person/423",
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (profile) {
@@ -102,6 +105,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dat
 				}
 			});
 		};
+    self.loadProfile(0);
 
 		self.showBrowser = function () {
 			$('#cohortDefinitionChooser').modal('show');
