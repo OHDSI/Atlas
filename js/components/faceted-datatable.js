@@ -4,6 +4,9 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 		var self = this;
 
 		self.reference = params.reference;
+		self.data = params.filteredData || ko.observableArray();
+    self.data(self.reference());
+
 		self.options = params.options;
 		self.columns = params.columns;
 		self.rowCallback = params.rowCallback;
@@ -14,7 +17,6 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 			self.orderColumn = params.orderColumn;
 		}
 
-		self.data = ko.observableArray();
 		self.facetEngine = ko.observable();
 
 		self.updateFilters = function (data, event) {

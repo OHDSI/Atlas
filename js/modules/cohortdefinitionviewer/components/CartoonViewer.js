@@ -7,7 +7,6 @@ define(['knockout', 'cohortbuilder/options', 'text!./CartoonViewerTemplate.html'
     self.expression = params.expression;
     self.options = options;
     self.selectedFragment = params.selectedFragment;
-    console.log(self.selectedFragment());
     //self.cartoonHeight = 150;
     //self.cartoonWidth = 300;
 

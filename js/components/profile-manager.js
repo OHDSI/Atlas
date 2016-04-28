@@ -1,13 +1,16 @@
 // lines labeled "TEMPORARY HACK" are to get the profile to display
 // while using the public api, which has some bug interfering with
 // cohort loading
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, d3, config) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable','components/profileChart'], function (ko, view, d3, config) {
 	function profileManager(params) {
     window.d3 = d3;
 		var self = this;
     self.config = config;
 		self.services = [params.services];
 		self.reference = ko.observableArray([]);
+		self.filteredData = ko.observableArray([]); // same as reference but with filters applied
+                                                // by faceted-datatable
+    self.loadedProfile = ko.observable();
 		//self.cohortDefinitionId = ko.observable();
 		self.cohortDefinitionId = ko.observable(params.model.currentCohortDefinition().id());
 		self.loading = ko.observable(false);
@@ -115,6 +118,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				success: function (profile) {
 					self.loadingProfile(false);
 					self.reference(profile.records);
+					self.filteredData(self.reference());
+          self.loadedProfile(profile);
+          console.log(profile);
 					// self.plotTimewave(profile.timewave, profile.startDate, profile.endDate);
 					self.plotScatter(profile.records, profile.startDate, profile.endDate);
 				}

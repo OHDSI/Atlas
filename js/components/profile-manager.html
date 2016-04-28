@@ -54,8 +54,9 @@
 			<div data-bind="visible:$component.reference().length > 0">
 				<div id="timewave"></div>
 				<div id="scatter"></div>
+        <div data-bind="profileChart:{profile:$component.loadedProfile, filteredData:$component.filteredData}"></div>
 				<div class="heading">Profile Records</div>
-				<faceted-datatable params="{reference: $component.reference, columns: $component.columns, options: $component.options}"></faceted-datatable>
+				<faceted-datatable params="{reference: $component.reference, columns: $component.columns, options: $component.options, filteredData: $component.filteredData}"></faceted-datatable>
 			</div>
 		</div>
 	</div>
