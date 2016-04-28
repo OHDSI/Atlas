@@ -23,6 +23,8 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 		self.cohortDefinition.extend({ notify: 'always' });
 		self.loading = ko.observable(true);
 		self.loading.extend({ notify: 'always' });
+		self.rootJSON = ko.observable();
+		self.rootJSON.extend({ notify: 'always' });
 		
 		if (self.model != null && self.model.hasOwnProperty('panaceaResultStudyId')){
 			self.panaceaResultStudyId(params.model.panaceaResultStudyId);
@@ -138,9 +140,15 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 					svg.selectAll("path").remove();
 					svg.selectAll("g").remove();
 					
+					self.rootJSON(root);
+					
+					var changedRoot = null;
 					if(!(root["studyResultFiltered"] === undefined || root["studyResultFiltered"] === null)) {
-						var changedRoot = JSON.parse(root["studyResultFiltered"]);
-						
+						changedRoot = JSON.parse(root["studyResultFiltered"]);
+					}else if(!(root["studyResultCollapsed"] === undefined || root["studyResultCollapsed"] === null)) {
+						changedRoot = JSON.parse(root["studyResultCollapsed"]);
+					}
+					if(changedRoot !== null){
 						var path = svg.selectAll("path")
 							.data(partition.nodes(changedRoot))
 							.enter().append("path")

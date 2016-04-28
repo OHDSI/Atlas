@@ -134,8 +134,11 @@
 		</div>
 	</div>
 	
-	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'visualization'">
+	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'visualization'  && !loading(), if: !loading()">
 		<div id="pnc_visualization_div">
+			<panacea-vi-result params="{services: pageModel.services, model: pageModel, panaceaResultStudyId: panaceaResultStudyId(), 
+				resultMode: resultMode(), currentResultSource: currentResultSource(), currentStudy: currentStudy(),
+				cohortDefinition: cohortDefinition(), loading: loading(), rootJSON: rootJSON(), }"></panacea-vi-result>
 		</div>
 	</div>
 	

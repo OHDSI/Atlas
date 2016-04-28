@@ -111,7 +111,7 @@ define([
 						});
 					},
 					'/panaceasunburstresult/:panaceaStudyId': function (panaceaStudyId) {
-						require(['panacea-sunburst-result', 'panacea-cohort-result'], function () {
+						require(['panacea-sunburst-result', 'panacea-cohort-result', 'panacea-vi-result'], function () {
 							self.panaceaResultStudyId = panaceaStudyId;
 							self.currentView('panaceasunburst');
 						});
