@@ -2,6 +2,7 @@
 line, marker {
   stroke: blue;
 }
+g.primary > rect,
 g.additional > rect {
   fill: lightgray;
   stroke-width: 2;

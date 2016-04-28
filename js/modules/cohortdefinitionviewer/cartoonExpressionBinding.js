@@ -85,15 +85,19 @@ define(['knockout','d3'], function (ko, d3) {
           //.style('stroke','white')
           //.style('stroke-width', 2)
           .classed('highlighted', function(d) {
-            return d === selectedFragment();
+            return expression().PrimaryCriteria() === selectedFragment();
           })
           .on('mouseover', function(d) {
-            selectedFragment(d);
+            selectedFragment(expression().PrimaryCriteria());
           })
           .on('mouseout', function(d) {
             // DOESN'T FIRE, don't know why
             selectedFragment(null);
           })
+      g.append('text')
+          .attr('y', lineHeight * 0.26)
+          .attr('x', 5)
+          .text('Primary Criteria')
       g.append('line')
           .attr('x1', scale(-expression().PrimaryCriteria()
                         .ObservationWindow.PriorDays())) 
@@ -102,18 +106,12 @@ define(['knockout','d3'], function (ko, d3) {
           .attr('y1', 0)
           .attr('y2', 0)
           .attr('stroke-width', 4)
-          .attr('fill', 'pink')
-          .attr('stroke', 'blue')
+          //.attr('fill', 'pink')
+          //.attr('stroke', 'blue')
           .style('marker-start', 'url(#left-arrow)')
           .style('marker-end', 'url(#right-arrow)')
-          .classed('highlighted', function(d) {
-            return expression().PrimaryCriteria() === selectedFragment();
-          })
-          .on('mouseover', function(d) {
-            selectedFragment(expression().PrimaryCriteria());
-          })
       g.append('circle')
-          .attr('r', 8)
+          .attr('r', 4)
           .attr('cx', scale(0))
           .attr('cy', 0)
           .style('fill','brown')

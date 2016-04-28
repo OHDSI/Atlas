@@ -30,15 +30,13 @@
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.tabMode('reporting') };"><a>Reporting</a>
 		</li>
 
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'printfriendly' }, click: function() { $component.tabMode('printfriendly') };"><a>Print Friendly</a>
+		<!--li role="presentation" data-bind="css: { active: $component.tabMode() == 'printfriendly' }, click: function() { $component.tabMode('printfriendly') };"><a>Print Friendly</a>
+		</li-->
+
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'cartoon' }, click: function() { $component.tabMode('cartoon') };"><a>Print Friendly</a>
 		</li>
 
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>JSON</a>
-		</li>
-
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'cartoon' }, click: function() { $component.tabMode('cartoon') };"><a>Cartoon</a>
-		</li>
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'demo' }, click: function() { $component.tabMode('demo') };"><a>Demo</a>
 		</li>
 	</ul>
 	<!-- ko if: isGeneratedOpen -->
@@ -171,21 +169,21 @@
 			</div>
 			<!-- /ko -->
 		</div>
-		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'printfriendly' }" class="tab-pane">
+		<!--div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'printfriendly' }" class="tab-pane">
 			<div class="paddedWrapper">
 				<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
 				<br/>
 				<div>Appendix 1: Concept Set Definitions</div>
 				<br/>
-				<!-- ko foreach: model.currentCohortDefinition().expression().ConceptSets.sorted -->
+				<!- ko foreach: model.currentCohortDefinition().expression().ConceptSets.sorted ->
 				<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
 				<div style="padding-left:20px">
 					<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
 					<br/>
 				</div>
-				<!-- /ko -->
+				<!- /ko ->
 			</div>
-		</div>
+		</div-->
 
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'generation' }" class="tab-pane">
 			<table class="configureSourceTable">
@@ -274,7 +272,6 @@
 			</div>
 		</div>
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'cartoon' }" class="tab-pane">
-      cartoon
 			<!--textarea style="width: 100%; height: 500px" data-bind="textInput: $component.expressionJSON"></textarea-->
 			<div class="paddedWrapper">
 				<cartoon-viewer params="text:$component.expressionJSON, expression: model.currentCohortDefinition().expression, selectedFragment: selectedFragment"></cartoon-viewer>
