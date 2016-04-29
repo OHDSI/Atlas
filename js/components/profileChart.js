@@ -14,9 +14,219 @@ define(['knockout','d3'], function (ko, d3) {
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
       var va = valueAccessor();
-      console.log(va.filteredData());
-      console.log(va.profile());
+      console.log(va.filteredData().length);
+      if (va.filteredData() && va.profile())
+        plotScatter(element, va.filteredData(), va.profile().startDate, va.profile().endDate);
+      //console.log(va.profile());
       //debugger;
     }
   };
 });
+function plotScatter(element, records, startDate, endDate) {
+  var margin = {
+      top: 10,
+      right: 10,
+      bottom: 150,
+      left: 10
+    },
+    margin2 = {
+      top: 430,
+      right: 10,
+      bottom: 20,
+      left: 10
+    },
+    width = 900 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom,
+    height2 = 500 - margin2.top - margin2.bottom;
+
+  var x = d3.time.scale().range([0, width]),
+    x2 = d3.time.scale().range([0, width]),
+    y = d3.scale.linear().range([height, 0]),
+    y2 = d3.scale.linear().range([height2, 0]);
+
+  var xAxis = d3.svg.axis().scale(x).orient("bottom"),
+    xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
+    yAxis = d3.svg.axis().scale(y).orient("left");
+
+  var brushed = function () {
+    x.domain(brush.empty() ? x2.domain() : brush.extent());
+    focus.selectAll('rect')
+      .attr('x', function (d) {
+        return x(d.startDate) - 2.5;
+      });
+    //var member = self.members()[self.currentMemberIndex];
+    focus.selectAll("line")
+      .attr('x1', function (d) {
+        return x(d)
+      })
+      .attr('y1', 0)
+      .attr('x2', function (d) {
+        return x(d)
+      })
+      .attr('y2', height)
+      .attr('class', 'observation-period');
+    focus.select(".x.axis").call(xAxis);
+  }
+
+  var brush = d3.svg.brush()
+    .x(x2)
+    .on("brush", brushed);
+
+  //$('#scatter').empty();
+  $(element).empty();
+
+  var svg = d3.select(element).append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
+
+  var focusTip = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html(function (d) {
+      return d.conceptName;
+    });
+
+  svg.call(focusTip);
+
+  var focus = svg.append("g")
+    //.attr("class", "focus")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var context = svg.append("g")
+    .attr("class", "context")
+    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+  x.domain([startDate, endDate]);
+  y.domain([0, 5]);
+  x2.domain(x.domain());
+  y2.domain(y.domain());
+
+  // plot observation window lines
+  //var member = self.members()[self.currentMemberIndex];
+  focus.selectAll("line")
+    //.data([member.startDate, member.endDate])
+    .data([startDate, endDate])
+    .enter()
+    .append("line")
+    .attr('x1', function (d) {
+      return x(d)
+    })
+    .attr('y1', 0)
+    .attr('x2', function (d) {
+      return x(d)
+    })
+    .attr('y2', height)
+    .attr('class', 'observation-period');
+
+  // place your data into the focus area
+  focus.selectAll("rect")
+    .data(records)
+    .enter()
+    .append("rect")
+    .attr('x', function (d) {
+      return x(d.startDate) - 2.5;
+    })
+    .attr('y', function (d) {
+      switch (d.recordType) {
+      case 'drug':
+        return y(4);
+        break;
+      case 'condition':
+        return y(3);
+        break;
+      case 'observation':
+        return y(2);
+        break;
+      case 'visit':
+        return y(1);
+        break;
+      }
+    })
+    .attr('width', 5)
+    .attr('height', 5)
+    .attr('class', function (d) {
+      return d.recordType;
+    })
+    .on('mouseover', function (d) {
+      focusTip.show(d);
+    })
+    .on('mouseout', function (d) {
+      focusTip.hide(d);
+    });
+
+  focus.append("text").text('Visits').attr('class', 'visit').attr('x', 0).attr('y', function (d) {
+    return y(1.2);
+  });
+  focus.append("text").text('Observations').attr('class', 'observation').attr('x', 0).attr('y', function (d) {
+    return y(2.2);
+  });
+  focus.append("text").text('Conditions').attr('class', 'condition').attr('x', 0).attr('y', function (d) {
+    return y(3.2);
+  });
+  focus.append("text").text('Drugs').attr('class', 'drug').attr('x', 0).attr('y', function (d) {
+    return y(4.2);
+  });
+
+  // and focus area
+  context.selectAll("line")
+    //.data([member.startDate, member.endDate])
+    .data([startDate, endDate])
+    .enter()
+    .append("line")
+    .attr('x1', function (d) {
+      return x2(d)
+    })
+    .attr('y1', 0)
+    .attr('x2', function (d) {
+      return x2(d)
+    })
+    .attr('y2', height2)
+    .attr('class', 'observation-period');
+
+  context.selectAll("rect")
+    .data(records)
+    .enter()
+    .append("rect")
+    .attr('x', function (d) {
+      return x2(d.startDate);
+    })
+    .attr('y', function (d) {
+      switch (d.recordType) {
+      case 'drug':
+        return y2(4);
+        break;
+      case 'condition':
+        return y2(3);
+        break;
+      case 'observation':
+        return y2(2);
+        break;
+      case 'visit':
+        return y2(1);
+        break;
+      }
+    })
+    .attr('width', 2)
+    .attr('height', 2)
+    .attr('class', function (d) {
+      return d.recordType;
+    });
+
+
+  focus.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+  context.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height2 + ")")
+    .call(xAxis2);
+
+  context.append("g")
+    .attr("class", "x brush")
+    .call(brush)
+    .selectAll("rect")
+    .attr("y", -6)
+    .attr("height", height2 + 7);
+}

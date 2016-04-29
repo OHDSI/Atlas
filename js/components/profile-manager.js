@@ -122,7 +122,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
           self.loadedProfile(profile);
           console.log(profile);
 					// self.plotTimewave(profile.timewave, profile.startDate, profile.endDate);
-					self.plotScatter(profile.records, profile.startDate, profile.endDate);
+					//self.plotScatter(profile.records, profile.startDate, profile.endDate);
 				}
 			});
 		};
