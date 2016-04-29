@@ -10,19 +10,15 @@
 	}
 }(this, function (jQuery, d3, lodash) {
 	
-	var d3ViModule = {};
-	var $ = jQuery;
-	var d3 = d3;
-	var _ = lodash;
-	
-	d3ViModule.testD3RenderData = function (data) {
-		
-	}
-
 	'use strict';
 
-	//Chen -- pull in all the var into render function -- start
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+		return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	} : function (obj) {
+		return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	};
 
 	var formatPercent = d3.format(',.1%');
 	var formatNumber = d3.format('.3n');
@@ -33,76 +29,32 @@
 	var textDark = 'hsla(0, 0%, 40%, 1)';
 	var translucentDark = 'hsla(0, 0%, 0%, 0.3)';
 	var lightGreen = 'hsla(180, 50%, 40%, 0.5)';
-	var mainContainer = d3.select('#main-container');
-	//Chen -- pull in all the var into render function -- end
-	// const namesContainer = d3.select('#drug-name-container');
-	// const studyTitle = d3.select('#study-title');
-	// const studyDescription = d3.select('#study-description');
-	// const cohortDetailsText = d3.select('#cohort-details-text');
-	// const cohortDetailsSvg = d3.select('#cohort-details-svg');
-	// const summarySection = d3.select('#summary-container');
-	// const summaryTable = d3.select('#summary-table');
-	// const conceptSelector = document.querySelector('#concept-selector');
-	// const childrenSelector = document.querySelector('#children-selector');
-	// const parentsSelector = document.querySelector('#parents-selector');
-	// const allSelector = document.querySelector('#all-selector');
-	// const firstSelector = document.querySelector('#first-selector');
 	
-	//Chen -- pull in all the var into render function -- start
-	//Chen -- null check
-//	var mainContainerXOffset;
-//	var width;
-//	var height;
-//	var margin;
-//	var innerHeight;
-//
-//	if(mainContainer[0][0] !== null && mainContainer.node() !== null){
-//		mainContainerXOffset = mainContainer[0][0].getBoundingClientRect().left;
-//		width = mainContainer.node().getBoundingClientRect().width - 150;
-//		height = 430;
-//		margin = {
-//				left: 80,
-//				top: 130,
-//				right: 50,
-//				bottom: 30
-//		};
-//		innerHeight = height - margin.bottom;
-//	}
-	//Chen -- pull in all the var into render function -- end
-	// const svg = mainContainer.append('svg')
-//	 	.attr({
-//	 		width: width + margin.left + margin.right,
-//	 		height: height + margin.top + margin.bottom
-//	 	});
-	// const drugBarsZone = svg.append('g')
-//	 	.attr({
-//	 		transform: 'translate(' + margin.left + ', ' + margin.top + ')'
-//	 	});
-	// const boundingRect = drugBarsZone.append('rect')
-//	 	.attr({
-//	 		width: width + 8,
-//	 		height: innerHeight + 8,
-//	 		transform: 'translate(-4, -4)'
-//	 	})
-//	 	.style({
-//	 		fill: veryLightGrey,
-//	 		stroke: grey,
-//	 		'stroke-width': '0px'
-//	 	});
-	// const detailsContainer = svg.append('svg')
-//	 	.attr({
-//	 		transform: 'translate(0, 0)',
-//	 		id: 'details-container'
-//	 	});
-	// detailsContainer.append('rect')
-//	   	.style({
-//	   		fill: veryLightGrey,
-//	   		width: width + margin.left + margin.right,
-//	   		height: 70
-//	   	});
-	// const detailsContainerInner = detailsContainer.append('g');
-	// let y = d3.scale.linear()
-//	 	.range([0, innerHeight]);
+	//Chen -- pulling var into d3 render function -- start
+	//var mainContainer = d3.select('#main-container');
+
+	//var mainContainerXOffset = mainContainer[0][0].getBoundingClientRect().left;
+	//var width = mainContainer.node().getBoundingClientRect().width - 150;
+	//Chen -- pulling var into d3 render function -- end
+	var height = 430;
+	var margin = {
+		left: 80,
+		top: 130,
+		right: 50,
+		bottom: 30
+	};
+	var innerHeight = height - margin.bottom;
+
+	
+	var d3ViModule = {};
+	var $ = jQuery;
+	var d3 = d3;
+	var _ = lodash;
+	
+	d3ViModule.testD3RenderData = function (data) {
+		
+	}
+
 	//Chen
 	//d3.json('../jsonWithLength.json', function (err, data) {
 	d3ViModule.d3RenderData = function (data) {
@@ -119,11 +71,10 @@
 //		var lightGreen = 'hsla(180, 50%, 40%, 0.5)';
 		var mainContainer = d3.select('#main-container');
 
-		var mainContainerXOffset;
-		var width;
-		var height;
-		var margin;
-		var innerHeight;
+		var mainContainer = d3.select('#main-container');
+
+		var mainContainerXOffset = mainContainer[0][0].getBoundingClientRect().left;
+		var width = mainContainer.node().getBoundingClientRect().width - 150;
 
 		if(mainContainer[0][0] !== null && mainContainer.node() !== null){
 			mainContainerXOffset = mainContainer[0][0].getBoundingClientRect().left;
@@ -206,24 +157,26 @@
 		// 	.text('Number of Days on Therapy');
 		// const x = makeX(totalPatients);
 
-		//Chen -- add _typeof as param
-		var dataWithRunningTotals = sendDataToTree(data, totalPatients);
+		// var dataWithRunningTotals = sendDataToTree(data, totalPatients);
 		var allData = {
 			header: 'Total Cohort',
 			patientCount: totalPatients
 		};
 		var maxNumberOfUniqueConcepts = findMaxNumberOfDrugs(data);
 		var maxNumberArray = _.range(maxNumberOfUniqueConcepts);
-		var numberOfDrugsTakenCollection = _.map(maxNumberArray, function (number) {
-			var lengthOfInterest = number + 1;
-			var greaterThanOrEqualToCollection = processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getValuesGreaterThanOrEqualToX, 'At Least');
-			var equalToCollection = processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getValuesEqualToX, '');
-			var medicationsForEqualData = processMedicationsAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getValuesEqualToX, '');
+		var equalToArrays = _.map(maxNumberArray, function (num) {
+			return [];
+		});
+		var greaterThanArrays = _.map(maxNumberArray, function (num) {
+			return [];
+		});
+		var numberOfDrugsTakenCollection = _.map(maxNumberArray, function (index) {
+			var lengthOfInterest = index + 1;
+			var greaterThanOrEqualToCollection = processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getValuesGreaterThanOrEqualToX, 'Patients Who Took At Least ', greaterThanArrays[index], 'conceptName');
+			var equalToCollection = processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getValuesEqualToX, 'Patients Who Took Exactly ', equalToArrays[index], 'conceptName');
 			return [{
 				greaterThanOrEqualToCollection: greaterThanOrEqualToCollection,
 				equalToCollection: equalToCollection
-			}, {
-				medicationsForEqualData: medicationsForEqualData
 			}];
 		});
 		var flattenedNumberOfDrugsTakenCollection = _.map(_.values(_.groupBy(_.flatMap(numberOfDrugsTakenCollection, function (collection) {
@@ -234,7 +187,6 @@
 			});
 		});
 		var tableCollection = flattenedNumberOfDrugsTakenCollection[0];
-		var medicationCollection = flattenedNumberOfDrugsTakenCollection[1];
 		drawCohortTable(mainContainer, allData, tableX);
 		var keys = _.first(_.map(tableCollection, function (item) {
 			return _.keys(item);
@@ -259,19 +211,61 @@
 			collectionType();
 			drawTable(mainContainer, collection, tableX, 5);
 		});
-		// Create the medication breakdown for the second table
-		_.forEach(medicationCollection, function (collection, i) {
-			drawMedicationSvg(mainContainer, collection);
-		});
 		// Create the third table for medications by getting the equalToCollection from the tableCollection
 		// and the first object from that array (as the ones for just one drug) then getting the medications from them
 		var tableCollectionArrayLength = _.range(tableCollection[1].length);
 		_.forEach(tableCollectionArrayLength, function (index) {
 			var number = index + 1;
 			var drugRegimenCollection = tableCollection[1][index];
-			mainContainer.append('h1').attr('class', 'table-heading').text(number + ' Drug Regimen Breakdown');
-			drawTable(mainContainer, drugRegimenCollection.medications, tableX, 8);
+			var groupedDrugRegimenCollection = _.chain(drugRegimenCollection.medications).groupBy('uniqueConcepts').values().value();
+			var reducedDrugRegimenCollection = _.map(groupedDrugRegimenCollection, function (groupedDrugs) {
+				var conceptGroupName = groupedDrugs[0].uniqueConcepts;
+				var innerPatientCount = reducePropertyValues(groupedDrugs, 'patientCount');
+				var avgTimesToStart = reduceAndWeightPropertyValues(groupedDrugs, 'avgTimeToStart', 'patientCount') / innerPatientCount;
+				var avgDuration = reduceAndWeightPropertyValues(groupedDrugs, 'avgDuration', 'patientCount') / innerPatientCount;
+				var avgAdherence = reduceAndWeightPropertyValues(groupedDrugs, 'avgGapPercent', 'patientCount') / innerPatientCount / 100;
+				var children = _.map(groupedDrugs, function (drug) {
+					return drug.children;
+				})[0];
+				var drops = reduceAndWeightPropertyValues(groupedDrugs, 'drops', 'patientCount') / innerPatientCount;
+				var switches = reduceAndWeightPropertyValues(groupedDrugs, 'switches', 'patientCount') / innerPatientCount;
+				var adds = reduceAndWeightPropertyValues(groupedDrugs, 'adds', 'patientCount') / innerPatientCount;
+				return {
+					conceptGroupName: conceptGroupName,
+					patientCount: [innerPatientCount, formatPercent(innerPatientCount / totalPatients)],
+					avgTimesToStart: formatNumber(avgTimesToStart),
+					avgDuration: parseInt(formatNumber(avgDuration)),
+					avgAdherece: formatPercent(avgAdherence),
+					drops: parseInt(formatNumber(drops)),
+					switches: parseInt(formatNumber(switches)),
+					adds: parseInt(formatNumber(adds)),
+					concepts: groupedDrugs[0].concepts,
+					children: children,
+					conceptName: groupedDrugs[0].conceptName
+				};
+			});
+			var sortedReducedDrugRegimenCollection = _.reverse(_.sortBy(reducedDrugRegimenCollection, function (item) {
+				return item.patientCount[0];
+			}));
+			mainContainer.append('h1').attr('class', 'table-heading').text('Distribution for ' + number + ' Drug Regimen');
+			drawTable(mainContainer, sortedReducedDrugRegimenCollection, tableX, 8);
 		});
+
+		function reduceAndWeightPropertyValues(data, property, prevalenceProperty) {
+			return _.chain(data).map(function (drug) {
+				if (_.isNumber(parseInt(drug[property]))) return parseInt(drug[property]) * parseInt(drug[prevalenceProperty][0]);
+				if (_.isNumber(parseFloat(drug[property]))) return parseFloat(drug[property]) * parseInt(drug[prevalenceProperty][0]);
+			}).reduce(function (acc, curr) {
+				return acc + curr;
+			}).value();
+		}
+		function reducePropertyValues(data, property) {
+			return _.chain(data).map(function (drug) {
+				return _.isNumber(parseInt(drug[property])) ? parseInt(drug[property]) : drug[property];
+			}).reduce(function (acc, curr) {
+				return acc + curr;
+			}).value();
+		}
 		// let rects = document.querySelectorAll('g.med-group');
 		// let flattenedDataFromRects = _.map(rects, (rect, i) => {
 		// 	let patientCount = parseInt(rect.getAttribute('patientCount'));
@@ -423,9 +417,6 @@
 
 	function drawCohortTableItems(tableRow, data, tableX) {
 		var values = _.values(data);
-		//Chen -- test NaN
-		if(!Number.isNaN(values[1]))
-		{
 		_.forEach(values, function (item, index) {
 			if (index === 0) {
 				var cell = drawCell(item, tableRow, 'big-col');
@@ -436,7 +427,6 @@
 				drawSpan(item, _cell, null);
 			}
 		});
-		}
 	}
 
 	function drawTable(container, data, tableX, appropriateNumberOfColumns) {
@@ -468,10 +458,17 @@
 	function drawTableItems(tableRow, data, tableX, appropriateNumberOfColumns) {
 		var values = _.values(data);
 		_.forEach(values, function (item, index) {
+			var medName = function medName() {
+				if (appropriateNumberOfColumns === 8) {
+					return values[0];
+				} else {
+					return values[0];
+				}
+			};
 			if (index < appropriateNumberOfColumns) {
 				if (index === 0) {
-					var cell = drawCell(item, tableRow, 'first-col');
-					drawSpan(item, cell, null);
+					var cell = drawCell(medName(), tableRow, 'first-col');
+					drawSpan(medName(), cell, null);
 				} else {
 					(function () {
 						var cell = drawCell(item, tableRow, null);
@@ -515,52 +512,6 @@
 		});
 	}
 
-	function drawMedicationSvg(container, collection) {
-		var data = collection.medicationsForEqualData;
-		var total = _.reduce(data.counts, function (acc, curr) {
-			return acc + curr;
-		});
-		var height = data.medications.length * 20;
-		var x = d3.scale.linear().range([0, 100]).domain([0, total]);
-		var svg = container.append('svg').attr({
-			class: 'medication-svg',
-			width: 300,
-			height: height
-		});
-		drawMedicationBars(svg, data, x);
-		drawMedicationLabels(svg, data, x);
-	}
-
-	function drawMedicationBars(container, data, x) {
-		var sorted = _.reverse(_.sortBy(data.counts));
-		_.forEach(sorted, function (count, i) {
-			var rect = container.append('rect').attr({
-				class: 'table-bar',
-				width: x(count),
-				height: 12,
-				transform: 'translate(110,' + (5 + i * 16) + ')'
-			});
-		});
-	}
-
-	function drawMedicationLabels(container, data, x) {
-		var total = _.reduce(data.counts, function (acc, curr) {
-			return acc + curr;
-		});
-		var sortedNums = _.reverse(_.sortBy(data.counts));
-		var sortedMeds = _.sortBy(data.medications, data.counts);
-		_.forEach(sortedNums, function (count, i) {
-			var number = container.append('text').attr({
-				transform: 'translate(' + (115 + x(count)) + ',' + (16 + i * 16) + ')'
-			}).text(count + ' (' + formatPercent(count / total) + ')');
-		});
-		_.forEach(sortedMeds, function (med, i) {
-			var medLabel = container.append('text').attr({
-				transform: 'translate(' + 0 + ',' + (16 + i * 16) + ')'
-			}).text(shortenWordByAmount(med, 4));
-		});
-	}
-
 	function findMaxNumberOfDrugs(data) {
 		var newArr = [];
 		_.map(data.children, function (item) {
@@ -568,18 +519,14 @@
 		});
 
 		var value = _.chain(newArr).map(function (item) {
-			//Chen
-			//return item.length;
-			if(item !== null && item !== undefined){
-				return item.length;
-			}
+			return item.length;
 		}).sortBy().last().value();
 		return value;
 	}
 
-	function processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getFunc, label) {
-		var allRelevantData = getAllRelevantData(data, getFunc, lengthOfInterest);
-		var flattenedRelevantData = getFlattenedReducedValues(allRelevantData);
+	function processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getFunc, label, arr, property) {
+		var allRelevantData = getAllRelevantData(data, getFunc, lengthOfInterest, arr);
+		var flattenedRelevantData = getFlattenedReducedValues(allRelevantData, property);
 		var innerTotalPatientCount = _.chain(allRelevantData).map(function (item) {
 			return item.patientCount;
 		}).reduce(function (acc, curr) {
@@ -611,7 +558,18 @@
 		}).value();
 		var medications = _.map(flattenedRelevantData, function (item) {
 			var concepts = item.concepts;
+			var conceptNames = _.map(concepts, function (concept) {
+				return _.map(concept, function (inner) {
+					return inner.innerConceptName;
+				});
+			})[0];
 			var conceptChildrenOfDrugType = item.children;
+			var uniqueConcepts = _.map(item.uniqueConcepts, function (uniqueConcepts) {
+				return _.map(uniqueConcepts, function (uniqueConcept) {
+					return uniqueConcept.innerConceptName;
+				});
+			})[0];
+			var uniqueConceptNames = uniqueConcepts.join(', ');
 			var childInnerConceptIds = _.uniq(_.flattenDeep(_.map(conceptChildrenOfDrugType, function (group) {
 				var drugTypeChildren = _.map(group, function (child) {
 					return _.map(child.concepts, function (childConcept) {
@@ -695,12 +653,13 @@
 				switches: switches,
 				adds: adds,
 				children: item.children,
-				concepts: item.concepts
+				concepts: item.concepts,
+				uniqueConcepts: uniqueConceptNames
 			};
 		});
 		return {
 			numberOfDrugs: function numberOfDrugs() {
-				if (lengthOfInterest === 1) return label + ' ' + lengthOfInterest + ' Drug Regimen';else return label + ' ' + lengthOfInterest + ' Drug Regimen';
+				if (lengthOfInterest === 1) return label + ' ' + lengthOfInterest + ' Drug';else return label + ' ' + lengthOfInterest + ' Drugs';
 			},
 			patientCount: [innerTotalPatientCount, formatPercent(innerTotalPatientCount / totalPatients)],
 			avgTimeToStart: formatNumber(daysFromCohortStart / innerTotalPatientCount),
@@ -710,33 +669,15 @@
 		};
 	}
 
-	function processMedicationsAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getFunc, label) {
-		var flattenedRelevantData = getFlattenedReducedValues(getAllRelevantData(data, getFunc, lengthOfInterest));
-		var medications = _.map(flattenedRelevantData, function (item) {
-			return item.conceptName;
+	function getAllRelevantData(data, getFunc, lengthOfInterest, newArr) {
+		var allRelevantData = _.forEach(data.children, function (obj) {
+			getFunc(obj, 'uniqueConceptsArray', lengthOfInterest, newArr);
 		});
-		var counts = _.map(flattenedRelevantData, function (item) {
-			return item.patientCount;
-		});
-		return {
-			medications: medications,
-			counts: counts
-		};
+		return newArr;
 	}
 
-	function getAllRelevantData(data, getFunc, lengthOfInterest) {
-		var allRelevantData = _.chain(data.children).map(function (obj) {
-			return getFunc(obj, 'uniqueConceptsArray', lengthOfInterest);
-		}).map(function (arr) {
-			return arr[0];
-		}).filter(function (item) {
-			return item !== undefined;
-		}).value();
-		return allRelevantData;
-	}
-
-	function getFlattenedReducedValues(data) {
-		var flattenedRelevantData = _.chain(data).groupBy('conceptName').map(function (arr) {
+	function getFlattenedReducedValues(data, property) {
+		var flattenedRelevantData = _.chain(data).groupBy(property).map(function (arr) {
 			return _.map(arr, function (item) {
 				return {
 					conceptName: item.conceptName,
@@ -745,7 +686,8 @@
 					avgDuration: parseInt(item.avgDuration),
 					avgGapPercent: 1 - item.gapPercent / 100,
 					children: item.children,
-					concepts: item.concepts
+					concepts: item.concepts,
+					uniqueConcepts: item.uniqueConceptsArray
 				};
 			});
 		}).map(function (arr) {
@@ -755,7 +697,7 @@
 		}).map(function (arr) {
 			return _.unzip(arr);
 		}).map(function (arr) {
-			return _.zipObject(['conceptName', 'patientCount', 'avgTimeToStart', 'avgDuration', 'avgGapPercent', 'children', 'concepts'], _.map(arr, function (innerArr, index) {
+			return _.zipObject(['conceptName', 'patientCount', 'avgTimeToStart', 'avgDuration', 'avgGapPercent', 'children', 'concepts', 'uniqueConcepts'], _.map(arr, function (innerArr, index) {
 				var patientCounts = _.map(arr[1], function (item) {
 					return item;
 				});
@@ -790,61 +732,70 @@
 				if (index === 6) {
 					return arr[index];
 				}
+				if (index === 7) {
+					return arr[index];
+				}
 			}));
 		}).value();
 		return flattenedRelevantData;
 	}
 
-	function getValuesGreaterThanOrEqualToX(obj, property, numberOfInterest) {
-		var newArr = [];
+	function getValuesGreaterThanOrEqualToX(obj, property, numberOfInterest, arr) {
 		if (Array.isArray(obj)) {
 			_.forEach(obj, function (item) {
 				if (item[property].length >= numberOfInterest) {
-					return newArr.concat(item);
+					arr.push(item);
+					return;
 				} else {
-					getValuesGreaterThanOrEqualToX(item, property, numberOfInterest);
+					getValuesGreaterThanOrEqualToX(item, property, numberOfInterest, arr);
 				}
 			});
 		} else {
 			if (obj[property].length >= numberOfInterest) {
-				return newArr.concat(obj);
+				arr.push(obj);
+				return;
 			} else {
 				_.forEach(obj.children, function (child) {
 					if (child[property].length >= numberOfInterest) {
-						return newArr.concat(child);
+						if (arr) {
+							arr.push(child);
+						}
+						return;
 					} else {
-						getValuesGreaterThanOrEqualToX(child, property, numberOfInterest);
+						getValuesGreaterThanOrEqualToX(child, property, numberOfInterest, arr);
 					}
 				});
 			}
 		}
-		return newArr;
 	}
 
-	function getValuesEqualToX(obj, property, numberOfInterest) {
-		var newArr = [];
+	function getValuesEqualToX(obj, property, numberOfInterest, arr) {
 		if (Array.isArray(obj)) {
 			_.forEach(obj, function (item) {
 				if (item[property].length === numberOfInterest) {
-					return newArr.concat(item);
+					arr.push(item);
+					return;
 				} else {
-					getValuesEqualToX(item, property, numberOfInterest);
+					getValuesEqualToX(item, property, numberOfInterest, arr);
 				}
 			});
 		} else {
 			if (obj[property].length === numberOfInterest) {
-				return newArr.concat(obj);
+				arr.push(obj);
+				return;
 			} else {
 				_.forEach(obj.children, function (child) {
 					if (child[property].length === numberOfInterest) {
-						return newArr.concat(child);
+						if (arr) {
+							arr.push(child);
+						}
+						return;
 					} else {
-						getValuesEqualToX(child, property, numberOfInterest);
+						getValuesEqualToX(child, property, numberOfInterest, arr);
 					}
 				});
 			}
 		}
-		return newArr;
 	}
 
 	function getAllPropertyValues(obj, newArr, property) {
@@ -872,249 +823,9 @@
 		return newArr;
 	}
 
-	function getAll(obj, newArr) {
-		if (Array.isArray(obj)) {
-			obj.forEach(function (item) {
-				if (!('children' in item)) {
-					newArr.push(item);
-				} else {
-					item.children.forEach(function (child) {
-						getAll(child, newArr);
-					});
-					newArr.push(item);
-				}
-			});
-		} else {
-			if (!('children' in obj)) {
-				newArr.push(obj);
-			} else {
-				obj.children.forEach(function (child) {
-					getAll(child, newArr);
-				});
-				newArr.push(obj);
-			}
-		}
-		return newArr;
-	}
-
-	function getFirsts(obj, newArr, property) {
-		if (!('children' in obj)) {
-			newArr.push(obj[property]);
-		} else {
-			newArr.push(obj[property]);
-		}
-		return newArr;
-	}
-
-	function addUpFromArr(allItems) {
-		var total = allItems.map(function (arr) {
-			var totalFromArr = arr.reduce(function (acc, val) {
-				return acc + val;
-			});
-			return totalFromArr;
-		});
-		return total;
-	}
-
-	//Chen -- add _typeof as param
-	function sendDataToTree(data, totalPatients) {
-		return data['children'].map(function (group, groupIndex) {
-			//Chen -- add _typeof as param
-			//var runningPatientTotal = getRunningTotal(group, data, groupIndex, 0);
-			var runningPatientTotal = getRunningTotal(group, data, groupIndex, 0);
-			var timeOffset = 0;
-			var depth = 0;
-			return makeObjectsWithRunningExtras(group, group, groupIndex, totalPatients, runningPatientTotal, timeOffset, depth);
-		});
-	}
-
-	//Chen -- add _typeof as param
-	function makeObjectsWithRunningExtras(obj, parent, objIndex, totalPatients, runningPatientTotal, timeOffset, depth) {
-		runningPatientTotal = obj === parent ? runningPatientTotal : getRunningTotal(obj, parent, objIndex, runningPatientTotal);
-		timeOffset = obj === parent ? 0 : timeOffset += 50; // exchange 50 with parent.avgDuration
-		depth = obj === parent ? depth : depth += 1;
-		if (Array.isArray(obj)) {
-			obj.forEach(function (item, itemIndex) {
-				if (!('children' in item)) {
-					return returnObjectWithRunningExtras(item, parent, itemIndex, totalPatients, runningPatientTotal, timeOffset, depth);
-				} else {
-					item.children.forEach(function (child, childIndex) {
-						makeObjectsWithRunningExtras(item.children, item, childIndex, totalPatients, runningPatientTotal, timeOffset, depth);
-					});
-					return returnObjectWithRunningExtras(item, parent, itemIndex, totalPatients, runningPatientTotal, timeOffset, depth);
-				}
-			});
-		} else {
-			if (!('children' in obj)) {
-				return returnObjectWithRunningExtras(obj, parent, objIndex, totalPatients, runningPatientTotal, timeOffset, depth);
-			} else {
-				obj.children.forEach(function (child, childIndex) {
-					makeObjectsWithRunningExtras(child, obj, childIndex, totalPatients, runningPatientTotal, timeOffset, depth);
-				});
-				return returnObjectWithRunningExtras(obj, parent, objIndex, totalPatients, runningPatientTotal, timeOffset, depth);
-			}
-		}
-	}
-
-	function returnObjectWithRunningExtras(obj, parent, objIndex, totalPatients, runningPatientTotal, timeOffset, depth) {
-		return {
-			obj: obj,
-			parent: parent,
-			objIndex: objIndex,
-			totalPatients: totalPatients,
-			runningPatientTotal: runningPatientTotal,
-			timeOffset: timeOffset,
-			depth: depth
-		};
-	}
-
-	//Chen - add _typeof as param
-	//function getRunningTotal(obj, parent, objIndex, runningPatientTotal) {
-	function getRunningTotal(obj, parent, objIndex, runningPatientTotal) {
-		if (objIndex === 0) {
-			return runningPatientTotal;
-		} else {
-			var _ret2 = function () {
-				var arr = [];
-				parent.children.map(function (sibling, siblingIndex) {
-					if (siblingIndex < objIndex) {
-						arr.push(sibling.patientCount);
-					}
-				});
-				var total = arr.reduce(function (acc, val) {
-					return acc + val;
-				}, 0);
-				return {
-					v: runningPatientTotal += total
-				};
-			}();
-
-			if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
-		}
-	}
-
 	function makeX(totalPatients, barMaxWidth) {
 		return d3.scale.linear().range([0, barMaxWidth]).domain([0, totalPatients]);
 	}
-
-	// function drawBar(item, parent, itemIndex, totalPatients, runningPatientTotal, timeOffset, depth, x) {
-//	 	let maxHeight = innerHeight;
-//	 	let percentage = item === parent ? formatPercent(item.patientCount/totalPatients) : formatPercent(item.patientCount/parent.patientCount);
-//	 	let g = drugBarsZone.append('g')
-//	 		.attr({
-//	 			patientCount: item.patientCount,
-//	 			avgDuration: item.avgDuration,
-//	 			conceptName: item.conceptName,
-//	 			percentage: percentage,
-//	 			depth: depth,
-//	 			gapPercent: item.gapPercent,
-//	 			daysFromCohortStart: item.daysFromCohortStart,
-//	 			totalPatients: totalPatients,
-//	 			class: 'med-group',
-//	 			transform: 'translate(' + x(runningPatientTotal) + ', ' + timeOffset + ')' // exchange timeOffset with y(timeOffset)
-//	 		});
-//	 	let rect = g.append('rect')
-//	 		.attr({
-//	 			class: 'med',
-//	 			width: x(item.patientCount),
-//	 			height: 50, //y(item.avgDuration)
-//	 			patientCount: item.patientCount,
-//	 			avgDuration: item.avgDuration,
-//	 			conceptName: item.conceptName,
-//	 			percentage: percentage,
-//	 			daysFromCohortStart: item.daysFromCohortStart,
-//	 			depth: depth,
-//	 			totalPatients: totalPatients,
-//	 			gapPercent: item.gapPercent
-//	 		})
-//	 		.style({
-//	 			fill: white,
-//	 			stroke: lightGrey,
-//	 			overflow: 'hidden',
-//	 			'shape-rendering': 'crispEdges'
-//	 		});
-//	 	let rectWidth = rect.attr('width');
-//	 	let rectHeight = rect.attr('height');
-//	 	let labelValue = shortenWordByAmount(item.conceptName, 2);
-//	 	let minRectWidthForLabel = labelValue.length * 5.5 + 4;
-//	 	let minRectHeightForLabel = 15;
-//	 	let label = g.append('text')
-//	 		.attr({
-//	 			class: 'label',
-//	 			transform: () => {
-//	 				if (rectWidth < minRectWidthForLabel || rectHeight < minRectHeightForLabel) {
-//	 					return 'scale(0)';
-//	 				}
-//	 				if (rectWidth >= minRectWidthForLabel) {
-//	 					return 'translate(3, 10)';
-//	 				}
-//	 			}
-//	 		})
-//	 		.style({
-//	 			'font-size': '10px',
-//	 			fill: textDark
-//	 		})
-//	 		.text(() => {
-//	 			return labelValue;
-//	 		});
-//	 	let labelTransformValue = label.attr('transform');
-//	 	let minRectHeightForPercentage = 22;
-//	 	let minRectWidthForPercentage = rectHeight < minRectHeightForPercentage ? minRectWidthForLabel + 44 : 20;
-//	 	let patientPercentage = g.append('text')
-//	 		.attr({
-//	 			transform: () => {
-//	 				// don't show if the label isn't shown.
-//	 				// first, do the same check we did for the label
-//	 				if (rectWidth < minRectWidthForLabel || rectHeight < minRectHeightForLabel) {
-//	 					return 'scale(0)';
-//	 				} else if (rectHeight >= minRectHeightForPercentage && rectWidth > 23) {
-//	 					return 'translate(3, 20)';
-//	 				} else if (rectHeight < minRectHeightForPercentage && rectWidth >= minRectWidthForPercentage) {
-//	 					return 'translate(' + (minRectWidthForLabel + 6) + ', 10)';
-//	 				} else {
-//	 					return 'scale(0)';
-//	 				}
-//	 			}
-//	 		})
-//	 		.style({
-//	 			'font-size': '9px',
-//	 			fill: textDark
-//	 		})
-//	 		.text(percentage);
-
-	// }
-
-	// function drawDrugNames(arr, container) {
-//	 	let drugName = container.selectAll('p.drug-name')
-//	 		.data(arr)
-//	 	  .enter().append('div')
-//	 	  	.attr({
-//	 	  		class: 'drug-name'
-//	 	  	})
-//	 	  	.style({
-//	 	  		'clear': 'both',
-//	 	  		'font-size': '14px',
-//	 	  		'padding': '3px 6px',
-//	 	  		'margin-bottom': '3px',
-//	 	  		'margin-right': '5px',
-//	 	  		'background': d => darkenByLength(d.length),
-//	 	  		'border': d => '1px solid ' + darkenByLength(d.length),
-//	 	  		'word-wrap': 'break-word'
-//	 	  	});
-//	 	let fullDrugName = drugName.append('span')
-//	 		.attr('class', 'full-drug')
-//	 		.style('color', textDark)
-//	 		.text(d => d.treatment);
-//	 	let drugAbbrev = drugName.append('span')
-//	 		.attr('class', 'drug-abbrev')
-//	 		.style({
-//	 			'margin-left': '5px',
-//	 			'font-style': 'italic',
-//	 			'float': 'right',
-//	 			color: textDark
-//	 		})
-//	 		.text(d => shortenWordByAmount(d.treatment, 2));
-	// }
 
 	function darkenByLength(length) {
 		var alpha = 0.3;
@@ -1169,87 +880,6 @@
 		}).text('Cohort Size: ' + total).transition().delay(250).duration(500).style('opacity', 1);
 		container.append('br');
 	}
-
-	// function drawAllDrugSummary(container, data, x) {
-//	 	let firstLines = getLineOfTherapyObj(1, data);
-//	 	let firstLinesImmediateChildren = getImmediateChildrenOfGivenItemDepth(data, 1, x).filter(arr => arr.length !== 0);
-//	 	let firstLinesTotal = getLineOfTherapyTotal(firstLines);
-//	 	let firstLinesAvgDuration = getLineOfTherapyAvgDuration(firstLines);
-//	 	let firstLinesConcepts = firstLines.map(obj => obj.conceptName.split(','));
-//	 	let secondLines = getLineOfTherapyObj(2, data);
-//	 	let secondLinesImmediateChildren = getImmediateChildrenOfGivenItemDepth(data, 2, x).filter(arr => arr.length !== 0);
-//	 	let secondLinesTotal = getLineOfTherapyTotal(secondLines);
-//	 	let secondLinesAvgDuration = getLineOfTherapyAvgDuration(secondLines);
-//	 	let secondLinesConcepts = secondLines.map(obj => obj.conceptName.split(','));
-//	 	let thirdLines = getLineOfTherapyObj(3, data);
-//	 	let thirdLinesImmediateChildren = getImmediateChildrenOfGivenItemDepth(data, 3, x).filter(arr => arr.length !== 0);
-//	 	let thirdLinesTotal = getLineOfTherapyTotal(thirdLines);
-//	 	let thirdLinesAvgDuration = getLineOfTherapyAvgDuration(thirdLines);
-//	 	let thirdLinesConcepts = thirdLines.map(obj => obj.conceptName.split(','));
-//	 	let total = _.first(data).totalPatients;
-//	 	let noTherapies = total - firstLinesTotal;
-//	 	let dataForBarChart = [
-//	 		{
-//	 			'lineNumber': 0,
-//	 			'total': noTherapies,
-//	 			'lineChildrenActions': null
-//	 		}, {
-//	 			'lineNumber': 1,
-//	 			'total': firstLinesTotal,
-//	 			'lineChildrenActions': getLineChildrenActions(firstLinesImmediateChildren, firstLinesConcepts, firstLinesAvgDuration, firstLinesTotal, total)
-//	 		}, {
-//	 			'lineNumber': 2,
-//	 			'total': secondLinesTotal,
-//	 			'lineChildrenActions': getLineChildrenActions(secondLinesImmediateChildren, secondLinesConcepts, secondLinesAvgDuration, secondLinesTotal, total)
-//	 		}, {
-//	 			'lineNumber': 3,
-//	 			'total': thirdLinesTotal,
-//	 			'lineChildrenActions': getLineChildrenActions(thirdLinesImmediateChildren, thirdLinesConcepts, thirdLinesAvgDuration, thirdLinesTotal, total)
-//	 		}
-//	 	];
-//	 	drawCohortBars(dataForBarChart);
-	// }
-
-	// function getLineChildrenActions(linesImmediateChildren, linesConcepts, linesAvgDuration, linesTotal, total) {
-//	 	let linesImmediateChildrenMoves =
-//	 		linesImmediateChildren.map(arr => {
-//	 			return arr.map(obj => {
-//	 				let conceptNames = obj.concept.conceptName.split(',');
-//	 				let childNames = obj.child.conceptName.split(',');
-//	 				let uniqueAndOld = _.groupBy(
-//	 							_.concat(conceptNames, childNames)
-//	 						);
-//	 				return _.values(uniqueAndOld).map(inner => {
-//	 					console.log(conceptNames.length, childNames.length, inner)
-//	 					if (conceptNames.length > childNames.length)
-//	 						return {
-//	 							obj: obj,
-//	 							status: 'dropped'
-//	 						};
-//	 					if (conceptNames.length < childNames.length)
-//	 						return {
-//	 							obj: obj,
-//	 							status: 'added'
-//	 						};
-//	 					if (conceptNames.length === childNames.length)
-//	 						return {
-//	 							obj: obj,
-//	 							status: 'switched'
-//	 						};
-//	 				});
-//	 			})
-//	 			.filter(val => val !== undefined);
-//	 		});
-//	 	let flattenedLine = _.flattenDeep(linesImmediateChildrenMoves);
-//	 	let linesImmediateChildrenDrugsAdded = _.reduce(_.map(_.uniq(_.map(_.filter(flattenedLine, item => item.status === 'added'), obj => obj.obj.child)), concept => concept.patientCount), (acc, curr) => acc + curr);
-//	 	let linesImmediateChildrenDrugsDropped = _.reduce(_.map(_.uniq(_.map(_.filter(flattenedLine, item => item.status === 'dropped'), obj => obj.obj.child)), concept => concept.patientCount), (acc, curr) => acc + curr);
-//	 	let linesImmediateChildrenDrugsSwitches = _.reduce(_.map(_.uniq(_.map(_.filter(flattenedLine, item => item.status === 'switched'), obj => obj.obj.child)), concept => concept.patientCount), (acc, curr) => acc + curr);
-//	 	return {
-//	 		augments: linesImmediateChildrenDrugsAdded,
-//	 		drops: linesImmediateChildrenDrugsDropped,
-//	 		switches: linesImmediateChildrenDrugsSwitches
-//	 	}
-	// }
 
 	function drawCohortBars(data) {
 		var maxBarWidth = 100;
@@ -1487,140 +1117,6 @@
 		return children;
 	}
 
-	// function drawSelectedDrugName(ev, container, data) {
-//	 	container.append('span')
-//	 		.attr({
-//	 			transform: 'translate(10, 32)',
-//	 			class: 'drug-name'
-//	 		})
-//	 		.style({
-//	 			opacity: 0,
-//	 			'font-size': '15px',
-//	 			'font-weight': 'bold',
-//	 			fill: textDark
-//	 		})
-//	 		.text(data)
-//	 		.transition()
-//	 		.delay(250)
-//	 		.duration(500)
-//	 		.style('opacity', 1);
-	// }
-
-	// function drawDrugSummary(ev, container, data) {
-//	 	let totalPatientsOnTherapy = data
-//	 		.map(obj => obj.patientCount)
-//	 		.reduce((acc, curr) => acc + curr, 0);
-//	 	container.append('br');
-//	 	container.append('span')
-//	 		.style({
-//	 			'margin-top': '15px',
-//	 			opacity: 0
-//	 		})
-//	 		.text('Total patients: ' + totalPatientsOnTherapy)
-//	 		.transition()
-//	 		.delay(250)
-//	 		.duration(500)
-//	 		.style('opacity', 1);
-	// }
-
-	// function drawDrugTooltip(ev, container, data, index) {
-//	 	let offset = 90;
-//	 	let scrollTop = mainContainer[0][0].scrollTop;
-//	 	if (ev.type === 'click') {
-//	 		let tooltip = container.append('g')
-//	 			.attr({
-//	 				transform: () => {
-//	 					if (index < 10)
-//	 						return 'translate(' + (10 + (index * offset)) + ', 15)'
-//	 					if (index >= 10) {
-//	 						return 'translate(' + (10 + ((index - 10) * offset)) + ', 60)'
-//	 					}
-//	 				},
-//	 				class: 'tooltip'
-//	 			});
-//	 		let count = tooltip.append('text')
-//	 			.style({
-//	 				opacity: 0,
-//	 				'font-size': '10px',
-//	 				fill: textDark
-//	 			})
-//	 			.text(
-//	 				'Patients: ' + data.patientCount + '(' + data.percentage + '%)'
-//	 			);
-//	 		let duration = tooltip.append('text')
-//	 			.attr({
-//	 				transform: 'translate(0, 10)'
-//	 			})
-//	 			.style({
-//	 				opacity: 0,
-//	 				'font-size': '10px',
-//	 				fill: textDark
-//	 			})
-//	 			.text(
-//	 				'Duration: ' + data.avgDuration
-//	 			);
-//	 		let gapPercent = tooltip.append('text')
-//	 			.attr({
-//	 				transform: 'translate(0, 20)'
-//	 			})
-//	 			.style({
-//	 				opacity: 0,
-//	 				'font-size': '10px',
-//	 				fill: textDark
-//	 			})
-//	 			.text(
-//	 				'Gap %: ' + data.gapPercent
-//	 			);
-//	 		let diagonal = d3.svg.diagonal()
-//	 			.source(() => {
-//	 				if (index < 10) {
-//	 					return {
-//	 						'x': (30 + (index * offset)),
-//	 						'y': data.filterYOffset - 40
-//	 					};
-//	 				}
-//	 				if (index >= 10) {
-//	 					return {
-//	 						'x': (30 + ((index - 10) * offset)),
-//	 						'y': data.filterYOffset + 4
-//	 					};
-//	 				}
-//	 			}) 
-//	 			.target(() => { return { 'x': data.rectXOffset - mainContainerXOffset + margin.left + 1, 'y': data.rectYOffset + scrollTop - 260 }; });
-//	 		let link = svg.append('path')
-//	 			.attr({
-//	 				class: 'link',
-//	 				d: diagonal
-//	 			})
-//	 			.style({
-//	 				fill: 'none',
-//	 				'stroke-width': 0.7,
-//	 				stroke: 'hsla(0, 0%, 0%, 0.3)',
-//	 				opacity: 0
-//	 			});
-//	 		tooltip.on('mouseover', function() {
-//	 				return link.transition()
-//	 					.duration(500)
-//	 					.style('stroke-width', 3)
-//	 			});
-//	 		tooltip.on('mouseout', function() {
-//	 				return link.transition()
-//	 					.duration(500)
-//	 					.style('stroke-width', 0.7)
-//	 			});
-//	 		animateIn(count);
-//	 		animateIn(duration);
-//	 		animateIn(link);
-//	 		animateIn(gapPercent);
-//	 	}
-	// }
-
-	// function animateIn(container) {
-//	 	container.transition()
-//	 		.delay(250)
-//	 		.duration(500)
-//	 		.style('opacity', 1);
-	// }
 	
 	return d3ViModule;
 }));

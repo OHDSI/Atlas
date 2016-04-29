@@ -17,8 +17,8 @@
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
 .main {
-	width: 95%;
-	margin: 0 auto;
+	width: 60%;
+	margin: 0 auto 120px;
 }
 /********************/
 #summary-table {
@@ -63,9 +63,13 @@ span.muted {
 }
 td.first-col {
 	width: 250px;
+	max-width: 250px;
+}
+td.first-col span {
+	word-wrap: break-word;
 }
 .table-bar {
-	fill: hsla(180, 50%, 40%, 0.7);
+	fill: hsla(180, 50%, 40%, 0.6);
 	stroke: hsla(180, 50%, 40%, 0.7);
 	margin-right: 5px;
 }

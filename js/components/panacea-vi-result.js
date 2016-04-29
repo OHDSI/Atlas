@@ -24,7 +24,10 @@ define(['knockout', 'text!./panacea-vi-result.html', 'jquery', 'd3', 'appConfig'
 		
 		self.renderVi = function(){
 			if (self.model != null && self.resultMode() == 'visualization' && self.rootJSON() != null){
-				if(!(self.rootJSON()["studyResultFiltered"] === undefined || self.rootJSON()["studyResultFiltered"] === null)) {
+//				if(!(self.rootJSON()["studyResultUniquePath"] === undefined || self.rootJSON()["studyResultUniquePath"] === null)) {
+//					panaceaViBuild2.d3RenderData(JSON.parse(self.rootJSON()["studyResultUniquePath"]));
+//				}else if
+			if(!(self.rootJSON()["studyResultFiltered"] === undefined || self.rootJSON()["studyResultFiltered"] === null)) {
 					panaceaViBuild2.d3RenderData(JSON.parse(self.rootJSON()["studyResultFiltered"]));
 				}else if(!(self.rootJSON()["studyResultCollapsed"] === undefined || self.rootJSON()["studyResultCollapsed"] === null)){
 					panaceaViBuild2.d3RenderData(JSON.parse(self.rootJSON()["studyResultCollapsed"]));
