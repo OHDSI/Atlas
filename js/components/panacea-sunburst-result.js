@@ -1,4 +1,5 @@
-define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appConfig', 'cohortbuilder/CohortDefinition', 'cohortdefinitionviewer'
+define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appConfig', 'cohortbuilder/CohortDefinition', 
+        ,'cohortdefinitionviewer'
         ,'knockout.dataTables.binding'
         ,'faceted-datatable'
         ,'databindings'
@@ -25,6 +26,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 		self.loading.extend({ notify: 'always' });
 		self.rootJSON = ko.observable();
 		self.rootJSON.extend({ notify: 'always' });
+		self.printview = false;
 		
 		if (self.model != null && self.model.hasOwnProperty('panaceaResultStudyId')){
 			self.panaceaResultStudyId(params.model.panaceaResultStudyId);
@@ -99,36 +101,44 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 			});
 		});	
 		
-		var width = 960,
-		height = 700,
-		radius = Math.min(width, height) / 2;
-
-		var x = d3.scale.linear()
-			.range([0, 2 * Math.PI]);
-
-		var y = d3.scale.sqrt()
-			.range([0, radius]);
-
-		var color = d3.scale.category20c();
-
-		var svg = d3.select("#pnc_sunburst_result_div").append("svg")
-			.attr("width", width)
-			.attr("height", height)
-			.append("g")
-			.attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
-
-		var partition = d3.layout.partition()
-			.value(function(d) { return d.percentage; });
-
-		var arc = d3.svg.arc()
-			.startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
-			.endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
-			.innerRadius(function(d) { return Math.max(0, y(d.y)); })
-			.outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
-
-//		var url = self.services()[0].url + 'panacea/getStudySummary/' + self.panaceaResultStudyId() + '/' + self.currentResultSource().sourceId;
-		
 		self.currentResultSource.subscribe(function (d) {
+
+			var width = 960,
+			height = 700,
+			radius = Math.min(width, height) / 2;
+
+			var x = d3.scale.linear()
+				.range([0, 2 * Math.PI]);
+
+			var y = d3.scale.sqrt()
+				.range([0, radius]);
+
+			var color = d3.scale.category20c();
+
+			var div1 = d3.select("#pnc_sunburst_result_div");
+			div1.selectAll("*").remove();
+			var svg = d3.select("#pnc_sunburst_result_div").append("svg")
+				.attr("width", width)
+				.attr("height", height)
+				.append("g")
+				.attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
+
+			var div2 = d3.select("#pnc_sunburst_result_div_2");
+			div2.selectAll("*").remove();
+			var svg2 = d3.select("#pnc_sunburst_result_div_2").append("svg")
+				.attr("width", width)
+				.attr("height", height)
+				.append("g")
+				.attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
+			
+			var partition = d3.layout.partition()
+				.value(function(d) { return d.percentage; });
+
+			var arc = d3.svg.arc()
+				.startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
+				.endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
+				.innerRadius(function(d) { return Math.max(0, y(d.y)); })
+				.outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 			
 			var url = config.services[0].url + 'panacea/getStudySummary/' + self.panaceaResultStudyId() + '/' + self.currentResultSource().sourceId;
 			
@@ -136,10 +146,17 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 				if (error) {
 					svg.selectAll("path").remove();
 					svg.selectAll("g").remove();
+					
+					svg2.selectAll("path").remove();
+					svg2.selectAll("g").remove();
+
 				}else{
 					svg.selectAll("path").remove();
 					svg.selectAll("g").remove();
-					
+
+					svg2.selectAll("path").remove();
+					svg2.selectAll("g").remove();
+
 					self.rootJSON(root);
 					
 					var changedRoot = null;
@@ -148,88 +165,124 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 					}else if(!(root["studyResultCollapsed"] === undefined || root["studyResultCollapsed"] === null)) {
 						changedRoot = JSON.parse(root["studyResultCollapsed"]);
 					}
-					if(changedRoot !== null){
-						var path = svg.selectAll("path")
-							.data(partition.nodes(changedRoot))
-							.enter().append("path")
-							.attr("d", arc)
-							.style("fill-rule", "evenodd")
-							.style("fill", function(d) { return color(d.conceptName); })
-						;
-						//comment out for not letting zoom in/out
-						//      .on("click", click);
-
-
-						//draw legend below.....
-						var legendRectSize = 18;
-						var legendSpacing = 4;
-
-						var legend = svg.selectAll('.legend')
-							.data(color.domain())
-							.enter()
-							.append('g')
-							.attr('class', 'pnc-legend')
-							.attr('transform', function(d, i) {
-								var height = legendRectSize + legendSpacing;
-								var offset =  height * color.domain().length / 2;
-								//var horz = -2 * legendRectSize;
-								var horz = -25 * legendRectSize;
-								var vert = i * height - offset;
-
-								if(i == 0)
-									return 'translate(-1000,-1000)';
-								return 'translate(' + horz + ',' + vert + ')';
-							});
-
-						legend.append('rect')
-							.attr('width', legendRectSize)
-							.attr('height', legendRectSize)
-							.attr('class','pnc-rect')
-							.style('fill', color)
-							.style('stroke', color);
-
-						legend.append('text')
-							.attr('x', legendRectSize + legendSpacing)
-							.attr('y', legendRectSize - legendSpacing)
-							.text(function(d) { return d; });
-						//draw legend done.........
-
-						//add tootip here.....
-						var tooltip = d3.select("body")
-							.append('div')
-							.attr('class', 'pnc-tooltip');
-
-						tooltip.append('div')
-							.attr('class', 'pnc-tooltip-label');
-
-						tooltip.append('div')
-							.attr('class', 'pnc-tooltip-duration');
-
-						path.on('mouseover', function(d) {
-							tooltip.select('.pnc-tooltip-label').html(d.conceptName + ":" + d.patientCount + ":" + d.percentage + "%");
-							tooltip.select('.pnc-tooltip-duration').html( d.avgDuration + " days:" + d.avgGapDay + ":" + d.gapPercent + "%");
-							tooltip.style('display', 'block');
-						});
-
-						path.on('mouseout', function() {
-							tooltip.style('display', 'none');
-						});
-						//tooltip done here......
-
-						self.click = function (d) {
-							path.transition()
-							.duration(750)
-							.attrTween("d", arcTween(d));
-						}			
-					}
+					self.drawSunburst(changedRoot, svg, div1, width, height, radius, color, arc, partition, false);
+					
+					var changedUniquePathRoot = null;
+					if(!(root["studyResultUniquePath"] === undefined || root["studyResultUniquePath"] === null)) {
+						changedUniquePathRoot = JSON.parse(root["studyResultUniquePath"]);
+						self.drawSunburst(changedUniquePathRoot, svg2, div2, width, height, radius, color, arc, partition, true);
+					}					
 				}
 			});
 		});	
 
-		d3.select(self.frameElement).style("height", height + "px");
+		self.drawSunburst = function(changedRoot, svg, div, width, height, radius, color, arc, partition, isUniquePath){
+			if(changedRoot !== null){
+				var path = null;
+				if(!isUniquePath){
+					path = svg.selectAll("path")
+						.data(partition.nodes(changedRoot))
+						.enter().append("path")
+						.attr("d", arc)
+						.style("fill-rule", "evenodd")
+						.style("fill", function(d) { return color(d.conceptName); })
+			;
+				//comment out for not letting zoom in/out
+				//      .on("click", click);
+				}else{
+				path = svg.selectAll("path")
+					.data(partition.nodes(changedRoot))
+					.enter().append("path")
+					.attr("d", arc)
+					.style("fill-rule", "evenodd")
+					.style("fill", function(d) { return color(d.uniqueConceptsName); });
+			}
+
+
+			//draw legend below.....
+			var legendRectSize = 18;
+			var legendSpacing = 4;
+
+			var legend = svg.selectAll('.legend')
+				.data(color.domain())
+				.enter()
+				.append('g')
+				.attr('class', 'pnc-legend')
+				.attr('transform', function(d, i) {
+					var height = legendRectSize + legendSpacing;
+					var offset =  height * color.domain().length / 2;
+					//var horz = -2 * legendRectSize;
+					var horz = -25 * legendRectSize;
+					var vert = i * height - offset;
+
+					if(i == 0)
+						return 'translate(-1000,-1000)';
+					return 'translate(' + horz + ',' + vert + ')';
+				});
+
+			legend.append('rect')
+				.attr('width', legendRectSize)
+				.attr('height', legendRectSize)
+				.attr('class','pnc-rect')
+				.style('fill', color)
+				.style('stroke', color);
+
+			legend.append('text')
+				.attr('x', legendRectSize + legendSpacing)
+				.attr('y', legendRectSize - legendSpacing)
+				.text(function(d) { return d; });
+			//draw legend done.........
+
+			//add tootip here.....
+			////var tooltip = d3.select("body")
+			var tooltip = div
+				.append('div')
+				.attr('class', 'pnc-tooltip')
+				.attr('transform', function() {
+					return 'translate(350, 100)';
+				});
+
+
+			tooltip.append('div')
+				.attr('class', 'pnc-tooltip-label');
+
+			tooltip.append('div')
+				.attr('class', 'pnc-tooltip-duration');
+			
+			tooltip.append('div')
+			    .attr('class', 'unique_path');
+
+			tooltip.append('div')
+			    .attr('class', 'from_start');
+
+			path.on('mouseover', function(d) {
+				if(!isUniquePath){
+					tooltip.select('.pnc-tooltip-label').html(d.conceptName + ":" + d.patientCount + ":" + d.percentage + "%");
+				}else{
+					tooltip.select('.pnc-tooltip-label').html(d.uniqueConceptsName + ":" + d.patientCount + ":" + d.percentage + "%");
+				}
+				tooltip.select('.pnc-tooltip-duration').html( d.avgDuration + " days:" + d.avgGapDay + ":" + d.gapPercent + "%");
+			    tooltip.select('.unique_path').html( "unique count: " + d.uniqueConceptCount);
+			    tooltip.select('.from_start').html( "Days from start: " + d.daysFromCohortStart);
+				tooltip.style('display', 'block');
+			});
+
+			path.on('mouseout', function() {
+				tooltip.style('display', 'none');
+			});
+			//tooltip done here......
+
+			self.click = function (d) {
+				path.transition()
+				.duration(750)
+				.attrTween("d", arcTween(d, radius));
+			}			
+		}
+			d3.select(self.frameElement).style("height", height + "px");
+		}
 
 		// Interpolate the scales!
-		self.arcTween = function (d) {
+		self.arcTween = function (d, radius) {
 			var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
 			yd = d3.interpolate(y.domain(), [d.y, 1]),
 			yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
@@ -249,6 +302,26 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 		
 		self.back = function () {
 			document.location = "#/panacea";
+		}
+		
+		self.popPrintView = function(){
+			if(!self.printview){
+				var leftMenuDiv = d3.select("#wrapperLeftMenu");
+				leftMenuDiv.style("display","none");
+			
+				var mainDiv = d3.select("#wrapperMainWindow");
+				mainDiv.style("left", "15px");
+				
+				self.printview = true;
+			}else{
+				var leftMenuDiv = d3.select("#wrapperLeftMenu");
+				leftMenuDiv.style("display","block");
+				
+				var mainDiv = d3.select("#wrapperMainWindow");
+				mainDiv.style("left", "199px");
+				
+				self.printview = false;
+			}				
 		}
 	};
 	

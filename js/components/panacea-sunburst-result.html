@@ -1,4 +1,4 @@
-<div>
+<div id="pnc_result_main_div">
 	<div class="wrapperTitle">
 		<i class="fa fa-briefcase"></i> Pathways
 	</div>
@@ -21,6 +21,11 @@
 	<div class="row" style="padding:10px;">
 		<div class="col-xs-2">
 			<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() {back();}">Back</button>
+		</div>
+		<div class="col-xs-2">
+			<a target="" data-bind="click:function() {popPrintView();}">
+				Print View
+			</a>
 		</div>
 	</div>
 		
@@ -144,6 +149,12 @@
 	
 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'sunburst'">
 		<div id="pnc_sunburst_result_div">
+			<label class="heading">Regular result</label>
+			<br/>
+		</div>
+		<div id="pnc_sunburst_result_div_2">
+			<label class="heading">Unique path result</label>
+			<br/>
 		</div>
 	</div>
 </div>
