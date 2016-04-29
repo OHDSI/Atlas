@@ -20,6 +20,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 		//self.members = ko.observableArray([{personId:423, startDate:1203724800000, endDate:1293580800000}]); // TEMPORARY HACK
 		self.members = ko.observableArray();
 		self.personId = ko.observable();
+    self.cohortPerson = ko.observable();
 		self.currentMemberIndex = 0;
 
 		self.hasCDM = function (source) {
@@ -31,10 +32,12 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				self.currentMemberIndex--;
 				//self.personId(self.members()[self.currentMemberIndex].personId);
 				self.personId(self.members()[self.currentMemberIndex].subjectId);
+				self.cohortPerson(self.members()[self.currentMemberIndex]);
 			} else {
 				self.currentMemberIndex = self.members().length - 1;
 				//self.personId(self.members()[self.currentMemberIndex].personId);
 				self.personId(self.members()[self.currentMemberIndex].subjectId);
+				self.cohortPerson(self.members()[self.currentMemberIndex]);
 			}
 		}
 
@@ -42,13 +45,15 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 			if (self.currentMemberIndex < self.members().length - 1) {
 				self.currentMemberIndex++;
 				self.personId(self.members()[self.currentMemberIndex].subjectId);
+				self.cohortPerson(self.members()[self.currentMemberIndex]);
 			} else {
 				self.currentMemberIindex = 0;
 				self.personId(self.members()[self.currentMemberIndex].subjectId);
+				self.cohortPerson(self.members()[self.currentMemberIndex]);
 			}
 		}
 
-		self.personId.subscribe(function (value) {
+		self.cohortPerson.subscribe(function (value) {
 			if (value) {
 				self.loadProfile(value);
 			}
@@ -87,6 +92,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				success: function (members) {
 					if (members.length == 0) {
 						self.personId(null);
+						self.cohortPerson(null);
 						self.loadingProfile(false);
 						$('#modalNoMembers').modal('show');
 						self.members([]);
@@ -100,18 +106,19 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 						self.currentMemberIndex = 0;
 						//self.personId(members[self.currentMemberIndex].personId);
 						self.personId(members[self.currentMemberIndex].subjectId);
+						self.cohortPerson(members[self.currentMemberIndex]);
 					}
 				}
 			});
 		};
     self.loadCohort();
 
-		self.loadProfile = function (personId) {
+		self.loadProfile = function (cohortPerson) {
 			self.loadingProfile(true);
 
       //self.personId(423); // TEMPORARY HACK
 			$.ajax({
-				url: self.services[0].url + self.sourceKey() + '/person/' + personId,
+				url: self.services[0].url + self.sourceKey() + '/person/' + cohortPerson.subjectId,
         //url: "http://api.ohdsi.org/WebAPI/CS1/person/423", // TEMPORARY HACK
 				method: 'GET',
 				contentType: 'application/json',
@@ -120,7 +127,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 					self.reference(profile.records);
 					self.filteredData(self.reference());
           self.loadedProfile(profile);
-          console.log(profile);
+          //console.log(profile);
 					// self.plotTimewave(profile.timewave, profile.startDate, profile.endDate);
 					//self.plotScatter(profile.records, profile.startDate, profile.endDate);
 				}

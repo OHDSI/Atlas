@@ -1,5 +1,5 @@
 "use strict";
-define(['knockout','d3'], function (ko, d3) {
+define(['knockout','d3', 'lodash'], function (ko, d3, _) {
   window.d3 = d3;
   var width = 400;
   var height = 450;
@@ -14,35 +14,60 @@ define(['knockout','d3'], function (ko, d3) {
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
       var va = valueAccessor();
-      console.log(va.filteredData().length);
       if (va.filteredData() && va.profile())
-        plotScatter(element, va.filteredData(), va.profile().startDate, va.profile().endDate);
+        plotScatter(element, va.filteredData(), va.profile(), va.cohortPerson());
       //console.log(va.profile());
       //debugger;
     }
   };
 });
-function plotScatter(element, records, startDate, endDate) {
+function plotScatter(element, records, profile, cohortPerson) {
+  var recordTypes = _.chain(records)
+                      .pluck('recordType')
+                      .uniq()
+                      .value();
   var margin = {
       top: 10,
       right: 10,
-      bottom: 150,
+      bottom: 10,
       left: 10
-    },
-    margin2 = {
-      top: 430,
+    };
+  var height = recordTypes.length * 40 - margin.top - margin.bottom;
+  var height2 = 50;
+  var margin2 = {
+      top: 10,
       right: 10,
       bottom: 20,
       left: 10
     },
-    width = 900 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom,
-    height2 = 500 - margin2.top - margin2.bottom;
+    width = 900 - margin.left - margin.right;
 
   var x = d3.time.scale().range([0, width]),
     x2 = d3.time.scale().range([0, width]),
-    y = d3.scale.linear().range([height, 0]),
-    y2 = d3.scale.linear().range([height2, 0]);
+    y = d3.scale.ordinal().rangePoints([height * .9, height * .1]),
+    y2 = d3.scale.ordinal().rangePoints([height2 * .9, height2 * .1]);
+
+  x.domain([profile.startDate, profile.endDate]);
+  y.domain(recordTypes);
+  x2.domain(x.domain());
+  y2.domain(y.domain());
+
+  //$('#scatter').empty();
+  $(element).empty();
+
+  var svg = d3.select(element).append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom +
+                    height2 + margin2.top + margin2.bottom);
+
+  var focus = svg.append("g")
+    //.attr("class", "focus")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var context = svg.append("g")
+    .attr("class", "context")
+    .attr("transform", "translate(" + margin2.left + "," + 
+          (height + margin.top + margin.bottom + margin2.top) + ")");
 
   var xAxis = d3.svg.axis().scale(x).orient("bottom"),
     xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
@@ -72,13 +97,6 @@ function plotScatter(element, records, startDate, endDate) {
     .x(x2)
     .on("brush", brushed);
 
-  //$('#scatter').empty();
-  $(element).empty();
-
-  var svg = d3.select(element).append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);
-
   var focusTip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0])
@@ -88,24 +106,11 @@ function plotScatter(element, records, startDate, endDate) {
 
   svg.call(focusTip);
 
-  var focus = svg.append("g")
-    //.attr("class", "focus")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  var context = svg.append("g")
-    .attr("class", "context")
-    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-
-  x.domain([startDate, endDate]);
-  y.domain([0, 5]);
-  x2.domain(x.domain());
-  y2.domain(y.domain());
-
   // plot observation window lines
   //var member = self.members()[self.currentMemberIndex];
   focus.selectAll("line")
     //.data([member.startDate, member.endDate])
-    .data([startDate, endDate])
+    .data([cohortPerson.startDate, cohortPerson.endDate])
     .enter()
     .append("line")
     .attr('x1', function (d) {
@@ -127,20 +132,7 @@ function plotScatter(element, records, startDate, endDate) {
       return x(d.startDate) - 2.5;
     })
     .attr('y', function (d) {
-      switch (d.recordType) {
-      case 'drug':
-        return y(4);
-        break;
-      case 'condition':
-        return y(3);
-        break;
-      case 'observation':
-        return y(2);
-        break;
-      case 'visit':
-        return y(1);
-        break;
-      }
+      return y(d.recordType);
     })
     .attr('width', 5)
     .attr('height', 5)
@@ -154,23 +146,18 @@ function plotScatter(element, records, startDate, endDate) {
       focusTip.hide(d);
     });
 
-  focus.append("text").text('Visits').attr('class', 'visit').attr('x', 0).attr('y', function (d) {
-    return y(1.2);
-  });
-  focus.append("text").text('Observations').attr('class', 'observation').attr('x', 0).attr('y', function (d) {
-    return y(2.2);
-  });
-  focus.append("text").text('Conditions').attr('class', 'condition').attr('x', 0).attr('y', function (d) {
-    return y(3.2);
-  });
-  focus.append("text").text('Drugs').attr('class', 'drug').attr('x', 0).attr('y', function (d) {
-    return y(4.2);
+  recordTypes.forEach(function(recordType) {
+    focus.append("text")
+          .text(recordType)
+          .attr('class', recordType)
+          .attr('x', 0)
+          .attr('y', y(recordType))
   });
 
   // and focus area
   context.selectAll("line")
     //.data([member.startDate, member.endDate])
-    .data([startDate, endDate])
+    .data([profile.startDate, profile.endDate])
     .enter()
     .append("line")
     .attr('x1', function (d) {
@@ -191,20 +178,7 @@ function plotScatter(element, records, startDate, endDate) {
       return x2(d.startDate);
     })
     .attr('y', function (d) {
-      switch (d.recordType) {
-      case 'drug':
-        return y2(4);
-        break;
-      case 'condition':
-        return y2(3);
-        break;
-      case 'observation':
-        return y2(2);
-        break;
-      case 'visit':
-        return y2(1);
-        break;
-      }
+      return y2(d.recordType);
     })
     .attr('width', 2)
     .attr('height', 2)
