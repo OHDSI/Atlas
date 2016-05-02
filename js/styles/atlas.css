@@ -1694,3 +1694,15 @@ li.current-asset {
 	padding:5px;
 	border: solid 1px #ddd;
 }
+
+.home-welcome {
+	margin: 7px;
+}
+
+.home-documentation {
+	margin: 10px;
+}
+
+.home-documentation .fa {
+    font-size: 18px;
+}
