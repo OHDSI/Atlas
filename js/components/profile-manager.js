@@ -171,6 +171,12 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				title: 'Concept Name',
 				data: 'conceptName'
 			},
+      {
+        title: 'From Index',
+        render: (s, p, d) => {
+          return (d.startDate - self.cohortPerson().startDate) / (1000 * 60 * 60 * 24)
+        }
+      },
 			{
 				title: 'Start Date',
 				render: function (s, p, d) {

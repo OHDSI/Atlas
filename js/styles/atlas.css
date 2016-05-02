@@ -1509,8 +1509,14 @@ div.scatter {
 	border-bottom: solid 1px #ccc;
 }
 
-line.observation-period {
+line.index-date {
 	stroke: #F19119;
+	stroke-width: 1px;
+	stroke-opacity: 1;
+}
+
+line.observation-period {
+	stroke: blue;
 	stroke-width: 1px;
 	stroke-opacity: 1;
 }

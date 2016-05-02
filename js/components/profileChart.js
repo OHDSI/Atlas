@@ -30,7 +30,8 @@ function plotScatter(element, records, profile, cohortPerson) {
       bottom: 30,
       left: 10
     };
-  var height = recordTypes.length * 35 - margin.top - margin.bottom;
+  //var height = recordTypes.length * 35 - margin.top - margin.bottom;
+  var height = recordTypes.length * 28;
   var height2 = 50;
   var margin2 = {
       top: 10,
@@ -78,7 +79,7 @@ function plotScatter(element, records, profile, cohortPerson) {
         return x(d.startDate) - 2.5;
       });
     //var member = self.members()[self.currentMemberIndex];
-    focus.selectAll("line")
+    focus.selectAll("line.observation-period")
       .attr('x1', function (d) {
         return x(d)
       })
@@ -106,9 +107,9 @@ function plotScatter(element, records, profile, cohortPerson) {
 
   // plot observation window lines
   //var member = self.members()[self.currentMemberIndex];
-  focus.selectAll("line")
-    //.data([member.startDate, member.endDate])
-    .data([cohortPerson.startDate, cohortPerson.endDate])
+  focus.selectAll("line.observation-period")
+    .data([profile.startDate, profile.endDate])
+    //.data([cohortPerson.startDate, cohortPerson.endDate])
     .enter()
     .append("line")
     .attr('x1', function (d) {
@@ -120,6 +121,21 @@ function plotScatter(element, records, profile, cohortPerson) {
     })
     .attr('y2', height)
     .attr('class', 'observation-period');
+
+  // plot index date
+  focus.selectAll("line.index-date")
+    .data([cohortPerson.startDate])
+    .enter()
+    .append("line")
+    .attr('x1', function (d) {
+      return x(d)
+    })
+    .attr('y1', 0)
+    .attr('x2', function (d) {
+      return x(d)
+    })
+    .attr('y2', height)
+    .attr('class', 'index-date');
 
   // place your data into the focus area
   focus.selectAll("rect")
@@ -153,7 +169,7 @@ function plotScatter(element, records, profile, cohortPerson) {
   });
 
   // and focus area
-  context.selectAll("line")
+  context.selectAll("line.observation-period")
     //.data([member.startDate, member.endDate])
     .data([profile.startDate, profile.endDate])
     .enter()
@@ -167,6 +183,19 @@ function plotScatter(element, records, profile, cohortPerson) {
     })
     .attr('y2', height2)
     .attr('class', 'observation-period');
+  context.selectAll("line.index-date")
+    .data([cohortPerson.startDate])
+    .enter()
+    .append("line")
+    .attr('x1', function (d) {
+      return x2(d)
+    })
+    .attr('y1', 0)
+    .attr('x2', function (d) {
+      return x2(d)
+    })
+    .attr('y2', height2)
+    .attr('class', 'index-date');
 
   context.selectAll("rect")
     .data(records)
