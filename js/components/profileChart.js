@@ -79,7 +79,7 @@ function plotScatter(element, records, profile, cohortPerson) {
         return x(d.startDate) - 2.5;
       });
     //var member = self.members()[self.currentMemberIndex];
-    focus.selectAll("line.observation-period")
+    focus.selectAll("line")
       .attr('x1', function (d) {
         return x(d)
       })
@@ -88,7 +88,6 @@ function plotScatter(element, records, profile, cohortPerson) {
         return x(d)
       })
       .attr('y2', height)
-      .attr('class', 'observation-period');
     focus.select(".x.axis").call(xAxis);
   }
 
