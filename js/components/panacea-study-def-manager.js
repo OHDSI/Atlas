@@ -1,4 +1,4 @@
-define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout-jqAutocomplete', 'appConfig', 'jquery-ui'], function (ko, view, $, jqAuto, config) {
+define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout-jqAutocomplete', 'appConfig', 'd3', 'jquery-ui'], function (ko, view, $, jqAuto, config, d3) {
 	function panaceaStudyDefManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -206,9 +206,13 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 			$.ajax({
 				url: config.services[0].url + 'panacea/runPncTasklet/' + self.currentRunSource().sourceKey + '/' + self.panaceaStudyId(),
 				method: 'GET',
-				success: function () {
-					document.location = "#/panacea";
-				}
+				success: function (data) {
+					//document.location = "#/panacea";
+					showJobStatus(true, data);
+				},
+				error: function(data){
+					showJobStatus(false, data);
+			    }
 			});
 		}
 		
@@ -216,15 +220,45 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 			$.ajax({
 				url: config.services[0].url + 'panacea/runPncFilterSummaryTasklet/' + self.currentRunSource().sourceKey + '/' + self.panaceaStudyId(),
 				method: 'GET',
-				success: function () {
-					document.location = "#/panacea";
-				}
+				success: function (data) {
+					//document.location = "#/panacea";
+					showJobStatus(true, data);
+				},
+				error: function(data){
+					showJobStatus(false, data);
+			    }
 			});
 		}
 		
 		self.toggleShowConcetpSetImporter = function(){
 			self.showConceptSetImporter(!self.showConceptSetImporter());
 	    };
+	}
+	
+	self.toggleFeedbackMsg = function(){
+		var div = d3.select("#jobFeedbackDiv");
+		var label = d3.select("#jobFeedbackLabel");
+		label.text('');
+        div.style('display', 'none');			
+	}
+	
+	self.showJobStatus = function(success, data){
+		var div = d3.select("#jobFeedbackDiv");
+		var label = d3.select("#jobFeedbackLabel");
+		
+		if(success){
+            var msg = "Your job was submitted successfully!";
+            if (data.jobInstance) {
+                msg += " Job instance ID: " + data.jobInstance.instanceId;
+                msg += ". Job execution ID: " + data.executionId;
+            }
+            label.text(msg);
+            div.style('display', 'block');
+		}else{
+			var msg = "Your job has failed!";
+			label.text(msg);
+            div.style('display', 'block');			
+		}
 	}
 	
 	self.renderConceptSetCheckBox = function(field){
