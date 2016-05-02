@@ -9,8 +9,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
     init: function (element, valueAccessor, allBindingsAccessor) {
       //var profile = valueAccessor().profile;
       //var filteredData = valueAccessor().filteredData;
-      d3.select(element)
-          .append('h3').text('hello');
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
       var va = valueAccessor();
@@ -29,10 +27,10 @@ function plotScatter(element, records, profile, cohortPerson) {
   var margin = {
       top: 10,
       right: 10,
-      bottom: 10,
+      bottom: 30,
       left: 10
     };
-  var height = recordTypes.length * 40 - margin.top - margin.bottom;
+  var height = recordTypes.length * 35 - margin.top - margin.bottom;
   var height2 = 50;
   var margin2 = {
       top: 10,
@@ -151,7 +149,7 @@ function plotScatter(element, records, profile, cohortPerson) {
           .text(recordType)
           .attr('class', recordType)
           .attr('x', 0)
-          .attr('y', y(recordType))
+          .attr('y', y(recordType) - 5)
   });
 
   // and focus area
