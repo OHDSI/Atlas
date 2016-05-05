@@ -1,7 +1,7 @@
 // lines labeled "TEMPORARY HACK" are to get the profile to display
 // while using the public api, which has some bug interfering with
 // cohort loading
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable','components/profileChart'], function (ko, view, d3, config) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable','components/profileChart', 'css!./styles/profileManager.css'], function (ko, view, d3, config) {
 	function profileManager(params) {
     window.d3 = d3;
 		var self = this;
