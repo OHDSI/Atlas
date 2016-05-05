@@ -51,12 +51,12 @@
 		<div data-bind="visible:$component.loadingProfile()" class="loading">loading</div>
 
 		<div class="paddedWrapper" data-bind="visible:!$component.loadingProfile()">
-			<div data-bind="visible:$component.reference().length > 0">
+			<div data-bind="visible:$component.allRecs().length > 0">
 				<div id="timewave"></div>
 				<!--div id="scatter"></div-->
-        <div id="scatter" data-bind="profileChart:{profile:$component.loadedProfile, cohortPerson:$component.cohortPerson, filteredData:$component.filteredData, allData:$component.reference}"></div>
+        <div id="scatter" data-bind="profileChart:{profile:$component.loadedProfile, cohortPerson:$component.cohortPerson, facetFilteredData:$component.facetFilteredData, allData:$component.allRecs, profileZoom:$component.profileZoom.bind($component)}"></div>
 				<div class="heading">Profile Records</div>
-				<faceted-datatable params="{reference: $component.reference, columns: $component.columns, options: $component.options, filteredData: $component.filteredData}"></faceted-datatable>
+				<faceted-datatable params="{reference: $component.profileZoomedRecs, columns: $component.columns, options: $component.options, filteredData: $component.facetFilteredData}"></faceted-datatable>
 			</div>
 		</div>
 	</div>

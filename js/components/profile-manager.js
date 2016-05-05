@@ -7,8 +7,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 		var self = this;
     self.config = config;
 		self.services = [params.services];
-		self.reference = ko.observableArray([]);
-		self.filteredData = ko.observableArray([]); // same as reference but with filters applied
+		self.allRecs = ko.observableArray([]);
+		self.facetFilteredData = ko.observableArray([]); // same as reference but with filters applied
+		self.profileZoomedRecs = ko.observableArray([]); // same as reference but with filters applied
                                                 // by faceted-datatable
     self.loadedProfile = ko.observable();
 		//self.cohortDefinitionId = ko.observable();
@@ -124,8 +125,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				contentType: 'application/json',
 				success: function (profile) {
 					self.loadingProfile(false);
-					self.reference(profile.records);
-					self.filteredData(self.reference());
+					self.allRecs(profile.records);
+					self.profileZoomedRecs(profile.records);
+					self.facetFilteredData(profile.records);
           self.loadedProfile(profile);
           //console.log(profile);
 					// self.plotTimewave(profile.timewave, profile.startDate, profile.endDate);
@@ -133,6 +135,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				}
 			});
 		};
+    self.profileZoom = function(zoomedRecs) {
+      if (zoomedRecs)
+        self.profileZoomedRecs(zoomedRecs);
+      return self.profileZoomedRecs;
+    };
     //self.loadProfile(0); // TEMPORARY HACK
 
 		self.showBrowser = function () {
