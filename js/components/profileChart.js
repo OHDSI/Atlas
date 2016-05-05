@@ -5,7 +5,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
   var height = 450;
   var lineHeight = 20;
 
-  var x = d=>d.startDate;
+  var x = d=>{
+    if (!d) debugger;
+    return d.startDate;
+  };
   var y = d=>d.recordType;
   var tipText = d=>d.conceptName;
   var pointClass = d=>d.recordType;
@@ -42,7 +45,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
       var va = valueAccessor();
       if (va.filteredData() && va.profile())
         categoryScatterPlot(element, va.filteredData(), 
-                            x, y, tipText, pointClass, triangle);
+                            x, y, tipText, pointClass, triangle,
+                           null, va.allData());
                     // va.profile(), va.cohortPerson());
       //console.log(va.profile());
       //debugger;
@@ -52,7 +56,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 function categoryScatterPlot(element, points, x, y, tipText, 
                              pointClass,
                              pointFunc,
-                             verticalLines, highlighPoints ) {
+                             verticalLines, allPoints, highlighPoints ) {
   /* verticleLines: [{xpos, color},...] */
   var categories = _.chain(points).map(y).uniq().value();
   var catLineHeight = 28;
@@ -74,15 +78,17 @@ function categoryScatterPlot(element, points, x, y, tipText,
     width = 900 - margin.left - margin.right;
 
   var xScale = d3.time.scale().range([0, width]),
-    x2 = d3.time.scale().range([0, width]),
+    x2Scale = d3.time.scale().range([0, width]),
     yScale = d3.scale.ordinal().rangePoints([mainHeight * .9, mainHeight * .1]),
-    y2 = d3.scale.ordinal().rangePoints([brushWindowHeight * .9, brushWindowHeight * .1]);
+    y2Scale = d3.scale.ordinal().rangePoints([brushWindowHeight * .9, brushWindowHeight * .1]);
 
   //xScale.domain([profile.startDate, profile.endDate]);
-  xScale.domain(d3.extent(points.map(x)));
+  //xScale.domain(d3.extent(points.map(x)));
+  xScale.domain(d3.extent(allPoints.map(x)));
   yScale.domain(categories);
-  x2.domain(xScale.domain());
-  y2.domain(yScale.domain());
+  //x2Scale.domain(xScale.domain());
+  x2Scale.domain(d3.extent(allPoints.map(x)));
+  y2Scale.domain(yScale.domain());
 
   //$('#scatter').empty();
   $(element).empty();
@@ -102,15 +108,15 @@ function categoryScatterPlot(element, points, x, y, tipText,
           (mainHeight + margin.top + margin.bottom + margin2.top) + ")");
 
   var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
-    xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
+    xAxis2 = d3.svg.axis().scale(x2Scale).orient("bottom"),
     yAxis = d3.svg.axis().scale(yScale).orient("left");
 
   var brushed = function () {
-    xScale.domain(brush.empty() ? x2.domain() : brush.extent());
-    focus.selectAll('g')
-      .attr('x', function (d) {
-        return xScale(x(d));
-      });
+    xScale.domain(brush.empty() ? x2Scale.domain() : brush.extent());
+    focus.selectAll('g.point')
+      .attr("transform", function(d) {
+        return "translate(" + xScale(x(d)) + "," + yScale(y(d)) + ")";
+      })
     //var member = self.members()[self.currentMemberIndex];
     focus.selectAll("line")  // not drawing vertLines right now
       .attr('x1', function (d) {
@@ -125,7 +131,7 @@ function categoryScatterPlot(element, points, x, y, tipText,
   }
 
   var brush = d3.svg.brush()
-    .x(x2)
+    .x(x2Scale)
     .on("brush", brushed);
 
   var focusTip = d3.tip()
@@ -138,8 +144,10 @@ function categoryScatterPlot(element, points, x, y, tipText,
   svg.call(focusTip);
 
   // place your data into the focus area
-  focus.selectAll("g.point")
-    .data(points)
+  var pointGs = focus.selectAll("g.point")
+    .data(points);
+  pointGs.exit().remove();
+  pointGs
     .enter()
     .append("g")
       .classed('point', true);
@@ -168,20 +176,23 @@ function categoryScatterPlot(element, points, x, y, tipText,
   });
 
   context.selectAll("rect")
-    .data(points)
+    .data(allPoints)
     .enter()
     .append("rect")
     .attr('x', function (d) {
-      return x2(x(d));
+      return x2Scale(x(d));
     })
     .attr('y', function (d) {
-      return y2(y(d));
+      return y2Scale(y(d));
     })
     .attr('width', 2)
     .attr('height', 2)
     .attr('class', function (d) {
       return pointClass(d);
-    });
+    })
+    .classed('dim', function(d) {
+      return !_.find(points, d);
+    })
 
 
   focus.append("g")
