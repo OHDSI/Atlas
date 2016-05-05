@@ -1,0 +1,119 @@
+
+
+path.drug,
+rect.drug,
+text.drug
+{
+  fill:rgb(177,89,40);
+  opacity: 0.6;
+}
+path.condition,
+rect.condition,
+text.condition
+{
+  fill:rgb(166,206,227);
+  opacity:0.6;
+}
+path.observation,
+rect.observation,
+text.observation
+{
+  fill:rgb(31,120,180);
+  opacity:0.6;
+}
+path.visit,
+rect.visit,
+text.visit
+{
+  fill:rgb(178,223,138);
+  opacity:0.6;
+}
+path.condition_era,
+rect.condition_era,
+text.condition_era
+{
+  fill:rgb(51,160,44);
+  opacity:0.6;
+}
+path.drug_era,
+rect.drug_era,
+text.drug_era
+{
+  fill:rgb(251,154,153);
+  opacity:0.6;
+}
+path.dose_era,
+rect.dose_era,
+text.dose_era
+{
+  fill:rgb(227,26,28);
+  opacity:0.6;
+}
+path.procedure,
+rect.procedure,
+text.procedure
+{
+  fill:rgb(253,191,111);
+  opacity:0.6;
+}
+path.device,
+rect.device,
+text.device
+{
+  fill:rgb(255,127,0);
+  opacity:0.6;
+}
+path.measurement,
+rect.measurement,
+text.measurement
+{
+  fill:rgb(202,178,214);
+  opacity:0.6;
+}
+path.specimen,
+rect.specimen,
+text.specimen
+{
+  fill:rgb(106,61,154);
+  opacity:0.6;
+}
+path.death,
+rect.death,
+text.death
+{
+  fill:rgb(255,255,153);
+  opacity:0.6;
+}
+/*
+#scatter rect.drug {
+	fill: #7EB1DC;
+}
+
+#scatter rect.condition {
+	fill: #5393C8;
+}
+
+#scatter rect.observation {
+	fill: #1265AB;
+}
+
+#scatter rect.visit {
+	fill: #094B83;
+}
+
+#scatter text.drug {
+	fill: #7EB1DC;
+}
+
+#scatter text.condition {
+	fill: #5393C8;
+}
+
+#scatter text.observation {
+	fill: #1265AB;
+}
+
+#scatter text.visit {
+	fill: #094B83;
+}
+*/
