@@ -32,10 +32,17 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
       .enter()
       .append('path')
         .attr('d', 'M 0 -3 L -3 3 L 3 3 Z')
+        .attr('transform', 'scale(2)')
         .classed(pointClass(datum), true);
     //g.selectAll('path.' + pointClass(datum))
       //.attr('r', radius(datum))
       //.attr('fill', 'blue');
+  }
+  var jitterOffsets = []; // keep them stable as points move around
+  function jitter(i, maxX=6, maxY=2) {
+    jitterOffsets[i] = jitterOffsets[i] || 
+      { x: (Math.random() - .5) * maxX, y: (Math.random() - .5) * maxY };
+    return jitterOffsets[i];
   }
   ko.bindingHandlers.profileChart = {
     init: function (element, valueAccessor, allBindingsAccessor) {
@@ -49,7 +56,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
          )
         categoryScatterPlot(element, va.facetFilteredData(), 
                             x, y, tipText, pointClass, triangle,
-                           null, va.allData(), null, va.profileZoom);
+                           null, va.allData(), null, va.profileZoom, jitter);
                     // va.profile(), va.cohortPerson());
       //console.log(va.profile());
       //debugger;
@@ -60,7 +67,7 @@ function categoryScatterPlot(element, points, x, y, tipText,
                              pointClass,
                              pointFunc,
                              verticalLines, allPoints, highlighPoints,
-                             profileZoomSetRecs ) {
+                             profileZoomSetRecs, jitter ) {
   /* verticleLines: [{xpos, color},...] */
   var categories = _.chain(points).map(y).uniq().value();
   var catLineHeight = 28;
@@ -121,8 +128,9 @@ function categoryScatterPlot(element, points, x, y, tipText,
   var brushed = function () {
     xScale.domain(brush.empty() ? x2Scale.domain() : brush.extent());
     focus.selectAll('g.point')
-      .attr("transform", function(d) {
-        return "translate(" + xScale(x(d)) + "," + yScale(y(d)) + ")";
+      .attr("transform", function(d,i) {
+        return "translate(" + (xScale(x(d)) + jitter(i).x) + "," + 
+                              (yScale(y(d)) + jitter(i).y) +")";
       })
     //var member = self.members()[self.currentMemberIndex];
     focus.selectAll("line.index")  // not drawing vertLines right now
@@ -134,7 +142,6 @@ function categoryScatterPlot(element, points, x, y, tipText,
         return xScale(d)
       })
       .attr('y2', mainHeight)
-    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
     focus.select(".x.axis").call(xAxis);
   }
 
@@ -170,8 +177,9 @@ function categoryScatterPlot(element, points, x, y, tipText,
     .append("g")
       .classed('point', true);
   focus.selectAll("g.point")
-    .attr("transform", function(d) {
-      return "translate(" + xScale(x(d)) + "," + yScale(y(d)) + ")";
+    .attr("transform", function(d,i) {
+      return "translate(" + (xScale(x(d)) + jitter(i).x) + "," + 
+                            (yScale(y(d)) + jitter(i).y) +")";
     })
     .attr('class', function (d) {
       return pointClass(d);
