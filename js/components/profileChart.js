@@ -7,7 +7,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
   var x = d=>{
     if (!d) debugger;
-    return d.startDate;
+    //return d.startDate;
+    return d.startDay;
   };
   var y = d=>d.recordType;
   var tipText = d=>d.conceptName;
@@ -80,8 +81,11 @@ function categoryScatterPlot(element, points, x, y, tipText,
     },
     width = 900 - margin.left - margin.right;
 
-  var xScale = d3.time.scale().range([0, width]),
-    x2Scale = d3.time.scale().range([0, width]),
+  var 
+    //xScale = d3.time.scale().range([0, width]),
+    //x2Scale = d3.time.scale().range([0, width]),
+    xScale = d3.scale.linear().range([0, width]),
+    x2Scale = d3.scale.linear().range([0, width]),
     yScale = d3.scale.ordinal().rangePoints([mainHeight * .9, mainHeight * .1]),
     y2Scale = d3.scale.ordinal().rangePoints([brushWindowHeight * .9, brushWindowHeight * .1]);
 
@@ -121,7 +125,7 @@ function categoryScatterPlot(element, points, x, y, tipText,
         return "translate(" + xScale(x(d)) + "," + yScale(y(d)) + ")";
       })
     //var member = self.members()[self.currentMemberIndex];
-    focus.selectAll("line")  // not drawing vertLines right now
+    focus.selectAll("line.index")  // not drawing vertLines right now
       .attr('x1', function (d) {
         return xScale(d)
       })
@@ -130,6 +134,7 @@ function categoryScatterPlot(element, points, x, y, tipText,
         return xScale(d)
       })
       .attr('y2', mainHeight)
+    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
     focus.select(".x.axis").call(xAxis);
   }
 
