@@ -107,13 +107,13 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 			height = 700,
 			radius = Math.min(width, height) / 2;
 
-			var x = d3.scale.linear()
-				.range([0, 2 * Math.PI]);
+//			var x = d3.scale.linear()
+//				.range([0, 2 * Math.PI]);
+//
+//			var y = d3.scale.sqrt()
+//				.range([0, radius]);
 
-			var y = d3.scale.sqrt()
-				.range([0, radius]);
-
-			var color = d3.scale.category20c();
+//			var color = d3.scale.category20c();
 
 			var div1 = d3.select("#pnc_sunburst_result_div");
 			div1.selectAll("*").remove();
@@ -122,7 +122,8 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 				.attr("height", height)
 				.append("g")
 				.attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
-
+			var tltp1Div = d3.select("#pnc_sunburst_tltp1");
+			
 			var div2 = d3.select("#pnc_sunburst_result_div_2");
 			div2.selectAll("*").remove();
 			var svg2 = d3.select("#pnc_sunburst_result_div_2").append("svg")
@@ -130,15 +131,16 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 				.attr("height", height)
 				.append("g")
 				.attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
+			var tltp2Div = d3.select("#pnc_sunburst_tltp2");
 			
-			var partition = d3.layout.partition()
-				.value(function(d) { return d.percentage; });
+//			var partition = d3.layout.partition()
+//				.value(function(d) { return d.percentage; });
 
-			var arc = d3.svg.arc()
-				.startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
-				.endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
-				.innerRadius(function(d) { return Math.max(0, y(d.y)); })
-				.outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
+//			var arc = d3.svg.arc()
+//				.startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
+//				.endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
+//				.innerRadius(function(d) { return Math.max(0, y(d.y)); })
+//				.outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 			
 			var url = config.services[0].url + 'panacea/getStudySummary/' + self.panaceaResultStudyId() + '/' + self.currentResultSource().sourceId;
 			
@@ -165,19 +167,38 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 					}else if(!(root["studyResultCollapsed"] === undefined || root["studyResultCollapsed"] === null)) {
 						changedRoot = JSON.parse(root["studyResultCollapsed"]);
 					}
-					self.drawSunburst(changedRoot, svg, div1, width, height, radius, color, arc, partition, false);
+					self.drawSunburst(changedRoot, svg, div1, width, height, radius, tltp1Div, false);
 					
 					var changedUniquePathRoot = null;
 					if(!(root["studyResultUniquePath"] === undefined || root["studyResultUniquePath"] === null)) {
 						changedUniquePathRoot = JSON.parse(root["studyResultUniquePath"]);
-						self.drawSunburst(changedUniquePathRoot, svg2, div2, width, height, radius, color, arc, partition, true);
+						self.drawSunburst(changedUniquePathRoot, svg2, div2, width, height, radius, tltp2Div, true);
 					}					
 				}
 			});
 		});	
 
-		self.drawSunburst = function(changedRoot, svg, div, width, height, radius, color, arc, partition, isUniquePath){
+		self.drawSunburst = function(changedRoot, svg, div, width, height, radius, tltpDiv, isUniquePath){
 			if(changedRoot !== null){
+				var x = d3.scale.linear()
+					.range([0, 2 * Math.PI]);
+
+				var y = d3.scale.sqrt()
+					.range([0, radius]);
+				
+				var color = d3.scale.category20c();
+				
+				//Change this from percentage to patientCount (the arc size/width reflects the size of unit cohort better)
+				var partition = d3.layout.partition()
+					.value(function(d) { return d.patientCount });
+					//.value(function(d) { return isUniquePath ? d.simpleUniqueConceptPercentage : d.percentage; });
+
+				var arc = d3.svg.arc()
+					.startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
+					.endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
+					.innerRadius(function(d) { return Math.max(0, y(d.y)); })
+					.outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
+
 				var path = null;
 				if(!isUniquePath){
 					path = svg.selectAll("path")
@@ -195,7 +216,8 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 					.enter().append("path")
 					.attr("d", arc)
 					.style("fill-rule", "evenodd")
-					.style("fill", function(d) { return color(d.uniqueConceptsName); });
+					//.style("fill", function(d) { return color(d.uniqueConceptsName); });
+					.style("fill", function(d) { return color(d.simpleUniqueConceptName); });
 			}
 
 
@@ -225,7 +247,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 				.attr('height', legendRectSize)
 				.attr('class','pnc-rect')
 				.style('fill', color)
-				.style('stroke', color);
+				.style('stroke', color);			
 
 			legend.append('text')
 				.attr('x', legendRectSize + legendSpacing)
@@ -235,40 +257,48 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 
 			//add tootip here.....
 			////var tooltip = d3.select("body")
-			var tooltip = div
-				.append('div')
-				.attr('class', 'pnc-tooltip')
-				.attr('transform', function() {
-					return 'translate(350, 100)';
-				});
-
-
-			tooltip.append('div')
+//			var tooltip = div
+//				.append('div')
+//				.attr('class', 'pnc-tooltip')
+//				.attr('transform', function() {
+//					return 'translate(350, 100)';
+//				});
+			
+			tltpDiv.attr('class', 'pnc-tooltip');
+			
+			tltpDiv.append('div')
 				.attr('class', 'pnc-tooltip-label');
 
-			tooltip.append('div')
+			tltpDiv.append('div')
 				.attr('class', 'pnc-tooltip-duration');
 			
-			tooltip.append('div')
+			tltpDiv.append('div')
 			    .attr('class', 'unique_path');
 
-			tooltip.append('div')
+			tltpDiv.append('div')
 			    .attr('class', 'from_start');
 
 			path.on('mouseover', function(d) {
-				if(!isUniquePath){
-					tooltip.select('.pnc-tooltip-label').html(d.conceptName + ":" + d.patientCount + ":" + d.percentage + "%");
-				}else{
-					tooltip.select('.pnc-tooltip-label').html(d.uniqueConceptsName + ":" + d.patientCount + ":" + d.percentage + "%");
+				if(d.comboId !== 'root'){
+					if(!isUniquePath){
+						tltpDiv.select('.pnc-tooltip-label').html(d.conceptName + ":" + d.patientCount + ":" + d.percentage + "%");
+					}else{
+						//tooltip.select('.pnc-tooltip-label').html(d.uniqueConceptsName + ":" + d.patientCount + ":" + d.percentage + "%");
+						tltpDiv.select('.pnc-tooltip-label').html(d.simpleUniqueConceptName + ":" + d.patientCount + ":" + d.simpleUniqueConceptPercentage + "%");
+					}
+					if(!isUniquePath){
+						tltpDiv.select('.pnc-tooltip-duration').html( d.avgDuration + " days:" + d.avgGapDay + ":" + d.gapPercent + "%");
+//					tooltip.select('.unique_path').html( "unique count: " + d.uniqueConceptCount);
+//					tltpDiv.select('.from_start').html( "Days from start: " + d.daysFromCohortStart);
+					}
+					//tltpDiv.style('display', 'block');
+					tltpDiv.style('visibility', ' visible');
 				}
-				tooltip.select('.pnc-tooltip-duration').html( d.avgDuration + " days:" + d.avgGapDay + ":" + d.gapPercent + "%");
-			    tooltip.select('.unique_path').html( "unique count: " + d.uniqueConceptCount);
-			    tooltip.select('.from_start').html( "Days from start: " + d.daysFromCohortStart);
-				tooltip.style('display', 'block');
 			});
 
 			path.on('mouseout', function() {
-				tooltip.style('display', 'none');
+				//tltpDiv.style('display', 'none');
+				tltpDiv.style('visibility', ' hidden');
 			});
 			//tooltip done here......
 
@@ -312,6 +342,8 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 				var mainDiv = d3.select("#wrapperMainWindow");
 				mainDiv.style("left", "15px");
 				
+				d3.select("#printViewLink").text("Close Print View");
+				
 				self.printview = true;
 			}else{
 				var leftMenuDiv = d3.select("#wrapperLeftMenu");
@@ -319,6 +351,8 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 				
 				var mainDiv = d3.select("#wrapperMainWindow");
 				mainDiv.style("left", "199px");
+				
+				d3.select("#printViewLink").text("Print View");
 				
 				self.printview = false;
 			}				

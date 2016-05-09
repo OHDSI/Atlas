@@ -100,7 +100,7 @@ define(['knockout', 'text!./panacea-browser.html', 'appConfig', 'faceted-datatab
 			if(d.lastRunTime == null){
 				return null;
 			}else{
-				return '<a href="#/panaceasunburstresult/' + d.studyId + '"><i class="fa fa-file"></i></a>';
+				return '<a href="#/panaceasunburstresult/' + d.studyId + '"><i class="fa fa-eye"></i></a>';
 			}
 		}
 		

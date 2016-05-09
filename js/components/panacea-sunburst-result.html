@@ -8,7 +8,7 @@
 			<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() {back();}">Back</button>
 		</div>
 		<div class="col-xs-2">
-			<a target="" data-bind="click:function() {popPrintView();}">
+			<a target="" data-bind="click:function() {popPrintView();}" id="printViewLink">
 				Print View
 			</a>
 		</div>
@@ -130,9 +130,15 @@
 	<div id="wrapperConceptDetails">
 		<label class="heading" style="font-weight: bold;">Pathway Overview (Interactive)</label>
 		<br/>
+		<div style="height:60px;">
+			<div id="pnc_sunburst_tltp1"/>
+		</div>
 		<div id="pnc_sunburst_result_div">
 <!-- 			<label class="heading">Regular result</label> -->
 			<br/>
+		</div>
+		<div style="height:45px;">
+			<div id="pnc_sunburst_tltp2"/>
 		</div>
 		<div id="pnc_sunburst_result_div_2">
 <!-- 			<label class="heading">Unique path result</label> -->

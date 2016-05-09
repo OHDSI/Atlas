@@ -24,7 +24,8 @@
   background: #eee;
   box-shadow: 0 0 5px #999999;
   color: #333;
-  display: none;
+  display: block;
+  visibility: hidden;
   font-size: 12px;
 //  left: 130px;
 ////  left: 400px;
@@ -33,7 +34,7 @@
   text-align: center;
 //  top: 95px;
 ////  top: 350px;
-  width: 145px;
+  width: 180px;
   z-index: 10;
 }
 
