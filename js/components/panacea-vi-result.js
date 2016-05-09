@@ -13,7 +13,15 @@ define(['knockout', 'text!./panacea-vi-result.html', 'jquery', 'd3', 'appConfig'
 		self.cohortDefinition = params.cohortDefinition;
 		self.loading = params.loading;
 		self.rootJSON = params.rootJSON;
-
+		
+		self.loading.subscribe(function (d) {
+			self.renderVi();
+		});
+		
+		self.rootJSON.subscribe(function (d) {
+			self.renderVi();
+		});
+		
 		self.resultMode.subscribe(function (d) {
 			self.renderVi();
 		});
@@ -23,7 +31,7 @@ define(['knockout', 'text!./panacea-vi-result.html', 'jquery', 'd3', 'appConfig'
 		});
 		
 		self.renderVi = function(){
-			if (self.model != null && self.resultMode() == 'visualization' && self.rootJSON() != null){
+			if (self.model != null && self.rootJSON() != null){
 //				if(!(self.rootJSON()["studyResultUniquePath"] === undefined || self.rootJSON()["studyResultUniquePath"] === null)) {
 //					panaceaViBuild2.d3RenderData(JSON.parse(self.rootJSON()["studyResultUniquePath"]));
 //				}else if

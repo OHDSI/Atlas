@@ -14,13 +14,26 @@ define(['knockout', 'text!./panacea-cohort-result.html', 'jquery', 'd3', 'appCon
 		self.currentStudy = params.currentStudy;
 		self.cohortDefinition = params.cohortDefinition;
 		self.loading = params.loading;
-
+		self.rootJSON = params.rootJSON;
+		
 		self.ageDistribution = ko.observable();
 		self.genderDistribution = ko.observable();
 		self.meanAge = ko.observable();
 		self.meanObsPeriod = ko.observable();
 		self.totalPatients = ko.observable();
 
+		self.loading.subscribe(function (d) {
+			self.renderCohortInfo();
+		});
+		
+		self.cohortDefinition.subscribe(function (d) {
+			self.renderCohortInfo();
+		});
+		
+		self.rootJSON.subscribe(function (d) {
+			self.renderCohortInfo();
+		});
+		
 		self.resultMode.subscribe(function (d) {
 			self.renderCohortInfo();
 		});
@@ -30,8 +43,7 @@ define(['knockout', 'text!./panacea-cohort-result.html', 'jquery', 'd3', 'appCon
 		});
 		
 		self.renderCohortInfo = function(){
-			if (self.model != null 
-					&& self.resultMode() == 'cohortreport'){
+			if (self.model != null){
 				
 					var url = config.services[0].url + self.currentResultSource().sourceKey + '/cohortresults/' + self.currentStudy().cohortDefId + "/summarydata";
 				

@@ -3,21 +3,6 @@
 		<i class="fa fa-briefcase"></i> Pathways
 	</div>
 
-	<ul class="nav nav-tabs">
-		<li role="presentation" data-bind="click: function() {routeTo('report');}, attr: {class: resultMode() == 'report' ? 'active' : ''}">
-			<a>Report</a>
-		</li>
-		<li role="presentation" data-bind="click: function() {routeTo('cohortreport');}, attr: {class: resultMode() == 'cohortreport' ? 'active' : ''}">
-			<a>Cohort Report</a>
-		</li>
-		<li role="presentation" data-bind="click: function() {routeTo('visualization');}, attr: {class: resultMode() == 'visualization' ? 'active' : ''}">
-			<a>Pathway Report</a>
-		</li>
-		<li role="presentation" data-bind="click: function() {routeTo('sunburst');}, attr: {class: resultMode() == 'sunburst' ? 'active' : ''}">
-			<a>Sunburst chart</a>
-		</li>
-	</ul>
-	
 	<div class="row" style="padding:10px;">
 		<div class="col-xs-2">
 			<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() {back();}">Back</button>
@@ -49,7 +34,7 @@
 		</div>
 	</div>
 	
-	<div class="paddedWrapper" data-bind="visible:resultMode() == 'report', if:currentStudy() && !loading() " style="padding: 10px;">
+	<div class="paddedWrapper" data-bind="if:currentStudy() && !loading() " style="padding: 10px;">
 <!-- 		<div class="paddedWrapper"> -->
 			<label class="heading">Cohort: </label><span style='margin-left:5px;' data-bind='text:cohortDefinition().name'/>
 			<br/>
@@ -131,23 +116,17 @@
 		</div>
 	</div>
 	
-	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'cohortreport' && !loading(), if: !loading()">
+<!-- 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'cohortreport' && !loading(), if: !loading()"> -->
+	<div id="wrapperConceptDetails" data-bind="visible: !loading(), if: !loading()">
 		<div id="pnc_cohortreport_div">
 			<panacea-cohort-result params="{services: pageModel.services, model: pageModel, panaceaResultStudyId: panaceaResultStudyId(), 
 				resultMode: resultMode(), currentResultSource: currentResultSource(), currentStudy: currentStudy(),
-				cohortDefinition: cohortDefinition(), loading: loading(), }"></panacea-cohort-result>
+				cohortDefinition: cohortDefinition(), loading: loading(), rootJSON: rootJSON(), }"></panacea-cohort-result>
 		</div>
 	</div>
 	
-	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'visualization'  && !loading(), if: !loading()">
-		<div id="pnc_visualization_div">
-			<panacea-vi-result params="{services: pageModel.services, model: pageModel, panaceaResultStudyId: panaceaResultStudyId(), 
-				resultMode: resultMode(), currentResultSource: currentResultSource(), currentStudy: currentStudy(),
-				cohortDefinition: cohortDefinition(), loading: loading(), rootJSON: rootJSON(), }"></panacea-vi-result>
-		</div>
-	</div>
-	
-	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'sunburst'">
+<!-- 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'sunburst'"> -->
+	<div id="wrapperConceptDetails">
 		<div id="pnc_sunburst_result_div">
 			<label class="heading">Regular result</label>
 			<br/>
@@ -157,4 +136,13 @@
 			<br/>
 		</div>
 	</div>
+	
+<!-- 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'visualization'  && !loading(), if: !loading()"> -->
+ 	<div id="wrapperConceptDetails" data-bind="visible: !loading(), if: !loading()">
+		<div id="pnc_visualization_div">
+			<panacea-vi-result params="{services: pageModel.services, model: pageModel, panaceaResultStudyId: panaceaResultStudyId(), 
+				resultMode: resultMode(), currentResultSource: currentResultSource(), currentStudy: currentStudy(),
+				cohortDefinition: cohortDefinition(), loading: loading(), rootJSON: rootJSON(), }"></panacea-vi-result>
+		</div>
+	</div>	
 </div>
