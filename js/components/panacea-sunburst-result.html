@@ -24,19 +24,19 @@
 	
 	<div style="padding:10px;" data-bind='if:currentStudy()'>
 		<div>
-			<label class="heading">Study Name</label>
+			<label class="heading" style="font-weight: bold;">Study Name</label>
 			<br/>
 			<span data-bind='text: currentStudy().studyName'/>
 			<br/>
 
-			<label class="heading">Description</label>
+			<label class="heading" style="font-weight: bold;">Description</label>
 			<span data-bind="text: currentStudy().studyDesc"/>
 		</div>
 	</div>
 	
 	<div class="paddedWrapper" data-bind="if:currentStudy() && !loading() " style="padding: 10px;">
 <!-- 		<div class="paddedWrapper"> -->
-			<label class="heading">Cohort: </label><span style='margin-left:5px;' data-bind='text:cohortDefinition().name'/>
+			<label class="heading" style="font-weight: bold;">Cohort: </label><span style='margin-left:5px;' data-bind='text:cohortDefinition().name'/>
 			<br/>
 			<cohort-expression-viewer params="expression: cohortDefinition().expression"></cohort-expression-viewer>
 			<br/>
@@ -51,7 +51,7 @@
 			<!-- /ko -->                                                                                                                                                         
 <!--   		</div> -->
 
-		<label class="heading">Treatment Concept Set</label>
+		<label class="heading" style="font-weight: bold;">Treatment Concept Set</label>
 		<br/>
 <!-- 		<span style="width:300px;" data-bind="jqAuto: { source: conceptsets, value: currentConceptSet, labelProp: 'name'}" /> -->
 		<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
@@ -77,16 +77,15 @@
                    { title: 'Concept Name', data: 'concept.CONCEPT_NAME'}, 
                    { title: 'Domain', data: 'concept.DOMAIN_ID' }, 
  									{ title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false }, 
- 									{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' }, 
- 									{ title: 'Exclude', class:'text-center', orderable:false,render: function() { return renderConceptSetCheckBox('isExcluded');} }, 
- 									{ title: 'Descendants', class:'text-center', orderable:false,render: function() { return renderConceptSetCheckBox('includeDescendants');} }, 
- 									{ title: 'Mapped', class:'text-center', orderable:false,render: function() { return renderConceptSetCheckBox('includeMapped');} } 
+ 									{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' } 
                ] 
             } 
          }"> 
  		</table> 
  		<br/> 
 		
+		<label class="heading" style="font-weight: bold;">Study Configuration</label>
+		<br/>
 		<label class="heading">Study Duration</label>
 		<span data-bind='text: currentStudy().studyDuration'></span>
 		<br/>
@@ -97,27 +96,29 @@
 
 		<div class="form-group">
 			<label class="input-label">Calendar start date (Optional)</label>
-			<span data-bind="text:startDate()"/>
+			<span data-bind="text:startDate() ? startDate() : 'none'"/>
 			<br/>
 			<label class=class="input-label">Calendar end date (Optional)</label>
-			<span data-bind="text:endDate()"/>
+			<span data-bind="text:endDate() ? endDate() : 'none'"/>
 		</div>
 		
 		<div class="form-group">
-			<label class="input-label">Minimum unit duration days: </label><span data-bind="text: currentStudy().minUnitDays">
+			<label class="input-label">Minimum unit duration days: </label><span data-bind="text: currentStudy().minUnitDays ? currentStudy().minUnitDays : 'none'">
 		</div>
 			
 		<div class="form-group">
-			<label class="input-label">Minimum unit patient count: </label><span data-bind="text: currentStudy().minUnitCounts">
+			<label class="input-label">Minimum unit patient count: </label><span data-bind="text: currentStudy().minUnitCounts ? currentStudy().minUnitCounts : 'none'">
 		</div>
 			
 		<div class="form-group">
-			<label class="input-label">Minimum adherence percentage: </label><span data-bind="text: gapThreshold()">
+			<label class="input-label">Minimum adherence percentage: </label><span data-bind="text: gapThreshold() ? gapThreshold() : 'none'">
 		</div>
 	</div>
 	
 <!-- 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'cohortreport' && !loading(), if: !loading()"> -->
 	<div id="wrapperConceptDetails" data-bind="visible: !loading(), if: !loading()">
+		<label class="heading" style="font-weight: bold;">Cohort Summary</label>
+		<br/>
 		<div id="pnc_cohortreport_div">
 			<panacea-cohort-result params="{services: pageModel.services, model: pageModel, panaceaResultStudyId: panaceaResultStudyId(), 
 				resultMode: resultMode(), currentResultSource: currentResultSource(), currentStudy: currentStudy(),
@@ -127,18 +128,22 @@
 	
 <!-- 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'sunburst'"> -->
 	<div id="wrapperConceptDetails">
+		<label class="heading" style="font-weight: bold;">Pathway Overview (Interactive)</label>
+		<br/>
 		<div id="pnc_sunburst_result_div">
-			<label class="heading">Regular result</label>
+<!-- 			<label class="heading">Regular result</label> -->
 			<br/>
 		</div>
 		<div id="pnc_sunburst_result_div_2">
-			<label class="heading">Unique path result</label>
+<!-- 			<label class="heading">Unique path result</label> -->
 			<br/>
 		</div>
 	</div>
 	
 <!-- 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'visualization'  && !loading(), if: !loading()"> -->
  	<div id="wrapperConceptDetails" data-bind="visible: !loading(), if: !loading()">
+		<label class="heading" style="font-weight: bold;">Report Tables</label>
+		<br/>
 		<div id="pnc_visualization_div">
 			<panacea-vi-result params="{services: pageModel.services, model: pageModel, panaceaResultStudyId: panaceaResultStudyId(), 
 				resultMode: resultMode(), currentResultSource: currentResultSource(), currentStudy: currentStudy(),
