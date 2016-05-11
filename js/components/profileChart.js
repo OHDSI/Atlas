@@ -8,7 +8,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
       bottom: 30,
       left: 10
     };
-  //var height = recordTypes.length * 35 - margin.top - margin.bottom;
+  //var height = domain.length * 35 - margin.top - margin.bottom;
   var brushWindowHeight = 50;
   var margin2 = {
       top: 10,
@@ -31,9 +31,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
     //return d.startDate;
     return d.startDay;
   };
-  var y = d=>d.recordType;
+  var y = d=>d.domain;
   var tipText = d=>d.conceptName;
-  var pointClass = d=>d.recordType;
+  var pointClass = d=>d.domain;
   var radius = d=>2;
   function circle(datum) {
     var g = d3.select(this);

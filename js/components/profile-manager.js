@@ -18,10 +18,13 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 		self.loadingCohort = ko.observable(false);
 		self.loadingProfile = ko.observable(false);
 		self.sourceKey = ko.observable(params.services.sources[0].sourceKey);
+		self.sourceKey('OPTUM-PDW');
+		self.startMember = 1;
+		self.endMember = 10;
 		//self.members = ko.observableArray([{personId:423, startDate:1203724800000, endDate:1293580800000}]); // TEMPORARY HACK
 		self.members = ko.observableArray();
 		self.personId = ko.observable();
-    self.cohortPerson = ko.observable();
+		self.cohortPerson = ko.observable();
 		self.currentMemberIndex = 0;
 
 		self.hasCDM = function (source) {
@@ -32,12 +35,12 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 			if (self.currentMemberIndex > 0) {
 				self.currentMemberIndex--;
 				//self.personId(self.members()[self.currentMemberIndex].personId);
-				self.personId(self.members()[self.currentMemberIndex].subjectId);
+				self.personId(self.members()[self.currentMemberIndex].personId);
 				self.cohortPerson(self.members()[self.currentMemberIndex]);
 			} else {
 				self.currentMemberIndex = self.members().length - 1;
 				//self.personId(self.members()[self.currentMemberIndex].personId);
-				self.personId(self.members()[self.currentMemberIndex].subjectId);
+				self.personId(self.members()[self.currentMemberIndex].personId);
 				self.cohortPerson(self.members()[self.currentMemberIndex]);
 			}
 		}
@@ -45,11 +48,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 		self.navigateNext = function () {
 			if (self.currentMemberIndex < self.members().length - 1) {
 				self.currentMemberIndex++;
-				self.personId(self.members()[self.currentMemberIndex].subjectId);
+				self.personId(self.members()[self.currentMemberIndex].personId);
 				self.cohortPerson(self.members()[self.currentMemberIndex]);
 			} else {
 				self.currentMemberIindex = 0;
-				self.personId(self.members()[self.currentMemberIndex].subjectId);
+				self.personId(self.members()[self.currentMemberIndex].personId);
 				self.cohortPerson(self.members()[self.currentMemberIndex]);
 			}
 		}
@@ -86,8 +89,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 
 		self.loadCohort = function () {
 			$.ajax({
-				//url: self.services[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members',
-				url: self.services[0].url + 'cohort/' + self.cohortDefinitionId(),
+				url: self.services[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members/' + self.startMember + '-' + self.endMember,
+				//url: self.services[0].url + 'cohort/' + self.cohortDefinitionId(),
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (members) {
@@ -98,15 +101,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 						$('#modalNoMembers').modal('show');
 						self.members([]);
 					} else {
-            members.forEach(function(m) {
-              m.startDate = m.cohortStartDate;
-              m.endDate = m.cohortEndDate;
-            });
 						self.members(members);
 						// default to first person in the cohort
 						self.currentMemberIndex = 0;
 						//self.personId(members[self.currentMemberIndex].personId);
-						self.personId(members[self.currentMemberIndex].subjectId);
+						self.personId(members[self.currentMemberIndex].personId);
 						self.cohortPerson(members[self.currentMemberIndex]);
 					}
 				}
@@ -119,7 +118,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 
       //self.personId(423); // TEMPORARY HACK
 			$.ajax({
-				url: self.services[0].url + self.sourceKey() + '/person/' + cohortPerson.subjectId,
+				url: self.services[0].url + self.sourceKey() + '/person/' + cohortPerson.personId,
         //url: "http://api.ohdsi.org/WebAPI/CS1/person/423", // TEMPORARY HACK
 				method: 'GET',
 				contentType: 'application/json',
@@ -157,7 +156,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				{
 					'caption': 'Type',
 					'binding': function (o) {
-						return o.recordType;
+						return o.domain;
 					}
 				},
 				{
@@ -172,7 +171,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 		self.columns = [
 			{
 				title: 'Type',
-				data: 'recordType'
+				data: 'domain'
 			},
 			{
 				title: 'Concept Id',
@@ -323,7 +322,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 					return x(d.startDate) - 2.5;
 				})
 				.attr('y', function (d) {
-					switch (d.recordType) {
+					switch (d.domain) {
 					case 'drug':
 						return y(4);
 						break;
@@ -341,7 +340,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				.attr('width', 5)
 				.attr('height', 5)
 				.attr('class', function (d) {
-					return d.recordType;
+					return d.domain;
 				})
 				.on('mouseover', function (d) {
 					focusTip.show(d);
@@ -386,7 +385,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 					return x2(d.startDate);
 				})
 				.attr('y', function (d) {
-					switch (d.recordType) {
+					switch (d.domain) {
 					case 'drug':
 						return y2(4);
 						break;
@@ -404,7 +403,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				.attr('width', 2)
 				.attr('height', 2)
 				.attr('class', function (d) {
-					return d.recordType;
+					return d.domain;
 				});
 
 
