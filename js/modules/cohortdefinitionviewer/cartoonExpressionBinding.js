@@ -122,7 +122,7 @@ define(['knockout','d3'], function (ko, d3) {
     }
   };
   function criteriaGroupWalk(criteriaGroup, cb, parentKey) {
-    var list = criteriaGroup.CriteriaList();
+    var list = criteriaGroup ? criteriaGroup.CriteriaList() : [];
     for (var i = 0; i < list.length; i++) {
       var key = [i + 1];
       if (parentKey)
@@ -131,7 +131,7 @@ define(['knockout','d3'], function (ko, d3) {
       list[i].key = key;
       cb(list[i], key);
     }
-    var groups = criteriaGroup.Groups();
+    var groups = criteriaGroup ? criteriaGroup.Groups() : [];
     for (var i = 0; i < groups.length; i++) {
       var key = [list.length + i + 1];
       if (parentKey)
@@ -148,7 +148,7 @@ define(['knockout','d3'], function (ko, d3) {
                 .attr('transform', 'translate(0,' + 
                       (linesdown*lineHeight) +')')
       g.selectAll('g.additional')
-              .data(data.CriteriaList())
+              .data(data ? data.CriteriaList() : [])
                 .enter()
               .append('g')
                 .attr('class','additional')
@@ -227,7 +227,7 @@ define(['knockout','d3'], function (ko, d3) {
           .text(function(d) { 
             return d.key;
           })
-      var groups = data.Groups();
+      var groups = data ? data.Groups() : [];
       for (var i = 0; i < groups.length; i++) {
         drawCartoon(g, groups[i], data.CriteriaList().length + 2*i, scale, selectedFragment, primaryWindow);
       }

@@ -3,15 +3,14 @@
 // cohort loading
 define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable','components/profileChart', 'css!./styles/profileManager.css'], function (ko, view, d3, config) {
 	function profileManager(params) {
-    window.d3 = d3;
+		window.d3 = d3;
 		var self = this;
-    self.config = config;
+		self.config = config;
 		self.services = [params.services];
 		self.allRecs = ko.observableArray([]);
 		self.facetFilteredData = ko.observableArray([]); // same as reference but with filters applied
-		self.profileZoomedRecs = ko.observableArray([]); // same as reference but with filters applied
-                                                // by faceted-datatable
-    self.loadedProfile = ko.observable();
+		self.profileZoomedRecs = ko.observableArray([]); // same as reference but with filters applied by faceted-datatable
+		self.loadedProfile = ko.observable();
 		//self.cohortDefinitionId = ko.observable();
 		self.cohortDefinitionId = ko.observable(params.model.currentCohortDefinition().id());
 		self.loading = ko.observable(false);
@@ -111,39 +110,39 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				}
 			});
 		};
-    self.loadCohort();
+		self.loadCohort();
 
 		self.loadProfile = function (cohortPerson) {
 			self.loadingProfile(true);
 
-      //self.personId(423); // TEMPORARY HACK
+			//self.personId(423); // TEMPORARY HACK
 			$.ajax({
 				url: self.services[0].url + self.sourceKey() + '/person/' + cohortPerson.personId,
-        //url: "http://api.ohdsi.org/WebAPI/CS1/person/423", // TEMPORARY HACK
+				//url: "http://api.ohdsi.org/WebAPI/CS1/person/423", // TEMPORARY HACK
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (profile) {
 					self.loadingProfile(false);
-          profile.records.forEach(function(rec) {
-            rec.startDay = (rec.startDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24)
-            rec.endDay = (rec.endDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24)
-          });
+					profile.records.forEach(function(rec) {
+						rec.startDay = (rec.startDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24)
+						rec.endDay = (rec.endDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24)
+					});
 					self.allRecs(profile.records);
 					self.profileZoomedRecs(profile.records);
 					self.facetFilteredData(profile.records);
-          self.loadedProfile(profile);
-          //console.log(profile);
+					self.loadedProfile(profile);
+					//console.log(profile);
 					// self.plotTimewave(profile.timewave, profile.startDate, profile.endDate);
 					//self.plotScatter(profile.records, profile.startDate, profile.endDate);
 				}
 			});
 		};
-    self.profileZoom = function(zoomedRecs) {
-      if (zoomedRecs)
-        self.profileZoomedRecs(zoomedRecs);
-      return self.profileZoomedRecs;
-    };
-    //self.loadProfile(0); // TEMPORARY HACK
+		self.profileZoom = function(zoomedRecs) {
+			if (zoomedRecs)
+				self.profileZoomedRecs(zoomedRecs);
+			return self.profileZoomedRecs;
+		};
+		//self.loadProfile(0); // TEMPORARY HACK
 
 		self.showBrowser = function () {
 			$('#cohortDefinitionChooser').modal('show');
@@ -181,23 +180,23 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 				title: 'Concept Name',
 				data: 'conceptName'
 			},
-      /*
-      {
-        title: 'From Index',
-        render: (s, p, d) => {
-          return (d.startDate - self.cohortPerson().startDate) / (1000 * 60 * 60 * 24)
-        }
-      },
-      */
-      {
-        title: 'Start Day',
-        data: 'startDay'
-      },
-      {
-        title: 'End Day',
-        data: 'endDay'
-      },
-      /*
+			/*
+			{
+				title: 'From Index',
+				render: (s, p, d) => {
+					return (d.startDate - self.cohortPerson().startDate) / (1000 * 60 * 60 * 24)
+				}
+			},
+			*/
+			{
+				title: 'Start Day',
+				data: 'startDay'
+			},
+			{
+				title: 'End Day',
+				data: 'endDay'
+			},
+			/*
 			{
 				title: 'Start Date',
 				render: function (s, p, d) {
@@ -210,7 +209,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'd3_tip', 
 					return new Date(d.endDate).toLocaleDateString();
 				}
 			}
-      */
+			*/
 		];
 
 		self.parseDate = function (value) {

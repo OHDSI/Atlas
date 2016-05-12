@@ -1,7 +1,7 @@
 "use strict";
 define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
-  var catLineHeight = 28;
+  var catLineHeight = 38;
   var margin = {
       top: 10,
       right: 10,
@@ -93,7 +93,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
       //.attr('fill', 'blue');
   }
   var jitterOffsets = []; // keep them stable as points move around
-  function jitter(i, maxX=6, maxY=2) {
+  function jitter(i, maxX=6, maxY=12) {
     jitterOffsets[i] = jitterOffsets[i] || 
       { x: (Math.random() - .5) * maxX, y: (Math.random() - .5) * maxY };
     return jitterOffsets[i];
@@ -123,7 +123,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
                               profileZoomSetRecs, jitter ) {
     /* verticleLines: [{xpos, color},...] */
     var categories = _.chain(points).map(y).uniq().value();
-    var mainHeight = categories.length * 28;
+    var mainHeight = categories.length * catLineHeight;
     var
       yScale = d3.scale.ordinal().rangePoints([mainHeight * .9, mainHeight * .1]),
       y2Scale = d3.scale.ordinal().rangePoints([brushWindowHeight * .9, brushWindowHeight * .1]);
@@ -131,10 +131,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
     //xScale.domain([profile.startDate, profile.endDate]);
     //xScale.domain(d3.extent(points.map(x)));
     xScale.domain(d3.extent(allPoints.map(x)));
-    yScale.domain(categories);
+    yScale.domain(categories.sort().reverse());
     //x2Scale.domain(xScale.domain());
     x2Scale.domain(d3.extent(allPoints.map(x)));
-    y2Scale.domain(yScale.domain());
+    y2Scale.domain(_.chain(allPoints).map(y).uniq().value());
 
     //$('#scatter').empty();
     $(element).empty();
@@ -230,11 +230,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
             .text(category)
             .attr('class', category)
             .attr('x', 0)
-            .attr('y', yScale(category) - 5)
+            .attr('y', yScale(category) - 13)
     });
 
-    context.selectAll("rect")
-      .data(allPoints)
+    var contextPoints = context.selectAll("rect")
+			      .data(allPoints)
+    contextPoints.exit().remove();
+    contextPoints
       .enter()
       .append("rect")
       .attr('x', function (d) {
