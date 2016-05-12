@@ -4,11 +4,11 @@ define(['knockout', '../InputTypes/Range', 'conceptpicker/InputTypes/Concept'], 
 		var self = this;
 		data = data || {};
 
-		// set up subscription to update CodesetId and ConditionSourceConcept if the item is removed from conceptSets
+		// set up subscription to update CodesetId if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
 			changes.forEach(function(change) {
 					if (change.status === 'deleted') {
-					  if (self.CodesetId() == change.value.id)
+					  if (ko.utils.unwrapObservable(self.CodesetId) == change.value.id)
 							self.CodesetId(null);
 					}
 			});

@@ -64,7 +64,7 @@
 				<td><img data-bind="click: function() { $component.removeCriterion('ObservationSourceConcept') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
 				<td>
 					<div>
-						Observation Source Concept is: <conceptset-selector params="conceptSetId: ObservationSourceConcept, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Observation'"></conceptset-selector>
+						Observation Source Concept is: <conceptset-selector params="conceptSetId: ObservationSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Observation'"></conceptset-selector>
 					</div>
 			 </td>									
 			</tr>										

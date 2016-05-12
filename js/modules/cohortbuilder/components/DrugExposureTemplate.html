@@ -81,7 +81,7 @@
 				<td><img data-bind="click: function() { $component.removeCriterion('DrugSourceConcept') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
 				<td>
 					<div>
-						Drug Source Concept is: <conceptset-selector params="conceptSetId: DrugSourceConcept, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Drug'"></conceptset-selector>
+						Drug Source Concept is: <conceptset-selector params="conceptSetId: DrugSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Drug'"></conceptset-selector>
 					</div>
 			 </td>									
 			</tr>										

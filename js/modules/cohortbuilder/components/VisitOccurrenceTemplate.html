@@ -33,7 +33,7 @@
 				<td><img data-bind="click: function() { $component.removeCriterion('VisitSourceConcept') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
 				<td>
 					<div>
-					Visit Source Concept is <conceptset-selector params="conceptSetId: VisitSourceConcept, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Visit'"></conceptset-selector>
+					Visit Source Concept is <conceptset-selector params="conceptSetId: VisitSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Visit'"></conceptset-selector>
 					</div>
 			 </td>									
 			</tr>

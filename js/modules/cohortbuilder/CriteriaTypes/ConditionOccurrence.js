@@ -10,8 +10,8 @@ define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '.
 					if (change.status === 'deleted') {
 					  if (self.CodesetId() == change.value.id)
 							self.CodesetId(null);
-						if (self.ConditionSourceConcept() == change.value.id)
-							self.CondtionSourceConcept(null);
+						if (ko.utils.unwrapObservable(self.ConditionSourceConcept()) == change.value.id) // ConditionSourceConcept is an observable wrapping another observable.
+							self.ConditionSourceConcept()(null);
 					}
 			});
 		}, null, "arrayChange");
