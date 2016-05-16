@@ -111,6 +111,8 @@
 		<pre data-bind="html: model.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 		<div class="heading">Included Concept Identifer List</div>
 		<pre data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+         <br/>
+        <button type="button" class="btn btn-success" data-bind="click:function() { exportCSV(); }, css: {disabled:!(model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty())}"><i class="fa fa-download" aria-hidden="true"></i>Export To CSV</button>
 	</div>
 
 </div>

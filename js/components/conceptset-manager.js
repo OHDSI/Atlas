@@ -129,6 +129,10 @@ define(['knockout', 'text!./conceptset-manager.html', 'appConfig', 'knockout.dat
 			alert(msg);
 			$("#txtConceptSetName").select().focus();
 		}
+        
+        self.exportCSV = function() {
+            window.open(config.services[0].url + 'conceptset/' + self.model.currentConceptSet().id + '/export');
+        }
 	}
 
 	var component = {
