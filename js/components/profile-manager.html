@@ -1,10 +1,10 @@
-<div id="wrapperLoading" data-bind="if: $component.loading()">
+<div id="wrapperLoading" data-bind="if: $component.loadingCohort()">
 	<div class="wrapperTitle">
 		<i class="fa fa-refresh fa-spin"></i> Loading...
 	</div>
 </div>
 
-<div data-bind="if: !$component.loading()">
+<div data-bind="if: !$component.loadingCohort()">
 
 	<!--div class="modal fade" id="cohortDefinitionChooser" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-lg">
@@ -49,11 +49,9 @@
 
 		<div class="paddedWrapper" data-bind="visible:!$component.loadingProfile()">
 			<div data-bind="visible:$component.allRecs().length > 0">
-				<div id="timewave"></div>
-				<!--div id="scatter"></div-->
-        <div id="scatter" data-bind="profileChart:{profile:$component.loadedProfile, cohortPerson:$component.cohortPerson, facetFilteredData:$component.facetFilteredData, allData:$component.allRecs, profileZoom:$component.profileZoom.bind($component)}"></div>
+				<div id="scatter" data-bind="profileChart:{profile:$component.loadedProfile, cohortPerson:$component.cohortPerson, recs:$component.profileChart_recs, filteredIn:$component.profileChart_filteredIn, ownFilter:$component.profileChart_ownFilter}"></div>
 				<div class="heading">Profile Records</div>
-				<faceted-datatable id="profile-manager-table" params="{reference: $component.profileZoomedRecs, columns: $component.columns, options: $component.options, filteredData: $component.facetFilteredData}"></faceted-datatable>
+				<faceted-datatable id="profile-manager-table" params="{reference: $component.datatable_recs, columns: $component.columns, options: $component.options, filteredIn: $component.datatable_filteredIn, ownFilter:$component.datatable_ownFilter}"></faceted-datatable>
 			</div>
 		</div>
 	</div>

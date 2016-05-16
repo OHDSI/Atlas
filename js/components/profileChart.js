@@ -9,20 +9,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
       left: 10
     };
   //var height = domain.length * 35 - margin.top - margin.bottom;
-  var brushWindowHeight = 50;
-  var margin2 = {
-      top: 10,
-      right: 10,
-      bottom: 20,
-      left: 10
-    },
-    width = 900 - margin.left - margin.right;
+  var width = 900 - margin.left - margin.right;
 
-  var 
-    //xScale = d3.time.scale().range([0, width]),
-    //x2Scale = d3.time.scale().range([0, width]),
-    xScale = d3.scale.linear().range([0, width]),
-    x2Scale = d3.scale.linear().range([0, width]);
+  var xScale = d3.scale.linear().range([0, width]);
   function relativeXscale(x) {
     return xScale(x) - xScale(0);
   }
@@ -31,6 +20,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
     //return d.startDate;
     return d.startDay;
   };
+  var endX = d => d.endDay;
   var y = d=>d.domain;
   var tipText = d=>d.conceptName;
   var pointClass = d=>d.domain;
@@ -55,9 +45,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
         .attr('d', 'M 0 -3 L -3 3 L 3 3 Z')
         .attr('transform', 'scale(2)')
         .classed(pointClass(datum), true);
-    //g.selectAll('path.' + pointClass(datum))
-      //.attr('r', radius(datum))
-      //.attr('fill', 'blue');
   }
   function pointyLine(datum) {
     // draw base of triangles at 0
@@ -86,11 +73,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
           return path.join(' ');
               //'m 0 -3 l -3 6 l 6 0 Z M 4 -3 L 0 3 L 7 3 Z'
         })
-        //.attr('transform', 'scale(2)')
         .classed(pointClass(datum), true);
-    //g.selectAll('path.' + pointClass(datum))
-      //.attr('r', radius(datum))
-      //.attr('fill', 'blue');
   }
   var jitterOffsets = []; // keep them stable as points move around
   function jitter(i, maxX=6, maxY=12) {
@@ -100,65 +83,43 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
   }
   ko.bindingHandlers.profileChart = {
     init: function (element, valueAccessor, allBindingsAccessor) {
-      //var profile = valueAccessor().profile;
-      //var filteredData = valueAccessor().filteredData;
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
       var va = valueAccessor();
-      if (va.facetFilteredData() && va.profile()
-          && va.allData().length === va.profileZoom()().length
-         )
-        categoryScatterPlot(element, va.facetFilteredData(), 
+      categoryScatterPlot(element, va.recs(), 
                             x, y, tipText, pointClass, pointyLine, //triangle,
-                           null, va.allData(), null, va.profileZoom, jitter);
-                    // va.profile(), va.cohortPerson());
-      //console.log(va.profile());
-      //debugger;
+                           null, null, va.filteredIn, jitter, va.ownFilter);
     }
   };
   function categoryScatterPlot(element, points, x, y, tipText, 
                               pointClass,
                               pointFunc,
-                              verticalLines, allPoints, highlighPoints,
-                              profileZoomSetRecs, jitter ) {
+                              verticalLines, highlighPoints,
+                              filteredIn, jitter,
+			      holdBrushExtent) {
     /* verticleLines: [{xpos, color},...] */
     var categories = _.chain(points).map(y).uniq().value();
     var mainHeight = categories.length * catLineHeight;
-    var
-      yScale = d3.scale.ordinal().rangePoints([mainHeight * .9, mainHeight * .1]),
-      y2Scale = d3.scale.ordinal().rangePoints([brushWindowHeight * .9, brushWindowHeight * .1]);
+    var yScale = d3.scale.ordinal().rangePoints([mainHeight * .9, mainHeight * .1]);
 
-    //xScale.domain([profile.startDate, profile.endDate]);
-    //xScale.domain(d3.extent(points.map(x)));
-    xScale.domain(d3.extent(allPoints.map(x)));
+    xScale.domain([d3.min(points.map(x)), d3.max(points.map(endX))]);
     yScale.domain(categories.sort().reverse());
-    //x2Scale.domain(xScale.domain());
-    x2Scale.domain(d3.extent(allPoints.map(x)));
-    y2Scale.domain(_.chain(allPoints).map(y).uniq().value());
 
-    //$('#scatter').empty();
     $(element).empty();
 
     var svg = d3.select(element).append("svg")
       .attr("width", width + margin.left + margin.right)
-      .attr("height", mainHeight + margin.top + margin.bottom +
-                      brushWindowHeight + margin2.top + margin2.bottom);
+      .attr("height", mainHeight + margin.top + margin.bottom);
 
     var focus = svg.append("g")
       //.attr("class", "focus")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var context = svg.append("g")
-      .attr("class", "context")
-      .attr("transform", "translate(" + margin2.left + "," + 
-            (mainHeight + margin.top + margin.bottom + margin2.top) + ")");
-
     var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
-      xAxis2 = d3.svg.axis().scale(x2Scale).orient("bottom"),
       yAxis = d3.svg.axis().scale(yScale).orient("left");
 
     var brushed = function () {
-      xScale.domain(brush.empty() ? x2Scale.domain() : brush.extent());
+      //xScale.domain(brush.empty() ? x2Scale.domain() : brush.extent());
       focus.selectAll('g.point')
         .attr("transform", function(d,i) {
           return "translate(" + (xScale(x(d)) + jitter(i).x) + "," + 
@@ -178,17 +139,20 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
     }
 
     var brush = d3.svg.brush()
-      .x(x2Scale)
+      .x(xScale)
       .on("brush", brushed)
       .on("brushend", function() {
         if (brush.empty()) {
-          profileZoomSetRecs(allPoints);
+	  console.log(`empty brush setting filteredIn to ${points.length} points`);
+          filteredIn(points);
         } else {
-          var zoomedRecs = allPoints.filter(function(d) {
+          var inRecs = points.filter(function(d) {
             return x(d) >= brush.extent()[0] && x(d) <= brush.extent()[1];
           });
-          profileZoomSetRecs(zoomedRecs);
+	  console.log(`brush ${brush.extent().join(',')} setting filteredIn to ${inRecs.length} points`);
+          filteredIn(inRecs);
         }
+	holdBrushExtent(brush.extent());
       });
 
     var focusTip = d3.tip()
@@ -233,43 +197,20 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
             .attr('y', yScale(category) - 13)
     });
 
-    var contextPoints = context.selectAll("rect")
-			      .data(allPoints)
-    contextPoints.exit().remove();
-    contextPoints
-      .enter()
-      .append("rect")
-      .attr('x', function (d) {
-        return x2Scale(x(d));
-      })
-      .attr('y', function (d) {
-        return y2Scale(y(d));
-      })
-      .attr('width', 2)
-      .attr('height', 2)
-      .attr('class', function (d) {
-        return pointClass(d);
-      })
-      .classed('dim', function(d) {
-        return !_.find(points, d);
-      })
-
-
     focus.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + mainHeight + ")")
       .call(xAxis);
 
-    context.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + brushWindowHeight + ")")
-      .call(xAxis2);
-
-    context.append("g")
+    focus.append("g")
       .attr("class", "x brush")
       .call(brush)
       .selectAll("rect")
       .attr("y", -6)
-      .attr("height", brushWindowHeight + 7);
+      .attr("height", mainHeight + 7);
+    if (holdBrushExtent()) {
+      brush.extent(holdBrushExtent());
+      brush.event(focus.select('g.x.brush'));
+    }
   }
 });

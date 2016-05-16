@@ -4,8 +4,8 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 		var self = this;
 
 		self.reference = params.reference;
-		self.data = params.filteredData || ko.observableArray();
-    self.data(self.reference());
+		self.data = params.filteredIn || ko.observableArray();
+		self.data(self.reference());
 
 		self.options = params.options;
 		self.columns = params.columns;
@@ -29,6 +29,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 
 			self.facetEngine().SetFilter(filters);
 			self.facetEngine(self.facetEngine());
+			console.log(`datatable setting filteredIn to ${self.facetEngine().GetCurrentObjects().length} recs (filtered)`);
 			self.data(self.facetEngine().GetCurrentObjects());
 		};
 
@@ -44,6 +45,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 			self.feTemp.sortFacetMembers();
 
 			self.facetEngine(self.feTemp);
+			console.log(`datatable setting filteredIn to ${self.reference().length} recs (all)`);
 			self.data(self.reference());
 		});
 
