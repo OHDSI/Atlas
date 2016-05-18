@@ -2,13 +2,14 @@ define(['knockout',
 				'text!./atlas.cohort-editor.html',
 				'appConfig',
 				'cohortbuilder/CohortDefinition',
+                'conceptsetbuilder/InputTypes/ConceptSet',
 				'cohortbuilder/components',
 				'conceptsetbuilder/components',
 				'knockout-jqueryui/tabs',
 				'cohortdefinitionviewer',
-        'circe',
+                'circe',
 				'databindings'
-], function (ko, view, config, CohortDefinition) {
+], function (ko, view, config, CohortDefinition, ConceptSet) {
 
 	function cohortEditor(params) {
 		var self = this;
@@ -43,13 +44,23 @@ define(['knockout',
             $('#conceptSetSelectorDialog').modal('show');
 		}
 
-		self.onAtlasConceptSetSelectAction = function(result) {
+		self.onAtlasConceptSetSelectAction = function(result, valueAccessor) {
 				console.log(result);
 				$('#conceptSetSelectorDialog').modal('hide');
 
-				if (result.action=='add')
+				if (result.action=='add') {
 						//self.addConceptSet();
-						alert("Add Concept Set Selected");
+						//alert("Add Concept Set Selected");
+                    var newConceptSet = new ConceptSet();
+                    var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
+				    newConceptSet.id = cohortConceptSets().length > 0 ? Math.max.apply(null, cohortConceptSets().map(function (d) {
+					   return d.id;
+				    })) + 1 : 0;
+				    cohortConceptSets.push(newConceptSet);
+				    self.model.loadConceptSet(newConceptSet.id, 'cohortdefinition', 'cohort', 'details');
+                    self.model.currentCohortDefinitionMode("conceptsets");
+                    self.model.criteriaContext().conceptSetId(newConceptSet.id);
+                }
 
 				self.model.criteriaContext(null);
 		}

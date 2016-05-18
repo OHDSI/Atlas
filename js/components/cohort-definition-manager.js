@@ -328,6 +328,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			var updatedExpression = JSON.parse(self.modifiedJSON);
 			self.model.currentCohortDefinition().expression(new CohortExpression(updatedExpression));
 		}
+        
+        self.exportConceptSetsCSV = function () {
+            window.open(config.services[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/export/conceptset');
+        }
 
 		// dispose subscriptions
 		self.dispose = function () {

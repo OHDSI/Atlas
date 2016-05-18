@@ -4,7 +4,7 @@
 			<select class="form-control" data-bind="enable: loading()==false, options:$component.sources, optionsText:'name', value:selectedSource"></select>
 		</td>
 		<td>
-			<div class="btn btn-sm btn-primary" style="width: 175px" data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}">Add Concept Set</div>
+			<div class="btn btn-sm btn-primary" style="width: 175px" data-bind="click: addConceptSet, text: buttonActionText, css: {disabled: disableConceptSetButton}"></div>
 		</td>
 	</tr>
 </table>
@@ -40,7 +40,7 @@
 	<!-- /ko -->
 	<div data-bind="visible: !loading()">
 		<table class="stripe compact hover" cellspacing="0" width="100%"
-			data-bind="dataTable:{
+			data-bind="attr: { id: $component.repositoryConceptSetTableId}, dataTable:{
 				data: repositoryConceptSets(),
 				options: {
 					deferRender: true,

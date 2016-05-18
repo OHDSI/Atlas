@@ -48,6 +48,8 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
         self.onRespositoryConceptSetSelected = params.onRespositoryConceptSetSelected || defaultRepositoryConceptSetSelected;
         self.onCohortConceptSetSelected = params.onCohortConceptSetSelected || defaultConceptSetSelected;
         self.disableConceptSetButton = setDisabledConceptSetButton(params.disableConceptSetButton);
+        self.buttonActionText = params.buttonActionText || "Add Concept Set";
+        self.repositoryConceptSetTableId = params.repositoryConceptSetTableId || "repositoryConceptSetTable";
 
 		self.loading = ko.observable(false);
 		self.repositoryConceptSets = ko.observableArray();
@@ -95,9 +97,9 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 			self.onCohortConceptSetSelected(conceptSet);
 		}
 
-		self.selectRepositoryConceptSet = function (conceptSet) {
+		self.selectRepositoryConceptSet = function (conceptSet, valueAccessor) {
 			console.log(conceptSet);
-            self.onRespositoryConceptSetSelected(conceptSet);
+            self.onRespositoryConceptSetSelected(conceptSet, valueAccessor);
         }
 		
 		self.addConceptSet = function()
