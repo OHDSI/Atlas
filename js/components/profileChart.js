@@ -88,15 +88,15 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
       var va = valueAccessor();
       categoryScatterPlot(element, va.recs(), 
                             x, y, tipText, pointClass, pointyLine, //triangle,
-                           null, null, va.filteredIn, jitter, va.ownFilter);
+                           null, null, va.ownFilter, jitter);
     }
   };
   function categoryScatterPlot(element, points, x, y, tipText, 
                               pointClass,
                               pointFunc,
                               verticalLines, highlighPoints,
-                              filteredIn, jitter,
-			      holdBrushExtent) {
+                              ownFilter, jitter
+			      ) {
     /* verticleLines: [{xpos, color},...] */
     var categories = _.chain(points).map(y).uniq().value();
     var mainHeight = categories.length * catLineHeight;
@@ -143,16 +143,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
       .on("brush", brushed)
       .on("brushend", function() {
         if (brush.empty()) {
-	  console.log(`empty brush setting filteredIn to ${points.length} points`);
-          filteredIn(points);
+	  console.log(`empty brush setting ownFilter to null`);
+          ownFilter(null);
         } else {
-          var inRecs = points.filter(function(d) {
-            return x(d) >= brush.extent()[0] && x(d) <= brush.extent()[1];
-          });
-	  console.log(`brush ${brush.extent().join(',')} setting filteredIn to ${inRecs.length} points`);
-          filteredIn(inRecs);
+	  console.log(`brush ${brush.extent().join(',')} setting ownFilter to ${brush.extent()}`);
+          ownFilter(brush.extent());
         }
-	holdBrushExtent(brush.extent());
+        //ownFilter.notifySubscribers();
+	//holdBrushExtent(brush.extent());
       });
 
     var focusTip = d3.tip()
@@ -208,9 +206,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
       .selectAll("rect")
       .attr("y", -6)
       .attr("height", mainHeight + 7);
+    /*
     if (holdBrushExtent()) {
       brush.extent(holdBrushExtent());
       brush.event(focus.select('g.x.brush'));
     }
+    */
   }
 });

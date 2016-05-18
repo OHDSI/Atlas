@@ -1,4 +1,4 @@
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'supergroup/supergroup','d3_tip', 'knockout.dataTables.binding', 'faceted-datatable','components/profileChart', 'css!./styles/profileManager.css'], function (ko, view, d3, config, lodash, _) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter','d3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf','components/profileChart', 'css!./styles/profileManager.css'], function (ko, view, d3, config, lodash, crossfilter) {
 
 	/*
 		trying to figure out a filterManager
@@ -14,13 +14,18 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			- wordcloud
 				- mouseover should trigger highlight--another kind of filter
 
+		about to start trying crossfilter. stuff here is obsolete
+
 		i don't want to make significant changes to facetedDatatable because it's used elsewhere.
 			it can currently receive an observable (of all records it should know about, so, all records
 			after other filters have been applied), and it can set an observable to records remaining
 			after applying facet engine. it cannot yet communicate anything about text search filtering.
 
 		a filterManager should provide each component with the set of records left after applying
-			all filters except its own. this requires that each component be able to supply the set
+			all filters except its own. the components need to display records they are filtering out
+			-- like the profileChart displays the set of records it received and shows a brushing region
+			over records that it's trying to filter in. 
+			this requires that each component be able to supply the set
 			of records that it filters OUT.
 			when a component changes its filter, the other components need to be updated, but they
 			should not trigger further updates. how can I do this?
@@ -30,28 +35,29 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 
 		datatable input recs: filterManager.recs['datatable'] : recs left after applying all but datatable's filters
 	*/
+	/*
 	function filterManager(self) {
 		console.log('in filterManager with' , self.allRecs().length);
+
+		self.profileChart_dim = self.crossfilter().dimension(d=>d.startDay);
+		self.profileChart_ownFilter(self.profileChart_dim.filter);
+		self.datatable_dim = self.crossfilter().dimension(d=>d);
+
 		self.components.forEach(function(comp) {
 			self[comp + '_recs'](self.allRecs());
-			self[comp + '_filteredIn'](self.allRecs());
-			self[comp + '_filteredOut']([]);
-			self[comp + '_ownFilter']();
+			// move these lines below to only happen once
+			self[comp + '_groupAll'](self[comp + '_dim'].groupAll());
+			var groupAll = self[comp + '_groupAll']();
+			groupAll.reduce((p,v,nf)=>p.concat(v), (p,v,nf)=>_.without(p,v), ()=>[]); // group's value is its records
 		});
 	}
 	function applyFiltersToComponent(self, comp) {
-		var recsToFilterOut = [];
-		self.components.forEach(function(otherComp) {
-			if (otherComp === comp) return;
-			recsToFilterOut = recsToFilterOut.concat(_.difference(self[otherComp + '_recs'](), self[otherComp + '_filteredOut']()));
-		});
-		if (_.difference(self[comp + '_recs'](), recsToFilterOut).length === 0) {
-			// nothing additional to filter out
-			return;
-		}
-		console.log(`applying filters to ${comp}, prior: ${self[comp + '_recs']().length}, new: ${recsToFilterOut.length}`);
-		self[comp + '_recs'](recsToFilterOut);
+		if (!self[comp + '_groupAll']()) return;
+		var filteredRecs = self[comp + '_groupAll']().value(); // recs filtered by all other dimensions
+		console.log(`applying filters to ${comp}, prior: ${self[comp + '_recs']().length}, new: ${filteredRecs.length}`);
+		self[comp + '_recs'](filteredRecs);
 	}
+	*/
 
 	function profileManager(params) {
 		window.d3 = d3;
@@ -61,7 +67,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		window.profileManager = self;
 		self.config = config;
 		self.services = [params.services];
-		self.allRecs = ko.observableArray([]);
+		//self.allRecs = ko.observableArray([]);
 		self.loadedProfile = ko.observable();
 		//self.cohortDefinitionId = ko.observable();
 		self.cohortDefinitionId = ko.observable(params.model.currentCohortDefinition().id());
@@ -75,27 +81,85 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.personId = ko.observable();
 		self.cohortPerson = ko.observable();
 		self.currentMemberIndex = 0;
+		self.crossfilter = ko.observable();
+		self.filtersChanged = ko.observable();
+
+		self.dimensions = {
+			'Type': {
+					caption: 'Type',
+					func: d => d.domain,
+					filter: ko.observable(null),
+					Members: ko.observableArray([{Name:'foo', ActiveCount:'bar',Selected:false}]),
+			},
+			'Year Start': {
+					caption: 'Year Start',
+					func: d => new Date(d.startDate).getFullYear(),
+					filter: ko.observable(null),
+					Members: ko.observableArray([]),
+			},
+			'profileChart': {
+					name: 'profileChart',
+					func: d => d.startDay,
+					filter: ko.observable(null),
+			},
+			'datatable': { // this has to combine dimensions/filters from all datatable facets
+				name: 'datatable',
+				func: () => true,
+				filter: ko.observable(null),
+				//filter: ko.observable(d=>!!d),
+			},
+		};
+		self.facets = ['Type','Year Start'].map(d=>self.dimensions[d]);
+		var reduceToRecs = [ (p,v,nf)=>p.concat(v), (p,v,nf)=>_.without(p,v), ()=>[] ];
+		self.crossfilter.subscribe(cf => {
+			_.each(self.dimensions, dim => {
+				dim.dimension = cf.dimension(dim.func);
+				dim.filter(null);
+				dim.group = dim.dimension.group();
+				dim.group.reduce(...reduceToRecs);
+				dim.groupAll = dim.dimension.groupAll();
+				dim.groupAll.reduce(...reduceToRecs);
+				dim.recs(dim.groupAll.value());
+			});
+		});
+		_.each(self.dimensions, dim => {
+			dim.filter.subscribe(filter => {
+				if (!_.find(self.facets, dim)) {
+					dim.dimension.filter(filter);
+				} else {
+					self.dimensions.datatable.dimension.dispose();
+					self.dimensions.datatable.dimension = self.crossfilter().dimension(
+						rec => _.every(self.facets, dim => {
+												if (dim.filter() == null) return true;
+												return dim.filter()(dim.dimension.accessor(rec));
+											})
+					);
+					self.dimensions.datatable.dimension.filter(d=>!!d);
+				}
+				self.filtersChanged(filter);
+			});
+			dim.recs = ko.observable([]);
+			self.filtersChanged.subscribe(() => {
+				dim.recs(dim.groupAll.value());
+			});
+		});
+		self.crossfilter(crossfilter([]));
 
 		self.components = ['datatable','profileChart'];
 		self.components.forEach(function(comp) {
 			self[comp + '_recs']	  = ko.observableArray([]);
-			self[comp + '_filteredOut'] = ko.observableArray([]);
-			self[comp + '_filteredIn'] = ko.observableArray([]);
 			self[comp + '_ownFilter'] = ko.observable();
+			self[comp + '_groupAll'] = ko.observable();
 		});
-		filterManager(self, []);
+		//filterManager(self, []);
 		self.components.forEach(function(comp) {
-			self[comp + '_filteredOut'].subscribe(function(recs) { 	// when comp changes its filter, change recs for other comps if filter affects them
-				console.log(`set filter out on ${comp} for ${recs.length} recs`);
+			self[comp + '_ownFilter'].subscribe(function(func) { 	// when comp changes its filter, change recs for other comps if filter affects them
+				console.log(`set filter out on ${comp}: ${func}`);
 				self.components.forEach(function(otherComp) {
 					if (otherComp === comp) return;
 					console.log('apply filter to ' + otherComp);
-					applyFiltersToComponent(self, otherComp);
+					//applyFiltersToComponent(self, otherComp);
 				});
-			});
-			self[comp + '_filteredIn'].subscribe(function(recs) {
-				console.log(`set filter in on ${comp} for ${recs.length} recs`);
-				self[comp + '_filteredOut'](_.difference(self.allRecs(), recs));
 			});
 		});
 
@@ -200,9 +264,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 							Math.floor((rec.endDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24))
 							: rec.startDay;
 					});
-					self.allRecs(profile.records);
+					//self.allRecs(profile.records);
+					self.crossfilter(crossfilter(profile.records));
 					self.loadedProfile(profile);
-					filterManager(self);
+					//filterManager(self);
 				}
 			});
 		};
@@ -212,23 +277,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		};
 
 		self.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
-
-		self.options = {
-			Facets: [
-				{
-					'caption': 'Type',
-					'binding': function (o) {
-						return o.domain;
-					}
-				},
-				{
-					'caption': 'Year Start',
-					'binding': function (o) {
-						return new Date(o.startDate).getFullYear();
-					}
-				}
-			]
-		};
 
 		self.columns = [
 			{

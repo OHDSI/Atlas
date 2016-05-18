@@ -1,10 +1,14 @@
-define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTables.binding', 'colvis'], function (ko, view, facetEngine) {
+define(['knockout', 'text!./faceted-datatable.html', 'facets', 'crossfilter/crossfilter','knockout.dataTables.binding', 'colvis'], function (ko, view, facetEngine, crossfilter) {
 
 	function facetedDatatable(params) {
 		var self = this;
 
+		if (Array.isArray(params.reference))
+			self.crossfilter = crossfilter(params.reference);
+		else if ('dimension' in params.reference)
+			self.crossfilter = params.reference;
 		self.reference = params.reference;
-		self.data = params.filteredIn || ko.observableArray();
+		self.data = ko.observableArray();
 		self.data(self.reference());
 
 		self.options = params.options;
@@ -29,7 +33,6 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 
 			self.facetEngine().SetFilter(filters);
 			self.facetEngine(self.facetEngine());
-			console.log(`datatable setting filteredIn to ${self.facetEngine().GetCurrentObjects().length} recs (filtered)`);
 			self.data(self.facetEngine().GetCurrentObjects());
 		};
 
@@ -45,7 +48,6 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 			self.feTemp.sortFacetMembers();
 
 			self.facetEngine(self.feTemp);
-			console.log(`datatable setting filteredIn to ${self.reference().length} recs (all)`);
 			self.data(self.reference());
 		});
 
