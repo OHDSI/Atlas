@@ -8,19 +8,19 @@
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-ban" /></td>
 				<td>
 					occurrence start is: <date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>									
 			</tr>
 			<tr data-bind="if: DeathType() != null, visible: DeathType() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('DeathType') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('DeathType') }" class="fa fa-ban" /></td>
 				<td>
 					Death Type is: <concept-list params="PickerParams: { DefaultDomain: 'Death Type', DefaultQuery: ''}, ConceptList: DeathType()"></concept-list>
 				</td>									
 			</tr>
 			<tr data-bind="if: DeathSourceConcept() != null, visible: DeathSourceConcept() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('DeathSourceConcept') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('DeathSourceConcept') }" class="fa fa-ban" /></td>
 				<td>
 					<div>
 					Death Source Concept is <conceptset-selector params="conceptSetId: DeathSourceConcept, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Death'"></conceptset-selector>
@@ -28,13 +28,13 @@
 			 </td>									
 			</tr>										
 			<tr data-bind="if: Age() != null, visible: Age() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('Age') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-ban" /></td>
 				<td>
 					with age <numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: Gender() != null, visible: Gender() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('Gender') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-ban" /></td>
 				<td>
 					<div>
 						with a gender of: <concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
@@ -43,13 +43,13 @@
 			</tr>
 		 <!--
 			<tr data-bind="if: PriorEnrollDays() != null, visible: PriorEnrollDays() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('PriorEnrollDays') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PriorEnrollDays') }" class="fa fa-ban" /></td>
 				<td>with at least
 					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorEnrollDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days of observation prior to diagnosis
 				</td>
 			</tr>
 			<tr data-bind="if: AfterEnrollDays() != null, visible: AfterEnrollDays() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('AfterEnrollDays') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AfterEnrollDays') }" class="fa fa-ban" /></td>
 				<td>with at least
 					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: AfterEnrollDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days of observation after diagnosis
 				</td>

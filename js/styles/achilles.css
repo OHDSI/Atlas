@@ -192,14 +192,13 @@ body {
 	padding-left: 5px;
 }
 .row {
-	margin-right: -5px;
-	margin-left: -5px;
+	/* margin-right: -5px; */
+	/* margin-left: -5px; */
 }
 /* Report Styles */
 
 .reportTitle {
 	font-size: 14px;
-	font-weight: bold;
 	margin-bottom: 5px;
 	margin-top: 5px;
 }
@@ -209,7 +208,6 @@ body {
 }
 div.personSummary .row div:first-child {
 	text-align: right;
-	font-weight: bold;
 }
 div.personSummary .row div {
 	padding-left: 2px;
@@ -292,7 +290,6 @@ div.personSummary .row div {
 .pathleaf {
 	font-size: 14px;
 	color: #333;
-	font-weight: bold;
 	margin-bottom: 3px;
 }
 .pathleafstat {
@@ -346,7 +343,6 @@ table.dataTable tbody td {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	font-size: 16px;
-	font-weight: bold;
 }
 /* datatables.colvis override */
 

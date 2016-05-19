@@ -21,7 +21,7 @@ define(function (require, exports) {
 		self.PrimaryCriteria = ko.observable(new PrimaryCriteria(data.PrimaryCriteria, self.ConceptSets));
 		self.AdditionalCriteria = ko.observable(data.AdditionalCriteria && new CriteriaGroup(data.AdditionalCriteria, self.ConceptSets));
 		self.ExpressionLimit =  { Type: ko.observable(data.ExpressionLimit && data.ExpressionLimit.Type || "All") }
-		
+		self.InclusionRules = ko.observableArray(data.InclusionRules);
 		self.ConceptSets.sorted = ko.pureComputed(function() {
 			return self.ConceptSets().map(function (item) { return item; }).sort(conceptSetSorter);
 		});

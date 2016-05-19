@@ -2,89 +2,103 @@
 	<div style="position: relative">
 		<table class="criteriaTable">
 			<col style="width:16px" />
-			<col />							
+			<col />
 			<tr>
-				<td colspan="2"> a condition occurrence of <conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Condition'"></conceptset-selector>
+				<td colspan="2"> a condition occurrence of
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Condition'"></conceptset-selector>
 				</td>
 			</tr>
 			<tr data-bind="if: First() != null, visible: First() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('First') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
-				<td><div style="padding-left: 5px">for the first time in the person's history</div></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-ban" /></td>
+				<td>
+					<div>for the first time in the person's history</div>
+				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
 				<td>
-					occurrence start is: <date-range params="Range: OccurrenceStartDate"></date-range>
-				</td>									
+					<i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-ban"/>
+				</td>
+				<td>
+					occurrence start is:
+					<date-range params="Range: OccurrenceStartDate"></date-range>
+				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceEndDate() != null, visible: OccurrenceEndDate() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('OccurrenceEndDate') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceEndDate') }" class="fa fa-ban" /></td>
 				<td>
-					occurrence end is: <date-range params="Range: OccurrenceEndDate"></date-range>
-				</td>									
+					occurrence end is:
+					<date-range params="Range: OccurrenceEndDate"></date-range>
+				</td>
 			</tr>
 			<tr data-bind="if: ConditionType() != null, visible: ConditionType() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('ConditionType') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('ConditionType') }" class="fa fa-ban" /></td>
 				<td>
-					Condition Type is: <concept-list params="PickerParams: { DefaultDomain: 'Condition Type', DefaultQuery: ''}, ConceptList: ConditionType()"></concept-list>
-				</td>									
+					Condition Type is:
+					<concept-list params="PickerParams: { DefaultDomain: 'Condition Type', DefaultQuery: ''}, ConceptList: ConditionType()"></concept-list>
+				</td>
 			</tr>
 			<tr data-bind="if: StopReason() != null, visible: StopReason() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('StopReason') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('StopReason') }" class="fa fa-ban" /></td>
 				<td>
-					with a Stop Reason <text-filter-input params="Filter: StopReason"></text-filter-input>
-				</td>									
-			</tr>	
+					with a Stop Reason
+					<text-filter-input params="Filter: StopReason"></text-filter-input>
+				</td>
+			</tr>
 			<tr data-bind="if: ConditionSourceConcept() != null, visible: ConditionSourceConcept() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('ConditionSourceConcept') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('ConditionSourceConcept') }" class="fa fa-ban" /></td>
 				<td>
 					<div>
-					Condition Source Concept is <conceptset-selector params="conceptSetId: ConditionSourceConcept, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Condition'"></conceptset-selector>
+						Condition Source Concept is
+						<conceptset-selector params="conceptSetId: ConditionSourceConcept, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Condition'"></conceptset-selector>
 					</div>
-			 </td>									
-			</tr>										
+				</td>
+			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('Age') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-ban" /></td>
 				<td>
-					with age <numeric-range params="Range: Age"></numeric-range>
+					with age
+					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: Gender() != null, visible: Gender() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('Gender') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-ban" /></td>
 				<td>
 					<div>
-						with a gender of: <concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
-					</div>						
+						with a gender of:
+						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
+					</div>
 				</td>
 			</tr>
-		 <!--
+			<!--
 			<tr data-bind="if: PriorEnrollDays() != null, visible: PriorEnrollDays() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('PriorEnrollDays') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PriorEnrollDays') }" class="fa fa-ban" /></td>
 				<td>with at least
 					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorEnrollDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days of observation prior to diagnosis
 				</td>
 			</tr>
 			<tr data-bind="if: AfterEnrollDays() != null, visible: AfterEnrollDays() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('AfterEnrollDays') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AfterEnrollDays') }" class="fa fa-ban" /></td>
 				<td>with at least
 					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: AfterEnrollDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days of observation after diagnosis
 				</td>
 			</tr>
  			-->
 			<tr data-bind="if: ProviderSpecialty() != null, visible: ProviderSpecialty() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-ban" /></td>
 				<td>
 					<div>
-					with a Provider Specialty of: <concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty' }, ConceptList: ProviderSpecialty()"></concept-list>
+						with a Provider Specialty of:
+						<concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty' }, ConceptList: ProviderSpecialty()"></concept-list>
 					</div>
-			  </td>									
-			</tr>	
+				</td>
+			</tr>
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
-				<td><img data-bind="click: function() { $component.removeCriterion('VisitType') }" class="deleteIcon" src="images/cohortbuilder/delete.png" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }" class="fa fa-ban" /></td>
 				<td>
-					with a Visit occurrance of: <concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
-				</td>									
-			</tr>								
+					with a Visit occurrance of:
+					<concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
+				</td>
+			</tr>
 		</table>
 	</div>
 	<div class="addCriterion" data-bind="ddSlickAction: $component.addCriterionSettings"></div>
