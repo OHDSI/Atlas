@@ -25,7 +25,7 @@ define(["jquery", "d3", "jnj_chart", "common", "datatables.net", "colvis"], func
 
 		$.ajax({
 			type: "GET",
-			url:getUrlFromDataCollection(self.datasource, "measurements", concept_id),
+			url:common.getUrlFromDataCollection(self.datasource, "measurements", concept_id),
 			success: function (data) {
 				// age at first measurement visualization
 				var ageAtFirstOccurrence = new jnj_chart.boxplot();
