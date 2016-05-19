@@ -1772,6 +1772,33 @@ inclusion-rule-editor .inclusion-rule-header {
 	cursor:pointer;
 }
 
+.fa.fa-times {
+	color: red;
+	font-size: 1.7em;
+	margin-right: 2px;
+	cursor:pointer;
+}
+
+button.btn-conceptset_selector
+{
+	font-size: 10px;
+	color: #000;
+	height: 21px;
+	padding: 0px 4px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 3px;
+	margin-left: -1px;
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
+}
+
+select.mediumInputField
+{
+	height:1.8em;
+}
+
+
 cohort-expression-editor .fa.fa-ban {
     font-size: 20px;
 }
