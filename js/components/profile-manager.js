@@ -164,7 +164,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			var groupAll = self.crossfilter().groupAll();
 			groupAll.reduce(...reduceToRecs);
 			self.filteredRecs(groupAll.value());
-			console.log('new recs', self.filteredRecs().length);
 		});
 
 		self.components = ['datatable','profileChart'];
