@@ -171,7 +171,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 		}
 
 		self.addInclusionRule = function () {
-			var newInclusionRule = new InclusionRule();
+			var newInclusionRule = new InclusionRule(null, self.expression().ConceptSets);
 			self.expression().InclusionRules.push(newInclusionRule);
 			self.selectInclusionRule(newInclusionRule);
 		}

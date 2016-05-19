@@ -153,13 +153,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				result.expression = JSON.parse(result.expression);
 				var definition = new CohortDefinition(result);
 
-				var rules = params.expression().InclusionRules();
-				for (var i = 0; i < rules.length; i++) {
-					if (!ko.isObservable(rules[i].name)) {
-						rules[i] = new InclusionRule(rules[i]);
-					}
-				}
-
 				var redirectWhenComplete = definition.id() != self.model.currentCohortDefinition().id();
 				self.model.currentCohortDefinition(definition);
 				if (redirectWhenComplete) {
