@@ -48,23 +48,23 @@
 		<div data-bind="visible:$component.loadingProfile()" class="loading">loading</div>
 
 		<div class="paddedWrapper" data-bind="visible:!$component.loadingProfile()">
-			<div data-bind="visible:$component.dimensions.profileChart.recs().length > 0">
+			<!--div data-bind="visible:$component.filteredRecs().length > 0"-->
 				<div id="scatter" data-bind="profileChart:{
 							profile:$component.loadedProfile, 
 							cohortPerson:$component.cohortPerson, 
-							recs:$component.dimensions.profileChart.recs, 
+							recs:$component.filteredRecs, 
 							ownFilter:$component.dimensions.profileChart.filter,
 						}"></div>
 				<div class="heading">Profile Records</div>
 				<faceted-datatable-cf id="profile-manager-table" params="{
-						recs: $component.dimensions.datatable.recs,
+						recs: $component.filteredRecs,
 						crossfilter: $component.crossfilter, 
 						columns: $component.columns, 
-						facets: $component.facets, 
+						facets: $component.facetsObs, 
 						order: [[3,'asc']],
 						ownFilter:$component.datatable_ownFilter
 					}"></faceted-datatable-cf>
-			</div>
+			<!--/div-->
 		</div>
 	</div>
 

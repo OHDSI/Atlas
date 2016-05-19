@@ -61,7 +61,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 
 	function profileManager(params) {
 		window.d3 = d3;
-		window.ko = ko;
 		window._ = _;
 		var self = this;
 		window.profileManager = self;
@@ -83,47 +82,43 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.currentMemberIndex = 0;
 		self.crossfilter = ko.observable();
 		self.filtersChanged = ko.observable();
+		self.filteredRecs = ko.observableArray([]);
+		self.facetsObs = ko.observableArray([]);
 
 		self.dimensions = {
 			'Type': {
 					caption: 'Type',
 					func: d => d.domain,
 					filter: ko.observable(null),
-					Members: ko.observableArray([{Name:'foo', ActiveCount:'bar',Selected:false}]),
+					Members: [],//ko.observableArray([{Name:'foo', ActiveCount:'bar',Selected:false}]),
 			},
 			'Year Start': {
 					caption: 'Year Start',
 					func: d => new Date(d.startDate).getFullYear(),
 					filter: ko.observable(null),
-					Members: ko.observableArray([]),
+					Members: [],//ko.observableArray([]),
 			},
 			'profileChart': {
 					name: 'profileChart',
 					func: d => d.startDay,
 					filter: ko.observable(null),
 			},
+			/*
 			'datatable': { // this has to combine dimensions/filters from all datatable facets
 				name: 'datatable',
 				func: () => true,
 				filter: ko.observable(null),
 				//filter: ko.observable(d=>!!d),
 			},
+			*/
 		};
 		self.facets = ['Type','Year Start'].map(d=>self.dimensions[d]);
 		var reduceToRecs = [ (p,v,nf)=>p.concat(v), (p,v,nf)=>_.without(p,v), ()=>[] ];
-		self.crossfilter.subscribe(cf => {
-			_.each(self.dimensions, dim => {
-				dim.dimension = cf.dimension(dim.func);
-				dim.filter(null);
-				dim.group = dim.dimension.group();
-				dim.group.reduce(...reduceToRecs);
-				dim.groupAll = dim.dimension.groupAll();
-				dim.groupAll.reduce(...reduceToRecs);
-				dim.recs(dim.groupAll.value());
-			});
-		});
+		self.crossfilter(crossfilter([]));
 		_.each(self.dimensions, dim => {
 			dim.filter.subscribe(filter => {
+				dim.dimension.filter(filter);
+				/*
 				if (!_.find(self.facets, dim)) {
 					dim.dimension.filter(filter);
 				} else {
@@ -136,14 +131,41 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					);
 					self.dimensions.datatable.dimension.filter(d=>!!d);
 				}
+				*/
 				self.filtersChanged(filter);
 			});
-			dim.recs = ko.observable([]);
-			self.filtersChanged.subscribe(() => {
-				dim.recs(dim.groupAll.value());
-			});
+			//dim.recs = ko.observable([]);
 		});
-		self.crossfilter(crossfilter([]));
+		self.filtersChanged.subscribe(() => {
+			var groupAll = self.crossfilter().groupAll();
+			groupAll.reduce(...reduceToRecs);
+			self.filteredRecs(groupAll.value());
+			/*
+			_.each(self.dimensions, dim => {
+				dim.recs(groupAll.value());
+				//dim.recs(dim.groupAll.value());
+			});
+			*/
+		});
+		self.crossfilter.subscribe(cf => {
+			_.each(self.dimensions, dim => {
+				dim.dimension = cf.dimension(dim.func);
+				dim.filter(null);
+				dim.group = dim.dimension.group();
+				dim.group.reduce(...reduceToRecs);
+				dim.groupAll = dim.dimension.groupAll();
+				dim.groupAll.reduce(...reduceToRecs);
+				//dim.recs(dim.groupAll.value());
+			});
+			self.facets.forEach(facet=>{
+				facet.Members = [];
+			});
+			self.facetsObs(self.facets);
+			var groupAll = self.crossfilter().groupAll();
+			groupAll.reduce(...reduceToRecs);
+			self.filteredRecs(groupAll.value());
+			console.log('new recs', self.filteredRecs().length);
+		});
 
 		self.components = ['datatable','profileChart'];
 		self.components.forEach(function(comp) {
