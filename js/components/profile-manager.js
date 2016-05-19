@@ -35,30 +35,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 
 		datatable input recs: filterManager.recs['datatable'] : recs left after applying all but datatable's filters
 	*/
-	/*
-	function filterManager(self) {
-		console.log('in filterManager with' , self.allRecs().length);
-
-		self.profileChart_dim = self.crossfilter().dimension(d=>d.startDay);
-		self.profileChart_ownFilter(self.profileChart_dim.filter);
-		self.datatable_dim = self.crossfilter().dimension(d=>d);
-
-		self.components.forEach(function(comp) {
-			self[comp + '_recs'](self.allRecs());
-			// move these lines below to only happen once
-			self[comp + '_groupAll'](self[comp + '_dim'].groupAll());
-			var groupAll = self[comp + '_groupAll']();
-			groupAll.reduce((p,v,nf)=>p.concat(v), (p,v,nf)=>_.without(p,v), ()=>[]); // group's value is its records
-		});
-	}
-	function applyFiltersToComponent(self, comp) {
-		if (!self[comp + '_groupAll']()) return;
-		var filteredRecs = self[comp + '_groupAll']().value(); // recs filtered by all other dimensions
-		console.log(`applying filters to ${comp}, prior: ${self[comp + '_recs']().length}, new: ${filteredRecs.length}`);
-		self[comp + '_recs'](filteredRecs);
-	}
-	*/
-
 	function profileManager(params) {
 		window.d3 = d3;
 		window._ = _;
@@ -140,12 +116,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			var groupAll = self.crossfilter().groupAll();
 			groupAll.reduce(...reduceToRecs);
 			self.filteredRecs(groupAll.value());
-			/*
-			_.each(self.dimensions, dim => {
-				dim.recs(groupAll.value());
-				//dim.recs(dim.groupAll.value());
-			});
-			*/
 		});
 		self.crossfilter.subscribe(cf => {
 			_.each(self.dimensions, dim => {
@@ -164,24 +134,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			var groupAll = self.crossfilter().groupAll();
 			groupAll.reduce(...reduceToRecs);
 			self.filteredRecs(groupAll.value());
-		});
-
-		self.components = ['datatable','profileChart'];
-		self.components.forEach(function(comp) {
-			self[comp + '_recs']	  = ko.observableArray([]);
-			self[comp + '_ownFilter'] = ko.observable();
-			self[comp + '_groupAll'] = ko.observable();
-		});
-		//filterManager(self, []);
-		self.components.forEach(function(comp) {
-			self[comp + '_ownFilter'].subscribe(function(func) { 	// when comp changes its filter, change recs for other comps if filter affects them
-				console.log(`set filter out on ${comp}: ${func}`);
-				self.components.forEach(function(otherComp) {
-					if (otherComp === comp) return;
-					console.log('apply filter to ' + otherComp);
-					//applyFiltersToComponent(self, otherComp);
-				});
-			});
 		});
 
 		self.hasCDM = function (source) {
@@ -288,7 +240,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					//self.allRecs(profile.records);
 					self.crossfilter(crossfilter(profile.records));
 					self.loadedProfile(profile);
-					//filterManager(self);
 				}
 			});
 		};
