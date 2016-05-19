@@ -1,20 +1,20 @@
 div.criteriaGroup {
 	position: relative;
-	margin-top: 15px;
-	margin-bottom: 9px;
+	margin-top: 20px;
+	margin-bottom: 5px;
 	padding-top: 15px;
 	padding-right: 0px;
 	padding-bottom: 5px;
 	padding-left: 5px;
-	border-left: solid 1px #888;
-	border-top: solid 1px #888;
-	border-right: solid 0px black;
-	border-bottom: solid 1px #888;
+	border-left: solid 1px #ccc;
+	border-top: solid 1px #ccc;
+	/* border-right: solid 0px black; */
+	border-bottom: solid 1px #ccc;
 }
 div.criteriaGroup div.criteriaHeading {
 	position: absolute;
 	display: inline;
-	top: -14px;
+	top: -10px;
 	margin-left: 10px;
 	padding: 0px 3px 0px 3px;
 	background-color: white;
@@ -23,32 +23,33 @@ div.criteriaGroup div.additionalCriteria {
 	position: relative;
 }
 div.criteriaGroup div.occurrenceSection {
-	position: absolute;
-	top: .5em;
-	left: 1em;
+	/* position: absolute; */
+	/* top: .5em; */
+	/* left: 1em; */
 }
 div.criteriaGroup div.occurrenceSection button {
 	line-height: 1.1em;	
 }
 div.criteriaGroup div.indexWindowSection {
-	position: absolute;
-	bottom: .5em;
-	left: 1em;
+	margin-top: 5px;
+	/* position: absolute; */
+	/* bottom: .5em; */
+	/* left: 1em; */
 }
 div.criteriaGroup div.additionalCriteria > div > div.criteriaSection {
 	padding-top: 2em;
-	padding-bottom: 2.5em;
-	padding-left: 15px;
+	padding-bottom: 5px;
+	padding-left: 35px;
 }
 div.criteriaGroup table {
 	width: 100%;
 }
 div.criteriaSection {
 	position: relative;
-	background-color: #eee;
-	border: solid 1px #ccc;
-	padding: 5px;
-	margin: 3px;
+	/* background-color: #eee; */
+	/* border: solid 1px #ddd; */
+	/* padding: 9px; */
+	/* margin: 3px 0px; */
 }
 div.criteriaSection > div.addCriterion {
 	position: absolute;
@@ -72,7 +73,7 @@ img.criteriaType {
 	margin-right: 3px;
 }
 .emptyInput {
-	background-color: #ccc;
+	background-color: #FFF;
 	border: solid 1px #f00 !important;
 }
 .criteriaAddLink {
@@ -88,10 +89,9 @@ img.deleteIcon {
 	vertical-align: middle;
 	cursor: pointer;
 }
-table.criteriaTable tbody tr td:first-child {
-	width: 16px;
-	vertical-align: top;
-	padding-top: 4px;
+table.criteriaTable tbody tr td {
+	padding-top:3px;
+	line-height:20px
 }
 .numericInputField {
 	padding-left: 3px;
@@ -144,9 +144,9 @@ button.deletegroup {
 	border-right: solid 3px white;
 }
 button.deletecriteria {
-	position: absolute;
-	bottom: 5px;
-	right: 10px;
+	/* position: absolute; */
+	/* bottom: 5px; */
+	/* right: 10px; */
 }
 
 button.addConceptSet
@@ -183,10 +183,10 @@ img.codesetLink {
 	vertical-align: sub;
 }
 col.rule {} col.options {
-	width: 250px;
+	width: 90%;
 }
 col.delete {
-	width: 130px;
+	width: 10%;
 }
 .ui-menu {
 	border: solid 1px gray;

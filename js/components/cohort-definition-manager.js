@@ -4,10 +4,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'webapi/CohortDefinitionAPI',
 				'ohdsi.util',
         'cohortbuilder/CohortExpression',
+				'cohortbuilder/InclusionRule',
 				'knockout.dataTables.binding',
 				'faceted-datatable',
 				'databindings'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil, CohortExpression) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil, CohortExpression, InclusionRule) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -35,19 +36,28 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 	function cohortDefinitionManager(params) {
 		var self = this;
-
 		var pollTimeout = null;
 		self.config = config;
 		self.model = params.model;
+
+		self.generatedSql = {};
+		self.generatedSql.mssql = ko.observable('');
+		self.generatedSql.oracle = ko.observable('');
+		self.generatedSql.postgresql = ko.observable('');
+		self.generatedSql.redshift = ko.observable('');
+		self.generatedSql.msaps = ko.observable('');
+
 		self.tabMode = self.model.currentCohortDefinitionMode;
+		self.exportTabMode = ko.observable('printfriendly');
+		self.exportSqlMode = ko.observable('mssql');
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
 		self.dirtyFlag = self.model.currentCohortDefinitionDirtyFlag;
-		self.isGeneratedOpen = ko.observable(false);
-		self.generatedSql = {};
+		self.isLoadingSql = ko.observable(false);
 		self.isRunning = ko.observable(false);
 		self.isSaveable = ko.pureComputed(function () {
 			return self.dirtyFlag() && self.dirtyFlag().isDirty() && self.isRunning();
 		});
+
 
 		self.modifiedJSON = "";
 		self.expressionJSON = ko.pureComputed({
@@ -132,6 +142,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				self.model.currentCohortDefinition().id(undefined);
 			}
 
+			console.log(self.model.currentCohortDefinition().expression().InclusionRules());
+
 			var definition = ko.toJS(self.model.currentCohortDefinition());
 
 			// for saving, we flatten the expresson JS into a JSON string
@@ -142,6 +154,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				console.log("Saved...");
 				result.expression = JSON.parse(result.expression);
 				var definition = new CohortDefinition(result);
+
+				var rules = params.expression().InclusionRules();
+				for (var i = 0; i < rules.length; i++) {
+					if (!ko.isObservable(rules[i].name)) {
+						rules[i] = new InclusionRule(rules[i]);
+					}
+				}
+
 				var redirectWhenComplete = definition.id() != self.model.currentCohortDefinition().id();
 				self.model.currentCohortDefinition(definition);
 				if (redirectWhenComplete) {
@@ -176,12 +196,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.showSql = function () {
-			self.generatedSql.mssql = null;
-			self.generatedSql.oracle = null;
-			self.generatedSql.postgres = null;
-			self.generatedSql.redshift = null;
-			self.generatedSql.msaps = null;
+			self.isLoadingSql(true);
 
+			self.generatedSql.mssql('');
+			self.generatedSql.oracle('');
+			self.generatedSql.postgresql('');
+			self.generatedSql.redshift('');
+			self.generatedSql.msaps('');
 
 			var expression = ko.toJS(self.model.currentCohortDefinition().expression, pruneJSON);
 			var templateSqlPromise = cohortDefinitionAPI.getSql(expression);
@@ -190,31 +211,31 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 				var mssqlTranslatePromise = translateSql(result.templateSql, 'sql server');
 				mssqlTranslatePromise.then(function (result) {
-					self.generatedSql.mssql = result.targetSQL;
+					self.generatedSql.mssql(result.targetSQL);
 				});
 
 				var msapsTranslatePromise = translateSql(result.templateSql, 'pdw');
 				msapsTranslatePromise.then(function (result) {
-					self.generatedSql.msaps = result.targetSQL;
+					self.generatedSql.msaps(result.targetSQL);
 				});
 
 				var oracleTranslatePromise = translateSql(result.templateSql, 'oracle');
 				oracleTranslatePromise.then(function (result) {
-					self.generatedSql.oracle = result.targetSQL;
+					self.generatedSql.oracle(result.targetSQL);
 				});
 
 				var postgresTranslatePromise = translateSql(result.templateSql, 'postgresql');
 				postgresTranslatePromise.then(function (result) {
-					self.generatedSql.postgres = result.targetSQL;
+					self.generatedSql.postgresql(result.targetSQL);
 				});
 
 				var redshiftTranslatePromise = translateSql(result.templateSql, 'redshift');
 				redshiftTranslatePromise.then(function (result) {
-					self.generatedSql.redshift = result.targetSQL;
+					self.generatedSql.redshift(result.targetSQL);
 				});
 
 				$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise).then(function () {
-					self.isGeneratedOpen(true);
+					self.isLoadingSql(false);
 				});
 			});
 		}
@@ -327,8 +348,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.reload = function () {
-			var updatedExpression = JSON.parse(self.modifiedJSON);
-			self.model.currentCohortDefinition().expression(new CohortExpression(updatedExpression));
+			if (self.modifiedJSON.length > 0) {
+				var updatedExpression = JSON.parse(self.modifiedJSON);
+				self.model.currentCohortDefinition().expression(new CohortExpression(updatedExpression));
+			}
 		}
         
         self.exportConceptSetsCSV = function () {

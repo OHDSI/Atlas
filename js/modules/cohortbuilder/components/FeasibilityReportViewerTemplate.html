@@ -1,0 +1,35 @@
+
+<!-- ko if: report -->
+<div class="tabs" data-bind="tabs: {}">
+	<ul>
+		<li>
+			<a data-bind="attr: { title: 'Simulation Results', href: '#overview' }, text: 'Overview'"></a>
+		</li>
+		<li>
+			<a data-bind="attr: { title: 'Cohort Details', href: '#cohortDetails' }, text: 'Reports'"></a>
+		</li>
+	</ul>
+	<div data-bind="attr: { id: 'overview' }">
+		<div class="tab_contents">
+			<div style="position: relative">
+			<!-- ko if: selectedView() == 'intersect' --><span class="toggleView" style="position: absolute; right:5px" data-bind="text: 'Switch to attrition view', click: function() { selectedView('attrition'); }"></span> <!-- /ko -->
+			<!-- ko if: selectedView() == 'attrition' --><span class="toggleView" style="position: absolute; right:5px" data-bind="text: 'Switch to intersect view', click: function() { selectedView('intersect'); }"></span> <!-- /ko -->			
+			</div>
+			<div data-bind="visible: selectedView() == 'intersect'"><feasibility-intersect-report params="report: report"></feasibility-intersect-report></div>
+			<div data-bind="visible: selectedView() == 'attrition'"><feasibility-attrition-report params="report: report"></feasibility-attrition-report></div>
+		</div>
+	</div>
+	<div data-bind="attr: { id: 'cohortDetails' }">
+		<div class="tab_contents">
+			Comming Sooon
+		</div>
+	</div>
+</div>
+<!-- /ko -->
+
+<!-- ko ifnot: report -->
+<div>
+	No report selected.
+</div>	
+<!-- /ko -->
+
