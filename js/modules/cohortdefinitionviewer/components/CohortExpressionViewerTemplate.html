@@ -1,18 +1,21 @@
-People having any of the following:<br>
+People having any of the following:
+<br>
 
 <ul>
-<!-- ko foreach: expression().PrimaryCriteria().CriteriaList -->
-	<li><div data-bind='component: { 
+	<!-- ko foreach: expression().PrimaryCriteria().CriteriaList -->
+	<li>
+		<div data-bind='component: { 
 						name: $component.getCriteriaIndexComponent($data),
 						params: {expression: $component.expression(), criteria: $data} }'></div>
 	</li>
-<!-- /ko -->
+	<!-- /ko -->
 </ul>
 <div>
-<span data-bind="with: expression().PrimaryCriteria().ObservationWindow"> with observation at least
+	<span data-bind="with: expression().PrimaryCriteria().ObservationWindow"> with observation at least
 	<span class="numericField" data-bind="text: PriorDays.numeric()" /> days prior and <span class="numericField" data-bind="text: PostDays.numeric()" /> days after index,
 </span>
-<span data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit"> and limit primary events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></span>
+	<span data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit"> and limit primary events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b>
+	</span>
 </div>
 <br/>
 
@@ -20,6 +23,13 @@ People having any of the following:<br>
 	<div data-bind="if: AdditionalCriteria">
 		<div>For people matching the Primary Events, include:</div>
 		<criteria-group-viewer params="{expression: $data, group: AdditionalCriteria}"></criteria-group-viewer>
+	</div>
+</div>
+
+<div data-bind="with: expression">
+	<div data-bind="foreach: InclusionRules">
+		<div data-bind="text: 'Inclusion ' + ($index()+1) + ': ' + name()"></div>
+		<criteria-group-viewer params="{expression: $parent, group: ko.observable($data.expression)}"></criteria-group-viewer>
 	</div>
 </div>
 
