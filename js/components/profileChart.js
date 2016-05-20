@@ -25,6 +25,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
   var tipText = d=>d.conceptName;
   var pointClass = d=>d.domain;
   var radius = d=>2;
+  var highlightFunc = ()=>{};
   function circle(datum) {
     var g = d3.select(this);
     g.selectAll('circle.' + pointClass(datum))
@@ -83,6 +84,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
   }
   ko.bindingHandlers.profileChart = {
     init: function (element, valueAccessor, allBindingsAccessor) {
+      valueAccessor().highlightRecs.subscribe(recs=>highlightFunc(recs));
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
       var va = valueAccessor();
@@ -259,6 +261,16 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       .selectAll("rect")
       .attr("y", -6)
       .attr("height", mainHeight + 7);
+    highlightFunc = function(recs) {
+      if (recs.length === 0) {
+      	pointGs.classed('highlighted', false);
+      	pointGs.classed('unhighlighted', false);
+      } else {
+      	pointGs.classed('highlighted', d => _.find(recs,d));
+      	pointGs.classed('unhighlighted', d => !_.find(recs,d));
+      }
+    };
+    console.log('profileChart just drew');
     /*
     if (holdBrushExtent()) {
       brush.extent(holdBrushExtent());

@@ -60,6 +60,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.filtersChanged = ko.observable();
 		self.filteredRecs = ko.observableArray([]);
 		self.facetsObs = ko.observableArray([]);
+		self.highlightRecs = ko.observableArray([]);
+		self.highlight = function(recs, evt) {
+			console.log('highlighting ', recs.length);
+			self.highlightRecs(recs || []);
+		};
 
 		self.dimensions = {
 			'Type': {
@@ -83,6 +88,23 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					name: 'search',
 					func: d => d,
 					filter: ko.observable(null),
+			},
+			'wordcloud': {
+					name: 'wordcloud',
+					func: d => d.conceptName,
+					filter: ko.observable(null),
+					words: function(filteredRecs) {
+						var needToLook = filteredRecs().length; // knockout won't fire this otherwise
+						if (!self.dimensions.wordcloud.dimension) return [];
+						var words = self.dimensions.wordcloud.group.top(20);
+						var avgSize = average(words.map(d=>d.value.length));
+						var std = standardDeviation(words.map(d=>d.value.length));
+						words.forEach(word=>{
+							word.size = (100 + Math.round(((word.value.length - avgSize) / std) * 20)) + '%';
+						});
+						console.log(words.map(d=>d.size));
+						return words;
+					},
 			},
 			/*
 			'datatable': { // this has to combine dimensions/filters from all datatable facets
@@ -290,7 +312,29 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		viewModel: profileManager,
 		template: view
 	};
-
 	ko.components.register('profile-manager', component);
 	return component;
+	function standardDeviation(values){
+  	var avg = average(values);
+  	
+  	var squareDiffs = values.map(function(value){
+    	var diff = value - avg;
+    	var sqrDiff = diff * diff;
+    	return sqrDiff;
+  	});
+  	
+  	var avgSquareDiff = average(squareDiffs);
+	
+  	var stdDev = Math.sqrt(avgSquareDiff);
+  	return stdDev;
+	}
+	
+	function average(data){
+  	var sum = data.reduce(function(sum, value){
+    	return sum + value;
+  	}, 0);
+	
+  	var avg = sum / data.length;
+  	return avg;
+	}
 });

@@ -54,8 +54,18 @@
 							cohortPerson:$component.cohortPerson, 
 							recs:$component.filteredRecs, 
 							ownFilter:$component.dimensions.profileChart.filter,
+							highlightRecs:$component.highlightRecs,
 						}"></div>
-				<div class="heading">Profile Records</div>
+				<div id="wordcloud" data-bind="with:$component.dimensions.wordcloud">
+					<div class="wordcloud" data-bind="foreach:words($component.filteredRecs)">
+						<span data-bind="
+							text:key, 
+						  style:{fontSize:size},
+							event:{mouseenter:(word,evt)=>$component.highlight(word.value, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
+							"></span>
+					</div>
+				</div>
+				<!--div class="heading">Profile Records</div-->
 				<faceted-datatable-cf id="profile-manager-table" params="{
 						recs: $component.filteredRecs,
 						columns: $component.columns, 

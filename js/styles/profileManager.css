@@ -151,3 +151,14 @@ rect.dim {
   stroke: gray;
   stroke-width: 0.5;
 }
+.wordcloud span {
+  background-color: #DDD;
+  margin: 1px;
+  padding: 2px;
+}
+.highlighted {
+  opacity: 1;
+}
+.unhighlighted {
+  opacity: 0.1;
+}
