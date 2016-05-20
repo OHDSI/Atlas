@@ -1760,7 +1760,7 @@ td div.criteria-content {
 }
 
 inclusion-rule-editor .btn-group {
-    margin-top: 0px;
+    margin-top: -3px;
 }
 
 inclusion-rule-editor .inclusion-rule-header {
