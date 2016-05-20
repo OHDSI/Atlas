@@ -156,8 +156,13 @@ rect.dim {
   margin: 1px;
   padding: 2px;
 }
-.highlighted {
+path.highlighted, line.highlighted {
   opacity: 1;
+  stroke: black;
+}
+text.highlighted {
+  opacity: 1;
+  fill: black !important;
 }
 .unhighlighted {
   opacity: 0.1;

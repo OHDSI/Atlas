@@ -96,13 +96,16 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					words: function(filteredRecs) {
 						var needToLook = filteredRecs().length; // knockout won't fire this otherwise
 						if (!self.dimensions.wordcloud.dimension) return [];
-						var words = self.dimensions.wordcloud.group.top(20);
-						var avgSize = average(words.map(d=>d.value.length));
-						var std = standardDeviation(words.map(d=>d.value.length));
+						var words = self.dimensions.wordcloud.group.top(20)
+														.filter(d=>d.value.length)
+														.map(d=>{return {text:d.key, recs:d.value}});
+						words = _.sortBy(words, d=>-d.recs.length)
+						var avgSize = average(words.map(d=>d.recs.length));
+						var std = standardDeviation(words.map(d=>d.recs.length));
 						words.forEach(word=>{
-							word.size = (100 + Math.round(((word.value.length - avgSize) / std) * 20)) + '%';
+							word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 20)) + '%';
 						});
-						console.log(words.map(d=>d.size));
+						console.log(words.map(d=>d.key + ':' + d.recs.length + ':' +  d.size));
 						return words;
 					},
 			},

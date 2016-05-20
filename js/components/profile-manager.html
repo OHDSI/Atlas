@@ -59,9 +59,9 @@
 				<div id="wordcloud" data-bind="with:$component.dimensions.wordcloud">
 					<div class="wordcloud" data-bind="foreach:words($component.filteredRecs)">
 						<span data-bind="
-							text:key, 
+							text:text, 
 						  style:{fontSize:size},
-							event:{mouseenter:(word,evt)=>$component.highlight(word.value, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
+							event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
 							"></span>
 					</div>
 				</div>

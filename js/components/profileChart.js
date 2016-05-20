@@ -209,6 +209,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 	  y: yScale(y(d)) + jitter(i).y,
 	  name: tipText(d),
 	  width: 0, height: 0,
+	  rec: d,
 	};
       });
       var labels = focus.selectAll('.labels')
@@ -265,9 +266,17 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       if (recs.length === 0) {
       	pointGs.classed('highlighted', false);
       	pointGs.classed('unhighlighted', false);
+      	labels.classed('highlighted', false);
+      	labels.classed('unhighlighted', false);
+      	links.classed('highlighted', false);
+      	links.classed('unhighlighted', false);
       } else {
       	pointGs.classed('highlighted', d => _.find(recs,d));
       	pointGs.classed('unhighlighted', d => !_.find(recs,d));
+      	labels.classed('highlighted', d => _.find(recs,d.rec));
+      	labels.classed('unhighlighted', d => !_.find(recs,d.rec));
+      	links.classed('highlighted', d => _.find(recs,d.rec));
+      	links.classed('unhighlighted', d => !_.find(recs,d.rec));
       }
     };
     console.log('profileChart just drew');
