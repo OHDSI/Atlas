@@ -18,6 +18,21 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'knockout.dataTables.bin
 
 		self.order = params.order || [[1,'desc']];
 
+		self.searchFilter = params.searchFilter;
+		self.initCompleteCallback = function() {
+			var dt=$('#profile-manager-table table').DataTable();
+			dt.on('search.dt', function(e, settings) { 
+				var s = dt.search();
+				if (s.length === 0) {
+					self.searchFilter(null);
+					return;
+				}
+				self.searchFilter(rec => {
+					return _.chain(rec).values().compact().any(val => val.toString().match(s)).value();
+				})
+			});
+		};
+
 		var reduceToRecs = [ (p,v,nf)=>p.concat(v), (p,v,nf)=>_.without(p,v), ()=>[] ];
 
 		self.recs.subscribe(function () {

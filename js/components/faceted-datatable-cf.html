@@ -33,9 +33,10 @@
 							ordering: true,
 							order: $component.order,
 							columns: $component.columns,
-							autoWidth: true
+							autoWidth: true,
+							initComplete: $component.initCompleteCallback,
 					},
-					onRowClick: $component.rowClick
+					onRowClick: $component.rowClick,
         }">
 			</table>
 		</div>

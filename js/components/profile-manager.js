@@ -79,6 +79,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					func: d => d.startDay,
 					filter: ko.observable(null),
 			},
+			'search': {
+					name: 'search',
+					func: d => d,
+					filter: ko.observable(null),
+			},
 			/*
 			'datatable': { // this has to combine dimensions/filters from all datatable facets
 				name: 'datatable',
@@ -94,23 +99,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		_.each(self.dimensions, dim => {
 			dim.filter.subscribe(filter => {
 				dim.dimension.filter(filter);
-				/*
-				if (!_.find(self.facets, dim)) {
-					dim.dimension.filter(filter);
-				} else {
-					self.dimensions.datatable.dimension.dispose();
-					self.dimensions.datatable.dimension = self.crossfilter().dimension(
-						rec => _.every(self.facets, dim => {
-												if (dim.filter() == null) return true;
-												return dim.filter()(dim.dimension.accessor(rec));
-											})
-					);
-					self.dimensions.datatable.dimension.filter(d=>!!d);
-				}
-				*/
 				self.filtersChanged(filter);
 			});
-			//dim.recs = ko.observable([]);
 		});
 		self.filtersChanged.subscribe(() => {
 			var groupAll = self.crossfilter().groupAll();
