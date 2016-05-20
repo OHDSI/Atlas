@@ -146,3 +146,8 @@ rect.dim {
 	fill: #094B83;
 }
 */
+
+.link {
+  stroke: gray;
+  stroke-width: 0.5;
+}

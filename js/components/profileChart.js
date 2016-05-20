@@ -1,5 +1,5 @@
 "use strict";
-define(['knockout','d3', 'lodash'], function (ko, d3, _) {
+define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 
   var catLineHeight = 38;
   var margin = {
@@ -99,7 +99,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			      ) {
     /* verticleLines: [{xpos, color},...] */
     var categories = _.chain(points).map(y).uniq().value();
-    var mainHeight = categories.length * catLineHeight;
+    //var mainHeight = categories.length * catLineHeight;
+    var mainHeight = 300;
     var yScale = d3.scale.ordinal().rangePoints([mainHeight * .9, mainHeight * .1]);
 
     xScale.domain([d3.min(points.map(x)), d3.max(points.map(endX))]);
@@ -194,6 +195,58 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
             .attr('x', 0)
             .attr('y', yScale(category) - 13)
     });
+
+    if (points.length <= 50) {
+      // labeler usage from https://github.com/tinker10/D3-Labeler demo
+      var label_array = points.map((d,i)=>{
+        d.x = xScale(x(d)) + jitter(i).x;
+        d.y = yScale(y(d)) + jitter(i).y;
+	d.r = 8;
+        return {
+	  x: xScale(x(d)) + jitter(i).x,
+	  y: yScale(y(d)) + jitter(i).y,
+	  name: tipText(d),
+	  width: 0, height: 0,
+	};
+      });
+      var labels = focus.selectAll('.labels')
+                     .data(label_array)
+		     .enter()
+		     .append('text')
+		     .attr('class','label')
+		     .attr('text-anchor','start')
+		     .text(d=>d.name)
+		     .attr('x', d=>d.x)
+		     .attr('y', d=>d.y)
+		     .attr('fill','black');
+      var index=0;
+      labels.each(function() {
+        label_array[index].width = this.getBBox().width;
+        label_array[index].height = this.getBBox().height;
+	index += 1;
+      });
+      var links = focus.selectAll('.link')
+                       .data(label_array)
+		       .enter()
+		       .append('line')
+		       .attr('class','link')
+		       .attr('x1', d=>d.x)
+		       .attr('y1', d=>d.y)
+		       .attr('x2', d=>d.x)
+		       .attr('y2', d=>d.y)
+      var sim_ann = d3.labeler()
+                      .label(label_array)
+		      .anchor(points)
+		      .width(width)
+		      .height(mainHeight)
+		      .start(2000)
+      labels.transition().duration(2000)
+            .attr('x', d=>d.x)
+	    .attr('y', d=>d.y)
+      links.transition().duration(2000)
+            .attr('x2', d=>d.x)
+	    .attr('y2', d=>d.y)
+    }
 
     focus.append("g")
       .attr("class", "x axis")
