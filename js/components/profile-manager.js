@@ -62,7 +62,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.facetsObs = ko.observableArray([]);
 		self.highlightRecs = ko.observableArray([]);
 		self.highlight = function(recs, evt) {
-			console.log('highlighting ', recs.length);
+			//console.log('highlighting ', recs.length);
 			self.highlightRecs(recs || []);
 		};
 
@@ -84,11 +84,13 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					func: d => d.startDay,
 					filter: ko.observable(null),
 			},
+			/*
 			'search': {
 					name: 'search',
 					func: d => d,
 					filter: ko.observable(null),
 			},
+			*/
 			'wordcloud': {
 					name: 'wordcloud',
 					func: d => d.conceptName,
@@ -105,7 +107,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						words.forEach(word=>{
 							word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 20)) + '%';
 						});
-						console.log(words.map(d=>d.key + ':' + d.recs.length + ':' +  d.size));
+						console.log(words.map(d=>d.text + ':' + d.recs.length + ':' +  d.size));
 						return words;
 					},
 			},
@@ -118,6 +120,13 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			},
 			*/
 		};
+		self.searchHighlight = ko.observable();
+		self.searchHighlight.subscribe(func=>{
+			if (func)
+				self.highlight(self.filteredRecs().filter(func));
+			else 
+				self.highlight([]);
+		});
 		self.facets = ['Type','Year Start'].map(d=>self.dimensions[d]);
 		var reduceToRecs = [ (p,v,nf)=>p.concat(v), (p,v,nf)=>_.without(p,v), ()=>[] ];
 		self.crossfilter(crossfilter([]));

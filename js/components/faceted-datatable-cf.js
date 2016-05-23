@@ -25,11 +25,12 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'knockout.dataTables.bin
 				var s = dt.search();
 				if (s.length === 0) {
 					self.searchFilter(null);
-					return;
+					return ()=>false;
 				}
 				self.searchFilter(rec => {
-					return _.chain(rec).values().compact().any(val => val.toString().match(s)).value();
+					return _.chain(rec).values().compact().any(val => val.toString().match(new RegExp(s,'i'))).value();
 				})
+				return true;
 			});
 		};
 
