@@ -156,9 +156,10 @@ rect.dim {
   margin: 1px;
   padding: 2px;
 }
-path.highlighted, line.highlighted {
+.highlighted path, .highlighted line {
   opacity: 1;
   stroke: black;
+  stroke-opacity: .6;
 }
 text.highlighted {
   opacity: 1;

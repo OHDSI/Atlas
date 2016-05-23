@@ -65,6 +65,14 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			//console.log('highlighting ', recs.length);
 			self.highlightRecs(recs || []);
 		};
+		self.datatableRowClickCallback = function(rec, evt) {
+			console.log(arguments);
+			if (evt.target.childNodes[0].data === rec.conceptName) {
+				self.highlightRecs(self.filteredRecs().filter(d=>d.conceptName === rec.conceptName));
+			} else {
+				self.highlightRecs([rec]);
+			}
+		};
 
 		self.dimensions = {
 			'Type': {
