@@ -8,6 +8,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       bottom: 30,
       left: 10
     };
+  var mainHeight = 270;
   //var height = domain.length * 35 - margin.top - margin.bottom;
   var width = 900 - margin.left - margin.right;
 
@@ -26,6 +27,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
   var pointClass = d=>d.domain;
   var radius = d=>2;
   var highlightFunc = ()=>{};
+  var highlightFunc2 = ()=>{};
   function circle(datum) {
     var g = d3.select(this);
     g.selectAll('circle.' + pointClass(datum))
@@ -84,25 +86,87 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
   }
   ko.bindingHandlers.profileChart = {
     init: function (element, valueAccessor, allBindingsAccessor) {
-      valueAccessor().highlightRecs.subscribe(recs=>highlightFunc(recs));
+      valueAccessor().highlightRecs.subscribe(recs=> {
+        highlightFunc(recs);
+        highlightFunc2(recs);
+      });
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
       var va = valueAccessor();
       categoryScatterPlot(element, va.recs(), 
-                            x, y, tipText, pointClass, pointyLine, //triangle,
-                           null, null, va.ownFilter, jitter);
+                            pointyLine, //triangle,
+                           null, va.zoomFilter);
+      inset(element, va.allRecs, va.recs(), va.zoomFilter);
     }
   };
-  function categoryScatterPlot(element, points, x, y, tipText, 
-                              pointClass,
+  function inset(element, allPoints, filteredPoints, zoomFilter) {
+    var insetWidth = (width + margin.left + margin.right) * .3
+    var insetHeight = (mainHeight + margin.top + margin.bottom) * .3;
+    var ixScale = d3.scale.linear()
+                    .range([5,insetWidth])
+                    .domain([d3.min(allPoints.map(x)), d3.max(allPoints.map(endX))]);
+    var categories = _.chain(allPoints).map(y).uniq().value();
+    var iyScale = d3.scale.ordinal().rangePoints([insetHeight, 5])
+                                    .domain(categories.sort().reverse());
+    var svg = d3.select(element).append("svg")
+      .attr("class", "inset")
+      .attr("width", insetWidth + 10)
+      .attr("height", insetHeight + 10)
+      .style('position','absolute') // the main svg is centered in div so this
+      .style('right', margin.right) // doesn't line up the right edges like I wanted
+    var points = svg.selectAll("rect")
+      .data(allPoints);
+    points.exit().remove();
+    points
+      .enter()
+      .append("rect")
+    svg.selectAll("rect")
+      .attr("x", (d,i) => ixScale(x(d)))
+      .attr("y", (d,i) => iyScale(y(d)))
+      .attr('class', function (d) {
+        return pointClass(d);
+      })
+      .attr('width', 1)
+      .attr('height', 1)
+      .classed('filteredout', d => {
+        return allPoints.length != filteredPoints.length && !_.find(filteredPoints, d)
+      });
+    if (zoomFilter()) {
+      var zoomDays = zoomFilter()[1] - zoomFilter()[0];
+      var insetZoom = svg
+			 .selectAll('rect.insetZoom')
+			 .data([{x: ixScale(zoomFilter()[0]), 
+			         width: ixScale(zoomDays) - ixScale(0)}])
+			 .enter()
+                         .append('rect')
+                         .attr('class', 'insetZoom')
+			 .attr('x', d=>d.x)
+			 .attr('width', d=>d.width)
+			 .attr('y', 5)
+			 .attr('height', insetHeight)
+      var drag = d3.behavior.drag();
+      insetZoom.call(drag);
+      drag.on('drag', function(d) {
+      	d.x += d3.event.dx;
+	insetZoom.attr('x', d.x);
+      });
+      drag.on('dragend', function(d) {
+      	var x = ixScale.invert(d.x);
+	zoomFilter([x, x + zoomDays]);
+      });
+    }
+    highlightFunc2 = function(recs) {
+      points.classed('highlighted', d => _.find(recs,d));
+    }
+  }
+  function categoryScatterPlot(element, points, 
                               pointFunc,
-                              verticalLines, highlighPoints,
-                              ownFilter, jitter
-			      ) {
+                              verticalLines, 
+                              zoomFilter
+                              ) {
     /* verticleLines: [{xpos, color},...] */
     var categories = _.chain(points).map(y).uniq().value();
     //var mainHeight = categories.length * catLineHeight;
-    var mainHeight = 300;
     var yScale = d3.scale.ordinal().rangePoints([mainHeight * .9, mainHeight * .1]);
 
     xScale.domain([d3.min(points.map(x)), d3.max(points.map(endX))]);
@@ -146,14 +210,14 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       .on("brush", brushed)
       .on("brushend", function() {
         if (brush.empty()) {
-	  console.log(`empty brush setting ownFilter to null`);
-          ownFilter(null);
+          console.log(`empty brush setting zoomFilter to null`);
+          zoomFilter(null);
         } else {
-	  console.log(`brush ${brush.extent().join(',')} setting ownFilter to ${brush.extent()}`);
-          ownFilter(brush.extent());
+          console.log(`brush ${brush.extent().join(',')} setting zoomFilter to ${brush.extent()}`);
+          zoomFilter(brush.extent());
         }
-        //ownFilter.notifySubscribers();
-	//holdBrushExtent(brush.extent());
+        //zoomFilter.notifySubscribers();
+        //holdBrushExtent(brush.extent());
       });
 
     var focusTip = d3.tip()
@@ -203,52 +267,52 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       var label_array = points.map((d,i)=>{
         d.x = xScale(x(d)) + jitter(i).x;
         d.y = yScale(y(d)) + jitter(i).y;
-	d.r = 8;
+        d.r = 8;
         return {
-	  x: xScale(x(d)) + jitter(i).x,
-	  y: yScale(y(d)) + jitter(i).y,
-	  name: tipText(d),
-	  width: 0, height: 0,
-	  rec: d,
-	};
+          x: xScale(x(d)) + jitter(i).x,
+          y: yScale(y(d)) + jitter(i).y,
+          name: tipText(d),
+          width: 0, height: 0,
+          rec: d,
+        };
       });
       var labels = focus.selectAll('.labels')
                      .data(label_array)
-		     .enter()
-		     .append('text')
-		     .attr('class','label')
-		     .attr('text-anchor','start')
-		     .text(d=>d.name)
-		     .attr('x', d=>d.x)
-		     .attr('y', d=>d.y)
-		     .attr('fill','black');
+                     .enter()
+                     .append('text')
+                     .attr('class','label')
+                     .attr('text-anchor','start')
+                     .text(d=>d.name)
+                     .attr('x', d=>d.x)
+                     .attr('y', d=>d.y)
+                     .attr('fill','black');
       var index=0;
       labels.each(function() {
         label_array[index].width = this.getBBox().width;
         label_array[index].height = this.getBBox().height;
-	index += 1;
+        index += 1;
       });
       var links = focus.selectAll('.link')
                        .data(label_array)
-		       .enter()
-		       .append('line')
-		       .attr('class','link')
-		       .attr('x1', d=>d.x)
-		       .attr('y1', d=>d.y)
-		       .attr('x2', d=>d.x)
-		       .attr('y2', d=>d.y)
+                       .enter()
+                       .append('line')
+                       .attr('class','link')
+                       .attr('x1', d=>d.x)
+                       .attr('y1', d=>d.y)
+                       .attr('x2', d=>d.x)
+                       .attr('y2', d=>d.y)
       var sim_ann = d3.labeler()
                       .label(label_array)
-		      .anchor(points)
-		      .width(width)
-		      .height(mainHeight)
-		      .start(2000)
+                      .anchor(points)
+                      .width(width)
+                      .height(mainHeight)
+                      .start(2000)
       labels.transition().duration(2000)
             .attr('x', d=>d.x)
-	    .attr('y', d=>d.y)
+            .attr('y', d=>d.y)
       links.transition().duration(2000)
             .attr('x2', d=>d.x)
-	    .attr('y2', d=>d.y)
+            .attr('y2', d=>d.y)
     }
 
     focus.append("g")
@@ -264,19 +328,19 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       .attr("height", mainHeight + 7);
     highlightFunc = function(recs) {
       if (recs.length === 0) {
-      	pointGs.classed('highlighted', false);
-      	pointGs.classed('unhighlighted', false);
-      	labels && labels.classed('highlighted', false);
-      	labels && labels.classed('unhighlighted', false);
-      	links && links.classed('highlighted', false);
-      	links && links.classed('unhighlighted', false);
+        pointGs.classed('highlighted', false);
+        pointGs.classed('unhighlighted', false);
+        labels && labels.classed('highlighted', false);
+        labels && labels.classed('unhighlighted', false);
+        links && links.classed('highlighted', false);
+        links && links.classed('unhighlighted', false);
       } else {
-      	pointGs.classed('highlighted', d => _.find(recs,d));
-      	pointGs.classed('unhighlighted', d => !_.find(recs,d));
-      	labels && labels.classed('highlighted', d => _.find(recs,d.rec));
-      	labels && labels.classed('unhighlighted', d => !_.find(recs,d.rec));
-      	links && links.classed('highlighted', d => _.find(recs,d.rec));
-      	links && links.classed('unhighlighted', d => !_.find(recs,d.rec));
+        pointGs.classed('highlighted', d => _.find(recs,d));
+        pointGs.classed('unhighlighted', d => !_.find(recs,d));
+        labels && labels.classed('highlighted', d => _.find(recs,d.rec));
+        labels && labels.classed('unhighlighted', d => !_.find(recs,d.rec));
+        links && links.classed('highlighted', d => _.find(recs,d.rec));
+        links && links.classed('unhighlighted', d => !_.find(recs,d.rec));
       }
     };
     console.log('profileChart just drew');

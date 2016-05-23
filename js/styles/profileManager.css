@@ -168,3 +168,23 @@ text.highlighted {
 .unhighlighted {
   opacity: 0.1;
 }
+svg.inset {
+  background-color: white;
+  border: 1px solid gray;
+}
+svg.inset rect {
+  fill: black;
+}
+svg.inset rect.highlighted {
+  fill: orangered !important;
+  width: 3px;
+  height: 3px;
+  rx: 1;
+  ry: 1;
+}
+svg.inset rect.insetZoom {
+  opacity: 0.2;
+}
+svg.inset rect.filteredout {
+  fill: lightgray;
+}
