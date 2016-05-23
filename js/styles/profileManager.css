@@ -184,6 +184,7 @@ svg.inset rect.highlighted {
 }
 svg.inset rect.insetZoom {
   opacity: 0.2;
+  cursor: -webkit-grab;
 }
 svg.inset rect.filteredout {
   fill: lightgray;

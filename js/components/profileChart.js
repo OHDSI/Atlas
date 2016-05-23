@@ -96,7 +96,8 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       categoryScatterPlot(element, va.recs(), 
                             pointyLine, //triangle,
                            null, va.zoomFilter);
-      inset(element, va.allRecs, va.recs(), va.zoomFilter);
+      if (va.allRecs.length != va.recs().length)
+        inset(element, va.allRecs, va.recs(), va.zoomFilter);
     }
   };
   function inset(element, allPoints, filteredPoints, zoomFilter) {
@@ -129,7 +130,8 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       .attr('width', 1)
       .attr('height', 1)
       .classed('filteredout', d => {
-        return allPoints.length != filteredPoints.length && !_.find(filteredPoints, d)
+        //return allPoints.length != filteredPoints.length && !_.find(filteredPoints, d)
+        return !_.find(filteredPoints, d)
       });
     if (zoomFilter()) {
       var zoomDays = zoomFilter()[1] - zoomFilter()[0];
@@ -148,10 +150,12 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       insetZoom.call(drag);
       drag.on('drag', function(d) {
       	d.x += d3.event.dx;
-	insetZoom.attr('x', d.x);
+	insetZoom.attr('x', d.x)
+	         //.style('cursor', '-webkit-grabbing') doesn't work
       });
       drag.on('dragend', function(d) {
       	var x = ixScale.invert(d.x);
+	//insetZoom.style('cursor', '-webkit-grab')
 	zoomFilter([x, x + zoomDays]);
       });
     }
