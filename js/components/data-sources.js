@@ -184,10 +184,9 @@ define([
 		self.setDatasource = function (data) {
 
 			self.datasource(data);
-			self.loadDashboard();
-
+			self.setReport(self.datasourceReport());
 			document.location = '#/datasources/' + data.name + '/' + self.datasourceReport().id;
-			//document.location = '#/datasources/' + data.name + '/dashboard';
+
 		}
 
 		self.setReportView = function (viewName) {
