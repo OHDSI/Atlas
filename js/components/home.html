@@ -23,19 +23,34 @@
 		<h4>Release Notes</h4>
 
 		<div>
-			Version 1.0 Current Release Notes
+			ATLAS Version 1.0.1 Current Release Notes
 			<ul>
-				<li>Integrated Data Source Characterization (project achilles)</li>
-				<li>Integrated Cohort Definitions (project circe)</li>
-				<li>Integrated Cohort Reporting (project heracles)</li>
-				<li>Bug Fixes listed in Additional Details below</li>
+				<li>Fix:  Condition Source Concept filter doesn't work</li>
+				<li>Fix: Error in 'included concepts' and 'included source codes' queries used in ConceptSetExpressions</li>
+				<li>Fix: Measurement report for datasources not showing details.</li>
 			</ul>
+		</div>
+
+		<div>
+			WebAPI Version 1.1.1 Current Release Notes
+			<ul>
+				<li>Fix: Slow performance of Codeset query on PDW</li>
+				<li>Fix: Death cohort criteria not finding events when death_concept_id is null.</li>
+				<li>Feature: Export concept sets to Zipped CSV</li>
+				<li>Feature: source service refresh route</li>
+			</ul>
+		</div>
+		
+		<div style="padding-bottom: 10px;">
+			<div><a href="https://github.com/OHDSI/Atlas/releases">Prior Atlas releases</a></div>
+			<div><a href="https://github.com/OHDSI/WebAPI/releases">Prior WebAPI releases</a></div>
 		</div>
 
 		<div>
 			Additional Details:
 			<br/> This latest release contains <strong data-bind="text:github_status().length"></strong> feature enhancements and issue resolutions.
 		</div>
+		
 		<div class="github-issue-container" data-bind="foreach:github_status">
 			<div class="github-issue">
 				<a target="_blank" data-bind="attr:{href: html_url, title: title}, text:title"></a>
