@@ -186,6 +186,11 @@ svg.inset rect.insetZoom {
   opacity: 0.2;
   cursor: -webkit-grab;
 }
+svg.inset rect.resizeLeft, 
+svg.inset rect.resizeRight {
+  opacity: 0;
+  cursor: ew-resize;
+}
 svg.inset rect.filteredout {
   fill: lightgray;
 }

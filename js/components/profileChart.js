@@ -133,34 +133,85 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
         //return allPoints.length != filteredPoints.length && !_.find(filteredPoints, d)
         return !_.find(filteredPoints, d)
       });
+    highlightFunc2 = function(recs) {
+      points.classed('highlighted', d => _.find(recs,d));
+    }
     if (zoomFilter()) {
       var zoomDays = zoomFilter()[1] - zoomFilter()[0];
+      var edges = [{x: ixScale(zoomFilter()[0]), 
+                    width: ixScale(zoomDays) - ixScale(0)}];
+      console.log(zoomFilter(), zoomDays, edges);
       var insetZoom = svg
-			 .selectAll('rect.insetZoom')
-			 .data([{x: ixScale(zoomFilter()[0]), 
-			         width: ixScale(zoomDays) - ixScale(0)}])
-			 .enter()
-                         .append('rect')
-                         .attr('class', 'insetZoom')
-			 .attr('x', d=>d.x)
-			 .attr('width', d=>d.width)
-			 .attr('y', 5)
-			 .attr('height', insetHeight)
+        .selectAll('rect.insetZoom')
+        .data(edges)
+        .enter()
+           .append('rect')
+           .attr('class', 'insetZoom')
+        .attr('x', d=>d.x)
+        .attr('width', d=>d.width)
+        .attr('y', 5)
+        .attr('height', insetHeight)
       var drag = d3.behavior.drag();
       insetZoom.call(drag);
       drag.on('drag', function(d) {
-      	d.x += d3.event.dx;
-	insetZoom.attr('x', d.x)
-	         //.style('cursor', '-webkit-grabbing') doesn't work
+        d.x += d3.event.dx;
+        insetZoom.attr('x', d.x)
+        //.style('cursor', '-webkit-grabbing') doesn't work
       });
       drag.on('dragend', function(d) {
-      	var x = ixScale.invert(d.x);
-	//insetZoom.style('cursor', '-webkit-grab')
-	zoomFilter([x, x + zoomDays]);
+        var x = ixScale.invert(d.x);
+        //insetZoom.style('cursor', '-webkit-grab')
+        zoomFilter([x, x + zoomDays]);
       });
-    }
-    highlightFunc2 = function(recs) {
-      points.classed('highlighted', d => _.find(recs,d));
+
+      var resizeLeft = svg
+        .selectAll('rect.resizeLeft')
+        .data(edges)
+        .enter()
+          .append('rect')
+          .attr('class', 'resizeLeft')
+        .attr('x', d=>d.x - 3)
+        .attr('width', 6)
+        .attr('y', 5)
+        .attr('height', insetHeight)
+      var resizeLeftDrag = d3.behavior.drag();
+      resizeLeft.call(resizeLeftDrag);
+      resizeLeftDrag.on('drag', function(d) {
+        d.x += d3.event.dx;
+        d.width -= d3.event.dx;
+        console.log(d);
+        resizeLeft.attr('x', d.x - 3)
+        insetZoom.attr('x', d.x)
+                 .attr('width', d.width)
+      });
+      resizeLeftDrag.on('dragend', function(d) {
+        var x = ixScale.invert(d.x);
+        //insetZoom.style('cursor', '-webkit-grab')
+        zoomFilter([x, zoomFilter()[1]]);
+      });
+
+      var resizeRight = svg
+        .selectAll('rect.resizeRight')
+        .data(edges)
+        .enter()
+          .append('rect')
+          .attr('class', 'resizeRight')
+        .attr('x', d=>d.x + d.width - 3)
+        .attr('width', 6)
+        .attr('y', 5)
+        .attr('height', insetHeight)
+      var resizeRightDrag = d3.behavior.drag();
+      resizeRight.call(resizeRightDrag);
+      resizeRightDrag.on('drag', function(d) {
+        d.width += d3.event.dx;
+        console.log(d);
+        resizeRight.attr('x', d.x + d.width - 3)
+        insetZoom.attr('width', d.width)
+      });
+      resizeRightDrag.on('dragend', function(d) {
+        var width = ixScale.invert(d.width) - ixScale.invert(0);
+        zoomFilter([zoomFilter()[0], zoomFilter()[0] + width]);
+      });
     }
   }
   function categoryScatterPlot(element, points, 
