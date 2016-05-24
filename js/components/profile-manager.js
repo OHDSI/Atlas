@@ -115,7 +115,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						words.forEach(word=>{
 							word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 20)) + '%';
 						});
-						console.log(words.map(d=>d.text + ':' + d.recs.length + ':' +  d.size));
+						//console.log(words.map(d=>d.text + ':' + d.recs.length + ':' +  d.size));
 						return words;
 					},
 			},
