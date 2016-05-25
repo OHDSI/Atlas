@@ -153,8 +153,11 @@ rect.dim {
 }
 .wordcloud span {
   background-color: #DDD;
-  margin: 1px;
+  margin: 2px;
   padding: 2px;
+  border-radius: 5px;
+  display: inline-block;
+  cursor: pointer;
 }
 .highlighted path, .highlighted line {
   opacity: 1;

@@ -4,18 +4,19 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
   var catLineHeight = 38;
   var margin = {
       top: 0,
-      right: 10,
+      right: 0,
       bottom: 30,
-      left: 10
+      left: 0
     };
   var vizHeight = 270;
-  var categoryBandHeight = categoryCount => vizHeight / categoryCount;
-  var categoryPos = categoryIdx => margin.top + categoryBandHeight * categoryIdx + categoryBandHeight * 1/2;
+  //var categoryBandHeight = categoryCount => vizHeight / categoryCount;
+  //var categoryPos = categoryIdx => margin.top + categoryBandHeight * categoryIdx + categoryBandHeight * 1/2;
   //var mainHeight = 270;
   //var height = category.length * 35 - margin.top - margin.bottom;
-  var width = 900 - margin.left - margin.right;
+  var minWidth = 900;
+  var width = minWidth - margin.left - margin.right;
 
-  var xScale = d3.scale.linear().range([0, width]);
+  var xScale = d3.scale.linear();
   function relativeXscale(x) {
     return xScale(x) - xScale(0);
   }
@@ -41,6 +42,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       });
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
+      width = Math.max(minWidth, element.offsetWidth - margin.left - margin.right);
       var va = valueAccessor();
       categoryScatterPlot(element, va.recs(), 
                             pointyLine, //triangle,
@@ -68,8 +70,10 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
     $(element).empty();
 
     var svg = d3.select(element).append("svg")
-      .attr("width", width + margin.left + margin.right)
+      .attr("width", width)
+      //.attr("width", width + margin.left + margin.right)
       .attr("height", vizHeight + margin.top + margin.bottom);
+    xScale.range([0, width]);
 
     var focus = svg.append("g")
       //.attr("class", "focus")
