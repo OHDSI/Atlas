@@ -117,6 +117,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
         //holdBrushExtent(brush.extent());
       });
 
+    /*
     var focusTip = d3.tip()
       .attr('class', 'd3-tip')
       .offset([-10, 0])
@@ -125,6 +126,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       });
 
     svg.call(focusTip);
+    */
 
     var letterSpacingScale = d3.scale.log()
           .domain([.8,20])
@@ -170,13 +172,15 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
         return pointClass(d);
       })
       .classed('point', true)
+      .each(pointFunc);
+      /*
       .on('mouseover', function (d) {
         focusTip.show(d);
       })
       .on('mouseout', function (d) {
         focusTip.hide(d);
       })
-      .each(pointFunc);
+      */
 
 
     if (points.length <= 50) {
