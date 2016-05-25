@@ -20,6 +20,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
   function relativeXscale(x) {
     return xScale(x) - xScale(0);
   }
+  var yScale = d3.scale.ordinal();
   var x = d=>{
     if (!d) debugger;
     //return d.startDate;
@@ -44,10 +45,9 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
     update: function (element, valueAccessor, allBindingsAccessor) {
       width = Math.max(minWidth, element.offsetWidth - margin.left - margin.right);
       var va = valueAccessor();
-      console.log(width, va.showing());
       if (va.showing()) {
         categoryScatterPlot(element, va.recs(), 
-                            pointyLine, //triangle,
+                            rectangle,
                            null, va.zoomFilter);
         if (va.allRecs.length != va.recs().length)
          inset(element, va.allRecs, va.recs(), va.zoomFilter);
@@ -65,10 +65,8 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
     xScale.domain([d3.min(points.map(x)), d3.max(points.map(endX))]);
 
     var categories = _.chain(points).map(y).uniq().value();
-    var yScale = d3.scale.ordinal()
-                   .domain(categories.sort())
-                   .rangeRoundBands([margin.top, vizHeight + margin.top], .1);
-                   //.rangeRoundBands([margin.top + vizHeight/categories.length/2, vizHeight + margin.top - vizHeight/categories.length/2], .1);
+    yScale.domain(categories.sort())
+          .rangeRoundBands([margin.top, vizHeight + margin.top], .1);
 
     $(element).empty();
 
@@ -89,7 +87,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       focus.selectAll('g.point')
         .attr("transform", function(d,i) {
           return "translate(" + (xScale(x(d)) + jitter(i).x) + "," + 
-                                (yScale(y(d)) + yScale.rangeBand()/2 + jitter(i).y) +")";
+                                (yScale(y(d)) + jitter(i).y) +")";
         })
       //var member = self.members()[self.currentMemberIndex];
       focus.selectAll("line.index")  // not drawing vertLines right now
@@ -153,7 +151,6 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
           .style('letter-spacing', function(d) {
             var ratio = width / this.getBBox().width;
             var ls = letterSpacingScale(ratio);
-            console.log(ratio, ls);
             return ls + 'em';
           });
 
@@ -167,7 +164,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
     focus.selectAll("g.point")
       .attr("transform", function(d,i) {
         return "translate(" + (xScale(x(d)) + jitter(i).x) + "," + 
-                              (yScale(y(d)) + yScale.rangeBand()/2 + jitter(i).y) +")";
+                              (yScale(y(d)) + jitter(i).y) +")";
       })
       .attr('class', function (d) {
         return pointClass(d);
@@ -186,7 +183,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       // labeler usage from https://github.com/tinker10/D3-Labeler demo
       var label_array = points.map((d,i)=>{
         d.x = xScale(x(d)) + jitter(i).x;
-        d.y = yScale(y(d)) + yScale.rangeBand()/2 + jitter(i).y;
+        d.y = yScale(y(d)) + jitter(i).y;
         d.r = 8;
         return {
           x: d.x,
@@ -396,6 +393,26 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       .attr('r', radius(datum))
       //.attr('fill', 'blue');
   }
+  function rectangle(datum) {
+    var minBoxPix = 4;
+    var g = d3.select(this);
+    g.selectAll('rect.point.' + pointClass(datum))
+      .data([datum])
+      .enter()
+      .append('rect')
+        .classed('point', true)
+        .classed(pointClass(datum), true);
+    g.selectAll('rect.point.' + pointClass(datum))
+      .attr('height', minBoxPix)
+      .attr('width', function(d) {
+        var days = Math.max(d.endDay-d.startDay, 1);
+        var length = Math.max(minBoxPix, relativeXscale(days));
+        if (isNaN(length)) debugger;
+        return length;
+      })
+      .attr('x', -minBoxPix / 2)
+      .attr('y', -minBoxPix / 2)
+  }
   function triangle(datum) {
     var g = d3.select(this);
     g.selectAll('path.' + pointClass(datum))
@@ -436,9 +453,10 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
         .classed(pointClass(datum), true);
   }
   var jitterOffsets = []; // keep them stable as points move around
+  var jitterYScale = d3.scale.linear().domain([-.5,.5]);
   function jitter(i, maxX=6, maxY=12) {
-    jitterOffsets[i] = jitterOffsets[i] || 
-      { x: (Math.random() - .5) * maxX, y: (Math.random() - .5) * maxY };
-    return jitterOffsets[i];
+    jitterYScale.range([yScale.rangeBand() * .1, yScale.rangeBand() * .9]);
+    jitterOffsets[i] = jitterOffsets[i] || [Math.random() - .5, Math.random() - .5];
+    return { x: jitterOffsets[i][0] * maxX, y: jitterYScale(jitterOffsets[i][1]) };
   }
 });

@@ -49,6 +49,9 @@ path.death {
   opacity:0.6;
 }
 
+rect.point {
+  opacity: 0.5;
+}
 rect.drug,
 text.drug
 {
@@ -159,8 +162,8 @@ rect.dim {
   display: inline-block;
   cursor: pointer;
 }
-.highlighted path, .highlighted line {
-  opacity: 1;
+.highlighted path, .highlighted line, .highlighted rect {
+  /*opacity: 1;*/
   stroke: black;
   stroke-opacity: .6;
 }
