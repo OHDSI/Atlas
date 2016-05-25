@@ -66,7 +66,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 
     var categories = _.chain(points).map(y).uniq().value();
     yScale.domain(categories.sort())
-          .rangeRoundBands([margin.top, vizHeight + margin.top], .1);
+          .rangeRoundBands([margin.top, vizHeight + margin.top], .04);
 
     $(element).empty();
 
@@ -269,10 +269,10 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
     */
   }
   function inset(element, allPoints, filteredPoints, zoomFilter) {
-    var insetWidth = (width + margin.left + margin.right) * .3
-    var insetHeight = (vizHeight + margin.top + margin.bottom) * .3;
+    var insetWidth = (width + margin.left + margin.right) * .15
+    var insetHeight = (vizHeight + margin.top + margin.bottom) * .15;
     var ixScale = d3.scale.linear()
-                    .range([5,insetWidth])
+                    .range([5,insetWidth - 5])
                     .domain([d3.min(allPoints.map(x)), d3.max(allPoints.map(endX))]);
     var categories = _.chain(allPoints).map(y).uniq().value();
     var iyScale = d3.scale.ordinal().rangePoints([5, insetHeight])
@@ -302,7 +302,8 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
         return !_.find(filteredPoints, d)
       });
     highlightFunc2 = function(recs) {
-      points.classed('highlighted', d => _.find(recs,d));
+      points.classed('highlighted', d => _.find(recs,d))
+            .attr('transform', d => _.find(recs,d) ? 'translate(-1,-1)' : null)
     }
     if (zoomFilter()) {
       var zoomDays = zoomFilter()[1] - zoomFilter()[0];

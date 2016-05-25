@@ -1,4 +1,7 @@
 
+div.#scatter {
+  position: relative;
+}
 
 path.drug {
   fill:rgb(177,89,40);
@@ -185,8 +188,6 @@ svg.inset rect.highlighted {
   fill: orangered !important;
   width: 3px;
   height: 3px;
-  rx: 1;
-  ry: 1;
 }
 svg.inset rect.insetZoom {
   opacity: 0.2;
