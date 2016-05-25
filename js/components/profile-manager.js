@@ -76,18 +76,20 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		};
 
 		self.dimensions = {
-			'Type': {
-					caption: 'Type',
+			'Domain': {
+					caption: 'Domain',
 					func: d => d.domain,
 					filter: ko.observable(null),
 					Members: [],//ko.observableArray([{Name:'foo', ActiveCount:'bar',Selected:false}]),
 			},
+			/*
 			'Year Start': {
 					caption: 'Year Start',
 					func: d => new Date(d.startDate).getFullYear(),
 					filter: ko.observable(null),
 					Members: [],//ko.observableArray([]),
 			},
+			*/
 			'profileChart': {
 					name: 'profileChart',
 					func: d => d.startDay,
@@ -136,7 +138,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			else 
 				self.highlight([]);
 		});
-		self.facets = ['Type','Year Start'].map(d=>self.dimensions[d]);
+		self.facets = ['Domain'].map(d=>self.dimensions[d]);
 		var reduceToRecs = [ (p,v,nf)=>p.concat(v), (p,v,nf)=>_.without(p,v), ()=>[] ];
 		self.crossfilter(crossfilter([]));
 		_.each(self.dimensions, dim => {
@@ -285,7 +287,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 
 		self.columns = [
 			{
-				title: 'Type',
+				title: 'Domain',
 				data: 'domain'
 			},
 			{
