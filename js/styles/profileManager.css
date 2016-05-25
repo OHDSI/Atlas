@@ -198,5 +198,9 @@ svg.inset rect.filteredout {
   fill: lightgray;
 }
 rect.category {
-  opacity: 0.1;
+  fill: #EEE;
+}
+text.category {
+  fill: white;
+  font-weight: bold;
 }

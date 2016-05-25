@@ -128,6 +128,9 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 
     svg.call(focusTip);
 
+    var letterSpacingScale = d3.scale.log()
+          .domain([.8,20])
+          .range([-.2, 2]);
     focus.selectAll('rect.category')
           .data(categories)
           .enter()
@@ -143,10 +146,16 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
           .attr('class','category')
           .attr('font-size', yScale.rangeBand() * .8)
           .attr('y', d => yScale(d) + yScale.rangeBand() * .8)
-          .attr('fill', 'white')
           .attr('x', width/2)
           .attr('text-anchor', 'middle')
+          .style('letter-spacing', 0)
           .text(d=>d)
+          .style('letter-spacing', function(d) {
+            var ratio = width / this.getBBox().width;
+            var ls = letterSpacingScale(ratio);
+            console.log(ratio, ls);
+            return ls + 'em';
+          });
 
     var pointGs = focus.selectAll("g.point")
       .data(points);
