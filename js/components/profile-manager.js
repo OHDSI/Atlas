@@ -41,6 +41,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		var self = this;
 		window.profileManager = self;
 		self.config = config;
+		self.showing = params.showing;
 		self.services = [params.services];
 		//self.allRecs = ko.observableArray([]);
 		self.loadedProfile = ko.observable();

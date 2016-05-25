@@ -44,11 +44,14 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
     update: function (element, valueAccessor, allBindingsAccessor) {
       width = Math.max(minWidth, element.offsetWidth - margin.left - margin.right);
       var va = valueAccessor();
-      categoryScatterPlot(element, va.recs(), 
+      console.log(width, va.showing());
+      if (va.showing()) {
+        categoryScatterPlot(element, va.recs(), 
                             pointyLine, //triangle,
                            null, va.zoomFilter);
-      if (va.allRecs.length != va.recs().length)
-        inset(element, va.allRecs, va.recs(), va.zoomFilter);
+        if (va.allRecs.length != va.recs().length)
+         inset(element, va.allRecs, va.recs(), va.zoomFilter);
+      }
     }
   };
   function categoryScatterPlot(element, points, 

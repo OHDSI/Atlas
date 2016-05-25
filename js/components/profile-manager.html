@@ -56,6 +56,7 @@
 							zoomFilter:$component.dimensions.profileChart.filter,
 							highlightRecs:$component.highlightRecs,
 							allRecs:$component.crossfilter().all(),
+							showing: $component.showing,
 						}"></div>
 				<div id="wordcloud" data-bind="with:$component.dimensions.wordcloud">
 					<div class="wordcloud" data-bind="foreach:words($component.filteredRecs)">
