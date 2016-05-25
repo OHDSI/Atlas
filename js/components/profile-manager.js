@@ -52,7 +52,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.sourceKey = ko.observable(params.services.sources[0].sourceKey);
 		self.sourceKey('OPTUM-PDW');
 		self.startMember = 1;
-		self.endMember = 10;
+		self.endMember = 100;
 		self.members = ko.observableArray();
 		self.personId = ko.observable();
 		self.cohortPerson = ko.observable();
