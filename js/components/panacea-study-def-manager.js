@@ -92,6 +92,10 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 					method: 'GET',
 					success: function (d) {
 						self.currentStudy(d);
+						self.studyDuration(365);
+						self.switchWindow(60);
+						self.minUnitDays(30);
+						self.minUnitCounts(10);
 						self.show(true);
 					}
 				});

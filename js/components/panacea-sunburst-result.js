@@ -270,29 +270,47 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 				.attr('class', 'pnc-tooltip-label');
 
 			tltpDiv.append('div')
-				.attr('class', 'pnc-tooltip-duration');
+				.attr('class', 'pnc-tooltip-line2');
 			
 			tltpDiv.append('div')
-			    .attr('class', 'unique_path');
+			    .attr('class', 'pnc-tooltip-line3');
 
 			tltpDiv.append('div')
-			    .attr('class', 'from_start');
-
+			    .attr('class', 'pnc-tooltip-line4');
+			
+			tltpDiv.append('div')
+		    	.attr('class', 'pnc-tooltip-line5');
+			
+			tltpDiv.append('div')
+		    	.attr('class', 'pnc-tooltip-line6');
+			
 			path.on('mouseover', function(d) {
 				if(d.comboId !== 'root'){
 					if(!isUniquePath){
-						tltpDiv.select('.pnc-tooltip-label').html(d.conceptName + ":" + d.patientCount + ":" + d.percentage + "%");
+						tltpDiv.select('.pnc-tooltip-label').html(d.conceptName);
+						tltpDiv.select('.pnc-tooltip-line2').html("Patient counts: " + d.patientCount + ". ");
+						tltpDiv.select('.pnc-tooltip-line3').html("Unit patient percentage: " + d.percentage + "%");
+						tltpDiv.select('.pnc-tooltip-line4').html("Duration: " + d.avgDuration + " days.");
+						tltpDiv.select('.pnc-tooltip-line5').html("Gap: " + d.avgGapDay + " days. ");
+						tltpDiv.select('.pnc-tooltip-line6').html("Adherence percentage: " + (100 - d.gapPercent) + "%");
 					}else{
 						//tooltip.select('.pnc-tooltip-label').html(d.uniqueConceptsName + ":" + d.patientCount + ":" + d.percentage + "%");
-						tltpDiv.select('.pnc-tooltip-label').html(d.simpleUniqueConceptName + ":" + d.patientCount + ":" + d.simpleUniqueConceptPercentage + "%");
+//						tltpDiv.select('.pnc-tooltip-label').html(d.simpleUniqueConceptName + ":" + d.patientCount + ":" + d.simpleUniqueConceptPercentage + "%");
+						tltpDiv.select('.pnc-tooltip-label').html(d.simpleUniqueConceptName);
+						tltpDiv.select('.pnc-tooltip-line2').html("Patient counts: " + d.patientCount);
+						tltpDiv.select('.pnc-tooltip-line3').html("Unit patient percentage: " + d.simpleUniqueConceptPercentage + "%");
 					}
-					if(!isUniquePath){
-						tltpDiv.select('.pnc-tooltip-duration').html( d.avgDuration + " days:" + d.avgGapDay + ":" + d.gapPercent + "%");
+//					if(!isUniquePath){
+//						tltpDiv.select('.pnc-tooltip-duration').html( d.avgDuration + " days:" + d.avgGapDay + ":" + d.gapPercent + "%");
 //					tooltip.select('.unique_path').html( "unique count: " + d.uniqueConceptCount);
 //					tltpDiv.select('.from_start').html( "Days from start: " + d.daysFromCohortStart);
-					}
+//					}
 					//tltpDiv.style('display', 'block');
 					tltpDiv.style('visibility', ' visible');
+
+					tltpDiv
+			        .style("top", (d3.event.pageY + 16) + "px")
+			        .style("left", (d3.event.pageX - 200 ) + "px");
 				}
 			});
 

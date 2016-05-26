@@ -30,11 +30,11 @@
 //  left: 130px;
 ////  left: 400px;
   padding: 10px;
-////  position: absolute;
+  position: absolute;
   text-align: center;
 //  top: 95px;
 ////  top: 350px;
-  width: 180px;
+  width: 280px;
   z-index: 10;
 }
 
@@ -43,6 +43,10 @@
   font-size: 12px;
 }
 
+.pnc-tooltip-line2 .pnc-tooltip-line3 .pnc-tooltip-line4 .pnc-tooltip-line5 .pnc-tooltip-line6 {
+  color: black;
+  font-size: 12px;
+}
 .pnc-tooltip-duration {
   color: black;
   font-size: 12px;
