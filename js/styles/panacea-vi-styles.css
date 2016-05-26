@@ -16,9 +16,26 @@
 .clearfix { display: inline-block; }
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
-.main {
-	width: 60%;
+.main, #single-drugs-div {
+	width: 90%;
 	margin: 0 auto 120px;
+}
+.arrow-up {
+  width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid black;
+}
+.arrow-down {
+  width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+}
+.pull-right {
+	float: right;
 }
 /********************/
 #summary-table {
@@ -31,8 +48,34 @@ hr {
 	border-color: hsla(0, 0%, 0%, 0.1);
 }
 h1.table-heading {
-	font-size: 1.5em;
+	font-size: 1.2em;
 	margin: 5px;
+}
+h1.heading {
+	font-size: 1.6em;
+}
+.single-drug-section {
+	padding: 10px 10px;
+	float: left;
+	min-width: 300px;
+	width: 300px;
+	max-width: 300px;
+	margin-right: 20px;
+}
+.cell {
+	display: inline-block;
+	text-align: right;
+	min-width: 20px;
+	max-width: 250px;
+	padding: 5px 10px;
+}
+.cell-red {
+	background: red;
+	display: inline-block;
+	text-align: right;
+	min-width: 20px;
+	max-width: 250px;
+	padding: 5px 10px;
 }
 table td, table th {
 	text-align: left;
@@ -55,6 +98,8 @@ span.muted {
 }
 .big-col {
 	width: 260px;
+	min-width: 260px;
+	max-width: 260px;
 	padding: 0;
 }
 .big-col span {
@@ -62,6 +107,7 @@ span.muted {
 	font-weight: bold;
 }
 td.first-col {
+	min-width: 150px;
 	width: 250px;
 	max-width: 250px;
 }

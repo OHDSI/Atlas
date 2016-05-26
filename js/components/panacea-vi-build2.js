@@ -31,8 +31,7 @@
 	var lightGreen = 'hsla(180, 50%, 40%, 0.5)';
 	
 	//Chen -- pulling var into d3 render function -- start
-	//var mainContainer = d3.select('#main-container');
-
+	//var mainContainer = d3.select('#contents');
 	//var mainContainerXOffset = mainContainer[0][0].getBoundingClientRect().left;
 	//var width = mainContainer.node().getBoundingClientRect().width - 150;
 	//Chen -- pulling var into d3 render function -- end
@@ -59,20 +58,7 @@
 	//d3.json('../jsonWithLength.json', function (err, data) {
 	d3ViModule.d3RenderData = function (data) {
 		//Chen -- pull in all the var into render function -- start
-//		var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-//		var formatPercent = d3.format(',.1%');
-//		var formatNumber = d3.format('.3n');
-//		var white = 'hsla(0, 0%, 100%, 1)';
-//		var veryLightGrey = 'hsla(0, 0%, 95%, 1)';
-//		var lightGrey = 'hsla(0, 0%, 90%, 1)';
-//		var grey = 'hsla(0, 0%, 30%, 1)';
-//		var textDark = 'hsla(0, 0%, 40%, 1)';
-//		var translucentDark = 'hsla(0, 0%, 0%, 0.3)';
-//		var lightGreen = 'hsla(180, 50%, 40%, 0.5)';
-		var mainContainer = d3.select('#main-container');
-
-		var mainContainer = d3.select('#main-container');
-
+		var mainContainer = d3.select('#contents');
 		var mainContainerXOffset = mainContainer[0][0].getBoundingClientRect().left;
 		var width = mainContainer.node().getBoundingClientRect().width - 150;
 
@@ -96,68 +82,16 @@
 		var totalPatients = parseInt(data.totalCohortCount);
 		var tableX = makeX(totalPatients, 250);
 		// These are the things that don't get filtered
-		// const allDrugNames = data['children'].map(obj => {
-		// 	let namesArr = [];
-		// 	let allNames = getAllPropertyValues(obj, namesArr, 'conceptName');
-		// 	return allNames;
-		// }).reduce((acc, arr) => {
-		// 	return acc.concat(arr);
-		// }, []);
-		// const uniqueDrugNames = _.uniq(allDrugNames);
-		// const treatmentArray = _.sortBy(uniqueDrugNames.map(drugGroup => {
-		// 		return {
-		// 			treatment: drugGroup,
-		// 			length: drugGroup.split(',').length
-		// 		}
-		// 	}), 'length');
-		// drawDrugNames(treatmentArray, namesContainer);
-		// These are the things that do get filtered
-		// const allPatients = data['children'].map(obj => {
-		// 	let patientArr = [];
-		// 	let allPatients = getFirsts(obj, patientArr, 'patientCount');
-		// 	return allPatients;
-		// });
+		const allDrugNames = _.chain(data['children'])
+			.map(obj => {
+				let namesArr = [];
+				let allNames = getAllPropertyValues(obj, namesArr, 'conceptName');
+				return allNames;
+			}).reduce(function(acc, arr) {return acc.concat(arr);}
+			, [])
+			.uniq()
+			.value();
 
-		// const allTimes = data['children'].map(obj => {
-		// 	let timeArr = [];
-		// 	let allTimes = getAllPropertyValues(obj, timeArr, 'avgDuration');
-		// 	return allTimes;
-		// });
-		// const maxTime = d3.max(addUpFromArr(allTimes));
-		// y.domain([0, 1000]);
-		// const yAxis = d3.svg.axis()
-		//        .orient('bottom')
-		//        .ticks(5)
-		//        .scale(y);
-		// drugBarsZone.append('g')
-		//     .attr({
-		//     	class: 'y-axis', // look for styles in css
-		//     	transform: 'translate(-15, 0) rotate(90)'
-		//     })
-		//     .call(yAxis);
-		//    drugBarsZone.append('text')
-		//    	.attr({
-		// 		transform: 'translate(' + (width/2) + ', ' + (height) + ')'
-		// 	})
-		// 	.style({
-		// 		'font-size': '14px',
-		// 		fill: textDark,
-		// 		'text-anchor': 'middle'
-		// 	})
-		// 	.text('% Patients on Therapy');
-		// drugBarsZone.append('text')
-		//    	.attr({
-		// 		transform: 'translate(' + (-55) + ', ' + (innerHeight/2) + ') rotate(90)'
-		// 	})
-		// 	.style({
-		// 		'font-size': '14px',
-		// 		fill: textDark,
-		// 		'text-anchor': 'middle'
-		// 	})
-		// 	.text('Number of Days on Therapy');
-		// const x = makeX(totalPatients);
-
-		// var dataWithRunningTotals = sendDataToTree(data, totalPatients);
 		var allData = {
 			header: 'Total Cohort',
 			patientCount: totalPatients
@@ -170,10 +104,13 @@
 		var greaterThanArrays = _.map(maxNumberArray, function (num) {
 			return [];
 		});
+		var equalToOneArrays = _.map(maxNumberArray, function (num) {
+			return [];
+		});
 		var numberOfDrugsTakenCollection = _.map(maxNumberArray, function (index) {
 			var lengthOfInterest = index + 1;
-			var greaterThanOrEqualToCollection = processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getValuesGreaterThanOrEqualToX, 'Patients Who Took At Least ', greaterThanArrays[index], 'conceptName');
-			var equalToCollection = processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getValuesEqualToX, 'Patients Who Took Exactly ', equalToArrays[index], 'conceptName');
+			var greaterThanOrEqualToCollection = processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getValuesGreaterThanOrEqualToX, 'Patients Who Took At Least ', greaterThanArrays[index], 'uniqueConceptsArray', 'conceptName', false);
+			var equalToCollection = processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getValuesEqualToX, 'Patients Who Took Exactly ', equalToArrays[index], 'uniqueConceptsArray', 'conceptName', false);
 			return [{
 				greaterThanOrEqualToCollection: greaterThanOrEqualToCollection,
 				equalToCollection: equalToCollection
@@ -197,29 +134,21 @@
 			});
 		});
 		// Create the first two tables
+		mainContainer.append('hr');
+		mainContainer.append('h1').attr('class', 'heading').text('Distribution by Number of Drugs Taken');
 		var firstTwoTableCollections = [tableCollection[0], tableCollection[1]];
 		_.forEach(firstTwoTableCollections, function (collection, index) {
-			var collectionType = function collectionType() {
-				if (index === 0) {
-					mainContainer.append('h1').attr('class', 'table-heading').text('At Least Breakdown');
-				}
-				if (index === 1) {
-					mainContainer.append('h1').attr('class', 'table-heading').text('Exactly Breakdown');
-				}
-			};
-			mainContainer.append('hr');
-			collectionType();
-			drawTable(mainContainer, collection, tableX, 5);
+			drawTable(mainContainer, collection, tableX, 5, null);
 		});
 		// Create the third table for medications by getting the equalToCollection from the tableCollection
 		// and the first object from that array (as the ones for just one drug) then getting the medications from them
 		var tableCollectionArrayLength = _.range(tableCollection[1].length);
-		_.forEach(tableCollectionArrayLength, function (index) {
+		var sortedCollection = _.map(tableCollectionArrayLength, function (index) {
 			var number = index + 1;
 			var drugRegimenCollection = tableCollection[1][index];
 			var groupedDrugRegimenCollection = _.chain(drugRegimenCollection.medications).groupBy('uniqueConcepts').values().value();
 			var reducedDrugRegimenCollection = _.map(groupedDrugRegimenCollection, function (groupedDrugs) {
-				var conceptGroupName = groupedDrugs[0].uniqueConcepts;
+				var conceptGroupName = splitToArrayCapitalizeSort(groupedDrugs[0].uniqueConcepts, ', ').join(', ');
 				var innerPatientCount = reducePropertyValues(groupedDrugs, 'patientCount');
 				var avgTimesToStart = reduceAndWeightPropertyValues(groupedDrugs, 'avgTimeToStart', 'patientCount') / innerPatientCount;
 				var avgDuration = reduceAndWeightPropertyValues(groupedDrugs, 'avgDuration', 'patientCount') / innerPatientCount;
@@ -230,27 +159,281 @@
 				var drops = reduceAndWeightPropertyValues(groupedDrugs, 'drops', 'patientCount') / innerPatientCount;
 				var switches = reduceAndWeightPropertyValues(groupedDrugs, 'switches', 'patientCount') / innerPatientCount;
 				var adds = reduceAndWeightPropertyValues(groupedDrugs, 'adds', 'patientCount') / innerPatientCount;
+				var parent = _.map(groupedDrugs, function (drug) {
+					return drug.parent;
+				})[0];
 				return {
 					conceptGroupName: conceptGroupName,
 					patientCount: [innerPatientCount, formatPercent(innerPatientCount / totalPatients)],
 					avgTimesToStart: formatNumber(avgTimesToStart),
 					avgDuration: parseInt(formatNumber(avgDuration)),
-					avgAdherece: formatPercent(avgAdherence),
+					avgAdherence: formatPercent(avgAdherence),
 					drops: parseInt(formatNumber(drops)),
 					switches: parseInt(formatNumber(switches)),
 					adds: parseInt(formatNumber(adds)),
 					concepts: groupedDrugs[0].concepts,
 					children: children,
-					conceptName: groupedDrugs[0].conceptName
+					conceptName: titleCase(groupedDrugs[0].conceptName.split(',').sort().join(' ')),
+					parent: parent
 				};
 			});
-			var sortedReducedDrugRegimenCollection = _.reverse(_.sortBy(reducedDrugRegimenCollection, function (item) {
-				return item.patientCount[0];
-			}));
-			mainContainer.append('h1').attr('class', 'table-heading').text('Distribution for ' + number + ' Drug Regimen');
-			drawTable(mainContainer, sortedReducedDrugRegimenCollection, tableX, 8);
+			var sortedReducedDrugRegimenCollection = _.chain(reducedDrugRegimenCollection)
+				.groupBy('conceptGroupName')
+				.values()
+				.map(function (group) {
+					var patientCount = _.reduce(group, function (acc, item) {
+						return acc + item.patientCount[0];
+					}, 0);
+					var newObj = {
+						conceptGroupName: group[0].conceptGroupName,
+						patientCount: [patientCount, formatPercent(patientCount / totalPatients)],
+						avgTimesToStart: group[0].avgTimesToStart,
+						avgDuration: group[0].avgDuration,
+						avgAdherence: group[0].avgAdherence,
+						drops: group[0].drops,
+						switches: group[0].switches,
+						adds: group[0].adds,
+						concepts: group[0].concepts,
+						children: group[0].children,
+						conceptName: group[0].conceptName,
+						parent: group[0].parent
+					}
+					return newObj;
+				})
+				.sortBy(function (item) {
+					return item.patientCount[0];
+				})
+				.reverse()
+				.value();
+			mainContainer.append('h1').attr('class', 'heading').text('Distribution for ' + number + ' Drug Regimen');
+			drawTable(mainContainer, sortedReducedDrugRegimenCollection, tableX, 8, null);
 		});
-
+		var detailByIngredient = processSingleDrugs(getSingleDrugs('uniqueConceptsArray', null));
+		var detailByCompleteRegimen = processSingleDrugs(getSingleDrugs('concepts', 1));
+		function getSingleDrugs(type, num) {
+			if (num === null) {
+				var allOfAName = [];
+				processValuesAccordingToFunctionPassedIn(data, totalPatients, num, getValuesOfAName, null, allOfAName, type, 'conceptName', true);
+				return allOfAName;
+			} else {
+				var allEqualToOne = [];
+				processValuesAccordingToFunctionPassedIn(data, totalPatients, num, getValuesEqualToX, null, allEqualToOne, type, 'conceptName', false);
+				return allEqualToOne;
+			}
+		}
+		function processSingleDrugs(getFunc) {
+			var groupedByNameJSON = _.map(_.groupBy(getFunc, 'conceptName'), group => _.groupBy(group, 'conceptName'));
+			var singleDrugs = _.map(groupedByNameJSON, itemGroup => {
+				var item = _.values(itemGroup);
+				var itemNames = _.map(splitToArrayCapitalizeSort(item[0][0]['conceptName'], ','), conceptName => {
+					return conceptName;
+				});
+				var allItems = _.map(itemNames, itemName => {
+					var itemPatientCount = _.reduce(item[0], (acc, curr) => acc + curr.patientCount, 0);
+					var children = _.chain(_.values(itemGroup)[0])
+						.map(function (concept) {
+							if (concept['children']) {
+								return _.sortBy(_.map(concept['children'], child => {
+									var childWithNoRepeatedConceptName = function (child) {
+										var childConcepts = splitToArrayCapitalizeSort(child['conceptName'], ',');
+										var filteredConcepts =  _.chain(childConcepts)
+											.map(function (childConcept) {
+												if (childConcept !== itemName) {
+													return childConcept;
+												}
+											})
+											.filter(function (childConcept) {
+												return childConcept !== undefined;
+											})
+											.value();
+										return filteredConcepts.join(', ');
+									}
+									return {
+										childName: childWithNoRepeatedConceptName(child) === '' ? 'Self' : childWithNoRepeatedConceptName(child),
+										count: child['patientCount']
+									}
+								}), 'count');
+							} else {
+								return {
+									childName: 'No Drugs Taken After',
+									count: 30
+								}
+							}
+						})
+						.flatten()
+						.groupBy('childName')
+						.values()
+						.map(function (group) {
+							var total = _.reduce(group, function (acc, child) {
+								return acc + child.count
+							}, 0);
+							return {
+								childName: group[0]['childName'],
+								count: [total, formatPercent(total/totalPatients)]
+							}
+						})
+						.sortBy(function(concept) {
+							return concept['count'][0]
+						})
+						.reverse()
+						.value();
+					var parents = _.chain(_.values(itemGroup)[0])
+						.map(concept => {
+							if (concept['parentConcept']) {
+								var parentWithNoRepeatedConceptName = function (parent) {
+									var parentConcepts = splitToArrayCapitalizeSort(parent['parentConceptName'], ',');
+									var filteredConcepts =  _.chain(parentConcepts)
+										.map(function (parentConcept) {
+											if (parentConcept !== itemName) {
+												return parentConcept;
+											}
+										})
+										.filter(function (parentConcept) {
+											return parentConcept !== undefined;
+										})
+										.value();
+									return filteredConcepts.join(', ');
+								}
+								return {
+									parentName: parentWithNoRepeatedConceptName(concept['parentConcept']) === '' ? 'Self' : parentWithNoRepeatedConceptName(concept['parentConcept']),
+									count: 70
+								}
+							} else if (concept['parentConcept'] === undefined) {
+								return {
+									parentName: 'No Drugs Taken Before',
+									count: 90
+								}
+							}
+						})
+						.flatten()
+						.compact()
+						.groupBy('parentName')
+						.values()
+						.map(function (group) {
+							var total = _.reduce(group, function (acc, parent) {
+								return acc + parent.count
+							}, 0);
+							return {
+								parentName: group[0]['parentName'],
+								count: [total, formatPercent(total/totalPatients)]
+							}
+						})
+						.sortBy(function(concept) {
+							return concept['count'][0]
+						})
+						.reverse()
+						.value();
+					return {
+						item: {
+							name: itemName,
+							count: itemPatientCount
+						},
+						children: children,
+						parents: parents
+					};
+				});
+				return allItems;
+			});
+			return singleDrugs;
+		}
+		var singleDrugsDiv = d3.select('#single-drugs-div');
+		singleDrugsDiv.append('h1').attr('class', 'heading').text('Detail By Ingredient');
+		detailByIngredient = _.chain(detailByIngredient)
+			.flatten()
+			.groupBy(function (drug) {
+				return drug['item']['name'];
+			})
+			.values()
+			.map(group => {
+				var count = _.reduce(group, (acc, curr) => {
+					return acc + curr['item']['count'];
+				}, 0);
+				var children = _.reduce(group, (acc, curr) => {
+					return acc.concat(curr['children']);
+				}, []);
+				var parents = _.reduce(group, (acc, curr) => {
+					return acc.concat(curr['parents']);
+				}, []);
+				return _.first(_.map(group, item => {
+					return {
+						item: {
+							name: item['item']['name'],
+							count: count
+						},
+						children: children,
+						parents: parents
+					}
+				}))
+			})
+			.sortBy(function (drug) {
+				return drug['item']['count'];
+			})
+			.reverse()
+			.value();
+//		console.log(detailByIngredient)
+		_.forEach(detailByIngredient, data => {
+			var container = singleDrugsDiv.append('div').attr('class', 'clearfix');
+			drawCohortTable(container, data.item, tableX);
+			var innerDiv1 = container.append('div').attr('class', 'single-drug-section');
+			var innerDiv2 = container.append('div').attr('class', 'single-drug-section');
+			drawTable(innerDiv1, data.parents, tableX, 2, 'Drugs Taken Before');
+			drawTable(innerDiv2, data.children, tableX, 2, 'Drugs Taken After');
+		});
+		singleDrugsDiv.append('br');
+		singleDrugsDiv.append('h1').attr('class', 'heading').text('Detail By Complete Regimen');
+		detailByCompleteRegimen = _.chain(detailByCompleteRegimen)
+			.flatten()
+			.groupBy(function (drug) {
+				return drug['item']['name'];
+			})
+			.values()
+			.map(group => {
+				var count = _.reduce(group, (acc, curr) => {
+					return acc + curr['item']['count'];
+				}, 0);
+				var children = _.reduce(group, (acc, curr) => {
+					return acc.concat(curr['children']);
+				}, []);
+				var parents = _.reduce(group, (acc, curr) => {
+					return acc.concat(curr['children']);
+				}, []);
+				return _.first(_.map(group, item => {
+					return {
+						item: {
+							name: item['item']['name'],
+							count: count
+						},
+						children: children,
+						parents: item['parents']
+					}
+				}))
+			})
+			.sortBy(function (drug) {
+				return drug['item']['count'];
+			})
+			.reverse()
+			.value();
+		_.forEach(detailByCompleteRegimen, data => {
+			var container = singleDrugsDiv.append('div').attr('class', 'clearfix');
+			drawCohortTable(container, data.item, tableX);
+			var innerDiv1 = container.append('div').attr('class', 'single-drug-section');
+			var innerDiv2 = container.append('div').attr('class', 'single-drug-section');
+			drawTable(innerDiv1, data.parents, tableX, 2, 'Drugs Taken Before');
+			drawTable(innerDiv2, data.children, tableX, 2, 'Drugs Taken After');
+		});
+		drawSorters();
+		sortTable();
+		function sortTable() {
+			var arrowsUp = document.querySelectorAll('.arrow-up');
+			_.forEach(arrowsUp, arrowUp => {
+				arrowUp.addEventListener('click', function (ev) {
+					var targetIndex = ev.target.classList.contains('col-1') ? 1 : 2;
+					var sortableRows = ev.path[3].querySelectorAll('tr:not(:first-child)');
+					var cells = ev.path[3].querySelectorAll('tr:not(:first-child) td:nth-child(' + targetIndex + ')');
+					console.log(cells);
+				});
+			});
+		}
 		function reduceAndWeightPropertyValues(data, property, prevalenceProperty) {
 			return _.chain(data).map(function (drug) {
 				if (_.isNumber(parseInt(drug[property]))) return parseInt(drug[property]) * parseInt(drug[prevalenceProperty][0]);
@@ -266,143 +449,6 @@
 				return acc + curr;
 			}).value();
 		}
-		// let rects = document.querySelectorAll('g.med-group');
-		// let flattenedDataFromRects = _.map(rects, (rect, i) => {
-		// 	let patientCount = parseInt(rect.getAttribute('patientCount'));
-		// 	let percentage = parseInt(rect.getAttribute('percentage'));
-		// 	let gapPercent = parseInt(rect.getAttribute('gapPercent'));
-		// 	let depth = parseInt(rect.getAttribute('depth'));
-		// 	let conceptName = rect.getAttribute('conceptName');
-		// 	let totalPatients = parseInt(rect.getAttribute('totalPatients'));
-		// 	let avgDuration = parseInt(rect.getAttribute('avgDuration'));
-		// 	let rectXOffset = rect.getBoundingClientRect().left - margin.left;
-		// 	let rectYOffset = rect.getBoundingClientRect().top - margin.top;
-		// 	let obj = {
-		// 		patientCount: patientCount,
-		// 		conceptName: conceptName,
-		// 		avgDuration: avgDuration,
-		// 		depth: depth,
-		// 		percentage: percentage,
-		// 		gapPercent: gapPercent,
-		// 		totalPatients: totalPatients,
-		// 		rectXOffset: rectXOffset,
-		// 		rectYOffset: rectYOffset,
-		// 		index: i
-		// 	}
-		// 	return obj;
-		// });
-		// studyTitle
-		// 	.style({
-		// 		'font-size': '18px'
-		// 	})
-		// 	.text('Atrial Fibrulation')
-		// 	.transition()
-		// 	.delay(250)
-		// 	.duration(500)
-		// 	.style('opacity', 1);
-		// studyDescription
-		// 	.style({
-		// 		'font-size': '16px'
-		// 	})
-		// 	.text('Patients who have had atrial fibrulation.')
-		// 	.transition()
-		// 	.delay(250)
-		// 	.duration(500)
-		// 	.style('opacity', 1);
-		// clearAll(detailsContainerInner, summaryTable, svg);
-		// // drawAllDrugSummary(cohortDetailsText, flattenedDataFromRects, x);
-		// _.forEach(flattenedDataFromRects, (obj, i) => {
-		// 	let firstItems = _.chain(flattenedDataFromRects)
-		// 		.filter(item => {
-		// 			return item.rectXOffset >= obj.rectXOffset &&
-		// 		   		   item.rectXOffset <= obj.rectXOffset + x(obj.patientCount)
-		// 		})
-		// 		.sortBy(item => item.depth)
-		// 		.first()
-		// 		.value();
-		// });
-		// const drugFilters = document.querySelectorAll('div.drug-name');
-		// //TODO!!!
-		// /////////////////
-		// /////////////////
-		// const firstOfTypeClick$ = Rx.Observable.fromEvent(firstSelector, 'click');
-		// const allOfTypeClick$ = Rx.Observable.fromEvent(allSelector, 'click');
-		// const typeClick$ = allOfTypeClick$.merge(firstOfTypeClick$)
-		// 	.map(typeEvent => {
-		// 		console.log(typeEvent);
-		// 	}).subscribe();
-		// const filterClick$ = Rx.Observable.fromEvent(drugFilters, 'click')
-		// 	.map(ev => {
-		// 		let targetText = getTargetText(ev, 1);
-		// 		let fullText = getTargetText(ev, 0);
-		// 		let selectedRects = _.filter(rects, rect => {
-		// 			return rect.childNodes[1].textContent === targetText;
-		// 		});
-		// 		let selectedRectFilterJoins = selectedRects.map((selected, i) => {
-		// 			let targetX = 35 + (i * 80);
-		// 			let targetY = 80;
-		// 			let patientCount = parseInt(selected.getAttribute('patientCount'));
-		// 			let percentage = parseInt(selected.getAttribute('percentage'));
-		// 			let gapPercent = parseInt(selected.getAttribute('gapPercent'));
-		// 			let depth = parseInt(selected.getAttribute('depth'));
-		// 			let conceptName = selected.getAttribute('conceptName');
-		// 			let avgDuration = parseInt(selected.getAttribute('avgDuration'));
-		// 			let rectXOffset = selected.getBoundingClientRect().left - margin.left;
-		// 			let rectYOffset = selected.getBoundingClientRect().top - margin.top;
-		// 			let obj = {
-		// 				filterXOffset: targetX,
-		// 				filterYOffset: targetY,
-		// 				patientCount: patientCount,
-		// 				conceptName: conceptName,
-		// 				avgDuration: avgDuration,
-		// 				depth: depth,
-		// 				percentage: percentage,
-		// 				gapPercent: gapPercent,
-		// 				rectXOffset: rectXOffset,
-		// 				rectYOffset: rectYOffset,
-		// 				index: i
-		// 			}
-		// 			return obj;
-		// 		});
-		// 		clearAll(detailsContainerInner, summaryTable, svg);
-		// 		drawSelectedDrugName(ev, summaryTable, fullText);
-		// 		drawDrugSummary(ev, summaryTable, selectedRectFilterJoins);
-		// 		if (false) {
-		// 			_.forEach(selectedRectFilterJoins, (obj, i) => {
-		// 				drawDrugTooltip(ev, detailsContainerInner, obj, i, x);
-		// 				selectedRects
-		// 					.map(group => group.childNodes[0])
-		// 					.filter(rect => rect.getAttribute('width') !== x(obj.patientCount))
-		// 					.map((rect, index) => {
-		// 						fadeRectColor(rect, targetText, fullText, lightGreen, textDark, true);
-		// 					});
-		// 			});
-		// 		} else {
-		// 			let firstItemsOfTypeArr = [];
-		// 			_.forEach(selectedRectFilterJoins, (obj, i) => {
-		// 				let firstItem =
-		// 					_.chain(selectedRectFilterJoins)
-		// 						.filter((item, i) => {
-		// 							return obj.rectXOffset >= item.rectXOffset && obj.rectXOffset <= item.rectXOffset + x(item.patientCount);
-		// 						})
-		// 						.sortBy(item => item.depth)
-		// 						.first()
-		// 						.value();
-		// 				firstItemsOfTypeArr.push(firstItem);
-		// 			});
-		// 			let uniqueFirstItems = _.uniq(firstItemsOfTypeArr);
-		// 			_.forEach(uniqueFirstItems, (obj, i) => {
-		// 				drawDrugTooltip(ev, detailsContainerInner, obj, i, x);
-		// 				selectedRects
-		// 					.map(group => group.childNodes[0])
-		// 					.filter(rect => rect.getAttribute('width') !== x(obj.patientCount))
-		// 					.map((rect, index) => {
-		// 						fadeRectColor(rect, targetText, fullText, lightGreen, textDark, true);
-		// 					});
-		// 			});
-		// 		}
-		// 	})
-		// 	.subscribe();
 	//Chen
 	//});
 	};
@@ -410,11 +456,13 @@
 	function drawCohortTable(container, data, tableX) {
 		var table = container.append('table').attr({
 			id: 'cohort-table'
+		}).attr({
+			//Chen -- 100%
+			style: 'width:100%'
 		});
 		var tableRow = table.append('tr');
 		drawCohortTableItems(tableRow, data, tableX);
 	}
-
 	function drawCohortTableItems(tableRow, data, tableX) {
 		var values = _.values(data);
 		_.forEach(values, function (item, index) {
@@ -428,21 +476,25 @@
 			}
 		});
 	}
-
-	function drawTable(container, data, tableX, appropriateNumberOfColumns) {
+	function drawTable(container, data, tableX, appropriateNumberOfColumns, tableHeader) {
 		var table = container.append('table').attr({
-			id: 'summary-table'
+			class: 'summary-table' 
+		}).attr({
+			//Chen -- 100% width
+			style: 'width:100%' 
 		});
-		var tableHead = table.append('tr');
-		drawTableHeadItems(tableHead, appropriateNumberOfColumns);
+		var tableHeadRow = table.append('tr');
+		drawTableHeadItems(tableHeadRow, appropriateNumberOfColumns, tableHeader);
 		_.forEach(data, function (item) {
 			var tableRow = table.append('tr');
 			drawTableItems(tableRow, item, tableX, appropriateNumberOfColumns);
 		});
 	}
-
-	function drawTableHeadItems(tableHead, appropriateNumberOfColumns) {
+	function drawTableHeadItems(tableHeadRow, appropriateNumberOfColumns, tableHeader) {
 		var headings = function headings() {
+			if (appropriateNumberOfColumns === 2) {
+				return [tableHeader, 'Count'];
+			}
 			if (appropriateNumberOfColumns === 5) {
 				return ['', 'Patient Count', 'Avg Days to Start', 'Avg Duration', 'Avg Adherence'];
 			}
@@ -451,19 +503,22 @@
 			}
 		};
 		_.forEach(headings(), function (heading) {
-			tableHead.append('th').text(heading);
+			tableHeadRow.append('th').text(heading);
 		});
 	}
-
+	function drawSorters() {
+		d3.selectAll('th:first-of-type')
+			.append('span')
+			.attr('class', 'arrow-up pull-right col-1');
+		d3.selectAll('th:nth-of-type(2)')
+			.append('span')
+			.attr('class', 'arrow-up pull-right col-2');
+	}
 	function drawTableItems(tableRow, data, tableX, appropriateNumberOfColumns) {
 		var values = _.values(data);
 		_.forEach(values, function (item, index) {
 			var medName = function medName() {
-				if (appropriateNumberOfColumns === 8) {
-					return values[0];
-				} else {
-					return values[0];
-				}
+				return values[0];
 			};
 			if (index < appropriateNumberOfColumns) {
 				if (index === 0) {
@@ -489,17 +544,14 @@
 			}
 		});
 	}
-
 	function drawCell(item, tableRow, className) {
 		return tableRow.append('td').attr('class', className);
 	}
-
 	function drawSpan(item, cell, className) {
 		return cell.append('span').attr('class', function () {
 			return className ? className : null;
 		}).text(className === 'muted' ? ' (' + item + ')' : item);
 	}
-
 	function drawSvgAndBar(x, cell, item) {
 		var svg = cell.append('svg').attr({
 			width: x(item),
@@ -511,21 +563,18 @@
 			height: 12
 		});
 	}
-
 	function findMaxNumberOfDrugs(data) {
 		var newArr = [];
 		_.map(data.children, function (item) {
 			return getAllPropertyValues(item, newArr, 'uniqueConceptsArray');
 		});
-
 		var value = _.chain(newArr).map(function (item) {
 			return item.length;
 		}).sortBy().last().value();
 		return value;
 	}
-
-	function processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getFunc, label, arr, property) {
-		var allRelevantData = getAllRelevantData(data, getFunc, lengthOfInterest, arr);
+	function processValuesAccordingToFunctionPassedIn(data, totalPatients, lengthOfInterest, getFunc, label, arr, type, property, isLastUniqueConcept) {
+		var allRelevantData = getAllRelevantData(data, getFunc, lengthOfInterest, arr, type, isLastUniqueConcept);
 		var flattenedRelevantData = getFlattenedReducedValues(allRelevantData, property);
 		var innerTotalPatientCount = _.chain(allRelevantData).map(function (item) {
 			return item.patientCount;
@@ -654,7 +703,8 @@
 				adds: adds,
 				children: item.children,
 				concepts: item.concepts,
-				uniqueConcepts: uniqueConceptNames
+				uniqueConcepts: uniqueConceptNames,
+				parent: item.parent
 			};
 		});
 		return {
@@ -668,14 +718,18 @@
 			medications: medications
 		};
 	}
-
-	function getAllRelevantData(data, getFunc, lengthOfInterest, newArr) {
+	function getAllRelevantData(data, getFunc, lengthOfInterest, newArr, property, isLastUniqueConcept) {
 		var allRelevantData = _.forEach(data.children, function (obj) {
-			getFunc(obj, 'uniqueConceptsArray', lengthOfInterest, newArr);
+			if (isLastUniqueConcept) {
+				var conceptsOfInterest = obj[property];
+				var lastIndexOfInterest = conceptsOfInterest.length - 1;
+				var lastConceptOfInterest = conceptsOfInterest[lastIndexOfInterest];
+				getFunc(obj, property, lastConceptOfInterest, newArr);
+			}
+			getFunc(obj, property, lengthOfInterest, newArr);
 		});
 		return newArr;
 	}
-
 	function getFlattenedReducedValues(data, property) {
 		var flattenedRelevantData = _.chain(data).groupBy(property).map(function (arr) {
 			return _.map(arr, function (item) {
@@ -739,7 +793,6 @@
 		}).value();
 		return flattenedRelevantData;
 	}
-
 	function getValuesGreaterThanOrEqualToX(obj, property, numberOfInterest, arr) {
 		if (Array.isArray(obj)) {
 			_.forEach(obj, function (item) {
@@ -768,7 +821,6 @@
 			}
 		}
 	}
-
 	function getValuesEqualToX(obj, property, numberOfInterest, arr) {
 		if (Array.isArray(obj)) {
 			_.forEach(obj, function (item) {
@@ -797,7 +849,43 @@
 			}
 		}
 	}
-
+	function getValuesOfAName(obj, property, name, arr) {
+		if (Array.isArray(obj)) {
+			_.forEach(obj, function (item) {
+				var conceptsOfInterest = item[property];
+				var lastIndexOfInterest = conceptsOfInterest.length - 1;
+				var lastConceptOfInterest = conceptsOfInterest[lastIndexOfInterest];
+				if (lastIndexOfInterest === name) {
+					arr.push(item);
+					return;
+				} else {
+					getValuesOfAName(item, property, name, arr);
+				}
+			});
+		} else {
+			var objConceptsOfInterest = obj[property];
+			var lastObjIndexOfInterest = objConceptsOfInterest.length - 1;
+			var lastObjConceptOfInterest = objConceptsOfInterest[lastObjIndexOfInterest];
+			if (lastObjConceptOfInterest === name) {
+				arr.push(obj);
+				return;
+			} else {
+				_.forEach(obj.children, function (child) {
+					var childConceptsOfInterest = child[property];
+					var lastChildIndexOfInterest = childConceptsOfInterest.length - 1;
+					var lastChildConceptOfInterest = childConceptsOfInterest[lastChildIndexOfInterest];
+					if (lastChildConceptOfInterest === name) {
+						if (arr) {
+							arr.push(child);
+						}
+						return;
+					} else {
+						getValuesOfAName(child, property, name, arr);
+					}
+				});
+			}
+		}
+	}
 	function getAllPropertyValues(obj, newArr, property) {
 		if (Array.isArray(obj)) {
 			obj.forEach(function (item) {
@@ -822,17 +910,14 @@
 		}
 		return newArr;
 	}
-
 	function makeX(totalPatients, barMaxWidth) {
 		return d3.scale.linear().range([0, barMaxWidth]).domain([0, totalPatients]);
 	}
-
 	function darkenByLength(length) {
 		var alpha = 0.3;
 		var color = 'hsla(180, 50%, 40%,' + length / 1.5 * alpha + ')';
 		return color;
 	}
-
 	function shortenWordByAmount(str, amt) {
 		var strArray = str.split(',');
 		return strArray.map(function (str) {
@@ -841,22 +926,12 @@
 			return acc + ',' + curr;
 		});
 	}
-
-	// function fadeRectColor(rect, targetText, fullText, rectBackground, textColor, show) {
-//	 	let length = fullText.split(',').length;	
-//	 	let gElem = rect.parentNode;
-//	 	rect.style.fill = darkenByLength(length);
-//	 	gElem.childNodes[1].style.fill = textColor;
-//	 	gElem.childNodes[2].style.fill = textColor;
-	// }
-
 	function clearAll(detailsContainerInner, summarySection, svg) {
 		detailsContainerInner.selectAll('*').remove();
 		summarySection.selectAll('*').remove();
 		svg.selectAll('path.link').remove();
 		svg.selectAll('rect.med').style('fill', white);
 	}
-
 	function getTargetText(ev, nodeIndex) {
 		var targetText = void 0;
 		if (ev.target.className === 'drug-name') {
@@ -868,7 +943,6 @@
 		}
 		return targetText;
 	}
-
 	function drawCohortSize(container, data) {
 		var total = _.first(data).totalPatients;
 		container.append('span').attr({
@@ -880,7 +954,6 @@
 		}).text('Cohort Size: ' + total).transition().delay(250).duration(500).style('opacity', 1);
 		container.append('br');
 	}
-
 	function drawCohortBars(data) {
 		var maxBarWidth = 100;
 		var maxBarHeight = 200;
@@ -973,7 +1046,6 @@
 
 		explainSwitchingPatterns(barSvg);
 	}
-
 	function explainSwitchingPatterns(container) {
 		var circle = d3.svg.symbol().type('circle');
 		var legend = container.append('g').attr({
@@ -1034,7 +1106,6 @@
 			'fill': 'transparent',
 			'stroke': 'black'
 		});
-
 		var augmented = legend.append('g').attr({
 			transform: 'translate(125, 58)'
 		});
@@ -1067,7 +1138,26 @@
 			'stroke': lightGreen
 		});
 	}
+	function splitToArrayCapitalizeSort(str, splitter) {
+		return _.chain(str.split(splitter))
+			.map(function (concept) {
+				return titleCase(concept);
+			})
+			.sortBy()
+			.value();
+	}
+	function titleCase(str) {
+		if (str !== undefined) {
+			str = str.toLowerCase().split(' ');      
 
+			for(var i = 0; i < str.length; i++){     
+			  str[i] = str[i].split('');         
+			  str[i][0] = str[i][0].toUpperCase();
+			  str[i] = str[i].join('');           
+			}
+			return str.join(' '); 
+		}                   
+	}
 	function getLineOfTherapyObj(number, data) {
 		var newObj = data.map(function (obj) {
 			if (obj.depth === number - 1) return obj;
@@ -1076,7 +1166,6 @@
 		});
 		return newObj;
 	}
-
 	function getLineOfTherapyTotal(data) {
 		var total = data.map(function (obj) {
 			return obj.patientCount;
@@ -1087,7 +1176,6 @@
 		});
 		return total;
 	}
-
 	function getLineOfTherapyAvgDuration(data) {
 		var total = data.map(function (obj) {
 			return obj.avgDuration;
@@ -1098,7 +1186,6 @@
 		});
 		return total / data.length;
 	}
-
 	function getImmediateChildrenOfGivenItemDepth(data, depth, x) {
 		var lineOfTherapyObjs = getLineOfTherapyObj(depth, data);
 		var nextLineOfTherapyObjs = getLineOfTherapyObj(depth + 1, data);
@@ -1116,7 +1203,6 @@
 		});
 		return children;
 	}
-
 	
 	return d3ViModule;
 }));
