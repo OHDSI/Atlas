@@ -56,7 +56,11 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
                               ) {
     /* verticleLines: [{xpos, color},...] */
 
-    xScale.domain([d3.min(points.map(x)), d3.max(points.map(endX))]);
+    if (zoomFilter()) {
+      xScale.domain(zoomFilter());
+    } else {
+      xScale.domain([d3.min(points.map(x)) - 1, d3.max(points.map(endX)) + 1]);
+    }
 
     var categories = _.chain(points).map(y).uniq().value();
     yScale.domain(categories.sort())
@@ -78,6 +82,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
     var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
     var brushed = function () {
+      /*
       //xScale.domain(brush.empty() ? x2Scale.domain() : brush.extent());
       focus.selectAll('g.point')
         .attr("transform", function(d,i) {
@@ -95,6 +100,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
         })
         .attr('y2', vizHeight)
       focus.select(".x.axis").call(xAxis);
+      */
     }
 
     var brush = d3.svg.brush()
@@ -105,7 +111,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
           //console.log(`empty brush setting zoomFilter to null`);
           zoomFilter(null);
         } else {
-          //console.log(`brush ${brush.extent().join(',')} setting zoomFilter to ${brush.extent()}`);
+          //console.log(`changing zoomFilter from ${zoomFilter()} to ${brush.extent()}`);
           zoomFilter(brush.extent());
         }
         //zoomFilter.notifySubscribers();
