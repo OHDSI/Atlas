@@ -30,6 +30,13 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 
 	var highlightFunc = ()=>{};
 	var highlightFunc2 = ()=>{};
+	var focusTip = d3.tip()
+		.attr('class', 'd3-tip')
+		.offset([-10, 0])
+		.html(function (d) {
+			return tipText(d);
+		});
+
 	ko.bindingHandlers.profileChart = {
 		init: function (element, valueAccessor, allBindingsAccessor) {
 			valueAccessor().highlightRecs.subscribe(recs=> {
@@ -107,6 +114,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.x(xScale)
 			.on("brush", brushed)
 			.on("brushend", function() {
+				focusTip.hide();
 				if (brush.empty()) {
 					//console.log(`empty brush setting zoomFilter to null`);
 					zoomFilter(null);
@@ -118,16 +126,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				//holdBrushExtent(brush.extent());
 			});
 
-		/*
-		var focusTip = d3.tip()
-			.attr('class', 'd3-tip')
-			.offset([-10, 0])
-			.html(function (d) {
-				return tipText(d);
-			});
-
 		svg.call(focusTip);
-		*/
 
 		var letterSpacingScale = d3.scale.log()
 					.domain([.8,20])
@@ -157,6 +156,13 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 						return ls + 'em';
 					});
 
+		focus.append("g")
+			.attr("class", "x brush")
+			.call(brush)
+			.selectAll("rect")
+			.attr("y", margin.top)
+			.attr("height", vizHeight);
+
 		var pointGs = focus.selectAll("g.point")
 			.data(points);
 		pointGs.exit().remove();
@@ -173,16 +179,19 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				return pointClass(d);
 			})
 			.classed('point', true)
-			.each(pointFunc);
-			/*
-			.on('mouseover', function (d) {
-				focusTip.show(d);
-			})
-			.on('mouseout', function (d) {
-				focusTip.hide(d);
-			})
-			*/
+			.on('mouseover', focusTip.show)
+			.on('mouseout', focusTip.hide)
+			.each(pointFunc)
 
+		pointGs.on('mousedown', function(){ // http://wrobstory.github.io/2013/11/D3-brush-and-tooltip.html
+			var brush_elm = svg.select(".brush").node();
+			var new_click_event = new Event('mousedown');
+			new_click_event.pageX = d3.event.pageX;
+			new_click_event.clientX = d3.event.clientX;
+			new_click_event.pageY = d3.event.pageY;
+			new_click_event.clientY = d3.event.clientY;
+			brush_elm.dispatchEvent(new_click_event);
+		});
 
 		if (points.length <= 50) {
 			// labeler usage from https://github.com/tinker10/D3-Labeler demo
@@ -199,15 +208,15 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				};
 			});
 			var labels = focus.selectAll('.labels')
-										 .data(label_array)
-										 .enter()
-										 .append('text')
-										 .attr('class','label')
-										 .attr('text-anchor','start')
-										 .text(d=>d.name)
-										 .attr('x', d=>d.x)
-										 .attr('y', d=>d.y)
-										 .attr('fill','black');
+						 						.data(label_array)
+						 						.enter()
+						 						.append('text')
+						 						.attr('class','label')
+						 						.attr('text-anchor','start')
+						 						.text(d=>d.name)
+						 						.attr('x', d=>d.x)
+						 						.attr('y', d=>d.y)
+						 						.attr('fill','black');
 			var index=0;
 			labels.each(function() {
 				label_array[index].width = this.getBBox().width;
@@ -215,14 +224,14 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				index += 1;
 			});
 			var links = focus.selectAll('.link')
-											 .data(label_array)
-											 .enter()
-											 .append('line')
-											 .attr('class','link')
-											 .attr('x1', d=>d.x)
-											 .attr('y1', d=>d.y)
-											 .attr('x2', d=>d.x)
-											 .attr('y2', d=>d.y)
+							 					.data(label_array)
+							 					.enter()
+							 					.append('line')
+							 					.attr('class','link')
+							 					.attr('x1', d=>d.x)
+							 					.attr('y1', d=>d.y)
+							 					.attr('x2', d=>d.x)
+							 					.attr('y2', d=>d.y)
 			var sim_ann = d3.labeler()
 											.label(label_array)
 											.anchor(points)
@@ -230,24 +239,18 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 											.height(vizHeight)
 											.start(2000)
 			labels.transition().duration(2000)
-						.attr('x', d=>d.x)
-						.attr('y', d=>d.y)
+													.attr('x', d=>d.x)
+													.attr('y', d=>d.y)
 			links.transition().duration(2000)
-						.attr('x2', d=>d.x)
-						.attr('y2', d=>d.y)
+													.attr('x2', d=>d.x)
+													.attr('y2', d=>d.y)
 		}
 
 		focus.append("g")
-			.attr("class", "x axis")
-			.attr("transform", "translate(0," + (vizHeight + margin.top) + ")")
-			.call(xAxis);
+					.attr("class", "x axis")
+					.attr("transform", "translate(0," + (vizHeight + margin.top) + ")")
+					.call(xAxis);
 
-		focus.append("g")
-			.attr("class", "x brush")
-			.call(brush)
-			.selectAll("rect")
-			.attr("y", margin.top)
-			.attr("height", vizHeight);
 		highlightFunc = function(recs) {
 			if (recs.length === 0) {
 				pointGs.classed('highlighted', false);
@@ -265,13 +268,6 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				links && links.classed('unhighlighted', d => !_.find(recs,d.rec));
 			}
 		};
-		//console.log('profileChart just drew');
-		/*
-		if (holdBrushExtent()) {
-			brush.extent(holdBrushExtent());
-			brush.event(focus.select('g.x.brush'));
-		}
-		*/
 		return svg;
 	}
 	function inset(svg, allPoints, filteredPoints, zoomFilter) {
@@ -284,27 +280,22 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 		var iyScale = d3.scale.ordinal().rangePoints([insetHeight * .1, insetHeight * .9 ])
 																		.domain(categories.sort());
 		var g = svg.append("g")
-			.attr("class", "inset")
-			.attr("transform",`translate(${width - insetWidth}, 0)`)
-			//.attr("width", insetWidth + 10)
-			//.attr("height", insetHeight + 10)
-			//.style('position','absolute') // the main svg is centered in div so this
-			//.style('right', margin.right) // doesn't line up the right edges like I wanted
+								.attr("class", "inset")
+								.attr("transform",`translate(${width - insetWidth}, 0)`)
 		g.append("rect")
-		 .attr('class', 'background')
-		 .attr('width', insetWidth)
-		 .attr('height', insetHeight);
+			.attr('class', 'background')
+			.attr('width', insetWidth)
+			.attr('height', insetHeight);
 		var points = g.selectAll("rect.inset-point")
-			.data(allPoints);
+										.data(allPoints);
 		points.exit().remove();
 		points
-			.enter()
-			.append("rect")
-			.attr('class', 'inset-point')
+					.enter()
+					.append("rect")
+						.attr('class', 'inset-point')
 		g.selectAll("rect.inset-point")
 			.attr("x", (d,i) => ixScale(x(d)))
 			.attr("y", (d,i) => iyScale(y(d)))
-			//.attr('class', function (d) { return pointClass(d); })
 			.attr('width', 1.5)
 			.attr('height', 1.5)
 			.classed('filteredout', d => {
@@ -321,15 +312,15 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 										width: ixScale(zoomDays) - ixScale(0)}];
 			//console.log(zoomFilter(), zoomDays, edges);
 			var insetZoom = g
-				.selectAll('rect.insetZoom')
-				.data(edges)
-				.enter()
-					 .append('rect')
-					 .attr('class', 'insetZoom')
-				.attr('x', d=>d.x)
-				.attr('width', d=>d.width)
-				.attr('y', 0)
-				.attr('height', insetHeight)
+												.selectAll('rect.insetZoom')
+												.data(edges)
+												.enter()
+	 											.append('rect')
+	 											.attr('class', 'insetZoom')
+												.attr('x', d=>d.x)
+												.attr('width', d=>d.width)
+												.attr('y', 0)
+												.attr('height', insetHeight)
 			var drag = d3.behavior.drag();
 			insetZoom.call(drag);
 			drag.on('drag', function(d) {
@@ -344,24 +335,23 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			});
 
 			var resizeLeft = g
-				.selectAll('rect.resizeLeft')
-				.data(edges)
-				.enter()
-					.append('rect')
-					.attr('class', 'resizeLeft')
-				.attr('x', d=>d.x - 3)
-				.attr('width', 6)
-				.attr('y', 5)
-				.attr('height', insetHeight)
+												.selectAll('rect.resizeLeft')
+												.data(edges)
+												.enter()
+												.append('rect')
+												.attr('class', 'resizeLeft')
+												.attr('x', d=>d.x - 3)
+												.attr('width', 6)
+												.attr('y', 5)
+												.attr('height', insetHeight)
 			var resizeLeftDrag = d3.behavior.drag();
 			resizeLeft.call(resizeLeftDrag);
 			resizeLeftDrag.on('drag', function(d) {
 				d.x += d3.event.dx;
 				d.width -= d3.event.dx;
-				//console.log(d);
 				resizeLeft.attr('x', d.x - 3)
 				insetZoom.attr('x', d.x)
-								 .attr('width', d.width)
+				 					.attr('width', d.width)
 			});
 			resizeLeftDrag.on('dragend', function(d) {
 				var x = ixScale.invert(d.x);
@@ -370,20 +360,19 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			});
 
 			var resizeRight = g
-				.selectAll('rect.resizeRight')
-				.data(edges)
-				.enter()
-					.append('rect')
-					.attr('class', 'resizeRight')
-				.attr('x', d=>d.x + d.width - 3)
-				.attr('width', 6)
-				.attr('y', 5)
-				.attr('height', insetHeight)
+													.selectAll('rect.resizeRight')
+													.data(edges)
+													.enter()
+													.append('rect')
+														.attr('class', 'resizeRight')
+														.attr('x', d=>d.x + d.width - 3)
+														.attr('width', 6)
+														.attr('y', 5)
+														.attr('height', insetHeight)
 			var resizeRightDrag = d3.behavior.drag();
 			resizeRight.call(resizeRightDrag);
 			resizeRightDrag.on('drag', function(d) {
 				d.width += d3.event.dx;
-				//console.log(d);
 				resizeRight.attr('x', d.x + d.width - 3)
 				insetZoom.attr('width', d.width)
 			});
@@ -399,10 +388,9 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.data([datum])
 			.enter()
 			.append('circle')
-				.classed(pointClass(datum), true);
+			.classed(pointClass(datum), true);
 		g.selectAll('circle.' + pointClass(datum))
 			.attr('r', radius(datum))
-			//.attr('fill', 'blue');
 	}
 	function rectangle(datum) {
 		var minBoxPix = 4;
@@ -411,15 +399,15 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.data([datum])
 			.enter()
 			.append('rect')
-				.classed('point', true)
-				.classed(pointClass(datum), true);
+			.classed('point', true)
+			.classed(pointClass(datum), true);
 		g.selectAll('rect.point.' + pointClass(datum))
 			.attr('height', minBoxPix)
 			.attr('width', function(d) {
 				var days = Math.max(d.endDay-d.startDay, 1);
 				var length = Math.max(minBoxPix, relativeXscale(days));
 				if (isNaN(length)) debugger;
-				return length;
+					return length;
 			})
 			.attr('x', -minBoxPix / 2)
 			.attr('y', -minBoxPix / 2)
@@ -430,9 +418,9 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.data([datum])
 			.enter()
 			.append('path')
-				.attr('d', 'M 0 -3 L -3 3 L 3 3 Z')
-				.attr('transform', 'scale(2)')
-				.classed(pointClass(datum), true);
+			.attr('d', 'M 0 -3 L -3 3 L 3 3 Z')
+			.attr('transform', 'scale(2)')
+			.classed(pointClass(datum), true);
 	}
 	function pointyLine(datum) {
 		// draw base of triangles at 0
@@ -442,26 +430,26 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.data([datum])
 			.enter()
 			.append('path')
-				.attr('d', function(d) {
-					var length = relativeXscale(d.endDay-d.startDay);
-					if (isNaN(length)) debugger;
-					var path = [];
-					path.push(`m ${tb/2} 0`);			 // right corner, left triangle
-					path.push(`l -${tb} 0`);				// left corner, left triangle
-					path.push(`l ${tb/2} -${th}`);	// top corner, left triangle
-					path.push(`l ${tb/2} ${th}`);	 // right corner, left triangle
-					if (length > tb) {
-						path.push(`l ${length} 0`);		 // right corner, right triangle
-						path.push(`l -${tb/2} -${th}`); // top corner, right triangle
-						path.push(`l -${tb/2} ${th}`);	// left corner, right triangle
-						path.push(`l 0 -2`);						// line thickness
-						path.push(`l -${length - tb} 0 Z`);	 
-					} else {
-					}
-					return path.join(' ');
-							//'m 0 -3 l -3 6 l 6 0 Z M 4 -3 L 0 3 L 7 3 Z'
-				})
-				.classed(pointClass(datum), true);
+			.attr('d', function(d) {
+				var length = relativeXscale(d.endDay-d.startDay);
+				if (isNaN(length)) debugger;
+				var path = [];
+				path.push(`m ${tb/2} 0`);			 // right corner, left triangle
+				path.push(`l -${tb} 0`);				// left corner, left triangle
+				path.push(`l ${tb/2} -${th}`);	// top corner, left triangle
+				path.push(`l ${tb/2} ${th}`);	 // right corner, left triangle
+				if (length > tb) {
+					path.push(`l ${length} 0`);		 // right corner, right triangle
+					path.push(`l -${tb/2} -${th}`); // top corner, right triangle
+					path.push(`l -${tb/2} ${th}`);	// left corner, right triangle
+					path.push(`l 0 -2`);						// line thickness
+					path.push(`l -${length - tb} 0 Z`);	 
+				} else {
+				}
+				return path.join(' ');
+				//'m 0 -3 l -3 6 l 6 0 Z M 4 -3 L 0 3 L 7 3 Z'
+			})
+			.classed(pointClass(datum), true);
 	}
 	var jitterOffsets = []; // keep them stable as points move around
 	var jitterYScale = d3.scale.linear().domain([-.5,.5]);
