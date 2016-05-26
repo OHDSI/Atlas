@@ -288,8 +288,8 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 				if(d.comboId !== 'root'){
 					if(!isUniquePath){
 						tltpDiv.select('.pnc-tooltip-label').html(d.conceptName);
-						tltpDiv.select('.pnc-tooltip-line2').html("Patient counts: " + d.patientCount + ". ");
-						tltpDiv.select('.pnc-tooltip-line3').html("Unit patient percentage: " + d.percentage + "%");
+						tltpDiv.select('.pnc-tooltip-line2').html("Patient count: " + d.patientCount + " (" + d.percentage + "%)");
+//						tltpDiv.select('.pnc-tooltip-line3').html("Unit patient percentage: " + d.percentage + "%");
 						tltpDiv.select('.pnc-tooltip-line4').html("Duration: " + d.avgDuration + " days.");
 						tltpDiv.select('.pnc-tooltip-line5').html("Gap: " + d.avgGapDay + " days. ");
 						tltpDiv.select('.pnc-tooltip-line6').html("Adherence percentage: " + (100 - d.gapPercent) + "%");
@@ -297,8 +297,8 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 						//tooltip.select('.pnc-tooltip-label').html(d.uniqueConceptsName + ":" + d.patientCount + ":" + d.percentage + "%");
 //						tltpDiv.select('.pnc-tooltip-label').html(d.simpleUniqueConceptName + ":" + d.patientCount + ":" + d.simpleUniqueConceptPercentage + "%");
 						tltpDiv.select('.pnc-tooltip-label').html(d.simpleUniqueConceptName);
-						tltpDiv.select('.pnc-tooltip-line2').html("Patient counts: " + d.patientCount);
-						tltpDiv.select('.pnc-tooltip-line3').html("Unit patient percentage: " + d.simpleUniqueConceptPercentage + "%");
+						tltpDiv.select('.pnc-tooltip-line2').html("Patient count: " + d.patientCount + " (" + d.simpleUniqueConceptPercentage + "%)");
+//						tltpDiv.select('.pnc-tooltip-line3').html("Unit patient percentage: " + d.simpleUniqueConceptPercentage + "%");
 					}
 //					if(!isUniquePath){
 //						tltpDiv.select('.pnc-tooltip-duration').html( d.avgDuration + " days:" + d.avgGapDay + ":" + d.gapPercent + "%");
