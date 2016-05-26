@@ -130,7 +130,10 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 
 		var letterSpacingScale = d3.scale.log()
 					.domain([.8,20])
-					.range([-.2, 2]);
+					.range([-.05, 2]);
+		var fontSizeScale = d3.scale.pow(1/2)
+					.domain([10, vizHeight])
+					.range([15, 75]);
 		focus.selectAll('rect.category')
 					.data(categories)
 					.enter()
@@ -144,8 +147,8 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 					.enter()
 					.append('text')
 					.attr('class','category')
-					.attr('font-size', yScale.rangeBand() * .8)
-					.attr('y', d => yScale(d) + yScale.rangeBand() * .8)
+					.attr('font-size', fontSizeScale(yScale.rangeBand()))
+					.attr('y', d => yScale(d) + yScale.rangeBand() / 2 + fontSizeScale(yScale.rangeBand()) / 2)
 					.attr('x', width/2)
 					.attr('text-anchor', 'middle')
 					.style('letter-spacing', 0)
@@ -238,10 +241,10 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 											.width(width)
 											.height(vizHeight)
 											.start(2000)
-			labels.transition().duration(2000)
+			labels.transition().duration(0)
 													.attr('x', d=>d.x)
 													.attr('y', d=>d.y)
-			links.transition().duration(2000)
+			links.transition().duration(0)
 													.attr('x2', d=>d.x)
 													.attr('y2', d=>d.y)
 		}
