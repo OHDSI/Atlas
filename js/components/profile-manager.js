@@ -118,7 +118,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						words.forEach(word=>{
 							word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 20)) + '%';
 						});
-						//console.log(words.map(d=>d.text + ':' + d.recs.length + ':' +  d.size));
+						//console.log(words.map(d=>d.text + ':' + d.recs.length + ':' + d.size));
 						return words;
 					},
 			},
@@ -338,26 +338,26 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 	ko.components.register('profile-manager', component);
 	return component;
 	function standardDeviation(values){
-  	var avg = average(values);
-  	
-  	var squareDiffs = values.map(function(value){
-    	var diff = value - avg;
-    	var sqrDiff = diff * diff;
-    	return sqrDiff;
-  	});
-  	
-  	var avgSquareDiff = average(squareDiffs);
+		var avg = average(values);
+
+		var squareDiffs = values.map(function(value){
+			var diff = value - avg;
+			var sqrDiff = diff * diff;
+			return sqrDiff;
+		});
+
+		var avgSquareDiff = average(squareDiffs);
 	
-  	var stdDev = Math.sqrt(avgSquareDiff);
-  	return stdDev;
+		var stdDev = Math.sqrt(avgSquareDiff);
+		return stdDev;
 	}
 	
 	function average(data){
-  	var sum = data.reduce(function(sum, value){
-    	return sum + value;
-  	}, 0);
+		var sum = data.reduce(function(sum, value){
+			return sum + value;
+		}, 0);
 	
-  	var avg = sum / data.length;
-  	return avg;
+		var avg = sum / data.length;
+		return avg;
 	}
 });

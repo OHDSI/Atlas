@@ -1,7 +1,6 @@
 "use strict";
 define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 
-  var catLineHeight = 38;
   var margin = {
       top: 0,
       right: 0,
@@ -9,12 +8,8 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       left: 0
     };
   var vizHeight = 270;
-  //var categoryBandHeight = categoryCount => vizHeight / categoryCount;
-  //var categoryPos = categoryIdx => margin.top + categoryBandHeight * categoryIdx + categoryBandHeight * 1/2;
-  //var mainHeight = 270;
-  //var height = category.length * 35 - margin.top - margin.bottom;
-  var minWidth = 900;
-  var width = minWidth - margin.left - margin.right;
+  var width = 900;
+  //var width = minWidth - margin.left - margin.right;
 
   var xScale = d3.scale.linear();
   function relativeXscale(x) {
@@ -43,14 +38,14 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       });
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
-      width = Math.max(minWidth, element.offsetWidth - margin.left - margin.right);
+      //width = Math.max(minWidth, element.offsetWidth - margin.left - margin.right);
       var va = valueAccessor();
       if (va.showing()) {
-        categoryScatterPlot(element, va.recs(), 
+        var svg = categoryScatterPlot(element, va.recs(), 
                             rectangle,
                            null, va.zoomFilter);
         if (va.allRecs.length != va.recs().length)
-         inset(element, va.allRecs, va.recs(), va.zoomFilter);
+          inset(svg, va.allRecs, va.recs(), va.zoomFilter);
       }
     }
   };
@@ -60,7 +55,6 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
                               zoomFilter
                               ) {
     /* verticleLines: [{xpos, color},...] */
-    //var mainHeight = categories.length * catLineHeight;
 
     xScale.domain([d3.min(points.map(x)), d3.max(points.map(endX))]);
 
@@ -71,9 +65,10 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
     $(element).empty();
 
     var svg = d3.select(element).append("svg")
-      .attr("width", width)
-      //.attr("width", width + margin.left + margin.right)
-      .attr("height", vizHeight + margin.top + margin.bottom);
+      .attr("preserveAspectRatio", "xMinYMin meet")
+      .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${vizHeight + margin.top + margin.bottom}`)
+      //.attr("width", width)
+      //.attr("height", vizHeight + margin.top + margin.bottom);
     xScale.range([0, width]);
 
     var focus = svg.append("g")
@@ -271,36 +266,41 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       brush.event(focus.select('g.x.brush'));
     }
     */
+    return svg;
   }
-  function inset(element, allPoints, filteredPoints, zoomFilter) {
+  function inset(svg, allPoints, filteredPoints, zoomFilter) {
     var insetWidth = (width + margin.left + margin.right) * .15
     var insetHeight = (vizHeight + margin.top + margin.bottom) * .15;
     var ixScale = d3.scale.linear()
                     .range([5,insetWidth - 5])
                     .domain([d3.min(allPoints.map(x)), d3.max(allPoints.map(endX))]);
     var categories = _.chain(allPoints).map(y).uniq().value();
-    var iyScale = d3.scale.ordinal().rangePoints([5, insetHeight])
+    var iyScale = d3.scale.ordinal().rangePoints([insetHeight * .1, insetHeight * .9 ])
                                     .domain(categories.sort());
-    var svg = d3.select(element).append("svg")
+    var g = svg.append("g")
       .attr("class", "inset")
-      .attr("width", insetWidth + 10)
-      .attr("height", insetHeight + 10)
-      .style('position','absolute') // the main svg is centered in div so this
-      .style('right', margin.right) // doesn't line up the right edges like I wanted
-    var points = svg.selectAll("rect")
+      .attr("transform",`translate(${width - insetWidth}, 0)`)
+      //.attr("width", insetWidth + 10)
+      //.attr("height", insetHeight + 10)
+      //.style('position','absolute') // the main svg is centered in div so this
+      //.style('right', margin.right) // doesn't line up the right edges like I wanted
+    g.append("rect")
+     .attr('class', 'background')
+     .attr('width', insetWidth)
+     .attr('height', insetHeight);
+    var points = g.selectAll("rect.inset-point")
       .data(allPoints);
     points.exit().remove();
     points
       .enter()
       .append("rect")
-    svg.selectAll("rect")
+      .attr('class', 'inset-point')
+    g.selectAll("rect.inset-point")
       .attr("x", (d,i) => ixScale(x(d)))
       .attr("y", (d,i) => iyScale(y(d)))
-      .attr('class', function (d) {
-        return pointClass(d);
-      })
-      .attr('width', 1)
-      .attr('height', 1)
+      //.attr('class', function (d) { return pointClass(d); })
+      .attr('width', 1.5)
+      .attr('height', 1.5)
       .classed('filteredout', d => {
         //return allPoints.length != filteredPoints.length && !_.find(filteredPoints, d)
         return !_.find(filteredPoints, d)
@@ -314,7 +314,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
       var edges = [{x: ixScale(zoomFilter()[0]), 
                     width: ixScale(zoomDays) - ixScale(0)}];
       //console.log(zoomFilter(), zoomDays, edges);
-      var insetZoom = svg
+      var insetZoom = g
         .selectAll('rect.insetZoom')
         .data(edges)
         .enter()
@@ -322,7 +322,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
            .attr('class', 'insetZoom')
         .attr('x', d=>d.x)
         .attr('width', d=>d.width)
-        .attr('y', 5)
+        .attr('y', 0)
         .attr('height', insetHeight)
       var drag = d3.behavior.drag();
       insetZoom.call(drag);
@@ -337,7 +337,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
         zoomFilter([x, x + zoomDays]);
       });
 
-      var resizeLeft = svg
+      var resizeLeft = g
         .selectAll('rect.resizeLeft')
         .data(edges)
         .enter()
@@ -363,7 +363,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
         zoomFilter([x, zoomFilter()[1]]);
       });
 
-      var resizeRight = svg
+      var resizeRight = g
         .selectAll('rect.resizeRight')
         .data(edges)
         .enter()

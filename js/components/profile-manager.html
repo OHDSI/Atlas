@@ -49,7 +49,7 @@
 
 		<div class="paddedWrapper" data-bind="visible:!$component.loadingProfile()">
 			<!--div data-bind="visible:$component.filteredRecs().length > 0"-->
-				<div id="scatter" data-bind="profileChart:{
+				<div id="profile-chart" data-bind="profileChart:{
 							profile:$component.loadedProfile, 
 							cohortPerson:$component.cohortPerson, 
 							recs:$component.filteredRecs, 
@@ -62,7 +62,7 @@
 					<div class="wordcloud" data-bind="foreach:words($component.filteredRecs)">
 						<span data-bind="
 							text:text, 
-						  style:{fontSize:size},
+							style:{fontSize:size},
 							event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
 							"></span>
 					</div>
