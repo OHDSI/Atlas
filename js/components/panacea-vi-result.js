@@ -26,9 +26,9 @@ define(['knockout', 'text!./panacea-vi-result.html', 'jquery', 'd3', 'appConfig'
 			self.renderVi();
 		});
 		
-		self.currentResultSource.subscribe(function (d) {
-			self.renderVi();
-		});
+//		self.currentResultSource.subscribe(function (d) {
+//			self.renderVi();
+//		});
 		
 		self.renderVi = function(){
 			if (self.model != null && self.rootJSON() != null){
