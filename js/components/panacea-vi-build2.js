@@ -381,6 +381,8 @@
 	    .map(function(o) {
 	    	var children = _.chain(o.descendantArray)
 	    			.values()
+	    			.sortBy('descendantCount')
+	    			.reverse()
 	    			.map(function(descChild){
 	    				return {
 	  					childName: descChild.descendantConceptName,
@@ -392,6 +394,8 @@
 
 	    	var parents = _.chain(o.ancestorArray)
 	    			.values()
+	    			.sortBy('ancestorCount')
+	    			.reverse()
 	    			.map(function(ancestor){
 	    				return {
 	  					parentName: ancestor.ancestorConceptName,
