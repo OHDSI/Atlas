@@ -208,7 +208,8 @@
 			mainContainer.append('h1').attr('class', 'heading').text('Distribution for ' + number + ' Drug Regimen');
 			drawTable(mainContainer, sortedReducedDrugRegimenCollection, tableX, 8, null);
 		});
-		var detailByIngredient = processSingleDrugs(getSingleDrugs('uniqueConceptsArray', null));
+		//Chen -- single ingredient
+		//var detailByIngredient = processSingleDrugs(getSingleDrugs('uniqueConceptsArray', null));
 		var detailByCompleteRegimen = processSingleDrugs(getSingleDrugs('concepts', 1));
 		function getSingleDrugs(type, num) {
 			if (num === null) {
@@ -224,153 +225,193 @@
 		function processSingleDrugs(getFunc) {
 			var groupedByNameJSON = _.map(_.groupBy(getFunc, 'conceptName'), group => _.groupBy(group, 'conceptName'));
 			var singleDrugs = _.map(groupedByNameJSON, itemGroup => {
-				var item = _.values(itemGroup);
-				var itemNames = _.map(splitToArrayCapitalizeSort(item[0][0]['conceptName'], ','), conceptName => {
-					return conceptName;
-				});
-				var allItems = _.map(itemNames, itemName => {
-					var itemPatientCount = _.reduce(item[0], (acc, curr) => acc + curr.patientCount, 0);
-					var children = _.chain(_.values(itemGroup)[0])
-						.map(function (concept) {
-							if (concept['children']) {
-								return _.sortBy(_.map(concept['children'], child => {
-									var childWithNoRepeatedConceptName = function (child) {
-										var childConcepts = splitToArrayCapitalizeSort(child['conceptName'], ',');
-										var filteredConcepts =  _.chain(childConcepts)
-											.map(function (childConcept) {
-												if (childConcept !== itemName) {
-													return childConcept;
-												}
-											})
-											.filter(function (childConcept) {
-												return childConcept !== undefined;
-											})
-											.value();
-										return filteredConcepts.join(', ');
-									}
-									return {
-										childName: childWithNoRepeatedConceptName(child) === '' ? 'Self' : childWithNoRepeatedConceptName(child),
-										count: child['patientCount']
-									}
-								}), 'count');
-							} else {
-								return {
-									childName: 'No Drugs Taken After',
-									count: 30
-								}
-							}
-						})
-						.flatten()
-						.groupBy('childName')
-						.values()
-						.map(function (group) {
-							var total = _.reduce(group, function (acc, child) {
-								return acc + child.count
-							}, 0);
-							return {
-								childName: group[0]['childName'],
-								count: [total, formatPercent(total/totalPatients)]
-							}
-						})
-						.sortBy(function(concept) {
-							return concept['count'][0]
-						})
-						.reverse()
-						.value();
-					var parents = _.chain(_.values(itemGroup)[0])
-						.map(concept => {
-							if (concept['parentConcept']) {
-								var parentWithNoRepeatedConceptName = function (parent) {
-									var parentConcepts = splitToArrayCapitalizeSort(parent['parentConceptName'], ',');
-									var filteredConcepts =  _.chain(parentConcepts)
-										.map(function (parentConcept) {
-											if (parentConcept !== itemName) {
-												return parentConcept;
-											}
-										})
-										.filter(function (parentConcept) {
-											return parentConcept !== undefined;
-										})
-										.value();
-									return filteredConcepts.join(', ');
-								}
-								return {
-									parentName: parentWithNoRepeatedConceptName(concept['parentConcept']) === '' ? 'Self' : parentWithNoRepeatedConceptName(concept['parentConcept']),
-									count: 70
-								}
-							} else if (concept['parentConcept'] === undefined) {
-								return {
-									parentName: 'No Drugs Taken Before',
-									count: 90
-								}
-							}
-						})
-						.flatten()
-						.compact()
-						.groupBy('parentName')
-						.values()
-						.map(function (group) {
-							var total = _.reduce(group, function (acc, parent) {
-								return acc + parent.count
-							}, 0);
-							return {
-								parentName: group[0]['parentName'],
-								count: [total, formatPercent(total/totalPatients)]
-							}
-						})
-						.sortBy(function(concept) {
-							return concept['count'][0]
-						})
-						.reverse()
-						.value();
-					return {
-						item: {
-							name: itemName,
-							count: itemPatientCount
-						},
-						children: children,
-						parents: parents
-					};
-				});
-				return allItems;
+			var item = _.values(itemGroup);
+			var itemNames = _.map(splitToArrayCapitalizeSort(item[0][0]['conceptName'], ','), conceptName => {
+			return conceptName;
 			});
-			return singleDrugs;
-		}
-		var singleDrugsDiv = d3.select('#single-drugs-div');
-		singleDrugsDiv.append('h1').attr('class', 'heading').text('Detail By Ingredient');
-		detailByIngredient = _.chain(detailByIngredient)
+			var itemPatientCount = _.reduce(item[0], (acc, curr) => acc + curr.patientCount, 0);
+			var allItems = _.map(itemNames, itemName => {
+			var children = _.chain(_.values(itemGroup)[0])
+			.map(function (concept) {
+			if (concept['children']) {
+			return _.sortBy(_.map(concept['children'], child => {
+			var childWithNoRepeatedConceptName = function (child) {
+			var childConcepts = splitToArrayCapitalizeSort(child['conceptName'], ',');
+			var filteredConcepts =  _.chain(childConcepts)
+			.map(function (childConcept) {
+			if (childConcept !== itemName) {
+			return childConcept;
+			}
+			})
+			.filter(function (childConcept) {
+			return childConcept !== undefined;
+			})
+			.value();
+			return filteredConcepts.join(', ');
+			}
+			return {
+			childName: childWithNoRepeatedConceptName(child) ? childWithNoRepeatedConceptName(child) : 'No Drugs Taken After',
+			count: child['patientCount']
+			}
+			}), 'count');
+			} else {
+			return {
+			childName: 'No Drugs Taken After',
+			count: concept['patientCount']
+			}
+			}
+			})
 			.flatten()
-			.groupBy(function (drug) {
-				return drug['item']['name'];
-			})
+			.groupBy('childName')
 			.values()
-			.map(group => {
-				var count = _.reduce(group, (acc, curr) => {
-					return acc + curr['item']['count'];
-				}, 0);
-				var children = _.reduce(group, (acc, curr) => {
-					return acc.concat(curr['children']);
-				}, []);
-				var parents = _.reduce(group, (acc, curr) => {
-					return acc.concat(curr['parents']);
-				}, []);
-				return _.first(_.map(group, item => {
-					return {
-						item: {
-							name: item['item']['name'],
-							count: count
-						},
-						children: children,
-						parents: parents
-					}
-				}))
+			.map(function (group) {
+			var total = _.reduce(group, function (acc, child) {
+			return acc + child.count
+			}, 0);
+			return {
+			childName: group[0]['childName'],
+			count: [total, formatPercent(total/itemPatientCount)]
+			}
 			})
-			.sortBy(function (drug) {
-				return drug['item']['count'];
+			.sortBy(function(concept) {
+			return concept['count'][0]
 			})
 			.reverse()
 			.value();
+			var parents = _.chain(_.values(itemGroup)[0])
+			.map(concept => {
+			if (concept['parentConcept']) {
+			var parentWithNoRepeatedConceptName = function (parent) {
+			var parentConcepts = splitToArrayCapitalizeSort(parent['parentConceptName'], ',');
+			var filteredConcepts =  _.chain(parentConcepts)
+			.map(function (parentConcept) {
+			if (parentConcept !== itemName) {
+			return parentConcept;
+			}
+			})
+			.filter(function (parentConcept) {
+			return parentConcept !== undefined;
+			})
+			.value();
+			return filteredConcepts.join(', ');
+			}
+			return {
+			parentName: concept['parentConcept'] ? parentWithNoRepeatedConceptName(concept['parentConcept']) : 'No Drugs Taken Before',
+			count: concept['patientCount']
+			}
+			} else if (concept['parentConcept'] === undefined) {
+			return {
+			parentName: 'No Drugs Taken Before',
+			count: concept['patientCount']
+			}
+			}
+			})
+			.flatten()
+			.compact()
+			.groupBy('parentName')
+			.values()
+			.map(function (group) {
+			var total = _.reduce(group, function (acc, parent) {
+			return acc + parent.count;
+			}, 0);
+			return {
+			parentName: group[0]['parentName'],
+			count: [total, formatPercent(total/itemPatientCount)]
+			}
+			})
+			.sortBy(function(concept) {
+			return concept['count'][0]
+			})
+			.reverse()
+			.value();
+			return {
+			item: {
+			name: itemName,
+			count: itemPatientCount
+			},
+			children: children,
+			parents: parents
+			};
+			});
+			return allItems;
+			});
+			return singleDrugs;
+			}
+		
+		var singleDrugsDiv = d3.select('#single-drugs-div');
+		singleDrugsDiv.append('h1').attr('class', 'heading').text('Detail By Ingredient');
+//Chen -- single ingredient
+//		detailByIngredient = _.chain(detailByIngredient)
+//			.flatten()
+//			.groupBy(function (drug) {
+//				return drug['item']['name'];
+//			})
+//			.values()
+//			.map(group => {
+//				var count = _.reduce(group, (acc, curr) => {
+//					return acc + curr['item']['count'];
+//				}, 0);
+//				var children = _.reduce(group, (acc, curr) => {
+//					return acc.concat(curr['children']);
+//				}, []);
+//				var parents = _.reduce(group, (acc, curr) => {
+//					return acc.concat(curr['parents']);
+//				}, []);
+//				return _.first(_.map(group, item => {
+//					return {
+//						item: {
+//							name: item['item']['name'],
+//							count: count
+//						},
+//						children: children,
+//						parents: parents
+//					}
+//				}))
+//			})
+//			.sortBy(function (drug) {
+//				return drug['item']['count'];
+//			})
+//			.reverse()
+//			.value();
 //		console.log(detailByIngredient)
+		var detailByIngredient = _.chain(data['singleIngredient'])
+	    .values()
+	    .sortBy('totalCount')
+	    .reverse()
+	    .map(function(o) {
+	    	var children = _.chain(o.descendantArray)
+	    			.values()
+	    			.map(function(descChild){
+	    				return {
+	  					childName: descChild.descendantConceptName,
+	  			  		count: [descChild.descendantCount, descChild.descendantPercentage + '%']
+	  
+	    				};
+	    			})
+	    			.value();
+
+	    	var parents = _.chain(o.ancestorArray)
+	    			.values()
+	    			.map(function(ancestor){
+	    				return {
+	  					parentName: ancestor.ancestorConceptName,
+	  			  		count: [ancestor.ancestorCount, ancestor.ancestorPercentage + '%']
+	  
+	    				};
+	    			})
+	    			.value();
+	    			
+	          return {
+	  		item: {
+	  			name: o.oneDrugName,
+	    			count: o.totalCount
+	    		},
+	    		children: children,
+	    		parents: parents
+	  	 };
+	     })
+	     .value();
+
 		_.forEach(detailByIngredient, data => {
 			var container = singleDrugsDiv.append('div').attr('class', 'clearfix');
 			drawCohortTable(container, data.item, tableX);
