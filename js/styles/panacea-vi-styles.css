@@ -58,8 +58,8 @@ h1.heading {
 	padding: 10px 10px;
 	float: left;
 	min-width: 300px;
-	width: 300px;
-	max-width: 300px;
+	width: 400px;
+	max-width: 500px;
 	margin-right: 20px;
 }
 .cell {
