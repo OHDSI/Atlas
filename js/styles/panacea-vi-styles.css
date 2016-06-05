@@ -17,7 +17,7 @@
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
 .main, #single-drugs-div {
-	width: 90%;
+	/*width: 90%;*/
 	margin: 0 auto 120px;
 }
 .arrow-up {

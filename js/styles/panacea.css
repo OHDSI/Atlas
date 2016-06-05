@@ -72,3 +72,31 @@
 .cohort-desc {
 	padding-right: 4px;
 }
+
+#pnc_sunburst_result_div path, #pnc_sunburst_result_div_2 path {
+    stroke: #fff;
+}
+
+.explanation {
+    position: absolute;
+    z-index: 10000;
+    font-size: 30px;
+    color: #000000;
+
+}
+
+.explanation .percent {
+    font-size: 28px;
+    text-align: center;
+}
+
+.explanation .sublabel {
+    font-size: 13px;
+    text-align: center;
+}
+
+.explanation .nvalue {
+    font-size: 12px;
+    color: slategray;
+    text-align: center;
+}

@@ -425,7 +425,7 @@
 			drawTable(innerDiv2, data.children, tableX, 2, 'Drugs Taken After');
 		});
 		singleDrugsDiv.append('br');
-		singleDrugsDiv.append('h1').attr('class', 'heading').text('Detail By Complete Regimen');
+		//singleDrugsDiv.append('h1').attr('class', 'heading').text('Detail By Complete Regimen');
 		detailByCompleteRegimen = _.chain(detailByCompleteRegimen)
 			.flatten()
 			.groupBy(function (drug) {
@@ -458,14 +458,14 @@
 			})
 			.reverse()
 			.value();
-		_.forEach(detailByCompleteRegimen, data => {
-			var container = singleDrugsDiv.append('div').attr('class', 'clearfix');
-			drawCohortTable(container, data.item, tableX);
-			var innerDiv1 = container.append('div').attr('class', 'single-drug-section');
-			var innerDiv2 = container.append('div').attr('class', 'single-drug-section');
-			drawTable(innerDiv1, data.parents, tableX, 2, 'Drugs Taken Before');
-			drawTable(innerDiv2, data.children, tableX, 2, 'Drugs Taken After');
-		});
+		//_.forEach(detailByCompleteRegimen, data => {
+		//	var container = singleDrugsDiv.append('div').attr('class', 'clearfix');
+		//	drawCohortTable(container, data.item, tableX);
+		//	var innerDiv1 = container.append('div').attr('class', 'single-drug-section');
+		//	var innerDiv2 = container.append('div').attr('class', 'single-drug-section');
+		//	drawTable(innerDiv1, data.parents, tableX, 2, 'Drugs Taken Before');
+		//	drawTable(innerDiv2, data.children, tableX, 2, 'Drugs Taken After');
+		//});
 		drawSorters();
 		sortTable();
 		function sortTable() {
