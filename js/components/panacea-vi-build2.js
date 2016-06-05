@@ -877,12 +877,12 @@
 				}
 			});
 		} else {
-			if (obj[property].length === numberOfInterest) {
+			if (obj[property] && obj[property].length === numberOfInterest) {
 				arr.push(obj);
 				return;
 			} else {
 				_.forEach(obj.children, function (child) {
-					if (child[property].length === numberOfInterest) {
+					if (child[property] && child[property].length === numberOfInterest) {
 						if (arr) {
 							arr.push(child);
 						}

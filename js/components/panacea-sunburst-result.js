@@ -102,7 +102,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 		});
 
         var colors = ['#d53e4f','#f46d43','#fdae61','#89BF59','#771333','#94A734','#4AA5A5','#3288bd', '#D85555', '#4A2B75',
-            '#1F3481', '#136375'];
+            '#1F3481', '#136375', '#354B9A', '#2CAA4D'];
         var width = $(window).width() - 200 - 30,
             height = 700,
             radius = Math.min(width, height) / 2;
@@ -227,7 +227,10 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
                 .attr("points", function(d, i) {
                     return breadcrumbPoints(d, i, isUniquePath);
                 })
-                .style("fill", function(d) { return colorsMap[capitalize(isUniquePath ? d.simpleUniqueConceptName : d.conceptName)] });
+                .style("fill", function(d) { return colorsMap[capitalize(isUniquePath ? d.simpleUniqueConceptName : d.conceptName)] })
+                .style("stroke", function(d) {
+                    return "#a9a9a9"
+                });
 
             entering.append("svg:text")
                 .attr("x", ((b.w + b.t) / 2) - 10)
@@ -235,6 +238,14 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
                 .attr("dy", "0.35em")
                 .attr("text-anchor", "middle")
                 .style("font-size", "11px")
+                .style("fill", function(d) {
+                    var name = capitalize(isUniquePath ? d.simpleUniqueConceptName : d.conceptName);
+                    if (name === "None") {
+                        return "#000";
+                    } else {
+                        return "#fff";
+                    }
+                })
                 .text(function(d) { return capitalize(isUniquePath ? d.simpleUniqueConceptName : d.conceptName); });
 
             // Set position for entering and updating nodes.
@@ -281,15 +292,27 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
                 var root_id = isUniquePath ? "root2" : "root1";
 
                 //Change this from percentage to patientCount (the arc size/width reflects the size of unit cohort better)
+                var vals = [];
                 var partition = d3.layout.partition()
                     .size([2 * Math.PI, radius * radius])
-                    .value(function(d) { return isNaN(d.patientCount) ?  0 : +d.patientCount; });
-
+                    .value(function(d) {
+                        var val = isNaN(d.patientCount) ?  0 : +d.patientCount;
+                        vals.push(val);
+                        return val;
+                    });
                 var arc = d3.svg.arc()
-                    .startAngle(function(d) { return d.x; })
-                    .endAngle(function(d) { return d.x + d.dx; })
-                    .innerRadius(function(d) { return Math.sqrt(d.y); })
-                    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+                    .startAngle(function(d) {
+                        return d.x;
+                    })
+                    .endAngle(function(d) {
+                        return d.x + d.dx;
+                    })
+                    .innerRadius(function(d) {
+                        return Math.sqrt(d.y);
+                    })
+                    .outerRadius(function(d) {
+                        return Math.sqrt(d.y + d.dy);
+                    });
 
                 var nodes = partition.nodes(changedRoot)
                     .filter(function(d) {
@@ -314,12 +337,17 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
                     while (idx >= colors.length) {
                         idx -= colors.length;
                     }
-                    colorsMap[capitalize(v)] = colors[idx];
+                    if (v === "None") {
+                        colorsMap["None"] = '#fff';
+                    } else {
+                        colorsMap[capitalize(v)] = colors[idx];
+                    }
                 });
 
                 console.log(colorsMap);
                 console.log((changedRoot));
-                console.log(nodes);
+                //console.log(nodes);
+
 
 				var path  = svg.selectAll("path")
                     .data(nodes)
