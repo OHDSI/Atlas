@@ -374,6 +374,7 @@
 //			.reverse()
 //			.value();
 //		console.log(detailByIngredient)
+
 		var detailByIngredient = _.chain(data['singleIngredient'])
 	    .values()
 	    .sortBy('totalCount')
@@ -417,12 +418,22 @@
 	     .value();
 
 		_.forEach(detailByIngredient, data => {
-			var container = singleDrugsDiv.append('div').attr('class', 'clearfix');
-			drawCohortTable(container, data.item, tableX);
-			var innerDiv1 = container.append('div').attr('class', 'single-drug-section');
-			var innerDiv2 = container.append('div').attr('class', 'single-drug-section');
-			drawTable(innerDiv1, data.parents, tableX, 2, 'Drugs Taken Before');
-			drawTable(innerDiv2, data.children, tableX, 2, 'Drugs Taken After');
+            if (data.item.name !== "None") {
+                var container = singleDrugsDiv.append('div').attr('class', 'clearfix');
+                drawCohortTable(container, data.item, tableX);
+                var innerDiv1 = container.append('div').attr('class', 'single-drug-section');
+                var innerDiv2 = container.append('div').attr('class', 'single-drug-section');
+                drawTable(innerDiv1, data.parents, tableX, 2, 'Drugs Taken Before');
+
+                // remove none from drugs after
+                var drugsAfterChildren = [];
+                $.each(data.children, function() {
+                    if (this.childName !== "None") {
+                        drugsAfterChildren.push(this);
+                    }
+                });
+                drawTable(innerDiv2, drugsAfterChildren, tableX, 2, 'Drugs Taken After');
+            }
 		});
 		singleDrugsDiv.append('br');
 		//singleDrugsDiv.append('h1').attr('class', 'heading').text('Detail By Complete Regimen');
@@ -522,6 +533,7 @@
 		});
 	}
 	function drawTable(container, data, tableX, appropriateNumberOfColumns, tableHeader) {
+
 		var table = container.append('table').attr({
 			class: 'summary-table' 
 		}).attr({
@@ -592,6 +604,7 @@
 	function drawCell(item, tableRow, className) {
 		return tableRow.append('td').attr('class', className);
 	}
+
 	function drawSpan(item, cell, className) {
 		return cell.append('span').attr('class', function () {
 			return className ? className : null;
