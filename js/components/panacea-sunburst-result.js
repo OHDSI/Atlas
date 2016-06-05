@@ -101,21 +101,21 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 			});
 		});
 
+        var colors = ['#d53e4f','#f46d43','#fdae61','#89BF59','#771333','#94A734','#4AA5A5','#3288bd', '#D85555', '#4A2B75',
+            '#1F3481', '#136375'];
         var width = $(window).width() - 200 - 30,
             height = 700,
             radius = Math.min(width, height) / 2;
 
+        // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
+        var b1 = {
+            w: 150, h: 25, s: 3, t: 10
+        };
+        var b2 = {
+            w: 200, h: 25, s: 3, t: 10
+        };
+
 		self.currentResultSource.subscribe(function (d) {
-
-
-
-//			var x = d3.scale.linear()
-//				.range([0, 2 * Math.PI]);
-//
-//			var y = d3.scale.sqrt()
-//				.range([0, radius]);
-
-//			var color = d3.scale.category20c();
 
 			var div1 = d3.select("#pnc_sunburst_result_div");
 			div1.selectAll("*").remove();
@@ -134,15 +134,6 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 				.append("g")
 				.attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
 			var tltp2Div = d3.select("#pnc_sunburst_tltp2");
-			
-//			var partition = d3.layout.partition()
-//				.value(function(d) { return d.percentage; });
-
-//			var arc = d3.svg.arc()
-//				.startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
-//				.endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
-//				.innerRadius(function(d) { return Math.max(0, y(d.y)); })
-//				.outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 			
 			var url = config.services[0].url + 'panacea/getStudySummary/' + self.panaceaResultStudyId() + '/' + self.currentResultSource().sourceId;
 			
@@ -169,13 +160,15 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 					}else if(!(root["studyResultCollapsed"] === undefined || root["studyResultCollapsed"] === null)) {
 						changedRoot = JSON.parse(root["studyResultCollapsed"]);
 					}
-					self.drawSunburst(changedRoot, svg, div1, width, height, radius, tltp1Div, 'pnc_explanation', false);
+					self.drawSunburst(changedRoot, svg, div1, width, height, radius, tltp1Div, 'pnc_explanation',
+                        'pnc_legend1', "sequence_1", false);
 					
 					var changedUniquePathRoot = null;
 					if(!(root["studyResultUniquePath"] === undefined || root["studyResultUniquePath"] === null)) {
 						changedUniquePathRoot = JSON.parse(root["studyResultUniquePath"]);
                         // console.log(JSON.stringify(changedUniquePathRoot));
-						self.drawSunburst(changedUniquePathRoot, svg2, div2, width, height, radius, tltp2Div, 'pnc_explanation_2', true);
+						self.drawSunburst(changedUniquePathRoot, svg2, div2, width, height, radius, tltp2Div, 'pnc_explanation_2',
+                            'pnc_legend2', "sequence_2",  true);
 					}					
 				}
 			});
@@ -193,28 +186,104 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
             return path;
         }
 
+        // Generate a string that describes the points of a breadcrumb polygon.
+        function breadcrumbPoints(d, i, isUniquePath) {
+            var b = isUniquePath ? b2 : b1;
+            var points = [];
+            points.push("0,0");
+            points.push(b.w + ",0");
+            points.push(b.w + b.t + "," + (b.h / 2));
+            points.push(b.w + "," + b.h);
+            points.push("0," + b.h);
+            if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
+                points.push(b.t + "," + (b.h / 2));
+            }
+            return points.join(" ");
+        }
+
+        function capitalize(a) {
+            return a.charAt(0).toUpperCase() + a.slice(1);
+        }
+
+        // Update the breadcrumb trail to show the current sequence and percentage.
+        function updateBreadcrumbs(nodeArray, percentageString, sequenceId, colorsMap, isUniquePath) {
+            var trailId = sequenceId + "_trail";
+            var endLabelId = sequenceId + "_endlabel";
 
 
+            var b = isUniquePath ? b2 : b1;
 
-        self.drawSunburst = function(changedRoot, svg, div, width, height, radius, tltpDiv, explanation, isUniquePath){
-			if(changedRoot !== null){
+            // Data join; key function combines name and depth (= position in sequence).
+            var g = d3.select("#" + trailId)
+                .selectAll("g")
+                .data(nodeArray, function(d) {
+                    return  (colorsMap[capitalize(isUniquePath ? d.simpleUniqueConceptName : d.conceptName)]) + d.depth;
+                });
+
+            // Add breadcrumb and label for entering nodes.
+            var entering = g.enter().append("svg:g");
+
+            entering.append("svg:polygon")
+                .attr("points", function(d, i) {
+                    return breadcrumbPoints(d, i, isUniquePath);
+                })
+                .style("fill", function(d) { return colorsMap[capitalize(isUniquePath ? d.simpleUniqueConceptName : d.conceptName)] });
+
+            entering.append("svg:text")
+                .attr("x", ((b.w + b.t) / 2) - 10)
+                .attr("y", b.h / 2)
+                .attr("dy", "0.35em")
+                .attr("text-anchor", "middle")
+                .style("font-size", "11px")
+                .text(function(d) { return capitalize(isUniquePath ? d.simpleUniqueConceptName : d.conceptName); });
+
+            // Set position for entering and updating nodes.
+            g.attr("transform", function(d, i) {
+                return "translate(" + i * (b.w + b.s) + ", 0)";
+            });
+
+            // Remove exiting nodes.
+            g.exit().remove();
+
+            // Now move and update the percentage at the end.
+            d3.select("#" + trailId).select("#" + endLabelId)
+                .attr("x", (nodeArray.length + 0.3) * (b.w + b.s))
+                .attr("y", b.h / 2)
+                .attr("dy", "0.35em")
+                .attr("text-anchor", "middle")
+                .text(percentageString);
+
+            // Make the breadcrumb trail visible, if it's hidden.
+            d3.select("#" + trailId)
+                .style("visibility", "");
+
+        }
+
+        function initializeBreadcrumbTrail(sequenceId, isUniquePath) {
+            // Add the svg area.
+            var trail = d3.select("#" + sequenceId).append("svg:svg")
+                .attr("width", width)
+                .attr("height", 50)
+                .attr('class', 'trail')
+                .attr("id", sequenceId + "_trail");
+            // Add the label at the end, for the percentage.
+            trail.append("svg:text")
+                .attr("id", sequenceId + "_endlabel")
+                .style("fill", "#000");
+        }
+
+        self.drawSunburst = function(changedRoot, svg, div, width, height, radius, tltpDiv, explanation,
+                                     legendId, sequenceId, isUniquePath) {
+
+			if (changedRoot !== null) {
+                initializeBreadcrumbTrail(sequenceId, isUniquePath);
                 var totalCountFirstTherapy = changedRoot.totalCountFirstTherapy;
-				var x = d3.scale.linear()
-					.range([0, 2 * Math.PI]);
+                var root_id = isUniquePath ? "root2" : "root1";
 
-				var y = d3.scale.sqrt()
-					.range([0, radius]);
-				
-				var color = d3.scale.ordinal()
-                    .range(['#9e0142','#d53e4f','#f46d43','#fdae61','#fee08b','#ffffbf','#e6f598','#abdda4','#66c2a5','#3288bd','#5e4fa2']
-                );
-				
-				//Change this from percentage to patientCount (the arc size/width reflects the size of unit cohort better)
+                //Change this from percentage to patientCount (the arc size/width reflects the size of unit cohort better)
                 var partition = d3.layout.partition()
                     .size([2 * Math.PI, radius * radius])
-                    .value(function(d) { return d.patientCount; });
-
-                var root_id = isUniquePath ? "root2" : "root1";
+                    .value(function(d) { return isNaN(d.patientCount) ?  0 : +d.patientCount; });
 
                 var arc = d3.svg.arc()
                     .startAngle(function(d) { return d.x; })
@@ -222,182 +291,164 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
                     .innerRadius(function(d) { return Math.sqrt(d.y); })
                     .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
 
-                console.log((changedRoot));
-				var path = null;
-				if (!isUniquePath) {
-					path = svg.selectAll("path")
-						.data(partition.nodes(changedRoot))
-						.enter().append("path")
-						.attr("d", arc)
-                        .attr("id", function(d) {
-                            var is_root = d.comboId === "root";
-                            if (is_root) {
-                                return root_id;
-                            }
-                            return "";
-                        })
-						.style("fill-rule", "evenodd")
-                        .style('opacity', function(d) {
-                            return d.comboId === "root" ? 0 : 1;
-                        })
-						.style("fill", function(d) {  return d.comboId === "root" ?  "white"  :  color(d.conceptName); });
-				//comment out for not letting zoom in/out
-				//      .on("click", click);
-				} else {
-                    path = svg.selectAll("path")
-                        .data(partition.nodes(changedRoot))
-                        .enter().append("path")
-                        .attr("d", arc)
-                        .attr("id", function(d) {
-                            var is_root = d.comboId === "root";
-                            if (is_root) {
-                                console.log(arc.centroid(d));
-                                 return root_id;
-                            }
-
-                            return "";
-                        })
-                        .style("fill-rule", "evenodd")
-                        //.style("fill", function(d) { return color(d.uniqueConceptsName); });
-                        .style('opacity', function(d) {
-                            return d.comboId === "root" ? 0 : 1;
-                        })
-                        .style("fill", function(d) { return d.comboId === "root" ?  "white"  : color(d.simpleUniqueConceptName); });
-			}
-
-
-			//draw legend below.....
-			var legendRectSize = 24;
-			var legendSpacing = 4;
-
-			var legend = svg.selectAll('.legend')
-				.data(color.domain())
-				.enter()
-				.append('g')
-				.attr('class', 'pnc-legend')
-				.attr('transform', function(d, i) {
-					var height = legendRectSize + legendSpacing;
-					var offset =  height * color.domain().length / 2;
-					//var horz = -2 * legendRectSize;
-					var horz = -25 * legendRectSize;
-					var vert = i * height - offset;
-
-					if(i == 0)
-						return 'translate(-1000,-1000)';
-					return 'translate(' + horz + ',' + vert + ')';
-				});
-
-			legend.append('rect')
-				.attr('width', legendRectSize)
-				.attr('height', legendRectSize)
-				.attr('class','pnc-rect')
-				.style('fill', color)
-				.style('stroke', color);			
-
-			legend.append('text')
-				.attr('x', legendRectSize + legendSpacing)
-				.attr('y', legendRectSize - legendSpacing)
-				.text(function(d) {
-                    var arry = d.split(',');
-                    arry = $.map(arry, function(a, i) {
-                        return a.charAt(0).toUpperCase() + a.slice(1);
+                var nodes = partition.nodes(changedRoot)
+                    .filter(function(d) {
+                        return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
                     });
-                    return arry.join(', ');
+
+                var uniqueNames = [];
+                var colorsMap = {};
+                $.each(nodes, function() {
+                    var node = this;
+                    if (node.comboId !== 'root') {
+                        var name = capitalize(isUniquePath ? node.simpleUniqueConceptName : node.conceptName);
+
+                        if (uniqueNames.indexOf(name) < 0) {
+                            uniqueNames.push(name);
+                        }
+                    }
+                });
+                uniqueNames = uniqueNames.sort();
+                $.each(uniqueNames, function(i, v) {
+                    var idx = i;
+                    while (idx >= colors.length) {
+                        idx -= colors.length;
+                    }
+                    colorsMap[capitalize(v)] = colors[idx];
                 });
 
+                console.log(colorsMap);
+                console.log((changedRoot));
+                console.log(nodes);
 
+				var path  = svg.selectAll("path")
+                    .data(nodes)
+                    .enter().append("path")
+                    .attr("d", arc)
+                    .attr("id", function(d) {
+                        var is_root = d.comboId === "root";
+                        if (is_root) {
+                            return root_id;
+                        }
 
-			//draw legend done.........
+                        return "";
+                    })
+                    .style("fill-rule", "evenodd")
+                    .style("fill", function(d) { return d.comboId === "root" ?  "white"  :
+                        colorsMap[capitalize(isUniquePath ? d.simpleUniqueConceptName : d.conceptName)]});
 
-			var mouseover = function(d) {
-                if(d && d.comboId !== 'root') {
-                    var percentage = (100 * d.patientCount / totalCountFirstTherapy).toPrecision(2);
-                    var percentageString = percentage + "%";
-                    if (percentage < 0.1) {
-                        percentageString = "<0.1%";
-                    }
+                //// Dimensions of legend item: width, height, spacing, radius of rounded rect.
+                //var li = {
+                //    w: 250, h: 30, s: 3, r: 3
+                //};
+                //
+                //var legend = d3.select('#' + legendId).append("svg:svg")
+                //    .attr("width", li.w)
+                //    .attr("height", d3.keys(colorsMap).length * (li.h + li.s));
+                //
+                //var g = legend.selectAll("g")
+                //    .data(d3.entries(colorsMap))
+                //    .enter().append("svg:g")
+                //    .attr("transform", function(d, i) {
+                //        return "translate(0," + i * (li.h + li.s) + ")";
+                //    });
+                //
+                //g.append("svg:rect")
+                //    .attr("rx", li.r)
+                //    .attr("ry", li.r)
+                //    .attr("width", li.w)
+                //    .attr("height", li.h)
+                //    .style("fill", function(d) { return d.value; });
+                //
+                //g.append("svg:text")
+                //    .attr("x", li.w / 2)
+                //    .attr("y", li.h / 2)
+                //    .attr("dy", "0.35em")
+                //    .attr("text-anchor", "middle")
+                //    .text(function(d) { return d.key; });
 
-                    var jpos = $('#' + root_id).position();
-                    var pos = document.getElementById(root_id).getBoundingClientRect();
-                    $('#' + explanation)
-                        .css('visibility', 'visible')
-                        .css('width', pos.width - 30)
-                        .css('top', jpos.top + (pos.width/5))
-                        .css('left', width/2 - (pos.width/2) + 18);
-                    $('#' + explanation + ' .percent').text(percentageString);
-                    $('#' + explanation + ' .nvalue').text('(n = ' + d.patientCount + ')');
-                    $('#' + explanation + ' .sublabel')
-                        .text(function() {
-                            var arry = d.uniqueConceptsName.split(',');
-                            arry = $.map(arry, function(a, i) {
-                                return a.charAt(0).toUpperCase() + a.slice(1);
+                // mouse events
+                var mouseover = function(d) {
+                    if(d && d.comboId !== 'root') {
+                        var percentage = (100 * +d.patientCount / +totalCountFirstTherapy).toPrecision(2);
+                        var percentageString = percentage + "%";
+                        if (percentage < 0.1) {
+                            percentageString = "<0.1%";
+                        }
+
+                        var jpos = $('#' + root_id).position();
+                        var pos = document.getElementById(root_id).getBoundingClientRect();
+                        $('#' + explanation)
+                            .css('visibility', 'visible')
+                            .css('width', pos.width - 30)
+                            .css('top', jpos.top + (pos.width/5))
+                            .css('left', width/2 - (pos.width/2) + 18);
+                        $('#' + explanation + ' .percent').text(percentageString);
+                        $('#' + explanation + ' .nvalue').text('(n = ' + d.patientCount + ')');
+                        $('#' + explanation + ' .sublabel')
+                            .css('font-weight', 'bold')
+                            .text(function() {
+                                var words = (isUniquePath ? d.simpleUniqueConceptName : d.conceptName).split(',');
+                                words = $.map( words, function( val, i ) {
+                                    return capitalize(val);
+                                });
+                                return words.join(', ');
                             });
-                            return arry.join(' → ');
+
+                        var sequenceArray = getAncestors(d);
+                        updateBreadcrumbs(sequenceArray, percentageString, sequenceId, colorsMap, isUniquePath);
+
+                        // Fade all the segments.
+                        div.selectAll("path")
+                            .style("opacity", 0.4);
+
+                        // Then highlight only those that are an ancestor of the current segment.
+                        div.selectAll("path")
+                            .filter(function (node) {
+                                return (sequenceArray.indexOf(node) >= 0);
+                            })
+                            .style("opacity", 1);
+                    }
+                };
+                path.on('mouseover', mouseover);
+                div.on("mouseleave", function() {
+
+                    d3.selectAll('.trail')
+                        .style("visibility", "hidden");
+
+                    // Deactivate all segments during transition.
+                    div.selectAll("path").on("mouseover", null);
+
+                    // Transition each segment to full opacity and then reactivate it.
+                    div.selectAll("path")
+                        .transition()
+                        .duration(500)
+                        .style("opacity", 1)
+                        .each("end", function(d) {
+                            d3.select(this).on("mouseover", mouseover);
                         });
 
-                    var sequenceArray = getAncestors(d);
-                    //updateBreadcrumbs(sequenceArray, percentageString);
+                    d3.select('#'+explanation)
+                        .style("visibility", "hidden");
+                });
 
-                    // Fade all the segments.
-                    d3.selectAll("path")
-                        .style("opacity", 0.4);
-
-                    // Then highlight only those that are an ancestor of the current segment.
-                    d3.selectAll("path")
-                        .filter(function (node) {
-                            return (sequenceArray.indexOf(node) >= 0);
-                        })
-                        .style("opacity", 1);
-                }
-            };
-			path.on('mouseover', mouseover);
-
-            div.on("mouseleave", function() {
-
-                // Deactivate all segments during transition.
-                div.selectAll("path").on("mouseover", null);
-
-                // Transition each segment to full opacity and then reactivate it.
-                div.selectAll("path")
-                    .transition()
-                    .duration(100)
-                    .style("opacity", 1)
-                    .each("end", function(d) {
-                        d3.select(this).on("mouseover", mouseover);
-                    });
-
-                d3.select('#'+explanation)
-                    .style("visibility", "hidden");
-            });
-
-			//path.on('mouseout', function() {
-			//	//tltpDiv.style('display', 'none');
-			//	tltpDiv.style('visibility', ' hidden');
-			//});
-			//tooltip done here......
-
-			self.click = function (d) {
-				path.transition()
-				.duration(750)
-				.attrTween("d", arcTween(d, radius));
-			}			
-		}
+		    }
             d3.select(self.frameElement).style("height", height + "px");
-		}
+		};
 
 
 	
 		self.renderConceptSetCheckBox = function(field){
 			return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check"></span>';
-		}
+		};
 		
 		self.routeTo = function (resultMode) {
 			self.resultMode(resultMode);
-		} 
+		};
 		
 		self.back = function () {
 			document.location = "#/panacea";
-		}
+		};
 		
 		self.popPrintView = function(){
 			if(!self.printview){

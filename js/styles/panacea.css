@@ -100,3 +100,34 @@
     color: slategray;
     text-align: center;
 }
+
+.pnc-sidebar {
+    float: right;
+    width: 250px;
+}
+
+.pnc-legend {
+    padding: 10px 0 0 3px;
+}
+
+.pnc-legend text {
+    font-weight: 600;
+    font-size: 11px;
+    fill: #fff;
+}
+
+.sequence {
+    width: 600px;
+    height: 70px;
+    font-size:11px;
+}
+
+.legend {
+    padding: 10px 0 0 3px;
+
+}
+
+.sequence text, .legend text {
+    font-weight: 600;
+    fill: #fff;
+}
