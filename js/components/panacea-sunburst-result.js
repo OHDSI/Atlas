@@ -105,11 +105,11 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
             '#1F3481', '#136375', '#354B9A', '#2CAA4D'];
         var width = $(window).width() - 200 - 30,
             height = 700,
-            radius = Math.min(width, height) / 2;
+            radius = Math.min(width, height)/1.75;
 
         // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
         var b1 = {
-            w: 150, h: 25, s: 3, t: 10
+            w: 175, h: 25, s: 3, t: 10
         };
         var b2 = {
             w: 200, h: 25, s: 3, t: 10
@@ -274,7 +274,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
             // Add the svg area.
             var trail = d3.select("#" + sequenceId).append("svg:svg")
                 .attr("width", width)
-                .attr("height", 50)
+                .attr("height", 35)
                 .attr('class', 'trail')
                 .attr("id", sequenceId + "_trail");
             // Add the label at the end, for the percentage.
@@ -289,7 +289,14 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 			if (changedRoot !== null) {
                 initializeBreadcrumbTrail(sequenceId, isUniquePath);
                 var totalCountFirstTherapy = changedRoot.totalCountFirstTherapy;
+                var totalCohortCount = changedRoot.totalCohortCount;
+                var firstTherapyPct = changedRoot.firstTherapyPercentage + '%';
                 var root_id = isUniquePath ? "root2" : "root1";
+
+                // show totals
+                $('.total_first_therapy[unique=' + isUniquePath + ']').text(totalCountFirstTherapy);
+                $('.total_cohort_count[unique=' + isUniquePath + ']').text(totalCohortCount);
+                $('.first_therapy_pct[unique=' + isUniquePath + ']').text(firstTherapyPct);
 
                 //Change this from percentage to patientCount (the arc size/width reflects the size of unit cohort better)
                 var vals = [];
@@ -365,43 +372,38 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
                     .style("fill", function(d) { return d.comboId === "root" ?  "white"  :
                         colorsMap[capitalize(isUniquePath ? d.simpleUniqueConceptName : d.conceptName)]});
 
-                //// Dimensions of legend item: width, height, spacing, radius of rounded rect.
-                //var li = {
-                //    w: 250, h: 30, s: 3, r: 3
-                //};
-                //
-                //var legend = d3.select('#' + legendId).append("svg:svg")
-                //    .attr("width", li.w)
-                //    .attr("height", d3.keys(colorsMap).length * (li.h + li.s));
-                //
-                //var g = legend.selectAll("g")
-                //    .data(d3.entries(colorsMap))
-                //    .enter().append("svg:g")
-                //    .attr("transform", function(d, i) {
-                //        return "translate(0," + i * (li.h + li.s) + ")";
-                //    });
-                //
-                //g.append("svg:rect")
-                //    .attr("rx", li.r)
-                //    .attr("ry", li.r)
-                //    .attr("width", li.w)
-                //    .attr("height", li.h)
-                //    .style("fill", function(d) { return d.value; });
-                //
-                //g.append("svg:text")
-                //    .attr("x", li.w / 2)
-                //    .attr("y", li.h / 2)
-                //    .attr("dy", "0.35em")
-                //    .attr("text-anchor", "middle")
-                //    .text(function(d) { return d.key; });
-
                 // mouse events
                 var mouseover = function(d) {
                     if(d && d.comboId !== 'root') {
-                        var percentage = (100 * +d.patientCount / +totalCountFirstTherapy).toPrecision(2);
+                        $('.sb_stats[unique=' + isUniquePath + ']').css('opacity', 1);
+                        var name = (isUniquePath ? d.simpleUniqueConceptName : d.conceptName);
+                        var pct = 100 * (+d.patientCount / +totalCountFirstTherapy);
+                        var percentage = pct < 0.1 ? 0.09 : pct.toPrecision(3);
                         var percentageString = percentage + "%";
                         if (percentage < 0.1) {
                             percentageString = "<0.1%";
+                        }
+
+
+                        // drug details
+                        var patientCount = +d.patientCount;
+                        $('.patient_count[unique=' + isUniquePath + ']').text(patientCount);
+                        if (name !== "None") {
+                            if (!isUniquePath) {
+                                var daysFromStart = +d.daysFromCohortStart;
+                                var adherence = (100 - +d.gapPercent);
+                                adherence = adherence.toPrecision(3);
+                                if (adherence < 0.1) {
+                                    adherence = '<0.1%';
+                                } else {
+                                    adherence = adherence + '%';
+                                }
+                                $('.days_from_start[unique=' + isUniquePath + ']').text(daysFromStart).css('opacity', 1);
+                                $('.adherence[unique=' + isUniquePath + ']').text(adherence).css('opacity', 1);
+                            }
+                        } else {
+                            $('.days_from_start[unique=' + isUniquePath + ']').css('opacity', 0);
+                            $('.adherence[unique=' + isUniquePath + ']').css('opacity', 0);
                         }
 
                         var jpos = $('#' + root_id).position();
@@ -416,7 +418,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
                         $('#' + explanation + ' .sublabel')
                             .css('font-weight', 'bold')
                             .text(function() {
-                                var words = (isUniquePath ? d.simpleUniqueConceptName : d.conceptName).split(',');
+                                var words = name.split(',');
                                 words = $.map( words, function( val, i ) {
                                     return capitalize(val);
                                 });
@@ -441,6 +443,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
                 path.on('mouseover', mouseover);
                 div.on("mouseleave", function() {
 
+
                     d3.selectAll('.trail')
                         .style("visibility", "hidden");
 
@@ -453,11 +456,14 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
                         .duration(500)
                         .style("opacity", 1)
                         .each("end", function(d) {
+
                             d3.select(this).on("mouseover", mouseover);
                         });
 
                     d3.select('#'+explanation)
                         .style("visibility", "hidden");
+
+                    $('.sb_stats[unique=' + isUniquePath + ']').css('opacity', 0);
                 });
 
 		    }

@@ -130,10 +130,33 @@
 	<div id="wrapperConceptDetails2">
 		<label class="heading" style="font-weight: bold;">Pathway Overview (Interactive)</label>
 		<br/>
-        <div id="sequence_1" class="sequence"></div>
-        <div id="pnc_sidebar1" class="pnc-sidebar">
-            <div id="pnc_legend1" class="pnc-legend"></div>
+        <div id="pnc1">
+            <div id="sequence_1" class="sequence"></div>
+            <div class="sb_stats" unique="false" style="opacity: 0;">
+                <!--<div>-->
+                    <!--<b>Total Count First Therapy:</b> <span class="total_first_therapy" unique="false"></span>-->
+                <!--</div>-->
+                <!--<div>-->
+                    <!--<b>Total Count:</b> <span class="total_cohort_count" unique="false"></span>-->
+                <!--</div>-->
+                <!--<div>-->
+                    <!--<b>First Therapy Percentage:</b> <span class="first_therapy_pct" unique="false"></span>-->
+                <!--</div>-->
+                <div>
+                    <b>Patient Count:</b> <span class="patient_count" unique="false"></span>
+                </div>
+                <div>
+                    <b>Days from Start:</b> <span class="days_from_start" unique="false"></span>
+                </div>
+                <div>
+                    <b>Adherence:</b> <span class="adherence" unique="false"></span>
+                </div>
+            </div>
         </div>
+
+        <!--<div id="pnc_sidebar1" class="pnc-sidebar">-->
+            <!--<div id="pnc_legend1" class="pnc-legend"></div>-->
+        <!--</div>-->
         <div id="pnc_explanation" class="explanation" style="visibility: hidden">
             <div class="percent"></div>
             <div class="nvalue"></div>
@@ -145,11 +168,16 @@
 			<br/>
 		</div>
 
-        <div id="pnc_sidebar2" class="pnc-sidebar">
-            <div id="pnc_legend2" class="pnc-legend"></div>
-        </div>
+        <!--<div id="pnc_sidebar2" class="pnc-sidebar">-->
+            <!--<div id="pnc_legend2" class="pnc-legend"></div>-->
+        <!--</div>-->
         <div id="pnc2" class="main_pnc">
             <div id="sequence_2" class="sequence"></div>
+            <div class="sb_stats" unique="true" style="opacity: 0;">
+                <div>
+                    <b>Patient Count:</b> <span class="patient_count" unique="true"></span>
+                </div>
+            </div>
         </div>
         <div id="pnc_explanation_2" class="explanation" style="visibility: hidden" >
             <div class="percent"></div>
