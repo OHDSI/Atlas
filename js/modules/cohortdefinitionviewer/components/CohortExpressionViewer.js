@@ -1,4 +1,4 @@
-define(['knockout', 'cohortbuilder/options', 'text!./CohortExpressionViewerTemplate.html'], 
+define(['knockout', 'cohortbuilder/options', 'text!./CohortExpressionViewerTemplate.html', 'css!./styles/cartoon.css'], 
 			 function (ko, options, template) {
 		
 	function CohortExpressionEditorViewModel(params) {
@@ -6,6 +6,7 @@ define(['knockout', 'cohortbuilder/options', 'text!./CohortExpressionViewerTempl
 
 		self.expression = params.expression;
 		self.options = options;
+		self.selectedFragment = params.selectedFragment;
 
 		self.getLimitTypeText = function(typeId)
 		{

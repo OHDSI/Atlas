@@ -117,7 +117,7 @@ define([
 						self.currentView('splash');
 					},
 					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
-						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager'], function (CohortDefinition) {
+						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'profile-manager'], function (CohortDefinition) {
 							self.currentView('cohortdefinition');
 							self.currentCohortDefinitionMode('definition');
 							self.loadCohortDefinition(cohortDefinitionId, null, 'cohortdefinition', 'details');

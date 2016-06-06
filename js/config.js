@@ -18,7 +18,7 @@ define([], function () {
 	config.webAPIRoot = config.services[0].url;
 
 	config.dataSourcesLocation = '/achilles/data/datasources.json';
-  config.dataSourcesRoot = '/achilles/data';
+	config.dataSourcesRoot = '/achilles/data';
 	
 	return config;
 });

@@ -1,0 +1,44 @@
+<div class="row">
+	<div class="feFilter col-xs-2">
+		<div data-bind="with: $component">
+			<div data-bind="foreach:facets">
+				<div class="facetName"><i class="fa fa-filter"></i><span data-bind="text:caption"></span></div>
+				<div class="facetScrollBox" data-bind="foreach:Members">
+					<div class="facetMemberName" data-bind="css : {selected:Selected}, click: function(data, event) { $component.updateFilters($data, event);}">
+						<span data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, text:Name + ' (' + ActiveCount + ')'"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-10">
+		<div class="facetedDataTable">
+			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+            data: $component.data,
+            options: {
+							dom: 'Clfiprt',
+							colVis: {
+								buttonText: 'Change Columns',
+								align: 'right',
+								overlayFade: 0,
+								showAll: 'Show All Columns',
+								restore: 'Reset Columns'
+							},																																													 
+							language: {
+								search: 'Filter: '
+							},
+							rowCallback: $component.rowCallback,
+							lengthMenu: [[15, 30, 45, -1], [15, 30, 45,'All']],
+							orderClasses: false,
+							ordering: true,
+							order: $component.order,
+							columns: $component.columns,
+							autoWidth: true,
+							initComplete: $component.initCompleteCallback,
+					},
+					onRowClick: $component.rowClick,
+        }">
+			</table>
+		</div>
+	</div>
+</div>

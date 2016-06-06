@@ -1,15 +1,12 @@
-<div id="wrapperLoading" data-bind="if: $component.loading()">
+<div id="wrapperLoading" data-bind="if: $component.loadingCohort()">
 	<div class="wrapperTitle">
 		<i class="fa fa-refresh fa-spin"></i> Loading...
 	</div>
 </div>
 
-<div data-bind="if: !$component.loading()">
-	<div class="wrapperTitle">
-		<i class="fa fa-user"></i> Profiles
-	</div>
+<div data-bind="if: !$component.loadingCohort()">
 
-	<div class="modal fade" id="cohortDefinitionChooser" tabindex="-1" role="dialog">
+	<!--div class="modal fade" id="cohortDefinitionChooser" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">Choose Cohort Definition</div>
@@ -18,9 +15,9 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div-->
 
-	<div class="reportControls pad-5">
+	<!--div class="reportControls pad-5">
 		<div class="row">
 			<div class="col-xs-12">
 				<button class="form-control btn btn-xs btn-primary" data-bind="click: $component.showBrowser, text:$component.cohortDefinitionButtonText"></button>
@@ -28,10 +25,10 @@
 		</div>
 		<div class="row">
 			<div class="col-xs-12">
-				<select class="form-control" data-bind="css : { invalid: $component.sourceKey()==undefined }, options:$component.services()[0].sources.filter($component.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.sourceKey, optionsCaption:'Select a Source'"></select>
+				<select class="form-control" data-bind="css : { invalid: $component.sourceKey()==undefined }, options:$component.config.services[0].sources.filter($component.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.sourceKey, optionsCaption:'Select a Source'"></select>
 			</div>
 		</div>
-	</div>
+	</div-->
 
 	<div data-bind="visible:$component.personId">
 		<div class="paddedWrapper">
@@ -51,12 +48,36 @@
 		<div data-bind="visible:$component.loadingProfile()" class="loading">loading</div>
 
 		<div class="paddedWrapper" data-bind="visible:!$component.loadingProfile()">
-			<div data-bind="visible:$component.reference().length > 0">
-				<div id="timewave"></div>
-				<div id="scatter"></div>
-				<div class="heading">Profile Records</div>
-				<faceted-datatable params="{reference: $component.reference, columns: $component.columns, options: $component.options}"></faceted-datatable>
-			</div>
+			<!--div data-bind="visible:$component.filteredRecs().length > 0"-->
+				<div id="profile-chart" data-bind="profileChart:{
+							profile:$component.loadedProfile, 
+							cohortPerson:$component.cohortPerson, 
+							recs:$component.filteredRecs, 
+							zoomFilter:$component.dimensions.profileChart.filter,
+							highlightRecs:$component.highlightRecs,
+							allRecs:$component.crossfilter().all(),
+							showing: $component.showing,
+						}"></div>
+				<div id="wordcloud" data-bind="with:$component.dimensions.wordcloud">
+					<div class="wordcloud" data-bind="foreach:words($component.filteredRecs)">
+						<span data-bind="
+							text:text, 
+							style:{fontSize:size},
+							event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
+							"></span>
+					</div>
+				</div>
+				<!--div class="heading">Profile Records</div-->
+				<faceted-datatable-cf id="profile-manager-table" params="{
+						recs: $component.filteredRecs,
+						columns: $component.columns, 
+						facets: $component.facetsObs, 
+						order: [[3,'asc']],
+						searchFilter: $component.searchHighlight,
+						rowClick: $component.datatableRowClickCallback,
+					}"></faceted-datatable-cf>
+						<!--searchFilter: $component.dimensions.search.filter,-->
+			<!--/div-->
 		</div>
 	</div>
 

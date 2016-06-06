@@ -960,6 +960,7 @@
 	 var width = w - options.margin.left - options.margin.right;
 	 var height = h - options.margin.top - options.margin.bottom;
 	 }
+   }
 	 */
 
 	module.line = function () {

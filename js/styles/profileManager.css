@@ -1,0 +1,198 @@
+
+#profile-chart {
+	display: inline-block;
+	position: relative;
+	width: 100%;
+	padding-bottom: 35%; /* aspect ratio */
+	vertical-align: top;
+	overflow: hidden;
+	text-align: center;
+}
+#profile-chart svg {
+	display: inline-block;
+	position: absolute;
+	top: 10px;
+	left: 0;
+}
+#profile-chart .axis text {
+	font-size: 10px;
+}
+
+#profile-chart {
+	text-align: center;
+	/* background-color: #eee; */
+	border-bottom: solid 1px #ccc;
+}
+
+
+path.drug {
+	fill:rgb(177,89,40);
+	opacity: 0.6;
+}
+path.condition {
+	fill:rgb(166,206,227);
+	opacity:0.6;
+}
+path.observation {
+	fill:rgb(31,120,180);
+	opacity:0.6;
+}
+path.visit {
+	fill:rgb(178,223,138);
+	opacity:0.6;
+}
+path.conditionera {
+	fill:rgb(51,160,44);
+	opacity:0.6;
+}
+path.drugera {
+	fill:rgb(251,154,153);
+	opacity:0.6;
+}
+path.doseera {
+	fill:rgb(227,26,28);
+	opacity:0.6;
+}
+path.procedure {
+	fill:rgb(253,191,111);
+	opacity:0.6;
+}
+path.device {
+	fill:rgb(255,127,0);
+	opacity:0.6;
+}
+path.measurement {
+	fill:rgb(202,178,214);
+	opacity:0.6;
+}
+path.specimen {
+	fill:rgb(106,61,154);
+	opacity:0.6;
+}
+path.death {
+	fill:rgb(255,255,153);
+	opacity:0.6;
+}
+
+rect.point {
+	opacity: 0.5;
+}
+rect.drug,
+text.drug
+{
+	fill:rgb(177,89,40);
+}
+rect.condition,
+text.condition
+{
+	fill:rgb(166,206,227);
+}
+rect.observation,
+text.observation
+{
+	fill:rgb(31,120,180);
+}
+rect.visit,
+text.visit
+{
+	fill:rgb(178,223,138);
+}
+rect.conditionera,
+text.conditionera
+{
+	fill:rgb(51,160,44);
+}
+rect.drugera,
+text.drugera
+{
+	fill:rgb(251,154,153);
+}
+rect.doseera,
+text.doseera
+{
+	fill:rgb(227,26,28);
+}
+rect.procedure,
+text.procedure
+{
+	fill:rgb(253,191,111);
+}
+rect.device,
+text.device
+{
+	fill:rgb(255,127,0);
+}
+rect.measurement,
+text.measurement
+{
+	fill:rgb(202,178,214);
+}
+rect.specimen,
+text.specimen
+{
+	fill:rgb(106,61,154);
+}
+rect.death,
+text.death
+{
+	fill:rgb(255,255,153);
+}
+
+rect.dim {
+	opacity: 0.2 !important;
+}
+.link {
+	stroke: gray;
+	stroke-width: 0.5;
+}
+.wordcloud span {
+	background-color: #DDD;
+	margin: 2px;
+	padding: 2px;
+	border-radius: 5px;
+	display: inline-block;
+	cursor: pointer;
+}
+.highlighted path, .highlighted line, .highlighted rect {
+	/*opacity: 1;*/
+	stroke: black;
+	stroke-opacity: .6;
+}
+text.highlighted {
+	opacity: 1;
+	fill: black !important;
+}
+.unhighlighted {
+	opacity: 0.1;
+}
+g.inset rect.inset-point {
+	fill: black;
+}
+g.inset rect.background {
+	fill: white;
+	stroke: gray;
+}
+g.inset rect.highlighted {
+	fill: orangered !important;
+	width: 3px;
+	height: 3px;
+}
+g.inset rect.insetZoom {
+	opacity: 0.2;
+	cursor: -webkit-grab;
+}
+g.inset rect.resizeLeft, 
+g.inset rect.resizeRight {
+	opacity: 0;
+	cursor: ew-resize;
+}
+g.inset rect.filteredout {
+	fill: lightgray;
+}
+rect.category {
+	fill: #EEE;
+}
+text.category {
+	fill: white;
+	font-weight: bold;
+}

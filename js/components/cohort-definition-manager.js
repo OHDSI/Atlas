@@ -65,6 +65,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 		});
 
+		self.selectedFragment = ko.observable();
+		
 		// model behaviors
 		self.onConceptSetTabRespositoryConceptSetSelected = function (conceptSet) {
 			self.model.loadConceptSet(conceptSet.id, 'cohortdefinition', 'cohort', 'details');
