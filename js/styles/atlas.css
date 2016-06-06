@@ -1591,6 +1591,7 @@ div.button-overlay {
 	color: #ccc;
 	line-height: 15px;
 	background-color: #888;
+<<<<<<< HEAD
 }
 
 .nav-pills li a:hover {
@@ -1598,6 +1599,15 @@ div.button-overlay {
 	color: #fff;
 }
 
+=======
+}
+
+.nav-pills li a:hover {
+	background-color: #888;
+	color: #fff;
+}
+
+>>>>>>> 4788b08dc6157e73e442f7caebb336e433a7a181
 textarea.code {
 	font-style='Courier New';
 	font-size: 8px;
