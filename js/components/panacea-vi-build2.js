@@ -138,7 +138,9 @@
 		mainContainer.append('h1').attr('class', 'heading').text('Distribution by Number of Drugs Taken');
 		var firstTwoTableCollections = [tableCollection[0], tableCollection[1]];
 		_.forEach(firstTwoTableCollections, function (collection, index) {
-			drawTable(mainContainer, collection, tableX, 5, null);
+            if (index !== 1) { // skip exactly per JD
+                drawTable(mainContainer, collection, tableX, 5, null);
+            }
 		});
 		// Create the third table for medications by getting the equalToCollection from the tableCollection
 		// and the first object from that array (as the ones for just one drug) then getting the medications from them
