@@ -80,12 +80,13 @@ define(['knockout', 'text!./panacea-cohort-result.html', 'jquery', 'd3', 'appCon
 	                    .domain([8507, 8551, 8532])
 	                    .range(["#1F78B4", "#33A02C", "#FB9A99"]),
 	                margin: {
-	                    top: 5,
-	                    bottom: 10,
+	                    top: 25,
+	                    bottom: 5,
 	                    right: 150,
 	                    left: 10
 	                }
 	            });
+                d3.select('#gender_dist svg').style('height', 130);// get a little extra space
 	        }
 
 	        // age at first obs histogram

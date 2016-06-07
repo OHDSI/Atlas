@@ -410,7 +410,7 @@
 	    			
 	          return {
 	  		item: {
-	  			name: o.oneDrugName,
+	  			name: o.oneDrugName ? o.oneDrugName.charAt(0).toUpperCase() + o.oneDrugName.slice(1) : '',
 	    			count: o.totalCount
 	    		},
 	    		children: children,

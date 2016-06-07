@@ -19,12 +19,13 @@ body {
 }
 
 #wrapperLeftMenu {
-	position: absolute;
+	position: fixed;
 	left: 0px;
 	top: 0px;
 	width: 200px;
 	bottom: 0px;
 	background-color: #003142;
+    height: 100%;
 }
 
 #wrapperMiniBar {

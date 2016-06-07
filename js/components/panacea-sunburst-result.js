@@ -35,6 +35,10 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 				url: config.services[0].url + 'panacea/' + self.panaceaResultStudyId(),
 				method: 'GET',
 				success: function (d) {
+                    if (!d) {
+                        console.log('no data');
+                        return;
+                    }
 					self.currentStudy(d);
 //					self.studyName(d.studyName);
 //					self.studyDesc(d.studyDesc);
@@ -61,6 +65,9 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 		}
 
 		self.currentStudy.subscribe(function (d) {
+            if (!self.currentStudy()) {
+                return;
+            }
 			$.ajax({
 				url: config.services[0].url + 'conceptset/' + self.currentStudy().conceptSetId  +'/expression',
 				method: 'GET',
@@ -104,8 +111,9 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
         var colors = ['#d53e4f','#f46d43','#fdae61','#89BF59','#771333','#94A734','#4AA5A5','#3288bd', '#D85555', '#4A2B75',
             '#1F3481', '#136375', '#354B9A', '#2CAA4D'];
         var width = $(window).width() - 200 - 30,
-            height = 700,
-            radius = Math.min(width, height)/1.75;
+            height = 750,
+            radius = Math.min(width, height)/2.25,
+            radiusBig = Math.min(width, height)/1.5;
 
         // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
         var b1 = {
@@ -139,11 +147,9 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 			
 			d3.json(url, function(error, root) {
 				if (error) {
-					svg.selectAll("path").remove();
-					svg.selectAll("g").remove();
-					
-					svg2.selectAll("path").remove();
-					svg2.selectAll("g").remove();
+                    console.log('error getting study summary');
+					$('#pnc_sunburst_result_div').empty();
+                    $('#pnc_sunburst_result_div_2').empty();
 
 				}else{
 					svg.selectAll("path").remove();
@@ -160,7 +166,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 					}else if(!(root["studyResultCollapsed"] === undefined || root["studyResultCollapsed"] === null)) {
 						changedRoot = JSON.parse(root["studyResultCollapsed"]);
 					}
-					self.drawSunburst(changedRoot, svg, div1, width, height, radius, tltp1Div, 'pnc_explanation',
+					self.drawSunburst(changedRoot, svg, div1, width, height, radiusBig, tltp1Div, 'pnc_explanation',
                         'pnc_legend1', "sequence_1", false);
 					
 					var changedUniquePathRoot = null;
@@ -323,7 +329,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
 
                 var nodes = partition.nodes(changedRoot)
                     .filter(function(d) {
-                        return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
+                        return (d.dx > 0.0005); // 0.005 radians = 0.29 degrees
                     });
 
                 var uniqueNames = [];
@@ -412,7 +418,7 @@ define(['knockout', 'text!./panacea-sunburst-result.html', 'jquery', 'd3', 'appC
                             .css('visibility', 'visible')
                             .css('width', pos.width - 30)
                             .css('top', jpos.top + (pos.width/5))
-                            .css('left', width/2 - (pos.width/2) + 18);
+                            .css('left', width/2 - (pos.width/2) + 32);
                         $('#' + explanation + ' .percent').text(percentageString);
                         $('#' + explanation + ' .nvalue').text('(n = ' + d.patientCount + ')');
                         $('#' + explanation + ' .sublabel')

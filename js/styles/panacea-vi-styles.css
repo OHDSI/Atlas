@@ -54,6 +54,10 @@ h1.table-heading {
 h1.heading {
 	font-size: 1.6em;
 }
+
+.heading {
+    font-size: 1.1em;
+}
 .single-drug-section {
 	padding: 10px 10px;
 	float: left;
@@ -80,6 +84,7 @@ h1.heading {
 table td, table th {
 	text-align: left;
 	padding: 5px;
+    font-size:0.9em;
 }
 table:first-of-type {
 	border-bottom: none;
