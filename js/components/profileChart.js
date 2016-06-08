@@ -7,7 +7,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			bottom: 30,
 			left: 0
 		};
-	var vizHeight = 270;
+	var vizHeight = 240;
 	var width = 900;
 	//var width = minWidth - margin.left - margin.right;
 

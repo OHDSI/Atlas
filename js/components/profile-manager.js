@@ -108,15 +108,19 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					filter: ko.observable(null),
 					words: function(filteredRecs) {
 						var needToLook = filteredRecs().length; // knockout won't fire this otherwise
+						var stopWords = [
+							'Outpatient Visit','No matching concept',
+						];
 						if (!self.dimensions.wordcloud.dimension) return [];
 						var words = self.dimensions.wordcloud.group.top(20)
-														.filter(d=>d.value.length)
+														.filter(d=>d.value.length &&
+																			 stopWords.indexOf(d.key) === -1)
 														.map(d=>{return {text:d.key, recs:d.value}});
 						words = _.sortBy(words, d=>-d.recs.length)
 						var avgSize = average(words.map(d=>d.recs.length));
 						var std = standardDeviation(words.map(d=>d.recs.length));
 						words.forEach(word=>{
-							word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 20)) + '%';
+							word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 10)) + '%';
 						});
 						//console.log(words.map(d=>d.text + ':' + d.recs.length + ':' + d.size));
 						return words;
