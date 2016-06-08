@@ -1,12 +1,8 @@
-define(['knockout', 'text!./faceted-datatable.html', 'facets', 'crossfilter/crossfilter','knockout.dataTables.binding', 'colvis'], function (ko, view, facetEngine, crossfilter) {
+define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTables.binding', 'colvis'], function (ko, view, facetEngine) {
 
 	function facetedDatatable(params) {
 		var self = this;
 
-		if (Array.isArray(params.reference))
-			self.crossfilter = crossfilter(params.reference);
-		else if ('dimension' in params.reference)
-			self.crossfilter = params.reference;
 		self.reference = params.reference;
 		self.data = ko.observableArray();
 		self.data(self.reference());
@@ -20,6 +16,8 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'crossfilter/cros
 		if (params.orderColumn) {
 			self.orderColumn = params.orderColumn;
 		}
+
+		self.lengthMenu = self.options.lengthMenu || [[15, 30, 45, -1], [15, 30, 45, 'All']];
 
 		self.facetEngine = ko.observable();
 
@@ -50,7 +48,10 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'crossfilter/cros
 			self.facetEngine(self.feTemp);
 			self.data(self.reference());
 		});
-
+				
+		if (!self.facetEngine() && self.reference()) {
+			self.reference.valueHasMutated();
+		}
 	};
 
 	var component = {

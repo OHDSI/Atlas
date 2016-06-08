@@ -1,5 +1,5 @@
 table.cohort-generate-sources {
-	width:100%;
+	width: 100%;
 	border-bottom: solid 1px #888;
 }
 
@@ -9,15 +9,16 @@ table.cohort-generate-sources td {
 }
 
 table.cohort-generate-sources tbody {
-	display:block;
-	max-height:210px;
+	display: block;
+	max-height: 210px;
 	overflow: auto;
 }
 
-table.cohort-generate-sources thead, table.cohort-generate-sources tbody tr {
-	display:table;
-	width:100%;
-	table-layout:fixed;
+table.cohort-generate-sources thead,
+table.cohort-generate-sources tbody tr {
+	display: table;
+	width: 100%;
+	table-layout: fixed;
 }
 
 table.cohort-generate-sources thead {
@@ -25,8 +26,8 @@ table.cohort-generate-sources thead {
 }
 
 .breadcrumb-container {
-	background-color:#333;
-	color:#fff;
+	background-color: #333;
+	color: #fff;
 	border-bottom: solid 1px #ccc;
 	padding-left: 10px;
 	line-height: 32px;
@@ -34,12 +35,23 @@ table.cohort-generate-sources thead {
 	height: 32px;
 }
 
-.btn.btn-sm {
-	padding-top:0px;
-	padding-bottom:0px;
-	margin-top:0px;
-	line-height:25px
+cohort-comparison-manager label {
+	text-transform: uppercase;
+	color:#888;
+	margin: 10px 0px 0px 2px;
+table.cohort-generate-sources {
+	width:100%;
+	border-bottom: solid 1px #888;
 }
+
+
+.btn.btn-sm {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	margin-top: 0px;
+	line-height: 25px
+}
+
 .asset-heading {
 	background-color: #333333;
 	padding: 7px;
@@ -57,14 +69,16 @@ body.splash {
 
 body {
 	font-size: 12px;
+	/* researched font stack used by github */
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 #wrapperLeftMenu {
-	position: absolute;
+	position: fixed;
 	left: 0px;
 	top: 0px;
 	width: 150px;
-	bottom: 0px;
+	bottom: 0;
 	background-color: #003142;
 	border-right: solid 1px #888;
 }
@@ -104,11 +118,12 @@ body {
 }
 
 .heading {
-	font-size: 12px;
-	color: #003142;
+	font-size: 14px;
+	color: #000;
 	font-weight: normal;
-	margin-top: 10px;
-	margin-bottom: 5px;
+	margin: 7px 0px 3px 0px;
+	padding: 0px 5px 0px 5px;
+	border-bottom: solid 1px #ccc;
 }
 
 #wrapperConfigure {
@@ -121,6 +136,10 @@ body {
 
 .paddedWrapper {
 	margin: 5px;
+}
+
+.padded td {
+	padding: 5px;
 }
 
 .paddedFloater {
@@ -555,11 +574,11 @@ td.select .fa-check-circle.selected {
 }
 
 .error {
+	font-size: 20px;
+	text-align: center;
+	font-variant: small-caps;
 	padding: 7px;
-	font-size: .9em;
-	font-family: courier new;
-	color: #444;
-	background-color: #fee;
+	color: #F44;
 	margin: 7px;
 }
 
@@ -576,7 +595,7 @@ td.select .fa-check-circle.selected {
 }
 
 .configureSourceTable tr.selected {
-	background-color: #f8b88f;	
+	background-color: #f8b88f;
 }
 
 th {
@@ -584,7 +603,7 @@ th {
 	padding-left: 7px;
 	padding-right: 7px;
 	font-size: 11px;
-	border-bottom: solid 1px #888;
+	border-bottom: solid 1px #CCC;
 }
 
 table.configureSourceTable {
@@ -704,10 +723,10 @@ ul.ColVis_collection li {
 }
 
 .wrapperTitle .fa.fa-chevron-right {
-	position:relative;
-	top:0px;
+	position: relative;
+	top: 0px;
 	left: 0px;
-	width:5px;
+	width: 5px;
 	font-size: 9px;
 	padding-left: 7px;
 	padding-right: 7px;
@@ -953,8 +972,7 @@ code {
 }
 
 pre {
-	border-radius: 0
-	font-size: 10px;
+	border-radius: 0 font-size: 10px;
 	background-color: #eee;
 	margin: 5px 0px;
 }
@@ -1427,10 +1445,6 @@ circle.child {
 	fill: #eee;
 }
 
-#kernelDensityContainer text {
-	font-size: 10px;
-}
-
 .axis path,
 .axis line {
 	stroke: rgba(200, 200, 200, 64) !important;
@@ -1667,8 +1681,8 @@ textarea.code {
 }
 
 #wrapperLeftMenu li {
-    border-bottom: solid 1px #333;
-    padding: 3px;
+	border-bottom: solid 1px #333;
+	padding: 3px;
 }
 
 .asset-heading input {
@@ -1691,13 +1705,13 @@ textarea.code {
 }
 
 li.current-asset {
-	background-color:	#ccc;
+	background-color: #ccc;
 	border-bottom: solid 1px #F19119;
 	padding: 2px 0px 2px 10px;
 }
 
 #wrapperLeftMenu li.current-asset a {
-	color:#000;
+	color: #000;
 }
 
 .configureSourceTable i.fa.fa-spinner.fa-spin {
@@ -1766,7 +1780,7 @@ inclusion-rule-editor input {
 }
 
 inclusion-rule-editor input.emptyInput {
-	background-color:#fff;
+	background-color: #fff;
 }
 
 .selectedInclusion {
@@ -1775,24 +1789,25 @@ inclusion-rule-editor input.emptyInput {
 }
 
 table.inclusionRules {
-	margin-top:5px;
+	margin-top: 5px;
 }
+
 table.inclusionRules td {
-	padding:2px;
+	padding: 2px;
 }
 
 table.inclusionRules tr {
-	cursor:pointer;
+	cursor: pointer;
 	line-height: 16px;
 }
 
 cohort-expression-editor td {
-    vertical-align: top;
+	vertical-align: top;
 }
 
 td div.criteria-content {
 	padding: 6px;
-	background-color:#eee;
+	background-color: #eee;
 	margin: 1px 5px 5px 0px;
 	border: solid 1px #ccc;
 }
@@ -1802,36 +1817,35 @@ td div.criteria-content {
 }
 
 .dd-select {
-    padding: 2px 0px 2px 5px;
-    margin-left: 5px;
+	padding: 2px 0px 2px 5px;
+	margin-left: 5px;
 }
 
 .criteriaHeading .dd-container {
-    margin-top: -5px;
+	margin-top: -5px;
 }
 
 inclusion-rule-editor .btn-group {
-    margin-top: -3px;
+	margin-top: -3px;
 }
 
 inclusion-rule-editor .inclusion-rule-header {
-	margin-bottom:5px;
+	margin-bottom: 5px;
 }
 
 .fa.fa-ban {
 	color: red;
-	cursor:pointer;
+	cursor: pointer;
 }
 
 .fa.fa-times {
 	color: red;
 	font-size: 1.7em;
 	margin-right: 2px;
-	cursor:pointer;
+	cursor: pointer;
 }
 
-button.btn-conceptset_selector
-{
+button.btn-conceptset_selector {
 	font-size: 10px;
 	color: #000;
 	height: 21px;
@@ -1844,37 +1858,88 @@ button.btn-conceptset_selector
 	border-top-left-radius: 0;
 }
 
-select.mediumInputField
-{
-	height:1.8em;
+select.mediumInputField {
+	height: 1.8em;
 }
-
 
 cohort-expression-editor .fa.fa-ban {
-    font-size: 20px;
+	font-size: 20px;
 }
 
+cohort-comparison-manager .results-tab-pane {
+	margin: 5px;
+}
+
+cohort-comparison-manager .results-tab-pane .row {
+	line-height: 30px;
+	vertical-align: middle;
+	text-align: left;
+	margin-top: 5px;
+	background-color: #eee;
+	border: solid 1px #ccc;
+}
+
+cohort-comparison-manager .results-tab-pane .row.executionrow {
+	background-color:#fff;
+	border-left: solid 1px #ccc;
+	border-right: solid 1px #ccc;
+	border-top: none;
+	border-bottom: solid 1px #ccc;
+	margin-bottom:0px;
+	margin-top:0px;
+}
+
+cohort-comparison-manager .row .btn {
+	margin-bottom: 2px;
+}
 
 #wrapperLeftMenu li:hover {
-    background-color: #093646;
+	background-color: #093646;
 }
 
 #wrapperLeftMenu li.current-asset:hover {
-    background-color: #fff;
+	background-color: #fff;
 }
 
 .breadcrumb-container a {
-    color: #ccc;
+	color: #ccc;
 }
 
 .breadcrumb-container i.fa.fa-chevron-left {
-    font-size: 10px;
+	font-size: 10px;
 }
 
 .breadcrumb-container i.fa.fa-chevron-right {
-    font-size: 10px;
+	font-size: 10px;
 }
 
 table.cohort-generate-sources tr:hover {
-    background-color: #eee;
+	background-color: #eee;
+}
+
+
+.modal-header button.close {
+    color: #fff;
+}
+
+#matchedpopdistChart svg {
+	height: 400px;
+}
+
+#psmodeldistChart svg {
+	height: 400px;
+}
+
+#balanceChart svg {
+	height: 400px;
+}
+
+.scatterTooltip {
+	width: 300px;
+	white-space: normal;
+}
+
+.modal-header .close {
+	color: #fff;
+	opacity: .8;
 }

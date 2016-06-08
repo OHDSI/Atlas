@@ -64,10 +64,16 @@
 				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
 			</li>
 			<li>
+				<a href="#/cohortcomparisons"><i class="fa fa-balance-scale"></i>Cohort Comparisons</a>
+			</li>
+			<li>
 				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
 			</li>
 			<li>
 				<a href="#/configure"><i class="fa fa-cogs"></i>Configuration</a>
+			</li>
+			<li>
+				<a href="#/r"><i class="fa fa-registered"></i>R Services</a>
 			</li>
 			<li>
 				<a target="_blank" href="https://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
@@ -166,6 +172,14 @@
 				<feasibility-analyzer params="services: pageModel.services, feasibilityId: pageModel.feasibilityId"></feasibility-analyzer>
 			</div>
 
+			<div data-bind="if:pageModel.currentView() == 'cohortcomparisons'">
+				<cohort-comparison-browser></cohort-comparison-browser>
+			</div>
+
+			<div data-bind="if:pageModel.currentView() == 'cohortcomparison'">
+				<cohort-comparison-manager params="currentCohortComparisonId:pageModel.currentCohortComparisonId"></cohort-comparison-manager>
+			</div>
+
 			<div data-bind="if:pageModel.currentView() == 'r'">
 				<r-manager></r-manager>
 			</div>
@@ -180,8 +194,10 @@
 						<div class="heading">Application Initialization Failed</div>
 						<div class="error">Unable to connect to an instance of the WebAPI. Please contact your administrator to resolve this issue.</div>
 					</div>
-					<div class="heading">Configured Services</div>
-					<ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
+					<div data-bind="if:!appInitializationFailed()">
+						<div class="heading">Configured Services</div>
+						<ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
+					</div>
 				</div>
 			</div>
 

@@ -7,14 +7,6 @@
 /* Global Styles */
 
 /* ------------------------------- */
-/*
-body {
-	margin-right: 15px;
-	margin-left: 15px;
-	margin-top: 5px;
-	margin-bottom: 5px;
-	font-family: Arial;
-}
 #wrapper {
 	width: 99%;
 }
@@ -289,7 +281,7 @@ div.data-sources.personSummary .row div {
 	left: 100%;
 }
 .tab-pane {
-	padding: 7px 7px 7px 7px;
+	/* padding: 7px 7px 7px 7px; */
 }
 .clear {
 	clear: both;

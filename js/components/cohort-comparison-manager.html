@@ -1,0 +1,223 @@
+<div class="wrapperTitle" data-bind="visible:loading">
+	<i class="fa fa-refresh fa-spin"></i> Loading...
+</div>
+
+<div data-bind="if:!loading() && cohortComparison()">
+	<div class="wrapperTitle">
+		<i class="fa fa-balance-scale"></i> Cohort Comparison
+	</div>
+
+	<div class="asset-heading">
+		<input type="text" data-bind="textInput: cohortComparison().name, css: { emptyInput: !(cohortComparison().name() && (cohortComparison().name().length > 0)) }" />
+		<div class="btn-group" role="group">
+			<button class="btn btn-sm btn-primary" data-bind="click: save, enable:canSave">Save</button>
+			<button class="btn btn-sm btn-primary" data-bind="click: close">Close</button>
+		</div>
+	</div>
+
+	<ul class="nav nav-tabs">
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'specification' }, click: function() { $component.tabMode('specification') };"><a>Specification</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>Export</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div class="paddedWrapper text-center error" data-bind="visible:$component.loadingExecutionFailure">
+			<div>
+				<i class="fa fa-exclamation-circle"></i>
+			</div>
+			<div>error loading selected results</div>
+		</div>
+
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'results' }" class="tab-pane">
+			<div class="padded-wrapper" data-bind="visible:$component.resultsMode() == 'sources'">
+				<div class="heading">Available Data Sources</div>
+				<div data-bind="foreach:$component.sources" class="results-tab-pane">
+					<div class="row">
+						<div class="col-sm-8" data-bind="text:sourceName"></div>
+						<div class="col-sm-4 text-right">
+							<button data-bind="visible: !$component.sourceProcessingStatus[sourceKey](), click:function() {$component.executeCohortComparison(sourceKey);}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
+							<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
+							<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
+							<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">
+								&nbsp;(<span data-bind="text:$component.sourceExecutions[sourceKey]().length"></span> Results)
+								<i data-bind="visible:!$component.sourceHistoryDisplay[sourceKey]()" class="fa fa-angle-double-down"></i>
+								<i data-bind="visible:$component.sourceHistoryDisplay[sourceKey]" class="fa fa-angle-double-up"></i>
+							</button>
+						</div>
+					</div>
+					<div data-bind="foreach:$component.sourceExecutions[sourceKey], visible:$component.sourceHistoryDisplay[sourceKey]">
+						<div class="row executionrow">
+							<div class="col-sm-1" data-bind="text:executionId"></div>
+							<div class="col-sm-2" data-bind="text:executedCaption"></div>
+							<div class="col-sm-3 text-right" data-bind="text:durationCaption"></div>
+							<div class="col-sm-2 text-right" data-bind="text:executionStatus"></div>
+							<div class="col-sm-4 text-right">
+								<button class="btn btn-sm btn-primary" data-bind="css:{disabled:executionStatus!='COMPLETED'},click:$component.executionSelected"><i class="fa fa-eye"></i> View</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--
+				<div class="row">
+					<div class="col-sm-12 text-right">
+						<button class="btn btn-sm btn-primary"><i class="fa fa-fast-forward"></i> Generate All</button>
+					</div>
+				</div>
+				-->
+			</div>
+
+			<div class="paddedWrapper text-center loading" data-bind="visible: $component.loadingExecution">
+				<div>loading results</div>
+				<div>
+					<i class="fa fa-circle-o-notch fa-spin"></i>
+				</div>
+			</div>
+
+			<div class="paddedWrapper" data-bind="visible: $component.resultsMode() == 'execution' && !$component.loadingExecution()">
+				<div class="row">
+					<div class="col-sm-4" data-bind="text:$component.currentExecutionSourceName"></div>
+					<div class="col-sm-2" data-bind="text:'Execution Id: ' + $component.currentExecutionId()"></div>
+					<div class="col-sm-2" data-bind="text:'AUC: ' + $component.currentExecutionAuc()"></div>
+					<div class="col-sm-4 text-right">
+						<button data-bind="click:closeExecution" class="btn btn-sm btn-primary">Back to Sources</button>
+					</div>
+				</div>
+
+				<ul class="nav nav-pills">
+					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'covariates' }, click: function() { $component.pillMode('covariates') };"><a>Covariates</a>
+					</li>
+					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'psd' }, click: function() { $component.pillMode('psd') };"><a>PS Distribution</a>
+					</li>
+					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'matched' }, click: function() { $component.pillMode('matched') };"><a>Matched PS Distribution</a>
+					</li>
+					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'attrition' }, click: function() { $component.pillMode('attrition') };"><a>Attrition</a>
+					</li>
+					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'balance' }, click: function() { $component.pillMode('balance') };"><a>Balance</a>
+					</li>
+				</ul>
+
+				<div class="tab-content">
+					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'covariates'">
+						<faceted-datatable params="{orderColumn:2, reference:covariates, columns: covariateColumns, options:covariateOptions, rowClick:covariateSelected}">
+						</faceted-datatable>
+					</div>
+					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'attrition'">
+						<div class="paddedWrapper">
+							<table class="padded">
+								<thead>
+									<th>Description</th>
+									<th>Treated Persons</th>
+									<th>Comparator Persons</th>
+									<th>Treated Exposures</th>
+									<th>Comparator Exposures</th>
+								</thead>
+								<tbody data-bind="foreach:attrition">
+									<tr>
+										<td data-bind="text:description"></td>
+										<td class="numeric" data-bind="text:treatedPersons"></td>
+										<td class="numeric" data-bind="text:comparatorPersons"></td>
+										<td class="numeric" data-bind="text:treatedExposures"></td>
+										<td class="numeric" data-bind="text:comparatorExposures"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'psd'">
+						<div id="psmodeldistChart">
+							<svg></svg>
+						</div>
+					</div>
+					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'matched'">
+						<div id="matchedpopdistChart">
+							<svg></svg>
+						</div>
+					</div>
+					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'balance'">
+						<div id="balanceChart">
+							<svg></svg>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'specification'}" class="tab-pane">
+			<div class="row">
+				<div class="col-md-8">
+					<div>
+						<label>treatment cohort</label>
+						<div class="input-group">
+							<input class="form-control" type="text" disabled data-bind="value: cohortComparison().treatmentCaption" />
+							<span class="input-group-btn">
+        				<button class="btn btn-primary" data-bind="click:chooseTreatment"><i class="fa fa-folder-open"></i></button>
+							</span>
+						</div>
+					</div>
+					<div>
+						<label>comparator cohort</label>
+						<div class="input-group">
+							<input class="form-control" type="text" disabled data-bind="value: cohortComparison().comparatorCaption" />
+							<span class="input-group-btn">
+        				<button class="btn btn-primary" data-bind="click:chooseComparator"><i class="fa fa-folder-open"></i></button>
+							</span>
+						</div>
+					</div>
+					<div>
+						<label>outcome cohort</label>
+						<div class="input-group">
+							<input class="form-control" type="text" disabled data-bind="value: cohortComparison().outcomeCaption" />
+							<span class="input-group-btn">
+        				<button class="btn btn-primary" data-bind="click:chooseOutcome"><i class="fa fa-folder-open"></i></button>
+							</span>
+						</div>
+					</div>
+					<div>
+						<label>exclusions</label>
+						<div class="input-group">
+							<input class="form-control" type="text" disabled data-bind="value: cohortComparison().exclusionCaption" />
+							<span class="input-group-btn">
+        				<button class="btn btn-primary" data-bind="click:chooseExclusion"><i class="fa fa-folder-open"></i></button>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4"></div>
+			</div>
+		</div>
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
+		</div>
+	</div>
+
+	<div id="modalCohortDefinition" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title">Choose a Cohort</div>
+				</div>
+				<div class="modal-body">
+					<cohort-definition-browser params="{model: self.model, cohortDefinitionSelected: cohortSelected}"></cohort-definition-browser>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="modalConceptSet" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title">Choose a Concept Set</div>
+				</div>
+				<div class="modal-body">
+					<cohort-concept-set-browser params="{onRespositoryConceptSetSelected: $component.conceptsetSelected}"></cohort-concept-set-browser>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

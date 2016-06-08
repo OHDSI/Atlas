@@ -1,19 +1,7 @@
-define([
-	'jquery',
-	'knockout',
-	'jnj_chart',
-	'd3',
-  'ohdsi.util',
-	'appConfig',
-	'facets',
-	'knockout-persist',
-	'css!styles/tabs.css',
-	'css!styles/buttons.css',
-], function ($, ko, jnj_chart, d3, ohdsiUtil, config) {
+define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'facets', 'knockout-persist', 'css!styles/tabs.css', 'css!styles/buttons.css', ], function ($, ko, jnj_chart, d3, ohdsiUtil, config) {
 	var appModel = function () {
-
 		$.support.cors = true;
-		var self = this;		
+		var self = this;
 		$('#querytext').focus();
 		self.appInitializationFailed = ko.observable(false);
 		self.initPromises = [];
@@ -21,10 +9,6 @@ define([
 		self.minibar = ko.observable(false);
 		self.searchTabMode = ko.observable('simple');
 		self.pendingSearch = ko.observable(false);
-		self.studyReportSections = ko.observableArray().extend({
-			localStoragePersist: ['studyReportSections', '30']
-		});;
-
 		self.initComplete = function () {
 			if (!self.appInitializationFailed()) {
 				var routerOptions = {
@@ -74,9 +58,6 @@ define([
 							self.currentView('home');
 						});
 					},
-					'/studyreport': function () {
-						self.currentView('studyreport');
-					},
 					'/jobs': function () {
 						require(['job-manager'], function () {
 							self.currentView('jobs');
@@ -104,11 +85,8 @@ define([
 						});
 					},
 					'/profiles/:sourceKey/:cohortDefinitionId/:personId': function (sourceKey, cohortDefinitionId, personId) {
-						// do i need more of this stuff?: require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) { });
 						require(['profile-manager', 'cohort-definition-browser'], function () {
 							self.currentView('profiles');
-							// every other variable in the world is thrown into pageModel, so, guess I'll
-							// do the same
 							pageModel.personId = personId;
 							pageModel.sourceKey = sourceKey;
 							self.loadCohortDefinition(cohortDefinitionId, null, 'profiles', 'details');
@@ -123,11 +101,6 @@ define([
 					'/conceptsets': function () {
 						require(['conceptset-browser'], function () {
 							self.currentView('conceptsets');
-						});
-					},
-					'analytics': function () {
-						require(['analytics-manager'], function () {
-							self.currentView('analytics');
 						});
 					},
 					'/splash': function () {
@@ -168,31 +141,36 @@ define([
 						require(['r-manager'], function () {
 							self.currentView('r');
 						});
+					},
+					'/cohortcomparisons': function () {
+						require(['cohort-comparison-browser'], function () {
+							self.currentView('cohortcomparisons');
+						});
+					},
+					'/cohortcomparison/:cohortComparisonId:': function (cohortComparisonId) {
+						require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
+							self.currentCohortComparisonId(cohortComparisonId)
+							self.currentView('cohortcomparison');
+						});
 					}
 				}
 				self.router = new Router(routes).configure(routerOptions);
-
 				self.router.init('/');
 				self.applicationStatus('running');
 			} else {
 				self.currentView('configure');
 				self.applicationStatus('initialization error');
 			}
-
 			setTimeout(function () {
 				$('#splash').hide();
 			}, 0);
-
 			setTimeout(function () {
 				$('#wrapperLeftMenu').fadeIn();
 				$('#wrapperMainWindow').fadeIn();
 			}, 10);
-
 		}
-
 		self.loadConcept = function (conceptId) {
 			self.currentView('loading');
-
 			var conceptPromise = $.ajax({
 				url: self.vocabularyUrl() + 'concept/' + conceptId,
 				method: 'GET',
@@ -209,7 +187,6 @@ define([
 					if (self.recentConcept().length > 7) {
 						self.recentConcept.pop();
 					}
-
 					self.currentConcept(c);
 					self.currentView('concept');
 				},
@@ -217,19 +194,15 @@ define([
 					alert('An error occurred while attempting to load the concept from your currently configured provider.  Please check the status of your selection from the configuration button in the top right corner.');
 				}
 			});
-
 			// load related concepts once the concept is loaded
 			self.loadingRelated(true);
-
 			var relatedPromise = $.Deferred();
-
 			$.when(conceptPromise).done(function () {
 				self.metarchy = {
 					parents: ko.observableArray(),
 					children: ko.observableArray(),
 					synonyms: ko.observableArray()
 				};
-
 				$.ajax({
 					url: self.vocabularyUrl() + 'concept/' + conceptId + '/related',
 					method: 'GET',
@@ -239,26 +212,21 @@ define([
 							self.metagorize(self.metarchy, related[i]);
 						}
 						var densityPromise = self.loadDensity(related);
-
 						$.when(densityPromise).done(function () {
 							self.relatedConcepts(related);
 							relatedPromise.resolve();
 						});
 					}
 				});
-
 			});
-
 			$.when(relatedPromise).done(function () {
 				self.loadingRelated(false);
 			});
-
 			// triggers once our async loading of the concept and related concepts is complete
 			$.when(conceptPromise).done(function () {
 				self.currentView('concept');
 			});
 		}
-
 		self.metagorize = function (metarchy, related) {
 			var concept = self.currentConcept();
 			var key = concept.VOCABULARY_ID + '.' + concept.CONCEPT_CLASS_ID;
@@ -272,504 +240,439 @@ define([
 				}
 			}
 		}
-
 		self.searchConceptsOptions = {
-			Facets: [
-				{
-					'caption': 'Vocabulary',
-					'binding': function (o) {
-						return o.VOCABULARY_ID;
-					}
-						},
-				{
-					'caption': 'Class',
-					'binding': function (o) {
-						return o.CONCEPT_CLASS_ID;
-					}
-						},
-				{
-					'caption': 'Domain',
-					'binding': function (o) {
-						return o.DOMAIN_ID;
-					}
-				},
-				{
-					'caption': 'Standard Concept',
-					'binding': function (o) {
-						return o.STANDARD_CONCEPT_CAPTION;
-					}
-				},
-				{
-					'caption': 'Invalid Reason',
-					'binding': function (o) {
-						return o.INVALID_REASON_CAPTION;
-					}
-				},
-				{
-					'caption': 'Has Records',
-					'binding': function (o) {
-						return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
-					}
-				},
-				{
-					'caption': 'Has Descendant Records',
-					'binding': function (o) {
-						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
-					}
+			Facets: [{
+				'caption': 'Vocabulary',
+				'binding': function (o) {
+					return o.VOCABULARY_ID;
 				}
-			]
+            }, {
+				'caption': 'Class',
+				'binding': function (o) {
+					return o.CONCEPT_CLASS_ID;
+				}
+            }, {
+				'caption': 'Domain',
+				'binding': function (o) {
+					return o.DOMAIN_ID;
+				}
+            }, {
+				'caption': 'Standard Concept',
+				'binding': function (o) {
+					return o.STANDARD_CONCEPT_CAPTION;
+				}
+            }, {
+				'caption': 'Invalid Reason',
+				'binding': function (o) {
+					return o.INVALID_REASON_CAPTION;
+				}
+            }, {
+				'caption': 'Has Records',
+				'binding': function (o) {
+					return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
+				}
+            }, {
+				'caption': 'Has Descendant Records',
+				'binding': function (o) {
+					return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
+				}
+            }]
 		};
-
 		self.relatedConceptsOptions = {
-			Facets: [
-				{
-					'caption': 'Vocabulary',
-					'binding': function (o) {
-						return o.VOCABULARY_ID;
-					}
-							},
-				{
-					'caption': 'Standard Concept',
-					'binding': function (o) {
-						return o.STANDARD_CONCEPT_CAPTION;
-					}
-							},
-				{
-					'caption': 'Invalid Reason',
-					'binding': function (o) {
-						return o.INVALID_REASON_CAPTION;
-					}
-							},
-				{
-					'caption': 'Class',
-					'binding': function (o) {
-						return o.CONCEPT_CLASS_ID;
-					}
-							},
-				{
-					'caption': 'Domain',
-					'binding': function (o) {
-						return o.DOMAIN_ID;
-					}
-							},
-				{
-					'caption': 'Relationship',
-					'binding': function (o) {
-						values = [];
-						for (var i = 0; i < o.RELATIONSHIPS.length; i++) {
-							values.push(o.RELATIONSHIPS[i].RELATIONSHIP_NAME);
-						}
-						return values;
-					}
-				},
-				{
-					'caption': 'Has Records',
-					'binding': function (o) {
-						return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
-					}
-				},
-				{
-					'caption': 'Has Descendant Records',
-					'binding': function (o) {
-						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
-					}
-				},
-				{
-					'caption': 'Distance',
-					'binding': function (o) {
-						values = [];
-						for (var i = 0; i < o.RELATIONSHIPS.length; i++) {
-							if (values.indexOf(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE) == -1) {
-								values.push(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE);
-							}
-						}
-						return values;
-					}
+			Facets: [{
+				'caption': 'Vocabulary',
+				'binding': function (o) {
+					return o.VOCABULARY_ID;
 				}
-			]
+            }, {
+				'caption': 'Standard Concept',
+				'binding': function (o) {
+					return o.STANDARD_CONCEPT_CAPTION;
+				}
+            }, {
+				'caption': 'Invalid Reason',
+				'binding': function (o) {
+					return o.INVALID_REASON_CAPTION;
+				}
+            }, {
+				'caption': 'Class',
+				'binding': function (o) {
+					return o.CONCEPT_CLASS_ID;
+				}
+            }, {
+				'caption': 'Domain',
+				'binding': function (o) {
+					return o.DOMAIN_ID;
+				}
+            }, {
+				'caption': 'Relationship',
+				'binding': function (o) {
+					values = [];
+					for (var i = 0; i < o.RELATIONSHIPS.length; i++) {
+						values.push(o.RELATIONSHIPS[i].RELATIONSHIP_NAME);
+					}
+					return values;
+				}
+            }, {
+				'caption': 'Has Records',
+				'binding': function (o) {
+					return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
+				}
+            }, {
+				'caption': 'Has Descendant Records',
+				'binding': function (o) {
+					return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
+				}
+            }, {
+				'caption': 'Distance',
+				'binding': function (o) {
+					values = [];
+					for (var i = 0; i < o.RELATIONSHIPS.length; i++) {
+						if (values.indexOf(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE) == -1) {
+							values.push(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE);
+						}
+					}
+					return values;
+				}
+            }]
 		};
-
-		self.searchConceptsColumns = [
-			{
-				title: '<i class="fa fa-shopping-cart"></i>',
-				render: function (s, p, d) {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-
-					if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					return '<i class="fa ' + icon + ' ' + css + '"></i>';
-				},
-				orderable: false,
-				searchable: false
-			},
-			{
-				title: 'Id',
-				data: 'CONCEPT_ID'
-			},
-			{
-				title: 'Code',
-				data: 'CONCEPT_CODE'
-			},
-			{
-				title: 'Name',
-				data: 'CONCEPT_NAME',
-				render: function (s, p, d) {
-					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+		self.searchConceptsColumns = [{
+			title: '<i class="fa fa-shopping-cart"></i>',
+			render: function (s, p, d) {
+				var css = '';
+				var icon = 'fa-shopping-cart';
+				if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+					css = ' selected';
 				}
+				return '<i class="fa ' + icon + ' ' + css + '"></i>';
 			},
-			{
-				title: 'Class',
-				data: 'CONCEPT_CLASS_ID'
-			},
-			{
-				title: 'Standard Concept Caption',
-				data: 'STANDARD_CONCEPT_CAPTION',
-				visible: false
-			},
-			{
-				title: 'RC',
-				data: 'RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'DRC',
-				data: 'DESCENDANT_RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'Domain',
-				data: 'DOMAIN_ID'
-			},
-			{
-				title: 'Vocabulary',
-				data: 'VOCABULARY_ID'
+			orderable: false,
+			searchable: false
+        }, {
+			title: 'Id',
+			data: 'CONCEPT_ID'
+        }, {
+			title: 'Code',
+			data: 'CONCEPT_CODE'
+        }, {
+			title: 'Name',
+			data: 'CONCEPT_NAME',
+			render: function (s, p, d) {
+				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 			}
-		];
-
-		self.relatedConceptsColumns = [
-			{
-				title: '<i class="fa fa-shopping-cart"></i>',
-				render: function (s, p, d) {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-
-					if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					return '<i class="fa ' + icon + ' ' + css + '"></i>';
-				},
-				orderable: false,
-				searchable: false
-			},
-			{
-				title: 'Id',
-				data: 'CONCEPT_ID'
-			},
-			{
-				title: 'Code',
-				data: 'CONCEPT_CODE'
-			},
-			{
-				title: 'Name',
-				data: 'CONCEPT_NAME',
-				render: function (s, p, d) {
-					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+        }, {
+			title: 'Class',
+			data: 'CONCEPT_CLASS_ID'
+        }, {
+			title: 'Standard Concept Caption',
+			data: 'STANDARD_CONCEPT_CAPTION',
+			visible: false
+        }, {
+			title: 'RC',
+			data: 'RECORD_COUNT',
+			className: 'numeric'
+        }, {
+			title: 'DRC',
+			data: 'DESCENDANT_RECORD_COUNT',
+			className: 'numeric'
+        }, {
+			title: 'Domain',
+			data: 'DOMAIN_ID'
+        }, {
+			title: 'Vocabulary',
+			data: 'VOCABULARY_ID'
+        }];
+		self.relatedConceptsColumns = [{
+			title: '<i class="fa fa-shopping-cart"></i>',
+			render: function (s, p, d) {
+				var css = '';
+				var icon = 'fa-shopping-cart';
+				if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+					css = ' selected';
 				}
+				return '<i class="fa ' + icon + ' ' + css + '"></i>';
 			},
-			{
-				title: 'Class',
-				data: 'CONCEPT_CLASS_ID'
-			},
-			{
-				title: 'Standard Concept Caption',
-				data: 'STANDARD_CONCEPT_CAPTION',
-				visible: false
-			},
-			{
-				title: 'RC',
-				data: 'RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'DRC',
-				data: 'DESCENDANT_RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'Domain',
-				data: 'DOMAIN_ID'
-			},
-			{
-				title: 'Vocabulary',
-				data: 'VOCABULARY_ID'
+			orderable: false,
+			searchable: false
+        }, {
+			title: 'Id',
+			data: 'CONCEPT_ID'
+        }, {
+			title: 'Code',
+			data: 'CONCEPT_CODE'
+        }, {
+			title: 'Name',
+			data: 'CONCEPT_NAME',
+			render: function (s, p, d) {
+				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 			}
-							];
-
-		self.relatedSourcecodesColumns = [
-			{
-				title: '',
-				render: function (s, p, d) {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-
-					if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					return '<i class="fa ' + icon + ' ' + css + '"></i>';
-				},
-				orderable: false,
-				searchable: false
-			},
-			{
-				title: 'Id',
-				data: 'CONCEPT_ID'
-			},
-			{
-				title: 'Code',
-				data: 'CONCEPT_CODE'
-			},
-			{
-				title: 'Name',
-				data: 'CONCEPT_NAME',
-				render: function (s, p, d) {
-					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+        }, {
+			title: 'Class',
+			data: 'CONCEPT_CLASS_ID'
+        }, {
+			title: 'Standard Concept Caption',
+			data: 'STANDARD_CONCEPT_CAPTION',
+			visible: false
+        }, {
+			title: 'RC',
+			data: 'RECORD_COUNT',
+			className: 'numeric'
+        }, {
+			title: 'DRC',
+			data: 'DESCENDANT_RECORD_COUNT',
+			className: 'numeric'
+        }, {
+			title: 'Domain',
+			data: 'DOMAIN_ID'
+        }, {
+			title: 'Vocabulary',
+			data: 'VOCABULARY_ID'
+        }];
+		self.relatedSourcecodesColumns = [{
+			title: '',
+			render: function (s, p, d) {
+				var css = '';
+				var icon = 'fa-shopping-cart';
+				if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+					css = ' selected';
 				}
+				return '<i class="fa ' + icon + ' ' + css + '"></i>';
 			},
-			{
-				title: 'Class',
-				data: 'CONCEPT_CLASS_ID'
-			},
-			{
-				title: 'Standard Concept Caption',
-				data: 'STANDARD_CONCEPT_CAPTION',
-				visible: false
-			},
-			{
-				title: 'Domain',
-				data: 'DOMAIN_ID'
-			},
-			{
-				title: 'Vocabulary',
-				data: 'VOCABULARY_ID'
+			orderable: false,
+			searchable: false
+        }, {
+			title: 'Id',
+			data: 'CONCEPT_ID'
+        }, {
+			title: 'Code',
+			data: 'CONCEPT_CODE'
+        }, {
+			title: 'Name',
+			data: 'CONCEPT_NAME',
+			render: function (s, p, d) {
+				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 			}
-		];
-
+        }, {
+			title: 'Class',
+			data: 'CONCEPT_CLASS_ID'
+        }, {
+			title: 'Standard Concept Caption',
+			data: 'STANDARD_CONCEPT_CAPTION',
+			visible: false
+        }, {
+			title: 'Domain',
+			data: 'DOMAIN_ID'
+        }, {
+			title: 'Vocabulary',
+			data: 'VOCABULARY_ID'
+        }];
 		self.relatedSourcecodesOptions = {
-			Facets: [
-				{
-					'caption': 'Vocabulary',
-					'binding': function (o) {
-						return o.VOCABULARY_ID;
-					}
-				},
-				{
-					'caption': 'Invalid Reason',
-					'binding': function (o) {
-						return o.INVALID_REASON_CAPTION;
-					}
-				},
-				{
-					'caption': 'Class',
-					'binding': function (o) {
-						return o.CONCEPT_CLASS_ID;
-					}
-				},
-				{
-					'caption': 'Domain',
-					'binding': function (o) {
-						return o.DOMAIN_ID;
-					}
+			Facets: [{
+				'caption': 'Vocabulary',
+				'binding': function (o) {
+					return o.VOCABULARY_ID;
 				}
-			]
+            }, {
+				'caption': 'Invalid Reason',
+				'binding': function (o) {
+					return o.INVALID_REASON_CAPTION;
+				}
+            }, {
+				'caption': 'Class',
+				'binding': function (o) {
+					return o.CONCEPT_CLASS_ID;
+				}
+            }, {
+				'caption': 'Domain',
+				'binding': function (o) {
+					return o.DOMAIN_ID;
+				}
+            }]
 		};
-
 		self.metatrix = {
 			'ICD9CM.5-dig billing code': {
 				childRelationships: [{
 					name: 'Subsumes',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Is a',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'ICD9CM.4-dig nonbill code': {
 				childRelationships: [{
 					name: 'Subsumes',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Is a',
 					range: [0, 1]
-				}, {
+                }, {
 					name: 'Non-standard to Standard map (OMOP)',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'ICD9CM.3-dig nonbill code': {
 				childRelationships: [{
 					name: 'Subsumes',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Non-standard to Standard map (OMOP)',
 					range: [0, 999]
-				}]
+                }]
 			},
 			'RxNorm.Ingredient': {
 				childRelationships: [{
 					name: 'Ingredient of (RxNorm)',
 					range: [0, 999]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has inferred drug class (OMOP)',
 					range: [0, 999]
-				}]
+                }]
 			},
 			'RxNorm.Brand Name': {
 				childRelationships: [{
 					name: 'Ingredient of (RxNorm)',
 					range: [0, 999]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Tradename of (RxNorm)',
 					range: [0, 999]
-				}]
+                }]
 			},
 			'RxNorm.Branded Drug': {
 				childRelationships: [{
 					name: 'Consists of (RxNorm)',
 					range: [0, 999]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ingredient (RxNorm)',
 					range: [0, 999]
-				}, {
+                }, {
 					name: 'RxNorm to ATC (RxNorm)',
 					range: [0, 999]
-				}, {
+                }, {
 					name: 'RxNorm to ETC (FDB)',
 					range: [0, 999]
-				}]
+                }]
 			},
 			'RxNorm.Clinical Drug Comp': {
 				childRelationships: [],
 				parentRelationships: [{
 					name: 'Has precise ingredient (RxNorm)',
 					range: [0, 999]
-				}, {
+                }, {
 					name: 'Has ingredient (RxNorm)',
 					range: [0, 999]
-				}]
+                }]
 			},
 			'CPT4.CPT4': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'CPT4.CPT4 Hierarchy': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'ETC.ETC': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'MedDRA.LLT': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'MedDRA.PT': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'MedDRA.HLT': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'MedDRA.SOC': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'MedDRA.HLGT': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'SNOMED.Clinical Finding': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-				}]
+                }]
 			},
 			'SNOMED.Procedure': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-				}],
+                }],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-				}]
+                }]
 			}
 		};
-
 		self.hasRelationship = function (concept, relationships) {
 			for (var r = 0; r < concept.RELATIONSHIPS.length; r++) {
 				for (var i = 0; i < relationships.length; i++) {
@@ -782,10 +685,8 @@ define([
 			}
 			return false;
 		}
-
 		self.meetsRequirements = function (concept, requirements) {
 			var passCount = 0;
-
 			for (var r = 0; r < requirements.length; r++) {
 				for (var f = 0; f < this.fe.Facets.length; f++) {
 					if (this.fe.Facets[f].caption == requirements[r].c) {
@@ -797,23 +698,19 @@ define([
 					}
 				}
 			}
-
 			if (filters.length == requirements.length) {
 				return true;
 			} else {
 				return false;
 			}
 		}
-
 		self.contextSensitiveLinkColor = function (row, data) {
 			var switchContext;
-
 			if (data.STANDARD_CONCEPT == undefined) {
 				switchContext = data.concept.STANDARD_CONCEPT;
 			} else {
 				switchContext = data.STANDARD_CONCEPT;
 			}
-
 			switch (switchContext) {
 			case 'N':
 				$('a', row).css('color', '#a71a19');
@@ -823,7 +720,6 @@ define([
 				break;
 			}
 		}
-
 		self.hasCDM = function (source) {
 			for (var d = 0; d < source.daimons.length; d++) {
 				if (source.daimons[d].daimonType == 'CDM') {
@@ -832,7 +728,6 @@ define([
 			}
 			return false;
 		}
-
 		self.hasResults = function (source) {
 			for (var d = 0; d < source.daimons.length; d++) {
 				if (source.daimons[d].daimonType == 'Results') {
@@ -841,7 +736,6 @@ define([
 			}
 			return false;
 		}
-
 		self.renderConceptSetItemSelector = function (s, p, d) {
 			var css = '';
 			if (self.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
@@ -849,32 +743,26 @@ define([
 			}
 			return '<i class="fa fa-shopping-cart' + css + '"></i>';
 		}
-
 		self.renderLink = function (s, p, d) {
 			var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 			return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 		}
-
 		self.renderBoundLink = function (s, p, d) {
-			return '<a href=\"#/concept/' + d.concept.CONCEPT_ID + '\">' + d.concept.CONCEPT_NAME + '</a>';
-		}
-
-		// for the current selected concepts:
-		// update the export panel
-		// resolve the included concepts and update the include concept set identifier list
+				return '<a href=\"#/concept/' + d.concept.CONCEPT_ID + '\">' + d.concept.CONCEPT_NAME + '</a>';
+			}
+			// for the current selected concepts:
+			// update the export panel
+			// resolve the included concepts and update the include concept set identifier list
 		self.resolveConceptSetExpression = function () {
 			self.resolvingConceptSetExpression(true);
-
 			var conceptSetExpression = '{"items" :' + ko.toJSON(self.selectedConcepts()) + '}';
 			var highlightedJson = self.syntaxHighlight(conceptSetExpression);
 			self.currentConceptSetExpressionJson(highlightedJson);
-
 			var conceptIdentifierList = [];
 			for (var i = 0; i < self.selectedConcepts().length; i++) {
 				conceptIdentifierList.push(self.selectedConcepts()[i].concept.CONCEPT_ID);
 			}
 			self.currentConceptIdentifierList(conceptIdentifierList.join(','));
-
 			var resolvingPromise = $.ajax({
 				url: self.vocabularyUrl() + 'resolveConceptSetExpression',
 				data: conceptSetExpression,
@@ -892,14 +780,11 @@ define([
 					self.resolvingConceptSetExpression(false);
 				}
 			});
-
 			return resolvingPromise;
 		};
-
 		self.renderCheckbox = function (field) {
 			return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); pageModel.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
 		}
-
 		self.enableRecordCounts = ko.observable(true);
 		self.loadingIncluded = ko.observable(false);
 		self.loadingSourcecodes = ko.observable(false);
@@ -907,119 +792,94 @@ define([
 		self.loadingEvidence = ko.observable(false);
 		self.loadingReport = ko.observable(false);
 		self.loadingReportDrilldown = ko.observable(false);
-
 		self.activeReportDrilldown = ko.observable(false);
 		self.criteriaContext = ko.observable();
-
 		self.cohortAnalyses = ko.observableArray();
 		self.currentReport = ko.observable();
-
 		// TODO: This object array was lifted from Heracles to capture the
 		// various analysis "packages" to use when viewing. This information should be relocated
 		// to the database and be made available through the WebAPI.
-		self.visualizationPacks = ko.observableArray([
-			{
-				name: "Care Site",
-				reportKey: null,
-				analyses: [1200, 1201]
-			},
-			{
-				name: "Cohort Specific",
-				reportKey: 'Cohort Specific',
-				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-			},
-			{
-				name: "Condition",
-				reportKey: 'Condition',
-				analyses: [116, 117, 400, 401, 402, 404, 405, 406, 1]
-			},
-			{
-				name: "Condition Eras",
-				reportKey: 'Condition Eras',
-				analyses: [1001, 1000, 1007, 1006, 1004, 1002, 116, 117, 1]
-			},
-			{
-				name: "Conditions By Index",
-				reportKey: 'Conditions by Index',
-				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-			},
-			{
-				name: "Data Density",
-				reportKey: null,
-				analyses: [117, 220, 420, 502, 620, 720, 820, 920, 1020, 111, 403, 603, 703, 803, 903, 1003]
-			},
-			{
-				name: "Death",
-				reportKey: 'Death',
-				analyses: [501, 506, 505, 504, 502, 116, 117]
-			},
-			{
-				name: "Default",
-				reportKey: null,
-				analyses: [1, 2, 101, 108, 110]
-			},
-			{
-				name: "Drug Eras",
-				reportKey: 'Drug Eras',
-				analyses: [900, 901, 907, 906, 904, 902, 116, 117, 1]
-			},
-			{
-				name: "Drug Exposure",
-				reportKey: 'Drug Exposure',
-				analyses: [700, 701, 706, 715, 705, 704, 116, 702, 117, 717, 716, 1]
-			},
-			{
-				name: "Drugs by Index",
-				reportKey: 'Drugs by Index',
-				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-			},
-			{
-				name: "Heracles Heel",
-				reportKey: null,
-				analyses: [7, 8, 9, 114, 115, 207, 208, 209, 210, 302, 409, 410, 411, 412, 413, 509, 510, 609, 610, 612, 613, 709, 710, 711, 712, 713, 809, 810, 812, 813, 814, 908, 909, 910, 1008, 1009, 1010, 1415, 1500, 1501, 1600, 1601, 1701, 103, 105, 206, 406, 506, 606, 706, 715, 716, 717, 806, 906, 907, 1006, 1007, 1502, 1503, 1504, 1505, 1506, 1507, 1508, 1509, 1510, 1511, 1602, 1603, 1604, 1605, 1606, 1607, 1608, 511, 512, 513, 514, 515, 2, 4, 5, 200, 301, 400, 500, 505, 600, 700, 800, 900, 1000, 1609, 1610, 405, 605, 705, 805, 202, 3, 101, 420, 620, 720, 820, 920, 1020, 402, 602, 702, 802, 902, 1002, 1310, 1309, 1312, 1313, 1314]
-			},
-			{
-				name: "Location",
-				reportKey: null,
-				analyses: [1100, 1101]
-			},
-			{
-				name: "Measurement",
-				reportKey: null,
-				analyses: [1300, 1301, 1303, 1306, 1305, 1315, 1304, 1316, 1302, 1307, 1317, 1318, 1320, 117, 116, 1]
-			},
-			{
-				name: "Observation",
-				reportKey: null,
-				analyses: [800, 801, 806, 805, 815, 804, 802, 807, 816, 817, 818, 117, 116, 102, 112, 1]
-			},
-			{
-				name: "Observation Periods",
-				reportKey: 'Observation Periods',
-				analyses: [101, 104, 106, 107, 108, 109, 110, 113, 1]
-			},
-			{
-				name: "Person",
-				reportKey: 'Person',
-				analyses: [0, 1, 2, 3, 4, 5]
-			},
-			{
-				name: "Procedure",
-				reportKey: 'Procedure',
-				analyses: [606, 604, 116, 602, 117, 605, 600, 601, 1]
-			},
-			{
-				name: "Procedures by Index",
-				reportKey: 'Procedures by Index',
-				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-			},
-			{
-				name: "Visit",
-				reportKey: null,
-				analyses: [202, 203, 206, 204, 116, 117, 211, 200, 201, 1]
-			}
-        ]);
-
+		self.visualizationPacks = ko.observableArray([{
+			name: "Care Site",
+			reportKey: null,
+			analyses: [1200, 1201]
+        }, {
+			name: "Cohort Specific",
+			reportKey: 'Cohort Specific',
+			analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
+        }, {
+			name: "Condition",
+			reportKey: 'Condition',
+			analyses: [116, 117, 400, 401, 402, 404, 405, 406, 1]
+        }, {
+			name: "Condition Eras",
+			reportKey: 'Condition Eras',
+			analyses: [1001, 1000, 1007, 1006, 1004, 1002, 116, 117, 1]
+        }, {
+			name: "Conditions By Index",
+			reportKey: 'Conditions by Index',
+			analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
+        }, {
+			name: "Data Density",
+			reportKey: null,
+			analyses: [117, 220, 420, 502, 620, 720, 820, 920, 1020, 111, 403, 603, 703, 803, 903, 1003]
+        }, {
+			name: "Death",
+			reportKey: 'Death',
+			analyses: [501, 506, 505, 504, 502, 116, 117]
+        }, {
+			name: "Default",
+			reportKey: null,
+			analyses: [1, 2, 101, 108, 110]
+        }, {
+			name: "Drug Eras",
+			reportKey: 'Drug Eras',
+			analyses: [900, 901, 907, 906, 904, 902, 116, 117, 1]
+        }, {
+			name: "Drug Exposure",
+			reportKey: 'Drug Exposure',
+			analyses: [700, 701, 706, 715, 705, 704, 116, 702, 117, 717, 716, 1]
+        }, {
+			name: "Drugs by Index",
+			reportKey: 'Drugs by Index',
+			analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
+        }, {
+			name: "Heracles Heel",
+			reportKey: null,
+			analyses: [7, 8, 9, 114, 115, 207, 208, 209, 210, 302, 409, 410, 411, 412, 413, 509, 510, 609, 610, 612, 613, 709, 710, 711, 712, 713, 809, 810, 812, 813, 814, 908, 909, 910, 1008, 1009, 1010, 1415, 1500, 1501, 1600, 1601, 1701, 103, 105, 206, 406, 506, 606, 706, 715, 716, 717, 806, 906, 907, 1006, 1007, 1502, 1503, 1504, 1505, 1506, 1507, 1508, 1509, 1510, 1511, 1602, 1603, 1604, 1605, 1606, 1607, 1608, 511, 512, 513, 514, 515, 2, 4, 5, 200, 301, 400, 500, 505, 600, 700, 800, 900, 1000, 1609, 1610, 405, 605, 705, 805, 202, 3, 101, 420, 620, 720, 820, 920, 1020, 402, 602, 702, 802, 902, 1002, 1310, 1309, 1312, 1313, 1314]
+        }, {
+			name: "Location",
+			reportKey: null,
+			analyses: [1100, 1101]
+        }, {
+			name: "Measurement",
+			reportKey: null,
+			analyses: [1300, 1301, 1303, 1306, 1305, 1315, 1304, 1316, 1302, 1307, 1317, 1318, 1320, 117, 116, 1]
+        }, {
+			name: "Observation",
+			reportKey: null,
+			analyses: [800, 801, 806, 805, 815, 804, 802, 807, 816, 817, 818, 117, 116, 102, 112, 1]
+        }, {
+			name: "Observation Periods",
+			reportKey: 'Observation Periods',
+			analyses: [101, 104, 106, 107, 108, 109, 110, 113, 1]
+        }, {
+			name: "Person",
+			reportKey: 'Person',
+			analyses: [0, 1, 2, 3, 4, 5]
+        }, {
+			name: "Procedure",
+			reportKey: 'Procedure',
+			analyses: [606, 604, 116, 602, 117, 605, 600, 601, 1]
+        }, {
+			name: "Procedures by Index",
+			reportKey: 'Procedures by Index',
+			analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
+        }, {
+			name: "Visit",
+			reportKey: null,
+			analyses: [202, 203, 206, 204, 116, 117, 211, 200, 201, 1]
+        }]);
 		/*
         self.reports = ko.observableArray([
 			'Person',
@@ -1036,21 +896,12 @@ define([
 			'Death'
 		]);
         */
-
 		// The reports available are defined as part of the visualizationPacks() definition above
-		self.reports = ko.observableArray(
-			self.visualizationPacks().map(
-				function (item) {
-					return item.reportKey
-				}
-			).filter(
-				function (n) {
-					return n != undefined
-				}
-			).sort()
-		);
-
-
+		self.reports = ko.observableArray(self.visualizationPacks().map(function (item) {
+			return item.reportKey
+		}).filter(function (n) {
+			return n != undefined
+		}).sort());
 		self.getSourceInfo = function (source) {
 			var info = self.currentCohortDefinitionInfo();
 			for (var i = 0; i < info.length; i++) {
@@ -1059,7 +910,6 @@ define([
 				}
 			}
 		}
-
 		self.getCohortCount = function (source, observable) {
 			var sourceKey = source.sourceKey;
 			var cohortDefinitionId = self.currentCohortDefinition() && self.currentCohortDefinition().id();
@@ -1072,7 +922,6 @@ define([
 				});
 			}
 		}
-
 		self.routeToConceptSet = function () {
 			if (self.currentConceptSet() == undefined) {
 				document.location = "#/conceptset/0/details";
@@ -1080,14 +929,11 @@ define([
 				document.location = "#/conceptset/" + self.currentConceptSet().id + "/details";
 			}
 		}
-
 		self.getCompletedAnalyses = function (source) {
 			var cohortDefinitionId = self.currentCohortDefinition().id();
-
 			$.ajax(config.services[0].url + source.sourceKey + '/cohortresults/' + cohortDefinitionId + '/analyses', {
 				success: function (analyses) {
 					sourceAnalysesStatus = {};
-
 					// initialize cohort analyses status
 					for (var i = 0; i < self.cohortAnalyses().length; i++) {
 						// If the analysis id's in the array returned from the ws call (analyses)
@@ -1103,7 +949,6 @@ define([
 				}
 			});
 		}
-
 		self.setConceptSet = function (conceptset, expressionItems) {
 			for (var i = 0; i < expressionItems.length; i++) {
 				var conceptSetItem = expressionItems[i];
@@ -1113,17 +958,14 @@ define([
 				self.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
 				self.selectedConcepts.push(conceptSetItem);
 			}
-
 			self.analyzeSelectedConcepts();
 			self.currentConceptSet({
 				name: ko.observable(conceptset.name),
 				id: conceptset.id
 			});
 		}
-
 		self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow, mode) {
 			self.currentView('loading');
-
 			// don't load if it is already loaded or a new concept set
 			if (self.currentCohortDefinition() && self.currentCohortDefinition().id() == cohortDefinitionId) {
 				if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId && self.currentConceptSetSource() == 'cohort') {
@@ -1137,13 +979,10 @@ define([
 					return;
 				}
 			}
-
 			if (self.currentCohortDefinition() && self.currentCohortDefinitionDirtyFlag() && self.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Cohort changes are not saved. Would you like to continue?")) {
 				window.location.href = "#/cohortdefinitions";
 				return;
-			};
-
-			// if we are loading a cohort definition, unload any active concept set that was loaded from
+			}; // if we are loading a cohort definition, unload any active concept set that was loaded from
 			// a respository. If it is dirty, prompt the user to save and exit.
 			if (self.currentConceptSet()) {
 				if (self.currentConceptSetSource() == 'repository') {
@@ -1152,24 +991,19 @@ define([
 						return;
 					};
 				}
-
 				// If we continue, then clear the loaded concept set
 				self.clearConceptSet();
 			}
-
 			var definitionPromise, infoPromise;
-
 			requirejs(['cohortbuilder/CohortDefinition'], function (CohortDefinition) {
 				if (cohortDefinitionId == '0') {
 					var def = new CohortDefinition({
 						id: '0',
 						name: 'New Cohort Definition'
 					});
-
 					self.currentCohortDefinition(def);
 					definitionPromise = $.Deferred();
 					definitionPromise.resolve();
-
 					self.currentCohortDefinitionInfo([]);
 					infoPromise = $.Deferred();
 					infoPromise.resolve();
@@ -1183,7 +1017,6 @@ define([
 							self.currentCohortDefinition(new CohortDefinition(cohortDefinition));
 						}
 					});
-
 					infoPromise = $.ajax({
 						url: config.services[0].url + 'cohortdefinition/' + cohortDefinitionId + '/info',
 						method: 'GET',
@@ -1193,27 +1026,19 @@ define([
 						}
 					});
 				}
-
 				$.when(infoPromise, definitionPromise).done(function (ip, dp) {
 					// Now that we have loaded up the cohort definition, we'll need to
 					// resolve all of the concepts embedded in the concept set collection
 					// to ensure they have all of the proper properties for editing in the cohort
 					// editior
 					var conceptPromise;
-
 					if (self.currentCohortDefinition().expression().ConceptSets()) {
-						var identifiers = $.makeArray(
-							$(self.currentCohortDefinition().expression().ConceptSets()).map(function (cs) {
-								var allConceptIDs = $.makeArray(
-									$(this.expression.items()).map(
-										function (item) {
-											return this.concept.CONCEPT_ID;
-										})
-								);
-								return allConceptIDs;
-							})
-						);
-
+						var identifiers = $.makeArray($(self.currentCohortDefinition().expression().ConceptSets()).map(function (cs) {
+							var allConceptIDs = $.makeArray($(this.expression.items()).map(function (item) {
+								return this.concept.CONCEPT_ID;
+							}));
+							return allConceptIDs;
+						}));
 						conceptPromise = $.ajax({
 							url: self.vocabularyUrl() + 'lookup/identifiers',
 							method: 'POST',
@@ -1242,25 +1067,20 @@ define([
 						conceptPromise = $.Deferred();
 						conceptPromise.resolve();
 					}
-
 					$.when(conceptPromise).done(function (cp) {
 						// now that we have required information lets compile them into data objects for our view
 						var cdmSources = config.services[0].sources.filter(self.hasCDM);
 						var results = [];
-
 						for (var s = 0; s < cdmSources.length; s++) {
 							var source = cdmSources[s];
-
 							self.sourceAnalysesStatus[source.sourceKey] = ko.observable({
 								ready: false,
 								checking: false
 							});
-
 							var sourceInfo = self.getSourceInfo(source);
 							var cdsi = {};
 							cdsi.name = cdmSources[s].sourceName;
 							cdsi.sourceKey = cdmSources[s].sourceKey;
-
 							if (sourceInfo != null) {
 								cdsi.isValid = ko.observable(sourceInfo.isValid);
 								cdsi.sourceId = sourceInfo.id.sourceId;
@@ -1269,7 +1089,6 @@ define([
 								cdsi.startTime = ko.observable(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
 								cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
 								cdsi.distinctPeople = ko.observable('...');
-
 								self.getCohortCount(source, cdsi.distinctPeople);
 							} else {
 								cdsi.isValid = ko.observable(false);
@@ -1278,22 +1097,17 @@ define([
 								cdsi.executionDuration = ko.observable('n/a');
 								cdsi.distinctPeople = ko.observable('n/a');
 							}
-
 							results.push(cdsi);
 						}
-
 						self.cohortDefinitionSourceInfo(results);
-
 						// load universe of analyses
 						self.cohortAnalyses(self.visualizationPacks().filter(function (n) {
 							return n.reportKey != undefined
 						}));
-
 						var index = {};
 						for (var a = 0; a < self.visualizationPacks().length; a++) {
 							self.analysisLookup[a] = self.visualizationPacks()[a].name;
 						}
-
 						// obtain completed result status for each source
 						for (var s = 0; s < cdmSources.length; s++) {
 							var source = cdmSources[s];
@@ -1305,8 +1119,6 @@ define([
 								self.getCompletedAnalyses(source);
 							}
 						}
-
-
 						// This is the original approach but it does not reflect some of the interdependencies between analyses
 						// so commenting it out for now. We should revisit this as hardcoding the object above is not sustainable
 						/*
@@ -1349,18 +1161,15 @@ define([
 						    }
 						});
 						*/
-
 						if (conceptSetId != null) {
 							self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 						} else {
 							self.currentView(viewToShow);
 						}
-
 					});
 				});
 			});
 		}
-
 		self.loadConceptSet = function (conceptSetId, viewToShow, loadingSource, mode) {
 			// If we're attempting to load the concept set that is already loaded, exit
 			if (self.currentConceptSetSource() == loadingSource && self.currentConceptSet() && self.currentConceptSet().id == conceptSetId) {
@@ -1368,7 +1177,6 @@ define([
 				self.currentConceptSetMode(mode);
 				return;
 			}
-
 			// If we're attempting to load a repository concept set, unload any cohort defintions
 			// that may be active
 			if (self.currentCohortDefinition() && loadingSource == "repository") {
@@ -1390,7 +1198,6 @@ define([
 				// Clear any existing concept set
 				self.clearConceptSet();
 			}
-
 			// Set the current conceptset source property to indicate if a concept set
 			// was loaded from the repository or the cohort definition
 			self.currentConceptSetSource(loadingSource);
@@ -1400,10 +1207,8 @@ define([
 				self.loadCohortConceptSet(conceptSetId, viewToShow, mode);
 			}
 		};
-
 		self.loadRepositoryConceptSet = function (conceptSetId, viewToShow, mode) {
 			$('body').removeClass('modal-open');
-
 			if (conceptSetId == 0 && !self.currentConceptSet()) {
 				// Create a new concept set
 				self.currentConceptSet({
@@ -1411,7 +1216,6 @@ define([
 					id: 0
 				});
 			}
-
 			// don't load if it is already loaded or a new concept set
 			if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId) {
 				self.analyzeSelectedConcepts();
@@ -1419,9 +1223,7 @@ define([
 				self.currentView(viewToShow);
 				return;
 			}
-
 			self.currentView('loading');
-
 			$.ajax({
 				url: config.services[0].url + 'conceptset/' + conceptSetId,
 				method: 'GET',
@@ -1443,27 +1245,20 @@ define([
 					});
 				}
 			});
-
 		}
-
 		self.loadCohortConceptSet = function (conceptSetId, viewToShow, mode) {
 			// Load up the selected concept set from the cohort definition
 			var conceptSet = self.currentCohortDefinition().expression().ConceptSets().filter(function (item) {
 				return item.id == conceptSetId
 			})[0];
-
 			// If the cohort concept set is lacking the STANDARD_CONCEPT property, we must
 			// resolve it with the vocabulary web service to ensure we have all of the appropriate
 			// properties
 			var conceptPromise;
 			if (conceptSet.expression.items() && conceptSet.expression.items().length > 0 && !conceptSet.expression.items()[0].concept.STANDARD_CONCEPT) {
-				var identifiers = $.makeArray(
-					$(conceptSet.expression.items()).map(
-						function () {
-							return this.concept.CONCEPT_ID;
-						})
-				);
-
+				var identifiers = $.makeArray($(conceptSet.expression.items()).map(function () {
+					return this.concept.CONCEPT_ID;
+				}));
 				conceptPromise = $.ajax({
 					url: self.vocabularyUrl() + 'lookup/identifiers',
 					method: 'POST',
@@ -1480,7 +1275,6 @@ define([
 				conceptPromise = $.Deferred();
 				conceptPromise.resolve();
 			}
-
 			$.when(conceptPromise).done(function (cp) {
 				// Reconstruct the expression items
 				for (var i = 0; i < conceptSet.expression.items().length; i++) {
@@ -1493,7 +1287,6 @@ define([
 					id: conceptSet.id
 				});
 				self.currentView(viewToShow);
-
 				var resolvingPromise = self.resolveConceptSetExpression();
 				$.when(resolvingPromise).done(function () {
 					self.currentConceptSetMode(mode);
@@ -1501,27 +1294,22 @@ define([
 				});
 			});
 		}
-
 		self.loadDensity = function (results) {
 			var densityPromise = $.Deferred();
-
 			// skip record counts if disabled on configuration screen
 			if (!self.enableRecordCounts()) {
 				for (c = 0; c < results.length; c++) {
 					results[c].RECORD_COUNT = '-';
 					results[c].DESCENDANT_RECORD_COUNT = '-';
 				}
-
 				densityPromise.resolve();
 				return densityPromise;
 			}
-
 			// nothing to look up
 			if (results.length == 0) {
 				densityPromise.resolve();
 				return densityPromise;
 			}
-
 			var searchResultIdentifiers = [];
 			for (c = 0; c < results.length; c++) {
 				// optimization - only lookup standard concepts as non standard concepts will not have records
@@ -1529,9 +1317,7 @@ define([
 					searchResultIdentifiers.push(results[c].CONCEPT_ID);
 				}
 			}
-
 			var densityIndex = {};
-
 			$.ajax({
 				url: self.resultsUrl() + 'conceptRecordCount',
 				method: 'POST',
@@ -1540,11 +1326,9 @@ define([
 				data: JSON.stringify(searchResultIdentifiers),
 				success: function (entries) {
 					var formatComma = d3.format(',');
-
 					for (var e = 0; e < entries.length; e++) {
 						densityIndex[entries[e].key] = entries[e].value;
 					}
-
 					for (var c = 0; c < results.length; c++) {
 						var concept = results[c];
 						if (densityIndex[concept.CONCEPT_ID] != undefined) {
@@ -1555,7 +1339,6 @@ define([
 							concept.DESCENDANT_RECORD_COUNT = 0;
 						}
 					}
-
 					densityPromise.resolve();
 				},
 				error: function (error) {
@@ -1567,10 +1350,8 @@ define([
 					densityPromise.resolve();
 				}
 			});
-
 			return densityPromise;
 		}
-
 		self.reportCohortDefinitionId = ko.observable();
 		self.reportReportName = ko.observable();
 		self.reportSourceKey = ko.observable();
@@ -1602,6 +1383,7 @@ define([
 		self.includedSourcecodes = ko.observableArray();
 		self.cohortDefinitions = ko.observableArray();
 		self.currentCohortDefinition = ko.observable();
+		self.currentCohortComparisonId = ko.observable();
 		self.currentCohortDefinitionInfo = ko.observable();
 		self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
 		self.feasibilityId = ko.observable();
@@ -1615,7 +1397,6 @@ define([
 		self.currentConcept = ko.observable();
 		self.currentConceptId = ko.observable();
 		self.currentConceptMode = ko.observable('details');
-
 		self.renderCurrentConceptSelector = function () {
 			var css = '';
 			if (self.selectedConceptsIndex[self.currentConcept().CONCEPT_ID] == 1) {
@@ -1623,24 +1404,22 @@ define([
 			}
 			return '<i class="fa fa-shopping-cart' + css + '"></i>';
 		};
-
 		self.renderConceptSelector = function (s, p, d) {
 			var css = '';
 			var icon = 'fa-shopping-cart';
-
 			if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
 				css = ' selected';
 			}
 			return '<i class="fa ' + icon + ' ' + css + '"></i>';
 		}
-
 		self.currentConceptSetMode = ko.observable('details');
 		self.currentCohortDefinitionMode = ko.observable('definition');
 		self.currentImportMode = ko.observable('identifiers');
 		self.feRelated = ko.observable();
 		self.feSearch = ko.observable();
 		self.metarchy = {};
-		self.selectedConcepts = ko.observableArray(null); //.extend({ persist: 'atlas.selectedConcepts' });
+		self.selectedConcepts = ko.observableArray(null);
+		//.extend({ persist: 'atlas.selectedConcepts' });
 		self.selectedConceptsWarnings = ko.observableArray();
 		self.currentConceptSetDirtyFlag = new ohdsiUtil.dirtyFlag({
 			header: self.currentConceptSet,
@@ -1649,16 +1428,14 @@ define([
 		self.checkCurrentSource = function (source) {
 			return source.url == self.curentVocabularyUrl();
 		};
-
 		self.clearConceptSet = function () {
 			self.currentConceptSet(null);
 			self.selectedConcepts([]);
 			self.selectedConceptsIndex = {};
 			self.analyzeSelectedConcepts();
 			self.resolveConceptSetExpression();
-            self.currentConceptSetDirtyFlag.reset();
+			self.currentConceptSetDirtyFlag.reset();
 		}
-
 		self.renderHierarchyLink = function (d) {
 			var valid = d.INVALID_REASON_CAPTION == 'Invalid' || d.STANDARD_CONCEPT != 'S' ? 'invalid' : '';
 			return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
@@ -1668,37 +1445,28 @@ define([
 			var domains = [];
 			var standards = [];
 			var includeNonStandard = false;
-
 			for (var i = 0; i < self.selectedConcepts().length; i++) {
 				var domain = self.selectedConcepts()[i].concept.DOMAIN_ID;
 				var standard = self.selectedConcepts()[i].concept.STANDARD_CONCEPT_CAPTION;
-
 				if (standard != 'Standard') {
 					includeNonStandard = true;
 				}
-
 				var index;
-
 				index = $.inArray(domain, domains);
 				if (index < 0) {
 					domains.push(domain);
 				}
-
 				index = $.inArray(standard, standards);
 				if (index < 0) {
 					standards.push(standard);
 				}
-
 			}
-
 			if (domains.length > 1) {
 				self.selectedConceptsWarnings.push('Your saved concepts come from multiple Domains (' + domains.join(', ') + ').  A useful set of concepts will typically all come from the same Domain.');
 			}
-
 			if (standards.length > 1) {
 				self.selectedConceptsWarnings.push('Your saved concepts include different standard concept types (' + standards.join(', ') + ').  A useful set of concepts will typically all be of the same standard concept type.');
 			}
-
 			if (includeNonStandard) {
 				self.selectedConceptsWarnings.push('Your saved concepts include Non-Standard or Classification concepts.  Typically concept sets should only include Standard concepts unless advanced use of this concept set is planned.');
 			}
@@ -1706,7 +1474,6 @@ define([
 		self.selectedConceptsIndex = {};
 		self.createConceptSetItem = function (concept) {
 			var conceptSetItem = {};
-
 			conceptSetItem.concept = concept;
 			conceptSetItem.isExcluded = ko.observable(false);
 			conceptSetItem.includeDescendants = ko.observable(false);
@@ -1715,7 +1482,6 @@ define([
 		};
 		self.conceptSetInclusionCount = ko.observable(0);
 		self.sourcecodeInclusionCount = ko.observable(0);
-
 		self.syntaxHighlight = function (json) {
 			if (typeof json != 'string') {
 				json = JSON.stringify(json, undefined, 2);
@@ -1737,10 +1503,8 @@ define([
 				return '<span class="' + cls + '">' + match + '</span>';
 			});
 		};
-
 		self.updateSearchFilters = function () {
 			$(event.target).toggleClass('selected');
-
 			var filters = [];
 			$('#wrapperSearchResultsFilter .facetMemberName.selected').each(function (i, d) {
 				filters.push(d.id);
@@ -1751,11 +1515,9 @@ define([
 			// update table data binding
 			self.searchResultsConcepts(self.feSearch().GetCurrentObjects());
 		};
-
 		self.selectConcept = function (concept) {
 			document.location = '#/concept/' + concept.CONCEPT_ID;
 		};
-
 		self.currentConceptSetSubscription = self.currentConceptSet.subscribe(function (newValue) {
 			if (newValue != null) {
 				self.currentConceptSetDirtyFlag = new ohdsiUtil.dirtyFlag({
@@ -1764,7 +1526,6 @@ define([
 				});
 			}
 		});
-
 		self.currentCohortDefinitionSubscription = self.currentCohortDefinition.subscribe(function (newValue) {
 			if (newValue != null) {
 				self.currentCohortDefinitionDirtyFlag(new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));

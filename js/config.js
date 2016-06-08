@@ -16,7 +16,8 @@ define([], function () {
 		];
 
 	config.webAPIRoot = config.services[0].url;
-
+	// config.rServicesHost = 'http://hixbeta.jnj.com:8999/';
+	config.rServicesHost = 'http://rndusrdhit09.jnj.com:8080/';
 	config.dataSourcesLocation = '/achilles/data/datasources.json';
 	config.dataSourcesRoot = '/achilles/data';
 	

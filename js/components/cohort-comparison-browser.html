@@ -1,0 +1,10 @@
+<div class="wrapperTitle">
+	<i class="fa fa-balance-scale"></i> Cohort Comparisons
+</div>
+
+<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newCohortComparison">New Cohort Comparison</span>
+
+<faceted-datatable data-bind="visible:loading()==false" params="orderColumn: 3, reference:reference, columns: columns, options:options, rowClick:rowClick">
+</faceted-datatable>
+
+<div data-bind="visible:loading()" class="loading">loading</div>
