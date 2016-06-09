@@ -47,14 +47,18 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.loadedProfile = ko.observable();
 		//self.cohortDefinitionId = ko.observable();
 		self.cohortDefinitionId = ko.observable(params.model.currentCohortDefinition().id());
+		self.model = params.model;
 		self.loadingCohort = ko.observable(false);
 		self.loadingProfile = ko.observable(false);
 		self.sourceKey = ko.observable(params.services.sources[0].sourceKey);
-		self.sourceKey('OPTUM-PDW');
-		self.startMember = 1;
-		self.endMember = 100;
-		self.members = ko.observableArray();
+		self.cohortSource = ko.observable(_.find(self.model.cohortDefinitionSourceInfo(), {sourceKey: self.sourceKey()}));
+		//self.sourceKey('OPTUM-PDW');
+		self.cohortStart = ko.observable(1);
+		self.cohortEnd = ko.observable(1);
+		self.peopleToFetch = 20;
+		self.people = ko.observableArray();
 		self.personId = ko.observable();
+		self.person = ko.observable();
 		self.cohortPerson = ko.observable();
 		self.currentMemberIndex = 0;
 		self.crossfilter = ko.observable();
@@ -179,6 +183,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			return source.hasCDM;
 		}
 
+		/*
 		self.navigatePrevious = function () {
 			if (self.currentMemberIndex > 0) {
 				self.currentMemberIndex--;
@@ -204,6 +209,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.cohortPerson(self.members()[self.currentMemberIndex]);
 			}
 		}
+		*/
 
 		self.cohortPerson.subscribe(function (value) {
 			if (value) {
@@ -229,37 +235,57 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			}
 		}
 
-		self.sourceKey.subscribe(function () {
-			if (self.cohortDefinitionId() && self.sourceKey()) {
+		self.sourceKey.subscribe(function (sourceKey) {
+			if (self.cohortDefinitionId() && sourceKey) {
 				self.loadCohort();
+				self.cohortSource(_.find(
+					self.model.cohortDefinitionSourceInfo(), 
+					{sourceKey: sourceKey}));
 			}
+		});
+		self.cohortSource().distinctPeople.subscribe(function() {
+			self.loadCohort();
 		});
 
 		self.loadCohort = function () {
+			if (self.cohortSource() && self.cohortSource().distinctPeople()) {
+				self.cohortEnd( Math.min(
+							self.cohortSource().distinctPeople(), 
+							self.cohortStart() + self.peopleToFetch));
+			} else {
+				return;
+			}
 			$.ajax({
-				url: self.services[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members/' + self.startMember + '-' + self.endMember,
+				url: self.services[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members/' 
+							+ self.cohortStart() + '-' + self.cohortEnd(),
 				//url: self.services[0].url + 'cohort/' + self.cohortDefinitionId(),
 				method: 'GET',
 				contentType: 'application/json',
-				success: function (members) {
-					if (members.length == 0) {
-						self.personId(null);
+				success: function (people) {
+					if (people.length == 0) {
+						self.person(null);
+						//self.personId(null);
 						self.cohortPerson(null);
 						self.loadingProfile(false);
 						$('#modalNoMembers').modal('show');
-						self.members([]);
+						self.people([]);
 					} else {
-						self.members(members);
+						self.people(people);
 						// default to first person in the cohort
 						self.currentMemberIndex = 0;
+						//self.personId(people[self.currentMemberIndex].personId);
 						//self.personId(members[self.currentMemberIndex].personId);
-						self.personId(members[self.currentMemberIndex].personId);
-						self.cohortPerson(members[self.currentMemberIndex]);
+						self.person(people[0]);
+						self.cohortPerson(people[0]);
 					}
 				}
 			});
 		};
-		self.loadCohort();
+		self.person.subscribe(function(person) {
+			self.personId(person.personId);
+			self.cohortPerson(person);
+		});
+		//self.loadCohort();
 
 		self.loadProfile = function (cohortPerson) {
 			self.loadingProfile(true);

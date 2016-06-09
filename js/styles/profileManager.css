@@ -200,3 +200,7 @@ text.category {
 	fill: white;
 	font-weight: bold;
 }
+
+#people {
+	display: inline-block;
+}
