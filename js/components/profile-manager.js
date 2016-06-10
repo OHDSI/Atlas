@@ -56,8 +56,15 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.personId = ko.observable();
 		self.person = ko.observable();
 		self.cohortPerson = ko.observable();
+		self.loadingPerson = ko.computed(function() {
+			return self.cohortPerson() && !self.person();
+		});
+		self.cantFindPerson = ko.computed(function() {
+			return self.personId() && !self.cohortPerson();
+		});
 
-		self.loadCohort = function () {
+		self.loadCohortChunk = function () {
+			console.log('loadCohort');
 			self.personId(null);
 			if (self.cohortSource() && 
 					!isNaN(self.cohortSource().distinctPeople())) {
@@ -77,10 +84,13 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				contentType: 'application/json',
 				success: function (cohortPeople) {
 					if (cohortPeople.length == 0) {
+						console.log('no cohortPeople, setting cohortPerson null');
 						self.cohortPerson(null);
 						$('#modalNoMembers').modal('show');
 						self.cohortPeople([]);
 					} else {
+						console.log('setting cohortPerson to first of chunk which is ',
+								cohortPeople[0].personId);
 						self.cohortPeople(cohortPeople);
 						// default to first person in the cohort
 						self.cohortPerson(cohortPeople[0]);
@@ -95,11 +105,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.model.cohortDefinitionSourceInfo(), 
 				{sourceKey: sourceKey}));
 
+			self.cohortStart(1);
 			self.cohortSource().distinctPeople.subscribe(function() {
-				self.loadCohort();
+				// this probably isn't necessary
+				self.loadCohortChunk();
 			});
-
-			self.loadCohort();
 		});
 
 		self.cohortDefinition.subscribe(function(def) {
@@ -116,25 +126,28 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 
 		var updatingPerson = false;
 		self.personId.subscribe(function(personId) {
+			console.log('personId subs', personId, 'updating', updatingPerson);
 			// happens when user enters personId
 			if (updatingPerson) {
 				updatingPerson = false;
 				return;
 			}
 			updatingPerson = true;
-			self.cohortPerson(null);
 			self.person(null);
 			let cohortPerson = _.find(self.cohortPeople(), 
-																{ personId })
+													{personId: parseInt(personId)})
 			if (cohortPerson) {
 				self.cohortPerson(cohortPerson);
 				self.loadPerson(cohortPerson);
+			} else {
+				self.cohortPerson(null);
 			}
 		});
 		self.cohortPerson.subscribe(function(cohortPerson) {
+			console.log('cohortPerson subs', cohortPerson, 'updating', updatingPerson);
 			// happens when user selects personId from list
 			// or when cohort is loaded
-			if (updatingPerson) {
+			if (updatingPerson || !cohortPerson) {
 				updatingPerson = false;
 				return;
 			}
@@ -143,6 +156,49 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.personId(cohortPerson.personId);
 			self.loadPerson(cohortPerson);
 		});
+		self.navigatePrevious = function () {
+			let start = self.cohortStart() - self.peopleToFetch;
+			if (start < 1) {
+				start = self.cohortSource().distinctPeople() - self.peopleToFetch + 1;
+			}
+			self.cohortStart(start);
+		}
+		self.navigateNext = function () {
+			let start = self.cohortStart() + self.peopleToFetch;
+			if (start + self.peopleToFetch > self.cohortSource().distinctPeople()) {
+				start = 1;
+			}
+			self.cohortStart(start);
+		}
+		self.cohortStart.subscribe(function(start) {
+			self.cohortEnd(start + self.peopleToFetch);
+			self.loadCohortChunk();
+		});
+		let personRequests = {};
+		let personRequest;
+		self.loadPerson = function (cohortPerson) {
+			let url = self.services[0].url + self.sourceKey() + '/person/' + cohortPerson.personId;
+			console.log('loadPerson', url);
+			personRequest = personRequests[url] = $.ajax({
+				url: url,
+				method: 'GET',
+				contentType: 'application/json',
+				success: function (person) {
+					if (personRequest !== personRequests[url]) {
+						console.log(url, 'overridden');
+						return;
+					}
+					person.records.forEach(function(rec) {
+						rec.startDay = Math.floor((rec.startDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24))
+						rec.endDay = rec.endDate ?
+							Math.floor((rec.endDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24))
+							: rec.startDay;
+					});
+					self.crossfilter(crossfilter(person.records));
+					self.person(person);
+				}
+			});
+		};
 
 
 		//self.sourceKey('OPTUM-PDW');
@@ -267,74 +323,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.hasCDM = function (source) {
 			return source.hasCDM;
 		}
-
-		/*
-		self.navigatePrevious = function () {
-			if (self.currentMemberIndex > 0) {
-				self.currentMemberIndex--;
-				//self.personId(self.members()[self.currentMemberIndex].personId);
-				self.personId(self.members()[self.currentMemberIndex].personId);
-				self.cohortPerson(self.members()[self.currentMemberIndex]);
-			} else {
-				self.currentMemberIndex = self.members().length - 1;
-				//self.personId(self.members()[self.currentMemberIndex].personId);
-				self.personId(self.members()[self.currentMemberIndex].personId);
-				self.cohortPerson(self.members()[self.currentMemberIndex]);
-			}
-		}
-
-		self.navigateNext = function () {
-			if (self.currentMemberIndex < self.members().length - 1) {
-				self.currentMemberIndex++;
-				self.personId(self.members()[self.currentMemberIndex].personId);
-				self.cohortPerson(self.members()[self.currentMemberIndex]);
-			} else {
-				self.currentMemberIindex = 0;
-				self.personId(self.members()[self.currentMemberIndex].personId);
-				self.cohortPerson(self.members()[self.currentMemberIndex]);
-			}
-		}
-		*/
-
-		/* pretty sure this hasn't been used for a while
-		self.cohortDefinitionSelected = function (cohortDefinitionId) {
-			self.cohortDefinitionId(cohortDefinitionId);
-			$('#cohortDefinitionChooser').modal('hide');
-
-			$.ajax({
-				url: self.services[0].url + 'cohortdefinition/' + self.cohortDefinitionId(),
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (definition) {
-					self.cohortDefinitionButtonText(definition.name);
-				}
-			});
-
-			if (self.cohortDefinitionId() && self.sourceKey()) {
-				self.loadCohort();
-			}
-		}
-		*/
-
-		//self.loadCohort();
-
-		self.loadPerson = function (cohortPerson) {
-			$.ajax({
-				url: self.services[0].url + self.sourceKey() + '/person/' + cohortPerson.personId,
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (person) {
-					person.records.forEach(function(rec) {
-						rec.startDay = Math.floor((rec.startDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24))
-						rec.endDay = rec.endDate ?
-							Math.floor((rec.endDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24))
-							: rec.startDay;
-					});
-					self.crossfilter(crossfilter(person.records));
-					self.person(person);
-				}
-			});
-		};
 
 		self.showBrowser = function () {
 			$('#cohortDefinitionChooser').modal('show');
