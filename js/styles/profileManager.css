@@ -154,7 +154,7 @@ rect.dim {
 	margin: 2px;
 	padding: 2px;
 	border-radius: 5px;
-	display: inline-block;
+	display: block;
 	cursor: pointer;
 }
 .highlighted path, .highlighted line, .highlighted rect {
@@ -201,6 +201,6 @@ text.category {
 	font-weight: bold;
 }
 
-#people {
+#cohortPeople {
 	display: inline-block;
 }
