@@ -1,7 +1,13 @@
+/* this file included in ATLAS to support
+		data-sources.html. commenting out everything
+		not used in that file, and adding data-sources
+		class to everything else, so these styles won't
+		conflict with others in ATLAS
+*/
 /* Global Styles */
 
 /* ------------------------------- */
-
+/*
 body {
 	margin-right: 15px;
 	margin-left: 15px;
@@ -35,6 +41,7 @@ body {
 
 /* Top Right Navigation Dropdown Styles */
 
+/*
 .navbar-top-links li {
 	display: inline-block;
 }
@@ -84,8 +91,9 @@ body {
 	margin-top: -5px;
 	margin-right: 5px;
 }
+*/
 /* ------------------------------- */
-
+/*
 .btn-outline {
 	color: inherit;
 	background-color: transparent;
@@ -113,9 +121,10 @@ body {
 .btn-danger.btn-outline:hover {
 	color: #fff;
 }
+*/
 /* Bootstrap Overrides */
 
-.fa {
+.data-sources.fa {
 	margin-right: 7px;
 }
 .panel {
@@ -138,68 +147,67 @@ body {
 	padding-bottom: 5px;
 	font-size: 14px;
 }
-.col-xs-1,
-.col-sm-1,
-.col-md-1,
-.col-lg-1,
-.col-xs-2,
-.col-sm-2,
-.col-md-2,
-.col-lg-2,
-.col-xs-3,
-.col-sm-3,
-.col-md-3,
-.col-lg-3,
-.col-xs-4,
-.col-sm-4,
-.col-md-4,
-.col-lg-4,
-.col-xs-5,
-.col-sm-5,
-.col-md-5,
-.col-lg-5,
-.col-xs-6,
-.col-sm-6,
-.col-md-6,
-.col-lg-6,
-.col-xs-7,
-.col-sm-7,
-.col-md-7,
-.col-lg-7,
-.col-xs-8,
-.col-sm-8,
-.col-md-8,
-.col-lg-8,
-.col-xs-9,
-.col-sm-9,
-.col-md-9,
-.col-lg-9,
-.col-xs-10,
-.col-sm-10,
-.col-md-10,
-.col-lg-10,
-.col-xs-11,
-.col-sm-11,
-.col-md-11,
-.col-lg-11,
-.col-xs-12,
-.col-sm-12,
-.col-md-12,
-.col-lg-12 {
+.datasources.col-xs-1,
+.datasources.col-sm-1,
+.datasources.col-md-1,
+.datasources.col-lg-1,
+.datasources.col-xs-2,
+.datasources.col-sm-2,
+.datasources.col-md-2,
+.datasources.col-lg-2,
+.datasources.col-xs-3,
+.datasources.col-sm-3,
+.datasources.col-md-3,
+.datasources.col-lg-3,
+.datasources.col-xs-4,
+.datasources.col-sm-4,
+.datasources.col-md-4,
+.datasources.col-lg-4,
+.datasources.col-xs-5,
+.datasources.col-sm-5,
+.datasources.col-md-5,
+.datasources.col-lg-5,
+.datasources.col-xs-6,
+.datasources.col-sm-6,
+.datasources.col-md-6,
+.datasources.col-lg-6,
+.datasources.col-xs-7,
+.datasources.col-sm-7,
+.datasources.col-md-7,
+.datasources.col-lg-7,
+.datasources.col-xs-8,
+.datasources.col-sm-8,
+.datasources.col-md-8,
+.datasources.col-lg-8,
+.datasources.col-xs-9,
+.datasources.col-sm-9,
+.datasources.col-md-9,
+.datasources.col-lg-9,
+.datasources.col-xs-10,
+.datasources.col-sm-10,
+.datasources.col-md-10,
+.datasources.col-lg-10,
+.datasources.col-xs-11,
+.datasources.col-sm-11,
+.datasources.col-md-11,
+.datasources.col-lg-11,
+.datasources.col-xs-12,
+.datasources.col-sm-12,
+.datasources.col-md-12,
+.datasources.col-lg-12 {
 	position: relative;
 	min-height: 1px;
 	padding-right: 5px;
 	padding-left: 5px;
 }
 .row {
-	margin-right: -5px;
-	margin-left: -5px;
+	/* margin-right: -5px; */
+	/* margin-left: -5px; */
 }
 /* Report Styles */
 
 .reportTitle {
 	font-size: 14px;
-	font-weight: bold;
 	margin-bottom: 5px;
 	margin-top: 5px;
 }
@@ -207,25 +215,24 @@ body {
 	padding: 5px;
 	width: 98%;
 }
-div.personSummary .row div:first-child {
+div.data-sources.personSummary .row div:first-child {
 	text-align: right;
-	font-weight: bold;
 }
-div.personSummary .row div {
+div.data-sources.personSummary .row div {
 	padding-left: 2px;
 	padding-right: 2px;
 	font-size: 16px;
 }
-.dataSourceReport {
+.data-sources.dataSourceReport {
 	width: 96%;
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 0px;
 }
 /* D3 Tip Styles */
-
+/*
 .d3-tip {
-	/*white-space: nowrap;*/
+	/*white-space: nowrap;* /
 	line-height: 1;
 	font-size: 10px;
 	padding: 12px;
@@ -235,7 +242,7 @@ div.personSummary .row div {
 	pointer-events: none;
 	max-width: 400px;
 }
-/* Creates a small triangle extender for the tooltip */
+/* Creates a small triangle extender for the tooltip * /
 
 .d3-tip:after {
 	box-sizing: border-box;
@@ -247,7 +254,7 @@ div.personSummary .row div {
 	position: absolute;
 	pointer-events: none;
 }
-/* Northward tooltips */
+/* Northward tooltips * /
 
 .d3-tip.n:after {
 	content: "\25BC";
@@ -256,7 +263,7 @@ div.personSummary .row div {
 	left: 0;
 	text-align: center;
 }
-/* Eastward tooltips */
+/* Eastward tooltips * /
 
 .d3-tip.e:after {
 	content: "\25C0";
@@ -264,7 +271,7 @@ div.personSummary .row div {
 	top: 50%;
 	left: -8px;
 }
-/* Southward tooltips */
+/* Southward tooltips * /
 
 .d3-tip.s:after {
 	content: "\25B2";
@@ -273,7 +280,7 @@ div.personSummary .row div {
 	left: 0;
 	text-align: center;
 }
-/* Westward tooltips */
+/* Westward tooltips * /
 
 .d3-tip.w:after {
 	content: "\25B6";
@@ -287,12 +294,12 @@ div.personSummary .row div {
 .clear {
 	clear: both;
 }
+*/
 /* Condition Occurrence Report */
-
+/*
 .pathleaf {
 	font-size: 14px;
 	color: #333;
-	font-weight: bold;
 	margin-bottom: 3px;
 }
 .pathleafstat {
@@ -310,16 +317,17 @@ hr.path {
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
+*/
 #condition_table tr {
 	cursor: pointer;
 }
-#treemap_container rect {
+#data-sources-treemap_container rect {
 	cursor: pointer;
 }
-th {
+th.data-sources {
 	white-space: nowrap;
 }
-.dropdown-menu li {
+.data-sources.dropdown-menu li {
 	display: block;
 	padding: 3px 20px;
 	clear: both;
@@ -329,27 +337,28 @@ th {
 	white-space: nowrap;
 	cursor: pointer;
 }
-.dropdown-menu li:hover {
+.data-sources.dropdown-menu li:hover {
 	background-color: #eee;
 }
 .numeric {
 	text-align: right;
 }
-.hidden {
+.data-sources.hidden {
 	display: none;
 }
+/*
 table.dataTable tbody td {
 	padding: 2px 4px;
 	vertical-align: top;
 }
+*/
 #datasourceTitle {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	font-size: 16px;
-	font-weight: bold;
 }
 /* datatables.colvis override */
-
+/*
 ul.ColVis_collection {
 	width: 200px;
 }
@@ -393,3 +402,4 @@ table.dataTable tbody tr.odd.selected {
 	max-width: 800px;
 	z-index: 1040;
 }
+*/
