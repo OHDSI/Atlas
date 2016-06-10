@@ -138,10 +138,8 @@ button.icon img {
 }
 button.deletegroup {
 	position: absolute;
-	top: 8px;
+	top: -10px;
 	right: 10px;
-	border-left: solid 3px white;
-	border-right: solid 3px white;
 }
 button.deletecriteria {
 	/* position: absolute; */
