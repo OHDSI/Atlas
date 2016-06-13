@@ -225,7 +225,7 @@
 					<th>Generation Duration</th>
 				</thead>
 				<tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
-					<tr>
+					<tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
 						<td>
 							<!-- ko ifnot: $component.isRunning -->
 							<div class="btn btn-xs btn-success" data-bind="css: {'disabled':$component.dirtyFlag().isDirty()}, click:$component.generateCohort, clickBubble: false"><i class="fa fa-play"></i>Generate</div>

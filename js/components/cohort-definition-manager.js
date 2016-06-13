@@ -357,6 +357,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			console.log("feasiblity report selected.");	
 			cohortDefinitionAPI.getReport(self.model.currentCohortDefinition().id(), item.sourceKey).then(function(report) {
 				console.log("report loaded");
+				report.sourceKey = item.sourceKey;
 				self.selectedReport(report);
 			});
 		}

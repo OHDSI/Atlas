@@ -540,6 +540,10 @@ td.select .fa-check-circle.selected {
 	border-bottom: 1px solid #ccc;
 }
 
+.configureSourceTable tr.selected {
+	background-color: #f8b88f;	
+}
+
 th {
 	line-height: 20px;
 	padding-left: 7px;
