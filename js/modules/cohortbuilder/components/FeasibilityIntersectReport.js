@@ -51,8 +51,8 @@ define(['knockout',
 			}
 
 			var percentage = 0;
-			if (self.report().summary.totalPersons > 0) {
-				percentage = (size / self.report().summary.totalPersons * 100);
+			if (self.report().summary.baseCount > 0) {
+				percentage = (size / self.report().summary.baseCount * 100);
 			}
 			self.pass(passed);
 			self.fail(failed);

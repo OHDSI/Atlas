@@ -5,6 +5,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'ohdsi.util',
         'cohortbuilder/CohortExpression',
 				'cohortbuilder/InclusionRule',
+				'cohortbuilder/components/FeasibilityReportViewer',
 				'knockout.dataTables.binding',
 				'faceted-datatable',
 				'databindings'
@@ -76,6 +77,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		});
 
 		self.selectedFragment = ko.observable();
+    self.selectedReport = ko.observable();	
 		
 		// model behaviors
 		self.onConceptSetTabRespositoryConceptSetSelected = function (conceptSet) {
@@ -347,10 +349,18 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 		}
         
-        self.exportConceptSetsCSV = function () {
-            window.open(config.services[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/export/conceptset');
-        }
+		self.exportConceptSetsCSV = function () {
+				window.open(config.services[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/export/conceptset');
+		}
 
+		self.selectFeasiblityReport = function (item) {
+			console.log("feasiblity report selected.");	
+			cohortDefinitionAPI.getReport(self.model.currentCohortDefinition().id(), item.sourceKey).then(function(report) {
+				console.log("report loaded");
+				self.selectedReport(report);
+			});
+		}
+		
 		// dispose subscriptions
 		self.dispose = function () {
 			//self.currentCohortDefinitionSubscription.dispose();

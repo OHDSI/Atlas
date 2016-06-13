@@ -32,7 +32,7 @@ define(['knockout',
 			var priorPct = 1.0;
 			var stats = self.report().inclusionRuleStats.map(function (d, i) {
 				var countSatisfying = countMatch(treemapData, '1'.repeat(i+1));
-				var percentSatisfying = countSatisfying/self.report().summary.totalPersons;
+				var percentSatisfying = self.report().summary.baseCount != 0 ? countSatisfying/self.report().summary.baseCount : 0;
 				var pctDiff = priorPct - percentSatisfying;
 				priorPct = percentSatisfying;
 				return {
