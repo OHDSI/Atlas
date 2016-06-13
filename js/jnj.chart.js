@@ -1665,14 +1665,14 @@
 			var minY = d3.min(dataByTrellis, function (trellis) {
 					return d3.min(trellis.values, function (series) {
 						return d3.min(series.values, function (d) {
-							return d.Y_PREVALENCE_1000PP ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp;
+							return (d.Y_PREVALENCE_1000PP === 0 || d.Y_PREVALENCE_1000PP) ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp;
 						});
 					});
 				}),
 				maxY = d3.max(dataByTrellis, function (trellis) {
 					return d3.max(trellis.values, function (series) {
 						return d3.max(series.values, function (d) {
-							return d.Y_PREVALENCE_1000PP ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp;
+							return (d.Y_PREVALENCE_1000PP === 0 || d.Y_PREVALENCE_1000PP) ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp;
 						});
 					});
 				});
@@ -1808,7 +1808,7 @@
 					return seriesScale(d.date);
 				})
 				.y(function (d) {
-					return yScale(d.Y_PREVALENCE_1000PP ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp);
+					return yScale((d.Y_PREVALENCE_1000PP === 0 || d.Y_PREVALENCE_1000PP) ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp);
 				})
 				.interpolate(options.interpolate);
 
@@ -1878,7 +1878,7 @@
 				.attr("transform", function (d) {
 					if (v && v[v.length - 1] && v[v.length - 1].date && v[v.length - 1] && (v[v.length - 1].Y_PREVALENCE_1000PP || v[v.length - 1].yPrevalence1000Pp)) {
 						var v = d.values;
-						var yValue = v[v.length - 1].Y_PREVALENCE_1000PP ? v[v.length - 1].Y_PREVALENCE_1000PP : v[v.length - 1].yPrevalence1000Pp;
+						var yValue = v[v.length - 1].hasOwnProperty('Y_PREVALENCE_1000PP') ? v[v.length - 1].Y_PREVALENCE_1000PP : v[v.length - 1].yPrevalence1000Pp;
 						return "translate(" + seriesScale(v[v.length - 1].date) + "," + yScale(yValue) + ")";
 					}
 					return "translate(0,0)";
@@ -1965,7 +1965,7 @@
 					var s = d.values;
 					if (s) {
 						var v = s[bisect(s, date, 0, s.length - 1)];
-						var yValue = v.Y_PREVALENCE_1000PP ? v.Y_PREVALENCE_1000PP : v.yPrevalence1000Pp;
+						var yValue = v.hasOwnProperty('Y_PREVALENCE_1000PP') ? v.Y_PREVALENCE_1000PP : v.yPrevalence1000Pp;
 						if (v && v.date) {
 							return "translate(" + seriesScale(v.date) + "," + yScale(yValue) + ")";
 						} else {
@@ -1997,7 +1997,7 @@
 						var x = seriesScale(v.date);
 
 						text.attr("dy", null).attr("y", -4);
-						var yValue = v.Y_PREVALENCE_1000PP ? v.Y_PREVALENCE_1000PP : v.yPrevalence1000Pp;
+						var yValue = v.hasOwnProperty('Y_PREVALENCE_1000PP') ? v.Y_PREVALENCE_1000PP : v.yPrevalence1000Pp;
 						text.text(options.yFormat(yValue))
 							.attr("transform", "translate(" + offsetScale.range([0, trellisScale.rangeBand() - this.getComputedTextLength()])(x) + "," + (yScale(d3.max(s.slice(j, j + 12), function (d) {
 								return yValue;
