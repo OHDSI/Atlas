@@ -1665,14 +1665,14 @@
 			var minY = d3.min(dataByTrellis, function (trellis) {
 					return d3.min(trellis.values, function (series) {
 						return d3.min(series.values, function (d) {
-							return d.hasOwnProperty('Y_PREVALENCE_1000PP') ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp;
+							return (d.Y_PREVALENCE_1000PP === 0 || d.Y_PREVALENCE_1000PP) ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp;
 						});
 					});
 				}),
 				maxY = d3.max(dataByTrellis, function (trellis) {
 					return d3.max(trellis.values, function (series) {
 						return d3.max(series.values, function (d) {
-							return d.hasOwnProperty('Y_PREVALENCE_1000PP') ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp;
+							return (d.Y_PREVALENCE_1000PP === 0 || d.Y_PREVALENCE_1000PP) ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp;
 						});
 					});
 				});
@@ -1808,7 +1808,7 @@
 					return seriesScale(d.date);
 				})
 				.y(function (d) {
-					return yScale(d.hasOwnProperty('Y_PREVALENCE_1000PP') ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp);
+					return yScale((d.Y_PREVALENCE_1000PP === 0 || d.Y_PREVALENCE_1000PP) ? d.Y_PREVALENCE_1000PP : d.yPrevalence1000Pp);
 				})
 				.interpolate(options.interpolate);
 
