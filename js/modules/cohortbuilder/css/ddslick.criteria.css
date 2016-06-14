@@ -14,7 +14,6 @@
 	overflow: hidden;
 	display: block;
 	padding: 1px;
-	font-weight: bold;
 }
 .dd-pointer {
 	width: 0;
@@ -88,7 +87,4 @@
 }
 .dd-container {
 	position: relative;
-}
-.dd-selected-text {
-	font-weight: bold;
 }

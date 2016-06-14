@@ -48,7 +48,6 @@
 			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
 			<!-- ko if: pageModel.currentCohortDefinition() != null -->
 			<li class="current-asset">
-				<i class="fa fa-users"></i>
 				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text: pageModel.currentCohortDefinition().name"></a>
 				<!-- ko if: pageModel.currentConceptSet() != null && pageModel.currentConceptSetSource() == 'cohort' -->
 				<ul>
@@ -63,7 +62,6 @@
 			<!-- /ko -->
 			<!-- ko if: pageModel.currentConceptSet() && pageModel.currentConceptSetSource() == 'repository'  -->
 			<li class="current-asset">
-				<i class="fa fa-shopping-cart"></i>
 				<!-- ko if: pageModel.currentConceptSetSource() == 'repository' -->
 				<a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
 				<!-- /ko -->

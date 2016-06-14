@@ -2,9 +2,8 @@
 	<div class="heading">
 		Description:
 	</div>
-	<div contenteditable class="divtext" data-bind="htmlValue:model.currentCohortDefinition().description"></div>
+	<div contenteditable class="divtext cohort-description" data-bind="htmlValue:model.currentCohortDefinition().description"></div>
 </div>
-
 
 <div class="paddedWrapper">
 	<div data-bind="eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">

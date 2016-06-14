@@ -5,6 +5,9 @@ define(function (require, exports) {
 	var expressionEditor = require('./components/CohortExpressionEditor');
 	ko.components.register('cohort-expression-editor', expressionEditor);
 	
+	var inclusionEditor = require('./components/InclusionRuleEditor');
+	ko.components.register('inclusion-rule-editor', inclusionEditor);
+	
 	var criteriaGroup = require('./components/CriteriaGroup');
 	ko.components.register('criteria-group', criteriaGroup);
 

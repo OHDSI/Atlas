@@ -8,98 +8,84 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 				text: "Add Condition Filters",
 				selected: false,
 				description: "Find patients with specific diagnoses.",
-				//imageSrc: "images/cohortbuilder/condition.png",
 				action: function () { self.addConditionCriteria(); }
 			},
 			{
 				text: "Add Condition Era Filters",
 				selected: false,
 				description: "Find patients with specific diagnosis era.",
-				//imageSrc: "images/cohortbuilder/condition.png",
 				action: function () { self.addConditionEraCriteria(); }
 			},
 			{
 				text: "Add Drug Filters",
 				selected: false,
 				description: "Find patients with exposure to specific drugs or drug classes.",
-				//imageSrc: "images/cohortbuilder/drug.png",
 				action: function () { self.addDrugExposureCriteria(); }
 			},
 			{
 				text: "Add Drug Era Filters",
 				selected: false,
 				description: "Find patients with with exposure to drugs over time.",
-				//imageSrc: "images/cohortbuilder/drugera.png",
 				action: function () { self.addDrugEraCriteria(); }
 			},
 			{
 				text: "Add Dose Era Filters",
 				selected: false,
 				description: "Find patients with dose eras.",
-				//imageSrc: "images/cohortbuilder/drugera.png",
 				action: function () { self.addDoseEraCriteria(); }
 			},
 			{
 				text: "Add Procedure Filters",
 				selected: false,
 				description: "Find patients that experienced a specific procedure.",
-				//imageSrc: "images/cohortbuilder/procedures.png",
 				action: function () { self.addProcedureCriteria(); }
 			},
 			{
 				text: "Add Observation Filters",
 				selected: false,
 				description: "Find patients based on lab tests or other observations.",
-				//imageSrc: "images/cohortbuilder/observation.png",
 				action: function () { self.addObservationCriteria(); }
 			},
 			{
 				text: "Add Visit Filters",
 				selected: false,
 				description: "Find patients based on visit information.",
-				//imageSrc: "images/cohortbuilder/visit.png",
 				action: function () { self.addVisitCriteria(); }
 			},
 			{
 				text: "Add Device Exposure Filters",
 				selected: false,
 				description: "Find patients based on device exposure.",
-				//imageSrc: "images/cohortbuilder/procedures.png",
 				action: function () { self.addDeviceCriteria(); }
 			},
 			{
 				text: "Add Measurement Filters",
 				selected: false,
 				description: "Find patients based on Measurements.",
-				//imageSrc: "images/cohortbuilder/procedures.png",
 				action: function () { self.addMeasurementCriteria(); }
 			},
 			{
 				text: "Add Specimen Filters",
 				selected: false,
 				description: "Find patients based on Specimen.",
-				//imageSrc: "images/cohortbuilder/procedures.png",
 				action: function () { self.addSpecimenCriteria(); }
 			},			
 			{
 				text: "Add Observation Period Filters",
 				selected: false,
 				description: "Find patients based on Observation Period.",
-				//imageSrc: "images/cohortbuilder/procedures.png",
 				action: function () { self.addObservationPeriodCriteria(); }
 			},
 			{
 				text: "Add Death Filters",
 				selected: false,
 				description: "Find patients based on death.",
-				//imageSrc: "images/cohortbuilder/procedures.png",
 				action: function () { self.addDeathCriteria(); }
 			},
 			{
 				text: "Add Filter Group",
 				selected: false,
 				description: "Add a group to combine Filters.",
-				//imageSrc: "images/cohortbuilder/group.png",
 				action: function () { self.addAdditionalCriteria(); }
 			}
 		];
