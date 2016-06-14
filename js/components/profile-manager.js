@@ -1,4 +1,5 @@
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter','d3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf','components/profileChart', 'css!./styles/profileManager.css'], function (ko, view, d3, config, lodash, crossfilter) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf','components/profileChart', 'css!./styles/profileManager.css'], 
+	function (ko, view, d3, config, lodash, crossfilter) {
 
 	/*
 		trying to figure out a filterManager
@@ -42,11 +43,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		window.profileManager = self;
 		self.config = config;
 		self.showing = params.showing;
-		self.services = [params.services];
+		self.services = params.services;
 		self.model = params.model;
 		self.loadingCohort = ko.observable(false);
 
-		self.cohortDefinition = ko.observable();
 		self.sourceKey = ko.observable();
 		self.cohortSource = ko.observable();
 		self.cohortStart = ko.observable(1);
@@ -77,8 +77,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			}
 			self.loadingCohort(true);
 			$.ajax({
-				url: self.services[0].url + self.sourceKey() + '/cohortresults/' 
-							+ self.cohortDefinition().id() + '/members/' 
+				url: self.services.url + self.sourceKey() + '/cohortresults/' 
+							+ self.model.currentCohortDefinition().id() + '/members/' 
 							+ self.cohortStart() + '-' + self.cohortEnd(),
 				method: 'GET',
 				contentType: 'application/json',
@@ -106,23 +106,20 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				{sourceKey: sourceKey}));
 
 			self.cohortStart(1);
+			self.cohortStart.valueHasMutated();
 			self.cohortSource().distinctPeople.subscribe(function() {
 				// this probably isn't necessary
 				self.loadCohortChunk();
 			});
 		});
 
-		self.cohortDefinition.subscribe(function(def) {
-			// i don't know if cohortDefinition will ever change after initialization
-			self.sourceKey(params.services.sources[0].sourceKey);
-		});
-
 		if (params.model.currentCohortDefinition()) {
-			self.cohortDefinition(params.model.currentCohortDefinition());
+			self.sourceKey(self.services.sources[0].sourceKey);
 		}
 		params.model.currentCohortDefinition.subscribe(function(def) {
-			self.cohortDefinition(def);
+			self.sourceKey(self.services.sources[0].sourceKey);
 		});
+
 
 		var updatingPerson = false;
 		self.personId.subscribe(function(personId) {
@@ -177,7 +174,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		let personRequests = {};
 		let personRequest;
 		self.loadPerson = function (cohortPerson) {
-			let url = self.services[0].url + self.sourceKey() + '/person/' + cohortPerson.personId;
+			let url = self.services.url + self.sourceKey() + '/person/' + cohortPerson.personId;
 			console.log('loadPerson', url);
 			personRequest = personRequests[url] = $.ajax({
 				url: url,
@@ -199,7 +196,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				}
 			});
 		};
-
 
 		//self.sourceKey('OPTUM-PDW');
 		self.crossfilter = ko.observable();
