@@ -56,6 +56,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 							source.filteredRecs(source.groupAll.value());
 						});
 						source.filteredRecs.subscribe(function() {
+							source.someMembers.removeAll();
 							source.membersChosen(source.groupAll.value() + ' people in cohort matching:');
 							let genders = source.facets()[0].Members.filter(d=>d.Selected);
 							let gender = genders.length ?
@@ -85,6 +86,12 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 								method: 'GET',
 								contentType: 'application/json',
 								success: function (people) {
+									people.forEach(function(person) {
+										person.url =  '/#/profiles/' 
+													+ person.personId + '/'
+													+ params.model.currentCohortDefinition().id() + '/'
+													+ source.sourceKey;
+									});
 									source.someMembers.removeAll();
 									source.someMembers.push(...people);
 									self.fetchMax(Math.min(defaultFetchMax, people.length));

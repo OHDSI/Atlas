@@ -97,6 +97,17 @@ define([
 							self.currentView('profiles');
 						});
 					},
+					'/profiles/:personId/:cohortDefinitionId/:sourceKey': function (personId, cohortDefinitionId, sourceKey) {
+						// do i need more of this stuff?: require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) { });
+						require(['profile-manager', 'cohort-definition-browser'], function () {
+							self.currentView('profiles');
+							// every other variable in the world is thrown into pageModel, so, guess I'll
+							// do the same
+							pageModel.personId = personId;
+							pageModel.sourceKey = sourceKey;
+							self.loadCohortDefinition(cohortDefinitionId, null, 'profiles', 'details');
+						});
+					},
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
 						require(['conceptset-manager'], function () {
 							self.loadConceptSet(conceptSetId, 'conceptset', 'repository', mode);

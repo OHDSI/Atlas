@@ -149,7 +149,7 @@
 			</div>
 
 			<div data-bind="if:pageModel.currentView() == 'profiles'">
-				<profile-manager params="services: pageModel.services"></profile-manager>
+				<profile-manager params="model: pageModel"></profile-manager>
 			</div>
 
 			<analytics-manager data-bind="if:pageModel.currentView()== 'analytics'" params="{model: pageModel}"></analytics-manager>

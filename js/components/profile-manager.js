@@ -42,18 +42,17 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		var self = this;
 		window.profileManager = self;
 		self.config = config;
-		self.showing = params.showing;
-		self.services = params.services;
+		self.services = config.services[0];
 		self.model = params.model;
 		self.loadingCohort = ko.observable(false);
 
-		self.sourceKey = ko.observable();
+		self.sourceKey = ko.observable(params.sourceKey);
 		self.cohortSource = ko.observable();
 		self.cohortStart = ko.observable(1);
 		self.cohortEnd = ko.observable(1);
 		self.peopleToFetch = 20;
 		self.cohortPeople = ko.observableArray();
-		self.personId = ko.observable();
+		self.personId = ko.observable(params.personId);
 		self.person = ko.observable();
 		self.cohortPerson = ko.observable();
 		self.loadingPerson = ko.computed(function() {

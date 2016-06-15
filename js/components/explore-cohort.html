@@ -18,7 +18,7 @@
 						First <span data-bind="text:$component.fetchMax"/> members:
 					</div>
 					<div data-bind="foreach:someMembers">
-						<a href="#" data-bind="text:personId" />
+						<a data-bind="text:personId, attr: {href: url}" />
 					</div>
 				</div>
 			</div>
