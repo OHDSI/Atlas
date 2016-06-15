@@ -129,7 +129,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 			{
 				text: "Add Death Filters",
 				selected: false,
-				description: "Find patients based on device exposure.",
+				description: "Find patients based on death.",
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						Death: new criteriaTypes.Death(null, self.expression().ConceptSets)
