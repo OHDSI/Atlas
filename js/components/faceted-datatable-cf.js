@@ -6,6 +6,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'knockout.dataTables.bin
 		var self = this;
 
 		self.recs = params.recs;
+		//console.log(params.recs());
 		self.data = ko.observableArray();
 		self.data(self.recs());
 		self.facets = params.facets;
@@ -15,6 +16,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'knockout.dataTables.bin
 		self.columns = params.columns;
 		self.rowCallback = params.rowCallback;
 		self.rowClick = params.rowClick;
+		self.facetsOnly = params.facetsOnly;
 
 		self.order = params.order || [[1,'desc']];
 
@@ -34,8 +36,6 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'knockout.dataTables.bin
 			});
 		};
 
-		var reduceToRecs = [ (p,v,nf)=>p.concat(v), (p,v,nf)=>_.without(p,v), ()=>[] ];
-
 		self.recs.subscribe(function () {
 			var newFacets = [];
 			self.facets().forEach(facet=>{
@@ -44,7 +44,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'knockout.dataTables.bin
 					var oldMember = _.find(facet.Members,{Name:group.key});
 					var member = {
 						Name: group.key,
-						ActiveCount: group.value.length,
+						ActiveCount: facet.countFunc ? facet.countFunc(group) : group.value.length,
 						Selected: oldMember ? oldMember.Selected : false,
 					};
 					members.push(member);

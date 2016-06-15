@@ -1,4 +1,16 @@
-<div class="row">
+	<div data-bind="if:facetsOnly">
+		<div data-bind="with: $component">
+			<div data-bind="foreach:facets">
+				<div class="facetName"><i class="fa fa-filter"></i><span data-bind="text:caption"></span></div>
+				<div class="facetScrollBox" data-bind="foreach:Members">
+					<div class="facetMemberName" data-bind="css : {selected:Selected}, click: function(data, event) { $component.updateFilters($data, event);}">
+						<span data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, text:Name + ' (' + ActiveCount + ')'"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<div data-bind="if:!facetsOnly" class="row">
 	<div class="feFilter col-xs-2">
 		<div data-bind="with: $component">
 			<div data-bind="foreach:facets">
