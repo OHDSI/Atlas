@@ -1,41 +1,6 @@
 define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf','components/profileChart', 'css!./styles/profileManager.css'], 
 	function (ko, view, d3, config, lodash, crossfilter) {
 
-	/*
-		trying to figure out a filterManager
-		several components need to be able to display data filtered by other components and also to set filters themselves:
-			- datatable
-				- filters set by facetEngine
-				- also would like filters to be set by text search
-						table.rows( { search: 'applied' } ).data()
-			- timeline viz
-				- main panel shows all recs (after filtering by other components)
-				- brush zoom for main viz, 
-				- mouseover shows local zoom area with labels (highlight?)
-			- wordcloud
-				- mouseover should trigger highlight--another kind of filter
-
-		about to start trying crossfilter. stuff here is obsolete
-
-		i don't want to make significant changes to facetedDatatable because it's used elsewhere.
-			it can currently receive an observable (of all records it should know about, so, all records
-			after other filters have been applied), and it can set an observable to records remaining
-			after applying facet engine. it cannot yet communicate anything about text search filtering.
-
-		a filterManager should provide each component with the set of records left after applying
-			all filters except its own. the components need to display records they are filtering out
-			-- like the profileChart displays the set of records it received and shows a brushing region
-			over records that it's trying to filter in. 
-			this requires that each component be able to supply the set
-			of records that it filters OUT.
-			when a component changes its filter, the other components need to be updated, but they
-			should not trigger further updates. how can I do this?
-
-		highlights (is this right?) should not be cumulative the way hide filters are. when a component
-			triggers a highlight, any previous highlights should be removed.
-
-		datatable input recs: filterManager.recs['datatable'] : recs left after applying all but datatable's filters
-	*/
 	function profileManager(params) {
 		window.d3 = d3;
 		window._ = _;
@@ -44,72 +9,20 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.config = config;
 		self.services = config.services[0];
 		self.model = params.model;
-		self.loadingCohort = ko.observable(false);
 
 		self.sourceKey = ko.observable(params.sourceKey);
 		self.cohortSource = ko.observable();
-		self.cohortStart = ko.observable(1);
-		self.cohortEnd = ko.observable(1);
-		self.peopleToFetch = 20;
-		self.cohortPeople = ko.observableArray();
 		self.personId = ko.observable(params.personId);
 		self.person = ko.observable();
-		self.cohortPerson = ko.observable();
 		self.loadingPerson = ko.computed(function() {
-			return self.cohortPerson() && !self.person();
+			return self.personId() && !self.person();
 		});
-		self.cantFindPerson = ko.computed(function() {
-			return self.personId() && !self.cohortPerson();
-		});
-
-		self.loadCohortChunk = function () {
-			console.log('loadCohort');
-			self.personId(null);
-			if (self.cohortSource() && 
-					!isNaN(self.cohortSource().distinctPeople())) {
-				self.cohortEnd( Math.min(
-							self.cohortSource().distinctPeople(), 
-							self.cohortStart() + self.peopleToFetch - 1));
-			} else {
-				console.log('not loading cohort');
-				return;
-			}
-			self.loadingCohort(true);
-			$.ajax({
-				url: self.services.url + self.sourceKey() + '/cohortresults/' 
-							+ self.model.currentCohortDefinition().id() + '/members/' 
-							+ self.cohortStart() + '-' + self.cohortEnd(),
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (cohortPeople) {
-					if (cohortPeople.length == 0) {
-						console.log('no cohortPeople, setting cohortPerson null');
-						self.cohortPerson(null);
-						$('#modalNoMembers').modal('show');
-						self.cohortPeople([]);
-					} else {
-						console.log('setting cohortPerson to first of chunk which is ',
-								cohortPeople[0].personId);
-						self.cohortPeople(cohortPeople);
-						// default to first person in the cohort
-						self.cohortPerson(cohortPeople[0]);
-					}
-					self.loadingCohort(false);
-				}
-			});
-		};
+		self.cantFindPerson = ko.observable(false)
 
 		self.sourceKey.subscribe(function (sourceKey) {
 			self.cohortSource(_.find(
 				self.model.cohortDefinitionSourceInfo(), 
 				{sourceKey: sourceKey}));
-
-			self.cohortStart(1);
-			self.cohortStart.valueHasMutated();
-			self.cohortSource().distinctPeople.subscribe(function() {
-				// this probably isn't necessary
-				self.loadCohortChunk();
-			});
 		});
 
 		if (params.model.currentCohortDefinition()) {
@@ -120,60 +33,14 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		});
 
 
-		var updatingPerson = false;
 		self.personId.subscribe(function(personId) {
-			console.log('personId subs', personId, 'updating', updatingPerson);
-			// happens when user enters personId
-			if (updatingPerson) {
-				updatingPerson = false;
-				return;
-			}
-			updatingPerson = true;
 			self.person(null);
-			let cohortPerson = _.find(self.cohortPeople(), 
-													{personId: parseInt(personId)})
-			if (cohortPerson) {
-				self.cohortPerson(cohortPerson);
-				self.loadPerson(cohortPerson);
-			} else {
-				self.cohortPerson(null);
-			}
-		});
-		self.cohortPerson.subscribe(function(cohortPerson) {
-			console.log('cohortPerson subs', cohortPerson, 'updating', updatingPerson);
-			// happens when user selects personId from list
-			// or when cohort is loaded
-			if (updatingPerson || !cohortPerson) {
-				updatingPerson = false;
-				return;
-			}
-			updatingPerson = true;
-			self.person(null);
-			self.personId(cohortPerson.personId);
-			self.loadPerson(cohortPerson);
-		});
-		self.navigatePrevious = function () {
-			let start = self.cohortStart() - self.peopleToFetch;
-			if (start < 1) {
-				start = self.cohortSource().distinctPeople() - self.peopleToFetch + 1;
-			}
-			self.cohortStart(start);
-		}
-		self.navigateNext = function () {
-			let start = self.cohortStart() + self.peopleToFetch;
-			if (start + self.peopleToFetch > self.cohortSource().distinctPeople()) {
-				start = 1;
-			}
-			self.cohortStart(start);
-		}
-		self.cohortStart.subscribe(function(start) {
-			self.cohortEnd(start + self.peopleToFetch);
-			self.loadCohortChunk();
+			self.loadPerson(personId);
 		});
 		let personRequests = {};
 		let personRequest;
-		self.loadPerson = function (cohortPerson) {
-			let url = self.services.url + self.sourceKey() + '/person/' + cohortPerson.personId;
+		self.loadPerson = function (personId) {
+			let url = self.services.url + self.sourceKey() + '/person/' + personId;
 			console.log('loadPerson', url);
 			personRequest = personRequests[url] = $.ajax({
 				url: url,
@@ -185,6 +52,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						return;
 					}
 					person.records.forEach(function(rec) {
+						// have to get startDate from person.cohorts
 						rec.startDay = Math.floor((rec.startDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24))
 						rec.endDay = rec.endDate ?
 							Math.floor((rec.endDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24))
