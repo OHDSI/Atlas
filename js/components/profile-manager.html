@@ -3,11 +3,17 @@
 		<div class="reportControls pad-5">
 			<div class="row">
 				<div class="col-xs-12">
-					<div>
-						<i class="fa fa-line-chart" data-bind="value:'profileChart', click:dispToggle" style="cursor:pointer"/>
-						<i class="fa fa-bars" data-bind="value:'wordcloud', click:dispToggle" style="cursor:pointer"/>
-						<i class="fa fa-table" data-bind="value:'datatable', click:dispToggle" style="cursor:pointer"/>
-					</div>
+					<ul class="nav nav-pills">
+						<li 
+							data-bind="css:{active:showSection.profileChart}" 
+							style="cursor:pointer"><a><i data-bind="click:dispToggle, value:'profileChart'" class="fa fa-line-chart" /></a></li>
+						<li 
+							data-bind="css:{active:showSection.wordcloud}" 
+							style="cursor:pointer"><a><i data-bind="click:dispToggle, value:'wordcloud'" class="fa fa-bars" /></a></li>
+						<li 
+							data-bind="css:{active:showSection.datatable}" 
+							style="cursor:pointer"><a><i data-bind="click:dispToggle, value:'datatable'" class="fa fa-table" /></a></li>
+					</ul>
 					<select class="form-control" 
 						data-bind="
 							css : { invalid: sourceKey()==undefined }, 
