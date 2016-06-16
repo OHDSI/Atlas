@@ -15,7 +15,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.personId = ko.observable();
 		self.person = ko.observable();
 		self.loadingPerson = ko.computed(function() {
-			return self.personId() && !self.person();
+			return self.personId() && !self.person() && !self.cantFindPerson();
 		});
 		self.cantFindPerson = ko.observable(false)
 
@@ -36,12 +36,16 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		let personRequests = {};
 		let personRequest;
 		self.loadPerson = function (personId) {
+			self.cantFindPerson(false)
 			let url = self.services.url + self.sourceKey() + '/person/' + personId;
 			console.log('loadPerson', url);
 			personRequest = personRequests[url] = $.ajax({
 				url: url,
 				method: 'GET',
 				contentType: 'application/json',
+				error: function(err) {
+					self.cantFindPerson(true)
+				},
 				success: function (person) {
 					if (personRequest !== personRequests[url]) {
 						console.log(url, 'overridden');
