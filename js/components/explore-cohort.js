@@ -9,8 +9,8 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 		var self = this;
 		window.exploreCohort = self;
 		self.sources = ko.observableArray([]);
-		var defaultFetchMax = 100;
-		self.fetchMax = ko.observable(defaultFetchMax);
+		self.defaultFetchMax = 100;
+		self.sourceKey = ko.observable();
 
 		params.services.sources
 			.filter(source=>source.hasCDM)
@@ -23,6 +23,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 				source.filteredRecs = ko.observable([]);
 				source.someMembers = ko.observableArray([]);
 				source.membersChosen = ko.observable('');
+				source.fetchMax = ko.observable(self.defaultFetchMax);
 				self.sources.push(source);
 				$.ajax({
 					url: params.services.url + source.sourceKey + '/cohortresults/' 
@@ -94,7 +95,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 									});
 									source.someMembers.removeAll();
 									source.someMembers.push(...people);
-									self.fetchMax(Math.min(defaultFetchMax, people.length));
+									source.fetchMax(Math.min(self.defaultFetchMax, people.length));
 								}
 							});
 						});

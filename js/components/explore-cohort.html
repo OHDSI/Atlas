@@ -1,48 +1,67 @@
-<div data-bind="foreach: sources">
-	<div class="row">
-		<div class="col-xs-12">
-			<h3 data-bind="text: sourceKey" />
+<ul class="nav nav-pills" data-bind="foreach: sources">
+	<li role="presentation" 
+			data-bind="
+				css: { active: $component.sourceKey() == sourceKey }, 
+				click: function() { $component.sourceKey(sourceKey) } ">
+					<a data-bind="text: sourceKey"></a>
+	</li>
+</ul>
+<div data-bind="foreach: sources" class="tab-content">
+	<div role="tabpanel" 
+				data-bind="css: {active: $component.sourceKey() == sourceKey}" 
+				class="tab-pane">
+		<div class="paddedWrapper">
 			<div class="row">
-				<faceted-datatable-cf class="feFilter col-xs-2" id="explore-cohort-table" params="{
-						recs: filteredRecs,
-						facets: facets,
-						columns: $component.columns, 
-						facetsOnly: true,
-					}"></faceted-datatable-cf>
-				<div class="col-xs-8 col-xs-offset-2">
-					<div data-bind="text:membersChosen" />
-					<div data-bind="foreach:facets">
-						<div data-bind="text:$component.selectedDesc($data)" />
-					</div>
-					<div data-bind="if: someMembers.length">
-						First <span data-bind="text:$component.fetchMax"/> members:
-					</div>
-					<div data-bind="foreach:someMembers">
-						<a data-bind="text:personId, attr: {href: url}" />
-					</div>
-				</div>
-			</div>
-				<!--
-					order: [[3,'asc']],
-					searchFilter: $component.searchHighlight,
-					rowClick: $component.datatableRowClickCallback,
-				-->
-		</div>
-		<div class="col-xs-9">
-
-			<div id="modalNoMembers" class="modal fade">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
-							</button>
+				<div class="col-xs-12">
+					<div class="row">
+						<faceted-datatable-cf class="feFilter col-xs-2" id="explore-cohort-table" params="{
+								recs: filteredRecs,
+								facets: facets,
+								columns: $component.columns, 
+								facetsOnly: true,
+							}"></faceted-datatable-cf>
+						<div class="col-xs-8 col-xs-offset-2">
+							<div data-bind="text:membersChosen" />
+							<div data-bind="foreach:facets">
+								<div data-bind="text:$component.selectedDesc($data)" />
+							</div>
+							<div data-bind="if: !someMembers().length">
+								Fetching first <span data-bind="text:$component.defaultFetchMax"/> members
+							</div>
+							<div data-bind="if: someMembers().length">
+								<span data-bind="text:someMembers().length === $component.defaultFetchMax 
+																	? 'First' : 'Found'"/>
+								<span data-bind="text:someMembers().length"/> members:
+							</div>
+							<div data-bind="foreach:someMembers">
+								<a data-bind="text:personId, attr: {href: url}" />
+							</div>
 						</div>
-						<div class="modal-body">
-							This cohort has no members available to view. Please check the generation status in the Cohort Definition section of Atlas.
+					</div>
+						<!--
+							order: [[3,'asc']],
+							searchFilter: $component.searchHighlight,
+							rowClick: $component.datatableRowClickCallback,
+						-->
+				</div>
+				<div class="col-xs-9">
+
+					<div id="modalNoMembers" class="modal fade">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									This cohort has no members available to view. Please check the generation status in the Cohort Definition section of Atlas.
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
 </div>
