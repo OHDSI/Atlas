@@ -3,6 +3,11 @@
 		<div class="reportControls pad-5">
 			<div class="row">
 				<div class="col-xs-12">
+					<div>
+						<i class="fa fa-line-chart" data-bind="value:'profileChart', click:dispToggle" style="cursor:pointer"/>
+						<i class="fa fa-bars" data-bind="value:'wordcloud', click:dispToggle" style="cursor:pointer"/>
+						<i class="fa fa-table" data-bind="value:'datatable', click:dispToggle" style="cursor:pointer"/>
+					</div>
 					<select class="form-control" 
 						data-bind="
 							css : { invalid: sourceKey()==undefined }, 
@@ -30,7 +35,9 @@
 		<div data-bind="visible:person, with:person">
 			<div data-bind="text: gender" />
 			<div data-bind="text: recordCount + ' events'" />
-			<div id="wordcloud" data-bind="with:$component.dimensions.wordcloud">
+			<div id="wordcloud" 
+				data-bind="with:$component.dimensions.wordcloud,
+										visible:$component.showSection.wordcloud">
 				<div class="wordcloud" data-bind="foreach:words($component.filteredRecs)">
 					<span data-bind="
 						text:text, 
@@ -51,8 +58,9 @@
 						<span data-bind="text:personId" /></div>
 
 			<div data-bind="visible:person">
-				<!--div data-bind="visible:filteredRecs().length > 0"-->
-					<div id="profile-chart" data-bind="profileChart:{
+					<div id="profile-chart" data-bind="
+						visible:showSection.profileChart,
+						profileChart:{
 								profile:person, 
 								recs:filteredRecs, 
 								zoomFilter:dimensions.profileChart.filter,
@@ -60,8 +68,9 @@
 								allRecs:crossfilter().all(),
 								showing: true,
 							}"></div>
-					<!--div class="heading">Profile Records</div-->
-					<faceted-datatable-cf id="profile-manager-table" params="{
+					<faceted-datatable-cf id="profile-manager-table" 
+						data-bind="visible:showSection.datatable"
+						params="{
 							recs: filteredRecs,
 							columns: columns, 
 							facets: facetsObs, 
@@ -69,8 +78,6 @@
 							searchFilter: searchHighlight,
 							rowClick: datatableRowClickCallback,
 						}"></faceted-datatable-cf>
-							<!--searchFilter: dimensions.search.filter,-->
-				<!--/div-->
 			</div>
 		</div>
 

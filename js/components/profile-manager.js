@@ -33,7 +33,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.sourceKey(self.services.sources[0].sourceKey);
 		});
 
-
 		let personRequests = {};
 		let personRequest;
 		self.loadPerson = function (personId) {
@@ -206,6 +205,17 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		};
 
 		self.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
+
+		self.showSection = {
+			profileChart: ko.observable(true),
+			wordcloud: ko.observable(true),
+			datatable: ko.observable(true),
+		};
+		self.dispToggle = function(pm, evt) {
+			let section = evt.target.value;
+			console.log('toggle ' + section);
+			self.showSection[section](!self.showSection[section]());
+		};
 
 		self.columns = [
 			{
