@@ -23,6 +23,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.cohortSource(_.find(
 				self.model.cohortDefinitionSourceInfo(), 
 				{sourceKey: sourceKey}));
+			self.loadPerson(self.personId());
 		});
 
 		if (params.model.currentCohortDefinition()) {

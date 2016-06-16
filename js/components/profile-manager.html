@@ -5,19 +5,19 @@
 				<div class="col-xs-12">
 					<select class="form-control" 
 						data-bind="
-							css : { invalid: $component.sourceKey()==undefined }, 
-							options:$component.config.services[0].sources.filter(d=>d.hasCDM), 
+							css : { invalid: sourceKey()==undefined }, 
+							options:config.services[0].sources.filter(d=>d.hasCDM), 
 							optionsValue:'sourceKey', 
 							optionsText:'sourceName', 
-							value:$component.sourceKey, 
-							enable: !person(),
+							value:sourceKey, 
+							enable: !person() && !loadingPerson(),
 							optionsCaption:'Select a Source'"></select>
 				</div>
 				Person:
 				<input id="personId"
 								data-bind="
 									enable: sourceKey(),
-									textInput: $component.personId" />
+									textInput: personId" />
 			</div>
 		</div>
 
@@ -27,7 +27,7 @@
 				</div>
 			</div>
 		</div>
-		<div data-bind="visible:$component.person, with:$component.person">
+		<div data-bind="visible:person, with:person">
 			<div data-bind="text: gender" />
 			<div data-bind="text: recordCount + ' events'" />
 			<div id="wordcloud" data-bind="with:$component.dimensions.wordcloud">
@@ -42,34 +42,34 @@
 		</div>
 	</div>
 	<div class="col-xs-9">
-		<div data-bind="visible:$component.personId">
-			<div data-bind="visible: $component.loadingPerson"
+		<div data-bind="visible:personId">
+			<div data-bind="visible: loadingPerson"
 						class="loading">loading</div>
 
 			<div data-bind="visible: cantFindPerson" 
 					class="loading">Can't find 
-						<span data-bind="text:$component.personId" /></div>
+						<span data-bind="text:personId" /></div>
 
-			<div data-bind="visible:$component.person">
-				<!--div data-bind="visible:$component.filteredRecs().length > 0"-->
+			<div data-bind="visible:person">
+				<!--div data-bind="visible:filteredRecs().length > 0"-->
 					<div id="profile-chart" data-bind="profileChart:{
-								profile:$component.person, 
-								recs:$component.filteredRecs, 
-								zoomFilter:$component.dimensions.profileChart.filter,
-								highlightRecs:$component.highlightRecs,
-								allRecs:$component.crossfilter().all(),
+								profile:person, 
+								recs:filteredRecs, 
+								zoomFilter:dimensions.profileChart.filter,
+								highlightRecs:highlightRecs,
+								allRecs:crossfilter().all(),
 								showing: true,
 							}"></div>
 					<!--div class="heading">Profile Records</div-->
 					<faceted-datatable-cf id="profile-manager-table" params="{
-							recs: $component.filteredRecs,
-							columns: $component.columns, 
-							facets: $component.facetsObs, 
+							recs: filteredRecs,
+							columns: columns, 
+							facets: facetsObs, 
 							order: [[3,'asc']],
-							searchFilter: $component.searchHighlight,
-							rowClick: $component.datatableRowClickCallback,
+							searchFilter: searchHighlight,
+							rowClick: datatableRowClickCallback,
 						}"></faceted-datatable-cf>
-							<!--searchFilter: $component.dimensions.search.filter,-->
+							<!--searchFilter: dimensions.search.filter,-->
 				<!--/div-->
 			</div>
 		</div>
