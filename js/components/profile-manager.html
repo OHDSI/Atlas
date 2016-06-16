@@ -3,7 +3,7 @@
 		<div class="reportControls pad-5">
 			<div class="row">
 				<div class="col-xs-12">
-					<select class="form-control" data-bind="css : { invalid: $component.sourceKey()==undefined }, options:$component.config.services[0].sources.filter($component.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.sourceKey, optionsCaption:'Select a Source'"></select>
+					<select class="form-control" data-bind="css : { invalid: $component.sourceKey()==undefined }, options:$component.config.services[0].sources.filter(d=>d.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.sourceKey, optionsCaption:'Select a Source'"></select>
 				</div>
 				Person:
 				<input id="personId"
@@ -44,7 +44,6 @@
 				<!--div data-bind="visible:$component.filteredRecs().length > 0"-->
 					<div id="profile-chart" data-bind="profileChart:{
 								profile:$component.person, 
-								cohortPerson:$component.cohortPerson, 
 								recs:$component.filteredRecs, 
 								zoomFilter:$component.dimensions.profileChart.filter,
 								highlightRecs:$component.highlightRecs,

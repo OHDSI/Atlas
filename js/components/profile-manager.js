@@ -10,9 +10,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		self.services = config.services[0];
 		self.model = params.model;
 
-		self.sourceKey = ko.observable(params.sourceKey);
+		self.sourceKey = ko.observable(params.model.sourceKey);
 		self.cohortSource = ko.observable();
-		self.personId = ko.observable(params.personId);
+		self.personId = ko.observable();
 		self.person = ko.observable();
 		self.loadingPerson = ko.computed(function() {
 			return self.personId() && !self.person();
@@ -33,10 +33,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 		});
 
 
-		self.personId.subscribe(function(personId) {
-			self.person(null);
-			self.loadPerson(personId);
-		});
 		let personRequests = {};
 		let personRequest;
 		self.loadPerson = function (personId) {
@@ -51,11 +47,23 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						console.log(url, 'overridden');
 						return;
 					}
+					let cohort;
+					if (params.model.currentCohortDefinition()) {
+						cohort = _.find(person.cohorts, 
+							{cohortDefinitionId: params.model.currentCohortDefinition().id()});
+					} else {
+						cohort = {
+							startDate: _.chain(person.records)
+													.map(d=>d.startDate)
+													.min()
+													.value()
+						};
+					}
 					person.records.forEach(function(rec) {
 						// have to get startDate from person.cohorts
-						rec.startDay = Math.floor((rec.startDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24))
+						rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24))
 						rec.endDay = rec.endDate ?
-							Math.floor((rec.endDate - cohortPerson.startDate) / (1000 * 60 * 60 * 24))
+							Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24))
 							: rec.startDay;
 					});
 					self.crossfilter(crossfilter(person.records));
@@ -63,6 +71,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				}
 			});
 		};
+		self.personId.subscribe(function(personId) {
+			self.person(null);
+			self.loadPerson(personId);
+		});
+		self.personId(params.model.personId);
 
 		//self.sourceKey('OPTUM-PDW');
 		self.crossfilter = ko.observable();
@@ -182,10 +195,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			groupAll.reduce(...reduceToRecs);
 			self.filteredRecs(groupAll.value());
 		});
-
-		self.hasCDM = function (source) {
-			return source.hasCDM;
-		}
 
 		self.showBrowser = function () {
 			$('#cohortDefinitionChooser').modal('show');
