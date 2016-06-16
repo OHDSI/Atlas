@@ -1878,7 +1878,7 @@
 				.attr("transform", function (d) {
 					if (v && v[v.length - 1] && v[v.length - 1].date && v[v.length - 1] && (v[v.length - 1].Y_PREVALENCE_1000PP || v[v.length - 1].yPrevalence1000Pp)) {
 						var v = d.values;
-						var yValue = v[v.length - 1].hasOwnProperty('Y_PREVALENCE_1000PP') ? v[v.length - 1].Y_PREVALENCE_1000PP : v[v.length - 1].yPrevalence1000Pp;
+						var yValue = (v[v.length - 1].Y_PREVALENCE_1000PP === 0 || v[v.length - 1].Y_PREVALENCE_1000PP) ? v[v.length - 1].Y_PREVALENCE_1000PP : v[v.length - 1].yPrevalence1000Pp;
 						return "translate(" + seriesScale(v[v.length - 1].date) + "," + yScale(yValue) + ")";
 					}
 					return "translate(0,0)";
@@ -1965,7 +1965,7 @@
 					var s = d.values;
 					if (s) {
 						var v = s[bisect(s, date, 0, s.length - 1)];
-						var yValue = v.hasOwnProperty('Y_PREVALENCE_1000PP') ? v.Y_PREVALENCE_1000PP : v.yPrevalence1000Pp;
+						var yValue = (v.Y_PREVALENCE_1000PP === 0 || v.Y_PREVALENCE_1000PP) ? v.Y_PREVALENCE_1000PP : v.yPrevalence1000Pp;
 						if (v && v.date) {
 							return "translate(" + seriesScale(v.date) + "," + yScale(yValue) + ")";
 						} else {
@@ -1997,7 +1997,7 @@
 						var x = seriesScale(v.date);
 
 						text.attr("dy", null).attr("y", -4);
-						var yValue = v.hasOwnProperty('Y_PREVALENCE_1000PP') ? v.Y_PREVALENCE_1000PP : v.yPrevalence1000Pp;
+						var yValue = (v.Y_PREVALENCE_1000PP === 0 || v.Y_PREVALENCE_1000PP) ? v.Y_PREVALENCE_1000PP : v.yPrevalence1000Pp;
 						text.text(options.yFormat(yValue))
 							.attr("transform", "translate(" + offsetScale.range([0, trellisScale.rangeBand() - this.getComputedTextLength()])(x) + "," + (yScale(d3.max(s.slice(j, j + 12), function (d) {
 								return yValue;
