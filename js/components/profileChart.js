@@ -182,6 +182,20 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.classed('point', true)
 			.on('mouseover', focusTip.show)
 			.on('mouseout', focusTip.hide)
+			// these stubs don't do anything useful yet but
+			// are here to allow fetching detailed data on
+			// prolonged hover over profile point issue #143
+			.on('mouseenter', function(d) {
+				$(this).data('timeout', setTimeout(()=>{
+					console.log($(this).data('timeout'), 'get details for', d);
+					$(this).data(null);
+				}, 500));
+			})
+			.on('mouseleave', function() {
+				let timeout = $(this).data('timeout');
+				if (timeout)
+					clearTimeout(timeout);
+			})
 			.each(pointFunc)
 
 		pointGs.on('mousedown', function(){ // http://wrobstory.github.io/2013/11/D3-brush-and-tooltip.html
