@@ -41,10 +41,6 @@ People having any of the following:
 									mouseout: function() { $component.selectedFragment && $component.selectedFragment(null);}
 								}, 
 								css: {highlighted: $component.selectedFragment && $component.selectedFragment() === expression().PrimaryCriteria()}
-<div style="width:30%; right:10px; top:160px; position:fixed; ">
-	<div data-bind="cartoonExpression:[expression,$component.selectedFragment]">
-	</div>
-</div>
 -->
 <div data-bind="with: expression">
 	<div data-bind="foreach: InclusionRules">
@@ -54,3 +50,8 @@ People having any of the following:
 </div>
 
 <div data-bind="with: expression().ExpressionLimit">Limit cohort expression results to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
+
+<div style="width:30%; right:10px; top:160px; position:fixed; ">
+	<div data-bind="cartoonExpression:[expression,$component.selectedFragment]">
+	</div>
+</div>

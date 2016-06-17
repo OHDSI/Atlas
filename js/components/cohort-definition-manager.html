@@ -153,6 +153,7 @@
 			<div class="tab-content">
 				<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'printfriendly'}" class="tab-pane">
 					<div class="paddedWrapper">
+						<cartoon-viewer params="text:$component.expressionJSON, expression: model.currentCohortDefinition().expression, selectedFragment: selectedFragment"></cartoon-viewer>
 						<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression, selectedFragment: selectedFragment"></cohort-expression-viewer>
 						<br/>
 						<div>Appendix 1: Concept Set Definitions</div>
