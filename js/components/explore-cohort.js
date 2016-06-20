@@ -88,7 +88,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 								contentType: 'application/json',
 								success: function (people) {
 									people.forEach(function(person) {
-										person.url =  '/#/profiles/' 
+										person.url =  '#/profiles/' 
 													+ person.personId + '/'
 													+ params.model.currentCohortDefinition().id() + '/'
 													+ source.sourceKey;

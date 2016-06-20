@@ -1,49 +1,51 @@
-<div class="row">
-	<div class="col-xs-3">
-		<div class="reportControls pad-5">
-			<div class="row">
-				<div class="col-xs-12">
-					<ul class="nav nav-pills">
-						<li 
-							data-bind="css:{active:showSection.profileChart}" 
-							style="cursor:pointer"><a><i data-bind="click:dispToggle, value:'profileChart'" class="fa fa-line-chart" /></a></li>
-						<li 
-							data-bind="css:{active:showSection.wordcloud}" 
-							style="cursor:pointer"><a><i data-bind="click:dispToggle, value:'wordcloud'" class="fa fa-bars" /></a></li>
-						<li 
-							data-bind="css:{active:showSection.datatable}" 
-							style="cursor:pointer"><a><i data-bind="click:dispToggle, value:'datatable'" class="fa fa-table" /></a></li>
-					</ul>
-					<select class="form-control" 
-						data-bind="
-							css : { invalid: sourceKey()==undefined }, 
-							options:config.services[0].sources.filter(d=>d.hasCDM), 
-							optionsValue:'sourceKey', 
-							optionsText:'sourceName', 
-							value:sourceKey, 
-							enable: !person() && !loadingPerson(),
-							optionsCaption:'Select a Source'"></select>
+<div class="wrapperTitle">
+	<i class="fa fa-user"></i> Profiles
+</div>
+<div class="asset-heading">
+	<form data-bind="submit:loadPerson">
+		<div class="input-group" role="group">
+			<div class="input-group-btn" role="group">
+				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span data-bind="text:$component.sourceKeyCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:config.services[0].sources.filter(d=>d.hasCDM)">
+					<li>
+						<a data-bind="text:sourceName,click:$component.setSourceKey"></a>
+					</li>
+				</ul>
+			</div>
+			<input type="text" class="form-control" placeholder="Person Id" data-bind="enable: sourceKey(),textInput: personId">
+			<div class="input-group-btn">
+				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.profileChart},click:$component.dispToggle, value:'profileChart'">
+					<i class="fa fa-line-chart" data-bind="value:'profileChart'" />
 				</div>
-				Person:
-				<input id="personId"
-								data-bind="
-									enable: sourceKey(),
-									textInput: personId" />
+				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.wordcloud},click:$component.dispToggle, value:'wordcloud'">
+					<i class="fa fa-bars" data-bind="value:'wordcloud'" />
+				</div>
+				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.datatable},click:$component.dispToggle, value:'datatable'">
+					<i class="fa fa-table" data-bind="value:'datatable'" />
+				</div>
 			</div>
 		</div>
+	</form>
+	<div style="margin-top:5px;" data-bind="visible:person, with:person">
+		<i data-bind="attr: {class : $component.getGenderClass}"></i>&nbsp;
+		<span data-bind="text: gender"></span>&nbsp;&nbsp;
+		<span data-bind="text: recordCount + ' events'"></span>
+	</div>
+</div>
 
-		<div class="paddedWrapper">
-			<div class="row">
-				<div class="col-xs-8 text-center heading">
-				</div>
-			</div>
-		</div>
+<div data-bind="visible: loadingPerson" class="loading">loading</div>
+
+<div data-bind="visible: cantFindPerson" class="loading">Can't find
+	<span data-bind="text:personId" />
+</div>
+
+<div class="row">
+	<!-- ko if:$component.showSection.wordcloud -->
+	<div class="col-xs-3">
 		<div data-bind="visible:person, with:person">
-			<div data-bind="text: gender" />
-			<div data-bind="text: recordCount + ' events'" />
-			<div id="wordcloud" 
-				data-bind="with:$component.dimensions.wordcloud,
-										visible:$component.showSection.wordcloud">
+			<div id="wordcloud" data-bind="with:$component.dimensions.wordcloud">
 				<div class="wordcloud" data-bind="foreach:words($component.filteredRecs)">
 					<span data-bind="
 						text:text, 
@@ -54,17 +56,10 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-xs-9">
-		<div data-bind="visible:personId">
-			<div data-bind="visible: loadingPerson"
-						class="loading">loading</div>
-
-			<div data-bind="visible: cantFindPerson" 
-					class="loading">Can't find 
-						<span data-bind="text:personId" /></div>
-
-			<div data-bind="visible:person">
-					<div id="profile-chart" data-bind="
+	<!-- /ko -->
+	<div data-bind="attr: { class: getRightWidth}">
+		<div data-bind="visible:person">
+			<div id="profile-chart" data-bind="
 						visible:showSection.profileChart,
 						profileChart:{
 								profile:person, 
@@ -74,9 +69,7 @@
 								allRecs:crossfilter().all(),
 								showing: true,
 							}"></div>
-					<faceted-datatable-cf id="profile-manager-table" 
-						data-bind="visible:showSection.datatable"
-						params="{
+			<faceted-datatable-cf id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
 							recs: filteredRecs,
 							columns: columns, 
 							facets: facetsObs, 
@@ -84,8 +77,8 @@
 							searchFilter: searchHighlight,
 							rowClick: datatableRowClickCallback,
 						}"></faceted-datatable-cf>
-			</div>
 		</div>
+
 
 		<div id="modalNoMembers" class="modal fade">
 			<div class="modal-dialog">
@@ -100,4 +93,4 @@
 				</div>
 			</div>
 		</div>
-</div>
+	</div>
