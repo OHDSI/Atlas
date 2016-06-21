@@ -89,9 +89,9 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 								success: function (people) {
 									people.forEach(function(person) {
 										person.url =  '#/profiles/' 
-													+ person.personId + '/'
+													+ source.sourceKey + '/'
 													+ params.model.currentCohortDefinition().id() + '/'
-													+ source.sourceKey;
+													+ person.personId;
 									});
 									source.someMembers.removeAll();
 									source.someMembers.push(...people);

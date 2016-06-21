@@ -14,9 +14,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.cohortSource = ko.observable();
 			self.personId = ko.observable();
 			self.person = ko.observable();
-			self.loadingPerson = ko.computed(function () {
-				return self.personId() && !self.person() && !self.cantFindPerson();
-			});
+			self.loadingPerson = ko.observable(false);
 			self.cantFindPerson = ko.observable(false)
 
 			self.setSourceKey = function (d) {
@@ -37,6 +35,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						sourceKey: sourceKey
 					}));
 				self.personId(null);
+				self.person(null);
+				document.location = '#/profiles/' + sourceKey;
 			});
 
 			if (params.model.currentCohortDefinition()) {
@@ -50,19 +50,22 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			let personRequest;
 			self.loadPerson = function () {
 				self.cantFindPerson(false)
+				self.loadingPerson(true);
 				let url = self.services.url + self.sourceKey() + '/person/' + self.personId();
 				personRequest = personRequests[url] = $.ajax({
 					url: url,
 					method: 'GET',
 					contentType: 'application/json',
 					error: function (err) {
-						self.cantFindPerson(true)
+						self.cantFindPerson(true);
+						self.loadingPerson(false);
 					},
 					success: function (person) {
 						if (personRequest !== personRequests[url]) {
 							console.log(url, 'overridden');
 							return;
 						}
+						self.loadingPerson(false);
 						let cohort;
 						if (params.model.currentCohortDefinition()) {
 							cohort = _.find(person.cohorts, {

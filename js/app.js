@@ -97,7 +97,13 @@ define([
 							self.currentView('profiles');
 						});
 					},
-					'/profiles/:personId/:cohortDefinitionId/:sourceKey': function (personId, cohortDefinitionId, sourceKey) {
+					'/profiles/:sourceKey': function (sourceKey) {
+						require(['profile-manager', 'cohort-definition-browser'], function () {
+							self.currentView('profiles');
+							pageModel.sourceKey = sourceKey;
+						});
+					},
+					'/profiles/:sourceKey/:cohortDefinitionId/:personId': function (sourceKey, cohortDefinitionId, personId) {
 						// do i need more of this stuff?: require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) { });
 						require(['profile-manager', 'cohort-definition-browser'], function () {
 							self.currentView('profiles');
