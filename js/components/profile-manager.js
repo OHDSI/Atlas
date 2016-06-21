@@ -242,7 +242,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						self.personId(null);
 						self.cohortPerson(null);
 						self.loadingProfile(false);
-						$('#modalNoMembers').modal('show');
 						self.members([]);
 					} else {
 						self.members(members);
