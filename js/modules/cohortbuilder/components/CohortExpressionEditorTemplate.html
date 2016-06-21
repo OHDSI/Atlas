@@ -63,8 +63,8 @@
 					</tr>
 				</tbody>
 			</table>
-			<div class="observation-window" data-bind="with: $component.expression().PrimaryCriteria().ObservationWindow"> with observation at least
-				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days prior and <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PostDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days after index
+			<div class="observation-window" data-bind="with: $component.expression().PrimaryCriteria().ObservationWindow"> with continuous observation of at least
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days before and <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PostDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days after index
 			</div>			
 			<div style="padding-top: 3px" data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit">Limit primary events to:
 				<select data-bind="options: $component.options.resultLimitOptions, 
