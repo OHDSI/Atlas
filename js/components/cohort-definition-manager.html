@@ -34,7 +34,7 @@
 			<a>Reporting</a>
 		</li>
 
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'profile' }, click: function() { $component.tabMode('profile') };"><a>Patient Profiles</a>
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore') };"><a>Explore</a></li>
 
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export'); $component.showSql(); };">
 			<a>Export</a>
@@ -296,10 +296,11 @@
 			<report-manager params="{model: pageModel, showSelectionArea: false}"></report-manager>
 		</div>
 
-		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'profile' }" class="tab-pane">
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'explore' }" class="tab-pane">
 			<div class="paddedWrapper">
-        <profile-manager params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false, showing: $component.tabMode()=='profile'}"></profile-manager>
+        <explore-cohort params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false, showing: $component.tabMode()=='explore'}"></explore-cohort>
 			</div>
 		</div>
+
 	</div>
 </div>

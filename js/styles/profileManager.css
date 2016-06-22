@@ -3,7 +3,7 @@
 	display: inline-block;
 	position: relative;
 	width: 100%;
-	padding-bottom: 35%; /* aspect ratio */
+	/* padding-bottom: 30%; / * aspect ratio */
 	vertical-align: top;
 	overflow: hidden;
 	text-align: center;
@@ -11,7 +11,7 @@
 #profile-chart svg {
 	display: inline-block;
 	position: absolute;
-	top: 10px;
+	/* top: 10px; */
 	left: 0;
 }
 #profile-chart .axis text {
@@ -145,12 +145,16 @@ rect.dim {
 	stroke: gray;
 	stroke-width: 0.5;
 }
+#wordcloud {
+	overflow: auto;
+	height: 100%;
+}
 .wordcloud span {
 	background-color: #DDD;
 	margin: 2px;
 	padding: 2px;
 	border-radius: 5px;
-	display: inline-block;
+	display: block;
 	cursor: pointer;
 }
 .highlighted path, .highlighted line, .highlighted rect {
@@ -195,4 +199,8 @@ rect.category {
 text.category {
 	fill: white;
 	font-weight: bold;
+}
+
+#cohortPeople {
+	display: inline-block;
 }

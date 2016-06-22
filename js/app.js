@@ -97,6 +97,23 @@ define([
 							self.currentView('profiles');
 						});
 					},
+					'/profiles/:sourceKey': function (sourceKey) {
+						require(['profile-manager', 'cohort-definition-browser'], function () {
+							self.currentView('profiles');
+							pageModel.sourceKey = sourceKey;
+						});
+					},
+					'/profiles/:sourceKey/:cohortDefinitionId/:personId': function (sourceKey, cohortDefinitionId, personId) {
+						// do i need more of this stuff?: require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) { });
+						require(['profile-manager', 'cohort-definition-browser'], function () {
+							self.currentView('profiles');
+							// every other variable in the world is thrown into pageModel, so, guess I'll
+							// do the same
+							pageModel.personId = personId;
+							pageModel.sourceKey = sourceKey;
+							self.loadCohortDefinition(cohortDefinitionId, null, 'profiles', 'details');
+						});
+					},
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
 						require(['conceptset-manager'], function () {
 							self.loadConceptSet(conceptSetId, 'conceptset', 'repository', mode);
@@ -117,7 +134,7 @@ define([
 						self.currentView('splash');
 					},
 					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
-						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'profile-manager'], function (CohortDefinition) {
+						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
 							self.currentView('cohortdefinition');
 							self.currentCohortDefinitionMode('definition');
 							self.loadCohortDefinition(cohortDefinitionId, null, 'cohortdefinition', 'details');

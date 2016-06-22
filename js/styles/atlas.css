@@ -6,7 +6,7 @@
 }
 .asset-heading {
 	background-color: #333333;
-	padding: 10px;
+	padding: 7px;
 	white-space: nowrap;
 	color: #fff;
 	font-size: 14px;
@@ -1264,7 +1264,7 @@ div#stage {
 	background-image: none;
 	border-radius: 0px;
 	color: #fff;
-	margin: 1px;
+	/* margin: 1px; */
 }
 
 table.dataTable {

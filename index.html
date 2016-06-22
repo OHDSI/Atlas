@@ -85,6 +85,9 @@
 				<a href="#/cohortdefinitions"><i class="fa fa-users"></i>Cohorts</a>
 			</li>
 			<li>
+				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
+			</li>
+			<li>
 				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
 			</li>
 			<li>
@@ -149,7 +152,7 @@
 			</div>
 
 			<div data-bind="if:pageModel.currentView() == 'profiles'">
-				<profile-manager params="services: pageModel.services"></profile-manager>
+				<profile-manager params="model: pageModel"></profile-manager>
 			</div>
 
 			<analytics-manager data-bind="if:pageModel.currentView()== 'analytics'" params="{model: pageModel}"></analytics-manager>

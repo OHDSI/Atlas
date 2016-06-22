@@ -79,6 +79,7 @@ requirejs.config({
 		"analytics-manager": "components/analytics-manager",
 		"faceted-datatable": "components/faceted-datatable",
 		"profile-manager": "components/profile-manager",
+		"explore-cohort": "components/explore-cohort",
 		"r-manager": "components/r-manager",
 		"studyreport-manager": "components/studyreport-manager",
 		"d3": "d3.min",
