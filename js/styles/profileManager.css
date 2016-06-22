@@ -3,7 +3,7 @@
 	display: inline-block;
 	position: relative;
 	width: 100%;
-	padding-bottom: 30%; /* aspect ratio */
+	/* padding-bottom: 30%; / * aspect ratio */
 	vertical-align: top;
 	overflow: hidden;
 	text-align: center;
@@ -147,7 +147,7 @@ rect.dim {
 }
 #wordcloud {
 	overflow: auto;
-	height: 300px;
+	height: 100%;
 }
 .wordcloud span {
 	background-color: #DDD;

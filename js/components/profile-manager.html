@@ -57,26 +57,30 @@
 		</div>
 	</div>
 	<!-- /ko -->
-	<div data-bind="attr: { class: getRightWidth}">
-		<div data-bind="visible:person">
-			<div id="profile-chart" data-bind="
-						visible:showSection.profileChart,
-						profileChart:{
-								profile:person, 
-								recs:filteredRecs, 
-								zoomFilter:dimensions.profileChart.filter,
-								highlightRecs:highlightRecs,
-								allRecs:crossfilter().all(),
-								showing: true,
-							}"></div>
-			<faceted-datatable-cf id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
-							recs: filteredRecs,
-							columns: columns, 
-							facets: facetsObs, 
-							order: [[3,'asc']],
-							searchFilter: searchHighlight,
-							rowClick: datatableRowClickCallback,
-						}"></faceted-datatable-cf>
-		</div>
+	<div data-bind="if: person, attr: { class: showSection.wordcloud() ? 'col-xs-9' : 'col-xs-12'}">
+		<div id="profile-chart" 
+				data-bind="
+					attr: {
+						 style:`padding-bottom:${aspectRatio()*100}%`
+						},
+					visible:showSection.profileChart,
+					profileChart:{
+							profile:person, 
+							recs:filteredRecs, 
+							zoomFilter:dimensions.profileChart.filter,
+							highlightRecs:highlightRecs,
+							allRecs:crossfilter().all(),
+							aspectRatio: aspectRatio,
+							short: showSection.datatable(),
+						}"></div>
+		<faceted-datatable-cf id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
+						recs: filteredRecs,
+						updateOnPersonChange: person,
+						columns: columns, 
+						facets: facetsObs, 
+						order: [[3,'asc']],
+						searchFilter: searchHighlight,
+						rowClick: datatableRowClickCallback,
+					}"></faceted-datatable-cf>
 	</div>
 </div>

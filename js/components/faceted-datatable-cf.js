@@ -37,6 +37,10 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'knockout.dataTables.bin
 		};
 
 		self.recs.subscribe(function () {
+			facetSetup();
+		});
+		facetSetup();
+		function facetSetup() {
 			var newFacets = [];
 			self.facets().forEach(facet=>{
 				var members = [];
@@ -55,7 +59,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'knockout.dataTables.bin
 			self.facets.removeAll()
 			self.facets.push(...newFacets);
 			self.data(self.recs());
-		});
+		}
 
 		self.updateFilters = function (data, event) {
 			var context = ko.contextFor(event.target);

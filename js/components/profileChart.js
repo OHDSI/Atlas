@@ -47,6 +47,12 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 		update: function (element, valueAccessor, allBindingsAccessor) {
 			//width = Math.max(minWidth, element.offsetWidth - margin.left - margin.right);
 			var va = valueAccessor();
+			width = element.offsetWidth;
+			vizHeight = (window.innerHeight - 150) / (va.short ? 2 : 1) - margin.top - margin.bottom;
+			va.aspectRatio((vizHeight + margin.top + margin.bottom) / width);
+			console.log(width, vizHeight, va.aspectRatio(), va.recs().length);
+			if (width < 100)
+				return;
 			var svg = categoryScatterPlot(element, va.recs(), 
 													rectangle,
 												 null, va.zoomFilter);
@@ -182,6 +188,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.classed('point', true)
 			.on('mouseover', focusTip.show)
 			.on('mouseout', focusTip.hide)
+			/*
 			// these stubs don't do anything useful yet but
 			// are here to allow fetching detailed data on
 			// prolonged hover over profile point issue #143
@@ -196,6 +203,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				if (timeout)
 					clearTimeout(timeout);
 			})
+			*/
 			.each(pointFunc)
 
 		pointGs.on('mousedown', function(){ // http://wrobstory.github.io/2013/11/D3-brush-and-tooltip.html

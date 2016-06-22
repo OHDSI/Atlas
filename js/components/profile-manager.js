@@ -9,6 +9,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.config = config;
 			self.services = config.services[0];
 			self.model = params.model;
+			self.aspectRatio = ko.observable();
 
 			self.sourceKey = ko.observable(params.model.sourceKey);
 			self.cohortSource = ko.observable();
@@ -102,9 +103,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.highlight = function (recs, evt) {
 				self.highlightRecs(recs || []);
 			};
-			self.datatableRowClickCallback = function (rec, evt) {
-				console.log(arguments);
-				if (evt.target.childNodes[0].data === rec.conceptName) {
+			self.datatableRowClickCallback = function (rec) {
+				if (event.target.childNodes[0].data === rec.conceptName) {
 					self.highlightRecs(self.filteredRecs().filter(d => d.conceptName === rec.conceptName));
 				} else {
 					self.highlightRecs([rec]);
@@ -221,7 +221,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.facets.forEach(facet => {
 					facet.Members = [];
 				});
-				self.facetsObs(self.facets);
+				self.facetsObs.removeAll();
+				self.facetsObs.push(...self.facets);
 				var groupAll = self.crossfilter().groupAll();
 				groupAll.reduce(...reduceToRecs);
 				self.filteredRecs(groupAll.value());
@@ -238,14 +239,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				wordcloud: ko.observable(true),
 				datatable: ko.observable(true),
 			};
-			
-			self.getRightWidth = ko.computed(function () {
-				if (self.showSection.wordcloud) {
-					return 'col-xs-9';
-				} else {
-					return 'col-xs-12';
-				}
-			});
 			
 			self.dispToggle = function (pm, evt) {
 				let section = evt.target.value;
