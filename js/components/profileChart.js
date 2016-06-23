@@ -50,7 +50,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			width = element.offsetWidth;
 			vizHeight = (window.innerHeight - 150) / (va.short ? 2 : 1) - margin.top - margin.bottom;
 			va.aspectRatio((vizHeight + margin.top + margin.bottom) / width);
-			console.log(width, vizHeight, va.aspectRatio(), va.recs().length);
+
 			if (width < 100)
 				return;
 			var svg = categoryScatterPlot(element, va.recs(), 
@@ -120,14 +120,10 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.on("brushend", function() {
 				focusTip.hide();
 				if (brush.empty()) {
-					//console.log(`empty brush setting zoomFilter to null`);
 					zoomFilter(null);
 				} else {
-					//console.log(`changing zoomFilter from ${zoomFilter()} to ${brush.extent()}`);
 					zoomFilter(brush.extent());
 				}
-				//zoomFilter.notifySubscribers();
-				//holdBrushExtent(brush.extent());
 			});
 
 		svg.call(focusTip);
@@ -194,7 +190,6 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			// prolonged hover over profile point issue #143
 			.on('mouseenter', function(d) {
 				$(this).data('timeout', setTimeout(()=>{
-					console.log($(this).data('timeout'), 'get details for', d);
 					$(this).data(null);
 				}, 500));
 			})
@@ -333,7 +328,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			var zoomDays = zoomFilter()[1] - zoomFilter()[0];
 			var edges = [{x: ixScale(zoomFilter()[0]), 
 										width: ixScale(zoomDays) - ixScale(0)}];
-			//console.log(zoomFilter(), zoomDays, edges);
+
 			var insetZoom = g
 												.selectAll('rect.insetZoom')
 												.data(edges)

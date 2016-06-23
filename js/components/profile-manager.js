@@ -63,7 +63,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					},
 					success: function (person) {
 						if (personRequest !== personRequests[url]) {
-							console.log(url, 'overridden');
 							return;
 						}
 						self.loadingPerson(false);
@@ -174,18 +173,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						words.forEach(word => {
 							word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 10)) + '%';
 						});
-						//console.log(words.map(d=>d.text + ':' + d.recs.length + ':' + d.size));
 						return words;
 					},
 				},
-				/*
-				'datatable': { // this has to combine dimensions/filters from all datatable facets
-					name: 'datatable',
-					func: () => true,
-					filter: ko.observable(null),
-					//filter: ko.observable(d=>!!d),
-				},
-				*/
 			};
 			self.searchHighlight = ko.observable();
 			self.searchHighlight.subscribe(func => {
@@ -242,7 +232,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			
 			self.dispToggle = function (pm, evt) {
 				let section = evt.target.value;
-				console.log('toggle ' + section);
 				self.showSection[section](!self.showSection[section]());
 			};
 

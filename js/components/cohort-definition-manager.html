@@ -45,9 +45,9 @@
 			<atlas.cohort-editor params="model: model"></atlas.cohort-editor>
 		</div>
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
-            <div style="padding-bottom: 10px;" class="pull-right">
-                <button type="button" class="btn btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i>Export All Concept Sets To CSV</button>
-            </div>
+			<div style="padding-bottom: 10px;" class="pull-right">
+				<button type="button" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
+			</div>
 			<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
 											data: model.currentCohortDefinition() && model.currentCohortDefinition().expression().ConceptSets,
 											options: {
@@ -98,8 +98,8 @@
 
 					<div class="clear"></div>
 
-					<button type="button" class="btn btn-xs btn-primary pull-right" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
-					<button type="button" class="btn btn-xs btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
+					<button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
+					<button type="button" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
 
 					<div id="wrapperConceptSetWarnings" data-bind="visible: model.selectedConceptsWarnings().length > 0">
 						<div class="heading">Concept Set Warnings</div>
@@ -169,7 +169,7 @@
 				<div role="tabpanel" data-bind="css: { active: $component.exportTabMode() == 'json' }" class="tab-pane">
 					<textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
 					<div style="text-align: right">
-						<button class="btn btn-xs btn-primary" data-bind="click: $component.reload">Reload</button>
+						<button class="btn btn-sm btn-primary" data-bind="click: $component.reload">Reload</button>
 					</div>
 				</div>
 				<div role="tabpanel" data-bind="css: { active: $component.exportTabMode() == 'sql'}" class="tab-pane">
@@ -214,8 +214,9 @@
 				</div>
 			</div>
 		</div>
-		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'generation' }, eventListener: { event: 'click', selector: 'table.configureSourceTable tbody tr td', callback: selectFeasiblityReport}" class="tab-pane">
-			<table class="configureSourceTable">
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'generation' }" class="tab-pane">
+			<div class="heading">Available CDM Sources</div>
+			<table class="cohort-generate-sources">
 				<thead>
 					<th></th>
 					<th>Source Name</th>
@@ -223,18 +224,17 @@
 					<th>Distinct People</th>
 					<th>Generated</th>
 					<th>Generation Duration</th>
+					<th></th>
 				</thead>
 				<tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
 					<tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
 						<td>
-							<!-- ko ifnot: $component.isRunning -->
-							<div class="btn btn-xs btn-success" data-bind="css: {'disabled':$component.dirtyFlag().isDirty()}, click:$component.generateCohort, clickBubble: false"><i class="fa fa-play"></i>Generate</div>
-							<!-- /ko -->
-							<div class="btn btn-xs btn-success" data-bind="visible:$component.isRunning"><i class="fa fa-spinner fa-spin"></i></div>
+							<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isRunning($data), css: {'disabled':$component.dirtyFlag().isDirty()}, click:$component.generateCohort"><i class="fa fa-play"></i>&nbsp;&nbsp;Generate</div>
+							<div class="btn btn-sm btn-warning" data-bind="visible:$component.isRunning($data)"><i class="fa fa-spinner fa-spin"></i></div>
 						</td>
 						<td data-bind="text:name"></td>
 						<td class="statusIndicator">
-							<span class="fa" data-bind="css: { 'fa-check-circle' : isValid, 'fa-exclamation-circle' : !isValid }"></span>&nbsp;<span data-bind="text: status"></span>
+							<span data-bind="text: status"></span>
 						</td>
 						<td class="text-right" data-bind="html: distinctPeople()">
 						</td>
@@ -242,10 +242,17 @@
 						</td>
 						<td class="text-right" data-bind="text: executionDuration">
 						</td>
+						<td>
+							<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isRunning($data) && isValid, click:$component.selectInclusionReport"><i class="fa fa-eye"></i>&nbsp;View Inclusion Report</div>
+						</td>
 					</tr>
 				</tbody>
 			</table>
-			<feasibility-report-viewer params="{report: selectedReport}"></feasibility-report-viewer>			
+			<div data-bind="visible:$component.loadingInclusionReport" class="loading">loading inclusion report</div>
+			
+			<div data-bind="visible:!$component.loadingInclusionReport()" style="margin-top:50px;" class="paddedWrapper">
+				<feasibility-report-viewer params="{report: selectedReport, reportCaption: selectedReportCaption}"></feasibility-report-viewer>
+			</div>
 		</div>
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'reporting' }" class="tab-pane">
 			<table id="analysisStatus">
@@ -283,9 +290,9 @@
 						<!-- ko foreach: $component.config.services[0].sources.filter($component.model.hasCDM) -->
 						<td style="border-bottom:0px;padding:5px;" class="statusIndicator">
 							<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().ready -->
-							<div data-bind="click:$component.generateAnalyses" class="btn btn-xs btn-primary">Generate</div>
+							<div data-bind="click:$component.generateAnalyses" class="btn btn-sm btn-primary">Generate</div>
 
-							<a class="btn btn-xs btn-success" data-bind="attr: {href: $component.config.services[0].url + sourceKey + '/cohortresults/' + $component.model.currentCohortDefinition().id + '/export.zip'}"><i class="fa fa-cloud-download"></i> Export</a>
+							<a class="btn btn-sm btn-success" data-bind="attr: {href: $component.config.services[0].url + sourceKey + '/cohortresults/' + $component.model.currentCohortDefinition().id + '/export.zip'}"><i class="fa fa-cloud-download"></i> Export</a>
 							<!-- /ko -->
 						</td>
 						<!-- /ko -->
@@ -298,7 +305,7 @@
 
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'explore' }" class="tab-pane">
 			<div class="paddedWrapper">
-        <explore-cohort params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false, showing: $component.tabMode()=='explore'}"></explore-cohort>
+				<explore-cohort params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false, showing: $component.tabMode()=='explore'}"></explore-cohort>
 			</div>
 		</div>
 

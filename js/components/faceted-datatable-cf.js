@@ -6,11 +6,9 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'knockout.dataTables.bin
 		var self = this;
 
 		self.recs = params.recs;
-		//console.log(params.recs());
 		self.data = ko.observableArray();
 		self.data(self.recs());
 		self.facets = params.facets;
-		//self.facets.extend({notify:'always'});
 
 		self.options = params.options;
 		self.columns = params.columns;

@@ -1,3 +1,22 @@
+table.cohort-generate-sources {
+	width:100%;
+	border-bottom: solid 1px #888;
+}
+table.cohort-generate-sources td {
+	padding:3px;
+	line-height: 28px;
+}
+
+.breadcrumb-container {
+	background-color:#333;
+	color:#fff;
+	border-bottom: solid 1px #ccc;
+	padding-left: 10px;
+	line-height: 32px;
+	font-size: 12px;
+	height: 32px;
+}
+
 .btn.btn-sm {
 	padding-top:0px;
 	padding-bottom:0px;
@@ -28,7 +47,7 @@ body {
 	position: absolute;
 	left: 0px;
 	top: 0px;
-	width: 200px;
+	width: 150px;
 	bottom: 0px;
 	background-color: #003142;
 	border-right: solid 1px #888;
@@ -95,7 +114,7 @@ body {
 
 .linkish {
 	text-decoration: underline;
-	color: #337ab7;
+	color: #0070dd;
 	cursor: pointer;
 }
 
@@ -218,7 +237,7 @@ pre span.key {
 	color: #fff;
 	cursor: pointer;
 	text-align: center;
-	/* border-bottom: solid 1px #224; */
+	border-bottom: solid 1px #CCC;
 }
 
 #wrapperLogo img {
@@ -231,7 +250,7 @@ pre span.key {
 #wrapperMainWindow {
 	position: absolute;
 	/* border-left: solid 1px #ccc; */
-	left: 199px;
+	left: 149px;
 	top: 0px;
 	right: 0px;
 	display: none;
@@ -260,7 +279,7 @@ div#wrapperMainWindowContainer {}
 	line-height: 36px;
 	padding: 0px 0px 0px 30px;
 	font-size: 14px;
-	/* border-bottom: solid 1px #ccc; */
+	border-bottom: solid 1px #ccc;
 	white-space: nowrap;
 }
 
@@ -450,7 +469,7 @@ th .fa {
 }
 
 td .fa {
-	font-size: 12px;
+	font-size: 14px;
 }
 
 table.datatable thead th {
@@ -673,8 +692,9 @@ ul.ColVis_collection li {
 	top:0px;
 	left: 0px;
 	width:5px;
-	font-size:12px;
-	padding-left:4px;
+	font-size: 9px;
+	padding-left: 7px;
+	padding-right: 7px;
 }
 
 #wrapperHierarchyAnchor {
@@ -1100,9 +1120,12 @@ ul.nav.nav-tabs {
 
 .badge {
 	border-radius: 10px;
-	background-color: #F19119;
-	font-size: .8em;
+	background-color: #eee;
+	font-size: 10px;
 	font-weight: normal;
+	padding: 1px 5px;
+	color: #000;
+	line-height: 12px;
 }
 
 .container .jumbotron {
@@ -1622,7 +1645,10 @@ textarea.code {
 	margin-bottom: 15px;
 }
 
-li {}
+#wrapperLeftMenu li {
+    border-bottom: solid 1px #333;
+    padding: 3px;
+}
 
 .asset-heading input {
 	width: 500px;
@@ -1805,4 +1831,29 @@ select.mediumInputField
 
 cohort-expression-editor .fa.fa-ban {
     font-size: 20px;
+}
+
+
+#wrapperLeftMenu li:hover {
+    background-color: #093646;
+}
+
+#wrapperLeftMenu li.current-asset:hover {
+    background-color: #fff;
+}
+
+.breadcrumb-container a {
+    color: #ccc;
+}
+
+.breadcrumb-container i.fa.fa-chevron-left {
+    font-size: 10px;
+}
+
+.breadcrumb-container i.fa.fa-chevron-right {
+    font-size: 10px;
+}
+
+table.cohort-generate-sources tr:hover {
+    background-color: #eee;
 }

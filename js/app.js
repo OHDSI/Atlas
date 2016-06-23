@@ -816,10 +816,10 @@ define([
 
 			switch (switchContext) {
 			case 'N':
-				$('a', row).css('color', '#800');
+				$('a', row).css('color', '#a71a19');
 				break;
 			case 'C':
-				$('a', row).css('color', '#080');
+				$('a', row).css('color', '#a335ee');
 				break;
 			}
 		}

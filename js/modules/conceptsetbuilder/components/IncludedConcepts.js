@@ -189,14 +189,12 @@ define([
 		// subscriptions
 		
 		self.conceptSetSubscription = self.conceptSet.subscribe(function (newValue){
-			console.log("concept set mutated!");
 			self.refresh();
 		});
 		
 		// dispose
 		
 		self.dispose = function() {
-			console.log("component disposed");
 			self.conceptSetSubscription.dispose();
 			params.widget(null);
 		}

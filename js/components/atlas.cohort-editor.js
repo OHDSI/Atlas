@@ -45,7 +45,6 @@ define(['knockout',
 		}
 
 		self.onAtlasConceptSetSelectAction = function(result, valueAccessor) {
-				console.log(result);
 				$('#conceptSetSelectorDialog').modal('hide');
 
 				if (result.action=='add') {

@@ -12,6 +12,7 @@ define(['knockout',
 		function FeasibilityReportViewer(params) {
 			var self = this;
 			self.report = params.report;
+			self.reportCaption = params.reportCaption;
 			self.selectedView = ko.observable("intersect");
 
 			if (params.viewerWidget) {
