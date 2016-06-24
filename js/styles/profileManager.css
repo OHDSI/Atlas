@@ -199,6 +199,7 @@ rect.category {
 text.category {
 	fill: white;
 	font-weight: bold;
+	text-shadow: -1px 0 #888, 0 1px #888, 1px 0 #888, 0 -1px #888;	
 }
 
 #cohortPeople {

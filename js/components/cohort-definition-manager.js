@@ -58,6 +58,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return self.dirtyFlag() && self.dirtyFlag().isDirty();
 		});
 
+		self.canGenerate = ko.pureComputed(function () {
+			var isDirty = self.dirtyFlag() && self.dirtyFlag().isDirty();
+			var isNew = self.model.currentCohortDefinition() && (self.model.currentCohortDefinition().id() == 0);
+			var canGenerate = !(isDirty || isNew);
+			return (canGenerate);
+		});
+
 
 		self.modifiedJSON = "";
 		self.expressionJSON = ko.pureComputed({
@@ -89,12 +96,15 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			if (pollTimeout)
 				clearTimeout(pollTimeout);
 
-			cohortDefinitionAPI.getInfo(pageModel.currentCohortDefinition().id()).then(function (infoList) {
+			var id = pageModel.currentCohortDefinition().id();
+			cohortDefinitionAPI.getInfo(id).then(function (infoList) {
 				var hasPending = false;
+				
 				infoList.forEach(function (info) {
 					// obtain source reference
-					var source = self.model.cohortDefinitionSourceInfo().filter(function (s) {
-						return s.sourceId == info.id.sourceId
+					var source = self.model.cohortDefinitionSourceInfo().filter(function (cdsi) {
+						var sourceId = self.config.services[0].sources.filter(source=>source.sourceKey==cdsi.sourceKey)[0].sourceId;
+						return sourceId == info.id.sourceId;
 					})[0];
 
 					if (source) {
@@ -116,7 +126,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 						}
 					}
 				});
-
+				
 				if (hasPending) {
 					pollTimeout = setTimeout(function () {
 						self.pollForInfo();
@@ -187,15 +197,19 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.isRunning = function (source) {
-			switch (source.status()) {
-			case 'COMPLETE':
+			if (source) {
+				switch (source.status()) {
+				case 'COMPLETE':
+					return false;
+					break;
+				case 'n/a':
+					return false;
+					break;
+				default:
+					return true;
+				}
+			} else {
 				return false;
-				break;
-			case 'n/a':
-				return false;
-				break;
-			default:
-				return true;
 			}
 		}
 
@@ -252,9 +266,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 		self.generateCohort = function (source, event) {
 			var route = config.services[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + source.sourceKey;
+			self.getSourceInfo(source.sourceKey).status('PENDING');			
 			$.ajax(route, {
 				success: function (data) {
-					self.getSourceInfo(source.sourceKey).status('PENDING');
 					setTimeout(function () {
 						self.pollForInfo();
 					}, 3000);
