@@ -2,9 +2,26 @@ table.cohort-generate-sources {
 	width:100%;
 	border-bottom: solid 1px #888;
 }
+
 table.cohort-generate-sources td {
 	padding:3px;
 	line-height: 28px;
+}
+
+table.cohort-generate-sources tbody {
+	display:block;
+	max-height:210px;
+	overflow: auto;
+}
+
+table.cohort-generate-sources thead, table.cohort-generate-sources tbody tr {
+	display:table;
+	width:100%;
+	table-layout:fixed;
+}
+
+table.cohort-generate-sources thead {
+	width: calc(100%-1em)
 }
 
 .breadcrumb-container {
@@ -39,7 +56,6 @@ body.splash {
 }
 
 body {
-	font-family: Roboto;
 	font-size: 12px;
 }
 

@@ -117,7 +117,7 @@
 							</div>
 							<div>
 								<table style="width: 100%" class="inclusionRules">
-									<tbody data-bind="foreach:$component.expression().InclusionRules">
+									<tbody data-bind="sortable: {data: expression().InclusionRules, connectClass: 'inclusionRuleItem'}">
 										<tr data-bind="click: $component.selectInclusionRule, css: { selectedInclusion: $data == $component.selectedInclusionRule() }">
 											<td style="width:20px; text-align: right; vertical-align: top;" data-bind="text: ($index() + 1) + '.'">
 											</td>

@@ -249,8 +249,7 @@
 				</tbody>
 			</table>
 			<div data-bind="visible:$component.loadingInclusionReport" class="loading">loading inclusion report</div>
-			
-			<div data-bind="visible:!$component.loadingInclusionReport()" style="margin-top:50px;" class="paddedWrapper">
+			<div data-bind="visible:!$component.loadingInclusionReport()">
 				<feasibility-report-viewer params="{report: selectedReport, reportCaption: selectedReportCaption}"></feasibility-report-viewer>
 			</div>
 		</div>
