@@ -9,6 +9,7 @@ define(['knockout','d3'], function (ko, d3) {
 		init: function (element, valueAccessor, allBindingsAccessor) {
 			var expression = valueAccessor()[0];
 			var selectedFragment = valueAccessor()[1];
+			/*
 			var svg = d3.select(element).append('svg')
 										.attr('width',width)
 										.attr('height',height)
@@ -45,6 +46,7 @@ define(['knockout','d3'], function (ko, d3) {
 					.attr('orient', 'auto')
 					.append('path')
 						.attr('d', 'M 0 0 L 1 0 L 1 10 L 0 10 z')
+			*/
 		},
 		update: function (element, valueAccessor, allBindingsAccessor) {
 			var expression = valueAccessor()[0];
@@ -70,10 +72,199 @@ define(['knockout','d3'], function (ko, d3) {
 										.range([0.10 * width, 0.85 * width]);
 
 
-			var primCritLabels = _.chain(expression().PrimaryCriteria().CriteriaList())
+			var primaryCriteria = _.chain(expression().PrimaryCriteria().CriteriaList())
+															.map(_.pairs)
+															.flatten()
+															.map(d=>{
+																	var [domain, pc] = d;
+																	pc.domain = domain;
+																	return pc;
+																})
+															.value();
+			var maxDur = _.chain(primaryCriteria)
+										.map(getMaxDuration)
+										.max()
+										.value();
+			console.log(maxDur);
+			function rangeInfo(range, feature) {
+				if (!range) 
+					return;
+				switch (feature) {
+					case "max":
+						if (range.Op() === "!bt")
+							return; // no upper limit
+					case "upper":
+						console.log(range.Extent(), range.Op(), range.Value());
+						return range.Extent() || range.Value(); // Extent is high end for "bt"
+					case "min":
+						if (range.Op() === "!bt")
+							return; // no lower limit
+					case "lower":
+					case "val":
+						return range.Value();
+					case "single-double":
+						if (range.Op().match(/bt/))
+							return 'double';
+						return 'single';
+					case "nice-op":
+						switch (range.Op()) {
+							case "lt":
+								return "<";
+							case "lte":
+								return "<=";
+							case "gt":
+								return ">";
+							case "gte":
+								return ">=";
+							case "eq":
+								return "=";
+							case "bt":
+								return "between";
+							case "!bt":
+								return "not between";
+						}
+				}
+			}
+			function getRange(pc, feature) {
+				var whichEnd;
+				switch (feature) {
+					case "dur":
+						if ("EraLength" in pc) {
+							return pc.EraLength();
+						}
+						switch (pc.domain) {
+							case "DrugExposure":
+								return pc.DaysSupply();
+							case "ObservationPeriod":
+								return pc.PeriodLength();
+							case "VisitOccurrence":
+								return pc.VisitLength();
+						}
+						return;
+					case "start":
+						whichEnd = 'StartDate';
+						break;
+					case "end":
+						whichEnd = 'EndDate';
+						break;
+				}
+				if (pc.EraLength)
+					return pc['Era' + whichEnd]();
+				if (pc.domain === 'ObservationPeriod')
+					return pc['Period' + whichEnd]();
+				return pc['Occurrence' + whichEnd]();
+			}
+			function getMaxDuration(pc) {
+				var range = getRange(pc, 'dur');
+				if (range)
+					return rangeInfo(range, 'max');
+			}
+			var conceptSets = expression().ConceptSets();
+			function conceptName(crit) {
+				return crit.CodesetId && crit.CodesetId() ? 
+								conceptSets[crit.CodesetId()].name() : '';
+			}
+			function niceDomain(domain) {
+				switch (domain) {
+					case "ConditionOccurrence":
+						return "condition";
+					case "DrugExposure":
+						return "drug";
+					case "DrugEra":
+						return "drug era";
+					case "ConditionEra":
+						return "condition era";
+					case "DoseEra":
+						return "dose era";
+					case "ProcedureOccurrence":
+						return "procedure";
+					case "Observation":
+						return "observation";
+					case "DeviceExposure":
+						return "device";
+					case "Measurement":
+						return "measurement";
+					case "Specimen":
+						return "specimen";
+					case "Death":
+						return "death";
+					case "ObservationPeriod":
+						return "observation period";
+					case "VisitOccurrence":
+						return "visit"
+					default:
+						return domain;
+				}
+			}
+			function critLabel(crit) {
+				var dom = niceDomain(crit.domain);
+				var name = conceptName(crit);
+				if (name)
+					return `${dom}: ${name}`;
+				return `any ${dom}`;
+			}
+			var prim = d3.select(element).selectAll('div.prim')
+										.data(primaryCriteria)
+										.enter()
+										.append('div')
+											.attr('class','prim');
+			prim.each(function(pc) {
+				var pcDiv = d3.select(this);
+				pcDiv.append('div')
+							.attr('class', 'pclabel')
+							.text(critLabel);
+				var cartoonDiv = pcDiv.append('div')
+							.attr('class', 'pc-cartoon')
+							.html(pcCartoonText)
+				cartoonDiv.append('svg')
+										.attr('height', 30)
+										.attr('width', 300)
+										.call(pcCartoon)
+			});
+			function pcCartoon(selection) {
+				selection.append('line')
+							.attr('y1', 15)
+							.attr('y2', 15)
+							.attr('x2', 300)
+							.attr('stroke-dasharray', '5,5')
+
+				selection.filter(pc=>getRange(pc, 'start'))
+						.each(function(pc) {
+							var startRange = getRange(pc, 'start');
+							if (startRange) {
+								if (['gt','gte','!bt'].indexOf(startRange.Op()) > -1) {
+									d3.select(this).append('text')
+												.attr('y', 28)
+												.text(startRange.Value());
+								}
+							}
+						})
+			}
+			function pcCartoonText(pc) {
+				var durRange = getRange(pc, 'dur');
+				var dur = 'any duration';
+				if (durRange) {
+					if (rangeInfo(durRange, 'single-double') == 'single') {
+						dur = `${rangeInfo(durRange, 'nice-op')} ${rangeInfo(durRange, 'val')} days`;
+					} else {
+						dur = `${rangeInfo(durRange, 'nice-op')} ${rangeInfo(durRange, 'lower')} and ${rangeInfo(durRange, 'upper')} days`;
+					}
+				}
+				var startRange = getRange(pc, 'start');
+				var start = 'any time';
+				if (startRange) {
+					start = `${rangeInfo(startRange, 'nice-op')} ${rangeInfo(startRange, 'val')}`;
+				}
+
+				return `start ${start}, ${dur}`;
+			}
+
+			return;
+			var primCritLabels = _.chain(primaryCriteria)
 														.map(_.pairs)
 														.flatten()
-														.map(d=>`${d[0]}: ${expression().ConceptSets()[d[1].CodesetId()].name()}`)
+														.map(d=>`${d[0]}: ${d[1].CodesetId && d[1].CodesetId() ? 
+																	expression().ConceptSets()[d[1].CodesetId()].name() : 'any'}`)
 														.value();
 			d3.select(element).selectAll('div.primary-criteria')
 				.data(primCritLabels)
