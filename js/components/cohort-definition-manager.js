@@ -8,7 +8,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'cohortbuilder/components/FeasibilityReportViewer',
 				'knockout.dataTables.binding',
 				'faceted-datatable',
-				'databindings'
+				'databindings', 
+				'css!styles/cartoon.css','cohortdefinitionviewer/expressionCartoonBinding'
 ], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil, CohortExpression, InclusionRule) {
 
 	function translateSql(sql, dialect) {
@@ -57,6 +58,15 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.isSaveable = ko.pureComputed(function () {
 			return self.dirtyFlag() && self.dirtyFlag().isDirty();
 		});
+		self.tabPath = ko.computed(function() {
+			var path = self.tabMode();
+			if (path === 'export') {
+				path += '/' + self.exportTabMode();
+			}
+			console.log('tabPath:', path);
+			return path;
+		});
+		self.delayedCartoonUpdate = ko.observable(null);
 
 		self.canGenerate = ko.pureComputed(function () {
 			var isDirty = self.dirtyFlag() && self.dirtyFlag().isDirty();

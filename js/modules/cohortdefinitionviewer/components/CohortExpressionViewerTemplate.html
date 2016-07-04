@@ -1,4 +1,5 @@
 							<!-- this was supposed to go in a div that no longer exists here - when cartoon is unhidden, that is
+										not needed if not linking cartoon and printfriendly text
 							data-bind="event: { 
 									mouseover: function() { selectedFragment && selectedFragment(expression().PrimaryCriteria()) }, 
 									mouseout: function() { selectedFragment && selectedFragment(null);}
@@ -6,9 +7,9 @@
 								css: {highlighted: selectedFragment && selectedFragment() === expression().PrimaryCriteria()}"
 								-->
 <div style="position: relative">
-	<div style="width:48%; right:12px; position:absolute; ">
-		<div data-bind="cartoonExpression:[expression,$component.selectedFragment]"></div>
-	</div>
+	<!--div style="width:48%; right:12px; position:absolute; ">
+		<div data-bind="cartoonExpression: {expression:expression,selectedFragment:$component.selectedFragment}"></div>
+	</div-->
 	<div>
 		People having any of the following:
 		<br>
@@ -16,13 +17,13 @@
 		<ul>
 			<!-- ko foreach: expression().PrimaryCriteria().CriteriaList -->
 			<li>
-				<div style="width: 48%" data-bind='component: { 
+				<div style-for-use-with-cartoon-column="width: 48%" data-bind='component: { 
 								name: $component.getCriteriaIndexComponent($data),
 								params: {expression: $component.expression(), criteria: $data} }'></div>
 			</li>
 			<!-- /ko -->
 		</ul>
-		<div style="width: 48%">
+		<div style-for-use-with-cartoon-column="width: 48%">
 			<span data-bind="with: expression().PrimaryCriteria().ObservationWindow"> with observation at least
 			<span class="numericField" data-bind="text: PriorDays.numeric()" /> days prior and <span class="numericField" data-bind="text: PostDays.numeric()" /> days after index,
 		</span>
@@ -31,29 +32,30 @@
 		</div>
 		<br/>
 
-		<div style="width:48%" data-bind="with: expression">
+		<div style-for-use-with-cartoon-column="width:48%" data-bind="with: expression">
 			<div data-bind="if: AdditionalCriteria">
 				<div>For people matching the Primary Events, include:</div>
-									<!-- INCLUDE IN params BELOW FOR CARTOON
+									<!-- INCLUDE IN params BELOW FOR CARTOON if linking highlighting to printfriendly text
 									, selectedFragment: $component.selectedFragment -->
 				<criteria-group-viewer params="{expression: $data, group: AdditionalCriteria}"></criteria-group-viewer>
 			</div>
 		</div>
 
 									<!-- not sure where these things go when putting cartoon back in place
+											not needed if not linking cartoon and printfriendly text
 										event: {
 											mouseover: function () { $component.selectedFragment && $component.selectedFragment(expression().PrimaryCriteria()) },
 											mouseout: function() { $component.selectedFragment && $component.selectedFragment(null);}
 										}, 
 										css: {highlighted: $component.selectedFragment && $component.selectedFragment() === expression().PrimaryCriteria()}
 		-->
-		<div style="width: 48%" data-bind="with: expression">
+		<div style-for-use-with-cartoon-column="width: 48%" data-bind="with: expression">
 			<div data-bind="foreach: InclusionRules">
 				<div data-bind="text: 'Inclusion ' + ($index()+1) + ': ' + name()"></div>
 				<criteria-group-viewer params="{expression: $parent, group: ko.observable($data.expression)}"></criteria-group-viewer>
 			</div>
 		</div>
 
-		<div style="width: 48%" data-bind="with: expression().ExpressionLimit">Limit cohort expression results to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
+		<div style-for-use-with-cartoon-column="width: 48%" data-bind="with: expression().ExpressionLimit">Limit cohort expression results to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
 	</div>
 </div>

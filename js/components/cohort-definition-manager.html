@@ -153,6 +153,9 @@
 			<div class="tab-content">
 				<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'printfriendly'}" class="tab-pane">
 					<div class="paddedWrapper">
+						<div data-bind="cohortExpressionCartoon:{expression:model.currentCohortDefinition().expression,selectedFragment:$component.selectedFragment, 
+														tabPath: $component.tabPath,
+														delayedCartoonUpdate: $component.delayedCartoonUpdate}"></div>
 						<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression, selectedFragment: selectedFragment"></cohort-expression-viewer>
 						<br/>
 						<div>Appendix 1: Concept Set Definitions</div>

@@ -41,6 +41,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			});
 
 			if (params.model.currentCohortDefinition()) {
+				console.log("might be clobbering route here");
 				self.sourceKey(self.services.sources[0].sourceKey);
 			}
 			params.model.currentCohortDefinition.subscribe(function (def) {

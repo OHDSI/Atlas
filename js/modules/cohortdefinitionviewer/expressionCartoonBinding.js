@@ -1,5 +1,5 @@
 "use strict";
-define(['knockout','d3'], function (ko, d3) {
+define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	window.d3 = d3;
 	var width = 400;
 	var height = 450;
@@ -9,24 +9,37 @@ define(['knockout','d3'], function (ko, d3) {
 		prestart:  { width: 10 }, // 10 em? for <starts after> date
 		start:     { width:  4 }, // indeterminate time between prim crit date and index date
 		poststart: { width: 10 }, // for <starts before> date
-		dur:       { width: 40, offset: -10 }, // should line up with end of start region
-		preend:    { width: 10, offset: -10 }, // for <ends after> date
+		dur:       { width: 40, adjust: -10 }, // should line up with end of start region
+		preend:    { width: 10, adjust: -10 }, // for <ends after> date
 		end:			 { width:  4 },
 		postend:   { width: 10 }, //for <ends before> date
 	};
+	var offset = 0;
+	_.each(sections, section => {
+		section.offset = offset + (section.adjust || 0);
+		offset += section.width;
+	});
+	var xScale = d3.scale.linear().domain([0, cartoonWidth()]);
 	function cartoonWidth() {
 		return _.chain(sections).map(d=>d.width).sum().value() -
-					 _.chain(sections).map(d=>d.offset).sum().value();
+					 _.chain(sections).map(d=>d.adjust).sum().value();
 	}
-	var cartoonHeight = 8;
+	var cartoonHeight = 15 * 4; // 4 lines, 15px high?
 	function aspectRatio() {
-		return cartoonHeight / cartoonWidth();
+		return .04;
+		return cartoonWidth() / cartoonHeight;
 	}
 
-	ko.bindingHandlers.cartoonExpression = {
+	var divWidth = ko.observable();
+	ko.bindingHandlers.cohortExpressionCartoon = {
 		init: function (element, valueAccessor, allBindingsAccessor) {
 			var expression = valueAccessor()[0];
 			var selectedFragment = valueAccessor()[1];
+			$(element).parents('.tab-pane').bind("DOMSubtreeModified", function() {
+				divWidth(element.offsetWidth);
+				xScale.range([0, element.offsetWidth]);
+			});
+
 			/*
 			var svg = d3.select(element).append('svg')
 										.attr('width',width)
@@ -67,9 +80,29 @@ define(['knockout','d3'], function (ko, d3) {
 			*/
 		},
 		update: function (element, valueAccessor, allBindingsAccessor) {
-			console.log('cartoon update');
-			var expression = valueAccessor()[0];
-			var selectedFragment = valueAccessor()[1];
+			if (!divWidth()) {
+				return;
+			}
+			console.log(valueAccessor().tabPath());
+			var expression = valueAccessor().expression;
+			ko.toJSON(expression);
+			if (valueAccessor().tabPath() !== "export/printfriendly") {
+				return;
+			}
+			if (!valueAccessor().delayedCartoonUpdate()) {
+				setTimeout(function() {
+					valueAccessor().delayedCartoonUpdate("wait for dom");
+					console.log('wait for dom');
+				}, 20);
+				return;
+			}
+			if (valueAccessor().delayedCartoonUpdate() === 'wait for dom') {
+				valueAccessor().delayedCartoonUpdate(null);
+				console.log('resetting delay');
+			}
+			console.log('rendering cartoon');
+			console.log("offset width", element.offsetWidth);
+			var selectedFragment = valueAccessor().selectedFragment;
 
 			var criteriaGroup = expression().AdditionalCriteria();
 			var domain = {
@@ -86,11 +119,6 @@ define(['knockout','d3'], function (ko, d3) {
 				domain.max = Math.max(domain.max, e);
 			};
 			//criteriaGroupWalk(criteriaGroup, getEndPoints); // broken
-			var scale = d3.scale.linear()
-										.domain([domain.min, domain.max])
-										.range([0.10 * width, 0.85 * width]);
-
-
 			var primaryCriteria = _.chain(expression().PrimaryCriteria().CriteriaList())
 															.map(_.pairs)
 															.flatten()
@@ -105,7 +133,7 @@ define(['knockout','d3'], function (ko, d3) {
 										.map(getMaxDuration)
 										.max()
 										.value();
-			console.log(maxDur);
+			//console.log(maxDur);
 			function rangeInfo(range, feature) {
 				if (!range) 
 					return;
@@ -114,7 +142,7 @@ define(['knockout','d3'], function (ko, d3) {
 						if (range.Op() === "!bt")
 							return; // no upper limit
 					case "upper":
-						console.log(range.Extent(), range.Op(), range.Value());
+						//console.log(range.Extent(), range.Op(), range.Value());
 						return range.Extent() || range.Value(); // Extent is high end for "bt"
 					case "min":
 						if (range.Op() === "!bt")
@@ -235,13 +263,16 @@ define(['knockout','d3'], function (ko, d3) {
 							.text(critLabel);
 				var cartoonDiv = pcDiv.append('div')
 							.attr('class', 'pc-cartoon')
-							.style('padding-bottom', (aspectRatio() * 100) + '%')
-							.style('font-size', (element.offsetWidth * aspectRatio()) + 'px')
+							//.style('padding-bottom', (aspectRatio() * 100) + '%')
+							.style('font-size', '15px')
 							.html(pcCartoonText)
 
 				var svg = cartoonDiv.append("svg")
-					.attr("preserveAspectRatio", "xMinYMin meet")
-					.attr("viewBox", `0 0 ${cartoonWidth()} ${cartoonHeight}`)
+					//.attr("preserveAspectRatio", "xMinYMin meet")
+					.attr('width', divWidth())
+					.attr('height', cartoonHeight)
+					//.style('height', cartoonHeight + 'px!important')
+					//.attr("viewBox", `0 0 ${cartoonWidth()} ${cartoonHeight}`)
 				svg.call(pcCartoon);
 				//xScale.range([0, width]);
 
@@ -250,7 +281,7 @@ define(['knockout','d3'], function (ko, d3) {
 				selection.append('line')
 							.attr('y1', cartoonHeight / 2)
 							.attr('y2', cartoonHeight / 2)
-							.attr('x2', cartoonWidth())
+							.attr('x2', divWidth())
 							.style('stroke-width', cartoonHeight / 20)
 							.attr('stroke-dasharray', '3,3')
 
@@ -260,13 +291,21 @@ define(['knockout','d3'], function (ko, d3) {
 							if (startRange) {
 								if (['lt','lte','!bt'].indexOf(startRange.Op()) > -1) {
 									d3.select(this).append('circle')
-												.attr('cx', cartoonWidth() / 2)
+												.attr('cx', divWidth() / 2)
 												.attr('cy', cartoonHeight / 2)
 												.attr('r', cartoonHeight / 2)
 												.style('fill', 'purple');
 									d3.select(this).append('text')
 												.attr('y', cartoonHeight * .95)
-												.style('font-size', cartoonHeight / 2.2)
+												.attr('x', xScale(sections.poststart.offset))
+												.style('font-size', '15px')
+												.text(startRange.Value());
+								}
+								if (['gt','gte','!bt'].indexOf(startRange.Op()) > -1) {
+									d3.select(this).append('text')
+												.attr('y', cartoonHeight * .95)
+												.attr('x', xScale(sections.prestart.offset))
+												.style('font-size', '15px')
 												.text(startRange.Value());
 								}
 							}
@@ -292,6 +331,12 @@ define(['knockout','d3'], function (ko, d3) {
 			}
 
 			return;
+
+			var scale = d3.scale.linear()
+										.domain([domain.min, domain.max])
+										.range([0.10 * width, 0.85 * width]);
+
+
 			var primCritLabels = _.chain(primaryCriteria)
 														.map(_.pairs)
 														.flatten()
@@ -310,8 +355,7 @@ define(['knockout','d3'], function (ko, d3) {
 			svg.selectAll('g').remove();
 			var g =svg.append('g')
 								.attr('class','primary')
-								.attr('transform', 
-											'translate(0,' + lineHeight + ')')
+								.attr('transform', `translate(0,${lineHeight})`)
 
 			g.append('rect')
 					.attr('width', width * 0.9)
@@ -383,8 +427,7 @@ define(['knockout','d3'], function (ko, d3) {
 			var g = selection
 							.append('g')
 								.attr('class','additional')
-								.attr('transform', 'translate(0,' + 
-											(linesdown*lineHeight) +')')
+								.attr('transform', `translate(0,${linesdown*lineHeight})`)
 			g.selectAll('g.additional')
 							.data(data ? data.CriteriaList() : [])
 								.enter()
