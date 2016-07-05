@@ -4,34 +4,41 @@
 	fill: none;
 }
 
-div.pclabel {
-	opacity: 0.5;
+text.pclabel {
+	opacity: 0.1;
 }
+/*
 div.pc-cartoon {
 	display: inline-block;
 	position: relative;
 	width: 100%;
-	/* padding-bottom: 10%; */ /* aspect ratio */
+	/* padding-bottom: 10%; * / /* aspect ratio * /
 	vertical-align: top;
 	overflow: hidden;
 	text-align: center;
-	/* border: 1px solid green;*/
+	/* border: 1px solid green;* /
 }
-div.pc-cartoon svg {
-	/*
-	display: inline-block;
-	position: absolute;
-	right: 0px;
-	*/
-	/* top: 10px; */
-	/* border: 1px solid brown;*/
+*/
+
+div.cartoon-primary-criteria > div.header {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+div.cartoon-primary-criteria > div.pc {
+	background-color: #EEE;
+	margin: 2px;
+	padding: 4px;
+}
+/*
+div.cartoon-primary-criteria > div.pc svg {
 	float:right;
 }
-div.pc-cartoon line {
+*/
+div.cartoon-primary-criteria > div.pc line {
 	stroke-width: 1px;
 	stroke: steelblue;
 }
-
 /*
  * line, marker {
   stroke: blue;
