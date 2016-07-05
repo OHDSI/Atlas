@@ -37,6 +37,25 @@ div.pc-cartoon line {
   stroke: blue;
 }
 */
+
+div.prim {
+	clear: both;
+}
+div.prim > div.pclabel {
+	float: left;
+	width: 50%;
+	text-align: right;
+	padding: 3px;
+}
+div.prim > div.pc-cartoon {
+	float: left;
+	width: 50%;
+	padding: 3px;
+}
+div.prim > div.pc-cartoon > svg {
+	border: solid 1px brown;
+}
+
 g.primary > rect,
 g.additional > rect {
   fill: lightgray;
