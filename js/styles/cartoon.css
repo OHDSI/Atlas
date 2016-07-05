@@ -1,4 +1,12 @@
+.curlyBrace {
+	stroke: steelblue;
+	stroke-width: 1px;
+	fill: none;
+}
 
+div.pclabel {
+	opacity: 0.5;
+}
 div.pc-cartoon {
 	display: inline-block;
 	position: relative;
@@ -7,7 +15,7 @@ div.pc-cartoon {
 	vertical-align: top;
 	overflow: hidden;
 	text-align: center;
-	border: 1px solid green;
+	/* border: 1px solid green;*/
 }
 div.pc-cartoon svg {
 	/*
@@ -16,13 +24,19 @@ div.pc-cartoon svg {
 	right: 0px;
 	*/
 	/* top: 10px; */
-	border: 1px solid brown;
+	/* border: 1px solid brown;*/
 	float:right;
 }
+div.pc-cartoon line {
+	stroke-width: 1px;
+	stroke: steelblue;
+}
 
-line, marker {
+/*
+ * line, marker {
   stroke: blue;
 }
+*/
 g.primary > rect,
 g.additional > rect {
   fill: lightgray;
