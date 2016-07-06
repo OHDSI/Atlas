@@ -4,7 +4,7 @@
 	fill: none;
 }
 
-text.pclabel {
+text.critlabel {
 	opacity: 0.1;
 }
 /*
@@ -25,7 +25,7 @@ div.cartoon-primary-criteria > div.header {
 	font-weight: bold;
 }
 
-div.cartoon-primary-criteria > div.pc,
+div.cartoon-primary-criteria > div.crit,
 div.cartoon-observation-period
 {
 	background-color: #EEE;
@@ -34,11 +34,11 @@ div.cartoon-observation-period
 	text-align: center;
 }
 /*
-div.cartoon-primary-criteria > div.pc svg {
+div.cartoon-primary-criteria > div.crit svg {
 	float:right;
 }
 */
-div.cartoon-primary-criteria > div.pc line {
+div.cartoon-primary-criteria > div.crit line {
 	stroke-width: 1px;
 	stroke: steelblue;
 }
