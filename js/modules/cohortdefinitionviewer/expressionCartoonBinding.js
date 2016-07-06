@@ -7,7 +7,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	var expression = {};
 	var conceptSets = [];
 	var _sections = [
-		{name: 'prestart',  width: 15 }, // 10 em? for <starts after> date
+		{name: 'prestart',  width: 15, adjust: -15 }, // 0 point at start
 		{name: 'start',     width:	10 }, // indeterminate time between prim crit date and index date
 		{name: 'poststart', width: 15 }, // for <starts before> date
 		{name: 'dur',       width: 45, adjust: -15 }, // should line up with end of start region
@@ -27,6 +27,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			offset += (section.adjust || 0);
 			sections[section.name] = section;
 		});
+		/*
 		if (obswin && !_.isEmpty(expression)) {
 			var prior = Math.abs(expression.PrimaryCriteria().ObservationWindow.PriorDays());
 			var post = expression.PrimaryCriteria().ObservationWindow.PostDays();
@@ -41,10 +42,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				leftOfIndex = .75;
 			}
 		}
+		*/
 		// put index at center point, and 0 point of obscale
-		pcScale.domain([-pcWidth(sections) / leftOfIndex - sections.start.offset, 
-											pcWidth(sections)]);
-		obScale.domain([obswin.min, obswin.max]);
+		pcScale.domain([-pcWidth(sections), pcWidth(sections)]);
+		obScale.domain([-Math.max(Math.abs(obswin.min), obswin.max),
+										 Math.max(Math.abs(obswin.min), obswin.max)]);
 	}
 	function pcWidth(sections) {
 		if (sections.postend.offset) {
@@ -253,7 +255,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 	}
 	function conceptName(crit) {
-		return crit.CodesetId && crit.CodesetId() ? 
+		return crit.CodesetId && crit.CodesetId() > -1 ? 
 						conceptSets[crit.CodesetId()].name() : '';
 	}
 	function critLabel(crit) {
@@ -316,7 +318,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			//var selectedFragment = valueAccessor().selectedFragment; // not using
 
 			drawPrimaryCriteria(element);
-			drawObservationPeriod(element);
+			drawObservationPeriod(element, obswin);
 			/*
 			var maxDur = _.chain(pcList)
 										.map(getMaxDuration)
@@ -502,6 +504,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					 makeCurlyBraceHalf(pointx - (x2 - pointx),y1,x2,y2,w,q, 'right')
 	}
 	function makeCurlyBraceHalf(x1,y1,x2,y2,w,q,half) {
+		if (x1 === x2 && y1 === y2) {
+			// just draw line at x1
+			return ( "M " + x1 + " " + y1 +
+							 " L " + x1 + " " + (y1 + w));
+
+		}
 		//Calculate unit vector
 		var dx = x1-x2;
 		var dy = y1-y2;
@@ -681,7 +689,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 					if (durationType(pc)) {
 						var durRange = getRange(pc, 'dur');
-						var brace = d3.select(this).append('path').attr('class','curlyBrace')
+						var brace = d3.select(this).append('path').attr('class','curly-brace')
 							.attr('d', makeCurlyBrace(
 																				pcScale(curlyEnd),
 																				ypos('brace', hasDur),
@@ -797,7 +805,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		var limitType = expression.PrimaryCriteria().PrimaryCriteriaLimit.Type();
 		var limitMsg, pcCritMatch;
-		var pcPlural = pcList.length === 1 ? '' : 's';
+		var pcPlural = limitType === 'All' ? 's' : '';
 		switch (limitType) {
 			case 'All':
 				pcCritMatch = pcList.length === 1 ?
@@ -812,8 +820,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 														'the following primary criterion' :
 														`any of the following ${pcList.length} primary criteria`;
 				limitMsg = `Results will be generated for the ${limitType.toLowerCase()}
-											event matching 
-											${pcCritMatch}.`;
+											single event matching ${pcCritMatch}.`;
 		}
 		primDiv.selectAll('div.header').html(limitMsg + 
 			` Result index date${pcPlural} will be the start date${pcPlural} of the matching event${pcPlural}.`);
@@ -823,66 +830,91 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		pcdivs.exit().remove();
 		pcdivs.enter()
 					.append('div')
-						.attr('class','pc');
+						.attr('class','pc')
+					.append('svg')
 		pcdivs = primDiv.selectAll('div.pc');
-		pcdivs.each(function(pc) {
-			var pcDiv = d3.select(this);
-			/*
-				* was thinking of side-by-side divs, but now not doing that
-			pcDiv.append('div')
-						.attr('class', 'pclabel')
-						.text(pcCartoonText);
-			*/
-			/*
-			var cartoonDiv = pcDiv.append('div')
-						.attr('class', 'pc-cartoon')
-						//.style('padding-bottom', (aspectRatio() * 100) + '%')
-						//.style('font-size', '15px')
-						//.html(pcCartoonText)
-			*/
-
-			//var svg = cartoonDiv.append("svg")
-			var svg = pcDiv.append("svg")
+		primDiv.selectAll('div.pc>svg').each(function(pc) {
+			var svg = d3.select(this);
+			svg
 				//.attr("preserveAspectRatio", "xMinYMin meet")
 				.attr('width', divWidth())
 				.attr('height', cartoonHeight(durationType(pc)))
 				//.attr("viewBox", `0 0 ${pcWidth()} ${cartoonHeight}`)
 			svg.call(pcCartoon);
-			//pcScale.range([0, width]);
-
 		});
 	}
-	function drawObservationPeriod(element) {
-		var opDiv = d3.select(element).selectAll('div.cartoon-observation-period')
+	function drawObservationPeriod(element, obswin) {
+		var svg = d3.select(element).selectAll('div.cartoon-observation-period')
 											.data([null]) // only create once
 											.enter()
 											.append('div')
-												.attr('class', 'cartoon-observation-period');
+												.attr('class', 'cartoon-observation-period')
+											.append("svg");
 
-		opDiv.append('div') // only create header div once
-							.attr('class', 'header');
+		svg.append('path').attr('class','curly-brace')
+											.classed('first', true);
+		svg.append('path').attr('class','curly-brace')
+											.classed('second', true);
 
-		opDiv = d3.select(element).selectAll('div.cartoon-observation-period');
+		svg.append('text')
+			.attr('class','op-text-first')
+			.attr('x',obScale(0))
+			.attr('text-anchor','middle')
+			.attr('y', lineHeight * 3);
+		svg.append('text')
+			.attr('class','op-text-second')
+			.attr('x',obScale(0))
+			.attr('text-anchor','middle')
+			.attr('y', lineHeight * 4);
+
+		var opDiv = d3.select(element).selectAll('div.cartoon-observation-period');
 
 		var prior = Math.abs(expression.PrimaryCriteria().ObservationWindow.PriorDays());
 		var post = expression.PrimaryCriteria().ObservationWindow.PostDays();
 
 		if (!(prior || post)) {
 			opDiv.html("No required observation period");
+			return;
 		}
 
-		var brace = opDiv.append("svg")
-				.attr('width', divWidth())
-				.attr('height', 40)
-			.append('path').attr('class','curlyBrace')
+		svg = opDiv.select("svg");
+		svg.attr('width', divWidth())
+				.attr('height', lineHeight * 3.5)
 
-		brace.attr('d', makeCurlyBrace(
+		svg.select('path.curly-brace.first').attr('d', makeCurlyBrace(
 																obScale(-prior),
-																0,
+																.5,
 																obScale(post),
-																0,
-																40,
-																0.6, 
-																obScale(0)));
+																.5,
+																lineHeight * 2,
+																0.6,
+																obScale(0) /*+ lineHeight/2*/)); 
+		svg.select('text.op-text-first')
+			.text(`Required observation period from at least ${prior} days
+						 before and ${post} days after index date.`);
+
+		var extra = [];
+		if (Math.abs(obswin.min) > Math.abs(prior)) {
+			extra.push(Math.abs(obswin.min) + ' days before');
+		}
+		if (obswin.max > post) {
+			extra.push(obswin.max + ' days after');
+		}
+		if (extra.length) {
+			svg.attr('height', lineHeight * 4.5);
+			svg.select('text.op-text-second')
+				.text(`Beyond observation period, additional criteria or inclusion rules 
+									also require ${extra.join(' and ')} index date.`);
+			svg.select('path.curly-brace.second')
+				.attr('d', makeCurlyBrace(
+																	obScale(obswin.min),
+																	.5,
+																	obScale(obswin.max),
+																	.5,
+																	lineHeight * 2,
+																	0.6,
+																	obScale(0) /*+ lineHeight/2*/)) 
+				.attr('stroke-dasharray', '3,3')
+		}
 	}
 });

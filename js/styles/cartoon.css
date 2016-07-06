@@ -1,4 +1,4 @@
-.curlyBrace {
+.curly-brace {
 	stroke: steelblue;
 	stroke-width: 1px;
 	fill: none;
@@ -25,10 +25,13 @@ div.cartoon-primary-criteria > div.header {
 	font-weight: bold;
 }
 
-div.cartoon-primary-criteria > div.pc {
+div.cartoon-primary-criteria > div.pc,
+div.cartoon-observation-period
+{
 	background-color: #EEE;
 	margin: 2px;
 	padding: 4px;
+	text-align: center;
 }
 /*
 div.cartoon-primary-criteria > div.pc svg {
