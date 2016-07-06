@@ -41,9 +41,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				leftOfIndex = .75;
 			}
 		}
-		pcScale.domain([-pcWidth(sections) / leftOfIndex - sections.prestart.offset, 
+		// put index at center point, and 0 point of obscale
+		pcScale.domain([-pcWidth(sections) / leftOfIndex - sections.start.offset, 
 											pcWidth(sections)]);
-		obScale.domain([-prior, post]);
+		obScale.domain([obswin.min, obswin.max]);
 	}
 	function pcWidth(sections) {
 		if (sections.postend.offset) {
@@ -493,7 +494,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	//returns path string d for <path d="This string">
 	//a curly brace between x1,y1 and x2,y2, w pixels wide 
 	//and q factor, .5 is normal, higher q = more expressive bracket 
-	function makeCurlyBrace(x1,y1,x2,y2,w,q) {
+	function makeCurlyBrace(x1,y1,x2,y2,w,q, pointx) {
+		if (typeof pointx === "undefined") {
+			return makeCurlyBraceHalf(x1,y1,x2,y2,w,q);
+		}
+		return makeCurlyBraceHalf(x1,y1,pointx + (pointx - x1),y2,w,q, 'left') + 
+					 makeCurlyBraceHalf(pointx - (x2 - pointx),y1,x2,y2,w,q, 'right')
+	}
+	function makeCurlyBraceHalf(x1,y1,x2,y2,w,q,half) {
 		//Calculate unit vector
 		var dx = x1-x2;
 		var dy = y1-y2;
@@ -513,12 +521,17 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var qx4 = (x1 - .75*len*dx) + (1-q)*w*dy;
 		var qy4 = (y1 - .75*len*dy) - (1-q)*w*dx;
 
-		return ( "M " +  x1 + " " +  y1 +
-							" Q " + qx1 + " " + qy1 + " " + qx2 + " " + qy2 + 
-							" T " + tx1 + " " + ty1 )//+
-							//" M " +  x2 + " " +  y2 +
-							//" Q " + qx3 + " " + qy3 + " " + qx4 + " " + qy4 + 
-							//" T " + tx1 + " " + ty1 );
+		var left =  "M " +  x1 + " " +  y1 +
+							  " Q " + qx1 + " " + qy1 + " " + qx2 + " " + qy2 + 
+							  " T " + tx1 + " " + ty1;
+		var right = " M " +  x2 + " " +  y2 +
+							  " Q " + qx3 + " " + qy3 + " " + qx4 + " " + qy4 + 
+							  " T " + tx1 + " " + ty1;
+		if (half === 'left')
+			return left;
+		if (half === 'right')
+			return right;
+		return left + right;
 	}
 
 	function setupArrowHeads(element) {
@@ -869,6 +882,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																obScale(post),
 																0,
 																40,
-																0.6));
+																0.6, 
+																obScale(0)));
 	}
 });
