@@ -3,7 +3,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 	function MeasurementViewModel(params) {
 		var self = this;
 
-		self.expression = params.expression;
+		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.Measurement;
 		self.options = options;
 		

@@ -3,7 +3,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./DrugEraTemplate
 	function DrugEraViewModel(params) {
 		
 		var self = this;
-		self.expression = params.expression;
+		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.DrugEra;
 		self.options = options;
 

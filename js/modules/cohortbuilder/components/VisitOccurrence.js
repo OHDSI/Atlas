@@ -105,7 +105,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./VisitOccurrence
 			}
 		};
 
-		self.expression = params.expression;
+		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.VisitOccurrence;
 		self.options = options;
 

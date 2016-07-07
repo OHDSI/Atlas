@@ -142,20 +142,16 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 			params.widget(this);
 		}
 
-		var rules = params.expression().InclusionRules();
-		for (var i = 0; i < rules.length; i++) {
-			if (!ko.isObservable(rules[i].name)) {
-				rules[i] = new InclusionRule(rules[i]);
-			}
-		}
-
 		self.expression = params.expression;
-
 		self.options = options;
 
 		self.selectedInclusionRule = ko.observable(null);
+		self.selectedInclusionRuleIndex = null;
+		
 		self.selectInclusionRule = function (inclusionRule) {
 			self.selectedInclusionRule(inclusionRule);
+			self.selectedInclusionRuleIndex = params.expression().InclusionRules().indexOf(inclusionRule);
+			console.log("Selected Index: " + self.selectedInclusionRuleIndex);
 		}
 
 		self.removeAdditionalCriteria = function () {
@@ -242,6 +238,23 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 			}, 2)
 		}
+		
+		// Subscriptions
+		
+		self.expressionSubscription = self.expression.subscribe(function (newVal) {
+			console.log("New Cohort Expression set.");
+			self.selectedInclusionRule(params.expression().InclusionRules()[self.selectedInclusionRuleIndex]);
+		});
+		
+		// Cleanup
+		
+		self.dispose = function() {
+			console.log("Cohort Expression Editor Dispose.");
+			self.expressionSubscription.dispose();
+		};
+		
+		
+		
 	}
 
 	// return factory

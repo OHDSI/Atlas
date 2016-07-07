@@ -3,7 +3,7 @@ define(['knockout', 'cohortbuilder/options', 'cohortbuilder/InputTypes/Range', '
 	function ConditionOccurrenceViewModel(params) {
 
 		var self = this;
-		self.expression = params.expression;
+		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.ConditionOccurrence;
 		self.options = options;
 

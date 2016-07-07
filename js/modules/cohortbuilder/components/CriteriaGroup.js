@@ -90,7 +90,7 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 			}
 		];
 
-		self.expression = ko.utils.unwrapObservable(params.expression);
+		self.expression = params.expression;
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;
 		self.options = options;
@@ -137,111 +137,125 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 		};
 
 		self.addAdditionalCriteria = function () {
-			self.group().Groups.push(new CriteriaGroup(null, self.expression.ConceptSets));
+			self.group().Groups.push(new CriteriaGroup(null, unwrappedExpression.ConceptSets));
 		};
 
 		self.addConditionCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					ConditionOccurrence: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addConditionEraCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					ConditionEra: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addDrugExposureCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					DrugExposure: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addDrugEraCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					DrugEra: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addDoseEraCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					DoseEra: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addProcedureCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					ProcedureOccurrence: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 		
 		self.addObservationCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					Observation: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};	
 
 		self.addVisitCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					VisitOccurrence: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 		
 		self.addDeviceCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					DeviceExposure: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 		
 		self.addMeasurementCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					Measurement: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addSpecimenCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					Specimen: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 		
 		self.addObservationPeriodCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					ObservationPeriod: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};		
+		
 		self.addDeathCriteria = function()
 		{
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					Death: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		}
 		
 		self.removeCriteria = function (observableList, data) {

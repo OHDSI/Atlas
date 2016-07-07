@@ -3,7 +3,7 @@ define(['knockout', 'cohortbuilder/options', 'cohortbuilder/InputTypes/Range', '
 	function ObservationPeriodViewModel(params) {
 		var self = this;
 
-		self.expression = params.expression;
+		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.ObservationPeriod;
 		self.options = options;
 		
