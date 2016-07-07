@@ -317,6 +317,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 			//var selectedFragment = valueAccessor().selectedFragment; // not using
 
+			var d3element = d3.select(element);
+			drawCritCat(d3element, 'primary-section', expression.PrimaryCriteria());
+			drawCritCat(d3element, 'obsperiod-section');
+			drawCritCat(d3element, 'additional-section', expression.AdditionalCriteria(), 0);
+			drawCritCat(d3element, 'inclusion-section', expression.InclusionRules(), 0);
+
+			return;
 			drawPrimaryCriteria(element);
 			drawObservationPeriod(element, obswin);
 			drawAdditionalCriteria(element, obswin);
@@ -584,175 +591,204 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				.append('path')
 					.attr('d', 'M 0 0 L 1 0 L 1 10 L 0 10 z')
 	}
-	function criterionCartoon(d3element, crit, critScale) {
-		var hasDur = !!durationType(crit);
-		var curlyStart = sections.start.offset;
-		var curlyEnd = sections.end.offset;
+	function addCritCartoon(d3element, scale) {
+		// expects a selection of divs w/ svgs, modified AdditionalCriteria objs attached
+		d3element.selectAll('svg')
+							//.datum( addCrit => addCrit.Criteria ) // doesn't work second time through, leave data undefined
+							.call(criterionCartoon, scale);
+		d3element.append('div')
+			.html(addCrit => `${addCritOccurrenceText(addCrit)}<br/>
+												${addCritWindowText(addCrit)}`);
+	}
+	function addCritOccurrenceText(ac) {
+		ac = ko.toJS(ac);
+		var oc = ac.Occurrence;
+		return `with ${['exactly','at most','at least'][oc.Type]}
+							${oc.Count} using ${oc.IsDistinct ? 'distinct' : 'all'} occurrences`;
+	}
+	function addCritWindowText(ac) {
+		ac = ko.toJS(ac);
+		var sw = ac.StartWindow;
+		return `occurring between 
+							${sw.Start.Days} days ${sw.Start.Coeff===-1 ? 'before' : 'after'} and
+							${sw.End.Days} days ${sw.End.Coeff===-1 ? 'before' : 'after'} index`;
+	}
+	function criterionCartoon(selection, critScale) {
+		// expects a selection of svgs with Criteria objs attached
+		selection.each(function(crit) {
+			if (crit.Criteria) { // or AdditionalCriteria objs
+				crit = crit.Criteria;
+			}
+			var d3element = d3.select(this);
+			var hasDur = !!durationType(crit);
+			var curlyStart = sections.start.offset;
+			var curlyEnd = sections.end.offset;
 
-		var startRange = getRange(crit, 'start');
-		if (startRange) {
-			d3element.append("text")
-						.attr('y', ypos('startdate', hasDur))
-						.attr('x', critScale(sections.start.offset))
-						.attr("font-family","FontAwesome")
-						.attr('text-anchor', 'middle')
-						.text('\uf006') // star
-			if (['lt','lte','!bt'].indexOf(startRange.Op()) > -1) {
-				d3element.append('text')
+			var startRange = getRange(crit, 'start');
+			if (startRange) {
+				d3element.append("text")
 							.attr('y', ypos('startdate', hasDur))
-							.attr('x', critScale(sections.start.offset) + lineHeight/2)
-							.style('font-size', '15px')
-							.text(`${rangeInfo(startRange, 'nice-op')} ${startRange.Value()}`);
-				d3element.append('line')
-							.attr('y1', ypos('startarrow', hasDur))
-							.attr('y2', ypos('startarrow', hasDur))
-							.attr('x1', critScale(sections.prestart.offset))
-							.attr('x2', critScale(sections.start.offset) - lineHeight/2)
-							.attr('stroke-dasharray', '3,3')
-							.style('marker-start', 'url(#left-arrow)')
-			}
-			if (['gt','gte','!bt'].indexOf(startRange.Op()) > -1) {
-				d3element.append('text')
-							.attr('y', ypos('startdate', hasDur))
-							.attr('x', critScale(sections.start.offset) - lineHeight/2)
-							.attr('text-anchor', 'end')
-							.style('font-size', '15px')
-							.text(`${rangeInfo(startRange, 'nice-op')} ${startRange.Value()}`);
-				d3element.append('line')
-							.attr('y1', ypos('startarrow', hasDur))
-							.attr('y2', ypos('startarrow', hasDur))
-							.attr('x1', critScale(sections.start.offset) + lineHeight/2)
-							.attr('x2', critScale(sections.poststart.offset))
-							.attr('stroke-dasharray', '3,3')
-							.style('marker-end', 'url(#right-arrow)')
-			}
-		}
-		var endRange = getRange(crit, 'end');
-		if (endRange) {
-			d3element.append("text")
-						.attr('y', ypos('startdate', hasDur))
-						.attr('x', critScale(sections.end.offset))
-						.attr("font-family","FontAwesome")
-						.attr('text-anchor', 'middle')
-						.text('\uf256') // stop
-			if (['lt','lte','!bt'].indexOf(endRange.Op()) > -1) {
-				d3element.append('text')
-							.attr('y', ypos('enddate', hasDur))
-							.attr('x', critScale(sections.end.offset) + lineHeight/2)
-							.style('font-size', '15px')
-							.text(`${rangeInfo(endRange, 'nice-op')} ${endRange.Value()}`);
-				d3element.append('line')
-							.attr('y1', ypos('endarrow', hasDur))
-							.attr('y2', ypos('endarrow', hasDur))
-							.attr('x1', critScale(sections.preend.offset))
-							.attr('x2', critScale(sections.end.offset) - lineHeight/2)
-							.attr('stroke-dasharray', '3,3')
-							.style('marker-start', 'url(#left-arrow)')
-			}
-			if (['gt','gte','!bt'].indexOf(endRange.Op()) > -1) {
-				d3element.append('text')
-							.attr('y', ypos('enddate', hasDur))
-							.attr('x', critScale(sections.end.offset) - lineHeight/2)
-							.attr('text-anchor', 'end')
-							.style('font-size', '15px')
-							.text(`${rangeInfo(endRange, 'nice-op')} ${endRange.Value()}`);
-				d3element.append('line')
-							.attr('y1', ypos('endarrow', hasDur))
-							.attr('y2', ypos('endarrow', hasDur))
-							.attr('x1', critScale(sections.end.offset) + lineHeight/2)
-							.attr('x2', critScale(sections.postend.offset))
-							.attr('stroke-dasharray', '3,3')
-							.style('marker-end', 'url(#right-arrow)')
-			}
-		}
-		d3element.append("text")
-					.attr('y', ypos('label', hasDur))
-					.attr('x', critScale(sections.start.offset))
-					.attr("font-family","FontAwesome")
-					.attr('text-anchor', 'middle')
-					//.text('\uf0a4') // right pointing finger
-					.text('\uf006') // star
-		d3element.append('text')
-					.attr('y', ypos('label', hasDur))
-					//.attr('x', critScale((curlyStart + curlyEnd)/2))
-					//.attr('text-anchor', 'middle')
-					.attr('x', critScale(sections.start.offset) + lineHeight/2)
-					.style('font-size', '15px')
-					.text(critLabel(crit))
-		d3element.append('text')
-					.attr('x', divWidth() - 15)
-					.attr('y', ypos('label', hasDur))
-					.attr('text-anchor', 'end')
-					.attr('class', 'critlabel')
-					.text(critCartoonText(crit));
-
-		if (durationType(crit)) {
-			var durRange = getRange(crit, 'dur');
-			var brace = d3element.append('path').attr('class','curly-brace')
-				.attr('d', makeCurlyBrace(
-																	critScale(curlyEnd),
-																	ypos('brace', hasDur),
-																	critScale(curlyStart),
-																	ypos('brace', hasDur),
-																	braceLines * lineHeight,
-																	//15,
-																	0.6));
-			if (durRange) {
-				/*
-				if (rangeInfo(durRange, 'single-double') == 'single') {
-					dur = `${rangeInfo(durRange, 'nice-op')} ${rangeInfo(durRange, 'val')} days`;
-				} else {
-					dur = `${rangeInfo(durRange, 'nice-op')} ${rangeInfo(durRange, 'lower')} and ${rangeInfo(durRange, 'upper')} days`;
-				}
-				*/
-				if (['lt','lte'].indexOf(durRange.Op()) > -1) {
+							.attr('x', critScale(sections.start.offset))
+							.attr("font-family","FontAwesome")
+							.attr('text-anchor', 'middle')
+							.text('\uf006') // star
+				if (['lt','lte','!bt'].indexOf(startRange.Op()) > -1) {
 					d3element.append('text')
-								.attr('y', ypos('dur', hasDur))
+								.attr('y', ypos('startdate', hasDur))
+								.attr('x', critScale(sections.start.offset) + lineHeight/2)
+								.style('font-size', '15px')
+								.text(`${rangeInfo(startRange, 'nice-op')} ${startRange.Value()}`);
+					d3element.append('line')
+								.attr('y1', ypos('startarrow', hasDur))
+								.attr('y2', ypos('startarrow', hasDur))
+								.attr('x1', critScale(sections.prestart.offset))
+								.attr('x2', critScale(sections.start.offset) - lineHeight/2)
+								.attr('stroke-dasharray', '3,3')
+								.style('marker-start', 'url(#left-arrow)')
+				}
+				if (['gt','gte','!bt'].indexOf(startRange.Op()) > -1) {
+					d3element.append('text')
+								.attr('y', ypos('startdate', hasDur))
+								.attr('x', critScale(sections.start.offset) - lineHeight/2)
+								.attr('text-anchor', 'end')
+								.style('font-size', '15px')
+								.text(`${rangeInfo(startRange, 'nice-op')} ${startRange.Value()}`);
+					d3element.append('line')
+								.attr('y1', ypos('startarrow', hasDur))
+								.attr('y2', ypos('startarrow', hasDur))
+								.attr('x1', critScale(sections.start.offset) + lineHeight/2)
+								.attr('x2', critScale(sections.poststart.offset))
+								.attr('stroke-dasharray', '3,3')
+								.style('marker-end', 'url(#right-arrow)')
+				}
+			}
+			var endRange = getRange(crit, 'end');
+			if (endRange) {
+				d3element.append("text")
+							.attr('y', ypos('startdate', hasDur))
+							.attr('x', critScale(sections.end.offset))
+							.attr("font-family","FontAwesome")
+							.attr('text-anchor', 'middle')
+							.text('\uf256') // stop
+				if (['lt','lte','!bt'].indexOf(endRange.Op()) > -1) {
+					d3element.append('text')
+								.attr('y', ypos('enddate', hasDur))
 								.attr('x', critScale(sections.end.offset) + lineHeight/2)
 								.style('font-size', '15px')
-								.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value()} days`);
+								.text(`${rangeInfo(endRange, 'nice-op')} ${endRange.Value()}`);
 					d3element.append('line')
-								.attr('y1', ypos('durarrow', hasDur))
-								.attr('y2', ypos('durarrow', hasDur))
+								.attr('y1', ypos('endarrow', hasDur))
+								.attr('y2', ypos('endarrow', hasDur))
 								.attr('x1', critScale(sections.preend.offset))
 								.attr('x2', critScale(sections.end.offset) - lineHeight/2)
 								.attr('stroke-dasharray', '3,3')
 								.style('marker-start', 'url(#left-arrow)')
 				}
-				if (['gt','gte'].indexOf(durRange.Op()) > -1) {
+				if (['gt','gte','!bt'].indexOf(endRange.Op()) > -1) {
 					d3element.append('text')
-								.attr('y', ypos('dur', hasDur))
+								.attr('y', ypos('enddate', hasDur))
 								.attr('x', critScale(sections.end.offset) - lineHeight/2)
 								.attr('text-anchor', 'end')
 								.style('font-size', '15px')
-								.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value()} days`);
+								.text(`${rangeInfo(endRange, 'nice-op')} ${endRange.Value()}`);
 					d3element.append('line')
-								.attr('y1', ypos('durarrow', hasDur))
-								.attr('y2', ypos('durarrow', hasDur))
+								.attr('y1', ypos('endarrow', hasDur))
+								.attr('y2', ypos('endarrow', hasDur))
 								.attr('x1', critScale(sections.end.offset) + lineHeight/2)
 								.attr('x2', critScale(sections.postend.offset))
 								.attr('stroke-dasharray', '3,3')
 								.style('marker-end', 'url(#right-arrow)')
 				}
-				if (durRange.Op() === 'eq') {
-					d3element.append('text')
-								.attr('y', ypos('dur', hasDur))
-								.attr('x', critScale(sections.end.offset) + lineHeight/2)
-								.style('font-size', '15px')
-								.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value()} days`);
-					d3element.append('line')
-								.attr('y1', ypos('durarrow', hasDur))
-								.attr('y2', ypos('durarrow', hasDur))
-								.attr('x1', critScale(sections.start.offset))
-								.attr('x2', critScale(sections.end.offset))
-								//.attr('stroke-dasharray', '3,3')
-								.style('marker-start', 'url(#line-stop)')
-								.style('marker-end', 'url(#line-stop)')
-				}
-			} else {
-				brace.style('stroke-dasharray', '3,3');
 			}
-		}
+			d3element.append("text")
+						.attr('y', ypos('label', hasDur))
+						.attr('x', critScale(sections.start.offset))
+						.attr("font-family","FontAwesome")
+						.attr('text-anchor', 'middle')
+						//.text('\uf0a4') // right pointing finger
+						.text('\uf006') // star
+			d3element.append('text')
+						.attr('y', ypos('label', hasDur))
+						//.attr('x', critScale((curlyStart + curlyEnd)/2))
+						//.attr('text-anchor', 'middle')
+						.attr('x', critScale(sections.start.offset) + lineHeight/2)
+						.style('font-size', '15px')
+						.text(critLabel(crit))
+			d3element.append('text')
+						.attr('x', divWidth() - 15)
+						.attr('y', ypos('label', hasDur))
+						.attr('text-anchor', 'end')
+						.attr('class', 'critlabel')
+						.text(critCartoonText(crit));
+
+			if (durationType(crit)) {
+				var durRange = getRange(crit, 'dur');
+				var brace = d3element.append('path').attr('class','curly-brace')
+					.attr('d', makeCurlyBrace(
+																		critScale(curlyEnd),
+																		ypos('brace', hasDur),
+																		critScale(curlyStart),
+																		ypos('brace', hasDur),
+																		braceLines * lineHeight,
+																		//15,
+																		0.6));
+				if (durRange) {
+					/*
+					if (rangeInfo(durRange, 'single-double') == 'single') {
+						dur = `${rangeInfo(durRange, 'nice-op')} ${rangeInfo(durRange, 'val')} days`;
+					} else {
+						dur = `${rangeInfo(durRange, 'nice-op')} ${rangeInfo(durRange, 'lower')} and ${rangeInfo(durRange, 'upper')} days`;
+					}
+					*/
+					if (['lt','lte'].indexOf(durRange.Op()) > -1) {
+						d3element.append('text')
+									.attr('y', ypos('dur', hasDur))
+									.attr('x', critScale(sections.end.offset) + lineHeight/2)
+									.style('font-size', '15px')
+									.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value()} days`);
+						d3element.append('line')
+									.attr('y1', ypos('durarrow', hasDur))
+									.attr('y2', ypos('durarrow', hasDur))
+									.attr('x1', critScale(sections.preend.offset))
+									.attr('x2', critScale(sections.end.offset) - lineHeight/2)
+									.attr('stroke-dasharray', '3,3')
+									.style('marker-start', 'url(#left-arrow)')
+					}
+					if (['gt','gte'].indexOf(durRange.Op()) > -1) {
+						d3element.append('text')
+									.attr('y', ypos('dur', hasDur))
+									.attr('x', critScale(sections.end.offset) - lineHeight/2)
+									.attr('text-anchor', 'end')
+									.style('font-size', '15px')
+									.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value()} days`);
+						d3element.append('line')
+									.attr('y1', ypos('durarrow', hasDur))
+									.attr('y2', ypos('durarrow', hasDur))
+									.attr('x1', critScale(sections.end.offset) + lineHeight/2)
+									.attr('x2', critScale(sections.postend.offset))
+									.attr('stroke-dasharray', '3,3')
+									.style('marker-end', 'url(#right-arrow)')
+					}
+					if (durRange.Op() === 'eq') {
+						d3element.append('text')
+									.attr('y', ypos('dur', hasDur))
+									.attr('x', critScale(sections.end.offset) + lineHeight/2)
+									.style('font-size', '15px')
+									.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value()} days`);
+						d3element.append('line')
+									.attr('y1', ypos('durarrow', hasDur))
+									.attr('y2', ypos('durarrow', hasDur))
+									.attr('x1', critScale(sections.start.offset))
+									.attr('x2', critScale(sections.end.offset))
+									//.attr('stroke-dasharray', '3,3')
+									.style('marker-start', 'url(#line-stop)')
+									.style('marker-end', 'url(#line-stop)')
+					}
+				} else {
+					brace.style('stroke-dasharray', '3,3');
+				}
+			}
+		});
 	}
 	function pcCartoon(selection) {
 		selection//.filter(pc=>getRange(pc, 'start'))
@@ -783,30 +819,88 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		return `start ${start}, end ${end}, ${dur}`;
 	}
-	function drawPrimaryCriteria(element) {
-		var pcList = _.chain(expression.PrimaryCriteria().CriteriaList())
-														.map(_.pairs)
-														.flatten()
-														.map(d=>{
-																var [domain, pc] = d;
-																var clone = _.clone(pc);
-																clone.domain = domain;
-																return clone;
-															})
-														.value();
+	function drawCritCat(d3element, cat, data, level) {
+		if (Array.isArray(data))
+			throw new Error("didn't expect array", data);
+		// type in primary, additional, inclusion
+		var funcs = {
+			'primary-section':    { header: primaryCritHeader,    body: primaryCritBody },
+			'additional-section': { header: addCritSectHeader,    body: addCritSectBody },
+			//addcrit:            { header: additionalCritHeader, body: additionalCritBody },
+			'critgroup':          { header: critGroupHeader,      body: critGroupBody },
+			'inclusion-section':  { header: inclusionCritHeader,  body: inclusionCritBody },
+			'obsperiod-section':  { header: obsperiodHeader,      body: obsperiodBody },
+		};
+		var catDiv = d3AddIfNeeded(d3element, [data], 'div', 
+															 [`cartoon-${cat}`], 
+																function(selection) { 
+																	selection.append('div') // only create cat header div once
+																						.attr('class', 'header');
+																	selection.append('div') // only create cat header div once
+																						.attr('class', 'body');
+																});
 
-		var primDiv = d3.select(element).selectAll('div.cartoon-primary-criteria')
-											.data([null]) // only create pc div once
-											.enter()
-											.append('div')
-												.attr('class', 'cartoon-primary-criteria');
-
-		primDiv.append('div') // only create pc header div once
-							.attr('class', 'header');
-
-		primDiv = d3.select(element).selectAll('div.cartoon-primary-criteria');
-
-		var limitType = expression.PrimaryCriteria().PrimaryCriteriaLimit.Type();
+		//if (!level) {
+		funcs[cat].header(catDiv.select('div.header'), data);
+		//}
+		funcs[cat].body(catDiv.select('div.body'), data, level);
+	}
+	function addCritSectHeader(d3element, acsect, level) {
+		var text = '<h3>Additional Criteria</h3>'; 
+		d3element.html(text);
+	}
+	function addCritSectBody(d3element, acsect, level) {
+		drawCritCat(d3element, 'critgroup', acsect, level);
+	}
+	function critGroupHeader(d3element, cg, level) {
+		var text = '';
+		text += `Restrict to people matching ${cg.Type().toLowerCase()} of the
+							following criteria`;
+		d3element.html(text);
+	}
+	function critGroupBody(d3element, cg, level) {
+		var acList = critArray(cg, 'additional');
+		var divs = d3AddIfNeeded(d3element, acList, 'div', ['crit'], 
+									function(selection) { 
+										selection.append('svg');
+									})//.selectAll('svg');
+		divs.selectAll('svg')
+				.attr('width', divWidth())
+				.attr('height', ac => cartoonHeight(durationType(ac.Criteria)))
+		divs.call(addCritCartoon, pcScale);
+		cg.Groups().forEach( group => {
+			drawCritCat(d3element, 'critgroup', group, level + 1);
+		});
+	}
+	function inclusionCritHeader(d3element, PrimaryCriteria, level) {
+	}
+	function inclusionCritBody(d3element, PrimaryCriteria, level) {
+	}
+	function critArray(data, cat) {
+		if (cat === 'primary') {
+			return _.chain(data.CriteriaList())
+							.map(_.pairs)
+							.flatten()
+							.map(d=>{
+									var [domain, pc] = d;
+									var clone = _.clone(pc);
+									clone.domain = domain;
+									return clone;
+								})
+							.value();
+		}
+		return data.CriteriaList().map(addCrit=>{
+							var domain = _.keys(addCrit.Criteria)[0];
+							var clone = _.clone(addCrit);
+							var critClone = _.clone(addCrit.Criteria[domain]);
+							critClone.domain = domain;
+							clone.Criteria = critClone;
+							return clone;
+						})
+	}
+	function primaryCritHeader(d3element, PrimaryCriteria) {
+		var pcList = critArray(PrimaryCriteria, 'primary');
+		var limitType = PrimaryCriteria.PrimaryCriteriaLimit.Type();
 		var limitMsg = '<h3>Primary Criteria</h3>'; 
 		var pcCritMatch;
 		var pcPlural = limitType === 'All' ? 's' : '';
@@ -826,34 +920,46 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				limitMsg += `Results will be generated for the ${limitType.toLowerCase()}
 											single event matching ${pcCritMatch}.`;
 		}
-		primDiv.selectAll('div.header').html(limitMsg + 
+		d3element.html(limitMsg + 
 			` Result index date${pcPlural} will be the start date${pcPlural} of the matching event${pcPlural}.`);
-
-		var pcdivs = primDiv.selectAll('div.crit')
-									.data(pcList);
-		pcdivs.exit().remove();
-		pcdivs.enter()
-					.append('div')
-						.attr('class','crit')
-					.append('svg')
-		//pcdivs = primDiv.selectAll('div.crit');
-		primDiv.selectAll('div.crit>svg').each(function(pc) {
-			var svg = d3.select(this);
-			svg
-				//.attr("preserveAspectRatio", "xMinYMin meet")
-				.attr('width', divWidth())
-				.attr('height', cartoonHeight(durationType(pc)))
-				//.attr("viewBox", `0 0 ${pcWidth()} ${cartoonHeight}`)
-			criterionCartoon(svg, pc, pcScale);
-			//svg.call(pcCartoon);
-		});
 	}
-	function drawCriteriaGroup(element, cg, level) {
-		// header stuff
-		var groupElement = element.append('div'); // ....
-		var listWithGroups = cg.CriteriaList().concat(cg.Groups());
-		drawCriteriaList(groupElement, listWithGroups);
+	function primaryCritBody(d3element, PrimaryCriteria) {
+		var pcList = critArray(PrimaryCriteria, 'primary');
+		var svgs = d3AddIfNeeded(d3element, pcList, 'div', ['crit'], 
+									function(selection) { 
+										selection.append('svg');
+									}).selectAll('svg');
+		svgs.attr('width', divWidth())
+				.attr('height', pc => cartoonHeight(durationType(pc)))
+				.call(criterionCartoon, pcScale);
 	}
+	function d3AddIfNeeded(parentElement, data, tag, classes, firstTimeCb) {
+		var d3element;
+		if (parentElement.selectAll) {
+			d3element = parentElement;
+		} else {
+			d3element = d3.select(parentElement);
+		}
+		var selection = d3element.selectAll([tag].concat(classes).join('.'));
+		if (Array.isArray(data)) {
+			selection = selection.data(data);
+		} else {
+			selection = selection.datum(data);
+			// or? selection = selection.data([data]);
+		}
+		selection.exit().remove();
+		selection.enter().append(tag)
+				.each(function(d) {
+					var newNode = d3.select(this);
+					classes.forEach(cls => {
+						newNode.classed(cls, true);
+					});
+				})
+				.call(firstTimeCb);
+		selection = d3element.selectAll([tag].concat(classes).join('.'));
+		return selection;
+	}
+	/*
 	function drawCriteriaList(d3element, cl, level) {
 		cl.forEach(criterion => {
 			if (criterion.constructor.name === "AdditionalCriteria") {
@@ -861,70 +967,75 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				return;
 			}
 			if (criterion.constructor.name === "CriteriaGroup") {
-				drawCriteriaGroup(d3element.node(), criterion);
+				drawCriteriaGroup(d3element.node(), criterion, pcScale);
 				return;
 			}
 			if (criterion.constructor.name === "object") {
+				throw new Error("not using this, right?");
 				criterionCartoon(d3element, criterion);
 				return;
 			}
 			throw new Error("not sure what's in this list");
 		});
 	}
-	function additionalCritCartoon(d3element, ac) {
-		// start window stuff ...
-		criterionCartoon(d3element, ac.Criteria);
+	*/
+	function obsperiodHeader(d3element) {
+		var prior = Math.abs(expression.PrimaryCriteria().ObservationWindow.PriorDays());
+		var post = expression.PrimaryCriteria().ObservationWindow.PostDays();
+
+		var text = "<h3>Observation Period</h3>";
+
+		if (!(prior || post)) {
+			d3element.html(text + "No required observation period");
+			return;
+		}
+		text += `Required observation period from at least ${prior} days
+								before to at least ${post} days after index date. `;
+
+		var extra = [];
+		var obswin = obsWindow();
+		if (Math.abs(obswin.min) > Math.abs(prior)) {
+			extra.push(Math.abs(obswin.min) + ' days before');
+		}
+		if (obswin.max > post) {
+			extra.push(obswin.max + ' days after');
+		}
+		if (extra.length) {
+			text += `Beyond the required observation period, additional criteria or 
+									inclusion rules also reference events ${extra.join(' and ')} 
+									index date.`;
+		}
+		d3element.html(text);
 	}
-	function drawObservationPeriod(element, obswin) {
-		var svg = d3.select(element).selectAll('div.cartoon-observation-period')
-											.data([null]) // only create once
-											.enter()
-											.append('div')
-												.attr('class', 'cartoon-observation-period')
-											.append("svg");
+	function obsperiodBody(d3element) {
+		var obswin = obsWindow();
+		var prior = Math.abs(expression.PrimaryCriteria().ObservationWindow.PriorDays());
+		var post = expression.PrimaryCriteria().ObservationWindow.PostDays();
+		if (!(prior || post)) {
+			return;
+		}
+		var svg = d3element.selectAll('svg')
+												.data([null]) // only create once
+												.enter()
+												.append("svg");
 
 		svg.append('path').attr('class','curly-brace')
 											.classed('first', true);
 		svg.append('path').attr('class','curly-brace')
 											.classed('second', true);
 
-		svg.append('text')
-			.attr('class','op-text-first')
-			.attr('x',obScale(0))
-			.attr('text-anchor','middle')
-			.attr('y', lineHeight * 3);
-		svg.append('text')
-			.attr('class','op-text-second')
-			.attr('x',obScale(0))
-			.attr('text-anchor','middle')
-			.attr('y', lineHeight * 4);
-
-		var opDiv = d3.select(element).selectAll('div.cartoon-observation-period');
-
-		var prior = Math.abs(expression.PrimaryCriteria().ObservationWindow.PriorDays());
-		var post = expression.PrimaryCriteria().ObservationWindow.PostDays();
-
-		if (!(prior || post)) {
-			opDiv.html("No required observation period");
-			return;
-		}
-
-		svg = opDiv.select("svg");
+		svg = d3element.select("svg");
 		svg.attr('width', divWidth())
-				.attr('height', lineHeight * 3.5)
+				.attr('height', lineHeight * 3)
 
 		svg.select('path.curly-brace.first').attr('d', makeCurlyBrace(
 																obScale(-prior),
-																.5,
+																.5 * lineHeight,
 																obScale(post),
-																.5,
+																.5 * lineHeight,
 																lineHeight * 2,
 																0.6,
 																obScale(0) /*+ lineHeight/2*/)); 
-		svg.select('text.op-text-first')
-			.text(`Required observation period from at least ${prior} days
-						 before and ${post} days after index date.`);
-
 		var extra = [];
 		if (Math.abs(obswin.min) > Math.abs(prior)) {
 			extra.push(Math.abs(obswin.min) + ' days before');
@@ -933,189 +1044,17 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			extra.push(obswin.max + ' days after');
 		}
 		if (extra.length) {
-			svg.attr('height', lineHeight * 4.5);
-			svg.select('text.op-text-second')
-				.text(`Beyond the required observation period, additional criteria or 
-									inclusion rules also reference events ${extra.join(' and ')} 
-									index date.`);
+			//svg.attr('height', lineHeight * 4.5);
 			svg.select('path.curly-brace.second')
 				.attr('d', makeCurlyBrace(
 																	obScale(obswin.min),
-																	.5,
+																	.5 * lineHeight,
 																	obScale(obswin.max),
-																	.5,
+																	.5 * lineHeight,
 																	lineHeight * 2,
 																	0.6,
 																	obScale(0) /*+ lineHeight/2*/)) 
 				.attr('stroke-dasharray', '3,3')
 		}
-	}
-	function drawAdditionalCriteria(element, obswin) {
-		var addDiv = d3.select(element).selectAll('div.cartoon-additional-criteria')
-											.data([null]) // only create ac div once
-											.enter()
-											.append('div')
-												.attr('class', 'cartoon-additional-criteria');
-
-		addDiv.append('div') // only create ac header div once
-							.attr('class', 'header');
-
-		addDiv = d3.select(element).selectAll('div.cartoon-additional-criteria');
-		addDiv.selectAll('div.header').html('<h3>Additional Criteria</h3>'); 
-		
-		return;
-
-		var limitType = expression.AdditionalCriteria().AdditionalCriteriaLimit.Type();
-		var limitMsg = '<h3>Additional Criteria</h3>'; 
-		var acCritMatch;
-		var acPlural = limitType === 'All' ? 's' : '';
-		switch (limitType) {
-			case 'All':
-				acCritMatch = acList.length === 1 ?
-														'the following additional criterion' :
-														`one of the following ${acList.length} additional criteria`;
-				limitMsg += `Results will be generated for every person event matching 
-											${acCritMatch}.`;
-				break;
-			case 'First':
-			case 'Last':
-				acCritMatch = acList.length === 1 ?
-														'the following additional criterion' :
-														`any of the following ${acList.length} additional criteria`;
-				limitMsg += `Results will be generated for the ${limitType.toLowerCase()}
-											single event matching ${acCritMatch}.`;
-		}
-		addDiv.selectAll('div.header').html(limitMsg + 
-			` Result index date${acPlural} will be the start date${acPlural} of the matching event${acPlural}.`);
-
-		//(selection, data, linesdown, scale, selectedFragment, primaryWindow) 
-		return;
-		var morelines = 0;
-		var g = selection
-						.append('g')
-							.attr('class','additional')
-							.attr('transform', `translate(0,${linesdown*lineHeight})`)
-		g.selectAll('g.additional')
-						.data(data ? data.CriteriaList() : [])
-							.enter()
-						.append('g')
-							.attr('class','additional')
-		g.selectAll('g.additional')
-			.append('rect')
-				.attr('width', width * 0.9)
-				.attr('height', lineHeight)
-				.attr('y', function(d,i) { return lineHeight * (i - 0.5); })
-				//.style('fill-opacity', 0.2)
-				//.style('stroke','white')
-				//.style('stroke-width', 2)
-				.classed('highlighted', function(d) {
-					return d === selectedFragment();
-				})
-				.on('mouseover', function(d) {
-					selectedFragment(d);
-				})
-				.on('mouseout', function(d) {
-					// DOESN'T FIRE, don't know why
-					selectedFragment(null);
-				})
-		g.selectAll('g.additional')
-						.append('line')
-							.style('marker-start', function(cg) {
-								var days = cg.StartWindow.Start.Days();
-								if (days === null) {
-									return 'url(#left-arrow)';
-								}
-								return 'url(#line-stop)';
-							})
-							.style('marker-end', function(cg) {
-								var days = cg.StartWindow.End.Days();
-								if (days === null) {
-									return 'url(#right-arrow)';
-								}
-								return 'url(#line-stop)';
-							})
-							.attr('x1', function(cg) {
-								var days = cg.StartWindow.Start.Days();
-								var coeff = cg.StartWindow.Start.Coeff();
-								if (days === null) {
-									if (coeff < 0)
-										return scale(primaryWindow.min);
-									else
-										return scale(primaryWindow.max);
-								}
-								return scale(days * coeff);
-							})
-							.attr('x2', function(cg) {
-								var days = cg.StartWindow.End.Days();
-								var coeff = cg.StartWindow.End.Coeff();
-								if (days === null) {
-									if (coeff < 0)
-										return scale(primaryWindow.min);
-									else
-										return scale(primaryWindow.max);
-								}
-								return scale(days * coeff);
-							})
-							.attr('y1', function(d,i) { return i*lineHeight;})
-							.attr('y2', function(d,i) { return i*lineHeight;})
-							.attr('stroke-width', 4)
-							/*
-							.classed('highlighted', function(d) {
-								return d === selectedFragment();
-							})
-							.on('mouseover', function(d) {
-								selectedFragment(d);
-							})
-							*/
-		/*
-		g.selectAll('g.additional')
-			.append('text')
-				//.attr('x', -20)
-				.attr('y', function(d,i) { return lineHeight * (0.26+i); })
-				.attr('x', 5)
-				.text(function(d) { 
-					return d.key;
-				})
-		*/
-		var groups = data ? data.Groups() : [];
-		for (var i = 0; i < groups.length; i++) {
-			drawCartoon(g, groups[i], data.CriteriaList().length + 2*i, scale, selectedFragment, primaryWindow);
-		}
-		var acList = _.chain(expression.PrimaryCriteria().CriteriaList())
-														.map(_.pairs)
-														.flatten()
-														.map(d=>{
-																var [domain, ac] = d;
-																var clone = _.clone(ac);
-																clone.domain = domain;
-																return clone;
-															})
-														.value();
-
-
-
-
-
-
-
-
-
-		var acdivs = primDiv.selectAll('div.ac')
-									.data(acList);
-		acdivs.exit().remove();
-		acdivs.enter()
-					.append('div')
-						.attr('class','ac')
-					.append('svg')
-		acdivs = primDiv.selectAll('div.ac');
-		primDiv.selectAll('div.ac>svg').each(function(ac) {
-			var svg = d3.select(this);
-			svg
-				//.attr("preserveAspectRatio", "xMinYMin meet")
-				.attr('width', divWidth())
-				.attr('height', cartoonHeight(durationType(ac)))
-				//.attr("viewBox", `0 0 ${acWidth()} ${cartoonHeight}`)
-			svg.call(criteriaCartoon);
-		});
 	}
 });

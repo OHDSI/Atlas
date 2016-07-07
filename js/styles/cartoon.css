@@ -20,13 +20,20 @@ div.pc-cartoon {
 }
 */
 
-div.cartoon-primary-criteria > div.header {
+div.cartoon-primary-section > div.header,
+div.cartoon-obsperiod-section > div.header,
+div.cartoon-additional-section > div.header,
+div.cartoon-critgroup> div.header,
+div.cartoon-inclusion-section > div.header 
+{
 	font-size: 16px;
-	font-weight: bold;
+	background-color: #EEC;
 }
 
-div.cartoon-primary-criteria > div.crit,
-div.cartoon-observation-period
+div.cartoon-obsperiod-section > div.body,
+div.cartoon-primary-section > div.body > div.crit,
+div.cartoon-additional-section div.body > div.crit,
+div.cartoon-inclusion-section div.body > div.crit
 {
 	background-color: #EEE;
 	margin: 2px;
@@ -38,7 +45,7 @@ div.cartoon-primary-criteria > div.crit svg {
 	float:right;
 }
 */
-div.cartoon-primary-criteria > div.crit line {
+div.crit line {
 	stroke-width: 1px;
 	stroke: steelblue;
 }
