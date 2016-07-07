@@ -1,5 +1,187 @@
 "use strict";
 define(['knockout','d3', 'lodash'], function (ko, d3, _) {
+
+	var divWidth = ko.observable(); // triggers update
+	var cohdef; // ko.toJS(expression)
+	var calScale, obsScale;
+
+	function firstTimeSetup(element, expression) {
+		expressionChangeSetup(element, expression);
+		setupArrowHeads(element);
+	}
+	function expressionChangeSetup(element, expression) {
+		dataSetup(expression);
+		//window.expression = expression = valueAccessor().expression();
+		var obswin = obsWindow();
+		console.log(obswin);
+		sectionCalc(obswin);
+		conceptSets = expression.ConceptSets;
+	}
+	function dataSetup(expression) {
+		cohdef = ko.toJS(expression);
+	}
+	function allCriteria(expression) {
+		var pcList = critArray(PrimaryCriteria, 'primary');
+	}
+	function dateRange(expression) {
+	}
+
+	ko.bindingHandlers.cohortExpressionCartoon = {
+		init: function (element, valueAccessor, allBindingsAccessor) {
+			expression = valueAccessor().expression();
+			// update when dom element is displayed and has width
+			$(element).parents('.tab-pane').bind("DOMSubtreeModified", function() {
+				divWidth(element.offsetWidth);
+				pcScale.range([0, element.offsetWidth]);
+				obScale.range([0, element.offsetWidth]);
+			});
+			firstTimeSetup(element, expression);
+		},
+		update: function (element, valueAccessor, allBindingsAccessor) {
+			if (!divWidth()) {
+				return;
+			}
+			expressionChangeSetup(element, expression);
+
+			if (valueAccessor().tabPath() !== "export/printfriendly") {
+				return;
+			}
+			if (!valueAccessor().delayedCartoonUpdate()) {
+				setTimeout(function() {
+					//console.log('wait for dom');
+					// force update after dom is displayed
+					valueAccessor().delayedCartoonUpdate("wait for dom");
+				}, 20);
+				return;
+			}
+			if (valueAccessor().delayedCartoonUpdate() === 'wait for dom') {
+				valueAccessor().delayedCartoonUpdate(null);
+				//console.log('resetting delay');
+			}
+			console.log(cohdef);
+
+
+			//var selectedFragment = valueAccessor().selectedFragment; // not using
+
+			var d3element = d3.select(element);
+			drawCritCat(d3element, 'primary-section', expression.PrimaryCriteria());
+			drawCritCat(d3element, 'obsperiod-section');
+			drawCritCat(d3element, 'additional-section', expression.AdditionalCriteria(), 0);
+			drawCritCat(d3element, 'inclusion-section', expression.InclusionRules(), 0);
+
+			return;
+			drawPrimaryCriteria(element);
+			drawObservationPeriod(element, obswin);
+			drawAdditionalCriteria(element, obswin);
+			/*
+			var maxDur = _.chain(pcList)
+										.map(getMaxDuration)
+										.max()
+										.value();
+			//console.log(maxDur);
+			*/
+
+			return;
+
+			/*
+			var scale = d3.scale.linear()
+										.domain([domain.min, domain.max])
+										.range([0.10 * width, 0.85 * width]);
+
+
+			var primCritLabels = _.chain(pcList)
+														.map(_.pairs)
+														.flatten()
+														.map(d=>`${d[0]}: ${d[1].CodesetId && d[1].CodesetId() ? 
+																	expression.ConceptSets()[d[1].CodesetId()].name() : 'any'}`)
+														.value();
+			d3.select(element).selectAll('div.primary-criteria')
+				.data(primCritLabels)
+				.enter()
+				.append('div')
+					.classed('primary-criteria','true')
+					.text(d=>d);
+
+			var svg = d3.select(element).select('svg');
+			//svg.select('g.primary').remove();
+			svg.selectAll('g').remove();
+			var g =svg.append('g')
+								.attr('class','primary')
+								.attr('transform', `translate(0,${lineHeight})`)
+
+			g.append('rect')
+					.attr('width', width * 0.9)
+					.attr('height', line(2))
+					.attr('y', -8)
+					//.attr('y', function(d,i) { return lineHeight * (i - 0.5); })
+					//.style('fill-opacity', 0.2)
+					//.style('stroke','white')
+					//.style('stroke-width', 2)
+					.classed('highlighted', function(d) {
+						return expression.PrimaryCriteria() === selectedFragment();
+					})
+					.on('mouseover', function(d) {
+						selectedFragment(expression.PrimaryCriteria());
+					})
+					.on('mouseout', function(d) {
+						// DOESN'T FIRE, don't know why
+						selectedFragment(null);
+					})
+			g.append('text')
+					.attr('y', 5)
+					.attr('x', 5)
+					.text('Primary Criteria')
+			g.append('line')
+					.attr('x1', scale(-expression.PrimaryCriteria()
+												.ObservationWindow.PriorDays())) 
+					.attr('x2', scale(expression.PrimaryCriteria()
+												.ObservationWindow.PostDays()))
+					.attr('y1', 18)
+					.attr('y2', 18)
+					.attr('stroke-width', 4)
+					//.attr('fill', 'pink')
+					//.attr('stroke', 'blue')
+					.style('marker-start', 'url(#left-arrow)')
+					.style('marker-end', 'url(#right-arrow)')
+			g.append('circle')
+					.attr('r', 4)
+					.attr('cx', scale(0))
+					.attr('cy', 18)
+					.style('fill','brown')
+					.style('stroke','black')
+
+			drawCartoon(g, criteriaGroup, 2, scale, selectedFragment, primaryWindow)
+			*/
+		}
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	window.d3 = d3;
 	var width = 400;
 	var height = 450;
@@ -255,8 +437,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 	}
 	function conceptName(crit) {
-		return crit.CodesetId && crit.CodesetId() > -1 ? 
-						conceptSets[crit.CodesetId()].name() : '';
+		return crit.CodesetId > -1 ? 
+						conceptSets[crit.CodesetId].name : '';
 	}
 	function critLabel(crit) {
 		var dom = niceDomain(crit.domain);
@@ -266,148 +448,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		return `any ${dom}`;
 	}
 
-	var divWidth = ko.observable();
-
-	ko.bindingHandlers.cohortExpressionCartoon = {
-		init: function (element, valueAccessor, allBindingsAccessor) {
-			expression = valueAccessor().expression();
-			//var selectedFragment = valueAccessor().selectedFragment; // no longer using
-
-			// update when do element is displayed and has width
-			$(element).parents('.tab-pane').bind("DOMSubtreeModified", function() {
-				divWidth(element.offsetWidth);
-				pcScale.range([0, element.offsetWidth]);
-				obScale.range([0, element.offsetWidth]);
-			});
-
-			setupArrowHeads(element);
-
-		},
-		update: function (element, valueAccessor, allBindingsAccessor) {
-			if (!divWidth()) {
-				return;
-			}
-			//console.log(valueAccessor().tabPath());
-			ko.toJSON(valueAccessor().expression); // force update on expression change
-
-			if (valueAccessor().tabPath() !== "export/printfriendly") {
-				return;
-			}
-			if (!valueAccessor().delayedCartoonUpdate()) {
-				setTimeout(function() {
-					//console.log('wait for dom');
-					// force update after dom is displayed
-					valueAccessor().delayedCartoonUpdate("wait for dom");
-				}, 20);
-				return;
-			}
-			if (valueAccessor().delayedCartoonUpdate() === 'wait for dom') {
-				valueAccessor().delayedCartoonUpdate(null);
-				//console.log('resetting delay');
-			}
-			//console.log('rendering cartoon');
-			//console.log("offset width", element.offsetWidth);
-
-			window.expression = expression = valueAccessor().expression();
-			var obswin = obsWindow();
-			console.log(obswin);
-			sectionCalc(obswin);
-			conceptSets = expression.ConceptSets();
-
-
-			//var selectedFragment = valueAccessor().selectedFragment; // not using
-
-			var d3element = d3.select(element);
-			drawCritCat(d3element, 'primary-section', expression.PrimaryCriteria());
-			drawCritCat(d3element, 'obsperiod-section');
-			drawCritCat(d3element, 'additional-section', expression.AdditionalCriteria(), 0);
-			drawCritCat(d3element, 'inclusion-section', expression.InclusionRules(), 0);
-
-			return;
-			drawPrimaryCriteria(element);
-			drawObservationPeriod(element, obswin);
-			drawAdditionalCriteria(element, obswin);
-			/*
-			var maxDur = _.chain(pcList)
-										.map(getMaxDuration)
-										.max()
-										.value();
-			//console.log(maxDur);
-			*/
-
-			return;
-
-			/*
-			var scale = d3.scale.linear()
-										.domain([domain.min, domain.max])
-										.range([0.10 * width, 0.85 * width]);
-
-
-			var primCritLabels = _.chain(pcList)
-														.map(_.pairs)
-														.flatten()
-														.map(d=>`${d[0]}: ${d[1].CodesetId && d[1].CodesetId() ? 
-																	expression.ConceptSets()[d[1].CodesetId()].name() : 'any'}`)
-														.value();
-			d3.select(element).selectAll('div.primary-criteria')
-				.data(primCritLabels)
-				.enter()
-				.append('div')
-					.classed('primary-criteria','true')
-					.text(d=>d);
-
-			var svg = d3.select(element).select('svg');
-			//svg.select('g.primary').remove();
-			svg.selectAll('g').remove();
-			var g =svg.append('g')
-								.attr('class','primary')
-								.attr('transform', `translate(0,${lineHeight})`)
-
-			g.append('rect')
-					.attr('width', width * 0.9)
-					.attr('height', line(2))
-					.attr('y', -8)
-					//.attr('y', function(d,i) { return lineHeight * (i - 0.5); })
-					//.style('fill-opacity', 0.2)
-					//.style('stroke','white')
-					//.style('stroke-width', 2)
-					.classed('highlighted', function(d) {
-						return expression.PrimaryCriteria() === selectedFragment();
-					})
-					.on('mouseover', function(d) {
-						selectedFragment(expression.PrimaryCriteria());
-					})
-					.on('mouseout', function(d) {
-						// DOESN'T FIRE, don't know why
-						selectedFragment(null);
-					})
-			g.append('text')
-					.attr('y', 5)
-					.attr('x', 5)
-					.text('Primary Criteria')
-			g.append('line')
-					.attr('x1', scale(-expression.PrimaryCriteria()
-												.ObservationWindow.PriorDays())) 
-					.attr('x2', scale(expression.PrimaryCriteria()
-												.ObservationWindow.PostDays()))
-					.attr('y1', 18)
-					.attr('y2', 18)
-					.attr('stroke-width', 4)
-					//.attr('fill', 'pink')
-					//.attr('stroke', 'blue')
-					.style('marker-start', 'url(#left-arrow)')
-					.style('marker-end', 'url(#right-arrow)')
-			g.append('circle')
-					.attr('r', 4)
-					.attr('cx', scale(0))
-					.attr('cy', 18)
-					.style('fill','brown')
-					.style('stroke','black')
-
-			drawCartoon(g, criteriaGroup, 2, scale, selectedFragment, primaryWindow)
-			*/
-		}
-	};
 	function drawCartoonNOTBEINGUSED(selection, data, linesdown, scale, selectedFragment, primaryWindow) {
 			var morelines = 0;
 			var g = selection
