@@ -2,50 +2,58 @@
 define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 	var divWidth = ko.observable(); // triggers update
-	var cohdef; // ko.toJS(expression)
+	//var cohdef; // ko.toJS(expression)
 	var calScale, obsScale;
 
-	function firstTimeSetup(element, expression) {
-		expressionChangeSetup(element, expression);
+	function firstTimeSetup(element) {
+		//expressionChangeSetup(element, cohdef);
 		setupArrowHeads(element);
 	}
-	function expressionChangeSetup(element, expression) {
-		dataSetup(expression);
-		//window.expression = expression = valueAccessor().expression();
-		var obswin = obsWindow();
+	function expressionChangeSetup(element, cohdef) {
+		var obswin = obsWindow(cohdef);
 		console.log(obswin);
 		sectionCalc(obswin);
-		conceptSets = expression.ConceptSets;
+		//conceptSets = expression.ConceptSets;
+		var d3element = d3.select(element);
+		drawCritCat(d3element, cohdef, 'primary-section', cohdef.PrimaryCriteria);
+		drawCritCat(d3element, cohdef, 'obsperiod-section');
+		drawCritCat(d3element, cohdef, 'additional-section', cohdef.AdditionalCriteria, 0);
+		drawCritCat(d3element, cohdef, 'inclusion-section', cohdef.InclusionRules, 0);
 	}
 	function dataSetup(expression) {
-		cohdef = ko.toJS(expression);
+		return ko.toJS(expression);
 	}
-	function allCriteria(expression) {
+	function allCriteria(cohdef) {
 		var pcList = critArray(PrimaryCriteria, 'primary');
 	}
-	function dateRange(expression) {
+	function dateRange(cohdef) {
 	}
 
 	ko.bindingHandlers.cohortExpressionCartoon = {
 		init: function (element, valueAccessor, allBindingsAccessor) {
-			expression = valueAccessor().expression();
 			// update when dom element is displayed and has width
 			$(element).parents('.tab-pane').bind("DOMSubtreeModified", function() {
 				divWidth(element.offsetWidth);
 				pcScale.range([0, element.offsetWidth]);
 				obScale.range([0, element.offsetWidth]);
 			});
-			firstTimeSetup(element, expression);
+			firstTimeSetup(element);
 		},
 		update: function (element, valueAccessor, allBindingsAccessor) {
+			//console.log('in update');
 			if (!divWidth()) {
 				return;
 			}
-			expressionChangeSetup(element, expression);
+			//console.log('staying in update');
+			var expression = valueAccessor().expression();
+			//console.log(expression);
+			var cohdef = dataSetup(expression);
+			//console.log(cohdef);
 
 			if (valueAccessor().tabPath() !== "export/printfriendly") {
 				return;
 			}
+			//console.log('on the right tab');
 			if (!valueAccessor().delayedCartoonUpdate()) {
 				setTimeout(function() {
 					//console.log('wait for dom');
@@ -58,100 +66,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				valueAccessor().delayedCartoonUpdate(null);
 				//console.log('resetting delay');
 			}
-			console.log(cohdef);
-
-
-			//var selectedFragment = valueAccessor().selectedFragment; // not using
-
-			var d3element = d3.select(element);
-			drawCritCat(d3element, 'primary-section', expression.PrimaryCriteria());
-			drawCritCat(d3element, 'obsperiod-section');
-			drawCritCat(d3element, 'additional-section', expression.AdditionalCriteria(), 0);
-			drawCritCat(d3element, 'inclusion-section', expression.InclusionRules(), 0);
-
+			//console.log('doing stuff in update');
+			expressionChangeSetup(element, cohdef);
 			return;
-			drawPrimaryCriteria(element);
-			drawObservationPeriod(element, obswin);
-			drawAdditionalCriteria(element, obswin);
-			/*
-			var maxDur = _.chain(pcList)
-										.map(getMaxDuration)
-										.max()
-										.value();
-			//console.log(maxDur);
-			*/
-
-			return;
-
-			/*
-			var scale = d3.scale.linear()
-										.domain([domain.min, domain.max])
-										.range([0.10 * width, 0.85 * width]);
-
-
-			var primCritLabels = _.chain(pcList)
-														.map(_.pairs)
-														.flatten()
-														.map(d=>`${d[0]}: ${d[1].CodesetId && d[1].CodesetId() ? 
-																	expression.ConceptSets()[d[1].CodesetId()].name() : 'any'}`)
-														.value();
-			d3.select(element).selectAll('div.primary-criteria')
-				.data(primCritLabels)
-				.enter()
-				.append('div')
-					.classed('primary-criteria','true')
-					.text(d=>d);
-
-			var svg = d3.select(element).select('svg');
-			//svg.select('g.primary').remove();
-			svg.selectAll('g').remove();
-			var g =svg.append('g')
-								.attr('class','primary')
-								.attr('transform', `translate(0,${lineHeight})`)
-
-			g.append('rect')
-					.attr('width', width * 0.9)
-					.attr('height', line(2))
-					.attr('y', -8)
-					//.attr('y', function(d,i) { return lineHeight * (i - 0.5); })
-					//.style('fill-opacity', 0.2)
-					//.style('stroke','white')
-					//.style('stroke-width', 2)
-					.classed('highlighted', function(d) {
-						return expression.PrimaryCriteria() === selectedFragment();
-					})
-					.on('mouseover', function(d) {
-						selectedFragment(expression.PrimaryCriteria());
-					})
-					.on('mouseout', function(d) {
-						// DOESN'T FIRE, don't know why
-						selectedFragment(null);
-					})
-			g.append('text')
-					.attr('y', 5)
-					.attr('x', 5)
-					.text('Primary Criteria')
-			g.append('line')
-					.attr('x1', scale(-expression.PrimaryCriteria()
-												.ObservationWindow.PriorDays())) 
-					.attr('x2', scale(expression.PrimaryCriteria()
-												.ObservationWindow.PostDays()))
-					.attr('y1', 18)
-					.attr('y2', 18)
-					.attr('stroke-width', 4)
-					//.attr('fill', 'pink')
-					//.attr('stroke', 'blue')
-					.style('marker-start', 'url(#left-arrow)')
-					.style('marker-end', 'url(#right-arrow)')
-			g.append('circle')
-					.attr('r', 4)
-					.attr('cx', scale(0))
-					.attr('cy', 18)
-					.style('fill','brown')
-					.style('stroke','black')
-
-			drawCartoon(g, criteriaGroup, 2, scale, selectedFragment, primaryWindow)
-			*/
 		}
 	};
 
@@ -186,8 +103,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	var width = 400;
 	var height = 450;
 
-	var expression = {};
-	var conceptSets = [];
+	//var expression = {};
+	//var conceptSets = [];
 	var _sections = [
 		{name: 'prestart',  width: 15, adjust: -15 }, // 0 point at start
 		{name: 'start',     width:	10 }, // indeterminate time between prim crit date and index date
@@ -273,18 +190,18 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 	}
 
-	function obsWindow() {
-		var criteriaGroup = expression.AdditionalCriteria();
+	function obsWindow(cohdef) {
+		var criteriaGroup = cohdef.AdditionalCriteria;
 		var domain = {
-			min: -expression.PrimaryCriteria().ObservationWindow.PriorDays(), 
-			max: expression.PrimaryCriteria().ObservationWindow.PostDays()
+			min: -cohdef.PrimaryCriteria.ObservationWindow.PriorDays, 
+			max: cohdef.PrimaryCriteria.ObservationWindow.PostDays
 		};
 		var primaryWindow = { min: domain.min, max: domain.max };
 		var getEndPoints = function(cg) {
-			var s = cg.StartWindow.Start.Days() *
-							cg.StartWindow.Start.Coeff();
-			var e = cg.StartWindow.End.Days() *
-							cg.StartWindow.End.Coeff();
+			var s = cg.StartWindow.Start.Days *
+							cg.StartWindow.Start.Coeff;
+			var e = cg.StartWindow.End.Days *
+							cg.StartWindow.End.Coeff;
 			domain.min = Math.min(domain.min, s);
 			domain.max = Math.max(domain.max, e);
 		};
@@ -292,7 +209,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		return domain;
 	}
 	function criteriaGroupWalk(criteriaGroup, cb, parentKey) {
-		var list = criteriaGroup ? criteriaGroup.CriteriaList() : [];
+		var list = criteriaGroup ? criteriaGroup.CriteriaList : [];
 		for (var i = 0; i < list.length; i++) {
 			/* key stuff
 			 * broken now because adding fields to json causes error in generating sql
@@ -306,7 +223,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			*/
 			cb(list[i]);
 		}
-		var groups = criteriaGroup ? criteriaGroup.Groups() : [];
+		var groups = criteriaGroup ? criteriaGroup.Groups : [];
 		for (var i = 0; i < groups.length; i++) {
 			/*
 			var key = [list.length + i + 1];
@@ -323,23 +240,23 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			return;
 		switch (feature) {
 			case "max":
-				if (range.Op() === "!bt")
+				if (range.Op === "!bt")
 					return; // no upper limit
 			case "upper":
 				//console.log(range.Extent(), range.Op(), range.Value());
-				return range.Extent() || range.Value(); // Extent is high end for "bt"
+				return range.Extent || range.Value; // Extent is high end for "bt"
 			case "min":
-				if (range.Op() === "!bt")
+				if (range.Op === "!bt")
 					return; // no lower limit
 			case "lower":
 			case "val":
-				return range.Value();
+				return range.Value;
 			case "single-double":
-				if (range.Op().match(/bt/))
+				if (range.Op.match(/bt/))
 					return 'double';
 				return 'single';
 			case "nice-op":
-				switch (range.Op()) {
+				switch (range.Op) {
 					case "lt":
 						return "<";
 					case "lte":
@@ -374,15 +291,15 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		switch (feature) {
 			case "dur":
 				if ("EraLength" in crit) {
-					return crit.EraLength();
+					return crit.EraLength;
 				}
 				switch (crit.domain) {
 					case "DrugExposure":
-						return crit.DaysSupply();
+						return crit.DaysSupply;
 					case "ObservationPeriod":
-						return crit.PeriodLength();
+						return crit.PeriodLength;
 					case "VisitOccurrence":
-						return crit.VisitLength();
+						return crit.VisitLength;
 				}
 				return;
 			case "start":
@@ -393,11 +310,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				break;
 		}
 		if (crit.EraLength)
-			return crit['Era' + whichEnd]();
+			return crit['Era' + whichEnd];
 		if (crit.domain === 'ObservationPeriod')
-			return crit['Period' + whichEnd]();
+			return crit['Period' + whichEnd];
 		if (crit['Occurrence' + whichEnd])
-			return crit['Occurrence' + whichEnd]();
+			return crit['Occurrence' + whichEnd];
 	}
 	function getMaxDuration(crit) {
 		var range = getRange(crit, 'dur');
@@ -436,13 +353,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				return domain;
 		}
 	}
-	function conceptName(crit) {
+	function conceptName(crit, cohdef) {
 		return crit.CodesetId > -1 ? 
-						conceptSets[crit.CodesetId].name : '';
+						cohdef.ConceptSets[crit.CodesetId].name : '';
 	}
-	function critLabel(crit) {
+	function critLabel(crit, cohdef) {
 		var dom = niceDomain(crit.domain);
-		var name = conceptName(crit);
+		var name = conceptName(crit, cohdef);
 		if (name)
 			return `${dom}: ${name}`;
 		return `any ${dom}`;
@@ -455,7 +372,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								.attr('class','additional')
 								.attr('transform', `translate(0,${linesdown*lineHeight})`)
 			g.selectAll('g.additional')
-							.data(data ? data.CriteriaList() : [])
+							.data(data ? data.CriteriaList : [])
 								.enter()
 							.append('g')
 								.attr('class','additional')
@@ -480,22 +397,22 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			g.selectAll('g.additional')
 							.append('line')
 								.style('marker-start', function(cg) {
-									var days = cg.StartWindow.Start.Days();
+									var days = cg.StartWindow.Start.Days;
 									if (days === null) {
 										return 'url(#left-arrow)';
 									}
 									return 'url(#line-stop)';
 								})
 								.style('marker-end', function(cg) {
-									var days = cg.StartWindow.End.Days();
+									var days = cg.StartWindow.End.Days;
 									if (days === null) {
 										return 'url(#right-arrow)';
 									}
 									return 'url(#line-stop)';
 								})
 								.attr('x1', function(cg) {
-									var days = cg.StartWindow.Start.Days();
-									var coeff = cg.StartWindow.Start.Coeff();
+									var days = cg.StartWindow.Start.Days;
+									var coeff = cg.StartWindow.Start.Coeff;
 									if (days === null) {
 										if (coeff < 0)
 											return scale(primaryWindow.min);
@@ -505,8 +422,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 									return scale(days * coeff);
 								})
 								.attr('x2', function(cg) {
-									var days = cg.StartWindow.End.Days();
-									var coeff = cg.StartWindow.End.Coeff();
+									var days = cg.StartWindow.End.Days;
+									var coeff = cg.StartWindow.End.Coeff;
 									if (days === null) {
 										if (coeff < 0)
 											return scale(primaryWindow.min);
@@ -536,9 +453,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						return d.key;
 					})
 			*/
-			var groups = data ? data.Groups() : [];
+			var groups = data ? data.Groups : [];
 			for (var i = 0; i < groups.length; i++) {
-				drawCartoon(g, groups[i], data.CriteriaList().length + 2*i, scale, selectedFragment, primaryWindow);
+				drawCartoon(g, groups[i], data.CriteriaList.length + 2*i, scale, selectedFragment, primaryWindow);
 			}
 	}
 	//returns path string d for <path d="This string">
@@ -631,29 +548,27 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				.append('path')
 					.attr('d', 'M 0 0 L 1 0 L 1 10 L 0 10 z')
 	}
-	function addCritCartoon(d3element, scale) {
+	function addCritCartoon(d3element, cohdef, scale) {
 		// expects a selection of divs w/ svgs, modified AdditionalCriteria objs attached
 		d3element.selectAll('svg')
 							//.datum( addCrit => addCrit.Criteria ) // doesn't work second time through, leave data undefined
-							.call(criterionCartoon, scale);
+							.call(criterionCartoon, cohdef, scale);
 		d3element.append('div')
 			.html(addCrit => `${addCritOccurrenceText(addCrit)}<br/>
 												${addCritWindowText(addCrit)}`);
 	}
 	function addCritOccurrenceText(ac) {
-		ac = ko.toJS(ac);
 		var oc = ac.Occurrence;
 		return `with ${['exactly','at most','at least'][oc.Type]}
 							${oc.Count} using ${oc.IsDistinct ? 'distinct' : 'all'} occurrences`;
 	}
 	function addCritWindowText(ac) {
-		ac = ko.toJS(ac);
 		var sw = ac.StartWindow;
 		return `occurring between 
 							${sw.Start.Days} days ${sw.Start.Coeff===-1 ? 'before' : 'after'} and
 							${sw.End.Days} days ${sw.End.Coeff===-1 ? 'before' : 'after'} index`;
 	}
-	function criterionCartoon(selection, critScale) {
+	function criterionCartoon(selection, cohdef, critScale) {
 		// expects a selection of svgs with Criteria objs attached
 		selection.each(function(crit) {
 			if (crit.Criteria) { // or AdditionalCriteria objs
@@ -672,12 +587,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 							.attr("font-family","FontAwesome")
 							.attr('text-anchor', 'middle')
 							.text('\uf006') // star
-				if (['lt','lte','!bt'].indexOf(startRange.Op()) > -1) {
+				if (['lt','lte','!bt'].indexOf(startRange.Op) > -1) {
 					d3element.append('text')
 								.attr('y', ypos('startdate', hasDur))
 								.attr('x', critScale(sections.start.offset) + lineHeight/2)
 								.style('font-size', '15px')
-								.text(`${rangeInfo(startRange, 'nice-op')} ${startRange.Value()}`);
+								.text(`${rangeInfo(startRange, 'nice-op')} ${startRange.Value}`);
 					d3element.append('line')
 								.attr('y1', ypos('startarrow', hasDur))
 								.attr('y2', ypos('startarrow', hasDur))
@@ -686,13 +601,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								.attr('stroke-dasharray', '3,3')
 								.style('marker-start', 'url(#left-arrow)')
 				}
-				if (['gt','gte','!bt'].indexOf(startRange.Op()) > -1) {
+				if (['gt','gte','!bt'].indexOf(startRange.Op) > -1) {
 					d3element.append('text')
 								.attr('y', ypos('startdate', hasDur))
 								.attr('x', critScale(sections.start.offset) - lineHeight/2)
 								.attr('text-anchor', 'end')
 								.style('font-size', '15px')
-								.text(`${rangeInfo(startRange, 'nice-op')} ${startRange.Value()}`);
+								.text(`${rangeInfo(startRange, 'nice-op')} ${startRange.Value}`);
 					d3element.append('line')
 								.attr('y1', ypos('startarrow', hasDur))
 								.attr('y2', ypos('startarrow', hasDur))
@@ -710,12 +625,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 							.attr("font-family","FontAwesome")
 							.attr('text-anchor', 'middle')
 							.text('\uf256') // stop
-				if (['lt','lte','!bt'].indexOf(endRange.Op()) > -1) {
+				if (['lt','lte','!bt'].indexOf(endRange.Op) > -1) {
 					d3element.append('text')
 								.attr('y', ypos('enddate', hasDur))
 								.attr('x', critScale(sections.end.offset) + lineHeight/2)
 								.style('font-size', '15px')
-								.text(`${rangeInfo(endRange, 'nice-op')} ${endRange.Value()}`);
+								.text(`${rangeInfo(endRange, 'nice-op')} ${endRange.Value}`);
 					d3element.append('line')
 								.attr('y1', ypos('endarrow', hasDur))
 								.attr('y2', ypos('endarrow', hasDur))
@@ -724,13 +639,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								.attr('stroke-dasharray', '3,3')
 								.style('marker-start', 'url(#left-arrow)')
 				}
-				if (['gt','gte','!bt'].indexOf(endRange.Op()) > -1) {
+				if (['gt','gte','!bt'].indexOf(endRange.Op) > -1) {
 					d3element.append('text')
 								.attr('y', ypos('enddate', hasDur))
 								.attr('x', critScale(sections.end.offset) - lineHeight/2)
 								.attr('text-anchor', 'end')
 								.style('font-size', '15px')
-								.text(`${rangeInfo(endRange, 'nice-op')} ${endRange.Value()}`);
+								.text(`${rangeInfo(endRange, 'nice-op')} ${endRange.Value}`);
 					d3element.append('line')
 								.attr('y1', ypos('endarrow', hasDur))
 								.attr('y2', ypos('endarrow', hasDur))
@@ -753,13 +668,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						//.attr('text-anchor', 'middle')
 						.attr('x', critScale(sections.start.offset) + lineHeight/2)
 						.style('font-size', '15px')
-						.text(critLabel(crit))
+						.text(critLabel(crit, cohdef))
 			d3element.append('text')
 						.attr('x', divWidth() - 15)
 						.attr('y', ypos('label', hasDur))
 						.attr('text-anchor', 'end')
 						.attr('class', 'critlabel')
-						.text(critCartoonText(crit));
+						.text(critCartoonText(crit, cohdef));
 
 			if (durationType(crit)) {
 				var durRange = getRange(crit, 'dur');
@@ -780,12 +695,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						dur = `${rangeInfo(durRange, 'nice-op')} ${rangeInfo(durRange, 'lower')} and ${rangeInfo(durRange, 'upper')} days`;
 					}
 					*/
-					if (['lt','lte'].indexOf(durRange.Op()) > -1) {
+					if (['lt','lte'].indexOf(durRange.Op) > -1) {
 						d3element.append('text')
 									.attr('y', ypos('dur', hasDur))
 									.attr('x', critScale(sections.end.offset) + lineHeight/2)
 									.style('font-size', '15px')
-									.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value()} days`);
+									.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value} days`);
 						d3element.append('line')
 									.attr('y1', ypos('durarrow', hasDur))
 									.attr('y2', ypos('durarrow', hasDur))
@@ -794,13 +709,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 									.attr('stroke-dasharray', '3,3')
 									.style('marker-start', 'url(#left-arrow)')
 					}
-					if (['gt','gte'].indexOf(durRange.Op()) > -1) {
+					if (['gt','gte'].indexOf(durRange.Op) > -1) {
 						d3element.append('text')
 									.attr('y', ypos('dur', hasDur))
 									.attr('x', critScale(sections.end.offset) - lineHeight/2)
 									.attr('text-anchor', 'end')
 									.style('font-size', '15px')
-									.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value()} days`);
+									.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value} days`);
 						d3element.append('line')
 									.attr('y1', ypos('durarrow', hasDur))
 									.attr('y2', ypos('durarrow', hasDur))
@@ -809,12 +724,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 									.attr('stroke-dasharray', '3,3')
 									.style('marker-end', 'url(#right-arrow)')
 					}
-					if (durRange.Op() === 'eq') {
+					if (durRange.Op === 'eq') {
 						d3element.append('text')
 									.attr('y', ypos('dur', hasDur))
 									.attr('x', critScale(sections.end.offset) + lineHeight/2)
 									.style('font-size', '15px')
-									.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value()} days`);
+									.text(`duration ${rangeInfo(durRange, 'nice-op')} ${durRange.Value} days`);
 						d3element.append('line')
 									.attr('y1', ypos('durarrow', hasDur))
 									.attr('y2', ypos('durarrow', hasDur))
@@ -859,7 +774,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		return `start ${start}, end ${end}, ${dur}`;
 	}
-	function drawCritCat(d3element, cat, data, level) {
+	function drawCritCat(d3element, cohdef, cat, data, level) {
 		if (Array.isArray(data))
 			throw new Error("didn't expect array", data);
 		// type in primary, additional, inclusion
@@ -881,24 +796,24 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																});
 
 		//if (!level) {
-		funcs[cat].header(catDiv.select('div.header'), data);
+		funcs[cat].header(catDiv.select('div.header'), cohdef, data, level);
 		//}
-		funcs[cat].body(catDiv.select('div.body'), data, level);
+		funcs[cat].body(catDiv.select('div.body'), cohdef, data, level);
 	}
-	function addCritSectHeader(d3element, acsect, level) {
+	function addCritSectHeader(d3element, cohdef, acsect, level) {
 		var text = '<h3>Additional Criteria</h3>'; 
 		d3element.html(text);
 	}
-	function addCritSectBody(d3element, acsect, level) {
-		drawCritCat(d3element, 'critgroup', acsect, level);
+	function addCritSectBody(d3element, cohdef, acsect, level) {
+		drawCritCat(d3element, cohdef, 'critgroup', acsect, level);
 	}
-	function critGroupHeader(d3element, cg, level) {
+	function critGroupHeader(d3element, cohdef, cg, level) {
 		var text = '';
-		text += `Restrict to people matching ${cg.Type().toLowerCase()} of the
+		text += `Restrict to people matching ${cg.Type.toLowerCase()} of the
 							following criteria`;
 		d3element.html(text);
 	}
-	function critGroupBody(d3element, cg, level) {
+	function critGroupBody(d3element, cohdef, cg, level) {
 		var acList = critArray(cg, 'additional');
 		var divs = d3AddIfNeeded(d3element, acList, 'div', ['crit'], 
 									function(selection) { 
@@ -907,18 +822,18 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		divs.selectAll('svg')
 				.attr('width', divWidth())
 				.attr('height', ac => cartoonHeight(durationType(ac.Criteria)))
-		divs.call(addCritCartoon, pcScale);
-		cg.Groups().forEach( group => {
-			drawCritCat(d3element, 'critgroup', group, level + 1);
+		divs.call(addCritCartoon, cohdef, pcScale);
+		cg.Groups.forEach( group => {
+			drawCritCat(d3element, cohdef, 'critgroup', group, level + 1);
 		});
 	}
-	function inclusionCritHeader(d3element, PrimaryCriteria, level) {
+	function inclusionCritHeader(d3element, cohdef, PrimaryCriteria, level) {
 	}
-	function inclusionCritBody(d3element, PrimaryCriteria, level) {
+	function inclusionCritBody(d3element, cohdef, PrimaryCriteria, level) {
 	}
 	function critArray(data, cat) {
 		if (cat === 'primary') {
-			return _.chain(data.CriteriaList())
+			return _.chain(data.CriteriaList)
 							.map(_.pairs)
 							.flatten()
 							.map(d=>{
@@ -929,7 +844,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								})
 							.value();
 		}
-		return data.CriteriaList().map(addCrit=>{
+		return data.CriteriaList.map(addCrit=>{
 							var domain = _.keys(addCrit.Criteria)[0];
 							var clone = _.clone(addCrit);
 							var critClone = _.clone(addCrit.Criteria[domain]);
@@ -938,9 +853,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 							return clone;
 						})
 	}
-	function primaryCritHeader(d3element, PrimaryCriteria) {
+	function primaryCritHeader(d3element, cohdef, PrimaryCriteria) {
 		var pcList = critArray(PrimaryCriteria, 'primary');
-		var limitType = PrimaryCriteria.PrimaryCriteriaLimit.Type();
+		var limitType = PrimaryCriteria.PrimaryCriteriaLimit.Type;
 		var limitMsg = '<h3>Primary Criteria</h3>'; 
 		var pcCritMatch;
 		var pcPlural = limitType === 'All' ? 's' : '';
@@ -963,7 +878,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		d3element.html(limitMsg + 
 			` Result index date${pcPlural} will be the start date${pcPlural} of the matching event${pcPlural}.`);
 	}
-	function primaryCritBody(d3element, PrimaryCriteria) {
+	function primaryCritBody(d3element, cohdef, PrimaryCriteria) {
 		var pcList = critArray(PrimaryCriteria, 'primary');
 		var svgs = d3AddIfNeeded(d3element, pcList, 'div', ['crit'], 
 									function(selection) { 
@@ -971,7 +886,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 									}).selectAll('svg');
 		svgs.attr('width', divWidth())
 				.attr('height', pc => cartoonHeight(durationType(pc)))
-				.call(criterionCartoon, pcScale);
+				.call(criterionCartoon, cohdef, pcScale);
 	}
 	function d3AddIfNeeded(parentElement, data, tag, classes, firstTimeCb) {
 		var d3element;
@@ -1019,9 +934,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		});
 	}
 	*/
-	function obsperiodHeader(d3element) {
-		var prior = Math.abs(expression.PrimaryCriteria().ObservationWindow.PriorDays());
-		var post = expression.PrimaryCriteria().ObservationWindow.PostDays();
+	function obsperiodHeader(d3element, cohdef) {
+		var prior = Math.abs(cohdef.PrimaryCriteria.ObservationWindow.PriorDays);
+		var post = cohdef.PrimaryCriteria.ObservationWindow.PostDays;
 
 		var text = "<h3>Observation Period</h3>";
 
@@ -1033,7 +948,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								before to at least ${post} days after index date. `;
 
 		var extra = [];
-		var obswin = obsWindow();
+		var obswin = obsWindow(cohdef);
 		if (Math.abs(obswin.min) > Math.abs(prior)) {
 			extra.push(Math.abs(obswin.min) + ' days before');
 		}
@@ -1047,10 +962,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		d3element.html(text);
 	}
-	function obsperiodBody(d3element) {
-		var obswin = obsWindow();
-		var prior = Math.abs(expression.PrimaryCriteria().ObservationWindow.PriorDays());
-		var post = expression.PrimaryCriteria().ObservationWindow.PostDays();
+	function obsperiodBody(d3element, cohdef) {
+		var obswin = obsWindow(cohdef);
+		var prior = Math.abs(cohdef.PrimaryCriteria.ObservationWindow.PriorDays);
+		var post = cohdef.PrimaryCriteria.ObservationWindow.PostDays;
 		if (!(prior || post)) {
 			return;
 		}
