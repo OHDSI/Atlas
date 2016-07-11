@@ -178,7 +178,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 		}
 
 		self.copyInclusionRule = function (inclusionRule) {
-			var copiedRule = new InclusionRule(ko.toJS(inclusionRule));
+			var copiedRule = new InclusionRule(ko.toJS(inclusionRule), self.expression().ConceptSets);
 			copiedRule.name("Copy of: " + copiedRule.name());
 			self.expression().InclusionRules.push(copiedRule);
 			self.selectedInclusionRule(copiedRule);
