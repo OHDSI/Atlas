@@ -90,7 +90,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var beforeDaysWithDurs =
 					addCrits.map(d=>d.StartWindow.Start.Days * d.StartWindow.Start.Coeff +
 											 rangeInfo(getRange(d.Criteria,'dur'),'max')||0);
-		return d3.extent(_.flatten([primDurs, beforeDays, afterDays, beforeDaysWithDurs]));
+		var obsDays = [-cohdef.PrimaryCriteria.ObservationWindow.PriorDays, 
+										cohdef.PrimaryCriteria.ObservationWindow.PostDays];
+		return d3.extent(_.flatten([primDurs, beforeDays, afterDays, 
+															 beforeDaysWithDurs, obsDays]));
 	}
 
 	ko.bindingHandlers.cohortExpressionCartoon = {
@@ -688,22 +691,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 
 	function obsWindow(cohdef) {
-		var criteriaGroup = cohdef.AdditionalCriteria;
-		var domain = {
-			min: -cohdef.PrimaryCriteria.ObservationWindow.PriorDays, 
-			max: cohdef.PrimaryCriteria.ObservationWindow.PostDays
-		};
-		var primaryWindow = { min: domain.min, max: domain.max };
-		var getEndPoints = function(cg) {
-			var s = cg.StartWindow.Start.Days *
-							cg.StartWindow.Start.Coeff;
-			var e = cg.StartWindow.End.Days *
-							cg.StartWindow.End.Coeff;
-			domain.min = Math.min(domain.min, s);
-			domain.max = Math.max(domain.max, e);
-		};
-		criteriaGroupWalk(criteriaGroup, getEndPoints); // broken
-		return domain;
+		var ext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
+												allAdditionalCriteria(cohdef));
+		return { min: ext[0], max: ext[1] };
 	}
 	function criteriaGroupWalk(criteriaGroup, cb, parentKey) {
 		var list = criteriaGroup ? criteriaGroup.CriteriaList : [];
