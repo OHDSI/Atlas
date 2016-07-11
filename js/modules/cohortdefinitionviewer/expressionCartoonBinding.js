@@ -10,13 +10,31 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		setupArrowHeads(element);
 	}
 	function expressionChangeSetup(element, cohdef) {
-		cohdef.calScale.range([element.offsetWidth * .05, element.offsetWidth * .45]);
-		cohdef.obsScale.range([element.offsetWidth * .05, element.offsetWidth * .45]);
 		var d3element = d3.select(element);
 		drawSection(d3element, cohdef, 'primary-section', cohdef.PrimaryCriteria);
 		drawSection(d3element, cohdef, 'obsperiod-section');
 		drawSection(d3element, cohdef, 'additional-section', cohdef.AdditionalCriteria, 0);
 		drawSection(d3element, cohdef, 'inclusion-section', cohdef.InclusionRules, 0);
+	}
+	function resetScales(cohdef, width) {
+		var extraPx = 75; // room at ends of cartoons for arrows past domain dates
+		var extraRatio = extraPx / width; // add to ends of domains
+
+		var calext = dateExtent(allPlainCriteria(cohdef));
+		var calrange = calext[1] - calext[0];
+		var extraTime = calrange * extraRatio;
+		cohdef.calScale.range([0,width])
+					.domain([new Date(calext[0].valueOf() - extraTime),
+									 new Date(calext[1].valueOf() + extraTime)]);
+
+		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
+												allAdditionalCriteria(cohdef));
+		var extraDays = extraRatio * (obsext[1] - obsext[0]);
+		cohdef.obsScale.range([0,width])
+									 .domain([obsext[0] - extraDays, obsext[1] + extraDays])
+		cohdef.obsExt = obsext;
+		//console.log(cohdef.obsScale.domain());
+		//console.log(cohdef.calScale.domain());
 	}
 	function dataSetup(expression) {
 		window.expression = expression;
@@ -27,18 +45,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		addDomainNames(cohdef.PrimaryCriteria, 'primary');
 		allGroups(cohdef).forEach(group=>addDomainNames(group, 'additional'))
 
-		var allCriteria = allPlainCriteria(cohdef);
-		cohdef.calScale = d3.time.scale()
-												.domain(dateExtent(allCriteria));
+		cohdef.calScale = d3.time.scale();
 		cohdef.calAxis = d3.svg.axis().orient('bottom').scale(cohdef.calScale);
-		console.log(cohdef.calScale.domain());
 
-		var allAddCrits = allAdditionalCriteria(cohdef);
-		cohdef.obsScale = d3.scale.linear()
-												.domain(obsExtent(
-													cohdef.PrimaryCriteria.CriteriaList,allAddCrits));
+		cohdef.obsScale = d3.scale.linear();
 		cohdef.obsAxis = d3.svg.axis().orient('bottom').scale(cohdef.obsScale);
-		console.log(cohdef.obsScale.domain());
 		return cohdef;
 	}
 	function allAdditionalCriteria(cohdef) {
@@ -142,12 +153,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			throw new Error("didn't expect array", data);
 		// type in primary, additional, inclusion
 		var funcs = {
-			'primary-section':    { header: primaryCritHeader,    body: primaryCritBody },
-			'additional-section': { header: addCritSectHeader,    body: addCritSectBody },
-			//addcrit:            { header: additionalCritHeader, body: additionalCritBody },
-			'critgroup':          { header: critGroupHeader,      body: critGroupBody },
-			'inclusion-section':  { header: inclusionCritHeader,  body: inclusionCritBody },
-			'obsperiod-section':  { header: obsperiodHeader,      body: obsperiodBody },
+			'primary-section':		{ header: primaryCritHeader,		body: primaryCritBody },
+			'additional-section': { header: addCritSectHeader,		body: addCritSectBody },
+			'critgroup':					{ header: critGroupHeader,			body: critGroupBody },
+			'inclusion-section':	{ header: inclusionCritHeader,	body: inclusionCritBody },
+			'obsperiod-section':	{ header: obsperiodHeader,			body: obsperiodBody },
 		};
 		var catDiv = d3AddIfNeeded(d3element, [data], 'div', 
 															 [`cartoon-${cat}`], 
@@ -266,21 +276,20 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			`;
 		d3element.html(headerHtml);
 		var w = $(d3element.select('div.left').node()).width();
-		cohdef.calScale.range([0,w]);
-		cohdef.obsScale.range([0,w]);
+		resetScales(cohdef, w);
 		d3element.select('div.left svg.x.axis').call(cohdef.calAxis);
-		d3element.select('div.left svg.x.axis').selectAll(".x.axis text")  // select all the text elements for the xaxis
+		d3element.select('div.left svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
 						.attr("transform", function(d) {
 							return "translate(" + this.getBBox().height*-2 + "," + 
-												this.getBBox().height + ")rotate(-45)";
-															        });
+																		this.getBBox().height + ")rotate(-45)";
+						});
 
 		d3element.select('div.right svg.x.axis').call(cohdef.obsAxis);
-		d3element.select('div.right svg.x.axis').selectAll(".x.axis text")  // select all the text elements for the xaxis
+		d3element.select('div.right svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
 						.attr("transform", function(d) {
 							return "translate(" + this.getBBox().height*-2 + "," + 
-												this.getBBox().height + ")rotate(-45)";
-															        });
+																		this.getBBox().height + ")rotate(-45)";
+						});
 	}
 	function primaryCritBody(d3element,cohdef,PrimaryCriteria) {
 		critBody(d3element,cohdef,PrimaryCriteria, 'primary');
@@ -352,7 +361,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 										.attr('y1', 10)
 										.attr('y2', 10)
 										.attr('x1', cohdef.obsScale(range.Value))
-										.attr('x2', cohdef.obsScale.range()[1])
+										.attr('x2', cohdef.obsScale(cohdef.obsExt[1]))
 										.attr('stroke-dasharray', '3,3')
 										.style(`marker-start`, `url(#line-stop)`)
 										.style(`marker-end`, `url(#right-arrow)`)
@@ -392,8 +401,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					el.append('line')
 								.attr('y1', 10)
 								.attr('y2', 10)
-								.attr('x1', cohdef.calScale(date) + 38 * (range.Op[0]==='l' ? -1 : 1))
-								.attr('x2', cohdef.calScale(date) +  8 * (range.Op[0]==='l' ? -1 : 1))
+								.attr('x1', cohdef.calScale(date) +	38 * (range.Op[0]==='l' ? -1 : 1))
+								.attr('x2', cohdef.calScale(date) +	 8 * (range.Op[0]==='l' ? -1 : 1))
 								.attr('stroke-dasharray', '3,3')
 								.style(`marker-start`, 
 											 `url(#left-arrow)`)
@@ -477,22 +486,19 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				</div>
 			`;
 		d3element.html(headerHtml);
-		var w = $(d3element.select('div.left').node()).width();
-		cohdef.calScale.range([0,w]);
-		cohdef.obsScale.range([0,w]);
 		d3element.select('div.left svg.x.axis').call(cohdef.calAxis);
-		d3element.select('div.left svg.x.axis').selectAll(".x.axis text")  // select all the text elements for the xaxis
+		d3element.select('div.left svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
 						.attr("transform", function(d) {
 							return "translate(" + this.getBBox().height*-2 + "," + 
-												this.getBBox().height + ")rotate(-45)";
-															        });
+																		this.getBBox().height + ")rotate(-45)";
+						});
 
 		d3element.select('div.right svg.x.axis').call(cohdef.obsAxis);
-		d3element.select('div.right svg.x.axis').selectAll(".x.axis text")  // select all the text elements for the xaxis
+		d3element.select('div.right svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
 						.attr("transform", function(d) {
 							return "translate(" + this.getBBox().height*-2 + "," + 
-												this.getBBox().height + ")rotate(-45)";
-															        });
+																		this.getBBox().height + ")rotate(-45)";
+						});
 	}
 	function d3AddIfNeeded(parentElement, data, tag, classes, firstTimeCb) {
 		var d3element;
@@ -637,14 +643,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	//var expression = {};
 	//var conceptSets = [];
 	var _sections = [
-		{name: 'prestart',  width: 15, adjust: -15 }, // 0 point at start
-		{name: 'start',     width:	10 }, // indeterminate time between prim crit date and index date
+		{name: 'prestart',	width: 15, adjust: -15 }, // 0 point at start
+		{name: 'start',			width:	10 }, // indeterminate time between prim crit date and index date
 		{name: 'poststart', width: 15 }, // for <starts before> date
-		{name: 'dur',       width: 45, adjust: -15 }, // should line up with end of start region
-		{name: 'preend',    width: 15, adjust: -15 }, // for <ends after> date
-		{name: 'end',       width:	10 },
-		{name: 'postend',   width: 15 }, //for <ends before> date
-		{name: 'extra',     width: 10 },
+		{name: 'dur',				width: 45, adjust: -15 }, // should line up with end of start region
+		{name: 'preend',		width: 15, adjust: -15 }, // for <ends after> date
+		{name: 'end',				width:	10 },
+		{name: 'postend',		width: 15 }, //for <ends before> date
+		{name: 'extra',			width: 10 },
 	];
 	var sections = {};
 	function pcWidth(sections) {
@@ -665,9 +671,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		};
 	function line(section, hasDur, num = 0) {
 		var bl = hasDur ? braceLines : 0;
-		return (section === 'before' ? num :
-						section === 'brace'  ? textLinesBeforeBrace + bl :
-						section === 'after'  ? textLinesBeforeBrace + bl + num : NaN) *
+		return (section === 'before'	? num :
+						section === 'brace'		? textLinesBeforeBrace + bl :
+						section === 'after'		? textLinesBeforeBrace + bl + num : NaN) *
 					 lineHeight;
 		//return lineHeight * num;
 	}
