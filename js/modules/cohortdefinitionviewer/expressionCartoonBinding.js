@@ -310,15 +310,19 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function critTriad(selection) {
 		selection.append('div').attr('class', 'name');
 		selection.append('div').attr('class', 'left col-xs-6')
-			.append('svg').attr('class', 'col-xs-12 date-cartoon');
+			.append('svg').attr('class', 'col-xs-12 cartoon');
 		selection.append('div').attr('class', 'right col-xs-6')
-			.append('svg').attr('class', 'col-xs-12 date-cartoon');
+			.append('svg').attr('class', 'col-xs-12 cartoon');
 	}
 	function critName(selection, cohdef, critType) {
 		selection.each(function(_crit) {
 			var crit = critType === 'group' ? _crit.Criteria : _crit;
 			var text = `${critLabel(crit, cohdef)}
 									<span style="opacity:0.2">${critCartoonText(crit)}</span>`;
+			if (critType === 'group')
+				text += `<span style="opacity:0.2">
+									${addCritOccurrenceText(_crit)}, ${addCritWindowText(_crit)}
+									</span>`;
 			d3.select(this).html(text);
 		})
 	}
@@ -385,7 +389,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				if (range) {
 					var date = new Date(range.Value);
 					el.append('circle')
-							.style('fill', which === 'start' ? 'green' : 'red')
+							//.style('fill', which === 'start' ? 'green' : 'red')
+							.attr('class', `term-${which}`)
 							.attr('cx', cohdef.calScale(date))
 							.attr('cy', 10)
 							.attr('r', 7)
@@ -411,6 +416,90 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			}
 		})
 	}
+	function symbol(opts) {
+		var sp = {}; // symbol params
+		switch (opts.term) {
+			case 'start':
+				sp.color = 'green'; break;
+			case 'end':
+				sp.color = 'red'; break;
+			default:
+				sp.color = 'steelblue';
+		}
+	}
+	function critGroupHeader(d3element, cohdef, cg, level) {
+		var all_any = `Restrict to people matching ${cg.Type.toLowerCase()} of the
+										following criteria`;
+		var leftHeader =
+			`
+			<div class="row">
+				Calendar Start 
+					(<svg style="display:inline-block" height="10px" width="10px">
+						<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
+					</svg>)
+				/ End 
+					(<svg style="display:inline-block" height="10px" width="10px">
+						<circle cx="5" cy="5" r="4" style="opacity:.4; fill:red" />
+					</svg>)
+				for additional criteria
+			</div>
+			<div class="row">
+				<svg class="x axis col-xs-12"/>
+			</div>`;
+		var rightHeader =
+			`
+			<div class="row">
+				Additional criteria start date 
+					(<svg style="display:inline-block" height="10px" width="10px">
+						<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
+					</svg>)
+				and duration 
+					(<svg style="display:inline-block" height="10px" width="38px">
+						<line x1="2" x2="27" y1="5" y2="5" 
+							style="marker-start:url(#line-stop); marker-end:url(#right-arrow)" />
+					</svg>)
+				relative to index date
+					(Day 0, <svg style="display:inline-block" height="10px" width="10px">
+						<circle cx="5" cy="5" r="4" style="fill:green" />
+					</svg>)
+			</div>
+			<div class="row">
+				<svg class="x axis col-xs-12"/>
+			</div>`;
+		
+		var headerHtml = 
+			`
+				<div class="row header">
+					${all_any}
+				</div>
+				<div class="row header">
+					<div class="col-xs-6 left">
+						${leftHeader}
+					</div>
+					<div class="col-xs-6 right">
+						${rightHeader}
+					</div>
+				</div>
+			`;
+		d3element.html(headerHtml);
+		var w = $(d3element.select('div.left').node()).width();
+		cohdef.calScale.range([0,w]);
+		cohdef.obsScale.range([0,w]);
+		d3element.select('div.left svg.x.axis').call(cohdef.calAxis);
+		d3element.select('div.left svg.x.axis').selectAll(".x.axis text")  // select all the text elements for the xaxis
+						.attr("transform", function(d) {
+							return "translate(" + this.getBBox().height*-2 + "," + 
+												this.getBBox().height + ")rotate(-45)";
+															        });
+
+		d3element.select('div.right svg.x.axis').call(cohdef.obsAxis);
+		d3element.select('div.right svg.x.axis').selectAll(".x.axis text")  // select all the text elements for the xaxis
+						.attr("transform", function(d) {
+							return "translate(" + this.getBBox().height*-2 + "," + 
+												this.getBBox().height + ")rotate(-45)";
+															        });
+	}
+	/*
 	function criterionCartoon(selection, cohdef, critType, critScale) {
 		// expects a selection of svgs with Criteria objs attached
 		selection.each(function(crit) {
@@ -541,7 +630,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					} else {
 						dur = `${rangeInfo(durRange, 'nice-op')} ${rangeInfo(durRange, 'lower')} and ${rangeInfo(durRange, 'upper')} days`;
 					}
-					*/
+					* /
 					if (['lt','lte'].indexOf(durRange.Op) > -1) {
 						d3element.append('text')
 									.attr('y', ypos('dur', hasDur))
@@ -592,6 +681,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			}
 		});
 	}
+	*/
 	function primaryCritBodyHOLD(d3element, cohdef, PrimaryCriteria) {
 		var pcList = PrimaryCriteria.CriteriaList;
 		var svgs = d3AddIfNeeded(d3element, pcList, 'div', ['crit'], 
@@ -601,12 +691,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		svgs.attr('width', divWidth())
 				.attr('height', pc => cartoonHeight(durationType(pc)))
 				.call(criterionCartoon, cohdef, 'primary', pcScale);
-	}
-	function critGroupHeader(d3element, cohdef, cg, level) {
-		var text = '';
-		text += `Restrict to people matching ${cg.Type.toLowerCase()} of the
-							following criteria`;
-		d3element.html(text);
 	}
 	function critGroupBodyHOLD(d3element, cohdef, cg, level) {
 		var acList = cg.CriteriaList;
@@ -693,10 +777,16 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		if (!(prior || post)) {
 			return;
 		}
-		var svg = d3element.selectAll('svg')
-												.data([null]) // only create once
-												.enter()
-												.append("svg");
+		var html = `
+				<div class="row header">
+					<div class="col-xs-6 left">
+					</div>
+					<div class="col-xs-6 right">
+						<svg/>
+					</div>
+				</div>`;
+		d3element.html(html);
+		var svg = d3element.select('svg');
 
 		svg.append('path').attr('class','curly-brace')
 											.classed('first', true);
@@ -708,13 +798,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				.attr('height', lineHeight * 3)
 
 		svg.select('path.curly-brace.first').attr('d', makeCurlyBrace(
-																obScale(-prior),
+																cohdef.obsScale(-prior),
 																.5 * lineHeight,
-																obScale(post),
+																cohdef.obsScale(post),
 																.5 * lineHeight,
 																lineHeight * 2,
 																0.6,
-																obScale(0) /*+ lineHeight/2*/)); 
+																cohdef.obsScale(0) /*+ lineHeight/2*/)); 
 		var extra = [];
 		if (Math.abs(obswin.min) > Math.abs(prior)) {
 			extra.push(Math.abs(obswin.min) + ' days before');
@@ -726,13 +816,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			//svg.attr('height', lineHeight * 4.5);
 			svg.select('path.curly-brace.second')
 				.attr('d', makeCurlyBrace(
-																	obScale(obswin.min),
+																	cohdef.obsScale(obswin.min),
 																	.5 * lineHeight,
-																	obScale(obswin.max),
+																	cohdef.obsScale(obswin.max),
 																	.5 * lineHeight,
 																	lineHeight * 2,
 																	0.6,
-																	obScale(0) /*+ lineHeight/2*/)) 
+																	cohdef.obsScale(0) /*+ lineHeight/2*/)) 
 				.attr('stroke-dasharray', '3,3')
 		}
 	}

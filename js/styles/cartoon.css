@@ -57,7 +57,7 @@ div.crit > div.right {
 	text-align: center;
 	border: 2px solid #FFF;
 }
-svg.date-cartoon {
+svg.cartoon {
 	height: 20px;
 }
 
@@ -82,9 +82,17 @@ div.cartoon-primary-criteria > div.crit svg {
 	float:right;
 }
 */
-div.crit line {
+div.cartoon-critgroup line,
+svg.cartoon line {
 	stroke-width: 1px;
 	stroke: steelblue;
+}
+
+.cartoon .term-start {
+	fill: green!important;
+}
+.cartoon .term-end {
+	fill: red!important;
 }
 /*
  * line, marker {
