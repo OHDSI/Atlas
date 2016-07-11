@@ -28,6 +28,9 @@ div.cartoon-inclusion-section > div.header
 {
 	font-size: 16px;
 	background-color: #EEC;
+	margin: 2px;
+	padding: 4px;
+	border: 1px solid black;
 }
 
 div.cartoon-obsperiod-section > div.body,
@@ -36,10 +39,44 @@ div.cartoon-additional-section div.body > div.crit,
 div.cartoon-inclusion-section div.body > div.crit
 {
 	background-color: #EEE;
-	margin: 2px;
-	padding: 4px;
-	text-align: center;
+	margin: 5px 2px 2px 2px;
+	border: 2px solid #DDD;
 }
+div.crit > div.name {
+	text-align: center;
+	font-size: 12px;
+	border: 2px solid #FFF;
+}
+div.header > div.left,
+div.crit > div.left {
+	text-align: center;
+	border: 2px solid #FFF;
+}
+div.header > div.right,
+div.crit > div.right {
+	text-align: center;
+	border: 2px solid #FFF;
+}
+svg.date-cartoon {
+	height: 20px;
+}
+
+
+
+
+/*
+div.header > div.left,
+div.header > div.right {
+}
+div.crit > div.left > svg {
+	width: 100%;
+	height: 100%;
+}
+div.crit > div.right > svg {
+	width: 100%;
+	height: 100%;
+}
+*/
 /*
 div.cartoon-primary-criteria > div.crit svg {
 	float:right;
@@ -55,6 +92,9 @@ div.crit line {
 }
 */
 
+svg.x.axis {
+	height: 20px;
+}
 
 g.primary > rect,
 g.additional > rect {
