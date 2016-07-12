@@ -89,10 +89,12 @@ svg.cartoon line {
 }
 
 .cartoon .term-start {
-	fill: green!important;
+	fill: green;
+	stroke: green;
 }
 .cartoon .term-end {
-	fill: red!important;
+	fill: red;
+	stroke: red;
 }
 /*
  * line, marker {

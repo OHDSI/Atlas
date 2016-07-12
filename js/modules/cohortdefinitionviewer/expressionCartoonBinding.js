@@ -2,8 +2,6 @@
 define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 	var divWidth = ko.observable(); // triggers update
-	//var cohdef; // ko.toJS(expression)
-	var calScale, obsScale;
 
 	function firstTimeSetup(element) {
 		//expressionChangeSetup(element, cohdef);
@@ -16,30 +14,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		drawSection(d3element, cohdef, 'additional-section', cohdef.AdditionalCriteria, 0);
 		drawSection(d3element, cohdef, 'inclusion-section', cohdef.InclusionRules, 0);
 	}
-	function resetScales(cohdef, width) {
-		var extraPx = 75; // room at ends of cartoons for arrows past domain dates
-		var extraRatio = extraPx / width; // add to ends of domains
-
-		var calext = dateExtent(allPlainCriteria(cohdef));
-		var calrange = calext[1] - calext[0];
-		var extraTime = calrange * extraRatio;
-		cohdef.calScale.range([0,width])
-					.domain([new Date(calext[0].valueOf() - extraTime),
-									 new Date(calext[1].valueOf() + extraTime)]);
-
-		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
-												allAdditionalCriteria(cohdef));
-		var extraDays = extraRatio * (obsext[1] - obsext[0]);
-		cohdef.obsScale.range([0,width])
-									 .domain([obsext[0] - extraDays, obsext[1] + extraDays])
-		cohdef.obsExt = obsext;
-		//console.log(cohdef.obsScale.domain());
-		//console.log(cohdef.calScale.domain());
-	}
 	function dataSetup(expression) {
 		window.expression = expression;
 		var cohdef = ko.toJS(expression);
 		window.cohdef = cohdef;
+		cohdef.columns = [];
 
 		// clone objects (so they can be modified) and add domain names
 		addDomainNames(cohdef.PrimaryCriteria, 'primary');
@@ -50,7 +29,44 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		cohdef.obsScale = d3.scale.linear();
 		cohdef.obsAxis = d3.svg.axis().orient('bottom').scale(cohdef.obsScale);
+
+		var calext = dateExtent(allPlainCriteria(cohdef));
+		if (calext) {
+			cohdef.columns.push('cal');
+		}
+
+		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
+												allAdditionalCriteria(cohdef));
+		if (obsext && !(obsext[0] === 0 && obsext[1] === 0)) {
+			cohdef.columns.push('obs');
+		}
+		cohdef.obsExt = obsext;
+
 		return cohdef;
+	}
+	function resetScales(cohdef, width) {
+		var extraPx = 75; // room at ends of cartoons for arrows past domain dates
+		var extraRatio = extraPx / width; // add to ends of domains
+
+		var calext = dateExtent(allPlainCriteria(cohdef));
+		if (calext) {
+			var calrange = calext[1] - calext[0];
+			var extraTime = calrange * extraRatio;
+			cohdef.calScale.range([0,width])
+						.domain([new Date(calext[0].valueOf() - extraTime),
+										new Date(calext[1].valueOf() + extraTime)]);
+		}
+
+		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
+												allAdditionalCriteria(cohdef));
+		if (obsext && !(obsext[0] === 0 && obsext[1] === 0)) {
+			var extraDays = extraRatio * (obsext[1] + obsext[0]);
+			cohdef.obsScale.range([0,width])
+										.domain([obsext[0] - extraDays, obsext[1] + extraDays])
+		}
+		cohdef.obsExt = obsext;
+		//console.log(cohdef.obsScale.domain());
+		//console.log(cohdef.calScale.domain());
 	}
 	function allAdditionalCriteria(cohdef) {
 		return (_.chain(allGroups(cohdef))
@@ -68,6 +84,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								.map(subGroups)));
 	}
 	function subGroups(group) { // returns array of this group and its subgroups
+		if (!group) return [];
 		if (group.Groups.length)
 			return _.flatten([group].concat(group.Groups.map(subGroups)));
 		return [group]
@@ -84,6 +101,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 										// have text dates now
 										.map(d => new Date(d))
 										.value();
+		if (!allDates.length) return;
 		return d3.extent(allDates);
 	}
 	function obsExtent(primCrits, addCrits) {
@@ -103,8 +121,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 											 rangeInfo(getRange(d.Criteria,'dur'),'max')||0);
 		var obsDays = [-cohdef.PrimaryCriteria.ObservationWindow.PriorDays, 
 										cohdef.PrimaryCriteria.ObservationWindow.PostDays];
-		return d3.extent(_.flatten([primDurs, beforeDays, afterDays, 
-															 beforeDaysWithDurs, obsDays]));
+		var allDayOffsets = _.flatten([primDurs, beforeDays, afterDays, 
+															 beforeDaysWithDurs, obsDays])
+		if (!allDayOffsets.length) return;
+		return d3.extent(allDayOffsets);
 	}
 
 	ko.bindingHandlers.cohortExpressionCartoon = {
@@ -171,16 +191,22 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		//if (!level) {
 		funcs[cat].header(catDiv.select('div.header'), cohdef, data, level);
 		//}
-		funcs[cat].body(catDiv.select('div.body'), cohdef, data, level);
+		if (data)
+			funcs[cat].body(catDiv.select('div.body'), cohdef, data, level);
 	}
 	function addCritSectHeader(d3element, cohdef, acsect, level) {
 		var text = '<h3>Additional Criteria</h3>'; 
+		if (!acsect)
+			text = 'No additional criteria';
 		d3element.html(text);
 	}
 	function addCritSectBody(d3element, cohdef, acsect, level) {
 		drawSection(d3element, cohdef, 'critgroup', acsect, level);
 	}
-	function inclusionCritHeader(d3element, cohdef, PrimaryCriteria, level) {
+	function inclusionCritHeader(d3element, cohdef, rules, level) {
+		var text = '<h3>Inclusion Rules</h3>'; 
+		if (!rules)
+			text = 'No inclusion rules';
 	}
 	function inclusionCritBody(d3element, cohdef, PrimaryCriteria, level) {
 	}
@@ -232,50 +258,75 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				limitMsg += `Results will be generated for the ${limitType.toLowerCase()}
 											single event matching ${pcCritMatch}.`;
 		}
-		var resultDateMsg = `Result index date${pcPlural} will be the start date${pcPlural} of the matching event${pcPlural}.`;
-		var leftHeader =
-			`
+		var resultDateMsg = `Result index date${pcPlural} will be the start date${pcPlural} of the 
+													matching event${pcPlural}.`;
+		if (cohdef.columns.length === 0) {
+			d3element.html(`
+				<div class="row header">
+					${title}
+					${limitMsg}
+					${resultDateMsg}
+				</div>`);
+			resetScales(cohdef, 1); // 1 is an arbitrary width. doesn't matter since
+															// scales won't be used, but didn't want any surprises
+			return;
+		}
+		var colstyle = `col-xs-${ 12 / cohdef.columns.length }`;
+		var leftHeader = `
 			<div class="row">
-				Start 
-					(<svg style="display:inline-block" height="10px" width="10px">
-						<circle cx="5" cy="5" r="4" style="fill:green" />
-					</svg>)
-				and End 
-					(<svg style="display:inline-block" height="10px" width="10px">
-						<circle cx="5" cy="5" r="4" style="fill:red" />
-					</svg>)
-				Dates
+				<div class="${colstyle}">
+					Start 
+						(<svg style="display:inline-block" height="10px" width="10px">
+							<circle cx="5" cy="5" r="4" style="fill:green" />
+						</svg>)
+					and End 
+						(<svg style="display:inline-block" height="10px" width="10px">
+							<circle cx="5" cy="5" r="4" style="fill:red" />
+						</svg>)
+					Dates
+				</div>
 			</div>
 			<div class="row">
 				<svg class="x axis col-xs-12"/>
 			</div>`;
-		var rightHeader =
-			`
+		var rightHeader = `
 			<div class="row">
-				Durations
+				<div class="${colstyle}">
+					Durations
+				</div>
 			</div>
 			<div class="row">
 				<svg class="x axis col-xs-12"/>
 			</div>`;
 		
-		var headerHtml = 
-			`
+		var pickadiv = ''; // doesn't matter, as long as it exists. they should all 
+											 // be the same width
+		var headerHtml = `
 				<div class="row header">
-					${title}
-					${limitMsg}
-					${resultDateMsg}
+					<div class="col-xs-12">
+						${title}
+						${limitMsg}
+						${resultDateMsg}
+					</div>
 				</div>
-				<div class="row header">
-					<div class="col-xs-6 left">
+				<div class="row header">`;
+		if (_.contains(cohdef.columns, 'cal')) {
+			headerHtml += `
+					<div class="${colstyle} left">
 						${leftHeader}
-					</div>
-					<div class="col-xs-6 right">
+					</div>`;
+			pickadiv = 'left';
+		}
+		if (_.contains(cohdef.columns, 'obs')) {
+			headerHtml += `
+					<div class="${colstyle} right">
 						${rightHeader}
-					</div>
-				</div>
-			`;
+					</div>`;
+			pickadiv = 'right';
+		}
+		headerHtml += '</div>';
 		d3element.html(headerHtml);
-		var w = $(d3element.select('div.left').node()).width();
+		var w = $(d3element.select(`div.${pickadiv}`).node()).width();
 		resetScales(cohdef, w);
 		d3element.select('div.left svg.x.axis').call(cohdef.calAxis);
 		d3element.select('div.left svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
@@ -302,7 +353,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function critBody(d3element, cohdef, crit, critType) {
 		var crits = crit.CriteriaList;
-		var critNodes = d3AddIfNeeded(d3element, crits, 'div', ['crit','row'], critTriad)
+		var critNodes = d3AddIfNeeded(d3element, crits, 'div', ['crit','row'], 
+																	critTriad, cohdef)
 		critNodes.selectAll('div.name')
 							.call(critName, cohdef, critType);
 
@@ -311,11 +363,15 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		critNodes.selectAll('div.right > svg')
 							.call(critRight, cohdef, critType);
 	}
-	function critTriad(selection) {
+	function critTriad(selection, cohdef) {
 		selection.append('div').attr('class', 'name');
-		selection.append('div').attr('class', 'left col-xs-6')
-			.append('svg').attr('class', 'col-xs-12 cartoon');
-		selection.append('div').attr('class', 'right col-xs-6')
+		if (cohdef.columns.length === 0) return;
+		var colstyle = `col-xs-${ 12 / cohdef.columns.length }`;
+		if (_.contains(cohdef.columns, 'cal')) {
+			selection.append('div').attr('class', `left ${colstyle}`)
+				.append('svg').attr('class', 'col-xs-12 cartoon');
+		}
+		selection.append('div').attr('class', `right ${colstyle}`)
 			.append('svg').attr('class', 'col-xs-12 cartoon');
 	}
 	function critName(selection, cohdef, critType) {
@@ -381,6 +437,17 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			}
 		})
 	}
+	function symbol(opts) {
+		var sp = {}; // symbol params
+		switch (opts.term) {
+			case 'start':
+				sp.color = 'green'; break;
+			case 'end':
+				sp.color = 'red'; break;
+			default:
+				sp.color = 'steelblue';
+		}
+	}
 	function critLeft(selection, cohdef, critType) {
 		selection.each(function(_crit) {
 			var crit = critType === 'group' ? _crit.Criteria : _crit;
@@ -388,24 +455,25 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			el.html(''); // clear by brute force, not sure if needed
 			drawCalThing('start');
 			drawCalThing('end');
-			function drawCalThing(which) {
-				var range = getRange(crit, which);
+			function drawCalThing(term) {
+				var range = getRange(crit, term);
 				if (range) {
 					var date = new Date(range.Value);
 					el.append('circle')
 							//.style('fill', which === 'start' ? 'green' : 'red')
-							.attr('class', `term-${which}`)
+							.attr('class', `term-${term}`)
 							.attr('cx', cohdef.calScale(date))
 							.attr('cy', 10)
 							.attr('r', 7)
 					el.append('line')
+								.attr('class', `term-${term}`)
 								.attr('y1', 10)
 								.attr('y2', 10)
 								.attr('x1', cohdef.calScale(date) +	38 * (range.Op[0]==='l' ? -1 : 1))
 								.attr('x2', cohdef.calScale(date) +	 8 * (range.Op[0]==='l' ? -1 : 1))
 								.attr('stroke-dasharray', '3,3')
 								.style(`marker-start`, 
-											 `url(#left-arrow)`)
+											 `url(#left-arrow-${term})`)
 					/*
 					el.append("text")
 								.attr('y', 10)
@@ -420,20 +488,20 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			}
 		})
 	}
-	function symbol(opts) {
-		var sp = {}; // symbol params
-		switch (opts.term) {
-			case 'start':
-				sp.color = 'green'; break;
-			case 'end':
-				sp.color = 'red'; break;
-			default:
-				sp.color = 'steelblue';
-		}
-	}
 	function critGroupHeader(d3element, cohdef, cg, level) {
+		if (!cg) {
+			d3element.html('No criteria group');
+			return;
+		}
 		var all_any = `Restrict to people matching ${cg.Type.toLowerCase()} of the
 										following criteria`;
+		if (cohdef.columns.length === 0) {
+			d3element.html(`
+				<div class="row header">
+					${all_any}
+				</div>`);
+			return;
+		}
 		var leftHeader =
 			`
 			<div class="row">
@@ -453,38 +521,53 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var rightHeader =
 			`
 			<div class="row">
-				Additional criteria start date 
-					(<svg style="display:inline-block" height="10px" width="10px">
-						<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
-					</svg>)
-				and duration 
-					(<svg style="display:inline-block" height="10px" width="38px">
-						<line x1="2" x2="27" y1="5" y2="5" 
-							style="marker-start:url(#line-stop); marker-end:url(#right-arrow)" />
-					</svg>)
-				relative to index date
-					(Day 0, <svg style="display:inline-block" height="10px" width="10px">
-						<circle cx="5" cy="5" r="4" style="fill:green" />
-					</svg>)
+				<div class="col-xs-12">
+					Additional criteria start date 
+						(<svg style="display:inline-block" height="10px" width="10px">
+							<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
+						</svg>)
+					and duration 
+						(<svg style="display:inline-block" height="10px" width="38px">
+							<line x1="2" x2="27" y1="5" y2="5" 
+								style="marker-start:url(#line-stop); marker-end:url(#right-arrow)" />
+						</svg>)
+					relative to index date
+						(Day 0, <svg style="display:inline-block" height="10px" width="10px">
+							<circle cx="5" cy="5" r="4" style="fill:green" />
+						</svg>)
+				</div>
 			</div>
 			<div class="row">
 				<svg class="x axis col-xs-12"/>
 			</div>`;
 		
+		var colstyle = `col-xs-${ 12 / cohdef.columns.length }`;
+		var pickadiv = ''; // doesn't matter, as long as it exists. they should all 
+											 // be the same width
 		var headerHtml = 
 			`
 				<div class="row header">
-					${all_any}
-				</div>
-				<div class="row header">
-					<div class="col-xs-6 left">
-						${leftHeader}
+					<div class="col-xs-12">
+						${all_any}
 					</div>
-					<div class="col-xs-6 right">
+				</div>
+				<div class="row header">`;
+		if (_.contains(cohdef.columns, 'cal')) {
+			headerHtml += `
+					<div class="${colstyle} left">
+						${leftHeader}
+					</div>`;
+			pickadiv = 'left'
+		}
+		if (_.contains(cohdef.columns, 'obs')) {
+			headerHtml += `
+					<div class="${colstyle} right">
 						${rightHeader}
 					</div>
-				</div>
-			`;
+				</div>`;
+			pickadiv = 'right'
+		}
+		headerHtml += '</div>';
 		d3element.html(headerHtml);
 		d3element.select('div.left svg.x.axis').call(cohdef.calAxis);
 		d3element.select('div.left svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
@@ -500,7 +583,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																		this.getBBox().height + ")rotate(-45)";
 						});
 	}
-	function d3AddIfNeeded(parentElement, data, tag, classes, firstTimeCb) {
+	function d3AddIfNeeded(parentElement, data, tag, classes, 
+													firstTimeCb, cbParams) {
 		var d3element;
 		if (parentElement.selectAll) {
 			d3element = parentElement;
@@ -522,7 +606,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						newNode.classed(cls, true);
 					});
 				})
-				.call(firstTimeCb);
+				.call(firstTimeCb, cbParams);
 		selection = d3element.selectAll([tag].concat(classes).join('.'));
 		return selection;
 	}
@@ -533,7 +617,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var text = "<h3>Observation Period</h3>";
 
 		if (!(prior || post)) {
-			d3element.html(text + "No required observation period");
+			d3element.html("No required observation period");
 			return;
 		}
 		text += `Required observation period from at least ${prior} days
@@ -905,47 +989,49 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 	function setupArrowHeads(element) {
 		var svg = d3.select(element).append('svg')
-									//.attr('width',width)
-									.attr('height',0)
-		svg.append('marker')
-				.attr('id', 'right-arrow')
-				.attr('viewBox', '0 0 10 10')
-				.attr('refX', 0)
-				.attr('refY', 5)
-				.attr('markerUnits', 'strokeWidth')
-				.attr('markerWidth', 10)
-				.attr('markerHeight', 10)
-				.attr('fill-opacity', 0)
-				.attr('stroke','steelblue')
-				.attr('orient', 'auto')
-				.append('path')
-					.attr('d', 'M 2 2 L 8 5 L 2 8 z')
-		svg.append('marker')
-				.attr('id', 'left-arrow')
-				.attr('viewBox', '0 0 10 10')
-				.attr('refX', 10)
-				.attr('refY', 5)
-				.attr('markerUnits', 'strokeWidth')
-				.attr('markerWidth', 10)
-				.attr('markerHeight', 10)
-				.attr('stroke','steelblue')
-				.attr('fill-opacity', 0)
-				.attr('orient', 'auto')
-				.append('path')
-					.attr('d', 'M 8 2 L 8 8 L 1 5 z')
-		svg.append('marker')
-				.attr('id', 'line-stop')
-				.attr('viewBox', '0 0 2 10')
-				.attr('refX', 0)
-				.attr('refY', 5)
-				.attr('markerUnits', 'strokeWidth')
-				.attr('markerWidth', 2)
-				.attr('markerHeight', 10)
-				.attr('stroke','steelblue')
-				.attr('fill-opacity', 0)
-				.attr('orient', 'auto')
-				.append('path')
-					.attr('d', 'M 0 0 L 1 0 L 1 10 L 0 10 z')
+									.attr('class','cartoon')
+									.attr('height',0);
+		['start','end'].forEach(function(term) {
+			svg.append('marker')
+					.attr('id', `right-arrow-${term}`)
+					.attr('class', `term-${term}`)
+					.attr('viewBox', '0 0 10 10')
+					.attr('refX', 0)
+					.attr('refY', 5)
+					.attr('markerUnits', 'strokeWidth')
+					.attr('markerWidth', 10)
+					.attr('markerHeight', 10)
+					.attr('fill-opacity', 0)
+					.attr('orient', 'auto')
+					.append('path')
+						.attr('d', 'M 2 2 L 8 5 L 2 8 z')
+			svg.append('marker')
+					.attr('id', `left-arrow-${term}`)
+					.attr('class', `term-${term}`)
+					.attr('viewBox', '0 0 10 10')
+					.attr('refX', 10)
+					.attr('refY', 5)
+					.attr('markerUnits', 'strokeWidth')
+					.attr('markerWidth', 10)
+					.attr('markerHeight', 10)
+					.attr('fill-opacity', 0)
+					.attr('orient', 'auto')
+					.append('path')
+						.attr('d', 'M 8 2 L 8 8 L 1 5 z')
+			svg.append('marker')
+					.attr('id', `line-stop-${term}`)
+					.attr('class', `term-${term}`)
+					.attr('viewBox', '0 0 2 10')
+					.attr('refX', 0)
+					.attr('refY', 5)
+					.attr('markerUnits', 'strokeWidth')
+					.attr('markerWidth', 2)
+					.attr('markerHeight', 10)
+					.attr('fill-opacity', 0)
+					.attr('orient', 'auto')
+					.append('path')
+						.attr('d', 'M 0 0 L 1 0 L 1 10 L 0 10 z')
+		})
 	}
 	function addCritOccurrenceText(ac) {
 		var oc = ac.Occurrence;
