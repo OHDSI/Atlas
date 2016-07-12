@@ -663,16 +663,15 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		svg = d3element.select("svg");
 		svg.attr('width', divWidth())
-				.attr('height', lineHeight * 3)
+				.attr('height', 30)
 
 		svg.select('path.curly-brace.first').attr('d', makeCurlyBrace(
 																cohdef.obsScale(-prior),
-																.5 * lineHeight,
+																15,
 																cohdef.obsScale(post),
-																.5 * lineHeight,
-																lineHeight * 2,
+																15, 60,
 																0.6,
-																cohdef.obsScale(0) /*+ lineHeight/2*/)); 
+																cohdef.obsScale(0))); 
 		var extra = [];
 		if (Math.abs(obswin.min) > Math.abs(prior)) {
 			extra.push(Math.abs(obswin.min) + ' days before');
@@ -681,16 +680,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			extra.push(obswin.max + ' days after');
 		}
 		if (extra.length) {
-			//svg.attr('height', lineHeight * 4.5);
 			svg.select('path.curly-brace.second')
 				.attr('d', makeCurlyBrace(
 																	cohdef.obsScale(obswin.min),
-																	.5 * lineHeight,
+																	15,
 																	cohdef.obsScale(obswin.max),
-																	.5 * lineHeight,
-																	lineHeight * 2,
+																	15, 60,
 																	0.6,
-																	cohdef.obsScale(0) /*+ lineHeight/2*/)) 
+																	cohdef.obsScale(0) )) 
 				.attr('stroke-dasharray', '3,3')
 		}
 	}
@@ -724,93 +721,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	var width = 400;
 	var height = 450;
 
-	//var expression = {};
-	//var conceptSets = [];
-	var _sections = [
-		{name: 'prestart',	width: 15, adjust: -15 }, // 0 point at start
-		{name: 'start',			width:	10 }, // indeterminate time between prim crit date and index date
-		{name: 'poststart', width: 15 }, // for <starts before> date
-		{name: 'dur',				width: 45, adjust: -15 }, // should line up with end of start region
-		{name: 'preend',		width: 15, adjust: -15 }, // for <ends after> date
-		{name: 'end',				width:	10 },
-		{name: 'postend',		width: 15 }, //for <ends before> date
-		{name: 'extra',			width: 10 },
-	];
-	var sections = {};
-	function pcWidth(sections) {
-		if (sections.postend.offset) {
-			return sections.postend.offset + sections.postend.width;
-		}
-		return _.chain(sections).map(d=>d.width).sum().value() +
-					 _.chain(sections).map(d=>d.adjust).sum().value();
-	}
-	var lineHeight = 15;
 	var textLinesBeforeBrace = 1;
 	var braceLines = 2;
 	var textLinesAfterBrace = 2;
-	var cartoonHeight = // lineHeight * 8; // 6 lines, 15px high?
-		function(hasDuration) {
-			return (textLinesBeforeBrace + textLinesAfterBrace +
-							(hasDuration ? braceLines : 0)) * lineHeight;
-		};
-	function line(section, hasDur, num = 0) {
-		var bl = hasDur ? braceLines : 0;
-		return (section === 'before'	? num :
-						section === 'brace'		? textLinesBeforeBrace + bl :
-						section === 'after'		? textLinesBeforeBrace + bl + num : NaN) *
-					 lineHeight;
-		//return lineHeight * num;
-	}
-	function ypos(what, hasDur) {
-		switch(what) {
-			case 'startdate':
-			case 'enddate':
-				return line('after', hasDur, 2);
-			case 'startarrow':
-			case 'endarrow':
-				return line('after', hasDur, 1.7);
-			case 'dur':
-				return line('after', hasDur, 1);
-			case 'durarrow':
-				return line('after', hasDur, .7);
-			case 'label':
-				return line('before', hasDur, 1);
-			case 'brace':
-				return line('brace', hasDur);
-		}
-	}
 
 	function obsWindow(cohdef) {
 		var ext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
 												allAdditionalCriteria(cohdef));
 		return { min: ext[0], max: ext[1] };
-	}
-	function criteriaGroupWalk(criteriaGroup, cb, parentKey) {
-		var list = criteriaGroup ? criteriaGroup.CriteriaList : [];
-		for (var i = 0; i < list.length; i++) {
-			/* key stuff
-			 * broken now because adding fields to json causes error in generating sql
-			 * and not using the fragment highlighting right now anyway 
-			var key = [i + 1];
-			if (parentKey)
-				key.unshift(parentKey);
-			key = key.join('.');
-			list[i].key = key;
-			cb(list[i], key);
-			*/
-			cb(list[i]);
-		}
-		var groups = criteriaGroup ? criteriaGroup.Groups : [];
-		for (var i = 0; i < groups.length; i++) {
-			/*
-			var key = [list.length + i + 1];
-			if (parentKey)
-				key.unshift(parentKey);
-			key = key.join('.');
-			criteriaGroupWalk(groups[i], cb, key);
-			*/
-			criteriaGroupWalk(groups[i], cb);
-		}
 	}
 	function rangeInfo(range, feature) {
 		if (!range) 
