@@ -10,7 +10,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function expressionChangeSetup(element, cohdef) {
 		var d3element = d3.select(element);
 		drawSection(d3element, cohdef, 'primary-section', cohdef.PrimaryCriteria);
-		drawSection(d3element, cohdef, 'obsperiod-section');
+		drawSection(d3element, cohdef, 'obsperiod-section', cohdef);
 		drawSection(d3element, cohdef, 'additional-section', cohdef.AdditionalCriteria, 0);
 		drawSection(d3element, cohdef, 'inclusion-section', cohdef.InclusionRules, 0);
 	}
@@ -386,10 +386,82 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			d3.select(this).html(text);
 		})
 	}
+	function symbol(opts, cohdef) {
+		var tag = 'circle';
+		var classes = [
+					`term-${opts.term}`,
+					`crit-${opts.crit}`,
+					opts.inclusive ? 'inclusive' : 'exclusive',
+		];
+		var x = cohdef.obsScale;
+		return `
+						<${tag} 
+							class="${classes.join(' ')}" 
+							cx="${x(opts.x)}" 
+							cy="5"
+							r="4"
+						/>`;
+		/*
+		var sp = {}; // symbol params
+		switch (opts.term) {
+			case 'start':
+				sp.color = 'green'; break;
+			case 'end':
+				sp.color = 'red'; break;
+			default:
+				sp.color = 'steelblue';
+		}
+		switch (opts.crit) {
+			case 'index':
+				sp.opacity: 1;
+				break;
+			case 'window':
+				sp.opacity: .4;
+				break;
+		}
+		*/
+	}
+	function interval(sym1, sym2, opts, cohdef) {
+		var x = cohdef.obsScale;
+		var line = `<line 
+											x1="${x(opts.x1)}"
+											x2="${x(opts.x2)}"
+											y1="5" y2="5"
+											class="${opts.fixed ? 'fixed' : 'conditional'}" />`;
+		return `
+						${sym1}
+						${sym2}
+						${line}`;
+	}
 	function critRight(selection, cohdef, critType) {
 		selection.each(function(_crit) {
-			var crit = critType === 'group' ? _crit.Criteria : _crit;
 			var el = d3.select(this);
+			var crit = _crit;
+			if (critType === 'group') {
+				crit = _crit.Criteria;
+				var sw = _crit.StartWindow;
+				var swin = [sw.Start.Coeff * sw.Start.Days, sw.End.Coeff * sw.End.Days];
+				var fixedWindow = true;
+				if (sw.Start.Days === null) {
+					swin[0] = null;
+					fixedWindow = false;
+				}
+				if (sw.End.Days === null) {
+					swin[1] = null;
+					fixedWindow = false;
+				}
+				if (fixedWindow) {
+					var html = 
+						interval(
+							symbol({term:'start', crit:'window', inclusive:'true', x:swin[0]}, cohdef),
+							symbol({term:'end', crit:'window', inclusive:'true', x:swin[1]}, cohdef),
+							{fixed:true, x1:swin[0], x2:swin[1]}, cohdef);
+					el.html(html);
+					return;
+				} else {
+				}
+			}
+
 			el.html(''); // clear by brute force, not sure if needed
 			var range = getRange(crit, 'dur');
 			if (range) {
@@ -436,17 +508,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				}
 			}
 		})
-	}
-	function symbol(opts) {
-		var sp = {}; // symbol params
-		switch (opts.term) {
-			case 'start':
-				sp.color = 'green'; break;
-			case 'end':
-				sp.color = 'red'; break;
-			default:
-				sp.color = 'steelblue';
-		}
 	}
 	function critLeft(selection, cohdef, critType) {
 		selection.each(function(_crit) {
@@ -663,7 +724,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		svg = d3element.select("svg");
 		svg.attr('width', divWidth())
-				.attr('height', 30)
+				.attr('height', 60)
 
 		svg.select('path.curly-brace.first').attr('d', makeCurlyBrace(
 																cohdef.obsScale(-prior),

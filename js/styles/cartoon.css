@@ -96,6 +96,12 @@ svg.cartoon line {
 	fill: red;
 	stroke: red;
 }
+.cartoon circle.exclusive {
+	fill-opacity: 0;
+}
+.cartoon circle.crit-window {
+	opacity: 0.4;
+}
 /*
  * line, marker {
   stroke: blue;
