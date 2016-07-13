@@ -36,7 +36,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 
 		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
-												allAdditionalCriteria(cohdef));
+												allAdditionalCriteria(cohdef), cohdef);
 		if (obsext && !(obsext[0] === 0 && obsext[1] === 0)) {
 			cohdef.columns.push('obs');
 		}
@@ -58,7 +58,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 
 		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
-												allAdditionalCriteria(cohdef));
+												allAdditionalCriteria(cohdef), cohdef);
 		if (obsext && !(obsext[0] === 0 && obsext[1] === 0)) {
 			var extraDays = extraRatio * (obsext[1] + obsext[0]);
 			cohdef.obsScale.range([0,width])
@@ -104,26 +104,38 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		if (!allDates.length) return;
 		return d3.extent(allDates);
 	}
-	function obsExtent(primCrits, addCrits) {
+	function swinMax(swinterm, ext) {
+		// for null (All), get max
+		if (swinterm.Days === null && ext) {
+			var max = ext[ swinterm.Coeff === -1 ? 0 : 1 ];
+			return Math.abs(max) * swinterm.Coeff;
+		}
+		return swinterm.Days * swinterm.Coeff;
+	}
+	function swinMaxWDur(crit, term, ext) {
+			var dur = rangeInfo(getRange(crit.Criteria,'dur'),'max');
+			if (dur)
+				return dur + swinMax(crit.StartWindow[term], ext);
+	}
+	function obsExtent(primCrits, addCrits, cohdef) { // don't need cohdef
 		var primDurs = _.chain(primCrits)
 										.map(crit => getRange(crit,'dur'))
 										.compact()
 										// have dur ranges now
 										.map(range => rangeInfo(range, 'max'))
 										.value();
-		var beforeDays = 
-					addCrits.map(d=>d.StartWindow.Start.Days * d.StartWindow.Start.Coeff);
-		var afterDays = // not quite right because not sure where dur starts
-					addCrits.map(d=>d.StartWindow.End.Days * d.StartWindow.End.Coeff +
-											 rangeInfo(getRange(d.Criteria,'dur'),'max')||0);
-		var beforeDaysWithDurs =
-					addCrits.map(d=>d.StartWindow.Start.Days * d.StartWindow.Start.Coeff +
-											 rangeInfo(getRange(d.Criteria,'dur'),'max')||0);
+		var beforeDays = addCrits.map(d=>swinMax(d.StartWindow.Start, cohdef));
+		var afterDays = addCrits.map(d=>swinMax(d.StartWindow.End, cohdef));
 		var obsDays = [-cohdef.PrimaryCriteria.ObservationWindow.PriorDays, 
 										cohdef.PrimaryCriteria.ObservationWindow.PostDays];
-		var allDayOffsets = _.flatten([primDurs, beforeDays, afterDays, 
-															 beforeDaysWithDurs, obsDays])
+		var allDayOffsets = _.flatten([primDurs, beforeDays, afterDays, obsDays])
 		if (!allDayOffsets.length) return;
+
+		var ext = d3.extent(allDayOffsets);
+		var beforeDaysWithDurs = addCrits.map(d=>swinMaxWDur(d, 'Start', ext));
+		var afterDaysWithDurs = addCrits.map(d=>swinMaxWDur(d, 'End', ext));
+
+		allDayOffsets = _.flatten([allDayOffsets, beforeDaysWithDurs, afterDaysWithDurs]);
 		return d3.extent(allDayOffsets);
 	}
 
@@ -398,7 +410,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						<${tag} 
 							class="${classes.join(' ')}" 
 							cx="${x(opts.x)}" 
-							cy="5"
+							cy="15"
 							r="4"
 						/>`;
 		/*
@@ -423,10 +435,16 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function interval(sym1, sym2, opts, cohdef) {
 		var x = cohdef.obsScale;
+		var terms = [];
+		if (opts.markerStart)
+			terms.push(`url(#${opts.markerStart})`);
+		if (opts.markerEnd)
+			terms.push(`url(#${opts.markerEnd})`);
 		var line = `<line 
 											x1="${x(opts.x1)}"
 											x2="${x(opts.x2)}"
-											y1="5" y2="5"
+											y1="15" y2="15"
+											style="${terms.join(' ')}"
 											class="${opts.fixed ? 'fixed' : 'conditional'}" />`;
 		return `
 						${sym1}
@@ -437,6 +455,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		selection.each(function(_crit) {
 			var el = d3.select(this);
 			var crit = _crit;
+			var html = '';
 			if (critType === 'group') {
 				crit = _crit.Criteria;
 				var sw = _crit.StartWindow;
@@ -451,15 +470,32 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					fixedWindow = false;
 				}
 				if (fixedWindow) {
-					var html = 
+					html += 
 						interval(
 							symbol({term:'start', crit:'window', inclusive:'true', x:swin[0]}, cohdef),
 							symbol({term:'end', crit:'window', inclusive:'true', x:swin[1]}, cohdef),
 							{fixed:true, x1:swin[0], x2:swin[1]}, cohdef);
-					el.html(html);
-					return;
 				} else {
+					if (swin[0] === null && swin[1] === null) {
+						// do something
+					} else if (swin[0] === null) {
+						html += 
+							interval(
+								'',
+								symbol({term:'end', crit:'window', inclusive:'true', x:swin[1]}, cohdef),
+								{fixed:false, x1:cohdef.obsScale.domain()[0], x2:swin[1],
+									markerStart:'left-arrow-start'}, cohdef);
+					} else if (swin[1] === null) {
+						html += 
+							interval(
+								symbol({term:'start', crit:'window', inclusive:'true', x:swin[0]}, cohdef),
+								'',
+								{fixed:false, x1:swin[0], x2:cohdef.obsScale.domain()[1],
+									markerEnd:'right-arrow-end'}, cohdef);
+					}
 				}
+				el.html(html);
+				return;
 			}
 
 			el.html(''); // clear by brute force, not sure if needed
@@ -788,7 +824,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 	function obsWindow(cohdef) {
 		var ext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
-												allAdditionalCriteria(cohdef));
+												allAdditionalCriteria(cohdef), cohdef);
 		return { min: ext[0], max: ext[1] };
 	}
 	function rangeInfo(range, feature) {

@@ -87,6 +87,9 @@ svg.cartoon line {
 	stroke-width: 1px;
 	stroke: steelblue;
 }
+svg.cartoon line.conditional {
+	stroke-dasharray: 3.3;
+}
 
 .cartoon .term-start {
 	fill: green;
