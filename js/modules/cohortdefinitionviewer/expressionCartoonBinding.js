@@ -2,10 +2,47 @@
 define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 	var divWidth = ko.observable(); // triggers update
+	const LEFT_COLS = 4;
+	const SVG_LINE_HEIGHT = 15;
+	const arrows = {
+		right: 'm -5 -5 l 10 5 l -10 5 z',
+		//right: 'M 2 2 L 8 5 L 2 8 z',
+		left: 'M 8 2 L 8 8 L 1 5 z',
+		stop: 'M 0 0 L 1 0 L 1 10 L 0 10 z',
+	};
+	function ypos({
+									brace = true,
+									dot = true,
+									dur = false,
+									dates = false
+								} = {}, feature) { // need to change for additional crits
+		var topMargin = .25;
+		var bottomMargin = .25;
+		var brace = brace ? 1 : 0; // first 1 lines (if it it present)
+		var dot = dot ? .5 : 0;		 // next line (if it it present)
+		var dur = dur ? 0 : 0;		 // put with dot	
+		var dates = dates ? 1 : 0; // next line (if it it present)
+
+		var lines = topMargin + brace + dot + dur + dates + bottomMargin;
+
+		switch (feature) {
+			case "svg-height":
+				return lines * SVG_LINE_HEIGHT;
+			case "brace-top":
+				//return (dur + dates + .1) * SVG_LINE_HEIGHT;
+				return topMargin * SVG_LINE_HEIGHT; // 10% margin
+			case "brace-height":
+				return brace * SVG_LINE_HEIGHT; // 10% top and bottom
+			case "index-dot":
+				return (topMargin + brace + dot * .5) * SVG_LINE_HEIGHT;
+			case "index-r":
+				return dot * .5 * SVG_LINE_HEIGHT;
+		}
+	}
 
 	function firstTimeSetup(element) {
 		//expressionChangeSetup(element, cohdef);
-		setupArrowHeads(element);
+		//setupArrowHeads(element);
 	}
 	function expressionChangeSetup(element, cohdef) {
 		var d3element = d3.select(element);
@@ -18,44 +55,26 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		window.expression = expression;
 		var cohdef = ko.toJS(expression);
 		window.cohdef = cohdef;
-		cohdef.columns = [];
 
 		// clone objects (so they can be modified) and add domain names
 		addDomainNames(cohdef.PrimaryCriteria, 'primary');
 		allGroups(cohdef).forEach(group=>addDomainNames(group, 'additional'))
 
-		cohdef.calScale = d3.time.scale();
-		cohdef.calAxis = d3.svg.axis().orient('bottom').scale(cohdef.calScale);
-
-		cohdef.obsScale = d3.scale.linear();
-		cohdef.obsAxis = d3.svg.axis().orient('bottom').scale(cohdef.obsScale);
-
-		var calext = dateExtent(allPlainCriteria(cohdef));
-		if (calext) {
-			cohdef.columns.push('cal');
-		}
-
 		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
 												allAdditionalCriteria(cohdef), cohdef);
+		cohdef.obsExt = obsext;
+		cohdef.obsScale = d3.scale.linear();
+		cohdef.obsAxis = d3.svg.axis().orient('bottom').scale(cohdef.obsScale);
+		return cohdef;
+		/*
 		if (obsext && !(obsext[0] === 0 && obsext[1] === 0)) {
 			cohdef.columns.push('obs');
 		}
-		cohdef.obsExt = obsext;
-
-		return cohdef;
+		*/
 	}
 	function resetScales(cohdef, width) {
 		var extraPx = 75; // room at ends of cartoons for arrows past domain dates
 		var extraRatio = extraPx / width; // add to ends of domains
-
-		var calext = dateExtent(allPlainCriteria(cohdef));
-		if (calext) {
-			var calrange = calext[1] - calext[0];
-			var extraTime = calrange * extraRatio;
-			cohdef.calScale.range([0,width])
-						.domain([new Date(calext[0].valueOf() - extraTime),
-										new Date(calext[1].valueOf() + extraTime)]);
-		}
 
 		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
 												allAdditionalCriteria(cohdef), cohdef);
@@ -66,7 +85,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		cohdef.obsExt = obsext;
 		//console.log(cohdef.obsScale.domain());
-		//console.log(cohdef.calScale.domain());
 	}
 	function allAdditionalCriteria(cohdef) {
 		return (_.chain(allGroups(cohdef))
@@ -272,6 +290,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		var resultDateMsg = `Result index date${pcPlural} will be the start date${pcPlural} of the 
 													matching event${pcPlural}.`;
+		/*
 		if (cohdef.columns.length === 0) {
 			d3element.html(`
 				<div class="row header">
@@ -283,10 +302,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 															// scales won't be used, but didn't want any surprises
 			return;
 		}
-		var colstyle = `col-xs-${ 12 / cohdef.columns.length }`;
-		var leftHeader = `
-			<div class="row">
-				<div class="${colstyle}">
+		*/
+		var calHeader = `
 					Start 
 						(<svg style="display:inline-block" height="10px" width="10px">
 							<circle cx="5" cy="5" r="4" style="fill:green" />
@@ -295,21 +312,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						(<svg style="display:inline-block" height="10px" width="10px">
 							<circle cx="5" cy="5" r="4" style="fill:red" />
 						</svg>)
-					Dates
-				</div>
-			</div>
-			<div class="row">
-				<svg class="x axis col-xs-12"/>
-			</div>`;
+					Dates`;
 		var rightHeader = `
-			<div class="row">
-				<div class="${colstyle}">
-					Durations
-				</div>
-			</div>
-			<div class="row">
-				<svg class="x axis col-xs-12"/>
-			</div>`;
+				Durations
+				<svg class="x axis col-xs-12"/>`;
 		
 		var pickadiv = ''; // doesn't matter, as long as it exists. they should all 
 											 // be the same width
@@ -319,36 +325,18 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						${title}
 						${limitMsg}
 						${resultDateMsg}
-					</div>
-				</div>
-				<div class="row header">`;
-		if (_.contains(cohdef.columns, 'cal')) {
-			headerHtml += `
-					<div class="${colstyle} left">
-						${leftHeader}
+						<div class="row">
+							<div class="col-xs-${12-LEFT_COLS} col-xs-offset-${LEFT_COLS}">
+								${calHeader}
+								${rightHeader}
+							</div>
+						</div>
 					</div>`;
-			pickadiv = 'left';
-		}
-		if (_.contains(cohdef.columns, 'obs')) {
-			headerHtml += `
-					<div class="${colstyle} right">
-						${rightHeader}
-					</div>`;
-			pickadiv = 'right';
-		}
-		headerHtml += '</div>';
 		d3element.html(headerHtml);
-		var w = $(d3element.select(`div.${pickadiv}`).node()).width();
+		var w = $(d3element.select(`div>div`).node()).width();
 		resetScales(cohdef, w);
-		d3element.select('div.left svg.x.axis').call(cohdef.calAxis);
-		d3element.select('div.left svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
-						.attr("transform", function(d) {
-							return "translate(" + this.getBBox().height*-2 + "," + 
-																		this.getBBox().height + ")rotate(-45)";
-						});
-
-		d3element.select('div.right svg.x.axis').call(cohdef.obsAxis);
-		d3element.select('div.right svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
+		d3element.select('svg.x.axis').call(cohdef.obsAxis);
+		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
 						.attr("transform", function(d) {
 							return "translate(" + this.getBBox().height*-2 + "," + 
 																		this.getBBox().height + ")rotate(-45)";
@@ -370,20 +358,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		critNodes.selectAll('div.name')
 							.call(critName, cohdef, critType);
 
-		critNodes.selectAll('div.left > svg')
-							.call(critLeft, cohdef, critType);
+		//critNodes.selectAll('div.left > svg') .call(critLeft, cohdef, critType);
 		critNodes.selectAll('div.right > svg')
 							.call(critRight, cohdef, critType);
 	}
-	function critTriad(selection, cohdef) {
-		selection.append('div').attr('class', 'name');
-		if (cohdef.columns.length === 0) return;
-		var colstyle = `col-xs-${ 12 / cohdef.columns.length }`;
-		if (_.contains(cohdef.columns, 'cal')) {
-			selection.append('div').attr('class', `left ${colstyle}`)
-				.append('svg').attr('class', 'col-xs-12 cartoon');
-		}
-		selection.append('div').attr('class', `right ${colstyle}`)
+	function critTriad(selection, cohdef) { // not a triad anymore
+		selection.append('div').attr('class', `name left col-xs-${LEFT_COLS}`)
+		selection.append('div').attr('class', `right col-xs-${12-LEFT_COLS}`)
 			.append('svg').attr('class', 'col-xs-12 cartoon');
 	}
 	function critName(selection, cohdef, critType) {
@@ -410,52 +391,108 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						<${tag} 
 							class="${classes.join(' ')}" 
 							cx="${x(opts.x)}" 
-							cy="15"
-							r="4"
+							cy="${opts.y}"
+							r="${opts.r}"
 						/>`;
-		/*
-		var sp = {}; // symbol params
-		switch (opts.term) {
-			case 'start':
-				sp.color = 'green'; break;
-			case 'end':
-				sp.color = 'red'; break;
-			default:
-				sp.color = 'steelblue';
-		}
-		switch (opts.crit) {
-			case 'index':
-				sp.opacity: 1;
-				break;
-			case 'window':
-				sp.opacity: .4;
-				break;
-		}
-		*/
 	}
 	function interval(sym1, sym2, opts, cohdef) {
 		var x = cohdef.obsScale;
 		var terms = [];
-		if (opts.markerStart)
-			terms.push(`url(#${opts.markerStart})`);
-		if (opts.markerEnd)
-			terms.push(`url(#${opts.markerEnd})`);
+		var y = opts.y || 15; // FIX, shouldn't need this
 		var line = `<line 
 											x1="${x(opts.x1)}"
 											x2="${x(opts.x2)}"
-											y1="15" y2="15"
+											y1="${opts.y||15}" y2="${opts.y||15}"
 											style="${terms.join(' ')}"
-											class="${opts.fixed ? 'fixed' : 'conditional'}" />`;
+											class="${opts.fixed ? 'fixed' : 'conditional'} 
+														 ${opts.term ? ('term-'+opts.term) : ''}" />`;
+		if (opts.markerStart) {
+			line += `<path d="M ${x(opts.x1)} ${y} ${arrows[opts.markerStart]}" class="term-start" />`;
+		}
+		if (opts.markerEnd) {
+			line += `<path d="M ${x(opts.x2)} ${y} ${arrows[opts.markerEnd]}" class="term-end" />`;
+		}
 		return `
 						${sym1}
 						${sym2}
 						${line}`;
 	}
+	function durInterval(range, cohdef) {
+		var html = '';
+		if (rangeInfo(range, 'single-double') === 'single') {
+			var y = ypos({dur: range, brace: true}, 'index-dot');
+			switch (range.Op[0]) {
+				case "l": // lt or lte
+					//html += interval('','', )
+					return '<text y="20">not handling yet</text>';
+					el.append('line')
+								.attr('y1', 10)
+								.attr('y2', 10)
+								.attr('x1', cohdef.obsScale(0))
+								.attr('x2', cohdef.obsScale(range.Value))
+								.attr('stroke-dasharray', '3,3')
+								.style(`marker-start`, `url(#line-stop)`)
+								.style(`marker-end`, `url(#left-arrow)`)
+					break;
+				case "g": // gt or gte
+					html += interval('','', {fixed:true, x1:0, x2:range.Value, y,
+																	 markerEnd:'right',
+																	 term:'end' // duration is how long before it ends
+																	}, cohdef);
+					html += interval('','', {fixed:false, x1:range.Value, x2:cohdef.obsExt[1], y,
+																	 markerEnd:'right',
+																	 term:'end' // duration is how long before it ends
+																	}, cohdef);
+					return html;
+					el.append('line')	// solid line to > point
+								.attr('y1', 10)
+								.attr('y2', 10)
+								.attr('x1', cohdef.obsScale(0))
+								.attr('x2', cohdef.obsScale(range.Value))
+								.style(`marker-start`, `url(#line-stop)`)
+								.style(`marker-end`, `url(#line-stop)`)
+					el.append('line') // dotted line to the end
+								.attr('y1', 10)
+								.attr('y2', 10)
+								.attr('x1', cohdef.obsScale(range.Value))
+								.attr('x2', cohdef.obsScale(cohdef.obsExt[1]))
+								.attr('stroke-dasharray', '3,3')
+								.style(`marker-start`, `url(#line-stop)`)
+								.style(`marker-end`, `url(#right-arrow)`)
+					break;
+				case "e": // eq
+					return '<text y="20">not handling yet</text>';
+					el.append('line')
+								.attr('y1', 10)
+								.attr('y2', 10)
+								.attr('x1', cohdef.obsScale(0))
+								.attr('x2', cohdef.obsScale(range.Value))
+								.style(`marker-start`, `url(#line-stop)`)
+								.style(`marker-end`, `url(#line-stop)`)
+			}
+		} else {
+			return '<text y="20">not handling yet</text>';
+			console.log("NOT HANDLING BETWEEN YET");
+		}
+	}
 	function critRight(selection, cohdef, critType) {
 		selection.each(function(_crit) {
-			var el = d3.select(this);
+			var el = d3.select(this); // the svg
 			var crit = _crit;
 			var html = '';
+			var durRange = getRange(crit, 'dur');
+			var startDateRange = getRange(crit, 'start');
+			var endDateRange = getRange(crit, 'end'); // ignore these?
+			el.attr('height', ypos({dates:startDateRange||endDateRange,
+															durRange, brace: true}, 'svg-height'));
+			if (critType === 'primary') {
+				if (durRange) {
+					html += durInterval(durRange, cohdef);
+				}
+				html += obsPeriodBrace(crit, durRange, startDateRange, endDateRange, cohdef);
+				el.html(html);
+				return;
+			}
 			if (critType === 'group') {
 				crit = _crit.Criteria;
 				var sw = _crit.StartWindow;
@@ -472,8 +509,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				if (fixedWindow) {
 					html += 
 						interval(
-							symbol({term:'start', crit:'window', inclusive:'true', x:swin[0]}, cohdef),
-							symbol({term:'end', crit:'window', inclusive:'true', x:swin[1]}, cohdef),
+							symbol({term:'start', crit:'window', inclusive:'true', x:swin[0], y:15, r:4}, cohdef),
+							symbol({term:'end', crit:'window', inclusive:'true', x:swin[1], y:15, r:4}, cohdef),
 							{fixed:true, x1:swin[0], x2:swin[1]}, cohdef);
 				} else {
 					if (swin[0] === null && swin[1] === null) {
@@ -482,68 +519,51 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						html += 
 							interval(
 								'',
-								symbol({term:'end', crit:'window', inclusive:'true', x:swin[1]}, cohdef),
+								symbol({term:'end', crit:'window', inclusive:'true', x:swin[1], y:15, r:4}, cohdef),
 								{fixed:false, x1:cohdef.obsScale.domain()[0], x2:swin[1],
-									markerStart:'left-arrow-start'}, cohdef);
+									markerStart:'left'}, cohdef);
 					} else if (swin[1] === null) {
 						html += 
 							interval(
-								symbol({term:'start', crit:'window', inclusive:'true', x:swin[0]}, cohdef),
+								symbol({term:'start', crit:'window', inclusive:'true', x:swin[0], y:15, r:4}, cohdef),
 								'',
 								{fixed:false, x1:swin[0], x2:cohdef.obsScale.domain()[1],
-									markerEnd:'right-arrow-end'}, cohdef);
+									markerEnd:'right'}, cohdef);
 					}
 				}
 				el.html(html);
 				return;
 			}
-
-			el.html(''); // clear by brute force, not sure if needed
-			var range = getRange(crit, 'dur');
-			if (range) {
-				if (rangeInfo(range, 'single-double') === 'single') {
-					switch (range.Op[0]) {
-						case "l": // lt or lte
-							el.append('line')
-										.attr('y1', 10)
-										.attr('y2', 10)
-										.attr('x1', cohdef.obsScale(0))
-										.attr('x2', cohdef.obsScale(range.Value))
-										.attr('stroke-dasharray', '3,3')
-										.style(`marker-start`, `url(#line-stop)`)
-										.style(`marker-end`, `url(#left-arrow)`)
-							break;
-						case "g": // gt or gte
-							el.append('line')	// solid line to > point
-										.attr('y1', 10)
-										.attr('y2', 10)
-										.attr('x1', cohdef.obsScale(0))
-										.attr('x2', cohdef.obsScale(range.Value))
-										.style(`marker-start`, `url(#line-stop)`)
-										.style(`marker-end`, `url(#line-stop)`)
-							el.append('line') // dotted line to the end
-										.attr('y1', 10)
-										.attr('y2', 10)
-										.attr('x1', cohdef.obsScale(range.Value))
-										.attr('x2', cohdef.obsScale(cohdef.obsExt[1]))
-										.attr('stroke-dasharray', '3,3')
-										.style(`marker-start`, `url(#line-stop)`)
-										.style(`marker-end`, `url(#right-arrow)`)
-							break;
-						case "e": // eq
-							el.append('line')
-										.attr('y1', 10)
-										.attr('y2', 10)
-										.attr('x1', cohdef.obsScale(0))
-										.attr('x2', cohdef.obsScale(range.Value))
-										.style(`marker-start`, `url(#line-stop)`)
-										.style(`marker-end`, `url(#line-stop)`)
-					}
-				} else {
-					console.log("NOT HANDLING BETWEEN YET");
-				}
-			}
 		})
+	}
+	function obsPeriodBrace(crit, durRange, startDateRange, endDateRange, cohdef) {
+		var prior = Math.abs(cohdef.PrimaryCriteria.ObservationWindow.PriorDays);
+		var post = cohdef.PrimaryCriteria.ObservationWindow.PostDays;
+		if (!(prior || post)) {
+			return '';
+		}
+		var dotY = ypos({dates:startDateRange||endDateRange,
+										 durRange, brace: true}, 'index-dot');
+		var dotR = ypos({dates:startDateRange||endDateRange,
+										 durRange, brace: true}, 'index-r');
+		var indexDateDot = symbol({term:'start', crit:'primary', 
+															 inclusive:'true', x:0, y:dotY, r:dotR}, cohdef);
+		var html = `
+				${indexDateDot}
+				<path class="curly-brace" 
+							d="${ makeCurlyBrace(
+																cohdef.obsScale(-prior),
+																ypos({dates:startDateRange||endDateRange,
+																			durRange, brace: true}, 'brace-top'),
+																cohdef.obsScale(post),
+																ypos({dates:startDateRange||endDateRange,
+																			durRange, brace: true}, 'brace-top'),
+																ypos({dates:startDateRange||endDateRange,
+																			durRange, brace: true}, 'brace-height'),
+																0.6,
+																cohdef.obsScale(0))}" />
+		`;
+		return html;
 	}
 	function critLeft(selection, cohdef, critType) {
 		selection.each(function(_crit) {
@@ -592,6 +612,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		var all_any = `Restrict to people matching ${cg.Type.toLowerCase()} of the
 										following criteria`;
+		/*
 		if (cohdef.columns.length === 0) {
 			d3element.html(`
 				<div class="row header">
@@ -599,9 +620,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				</div>`);
 			return;
 		}
-		var leftHeader =
-			`
-			<div class="row">
+		*/
+		var calHeader = `
 				Calendar Start 
 					(<svg style="display:inline-block" height="10px" width="10px">
 						<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
@@ -610,71 +630,38 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					(<svg style="display:inline-block" height="10px" width="10px">
 						<circle cx="5" cy="5" r="4" style="opacity:.4; fill:red" />
 					</svg>)
-				for additional criteria
-			</div>
-			<div class="row">
-				<svg class="x axis col-xs-12"/>
-			</div>`;
-		var rightHeader =
-			`
-			<div class="row">
-				<div class="col-xs-12">
-					Additional criteria start date 
-						(<svg style="display:inline-block" height="10px" width="10px">
-							<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
-						</svg>)
-					and duration 
-						(<svg style="display:inline-block" height="10px" width="38px">
-							<line x1="2" x2="27" y1="5" y2="5" 
-								style="marker-start:url(#line-stop); marker-end:url(#right-arrow)" />
-						</svg>)
-					relative to index date
-						(Day 0, <svg style="display:inline-block" height="10px" width="10px">
-							<circle cx="5" cy="5" r="4" style="fill:green" />
-						</svg>)
-				</div>
-			</div>
-			<div class="row">
-				<svg class="x axis col-xs-12"/>
-			</div>`;
+				for additional criteria`;
+		var rightHeader = `
+				Additional criteria start date 
+					(<svg style="display:inline-block" height="10px" width="10px">
+						<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
+					</svg>)
+				and duration 
+					(<svg style="display:inline-block" height="10px" width="38px">
+						<line x1="2" x2="27" y1="5" y2="5" 
+							style="marker-start:url(#line-stop); marker-end:url(#right-arrow)" />
+					</svg>)
+				relative to index date
+					(Day 0, <svg style="display:inline-block" height="10px" width="10px">
+						<circle cx="5" cy="5" r="4" style="fill:green" />
+					</svg>)
+				<svg class="x axis col-xs-12"/>`;
 		
-		var colstyle = `col-xs-${ 12 / cohdef.columns.length }`;
-		var pickadiv = ''; // doesn't matter, as long as it exists. they should all 
-											 // be the same width
-		var headerHtml = 
-			`
+		var headerHtml = `
 				<div class="row header">
 					<div class="col-xs-12">
 						${all_any}
-					</div>
-				</div>
-				<div class="row header">`;
-		if (_.contains(cohdef.columns, 'cal')) {
-			headerHtml += `
-					<div class="${colstyle} left">
-						${leftHeader}
-					</div>`;
-			pickadiv = 'left'
-		}
-		if (_.contains(cohdef.columns, 'obs')) {
-			headerHtml += `
-					<div class="${colstyle} right">
-						${rightHeader}
+						<div class="row">
+							<div class="col-xs-${12-LEFT_COLS} col-xs-offset-${LEFT_COLS}">
+								${calHeader}
+								${rightHeader}
+							</div>
+						</div>
 					</div>
 				</div>`;
-			pickadiv = 'right'
-		}
-		headerHtml += '</div>';
 		d3element.html(headerHtml);
-		d3element.select('div.left svg.x.axis').call(cohdef.calAxis);
-		d3element.select('div.left svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
-						.attr("transform", function(d) {
-							return "translate(" + this.getBBox().height*-2 + "," + 
-																		this.getBBox().height + ")rotate(-45)";
-						});
-
-		d3element.select('div.right svg.x.axis').call(cohdef.obsAxis);
-		d3element.select('div.right svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
+		d3element.select('svg.x.axis').call(cohdef.obsAxis);
+		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
 						.attr("transform", function(d) {
 							return "translate(" + this.getBBox().height*-2 + "," + 
 																		this.getBBox().height + ")rotate(-45)";
@@ -1002,7 +989,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		return left + right;
 	}
 
-	function setupArrowHeads(element) {
+	function setupArrowHeadsNOT_USING(element) {
 		var svg = d3.select(element).append('svg')
 									.attr('class','cartoon')
 									.attr('height',0);
@@ -1016,7 +1003,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					.attr('markerUnits', 'strokeWidth')
 					.attr('markerWidth', 10)
 					.attr('markerHeight', 10)
-					.attr('fill-opacity', 0)
+					//.attr('fill-opacity', 0)
 					.attr('orient', 'auto')
 					.append('path')
 						.attr('d', 'M 2 2 L 8 5 L 2 8 z')
@@ -1029,7 +1016,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					.attr('markerUnits', 'strokeWidth')
 					.attr('markerWidth', 10)
 					.attr('markerHeight', 10)
-					.attr('fill-opacity', 0)
+					//.attr('fill-opacity', 0)
 					.attr('orient', 'auto')
 					.append('path')
 						.attr('d', 'M 8 2 L 8 8 L 1 5 z')
@@ -1041,7 +1028,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					.attr('refY', 5)
 					.attr('markerUnits', 'strokeWidth')
 					.attr('markerWidth', 2)
-					.attr('markerHeight', 10)
+					//.attr('markerHeight', 10)
 					.attr('fill-opacity', 0)
 					.attr('orient', 'auto')
 					.append('path')

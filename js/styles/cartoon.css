@@ -42,27 +42,35 @@ div.cartoon-inclusion-section div.body > div.crit
 	margin: 5px 2px 2px 2px;
 	border: 2px solid #DDD;
 }
+/*
 div.crit > div.name {
 	text-align: center;
 	font-size: 12px;
 	border: 2px solid #FFF;
 }
+*/
+div.crit.row {
+	display: table;
+	width: 100%;
+}
 div.header > div.left,
 div.crit > div.left {
 	text-align: center;
 	border: 2px solid #FFF;
+
+	float: none;
+	display: table-cell;
+	vertical-align: top;
 }
 div.header > div.right,
 div.crit > div.right {
 	text-align: center;
 	border: 2px solid #FFF;
+
+	float: none;
+	display: table-cell;
+	vertical-align: top;
 }
-svg.cartoon {
-	height: 20px;
-}
-
-
-
 
 /*
 div.header > div.left,
@@ -105,11 +113,6 @@ svg.cartoon line.conditional {
 .cartoon circle.crit-window {
 	opacity: 0.4;
 }
-/*
- * line, marker {
-  stroke: blue;
-}
-*/
 
 svg.x.axis {
 	height: 20px;
