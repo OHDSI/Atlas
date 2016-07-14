@@ -106,10 +106,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								.concat(cohdef.InclusionRules.map(d=>d.expression))
 								.map(subGroups)));
 	}
-	function subGroups(group) { // returns array of this group and its subgroups
+	function subGroups(group, level=0) { // returns array of this group and its subgroups
 		if (!group) return [];
+		group.level = level;
 		if (group.Groups.length)
-			return _.flatten([group].concat(group.Groups.map(subGroups)));
+			return _.flatten([group].concat(group.Groups.map(g=>subGroups(g,level+1))));
 		return [group]
 	}
 	function dateExtent(crits) {
@@ -203,16 +204,15 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	};
 
 
-	function drawSection(d3element, cohdef, cat, data, level) {
-		if (Array.isArray(data))
-			throw new Error("didn't expect array", data);
-		// type in primary, additional, inclusion
+	function drawSection(d3element, cohdef, cat, data, level, opts) {
+		//if (Array.isArray(data)) throw new Error("didn't expect array", data);
 		var funcs = {
 			'primary-section':		{ header: primaryCritHeader,		body: primaryCritBody },
 			'additional-section': { header: addCritSectHeader,		body: addCritSectBody },
 			'critgroup':					{ header: critGroupHeader,			body: critGroupBody },
-			'inclusion-section':	{ header: inclusionCritHeader,	body: inclusionCritBody },
-			'obsperiod-section':	{ header: obsperiodHeader,			body: obsperiodBody },
+			'inclusion-section':	{ header: inclusionRulesHeader,	body: inclusionRulesBody },
+			'inclusion-rule':			{ header: inclusionRuleHeader,	body: inclusionRuleBody },
+			//'obsperiod-section':	{ header: obsperiodHeader,			body: obsperiodBody },
 		};
 		var catDiv = d3AddIfNeeded(d3element, [data], 'div', 
 															 [`cartoon-${cat}`], 
@@ -224,10 +224,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																});
 
 		//if (!level) {
-		funcs[cat].header(catDiv.select('div.header'), cohdef, data, level);
+		funcs[cat].header(catDiv.select('div.header'), cohdef, data, level, opts);
 		//}
 		if (data)
-			funcs[cat].body(catDiv.select('div.body'), cohdef, data, level);
+			funcs[cat].body(catDiv.select('div.body'), cohdef, data, level, opts);
 	}
 	function addCritSectHeader(d3element, cohdef, acsect, level) {
 		var text = '<h3>Additional Criteria</h3>'; 
@@ -238,12 +238,24 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function addCritSectBody(d3element, cohdef, acsect, level) {
 		drawSection(d3element, cohdef, 'critgroup', acsect, level);
 	}
-	function inclusionCritHeader(d3element, cohdef, rules, level) {
+	function inclusionRulesHeader(d3element, cohdef, rules, level) {
 		var text = '<h3>Inclusion Rules</h3>'; 
 		if (!rules)
 			text = 'No inclusion rules';
+		d3element.html(text);
 	}
-	function inclusionCritBody(d3element, cohdef, PrimaryCriteria, level) {
+	function inclusionRulesBody(d3element, cohdef, rules, level) {
+		rules.forEach(function(rule) {
+			var rulediv = d3element.append('div');
+			drawSection(rulediv, cohdef, 'inclusion-rule', rule, 0);
+		});
+	}
+	function inclusionRuleHeader(d3element, cohdef, rule, level) {
+		var text = `<h4>${rule.name}</h4>${rule.description}`; 
+		d3element.html(text);
+	}
+	function inclusionRuleBody(d3element, cohdef, rule, level) {
+		drawSection(d3element, cohdef, 'critgroup', rule.expression, 0);
 	}
 	function addDomainNames(data, cat) { // criteria with domain name attached
 		if (cat === 'primary') {
@@ -348,27 +360,46 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						});
 	}
 	function primaryCritBody(d3element,cohdef,PrimaryCriteria) {
-		critBody(d3element,cohdef,PrimaryCriteria, 'primary');
+		PrimaryCriteria.CriteriaList.forEach((crit,i) => {
+			crit.critIndex = i;
+		});
+		critBody(d3element,cohdef,PrimaryCriteria, 'primary', 
+							{maxDepth:0, depth:1});
 	}
 	function critGroupBody(d3element,cohdef,critgroup, level) {
-		critBody(d3element,cohdef,critgroup, 'group');
+		if (level === 0) {
+			var subs = subGroups(critgroup);
+			var maxDepth = _.max(subs.map(d=>d.level));
+		}
+		var critIndex = -1;
+		critgroup.CriteriaList.forEach((crit,i) => {
+			crit.critIndex = ++critIndex;
+		});
+		critBody(d3element,cohdef,critgroup, 'group', 
+						 {maxDepth, depth:level+1});
 		critgroup.Groups.forEach( group => {
-			drawSection(d3element, cohdef, 'critgroup', group, level + 1);
+			drawSection(d3element, cohdef, 'critgroup', group, level + 1, 
+									{maxDepth, depth: level + 1, critIndex});
 		});
 	}
-	function critBody(d3element, cohdef, crit, critType) {
+	function critBody(d3element, cohdef, crit, critType, opts) {
 		var crits = crit.CriteriaList;
 		var critNodes = d3AddIfNeeded(d3element, crits, 'div', ['crit','row'], 
 																	critTriad, cohdef)
+		critNodes.selectAll('div.indenting')
+							.html(function(crit) {
+								return `${opts&&JSON.stringify(opts)}<br/>${crit.critIndex}`;
+							});
+
 		critNodes.selectAll('div.name')
 							.call(critName, cohdef, critType);
 
-		//critNodes.selectAll('div.left > svg') .call(critLeft, cohdef, critType);
 		critNodes.selectAll('div.right > div.row > svg')
-							.call(critRight, cohdef, critType);
+							.call(drawCrits, cohdef, critType);
 	}
 	function critTriad(selection, cohdef) { // not a triad anymore
-		selection.append('div').attr('class', `name left col-xs-${LEFT_COLS}`)
+		selection.append('div').attr('class', `indenting col-xs-1`)
+		selection.append('div').attr('class', `name left col-xs-${LEFT_COLS - 1}`)
 		selection.append('div').attr('class', `right col-xs-${12-LEFT_COLS}`)
 			.append('div').attr('class', 'row')
 			.append('svg').attr('class', 'col-xs-12 cartoon');
@@ -428,18 +459,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		if (rangeInfo(range, 'single-double') === 'single') {
 			var y = ypos({dur: range, brace: true}, 'index-dot');
 			switch (range.Op[0]) {
-				case "l": // lt or lte
-					//html += interval('','', )
-					return '<text y="20">not handling yet</text>';
-					el.append('line')
-								.attr('y1', 10)
-								.attr('y2', 10)
-								.attr('x1', cohdef.obsScale(0))
-								.attr('x2', cohdef.obsScale(range.Value))
-								.attr('stroke-dasharray', '3,3')
-								.style(`marker-start`, `url(#line-stop)`)
-								.style(`marker-end`, `url(#left-arrow)`)
-					break;
 				case "g": // gt or gte
 					html += interval('','', {fixed:true, x1:0, x2:range.Value, y,
 																	 markerEnd:'right',
@@ -457,8 +476,20 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					`;
 					return html;
 					break;
+				case "l": // lt or lte
+					//html += interval('','', )
+					return '<text y="20">not handling duration less than yet</text>';
+					el.append('line')
+								.attr('y1', 10)
+								.attr('y2', 10)
+								.attr('x1', cohdef.obsScale(0))
+								.attr('x2', cohdef.obsScale(range.Value))
+								.attr('stroke-dasharray', '3,3')
+								.style(`marker-start`, `url(#line-stop)`)
+								.style(`marker-end`, `url(#left-arrow)`)
+					break;
 				case "e": // eq
-					return '<text y="20">not handling yet</text>';
+					return '<text y="20">not handling duration equal to yet</text>';
 					el.append('line')
 								.attr('y1', 10)
 								.attr('y2', 10)
@@ -466,14 +497,18 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								.attr('x2', cohdef.obsScale(range.Value))
 								.style(`marker-start`, `url(#line-stop)`)
 								.style(`marker-end`, `url(#line-stop)`)
+				default: // eq
+					return `<text y="20">not handling duration ${range.Op} yet</text>`;
 			}
 		} else {
-			return '<text y="20">not handling yet</text>';
-			console.log("NOT HANDLING BETWEEN YET");
+			return `<text y="20">not handling duration ${rangeInfo(range,'nice-op')} yet</text>`;
 		}
 	}
 	function dateSymbols(crit, durRange, startDateRange, endDateRange, cohdef) {
 		var html = '';
+		if (endDateRange) {
+			html += `<text y="40">not handling end dates</text>`;
+		}
 		if (startDateRange) {
 			var y = ypos({dates:startDateRange||endDateRange,
 											durRange, brace: true}, 'dates');
@@ -510,47 +545,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		return html;
 	}
-	function critLeft(selection, cohdef, critType) {
-		selection.each(function(_crit) {
-			var crit = critType === 'group' ? _crit.Criteria : _crit;
-			var el = d3.select(this);
-			el.html(''); // clear by brute force, not sure if needed
-			drawCalThing('start');
-			drawCalThing('end');
-			function drawCalThing(term) {
-				var range = getRange(crit, term);
-				if (range) {
-					var date = new Date(range.Value);
-					el.append('circle')
-							//.style('fill', which === 'start' ? 'green' : 'red')
-							.attr('class', `term-${term}`)
-							.attr('cx', cohdef.calScale(date))
-							.attr('cy', 10)
-							.attr('r', 7)
-					el.append('line')
-								.attr('class', `term-${term}`)
-								.attr('y1', 10)
-								.attr('y2', 10)
-								.attr('x1', cohdef.calScale(date) +	38 * (range.Op[0]==='l' ? -1 : 1))
-								.attr('x2', cohdef.calScale(date) +	 8 * (range.Op[0]==='l' ? -1 : 1))
-								.attr('stroke-dasharray', '3,3')
-								.style(`marker-start`, 
-											 `url(#left-arrow-${term})`)
-					/*
-					el.append("text")
-								.attr('y', 10)
-								.attr('x', cohdef.calScale(date))
-								.attr("font-family","FontAwesome")
-								.attr('text-anchor', 'middle')
-								.attr('alignment-baseline', 'middle')
-								.text(which === 'end' ? '\uf0a5' : '\uf0a4') // hand-o-left/right
-								.style('fill', which === 'start' ? 'green' : 'red')
-					*/
-				}
-			}
-		})
-	}
-	function critRight(selection, cohdef, critType) {
+	function drawCrits(selection, cohdef, critType) {
 		selection.each(function(_crit) {
 			var el = d3.select(this); // the svg
 			var crit = _crit;
@@ -664,25 +659,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		var all_any = `Restrict to people matching ${cg.Type.toLowerCase()} of the
 										following criteria`;
-		/*
-		if (cohdef.columns.length === 0) {
-			d3element.html(`
-				<div class="row header">
-					${all_any}
-				</div>`);
-			return;
-		}
-		*/
-		var calHeader = `
-				Calendar Start 
-					(<svg style="display:inline-block" height="10px" width="10px">
-						<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
-					</svg>)
-				/ End 
-					(<svg style="display:inline-block" height="10px" width="10px">
-						<circle cx="5" cy="5" r="4" style="opacity:.4; fill:red" />
-					</svg>)
-				for additional criteria`;
 		var rightHeader = `
 				Additional criteria start date 
 					(<svg style="display:inline-block" height="10px" width="10px">
@@ -702,10 +678,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var headerHtml = `
 				<div class="row header">
 					<div class="col-xs-12">
-						${all_any}
 						<div class="row">
-							<div class="right col-xs-${12-LEFT_COLS} col-xs-offset-${LEFT_COLS}">
-								${calHeader}
+							<div class="indenting col-xs-1"></div>
+							<div class="col-xs-${LEFT_COLS - 1}"></div>
+							<div class="right col-xs-${12-LEFT_COLS}">
+								${all_any}
 								${rightHeader}
 							</div>
 						</div>
@@ -798,7 +775,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 											.classed('second', true);
 
 		svg = d3element.select("svg");
-		debugger;
 		svg.attr('width', divWidth())
 				.attr('height', 60)
 
