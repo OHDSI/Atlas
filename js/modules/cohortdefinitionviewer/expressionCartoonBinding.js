@@ -18,25 +18,29 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								} = {}, feature) { // need to change for additional crits
 		var topMargin = .25;
 		var bottomMargin = .25;
-		var brace = brace ? 1 : 0; // first 1 lines (if it it present)
+		var braceLabel = brace ? 1 : 0;
+		var brace = brace ? 1.5 : 0; // first 1 lines (if it it present)
 		var dot = dot ? .5 : 0;		 // next line (if it it present)
 		var dur = dur ? 0 : 0;		 // put with dot	
 		var dates = dates ? 1 : 0; // next line (if it it present)
 
-		var lines = topMargin + brace + dot + dur + dates + bottomMargin;
+		var lines = topMargin + braceLabel + brace + dot + dur + dates + bottomMargin;
 
 		switch (feature) {
 			case "svg-height":
 				return lines * SVG_LINE_HEIGHT;
+			case "brace-label":
+				return (topMargin + braceLabel - .2) * SVG_LINE_HEIGHT; // 10% margin
 			case "brace-top":
-				//return (dur + dates + .1) * SVG_LINE_HEIGHT;
-				return topMargin * SVG_LINE_HEIGHT; // 10% margin
+				return (topMargin + braceLabel) * SVG_LINE_HEIGHT; // 10% margin
 			case "brace-height":
 				return brace * SVG_LINE_HEIGHT; // 10% top and bottom
 			case "index-dot":
-				return (topMargin + brace + dot * .5) * SVG_LINE_HEIGHT;
+				return (topMargin + brace + braceLabel + dot * .5) * SVG_LINE_HEIGHT;
 			case "index-r":
 				return dot * .5 * SVG_LINE_HEIGHT;
+			case "dates":
+				return (topMargin + brace + braceLabel + dot + dur + dates * .5) * SVG_LINE_HEIGHT;
 		}
 	}
 
@@ -47,7 +51,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function expressionChangeSetup(element, cohdef) {
 		var d3element = d3.select(element);
 		drawSection(d3element, cohdef, 'primary-section', cohdef.PrimaryCriteria);
-		drawSection(d3element, cohdef, 'obsperiod-section', cohdef);
+		//drawSection(d3element, cohdef, 'obsperiod-section', cohdef);
 		drawSection(d3element, cohdef, 'additional-section', cohdef.AdditionalCriteria, 0);
 		drawSection(d3element, cohdef, 'inclusion-section', cohdef.InclusionRules, 0);
 	}
@@ -73,16 +77,17 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		*/
 	}
 	function resetScales(cohdef, width) {
-		var extraPx = 75; // room at ends of cartoons for arrows past domain dates
+		var extraPx = 25; // room at ends of cartoons for arrows past domain dates
 		var extraRatio = extraPx / width; // add to ends of domains
 
 		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
 												allAdditionalCriteria(cohdef), cohdef);
 		if (obsext && !(obsext[0] === 0 && obsext[1] === 0)) {
-			var extraDays = extraRatio * (obsext[1] + obsext[0]);
+			var extraDays = extraRatio * (Math.abs(obsext[0]) + Math.abs(obsext[0]));
 			cohdef.obsScale.range([0,width])
 										.domain([obsext[0] - extraDays, obsext[1] + extraDays])
 		}
+		console.log(obsext, cohdef.obsScale.domain(), extraRatio, extraDays);
 		cohdef.obsExt = obsext;
 		//console.log(cohdef.obsScale.domain());
 	}
@@ -135,7 +140,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			if (dur)
 				return dur + swinMax(crit.StartWindow[term], ext);
 	}
-	function obsExtent(primCrits, addCrits, cohdef) { // don't need cohdef
+	function obsExtent(primCrits, addCrits, cohdef) {
 		var primDurs = _.chain(primCrits)
 										.map(crit => getRange(crit,'dur'))
 										.compact()
@@ -326,14 +331,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						${limitMsg}
 						${resultDateMsg}
 						<div class="row">
-							<div class="col-xs-${12-LEFT_COLS} col-xs-offset-${LEFT_COLS}">
+							<div class="right col-xs-${12-LEFT_COLS} col-xs-offset-${LEFT_COLS}">
 								${calHeader}
 								${rightHeader}
 							</div>
 						</div>
 					</div>`;
 		d3element.html(headerHtml);
-		var w = $(d3element.select(`div>div`).node()).width();
+		var w = $(d3element.select(`div.right`).node()).width();
 		resetScales(cohdef, w);
 		d3element.select('svg.x.axis').call(cohdef.obsAxis);
 		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
@@ -359,12 +364,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 							.call(critName, cohdef, critType);
 
 		//critNodes.selectAll('div.left > svg') .call(critLeft, cohdef, critType);
-		critNodes.selectAll('div.right > svg')
+		critNodes.selectAll('div.right > div.row > svg')
 							.call(critRight, cohdef, critType);
 	}
 	function critTriad(selection, cohdef) { // not a triad anymore
 		selection.append('div').attr('class', `name left col-xs-${LEFT_COLS}`)
 		selection.append('div').attr('class', `right col-xs-${12-LEFT_COLS}`)
+			.append('div').attr('class', 'row')
 			.append('svg').attr('class', 'col-xs-12 cartoon');
 	}
 	function critName(selection, cohdef, critType) {
@@ -417,7 +423,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						${sym2}
 						${line}`;
 	}
-	function durInterval(range, cohdef) {
+	function durInterval(range, crit, cohdef) {
 		var html = '';
 		if (rangeInfo(range, 'single-double') === 'single') {
 			var y = ypos({dur: range, brace: true}, 'index-dot');
@@ -443,22 +449,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																	 markerEnd:'right',
 																	 term:'end' // duration is how long before it ends
 																	}, cohdef);
+					html += `
+										<text x="${cohdef.obsScale(range.Value) + 3}"
+													y="${y - 4}"
+										>${durationType(crit)} ${rangeInfo(range,'nice-op')} 
+											${range.Value} days</text>
+					`;
 					return html;
-					el.append('line')	// solid line to > point
-								.attr('y1', 10)
-								.attr('y2', 10)
-								.attr('x1', cohdef.obsScale(0))
-								.attr('x2', cohdef.obsScale(range.Value))
-								.style(`marker-start`, `url(#line-stop)`)
-								.style(`marker-end`, `url(#line-stop)`)
-					el.append('line') // dotted line to the end
-								.attr('y1', 10)
-								.attr('y2', 10)
-								.attr('x1', cohdef.obsScale(range.Value))
-								.attr('x2', cohdef.obsScale(cohdef.obsExt[1]))
-								.attr('stroke-dasharray', '3,3')
-								.style(`marker-start`, `url(#line-stop)`)
-								.style(`marker-end`, `url(#right-arrow)`)
 					break;
 				case "e": // eq
 					return '<text y="20">not handling yet</text>';
@@ -475,94 +472,42 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			console.log("NOT HANDLING BETWEEN YET");
 		}
 	}
-	function critRight(selection, cohdef, critType) {
-		selection.each(function(_crit) {
-			var el = d3.select(this); // the svg
-			var crit = _crit;
-			var html = '';
-			var durRange = getRange(crit, 'dur');
-			var startDateRange = getRange(crit, 'start');
-			var endDateRange = getRange(crit, 'end'); // ignore these?
-			el.attr('height', ypos({dates:startDateRange||endDateRange,
-															durRange, brace: true}, 'svg-height'));
-			if (critType === 'primary') {
-				if (durRange) {
-					html += durInterval(durRange, cohdef);
-				}
-				html += obsPeriodBrace(crit, durRange, startDateRange, endDateRange, cohdef);
-				el.html(html);
-				return;
+	function dateSymbols(crit, durRange, startDateRange, endDateRange, cohdef) {
+		var html = '';
+		if (startDateRange) {
+			var y = ypos({dates:startDateRange||endDateRange,
+											durRange, brace: true}, 'dates');
+			var r = ypos({dates:startDateRange||endDateRange,
+											durRange, brace: true}, 'index-r');
+			var xIndex = 0;
+			//var xEdge = cohdef.obsExt[0];
+			var circle = symbol({term:'start', crit:'primary', 
+														inclusive:startDateRange.Op.match(/e/), 
+														x:xIndex, y, r}, cohdef);
+			var whichSide;
+			var anchor;
+			switch (startDateRange.Op[0]) {
+				case "l":
+					whichSide = 1;
+					anchor = 'start';
+					break;
+				case "g":
+				case "e":
+					whichSide = -1;
+					anchor = 'end';
+					break;
 			}
-			if (critType === 'group') {
-				crit = _crit.Criteria;
-				var sw = _crit.StartWindow;
-				var swin = [sw.Start.Coeff * sw.Start.Days, sw.End.Coeff * sw.End.Days];
-				var fixedWindow = true;
-				if (sw.Start.Days === null) {
-					swin[0] = null;
-					fixedWindow = false;
-				}
-				if (sw.End.Days === null) {
-					swin[1] = null;
-					fixedWindow = false;
-				}
-				if (fixedWindow) {
-					html += 
-						interval(
-							symbol({term:'start', crit:'window', inclusive:'true', x:swin[0], y:15, r:4}, cohdef),
-							symbol({term:'end', crit:'window', inclusive:'true', x:swin[1], y:15, r:4}, cohdef),
-							{fixed:true, x1:swin[0], x2:swin[1]}, cohdef);
-				} else {
-					if (swin[0] === null && swin[1] === null) {
-						// do something
-					} else if (swin[0] === null) {
-						html += 
-							interval(
-								'',
-								symbol({term:'end', crit:'window', inclusive:'true', x:swin[1], y:15, r:4}, cohdef),
-								{fixed:false, x1:cohdef.obsScale.domain()[0], x2:swin[1],
-									markerStart:'left'}, cohdef);
-					} else if (swin[1] === null) {
-						html += 
-							interval(
-								symbol({term:'start', crit:'window', inclusive:'true', x:swin[0], y:15, r:4}, cohdef),
-								'',
-								{fixed:false, x1:swin[0], x2:cohdef.obsScale.domain()[1],
-									markerEnd:'right'}, cohdef);
-					}
-				}
-				el.html(html);
-				return;
-			}
-		})
-	}
-	function obsPeriodBrace(crit, durRange, startDateRange, endDateRange, cohdef) {
-		var prior = Math.abs(cohdef.PrimaryCriteria.ObservationWindow.PriorDays);
-		var post = cohdef.PrimaryCriteria.ObservationWindow.PostDays;
-		if (!(prior || post)) {
-			return '';
+			var text = `
+									<text x="${cohdef.obsScale(xIndex) + 11 * whichSide}"
+												y="${y + 4}"
+												alignment-baseline="top"
+												text-anchor="${anchor}"
+									>start ${rangeInfo(startDateRange,'nice-op')}
+									 ${startDateRange.Value}
+									</text>`;
+			return circle + text;
+			//return interval( '', {fixed:false, x1:xIndex, x2:xEdge, y}, cohdef);
 		}
-		var dotY = ypos({dates:startDateRange||endDateRange,
-										 durRange, brace: true}, 'index-dot');
-		var dotR = ypos({dates:startDateRange||endDateRange,
-										 durRange, brace: true}, 'index-r');
-		var indexDateDot = symbol({term:'start', crit:'primary', 
-															 inclusive:'true', x:0, y:dotY, r:dotR}, cohdef);
-		var html = `
-				${indexDateDot}
-				<path class="curly-brace" 
-							d="${ makeCurlyBrace(
-																cohdef.obsScale(-prior),
-																ypos({dates:startDateRange||endDateRange,
-																			durRange, brace: true}, 'brace-top'),
-																cohdef.obsScale(post),
-																ypos({dates:startDateRange||endDateRange,
-																			durRange, brace: true}, 'brace-top'),
-																ypos({dates:startDateRange||endDateRange,
-																			durRange, brace: true}, 'brace-height'),
-																0.6,
-																cohdef.obsScale(0))}" />
-		`;
 		return html;
 	}
 	function critLeft(selection, cohdef, critType) {
@@ -604,6 +549,113 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				}
 			}
 		})
+	}
+	function critRight(selection, cohdef, critType) {
+		selection.each(function(_crit) {
+			var el = d3.select(this); // the svg
+			var crit = _crit;
+			var html = '';
+			var durRange = getRange(crit, 'dur');
+			var startDateRange = getRange(crit, 'start');
+			var endDateRange = getRange(crit, 'end'); // ignore these?
+			el.attr('height', ypos({dates:startDateRange||endDateRange,
+															durRange, brace: true}, 'svg-height'));
+			if (critType === 'primary') {
+				if (durRange) {
+					html += durInterval(durRange, crit, cohdef);
+				}
+				html += obsPeriodBrace(crit, durRange, startDateRange, endDateRange, cohdef);
+				html += dateSymbols(crit, durRange, startDateRange, endDateRange, cohdef)
+				el.html(html);
+				return;
+			}
+			if (critType === 'group') {
+				crit = _crit.Criteria;
+				var sw = _crit.StartWindow;
+				var swin = [sw.Start.Coeff * sw.Start.Days, sw.End.Coeff * sw.End.Days];
+				var fixedWindow = true;
+				if (sw.Start.Days === null) {
+					swin[0] = null;
+					fixedWindow = false;
+				}
+				if (sw.End.Days === null) {
+					swin[1] = null;
+					fixedWindow = false;
+				}
+				if (fixedWindow) {
+					html += 
+						interval(
+							symbol({term:'start', crit:'window', inclusive:'true', x:swin[0], y:15, r:4}, cohdef),
+							symbol({term:'end', crit:'window', inclusive:'true', x:swin[1], y:15, r:4}, cohdef),
+							{fixed:true, x1:swin[0], x2:swin[1]}, cohdef);
+				} else {
+					if (swin[0] === null && swin[1] === null) {
+						// do something
+					} else if (swin[0] === null) {
+						html += 
+							interval(
+								'',
+								symbol({term:'end', crit:'window', inclusive:'true', x:swin[1], y:15, r:4}, cohdef),
+								{fixed:false, x1:cohdef.obsExt[0], x2:swin[1],
+									markerStart:'left'}, cohdef);
+					} else if (swin[1] === null) {
+						html += 
+							interval(
+								symbol({term:'start', crit:'window', inclusive:'true', x:swin[0], y:15, r:4}, cohdef),
+								'',
+								{fixed:false, x1:swin[0], x2:cohdef.obsExt[1],
+									markerEnd:'right'}, cohdef);
+					}
+				}
+				el.html(html);
+				return;
+			}
+		})
+	}
+	function obsPeriodBrace(crit, durRange, startDateRange, endDateRange, cohdef) {
+		var prior = Math.abs(cohdef.PrimaryCriteria.ObservationWindow.PriorDays);
+		var post = cohdef.PrimaryCriteria.ObservationWindow.PostDays;
+		if (!(prior || post)) {
+			return '';
+		}
+		var dotY = ypos({dates:startDateRange||endDateRange,
+										 durRange, brace: true}, 'index-dot');
+		var dotR = ypos({dates:startDateRange||endDateRange,
+										 durRange, brace: true}, 'index-r');
+		var braceTop = ypos({dates:startDateRange||endDateRange,
+																			durRange, brace: true}, 'brace-top');
+		var braceLabel = ypos({dates:startDateRange||endDateRange,
+																			durRange, brace: true}, 'brace-label');
+		var braceHeight = ypos({dates:startDateRange||endDateRange,
+																			durRange, brace: true}, 'brace-height');
+		var braceLeft = cohdef.obsScale(-prior);
+		var braceRight = cohdef.obsScale(post);
+		var braceMid = (braceLeft + braceRight) / 2;
+
+		var indexDateDot = symbol({term:'start', crit:'primary', 
+															 inclusive:'true', x:0, y:dotY, r:dotR}, cohdef);
+		var html = `
+				${indexDateDot}
+				<text x="${braceLeft}"
+							y="${braceLabel}"
+							text-anchor="middle">-${prior}</text>
+				<text x="${braceRight}"
+							y="${braceLabel}"
+							text-anchor="middle">${post}</text>
+				<text x="${braceMid}"
+							y="${braceLabel}"
+							text-anchor="middle">obs</text>
+				<path class="curly-brace" 
+							d="${ makeCurlyBrace(
+																braceLeft,
+																braceTop,
+																braceRight,
+																braceTop,
+																braceHeight,
+																0.6,
+																cohdef.obsScale(0))}" />
+		`;
+		return html;
 	}
 	function critGroupHeader(d3element, cohdef, cg, level) {
 		if (!cg) {
@@ -652,7 +704,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					<div class="col-xs-12">
 						${all_any}
 						<div class="row">
-							<div class="col-xs-${12-LEFT_COLS} col-xs-offset-${LEFT_COLS}">
+							<div class="right col-xs-${12-LEFT_COLS} col-xs-offset-${LEFT_COLS}">
 								${calHeader}
 								${rightHeader}
 							</div>
@@ -746,6 +798,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 											.classed('second', true);
 
 		svg = d3element.select("svg");
+		debugger;
 		svg.attr('width', divWidth())
 				.attr('height', 60)
 
@@ -856,14 +909,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function durationType(crit) {
 		if ("EraLength" in crit) {
-			return "duration";
+			return "Era";
 		}
 		switch (crit.domain) {
 			case "DrugExposure":
-				return "days supply";
+				return "Days supply";
 			case "ObservationPeriod":
 			case "VisitOccurrence":
-				return "duration";
+				return "Visit";
 		}
 	}
 	function getRange(crit, feature) {
@@ -989,52 +1042,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		return left + right;
 	}
 
-	function setupArrowHeadsNOT_USING(element) {
-		var svg = d3.select(element).append('svg')
-									.attr('class','cartoon')
-									.attr('height',0);
-		['start','end'].forEach(function(term) {
-			svg.append('marker')
-					.attr('id', `right-arrow-${term}`)
-					.attr('class', `term-${term}`)
-					.attr('viewBox', '0 0 10 10')
-					.attr('refX', 0)
-					.attr('refY', 5)
-					.attr('markerUnits', 'strokeWidth')
-					.attr('markerWidth', 10)
-					.attr('markerHeight', 10)
-					//.attr('fill-opacity', 0)
-					.attr('orient', 'auto')
-					.append('path')
-						.attr('d', 'M 2 2 L 8 5 L 2 8 z')
-			svg.append('marker')
-					.attr('id', `left-arrow-${term}`)
-					.attr('class', `term-${term}`)
-					.attr('viewBox', '0 0 10 10')
-					.attr('refX', 10)
-					.attr('refY', 5)
-					.attr('markerUnits', 'strokeWidth')
-					.attr('markerWidth', 10)
-					.attr('markerHeight', 10)
-					//.attr('fill-opacity', 0)
-					.attr('orient', 'auto')
-					.append('path')
-						.attr('d', 'M 8 2 L 8 8 L 1 5 z')
-			svg.append('marker')
-					.attr('id', `line-stop-${term}`)
-					.attr('class', `term-${term}`)
-					.attr('viewBox', '0 0 2 10')
-					.attr('refX', 0)
-					.attr('refY', 5)
-					.attr('markerUnits', 'strokeWidth')
-					.attr('markerWidth', 2)
-					//.attr('markerHeight', 10)
-					.attr('fill-opacity', 0)
-					.attr('orient', 'auto')
-					.append('path')
-						.attr('d', 'M 0 0 L 1 0 L 1 10 L 0 10 z')
-		})
-	}
 	function addCritOccurrenceText(ac) {
 		var oc = ac.Occurrence;
 		return `with ${['exactly','at most','at least'][oc.Type]}
