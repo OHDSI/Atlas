@@ -137,6 +137,7 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 		};
 
 		self.addAdditionalCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().Groups.push(new CriteriaGroup(null, unwrappedExpression.ConceptSets));
 		};
 
