@@ -45,6 +45,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				return dot * .5 * SVG_LINE_HEIGHT;
 			case "dates":
 				return (topMargin + brace + braceLabel + dot + dur + dates * .5) * SVG_LINE_HEIGHT;
+			case "sec-header-height":
+				return 35;
+			case "header-height":
+				return 30;
 		}
 	}
 
@@ -58,6 +62,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		//drawSection(d3element, cohdef, 'obsperiod-section', cohdef);
 		drawSection(d3element, cohdef, 'additional-section', cohdef.AdditionalCriteria, 0);
 		drawSection(d3element, cohdef, 'inclusion-section', cohdef.InclusionRules, 0);
+		$('div.indent-bar').each(function() { 
+			$(this).height($(this).closest('div.header-row').height()) 
+		});
 	}
 	function dataSetup(expression) {
 		window.expression = expression;
@@ -213,7 +220,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		//if (Array.isArray(data)) throw new Error("didn't expect array", data);
 		var funcs = {
 			'primary-section':		{ header: primaryCritHeader,		body: primaryCritBody },
-			'additional-section': { header: addCritSectHeader,		body: critGroupBody },
+			'additional-section': { header: addCritSectHeader,		body: addCritSectBody },
 			'critgroup':					{ header: critGroupHeader,			body: critGroupBody },
 			'inclusion-section':	{ header: inclusionRulesHeader,	body: inclusionRulesBody },
 			'inclusion-rule':			{ header: inclusionRuleHeader,	body: inclusionRuleBody },
@@ -234,32 +241,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		if (data)
 			funcs[cat].body(catDiv.select('div.body'), cohdef, data, level, opts);
 	}
-	function addCritSectHeader(d3element, cohdef, acsect, level) {
-		var text = '<h3>Additional Criteria</h3>'; 
-		if (!acsect)
-			text = 'No additional criteria';
-		d3element.html(text);
-	}
-	/*
-	function addCritSectBody(d3element, cohdef, acsect, level) {
-		drawSection(d3element, cohdef, 'critgroup', acsect, level);
-	}
-	*/
-	function inclusionRulesHeader(d3element, cohdef, rules, level) {
-		var text = '<h3>Inclusion Rules</h3>'; 
-		if (!rules)
-			text = 'No inclusion rules';
-		d3element.html(text);
-	}
 	function inclusionRulesBody(d3element, cohdef, rules, level) {
 		rules.forEach(function(rule) {
 			var rulediv = d3element.append('div');
 			drawSection(rulediv, cohdef, 'inclusion-rule', rule, 0);
 		});
-	}
-	function inclusionRuleHeader(d3element, cohdef, rule, level) {
-		var text = `<h4>${rule.name}</h4>${rule.description}`; 
-		d3element.html(text);
 	}
 	function inclusionRuleBody(d3element, cohdef, rule, level) {
 		drawSection(d3element, cohdef, 'critgroup', rule.expression, 0);
@@ -331,8 +317,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var pickadiv = ''; // doesn't matter, as long as it exists. they should all 
 											 // be the same width
 		var headerHtml = `
-				<div class="row header">
-					<div class="col-xs-12">
 						${title}
 						${limitMsg}
 						${resultDateMsg}
@@ -341,9 +325,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								${calHeader}
 								${rightHeader}
 							</div>
-						</div>
-					</div>`;
-		d3element.html(headerHtml);
+						</div>`;
+
+		var headerNode = d3AddIfNeeded(d3element, [PrimaryCriteria], 'div', 
+																	 ['primary','header', 'row'], 
+																	skeleton, {cohdef,type:'header',depth:0})
+		headerNode.select('div.header-content').html(headerHtml);
+
+		//d3element.html(headerHtml);
 		var w = $(d3element.select(`div.right`).node()).width();
 		resetScales(cohdef, w);
 		d3element.select('svg.x.axis').call(cohdef.obsAxis);
@@ -353,23 +342,98 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																		this.getBBox().height + ")rotate(-45)";
 						});
 	}
-	function header() {
-	}
-	function critTriad(selection, cohdef) { // not a triad anymore
+	function skeleton(selection, {cohdef, type, depth} = {}) {
 		// the reason this uses d3 append rather than composing html is to
 		// send __data__ down to all the elements
-		selection.append('div').attr('class', `indenting col-xs-${INDENT_COLS}`)
+		selection
+			.classed(`${type}-row`,true)
+			.append('div').attr('class', `indenting col-xs-${INDENT_COLS}`)
 			.append('div').attr('class', 'row')
 			.each(function() {
-				d3.select(this).append('div').attr('class', 'col-xs-6')
+				d3.select(this).append('div').attr('class', 'col-xs-9')
 											 .append('div').attr('class', 'row')
-											 .append('div').attr('class', 'indent-bar')
-				d3.select(this).append('div').attr('class', 'indent-text col-xs-6');
+											 .append('div').attr('class', `indent-bar col-xs-${indentCols(depth)}`)
+				d3.select(this).append('div').attr('class', 'indent-text col-xs-3');
 			})
-		selection.append('div').attr('class', `name col-xs-${NAME_COLS}`)
-		selection.append('div').attr('class', `right col-xs-${12-(INDENT_COLS+NAME_COLS)}`)
-			.append('div').attr('class', 'row')
-			.append('svg').attr('class', 'col-xs-12 cartoon');
+		if (type === 'header') {
+			selection.append('div').attr('class', `right col-xs-${12-INDENT_COLS}`)
+				.append('div').attr('class', 'row')
+				.append('div').attr('class', 'col-xs-12 header-content');
+		} else {
+			selection.append('div').attr('class', `name col-xs-${NAME_COLS}`)
+			selection.append('div').attr('class', `right col-xs-${12-(INDENT_COLS+NAME_COLS)}`)
+				.append('div').attr('class', 'row')
+				.append('svg').attr('class', 'col-xs-12 cartoon');
+		}
+	}
+	function addCritSectHeader(d3element, cohdef, acsect, level) {
+		var html = '<h3>Additional Criteria</h3>'; 
+		if (!acsect)
+			html = 'No additional criteria';
+		var headerNode = d3AddIfNeeded(d3element, [acsect], 'div', 
+																	 ['primary','header', 'row'], 
+																	skeleton, {cohdef,type:'header',depth:0})
+		headerNode.select('div.header-content').html(html);
+	}
+	function inclusionRulesHeader(d3element, cohdef, rules, level) {
+		var html = '<h3>Inclusion Rules</h3>'; 
+		if (!rules)
+			html = 'No inclusion rules';
+		var headerNode = d3AddIfNeeded(d3element, [rules], 'div', 
+																	 ['primary','header', 'row'], 
+																	skeleton, {cohdef,type:'header',depth:0})
+		headerNode.select('div.header-content').html(html);
+	}
+	function inclusionRuleHeader(d3element, cohdef, rule, level) {
+		var html = `<h4>${rule.name}</h4>${rule.description}`; 
+		var headerNode = d3AddIfNeeded(d3element, [rule], 'div', 
+																	 ['primary','header', 'row'], 
+																	skeleton, {cohdef,type:'header',depth:0})
+		headerNode.select('div.header-content').html(html);
+	}
+	function critGroupHeader(d3element, cohdef, cg, level, {parentcg, critIndex} = {}) {
+		var html = '';
+		if (!cg) {
+			html = 'No criteria group';
+		} else {
+			var all_any = `Restrict to people matching ${cg.Type.toLowerCase()} of the
+											following criteria`;
+			var rightHeader = `
+					Additional criteria start date 
+						(<svg style="display:inline-block" height="10px" width="10px">
+							<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
+						</svg>)
+					and duration 
+						(<svg style="display:inline-block" height="10px" width="38px">
+							<line x1="2" x2="27" y1="5" y2="5" 
+								style="marker-start:url(#line-stop); marker-end:url(#right-arrow)" />
+						</svg>)
+					relative to index date
+						(Day 0, <svg style="display:inline-block" height="10px" width="10px">
+							<circle cx="5" cy="5" r="4" style="fill:green" />
+						</svg>)
+					<svg class="x axis col-xs-12"/>`;
+			
+			html += `${all_any}${rightHeader}`;
+		}
+		var headerNode = d3AddIfNeeded(d3element, [cg], 'div', 
+																	 ['primary','header', 'row'], 
+																	skeleton, {cohdef,type:'header',depth:0})
+		headerNode.select('div.header-content').html(html);
+
+		if (level > 0 && critIndex > 0) {
+			var groupConnector = parentcg.Type === 'ALL' ? 'and' : 'or';
+			headerNode.selectAll('div.indent-text')
+								.style('text-align','right')
+								.html(groupConnector);
+		}
+
+		d3element.select('svg.x.axis').call(cohdef.obsAxis);
+		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
+						.attr("transform", function(d) {
+							return "translate(" + this.getBBox().height*-2 + "," + 
+																		this.getBBox().height + ")rotate(-45)";
+						});
 	}
 	function primaryCritBody(d3element,cohdef,PrimaryCriteria) {
 		PrimaryCriteria.CriteriaList.forEach((crit,i) => {
@@ -377,6 +441,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		});
 		critBody(d3element,cohdef,PrimaryCriteria, 'primary', 
 							{depth:0});
+	}
+	function addCritSectBody(d3element, cohdef, acsect, level) {
+		drawSection(d3element, cohdef, 'critgroup', acsect, level);
 	}
 	function critGroupBody(d3element,cohdef,critgroup, level) {
 		/*
@@ -393,17 +460,28 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						 {depth:level});
 		critgroup.Groups.forEach( group => {
 			drawSection(d3element, cohdef, 'critgroup', group, level + 1, 
-									{depth:level, critIndex});
+									{depth:level, parentcg:critgroup, critIndex});
+			critIndex++;
 		});
 	}
 	function critBody(d3element, cohdef, crit, critType, opts) {
 		var crits = crit.CriteriaList;
+		var groupMsg, groupConnector;
+		if (crit.PrimaryCriteriaLimit) {
+			groupMsg = `${crit.PrimaryCriteriaLimit.Type} of`;
+			groupConnector = 'or';
+		} else {
+			groupMsg = `${crit.Type[0]}${crit.Type.slice(1).toLowerCase()} of`;
+			if (crit.Type.match(/^AT/))
+				groupMsg = `At ${crit.Type.slice(3).toLowerCase()} ${crit.Count} of`;
+			groupConnector = crit.Type === 'ALL' ? 'and' : 'or';
+		}
 		var critNodes = d3AddIfNeeded(d3element, crits, 'div', ['crit','row'], 
-																	critTriad, cohdef)
+																	skeleton, {cohdef,type:'primary',depth:opts.depth})
 
 		critNodes.selectAll('div.indent-bar')
 							.attr('class', `indent-bar col-xs-${indentCols(opts.depth)}`)
-							.style('background-color', 'brown')
+							//.style('background-color', 'brown')
 							.style('height', function(crit) {
 								var durRange = getRange(crit, 'dur');
 								var startDateRange = getRange(crit, 'start');
@@ -414,6 +492,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		critNodes.selectAll('div.indent-text')
 							.html(function(crit) {
+								if (crit.critIndex === 0) return groupMsg;
+								d3.select(this).style('text-align','right');
+								return groupConnector;
 								return `${opts.depth}/${cohdef.maxDepth}:${crit.critIndex}`;
 							});
 
@@ -677,50 +758,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																cohdef.obsScale(0))}" />
 		`;
 		return html;
-	}
-	function critGroupHeader(d3element, cohdef, cg, level) {
-		if (!cg) {
-			d3element.html('No criteria group');
-			return;
-		}
-		var all_any = `Restrict to people matching ${cg.Type.toLowerCase()} of the
-										following criteria`;
-		var rightHeader = `
-				Additional criteria start date 
-					(<svg style="display:inline-block" height="10px" width="10px">
-						<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
-					</svg>)
-				and duration 
-					(<svg style="display:inline-block" height="10px" width="38px">
-						<line x1="2" x2="27" y1="5" y2="5" 
-							style="marker-start:url(#line-stop); marker-end:url(#right-arrow)" />
-					</svg>)
-				relative to index date
-					(Day 0, <svg style="display:inline-block" height="10px" width="10px">
-						<circle cx="5" cy="5" r="4" style="fill:green" />
-					</svg>)
-				<svg class="x axis col-xs-12"/>`;
-		
-		var headerHtml = `
-				<div class="row header">
-					<div class="col-xs-12">
-						<div class="row">
-							<div class="indenting col-xs-${INDENT_COLS}"></div>
-							<div class="name col-xs-${NAME_COLS}"></div>
-							<div class="right col-xs-${12-(INDENT_COLS+NAME_COLS)}">
-								${all_any}
-								${rightHeader}
-							</div>
-						</div>
-					</div>
-				</div>`;
-		d3element.html(headerHtml);
-		d3element.select('svg.x.axis').call(cohdef.obsAxis);
-		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
-						.attr("transform", function(d) {
-							return "translate(" + this.getBBox().height*-2 + "," + 
-																		this.getBBox().height + ")rotate(-45)";
-						});
 	}
 	function d3AddIfNeeded(parentElement, data, tag, classes, 
 													firstTimeCb, cbParams) {

@@ -71,6 +71,40 @@ div.name {
 }
 div.indenting,
 div.indenting div[class^="col-xs-"] {
+	padding: 0;
+}
+div.header-row {
+	/*
+	display: table;
+	*/
+}
+div.header-row div.indenting {
+	/*
+	float: none;
+	display: table-cell;
+	*/
+}
+div.header-row div.indenting div.row {
+	/*
+	height: 100%;
+	*/
+}
+div.header-row div.indenting div.row > div {
+	/*
+	float: none;
+	display: table-cell;
+	height: 100%;
+	*/
+}
+div.indent-bar {
+	background-color: moccasin;
+}
+div.header-row div.right {
+	background-color: moccasin;
+	/*
+	float: none;
+	display: table-cell;
+	*/
 }
 
 /*
