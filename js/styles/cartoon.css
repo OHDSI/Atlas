@@ -20,6 +20,7 @@ div.pc-cartoon {
 }
 */
 
+/*
 div.cartoon-primary-section > div.header,
 div.cartoon-obsperiod-section > div.header,
 div.cartoon-additional-section > div.header,
@@ -29,10 +30,8 @@ div.cartoon-inclusion-section > div.header
 	font-size: 16px;
 	margin: 2px;
 	padding: 4px;
-	/* 
-		background-color: #EEC;
-		border: 1px solid black; 
-	*/
+	background-color: #EEC;
+	border: 1px solid black; 
 }
 
 div.cartoon-obsperiod-section > div.body,
@@ -41,39 +40,37 @@ div.cartoon-additional-section div.body > div.crit,
 div.cartoon-inclusion-section div.body > div.crit
 {
 	margin: 5px 2px 2px 2px;
-	/*
-		background-color: #EEE;
-		border: 2px solid #DDD;
-	*/
+	background-color: #EEE;
+	border: 2px solid #DDD;
 }
+*/
 /*
 div.crit > div.name {
 	text-align: center;
 	font-size: 12px;
 	border: 2px solid #FFF;
 }
-*/
-div.crit.row {
-	display: table;
-	width: 100%;
-}
-div.header > div.left,
-div.crit > div.left {
-	text-align: center;
-	border: 2px solid #FFF;
-
-	float: none;
-	display: table-cell;
-	vertical-align: top;
-}
 div.header > div.right,
 div.crit > div.right {
 	text-align: center;
 	border: 2px solid #FFF;
-
 	float: none;
 	display: table-cell;
 	vertical-align: top;
+}
+*/
+div.crit.row {
+	margin: 0px;
+}
+
+div.indenting .row {
+	overflow: scroll;
+}
+div.name {
+	overflow: scroll;
+}
+div.indenting,
+div.indenting div[class^="col-xs-"] {
 }
 
 /*

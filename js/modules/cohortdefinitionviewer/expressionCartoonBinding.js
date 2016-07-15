@@ -2,7 +2,11 @@
 define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 	var divWidth = ko.observable(); // triggers update
-	const LEFT_COLS = 4;
+	const INDENT_COLS = 2; // for the whole leftmost column
+	function indentCols(depth) { // for the indent-bar width
+		return Math.floor(12 / (cohdef.maxDepth + 1)) * (depth + 1);
+	}
+	const NAME_COLS = 2;
 	const SVG_LINE_HEIGHT = 15;
 	const arrows = {
 		right: 'm -5 -5 l 10 5 l -10 5 z',
@@ -63,6 +67,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		// clone objects (so they can be modified) and add domain names
 		addDomainNames(cohdef.PrimaryCriteria, 'primary');
 		allGroups(cohdef).forEach(group=>addDomainNames(group, 'additional'))
+		cohdef.maxDepth = _.max(allGroups(cohdef).map(d=>d.level));
 
 		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
 												allAdditionalCriteria(cohdef), cohdef);
@@ -208,7 +213,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		//if (Array.isArray(data)) throw new Error("didn't expect array", data);
 		var funcs = {
 			'primary-section':		{ header: primaryCritHeader,		body: primaryCritBody },
-			'additional-section': { header: addCritSectHeader,		body: addCritSectBody },
+			'additional-section': { header: addCritSectHeader,		body: critGroupBody },
 			'critgroup':					{ header: critGroupHeader,			body: critGroupBody },
 			'inclusion-section':	{ header: inclusionRulesHeader,	body: inclusionRulesBody },
 			'inclusion-rule':			{ header: inclusionRuleHeader,	body: inclusionRuleBody },
@@ -235,9 +240,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			text = 'No additional criteria';
 		d3element.html(text);
 	}
+	/*
 	function addCritSectBody(d3element, cohdef, acsect, level) {
 		drawSection(d3element, cohdef, 'critgroup', acsect, level);
 	}
+	*/
 	function inclusionRulesHeader(d3element, cohdef, rules, level) {
 		var text = '<h3>Inclusion Rules</h3>'; 
 		if (!rules)
@@ -307,19 +314,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		var resultDateMsg = `Result index date${pcPlural} will be the start date${pcPlural} of the 
 													matching event${pcPlural}.`;
-		/*
-		if (cohdef.columns.length === 0) {
-			d3element.html(`
-				<div class="row header">
-					${title}
-					${limitMsg}
-					${resultDateMsg}
-				</div>`);
-			resetScales(cohdef, 1); // 1 is an arbitrary width. doesn't matter since
-															// scales won't be used, but didn't want any surprises
-			return;
-		}
-		*/
 		var calHeader = `
 					Start 
 						(<svg style="display:inline-block" height="10px" width="10px">
@@ -343,7 +337,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						${limitMsg}
 						${resultDateMsg}
 						<div class="row">
-							<div class="right col-xs-${12-LEFT_COLS} col-xs-offset-${LEFT_COLS}">
+							<div class="right col-xs-${12-(INDENT_COLS+NAME_COLS)} col-xs-offset-${(INDENT_COLS+NAME_COLS)}">
 								${calHeader}
 								${rightHeader}
 							</div>
@@ -359,50 +353,82 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																		this.getBBox().height + ")rotate(-45)";
 						});
 	}
+	function header() {
+	}
+	function critTriad(selection, cohdef) { // not a triad anymore
+		// the reason this uses d3 append rather than composing html is to
+		// send __data__ down to all the elements
+		selection.append('div').attr('class', `indenting col-xs-${INDENT_COLS}`)
+			.append('div').attr('class', 'row')
+			.each(function() {
+				d3.select(this).append('div').attr('class', 'col-xs-6')
+											 .append('div').attr('class', 'row')
+											 .append('div').attr('class', 'indent-bar')
+				d3.select(this).append('div').attr('class', 'indent-text col-xs-6');
+			})
+		selection.append('div').attr('class', `name col-xs-${NAME_COLS}`)
+		selection.append('div').attr('class', `right col-xs-${12-(INDENT_COLS+NAME_COLS)}`)
+			.append('div').attr('class', 'row')
+			.append('svg').attr('class', 'col-xs-12 cartoon');
+	}
 	function primaryCritBody(d3element,cohdef,PrimaryCriteria) {
 		PrimaryCriteria.CriteriaList.forEach((crit,i) => {
 			crit.critIndex = i;
 		});
 		critBody(d3element,cohdef,PrimaryCriteria, 'primary', 
-							{maxDepth:0, depth:1});
+							{depth:0});
 	}
 	function critGroupBody(d3element,cohdef,critgroup, level) {
+		/*
 		if (level === 0) {
 			var subs = subGroups(critgroup);
 			var maxDepth = _.max(subs.map(d=>d.level));
 		}
+		*/
 		var critIndex = -1;
 		critgroup.CriteriaList.forEach((crit,i) => {
 			crit.critIndex = ++critIndex;
 		});
 		critBody(d3element,cohdef,critgroup, 'group', 
-						 {maxDepth, depth:level+1});
+						 {depth:level});
 		critgroup.Groups.forEach( group => {
 			drawSection(d3element, cohdef, 'critgroup', group, level + 1, 
-									{maxDepth, depth: level + 1, critIndex});
+									{depth:level, critIndex});
 		});
 	}
 	function critBody(d3element, cohdef, crit, critType, opts) {
 		var crits = crit.CriteriaList;
 		var critNodes = d3AddIfNeeded(d3element, crits, 'div', ['crit','row'], 
 																	critTriad, cohdef)
-		critNodes.selectAll('div.indenting')
+
+		critNodes.selectAll('div.indent-bar')
+							.attr('class', `indent-bar col-xs-${indentCols(opts.depth)}`)
+							.style('background-color', 'brown')
+							.style('height', function(crit) {
+								var durRange = getRange(crit, 'dur');
+								var startDateRange = getRange(crit, 'start');
+								var endDateRange = getRange(crit, 'end'); // ignore these?
+								return ypos({dates:startDateRange||endDateRange,
+														 durRange, brace: true}, 'svg-height') + 'px';
+							})
+
+		critNodes.selectAll('div.indent-text')
 							.html(function(crit) {
-								return `${opts&&JSON.stringify(opts)}<br/>${crit.critIndex}`;
+								return `${opts.depth}/${cohdef.maxDepth}:${crit.critIndex}`;
 							});
 
 		critNodes.selectAll('div.name')
+							.style('height', function(crit) {
+								var durRange = getRange(crit, 'dur');
+								var startDateRange = getRange(crit, 'start');
+								var endDateRange = getRange(crit, 'end'); // ignore these?
+								return ypos({dates:startDateRange||endDateRange,
+														 durRange, brace: true}, 'svg-height') + 'px';
+							})
 							.call(critName, cohdef, critType);
 
 		critNodes.selectAll('div.right > div.row > svg')
 							.call(drawCrits, cohdef, critType);
-	}
-	function critTriad(selection, cohdef) { // not a triad anymore
-		selection.append('div').attr('class', `indenting col-xs-1`)
-		selection.append('div').attr('class', `name left col-xs-${LEFT_COLS - 1}`)
-		selection.append('div').attr('class', `right col-xs-${12-LEFT_COLS}`)
-			.append('div').attr('class', 'row')
-			.append('svg').attr('class', 'col-xs-12 cartoon');
 	}
 	function critName(selection, cohdef, critType) {
 		selection.each(function(_crit) {
@@ -679,9 +705,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				<div class="row header">
 					<div class="col-xs-12">
 						<div class="row">
-							<div class="indenting col-xs-1"></div>
-							<div class="col-xs-${LEFT_COLS - 1}"></div>
-							<div class="right col-xs-${12-LEFT_COLS}">
+							<div class="indenting col-xs-${INDENT_COLS}"></div>
+							<div class="name col-xs-${NAME_COLS}"></div>
+							<div class="right col-xs-${12-(INDENT_COLS+NAME_COLS)}">
 								${all_any}
 								${rightHeader}
 							</div>
@@ -723,6 +749,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		selection = d3element.selectAll([tag].concat(classes).join('.'));
 		return selection;
 	}
+	/*
 	function obsperiodHeader(d3element, cohdef) {
 		var prior = Math.abs(cohdef.PrimaryCriteria.ObservationWindow.PriorDays);
 		var post = cohdef.PrimaryCriteria.ObservationWindow.PostDays;
@@ -804,6 +831,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				.attr('stroke-dasharray', '3,3')
 		}
 	}
+	*/
 
 
 
