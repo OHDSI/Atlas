@@ -99,9 +99,14 @@ div.header-row div.indenting div.row > div {
 div.indent-bar {
 	background-color: moccasin;
 }
-div.header-row div.right {
+div.section-header {
 	background-color: moccasin;
+	border: 3px double brown;
+}
+div.header-row div.right {
+	font-weight: bold;
 	/*
+	background-color: moccasin;
 	float: none;
 	display: table-cell;
 	*/

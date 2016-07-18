@@ -317,7 +317,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var pickadiv = ''; // doesn't matter, as long as it exists. they should all 
 											 // be the same width
 		var headerHtml = `
-						${title}
 						${limitMsg}
 						${resultDateMsg}
 						<div class="row">
@@ -328,6 +327,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						</div>`;
 
 		var headerNode = d3AddIfNeeded(d3element, [PrimaryCriteria], 'div', 
+																	 ['primary','section-header', 'row'], 
+																	skeleton, {cohdef,type:'section-header',depth:0})
+		headerNode.select('div.header-content').html(title);
+
+		headerNode = d3AddIfNeeded(d3element, [PrimaryCriteria], 'div', 
 																	 ['primary','header', 'row'], 
 																	skeleton, {cohdef,type:'header',depth:0})
 		headerNode.select('div.header-content').html(headerHtml);
@@ -347,12 +351,18 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		// send __data__ down to all the elements
 		selection
 			.classed(`${type}-row`,true)
+		if (type === 'section-header') {
+			selection.append('div').attr('class', 'col-xs-12 header-content');
+			return;
+		}
+		selection
 			.append('div').attr('class', `indenting col-xs-${INDENT_COLS}`)
 			.append('div').attr('class', 'row')
 			.each(function() {
 				d3.select(this).append('div').attr('class', 'col-xs-9')
 											 .append('div').attr('class', 'row')
 											 .append('div').attr('class', `indent-bar col-xs-${indentCols(depth)}`)
+													.attr('depth-indent', `${depth}-${indentCols(depth)}`)
 				d3.select(this).append('div').attr('class', 'indent-text col-xs-3');
 			})
 		if (type === 'header') {
@@ -371,8 +381,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		if (!acsect)
 			html = 'No additional criteria';
 		var headerNode = d3AddIfNeeded(d3element, [acsect], 'div', 
-																	 ['primary','header', 'row'], 
-																	skeleton, {cohdef,type:'header',depth:0})
+																	 ['primary','section-header', 'row'], 
+																	skeleton, {cohdef,type:'section-header',depth:0})
 		headerNode.select('div.header-content').html(html);
 	}
 	function inclusionRulesHeader(d3element, cohdef, rules, level) {
@@ -380,15 +390,15 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		if (!rules)
 			html = 'No inclusion rules';
 		var headerNode = d3AddIfNeeded(d3element, [rules], 'div', 
-																	 ['primary','header', 'row'], 
-																	skeleton, {cohdef,type:'header',depth:0})
+																	 ['primary','section-header', 'row'], 
+																	skeleton, {cohdef,type:'section-header',depth:0})
 		headerNode.select('div.header-content').html(html);
 	}
 	function inclusionRuleHeader(d3element, cohdef, rule, level) {
 		var html = `<h4>${rule.name}</h4>${rule.description}`; 
 		var headerNode = d3AddIfNeeded(d3element, [rule], 'div', 
-																	 ['primary','header', 'row'], 
-																	skeleton, {cohdef,type:'header',depth:0})
+																	 ['primary','section-header', 'row'], 
+																	skeleton, {cohdef,type:'section-header',depth:0})
 		headerNode.select('div.header-content').html(html);
 	}
 	function critGroupHeader(d3element, cohdef, cg, level, {parentcg, critIndex} = {}) {
@@ -417,8 +427,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			html += `${all_any}${rightHeader}`;
 		}
 		var headerNode = d3AddIfNeeded(d3element, [cg], 'div', 
-																	 ['primary','header', 'row'], 
-																	skeleton, {cohdef,type:'header',depth:0})
+																	 ['crit','header', 'row'], 
+																	skeleton, {cohdef,type:'header',
+																						 depth:Math.max(0, level-1)})
 		headerNode.select('div.header-content').html(html);
 
 		if (level > 0 && critIndex > 0) {
@@ -477,7 +488,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			groupConnector = crit.Type === 'ALL' ? 'and' : 'or';
 		}
 		var critNodes = d3AddIfNeeded(d3element, crits, 'div', ['crit','row'], 
-																	skeleton, {cohdef,type:'primary',depth:opts.depth})
+																	skeleton, {cohdef,type:'crit',depth:opts.depth})
 
 		critNodes.selectAll('div.indent-bar')
 							.attr('class', `indent-bar col-xs-${indentCols(opts.depth)}`)
@@ -626,7 +637,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			var circle = symbol({term:'start', crit:'primary', 
 														inclusive:startDateRange.Op.match(/e/), 
 														x:xIndex, y, r}, cohdef);
-			var whichSide;
+			var whichSide = 1;
 			var anchor;
 			switch (startDateRange.Op[0]) {
 				case "l":
