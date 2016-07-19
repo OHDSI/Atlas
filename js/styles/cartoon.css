@@ -129,6 +129,10 @@ div.cartoon svg line.conditional {
 	fill: green;
 	stroke: green;
 }
+.cartoon .term-start.crit-additional {
+	fill: lightgreen;
+	stroke: lightgreen;
+}
 .cartoon .term-end {
 	fill: red;
 	stroke: red;
