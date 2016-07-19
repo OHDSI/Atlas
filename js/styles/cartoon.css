@@ -80,6 +80,9 @@ div.indent-bar {
 	background-color: moccasin;
 	font-weight: bold;
 }
+div.after-indent {
+	border: 1px solid #EEE;
+}
 div.section-header {
 	background-color: moccasin;
 	border: 3px double brown;
@@ -114,7 +117,7 @@ div.cartoon-primary-criteria > div.crit svg {
 
 div.cartoon {
 	float: right;
-	border: 1px dotted pink;
+	/* border: 1px dotted pink; */
 }
 div.cartoon-critgroup line,
 div.cartoon svg line {
@@ -142,6 +145,13 @@ div.cartoon svg line.conditional {
 }
 .cartoon circle.crit-window {
 	opacity: 0.4;
+}
+rect.not-obs {
+	fill: #DDD;
+	opacity: .4;
+}
+rect.index-marker {
+	fill: green;
 }
 
 svg.x.axis {

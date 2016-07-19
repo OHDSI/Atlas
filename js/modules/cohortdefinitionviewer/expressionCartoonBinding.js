@@ -10,21 +10,22 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		return Math.floor(12 / (cohdef.maxDepth + 1)) * (depth + 1);
 	}
 	const NAME_COLS = 2;
-	const SVG_LINE_HEIGHT = 15;
+	const SVG_LINE_HEIGHT = 17;
 	const arrows = {
 		right: 'm -5 -5 l 10 5 l -10 5 z',
 		//right: 'M 2 2 L 8 5 L 2 8 z',
 		left: 'M 8 2 L 8 8 L 1 5 z',
 		stop: 'M 0 0 L 1 0 L 1 10 L 0 10 z',
 	};
-	function ypos(crit, feature, critType='primary') {
-		console.log(critType);
+	function ypos(crit, feature, critType='primary',element) {
 		var durRange = getRange(crit, 'dur');
 		var startDateRange = getRange(crit, 'start');
 		//var endDateRange = getRange(crit, 'end'); // ignore these?
 
 		// sections
-		var brace = true, dot = true, dur = !!durRange, dates = !!startDateRange;
+		// getting rid of top brace
+		// var brace = true, dot = true, dur = !!durRange, dates = !!startDateRange;
+		var brace = false, dot = false, dur = false, dates = !!startDateRange;
 
 		// additional sections  (critType is group, which should maybe change)
 		var addBrace = (critType!=='primary'),
@@ -50,7 +51,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		switch (feature) {
 			case "svg-height":
-				return lines * SVG_LINE_HEIGHT;
+				return Math.max(
+								Math.max(1, lines) * SVG_LINE_HEIGHT,
+								(element ? $(element).height() : 0));
 			case "brace-label":
 				return (topMargin + braceLabel - .2) * SVG_LINE_HEIGHT; // 10% margin
 			case "brace-top":
@@ -110,6 +113,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		$('div.indent-bar').each(function() { 
 			$(this).height($(this).closest('div.row').height()) 
 		});
+		$('div.name').each(function() { 
+			$(this).height($(this).closest('div.row').height()) 
+		});
 		$('div.cartoon').width(cartoonWidth());
 	}
 	function d3AddIfNeeded(parentElement, data, tag, classes, firstTimeCb, cbParams) {
@@ -162,7 +168,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function resetScales(cohdef, width) {
 		width = width || cartoonWidth();
-		console.log(`resetScales with width ${width}`);
 		var extraPx = 25; // room at ends of cartoons for arrows past domain dates
 		var extraRatio = extraPx / width; // add to ends of domains
 
@@ -173,7 +178,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			cohdef.obsScale.range([0,width])
 										.domain([obsext[0] - extraDays, obsext[1] + extraDays])
 		}
-		console.log(obsext, cohdef.obsScale.domain(), extraRatio, extraDays);
+		//console.log(obsext, cohdef.obsScale.domain(), extraRatio, extraDays);
 		cohdef.obsExt = obsext;
 		//console.log(cohdef.obsScale.domain());
 	}
@@ -348,7 +353,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						(<svg style="display:inline-block" height="10px" width="10px">
 							<circle cx="5" cy="5" r="4" style="fill:green" />
 						</svg>)
-				<svg class="x axis col-xs-12"/>`;
+				<svg height="0" class="x axis col-xs-12"/>`;
 		
 		var pickadiv = ''; // doesn't matter, as long as it exists. they should all 
 											 // be the same width
@@ -405,7 +410,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 
 		selection.append('div').attr('class', `indent-bar col-xs-${INDENT_COLS}`)
-		var right = selection.append('div').attr('class', `col-xs-${12-INDENT_COLS}`)
+		var right = selection.append('div').attr('class', `after-indent col-xs-${12-INDENT_COLS}`)
 		right = right.append('div').attr('class','row');
 		/*
 		if (type === 'header') {
@@ -418,7 +423,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			right.append('div').attr('class', `name col-xs-${NAME_COLS}`)
 			right.append('div').attr('class', `col-xs-${12-NAME_COLS}`)
 							.append('div').attr('class', 'cartoon')
-							.append('svg').attr('class', 'col-xs-12');
+							.append('svg').attr('class', 'col-xs-12')
+														.attr('height',0)
 		}
 	}
 	function critGroupHeader(d3element, {cohdef, critgroup, depth, parentcg, critIndex} = {}) {
@@ -447,7 +453,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								<div class="row">
 									<div class="col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
 										<div class="cartoon">
-											<svg class="x axis col-xs-12"/>
+											<svg height="0" class="x axis col-xs-12"/>
 										</div>
 									</div>
 								</div>`;
@@ -583,9 +589,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																	skeleton, {cohdef,type:'crit',depth})
 		connectorText(critNodes, crit);
 		critNodes.selectAll('div.name')
-							.style('height', function(crit) {
-								return ypos(crit, 'svg-height', critType) + 'px';
-							})
 							.call(critName, cohdef, critType);
 
 		critNodes.selectAll('div.cartoon > svg')
@@ -596,13 +599,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			var el = d3.select(this); // the svg
 			var crit = _crit;
 			var html = '';
-			el.attr('height', ypos(crit, 'svg-height', critType));
+			el.attr('height', ypos(crit, 'svg-height', critType, $(this).closest('div.row')));
 
 			var durRange = getRange(crit, 'dur');
 			if (durRange) {
 				html += durInterval(durRange, crit, cohdef, critType);
 			}
-			html += obsPeriodBrace(crit, cohdef, critType);
+			//html += obsPeriodBrace(crit, cohdef, critType);
+			html += obsPeriodShading(crit, cohdef, critType, this);
 			html += dateSymbols(crit, cohdef, critType)
 
 			if (critType === 'primary') {
@@ -625,7 +629,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					fixedWindow = false;
 				}
 
-				html += swPeriodBrace(crit, cohdef, swin);
+				html += swPeriodBrace(crit, _crit, cohdef, swin);
 
 				if (fixedWindow) {
 					html += 
@@ -699,10 +703,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function critName(selection, cohdef, critType) {
 		selection.each(function(_crit) {
 			var crit = critType === 'group' ? _crit.Criteria : _crit;
-			var text = `${critLabel(crit, cohdef)}
-									<span style="opacity:0.2">${critCartoonText(crit)}</span>`;
+			var text = `${critLabel(crit, cohdef)}`;
+			var verbose = `<span style="opacity:0.2">${critCartoonText(crit)}</span>`;
 			if (critType === 'group')
-				text += `<span style="opacity:0.2">
+				verbose += `<span style="opacity:0.2">
 									${addCritOccurrenceText(_crit)}, ${addCritWindowText(_crit)}
 									</span>`;
 			d3.select(this).html(text);
@@ -771,7 +775,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					break;
 				case "l": // lt or lte
 					//html += interval('','', )
-					return '<text y="20">not handling duration less than yet</text>';
+					return '<text y="6">not handling duration less than yet</text>';
 					el.append('line')
 								.attr('y1', 10)
 								.attr('y2', 10)
@@ -782,7 +786,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								.style(`marker-end`, `url(#left-arrow)`)
 					break;
 				case "e": // eq
-					return '<text y="20">not handling duration equal to yet</text>';
+					return '<text y="6">not handling duration equal to yet</text>';
 					el.append('line')
 								.attr('y1', 10)
 								.attr('y2', 10)
@@ -791,10 +795,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								.style(`marker-start`, `url(#line-stop)`)
 								.style(`marker-end`, `url(#line-stop)`)
 				default: // eq
-					return `<text y="20">not handling duration ${range.Op} yet</text>`;
+					return `<text y="6">not handling duration ${range.Op} yet</text>`;
 			}
 		} else {
-			return `<text y="20">not handling duration ${rangeInfo(range,'nice-op')} yet</text>`;
+			return `<text y="6">not handling duration ${rangeInfo(range,'nice-op')} yet</text>`;
 		}
 	}
 	function dateSymbols(crit, cohdef, critType) {
@@ -803,7 +807,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var startDateRange = getRange(crit, 'start');
 		var endDateRange = getRange(crit, 'end'); // ignore these?
 		if (endDateRange) {
-			html += `<text y="40">not handling end dates</text>`;
+			html += `<text y="13">not handling end dates</text>`;
 		}
 		if (startDateRange) {
 			var y = ypos(crit, 'dates', critType);
@@ -837,6 +841,26 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			return circle + text;
 			//return interval( '', {fixed:false, x1:xIndex, x2:xEdge, y}, cohdef);
 		}
+		return html;
+	}
+	function obsPeriodShading(crit, cohdef, critType, svg) {
+		//var height = ypos(crit, 'svg-height', critType, $(svg).closest('div.row'));
+		var height = $(svg).height();
+		var prior = Math.abs(cohdef.PrimaryCriteria.ObservationWindow.PriorDays);
+		var post = cohdef.PrimaryCriteria.ObservationWindow.PostDays;
+		var dotY = ypos(crit, 'index-dot', critType);
+		var dotR = ypos(crit, 'index-r', critType);
+		var leftEdge = cohdef.obsScale.range()[0];
+		var leftWidth = cohdef.obsScale(-prior);
+		var rightEdge = cohdef.obsScale.range()[1];
+		var rightWidth = rightEdge - cohdef.obsScale(post);
+
+		//var indexDateDot = symbol({term:'start', crit:'primary', inclusive:'true', x:0, y:dotY, r:dotR}, cohdef);
+		var html = `
+				<rect x="${cohdef.obsScale(0) - 1}" y="0" width="2" height="${height}" class="index-marker" />
+				<rect x="${leftEdge}" y="0" width="${leftWidth}" height="${height}" class="not-obs" />
+				<rect x="${rightEdge - rightWidth}" y="0" width="${rightWidth}" height="${height}" class="not-obs" />
+		`;
 		return html;
 	}
 	function obsPeriodBrace(crit, cohdef, critType) {
@@ -882,7 +906,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		`;
 		return html;
 	}
-	function swPeriodBrace(crit, cohdef, swin) {
+	function swPeriodBrace(crit, addcrit, cohdef, swin) {
 		var durRange = getRange(crit, 'dur');
 		var startDateRange = getRange(crit, 'start');
 		var endDateRange = getRange(crit, 'end'); // ignore these?
@@ -898,10 +922,20 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var braceMid = (braceLeft + braceRight) / 2;
 		var braceMidDays = (swin[0] + swin[1]) / 2;
 
-		var addCritDot = symbol({term:'start', crit:'additional', 
-															 inclusive:'true', x:braceMidDays, y:dotY, r:dotR}, cohdef);
+		var addCritDot = ''; //symbol({term:'start', crit:'additional', inclusive:'true', x:braceMidDays, y:dotY, r:dotR}, cohdef);
+		var oc = addcrit.Occurrence;
+		var howMany;
+		if (oc.Type === 0 && oc.Count === 0) {
+			howMany = `
+				<text x="${braceMid}"
+							y="${dotY}"
+							fill="red"
+							text-anchor="top">X</text>
+				`;
+		}
 		var html = `
 				${addCritDot}
+				${howMany}
 				<text x="${braceLeft}"
 							y="${braceLabel}"
 							text-anchor="middle">${swin[0]}</text>
