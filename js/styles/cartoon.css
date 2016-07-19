@@ -59,29 +59,12 @@ div.crit > div.right {
 	vertical-align: top;
 }
 */
-div.crit.row {
-	margin: 0px;
-}
-
-div.name {
-	overflow: scroll;
-	font-style: italic;
-	font-variant: small-caps;
-	font-weight: bold;
-}
 div.header-row {
 	background-color: moccasin;
 	font-weight: bold;
 	/*
 	display: table;
 	*/
-}
-div.indent-bar {
-	background-color: moccasin;
-	font-weight: bold;
-}
-div.after-indent {
-	border: 1px solid #EEE;
 }
 div.section-header {
 	background-color: moccasin;
@@ -148,14 +131,41 @@ div.cartoon svg line.conditional {
 }
 rect.not-obs {
 	fill: #DDD;
-	opacity: .4;
+	opacity: .8;
 }
 rect.index-marker {
 	fill: green;
 }
 
-svg.x.axis {
+div.cartoon svg.x.axis {
 	height: 20px;
+	background-color: #DDD;
+	opacity: .8;
+}
+div.crit-row div,
+div.crit-row svg {
+	padding: 0;
+}
+div.indent-bar,
+div.crit-row div.indent-bar {
+	background-color: moccasin;
+	font-weight: bold;
+	padding: 0px 5px 0px 5px;
+}
+div.after-indent {
+	border: 1px solid #EEE;
+}
+div.crit.row {
+	margin: 0px;
+}
+
+div.name,
+div.crit-row div.name {
+	overflow: scroll;
+	font-style: italic;
+	font-variant: small-caps;
+	font-weight: bold;
+	padding: 0px 5px 0px 5px;
 }
 
 /*

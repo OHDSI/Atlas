@@ -458,33 +458,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 									</div>
 								</div>`;
 		}
-		/*
-		if (depth > 0) {
-			var subgroupNode = d3AddIfNeeded(d3element, [critgroup], 'div', 
-																		['subgroup', 'row'], 
-																		skeleton, {cohdef,type:'header',
-																							depth:Math.max(0, depth)})
-			var headerNode = d3AddIfNeeded(subgroupNode, [critgroup], 'div', 
-																		['crit','header', 'row'], 
-																		skeleton, {cohdef,type:'header',
-																							depth:Math.max(0, depth)})
-		} else {
-		}
-		*/
 		var headerNode = d3AddIfNeeded(d3element, [critgroup], 'div', 
 																	['crit','header', 'row'], 
 																	skeleton, {cohdef,type:'header',
 																						depth:Math.max(0, depth)})
 		headerNode.select('div.header-content').html(html);
-
-		/*
-		if (depth > 0 && critIndex > 0) {
-			var groupConnector = parentcg.Type === 'ALL' ? 'and' : 'or';
-			headerNode.selectAll('div.indent-bar')
-								.style('text-align','right')
-								.html(groupConnector);
-		}
-		*/
 
 		d3element.select('svg.x.axis').call(cohdef.obsAxis);
 		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
@@ -542,25 +520,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																	{cohdef, critgroup:group, depth:depth+1,
 																		parentcg:critgroup,critIndex:group.critIndex});
 			});
-		return;
-
-		critgroup.Groups.forEach( group => {
-			var skel = d3AddIfNeeded(d3element, [group], 'div', ['crit','subgroup','row'], 
-																		skeleton, {cohdef,type:'header',depth})
-			d3AddIfNeeded(skel, [critgroup], 'div', 
-																['critgroup','subgroup','header'], 
-																critGroupHeader, 
-																{cohdef, critgroup:group, depth:depth+1,
-																	parentcg:critgroup,critIndex});
-			/*
-			d3AddIfNeeded(skel, [critgroup], 'div', 
-																['critgroup','subgroup','body'], 
-																critGroupBody,
-																{cohdef, critgroup:group, depth:depth+1,
-																	parentcg:critgroup,critIndex});
-			*/
-			critIndex++;
-		});
 	}
 	function connectorText(nodes, parentcrit, subgroup) {
 		var groupMsg, groupConnector;
@@ -957,128 +916,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		`;
 		return html;
 	}
-	/*
-	function obsperiodHeader(d3element, cohdef) {
-		var prior = Math.abs(cohdef.PrimaryCriteria.ObservationWindow.PriorDays);
-		var post = cohdef.PrimaryCriteria.ObservationWindow.PostDays;
 
-		var text = "<h3>Observation Period</h3>";
-
-		if (!(prior || post)) {
-			d3element.html("No required observation period");
-			return;
-		}
-		text += `Required observation period from at least ${prior} days
-								before to at least ${post} days after index date. `;
-
-		var extra = [];
-		var obswin = obsWindow(cohdef);
-		if (Math.abs(obswin.min) > Math.abs(prior)) {
-			extra.push(Math.abs(obswin.min) + ' days before');
-		}
-		if (obswin.max > post) {
-			extra.push(obswin.max + ' days after');
-		}
-		if (extra.length) {
-			text += `Beyond the required observation period, additional criteria or 
-									inclusion rules also reference events ${extra.join(' and ')} 
-									index date.`;
-		}
-		d3element.html(text);
-	}
-	function obsperiodBody(d3element, cohdef) {
-		var obswin = obsWindow(cohdef);
-		var prior = Math.abs(cohdef.PrimaryCriteria.ObservationWindow.PriorDays);
-		var post = cohdef.PrimaryCriteria.ObservationWindow.PostDays;
-		if (!(prior || post)) {
-			return;
-		}
-		var html = `
-				<div class="row header">
-					<div class="col-xs-6 left">
-					</div>
-					<div class="col-xs-6 right">
-						<svg/>
-					</div>
-				</div>`;
-		d3element.html(html);
-		var svg = d3element.select('svg');
-
-		svg.append('path').attr('class','curly-brace')
-											.classed('first', true);
-		svg.append('path').attr('class','curly-brace')
-											.classed('second', true);
-
-		svg = d3element.select("svg");
-		svg.attr('width', divWidth())
-				.attr('height', 60)
-
-		svg.select('path.curly-brace.first').attr('d', makeCurlyBrace(
-																cohdef.obsScale(-prior),
-																15,
-																cohdef.obsScale(post),
-																15, 60,
-																0.6,
-																cohdef.obsScale(0))); 
-		var extra = [];
-		if (Math.abs(obswin.min) > Math.abs(prior)) {
-			extra.push(Math.abs(obswin.min) + ' days before');
-		}
-		if (obswin.max > post) {
-			extra.push(obswin.max + ' days after');
-		}
-		if (extra.length) {
-			svg.select('path.curly-brace.second')
-				.attr('d', makeCurlyBrace(
-																	cohdef.obsScale(obswin.min),
-																	15,
-																	cohdef.obsScale(obswin.max),
-																	15, 60,
-																	0.6,
-																	cohdef.obsScale(0) )) 
-				.attr('stroke-dasharray', '3,3')
-		}
-	}
-	*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	window.d3 = d3;
-	var width = 400;
-	var height = 450;
-
-	var textLinesBeforeBrace = 1;
-	var braceLines = 2;
-	var textLinesAfterBrace = 2;
-
-	function obsWindow(cohdef) {
-		var ext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
-												allAdditionalCriteria(cohdef), cohdef);
-		return { min: ext[0], max: ext[1] };
-	}
 	function rangeInfo(range, feature) {
 		if (!range) 
 			return;
@@ -1264,11 +1102,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		return `occurring between 
 							${sw.Start.Days} days ${sw.Start.Coeff===-1 ? 'before' : 'after'} and
 							${sw.End.Days} days ${sw.End.Coeff===-1 ? 'before' : 'after'} index`;
-	}
-	function pcCartoon(selection) {
-		selection//.filter(pc=>getRange(pc, 'start'))
-				.each(function(pc) {
-				})
 	}
 	function critCartoonText(crit) {
 		var durRange = getRange(crit, 'dur');
