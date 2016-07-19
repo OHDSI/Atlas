@@ -136,6 +136,14 @@ rect.not-obs {
 rect.index-marker {
 	fill: green;
 }
+text.index-marker {
+	alignment-baseline: top;
+	fill: green;
+	font-weight: bold;
+}
+.addcrit-marker {
+	font-weight: bold;
+}
 
 div.cartoon svg.x.axis {
 	height: 20px;

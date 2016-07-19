@@ -25,7 +25,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		// sections
 		// getting rid of top brace
 		// var brace = true, dot = true, dur = !!durRange, dates = !!startDateRange;
-		var brace = false, dot = false, dur = false, dates = !!startDateRange;
+		var brace = false, dot = true, dur = false, dates = !!startDateRange;
 
 		// additional sections  (critType is group, which should maybe change)
 		var addBrace = (critType!=='primary'),
@@ -564,7 +564,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			if (durRange) {
 				html += durInterval(durRange, crit, cohdef, critType);
 			}
-			//html += obsPeriodBrace(crit, cohdef, critType);
 			html += obsPeriodShading(crit, cohdef, critType, this);
 			html += dateSymbols(crit, cohdef, critType)
 
@@ -814,56 +813,52 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var rightEdge = cohdef.obsScale.range()[1];
 		var rightWidth = rightEdge - cohdef.obsScale(post);
 
+		var indexMarker = markerText(crit);
+		if (indexMarker) {
+			indexMarker = `<text x="${cohdef.obsScale(0)}" y="${dotY}"
+														text-anchor="middle" 
+														alignment-baseline="top"
+														class="index-marker">${indexMarker}</text>`;
+		} else {
+			indexMarker = `<rect x="${cohdef.obsScale(0) - 1}" 
+			                     y="0" width="2" height="${height}" 
+													class="index-marker" />`;
+		}
 		//var indexDateDot = symbol({term:'start', crit:'primary', inclusive:'true', x:0, y:dotY, r:dotR}, cohdef);
 		var html = `
-				<rect x="${cohdef.obsScale(0) - 1}" y="0" width="2" height="${height}" class="index-marker" />
+				${indexMarker}
 				<rect x="${leftEdge}" y="0" width="${leftWidth}" height="${height}" class="not-obs" />
 				<rect x="${rightEdge - rightWidth}" y="0" width="${rightWidth}" height="${height}" class="not-obs" />
 		`;
 		return html;
 	}
-	function obsPeriodBrace(crit, cohdef, critType) {
-		var durRange = getRange(crit, 'dur');
-		var startDateRange = getRange(crit, 'start');
-		var endDateRange = getRange(crit, 'end'); // ignore these?
-		var prior = Math.abs(cohdef.PrimaryCriteria.ObservationWindow.PriorDays);
-		var post = cohdef.PrimaryCriteria.ObservationWindow.PostDays;
-		if (!(prior || post)) {
-			return '';
+	function markerText(crit, addcrit) {
+		var text = ''
+		if (crit.First) {
+			text += '1st';
 		}
-		var dotY = ypos(crit, 'index-dot', critType);
-		var dotR = ypos(crit, 'index-r', critType);
-		var braceTop = ypos(crit, 'brace-top', critType);
-		var braceLabel = ypos(crit, 'brace-label', critType);
-		var braceHeight = ypos(crit, 'brace-height', critType);
-		var braceLeft = cohdef.obsScale(-prior);
-		var braceRight = cohdef.obsScale(post);
-		var braceMid = (braceLeft + braceRight) / 2;
-
-		var indexDateDot = symbol({term:'start', crit:'primary', 
-															 inclusive:'true', x:0, y:dotY, r:dotR}, cohdef);
-		var html = `
-				${indexDateDot}
-				<text x="${braceLeft}"
-							y="${braceLabel}"
-							text-anchor="middle">-${prior}</text>
-				<text x="${braceRight}"
-							y="${braceLabel}"
-							text-anchor="middle">${post}</text>
-				<text x="${braceMid}"
-							y="${braceLabel}"
-							text-anchor="top">obs</text>
-				<path class="curly-brace" 
-							d="${ makeCurlyBrace(
-																braceLeft,
-																braceTop,
-																braceRight,
-																braceTop,
-																braceHeight,
-																0.6,
-																cohdef.obsScale(0))}" />
-		`;
-		return html;
+		var count = '';
+		if (addcrit) {
+			if (text.length) text += ' ';
+			var oc = addcrit.Occurrence;
+			// types: 'exactly','at most','at least'
+			switch (oc.Type) {
+				case 0:
+					if (oc.Count === 0) {
+						count += 'None';
+					} else {
+						count += `= ${oc.Count}`;
+					}
+					break;
+				case 1:
+						count += `<= ${oc.Count}`;
+					break;
+				case 2:
+						count += `>= ${oc.Count}`;
+					break;
+			}
+		}
+		return text + count;
 	}
 	function swPeriodBrace(crit, addcrit, cohdef, swin) {
 		var durRange = getRange(crit, 'dur');
@@ -883,15 +878,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		var addCritDot = ''; //symbol({term:'start', crit:'additional', inclusive:'true', x:braceMidDays, y:dotY, r:dotR}, cohdef);
 		var oc = addcrit.Occurrence;
-		var howMany;
-		if (oc.Type === 0 && oc.Count === 0) {
-			howMany = `
+		var howMany = `
 				<text x="${braceMid}"
 							y="${dotY}"
-							fill="red"
-							text-anchor="top">X</text>
+							class="addcrit-marker"
+							text-anchor="middle" 
+							text-anchor="top">${markerText(crit, addcrit)}</text>
 				`;
-		}
 		var html = `
 				${addCritDot}
 				${howMany}
