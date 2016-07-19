@@ -83,7 +83,7 @@ define([
 			}
         ]);
 
-		ko.amdTemplateEngine.defaultPath = "/Atlas/js/components/datasources/templates";
+		ko.amdTemplateEngine.defaultPath = "js/components/datasources/templates";
 
 		self.formatSI = function (d, p) {
 			if (d < 1) {
