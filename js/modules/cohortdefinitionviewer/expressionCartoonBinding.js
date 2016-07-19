@@ -2,6 +2,9 @@
 define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 	var divWidth = ko.observable(); // triggers update
+	var cartoonWidth = ko.computed(function() {
+												return divWidth() * 0.6;
+											});
 	const INDENT_COLS = 1; // for the whole leftmost column
 	function indentColsOBSOLETE(depth) { // for the indent-bar width
 		return Math.floor(12 / (cohdef.maxDepth + 1)) * (depth + 1);
@@ -78,8 +81,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 															 {cohdef, rules:cohdef.InclusionRules});
 
 		$('div.indent-bar').each(function() { 
-			$(this).height($(this).closest('div.header-row').height()) 
+			$(this).height($(this).closest('div.row').height()) 
 		});
+		$('div.cartoon').width(cartoonWidth());
 	}
 	function d3AddIfNeeded(parentElement, data, tag, classes, firstTimeCb, cbParams) {
 		var d3element;
@@ -130,6 +134,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		*/
 	}
 	function resetScales(cohdef, width) {
+		width = width || cartoonWidth();
+		console.log(`resetScales with width ${width}`);
 		var extraPx = 25; // room at ends of cartoons for arrows past domain dates
 		var extraRatio = extraPx / width; // add to ends of domains
 
@@ -222,6 +228,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			$(element).parents('.tab-pane').bind("DOMSubtreeModified", function() {
 				divWidth(element.offsetWidth);
 			});
+			$(window).resize(function() {
+				divWidth(element.offsetWidth);
+			});
 			firstTimeSetup(element);
 		},
 		update: function (element, valueAccessor, allBindingsAccessor) {
@@ -229,7 +238,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			if (!divWidth()) {
 				return;
 			}
-			//console.log('staying in update');
+			console.log(`update width divWidth ${divWidth()}`);
 			var expression = valueAccessor().expression();
 			//console.log(expression);
 
@@ -320,8 +329,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						${limitMsg}
 						${resultDateMsg}
 						<div class="row">
-							<div class="right col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
-								${rightHeader}
+							<div class="col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
+								<div class="cartoon">
+									${rightHeader}
+								</div>
 							</div>
 						</div>`;
 
@@ -336,8 +347,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		headerNode.select('div.header-content').html(headerHtml);
 
 		//d3element.html(headerHtml);
-		var w = $(d3element.select(`div.right`).node()).width();
+		/* 
+		switching to constant width
+		var w = $(d3element.select(`div.cartoon`).node()).width();
 		resetScales(cohdef, w);
+		resetScales(cohdef, CARTOON_WIDTH);
+		*/
+		resetScales(cohdef);
 		d3element.select('svg.x.axis').call(cohdef.obsAxis);
 		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
 						.attr("transform", function(d) {
@@ -354,17 +370,28 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			selection.append('div').attr('class', 'col-xs-12 header-content');
 			return;
 		}
-		selection.append('div').attr('class', `indent-bar col-xs-${INDENT_COLS}`)
-		var right = selection.append('div').attr('class', `right col-xs-${12-INDENT_COLS}`)
-		right = right.append('div').attr('class','row');
+
 		if (type === 'header') {
-			right.append('div').attr('class', `right header-content col-xs-12`)
-		} else if (type === 'subgroup') {
+			selection.append('div').attr('class', 'col-xs-12 header-content');
+			return;
+		}
+
+
+		selection.append('div').attr('class', `indent-bar col-xs-${INDENT_COLS}`)
+		var right = selection.append('div').attr('class', `col-xs-${12-INDENT_COLS}`)
+		right = right.append('div').attr('class','row');
+		/*
+		if (type === 'header') {
+			right.append('div').attr('class', `header-content col-xs-12`)
+		} else 
+		*/
+		if (type === 'subgroup') {
 			right.append('div').attr('class', `subgroup-container col-xs-12`)
 		} else {
 			right.append('div').attr('class', `name col-xs-${NAME_COLS}`)
-			right.append('div').attr('class', `right cartoon col-xs-${12-NAME_COLS}`)
-							.append('svg').attr('class', 'col-xs-12 cartoon');
+			right.append('div').attr('class', `col-xs-${12-NAME_COLS}`)
+							.append('div').attr('class', 'cartoon')
+							.append('svg').attr('class', 'col-xs-12');
 		}
 	}
 	function critGroupHeader(d3element, {cohdef, critgroup, depth, parentcg, critIndex} = {}) {
@@ -391,8 +418,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			
 			html += `${all_any}${rightHeader}
 								<div class="row">
-									<div class="right col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
-										${depth ? '<svg class="x axis col-xs-12"/>' : ''}
+									<div class="col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
+										<div class="cartoon">
+											<svg class="x axis col-xs-12"/>
+										</div>
 									</div>
 								</div>`;
 		}
@@ -473,7 +502,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																	critGroupHeader, 
 																	{cohdef, critgroup:group, depth:depth+1,
 																		parentcg:critgroup,critIndex:group.critIndex});
-				connectorText(subgroup, group);
+				connectorText(subgroup, group, 'subgroup');
+				d3AddIfNeeded(d3.select(this), [group], 'div', 
+																	['critgroup','subgroup','body'], 
+																	critGroupBody,
+																	{cohdef, critgroup:group, depth:depth+1,
+																		parentcg:critgroup,critIndex:group.critIndex});
 			});
 		return;
 
@@ -495,7 +529,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			critIndex++;
 		});
 	}
-	function connectorText(nodes, parentcrit) {
+	function connectorText(nodes, parentcrit, subgroup) {
 		var groupMsg, groupConnector;
 		if (parentcrit.PrimaryCriteriaLimit) {
 			groupMsg = `${parentcrit.PrimaryCriteriaLimit.Type} of`;
@@ -518,7 +552,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		nodes.selectAll('div.indent-bar')
 							.html(function(crit) {
-								if (!crit.critIndex) return groupMsg;
+								if (!crit.critIndex || subgroup) return groupMsg;
 								d3.select(this).style('text-align','right');
 								return groupConnector;
 								return `${depth}/${cohdef.maxDepth}:${crit.critIndex}`;
@@ -540,7 +574,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 							})
 							.call(critName, cohdef, critType);
 
-		critNodes.selectAll('svg.cartoon')
+		critNodes.selectAll('div.cartoon > svg')
 							.call(drawCrits, cohdef, critType);
 	}
 	function inclusionRulesHeader(d3element, {cohdef, rules} = {}) {
@@ -555,11 +589,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function inclusionRulesBody(d3element, {cohdef, rules} = {}) {
 		rules.forEach(function(rule) {
 			var rulediv = d3element.append('div');
-			d3AddIfNeeded(d3element, [rule], 'div', 
+			d3AddIfNeeded(rulediv, [rule], 'div', 
 																['critgroup','section','header'], 
 																inclusionRuleHeader, 
 																{cohdef, rule, depth:0});
-			d3AddIfNeeded(d3element, [rule], 'div', 
+			d3AddIfNeeded(rulediv, [rule], 'div', 
 																['critgroup','section','body'], 
 																inclusionRuleBody,
 																{cohdef, rule, depth:0});

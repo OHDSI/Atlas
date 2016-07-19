@@ -63,41 +63,22 @@ div.crit.row {
 	margin: 0px;
 }
 
-div.indenting .row {
-	overflow: scroll;
-}
 div.name {
 	overflow: scroll;
-}
-div.indenting,
-div.indenting div[class^="col-xs-"] {
-	padding: 0;
+	font-style: italic;
+	font-variant: small-caps;
+	font-weight: bold;
 }
 div.header-row {
+	background-color: moccasin;
+	font-weight: bold;
 	/*
 	display: table;
 	*/
 }
-div.header-row div.indenting {
-	/*
-	float: none;
-	display: table-cell;
-	*/
-}
-div.header-row div.indenting div.row {
-	/*
-	height: 100%;
-	*/
-}
-div.header-row div.indenting div.row > div {
-	/*
-	float: none;
-	display: table-cell;
-	height: 100%;
-	*/
-}
 div.indent-bar {
 	background-color: moccasin;
+	font-weight: bold;
 }
 div.section-header {
 	background-color: moccasin;
@@ -130,12 +111,17 @@ div.cartoon-primary-criteria > div.crit svg {
 	float:right;
 }
 */
+
+div.cartoon {
+	float: right;
+	border: 1px dotted pink;
+}
 div.cartoon-critgroup line,
-svg.cartoon line {
+div.cartoon svg line {
 	stroke-width: 1px;
 	stroke: steelblue;
 }
-svg.cartoon line.conditional {
+div.cartoon svg line.conditional {
 	stroke-dasharray: 3.3;
 }
 
