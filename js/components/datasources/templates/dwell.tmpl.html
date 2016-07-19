@@ -1,0 +1,20 @@
+<div class="row">
+	<div class="col-xs-5">Median:</div>
+	<div class="col-xs-7" data-bind="text: $root.formatSI(ObservationBoxplot.median,2) + ' Years'"></div>
+</div>
+<div class="row">
+	<div class="col-xs-5">1st/3rd Quartile:</div>
+	<div class="col-xs-7" data-bind="text: $root.formatSI(ObservationBoxplot.q1,2) + ' - ' + $root.formatSI(ObservationBoxplot.q3,2) + ' Years'"></div>
+</div>
+<div class="row">
+	<div class="col-xs-5">1+ Years:</div>
+	<div class="col-xs-7" data-bind="text: $root.formatSI(ObservationSummary.OneOrMore, 2) + ' Patients'"></div>
+</div>
+<div class="row">
+	<div class="col-xs-5">3+ Years:</div>
+	<div class="col-xs-7" data-bind="text: $root.formatSI(ObservationSummary.ThreeOrMore, 2) + ' Patients'"></div>
+</div>
+<div class="row">
+	<div class="col-xs-5">5+ Years:</div>
+	<div class="col-xs-7" data-bind="text: $root.formatSI(ObservationSummary.FiveOrMore, 2) + ' Patients'"></div>
+</div>

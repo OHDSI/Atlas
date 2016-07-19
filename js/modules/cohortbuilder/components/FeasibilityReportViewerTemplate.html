@@ -1,0 +1,10 @@
+
+<!-- ko if: report -->
+<div class="heading">Inclusion Report for <span data-bind="text:reportCaption"></span></div>
+<div style="position: relative">
+<!-- ko if: selectedView() == 'intersect' --><span class="toggleView" style="position: absolute; right:5px" data-bind="text: 'Switch to attrition view', click: function() { selectedView('attrition'); }"></span> <!-- /ko -->
+<!-- ko if: selectedView() == 'attrition' --><span class="toggleView" style="position: absolute; right:5px" data-bind="text: 'Switch to intersect view', click: function() { selectedView('intersect'); }"></span> <!-- /ko -->			
+</div>
+<div data-bind="visible: selectedView() == 'intersect'"><feasibility-intersect-report params="report: report"></feasibility-intersect-report></div>
+<div data-bind="visible: selectedView() == 'attrition'"><feasibility-attrition-report params="report: report"></feasibility-attrition-report></div>
+<!-- /ko -->

@@ -1,0 +1,69 @@
+<div class="criteriaSection" data-bind="with: Criteria">
+	<div style="position: relative">
+		<table class="criteriaTable">
+			<col style="width:16px" />
+			<col />							
+			<tr>
+				<td colspan="2"> a dose era of <conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Drug'"></conceptset-selector>
+				</td>
+			</tr>
+			<tr data-bind="if: First() != null, visible: First() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
+				<td><div>for the first time in the person's history</div></td>
+			</tr>
+			<tr data-bind="if: EraStartDate() != null, visible: EraStartDate() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('EraStartDate') }" class="fa fa-times" /></td>
+				<td>
+					era start is: <date-range params="Range: EraStartDate"></date-range>
+				</td>									
+			</tr>
+			<tr data-bind="if: EraEndDate() != null, visible: EraEndDate() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('EraEndDate') }" class="fa fa-times" /></td>
+				<td>
+					era end is: <date-range params="Range: EraEndDate"></date-range>
+				</td>									
+			</tr>
+			<tr data-bind="if: Unit() != null, visible: Unit() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('Unit') }" class="fa fa-times" /></td>
+				<td>
+					<div>
+						with Unit: <concept-list params="PickerParams: { DefaultDomain: 'Unit'}, ConceptList: Unit()"></concept-list>
+					</div>
+			 </td>									
+			</tr>	
+			<tr data-bind="if: DoseValue() != null, visible: DoseValue() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('GapDays') }" class="fa fa-times" /></td>
+				<td>
+					with dose value <numeric-range params="Range: DoseValue"></numeric-range>
+				</td>
+			</tr>
+			<tr data-bind="if: EraLength() != null, visible: EraLength() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('EraLength') }" class="fa fa-times" /></td>
+				<td>
+					with era length <numeric-range params="Range: EraLength"></numeric-range> days
+				</td>
+			</tr>
+			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }" class="fa fa-times" /></td>
+				<td>
+					with age at era start <numeric-range params="Range: AgeAtStart"></numeric-range>
+				</td>
+			</tr>
+			<tr data-bind="if: AgeAtEnd() != null, visible: AgeAtEnd() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }" class="fa fa-times" /></td>
+				<td>
+					with age at era end <numeric-range params="Range: AgeAtEnd"></numeric-range>
+				</td>
+			</tr>
+			<tr data-bind="if: Gender() != null, visible: Gender() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
+				<td>
+					<div>
+					with a gender of: <concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
+					</div>						
+				</td>
+			</tr>					
+		</table>
+	</div>
+	<div class="addCriterion" data-bind="ddSlickAction: $component.addCriterionSettings"></div>
+</div>

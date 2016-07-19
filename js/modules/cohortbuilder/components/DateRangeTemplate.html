@@ -1,0 +1,3 @@
+<select data-bind="options: $component.operationOptions, optionsText: 'name', optionsValue: 'id', value: Range().Op"></select> 
+<input class="dateField" data-bind="datepicker: Range().Value, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
+<span data-bind="if: Range().Op().substr(-2) == 'bt'"> and <input class="dateField" data-bind="datepicker: Range().Extent, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" /></span>

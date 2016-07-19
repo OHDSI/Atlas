@@ -1,8 +1,10 @@
 <div class="wrapperTitle">
 	<span><i class="fa fa-dot-circle-o"></i></span> Feasibility
-	<div class="paddedFloater pull-right btn btn-primary btn-sm">New Feasibility</div>
 </div>
 
 <div class="paddedWrapper">
-	<feasibility-browser params="{services: pageModel.services, feasibilityId: feasibilityId}"></feasibility-browser>
+	<div class="paddedFloater pull-right btn btn-success btn-sm disabled">New Feasibility</div>
+	<div class="clear">
+		<feasibility-browser params="{services: pageModel.services, feasibilityId: feasibilityId}"></feasibility-browser>
+	</div>
 </div>

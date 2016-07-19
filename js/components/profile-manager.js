@@ -1,491 +1,295 @@
-define(['knockout', 'text!./profile-manager.html', 'd3', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, d3) {
-	function profileManager(params) {
-		var self = this;
-		self.services = params.services;
-		self.reference = ko.observableArray([]);
-		self.cohortDefinitionId = ko.observable();
-		self.loading = ko.observable(false);
-		self.loadingCohort = ko.observable(false);
-		self.loadingProfile = ko.observable(false);
-		self.sourceKey = ko.observable();
-		self.members = ko.observableArray();
-		self.personId = ko.observable();
-		self.currentMemberIndex = 0;
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf', 'components/profileChart', 'css!./styles/profileManager.css'],
+	function (ko, view, d3, config, lodash, crossfilter) {
 
-		self.hasCDM = function (source) {
-			return source.hasCDM;
-		}
+		function profileManager(params) {
+			window.d3 = d3;
+			window._ = _;
+			var self = this;
+			window.profileManager = self;
+			self.config = config;
+			self.services = config.services[0];
+			self.model = params.model;
+			self.aspectRatio = ko.observable();
 
-		self.navigatePrevious = function () {
-			if (self.currentMemberIndex > 0) {
-				self.currentMemberIndex--;
-				self.personId(self.members()[self.currentMemberIndex].personId);
-			} else {
-				self.currentMemberIndex = self.members().length - 1;
-				self.personId(self.members()[self.currentMemberIndex].personId);
+			self.sourceKey = ko.observable(params.model.sourceKey);
+			self.cohortSource = ko.observable();
+			self.personId = ko.observable();
+			self.person = ko.observable();
+			self.loadingPerson = ko.observable(false);
+			self.cantFindPerson = ko.observable(false)
+
+			self.setSourceKey = function (d) {
+				self.sourceKey(d.sourceKey);
 			}
-		}
 
-		self.navigateNext = function () {
-			if (self.currentMemberIndex < self.members().length - 1) {
-				self.currentMemberIndex++;
-				self.personId(self.members()[self.currentMemberIndex].personId);
-			} else {
-				self.currentMemberIindex = 0;
-				self.personId(self.members()[self.currentMemberIndex].personId);
-			}
-		}
-
-		self.personId.subscribe(function (value) {
-			if (value) {
-				self.loadProfile(value);
-			}
-		});
-
-		self.cohortDefinitionSelected = function (cohortDefinitionId) {
-			self.cohortDefinitionId(cohortDefinitionId);
-			$('#cohortDefinitionChooser').modal('hide');
-
-			$.ajax({
-				url: self.services()[0].url + 'cohortdefinition/' + self.cohortDefinitionId(),
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (definition) {
-					self.cohortDefinitionButtonText(definition.name);
+			self.sourceKeyCaption = ko.computed(function () {
+				if (self.sourceKey()) {
+					return self.sourceKey();
+				} else {
+					return "Select a Data Source";
 				}
 			});
 
-			if (self.cohortDefinitionId() && self.sourceKey()) {
-				self.loadCohort();
-			}
-		}
-
-		self.sourceKey.subscribe(function () {
-			if (self.cohortDefinitionId() && self.sourceKey()) {
-				self.loadCohort();
-			}
-		});
-
-		self.loadCohort = function () {
-			$.ajax({
-				url: self.services()[0].url + self.sourceKey() + '/cohortresults/' + self.cohortDefinitionId() + '/members',
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (members) {
-					if (members.length == 0) {
-						self.personId(null);
-						self.loadingProfile(false);
-						$('#modalNoMembers').modal('show');
-						self.members([]);
-					} else {
-						self.members(members);
-						// default to first person in the cohort
-						self.currentMemberIndex = 0;
-						self.personId(members[self.currentMemberIndex].personId);
-					}
-				}
+			self.sourceKey.subscribe(function (sourceKey) {
+				self.cohortSource(_.find(
+					self.model.cohortDefinitionSourceInfo(), {
+						sourceKey: sourceKey
+					}));
+				self.personId(null);
+				self.person(null);
+				document.location = '#/profiles/' + sourceKey;
 			});
-		};
 
-		self.loadProfile = function (personId) {
-			self.loadingProfile(true);
-
-			$.ajax({
-				url: self.services()[0].url + self.sourceKey() + '/person/' + personId,
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (profile) {
-					self.loadingProfile(false);
-					self.reference(profile.records);
-					// self.plotTimewave(profile.timewave, profile.startDate, profile.endDate);
-					self.plotScatter(profile.records, profile.startDate, profile.endDate);
-				}
+			if (params.model.currentCohortDefinition()) {
+				self.sourceKey(self.services.sources[0].sourceKey);
+			}
+			params.model.currentCohortDefinition.subscribe(function (def) {
+				self.sourceKey(self.services.sources[0].sourceKey);
 			});
-		};
 
-		self.showBrowser = function () {
-			$('#cohortDefinitionChooser').modal('show');
-		};
-
-		self.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
-
-		self.options = {
-			Facets: [
-				{
-					'caption': 'Type',
-					'binding': function (o) {
-						return o.recordType;
+			let personRequests = {};
+			let personRequest;
+			self.loadPerson = function () {
+				self.cantFindPerson(false)
+				self.loadingPerson(true);
+				let url = self.services.url + self.sourceKey() + '/person/' + self.personId();
+				personRequest = personRequests[url] = $.ajax({
+					url: url,
+					method: 'GET',
+					contentType: 'application/json',
+					error: function (err) {
+						self.cantFindPerson(true);
+						self.loadingPerson(false);
+					},
+					success: function (person) {
+						if (personRequest !== personRequests[url]) {
+							return;
+						}
+						self.loadingPerson(false);
+						let cohort;
+						if (params.model.currentCohortDefinition()) {
+							cohort = _.find(person.cohorts, {
+								cohortDefinitionId: params.model.currentCohortDefinition().id()
+							});
+						} else {
+							cohort = {
+								startDate: _.chain(person.records)
+									.map(d => d.startDate)
+									.min()
+									.value()
+							};
+						}
+						person.records.forEach(function (rec) {
+							// have to get startDate from person.cohorts
+							rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24))
+							rec.endDay = rec.endDate ?
+								Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
+						});
+						self.crossfilter(crossfilter(person.records));
+						self.person(person);
 					}
-				},
-				{
-					'caption': 'Year Start',
-					'binding': function (o) {
-						return new Date(o.startDate).getFullYear();
-					}
-				}
-			]
-		};
-
-		self.columns = [
-			{
-				title: 'Type',
-				data: 'recordType'
-			},
-			{
-				title: 'Concept Id',
-				data: 'conceptId'
-			},
-			{
-				title: 'Concept Name',
-				data: 'conceptName'
-			},
-			{
-				title: 'Start Date',
-				render: function (s, p, d) {
-					return new Date(d.startDate).toLocaleDateString();
-				}
-			},
-			{
-				title: 'End Date',
-				render: function (s, p, d) {
-					return new Date(d.endDate).toLocaleDateString();
-				}
-			}
-		];
-
-		self.parseDate = function (value) {
-			var re = /-?\d+/;
-			var m = re.exec(value);
-			return new Date(parseInt(m[0]));
-		}
-
-		self.plotScatter = function (records, startDate, endDate) {
-			var margin = {
-					top: 10,
-					right: 10,
-					bottom: 150,
-					left: 10
-				},
-				margin2 = {
-					top: 430,
-					right: 10,
-					bottom: 20,
-					left: 10
-				},
-				width = 900 - margin.left - margin.right,
-				height = 500 - margin.top - margin.bottom,
-				height2 = 500 - margin2.top - margin2.bottom;
-
-			var x = d3.time.scale().range([0, width]),
-				x2 = d3.time.scale().range([0, width]),
-				y = d3.scale.linear().range([height, 0]),
-				y2 = d3.scale.linear().range([height2, 0]);
-
-			var xAxis = d3.svg.axis().scale(x).orient("bottom"),
-				xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
-				yAxis = d3.svg.axis().scale(y).orient("left");
-
-			var brushed = function () {
-				x.domain(brush.empty() ? x2.domain() : brush.extent());
-				focus.selectAll('rect')
-					.attr('x', function (d) {
-						return x(d.startDate) - 2.5;
-					});
-				var member = self.members()[self.currentMemberIndex];
-				focus.selectAll("line")
-					.attr('x1', function (d) {
-						return x(d)
-					})
-					.attr('y1', 0)
-					.attr('x2', function (d) {
-						return x(d)
-					})
-					.attr('y2', height)
-					.attr('class', 'observation-period');
-				focus.select(".x.axis").call(xAxis);
-			}
-
-			var brush = d3.svg.brush()
-				.x(x2)
-				.on("brush", brushed);
-
-			$('#scatter').empty();
-
-			var svg = d3.select("#scatter").append("svg")
-				.attr("width", width + margin.left + margin.right)
-				.attr("height", height + margin.top + margin.bottom);
-
-			var focusTip = d3.tip()
-				.attr('class', 'd3-tip')
-				.offset([-10, 0])
-				.html(function (d) {
-					return d.conceptName;
 				});
-
-			svg.call(focusTip);
-
-			var focus = svg.append("g")
-				.attr("class", "focus")
-				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-			var context = svg.append("g")
-				.attr("class", "context")
-				.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-
-			x.domain([startDate, endDate]);
-			y.domain([0, 5]);
-			x2.domain(x.domain());
-			y2.domain(y.domain());
-
-			// plot observation window lines
-			var member = self.members()[self.currentMemberIndex];
-			focus.selectAll("line")
-				.data([member.startDate, member.endDate])
-				.enter()
-				.append("line")
-				.attr('x1', function (d) {
-					return x(d)
-				})
-				.attr('y1', 0)
-				.attr('x2', function (d) {
-					return x(d)
-				})
-				.attr('y2', height)
-				.attr('class', 'observation-period');
-
-			// place your data into the focus area
-			focus.selectAll("rect")
-				.data(records)
-				.enter()
-				.append("rect")
-				.attr('x', function (d) {
-					return x(d.startDate) - 2.5;
-				})
-				.attr('y', function (d) {
-					switch (d.recordType) {
-					case 'drug':
-						return y(4);
-						break;
-					case 'condition':
-						return y(3);
-						break;
-					case 'observation':
-						return y(2);
-						break;
-					case 'visit':
-						return y(1);
-						break;
-					}
-				})
-				.attr('width', 5)
-				.attr('height', 5)
-				.attr('class', function (d) {
-					return d.recordType;
-				})
-				.on('mouseover', function (d) {
-					focusTip.show(d);
-				})
-				.on('mouseout', function (d) {
-					focusTip.hide(d);
-				});
-
-			focus.append("text").text('Visits').attr('class', 'visit').attr('x', 0).attr('y', function (d) {
-				return y(1.2);
-			});
-			focus.append("text").text('Observations').attr('class', 'observation').attr('x', 0).attr('y', function (d) {
-				return y(2.2);
-			});
-			focus.append("text").text('Conditions').attr('class', 'condition').attr('x', 0).attr('y', function (d) {
-				return y(3.2);
-			});
-			focus.append("text").text('Drugs').attr('class', 'drug').attr('x', 0).attr('y', function (d) {
-				return y(4.2);
-			});
-
-			// and focus area
-			context.selectAll("line")
-				.data([member.startDate, member.endDate])
-				.enter()
-				.append("line")
-				.attr('x1', function (d) {
-					return x2(d)
-				})
-				.attr('y1', 0)
-				.attr('x2', function (d) {
-					return x2(d)
-				})
-				.attr('y2', height2)
-				.attr('class', 'observation-period');
-
-			context.selectAll("rect")
-				.data(records)
-				.enter()
-				.append("rect")
-				.attr('x', function (d) {
-					return x2(d.startDate);
-				})
-				.attr('y', function (d) {
-					switch (d.recordType) {
-					case 'drug':
-						return y2(4);
-						break;
-					case 'condition':
-						return y2(3);
-						break;
-					case 'observation':
-						return y2(2);
-						break;
-					case 'visit':
-						return y2(1);
-						break;
-					}
-				})
-				.attr('width', 2)
-				.attr('height', 2)
-				.attr('class', function (d) {
-					return d.recordType;
-				});
-
-
-			focus.append("g")
-				.attr("class", "x axis")
-				.attr("transform", "translate(0," + height + ")")
-				.call(xAxis);
-
-			context.append("g")
-				.attr("class", "x axis")
-				.attr("transform", "translate(0," + height2 + ")")
-				.call(xAxis2);
-
-			context.append("g")
-				.attr("class", "x brush")
-				.call(brush)
-				.selectAll("rect")
-				.attr("y", -6)
-				.attr("height", height2 + 7);
-		}
-
-		self.plotTimewave = function (tw, startDate, endDate) {
-			var margin = {
-					top: 10,
-					right: 10,
-					bottom: 10,
-					left: 10
-				},
-				width = 800,
-				height = 200;
-
-			var padding = {
-				top: 10,
-				left: 0
 			};
 
-			var xScale = d3.scale.linear()
-				.domain([startDate, endDate])
-				.range([0, width]);
-			$('#timewave').empty();
+			self.sourceKey(params.model.sourceKey);
+			self.personId(params.model.personId);
 
-			var timewave_container = d3.select("#timewave")
-				.append("div")
-				.attr("class", "timewave");
-
-			var div = timewave_container
-				.append("div");
-
-			var svg = div.append("svg")
-				.attr("width", width)
-				.attr("height", height);
-
-			var yScale = d3.scale.linear()
-				.domain([0, tw.maxEvents])
-				.range([0, height / 2]);
-
-			var yAxis = new d3.svg.axis()
-				.scale(yScale)
-				.orient("left")
-				.tickSize(-width, 0)
-				.ticks(5);
-
-			bucketgroup = svg.append("g")
-				.attr("class", "bucket-group")
-				.attr("transform", "translate(" + padding.left + "," + padding.top + ")");
-
-			bucketgroup.append("line")
-				.attr("x1", 0)
-				.attr("x2", width)
-				.attr("y1", height / 2)
-				.attr("y2", height / 2)
-				.attr("class", "timewave-line");
-
-			for (b = 0; b < tw.buckets.length; b++) {
-				event_counter = 0;
-				bucket = tw.buckets[b];
-				event_x = xScale(bucket.timeIndex);
-				condition_height = 0;
-				drug_height = 0;
-				observation_height = 0;
-
-				if (bucket.conditions > 0) {
-					condition_height = yScale(bucket.conditions);
-					bucketgroup.append("line")
-						.attr("x1", event_x)
-						.attr("y1", height / 2)
-						.attr("x2", event_x)
-						.attr("y2", (height / 2) - condition_height)
-						.attr("class", "timewave-condition");
-
-					bucketgroup.append("line")
-						.attr("x1", event_x)
-						.attr("y1", height / 2)
-						.attr("x2", event_x)
-						.attr("y2", (height / 2) + condition_height)
-						.attr("class", "timewave-condition");
+			self.crossfilter = ko.observable();
+			self.filtersChanged = ko.observable();
+			self.filteredRecs = ko.observableArray([]);
+			self.facetsObs = ko.observableArray([]);
+			self.highlightRecs = ko.observableArray([]);
+			self.highlight = function (recs, evt) {
+				self.highlightRecs(recs || []);
+			};
+			self.datatableRowClickCallback = function (rec) {
+				if (event.target.childNodes[0].data === rec.conceptName) {
+					self.highlightRecs(self.filteredRecs().filter(d => d.conceptName === rec.conceptName));
+				} else {
+					self.highlightRecs([rec]);
 				}
-
-				if (bucket.drugs > 0) {
-					drug_height = yScale(bucket.drugs);
-					bucketgroup.append("line")
-						.attr("x1", event_x)
-						.attr("y1", (height / 2) - condition_height)
-						.attr("x2", event_x)
-						.attr("y2", (height / 2) - condition_height - drug_height)
-						.attr("class", "timewave-drug");
-
-					bucketgroup.append("line")
-						.attr("x1", event_x)
-						.attr("y1", (height / 2) + condition_height)
-						.attr("x2", event_x)
-						.attr("y2", (height / 2) + condition_height + drug_height)
-						.attr("class", "timewave-drug");
+			};
+			self.getGenderClass = ko.computed(function () {
+				if (self.person()) {
+					if (self.person().gender == 'FEMALE') {
+						return "fa fa-female";
+					} else if (self.person().gender == 'MALE') {
+						return "fa fa-male";
+					} else {
+						return "fa fa-question";
+					}
 				}
+			});
 
-				if (bucket.observations > 0) {
-					observation_height = yScale(bucket.observations);
-					bucketgroup.append("line")
-						.attr("x1", event_x)
-						.attr("y1", (height / 2) - condition_height - drug_height)
-						.attr("x2", event_x)
-						.attr("y2", (height / 2) - condition_height - drug_height - observation_height)
-						.attr("class", "timewave-observation");
+			self.dimensions = {
+				'Domain': {
+					caption: 'Domain',
+					func: d => d.domain,
+					filter: ko.observable(null),
+					Members: [], //ko.observableArray([{Name:'foo', ActiveCount:'bar',Selected:false}]),
+				},
+				/*
+				'Year Start': {
+						caption: 'Year Start',
+						func: d => new Date(d.startDate).getFullYear(),
+						filter: ko.observable(null),
+						Members: [],//ko.observableArray([]),
+				},
+				*/
+				'profileChart': {
+					name: 'profileChart',
+					func: d => d.startDay,
+					filter: ko.observable(null),
+				},
+				/*
+				'search': {
+						name: 'search',
+						func: d => d,
+						filter: ko.observable(null),
+				},
+				*/
+				'wordcloud': {
+					name: 'wordcloud',
+					func: d => d.conceptName,
+					filter: ko.observable(null),
+					words: function (filteredRecs) {
+						var needToLook = filteredRecs().length; // knockout won't fire this otherwise
+						var stopWords = [
+							'Outpatient Visit', 'No matching concept',
+						];
+						if (!self.dimensions.wordcloud.dimension) return [];
+						var words = self.dimensions.wordcloud.group.top(20)
+							.filter(d => d.value.length &&
+								stopWords.indexOf(d.key) === -1)
+							.map(d => {
+								return {
+									text: d.key,
+									recs: d.value
+								}
+							});
+						words = _.sortBy(words, d => -d.recs.length)
+						var avgSize = average(words.map(d => d.recs.length));
+						var std = standardDeviation(words.map(d => d.recs.length));
+						words.forEach(word => {
+							word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 10)) + '%';
+						});
+						return words;
+					},
+				},
+			};
+			self.searchHighlight = ko.observable();
+			self.searchHighlight.subscribe(func => {
+				if (func)
+					self.highlight(self.filteredRecs().filter(func));
+				else
+					self.highlight([]);
+			});
+			self.facets = ['Domain'].map(d => self.dimensions[d]);
+			var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
+			self.crossfilter(crossfilter([]));
+			_.each(self.dimensions, dim => {
+				dim.filter.subscribe(filter => {
+					dim.dimension.filter(filter);
+					self.filtersChanged(filter);
+				});
+			});
+			self.filtersChanged.subscribe(() => {
+				var groupAll = self.crossfilter().groupAll();
+				groupAll.reduce(...reduceToRecs);
+				self.filteredRecs(groupAll.value());
+			});
+			self.crossfilter.subscribe(cf => {
+				_.each(self.dimensions, dim => {
+					dim.dimension = cf.dimension(dim.func);
+					dim.filter(null);
+					dim.group = dim.dimension.group();
+					dim.group.reduce(...reduceToRecs);
+					dim.groupAll = dim.dimension.groupAll();
+					dim.groupAll.reduce(...reduceToRecs);
+					//dim.recs(dim.groupAll.value());
+				});
+				self.facets.forEach(facet => {
+					facet.Members = [];
+				});
+				self.facetsObs.removeAll();
+				self.facetsObs.push(...self.facets);
+				var groupAll = self.crossfilter().groupAll();
+				groupAll.reduce(...reduceToRecs);
+				self.filteredRecs(groupAll.value());
+			});
 
-					bucketgroup.append("line")
-						.attr("x1", event_x)
-						.attr("y1", (height / 2) + condition_height + drug_height)
-						.attr("x2", event_x)
-						.attr("y2", (height / 2) + condition_height + drug_height + observation_height)
-						.attr("class", "timewave-observation");
-				}
+			self.showBrowser = function () {
+				$('#cohortDefinitionChooser').modal('show');
+			};
+
+			self.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
+
+			self.showSection = {
+				profileChart: ko.observable(true),
+				wordcloud: ko.observable(true),
+				datatable: ko.observable(true),
+			};
+			
+			self.dispToggle = function (pm, evt) {
+				let section = evt.target.value;
+				self.showSection[section](!self.showSection[section]());
+			};
+
+			self.columns = [
+				{
+					title: 'Domain',
+					data: 'domain'
+			},
+				{
+					title: 'Concept Id',
+					data: 'conceptId'
+			},
+				{
+					title: 'Concept Name',
+					data: 'conceptName'
+			},
+				{
+					title: 'Start Day',
+					data: 'startDay'
+			},
+				{
+					title: 'End Day',
+					data: 'endDay'
 			}
-
-			self.plotAxis(timewave_container);
+		];
+			if (self.personId()) {
+				self.loadPerson();
+			}
 		}
-	}
 
-	var component = {
-		viewModel: profileManager,
-		template: view
-	};
+		var component = {
+			viewModel: profileManager,
+			template: view
+		};
+		ko.components.register('profile-manager', component);
+		return component;
 
-	ko.components.register('profile-manager', component);
-	return component;
-});
+		function standardDeviation(values) {
+			var avg = average(values);
+
+			var squareDiffs = values.map(function (value) {
+				var diff = value - avg;
+				var sqrDiff = diff * diff;
+				return sqrDiff;
+			});
+
+			var avgSquareDiff = average(squareDiffs);
+
+			var stdDev = Math.sqrt(avgSquareDiff);
+			return stdDev;
+		}
+
+		function average(data) {
+			var sum = data.reduce(function (sum, value) {
+				return sum + value;
+			}, 0);
+
+			var avg = sum / data.length;
+			return avg;
+		}
+	});

@@ -1,8 +1,8 @@
-define(['knockout', 'text!./configuration.html'], function (ko, view) {
+define(['knockout', 'text!./configuration.html', 'appConfig'], function (ko, view, config) {
 	function configuration(params) {
 		var self = this;
 		self.enableRecordCounts = params.enableRecordCounts;
-		self.services = params.services();
+		self.services = config.services;
 	}
 
 	var component = {

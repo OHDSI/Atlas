@@ -24,9 +24,86 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
 
 		self.model.currentSearch.subscribe(function (query) {
 			if (self.model.currentSearch().length > 2) {
-				document.location='#/search/' + escape(query);
+				document.location = '#/search/' + escape(query);
 			}
 		});
+
+		self.importConceptSetExpression = function () {
+			var expressionJson = $('#textImportConceptSet').val();
+			var items = JSON.parse(expressionJson).items;
+			if (pageModel.currentConceptSet() == undefined) {
+				pageModel.currentConceptSet({
+					name: ko.observable('New Concept Set'),
+					id: 0
+				});
+				pageModel.currentConceptSetSource('repository');
+			}			
+			
+			for (var i = 0; i < items.length; i++) {
+				var conceptSetItem = {}
+
+				conceptSetItem.concept = items[i].concept;
+				conceptSetItem.isExcluded = ko.observable(items[i].isExcluded);
+				conceptSetItem.includeDescendants = ko.observable(items[i].includeDescendants);
+				conceptSetItem.includeMapped = ko.observable(items[i].includeMapped);
+
+				self.model.selectedConceptsIndex[items[i].concept.CONCEPT_ID] = 1;
+				self.model.selectedConcepts.push(conceptSetItem);
+			}
+		}
+
+		self.importConceptIdentifiers = function () {
+			var identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
+			$.ajax({
+				url: self.model.vocabularyUrl() + 'lookup/identifiers',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(identifers),
+				success: function (data) {                    
+                    // Automatically add these concepts to the active concept set
+                    self.initConceptSet(data);
+					self.model.importedConcepts(data);                    
+				}
+			});
+		}
+
+		self.importSourcecodes = function () {
+			var sourcecodes = $('#textImportSourcecodes').val().match(/[0-9a-zA-Z\.-]+/g);
+			$.ajax({
+				url: self.model.vocabularyUrl() + 'lookup/sourcecodes',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(sourcecodes),
+				success: function (data) {
+                    // Automatically add these concepts to the active concept set
+                    self.initConceptSet(data);                    
+					self.model.importedConcepts(data);
+				}
+			});
+		}
+        
+        self.initConceptSet = function(conceptSetItems) {
+            if (self.model.currentConceptSet() == undefined) {
+                self.model.currentConceptSet({
+                    name: ko.observable("New Concept Set"),
+                    id: 0
+                });
+                self.model.currentConceptSetSource('repository');
+            }
+
+            for (var i = 0; i < conceptSetItems.length; i++) {
+                if (self.model.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] != 1) {
+                    self.model.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
+                    var conceptSetItem = self.model.createConceptSetItem(conceptSetItems[i]);
+                    self.model.selectedConcepts.push(conceptSetItem);
+                }
+            }
+        }
+        
+        self.clearImportedConceptSet = function(textArea) {
+            $(textArea).val('');
+            self.model.importedConcepts([]);
+        }
 
 		self.tabMode.subscribe(function (value) {
 			switch (value) {

@@ -1,77 +1,86 @@
-<div id="wrapperLoading" data-bind="if: $component.loading()">
-	<div class="wrapperTitle">
-		<i class="fa fa-refresh fa-spin"></i> Loading...
+<div class="wrapperTitle">
+	<i class="fa fa-user"></i> Profiles
+</div>
+<div class="asset-heading">
+	<form data-bind="submit:loadPerson">
+		<div class="input-group" role="group">
+			<div class="input-group-btn" role="group">
+				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span data-bind="text:$component.sourceKeyCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:config.services[0].sources.filter(d=>d.hasCDM)">
+					<li>
+						<a data-bind="text:sourceName,click:$component.setSourceKey"></a>
+					</li>
+				</ul>
+			</div>
+			<input type="text" class="form-control" placeholder="Person Id" data-bind="enable: sourceKey(),textInput: personId">
+			<div class="input-group-btn">
+				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.profileChart},click:$component.dispToggle, value:'profileChart'">
+					<i class="fa fa-line-chart" data-bind="value:'profileChart'" />
+				</div>
+				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.wordcloud},click:$component.dispToggle, value:'wordcloud'">
+					<i class="fa fa-bars" data-bind="value:'wordcloud'" />
+				</div>
+				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.datatable},click:$component.dispToggle, value:'datatable'">
+					<i class="fa fa-table" data-bind="value:'datatable'" />
+				</div>
+			</div>
+		</div>
+	</form>
+	<div style="margin-top:5px;" data-bind="visible:person, with:person">
+		<i data-bind="attr: {class : $component.getGenderClass}"></i>&nbsp;
+		<span data-bind="text: gender"></span>&nbsp;&nbsp;
+		<span data-bind="text: recordCount + ' events'"></span>
 	</div>
 </div>
 
-<div data-bind="if: !$component.loading()">
-	<div class="wrapperTitle">
-		<i class="fa fa-user"></i> Profiles
-	</div>
+<div data-bind="visible: loadingPerson" class="loading">loading</div>
 
-	<div class="modal fade" id="cohortDefinitionChooser" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">Choose Cohort Definition</div>
-				<div class="modal-body">
-					<cohort-definition-browser params="{services: $component.services, cohortDefinitionSelected: $component.cohortDefinitionSelected}"></cohort-definition-browser>
+<div data-bind="visible: cantFindPerson" class="loading">Can't find
+	<span data-bind="text:personId" />
+</div>
+
+<div class="row">
+	<!-- ko if:$component.showSection.wordcloud -->
+	<div class="col-xs-3">
+		<div data-bind="visible:person, with:person">
+			<div id="wordcloud" data-bind="with:$component.dimensions.wordcloud">
+				<div class="wordcloud" data-bind="foreach:words($component.filteredRecs)">
+					<span data-bind="
+						text:text, 
+						style:{fontSize:size},
+						event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
+						"></span>
 				</div>
 			</div>
 		</div>
 	</div>
-
-	<div class="reportControls pad-5">
-		<div class="row">
-			<div class="col-xs-12">
-				<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.showBrowser, text:$component.cohortDefinitionButtonText"></button>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12">
-				<select class="form-control" data-bind="css : { invalid: $component.sourceKey()==undefined }, options:$component.services()[0].sources.filter($component.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.sourceKey, optionsCaption:'Select a Source'"></select>
-			</div>
-		</div>
+	<!-- /ko -->
+	<div data-bind="if: person, attr: { class: showSection.wordcloud() ? 'col-xs-9' : 'col-xs-12'}">
+		<div id="profile-chart" 
+				data-bind="
+					attr: {
+						 style:`padding-bottom:${aspectRatio()*100}%`
+						},
+					visible:showSection.profileChart,
+					profileChart:{
+							profile:person, 
+							recs:filteredRecs, 
+							zoomFilter:dimensions.profileChart.filter,
+							highlightRecs:highlightRecs,
+							allRecs:crossfilter().all(),
+							aspectRatio: aspectRatio,
+							short: showSection.datatable(),
+						}"></div>
+		<faceted-datatable-cf id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
+						recs: filteredRecs,
+						updateOnPersonChange: person,
+						columns: columns, 
+						facets: facetsObs, 
+						order: [[3,'asc']],
+						searchFilter: searchHighlight,
+						rowClick: datatableRowClickCallback,
+					}"></faceted-datatable-cf>
 	</div>
-
-	<div data-bind="visible:$component.personId">
-		<div class="paddedWrapper">
-			<div class="row">
-				<div class="col-xs-2 text-left">
-					<div data-bind="click:$component.navigatePrevious" class="btn btn-sm btn-primary"><i class="fa fa-chevron-left"></i></div>
-				</div>
-				<div class="col-xs-8 text-center heading">
-					<i class="fa fa-user"></i> <span data-bind="text:$component.personId"></span>
-				</div>
-				<div class="col-xs-2 text-right">
-					<div data-bind="click:$component.navigateNext" class="btn btn-sm btn-primary"><i class="fa fa-chevron-right"></i></div>
-				</div>
-			</div>
-		</div>
-
-		<div data-bind="visible:$component.loadingProfile()" class="loading">loading</div>
-
-		<div class="paddedWrapper" data-bind="visible:!$component.loadingProfile()">
-			<div data-bind="visible:$component.reference().length > 0">
-				<div id="timewave"></div>
-				<div id="scatter"></div>
-				<div class="heading">Profile Records</div>
-				<faceted-datatable params="{reference: $component.reference, columns: $component.columns, options: $component.options}"></faceted-datatable>
-			</div>
-		</div>
-	</div>
-
-	<div id="modalNoMembers" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					This cohort has no members available to view. Please check the generation status in the Cohort Definition section of Atlas.
-				</div>
-			</div>
-		</div>
-	</div>
-
 </div>

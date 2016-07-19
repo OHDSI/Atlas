@@ -16,12 +16,11 @@
 		<thead>
 			<th></th>
 			<th>Source Name [Source Key]</th>
-			<th>Vocabulary Version</th>
 			<th>Dialect</th>
-			<th class="centered">Vocabulary</th>
-			<th class="centered">Evidence</th>
-			<th class="centered">Record Counts (RC / DRC)</th>
-			<th class="centered">Incidence</th>
+			<th>Vocabulary Version</th>
+			<th>Evidence</th>
+			<th>Record Counts (RC / DRC)</th>
+			<th>Incidence</th>
 		</thead>
 		<tbody data-bind="foreach:$data.sources">
 			<tr>
@@ -29,10 +28,10 @@
 					<span data-bind="text:error"></span>
 				</td>
 				<td data-bind="text:sourceName + ' [' + sourceKey + ']'"></td>
-				<td data-bind="text:version"></td>
 				<td data-bind="text:sourceDialect"></td>
 				<td class="configureRadio">
 					<input type="radio" name="radioSource" data-bind="disable:!hasVocabulary, checkedValue:vocabularyUrl, checked:pageModel.vocabularyUrl">
+					<span data-bind="text:version"></span>
 				</td>
 				<td class="configureRadio">
 					<input type="radio" name="radioEvidence" data-bind="disable:!hasEvidence, checkedValue:evidenceUrl, checked:pageModel.evidenceUrl">
@@ -49,5 +48,6 @@
 </div>
 
 <div>
-	<div class="heading"><input type="checkbox" data-bind="checked:enableRecordCounts"> Enable Record Counts</div>
+	<div class="heading">
+		<input type="checkbox" data-bind="checked:enableRecordCounts"> Enable Record Counts</div>
 </div>

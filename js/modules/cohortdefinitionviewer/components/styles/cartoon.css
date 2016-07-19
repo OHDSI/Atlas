@@ -1,0 +1,15 @@
+
+line, marker {
+  stroke: blue;
+}
+g.primary > rect,
+g.additional > rect {
+  fill: lightgray;
+  stroke-width: 2;
+  stroke: white;
+}
+g.additional > rect.highlighed,
+.highlighted {
+  fill: pink !important;
+  background-color: pink;
+}

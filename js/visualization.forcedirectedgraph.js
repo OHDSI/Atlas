@@ -324,8 +324,6 @@ define(['jquery', 'd3', 'd3_tip'], function ($, d3) {
 			shiftKey = d3.event.shiftKey || d3.event.metaKey;
 			ctrlKey = d3.event.ctrlKey;
 
-			console.log('d3.event', d3.event)
-
 			if (d3.event.keyCode == 67) { //the 'c' key
 				center_view();
 			}

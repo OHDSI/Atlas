@@ -1,0 +1,20 @@
+<div class="wrapperTitle">
+	<i class="fa fa-registered"></i> R Service Manager
+</div>
+
+<div class="paddedWrapper">
+	<div class="heading">R Service Bus Instance</div>
+	<div class="paddedWrapper" data-bind="if:rsbInfo">
+		<div>
+			<i data-bind="if:rsbInfo().healthy == 'true'" class="fa fa-check-circle"></i> <span data-bind="text:rsbInfo().name"></span>
+		</div>
+		<div data-bind="text:'Online for ' + rsbInfo().uptimeText"></div>
+		<div data-bind="text:'Hosted by ' + rsbInfo().servletContainerInfo"></div>
+	</div>
+
+	<div class="heading">RPooli Nodes</div>
+	<div data-bind="if:nodes">
+		<faceted-datatable params="options:options, columns:columns, reference:nodes"></faceted-datatable>
+	</div>
+	<div class="btn btn-xs btn-primary pull-right" data-bind="click:loadNodes">Refresh Nodes</div>
+</div>

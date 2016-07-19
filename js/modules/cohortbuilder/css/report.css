@@ -1,0 +1,78 @@
+table.indexSummary {
+	border-collapse: collapse;
+}
+table.indexSummary th {
+	padding-left: 5px;
+	padding-right: 5px;
+	font-size: .8em;
+	text-align: right;
+}
+table.indexSummary td {
+	text-align:right;
+	padding-left: 5px;
+	padding-right: 5px;	
+}
+
+table.indexRuleSummary .td 
+{
+	text-align:right;
+	font-size:.8em;
+} 
+
+table.inclusionRules {
+	border-collapse: collapse;
+}
+table.inclusionRules th {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+table.inclusionRules tr td {
+	cursor: pointer;
+	padding: 3px 3px 3px 3px;
+}
+div.inclusionRuleType .header {
+	font-size: 12px;
+	font-weight: bold;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+div.inclusionRuleType th {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+div.inclusionRuleType td {
+	padding-left: 5px;
+	padding-right: 5px;
+	text-align: right;
+}
+
+rect.selected {
+	stroke: #555;
+	stroke-width: 3px;
+}
+
+.inclusionRulePass {
+	
+}
+
+.inclusionRuleFail {
+	color: #f44;
+}
+
+div.attritionbar {
+	border: solid 1px #B4BAA5;
+	margin-left:auto;
+	margin-right:auto;
+	height: 15px;
+}
+
+span.toggleView {
+	cursor:pointer;
+	color:blue;
+}
+
+span.toggleView:hover {
+	text-decoration: underline;
+}

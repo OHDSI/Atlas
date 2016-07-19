@@ -1,4 +1,4 @@
-define(['knockout', 'text!./feasibility-analyzer.html','faceted-datatable'], function (ko, view) {
+define(['knockout', 'text!./feasibility-analyzer.html', 'faceted-datatable'], function (ko, view) {
 	function feasibilityAnalyzer(params) {
 		var self = this;
 
@@ -9,7 +9,7 @@ define(['knockout', 'text!./feasibility-analyzer.html','faceted-datatable'], fun
 		self.sources = ko.observableArray();
 		self.report = ko.observable();
 		self.isNoData = ko.observable(false);
-		self.tabMode = ko.observable('definition');
+		self.tabMode = ko.observable('results');
 		self.results = {};
 
 		self.lookupCount = function (inclusionRuleIndex, sourceKey) {
@@ -24,6 +24,8 @@ define(['knockout', 'text!./feasibility-analyzer.html','faceted-datatable'], fun
 
 		self.loadFeasibility = function (id) {
 			self.loading(true);
+			self.results = {};
+			self.sources([]);
 
 			$.ajax({
 				url: self.services()[0].url + 'feasibility/' + id,
@@ -53,6 +55,10 @@ define(['knockout', 'text!./feasibility-analyzer.html','faceted-datatable'], fun
 							url: self.services()[0].url + 'feasibility/' + id + '/report/' + source.sourceKey,
 							success: function (data) {
 								dataCount++;
+								// sort as the stats may came back in arbitrary orders
+								data.inclusionRuleStats = data.inclusionRuleStats.sort(function (a, b) {
+									return a.id - b.id;
+								});
 								self.results[this.source.sourceKey] = data;
 								if (dataCount == fi.length) {
 									dataPromise.resolve();
@@ -65,6 +71,9 @@ define(['knockout', 'text!./feasibility-analyzer.html','faceted-datatable'], fun
 
 			$.when(dataPromise).done(function () {
 				self.loading(false);
+				self.sources(self.sources().sort(function (a, b) {
+					return a.sourceName.localeCompare(b.sourceName);
+				}));
 				self.report(self.results);
 			});
 		}

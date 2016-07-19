@@ -1,0 +1,20 @@
+<div class="row">
+	<div class="col-xs-5">Name:</div>
+	<div class="col-xs-7" data-bind="text: Summary.Title"></div>
+</div>
+<div class="row">
+	<div class="col-xs-5">Region:</div>
+	<div class="col-xs-7" data-bind="text: Summary.Region"></div>
+</div>
+<div class="row">
+	<div class="col-xs-5">Population:</div>
+	<div class="col-xs-7" data-bind="text: $root.formatSI(Summary.TotalPeople,1)"></div>
+</div>
+<div class="row">
+	<div class="col-xs-5">Total Years:</div>
+	<div class="col-xs-7" data-bind="text: $root.formatSI(Summary.TotalObserved,1)"></div>
+</div>
+<div class="row">
+	<div class="col-xs-5">Date Range:</div>
+	<div class="col-xs-7" data-bind="text: Summary.ObservedRange.Start + ' - ' + Summary.ObservedRange.End"></div>
+</div>
