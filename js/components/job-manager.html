@@ -2,20 +2,19 @@
 	<i class="fa fa-tasks"></i> Jobs
 </div>
 <div id="wrapperJobs">
+	<div data-bind="click:updateJobs" class="btn btn-xs btn-success pull-right">Refresh Jobs</div>
+	<div class="clear"></div>
+
 	<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
             data: model.jobs(),
             options: {
-						dom: 'Clfiprt',
+						dom: 'Blfiprt',
 						language: {
 							search : 'Filter Jobs:'
 						},
-						colVis: {
-							buttonText: 'Change Columns',
-							align: 'right',
-							overlayFade: 0,
-							showAll: 'Show All Columns',
-							restore: 'Reset Columns'
-						},
+						buttons: [
+									'colvis','copyHtml5', 'csvHtml5'
+						],
 						lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
 						orderClasses: false,
 						deferRender: true,

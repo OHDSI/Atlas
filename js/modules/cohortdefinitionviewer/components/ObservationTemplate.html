@@ -1,0 +1,41 @@
+<!-- ko with: Criteria -->
+an observation of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Observation'}"></conceptset-reference>
+<ul>
+<!-- ko if: First() != null -->
+	<li>for the first time in the person's history</li>
+<!-- /ko -->
+<!-- ko if: OccurrenceStartDate() != null -->
+	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ObservationType() != null -->
+	<li>observation type is any of: <concept-list-viewer params="ConceptList: ObservationType()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ValueAsNumber() != null -->
+	<li>with value as number <numeric-range-viewer params="Range: ValueAsNumber"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ValueAsString() != null -->
+	<li>with value as string <text-filter-viewer params="Filter: ValueAsString"></text-filter-viewer></li>
+<!-- /ko -->
+<!-- ko if: ValueAsConcept() != null -->
+	<li>value as concept is any of: <concept-list-viewer params="ConceptList: ValueAsConcept()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: Qualifier() != null -->
+	<li>qualifier is any of: <concept-list-viewer params="ConceptList: Qualifier()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: Unit() != null -->
+	<li>unit is any of: <concept-list-viewer params="ConceptList: Unit()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: Age() != null -->
+	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Gender() != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: Gender()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ProviderSpecialty() != null -->
+	<li>provider specialty is any of: <concept-list-viewer params="ConceptList: ProviderSpecialty()"></concept-list></li>
+<!-- /ko -->
+<!-- ko if: VisitType() != null -->
+	<li>visit occurrence is any of: <concept-list-viewer params="ConceptList: VisitType()"></concept-list-viewer></li>
+<!-- /ko -->
+</ul>
+<!-- /ko -->

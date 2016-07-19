@@ -1,97 +1,201 @@
 <div class="wrapperTitle" data-bind="visible:loading">
-	<i class="fa fa-refresh fa-spin"></i> Loading...
+	<i class="fa fa-refresh fa-spin"></i> Searching...
 </div>
 
 <div data-bind="visible:!loading()">
 	<div class="wrapperTitle">
-		<i class="fa fa-search"></i> Vocabulary Search
+		<i class="fa fa-search"></i> Vocabulary
 	</div>
 
-	<div class="paddedWrapper">
-		<ul class="nav nav-tabs">
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'simple' }, click: function() { $component.tabMode('simple') };"><a>Simple</a>
-			</li>
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'advanced' }, click: function() { $component.tabMode('advanced') };"><a>Advanced</a>
-			</li>
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a>
-			</li>
-		</ul>
+	<ul class="nav nav-tabs">
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'simple' }, click: function() { $component.tabMode('simple') };"><a>Search</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'advanced' }, click: function() { $component.tabMode('advanced') };"><a>Advanced</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'import' }, click: function() { $component.tabMode('import') };"><a>Import</a>
+		</li>
+	</ul>
 
-		<div class="tab-content">
-			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'simple' }" class="tab-pane">
-				<input id="querytext" placeholder="type your search here" class="form-control" type="text" data-bind="value:model.currentSearch" />
+	<div class="tab-content">
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'simple' }" class="tab-pane">
+			<input id="querytext" placeholder="type your search here" class="form-control" type="text" data-bind="value:model.currentSearch" />
+
+			<!-- ko if: model.recentSearch().length > 0 -->
+			<div class="heading">Recent Searches (number of results)</div>
+
+			<ul data-bind="foreach:pageModel.recentSearch">
+				<li>
+					<a data-bind="attr: {href:'#/search/' + query}, text: caption + ' (' + resultLength + ')'"></a>
+				</li>
+			</ul>
+			<!-- /ko -->
+
+			<!-- ko if: model.recentConcept().length > 0 -->
+			<div class="heading">
+				Recent Concepts
+			</div>
+			<ul data-bind="foreach:pageModel.recentConcept">
+				<li>
+					<a data-bind="text: CONCEPT_NAME, attr: { href: '#/concept/' + CONCEPT_ID}"></a>
+				</li>
+			</ul>
+			<!-- /ko -->
+		</div>
+
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'import' }" class="tab-pane">
+			<ul class="nav nav-tabs">
+				<li role="presentation" data-bind="click: function() {model.currentImportMode('identifiers');}, attr: {class: model.currentImportMode() == 'identifiers' ? 'active' : ''}"><a>Concept Identifiers</a>
+				</li>
+
+				<li role="presentation" data-bind="click: function() {model.currentImportMode('sourcecodes');}, attr: {class: model.currentImportMode() == 'sourcecodes' ? 'active' : ''}"><a>Source Codes</a>
+				</li>
+
+				<li role="presentation" data-bind="click: function() {model.currentImportMode('conceptset');}, attr: {class: model.currentImportMode() == 'conceptset' ? 'active' : ''}"><a>Concept Set</a>
+				</li>
+			</ul>
+
+			<div id="wrapperImportSourcecodes" class="paddedWrapper form-group" data-bind="if:model.currentImportMode() == 'sourcecodes'">
+				<div class="heading">Enter Source Codes (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportSourcecodes');}">click to clear</a>)</div>
+				<textarea class="form-control" rows="5" id="textImportSourcecodes"></textarea>
+				<a data-bind="click:function() {importSourcecodes();}" class="btn btn-xs btn-primary pull-right"><span class="fa fa-upload"></span> Import Source Codes</a>
+				<div class="clear"></div>
+			</div>
+			<div id="wrapperImportConceptIdentifiers" class="paddedWrapper form-group" data-bind="if:model.currentImportMode() == 'identifiers'">
+				<div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportConceptIdentifiers');}">click to clear</a>)</div>
+				<textarea class="form-control" rows="5" id="textImportConceptIdentifiers" data-bind="if:model.currentImportMode() == 'conceptset'"></textarea>
+				<a data-bind="click:function() {importConceptIdentifiers();}" class="btn btn-xs btn-primary pull-right"><span class="fa fa-upload"></span> Import Concept Identifiers</a>
+				<div class="clear"></div>
 			</div>
 
-			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'advanced' }" class="tab-pane">
-				<div class="heading">Query</div>
-				<input placeholder="type your search here" class="form-control" type="text" data-bind="value:advancedQuery" />
-
-				<div class="heading">Vocabularies</div>
-				<div class="checkboxListing">
-					<!-- ko foreach: vocabularies -->
-					<div>
-						<input type="checkbox" name="vocabularyId" data-bind="value: VOCABULARY_ID"> <span data-bind="text: VOCABULARY_NAME"></span>
-					</div>
-					<!-- /ko -->
-				</div>
-				
-				<div class="heading">Domains</div>
-				<div class="checkboxListing">
-					<!-- ko foreach: domains -->
-					<div>
-						<input type="checkbox" name="domainId" data-bind="value: DOMAIN_ID"> <span data-bind="text: DOMAIN_NAME"></span>
-					</div>
-					<!-- /ko -->
-				</div>
-				
-				<div class="btn btn-sm btn-primary pull-right" data-bind="click:executeAdvancedSearch">Search</div>
+			<div data-bind="visible: (model.currentImportMode() == 'sourcecodes' || model.currentImportMode() == 'identifiers') && model.importedConcepts().length > 0">
+				<div class="heading paddedWrapper">Imported Concepts</div>
+				<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.importedConcepts }"></faceted-datatable>
 			</div>
 
-			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'results' }" class="tab-pane">
-				<div class="heading" data-bind="text: 'Search Results for ' + decodeURI(model.currentSearch())">
+			<div id="wrapperImportConceptSet" class="paddedWrapper form-group" data-bind="if:model.currentImportMode() == 'conceptset'">
+				<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $('#textImportConceptSet').val('');}">click to clear</a>)</div>
+				<textarea class="form-control" rows="5" id="textImportConceptSet"></textarea>
+				<a type="button" data-bind="click:function() {importConceptSetExpression();}" class="btn btn-xs btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</a>
+				<div class="clear"></div>
+
+				<!-- ko if: model.selectedConcepts().length > 0 -->
+				<div class="heading ">Imported Concept Set Expression</div>
+				<table class="conceptSetTable stripe compact hover " cellspacing="0 " width="100% " data-bind="dataTable:{
+				data: model.selectedConcepts(),
+				options: { dom: 'Clfiprt',
+				colVis: { buttonText: 'Change Columns', align: 'right', overlayFade: 0, showAll: 'Show All Columns', restore: 'Reset Columns' },
+				rowCallback: model.contextSensitiveLinkColor,
+				lengthMenu: [[25, 50, 100, -1], [25, 50, 100, 'All']],
+				orderClasses: false,
+				deferRender: true,
+				autoWidth: false,
+				order: [[3, 'desc']],
+				columns: [
+					{ title: '<li class=\'fa fa-shopping-cart\'></li>', render: model.renderConceptSetItemSelector, orderable:false, searchable:false},
+					{ title: 'Concept Id', data: 'concept.CONCEPT_ID', visible:false},
+					{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
+					{ title: 'Concept Name', render: model.renderBoundLink},
+					{ title: 'Domain', data: 'concept.DOMAIN_ID' },
+					{ title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
+					{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
+				 	{ title: 'Exclude', class: 'text-center', orderable:false,render: function() { return model.renderCheckbox( 'isExcluded');} },
+				  { title: 'Descendants', class: 'text-center', orderable:false,render: function() { return model.renderCheckbox( 'includeDescendants');} },
+					{ title: 'Mapped', class: 'text-center', orderable:false,render: function() { return model.renderCheckbox( 'includeMapped');} } ] } }
+			">
+				</table>
+
+				<div class="linkLegend ">
+					<div class="linkLegendItem ">
+						<div class="swatch standard ">
+						</div>
+						<div class="linkLegendTitle ">Standard</div>
+					</div>
+					<div class="linkLegendItem ">
+						<div class="swatch nonStandard ">
+						</div>
+						<div class="linkLegendTitle ">Non-Standard</div>
+					</div>
+					<div class="linkLegendItem ">
+						<div class="swatch classification ">
+						</div>
+						<div class="linkLegendTitle ">Classification</div>
+					</div>
 				</div>
-				<faceted-datatable params="{orderColumn: 7, columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.searchResultsConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
+				<!-- /ko -->
 			</div>
 		</div>
 
-		<div id="modalError" class="modal fade">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<p id="helpErrorMessage"></p>
-					</div>
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'advanced' }" class="tab-pane">
+			<div class="heading">Query</div>
+			<input placeholder="type your search here" class="form-control" type="text" data-bind="value:advancedQuery" />
+
+			<div class="heading">Vocabularies</div>
+			<div class="checkboxListing">
+				<!-- ko foreach: vocabularies -->
+				<div>
+					<input type="checkbox" name="vocabularyId" data-bind="value: VOCABULARY_ID"> <span data-bind="text: VOCABULARY_NAME"></span>
 				</div>
+				<!-- /ko -->
 			</div>
-		</div>
-		
-		<div id="helpMinimumQueryLength" class="modal fade">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<p>Search string must be at least 3 characters long</p>
-					</div>
+
+			<div class="heading">Domains</div>
+			<div class="checkboxListing">
+				<!-- ko foreach: domains -->
+				<div>
+					<input type="checkbox" name="domainId" data-bind="value: DOMAIN_ID"> <span data-bind="text: DOMAIN_NAME"></span>
 				</div>
+				<!-- /ko -->
 			</div>
+
+			<div class="btn btn-xs btn-primary pull-right" data-bind="click:executeAdvancedSearch">Search</div>
 		</div>
 
-		<div id="modalNoSearchResults" class="modal fade">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<p>Your search had no results.</p>
-					</div>
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'results' }" class="tab-pane">
+			<div class="heading" data-bind="text: 'Search Results for ' + decodeURI(model.currentSearch())">
+			</div>
+			<faceted-datatable params="{orderColumn: 7, columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.searchResultsConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
+		</div>
+	</div>
+
+	<div id="modalError" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p id="helpErrorMessage"></p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="helpMinimumQueryLength" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Search string must be at least 3 characters long</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="modalNoSearchResults" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Your search had no results.</p>
 				</div>
 			</div>
 		</div>

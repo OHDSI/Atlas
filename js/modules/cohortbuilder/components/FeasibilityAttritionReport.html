@@ -1,0 +1,62 @@
+<table style="border-collapse: collapse; width:100%; max-width: 1190px; margin-left: auto;">
+	<colgroup>
+		<col style="vertical-align: top; padding-right: 25px;"/>
+		<col style="width: 25px;border-left: solid 1px #eee;"/>
+		<col style="padding-left: 25px; vertical-align: top; width: 400px"/>
+	</colgroup>
+	<tr>
+		<td style="vertical-align: top; padding-right: 25px;">
+			<div>
+				<table style="border-collapse: collapse; width:500px; margin-left:auto; margin-right:auto" class="indexSummary">
+					<thead>
+						<th style="width: 15px;"></th>
+						<th></th>
+						<th>Match Rate</th>
+						<th>Matches</th>
+						<th>Total</th>
+					</thead>
+					<tbody>
+						<td></td>
+						<td class="header">Summary Statistics:</td>
+						<td data-bind="text:report().summary.percentMatched"></td>
+						<td data-bind="text:report().summary.finalCount.toLocaleString()"></td>
+						<td data-bind="text:report().summary.baseCount.toLocaleString()"></td>
+					</tbody>
+				</table>
+			</div>
+		</td>
+		<td></td>
+		<td>
+			<div class="header">Attrition Visualization</div>
+		</td>
+	</tr>
+</table>
+<div class="inclusionRuleType">
+	<table style="border-collapse: collapse; width:100%; max-width: 1190px; margin-left: auto;">
+		<thead>
+			<th style="width: 15px;"></th>
+			<th class="header">Inclusion Rule</th>
+			<th style="width: 100px;text-align: right" class="header">N</th>
+			<th style="width: 100px;text-align: right" class="header">% Remain</th>
+			<th style="width: 100px;text-align: right; padding-right: 25px;" class="header">% Diff</th>
+			<th style="width: 25px;border-left: solid 1px #eee;"></th>
+			<th style="width: 400px;text-align: center; padding-right: 25px" class="header"><div class="attritionbar" style="width:100%; background-color: #7BB209"></div></th>
+		</thead>
+		<tbody data-bind="foreach: attritionStats">
+			<tr>
+				<td style="vertical-align: top;"><span data-bind="text: ($index()+1) + '.'"></span>
+				</td>
+				<td style="text-align: left"><span data-bind="text:name"></span>
+				</td>
+				<td><span data-bind="text:countSatisfying.toLocaleString()"></span>
+				</td>
+				<td><span data-bind="text:$component.formatPercent(percentSatisfying)"></span>
+				</td>
+				<td style="padding-right: 25px;"><span data-bind="text:$component.formatPercent(pctDiff)"></span>
+				</td>
+				<td style="border-left: solid 1px #eee;"></td>
+				<td align="middle" style="padding-right: 25px"><div class="attritionbar" data-bind="style: {width: $component.formatPercent(percentSatisfying), backgroundColor: $component.color(percentSatisfying)}"></div></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

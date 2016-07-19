@@ -1,3 +1,4 @@
+<!-- ko if:$component.showSelectionArea -->
 <div class="wrapperTitle">
 	<span data-bind="if:!$component.model.loadingReport()"><i class="fa fa-area-chart"></i></span>
 	<span data-bind="if:$component.model.loadingReport()"><i class="fa fa-refresh fa-spin"></i></span> Cohort Reporting
@@ -17,7 +18,7 @@
 <div class="reportControls pad-5">
 	<div class="row">
 		<div class="col-xs-12">
-			<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.showBrowser, text:$component.cohortCaption"></button>
+			<button class="form-control btn btn-xs btn-primary" data-bind="click: $component.showBrowser, text:$component.cohortCaption"></button>
 		</div>
 	</div>
 	<div class="row">
@@ -34,16 +35,17 @@
 		<div class="col-xs-10"></div>
 
 		<div class="col-xs-2">
-			<button class="pull-right form-control btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'View Report'"></button>
+			<button class="pull-right form-control btn btn-xs btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'View Report'"></button>
 		</div>
 	</div>
 
 	<div class="clear"></div>
 </div>
+<!-- /ko -->
 
 <div id="reportPerson" data-bind="if: model.currentReport() == 'Person' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Person Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Person Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Year of Birth</div>
 		<div class="evidenceDescription">The number of people in this cohort shown with respect to their year of birth.</div>
 		<div class="evidenceVisualization" id="hist"></div>
@@ -64,7 +66,7 @@
 
 <div id="reportCohortSpecific" data-bind="if: model.currentReport() == 'Cohort Specific' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Cohort Specific Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Cohort Specific Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Prevalence by Month</div>
 		<div class="evidenceVisualization" id="prevalenceByMonth"></div>
 		<div class="evidenceDescription">help text here</div>
@@ -97,7 +99,7 @@
 
 <div id="reportConditionsByIndex" data-bind="if: model.currentReport() == 'Conditions by Index' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Conditions by Index Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Conditions by Index Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Condition Prevalence</div>
 
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -145,24 +147,24 @@
 
 <div id="reportDrugErasByIndex" data-bind="if: model.currentReport() == 'Drugs by Index' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Drugs by Index Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Drugs by Index Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Drug Era Prevalence</div>
 
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
-			<li class="active" id="treemap-tab"><a href="#drugera-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+			<li class="active" id="treemap-tab"><a href="#drugs-by-index-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
 			</li>
-			<li><a href="#drugera-table-panel" role="tab" data-toggle="tab">Table</a>
+			<li><a href="#drugs-by-index-table-panel" role="tab" data-toggle="tab">Table</a>
 			</li>
 		</ul>
 		<div id='content' class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="drugera-treemap-panel">
+			<div role="tabpanel" class="tab-pane active" id="drugs-by-index-treemap-panel">
 				<div id="treemap_container">
 					<div class="treemap_zoomtarget"></div>
 				</div>
 				<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="drugera-table-panel">
-				<table id="drugera_table" class="display treemap_table" type="drug">
+			<div role="tabpanel" class="tab-pane" id="drugs-by-index-table-panel">
+				<table id="drugs-by-index-table" class="display treemap_table" type="drug">
 					<thead>
 						<tr>
 							<th>Concept Id</th>
@@ -192,7 +194,7 @@
 
 <div id="reportConditionPeriods" data-bind="if: model.currentReport() == 'Observation Periods' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i>Observation Period Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i>Observation Period Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 
 		<div class="reportSectionHeading">Age at First Observation</div>
 		<div class="evidenceDescription">The distribution of age at first observation in the cohort.</div>
@@ -235,7 +237,7 @@
 
 <div id="reportConditionEras" data-bind="if: model.currentReport() == 'Condition Eras' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Condition Eras Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Condition Eras Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Condition Era Prevalence</div>
 
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -251,7 +253,7 @@
 				</div>
 				<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="conditionera-table-panel">
+			<div role="tabpanel" class="tab-pane" id="conditionera-table-panel" data-bind="eventListener: { event: 'click', selector: '.conditionera_table_selector', callback: handleConditionEraTableClick}">
 				<table id="conditionera_table" class="display">
 					<thead>
 						<tr>
@@ -296,7 +298,7 @@
 
 <div id="reportProceduresByIndex" data-bind="if: model.currentReport() == 'Procedures by Index' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Procedures by Index Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Procedures by Index Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Procedure Prevalence</div>
 
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -343,7 +345,7 @@
 
 <div id="reportCondition" data-bind="if: model.currentReport() == 'Condition' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Condition Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Condition Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Condition Prevalence</div>
 
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -359,7 +361,7 @@
 				</div>
 				<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="condition-table-panel">
+			<div role="tabpanel" class="tab-pane" id="condition-table-panel" data-bind="eventListener: { event: 'click', selector: '.condition_table_selector', callback: handleConditionTableClick}">
 				<table id="condition_table" class="display">
 					<thead>
 						<tr>
@@ -405,7 +407,7 @@
 
 <div id="reportDrugEras" data-bind="if: model.currentReport() == 'Drug Eras' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Drug Eras Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Drug Eras Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Drug Era Prevalence</div>
 
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -421,7 +423,7 @@
 				</div>
 				<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="drugera-table-panel">
+			<div role="tabpanel" class="tab-pane" id="drugera-table-panel" data-bind="eventListener: { event: 'click', selector: '.drugera_table_selector', callback: handleDrugEraTableClick}">
 				<table id="drugera_table" class="display">
 					<thead>
 						<tr>
@@ -467,7 +469,7 @@
 
 <div id="reportDrugExposure" data-bind="if: model.currentReport() == 'Drug Exposure' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Drug Exposure Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Drug Exposure Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Drug Exposure Prevalence</div>
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
 			<li class="active" id="treemap-tab"><a href="#drug_treemap_panel" role="tab" data-toggle="tab">Treemap</a>
@@ -483,7 +485,7 @@
 
 				<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div class="tab-pane" id="drug_table_panel">
+			<div class="tab-pane" id="drug_table_panel" data-bind="eventListener: { event: 'click', selector: '.drug_table_selector', callback: handleDrugTableClick}">
 				<table id="drug_table" class="display">
 					<thead>
 						<tr>
@@ -541,7 +543,7 @@
 
 <div id="reportProcedure" data-bind="if: model.currentReport() == 'Procedure' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Procedure Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Procedure Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Procedure Prevalence</div>
 
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -557,7 +559,7 @@
 				</div>
 				<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 			</div>
-			<div class="tab-pane" role="tabpanel" id="procedure-table-panel">
+			<div class="tab-pane" role="tabpanel" id="procedure-table-panel" data-bind="eventListener: { event: 'click', selector: '.procedure_table_selector', callback: handleProcedureTableClick}">
 				<table id="procedure_table" class="display">
 					<thead>
 						<tr>
@@ -602,7 +604,7 @@
 
 <div id="reportDeath" data-bind="if: model.currentReport() == 'Death' && !model.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Death Report</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Death Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 
 		<div class="reportSectionHeading">Death Prevalence by Age, Gender, Year</div>
 		<div class="evidenceVisualization" id="trellisLinePlot"></div>

@@ -1,0 +1,143 @@
+<div class="paddedWrapper">
+	<ul class="nav nav-pills">
+		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'primary' }, click: function() { $component.expressionMode('primary') };">
+			<a>Primary</a>
+		</li>
+
+		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'additional' }, click: function() { $component.expressionMode('additional') };">
+			<a>Additional</a>
+		</li>
+
+		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'inclusion' }, click: function() { $component.expressionMode('inclusion') };">
+			<a>Inclusion</a>
+		</li>
+
+		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'all' }, click: function() { $component.expressionMode('all') };">
+			<a>All</a>
+		</li>
+
+	</ul>
+</div>
+
+<div class="tab-content">
+	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'primary' || $component.expressionMode() == 'all' }" class="tab-pane">
+		<div class="heading" data-bind="visible:$component.expressionMode() == 'all'">Primary Criteria</div>
+		<div class="criteriaGroup">
+			<div class="criteriaHeading">
+				<table>
+					<colgroup>
+						<col />
+						<col />
+					</colgroup>
+					<tbody>
+						<tr>
+							<td>
+								People having any of the following:
+							</td>
+							<td>
+								<div data-bind="ddSlickAction: $component.addPrimaryCriteriaOptions"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<table class="criteria">
+				<colgroup>
+					<col span="1" class="rule" />
+					<col span="1" class="delete" />
+				</colgroup>
+				<tbody data-bind="sortable: {data: expression().PrimaryCriteria().CriteriaList, connectClass : 'primaryCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
+					<tr>
+						<td>
+							<div class="criteria-content">
+								<div data-bind='component: { 
+											name: $component.getCriteriaIndexComponent($data),
+											params: {expression: $component.expression(), criteria: $data}
+										}'></div>
+							</div>
+						</td>
+						<td style="vertical-align: top;">
+							<button class="btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removePrimaryCriteria(data) }">Delete Filter</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="observation-window" data-bind="with: $component.expression().PrimaryCriteria().ObservationWindow"> with continuous observation of at least
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days before and <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PostDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days after index
+			</div>			
+			<div style="padding-top: 3px" data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit">Limit primary events to:
+				<select data-bind="options: $component.options.resultLimitOptions, 
+				optionsText: function(item) { return item.name }, 
+				optionsValue: 'id',
+				value: Type">
+				</select> per person.
+			</div>
+		</div>
+		<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'options' || $component.expressionMode() == 'all'}" class="tab-pane">
+			<div style="padding-top: 3px" data-bind="with: expression().ExpressionLimit">Limit final cohort results to:
+				<select data-bind="options: $component.options.resultLimitOptions, 
+				optionsText: function(item) { return item.name }, 
+				optionsValue: 'id',
+				value: Type">
+				</select> per person.
+			</div>
+		</div>		
+	</div>
+	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'additional' || $component.expressionMode() == 'all'}" class="tab-pane">
+		<div class="heading" data-bind="visible:$component.expressionMode() == 'all'">Additional Criteria</div>
+		<div data-bind="with: expression">
+			<div data-bind="if: AdditionalCriteria">
+				<div>For people matching the Primary Events, include:</div>
+				<criteria-group params="{expression: $data, group: AdditionalCriteria}"></criteria-group>
+				<button class="btn btn-xs btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove Additional Filters</button>
+			</div>
+			<div data-bind="ifnot: AdditionalCriteria">
+				<button class="btn btn-sm btn-success" data-bind="click: function () { $component.addAdditionalCriteria() }">Add Additional Filters</button>
+			</div>
+		</div>
+	</div>
+	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'inclusion' || $component.expressionMode() == 'all'}" class="tab-pane">
+		<div class="heading" data-bind="visible:$component.expressionMode() == 'all'">Inclusion Rules</div>
+		<div data-bind="eventListener: [
+			 { event: 'click', selector: '.copyInclusionRule', callback: copyInclusionRule},
+			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule},
+			 { event: 'click', selector: '.addConceptSet', callback: addConceptSet}]">
+
+			<table style="width: 100%">
+				<colgroup>
+					<col span="1" style="width: 200px;" />
+					<col span="1" />
+				</colgroup>
+				<tbody>
+					<tr>
+						<td style="vertical-align: top; padding-right: 20px;">
+							<div>
+								<button class="btn btn-sm btn-success" data-bind="click: addInclusionRule">New Inclusion Rule</button>
+							</div>
+							<div>
+								<table style="width: 100%" class="inclusionRules">
+									<tbody data-bind="sortable: {data: expression().InclusionRules, connectClass: 'inclusionRuleItem'}">
+										<tr data-bind="click: $component.selectInclusionRule, css: { selectedInclusion: $data == $component.selectedInclusionRule() }">
+											<td style="width:20px; text-align: right; vertical-align: top;" data-bind="text: ($index() + 1) + '.'">
+											</td>
+											<td style="vertical-align: top;" class="inclusionRules" data-bind="text: ((name() || '').length > 0) ? name() : 'Unnamed Rule' "></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</td>
+						<td style="vertical-align: top; padding-left: 25px; border-left: 1px #eee solid;">
+							<!-- ko if: $component.selectedInclusionRule() -->
+							<inclusion-rule-editor params="{IndexRule: expression, InclusionRule: selectedInclusionRule}"></inclusion-rule-editor>
+							<!-- /ko -->
+							<!-- ko ifnot: $component.selectedInclusionRule() -->
+							<div>Please select an inclusion rule to edit.</div>
+							<!-- /ko -->
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,32 @@
+<!-- ko with: Criteria -->
+a dose era of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Drug'}"></conceptset-reference>
+<ul>
+<!-- ko if: First() != null -->
+	<li>for the first time in the person's history</li>
+<!-- /ko -->
+<!-- ko if: EraStartDate() != null -->
+	<li>era start is <date-range-viewer params="Range: EraStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: EraEndDate() != null -->
+	<li>era end is <date-range-viewer params="Range: EraEndDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Unit() != null -->
+	<li>unit is any of: <concept-list-viewer params="ConceptList: Unit()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: DoseValue() != null -->
+	<li>with dose value <numeric-range-viewer params="Range: DoseValue"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: EraLength() != null -->
+	<li>with era length <numeric-range-viewer params="Range: EraLength"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: AgeAtStart() != null -->
+	<li>with age at era start <numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: AgeAtEnd() != null -->
+	<li>with age at era end <numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Gender() != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: Gender()"></concept-list-viewer></li>
+<!-- /ko -->
+</ul>
+<!-- /ko -->

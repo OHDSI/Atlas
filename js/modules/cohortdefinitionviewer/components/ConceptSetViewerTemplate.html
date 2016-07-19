@@ -1,0 +1,24 @@
+<table class="conceptsetviewer" width="100%">
+	<thead>
+		<tr>
+			<th class="fixed-width">Concept Id</th>
+			<th>Concept Name</th>
+			<th class="fixed-width">Domain</th>
+			<th class="fixed-width">Vocabulary</th>
+			<th class="fixed-width" >Excluded</th>
+			<th class="fixed-width">Descendants</th>
+			<th class="fixed-width">Mapped</th>
+		</tr>
+	</thead>
+	<tbody data-bind="foreach: conceptSet.expression.items">
+		<tr>
+			<td data-bind="text: concept.CONCEPT_ID"></td>
+			<td data-bind="text: concept.CONCEPT_NAME"></td>
+			<td data-bind="text: concept.DOMAIN_ID"></td>
+			<td data-bind="text: concept.VOCABULARY_ID"></td>
+			<td data-bind="text: isExcluded() ? 'YES' : 'NO'"></td>
+			<td data-bind="text: includeDescendants() ? 'YES' : 'NO'"></td>
+			<td data-bind="text: includeMapped() ? 'YES' : 'NO'"></td>
+		</tr>
+	</tbody>
+</table>

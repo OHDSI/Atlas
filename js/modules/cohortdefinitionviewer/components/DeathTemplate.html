@@ -1,0 +1,20 @@
+<!-- ko with: Criteria -->
+a death occurrence from <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Death'}"></conceptset-reference>
+<ul>
+<!-- ko if: OccurrenceStartDate() != null -->
+	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: DeathType() != null -->
+	<li>death type is any of: <concept-list-viewer params="ConceptList: DeathType()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: DeathSourceConcept() != null -->
+	<li>Death Source Concept is <conceptset-reference params="{conceptSetId: DeathSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: Age() != null -->
+	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Gender() != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: Gender()"></concept-list-viewer></li>
+<!-- /ko -->
+</ul>
+<!-- /ko -->

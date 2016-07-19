@@ -1,0 +1,60 @@
+<div class="wrapperTitle">
+	<i class="fa fa-home"></i> Home
+</div>
+
+<div class="paddedWrapper">
+	<div class="home-welcome">
+		<h4>Welcome to ATLAS</h4> ATLAS is an open source application developed as a part of <a href="http://www.ohdsi.org">OHDSI</a> intended to provide a unified interface to patient level data and analytics.
+	</div>
+	<div class="home-documentation">
+		<a target="_new" href="https://github.com/OHDSI/Atlas/wiki"><i class="fa fa-book" aria-hidden="true"></i></a>The ATLAS user guide can be found <a target="_new" href="https://github.com/OHDSI/Atlas/wiki">here</a>.
+	</div>
+	<div class="home-getting-started">
+		<h4>Getting Started</h4>
+		<div>
+			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.newCohortDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined}">Define a New Cohort</span> Begin performing research by defining the group of people you intend to study
+		</div>
+		<div>
+			<span class="btn btn-sm btn-success" data-bind="click:$component.browseVocabulary">Search the Vocabulary</span> Search the different ontologies used to describe patient level data around the world
+		</div>
+	</div>
+
+	<div class="release-notes">
+		<h4>Release Notes</h4>
+
+		<div>
+			ATLAS Version 1.1.0 Current Release Notes
+			<ul>
+				<li>Fix: Cohort Definition UI bugfixes</li>
+				<li>Fix: Data Sources report fixes (Measurement reports and trellis graph rendering NaNs)</li>
+				<li>Feature: Cohort Definitions (CIRCE)  UI and Backend Changes: Inclusion rules and Inclusion Rule Impact Reports</li>
+				<li>Feature: Patient Profiles</li>
+			</ul>
+		</div>
+
+		<div>
+			WebAPI Version 1.2.0 Current Release Notes
+			<ul>
+				<li>Feature: Cohort generation update to support inclusion rules</li>
+				<li>Feature: Inclusion rule impact analysis</li>
+			</ul>
+		</div>
+		
+		<div style="padding-bottom: 10px;">
+			<div><a href="https://github.com/OHDSI/Atlas/releases">Prior Atlas releases</a></div>
+			<div><a href="https://github.com/OHDSI/WebAPI/releases">Prior WebAPI releases</a></div>
+		</div>
+
+		<div>
+			Additional Details:
+			<br/> This latest release contains <strong data-bind="text:github_status().length"></strong> feature enhancements and issue resolutions.
+		</div>
+		
+		<div class="github-issue-container" data-bind="foreach:github_status">
+			<div class="github-issue">
+				<a target="_blank" data-bind="attr:{href: html_url, title: title}, text:title"></a>
+				<img class="github-avatar" data-bind="attr:{src: user.avatar_url}" />
+			</div>
+		</div>
+	</div>
+</div>
