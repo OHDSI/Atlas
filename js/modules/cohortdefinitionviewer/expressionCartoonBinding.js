@@ -14,8 +14,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	const arrows = {
 		right: 'm -5 -5 l 10 5 l -10 5 z',
 		//right: 'M 2 2 L 8 5 L 2 8 z',
-		left: 'M 8 2 L 8 8 L 1 5 z',
-		stop: 'M 0 0 L 1 0 L 1 10 L 0 10 z',
+		left: 'm 5 -5 l -10 5 l 10 5 z',
+		stop: 'm -.5 -5 l 1 0 l 0 10 l -1 0 z',
 	};
 	function ypos(crit, feature, critType='primary',element) {
 		var durRange = getRange(crit, 'dur');
@@ -25,29 +25,48 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		// sections
 		// getting rid of top brace
 		// var brace = true, dot = true, dur = !!durRange, dates = !!startDateRange;
-		var brace = false, dot = true, dur = false, dates = !!startDateRange;
+		var brace = false, dot = (critType==='primary'), dur = false, dates = false;
 
 		// additional sections  (critType is group, which should maybe change)
-		var addBrace = (critType!=='primary'),
-				addDot = (critType!=='primary');
+		var addBrace = false,
+				addDot = false,
+				addDates = false,
+				addDur = false;
 
-		var topMargin = .25;
-		var bottomMargin = .25;
+		if (critType === 'primary') {
+			if (startDateRange)
+				dates = true;
+			if (durRange)
+				dur = true;
+		} else {
+			addBrace = true;
+			addDot = true;
+			if (startDateRange)
+				addDates = true;
+			if (durRange)
+				addDur = true;
+		}
+
+		var topMargin = .1;
+		var bottomMargin = .1;
 		var braceLabel = brace ? 1 : 0;		// first line if brace present
 		brace = brace ? 1.5 : 0;					// next 1.5 lines if brace present
-		dot = dot ? .5 : 0;
-		dur = dur ? 0 : 0;								// put with dot	
+		dot = dot ? 1 : 0;
+		dur = dur ? 1 : 0;								// put with dot	
+		var durText = dur ? 1 : 0;
 		dates = dates ? 1 : 0;
 
-		var addBraceLabel = addBrace ? 1 : 0;
+		var addBraceLabel = addBrace ? 0 : 0; // removing brace label
 		addBrace = addBrace ? 1.5 : 0;
-		addDot = addDot ? .5 : 0;
+		addDot = addDot ? 1 : 0;
+		addDur = addDur ? 1 : 0;
+		var addDurLabel = addDur ? 1 : 0;
+		addDates = addDates ? 1 : 0;
 
-		var lines = topMargin 
-								+ braceLabel + brace + dot + dur + dates 
-								+ addBraceLabel + addBrace + addDot
+		var topLines = topMargin + braceLabel + brace + dot + dur + durText + dates;
+		var lines = topLines 
+								+ addBraceLabel + addBrace + addDot + addDur + addDurLabel + addDates
 								+ bottomMargin;
-		var addStart = topMargin + braceLabel + brace + dot + dur + dates;
 
 		switch (feature) {
 			case "svg-height":
@@ -55,16 +74,22 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 								Math.max(1, lines) * SVG_LINE_HEIGHT,
 								(element ? $(element).height() : 0));
 			case "brace-label":
-				return (topMargin + braceLabel - .2) * SVG_LINE_HEIGHT; // 10% margin
+				return (topMargin) * SVG_LINE_HEIGHT;
 			case "brace-top":
-				return (topMargin + braceLabel) * SVG_LINE_HEIGHT; // 10% margin
+				return (topMargin + braceLabel) * SVG_LINE_HEIGHT;
 			case "brace-height":
-				return brace * SVG_LINE_HEIGHT; // 10% top and bottom
+				return brace * SVG_LINE_HEIGHT;
 			case "index-dot":
 				return (topMargin + brace + braceLabel + dot * .5) * SVG_LINE_HEIGHT;
 			case "index-r":
-				return dot * .5 * SVG_LINE_HEIGHT;
-			case "dates":
+				return dot * .25 * SVG_LINE_HEIGHT;
+			case "dur":
+				return (topMargin + brace + braceLabel + dot + dur * .3) * SVG_LINE_HEIGHT;
+			case "dur-text":
+				return (topMargin + brace + braceLabel + dot + dur) * SVG_LINE_HEIGHT;
+			case "dates-label":
+				return (topMargin + brace + braceLabel + dot + dur) * SVG_LINE_HEIGHT;
+			case "dates-dot":
 				return (topMargin + brace + braceLabel + dot + dur + dates * .5) * SVG_LINE_HEIGHT;
 			case "sec-header-height":
 				return 35;
@@ -72,15 +97,21 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				return 30;
 
 			case "add-dot":
-				return (addStart + addBraceLabel + addBrace + addDot * .5) * SVG_LINE_HEIGHT;
+				return (topLines + addBraceLabel + addBrace + addDot * .5) * SVG_LINE_HEIGHT;
+			case "add-dot-label":  // for when dot is replaced by label (alwasy?)
+				return (topLines + addBraceLabel + addBrace) * SVG_LINE_HEIGHT;
 			case "add-r":
-				return addDot * .5 * SVG_LINE_HEIGHT;
+				return addDot * .25 * SVG_LINE_HEIGHT;
+			case "add-dur":
+				return (topLines + addBraceLabel + addBrace + addDot + addDur * .3) * SVG_LINE_HEIGHT;
+			case "add-dur-text":
+				return (topLines + addBraceLabel + addBrace + addDot + addDur) * SVG_LINE_HEIGHT;
 			case "add-brace-label":
-				return (addStart + addBraceLabel - .2) * SVG_LINE_HEIGHT; // 10% margin
+				return (topLines) * SVG_LINE_HEIGHT;
 			case "add-brace-top":
-				return (addStart + addBraceLabel) * SVG_LINE_HEIGHT; // 10% margin
+				return (topLines + addBraceLabel) * SVG_LINE_HEIGHT;
 			case "add-brace-height":
-				return addBrace * SVG_LINE_HEIGHT; // 10% top and bottom
+				return addBrace * SVG_LINE_HEIGHT;
 		}
 		throw new Error(`not handling ${feature} in ypos`);
 	}
@@ -204,53 +235,54 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			return _.flatten([group].concat(group.Groups.map(g=>subGroups(g,depth+1))));
 		return [group]
 	}
-	function dateExtent(crits) {
-		var allDates = _.chain(crits)
-										.map(crit => [getRange(crit,'start'), getRange(crit,'end')])
-										.flatten()
-										.compact()
-										// have date ranges now
-										.map(range => [rangeInfo(range, 'lower'), rangeInfo(range, 'upper')])
-										.flatten()
-										.compact()
-										// have text dates now
-										.map(d => new Date(d))
-										.value();
-		if (!allDates.length) return;
-		return d3.extent(allDates);
-	}
-	function swinMax(swinterm, ext) {
-		// for null (All), get max
-		if (swinterm.Days === null && ext) {
-			var max = ext[ swinterm.Coeff === -1 ? 0 : 1 ];
-			return Math.abs(max) * swinterm.Coeff;
+	function startWindow(sw, ext) {
+		// for 'All' days before or after, go to edge of cartoon
+		// ext should either be cohdef.obsExt or cohdef.obsScale.domain()
+		var swin = [sw.Start.Coeff * sw.Start.Days, sw.End.Coeff * sw.End.Days];
+		if (sw.Start.Days === null) { 
+			swin[0] = ext[sw.Start.Coeff === -1 ? 0 : 1];
 		}
-		return swinterm.Days * swinterm.Coeff;
+		if (sw.End.Days === null) {
+			swin[1] = ext[sw.End.Coeff === -1 ? 0 : 1];
+		}
+		return swin.sort(d3.ascending); // should it be sorted or is that excessive hand holding?
 	}
-	function swinMaxWDur(crit, term, ext) {
-			var dur = rangeInfo(getRange(crit.Criteria,'dur'),'max');
-			if (dur)
-				return dur + swinMax(crit.StartWindow[term], ext);
+	function durExt(crit, ext, shift, op) { // from start to longest possible duration
+		if (crit.Criteria) { // additional, starts at midpoint of StartWindow
+			var range = getRange(crit.Criteria, 'dur');
+			var durDays = rangeInfo(range, 'max');
+			var sw = startWindow(crit.StartWindow, ext);
+			var start = (sw[0] + sw[1]) / 2;
+			if (shift && (start+durDays)>ext[1]) {
+				start = ext[1] - durDays;
+			}
+			if (op === "bt")
+				return [start, start+range.Value, start+range.Extent];
+			if (op === "!bt")
+				return [0, range.Value, range.Extent, ext[1]];
+			return [start, start + durDays];
+		} else {						 // primary, starts at index date
+			var range = getRange(crit, 'dur');
+			if (op === "bt")
+				return [0, range.Value, range.Extent];
+			if (op === "!bt")
+				return [0, range.Value, range.Extent, ext[1]];
+			var durDays = rangeInfo(range, 'max');
+			return [0, durDays];
+		}
 	}
 	function obsExtent(primCrits, addCrits, cohdef) {
-		var primDurs = _.chain(primCrits)
-										.map(crit => getRange(crit,'dur'))
-										.compact()
-										// have dur ranges now
-										.map(range => rangeInfo(range, 'max'))
-										.value();
-		var beforeDays = addCrits.map(d=>swinMax(d.StartWindow.Start, cohdef));
-		var afterDays = addCrits.map(d=>swinMax(d.StartWindow.End, cohdef));
+		var primDurs = primCrits.map(crit=>durExt(crit)[1]);
+		var swins = _.flatten(addCrits.map(crit=>startWindow(crit.StartWindow,[0,0])));
 		var obsDays = [-cohdef.PrimaryCriteria.ObservationWindow.PriorDays, 
 										cohdef.PrimaryCriteria.ObservationWindow.PostDays];
-		var allDayOffsets = _.flatten([primDurs, beforeDays, afterDays, obsDays])
+		var allDayOffsets = _.flatten([primDurs, swins, obsDays])
 		if (!allDayOffsets.length) return;
 
 		var ext = d3.extent(allDayOffsets);
-		var beforeDaysWithDurs = addCrits.map(d=>swinMaxWDur(d, 'Start', ext));
-		var afterDaysWithDurs = addCrits.map(d=>swinMaxWDur(d, 'End', ext));
+		var addDurs = _.flatten(addCrits.map(crit=>durExt(crit, ext)));
 
-		allDayOffsets = _.flatten([allDayOffsets, beforeDaysWithDurs, afterDaysWithDurs]);
+		allDayOffsets = allDayOffsets.concat(addDurs);
 		return d3.extent(allDayOffsets);
 	}
 
@@ -556,67 +588,21 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function drawCrits(selection, cohdef, critType) {
 		selection.each(function(_crit) {
 			var el = d3.select(this); // the svg
-			var crit = _crit;
-			var html = '';
+			var crit = critType === 'primary' ? _crit : _crit.Criteria;
 			el.attr('height', ypos(crit, 'svg-height', critType, $(this).closest('div.row')));
-
-			var durRange = getRange(crit, 'dur');
-			if (durRange) {
-				html += durInterval(durRange, crit, cohdef, critType);
-			}
+			var html = '';
 			html += obsPeriodShading(crit, cohdef, critType, this);
 			html += dateSymbols(crit, cohdef, critType)
 
 			if (critType === 'primary') {
-				el.html(html);
-				return;
-			}
-			if (critType === 'group') {
-				crit = _crit.Criteria;
+				html += durInterval(crit, cohdef, critType);
+			} else if (critType === 'group') {
+				html += durInterval(crit, cohdef, critType, _crit);
 				var sw = _crit.StartWindow;
-				var swin = [sw.Start.Coeff * sw.Start.Days, sw.End.Coeff * sw.End.Days];
-				var fixedWindow = true;
-				if (sw.Start.Days === null) {
-					//swin[0] = null;
-					swin[0] = cohdef.obsExt[0];
-					fixedWindow = false;
-				}
-				if (sw.End.Days === null) {
-					//swin[1] = null;
-					swin[1] = cohdef.obsExt[1];
-					fixedWindow = false;
-				}
-
+				var swin = startWindow(sw, cohdef.obsExt);
 				html += swPeriodBrace(crit, _crit, cohdef, swin);
-
-				if (fixedWindow) {
-					html += 
-						interval(
-							symbol({term:'start', crit:'window', inclusive:'true', x:swin[0], y:15, r:4}, cohdef),
-							symbol({term:'end', crit:'window', inclusive:'true', x:swin[1], y:15, r:4}, cohdef),
-							{fixed:true, x1:swin[0], x2:swin[1]}, cohdef);
-				} else {
-					if (sw.Start.Days === null && sw.End.Days === null) {
-						// do something
-					} else if (sw.Start.Days === null) {
-						html += 
-							interval(
-								'',
-								symbol({term:'end', crit:'window', inclusive:'true', x:swin[1], y:15, r:4}, cohdef),
-								{fixed:false, x1:cohdef.obsExt[0], x2:swin[1],
-									markerStart:'left'}, cohdef);
-					} else if (sw.End.Days === null) {
-						html += 
-							interval(
-								symbol({term:'start', crit:'window', inclusive:'true', x:swin[0], y:15, r:4}, cohdef),
-								'',
-								{fixed:false, x1:swin[0], x2:cohdef.obsExt[1],
-									markerEnd:'right'}, cohdef);
-					}
-				}
-				el.html(html);
-				return;
 			}
+			el.html(html);
 		})
 	}
 	function inclusionRulesHeader(d3element, {cohdef, rules} = {}) {
@@ -667,6 +653,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				verbose += `<span style="opacity:0.2">
 									${addCritOccurrenceText(_crit)}, ${addCritWindowText(_crit)}
 									</span>`;
+			//d3.select(this).html(text + verbose);
 			d3.select(this).html(text);
 		})
 	}
@@ -698,83 +685,125 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 											class="${opts.fixed ? 'fixed' : 'conditional'} 
 														 ${opts.term ? ('term-'+opts.term) : ''}" />`;
 		if (opts.markerStart) {
-			line += `<path d="M ${x(opts.x1)} ${y} ${arrows[opts.markerStart]}" class="term-start" />`;
+			line += `<path d="M ${x(opts.x1)} ${y} ${arrows[opts.markerStart]}" 
+									class="term-${opts.term}
+														  ${opts.filled ? 'filled' : 'no-fill'}
+												" />`;
 		}
 		if (opts.markerEnd) {
-			line += `<path d="M ${x(opts.x2)} ${y} ${arrows[opts.markerEnd]}" class="term-end" />`;
+			line += `<path d="M ${x(opts.x2)} ${y} ${arrows[opts.markerEnd]}" 
+									class="term-${opts.term}
+														  ${opts.filled ? 'filled' : 'no-fill'}
+												" />`;
 		}
 		return `
 						${sym1}
 						${sym2}
 						${line}`;
 	}
-	function durInterval(range, crit, cohdef, critType) {
-		var html = '';
-		if (critType === 'group') debugger;
+	function durInterval(crit, cohdef, critType, addcrit) {
+		var range = getRange(crit, 'dur');
+		if (!range) return '';
+		var html = '', y;
+		if (critType === 'primary') {
+			var yLine = ypos(crit, 'dur', critType);
+			var yText = ypos(crit, 'dur-text', critType);
+			var durext = durExt(crit, cohdef.obsExt, false, range.Op);
+		} else {
+			var yLine = ypos(crit, 'add-dur', critType);
+			var yText = ypos(crit, 'add-dur-text', critType);
+			var durext = durExt(addcrit, cohdef.obsExt, true, range.Op);
+		}
+		var filledArrow = range.Op.length === 3 && range.Op[2] === 'e'; // lte or gte
+		var textCenter = 0;
 		if (rangeInfo(range, 'single-double') === 'single') {
-			var y = ypos(crit, 'index-dot', critType);
 			switch (range.Op[0]) {
 				case "g": // gt or gte
-					html += interval('','', {fixed:true, x1:0, x2:range.Value, y,
+					html += interval('','', {fixed:true, x1:durext[0], 
+																	 x2:durext[1], y:yLine,
+																	 markerStart:'stop',
 																	 markerEnd:'right',
-																	 term:'end' // duration is how long before it ends
+																	 filled: filledArrow,
+																	 term:'dur'
 																	}, cohdef);
-					html += interval('','', {fixed:false, x1:range.Value, x2:cohdef.obsExt[1], y,
+					html += interval('','', {fixed:false, x1:durext[1], 
+																	 x2:cohdef.obsExt[1], y:yLine,
 																	 markerEnd:'right',
-																	 term:'end' // duration is how long before it ends
+																	 filled: filledArrow,
+																	 term:'dur'
 																	}, cohdef);
-					html += `
-										<text x="${cohdef.obsScale(range.Value) + 3}"
-													y="${y - 4}"
-										>${durationType(crit)} ${rangeInfo(range,'nice-op')} 
-											${range.Value} days</text>
-					`;
-					return html;
+					textCenter = (durext[0] + cohdef.obsExt[1]) / 2;
 					break;
 				case "l": // lt or lte
-					//html += interval('','', )
-					return '<text y="6">not handling duration less than yet</text>';
-					el.append('line')
-								.attr('y1', 10)
-								.attr('y2', 10)
-								.attr('x1', cohdef.obsScale(0))
-								.attr('x2', cohdef.obsScale(range.Value))
-								.attr('stroke-dasharray', '3,3')
-								.style(`marker-start`, `url(#line-stop)`)
-								.style(`marker-end`, `url(#left-arrow)`)
+					html += interval('','', {fixed:true, x1:durext[0], 
+																	 x2:durext[1], y:yLine,
+																	 markerStart:'stop',
+																	 markerEnd:'left',
+																	 filled: filledArrow,
+																	 term:'dur'
+																	}, cohdef);
+					textCenter = (durext[0] + durext[1]) / 2;
 					break;
 				case "e": // eq
-					return '<text y="6">not handling duration equal to yet</text>';
-					el.append('line')
-								.attr('y1', 10)
-								.attr('y2', 10)
-								.attr('x1', cohdef.obsScale(0))
-								.attr('x2', cohdef.obsScale(range.Value))
-								.style(`marker-start`, `url(#line-stop)`)
-								.style(`marker-end`, `url(#line-stop)`)
-				default: // eq
-					return `<text y="6">not handling duration ${range.Op} yet</text>`;
+					html += interval('','', {fixed:true, x1:durext[0], 
+																	 x2:durext[1], y:yLine,
+																	 markerStart:'stop',
+																	 markerEnd:'stop',
+																	 term:'dur'
+																	}, cohdef);
+					textCenter = (durext[0] + durext[1]) / 2;
+					break;
+				default:
+					return `<text y="9">not handling duration ${range.Op} yet</text>`;
 			}
 		} else {
-			return `<text y="6">not handling duration ${rangeInfo(range,'nice-op')} yet</text>`;
+			textCenter = _.sum(d3.extent(durext)) / 2;
+			if (range.Op === "bt") {
+				if (durext.length !== 3) 
+					throw new Error("problem with durExt");
+				html += interval('','', {fixed:true, x1:durext[0], 
+																	x2:durext[1], y:yLine,
+																	markerStart:'stop',
+																	markerEnd:'right',
+																	filled: filledArrow,
+																	term:'dur'
+																}, cohdef);
+				html += interval('','', {fixed:false, x1:durext[1], 
+																	x2:durext[2], y:yLine,
+																	markerStart:'right',
+																	markerEnd:'left',
+																	filled: filledArrow,
+																	term:'dur'
+																}, cohdef);
+			} else {
+				return `<text y="9">not handling duration ${rangeInfo(range,'nice-op')} yet</text>`;
+			}
 		}
+		html += `
+							<text x="${cohdef.obsScale(textCenter)}"
+										y="${yText}"
+										dominant-baseline="hanging"
+										text-anchor="middle"
+							>${durText(crit)}</text>
+		`;
+		return html;
 	}
 	function dateSymbols(crit, cohdef, critType) {
 		var html = '';
-		var durRange = getRange(crit, 'dur');
 		var startDateRange = getRange(crit, 'start');
 		var endDateRange = getRange(crit, 'end'); // ignore these?
 		if (endDateRange) {
-			html += `<text y="13">not handling end dates</text>`;
+			html += `<text y="18">not handling end dates</text>`;
 		}
 		if (startDateRange) {
-			var y = ypos(crit, 'dates', critType);
+			var yDot = ypos(crit, 'dates-dot', critType);
+			var yLabel = ypos(crit, 'dates-label', critType);
 			var r = ypos(crit, 'index-r', critType);
 			var xIndex = 0;
 			//var xEdge = cohdef.obsExt[0];
 			var circle = symbol({term:'start', crit:'primary', 
 														inclusive:startDateRange.Op.match(/e/), 
-														x:xIndex, y, r}, cohdef);
+														x:xIndex, y:yDot, r}, cohdef);
 			var whichSide = 1;
 			var anchor;
 			switch (startDateRange.Op[0]) {
@@ -790,8 +819,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			}
 			var text = `
 									<text x="${cohdef.obsScale(xIndex) + 11 * whichSide}"
-												y="${y + 4}"
-												alignment-baseline="top"
+												y="${yLabel}"
+												dominant-baseline="hanging"
 												text-anchor="${anchor}"
 									>start ${rangeInfo(startDateRange,'nice-op')}
 									 ${startDateRange.Value}
@@ -817,7 +846,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		if (indexMarker) {
 			indexMarker = `<text x="${cohdef.obsScale(0)}" y="${dotY}"
 														text-anchor="middle" 
-														alignment-baseline="top"
+														dominant-baseline="hanging"
 														class="index-marker">${indexMarker}</text>`;
 		} else {
 			indexMarker = `<rect x="${cohdef.obsScale(0) - 1}" 
@@ -861,12 +890,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		return text + count;
 	}
 	function swPeriodBrace(crit, addcrit, cohdef, swin) {
-		var durRange = getRange(crit, 'dur');
 		var startDateRange = getRange(crit, 'start');
 		var endDateRange = getRange(crit, 'end'); // ignore these?
 
 		var critType = 'group'; // kludgy
 		var dotY = ypos(crit, 'add-dot', critType);
+		var dotLabel = ypos(crit, 'add-dot-label', critType);
 		var dotR = ypos(crit, 'add-r', critType);
 		var braceTop = ypos(crit, 'add-brace-top', critType);
 		var braceLabel = ypos(crit, 'add-brace-label', critType);
@@ -880,14 +909,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var oc = addcrit.Occurrence;
 		var howMany = `
 				<text x="${braceMid}"
-							y="${dotY}"
+							y="${dotLabel}"
 							class="addcrit-marker"
 							text-anchor="middle" 
-							text-anchor="top">${markerText(crit, addcrit)}</text>
+							dominant-baseline="hanging">${markerText(crit, addcrit)}</text>
 				`;
-		var html = `
-				${addCritDot}
-				${howMany}
+			/*
 				<text x="${braceLeft}"
 							y="${braceLabel}"
 							text-anchor="middle">${swin[0]}</text>
@@ -897,6 +924,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				<text x="${braceMid}"
 							y="${braceLabel}"
 							text-anchor="top">criteria start</text>
+			*/
+		var html = `
+				${addCritDot}
+				${howMany}
 				<path class="curly-brace" 
 							d="${ makeCurlyBrace(
 																braceLeft,
@@ -950,19 +981,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				}
 		}
 	}
-	function durationType(crit) {
-		if ("EraLength" in crit) {
-			return "Era";
-		}
-		switch (crit.domain) {
-			case "DrugExposure":
-				return "Days supply";
-			case "ObservationPeriod":
-			case "VisitOccurrence":
-				return "Visit";
-		}
-	}
 	function getRange(crit, feature) {
+		if (crit.Criteria)
+			throw new Error("wrong kind of crit");
 		var whichEnd;
 		switch (feature) {
 			case "dur":
@@ -1096,16 +1117,33 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 							${sw.Start.Days} days ${sw.Start.Coeff===-1 ? 'before' : 'after'} and
 							${sw.End.Days} days ${sw.End.Coeff===-1 ? 'before' : 'after'} index`;
 	}
-	function critCartoonText(crit) {
-		var durRange = getRange(crit, 'dur');
+	function durType(crit) {
+		if ("EraLength" in crit) {
+			return "Era";
+		}
+		switch (crit.domain) {
+			case "DrugExposure":
+				return "Days supply";
+			case "ObservationPeriod":
+			case "VisitOccurrence":
+				return "Visit";
+		}
+	}
+	function durText(crit) {
+		var range = getRange(crit, 'dur');
 		var dur = 'any duration';
-		if (durRange) {
-			if (rangeInfo(durRange, 'single-double') == 'single') {
-				dur = `${rangeInfo(durRange, 'nice-op')} ${rangeInfo(durRange, 'val')} days`;
+		if (range) {
+			dur = `${durType(crit)} ${rangeInfo(range,'nice-op')} `;
+			if (rangeInfo(range, 'single-double') === 'single') {
+				dur += `${rangeInfo(range, 'val')} days`;
 			} else {
-				dur = `${rangeInfo(durRange, 'nice-op')} ${rangeInfo(durRange, 'lower')} and ${rangeInfo(durRange, 'upper')} days`;
+				dur += `${rangeInfo(range, 'lower')} and ${rangeInfo(range, 'upper')} days`;
 			}
 		}
+		return dur;
+	}
+	function critCartoonText(crit) {
+		var dur = durText(crit);
 		var startRange = getRange(crit, 'start');
 		var start = 'any time';
 		if (startRange) {

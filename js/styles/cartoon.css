@@ -110,6 +110,13 @@ div.cartoon svg line {
 div.cartoon svg line.conditional {
 	stroke-dasharray: 3.3;
 }
+.cartoon .term-dur {
+	fill: steelblue;
+	stroke: steelblue;
+}
+div.cartoon svg path.no-fill {
+	fill-opacity: 0;
+}
 
 .cartoon .term-start {
 	fill: green;
@@ -137,7 +144,7 @@ rect.index-marker {
 	fill: green;
 }
 text.index-marker {
-	alignment-baseline: top;
+	dominant-baseline: hanging;
 	fill: green;
 	font-weight: bold;
 }
