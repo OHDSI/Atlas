@@ -153,7 +153,14 @@
 			<div class="tab-content">
 				<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'printfriendly'}" class="tab-pane">
 					<div class="paddedWrapper">
+						<div id="cartoon-tooltip">
+							<div id="tooltip" data-bind='component: { 
+								      name: JUNK($component.selectedCriteria),
+											params: {expression: model.currentCohortDefinition().expression, 
+																criteria: $component.selectedCriteria} }'></div>
+						</div>
 						<div data-bind="cohortExpressionCartoon:{expression:model.currentCohortDefinition().expression,selectedFragment:$component.selectedFragment, 
+														selectedCriteria: $component.selectedCriteria,
 														tabPath: $component.tabPath,
 														delayedCartoonUpdate: $component.delayedCartoonUpdate}"></div>
 						<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression, selectedFragment: selectedFragment"></cohort-expression-viewer>

@@ -405,7 +405,38 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.dispose = function () {
 			//self.currentCohortDefinitionSubscription.dispose();
 		}
-
+		self.JUNK = function (crit) {
+			var domain = crit && crit.domain || "ConditionOccurrence";
+      if (domain === "ConditionOccurrence")
+        return "condition-occurrence-criteria-viewer";
+      else if (domain === "ConditionEra")
+        return "condition-era-criteria-viewer";
+      else if (domain === "DrugExposure")
+        return "drug-exposure-criteria-viewer";
+      else if (domain === "DrugEra")
+        return "drug-era-criteria-viewer";
+      else if (domain === "DoseEra")
+        return "dose-era-criteria-viewer";
+      else if (domain === "ProcedureOccurrence")
+        return "procedure-occurrence-criteria-viewer";
+      else if (domain === "Observation")
+        return "observation-criteria-viewer";
+      else if (domain === "VisitOccurrence")
+        return "visit-occurrence-criteria-viewer";
+      else if (domain === "DeviceExposure")
+        return "device-exposure-criteria-viewer";
+      else if (domain === "Measurement")
+        return "measurement-criteria-viewer";
+      else if (domain === "Specimen")
+        return "specimen-criteria-viewer";
+      else if (domain === "ObservationPeriod")
+        return "observation-period-criteria-viewer";
+      else if (domain === "Death")
+        return "death-criteria-viewer";
+      else
+        return "unknownCriteriaType";
+    };
+		self.selectedCriteria = ko.observable();
 	}
 
 	var component = {
