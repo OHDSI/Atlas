@@ -124,21 +124,27 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var d3element = d3.select(element);
 		d3AddIfNeeded(d3element, [null], 'div', 
 															 ['primarycrit','section','header'], 
-															 primaryCritHeader, {cohdef});
+															 primaryCritHeaderAdd, primaryCritHeaderUpdate, 
+															 {cohdef});
 		d3AddIfNeeded(d3element, [null], 'div', 
 															 ['primarycrit','section','body'], 
-															 primaryCritBody, {cohdef});
+															 null, 
+															 primaryCritBodyUpdate, 
+															 {cohdef});
 		d3AddIfNeeded(d3element, [null], 'div', 
 															 ['addcrit','section','body'], 
-															 addCritSectBody,
+															 addCritSectBodyAdd,
+															 addCritSectBodyUpdate,
 															 {cohdef, acsect:cohdef.AdditionalCriteria});
 		d3AddIfNeeded(d3element, [null], 'div', 
 															 ['inclusion','section','header'], 
-															 inclusionRulesHeader, 
+															 null, 
+															 inclusionRulesHeaderUpdate, 
 															 {cohdef, rules:cohdef.InclusionRules});
-		d3AddIfNeeded(d3element, [null], 'div', 
+		d3AddIfNeeded(d3element, cohdef.InclusionRules, 'div', 
 															 ['inclusion','section','body'], 
-															 inclusionRulesBody, 
+															 inclusionRulesBodyAdd, 
+															 inclusionRulesBodyUpdate, 
 															 {cohdef, rules:cohdef.InclusionRules});
 
 		$('div.indent-bar').each(function() { 
@@ -149,7 +155,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		});
 		$('div.cartoon').width(cartoonWidth());
 	}
-	function d3AddIfNeeded(parentElement, data, tag, classes, firstTimeCb, cbParams) {
+	function d3AddIfNeeded(parentElement, data, tag, classes, addCb, updateCb, cbParams) {
 		var d3element;
 		if (parentElement.selectAll) {
 			d3element = parentElement;
@@ -171,8 +177,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						newNode.classed(cls, true);
 					});
 				})
-				.call(firstTimeCb, cbParams);
+				.call(addCb||function(){}, cbParams);
 		selection = d3element.selectAll([tag].concat(classes).join('.'));
+		selection.call(updateCb||function(){}, cbParams);
 		return selection;
 	}
 	function dataSetup(expression) {
@@ -354,7 +361,28 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 							})
 		}
 	}
-	function primaryCritHeader(d3element, {cohdef}={}) {
+	function primaryCritHeaderAdd(d3element, {cohdef}={}) {
+		if (!d3element.size())
+			return;
+		var headerHtml = `
+									<div class="primary section-header row header-row">
+										<div class="col-xs-12 header-content">
+										</div>
+									</div>
+									<div class="primary header row header-row">
+										<div class="col-xs-12 header-content">
+											<div class="msg"></div>
+											<div class="row">
+												<div class="col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
+													<div class="cartoon">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>`;
+		d3element.html(headerHtml);
+	}
+	function primaryCritHeaderUpdate(d3element, {cohdef}={}) {
 		var PrimaryCriteria = cohdef.PrimaryCriteria;
 		var pcList = PrimaryCriteria.CriteriaList;
 		var limitType = PrimaryCriteria.PrimaryCriteriaLimit.Type;
@@ -387,36 +415,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						</svg>)
 				<svg height="0" class="x axis col-xs-12"/>`;
 		
-		var pickadiv = ''; // doesn't matter, as long as it exists. they should all 
-											 // be the same width
-		var headerHtml = `
-						${limitMsg}
-						${resultDateMsg}
-						<div class="row">
-							<div class="col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
-								<div class="cartoon">
-									${rightHeader}
-								</div>
-							</div>
-						</div>`;
-
-		var headerNode = d3AddIfNeeded(d3element, [PrimaryCriteria], 'div', 
-																	 ['primary','section-header', 'row'], 
-																	skeleton, {cohdef,type:'section-header',depth:0})
-		headerNode.select('div.header-content').html(title);
-
-		headerNode = d3AddIfNeeded(d3element, [PrimaryCriteria], 'div', 
-																	 ['primary','header', 'row'], 
-																	skeleton, {cohdef,type:'header',depth:0})
-		headerNode.select('div.header-content').html(headerHtml);
-
-		//d3element.html(headerHtml);
-		/* 
-		switching to constant width
-		var w = $(d3element.select(`div.cartoon`).node()).width();
-		resetScales(cohdef, w);
-		resetScales(cohdef, CARTOON_WIDTH);
-		*/
+		d3element.select('div.section-header>div.header-content').html(title);
+		d3element.select('div.msg').html(limitMsg + ' ' + resultDateMsg);
+		d3element.select('div.cartoon').html(rightHeader);
 		resetScales(cohdef);
 		d3element.select('svg.x.axis').call(cohdef.obsAxis);
 		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
@@ -430,17 +431,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		// send __data__ down to all the elements
 		selection
 			.classed(`${type}-row`,true)
-		if (type === 'section-header') {
-			selection.append('div').attr('class', 'col-xs-12 header-content');
-			return;
-		}
-
-		if (type === 'header') {
-			selection.append('div').attr('class', 'col-xs-12 header-content');
-			return;
-		}
-
-
 		selection.append('div').attr('class', `indent-bar col-xs-${INDENT_COLS}`)
 		var right = selection.append('div').attr('class', `after-indent col-xs-${12-INDENT_COLS}`)
 		right = right.append('div').attr('class','row');
@@ -459,7 +449,32 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 														.attr('height',0)
 		}
 	}
-	function critGroupHeader(d3element, {cohdef, critgroup, depth, parentcg, critIndex} = {}) {
+	function skeletonUpdate(selection, {cohdef, type, depth} = {}) {
+		// every node that needs fresh data needs to be selected
+		selection.select('div.indent-bar');
+		selection.select('div.after-indent')
+						 .select('div.row')
+						 .select('div.name')
+		selection.select('div.after-indent')
+						 .select('div.cartoon')
+						 .select('svg')
+	}
+	function critGroupHeaderAdd(d3element, {cohdef, critgroup, depth, parentcg, critIndex} = {}) {
+		d3element.html(`
+									 <div class="crit header row header-row">
+										<div class="col-xs-12 header-content">
+											<div class="row">
+												<div class="col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
+													<div class="cartoon">
+														<svg height="0" class="x axis col-xs-12"/>
+													</div>
+												</div>
+											</div>
+										</div>
+									 </div>
+									 `);
+	}
+	function critGroupHeaderUpdate(d3element, {cohdef, critgroup, depth, parentcg, critIndex} = {}) {
 		var html = '';
 		if (!critgroup) {
 			html = 'No criteria group';
@@ -490,12 +505,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 									</div>
 								</div>`;
 		}
-		var headerNode = d3AddIfNeeded(d3element, [critgroup], 'div', 
-																	['crit','header', 'row'], 
-																	skeleton, {cohdef,type:'header',
-																						depth:Math.max(0, depth)})
-		headerNode.select('div.header-content').html(html);
-
+		d3element.select('div.header-content').html(html);
 		d3element.select('svg.x.axis').call(cohdef.obsAxis);
 		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
 						.attr("transform", function(d) {
@@ -503,52 +513,64 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																		this.getBBox().height + ")rotate(-45)";
 						});
 	}
-	function primaryCritBody(d3element,{cohdef}={}) {
+	function primaryCritBodyUpdate(d3element,{cohdef}={}) {
 		var pc = cohdef.PrimaryCriteria;
 		pc.CriteriaList.forEach((crit,i) => {
 			crit.critIndex = i;
 		});
 		critBody(d3element, {cohdef, crit:pc, critType:'primary', depth:0});
 	}
-	function addCritSectBody(d3element, {cohdef, acsect}) {
-		var html = '<h3>Additional Criteria</h3>'; 
+	function addCritSectBodyAdd(d3element, {cohdef, acsect}) {
+		var headerHtml = `
+									<div class="critgroup section-header row header-row">
+										<div class="col-xs-12 header-content">
+										</div>
+									</div>
+									<div class="critgroup section-body">
+									</div>`;
+		d3element.html(headerHtml);
+	}
+	function addCritSectBodyUpdate(d3element, {cohdef, acsect}) {
+		var title = '<h3>Additional Criteria</h3>'; 
 		if (!acsect)
-			html = 'No additional criteria';
-		var headerNode = d3AddIfNeeded(d3element, [acsect], 'div', 
-																	 ['critgroup','section-header', 'row'], 
-																	skeleton, {cohdef,type:'section-header',depth:0})
-		headerNode.select('div.header-content').html(html);
-		d3AddIfNeeded(d3element, [acsect], 'div', 
+			title = 'No additional criteria';
+		d3element.select('div.header-content').html(title);
+		var body = d3element.select('div.section-body');
+
+		d3AddIfNeeded(body, [acsect], 'div', 
 															 ['critgroup','section','header'], 
-															 critGroupHeader, 
+															 critGroupHeaderAdd, 
+															 critGroupHeaderUpdate, 
 															 {cohdef, critgroup:acsect, depth:0});
-		d3AddIfNeeded(d3element, [acsect], 'div', 
+		d3AddIfNeeded(body, [acsect], 'div', 
 															 ['critgroup','section','body'], 
-															 critGroupBody,
+															 null,
+															 critGroupBodyUpdate,
 															 {cohdef, critgroup:acsect, depth:0});
 	}
-	function critGroupBody(d3element, {cohdef,critgroup, depth} = {}) {
+	function critGroupBodyUpdate(d3element, {cohdef,critgroup, depth} = {}) {
 		critgroup.CriteriaList.concat(critgroup.Groups).forEach((crit,i) => {
 			crit.critIndex = i;
 		});
 		critBody(d3element,{cohdef, crit:critgroup, critType:'group', depth});
-		if (depth > 3) throw new Error('wait');
 
 		var groupNodes = d3AddIfNeeded(d3element, critgroup.Groups, 'div', 
 																	 ['crit','row','subgroup'], 
-																	skeleton, {cohdef,type:'subgroup',depth})
+																	skeleton, skeletonUpdate, {cohdef,type:'subgroup',depth})
 		connectorText(groupNodes, critgroup);
 		groupNodes.selectAll('div.subgroup-container')
 			.each(function(group) {
 				var subgroup = d3AddIfNeeded(d3.select(this), [group], 'div', 
 																	['critgroup','subgroup','header'], 
-																	critGroupHeader, 
+																	critGroupHeaderAdd, 
+																	critGroupHeaderUpdate, 
 																	{cohdef, critgroup:group, depth:depth+1,
 																		parentcg:critgroup,critIndex:group.critIndex});
 				connectorText(subgroup, group, 'subgroup');
 				d3AddIfNeeded(d3.select(this), [group], 'div', 
 																	['critgroup','subgroup','body'], 
-																	critGroupBody,
+																	null,
+																	critGroupBodyUpdate,
 																	{cohdef, critgroup:group, depth:depth+1,
 																		parentcg:critgroup,critIndex:group.critIndex});
 			});
@@ -577,7 +599,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function critBody(d3element, {cohdef, crit, critType, depth} = {}) {
 		var crits = crit.CriteriaList;
 		var critNodes = d3AddIfNeeded(d3element, crits, 'div', ['crit','row'], 
-																	skeleton, {cohdef,type:'crit',depth})
+																	skeleton, skeletonUpdate, {cohdef,type:'crit',depth})
 		connectorText(critNodes, crit);
 		critNodes.selectAll('div.name')
 							.call(critName, cohdef, critType);
@@ -588,6 +610,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function drawCrits(selection, cohdef, critType) {
 		selection.each(function(_crit) {
 			var el = d3.select(this); // the svg
+			/*
+			el.on("mouseover", function() {
+				console.log
+				return tooltip
+			})
+			*/
 			var crit = critType === 'primary' ? _crit : _crit.Criteria;
 			el.attr('height', ypos(crit, 'svg-height', critType, $(this).closest('div.row')));
 			var html = '';
@@ -615,44 +643,56 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			el.html(html);
 		})
 	}
-	function inclusionRulesHeader(d3element, {cohdef, rules} = {}) {
+	function inclusionRulesHeaderUpdate(d3element, {cohdef, rules} = {}) {
 		var html = '<h3>Inclusion Rules</h3>'; 
 		if (!rules)
 			html = 'No inclusion rules';
 		var headerNode = d3AddIfNeeded(d3element, [rules], 'div', 
 																	 ['primary','section-header', 'row'], 
-																	skeleton, {cohdef,type:'section-header',depth:0})
+																	skeleton, skeletonUpdate, {cohdef,type:'section-header',depth:0})
 		headerNode.select('div.header-content').html(html);
 	}
-	function inclusionRulesBody(d3element, {cohdef, rules} = {}) {
-		rules.forEach(function(rule) {
-			var rulediv = d3element.append('div');
-			d3AddIfNeeded(rulediv, [rule], 'div', 
-																['critgroup','section','header'], 
-																inclusionRuleHeader, 
-																{cohdef, rule, depth:0});
-			d3AddIfNeeded(rulediv, [rule], 'div', 
-																['critgroup','section','body'], 
-																inclusionRuleBody,
-																{cohdef, rule, depth:0});
-		});
+	function inclusionRulesBodyAdd(d3element, {cohdef, rules} = {}) {
+		d3element.append('div')
 	}
-	function inclusionRuleBody(d3element, {cohdef, rule, depth} = {}) {
+	function inclusionRulesBodyUpdate(d3element, {cohdef, rules} = {}) {
+		d3element
+			.each(function(rule) {
+				d3AddIfNeeded(this, [rule], 'div', 
+																	['critgroup','section','header'], 
+																	inclusionRuleHeaderAdd, 
+																	inclusionRuleHeaderUpdate, 
+																	{cohdef, rule, depth:0});
+				d3AddIfNeeded(this, [rule], 'div', 
+																	['critgroup','section','body'], 
+																	null,
+																	inclusionRuleBodyUpdate,
+																	{cohdef, rule, depth:0});
+			});
+	}
+	function inclusionRuleBodyUpdate(d3element, {cohdef, rule, depth} = {}) {
 		d3AddIfNeeded(d3element, [rule.expression], 'div', 
 															 ['critgroup','section','header'], 
-															 critGroupHeader, 
+															 critGroupHeaderAdd, 
+															 critGroupHeaderUpdate, 
 															 {cohdef, critgroup:rule.expression, depth:0});
 		d3AddIfNeeded(d3element, [rule.expression], 'div', 
 															 ['critgroup','section','body'], 
-															 critGroupBody,
+															 null,
+															 critGroupBodyUpdate,
 															 {cohdef, critgroup:rule.expression, depth:0});
 	}
-	function inclusionRuleHeader(d3element, {cohdef, rule, depth} = {}) {
+	function inclusionRuleHeaderAdd(d3element, {cohdef, rule, depth} = {}) {
+		d3element.html(`
+										<div class="inclusion header row header-row">
+											<div class="col-xs-12 header-content">
+											</div>
+										</div>
+									 `);
+	}
+	function inclusionRuleHeaderUpdate(d3element, {cohdef, rule, depth} = {}) {
 		var html = `<h4>${rule.name}</h4>${rule.description}`; 
-		var headerNode = d3AddIfNeeded(d3element, [rule], 'div', 
-																	 ['primary','section-header', 'row'], 
-																	skeleton, {cohdef,type:'section-header',depth:0})
-		headerNode.select('div.header-content').html(html);
+		d3element.select('div.header-content').html(html);
 	}
 	function critName(selection, cohdef, critType) {
 		selection.each(function(_crit) {
@@ -1170,3 +1210,23 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		return `start ${start}, end ${end}, ${dur}`;
 	}
 });
+
+/*
+function language(crit, feature, context) {
+	switch(feature) {
+		case: "First":
+			if (crit.First) {
+				switch (context) {
+					case "printfriendly":
+						return "for the first ${domain} in the person's history";
+					case "cartoon":
+						return "1st";
+					case: "UI":
+						return UIFirst;
+				}
+			}
+	}
+}
+
+var language k
+*/
