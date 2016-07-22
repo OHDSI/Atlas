@@ -6,7 +6,7 @@ define(['knockout','text!./ConceptListTemplate.html', 'conceptpicker/InputTypes/
 		self.PickerParams = params.PickerParams;
 		
 		self.ConceptListNames = ko.pureComputed(function () {
-			return self.ConceptList().map(function(item) { return item.CONCEPT_NAME }).join(', ');
+			return ko.utils.unwrapObservable(self.ConceptList).map(function(item) { return item.CONCEPT_NAME }).join(', ');
 		});
 	}
 	

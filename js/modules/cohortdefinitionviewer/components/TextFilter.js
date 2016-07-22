@@ -26,7 +26,7 @@ define(['knockout', 'text!./TextFilterTemplate.html'], function (ko, componentTe
 		
 		self.opName = ko.pureComputed(function() {
 			return self.operationOptions.filter(function(item) {
-				return item.id == self.Filter().Op();
+				return item.id == ko.utils.unwrapObservable(ko.utils.unwrapObservable(self.Filter).Op);
 			})[0].name;
 		});
 		

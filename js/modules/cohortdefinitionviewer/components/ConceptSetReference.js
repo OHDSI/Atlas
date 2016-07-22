@@ -8,7 +8,7 @@ define(['knockout','text!./ConceptSetReferenceTemplate.html'], function (ko, tem
 		
 		self.referenceId = ko.pureComputed(function () {
 			var calculatedRefId = "";
-			var selectedConceptSet = self.conceptSets().filter(function(item) { return item.id == self.conceptSetId(); })[0];
+			var selectedConceptSet = self.conceptSets().filter(function(item) { return item.id == ko.utils.unwrapObservable(self.conceptSetId); })[0];
 			if (selectedConceptSet)
 			{
 				calculatedRefId = (self.conceptSets.sorted().indexOf(selectedConceptSet) + 1) + "";
@@ -17,7 +17,7 @@ define(['knockout','text!./ConceptSetReferenceTemplate.html'], function (ko, tem
 		});
 		
 		self.codesetName = ko.pureComputed(function () {
-			var selectedConceptSet = self.conceptSets().filter(function (item) { return item.id == self.conceptSetId()})[0];
+			var selectedConceptSet = self.conceptSets().filter(function (item) { return item.id == ko.utils.unwrapObservable(self.conceptSetId)})[0];
 			if (selectedConceptSet)
 			{
 				return ko.utils.unwrapObservable(selectedConceptSet.name);
