@@ -302,7 +302,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			if (!divWidth()) {
 				return;
 			}
-			console.log(`update width divWidth ${divWidth()}`);
+			//console.log(`update width divWidth ${divWidth()}`);
 			var expression = valueAccessor().expression();
 			//console.log(expression);
 
@@ -592,7 +592,17 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			el.attr('height', ypos(crit, 'svg-height', critType, $(this).closest('div.row')));
 			var html = '';
 			html += obsPeriodShading(crit, cohdef, critType, this);
-			html += dateSymbols(crit, cohdef, critType)
+			var ds = dateSymbols(crit, cohdef, critType);
+			if (ds.length) {
+				html += dateSymbols(crit, cohdef, critType)
+			} else {
+				var yDot = ypos(crit, 'dates-dot', critType);
+				var r = ypos(crit, 'index-r', critType);
+				var xIndex = 0;
+				var circle = symbol({term:'start', critType, 
+														inclusive:true,
+														x:xIndex, y:yDot, r}, cohdef);
+			}
 
 			if (critType === 'primary') {
 				html += durInterval(crit, cohdef, critType);
@@ -653,15 +663,15 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				verbose += `<span style="opacity:0.2">
 									${addCritOccurrenceText(_crit)}, ${addCritWindowText(_crit)}
 									</span>`;
-			//d3.select(this).html(text + verbose);
-			d3.select(this).html(text);
+			d3.select(this).html(text + verbose);
+			//d3.select(this).html(text);
 		})
 	}
 	function symbol(opts, cohdef) {
 		var tag = 'circle';
 		var classes = [
 					`term-${opts.term}`,
-					`crit-${opts.crit}`,
+					`crit-${opts.critType}`,
 					opts.inclusive ? 'inclusive' : 'exclusive',
 		];
 		var x = cohdef.obsScale;
@@ -801,7 +811,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			var r = ypos(crit, 'index-r', critType);
 			var xIndex = 0;
 			//var xEdge = cohdef.obsExt[0];
-			var circle = symbol({term:'start', crit:'primary', 
+			var circle = symbol({term:'start', critType,
 														inclusive:startDateRange.Op.match(/e/), 
 														x:xIndex, y:yDot, r}, cohdef);
 			var whichSide = 1;
@@ -844,15 +854,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		var indexMarker = markerText(crit);
 		if (indexMarker) {
-			indexMarker = `<text x="${cohdef.obsScale(0)}" y="${dotY}"
-														text-anchor="middle" 
+			indexMarker = `<text x="${cohdef.obsScale(0) - 3}" y="${dotY}"
+														text-anchor="end" 
 														dominant-baseline="hanging"
 														class="index-marker">${indexMarker}</text>`;
-		} else {
-			indexMarker = `<rect x="${cohdef.obsScale(0) - 1}" 
-			                     y="0" width="2" height="${height}" 
-													class="index-marker" />`;
 		}
+		indexMarker += `<rect x="${cohdef.obsScale(0) - 1}" 
+													y="0" width="2" height="${height}" 
+												class="index-marker" />`;
 		//var indexDateDot = symbol({term:'start', crit:'primary', inclusive:'true', x:0, y:dotY, r:dotR}, cohdef);
 		var html = `
 				${indexMarker}
@@ -863,9 +872,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function markerText(crit, addcrit) {
 		var text = ''
-		if (crit.First) {
-			text += '1st';
-		}
 		var count = '';
 		if (addcrit) {
 			if (text.length) text += ' ';
@@ -874,17 +880,22 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			switch (oc.Type) {
 				case 0:
 					if (oc.Count === 0) {
-						count += 'None';
+						count += 'Zero';
 					} else {
-						count += `= ${oc.Count}`;
+						count += `Exactly ${oc.Count}`;
 					}
 					break;
 				case 1:
-						count += `<= ${oc.Count}`;
+						count += `At most ${oc.Count}`;
 					break;
 				case 2:
-						count += `>= ${oc.Count}`;
+						count += `At least ${oc.Count}`;
 					break;
+			}
+			count += ` ${oc.IsDistinct ? 'distinct' : ''} occurrence${oc.Count===1 ? '' : 's'}`;
+		} else {
+			if (crit.First) {
+				text += '1st';
 			}
 		}
 		return text + count;
