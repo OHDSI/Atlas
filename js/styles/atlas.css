@@ -1629,6 +1629,11 @@ div.button-overlay {
 	outline: none;
 }
 
+[contenteditable=true]:empty:before{
+  content: attr(placeholder);
+
+}
+
 .nav-tabs li a,
 .nav-tabs li a:hover {
 	color: #ccc;

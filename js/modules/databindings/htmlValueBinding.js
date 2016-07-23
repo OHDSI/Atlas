@@ -2,7 +2,7 @@ define(['knockout'], function (ko) {
 
 	ko.bindingHandlers.htmlValue = {
 		init: function (element, valueAccessor, allBindingsAccessor) {
-			ko.utils.registerEventHandler(element, "blur", function () {
+			ko.utils.registerEventHandler(element, "input", function () {
 				var modelValue = valueAccessor();
 				var elementValue = element.innerText;
 				if (ko.isWriteableObservable(modelValue)) {

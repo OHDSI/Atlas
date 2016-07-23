@@ -37,7 +37,7 @@ requirejs.config({
 			'jquery-ui/sortable': 'jquery-ui',
 			'jquery-ui/draggable': 'jquery-ui',
 			'jquery-ui/dialog': 'jquery-ui',
-			'jquery-ui/autocomplate': 'jquery-ui',
+			'jquery-ui/autocomplete': 'jquery-ui',
 			'jquery-ui/tabs': 'jquery-ui'
 		}
 	},
