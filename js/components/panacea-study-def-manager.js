@@ -207,15 +207,46 @@ define(['knockout', 'text!./panacea-study-def-manager.html', 'jquery', 'knockout
 		}
 		
 		self.runStudy = function() {
+			self.currentStudy().concepSetDef = self.currentConceptsExpression();
+			self.currentStudy().cohortDefId = self.currentCohort().id;
+			self.currentStudy().studyName = self.studyName();
+			self.currentStudy().studyDesc = self.studyDesc();
+			self.currentStudy().studyDuration = self.studyDuration();
+			self.currentStudy().switchWindow = self.switchWindow();
+			self.currentStudy().conceptSetId = self.currentConceptSet().id;
+			self.currentStudy().minUnitDays = self.minUnitDays();
+			self.currentStudy().minUnitCounts = self.minUnitCounts();
+			if(self.gapThreshold() != null){
+				self.currentStudy().gapThreshold = 100 - self.gapThreshold();
+			}
+	
+			var unwrappedStart = ko.utils.unwrapObservable(self.startDate());
+		    if(unwrappedStart === undefined || unwrappedStart === null) {
+		    	self.currentStudy().startDate = null;
+		    } else {
+		    	self.currentStudy().startDate = unwrappedStart;
+		    }
+			
+			var unwrappedEnd = ko.utils.unwrapObservable(self.endDate());
+		    if(unwrappedEnd === undefined || unwrappedEnd === null) {
+		    	self.currentStudy().endDate = null;
+		    } else {
+		    	self.currentStudy().endDate = unwrappedEnd;
+		    }
+
 			$.ajax({
-				url: config.services[0].url + 'panacea/runPncTasklet/' + self.currentRunSource().sourceKey + '/' + self.panaceaStudyId(),
-				method: 'GET',
+				url: config.services[0].url + 'panacea/saveandrunstudy/' + self.currentRunSource().sourceKey,
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(self.currentStudy()),
+				dataType: 'json',
 				success: function (data) {
 					//document.location = "#/panacea";
-					showJobStatus(true, data);
+					self.currentStudy().studyId = data['savedStudyId'];
+					showJobStatus(true, data['status']);
 				},
 				error: function(data){
-					showJobStatus(false, data);
+					showJobStatus(false, data['status']);
 			    }
 			});
 		}

@@ -136,11 +136,17 @@
         		</select>
         		
         		<div class="row" style="padding-top:20px;">
-		 			<div class="col-xs-2">
-						<button type="button" class="btn btn-sm btn-primary form-control" style="background" data-bind="click:function() {runGenerateStudySum();} ">Generate study summary</button>
-					</div>
+<!-- 		 			<div class="col-xs-2"> -->
+<!-- 						<button type="button" class="btn btn-sm btn-primary form-control" style="background" data-bind="click:function() {runGenerateStudySum();} ">Generate study summary</button> -->
+<!-- 					</div> -->
 	 				<div class="col-xs-2">
-						<button type="button" class="btn btn-sm btn-warning form-control" data-bind="click:function() {runStudy();}">Run study</button>
+						<button type="button" class="btn btn-sm btn-warning form-control" data-bind="click:function() {runStudy();}, enable: isAllValid " >Run study</button>
+					</div>
+		 			<div class="col-xs-2">
+						<button type="button" class="btn btn-sm btn-primary form-control" id="pncStdySbmt" data-bind="click:function() {saveStudy();}, enable: isAllValid ">Save</button>
+					</div>
+ 					<div class="col-xs-2">
+						<button type="button" class="btn btn-sm btn-danger form-control" id="pncStdyCncl" data-bind="click:function() {cancelStudy();}">Cancel</button>
 					</div>
 				</div>
 				
@@ -156,14 +162,14 @@
 		
 		</div>
 		
-		<div class="row" style="padding-top:20px;">
- 			<div class="col-xs-2">
-				<button type="button" class="btn btn-sm btn-primary form-control" id="pncStdySbmt" data-bind="click:function() {saveStudy();}, enable: isAllValid ">Save</button>
-			</div>
- 			<div class="col-xs-2">
-				<button type="button" class="btn btn-sm btn-danger form-control" id="pncStdyCncl" data-bind="click:function() {cancelStudy();}">Cancel</button>
-			</div>
-		</div>	
+<!-- 		<div class="row" style="padding-top:20px;"> -->
+<!--  			<div class="col-xs-2"> -->
+<!-- 				<button type="button" class="btn btn-sm btn-primary form-control" id="pncStdySbmt" data-bind="click:function() {saveStudy();}, enable: isAllValid ">Save</button> -->
+<!-- 			</div> -->
+<!--  			<div class="col-xs-2"> -->
+<!-- 				<button type="button" class="btn btn-sm btn-danger form-control" id="pncStdyCncl" data-bind="click:function() {cancelStudy();}">Cancel</button> -->
+<!-- 			</div> -->
+<!-- 		</div>	 -->
 <!-- 		<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() { saveClick(); }" id="pncStdySbmt">Submit</button> -->
 
 	</div>
