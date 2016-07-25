@@ -11,7 +11,7 @@ a drug exposure of <conceptset-reference params="{conceptSetId: CodesetId, conce
 	<li>occurrence end is <date-range-viewer params="Range: OccurrenceEndDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(DrugType) != null -->
-	<li>drug type is any of: <concept-list-viewer params="ConceptList: DrugType()"></concept-list-viewer></li>
+	<li>drug type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DrugType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(StopReason) != null -->
 	<li>with a Stop Reason <text-filter-viewer params="Filter: StopReason"></text-filter-viewer></li>
@@ -26,13 +26,13 @@ a drug exposure of <conceptset-reference params="{conceptSetId: CodesetId, conce
 	<li>with days supply <numeric-range-viewer params="Range: DaysSupply"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(RouteConcept) != null -->
-	<li>route concept is any of: <concept-list-viewer params="ConceptList: RouteConcept()"></concept-list-viewer></li>
+	<li>route concept is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(RouteConcept)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(EffectiveDrugDose) != null -->
 	<li>with effective drug dose <numeric-range-viewer params="Range: EffectiveDrugDose"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(DoseUnit) != null -->
-	<li>dose unit is any of: <concept-list-viewer params="ConceptList: DoseUnit()"></concept-list-viewer></li>
+	<li>dose unit is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DoseUnit)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(LotNumber) != null -->
 	<li>with a lot number <text-filter-viewer params="Filter: LotNumber"></text-filter-viewer></li>

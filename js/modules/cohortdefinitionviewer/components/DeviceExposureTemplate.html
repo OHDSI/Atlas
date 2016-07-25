@@ -1,7 +1,7 @@
 <!-- ko with: Criteria -->
 a device exposure of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Device'}"></conceptset-reference>
 <ul>
-<!-- ko if: First() != null -->
+<!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>for the first time in the person's history</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(OccurrenceStartDate) != null -->

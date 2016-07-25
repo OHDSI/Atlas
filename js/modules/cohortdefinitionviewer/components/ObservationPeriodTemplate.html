@@ -11,7 +11,7 @@ an observation period
 	<li>period end is <date-range-viewer params="Range: PeriodEndDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PeriodType) != null -->
-	<li>period type is any of: <concept-list-viewer params="ConceptList: PeriodType()"></concept-list-viewer></li>
+	<li>period type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(PeriodType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PeriodLength) != null -->
 	<li>with period duration <numeric-range-viewer params="Range: PeriodLength"></numeric-range-viewer></li>

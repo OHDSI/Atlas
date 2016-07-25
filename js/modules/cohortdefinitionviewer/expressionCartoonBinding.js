@@ -362,6 +362,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			}
 			//console.log('doing stuff in update');
 			var cohdef = dataSetup(expression);
+			cohdef.selectedCriteria = valueAccessor().selectedCriteria;
 			//console.log(cohdef);
 			expressionChangeSetup(element, cohdef);
 		}
@@ -610,6 +611,10 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		critNodes.selectAll('div.cartoon > svg')
 							.call(drawCrits, cohdef, critType);
+
+		critNodes.on("mouseenter", function(crit) {
+			cohdef.selectedCriteria(getCrit("wrapper",crit));
+		});
 	}
 	function drawCrits(selection, cohdef, critType) {
 		selection.each(function(_crit) {

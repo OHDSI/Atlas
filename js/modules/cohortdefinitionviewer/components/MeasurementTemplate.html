@@ -8,7 +8,7 @@ a measurement of <conceptset-reference params="{conceptSetId: CodesetId, concept
 	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(MeasurementType) != null -->
-	<li>measurement type is any of: <concept-list-viewer params="ConceptList: MeasurementType()"></concept-list-viewer></li>
+	<li>measurement type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(MeasurementType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Operator) != null -->
 	<li>measurement value operator is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Operator)"></concept-list-viewer></li>
@@ -49,7 +49,7 @@ a measurement of <conceptset-reference params="{conceptSetId: CodesetId, concept
 <!-- ko if: ko.utils.unwrapObservable(ProviderSpecialty) != null -->
 	<li>provider specialty is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProviderSpecialty)"></concept-list></li>
 <!-- /ko -->
-<!-- ko if: VisitType() != null -->
+<!-- ko if: ko.utils.unwrapObservable(VisitType) != null -->
 	<li>visit occurrence is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
 <!-- /ko -->
 </ul>

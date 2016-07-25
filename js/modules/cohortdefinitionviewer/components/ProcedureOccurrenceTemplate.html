@@ -22,10 +22,10 @@ a procedure of <conceptset-reference params="{conceptSetId: CodesetId, conceptSe
 <!-- ko if: ko.utils.unwrapObservable(Age) != null -->
 	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
 <!-- /ko -->
-<!-- ko if: Gender() != null -->
+<!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
 	<li>gender is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
-<!-- ko if: ProviderSpecialty() != null -->
+<!-- ko if: ko.utils.unwrapObservable(ProviderSpecialty) != null -->
 	<li>provider specialty is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProviderSpecialty)"></concept-list></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(VisitType) != null -->
