@@ -188,12 +188,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		window.cohdef = cohdef;
 
 		// clone objects (so they can be modified) and add domain names
-		addDomainNames(cohdef.PrimaryCriteria, 'primary');
-		allGroups(cohdef).forEach(group=>addDomainNames(group, 'additional'))
+		//addDomainNames(cohdef.PrimaryCriteria, 'primary');
+		//allGroups(cohdef).forEach(group=>addDomainNames(group, 'additional'))
 		cohdef.maxDepth = _.max(allGroups(cohdef).map(d=>d.depth));
 
-		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
-												allAdditionalCriteria(cohdef), cohdef);
+		var obsext = obsExtent(cohdef)
 		cohdef.obsExt = obsext;
 		cohdef.obsScale = d3.scale.linear();
 		cohdef.obsAxis = d3.svg.axis().orient('bottom').scale(cohdef.obsScale);
@@ -204,13 +203,53 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		*/
 	}
+	function getCrits(cohdef, which, returnType) {
+		var list;
+		switch (which) {
+			case "primary":
+				list = cohdef.PrimaryCriteria.CriteriaList;
+				break;
+			case "additional":
+				list = cohdef.PrimaryCriteria.AdditionalCriteria;
+				break;
+			case "all-additional":
+				list = (_.chain(allGroups(cohdef))
+								.map(d => d.CriteriaList)
+								.flatten()
+								.value());
+				break;
+		}
+		return list.map(getCrit(returnType));
+	}
+	var getCrit = _.curry(function (feature, crit) {
+		switch (feature) {
+			case "additional":
+				if (crit.Criteria)
+					return crit;
+				throw new Error("not an additional crit");
+			case "wrapper":	// the single-property object with key=domain, val=crit
+				var wrapper = crit.Criteria || crit;
+				var kv = _.pairs(wrapper);
+				if (kv.length !== 1)
+					throw new Error("can't find wrapper in crit");
+				if (!kv[0][1]._domain) {
+					kv[0][1]._domain = kv[0][0];
+					kv[0][1]._plainCrit = true;
+				}
+				return wrapper;
+			case "domain":
+				return crit._domain || _.keys(getCrit("wrapper", crit))[0];
+			case "crit":
+				if (crit._plainCrit) return crit;
+				return getCrit("wrapper", crit)[getCrit("domain", crit)];
+		}
+	});
 	function resetScales(cohdef, width) {
 		width = width || cartoonWidth();
 		var extraPx = 25; // room at ends of cartoons for arrows past domain dates
 		var extraRatio = extraPx / width; // add to ends of domains
 
-		var obsext = obsExtent(cohdef.PrimaryCriteria.CriteriaList,
-												allAdditionalCriteria(cohdef), cohdef);
+		var obsext = obsExtent(cohdef);
 		if (obsext && !(obsext[0] === 0 && obsext[1] === 0)) {
 			var extraDays = extraRatio * (Math.abs(obsext[0]) + Math.abs(obsext[0]));
 			cohdef.obsScale.range([0,width])
@@ -219,16 +258,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		//console.log(obsext, cohdef.obsScale.domain(), extraRatio, extraDays);
 		cohdef.obsExt = obsext;
 		//console.log(cohdef.obsScale.domain());
-	}
-	function allAdditionalCriteria(cohdef) {
-		return (_.chain(allGroups(cohdef))
-						 .map(d => d.CriteriaList)
-						 .flatten()
-						 .value());
-	}
-	function allPlainCriteria(cohdef) {
-		return (cohdef.PrimaryCriteria.CriteriaList
-						.concat(allAdditionalCriteria(cohdef).map(d=>d.Criteria)));
 	}
 	function allGroups(cohdef) {
 		return (_.flatten([cohdef.AdditionalCriteria]
@@ -278,7 +307,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			return [0, durDays];
 		}
 	}
-	function obsExtent(primCrits, addCrits, cohdef) {
+	function obsExtent(cohdef) {
+		var primCrits = getCrits(cohdef, "primary", "crit");
+		var addCrits = getCrits(cohdef, "all-additional", "additional");
 		var primDurs = primCrits.map(crit=>durExt(crit)[1]);
 		var swins = _.flatten(addCrits.map(crit=>startWindow(crit.StartWindow,[0,0])));
 		var obsDays = [-cohdef.PrimaryCriteria.ObservationWindow.PriorDays, 
@@ -335,32 +366,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			expressionChangeSetup(element, cohdef);
 		}
 	};
-
-	function addDomainNames(data, cat) { // criteria with domain name attached
-		if (cat === 'primary') {
-			data.CriteriaList =
-						 _.chain(data.CriteriaList)
-							.map(_.pairs)
-							.flatten()
-							.map(d=>{
-									var [domain, pc] = d;
-									var clone = _.clone(pc);
-									clone.domain = domain;
-									return clone;
-								})
-							.value();
-		} else {
-			data.CriteriaList =
-						data.CriteriaList.map(addCrit=>{ // additional criteria
-								var domain = _.keys(addCrit.Criteria)[0];
-								var clone = _.clone(addCrit);
-								var critClone = _.clone(addCrit.Criteria[domain]);
-								critClone.domain = domain;
-								clone.Criteria = critClone;
-								return clone;
-							})
-		}
-	}
 	function primaryCritHeaderAdd(d3element, {cohdef}={}) {
 		if (!d3element.size())
 			return;
@@ -383,9 +388,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		d3element.html(headerHtml);
 	}
 	function primaryCritHeaderUpdate(d3element, {cohdef}={}) {
-		var PrimaryCriteria = cohdef.PrimaryCriteria;
-		var pcList = PrimaryCriteria.CriteriaList;
-		var limitType = PrimaryCriteria.PrimaryCriteriaLimit.Type;
+		var pcList = getCrits(cohdef, "primary", "crit");
+		var limitType = cohdef.PrimaryCriteria.PrimaryCriteriaLimit.Type;
 		var title = '<h3>Primary Criteria</h3>'; 
 		var pcCritMatch;
 		var pcPlural = limitType === 'All' ? 's' : '';
@@ -514,11 +518,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						});
 	}
 	function primaryCritBodyUpdate(d3element,{cohdef}={}) {
-		var pc = cohdef.PrimaryCriteria;
-		pc.CriteriaList.forEach((crit,i) => {
+		var pcList = getCrits(cohdef, "primary", "crit");
+		pcList.forEach((crit,i) => {
 			crit.critIndex = i;
 		});
-		critBody(d3element, {cohdef, crit:pc, critType:'primary', depth:0});
+		groupBody(d3element, {cohdef, group:cohdef.PrimaryCriteria, critType:'primary', depth:0});
 	}
 	function addCritSectBodyAdd(d3element, {cohdef, acsect}) {
 		var headerHtml = `
@@ -552,7 +556,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		critgroup.CriteriaList.concat(critgroup.Groups).forEach((crit,i) => {
 			crit.critIndex = i;
 		});
-		critBody(d3element,{cohdef, crit:critgroup, critType:'group', depth});
+		groupBody(d3element,{cohdef, group:critgroup, critType:'group', depth});
 
 		var groupNodes = d3AddIfNeeded(d3element, critgroup.Groups, 'div', 
 																	 ['crit','row','subgroup'], 
@@ -596,11 +600,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 							});
 
 	}
-	function critBody(d3element, {cohdef, crit, critType, depth} = {}) {
-		var crits = crit.CriteriaList;
-		var critNodes = d3AddIfNeeded(d3element, crits, 'div', ['crit','row'], 
+	function groupBody(d3element, {cohdef, group, critType, depth} = {}) {
+		var list = group.CriteriaList;//.map(getCrit("crit"));
+		var critNodes = d3AddIfNeeded(d3element, list, 'div', ['crit','row'], 
 																	skeleton, skeletonUpdate, {cohdef,type:'crit',depth})
-		connectorText(critNodes, crit);
+		connectorText(critNodes, group);
 		critNodes.selectAll('div.name')
 							.call(critName, cohdef, critType);
 
@@ -616,7 +620,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				return tooltip
 			})
 			*/
-			var crit = critType === 'primary' ? _crit : _crit.Criteria;
+			//var crit = critType === 'primary' ? _crit : _crit.Criteria;
+			var crit = getCrit("crit", _crit);
 			el.attr('height', ypos(crit, 'svg-height', critType, $(this).closest('div.row')));
 			var html = '';
 			html += obsPeriodShading(crit, cohdef, critType, this);
@@ -696,7 +701,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function critName(selection, cohdef, critType) {
 		selection.each(function(_crit) {
-			var crit = critType === 'group' ? _crit.Criteria : _crit;
+			var crit = getCrit("crit", _crit);
 			var text = `${critLabel(crit, cohdef)}`;
 			var verbose = `<span style="opacity:0.2">${critCartoonText(crit)}</span>`;
 			if (critType === 'group')
@@ -1033,15 +1038,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 	}
 	function getRange(crit, feature) {
-		if (crit.Criteria)
-			throw new Error("wrong kind of crit");
+		crit = getCrit("crit", crit);
 		var whichEnd;
 		switch (feature) {
 			case "dur":
 				if ("EraLength" in crit) {
 					return crit.EraLength;
 				}
-				switch (crit.domain) {
+				switch (getCrit("domain", crit)) {
 					case "DrugExposure":
 						return crit.DaysSupply;
 					case "ObservationPeriod":
@@ -1059,7 +1063,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		if ('EraLength' in crit)
 			return crit['Era' + whichEnd];
-		if (crit.domain === 'ObservationPeriod')
+		if (getCrit("domain", crit) === 'ObservationPeriod')
 			return crit['Period' + whichEnd];
 		if (crit['Occurrence' + whichEnd])
 			return crit['Occurrence' + whichEnd];
@@ -1101,7 +1105,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						cohdef.ConceptSets[crit.CodesetId].name : '';
 	}
 	function critLabel(crit, cohdef) {
-		var dom = niceDomain(crit.domain);
+		var dom = niceDomain(getCrit("domain", crit));
 		var name = conceptName(crit, cohdef);
 		if (name)
 			return `${dom}: ${name}`;
@@ -1172,7 +1176,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		if ("EraLength" in crit) {
 			return "Era";
 		}
-		switch (crit.domain) {
+		switch (getCrit("domain", crit)) {
 			case "DrugExposure":
 				return "Days supply";
 			case "ObservationPeriod":
