@@ -3,6 +3,9 @@
 	stroke-width: 1px;
 	fill: none;
 }
+.curly-brace.indeterminate {
+	stroke-dasharray: 3.3;
+}
 
 text.critlabel {
 	opacity: 0.1;
@@ -150,6 +153,9 @@ text.index-marker {
 }
 .addcrit-marker {
 	font-weight: bold;
+}
+.addcrit-marker.zero {
+	fill: red;
 }
 
 div.cartoon svg.x.axis {

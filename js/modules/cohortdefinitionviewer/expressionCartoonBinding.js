@@ -87,14 +87,14 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			case "dates-label":
 				return (topMargin + brace + braceLabel + dot + dur) * SVG_LINE_HEIGHT;
 			case "dates-dot":
-				return (topMargin + brace + braceLabel + dot + dur + dates * .5) * SVG_LINE_HEIGHT;
+				return (topMargin + brace + braceLabel + dot + dur + dates * .3) * SVG_LINE_HEIGHT;
 			case "sec-header-height":
 				return 35;
 			case "header-height":
 				return 30;
 
 			case "add-dot":
-				return (topLines + addBraceLabel + addBrace + addDot * .5) * SVG_LINE_HEIGHT;
+				return (topLines + addBraceLabel + addBrace + addDot * .3) * SVG_LINE_HEIGHT;
 			case "add-dot-label":  // for when dot is replaced by label (alwasy?)
 				return (topLines + addBraceLabel + addBrace) * SVG_LINE_HEIGHT;
 			case "add-r":
@@ -289,9 +289,11 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var swin = [sw.Start.Coeff * sw.Start.Days, sw.End.Coeff * sw.End.Days];
 		if (sw.Start.Days === null) { 
 			swin[0] = ext[sw.Start.Coeff === -1 ? 0 : 1];
+			swin.noStart = true;
 		}
 		if (sw.End.Days === null) {
 			swin[1] = ext[sw.End.Coeff === -1 ? 0 : 1];
+			swin.noEnd = true;
 		}
 		return swin.sort(d3.ascending); // should it be sorted or is that excessive hand holding?
 	}
@@ -402,35 +404,33 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function primaryCritHeaderUpdate(d3element, {cohdef}={}) {
 		var pcList = getCrits(cohdef, "primary", "crit");
-		var limitType = cohdef.PrimaryCriteria.PrimaryCriteriaLimit.Type;
 		var title = '<h3>Primary Criteria</h3>'; 
-		var pcCritMatch;
-		var pcPlural = limitType === 'All' ? 's' : '';
-		var limitMsg = '';
-		switch (limitType) {
-			case 'All':
-				pcCritMatch = pcList.length === 1 ?
-														'the following primary criterion' :
-														`one of the following ${pcList.length} primary criteria`;
-				limitMsg += `Results will be generated for every person event matching 
-											${pcCritMatch}.`;
-				break;
-			case 'First':
-			case 'Last':
-				pcCritMatch = pcList.length === 1 ?
-														'the following primary criterion' :
-														`any of the following ${pcList.length} primary criteria`;
-				limitMsg += `Results will be generated for the ${limitType.toLowerCase()}
+		var pLimitType = cohdef.PrimaryCriteria.PrimaryCriteriaLimit.Type;
+		var pcPlural = pLimitType === 'All' ? 's' : '';
+		var oneOrAny = pLimitType === 'All' ? 'any' : 'one';
+		var pcCritMatch = pcList.length === 1 ?
+								'the following primary criterion' :
+								`${oneOrAny} of the following ${pcList.length} primary criteria`;
+		var limitMsg = pLimitType === 'All' ?
+				`Results will be generated for every person event matching 
+					${pcCritMatch}.
+					Final results will be limited to
+						${cohdef.ExpressionLimit.Type === 'All' ? 
+									'those' : 
+									'the ' + cohdef.ExpressionLimit.Type.toLowerCase()}
+						events matching any additional criteria and inclusion rules.` :
+				`Results will be generated for the ${pLimitType.toLowerCase()}
 											single event matching ${pcCritMatch}.`;
-		}
+
 		var resultDateMsg = `Result index date${pcPlural} will be the start date${pcPlural} of the 
-													matching event${pcPlural}.`;
-		var rightHeader = `
-				Duration from Start
+													matching primary criteria event${pcPlural}.`;
+		var rightHeader = 
+			/*
+			`Duration from Start
 						(<svg style="display:inline-block" height="10px" width="10px">
 							<circle cx="5" cy="5" r="4" style="fill:green" />
-						</svg>)
-				<svg height="0" class="x axis col-xs-12"/>`;
+						</svg>)` */
+				`<svg height="0" class="x axis col-xs-12"/>`;
 		
 		d3element.select('div.section-header>div.header-content').html(title);
 		d3element.select('div.msg').html(limitMsg + ' ' + resultDateMsg);
@@ -496,22 +496,24 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		if (!critgroup) {
 			html = 'No criteria group';
 		} else {
-			var all_any = `Restrict to people matching ${critgroup.Type.toLowerCase()} of the
-											following criteria`;
+			var all_any = `Restrict to people having events matching 
+											${critgroup.Type.toLowerCase()} of the
+											following criteria.`;
 			var rightHeader = `
-					Additional criteria start date 
-						(<svg style="display:inline-block" height="10px" width="10px">
-							<circle cx="5" cy="5" r="4" style="opacity:.4; fill:green" />
-						</svg>)
-					and duration 
+						Events must start within bracketed period
 						(<svg style="display:inline-block" height="10px" width="38px">
-							<line x1="2" x2="27" y1="5" y2="5" 
-								style="marker-start:url(#line-stop); marker-end:url(#right-arrow)" />
+							<path class="curly-brace" 
+										d="${ makeCurlyBrace(
+																			4,
+																			0,
+																			34,
+																			0,
+																			10,
+																			0.6)}" />
 						</svg>)
-					relative to index date
-						(Day 0, <svg style="display:inline-block" height="10px" width="10px">
-							<circle cx="5" cy="5" r="4" style="fill:green" />
-						</svg>)`;
+						relative to index date.
+						Lines and arrows represent required duration of these events.
+					`;
 			
 			html += `${all_any}${rightHeader}
 								<div class="row">
@@ -664,6 +666,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				var circle = symbol({term:'start', critType, 
 														inclusive:true,
 														x:xIndex, y:yDot, r}, cohdef);
+				html += circle;
 			}
 
 			if (critType === 'primary') {
@@ -911,9 +914,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 												y="${yLabel}"
 												dominant-baseline="hanging"
 												text-anchor="${anchor}"
-									>start ${rangeInfo(startDateRange,'nice-op')}
-									 ${startDateRange.Value}
-									</text>`;
+									>start ${dateText(startDateRange)}</text>`;
 			return circle + text;
 			//return interval( '', {fixed:false, x1:xIndex, x2:xEdge, y}, cohdef);
 		}
@@ -971,7 +972,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						count += `At least ${oc.Count}`;
 					break;
 			}
-			count += ` ${oc.IsDistinct ? 'distinct' : ''} occurrence${oc.Count===1 ? '' : 's'}`;
+			var first = crit.First ? ' first ' : '';
+			count += ` ${oc.IsDistinct ? 'distinct' : ''} ${first}
+										occurrence${oc.Count===1 ? '' : 's'}`;
 		} else {
 			if (crit.First) {
 				text += '1st';
@@ -995,12 +998,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var braceMid = (braceLeft + braceRight) / 2;
 		var braceMidDays = (swin[0] + swin[1]) / 2;
 
-		var addCritDot = ''; //symbol({term:'start', crit:'additional', inclusive:'true', x:braceMidDays, y:dotY, r:dotR}, cohdef);
+		var indexDot = symbol({term:'start', inclusive:'true', 
+														x:0, y:dotY, r:dotR}, cohdef);
 		var oc = addcrit.Occurrence;
 		var howMany = `
 				<text x="${braceMid}"
 							y="${dotLabel}"
-							class="addcrit-marker"
+							class="addcrit-marker ${oc.Count === 0 ? 'zero' : ''}"
 							text-anchor="middle" 
 							dominant-baseline="hanging">${markerText(crit, addcrit)}</text>
 				`;
@@ -1016,9 +1020,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 							text-anchor="top">criteria start</text>
 			*/
 		var html = `
-				${addCritDot}
+				${indexDot}
 				${howMany}
-				<path class="curly-brace" 
+				<path class="curly-brace ${swin.noStart ? 'indeterminate' : ''}" 
 							d="${ makeCurlyBrace(
 																braceLeft,
 																braceTop,
@@ -1026,7 +1030,18 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																braceTop,
 																braceHeight,
 																0.6,
-																braceMid)}" />
+																braceMid,
+																'left')}" />
+				<path class="curly-brace ${swin.noEnd ? 'indeterminate' : ''}" 
+							d="${ makeCurlyBrace(
+																braceLeft,
+																braceTop,
+																braceRight,
+																braceTop,
+																braceHeight,
+																0.6,
+																braceMid,
+																'right')}" />
 		`;
 		return html;
 	}
@@ -1149,12 +1164,15 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	//returns path string d for <path d="This string">
 	//a curly brace between x1,y1 and x2,y2, w pixels wide 
 	//and q factor, .5 is normal, higher q = more expressive bracket 
-	function makeCurlyBrace(x1,y1,x2,y2,w,q, pointx) {
+	function makeCurlyBrace(x1,y1,x2,y2,w,q, pointx, halfOnly) {
 		if (typeof pointx === "undefined") {
 			return makeCurlyBraceHalf(x1,y1,x2,y2,w,q);
 		}
+		if (halfOnly)
+			return makeCurlyBraceHalf(x1,y1,pointx + (pointx - x1),y2,w,q, halfOnly);
+
 		return makeCurlyBraceHalf(x1,y1,pointx + (pointx - x1),y2,w,q, 'left') + 
-					 makeCurlyBraceHalf(pointx - (x2 - pointx),y1,x2,y2,w,q, 'right')
+					 makeCurlyBraceHalf(pointx - (x2 - pointx),y1,x2,y2,w,q, 'right');
 	}
 	function makeCurlyBraceHalf(x1,y1,x2,y2,w,q,half) {
 		if (x1 === x2 && y1 === y2) {
@@ -1231,18 +1249,28 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		return dur;
 	}
+	function dateText(range) {
+		if (rangeInfo(range, 'single-double') === 'single') {
+			return `${rangeInfo(range,'nice-op')} ${range.Value}`;
+		} else {
+			return `${rangeInfo(range,'nice-op')} ${rangeInfo(range, 'lower')}
+										and ${rangeInfo(range, 'upper')}`;
+		}
+	}
 	function critCartoonText(crit) {
 		var dur = durText(crit);
 		var startRange = getRange(crit, 'start');
 		var start = 'any time';
 		if (startRange) {
-			start = `${rangeInfo(startRange, 'nice-op')} ${rangeInfo(startRange, 'val')}`;
+			start = dateText(startRange);
+			//`${rangeInfo(startRange, 'nice-op')} ${rangeInfo(startRange, 'val')}`;
 		}
 
 		var endRange = getRange(crit, 'end');
 		var end = 'any time';
 		if (endRange) {
-			end = `${rangeInfo(endRange, 'nice-op')} ${rangeInfo(endRange, 'val')}`;
+			end = dateText(endRange);
+			//`${rangeInfo(endRange, 'nice-op')} ${rangeInfo(endRange, 'val')}`;
 		}
 
 		return `start ${start}, end ${end}, ${dur}`;
