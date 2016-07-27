@@ -625,9 +625,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			tt.css('display', 'inline')
 				.css('left', evt.pageX- tt.parent().offset().left)
 				.css('top', evt.pageY - tt.parent().offset().top)
-			console.log(`client: ${evt.clientX},${evt.clientY},
-									 parent: ${JSON.stringify(tt.parent().offset())}`);
-		});
+			//console.log(`client: ${evt.clientX},${evt.clientY}, parent: ${JSON.stringify(tt.parent().offset())}`);
+		})
+		.on("mouseout", function(crit) {
+			var tt = $('div#cartoon-tooltip > div#tooltip');
+			tt.css('display', 'none')
+		})
 	}
 	var focusTip = d3.tip()
 										.attr('class', 'd3-tip')
