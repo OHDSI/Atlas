@@ -228,8 +228,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function getGroups(cohdef, which) {
 		switch (which) {
 			case "top":
-				return [cohdef.AdditionalCriteria]
-								.concat(cohdef.InclusionRules.map(d=>d.expression));
+				return (cohdef.AdditionalCriteria ? [cohdef.AdditionalCriteria] : []
+							 ).concat(cohdef.InclusionRules.map(d=>d.expression));
 			case "all":
 				return getGroups(cohdef, "top").map(subGroups);
 		}
@@ -547,8 +547,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	function addCritSectBodyUpdate(d3element, {cohdef, acsect}) {
 		var title = '<h3>Additional Criteria</h3>'; 
 		if (!acsect)
-			title = 'No additional criteria';
+			title = '<h4>No additional criteria</h4>';
 		d3element.select('div.header-content').html(title);
+		if (!acsect) return;
 		var body = d3element.select('div.section-body');
 
 		d3AddIfNeeded(body, [acsect], 'div', 
@@ -619,7 +620,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		critNodes
 		.on("mouseover", function(crit) {
-			cohdef.selectedCriteria(getCrit("wrapper",crit));
+			cohdef.selectedCriteria(crit);
+			//cohdef.selectedCriteria(getCrit("wrapper",crit));
 			var evt = d3.event;
 			var tt = $('div#cartoon-tooltip > div#tooltip');
 			tt.css('display', 'inline')
@@ -677,12 +679,17 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function inclusionRulesHeaderUpdate(d3element, {cohdef, rules} = {}) {
 		var html = '<h3>Inclusion Rules</h3>'; 
-		if (!rules)
-			html = 'No inclusion rules';
-		var headerNode = d3AddIfNeeded(d3element, [rules], 'div', 
-																	 ['primary','section-header', 'row'], 
-																	skeleton, skeletonUpdate, {cohdef,type:'section-header'})
-		headerNode.select('div.header-content').html(html);
+		if (!rules.length)
+			html = '<h4>No inclusion rules</h4>';
+		var headerHtml = `
+									<div class="critgroup section-header row header-row">
+										<div class="col-xs-12 header-content">
+											${html}
+										</div>
+									</div>
+									<div class="critgroup section-body">
+									</div>`;
+		d3element.html(headerHtml);
 	}
 	function inclusionRulesBodyAdd(d3element, {cohdef, rules} = {}) {
 		d3element.append('div')

@@ -6,7 +6,6 @@ define(['knockout', 'cohortbuilder/options', 'text!./CohortExpressionViewerTempl
 
 		self.expression = params.expression;
 		self.options = options;
-		self.selectedFragment = params.selectedFragment; // don't need anymore?
 
 		self.getLimitTypeText = function(typeId)
 		{

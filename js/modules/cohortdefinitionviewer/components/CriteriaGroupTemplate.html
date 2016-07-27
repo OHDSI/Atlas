@@ -7,14 +7,6 @@
 <ul>
 <!-- ko foreach: group().CriteriaList -->
 	<li>
-		<!-- CARTOON
-		<div data-bind="event: { 
-								mouseover: function() { $component.selectedFragment && $component.selectedFragment($data) }, 
-								mouseout: function() { $component.selectedFragment && $component.selectedFragment(null);}
-							}, 
-							css: {highlighted: ($component.selectedFragment && $component.selectedFragment()) === $data}">
-      <span style="font-weight:bold" data-bind="text: '(' + $data.key + ')'"></span>
-			-->
 		<div>
 			<span data-bind="if: ($index() > 0)"><span data-bind="	text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span><span data-bind="text: $component.getOccurrenceType(Occurrence.Type())" /> 
 			<span data-bind="text: Occurrence.Count"></span> <span data-bind="text: Occurrence.IsDistinct() ? 'distinct' : ''"></span>
@@ -32,8 +24,6 @@
 <!-- ko foreach: group().Groups -->
 	<li>
 		<div style="padding-top: 5px; position:relative">
-				<!-- INCLUDE IN params BELOW FOR CARTOON
-					, selectedFragment: $component.selectedFragment -->
 			<criteria-group-viewer params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group()}"></criteria-group-viewer>
 		</div>
 	</li>

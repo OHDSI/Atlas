@@ -153,12 +153,29 @@
 			<div class="tab-content">
 				<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'printfriendly'}" class="tab-pane">
 					<div class="paddedWrapper">
-						<div id="cartoon-tooltip" data-bind='if: $component.selectedCriteria()'>
-							<div id="tooltip" data-bind='component: { 
-								      name: $component.getCriteriaIndexComponent($component.selectedCriteria),
-											params: {expression: model.currentCohortDefinition().expression(), 
-																criteria: $component.selectedCriteria()} }'></div>
-						</div>
+						<!-- ko if: $component.selectedCriteria() -->
+							<div id="cartoon-tooltip" data-bind='with: $component.selectedCriteria()'>
+								<div id="tooltip">
+									<!-- ko ifnot: $data.Criteria -->
+									<div data-bind='component: { 
+													name: $component.getCriteriaIndexComponent($data),
+													params: {expression: $component.model.currentCohortDefinition().expression(), 
+																		criteria: $data} }'></div>
+									<!-- /ko -->
+
+									<!-- ko if: $data.Criteria -->
+										<span data-bind="text: Occurrence.Count"></span> <span data-bind="text: Occurrence.IsDistinct ? 'distinct' : ''"></span>
+												occurrence<span data-bind="text: Occurrence.Count != 1 ? 's' : ''"></span> of
+											<span data-bind="component: {
+																				name: $component.getCriteriaIndexComponent($data.Criteria),
+																				params: {expression: $component.model.currentCohortDefinition().expression(), 
+																				criteria: $data.Criteria }
+																			}"></span>
+													occurring between <window-input-viewer params="Window: StartWindow"></window-input-viewer> index
+									<!-- /ko -->
+								</div>
+							</div>
+						<!-- /ko -->
 						<div data-bind="cohortExpressionCartoon:{expression:model.currentCohortDefinition().expression,selectedFragment:$component.selectedFragment, 
 														selectedCriteria: $component.selectedCriteria,
 														tabPath: $component.tabPath,

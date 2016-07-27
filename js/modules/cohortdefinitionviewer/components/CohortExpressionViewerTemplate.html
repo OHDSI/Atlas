@@ -1,15 +1,4 @@
-							<!-- this was supposed to go in a div that no longer exists here - when cartoon is unhidden, that is
-										not needed if not linking cartoon and printfriendly text
-							data-bind="event: { 
-									mouseover: function() { selectedFragment && selectedFragment(expression().PrimaryCriteria()) }, 
-									mouseout: function() { selectedFragment && selectedFragment(null);}
-								}, 
-								css: {highlighted: selectedFragment && selectedFragment() === expression().PrimaryCriteria()}"
-								-->
 <div style="position: relative">
-	<!--div style="width:48%; right:12px; position:absolute; ">
-		<div data-bind="cartoonExpression: {expression:expression,selectedFragment:$component.selectedFragment}"></div>
-	</div-->
 	<div>
 		People having any of the following:
 		<br>
@@ -35,20 +24,9 @@
 		<div data-bind="with: expression">
 			<div data-bind="if: AdditionalCriteria">
 				<div>For people matching the Primary Events, include:</div>
-									<!-- INCLUDE IN params BELOW FOR CARTOON if linking highlighting to printfriendly text
-									, selectedFragment: $component.selectedFragment -->
 				<criteria-group-viewer params="{expression: $data, group: AdditionalCriteria}"></criteria-group-viewer>
 			</div>
 		</div>
-
-									<!-- not sure where these things go when putting cartoon back in place
-											not needed if not linking cartoon and printfriendly text
-										event: {
-											mouseover: function () { $component.selectedFragment && $component.selectedFragment(expression().PrimaryCriteria()) },
-											mouseout: function() { $component.selectedFragment && $component.selectedFragment(null);}
-										}, 
-										css: {highlighted: $component.selectedFragment && $component.selectedFragment() === expression().PrimaryCriteria()}
-		-->
 		<div data-bind="with: expression">
 			<div data-bind="foreach: InclusionRules">
 				<div data-bind="text: 'Inclusion ' + ($index()+1) + ': ' + name()"></div>
