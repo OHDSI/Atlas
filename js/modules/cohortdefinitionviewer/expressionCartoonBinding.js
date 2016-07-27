@@ -6,9 +6,6 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 												return divWidth() * 0.6;
 											});
 	const INDENT_COLS = 1; // for the whole leftmost column
-	function indentColsOBSOLETE(depth) { // for the indent-bar width
-		return Math.floor(12 / (cohdef.maxDepth + 1)) * (depth + 1);
-	}
 	const NAME_COLS = 2;
 	const SVG_LINE_HEIGHT = 17;
 	const arrows = {
@@ -187,10 +184,12 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var cohdef = ko.toJS(expression);
 		window.cohdef = cohdef;
 
-		// clone objects (so they can be modified) and add domain names
-		//addDomainNames(cohdef.PrimaryCriteria, 'primary');
-		//allGroups(cohdef).forEach(group=>addDomainNames(group, 'additional'))
-		cohdef.maxDepth = _.max(allGroups(cohdef).map(d=>d.depth));
+		getCrits(cohdef, 'primary', 'crit').forEach(
+			(crit,i) => Object.defineProperty(crit, '_critIndex', {value: i}));
+
+		getGroups(cohdef, 'top').forEach(group=>numberGroupItems(cohdef, group));
+
+		cohdef.maxDepth = _.max(getGroups(cohdef,"all").map(d=>d._depth));
 
 		var obsext = obsExtent(cohdef)
 		cohdef.obsExt = obsext;
@@ -203,23 +202,36 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		}
 		*/
 	}
+	function numberGroupItems(cohdef, group) {
+		group.CriteriaList.concat(group.Groups).forEach(
+			(g,i) => Object.defineProperty(getCrit('critorgroup',g), '_critIndex', {value: i})
+		);
+		group.Groups.forEach(g=>numberGroupItems(cohdef,g));
+	}
 	function getCrits(cohdef, which, returnType) {
 		var list;
 		switch (which) {
 			case "primary":
 				list = cohdef.PrimaryCriteria.CriteriaList;
 				break;
-			case "additional":
-				list = cohdef.PrimaryCriteria.AdditionalCriteria;
-				break;
-			case "all-additional":
-				list = (_.chain(allGroups(cohdef))
+			case "all-additional-crits":
+				list = (_.chain(getGroups(cohdef,"all"))
+								.flatten()
 								.map(d => d.CriteriaList)
 								.flatten()
 								.value());
 				break;
 		}
 		return list.map(getCrit(returnType));
+	}
+	function getGroups(cohdef, which) {
+		switch (which) {
+			case "top":
+				return [cohdef.AdditionalCriteria]
+								.concat(cohdef.InclusionRules.map(d=>d.expression));
+			case "all":
+				return getGroups(cohdef, "top").map(subGroups);
+		}
 	}
 	var getCrit = _.curry(function (feature, crit) {
 		switch (feature) {
@@ -228,17 +240,21 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 					return crit;
 				throw new Error("not an additional crit");
 			case "wrapper":	// the single-property object with key=domain, val=crit
+				if (crit._isWrapper) return crit;
 				var wrapper = crit.Criteria || crit;
+				Object.defineProperty(wrapper, '_isWrapper', {value: true});
 				var kv = _.pairs(wrapper);
 				if (kv.length !== 1)
 					throw new Error("can't find wrapper in crit");
 				if (!kv[0][1]._domain) {
-					kv[0][1]._domain = kv[0][0];
-					kv[0][1]._plainCrit = true;
+					Object.defineProperty(kv[0][1], '_domain', {value: kv[0][0]});
+					Object.defineProperty(kv[0][1], '_plainCrit', {value: true});
 				}
 				return wrapper;
 			case "domain":
 				return crit._domain || _.keys(getCrit("wrapper", crit))[0];
+			case "critorgroup":
+				if (crit.Groups) return crit;
 			case "crit":
 				if (crit._plainCrit) return crit;
 				return getCrit("wrapper", crit)[getCrit("domain", crit)];
@@ -259,14 +275,9 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		cohdef.obsExt = obsext;
 		//console.log(cohdef.obsScale.domain());
 	}
-	function allGroups(cohdef) {
-		return (_.flatten([cohdef.AdditionalCriteria]
-								.concat(cohdef.InclusionRules.map(d=>d.expression))
-								.map(subGroups)));
-	}
 	function subGroups(group, depth=0) { // returns array of this group and its subgroups
 		if (!group) return [];
-		group.depth = depth;
+		Object.defineProperty(group, '_depth', {value: depth});
 		if (group.Groups.length)
 			return _.flatten([group].concat(group.Groups.map(g=>subGroups(g,depth+1))));
 		return [group]
@@ -309,7 +320,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function obsExtent(cohdef) {
 		var primCrits = getCrits(cohdef, "primary", "crit");
-		var addCrits = getCrits(cohdef, "all-additional", "additional");
+		var addCrits = getCrits(cohdef, "all-additional-crits", "additional");
 		var primDurs = primCrits.map(crit=>durExt(crit)[1]);
 		var swins = _.flatten(addCrits.map(crit=>startWindow(crit.StartWindow,[0,0])));
 		var obsDays = [-cohdef.PrimaryCriteria.ObservationWindow.PriorDays, 
@@ -431,7 +442,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																		this.getBBox().height + ")rotate(-45)";
 						});
 	}
-	function skeleton(selection, {cohdef, type, depth} = {}) {
+	function skeleton(selection, {cohdef, type} = {}) {
 		// the reason this uses d3 append rather than composing html is to
 		// send __data__ down to all the elements
 		selection
@@ -454,7 +465,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 														.attr('height',0)
 		}
 	}
-	function skeletonUpdate(selection, {cohdef, type, depth} = {}) {
+	function skeletonUpdate(selection, {cohdef, type} = {}) {
 		// every node that needs fresh data needs to be selected
 		selection.select('div.indent-bar');
 		selection.select('div.after-indent')
@@ -464,7 +475,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 						 .select('div.cartoon')
 						 .select('svg')
 	}
-	function critGroupHeaderAdd(d3element, {cohdef, critgroup, depth, parentcg, critIndex} = {}) {
+	function critGroupHeaderAdd(d3element) {
 		d3element.html(`
 									 <div class="crit header row header-row">
 										<div class="col-xs-12 header-content">
@@ -479,7 +490,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 									 </div>
 									 `);
 	}
-	function critGroupHeaderUpdate(d3element, {cohdef, critgroup, depth, parentcg, critIndex} = {}) {
+	function critGroupHeaderUpdate(d3element, {cohdef, critgroup} = {}) {
 		var html = '';
 		if (!critgroup) {
 			html = 'No criteria group';
@@ -520,10 +531,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function primaryCritBodyUpdate(d3element,{cohdef}={}) {
 		var pcList = getCrits(cohdef, "primary", "crit");
-		pcList.forEach((crit,i) => {
-			crit.critIndex = i;
-		});
-		groupBody(d3element, {cohdef, group:cohdef.PrimaryCriteria, critType:'primary', depth:0});
+		groupBody(d3element, {cohdef, group:cohdef.PrimaryCriteria, critType:'primary'});
 	}
 	function addCritSectBodyAdd(d3element, {cohdef, acsect}) {
 		var headerHtml = `
@@ -546,22 +554,19 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 															 ['critgroup','section','header'], 
 															 critGroupHeaderAdd, 
 															 critGroupHeaderUpdate, 
-															 {cohdef, critgroup:acsect, depth:0});
+															 {cohdef, critgroup:acsect});
 		d3AddIfNeeded(body, [acsect], 'div', 
 															 ['critgroup','section','body'], 
 															 null,
 															 critGroupBodyUpdate,
-															 {cohdef, critgroup:acsect, depth:0});
+															 {cohdef, critgroup:acsect});
 	}
-	function critGroupBodyUpdate(d3element, {cohdef,critgroup, depth} = {}) {
-		critgroup.CriteriaList.concat(critgroup.Groups).forEach((crit,i) => {
-			crit.critIndex = i;
-		});
-		groupBody(d3element,{cohdef, group:critgroup, critType:'group', depth});
+	function critGroupBodyUpdate(d3element, {cohdef,critgroup} = {}) {
+		groupBody(d3element,{cohdef, group:critgroup, critType:'group'});
 
 		var groupNodes = d3AddIfNeeded(d3element, critgroup.Groups, 'div', 
 																	 ['crit','row','subgroup'], 
-																	skeleton, skeletonUpdate, {cohdef,type:'subgroup',depth})
+																	skeleton, skeletonUpdate, {cohdef,type:'subgroup'})
 		connectorText(groupNodes, critgroup);
 		groupNodes.selectAll('div.subgroup-container')
 			.each(function(group) {
@@ -569,15 +574,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																	['critgroup','subgroup','header'], 
 																	critGroupHeaderAdd, 
 																	critGroupHeaderUpdate, 
-																	{cohdef, critgroup:group, depth:depth+1,
-																		parentcg:critgroup,critIndex:group.critIndex});
+																	{cohdef, critgroup:group});
 				connectorText(subgroup, group, 'subgroup');
 				d3AddIfNeeded(d3.select(this), [group], 'div', 
 																	['critgroup','subgroup','body'], 
 																	null,
 																	critGroupBodyUpdate,
-																	{cohdef, critgroup:group, depth:depth+1,
-																		parentcg:critgroup,critIndex:group.critIndex});
+																	{cohdef, critgroup:group});
 			});
 	}
 	function connectorText(nodes, parentcrit, subgroup) {
@@ -594,17 +597,18 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 
 		nodes.selectAll('div.indent-bar')
 							.html(function(crit) {
-								if (!crit.critIndex || subgroup) return groupMsg;
+								crit = getCrit("critorgroup", crit);
+								if (!('_critIndex' in crit)) debugger;
+								if (!crit._critIndex || subgroup) return groupMsg;
 								d3.select(this).style('text-align','right');
 								return groupConnector;
-								return `${depth}/${cohdef.maxDepth}:${crit.critIndex}`;
 							});
 
 	}
-	function groupBody(d3element, {cohdef, group, critType, depth} = {}) {
+	function groupBody(d3element, {cohdef, group, critType} = {}) {
 		var list = group.CriteriaList;//.map(getCrit("crit"));
 		var critNodes = d3AddIfNeeded(d3element, list, 'div', ['crit','row'], 
-																	skeleton, skeletonUpdate, {cohdef,type:'crit',depth})
+																	skeleton, skeletonUpdate, {cohdef,type:'crit'})
 		connectorText(critNodes, group);
 		critNodes.selectAll('div.name')
 							.call(critName, cohdef, critType);
@@ -612,19 +616,26 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		critNodes.selectAll('div.cartoon > svg')
 							.call(drawCrits, cohdef, critType);
 
-		critNodes.on("mouseenter", function(crit) {
+		critNodes
+		.on("mouseenter", function(crit) {
 			cohdef.selectedCriteria(getCrit("wrapper",crit));
 		});
 	}
+	var focusTip = d3.tip()
+										.attr('class', 'd3-tip')
+										.offset([-10, 0])
+										.html(function (d) {
+											//return d3.select('#tooltip').html();
+											return "howdy";
+											return tipText(d);
+										});
 	function drawCrits(selection, cohdef, critType) {
 		selection.each(function(_crit) {
 			var el = d3.select(this); // the svg
-			/*
-			el.on("mouseover", function() {
-				console.log
-				return tooltip
-			})
-			*/
+
+			//el.on('mouseover', focusTip.show)
+				//.on('mouseout', focusTip.hide)
+			//el.call(focusTip);
 			//var crit = critType === 'primary' ? _crit : _crit.Criteria;
 			var crit = getCrit("crit", _crit);
 			el.attr('height', ypos(crit, 'svg-height', critType, $(this).closest('div.row')));
@@ -659,7 +670,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			html = 'No inclusion rules';
 		var headerNode = d3AddIfNeeded(d3element, [rules], 'div', 
 																	 ['primary','section-header', 'row'], 
-																	skeleton, skeletonUpdate, {cohdef,type:'section-header',depth:0})
+																	skeleton, skeletonUpdate, {cohdef,type:'section-header'})
 		headerNode.select('div.header-content').html(html);
 	}
 	function inclusionRulesBodyAdd(d3element, {cohdef, rules} = {}) {
@@ -672,27 +683,27 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 																	['critgroup','section','header'], 
 																	inclusionRuleHeaderAdd, 
 																	inclusionRuleHeaderUpdate, 
-																	{cohdef, rule, depth:0});
+																	{cohdef, rule});
 				d3AddIfNeeded(this, [rule], 'div', 
 																	['critgroup','section','body'], 
 																	null,
 																	inclusionRuleBodyUpdate,
-																	{cohdef, rule, depth:0});
+																	{cohdef, rule});
 			});
 	}
-	function inclusionRuleBodyUpdate(d3element, {cohdef, rule, depth} = {}) {
+	function inclusionRuleBodyUpdate(d3element, {cohdef, rule} = {}) {
 		d3AddIfNeeded(d3element, [rule.expression], 'div', 
 															 ['critgroup','section','header'], 
 															 critGroupHeaderAdd, 
 															 critGroupHeaderUpdate, 
-															 {cohdef, critgroup:rule.expression, depth:0});
+															 {cohdef, critgroup:rule.expression});
 		d3AddIfNeeded(d3element, [rule.expression], 'div', 
 															 ['critgroup','section','body'], 
 															 null,
 															 critGroupBodyUpdate,
-															 {cohdef, critgroup:rule.expression, depth:0});
+															 {cohdef, critgroup:rule.expression});
 	}
-	function inclusionRuleHeaderAdd(d3element, {cohdef, rule, depth} = {}) {
+	function inclusionRuleHeaderAdd(d3element) {
 		d3element.html(`
 										<div class="inclusion header row header-row">
 											<div class="col-xs-12 header-content">
@@ -700,7 +711,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 										</div>
 									 `);
 	}
-	function inclusionRuleHeaderUpdate(d3element, {cohdef, rule, depth} = {}) {
+	function inclusionRuleHeaderUpdate(d3element, {cohdef, rule} = {}) {
 		var html = `<h4>${rule.name}</h4>${rule.description}`; 
 		d3element.select('div.header-content').html(html);
 	}
@@ -713,8 +724,8 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 				verbose += `<span style="opacity:0.2">
 									${addCritOccurrenceText(_crit)}, ${addCritWindowText(_crit)}
 									</span>`;
-			d3.select(this).html(text + verbose);
-			//d3.select(this).html(text);
+			//d3.select(this).html(text + verbose);
+			d3.select(this).html(text);
 		})
 	}
 	function symbol(opts, cohdef) {
