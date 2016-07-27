@@ -151,6 +151,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			$(this).height($(this).closest('div.row').height()) 
 		});
 		$('div.cartoon').width(cartoonWidth());
+		$('[data-toggle="tooltip"]').tooltip();
 	}
 	function d3AddIfNeeded(parentElement, data, tag, classes, addCb, updateCb, cbParams) {
 		var d3element;
@@ -185,7 +186,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		window.cohdef = cohdef;
 
 		getCrits(cohdef, 'primary', 'crit').forEach(
-			(crit,i) => Object.defineProperty(crit, '_critIndex', {value: i}));
+			(crit,i) => Object.defineProperty(crit, '_critIndex', {value: i, configurable:true}));
 
 		getGroups(cohdef, 'top').forEach(group=>numberGroupItems(cohdef, group));
 
@@ -204,7 +205,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function numberGroupItems(cohdef, group) {
 		group.CriteriaList.concat(group.Groups).forEach(
-			(g,i) => Object.defineProperty(getCrit('critorgroup',g), '_critIndex', {value: i})
+			(g,i) => Object.defineProperty(getCrit('critorgroup',g), '_critIndex', {value: i, configurable:true})
 		);
 		group.Groups.forEach(g=>numberGroupItems(cohdef,g));
 	}
@@ -242,13 +243,13 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 			case "wrapper":	// the single-property object with key=domain, val=crit
 				if (crit._isWrapper) return crit;
 				var wrapper = crit.Criteria || crit;
-				Object.defineProperty(wrapper, '_isWrapper', {value: true});
+				Object.defineProperty(wrapper, '_isWrapper', {value: true, configurable:true});
 				var kv = _.pairs(wrapper);
 				if (kv.length !== 1)
 					throw new Error("can't find wrapper in crit");
 				if (!kv[0][1]._domain) {
-					Object.defineProperty(kv[0][1], '_domain', {value: kv[0][0]});
-					Object.defineProperty(kv[0][1], '_plainCrit', {value: true});
+					Object.defineProperty(kv[0][1], '_domain', {value: kv[0][0], configurable:true});
+					Object.defineProperty(kv[0][1], '_plainCrit', {value: true, configurable:true});
 				}
 				return wrapper;
 			case "domain":
@@ -277,7 +278,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	}
 	function subGroups(group, depth=0) { // returns array of this group and its subgroups
 		if (!group) return [];
-		Object.defineProperty(group, '_depth', {value: depth});
+		Object.defineProperty(group, '_depth', {value: depth, configurable:true});
 		if (group.Groups.length)
 			return _.flatten([group].concat(group.Groups.map(g=>subGroups(g,depth+1))));
 		return [group]
@@ -617,8 +618,15 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 							.call(drawCrits, cohdef, critType);
 
 		critNodes
-		.on("mouseenter", function(crit) {
+		.on("mouseover", function(crit) {
 			cohdef.selectedCriteria(getCrit("wrapper",crit));
+			var evt = d3.event;
+			var tt = $('div#cartoon-tooltip > div#tooltip');
+			tt.css('display', 'inline')
+				.css('left', evt.pageX- tt.parent().offset().left)
+				.css('top', evt.pageY - tt.parent().offset().top)
+			console.log(`client: ${evt.clientX},${evt.clientY},
+									 parent: ${JSON.stringify(tt.parent().offset())}`);
 		});
 	}
 	var focusTip = d3.tip()

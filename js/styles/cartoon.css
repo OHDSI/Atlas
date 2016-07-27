@@ -183,6 +183,32 @@ div.crit-row div.name {
 	padding: 0px 5px 0px 5px;
 }
 
+div#cartoon-tooltip {
+	position: relative;
+}
+div#cartoon-tooltip > div#tooltip {
+	display: none;
+  position: absolute;
+  color: #FFFFFF;
+  background: #000000;
+  border-radius: 6px;
+	padding: 4px;
+	z-index: 999;
+}
+/*
+ * not sure how to place the triangle pointer thing correctly
+div#cartoon-tooltip > div#tooltip:after {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -8px;
+	width: 0; height: 0;
+	border-top: 8px solid #000000;
+	border-right: 8px solid transparent;
+	border-left: 8px solid transparent;
+}
+*/
 /*
 g.primary > rect,
 g.additional > rect {
