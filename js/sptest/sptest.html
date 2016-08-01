@@ -1,0 +1,16 @@
+<div class="wrapperTitle">
+	scatterplot test
+</div>
+
+<div class="paddedWrapper">
+	<scatterplot 
+			style="width:300px; height:100px;"
+			params="{
+				jsonfile: 'js/sptest/sample.json',
+			}"></scatterplot>
+
+	<div class="heading">table:</div>
+	<div data-bind="if:false">
+		<faceted-datatable params="options:options, columns:columns, reference:nodes"></faceted-datatable>
+	</div>
+</div>

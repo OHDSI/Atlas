@@ -152,7 +152,13 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.currentCohortComparisonId(cohortComparisonId)
 							self.currentView('estimation');
 						});
-					}
+					},
+					'/sptest': function () {
+						require(['sptest'], function () {
+							console.log("trying to load sptest");
+							self.currentView('sptest');
+						});
+					},
 				}
 				self.router = new Router(routes).configure(routerOptions);
 				self.router.init('/');

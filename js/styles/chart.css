@@ -189,3 +189,9 @@ table.data td {
 	top: 50%;
 	left: 100%;
 }
+
+.zoom-scatter .dot {
+	opacity: 0.4;
+	stroke-width: .4;
+	fill: white;
+}
