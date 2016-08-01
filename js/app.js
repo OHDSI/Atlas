@@ -168,7 +168,13 @@ define([
 						require(['r-manager'], function () {
 							self.currentView('r');
 						});
-					}
+					},
+					'/sptest': function () {
+						require(['sptest'], function () {
+							console.log("trying to load sptest");
+							self.currentView('sptest');
+						});
+					},
 				}
 				self.router = new Router(routes).configure(routerOptions);
 

@@ -1,4 +1,5 @@
 requirejs.config({
+	waitSeconds: 60, // FOR DEVELOPMENT, REMOVE WHEN NOT NEEDED? default is 7
 	//urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: 'js',
 	config: {
@@ -97,7 +98,8 @@ requirejs.config({
 		"home" : "components/home",
 		"lodash": "lodash.min",
 		"common":"components/datasources/app/common",
-		"reports": "components/datasources/app/reports"
+		"reports": "components/datasources/app/reports",
+		"sptest": "sptest/sptest",
 	}
 });
 

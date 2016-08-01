@@ -1,0 +1,9 @@
+<div data-bind="if: loading">
+	<p>
+		loading
+		<span data-bind="text: jsonfile"></span>
+	</p>
+</div>
+<div data-bind="ifnot: loading">
+	<div data-bind="attr:{id:id()}"></div>
+</div>
