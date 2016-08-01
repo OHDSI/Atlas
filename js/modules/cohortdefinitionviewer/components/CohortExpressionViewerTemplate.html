@@ -1,10 +1,4 @@
-							<!-- this was supposed to go in a div that no longer exists here - when cartoon is unhidden, that is
-							data-bind="event: { 
-									mouseover: function() { selectedFragment && selectedFragment(expression().PrimaryCriteria()) }, 
-									mouseout: function() { selectedFragment && selectedFragment(null);}
-								}, 
-								css: {highlighted: selectedFragment && selectedFragment() === expression().PrimaryCriteria()}"
-								-->
+<div class="heading">Initial Event Cohort</div>
 People having any of the following:
 <br>
 
@@ -19,9 +13,9 @@ People having any of the following:
 </ul>
 <div>
 	<span data-bind="with: expression().PrimaryCriteria().ObservationWindow"> with continuous observation of at least
-	<span class="numericField" data-bind="text: PriorDays.numeric()" /> days prior and <span class="numericField" data-bind="text: PostDays.numeric()" /> days after index,
+	<span class="numericField" data-bind="text: PriorDays.numeric()" /> days prior and <span class="numericField" data-bind="text: PostDays.numeric()" /> days after event index date,
 </span>
-	<span data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit"> and limit primary events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b>
+	<span data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit"> and limit initial events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b>
 	</span>
 </div>
 <br/>
@@ -34,6 +28,7 @@ People having any of the following:
 		<criteria-group-viewer params="{expression: $data, group: AdditionalCriteria}"></criteria-group-viewer>
 	</div>
 </div>
+<div data-bind="with: expression().QualifiedLimit">Limit cohort of initial events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
 
 							<!-- not sure where these things go when putting cartoon back in place
 								event: {
@@ -46,11 +41,16 @@ People having any of the following:
 	</div>
 </div>
 -->
+
 <div data-bind="with: expression">
 	<div data-bind="foreach: InclusionRules">
-		<div data-bind="text: 'Inclusion ' + ($index()+1) + ': ' + name()"></div>
+		<div class="heading" data-bind="text: 'Inclusion Criteria #' + ($index()+1) + ': ' + name()"></div>
 		<criteria-group-viewer params="{expression: $parent, group: ko.observable($data.expression)}"></criteria-group-viewer>
 	</div>
 </div>
 
-<div data-bind="with: expression().ExpressionLimit">Limit cohort expression results to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
+<div data-bind="with: expression().ExpressionLimit">Limit qualifying cohort to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
+
+<end-strategy-viewer params="strategy: expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-viewer>
+
+

@@ -14,7 +14,7 @@ define(function (require, exports, module) {
 		self.ObservationWindow = { PriorDays: ko.observable((data.ObservationWindow && data.ObservationWindow.PriorDays) || 0),
 																PostDays: ko.observable((data.ObservationWindow && data.ObservationWindow.PostDays) || 0) };
 		
-		self.PrimaryCriteriaLimit = { Type: ko.observable(data.PrimaryCriteriaLimit && data.PrimaryCriteriaLimit.Type || "All") }
+		self.PrimaryCriteriaLimit = { Type: ko.observable(data.PrimaryCriteriaLimit && data.PrimaryCriteriaLimit.Type || "First") }
 		
 	}
 	

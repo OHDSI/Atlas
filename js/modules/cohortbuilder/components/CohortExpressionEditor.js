@@ -1,13 +1,14 @@
-define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../CohortExpression', '../InclusionRule', 'text!./CohortExpressionEditorTemplate.html',
+define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../CohortExpression', '../InclusionRule', 'text!./CohortExpressionEditorTemplate.html', './EndStrategyEditor',
 				'databindings', 'conceptpicker/ConceptPicker', 'css!../css/builder.css', 'css!../css/ddslick.criteria.css', 'ko.sortable'
 			 ], function (ko, options, CriteriaGroup, criteriaTypes, CohortExpression, InclusionRule, template) {
+	
 	function CohortExpressionEditorViewModel(params) {
 		var self = this;
-		this.expressionMode = ko.observable('primary');
+		this.expressionMode = ko.observable('all');
 
 		var primaryCriteriaOptions = [
 			{
-				text: "Add Condition Filters",
+				text: "Add Condition Criteria",
 				selected: false,
 				description: "Find patients with specific diagnoses.",
 				action: function () {
@@ -17,7 +18,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Condition Era Filters",
+				text: "Add Condition Era Criteria",
 				selected: false,
 				description: "Find patients with specific diagosis era.",
 				action: function () {
@@ -27,7 +28,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Drug Filters",
+				text: "Add Drug Criteria",
 				selected: false,
 				description: "Find patients with exposure to specific drugs or drug classes.",
 				action: function () {
@@ -37,7 +38,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Drug Era Filters",
+				text: "Add Drug Era Criteria",
 				selected: false,
 				description: "Find patients with with exposure to drugs over time.",
 				action: function () {
@@ -47,7 +48,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Dose Era Filters",
+				text: "Add Dose Era Criteria",
 				selected: false,
 				description: "Find patients with dose eras.",
 				action: function () {
@@ -57,7 +58,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Procedure Filters",
+				text: "Add Procedure Criteria",
 				selected: false,
 				description: "Find patients that experienced a specific procedure.",
 				action: function () {
@@ -67,7 +68,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Observation Filters",
+				text: "Add Observation Criteria",
 				selected: false,
 				description: "Find patients based on lab tests or other observations.",
 				action: function () {
@@ -77,7 +78,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Visit Filters",
+				text: "Add Visit Criteria",
 				selected: false,
 				description: "Find patients based on visit information.",
 				action: function () {
@@ -87,7 +88,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Device Filters",
+				text: "Add Device Criteria",
 				selected: false,
 				description: "Find patients based on device exposure.",
 				action: function () {
@@ -97,7 +98,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Measurement Filters",
+				text: "Add Measurement Criteria",
 				selected: false,
 				description: "Find patients based on Measurement.",
 				action: function () {
@@ -107,7 +108,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Specimen Filters",
+				text: "Add Specimen Criteria",
 				selected: false,
 				description: "Find patients based on Specimen.",
 				action: function () {
@@ -117,7 +118,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Observation Period Filters",
+				text: "Add Observation Period Criteria",
 				selected: false,
 				description: "Find patients based on Observation Period.",
 				action: function () {
@@ -127,7 +128,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 				},
 			{
-				text: "Add Death Filters",
+				text: "Add Death Criteria",
 				selected: false,
 				description: "Find patients based on death.",
 				action: function () {
@@ -187,7 +188,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 		self.addConceptSet = function (item) {}
 
 		self.addPrimaryCriteriaOptions = {
-			selectText: "Add Primary Event Filters...",
+			selectText: "Add Initial Event...",
 			width: 250,
 			height: 300,
 			actionOptions: primaryCriteriaOptions,

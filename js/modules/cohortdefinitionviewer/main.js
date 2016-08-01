@@ -68,4 +68,8 @@ define(function (require, exports) {
 	var conceptSetViewer = require('./components/ConceptSetViewer');
 	ko.components.register('conceptset-viewer',conceptSetViewer);
 
+	var conceptSetViewer = require('./components/EndStrategyViewer');
+	ko.components.register('end-strategy-viewer',conceptSetViewer);
+	
+	
 });

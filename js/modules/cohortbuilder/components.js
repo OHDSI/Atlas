@@ -65,4 +65,7 @@ define(function (require, exports) {
 	var conceptList = require('./components/ConceptList');
 	ko.components.register('concept-list',conceptList);
 	
+	var endStrategyEditor = require('./components/EndStrategyEditor');
+	ko.components.register('end-strategy-editor', endStrategyEditor);
+	
 });

@@ -5,13 +5,7 @@ define(function (require, exports) {
 	var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
 	var PrimaryCriteria = require('./PrimaryCriteria');
 	var InclusionRule = require('./InclusionRule');
-
-	function conceptSetSorter(a,b)
-	{
-		var textA = a.name().toUpperCase();
-		var textB = b.name().toUpperCase();
-		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-	}
+	var EndStrategies = require('./EndStrategies');
 	
 	function CohortExpression(data) {
 		var self = this;
@@ -21,14 +15,12 @@ define(function (require, exports) {
 		self.ConceptSets = ko.observableArray(data.ConceptSets && data.ConceptSets.map(function(d) { return new ConceptSet(d) }));
 		self.PrimaryCriteria = ko.observable(new PrimaryCriteria(data.PrimaryCriteria, self.ConceptSets));
 		self.AdditionalCriteria = ko.observable(data.AdditionalCriteria && new CriteriaGroup(data.AdditionalCriteria, self.ConceptSets));
-		self.ExpressionLimit =  { Type: ko.observable(data.ExpressionLimit && data.ExpressionLimit.Type || "All") }
+		self.QualifiedLimit =  { Type: ko.observable(data.QualifiedLimit && data.ExpressionLimit.Type || "First") }
+		self.ExpressionLimit =  { Type: ko.observable(data.ExpressionLimit && data.ExpressionLimit.Type || "First") }
 		self.InclusionRules = ko.observableArray(data.InclusionRules && data.InclusionRules.map(function (rule) {
 			return new InclusionRule(rule, self.ConceptSets);	
 		}));
-		self.ConceptSets.sorted = ko.pureComputed(function() {
-			return self.ConceptSets().map(function (item) { return item; }).sort(conceptSetSorter);
-		});
-	
+		self.EndStrategy = ko.observable(data.EndStrategy && EndStrategies.GetStrategyFromObject(data.EndStrategy, self.ConceptSets));		
 		
 	}
 	return CohortExpression;

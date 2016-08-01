@@ -9,7 +9,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 		
 		var addActions = [
 			{
-				text: "Period Limit Filter",
+				text: "Period Limit Criteria",
 				value: 5,
 				selected: false,
 				description: "Limit Observation Period to first period.",
@@ -19,7 +19,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 				}
 			},
 			{
-				text: "Add Period Start Date Filter",
+				text: "Add Period Start Date Criteria",
 				value: 0,
 				selected: false,
 				description: "Filter Observation Periods by Start Date.",
@@ -29,7 +29,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 				}
 			},
 			{
-				text: "Add Period End Date Filter",
+				text: "Add Period End Date Criteria",
 				value: 1,
 				selected: false,
 				description: "Filter Observation Periods by End Date.",
@@ -39,7 +39,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 				}
 			},
 			{
-				text: "Add Period Type Filter",
+				text: "Add Period Type Criteria",
 				value: 2,
 				selected: false,
 				description: "Filter Obsevation Periods by Type.",
@@ -49,7 +49,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 				}				
 			},	
 			{
-				text: "Add Age at Start Filter",
+				text: "Add Age at Start Criteria",
 				value: 3,
 				selected: false,
 				description: "Filter Periods by Age at Start.",
@@ -59,7 +59,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 				}
 			}, 
 			{
-				text: "Add Age at End Filter",
+				text: "Add Age at End Criteria",
 				value: 4,
 				selected: false,
 				description: "Filter Periods by age at End.",
@@ -69,7 +69,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 				}
 			}, 
 			{
-				text: "Add Period Length Filter",
+				text: "Add Period Length Criteria",
 				value: 13,
 				selected: false,
 				description: "Filter Observation Periods by duration.",
@@ -81,7 +81,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 		];
 
 		self.addCriterionSettings = {
-			selectText: "Add Filter...",
+			selectText: "Add criteria attribute…",
 			height:300,
 			actionOptions: addActions,
 			onAction: function (data) {

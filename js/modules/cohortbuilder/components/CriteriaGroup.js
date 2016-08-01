@@ -5,79 +5,79 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 
 		var addCriteriaActions = [
 			{
-				text: "Add Condition Filters",
+				text: "Add Condition Criteria",
 				selected: false,
 				description: "Find patients with specific diagnoses.",
 				action: function () { self.addConditionCriteria(); }
 			},
 			{
-				text: "Add Condition Era Filters",
+				text: "Add Condition Era Criteria",
 				selected: false,
 				description: "Find patients with specific diagnosis era.",
 				action: function () { self.addConditionEraCriteria(); }
 			},
 			{
-				text: "Add Drug Filters",
+				text: "Add Drug Criteria",
 				selected: false,
 				description: "Find patients with exposure to specific drugs or drug classes.",
 				action: function () { self.addDrugExposureCriteria(); }
 			},
 			{
-				text: "Add Drug Era Filters",
+				text: "Add Drug Era Criteria",
 				selected: false,
 				description: "Find patients with with exposure to drugs over time.",
 				action: function () { self.addDrugEraCriteria(); }
 			},
 			{
-				text: "Add Dose Era Filters",
+				text: "Add Dose Era Criteria",
 				selected: false,
 				description: "Find patients with dose eras.",
 				action: function () { self.addDoseEraCriteria(); }
 			},
 			{
-				text: "Add Procedure Filters",
+				text: "Add Procedure Criteria",
 				selected: false,
 				description: "Find patients that experienced a specific procedure.",
 				action: function () { self.addProcedureCriteria(); }
 			},
 			{
-				text: "Add Observation Filters",
+				text: "Add Observation Criteria",
 				selected: false,
 				description: "Find patients based on lab tests or other observations.",
 				action: function () { self.addObservationCriteria(); }
 			},
 			{
-				text: "Add Visit Filters",
+				text: "Add Visit Criteria",
 				selected: false,
 				description: "Find patients based on visit information.",
 				action: function () { self.addVisitCriteria(); }
 			},
 			{
-				text: "Add Device Exposure Filters",
+				text: "Add Device Exposure Criteria",
 				selected: false,
 				description: "Find patients based on device exposure.",
 				action: function () { self.addDeviceCriteria(); }
 			},
 			{
-				text: "Add Measurement Filters",
+				text: "Add Measurement Criteria",
 				selected: false,
 				description: "Find patients based on Measurements.",
 				action: function () { self.addMeasurementCriteria(); }
 			},
 			{
-				text: "Add Specimen Filters",
+				text: "Add Specimen Criteria",
 				selected: false,
 				description: "Find patients based on Specimen.",
 				action: function () { self.addSpecimenCriteria(); }
 			},			
 			{
-				text: "Add Observation Period Filters",
+				text: "Add Observation Period Criteria",
 				selected: false,
 				description: "Find patients based on Observation Period.",
 				action: function () { self.addObservationPeriodCriteria(); }
 			},
 			{
-				text: "Add Death Filters",
+				text: "Add Death Criteria",
 				selected: false,
 				description: "Find patients based on death.",
 				action: function () { self.addDeathCriteria(); }

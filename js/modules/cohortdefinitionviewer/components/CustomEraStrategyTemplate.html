@@ -1,0 +1,12 @@
+<div class="heading">Custom Drug Era Exit Criteria</div>
+<div>
+	This strategy creates a drug era from the codes found in the specified concept set. If the index event is found within an era, the cohort end date will use the era's end date. 
+	Otherwise, it will use the observation period end date that contains the index event.
+</div>
+<div style="padding: 5px 0px">
+	Use the era end date of <conceptset-reference params="{conceptSetId: strategy().DrugCodesetId, conceptSets: conceptSets,  defaultName: '!!UNSPECIFIED!!'}"></conceptset-reference>
+	<ul>
+		<li>allowing <span data-bind="text: strategy().GapDays" ></span> days between exposures</li>
+		<li>adding <span data-bind="text: strategy().Offset"></span> days after exposure end</li>
+	</ul>
+</div>

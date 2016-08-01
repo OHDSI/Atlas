@@ -35,6 +35,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 	}
 
+	function conceptSetSorter(a,b)
+	{
+		var textA = a.name().toUpperCase();
+		var textB = b.name().toUpperCase();
+		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+	}
+	
 	function cohortDefinitionManager(params) {
 		var self = this;
 		var pollTimeout = null;
@@ -86,6 +93,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.selectedReport = ko.observable();
 		self.selectedReportCaption = ko.observable();
 		self.loadingInclusionReport = ko.observable(false);
+		self.sortedConceptSets = self.model.currentCohortDefinition().expression().ConceptSets.extend({sorted: conceptSetSorter});
 
 		// model behaviors
 		self.onConceptSetTabRespositoryConceptSetSelected = function (conceptSet) {
