@@ -1228,7 +1228,10 @@ define([
 										var selectedConcept = $(data).filter(function (item) {
 											return this.CONCEPT_ID == currentConceptSet.expression.items()[j].concept.CONCEPT_ID
 										});
-										currentConceptSet.expression.items()[j].concept = selectedConcept[0];
+										if (selectedConcept.length == 1)
+											currentConceptSet.expression.items()[j].concept = selectedConcept[0];
+										else
+											console.error("Concept not found: " + currentConceptSet.expression.items()[j].concept.CONCEPT_ID + "," + currentConceptSet.expression.items()[j].concept.CONCEPT_NAME);
 									}
 									currentConceptSet.expression.items.valueHasMutated();
 								}
