@@ -68,8 +68,8 @@ define(['knockout', 'text!./scatterplot.html', 'jnj_chart'], function (ko, view,
 								},
 						size: {
 									value: d=>d.afterMatchingMeanTreated,
-									scale: d3.scale.log(),
-									domain: [.5, 8],
+									//scale: d3.scale.log(),
+									//domain: [.5, 8],
 									label: "After matching mean treated",
 								},
 						color: {
@@ -85,9 +85,17 @@ define(['knockout', 'text!./scatterplot.html', 'jnj_chart'], function (ko, view,
 									value: d=>Math.floor(Math.random() * 3),
 									label: "Random",
 								},
+						series: {
+									group: d=>d.direction,
+									sort:  d=>d.prev.noout,
+									showOn:'color',
+								},
+						CIup: { // support CI in both directions
+										value: d => d.upperBound,
+										value: d => y(d) - d.upperBoundDiff,
+									},
 					},
 					//seriesName: "recordType",
-					showLegend: true,
 					/*
 					tooltips: [
 						{
