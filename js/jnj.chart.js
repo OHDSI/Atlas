@@ -14,6 +14,7 @@
 	var $ = jQuery;
 	var d3 = d3;
 
+	// should module.util functions be moved to ohdsi.util?
 	module.util = module.util || {};
 	module.util.wrap = function (text, width) {
 		text.each(function () {
@@ -1710,7 +1711,7 @@
 			return chart;
 	}
 	module.zoomScatter = function () {
-		this.render = function (data, target, w, h, options) {
+		this.render = function (data, target, w, h, opts) {
 			var chart = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
 			if (! (data && data.length)) {
 				chart.html('');
@@ -1735,20 +1736,35 @@
 					bottom: 5,
 					left: 5
 				},
+				chartProps: {
+					x: {
+								showAxis: true,
+								showLabel: true,
+								format: module.util.formatSI(3),
+								ticks: 10,
+							},
+					y: {
+								showAxis: true,
+								showLabel: true,
+								format: module.util.formatSI(3),
+								ticks: 4,
+							},
+					size: {
+									scale: d3.scale.linear(),
+									range: [.5, 8],
+								},
+					color: {},
+					shape: {},
+				},
+				showLegend: true,
 				xFormat: module.util.formatSI(3),
 				yFormat: module.util.formatSI(3),
 				//interpolate: "linear", // not used
 				seriesName: function(d) { return this.parentNode.__data__.name; },
-				xValue: "xValue",
-				// xScale: d3.scale.linear(), // default set below, but can override
-				yValue: "yValue",
-				// yScale: d3.scale.linear(), // default set below, but can override
-				sizeValue: 1,
 				sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
 				shapeValue: "shapeValue",
 				shapeScale: d3.scale.ordinal().range(shapePath("types")),
 				cssClass: "lineplot",
-				ticks: 10,
 				showSeriesLabel: false,
 				colorScale: null,
 				colors: d3.scale.category10(),
@@ -1756,22 +1772,175 @@
 				colorBasedOnIndex: false,
 				showXAxis: true
 			};
-			var options = $.extend({}, defaults, options);
-			options.chartProps = $.extend({
-																			x: {},
-																			y: {},
-																			size: {},
-																			color: {},
-																			shape: {},
-																		}, options.chartProps);
-			_.each(options.chartProps, 
-						 (prop, name) => {
+			var options = $.extend({}, defaults, opts);
+			var cp = options.chartProps = {}; // got clobbered by extend
+			_.each(defaults.chartProps, 
+						 (defaultProp, name) => {
+							 var prop = cp[name] = 
+								 $.extend({}, defaultProp, opts.chartProps[name]);
 							 prop.label = prop.label || name;
 							 prop.value = makeAccessor(prop.value || prop.label);
-							});
+							 prop.scale = prop.scale || d3.scale.linear();
+						 });
+
+			var chartThings = {
+				top: { margin: { size: options.margin.top }, },
+				bottom: { margin: { size: options.margin.bottom }, },
+				left: { margin: { size: options.margin.left }, },
+				right: { margin: { size: options.margin.right }, },
+			};
+			function zoneSize(zones) {
+				var size = _.chain(zones)
+										.map(zone=>{
+											var thing = zone.split(/\./);
+											if (thing.length === 1 && chartThings[thing]) {
+												return _.values(chartThings[thing]);
+											}
+											if (thing.length === 2 && chartThings[thing[0]][thing[1]]) {
+												return chartThings[thing[0]][thing[1]];
+											}
+											throw new Error(`invalid zone: ${zone}`);
+										})
+										.flatten()
+										.map(d=>{
+												 return d.obj ? d.obj.getBBox()[d.dim] : d3.functor(d.size)();
+										})
+										.sum()
+										.value();
+				console.log(zones, size);
+				return size;
+			}
+			function chartWidth() {
+				return w - zoneSize(["left","right"]);
+			}
+			function chartHeight() {
+				return h - zoneSize(["top","bottom"]);
+			}
+			function runPosFuncs() {
+				_.chain(chartThings)
+						.map(_.values)
+						.flatten()
+						.map('posFunc')
+						.compact()
+						.each(pf=>pf())
+						.value();
+			}
+
+			if (cp.y.showLabel) {
+				cp.y.axisLabel= chart.append("g");
+				var posFunc = function() {
+					cp.y.axisLabel.attr("transform", 
+								`translate(${zoneSize(["left.margin"])},
+													 ${zoneSize(["top"]) + (h - zoneSize(["top","bottom"])) / 2})`);
+				}
+				cp.y.axisLabel
+					.append("text")
+						.attr("class", "axislabel")
+						.attr("transform", "rotate(-90)")
+						.attr("y", 0)
+						.attr("x", 0)
+						.attr("dy", "1em")
+						.style("text-anchor", "middle")
+						.text(cp.y.label);
+
+				//chartThings.left.axisLabel = { size: bbox.width, posFunc };
+				chartThings.left.axisLabel = { size: ()=>cp.y.axisLabel.node().getBBox().width * 1.5, posFunc };
+				// width is calculated as 1.5 * box height due to rotation anomolies that cause the y axis label to appear shifted.
+			}
+
+			cp.y.scale = (options.yScale || d3.scale.linear())
+								.domain(extent(data, cp.y.value))
+								.range([chartHeight(), 0]);
+			/*
+			var axisHelper = chart.append("g")
+												.attr("transform", `translate(
+															${options.margin.left + yAxisLabelWidth + yAxisWidth},
+															${options.margin.top})`);
+			*/
+			if (cp.y.showAxis) {
+				cp.y.axis = cp.y.axis || d3.svg.axis()
+																		.scale(cp.y.scale)
+																		.tickFormat(cp.y.format)
+																		.ticks(cp.y.ticks)
+																		.orient("left");
+
+				cp.y.axisG = chart.append("g").attr("class", "y axis"); // FIX on first time only
+				var posFunc = function() {
+					cp.y.scale.range([chartHeight(), 0]);
+					cp.y.axisG
+						.attr('transform', `translate(${zoneSize(['left'])},${zoneSize(['top'])})`)
+						.call(cp.y.axis);
+				}
+
+				chartThings.left.axis = { obj: cp.y.axisG.node(), dim:'width',posFunc };
+				posFunc();
+			}
+
+			// define the intial scale (range will be updated after we 
+			// determine the final dimensions)
+			cp.x.scale = (options.xScale || d3.scale.linear())
+								.domain(extent(data, cp.x.value))
+								.range([0, chartWidth()]);
+
+			if (cp.x.showLabel) {
+				cp.x.axisLabel= chart.append("g")
+				var posFunc = function() {
+					cp.x.axisLabel
+						.attr("transform", `translate(${w / 2},${h - zoneSize(["bottom.margin"])})`);
+				}
+				cp.x.axisLabel.append("text")
+					.attr("class", "axislabel")
+					.style("text-anchor", "middle")
+					.text(cp.x.label);
+
+				//var bbox = cp.x.axisLabel.node().getBBox();
+				//chartThings.bottom.axisLabel = { obj:bbox.height, dim:'height', posFunc };
+				chartThings.bottom.axisLabel = { size: ()=>cp.x.axisLabel.node().getBBox().height, posFunc };
+				posFunc();
+			}
+			if (options.showXAxis) {
+				cp.x.axis = cp.x.axis || d3.svg.axis()
+																		.scale(cp.x.scale)
+																		.tickFormat(cp.x.format)
+																		.ticks(cp.x.ticks)
+																		.orient("bottom");
+
+				cp.x.axisG = chart.append("g").attr("class", "x axis") // FIX on first time only
+													.call(cp.x.axis);
+				var posFunc = function() {
+					cp.x.axisG.attr('transform', `translate(${zoneSize(['left'])},
+																${zoneSize(['top']) + chartHeight()})`)
+					cp.x.scale.range([chartWidth(), 0]);
+				}
+
+				chartThings.bottom.axis = { obj:cp.x.axisG.node(), dim:'height', posFunc };
+				posFunc();
+
+				if (cp.x.tickFormat) { // check for custom tick formatter
+					cp.x.axis.tickFormat(cp.x.tickFormat);
+				} else { // apply standard formatter
+					cp.x.axis.tickFormat(cp.x.format);
+				}
+
+				// if x scale is ordinal, then apply rangeRoundBands, else 
+				// apply standard range.
+				if (typeof cp.x.scale.rangePoints === 'function') {
+					cp.x.scale.rangePoints([0, chartWidth]);
+				} else {
+					cp.x.scale.range([0, chartWidth]);
+				}
+			}
+			runPosFuncs();
+			var vis = chart.append("g")
+				.attr("class", options.cssClass)
+				.attr("transform", `translate(${zoneSize(['left'])},${zoneSize(['top'])})`)
+				.attr("clip-path","url(#clip)");
+
+
+			// temporary
 			[ "x", "y", "size", "shape", 
 			].forEach(function(prop) {
-				options[prop + 'Value'] = makeAccessor(options.chartProps[prop].value);
+				options[prop + 'Value'] = makeAccessor(cp[prop].value);
 			});
 
 			var tooltipBuilder = tooltipFactory(options.tooltips);
@@ -1779,35 +1948,6 @@
 			var xAxisLabelHeight = 0;
 			var yAxisLabelWidth = 0;
 
-			// apply labels (if specified) and offset margins accordingly
-			if (options.xLabel) {
-				var xAxisLabel = chart.append("g")
-					.attr("transform", "translate(" + w / 2 + "," + (h - options.margin.bottom) + ")")
-
-				xAxisLabel.append("text")
-					.attr("class", "axislabel")
-					.style("text-anchor", "middle")
-					.text(options.xLabel);
-
-				var bbox = xAxisLabel.node().getBBox();
-				xAxisLabelHeight += bbox.height;
-			}
-
-			if (options.yLabel) {
-				var yAxisLabel = chart.append("g")
-					.attr("transform", "translate(" + options.margin.left + "," + (((h - options.margin.bottom - options.margin.top) / 2) + options.margin.top) + ")");
-				yAxisLabel.append("text")
-					.attr("class", "axislabel")
-					.attr("transform", "rotate(-90)")
-					.attr("y", 0)
-					.attr("x", 0)
-					.attr("dy", "1em")
-					.style("text-anchor", "middle")
-					.text(options.yLabel);
-
-				var bbox = yAxisLabel.node().getBBox();
-				yAxisLabelWidth = 1.5 * bbox.width; // width is calculated as 1.5 * box height due to rotation anomolies that cause the y axis label to appear shifted.
-			}
 
 			var legendWidth = 0;
 			if (options.showLegend) {
@@ -1834,10 +1974,6 @@
 				legendWidth += maxWidth + 5;
 			}
 
-			// calculate an intial width and height that does not take into account the tick text dimensions
-			var width = w - options.margin.left - options.margin.right - yAxisLabelWidth - legendWidth;
-			var height = h - options.margin.top - options.margin.bottom - xAxisLabelHeight;
-
 			chart.data(data)
 
 			var focusTip = d3.tip()
@@ -1845,42 +1981,6 @@
 				.offset([-10, 0])
 				.html(tooltipBuilder);
 			chart.call(focusTip);
-
-			// define the intial scale (range will be updated after we 
-			// determine the final dimensions)
-			var x = (options.xScale || d3.scale.linear())
-								.domain(extent(data, options.xValue));
-
-			var xAxis = d3.svg.axis()
-				.scale(x)
-				.ticks(options.ticks)
-				.orient("bottom");
-
-			// check for custom tick formatter
-			if (options.tickFormat) {
-				xAxis.tickFormat(options.tickFormat);
-			} else // apply standard formatter
-			{
-				xAxis.tickFormat(options.xFormat);
-			}
-
-			// if x scale is ordinal, then apply rangeRoundBands, else 
-			// apply standard range.
-			if (typeof x.rangePoints === 'function') {
-				x.rangePoints([0, width]);
-			} else {
-				x.range([0, width]);
-			}
-
-			var y = (options.yScale || d3.scale.linear())
-								.domain(extent(data, options.yValue))
-								.range([height, 0]);
-
-			var yAxis = d3.svg.axis()
-				.scale(y)
-				.tickFormat(options.yFormat)
-				.ticks(4)
-				.orient("left");
 
 			function extent(data, accessor) {
 				return d3.extent(
@@ -1893,68 +1993,50 @@
 			options.sizeScale
 								.domain(extent(data, options.sizeValue))
 								.range([.5, 8])
+
 			// create temporary x axis
 			var tempXAxis = chart.append("g").attr("class", "axis");
 			tempXAxis.call(xAxis);
 			var xAxisHeight = Math.round(tempXAxis.node().getBBox().height);
 			var xAxisWidth = Math.round(tempXAxis.node().getBBox().width);
-			height = height - xAxisHeight;
-			width = width - Math.max(0, (xAxisWidth - width)); // trim width if xAxisWidth bleeds over the allocated width.
+			chartHeight = chartHeight - xAxisHeight;
+			chartWidth = chartWidth - Math.max(0, (xAxisWidth - chartWidth)); // trim width if xAxisWidth bleeds over the allocated width.
 			tempXAxis.remove();
-
-			// create temporary y axis
-			var tempYAxis = chart.append("g").attr("class", "axis");
-			tempYAxis.call(yAxis);
-
-			// update height based on temp xaxis dimension and remove
-			var yAxisWidth = Math.round(tempYAxis.node().getBBox().width);
-			width = width - yAxisWidth;
-			tempYAxis.remove();
-
 			// reset axis ranges
 			// if x scale is ordinal, then apply rangeRoundBands, else apply standard range.
-			if (typeof x.rangePoints === 'function') {
-				x.rangePoints([0, width]);
+			if (typeof cp.x.scale.rangePoints === 'function') {
+				cp.x.scale.rangePoints([0, chartWidth]);
 			} else {
-				x.range([0, width]);
+				cp.x.scale.range([0, chartWidth]);
 			}
-			y.range([height, 0]);
-
-			var axisHelper = chart.append("g")
-				.attr("transform", "translate(" + (options.margin.left + yAxisLabelWidth + yAxisWidth) + "," + options.margin.top + ")");
-
-			var vis = chart.append("g")
-				.attr("class", options.cssClass)
-				.attr("transform", "translate(" + (options.margin.left + yAxisLabelWidth + yAxisWidth) + "," + options.margin.top + ")")
-				.attr("clip-path","url(#clip)");
 
 			var clip = vis.append("defs")
 				.append("clipPath")
 				.attr("id", "clip")
 				.append("rect")
-				.attr("width", width)
-				.attr("height", height)
+				.attr("width", chartWidth)
+				.attr("height", chartHeight)
 				.attr("x", 0)
 				.attr("y", 0);
 
 			var brush = d3.svg.brush()
-				.x(x)
-				.y(y)
+				.x(cp.x.scale)
+				.y(cp.y.scale)
 				.on('brushstart', function() {
 					$('.extent').show();
 					$('.resize').show();
 				})
 				.on('brushend', function () {
-					x.domain(brush.empty() ? xDomain : [brush.extent()[0][0], brush.extent()[1][0]]);
-					y.domain(brush.empty() ? yDomain : [brush.extent()[0][1], brush.extent()[1][1]]);
+					cp.x.scale.domain(brush.empty() ? xDomain : [brush.extent()[0][0], brush.extent()[1][0]]);
+					cp.y.scale.domain(brush.empty() ? yDomain : [brush.extent()[0][1], brush.extent()[1][1]]);
 
 					series
 						.selectAll(".dot")
 						.transition()
 						.duration(750)
 						.attr("transform", function (d) {
-							var xVal = x(options.xValue(d));
-							var yVal = y(options.yValue(d));
+							var xVal = cp.x.scale(options.xValue(d));
+							var yVal = cp.y.scale(options.yValue(d));
 							return "translate(" + xVal + "," + yVal + ")";
 						});
 
@@ -1995,8 +2077,8 @@
 					return options.colors(options.seriesName.call(this, d));
 				})
 				.attr("transform", function (d) {
-					var xVal = x(options.xValue(d));
-					var yVal = y(options.yValue(d));
+					var xVal = cp.x.scale(options.xValue(d));
+					var yVal = cp.y.scale(options.yValue(d));
 					return "translate(" + xVal + "," + yVal + ")";
 				})
 				.on('mouseover', function (d) {
@@ -2015,7 +2097,7 @@
 						};
 					})
 					.attr("transform", function (d) {
-						return "translate(" + x(options.xValue(d.value)) + "," + y(options.yValue(d.value)) + ")";
+						return "translate(" + cp.x.scale(options.xValue(d.value)) + "," + cp.y.scale(options.yValue(d.value)) + ")";
 					})
 					.attr("x", 3)
 					.attr("dy", 2)
@@ -2025,24 +2107,13 @@
 					});
 			}
 
-			if (options.showXAxis) {
-				axisHelper.append("g")
-					.attr("class", "x axis")
-					.attr("transform", "translate(0," + height + ")")
-					.call(xAxis);
-			}
-
-			axisHelper.append("g")
-				.attr("class", "y axis")
-				.call(yAxis)
-
 			if (options.labelIndexDate) {
 				vis.append("rect")
 					.attr("transform", function () {
 						return "translate(" + (indexPoints.x - 0.5) + "," + indexPoints.y + ")";
 					})
 					.attr("width", 1)
-					.attr("height", height);
+					.attr("height", chartHeight);
 			}
 
 		}
