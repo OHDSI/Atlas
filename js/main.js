@@ -74,6 +74,7 @@ requirejs.config({
 		"cohort-definition-manager": "components/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definition-browser",
 		"cohort-comparison-browser": "components/cohort-comparison-browser",
+        "cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
 		"feasibility-manager": "components/feasibility-manager",
 		"feasibility-browser": "components/feasibility-browser",
 		"feasibility-analyzer": "components/feasibility-analyzer",

@@ -35,16 +35,6 @@ table.cohort-generate-sources thead {
 	height: 32px;
 }
 
-cohort-comparison-manager label {
-	text-transform: uppercase;
-	color:#888;
-	margin: 10px 0px 0px 2px;
-table.cohort-generate-sources {
-	width:100%;
-	border-bottom: solid 1px #888;
-}
-
-
 .btn.btn-sm {
 	padding-top: 0px;
 	padding-bottom: 0px;
@@ -1443,6 +1433,10 @@ circle.parent {
 
 circle.child {
 	fill: #eee;
+}
+
+#kernelDensityContainer text {
+	font-size: 10px;
 }
 
 .axis path,

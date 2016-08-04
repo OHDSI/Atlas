@@ -1,0 +1,340 @@
+<div data-bind="if: $component.cohortComparison() && ($component.cohortComparison().readyForDisplay() == false)">
+    Please complete the full specification for the study
+</div>
+<div data-bind="if: $component.cohortComparison() && $component.cohortComparison().readyForDisplay()">
+<h3>Research question</h3>
+<br/>
+To compare the risk of <span class="outcomeCohortName" data-bind="text: $component.cohortComparison().outcomeCaption()"></span> between <span class="treatmentCohortName" data-bind="text: $component.cohortComparison().treatmentCaption()"></span> and <span class="comparatorCohortName" data-bind="text: $component.cohortComparison().comparatorCaption()"></span>, we will estimate the population-level effect of exposure on the <span data-bind="text: $component.cohortComparison().modelTypeRate()"></span> of the outcome during the period from <span data-bind="text: $component.cohortComparison().timeAtRiskStart()"></span> days from cohort start date to <span data-bind="text: $component.cohortComparison().timeAtRiskEnd()"></span> days from <span data-bind="text: $component.cohortComparison().addExposureDaysToEndDescription()"></span>.
+<br/>
+<h3>Study Design:</h3>
+This study will follow a retrospective, observational, comparative cohort design. We define ‘retrospective’ to mean the study will be conducted using data already collected prior to the start of the study.  We define ‘observational’ to mean there is no intervention or treatment assignment imposed by the study. We define 'cohort' to mean a set of patients satisfying a one or more inclusion criteria for a duration of time.  We define ‘comparative cohort design’ to mean the formal comparison between two cohorts, a treatment cohort and comparator cohort, for the risk of an outcome during a defined time period after cohort entry.
+<div>
+<br />
+In this study, we compare <span class="treatmentCohortName" data-bind="text: $component.cohortComparison().treatmentCaption()"></span> with <span class="comparatorCohortName" data-bind="text: $component.cohortComparison().comparatorCaption()"></span> for the <span data-bind="text: $component.cohortComparison().modelTypeRate()"></span> of <span class="outcomeCohortName" data-bind="text: $component.cohortComparison().outcomeCaption()"></span> from <span data-bind="text: $component.cohortComparison().timeAtRiskStart()"></span> days from cohort start date to <span data-bind="text: $component.cohortComparison().timeAtRiskEnd()"></span> days from <span id="modelTypeRate" data-bind="text: $component.cohortComparison().addExposureDaysToEndDescription()"></span>.
+</div>
+<div>
+<br />
+The treatment cohort, <span class="treatmentCohortName" data-bind="text: $component.cohortComparison().treatmentCaption()"></span> is defined as:
+</div>
+<div data-bind="if: $component.cohortComparison().treatmentCohortDefinition() != null">
+<br />
+<cohort-expression-viewer params="expression: $component.cohortComparison().treatmentCohortDefinition().expression, selectedFragment: $component.cohortComparison().treatmentCohortDefinition().expression"></cohort-expression-viewer>
+</div>
+<div>
+<br />
+The comparator cohort, <span class="comparatorCohortName" data-bind="text: $component.cohortComparison().comparatorCaption()"></span> is defined as: 
+</div>
+<div data-bind="if: $component.cohortComparison().comparatorCohortDefinition() != null">
+<br />
+<cohort-expression-viewer params="expression: $component.cohortComparison().comparatorCohortDefinition().expression, selectedFragment: $component.cohortComparison().comparatorCohortDefinition().expression"></cohort-expression-viewer>
+</div>
+<div data-bind="if: $component.cohortComparison().minimumWashoutPeriod() > 0">
+<br />
+For both cohorts, we impose a requirement that patients must have at least <span data-bind="text: $component.cohortComparison().minimumWashoutPeriod()"></span> days of continuous observation prior to cohort entry.      
+</div>
+<div data-bind="if: $component.cohortComparison().minimumDaysAtRisk() > 0">
+<br />
+For both cohorts, we impose a requirement that patients must have at least <span data-bind="text: $component.cohortComparison().minimumDaysAtRisk()"></span> days of continuous observation after the time-at-risk start, <span id="modelTypeRate" data-bind="text: $component.cohortComparison().timeAtRiskStart()"></span> days from cohort start date.
+</div>
+<div>
+<br />
+The overall study population could be considered to be patients who entered either the treatment cohort or comparator cohort.  <span data-bind="if: $component.cohortComparison().rmSubjectsInBothCohorts() == 1">Patients were excluded from consideration is they qualified for both the treatment cohort and comparator cohort at any time in their record.</span>
+</div>
+<div>
+<br />
+The outcome, <span class="outcomeCohortName" data-bind="text: $component.cohortComparison().outcomeCaption()"></span>, is defined as:
+</div>
+<div data-bind="if: $component.cohortComparison().outcomeCohortDefinition() != null">
+<br />
+<cohort-expression-viewer params="expression: $component.cohortComparison().outcomeCohortDefinition().expression, selectedFragment: $component.cohortComparison().outcomeCohortDefinition().expression"></cohort-expression-viewer>
+</div>
+<div data-bind="if: $component.cohortComparison().modelType() == 1">
+<br />
+Patients in the treatment and comparator cohorts are classified as having the outcome if an event among <span class="outcomeCohortName" data-bind="text: $component.cohortComparison().outcomeCaption()"></span> occurs with a start date during the time-at-risk of <span id="modelTypeRate" data-bind="text: $component.cohortComparison().timeAtRiskStart()"></span> days from cohort start date to <span class="modelTypeRate" data-bind="text: $component.cohortComparison().timeAtRiskEnd()"></span> days from <span id="modelTypeRate" data-bind="text: $component.cohortComparison().addExposureDaysToEndDescription()"></span>.
+</div>
+<div data-bind="if: $component.cohortComparison().modelType() == 2">
+<br />
+The rate of outcomes among patients in the treatment and comparator cohorts is determined by counting the number of outcome occurrences of <span class="outcomeCohortName" data-bind="text: $component.cohortComparison().outcomeCaption()"></span> during the time-at-risk of <span id="modelTypeRate" data-bind="text: $component.cohortComparison().timeAtRiskStart()"></span> days from cohort start date to <span class="modelTypeRate" data-bind="text: $component.cohortComparison().timeAtRiskEnd()"></span> days from <span id="modelTypeRate" data-bind="text: $component.cohortComparison().addExposureDaysToEndDescription()"></span>.
+</div>
+<div data-bind="if: $component.cohortComparison().modelType() == 3">
+<br />
+The time-to-event of outcome among patients in the treatment and comparator cohorts is determined by calculating the number of days from the start of the time-at-risk window, <span id="modelTypeRate" data-bind="text: $component.cohortComparison().timeAtRiskStart()"></span> days from cohort start date until the earliest event among 1) the first occurrence of the outcome, <span class="outcomeCohortName" data-bind="text: $component.cohortComparison().outcomeCaption()"></span> before <span class="modelTypeRate" data-bind="text: $component.cohortComparison().timeAtRiskEnd()"></span> days from <span id="modelTypeRate" data-bind="text: $component.cohortComparison().addExposureDaysToEndDescription()"></span>, 2) the end of the time-at-risk window, <span class="modelTypeRate" data-bind="text: $component.cohortComparison().timeAtRiskEnd()"></span> days from <span id="modelTypeRate" data-bind="text: $component.cohortComparison().addExposureDaysToEndDescription()"></span>, and 3) the end of the observation period that spans the time-at-risk start.
+</div>
+<div data-bind="if: $component.cohortComparison().rmPriorOutcomes() == 1">
+<br />
+Patients with <span class="outcomeCohortName" data-bind="text: $component.cohortComparison().outcomeCaption()"></span> prior to treatment or comparator cohort entry were excluded from consideration.
+</div>
+<div data-bind="if: $component.cohortComparison().psAdjustment() == 1">
+<br />
+Propensity scores will be used as an analytic strategy to reduce potential confounding due to imbalance between the treatment and comparator cohorts in baseline covariates.  The propensity score is the probability of a patient being classified in the treatment cohort vs. the comparator cohort, given a set of observed covariates.  In this study, the propensity score is estimated for each patient, using the predicted probability from a regularized logistic regression model, fit with a Laplace prior (LASSO) and the regularization hyperparameter selected by optimizing the likelihood in a 10-fold cross validation, using a starting variance of 0.01 and a tolerance of 2e-7.
+<br />
+<br />
+The types of baseline covariates used to fit the propensity score model will be:  
+<br />
+<br />
+<div>
+    <ul data-bind="visible: cohortComparison().psDemographics">
+        <li>Demographics</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().psDemographicsGender">Gender</li>
+            <li data-bind="visible:cohortComparison().psDemographicsAge">Age group (5-year bands)</li>
+            <li data-bind="visible:cohortComparison().psDemographicsYear">Index year</li>
+            <li data-bind="visible:cohortComparison().psDemographicsMonth">Index month</li>
+            <li data-bind="visible:cohortComparison().psDemographicsRace">Race</li>
+            <li data-bind="visible:cohortComparison().psDemographicsEthnicity">Ethnicity</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().psCondition">
+        <li>Conditions</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().psConditionOcc30d">In prior 30d</li>
+            <li data-bind="visible:cohortComparison().psConditionOcc365d">In prior 365d</li>
+            <li data-bind="visible:cohortComparison().psConditionOccInpt180d">In prior 180d within inpatient setting</li>
+            <li data-bind="visible:cohortComparison().psConditionEraEver">All time prior</li>
+            <li data-bind="visible:cohortComparison().psConditionEraOverlap">Overlapping index date</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().psConditionGroup">
+        <li>Condition aggregation</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().psConditionGroupSnomed">SNOMED</li>
+            <li data-bind="visible:cohortComparison().psConditionGroupMeddra">MedDRA</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().psDrug">
+        <li>Drugs</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().psDrugInPrior30d">In prior 30d</li>
+            <li data-bind="visible:cohortComparison().psDrugInPrior365d">In prior 365d</li>
+            <li data-bind="visible:cohortComparison().psDrugEraEver">All time prior</li>
+            <li data-bind="visible:cohortComparison().psDrugEraOverlap">Overlapping index date</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().psDrugAggregation">
+        <li>Drug aggregation</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().psDrugExposure">Clinical Drug</li>
+            <li data-bind="visible:cohortComparison().psDrugEra">Ingredient</li>
+            <li data-bind="visible:cohortComparison().psDrugGroup">ATC Class</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().psProcedureOcc">
+        <li>Procedures</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().psProcedureOcc30d">In prior 30d</li>
+            <li data-bind="visible:cohortComparison().psProcedureOcc365d">In prior 365d</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().psMeasurement">
+        <li>Measurement</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().psMeasurement30d">Existence in prior 30d</li>
+            <li data-bind="visible:cohortComparison().psMeasurement365d">Existence in prior 365d</li>
+            <li data-bind="visible:cohortComparison().psMeasurementCount365d">Count in prior 365d</li>
+            <li data-bind="visible:cohortComparison().psMeasurementBelow">Has latest prior numeric value below normal range</li>
+            <li data-bind="visible:cohortComparison().psMeasurementAbove">Has latest prior numeric value above normal range</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().psRiskScores">
+        <li>Risk scores</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().psRiskScoresCharlson">Charlson</li>
+            <li data-bind="visible:cohortComparison().psRiskScoresChads2">CHADS2</li>
+            <li data-bind="visible:cohortComparison().psRiskScoresDcsi">DCSI</li>
+        </ul>
+    </ul>
+    <ul>
+        <li data-bind="visible:cohortComparison().psConceptCounts">Concept counts (count of distinct conditions/procedures/visits in history)</li>
+    </ul>
+    <ul data-bind="visible: cohortComparison().psInteraction">
+        <li>Interaction terms</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().psInteractionYear">By index year</li>
+            <li data-bind="visible:cohortComparison().psInteractionMonth">By index month</li>
+        </ul>
+    </ul>
+</div>
+<div data-bind="if: $component.cohortComparison().psInclusionId() != null">
+<br />
+Specific covariates to be included in the propensity score model are:
+<br />
+<br />
+<!-- ko foreach: ko.observableArray($component.cohortComparison().psInclusionConceptSet()) -->
+<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+<!-- /ko -->
+</div>
+<div data-bind="if: $component.cohortComparison().psExclusionId() != null">
+<br />
+Specific covariates to be excluded from the propensity score model are: 
+<br />
+<br />
+<!-- ko foreach: ko.observableArray($component.cohortComparison().psExclusionConceptSet()) -->
+<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+<!-- /ko -->
+<br />
+<br />
+All covariates that occur in fewer than 10 persons between the treatment and comparator cohorts combined will be excluded prior to model fitting.
+</div>
+<div data-bind="if: $component.cohortComparison().psTrim() > 0">
+    The propensity score estimates are used to restrict the cohorts through patient trimming. <span data-bind="if: $component.cohortComparison().psTrim() == 1">Patients are excluded if their predicted probability is less than <span data-bind="text: $component.cohortComparison().psTrimFraction()"></span>% or greater than <span data-bind="text: (100 - $component.cohortComparison().psTrimFraction())"></span>% of the propensity score distribution across both cohorts.</span><span data-bind="if: $component.cohortComparison().psTrim() == 2">Patients are excluded if their predicted probability is less than <span data-bind="text: $component.cohortComparison().psTrimFraction()"></span>% or greater than <span data-bind="text: (100 - $component.cohortComparison().psTrimFraction())"></span>% of the preference score.</span>
+</div>
+<div data-bind="if: $component.cohortComparison().psMatch() == 1">
+<br />
+Patients in the treatment cohort will be matched to patients in the comparator cohort, using a maximum ratio of <span data-bind="text: $component.cohortComparison().psMatchMaxRatio()"></span>:1 matching, using a greedy matching algorithm, applying a caliper of 0.25 of the standard deviation of the propensity score distribution.  
+</div>
+<div data-bind="if: $component.cohortComparison().psStrat() == 1">
+<br />
+The treatment cohort and comparator cohorts will be stratified into <span data-bind="text: $component.cohortComparison().psStratNumStrata()"></span> quantiles of the propensity score distrbution.
+</div>
+<div data-bind="if: $component.cohortComparison().omCovariates() == 1">
+<br />
+A multivariate <span data-bind="if: ($component.cohortComparison().psMatch() == 1 || $component.cohortComparison().psStrat() == 1)">conditional</span> <span data-bind="text: $component.cohortComparison().modelTypeName()"></span> will be used to estimate the <span class="modelTypeRate" data-bind="text: $component.cohortComparison().modelTypeRate()"></span> of <span class="outcomeCohortName" data-bind="text: $component.cohortComparison().outcomeCaption()"></span> in <span class="treatmentCohortName" data-bind="text: $component.cohortComparison().treatmentCaption()"></span>, relative to <span class="comparatorCohortName" data-bind="text: $component.cohortComparison().comparatorCaption()"></span>, adjusting for the following baseline covariates:  
+<br />
+<br />
+<div>
+    <ul data-bind="visible: cohortComparison().omDemographics">
+        <li>Demographics</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().omDemographicsGender">Gender</li>
+            <li data-bind="visible:cohortComparison().omDemographicsAge">Age group (5-year bands)</li>
+            <li data-bind="visible:cohortComparison().omDemographicsYear">Index year</li>
+            <li data-bind="visible:cohortComparison().omDemographicsMonth">Index month</li>
+            <li data-bind="visible:cohortComparison().omDemographicsRace">Race</li>
+            <li data-bind="visible:cohortComparison().omDemographicsEthnicity">Ethnicity</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().omCondition">
+        <li>Conditions</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().omConditionOcc30d">In prior 30d</li>
+            <li data-bind="visible:cohortComparison().omConditionOcc365d">In prior 365d</li>
+            <li data-bind="visible:cohortComparison().omConditionOccInpt180d">In prior 180d within inpatient setting</li>
+            <li data-bind="visible:cohortComparison().omConditionEraEver">All time prior</li>
+            <li data-bind="visible:cohortComparison().omConditionEraOverlap">Overlapping index date</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().omConditionGroup">
+        <li>Condition aggregation</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().omConditionGroupSnomed">SNOMED</li>
+            <li data-bind="visible:cohortComparison().omConditionGroupMeddra">MedDRA</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().omDrug">
+        <li>Drugs</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().omDrugInPrior30d">In prior 30d</li>
+            <li data-bind="visible:cohortComparison().omDrugInPrior365d">In prior 365d</li>
+            <li data-bind="visible:cohortComparison().omDrugEraEver">All time prior</li>
+            <li data-bind="visible:cohortComparison().omDrugEraOverlap">Overlapping index date</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().omDrugAggregation">
+        <li>Drug aggregation</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().omDrugExposure">Clinical Drug</li>
+            <li data-bind="visible:cohortComparison().omDrugEra">Ingredient</li>
+            <li data-bind="visible:cohortComparison().omDrugGroup">ATC Class</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().omProcedureOcc">
+        <li>Procedures</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().omProcedureOcc30d">In prior 30d</li>
+            <li data-bind="visible:cohortComparison().omProcedureOcc365d">In prior 365d</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().omMeasurement">
+        <li>Measurement</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().omMeasurement30d">Existence in prior 30d</li>
+            <li data-bind="visible:cohortComparison().omMeasurement365d">Existence in prior 365d</li>
+            <li data-bind="visible:cohortComparison().omMeasurementCount365d">Count in prior 365d</li>
+            <li data-bind="visible:cohortComparison().omMeasurementBelow">Has latest prior numeric value below normal range</li>
+            <li data-bind="visible:cohortComparison().omMeasurementAbove">Has latest prior numeric value above normal range</li>
+        </ul>
+    </ul>
+    <ul data-bind="visible: cohortComparison().omRiskScores">
+        <li>Risk scores</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().omRiskScoresCharlson">Charlson</li>
+            <li data-bind="visible:cohortComparison().omRiskScoresChads2">CHADS2</li>
+            <li data-bind="visible:cohortComparison().omRiskScoresDcsi">DCSI</li>
+        </ul>
+    </ul>
+    <ul>
+        <li data-bind="visible:cohortComparison().omConceptCounts">Concept counts (count of distinct conditions/procedures/visits in history)</li>
+    </ul>
+    <ul data-bind="visible: cohortComparison().omInteraction">
+        <li>Interaction terms</li>
+        <ul>
+            <li data-bind="visible:cohortComparison().omInteractionYear">By index year</li>
+            <li data-bind="visible:cohortComparison().omInteractionMonth">By index month</li>
+        </ul>
+    </ul>
+</div>
+<br />
+<br />
+A regularized regression model will be fit with a LaPlace prior (LASSO) for all covariates except for the cohort classifier (treatment vs. comparator); the regularization hyperparameter will be selected by optimizing the likelihood in a 10-fold cross validation, using a starting variance of 0.01 and a tolerance of 2e-7.
+<div data-bind="if: $component.cohortComparison().omInclusionId() > 0">
+<br/>
+Specific covariates to be included in the outcome model are: 
+<br/>
+<br/>
+<!-- ko foreach: $component.cohortComparison().omInclusionConceptSet() -->
+<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+<!-- /ko -->
+</div>
+<div data-bind="if: $component.cohortComparison().omExclusionId() > 0">
+<br/>
+Specific covariates to be excluded from the outcome model are:
+<br/>
+<br/>
+<!-- ko foreach: $component.cohortComparison().omExclusionConceptSet() -->
+<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+<!-- /ko -->
+</div>
+</div>
+<h3>Output and evaluation</h3>
+<div>
+Covariate balance will be summarized in tabular form by showing the mean value for all baseline covariates in the treatment and comparator cohort, with the associated standardized mean difference computed for each covariate.
+</div>
+<div data-bind="if: $component.cohortComparison().psAdjustment() == 1">
+<br/>
+Once the propensity score model is fit, we will plot the propensity score distribution of the treatment and comparator cohorts to evaluate the comparability of the two cohorts. The plot will be scaled to the preference score, normalizing for any imbalance in cohort size.  The area under the Receiver Operating Characteric (ROC) curve (AUC) will be reported.  The covariates selected within the propensity score model, with associated coefficients will also be reported.
+<div data-bind="if: $component.cohortComparison().psMatch() == 1">
+<br/>
+A plot showing the propensity score distributions for both cohorts after matching will be provided.  Covariate balance will be evaluated by plotting the standardized mean difference of each covariate before propensity score matching against the standardized mean difference for each covariate after propensity score matching.
+</div>
+<div data-bind="if: $component.cohortComparison().psStrat() == 1">
+<br/>
+A plot showing the propensity score distributions for both cohorts after stratification will be provided, with each quantile cutpoint shown as a vertical line.
+</div>
+<div>
+<br/>
+An attrition diagram will be provided to detail the loss of patients from the original treatment cohort, <span class="treatmentCohortName" data-bind="text: $component.cohortComparison().treatmentCaption()"></span>, and comparator cohort <span class="comparatorCohortName" data-bind="text: $component.cohortComparison().comparatorCaption()"></span> to the subpopulations that remain after all design considerations have been applied.
+</div>
+<div>
+<br/>
+The final outcome model will be summarized by providing the treatment effect estimate and associated 95% confidence interval.  The number of persons, amount of time-at-risk, and number of outcomes in each cohort will also be reported.  
+</div>
+<div data-bind="if: $component.cohortComparison().modelType() == 3">
+<br/>
+A Kaplan-Meier plot will be generated to characterize the contour of risk over time for the outcome of interest.
+</div>
+<div data-bind="if: $component.cohortComparison().omCovariates() == 1">
+<br/>
+The covariates selected within the outcome model, with associated coefficients will be provided.
+</div>
+<div data-bind="if: $component.cohortComparison().negativeControlId() != null">
+<br/>
+Negative control outcomes will be used to evaluate the potential impact of residual systematic error in the study design, and to facilitate empirical calibration of the p-value for the outcomes of interest.  Negative control outcomes are concepts known not to be associated with either the treatment or comparator group, such that we can assume the true relative risk should equal 1. The negative control outcomes used in this study are: 
+<br/>
+<br/>
+<!-- ko foreach: $component.cohortComparison().negativeControlConceptSet() -->
+<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+<!-- /ko -->
+<br/>
+<br/>
+For each negative control outcome, the study design described above will be implemented and the effect estimate will be recorded.  The distribution of effect estimates across all negative control outcomes will be used to fit an empirical null distribution which models the observed residual systematic error.  The empirical null distribution will then be applied to the target outcome of interest to calibrate the p-value.  Empirical calibration serves as an important diagnostic tool to evaluate if the residual systematic error is sufficient to cast doubt on the accuracy of the unknown effect estimate.  The calibration effect plot and calibration probability plots will be generated for review.  We will report the traditional p-value and empirically calibrated p-value for each negative control, as well as the unknown outcomes of interest
+</div>

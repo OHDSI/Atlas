@@ -88,7 +88,7 @@ define(function (require, exports) {
 		if (url)
 			repositoryUrl = url + 'conceptset/';
 		else
-			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/conceptset/';
+			repositoryUrl = config.webAPIRoot + 'conceptset/';
 
 		repositoryUrl += id + '/expression';
 		

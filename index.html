@@ -64,7 +64,7 @@
 				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
 			</li>
 			<li>
-				<a href="#/cohortcomparisons"><i class="fa fa-balance-scale"></i>Cohort Comparisons</a>
+				<a href="#/estimation"><i class="fa fa-balance-scale"></i>Estimation</a>
 			</li>
 			<li>
 				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
@@ -172,11 +172,11 @@
 				<feasibility-analyzer params="services: pageModel.services, feasibilityId: pageModel.feasibilityId"></feasibility-analyzer>
 			</div>
 
-			<div data-bind="if:pageModel.currentView() == 'cohortcomparisons'">
+			<div data-bind="if:pageModel.currentView() == 'estimations'">
 				<cohort-comparison-browser></cohort-comparison-browser>
 			</div>
 
-			<div data-bind="if:pageModel.currentView() == 'cohortcomparison'">
+			<div data-bind="if:pageModel.currentView() == 'estimation'">
 				<cohort-comparison-manager params="currentCohortComparisonId:pageModel.currentCohortComparisonId"></cohort-comparison-manager>
 			</div>
 

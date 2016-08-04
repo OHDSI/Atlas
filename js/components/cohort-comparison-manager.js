@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/CohortDefinitionAPI', 'appConfig', 'cohortcomparison/ComparativeCohortAnalysis', 'nvd3', 'css!./styles/nv.d3.min.css'],
-	function ($, ko, view, cohortDefinitionAPI, config, ComparativeCohortAnalysis) {
+define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/CohortDefinitionAPI', 'appConfig', 'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options', 'cohortbuilder/CohortDefinition', 'vocabularyprovider', 'conceptsetbuilder/InputTypes/ConceptSet', 'nvd3', 'css!./styles/nv.d3.min.css'],
+	function ($, ko, view, cohortDefinitionAPI, config, ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI, ConceptSet) {
 		function cohortComparisonManager(params) {
 
 			var self = this;
@@ -19,6 +19,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 			self.sourceHistoryDisplay = {};
 			self.sourceProcessingStatus = {};
 			self.sourceExecutions = {};
+            self.options = options;
+            self.expressionMode = ko.observable('print');
+            self.cohortComparison = ko.observable();
 
 			var initSources = config.services[0].sources.filter(s => s.hasCDM);
 			for (var i = 0; i < initSources.length; i++) {
@@ -325,15 +328,17 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 			}
 
 			self.cohortSelected = function (id) {
-				$('cohort-comparison-manager #modalCohortDefinition').modal('hide');
-				cohortDefinitionAPI.getCohortDefinition(id).then(function (cohort) {
-					self.targetId(cohort.id);
-					self.targetCaption(cohort.name);
+                $('cohort-comparison-manager #modalCohortDefinition').modal('hide');
+				cohortDefinitionAPI.getCohortDefinition(id).then(function (cohortDefinition) {
+					self.targetId(cohortDefinition.id);
+					self.targetCaption(cohortDefinition.name);
+                    cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+                    self.targetCohortDefinition(new CohortDefinition(cohortDefinition));                    
 				});
 			}
 
 			self.canSave = ko.pureComputed(function () {
-				return self.cohortComparison().comparatorId() && self.cohortComparison().treatmentId() && self.cohortComparison().exclusionId() && self.cohortComparison().outcomeId();
+				return self.cohortComparison().comparatorId() && self.cohortComparison().treatmentId() && self.cohortComparison().psExclusionId() && self.cohortComparison().outcomeId();
 			});
 
 			self.save = function () {
@@ -343,12 +348,134 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					treatmentId: self.cohortComparison().treatmentId(),
 					comparatorId: self.cohortComparison().comparatorId(),
 					outcomeId: self.cohortComparison().outcomeId(),
-					timeAtRisk: 9999,
-					exclusionId: self.cohortComparison().exclusionId()
+					modelType: self.cohortComparison().modelType(),
+                    timeAtRiskStart: self.cohortComparison().timeAtRiskStart(),
+                    timeAtRiskEnd: self.cohortComparison().timeAtRiskEnd(),
+                    addExposureDaysToEnd: self.cohortComparison().addExposureDaysToEnd(),
+                    minimumWashoutPeriod: self.cohortComparison().minimumWashoutPeriod(),
+                    minimumDaysAtRisk: self.cohortComparison().minimumDaysAtRisk(),
+                    rmSubjectsInBothCohorts: self.cohortComparison().rmSubjectsInBothCohorts(),
+                    rmPriorOutcomes: self.cohortComparison().rmPriorOutcomes(),
+                    psAdjustment: self.cohortComparison().psAdjustment(),
+                    psExclusionId: self.cohortComparison().psExclusionId(),
+                    psInclusionId: self.cohortComparison().psInclusionId(),
+                    psDemographics: self.cohortComparison().psDemographics() | 0,
+                    psDemographicsGender: self.cohortComparison().psDemographicsGender() | 0,
+                    psDemographicsRace: self.cohortComparison().psDemographicsRace() | 0,
+                    psDemographicsEthnicity: self.cohortComparison().psDemographicsEthnicity() | 0,
+                    psDemographicsAge: self.cohortComparison().psDemographicsAge() | 0,
+                    psDemographicsYear: self.cohortComparison().psDemographicsYear() | 0,
+                    psDemographicsMonth: self.cohortComparison().psDemographicsMonth() | 0,
+                    psTrim: self.cohortComparison().psTrim(),
+                    psTrimFraction: self.cohortComparison().psTrimFraction(),
+                    psMatch: self.cohortComparison().psMatch(),
+                    psMatchMaxRatio: self.cohortComparison().psMatchMaxRatio(),
+                    psStrat: self.cohortComparison().psStrat() | 0,
+                    psStratNumStrata: self.cohortComparison().psStratNumStrata(),
+                    psConditionOcc: self.cohortComparison().psConditionOcc() | 0,
+                    psConditionOcc365d: self.cohortComparison().psConditionOcc365d() | 0,
+                    psConditionOcc30d: self.cohortComparison().psConditionOcc30d() | 0,
+                    psConditionOccInpt180d: self.cohortComparison().psConditionOccInpt180d() | 0,
+                    psConditionEra: self.cohortComparison().psConditionEra() | 0,
+                    psConditionEraEver: self.cohortComparison().psConditionEraEver() | 0,
+                    psConditionEraOverlap: self.cohortComparison().psConditionEraOverlap() | 0,
+                    psConditionGroup: self.cohortComparison().psConditionGroup() | 0,
+                    psConditionGroupMeddra: self.cohortComparison().psConditionGroupMeddra() | 0,
+                    psConditionGroupSnomed: self.cohortComparison().psConditionGroupSnomed() | 0,
+                    psDrugExposure: self.cohortComparison().psDrugExposure() | 0,
+                    psDrugExposure365d: self.cohortComparison().psDrugExposure365d() | 0,
+                    psDrugExposure30d: self.cohortComparison().psDrugExposure30d() | 0,
+                    psDrugEra: self.cohortComparison().psDrugEra() | 0,
+                    psDrugEra365d: self.cohortComparison().psDrugEra365d() | 0,
+                    psDrugEra30d: self.cohortComparison().psDrugEra30d() | 0,
+                    psDrugEraOverlap: self.cohortComparison().psDrugEraOverlap() | 0,
+                    psDrugEraEver: self.cohortComparison().psDrugEraEver() | 0,
+                    psDrugGroup: self.cohortComparison().psDrugGroup() | 0,
+                    psProcedureOcc: self.cohortComparison().psProcedureOcc() | 0,
+                    psProcedureOcc365d: self.cohortComparison().psProcedureOcc365d() | 0,
+                    psProcedureOcc30d: self.cohortComparison().psProcedureOcc30d() | 0,
+                    psProcedureGroup: self.cohortComparison().psProcedureGroup() | 0,
+                    psObservation: self.cohortComparison().psObservation() | 0,
+                    psObservation365d: self.cohortComparison().psObservation365d() | 0,
+                    psObservation30d: self.cohortComparison().psObservation30d() | 0,
+                    psObservationCount365d: self.cohortComparison().psObservationCount365d() | 0,
+                    psMeasurement: self.cohortComparison().psMeasurement() | 0,
+                    psMeasurement365d: self.cohortComparison().psMeasurement365d() | 0,
+                    psMeasurement30d: self.cohortComparison().psMeasurement30d() | 0,
+                    psMeasurementCount365d: self.cohortComparison().psMeasurementCount365d() | 0,
+                    psMeasurementBelow: self.cohortComparison().psMeasurementBelow() | 0,
+                    psMeasurementAbove: self.cohortComparison().psMeasurementAbove() | 0,
+                    psConceptCounts: self.cohortComparison().psConceptCounts() | 0,
+                    psRiskScores: self.cohortComparison().psRiskScores() | 0,
+                    psRiskScoresCharlson: self.cohortComparison().psRiskScoresCharlson() | 0,
+                    psRiskScoresDcsi: self.cohortComparison().psRiskScoresDcsi() | 0,
+                    psRiskScoresChads2: self.cohortComparison().psRiskScoresChads2() | 0,
+                    psRiskScoresChads2vasc: self.cohortComparison().psRiskScoresChads2vasc() | 0,
+                    psInteractionYear: self.cohortComparison().psInteractionYear() | 0,
+                    psInteractionMonth: self.cohortComparison().psInteractionMonth() | 0,
+                    omCovariates: self.cohortComparison().omCovariates(),
+                    omExclusionId: self.cohortComparison().omExclusionId(),
+                    omInclusionId: self.cohortComparison().omInclusionId(),
+                    omDemographics: self.cohortComparison().omDemographics() | 0,
+                    omDemographicsGender: self.cohortComparison().omDemographicsGender() | 0,
+                    omDemographicsRace: self.cohortComparison().omDemographicsRace() | 0,
+                    omDemographicsEthnicity: self.cohortComparison().omDemographicsEthnicity() | 0,
+                    omDemographicsAge: self.cohortComparison().omDemographicsAge() | 0,
+                    omDemographicsYear: self.cohortComparison().omDemographicsYear() | 0,
+                    omDemographicsMonth: self.cohortComparison().omDemographicsMonth() | 0,
+                    omTrim: self.cohortComparison().omTrim(),
+                    omTrimFraction: self.cohortComparison().omTrimFraction(),
+                    omMatch: self.cohortComparison().omMatch(),
+                    omMatchMaxRatio: self.cohortComparison().omMatchMaxRatio(),
+                    omStrat: self.cohortComparison().omStrat() | 0,
+                    omStratNumStrata: self.cohortComparison().omStratNumStrata(),
+                    omConditionOcc: self.cohortComparison().omConditionOcc() | 0,
+                    omConditionOcc365d: self.cohortComparison().omConditionOcc365d() | 0,
+                    omConditionOcc30d: self.cohortComparison().omConditionOcc30d() | 0,
+                    omConditionOccInpt180d: self.cohortComparison().omConditionOccInpt180d() | 0,
+                    omConditionEra: self.cohortComparison().omConditionEra() | 0,
+                    omConditionEraEver: self.cohortComparison().omConditionEraEver() | 0,
+                    omConditionEraOverlap: self.cohortComparison().omConditionEraOverlap() | 0,
+                    omConditionGroup: self.cohortComparison().omConditionGroup() | 0,
+                    omConditionGroupMeddra: self.cohortComparison().omConditionGroupMeddra() | 0,
+                    omConditionGroupSnomed: self.cohortComparison().omConditionGroupSnomed() | 0,
+                    omDrugExposure: self.cohortComparison().omDrugExposure() | 0,
+                    omDrugExposure365d: self.cohortComparison().omDrugExposure365d() | 0,
+                    omDrugExposure30d: self.cohortComparison().omDrugExposure30d() | 0,
+                    omDrugEra: self.cohortComparison().omDrugEra() | 0,
+                    omDrugEra365d: self.cohortComparison().omDrugEra365d() | 0,
+                    omDrugEra30d: self.cohortComparison().omDrugEra30d() | 0,
+                    omDrugEraOverlap: self.cohortComparison().omDrugEraOverlap() | 0,
+                    omDrugEraEver: self.cohortComparison().omDrugEraEver() | 0,
+                    omDrugGroup: self.cohortComparison().omDrugGroup() | 0,
+                    omProcedureOcc: self.cohortComparison().omProcedureOcc() | 0,
+                    omProcedureOcc365d: self.cohortComparison().omProcedureOcc365d() | 0,
+                    omProcedureOcc30d: self.cohortComparison().omProcedureOcc30d() | 0,
+                    omProcedureGroup: self.cohortComparison().omProcedureGroup() | 0,
+                    omObservation: self.cohortComparison().omObservation() | 0,
+                    omObservation365d: self.cohortComparison().omObservation365d() | 0,
+                    omObservation30d: self.cohortComparison().omObservation30d() | 0,
+                    omObservationCount365d: self.cohortComparison().omObservationCount365d() | 0,
+                    omMeasurement: self.cohortComparison().omMeasurement() | 0,
+                    omMeasurement365d: self.cohortComparison().omMeasurement365d() | 0,
+                    omMeasurement30d: self.cohortComparison().omMeasurement30d() | 0,
+                    omMeasurementCount365d: self.cohortComparison().omMeasurementCount365d() | 0,
+                    omMeasurementBelow: self.cohortComparison().omMeasurementBelow() | 0,
+                    omMeasurementAbove: self.cohortComparison().omMeasurementAbove() | 0,
+                    omConceptCounts: self.cohortComparison().omConceptCounts() | 0,
+                    omRiskScores: self.cohortComparison().omRiskScores() | 0,
+                    omRiskScoresCharlson: self.cohortComparison().omRiskScoresCharlson() | 0,
+                    omRiskScoresDcsi: self.cohortComparison().omRiskScoresDcsi() | 0,
+                    omRiskScoresChads2: self.cohortComparison().omRiskScoresChads2() | 0,
+                    omRiskScoresChads2vasc: self.cohortComparison().omRiskScoresChads2vasc() | 0,
+                    omInteractionYear: self.cohortComparison().omInteractionYear() | 0,
+                    omInteractionMonth: self.cohortComparison().omInteractionMonth() | 0,
+                    delCovariatesSmallCount: self.cohortComparison().delCovariatesSmallCount(),
+                    negativeControlId: self.cohortComparison().negativeControlId()
 				};
 
 				if (self.cohortComparisonId() != 0) {
-					cca.id = self.cohortComparisonId();
+					cca.analysisId = self.cohortComparisonId();
 				}
 
 				var json = JSON.stringify(cca);
@@ -372,31 +499,70 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 			}
 
 			self.conceptsetSelected = function (d) {
-				self.cohortComparison().exclusionId(d.id);
-				self.cohortComparison().exclusionCaption(d.name);
-				$('cohort-comparison-manager #modalConceptSet').modal('hide');
+                $('cohort-comparison-manager #modalConceptSet').modal('hide');
+                vocabularyAPI.getConceptSetExpression(d.id).then(function (csExpression) {
+                    self.targetId(d.id);
+                    self.targetCaption(d.name);
+                    var conceptSetData = {id: d.id, name: d.name, expression: csExpression};
+                    self.targetExpression.removeAll();
+                    self.targetExpression.push(new ConceptSet(conceptSetData));
+                });
 			}
 
 			self.chooseTreatment = function () {
 				$('cohort-comparison-manager #modalCohortDefinition').modal('show');
 				self.targetId = self.cohortComparison().treatmentId;
 				self.targetCaption = self.cohortComparison().treatmentCaption;
+                self.targetCohortDefinition = self.cohortComparison().treatmentCohortDefinition;
 			}
 
 			self.chooseComparator = function () {
 				$('cohort-comparison-manager #modalCohortDefinition').modal('show');
 				self.targetId = self.cohortComparison().comparatorId;
 				self.targetCaption = self.cohortComparison().comparatorCaption;
+                self.targetCohortDefinition = self.cohortComparison().comparatorCohortDefinition;
 			}
 
 			self.chooseOutcome = function () {
 				$('cohort-comparison-manager #modalCohortDefinition').modal('show');
 				self.targetId = self.cohortComparison().outcomeId;
 				self.targetCaption = self.cohortComparison().outcomeCaption;
+                self.targetCohortDefinition = self.cohortComparison().outcomeCohortDefinition;
 			}
 
-			self.chooseExclusion = function () {
+			self.choosePsExclusion = function () {
 				$('cohort-comparison-manager #modalConceptSet').modal('show');
+                self.targetId = self.cohortComparison().psExclusionId;
+				self.targetCaption = self.cohortComparison().psExclusionCaption;
+                self.targetExpression = self.cohortComparison().psExclusionConceptSet;
+			}
+			
+            self.choosePsInclusion = function () {
+				$('cohort-comparison-manager #modalConceptSet').modal('show');
+                self.targetId = self.cohortComparison().psInclusionId;
+				self.targetCaption = self.cohortComparison().psInclusionCaption;
+                self.targetExpression = self.cohortComparison().psInclusionConceptSet;
+			}
+
+            self.chooseOmExclusion = function () {
+				$('cohort-comparison-manager #modalConceptSet').modal('show');
+                self.targetId = self.cohortComparison().omExclusionId;
+				self.targetCaption = self.cohortComparison().omExclusionCaption;
+                self.targetExpression = self.cohortComparison().omExclusionConceptSet;
+			}
+			
+            self.chooseOmInclusion = function () {
+				$('cohort-comparison-manager #modalConceptSet').modal('show');
+                self.targetId = self.cohortComparison().omInclusionId;
+				self.targetCaption = self.cohortComparison().omInclusionCaption;
+                self.targetExpression = self.cohortComparison().omInclusionConceptSet;
+			}
+            
+            self.chooseNegativeControl= function () {
+				$('cohort-comparison-manager #modalConceptSet').modal('show');
+                self.targetId = self.cohortComparison().negativeControlId;
+				self.targetCaption = self.cohortComparison().negativeControlCaption;
+                self.targetExpression = self.cohortComparison().negativeControlConceptSet;
 			}
 
 			self.chooseConceptSet = function (conceptSetType, observable) {
@@ -439,9 +605,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					}
 				});
 			};
-
+            
 			if (self.cohortComparisonId() == 0) {
-				self.cohortComparison = ko.observable(new ComparativeCohortAnalysis());
+				self.cohortComparison(new ComparativeCohortAnalysis());
 				self.loading(false);
 			} else {
 				$.ajax({
@@ -449,8 +615,101 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (comparativeCohortAnalysis) {
-						self.cohortComparison = ko.observable(new ComparativeCohortAnalysis(comparativeCohortAnalysis));
-						self.loading(false);
+						self.cohortComparison(new ComparativeCohortAnalysis(comparativeCohortAnalysis));
+                        treatmentPromise = $.Deferred();
+                        comparatorPromise = $.Deferred();
+                        outcomePromise = $.Deferred();
+                        
+                        // Load up the cohort definitions
+                        // Treatment
+                        if (self.cohortComparison().treatmentId() != null) {
+                            treatmentPromise = cohortDefinitionAPI.getCohortDefinition(self.cohortComparison().treatmentId()).then(function (cohortDefinition) {
+                                 cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+                                 self.cohortComparison().treatmentCohortDefinition(new CohortDefinition(cohortDefinition));
+                            });
+                        } else {
+                            treatmentPromise.resolve();
+                        }
+
+                        // Comparator
+                        if (self.cohortComparison().comparatorId() != null) {
+                            comparatorPromise = cohortDefinitionAPI.getCohortDefinition(self.cohortComparison().comparatorId()).then(function (cohortDefinition) {
+                                 cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+                                 self.cohortComparison().comparatorCohortDefinition(new CohortDefinition(cohortDefinition));
+                            });
+                        } else {
+                            comparatorPromise.resolve();
+                        }
+
+                        // Outcome
+                        if (self.cohortComparison().outcomeId() != null) {
+                            outcomePromise = cohortDefinitionAPI.getCohortDefinition(self.cohortComparison().outcomeId()).then(function (cohortDefinition) {
+                                 cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+                                 self.cohortComparison().outcomeCohortDefinition(new CohortDefinition(cohortDefinition));
+                            });
+                        } else {
+                            outcomePromise.resolve();
+                        }
+                        
+                        // Load up the concept sets
+                        // PS Inclusion Concepts
+                        if (self.cohortComparison().psInclusionId() != null) {
+                            var conceptSetData = {
+                                id: self.cohortComparison().psInclusionId(), 
+                                name: self.cohortComparison().psInclusionCaption(), 
+                                expression: comparativeCohortAnalysis.psInclusionConceptSet
+                            };
+                            self.cohortComparison().psInclusionConceptSet.removeAll();
+                            self.cohortComparison().psInclusionConceptSet.push(new ConceptSet(conceptSetData));
+                        }
+
+                        // PS Exclusion Concepts
+                        if (self.cohortComparison().psExclusionId() != null) {
+                            var conceptSetData = {
+                                id: self.cohortComparison().psExclusionId(), 
+                                name: self.cohortComparison().psExclusionCaption(), 
+                                expression: comparativeCohortAnalysis.psExclusionConceptSet
+                            };
+                            self.cohortComparison().psExclusionConceptSet.removeAll();
+                            self.cohortComparison().psExclusionConceptSet.push(new ConceptSet(conceptSetData));
+                        }
+                        
+                        // OM Inclusion Concepts
+                        if (self.cohortComparison().omInclusionId() != null) {
+                            var conceptSetData = {
+                                id: self.cohortComparison().omInclusionId(), 
+                                name: self.cohortComparison().omInclusionCaption(), 
+                                expression: comparativeCohortAnalysis.omInclusionConceptSet
+                            };
+                            self.cohortComparison().omInclusionConceptSet.removeAll();
+                            self.cohortComparison().omInclusionConceptSet.push(new ConceptSet(conceptSetData));
+                        }
+
+                        // PS Exclusion Concepts
+                        if (self.cohortComparison().omExclusionId() != null) {
+                            var conceptSetData = {
+                                id: self.cohortComparison().omExclusionId(), 
+                                name: self.cohortComparison().omExclusionCaption(), 
+                                expression: comparativeCohortAnalysis.omExclusionConceptSet
+                            };
+                            self.cohortComparison().omExclusionConceptSet.removeAll();
+                            self.cohortComparison().omExclusionConceptSet.push(new ConceptSet(conceptSetData));
+                        }
+                        
+                        // Negative Control Concepts
+                        if (self.cohortComparison().negativeControlId() != null) {
+                            var conceptSetData = {
+                                id: self.cohortComparison().negativeControlId(), 
+                                name: self.cohortComparison().negativeControlCaption(), 
+                                expression: comparativeCohortAnalysis.negativeControlConceptSet
+                            };
+                            self.cohortComparison().negativeControlConceptSet.removeAll();
+                            self.cohortComparison().negativeControlConceptSet.push(new ConceptSet(conceptSetData));
+                        }
+
+                        $.when(treatmentPromise, comparatorPromise, outcomePromise).done(function () {                            
+                            self.loading(false);
+                        });
 					}
 				});
 			}

@@ -142,15 +142,15 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.currentView('r');
 						});
 					},
-					'/cohortcomparisons': function () {
+					'/estimation': function () {
 						require(['cohort-comparison-browser'], function () {
-							self.currentView('cohortcomparisons');
+							self.currentView('estimations');
 						});
 					},
-					'/cohortcomparison/:cohortComparisonId:': function (cohortComparisonId) {
-						require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
+					'/estimation/:cohortComparisonId:': function (cohortComparisonId) {
+						require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly'], function () {
 							self.currentCohortComparisonId(cohortComparisonId)
-							self.currentView('cohortcomparison');
+							self.currentView('estimation');
 						});
 					}
 				}

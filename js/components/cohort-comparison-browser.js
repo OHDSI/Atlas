@@ -28,7 +28,7 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohort
 		};
 
 		self.rowClick = function (d) {
-			document.location = '#/cohortcomparison/' + d.analysisId;
+			document.location = '#/estimation/' + d.analysisId;
 		}
 
 		self.columns = [
@@ -55,7 +55,7 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohort
 		];
 
 		self.newCohortComparison = function() {
-			document.location = '#/cohortcomparison/0'	;
+			document.location = '#/estimation/0'	;
 		}
 		
 		self.loading(true);
