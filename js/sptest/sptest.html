@@ -6,7 +6,9 @@
 	<scatterplot 
 			style="width:300px; height:100px;"
 			params="{
-				jsonfile: 'js/sptest/sample.json',
+				jsonFile: $component.jsonFile,
+				dataSetup: $component.dataSetup,
+				chartOptions: $component.chartOptions,
 			}"></scatterplot>
 
 	<div class="heading">table:</div>

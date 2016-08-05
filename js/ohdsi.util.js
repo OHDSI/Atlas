@@ -108,15 +108,15 @@ define(['jquery','knockout'], function($,ko) {
 	 *																	 },
 	 *												 cbParams: []});
 	 */
-	function d3AddIfNeeded({parentElement, data, tag, classes, addCb, updateCb, 
+	function d3AddIfNeeded({parentElement, data, tag, classes=[], addCb=()=>{}, updateCb=()=>{}, 
 												  cbParams} = {}) {
 		var el = getContainer(parentElement, "d3");
 		var selection = el.selectAll([tag].concat(classes).join('.'));
 		if (Array.isArray(data)) {
 			selection = selection.data(data);
 		} else {
-			selection = selection.datum(data);
-			// or? selection = selection.data([data]);
+			selection = selection.data([data]);
+			// might want this? : selection = selection.datum(data);
 		}
 		selection.exit().remove();
 		selection.enter().append(tag)
@@ -126,9 +126,9 @@ define(['jquery','knockout'], function($,ko) {
 						newNode.classed(cls, true);
 					});
 				})
-				.call(addCb||function(){}, cbParams);
+				.call(addCb, cbParams);
 		selection = el.selectAll([tag].concat(classes).join('.'));
-		selection.call(updateCb||function(){}, cbParams);
+		selection.call(updateCb, cbParams);
 		return selection;
 	}
 	
