@@ -1672,7 +1672,7 @@
 	// svgSetup could probably be used for all jnj.charts; it works
 	// (i believe) the way line chart and scatterplot were already working
 	// (without the offscreen stuff, which I believe was not necessary).
-	function svgSetup(data, target, w, h, classes) {
+	function svgSetup(data, target, w, h, divClasses=[], svgClasses=[]) {
 			// call from chart obj like: 
 			//	var chart = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
 			// target gets a new div, new div gets a new svg. div/svg will resize
@@ -1680,10 +1680,32 @@
 			// svgSetup can be called multiple times but will only create div/svg
 			//	once. data will be attached to div and svg (for subsequent calls
 			//	it may need to be propogated explicitly to svg children)
+			// returns a D3Element (defined in odhsi.utils)
 			this.container = this.container || ohdsiUtil.getContainer(target, "dom");
+			if (Array.isArray(data) && data.length > 1) {
+				data = [data];
+			}
+			this.chartDivEl = new ohdsiUtil.D3Element( {
+							parentElement:this.container,
+							data, tag:'div', classes: divClasses, 
+							children: {
+								svg: {
+												// no data func means data passed to children unchanged
+												tag: 'svg',
+												classes: svgClasses,
+												updateCb: function(selection, params) {
+													selection
+														.attr('width', w)
+														.attr('height', w)
+														.attr('viewBox', '0 0 ' + w + ' ' + h);
+												},
+											}
+							},
+						});
+			/*
 			this.chartDiv = ohdsiUtil.d3AddIfNeeded({parentElement:this.container,
-															  data, tag:'div', classes, 
-																addCb: function(el, params) {
+																data, tag:'div', classes, 
+																enterCb: function(el, params) {
 																					el.append('svg:svg')
 																						.attr('width', w)
 																						.attr('height', w)
@@ -1693,22 +1715,23 @@
 																						el.select('svg'); 
 																						// so new data gets attached to svg
 																					}, cbParams:[]})
-			var chart = this.chartDiv.select('svg');
+			*/
+			this.chartDivEl.run();
 			var resizeHandler = $(window).on("resize", {
-					container: $(this.chartDiv.node()),
-					chart: $(chart.node()),
+					chartDivEl: this.chartDivEl,
 					aspect: w / h
 				},
 				function (event) {
-					var targetWidth = event.data.container.width();
-					event.data.chart.attr("width", targetWidth);
-					event.data.chart.attr("height", Math.round(targetWidth / event.data.aspect));
+					var targetWidth = event.data.chartDivEl.as("jquery").width();
+					event.data.chartDivEl.child('svg').as("d3")
+								.attr("width", targetWidth)
+								.attr("height", Math.round(targetWidth / event.data.aspect));
 				});
 
 			setTimeout(function () {
 				$(window).trigger('resize');
 			}, 0);
-			return chart;
+			return this.chartDivEl.child('svg');
 	}
 	function nodata(chart) {
 		chart.html('');
@@ -1756,7 +1779,7 @@
 	/* Layout class (want to make it an ES6 class, but not pushing it now)
 	 * manages layout of subcomponents in zones of an svg
 	 * initialize with layout like:
-	   var lo = new Layout(
+		 var lo = new Layout(
 				{
 					// svg dimensions
 					w: 100,
@@ -1809,23 +1832,36 @@
 	 * the repos funcs should reposition their subcomponent, but shouldn't resize 
 	 * them 
 	 */
-	function Layout(o) { // for svg subcomponents
+	class Layout { // for svg subcomponents
 											 // adjusts to actual size of elements placed in zones
-		var opts = this.opts = _.cloneDeep(o);
-		this.chartWidth = () => this.opts.w - this.zone(['left','right']);
-		this.chartHeight = () => this.opts.h - this.zone(['top','bottom']);
-		this.w = () => this.opts.w;
-		this.h = () => this.opts.h;
-		this.zone = (zones) => {
+		constructor(o) {
+			this._w = o.w;
+			this._h = o.h;
+			['left','right','top','bottom'].forEach(
+				zone => this[zone] = _.cloneDeep(o[zone]));
+		}
+		chartWidth() {
+			return this._w - this.zone(['left','right']);
+		}
+		chartHeight() {
+			return this._h - this.zone(['top','bottom']);
+		}
+		w() {
+			return this._w;
+		}
+		h() {
+			return this._h;
+		}
+		zone(zones) {
 			zones = typeof zones === "string" ? [zones] : zones;
 			var size = _.chain(zones)
 									.map(zone=>{
-										var thing = zone.split(/\./);
-										if (thing.length === 1 && opts[thing]) {
-											return _.values(opts[thing]);
+										var zoneParts = zone.split(/\./);
+										if (zoneParts.length === 1 && this[zoneParts]) {
+											return _.values(this[zoneParts]);
 										}
-										if (thing.length === 2 && opts[thing[0]][thing[1]]) {
-											return opts[thing[0]][thing[1]];
+										if (zoneParts.length === 2 && this[zoneParts[0]][zoneParts[1]]) {
+											return this[zoneParts[0]][zoneParts[1]];
 										}
 										throw new Error(`invalid zone: ${zone}`);
 									})
@@ -1838,34 +1874,43 @@
 			//console.log(zones, size);
 			return size;
 		};
-		this.add = (zone, componentName, config) => opts[zone][componentName] = config;
-		this.repos = () => _.chain(opts)
-													.map(_.values)
-													.compact()
-													.flatten()
-													.map('repos')
-													.compact()
-													.each(repos=>repos(this))
-													.value();
+		add(zone, componentName, config) {
+			return this[zone][componentName] = config;
+		}
+		repos() {
+			return _.chain(this)
+				.map(_.values)
+				.compact()
+				.flatten()
+				.map('repos')
+				.compact()
+				.each(repos=>repos(this))
+				.value();
+		}
 	}
+	class ChartComponent {
+		constructor(chart, data, accessor) {
+		}
+	}
+
 	module.zoomScatter = function () {
 		this.render = function (data, target, w, h, opts) {
 			var options = assembleChartOptions(this.defaultOptions, opts);
 			options.layout.w = w || options.layout.w;
 			options.layout.h = h || options.layout.h;
 			var lo = new Layout(options.layout);
-			var chart = svgSetup.call(this, [data], target, w, h, ['zoom-scatter']);
+			var chart = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
 			if (!options.dataAlreadyInSeries) {
 				data = dataToSeries(data, options.series);
 			}
 			if (!dataFromSeries(data).length) { // do this some more efficient way
-				nodata(chart);
+				nodata(chart.as("d3"));
 				return;
 			}
 
 			var cp = options.chartProps;
 			if (cp.y.showLabel) {
-				cp.y.axisLabel = ohdsiUtil.d3AddIfNeeded({parentElement:chart,
+				cp.y.axisLabel = ohdsiUtil.d3AddIfNeeded({parentElement:chart.as("d3"),
 																									data: cp.y.label,
 																									tag: 'g'});
 				var repos = function() {
@@ -1907,7 +1952,7 @@
 																		.ticks(cp.y.ticks)
 																		.orient("left");
 
-				cp.y.axisG = chart.append("g").attr("class", "y axis"); // FIX on first time only
+				cp.y.axisG = chart.as("d3").append("g").attr("class", "y axis"); // FIX on first time only
 				var repos = function() {
 					cp.y.scale.range([lo.chartHeight(), 0]);
 					cp.y.axisG
@@ -1926,7 +1971,7 @@
 								.range([0, lo.chartWidth()]);
 
 			if (cp.x.showLabel) {
-				cp.x.axisLabel= chart.append("g")
+				cp.x.axisLabel= chart.as("d3").append("g")
 				var repos = function() {
 					cp.x.axisLabel
 						.attr("transform", `translate(${w / 2},${h - lo.zone(["bottom.margin"])})`);
@@ -1946,7 +1991,7 @@
 																		.ticks(cp.x.ticks)
 																		.orient("bottom");
 
-				cp.x.axisG = chart.append("g").attr("class", "x axis") // FIX on first time only
+				cp.x.axisG = chart.as("d3").append("g").attr("class", "x axis") // FIX on first time only
 													.call(cp.x.axis);
 				var repos = function() {
 					cp.x.axisG.attr('transform', `translate(${lo.zone(['left'])},
@@ -1972,7 +2017,7 @@
 				}
 			}
 			lo.repos();
-			var vis = chart.append("g")
+			var vis = chart.as("d3").append("g")
 				.attr("class", options.cssClass)
 				.attr("transform", `translate(${lo.zone(['left'])},${lo.zone(['top'])})`)
 				.attr("clip-path","url(#clip)");
@@ -1992,7 +2037,7 @@
 
 			var legendWidth = 0;
 			if (options.showLegend) {
-				var legend = chart.append("g")
+				var legend = chart.as("d3").append("g")
 					.attr("class", "legend");
 
 				var maxWidth = 0;
@@ -2021,7 +2066,7 @@
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
 				.html(tooltipBuilder);
-			chart.call(focusTip);
+			chart.as("d3").call(focusTip);
 
 			function extent(data, accessor) {
 				return d3.extent(
