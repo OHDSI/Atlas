@@ -1674,7 +1674,7 @@
 	// (without the offscreen stuff, which I believe was not necessary).
 	function svgSetup(target, data, w, h, divClasses=[], svgClasses=[]) {
 			// call from chart obj like: 
-			//	var chart = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
+			//	var svgEl = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
 			// target gets a new div, new div gets a new svg. div/svg will resize
 			//	with consistent aspect ratio.
 			// svgSetup can be called multiple times but will only create div/svg
@@ -1686,11 +1686,11 @@
 			if (Array.isArray(data) && data.length > 1) {
 				data = [data];
 			}
-			this.chartDivEl = new ohdsiUtil.D3Element( {
+			this.svgDivEl = new ohdsiUtil.D3Element( {
 							parentElement:this.container,
 							data, tag:'div', classes: divClasses, 
 			});
-			this.chartDivEl.addChild('chart',
+			this.svgDivEl.addChild('svg',
 										{
 												tag: 'svg',
 												classes: svgClasses,
@@ -1702,13 +1702,13 @@
 												},
 											});
 			var resizeHandler = $(window).on("resize", {
-					chartDivEl: this.chartDivEl,
+					svgDivEl: this.svgDivEl,
 					aspect: w / h
 				},
 				function (event) {
 					// set svg to size of container div
-					var targetWidth = event.data.chartDivEl.as("jquery").width();
-					event.data.chartDivEl.child('chart').as("d3")
+					var targetWidth = event.data.svgDivEl.as("jquery").width();
+					event.data.svgDivEl.child('svg').as("d3")
 								.attr("width", targetWidth)
 								.attr("height", Math.round(targetWidth / event.data.aspect));
 				});
@@ -1716,7 +1716,7 @@
 			setTimeout(function () {
 				$(window).trigger('resize');
 			}, 0);
-			return this.chartDivEl;
+			return this.svgDivEl;
 	}
 	function nodata(chart) {
 		chart.html('');
@@ -1785,9 +1785,9 @@
 			// provide svg element to get size from (must specify 'width' or 'height' as dim)
 			layout.add('left','axis', { obj: cp.y.axisG.node(), dim:'width' })
 
-	 * retrieve dimensions of chart area (inside all zones):
-			layout.chartWidth()
-			layout.chartHeight()
+	 * retrieve dimensions of svg area (inside all zones):
+			layout.svgWidth()
+			layout.svgHeight()
 	 * retrieve svg dimensions:
 			layout.w()
 			layout.h()
@@ -1804,7 +1804,7 @@
 	 * do something based on the latest layout parameters
 	 *
 			var position = function(layout) {
-				// positions element to x:left margin, y: middle of chart area
+				// positions element to x:left margin, y: middle of svg area
 				axisLabel.attr("transform", 
 					`translate(${layout.zone(["left.margin"])},
 										 ${layout.zone(["top"]) + (h - layout.zone(["top","bottom"])) / 2})`);
@@ -1826,10 +1826,10 @@
 			['left','right','top','bottom'].forEach(
 				zone => this[zone] = _.cloneDeep(zones[zone]));
 		}
-		chartWidth() {
+		svgWidth() {
 			return this._w - this.zone(['left','right']);
 		}
-		chartHeight() {
+		svgHeight() {
 			return this._h - this.zone(['top','bottom']);
 		}
 		w() {
@@ -1874,36 +1874,30 @@
 				.value();
 		}
 	}
-	class ChartHandler {
-		constructor(svgDivEl, layout, chartProps) {
-			this._svgDivEl = svgDivEl; // create using svgSetup
-			this._svgEl = svgDivEl.child('svg');
-			this._layoutConfig = layoutConfig; // just margins probably
-			this._chartProps = chartProps;
-		}
-	}
-	class SvgElement {
-	}
-	class ChartProp {
-	}
-	class ChartLabel {
-		constructor(svgEl, layout, chartProp, classes) {
+	class SvgElement { // assume it always gets a g and then something inside the g
+		constructor(svgEl, layout, chartProp) {
 			this.gEl = svgEl.addChild(chartProp.name, 
 											{ tag:'g', data:chartProp,
-												classes: this.cssClasses(classes), });
-			this.textEl = this.gEl.addChild('text', 
-											{ tag:'text', //classes:this.cssClasses(classes), 
-												updateCb: this.updateFunc.bind(this) });
+												classes: this.cssClasses(), });
+			this._addContent();
 			this.addToLayout(layout);
 		}
 	}
-	class LeftChartLabel extends ChartLabel {
-		cssClasses(classesParam= []) { // classes needed on text element
-			return _.union(classesParam, ['y-axislabel','axislabel']);
+	class ChartProp {
+	}
+	class ChartLabel extends SvgElement {
+		_addContent() {
+			this.textEl = this.gEl.addChild('text', 
+											{ tag:'text',
+												updateCb: this.updateFunc.bind(this) });
+		}
+	}
+	class ChartLabelLeft extends ChartLabel {
+		cssClasses() { // classes needed on g element
+			return ['y-axislabel','axislabel'];
 		}
 		updateFunc(selection) {
 			selection
-				//.attr("class", "axislabel")
 				.attr("transform", "rotate(-90)")
 				.attr("y", 0)
 				.attr("x", 0)
@@ -1913,9 +1907,14 @@
 		}
 		addToLayout(layout) {
 				layout.add('left','axisLabel', 
-					{ size: () => this.gEl.as('dom').getBBox().width * 1.5, 
+					{ size: this.size.bind(this),
 						position: this.position.bind(this) });
 				this.position(layout);
+		}
+		size() {
+			return this.gEl.as('dom').getBBox().width * 1.5;
+			// width is calculated as 1.5 * box height due to rotation anomolies 
+			// that cause the y axis label to appear shifted.
 		}
 		position(layout) {
 			this.gEl.as('d3').attr('transform',
@@ -1924,54 +1923,101 @@
 		}
 	}
 
+	class ChartAxis extends SvgElement {
+		_addContent() {
+			this.textEl = this.gEl.addChild('text', 
+											{ tag:'text',
+												updateCb: this.updateFunc.bind(this) });
+		}
+	}
+	/*
+			cp.y.scale = (options.yScale || d3.scale.linear())
+								.domain(extent(data, cp.y.value))
+								.range([layout.svgHeight(), 0]);
+				cp.y.axis = cp.y.axis || d3.svg.axis()
+																		.scale(cp.y.scale)
+																		.tickFormat(cp.y.format)
+																		.ticks(cp.y.ticks)
+																		.orient("left");
+
+				cp.y.axisG = svg.as("d3").append("g").attr("class", "y axis"); // FIX on first time only
+				var position = function() {
+					cp.y.scale.range([layout.svgHeight(), 0]);
+					cp.y.axisG
+						.attr('transform', `translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
+						.call(cp.y.axis);
+				}
+
+				layout.add('left','axis', { obj: cp.y.axisG.node(), dim:'width',position });
+				position();
+	*/
+	class ChartAxisY extends ChartAxis {
+		cssClasses() { // classes needed on g element
+			return ['y-axislabel','axislabel'];
+		}
+		updateFunc(selection) {
+			selection
+				.attr("transform", "rotate(-90)")
+				.attr("y", 0)
+				.attr("x", 0)
+				.attr("dy", "1em")
+				.style("text-anchor", "middle")
+				.text(chartProp => chartProp.label)
+		}
+		addToLayout(layout) {
+				layout.add('left','axisLabel', 
+					{ size: this.size.bind(this),
+						position: this.position.bind(this) });
+				this.position(layout);
+		}
+		size() {
+			return this.gEl.as('dom').getBBox().width * 1.5;
+			// width is calculated as 1.5 * box height due to rotation anomolies 
+			// that cause the y axis label to appear shifted.
+		}
+		position(layout) {
+			this.gEl.as('d3').attr('transform',
+				`translate(${layout.zone(["left.margin"])},
+										${layout.zone(["top"]) + (layout.h() - layout.zone(["top","bottom"])) / 2})`);
+		}
+	}
+	class svgHandler {
+		constructor(svgDivEl, layout, chartProps) {
+			this._svgDivEl = svgDivEl; // create using svgSetup
+			this._svgEl = svgDivEl.child('svg');
+			this._layoutConfig = layoutConfig; // just margins probably
+			this._chartProps = chartProps;
+		}
+	}
+
 	module.zoomScatter = function () {
 		this.render = function (data, target, w, h, opts) {
 			var options = assembleChartOptions(this.defaultOptions, opts);
-			var chart = svgSetup.call(this, target, data, w, h, ['zoom-scatter']).child('chart');
+			var svg = svgSetup.call(this, target, data, w, h, ['zoom-scatter']).child('svg');
 			var layout = new SvgLayout(w, h, options.layout);
 			if (!options.dataAlreadyInSeries) {
 				data = dataToSeries(data, options.series);
 			}
 			if (!dataFromSeries(data).length) { // do this some more efficient way
-				nodata(chart.as("d3"));
+				nodata(svg.as("d3"));
 				return;
 			}
 
+			/*
+			svgHandler.addLabel('y');
+			svgHandler.addAxis('y');
+			svgHandler.addLabel('x');
+			svgHandler.addAxis('x');
+			*/
+
 			var cp = options.chartProps;
 			if (cp.y.showLabel) {
-				cp.y.labelComponent = new LeftChartLabel(chart, layout, cp.y, ['axislabel']);
-				/*
-				cp.y.axisLabel = ohdsiUtil.d3AddIfNeeded({parentElement:chart.as("d3"),
-																									data: cp.y.label,
-																									tag: 'g'});
-				var position = function() {
-					cp.y.axisLabel.attr("transform", 
-								`translate(${layout.zone(["left.margin"])},
-													 ${layout.zone(["top"]) + (layout.h() - layout.zone(["top","bottom"])) / 2})`);
-				}
-				position();
-				ohdsiUtil.d3AddIfNeeded({parentElement:cp.y.axisLabel,
-																	data: cp.y.label,
-																	tag: 'text',
-																	updateCb: function(selection) {
-																		selection
-																			.attr("class", "axislabel")
-																			.attr("transform", "rotate(-90)")
-																			.attr("y", 0)
-																			.attr("x", 0)
-																			.attr("dy", "1em")
-																			.style("text-anchor", "middle")
-																			.text(cp.y.label);
-																	},
-																});
-				layout.add('left','axisLabel', { size: ()=>cp.y.axisLabel.node().getBBox().width * 1.5, position });
-				*/
-				// width is calculated as 1.5 * box height due to rotation anomolies that cause the y axis label to appear shifted.
+				cp.y.labelComponent = new ChartLabelLeft(svg, layout, cp.y);
 			}
 
 			cp.y.scale = (options.yScale || d3.scale.linear())
 								.domain(extent(data, cp.y.value))
-								.range([layout.chartHeight(), 0]);
+								.range([layout.svgHeight(), 0]);
 			/*
 			var axisHelper = chart.append("g")
 												.attr("transform", `translate(
@@ -1979,15 +2025,16 @@
 															${options.margin.top})`);
 			*/
 			if (cp.y.showAxis) {
+				//cp.y.axisComponent = new ChartAxisY(svg, layout, cp.y);
 				cp.y.axis = cp.y.axis || d3.svg.axis()
 																		.scale(cp.y.scale)
 																		.tickFormat(cp.y.format)
 																		.ticks(cp.y.ticks)
 																		.orient("left");
 
-				cp.y.axisG = chart.as("d3").append("g").attr("class", "y axis"); // FIX on first time only
+				cp.y.axisG = svg.as("d3").append("g").attr("class", "y axis"); // FIX on first time only
 				var position = function() {
-					cp.y.scale.range([layout.chartHeight(), 0]);
+					cp.y.scale.range([layout.svgHeight(), 0]);
 					cp.y.axisG
 						.attr('transform', `translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
 						.call(cp.y.axis);
@@ -2001,10 +2048,10 @@
 			// determine the final dimensions)
 			cp.x.scale = (cp.x.scale || d3.scale.linear())
 								.domain(extent(data, cp.x.value))
-								.range([0, layout.chartWidth()]);
+								.range([0, layout.svgWidth()]);
 
 			if (cp.x.showLabel) {
-				cp.x.axisLabel= chart.as("d3").append("g")
+				cp.x.axisLabel= svg.as("d3").append("g")
 				var position = function() {
 					cp.x.axisLabel
 						.attr("transform", `translate(${w / 2},${layout.h() - layout.zone(["bottom.margin"])})`);
@@ -2025,12 +2072,12 @@
 																		.ticks(cp.x.ticks)
 																		.orient("bottom");
 
-				cp.x.axisG = chart.as("d3").append("g").attr("class", "x axis") // FIX on first time only
+				cp.x.axisG = svg.as("d3").append("g").attr("class", "x axis") // FIX on first time only
 													.call(cp.x.axis);
 				var position = function() {
 					cp.x.axisG.attr('transform', `translate(${layout.zone('left')},
 																${layout.h() - layout.zone('bottom')})`)
-					cp.x.scale.range([layout.chartWidth(), 0]);
+					cp.x.scale.range([layout.svgWidth(), 0]);
 				}
 				position();
 
@@ -2047,17 +2094,15 @@
 				// if x scale is ordinal, then apply rangeRoundBands, else 
 				// apply standard range.
 				if (typeof cp.x.scale.rangePoints === 'function') {
-					cp.x.scale.rangePoints([0, layout.chartWidth()]);
+					cp.x.scale.rangePoints([0, layout.svgWidth()]);
 				} else {
-					cp.x.scale.range([0, layout.chartWidth()]);
+					cp.x.scale.range([0, layout.svgWidth()]);
 				}
 			}
-			console.log(cp.y.scale.domain(), cp.y.scale.range());
-			console.log(cp.x.scale.domain(), cp.x.scale.range());
 			layout.positionZones();
-			console.log(cp.y.scale.domain(), cp.y.scale.range());
-			console.log(cp.x.scale.domain(), cp.x.scale.range());
-			var vis = chart.as("d3").append("g")
+			//console.log(cp.y.scale.domain(), cp.y.scale.range());
+			//console.log(cp.x.scale.domain(), cp.x.scale.range());
+			var vis = svg.as("d3").append("g")
 				.attr("class", options.cssClass)
 				.attr("transform", `translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
 				.attr("clip-path","url(#clip)");
@@ -2077,7 +2122,7 @@
 
 			var legendWidth = 0;
 			if (options.showLegend) {
-				var legend = chart.as("d3").append("g")
+				var legend = svg.as("d3").append("g")
 					.attr("class", "legend");
 
 				var maxWidth = 0;
@@ -2100,13 +2145,13 @@
 				legendWidth += maxWidth + 5;
 			}
 
-			chart.data(data)
+			svg.data(data)
 
 			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
 				.html(tooltipBuilder);
-			chart.as("d3").call(focusTip);
+			svg.as("d3").call(focusTip);
 
 			function extent(data, accessor) {
 				return d3.extent(
@@ -2123,17 +2168,17 @@
 			// reset axis ranges
 			// if x scale is ordinal, then apply rangeRoundBands, else apply standard range.
 			if (typeof cp.x.scale.rangePoints === 'function') {
-				cp.x.scale.rangePoints([0, layout.chartWidth()]);
+				cp.x.scale.rangePoints([0, layout.svgWidth()]);
 			} else {
-				cp.x.scale.range([0, layout.chartWidth()]);
+				cp.x.scale.range([0, layout.svgWidth()]);
 			}
 
 			var clip = vis.append("defs")
 				.append("clipPath")
 				.attr("id", "clip")
 				.append("rect")
-				.attr("width", layout.chartWidth())
-				.attr("height", layout.chartHeight())
+				.attr("width", layout.svgWidth())
+				.attr("height", layout.svgHeight())
 				.attr("x", 0)
 				.attr("y", 0);
 
@@ -2231,7 +2276,7 @@
 						return "translate(" + (indexPoints.x - 0.5) + "," + indexPoints.y + ")";
 					})
 					.attr("width", 1)
-					.attr("height", layout.chartHeight());
+					.attr("height", layout.svgHeight());
 			}
 		}
 		this.defaultOptions = {
