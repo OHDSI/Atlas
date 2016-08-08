@@ -338,7 +338,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 			}
 
 			self.canSave = ko.pureComputed(function () {
-				return self.cohortComparison().comparatorId() && self.cohortComparison().treatmentId() && self.cohortComparison().psExclusionId() && self.cohortComparison().outcomeId();
+				return self.cohortComparison().name() && self.cohortComparison().comparatorId() && self.cohortComparison().treatmentId() &&  self.cohortComparison().outcomeId() && self.cohortComparison().modelType && self.cohortComparison().modelType() > 0;
 			});
 
 			self.save = function () {
@@ -490,6 +490,12 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 				});
 
 				savePromise.then(function (saveResult) {
+    				var redirectWhenComplete = saveResult.analysisId != self.cohortComparisonId();
+                    self.cohortComparisonId(saveResult.analysisId);
+                    if (redirectWhenComplete) {
+                        document.location = "#/estimation/" + self.cohortComparisonId();
+                    }
+
 					console.log(saveResult);
 				});
 			}
@@ -503,9 +509,14 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                 vocabularyAPI.getConceptSetExpression(d.id).then(function (csExpression) {
                     self.targetId(d.id);
                     self.targetCaption(d.name);
-                    var conceptSetData = {id: d.id, name: d.name, expression: csExpression};
+                    var conceptSetData = new ConceptSet({id: d.id, name: d.name, expression: csExpression});
                     self.targetExpression.removeAll();
-                    self.targetExpression.push(new ConceptSet(conceptSetData));
+                    self.targetExpression.push(conceptSetData);
+                        
+                    vocabularyAPI.resolveConceptSetExpression(csExpression).then(
+                        function (data) {
+                            self.targetConceptIds(data);
+                        });
                 });
 			}
 
@@ -535,6 +546,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                 self.targetId = self.cohortComparison().psExclusionId;
 				self.targetCaption = self.cohortComparison().psExclusionCaption;
                 self.targetExpression = self.cohortComparison().psExclusionConceptSet;
+                self.targetConceptIds = self.cohortComparison().psExclusionConceptSetSQL;
 			}
 			
             self.choosePsInclusion = function () {
@@ -542,6 +554,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                 self.targetId = self.cohortComparison().psInclusionId;
 				self.targetCaption = self.cohortComparison().psInclusionCaption;
                 self.targetExpression = self.cohortComparison().psInclusionConceptSet;
+                self.targetConceptIds = self.cohortComparison().psInclusionConceptSetSQL;
 			}
 
             self.chooseOmExclusion = function () {
@@ -549,6 +562,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                 self.targetId = self.cohortComparison().omExclusionId;
 				self.targetCaption = self.cohortComparison().omExclusionCaption;
                 self.targetExpression = self.cohortComparison().omExclusionConceptSet;
+                self.targetConceptIds = self.cohortComparison().omExclusionConceptSetSQL;
 			}
 			
             self.chooseOmInclusion = function () {
@@ -556,6 +570,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                 self.targetId = self.cohortComparison().omInclusionId;
 				self.targetCaption = self.cohortComparison().omInclusionCaption;
                 self.targetExpression = self.cohortComparison().omInclusionConceptSet;
+                self.targetConceptIds = self.cohortComparison().omInclusionConceptSetSQL;
 			}
             
             self.chooseNegativeControl= function () {
@@ -563,6 +578,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                 self.targetId = self.cohortComparison().negativeControlId;
 				self.targetCaption = self.cohortComparison().negativeControlCaption;
                 self.targetExpression = self.cohortComparison().negativeControlConceptSet;
+                self.targetConceptIds = self.cohortComparison().negativeControlConceptSetSQL;
 			}
 
 			self.chooseConceptSet = function (conceptSetType, observable) {
@@ -653,7 +669,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                         
                         // Load up the concept sets
                         // PS Inclusion Concepts
-                        if (self.cohortComparison().psInclusionId() != null) {
+                        if (self.cohortComparison().psInclusionId() > 0) {
                             var conceptSetData = {
                                 id: self.cohortComparison().psInclusionId(), 
                                 name: self.cohortComparison().psInclusionCaption(), 
@@ -664,7 +680,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                         }
 
                         // PS Exclusion Concepts
-                        if (self.cohortComparison().psExclusionId() != null) {
+                        if (self.cohortComparison().psExclusionId() > 0) {
                             var conceptSetData = {
                                 id: self.cohortComparison().psExclusionId(), 
                                 name: self.cohortComparison().psExclusionCaption(), 
@@ -675,7 +691,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                         }
                         
                         // OM Inclusion Concepts
-                        if (self.cohortComparison().omInclusionId() != null) {
+                        if (self.cohortComparison().omInclusionId() > 0) {
                             var conceptSetData = {
                                 id: self.cohortComparison().omInclusionId(), 
                                 name: self.cohortComparison().omInclusionCaption(), 
@@ -685,8 +701,8 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                             self.cohortComparison().omInclusionConceptSet.push(new ConceptSet(conceptSetData));
                         }
 
-                        // PS Exclusion Concepts
-                        if (self.cohortComparison().omExclusionId() != null) {
+                        // OM Exclusion Concepts
+                        if (self.cohortComparison().omExclusionId() > 0) {
                             var conceptSetData = {
                                 id: self.cohortComparison().omExclusionId(), 
                                 name: self.cohortComparison().omExclusionCaption(), 
@@ -695,9 +711,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                             self.cohortComparison().omExclusionConceptSet.removeAll();
                             self.cohortComparison().omExclusionConceptSet.push(new ConceptSet(conceptSetData));
                         }
-                        
-                        // Negative Control Concepts
-                        if (self.cohortComparison().negativeControlId() != null) {
+
+                        // Negative Controls Concepts
+                        if (self.cohortComparison().negativeControlId() > 0) {
                             var conceptSetData = {
                                 id: self.cohortComparison().negativeControlId(), 
                                 name: self.cohortComparison().negativeControlCaption(), 
@@ -706,9 +722,78 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                             self.cohortComparison().negativeControlConceptSet.removeAll();
                             self.cohortComparison().negativeControlConceptSet.push(new ConceptSet(conceptSetData));
                         }
-
-                        $.when(treatmentPromise, comparatorPromise, outcomePromise).done(function () {                            
+                        
+            
+                        $.when(treatmentPromise, 
+                               comparatorPromise, 
+                               outcomePromise).done(function () {
+                            
                             self.loading(false);
+                            
+                            // Resolve any concept sets against the vocab
+                            psInclusionPromise = $.Deferred();
+                            psExclusionPromise = $.Deferred();
+                            omInclusionPromise = $.Deferred();
+                            omExclusionPromise = $.Deferred();
+                            ncPromise = $.Deferred();
+
+                            // PS Inclusion Concepts
+                            if (self.cohortComparison().psInclusionId() > 0) {
+                                psInclusionPromise = vocabularyAPI.getConceptSetExpressionSQL(comparativeCohortAnalysis.psInclusionConceptSet).then(function (data) {
+                                    console.log('concept set - psInclusionPromise');  
+                                    self.cohortComparison().psInclusionConceptSetSQL(data);
+                                });
+                            } else {
+                                psInclusionPromise.resolve();
+                            }
+
+                            // PS Exclusion Concepts
+                            if (self.cohortComparison().psExclusionId() > 0) {
+                               psExclusionPromise = vocabularyAPI.getConceptSetExpressionSQL(comparativeCohortAnalysis.psExclusionConceptSet).then(function (data) {
+                                    console.log('concept set - psExclusionPromise');  
+                                    self.cohortComparison().psExclusionConceptSetSQL(data);
+                                });
+                            } else {
+                                psExclusionPromise.resolve();
+                            }
+                            
+                            // OM Inclusion Concepts
+                            if (self.cohortComparison().omInclusionId() > 0) {
+                              omInclusionPromise = vocabularyAPI.getConceptSetExpressionSQL(comparativeCohortAnalysis.omInclusionConceptSet).then(function (data) {
+                                    console.log('concept set - omInclusionPromise');  
+                                    self.cohortComparison().omInclusionConceptSetSQL(data);
+                                });
+                            } else {
+                                omInclusionPromise.resolve();
+                            }
+
+                            // OM Exclusion Concepts
+                            if (self.cohortComparison().omExclusionId() > 0) {
+                              omExclusionPromise = vocabularyAPI.getConceptSetExpressionSQL(comparativeCohortAnalysis.omExclusionConceptSet).then(function (data) {
+                                    console.log('concept set - omExclusionPromise');
+                                    self.cohortComparison().omExclusionConceptSetSQL(data);
+                                });
+                            } else {
+                                omExclusionPromise.resolve();
+                            }
+
+                            // Negative Controls Concepts
+                            if (self.cohortComparison().negativeControlId() > 0) {
+                              ncPromise = vocabularyAPI.getConceptSetExpressionSQL(comparativeCohortAnalysis.negativeControlConceptSet).then(function (data) {
+                                    console.log('concept set - ncPromise');
+                                    self.cohortComparison().negativeControlConceptSetSQL(data);
+                                });
+                            } else {
+                                ncPromise.resolve();
+                            }
+                            
+                            $.when(psInclusionPromise, 
+                                   psExclusionPromise, 
+                                   omInclusionPromise,
+                                   omExclusionPromise, 
+                                   ncPromise).done(function() {
+                                console.log('concept sets loaded');
+                            });
                         });
 					}
 				});

@@ -30,7 +30,12 @@ requirejs.config({
 			"deps": [
 				'jquery'
 			]
-		}
+		},
+        "prism" :{
+            "prism": {
+                "exports": "Prism"
+            }
+        }
 	},
 	map: {
 		"*": {
@@ -75,6 +80,7 @@ requirejs.config({
 		"cohort-definition-browser": "components/cohort-definition-browser",
 		"cohort-comparison-browser": "components/cohort-comparison-browser",
         "cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
+        "cohort-comparison-r-code": "components/cohort-comparison-r-code",
 		"feasibility-manager": "components/feasibility-manager",
 		"feasibility-browser": "components/feasibility-browser",
 		"feasibility-analyzer": "components/feasibility-analyzer",
@@ -100,7 +106,8 @@ requirejs.config({
 		"home" : "components/home",
 		"lodash": "lodash.min",
 		"common":"components/datasources/app/common",
-		"reports": "components/datasources/app/reports"
+		"reports": "components/datasources/app/reports",
+        "prism": "prism"
 	}
 });
 

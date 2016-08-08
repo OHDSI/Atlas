@@ -75,7 +75,7 @@
 		</div>
 		<div data-bind="with: expression">
 			<div data-bind="if: AdditionalCriteria">
-				<div><b>Index event inclusion criteria:</b>  From among the index events, include:</div>
+				<div><b>Initial event inclusion criteria:</b>  From among the initial events, include:</div>
 				<criteria-group params="{expression: $data, group: AdditionalCriteria}"> </criteria-group>
 				<button class="btn btn-xs btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove initial event inclusion criteria</button>
 				<div style="padding-top: 3px" data-bind="with: QualifiedLimit">Limit cohort of initial events to:
@@ -130,7 +130,7 @@
 							<inclusion-rule-editor params="{IndexRule: expression, InclusionRule: selectedInclusionRule}"></inclusion-rule-editor>
 							<!-- /ko -->
 							<!-- ko ifnot: $component.selectedInclusionRule() -->
-							<div>Please select an inclusion rule to edit.</div>
+							<div>Please select a qualifying inclusion criteria to edit.</div>
 							<!-- /ko -->
 						</td>
 					</tr>

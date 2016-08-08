@@ -117,7 +117,26 @@ define(function (require, exports) {
 		
 		return resolveConceptSetExpressionPromise;
 	}
-	
+
+	function getConceptSetExpressionSQL(expression, url)
+	{
+		var repositoryUrl;
+		
+		if (url)
+			repositoryUrl = url + 'vocabulary/conceptSetExpressionSQL';
+		else
+			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/vocabulary/conceptSetExpressionSQL';
+
+		var conceptSetExpressionSQLPromise = $.ajax({
+			url: repositoryUrl,
+			data: JSON.stringify(expression),
+			method: 'POST',
+			contentType: 'application/json'
+		});
+		
+		return conceptSetExpressionSQLPromise;
+	}
+
 	function getConceptsById(identifiers, url)
 	{
 		var repositoryUrl;
@@ -165,7 +184,8 @@ define(function (require, exports) {
 		getConceptSetExpression: getConceptSetExpression,
 		resolveConceptSetExpression: resolveConceptSetExpression,
 		getConceptsById: getConceptsById,
-		getMappedConceptsById: getMappedConceptsById
+		getMappedConceptsById: getMappedConceptsById,
+        getConceptSetExpressionSQL: getConceptSetExpressionSQL
 	}
 
 	return api;

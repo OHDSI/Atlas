@@ -7,54 +7,84 @@ define(function (require, exports) {
 		var data = data || {};
 
         // Options
-        self.modelTypeOptions = [{name: 'Logistic regression', rate: 'odds', id: 1}, {name: 'Poission regression', rate: 'rate', id: 2}, {name: 'Cox proportional hazards', rate: 'hazards', id: 3}];
+        self.modelTypeOptions = [{name: 'Logistic regression', cmArgValue: '"logistic"', rate: 'odds', id: 1}, {name: 'Poisson regression', cmArgValue: '"poisson"', rate: 'rate', id: 2}, {name: 'Cox proportional hazards', cmArgValue: '"cox"', rate: 'hazards', id: 3}];
         self.timeAtRiskEndOptions = [{name: 'cohort end date', id: 1}, {name: 'cohort start date', id: 0}];
         self.trimOptions = [{name: 'None', id: 0}, {name: 'by Percentile', id: 1}, {name: 'by Equipoise', id: 2}];
-        self.matchingOptions = [{name: 'Matching', id: 1}, {name: 'Stratification', id: 0}];
+        self.matchingOptions = [{name: 'No matching/stratification', id: 0}, {name: 'Matching', id: 1}, {name: 'Stratification', id: 2}];
 
         // Properties
 		self.name = ko.observable(data.name || null);
-        self.timeAtRiskStart = ko.observable(data.timeAtRiskStart||0);
-        self.timeAtRiskEnd = ko.observable(data.timeAtRiskEnd||0);
-        self.addExposureDaysToEnd = ko.observable(data.addExposureDaysToEnd||1);
-        self.minimumWashoutPeriod = ko.observable(data.minimumWashoutPeriod||0);
-        self.minimumDaysAtRisk = ko.observable(data.minimumDaysAtRisk||0);
-        self.rmSubjectsInBothCohorts = ko.observable(data.rmSubjectsInBothCohorts||1);
-        self.rmPriorOutcomes = ko.observable(data.rmPriorOutcomes||1);
-		self.comparatorCaption = ko.observable(data.comparatorCaption || null);
-		self.comparatorId = ko.observable(data.comparatorId || null);
-        self.comparatorCohortDefinition = ko.observable(null);
-		
-		self.treatmentCaption = ko.observable(data.treatmentCaption || null);
-		self.treatmentId = ko.observable(data.treatmentId || null);
+        self.nameMultiLine = ko.pureComputed(function() {
+            var maxLength = 45;
+            var nameFormatted = [];
+            var nameSplit = self.name().split(" ");
+            var curName = "";
+            for(i=0; i < nameSplit.length; i++) {
+                if (curName.length > maxLength) {
+                    nameFormatted.push(curName);
+                    curName = "";
+                }
+                curName += nameSplit[i] + " ";
+            }
+            nameFormatted.push(curName);
+            return nameFormatted;
+        })
+        self.timeAtRiskStart = ko.observable(data.timeAtRiskStart != null ? data.timeAtRiskStart : 0);
+        self.timeAtRiskEnd = ko.observable(data.timeAtRiskEnd != null ? data.timeAtRiskEnd : 0);
+        self.addExposureDaysToEnd = ko.observable(data.addExposureDaysToEnd != null ? data.addExposureDaysToEnd : 1);
+        self.addExposureDaysToEndFormatted = ko.pureComputed(function() {
+            return self.addExposureDaysToEnd() == 1;
+        })
+        self.minimumWashoutPeriod = ko.observable(data.minimumWashoutPeriod != null ? data.minimumWashoutPeriod : 0);
+        self.minimumDaysAtRisk = ko.observable(data.minimumDaysAtRisk != null ? data.minimumDaysAtRisk : 0);
+        self.rmSubjectsInBothCohorts = ko.observable(data.rmSubjectsInBothCohorts != null ? data.rmSubjectsInBothCohorts : 1);
+        self.rmSubjectsInBothCohortsFormatted = ko.pureComputed(function() {
+            return self.rmSubjectsInBothCohorts() == 1;
+        });
+        self.rmPriorOutcomes = ko.observable(data.rmPriorOutcomes != null ? data.rmPriorOutcomes : 1);
+        self.rmPriorOutcomesFormatted = ko.pureComputed(function () {
+            return self.rmPriorOutcomes() == 1;
+        });
+
+		self.treatmentId = ko.observable(data.treatmentId != null ? data.treatmentId : 0);
+		self.treatmentCaption = ko.observable(data.treatmentCaption != null ? data.treatmentCaption : null);
         self.treatmentCohortDefinition = ko.observable(null);
-		
-        self.psExclusionId = ko.observable(data.psExclusionId||null);
-        self.psExclusionCaption = ko.observable(data.psExclusionCaption||null);
-        self.psExclusionConceptSet = ko.observableArray(null);
-        
-        self.psInclusionId = ko.observable(data.psInclusionId||null);
-        self.psInclusionCaption = ko.observable(data.psInclusionCaption||null);
-        self.psInclusionConceptSet = ko.observableArray(null);
 
-        self.omExclusionCaption = ko.observable(data.omExclusionCaption || null);
-        self.omExclusionId = ko.observable(data.omExclusionId||null);
-        self.omExclusionConceptSet = ko.observableArray(null);
+        self.comparatorCaption = ko.observable(data.comparatorCaption != null ?  data.comparatorCaption : null);
+		self.comparatorId = ko.observable(data.comparatorId != null ? data.comparatorId : null);
+        self.comparatorCohortDefinition = ko.observable(null);
         
-        self.omInclusionCaption = ko.observable(data.omExclusionCaption || null);
-        self.omInclusionId = ko.observable(data.omInclusionId||null);
-        self.omInclusionConceptSet = ko.observableArray(null);
-
-		self.outcomeCaption = ko.observable(data.outcomeCaption || null);
-		self.outcomeId = ko.observable(data.outcomeId || null);
+		self.outcomeId = ko.observable(data.outcomeId != null ? data.outcomeId : 0);
+		self.outcomeCaption = ko.observable(data.outcomeCaption != null ? data.outcomeCaption : null);
         self.outcomeCohortDefinition = ko.observable(null);
 
-		self.negativeControlCaption = ko.observable(data.negativeControlCaption || null);
-        self.negativeControlId = ko.observable(data.negativeControlId||null);
-        self.negativeControlConceptSet = ko.observableArray(null);
+        self.psExclusionId = ko.observable(data.psExclusionId != null ? data.psExclusionId : 0);
+        self.psExclusionCaption = ko.observable(data.psExclusionCaption != null ? data.psExclusionCaption : null);
+        self.psExclusionConceptSet = ko.observableArray(null);
+        self.psExclusionConceptSetSQL = ko.observable(null);
         
-        self.modelType = ko.observable(data.modelType||null);
-        self.delCovariatesSmallCount = ko.observable(data.delCovariatesSmallCount||null);
+        self.psInclusionId = ko.observable(data.psInclusionId != null ? data.psInclusionId : 0);
+        self.psInclusionCaption = ko.observable(data.psInclusionCaption != null ? data.psInclusionCaption : null);
+        self.psInclusionConceptSet = ko.observableArray(null);
+        self.psInclusionConceptSetSQL = ko.observable(null);
+
+        self.omExclusionId = ko.observable(data.omExclusionId != null ? data.omExclusionId : 0);
+        self.omExclusionCaption = ko.observable(data.omExclusionCaption != null ? data.omExclusionCaption : null);
+        self.omExclusionConceptSet = ko.observableArray(null);
+        self.omExclusionConceptSetSQL = ko.observable(null);
+        
+        self.omInclusionId = ko.observable(data.omInclusionId != null ? data.omInclusionId : 0);
+        self.omInclusionCaption = ko.observable(data.omExclusionCaption != null ? data.omExclusionCaption : null);
+        self.omInclusionConceptSet = ko.observableArray(null);
+        self.omInclusionConceptSetSQL = ko.observable(null);
+
+        self.negativeControlId = ko.observable(data.negativeControlId != null ? data.negativeControlId : 0);
+		self.negativeControlCaption = ko.observable(data.negativeControlCaption != null ? data.negativeControlCaption : null);
+        self.negativeControlConceptSet = ko.observableArray(null);
+        self.negativeControlConceptSetSQL = ko.observable(null);
+        
+        self.modelType = ko.observable(data.modelType != null ? data.modelType : null);
+        self.delCovariatesSmallCount = ko.observable(data.delCovariatesSmallCount != null ? data.delCovariatesSmallCount : 100);
         
         // Derived fields
         self.modelTypeRate = function() {
@@ -75,7 +105,16 @@ define(function (require, exports) {
                 	})[0].name
             }
             return returnVal;
-            
+        }
+
+        self.modelTypeCmArgValue = function() {
+            returnVal = '';
+            if(self.modelType() != null) {
+                returnVal = self.modelTypeOptions.filter(function(item) {
+                		return item.id == self.modelType(); 
+                	})[0].cmArgValue
+            }
+            return returnVal;
         }
         
         self.addExposureDaysToEndDescription = function() {
@@ -94,13 +133,25 @@ define(function (require, exports) {
 
         
         // Propensity Score Settings
-        self.psAdjustment = ko.observable(data.psAdjustment||1);
+        self.psAdjustment = ko.observable(data.psAdjustment != null ? data.psAdjustment : 1);
         
-        self.psTrim = ko.observable(data.psTrim||0);
-        self.psTrimFraction = ko.observable(data.psTrimFraction||5);
-        self.psMatch = ko.observable(data.psMatch||1);
-        self.psMatchMaxRatio = ko.observable(data.psMatchMaxRatio||1);
-        self.psStratNumStrata = ko.observable(data.psStratNumStrata||5);
+        self.psTrim = ko.observable(data.psTrim != null ? data.psTrim : 0);
+        self.psTrimFraction = ko.observable(data.psTrimFraction != null ? data.psTrimFraction : 5);
+        self.psTrimFractionFormatted = ko.pureComputed(function() {
+            var trimFraction = self.psTrimFraction();
+            if (trimFraction > 0) {
+                trimFraction = trimFraction / 100;
+            } 
+            if (self.psTrim() == 1) {
+              return trimFraction;  
+            }
+            if (self.psTrim() == 2) {
+                return trimFraction + ", " + (1 - trimFraction);
+            }
+        });
+        self.psMatch = ko.observable(data.psMatch != null ? data.psMatch : 2);
+        self.psMatchMaxRatio = ko.observable(data.psMatchMaxRatio != null ? data.psMatchMaxRatio : 1);
+        self.psStratNumStrata = ko.observable(data.psStratNumStrata != null ? data.psStratNumStrata : 5);
 
         self.psDemographicsGender = ko.observable((data.psDemographicsGender == 1)|| false);
         self.psDemographicsRace = ko.observable((data.psDemographicsRace == 1)||false);
@@ -119,8 +170,8 @@ define(function (require, exports) {
         self.psConditionGroupSnomed = ko.observable((data.psConditionGroupSnomed == 1)||false);        
         
         self.psDrugExposure = ko.observable((data.psDrugExposure == 1)||false);
-        self.psDrugInPrior30d = ko.observable((data.psDrugExposure30d == 1 || data.psDrugEraExposure30d == 1) || false); 
-        self.psDrugInPrior365d = ko.observable((data.psDrugExposure365d == 1 || data.psDrugEraExposure365d == 1) || false);
+        self.psDrugInPrior30d = ko.observable((data.psDrugExposure30d == 1 || data.psDrugEra30d == 1) || false); 
+        self.psDrugInPrior365d = ko.observable((data.psDrugExposure365d == 1 || data.psDrugEra365d == 1) || false);
         
         self.psDrugEra = ko.observable((data.psDrugEra == 1)||false);
         self.psDrugEraOverlap = ko.observable((data.psDrugEraOverlap == 1)||false);
@@ -167,8 +218,11 @@ define(function (require, exports) {
             return (propCount > 0 && propCount < 6);
         }
         self.psStrat = ko.pureComputed(function () {
-			return !self.psMatch();
+			return self.psMatch() == 2;
 		});
+        self.psStratOrMatch = ko.pureComputed(function() {
+            return self.psMatch() > 0;
+        })
         self.psConditionOcc = ko.pureComputed(function() {
             return (self.psConditionOcc365d() || self.psConditionOcc30d() || self.psConditionOccInpt180d())
         });
@@ -213,14 +267,13 @@ define(function (require, exports) {
         })
 
         // Outcome model settings
-        self.omCovariates = ko.observable(data.omCovariates||0);
+        self.omCovariates = ko.observable(data.omCovariates != null ? data.omCovariates : 0);
 
-        self.omTrim = ko.observable(data.omTrim||null);
-        self.omTrimFraction = ko.observable(data.omTrimFraction||null);
-        self.omMatch = ko.observable(data.omMatch||null);
-        self.omMatchMaxRatio = ko.observable(data.omMatchMaxRatio||null);
-        self.omStrat = ko.observable(data.omStrat||null);
-        self.omStratNumStrata = ko.observable(data.omStratNumStrata||null);
+        self.omTrim = ko.observable(data.omTrim != null ? data.omTrim : 0);
+        self.omTrimFraction = ko.observable(data.omTrimFraction != null ? data.omTrimFraction : 5);
+        self.omMatch = ko.observable(data.omMatch != null ? data.omMatch : 1);
+        self.omMatchMaxRatio = ko.observable(data.omMatchMaxRatio != null ? data.omMatchMaxRatio : 1);
+        self.omStratNumStrata = ko.observable(data.omStratNumStrata != null ? data.omStratNumStrata : 5);
 
         self.omDemographicsGender = ko.observable((data.omDemographicsGender == 1)|| false);
         self.omDemographicsRace = ko.observable((data.omDemographicsRace == 1)||false);

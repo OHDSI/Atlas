@@ -1887,6 +1887,10 @@ cohort-comparison-manager .row .btn {
 	margin-bottom: 2px;
 }
 
+.cohort-comparison-pf-reference {
+    font-weight: bold;
+}
+
 #wrapperLeftMenu li:hover {
 	background-color: #093646;
 }
