@@ -1625,10 +1625,6 @@
 		}
 	};
 
-	function makeAccessor(acc) {
-		if (typeof acc === "function") return acc;
-		return function(obj) { return obj[acc]; };
-	}
 	function shapePath(type, cx, cy, r) {
 		// shape fits inside the radius
 		var shapes = {
@@ -1735,32 +1731,8 @@
 															_.sortBy(series.values, seriesProp.sortBy))
 							.value());
 	}
-	function dataFromSeries(data) {
-		return (_.chain(data)
-							.map('values')
-							.flatten()
-							.value());
-	}
 	function dataInSeries(data) {
 		return _.chain(data).map(_.keys).flatten().uniq().eq(['name','values']).value();
-	}
-	function assembleChartOptions(defaults, passed) {
-		var options = $.extend({}, defaults, passed);
-		// extend will clobber default.chartProps with passed.chartProps
-		options.chartProps = {}; // clear out chartProps
-			// and put defaults back, with each default extended by
-			// what was passed
-		_.each(defaults.chartProps, 
-						(defaultProp, name) => {
-							var prop = options.chartProps[name] = 
-								$.extend({}, defaultProp, passed.chartProps[name]);
-							// also fill in label, value, scale if no values passed or defaulted
-							prop.label = prop.label || name;
-							prop.value = makeAccessor(prop.value || prop.label);
-							prop.scale = prop.scale || d3.scale.linear();
-							prop.name = name;
-						});
-		return options;
 	}
 	/* SvgLayout class
 	 * manages layout of subcomponents in zones of an svg
@@ -1883,8 +1855,6 @@
 			this.addToLayout(layout);
 		}
 	}
-	class ChartProp {
-	}
 	class ChartLabel extends SvgElement {
 		_addContent() {
 			this.textEl = this.gEl.addChild('text', 
@@ -1903,7 +1873,7 @@
 				.attr("x", 0)
 				.attr("dy", "1em")
 				.style("text-anchor", "middle")
-				.text(chartProp => chartProp.label)
+				.text(chartProp => chartProp.label())
 		}
 		addToLayout(layout) {
 				layout.add('left','axisLabel', 
@@ -1981,6 +1951,7 @@
 										${layout.zone(["top"]) + (layout.h() - layout.zone(["top","bottom"])) / 2})`);
 		}
 	}
+	/*
 	class svgHandler {
 		constructor(svgDivEl, layout, chartProps) {
 			this._svgDivEl = svgDivEl; // create using svgSetup
@@ -1989,36 +1960,122 @@
 			this._chartProps = chartProps;
 		}
 	}
+	*/
+	class ChartProp {
+	}
+	function makeAccessor(acc) {
+		if (typeof acc === "function") return acc;
+		return function(obj) { return obj[acc]; };
+	}
+	class ChartProps {
+		constructor(defaults, explicit) {
+			//this.props = {};
+			_.each(defaults, 
+							(defaultProp, name) => {
+								var prop = $.extend({}, defaultProp, explicit[name]);
+								prop.name = name;
+								if (prop.needsLabel) {
+									prop.label = d3.functor(prop.label || name);
+								}
+								if (prop.needsValueFunc) {
+									if (typeof prop.value === "string" || isFinite(prop.value)) {
+										prop.value = obj => obj[prop.value];
+									} else if (!prop.value) {
+										var label = prop.label || d3.functor(name);
+										prop.value = obj => (label in obj) ? obj[label] : label;
+									} else if (typeof prop.value === "function") {
+										//console.log(`saving value for ${name}`);
+										prop._originalValueAccessor = prop.value;
+										// add params to call below when data is known
+									} else {
+										throw new Error("can't figure out how to make value accessor");
+									}
+								}
+								if (prop.needsScale) { // if it needsScale, it must also needsValueFunc
+									prop.scale = prop.scale || d3.scale.linear();
+									prop.domainFunc = prop.domainFunc ||
+																		prop.domain && d3.functor(prop.domain) ||
+																		((data,series) => d3.extent(data.map(this.richValueFunc.bind(this)(name, data, series))));
+									prop.rangeFunc = prop.rangeFunc ||
+																		prop.range && d3.functor(prop.range) ||
+																		function() {throw new Error(`no range for prop ${name}`)};
+								}
+								//this.props[name] = prop;
+								this[name] = prop;
+							});
+		}
+		calcDomains(data, series) {
+			_.each(this, (prop, name) => {
+											if (prop.needsScale) {
+												var ext = prop.domainFuncNeedsExtent
+																		? d3.extent(data.map(this.richValueFunc.bind(this)(name, data, series))) 
+																		: null;
+												prop.scale.domain(
+													prop.domainFunc(data, series, this, ext));
+												// brushing may temporaryily change the scale domain
+												// hold on to the domain as calculated from the data
+												prop.domain = prop.scale.domain();
+											}
+										});
+		}
+		calcRanges(layout) {
+			_.each(this, (prop, name) => {
+											if (prop.needsScale) {
+												var range = prop.rangeFunc(layout, this);
+												if (range) {
+													prop.scale.range(range)
+													prop.range = range;
+												}
+											}
+										});
+		}
+		calcAccessors(data, series) {
+			_.each(this, (prop, name) => {
+											if (prop.needsValueFunc) {
+												//console.log(`replacing value for ${name}`);
+												prop.value = this.richValueFunc.bind(this)(name, data, series);
+											}
+										});
+		}
+		richValueFunc(name, data, series) {
+			//console.log(`making rich value for ${name}`);
+			return (obj, i) => {
+											//i % 1000 === 0 && console.log(`calling value for ${name}, ${i}`);
+											return this[name]._originalValueAccessor(
+														obj, 
+														i,
+														this, 
+														data,
+														series);
+			};
+		}
+	}
 
 	module.zoomScatter = function () {
 		this.render = function (data, target, w, h, opts) {
-			var options = assembleChartOptions(this.defaultOptions, opts);
-			var svg = svgSetup.call(this, target, data, w, h, ['zoom-scatter']).child('svg');
-			var layout = new SvgLayout(w, h, options.layout);
-			if (!options.dataAlreadyInSeries) {
-				data = dataToSeries(data, options.series);
+			//var options = assembleChartOptions(this.defaultOptions, opts);
+			var cp = new ChartProps(this.defaultOptions, opts);
+			window.cp = cp; //debugging
+			if (!cp.data.alreadyInSeries) {
+				var series = dataToSeries(data, cp.series);
 			}
-			if (!dataFromSeries(data).length) { // do this some more efficient way
+			var svg = svgSetup.call(this, target, series, w, h, ['zoom-scatter']).child('svg');
+			if (!data.length) { // do this some more efficient way
 				nodata(svg.as("d3"));
 				return;
 			}
-
-			/*
-			svgHandler.addLabel('y');
-			svgHandler.addAxis('y');
-			svgHandler.addLabel('x');
-			svgHandler.addAxis('x');
-			*/
-
-			var cp = options.chartProps;
+			/* var svgHandler = new SvgHandler(svg, layout, options.chartProps); */
+			var layout = new SvgLayout(w, h, cp.layout);
 			if (cp.y.showLabel) {
 				cp.y.labelComponent = new ChartLabelLeft(svg, layout, cp.y);
 			}
 
-			cp.y.scale = (options.yScale || d3.scale.linear())
-								.domain(extent(data, cp.y.value))
-								.range([layout.svgHeight(), 0]);
+			cp.calcAccessors(data, series);
+			cp.calcDomains(data, series);
+			cp.calcRanges(layout);
 			/*
+			cp.y.scale.domain(cp.y.domainFunc(data))
+								.range(cp.y.rangeFunc(layout));
 			var axisHelper = chart.append("g")
 												.attr("transform", `translate(
 															${options.margin.left + yAxisLabelWidth + yAxisWidth},
@@ -2046,9 +2103,11 @@
 
 			// define the intial scale (range will be updated after we 
 			// determine the final dimensions)
+			/*
 			cp.x.scale = (cp.x.scale || d3.scale.linear())
 								.domain(extent(data, cp.x.value))
 								.range([0, layout.svgWidth()]);
+			*/
 
 			if (cp.x.showLabel) {
 				cp.x.axisLabel= svg.as("d3").append("g")
@@ -2065,7 +2124,7 @@
 				//layout.add('bottom','axisLabel', { size: ()=>cp.x.axisLabel.node().getBBox().height, position });
 				position();
 			}
-			if (options.showXAxis) {
+			if (cp.x.showAxis) {
 				cp.x.axis = cp.x.axis || d3.svg.axis()
 																		.scale(cp.x.scale)
 																		.tickFormat(cp.x.format)
@@ -2103,37 +2162,30 @@
 			//console.log(cp.y.scale.domain(), cp.y.scale.range());
 			//console.log(cp.x.scale.domain(), cp.x.scale.range());
 			var vis = svg.as("d3").append("g")
-				.attr("class", options.cssClass)
+				.attr("class", cp.general.cssClass)
 				.attr("transform", `translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
 				.attr("clip-path","url(#clip)");
 
-
-			// temporary
-			[ "x", "y", "size", "shape", 
-			].forEach(function(prop) {
-				options[prop + 'Value'] = makeAccessor(cp[prop].value);
-			});
-
-			var tooltipBuilder = tooltipFactory(options.tooltips);
+			var tooltipBuilder = tooltipFactory(cp.tooltips);
 
 			var xAxisLabelHeight = 0;
 			var yAxisLabelWidth = 0;
 
 
 			var legendWidth = 0;
-			if (options.showLegend) {
+			if (cp.legend.show) {
 				var legend = svg.as("d3").append("g")
 					.attr("class", "legend");
 
 				var maxWidth = 0;
 
-				data.forEach(function (d, i) {
+				series.forEach(function (d, i) {
 					legend.append("rect")
 						.attr("x", 0)
 						.attr("y", (i * 15))
 						.attr("width", 10)
 						.attr("height", 10)
-						.style("fill", options.colors(d.name));
+						.style("fill", cp.color.scale(d.name));
 
 					var legendItem = legend.append("text")
 						.attr("x", 12)
@@ -2145,7 +2197,7 @@
 				legendWidth += maxWidth + 5;
 			}
 
-			svg.data(data)
+			svg.data(series)
 
 			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
@@ -2153,17 +2205,11 @@
 				.html(tooltipBuilder);
 			svg.as("d3").call(focusTip);
 
-			function extent(data, accessor) {
-				return d3.extent(
-									_.chain(data)
-										.map(d=>d.values)
-										.flatten()
-										.map(accessor)
-										.value());
-			}
+			/*
 			cp.size.scale
 								.domain(extent(data, cp.size.value))
 								.range(cp.size.range)
+			*/
 
 			// reset axis ranges
 			// if x scale is ordinal, then apply rangeRoundBands, else apply standard range.
@@ -2190,8 +2236,8 @@
 					$('.resize').show();
 				})
 				.on('brushend', function () {
-					cp.x.scale.domain(brush.empty() ? xDomain : [brush.extent()[0][0], brush.extent()[1][0]]);
-					cp.y.scale.domain(brush.empty() ? yDomain : [brush.extent()[0][1], brush.extent()[1][1]]);
+					cp.x.scale.domain(brush.empty() ? cp.x.domain : [brush.extent()[0][0], brush.extent()[1][0]]);
+					cp.y.scale.domain(brush.empty() ? cp.y.domain : [brush.extent()[0][1], brush.extent()[1][1]]);
 
 					series
 						.selectAll(".dot")
@@ -2214,7 +2260,7 @@
 				.call(brush);
 
 			var series = vis.selectAll(".series")
-				.data(data)
+				.data(series)
 				.enter()
 				.append("g");
 
@@ -2229,7 +2275,7 @@
 				.attr("class", "dot")
 				.attr("d", function(d) {
 					return shapePath(
-										options.shapeScale(options.shapeValue(d)),
+										cp.shape.scale(cp.shape.value(d)),
 										0, //options.xValue(d),
 										0, //options.yValue(d),
 										cp.size.scale(cp.size.value(d)));
@@ -2237,11 +2283,12 @@
 				.style("stroke", function (d) {
 					// calling with this so default can reach up to parent
 					// for series name
-					return options.colors(options.seriesName.call(this, d));
+					//return cp.color.scale(cp.series.value.call(this, d));
+					return cp.color.scale(cp.color.value(d));
 				})
 				.attr("transform", function (d) {
-					var xVal = cp.x.scale(options.xValue(d));
-					var yVal = cp.y.scale(options.yValue(d));
+					var xVal = cp.x.scale(cp.x.value(d));
+					var yVal = cp.y.scale(cp.y.value(d));
 					return "translate(" + xVal + "," + yVal + ")";
 				})
 				.on('mouseover', function (d) {
@@ -2251,7 +2298,7 @@
 					focusTip.hide(d);
 				});
 
-			if (options.showSeriesLabel) {
+			if (cp.series.showLabel) {
 				series.append("text")
 					.datum(function (d) {
 						return {
@@ -2260,7 +2307,7 @@
 						};
 					})
 					.attr("transform", function (d) {
-						return "translate(" + cp.x.scale(options.xValue(d.value)) + "," + cp.y.scale(options.yValue(d.value)) + ")";
+						return "translate(" + cp.x.scale(cp.x.value(d.value)) + "," + cp.y.scale(cp.y.value(d.value)) + ")";
 					})
 					.attr("x", 3)
 					.attr("dy", 2)
@@ -2270,7 +2317,7 @@
 					});
 			}
 
-			if (options.labelIndexDate) {
+			if (cp.general.labelIndexDate) {
 				vis.append("rect")
 					.attr("transform", function () {
 						return "translate(" + (indexPoints.x - 0.5) + "," + indexPoints.y + ")";
@@ -2280,49 +2327,78 @@
 			}
 		}
 		this.defaultOptions = {
-				dataAlreadyInSeries: false,
-				layout: {
-					top: { margin: { size: 5}, },
-					bottom: { margin: { size: 5}, },
-					left: { margin: { size: 5}, },
-					right: { margin: { size: 5}, },
-				},
-				chartProps: {
-					x: {
-								showAxis: true,
-								showLabel: true,
-								format: module.util.formatSI(3),
-								ticks: 10,
-							},
-					y: {
-								showAxis: true,
-								showLabel: true,
-								format: module.util.formatSI(3),
-								ticks: 4,
-							},
-					size: {
-									scale: d3.scale.linear(),
-									range: [.5, 8],
-								},
-					color: {},
-					shape: {},
-				},
-				showLegend: true,
-				xFormat: module.util.formatSI(3),
-				yFormat: module.util.formatSI(3),
-				//interpolate: "linear", // not used
-				seriesName: function(d) { return this.parentNode.__data__.name; },
-				//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
-				shapeValue: "shapeValue",
-				shapeScale: d3.scale.ordinal().range(shapePath("types")),
+			data: {
+				alreadyInSeries: false,
+			},
+			general: {
 				cssClass: "lineplot",
-				showSeriesLabel: false,
-				colorScale: null,
-				colors: d3.scale.category10(),
 				labelIndexDate: false,
 				colorBasedOnIndex: false,
-				showXAxis: true
-			};
+			},
+			layout: {
+				top: { margin: { size: 5}, },
+				bottom: { margin: { size: 5}, },
+				left: { margin: { size: 5}, },
+				right: { margin: { size: 5}, },
+			},
+			x: {
+						showAxis: true,
+						showLabel: true,
+						rangeFunc: layout => [0, layout.svgWidth()],
+						format: module.util.formatSI(3),
+						ticks: 10,
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+			},
+			y: {
+						showAxis: true,
+						showLabel: true,
+						format: module.util.formatSI(3),
+						ticks: 4,
+						scale: d3.scale.linear(),
+						rangeFunc: layout => [layout.svgHeight(), 0],
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+			},
+			size: {
+						scale: d3.scale.linear(),
+						range: [.5, 8],
+						value: 1,
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+			},
+			color: {
+						//scale: null,
+						scale: d3.scale.category10(),
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+			},
+			shape: {
+						value: 0,
+						scale: d3.scale.ordinal(),
+						range: shapePath("types"),
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+			},
+			legend: {
+						show: true,
+			},
+			series: {
+						value: function(d) { return this.parentNode.__data__.name; },
+						showLabel: false,
+						//showSeriesLabel: false,
+						needsLabel: true,
+						needsValueFunc: true,
+			},
+			//interpolate: "linear", // not used
+			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
+			//showXAxis: true
+		};
 	};
 
 	module.trellisline = function () {
