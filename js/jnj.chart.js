@@ -1642,10 +1642,10 @@
 												`;
 							},
 			square: function(cx, cy, r) {
-								var side = Math.sqrt(2) * r;
+								var side = Math.sqrt(1/2) * r * 2;
 								return `
 													M ${cx} ${cy}
-													m ${-side} ${side}
+													m ${-side / 2} ${-side / 2}
 													l ${side} 0
 													l 0 ${side}
 													l ${-side} 0
@@ -1688,20 +1688,18 @@
 			this.chartDivEl = new ohdsiUtil.D3Element( {
 							parentElement:this.container,
 							data, tag:'div', classes: divClasses, 
-							children: {
-								svg: {
-												// no data func means data passed to children unchanged
+			});
+			this.chartDivEl.addChild('chart',
+										{
 												tag: 'svg',
 												classes: svgClasses,
 												updateCb: function(selection, params) {
 													selection
 														.attr('width', w)
-														.attr('height', w)
+														.attr('height', h)
 														.attr('viewBox', '0 0 ' + w + ' ' + h);
 												},
-											}
-							},
-						});
+											});
 			/*
 			this.chartDiv = ohdsiUtil.d3AddIfNeeded({parentElement:this.container,
 																data, tag:'div', classes, 
@@ -1716,14 +1714,14 @@
 																						// so new data gets attached to svg
 																					}, cbParams:[]})
 			*/
-			this.chartDivEl.run();
 			var resizeHandler = $(window).on("resize", {
 					chartDivEl: this.chartDivEl,
 					aspect: w / h
 				},
 				function (event) {
+					// set svg to size of container div
 					var targetWidth = event.data.chartDivEl.as("jquery").width();
-					event.data.chartDivEl.child('svg').as("d3")
+					event.data.chartDivEl.child('chart').as("d3")
 								.attr("width", targetWidth)
 								.attr("height", Math.round(targetWidth / event.data.aspect));
 				});
@@ -1731,7 +1729,7 @@
 			setTimeout(function () {
 				$(window).trigger('resize');
 			}, 0);
-			return this.chartDivEl.child('svg');
+			return this.chartDivEl;
 	}
 	function nodata(chart) {
 		chart.html('');
@@ -1773,67 +1771,72 @@
 							prop.label = prop.label || name;
 							prop.value = makeAccessor(prop.value || prop.label);
 							prop.scale = prop.scale || d3.scale.linear();
+							prop.name = name;
 						});
 		return options;
 	}
-	/* Layout class (want to make it an ES6 class, but not pushing it now)
+	/* Layout class
 	 * manages layout of subcomponents in zones of an svg
 	 * initialize with layout like:
-		 var lo = new Layout(
+		 var layout = new Layout(
 				{
 					// svg dimensions
 					w: 100,
 					h: 100,
 					// zones
-					top: { margin: { size: 5}, }, // top zone initialized with margin component
+					top: { margin: { size: 5}, }, // top zone initialized with margin
 																				// 5 pixels (or whatever units) high
 					bottom: { margin: { size: 5}, },
 					left: { margin: { size: 5}, },
 					right: { margin: { size: 5}, },
 				})
-	 * add components to zones like one of these
+	 * add components to zones like one of these:
 			
 			// size is constant:
-			lo.add('left','axisLabel', { size: 20 })
+			layout.add('left','axisLabel', { size: 20 })
 
 			// size returned by function:
-			lo.add('left','axisLabel', { size: ()=>axisLabel.node().getBBox().width * 1.5 })
+			layout.add('left','axisLabel', { size: ()=>axisLabel.node().getBBox().width * 1.5 })
 
 			// provide svg element to get size from (must specify 'width' or 'height' as dim)
-			lo.add('left','axis', { obj: cp.y.axisG.node(), dim:'width' })
+			layout.add('left','axis', { obj: cp.y.axisG.node(), dim:'width' })
 
 	 * retrieve dimensions of chart area (inside all zones):
-			lo.chartWidth()
-			lo.chartHeight()
+			layout.chartWidth()
+			layout.chartHeight()
 	 * retrieve svg dimensions:
-			lo.w()
-			lo.h()
+			layout.w()
+			layout.h()
 	 * retrieve total size of zone
-			lo.zone('bottom')
+			layout.zone('bottom')
 	 * retrieve total size of one zone element
-			lo.zone('left.margin')
+			layout.zone('left.margin')
 	 * retrieve total size of more than one zone element
-			lo.zone(['left.margin','left.axisLabel'])
+			layout.zone(['left.margin','left.axisLabel'])
 	 * y position of bottom zone:
-			lo.h() - lo.zone('bottom')
+			layout.h() - layout.zone('bottom')
 	 * 
-	 * when adding zones, you can also include a reposition func that will
+	 * when adding zones, you can also include a position func that will
 	 * do something based on the latest layout parameters
 	 *
-			var repos = function(lo) {
-				// repositions element to x:left margin, y: middle of chart area
+			var position = function(layout) {
+				// positions element to x:left margin, y: middle of chart area
 				axisLabel.attr("transform", 
-					`translate(${lo.zone(["left.margin"])},
-										 ${lo.zone(["top"]) + (h - lo.zone(["top","bottom"])) / 2})`);
+					`translate(${layout.zone(["left.margin"])},
+										 ${layout.zone(["top"]) + (h - layout.zone(["top","bottom"])) / 2})`);
 			}
-			lo.add('left','axisLabel', { size: 20 }, repos: repos)
+			layout.add('left','axisLabel', { size: 20 }, position: position)
 	 *
-	 * whenever you call lo.repos(), all registered repos functions will be called
-	 * the repos funcs should reposition their subcomponent, but shouldn't resize 
-	 * them 
+	 * whenever you call layout.positionZones(), all registered position functions 
+	 * will be called. the position funcs should position their subcomponent, but 
+	 * shouldn't resize them (except they will, won't they? because, e.g.,
+	 * the y axis needs to fit after the x axis grabs some of the vertical space.
+	 * but as long as left and right regions don't change size horizontally and top
+	 * and bottom don't change size vertically, only two rounds of positioning
+	 * will be needed)
 	 */
 	class Layout { // for svg subcomponents
-											 // adjusts to actual size of elements placed in zones
+								 // adjusts to actual size of elements placed in zones
 		constructor(o) {
 			this._w = o.w;
 			this._h = o.h;
@@ -1877,19 +1880,50 @@
 		add(zone, componentName, config) {
 			return this[zone][componentName] = config;
 		}
-		repos() {
+		positionZones() {
 			return _.chain(this)
 				.map(_.values)
 				.compact()
 				.flatten()
-				.map('repos')
+				.map('position')
 				.compact()
-				.each(repos=>repos(this))
+				.each(position=>position(this))
 				.value();
 		}
 	}
 	class ChartComponent {
 		constructor(chart, data, accessor) {
+		}
+	}
+	class ChartLabel {
+		constructor(chart, layout, chartProp, classes) {
+			this.gEl = chart.addChild(chartProp.name, { tag:'g', data:chartProp });
+			this.gEl.addChild('text', { tag:'text', classes, 
+												updateCb: this.updateFunc.bind(this) });
+			this.addToLayout(layout);
+		}
+	}
+	class LeftChartLabel extends ChartLabel {
+		updateFunc(selection) {
+			selection
+				.attr("class", "axislabel")
+				.attr("transform", "rotate(-90)")
+				.attr("y", 0)
+				.attr("x", 0)
+				.attr("dy", "1em")
+				.style("text-anchor", "middle")
+				.text(chartProp => chartProp.label)
+		}
+		addToLayout(layout) {
+				layout.add('left','axisLabel', 
+					{ size: () => this.gEl.as('dom').getBBox().width * 1.5, 
+						position: this.position.bind(this) });
+				this.position(layout);
+		}
+		position(layout) {
+			this.gEl.as('d3').attr('transform',
+				`translate(${layout.zone(["left.margin"])},
+										${layout.zone(["top"]) + (layout.h() - layout.zone(["top","bottom"])) / 2})`);
 		}
 	}
 
@@ -1898,8 +1932,8 @@
 			var options = assembleChartOptions(this.defaultOptions, opts);
 			options.layout.w = w || options.layout.w;
 			options.layout.h = h || options.layout.h;
-			var lo = new Layout(options.layout);
-			var chart = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
+			var layout = new Layout(options.layout);
+			var chart = svgSetup.call(this, data, target, w, h, ['zoom-scatter']).child('chart');
 			if (!options.dataAlreadyInSeries) {
 				data = dataToSeries(data, options.series);
 			}
@@ -1910,14 +1944,18 @@
 
 			var cp = options.chartProps;
 			if (cp.y.showLabel) {
+				/*
+				cp.y.labelComponent = new LeftChartLabel(chart, layout, cp.y, ['axislabel']);
+				*/
 				cp.y.axisLabel = ohdsiUtil.d3AddIfNeeded({parentElement:chart.as("d3"),
 																									data: cp.y.label,
 																									tag: 'g'});
-				var repos = function() {
+				var position = function() {
 					cp.y.axisLabel.attr("transform", 
-								`translate(${lo.zone(["left.margin"])},
-													 ${lo.zone(["top"]) + (h - lo.zone(["top","bottom"])) / 2})`);
+								`translate(${layout.zone(["left.margin"])},
+													 ${layout.zone(["top"]) + (layout.h() - layout.zone(["top","bottom"])) / 2})`);
 				}
+				position();
 				ohdsiUtil.d3AddIfNeeded({parentElement:cp.y.axisLabel,
 																	data: cp.y.label,
 																	tag: 'text',
@@ -1932,13 +1970,13 @@
 																			.text(cp.y.label);
 																	},
 																});
-				lo.add('left','axisLabel', { size: ()=>cp.y.axisLabel.node().getBBox().width * 1.5, repos });
+				layout.add('left','axisLabel', { size: ()=>cp.y.axisLabel.node().getBBox().width * 1.5, position });
 				// width is calculated as 1.5 * box height due to rotation anomolies that cause the y axis label to appear shifted.
 			}
 
 			cp.y.scale = (options.yScale || d3.scale.linear())
 								.domain(extent(data, cp.y.value))
-								.range([lo.chartHeight(), 0]);
+								.range([layout.chartHeight(), 0]);
 			/*
 			var axisHelper = chart.append("g")
 												.attr("transform", `translate(
@@ -1953,36 +1991,37 @@
 																		.orient("left");
 
 				cp.y.axisG = chart.as("d3").append("g").attr("class", "y axis"); // FIX on first time only
-				var repos = function() {
-					cp.y.scale.range([lo.chartHeight(), 0]);
+				var position = function() {
+					cp.y.scale.range([layout.chartHeight(), 0]);
 					cp.y.axisG
-						.attr('transform', `translate(${lo.zone(['left'])},${lo.zone(['top'])})`)
+						.attr('transform', `translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
 						.call(cp.y.axis);
 				}
 
-				lo.add('left','axis', { obj: cp.y.axisG.node(), dim:'width',repos });
-				repos();
+				layout.add('left','axis', { obj: cp.y.axisG.node(), dim:'width',position });
+				position();
 			}
 
 			// define the intial scale (range will be updated after we 
 			// determine the final dimensions)
-			cp.x.scale = (options.xScale || d3.scale.linear())
+			cp.x.scale = (cp.x.scale || d3.scale.linear())
 								.domain(extent(data, cp.x.value))
-								.range([0, lo.chartWidth()]);
+								.range([0, layout.chartWidth()]);
 
 			if (cp.x.showLabel) {
 				cp.x.axisLabel= chart.as("d3").append("g")
-				var repos = function() {
+				var position = function() {
 					cp.x.axisLabel
-						.attr("transform", `translate(${w / 2},${h - lo.zone(["bottom.margin"])})`);
+						.attr("transform", `translate(${w / 2},${layout.h() - layout.zone(["bottom.margin"])})`);
 				}
 				cp.x.axisLabel.append("text")
 					.attr("class", "axislabel")
 					.style("text-anchor", "middle")
 					.text(cp.x.label);
 
-				lo.add('bottom','axisLabel', { obj: cp.x.axisLabel.node(), dim:'height', repos });
-				repos();
+				layout.add('bottom','axisLabel', { obj: cp.x.axisLabel.node(), dim:'height', position });
+				//layout.add('bottom','axisLabel', { size: ()=>cp.x.axisLabel.node().getBBox().height, position });
+				position();
 			}
 			if (options.showXAxis) {
 				cp.x.axis = cp.x.axis || d3.svg.axis()
@@ -1993,14 +2032,16 @@
 
 				cp.x.axisG = chart.as("d3").append("g").attr("class", "x axis") // FIX on first time only
 													.call(cp.x.axis);
-				var repos = function() {
-					cp.x.axisG.attr('transform', `translate(${lo.zone(['left'])},
-																${lo.zone(['top']) + lo.chartHeight()})`)
-					cp.x.scale.range([lo.chartWidth(), 0]);
+				var position = function() {
+					cp.x.axisG.attr('transform', `translate(${layout.zone('left')},
+																${layout.h() - layout.zone('bottom')})`)
+					cp.x.scale.range([layout.chartWidth(), 0]);
 				}
+				position();
 
-				lo.add('bottom','axis', { obj:cp.x.axisG.node(), dim:'height', repos });
-				repos();
+				//layout.add('bottom','axis', { obj:cp.x.axisG.node(), dim:'height', position });
+				layout.add('bottom','axis', { size: ()=>cp.x.axisG.node().getBBox().height, position });
+				position();
 
 				if (cp.x.tickFormat) { // check for custom tick formatter
 					cp.x.axis.tickFormat(cp.x.tickFormat);
@@ -2011,15 +2052,15 @@
 				// if x scale is ordinal, then apply rangeRoundBands, else 
 				// apply standard range.
 				if (typeof cp.x.scale.rangePoints === 'function') {
-					cp.x.scale.rangePoints([0, lo.chartWidth()]);
+					cp.x.scale.rangePoints([0, layout.chartWidth()]);
 				} else {
-					cp.x.scale.range([0, lo.chartWidth()]);
+					cp.x.scale.range([0, layout.chartWidth()]);
 				}
 			}
-			lo.repos();
+			layout.positionZones();
 			var vis = chart.as("d3").append("g")
 				.attr("class", options.cssClass)
-				.attr("transform", `translate(${lo.zone(['left'])},${lo.zone(['top'])})`)
+				.attr("transform", `translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
 				.attr("clip-path","url(#clip)");
 
 
@@ -2056,7 +2097,7 @@
 						.text(d.name);
 					maxWidth = Math.max(legendItem.node().getBBox().width + 12, maxWidth);
 				});
-				legend.attr("transform", "translate(" + (lo.w() - lo.zone('right') - maxWidth) + ",0)")
+				legend.attr("transform", "translate(" + (layout.w() - layout.zone('right') - maxWidth) + ",0)")
 				legendWidth += maxWidth + 5;
 			}
 
@@ -2076,24 +2117,24 @@
 										.map(accessor)
 										.value());
 			}
-			options.sizeScale
-								.domain(extent(data, options.sizeValue))
-								.range([.5, 8])
+			cp.size.scale
+								.domain(extent(data, cp.size.value))
+								.range(cp.size.range)
 
 			// reset axis ranges
 			// if x scale is ordinal, then apply rangeRoundBands, else apply standard range.
 			if (typeof cp.x.scale.rangePoints === 'function') {
-				cp.x.scale.rangePoints([0, lo.chartWidth()]);
+				cp.x.scale.rangePoints([0, layout.chartWidth()]);
 			} else {
-				cp.x.scale.range([0, lo.chartWidth()]);
+				cp.x.scale.range([0, layout.chartWidth()]);
 			}
 
 			var clip = vis.append("defs")
 				.append("clipPath")
 				.attr("id", "clip")
 				.append("rect")
-				.attr("width", lo.chartWidth())
-				.attr("height", lo.chartHeight())
+				.attr("width", layout.chartWidth())
+				.attr("height", layout.chartHeight())
 				.attr("x", 0)
 				.attr("y", 0);
 
@@ -2147,7 +2188,7 @@
 										options.shapeScale(options.shapeValue(d)),
 										0, //options.xValue(d),
 										0, //options.yValue(d),
-										options.sizeScale(options.sizeValue(d)));
+										cp.size.scale(cp.size.value(d)));
 				})
 				.style("stroke", function (d) {
 					// calling with this so default can reach up to parent
@@ -2191,7 +2232,7 @@
 						return "translate(" + (indexPoints.x - 0.5) + "," + indexPoints.y + ")";
 					})
 					.attr("width", 1)
-					.attr("height", lo.chartHeight());
+					.attr("height", layout.chartHeight());
 			}
 		}
 		this.defaultOptions = {
@@ -2229,7 +2270,7 @@
 				yFormat: module.util.formatSI(3),
 				//interpolate: "linear", // not used
 				seriesName: function(d) { return this.parentNode.__data__.name; },
-				sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
+				//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
 				shapeValue: "shapeValue",
 				shapeScale: d3.scale.ordinal().range(shapePath("types")),
 				cssClass: "lineplot",

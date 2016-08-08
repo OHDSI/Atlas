@@ -43,6 +43,7 @@ define(['jquery','knockout'], function($,ko) {
 		if (target.selectAll) { // it's a d3 selection
 			if (type === "d3") return target;
 			return getContainer(target.node(), type); // call again with dom node
+																						    // (first in selection, that is)
 		}
 		if (target.jquery) { // it's a jquery selection
 			if (type === "jquery") return target;
@@ -131,7 +132,31 @@ define(['jquery','knockout'], function($,ko) {
 		selection.call(updateCb, cbParams);
 		return selection;
 	}
-	/*
+	/* D3Element
+	 * this is an OO class to replace the d3AddIfNeeded function above
+	 *
+	 * making a new D3Element instance (el) will add <tag> elements to the
+	 * parentElement using a D3 join to the data param. but if elements
+	 * already exist, they elements will be appropriately joined to the
+	 * data: extras will be removed (after running an exit callback if
+	 * you specify one), entering items will be appended, and the update
+	 * callback will be run on everything remaining after the join.
+	 *
+	 * you could also just say: el.data(newData); el.run(). that will
+	 * also perform the appropriate join and run the callbacks.
+	 *
+	 * so you do not need to keep track of whether you've already created
+	 * the elements. if you have and you still have a reference to the
+	 * D3Element instance, el.data(d); el.run(); works. but calling the
+	 * same code that created it originally and sending new data will
+	 * work as well.
+	 *
+	 * if you also create child elements like:
+	 *    var el = new D3Element(params);
+	 *    el.addChild(params);
+	 * then calling el.data(newData); el.run(); will not only update el,
+	 * it will also rejoin and update its children with newData.
+	 *
 	 * var el = new D3Element({parentElement:p, 
 	 *													data:arrOrObj, // data to be joined to selection
 	 *																				 // if it's scalar, will be turned
@@ -163,14 +188,18 @@ define(['jquery','knockout'], function($,ko) {
 	 *													children: null,// k/v obj with child descriptors (need to document)
 	 *													dataPropogationSelectors: null, // document when implemented
 	 *												});
-	 * el.run();
 	 *
-	 * el.run() returns a d3 selection you can continue operating on, or you can 
-	 * put all code to be run on all added/updated elements into the updateCb
+	 * el.run() returns the d3 selection after performing joins and running callbacks.
+	 * you can also get the d3 selection with el.selectAll();
 	 *
-	 * you shouldn't have to worry about whether you use (i.e., el.run()) 
-	 *	the same D3Element repeatedly or instantiate a new one.
-	 *	the effects should be the same either way
+	 * there are many ways to add child elements (using the addChild method, using
+	 * the d3 selection returned from run and selectAll methods, or in the add or
+	 * update callbacks). I recommend:
+	 *
+	 *		add using el.addChild()
+	 *		set attributes in the update callback
+	 *		don't use the d3 selections at all
+	 *		you also probably don't need to use the add callback
 	 */
 	class D3Element {
 		constructor(props) {
@@ -190,6 +219,7 @@ define(['jquery','knockout'], function($,ko) {
 			_.each(this._childDescs, (desc, name) => {
 				this.childDesc(name, desc);
 			});
+			this.run();
 		}
 		selectAll() {
 		 return this.el.selectAll([this.tag].concat(this.classes).join('.'));
@@ -258,6 +288,10 @@ define(['jquery','knockout'], function($,ko) {
 			if (el)
 				this._children[name].el = el;
 			return this._children[name].el;
+		}
+		addChild(name, desc) {
+			this.childDesc(name, desc);
+			return this.makeChild(name, this.selectAll());
 		}
 		makeChild(name, parentElement) {
 			var desc = this.childDesc(name);
