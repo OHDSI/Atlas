@@ -1672,7 +1672,7 @@
 	// svgSetup could probably be used for all jnj.charts; it works
 	// (i believe) the way line chart and scatterplot were already working
 	// (without the offscreen stuff, which I believe was not necessary).
-	function svgSetup(data, target, w, h, divClasses=[], svgClasses=[]) {
+	function svgSetup(target, data, w, h, divClasses=[], svgClasses=[]) {
 			// call from chart obj like: 
 			//	var chart = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
 			// target gets a new div, new div gets a new svg. div/svg will resize
@@ -1681,6 +1681,7 @@
 			//	once. data will be attached to div and svg (for subsequent calls
 			//	it may need to be propogated explicitly to svg children)
 			// returns a D3Element (defined in odhsi.utils)
+		// ( maybe shouldn't send data to this func, attach it later)
 			this.container = this.container || ohdsiUtil.getContainer(target, "dom");
 			if (Array.isArray(data) && data.length > 1) {
 				data = [data];
@@ -1700,20 +1701,6 @@
 														.attr('viewBox', '0 0 ' + w + ' ' + h);
 												},
 											});
-			/*
-			this.chartDiv = ohdsiUtil.d3AddIfNeeded({parentElement:this.container,
-																data, tag:'div', classes, 
-																enterCb: function(el, params) {
-																					el.append('svg:svg')
-																						.attr('width', w)
-																						.attr('height', w)
-																						.attr('viewBox', '0 0 ' + w + ' ' + h);
-																				},
-																updateCb: function(el, params) {
-																						el.select('svg'); 
-																						// so new data gets attached to svg
-																					}, cbParams:[]})
-			*/
 			var resizeHandler = $(window).on("resize", {
 					chartDivEl: this.chartDivEl,
 					aspect: w / h
@@ -1775,21 +1762,18 @@
 						});
 		return options;
 	}
-	/* Layout class
+	/* SvgLayout class
 	 * manages layout of subcomponents in zones of an svg
 	 * initialize with layout like:
-		 var layout = new Layout(
-				{
-					// svg dimensions
-					w: 100,
-					h: 100,
-					// zones
-					top: { margin: { size: 5}, }, // top zone initialized with margin
-																				// 5 pixels (or whatever units) high
-					bottom: { margin: { size: 5}, },
-					left: { margin: { size: 5}, },
-					right: { margin: { size: 5}, },
-				})
+		 var layout = new SvgLayout(w, h,
+					// zones:
+					{
+						top: { margin: { size: 5}, }, // top zone initialized with margin
+																					// 5 pixels (or whatever units) high
+						bottom: { margin: { size: 5}, },
+						left: { margin: { size: 5}, },
+						right: { margin: { size: 5}, },
+					})
 	 * add components to zones like one of these:
 			
 			// size is constant:
@@ -1835,13 +1819,12 @@
 	 * and bottom don't change size vertically, only two rounds of positioning
 	 * will be needed)
 	 */
-	class Layout { // for svg subcomponents
-								 // adjusts to actual size of elements placed in zones
-		constructor(o) {
-			this._w = o.w;
-			this._h = o.h;
+	class SvgLayout {
+		constructor(w, h, zones) {
+			this._w = w;
+			this._h = h;
 			['left','right','top','bottom'].forEach(
-				zone => this[zone] = _.cloneDeep(o[zone]));
+				zone => this[zone] = _.cloneDeep(zones[zone]));
 		}
 		chartWidth() {
 			return this._w - this.zone(['left','right']);
@@ -1891,22 +1874,36 @@
 				.value();
 		}
 	}
-	class ChartComponent {
-		constructor(chart, data, accessor) {
+	class ChartHandler {
+		constructor(svgDivEl, layout, chartProps) {
+			this._svgDivEl = svgDivEl; // create using svgSetup
+			this._svgEl = svgDivEl.child('svg');
+			this._layoutConfig = layoutConfig; // just margins probably
+			this._chartProps = chartProps;
 		}
 	}
+	class SvgElement {
+	}
+	class ChartProp {
+	}
 	class ChartLabel {
-		constructor(chart, layout, chartProp, classes) {
-			this.gEl = chart.addChild(chartProp.name, { tag:'g', data:chartProp });
-			this.gEl.addChild('text', { tag:'text', classes, 
+		constructor(svgEl, layout, chartProp, classes) {
+			this.gEl = svgEl.addChild(chartProp.name, 
+											{ tag:'g', data:chartProp,
+												classes: this.cssClasses(classes), });
+			this.textEl = this.gEl.addChild('text', 
+											{ tag:'text', //classes:this.cssClasses(classes), 
 												updateCb: this.updateFunc.bind(this) });
 			this.addToLayout(layout);
 		}
 	}
 	class LeftChartLabel extends ChartLabel {
+		cssClasses(classesParam= []) { // classes needed on text element
+			return _.union(classesParam, ['y-axislabel','axislabel']);
+		}
 		updateFunc(selection) {
 			selection
-				.attr("class", "axislabel")
+				//.attr("class", "axislabel")
 				.attr("transform", "rotate(-90)")
 				.attr("y", 0)
 				.attr("x", 0)
@@ -1930,10 +1927,8 @@
 	module.zoomScatter = function () {
 		this.render = function (data, target, w, h, opts) {
 			var options = assembleChartOptions(this.defaultOptions, opts);
-			options.layout.w = w || options.layout.w;
-			options.layout.h = h || options.layout.h;
-			var layout = new Layout(options.layout);
-			var chart = svgSetup.call(this, data, target, w, h, ['zoom-scatter']).child('chart');
+			var chart = svgSetup.call(this, target, data, w, h, ['zoom-scatter']).child('chart');
+			var layout = new SvgLayout(w, h, options.layout);
 			if (!options.dataAlreadyInSeries) {
 				data = dataToSeries(data, options.series);
 			}
@@ -1944,9 +1939,8 @@
 
 			var cp = options.chartProps;
 			if (cp.y.showLabel) {
-				/*
 				cp.y.labelComponent = new LeftChartLabel(chart, layout, cp.y, ['axislabel']);
-				*/
+				/*
 				cp.y.axisLabel = ohdsiUtil.d3AddIfNeeded({parentElement:chart.as("d3"),
 																									data: cp.y.label,
 																									tag: 'g'});
@@ -1971,6 +1965,7 @@
 																	},
 																});
 				layout.add('left','axisLabel', { size: ()=>cp.y.axisLabel.node().getBBox().width * 1.5, position });
+				*/
 				// width is calculated as 1.5 * box height due to rotation anomolies that cause the y axis label to appear shifted.
 			}
 
@@ -2057,7 +2052,11 @@
 					cp.x.scale.range([0, layout.chartWidth()]);
 				}
 			}
+			console.log(cp.y.scale.domain(), cp.y.scale.range());
+			console.log(cp.x.scale.domain(), cp.x.scale.range());
 			layout.positionZones();
+			console.log(cp.y.scale.domain(), cp.y.scale.range());
+			console.log(cp.x.scale.domain(), cp.x.scale.range());
 			var vis = chart.as("d3").append("g")
 				.attr("class", options.cssClass)
 				.attr("transform", `translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
@@ -2242,8 +2241,6 @@
 					bottom: { margin: { size: 5}, },
 					left: { margin: { size: 5}, },
 					right: { margin: { size: 5}, },
-					w: 100,
-					h: 100,
 				},
 				chartProps: {
 					x: {
