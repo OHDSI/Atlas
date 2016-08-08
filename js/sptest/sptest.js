@@ -34,6 +34,7 @@ define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], fun
 	ko.components.register('sptest', component);
 	return component;
 	function chartOptions() {
+		var junk = 1;
 		return {
 					yFormat: function(d) {
 						var str = d.toString();
@@ -57,7 +58,7 @@ define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], fun
 						size: {
 									value: d=>d.afterMatchingMeanTreated,
 									//scale: d3.scale.log(),
-									//domain: [.5, 8],
+									range: [1, 8],
 									label: "After matching mean treated",
 								},
 						color: {
@@ -70,7 +71,11 @@ define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], fun
 									range: ['#ef8a62','#f7f7f7','#67a9cf'],
 								},
 						shape: {
-									value: d => Math.floor(Math.random() * 3),
+									//value: d => Math.floor(Math.random() * 3),
+									//
+									//  i as always 0! fix!
+									//  value: (d,i) => i % 3,
+									value: () => junk++ % 3,
 									label: "Random",
 								},
 						series: {
