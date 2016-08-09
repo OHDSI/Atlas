@@ -1797,6 +1797,7 @@
 			this._h = h;
 			['left','right','top','bottom'].forEach(
 				zone => this[zone] = _.cloneDeep(zones[zone]));
+			this.chart = {};
 		}
 		svgWidth() {
 			return this._w - this.zone(['left','right']);
@@ -1858,6 +1859,40 @@
 			this.addToLayout(layout);
 		}
 	}
+
+	class ChartChart extends SvgElement {
+		cssClasses() { // classes needed on g element
+			return [this.chartProp.cssClass];
+		}
+		_addContent() {
+			this.gEl.as('d3')
+							.attr('clip-path','url(#clip)');
+			this.gEl.addChild(
+				'defs', // does this belong here? maybe at svg level?
+				{ tag: 'defs',
+					addCb: (selection, params) => {
+						selection.append("defs")
+							.append("clipPath")
+							.attr("id", "clip")
+							.append("rect")
+							.attr("width", this.layout.svgWidth())
+							.attr("height", this.layout.svgHeight())
+							.attr("x", 0)
+							.attr("y", 0);
+					}
+				});
+		}
+		addToLayout(layout) {
+				layout.add('chart','chart', { position: this.position.bind(this) });
+				this.position(layout);
+		}
+		position(layout) {
+			this.gEl.as('d3')
+					.attr("transform", 
+								`translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
+		}
+	}
+
 	class ChartLabel extends SvgElement {
 		_addContent() {
 			this.textEl = this.gEl.addChild('text', 
@@ -2116,54 +2151,15 @@
 			}
 			if (cp.x.showAxis) {
 				cp.x.axisComponent = new ChartAxisX(svg, layout, cp.x);
-				/*
-				cp.x.axis = cp.x.axis || d3.svg.axis()
-																		.scale(cp.x.scale)
-																		.tickFormat(cp.x.format)
-																		.ticks(cp.x.ticks)
-																		.orient("bottom");
-
-				cp.x.axisG = svg.as("d3").append("g").attr("class", "x axis") // FIX on first time only
-													.call(cp.x.axis);
-				var position = function() {
-					cp.x.axisG.attr('transform', `translate(${layout.zone('left')},
-																${layout.h() - layout.zone('bottom')})`)
-					cp.x.scale.range([layout.svgWidth(), 0]);
-				}
-				position();
-
-				//layout.add('bottom','axis', { obj:cp.x.axisG.node(), dim:'height', position });
-				layout.add('bottom','axis', { size: ()=>cp.x.axisG.node().getBBox().height, position });
-				position();
-
-				if (cp.x.tickFormat) { // check for custom tick formatter
-					cp.x.axis.tickFormat(cp.x.tickFormat);
-				} else { // apply standard formatter
-					cp.x.axis.tickFormat(cp.x.format);
-				}
-
-				// if x scale is ordinal, then apply rangeRoundBands, else 
-				// apply standard range.
-				if (typeof cp.x.scale.rangePoints === 'function') {
-					cp.x.scale.rangePoints([0, layout.svgWidth()]);
-				} else {
-					cp.x.scale.range([0, layout.svgWidth()]);
-				}
-				*/
 			}
 			layout.positionZones();
+
 			//console.log(cp.y.scale.domain(), cp.y.scale.range());
 			//console.log(cp.x.scale.domain(), cp.x.scale.range());
-			var vis = svg.as("d3").append("g")
-				.attr("class", cp.general.cssClass)
-				.attr("transform", `translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
-				.attr("clip-path","url(#clip)");
+
+			cp.chart.chart = new ChartChart(svg, layout, cp.chart);
 
 			var tooltipBuilder = tooltipFactory(cp.tooltips);
-
-			var xAxisLabelHeight = 0;
-			var yAxisLabelWidth = 0;
-
 
 			var legendWidth = 0;
 			if (cp.legend.show) {
@@ -2204,14 +2200,7 @@
 								.range(cp.size.range)
 			*/
 
-			// reset axis ranges
-			// if x scale is ordinal, then apply rangeRoundBands, else apply standard range.
-			if (typeof cp.x.scale.rangePoints === 'function') {
-				cp.x.scale.rangePoints([0, layout.svgWidth()]);
-			} else {
-				cp.x.scale.range([0, layout.svgWidth()]);
-			}
-
+			/*
 			var clip = vis.append("defs")
 				.append("clipPath")
 				.attr("id", "clip")
@@ -2220,7 +2209,7 @@
 				.attr("height", layout.svgHeight())
 				.attr("x", 0)
 				.attr("y", 0);
-
+			*/
 			var brush = d3.svg.brush()
 				.x(cp.x.scale)
 				.y(cp.y.scale)
@@ -2248,11 +2237,11 @@
 					$('.resize').hide();
 				});
 
-			vis.append('g')
+			cp.chart.chart.gEl.as("d3").append('g')
 				.attr('class', 'brush')
 				.call(brush);
 
-			var series = vis.selectAll(".series")
+			var series = cp.chart.chart.gEl.as('d3').selectAll(".series")
 				.data(series)
 				.enter()
 				.append("g");
@@ -2310,8 +2299,8 @@
 					});
 			}
 
-			if (cp.general.labelIndexDate) {
-				vis.append("rect")
+			if (cp.chart.labelIndexDate) {
+				cp.chart.chart.gEl.as('d3').append("rect")
 					.attr("transform", function () {
 						return "translate(" + (indexPoints.x - 0.5) + "," + indexPoints.y + ")";
 					})
@@ -2323,7 +2312,7 @@
 			data: {
 				alreadyInSeries: false,
 			},
-			general: {
+			chart: {
 				cssClass: "lineplot",
 				labelIndexDate: false,
 				colorBasedOnIndex: false,
