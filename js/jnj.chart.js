@@ -1895,6 +1895,30 @@
 										${layout.zone(["top"]) + (layout.h() - layout.zone(["top","bottom"])) / 2})`);
 		}
 	}
+	class ChartLabelBottom extends ChartLabel {
+		cssClasses() { // classes needed on g element
+			return ['x-axislabel','axislabel'];
+		}
+		updateFunc(selection) {
+			selection
+				.style("text-anchor", "middle")
+				.text(chartProp => chartProp.label())
+		}
+		addToLayout(layout) {
+				layout.add('bottom','axisLabel', 
+					{ size: this.size.bind(this),
+						position: this.position.bind(this) });
+				this.position(layout);
+		}
+		size() {
+			return this.gEl.as('dom').getBBox().height;
+		}
+		position(layout) {
+			this.gEl.as('d3')
+					.attr("transform", 
+								`translate(${layout.w() / 2},${layout.h() - layout.zone(["bottom.margin"])})`);
+		}
+	}
 
 	class ChartAxis extends SvgElement {
 		_addContent() {
@@ -1930,6 +1954,39 @@
 			this.gEl.as('d3')
 					.attr('transform',
 								`translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
+					.call(this.axis);
+		}
+	}
+	class ChartAxisX extends ChartAxis {
+		_addContent() {
+			super._addContent();
+			this.axis.orient('bottom');
+			if (this.chartProp.tickFormat) { // check for custom tick formatter
+				this.axis.tickFormat(this.chartProp.tickFormat); // otherwise uses chartProp.format above
+			}
+		}
+		addToLayout(layout) {
+				layout.add('bottom','axis', 
+					{ size: this.size.bind(this),
+						position: this.position.bind(this) });
+				this.position(layout);
+		}
+		cssClasses() { // classes needed on g element
+			return ['x','axis'];
+		}
+		size() {
+			return this.gEl.as('dom').getBBox().height;
+		}
+		position(layout) {
+			// if x scale is ordinal, then apply rangeRoundBands, else apply standard range
+			if (typeof this.chartProp.scale.rangePoints === 'function') {
+				this.chartProp.scale.rangePoints([0, layout.svgWidth()]);
+			} else {
+				this.chartProp.scale.range([0, layout.svgWidth()]);
+			}
+			this.gEl.as('d3')
+					.attr('transform', `translate(${layout.zone('left')},
+																${layout.h() - layout.zone('bottom')})`)
 					.call(this.axis);
 		}
 	}
@@ -2052,50 +2109,14 @@
 
 			if (cp.y.showAxis) {
 				cp.y.axisComponent = new ChartAxisY(svg, layout, cp.y);
-				/*
-				cp.y.axis = cp.y.axis || d3.svg.axis()
-																		.scale(cp.y.scale)
-																		.tickFormat(cp.y.format)
-																		.ticks(cp.y.ticks)
-																		.orient("left");
-
-				cp.y.axisG = svg.as("d3").append("g").attr("class", "y axis"); // FIX on first time only
-				var position = function() {
-					cp.y.scale.range([layout.svgHeight(), 0]);
-					cp.y.axisG
-						.attr('transform', `translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
-						.call(cp.y.axis);
-				}
-
-				layout.add('left','axis', { obj: cp.y.axisG.node(), dim:'width',position });
-				position();
-				*/
 			}
-
-			// define the intial scale (range will be updated after we 
-			// determine the final dimensions)
-			/*
-			cp.x.scale = (cp.x.scale || d3.scale.linear())
-								.domain(extent(data, cp.x.value))
-								.range([0, layout.svgWidth()]);
-			*/
 
 			if (cp.x.showLabel) {
-				cp.x.axisLabel= svg.as("d3").append("g")
-				var position = function() {
-					cp.x.axisLabel
-						.attr("transform", `translate(${w / 2},${layout.h() - layout.zone(["bottom.margin"])})`);
-				}
-				cp.x.axisLabel.append("text")
-					.attr("class", "axislabel")
-					.style("text-anchor", "middle")
-					.text(cp.x.label);
-
-				layout.add('bottom','axisLabel', { obj: cp.x.axisLabel.node(), dim:'height', position });
-				//layout.add('bottom','axisLabel', { size: ()=>cp.x.axisLabel.node().getBBox().height, position });
-				position();
+				cp.x.labelComponent = new ChartLabelBottom(svg, layout, cp.x);
 			}
 			if (cp.x.showAxis) {
+				cp.x.axisComponent = new ChartAxisX(svg, layout, cp.x);
+				/*
 				cp.x.axis = cp.x.axis || d3.svg.axis()
 																		.scale(cp.x.scale)
 																		.tickFormat(cp.x.format)
@@ -2128,6 +2149,7 @@
 				} else {
 					cp.x.scale.range([0, layout.svgWidth()]);
 				}
+				*/
 			}
 			layout.positionZones();
 			//console.log(cp.y.scale.domain(), cp.y.scale.range());
