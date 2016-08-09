@@ -1848,6 +1848,9 @@
 	}
 	class SvgElement { // assume it always gets a g and then something inside the g
 		constructor(svgEl, layout, chartProp) {
+			this.parentEl = svgEl;
+			this.layout = layout;
+			this.chartProp = chartProp;
 			this.gEl = svgEl.addChild(chartProp.name, 
 											{ tag:'g', data:chartProp,
 												classes: this.cssClasses(), });
@@ -1895,60 +1898,39 @@
 
 	class ChartAxis extends SvgElement {
 		_addContent() {
-			this.textEl = this.gEl.addChild('text', 
-											{ tag:'text',
-												updateCb: this.updateFunc.bind(this) });
+			this.axis = this.chartProp.axis || 
+									d3.svg.axis().scale(this.chartProp.scale)
+																.tickFormat(this.chartProp.format)
+																.ticks(this.chartProp.ticks)
+																.orient("left");
+			//this.gEl.updateCb = this.updateFunc.bind(this);
+
+			// somewhat weird that scale belongs to chartProp and axis belongs to svgElement
 		}
 	}
-	/*
-			cp.y.scale = (options.yScale || d3.scale.linear())
-								.domain(extent(data, cp.y.value))
-								.range([layout.svgHeight(), 0]);
-				cp.y.axis = cp.y.axis || d3.svg.axis()
-																		.scale(cp.y.scale)
-																		.tickFormat(cp.y.format)
-																		.ticks(cp.y.ticks)
-																		.orient("left");
-
-				cp.y.axisG = svg.as("d3").append("g").attr("class", "y axis"); // FIX on first time only
-				var position = function() {
-					cp.y.scale.range([layout.svgHeight(), 0]);
-					cp.y.axisG
-						.attr('transform', `translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
-						.call(cp.y.axis);
-				}
-
-				layout.add('left','axis', { obj: cp.y.axisG.node(), dim:'width',position });
-				position();
-	*/
 	class ChartAxisY extends ChartAxis {
-		cssClasses() { // classes needed on g element
-			return ['y-axislabel','axislabel'];
-		}
-		updateFunc(selection) {
-			selection
-				.attr("transform", "rotate(-90)")
-				.attr("y", 0)
-				.attr("x", 0)
-				.attr("dy", "1em")
-				.style("text-anchor", "middle")
-				.text(chartProp => chartProp.label)
+		_addContent() {
+			super._addContent();
+			this.axis.orient('left');
 		}
 		addToLayout(layout) {
-				layout.add('left','axisLabel', 
+				layout.add('left','axis', 
 					{ size: this.size.bind(this),
 						position: this.position.bind(this) });
 				this.position(layout);
 		}
+		cssClasses() { // classes needed on g element
+			return ['y','axis'];
+		}
 		size() {
-			return this.gEl.as('dom').getBBox().width * 1.5;
-			// width is calculated as 1.5 * box height due to rotation anomolies 
-			// that cause the y axis label to appear shifted.
+			return this.gEl.as('dom').getBBox().width;
 		}
 		position(layout) {
-			this.gEl.as('d3').attr('transform',
-				`translate(${layout.zone(["left.margin"])},
-										${layout.zone(["top"]) + (layout.h() - layout.zone(["top","bottom"])) / 2})`);
+			this.chartProp.scale.range([this.layout.svgHeight(), 0]);
+			this.gEl.as('d3')
+					.attr('transform',
+								`translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
+					.call(this.axis);
 		}
 	}
 	/*
@@ -1961,12 +1943,6 @@
 		}
 	}
 	*/
-	class ChartProp {
-	}
-	function makeAccessor(acc) {
-		if (typeof acc === "function") return acc;
-		return function(obj) { return obj[acc]; };
-	}
 	class ChartProps {
 		constructor(defaults, explicit) {
 			//this.props = {};
@@ -2073,16 +2049,10 @@
 			cp.calcAccessors(data, series);
 			cp.calcDomains(data, series);
 			cp.calcRanges(layout);
-			/*
-			cp.y.scale.domain(cp.y.domainFunc(data))
-								.range(cp.y.rangeFunc(layout));
-			var axisHelper = chart.append("g")
-												.attr("transform", `translate(
-															${options.margin.left + yAxisLabelWidth + yAxisWidth},
-															${options.margin.top})`);
-			*/
+
 			if (cp.y.showAxis) {
-				//cp.y.axisComponent = new ChartAxisY(svg, layout, cp.y);
+				cp.y.axisComponent = new ChartAxisY(svg, layout, cp.y);
+				/*
 				cp.y.axis = cp.y.axis || d3.svg.axis()
 																		.scale(cp.y.scale)
 																		.tickFormat(cp.y.format)
@@ -2099,6 +2069,7 @@
 
 				layout.add('left','axis', { obj: cp.y.axisG.node(), dim:'width',position });
 				position();
+				*/
 			}
 
 			// define the intial scale (range will be updated after we 
