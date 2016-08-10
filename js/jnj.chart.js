@@ -1881,8 +1881,8 @@
 	 * SvgElement is an abstract class. Subclasses should define
 	 *	- zone: where they belong: top, bottom, left, right, center
 	 *	- subzone: their (unique) name within their zone
-	 *	- addCb: to be passed to D3Element
-	 *	- gAddCb: addCb for the g container
+	 *	- enterCb: to be passed to D3Element
+	 *	- gEnterCb: enterCb for the g container
 	 *	- updateContent: updateCb to be passed to D3Element
 	 *	- updatePosition: updateCb to be passed to the g container
 	 *	- sizedim: width or height. for determining this element's size
@@ -1907,77 +1907,81 @@
 			this.chartProp = chartProp;
 			this.gEl = d3El.addChild(chartProp.name, 
 											{ tag:'g', data:chartProp,
-												classes: this.cssClasses(), 
-												gAddCb: this.gAddCb.bind(this),
-												addCb: this.addCb.bind(this),
-												updateContent: this.updateContent.bind(this),
-												updatePosition: this.gAddCb.bind(this),
+												classes: this.cssClasses(), // move to gEnterCb
+												enterCb: this.gEnterCb.bind(this),
+												updateCb: this.updatePosition.bind(this),
+												cbParams: {layout},
 											});
-
-			/*
-			this.addCb
-			*/
-			this._addContent();
-			if (this.zone) {
-				layout.add(this.zone(), this.subzone(), 
-								 { size:this.size.bind(this),
-										position:this.position.bind(this),});
-				this.position(layout);
-			} else {
-				this.addToLayout(layout);
+			if (!this.emptyG()) {
+				// if g is empty, don't use enterCb ot updateContent methods
+				this.contentEl = this.gEl.addChild(chartProp.name, 
+											{ tag: this.tagName(), 
+												data:chartProp,
+												classes: this.cssClasses(), // move to enterCb
+												enterCb: this.enterCb.bind(this),
+												updateCb: this.updateContent.bind(this),
+												cbParams: {layout},
+											});
 			}
+
+			layout.add(this.zone(), this.subzone(), 
+								{ size:this.size.bind(this), 
+									position:this.updatePosition.bind(this, this.gEl.as('d3'), {layout:this.layout}),
+								});
 		}
-		addCb() {}
-		gAddCb() {}
+		enterCb() {}
+		gEnterCb() {}
 		updateContent() {}
 		updatePosition() {}
+		emptyG() {}
+		size() {
+			return this.gEl.as('dom').getBBox()[this.sizedim()];
+		}
 	}
 
 	class ChartChart extends SvgElement {
+		zone () { return 'chart'; }
+		subzone () { return 'chart'; }
 		cssClasses() { // classes needed on g element
 			return [this.chartProp.cssClass];
 		}
-		_addContent() {
-			this.gEl.as('d3')
-							.attr('clip-path','url(#clip)');
-			this.gEl.addChild(
-				'defs', // does this belong here? maybe at svg level?
-				{ tag: 'defs',
-					addCb: (selection, params) => {
-						selection.append("defs")
-							.append("clipPath")
-							.attr("id", "clip")
-							.append("rect")
-							.attr("width", this.layout.svgWidth())
-							.attr("height", this.layout.svgHeight())
-							.attr("x", 0)
-							.attr("y", 0);
-					}
-				});
+		gEnterCb(selection, params, opts) {
+			selection.attr('clip-path','url(#clip)');
 		}
-		addToLayout(layout) {
-				layout.add('chart','chart', { position: this.position.bind(this) });
-				this.position(layout);
+		tagName() { return 'defs'; }
+		enterCb(selection, params, opts) {
+			selection.append("defs")
+				.append("clipPath")
+				.attr("id", "clip")
+				.append("rect")
+				.attr("width", this.layout.svgWidth())
+				.attr("height", this.layout.svgHeight())
+				.attr("x", 0)
+				.attr("y", 0);
 		}
-		position(layout) {
-			this.gEl.as('d3')
+		updatePosition(selection, params, opts) {
+			selection
 					.attr("transform", 
-								`translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
+								`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
 		}
 	}
 
 	class ChartLabel extends SvgElement {
-		_addContent() {
-			this.textEl = this.gEl.addChild('text', 
-											{ tag:'text',
-												updateCb: this.updateFunc.bind(this) });
-		}
+		tagName() { return 'text'; }
 	}
 	class ChartLabelLeft extends ChartLabel {
 		cssClasses() { // classes needed on g element
 			return ['y-axislabel','axislabel'];
 		}
-		updateFunc(selection) {
+		zone () { return 'left'; }
+		subzone () { return 'axisLabel'; }
+		sizedim() { return 'width'; }
+		size() {
+			return this.gEl.as('dom').getBBox().width * 1.5;
+			// width is calculated as 1.5 * box height due to rotation anomolies 
+			// that cause the y axis label to appear shifted.
+		}
+		updateContent(selection, params, opts) {
 			selection
 				.attr("transform", "rotate(-90)")
 				.attr("y", 0)
@@ -1986,117 +1990,86 @@
 				.style("text-anchor", "middle")
 				.text(chartProp => chartProp.label())
 		}
-		addToLayout(layout) {
-				layout.add('left','axisLabel', 
-					{ size: this.size.bind(this),
-						position: this.position.bind(this) });
-				this.position(layout);
-		}
-		size() {
-			return this.gEl.as('dom').getBBox().width * 1.5;
-			// width is calculated as 1.5 * box height due to rotation anomolies 
-			// that cause the y axis label to appear shifted.
-		}
-		position(layout) {
-			this.gEl.as('d3').attr('transform',
-				`translate(${layout.zone(["left.margin"])},
-										${layout.zone(["top"]) + (layout.h() - layout.zone(["top","bottom"])) / 2})`);
+		updatePosition(selection, params, opts) {
+			selection.attr('transform',
+				`translate(${params.layout.zone(["left.margin"])},
+										${params.layout.zone(["top"]) + (params.layout.h() - params.layout.zone(["top","bottom"])) / 2})`);
 		}
 	}
 	class ChartLabelBottom extends ChartLabel {
 		cssClasses() { // classes needed on g element
 			return ['x-axislabel','axislabel'];
 		}
-		updateFunc(selection) {
+		zone () { return 'bottom'; }
+		subzone () { return 'axisLabel'; }
+		sizedim() { return 'height'; }
+		enterCb(selection, params, opts) {
 			selection
 				.style("text-anchor", "middle")
+		}
+		updateContent(selection, params, opts) {
+			selection
 				.text(chartProp => chartProp.label())
 		}
-		addToLayout(layout) {
-				layout.add('bottom','axisLabel', 
-					{ size: this.size.bind(this),
-						position: this.position.bind(this) });
-				this.position(layout);
-		}
-		size() {
-			return this.gEl.as('dom').getBBox().height;
-		}
-		position(layout) {
-			this.gEl.as('d3')
-					.attr("transform", 
-								`translate(${layout.w() / 2},${layout.h() - layout.zone(["bottom.margin"])})`);
+		updatePosition(selection, params, opts) {
+			selection.attr('transform',
+				`translate(${params.layout.w() / 2},${params.layout.h() - params.layout.zone(["bottom.margin"])})`);
 		}
 	}
 
 	class ChartAxis extends SvgElement {
-		_addContent() {
-			this.axis = this.chartProp.axis || 
-									d3.svg.axis().scale(this.chartProp.scale)
-																.tickFormat(this.chartProp.format)
-																.ticks(this.chartProp.ticks)
-																.orient("left");
-			//this.gEl.updateCb = this.updateFunc.bind(this);
-
+		//tagName() { return 'g'; }  // pretty bad. axes have an unneeded extra g
+		emptyG() { return true; }
+		gEnterCb(selection, params, opts) {
+			this.axis = this.chartProp.axis || d3.svg.axis();
 			// somewhat weird that scale belongs to chartProp and axis belongs to svgElement
+		}
+		updatePosition(selection, params, opts) {
+			this.axis.scale(this.chartProp.scale)
+								.tickFormat(this.chartProp.format)
+								.ticks(this.chartProp.ticks)
+								.orient(this.zone());
 		}
 	}
 	class ChartAxisY extends ChartAxis {
-		_addContent() {
-			super._addContent();
-			this.axis.orient('left');
-		}
-		addToLayout(layout) {
-				layout.add('left','axis', 
-					{ size: this.size.bind(this),
-						position: this.position.bind(this) });
-				this.position(layout);
-		}
-		cssClasses() { return ['y','axis']; } // classes needed on g element
 		zone () { return 'left'; }
 		subzone () { return 'axis'; }
 		sizedim() { return 'width'; }
-		size() {
-			return this.gEl.as('dom').getBBox().width;
-		}
-		position(layout) {
-			this.chartProp.scale.range([this.layout.svgHeight(), 0]);
-			this.gEl.as('d3')
+		cssClasses() { return ['y','axis']; } // classes needed on g element
+		updatePosition(selection, params, opts) {
+			this.chartProp.scale.range([params.layout.svgHeight(), 0]);
+			super.updatePosition(selection, params, opts);
+															// params.layout === this.layout (i think)
+			selection
 					.attr('transform',
-								`translate(${layout.zone(['left'])},${layout.zone(['top'])})`)
-					.call(this.axis);
+								`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
+			this.axis && selection.call(this.axis);
 		}
 	}
 	class ChartAxisX extends ChartAxis {
-		_addContent() {
-			super._addContent();
-			this.axis.orient('bottom');
+		zone () { return 'bottom'; }
+		subzone () { return 'axis'; }
+		sizedim() { return 'height'; }
+		updatePosition(selection, params, opts) {
 			if (this.chartProp.tickFormat) { // check for custom tick formatter
 				this.axis.tickFormat(this.chartProp.tickFormat); // otherwise uses chartProp.format above
 			}
 		}
-		addToLayout(layout) {
-				layout.add('bottom','axis', 
-					{ size: this.size.bind(this),
-						position: this.position.bind(this) });
-				this.position(layout);
-		}
 		cssClasses() { // classes needed on g element
 			return ['x','axis'];
 		}
-		size() {
-			return this.gEl.as('dom').getBBox().height;
-		}
-		position(layout) {
+		updatePosition(selection, params, opts) {
 			// if x scale is ordinal, then apply rangeRoundBands, else apply standard range
 			if (typeof this.chartProp.scale.rangePoints === 'function') {
-				this.chartProp.scale.rangePoints([0, layout.svgWidth()]);
+				this.chartProp.scale.rangePoints([0, params.layout.svgWidth()]);
 			} else {
-				this.chartProp.scale.range([0, layout.svgWidth()]);
+				this.chartProp.scale.range([0, params.layout.svgWidth()]);
 			}
-			this.gEl.as('d3')
-					.attr('transform', `translate(${layout.zone('left')},
-																${layout.h() - layout.zone('bottom')})`)
-					.call(this.axis);
+			super.updatePosition(selection, params, opts);
+			selection
+					.attr('transform', `translate(${params.layout.zone('left')},
+																${params.layout.h() - params.layout.zone('bottom')})`);
+			this.axis && selection.call(this.axis);
 		}
 	}
   /* ChartProps
@@ -2330,7 +2303,7 @@
 				nodata(svgEl.as("d3"));
 				return;
 			}
-			var layout = new SvgLayout(w, h, cp.layout);
+			var layout = cp._layout = new SvgLayout(w, h, cp.layout);
 			if (cp.y.showLabel) {
 				cp.y.labelComponent = new ChartLabelLeft(svgEl, layout, cp.y);
 			}
@@ -2372,7 +2345,7 @@
 			//divEl.update({duration:750});
 			setTimeout(function() {
 				layout.positionZones();
-				layout.positionZones();
+				//layout.positionZones();
 			}, 1000);
 			setTimeout(function() {
 				//divEl.update({duration:750});
@@ -2406,6 +2379,7 @@
 				legendWidth += maxWidth + 5;
 			}
 
+			//svgEl.update({data:series})
 			//svgEl.data(series)
 
 			var focusTip = d3.tip()
