@@ -13,6 +13,7 @@
 	};
 	var $ = jQuery;
 	var d3 = d3;
+	var DEBUG = true;
 
 	// should module.util functions be moved to ohdsi.util?
 	module.util = module.util || {};
@@ -1686,14 +1687,24 @@
 							parentElement:this.container,
 							data, tag:'div', classes: divClasses, 
 			});
+			var self = this;
 			this.svgDivEl.addChild('svg',
 										{
 												tag: 'svg',
 												classes: svgClasses,
-												updateCb: function(selection, params) {
+												updateCb: function(selection, params, updateOpts) {
+													try {
+														var targetWidth = self.svgDivEl.as("jquery").width();
+													} catch(e) {
+														var targetWidth = w;
+													}
+													var aspect = w/h;
+													console.log(targetWidth, aspect);
 													selection
-														.attr('width', w)
-														.attr('height', h)
+														//.attr('width', w)
+														//.attr('height', h)
+														.attr('width', targetWidth)
+														.attr('height', Math.round(targetWidth / aspect))
 														.attr('viewBox', '0 0 ' + w + ' ' + h);
 												},
 											});
@@ -1725,10 +1736,16 @@
 		if (dataInSeries(data)) throw new Error("didn't expect data in series");
 		if (!seriesProp) return [{ name: '', values: data }];
 		return (_.chain(data)
-							.groupBy(seriesProp.groupBy)
+							.groupBy(seriesProp.value)
 							.map((v, k) => ({name: k, values: v}))
 							.sort(series => series.values = 
 															_.sortBy(series.values, seriesProp.sortBy))
+							.value());
+	}
+	function dataFromSeries(data) {
+		return (_.chain(data)
+							.map('values')
+							.flatten()
 							.value());
 	}
 	function dataInSeries(data) {
@@ -2025,16 +2042,109 @@
 					.call(this.axis);
 		}
 	}
-	/*
-	class svgHandler {
-		constructor(svgDivEl, layout, chartProps) {
-			this._svgDivEl = svgDivEl; // create using svgSetup
-			this._svgEl = svgDivEl.child('svg');
-			this._layoutConfig = layoutConfig; // just margins probably
-			this._chartProps = chartProps;
-		}
-	}
-	*/
+  /* ChartProps
+	 * The chart class should have default options
+	 * which can be overridden when instantiating the chart.
+	 * All options are grouped into named chartProps, like:
+	 * (For example defaults, see this.defaultOptions in module.zoomScatter.
+	 *  For an example of explicit options, see function chartOptions() in sptest.js.)
+	 *
+				defaults = {
+					x: {
+								showAxis: true,
+								showLabel: true,
+								rangeFunc: layout => [0, layout.svgWidth()],
+								format: module.util.formatSI(3),
+								ticks: 10,
+								needsLabel: true,
+								needsValueFunc: true,
+								needsScale: true,
+					},...
+				explicit = {
+					x: {
+								value: d=>d.beforeMatchingStdDiff,
+								label: "Before matching StdDiff",
+								tooltipOrder: 1,
+					},...
+	 *
+	 * If a chart is expecting a label for some prop (like an axis
+	 * label for the x axis or tooltip label for the x value), and
+	 * no prop.label is specified, the prop name will be used (e.g., 'x').
+	 * prop.label can be a function. If it's a string, it will be turned
+	 * into a function returning that string. (So the chart needs to
+	 * call it, not just print it.) Label generation will be done
+	 * automatically if prop.needsLabel is true.
+	 *
+	 * If needsValueFunc is true for a prop, prop.value will be used.
+	 * If prop.value hasn't been specified in default or explicit
+	 * prop options, it will be be generated from the label. (Which is
+	 * probably not what you want as it will give every data point's
+	 * x value (for instance) as x's label.
+	 *
+	 * If prop.value is a string or number, it will be transformed into
+	 * an accessor function to extract a named property or indexed array
+	 * value from a datum object or array.
+	 *
+	 * If prop.value is a function, it will be called with these arguments:
+	 *		- datum (usually called 'd' in d3 callbacks)
+	 *		- index of datum in selection data (i)
+	 *		- index of data group (series) in parent selection (j)
+	 *		- the whole ChartProps instance
+	 *		- all of the data (not grouped into series)
+	 *		- data for the series
+	 *		- prop name (so you can get prop with chartProps[name])
+	 *
+	 * If prop.needsScale is true, prop.scale will be used (it will default
+	 * to d3.scale.linear if not provided.) prop.domainFunc and prop.rangeFunc
+	 * will be used to generate domain and range. If they are not provided
+	 * they will be generated as functions returning prop.domain or prop.range 
+	 * if those are provided. If neither prop.domainFunc nor prop.domain is
+	 * provided, a domainFunc will be generated that returns the d3.extent
+	 * of the prop.value function applied to all data items.
+	 * If neither prop.rangeFunc nor prop.range is provided, an Error will be
+	 * thrown.
+	 *
+	 * The domainFunc will be called with these arguments:
+	 *		- the whole data array (not grouped into series)
+	 *		- the array of series
+	 *		- the whole ChartProps instance
+	 *		- prop name
+	 *
+	 * The rangeFunc will be called with these arguments:
+	 *		- the SvgLayout instance
+	 *		- the chartProp
+	 *		- the wholeChartProps instance
+	 *		- prop name
+	 * If rangeFunc returns nothing (or anything falsy), the range will not
+	 * be set on prop.scale. This is important because for some scales you
+	 * may want to do something other than set scale.range(). For instance:
+	 *	prop.rangeFunc = function(layout, prop, props) {
+	 *											prop.scale.rangePoints([0, layout.w()]);
+	 *										}
+	 * This function will not return a range to be passed to prop.scale.range
+	 * but will call prop.scale.rangePoints() itself.
+	 *
+	 * Set all scale.domains by calling
+	 *		cp.updateDomains(data, series)
+	 *
+	 * Set all scale.ranges by calling
+	 *		cp.updateRanges(layout)
+	 *
+	 * Also, before drawing data points (and if data changes), you should call
+	 *		cp.updateAccessors(data, series)
+	 * This will assure that prop.value will be called with fresh data and series
+	 * arguments.
+	 *
+	 * And:
+	 *		cp.tooltipSetup(data, series)
+	 * If prop.tooltipFunc is provided, it will be setup to receive the same
+	 * arguments as prop.value. If not, a tooltipFunc will be generated that
+	 * returns results from prop.label and prop.value. tooltipFunc is expected
+	 * to return an object with a label property and a value property. 
+	 * (What about formatting?)
+	 * Tooltip content will only be generated for props where prop.tooltipOrder 
+	 * is provided (it should be a non-zero number.)
+	 */
 	class ChartProps {
 		constructor(defaults, explicit) {
 			//this.props = {};
@@ -2053,17 +2163,26 @@
 										prop.value = obj => (label in obj) ? obj[label] : label;
 									} else if (typeof prop.value === "function") {
 										//console.log(`saving value for ${name}`);
-										prop._originalValueAccessor = prop.value;
-										// add params to call below when data is known
+										//prop._originalValueAccessor = prop.value;
 									} else {
 										throw new Error("can't figure out how to make value accessor");
 									}
+									prop._originalValueAccessor = prop.value;
+									// add params to call below when data is known
 								}
 								if (prop.needsScale) { // if it needsScale, it must also needsValueFunc
 									prop.scale = prop.scale || d3.scale.linear();
+									// domainFunc should be called with args: data,series
+									// domainFunc will receive args:
+									//		data, series, props, propname
 									prop.domainFunc = prop.domainFunc ||
 																		prop.domain && d3.functor(prop.domain) ||
-																		((data,series) => d3.extent(data.map(this.richValueFunc.bind(this)(name, data, series))));
+																		((data,series,props,name) => 
+																			d3.extent(data.map(
+																					_.partial(props[name]._originalValueAccessor, 
+																							 _, _, _, // d, i, undefined,
+																							this, data, series, name))))
+									prop._origDomainFunc = prop.domainFunc;
 									prop.rangeFunc = prop.rangeFunc ||
 																		prop.range && d3.functor(prop.range) ||
 																		function() {throw new Error(`no range for prop ${name}`)};
@@ -2072,24 +2191,31 @@
 								this[name] = prop;
 							});
 		}
-		calcDomains(data, series) {
+		chartData(data) {
+			if (typeof data !== "undefined")
+				this._chartData = data;
+			return this._chartData;
+		}
+		chartSeries(series) {
+			if (typeof series !== "undefined")
+				this._chartSeries = series;
+			return this._chartSeries;
+		}
+		updateDomains(data, series) {
 			_.each(this, (prop, name) => {
 											if (prop.needsScale) {
-												var ext = prop.domainFuncNeedsExtent
-																		? d3.extent(data.map(this.richValueFunc.bind(this)(name, data, series))) 
-																		: null;
 												prop.scale.domain(
-													prop.domainFunc(data, series, this, ext));
+													prop.domainFunc(data, series, this, name));
 												// brushing may temporaryily change the scale domain
 												// hold on to the domain as calculated from the data
 												prop.domain = prop.scale.domain();
 											}
 										});
 		}
-		calcRanges(layout) {
+		updateRanges(layout) {
 			_.each(this, (prop, name) => {
 											if (prop.needsScale) {
-												var range = prop.rangeFunc(layout, this);
+												var range = prop.rangeFunc(layout, this[name], this, name);
 												if (range) {
 													prop.scale.range(range)
 													prop.range = range;
@@ -2097,73 +2223,103 @@
 											}
 										});
 		}
-		calcAccessors(data, series) {
+		updateAccessors(data, series) {
 			_.each(this, (prop, name) => {
 											if (prop.needsValueFunc) {
-												//console.log(`replacing value for ${name}`);
-												prop.value = this.richValueFunc.bind(this)(name, data, series);
+												prop.value = _.partial(prop._originalValueAccessor, 
+																							 _, _, _, // d, i, j,
+																							this, data, series, name);
 											}
 										});
 		}
-		richValueFunc(name, data, series) {
-			//console.log(`making rich value for ${name}`);
-			return (obj, i) => {
-											//i % 1000 === 0 && console.log(`calling value for ${name}, ${i}`);
-											return this[name]._originalValueAccessor(
-														obj, 
-														i,
-														this, 
-														data,
-														series);
-			};
+		tooltipSetup(data, series) {
+			this.tooltip = this.tooltip || { funcs: [] };
+			this.tooltip.funcs = 
+				_.chain(this)
+					.filter('tooltipOrder')
+					.sortBy('tooltipOrder')
+					.map((prop) => {
+						var func = prop.tooltipFunc ||
+											 function(d,i,j) {
+												 return {
+													 name: prop.label(),
+													 value: _.partial(prop._originalValueAccessor, 
+																	_, _, _, // d, i, j,
+																	this, data, series, name)(d,i,j)
+												 };
+											 };
+						return func;
+					})
+					.value();
+			this.tooltip.builder = // not configurable but could be, but would be
+														 // func that knows what to do with a bunch of funcs
+				(d, i, j) => this.tooltip.funcs
+													.map(func => func(d,i,j))
+													.map(o => `${o.name}: ${o.value}<br/>`)
+													.join('')
 		}
 	}
 
 	module.zoomScatter = function () {
 		this.render = function (data, target, w, h, opts) {
-			//var options = assembleChartOptions(this.defaultOptions, opts);
 			var cp = new ChartProps(this.defaultOptions, opts);
-			window.cp = cp; //debugging
+			DEBUG && (window.cp = cp);
 			if (!cp.data.alreadyInSeries) {
 				var series = dataToSeries(data, cp.series);
 			}
-			var svg = svgSetup.call(this, target, series, w, h, ['zoom-scatter']).child('svg');
+			var divEl = svgSetup.call(this, target, series, w, h, ['zoom-scatter']);
+			var svgEl = divEl.child('svg');
 			if (!data.length) { // do this some more efficient way
-				nodata(svg.as("d3"));
+				nodata(svgEl.as("d3"));
 				return;
 			}
-			/* var svgHandler = new SvgHandler(svg, layout, options.chartProps); */
 			var layout = new SvgLayout(w, h, cp.layout);
 			if (cp.y.showLabel) {
-				cp.y.labelComponent = new ChartLabelLeft(svg, layout, cp.y);
+				cp.y.labelComponent = new ChartLabelLeft(svgEl, layout, cp.y);
 			}
 
-			cp.calcAccessors(data, series);
-			cp.calcDomains(data, series);
-			cp.calcRanges(layout);
 
 			if (cp.y.showAxis) {
-				cp.y.axisComponent = new ChartAxisY(svg, layout, cp.y);
+				cp.y.axisComponent = new ChartAxisY(svgEl, layout, cp.y);
 			}
 
 			if (cp.x.showLabel) {
-				cp.x.labelComponent = new ChartLabelBottom(svg, layout, cp.x);
+				cp.x.labelComponent = new ChartLabelBottom(svgEl, layout, cp.x);
 			}
 			if (cp.x.showAxis) {
-				cp.x.axisComponent = new ChartAxisX(svg, layout, cp.x);
+				cp.x.axisComponent = new ChartAxisX(svgEl, layout, cp.x);
 			}
 			layout.positionZones();
 
-			//console.log(cp.y.scale.domain(), cp.y.scale.range());
-			//console.log(cp.x.scale.domain(), cp.x.scale.range());
+			cp.updateAccessors(data, series);
+			cp.updateDomains(data, series);
+			cp.tooltipSetup(data, series);
+			cp.updateRanges(layout);
+			cp.chart.chart = new ChartChart(svgEl, layout, cp.chart);
+			cp.chart.chart.gEl.addChild('chartrect', 
+												{
+														tag: 'rect',
+														updateCb: function(selection) {
+															selection
+																.attr('width', layout.svgWidth())
+																.attr('height', layout.svgHeight())
+																.style('fill', '#AAA')
+														},
+													});
+			//divEl.update({duration:750});
+			setTimeout(function() {
+				layout.positionZones();
+			}, 1000);
+			setTimeout(function() {
+				//divEl.update({duration:750});
+				divEl.update({delay: 500, duration:1000});
+			}, 1100);
+			return;
 
-			cp.chart.chart = new ChartChart(svg, layout, cp.chart);
-
-			var tooltipBuilder = tooltipFactory(cp.tooltips);
 
 			var legendWidth = 0;
 			if (cp.legend.show) {
-				var legend = svg.as("d3").append("g")
+				var legend = svgEl.as("d3").append("g")
 					.attr("class", "legend");
 
 				var maxWidth = 0;
@@ -2186,30 +2342,14 @@
 				legendWidth += maxWidth + 5;
 			}
 
-			svg.data(series)
+			svgEl.data(series)
 
 			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
-				.html(tooltipBuilder);
-			svg.as("d3").call(focusTip);
+				.html(cp.tooltip.builder);
+			svgEl.as("d3").call(focusTip);
 
-			/*
-			cp.size.scale
-								.domain(extent(data, cp.size.value))
-								.range(cp.size.range)
-			*/
-
-			/*
-			var clip = vis.append("defs")
-				.append("clipPath")
-				.attr("id", "clip")
-				.append("rect")
-				.attr("width", layout.svgWidth())
-				.attr("height", layout.svgHeight())
-				.attr("x", 0)
-				.attr("y", 0);
-			*/
 			var brush = d3.svg.brush()
 				.x(cp.x.scale)
 				.y(cp.y.scale)
@@ -2231,8 +2371,9 @@
 							return "translate(" + xVal + "," + yVal + ")";
 						});
 
-					axisHelper.select(".x.axis").transition().duration(750).call(xAxis);
-					axisHelper.select(".y.axis").transition().duration(750).call(yAxis);
+					layout.positionZones();
+					//axisHelper.select(".x.axis").transition().duration(750).call(xAxis);
+					//axisHelper.select(".y.axis").transition().duration(750).call(yAxis);
 					$('.extent').hide();
 					$('.resize').hide();
 				});
@@ -2273,12 +2414,8 @@
 					var yVal = cp.y.scale(cp.y.value(d));
 					return "translate(" + xVal + "," + yVal + ")";
 				})
-				.on('mouseover', function (d) {
-					focusTip.show(d);
-				})
-				.on('mouseout', function (d) {
-					focusTip.hide(d);
-				});
+				.on('mouseover', focusTip.show)
+				.on('mouseout', focusTip.hide)
 
 			if (cp.series.showLabel) {
 				series.append("text")

@@ -53,6 +53,7 @@ define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], fun
 			x: {
 						value: d=>d.beforeMatchingStdDiff,
 						label: "Before matching StdDiff",
+						tooltipOrder: 1,
 			},
 			y: {
 						value: d=>d.afterMatchingStdDiff,
@@ -67,16 +68,18 @@ define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], fun
 							var precision = (str.length - (idx+1) - 2).toString();
 							return d3.format('0.' + precision + '%')(d);
 						},
+						tooltipOrder: 2,
 			},
 			size: {
 						value: d=>d.afterMatchingMeanTreated,
 						//scale: d3.scale.log(),
 						range: [1, 8],
 						label: "After matching mean treated",
+						tooltipOrder: 3,
 			},
 			color: {
-						value: function(d, i, props, data, series) {
-							return props.series.groupBy(d, i, props, data, series);
+						value: function(d, i, j, props, data, series) {
+							return props.series.value(d, i, j, props, data, series);
 						},
 						//value: d=>nthroot(d.coefficient, 7),
 						//value: d=>d.coefficient,
@@ -92,7 +95,7 @@ define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], fun
 						scale: d3.scale.ordinal(),
 						domainFunc: 
 							function(data, series, props, ext) {
-								return _.uniq(data.map(props.series.groupBy));
+								return _.uniq(data.map(props.series.value));
 							},
 						//range: ['#ef8a62','#ddd','#67a9cf'],
 						range: ['red', 'green', 'pink', 'blue'],
@@ -122,11 +125,13 @@ define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], fun
 						//  value: (d,i) => i % 3,
 						value: () => junk++ % 3,
 						label: "Random",
+						tooltipOrder: 4,
 			},
 			series: {
-						groupBy: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
+						value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
 						sortBy:  d => d.afterMatchingStdDiff,
 						showOn:'color',
+						tooltipOrder: 5,
 			},
 			CIup: { // support CI in both directions
 						value: d => d.upperBound,

@@ -175,17 +175,23 @@ define(['jquery','knockout'], function($,ko) {
 	 *												  exitCb: null,  // only needed if you want
 	 *																				 // to run extra code (transition?)
 	 *																				 // when el is removed
+	 *												  cbParams: null,// will be passed to all callbacks
+	 *																				 // along with d3 selection
 	 *												  updateCb:			 // code to run on creation and
 	 *																				 // after possible data changes
-	 *																		function(selection, cbParams) {
+	 *																		function(selection, cbParams, updateOpts) {
+	 *																			// updateOpts are set by calling
+	 *																			// el.run(opts) or el.update(opts)
+	 *																			// and they are sent to the updateCb not
+	 *																			// just for the el in question, but to
+	 *																			// all its children
 	 *																			selection
 	 *																				.attr('x', function(d) {
 	 *																					return cbParams.scale(cbParams.xVal(d))
 	 *																				})
 	 *																		},
-	 *												  cbParams: null,// will be passed to all callbacks
-	 *																				 // along with d3 selection
 	 *													children: null,// k/v obj with child descriptors (need to document)
+	 *																				 // should only allow children with explicite el.addChild
 	 *													dataPropogationSelectors: null, // document when implemented
 	 *												});
 	 *
@@ -205,7 +211,7 @@ define(['jquery','knockout'], function($,ko) {
 		constructor(props) {
 			this.parentElement = props.parentElement; // any form ok: d3, jq, dom, id
 			this.el = getContainer(this.parentElement, "d3");
-			this.data = Array.isArray(props.data) || typeof props.data === 'function'
+			this._data = Array.isArray(props.data) || typeof props.data === 'function'
 										? props.data : [props.data];
 			this.tag = props.tag;
 			this.classes = props.classes || [];
@@ -221,8 +227,13 @@ define(['jquery','knockout'], function($,ko) {
 			});
 			this.run();
 		}
-		selectAll() {
-		 return this.el.selectAll([this.tag].concat(this.classes).join('.'));
+		selectAll({delay, duration, data} = {}) {
+		 var selection = this.el.selectAll([this.tag].concat(this.classes).join('.'));
+		 if (data)
+			 selection = selection.data(data);
+		 if (duration||delay)
+			 return selection.transition().delay(delay||0).duration(duration||0);
+		 return selection;
 		}
 		as(type) {
 			return getContainer(this.selectAll(), type);
@@ -230,11 +241,13 @@ define(['jquery','knockout'], function($,ko) {
 		data(data) {
 			if (typeof data === "undefined")
 				return this.selectAll().data();
-			return this.selectAll().data(data);
+			this._data = data;
+			return this.selectAll({data}).data();
 		}
-		run(enter=true, exit=true, update=true) {
+		run(opts={}, enter=true, exit=true, update=true) {
 			var self = this;
-			var selection = self.selectAll().data(self.data);
+			opts.data = opts.data || self._data;
+			var selection = self.selectAll(opts);
 			if (exit) {
 				selection.exit()
 						.call(self.exitCb, self.cbParams)
@@ -263,13 +276,13 @@ define(['jquery','knockout'], function($,ko) {
 							});
 						});
 			}
-			selection = self.selectAll().data(self.data);
+			selection = self.selectAll(opts);
 			if (update) {
 				selection
-						.call(self.updateCb, self.cbParams)
+						.call(self.updateCb, self.cbParams, opts)
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
-								self.child(name).update();
+								self.child(name).update(opts);
 							});
 						})
 			}
@@ -293,6 +306,9 @@ define(['jquery','knockout'], function($,ko) {
 			this.childDesc(name, desc);
 			return this.makeChild(name, this.selectAll());
 		}
+		// should we attempt to send selectAll options (for transition durations)
+		// through addChild/makeChild? not doing this yet. but update calls will
+		// send these options down the D3Element tree
 		makeChild(name, parentElement) {
 			var desc = this.childDesc(name);
 			var params = $.extend(
@@ -305,14 +321,14 @@ define(['jquery','knockout'], function($,ko) {
 		children() {
 			return this._children;
 		}
-		exit() {
-			return this.run(false, true, false);
+		exit(opts) {
+			return this.run(opts, false, true, false);
 		}
-		enter() {
-			return this.run(true, false, false);
+		enter(opts) {
+			return this.run(opts, true, false, false);
 		}
-		update() {
-			return this.run(false, false, true);
+		update(opts) {
+			return this.run(opts, false, false, true);
 		}
 	}
 	
