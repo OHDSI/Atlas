@@ -81,7 +81,7 @@ define(['jquery','knockout'], function($,ko) {
 	 *						(could also add remove callback but don't have it yet)
 	 *						and array of params to send to callbacks
 	 * returns d3 selection with data appropriately attached
-	 * warning: if your enterCb appends further elements (or if you add more
+	 * warning: if your addCb appends further elements (or if you add more
 	 *					using the returned selection, i think),
 	 *					they will also have data appropriately attached, but that
 	 *					data may end up stale for the updateCb if you call this again 
@@ -94,7 +94,7 @@ define(['jquery','knockout'], function($,ko) {
 	 *												                // don't already exist) as children of pdiv
 	 *												 tag: 'div',		// they are divs
 	 *												 classes: [],
-	 *												 enterCb: function(el, params) {
+	 *												 addCb: function(el, params) {
 	 *																	// each div will have an svg appended
 	 *																	el.append('svg');
 	 *															  },
@@ -109,7 +109,7 @@ define(['jquery','knockout'], function($,ko) {
 	 *																	 },
 	 *												 cbParams: []});
 	 */
-	function d3AddIfNeeded({parentElement, data, tag, classes=[], enterCb=()=>{}, updateCb=()=>{}, 
+	function d3AddIfNeeded({parentElement, data, tag, classes=[], addCb=()=>{}, updateCb=()=>{}, 
 												  cbParams} = {}) {
 		var el = getContainer(parentElement, "d3");
 		var selection = el.selectAll([tag].concat(classes).join('.'));
@@ -127,7 +127,7 @@ define(['jquery','knockout'], function($,ko) {
 						newNode.classed(cls, true);
 					});
 				})
-				.call(enterCb, cbParams);
+				.call(addCb, cbParams);
 		selection = el.selectAll([tag].concat(classes).join('.'));
 		selection.call(updateCb, cbParams);
 		return selection;
@@ -207,6 +207,9 @@ define(['jquery','knockout'], function($,ko) {
 	 *		don't use the d3 selections at all
 	 *		you also probably don't need to use the add callback
 	 */
+	function combineFuncs(funcs) {
+		return (...args) => { return funcs.map(function(f) { return f.apply(this, args) }) }
+	}
 	class D3Element {
 		constructor(props) {
 			this.parentElement = props.parentElement; // any form ok: d3, jq, dom, id
@@ -217,6 +220,8 @@ define(['jquery','knockout'], function($,ko) {
 			this.classes = props.classes || [];
 			this.enterCb = props.enterCb || (()=>{});
 			this.updateCb = props.updateCb || (()=>{});
+			this.updateCbs = props.updateCbs || [this.updateCb]; // in case you want to run more than one callback on update
+			this.updateCbsCombined = combineFuncs(this.updateCbs);
 			this.exitCb = props.exitCb || (()=>{});
 			this.cbParams = props.cbParams;
 			this._childDescs = props.children || {}; // k/v obj with child descriptors (document)
@@ -267,7 +272,7 @@ define(['jquery','knockout'], function($,ko) {
 									newNode.classed(cls, true);
 								});
 							})
-						.call(self.enterCb, self.cbParams)
+						.call(self.enterCb, self.cbParams, opts)
 						.each(function(d) {
 							// make children
 							_.each(self.children(), (c, name) => {
@@ -279,7 +284,7 @@ define(['jquery','knockout'], function($,ko) {
 			selection = self.selectAll(opts);
 			if (update) {
 				selection
-						.call(self.updateCb, self.cbParams, opts)
+						.call(self.updateCbsCombined, self.cbParams, opts)
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
 								self.child(name).update(opts);
@@ -317,6 +322,12 @@ define(['jquery','knockout'], function($,ko) {
 											// its own data function
 				}, desc);
 			return this.child(name, new D3Element(params));
+			// it sort of doesn't matter because if you repeatedly create D3Elements
+			// with the same parameters, d3 enter and exit selections will be empty
+			// and update won't have a visible effect since data is the same,
+			// but maybe if makeChild (or addChild) is called repeatedly with the
+			// same exact parameters, we should avoid actually creating a new
+			// D3Element instance
 		}
 		children() {
 			return this._children;
