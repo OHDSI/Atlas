@@ -1671,7 +1671,7 @@
 	// (without the offscreen stuff, which I believe was not necessary).
 	function svgSetup(target, data, w, h, divClasses=[], svgClasses=[]) {
 			// call from chart obj like: 
-			//	var svgEl = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
+			//	var divEl = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
 			// target gets a new div, new div gets a new svg. div/svg will resize
 			//	with consistent aspect ratio.
 			// svgSetup can be called multiple times but will only create div/svg
@@ -1774,7 +1774,7 @@
 			// provide svg element to get size from (must specify 'width' or 'height' as dim)
 			layout.add('left','axis', { obj: cp.y.axisG.node(), dim:'width' })
 
-	 * retrieve dimensions of svg area (inside all zones):
+	 * retrieve dimensions of svg chart area (inside all zones):
 			layout.svgWidth()
 			layout.svgHeight()
 	 * retrieve svg dimensions:
@@ -1864,17 +1864,73 @@
 				.value();
 		}
 	}
-	class SvgElement { // assume it always gets a g and then something inside the g
-		constructor(svgEl, layout, chartProp) {
-			this.parentEl = svgEl;
+	/* SvgElement combines D3Element, SvgLayout, and ChartProps
+	 * ChartProps is where configuration options for your chart
+	 * are assembled. SvgElement is the place for code that
+	 * generates common chart elements (axes, labels, etc.)
+	 * So your chart code shouldn't have to worry about placement
+	 * of these items (and readjusting placement of other items
+	 * when the size of these changes). Chart code should just
+	 * say what elements should be included and should (probably
+	 * through chartProps) provide methods for generating their
+	 * content.
+	 *
+	 * SvgElement will make a g as a child of the parent D3Element
+	 * and then another element inside that (determined by the subclass).
+	 *
+	 * SvgElement is an abstract class. Subclasses should define
+	 *	- zone: where they belong: top, bottom, left, right, center
+	 *	- subzone: their (unique) name within their zone
+	 *	- addCb: to be passed to D3Element
+	 *	- gAddCb: addCb for the g container
+	 *	- updateContent: updateCb to be passed to D3Element
+	 *	- updatePosition: updateCb to be passed to the g container
+	 *	- sizedim: width or height. for determining this element's size
+	 *	- size: optional func. by default size is sizedim of element's 
+	 *			g's getBBox() 
+	 *
+	 * SvgElements are one per chart instance. Use them to make titles,
+	 * axes, legends, etc. Not to make dots. The data they get is
+	 * the chartProp
+	 *
+	 */
+	class SvgElement {
+		// assume it always gets a g and then something inside the g
+		// the inside thing will be added in the subclass's _addContent
+		// method which will include a line like this.gEl.addChild(...).
+		// so making a new SvgElement means adding a child (g) and a
+		// grandchild (whatever) to the parent D3Eelement
+		constructor(d3El, layout, chartProp) {
+			if (new.target === SvgElement) throw TypeError("new of abstract class SvgElement");
+			this.parentEl = d3El;
 			this.layout = layout;
 			this.chartProp = chartProp;
-			this.gEl = svgEl.addChild(chartProp.name, 
+			this.gEl = d3El.addChild(chartProp.name, 
 											{ tag:'g', data:chartProp,
-												classes: this.cssClasses(), });
+												classes: this.cssClasses(), 
+												gAddCb: this.gAddCb.bind(this),
+												addCb: this.addCb.bind(this),
+												updateContent: this.updateContent.bind(this),
+												updatePosition: this.gAddCb.bind(this),
+											});
+
+			/*
+			this.addCb
+			*/
 			this._addContent();
-			this.addToLayout(layout);
+			if (this.zone) {
+				layout.add(this.zone(), this.subzone(), 
+								 { size:this.size.bind(this),
+										position:this.position.bind(this),});
+				this.position(layout);
+			} else {
+				this.addToLayout(layout);
+			}
 		}
+		addCb() {}
+		gAddCb() {}
+		updateContent() {}
+		updatePosition() {}
 	}
 
 	class ChartChart extends SvgElement {
@@ -1995,9 +2051,10 @@
 						position: this.position.bind(this) });
 				this.position(layout);
 		}
-		cssClasses() { // classes needed on g element
-			return ['y','axis'];
-		}
+		cssClasses() { return ['y','axis']; } // classes needed on g element
+		zone () { return 'left'; }
+		subzone () { return 'axis'; }
+		sizedim() { return 'width'; }
 		size() {
 			return this.gEl.as('dom').getBBox().width;
 		}
@@ -2290,12 +2347,15 @@
 				cp.x.axisComponent = new ChartAxisX(svgEl, layout, cp.x);
 			}
 			layout.positionZones();
+			layout.positionZones();
 
 			cp.updateAccessors(data, series);
 			cp.updateDomains(data, series);
 			cp.tooltipSetup(data, series);
 			cp.updateRanges(layout);
-			cp.chart.chart = new ChartChart(svgEl, layout, cp.chart);
+			cp.chart.chart = new ChartChart(svgEl, layout, cp.chart, series);
+
+			// rectangle just to help with development:
 			cp.chart.chart.gEl.addChild('chartrect', 
 												{
 														tag: 'rect',
@@ -2306,15 +2366,19 @@
 																.style('fill', '#AAA')
 														},
 													});
+
+			var chart = cp.chart.chart.gEl.as('d3');
+
 			//divEl.update({duration:750});
 			setTimeout(function() {
+				layout.positionZones();
 				layout.positionZones();
 			}, 1000);
 			setTimeout(function() {
 				//divEl.update({duration:750});
 				divEl.update({delay: 500, duration:1000});
 			}, 1100);
-			return;
+			//return;
 
 
 			var legendWidth = 0;
@@ -2342,7 +2406,7 @@
 				legendWidth += maxWidth + 5;
 			}
 
-			svgEl.data(series)
+			//svgEl.data(series)
 
 			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
@@ -2372,17 +2436,18 @@
 						});
 
 					layout.positionZones();
+					layout.positionZones();
 					//axisHelper.select(".x.axis").transition().duration(750).call(xAxis);
 					//axisHelper.select(".y.axis").transition().duration(750).call(yAxis);
 					$('.extent').hide();
 					$('.resize').hide();
 				});
 
-			cp.chart.chart.gEl.as("d3").append('g')
+			chart.append('g')  // use addChild?
 				.attr('class', 'brush')
 				.call(brush);
 
-			var series = cp.chart.chart.gEl.as('d3').selectAll(".series")
+			var series = chart.selectAll(".series")  // use addChild?
 				.data(series)
 				.enter()
 				.append("g");
@@ -2437,7 +2502,7 @@
 			}
 
 			if (cp.chart.labelIndexDate) {
-				cp.chart.chart.gEl.as('d3').append("rect")
+				chart.append("rect")
 					.attr("transform", function () {
 						return "translate(" + (indexPoints.x - 0.5) + "," + indexPoints.y + ")";
 					})
