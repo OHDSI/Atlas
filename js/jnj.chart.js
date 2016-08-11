@@ -2345,14 +2345,6 @@
 
 			var chart = cp.chart.chart.gEl.as('d3');
 
-			//divEl.update({duration:750});
-			setTimeout(function() {
-				//layout.positionZones();
-				//layout.positionZones();
-			}, 1000);
-			//return;
-
-
 			var legendWidth = 0;
 			if (cp.legend.show) {
 				var legend = svgEl.as("d3").append("g")
@@ -2461,36 +2453,40 @@
 												})
 										},
 										exitCb: function(selection, params, transitionOpts={}) {
-											var {delay=0, duration=0} = transitionOpts;
+											var {delay=0, duration=0, transition} = transitionOpts;
 											selection
-												.transition().delay(delay).duration(duration)
+												//.transition().delay(delay).duration(duration)
+												//.transition(transition)
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.value(d));
 													var yVal = cp.y.scale(cp.y.value(d));
-													return `translate(${xVal},${yVal}) scale(.1,.1)`;
+													return `translate(${xVal},${yVal}) scale(.8,.8)`;
 												})
-												.style("stroke", "green")
+												.style("stroke", "black")
+												//.transition(transition)
 												.transition()
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.value(d));
 													var yVal = cp.y.scale(cp.y.value(d));
 													return `translate(${xVal},${yVal}) scale(5,4)`;
 												})
+												//.transition(transition)
 												.transition()
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.value(d));
 													var yVal = cp.y.scale(cp.y.value(d));
 													return `translate(${xVal},${yVal}) scale(1,1)`;
 												})
-												.transition()
-												.remove();
+												.remove()
 										},
 									});
 
-			series = dataToSeries(data.slice(0,100), cp.series);
+			series = dataToSeries(data.slice(0,15000), cp.series);
 			cp.chart.chart.gEl
 					.child('series')
-						.run({data: series, delay: 10000, duration: 2750});
+						.run({data: series, delay: 0, duration: 4000});
+			layout.positionZones();
+			layout.positionZones();
 			/*
 			cp.chart.chart.gEl
 					.child('series')
