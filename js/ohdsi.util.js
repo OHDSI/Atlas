@@ -258,10 +258,10 @@ define(['jquery','knockout'], function($,ko) {
 			var {delay=0, duration=0} = transitionOpts;
 
 			if (exit) {
+				//transitionOpts.transition = d3.transition().delay(delay).duration(duration);
 				selection.exit()
-						.call(self.exitCb, self.cbParams, opts)
-						// run exitCb for children first
-						/*
+						.transition()
+						.delay(delay).duration(duration)
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
 								self.child(name).exit(transitionOpts);
@@ -269,6 +269,11 @@ define(['jquery','knockout'], function($,ko) {
 								// probably no reason to
 							});
 						})
+						.call(self.exitCb, self.cbParams, opts)
+						.remove()
+						//.transition(transitionOpts.transition)
+						// run exitCb for children first
+						/*
 						.transition().delay(delay).duration(duration)
 							.attr('transform', 'scale(3,3)')
 							.style('opacity', 1)
@@ -314,14 +319,13 @@ define(['jquery','knockout'], function($,ko) {
 			selection = self.selectAll(data);
 			if (update) {
 				selection
-						.call(self.updateCbsCombined, self.cbParams, opts)
-				selection
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
 								self.child(name).run(transitionOpts, enter, exit, update);
 								// data will be passed down to children don't override it with data from opts
 							});
 						})
+						.call(self.updateCbsCombined, self.cbParams, opts)
 			}
 			return selection;
 		}
