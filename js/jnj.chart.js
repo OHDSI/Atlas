@@ -1629,6 +1629,7 @@
 	function shapePath(type, cx, cy, r) {
 		// shape fits inside the radius
 		var shapes = {
+			/*
 			circle: function(cx, cy, r) {
 								// http://stackoverflow.com/questions/5737975/circle-drawing-with-svgs-arc-path
 								return `
@@ -1638,6 +1639,7 @@
 													a ${r},${r} 0 1,0 ${-r * 2},0
 												`;
 							},
+			*/
 			square: function(cx, cy, r) {
 								var side = Math.sqrt(1/2) * r * 2;
 								return `
@@ -1742,8 +1744,8 @@
 															_.sortBy(series.values, seriesProp.sortBy))
 							.value());
 	}
-	function dataFromSeries(data) {
-		return (_.chain(data)
+	function dataFromSeries(series) {
+		return (_.chain(series)
 							.map('values')
 							.flatten()
 							.value());
@@ -2319,8 +2321,8 @@
 			if (cp.x.showAxis) {
 				cp.x.axisComponent = new ChartAxisX(svgEl, layout, cp.x);
 			}
-			layout.positionZones();
-			layout.positionZones();
+			//layout.positionZones();
+			//layout.positionZones();
 
 			cp.updateAccessors(data, series);
 			cp.updateDomains(data, series);
@@ -2332,6 +2334,7 @@
 			cp.chart.chart.gEl.addChild('chartrect', 
 												{
 														tag: 'rect',
+														classes:['foo','bar'],
 														updateCb: function(selection) {
 															selection
 																.attr('width', layout.svgWidth())
@@ -2344,13 +2347,9 @@
 
 			//divEl.update({duration:750});
 			setTimeout(function() {
-				layout.positionZones();
+				//layout.positionZones();
 				//layout.positionZones();
 			}, 1000);
-			setTimeout(function() {
-				//divEl.update({duration:750});
-				divEl.update({delay: 500, duration:1000});
-			}, 1100);
 			//return;
 
 
@@ -2421,6 +2420,110 @@
 				.attr('class', 'brush')
 				.call(brush);
 
+			var seriesGs = cp.chart.chart.gEl
+				.addChild('series',
+									{ tag: 'g',
+										classes:['series'],
+										data: series,
+									});
+			seriesGs.addChild('dots',
+									{tag: 'path',
+										data: function(series) {
+											return series.values;
+										},
+										classes: ['dot'],
+										addCb: function(selectionparams) {
+											selection
+												.on('mouseover', focusTip.show)
+												.on('mouseout', focusTip.hide)
+										},
+										updateCb: function(selection, params, opts) {
+											selection
+												.attr("d", function(d) {
+													var xVal = 0; //cp.x.scale(cp.x.value(d));
+													var yVal = 0; //cp.y.scale(cp.y.value(d));
+													return shapePath(
+																		cp.shape.scale(cp.shape.value(d)),
+																		xVal, // 0, //options.xValue(d),
+																		yVal, // 0, //options.yValue(d),
+																		cp.size.scale(cp.size.value(d)));
+												})
+												.style("stroke", function (d) {
+													// calling with this so default can reach up to parent
+													// for series name
+													//return cp.color.scale(cp.series.value.call(this, d));
+													return cp.color.scale(cp.color.value(d));
+												})
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.value(d));
+													var yVal = cp.y.scale(cp.y.value(d));
+													return "translate(" + xVal + "," + yVal + ")";
+												})
+										},
+										exitCb: function(selection, params, transitionOpts={}) {
+											var {delay=0, duration=0} = transitionOpts;
+											selection
+												.transition().delay(delay).duration(duration)
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.value(d));
+													var yVal = cp.y.scale(cp.y.value(d));
+													return `translate(${xVal},${yVal}) scale(.1,.1)`;
+												})
+												.style("stroke", "green")
+												.transition()
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.value(d));
+													var yVal = cp.y.scale(cp.y.value(d));
+													return `translate(${xVal},${yVal}) scale(5,4)`;
+												})
+												.transition()
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.value(d));
+													var yVal = cp.y.scale(cp.y.value(d));
+													return `translate(${xVal},${yVal}) scale(1,1)`;
+												})
+												.transition()
+												.remove();
+										},
+									});
+
+			series = dataToSeries(data.slice(0,100), cp.series);
+			cp.chart.chart.gEl
+					.child('series')
+						.run({data: series, delay: 10000, duration: 2750});
+			/*
+			cp.chart.chart.gEl
+					.child('series')
+					.child('dots')
+					.run({data: dataFromSeries(series), delay:5000,duration:2500});
+			*/
+			return;
+			/*
+			d3.select(cp.chart.chart.gEl.as('dom'))
+				.select('.series')
+				.selectAll('.dot')
+						.style('opacity', 1)
+						.attr('transform', 'scale(2,2)')
+					.transition().duration(1750).delay(500)
+						.attr("transform", "translate(100,100)scale(5,2)")
+					.transition()//.delay(1000).duration(1000)
+						.style('opacity', .2)
+						.attr("transform", "translate(-100,-100)scale(2,5)")
+					.transition()//.delay(2000).duration(1000)
+						.style('opacity', .8)
+						.attr("transform", "translate(0,0)scale(3,2)")
+					//.remove();
+			return;
+			*/
+			setTimeout(function() {
+				//divEl.update({duration:750});
+				series = dataToSeries(data.slice(0,100), cp.series);
+				cp.chart.chart.gEl.child('series').run({data: series, duration:1000});
+				//cp.chart.chart.gEl.child('series').update({data: series, delay: 500, duration:1000});
+
+			}, 1100);
+			return;
+			
 			var series = chart.selectAll(".series")  // use addChild?
 				.data(series)
 				.enter()
