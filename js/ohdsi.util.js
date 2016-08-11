@@ -211,7 +211,7 @@ define(['jquery','knockout'], function($,ko) {
 		return (...args) => { return funcs.map(function(f) { return f.apply(this, args) }) }
 	}
 	class D3Element {
-		constructor(props) {
+		constructor(props, transitionOpts) {
 			this.parentElement = props.parentElement; // any form ok: d3, jq, dom, id
 			this.el = getContainer(this.parentElement, "d3");
 			this._data = Array.isArray(props.data) || typeof props.data === 'function'
@@ -230,14 +230,13 @@ define(['jquery','knockout'], function($,ko) {
 			_.each(this._childDescs, (desc, name) => {
 				this.childDesc(name, desc);
 			});
-			this.run();
+			this.run(transitionOpts);
 		}
-		selectAll({delay, duration, data} = {}) {
+		selectAll(data) {
 		 var selection = this.el.selectAll([this.tag].concat(this.classes).join('.'));
 		 if (data)
 			 selection = selection.data(data);
-		 if (duration||delay)
-			 return selection.transition().delay(delay||0).duration(duration||0);
+		 //if (duration||delay) return selection.transition().delay(delay||0).duration(duration||0);
 		 return selection;
 		}
 		as(type) {
@@ -247,21 +246,50 @@ define(['jquery','knockout'], function($,ko) {
 			if (typeof data === "undefined")
 				return this.selectAll().data();
 			this._data = data;
-			return this.selectAll({data}).data();
+			return this.selectAll(data);
 		}
 		run(opts={}, enter=true, exit=true, update=true) {
+			// fix opts: split up data and transition
 			var self = this;
-			opts.data = opts.data || self._data;
-			var selection = self.selectAll(opts);
+			var data = opts.data || self._data;
+			var selection = self.selectAll(data);
+
+			var transitionOpts = _.omit(opts, ['data']); // delay, duration
+			var {delay=0, duration=0} = transitionOpts;
+
 			if (exit) {
 				selection.exit()
-						.call(self.exitCb, self.cbParams)
+						.call(self.exitCb, self.cbParams, opts)
+						// run exitCb for children first
+						/*
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
-								self.child(name).exit();
+								self.child(name).exit(transitionOpts);
+								// allow enter/update on children of exiting elements?
+								// probably no reason to
 							});
 						})
+						.transition().delay(delay).duration(duration)
+							.attr('transform', 'scale(3,3)')
+							.style('opacity', 1)
+							.each(function(d) {
+								debugger;
+							})
+						.transition()
+							.attr('transform', 'scale(0,0)')
+							.style('opacity', .2)
+						*/
+
+							/*
+						.attr('transform', 'translate(-100,0) scale(2,2)')
+						.transition().delay(0).duration(1000)
+						.style('opacity', .2)
+						.attr('transform', 'translate(200,40) scale(3,3)')
+						.transition().delay(0).duration(1000)
+						.attr('transform', 'translate(200,40) scale(1,1)')
+						//.call(self.exitCb, self.cbParams, opts)
 						.remove();
+						*/
 			}
 			if (enter) {
 				selection.enter()
@@ -276,18 +304,22 @@ define(['jquery','knockout'], function($,ko) {
 						.each(function(d) {
 							// make children
 							_.each(self.children(), (c, name) => {
-								var child = self.makeChild(name, this); // 'this' is the dom element we just appended
+								var child = self.makeChild(name, this, transitionOpts); // 'this' is the dom element we just appended
 								child.enter();
+								// allow exit/update on children of entering elements?
+								// probably no reason to
 							});
 						});
 			}
-			selection = self.selectAll(opts);
+			selection = self.selectAll(data);
 			if (update) {
 				selection
 						.call(self.updateCbsCombined, self.cbParams, opts)
+				selection
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
-								self.child(name).update(opts);
+								self.child(name).run(transitionOpts, enter, exit, update);
+								// data will be passed down to children don't override it with data from opts
 							});
 						})
 			}
@@ -307,21 +339,21 @@ define(['jquery','knockout'], function($,ko) {
 				this._children[name].el = el;
 			return this._children[name].el;
 		}
-		addChild(name, desc) {
+		addChild(name, desc, transitionOpts) {
 			this.childDesc(name, desc);
-			return this.makeChild(name, this.selectAll());
+			return this.makeChild(name, this.selectAll(), transitionOpts);
 		}
 		// should we attempt to send selectAll options (for transition durations)
 		// through addChild/makeChild? not doing this yet. but update calls will
 		// send these options down the D3Element tree
-		makeChild(name, parentElement) {
+		makeChild(name, parentElement, transitionOpts) {
 			var desc = this.childDesc(name);
 			var params = $.extend(
 				{ parentElement,
 					data: d=>[d],	// pass data down to child unless desc provides
 											// its own data function
 				}, desc);
-			return this.child(name, new D3Element(params));
+			return this.child(name, new D3Element(params, transitionOpts));
 			// it sort of doesn't matter because if you repeatedly create D3Elements
 			// with the same parameters, d3 enter and exit selections will be empty
 			// and update won't have a visible effect since data is the same,
