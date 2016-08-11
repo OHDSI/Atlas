@@ -109,7 +109,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 					if (source) {
 						// only bother updating those sources that we know are running
-						if (self.isRunning(source)) {
+						if (self.isSourceRunning(source)) {
 							source.status(info.status);
 							source.isValid(info.isValid);
 							var date = new Date(info.startTime);
@@ -136,6 +136,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.delete = function () {
+			if (!confirm("Delete cohort definition? Warning: deletion can not be undone!"))
+				return;
+			
 			clearTimeout(pollTimeout);
 
 			// reset view after save
@@ -196,7 +199,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			});
 		}
 
-		self.isRunning = function (source) {
+		self.isRunning = ko.pureComputed(function() {
+				return self.model.cohortDefinitionSourceInfo().filter(function (info) {
+					return !(info.status() == "COMPLETE" || info.status() == "n/a") ;
+				}).length > 0;
+		});
+		
+		self.isSourceRunning = function (source) {
 			if (source) {
 				switch (source.status()) {
 				case 'COMPLETE':
