@@ -14,8 +14,15 @@ define(['knockout', 'text!./scatterplot.html', 'jnj_chart'], function (ko, view,
 		var self = this;
 		self.loading = ko.observable(true);
 		self.data = params.data;
+		self.processedData = ko.observable();
+		self.chartResolution = ko.observable();
 		self.jsonFile = params.jsonFile;
-		self.chartOptions = params.chartOptions;
+		self.csvFile = params.csvFile;
+		self.tsvFile = params.tsvFile;
+		self.chartOptions = ko.observable(params.chartOptions);
+		var dataFile = ko.computed(function() {
+			return self.jsonFile || self.csvFile || self.tsvFile;
+		});
 		self.dataSetup = ko.utils.unwrapObservable(params.dataSetup)
 											|| (d => d);
 											// callback for modifying data after loading
@@ -26,35 +33,39 @@ define(['knockout', 'text!./scatterplot.html', 'jnj_chart'], function (ko, view,
 			return self._id = `scatter_${_idnum++}`;
 		};
 		self.error = ko.observable();
-		if (self.jsonFile && self.data) {
-			self.error("don't pass both jsonFile and data");
+		if (dataFile() && self.data) {
+			self.error("don't pass both data file and data");
 		}
 		self.ready = ko.computed(function() {
 			return !(self.loading() || self.error());
 		});
 		if (self.data) {
 			var data = self.dataSetup(self.data);
-			callScatter(self._id, data, self.chartOptions);
-
+			callScatter(self, data, self.chartOptions);
 		} else if (self.jsonFile) {
-			loadData(self.jsonFile, 
-						function(data) {
-							data = self.dataSetup(data);
-							self.loading(false);
-							callScatter(self._id, data, self.chartOptions);
-						});
+			loadData(self.jsonFile, dataLoaded.bind(self));
+		} else if (self.csvFile) {
+			d3.csv(self.csvFile, dataLoaded.bind(self));
+		} else if (self.tsvFile) {
+			d3.tsv(self.tsvFile, dataLoaded.bind(self));
 		} else {
 			self.loading(false);
 			self.error("need to send jsonFile or data");
 		}
 
-		function callScatter(divid, data) {
-			var scatter = new jnj_chart.zoomScatter();
-			scatter.render(data, '#'+divid, 460, 150, 
-										self.chartOptions
-										);
-		}
 	};
+	function callScatter(self, data, options) {
+		//var scatter = new jnj_chart.zoomScatter();
+		//scatter.render(data, '#'+divid, 460, 150, options);
+		self.processedData(data);
+		self.chartOptions(options);
+		self.chartResolution({width:460, height:150});
+	}
+	function dataLoaded(data) {
+		data = this.dataSetup(data);
+		this.loading(false);
+		callScatter(this, data, this.chartOptions);
+	}
 
 	var component = {
 		viewModel: scatterplot,

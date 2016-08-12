@@ -1,4 +1,4 @@
-define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], function (ko, view, _) {
+define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/scatterplot'], function (ko, view, _) {
 	function sptest(params) {
 		var self = this;
 		self.model = params.model;

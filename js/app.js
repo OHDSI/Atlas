@@ -175,6 +175,12 @@ define([
 							self.currentView('sptest');
 						});
 					},
+					'/sptest_smoking': function () {
+						require(['sptest_smoking'], function () {
+							console.log("trying to load sptest_smoking");
+							self.currentView('sptest_smoking');
+						});
+					},
 				}
 				self.router = new Router(routes).configure(routerOptions);
 

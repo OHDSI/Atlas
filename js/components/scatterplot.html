@@ -11,5 +11,10 @@
 	</p>
 </div>
 <div data-bind="if: ready">
-	<div data-bind="attr:{id:id()}"></div>
+	<div data-bind="d3ChartBinding: 
+		{	processedData,
+			chartOptions,
+			chartResolution,
+			chartType:'zoomScatter',
+		}"></div>
 </div>

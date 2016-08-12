@@ -100,6 +100,7 @@ requirejs.config({
 		"common":"components/datasources/app/common",
 		"reports": "components/datasources/app/reports",
 		"sptest": "sptest/sptest",
+		"sptest_smoking": "sptest/sptest_smoking",
 	}
 });
 
