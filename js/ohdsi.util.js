@@ -205,7 +205,9 @@ define(['jquery','knockout'], function($,ko) {
 	 *		add using el.addChild()
 	 *		set attributes in the update callback
 	 *		don't use the d3 selections at all
-	 *		you also probably don't need to use the add callback
+	 *		you probably don't need to do anything in the enterCb
+	 *		(because that would probably mean creating some nested dom nodes
+	 *		below the one you're adding, and then how would you access those?)
 	 */
 	function combineFuncs(funcs) {
 		return (...args) => { return funcs.map(function(f) { return f.apply(this, args) }) }
@@ -226,7 +228,8 @@ define(['jquery','knockout'], function($,ko) {
 			this.cbParams = props.cbParams;
 			this._children = {};
 			this.dataPropogationSelectors = props.dataPropogationSelectors; // not implemented yet
-			this.run(transitionOpts);
+			if (!props.stub)
+				this.run(transitionOpts);
 		}
 		selectAll(data) {
 		 var selection = this.el.selectAll([this.tag].concat(this.classes).join('.'));
@@ -263,7 +266,7 @@ define(['jquery','knockout'], function($,ko) {
 								// allow enter/update on children of exiting elements? probably no reason to
 							});
 						})
-						.call(self.exitCb, self.cbParams, opts)
+						.call(self.exitCb, self.cbParams, opts, self)
 						.remove()
 			}
 			if (enter) {
@@ -275,7 +278,7 @@ define(['jquery','knockout'], function($,ko) {
 									newNode.classed(cls, true);
 								});
 							})
-						.call(self.enterCb, self.cbParams, opts)
+						.call(self.enterCb, self.cbParams, opts, self)
 						.each(function(d) {
 							// make children
 							_.each(self.children(), (c, name) => {
@@ -294,7 +297,7 @@ define(['jquery','knockout'], function($,ko) {
 								// data will be passed down to children don't override it with data from opts
 							});
 						})
-						.call(self.updateCbsCombined, self.cbParams, opts)
+						.call(self.updateCbsCombined, self.cbParams, opts, self)
 			}
 			return selection;
 		}
@@ -336,6 +339,8 @@ define(['jquery','knockout'], function($,ko) {
 		}
 		children() {
 			return this._children;
+		}
+		implicitChild(selectorFunc) {
 		}
 		exit(opts) {
 			return this.run(opts, false, true, false);
