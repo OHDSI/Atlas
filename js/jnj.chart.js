@@ -1669,6 +1669,64 @@
 	// svgSetup could probably be used for all jnj.charts; it works
 	// (i believe) the way line chart and scatterplot were already working
 	// (without the offscreen stuff, which I believe was not necessary).
+	class ResizableSvgContainer extends ohdsiUtil.D3Element {
+		// call from chart obj like: 
+		//	var divEl = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
+		// target gets a new div, new div gets a new svg. div/svg will resize
+		//	with consistent aspect ratio.
+		// svgSetup can be called multiple times but will only create div/svg
+		//	once. data will be attached to div and svg (for subsequent calls
+		//	it may need to be propogated explicitly to svg children)
+		// returns a D3Element (defined in odhsi.utils)
+		// ( maybe shouldn't send data to this func, attach it later)
+		constructor(target, data, w, h, divClasses=[], svgClasses=[], makeMany=false) {
+			if (Array.isArray(data) && data.length > 1 && !makeMany) {
+				data = [data];
+			}
+			function aspect() {
+				return w / h;
+			}
+			super({
+				parentElement: target,
+				data, 
+				tag:'div', 
+				classes: divClasses, 
+			})
+			var divEl = this;
+			var svgEl = divEl.addChild('svg', {
+				tag: 'svg',
+				classes: svgClasses,
+				updateCb: function(selection, params, updateOpts, thisEl) {
+					var targetWidth = divEl.divWidth();
+					selection
+						.attr('width', targetWidth)
+						.attr('height', Math.round(targetWidth / aspect()))
+						.attr('viewBox', '0 0 ' + w + ' ' + h);
+				},
+			});
+			this.w = w;
+			this.h = h;
+			this.svgClasses = svgClasses;
+			var resizeHandler = $(window).on("resize",
+							() => svgEl.as('d3')
+												.attr("width", this.divWidth())
+												.attr("height", Math.round(this.divWidth() / aspect())));
+			setTimeout(function () {
+				$(window).trigger('resize');
+			}, 0);
+		}
+		divWidth() {
+			try {
+				return this.as("jquery").width();
+			} catch(e) {
+				return this.w;
+			}
+		}
+	}
+	/*
+	// svgSetup could probably be used for all jnj.charts; it works
+	// (i believe) the way line chart and scatterplot were already working
+	// (without the offscreen stuff, which I believe was not necessary).
 	function svgSetup(target, data, w, h, divClasses=[], svgClasses=[]) {
 			// call from chart obj like: 
 			//	var divEl = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
@@ -1725,6 +1783,7 @@
 			}, 0);
 			return this.svgDivEl;
 	}
+	*/
 	function nodata(chart) {
 		chart.html('');
 		chart.append("text")
@@ -1908,6 +1967,7 @@
 			this.gEl = d3El.addChild(chartProp.name, 
 											{ tag:'g', data:chartProp,
 												classes: this.cssClasses(), // move to gEnterCb
+																										// no, don't, will break D3Element
 												enterCb: this.gEnterCb.bind(this),
 												updateCb: this.updatePosition.bind(this),
 												cbParams: {layout},
@@ -1965,7 +2025,6 @@
 								`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
 		}
 	}
-
 	class ChartLabel extends SvgElement {
 		tagName() { return 'text'; }
 	}
@@ -2262,6 +2321,12 @@
 											}
 										});
 		}
+		/*
+		 * for value or tooltip functions that make use of aggregation over data or series
+		 * there should be a way to perform the aggregation calculations only once
+		 * rather than on every call to the value/tooltip func (actually, for tooltips
+		 * it doesn't matter too much since only one point gets processed at a time)
+		 */
 		tooltipSetup(data, series) {
 			this.tooltip = this.tooltip || { funcs: [] };
 			this.tooltip.funcs = 
@@ -2297,8 +2362,8 @@
 			if (!cp.data.alreadyInSeries) {
 				var series = dataToSeries(data, cp.series);
 			}
-			var divEl = svgSetup.call(this, target, series, w, h, ['zoom-scatter']);
-			var svgEl = divEl.child('svg');
+			var divEl = new ResizableSvgContainer(target, series, w, h, ['zoom-scatter']);
+			var svgEl = divEl.child('svg')
 			if (!data.length) { // do this some more efficient way
 				nodata(svgEl.as("d3"));
 				return;
