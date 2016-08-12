@@ -49,7 +49,7 @@ define(['jquery','knockout'], function($,ko) {
 			if (type === "jquery") return target;
 			return getContainer(target[0], type); // call again with dom node
 		}
-		if (typeof target === "string") {
+		if (typeof target === "string") { // only works with ids for now, not other css selectors
 			var id = target[0] === '#' ? target.slice(1) : target;
 			var dom = document.getElementById(id);
 			if (dom) return getContainer(dom, type); // call again with dom node
@@ -224,12 +224,8 @@ define(['jquery','knockout'], function($,ko) {
 			this.updateCbsCombined = combineFuncs(this.updateCbs);
 			this.exitCb = props.exitCb || (()=>{});
 			this.cbParams = props.cbParams;
-			this._childDescs = props.children || {}; // k/v obj with child descriptors (document)
 			this._children = {};
 			this.dataPropogationSelectors = props.dataPropogationSelectors; // not implemented yet
-			_.each(this._childDescs, (desc, name) => {
-				this.childDesc(name, desc);
-			});
 			this.run(transitionOpts);
 		}
 		selectAll(data) {
@@ -258,43 +254,17 @@ define(['jquery','knockout'], function($,ko) {
 			var {delay=0, duration=0} = transitionOpts;
 
 			if (exit) {
-				//transitionOpts.transition = d3.transition().delay(delay).duration(duration);
 				selection.exit()
 						.transition()
 						.delay(delay).duration(duration)
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
 								self.child(name).exit(transitionOpts);
-								// allow enter/update on children of exiting elements?
-								// probably no reason to
+								// allow enter/update on children of exiting elements? probably no reason to
 							});
 						})
 						.call(self.exitCb, self.cbParams, opts)
 						.remove()
-						//.transition(transitionOpts.transition)
-						// run exitCb for children first
-						/*
-						.transition().delay(delay).duration(duration)
-							.attr('transform', 'scale(3,3)')
-							.style('opacity', 1)
-							.each(function(d) {
-								debugger;
-							})
-						.transition()
-							.attr('transform', 'scale(0,0)')
-							.style('opacity', .2)
-						*/
-
-							/*
-						.attr('transform', 'translate(-100,0) scale(2,2)')
-						.transition().delay(0).duration(1000)
-						.style('opacity', .2)
-						.attr('transform', 'translate(200,40) scale(3,3)')
-						.transition().delay(0).duration(1000)
-						.attr('transform', 'translate(200,40) scale(1,1)')
-						//.call(self.exitCb, self.cbParams, opts)
-						.remove();
-						*/
 			}
 			if (enter) {
 				selection.enter()
@@ -311,8 +281,7 @@ define(['jquery','knockout'], function($,ko) {
 							_.each(self.children(), (c, name) => {
 								var child = self.makeChild(name, this, transitionOpts); // 'this' is the dom element we just appended
 								child.enter();
-								// allow exit/update on children of entering elements?
-								// probably no reason to
+								// allow exit/update on children of entering elements? probably no reason to
 							});
 						});
 			}
