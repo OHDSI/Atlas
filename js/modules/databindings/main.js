@@ -1,3 +1,4 @@
+// is this being loaded? doesn't seem like it
 define(function (require) {
 	var autocompleteBinding = require("./autocompleteBinding");
 	var htmlValueBinding = require("./htmlValueBinding");

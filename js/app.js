@@ -159,6 +159,12 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.currentView('sptest');
 						});
 					},
+					'/sptest_smoking': function () {
+						require(['sptest_smoking'], function () {
+							console.log("trying to load sptest_smoking");
+							self.currentView('sptest_smoking');
+						});
+					},
 				}
 				self.router = new Router(routes).configure(routerOptions);
 				self.router.init('/');

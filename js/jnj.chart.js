@@ -1784,7 +1784,7 @@
 			return this.svgDivEl;
 	}
 	*/
-	function nodata(chart) {
+	function nodata(chart, w, h) {
 		chart.html('');
 		chart.append("text")
 			.attr("transform", "translate(" + (w / 2) + "," + (h / 2) + ")")
@@ -2357,6 +2357,7 @@
 
 	module.zoomScatter = function () {
 		this.render = function (data, target, w, h, opts) {
+			console.log(data);
 			var cp = new ChartProps(this.defaultOptions, opts);
 			DEBUG && (window.cp = cp);
 			if (!cp.data.alreadyInSeries) {
@@ -2365,75 +2366,30 @@
 			var divEl = new ResizableSvgContainer(target, series, w, h, ['zoom-scatter']);
 			var svgEl = divEl.child('svg')
 			if (!data.length) { // do this some more efficient way
-				nodata(svgEl.as("d3"));
+				nodata(divEl.as("d3"), w, h);
 				return;
 			}
 			var layout = cp._layout = new SvgLayout(w, h, cp.layout);
 			if (cp.y.showLabel) {
-				cp.y.labelComponent = new ChartLabelLeft(svgEl, layout, cp.y);
+				cp.y.labelEl = new ChartLabelLeft(svgEl, layout, cp.y);
 			}
-
-
 			if (cp.y.showAxis) {
-				cp.y.axisComponent = new ChartAxisY(svgEl, layout, cp.y);
+				cp.y.axisEl = new ChartAxisY(svgEl, layout, cp.y);
 			}
-
 			if (cp.x.showLabel) {
-				cp.x.labelComponent = new ChartLabelBottom(svgEl, layout, cp.x);
+				cp.x.labelEl = new ChartLabelBottom(svgEl, layout, cp.x);
 			}
 			if (cp.x.showAxis) {
-				cp.x.axisComponent = new ChartAxisX(svgEl, layout, cp.x);
+				cp.x.axisEl = new ChartAxisX(svgEl, layout, cp.x);
 			}
-			//layout.positionZones();
-			//layout.positionZones();
 
 			cp.updateAccessors(data, series);
 			cp.updateDomains(data, series);
 			cp.tooltipSetup(data, series);
 			cp.updateRanges(layout);
-			cp.chart.chart = new ChartChart(svgEl, layout, cp.chart, series);
-
-			// rectangle just to help with development:
-			/*
-			cp.chart.chart.gEl.addChild('chartrect', 
-												{
-														tag: 'rect',
-														classes:['foo','bar'],
-														updateCb: function(selection) {
-															selection
-																.attr('width', layout.svgWidth())
-																.attr('height', layout.svgHeight())
-																.style('fill', '#AAA')
-														},
-													});
-													*/
-
-			var chart = cp.chart.chart.gEl.as('d3');
-
-			var legendWidth = 0;
-			if (cp.legend.show) {
-				var legend = svgEl.as("d3").append("g")
-					.attr("class", "legend");
-
-				var maxWidth = 0;
-
-				series.forEach(function (d, i) {
-					legend.append("rect")
-						.attr("x", 0)
-						.attr("y", (i * 15))
-						.attr("width", 10)
-						.attr("height", 10)
-						.style("fill", cp.color.scale(d.name));
-
-					var legendItem = legend.append("text")
-						.attr("x", 12)
-						.attr("y", (i * 15) + 9)
-						.text(d.name);
-					maxWidth = Math.max(legendItem.node().getBBox().width + 12, maxWidth);
-				});
-				legend.attr("transform", "translate(" + (layout.w() - layout.zone('right') - maxWidth) + ",0)")
-				legendWidth += maxWidth + 5;
-			}
+			var chartSvgEl = cp.chart.chart = new ChartChart(svgEl, layout, cp.chart, series);
+			var chartEl = chartSvgEl.gEl;
+			var chart = chartEl.as('d3');
 
 			//svgEl.update({data:series})
 			//svgEl.data(series)
@@ -2455,7 +2411,7 @@
 					cp.x.scale.domain(brush.empty() ? cp.x.domain : [brush.extent()[0][0], brush.extent()[1][0]]);
 					cp.y.scale.domain(brush.empty() ? cp.y.domain : [brush.extent()[0][1], brush.extent()[1][1]]);
 
-					series
+					seriesEls.as('d3')
 						.selectAll(".dot")
 						.transition()
 						.duration(750)
@@ -2467,8 +2423,6 @@
 
 					layout.positionZones();
 					layout.positionZones();
-					//axisHelper.select(".x.axis").transition().duration(750).call(xAxis);
-					//axisHelper.select(".y.axis").transition().duration(750).call(yAxis);
 					$('.extent').hide();
 					$('.resize').hide();
 				});
@@ -2477,13 +2431,12 @@
 				.attr('class', 'brush')
 				.call(brush);
 
-			var seriesGs = cp.chart.chart.gEl
-				.addChild('series',
-									{ tag: 'g',
-										classes:['series'],
-										data: series,
-									});
-			seriesGs.addChild('dots',
+			var seriesEls = chartEl.addChild('series',
+															{ tag: 'g',
+																classes:['series'],
+																data: series,
+															});
+			seriesEls.addChild('dots',
 									{tag: 'path',
 										data: function(series) {
 											return series.values;
@@ -2517,6 +2470,7 @@
 													return "translate(" + xVal + "," + yVal + ")";
 												})
 										},
+										/* testing transitions on exit
 										exitCb: function(selection, params, transitionOpts={}) {
 											var {delay=0, duration=0, transition} = transitionOpts;
 											selection
@@ -2544,82 +2498,42 @@
 												})
 												.remove()
 										},
+										*/
 									});
 
-			series = dataToSeries(data.slice(0,15000), cp.series);
+			series = dataToSeries(data.slice(0,5000), cp.series);
 			cp.chart.chart.gEl
 					.child('series')
-						.run({data: series, delay: 0, duration: 4000});
+						.run({data: series, delay: 500, duration: 200});
 			layout.positionZones();
 			layout.positionZones();
-			/*
-			cp.chart.chart.gEl
-					.child('series')
-					.child('dots')
-					.run({data: dataFromSeries(series), delay:5000,duration:2500});
-			*/
-			return;
-			/*
-			d3.select(cp.chart.chart.gEl.as('dom'))
-				.select('.series')
-				.selectAll('.dot')
-						.style('opacity', 1)
-						.attr('transform', 'scale(2,2)')
-					.transition().duration(1750).delay(500)
-						.attr("transform", "translate(100,100)scale(5,2)")
-					.transition()//.delay(1000).duration(1000)
-						.style('opacity', .2)
-						.attr("transform", "translate(-100,-100)scale(2,5)")
-					.transition()//.delay(2000).duration(1000)
-						.style('opacity', .8)
-						.attr("transform", "translate(0,0)scale(3,2)")
-					//.remove();
-			return;
-			*/
-			setTimeout(function() {
-				//divEl.update({duration:750});
-				series = dataToSeries(data.slice(0,100), cp.series);
-				cp.chart.chart.gEl.child('series').run({data: series, duration:1000});
-				//cp.chart.chart.gEl.child('series').update({data: series, delay: 500, duration:1000});
+			var legendWidth = 0;
+			if (cp.legend.show) {
+				var legend = svgEl.as("d3").append("g")
+					.attr("class", "legend");
 
-			}, 1100);
-			return;
-			
-			var series = chart.selectAll(".series")  // use addChild?
-				.data(series)
-				.enter()
-				.append("g");
+				var maxWidth = 0;
 
-			// enter / add dots
-			var seriesDots = series
-				.selectAll(".dot")
-				.data(function (series) {
-					return series.values;
-				})
-				.enter()
-				.append("path")
-				.attr("class", "dot")
-				.attr("d", function(d) {
-					return shapePath(
-										cp.shape.scale(cp.shape.value(d)),
-										0, //options.xValue(d),
-										0, //options.yValue(d),
-										cp.size.scale(cp.size.value(d)));
-				})
-				.style("stroke", function (d) {
-					// calling with this so default can reach up to parent
-					// for series name
-					//return cp.color.scale(cp.series.value.call(this, d));
-					return cp.color.scale(cp.color.value(d));
-				})
-				.attr("transform", function (d) {
-					var xVal = cp.x.scale(cp.x.value(d));
-					var yVal = cp.y.scale(cp.y.value(d));
-					return "translate(" + xVal + "," + yVal + ")";
-				})
-				.on('mouseover', focusTip.show)
-				.on('mouseout', focusTip.hide)
+				series.forEach(function (d, i) {
+					legend.append("rect")
+						.attr("x", 0)
+						.attr("y", (i * 15))
+						.attr("width", 10)
+						.attr("height", 10)
+						.style("fill", cp.color.scale(d.name));
 
+					var legendItem = legend.append("text")
+						.attr("x", 12)
+						.attr("y", (i * 15) + 9)
+						.text(d.name);
+					maxWidth = Math.max(legendItem.node().getBBox().width + 12, maxWidth);
+				});
+				legend.attr("transform", "translate(" + (layout.w() - layout.zone('right') - maxWidth) + ",0)")
+				legendWidth += maxWidth + 5;
+			}
+
+			/* not sure what these were doing.
+			 * should we add them back in?
 			if (cp.series.showLabel) {
 				series.append("text")
 					.datum(function (d) {
@@ -2647,6 +2561,7 @@
 					.attr("width", 1)
 					.attr("height", layout.svgHeight());
 			}
+			*/
 		}
 		this.defaultOptions = {
 			data: {
@@ -2695,6 +2610,7 @@
 			color: {
 						//scale: null,
 						scale: d3.scale.category10(),
+						rangeFunc: (layout, prop) => prop.scale.range(),
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
@@ -2711,10 +2627,10 @@
 						show: true,
 			},
 			series: {
-						value: function(d) { return this.parentNode.__data__.name; },
+						value: ()=>null,
 						showLabel: false,
 						//showSeriesLabel: false,
-						needsLabel: true,
+						needsLabel: false,
 						needsValueFunc: true,
 			},
 			//interpolate: "linear", // not used

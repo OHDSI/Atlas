@@ -1,0 +1,18 @@
+<div class="wrapperTitle">
+	scatterplot test
+</div>
+
+<div class="paddedWrapper">
+	<scatterplot 
+			style="width:300px; height:100px;"
+			params="{
+				tsvFile: $component.tsvFile,
+				dataSetup: $component.dataSetup,
+				chartOptions: $component.chartOptions,
+			}"></scatterplot>
+
+	<div class="heading">table:</div>
+	<div data-bind="if:false">
+		<faceted-datatable params="options:options, columns:columns, reference:nodes"></faceted-datatable>
+	</div>
+</div>
