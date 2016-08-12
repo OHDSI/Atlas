@@ -1629,7 +1629,6 @@
 	function shapePath(type, cx, cy, r) {
 		// shape fits inside the radius
 		var shapes = {
-			/*
 			circle: function(cx, cy, r) {
 								// http://stackoverflow.com/questions/5737975/circle-drawing-with-svgs-arc-path
 								return `
@@ -1639,7 +1638,6 @@
 													a ${r},${r} 0 1,0 ${-r * 2},0
 												`;
 							},
-			*/
 			square: function(cx, cy, r) {
 								var side = Math.sqrt(1/2) * r * 2;
 								return `
@@ -2286,7 +2284,7 @@
 			this.tooltip.builder = // not configurable but could be, but would be
 														 // func that knows what to do with a bunch of funcs
 				(d, i, j) => this.tooltip.funcs
-													.map(func => func(d,i,j))
+													.map(func => func(d,i,j,this,data,series,name))
 													.map(o => `${o.name}: ${o.value}<br/>`)
 													.join('')
 		}
@@ -2331,6 +2329,7 @@
 			cp.chart.chart = new ChartChart(svgEl, layout, cp.chart, series);
 
 			// rectangle just to help with development:
+			/*
 			cp.chart.chart.gEl.addChild('chartrect', 
 												{
 														tag: 'rect',
@@ -2342,6 +2341,7 @@
 																.style('fill', '#AAA')
 														},
 													});
+													*/
 
 			var chart = cp.chart.chart.gEl.as('d3');
 
@@ -2424,7 +2424,7 @@
 											return series.values;
 										},
 										classes: ['dot'],
-										addCb: function(selectionparams) {
+										enterCb: function(selection,params) {
 											selection
 												.on('mouseover', focusTip.show)
 												.on('mouseout', focusTip.hide)

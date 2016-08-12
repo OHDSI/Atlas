@@ -44,6 +44,9 @@ define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], fun
 		} catch(e){}
 	}
 	return component;
+	function round(num, dec) {
+		return Math.round(num * Math.pow(10, dec))/Math.pow(10,dec);
+	}
 	function chartOptions() {
 		var junk = 1;
 		return {
@@ -76,6 +79,14 @@ define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], fun
 						range: [1, 8],
 						label: "After matching mean treated",
 						tooltipOrder: 3,
+						tooltipFunc: function(d, i, j, props, data, series, propName) {
+							var avg = d3.mean(
+													data.map(props.size.value));
+							return {
+								name: `After matching mean treated (avg: ${round(avg,4)})`,
+								value: round(props.size.value(d), 4),
+							};
+						},
 			},
 			color: {
 						value: function(d, i, j, props, data, series) {
@@ -130,7 +141,6 @@ define(['knockout', 'text!./sptest.html','lodash','components/scatterplot'], fun
 			series: {
 						value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
 						sortBy:  d => d.afterMatchingStdDiff,
-						showOn:'color',
 						tooltipOrder: 5,
 			},
 			CIup: { // support CI in both directions
