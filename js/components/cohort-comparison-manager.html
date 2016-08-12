@@ -149,12 +149,13 @@
 			<div class="row">
 				<div class="col-md-8">
 					<div>
-						<label>Choose your target cohort:</label>
+                        <label>Choose your target cohort:</label>
 						<div class="input-group">
-							<input class="form-control" type="text" disabled data-bind="value: cohortComparison().treatmentCaption" />
-							<span class="input-group-btn">
-        				<button class="btn btn-primary" data-bind="click:chooseTreatment"><i class="fa fa-folder-open"></i></button>
-							</span>
+                            <input class="form-control" type="text" disabled data-bind="value: cohortComparison().treatmentCaption" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" data-bind="click:chooseTreatment"><i class="fa fa-folder-open"></i></button>
+                                <span data-bind="if: cohortComparison().treatmentId() > 0"><button class="btn btn-danger" data-bind="click:clearTreatment" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
+                            </span>
                         </div>
                     </div>
                     <div>
@@ -162,7 +163,8 @@
                         <div class="input-group">
                             <input class="form-control" type="text" disabled data-bind="value: cohortComparison().comparatorCaption" />
                             <span class="input-group-btn">
-        				<button class="btn btn-primary" data-bind="click:chooseComparator"><i class="fa fa-folder-open"></i></button>
+        				        <button class="btn btn-primary" data-bind="click:chooseComparator"><i class="fa fa-folder-open"></i></button>
+                                <span data-bind="if: cohortComparison().comparatorId() > 0"><button class="btn btn-danger" data-bind="click:clearComparator" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
 							</span>
                         </div>
                     </div>
@@ -171,7 +173,8 @@
                         <div class="input-group">
                             <input class="form-control" type="text" disabled data-bind="value: cohortComparison().outcomeCaption" />
                             <span class="input-group-btn">
-        				<button class="btn btn-primary" data-bind="click:chooseOutcome"><i class="fa fa-folder-open"></i></button>
+        				        <button class="btn btn-primary" data-bind="click:chooseOutcome"><i class="fa fa-folder-open"></i></button>
+                                <span data-bind="if: cohortComparison().outcomeId() > 0"><button class="btn btn-danger" data-bind="click:clearOutcome" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
 							</span>
                         </div>
                     </div>
@@ -228,8 +231,7 @@
                         <div>
                             <label>Which types of baseline covariates do you want to include in the propensity score model?</label>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().psDemographics" />Demographics</li>
+                                <li>Demographics</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().psDemographicsGender" />Gender</li>
@@ -246,8 +248,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().psCondition" />Conditions</li>
+                                <li>Conditions</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().psConditionOcc30d" />In prior 30d</li>
@@ -262,9 +263,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().psConditionGroup
-" />Condition aggregation</li>
+                                <li>Condition aggregation</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().psConditionGroupSnomed" />SNOMED</li>
@@ -273,8 +272,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().psDrug" />Drugs</li>
+                                <li>Drugs</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().psDrugInPrior30d" />In prior 30d</li>
@@ -287,8 +285,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().psDrugAggregation" />Drug aggregation</li>
+                                <li>Drug aggregation</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().psDrugExposure" />Clinical Drug</li>
@@ -299,8 +296,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().psProcedureOcc" />Procedures</li>
+                                <li>Procedures</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().psProcedureOcc30d" />In prior 30d</li>
@@ -309,8 +305,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().psMeasurement" />Measurement</li>
+                                <li>Measurement</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().psMeasurement30d" />Existence in prior 30d</li>
@@ -325,8 +320,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().psRiskScores" />Risk scores</li>
+                                <li>Risk scores</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().psRiskScoresCharlson" />Charlson</li>
@@ -337,12 +331,10 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" data-bind="checked: cohortComparison().psConceptCounts" />Concept counts (count of distinct conditions/procedures/visits in history)</li>
+                                <li><input type="checkbox" data-bind="checked: cohortComparison().psConceptCounts" />Concept counts (count of distinct conditions/procedures/visits in history)</li>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().psInteraction"/>Interaction terms</li>
+                                <li>Interaction terms</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().psInteractionYear" />By index year</li>
@@ -356,8 +348,9 @@
                             <div class="input-group">
                                 <input class="form-control" type="text" disabled data-bind="value: cohortComparison().psInclusionCaption" />
                                 <span class="input-group-btn">
-        				        <button class="btn btn-primary" data-bind="click:choosePsInclusion"><i class="fa fa-folder-open"></i></button>
-							</span>
+        				            <button class="btn btn-primary" data-bind="click:choosePsInclusion"><i class="fa fa-folder-open"></i></button>
+                                    <span data-bind="if: cohortComparison().psInclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearPsInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>                                
+							    </span>
                             </div>
                         </div>
                         <div>
@@ -365,8 +358,9 @@
                             <div class="input-group">
                                 <input class="form-control" type="text" disabled data-bind="value: cohortComparison().psExclusionCaption" />
                                 <span class="input-group-btn">
-        				<button class="btn btn-primary" data-bind="click:choosePsExclusion"><i class="fa fa-folder-open"></i></button>
-							</span>
+        				            <button class="btn btn-primary" data-bind="click:choosePsExclusion"><i class="fa fa-folder-open"></i></button>
+                                    <span data-bind="if: cohortComparison().psExclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearPsExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>                                
+							    </span>
                             </div>
                         </div>
                         <div>
@@ -396,8 +390,7 @@
                                                 <div>
                             <label>Which types of baseline covariates do you want to include in the outcome model?</label>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().omDemographics" />Demographics</li>
+                                <li>Demographics</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().omDemographicsGender" />Gender</li>
@@ -414,8 +407,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().omCondition" />Conditions</li>
+                                <li>Conditions</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().omConditionOcc30d" />In prior 30d</li>
@@ -430,9 +422,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().omConditionGroup
-" />Condition aggregation</li>
+                                <li>Condition aggregation</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().omConditionGroupSnomed" />SNOMED</li>
@@ -441,8 +431,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().omDrug" />Drugs</li>
+                                <li>Drugs</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().omDrugInPrior30d" />In prior 30d</li>
@@ -455,8 +444,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().omDrugAggregation" />Drug aggregation</li>
+                                <li>Drug aggregation</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().omDrugExposure" />Clinical Drug</li>
@@ -467,8 +455,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().omProcedureOcc" />Procedures</li>
+                                <li>Procedures</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().omProcedureOcc30d" />In prior 30d</li>
@@ -477,8 +464,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().omMeasurement" />Measurement</li>
+                                <li>Measurement</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().omMeasurement30d" />Existence in prior 30d</li>
@@ -493,8 +479,7 @@
                                 </ul>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().omRiskScores" />Risk scores</li>
+                                <li>Risk scores</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().omRiskScoresCharlson" />Charlson</li>
@@ -509,8 +494,7 @@
                                     <input type="checkbox" data-bind="checked: cohortComparison().omConceptCounts" />Concept counts (count of distinct conditions/procedures/visits in history)</li>
                             </ul>
                             <ul>
-                                <li>
-                                    <input type="checkbox" disabled data-bind="checked: cohortComparison().omInteraction"/>Interaction terms</li>
+                                <li>Interaction terms</li>
                                 <ul>
                                     <li>
                                         <input type="checkbox" data-bind="checked:cohortComparison().omInteractionYear" />By index year</li>
@@ -524,8 +508,9 @@
                             <div class="input-group">
                                 <input class="form-control" type="text" disabled data-bind="value: cohortComparison().omInclusionCaption" />
                                 <span class="input-group-btn">
-        				        <button class="btn btn-primary" data-bind="click:chooseOmInclusion"><i class="fa fa-folder-open"></i></button>
-							</span>
+        				            <button class="btn btn-primary" data-bind="click:chooseOmInclusion"><i class="fa fa-folder-open"></i></button>
+                                    <span data-bind="if: cohortComparison().omInclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearOmInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>                                                                
+							    </span>
                             </div>
                         </div>
                         <div>
@@ -533,8 +518,9 @@
                             <div class="input-group">
                                 <input class="form-control" type="text" disabled data-bind="value: cohortComparison().omExclusionCaption" />
                                 <span class="input-group-btn">
-        				<button class="btn btn-primary" data-bind="click:chooseOmExclusion"><i class="fa fa-folder-open"></i></button>
-							</span>
+        				            <button class="btn btn-primary" data-bind="click:chooseOmExclusion"><i class="fa fa-folder-open"></i></button>
+                                    <span data-bind="if: cohortComparison().omExclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearOmExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>                                                                
+							    </span>
                             </div>
                         </div>                        
                     </div>
@@ -543,8 +529,9 @@
                         <div class="input-group">
                             <input class="form-control" type="text" disabled data-bind="value: cohortComparison().negativeControlCaption" />
                             <span class="input-group-btn">
-                            <button class="btn btn-primary" data-bind="click:chooseNegativeControl"><i class="fa fa-folder-open"></i></button>
-                        </span>
+                                <button class="btn btn-primary" data-bind="click:chooseNegativeControl"><i class="fa fa-folder-open"></i></button>
+                                <span data-bind="if: cohortComparison().negativeControlId() > 0"><button class="btn btn-danger" data-bind="click:clearNegativeControl" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>                                                                
+                            </span>
                         </div>
                     </div>
                 </div>

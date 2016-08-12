@@ -17,16 +17,18 @@ define(function (require, exports) {
         self.nameMultiLine = ko.pureComputed(function() {
             var maxLength = 45;
             var nameFormatted = [];
-            var nameSplit = self.name().split(" ");
-            var curName = "";
-            for(i=0; i < nameSplit.length; i++) {
-                if (curName.length > maxLength) {
-                    nameFormatted.push(curName);
-                    curName = "";
-                }
-                curName += nameSplit[i] + " ";
+            if (self.name() && self.name().length > 0) {
+				var nameSplit = self.name().split(" ");
+				var curName = "";
+				for(i=0; i < nameSplit.length; i++) {
+					if (curName.length > maxLength) {
+						nameFormatted.push(curName);
+						curName = "";
+					}
+					curName += nameSplit[i] + " ";
+				}
+				nameFormatted.push(curName);            	
             }
-            nameFormatted.push(curName);
             return nameFormatted;
         })
         self.timeAtRiskStart = ko.observable(data.timeAtRiskStart != null ? data.timeAtRiskStart : 0);
@@ -128,7 +130,10 @@ define(function (require, exports) {
         }
         
         self.readyForDisplay = function() {
-            return (self.comparatorId() != null && self.treatmentId() != null && self.outcomeId() != null && self.modelType() != null)
+            return (self.comparatorId() != null && self.comparatorId() > 0 &&
+                    self.treatmentId() != null && self.treatmentId() > 0 &&
+                    self.outcomeId() != null && self.outcomeId() > 0 &&
+                    self.modelType() != null)
         }
 
         
@@ -149,7 +154,7 @@ define(function (require, exports) {
                 return trimFraction + ", " + (1 - trimFraction);
             }
         });
-        self.psMatch = ko.observable(data.psMatch != null ? data.psMatch : 2);
+        self.psMatch = ko.observable(data.psMatch != null ? data.psMatch : 1);
         self.psMatchMaxRatio = ko.observable(data.psMatchMaxRatio != null ? data.psMatchMaxRatio : 1);
         self.psStratNumStrata = ko.observable(data.psStratNumStrata != null ? data.psStratNumStrata : 5);
 

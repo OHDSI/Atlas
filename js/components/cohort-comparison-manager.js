@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/CohortDefinitionAPI', 'appConfig', 'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options', 'cohortbuilder/CohortDefinition', 'vocabularyprovider', 'conceptsetbuilder/InputTypes/ConceptSet', 'nvd3', 'css!./styles/nv.d3.min.css'],
-	function ($, ko, view, cohortDefinitionAPI, config, ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI, ConceptSet) {
+define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util', 'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options', 'cohortbuilder/CohortDefinition', 'vocabularyprovider', 'conceptsetbuilder/InputTypes/ConceptSet', 'nvd3', 'css!./styles/nv.d3.min.css'],
+	function ($, ko, view, cohortDefinitionAPI, config, ohdsiUtil, ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI, ConceptSet) {
 		function cohortComparisonManager(params) {
 
 			var self = this;
@@ -22,6 +22,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
             self.options = options;
             self.expressionMode = ko.observable('print');
             self.cohortComparison = ko.observable();
+            self.cohortComparisonDirtyFlag = ko.observable();
 
 			var initSources = config.services[0].sources.filter(s => s.hasCDM);
 			for (var i = 0; i < initSources.length; i++) {
@@ -338,7 +339,12 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 			}
 
 			self.canSave = ko.pureComputed(function () {
-				return self.cohortComparison().name() && self.cohortComparison().comparatorId() && self.cohortComparison().treatmentId() &&  self.cohortComparison().outcomeId() && self.cohortComparison().modelType && self.cohortComparison().modelType() > 0;
+				return (self.cohortComparison().name() 
+                        && self.cohortComparison().comparatorId() && self.cohortComparison().comparatorId() > 0
+                        && self.cohortComparison().treatmentId() && self.cohortComparison().treatmentId() > 0
+                        && self.cohortComparison().outcomeId() && self.cohortComparison().outcomeId() > 0
+                        && self.cohortComparison().modelType && self.cohortComparison().modelType() > 0
+                        && self.cohortComparisonDirtyFlag() && self.cohortComparisonDirtyFlag().isDirty());
 			});
 
 			self.save = function () {
@@ -495,13 +501,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                     if (redirectWhenComplete) {
                         document.location = "#/estimation/" + self.cohortComparisonId();
                     }
-
+                    self.cohortComparisonDirtyFlag().reset();
 					console.log(saveResult);
 				});
 			}
 
 			self.close = function () {
-				document.location = '#/cohortcomparisons';
+				document.location = '#/estimation';
 			}
 
 			self.conceptsetSelected = function (d) {
@@ -540,7 +546,60 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 				self.targetCaption = self.cohortComparison().outcomeCaption;
                 self.targetCohortDefinition = self.cohortComparison().outcomeCohortDefinition;
 			}
+            
+            self.clearTreatment = function() {
+                self.cohortComparison().treatmentId(0);
+                self.cohortComparison().treatmentCaption(null);
+                self.cohortComparison().treatmentCohortDefinition(null);
+            }
 
+            self.clearComparator = function() {
+                self.cohortComparison().comparatorId(0);
+                self.cohortComparison().comparatorCaption(null);
+                self.cohortComparison().comparatorCohortDefinition(null);
+            }
+
+            self.clearOutcome = function() {
+                self.cohortComparison().outcomeId(0);
+                self.cohortComparison().outcomeCaption(null);
+                self.cohortComparison().outcomeCohortDefinition(null);
+            }
+            
+			self.clearPsExclusion = function () {
+                self.cohortComparison().psExclusionId(0);
+				self.cohortComparison().psExclusionCaption(null);
+                self.cohortComparison().psExclusionConceptSet.removeAll();
+                self.cohortComparison().psExclusionConceptSetSQL(null);
+			}
+			
+            self.clearPsInclusion = function () {
+                self.cohortComparison().psInclusionId(0);
+				self.cohortComparison().psInclusionCaption(null);
+                self.cohortComparison().psInclusionConceptSet.removeAll();
+                self.cohortComparison().psInclusionConceptSetSQL(null);
+			}
+
+            self.clearOmExclusion = function () {
+                self.cohortComparison().omExclusionId(0);
+				self.cohortComparison().omExclusionCaption(null);
+                self.cohortComparison().omExclusionConceptSet.removeAll();
+                self.cohortComparison().omExclusionConceptSetSQL(null);
+			}
+			
+            self.clearOmInclusion = function () {
+                self.cohortComparison().omInclusionId(0);
+				self.cohortComparison().omInclusionCaption(null);
+                self.cohortComparison().omInclusionConceptSet.removeAll();
+                self.cohortComparison().omInclusionConceptSetSQL(null);
+			}
+            
+            self.clearNegativeControl= function () {
+                self.cohortComparison().negativeControlId(0);
+				self.cohortComparison().negativeControlCaption(null);
+                self.cohortComparison().negativeControlConceptSet.removeAll();
+                self.cohortComparison().negativeControlConceptSetSQL(null);
+			}
+            
 			self.choosePsExclusion = function () {
 				$('cohort-comparison-manager #modalConceptSet').modal('show');
                 self.targetId = self.cohortComparison().psExclusionId;
@@ -624,6 +683,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
             
 			if (self.cohortComparisonId() == 0) {
 				self.cohortComparison(new ComparativeCohortAnalysis());
+                self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison()));
 				self.loading(false);
 			} else {
 				$.ajax({
@@ -792,6 +852,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
                                    omInclusionPromise,
                                    omExclusionPromise, 
                                    ncPromise).done(function() {
+                                self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison()));
                                 console.log('concept sets loaded');
                             });
                         });
