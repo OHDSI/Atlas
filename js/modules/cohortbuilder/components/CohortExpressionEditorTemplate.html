@@ -77,14 +77,14 @@
 			<div data-bind="if: AdditionalCriteria">
 				<div><b>Initial event inclusion criteria:</b>  From among the initial events, include:</div>
 				<criteria-group params="{expression: $data, group: AdditionalCriteria}"> </criteria-group>
-				<button class="btn btn-xs btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove initial event inclusion criteria</button>
-				<div style="padding-top: 3px" data-bind="with: QualifiedLimit">Limit cohort of initial events to:
+				<div style="padding: 3px 0px" data-bind="with: QualifiedLimit">Limit cohort of initial events to:
 					<select data-bind="options: $component.options.resultLimitOptions, 
 					optionsText: function(item) { return item.name }, 
 					optionsValue: 'id',
 					value: Type">
 					</select> per person.
 				</div>				
+				<button class="btn btn-xs btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove initial event inclusion criteria</button>
 			</div>
 			<div data-bind="ifnot: AdditionalCriteria">
 				<button class="btn btn-sm btn-success" data-bind="click: function () { $component.addAdditionalCriteria() }">Add initial event inclusion criteria</button>
