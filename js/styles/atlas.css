@@ -150,6 +150,10 @@ body {
 	cursor: pointer;
 }
 
+.clickable {
+	cursor: pointer;
+}
+
 .serviceName {
 	float: left;
 	margin-right: 10px;
@@ -1961,3 +1965,40 @@ table.cohort-generate-sources tr:hover {
 	color: #fff;
 	opacity: .8;
 }
+
+div.generateAction {
+	display: inline-block;
+  vertical-align: bottom;
+  line-height: 19px;
+}
+
+table.sourceTable tr td, table.sourceTable th
+{
+	padding: 2px 5px;
+	line-height:12px;
+	user-select:none;
+}
+
+table.sourceTable .selected
+{
+	color: #F19119;
+	font-size:1.5em;
+}
+
+
+.overflow-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
+}
+
