@@ -2357,10 +2357,10 @@
 		}
 	}
 
-	module.zoomScatter = function () {
-		this.render = function (data, target, w, h, opts) {
+	module.zoomScatter = function (opts) {
+		var cp = this.chartOptions = new ChartProps(this.defaultOptions, opts);
+		this.render = function (data, target, w, h) {
 			if (!data.length) return;
-			var cp = new ChartProps(this.defaultOptions, opts);
 			DEBUG && (window.cp = cp);
 			if (!cp.data.alreadyInSeries) {
 				//var series = dataToSeries(data, cp.series);
@@ -2657,6 +2657,7 @@
 			}
 		}
 		this.defaultOptions = {
+			dispatch: d3.dispatch("brush", "filter"),
 			data: {
 				alreadyInSeries: false,
 			},

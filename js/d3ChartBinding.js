@@ -3,7 +3,8 @@ define(['jquery', 'knockout', 'jnj_chart'], function ($, ko, jnjChart) {
 		init: function (element, valueAccessor) {
 			var va = ko.utils.unwrapObservable(valueAccessor());
 			var chartType = ko.utils.unwrapObservable(va.chartType);
-			var chart = new jnjChart[chartType]();
+			var chartOptions = ko.utils.unwrapObservable(va.chartOptions)||{};
+			var chart = new jnjChart[chartType](chartOptions);
 			if (va.chartObj) {
 				va.chartObj(chart);
 			}
@@ -13,7 +14,6 @@ define(['jquery', 'knockout', 'jnj_chart'], function ($, ko, jnjChart) {
 			var va = ko.utils.unwrapObservable(valueAccessor());
 			va.domElement(element);
 			var chartData = ko.utils.unwrapObservable(va.chartData)||[];
-			var chartOptions = ko.utils.unwrapObservable(va.chartOptions)||{};
 			var chartResolution = ko.utils.unwrapObservable(va.chartResolution)||{width:460,height:150};
 			var chartType = ko.utils.unwrapObservable(va.chartType);
 

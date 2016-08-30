@@ -11,7 +11,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 			success: function (data) {
 				var pdata = self.dataSetup(data);
 				var chart = self.chartObj();
-				chart.render(pdata, self.domElement(), 460, 150, self.chartOptions);
+				chart.render(pdata, self.domElement(), 460, 150);
 				self.chartData(pdata);
 			}
 		});
@@ -26,11 +26,17 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 		console.log(self.chartData().length);
 		self.chartResolution = ko.observable(); // junk
 		self.jsonFile = 'js/sptest/sample.json';
-		self.chartOptions = chartOptions(chartOptions());
-		var dispatch = self.chartOptions.dispatch;
-		dispatch.on("brush", function() {
+		self.chartOptions = chartOptions();
+		//var opts = self.chartObj.chartOptions; // after applying defaults
+		//debugger;
+
+		self.fields = _.filter(self.chartOptions, d=>d.isColumn||d.isFacet);
+		/*
+		self.dispatch = opts.dispatch;
+		self.dispatch.on("brush", function() {
 			console.log(arguments);
 		});
+		*/
 		self.dataSetup = function(vectors) {
 			/* sample:
 				{                               
@@ -92,11 +98,14 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 			data: {
 				alreadyInSeries: false,
 			},
-			dispatch: d3.dispatch("brush"),
+			//dispatch: d3.dispatch("brush", "filter"), // in default opts for zoomScatter
 			x: {
 						value: d=>d.beforeMatchingStdDiff,
-						label: "Before matching StdDiff",
+						label: 'Before matching StdDiff',
 						tooltipOrder: 1,
+						fname: 'beforeMatchingStdDiff',
+						isColumn: true,
+						colIdx: 1,
 			},
 			y: {
 						value: d=>d.afterMatchingStdDiff,
@@ -112,6 +121,9 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 							return d3.format('0.' + precision + '%')(d);
 						},
 						tooltipOrder: 2,
+						fname: 'afterMatchingStdDiff',
+						isColumn: true,
+						colIdx: 1,
 			},
 			size: {
 						value: d=>d.afterMatchingMeanTreated,
@@ -187,42 +199,29 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						value: d => d.upperBound,
 						value: d => y(d) - d.upperBoundDiff,
 			},
-			//seriesName: "recordType",
-			/*
-			tooltips: [
-					{
-						label: 'Series',
-						accessor: function (o) {
-							return o.recordType;
-						}
-					},
-					{
-						label: 'Percent Persons',
-						accessor: function (o) {
-							return d3.format('0.2%')(o.pctPersons);
-						}
-					},
-					{
-						label: 'Duration Relative to Index',
-						accessor: function (o) {
-							var years = Math.round(o.duration / 365);
-							var days = o.duration % 365;
-							var result = '';
-							if (years != 0)
-							result += years + 'y ';
-
-						result += days + 'd'
-						return result;
-					}
-				},
-				{
-					label: 'Person Count',
-					accessor: function (o) {
-						return o.countValue;
-					}
-				}
-			],
-			*/
+			covariateName: {
+						fname: 'covariateName',
+						isColumn: true,
+						colIdx: 0,
+						tooltipOrder: 7,
+						label: 'Covariate Name',
+			},
+			conceptId: {
+						fname: 'conceptId',
+						isColumn: true,
+						isFacet: true,
+						colIdx: 3,
+						tooltipOrder: 5,
+						label: 'Concept ID',
+			},
+			analysisId: {
+						fname: 'analysisId',
+						isColumn: true,
+						isFacet: true,
+						colIdx: 4,
+						tooltipOrder: 6,
+						label: 'Analysis ID',
+			},
 		};
 	}
 });

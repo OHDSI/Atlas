@@ -1,20 +1,62 @@
 "use strict";
-define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter', 'knockout.dataTables.binding', 'colvis'], 
-			 function (ko, view, crossfilter) {
+define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter', 'lodash', 'knockout.dataTables.binding', 'colvis'], 
+			 function (ko, view, crossfilter, _) {
 
 	function facetedDatatable(params) {
 		window.ko = ko;
 		var self = this;
 
-		self.recs = params.recs;
-		self.data = ko.observableArray();
-		self.data(self.recs());
-		self.facets = params.facets;
+		self.recs = ko.utils.unwrapObservable(params.recs);
+		self.crossfilter = ko.utils.unwrapObservable(params.crossfilter) ||
+												crossfilter(self.recs);
+		self.dispatch = params.d3dispatch || d3.dispatch("filter");
+
+		// don't use observables to communicate out anymore
+		//self.data = ko.observableArray();
+		//self.data(self.recs());
 
 		self.options = params.options;
-		self.columns = params.columns;
+		self.fields = params.fields || params.columns.concat(params.facets);
+		self.fields.forEach(function(field) {
+			// need to consistently define what labels and titles and stuff are called
+			// and how they're defined
+			field.label = field.label || field.fname;
+			field.value = field.value || field.fname;
+			field.accessor = field.value;
+			if (typeof field.accessor === "string" || isFinite(field.accessor)) {
+				field.accessor = d => d[field.value];
+			}
+			if (typeof field.accessor !== "function") {
+				throw new Error("field.value must be function or string or index");
+			}
+		});
+		self.columns = params.columns || _.filter(self.fields, d=>d.isColumn);
+		self.facets = params.facets || _.filter(self.fields, d=>d.isFacet);
+		var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
+		self.facets.forEach(function(facet) {
+			facet.caption = facet.caption || facet.label;
+			facet.Members = [];
+			facet.cfDim = self.crossfilter.dimension(facet.accessor);
+			facet.cfDimGroup = facet.cfDim.group();
+			facet.cfDimGroupAll = facet.cfDim.groupAll();
+			facet.cfDimGroup.reduce(...reduceToRecs);
+			facet.cfDimGroupAll.reduce(...reduceToRecs);
+		})
+		self.columns.forEach(function(column) {
+			column.title = column.title || column.label;
+			column.render = function(data, type, row, meta) {
+				// see https://datatables.net/reference/option/columns.render
+				if (typeof data !== "undefined")
+					return row[data];
+				return column.accessor(row);
+			};
+			//column.render = typeof column.data === "string" ? (d=>d[column.data]) : column.accessor;
+		})
 		self.rowCallback = params.rowCallback;
 		self.rowClick = params.rowClick;
+
+		// Maybe you want to use facets for filtering, but
+		// not the data table?
 		self.facetsOnly = params.facetsOnly;
 
 		// Set some defaults for the data table
@@ -56,15 +98,15 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		};
 		*/
 
-		self.recs.subscribe(function () {
+		//self.recs.subscribe(function () {
 			//facetSetup();
-		});
-		//facetSetup();
+		//});
+		facetSetup();
 		function facetSetup() {
 			var newFacets = [];
-			self.facets().forEach(facet=>{
+			self.facets.forEach(facet=>{
 				var members = [];
-				facet.group.all().forEach(group=>{
+				facet.cfDimGroup.all().forEach(group=>{
 					var oldMember = _.find(facet.Members,{Name:group.key});
 					var member = {
 						Name: group.key,
@@ -76,9 +118,10 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				facet.Members = members;
 				newFacets.push(facet);
 			});
-			self.facets.removeAll()
-			self.facets.push(...newFacets);
-			self.data(self.recs());
+			//self.facets.removeAll()
+			//self.facets.push(...newFacets);
+			self.facets = newFacets;
+			//self.data(self.recs());
 		}
 
 		self.updateFilters = function (data, event) {
@@ -88,14 +131,19 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			var selected = facet.Members
 												.filter(d=>d.Selected)
 												.map(d=>d.Name);
+			var filter;
 			if (selected.length === 0) {
 				facet.Members.forEach(member=>{
 					member.Selected = false;
 				});
-				facet.filter(null);
+				//facet.filter(null);
+				filter = null;
 			} else {
-				facet.filter(d=>selected.indexOf(d) != -1);
+				//facet.filter(d=>selected.indexOf(d) != -1);
+				filter = d=>selected.indexOf(d) != -1;
 			}
+			facet.cfDim.filter(filter);
+			self.dispatch.filter(selected);
 		};
 
 	};

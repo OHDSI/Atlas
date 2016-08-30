@@ -352,6 +352,13 @@ define(['jquery','knockout'], function($,ko) {
 			return this.run(opts, false, false, true);
 		}
 	}
+
+	/*
+	class Field {
+		constructor({name, opts} = {}) {
+		}
+	}
+	*/
 	
 	// END module functions
 	
