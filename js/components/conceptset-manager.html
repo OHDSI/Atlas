@@ -18,13 +18,18 @@
 			<a>Included Concepts
 				<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
 				<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
+			</li>
 		</li>
 		<li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
 			<a>Included Source Codes</a>
 		</li>
-		<li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
-		</li>
-	</ul>
+			<li role="presentation" data-bind="click: function() {$component.routeTo('evidence');}, attr: {class: model.currentConceptSetMode() == 'evidence' ? 'active' : ''}">
+				<a>Explore Evidence</a>
+			</li>
+			<li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
+			</li>
+		</ul>
+	</div>
 
 	<div id="wrapperConceptSetAnalysis" data-bind="if: model.currentConceptSetMode() == 'analysis'">
 		<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.denseSiblings}"></faceted-datatable>
@@ -107,6 +112,10 @@
 		</div>
 	</div>
 
+    <div data-bind="visible: model.currentConceptSetMode() == 'evidence'">
+        <negative-controls params="{model: pageModel, negativeControls: model.currentConceptSetNegativeControls, selectedConcepts: model.selectedConcepts, conceptSet: model.currentConceptSet, dirtyFlag: model.currentConceptSetDirtyFlag, conceptIds: model.conceptSetInclusionIdentifiers, services: model.services, defaultResultsUrl: model.resultsUrl}"></negative-controls>
+    </div>
+    
 	<div id="wrapperConceptSetExport" data-bind="if: model.currentConceptSetMode() == 'export'">
 		<div class="heading">Concept Set Expression JSON</div>
 		<pre data-bind="html: model.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>

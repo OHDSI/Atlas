@@ -1385,6 +1385,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.currentConceptIdentifierList = ko.observable();
 		self.currentConceptSet = ko.observable();
 		self.currentConceptSetSource = ko.observable('repository');
+        self.currentConceptSetNegativeControls = ko.observable();
 		self.currentIncludedConceptIdentifierList = ko.observable();
 		self.searchResultsConcepts = ko.observableArray();
 		self.relatedConcepts = ko.observableArray();

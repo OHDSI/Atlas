@@ -2363,8 +2363,8 @@
 			var cp = new ChartProps(this.defaultOptions, opts);
 			DEBUG && (window.cp = cp);
 			if (!cp.data.alreadyInSeries) {
-				var series = dataToSeries(data, cp.series);
-				//var series = dataToSeries(data.slice(0,1000), cp.series);
+				//var series = dataToSeries(data, cp.series);
+				var series = dataToSeries(data.slice(0,1000), cp.series);
 			}
 			var divEl = new ResizableSvgContainer(target, series, w, h, ['zoom-scatter']);
 			var svgEl = divEl.child('svg')
@@ -2575,7 +2575,7 @@
 										},
 									});
 
-			series = dataToSeries(data.slice(0,5000), cp.series);
+			series = dataToSeries(data.slice(0,500), cp.series);
 			cp.chart.chart.gEl
 					.child('series')
 						.run({data: series, delay: 1500, duration: 2000});

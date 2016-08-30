@@ -23,30 +23,23 @@
 	<div class="col-xs-10">
 		<div class="facetedDataTable">
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-            data: $component.data,
-            options: {
-							dom: 'Clfiprt',
-							colVis: {
-								buttonText: 'Change Columns',
-								align: 'right',
-								overlayFade: 0,
-								showAll: 'Show All Columns',
-								restore: 'Reset Columns'
-							},																																													 
-							language: {
-								search: 'Filter: '
-							},
+						data: $component.data,
+						options: {
+							dom: $component.dom,
+							colVis: $component.colVis,
+							language: $component.language,
+														buttons: $component.buttons,
 							rowCallback: $component.rowCallback,
-							lengthMenu: [[15, 30, 45, -1], [15, 30, 45,'All']],
-							orderClasses: false,
-							ordering: true,
+							lengthMenu: $component.lengthMenu,
+							orderClasses: $component.orderClasses,
+							ordering: $component.ordering,
 							order: $component.order,
 							columns: $component.columns,
-							autoWidth: true,
-							initComplete: $component.initCompleteCallback,
+							autoWidth: $component.autoWidth,
+							initComplete:$component.initCompleteCallback,
 					},
 					onRowClick: $component.rowClick,
-        }">
+				}">
 			</table>
 		</div>
 	</div>
