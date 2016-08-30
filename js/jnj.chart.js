@@ -2358,6 +2358,84 @@
 	}
 
 	module.zoomScatter = function (opts) {
+		this.defaultOptions = {
+			dispatch: d3.dispatch("brush", "filter"),
+			data: {
+				alreadyInSeries: false,
+			},
+			chart: {
+				cssClass: "lineplot",
+				labelIndexDate: false,
+				colorBasedOnIndex: false,
+			},
+			layout: {
+				top: { margin: { size: 5}, },
+				bottom: { margin: { size: 5}, },
+				left: { margin: { size: 5}, },
+				right: { margin: { size: 5}, },
+			},
+			x: {
+						showAxis: true,
+						showLabel: true,
+						rangeFunc: layout => [0, layout.svgWidth()],
+						format: module.util.formatSI(3),
+						ticks: 10,
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+			},
+			y: {
+						showAxis: true,
+						showLabel: true,
+						format: module.util.formatSI(3),
+						ticks: 4,
+						scale: d3.scale.linear(),
+						rangeFunc: layout => [layout.svgHeight(), 0],
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+			},
+			size: {
+						scale: d3.scale.linear(),
+						range: [.5, 8],
+						value: 1,
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+			},
+			color: {
+						//scale: null,
+						scale: d3.scale.category10(),
+						//rangeFunc: (layout, prop) => prop.scale.range(), // does this belong here?
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+			},
+			shape: {
+						value: 0,
+						scale: d3.scale.ordinal(),
+						range: shapePath("types"),
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+			},
+			legend: {
+						show: true,
+			},
+			series: {
+						//value: function(d) { return this.parentNode.__data__.name; },
+						value: ()=>null,
+						//value: d=>1,
+						showLabel: false,
+						//showSeriesLabel: false,
+						//needsLabel: true,
+						needsLabel: false,
+						needsValueFunc: true,
+			},
+			//interpolate: "linear", // not used
+			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
+			//showXAxis: true
+		};
 		var cp = this.chartOptions = new ChartProps(this.defaultOptions, opts);
 		this.render = function (data, target, w, h) {
 			if (!data.length) return;
@@ -2656,84 +2734,6 @@
 					.attr("height", layout.svgHeight());
 			}
 		}
-		this.defaultOptions = {
-			dispatch: d3.dispatch("brush", "filter"),
-			data: {
-				alreadyInSeries: false,
-			},
-			chart: {
-				cssClass: "lineplot",
-				labelIndexDate: false,
-				colorBasedOnIndex: false,
-			},
-			layout: {
-				top: { margin: { size: 5}, },
-				bottom: { margin: { size: 5}, },
-				left: { margin: { size: 5}, },
-				right: { margin: { size: 5}, },
-			},
-			x: {
-						showAxis: true,
-						showLabel: true,
-						rangeFunc: layout => [0, layout.svgWidth()],
-						format: module.util.formatSI(3),
-						ticks: 10,
-						needsLabel: true,
-						needsValueFunc: true,
-						needsScale: true,
-			},
-			y: {
-						showAxis: true,
-						showLabel: true,
-						format: module.util.formatSI(3),
-						ticks: 4,
-						scale: d3.scale.linear(),
-						rangeFunc: layout => [layout.svgHeight(), 0],
-						needsLabel: true,
-						needsValueFunc: true,
-						needsScale: true,
-			},
-			size: {
-						scale: d3.scale.linear(),
-						range: [.5, 8],
-						value: 1,
-						needsLabel: true,
-						needsValueFunc: true,
-						needsScale: true,
-			},
-			color: {
-						//scale: null,
-						scale: d3.scale.category10(),
-						//rangeFunc: (layout, prop) => prop.scale.range(), // does this belong here?
-						needsLabel: true,
-						needsValueFunc: true,
-						needsScale: true,
-			},
-			shape: {
-						value: 0,
-						scale: d3.scale.ordinal(),
-						range: shapePath("types"),
-						needsLabel: true,
-						needsValueFunc: true,
-						needsScale: true,
-			},
-			legend: {
-						show: true,
-			},
-			series: {
-						//value: function(d) { return this.parentNode.__data__.name; },
-						value: ()=>null,
-						//value: d=>1,
-						showLabel: false,
-						//showSeriesLabel: false,
-						//needsLabel: true,
-						needsLabel: false,
-						needsValueFunc: true,
-			},
-			//interpolate: "linear", // not used
-			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
-			//showXAxis: true
-		};
 	};
 
 	module.trellisline = function () {
