@@ -14,12 +14,12 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="row">
-						<faceted-datatable-cf class="feFilter col-xs-2" id="explore-cohort-table" params="{
+						<faceted-datatable-cf-profile class="feFilter col-xs-2" id="explore-cohort-table" params="{
 								recs: filteredRecs,
 								facets: facets,
 								columns: $component.columns, 
 								facetsOnly: true,
-							}"></faceted-datatable-cf>
+							}"></faceted-datatable-cf-profile>
 						<div class="col-xs-8 col-xs-offset-2">
 							<div data-bind="text:membersChosen" />
 							<div data-bind="foreach:facets">

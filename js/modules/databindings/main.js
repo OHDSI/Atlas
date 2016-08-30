@@ -10,5 +10,5 @@ define(function (require) {
 	var templateDataTable = require("./knockout.datatables");
 	var eventListener = require("./eventListenerBinding");
 	var selectOnFocus = require("./knockout.selectOnFocus");
-	var d3ChartBinding = require("./d3ChartBinding");
+	var d3ChartBinding = require("../../d3ChartBinding");
 });

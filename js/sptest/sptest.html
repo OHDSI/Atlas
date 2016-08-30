@@ -3,16 +3,28 @@
 </div>
 
 <div class="paddedWrapper">
-	<scatterplot 
-			style="width:300px; height:100px;"
-			params="{
-				jsonFile: $component.jsonFile,
-				dataSetup: $component.dataSetup,
-				chartOptions: $component.chartOptions,
-			}"></scatterplot>
+	<div data-bind="d3ChartBinding: 
+		{	
+			c1:null, // ko only allows comment on same line as param (and not after last param)
 
-	<div class="heading">table:</div>
-	<div data-bind="if:false">
-		<faceted-datatable params="options:options, columns:columns, reference:nodes"></faceted-datatable>
+			chartType:'zoomScatter',// required string
+
+			c3:null,								// optional observables
+			chartData,							// whatever data chart expects
+			chartOptions,						// whatever options chart expects
+			chartResolution,				// {width: w, height: h}
+			chartObj,								// to pass back ref to chart obj
+			domElement,							// ref to dom element for use by chart or caller
+
+			c3:null,
+		}">
+	</div>
+
+	<div data-bind="if:chartData().length">
+		<faceted-datatable-cf
+			params="options:{}, 
+							columns:columns, 
+							facets: facets,
+							recs:chartData"></faceted-datatable-cf>
 	</div>
 </div>
