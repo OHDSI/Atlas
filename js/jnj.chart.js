@@ -2241,9 +2241,9 @@
 							(defaultProp, name) => {
 								var prop = $.extend({}, defaultProp, explicit[name]);
 								prop.name = name;
-								if (prop.needsLabel || prop.label) {
-									prop.label = d3.functor(prop.label || name);
-								}
+								//if (prop.needsLabel || prop.label) {
+								prop.label = d3.functor(prop.label || name);
+								//}
 								if (prop.needsValueFunc) {
 									if (typeof prop.value === "string" || isFinite(prop.value)) {
 										prop.value = obj => obj[prop.value];
@@ -2425,6 +2425,79 @@
 			//svgEl.update({data:series})
 			//svgEl.data(series)
 
+			// brush stuff needs to go before dots so tooltips will work
+			var orig_x_domain = cp.x.scale.domain();
+			var orig_y_domain = cp.y.scale.domain();
+			/*
+			var idleTimeout, idleDelay = 350;
+			function idled() {
+				idleTimeout = null;
+			}
+			*/
+			var brush = d3.svg.brush()
+				.x(cp.x.scale)
+				.y(cp.y.scale)
+				.on('brushstart', function() {
+					$('.extent').show();
+					$('.resize').show();
+				});
+
+			/*
+			chart.append('g')  // use addChild?
+				.attr('class', 'brush')
+				.call(brush);
+			*/
+			var brushEl = cp.chart.chart.gEl.addChild('brush',
+																	{ tag: 'g',
+																		classes:['brush'],
+																		data: [null],
+																	});
+			brushEl.as('d3').call(brush);
+
+			brush
+				.on('brushend', function () {
+					//var s = d3.event.selection;
+					// wanted to use https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
+					// but it's d3.v4
+					if (brush.empty()) {
+						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+						cp.x.scale.domain(orig_x_domain);
+						cp.y.scale.domain(orig_y_domain);
+					} else {
+						cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]]);
+						cp.y.scale.domain([brush.extent()[0][1], brush.extent()[1][1]]);
+						//cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]].map(cp.x.scale.invert, cp.x.scale));
+						//cp.y.scale.domain([brush.extent()[1][1], brush.extent()[0][1]].map(cp.y.scale.invert, cp.y.scale));
+						//brushEl.as('d3').call(brush.move, null);
+					}
+					//console.log(brush.extent()[0][0], brush.extent()[1][0],cp.x.scale.domain());
+					//cp.x.scale.domain(brush.empty() ? orig_x_domain : [brush.extent()[0][0], brush.extent()[1][0]]);
+					//console.log(brush.extent()[0][0], brush.extent()[1][0],cp.x.scale.domain());
+					//cp.y.scale.domain(brush.empty() ? orig_y_domain : [brush.extent()[0][1], brush.extent()[1][1]]);
+
+					//layout.positionZones();
+					//layout.positionZones();
+					opts.dispatch.brush(brush);
+
+					//var t = cp.chart.chart.gEl.as('d3').transition().duration(2750);
+					cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
+					cp.y.axisEl.gEl.as('d3').transition().duration(750).call(cp.y.axisEl.axis);
+
+					seriesGs.as('d3')
+						.selectAll(".dot")
+						.transition()
+						.duration(750)
+						.attr("transform", function (d) {
+							var xVal = cp.x.scale(cp.x.value(d));
+							var yVal = cp.y.scale(cp.y.value(d));
+							return "translate(" + xVal + "," + yVal + ")";
+						});
+
+					$('.extent').hide();
+					$('.resize').hide();
+				});
+
+
 			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
@@ -2501,79 +2574,6 @@
 												.remove()
 										},
 									});
-
-
-			var orig_x_domain = cp.x.scale.domain();
-			var orig_y_domain = cp.y.scale.domain();
-			/*
-			var idleTimeout, idleDelay = 350;
-			function idled() {
-				idleTimeout = null;
-			}
-			*/
-
-			var brush = d3.svg.brush()
-				.x(cp.x.scale)
-				.y(cp.y.scale)
-				.on('brushstart', function() {
-					$('.extent').show();
-					$('.resize').show();
-				});
-
-			/*
-			chart.append('g')  // use addChild?
-				.attr('class', 'brush')
-				.call(brush);
-			*/
-			var brushEl = cp.chart.chart.gEl.addChild('brush',
-																	{ tag: 'g',
-																		classes:['brush'],
-																		data: [null],
-																	});
-			brushEl.as('d3').call(brush);
-
-			brush
-				.on('brushend', function () {
-					//var s = d3.event.selection;
-					// wanted to use https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
-					// but it's d3.v4
-					if (brush.empty()) {
-						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
-						cp.x.scale.domain(orig_x_domain);
-						cp.y.scale.domain(orig_y_domain);
-					} else {
-						cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]]);
-						cp.y.scale.domain([brush.extent()[0][1], brush.extent()[1][1]]);
-						//cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]].map(cp.x.scale.invert, cp.x.scale));
-						//cp.y.scale.domain([brush.extent()[1][1], brush.extent()[0][1]].map(cp.y.scale.invert, cp.y.scale));
-						//brushEl.as('d3').call(brush.move, null);
-					}
-					//console.log(brush.extent()[0][0], brush.extent()[1][0],cp.x.scale.domain());
-					//cp.x.scale.domain(brush.empty() ? orig_x_domain : [brush.extent()[0][0], brush.extent()[1][0]]);
-					//console.log(brush.extent()[0][0], brush.extent()[1][0],cp.x.scale.domain());
-					//cp.y.scale.domain(brush.empty() ? orig_y_domain : [brush.extent()[0][1], brush.extent()[1][1]]);
-
-					//layout.positionZones();
-					//layout.positionZones();
-					opts.dispatch.brush(brush);
-
-					//var t = cp.chart.chart.gEl.as('d3').transition().duration(2750);
-					cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
-					cp.y.axisEl.gEl.as('d3').transition().duration(750).call(cp.y.axisEl.axis);
-
-					seriesGs.as('d3')
-						.selectAll(".dot")
-						.transition()
-						.duration(750)
-						.attr("transform", function (d) {
-							var xVal = cp.x.scale(cp.x.value(d));
-							var yVal = cp.y.scale(cp.y.value(d));
-							return "translate(" + xVal + "," + yVal + ")";
-						});
-
-					$('.extent').hide();
-					$('.resize').hide();
-				});
 
 			series = dataToSeries(data.slice(0,5000), cp.series);
 			cp.chart.chart.gEl
