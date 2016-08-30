@@ -9,14 +9,15 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		self.recs = ko.utils.unwrapObservable(params.recs);
 		self.crossfilter = ko.utils.unwrapObservable(params.crossfilter) ||
 												crossfilter(self.recs);
-		self.dispatch = params.d3dispatch || d3.dispatch("filter");
+		self.dispatch = ko.utils.unwrapObservable(params.d3dispatch) || d3.dispatch("filter");
 
-		// don't use observables to communicate out anymore
-		//self.data = ko.observableArray();
-		//self.data(self.recs());
+		self.data = ko.observableArray();
+		self.data(self.recs);
 
 		self.options = params.options;
-		self.fields = params.fields || params.columns.concat(params.facets);
+		self.fields = ko.utils.unwrapObservable(params.fields) || 
+											params.columns.concat(params.facets);
+		console.log(self.fields);
 		self.fields.forEach(function(field) {
 			// need to consistently define what labels and titles and stuff are called
 			// and how they're defined
@@ -34,7 +35,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		self.facets = params.facets || _.filter(self.fields, d=>d.isFacet);
 		var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
 		self.facets.forEach(function(facet) {
-			facet.caption = facet.caption || facet.label;
+			facet.caption = facet.caption || d3.functor(facet.label)();
 			facet.Members = [];
 			facet.cfDim = self.crossfilter.dimension(facet.accessor);
 			facet.cfDimGroup = facet.cfDim.group();
@@ -43,7 +44,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			facet.cfDimGroupAll.reduce(...reduceToRecs);
 		})
 		self.columns.forEach(function(column) {
-			column.title = column.title || column.label;
+			column.title = column.title || d3.functor(column.label)();
 			column.render = function(data, type, row, meta) {
 				// see https://datatables.net/reference/option/columns.render
 				if (typeof data !== "undefined")
@@ -145,7 +146,11 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			facet.cfDim.filter(filter);
 			self.dispatch.filter(selected);
 		};
-
+		self.dispatch.on('filter', function(filts) {
+			var groupAll = self.crossfilter.groupAll();
+			groupAll.reduce(...reduceToRecs);
+			self.data(groupAll.value());
+		});
 	};
 
 	var component = {

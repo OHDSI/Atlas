@@ -2237,9 +2237,8 @@
 	class ChartProps {
 		constructor(defaults, explicit) {
 			//this.props = {};
-			_.each(defaults, 
-							(defaultProp, name) => {
-								var prop = $.extend({}, defaultProp, explicit[name]);
+			_.union(_.keys(defaults), _.keys(explicit)).forEach(name => {
+								var prop = $.extend({}, defaults[name], explicit[name]);
 								prop.name = name;
 								//if (prop.needsLabel || prop.label) {
 								prop.label = d3.functor(prop.label || name);
@@ -2278,6 +2277,8 @@
 								//this.props[name] = prop;
 								this[name] = prop;
 							});
+			this.d3dispatch = d3.dispatch.apply(null, 
+					_.union(defaults.dispatchEvents, explicit.additionalDispatchEvents));
 		}
 		chartData(data) {
 			if (typeof data !== "undefined")
@@ -2359,7 +2360,8 @@
 
 	module.zoomScatter = function (opts) {
 		this.defaultOptions = {
-			dispatch: d3.dispatch("brush", "filter"),
+			//dispatch: d3.dispatch("brush", "filter"),
+			dispatchEvents: ['brush', 'filter'],
 			data: {
 				alreadyInSeries: false,
 			},
