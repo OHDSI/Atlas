@@ -73,7 +73,10 @@
 							aspectRatio: aspectRatio,
 							short: showSection.datatable(),
 						}"></div>
-		<faceted-datatable-cf id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
+		<faceted-datatable-cf-profile
+				id="profile-manager-table" 
+				data-bind="visible:showSection.datatable" 
+				params="{
 						recs: filteredRecs,
 						updateOnPersonChange: person,
 						columns: columns, 
@@ -81,6 +84,6 @@
 						order: [[3,'asc']],
 						searchFilter: searchHighlight,
 						rowClick: datatableRowClickCallback,
-					}"></faceted-datatable-cf>
+					}"></faceted-datatable-cf-profile
 	</div>
 </div>

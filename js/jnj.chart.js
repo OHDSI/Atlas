@@ -2131,12 +2131,12 @@
 			this.axis && selection.call(this.axis);
 		}
 	}
-  /* ChartProps
+	/* ChartProps
 	 * The chart class should have default options
 	 * which can be overridden when instantiating the chart.
 	 * All options are grouped into named chartProps, like:
 	 * (For example defaults, see this.defaultOptions in module.zoomScatter.
-	 *  For an example of explicit options, see function chartOptions() in sptest.js.)
+	 *	For an example of explicit options, see function chartOptions() in sptest.js.)
 	 *
 				defaults = {
 					x: {
@@ -2241,7 +2241,7 @@
 							(defaultProp, name) => {
 								var prop = $.extend({}, defaultProp, explicit[name]);
 								prop.name = name;
-								if (prop.needsLabel) {
+								if (prop.needsLabel || prop.label) {
 									prop.label = d3.functor(prop.label || name);
 								}
 								if (prop.needsValueFunc) {
@@ -2249,10 +2249,9 @@
 										prop.value = obj => obj[prop.value];
 									} else if (!prop.value) {
 										var label = prop.label || d3.functor(name);
-										prop.value = obj => (label in obj) ? obj[label] : label;
+										//prop.value = obj => (label in obj) ? obj[label] : label;
+										prop.value = label;
 									} else if (typeof prop.value === "function") {
-										//console.log(`saving value for ${name}`);
-										//prop._originalValueAccessor = prop.value;
 									} else {
 										throw new Error("can't figure out how to make value accessor");
 									}
@@ -2337,8 +2336,11 @@
 						var func = prop.tooltipFunc ||
 											 function(d,i,j) {
 												 return {
-													 name: prop.label(),
 													 value: _.partial(prop._originalValueAccessor, 
+																	_, _, _, // d, i, j,
+																	this, data, series, name)(d,i,j),
+													 //name: prop.label(),
+													 name: _.partial(prop.label, 
 																	_, _, _, // d, i, j,
 																	this, data, series, name)(d,i,j)
 												 };
@@ -2357,16 +2359,17 @@
 
 	module.zoomScatter = function () {
 		this.render = function (data, target, w, h, opts) {
-			console.log(data);
+			if (!data.length) return;
 			var cp = new ChartProps(this.defaultOptions, opts);
 			DEBUG && (window.cp = cp);
 			if (!cp.data.alreadyInSeries) {
 				var series = dataToSeries(data, cp.series);
+				//var series = dataToSeries(data.slice(0,1000), cp.series);
 			}
 			var divEl = new ResizableSvgContainer(target, series, w, h, ['zoom-scatter']);
 			var svgEl = divEl.child('svg')
 			if (!data.length) { // do this some more efficient way
-				nodata(divEl.as("d3"), w, h);
+				nodata(svgEl.as("d3"));
 				return;
 			}
 			var layout = cp._layout = new SvgLayout(w, h, cp.layout);
@@ -2387,10 +2390,38 @@
 			cp.updateDomains(data, series);
 			cp.tooltipSetup(data, series);
 			cp.updateRanges(layout);
-			var chartSvgEl = cp.chart.chart = new ChartChart(svgEl, layout, cp.chart, series);
-			var chartEl = chartSvgEl.gEl;
-			var chart = chartEl.as('d3');
+			cp.chart.chart = new ChartChart(svgEl, layout, cp.chart, series);
 
+			
+			var chart = cp.chart.chart.gEl.as('d3');
+
+			var legendWidth = 0;
+			if (cp.legend.show) {
+				var legend = svgEl.as("d3").append("g")
+					.attr("class", "legend");
+
+				var maxWidth = 0;
+
+				series.forEach(function (d, i) {
+					legend.append("rect")
+						.attr("x", 0)
+						.attr("y", (i * 15))
+						.attr("width", 10)
+						.attr("height", 10)
+						.style("fill", cp.color.scale(d.name));
+
+					var legendItem = legend.append("text")
+						.attr("x", 12)
+						.attr("y", (i * 15) + 9)
+						.text(d.name);
+					maxWidth = Math.max(legendItem.node().getBBox().width + 12, maxWidth);
+				});
+				legend.attr("transform", "translate(" + (layout.w() - layout.zone('right') - maxWidth) + ",0)")
+				legendWidth += maxWidth + 5;
+			}
+
+			layout.positionZones();
+			layout.positionZones();
 			//svgEl.update({data:series})
 			//svgEl.data(series)
 
@@ -2400,43 +2431,13 @@
 				.html(cp.tooltip.builder);
 			svgEl.as("d3").call(focusTip);
 
-			var brush = d3.svg.brush()
-				.x(cp.x.scale)
-				.y(cp.y.scale)
-				.on('brushstart', function() {
-					$('.extent').show();
-					$('.resize').show();
-				})
-				.on('brushend', function () {
-					cp.x.scale.domain(brush.empty() ? cp.x.domain : [brush.extent()[0][0], brush.extent()[1][0]]);
-					cp.y.scale.domain(brush.empty() ? cp.y.domain : [brush.extent()[0][1], brush.extent()[1][1]]);
-
-					seriesEls.as('d3')
-						.selectAll(".dot")
-						.transition()
-						.duration(750)
-						.attr("transform", function (d) {
-							var xVal = cp.x.scale(cp.x.value(d));
-							var yVal = cp.y.scale(cp.y.value(d));
-							return "translate(" + xVal + "," + yVal + ")";
-						});
-
-					layout.positionZones();
-					layout.positionZones();
-					$('.extent').hide();
-					$('.resize').hide();
-				});
-
-			chart.append('g')  // use addChild?
-				.attr('class', 'brush')
-				.call(brush);
-
-			var seriesEls = chartEl.addChild('series',
-															{ tag: 'g',
-																classes:['series'],
-																data: series,
-															});
-			seriesEls.addChild('dots',
+			var seriesGs = cp.chart.chart.gEl
+												.addChild('series',
+																	{ tag: 'g',
+																		classes:['series'],
+																		data: series,
+																	});
+			seriesGs.addChild('dots',
 									{tag: 'path',
 										data: function(series) {
 											return series.values;
@@ -2470,7 +2471,8 @@
 													return "translate(" + xVal + "," + yVal + ")";
 												})
 										},
-										/* testing transitions on exit
+										/* testing transitions on exit 
+										*/
 										exitCb: function(selection, params, transitionOpts={}) {
 											var {delay=0, duration=0, transition} = transitionOpts;
 											selection
@@ -2498,42 +2500,134 @@
 												})
 												.remove()
 										},
-										*/
 									});
+
+
+			var orig_x_domain = cp.x.scale.domain();
+			var orig_y_domain = cp.y.scale.domain();
+			/*
+			var idleTimeout, idleDelay = 350;
+			function idled() {
+				idleTimeout = null;
+			}
+			*/
+
+			var brush = d3.svg.brush()
+				.x(cp.x.scale)
+				.y(cp.y.scale)
+				.on('brushstart', function() {
+					$('.extent').show();
+					$('.resize').show();
+				});
+
+			/*
+			chart.append('g')  // use addChild?
+				.attr('class', 'brush')
+				.call(brush);
+			*/
+			var brushEl = cp.chart.chart.gEl.addChild('brush',
+																	{ tag: 'g',
+																		classes:['brush'],
+																		data: [null],
+																	});
+			brushEl.as('d3').call(brush);
+
+			brush
+				.on('brushend', function () {
+					//var s = d3.event.selection;
+					// wanted to use https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
+					// but it's d3.v4
+					if (brush.empty()) {
+						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+						cp.x.scale.domain(orig_x_domain);
+						cp.y.scale.domain(orig_y_domain);
+					} else {
+						cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]]);
+						cp.y.scale.domain([brush.extent()[0][1], brush.extent()[1][1]]);
+						//cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]].map(cp.x.scale.invert, cp.x.scale));
+						//cp.y.scale.domain([brush.extent()[1][1], brush.extent()[0][1]].map(cp.y.scale.invert, cp.y.scale));
+						//brushEl.as('d3').call(brush.move, null);
+					}
+					//console.log(brush.extent()[0][0], brush.extent()[1][0],cp.x.scale.domain());
+					//cp.x.scale.domain(brush.empty() ? orig_x_domain : [brush.extent()[0][0], brush.extent()[1][0]]);
+					//console.log(brush.extent()[0][0], brush.extent()[1][0],cp.x.scale.domain());
+					//cp.y.scale.domain(brush.empty() ? orig_y_domain : [brush.extent()[0][1], brush.extent()[1][1]]);
+
+					//layout.positionZones();
+					//layout.positionZones();
+					opts.dispatch.brush(brush);
+
+					//var t = cp.chart.chart.gEl.as('d3').transition().duration(2750);
+					cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
+					cp.y.axisEl.gEl.as('d3').transition().duration(750).call(cp.y.axisEl.axis);
+
+					seriesGs.as('d3')
+						.selectAll(".dot")
+						.transition()
+						.duration(750)
+						.attr("transform", function (d) {
+							var xVal = cp.x.scale(cp.x.value(d));
+							var yVal = cp.y.scale(cp.y.value(d));
+							return "translate(" + xVal + "," + yVal + ")";
+						});
+
+					$('.extent').hide();
+					$('.resize').hide();
+				});
 
 			series = dataToSeries(data.slice(0,5000), cp.series);
 			cp.chart.chart.gEl
 					.child('series')
-						.run({data: series, delay: 500, duration: 200});
-			layout.positionZones();
-			layout.positionZones();
-			var legendWidth = 0;
-			if (cp.legend.show) {
-				var legend = svgEl.as("d3").append("g")
-					.attr("class", "legend");
+						.run({data: series, delay: 1500, duration: 2000});
+			/*
+			*/
 
-				var maxWidth = 0;
+			return;
 
-				series.forEach(function (d, i) {
-					legend.append("rect")
-						.attr("x", 0)
-						.attr("y", (i * 15))
-						.attr("width", 10)
-						.attr("height", 10)
-						.style("fill", cp.color.scale(d.name));
+			setTimeout(function() {
+				//divEl.update({duration:750});
+				series = dataToSeries(data.slice(0,100), cp.series);
+				cp.chart.chart.gEl.child('series').run({data: series, duration:1000});
+				//cp.chart.chart.gEl.child('series').update({data: series, delay: 500, duration:1000});
 
-					var legendItem = legend.append("text")
-						.attr("x", 12)
-						.attr("y", (i * 15) + 9)
-						.text(d.name);
-					maxWidth = Math.max(legendItem.node().getBBox().width + 12, maxWidth);
-				});
-				legend.attr("transform", "translate(" + (layout.w() - layout.zone('right') - maxWidth) + ",0)")
-				legendWidth += maxWidth + 5;
-			}
+			}, 1100);
+			return;
+			
+			var series = chart.selectAll(".series")  // use addChild?
+				.data(series)
+				.enter()
+				.append("g");
 
-			/* not sure what these were doing.
-			 * should we add them back in?
+			// enter / add dots
+			var seriesDots = series
+				.selectAll(".dot")
+				.data(function (series) {
+					return series.values;
+				})
+				.enter()
+				.append("path")
+				.attr("class", "dot")
+				.attr("d", function(d) {
+					return shapePath(
+										cp.shape.scale(cp.shape.value(d)),
+										0, //options.xValue(d),
+										0, //options.yValue(d),
+										cp.size.scale(cp.size.value(d)));
+				})
+				.style("stroke", function (d) {
+					// calling with this so default can reach up to parent
+					// for series name
+					//return cp.color.scale(cp.series.value.call(this, d));
+					return cp.color.scale(cp.color.value(d));
+				})
+				.attr("transform", function (d) {
+					var xVal = cp.x.scale(cp.x.value(d));
+					var yVal = cp.y.scale(cp.y.value(d));
+					return "translate(" + xVal + "," + yVal + ")";
+				})
+				.on('mouseover', focusTip.show)
+				.on('mouseout', focusTip.hide)
+
 			if (cp.series.showLabel) {
 				series.append("text")
 					.datum(function (d) {
@@ -2561,7 +2655,6 @@
 					.attr("width", 1)
 					.attr("height", layout.svgHeight());
 			}
-			*/
 		}
 		this.defaultOptions = {
 			data: {
@@ -2610,7 +2703,7 @@
 			color: {
 						//scale: null,
 						scale: d3.scale.category10(),
-						rangeFunc: (layout, prop) => prop.scale.range(),
+						//rangeFunc: (layout, prop) => prop.scale.range(), // does this belong here?
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
@@ -2627,9 +2720,12 @@
 						show: true,
 			},
 			series: {
+						//value: function(d) { return this.parentNode.__data__.name; },
 						value: ()=>null,
+						//value: d=>1,
 						showLabel: false,
 						//showSeriesLabel: false,
+						//needsLabel: true,
 						needsLabel: false,
 						needsValueFunc: true,
 			},

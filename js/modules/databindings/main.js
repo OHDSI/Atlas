@@ -11,5 +11,5 @@ define(function (require) {
 	var eventListener = require("./eventListenerBinding");
 	var selectOnFocus = require("./knockout.selectOnFocus");
 	var sortExtender = require("./sortExtender");
-	var d3ChartBinding = require("./d3ChartBinding");
+	var d3ChartBinding = require("../../d3ChartBinding");
 });

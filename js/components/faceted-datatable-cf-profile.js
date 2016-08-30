@@ -1,8 +1,7 @@
 "use strict";
-define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter', 'knockout.dataTables.binding', 'colvis'], 
-			 function (ko, view, crossfilter) {
+define(['knockout', 'text!./faceted-datatable-cf-profile.html', 'knockout.dataTables.binding', 'colvis'], function (ko, view) {
 
-	function facetedDatatable(params) {
+	function facetedDatatableProfile(params) {
 		window.ko = ko;
 		var self = this;
 
@@ -20,7 +19,6 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		self.order = params.order || [[1,'desc']];
 
 		self.searchFilter = params.searchFilter;
-		/*
 		self.initCompleteCallback = function() {
 			var dt=$('#profile-manager-table table').DataTable();
 			dt.on('search.dt', function(e, settings) { 
@@ -35,12 +33,11 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				return true;
 			});
 		};
-		*/
 
 		self.recs.subscribe(function () {
-			//facetSetup();
+			facetSetup();
 		});
-		//facetSetup();
+		facetSetup();
 		function facetSetup() {
 			var newFacets = [];
 			self.facets().forEach(facet=>{
@@ -82,10 +79,10 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 	};
 
 	var component = {
-		viewModel: facetedDatatable,
+		viewModel: facetedDatatableProfile,
 		template: view
 	};
 
-	ko.components.register('faceted-datatable-cf', component);
+	ko.components.register('faceted-datatable-cf-profile', component);
 	return component;
 });

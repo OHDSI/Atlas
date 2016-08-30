@@ -1,29 +1,68 @@
-define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/scatterplot'], function (ko, view, _) {
+define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/faceted-datatable-cf',], 
+			 function (ko, view, _) {
+	var getData = _.once(function(self) {
+		var request = $.ajax({
+			url: self.jsonFile,
+			method: 'GET',
+			contentType: 'application/json',
+			error: function (err) {
+				console.log(err);
+			},
+			success: function (data) {
+				var pdata = self.dataSetup(data);
+				var chart = self.chartObj();
+				chart.render(pdata, self.domElement(), 460, 150, self.chartOptions);
+				self.chartData(pdata);
+			}
+		});
+	});
 	function sptest(params) {
 		var self = this;
 		self.model = params.model;
+		var filters = {};
+		self.chartObj = ko.observable();
+		self.domElement = ko.observable();
+		self.chartData = ko.observableArray(self.chartData && self.chartData() || []);
+		console.log(self.chartData().length);
+		self.chartResolution = ko.observable(); // junk
 		self.jsonFile = 'js/sptest/sample.json';
-		self.chartOptions = chartOptions();
+		self.chartOptions = chartOptions(chartOptions());
+		var dispatch = self.chartOptions.dispatch;
+		dispatch.on("brush", function() {
+			console.log(arguments);
+		});
 		self.dataSetup = function(vectors) {
-					/* sample:
-						{                               
-							"covariateId": [     13,     14...
-							"covariateName": [ "Age group: 1...
-							"beforeMatchingMeanTreated": [ 0...
-							"beforeMatchingMeanComparator": ...
-							"beforeMatchingSumTreated": [ 10...
-							...
-							}
-						*/
-					var arr = [];
-					var names = _.keys(vectors);
-					for (var i=0; i<vectors[names[0]].length; i++) {
-						var obj = {};
-						names.forEach(name => obj[name] = vectors[name][i]);
-						arr.push(obj);
+			/* sample:
+				{                               
+					"covariateId": [     13,     14...
+					"covariateName": [ "Age group: 1...
+					"beforeMatchingMeanTreated": [ 0...
+					"beforeMatchingMeanComparator": ...
+					"beforeMatchingSumTreated": [ 10...
+					...
 					}
-					return arr;
-				};
+				*/
+			var arr = [];
+			var names = _.keys(vectors);
+			for (var i=0; i<vectors[names[0]].length; i++) {
+				var obj = {};
+				names.forEach(name => obj[name] = vectors[name][i]);
+				arr.push(obj);
+			}
+			return arr;
+		};
+		self.columns = [
+			{ title: 'Covariate', data: 'covariateName', },
+			{ title: 'Analysis ID', data: 'analysisId', },
+			{ title: 'Concept ID', data: 'conceptId', },
+			{ title: 'Before Match Mean Treated', data: 'beforeMatchingMeanTreated', },
+			{ title: 'Before Match Mean Comparator', data: 'beforeMatchingMeanComparator', },
+		];
+		self.facets = ko.observableArray([
+			{ caption: 'Analysis ID', func: d=>d.analysisId, filter:ko.observable(null), Members:[] },
+			{ caption: 'Concept ID', data: d=>d.conceptId, filter:ko.observable(null), Members:[] },
+		]);
+		getData(self);
 	}
 
 	var component = {
@@ -53,6 +92,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/s
 			data: {
 				alreadyInSeries: false,
 			},
+			dispatch: d3.dispatch("brush"),
 			x: {
 						value: d=>d.beforeMatchingStdDiff,
 						label: "Before matching StdDiff",
@@ -87,6 +127,11 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/s
 								value: round(props.size.value(d), 4),
 							};
 						},
+			},
+			series: {
+						value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
+						sortBy:  d => d.afterMatchingStdDiff,
+						tooltipOrder: 5,
 			},
 			color: {
 						value: function(d, i, j, props, data, series) {
@@ -137,11 +182,6 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/s
 						value: () => junk++ % 3,
 						label: "Random",
 						tooltipOrder: 4,
-			},
-			series: {
-						value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
-						sortBy:  d => d.afterMatchingStdDiff,
-						tooltipOrder: 5,
 			},
 			CIup: { // support CI in both directions
 						value: d => d.upperBound,
