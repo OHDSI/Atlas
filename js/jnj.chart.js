@@ -5,9 +5,9 @@
 		define(["jquery", "d3", "lodash", "ohdsi.util", "d3_tip"], factory)
 	} else {
 		// Browser global.
-		root.jnj_chart = factory(root.$, root.d3, root._, root.ohdsiUtil)
+		root.jnj_chart = factory(root.$, root.d3, root._, root.util)
 	}
-}(this, function (jQuery, d3, _, ohdsiUtil) {
+}(this, function (jQuery, d3, _, util) {
 	var module = {
 		version: "0.0.1"
 	};
@@ -1626,164 +1626,6 @@
 		}
 	};
 
-	function shapePath(type, cx, cy, r) {
-		// shape fits inside the radius
-		var shapes = {
-			circle: function(cx, cy, r) {
-								// http://stackoverflow.com/questions/5737975/circle-drawing-with-svgs-arc-path
-								return `
-													M ${cx} ${cy}
-													m -${r}, 0
-													a ${r},${r} 0 1,0 ${r * 2},0
-													a ${r},${r} 0 1,0 ${-r * 2},0
-												`;
-							},
-			square: function(cx, cy, r) {
-								var side = Math.sqrt(1/2) * r * 2;
-								return `
-													M ${cx} ${cy}
-													m ${-side / 2} ${-side / 2}
-													l ${side} 0
-													l 0 ${side}
-													l ${-side} 0
-													z
-												`;
-							},
-			triangle: function(cx, cy, r) {
-								var side = r * Math.sqrt(3);
-								var alt = r * 1.5;
-								return `
-													M ${cx} ${cy}
-													m 0 ${-r}
-													l ${side/2} ${alt}
-													l ${-side} 0
-													z
-												`;
-							},
-		}
-		if (type === "types")
-			return _.keys(shapes);
-		if (! (type in shapes)) throw new Error("unrecognized shape type");
-		return shapes[type](cx, cy, r);
-	}
-	// svgSetup could probably be used for all jnj.charts; it works
-	// (i believe) the way line chart and scatterplot were already working
-	// (without the offscreen stuff, which I believe was not necessary).
-	class ResizableSvgContainer extends ohdsiUtil.D3Element {
-		// call from chart obj like: 
-		//	var divEl = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
-		// target gets a new div, new div gets a new svg. div/svg will resize
-		//	with consistent aspect ratio.
-		// svgSetup can be called multiple times but will only create div/svg
-		//	once. data will be attached to div and svg (for subsequent calls
-		//	it may need to be propogated explicitly to svg children)
-		// returns a D3Element (defined in odhsi.utils)
-		// ( maybe shouldn't send data to this func, attach it later)
-		constructor(target, data, w, h, divClasses=[], svgClasses=[], makeMany=false) {
-			if (Array.isArray(data) && data.length > 1 && !makeMany) {
-				data = [data];
-			}
-			function aspect() {
-				return w / h;
-			}
-			super({
-				parentElement: target,
-				data, 
-				tag:'div', 
-				classes: divClasses, 
-			})
-			var divEl = this;
-			var svgEl = divEl.addChild('svg', {
-				tag: 'svg',
-				classes: svgClasses,
-				updateCb: function(selection, params, updateOpts, thisEl) {
-					var targetWidth = divEl.divWidth();
-					selection
-						.attr('width', targetWidth)
-						.attr('height', Math.round(targetWidth / aspect()))
-						.attr('viewBox', '0 0 ' + w + ' ' + h);
-				},
-			});
-			this.w = w;
-			this.h = h;
-			this.svgClasses = svgClasses;
-			var resizeHandler = $(window).on("resize",
-							() => svgEl.as('d3')
-												.attr("width", this.divWidth())
-												.attr("height", Math.round(this.divWidth() / aspect())));
-			setTimeout(function () {
-				$(window).trigger('resize');
-			}, 0);
-		}
-		divWidth() {
-			try {
-				return this.as("jquery").width();
-			} catch(e) {
-				return this.w;
-			}
-		}
-	}
-	/*
-	// svgSetup could probably be used for all jnj.charts; it works
-	// (i believe) the way line chart and scatterplot were already working
-	// (without the offscreen stuff, which I believe was not necessary).
-	function svgSetup(target, data, w, h, divClasses=[], svgClasses=[]) {
-			// call from chart obj like: 
-			//	var divEl = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
-			// target gets a new div, new div gets a new svg. div/svg will resize
-			//	with consistent aspect ratio.
-			// svgSetup can be called multiple times but will only create div/svg
-			//	once. data will be attached to div and svg (for subsequent calls
-			//	it may need to be propogated explicitly to svg children)
-			// returns a D3Element (defined in odhsi.utils)
-		// ( maybe shouldn't send data to this func, attach it later)
-			this.container = this.container || ohdsiUtil.getContainer(target, "dom");
-			if (Array.isArray(data) && data.length > 1) {
-				data = [data];
-			}
-			this.svgDivEl = new ohdsiUtil.D3Element( {
-							parentElement:this.container,
-							data, tag:'div', classes: divClasses, 
-			});
-			var self = this;
-			this.svgDivEl.addChild('svg',
-										{
-												tag: 'svg',
-												classes: svgClasses,
-												updateCb: function(selection, params, updateOpts) {
-													try {
-														var targetWidth = self.svgDivEl.as("jquery").width();
-													} catch(e) {
-														var targetWidth = w;
-													}
-													var aspect = w/h;
-													console.log(targetWidth, aspect);
-													selection
-														//.attr('width', w)
-														//.attr('height', h)
-														.attr('width', targetWidth)
-														.attr('height', Math.round(targetWidth / aspect))
-														.attr('viewBox', '0 0 ' + w + ' ' + h);
-												},
-											});
-			var resizeHandler = $(window).on("resize", {
-					svgDivEl: this.svgDivEl,
-					aspect: w / h
-				},
-				function (event) {
-					// set svg to size of container div
-					var targetWidth = event.data.svgDivEl.as("jquery").width();
-					event.data.svgDivEl.child('svg').as("d3")
-								.attr("width", targetWidth)
-								.attr("height", Math.round(targetWidth / event.data.aspect));
-				});
-
-			setTimeout(function () {
-				$(window).trigger('resize');
-			}, 0);
-			return this.svgDivEl;
-	}
-	*/
 	function nodata(chart, w, h) {
 		chart.html('');
 		chart.append("text")
@@ -1810,554 +1652,6 @@
 	function dataInSeries(data) {
 		return _.chain(data).map(_.keys).flatten().uniq().eq(['name','values']).value();
 	}
-	/* SvgLayout class
-	 * manages layout of subcomponents in zones of an svg
-	 * initialize with layout like:
-		 var layout = new SvgLayout(w, h,
-					// zones:
-					{
-						top: { margin: { size: 5}, }, // top zone initialized with margin
-																					// 5 pixels (or whatever units) high
-						bottom: { margin: { size: 5}, },
-						left: { margin: { size: 5}, },
-						right: { margin: { size: 5}, },
-					})
-	 * add components to zones like one of these:
-			
-			// size is constant:
-			layout.add('left','axisLabel', { size: 20 })
-
-			// size returned by function:
-			layout.add('left','axisLabel', { size: ()=>axisLabel.node().getBBox().width * 1.5 })
-
-			// provide svg element to get size from (must specify 'width' or 'height' as dim)
-			layout.add('left','axis', { obj: cp.y.axisG.node(), dim:'width' })
-
-	 * retrieve dimensions of svg chart area (inside all zones):
-			layout.svgWidth()
-			layout.svgHeight()
-	 * retrieve svg dimensions:
-			layout.w()
-			layout.h()
-	 * retrieve total size of zone
-			layout.zone('bottom')
-	 * retrieve total size of one zone element
-			layout.zone('left.margin')
-	 * retrieve total size of more than one zone element
-			layout.zone(['left.margin','left.axisLabel'])
-	 * y position of bottom zone:
-			layout.h() - layout.zone('bottom')
-	 * 
-	 * when adding zones, you can also include a position func that will
-	 * do something based on the latest layout parameters
-	 *
-			var position = function(layout) {
-				// positions element to x:left margin, y: middle of svg area
-				axisLabel.attr("transform", 
-					`translate(${layout.zone(["left.margin"])},
-										 ${layout.zone(["top"]) + (h - layout.zone(["top","bottom"])) / 2})`);
-			}
-			layout.add('left','axisLabel', { size: 20 }, position: position)
-	 *
-	 * whenever you call layout.positionZones(), all registered position functions 
-	 * will be called. the position funcs should position their subcomponent, but 
-	 * shouldn't resize them (except they will, won't they? because, e.g.,
-	 * the y axis needs to fit after the x axis grabs some of the vertical space.
-	 * but as long as left and right regions don't change size horizontally and top
-	 * and bottom don't change size vertically, only two rounds of positioning
-	 * will be needed)
-	 */
-	class SvgLayout {
-		constructor(w, h, zones) {
-			this._w = w;
-			this._h = h;
-			['left','right','top','bottom'].forEach(
-				zone => this[zone] = _.cloneDeep(zones[zone]));
-			this.chart = {};
-		}
-		svgWidth() {
-			return this._w - this.zone(['left','right']);
-		}
-		svgHeight() {
-			return this._h - this.zone(['top','bottom']);
-		}
-		w() {
-			return this._w;
-		}
-		h() {
-			return this._h;
-		}
-		zone(zones) {
-			zones = typeof zones === "string" ? [zones] : zones;
-			var size = _.chain(zones)
-									.map(zone=>{
-										var zoneParts = zone.split(/\./);
-										if (zoneParts.length === 1 && this[zoneParts]) {
-											return _.values(this[zoneParts]);
-										}
-										if (zoneParts.length === 2 && this[zoneParts[0]][zoneParts[1]]) {
-											return this[zoneParts[0]][zoneParts[1]];
-										}
-										throw new Error(`invalid zone: ${zone}`);
-									})
-									.flatten()
-									.map(d=>{
-												return d.obj ? d.obj.getBBox()[d.dim] : d3.functor(d.size)();
-									})
-									.sum()
-									.value();
-			//console.log(zones, size);
-			return size;
-		};
-		add(zone, componentName, config) {
-			return this[zone][componentName] = config;
-		}
-		positionZones() {
-			return _.chain(this)
-				.map(_.values)
-				.compact()
-				.flatten()
-				.map('position')
-				.compact()
-				.each(position=>position(this))
-				.value();
-		}
-	}
-	/* SvgElement combines D3Element, SvgLayout, and ChartProps
-	 * ChartProps is where configuration options for your chart
-	 * are assembled. SvgElement is the place for code that
-	 * generates common chart elements (axes, labels, etc.)
-	 * So your chart code shouldn't have to worry about placement
-	 * of these items (and readjusting placement of other items
-	 * when the size of these changes). Chart code should just
-	 * say what elements should be included and should (probably
-	 * through chartProps) provide methods for generating their
-	 * content.
-	 *
-	 * SvgElement will make a g as a child of the parent D3Element
-	 * and then another element inside that (determined by the subclass).
-	 *
-	 * SvgElement is an abstract class. Subclasses should define
-	 *	- zone: where they belong: top, bottom, left, right, center
-	 *	- subzone: their (unique) name within their zone
-	 *	- enterCb: to be passed to D3Element
-	 *	- gEnterCb: enterCb for the g container
-	 *	- updateContent: updateCb to be passed to D3Element
-	 *	- updatePosition: updateCb to be passed to the g container
-	 *	- sizedim: width or height. for determining this element's size
-	 *	- size: optional func. by default size is sizedim of element's 
-	 *			g's getBBox() 
-	 *
-	 * SvgElements are one per chart instance. Use them to make titles,
-	 * axes, legends, etc. Not to make dots. The data they get is
-	 * the chartProp
-	 *
-	 */
-	class SvgElement {
-		// assume it always gets a g and then something inside the g
-		// the inside thing will be added in the subclass's _addContent
-		// method which will include a line like this.gEl.addChild(...).
-		// so making a new SvgElement means adding a child (g) and a
-		// grandchild (whatever) to the parent D3Eelement
-		constructor(d3El, layout, chartProp) {
-			if (new.target === SvgElement) throw TypeError("new of abstract class SvgElement");
-			this.parentEl = d3El;
-			this.layout = layout;
-			this.chartProp = chartProp;
-			this.gEl = d3El.addChild(chartProp.name, 
-											{ tag:'g', data:chartProp,
-												classes: this.cssClasses(), // move to gEnterCb
-																										// no, don't, will break D3Element
-												enterCb: this.gEnterCb.bind(this),
-												updateCb: this.updatePosition.bind(this),
-												cbParams: {layout},
-											});
-			if (!this.emptyG()) {
-				// if g is empty, don't use enterCb ot updateContent methods
-				this.contentEl = this.gEl.addChild(chartProp.name, 
-											{ tag: this.tagName(), 
-												data:chartProp,
-												classes: this.cssClasses(), // move to enterCb
-												enterCb: this.enterCb.bind(this),
-												updateCb: this.updateContent.bind(this),
-												cbParams: {layout},
-											});
-			}
-
-			layout.add(this.zone(), this.subzone(), 
-								{ size:this.size.bind(this), 
-									position:this.updatePosition.bind(this, this.gEl.as('d3'), {layout:this.layout}),
-								});
-		}
-		enterCb() {}
-		gEnterCb() {}
-		updateContent() {}
-		updatePosition() {}
-		emptyG() {}
-		size() {
-			return this.gEl.as('dom').getBBox()[this.sizedim()];
-		}
-	}
-
-	class ChartChart extends SvgElement {
-		zone () { return 'chart'; }
-		subzone () { return 'chart'; }
-		cssClasses() { // classes needed on g element
-			return [this.chartProp.cssClass];
-		}
-		gEnterCb(selection, params, opts) {
-			selection.attr('clip-path','url(#clip)');
-		}
-		tagName() { return 'defs'; }
-		enterCb(selection, params, opts) {
-			selection.append("defs")
-				.append("clipPath")
-				.attr("id", "clip")
-				.append("rect")
-				.attr("width", this.layout.svgWidth())
-				.attr("height", this.layout.svgHeight())
-				.attr("x", 0)
-				.attr("y", 0);
-		}
-		updatePosition(selection, params, opts) {
-			selection
-					.attr("transform", 
-								`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
-		}
-	}
-	class ChartLabel extends SvgElement {
-		tagName() { return 'text'; }
-	}
-	class ChartLabelLeft extends ChartLabel {
-		cssClasses() { // classes needed on g element
-			return ['y-axislabel','axislabel'];
-		}
-		zone () { return 'left'; }
-		subzone () { return 'axisLabel'; }
-		sizedim() { return 'width'; }
-		size() {
-			return this.gEl.as('dom').getBBox().width * 1.5;
-			// width is calculated as 1.5 * box height due to rotation anomolies 
-			// that cause the y axis label to appear shifted.
-		}
-		updateContent(selection, params, opts) {
-			selection
-				.attr("transform", "rotate(-90)")
-				.attr("y", 0)
-				.attr("x", 0)
-				.attr("dy", "1em")
-				.style("text-anchor", "middle")
-				.text(chartProp => chartProp.label())
-		}
-		updatePosition(selection, params, opts) {
-			selection.attr('transform',
-				`translate(${params.layout.zone(["left.margin"])},
-										${params.layout.zone(["top"]) + (params.layout.h() - params.layout.zone(["top","bottom"])) / 2})`);
-		}
-	}
-	class ChartLabelBottom extends ChartLabel {
-		cssClasses() { // classes needed on g element
-			return ['x-axislabel','axislabel'];
-		}
-		zone () { return 'bottom'; }
-		subzone () { return 'axisLabel'; }
-		sizedim() { return 'height'; }
-		enterCb(selection, params, opts) {
-			selection
-				.style("text-anchor", "middle")
-		}
-		updateContent(selection, params, opts) {
-			selection
-				.text(chartProp => chartProp.label())
-		}
-		updatePosition(selection, params, opts) {
-			selection.attr('transform',
-				`translate(${params.layout.w() / 2},${params.layout.h() - params.layout.zone(["bottom.margin"])})`);
-		}
-	}
-
-	class ChartAxis extends SvgElement {
-		//tagName() { return 'g'; }  // pretty bad. axes have an unneeded extra g
-		emptyG() { return true; }
-		gEnterCb(selection, params, opts) {
-			this.axis = this.chartProp.axis || d3.svg.axis();
-			// somewhat weird that scale belongs to chartProp and axis belongs to svgElement
-		}
-		updatePosition(selection, params, opts) {
-			this.axis.scale(this.chartProp.scale)
-								.tickFormat(this.chartProp.format)
-								.ticks(this.chartProp.ticks)
-								.orient(this.zone());
-		}
-	}
-	class ChartAxisY extends ChartAxis {
-		zone () { return 'left'; }
-		subzone () { return 'axis'; }
-		sizedim() { return 'width'; }
-		cssClasses() { return ['y','axis']; } // classes needed on g element
-		updatePosition(selection, params, opts) {
-			this.chartProp.scale.range([params.layout.svgHeight(), 0]);
-			super.updatePosition(selection, params, opts);
-															// params.layout === this.layout (i think)
-			selection
-					.attr('transform',
-								`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
-			this.axis && selection.call(this.axis);
-		}
-	}
-	class ChartAxisX extends ChartAxis {
-		zone () { return 'bottom'; }
-		subzone () { return 'axis'; }
-		sizedim() { return 'height'; }
-		updatePosition(selection, params, opts) {
-			if (this.chartProp.tickFormat) { // check for custom tick formatter
-				this.axis.tickFormat(this.chartProp.tickFormat); // otherwise uses chartProp.format above
-			}
-		}
-		cssClasses() { // classes needed on g element
-			return ['x','axis'];
-		}
-		updatePosition(selection, params, opts) {
-			// if x scale is ordinal, then apply rangeRoundBands, else apply standard range
-			if (typeof this.chartProp.scale.rangePoints === 'function') {
-				this.chartProp.scale.rangePoints([0, params.layout.svgWidth()]);
-			} else {
-				this.chartProp.scale.range([0, params.layout.svgWidth()]);
-			}
-			super.updatePosition(selection, params, opts);
-			selection
-					.attr('transform', `translate(${params.layout.zone('left')},
-																${params.layout.h() - params.layout.zone('bottom')})`);
-			this.axis && selection.call(this.axis);
-		}
-	}
-	/* ChartProps
-	 * The chart class should have default options
-	 * which can be overridden when instantiating the chart.
-	 * All options are grouped into named chartProps, like:
-	 * (For example defaults, see this.defaultOptions in module.zoomScatter.
-	 *	For an example of explicit options, see function chartOptions() in sptest.js.)
-	 *
-				defaults = {
-					x: {
-								showAxis: true,
-								showLabel: true,
-								rangeFunc: layout => [0, layout.svgWidth()],
-								format: module.util.formatSI(3),
-								ticks: 10,
-								needsLabel: true,
-								needsValueFunc: true,
-								needsScale: true,
-					},...
-				explicit = {
-					x: {
-								value: d=>d.beforeMatchingStdDiff,
-								label: "Before matching StdDiff",
-								tooltipOrder: 1,
-					},...
-	 *
-	 * If a chart is expecting a label for some prop (like an axis
-	 * label for the x axis or tooltip label for the x value), and
-	 * no prop.label is specified, the prop name will be used (e.g., 'x').
-	 * prop.label can be a function. If it's a string, it will be turned
-	 * into a function returning that string. (So the chart needs to
-	 * call it, not just print it.) Label generation will be done
-	 * automatically if prop.needsLabel is true.
-	 *
-	 * If needsValueFunc is true for a prop, prop.value will be used.
-	 * If prop.value hasn't been specified in default or explicit
-	 * prop options, it will be be generated from the label. (Which is
-	 * probably not what you want as it will give every data point's
-	 * x value (for instance) as x's label.
-	 *
-	 * If prop.value is a string or number, it will be transformed into
-	 * an accessor function to extract a named property or indexed array
-	 * value from a datum object or array.
-	 *
-	 * If prop.value is a function, it will be called with these arguments:
-	 *		- datum (usually called 'd' in d3 callbacks)
-	 *		- index of datum in selection data (i)
-	 *		- index of data group (series) in parent selection (j)
-	 *		- the whole ChartProps instance
-	 *		- all of the data (not grouped into series)
-	 *		- data for the series
-	 *		- prop name (so you can get prop with chartProps[name])
-	 *
-	 * If prop.needsScale is true, prop.scale will be used (it will default
-	 * to d3.scale.linear if not provided.) prop.domainFunc and prop.rangeFunc
-	 * will be used to generate domain and range. If they are not provided
-	 * they will be generated as functions returning prop.domain or prop.range 
-	 * if those are provided. If neither prop.domainFunc nor prop.domain is
-	 * provided, a domainFunc will be generated that returns the d3.extent
-	 * of the prop.value function applied to all data items.
-	 * If neither prop.rangeFunc nor prop.range is provided, an Error will be
-	 * thrown.
-	 *
-	 * The domainFunc will be called with these arguments:
-	 *		- the whole data array (not grouped into series)
-	 *		- the array of series
-	 *		- the whole ChartProps instance
-	 *		- prop name
-	 *
-	 * The rangeFunc will be called with these arguments:
-	 *		- the SvgLayout instance
-	 *		- the chartProp
-	 *		- the wholeChartProps instance
-	 *		- prop name
-	 * If rangeFunc returns nothing (or anything falsy), the range will not
-	 * be set on prop.scale. This is important because for some scales you
-	 * may want to do something other than set scale.range(). For instance:
-	 *	prop.rangeFunc = function(layout, prop, props) {
-	 *											prop.scale.rangePoints([0, layout.w()]);
-	 *										}
-	 * This function will not return a range to be passed to prop.scale.range
-	 * but will call prop.scale.rangePoints() itself.
-	 *
-	 * Set all scale.domains by calling
-	 *		cp.updateDomains(data, series)
-	 *
-	 * Set all scale.ranges by calling
-	 *		cp.updateRanges(layout)
-	 *
-	 * Also, before drawing data points (and if data changes), you should call
-	 *		cp.updateAccessors(data, series)
-	 * This will assure that prop.value will be called with fresh data and series
-	 * arguments.
-	 *
-	 * And:
-	 *		cp.tooltipSetup(data, series)
-	 * If prop.tooltipFunc is provided, it will be setup to receive the same
-	 * arguments as prop.value. If not, a tooltipFunc will be generated that
-	 * returns results from prop.label and prop.value. tooltipFunc is expected
-	 * to return an object with a label property and a value property. 
-	 * (What about formatting?)
-	 * Tooltip content will only be generated for props where prop.tooltipOrder 
-	 * is provided (it should be a non-zero number.)
-	 */
-	class ChartProps {
-		constructor(defaults, explicit) {
-			//this.props = {};
-			_.union(_.keys(defaults), _.keys(explicit)).forEach(name => {
-								var prop = $.extend({}, defaults[name], explicit[name]);
-								prop.name = name;
-								//if (prop.needsLabel || prop.label) {
-								prop.label = d3.functor(prop.label || name);
-								//}
-								if (prop.needsValueFunc) {
-									if (typeof prop.value === "string" || isFinite(prop.value)) {
-										prop.value = obj => obj[prop.value];
-									} else if (!prop.value) {
-										var label = prop.label || d3.functor(name);
-										//prop.value = obj => (label in obj) ? obj[label] : label;
-										prop.value = label;
-									} else if (typeof prop.value === "function") {
-									} else {
-										throw new Error("can't figure out how to make value accessor");
-									}
-									prop._originalValueAccessor = prop.value;
-									// add params to call below when data is known
-								}
-								if (prop.needsScale) { // if it needsScale, it must also needsValueFunc
-									prop.scale = prop.scale || d3.scale.linear();
-									// domainFunc should be called with args: data,series
-									// domainFunc will receive args:
-									//		data, series, props, propname
-									prop.domainFunc = prop.domainFunc ||
-																		prop.domain && d3.functor(prop.domain) ||
-																		((data,series,props,name) => 
-																			d3.extent(data.map(
-																					_.partial(props[name]._originalValueAccessor, 
-																							 _, _, _, // d, i, undefined,
-																							this, data, series, name))))
-									prop._origDomainFunc = prop.domainFunc;
-									prop.rangeFunc = prop.rangeFunc ||
-																		prop.range && d3.functor(prop.range) ||
-																		function() {throw new Error(`no range for prop ${name}`)};
-								}
-								//this.props[name] = prop;
-								this[name] = prop;
-							});
-			this.d3dispatch = d3.dispatch.apply(null, 
-					_.union(defaults.dispatchEvents, explicit.additionalDispatchEvents));
-		}
-		chartData(data) {
-			if (typeof data !== "undefined")
-				this._chartData = data;
-			return this._chartData;
-		}
-		chartSeries(series) {
-			if (typeof series !== "undefined")
-				this._chartSeries = series;
-			return this._chartSeries;
-		}
-		updateDomains(data, series) {
-			_.each(this, (prop, name) => {
-											if (prop.needsScale) {
-												prop.scale.domain(
-													prop.domainFunc(data, series, this, name));
-												// brushing may temporaryily change the scale domain
-												// hold on to the domain as calculated from the data
-												prop.domain = prop.scale.domain();
-											}
-										});
-		}
-		updateRanges(layout) {
-			_.each(this, (prop, name) => {
-											if (prop.needsScale) {
-												var range = prop.rangeFunc(layout, this[name], this, name);
-												if (range) {
-													prop.scale.range(range)
-													prop.range = range;
-												}
-											}
-										});
-		}
-		updateAccessors(data, series) {
-			_.each(this, (prop, name) => {
-											if (prop.needsValueFunc) {
-												prop.value = _.partial(prop._originalValueAccessor, 
-																							 _, _, _, // d, i, j,
-																							this, data, series, name);
-											}
-										});
-		}
-		/*
-		 * for value or tooltip functions that make use of aggregation over data or series
-		 * there should be a way to perform the aggregation calculations only once
-		 * rather than on every call to the value/tooltip func (actually, for tooltips
-		 * it doesn't matter too much since only one point gets processed at a time)
-		 */
-		tooltipSetup(data, series) {
-			this.tooltip = this.tooltip || { funcs: [] };
-			this.tooltip.funcs = 
-				_.chain(this)
-					.filter('tooltipOrder')
-					.sortBy('tooltipOrder')
-					.map((prop) => {
-						var func = prop.tooltipFunc ||
-											 function(d,i,j) {
-												 return {
-													 value: _.partial(prop._originalValueAccessor, 
-																	_, _, _, // d, i, j,
-																	this, data, series, name)(d,i,j),
-													 //name: prop.label(),
-													 name: _.partial(prop.label, 
-																	_, _, _, // d, i, j,
-																	this, data, series, name)(d,i,j)
-												 };
-											 };
-						return func;
-					})
-					.value();
-			this.tooltip.builder = // not configurable but could be, but would be
-														 // func that knows what to do with a bunch of funcs
-				(d, i, j) => this.tooltip.funcs
-													.map(func => func(d,i,j,this,data,series,name))
-													.map(o => `${o.name}: ${o.value}<br/>`)
-													.join('')
-		}
-	}
-
 	module.zoomScatter = function (opts) {
 		this.defaultOptions = {
 			//dispatch: d3.dispatch("brush", "filter"),
@@ -2416,7 +1710,7 @@
 			shape: {
 						value: 0,
 						scale: d3.scale.ordinal(),
-						range: shapePath("types"),
+						range: util.shapePath("types"),
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
@@ -2438,7 +1732,7 @@
 			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
 			//showXAxis: true
 		};
-		var cp = this.chartOptions = new ChartProps(this.defaultOptions, opts);
+		var cp = this.chartOptions = new util.ChartProps(this.defaultOptions, opts);
 		this.render = function (data, target, w, h) {
 			if (!data.length) return;
 			DEBUG && (window.cp = cp);
@@ -2446,31 +1740,31 @@
 				//var series = dataToSeries(data, cp.series);
 				var series = dataToSeries(data.slice(0,1000), cp.series);
 			}
-			var divEl = new ResizableSvgContainer(target, series, w, h, ['zoom-scatter']);
+			var divEl = new util.ResizableSvgContainer(target, series, w, h, ['zoom-scatter']);
 			var svgEl = divEl.child('svg')
 			if (!data.length) { // do this some more efficient way
 				nodata(svgEl.as("d3"));
 				return;
 			}
-			var layout = cp._layout = new SvgLayout(w, h, cp.layout);
+			var layout = cp._layout = new util.SvgLayout(w, h, cp.layout);
 			if (cp.y.showLabel) {
-				cp.y.labelEl = new ChartLabelLeft(svgEl, layout, cp.y);
+				cp.y.labelEl = new util.ChartLabelLeft(svgEl, layout, cp.y);
 			}
 			if (cp.y.showAxis) {
-				cp.y.axisEl = new ChartAxisY(svgEl, layout, cp.y);
+				cp.y.axisEl = new util.ChartAxisY(svgEl, layout, cp.y);
 			}
 			if (cp.x.showLabel) {
-				cp.x.labelEl = new ChartLabelBottom(svgEl, layout, cp.x);
+				cp.x.labelEl = new util.ChartLabelBottom(svgEl, layout, cp.x);
 			}
 			if (cp.x.showAxis) {
-				cp.x.axisEl = new ChartAxisX(svgEl, layout, cp.x);
+				cp.x.axisEl = new util.ChartAxisX(svgEl, layout, cp.x);
 			}
 
 			cp.updateAccessors(data, series);
 			cp.updateDomains(data, series);
 			cp.tooltipSetup(data, series);
 			cp.updateRanges(layout);
-			cp.chart.chart = new ChartChart(svgEl, layout, cp.chart, series);
+			cp.chart.chart = new util.ChartChart(svgEl, layout, cp.chart, series);
 
 			
 			var chart = cp.chart.chart.gEl.as('d3');
@@ -2606,7 +1900,7 @@
 												.attr("d", function(d) {
 													var xVal = 0; //cp.x.scale(cp.x.value(d));
 													var yVal = 0; //cp.y.scale(cp.y.value(d));
-													return shapePath(
+													return util.shapePath(
 																		cp.shape.scale(cp.shape.value(d)),
 																		xVal, // 0, //options.xValue(d),
 																		yVal, // 0, //options.yValue(d),
@@ -2688,7 +1982,7 @@
 				.append("path")
 				.attr("class", "dot")
 				.attr("d", function(d) {
-					return shapePath(
+					return util.shapePath(
 										cp.shape.scale(cp.shape.value(d)),
 										0, //options.xValue(d),
 										0, //options.yValue(d),
