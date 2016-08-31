@@ -12,7 +12,8 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 				var pdata = self.dataSetup(data);
 				var chart = self.chartObj();
 				chart.render(pdata, self.domElement(), 460, 150);
-				self.chartData(pdata);
+				self.chartData(pdata.slice(0,200));
+				setTimeout(() => self.chartData(pdata.slice(0,400)), 2000);
 			}
 		});
 	});

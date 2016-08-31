@@ -1,4 +1,4 @@
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf', 'components/profileChart', 'css!./styles/profileManager.css'],
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf-profile', 'components/profileChart', 'css!./styles/profileManager.css'],
 	function (ko, view, d3, config, lodash, crossfilter) {
 
 		function profileManager(params) {
