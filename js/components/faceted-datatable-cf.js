@@ -15,8 +15,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		self.data(self.recs);
 
 		self.options = params.options;
-		self.fields = ko.utils.unwrapObservable(params.fields) || 
-											params.columns.concat(params.facets);
+		self.fields = ko.utils.unwrapObservable(params.fields) || [];
 		console.log(self.fields);
 		self.fields.forEach(function(field) {
 			// need to consistently define what labels and titles and stuff are called
@@ -33,8 +32,10 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		});
 		self.columns = params.columns || _.filter(self.fields, d=>d.isColumn);
 		self.facets = params.facets || _.filter(self.fields, d=>d.isFacet);
+		self.facets = ko.isObservable(self.facets) ? self.facets : 
+										ko.observableArray(self.facets);
 		var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
-		self.facets.forEach(function(facet) {
+		self.facets().forEach(function(facet) {
 			facet.caption = facet.caption || d3.functor(facet.label)();
 			facet.Members = [];
 			facet.cfDim = self.crossfilter.dimension(facet.accessor);
@@ -105,7 +106,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		facetSetup();
 		function facetSetup() {
 			var newFacets = [];
-			self.facets.forEach(facet=>{
+			self.facets().forEach(facet=>{
 				var members = [];
 				facet.cfDimGroup.all().forEach(group=>{
 					var oldMember = _.find(facet.Members,{Name:group.key});
@@ -119,9 +120,9 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				facet.Members = members;
 				newFacets.push(facet);
 			});
-			//self.facets.removeAll()
-			//self.facets.push(...newFacets);
-			self.facets = newFacets;
+			self.facets.removeAll()
+			self.facets.push(...newFacets);
+			//self.facets = newFacets;
 			//self.data(self.recs());
 		}
 
@@ -150,6 +151,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			var groupAll = self.crossfilter.groupAll();
 			groupAll.reduce(...reduceToRecs);
 			self.data(groupAll.value());
+			facetSetup();
 		});
 	};
 
