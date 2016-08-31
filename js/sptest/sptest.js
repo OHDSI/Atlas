@@ -33,8 +33,13 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 			var opts = chart.chartOptions; // after applying defaults
 			console.log(opts);
 			self.fields(_.filter(opts, d=>d.isColumn||d.isFacet));
-			self.d3dispatch(opts.d3dispatch);
+			var dispatch = opts.d3dispatch;
+			self.d3dispatch(dispatch);
+			dispatch.on('filter.sptest', filterChange);
 		});
+		function filterChange() {
+			console.log(arguments);
+		}
 
 		/*
 		self.dispatch = opts.dispatch;
@@ -219,6 +224,9 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						colIdx: 3,
 						tooltipOrder: 5,
 						label: 'Concept ID',
+						needsValueFunc: true, // so ChartProps will make one
+																	// even though this isn't a normal
+																	// zoomScatter field
 			},
 			analysisId: {
 						fname: 'analysisId',

@@ -16,8 +16,13 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		*/
 
 		self.dispatch = ko.utils.unwrapObservable(params.d3dispatch) || d3.dispatch("filter");
-		self.data = ko.observableArray([]);
+		if (ko.isSubscribable(params.d3dispatch)) {
+			params.d3dispatch.subscribe(function(dispatch) {
+				self.dispatch = dispatch;
+			});
+		}
 
+		self.data = ko.observableArray([]);
 		self.facets = ko.observableArray([]);
 
 		self.rowCallback = params.rowCallback;
@@ -59,16 +64,12 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				});
 			}
 		} else {
-			self._columns = ko.utils.unwrapObservable(params.columns);
-			self._facets = ko.utils.unwrapObservable(params.facets);
-			columnSetup();
-			facetSetup();
-			if (ko.isSubscribable(params.columns)) {
-				params.columns.subscribe(function(columns) {
-					self._columns = columns;
-					columnSetup();
-				});
+			if (ko.isObservable(params.columns)) {
+				throw new Error("can't deal with observable columns");
 			}
+			self.columns = params.columns;
+			self._facets = ko.utils.unwrapObservable(params.facets);
+			facetSetup();
 			if (ko.isSubscribable(params.facets)) {
 				params.facets.subscribe(function(facets) {
 					self._facets = facets;
@@ -79,7 +80,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		function newRecs(recs) {
 			self.crossfilter = crossfilter(recs);
 			self.data(recs);
-			columnSetup();
+			//columnSetup(); // can't change after creating table
 			facetSetup();
 		}
 		if (ko.isSubscribable(params.recs)) {
@@ -87,14 +88,17 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				newRecs(recs);
 			});
 		}
+
+		columnSetup();
 		newRecs(ko.utils.unwrapObservable(params.recs));
+
 		function fieldSetup(fields) {
-			self._columns = _.filter(fields, d=>d.isColumn);
+			self.columns = _.filter(fields, d=>d.isColumn);
 			self._facets = _.filter(fields, d=>d.isFacet);
 		}
 		function columnSetup() {
-			sharedSetup(self._columns);
-			self._columns.forEach(function(column) {
+			sharedSetup(self.columns);
+			self.columns.forEach(function(column) {
 				column.title = column.title || d3.functor(column.label)();
 				column.render = function(data, type, row, meta) {
 					// see https://datatables.net/reference/option/columns.render
@@ -103,7 +107,6 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 					return column.accessor(row);
 				};
 			})
-			self.columns = self._columns;
 		}
 		function facetSetup() {
 			sharedSetup(self._facets);
@@ -195,7 +198,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			facet.cfDim.filter(filter);
 			self.dispatch.filter(selected);
 		};
-		self.dispatch.on('filter', function(filts) {
+		self.dispatch.on('filter.datatable', function(filts) {
 			var groupAll = self.crossfilter.groupAll();
 			groupAll.reduce(...reduceToRecs);
 			self.data(groupAll.value());
