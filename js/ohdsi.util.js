@@ -967,10 +967,18 @@ define(['jquery','knockout'], function($,ko) {
 			_.union(_.keys(defaults), _.keys(explicit)).forEach(name => {
 								var prop = $.extend({}, defaults[name], explicit[name]);
 								prop.name = name;
-								//if (prop.needsLabel || prop.label) {
 								prop.label = d3.functor(prop.label || name);
-								//}
 								if (prop.needsValueFunc) {
+									prop.ac = new AccessorGenerator({
+																	func: prop.value,
+																	propName: (typeof prop.value === "string" || 
+																						 isFinite(prop.value)) ? prop.value
+																						 : name,
+																	posParams: ['i', 'j', 'chartProps',
+																							'data', 'series', 'chartPropName'],
+																});
+									prop.accessor = prop.ac.generate();
+									/*
 									if (typeof prop.value === "string" || isFinite(prop.value)) {
 										prop.value = obj => obj[prop.value];
 									} else if (!prop.value) {
@@ -982,6 +990,7 @@ define(['jquery','knockout'], function($,ko) {
 										throw new Error("can't figure out how to make value accessor");
 									}
 									prop._originalValueAccessor = prop.value;
+									*/
 									// add params to call below when data is known
 								}
 								if (prop.needsScale) { // if it needsScale, it must also needsValueFunc
@@ -991,12 +1000,24 @@ define(['jquery','knockout'], function($,ko) {
 									//		data, series, props, propname
 									prop.domainFunc = prop.domainFunc ||
 																		prop.domain && d3.functor(prop.domain) ||
-																		((data,series,props,name) => 
-																			d3.extent(data.map(
+																		((data,series,props,name) => {
+																			var localProp = props[name]; 
+																			// can't remember why or if props[name] would
+																			// be different from prop
+																			localProp.ac.bindParam('chartProps', this);
+																			localProp.ac.bindParam('data', data);
+																			localProp.ac.bindParam('series', series);
+																			localProp.ac.bindParam('chartPropName', name);
+																			var accessor = localProp.ac.generate();
+																			/*
+																			return d3.extent(data.map(
 																					_.partial(props[name]._originalValueAccessor, 
 																							 _, _, _, // d, i, undefined,
-																							this, data, series, name))))
-									prop._origDomainFunc = prop.domainFunc;
+																							this, data, series, name)))
+																			*/
+																			return d3.extent(data.map(accessor));
+																		})
+									//prop._origDomainFunc = prop.domainFunc;
 									prop.rangeFunc = prop.rangeFunc ||
 																		prop.range && d3.functor(prop.range) ||
 																		function() {throw new Error(`no range for prop ${name}`)};
@@ -1042,9 +1063,16 @@ define(['jquery','knockout'], function($,ko) {
 		updateAccessors(data, series) {
 			_.each(this, (prop, name) => {
 											if (prop.needsValueFunc) {
+												/*
 												prop.value = _.partial(prop._originalValueAccessor, 
 																							 _, _, _, // d, i, j,
 																							this, data, series, name);
+												*/
+												prop.ac.bindParam('chartProps', this);
+												prop.ac.bindParam('data', data);
+												prop.ac.bindParam('series', series);
+												prop.ac.bindParam('chartPropName', name);
+												prop.accessor = prop.ac.generate();
 											}
 										});
 		}
@@ -1064,6 +1092,9 @@ define(['jquery','knockout'], function($,ko) {
 						var func = prop.tooltipFunc ||
 											 function(d,i,j) {
 												 return {
+													 value: prop.accessor(d,i,j),
+													 name: prop.label(),
+													 /*
 													 value: _.partial(prop._originalValueAccessor, 
 																	_, _, _, // d, i, j,
 																	this, data, series, name)(d,i,j),
@@ -1071,6 +1102,7 @@ define(['jquery','knockout'], function($,ko) {
 													 name: _.partial(prop.label, 
 																	_, _, _, // d, i, j,
 																	this, data, series, name)(d,i,j)
+													*/
 												 };
 											 };
 						return func;
@@ -1093,14 +1125,51 @@ define(['jquery','knockout'], function($,ko) {
 		}
 	}
 	*/
-	/*
-	 *	opts:
-	 *		propName: 
+
+	/*	@class AccessorGenerator
+   *	@param {string} [propName] key of property to extract
+   *	@param {function} [func] to be called with record obj to return value
+   *	@param {string} [thisArg] object to set as *this* for func
+   *	@param {string[]} [posParams] list of positioned parameters of func
+	 *																(except first param, which is assumed to be
+	 *																 the record object)
+   *	@param {string[]} [namedParams] list of named parameters of func
+   *	@param {object} [bindValues] values to bind to parameters (this can also
+	 *																	be done later)
+	 */
 	class AccessorGenerator {
-		constructor({name, opts} = {}) {
+		constructor({propName, func, posParams, namedParams, thisArg, bindValues} = {}) {
+			if (typeof func === "function") {
+				this.plainAccessor = func;
+			} else if (typeof propName === "string") {
+				this.plainAccessor = d => d[propName];
+			} else {
+				throw new Error("must specify func function or propName string");
+			}
+			this.posParams = posParams || [];
+			this.namedParams = namedParams || [];
+			this.boundParams = bindValues || {};
+			this.thisArg = thisArg || null;
+		}
+		/* @method generate
+		 */
+		generate() {
+			var pos = this.posParams.map(
+				p => _.has(this.boundParams, p) ? this.boundParams[p] : _);
+			var named = _.pick(this.boundParams, this.namedParams);
+			return _.bind.apply(_, [this.plainAccessor, this.thisArg, _].concat(pos, named));
+			// first arg of apply, _, is context for _.bind (https://lodash.com/docs#bind)
+			// then bind gets passed: accessor func, thisArg, posParams, 
+			// and (as final arg) namedParams
+		}
+		/* @method bindParam
+		 * @param {string} paramName
+		 * @param {string} paramValue
+		 */
+		bindParam(paramName, paramValue) {
+			this.boundParams[paramName] = paramValue;
 		}
 	}
-	*/
 	
 	// END module functions
 	
@@ -1120,6 +1189,7 @@ define(['jquery','knockout'], function($,ko) {
 	utilModule.ChartAxisY = ChartAxisY;
 	utilModule.ChartAxisX = ChartAxisX;
 	utilModule.ChartProps = ChartProps;
+	utilModule.AccessorGenerator = AccessorGenerator;
 	
 	return utilModule;
 	
