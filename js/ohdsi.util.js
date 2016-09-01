@@ -1028,8 +1028,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 								//this.props[name] = prop;
 								this[name] = prop;
 							});
-			this.d3dispatch = d3.dispatch.apply(null, 
-					_.union(defaults.dispatchEvents, explicit.additionalDispatchEvents));
+			//this.d3dispatch = d3.dispatch.apply(null, _.union(defaults.dispatchEvents, explicit.additionalDispatchEvents));
 		}
 		chartData(data) {
 			if (typeof data !== "undefined")

@@ -1,6 +1,6 @@
 "use strict";
-define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter', 'lodash', 'knockout.dataTables.binding', 'colvis'], 
-			 function (ko, view, crossfilter, _) {
+define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter', 'lodash', 'ohdsi.util', 'knockout.dataTables.binding', 'colvis'], 
+			 function (ko, view, crossfilter, _, util) {
 
 	var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
 	function facetedDatatable(params) {
@@ -8,6 +8,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		var self = this;
 
 		self.options = params.options; // passed directly to datatable binding
+		self.saveState = params.saveStateToUrl;
 
 		/*
 		 * was going to allow shared crossfilter, but not for now
@@ -15,12 +16,15 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 												crossfilter(self.recs);
 		*/
 
+	 /*
 		self.dispatch = ko.utils.unwrapObservable(params.d3dispatch) || d3.dispatch("filter");
 		if (ko.isSubscribable(params.d3dispatch)) {
 			params.d3dispatch.subscribe(function(dispatch) {
 				self.dispatch = dispatch;
 			});
 		}
+		*/
+		self.jqEventSpace = params.jqEventSpace || {};
 
 		self.data = ko.observableArray([]);
 		self.facets = ko.observableArray([]);
@@ -196,9 +200,14 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				filter = d=>selected.indexOf(d) != -1;
 			}
 			facet.cfDim.filter(filter);
-			self.dispatch.filter(selected);
+			//self.dispatch.filter(selected);
+			util.setState('filters.datatable.'+facet.name, selected);
+			//self.dispatch.stateChange();
+			$(self.jqEventSpace).trigger('filter');
+			$(self.jqEventSpace).trigger('stateChange',
+								['filters.datatable.'+facet.name, selected]);
 		};
-		self.dispatch.on('filter.datatable', function(filts) {
+		$(self.jqEventSpace).on('stateChange', function() {
 			var groupAll = self.crossfilter.groupAll();
 			groupAll.reduce(...reduceToRecs);
 			self.data(groupAll.value());

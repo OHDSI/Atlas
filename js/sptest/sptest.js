@@ -28,17 +28,23 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 		self.jsonFile = 'js/sptest/sample.json';
 		self.chartOptions = chartOptions();
 		self.fields = ko.observable([]);
-		self.d3dispatch = ko.observable(d3.dispatch());
+		self.jqEventSpace = params.jqEventSpace || {};
+		//self.d3dispatch = ko.observable(d3.dispatch());
 		self.chartObj.subscribe(function(chart) {
 			var opts = chart.chartOptions; // after applying defaults
 			console.log(opts);
 			self.fields(_.filter(opts, d=>d.isColumn||d.isFacet));
-			var dispatch = opts.d3dispatch;
-			self.d3dispatch(dispatch);
-			dispatch.on('filter.sptest', filterChange);
+			//var dispatch = opts.d3dispatch;
+			//self.d3dispatch(dispatch);
+			//dispatch.on('filter.sptest', filterChange);
 		});
+		$(self.jqEventSpace).on('filter.sptest', filterChange);
+		$(self.jqEventSpace).on('brush.sptest', brushEvent);
 		function filterChange() {
-			console.log(arguments);
+			console.log('filter event', arguments);
+		}
+		function brushEvent() {
+			console.log('brush event', arguments);
 		}
 
 		/*
@@ -109,7 +115,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 				alreadyInSeries: false,
 			},
 			//dispatch: d3.dispatch("brush", "filter"), // in default opts for zoomScatter
-			additionalDispatchEvents: ["foo"],
+			//additionalDispatchEvents: ["foo"],
 			x: {
 						value: d=>d.beforeMatchingStdDiff,
 						label: 'Before matching StdDiff',

@@ -1652,10 +1652,9 @@
 	function dataInSeries(data) {
 		return _.chain(data).map(_.keys).flatten().uniq().eq(['name','values']).value();
 	}
-	module.zoomScatter = function (opts) {
+	module.zoomScatter = function (opts, jqEventSpace) {
 		this.defaultOptions = {
-			//dispatch: d3.dispatch("brush", "filter"),
-			dispatchEvents: ['brush', 'filter'],
+			dispatchEvents: ['brush', 'filter'], // list events that might be triggered
 			data: {
 				alreadyInSeries: false,
 			},
@@ -1853,7 +1852,8 @@
 
 					//layout.positionZones();
 					//layout.positionZones();
-					cp.d3dispatch.brush(brush);
+					//cp.d3dispatch.brush(brush);
+					$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
 
 					//var t = cp.chart.chart.gEl.as('d3').transition().duration(2750);
 					cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);

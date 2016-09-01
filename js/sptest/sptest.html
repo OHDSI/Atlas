@@ -15,6 +15,7 @@
 			chartResolution,				// {width: w, height: h}
 			chartObj,								// to pass back ref to chart obj
 			domElement,							// ref to dom element for use by chart or caller
+			jqEventSpace,						// any object, so chart can share events with caller
 
 			c3:null,
 		}">
@@ -23,7 +24,8 @@
 	<div data-bind="if:chartData().length && fields().length">
 		<faceted-datatable-cf
 			params="options:{}, 
-							d3dispatch: d3dispatch,
+							jqEventSpace: jqEventSpace,
+							//d3dispatch: d3dispatch,
 							fields: fields,
 							recs:chartData,
 							saveStateToUrl: true,
