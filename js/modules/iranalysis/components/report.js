@@ -2,14 +2,15 @@ define(['knockout',
 				'jquery',
 				'text!./report.html',
 				'webapi/IRAnalysisAPI',
+				'd3',
 				'databindings',
-				'../bindings/strataTreemapBinding',
 				'css!cohortbuilder/css/report.css'
 ], function (
 	ko,
 	$,
 	template,
-	irAPI) {
+	irAPI,
+	d3) {
 	
 	function bitCounter(bits) {
 		counted = 0;
@@ -33,6 +34,44 @@ define(['knockout',
 		self.rectSummary = ko.observable();
 		self.pass = ko.observableArray();
 		self.fail = ko.observableArray();
+		
+		// behaviors
+		
+		self.treeIRExtent = ko.pureComputed(function() {
+			var rates = [];
+			function traverse(node) {
+				if (node.hasOwnProperty("timeAtRisk")  && node.timeAtRisk > 0 && node.cases > 0) {
+					rates.push(node.cases / node.timeAtRisk)	
+				}
+				if (node.hasOwnProperty("children")) {
+					node.children.forEach(function (child) {
+						traverse(child);
+					});
+				}
+			}
+			
+			traverse(JSON.parse(self.report().treemapData));
+			var extent = d3.extent(rates);
+			return [extent[0], Math.max(extent[0] * 1.001, extent[1])]; // padd the upper bound in the case where there is only 1 incidence rate calculated and we want to have an extent > 0
+		});
+		
+		self.colorPicker = ko.pureComputed(function() {
+			
+			var extent = self.treeIRExtent();
+			
+			var color = d3.scale.quantize()
+				.domain([extent[0], extent[1]])
+				.range(["#2c7bb6", "#00a6ca","#00ccbc","#90eb9d","#ffff8c","#f9d057","#f29e2e","#e76818","#d7191c"]);	
+			
+			return (function(d) {
+				if (d.cases == 0)
+					return "#000000";
+				else if (d.timeAtRisk > 0)
+					return color(d.cases/d.timeAtRisk);
+				else
+					return "#bababa";
+			});
+		});
 		
 		self.describeClear = function () {
 			self.rectSummary(null);
@@ -75,6 +114,12 @@ define(['knockout',
 				return false;
 			}
 		}
+		
+		self.treemapOptions = ko.pureComputed(function() {
+			var options = {};
+			options.colorPicker = self.colorPicker();
+			return options;
+		});
 		
 	}
 	

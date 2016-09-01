@@ -49,7 +49,8 @@
 																								 { event: 'mouseover', selector: '.cell rect', callback: handleCellOver},
 																								 { event: 'mouseout', selector: '.cell rect', callback: describeClear}]">
 				<div style="height: 35px; text-align: center; line-height: 1.3em; font-size: 12px; color: #222;" class="rect_summary" data-bind="html: rectSummary"></div>
-				<div style="vertical-align: middle; text-align: center; width: 400px; margin: 7px auto 7px auto;" data-bind="populationTreemap: { data: report().treemapData }"></div>
+				<div style="vertical-align: middle; text-align: center; width: 400px; margin: 7px auto 7px auto;" data-bind="treemap: { data: report().treemapData, options: $component.treemapOptions() }"></div>
+				<div>Min: <span data-bind="text: $component.calculateRate(treeIRExtent()[0], 1)"></span>, Max: <span data-bind="text: $component.calculateRate(treeIRExtent()[1], 1)"></span></div>
 			</div>
 		</td>
 	</tr>

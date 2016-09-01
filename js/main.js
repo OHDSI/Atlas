@@ -94,7 +94,8 @@ requirejs.config({
 		"feasibility-browser": "components/feasibility-browser",
 		"feasibility-analyzer": "components/feasibility-analyzer",
 		"report-manager": "components/report-manager",
-		"ir-analysis-manager": "components/ir-analysis-manager",
+		"ir-manager": "components/ir-manager",
+        "ir-browser": "components/ir-browser",
 		"faceted-datatable": "components/faceted-datatable",
 		"profile-manager": "components/profile-manager",
 		"explore-cohort": "components/explore-cohort",
@@ -421,7 +422,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		
 		$(window).bind('beforeunload', function () {
 			if ((pageModel.currentCohortDefinitionDirtyFlag() && pageModel.currentCohortDefinitionDirtyFlag().isDirty())  || 
-					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()))
+					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()) ||
+				 	pageModel.currentIRAnalysisDirtyFlag().isDirty())
 				return "Changes will be lost if you do not save.";
 		});		
 	});

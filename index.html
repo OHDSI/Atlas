@@ -61,7 +61,7 @@
 				<a href="#/cohortdefinitions"><i class="fa fa-users"></i>Cohorts</a>
 			</li>
 			<li>
-				<a href="#/iranalysis"><i class="fa fa-bolt"></i>Incidence Rates</a>
+				<a data-bind="css: irStatusCss, attr: {href: irAnalysisURL}"><i class="fa fa-bolt"></i>Incidence Rates</a>
 			</li>
 			<li>
 				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
@@ -204,8 +204,12 @@
 				</div>
 			</div>
 
-			<div data-bind="visible:pageModel.currentView() == 'iranalysis'">
-				<ir-analysis-manager params="model: pageModel"></ir-analysis-manager>
+      <div data-bind="if: currentView() == 'irbrowser'">
+				<ir-browser params="model: pageModel"></ir-browser>
+			</div>
+
+      <div data-bind="if: currentView() == 'iranalysis'">
+				<ir-manager params="model: pageModel"></ir-manager>
 			</div>
 
 			<div data-bind="if: currentView() == 'template'">

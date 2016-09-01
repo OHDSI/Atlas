@@ -1,5 +1,5 @@
 define(['knockout', 
-				'text!./ir-analysis-manager.html', 
+				'text!./ir-manager.html', 
 				'webapi/IRAnalysisAPI',
 				'webapi/SourceAPI',
 				'webapi/CohortDefinitionAPI',
@@ -24,9 +24,10 @@ define(['knockout',
 		self.model = params.model;
 		self.loading = ko.observable(false);
 		self.analysisList = ko.observableArray();
-		self.selectedAnalysis = ko.observable();
+		self.selectedAnalysis = self.model.currentIRAnalysis;
+		self.selectedAnalysisId = self.model.selectedIRAnalysisId;
 		
-		self.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(self.selectedAnalysis));
+		self.dirtyFlag = self.model.currentIRAnalysisDirtyFlag;
 		self.isRunning = ko.observable(false);
 		self.activeTab = ko.observable('definition');
 		self.conceptSetEditor = ko.observable(); // stores a refrence to the concept set editor
@@ -66,25 +67,18 @@ define(['knockout',
 		
 		// model behaviors
 
-		self.refresh = function() {
-			self.loading(true);
-			iraAPI.getAnalysisList().then(function(result) {
-				self.analysisList(result);
-				self.loading(false);
-			}).then(function(result) {
-				// load cohort definition lookup
-				cohortAPI.getCohortDefinitionList().then(function(list) {
-					self.cohortDefs(list);
-				});	
-			})
+		self.refreshDefs = function() {
+			cohortAPI.getCohortDefinitionList().then(function(list) {
+				self.cohortDefs(list);
+			});	
 		}
 		
-		self.onAnalysisSelected = function (analysis) {
+		self.onAnalysisSelected = function () {
 			self.loading(true);
-			self.refresh();
-			iraAPI.getAnalysis(analysis.id).then(function (analysis) {
+			self.refreshDefs();
+			iraAPI.getAnalysis(self.selectedAnalysisId()).then(function (analysis) {
 				self.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				self.dirtyFlag().reset();
+				self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedAnalysis()));				
 				self.activeTab('definition');
 				self.loading(false);
 				pollForInfo();
@@ -111,8 +105,10 @@ define(['knockout',
 			self.loading(true);
 			iraAPI.copyAnalysis(self.selectedAnalysis().id()).then(function (analysis) {
 				self.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				self.dirtyFlag().reset();
+				self.selectedAnalysisId(analysis.id)
+				self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedAnalysis()));
 				self.loading(false);
+				document.location = "#/iranalysis/" + analysis.id;
 			});	
 		}
 		
@@ -121,17 +117,20 @@ define(['knockout',
 				return;
 			}
 			self.selectedAnalysis(null);
+			self.selectedAnalysisId(null);
+			self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedAnalysis()));
 			self.sources().forEach(function(source) {
 				source.info(null);
 			});
-			self.refresh();
+			document.location = "#/iranalysis";
 		}
 		
 		self.save = function() {
 			self.loading(true);
 			iraAPI.saveAnalysis(self.selectedAnalysis()).then(function (analysis) {
 				self.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				self.dirtyFlag().reset();
+				self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedAnalysis()));
+				document.location =  `#/iranalysis/${analysis.id}`
 				self.loading(false);
 			});
 		}
@@ -143,7 +142,8 @@ define(['knockout',
 			// reset view after save
 			iraAPI.deleteAnalysis(self.selectedAnalysis().id()).then(function (result) {
 				self.selectedAnalysis(null);
-				self.refresh();
+				self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedAnalysis()));
+        document.location = "#/iranalysis";
 			});
 		}
 		
@@ -156,7 +156,7 @@ define(['knockout',
 		
 		self.newAnalysis = function() {
 			self.selectedAnalysis(new IRAnalysisDefinition());
-			self.dirtyFlag().reset();
+			self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedAnalysis()));
 		};
 		
 		self.onExecuteClick = function(sourceItem) {
@@ -166,6 +166,21 @@ define(['knockout',
 			});			
 		}
 		
+		self.init = function() {
+			self.refreshDefs();
+			if (self.selectedAnalysisId() == null && self.selectedAnalysis() == null) {
+					self.newAnalysis();
+			} else if (self.selectedAnalysisId() != (self.selectedAnalysis() && self.selectedAnalysis().id())) {
+					self.onAnalysisSelected();
+			}
+		}
+		
+		// subscriptions
+		
+		var selectedAnalysisIdSub = self.selectedAnalysisId.subscribe(function (newVal) {
+			if (newVal)
+				self.onAnalysisSelected();
+		});
 		
 		// polling support
 		
@@ -176,7 +191,8 @@ define(['knockout',
 				var hasPending = false;
 				infoList.forEach(function(info){
 					var source = self.sources().filter(function (s) { return s.source.sourceId == info.executionInfo.id.sourceId })[0];
-					source.info(info);
+					if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
+						source.info(info);
 					if (info.executionInfo.status != "COMPLETE")
 						hasPending = true;
 				});
@@ -190,9 +206,8 @@ define(['knockout',
 			});
 		}
 		
-		// startup actions
-		// refresh when instantiated
-		self.refresh();
+		// startup actions        
+    self.init();
 
 		sourceAPI.getSources().then(function(sources) {
 			var sourceList = [];
@@ -235,7 +250,13 @@ define(['knockout',
 					}
 				}
 			});				
-		});		
+		});
+		
+		// cleanup
+		self.dispose = function() {
+			selectedAnalysisIdSub.dispose();
+			console.log("IR manager disposed");
+		}
 
 	}
 
@@ -244,6 +265,6 @@ define(['knockout',
 		template: template
 	};
 
-	ko.components.register('ir-analysis-manager', component);
+	ko.components.register('ir-manager', component);
 	return component;
 });

@@ -2,13 +2,6 @@
 	<i class="fa fa-bolt"></i>Incidence Rate Analysis
 </div>
 <div data-bind="visible:!loading()">
-	<!-- ko if: selectedAnalysis() == null -->
-	<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newAnalysis">New Analysis</span>
-	<div data-bind="eventListener: [{event: 'click', selector: '.linkish', callback: onAnalysisSelected}]">
-		<ir-analysis-browser params="analysisList: analysisList"></ir-analysis-browser>
-	</div>
-	<!-- /ko -->
-
 	<!-- ko if: selectedAnalysis() != null -->
 	<div>
 		<div class="asset-heading">
@@ -38,7 +31,7 @@
 				<a>Concept Sets</a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'generation' }, click: function() { $component.activeTab('execution') };">
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'generation' }, click: function() { $component.activeTab('generation') };">
 				<a>Generation</a>
 			</li>
 		</ul>
@@ -56,7 +49,7 @@
 					<concept-set-builder params="conceptSets: ConceptSets, ref: $parent.conceptSetEditor"></concept-set-builder>
 				<!-- /ko -->			
 			</div>
-			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'execution' }, 
+			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'generation' }, 
 																			eventListener: [{ event: 'click', selector: 'button.removeResult', callback: removeResult}, {event: 'click', selector: 'button.execute', callback: onExecuteClick}]" class="tab-pane">
 				<ir-analysis-results params="sources: filteredSources, analysisCohorts: analysisCohorts"></ir-analysis-results>
 			</div>		

@@ -12,5 +12,6 @@ define(function (require) {
 	var selectOnFocus = require("./knockout.selectOnFocus");
 	var sortExtender = require("./sortExtender");
 	var bootstrapModal = require("./bootstrapModal");
+	var treemap= require("./treemapBinding");
 	var d3ChartBinding = require("../../d3ChartBinding");
 });

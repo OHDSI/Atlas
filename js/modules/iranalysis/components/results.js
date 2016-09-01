@@ -29,21 +29,13 @@ define(['knockout',
 			return "per " + multiplier  + " years";
 		});
 		
-		self.reportSources = ko.pureComputed(function() {
+		self.getSummaryData = function (summaryList) {
 			var targetId = self.selectedTarget();
-			var outcomeId = self.selectedOutcome();
-			var reportSources = [];
-			self.sources().forEach(function(sourceItem) {
-				var reportSource = {};
-				reportSource.source = sourceItem.source;
-				reportSource.executionInfo = sourceItem.info().executionInfo;
-				reportSource.summary = sourceItem.info().summaryList.filter(function (item) {
+			var outcomeId = self.selectedOutcome();			
+			return summaryList.filter(function (item) {
 					return (item.targetId == targetId && item.outcomeId == outcomeId);
 				})[0] || {totalPersons: 0, cases: 0, timeAtRisk: 0};
-				reportSources.push(reportSource);
-			});
-			return reportSources;
-		});
+		}
 		
 		// viewmodel behaviors
 
@@ -67,7 +59,7 @@ define(['knockout',
 			self.selectedSource(source);
 			self.isLoading(true);
 
-			iraAPI.getReport(source.executionInfo.id.analysisId, source.source.sourceKey, self.selectedTarget(), self.selectedOutcome()).then(function (report) {
+			iraAPI.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, self.selectedTarget(), self.selectedOutcome()).then(function (report) {
 				// ensure report results are sorted in correct order (by id)
 				report.stratifyStats.sort(function (a, b) {
 					return a.id - b.id;
@@ -103,6 +95,24 @@ define(['knockout',
 
 			return addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs);
 		}
+		
+		// observable subscriptions
+		
+		self.targetSub = self.selectedTarget.subscribe(function(newVal) {
+			if (self.selectedSource()) // this will cause a report refresh
+				self.selectSource(self.selectedSource());
+		});
+		
+		self.outcomeSub = self.selectedOutcome.subscribe(function(newVal) {
+			if (self.selectedSource()) // this will cause a report refresh
+				self.selectSource(self.selectedSource());
+		});
+		
+		
+		self.dispose = function() {
+			self.targetSub.dispose();
+			self.outcomeSub.dispose();
+		};
 
 	}
 

@@ -2002,3 +2002,10 @@ table.sourceTable .selected
                                   not supported by any browser */
 }
 
+a.open > i.fa {
+	color:#5bb75b !important;
+}
+
+a.unsaved > i.fa {
+	color:#d04541 !important;
+}
