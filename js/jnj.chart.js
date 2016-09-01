@@ -1733,6 +1733,8 @@
 			//showXAxis: true
 		};
 		var cp = this.chartOptions = new util.ChartProps(this.defaultOptions, opts);
+		util.setState('foot.urk',['e',1,2,3]);
+		console.log(util.getState());
 		this.render = function (data, target, w, h) {
 			if (!data.length) return;
 			DEBUG && (window.cp = cp);

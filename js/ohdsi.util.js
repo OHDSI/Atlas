@@ -21,8 +21,9 @@
 *			  ChartAxisX extends ChartAxis
 *			  ChartChart extends SvgElement
 *			  ChartProps
+*			  getState, setState, deleteState
 */
-define(['jquery','knockout'], function($,ko) {
+define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 	
 	var utilModule = { version: '1.0.0' };
 	
@@ -876,12 +877,14 @@ define(['jquery','knockout'], function($,ko) {
 								needsValueFunc: true,
 								needsScale: true,
 					},...
+				}
 				explicit = {
 					x: {
 								value: d=>d.beforeMatchingStdDiff,
 								label: "Before matching StdDiff",
 								tooltipOrder: 1,
 					},...
+				}
 	 *
 	 * If a chart is expecting a label for some prop (like an axis
 	 * label for the x axis or tooltip label for the x value), and
@@ -895,7 +898,7 @@ define(['jquery','knockout'], function($,ko) {
 	 * If prop.value hasn't been specified in default or explicit
 	 * prop options, it will be be generated from the label. (Which is
 	 * probably not what you want as it will give every data point's
-	 * x value (for instance) as x's label.
+	 * x value (for instance) as x's label.)
 	 *
 	 * If prop.value is a string or number, it will be transformed into
 	 * an accessor function to extract a named property or indexed array
@@ -1170,7 +1173,53 @@ define(['jquery','knockout'], function($,ko) {
 			this.boundParams[paramName] = paramValue;
 		}
 	}
+
 	
+	// these functions associate state with a compressed stringified
+	// object in the querystring
+	function getState(path) {
+		var state = _getState();
+		if (typeof path === "undefined" || path === null || !path.length)
+			return state;
+		return _.get(state, path);
+	}
+	function deleteState(path) {
+		var state = _getState();
+		_.unset(state, path);
+		_setState(state);
+	}
+	function setState(path, val) {
+		if (typeof val === "undefined") {
+			val = path;
+			_setState(val);
+			return;
+		}
+		var state = _getState();
+		_.set(state, path, val);
+		_setState(state);
+	}
+	function _setState(state) {
+			var stateStr = JSON.stringify(state);
+			var compressed = LZString.compressToBase64(stateStr);
+			var hash = location.hash.startsWith('#') ? location.hash : '#';
+			var h = hash.replace(/\?.*/, '');
+			location.hash = h + '?' + compressed;
+	}
+	function _getState() {
+		if (!location.hash.length)
+			return {};
+
+		var hashparts = location.hash.substr(1).split(/\?/);
+		var state = { hashpath: hashparts[0] };
+		if (hashparts.length > 1) {
+			var compressedStateStr = hashparts[1];
+			var stateStr = LZString.decompressFromBase64(compressedStateStr);
+			var s = stateStr ? JSON.parse(stateStr) : {};
+			_.extend(state, s);
+		}
+		return state;
+	}
+
 	// END module functions
 	
 	utilModule.dirtyFlag = dirtyFlag;
@@ -1190,6 +1239,9 @@ define(['jquery','knockout'], function($,ko) {
 	utilModule.ChartAxisX = ChartAxisX;
 	utilModule.ChartProps = ChartProps;
 	utilModule.AccessorGenerator = AccessorGenerator;
+	utilModule.getState = getState;
+	utilModule.setState = setState;
+	utilModule.deleteState = deleteState;
 	
 	return utilModule;
 	
