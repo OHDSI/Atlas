@@ -22,6 +22,7 @@
 *			  ChartChart extends SvgElement
 *			  ChartProps
 *			  getState, setState, deleteState
+*			  Field
 */
 define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 	
@@ -775,7 +776,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 				.attr("x", 0)
 				.attr("dy", "1em")
 				.style("text-anchor", "middle")
-				.text(chartProp => chartProp.label())
+				.text(field => fieldAccessor(field, ['label','title','name'], 'Y Axis')())
 		}
 		updatePosition(selection, params, opts) {
 			selection.attr('transform',
@@ -796,7 +797,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 		}
 		updateContent(selection, params, opts) {
 			selection
-				.text(chartProp => chartProp.label())
+				.text(field => fieldAccessor(field, ['label','title','name'], 'X Axis')())
 		}
 		updatePosition(selection, params, opts) {
 			selection.attr('transform',
@@ -1030,16 +1031,6 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 							});
 			//this.d3dispatch = d3.dispatch.apply(null, _.union(defaults.dispatchEvents, explicit.additionalDispatchEvents));
 		}
-		chartData(data) {
-			if (typeof data !== "undefined")
-				this._chartData = data;
-			return this._chartData;
-		}
-		chartSeries(series) {
-			if (typeof series !== "undefined")
-				this._chartSeries = series;
-			return this._chartSeries;
-		}
 		updateDomains(data, series) {
 			_.each(this, (prop, name) => {
 											if (prop.needsScale) {
@@ -1121,12 +1112,171 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 
 
 	/*
+	 * fields are complex things that get used and accessed in different
+	 * ways in different places. most simply a field might be 'age' in
+	 * a recordset like:
+	 *		[ {gender: 'F', age: 67, weight: 122, height: 65},
+	 *			{gender: 'M', age: 12, weight: 84, height: 58} ]
 	 *
+	 * or a field could be derived, like, say:
+	 *	bmi = d => convert(d.weight, 'lb', 'kg') / 
+	 *							Math.pow(convert(d.height, 'in', 'm'), 2);
+	 *
+	 * but in addition to having a property name ('age') or accessor function
+	 * (bmi) to extract a value from an object, fields may need names, labels
+	 * for display in different contexts, functions for grouping and filtering
+	 * values, and more.
+	 *
+	 * in a chart context, a field like 'age' might also be used as the chart
+	 * attribute 'x'. in that case it will also need a way to compute domain:
+	 *
+	 *			d3.extent(dataset.map(d=>d.age))
+	 *
+	 * and range (which has nothing to do with age but is based on the pixel
+	 * width of the chart).
+	 *
+	 * in a crossfilter context a field will be associated with a crossfilter
+	 * dimension:   dim = cf.dimension(d=>d.age) 
+	 * and possible filters: dim.filter([65, 90])
+	 *
+	 * in a faceted datatable context a field will need a grouping function, e.g.,
+	 *
+	 *			d => d <= 10 ? '0 - 10' :
+	 *			     d <= 20 ? '11 - 20' : 'older than 20';
+	 *
+	 * and maybe a way of keeping track of or reporting which facet members are
+	 * selected
+	 *
+	 * in a component that displays, say, a scatterplot and an associated datatable
+	 * 'age' as a continuous value may serve as 'x' in the scatterplot and a column
+	 * in the datatable, and as a grouped value may serve as a facet for the datatable.
+	 * should the continuous age and the grouped age be considered the same field?
+	 * i'm not sure. probably not.
+	 *
+	 * in a data-specific component (say a demographics browser) the age field may
+	 * be referenced explicitly, but from the point of view of the scatterplot
+	 * it will just be thought of as the 'x' field (while probably needing to know
+	 * that it is called both 'x' and 'Age' for display in the legend or tooltips.
+	 *
+	 * what if the tooltip wants to report age as a percentile? it will need access
+	 * not only to the age a specific datapoint, but also the ages of all the other
+	 * datapoints.
+	 *
+	 * the purpose of the Field class is to allow fields to be configured in a
+	 * simple, intuitive manner, while allowing code and components that use
+	 * fields and datasets to get what they need without requiring redundant and
+	 * idiosyncratic configuration. (e.g., datatable currently requires a 'caption'
+	 * property for facet names and a 'title' property for column headings, while
+	 * scatterplot's legend wants a 'label' property and all three of these should
+	 * contain the same string for certain fields.)
+	 *
+	 */
 	class Field {
-		constructor({name, opts} = {}) {
+		constructor(name, opts = {}, allFields) {
+			this.name = name;
+			_.extend(this, opts);
+
+			(this.requiredOptions || []).forEach(opt => {
+				if (!_.has(this, opt))
+					throw new Error(`expected ${opt} in ${this.name} Field options`);
+			});
+			this._accessorGenerators = {};
+			this.boundAccessors = this.boundAccessors || {};
+			_.each(this.boundAccessors, (acc,name) => {
+				if (_.difference(acc.posParams, this.possibleBindings).length ||
+						_.difference(acc.namedParams, this.possibleBindings).length)
+					throw new Error(`${this.name} accessor requested an unavailable binding`);
+				acc.accGen = this.accessorGenerator(name, acc);
+			});
+
+			if (this.needsScale) { // if it needsScale, it must also needsValueFunc
+				this.makeScale();
+			}
+			this.allFields = allFields;
+		}
+		bindParams(params) {
+			_.each(this.boundAccessors, (acc,name) => {
+				acc.accGen.bindParams(params);
+				acc.accessor = acc.accGen.generate();
+				this[name] = acc.accessor;
+			});
+		}
+		getAccessor(name) { // not needed?
+			return this.accessorGenerator(name).generate();
+		}
+		accessorGenerator(accessorName, genOpts) {
+			if (genOpts) {
+				this._accessorGenerators[accessorName] = new AccessorGenerator(genOpts);
+			}
+			return this._accessorGenerators[accessorName];
+		}
+
+
+		/*
+												prop.ac.bindParam('chartProps', this);
+												prop.ac.bindParam('data', data);
+												prop.ac.bindParam('series', series);
+												prop.ac.bindParam('chartPropName', name);
+												prop.accessor = prop.ac.generate();
+		get accessor() {
+			return _.accessor;
+		}
+		*/
+		makeScale() {
+			this.scale = this.scale || d3.scale.linear();
+			// domainFunc should be called with args: data,series
+			// domainFunc will receive args: data, series, allFields, field
+			this.domainFunc = this.domainFunc ||
+												this.domain && d3.functor(this.domain) ||
+												((data,series,props,name) => {
+													this.ac.bindParam('chartProps', this.allFields);
+													this.ac.bindParam('data', data);
+													this.ac.bindParam('series', series);
+													this.ac.bindParam('chartPropName', name);
+													var accessor = this.ac.generate();
+													return d3.extent(data.map(accessor));
+												})
+			this.rangeFunc = this.rangeFunc ||
+												this.range && d3.functor(this.range) ||
+												function() {throw new Error(`no range for prop ${name}`)};
+		}
+	}
+	/*
+	class ProxyField {
+		constructor(name, opts = {}, proxyFor, allFields) {
+			this.parentField = new Field(name, opts, allFields);
+			this.baseField = proxyFor;
 		}
 	}
 	*/
+	function fishForProp(field, propNames, defaultVal) {
+		propNames = Array.isArray(propNames) ? propNames : [propNames];
+		// get first propName that appears in the field
+		var propName = _.find(propNames, propName => _.has(field, propName)); 
+		var propVal = field[propName];
+
+		if (typeof propVal === "undefined")
+			propVal = defaultVal || _.first(propNames);
+
+		return propVal;
+	}
+	function fieldAccessor(field, propNames, defaultVal) {
+		var propVal = fishForProp(field, propNames, defaultVal);
+		if (typeof propVal === "function") {
+			return propVal;
+		}
+		return () => propVal;
+	}
+	function dataAccessor(field, propNames, defaultFunc) {
+		var propVal = fishForProp(field, propNames, defaultVal);
+		if (typeof propVal === "function") {
+			return propVal;
+		}
+		if (typeof propVal === "string" || isFinite(propVal)) {
+			return d => propVal[d];
+		}
+		throw new Error("can't find what you want");
+	}
 
 	/*	@class AccessorGenerator
    *	@param {string} [propName] key of property to extract
@@ -1159,7 +1309,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 			var pos = this.posParams.map(
 				p => _.has(this.boundParams, p) ? this.boundParams[p] : _);
 			var named = _.pick(this.boundParams, this.namedParams);
-			return _.bind.apply(_, [this.plainAccessor, this.thisArg, _].concat(pos, named));
+			return _.bind.apply(_, [this.plainAccessor, this.thisArg].concat(pos, named));
 			// first arg of apply, _, is context for _.bind (https://lodash.com/docs#bind)
 			// then bind gets passed: accessor func, thisArg, posParams, 
 			// and (as final arg) namedParams
@@ -1170,6 +1320,9 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 		 */
 		bindParam(paramName, paramValue) {
 			this.boundParams[paramName] = paramValue;
+		}
+		bindParams(params) {
+			_.each(params, (val, name) => this.bindParam(name, val));
 		}
 	}
 
@@ -1218,6 +1371,20 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 		}
 		return state;
 	}
+	class Filter {
+		constructor(name, type, val) {
+			this.name = name;
+		}
+	}
+	class CrossfilterFilter {
+		constructor(name, {dimension, accessor, filter, crossfilter} = {}) {
+			this.name = name;
+			this.dimension = dimension;
+			this.accessor = accessor;
+			this.filter = filter;
+			this.crossfilter = crossfilter;
+		}
+	}
 
 	// END module functions
 	
@@ -1241,6 +1408,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 	utilModule.getState = getState;
 	utilModule.setState = setState;
 	utilModule.deleteState = deleteState;
+	utilModule.Field = Field;
 	
 	return utilModule;
 	

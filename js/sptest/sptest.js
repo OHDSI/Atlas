@@ -123,6 +123,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						fname: 'beforeMatchingStdDiff',
 						isColumn: true,
 						colIdx: 1,
+						isField: true,
 			},
 			y: {
 						value: d=>d.afterMatchingStdDiff,
@@ -141,6 +142,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						fname: 'afterMatchingStdDiff',
 						isColumn: true,
 						colIdx: 1,
+						isField: true,
 			},
 			size: {
 						value: d=>d.afterMatchingMeanTreated,
@@ -156,15 +158,29 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 								value: round(props.size.value(d), 4),
 							};
 						},
+						isField: true,
 			},
 			series: {
 						value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
 						sortBy:  d => d.afterMatchingStdDiff,
 						tooltipOrder: 5,
+						isField: true,
 			},
 			color: {
-						value: function(d, i, j, props, data, series) {
-							return props.series.value(d, i, j, props, data, series);
+						boundAccessors: {
+							value: {
+												func: function(d,i,j,allFields,data,series) {
+													console.log(arguments);
+													return allFields.series.value(d,i,j,data,series);
+												},
+												posParams: ['d','i','j','allFields','data','series'],
+							},
+							domainFunc: {
+												func: function(data, series, allFields) {
+													return _.uniq(data.map(allFields.series.value));
+												},
+												posParams: ['data', 'series', 'allFields'],
+							},
 						},
 						//value: d=>nthroot(d.coefficient, 7),
 						//value: d=>d.coefficient,
@@ -178,12 +194,9 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						//label: "Coefficient",
 						label: "Nonsense series",
 						scale: d3.scale.ordinal(),
-						domainFunc: 
-							function(data, series, props, ext) {
-								return _.uniq(data.map(props.series.value));
-							},
 						//range: ['#ef8a62','#ddd','#67a9cf'],
 						range: ['red', 'green', 'pink', 'blue'],
+						isField: true,
 						//domainFuncNeedsExtent: true,
 						//domainFunc: (data, ext) => [ext[0], 0, ext[1]],
 						/*
@@ -211,6 +224,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						value: () => junk++ % 3,
 						label: "Random",
 						tooltipOrder: 4,
+						isField: true,
 			},
 			CIup: { // support CI in both directions
 						value: d => d.upperBound,
@@ -222,6 +236,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						colIdx: 0,
 						tooltipOrder: 7,
 						label: 'Covariate Name',
+						isField: true,
 			},
 			conceptId: {
 						fname: 'conceptId',
@@ -233,6 +248,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						needsValueFunc: true, // so ChartProps will make one
 																	// even though this isn't a normal
 																	// zoomScatter field
+						isField: true,
 			},
 			analysisId: {
 						fname: 'analysisId',
@@ -241,6 +257,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						colIdx: 4,
 						tooltipOrder: 6,
 						label: 'Analysis ID',
+						isField: true,
 			},
 		};
 	}

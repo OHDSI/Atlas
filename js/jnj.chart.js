@@ -1653,6 +1653,17 @@
 		return _.chain(data).map(_.keys).flatten().uniq().eq(['name','values']).value();
 	}
 	module.zoomScatter = function (opts, jqEventSpace) {
+		/*
+									prop.ac = new AccessorGenerator({
+																	func: prop.value,
+																	propName: (typeof prop.value === "string" || 
+																						 isFinite(prop.value)) ? prop.value
+																						 : name,
+																	posParams: ['i', 'j', 'chartProps',
+																							'data', 'series', 'chartPropName'],
+																});
+																*/
+		var availableDatapointBindings = ['d', 'i', 'j', 'data', 'series', 'allFields'];
 		this.defaultOptions = {
 			dispatchEvents: ['brush', 'filter'], // list events that might be triggered
 			data: {
@@ -1670,6 +1681,8 @@
 				right: { margin: { size: 5}, },
 			},
 			x: {
+						requiredOptions: ['value'],
+						possibleBindings: availableDatapointBindings,
 						showAxis: true,
 						showLabel: true,
 						rangeFunc: layout => [0, layout.svgWidth()],
@@ -1678,8 +1691,11 @@
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
+						isField: true,
 			},
 			y: {
+						requiredOptions: ['value'],
+						possibleBindings: availableDatapointBindings,
 						showAxis: true,
 						showLabel: true,
 						format: module.util.formatSI(3),
@@ -1689,36 +1705,44 @@
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
+						isField: true,
 			},
 			size: {
+						possibleBindings: availableDatapointBindings,
 						scale: d3.scale.linear(),
 						range: [.5, 8],
 						value: 1,
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
+						isField: true,
 			},
 			color: {
 						//scale: null,
+						possibleBindings: availableDatapointBindings,
 						scale: d3.scale.category10(),
 						//rangeFunc: (layout, prop) => prop.scale.range(), // does this belong here?
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
+						isField: true,
 			},
 			shape: {
+						possibleBindings: availableDatapointBindings,
 						value: 0,
 						scale: d3.scale.ordinal(),
 						range: util.shapePath("types"),
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
+						isField: true,
 			},
 			legend: {
 						show: true,
 			},
 			series: {
 						//value: function(d) { return this.parentNode.__data__.name; },
+						possibleBindings: availableDatapointBindings,
 						value: ()=>null,
 						//value: d=>1,
 						showLabel: false,
@@ -1726,12 +1750,21 @@
 						//needsLabel: true,
 						needsLabel: false,
 						needsValueFunc: true,
+						isField: true,
 			},
 			//interpolate: "linear", // not used
 			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
 			//showXAxis: true
 		};
-		var cp = this.chartOptions = new util.ChartProps(this.defaultOptions, opts);
+		//var cp = this.chartOptions = new util.ChartProps(this.defaultOptions, opts);
+		var cp = _.merge(this.defaultOptions, opts);
+		var fields = [];
+		for(var key in cp) {
+			if (cp[key].isField) {
+				cp[key] = new util.Field(key, cp[key], cp);
+				fields.push(cp[key]);
+			}
+		}
 		util.setState('foot.urk',['e',1,2,3]);
 		console.log(util.getState());
 		this.render = function (data, target, w, h) {
@@ -1761,7 +1794,9 @@
 				cp.x.axisEl = new util.ChartAxisX(svgEl, layout, cp.x);
 			}
 
-			cp.updateAccessors(data, series);
+			fields.forEach(field => field.bindParams({data, series, allFields:cp}));
+			cp.color.value(data[0],0,0);
+			//cp.updateAccessors(data, series);
 			cp.updateDomains(data, series);
 			cp.tooltipSetup(data, series);
 			cp.updateRanges(layout);
