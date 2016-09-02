@@ -3,7 +3,7 @@ define(['knockout', 'cohortbuilder/options', 'cohortbuilder/InputTypes/Range', '
 	function MeasurementViewModel(params) {
 		var self = this;
 
-		self.expression = params.expression;
+		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.Measurement;
 		self.options = options;
 	

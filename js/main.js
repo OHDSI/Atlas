@@ -31,14 +31,19 @@ requirejs.config({
 			"deps": [
 				'jquery'
 			]
-		}
+		},
+        "prism" :{
+            "prism": {
+                "exports": "Prism"
+            }
+        }
 	},
 	map: {
 		"*": {
 			'jquery-ui/sortable': 'jquery-ui',
 			'jquery-ui/draggable': 'jquery-ui',
 			'jquery-ui/dialog': 'jquery-ui',
-			'jquery-ui/autocomplate': 'jquery-ui',
+			'jquery-ui/autocomplete': 'jquery-ui',
 			'jquery-ui/tabs': 'jquery-ui'
 		}
 	},
@@ -67,25 +72,29 @@ requirejs.config({
 		"conceptset-browser": "components/conceptset-browser",
 		"conceptset-editor": "components/conceptset-editor",
 		"conceptset-manager": "components/conceptset-manager",
+		"cohort-comparison-manager": "components/cohort-comparison-manager",
 		"job-manager": "components/job-manager",
 		"importer": "components/importer",
 		"data-sources": "components/data-sources",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definition-browser",
+		"cohort-comparison-browser": "components/cohort-comparison-browser",
+        "cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
+        "cohort-comparison-r-code": "components/cohort-comparison-r-code",
 		"feasibility-manager": "components/feasibility-manager",
 		"feasibility-browser": "components/feasibility-browser",
 		"feasibility-analyzer": "components/feasibility-analyzer",
 		"report-manager": "components/report-manager",
-		"analytics-manager": "components/analytics-manager",
 		"faceted-datatable": "components/faceted-datatable",
 		"profile-manager": "components/profile-manager",
 		"explore-cohort": "components/explore-cohort",
+		"cohortcomparison": "modules/cohortcomparison",
 		"r-manager": "components/r-manager",
-		"studyreport-manager": "components/studyreport-manager",
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
+		"nvd3":"nv.d3",
 		"lodash": "lodash.min",
 		"lscache": "lscache.min",
 		"localStorageExtender": "localStorageExtender",
@@ -98,7 +107,8 @@ requirejs.config({
 		"home" : "components/home",
 		"lodash": "lodash.min",
 		"common":"components/datasources/app/common",
-		"reports": "components/datasources/app/reports"
+		"reports": "components/datasources/app/reports",
+        "prism": "prism"
 	}
 });
 

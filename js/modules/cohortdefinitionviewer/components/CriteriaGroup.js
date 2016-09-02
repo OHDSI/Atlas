@@ -3,7 +3,7 @@ define(['knockout', 'cohortbuilder/CriteriaTypes','cohortbuilder/CriteriaGroup',
 	function CriteriaGroupViewModel(params) {
 		var self = this;
 
-		self.expression = ko.utils.unwrapObservable(params.expression);
+		self.expression = params.expression;
     //if (!params.parentGroup) debugger;
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;

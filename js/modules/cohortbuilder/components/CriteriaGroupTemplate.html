@@ -15,7 +15,7 @@
 						<span data-bind="ifnot: parentGroup">People having</span>
 						<select data-bind="options: $component.options.groupTypeOptions, optionsText: 'name', optionsValue: 'id', value: group().Type"></select>
 						<!-- ko if: group().Type().startsWith("AT_") -->
-						<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: group().Count.numeric(), ko_autocomplete: { source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }" />
+						<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: group().Count.numeric(), ko_autocomplete: { value: group().Count, source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }" />
 						<!-- /ko -->
 						of the following criteria:
 					</td>
@@ -52,12 +52,12 @@
 
 								<div class="indexWindowSection">
 									occurring between
-									<window-input params="Window: StartWindow"></window-input> index
+									<window-input params="Window: StartWindow"></window-input> event index date
 								</div>
 							</div>
 						</td>
 						<td>
-							<button class="deletecriteria btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Filter</button>
+							<button class="deletecriteria btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Criteria</button>
 						</td>
 					</tr>
 				</tbody>

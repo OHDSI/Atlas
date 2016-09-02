@@ -54,7 +54,8 @@ define(['knockout', 'text!./conceptset-manager.html', 'appConfig', 'knockout.dat
 			}
 
 			if (self.model.currentConceptSet() == undefined) {
-				conceptSet.name = self.conceptSetName();
+				conceptSet.id = 0;
+				conceptSet.name = self.conceptSetName;
 			} else {
 				conceptSet = self.model.currentConceptSet();
 			}
@@ -132,6 +133,13 @@ define(['knockout', 'text!./conceptset-manager.html', 'appConfig', 'knockout.dat
         
         self.exportCSV = function() {
             window.open(config.services[0].url + 'conceptset/' + self.model.currentConceptSet().id + '/export');
+        }
+        
+        self.copy = function() {
+            console.log("copy concept set: " + self.model.currentConceptSet().name());
+            self.conceptSetName("COPY OF: " + self.model.currentConceptSet().name());
+        	self.model.currentConceptSet(undefined);
+        	self.saveConceptSet();
         }
 	}
 

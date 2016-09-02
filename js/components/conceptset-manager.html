@@ -7,6 +7,7 @@
 		<div class="btn-group">
 			<button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty()}">Save</button>
 			<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }">Close</button>
+			<button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0">Copy</button>
 		</div>
 	</div>
 

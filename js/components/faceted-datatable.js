@@ -17,6 +17,8 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 			self.orderColumn = params.orderColumn;
 		}
 
+		self.lengthMenu = self.options.lengthMenu || [[15, 30, 45, -1], [15, 30, 45, 'All']];
+
 		self.facetEngine = ko.observable();
 
 		self.updateFilters = function (data, event) {
@@ -46,7 +48,10 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 			self.facetEngine(self.feTemp);
 			self.data(self.reference());
 		});
-
+				
+		if (!self.facetEngine() && self.reference()) {
+			self.reference.valueHasMutated();
+		}
 	};
 
 	var component = {

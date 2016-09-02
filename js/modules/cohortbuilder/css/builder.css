@@ -97,8 +97,9 @@ table.criteriaTable tbody tr td {
 	padding-left: 3px;
 	padding-right: 3px;
 	margin-right: 3px;
-	line-height: 19px;
-	min-width: 12px;
+	line-height: 17px;
+	min-width: 18px;
+	min-height:19px;
 	border: solid 1px;
 	display: inline-block;
 	background-color: white;
@@ -107,6 +108,7 @@ table.criteriaTable tbody tr td {
 	text-indent: 0px;
 }
 .dropdown {
+	margin: 2px 0px;
 	padding-right: 18px;
 	background-image: url(images/arrow_down.png);
 	background-position: center right;

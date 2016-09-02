@@ -1,13 +1,13 @@
 <!-- ko with: InclusionRule -->
 <div class="inclusion-rule-header">
-	<input type="text" placeholder="Unnamed Rule" data-bind="textInput: name, css: { emptyInput: !(name() && (name().length > 0)) }"/>
+	<input type="text" placeholder="Unnamed Criteria’" data-bind="textInput: name, css: { emptyInput: !(name() && (name().length > 0)) }"/>
 	<div class="btn-group">
 		<button class="btn btn-xs btn-primary copyInclusionRule">Copy</button>
 		<button class="btn btn-xs btn-danger deleteInclusionRule">Delete</button>
 	</div>
 </div>
 <div>
-	<textarea placeholder="description" maxlength="1000" rows="1" style="width: 100%; resize: none; overflow: hidden; word-wrap: break-word;" data-bind="textInput:description, jqAutoresize: {append: ''}"></textarea>
+	<textarea placeholder="description" maxlength="1000" rows="1" style="width: 100%; resize: none; overflow: hidden; word-wrap: break-word;" data-bind="textInput:description"></textarea>
 </div>
 <!-- /ko -->
-<criteria-group params="{expression: IndexRule, group: ko.observable(InclusionRule().expression)}"></criteria-group>
+<criteria-group params="{expression: IndexRule, group: InclusionRule().expression}"></criteria-group>

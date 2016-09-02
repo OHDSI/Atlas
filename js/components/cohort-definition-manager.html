@@ -184,7 +184,7 @@
 						<br/>
 						<div>Appendix 1: Concept Set Definitions</div>
 						<br/>
-						<!-- ko foreach: model.currentCohortDefinition().expression().ConceptSets.sorted -->
+						<!-- ko foreach: sortedConceptSets -->
 						<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
 						<div style="padding-left:20px">
 							<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
@@ -256,8 +256,8 @@
 				<tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
 					<tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
 						<td>
-							<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isRunning($data), attr: {'disabled':$component.canGenerate()==false}, click:$component.generateCohort"><i class="fa fa-play"></i>&nbsp;&nbsp;Generate</div>
-							<div class="btn btn-sm btn-warning" data-bind="visible:$component.isRunning($data)"><i class="fa fa-spinner fa-spin"></i></div>
+							<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data), attr: {'disabled':$component.canGenerate()==false}, click:$component.generateCohort"><i class="fa fa-play"></i>&nbsp;&nbsp;Generate</div>
+							<div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i></div>
 						</td>
 						<td data-bind="text:name"></td>
 						<td class="statusIndicator">
@@ -270,7 +270,7 @@
 						<td class="text-right" data-bind="text: executionDuration">
 						</td>
 						<td>
-							<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isRunning($data) && isValid, click:$component.selectInclusionReport"><i class="fa fa-eye"></i>&nbsp;View Inclusion Report</div>
+							<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid, click:$component.selectInclusionReport"><i class="fa fa-eye"></i>&nbsp;View Inclusion Report</div>
 						</td>
 					</tr>
 				</tbody>

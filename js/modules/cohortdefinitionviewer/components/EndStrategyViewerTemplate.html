@@ -1,0 +1,9 @@
+<div data-bind="if: ko.utils.unwrapObservable(strategy) == null">
+	No end date strategy selected.  By default, the cohort end date will be the end of the observation period that contains the index event.
+</div>
+<div data-bind="if: ko.utils.unwrapObservable(strategy) != null">
+<div data-bind="component: { 
+	name: strategyComponentName, 
+	params: {strategy: strategy, conceptSets: conceptSets }
+}"></div>
+</div>

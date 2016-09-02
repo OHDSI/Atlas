@@ -1,27 +1,26 @@
 <div class="paddedWrapper">
 	<ul class="nav nav-pills">
-		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'primary' }, click: function() { $component.expressionMode('primary') };">
-			<a>Primary</a>
-		</li>
-
-		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'additional' }, click: function() { $component.expressionMode('additional') };">
-			<a>Additional</a>
-		</li>
-
-		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'inclusion' }, click: function() { $component.expressionMode('inclusion') };">
-			<a>Inclusion</a>
-		</li>
-
 		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'all' }, click: function() { $component.expressionMode('all') };">
 			<a>All</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'entry' }, click: function() { $component.expressionMode('entry') };">
+			<a>Cohort Entry Criteria</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'exit' }, click: function() { $component.expressionMode('exit') };">
+			<a>Cohort Exit Criteria</a>
 		</li>
 
 	</ul>
 </div>
 
 <div class="tab-content">
-	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'primary' || $component.expressionMode() == 'all' }" class="tab-pane">
-		<div class="heading" data-bind="visible:$component.expressionMode() == 'all'">Primary Criteria</div>
+	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'entry' || $component.expressionMode() == 'all' }" class="tab-pane">
+		<div class="heading">
+			<b>Initial event cohort:</b>  Events are recorded time-stamped observations for the persons, such as drug exposures, 
+			conditions, procedures, measurements and visits.  All events have a start date and end date, though some events may have a 
+			start date and end date with the same value (such as procedures or measurements).  The event index date is set to be equal 
+			to the event start date.
+		</div>
 		<div class="criteriaGroup">
 			<div class="criteriaHeading">
 				<table>
@@ -58,15 +57,15 @@
 							</div>
 						</td>
 						<td style="vertical-align: top;">
-							<button class="btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removePrimaryCriteria(data) }">Delete Filter</button>
+							<button class="btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removePrimaryCriteria(data) }">Delete Criteria</button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="observation-window" data-bind="with: $component.expression().PrimaryCriteria().ObservationWindow"> with continuous observation of at least
-				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days before and <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PostDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days after index
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorDays.numeric(), ko_autocomplete: { value: PriorDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days before and <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PostDays.numeric(), ko_autocomplete: { value: PostDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days after event index date
 			</div>			
-			<div style="padding-top: 3px" data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit">Limit primary events to:
+			<div style="padding-top: 3px" data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit">Limit initial events to:
 				<select data-bind="options: $component.options.resultLimitOptions, 
 				optionsText: function(item) { return item.name }, 
 				optionsValue: 'id',
@@ -74,31 +73,30 @@
 				</select> per person.
 			</div>
 		</div>
-		<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'options' || $component.expressionMode() == 'all'}" class="tab-pane">
-			<div style="padding-top: 3px" data-bind="with: expression().ExpressionLimit">Limit final cohort results to:
-				<select data-bind="options: $component.options.resultLimitOptions, 
-				optionsText: function(item) { return item.name }, 
-				optionsValue: 'id',
-				value: Type">
-				</select> per person.
-			</div>
-		</div>		
-	</div>
-	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'additional' || $component.expressionMode() == 'all'}" class="tab-pane">
-		<div class="heading" data-bind="visible:$component.expressionMode() == 'all'">Additional Criteria</div>
 		<div data-bind="with: expression">
 			<div data-bind="if: AdditionalCriteria">
-				<div>For people matching the Primary Events, include:</div>
-				<criteria-group params="{expression: $data, group: AdditionalCriteria}"></criteria-group>
-				<button class="btn btn-xs btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove Additional Filters</button>
+				<div><b>Initial event inclusion criteria:</b>  From among the initial events, include:</div>
+				<criteria-group params="{expression: $data, group: AdditionalCriteria}"> </criteria-group>
+				<div style="padding: 3px 0px" data-bind="with: QualifiedLimit">Limit cohort of initial events to:
+					<select data-bind="options: $component.options.resultLimitOptions, 
+					optionsText: function(item) { return item.name }, 
+					optionsValue: 'id',
+					value: Type">
+					</select> per person.
+				</div>				
+				<button class="btn btn-xs btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove initial event inclusion criteria</button>
 			</div>
 			<div data-bind="ifnot: AdditionalCriteria">
-				<button class="btn btn-sm btn-success" data-bind="click: function () { $component.addAdditionalCriteria() }">Add Additional Filters</button>
+				<button class="btn btn-sm btn-success" data-bind="click: function () { $component.addAdditionalCriteria() }">Add initial event inclusion criteria</button>
 			</div>
+		</div>		
+
+		<div class="heading">
+			<b>Additional qualifying inclusion criteria:  </b>
+			The qualifying cohort will be defined as all persons who have an initial event, satisfy the initial event 
+			inclusion criteria, and fulfill all additional qualifying inclusion criteria.  Each qualifying inclusion criteria 
+			will be evaluated to determine the impact of the criteria on the attrition of persons from the initial cohort.
 		</div>
-	</div>
-	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'inclusion' || $component.expressionMode() == 'all'}" class="tab-pane">
-		<div class="heading" data-bind="visible:$component.expressionMode() == 'all'">Inclusion Rules</div>
 		<div data-bind="eventListener: [
 			 { event: 'click', selector: '.copyInclusionRule', callback: copyInclusionRule},
 			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule},
@@ -113,7 +111,7 @@
 					<tr>
 						<td style="vertical-align: top; padding-right: 20px;">
 							<div>
-								<button class="btn btn-sm btn-success" data-bind="click: addInclusionRule">New Inclusion Rule</button>
+								<button class="btn btn-sm btn-success" data-bind="click: addInclusionRule">New qualifying inclusion criteria</button>
 							</div>
 							<div>
 								<table style="width: 100%" class="inclusionRules">
@@ -121,7 +119,7 @@
 										<tr data-bind="click: $component.selectInclusionRule, css: { selectedInclusion: $data == $component.selectedInclusionRule() }">
 											<td style="width:20px; text-align: right; vertical-align: top;" data-bind="text: ($index() + 1) + '.'">
 											</td>
-											<td style="vertical-align: top;" class="inclusionRules" data-bind="text: ((name() || '').length > 0) ? name() : 'Unnamed Rule' "></td>
+											<td style="vertical-align: top;" class="inclusionRules" data-bind="text: ((name() || '').length > 0) ? name() : 'Unnamed Criteria’' "></td>
 										</tr>
 									</tbody>
 								</table>
@@ -129,15 +127,27 @@
 						</td>
 						<td style="vertical-align: top; padding-left: 25px; border-left: 1px #eee solid;">
 							<!-- ko if: $component.selectedInclusionRule() -->
-							<inclusion-rule-editor params="{IndexRule: expression, InclusionRule: selectedInclusionRule()}"></inclusion-rule-editor>
+							<inclusion-rule-editor params="{IndexRule: expression, InclusionRule: selectedInclusionRule}"></inclusion-rule-editor>
 							<!-- /ko -->
 							<!-- ko ifnot: $component.selectedInclusionRule() -->
-							<div>Please select an inclusion rule to edit.</div>
+							<div>Please select a qualifying inclusion criteria to edit.</div>
 							<!-- /ko -->
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
+		<div style="padding-top: 3px" data-bind="with: expression().ExpressionLimit">Limit qualifying cohort to:
+			<select data-bind="options: $component.options.resultLimitOptions, 
+			optionsText: function(item) { return item.name }, 
+			optionsValue: 'id',
+			value: Type">
+			</select> per person.
+		</div>
 	</div>
+	
+	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'exit' || $component.expressionMode() == 'all'}" class="tab-pane">
+		<div><b>Cohort Exit Criteria</b></div>
+		<end-strategy-editor params="strategy: $component.expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-editor>
+	</div>	
 </div>

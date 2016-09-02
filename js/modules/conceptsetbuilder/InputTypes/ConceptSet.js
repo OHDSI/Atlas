@@ -7,7 +7,12 @@ define(['knockout', './ConceptSetItem'], function (ko, ConceptSetItem) {
 		self.id = data.id;
 		self.name = ko.observable(data.name || "Unnamed Concept Set");
 		self.expression = {
-			items: ko.observableArray(data.expression && data.expression.items && data.expression.items.map(function (item) { return new ConceptSetItem(item); }))
+			items: ko.observableArray(data.expression && data.expression.items && 
+																data.expression.items.filter(function (item) { 
+																	return item.concept != null; 
+																}).map(function (item) { 
+																	return new ConceptSetItem(item); 
+																}))
 		}
 	}
 
