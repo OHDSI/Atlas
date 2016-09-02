@@ -207,7 +207,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			$(self.jqEventSpace).trigger('stateChange',
 								['filters.datatable.'+facet.name, selected]);
 		};
-		$(self.jqEventSpace).on('stateChange', function() {
+		$(self.jqEventSpace).on('filter.datatable', function() {
 			var groupAll = self.crossfilter.groupAll();
 			groupAll.reduce(...reduceToRecs);
 			self.data(groupAll.value());
