@@ -1653,16 +1653,6 @@
 		return _.chain(data).map(_.keys).flatten().uniq().eq(['name','values']).value();
 	}
 	module.zoomScatter = function (opts, jqEventSpace) {
-		/*
-									prop.ac = new AccessorGenerator({
-																	func: prop.value,
-																	propName: (typeof prop.value === "string" || 
-																						 isFinite(prop.value)) ? prop.value
-																						 : name,
-																	posParams: ['i', 'j', 'chartProps',
-																							'data', 'series', 'chartPropName'],
-																});
-																*/
 		this.defaultOptions = {
 			dispatchEvents: ['brush', 'filter'], // list events that might be triggered
 			data: {
@@ -1771,8 +1761,8 @@
 			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
 			//showXAxis: true
 		};
-		//var cp = this.chartOptions = new util.ChartProps(this.defaultOptions, opts);
-		var cp = _.merge(this.defaultOptions, opts);
+		/*
+		var cp = _.merge({}, this.defaultOptions, opts);
 		var fields = [];
 		for(var key in cp) {
 			if (cp[key].isField) {
@@ -1780,11 +1770,13 @@
 				fields.push(cp[key]);
 			}
 		}
-		util.setState('foot.urk',['e',1,2,3]);
-		console.log(util.getState());
-		this.render = function (data, target, w, h) {
+		*/
+		//util.setState('foot.urk',['e',1,2,3]);
+		//console.log(util.getState());
+		this.render = function (data, target, w, h, cp) {
 			if (!data.length) return;
 			DEBUG && (window.cp = cp);
+			var fields = _.filter(cp, opt=>opt instanceof util.Field);
 			if (!cp.data.alreadyInSeries) {
 				//var series = dataToSeries(data, cp.series);
 				var series = dataToSeries(data.slice(0,1000), cp.series);

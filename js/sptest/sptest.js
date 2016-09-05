@@ -1,5 +1,5 @@
-define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/faceted-datatable-cf',], 
-			 function (ko, view, _) {
+define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding','components/faceted-datatable-cf',], 
+			 function (ko, view, _, util) {
 	var getData = _.once(function(self) {
 		var request = $.ajax({
 			url: self.jsonFile,
@@ -11,7 +11,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 			success: function (data) {
 				var pdata = self.dataSetup(data);
 				var chart = self.chartObj();
-				chart.render(pdata, self.domElement(), 460, 150);
+				//chart.render(pdata, self.domElement(), 460, 150, self.chartOptions);
 				self.chartData(pdata.slice(0,200));
 				setTimeout(() => self.chartData(pdata.slice(0,400)), 2000);
 			}
@@ -31,12 +31,28 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 		self.jqEventSpace = params.jqEventSpace || {};
 		//self.d3dispatch = ko.observable(d3.dispatch());
 		self.chartObj.subscribe(function(chart) {
-			var opts = chart.chartOptions; // after applying defaults
-			console.log(opts);
-			self.fields(_.filter(opts, d=>d.isColumn||d.isFacet));
-			//var dispatch = opts.d3dispatch;
-			//self.d3dispatch(dispatch);
-			//dispatch.on('filter.sptest', filterChange);
+			var opts = _.merge(chart.defaultOptions, chartOptions());
+			//var opts = chart.chartOptions; // after applying defaults
+
+			//self.fields(_.filter(opts, d=>d.isColumn||d.isFacet));
+
+			var fields = [];
+			_.each(opts, (opt, name) => {
+				if (opt.isField) {
+					opts[name] = new util.Field(name, opt, opts);
+					fields.push(opts[name]);
+				}
+			});
+			self.fields(fields);
+			self.chartOptions = opts;
+		});
+		self.ready = ko.computed(function() {
+			return self.chartData().length && self.chartObj() && self.domElement();
+		});
+		self.ready.subscribe(function(ready) {
+			if (ready) {
+				self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
+			}
 		});
 		$(self.jqEventSpace).on('filter.sptest', filterChange);
 		$(self.jqEventSpace).on('brush.sptest', brushEvent);
@@ -257,11 +273,34 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 			},
 			covariateName: {
 						propName: 'covariateName',
+						value: d => d.covariateName.split(/:/).shift(),
 						isColumn: true,
 						colIdx: 0,
 						tooltipOrder: 7,
 						label: 'Covariate Name',
 						isField: true,
+			},
+			covariateValue: {
+						propName: 'covariateName',
+						value: d => d.covariateName.split(/:/).pop(),
+						isColumn: true,
+						colIdx: 0,
+						tooltipOrder: 8,
+						label: 'Covariate Value',
+						isField: true,
+						/*
+						_accessors: {
+							tooltip: {
+								posParams: ['d','allFields'],
+								func: (d, allFields) => {
+									return {
+										name: `Covariate value`,
+										value: allFields.covariateName.accessors.value(d).split(/:/).pop(),
+									}
+								},
+							},
+						},
+						*/
 			},
 			conceptId: {
 						propName: 'conceptId',

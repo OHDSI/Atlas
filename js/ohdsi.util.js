@@ -1209,7 +1209,10 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 			if (this.needsScale) {
 				this.scale = this.scale || d3.scale.linear();
 				this._accessors.domain = this._accessors.domain || {
-					func: (data) => d3.extent(data.map(this._accessors.value.accessor)),
+					func: (data) => {
+						return d3.extent(data.map(this.accessors.value));
+					},
+					//func: (data) => d3.extent(data.map(this.accessors.value)),
 					posParams: ['data']
 				};
 				if (!this._accessors.range)

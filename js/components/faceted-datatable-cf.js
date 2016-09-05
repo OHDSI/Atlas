@@ -130,14 +130,18 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			fields.forEach(function(field) {
 				// need to consistently define what labels and titles and stuff are called and how they're defined
 				// but this is ok for now
-				field.label = field.label || field.fname;
-				field.value = field.value || field.fname;
-				field.accessor = field.value;
-				if (typeof field.accessor === "string" || isFinite(field.accessor)) {
-					field.accessor = d => d[field.value];
-				}
-				if (typeof field.accessor !== "function") {
-					throw new Error("field.value must be function or string or index");
+				if (field instanceof util.Field) {
+					field.accessor = field.accessors.value;
+				} else {
+					field.label = field.label || field.fname;
+					field.value = field.value || field.fname;
+					field.accessor = field.value;
+					if (typeof field.accessor === "string" || isFinite(field.accessor)) {
+						field.accessor = d => d[field.value];
+					}
+					if (typeof field.accessor !== "function") {
+						throw new Error("field.value must be function or string or index");
+					}
 				}
 			});
 		}
