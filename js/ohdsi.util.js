@@ -1197,7 +1197,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 			*/
 			var defaultAccessors = {
 				value: {
-					func: dataAccessor(this, ['value', 'propName']),
+					func: dataAccessor(this, ['value', 'propName', 'defaultValue']),
 					posParams: ['d'],
 				},
 				label: {
@@ -1214,6 +1214,17 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 				};
 				if (!this._accessors.range)
 					throw new Error(`no range for prop ${name}`);
+			}
+			if (typeof this.tooltipOrder !== "undefined" || this.tooltip) {
+				this._accessors.tooltip = this._accessors.tooltip || {
+					func: (d) => {
+						return {
+							name: this.accessors.label(),
+							value: this.accessors.value(d),
+						};
+					},
+					posParams: ['d']
+				};
 			}
 			this.possibleBindings = this.possibleBindings || allFields.availableDatapointBindings;
 
@@ -1262,6 +1273,26 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 		}
 	}
 	*/
+
+	/*
+		* for value or tooltip functions that make use of aggregation over data or series
+		* there should be a way to perform the aggregation calculations only once
+		* rather than on every call to the value/tooltip func (actually, for tooltips
+		* it doesn't matter too much since only one point gets processed at a time)
+		*/
+	function tooltipBuilderForFields(fields) {
+		var accessors = _.chain(fields)
+									.filter(field=>field.accessors.tooltip)
+									.sortBy('tooltipOrder')
+									.map((field) => field.accessors.tooltip)
+									.value();
+		return (d, i, j) => {
+													return (accessors
+																		.map(func => func(d,i,j))
+																		.map(o => `${o.name}: ${o.value}<br/>`)
+																		.join(''))
+												};
+	}
 	function fishForProp(field, propNames, defaultVal) {
 		propNames = Array.isArray(propNames) ? propNames : [propNames];
 		// get first propName that appears in the field
@@ -1286,7 +1317,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 			return propVal;
 		}
 		if (typeof propVal === "string" || isFinite(propVal)) {
-			return d => propVal[d];
+			return d => d[propVal];
 		}
 		throw new Error("can't find what you want");
 	}
@@ -1422,6 +1453,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 	utilModule.setState = setState;
 	utilModule.deleteState = deleteState;
 	utilModule.Field = Field;
+	utilModule.tooltipBuilderForFields = tooltipBuilderForFields;
 	
 	return utilModule;
 	

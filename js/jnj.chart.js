@@ -1719,7 +1719,7 @@
 			size: {
 						scale: d3.scale.linear(),
 						range: [.5, 8],
-						value: ()=>1,
+						defaultValue: ()=>1,
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
@@ -1812,6 +1812,7 @@
 			fields.forEach(field => {
 				field.bindParams({data, series, allFields:cp, layout});
 			});
+			var tooltipBuilder = util.tooltipBuilderForFields(fields, data, series);
 			//cp.updateAccessors(data, series);
 			//cp.updateDomains(data, series);
 			//cp.tooltipSetup(data, series);
@@ -1928,6 +1929,7 @@
 			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
+				.html(tooltipBuilder);
 				//.html(cp.tooltip.builder);
 			svgEl.as("d3").call(focusTip);
 

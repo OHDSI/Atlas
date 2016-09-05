@@ -117,10 +117,10 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 			//dispatch: d3.dispatch("brush", "filter"), // in default opts for zoomScatter
 			//additionalDispatchEvents: ["foo"],
 			x: {
-						value: d=>d.beforeMatchingStdDiff,
+						//value: d=>d.beforeMatchingStdDiff,
 						label: 'Before matching StdDiff',
 						tooltipOrder: 1,
-						fname: 'beforeMatchingStdDiff',
+						propName: 'beforeMatchingStdDiff',
 						isColumn: true,
 						colIdx: 1,
 						isField: true,
@@ -139,7 +139,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 							return d3.format('0.' + precision + '%')(d);
 						},
 						tooltipOrder: 2,
-						fname: 'afterMatchingStdDiff',
+						propName: 'afterMatchingStdDiff',
 						isColumn: true,
 						colIdx: 1,
 						isField: true,
@@ -163,15 +163,18 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						isField: true,
 						_accessors: {
 							avg: {
-								posParams: ['d','i','j','allFields','data','series'],
-								func: (data, allFields) => d3.mean(data.map(allFields.size.value)),
+								posParams: ['data','allFields'],
+								func: (data, allFields) => {
+									return d3.mean(data.map(allFields.size.accessors.value));
+								},
 							},
-							tooltipFunc: {
+							tooltip: {
 								posParams: ['d','allFields'],
 								func: (d, allFields) => {
 									return {
-										name: `After matching mean treated (avg: ${round(avg,4)})`,
-										value: round(allFields.size.value(d), 4),
+										name: `After matching mean treated 
+														(avg: ${round(allFields.size.accessors.avg(),4)})`,
+										value: round(allFields.size.accessors.value(d), 4),
 									}
 								},
 							},
@@ -190,7 +193,6 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						_accessors: {
 							value: {
 												func: function(d,i,j,allFields,data,series) {
-													console.log(arguments);
 													return allFields.series.value(d,i,j,data,series);
 												},
 												posParams: ['d','i','j','allFields','data','series'],
@@ -254,7 +256,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						value: d => y(d) - d.upperBoundDiff,
 			},
 			covariateName: {
-						fname: 'covariateName',
+						propName: 'covariateName',
 						isColumn: true,
 						colIdx: 0,
 						tooltipOrder: 7,
@@ -262,7 +264,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						isField: true,
 			},
 			conceptId: {
-						fname: 'conceptId',
+						propName: 'conceptId',
 						isColumn: true,
 						isFacet: true,
 						colIdx: 3,
@@ -274,7 +276,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						isField: true,
 			},
 			analysisId: {
-						fname: 'analysisId',
+						propName: 'analysisId',
 						isColumn: true,
 						isFacet: true,
 						colIdx: 4,
