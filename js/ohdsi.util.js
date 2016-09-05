@@ -965,7 +965,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 	 * Tooltip content will only be generated for props where prop.tooltipOrder 
 	 * is provided (it should be a non-zero number.)
 	 */
-	class ChartProps {
+	class ChartPropsJUNK {
 		constructor(defaults, explicit) {
 			//this.props = {};
 			_.union(_.keys(defaults), _.keys(explicit)).forEach(name => {
@@ -1170,47 +1170,78 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 	 * scatterplot's legend wants a 'label' property and all three of these should
 	 * contain the same string for certain fields.)
 	 *
+	 *
+	 * further thoughts:
+	 *
+	 * fields should have a single data accessor function?
+	 *
+	 * but domain and tooltip functions are also accessors, though they will
+	 * depend on the main accessor function. same with grouping funcs.
+	 *
+	 * maybe: every field needs either a propName or accessor
+	 *				accessor will be generated from propName if doesn't exist
+	 *				every field needs a label, but can have labels for more than one
+	 *				context
+	 *
 	 */
 	class Field {
 		constructor(name, opts = {}, allFields) {
 			this.name = name;
 			_.extend(this, opts);
 
+			/*
 			(this.requiredOptions || []).forEach(opt => {
 				if (!_.has(this, opt))
 					throw new Error(`expected ${opt} in ${this.name} Field options`);
 			});
-			this._accessorGenerators = {};
-			this.boundAccessors = this.boundAccessors || {};
-			_.each(this.boundAccessors, (acc,name) => {
+			*/
+			var defaultAccessors = {
+				value: {
+					func: dataAccessor(this, ['value', 'propName']),
+					posParams: ['d'],
+				},
+				label: {
+					func: fieldAccessor(this, ['label']),
+				},
+			};
+			this._accessors = _.merge(defaultAccessors, this._accessors);
+
+			if (this.needsScale) {
+				this.scale = this.scale || d3.scale.linear();
+				this._accessors.domain = this._accessors.domain || {
+					func: (data) => d3.extent(data.map(this._accessors.value.accessor)),
+					posParams: ['data']
+				};
+				if (!this._accessors.range)
+					throw new Error(`no range for prop ${name}`);
+			}
+			this.possibleBindings = this.possibleBindings || allFields.availableDatapointBindings;
+
+			_.each(this._accessors, (acc,name) => {
 				if (_.difference(acc.posParams, this.possibleBindings).length ||
 						_.difference(acc.namedParams, this.possibleBindings).length)
 					throw new Error(`${this.name} accessor requested an unavailable binding`);
-				acc.accGen = this.accessorGenerator(name, acc);
+				acc.accGen = new AccessorGenerator(acc);
 			});
 
-			if (this.needsScale) { // if it needsScale, it must also needsValueFunc
-				this.makeScale();
-			}
 			this.allFields = allFields;
 		}
+		get accessors() {
+			return this.__accessors;
+		}
 		bindParams(params) {
-			_.each(this.boundAccessors, (acc,name) => {
+			this.__accessors = {};
+			_.each(this._accessors, (acc,name) => {
 				acc.accGen.bindParams(params);
 				acc.accessor = acc.accGen.generate();
-				this[name] = acc.accessor;
+				this.__accessors[name] = acc.accessor;
+				//this[name] = acc.accessor;
 			});
-		}
-		getAccessor(name) { // not needed?
-			return this.accessorGenerator(name).generate();
-		}
-		accessorGenerator(accessorName, genOpts) {
-			if (genOpts) {
-				this._accessorGenerators[accessorName] = new AccessorGenerator(genOpts);
+			if (this.needsScale) {
+				this.scale.domain(this.accessors.domain());
+				this.scale.range(this.accessors.range());
 			}
-			return this._accessorGenerators[accessorName];
 		}
-
 
 		/*
 												prop.ac.bindParam('chartProps', this);
@@ -1222,24 +1253,6 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 			return _.accessor;
 		}
 		*/
-		makeScale() {
-			this.scale = this.scale || d3.scale.linear();
-			// domainFunc should be called with args: data,series
-			// domainFunc will receive args: data, series, allFields, field
-			this.domainFunc = this.domainFunc ||
-												this.domain && d3.functor(this.domain) ||
-												((data,series,props,name) => {
-													this.ac.bindParam('chartProps', this.allFields);
-													this.ac.bindParam('data', data);
-													this.ac.bindParam('series', series);
-													this.ac.bindParam('chartPropName', name);
-													var accessor = this.ac.generate();
-													return d3.extent(data.map(accessor));
-												})
-			this.rangeFunc = this.rangeFunc ||
-												this.range && d3.functor(this.range) ||
-												function() {throw new Error(`no range for prop ${name}`)};
-		}
 	}
 	/*
 	class ProxyField {
@@ -1268,7 +1281,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 		return () => propVal;
 	}
 	function dataAccessor(field, propNames, defaultFunc) {
-		var propVal = fishForProp(field, propNames, defaultVal);
+		var propVal = fishForProp(field, propNames, defaultFunc);
 		if (typeof propVal === "function") {
 			return propVal;
 		}
@@ -1403,7 +1416,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 	utilModule.ChartAxis = ChartAxis;
 	utilModule.ChartAxisY = ChartAxisY;
 	utilModule.ChartAxisX = ChartAxisX;
-	utilModule.ChartProps = ChartProps;
+	//utilModule.ChartProps = ChartProps;
 	utilModule.AccessorGenerator = AccessorGenerator;
 	utilModule.getState = getState;
 	utilModule.setState = setState;

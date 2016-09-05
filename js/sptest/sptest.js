@@ -145,11 +145,12 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						isField: true,
 			},
 			size: {
-						value: d=>d.afterMatchingMeanTreated,
+						//value: d=>d.afterMatchingMeanTreated,
+						propName: 'afterMatchingMeanTreated',
 						//scale: d3.scale.log(),
-						range: [1, 8],
 						label: "After matching mean treated",
 						tooltipOrder: 3,
+						/*
 						tooltipFunc: function(d, i, j, props, data, series, propName) {
 							var avg = d3.mean(
 													data.map(props.size.value));
@@ -158,7 +159,26 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 								value: round(props.size.value(d), 4),
 							};
 						},
+						*/
 						isField: true,
+						_accessors: {
+							avg: {
+								posParams: ['d','i','j','allFields','data','series'],
+								func: (data, allFields) => d3.mean(data.map(allFields.size.value)),
+							},
+							tooltipFunc: {
+								posParams: ['d','allFields'],
+								func: (d, allFields) => {
+									return {
+										name: `After matching mean treated (avg: ${round(avg,4)})`,
+										value: round(allFields.size.value(d), 4),
+									}
+								},
+							},
+							range: {
+								func: () => [1,8],
+							},
+						},
 			},
 			series: {
 						value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
@@ -167,7 +187,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						isField: true,
 			},
 			color: {
-						boundAccessors: {
+						_accessors: {
 							value: {
 												func: function(d,i,j,allFields,data,series) {
 													console.log(arguments);
@@ -175,11 +195,14 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 												},
 												posParams: ['d','i','j','allFields','data','series'],
 							},
-							domainFunc: {
+							domain: {
 												func: function(data, series, allFields) {
 													return _.uniq(data.map(allFields.series.value));
 												},
 												posParams: ['data', 'series', 'allFields'],
+							},
+							range: {
+								func: () => ['red', 'green', 'pink', 'blue'],
 							},
 						},
 						//value: d=>nthroot(d.coefficient, 7),
@@ -195,7 +218,7 @@ define(['knockout', 'text!./sptest.html','lodash','d3ChartBinding','components/f
 						label: "Nonsense series",
 						scale: d3.scale.ordinal(),
 						//range: ['#ef8a62','#ddd','#67a9cf'],
-						range: ['red', 'green', 'pink', 'blue'],
+						//range: ['red', 'green', 'pink', 'blue'],
 						isField: true,
 						//domainFuncNeedsExtent: true,
 						//domainFunc: (data, ext) => [ext[0], 0, ext[1]],

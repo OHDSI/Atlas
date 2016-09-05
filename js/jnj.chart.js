@@ -1663,12 +1663,13 @@
 																							'data', 'series', 'chartPropName'],
 																});
 																*/
-		var availableDatapointBindings = ['d', 'i', 'j', 'data', 'series', 'allFields'];
 		this.defaultOptions = {
 			dispatchEvents: ['brush', 'filter'], // list events that might be triggered
 			data: {
 				alreadyInSeries: false,
 			},
+			availableDatapointBindings: 
+				['d', 'i', 'j', 'data', 'series', 'allFields', 'layout'],
 			chart: {
 				cssClass: "lineplot",
 				labelIndexDate: false,
@@ -1681,37 +1682,44 @@
 				right: { margin: { size: 5}, },
 			},
 			x: {
-						requiredOptions: ['value'],
-						possibleBindings: availableDatapointBindings,
+						requiredOptions: ['value','label'],
 						showAxis: true,
 						showLabel: true,
-						rangeFunc: layout => [0, layout.svgWidth()],
 						format: module.util.formatSI(3),
 						ticks: 10,
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
 						isField: true,
+						_accessors: {
+							range: {
+								func: layout => [0, layout.svgWidth()],
+								posParams: ['layout'],
+							},
+						}
 			},
 			y: {
 						requiredOptions: ['value'],
-						possibleBindings: availableDatapointBindings,
 						showAxis: true,
 						showLabel: true,
 						format: module.util.formatSI(3),
 						ticks: 4,
 						scale: d3.scale.linear(),
-						rangeFunc: layout => [layout.svgHeight(), 0],
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
 						isField: true,
+						_accessors: {
+							range: {
+								func: layout => [layout.svgHeight(), 0],
+								posParams: ['layout'],
+							},
+						}
 			},
 			size: {
-						possibleBindings: availableDatapointBindings,
 						scale: d3.scale.linear(),
 						range: [.5, 8],
-						value: 1,
+						value: ()=>1,
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
@@ -1719,30 +1727,37 @@
 			},
 			color: {
 						//scale: null,
-						possibleBindings: availableDatapointBindings,
-						scale: d3.scale.category10(),
 						//rangeFunc: (layout, prop) => prop.scale.range(), // does this belong here?
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
 						isField: true,
+						scale: d3.scale.category10(),
+						_accessors: {
+							range: {
+								func: (allFields) => allFields.color.scale.range(),
+								posParams: ['allFields'],
+							},
+						}
 			},
 			shape: {
-						possibleBindings: availableDatapointBindings,
 						value: 0,
 						scale: d3.scale.ordinal(),
-						range: util.shapePath("types"),
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
 						isField: true,
+						_accessors: {
+							range: {
+								func: () => util.shapePath("types"),
+							},
+						}
 			},
 			legend: {
 						show: true,
 			},
 			series: {
 						//value: function(d) { return this.parentNode.__data__.name; },
-						possibleBindings: availableDatapointBindings,
 						value: ()=>null,
 						//value: d=>1,
 						showLabel: false,
@@ -1794,12 +1809,13 @@
 				cp.x.axisEl = new util.ChartAxisX(svgEl, layout, cp.x);
 			}
 
-			fields.forEach(field => field.bindParams({data, series, allFields:cp}));
-			cp.color.value(data[0],0,0);
+			fields.forEach(field => {
+				field.bindParams({data, series, allFields:cp, layout});
+			});
 			//cp.updateAccessors(data, series);
-			cp.updateDomains(data, series);
-			cp.tooltipSetup(data, series);
-			cp.updateRanges(layout);
+			//cp.updateDomains(data, series);
+			//cp.tooltipSetup(data, series);
+			//cp.updateRanges(layout);
 			cp.chart.chart = new util.ChartChart(svgEl, layout, cp.chart, series);
 
 			
@@ -1899,8 +1915,8 @@
 						.transition()
 						.duration(750)
 						.attr("transform", function (d) {
-							var xVal = cp.x.scale(cp.x.accessor(d));
-							var yVal = cp.y.scale(cp.y.accessor(d));
+							var xVal = cp.x.scale(cp.x.accessors.value(d));
+							var yVal = cp.y.scale(cp.y.accessors.value(d));
 							return "translate(" + xVal + "," + yVal + ")";
 						});
 
@@ -1912,7 +1928,7 @@
 			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
-				.html(cp.tooltip.builder);
+				//.html(cp.tooltip.builder);
 			svgEl.as("d3").call(focusTip);
 
 			var seriesGs = cp.chart.chart.gEl
@@ -1935,23 +1951,23 @@
 										updateCb: function(selection, params, opts) {
 											selection
 												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
+													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
+													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
 													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessor(d)),
+																		cp.shape.scale(cp.shape.accessors.value(d)),
 																		xVal, // 0, //options.xValue(d),
 																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessor(d)));
+																		cp.size.scale(cp.size.accessors.value(d)));
 												})
 												.style("stroke", function (d) {
 													// calling with this so default can reach up to parent
 													// for series name
-													//return cp.color.scale(cp.series.accessor.call(this, d));
-													return cp.color.scale(cp.color.accessor(d));
+													//return cp.color.scale(cp.series.value.call(this, d));
+													return cp.color.scale(cp.color.accessors.value(d));
 												})
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
 													return "translate(" + xVal + "," + yVal + ")";
 												})
 										},
@@ -1963,23 +1979,23 @@
 												//.transition().delay(delay).duration(duration)
 												//.transition(transition)
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
 													return `translate(${xVal},${yVal}) scale(.8,.8)`;
 												})
 												.style("stroke", "black")
 												//.transition(transition)
 												.transition()
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
 													return `translate(${xVal},${yVal}) scale(5,4)`;
 												})
 												//.transition(transition)
 												.transition()
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
 													return `translate(${xVal},${yVal}) scale(1,1)`;
 												})
 												.remove()
@@ -2020,20 +2036,20 @@
 				.attr("class", "dot")
 				.attr("d", function(d) {
 					return util.shapePath(
-										cp.shape.scale(cp.shape.accessor(d)),
+										cp.shape.scale(cp.shape.accessors.value(d)),
 										0, //options.xValue(d),
 										0, //options.yValue(d),
-										cp.size.scale(cp.size.accessor(d)));
+										cp.size.scale(cp.size.accessors.value(d)));
 				})
 				.style("stroke", function (d) {
 					// calling with this so default can reach up to parent
 					// for series name
-					//return cp.color.scale(cp.series.accessor.call(this, d));
-					return cp.color.scale(cp.color.accessor(d));
+					//return cp.color.scale(cp.series.value.call(this, d));
+					return cp.color.scale(cp.color.accessors.value(d));
 				})
 				.attr("transform", function (d) {
-					var xVal = cp.x.scale(cp.x.accessor(d));
-					var yVal = cp.y.scale(cp.y.accessor(d));
+					var xVal = cp.x.scale(cp.x.accessors.value(d));
+					var yVal = cp.y.scale(cp.y.accessors.value(d));
 					return "translate(" + xVal + "," + yVal + ")";
 				})
 				.on('mouseover', focusTip.show)
@@ -2048,7 +2064,7 @@
 						};
 					})
 					.attr("transform", function (d) {
-						return "translate(" + cp.x.scale(cp.x.accessor(d.value)) + "," + cp.y.scale(cp.y.accessor(d.value)) + ")";
+						return "translate(" + cp.x.scale(cp.x.accessors.value(d.value)) + "," + cp.y.scale(cp.y.accessors.value(d.value)) + ")";
 					})
 					.attr("x", 3)
 					.attr("dy", 2)
