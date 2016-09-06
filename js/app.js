@@ -108,6 +108,11 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.currentView('home');
 						});
 					},
+					'/welcome': function () {
+					    require(['welcome'], function () {
+					        self.currentView('welcome');
+						});
+					},
 					'/jobs': function () {
 						require(['job-manager'], function () {
 							self.currentView('jobs');

@@ -122,6 +122,7 @@ requirejs.config({
 		"prism": "prism",
 		"sptest": "sptest/sptest",
 		"sptest_smoking": "sptest/sptest_smoking",
+        "welcome": "components/welcome"
 	}
 });
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -41,9 +41,9 @@
 		<div id="wrapperLogo">
 			<a href="#/splash">ATLAS</a>
 		</div>
-
 		<div class="list-group">
 			<a class="list-group-item" href="#/home"><i class="fa fa-fw fa-home" aria-hidden="true"></i>&nbsp;Home</a>
+			<a class="list-group-item" href="#/welcome"><i class="fa fa-fw fa-sign-in" aria-hidden="true"></i>&nbsp;Welcome</a>
 			<a class="list-group-item" href="#/datasources"><i class="fa fa-fw fa-database" aria-hidden="true"></i>&nbsp;Data Sources</a>
 			<a class="list-group-item" href="#/search"><i class="fa fa-fw fa-search" aria-hidden="true"></i>&nbsp;Vocabulary</a>
 			<a class="list-group-item" href="#/conceptsets"><i class="fa fa-fw fa-shopping-cart" aria-hidden="true"></i>&nbsp;Concept Sets</a>
@@ -96,6 +96,10 @@
 
 			<div data-bind="if:pageModel.currentView()=='home'">
 				<home params="{model: pageModel}"></home>
+			</div>
+
+			<div data-bind="if:pageModel.currentView()=='welcome'">
+                <welcome params="{model: pageModel}"></welcome>
 			</div>
 
 			<div data-bind="if:pageModel.currentView()=='conceptsets'">
