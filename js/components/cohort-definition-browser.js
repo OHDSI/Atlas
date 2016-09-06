@@ -1,6 +1,6 @@
-define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'faceted-datatable'], function (ko, view, config) {
+define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webapi/AuthAPI', 'faceted-datatable'], function (ko, view, config, authApi) {
 	function cohortDefinitionBrowser(params) {
-		var self = this;
+	    var self = this;
 		self.currentService = ko.observable();
 		self.reference = ko.observableArray();
 		self.selected = params.cohortDefinitionSelected;
@@ -11,12 +11,18 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'facet
 			self.loading(true);
 
 			$.ajax({
-				url: self.currentService() + 'cohortdefinition',
+			    url: self.currentService() + 'cohortdefinition',
+                headers: {
+                    Authorization: authApi.getAuthorizationHeader()
+                },
 				method: 'GET',
+                error: authApi.handleAccessDenied,
 				success: function (d) {
-					self.loading(false);
 					self.reference(d);
-				}
+				},
+                complete: function() {
+                    self.loading(false);
+                }
 			});
 		});
 

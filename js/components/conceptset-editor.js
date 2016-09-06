@@ -4,7 +4,7 @@ define(['knockout', 'text!./conceptset-editor.html', 'knockout.dataTables.bindin
 		self.model = params.model;
 		self.conceptSetName = ko.observable();
 		self.conceptSets = params.$raw.conceptSets();
-        self.conceptSetId = params.$raw.conceptSetId;
+		self.conceptSetId = params.$raw.conceptSetId;
 
 		self.renderLink = function (s, p, d) {
 			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';

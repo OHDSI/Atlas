@@ -2,6 +2,7 @@ define(function (require, exports) {
 
 	var $ = require('jquery');
 	var config = require('appConfig');
+	var authApi = require('webapi/AuthAPI');
 	
 	function pruneJSON(key, value) {
 		if (value === 0 || value) {
@@ -13,7 +14,11 @@ define(function (require, exports) {
 	
 	function getCohortDefinitionList() {
 		var promise = $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/'
+			url: config.webAPIRoot + 'cohortdefinition/',
+			headers: {
+			    Authorization: authApi.getAuthorizationHeader()
+			},
+            error: authApi.handleAccessDenied
 		});
 		return promise;
 	}
@@ -22,12 +27,16 @@ define(function (require, exports) {
 		var savePromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (definition.id || ""),
 			method: definition.id ? 'PUT' : 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify(definition),
-			error: function (error) {
-				console.log("Error: " + error);
-			}
-		});
+	        headers: {
+	            Authorization: authApi.getAuthorizationHeader()
+	        },
+	        contentType: 'application/json',
+	        data: JSON.stringify(definition),
+	        error: function(error) {
+	            console.log("Error: " + error);
+	            authApi.handleAccessDenied(error);
+	        }
+	    });
 		return savePromise;
 	}
 	
@@ -35,9 +44,13 @@ define(function (require, exports) {
 		var copyPromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (id || "") +"/copy",
 			method: 'GET',
+			headers: {
+			    Authorization: authApi.getAuthorizationHeader()
+			},
 			contentType: 'application/json',
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return copyPromise;
@@ -47,8 +60,12 @@ define(function (require, exports) {
 		var deletePromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (id || ""),
 			method: 'DELETE',
+			headers: {
+			    Authorization: authApi.getAuthorizationHeader()
+			},
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return deletePromise;
@@ -57,8 +74,12 @@ define(function (require, exports) {
 	function getCohortDefinition(id) {
 		var loadPromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + id,
+			headers: {
+			    Authorization: authApi.getAuthorizationHeader()
+			},
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return loadPromise;	
@@ -68,13 +89,17 @@ define(function (require, exports) {
 		var getSqlPromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/sql',
 			method: 'POST',
+			headers: {
+			    Authorization: authApi.getAuthorizationHeader()
+			},
 			contentType: 'application/json',
 			data: JSON.stringify({
 				expression: expression,
 				options: options
 			}),
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});	
 		return getSqlPromise;
@@ -83,8 +108,12 @@ define(function (require, exports) {
 	function generate(cohortDefinitionId, sourceKey) {
 		var generatePromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/generate/' + sourceKey,
+			headers: {
+			    Authorization: authApi.getAuthorizationHeader()
+			},
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return generatePromise;
@@ -93,8 +122,12 @@ define(function (require, exports) {
 	function getInfo(cohortDefinitionId) {
 		var infoPromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/info',
+			headers: {
+			    Authorization: authApi.getAuthorizationHeader()
+			},
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return infoPromise;
@@ -103,8 +136,12 @@ define(function (require, exports) {
 	function getReport(cohortDefinitionId, sourceKey) {
 		var reportPromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/report/' + sourceKey,
+			headers: {
+			    Authorization: authApi.getAuthorizationHeader()
+			},
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return reportPromise;

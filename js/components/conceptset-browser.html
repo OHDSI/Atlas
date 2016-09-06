@@ -7,7 +7,7 @@
             <div class="heading">
                 Concept Set Repository
             </div>
-            <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null, onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected, onActionComplete: $component.onConceptSetBrowserAction, disableConceptSetButton: model.currentConceptSet() != undefined"></cohort-concept-set-browser>
+            <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null, onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected, onActionComplete: $component.onConceptSetBrowserAction, disableConceptSetButton: model.currentConceptSet() != undefined || !canCreateConceptSet()"></cohort-concept-set-browser>
         </div>
         <div data-bind="attr: {class: $component.mode() == 'export' ? 'active' : 'hidden'}">
             <div class="heading">

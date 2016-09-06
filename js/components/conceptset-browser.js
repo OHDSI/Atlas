@@ -1,4 +1,4 @@
-define(['knockout', 'text!./conceptset-browser.html', 'appConfig', 'bootstrap', 'circe', ], function (ko, view, config) {
+define(['knockout', 'text!./conceptset-browser.html', 'appConfig', 'webapi/AuthAPI', 'bootstrap', 'circe', ], function (ko, view, config, authApi) {
 	function conceptsetBrowser(params) {
 		var self = this;
 		self.model = params.model;
@@ -57,6 +57,8 @@ define(['knockout', 'text!./conceptset-browser.html', 'appConfig', 'bootstrap', 
 				document.location = '#/conceptset/0/details';
 			}
 		}
+
+	    self.canCreateConceptSet = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset(); });
 	}
 
 	var component = {

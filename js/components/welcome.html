@@ -1,0 +1,19 @@
+﻿<div class="wrapperTitle">
+    <i class="fa fa-sign-in"></i> Welcome
+</div>
+
+<div class="paddedWrapper">
+    <div class="welcome-login-ntlm">
+        <div data-bind="text: $component.status"></div>
+        <div>
+            <span>
+                <span data-bind="if: !isLoggedIn()">
+                    <span class="btn btn-sm btn-primary" data-bind="click: $component.signin">Login</span>
+                </span>
+                <span data-bind="if: isLoggedIn()">
+                    <span class="btn btn-sm btn-primary" data-bind="click: $component.signout">Logout</span>
+                </span>
+            </span>
+        </div>
+    </div>
+</div>

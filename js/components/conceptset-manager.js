@@ -1,6 +1,6 @@
 define(['knockout', 
         'text!./conceptset-manager.html', 
-        'appConfig', 
+        'appConfig',
         'ohdsi.util', 
         'webapi/CDMResultsAPI',
         'vocabularyprovider',
@@ -14,7 +14,8 @@ define(['knockout',
         'circe',
 ], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet) {
 	function conceptsetManager(params) {
-		var self = this;
+	    var self = this;
+	    var authApi = params.model.authApi;
 		self.model = params.model;
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
@@ -434,6 +435,10 @@ define(['knockout',
 				url: urlEncoded,
 				method: 'GET',
 				contentType: 'application/json',
+                headers : {
+                    Authorization: authApi.getAuthorizationHeader()
+                },
+                error: authApi.handleAccessDenied,
 				success: function (results) {
 					if (results.length > 0) {
 						self.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
@@ -464,25 +469,44 @@ define(['knockout',
 
 				var json = ko.toJSON(conceptSet);
 
+			    // for create - PUT: /conceptset/
+                // for update - POST: /conceptset/{id}/
+				var updateConceptSet = conceptSet.id > 0;
+				var method = updateConceptSet ? 'POST' : 'PUT';
+				var url = config.services[0].url + 'conceptset/';
+				if (updateConceptSet) {
+				    url += conceptSet.id + '/';
+				}
+
 				$.ajax({
 					method: conceptSet.id ? 'PUT' : 'POST',
 					url: config.services[0].url + 'conceptset/' + (conceptSet.id || ''),
 					contentType: 'application/json',
+					headers: {
+					    Authorization: authApi.getAuthorizationHeader()
+					},
 					data: json,
 					dataType: 'json',
+					error: authApi.handleAccessDenied,
 					success: function (data) {
 
 						$.ajax({
 							method: 'PUT',
 							url: config.services[0].url + 'conceptset/' + data.id + '/items',
+							headers: {
+							    Authorization: authApi.getAuthorizationHeader()
+							},
 							data: JSON.stringify(conceptSetItems),
 							dataType: 'json',
 							contentType: 'application/json',
+							error: authApi.handleAccessDenied,
 							success: function (itemSave) {
-								$('#conceptSetSaveDialog').modal('hide');
-								document.location = '#/conceptset/' + data.id + '/details';
-								self.compareResults(null);
-								self.model.currentConceptSetDirtyFlag.reset();
+							    $('#conceptSetSaveDialog').modal('hide');
+							    authApi.refreshToken().then(function() {
+							        document.location = '#/conceptset/' + data.id + '/details';
+							        self.compareResults(null);
+							        self.model.currentConceptSetDirtyFlag.reset();
+							    });
 							}
 						});
 					}
@@ -702,7 +726,11 @@ define(['knockout',
         	});
         }
         
-        self.selectAllConceptSetItems = function(selector, props) {        	
+        self.selectAllConceptSetItems = function(selector, props) {
+			if (!self.canEdit()) {
+				return;
+			}
+        	console.log("select all: " + props)
             props = props || {};
             props.isExcluded = props.isExcluded || null;
             props.includeDescendants = props.includeDescendants || null;
@@ -792,7 +820,11 @@ define(['knockout',
         $(document).on('click', '#selectAllDescendants', function() { self.selectAllConceptSetItems("#selectAllDescendants", { includeDescendants: true })});
         $(document).off('click', '#selectAllMapped');
         $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeMapped: true })});
-	}
+
+        self.canEdit = self.model.canEditCurrentConceptSet;
+        self.canCreate = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset(); });
+        self.canDelete = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedDeleteConceptset(); });
+    }
 
 	var component = {
 		viewModel: conceptsetManager,

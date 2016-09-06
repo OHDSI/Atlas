@@ -1,0 +1,6 @@
+<div data-bind="if:$component.isAuthenticated">
+    <forbidden />
+</div>
+<div data-bind="ifnot:$component.isAuthenticated">
+    <unauthenticated />
+</div>
