@@ -1,6 +1,8 @@
-define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables.binding'], function (ko, view, config) {
+define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config) {
 	function jobManager(params) {
 		var self = this;
+
+		var authApi = params.model.authApi;
 		self.model = params.model;
 		self.updateJobs = function () {
 			self.model.jobs([]);
@@ -8,6 +10,9 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables
 			$.ajax({
 				url: config.services[0].url + 'job/execution?comprehensivePage=true',
 				method: 'GET',
+				headers: {
+				    Authorization: authApi.getAuthorizationHeader()
+				},
 				contentType: 'application/json',
 				success: function (jobs) {
 					for (var j = 0; j < jobs.content.length; j++) {
@@ -22,11 +27,19 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables
 						}
 					}
 					self.model.jobs(jobs.content);
-				}
+				},
+                error: authApi.handleAccessDenied
 			});
 		}
 
-		self.updateJobs();
+	    self.isAuthenticated = authApi.isAuthenticated;
+	    self.canReadJobs = ko.pureComputed(function() {
+	       return self.isAuthenticated() && authApi.isPermittedReadJobs();
+	    });
+
+		if (self.canReadJobs()) {
+		    self.updateJobs();
+		}
 	}
 
 	var component = {
