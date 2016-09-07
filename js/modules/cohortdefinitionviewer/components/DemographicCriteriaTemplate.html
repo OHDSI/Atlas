@@ -1,0 +1,22 @@
+<!-- ko with: Criteria -->
+<ul>
+<!-- ko if: Age() != null -->
+	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: Gender() != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: Gender()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: Race() != null -->
+	<li>race is any of: <concept-list-viewer params="ConceptList: Race()"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: Ethnicity() != null -->
+	<li>ethnicity is any of: <concept-list-viewer params="ConceptList: Ethnicity()"></concept-list-viewer></li>
+<!-- /ko -->	
+<!-- ko if: OccurrenceStartDate() != null -->
+	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: OccurrenceEndDate() != null -->
+	<li>occurrence end is <date-range-viewer params="Range: OccurrenceEndDate"></date-range-viewer></li>
+<!-- /ko -->
+</ul>
+<!-- /ko -->

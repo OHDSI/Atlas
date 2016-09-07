@@ -5,6 +5,12 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 
 		var addCriteriaActions = [
 			{
+				text: "Add Demographic Criteria",
+				selected: false,
+				description: "Filter events based on demographic criteria.",
+				action: function () { self.addDemographicCriteria(); }
+			},
+			{
 				text: "Add Condition Criteria",
 				selected: false,
 				description: "Find patients with specific diagnoses.",
@@ -141,6 +147,10 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 			self.group().Groups.push(new CriteriaGroup(null, unwrappedExpression.ConceptSets));
 		};
 
+		self.addDemographicCriteria = function() {
+			self.group().DemographicCriteriaList.push(new criteriaTypes.DemographicCriteria());
+		}
+		
 		self.addConditionCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
