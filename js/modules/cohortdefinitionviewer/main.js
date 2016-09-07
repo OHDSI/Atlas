@@ -47,6 +47,9 @@ define(function (require, exports) {
 	var death = require('./components/Death');
 	ko.components.register('death-criteria-viewer', death);
 	
+	var demographicCriteria = require('./components/DemographicCriteria');
+	ko.components.register('demographic-criteria-viewer', demographicCriteria);	
+	
 	var numericRange = require('./components/NumericRange');
 	ko.components.register('numeric-range-viewer', numericRange);
 

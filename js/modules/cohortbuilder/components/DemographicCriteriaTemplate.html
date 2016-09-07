@@ -1,0 +1,59 @@
+<div class="criteriaSection" style="display: table; width: 100%;" data-bind="with: Criteria">
+	<div style="display: table-cell">
+		<table class="criteriaTable">
+			<col style="width:16px" />
+			<col />
+			<tr data-bind="if: Age() != null, visible: Age() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
+				<td>
+					with age
+					<numeric-range params="Range: Age"></numeric-range>
+				</td>
+			</tr>
+			<tr data-bind="if: Gender() != null, visible: Gender() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
+				<td>
+					<div>
+						with a gender of:
+						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
+					</div>
+				</td>
+			</tr>
+			<tr data-bind="if: Race() != null, visible: Race() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('Race') }" class="fa fa-times" /></td>
+				<td>
+					<div>
+						with a race of:
+						<concept-list params="PickerParams: { DefaultDomain: 'Race', DefaultQuery: ''}, ConceptList: Race()"></concept-list>
+					</div>
+				</td>
+			</tr>
+			<tr data-bind="if: Ethnicity() != null, visible: Ethnicity() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('Ethnicity') }" class="fa fa-times" /></td>
+				<td>
+					<div>
+						with a ethnicity of:
+						<concept-list params="PickerParams: { DefaultDomain: 'Ethnicity', DefaultQuery: ''}, ConceptList: Ethnicity()"></concept-list>
+					</div>
+				</td>
+			</tr>
+			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
+				<td>
+					<i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times"/>
+				</td>
+				<td>
+					occurrence start is:
+					<date-range params="Range: OccurrenceStartDate"></date-range>
+				</td>
+			</tr>
+			<tr data-bind="if: OccurrenceEndDate() != null, visible: OccurrenceEndDate() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceEndDate') }" class="fa fa-times" /></td>
+				<td>
+					occurrence end is:
+					<date-range params="Range: OccurrenceEndDate"></date-range>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div style="display: table-cell; width: 200px; vertical-align:top" data-bind="ddSlickAction: $component.addCriterionSettings"></div>
+</div>
