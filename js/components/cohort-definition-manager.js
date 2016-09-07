@@ -8,7 +8,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'cohortbuilder/components/FeasibilityReportViewer',
 				'knockout.dataTables.binding',
 				'faceted-datatable',
-				'databindings'
+				'databindings', 
+				,'cohortdefinitionviewer/expressionCartoonBinding'
 ], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil, CohortExpression, InclusionRule) {
 
 	function translateSql(sql, dialect) {
@@ -64,6 +65,20 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.isSaveable = ko.pureComputed(function () {
 			return self.dirtyFlag() && self.dirtyFlag().isDirty();
 		});
+		self.tabPath = ko.computed(function() {
+			var path = self.tabMode();
+			if (path === 'export') {
+				path += '/' + self.exportTabMode();
+			}
+			//console.log('tabPath:', path);
+			if (self.exportTabMode() === 'cartoon') {
+				setTimeout(function() {
+					self.delayedCartoonUpdate('ready');
+				}, 10);
+			}
+			return path;
+		});
+		self.delayedCartoonUpdate = ko.observable(null);
 
 		self.canGenerate = ko.pureComputed(function () {
 			var isDirty = self.dirtyFlag() && self.dirtyFlag().isDirty();
@@ -89,7 +104,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 		});
 
-		self.selectedFragment = ko.observable();
 		self.selectedReport = ko.observable();
 		self.selectedReportCaption = ko.observable();
 		self.loadingInclusionReport = ko.observable(false);
@@ -412,7 +426,39 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.dispose = function () {
 			//self.currentCohortDefinitionSubscription.dispose();
 		}
-
+		self.getCriteriaIndexComponent = function (data) {
+			data = ko.utils.unwrapObservable(data);
+			if (!data) return;
+			if (data.hasOwnProperty("ConditionOccurrence"))
+				return "condition-occurrence-criteria-viewer";
+			else if (data.hasOwnProperty("ConditionEra"))
+				return "condition-era-criteria-viewer";
+			else if (data.hasOwnProperty("DrugExposure"))
+				return "drug-exposure-criteria-viewer";
+			else if (data.hasOwnProperty("DrugEra"))
+				return "drug-era-criteria-viewer";
+			else if (data.hasOwnProperty("DoseEra"))
+				return "dose-era-criteria-viewer";
+			else if (data.hasOwnProperty("ProcedureOccurrence"))
+				return "procedure-occurrence-criteria-viewer";
+			else if (data.hasOwnProperty("Observation"))
+				return "observation-criteria-viewer";			
+			else if (data.hasOwnProperty("VisitOccurrence"))
+				return "visit-occurrence-criteria-viewer";			
+			else if (data.hasOwnProperty("DeviceExposure"))
+				return "device-exposure-criteria-viewer";			
+			else if (data.hasOwnProperty("Measurement"))
+				return "measurement-criteria-viewer";
+			else if (data.hasOwnProperty("Specimen"))
+				return "specimen-criteria-viewer";
+			else if (data.hasOwnProperty("ObservationPeriod"))
+				return "observation-period-criteria-viewer";			
+			else if (data.hasOwnProperty("Death"))
+				return "death-criteria-viewer";			
+			else
+				return "unknownCriteriaType";
+		};
+		self.selectedCriteria = ko.observable();
 	}
 
 	var component = {

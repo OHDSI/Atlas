@@ -13,6 +13,7 @@ define(function (require, exports) {
 	var Measurement = require("./CriteriaTypes/Measurement");
 	var ObservationPeriod = require("./CriteriaTypes/ObservationPeriod");	
 	var Death = require("./CriteriaTypes/Death");
+	var DemographicCriteria = require("./CriteriaTypes/DemographicCriteria");
 	
 	function GetCriteriaFromObject (data, conceptSets)
 	{
@@ -90,6 +91,7 @@ define(function (require, exports) {
 	exports.Measurement = Measurement;
 	exports.ObservationPeriod = ObservationPeriod;
 	exports.Death = Death;
+	exports.DemographicCriteria = DemographicCriteria;
 	
 	exports.GetCriteriaFromObject = GetCriteriaFromObject;
 

@@ -13,6 +13,7 @@ define(function (require, exports, module) {
 		data = data || {};
 		self.Criteria = CriteriaTypes.GetCriteriaFromObject(data.Criteria, conceptSets);
 		self.StartWindow = new Window(data.StartWindow);
+		self.EndWindow = new Window(data.EndWindow);
 		self.Occurrence = new Occurrence(data.Occurrence);
 	}
 	

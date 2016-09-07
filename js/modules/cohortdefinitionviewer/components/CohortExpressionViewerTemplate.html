@@ -23,24 +23,10 @@ People having any of the following:
 <div style="width:60%" data-bind="with: expression">
 	<div data-bind="if: AdditionalCriteria">
 		<div>For people matching the Primary Events, include:</div>
-							<!-- INCLUDE IN params BELOW FOR CARTOON
-							, selectedFragment: $component.selectedFragment -->
 		<criteria-group-viewer params="{expression: $data, group: AdditionalCriteria}"></criteria-group-viewer>
 		<div data-bind="with: QualifiedLimit">Limit cohort of initial events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
 	</div>
 </div>
-
-							<!-- not sure where these things go when putting cartoon back in place
-								event: {
-									mouseover: function () { $component.selectedFragment && $component.selectedFragment(expression().PrimaryCriteria()) },
-									mouseout: function() { $component.selectedFragment && $component.selectedFragment(null);}
-								}, 
-								css: {highlighted: $component.selectedFragment && $component.selectedFragment() === expression().PrimaryCriteria()}
-<div style="width:30%; right:10px; top:160px; position:fixed; ">
-	<div data-bind="cartoonExpression:[expression,$component.selectedFragment]">
-	</div>
-</div>
--->
 
 <div data-bind="with: expression">
 	<div data-bind="foreach: InclusionRules">
@@ -52,5 +38,4 @@ People having any of the following:
 <div data-bind="with: expression().ExpressionLimit">Limit qualifying cohort to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
 
 <end-strategy-viewer params="strategy: expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-viewer>
-
 

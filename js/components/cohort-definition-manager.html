@@ -141,6 +141,10 @@
 					<a>Print Friendly</a>
 				</li>
 
+				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'cartoon' }, click: function() { $component.exportTabMode('cartoon') };">
+					<a>Cartoon</a>
+				</li>
+
 				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'json' }, click: function() { $component.exportTabMode('json') };">
 					<a>JSON</a>
 				</li>
@@ -153,7 +157,7 @@
 			<div class="tab-content">
 				<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'printfriendly'}" class="tab-pane">
 					<div class="paddedWrapper">
-						<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression, selectedFragment: selectedFragment"></cohort-expression-viewer>
+						<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
 						<br/>
 						<div>Appendix 1: Concept Set Definitions</div>
 						<br/>
@@ -164,6 +168,37 @@
 							<br/>
 						</div>
 						<!-- /ko -->
+					</div>
+				</div>
+				<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'cartoon'}" class="tab-pane">
+					<div class="paddedWrapper">
+						<!-- ko if: $component.selectedCriteria() -->
+							<div id="cartoon-tooltip" data-bind='with: $component.selectedCriteria()'>
+								<div id="tooltip">
+									<!-- ko ifnot: $data.Criteria -->
+									<div data-bind='component: { 
+													name: $component.getCriteriaIndexComponent($data),
+													params: {expression: $component.model.currentCohortDefinition().expression(), 
+																		criteria: $data} }'></div>
+									<!-- /ko -->
+
+									<!-- ko if: $data.Criteria -->
+										<span data-bind="text: Occurrence.Count"></span> <span data-bind="text: Occurrence.IsDistinct ? 'distinct' : ''"></span>
+												occurrence<span data-bind="text: Occurrence.Count != 1 ? 's' : ''"></span> of
+											<span data-bind="component: {
+																				name: $component.getCriteriaIndexComponent($data.Criteria),
+																				params: {expression: $component.model.currentCohortDefinition().expression(), 
+																				criteria: $data.Criteria }
+																			}"></span>
+													occurring between <window-input-viewer params="Window: StartWindow"></window-input-viewer> index
+									<!-- /ko -->
+								</div>
+							</div>
+						<!-- /ko -->
+						<div data-bind="cohortExpressionCartoon:{expression:model.currentCohortDefinition().expression,
+														selectedCriteria: $component.selectedCriteria,
+														tabPath: $component.tabPath,
+														delayedCartoonUpdate: $component.delayedCartoonUpdate}"></div>
 					</div>
 				</div>
 				<div role="tabpanel" data-bind="css: { active: $component.exportTabMode() == 'json' }" class="tab-pane">
