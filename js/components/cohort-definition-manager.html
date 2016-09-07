@@ -141,6 +141,10 @@
 					<a>Print Friendly</a>
 				</li>
 
+				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'cartoon' }, click: function() { $component.exportTabMode('cartoon') };">
+					<a>Cartoon</a>
+				</li>
+
 				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'json' }, click: function() { $component.exportTabMode('json') };">
 					<a>JSON</a>
 				</li>
@@ -152,6 +156,21 @@
 
 			<div class="tab-content">
 				<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'printfriendly'}" class="tab-pane">
+					<div class="paddedWrapper">
+						<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
+						<br/>
+						<div>Appendix 1: Concept Set Definitions</div>
+						<br/>
+						<!-- ko foreach: sortedConceptSets -->
+						<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
+						<div style="padding-left:20px">
+							<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+							<br/>
+						</div>
+						<!-- /ko -->
+					</div>
+				</div>
+				<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'cartoon'}" class="tab-pane">
 					<div class="paddedWrapper">
 						<!-- ko if: $component.selectedCriteria() -->
 							<div id="cartoon-tooltip" data-bind='with: $component.selectedCriteria()'>
@@ -176,21 +195,10 @@
 								</div>
 							</div>
 						<!-- /ko -->
-						<div data-bind="cohortExpressionCartoon:{expression:model.currentCohortDefinition().expression,selectedFragment:$component.selectedFragment, 
+						<div data-bind="cohortExpressionCartoon:{expression:model.currentCohortDefinition().expression,
 														selectedCriteria: $component.selectedCriteria,
 														tabPath: $component.tabPath,
 														delayedCartoonUpdate: $component.delayedCartoonUpdate}"></div>
-						<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression, selectedFragment: selectedFragment"></cohort-expression-viewer>
-						<br/>
-						<div>Appendix 1: Concept Set Definitions</div>
-						<br/>
-						<!-- ko foreach: sortedConceptSets -->
-						<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
-						<div style="padding-left:20px">
-							<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
-							<br/>
-						</div>
-						<!-- /ko -->
 					</div>
 				</div>
 				<div role="tabpanel" data-bind="css: { active: $component.exportTabMode() == 'json' }" class="tab-pane">

@@ -23,8 +23,6 @@ People having any of the following:
 <div style="width:60%" data-bind="with: expression">
 	<div data-bind="if: AdditionalCriteria">
 		<div>For people matching the Primary Events, include:</div>
-							<!-- INCLUDE IN params BELOW FOR CARTOON
-							, selectedFragment: $component.selectedFragment -->
 		<criteria-group-viewer params="{expression: $data, group: AdditionalCriteria}"></criteria-group-viewer>
 		<div data-bind="with: QualifiedLimit">Limit cohort of initial events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
 	</div>

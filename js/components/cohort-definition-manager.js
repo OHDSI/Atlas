@@ -9,7 +9,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'knockout.dataTables.binding',
 				'faceted-datatable',
 				'databindings', 
-				'css!styles/cartoon.css','cohortdefinitionviewer/expressionCartoonBinding'
+				,'cohortdefinitionviewer/expressionCartoonBinding'
 ], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil, CohortExpression, InclusionRule) {
 
 	function translateSql(sql, dialect) {
@@ -70,7 +70,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			if (path === 'export') {
 				path += '/' + self.exportTabMode();
 			}
-			console.log('tabPath:', path);
+			//console.log('tabPath:', path);
+			if (self.exportTabMode() === 'cartoon') {
+				setTimeout(function() {
+					self.delayedCartoonUpdate('ready');
+				}, 10);
+			}
 			return path;
 		});
 		self.delayedCartoonUpdate = ko.observable(null);
@@ -99,7 +104,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 		});
 
-		self.selectedFragment = ko.observable();
 		self.selectedReport = ko.observable();
 		self.selectedReportCaption = ko.observable();
 		self.loadingInclusionReport = ko.observable(false);

@@ -1,5 +1,6 @@
 "use strict";
-define(['knockout','d3', 'lodash'], function (ko, d3, _) {
+define(['knockout','d3', 'lodash','css!styles/cartoon.css'], 
+			 function (ko, d3, _) {
 
 	var divWidth = ko.observable(); // triggers update
 	var cartoonWidth = ko.computed(function() {
@@ -327,7 +328,7 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 		var primDurs = primCrits.map(crit=>durExt(crit)[1]);
 		var swins = _.flatten(addCrits.map(crit=>startWindow(crit.StartWindow,[0,0])));
 		var obsDays = [-cohdef.PrimaryCriteria.ObservationWindow.PriorDays, 
-										cohdef.PrimaryCriteria.ObservationWindow.PostDays];
+										cohdef.PrimaryCriteria.ObservationWindow.PostDays].map(d=>parseInt(d));
 		var allDayOffsets = _.flatten([primDurs, swins, obsDays])
 		if (!allDayOffsets.length) return;
 
@@ -341,43 +342,25 @@ define(['knockout','d3', 'lodash'], function (ko, d3, _) {
 	ko.bindingHandlers.cohortExpressionCartoon = {
 		init: function (element, valueAccessor, allBindingsAccessor) {
 			// update when dom element is displayed and has width
-			$(element).parents('.tab-pane').bind("DOMSubtreeModified", function() {
+			$(window).resize(function() {
 				divWidth(element.offsetWidth);
 			});
-			$(window).resize(function() {
+			valueAccessor().delayedCartoonUpdate.subscribe(function() {
 				divWidth(element.offsetWidth);
 			});
 			firstTimeSetup(element);
 		},
 		update: function (element, valueAccessor, allBindingsAccessor) {
-			//console.log('in update');
 			if (!divWidth()) {
 				return;
 			}
-			//console.log(`update width divWidth ${divWidth()}`);
 			var expression = valueAccessor().expression();
-			//console.log(expression);
 
-			if (valueAccessor().tabPath() !== "export/printfriendly") {
+			if (valueAccessor().tabPath() !== "export/cartoon") {
 				return;
 			}
-			//console.log('on the right tab');
-			if (!valueAccessor().delayedCartoonUpdate()) {
-				setTimeout(function() {
-					//console.log('wait for dom');
-					// force update after dom is displayed
-					valueAccessor().delayedCartoonUpdate("wait for dom");
-				}, 20);
-				return;
-			}
-			if (valueAccessor().delayedCartoonUpdate() === 'wait for dom') {
-				valueAccessor().delayedCartoonUpdate(null);
-				//console.log('resetting delay');
-			}
-			//console.log('doing stuff in update');
 			var cohdef = dataSetup(expression);
 			cohdef.selectedCriteria = valueAccessor().selectedCriteria;
-			//console.log(cohdef);
 			expressionChangeSetup(element, cohdef);
 		}
 	};
