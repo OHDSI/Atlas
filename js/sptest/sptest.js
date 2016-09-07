@@ -58,13 +58,22 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 				//self.chartObj().updateData(self.chartData().slice(0,2000));
 			}
 		});
-		$(self.jqEventSpace).on('filter.sptest', filterChange);
-		$(self.jqEventSpace).on('brush.sptest', brushEvent);
+		$(self.jqEventSpace).on('filter', filterChange);
+		$(self.jqEventSpace).on('brush', brushEvent);
 		function filterChange() {
 			console.log('filter event', arguments);
 		}
-		function brushEvent() {
+		function brushEvent(evt, brush, x, y) {
 			console.log('brush event', arguments);
+			util.setState('filters.brush',
+				d => {
+					var [[x1,y1],[x2,y2]] = brush.extent();
+					return x.accessors.value(d) >= x1 &&
+								 x.accessors.value(d) <= x2 &&
+								 y.accessors.value(d) >= y1 &&
+								 x.accessors.value(d) <= y2;
+				});
+			$(self.jqEventSpace).trigger('filter');
 		}
 
 		/*

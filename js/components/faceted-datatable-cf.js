@@ -207,10 +207,10 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				util.deleteState(filterSwitched);
 			}
 			updateFilters(facet);
-			$(self.jqEventSpace).trigger('filter', 'internal');
+			$(self.jqEventSpace).trigger('filter.datatable');
 		}
 		function updateFilters(facet) {
-			var filters = util.getState(filterStateKey());
+			var filters = util.getState(filterStateKey()) || {};
 			if (filters[facet.name]) {
 				facet.cfDim.filter(memberName=>filterVal(facet.name, memberName));
 			} else {
@@ -237,11 +237,13 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			self.data(groupAll.value());
 			//self.data(self.recs());
 		}
-		$(self.jqEventSpace).on('filter.datatable', function(internal) {
-			//throw new Error("check what should happen here");
-			if (!internal) {
-				updateFacets();
-			}
+		$(self.jqEventSpace).on('filter.datatable', function() {
+			console.log('internally set filter', arguments);
+		});
+		$(self.jqEventSpace).on('filter', function(evt, filt) {
+			if (evt.namespace === 'datatable')
+				return;
+			console.log('externally set filter', evt, filt);
 		});
 	};
 
