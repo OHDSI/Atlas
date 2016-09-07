@@ -1761,62 +1761,60 @@
 			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
 			//showXAxis: true
 		};
-		/*
-		var cp = _.merge({}, this.defaultOptions, opts);
-		var fields = [];
-		for(var key in cp) {
-			if (cp[key].isField) {
-				cp[key] = new util.Field(key, cp[key], cp);
-				fields.push(cp[key]);
-			}
-		}
-		*/
-		//util.setState('foot.urk',['e',1,2,3]);
-		//console.log(util.getState());
-		this.render = function (data, target, w, h, cp) {
-			if (!data.length) return;
-			DEBUG && (window.cp = cp);
-			var fields = _.filter(cp, opt=>opt instanceof util.Field);
-			if (!cp.data.alreadyInSeries) {
-				//var series = dataToSeries(data, cp.series);
-				var series = dataToSeries(data.slice(0,1000), cp.series);
-			}
-			var divEl = new util.ResizableSvgContainer(target, series, w, h, ['zoom-scatter']);
-			var svgEl = divEl.child('svg')
-			if (!data.length) { // do this some more efficient way
-				nodata(svgEl.as("d3"));
-				return;
-			}
-			var layout = cp._layout = new util.SvgLayout(w, h, cp.layout);
+		this.chartSetup = _.once(function(target, w, h, cp) {
+			this.fields = _.filter(cp, opt=>opt instanceof util.Field);
+			this.divEl = new util.ResizableSvgContainer(target, [null], w, h, ['zoom-scatter']);
+			this.svgEl = this.divEl.child('svg')
+			var layout = this.layout = new util.SvgLayout(w, h, cp.layout);
 			if (cp.y.showLabel) {
-				cp.y.labelEl = new util.ChartLabelLeft(svgEl, layout, cp.y);
+				cp.y.labelEl = new util.ChartLabelLeft(this.svgEl, layout, cp.y);
 			}
 			if (cp.y.showAxis) {
-				cp.y.axisEl = new util.ChartAxisY(svgEl, layout, cp.y);
+				cp.y.axisEl = new util.ChartAxisY(this.svgEl, layout, cp.y);
 			}
 			if (cp.x.showLabel) {
-				cp.x.labelEl = new util.ChartLabelBottom(svgEl, layout, cp.x);
+				cp.x.labelEl = new util.ChartLabelBottom(this.svgEl, layout, cp.x);
 			}
 			if (cp.x.showAxis) {
-				cp.x.axisEl = new util.ChartAxisX(svgEl, layout, cp.x);
+				cp.x.axisEl = new util.ChartAxisX(this.svgEl, layout, cp.x);
 			}
 
-			fields.forEach(field => {
-				field.bindParams({data, series, allFields:cp, layout});
-			});
-			var tooltipBuilder = util.tooltipBuilderForFields(fields, data, series);
 			//cp.updateAccessors(data, series);
 			//cp.updateDomains(data, series);
 			//cp.tooltipSetup(data, series);
 			//cp.updateRanges(layout);
-			cp.chart.chart = new util.ChartChart(svgEl, layout, cp.chart, series);
+			self.cp = cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
 
+		});
+		this.updateData = function(data) {
+			var series = dataToSeries(data, self.cp.series);
+			self.cp.chart.chart.gEl
+					.child('series')
+						//.run({data: series});
+						.run({data: series, delay: 500, duration: 2000});
+		}
+		this.render = function (data, target, w, h, cp) {
+			if (!data.length) return;
+			DEBUG && (window.cp = cp);
+			if (!cp.data.alreadyInSeries) {
+				var series = dataToSeries(data, cp.series);
+				//var series = dataToSeries(data.slice(0,1000), cp.series);
+			}
+			if (!data.length) { // do this some more efficient way
+				nodata(this.svgEl.as("d3"));
+				return;
+			}
+			this.fields.forEach(field => {
+				field.bindParams({data, series, allFields:cp, layout:this.layout});
+			});
+			var tooltipBuilder = util.tooltipBuilderForFields(this.fields, data, series);
 			
 			var chart = cp.chart.chart.gEl.as('d3');
 
+			/*
 			var legendWidth = 0;
 			if (cp.legend.show) {
-				var legend = svgEl.as("d3").append("g")
+				var legend = this.svgEl.as("d3").append("g")
 					.attr("class", "legend");
 
 				var maxWidth = 0;
@@ -1835,14 +1833,15 @@
 						.text(d.name);
 					maxWidth = Math.max(legendItem.node().getBBox().width + 12, maxWidth);
 				});
-				legend.attr("transform", "translate(" + (layout.w() - layout.zone('right') - maxWidth) + ",0)")
+				legend.attr("transform", "translate(" + (this.layout.w() - this.layout.zone('right') - maxWidth) + ",0)")
 				legendWidth += maxWidth + 5;
 			}
+			*/
 
-			layout.positionZones();
-			layout.positionZones();
-			//svgEl.update({data:series})
-			//svgEl.data(series)
+			this.layout.positionZones();
+			this.layout.positionZones();
+			//this.svgEl.update({data:series})
+			//this.svgEl.data(series)
 
 			// brush stuff needs to go before dots so tooltips will work
 			var orig_x_domain = cp.x.scale.domain();
@@ -1894,8 +1893,8 @@
 					//console.log(brush.extent()[0][0], brush.extent()[1][0],cp.x.scale.domain());
 					//cp.y.scale.domain(brush.empty() ? orig_y_domain : [brush.extent()[0][1], brush.extent()[1][1]]);
 
-					//layout.positionZones();
-					//layout.positionZones();
+					//this.layout.positionZones();
+					//this.layout.positionZones();
 					//cp.d3dispatch.brush(brush);
 					$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
 
@@ -1923,7 +1922,7 @@
 				.offset([-10, 0])
 				.html(tooltipBuilder);
 				//.html(cp.tooltip.builder);
-			svgEl.as("d3").call(focusTip);
+			this.svgEl.as("d3").call(focusTip);
 
 			var seriesGs = cp.chart.chart.gEl
 												.addChild('series',
@@ -1941,6 +1940,36 @@
 											selection
 												.on('mouseover', focusTip.show)
 												.on('mouseout', focusTip.hide)
+												.attr("d", function(d) {
+													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
+													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
+													return util.shapePath(
+																		cp.shape.scale(cp.shape.accessors.value(d)),
+																		xVal, // 0, //options.xValue(d),
+																		yVal, // 0, //options.yValue(d),
+																		cp.size.scale(cp.size.accessors.value(d)));
+												})
+												.style("stroke", function (d) {
+													// calling with this so default can reach up to parent
+													// for series name
+													//return cp.color.scale(cp.series.value.call(this, d));
+													return cp.color.scale(cp.color.accessors.value(d));
+												})
+												.transition()
+												.delay(1000).duration(1500)
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													return `translate(${xVal},${yVal}) scale(0,0)`;
+													//return "translate(" + xVal + "," + yVal + ")";
+												})
+												.transition()
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													return `translate(${xVal},${yVal}) scale(1,1)`;
+													//return "translate(" + xVal + "," + yVal + ")";
+												})
 										},
 										updateCb: function(selection, params, opts) {
 											selection
@@ -1959,6 +1988,7 @@
 													//return cp.color.scale(cp.series.value.call(this, d));
 													return cp.color.scale(cp.color.accessors.value(d));
 												})
+												//.transition()
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.accessors.value(d));
 													var yVal = cp.y.scale(cp.y.accessors.value(d));
@@ -1969,16 +1999,24 @@
 										*/
 										exitCb: function(selection, params, transitionOpts={}) {
 											var {delay=0, duration=0, transition} = transitionOpts;
+											/*
+											if (!transition && (delay || transition))
+												transition = d3.transition().delay(delay).duration(duration);
+											*/
+
 											selection
-												//.transition().delay(delay).duration(duration)
 												//.transition(transition)
+												/*
+												//.transition().delay(delay).duration(duration)
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.accessors.value(d));
 													var yVal = cp.y.scale(cp.y.accessors.value(d));
 													return `translate(${xVal},${yVal}) scale(.8,.8)`;
 												})
+												*/
 												.style("stroke", "black")
 												//.transition(transition)
+												/*
 												.transition()
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.accessors.value(d));
@@ -1990,64 +2028,22 @@
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.accessors.value(d));
 													var yVal = cp.y.scale(cp.y.accessors.value(d));
-													return `translate(${xVal},${yVal}) scale(1,1)`;
+													return `translate(${xVal},${yVal}) scale(0,0)`;
+													//return `scale(0,0)`;
 												})
 												.remove()
+												*/
 										},
 									});
 
+			/*
 			series = dataToSeries(data.slice(0,500), cp.series);
 			cp.chart.chart.gEl
 					.child('series')
 						.run({data: series, delay: 1500, duration: 2000});
-			/*
 			*/
 
 			return;
-
-			setTimeout(function() {
-				//divEl.update({duration:750});
-				series = dataToSeries(data.slice(0,100), cp.series);
-				cp.chart.chart.gEl.child('series').run({data: series, duration:1000});
-				//cp.chart.chart.gEl.child('series').update({data: series, delay: 500, duration:1000});
-
-			}, 1100);
-			return;
-			
-			var series = chart.selectAll(".series")  // use addChild?
-				.data(series)
-				.enter()
-				.append("g");
-
-			// enter / add dots
-			var seriesDots = series
-				.selectAll(".dot")
-				.data(function (series) {
-					return series.values;
-				})
-				.enter()
-				.append("path")
-				.attr("class", "dot")
-				.attr("d", function(d) {
-					return util.shapePath(
-										cp.shape.scale(cp.shape.accessors.value(d)),
-										0, //options.xValue(d),
-										0, //options.yValue(d),
-										cp.size.scale(cp.size.accessors.value(d)));
-				})
-				.style("stroke", function (d) {
-					// calling with this so default can reach up to parent
-					// for series name
-					//return cp.color.scale(cp.series.value.call(this, d));
-					return cp.color.scale(cp.color.accessors.value(d));
-				})
-				.attr("transform", function (d) {
-					var xVal = cp.x.scale(cp.x.accessors.value(d));
-					var yVal = cp.y.scale(cp.y.accessors.value(d));
-					return "translate(" + xVal + "," + yVal + ")";
-				})
-				.on('mouseover', focusTip.show)
-				.on('mouseout', focusTip.hide)
 
 			if (cp.series.showLabel) {
 				series.append("text")
@@ -2074,7 +2070,7 @@
 						return "translate(" + (indexPoints.x - 0.5) + "," + indexPoints.y + ")";
 					})
 					.attr("width", 1)
-					.attr("height", layout.svgHeight());
+					.attr("height", this.layout.svgHeight());
 			}
 		}
 	};

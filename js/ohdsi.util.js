@@ -24,7 +24,9 @@
 *			  getState, setState, deleteState
 *			  Field
 */
-define(['jquery','knockout','lz-string'], function($,ko, LZString) {
+define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString, _) {
+
+	var DEBUG = true;
 	
 	var utilModule = { version: '1.0.0' };
 	
@@ -283,6 +285,7 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 			var {delay=0, duration=0} = transitionOpts;
 
 			if (exit) {
+				if (selection.exit().size()) console.log(`exiting ${self.name}`);
 				selection.exit()
 						.transition()
 						.delay(delay).duration(duration)
@@ -1394,7 +1397,14 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 			return;
 		}
 		var state = _getState();
+		/*
 		_.set(state, path, val);
+		that didn't work because:
+			_.set({}, 'foo.5', true)  => {"foo":[null,null,null,null,null,true]}
+		but:
+			_.setWith({}, 'foo.5', true, Object)  => {"foo":{"5":true}}
+		*/
+		_.setWith(state, path, val, Object);
 		_setState(state);
 	}
 	function _setState(state) {
@@ -1458,6 +1468,9 @@ define(['jquery','knockout','lz-string'], function($,ko, LZString) {
 	utilModule.Field = Field;
 	utilModule.tooltipBuilderForFields = tooltipBuilderForFields;
 	
+	if (DEBUG) {
+		window.util = utilModule;
+	}
 	return utilModule;
 	
 });

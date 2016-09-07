@@ -2,7 +2,7 @@
 	<div data-bind="foreach:facets">
 		<div class="facetName"><i class="fa fa-filter"></i><span data-bind="text:caption"></span></div>
 		<div class="facetScrollBox" data-bind="foreach:Members">
-			<div class="facetMemberName" data-bind="css : {selected:Selected}, click: function(data, event) { $component.updateFilters($data, event);}">
+			<div class="facetMemberName" data-bind="css : {selected:Selected}, click: function(data, event) { $component.toggleFilter($data, event);}">
 				<span data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, text:Name + ' (' + ActiveCount + ')'"></span>
 			</div>
 		</div>
@@ -14,7 +14,7 @@
 		<div data-bind="foreach:facets">
 			<div class="facetName"><i class="fa fa-filter"></i><span data-bind="text:caption"></span></div>
 			<div class="facetScrollBox" data-bind="foreach:Members">
-				<div class="facetMemberName" data-bind="css : {selected:Selected}, click: function(data, event) { $component.updateFilters($data, event);}">
+				<div class="facetMemberName" data-bind="css : {selected:Selected}, click: function(data, event) { $component.toggleFilter($data, event);}">
 					<span data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, text:Name + ' (' + ActiveCount + ')'"></span>
 				</div>
 			</div>

@@ -1,3 +1,27 @@
+/* faceted-datatable-cf
+ * datatables, facets, filters controlled by crossfilter
+ *
+ * Author: Sigfried Gold
+ *				 based on faceted-datatable, written by Frank DeFalco and/or Chris Knoll
+ *
+ * in the old faceted-datatable, filter state was maintained in each facet
+ * object in the 'Selected' property.
+ *
+ * faceted-datatable-cf has some new features that complicate things a little:
+ *	- crossfilter is used for filtering records, which is much faster than the old code
+ *	- filter state can now be saved to the url (should be optional, but isn't yet)
+ *	- filter changes can be broadcast to external listeners
+ *	- external filter changes can be caught and reflected here
+ *	- facets and columns can now be defined as ohdsi.util.Field objects
+ *
+ * facet members have to be recalculated when:
+ *	- facet selection changes locally
+ *	- a filter is set externally (the filter will be reflected in crossfilter,
+ *																even though it's not based on a facet)
+ *	- the records observable changes (externally)
+ *	- facets are initialized
+ *	- ?
+ */
 "use strict";
 define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter', 'lodash', 'ohdsi.util', 'knockout.dataTables.binding', 'colvis'], 
 			 function (ko, view, crossfilter, _, util) {
@@ -9,21 +33,13 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 
 		self.options = params.options; // passed directly to datatable binding
 		self.saveState = params.saveStateToUrl;
-
+		self.filterNameSpace = params.filterNameSpace;
 		/*
 		 * was going to allow shared crossfilter, but not for now
 		self.crossfilter = ko.utils.unwrapObservable(params.crossfilter) || 
 												crossfilter(self.recs);
 		*/
 
-	 /*
-		self.dispatch = ko.utils.unwrapObservable(params.d3dispatch) || d3.dispatch("filter");
-		if (ko.isSubscribable(params.d3dispatch)) {
-			params.d3dispatch.subscribe(function(dispatch) {
-				self.dispatch = dispatch;
-			});
-		}
-		*/
 		self.jqEventSpace = params.jqEventSpace || {};
 
 		self.data = ko.observableArray([]);
@@ -59,46 +75,46 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 
 		self.searchFilter = params.searchFilter;
 
-		// if fields parameter is supplied, columns and facets will be ignored
-		if (params.fields) {
-			fieldSetup(ko.utils.unwrapObservable(params.fields));
-			if (ko.isSubscribable(params.fields)) {
-				params.fields.subscribe(function(fields) {
-					fieldSetup(fields);
-				});
-			}
-		} else {
-			if (ko.isObservable(params.columns)) {
-				throw new Error("can't deal with observable columns");
-			}
-			self.columns = params.columns;
-			self._facets = ko.utils.unwrapObservable(params.facets);
-			facetSetup();
-			if (ko.isSubscribable(params.facets)) {
-				params.facets.subscribe(function(facets) {
-					self._facets = facets;
-					facetSetup();
-				});
-			}
-		}
-		function newRecs(recs) {
-			self.crossfilter = crossfilter(recs);
-			self.data(recs);
-			//columnSetup(); // can't change after creating table
-			facetSetup();
-		}
+		newRecs(ko.utils.unwrapObservable(params.recs));
 		if (ko.isSubscribable(params.recs)) {
 			params.recs.subscribe(function(recs) {
 				newRecs(recs);
 			});
 		}
 
-		columnSetup();
-		newRecs(ko.utils.unwrapObservable(params.recs));
-
-		function fieldSetup(fields) {
-			self.columns = _.filter(fields, d=>d.isColumn);
-			self._facets = _.filter(fields, d=>d.isFacet);
+		function newRecs(recs) {
+			self.crossfilter = crossfilter(recs);
+			processFieldFacetColumnParams();
+			self.data(recs);
+			columnSetup();
+			facetSetup();
+		}
+		function processFieldFacetColumnParams() {
+			// if fields parameter is supplied, columns and facets will be ignored
+			if (params.fields) {
+				var fields = ko.utils.unwrapObservable(params.fields);
+				self.columns = _.filter(fields, d=>d.isColumn);
+				self._facets = _.filter(fields, d=>d.isFacet);
+				if (ko.isSubscribable(params.fields)) {
+					params.fields.subscribe(function(fields) {
+						self.columns = _.filter(fields, d=>d.isColumn);
+						self._facets = _.filter(fields, d=>d.isFacet);
+					});
+				}
+			} else {
+				console.warn(`still supporting old style facet/column config, but 
+										  probably best to use ohdsi.util.Field and fields param`);
+				if (ko.isObservable(params.columns)) {
+					throw new Error("can't deal with observable columns");
+				}
+				self.columns = params.columns;
+				self._facets = ko.utils.unwrapObservable(params.facets);
+				if (ko.isSubscribable(params.facets)) {
+					params.facets.subscribe(function(facets) {
+						newRecs(ko.utils.unwrapObservable(params.recs));
+					});
+				}
+			}
 		}
 		function columnSetup() {
 			sharedSetup(self.columns);
@@ -124,7 +140,10 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				facet.cfDimGroupAll.reduce(...reduceToRecs);
 			})
 			//self.facets(self._facets);
-			facetUpdate();
+			self._facets.forEach(facet=>{
+				updateFilters(facet);
+			});
+			updateFacets();
 		}
 		function sharedSetup(fields) {
 			fields.forEach(function(field) {
@@ -145,24 +164,6 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				}
 			});
 		}
-		function facetUpdate() {
-			self._facets.forEach(facet=>{
-				var members = [];
-				facet.cfDimGroup.all().forEach(group=>{
-					var oldMember = _.find(facet.Members,{Name:group.key});
-					var member = {
-						Name: group.key,
-						ActiveCount: facet.countFunc ? facet.countFunc(group) : group.value.length,
-						Selected: oldMember ? oldMember.Selected : false,
-					};
-					members.push(member);
-				});
-				facet.Members = members;
-			});
-			self.facets.removeAll()
-			self.facets.push(...self._facets);
-			//self.data(self.recs());
-		}
 
 		/*
 		 * PUT THIS BACK!
@@ -182,40 +183,65 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		};
 		*/
 
-		//self.recs.subscribe(function () {
-			//facetSetup();
-		//});
-		self.updateFilters = function (data, event) {
+		function filterStateKey() {
+			return `filters${self.filterNameSpace ?
+								('.' + self.filterNameSpace) :
+								''}`;
+		}
+		function filterName(facetName, memberName) {
+			return `${filterStateKey()}.${facetName}.${memberName}`;
+		}
+		function filterVal(facetName, memberName) {
+			return !!util.getState(filterName(facetName, memberName));
+		}
+		self.toggleFilter = function(data, event) {
 			var context = ko.contextFor(event.target);
-			context.$data.Selected = !context.$data.Selected;
+			var memberName = context.$data.Name;
 			var facet = context.$parent;
-			var selected = facet.Members
-												.filter(d=>d.Selected)
-												.map(d=>d.Name);
-			var filter;
-			if (selected.length === 0) {
-				facet.Members.forEach(member=>{
-					member.Selected = false;
-				});
-				//facet.filter(null);
-				filter = null;
+			var facetName = facet.name;
+			var filterOn = !filterVal(facetName, memberName);
+			var filterSwitched = filterName(facetName,memberName)
+			if (filterOn) {
+				util.setState(filterSwitched, true);
 			} else {
-				//facet.filter(d=>selected.indexOf(d) != -1);
-				filter = d=>selected.indexOf(d) != -1;
+				util.deleteState(filterSwitched);
 			}
-			facet.cfDim.filter(filter);
-			//self.dispatch.filter(selected);
-			util.setState('filters.datatable.'+facet.name, selected);
-			//self.dispatch.stateChange();
-			$(self.jqEventSpace).trigger('filter');
-			$(self.jqEventSpace).trigger('stateChange',
-								['filters.datatable.'+facet.name, selected]);
+			updateFilters(facet);
+			$(self.jqEventSpace).trigger('filter', 'internal');
+		}
+		function updateFilters(facet) {
+			var filters = util.getState(filterStateKey());
+			if (filters[facet.name]) {
+				facet.cfDim.filter(memberName=>filterVal(facet.name, memberName));
+			} else {
+				facet.cfDim.filter(null);
+			}
+			updateFacets();
 		};
-		$(self.jqEventSpace).on('filter.datatable', function() {
+		function updateFacets() {
+			self._facets.forEach(facet=>{
+				facet.Members = facet.cfDimGroup.all().map(group=>{
+					var selected = filterVal(facet.name, group.key);
+					return {
+						Name: group.key,
+						ActiveCount: facet.countFunc ? facet.countFunc(group) : group.value.length,
+						Selected: selected,
+					};
+				});
+			});
+			self.facets.removeAll()
+			self.facets.push(...self._facets);
+
 			var groupAll = self.crossfilter.groupAll();
 			groupAll.reduce(...reduceToRecs);
 			self.data(groupAll.value());
-			facetUpdate();
+			//self.data(self.recs());
+		}
+		$(self.jqEventSpace).on('filter.datatable', function(internal) {
+			//throw new Error("check what should happen here");
+			if (!internal) {
+				updateFacets();
+			}
 		});
 	};
 

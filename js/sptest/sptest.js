@@ -12,8 +12,9 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 				var pdata = self.dataSetup(data);
 				var chart = self.chartObj();
 				//chart.render(pdata, self.domElement(), 460, 150, self.chartOptions);
-				self.chartData(pdata.slice(0,200));
-				setTimeout(() => self.chartData(pdata.slice(0,400)), 2000);
+				//self.chartData(pdata);
+				self.chartData(pdata.slice(0,2000));
+				//setTimeout(() => self.chartData(pdata.slice(0,1000)), 2000);
 			}
 		});
 	});
@@ -51,7 +52,10 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 		});
 		self.ready.subscribe(function(ready) {
 			if (ready) {
-				self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
+				self.chartObj().chartSetup(self.domElement(), 460, 150, self.chartOptions);
+				self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
+				setTimeout(() => self.chartObj().updateData(self.chartData().slice(0,2000)), 4000);
+				//self.chartObj().updateData(self.chartData().slice(0,2000));
 			}
 		});
 		$(self.jqEventSpace).on('filter.sptest', filterChange);
@@ -89,6 +93,7 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 			}
 			return arr;
 		};
+		/*
 		self.columns = [
 			{ title: 'Covariate', data: 'covariateName', },
 			{ title: 'Analysis ID', data: 'analysisId', },
@@ -100,6 +105,7 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 			{ caption: 'Analysis ID', func: d=>d.analysisId, filter:ko.observable(null), Members:[] },
 			{ caption: 'Concept ID', data: d=>d.conceptId, filter:ko.observable(null), Members:[] },
 		]);
+		*/
 		getData(self);
 	}
 
@@ -273,8 +279,11 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 			},
 			covariateName: {
 						propName: 'covariateName',
-						value: d => d.covariateName.split(/:/).shift(),
+						value: d => {
+							return d.covariateName.split(/:/).shift();
+						},
 						isColumn: true,
+						isFacet: true,
 						colIdx: 0,
 						tooltipOrder: 7,
 						label: 'Covariate Name',
