@@ -1,4 +1,4 @@
-define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, appConfig) {
+define(['knockout', 'text!./welcome.html', 'appConfig', 'webapi/AuthAPI'], function (ko, view, appConfig, authApi) {
     function welcome(params) {
         var self = this;
 
@@ -7,35 +7,17 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
         self.token = ko.observable();
         self.isInProgress = ko.observable(false);
         self.login = ko.computed(function () {
-            if (self.token()) {
-                var t = String(self.token());
-                return parseJwtPayload(t).sub;
-            } else {
-                return null;
-            }
+            return authApi.getSubject();
         });
-        self.tokenExpirationDate = function() {
-            if (self.token()) {
-                var expirationInSeconds = parseJwtPayload(self.token()).exp;
-                var expirationDate = new Date(expirationInSeconds * 1000);
-                return expirationDate;
-            } else
-                return null;
-        };
         self.expiration = ko.computed(function () {
-            var expDate = self.tokenExpirationDate();
-            if (expDate) {
-                return expDate.toLocaleString();
-            } else {
-                return null;
-            }
+            var expDate = authApi.getTokenExpirationDate();
+            return expDate
+                ? expDate.toLocaleString()
+                : null;
         });
         self.isLoggedIn = ko.computed(function () {
             if (self.token()) {
-                var exp = self.tokenExpirationDate();
-                var now = new Date();
-                var valid = now < exp;
-                return valid;
+                return new Date() < authApi.getTokenExpirationDate();
             }
 
             return false;
@@ -121,73 +103,26 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
         };
 
         var setToken = function (token) {
-            if (token == "null") {
-                token = null;
-            }
-
+            authApi.setToken(token);
             self.token(token);
             self.errorMsg(null);
-            if (token) {
-                localStorage.bearerToken = token;
-            } else {
-                localStorage.removeItem('bearerToken');
-            }
-        };
-
-        var base64urldecode = function (arg) {
-            var s = arg;
-            s = s.replace(/-/g, '+'); // 62nd char of encoding
-            s = s.replace(/_/g, '/'); // 63rd char of encoding
-            switch (s.length % 4) // Pad with trailing '='s
-            {
-                case 0: break; // No pad chars in this case
-                case 2: s += "=="; break; // Two pad chars
-                case 3: s += "="; break; // One pad char
-                default: throw new Error("Illegal base64url string!");
-            }
-            return window.atob(s); // Standard base64 decoder
-        };
-
-        var parseJwtPayload = function (jwt) {
-            var parts = jwt.split(".");
-            if (parts.length != 3) {
-                throw new Error("JSON Web Token must have three parts");
-            }
-
-            var payload = base64urldecode(parts[1]);
-            return $.parseJSON(payload);
         };
 
         // check if token works
-        if (localStorage.bearerToken && localStorage.bearerToken != "null") {
+        var token = authApi.getToken();
+        if (token != null) {
             self.isInProgress(true);
-            $.ajax({
-                url: self.serviceUrl + "user/loggedIn",
-                method: 'GET',
-                headers: {
-                    Authorization: "Bearer " + localStorage.bearerToken
-                },
-                statusCode: {
-                  401: function() {
-                      setToken(null);
-                  }  
-                },
-                success: function(data, textStatus, jqXHR) {
-                    if (data == true) {
-                        setToken(localStorage.bearerToken);
+            authApi.verifyToken()
+                .then(function(isValid) {
+                    if (isValid === true) {
+                        setToken(token);
                     } else {
                         setToken(null);
                     }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    self.errorMsg(fromatErrMsg(jqXHR, textStatus, errorThrown));
-                },
-                complete: function(data) {
+                })
+                .always(function() {
                     self.isInProgress(false);
-                }
-            });
-        } else {
-            setToken(null);
+                });
         }
     }
 
