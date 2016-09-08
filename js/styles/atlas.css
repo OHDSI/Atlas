@@ -115,6 +115,13 @@ body {
 	padding: 0px 5px 0px 5px;
 	border-bottom: solid 1px #ccc;
 }
+.subheading {
+	font-size: 12px;
+	color: #000;
+	font-weight: normal;
+	margin: 7px 0px 3px 0px;
+	padding: 0px 5px 0px 5px;
+}
 
 #wrapperConfigure {
 	padding: 5px;
