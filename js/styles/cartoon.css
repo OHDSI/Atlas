@@ -210,8 +210,8 @@ div.crit.row {
 
 div.name,
 div.crit-row div.name {
-	overflow: scroll;
 	/*
+	overflow: scroll;
 	font-weight: bold;
 	*/
 	padding: 0px 5px 0px 5px;

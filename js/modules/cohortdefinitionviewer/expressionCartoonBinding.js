@@ -145,12 +145,14 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 															 inclusionRulesBodyUpdate, 
 															 {cohdef, rules:cohdef.InclusionRules});
 
+		/*
 		$('div.indent-bar').each(function() { 
 			$(this).height($(this).closest('div.row').height()) 
 		});
 		$('div.name').each(function() { 
 			$(this).height($(this).closest('div.row').height()) 
 		});
+		*/
 		$('div.cartoon').width(cartoonWidth());
 		$('[data-toggle="tooltip"]').tooltip();
 	}
