@@ -125,12 +125,12 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 															 primaryCritHeaderAdd, primaryCritHeaderUpdate, 
 															 {cohdef});
 		d3AddIfNeeded(d3element, [null], 'div', 
-															 ['primarycrit','section','body'], 
+															 ['primarycrit','section','body', 'paddedWrapper'], 
 															 null, 
 															 primaryCritBodyUpdate, 
 															 {cohdef});
 		d3AddIfNeeded(d3element, [null], 'div', 
-															 ['addcrit','section','body'], 
+															 ['addcrit','section','body', 'paddedWrapper'], 
 															 addCritSectBodyAdd,
 															 addCritSectBodyUpdate,
 															 {cohdef, acsect:cohdef.AdditionalCriteria});
@@ -140,7 +140,7 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 															 inclusionRulesHeaderUpdate, 
 															 {cohdef, rules:cohdef.InclusionRules});
 		d3AddIfNeeded(d3element, cohdef.InclusionRules, 'div', 
-															 ['inclusion','section','body'], 
+															 ['inclusion','section','body', 'paddedWrapper'], 
 															 inclusionRulesBodyAdd, 
 															 inclusionRulesBodyUpdate, 
 															 {cohdef, rules:cohdef.InclusionRules});
@@ -196,7 +196,7 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 		var obsext = obsExtent(cohdef)
 		cohdef.obsExt = obsext;
 		cohdef.obsScale = d3.scale.linear();
-		cohdef.obsAxis = d3.svg.axis().orient('bottom').scale(cohdef.obsScale);
+		cohdef.obsAxis = d3.svg.axis().orient('top').scale(cohdef.obsScale);
 		return cohdef;
 		/*
 		if (obsext && !(obsext[0] === 0 && obsext[1] === 0)) {
@@ -372,7 +372,7 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 										<div class="col-xs-12 header-content">
 										</div>
 									</div>
-									<div class="primary header row header-row">
+									<div class="paddedWrapper primary header row header-row">
 										<div class="col-xs-12 header-content">
 											<div class="msg"></div>
 											<div class="row">
@@ -387,7 +387,7 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 	}
 	function primaryCritHeaderUpdate(d3element, {cohdef}={}) {
 		var pcList = getCrits(cohdef, "primary", "crit");
-		var title = '<h3>Primary Criteria</h3>'; 
+		var title = '<div class="heading">Primary Criteria</div>'; 
 		var pLimitType = cohdef.PrimaryCriteria.PrimaryCriteriaLimit.Type;
 		var pcPlural = pLimitType === 'All' ? 's' : '';
 		var oneOrAny = pLimitType === 'All' ? 'any' : 'one';
@@ -413,17 +413,16 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 						(<svg style="display:inline-block" height="10px" width="10px">
 							<circle cx="5" cy="5" r="4" style="fill:green" />
 						</svg>)` */
-				`<svg height="0" class="x axis col-xs-12"/>`;
+				`<svg height="0" class="x axis col-xs-12"><g transform="translate(0,20)" /></svg>`;
 		
 		d3element.select('div.section-header>div.header-content').html(title);
 		d3element.select('div.msg').html(limitMsg + ' ' + resultDateMsg);
 		d3element.select('div.cartoon').html(rightHeader);
 		resetScales(cohdef);
-		d3element.select('svg.x.axis').call(cohdef.obsAxis);
-		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
+		d3element.select('svg.x.axis>g').call(cohdef.obsAxis);
+		d3element.select('svg.x.axis>g').selectAll("text") // select all the text elements for the xaxis
 						.attr("transform", function(d) {
-							return "translate(" + this.getBBox().height*-2 + "," + 
-																		this.getBBox().height + ")rotate(-45)";
+							return "rotate(-45)";
 						});
 	}
 	function skeleton(selection, {cohdef, type} = {}) {
@@ -464,9 +463,9 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 									 <div class="crit header row header-row">
 										<div class="col-xs-12 header-content">
 											<div class="row">
-												<div class="col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
+												<div class="axis-div col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
 													<div class="cartoon">
-														<svg height="0" class="x axis col-xs-12"/>
+														<svg height="0" class="x axis col-xs-12"><g transform="translate(0,20)" /></svg>
 													</div>
 												</div>
 											</div>
@@ -500,17 +499,18 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 			
 			html += `${all_any}${rightHeader}
 								<div class="row">
-									<div class="col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
+									<div class="axis-div col-xs-${12-NAME_COLS} col-xs-offset-${NAME_COLS}">
 										<div class="cartoon">
-											<svg height="0" class="x axis col-xs-12"/>
+											<svg height="0" class="x axis col-xs-12"><g transform="translate(0,20)" /></svg>
 										</div>
 									</div>
 								</div>`;
 		}
 		d3element.select('div.header-content').html(html);
-		d3element.select('svg.x.axis').call(cohdef.obsAxis);
-		d3element.select('svg.x.axis').selectAll(".x.axis text") // select all the text elements for the xaxis
+		d3element.select('svg.x.axis>g').call(cohdef.obsAxis);
+		d3element.select('svg.x.axis>g').selectAll("text") // select all the text elements for the xaxis
 						.attr("transform", function(d) {
+							return "rotate(-45)";
 							return "translate(" + this.getBBox().height*-2 + "," + 
 																		this.getBBox().height + ")rotate(-45)";
 						});
@@ -521,29 +521,29 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 	}
 	function addCritSectBodyAdd(d3element, {cohdef, acsect}) {
 		var headerHtml = `
-									<div class="critgroup section-header row header-row">
+									<div class="critgroup section-header row header-row paddedWrapper">
 										<div class="col-xs-12 header-content">
 										</div>
 									</div>
-									<div class="critgroup section-body">
+									<div class="critgroup section-body paddedWrapper">
 									</div>`;
 		d3element.html(headerHtml);
 	}
 	function addCritSectBodyUpdate(d3element, {cohdef, acsect}) {
-		var title = '<h3>Additional Criteria</h3>'; 
+		var title = '<div class="heading">Additional Criteria</div>'; 
 		if (!acsect)
-			title = '<h4>No additional criteria</h4>';
+			title = '<div class="heading">No additional criteria</div>';
 		d3element.select('div.header-content').html(title);
 		if (!acsect) return;
 		var body = d3element.select('div.section-body');
 
 		d3AddIfNeeded(body, [acsect], 'div', 
-															 ['critgroup','section','header'], 
+															 ['critgroup','section','header', 'paddedWrapper'], 
 															 critGroupHeaderAdd, 
 															 critGroupHeaderUpdate, 
 															 {cohdef, critgroup:acsect});
 		d3AddIfNeeded(body, [acsect], 'div', 
-															 ['critgroup','section','body'], 
+															 ['critgroup','section','body', 'paddedWrapper'], 
 															 null,
 															 critGroupBodyUpdate,
 															 {cohdef, critgroup:acsect});
@@ -664,16 +664,16 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 		})
 	}
 	function inclusionRulesHeaderUpdate(d3element, {cohdef, rules} = {}) {
-		var html = '<h3>Inclusion Rules</h3>'; 
+		var html = '<div class="heading">Inclusion Rules</div>'; 
 		if (!rules.length)
-			html = '<h4>No inclusion rules</h4>';
+			html = '<div class="subheading">No inclusion rules</div>';
 		var headerHtml = `
 									<div class="critgroup section-header row header-row">
 										<div class="col-xs-12 header-content">
 											${html}
 										</div>
 									</div>
-									<div class="critgroup section-body">
+									<div class="critgroup section-body paddedWrapper">
 									</div>`;
 		d3element.html(headerHtml);
 	}
@@ -689,7 +689,7 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 																	inclusionRuleHeaderUpdate, 
 																	{cohdef, rule});
 				d3AddIfNeeded(this, [rule], 'div', 
-																	['critgroup','section','body'], 
+																	['critgroup','section','body', 'paddedWrapper'], 
 																	null,
 																	inclusionRuleBodyUpdate,
 																	{cohdef, rule});
@@ -716,7 +716,7 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 									 `);
 	}
 	function inclusionRuleHeaderUpdate(d3element, {cohdef, rule} = {}) {
-		var html = `<h4>${rule.name}</h4>${rule.description}`; 
+		var html = `<div class="subheading">${rule.name} (${rule.description})</div>`; 
 		d3element.select('div.header-content').html(html);
 	}
 	function critName(selection, cohdef, critType) {
