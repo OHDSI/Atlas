@@ -23,7 +23,7 @@
 		<li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
 			<a>Included Source Codes</a>
 		</li>
-			<li role="presentation" data-bind="click: function() {$component.routeTo('evidence');}, attr: {class: model.currentConceptSetMode() == 'evidence' ? 'active' : ''}">
+			<li role="presentation" data-bind="visible: $component.displayEvidence(), click: function() {$component.routeTo('evidence');}, attr: {class: model.currentConceptSetMode() == 'evidence' ? 'active' : ''}">
 				<a>Explore Evidence</a>
 			</li>
 			<li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>

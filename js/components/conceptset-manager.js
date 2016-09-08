@@ -5,6 +5,9 @@ define(['knockout', 'text!./conceptset-manager.html', 'appConfig', 'knockout.dat
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
 		self.defaultConceptSetName = "New Concept Set";
+        self.displayEvidence = ko.pureComputed(function () {
+                                    return (self.model.evidenceUrl() && self.model.evidenceUrl().length > 0);
+                                });
 
 		self.renderLink = function (s, p, d) {
 			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
