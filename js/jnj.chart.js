@@ -1877,6 +1877,9 @@
 					//var s = d3.event.selection;
 					// wanted to use https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
 					// but it's d3.v4
+
+					$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
+
 					if (brush.empty()) {
 						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
 						cp.x.scale.domain(orig_x_domain);
@@ -1888,15 +1891,7 @@
 						//cp.y.scale.domain([brush.extent()[1][1], brush.extent()[0][1]].map(cp.y.scale.invert, cp.y.scale));
 						//brushEl.as('d3').call(brush.move, null);
 					}
-					//console.log(brush.extent()[0][0], brush.extent()[1][0],cp.x.scale.domain());
-					//cp.x.scale.domain(brush.empty() ? orig_x_domain : [brush.extent()[0][0], brush.extent()[1][0]]);
-					//console.log(brush.extent()[0][0], brush.extent()[1][0],cp.x.scale.domain());
-					//cp.y.scale.domain(brush.empty() ? orig_y_domain : [brush.extent()[0][1], brush.extent()[1][1]]);
 
-					//this.layout.positionZones();
-					//this.layout.positionZones();
-					//cp.d3dispatch.brush(brush);
-					$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
 
 					//var t = cp.chart.chart.gEl.as('d3').transition().duration(2750);
 					cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
@@ -1904,8 +1899,8 @@
 
 					seriesGs.as('d3')
 						.selectAll(".dot")
-						.transition()
-						.duration(750)
+						//.transition()
+						//.duration(750)
 						.attr("transform", function (d) {
 							var xVal = cp.x.scale(cp.x.accessors.value(d));
 							var yVal = cp.y.scale(cp.y.accessors.value(d));
@@ -1914,6 +1909,8 @@
 
 					$('.extent').hide();
 					$('.resize').hide();
+
+					//$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
 				});
 
 
@@ -1940,6 +1937,8 @@
 											selection
 												.on('mouseover', focusTip.show)
 												.on('mouseout', focusTip.hide)
+												//.transition()
+												//.delay(1000).duration(1500)
 												.attr("d", function(d) {
 													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
 													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
@@ -1955,20 +1954,11 @@
 													//return cp.color.scale(cp.series.value.call(this, d));
 													return cp.color.scale(cp.color.accessors.value(d));
 												})
-												.transition()
-												.delay(1000).duration(1500)
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.accessors.value(d));
 													var yVal = cp.y.scale(cp.y.accessors.value(d));
-													return `translate(${xVal},${yVal}) scale(0,0)`;
-													//return "translate(" + xVal + "," + yVal + ")";
-												})
-												.transition()
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
-													return `translate(${xVal},${yVal}) scale(1,1)`;
-													//return "translate(" + xVal + "," + yVal + ")";
+													//return `translate(${xVal},${yVal}) scale(1,1)`;
+													return "translate(" + xVal + "," + yVal + ")";
 												})
 										},
 										updateCb: function(selection, params, opts) {

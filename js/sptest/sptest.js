@@ -53,8 +53,9 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 		self.ready.subscribe(function(ready) {
 			if (ready) {
 				self.chartObj().chartSetup(self.domElement(), 460, 150, self.chartOptions);
-				self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
-				setTimeout(() => self.chartObj().updateData(self.chartData().slice(0,2000)), 4000);
+				self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
+				//self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
+				//setTimeout(() => self.chartObj().updateData(self.chartData().slice(0,2000)), 4000);
 				//self.chartObj().updateData(self.chartData().slice(0,2000));
 			}
 		});
@@ -65,15 +66,18 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 		}
 		function brushEvent(evt, brush, x, y) {
 			console.log('brush event', arguments);
-			util.setState('filters.brush',
-				d => {
-					var [[x1,y1],[x2,y2]] = brush.extent();
+			var [[x1,y1],[x2,y2]] = brush.extent();
+			var xyFilt = brush.empty() ?
+				null :
+				(d => {
 					return x.accessors.value(d) >= x1 &&
 								 x.accessors.value(d) <= x2 &&
 								 y.accessors.value(d) >= y1 &&
 								 x.accessors.value(d) <= y2;
 				});
-			$(self.jqEventSpace).trigger('filter');
+			util.setState('filters.brush', xyFilt);
+			$(self.jqEventSpace).trigger('filter', 
+								{filterName:'xy', func:xyFilt});
 		}
 
 		/*
@@ -159,6 +163,7 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 			y: {
 						value: d=>d.afterMatchingStdDiff,
 						label: "After matching StdDiff",
+						/*
 						format: d => {
 							var str = d.toString();
 							var idx = str.indexOf('.');
@@ -169,12 +174,28 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 							var precision = (str.length - (idx+1) - 2).toString();
 							return d3.format('0.' + precision + '%')(d);
 						},
+						*/
 						tooltipOrder: 2,
 						propName: 'afterMatchingStdDiff',
 						isColumn: true,
 						colIdx: 1,
 						isField: true,
 			},
+			/*
+			xy: { // for brushing
+						_accessors: {
+							value: {
+								func: function(d,allFields) {
+									return [
+													allFields.accessors.x.value(d),
+													allFields.accessors.y.value(d)];
+								},
+								posParams: ['d','allFields'],
+							},
+						},
+						isField: true,
+			},
+			*/
 			size: {
 						//value: d=>d.afterMatchingMeanTreated,
 						propName: 'afterMatchingMeanTreated',

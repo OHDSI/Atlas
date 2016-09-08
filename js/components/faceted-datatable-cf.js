@@ -75,6 +75,8 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 
 		self.searchFilter = params.searchFilter;
 
+		self.externalFilters = {};
+
 		newRecs(ko.utils.unwrapObservable(params.recs));
 		if (ko.isSubscribable(params.recs)) {
 			params.recs.subscribe(function(recs) {
@@ -240,10 +242,19 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		$(self.jqEventSpace).on('filter.datatable', function() {
 			console.log('internally set filter', arguments);
 		});
-		$(self.jqEventSpace).on('filter', function(evt, filt) {
+		$(self.jqEventSpace).on('filter', function(evt, {filterName, func} = {}) {
 			if (evt.namespace === 'datatable')
 				return;
-			console.log('externally set filter', evt, filt);
+			console.log('externally set filter', evt, filterName, func);
+			var dim = self.externalFilters[filterName] =
+								self.externalFilters[filterName] || 
+									self.crossfilter.dimension(d=>d);
+			if (func) {
+				dim.filter(func);
+			} else {
+				dim.dispose();
+			}
+			updateFacets();
 		});
 	};
 
