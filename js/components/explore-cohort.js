@@ -12,6 +12,29 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 			self.sourceKey.subscribe(function(sourceKey) {
 				util.setState('sourceKey', sourceKey);
 			});
+			self.cohortDefSource = ko.computed(function() {
+				return {
+									cohortDef: params.model.currentCohortDefinition(),
+									sourceKey: self.sourceKey(),
+				};
+			});
+			self.cohortDefSource.subscribe(function(o) {
+				self.loadConceptSets(o);
+			});
+			self.loadConceptSets = function(o) {
+				var conceptSets = ko.toJS(o.cohortDef.expression().ConceptSets());
+				var cs = {};
+				window.cs = cs;
+				conceptSets.forEach(function(conceptSet) {
+					var success = function(results) {
+						console.log(results);
+						cs[conceptSet.name] = results;
+					};
+					pageModel.resolveConceptSetExpressionSimple(ko.toJSON(conceptSet.expression), success)
+				});
+			};
+			self.onGotConceptSet
+			self.loadConceptSets(self.cohortDefSource());
 
 			params.services.sources
 				.filter(source => source.hasCDM)

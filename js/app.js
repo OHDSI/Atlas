@@ -798,6 +798,26 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			});
 			return resolvingPromise;
 		};
+		self.resolveConceptSetExpressionSimple = function(expression, success) {
+			var resolvingPromise = $.ajax({
+				url: self.vocabularyUrl() + 'resolveConceptSetExpression',
+				data: expression,
+				method: 'POST',
+				contentType: 'application/json',
+				success: success || function (info) {
+					var identifiers = info;
+					self.conceptSetInclusionIdentifiers(info);
+					self.currentIncludedConceptIdentifierList(info.join(','));
+					self.conceptSetInclusionCount(info.length);
+					self.resolvingConceptSetExpression(false);
+				},
+				error: function (err) {
+					self.currentView('configure');
+					self.resolvingConceptSetExpression(false);
+				}
+			});
+			return resolvingPromise;
+		};
 		self.renderCheckbox = function (field) {
 			return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); pageModel.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
 		}
