@@ -1,6 +1,6 @@
 .curly-brace {
 	stroke: #f19119;
-	stroke-width: 1px;
+	stroke-width: 3px;
 	fill: none;
 }
 .curly-brace.indeterminate {
@@ -105,12 +105,11 @@ div.cartoon-primary-criteria > div.crit svg {
 
 div.cartoon {
 	float: right;
-	/* border: 1px dotted pink; */
+	/* border: 1px solid #ccc; */
 }
 div.cartoon-critgroup line,
 div.cartoon svg line {
-	stroke-width: 1px;
-	stroke: #f19119;
+	stroke-width: 3px;
 }
 div.cartoon svg line.conditional {
 	stroke-dasharray: 3.3;
@@ -175,16 +174,22 @@ div.cartoon svg.x.axis {
 }
 div.crit-row div {
 	padding: 0;
+	background-color: #333;
+	color: #fff;
 }
 div.header-content svg,
 div.crit-row svg {
 	padding: 0;
 }
 div.crit-row svg {
-	background: #D0D078;
+	background: #b7cbdc;
 }
+.cartoon .axis text {
+	font-size:9px
+}
+
 rect.not-obs {
-	fill: #CCC;
+	fill: #eee;
 }
 div.indent-bar,
 div.crit-row div.indent-bar {
@@ -193,10 +198,10 @@ div.crit-row div.indent-bar {
 	font-weight: bold;
 	*/
 	padding: 0px 5px 0px 5px;
+	color: #000;
 }
 div.after-indent {
-	border: 1px solid #EEE;
-	padding: 0;
+	margin-bottom: 3px;
 }
 div.subgroup-container {
 	padding: 0;

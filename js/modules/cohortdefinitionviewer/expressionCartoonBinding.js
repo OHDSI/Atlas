@@ -422,10 +422,7 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 		d3element.select('div.cartoon').html(rightHeader);
 		resetScales(cohdef);
 		d3element.select('svg.x.axis>g').call(cohdef.obsAxis);
-		d3element.select('svg.x.axis>g').selectAll("text") // select all the text elements for the xaxis
-						.attr("transform", function(d) {
-							return "rotate(-45)";
-						});
+		d3element.select('svg.x.axis>g').selectAll("text");
 	}
 	function skeleton(selection, {cohdef, type} = {}) {
 		// the reason this uses d3 append rather than composing html is to
@@ -510,12 +507,7 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 		}
 		d3element.select('div.header-content').html(html);
 		d3element.select('svg.x.axis>g').call(cohdef.obsAxis);
-		d3element.select('svg.x.axis>g').selectAll("text") // select all the text elements for the xaxis
-						.attr("transform", function(d) {
-							return "rotate(-45)";
-							return "translate(" + this.getBBox().height*-2 + "," + 
-																		this.getBBox().height + ")rotate(-45)";
-						});
+		d3element.select('svg.x.axis>g').selectAll("text");
 	}
 	function primaryCritBodyUpdate(d3element,{cohdef}={}) {
 		var pcList = getCrits(cohdef, "primary", "crit");
