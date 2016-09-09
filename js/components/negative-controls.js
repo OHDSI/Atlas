@@ -5,7 +5,6 @@ define(['knockout',
         'webapi/CDMResultsAPI',
         'webapi/ConceptSetAPI',
         'lodash', 
-        'crossfilter/crossfilter',
         'ohdsi.util',
         'knockout.dataTables.binding',
         'components/faceted-datatable-cf',
@@ -24,6 +23,7 @@ define(['knockout',
         self.negativeControls = params.negativeControls;
         self.dirtyFlag = params.dirtyFlag;
         self.conceptSetValid = ko.observable(false);
+        self.conceptSetValidText = ko.observable("");
         self.conceptDomainId = ko.observable(null);
         self.targetDomainId = ko.observable(null);
         self.currentEvidenceService = ko.observable();
@@ -32,21 +32,228 @@ define(['knockout',
         self.evidenceSources = ko.observableArray();
         self.loadingEvidenceSources = ko.observable(false);
         self.selectedReportCaption = ko.observable();
+        self.recordCountsRefreshing = ko.observable(false);
+        self.recordCountClass = ko.pureComputed(function() {
+            return self.recordCountsRefreshing() ? "fa fa-refresh fa-spin fa-lg" : "fa fa-database fa-lg";
+        });
         
-        // Cross filter settings
-        self.crossfilter = ko.observable();
-        self.filtersChanged = ko.observable();
-        self.filteredRecs = ko.observableArray([]);
-        self.facetsObs = ko.observableArray([]);
-        // TODO: Make the func: filter a function that would actually
-        // return the filters we want to use for negative/positive controls.
-        self.dimensions = {
-            'Controls': {
-                caption: 'Subset to candidate',
-                //func: d => d.domainId,
-                func: function(d) { 
-                    if (d.medlineCt == 0 && 
-                        d.medlineCase == 0 && 
+        
+        self.fields = {
+            id: {
+                propName: 'conceptId',
+                value: 'conceptId',
+                isColumn: true,
+                isFacet: false,
+                colIdx: 0,
+                label: 'Id',
+                isField: true,
+            },
+            name: {
+                propName: 'conceptName',
+                value: d => {
+                    var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+                    return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 1,
+                label: 'Name',
+                isField: true,
+            },            
+            domainId: {
+                propName: 'domainId',
+                value: 'domainId',
+                isColumn: true,
+                isFacet: false,
+                colIdx: 2,
+                label: 'Domain Id',
+                isField: true,
+            },
+            medlineCT: {
+                propName: 'medlineCt',
+                value: d => {
+                    return d.medlineCt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 3,
+                label: 'Medline CT',
+                isField: true,
+            },
+            medlineCase: {
+                propName: 'medlineCase',
+                value: d => {
+                    return d.medlineCase.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 4,
+                label: 'Medline Case',
+                isField: true,
+            },
+            medlineOther: {
+                propName: 'medlineOther',
+                value: d => {
+                    return d.medlineOther.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 4,
+                label: 'Medline Other',
+                isField: true,
+            },
+            semmeddbCtT: {
+                propName: 'semmeddbCtT',
+                value: d => {
+                    return d.semmeddbCtT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 5,
+                label: 'SemMedDB CT (True)',
+                isField: true,
+                visible: false,
+            },
+            semmeddbCaseT: {
+                propName: 'semmeddbCaseT',
+                value: d => {
+                    return d.semmeddbCaseT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 6,
+                label: 'SemMedDB Case (True)',
+                isField: true,
+                visible: false,
+            },
+            semmeddbOtherT: {
+                propName: 'semmeddbOtherT',
+                value: d => {
+                    return d.semmeddbOtherT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 6,
+                label: 'SemMedDB Other (True)',
+                isField: true,
+                visible: false,
+            },
+            semmeddbCtF: {
+                propName: 'semmeddbCtF',
+                value: d => {
+                    return d.semmeddbCtF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 7,
+                label: 'SemMedDB CT (False)',
+                isField: true,
+                visible: false,
+            },
+            semmeddbCaseF: {
+                propName: 'semmeddbCaseF',
+                value: d => {
+                    return d.semmeddbCaseF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 8,
+                label: 'SemMedDB Case (False)',
+                isField: true,
+                visible: false,
+            }, 
+            semmeddbOtherF: {
+                propName: 'semmeddbOtherF',
+                value: d => {
+                    return d.semmeddbOtherF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 9,
+                label: 'SemMedDB Other (False)',
+                isField: true,
+                visible: false,
+            }, 
+            euSPC:  {
+                propName: 'euSPC',
+                value: d => {
+                    return d.euSPC.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 11,
+                label: 'EU SPC',
+                isField: true,
+                visible: false,
+            }, 
+            splicerADR:  {
+                propName: 'splADR',
+                value: d => {
+                    return d.splADR.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 12,
+                label: 'Splicer ADR',
+                isField: true,
+            }, 
+            aers: {
+                propName: 'aers',
+                value: d => {
+                    return d.aers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 13,
+                label: 'AERS',
+                isField: true,
+                
+            },
+            aersPRR: {
+                propName: 'aersPRR',
+                value: d => {
+                    return (Math.ceil(d.aersPRR * 1000) / 1000).toFixed(4);
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 14,
+                label: 'AERS PRR',
+                isField: true,
+            },
+            prediction: {
+                propName: 'prediction',
+                value: d => {
+                    return (Math.ceil(d.prediction * 1000) / 1000).toFixed(4);
+                },
+                isColumn: true,
+                isFacet: false,
+                colIdx: 15,
+                label: 'AERS PRR',
+                isField: true,                
+            },
+            RC: {
+                propName: 'recordCount',
+                value: 'recordCount',
+                isColumn: true,
+                isFacet: false,
+                colIdx: 16,
+                label: '<i id="dtNegCtrlRC" class="fa fa-database" aria-hidden="true"></i> RC',
+                isField: true,
+            },
+            DRC: {
+                propName: 'descendantRecordCount',
+                value: 'descendantRecordCount',
+                isColumn: true,
+                isFacet: false,
+                colIdx: 17,
+                label: '<i id="dtNegCtrlDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
+                isField: true,
+            },
+            fControls: {
+                propName: 'medlineCt',
+                value: d => { 
+                    if (d.medlineCt == 0 &&  
+                        d.medlineCase == 0 &&  
                         d.medlineOther == 0 &&
                         d.splADR == 0 &&
                         d.aersPRR.toFixed(2) < 2.00 &&
@@ -55,155 +262,89 @@ define(['knockout',
                     } else if (d.prediction.toFixed(2) > 0.80) {
                     	return 'Positive Controls'
                     } else {
-                    	return 'All Other Controls'
+                    	return 'Other'
                     }
                 },
-                filter: ko.observable(null),
-                Members: [], //ko.observableArray([{Name:'foo', ActiveCount:'bar',Selected:false}]),
-            }			
-        };        
-        var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
-        self.facets = ['Controls'].map(d => self.dimensions[d]);
-        
-        
-        self.reportColumns = [
-                        {
-                            title: 'Id',
-                            data: 'conceptId'
-                        },
-                        {
-                            title: 'Name',
-                            data: 'conceptName',
-                            render: function (s, p, d) {
-                                var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-                                return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
-                            }
-                        },
-                        {
-                            title: 'Domain',
-                            data: 'domainId'
-                        },
-                        {
-                            title: 'Medline CT',
-                            data: 'medlineCt',
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'Medline Case',
-                            data: 'medlineCase',
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'Medline Other',
-                            data: 'medlineOther',
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'SemMedDB CT (True)',
-                            data: 'semmeddbCtT',
-                            visible: false,
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'SemMedDB Case (True)',
-                            data: 'semmeddbCaseT',
-                            visible: false,
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'SemMedDB Other (True)',
-                            data: 'semmeddbOtherT',
-                            visible: false,
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'SemMedDB CT (False)',
-                            data: 'semmeddbCtF',
-                            visible: false,
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'SemMedDB Case (False)',
-                            data: 'semmeddbCaseF',
-                            visible: false,
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'SemMedDB Other (False)',
-                            data: 'semmeddbOtherF',
-                            visible: false,
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'EU SPC',
-                            data: 'euSPC',
-                            visible: false,
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'EU SPC',
-                            data: 'euSPC',
-                            visible: false,
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'Splicer ADR',
-                            data: 'splADR',
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'AERS',
-                            data: 'aers',
-                            render: $.fn.dataTable.render.number( ',','.', 0)
-                        },
-                        {
-                            title: 'AERS PRR',
-                            data: 'aersPRR',
-                            render: $.fn.dataTable.render.number( ',','.', 4)
-                        },
-                        {
-                            title: 'Prediction',
-                            data: 'prediction',
-                            render: function (data) {
-                                return (Math.ceil(data * 1000) / 1000).toFixed(4);
-                            }
-                        },
-                        {
-                            title: 'RC',
-                            data: 'recordCount'
-                        },
-                        {
-                            title: 'DRC',
-                            data: 'descendantRecordCount'
-                        }
-                ];
-        self.reportOptions = {
-            Facets: [{
-				'caption': 'Test',
-				'binding': function (o) {
-					return o.VOCABULARY_ID;
-				}
-            }],
-            dom: 'Blfiprt',
-            language: {
-                search : 'Filter Rows:'
+                isField: true,
+                isColumn: false,
+                isFacet: true,
+                label: 'Subset to candidate',
             },
-            buttons: [
-                        'colvis','copyHtml5','excelHtml5','csvHtml5','pdfHtml5'
-            ],
-            colVis: {
-                buttonText: 'Change Columns',
-                align: 'right',
-                overlayFade: 0,
-                showAll: 'Show All Columns',
-                restore: 'Reset Columns'
+            fMedlineCT: {
+                propName: 'medlineCt',
+                label: 'Medline CT',
+                value: d => { 
+                    if (d.medlineCt == 0) {
+                        return '0';                         
+                    } else if (d.medlineCt > 0 && d.medlineCt <= 10) {
+                    	return '1-10'
+                    } else {
+                    	return '11 +'
+                    }
+                },
+                isField: true,
+                isColumn: false,
+                isFacet: true,
             },
-            lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
-            orderClasses: false,
-            deferRender: true,
-            autoWidth: false,
-            order: [[17, 'asc'], [18, 'desc']]
-        };
+            fMedlineCase: {
+                propName: 'medlineCase',
+                label: 'Medline Case',
+                value: d => { 
+                    if (d.medlineCase == 0) {
+                        return '0';                         
+                    } else if (d.medlineCase > 0 && d.medlineCase <= 10) {
+                    	return '1-10'
+                    } else {
+                    	return '11 +'
+                    }
+                },
+                isField: true,
+                isColumn: false,
+                isFacet: true,
+            },
+            fMedlineOther: {
+                propName: 'medlineOther',
+                label: 'Medline Other',
+                value: d => { 
+                    if (d.medlineOther == 0) {
+                        return '0';                         
+                    } else if (d.medlineOther > 0 && d.medlineOther <= 10) {
+                    	return '1-10'
+                    } else {
+                    	return '11 +'
+                    }
+                },
+                isField: true,
+                isColumn: false,
+                isFacet: true,
+            },
+            fSplicer: {
+                propName: 'splADR',
+                label: 'Splicer ADR',
+                value: d => d.splADR,
+                isField: true,
+                isColumn: false,
+                isFacet: true,
+            },
+            fAERS: {
+                propName: 'aers',
+                label: 'AERS',
+                value: d => { 
+                    if (d.aers == 0) {
+                        return '0';                         
+                    } else if (d.aers > 0 && d.aers <= 10) {
+                    	return '1-10'
+                    } else if (d.aers > 10 && d.aers <= 100) {
+                    	return '11-100'
+                    } else {
+                        return '100+'
+                    }
+                },
+                isField: true,
+                isColumn: false,
+                isFacet: true,
+            }            
+        }
 
         self.selectedConceptsSubscription = self.selectedConcepts.subscribe(function (newValue) {
             if (newValue != null) {
@@ -321,7 +462,11 @@ define(['knockout',
                     conceptSetValid = true;
                     conceptDomainId = "Drug";
                     targetDomainId = "Condition";
+                } else {
+                    self.conceptSetValidText("Your saved concepts come from multiple Domains (Condition, Drug). The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
                 }
+            } else {
+                self.conceptSetValidText("You must define a concept set with drugs found in the RxNorm vocbulary at the Ingredient class level OR Conditions from SNOMED. The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
             }
             self.conceptSetValid(conceptSetValid);
             self.conceptDomainId(conceptDomainId);
@@ -394,6 +539,27 @@ define(['knockout',
             return resultSources;
         }, this);
 
+        self.refreshRecordCounts = function(obj, event) {
+			if (event.originalEvent) {                
+                // User changed event
+                console.log("Record count refresh");
+                self.recordCountsRefreshing(true);
+                $("#dtNegCtrlRC").toggleClass("fa-database").toggleClass("fa-refresh").toggleClass("fa-spin");
+                $("#dtNegCtrlDRC").toggleClass("fa-database").toggleClass("fa-refresh").toggleClass("fa-spin");
+                var negativeControls = self.negativeControls();
+                var conceptIdsForNegativeControls = $.map(negativeControls, function(o, n) { 
+                    return o.conceptId; 
+                });
+                cdmResultsAPI.getConceptRecordCount(self.currentResultSource().sourceKey, conceptIdsForNegativeControls, negativeControls).then(function (rowcounts) {
+                    self.negativeControls(negativeControls);
+                    console.log('record counts different?');
+                    self.recordCountsRefreshing(false);
+					$("#dtNegCtrlRC").toggleClass("fa-database").toggleClass("fa-refresh").toggleClass("fa-spin");
+					$("#dtNegCtrlDRC").toggleClass("fa-database").toggleClass("fa-refresh").toggleClass("fa-spin");
+                });
+            }
+        }
+        
         self.loadResults = function (service) {
             self.loadingResults(true);
             self.currentEvidenceService(service);
@@ -405,7 +571,6 @@ define(['knockout',
                 });
                 cdmResultsAPI.getConceptRecordCount(self.currentResultSource().sourceKey, conceptIdsForNegativeControls, results).then(function (rowcounts) {
                     self.negativeControls(results);
-                    self.crossfilter(crossfilter(results));
                     self.loadingResults(false);
                 });
             });
@@ -417,6 +582,9 @@ define(['knockout',
 				case 'COMPLETE':
 					return false;
 					break;
+                case 'ERROR':
+                    return false;
+                    break;
 				case 'n/a':
 					return false;
 					break;
@@ -427,48 +595,12 @@ define(['knockout',
 				return false;
 			}
 		}        
-        
-        self.filtersChanged.subscribe(() => {
-				var groupAll = self.crossfilter().groupAll();
-				groupAll.reduce(...reduceToRecs);
-				self.filteredRecs(groupAll.value());
-		});
-        
-        self.crossfilter.subscribe(cf => {
-            _.each(self.dimensions, dim => {
-                dim.dimension = cf.dimension(dim.func);
-                dim.filter(null);
-                dim.group = dim.dimension.group();
-                dim.group.reduce(...reduceToRecs);
-                dim.groupAll = dim.dimension.groupAll();
-                dim.groupAll.reduce(...reduceToRecs);
-                //dim.recs(dim.groupAll.value());
-            });
-            self.facets.forEach(facet => {
-                facet.Members = [];
-            });
-            self.facetsObs.removeAll();
-            self.facetsObs.push(...self.facets);
-            var groupAll = self.crossfilter().groupAll();
-            groupAll.reduce(...reduceToRecs);
-            self.filteredRecs(groupAll.value());
-        });
-        
-
+                
         // Evalute the concept set when this component is loaded
         self.evaluateConceptSet();
 
         // Get the evidence sources
-        self.getEvidenceSources();
-        
-        // Init the crossfilter observable
-        self.crossfilter(crossfilter([]));
-        _.each(self.dimensions, dim => {
-            dim.filter.subscribe(filter => {
-                dim.dimension.filter(filter);
-                self.filtersChanged(filter);
-            });
-        });
+        self.getEvidenceSources();        
     }
 
     var component = {

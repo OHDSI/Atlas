@@ -1,3 +1,8 @@
+<div data-bind="if: !$component.conceptSetValid()">
+    <div class="heading" >
+        <i class="fa fa-exclamation-triangle fa-lg"></i> <span data-bind="text: $component.conceptSetValidText"></span><br /><br />
+    </div>
+</div>
 <div data-bind="if: $component.conceptSetValid()">
     <div data-bind="if: !$component.loadingEvidenceSources()">
         <div class="heading">
@@ -37,26 +42,24 @@
         </table>
     </div>
 </div>
-<div data-bind="if: !$component.conceptSetValid()">
-    <i class="fa fa-exclamation-triangle"></i>Your saved concepts come from multiple Domains (Condition, Drug). The concept set must contain ONLY conditions OR drugs in order to explore evidence.
-</div>
 <div class="loading" data-bind="if:$component.loadingResults()">loading evidence</div>
 <div data-bind="if: $component.negativeControls() && $component.negativeControls().length > 0 && $component.currentEvidenceService() && $component.currentResultSource() && $component.conceptSet() && !$component.loadingResults()">
     <div class="paddedWrapper">
         <div class="heading">Evidence for all <span style="text-transform: lowercase;" data-bind="text: $component.targetDomainId()"></span>s for <span data-bind="text: $component.conceptSet().name()"></span></div>
-        <br>
-        View record counts for: <select data-bind="options: $component.resultSources, optionsText: 'sourceName', optionsValue: 'sourceKey', value: $component.currentResultSource().sourceKey"></select>
     </div>
-    <hr />
+    <div class="pull-right" style="padding-bottom: 10px;">
+        <i data-bind="attr: { class: $component.recordCountClass }" aria-hidden="true"></i> View database record counts (RC) and descendant record counts (DRC) for: <select data-bind="options: $component.resultSources, optionsText: 'sourceName', optionsValue: 'sourceKey', value: $component.currentResultSource().sourceKey, event: { change: $component.refreshRecordCounts }"></select>
+    </div>
     <div class="paddedWrapper">     
-        <faceted-datatable-cf params="{
-						recs: $component.filteredRecs,
-						columns: $component.reportColumns, 
-                        facets: facetsObs,
-                        dom: 'Blfiprt',
-                        language: {search : 'Filter Rows:'},
-                        order: [[17, 'asc'], [18, 'desc']]
-					}"></faceted-datatable-cf>        
+        <faceted-datatable-cf
+			params="options:{},
+							fields: $component.fields,
+							recs: $component.negativeControls(),
+                            dom: 'Blfiprt',
+                            language: {search : 'Filter Rows:'},
+                            order: [[16, 'asc'], [17, 'desc']]
+							saveStateToUrl: false,
+							"></faceted-datatable-cf>
     </div>
 </div>
 <div class="loading" data-bind="if:$component.loadingEvidenceSources()">loading</div>
