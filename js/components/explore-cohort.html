@@ -34,7 +34,9 @@
 								<span data-bind="text:someMembers().length"/> members:
 							</div>
 							<div data-bind="foreach:someMembers">
-								<a data-bind="text:personId, attr: {href: url}" />
+								<a data-bind="text:personId, 
+															click:$component.viewProfile,
+															attr: {href: '#/profiles'}" />
 							</div>
 						</div>
 					</div>

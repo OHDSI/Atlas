@@ -61,7 +61,10 @@
 				<a href="#/cohortdefinitions"><i class="fa fa-users"></i>Cohorts</a>
 			</li>
 			<li>
-				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
+				<!-- force a reload to reset in case already on the profiles page -->
+				<a href="#/profiles"
+					onclick="window.location.reload(); return true;"
+					><i class="fa fa-user"></i>Profiles</a>
 			</li>
 			<li>
 				<a href="#/estimation"><i class="fa fa-balance-scale"></i>Estimation</a>

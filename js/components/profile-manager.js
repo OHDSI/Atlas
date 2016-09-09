@@ -11,9 +11,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.model = params.model;
 			self.aspectRatio = ko.observable();
 
-			self.sourceKey = ko.observable(params.model.sourceKey);
+			self.sourceKey = ko.observable(util.getState('sourceKey'));
+			self.personId = ko.observable(util.getState('personId'));
 			self.cohortSource = ko.observable();
-			self.personId = ko.observable();
 			self.person = ko.observable();
 			self.loadingPerson = ko.observable(false);
 			self.cantFindPerson = ko.observable(false)
@@ -31,6 +31,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			});
 
 			self.sourceKey.subscribe(function (sourceKey) {
+				util.setState('sourceKey', sourceKey);
+				/*
 				self.cohortSource(_.find(
 					self.model.cohortDefinitionSourceInfo(), {
 						sourceKey: sourceKey
@@ -38,15 +40,23 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.personId(null);
 				self.person(null);
 				document.location = '#/profiles/' + sourceKey;
+				*/
+			});
+			self.personId.subscribe(function (personId) {
+				util.setState('personId', personId);
 			});
 
+			/*
 			if (params.model.currentCohortDefinition()) {
 				console.log("might be clobbering route here");
 				self.sourceKey(self.services.sources[0].sourceKey);
 			}
+			*/
+		  /*
 			params.model.currentCohortDefinition.subscribe(function (def) {
 				self.sourceKey(self.services.sources[0].sourceKey);
 			});
+			*/
 
 			let personRequests = {};
 			let personRequest;
@@ -68,10 +78,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						}
 						self.loadingPerson(false);
 						let cohort;
-						if (params.model.currentCohortDefinition()) {
-							cohort = _.find(person.cohorts, {
-								cohortDefinitionId: params.model.currentCohortDefinition().id()
-							});
+						let cohortDefinitionId = util.getState('currentCohortDefinitionId');
+						if (cohortDefinitionId) {
+							cohort = _.find(person.cohorts, { cohortDefinitionId });
 						} else {
 							cohort = {
 								startDate: _.chain(person.records)
@@ -92,8 +101,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				});
 			};
 
-			self.sourceKey(params.model.sourceKey);
-			self.personId(params.model.personId);
+			//self.sourceKey(params.model.sourceKey);
+			//self.personId(params.model.personId);
 
 			self.crossfilter = ko.observable();
 			self.filtersChanged = ko.observable();

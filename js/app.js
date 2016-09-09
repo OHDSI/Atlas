@@ -26,10 +26,24 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.loadConcept(conceptId);
 						});
 					},
-					'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
-						require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor'], function (CohortDefinition) {
+					'/cohortdefinitions': function () {
+						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
+							self.currentView('cohortdefinitions');
+						});
+					},
+					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
+						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
 							self.currentView('cohortdefinition');
-							self.currentCohortDefinitionMode('conceptsets');
+							//self.currentCohortDefinitionMode('definition');
+							self.loadCohortDefinition(cohortDefinitionId, null, 'cohortdefinition', 'details');
+						});
+					},
+					'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
+						require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor','explore-cohort'], function (CohortDefinition) {
+							self.currentView('cohortdefinition');
+							//self.currentCohortDefinitionMode('conceptsets');
+							ohdsiUtil.setState('cohortDefTab', ohdsiUtil.getState('cohortDefTab') ||
+																								'conceptsets');
 							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortdefinition', 'details');
 						});
 					},
@@ -41,11 +55,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					'/datasources/:sourceName/:report': function (sourceName, report) {
 						require(['data-sources'], function () {
 							self.currentView('datasources');
-						});
-					},
-					'/cohortdefinitions': function () {
-						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
-							self.currentView('cohortdefinitions');
 						});
 					},
 					'/configure': function () {
@@ -78,6 +87,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.currentView('profiles');
 						});
 					},
+					/*
 					'/profiles/:sourceKey': function (sourceKey) {
 						require(['profile-manager', 'cohort-definition-browser'], function () {
 							self.currentView('profiles');
@@ -92,6 +102,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.loadCohortDefinition(cohortDefinitionId, null, 'profiles', 'details');
 						});
 					},
+					*/
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
 						require(['conceptset-manager'], function () {
 							self.loadConceptSet(conceptSetId, 'conceptset', 'repository', mode);
@@ -105,13 +116,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					},
 					'/splash': function () {
 						self.currentView('splash');
-					},
-					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
-						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
-							self.currentView('cohortdefinition');
-							self.currentCohortDefinitionMode('definition');
-							self.loadCohortDefinition(cohortDefinitionId, null, 'cohortdefinition', 'details');
-						});
 					},
 					'/search/:query:': function (query) {
 						require(['search'], function (search) {
@@ -1426,7 +1430,8 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			return '<i class="fa ' + icon + ' ' + css + '"></i>';
 		}
 		self.currentConceptSetMode = ko.observable('details');
-		self.currentCohortDefinitionMode = ko.observable('definition');
+		//ohdsiUtil.setState('cohortDefTab', 'definition');
+		//self.currentCohortDefinitionMode = ko.observable('definition');
 		self.currentImportMode = ko.observable('identifiers');
 		self.feRelated = ko.observable();
 		self.feSearch = ko.observable();

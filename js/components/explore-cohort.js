@@ -1,8 +1,6 @@
 define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf-profile', 'css!./styles/exploreCohort.css'],
 	function (ko, view, d3, config, lodash, crossfilter) {
 
-		/*
-		 */
 		function exploreCohort(params) {
 			window.d3 = d3;
 			window._ = _;
@@ -10,7 +8,10 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 			window.exploreCohort = self;
 			self.sources = ko.observableArray([]);
 			self.defaultFetchMax = 100;
-			self.sourceKey = ko.observable();
+			self.sourceKey = ko.observable(util.getState('sourceKey'));
+			self.sourceKey.subscribe(function(sourceKey) {
+				util.setState('sourceKey', sourceKey);
+			});
 
 			params.services.sources
 				.filter(source => source.hasCDM)
@@ -77,7 +78,8 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 									contentType: 'application/json',
 									success: function (people) {
 										people.forEach(function (person) {
-											person.url = '#/profiles/' + source.sourceKey + '/' + params.model.currentCohortDefinition().id() + '/' + person.personId;
+											//person.url = '#/profiles/' + source.sourceKey + '/' + params.model.currentCohortDefinition().id() + '/' + person.personId;
+											person.url = '#/profiles';
 										});
 										source.someMembers.removeAll();
 										source.someMembers.push(...people);
@@ -90,6 +92,13 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 					});
 				});
 
+			self.viewProfile = function(person) {
+				//console.log(person);
+				util.setState('currentCohortDefinitionId', params.model.currentCohortDefinition().id());
+				util.setState('personId', person.personId);
+				location.hash = '#/profiles?' + location.hash.replace(/^.*\?/,'');
+				//return true;
+			};
 			self.selectedDesc = function (facet) {
 				let selected = facet.Members.filter(d => d.Selected);
 				if (selected.length) {
@@ -152,110 +161,20 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 				{
 					title: 'Gender',
 					data: 'gender'
-			},
+				},
 				{
 					title: 'Age range',
 					data: 'age'
-			},
+				},
 				{
 					title: 'Condition density',
 					data: 'conditions'
-			},
+				},
 				{
 					title: 'Drug density',
 					data: 'drugs'
-			},
-		];
-			return;
-
-
-
-
-			self.config = config;
-			self.showing = params.showing;
-			self.services = params.services;
-			self.model = params.model;
-			self.loadingCohort = ko.observable(false);
-
-			self.service
-			debugger;
-
-			self.sourceKey = ko.observable();
-			self.cohortSource = ko.observable();
-			self.cohortStart = ko.observable(1);
-			self.cohortEnd = ko.observable(1);
-			self.peopleToFetch = 20;
-			self.cohortPeople = ko.observableArray();
-			self.personId = ko.observable();
-			self.person = ko.observable();
-			self.cohortPerson = ko.observable();
-
-			self.crossfilter = ko.observable();
-			self.filtersChanged = ko.observable();
-			self.filteredRecs = ko.observableArray([]);
-			self.facetsObs = ko.observableArray([]);
-			self.highlightRecs = ko.observableArray([]);
-			self.highlight = function (recs, evt) {
-				self.highlightRecs(recs || []);
-			};
-			self.datatableRowClickCallback = function (rec, evt) {
-				if (evt.target.childNodes[0].data === rec.conceptName) {
-					self.highlightRecs(self.filteredRecs().filter(d => d.conceptName === rec.conceptName));
-				} else {
-					self.highlightRecs([rec]);
-				}
-			};
-
-			self.searchHighlight = ko.observable();
-			self.searchHighlight.subscribe(func => {
-				if (func)
-					self.highlight(self.filteredRecs().filter(func));
-				else
-					self.highlight([]);
-			});
-			self.facets = ['Domain'].map(d => self.dimensions[d]);
-			var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
-			self.crossfilter(crossfilter([]));
-			_.each(self.dimensions, dim => {
-				dim.filter.subscribe(filter => {
-					dim.dimension.filter(filter);
-					self.filtersChanged(filter);
-				});
-			});
-			self.filtersChanged.subscribe(() => {
-				var groupAll = self.crossfilter().groupAll();
-				groupAll.reduce(...reduceToRecs);
-				self.filteredRecs(groupAll.value());
-			});
-			self.crossfilter.subscribe(cf => {
-				_.each(self.dimensions, dim => {
-					dim.dimension = cf.dimension(dim.func);
-					dim.filter(null);
-					dim.group = dim.dimension.group();
-					dim.group.reduce(...reduceToRecs);
-					dim.groupAll = dim.dimension.groupAll();
-					dim.groupAll.reduce(...reduceToRecs);
-					//dim.recs(dim.groupAll.value());
-				});
-				self.facets.forEach(facet => {
-					facet.Members = [];
-				});
-				self.facetsObs(self.facets);
-				var groupAll = self.crossfilter().groupAll();
-				groupAll.reduce(...reduceToRecs);
-				self.filteredRecs(groupAll.value());
-			});
-
-			self.hasCDM = function (source) {
-				return source.hasCDM;
-			}
-
-			self.showBrowser = function () {
-				$('#cohortDefinitionChooser').modal('show');
-			};
-
-			self.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
-
+				},
+			];
 		}
 
 		var component = {

@@ -9,8 +9,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'knockout.dataTables.binding',
 				'faceted-datatable',
 				'databindings', 
-				,'cohortdefinitionviewer/expressionCartoonBinding'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil, CohortExpression, InclusionRule) {
+				'cohortdefinitionviewer/expressionCartoonBinding',
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -56,7 +56,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.generatedSql.redshift = ko.observable('');
 		self.generatedSql.msaps = ko.observable('');
 
-		self.tabMode = self.model.currentCohortDefinitionMode;
+		self.tabMode = ko.observable(
+								 util.getState('cohortDefTab') ||
+								 'definition'
+								);
+		self.tabMode.subscribe(function(tab) {
+			util.setState('cohortDefTab', tab);
+		});
+
 		self.exportTabMode = ko.observable('printfriendly');
 		self.exportSqlMode = ko.observable('mssql');
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
