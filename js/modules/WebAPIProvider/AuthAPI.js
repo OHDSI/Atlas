@@ -17,7 +17,19 @@ define(function(require, exports) {
 
     var setToken = function(token) {
         localStorage.bearerToken = token;
-    }
+    };
+
+    var isAuthenticated = function() {
+        var token = getToken();
+        if (!token) {
+            return false;
+        }
+
+        var expiration = getTokenExpirationDate();
+        var now = new Date();
+
+        return now < expiration;
+    };
 
     var getAuthorizationHeader = function() {
         var token = getToken();
@@ -156,15 +168,25 @@ define(function(require, exports) {
         return promise;
     };
 
+    var isPermittedCreateConceptset = function() {
+        return isPermitted('conceptset:edit:ui');
+    }
+
+    var isPermittedUpdateConceptset = function(conceptsetId) {
+        return isPermitted('conceptset:edit:ui');
+    };
 
     var api = {
         getToken: getToken,
         setToken: setToken,
         getSubject: getSubject,
-        isPermitted: isPermitted,
         getTokenExpirationDate: getTokenExpirationDate,
         getAuthorizationHeader: getAuthorizationHeader,
-        verifyToken: verifyToken
+        verifyToken: verifyToken,
+
+        isAuthenticated: isAuthenticated,
+        isPermittedCreateConceptset: isPermittedCreateConceptset,
+        isPermittedUpdateConceptset: isPermittedUpdateConceptset,
     };
 
     return api;

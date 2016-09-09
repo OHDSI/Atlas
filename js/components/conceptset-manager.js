@@ -1,6 +1,7 @@
 define(['knockout', 
         'text!./conceptset-manager.html', 
-        'appConfig', 
+        'appConfig',
+        'webapi/AuthAPI',
         'ohdsi.util', 
         'webapi/CDMResultsAPI',
         'vocabularyprovider',
@@ -12,7 +13,7 @@ define(['knockout',
         'databindings', 
         'negative-controls',
         'circe',
-], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet) {
+], function (ko, view, config, authApi, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet) {
 	function conceptsetManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -793,6 +794,30 @@ define(['knockout',
         $(document).on('click', '#selectAllDescendants', function() { self.selectAllConceptSetItems("#selectAllDescendants", { includeDescendants: true })});
         $(document).off('click', '#selectAllMapped');
         $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeDescendants: true })});
+
+	    self.isSaveDisabled = ko.computed(function() {
+	        if (self.model.currentConceptSet() != null && !self.model.currentConceptSetDirtyFlag.isDirty()) {
+	            return true;
+	        }
+
+	        if (!authApi.isAuthenticated()) {
+	            return true;
+	        }
+
+	        if (self.model.currentConceptSet() != null) {
+	            if (self.model.currentConceptSet().id != null) {
+	                return !authApi.isPermittedUpdateConceptset(self.model.currentConceptSet().id);
+	            } else {
+	                return !authApi.isPermittedCreateConceptset();
+	            }
+	        }
+
+	        return true;
+	    });
+
+        self.isCopyDisabled = function () {
+	        return !authApi.isAuthenticated() || !authApi.isPermittedCreateConceptset();
+	    }
 	}
 
 	var component = {

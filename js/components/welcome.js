@@ -7,20 +7,19 @@ define(['knockout', 'text!./welcome.html', 'appConfig', 'webapi/AuthAPI'], funct
         self.token = ko.observable();
         self.isInProgress = ko.observable(false);
         self.login = ko.computed(function () {
+            if (!self.token()) return null;
             return authApi.getSubject();
         });
         self.expiration = ko.computed(function () {
+            if (!self.token()) return null;
             var expDate = authApi.getTokenExpirationDate();
             return expDate
                 ? expDate.toLocaleString()
                 : null;
         });
         self.isLoggedIn = ko.computed(function () {
-            if (self.token()) {
-                return new Date() < authApi.getTokenExpirationDate();
-            }
-
-            return false;
+            if (!self.token()) return null;
+            return authApi.isAuthenticated();
         });
         self.status = ko.computed(function () {
             if (self.isInProgress())
