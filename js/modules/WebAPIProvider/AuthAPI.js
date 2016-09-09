@@ -51,7 +51,7 @@ define(function(require, exports) {
             return null;
         }
 
-        var permissions = permissionsString.split(',');
+        var permissions = permissionsString.split('|');
         return permissions;
     };
 
