@@ -174,6 +174,25 @@ define(function (require, exports) {
 		
 		return getMappedConceptsByIdPromise;
 	}	
+    
+	function optimizeConceptSet(conceptSetItems, url)
+	{
+		var repositoryUrl;
+		
+		if (url)
+			repositoryUrl = url + 'vocabulary/optimize';
+		else
+			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/vocabulary/optimize';
+
+		var getOptimizedConceptSetPromise = $.ajax({
+			url: repositoryUrl,
+			data: JSON.stringify(conceptSetItems),
+			method: 'POST',
+			contentType: 'application/json'
+		});
+		
+		return getOptimizedConceptSetPromise;
+	}	
 
 	var api = {
 		loaded: loadedPromise,
@@ -185,7 +204,8 @@ define(function (require, exports) {
 		resolveConceptSetExpression: resolveConceptSetExpression,
 		getConceptsById: getConceptsById,
 		getMappedConceptsById: getMappedConceptsById,
-        getConceptSetExpressionSQL: getConceptSetExpressionSQL
+        getConceptSetExpressionSQL: getConceptSetExpressionSQL,
+        optimizeConceptSet: optimizeConceptSet,
 	}
 
 	return api;

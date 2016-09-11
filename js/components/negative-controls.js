@@ -9,7 +9,7 @@ define(['knockout',
         'knockout.dataTables.binding',
         'components/faceted-datatable-cf',
         'databindings'
-], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, lodash, crossfilter) {
+], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, lodash) {
     function negativeControls(params) {
         var self = this;
 
@@ -476,7 +476,6 @@ define(['knockout',
         self.getEvidenceSourcesFromConfig = function () {
             evidenceSources = [];
             $.each(config.services, function (sourceIndex, service) {
-                console.log(service);
                 $.each(service.sources, function (i, source) {
                     if (source.hasEvidence) {
                         var sourceInfo = {};
@@ -525,7 +524,6 @@ define(['knockout',
         self.resultSources = ko.computed(function () {
             var resultSources = [];
             $.each(config.services, function (sourceIndex, service) {
-                console.log(service);
                 $.each(service.sources, function (i, source) {
                     if (source.hasResults) {
                         resultSources.push(source);
