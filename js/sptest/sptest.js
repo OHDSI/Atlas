@@ -61,8 +61,18 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding',
 		});
 		$(self.jqEventSpace).on('filter', filterChange);
 		$(self.jqEventSpace).on('brush', brushEvent);
+		$(self.jqEventSpace).on('filteredRecs', 
+			function(evt, {source, recs} = {}) {
+				if (self.chartData() && recs.length < self.chartData().length
+						|| self.chartObj() && self.chartObj().latestData !== recs
+					 ) {
+								console.log('caught filteredRecs', recs);
+								self.chartObj().render(recs, self.domElement(), 460, 150, self.chartOptions);
+							}
+			});
 		function filterChange() {
 			console.log('filter event', arguments);
+			//self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
 		}
 		function brushEvent(evt, brush, x, y) {
 			console.log('brush event', arguments);

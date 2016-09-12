@@ -191,7 +191,11 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 								''}`;
 		}
 		function filterName(facetName, memberName) {
-			return `${filterStateKey()}.${facetName}.${memberName}`;
+			if (typeof memberName === 'undefined') {
+				return `${filterStateKey()}.${facetName}`;
+			} else {
+				return `${filterStateKey()}.${facetName}.${memberName}`;
+			}
 		}
 		function filterVal(facetName, memberName) {
 			return !!util.getState(filterName(facetName, memberName));
@@ -207,9 +211,16 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				util.setState(filterSwitched, true);
 			} else {
 				util.deleteState(filterSwitched);
+				if (_.keys(util.getState(filterName(facetName))).length === 0) {
+					util.deleteState(filterName(facetName));
+				}
 			}
+			$(self.jqEventSpace)
+				.trigger('filter', {
+															source:'datatable',
+															filter: {[filterSwitched]: filterOn},
+														});
 			updateFilters(facet);
-			$(self.jqEventSpace).trigger('filter.datatable');
 		}
 		function updateFilters(facet) {
 			var filters = util.getState(filterStateKey()) || {};
@@ -238,13 +249,19 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			groupAll.reduce(...reduceToRecs);
 			self.data(groupAll.value());
 			//self.data(self.recs());
+
+			console.log('triggering filteredRecs', groupAll.value());
+			$(self.jqEventSpace)
+				.trigger('filteredRecs', {
+															source:'datatable',
+															recs: groupAll.value(),
+														});
 		}
-		$(self.jqEventSpace).on('filter.datatable', function() {
-			console.log('internally set filter', arguments);
-		});
-		$(self.jqEventSpace).on('filter', function(evt, {filterName, func} = {}) {
-			if (evt.namespace === 'datatable')
+		$(self.jqEventSpace).on('filter', function(evt, {filterName, func, source} = {}) {
+			if (source === 'datatable') {
+				console.log('internally set filter', arguments);
 				return;
+			}
 			console.log('externally set filter', evt, filterName, func);
 			var dim = self.externalFilters[filterName] =
 								self.externalFilters[filterName] || 
