@@ -5,12 +5,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'ohdsi.util',
         'cohortbuilder/CohortExpression',
 				'cohortbuilder/InclusionRule',
+				'conceptsetbuilder/InputTypes/ConceptSet',
 				'cohortbuilder/components/FeasibilityReportViewer',
 				'knockout.dataTables.binding',
 				'faceted-datatable',
 				'databindings', 
 				,'cohortdefinitionviewer/expressionCartoonBinding'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil, CohortExpression, InclusionRule) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, ohdsiUtil, CohortExpression, InclusionRule, ConceptSet) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -388,6 +389,18 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				}
 			);
 			self.closeConceptSet();
+		}
+		
+		self.newConceptSet = function() {
+			console.log("new concept set selected");
+			var newConceptSet = new ConceptSet();
+			var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
+			newConceptSet.id = cohortConceptSets().length > 0 ? Math.max.apply(null, cohortConceptSets().map(function (d) {
+			 return d.id;
+			})) + 1 : 0;
+			cohortConceptSets.push(newConceptSet);
+			self.model.loadConceptSet(newConceptSet.id, 'cohortdefinition', 'cohort', 'details');
+			self.model.currentCohortDefinitionMode("conceptsets");
 		}
 
 		self.viewReport = function (sourceKey, reportName) {
