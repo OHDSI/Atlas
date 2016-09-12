@@ -45,14 +45,12 @@
 	<!-- ko if:$component.showSection.wordcloud -->
 	<div class="col-xs-3">
 		<div data-bind="visible:person, with:person">
-			<div id="wordcloud" data-bind="with:$component.dimensions.wordcloud">
-				<div class="wordcloud" data-bind="foreach:words($component.filteredRecs)">
-					<span data-bind="
-						text:text, 
-						style:{fontSize:size},
-						event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
-						"></span>
-				</div>
+			<div class="wordcloud" data-bind="foreach:$component.words">
+				<span data-bind="
+					text:text, 
+					style:{fontSize:size},
+					event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
+					"></span>
 			</div>
 		</div>
 	</div>

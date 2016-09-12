@@ -84,6 +84,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					},
 					'/profiles': function () {
 						require(['profile-manager', 'cohort-definition-browser'], function () {
+							var cohortDefinitionId = util.getState('currentCohortDefinitionId');
+							if (typeof cohortDefinitionId !== "undefined")
+								self.loadCohortDefinition(cohortDefinitionId, null, 'profiles');
 							self.currentView('profiles');
 						});
 					},
