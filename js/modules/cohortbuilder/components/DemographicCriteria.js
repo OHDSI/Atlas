@@ -9,6 +9,15 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./DemographicCrit
 
 		var addActions = [
 			{
+				text: "Add Age Criteria",
+				selected: false,
+				description: "Filter events based on age.",
+				action: function() {
+					if (self.Criteria.Age() == null)
+						self.Criteria.Age(new Range());		
+				}
+			},
+			{
 				text: "Add Gender Criteria",
 				selected: false,
 				description: "Filter events based on Gender.",

@@ -21,6 +21,10 @@ requirejs.config({
 		{
 			name: "circe",
 			location: "modules/circe"
+    	},
+		{
+			name: "iranalysis",
+			location: "modules/iranalysis"
         },
         {
 		    name: "extenders",
@@ -84,12 +88,14 @@ requirejs.config({
 		"cohort-definition-manager": "components/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definition-browser",
 		"cohort-comparison-browser": "components/cohort-comparison-browser",
-        "cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
-        "cohort-comparison-r-code": "components/cohort-comparison-r-code",
+		"cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
+		"cohort-comparison-r-code": "components/cohort-comparison-r-code",
 		"feasibility-manager": "components/feasibility-manager",
 		"feasibility-browser": "components/feasibility-browser",
 		"feasibility-analyzer": "components/feasibility-analyzer",
 		"report-manager": "components/report-manager",
+		"ir-manager": "components/ir-manager",
+        "ir-browser": "components/ir-browser",
 		"faceted-datatable": "components/faceted-datatable",
 		"profile-manager": "components/profile-manager",
 		"explore-cohort": "components/explore-cohort",
@@ -416,7 +422,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		
 		$(window).bind('beforeunload', function () {
 			if ((pageModel.currentCohortDefinitionDirtyFlag() && pageModel.currentCohortDefinitionDirtyFlag().isDirty())  || 
-					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()))
+					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()) ||
+				 	pageModel.currentIRAnalysisDirtyFlag().isDirty())
 				return "Changes will be lost if you do not save.";
 		});		
 	});

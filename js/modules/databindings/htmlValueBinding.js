@@ -12,7 +12,7 @@ define(['knockout'], function (ko) {
 					if (allBindings['_ko_property_writers'] && allBindings['_ko_property_writers'].htmlValue)
 						allBindings['_ko_property_writers'].htmlValue(elementValue);
 				}
-			})
+			});
 		},
 		update: function (element, valueAccessor, allBindingsAccessor) {
 			var value = ko.utils.unwrapObservable(valueAccessor());

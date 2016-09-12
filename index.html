@@ -61,6 +61,9 @@
 				<a href="#/cohortdefinitions"><i class="fa fa-users"></i>Cohorts</a>
 			</li>
 			<li>
+				<a data-bind="css: irStatusCss, attr: {href: irAnalysisURL}"><i class="fa fa-bolt"></i>Incidence Rates</a>
+			</li>
+			<li>
 				<!-- force a reload to reset in case already on the profiles page -->
 				<a href="#/profiles"
 					onclick="window.location.reload(); return true;"
@@ -202,6 +205,14 @@
 						<ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
 					</div>
 				</div>
+			</div>
+
+      <div data-bind="if: currentView() == 'irbrowser'">
+				<ir-browser params="model: pageModel"></ir-browser>
+			</div>
+
+      <div data-bind="if: currentView() == 'iranalysis'">
+				<ir-manager params="model: pageModel"></ir-manager>
 			</div>
 
 			<div data-bind="if: currentView() == 'template'">

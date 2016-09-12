@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'facets', 'knockout-persist', 'css!styles/tabs.css', 'css!styles/buttons.css', ], function ($, ko, jnj_chart, d3, ohdsiUtil, config) {
+define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'facets', 'knockout-persist', 'css!styles/tabs.css', 'css!styles/buttons.css'], function ($, ko, jnj_chart, d3, ohdsiUtil, config) {
 	var appModel = function () {
 		$.support.cors = true;
 		var self = this;
@@ -160,6 +160,23 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.currentView('estimation');
 						});
 					},
+					'/iranalysis': function () {
+						require(['ir-browser'], function () {
+							self.currentView('irbrowser');
+						});
+					},
+          '/iranalysis/new': function(analysisId) {
+						require(['ir-manager'], function () {
+            	self.selectedIRAnalysisId(null)
+							self.currentView('iranalysis');
+						});
+					},
+          '/iranalysis/:analysisId': function(analysisId) {
+						require(['ir-manager'], function () {
+            	self.selectedIRAnalysisId(+analysisId)
+							self.currentView('iranalysis');
+						});
+					},
 					'/sptest': function () {
 						require(['sptest'], function () {
 							console.log("trying to load sptest");
@@ -172,7 +189,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.currentView('sptest_smoking');
 						});
 					},
-				}
+        	}
 				self.router = new Router(routes).configure(routerOptions);
 				self.router.init('/');
 				self.applicationStatus('running');
@@ -1285,6 +1302,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 				}
 			});
 		}
+		
 		self.loadCohortConceptSet = function (conceptSetId, viewToShow, mode) {
 			// Load up the selected concept set from the cohort definition
 			var conceptSet = self.currentCohortDefinition().expression().ConceptSets().filter(function (item) {
@@ -1427,6 +1445,11 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.currentCohortDefinitionInfo = ko.observable();
 		self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
 		self.feasibilityId = ko.observable();
+		
+		self.selectedIRAnalysisId = ko.observable();
+		self.currentIRAnalysis = ko.observable();
+		self.currentIRAnalysisDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(self.currentIRAnalysis()));
+
 		self.resolvingConceptSetExpression = ko.observable();
 		self.resolvingSourcecodes = ko.observable();
 		self.evidence = ko.observableArray();
@@ -1437,6 +1460,17 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.currentConcept = ko.observable();
 		self.currentConceptId = ko.observable();
 		self.currentConceptMode = ko.observable('details');
+    	self.currentIRAnalysisId = ko.observable();
+		self.irAnalysisURL = ko.pureComputed(function() {
+			var url = "#/iranalysis";
+			if (self.currentIRAnalysis())
+				url = url + "/" + (self.currentIRAnalysis().id() || 'new');
+			return url;
+		});
+		self.irStatusCss = ko.pureComputed(function() {
+			if (self.currentIRAnalysis())
+				return self.currentIRAnalysisDirtyFlag().isDirty() ? "unsaved" : "open";
+		});
 		self.renderCurrentConceptSelector = function () {
 			var css = '';
 			if (self.selectedConceptsIndex[self.currentConcept().CONCEPT_ID] == 1) {
