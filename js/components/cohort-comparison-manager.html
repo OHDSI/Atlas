@@ -1,5 +1,5 @@
 <div class="wrapperTitle" data-bind="visible:loading">
-    <i class="fa fa-refresh fa-spin"></i> Loading...
+    <i class="fa fa-circle-o-notch fa-spin"></i> Loading...
 </div>
 
 <div data-bind="if:!loading() && cohortComparison()">
@@ -18,7 +18,7 @@
     <ul class="nav nav-tabs">
         <li role="presentation" data-bind="css: { active: $component.tabMode() == 'specification' }, click: function() { $component.tabMode('specification') };"><a>Specification</a>
         </li>
-        <li role="presentation" data-bind="visible: config.cohortComparsionResultsEnabled, css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a>
+        <li role="presentation" data-bind="visible: config.cohortComparisonResultsEnabled, css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a>
         </li>
         <li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>Export</a>
         </li>
@@ -78,17 +78,20 @@
 			</div>
 
 			<div class="paddedWrapper" data-bind="visible: $component.resultsMode() == 'execution' && !$component.loadingExecution()">
+
 				<div class="row">
-					<div class="col-sm-4" data-bind="text:$component.currentExecutionSourceName"></div>
-					<div class="col-sm-2" data-bind="text:'Execution Id: ' + $component.currentExecutionId()"></div>
-					<div class="col-sm-2" data-bind="text:'AUC: ' + $component.currentExecutionAuc()"></div>
-					<div class="col-sm-4 text-right">
+					<div class="col-sm-12 text-right">
 						<button data-bind="click:closeExecution" class="btn btn-sm btn-primary">Back to Sources</button>
 					</div>
 				</div>
 
+				<div class="row">
+					<div class="col-sm-4" data-bind="text:$component.currentExecutionSourceName"></div>
+					<div class="col-sm-8" data-bind="text:'Execution Id: ' + $component.currentExecutionId()"></div>
+				</div>
+
 				<ul class="nav nav-pills">
-					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'covariates' }, click: function() { $component.pillMode('covariates') };"><a>Covariates</a>
+					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'covariates' }, click: function() { $component.pillMode('covariates') };"><a>PS Covariates</a>
 					</li>
 					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'psd' }, click: function() { $component.pillMode('psd') };"><a>PS Distribution</a>
 					</li>

@@ -748,10 +748,10 @@ ul.ColVis_collection li {
 
 .wrapperTitle .fa {
 	font-size: 14px;
-	padding-right: 3px;
+	/* padding-right: 3px; */
 	position: absolute;
 	top: 10px;
-	left: 10px;
+	left: 7px;
 }
 
 .fa-check-circle {
@@ -955,6 +955,11 @@ input.btn.btn-default:disabled {
 i.fa.fa-refresh.fa-spin {
 	font-size: .9em;
 	padding-right: 0px;
+}
+
+.i.fa.fa-circle-o-notch.fa-spin {
+	font-size: .9em;
+	padding-right: 0px;	
 }
 
 rect.box {}

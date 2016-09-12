@@ -65,9 +65,7 @@
 			</li>
 			<li>
 				<!-- force a reload to reset in case already on the profiles page -->
-				<a href="#/profiles"
-					onclick="window.location.reload(); return true;"
-					><i class="fa fa-user"></i>Profiles</a>
+				<a href="#/profiles" onclick="window.location.reload(); return true;"><i class="fa fa-user"></i>Profiles</a>
 			</li>
 			<li>
 				<a href="#/estimation"><i class="fa fa-balance-scale"></i>Estimation</a>
@@ -113,10 +111,10 @@
 			<!-- /ko -->
 
 			<!-- /ko -->
-
+			
 			<div id="wrapperLoading" data-bind="if: currentView() == 'loading'">
 				<div class="wrapperTitle">
-					<i class="fa fa-refresh fa-spin"></i> Loading...
+					<i class="fa fa-circle-o-notch fa-spin"></i> Loading...
 				</div>
 			</div>
 
@@ -207,11 +205,11 @@
 				</div>
 			</div>
 
-      <div data-bind="if: currentView() == 'irbrowser'">
+			<div data-bind="if: currentView() == 'irbrowser'">
 				<ir-browser params="model: pageModel"></ir-browser>
 			</div>
 
-      <div data-bind="if: currentView() == 'iranalysis'">
+			<div data-bind="if: currentView() == 'iranalysis'">
 				<ir-manager params="model: pageModel"></ir-manager>
 			</div>
 

@@ -20,7 +20,7 @@ define([], function () {
 	config.rServicesHost = 'http://rndusrdhit09.jnj.com:8080/';
 	config.dataSourcesLocation = '/achilles/data/datasources.json';
 	config.dataSourcesRoot = '/achilles/data';
-    config.cohortComparsionResultsEnabled = false;
+  config.cohortComparisonResultsEnabled = false;
 	
 	return config;
 });
