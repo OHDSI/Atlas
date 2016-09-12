@@ -2,13 +2,14 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 	function (ko, view, d3, config, lodash, crossfilter) {
 
 		function exploreCohort(params) {
-			window.d3 = d3;
-			window._ = _;
 			var self = this;
-			window.exploreCohort = self;
 			self.sources = ko.observableArray([]);
-			self.defaultFetchMax = 100;
 			self.sourceKey = ko.observable(util.getState('sourceKey'));
+			if (!params.showing())
+				return;
+			window._ = _;
+			window.exploreCohort = self;
+			self.defaultFetchMax = 100;
 			self.sourceKey.subscribe(function(sourceKey) {
 				util.setState('sourceKey', sourceKey);
 			});
