@@ -1,9 +1,9 @@
-define(['knockout', 'cohortbuilder/CriteriaTypes','cohortbuilder/CriteriaGroup', 'cohortbuilder/AdditionalCriteria', 'cohortbuilder/options', 'text!./CriteriaGroupTemplate.html', 'css!./styles/cartoon.css'], function (ko, criteriaTypes, CriteriaGroup, AdditionalCriteria, options, template) {
+define(['knockout', 'cohortbuilder/CriteriaTypes','cohortbuilder/CriteriaGroup', 'cohortbuilder/AdditionalCriteria', 'cohortbuilder/options', 'text!./CriteriaGroupTemplate.html'], function (ko, criteriaTypes, CriteriaGroup, AdditionalCriteria, options, template) {
 
 	function CriteriaGroupViewModel(params) {
 		var self = this;
 
-		self.expression = ko.utils.unwrapObservable(params.expression);
+		self.expression = params.expression;
     //if (!params.parentGroup) debugger;
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;

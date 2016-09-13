@@ -14,7 +14,7 @@
 					</li>
 				</ul>
 			</div>
-			<input type="text" class="form-control" placeholder="Person Id" data-bind="enable: sourceKey(),textInput: personId">
+			<input type="text" class="form-control" placeholder="Person Id" data-bind="enable: sourceKey(),value: personId">
 			<div class="input-group-btn">
 				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.profileChart},click:$component.dispToggle, value:'profileChart'">
 					<i class="fa fa-line-chart" data-bind="value:'profileChart'" />
@@ -45,14 +45,12 @@
 	<!-- ko if:$component.showSection.wordcloud -->
 	<div class="col-xs-3">
 		<div data-bind="visible:person, with:person">
-			<div id="wordcloud" data-bind="with:$component.dimensions.wordcloud">
-				<div class="wordcloud" data-bind="foreach:words($component.filteredRecs)">
-					<span data-bind="
-						text:text, 
-						style:{fontSize:size},
-						event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
-						"></span>
-				</div>
+			<div class="wordcloud" data-bind="foreach:$component.words">
+				<span data-bind="
+					text:text, 
+					style:{fontSize:size},
+					event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
+					"></span>
 			</div>
 		</div>
 	</div>
@@ -72,8 +70,12 @@
 							allRecs:crossfilter().all(),
 							aspectRatio: aspectRatio,
 							short: showSection.datatable(),
+							verticalLines: [{x:0, color:'#f19119'}],
 						}"></div>
-		<faceted-datatable-cf id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
+		<faceted-datatable-cf-profile
+				id="profile-manager-table" 
+				data-bind="visible:showSection.datatable" 
+				params="{
 						recs: filteredRecs,
 						updateOnPersonChange: person,
 						columns: columns, 
@@ -81,6 +83,6 @@
 						order: [[3,'asc']],
 						searchFilter: searchHighlight,
 						rowClick: datatableRowClickCallback,
-					}"></faceted-datatable-cf>
+					}"></faceted-datatable-cf-profile>
 	</div>
 </div>

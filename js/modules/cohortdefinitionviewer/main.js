@@ -47,6 +47,9 @@ define(function (require, exports) {
 	var death = require('./components/Death');
 	ko.components.register('death-criteria-viewer', death);
 	
+	var demographicCriteria = require('./components/DemographicCriteria');
+	ko.components.register('demographic-criteria-viewer', demographicCriteria);	
+	
 	var numericRange = require('./components/NumericRange');
 	ko.components.register('numeric-range-viewer', numericRange);
 
@@ -68,4 +71,8 @@ define(function (require, exports) {
 	var conceptSetViewer = require('./components/ConceptSetViewer');
 	ko.components.register('conceptset-viewer',conceptSetViewer);
 
+	var conceptSetViewer = require('./components/EndStrategyViewer');
+	ko.components.register('end-strategy-viewer',conceptSetViewer);
+	
+	
 });

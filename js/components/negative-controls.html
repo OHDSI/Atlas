@@ -1,0 +1,62 @@
+<div data-bind="if: $component.conceptSetValid()">
+    <div data-bind="if: !$component.loadingEvidenceSources()">
+        <div class="heading">
+            <b>Explore Evidence:</b> Evidence comes from the <a href="http://www.ohdsi.org/web/wiki/doku.php?id=documentation:laertes_etl"></a>LAERTES evidence base</a>. The evidence base is comprised of evidence found in published literature, product labels and spontaneous reports. Use the evidence sources below to find out what evidence has been associated to the concepts included in this concept set. Report any missing evidence to the OHDSI forums here.
+	    </div>        
+        <br/>
+        <div class="heading">Available Evidence Sources</div>
+        <table class="cohort-generate-sources">
+            <thead>
+                <th></th>
+                <th>Source Name</th>
+                <th>Generation Status</th>
+                <th>Distinct People</th>
+                <th>Generated</th>
+                <th>Generation Duration</th>
+                <th></th>
+            </thead>
+            <tbody data-bind="foreach:$component.evidenceSources">
+                <tr data-bind="css: { 'selected': $component.negativeControls() && $component.negativeControls().sourceKey == $data.sourceKey}">
+                    <td>
+                        <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data), attr: {'disabled':$component.canGenerate()==false}, click:$component.generate"><i class="fa fa-play"></i>&nbsp;&nbsp;Generate</div>
+                        <div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i></div>
+                    </td>
+                    <td data-bind="text:sourceName"></td>
+                    <td class="statusIndicator">
+                        <span data-bind="text: status"></span>
+                    </td>
+                    <td class="text-right" data-bind="text: startTime">
+                    </td>
+                    <td class="text-right" data-bind="text: executionDuration">
+                    </td>
+                    <td class="rightaligned">
+                        <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid, click:$component.loadResults"><i class="fa fa-eye"></i>&nbsp;View Evidence</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div data-bind="if: !$component.conceptSetValid()">
+    <i class="fa fa-exclamation-triangle"></i>Your saved concepts come from multiple Domains (Condition, Drug). The concept set must contain ONLY conditions OR drugs in order to explore evidence.
+</div>
+<div class="loading" data-bind="if:$component.loadingResults()">loading evidence</div>
+<div data-bind="if: $component.negativeControls() && $component.negativeControls().length > 0 && $component.currentEvidenceService() && $component.currentResultSource() && $component.conceptSet() && !$component.loadingResults()">
+    <div class="paddedWrapper">
+        <div class="heading">Evidence for all <span style="text-transform: lowercase;" data-bind="text: $component.targetDomainId()"></span>s for <span data-bind="text: $component.conceptSet().name()"></span></div>
+        <br>
+        View record counts for: <select data-bind="options: $component.resultSources, optionsText: 'sourceName', optionsValue: 'sourceKey', value: $component.currentResultSource().sourceKey"></select>
+    </div>
+    <hr />
+    <div class="paddedWrapper">     
+        <faceted-datatable-cf params="{
+						recs: $component.filteredRecs,
+						columns: $component.reportColumns, 
+                        facets: facetsObs,
+                        dom: 'Blfiprt',
+                        language: {search : 'Filter Rows:'},
+                        order: [[17, 'asc'], [18, 'desc']]
+					}"></faceted-datatable-cf>        
+    </div>
+</div>
+<div class="loading" data-bind="if:$component.loadingEvidenceSources()">loading</div>

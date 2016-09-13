@@ -1,3 +1,4 @@
+// is this being loaded? doesn't seem like it
 define(function (require) {
 	var autocompleteBinding = require("./autocompleteBinding");
 	var htmlValueBinding = require("./htmlValueBinding");
@@ -9,4 +10,8 @@ define(function (require) {
 	var templateDataTable = require("./knockout.datatables");
 	var eventListener = require("./eventListenerBinding");
 	var selectOnFocus = require("./knockout.selectOnFocus");
+	var sortExtender = require("./sortExtender");
+	var bootstrapModal = require("./bootstrapModal");
+	var treemap= require("./treemapBinding");
+	var d3ChartBinding = require("../../d3ChartBinding");
 });

@@ -1,18 +1,21 @@
+"use strict";
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module with d3 as a dependency.
-		define(["jquery", "d3", "d3_tip"], factory)
+		define(["jquery", "d3", "lodash", "ohdsi.util", "d3_tip"], factory)
 	} else {
 		// Browser global.
-		root.jnj_chart = factory(root.$, root.d3)
+		root.jnj_chart = factory(root.$, root.d3, root._, root.util)
 	}
-}(this, function (jQuery, d3) {
+}(this, function (jQuery, d3, _, util) {
 	var module = {
 		version: "0.0.1"
 	};
 	var $ = jQuery;
 	var d3 = d3;
+	var DEBUG = true;
 
+	// should module.util functions be moved to ohdsi.util?
 	module.util = module.util || {};
 	module.util.wrap = function (text, width) {
 		text.each(function () {
@@ -960,7 +963,7 @@
 	 var width = w - options.margin.left - options.margin.right;
 	 var height = h - options.margin.top - options.margin.bottom;
 	 }
-   }
+	}
 	 */
 
 	module.line = function () {
@@ -1015,7 +1018,7 @@
 						{
 							name: '',
 							values: data
-                        }];
+						}];
 				}
 				chart.data(data)
 
@@ -1353,7 +1356,7 @@
 						{
 							name: '',
 							values: data
-                        }];
+						}];
 				}
 				chart.data(data)
 
@@ -1620,6 +1623,445 @@
 			setTimeout(function () {
 				$(window).trigger('resize');
 			}, 0);
+		}
+	};
+
+	function nodata(chart, w, h) {
+		chart.html('');
+		chart.append("text")
+			.attr("transform", "translate(" + (w / 2) + "," + (h / 2) + ")")
+			.style("text-anchor", "middle")
+			.text("No Data");
+	}
+	function dataToSeries(data, seriesProp) {
+		if (dataInSeries(data)) throw new Error("didn't expect data in series");
+		if (!seriesProp) return [{ name: '', values: data }];
+		return (_.chain(data)
+							.groupBy(seriesProp.value)
+							.map((v, k) => ({name: k, values: v}))
+							.sort(series => series.values = 
+															_.sortBy(series.values, seriesProp.sortBy))
+							.value());
+	}
+	function dataFromSeries(series) {
+		return (_.chain(series)
+							.map('values')
+							.flatten()
+							.value());
+	}
+	function dataInSeries(data) {
+		return _.chain(data).map(_.keys).flatten().uniq().eq(['name','values']).value();
+	}
+	module.zoomScatter = function (opts, jqEventSpace) {
+		this.defaultOptions = {
+			dispatchEvents: ['brush', 'filter'], // list events that might be triggered
+			data: {
+				alreadyInSeries: false,
+			},
+			availableDatapointBindings: 
+				['d', 'i', 'j', 'data', 'series', 'allFields', 'layout'],
+			chart: {
+				cssClass: "lineplot",
+				labelIndexDate: false,
+				colorBasedOnIndex: false,
+			},
+			layout: {
+				top: { margin: { size: 5}, },
+				bottom: { margin: { size: 5}, },
+				left: { margin: { size: 5}, },
+				right: { margin: { size: 5}, },
+			},
+			x: {
+						requiredOptions: ['value','label'],
+						showAxis: true,
+						showLabel: true,
+						format: module.util.formatSI(3),
+						ticks: 10,
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+						isField: true,
+						_accessors: {
+							range: {
+								func: layout => [0, layout.svgWidth()],
+								posParams: ['layout'],
+							},
+						}
+			},
+			y: {
+						requiredOptions: ['value'],
+						showAxis: true,
+						showLabel: true,
+						format: module.util.formatSI(3),
+						ticks: 4,
+						scale: d3.scale.linear(),
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+						isField: true,
+						_accessors: {
+							range: {
+								func: layout => [layout.svgHeight(), 0],
+								posParams: ['layout'],
+							},
+						}
+			},
+			size: {
+						scale: d3.scale.linear(),
+						range: [.5, 8],
+						defaultValue: ()=>1,
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+						isField: true,
+			},
+			color: {
+						//scale: null,
+						//rangeFunc: (layout, prop) => prop.scale.range(), // does this belong here?
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+						isField: true,
+						scale: d3.scale.category10(),
+						_accessors: {
+							range: {
+								func: (allFields) => allFields.color.scale.range(),
+								posParams: ['allFields'],
+							},
+						}
+			},
+			shape: {
+						value: 0,
+						scale: d3.scale.ordinal(),
+						needsLabel: true,
+						needsValueFunc: true,
+						needsScale: true,
+						isField: true,
+						_accessors: {
+							range: {
+								func: () => util.shapePath("types"),
+							},
+						}
+			},
+			legend: {
+						show: true,
+			},
+			series: {
+						//value: function(d) { return this.parentNode.__data__.name; },
+						value: ()=>null,
+						//value: d=>1,
+						showLabel: false,
+						//showSeriesLabel: false,
+						//needsLabel: true,
+						needsLabel: false,
+						needsValueFunc: true,
+						isField: true,
+			},
+			//interpolate: "linear", // not used
+			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
+			//showXAxis: true
+		};
+		this.chartSetup = _.once(function(target, w, h, cp) {
+			this.fields = _.filter(cp, opt=>opt instanceof util.Field);
+			this.divEl = new util.ResizableSvgContainer(target, [null], w, h, ['zoom-scatter']);
+			this.svgEl = this.divEl.child('svg')
+			var layout = this.layout = new util.SvgLayout(w, h, cp.layout);
+			if (cp.y.showLabel) {
+				cp.y.labelEl = new util.ChartLabelLeft(this.svgEl, layout, cp.y);
+			}
+			if (cp.y.showAxis) {
+				cp.y.axisEl = new util.ChartAxisY(this.svgEl, layout, cp.y);
+			}
+			if (cp.x.showLabel) {
+				cp.x.labelEl = new util.ChartLabelBottom(this.svgEl, layout, cp.x);
+			}
+			if (cp.x.showAxis) {
+				cp.x.axisEl = new util.ChartAxisX(this.svgEl, layout, cp.x);
+			}
+
+			//cp.updateAccessors(data, series);
+			//cp.updateDomains(data, series);
+			//cp.tooltipSetup(data, series);
+			//cp.updateRanges(layout);
+			self.cp = cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
+
+		});
+		this.updateData = function(data) {
+			var series = dataToSeries(data, self.cp.series);
+			self.cp.chart.chart.gEl
+					.child('series')
+						//.run({data: series});
+						.run({data: series, delay: 500, duration: 2000});
+		}
+		this.render = function (data, target, w, h, cp) {
+			if (!data.length) return;
+			DEBUG && (window.cp = cp);
+			if (!cp.data.alreadyInSeries) {
+				var series = dataToSeries(data, cp.series);
+				//var series = dataToSeries(data.slice(0,1000), cp.series);
+			}
+			if (!data.length) { // do this some more efficient way
+				nodata(this.svgEl.as("d3"));
+				return;
+			}
+			this.fields.forEach(field => {
+				field.bindParams({data, series, allFields:cp, layout:this.layout});
+			});
+			var tooltipBuilder = util.tooltipBuilderForFields(this.fields, data, series);
+			
+			var chart = cp.chart.chart.gEl.as('d3');
+
+			/*
+			var legendWidth = 0;
+			if (cp.legend.show) {
+				var legend = this.svgEl.as("d3").append("g")
+					.attr("class", "legend");
+
+				var maxWidth = 0;
+
+				series.forEach(function (d, i) {
+					legend.append("rect")
+						.attr("x", 0)
+						.attr("y", (i * 15))
+						.attr("width", 10)
+						.attr("height", 10)
+						.style("fill", cp.color.scale(d.name));
+
+					var legendItem = legend.append("text")
+						.attr("x", 12)
+						.attr("y", (i * 15) + 9)
+						.text(d.name);
+					maxWidth = Math.max(legendItem.node().getBBox().width + 12, maxWidth);
+				});
+				legend.attr("transform", "translate(" + (this.layout.w() - this.layout.zone('right') - maxWidth) + ",0)")
+				legendWidth += maxWidth + 5;
+			}
+			*/
+
+			this.layout.positionZones();
+			this.layout.positionZones();
+			//this.svgEl.update({data:series})
+			//this.svgEl.data(series)
+
+			// brush stuff needs to go before dots so tooltips will work
+			var orig_x_domain = cp.x.scale.domain();
+			var orig_y_domain = cp.y.scale.domain();
+			/*
+			var idleTimeout, idleDelay = 350;
+			function idled() {
+				idleTimeout = null;
+			}
+			*/
+			var brush = d3.svg.brush()
+				.x(cp.x.scale)
+				.y(cp.y.scale)
+				.on('brushstart', function() {
+					$('.extent').show();
+					$('.resize').show();
+				});
+
+			/*
+			chart.append('g')  // use addChild?
+				.attr('class', 'brush')
+				.call(brush);
+			*/
+			var brushEl = cp.chart.chart.gEl.addChild('brush',
+																	{ tag: 'g',
+																		classes:['brush'],
+																		data: [null],
+																	});
+			brushEl.as('d3').call(brush);
+
+			brush
+				.on('brushend', function () {
+					//var s = d3.event.selection;
+					// wanted to use https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
+					// but it's d3.v4
+
+					$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
+
+					if (brush.empty()) {
+						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+						cp.x.scale.domain(orig_x_domain);
+						cp.y.scale.domain(orig_y_domain);
+					} else {
+						cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]]);
+						cp.y.scale.domain([brush.extent()[0][1], brush.extent()[1][1]]);
+						//cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]].map(cp.x.scale.invert, cp.x.scale));
+						//cp.y.scale.domain([brush.extent()[1][1], brush.extent()[0][1]].map(cp.y.scale.invert, cp.y.scale));
+						//brushEl.as('d3').call(brush.move, null);
+					}
+
+
+					//var t = cp.chart.chart.gEl.as('d3').transition().duration(2750);
+					cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
+					cp.y.axisEl.gEl.as('d3').transition().duration(750).call(cp.y.axisEl.axis);
+
+					seriesGs.as('d3')
+						.selectAll(".dot")
+						//.transition()
+						//.duration(750)
+						.attr("transform", function (d) {
+							var xVal = cp.x.scale(cp.x.accessors.value(d));
+							var yVal = cp.y.scale(cp.y.accessors.value(d));
+							return "translate(" + xVal + "," + yVal + ")";
+						});
+
+					$('.extent').hide();
+					$('.resize').hide();
+
+					//$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
+				});
+
+
+			var focusTip = d3.tip()
+				.attr('class', 'd3-tip')
+				.offset([-10, 0])
+				.html(tooltipBuilder);
+				//.html(cp.tooltip.builder);
+			this.svgEl.as("d3").call(focusTip);
+
+			var seriesGs = cp.chart.chart.gEl
+												.addChild('series',
+																	{ tag: 'g',
+																		classes:['series'],
+																		data: series,
+																	});
+			seriesGs.addChild('dots',
+									{tag: 'path',
+										data: function(series) {
+											return series.values;
+										},
+										classes: ['dot'],
+										enterCb: function(selection,params) {
+											selection
+												.on('mouseover', focusTip.show)
+												.on('mouseout', focusTip.hide)
+												//.transition()
+												//.delay(1000).duration(1500)
+												.attr("d", function(d) {
+													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
+													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
+													return util.shapePath(
+																		cp.shape.scale(cp.shape.accessors.value(d)),
+																		xVal, // 0, //options.xValue(d),
+																		yVal, // 0, //options.yValue(d),
+																		cp.size.scale(cp.size.accessors.value(d)));
+												})
+												.style("stroke", function (d) {
+													// calling with this so default can reach up to parent
+													// for series name
+													//return cp.color.scale(cp.series.value.call(this, d));
+													return cp.color.scale(cp.color.accessors.value(d));
+												})
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													//return `translate(${xVal},${yVal}) scale(1,1)`;
+													return "translate(" + xVal + "," + yVal + ")";
+												})
+										},
+										updateCb: function(selection, params, opts) {
+											selection
+												.attr("d", function(d) {
+													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
+													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
+													return util.shapePath(
+																		cp.shape.scale(cp.shape.accessors.value(d)),
+																		xVal, // 0, //options.xValue(d),
+																		yVal, // 0, //options.yValue(d),
+																		cp.size.scale(cp.size.accessors.value(d)));
+												})
+												.style("stroke", function (d) {
+													// calling with this so default can reach up to parent
+													// for series name
+													//return cp.color.scale(cp.series.value.call(this, d));
+													return cp.color.scale(cp.color.accessors.value(d));
+												})
+												//.transition()
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													return "translate(" + xVal + "," + yVal + ")";
+												})
+										},
+										/* testing transitions on exit 
+										*/
+										exitCb: function(selection, params, transitionOpts={}) {
+											var {delay=0, duration=0, transition} = transitionOpts;
+											/*
+											if (!transition && (delay || transition))
+												transition = d3.transition().delay(delay).duration(duration);
+											*/
+
+											selection
+												//.transition(transition)
+												/*
+												//.transition().delay(delay).duration(duration)
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													return `translate(${xVal},${yVal}) scale(.8,.8)`;
+												})
+												*/
+												.style("stroke", "black")
+												//.transition(transition)
+												/*
+												.transition()
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													return `translate(${xVal},${yVal}) scale(5,4)`;
+												})
+												//.transition(transition)
+												.transition()
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													return `translate(${xVal},${yVal}) scale(0,0)`;
+													//return `scale(0,0)`;
+												})
+												.remove()
+												*/
+										},
+									});
+
+			/*
+			series = dataToSeries(data.slice(0,500), cp.series);
+			cp.chart.chart.gEl
+					.child('series')
+						.run({data: series, delay: 1500, duration: 2000});
+			*/
+
+			return;
+
+			if (cp.series.showLabel) {
+				series.append("text")
+					.datum(function (d) {
+						return {
+							name: d.name,
+							value: d.values[d.values.length - 1]
+						};
+					})
+					.attr("transform", function (d) {
+						return "translate(" + cp.x.scale(cp.x.accessors.value(d.value)) + "," + cp.y.scale(cp.y.accessors.value(d.value)) + ")";
+					})
+					.attr("x", 3)
+					.attr("dy", 2)
+					.style("font-size", "8px")
+					.text(function (d) {
+						return d.name;
+					});
+			}
+
+			if (cp.chart.labelIndexDate) {
+				chart.append("rect")
+					.attr("transform", function () {
+						return "translate(" + (indexPoints.x - 0.5) + "," + indexPoints.y + ")";
+					})
+					.attr("width", 1)
+					.attr("height", this.layout.svgHeight());
+			}
 		}
 	};
 

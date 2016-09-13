@@ -73,7 +73,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				return;
 			var svg = categoryScatterPlot(element, va.recs(), 
 													rectangle,
-												 null, va.zoomFilter);
+												 ko.utils.unwrapObservable(va.verticalLines), va.zoomFilter);
 			if (va.allRecs.length != va.recs().length)
 				inset(svg, va.allRecs, va.recs(), va.zoomFilter);
 		}
@@ -185,6 +185,18 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.attr("y", margin.top)
 			.attr("height", vizHeight);
 
+		var vLines = focus.selectAll('line.vertical')
+									.data(verticalLines);
+		vLines.exit().remove();
+		vLines.enter()
+					.append('line')
+					.attr('class','vertical');
+		focus.selectAll('line.vertical')
+			.attr('x1',d=>xScale(d.x))
+			.attr('x2',d=>xScale(d.x))
+			.attr('y1', yScale.rangeExtent()[0])
+			.attr('y2', yScale.rangeExtent()[1])
+			.style('stroke', d=>d.color);
 		var pointGs = focus.selectAll("g.point")
 			.data(points);
 		pointGs.exit().remove();
@@ -431,7 +443,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.attr('r', radius(datum))
 	}
 	function rectangle(datum) {
-		var minBoxPix = 4;
+		var minBoxPix = 2;
 		var g = d3.select(this);
 		g.selectAll('rect.point.' + pointClass(datum))
 			.data([datum])

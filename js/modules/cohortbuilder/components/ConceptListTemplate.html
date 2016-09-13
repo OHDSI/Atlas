@@ -1,4 +1,4 @@
 <span class="conceptList" data-bind="foreach: ConceptList">
-	<span class="conceptItem"><img data-bind="click: $component.removeConcept.bind($component)" class="fa fa-times" /><span data-bind="text: CONCEPT_NAME"></span></span>
+	<span class="conceptItem"><span data-bind="click: $component.removeConcept.bind($component)" class="fa fa-times" /><span data-bind="text: CONCEPT_NAME"></span></span>
 </span>
 <concept-picker params="onAdd: addConcepts, DefaultDomain: PickerParams.DefaultDomain, DefaultQuery: PickerParams.DefaultQuery"></concept-picker>

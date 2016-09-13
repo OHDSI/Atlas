@@ -9,13 +9,13 @@
 				<tr>
 					<td>
 						<span data-bind="if: parentGroup">
-							<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? 'And ' : 'Or '"></span>people having</span>
-						<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">People having</span>
+							<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? 'And ' : 'Or '"></span>people having</span>
+						<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">People having</span>
 						</span>
 						<span data-bind="ifnot: parentGroup">People having</span>
 						<select data-bind="options: $component.options.groupTypeOptions, optionsText: 'name', optionsValue: 'id', value: group().Type"></select>
 						<!-- ko if: group().Type().startsWith("AT_") -->
-						<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: group().Count.numeric(), ko_autocomplete: { source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }" />
+						<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: group().Count.numeric(), ko_autocomplete: { value: group().Count, source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }" />
 						<!-- /ko -->
 						of the following criteria:
 					</td>
@@ -26,6 +26,35 @@
 			</tbody>
 		</table>
 	</div>
+	
+	<div style="min-height: 10px;" data-bind="sortable: {data: group().DemographicCriteriaList, connectClass: 'demographicCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
+		<div class="demographicCriteria">
+			<table>
+				<colgroup>
+					<col span="1" class="rule" />
+					<col span="1" class="delete" />
+				</colgroup>
+				<tbody>
+					<tr>
+						<td>
+							<div class="criteria-content">
+								<div class="occurrenceSection">
+									<span data-bind="if: ($index() > 0)"><span data-bind="text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span> with the following event criteria:
+								</div>
+								<div>
+									<demographic-criteria params="criteria: $data"></demographic-criteria>
+								</div>
+							</div>
+						</td>
+						<td>
+							<button class="deletecriteria btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().DemographicCriteriaList, data) }">Delete Criteria</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
 	<div style="min-height: 10px;" data-bind="sortable: {data: group().CriteriaList, connectClass: 'additionalCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
 		<div class="additionalCriteria">
 			<table>
@@ -38,7 +67,7 @@
 						<td>
 							<div class="criteria-content">
 								<div class="occurrenceSection">
-									<span data-bind="if: ($index() > 0)"><span data-bind="	text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span>
+									<span data-bind="if: ($parent.group().DemographicCriteriaList().length > 0 || $index() > 0)"><span data-bind="	text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span>
 									with
 									<select data-bind="options: $component.options.occurrenceTypeOptions, optionsText: 'name', optionsValue: 'id', value: Occurrence.Type" />
 									<select data-bind="options: $component.options.occurrenceCountOptions, value: Occurrence.Count" />
@@ -51,20 +80,21 @@
 								}"></div>
 
 								<div class="indexWindowSection">
-									occurring between
-									<window-input params="Window: StartWindow"></window-input> index
+									starting between
+									<window-input params="Window: StartWindow"></window-input> and ending between <window-input params="Window: EndWindow"></window-input> event index date
 								</div>
 							</div>
 						</td>
 						<td>
-							<button class="deletecriteria btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Filter</button>
+							<button class="deletecriteria btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Criteria</button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
-
 		</div>
 	</div>
+	
+	
 	<!-- ko foreach: group().Groups -->
 	<div style="position:relative">
 		<criteria-group params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group()}"></criteria-group>

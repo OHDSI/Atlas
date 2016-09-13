@@ -10,7 +10,7 @@ define(['knockout'], function (ko) {
 						newValue = newValue.trim();
 					
 					var current = underlyingObservable(),
-						valueToWrite = isNaN(newValue) ? current : parseFloat(+newValue);
+						valueToWrite = isNaN(newValue) ? current : parseFloat(newValue);
 
 					if (newValue.length == 0)
 						valueToWrite = null;

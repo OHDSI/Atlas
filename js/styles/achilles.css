@@ -289,7 +289,7 @@ div.data-sources.personSummary .row div {
 	left: 100%;
 }
 .tab-pane {
-	padding: 7px 7px 7px 7px;
+	/* padding: 7px 7px 7px 7px; */
 }
 .clear {
 	clear: both;

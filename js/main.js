@@ -1,4 +1,5 @@
 requirejs.config({
+	waitSeconds: 60, // FOR DEVELOPMENT, REMOVE WHEN NOT NEEDED? default is 7
 	//urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: 'js',
 	config: {
@@ -20,7 +21,15 @@ requirejs.config({
 		{
 			name: "circe",
 			location: "modules/circe"
-    }
+    	},
+		{
+			name: "iranalysis",
+			location: "modules/iranalysis"
+        },
+        {
+		    name: "extenders",
+		    location: "extenders"
+        }        
 	],
 	shim: {
 		"colorbrewer": {
@@ -30,14 +39,19 @@ requirejs.config({
 			"deps": [
 				'jquery'
 			]
-		}
+		},
+        "prism" :{
+            "prism": {
+                "exports": "Prism"
+            }
+        }
 	},
 	map: {
 		"*": {
 			'jquery-ui/sortable': 'jquery-ui',
 			'jquery-ui/draggable': 'jquery-ui',
 			'jquery-ui/dialog': 'jquery-ui',
-			'jquery-ui/autocomplate': 'jquery-ui',
+			'jquery-ui/autocomplete': 'jquery-ui',
 			'jquery-ui/tabs': 'jquery-ui'
 		}
 	},
@@ -66,26 +80,34 @@ requirejs.config({
 		"conceptset-browser": "components/conceptset-browser",
 		"conceptset-editor": "components/conceptset-editor",
 		"conceptset-manager": "components/conceptset-manager",
+		"cohort-comparison-manager": "components/cohort-comparison-manager",
 		"job-manager": "components/job-manager",
 		"importer": "components/importer",
 		"data-sources": "components/data-sources",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definition-browser",
+		"cohort-comparison-browser": "components/cohort-comparison-browser",
+		"cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
+		"cohort-comparison-r-code": "components/cohort-comparison-r-code",
 		"feasibility-manager": "components/feasibility-manager",
 		"feasibility-browser": "components/feasibility-browser",
 		"feasibility-analyzer": "components/feasibility-analyzer",
 		"report-manager": "components/report-manager",
-		"analytics-manager": "components/analytics-manager",
+		"ir-manager": "components/ir-manager",
+        "ir-browser": "components/ir-browser",
 		"faceted-datatable": "components/faceted-datatable",
 		"profile-manager": "components/profile-manager",
 		"explore-cohort": "components/explore-cohort",
+		"cohortcomparison": "modules/cohortcomparison",
 		"r-manager": "components/r-manager",
-		"studyreport-manager": "components/studyreport-manager",
+        "negative-controls": "components/negative-controls",
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
+		"nvd3":"nv.d3",
 		"lodash": "lodash.min",
+		"lodash-full": "lodash.4.15.0.full",
 		"lscache": "lscache.min",
 		"localStorageExtender": "localStorageExtender",
 		"cohortbuilder": "modules/cohortbuilder",
@@ -95,9 +117,11 @@ requirejs.config({
 		"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
 		"appConfig": "config",
 		"home" : "components/home",
-		"lodash": "lodash.min",
 		"common":"components/datasources/app/common",
-		"reports": "components/datasources/app/reports"
+		"reports": "components/datasources/app/reports",
+		"prism": "prism",
+		"sptest": "sptest/sptest",
+		"sptest_smoking": "sptest/sptest_smoking",
 	}
 });
 
@@ -398,7 +422,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		
 		$(window).bind('beforeunload', function () {
 			if ((pageModel.currentCohortDefinitionDirtyFlag() && pageModel.currentCohortDefinitionDirtyFlag().isDirty())  || 
-					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()))
+					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()) ||
+				 	pageModel.currentIRAnalysisDirtyFlag().isDirty())
 				return "Changes will be lost if you do not save.";
 		});		
 	});

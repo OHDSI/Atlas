@@ -5,126 +5,125 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 		var addActions = [
 			{
-				text: "Add Drug Exposure Start Date Filter",
-				value: 0,
-				selected: false,
-				description: "Filter Drug Exposures by the Drug Exposure Start Date."
-			},
-			{
-				text: "Add Drug Exposure End Date Filter",
-				value: 1,
-				selected: false,
-				description: "Filter Drug Exposures  by the Drug Exposure End Date"
-			},
-			{
-				text: "Add Drug Type Filter",
-				value: 2,
-				selected: false,
-				description: "Filter Drug Exposures  by the Drug Type."
-			},
-			{
-				text: "Add Stop Reason Filter",
-				value: 3,
-				selected: false,
-				description: "Filter Drug Exposures  by the Stop Reason."
-			},
-			{
-				text: "Add Refills Filter",
-				value: 12,
-				selected: false,
-				description: "Filter Drug Exposures by Refills."
-			},			
-			{
-				text: "Add Quantity Filter",
-				value: 13,
-				selected: false,
-				description: "Filter Drug Exposures by Quantity."
-			},
-			{
-				text: "Add Days Supply Filter",
-				value: 14,
-				selected: false,
-				description: "Filter Drug Exposures by Days Supply."
-			},			
-			{
-				text: "Add Route Filter",
-				value: 15,
-				selected: false,
-				description: "Filter Drug Exposures by Route."
-			},
-			{
-				text: "Add Effective Dose Filter",
-				value: 16,
-				selected: false,
-				description: "Filter Drug Exposures by Effective Dose."
-			},
-			{
-				text: "Add Dose Unit Filter",
-				value: 17,
-				selected: false,
-				description: "Filter Drug Exposures by Dose Unit."
-			},
-			{
-				text: "Add Lot Number Filter",
-				value: 18,
-				selected: false,
-				description: "Filter Drug Exposures by Lot Number."
-			},				
-			{
-				text: "Add Drug Source Concept Filter",
-				value: 4,
-				selected: false,
-				description: "Filter Drug Exposures by the Drug Source Concept."
-			},
-			{
-				text: "Add New Exposure Filter",
+				text: "Add First Exposure Criteria",
 				value: 5,
 				selected: false,
-				description: "Limit Drug Exposures to new exposure."
+				description: "Limit Drug Exposures to the first exposure in history."
 			},
 			{
-				text: "Add Age at Occurrence Filter",
+				text: "Add Age at Occurrence Criteria",
 				value: 6,
 				selected: false,
 				description: "Filter Drug Exposures by age at occurrence."
 			}, 
 			{
-				text: "Add Gender Filter",
+				text: "Add Gender Criteria",
 				value: 7,
 				selected: false,
 				description: "Filter Drug Exposures based on Gender."
 			},
+			{
+				text: "Add Start Date Criteria",
+				value: 0,
+				selected: false,
+				description: "Filter Drug Exposures by the Drug Exposure Start Date."
+			},
+			{
+				text: "Add End Date Criteria",
+				value: 1,
+				selected: false,
+				description: "Filter Drug Exposures  by the Drug Exposure End Date"
+			},
+			{
+				text: "Add Drug Type Criteria",
+				value: 2,
+				selected: false,
+				description: "Filter Drug Exposures  by the Drug Type."
+			},
+			{
+				text: "Add Visit Criteria",
+				value: 11,
+				selected: false,
+				description: "Filter Drug Exposures based on visit occurrence of drug exposure."
+			},
+			{
+				text: "Add Stop Reason Criteria",
+				value: 3,
+				selected: false,
+				description: "Filter Drug Exposures  by the Stop Reason."
+			},
+			{
+				text: "Add Refills Criteria",
+				value: 12,
+				selected: false,
+				description: "Filter Drug Exposures by Refills."
+			},			
+			{
+				text: "Add Quantity Criteria",
+				value: 13,
+				selected: false,
+				description: "Filter Drug Exposures by Quantity."
+			},
+			{
+				text: "Add Days Supply Criteria",
+				value: 14,
+				selected: false,
+				description: "Filter Drug Exposures by Days Supply."
+			},			
+			{
+				text: "Add Route Criteria",
+				value: 15,
+				selected: false,
+				description: "Filter Drug Exposures by Route."
+			},
+			{
+				text: "Add Effective Dose Criteria",
+				value: 16,
+				selected: false,
+				description: "Filter Drug Exposures by Effective Dose."
+			},
+			{
+				text: "Add Dose Unit Criteria",
+				value: 17,
+				selected: false,
+				description: "Filter Drug Exposures by Dose Unit."
+			},
+			{
+				text: "Add Lot Number Criteria",
+				value: 18,
+				selected: false,
+				description: "Filter Drug Exposures by Lot Number."
+			},				
+			{
+				text: "Add Drug Source Concept Criteria",
+				value: 4,
+				selected: false,
+				description: "Filter Drug Exposures by the Drug Source Concept."
+			},
 /*
  			{
-				text: "Add Prior Observation Duration Filter",
+				text: "Add Prior Observation Duration Criteria",
 				value: 8,
 				selected: false,
 				description: "Filter Drug Exposures based on Prior Observation Duration."
 					},
 			{
-				text: "Add Post Observation Duration Filter",
+				text: "Add Post Observation Duration Criteria",
 				value: 9,
 				selected: false,
 				description: "Filter Drug Exposures based on Prior Observation Duration."
 					},
 */
 			{
-				text: "Add Provider Specialty Filter",
+				text: "Add Provider Specialty Criteria",
 				value: 10,
 				selected: false,
 				description: "Filter Drug Exposures based on provider specialty."
-					},
-			{
-				text: "Add Visit Filter",
-				value: 11,
-				selected: false,
-				description: "Filter Drug Exposures based on visit occurrence of drug exposure."
-					}
-
+			}
 				];
 
 		self.addCriterionSettings = {
-			selectText: "Add Filter...",
+			selectText: "Add criteria attribute…",
 			height:300,
 			actionOptions: addActions,
 			onAction: function (data) {
@@ -212,7 +211,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 			}
 		};
 
-		self.expression = params.expression;
+		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.DrugExposure;
 		self.options = options;
 

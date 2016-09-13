@@ -1,23 +1,14 @@
-define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../CohortExpression', '../InclusionRule', 'text!./CohortExpressionEditorTemplate.html',
+define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../CohortExpression', '../InclusionRule', 'text!./CohortExpressionEditorTemplate.html', './EndStrategyEditor',
 				'databindings', 'conceptpicker/ConceptPicker', 'css!../css/builder.css', 'css!../css/ddslick.criteria.css', 'ko.sortable'
 			 ], function (ko, options, CriteriaGroup, criteriaTypes, CohortExpression, InclusionRule, template) {
+	
 	function CohortExpressionEditorViewModel(params) {
 		var self = this;
-		this.expressionMode = ko.observable('primary');
+		this.expressionMode = ko.observable('all');
 
 		var primaryCriteriaOptions = [
 			{
-				text: "Add Condition Filters",
-				selected: false,
-				description: "Find patients with specific diagnoses.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						ConditionOccurrence: new criteriaTypes.ConditionOccurrence(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Condition Era Filters",
+				text: "Add Condition Era Criteria",
 				selected: false,
 				description: "Find patients with specific diagosis era.",
 				action: function () {
@@ -25,109 +16,19 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 						ConditionEra: new criteriaTypes.ConditionEra(null, self.expression().ConceptSets)
 					});
 				}
-				},
+			},
 			{
-				text: "Add Drug Filters",
+				text: "Add Condition Occurrence Criteria",
 				selected: false,
-				description: "Find patients with exposure to specific drugs or drug classes.",
+				description: "Find patients with specific diagnoses.",
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
-						DrugExposure: new criteriaTypes.DrugExposure(null, self.expression().ConceptSets)
+						ConditionOccurrence: new criteriaTypes.ConditionOccurrence(null, self.expression().ConceptSets)
 					});
 				}
-				},
+			},
 			{
-				text: "Add Drug Era Filters",
-				selected: false,
-				description: "Find patients with with exposure to drugs over time.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						DrugEra: new criteriaTypes.DrugEra(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Dose Era Filters",
-				selected: false,
-				description: "Find patients with dose eras.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						DoseEra: new criteriaTypes.DoseEra(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Procedure Filters",
-				selected: false,
-				description: "Find patients that experienced a specific procedure.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						ProcedureOccurrence: new criteriaTypes.ProcedureOccurrence(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Observation Filters",
-				selected: false,
-				description: "Find patients based on lab tests or other observations.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						Observation: new criteriaTypes.Observation(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Visit Filters",
-				selected: false,
-				description: "Find patients based on visit information.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						VisitOccurrence: new criteriaTypes.VisitOccurrence(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Device Filters",
-				selected: false,
-				description: "Find patients based on device exposure.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						DeviceExposure: new criteriaTypes.DeviceExposure(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Measurement Filters",
-				selected: false,
-				description: "Find patients based on Measurement.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						Measurement: new criteriaTypes.Measurement(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Specimen Filters",
-				selected: false,
-				description: "Find patients based on Specimen.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						Specimen: new criteriaTypes.Specimen(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Observation Period Filters",
-				selected: false,
-				description: "Find patients based on Observation Period.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						ObservationPeriod: new criteriaTypes.ObservationPeriod(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Death Filters",
+				text: "Add Death Criteria",
 				selected: false,
 				description: "Find patients based on death.",
 				action: function () {
@@ -135,27 +36,123 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 						Death: new criteriaTypes.Death(null, self.expression().ConceptSets)
 					});
 				}
+			},
+			{
+				text: "Add Device Exposure Criteria",
+				selected: false,
+				description: "Find patients based on device exposure.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						DeviceExposure: new criteriaTypes.DeviceExposure(null, self.expression().ConceptSets)
+					});
 				}
-			];
+			},
+			{
+				text: "Add Dose Era Criteria",
+				selected: false,
+				description: "Find patients with dose eras.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						DoseEra: new criteriaTypes.DoseEra(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Drug Era Criteria",
+				selected: false,
+				description: "Find patients with with exposure to drugs over time.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						DrugEra: new criteriaTypes.DrugEra(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Drug Exposure Criteria",
+				selected: false,
+				description: "Find patients with exposure to specific drugs or drug classes.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						DrugExposure: new criteriaTypes.DrugExposure(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Measurement Criteria",
+				selected: false,
+				description: "Find patients based on Measurement.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						Measurement: new criteriaTypes.Measurement(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Observation Criteria",
+				selected: false,
+				description: "Find patients based on lab tests or other observations.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						Observation: new criteriaTypes.Observation(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Observation Period Criteria",
+				selected: false,
+				description: "Find patients based on Observation Period.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						ObservationPeriod: new criteriaTypes.ObservationPeriod(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Procedure Occurrence Criteria",
+				selected: false,
+				description: "Find patients that experienced a specific procedure.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						ProcedureOccurrence: new criteriaTypes.ProcedureOccurrence(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Specimen Criteria",
+				selected: false,
+				description: "Find patients based on Specimen.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						Specimen: new criteriaTypes.Specimen(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Visit Criteria",
+				selected: false,
+				description: "Find patients based on visit information.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						VisitOccurrence: new criteriaTypes.VisitOccurrence(null, self.expression().ConceptSets)
+					});
+				}
+			}
+		];
 
 		if (params.widget) {
 			params.widget(this);
 		}
 
-		var rules = params.expression().InclusionRules();
-		for (var i = 0; i < rules.length; i++) {
-			if (!ko.isObservable(rules[i].name)) {
-				rules[i] = new InclusionRule(rules[i]);
-			}
-		}
-
 		self.expression = params.expression;
-
 		self.options = options;
 
 		self.selectedInclusionRule = ko.observable(null);
+		self.selectedInclusionRuleIndex = null;
+		
 		self.selectInclusionRule = function (inclusionRule) {
 			self.selectedInclusionRule(inclusionRule);
+			self.selectedInclusionRuleIndex = params.expression().InclusionRules().indexOf(inclusionRule);
+			console.log("Selected Index: " + self.selectedInclusionRuleIndex);
 		}
 
 		self.removeAdditionalCriteria = function () {
@@ -182,7 +179,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 		}
 
 		self.copyInclusionRule = function (inclusionRule) {
-			var copiedRule = new InclusionRule(ko.toJS(inclusionRule));
+			var copiedRule = new InclusionRule(ko.toJS(inclusionRule), self.expression().ConceptSets);
 			copiedRule.name("Copy of: " + copiedRule.name());
 			self.expression().InclusionRules.push(copiedRule);
 			self.selectedInclusionRule(copiedRule);
@@ -191,7 +188,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 		self.addConceptSet = function (item) {}
 
 		self.addPrimaryCriteriaOptions = {
-			selectText: "Add Primary Event Filters...",
+			selectText: "Add Initial Event...",
 			width: 250,
 			height: 300,
 			actionOptions: primaryCriteriaOptions,
@@ -242,6 +239,23 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				}
 			}, 2)
 		}
+		
+		// Subscriptions
+		
+		self.expressionSubscription = self.expression.subscribe(function (newVal) {
+			console.log("New Cohort Expression set.");
+			self.selectedInclusionRule(params.expression().InclusionRules()[self.selectedInclusionRuleIndex]);
+		});
+		
+		// Cleanup
+		
+		self.dispose = function() {
+			console.log("Cohort Expression Editor Dispose.");
+			self.expressionSubscription.dispose();
+		};
+		
+		
+		
 	}
 
 	// return factory

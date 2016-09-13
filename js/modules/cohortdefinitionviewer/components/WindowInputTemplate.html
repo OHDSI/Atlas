@@ -1,2 +1,2 @@
-<span data-bind="text: Window.Start.Days() != null ? Window.Start.Days() : 'all'" /> days <span data-bind="text: $component.getCoeffName(Window.Start.Coeff())"></span>
-and <span data-bind="text: Window.End.Days() != null ? Window.End.Days() : 'all'" /> days <span data-bind="text: $component.getCoeffName(Window.End.Coeff())"></span>
+<span data-bind="text: ko.utils.unwrapObservable(Window.Start.Days) != null ? ko.utils.unwrapObservable(Window.Start.Days) : 'all'" /> days <span data-bind="text: $component.getCoeffName(ko.utils.unwrapObservable(Window.Start.Coeff))"></span>
+and <span data-bind="text: ko.utils.unwrapObservable(Window.End.Days) != null ? ko.utils.unwrapObservable(Window.End.Days) : 'all'" /> days <span data-bind="text: $component.getCoeffName(ko.utils.unwrapObservable(Window.End.Coeff))"></span>

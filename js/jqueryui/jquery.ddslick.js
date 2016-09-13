@@ -158,9 +158,6 @@
 					obj.on('click.ddslick', function (e) {
 						e.stopPropagation();
 					});
-					$('body').on('click', function () {
-						$('.dd-click-off-close').slideUp(50).siblings('.dd-select').find('.dd-pointer').removeClass('dd-pointer-up');
-					});
 				}
 			}
 		});
@@ -327,4 +324,10 @@
 			}
 		});
 	}
+
+	// init body click handler one time for all ddslick instances
+	$('body').on('click', function () {
+		$('.dd-click-off-close').slideUp(50).siblings('.dd-select').find('.dd-pointer').removeClass('dd-pointer-up');
+	});
+	
 }));

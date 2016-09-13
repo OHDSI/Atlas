@@ -1,29 +1,29 @@
 <!-- ko with: Criteria -->
 a condition era of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Condition'}"></conceptset-reference>
 <ul>
-<!-- ko if: First() != null -->
+<!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>for the first time in the person's history</li>
 <!-- /ko -->
-<!-- ko if: EraStartDate() != null -->
+<!-- ko if: ko.utils.unwrapObservable(EraStartDate) != null -->
 	<li>era start is <date-range-viewer params="Range: EraStartDate"></date-range-viewer></li>
 <!-- /ko -->
-<!-- ko if: EraEndDate() != null -->
+<!-- ko if: ko.utils.unwrapObservable(EraEndDate) != null -->
 	<li>era end is <date-range-viewer params="Range: EraEndDate"></date-range-viewer></li>
 <!-- /ko -->
-<!-- ko if: OccurrenceCount() != null -->
+<!-- ko if: ko.utils.unwrapObservable(OccurrenceCount) != null -->
 	<li>with occurrence count <numeric-range-viewer params="Range: OccurrenceCount"></numeric-range-viewer></li>
 <!-- /ko -->
-<!-- ko if: EraLength() != null -->
+<!-- ko if: ko.utils.unwrapObservable(EraLength) != null -->
 	<li>with era length <numeric-range-viewer params="Range: EraLength"></numeric-range-viewer></li>
 <!-- /ko -->
-<!-- ko if: AgeAtStart() != null -->
+<!-- ko if: ko.utils.unwrapObservable(AgeAtStart) != null -->
 	<li>with age at era start <numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
 <!-- /ko -->
-<!-- ko if: AgeAtEnd() != null -->
+<!-- ko if: ko.utils.unwrapObservable(AgeAtEnd) != null -->
 	<li>with age at era end <numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
 <!-- /ko -->
-<!-- ko if: Gender() != null -->
-	<li>gender is any of: <concept-list-viewer params="ConceptList: Gender()"></concept-list-viewer></li>
+<!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
 </ul>
 <!-- /ko -->

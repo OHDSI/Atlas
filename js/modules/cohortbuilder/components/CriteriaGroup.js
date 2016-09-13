@@ -5,92 +5,98 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 
 		var addCriteriaActions = [
 			{
-				text: "Add Condition Filters",
+				text: "Add Demographic Criteria",
 				selected: false,
-				description: "Find patients with specific diagnoses.",
-				action: function () { self.addConditionCriteria(); }
+				description: "Filter events based on demographic criteria.",
+				action: function () { self.addDemographicCriteria(); }
 			},
 			{
-				text: "Add Condition Era Filters",
+				text: "Add Condition Era Criteria",
 				selected: false,
-				description: "Find patients with specific diagnosis era.",
+				description: "Find patients with specific condition era.",
 				action: function () { self.addConditionEraCriteria(); }
 			},
 			{
-				text: "Add Drug Filters",
+				text: "Add Condition Occurrence Criteria",
 				selected: false,
-				description: "Find patients with exposure to specific drugs or drug classes.",
-				action: function () { self.addDrugExposureCriteria(); }
+				description: "Find patients with specific conditions.",
+				action: function () { self.addConditionCriteria(); }
 			},
 			{
-				text: "Add Drug Era Filters",
-				selected: false,
-				description: "Find patients with with exposure to drugs over time.",
-				action: function () { self.addDrugEraCriteria(); }
-			},
-			{
-				text: "Add Dose Era Filters",
-				selected: false,
-				description: "Find patients with dose eras.",
-				action: function () { self.addDoseEraCriteria(); }
-			},
-			{
-				text: "Add Procedure Filters",
-				selected: false,
-				description: "Find patients that experienced a specific procedure.",
-				action: function () { self.addProcedureCriteria(); }
-			},
-			{
-				text: "Add Observation Filters",
-				selected: false,
-				description: "Find patients based on lab tests or other observations.",
-				action: function () { self.addObservationCriteria(); }
-			},
-			{
-				text: "Add Visit Filters",
-				selected: false,
-				description: "Find patients based on visit information.",
-				action: function () { self.addVisitCriteria(); }
-			},
-			{
-				text: "Add Device Exposure Filters",
-				selected: false,
-				description: "Find patients based on device exposure.",
-				action: function () { self.addDeviceCriteria(); }
-			},
-			{
-				text: "Add Measurement Filters",
-				selected: false,
-				description: "Find patients based on Measurements.",
-				action: function () { self.addMeasurementCriteria(); }
-			},
-			{
-				text: "Add Specimen Filters",
-				selected: false,
-				description: "Find patients based on Specimen.",
-				action: function () { self.addSpecimenCriteria(); }
-			},			
-			{
-				text: "Add Observation Period Filters",
-				selected: false,
-				description: "Find patients based on Observation Period.",
-				action: function () { self.addObservationPeriodCriteria(); }
-			},
-			{
-				text: "Add Death Filters",
+				text: "Add Death Criteria",
 				selected: false,
 				description: "Find patients based on death.",
 				action: function () { self.addDeathCriteria(); }
 			},
 			{
-				text: "Add Filter Group",
+				text: "Add Device Exposure Criteria",
 				selected: false,
-				description: "Add a group to combine Filters.",
+				description: "Find patients based on device exposure.",
+				action: function () { self.addDeviceCriteria(); }
+			},
+			{
+				text: "Add Dose Era Criteria",
+				selected: false,
+				description: "Find patients with dose eras.",
+				action: function () { self.addDoseEraCriteria(); }
+			},
+			{
+				text: "Add Drug Era Criteria",
+				selected: false,
+				description: "Find patients with with drug eras.",
+				action: function () { self.addDrugEraCriteria(); }
+			},
+			{
+				text: "Add Drug Exposure Criteria",
+				selected: false,
+				description: "Find patients with exposure to specific drugs or drug classes.",
+				action: function () { self.addDrugExposureCriteria(); }
+			},
+			{
+				text: "Add Measurement Criteria",
+				selected: false,
+				description: "Find patients based on measurements.",
+				action: function () { self.addMeasurementCriteria(); }
+			},
+			{
+				text: "Add Observation Criteria",
+				selected: false,
+				description: "Find patients based on observations.",
+				action: function () { self.addObservationCriteria(); }
+			},
+			{
+				text: "Add Observation Period Criteria",
+				selected: false,
+				description: "Find patients based on pbservation periods.",
+				action: function () { self.addObservationPeriodCriteria(); }
+			},
+			{
+				text: "Add Procedure Occurrence Criteria",
+				selected: false,
+				description: "Find patients that experienced a specific procedure.",
+				action: function () { self.addProcedureCriteria(); }
+			},
+			{
+				text: "Add Specimen Criteria",
+				selected: false,
+				description: "Find patients based on specimen.",
+				action: function () { self.addSpecimenCriteria(); }
+			},			
+			{
+				text: "Add Visit Criteria",
+				selected: false,
+				description: "Find patients based on visit information.",
+				action: function () { self.addVisitCriteria(); }
+			},
+			{
+				text: "Add Group",
+				selected: false,
+				description: "Add a group to combine criteria using and/or relationships.",
 				action: function () { self.addAdditionalCriteria(); }
 			}
 		];
 
-		self.expression = ko.utils.unwrapObservable(params.expression);
+		self.expression = params.expression;
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;
 		self.options = options;
@@ -137,111 +143,130 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 		};
 
 		self.addAdditionalCriteria = function () {
-			self.group().Groups.push(new CriteriaGroup(null, self.expression.ConceptSets));
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+			self.group().Groups.push(new CriteriaGroup(null, unwrappedExpression.ConceptSets));
 		};
 
+		self.addDemographicCriteria = function() {
+			self.group().DemographicCriteriaList.push(new criteriaTypes.DemographicCriteria());
+		}
+		
 		self.addConditionCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					ConditionOccurrence: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addConditionEraCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					ConditionEra: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addDrugExposureCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					DrugExposure: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addDrugEraCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					DrugEra: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addDoseEraCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					DoseEra: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addProcedureCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					ProcedureOccurrence: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 		
 		self.addObservationCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					Observation: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};	
 
 		self.addVisitCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					VisitOccurrence: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 		
 		self.addDeviceCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					DeviceExposure: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 		
 		self.addMeasurementCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					Measurement: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 
 		self.addSpecimenCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					Specimen: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};
 		
 		self.addObservationPeriodCriteria = function () {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					ObservationPeriod: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		};		
+		
 		self.addDeathCriteria = function()
 		{
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					Death: {}
 				}
-			}, self.expression.ConceptSets));
+			}, unwrappedExpression.ConceptSets));
 		}
 		
 		self.removeCriteria = function (observableList, data) {

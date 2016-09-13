@@ -1,5 +1,12 @@
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf', 'components/profileChart', 'css!./styles/profileManager.css'],
-	function (ko, view, d3, config, lodash, crossfilter) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf-profile', 'components/profileChart', 'css!./styles/profileManager.css'],
+	function (ko, view, d3, config, _, crossfilter) {
+
+		var reduceToRecs = [ // crossfilter group reduce functions where group val
+												 // is an array of recs in the group
+			(p, v, nf) => p.concat(v), 
+			(p, v, nf) => _.without(p, v), 
+			() => []
+		];
 
 		function profileManager(params) {
 			window.d3 = d3;
@@ -11,9 +18,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.model = params.model;
 			self.aspectRatio = ko.observable();
 
-			self.sourceKey = ko.observable(params.model.sourceKey);
+			self.sourceKey = ko.observable(util.getState('sourceKey'));
+			self.personId = ko.observable(util.getState('personId'));
 			self.cohortSource = ko.observable();
-			self.personId = ko.observable();
 			self.person = ko.observable();
 			self.loadingPerson = ko.observable(false);
 			self.cantFindPerson = ko.observable(false)
@@ -21,6 +28,33 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.setSourceKey = function (d) {
 				self.sourceKey(d.sourceKey);
 			}
+
+			self.cohortDefSource = ko.computed(function() {
+				return {
+									cohortDef: params.model.currentCohortDefinition(),
+									sourceKey: self.sourceKey(),
+				};
+			});
+			self.cohortDefSource.subscribe(function(o) {
+				self.loadConceptSets(o);
+			});
+			self.loadConceptSets = function(o) {
+				if (!o.cohortDef)
+					return;
+				var conceptSets = ko.toJS(o.cohortDef.expression().ConceptSets());
+				conceptSets.forEach(function(conceptSet) {
+					pageModel.resolveConceptSetExpressionSimple(
+						ko.toJSON(conceptSet.expression), 
+											_.bind(self.loadedConceptSet, self, conceptSet))
+				});
+			};
+			self.conceptSets = ko.observable({});
+			self.loadedConceptSet = function(conceptSet, ids, status) {
+				//console.log(conceptSet.name, ids);
+				self.conceptSets(_.extend({}, self.conceptSets(),
+																	{[conceptSet.name]: ids}));
+			}
+			self.loadConceptSets(self.cohortDefSource());
 
 			self.sourceKeyCaption = ko.computed(function () {
 				if (self.sourceKey()) {
@@ -31,6 +65,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			});
 
 			self.sourceKey.subscribe(function (sourceKey) {
+				util.setState('sourceKey', sourceKey);
+				/*
 				self.cohortSource(_.find(
 					self.model.cohortDefinitionSourceInfo(), {
 						sourceKey: sourceKey
@@ -38,14 +74,23 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.personId(null);
 				self.person(null);
 				document.location = '#/profiles/' + sourceKey;
+				*/
+			});
+			self.personId.subscribe(function (personId) {
+				util.setState('personId', personId);
 			});
 
+			/*
 			if (params.model.currentCohortDefinition()) {
+				console.log("might be clobbering route here");
 				self.sourceKey(self.services.sources[0].sourceKey);
 			}
+			*/
+		  /*
 			params.model.currentCohortDefinition.subscribe(function (def) {
 				self.sourceKey(self.services.sources[0].sourceKey);
 			});
+			*/
 
 			let personRequests = {};
 			let personRequest;
@@ -67,10 +112,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						}
 						self.loadingPerson(false);
 						let cohort;
-						if (params.model.currentCohortDefinition()) {
-							cohort = _.find(person.cohorts, {
-								cohortDefinitionId: params.model.currentCohortDefinition().id()
-							});
+						let cohortDefinitionId = util.getState('currentCohortDefinitionId');
+						if (cohortDefinitionId) {
+							cohort = _.find(person.cohorts, { cohortDefinitionId });
 						} else {
 							cohort = {
 								startDate: _.chain(person.records)
@@ -91,8 +135,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				});
 			};
 
-			self.sourceKey(params.model.sourceKey);
-			self.personId(params.model.personId);
+			//self.sourceKey(params.model.sourceKey);
+			//self.personId(params.model.personId);
 
 			self.crossfilter = ko.observable();
 			self.filtersChanged = ko.observable();
@@ -141,42 +185,58 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					func: d => [d.startDay, d.endDay],
 					filter: ko.observable(null),
 				},
-				/*
-				'search': {
-						name: 'search',
-						func: d => d,
-						filter: ko.observable(null),
-				},
-				*/
-				'wordcloud': {
-					name: 'wordcloud',
+				'conceptName': {
+					name: 'conceptName',
 					func: d => d.conceptName,
 					filter: ko.observable(null),
-					words: function (filteredRecs) {
-						var needToLook = filteredRecs().length; // knockout won't fire this otherwise
-						var stopWords = [
-							'Outpatient Visit', 'No matching concept',
-						];
-						if (!self.dimensions.wordcloud.dimension) return [];
-						var words = self.dimensions.wordcloud.group.top(20)
-							.filter(d => d.value.length &&
-								stopWords.indexOf(d.key) === -1)
-							.map(d => {
-								return {
-									text: d.key,
-									recs: d.value
-								}
-							});
-						words = _.sortBy(words, d => -d.recs.length)
-						var avgSize = average(words.map(d => d.recs.length));
-						var std = standardDeviation(words.map(d => d.recs.length));
-						words.forEach(word => {
-							word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 10)) + '%';
-						});
-						return words;
+				},
+				'concepts': { // includes conceptSets and specific conceptName
+					name: 'concepts',
+					isArray: true,
+					func: d => {
+						return (_.chain(self.conceptSets())
+											.map(function(ids, conceptSetName) {
+												if (_.contains(ids, d.conceptId))
+													return conceptSetName;
+													//return conceptSetName + '-cs';
+											})
+											.compact()
+											.value()
+											.concat(d.conceptName)
+											//.concat(d.conceptName + '-c')
+									 );
 					},
+					filter: ko.observable(null),
 				},
 			};
+			self.words = ko.computed(function() {
+				var recs = self.filteredRecs();
+				var conceptSets = self.conceptSets();
+				self.crossfilter.valueHasMutated();
+				//console.log(conceptSets);
+				var stopWords = [
+					'Outpatient Visit', 'No matching concept',
+				];
+				if (!self.dimensions.concepts.dimension) return [];
+				var words = self.dimensions.concepts.group.top(20)
+					.filter(d => d.value.length &&
+						stopWords.indexOf(d.key) === -1)
+					.map(d => {
+						return {
+							//text: d.key,
+							text: `${d.key} (${d.value.length})`,
+							recs: d.value
+						}
+					});
+				words = _.sortBy(words, d => -d.recs.length)
+				var avgSize = average(words.map(d => d.recs.length));
+				var std = standardDeviation(words.map(d => d.recs.length));
+				words.forEach(word => {
+					word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 10)) + '%';
+				});
+				//console.log(words);
+				return words;
+			});
 			self.searchHighlight = ko.observable();
 			self.searchHighlight.subscribe(func => {
 				if (func)
@@ -185,7 +245,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					self.highlight([]);
 			});
 			self.facets = ['Domain'].map(d => self.dimensions[d]);
-			var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
 			self.crossfilter(crossfilter([]));
 			_.each(self.dimensions, dim => {
 				dim.filter.subscribe(filter => {
@@ -200,7 +259,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			});
 			self.crossfilter.subscribe(cf => {
 				_.each(self.dimensions, dim => {
-					dim.dimension = cf.dimension(dim.func);
+					dim.dimension = cf.dimension(dim.func, dim.isArray);
 					dim.filter(null);
 					dim.group = dim.dimension.group();
 					dim.group.reduce(...reduceToRecs);
@@ -239,24 +298,24 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				{
 					title: 'Domain',
 					data: 'domain'
-			},
+				},
 				{
 					title: 'Concept Id',
 					data: 'conceptId'
-			},
+				},
 				{
 					title: 'Concept Name',
 					data: 'conceptName'
-			},
+				},
 				{
 					title: 'Start Day',
 					data: 'startDay'
-			},
+				},
 				{
 					title: 'End Day',
 					data: 'endDay'
-			}
-		];
+				}
+			];
 			if (self.personId()) {
 				self.loadPerson();
 			}

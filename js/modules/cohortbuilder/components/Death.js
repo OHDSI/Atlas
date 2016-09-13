@@ -5,44 +5,44 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 		var addActions = [
 			{
-				text: "Add Death Date Filter",
+				text: "Add Age at Occurrence Criteria",
+				value: 3,
+				selected: false,
+				description: "Filter by age at death."
+			},
+			{
+				text: "Add Gender Criteria",
+				value: 4,
+				selected: false,
+				description: "Filter Deaths based on Gender."
+			}, 
+			{
+				text: "Add Death Date Criteria",
 				value: 0,
 				selected: false,
 				description: "Filter Death by Date."
 			},
 			{
-				text: "Add Death Type Filter",
+				text: "Add Death Type Criteria",
 				value: 1,
 				selected: false,
 				description: "Filter by Death Type."
 			},
 			{
-				text: "Add Cause of Death Source Concept Filter",
+				text: "Add Cause of Death Source Concept Criteria",
 				value: 2,
 				selected: false,
 				description: "Filter Death by the Death Source Concept."
-			},
-			{
-				text: "Add Age at Occurrence Filter",
-				value: 3,
-				selected: false,
-				description: "Filter by age at death."
-					}, 
-			{
-				text: "Add Gender Filter",
-				value: 4,
-				selected: false,
-				description: "Filter Deaths based on Gender."
 			}
 /*
  			{
-				text: "Add Prior Observation Duration Filter",
+				text: "Add Prior Observation Duration Criteria",
 				value: 8,
 				selected: false,
 				description: "Filter Condition Occurrences based on Prior Observation Duration."
 					},
 			{
-				text: "Add Post Observation Duration Filter",
+				text: "Add Post Observation Duration Criteria",
 				value: 9,
 				selected: false,
 				description: "Filter Condition Occurrences based on Prior Observation Duration."
@@ -51,7 +51,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 		];
 
 		self.addCriterionSettings = {
-			selectText: "Add Filter...",
+			selectText: "Add criteria attribute…",
 			height:300,
 			actionOptions: addActions,
 			onAction: function (data) {
@@ -91,7 +91,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 			}
 		};
 
-		self.expression = params.expression;
+		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.Death;
 		self.options = options;
 		

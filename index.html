@@ -61,13 +61,23 @@
 				<a href="#/cohortdefinitions"><i class="fa fa-users"></i>Cohorts</a>
 			</li>
 			<li>
-				<a href="#/profiles"><i class="fa fa-user"></i>Profiles</a>
+				<a data-bind="css: irStatusCss, attr: {href: irAnalysisURL}"><i class="fa fa-bolt"></i>Incidence Rates</a>
+			</li>
+			<li>
+				<!-- force a reload to reset in case already on the profiles page -->
+				<a href="#/profiles" onclick="window.location.reload(); return true;"><i class="fa fa-user"></i>Profiles</a>
+			</li>
+			<li>
+				<a href="#/estimation"><i class="fa fa-balance-scale"></i>Estimation</a>
 			</li>
 			<li>
 				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
 			</li>
 			<li>
 				<a href="#/configure"><i class="fa fa-cogs"></i>Configuration</a>
+			</li>
+			<li>
+				<a href="#/r"><i class="fa fa-registered"></i>R Services</a>
 			</li>
 			<li>
 				<a target="_blank" href="https://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
@@ -101,10 +111,10 @@
 			<!-- /ko -->
 
 			<!-- /ko -->
-
+			
 			<div id="wrapperLoading" data-bind="if: currentView() == 'loading'">
 				<div class="wrapperTitle">
-					<i class="fa fa-refresh fa-spin"></i> Loading...
+					<i class="fa fa-circle-o-notch fa-spin"></i> Loading...
 				</div>
 			</div>
 
@@ -166,6 +176,14 @@
 				<feasibility-analyzer params="services: pageModel.services, feasibilityId: pageModel.feasibilityId"></feasibility-analyzer>
 			</div>
 
+			<div data-bind="if:pageModel.currentView() == 'estimations'">
+				<cohort-comparison-browser></cohort-comparison-browser>
+			</div>
+
+			<div data-bind="if:pageModel.currentView() == 'estimation'">
+				<cohort-comparison-manager params="currentCohortComparisonId:pageModel.currentCohortComparisonId"></cohort-comparison-manager>
+			</div>
+
 			<div data-bind="if:pageModel.currentView() == 'r'">
 				<r-manager></r-manager>
 			</div>
@@ -180,15 +198,32 @@
 						<div class="heading">Application Initialization Failed</div>
 						<div class="error">Unable to connect to an instance of the WebAPI. Please contact your administrator to resolve this issue.</div>
 					</div>
-					<div class="heading">Configured Services</div>
-					<ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
+					<div data-bind="if:!appInitializationFailed()">
+						<div class="heading">Configured Services</div>
+						<ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
+					</div>
 				</div>
+			</div>
+
+			<div data-bind="if: currentView() == 'irbrowser'">
+				<ir-browser params="model: pageModel"></ir-browser>
+			</div>
+
+			<div data-bind="if: currentView() == 'iranalysis'">
+				<ir-manager params="model: pageModel"></ir-manager>
 			</div>
 
 			<div data-bind="if: currentView() == 'template'">
 				<div class="wrapperTitle">
 					Template
 				</div>
+			</div>
+
+			<div data-bind="if:pageModel.currentView() == 'sptest'">
+				<sptest></sptest>
+			</div>
+			<div data-bind="if:pageModel.currentView() == 'sptest_smoking'">
+				<sptest_smoking></sptest_smoking>
 			</div>
 
 		</div>

@@ -1,5 +1,5 @@
-<span contenteditable="true" class="dropdown numericInputField" data-bind="htmlValue: Window.Start.Days.numeric(), defaultValue: 'All', ko_autocomplete: { source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days
+<span contenteditable="true" placeholder="All" class="dropdown numericInputField" data-bind="htmlValue: Window.Start.Days.numeric(), ko_autocomplete: { value: Window.Start.Days, source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true }, selectOnFocus: {events: ['click']}" /> days
 <select data-bind="options: $component.options.windowCoeffOptions, optionsText: 'name', optionsValue: 'value', value: Window.Start.Coeff" />
 and 
-<span contenteditable="true" class="dropdown numericInputField" data-bind="htmlValue: Window.End.Days.numeric(), defaultValue: 'All', ko_autocomplete: { source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days
+<span contenteditable="true" placeholder="All" class="dropdown numericInputField" data-bind="htmlValue: Window.End.Days.numeric(), ko_autocomplete: { value: Window.End.Days, source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true }, selectOnFocus: {events: ['click']}" /> days
 <select data-bind="options: $component.options.windowCoeffOptions, optionsText: 'name', optionsValue: 'value', value: Window.End.Coeff" />

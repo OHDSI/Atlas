@@ -5,89 +5,88 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 		var addActions = [
 			{
-				text: "Add Device Exposure Start Date Filter",
-				value: 0,
-				selected: false,
-				description: "Filter Procedure Occurrences by the Procedure Start Date."
-			},
-			{
-				text: "Add Device Exposure End Date Filter",
-				value: 1,
-				selected: false,
-				description: "Filter Device Exposure by the Procedure Start Date."
-			},			
-			{
-				text: "Add Device Type Filter",
-				value: 2,
-				selected: false,
-				description: "Filter Procedure Occurrences  by the Procedure Type."
-			},
-			{
-				text: "Add Unique Id Filter",
-				value: 3,
-				selected: false,
-				description: "Filter Device Exposures by Device Unique Id."
-			},			
-			{
-				text: "Add Quantity Filter",
-				value: 4,
-				selected: false,
-				description: "Filter Device Exposures by Quantity."
-					},
-			{
-				text: "Add Device Source Concept Filter",
-				value: 5,
-				selected: false,
-				description: "Filter Device Exposures by the Device Source Concept."
-					},
-			{
-				text: "Add New Exposure Filter",
+				text: "Add First Exposure Criteria",
 				value: 6,
 				selected: false,
-				description: "Limit Device Exposures to first exposure."
+				description: "Limit Device Exposures to first exposure in history."
 			},
 			{
-				text: "Add Age at Occurrence Filter",
+				text: "Add Age at Occurrence Criteria",
 				value: 7,
 				selected: false,
 				description: "Filter Device Exposures by age at occurrence."
 			}, 
 			{
-				text: "Add Gender Filter",
+				text: "Add Gender Criteria",
 				value: 8,
 				selected: false,
 				description: "Filter Device Exposures based on Gender."
+			},			{
+				text: "Add Start Date Criteria",
+				value: 0,
+				selected: false,
+				description: "Filter Procedure Occurrences by the Procedure Start Date."
+			},
+			{
+				text: "Add End Date Criteria",
+				value: 1,
+				selected: false,
+				description: "Filter Device Exposure by the Procedure Start Date."
+			},			
+			{
+				text: "Add Device Type Criteria",
+				value: 2,
+				selected: false,
+				description: "Filter Procedure Occurrences  by the Procedure Type."
+			},
+			{
+				text: "Add Visit Criteria",
+				value: 10,
+				selected: false,
+				description: "Filter Device Exposures based on visit occurrence of exposure."
+			},
+			{
+				text: "Add Unique Id Criteria",
+				value: 3,
+				selected: false,
+				description: "Filter Device Exposures by Device Unique Id."
+			},			
+			{
+				text: "Add Quantity Criteria",
+				value: 4,
+				selected: false,
+				description: "Filter Device Exposures by Quantity."
+					},
+			{
+				text: "Add Device Source Concept Criteria",
+				value: 5,
+				selected: false,
+				description: "Filter Device Exposures by the Device Source Concept."
 			},
 /*
  			{
-				text: "Add Prior Observation Duration Filter",
+				text: "Add Prior Observation Duration Criteria",
 				value: 8,
 				selected: false,
 				description: "Filter Procedure Occurrences based on Prior Observation Duration."
 					},
 			{
-				text: "Add Post Observation Duration Filter",
+				text: "Add Post Observation Duration Criteria",
 				value: 9,
 				selected: false,
 				description: "Filter Procedure Occurrences based on Prior Observation Duration."
 					},
 */
 			{
-				text: "Add Provider Specialty Filter",
+				text: "Add Provider Specialty Criteria",
 				value: 9,
 				selected: false,
 				description: "Filter Device Exposures based on provider specialty."
-					},
-			{
-				text: "Add Visit Filter",
-				value: 10,
-				selected: false,
-				description: "Filter Device Exposures based on visit occurrence of exposure."
 			}
 		];
 
 		self.addCriterionSettings = {
-			selectText: "Add Filter...",
+			selectText: "Add criteria attribute…",
 			height:300,
 			actionOptions: addActions,
 			onAction: function (data) {
@@ -151,7 +150,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 			}
 		};
 
-		self.expression = params.expression;
+		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.DeviceExposure;
 		self.options = options;
 

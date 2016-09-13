@@ -1,10 +1,4 @@
-							<!-- this was supposed to go in a div that no longer exists here - when cartoon is unhidden, that is
-							data-bind="event: { 
-									mouseover: function() { selectedFragment && selectedFragment(expression().PrimaryCriteria()) }, 
-									mouseout: function() { selectedFragment && selectedFragment(null);}
-								}, 
-								css: {highlighted: selectedFragment && selectedFragment() === expression().PrimaryCriteria()}"
-								-->
+<div class="heading">Initial Event Cohort</div>
 People having any of the following:
 <br>
 
@@ -19,9 +13,9 @@ People having any of the following:
 </ul>
 <div>
 	<span data-bind="with: expression().PrimaryCriteria().ObservationWindow"> with continuous observation of at least
-	<span class="numericField" data-bind="text: PriorDays.numeric()" /> days prior and <span class="numericField" data-bind="text: PostDays.numeric()" /> days after index,
+	<span class="numericField" data-bind="text: PriorDays.numeric()" /> days prior and <span class="numericField" data-bind="text: PostDays.numeric()" /> days after event index date,
 </span>
-	<span data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit"> and limit primary events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b>
+	<span data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit"> and limit initial events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b>
 	</span>
 </div>
 <br/>
@@ -29,28 +23,19 @@ People having any of the following:
 <div style="width:60%" data-bind="with: expression">
 	<div data-bind="if: AdditionalCriteria">
 		<div>For people matching the Primary Events, include:</div>
-							<!-- INCLUDE IN params BELOW FOR CARTOON
-							, selectedFragment: $component.selectedFragment -->
 		<criteria-group-viewer params="{expression: $data, group: AdditionalCriteria}"></criteria-group-viewer>
+		<div data-bind="with: QualifiedLimit">Limit cohort of initial events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
 	</div>
 </div>
 
-							<!-- not sure where these things go when putting cartoon back in place
-								event: {
-									mouseover: function () { $component.selectedFragment && $component.selectedFragment(expression().PrimaryCriteria()) },
-									mouseout: function() { $component.selectedFragment && $component.selectedFragment(null);}
-								}, 
-								css: {highlighted: $component.selectedFragment && $component.selectedFragment() === expression().PrimaryCriteria()}
-<div style="width:30%; right:10px; top:160px; position:fixed; ">
-	<div data-bind="cartoonExpression:[expression,$component.selectedFragment]">
-	</div>
-</div>
--->
 <div data-bind="with: expression">
 	<div data-bind="foreach: InclusionRules">
-		<div data-bind="text: 'Inclusion ' + ($index()+1) + ': ' + name()"></div>
+		<div class="heading" data-bind="text: 'Inclusion Criteria #' + ($index()+1) + ': ' + name()"></div>
 		<criteria-group-viewer params="{expression: $parent, group: ko.observable($data.expression)}"></criteria-group-viewer>
 	</div>
 </div>
 
-<div data-bind="with: expression().ExpressionLimit">Limit cohort expression results to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
+<div data-bind="with: expression().ExpressionLimit">Limit qualifying cohort to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
+
+<end-strategy-viewer params="strategy: expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-viewer>
+
