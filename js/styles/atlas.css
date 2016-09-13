@@ -1454,7 +1454,6 @@ circle.child {
 .axis line {
 	stroke: rgba(200, 200, 200, 64) !important;
 	stroke-width: .5px !important;
-	/* color: #fff; */
 }
 
 .checkboxListing {

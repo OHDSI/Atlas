@@ -3,16 +3,29 @@
 	display: inline-block;
 	position: relative;
 	width: 100%;
-	/* padding-bottom: 30%; / * aspect ratio */
 	vertical-align: top;
 	overflow: hidden;
 	text-align: center;
+	shape-rendering: crispEdges;	
 }
+
+#profile-chart .brush .extent {
+	stroke: #f19119;
+	fill: #f19119;
+	fill-opacity: .125;
+	shape-rendering: crispEdges;
+}
+
+#profile-chart .observation-period {
+	fill: #b7cbdc;
+	opacity: .5;
+}
+
 #profile-chart svg {
 	display: inline-block;
 	position: absolute;
-	/* top: 10px; */
 	left: 0;
+	background-color: #eee;
 }
 #profile-chart .axis text {
 	font-size: 10px;
@@ -20,13 +33,16 @@
 
 #profile-chart {
 	text-align: center;
-	/* background-color: #eee; */
 	border-bottom: solid 1px #ccc;
 }
 
+#profile-chart .axis path, .axis line {
+		stroke: #666 !important;
+		stroke-width: 1px !important;
+}
 
 path.drug {
-	fill:rgb(177,89,40);
+	fill:#337AB7;
 	opacity: 0.6;
 }
 path.condition {
@@ -75,67 +91,83 @@ path.death {
 }
 
 rect.point {
-	opacity: 0.5;
+	opacity: 1;
 }
 rect.drug,
 text.drug
 {
-	fill:rgb(177,89,40);
+	fill:#337AB7;
+	opacity:.7;
 }
 rect.condition,
 text.condition
 {
-	fill:rgb(166,206,227);
+	fill:#337AB7;
+	opacity:.7;
+
 }
 rect.observation,
 text.observation
 {
-	fill:rgb(31,120,180);
+	fill:#337AB7;
+	opacity:.7;
+
 }
 rect.visit,
 text.visit
 {
-	fill:rgb(178,223,138);
+	fill:#337AB7;
+	opacity:.7;
+
 }
 rect.conditionera,
 text.conditionera
 {
-	fill:rgb(51,160,44);
+	fill:#337AB7;
+	opacity:.7;
+
 }
 rect.drugera,
 text.drugera
 {
-	fill:rgb(251,154,153);
+	fill:#337AB7;
+	opacity:.7;
 }
 rect.doseera,
 text.doseera
 {
-	fill:rgb(227,26,28);
+	fill:#337AB7;
+	opacity:.7;
 }
 rect.procedure,
 text.procedure
 {
-	fill:rgb(253,191,111);
+	fill:#337AB7;
+	opacity:.7;
 }
 rect.device,
 text.device
 {
-	fill:rgb(255,127,0);
+	fill:#337AB7;
+	opacity:.7;
 }
 rect.measurement,
 text.measurement
 {
-	fill:rgb(202,178,214);
+	fill:#337AB7;
+	opacity:.7;
 }
 rect.specimen,
 text.specimen
 {
-	fill:rgb(106,61,154);
+	fill:#337AB7;
+	opacity:.7;
 }
 rect.death,
 text.death
 {
-	fill:rgb(255,255,153);
+	fill:#337AB7;
+	opacity:.7;
 }
 
 rect.dim {
@@ -150,10 +182,10 @@ rect.dim {
 	height: 100%;
 }
 .wordcloud span {
-	background-color: #DDD;
+	background-color: #ccc;
 	margin: 2px;
-	padding: 2px;
-	border-radius: 5px;
+	padding: 3px;
+	border-radius: 3px;
 	display: block;
 	cursor: pointer;
 }
@@ -182,8 +214,11 @@ g.inset rect.highlighted {
 	height: 3px;
 }
 g.inset rect.insetZoom {
-	opacity: 0.2;
+	opacity: 1;
 	cursor: -webkit-grab;
+	fill:transparent;
+	stroke:#f19119;
+
 }
 g.inset rect.resizeLeft, 
 g.inset rect.resizeRight {
@@ -194,14 +229,15 @@ g.inset rect.filteredout {
 	fill: lightgray;
 }
 rect.category {
-	fill: #EEE;
+	fill: #fff;
 }
 text.category {
-	fill: white;
-	font-weight: bold;
-	text-shadow: -1px 0 #888, 0 1px #888, 1px 0 #888, 0 -1px #888;	
+	fill: #ccc;
+	font-weight:bold;
 }
 
 #cohortPeople {
 	display: inline-block;
 }
+
+
