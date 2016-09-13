@@ -16,23 +16,41 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 		return xScale(x) - xScale(0);
 	}
 	var yScale = d3.scale.ordinal();
+	// these are hardcoded now, but should be parameters to make this chart more reusable
 	var x = d=>{
 		if (!d) debugger;
 		//return d.startDate;
 		return d.startDay;
 	};
-	// these are hardcoded now, but should be parameters to make this chart more reusable
 	var endX = d => d.endDay;
 	var y = d=>d.domain;
 	var tipText = d=>d.conceptName;
 	var pointClass = d=>d.domain;
 	var radius = d=>2;
+	var labelX = (d, zoomFilter) => {
+		var ext = zoomFilter() && zoomFilter().ext() || [x(d), endX(d)];
+		var mid = (x(d) + endX(d)) / 2;
+		if (mid < ext[0] || mid > ext[1]) {
+			return (d3.scale.linear()
+								.domain([x(d), endX(d)])
+								.range(ext)
+								(mid));
+		}
+		return mid;
+	}
 
 	var highlightFunc = ()=>{};
 	var highlightFunc2 = ()=>{};
+	var zoomFilterG;
 	var focusTip = d3.tip()
 		.attr('class', 'd3-tip')
-		.offset([-10, 0])
+		.offset(function(d) {
+			return [this.getBBox().height / 2, 0];
+			return [-10,0];
+			var offset = [0, labelX(d, zoomFilterG) - x(d)];
+			console.log(offset)
+			return offset;
+		})
 		.html(function (d) {
 			return tipText(d);
 		});
@@ -68,10 +86,11 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 		/* verticleLines: [{xpos, color},...] */
 
 		if (zoomFilter()) {
-			xScale.domain(zoomFilter());
+			xScale.domain(zoomFilter().ext());
 		} else {
 			xScale.domain([d3.min(points.map(x)) - 1, d3.max(points.map(endX)) + 1]);
 		}
+		zoomFilterG = zoomFilter;
 
 		var categories = _.chain(points).map(y).uniq().value();
 		yScale.domain(categories.sort())
@@ -122,7 +141,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				if (brush.empty()) {
 					zoomFilter(null);
 				} else {
-					zoomFilter(brush.extent());
+					zoomFilter(makeFilter(brush.extent()));
 				}
 			});
 
@@ -214,7 +233,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 		if (points.length <= 50) {
 			// labeler usage from https://github.com/tinker10/D3-Labeler demo
 			var label_array = points.map((d,i)=>{
-				d.x = xScale(x(d)) + jitter(i).x;
+				d.x = xScale(labelX(d, zoomFilter)) + jitter(i).x;
 				d.y = yScale(y(d)) + jitter(i).y;
 				d.r = 8;
 				return {
@@ -289,6 +308,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 		return svg;
 	}
 	function inset(svg, allPoints, filteredPoints, zoomFilter) {
+		zoomFilterG = zoomFilter;
 		var insetWidth = (width + margin.left + margin.right) * .15
 		var insetHeight = (vizHeight + margin.top + margin.bottom) * .15;
 		var ixScale = d3.scale.linear()
@@ -325,8 +345,8 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 						.attr('transform', d => _.find(recs,d) ? 'translate(-1,-1)' : null)
 		}
 		if (zoomFilter()) {
-			var zoomDays = zoomFilter()[1] - zoomFilter()[0];
-			var edges = [{x: ixScale(zoomFilter()[0]), 
+			var zoomDays = zoomFilter().ext()[1] - zoomFilter().ext()[0];
+			var edges = [{x: ixScale(zoomFilter().ext()[0]), 
 										width: ixScale(zoomDays) - ixScale(0)}];
 
 			var insetZoom = g
@@ -349,7 +369,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			drag.on('dragend', function(d) {
 				var x = ixScale.invert(d.x);
 				//insetZoom.style('cursor', '-webkit-grab')
-				zoomFilter([x, x + zoomDays]);
+				zoomFilter(makeFilter([x, x + zoomDays]));
 			});
 
 			var resizeLeft = g
@@ -374,7 +394,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			resizeLeftDrag.on('dragend', function(d) {
 				var x = ixScale.invert(d.x);
 				//insetZoom.style('cursor', '-webkit-grab')
-				zoomFilter([x, zoomFilter()[1]]);
+				zoomFilter(makeFilter([x, zoomFilter().ext()[1]]));
 			});
 
 			var resizeRight = g
@@ -396,7 +416,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			});
 			resizeRightDrag.on('dragend', function(d) {
 				var width = ixScale.invert(d.width) - ixScale.invert(0);
-				zoomFilter([zoomFilter()[0], zoomFilter()[0] + width]);
+				zoomFilter(makeFilter([zoomFilter().ext()[0], zoomFilter().ext()[0] + width]));
 			});
 		}
 	}
@@ -475,5 +495,16 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 		jitterYScale.range([yScale.rangeBand() * .1, yScale.rangeBand() * .9]);
 		jitterOffsets[i] = jitterOffsets[i] || [Math.random() - .5, Math.random() - .5];
 		return { x: jitterOffsets[i][0] * maxX, y: jitterYScale(jitterOffsets[i][1]) };
+	}
+	function makeFilter(ext) {
+		var filter = function([start, end] = []) {
+			return (
+							( start >= ext[0] && start <= ext[1] ) ||
+							( end >= ext[0] && end <= ext[1] ) ||
+							( start <= ext[0] && end >= ext[1] )
+						 );
+		};
+		filter.ext = () => ext;
+		return filter;
 	}
 });
