@@ -142,7 +142,11 @@
 					<a>Print Friendly</a>
 				</li>
 
-				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'cartoon' }, click: function() { $component.exportTabMode('cartoon'); }">
+				<li role="presentation" data-bind="
+							css: { active: $component.exportTabMode() == 'cartoon' }, 
+							click: function() { 
+								$component.exportTabMode('cartoon'); 
+								$component.delayedCartoonUpdate($component.delayedCartoonUpdate()+1) }">
 					<a>Cartoon</a>
 				</li>
 
@@ -198,7 +202,7 @@
 						<!-- /ko -->
 						<div data-bind="cohortExpressionCartoon:{expression:model.currentCohortDefinition().expression,
 														selectedCriteria: $component.selectedCriteria,
-														tabPath: $component.tabPath,
+														exportTabMode: $component.exportTabMode,
 														delayedCartoonUpdate: $component.delayedCartoonUpdate}"></div>
 					</div>
 				</div>
@@ -340,7 +344,7 @@
 
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'explore' }" class="tab-pane">
 			<div class="paddedWrapper">
-				<explore-cohort params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false, showing: $component.tabMode()=='explore'}"></explore-cohort>
+				<explore-cohort params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false, showing: $component.tabMode}"></explore-cohort>
 			</div>
 		</div>
 
