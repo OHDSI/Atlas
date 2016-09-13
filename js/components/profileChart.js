@@ -55,7 +55,9 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				return;
 			var svg = categoryScatterPlot(element, va.recs(), 
 													rectangle,
-												 ko.utils.unwrapObservable(va.verticalLines), va.zoomFilter);
+													ko.utils.unwrapObservable(va.verticalLines||[]), 
+													ko.utils.unwrapObservable(va.shadedRegions||[]), 
+													va.zoomFilter);
 			if (va.allRecs.length != va.recs().length)
 				inset(svg, va.allRecs, va.recs(), va.zoomFilter);
 		}
@@ -63,6 +65,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 	function categoryScatterPlot(element, points, 
 															pointFunc,
 															verticalLines, 
+															shadedRegions, 
 															zoomFilter
 															) {
 		/* verticleLines: [{xpos, color},...] */
@@ -159,6 +162,22 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 						return ls + 'em';
 					});
 
+		console.log(shadedRegions);
+		var regions = focus.selectAll('rect.shaded-region')
+									.data(shadedRegions);
+		regions.exit().remove();
+		regions.enter()
+					.append('rect')
+					.attr('class', function(sr) {
+						return sr.className;
+					})
+					.classed('shaded-region', true);
+		focus.selectAll('rect.shaded-region')
+			.attr('x',d=>xScale(d.x1))
+			.attr('y', yScale.rangeExtent()[0])
+			.attr('width',d => xScale(d.x2) - xScale(d.x1))
+			.attr('height', yScale.rangeExtent()[1])
+
 		focus.append("g")
 			.attr("class", "x brush")
 			.call(brush)
@@ -178,6 +197,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.attr('y1', yScale.rangeExtent()[0])
 			.attr('y2', yScale.rangeExtent()[1])
 			.style('stroke', d=>d.color);
+
 		var pointGs = focus.selectAll("g.point")
 			.data(points);
 		pointGs.exit().remove();

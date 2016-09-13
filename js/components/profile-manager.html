@@ -48,7 +48,7 @@
 			<div class="wordcloud" data-bind="foreach:$component.words">
 				<span data-bind="
 					text:text, 
-					style:{fontSize:size},
+					style:{/*fontSize:size*/},
 					event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
 					"></span>
 			</div>
@@ -63,7 +63,6 @@
 						},
 					visible:showSection.profileChart,
 					profileChart:{
-							profile:person, 
 							recs:filteredRecs, 
 							zoomFilter:dimensions.profileChart.filter,
 							highlightRecs:highlightRecs,
@@ -71,6 +70,7 @@
 							aspectRatio: aspectRatio,
 							short: showSection.datatable(),
 							verticalLines: [{x:0, color:'#003142'}],
+							shadedRegions: shadedRegions,
 						}"></div>
 		<faceted-datatable-cf-profile
 				id="profile-manager-table" 

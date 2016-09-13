@@ -24,7 +24,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.cohortSource = ko.observable();
 			self.person = ko.observable();
 			self.loadingPerson = ko.observable(false);
-			self.cantFindPerson = ko.observable(false)
+			self.cantFindPerson = ko.observable(false);
+			self.shadedRegions = ko.observable([]);
 
 			self.setSourceKey = function (d) {
 				self.sourceKey(d.sourceKey);
@@ -143,6 +144,15 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 							rec.endDay = rec.endDate ?
 								Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
 						});
+						self.shadedRegions(
+							person.observationPeriods.map(op => {
+								return {
+									x1: Math.floor((op.startDate - cohort.startDate) / (1000 * 60 * 60 * 24)),
+									x2: Math.floor((op.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)),
+									className: 'observation-period',
+								};
+							})
+						);
 						self.crossfilter(crossfilter(person.records));
 						sessionStorage.setItem(
 							`person_${person.personId}`, 
@@ -261,11 +271,13 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						}
 					});
 				words = _.sortBy(words, d => -d.recs.length)
+				/* not varying word size anymore
 				var avgSize = average(words.map(d => d.recs.length));
 				var std = standardDeviation(words.map(d => d.recs.length));
 				words.forEach(word => {
 					word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 10)) + '%';
 				});
+				*/
 				//console.log(words);
 				return words;
 			});
