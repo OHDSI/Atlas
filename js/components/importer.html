@@ -16,13 +16,13 @@
 <div id="wrapperImportSourcecodes" class="paddedWrapper form-group" data-bind="if:model.currentImportMode() == 'sourcecodes'">
 	<div class="heading">Enter Source Codes</div>
 	<textarea class="form-control" rows="5" id="textImportSourcecodes"></textarea>
-	<a data-bind="click:function() {importSourcecodes();}" class="btn btn-xs btn-primary"><span class="fa fa-upload"></span> Import Source Codes</a>
+	<a data-bind="click:function() {importSourcecodes();}" class="btn btn-sm btn-primary"><span class="fa fa-upload"></span> Import Source Codes</a>
 	<div class="clear"></div>
 </div>
 <div id="wrapperImportConceptIdentifiers" class="paddedWrapper form-group" data-bind="if:model.currentImportMode() == 'identifiers'">
 	<div class="heading">Enter Concept Identifiers</div>
 	<textarea class="form-control" rows="5" id="textImportConceptIdentifiers" data-bind="if:model.currentImportMode() == 'conceptset'"></textarea>
-	<a data-bind="click:function() {importConceptIdentifiers();}" class="btn btn-xs btn-primary"><span class="fa fa-upload"></span> Import Concept Identifiers</a>
+	<a data-bind="click:function() {importConceptIdentifiers();}" class="btn btn-sm btn-primary"><span class="fa fa-upload"></span> Import Concept Identifiers</a>
 	<div class="clear"></div>
 </div>
 
@@ -34,7 +34,7 @@
 <div id="wrapperImportConceptSet" class="paddedWrapper form-group" data-bind="if:model.currentImportMode() == 'conceptset'">
 	<div class="heading">Concept Set Expression JSON</div>
 	<textarea class="form-control" rows="5" id="textImportConceptSet"></textarea>
-	<a type="button" data-bind="click:function() {importConceptSetExpression();}" class="btn btn-xs btn-primary "><i class="fa fa-upload"></i> Import Concept Set Expression</a>
+	<a type="button" data-bind="click:function() {importConceptSetExpression();}" class="btn btn-sm btn-primary "><i class="fa fa-upload"></i> Import Concept Set Expression</a>
 	<div class="clear"></div>
 
 	<!-- ko if: model.selectedConcepts().length > 0 -->

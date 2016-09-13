@@ -36,10 +36,10 @@ table.cohort-generate-sources thead {
 }
 
 .btn.btn-sm {
-	padding-top: 0px;
-	padding-bottom: 0px;
-	margin-top: 0px;
-	line-height: 25px
+	/* padding-top: 0px; */
+	/* padding-bottom: 0px; */
+	/* margin-top: 0px; */
+	/* line-height: 25px; */
 }
 
 .asset-heading {
@@ -73,34 +73,22 @@ body {
 	border-right: solid 1px #888;
 }
 
-#wrapperMiniBar {
-	position: absolute;
-	text-align: center;
-	left: 0px;
-	top: 0px;
-	width: 50px;
-	bottom: 0px;
-	border-right: solid 1px #ccc;
+#wrapperLeftMenu a.list-group-item {
+    color: #fff;
 }
 
-#wrapperMiniBar ul {
-	padding: 0px;
+#wrapperLeftMenu .list-group-item {
+    position: relative;
+    display: block;
+    padding: 5px 5px;
+    margin-bottom: 1px;
+    background-color: #003142;
+    border: none;
+    border-bottom: solid 1px #333;
 }
 
-#wrapperMiniBar li {
-	list-style: none;
-	text-indent: 0px;
-	padding: 12px 6px 0px 6px;
-	color: #000;
-}
-
-#wrapperMiniBar li a {
-	color: #184756;
-	text-decoration: none;
-}
-
-#wrapperMiniBar li a:hover {
-	text-decoration: none;
+#wrapperLeftMenu .list-group-item:hover {
+	background-color: #005471;
 }
 
 .importedTable {
@@ -186,8 +174,6 @@ body {
 
 .statusIndicator {
 	vertical-align: middle;
-	/* width: 100px; */
-	/* text-align: center; */
 	padding-left: 20px;
 	margin-left: 20px;
 }
@@ -230,10 +216,6 @@ textarea {
 #wrapperConcept .nav.nav-pills {
 	padding: 7px;
 	cursor: pointer;
-}
-
-#wrapperConceptDetails {
-	/* padding: 5px; */
 }
 
 #wrapperConceptDetails table {
@@ -285,7 +267,6 @@ pre span.key {
 
 #wrapperMainWindow {
 	position: absolute;
-	/* border-left: solid 1px #ccc; */
 	left: 149px;
 	top: 0px;
 	right: 0px;
@@ -335,9 +316,6 @@ div#wrapperMainWindowContainer {}
 .nav-tabs>li.active>a:hover {
 	background-color: #FFFFFF;
 	color: #003142;
-	/* border-top: solid 1px #003142; */
-	/* border-left: solid 1px #003142; */
-	/* border-right: solid 1px #003142; */
 	border: solid 1px white;
 }
 
@@ -406,7 +384,6 @@ div#wrapperMainWindowContainer {}
 	max-height: 125px;
 	overflow-y: auto;
 	border-bottom: solid 1px #eee;
-	/* border-top: solid 1px #ddd; */
 	margin-bottom: ;
 }
 
@@ -493,11 +470,6 @@ td.numeric {
 
 #wrapperConceptEvidence table {
 	font-size: 11px;
-}
-
-#wrapperLeftMenu .fa {
-	font-size: 14px;
-	padding-right: 0px;
 }
 
 th .fa {
@@ -623,7 +595,6 @@ table.configureSourceTable {
 
 .configureSourceTable tbody td {
 	cursor: default;
-	/* vertical-align: middle; */
 }
 
 th.centered {
@@ -650,8 +621,6 @@ ul.ColVis_collection li {
 
 .linkLegend {
 	padding: 10px 10px 15px 10px;
-	/* float: left; */
-	/* margin-bottom: 10px; */
 	clear: both;
 }
 
@@ -692,10 +661,6 @@ ul.ColVis_collection li {
 .clear {
 	clear: both;
 	height: 2px;
-}
-
-#wrapperConceptHierarchy {
-	/* padding: 5px; */
 }
 
 #wrapperParents {
@@ -748,7 +713,6 @@ ul.ColVis_collection li {
 
 .wrapperTitle .fa {
 	font-size: 14px;
-	/* padding-right: 3px; */
 	position: absolute;
 	top: 10px;
 	left: 7px;
@@ -800,10 +764,6 @@ ul.ColVis_collection li {
 	cursor: pointer;
 }
 
-#analysisStatus input[type="checkbox"] {
-	/*margin-top: 19px;*/
-}
-
 #analysisStatus td div {
 	vertical-align: middle;
 }
@@ -813,11 +773,7 @@ ul.ColVis_collection li {
 }
 
 #wrapperLeftMenu i.fa {
-	padding-left: 5px;
-	width: 25px;
-	line-height: 20px;
-	margin-right: 0px;
-	color: #fff;
+	/* line-height: 7px; */
 }
 
 #wrapperMiniBar i.fa {
@@ -931,7 +887,6 @@ table#analysisStatus {
 
 .reportControls {
 	background-color: #eee;
-	/* padding-bottom: 0px; */
 	margin-left: 0px;
 	border-bottom: solid #ccc 1px;
 }
@@ -1095,7 +1050,6 @@ ul.nav.nav-tabs {
 }
 
 .nav-tabs>li {
-	/* background-color: #eee; */
 	margin-left: 5px;
 	cursor: pointer;
 	line-height: 14px;
@@ -1210,10 +1164,6 @@ ul.nav.nav-tabs {
 	padding: 4px 5px 4px 10px;
 }
 
-.panel-default {
-	/* border: solid 1px #ccc; */
-}
-
 .panel-footer {
 	border-bottom-right-radius: 0;
 	border-bottom-left-radius: 0
@@ -1324,10 +1274,9 @@ div#stage {
 }
 
 .btn {
-	background-image: none;
-	border-radius: 0px;
-	color: #fff;
-	/* margin: 1px; */
+	/* background-image: none; */
+	/* border-radius: 0px; */
+	/* color: #fff; */
 }
 
 table.dataTable {
@@ -1381,14 +1330,6 @@ table.dataTable thead td {
 
 .facetName i.fa.fa-filter {
 	margin-right: 3px;
-}
-
-.dataTables_length {
-	/* padding-left: 10px; */
-}
-
-.dataTables_info {
-	/* padding-left: 10px; */
 }
 
 .badge .fa {
@@ -1459,7 +1400,6 @@ circle.child {
 .axis line {
 	stroke: rgba(200, 200, 200, 64) !important;
 	stroke-width: .5px !important;
-	/* color: #fff; */
 }
 
 .checkboxListing {
@@ -1555,7 +1495,6 @@ div.scatter {
 
 #scatter {
 	text-align: center;
-	/* background-color: #eee; */
 	border-bottom: solid 1px #ccc;
 }
 
@@ -1574,7 +1513,6 @@ line.observation-period {
 input[type="radio"] {
 	vertical-align: middle;
 	margin: 0px;
-	/* line-height: 30px; */
 }
 
 li.assetlink {
@@ -1627,9 +1565,7 @@ a:hover {
 
 div.button-overlay {
 	position: absolute;
-	/* right: 5px; */
 	padding-top: 2px;
-	/* margin-left: 1px; */
 }
 
 @media(max-width:1010px) {
@@ -1692,7 +1628,7 @@ textarea.code {
 
 #wrapperLeftMenu li {
 	border-bottom: solid 1px #333;
-	padding: 3px;
+	padding: 4px;
 }
 
 .asset-heading input {
@@ -1731,7 +1667,6 @@ li.current-asset {
 }
 
 .github-issue {
-	/* border-bottom:solid 1px #ddd; */
 	margin-bottom: 3px;
 	position: relative;
 	clear: both;
@@ -1753,11 +1688,7 @@ li.current-asset {
 }
 
 .home-getting-started {
-	margin: 10px 3px 30px 3px;
-	background-color: #003142;
-	color: #fff;
-	padding: 20px;
-	line-height: 75px;
+	line-height: 35px;
 }
 
 .home-getting-started .btn {
@@ -1773,11 +1704,11 @@ li.current-asset {
 }
 
 .home-welcome {
-	margin: 7px;
+	/* margin: 7px; */
 }
 
 .home-documentation {
-	margin: 10px;
+	/* margin: 10px; */
 }
 
 .home-documentation .fa {
@@ -2005,12 +1936,4 @@ table.sourceTable .selected
   -ms-user-select: none;       /* Internet Explorer/Edge */
   user-select: none;           /* Non-prefixed version, currently
                                   not supported by any browser */
-}
-
-a.open > i.fa {
-	color:#5bb75b !important;
-}
-
-a.unsaved > i.fa {
-	color:#d04541 !important;
 }

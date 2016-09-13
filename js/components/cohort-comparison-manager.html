@@ -61,13 +61,6 @@
 						</div>
 					</div>
 				</div>
-				<!--
-				<div class="row">
-					<div class="col-sm-12 text-right">
-						<button class="btn btn-sm btn-primary"><i class="fa fa-fast-forward"></i> Generate All</button>
-					</div>
-				</div>
-				-->
 			</div>
 
 			<div class="paddedWrapper text-center loading" data-bind="visible: $component.loadingExecution">
@@ -85,9 +78,7 @@
 					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-sm-4" data-bind="text:$component.currentExecutionSourceName"></div>
-					<div class="col-sm-8" data-bind="text:'Execution Id: ' + $component.currentExecutionId()"></div>
+				<div class="heading" data-bind="text:$component.currentExecutionSourceName() + ' Results'">
 				</div>
 
 				<ul class="nav nav-pills">
@@ -105,7 +96,7 @@
 
 				<div class="tab-content">
 					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'covariates'">
-						<faceted-datatable params="{orderColumn:2, reference:covariates, columns: covariateColumns, options:covariateOptions, rowClick:covariateSelected}">
+						<faceted-datatable params="{orderColumn:3, reference:covariates, columns: covariateColumns, options:covariateOptions, rowClick:covariateSelected}">
 						</faceted-datatable>
 					</div>
 					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'attrition'">
@@ -136,7 +127,7 @@
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'matched'">
-						<div id="matchedpopdistChart">
+						<div id="popdistChart">
 							<svg></svg>
 						</div>
 					</div>

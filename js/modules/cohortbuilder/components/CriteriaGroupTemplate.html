@@ -47,7 +47,7 @@
 							</div>
 						</td>
 						<td>
-							<button class="deletecriteria btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().DemographicCriteriaList, data) }">Delete Criteria</button>
+							<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().DemographicCriteriaList, data) }">Delete Criteria</button>
 						</td>
 					</tr>
 				</tbody>
@@ -94,7 +94,7 @@
 							</div>
 						</td>
 						<td>
-							<button class="deletecriteria btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Criteria</button>
+							<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Criteria</button>
 						</td>
 					</tr>
 				</tbody>
@@ -106,7 +106,7 @@
 	<!-- ko foreach: group().Groups -->
 	<div style="position:relative">
 		<criteria-group params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group()}"></criteria-group>
-		<button class="deletegroup btn btn-xs btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().Groups, data) }">Delete Group</button>
+		<button class="deletegroup btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().Groups, data) }">Delete Group</button>
 	</div>
 	<!-- /ko -->
 </div>
