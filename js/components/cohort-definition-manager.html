@@ -36,7 +36,7 @@
 
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore') };"><a>Explore</a></li>
 
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export'); $component.showSql(); };">
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export');}">
 			<a>Export</a>
 		</li>
 	</ul>
@@ -138,19 +138,19 @@
 		</div>
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
 			<ul class="nav nav-pills">
-				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'printfriendly' }, click: function() { $component.exportTabMode('printfriendly') };">
+				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'printfriendly' }, click: function() { $component.exportTabMode('printfriendly'); }">
 					<a>Print Friendly</a>
 				</li>
 
-				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'cartoon' }, click: function() { $component.exportTabMode('cartoon') };">
+				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'cartoon' }, click: function() { $component.exportTabMode('cartoon'); }">
 					<a>Cartoon</a>
 				</li>
 
-				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'json' }, click: function() { $component.exportTabMode('json') };">
+				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'json' }, click: function() { $component.exportTabMode('json'); }">
 					<a>JSON</a>
 				</li>
 
-				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'sql' }, click: function() { $component.exportTabMode('sql') };">
+				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'sql' }, click: function() { $component.exportTabMode('sql');  $component.showSql();}">
 					<a>SQL</a>
 				</li>
 			</ul>
@@ -232,7 +232,7 @@
 						</div>
 
 						<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'mssql' && !$component.isLoadingSql()">
-							<pre data-bind="text: $component.generatedSql.mssql"></pre>
+							<pre data-bind="html: $component.generatedSql.mssql"></pre>
 						</div>
 						<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'msaps' && !$component.isLoadingSql()">
 							<pre data-bind="text: $component.generatedSql.msaps"></pre>
