@@ -9,52 +9,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./DoseEraTemplate
 
 		var addActions = [
 			{
-				text: "Add Era Start Date Criteria",
-				selected: false,
-				description: "Filter Dose Eras by the Era Start Date.",
-				action: function() {
-					if (self.Criteria.EraStartDate() == null)
-						self.Criteria.EraStartDate(new Range({Op: "lt"}));				
-				}
-			},
-			{
-				text: "Add Era End Date Criteria",
-				selected: false,
-				description: "Filter Dose Eras  by the Era End Date",
-				action: function() {
-					if (self.Criteria.EraEndDate() == null)
-						self.Criteria.EraEndDate(new Range({Op: "lt"}));				
-				}
-			},
-			{
-				text: "Add Dose Unit Criteria",
-				selected: false,
-				description: "Filter Dose Eras by the Unit.",
-				action: function() {
-					if (self.Criteria.Unit() == null)
-						self.Criteria.Unit(ko.observableArray());				
-				}
-			},
-			{
-				text: "Add Dose Value Criteria",
-				selected: false,
-				description: "Filter Dose Eras by the dose value.",
-				action: function() {
-					if (self.Criteria.DoseValue() == null)
-						self.Criteria.DoseValue(new Range());				
-				}
-			},
-			{
-				text: "Add Era Length Criteria",
-				selected: false,
-				description: "Filter Drug Eras by the Era duration.",
-				action: function() {
-					if (self.Criteria.EraLength() == null)
-						self.Criteria.EraLength(new Range());				
-				}
-			},
-			{
-				text: "Add New Exposure Criteria",
+				text: "Add First Exposure Criteria",
 				selected: false,
 				description: "Limit Dose Era to new exposure.",
 				action: function() {
@@ -87,6 +42,51 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./DoseEraTemplate
 				action: function() {
 					if (self.Criteria.Gender() == null)
 						self.Criteria.Gender(ko.observableArray());				
+				}
+			},
+			{
+				text: "Add Era Start Date Criteria",
+				selected: false,
+				description: "Filter Dose Eras by the Era Start Date.",
+				action: function() {
+					if (self.Criteria.EraStartDate() == null)
+						self.Criteria.EraStartDate(new Range({Op: "lt"}));				
+				}
+			},
+			{
+				text: "Add Era End Date Criteria",
+				selected: false,
+				description: "Filter Dose Eras  by the Era End Date",
+				action: function() {
+					if (self.Criteria.EraEndDate() == null)
+						self.Criteria.EraEndDate(new Range({Op: "lt"}));				
+				}
+			},
+			{
+				text: "Add Dose Unit Criteria",
+				selected: false,
+				description: "Filter Dose Eras by the Unit.",
+				action: function() {
+					if (self.Criteria.Unit() == null)
+						self.Criteria.Unit(ko.observableArray());				
+				}
+			},
+			{
+				text: "Add Era Length Criteria",
+				selected: false,
+				description: "Filter Drug Eras by the Era duration.",
+				action: function() {
+					if (self.Criteria.EraLength() == null)
+						self.Criteria.EraLength(new Range());				
+				}
+			},
+			{
+				text: "Add Dose Value Criteria",
+				selected: false,
+				description: "Filter Dose Eras by the dose value.",
+				action: function() {
+					if (self.Criteria.DoseValue() == null)
+						self.Criteria.DoseValue(new Range());				
 				}
 			}
 		];

@@ -9,13 +9,33 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 		
 		var addActions = [
 			{
-				text: "Period Limit Criteria",
+				text: "First Observation Period Criteria",
 				value: 5,
 				selected: false,
-				description: "Limit Observation Period to first period.",
+				description: "Limit Observation Period to first period in history.",
 				action: function() {
 					if (self.Criteria.First() == null)
 						self.Criteria.First(true);
+				}
+			},	
+			{
+				text: "Add Age at Start Criteria",
+				value: 3,
+				selected: false,
+				description: "Filter Periods by Age at Start.",
+				action: function() { 
+					if (self.Criteria.AgeAtStart() == null)
+						self.Criteria.AgeAtStart(new Range());
+				}
+			}, 
+			{
+				text: "Add Age at End Criteria",
+				value: 4,
+				selected: false,
+				description: "Filter Periods by age at End.",
+				action: function() { 
+					if (self.Criteria.AgeAtEnd() == null)
+						self.Criteria.AgeAtEnd(new Range());
 				}
 			},
 			{
@@ -47,26 +67,6 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 					if (self.Criteria.PeriodType() == null)
 						self.Criteria.PeriodType(ko.observableArray());
 				}				
-			},	
-			{
-				text: "Add Age at Start Criteria",
-				value: 3,
-				selected: false,
-				description: "Filter Periods by Age at Start.",
-				action: function() { 
-					if (self.Criteria.AgeAtStart() == null)
-						self.Criteria.AgeAtStart(new Range());
-				}
-			}, 
-			{
-				text: "Add Age at End Criteria",
-				value: 4,
-				selected: false,
-				description: "Filter Periods by age at End.",
-				action: function() { 
-					if (self.Criteria.AgeAtEnd() == null)
-						self.Criteria.AgeAtEnd(new Range());
-				}
 			}, 
 			{
 				text: "Add Period Length Criteria",

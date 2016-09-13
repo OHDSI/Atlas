@@ -5,6 +5,33 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 		var addActions = [
 			{
+				text: "Add First Observation Criteria",
+				selected: false,
+				description: "Limit Observations to the first occurrence.",
+				action: function() {
+					if (self.Criteria.First() == null)
+						self.Criteria.First(true);					
+				}
+			},
+			{
+				text: "Add Age at Occurrence Criteria",
+				selected: false,
+				description: "Filter Condition Occurrences by age at occurrence.",
+				action: function() {
+					if (self.Criteria.Age() == null)
+						self.Criteria.Age(new Range());					
+				}
+			}, 
+			{
+				text: "Add Gender Criteria",
+				selected: false,
+				description: "Filter Observations based on Gender.",
+				action: function() {
+					if (self.Criteria.Gender() == null)
+						self.Criteria.Gender(ko.observableArray());					
+				}
+			},
+			{
 				text: "Add Observation Date Criteria",
 				selected: false,
 				description: "Filter Observations by Date.",
@@ -20,6 +47,15 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				action: function() {
 				 if (self.Criteria.ObservationType() == null)
 					self.Criteria.ObservationType(ko.observableArray());
+				}
+			},
+			{
+				text: "Add Visit Criteria",
+				selected: false,
+				description: "Filter Observations based on visit occurrence of observation.",
+				action: function() {
+					if (self.Criteria.VisitType() == null)
+						self.Criteria.VisitType(ko.observableArray());
 				}
 			},
 			{
@@ -76,33 +112,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 						self.Criteria.ObservationSourceConcept(ko.observable());
 				}
 			},
-			{
-				text: "Add First Observation Criteria",
-				selected: false,
-				description: "Limit Observations to the first occurrence.",
-				action: function() {
-					if (self.Criteria.First() == null)
-						self.Criteria.First(true);					
-				}
-			},
-			{
-				text: "Add Age at Occurrence Criteria",
-				selected: false,
-				description: "Filter Condition Occurrences by age at occurrence.",
-				action: function() {
-					if (self.Criteria.Age() == null)
-						self.Criteria.Age(new Range());					
-				}
-			}, 
-			{
-				text: "Add Gender Criteria",
-				selected: false,
-				description: "Filter Observations based on Gender.",
-				action: function() {
-					if (self.Criteria.Gender() == null)
-						self.Criteria.Gender(ko.observableArray());					
-				}
-			},
 /*
  			{
 				text: "Add Prior Observation Duration Criteria",
@@ -124,15 +133,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				action: function() {
 					if (self.Criteria.ProviderSpecialty() == null)
 						self.Criteria.ProviderSpecialty(ko.observableArray());
-				}
-			},
-			{
-				text: "Add Visit Criteria",
-				selected: false,
-				description: "Filter Observations based on visit occurrence of observation.",
-				action: function() {
-					if (self.Criteria.VisitType() == null)
-						self.Criteria.VisitType(ko.observableArray());
 				}
 			}
 		];

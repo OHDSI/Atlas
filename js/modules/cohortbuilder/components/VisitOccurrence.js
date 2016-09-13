@@ -5,52 +5,7 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./VisitOccurrence
 
 		var addActions = [
 			{
-				text: "Add Visit Start Date Criteria",
-				selected: false,
-				description: "Filter Visit Occurrences by the Condition Start Date.",
-				action: function () {
-					if (self.Criteria.OccurrenceStartDate() == null)
-						self.Criteria.OccurrenceStartDate(new Range({Op: "lt"}));
-				}
-			},
-			{
-				text: "Add Visit End Date Criteria",
-				selected: false,
-				description: "Filter Visit Occurrences  by the Condition End Date",
-				action: function() {
-					if (self.Criteria.OccurrenceEndDate() == null)
-						self.Criteria.OccurrenceEndDate(new Range({Op: "lt"}));
-				}
-			},
-			{
-				text: "Add Visit Type Criteria",
-				selected: false,
-				description: "Filter Condition Occurrences  by the Condition Type.",
-				action: function() {
-					if (self.Criteria.VisitType() == null)
-						self.Criteria.VisitType(ko.observableArray());
-				}
-			},
-			{
-				text: "Add Visit Source Concept Criteria",
-				selected: false,
-				description: "Filter Visit Occurrences by the Visit Source Concept.",
-				action: function() {
-					if (self.Criteria.VisitSourceConcept() == null)
-						self.Criteria.VisitSourceConcept(ko.observable());
-				}
-			},
-			{
-				text: "Add Visit Length Criteria",
-				selected: false,
-				description: "Filter Visit Occurrences by duration.",
-				action: function() {
-					if (self.Criteria.VisitLength() == null)
-						self.Criteria.VisitLength(new Range());
-				}
-			},
-			{
-				text: "Add Initial Visit Criteria",
+				text: "Add First Visit Criteria",
 				selected: false,
 				description: "Limit Visit Occurrences to the first visit.",
 				action: function() {
@@ -74,6 +29,51 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./VisitOccurrence
 				action: function() {
 					if (self.Criteria.Gender() == null)
 						self.Criteria.Gender(ko.observableArray());
+				}
+			},
+			{
+				text: "Add Start Date Criteria",
+				selected: false,
+				description: "Filter Visit Occurrences by the Condition Start Date.",
+				action: function () {
+					if (self.Criteria.OccurrenceStartDate() == null)
+						self.Criteria.OccurrenceStartDate(new Range({Op: "lt"}));
+				}
+			},
+			{
+				text: "Add End Date Criteria",
+				selected: false,
+				description: "Filter Visit Occurrences  by the Condition End Date",
+				action: function() {
+					if (self.Criteria.OccurrenceEndDate() == null)
+						self.Criteria.OccurrenceEndDate(new Range({Op: "lt"}));
+				}
+			},
+			{
+				text: "Add Visit Type Criteria",
+				selected: false,
+				description: "Filter Condition Occurrences  by the Condition Type.",
+				action: function() {
+					if (self.Criteria.VisitType() == null)
+						self.Criteria.VisitType(ko.observableArray());
+				}
+			},
+			{
+				text: "Add Visit Length Criteria",
+				selected: false,
+				description: "Filter Visit Occurrences by duration.",
+				action: function() {
+					if (self.Criteria.VisitLength() == null)
+						self.Criteria.VisitLength(new Range());
+				}
+			},
+			{
+				text: "Add Visit Source Concept Criteria",
+				selected: false,
+				description: "Filter Visit Occurrences by the Visit Source Concept.",
+				action: function() {
+					if (self.Criteria.VisitSourceConcept() == null)
+						self.Criteria.VisitSourceConcept(ko.observable());
 				}
 			},
 			{
