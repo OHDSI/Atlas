@@ -21,6 +21,9 @@
 								params: {expression: $component.expression, criteria: $data.Criteria }
 							}"></span>
 			occurring between <window-input-viewer params="Window: StartWindow"></window-input-viewer> event index date
+			<!-- ko if: EndWindow -->
+			and ending between <window-input-viewer params="Window: EndWindow"></window-input-viewer> event index date
+			<!-- /ko -->
 		</div>	
 	</li>
 <!-- /ko -->

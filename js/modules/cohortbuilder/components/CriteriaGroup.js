@@ -1,4 +1,5 @@
-define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteria', '../options', 'text!./CriteriaGroupTemplate.html'], function (ko, criteriaTypes, CriteriaGroup, AdditionalCriteria, options, template) {
+define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window', '../AdditionalCriteria', '../options', 'text!./CriteriaGroupTemplate.html'
+			 ], function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, template) {
 
 	function CriteriaGroupViewModel(params) {
 		var self = this;
@@ -273,6 +274,15 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 			observableList.remove(data);
 		};
 
+		
+		self.addEndWindow = function(corelatedCriteria){
+			corelatedCriteria.EndWindow(new Window());
+		};
+		
+		self.removeEndWindow = function(corelatedCriteria) {
+			corelatedCriteria.EndWindow(null);
+		};
+		
 		self.addCriteriaSettings = {
 			selectText: "Add New Criteria...",
 			width:250,

@@ -3,7 +3,7 @@ define(['knockout', 'cohortbuilder/options', 'text!./WindowInputTemplate.html'],
 	function WindowInputViewModel(params) {
 		var self = this;
 		self.options = options;
-		self.Window = params.Window; // this will be a Window input type.
+		self.Window = ko.utils.unwrapObservable(params.Window); // this will be a Window input type.
 		
 		self.getCoeffName = function(coeffId) {
 			return self.options.windowCoeffOptions.filter(function(item) {

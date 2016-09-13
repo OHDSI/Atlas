@@ -81,7 +81,15 @@
 
 								<div class="indexWindowSection">
 									starting between
-									<window-input params="Window: StartWindow"></window-input> and ending between <window-input params="Window: EndWindow"></window-input> event index date
+									<window-input params="Window: StartWindow"></window-input> event index date
+									<!-- ko if: EndWindow -->
+									<div>
+									 <i data-bind="click: $component.removeEndWindow" class="fa fa-times" /> and ending between <window-input params="Window: EndWindow"></window-input> event index date
+									</div>
+									<!-- /ko -->
+									<!-- ko ifnot: EndWindow -->
+									 <span class="linkish" data-bind="click: $component.addEndWindow">and ending any time.</span>
+									<!-- /ko -->
 								</div>
 							</div>
 						</td>
