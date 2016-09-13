@@ -1274,9 +1274,7 @@ div#stage {
 }
 
 .btn {
-	/* background-image: none; */
-	/* border-radius: 0px; */
-	/* color: #fff; */
+	background-image: none;
 }
 
 table.dataTable {
