@@ -31,7 +31,8 @@
 	<div style="margin-top:5px;" data-bind="visible:person, with:person">
 		<i data-bind="attr: {class : $component.getGenderClass}"></i>&nbsp;
 		<span data-bind="text: gender"></span>&nbsp;&nbsp;
-		<span data-bind="text: recordCount + ' events'"></span>
+		<span data-bind="text: recordCount + ' events'"></span>&nbsp;&nbsp;
+		<span data-bind="text: `Age ${age} at index`"></span>
 	</div>
 </div>
 

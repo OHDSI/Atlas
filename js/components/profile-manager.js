@@ -1,5 +1,6 @@
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf-profile', 'components/profileChart', 'css!./styles/profileManager.css'],
-	function (ko, view, d3, config, _, crossfilter) {
+"use strict";
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'lz-string', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf-profile', 'components/profileChart', 'css!./styles/profileManager.css'],
+	function (ko, view, d3, config, _, crossfilter, LZString) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
 												 // is an array of recs in the group
@@ -97,6 +98,17 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.loadPerson = function () {
 				self.cantFindPerson(false)
 				self.loadingPerson(true);
+
+				var personCache = sessionStorage.getItem(`person_${self.personId()}`, person);
+				if (personCache) {
+					var person = JSON.parse(
+						LZString.decompressFromBase64(personCache));
+					self.loadingPerson(false);
+					self.crossfilter(crossfilter(person.records));
+					self.person(person);
+					return;
+				}
+
 				let url = self.services.url + self.sourceKey() + '/person/' + self.personId();
 				personRequest = personRequests[url] = $.ajax({
 					url: url,
@@ -110,6 +122,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						if (personRequest !== personRequests[url]) {
 							return;
 						}
+						person.personId = self.personId();
 						self.loadingPerson(false);
 						let cohort;
 						let cohortDefinitionId = util.getState('currentCohortDefinitionId');
@@ -123,6 +136,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 									.value()
 							};
 						}
+						person.age = new Date(cohort.startDate).getFullYear() - person.yearOfBirth;
 						person.records.forEach(function (rec) {
 							// have to get startDate from person.cohorts
 							rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24))
@@ -130,6 +144,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 								Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
 						});
 						self.crossfilter(crossfilter(person.records));
+						sessionStorage.setItem(
+							`person_${person.personId}`, 
+							LZString.compressToBase64(JSON.stringify(person)));
 						self.person(person);
 					}
 				});
@@ -162,6 +179,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					} else {
 						return "fa fa-question";
 					}
+				}
+			});
+			self.age = ko.computed(function() {
+				if (self.person()) {
 				}
 			});
 
