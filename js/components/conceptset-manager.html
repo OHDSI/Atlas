@@ -29,7 +29,7 @@
 			</li>
 			<li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
 			</li>
-			<li role="presentation" data-bind="click: function() {$component.routeTo('utility');}, attr: {class: model.currentConceptSetMode() == 'utility' ? 'active' : ''}"><a>Utility</a>
+			<li role="presentation" data-bind="click: function() {$component.routeTo('compare');}, attr: {class: model.currentConceptSetMode() == 'compare' ? 'active' : ''}"><a>Compare</a>
 			</li>
 		</ul>
 	</div>
@@ -130,8 +130,74 @@
 		<button type="button" class="btn btn-success" data-bind="click:function() { exportCSV(); }, css: {disabled:!(model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty())}"><i class="fa fa-download" aria-hidden="true"></i>Export To CSV</button>
 	</div>
     
-    <div data-bind="visible: model.currentConceptSetMode() == 'utility'">
-        <div class="heading"><b>Concept Set Utilities</b>: This area contains utilities for working with concept sets.</div>
+    <div data-bind="visible: model.currentConceptSetMode() == 'compare'">
+        <div class="paddedWrapper">
+            <div class="heading"><b>Concept Set Comparison</b>: Use this utility to compare the contents of two concept sets to see which concepts they may share.</div>
+            <br/>
+            <div>
+                <label>Concept Set 1:</label>
+                <div class="input-group">
+                    <input class="form-control" type="text" disabled data-bind="value: $component.compareCS1Caption" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" data-bind="click:chooseCS1"><i class="fa fa-folder-open"></i></button>
+                        <span data-bind="if: $component.compareCS1Id() > 0"><button class="btn btn-danger" data-bind="click:clearCS1" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
+                    </span>
+                </div>
+            </div>
+            <br/>
+            <div>
+                <label>Concept Set 2:</label>
+                <div class="input-group">
+                    <input class="form-control" type="text" disabled data-bind="value: $component.compareCS2Caption" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" data-bind="click:chooseCS2"><i class="fa fa-folder-open"></i></button>
+                        <span data-bind="if: $component.compareCS2Id() > 0"><button class="btn btn-danger" data-bind="click:clearCS2" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
+                    </span>
+                </div>
+            </div>
+            <div data-bind="if: $component.compareReady() && !$component.compareResults()">
+                <div class="paddedWrapper" style="padding-top: 20px;">
+                    <button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.compareConceptSets;">Compare Concept Sets</button>
+                </div>
+            </div>
+            <div data-bind="if: $component.compareError()">
+                <div class="paddedWrapper">
+                    <span style="font-weight: bold; color: #ff0000;">You cannot compare the same concept sets.</span>
+                </div>
+            </div>
+            <div data-bind="if: $component.compareResults()">
+                <div class="heading" style="padding-top: 10px;">
+                    <b>Comparison Results</b>
+                </div>
+                <div class="heading pull-right"><button class="btn btn-sm btn-primary" data-bind="click:function() { showSaveNewModal(); }">Save New Concept Set From Selection Below</button></div>
+                <div id="compareResults">
+                    <faceted-datatable-cf
+                        params="id:,
+                                options:{},
+                                fields: $component.fields,
+                                recs: $component.compareResults(),
+                                dom: 'Blfiprt',
+                                language: {search : 'Filter Rows:'},
+                                order: [[1, 'asc'], [2, 'desc']]
+                                saveStateToUrl: false,
+                                "></faceted-datatable-cf>        
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalCS" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="modal-title">Choose a concept set</div>
+                </div>
+                <div class="modal-body">
+                    <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null,onRespositoryConceptSetSelected: $component.conceptsetSelected"></cohort-concept-set-browser>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="modalConceptSetOptimize" class="modal fade" tabindex="-1" role="dialog">
@@ -258,3 +324,23 @@
         </div>
     </div>
 </div>
+
+    <div id="modalSaveNew" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="modal-title">Save New Concept Set</div>
+                </div>
+                <div class="modal-body">
+                    <label>Concept Set Name:</label>
+                    <div class="input-group">
+                        <input class="form-control" id="txtNewConceptSetName" type="text" data-bind="textInput: $component.compareNewConceptSetName" />
+                        <span class="input-group-btn">
+                         <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { compareCreateNewConceptSet(); }">Save</button>                    
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

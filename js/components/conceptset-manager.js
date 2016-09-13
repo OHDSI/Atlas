@@ -3,12 +3,14 @@ define(['knockout',
         'appConfig', 
         'ohdsi.util', 
         'vocabularyprovider',
+        'conceptsetbuilder/InputTypes/ConceptSet',
         'knockout.dataTables.binding', 
         'bootstrap',
         'faceted-datatable', 
         'databindings', 
-        'negative-controls'
-], function (ko, view, config, ohdsiUtil, vocabularyAPI) {
+        'negative-controls',
+        'circe',
+], function (ko, view, config, ohdsiUtil, vocabularyAPI, ConceptSet) {
 	function conceptsetManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -35,7 +37,124 @@ define(['knockout',
                 }
             return returnVal;
         })
-
+        // Set the default concept set to be the current concept set
+        self.currentConceptSet = ko.observableArray();
+        _.each(self.model.selectedConcepts(), (conceptSetItem) => {
+            var item = {
+                concept: conceptSetItem.concept,
+                includeDescendants: conceptSetItem.includeDescendants(),
+                includeMapped: conceptSetItem.includeMapped(),
+                isExcluded: conceptSetItem.isExcluded(),
+            }
+            self.currentConceptSet().push(item);
+        });            	
+        self.compareCS1Id = ko.observable(self.model.currentConceptSet().id); // Init to the currently loaded cs
+        self.compareCS1Caption = ko.observable(self.model.currentConceptSet().name());
+        self.compareCS1ConceptSet = ko.observableArray(self.currentConceptSet());
+        self.compareCS2Id = ko.observable();
+        self.compareCS2Caption = ko.observable();
+        self.compareCS2ConceptSet = ko.observableArray(null);
+        self.compareError = ko.pureComputed(function() {
+            return (self.compareCS1Id() == self.compareCS2Id())
+        });
+        self.compareReady = ko.pureComputed(function() {
+            // both are specified & not the same
+            return (
+                    (self.compareCS1Id() > 0 && self.compareCS2Id() > 0) &&
+                    (self.compareCS1Id() != self.compareCS2Id())
+                   )
+        });
+        self.compareResults = ko.observable();
+        self.compareNewConceptSetName = ko.observable(self.model.currentConceptSet().name() + " - From Comparison");
+        
+        self.fields = {
+            membership: {
+                propName: 'conceptIn1And2',
+                value: d => { 
+                    if (d.conceptIn1Only == 1) {
+                        return '1 Only'   
+                    } else if (d.conceptIn2Only == 1) {
+                    	return '2 Only'
+                    } else {
+                    	return 'Both'
+                    }
+                },
+                isColumn: true,
+                isFacet: true,
+                label: 'Match',
+                isField: true,
+            },
+            id: {
+                propName: 'conceptId',
+                value: 'conceptId',
+                isColumn: true,
+                isFacet: false,
+                label: 'Id',
+                isField: true,
+            },
+            code: {
+                propName: 'conceptCode',
+                value: 'conceptCode',
+                isColumn: true,
+                isFacet: false,
+                label: 'Code',
+                isField: true,
+            },
+            name: {
+                propName: 'conceptName',
+                value: d => {
+                    var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+                    return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
+                },
+                isColumn: true,
+                isFacet: false,
+                label: 'Name',
+                isField: true,
+            },            
+            class: {
+                propName: 'conceptClassId',
+                value: 'conceptClassId',
+                isColumn: true,
+                isFacet: true,
+                label: 'Code',
+                isField: true,
+            },
+            /*
+            RC: {
+                propName: 'recordCount',
+                value: 'recordCount',
+                isColumn: true,
+                isFacet: false,
+                label: '<i id="dtNegCtrlRC" class="fa fa-database" aria-hidden="true"></i> RC',
+                isField: true,
+            },
+            DRC: {
+                propName: 'descendantRecordCount',
+                value: 'descendantRecordCount',
+                isColumn: true,
+                isFacet: false,
+                label: '<i id="dtNegCtrlDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
+                isField: true,
+            },
+            */
+            domainId: {
+                propName: 'domainId',
+                value: 'domainId',
+                isColumn: true,
+                isFacet: true,
+                label: 'Domain Id',
+                isField: true,
+            },        
+            vocabularyId: {
+                propName: 'vocabularyId',
+                value: 'vocabularyId',
+                isColumn: true,
+                isFacet: true,
+                label: 'Vocabulary Id',
+                isField: true,
+            },        
+        }
+        
 		self.renderLink = function (s, p, d) {
 			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
 		}
@@ -263,6 +382,89 @@ define(['knockout',
         self.cancelSaveNewOptimizedConceptSet = function() {
             console.log("cancel");
             self.optimizerSavingNew(false);
+        }
+        
+        self.chooseCS1 = function () {
+            $('conceptset-manager #modalCS').modal('show');
+            self.targetId = self.compareCS1Id;
+            self.targetCaption = self.compareCS1Caption;
+            self.targetExpression = self.compareCS1ConceptSet;
+        }
+
+        self.clearCS1 = function () {
+            self.compareCS1Id(0);
+            self.compareCS1Caption(null);
+            self.compareCS1ConceptSet.removeAll();
+            self.compareResults(null);
+        }
+
+        self.chooseCS2 = function () {
+            $('conceptset-manager #modalCS').modal('show');
+            self.targetId = self.compareCS2Id;
+            self.targetCaption = self.compareCS2Caption;
+            self.targetExpression = self.compareCS2ConceptSet;
+        }
+
+        self.clearCS2 = function () {
+            self.compareCS2Id(0);
+            self.compareCS2Caption(null);
+            self.compareCS2ConceptSet.removeAll();
+            self.compareResults(null);
+        }
+
+        self.conceptsetSelected = function (d) {
+            $('conceptset-manager #modalCS').modal('hide');
+            vocabularyAPI.getConceptSetExpression(d.id).then(function (csExpression) {
+                self.targetId(d.id);
+                self.targetCaption(d.name);
+                self.targetExpression(csExpression.items);
+            });
+        }
+        
+        self.compareConceptSets = function() {
+            console.log("compare");
+            var compareTargets = [{items: self.compareCS1ConceptSet()}, {items: self.compareCS2ConceptSet()}];
+            vocabularyAPI.compareConceptSet(compareTargets).then(function (compareResults) {
+            	self.compareResults(null);
+            	self.compareResults(compareResults);
+            });
+        }
+        
+        self.showSaveNewModal = function() {
+            $('conceptset-manager #modalSaveNew').modal('show');
+        }
+        
+        self.compareCreateNewConceptSet = function() {
+            var dtItems = $('#compareResults table').DataTable().data();
+            var conceptSet = {};
+            conceptSet.id = 0;
+            conceptSet.name = self.compareNewConceptSetName;
+            var selectedConcepts = [];
+            _.each(dtItems, (item) => {
+                var concept;
+                concept = {
+                    CONCEPT_CLASS_ID: item.conceptClassId,
+                    CONCEPT_CODE: item.conceptCode,
+                    CONCEPT_ID: item.conceptId,
+                    CONCEPT_NAME: item.conceptName,
+                    DOMAIN_ID: item.domainId,
+                    INVALID_REASON: null,
+                    INVALID_REASON_CAPTION: null,
+                    STANDARD_CONCEPT: null,
+                    STANDARD_CONCEPT_CAPTION: null,
+                    VOCABULARY_ID: null,                    
+                }
+            	var newItem;
+            	newItem = {
+            		concept: concept,
+            		isExcluded: ko.observable(false),
+					includeDescendants: ko.observable(false),
+					includeMapped: ko.observable(false),
+            	}
+            	selectedConcepts.push(newItem);
+            })
+            self.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
+            $('conceptset-manager #modalSaveNew').modal('hide');
         }
 	}
 

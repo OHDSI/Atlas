@@ -194,6 +194,25 @@ define(function (require, exports) {
 		return getOptimizedConceptSetPromise;
 	}	
 
+    function compareConceptSet(compareTargets, url)
+	{
+		var repositoryUrl;
+		
+		if (url)
+			repositoryUrl = url + 'vocabulary/compare';
+		else
+			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/vocabulary/compare';
+
+		var getComparedConceptSetPromise = $.ajax({
+			url: repositoryUrl,
+			data: JSON.stringify(compareTargets),
+			method: 'POST',
+			contentType: 'application/json'
+		});
+		
+		return getComparedConceptSetPromise;
+	}	
+
 	var api = {
 		loaded: loadedPromise,
 		search: search,
@@ -206,6 +225,7 @@ define(function (require, exports) {
 		getMappedConceptsById: getMappedConceptsById,
         getConceptSetExpressionSQL: getConceptSetExpressionSQL,
         optimizeConceptSet: optimizeConceptSet,
+        compareConceptSet: compareConceptSet,
 	}
 
 	return api;
