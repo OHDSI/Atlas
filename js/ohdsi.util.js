@@ -1419,7 +1419,8 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			return {};
 
 		var hashparts = location.hash.substr(1).split(/\?/);
-		var state = { hashpath: hashparts[0] };
+		//var state = { hashpath: hashparts[0] };
+		var state = { };
 		if (hashparts.length > 1) {
 			var compressedStateStr = hashparts[1];
 			var stateStr = LZString.decompressFromBase64(compressedStateStr);

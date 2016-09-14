@@ -29,11 +29,12 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 	var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
 	function facetedDatatable(params) {
 		window.ko = ko;
+        window.util = util;
 		var self = this;
 
 		self.options = params.options; // passed directly to datatable binding
 		self.saveState = params.saveStateToUrl;
-		self.filterNameSpace = params.filterNameSpace;
+		self.filterNameSpace = params.filterNameSpace || '';
 		/*
 		 * was going to allow shared crossfilter, but not for now
 		self.crossfilter = ko.utils.unwrapObservable(params.crossfilter) || 
@@ -156,6 +157,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				} else {
 					field.label = field.label || field.fname;
 					field.value = field.value || field.fname;
+                    field.name = field.name || field.fname || field.propName || field.label;
 					field.accessor = field.value;
 					if (typeof field.accessor === "string" || isFinite(field.accessor)) {
 						field.accessor = d => d[field.value];
