@@ -1,5 +1,13 @@
-define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util', 'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options', 'cohortbuilder/CohortDefinition', 'vocabularyprovider', 'conceptsetbuilder/InputTypes/ConceptSet', 'nvd3', 'css!./styles/nv.d3.min.css'],
-	function ($, ko, view, cohortDefinitionAPI, config, ohdsiUtil, ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI, ConceptSet) {
+define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash', 
+				'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util', 
+				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options', 
+				'cohortbuilder/CohortDefinition', 'vocabularyprovider', 
+				'conceptsetbuilder/InputTypes/ConceptSet', 'nvd3', 
+				'd3ChartBinding','components/faceted-datatable-cf',
+				'css!./styles/nv.d3.min.css'],
+	function ($, ko, view, _, cohortDefinitionAPI, config, ohdsiUtil, 
+						ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI, 
+						ConceptSet) {
 		function cohortComparisonManager(params) {
 
 			var self = this;
@@ -24,6 +32,65 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 			self.expressionMode = ko.observable('print');
 			self.cohortComparison = ko.observable();
 			self.cohortComparisonDirtyFlag = ko.observable();
+
+
+			// for balance chart
+			self.chartObj = ko.observable();
+			self.domElement = ko.observable();
+			self.chartData = ko.observableArray(self.chartData && self.chartData() || []);
+			self.chartResolution = ko.observable(); // junk
+			self.chartOptions = chartOptions();
+			self.jqEventSpace = params.jqEventSpace || {};
+			self.fields = ko.observable([]);
+			self.chartObj.subscribe(function(chart) {
+				var opts = _.merge(chart.defaultOptions, chartOptions());
+				//var opts = chart.chartOptions; // after applying defaults
+
+				//self.fields(_.filter(opts, d=>d.isColumn||d.isFacet));
+
+				var fields = [];
+				_.each(opts, (opt, name) => {
+					if (opt.isField) {
+						opts[name] = new ohdsiUtil.Field(name, opt, opts);
+						fields.push(opts[name]);
+					}
+				});
+				self.fields(fields);
+				self.chartOptions = opts;
+			});
+			self.ready = ko.computed(function() {
+				return self.chartData().length && self.chartObj() && self.domElement();
+			});
+			self.ready.subscribe(function(ready) {
+				if (ready) {
+					self.chartObj().chartSetup(self.domElement(), 460, 150, self.chartOptions);
+					self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
+					//self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
+					//setTimeout(() => self.chartObj().updateData(self.chartData().slice(0,2000)), 4000);
+					//self.chartObj().updateData(self.chartData().slice(0,2000));
+				}
+			});
+			//$(self.jqEventSpace).on('filter', filterChange);
+			//$(self.jqEventSpace).on('brush', brushEvent);
+			$(self.jqEventSpace).on('filteredRecs', 
+				function(evt, {source, recs} = {}) {
+					if (self.chartData() && recs.length < self.chartData().length
+							|| self.chartObj() && self.chartObj().latestData !== recs
+						 ) {
+									console.log('caught filteredRecs', recs);
+									self.chartObj().render(recs, self.domElement(), 460, 150, self.chartOptions);
+								}
+				});
+			function dataSetup(raw) {
+				var points = raw.map(d => ({
+					x: Math.abs(d.beforeMatchingStdDiff),
+					y: Math.abs(d.afterMatchingStdDiff),
+					tooltip: d.covariateName
+				}));
+				return points;
+			}
+
+			// end for balance chart
 
 			var initSources = config.services[0].sources.filter(s => s.hasCDM);
 			for (var i = 0; i < initSources.length; i++) {
@@ -195,6 +262,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
+
+						debugger;
+						self.chartData(dataSetup(response));
+
 						nv.addGraph(function () {
 
 							var points = response.map(d => ({
@@ -883,4 +954,227 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 
 		ko.components.register('cohort-comparison-manager', component);
 		return component;
-	});
+
+		function chartOptions() {
+			var junk = 1;
+			return {
+				data: {
+					alreadyInSeries: false,
+				},
+				//dispatch: d3.dispatch("brush", "filter"), // in default opts for zoomScatter
+				//additionalDispatchEvents: ["foo"],
+				x: {
+							//value: d=>d.beforeMatchingStdDiff,
+							label: 'Before matching StdDiff',
+							tooltipOrder: 1,
+							propName: 'beforeMatchingStdDiff',
+							isColumn: true,
+							colIdx: 1,
+							isField: true,
+				},
+				y: {
+							value: d=>d.afterMatchingStdDiff,
+							label: "After matching StdDiff",
+							/*
+							format: d => {
+								var str = d.toString();
+								var idx = str.indexOf('.');
+								if (idx == -1) {
+									return d3.format('0%')(d);
+								}
+
+								var precision = (str.length - (idx+1) - 2).toString();
+								return d3.format('0.' + precision + '%')(d);
+							},
+							*/
+							tooltipOrder: 2,
+							propName: 'afterMatchingStdDiff',
+							isColumn: true,
+							colIdx: 1,
+							isField: true,
+				},
+				/*
+				xy: { // for brushing
+							_accessors: {
+								value: {
+									func: function(d,allFields) {
+										return [
+														allFields.accessors.x.value(d),
+														allFields.accessors.y.value(d)];
+									},
+									posParams: ['d','allFields'],
+								},
+							},
+							isField: true,
+				},
+				*/
+				size: {
+							//value: d=>d.afterMatchingMeanTreated,
+							propName: 'afterMatchingMeanTreated',
+							//scale: d3.scale.log(),
+							label: "After matching mean treated",
+							tooltipOrder: 3,
+							/*
+							tooltipFunc: function(d, i, j, props, data, series, propName) {
+								var avg = d3.mean(
+														data.map(props.size.value));
+								return {
+									name: `After matching mean treated (avg: ${round(avg,4)})`,
+									value: round(props.size.value(d), 4),
+								};
+							},
+							*/
+							isField: true,
+							_accessors: {
+								avg: {
+									posParams: ['data','allFields'],
+									func: (data, allFields) => {
+										return d3.mean(data.map(allFields.size.accessors.value));
+									},
+								},
+								tooltip: {
+									posParams: ['d','allFields'],
+									func: (d, allFields) => {
+										return {
+											name: `After matching mean treated 
+															(avg: ${round(allFields.size.accessors.avg(),4)})`,
+											value: round(allFields.size.accessors.value(d), 4),
+										}
+									},
+								},
+								range: {
+									func: () => [1,8],
+								},
+							},
+				},
+				series: {
+							value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
+							sortBy:  d => d.afterMatchingStdDiff,
+							tooltipOrder: 5,
+							isField: true,
+				},
+				color: {
+							_accessors: {
+								value: {
+													func: function(d,i,j,allFields,data,series) {
+														return allFields.series.value(d,i,j,data,series);
+													},
+													posParams: ['d','i','j','allFields','data','series'],
+								},
+								domain: {
+													func: function(data, series, allFields) {
+														return _.uniq(data.map(allFields.series.value));
+													},
+													posParams: ['data', 'series', 'allFields'],
+								},
+								range: {
+									func: () => ['red', 'green', 'pink', 'blue'],
+								},
+							},
+							//value: d=>nthroot(d.coefficient, 7),
+							//value: d=>d.coefficient,
+									/*
+									['NA','N/A','null','.']
+										.indexOf(d.coefficient &&
+														 d.coefficient.toLowerCase()
+														 .trim()) > -1
+										? 0 : d.coefficient || 0, // (set NA = 0)
+										*/
+							//label: "Coefficient",
+							label: "Nonsense series",
+							scale: d3.scale.ordinal(),
+							//range: ['#ef8a62','#ddd','#67a9cf'],
+							//range: ['red', 'green', 'pink', 'blue'],
+							isField: true,
+							//domainFuncNeedsExtent: true,
+							//domainFunc: (data, ext) => [ext[0], 0, ext[1]],
+							/*
+							rangeFunc: (layout, prop) => {
+								prop.scale.rangePoints(
+									['#ef8a62','#ddd','#67a9cf']);
+							},
+							domainFunc: (data, prop) => {
+								var vals = data.map(prop.value).sort(d3.ascending);
+								return vals;
+								var preScale = d3.scale.ordinal()
+																.domain(vals)
+																.rangePoints([-1, 0, 1]);
+
+
+							},
+							*/
+							//range: ['red', 'yellow', 'blue'],
+				},
+				shape: {
+							//value: d => Math.floor(Math.random() * 3),
+							//
+							//  i as always 0! fix!
+							//  value: (d,i) => i % 3,
+							value: () => junk++ % 3,
+							label: "Random",
+							tooltipOrder: 4,
+							isField: true,
+				},
+				CIup: { // support CI in both directions
+							value: d => d.upperBound,
+							value: d => y(d) - d.upperBoundDiff,
+				},
+				covariateName: {
+							propName: 'covariateName',
+							value: d => {
+								return d.covariateName.split(/:/).shift();
+							},
+							isColumn: true,
+							isFacet: true,
+							colIdx: 0,
+							tooltipOrder: 7,
+							label: 'Covariate Name',
+							isField: true,
+				},
+				covariateValue: {
+							propName: 'covariateName',
+							value: d => d.covariateName.split(/:/).pop(),
+							isColumn: true,
+							colIdx: 0,
+							tooltipOrder: 8,
+							label: 'Covariate Value',
+							isField: true,
+							/*
+							_accessors: {
+								tooltip: {
+									posParams: ['d','allFields'],
+									func: (d, allFields) => {
+										return {
+											name: `Covariate value`,
+											value: allFields.covariateName.accessors.value(d).split(/:/).pop(),
+										}
+									},
+								},
+							},
+							*/
+				},
+				conceptId: {
+							propName: 'conceptId',
+							isColumn: true,
+							isFacet: true,
+							colIdx: 3,
+							tooltipOrder: 5,
+							label: 'Concept ID',
+							needsValueFunc: true, // so ChartProps will make one
+																		// even though this isn't a normal
+																		// zoomScatter field
+							isField: true,
+				},
+				analysisId: {
+							propName: 'analysisId',
+							isColumn: true,
+							isFacet: true,
+							colIdx: 4,
+							tooltipOrder: 6,
+							label: 'Analysis ID',
+							isField: true,
+				},
+			};
+		}
+	}
+);
