@@ -213,7 +213,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				*/
 				'profileChart': {
 					name: 'profileChart',
-					func: d => d.startDay,
+					func: d => [d.startDay, d.endDay],
 					filter: ko.observable(null),
 				},
 				'conceptName': {
