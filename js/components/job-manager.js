@@ -1,4 +1,4 @@
-define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables.binding'], function (ko, view, config) {
+define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/AuthAPI', 'knockout.dataTables.binding', 'forbidden', 'unauthenticated'], function (ko, view, config, authApi) {
 	function jobManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -8,6 +8,9 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables
 			$.ajax({
 				url: config.services[0].url + 'job/execution?comprehensivePage=true',
 				method: 'GET',
+				headers: {
+				    Authorization: authApi.getAuthorizationHeader()
+				},
 				contentType: 'application/json',
 				success: function (jobs) {
 					for (var j = 0; j < jobs.content.length; j++) {
@@ -26,7 +29,12 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables
 			});
 		}
 
-		self.updateJobs();
+	    self.isAuthenticated = authApi.isAuthenticated();
+	    self.canReadJobs = self.isAuthenticated && authApi.isPermittedReadJobs();
+
+		if (self.canReadJobs) {
+		    self.updateJobs();
+		}
 	}
 
 	var component = {

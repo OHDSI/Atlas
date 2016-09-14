@@ -1,11 +1,12 @@
 <div class="wrapperTitle">
-	<i class="fa fa-tasks"></i> Jobs
+    <i class="fa fa-tasks"></i> Jobs
 </div>
-<div id="wrapperJobs">
-	<div data-bind="click:updateJobs" class="btn btn-sm btn-success pull-right">Refresh Jobs</div>
-	<div class="clear"></div>
+<div data-bind="if:canReadJobs">
+    <div id="wrapperJobs">
+        <div data-bind="click:updateJobs" class="btn btn-xs btn-success pull-right">Refresh Jobs</div>
+        <div class="clear"></div>
 
-	<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+        <table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
             data: model.jobs(),
             options: {
 						dom: 'Blfiprt',
@@ -28,6 +29,14 @@
 								{ title: 'End Date', data: 'endDate'}
 						]
 				}
-        }">
-	</table>
+        }"></table>
+    </div>
+</div>
+<div data-bind="ifnot:canReadJobs">
+    <div data-bind="if:isAuthenticated">
+        <forbidden/>
+    </div>
+    <div data-bind="ifnot:isAuthenticated">
+        <unauthenticated/>
+    </div>
 </div>

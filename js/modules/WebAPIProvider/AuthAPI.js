@@ -198,6 +198,10 @@ define(function(require, exports) {
         return isPermitted(permission);
     }
 
+    var isPermittedReadJobs = function() {
+        return isPermitted('job:execution:get');
+    }
+
     var api = {
         getToken: getToken,
         setToken: setToken,
@@ -214,7 +218,8 @@ define(function(require, exports) {
         isPermittedReadCohorts: isPermittedReadCohorts,
         isPermittedCreateCohort: isPermittedCreateCohort,
         isPermittedUpdateCohort: isPermittedUpdateCohort,
-        isPermittedDeleteCohort: isPermittedDeleteCohort
+        isPermittedDeleteCohort: isPermittedDeleteCohort,
+        isPermittedReadJobs: isPermittedReadJobs
     };
 
     return api;
