@@ -12,10 +12,30 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				text: "Add First Measure Criteria",
 				value: 14,
 				selected: false,
-				description: "Restrict Measures to first occurrence.",
+				description: "Limit Measures to first occurrence in history.",
 				action: function() { 
 					if (self.Criteria.First() == null)
 						self.Criteria.First(true);
+				}
+			},			
+			{
+				text: "Add Age at Occurrence Criteria",
+				value: 12,
+				selected: false,
+				description: "Filter Measurements by age at occurrence.",
+				action: function() { 
+					if (self.Criteria.Age() == null)
+						self.Criteria.Age(new Range());
+				}
+			}, 
+			{
+				text: "Add Gender Criteria",
+				value: 13,
+				selected: false,
+				description: "Filter Measurements based on Gender.",
+				action: function() { 
+					if (self.Criteria.Gender() == null)
+						self.Criteria.Gender(ko.observableArray());
 				}
 			},
 			{
@@ -37,6 +57,16 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					if (self.Criteria.MeasurementType() == null)
 						self.Criteria.MeasurementType(ko.observableArray());
 				}				
+			},
+			{
+				text: "Add Visit Criteria",
+				value: 15,
+				selected: false,
+				description: "Filter Measurements based on visit occurrence of measurement.",
+				action: function() { 
+					if (self.Criteria.VisitType() == null)
+						self.Criteria.VisitType(ko.observableArray());
+				}
 			},
 			{
 				text: "Add Operator Criteria",
@@ -79,6 +109,16 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				}
 			},
 			{
+				text: "Add Abnormal Result Criteria",
+				value: 11,
+				selected: false,
+				description: "Filter Measurements to include those which fall outside of normal range.",
+				action: function() { 
+					if (self.Criteria.Abnormal() == null)
+						self.Criteria.Abnormal(true);
+				}
+			},
+			{
 				text: "Add Low Range Criteria",
 				value: 6,
 				selected: false,
@@ -96,16 +136,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				action: function() { 
 					if (self.Criteria.RangeHigh() == null)
 						self.Criteria.RangeHigh(new Range());
-				}
-			},
-			{
-				text: "Add Measurement Source Concept Criteria",
-				value: 8,
-				selected: false,
-				description: "Filter Measurements by the Measurement Source Concept.",
-				action: function() { 
-					if (self.Criteria.MeasurementSourceConcept() == null)
-						self.Criteria.MeasurementSourceConcept(ko.observable());
 				}
 			},
 			{
@@ -129,50 +159,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				}
 			},
 			{
-				text: "Add Abnormal Result Criteria",
-				value: 11,
-				selected: false,
-				description: "Filter Measurements to include those which fall outside of normal range.",
-				action: function() { 
-					if (self.Criteria.Abnormal() == null)
-						self.Criteria.Abnormal(true);
-				}
-			},			
-			{
-				text: "Add Age at Occurrence Criteria",
-				value: 12,
-				selected: false,
-				description: "Filter Measurements by age at occurrence.",
-				action: function() { 
-					if (self.Criteria.Age() == null)
-						self.Criteria.Age(new Range());
-				}
-			}, 
-			{
-				text: "Add Gender Criteria",
-				value: 13,
-				selected: false,
-				description: "Filter Measurements based on Gender.",
-				action: function() { 
-					if (self.Criteria.Gender() == null)
-						self.Criteria.Gender(ko.observableArray());
-				}
-			},
-/*
- 			{
-				text: "Add Prior Observation Duration Criteria",
-				value: 8,
-				selected: false,
-				description: "Filter Condition Occurrences based on Prior Observation Duration."
-					},
-			{
-				text: "Add Post Observation Duration Criteria",
-				value: 9,
-				selected: false,
-				description: "Filter Condition Occurrences based on Prior Observation Duration."
-					},
-*/
-			{
 				text: "Add Provider Specialty Criteria",
 				value: 14,
 				selected: false,
@@ -183,13 +169,13 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				}
 			},
 			{
-				text: "Add Visit Criteria",
-				value: 15,
+				text: "Add Measurement Source Concept Criteria",
+				value: 8,
 				selected: false,
-				description: "Filter Measurements based on visit occurrence of measurement.",
+				description: "Filter Measurements by the Measurement Source Concept.",
 				action: function() { 
-					if (self.Criteria.VisitType() == null)
-						self.Criteria.VisitType(ko.observableArray());
+					if (self.Criteria.MeasurementSourceConcept() == null)
+						self.Criteria.MeasurementSourceConcept(ko.observable());
 				}
 			}
 		];

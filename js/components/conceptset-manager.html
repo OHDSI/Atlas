@@ -17,7 +17,7 @@
 		<li role="presentation" data-bind="click: function() {$component.routeTo('included');}, attr: {class: model.currentConceptSetMode() == 'included' ? 'active' : ''}">
 			<a>Included Concepts
 				<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
-				<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
+				<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-circle-o-notch fa-spin"></i></span></a>
 			</li>
 		</li>
 		<li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">

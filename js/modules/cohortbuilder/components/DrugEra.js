@@ -9,54 +9,9 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./DrugEraTemplate
 
 		var addActions = [
 			{
-				text: "Add Era Start Date Criteria",
+				text: "Add First Exposure Criteria",
 				selected: false,
-				description: "Filter Drug Eras by the Era Start Date.",
-				action: function() {
-					if (self.Criteria.EraStartDate() == null)
-						self.Criteria.EraStartDate(new Range({Op: "lt"}));				
-				}
-			},
-			{
-				text: "Add Era End Date Criteria",
-				selected: false,
-				description: "Filter Drug Eras  by the Era End Date",
-				action: function() {
-					if (self.Criteria.EraEndDate() == null)
-						self.Criteria.EraEndDate(new Range({Op: "lt"}));				
-				}
-			},
-			{
-				text: "Add Era Exposure Count Criteria",
-				selected: false,
-				description: "Filter Drug Eras by the Exposure Count.",
-				action: function() {
-					if (self.Criteria.OccurrenceCount() == null)
-						self.Criteria.OccurrenceCount(new Range());				
-				}
-			},
-			{
-				text: "Add Gap Length Criteria",
-				selected: false,
-				description: "Filter Drug Eras by the Gap Length.",
-				action: function() {
-					if (self.Criteria.GapDays() == null)
-						self.Criteria.GapDays(new Range());				
-				}
-			},
-			{
-				text: "Add Era Length Criteria",
-				selected: false,
-				description: "Filter Drug Eras by the Era duration.",
-				action: function() {
-					if (self.Criteria.EraLength() == null)
-						self.Criteria.EraLength(new Range());				
-				}
-			},
-			{
-				text: "Add New Exposure Criteria",
-				selected: false,
-				description: "Limit Drug Eras to new exposure.",
+				description: "Limit Drug Eras to first exposure in history.",
 				action: function() {
 					if (self.Criteria.First() == null)
 						self.Criteria.First(true);				
@@ -87,6 +42,42 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./DrugEraTemplate
 				action: function() {
 					if (self.Criteria.Gender() == null)
 						self.Criteria.Gender(ko.observableArray());				
+				}
+			},
+			{
+				text: "Add Era Start Date Criteria",
+				selected: false,
+				description: "Filter Drug Eras by the Era Start Date.",
+				action: function() {
+					if (self.Criteria.EraStartDate() == null)
+						self.Criteria.EraStartDate(new Range({Op: "lt"}));				
+				}
+			},
+			{
+				text: "Add Era End Date Criteria",
+				selected: false,
+				description: "Filter Drug Eras  by the Era End Date",
+				action: function() {
+					if (self.Criteria.EraEndDate() == null)
+						self.Criteria.EraEndDate(new Range({Op: "lt"}));				
+				}
+			},
+			{
+				text: "Add Era Length Criteria",
+				selected: false,
+				description: "Filter Drug Eras by the Era duration.",
+				action: function() {
+					if (self.Criteria.EraLength() == null)
+						self.Criteria.EraLength(new Range());				
+				}
+			},
+			{
+				text: "Add Era Exposure Count Criteria",
+				selected: false,
+				description: "Filter Drug Eras by the Exposure Count.",
+				action: function() {
+					if (self.Criteria.OccurrenceCount() == null)
+						self.Criteria.OccurrenceCount(new Range());				
 				}
 			}
 		];

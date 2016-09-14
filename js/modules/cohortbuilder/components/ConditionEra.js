@@ -9,45 +9,9 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ConditionEraTem
 
 		var addActions = [
 			{
-				text: "Add Era Start Date Criteria",
+				text: "Add First Diagnosis Criteria",
 				selected: false,
-				description: "Filter Condition Eras by the Era Start Date.",
-				action: function() {
-					if (self.Criteria.EraStartDate() == null)
-						self.Criteria.EraStartDate(new Range({Op: "lt"}));				
-				}
-			},
-			{
-				text: "Add Era End Date Criteria",
-				selected: false,
-				description: "Filter Condition Eras  by the Era End Date",
-				action: function() {
-					if (self.Criteria.EraEndDate() == null)
-						self.Criteria.EraEndDate(new Range({Op: "lt"}));				
-				}
-			},
-			{
-				text: "Add Era Conditon Count Criteria",
-				selected: false,
-				description: "Filter Condition Eras by the Condition Count.",
-				action: function() {
-					if (self.Criteria.OccurrenceCount() == null)
-						self.Criteria.OccurrenceCount(new Range());				
-				}
-			},
-			{
-				text: "Add Era Length Criteria",
-				selected: false,
-				description: "Filter Condition Eras by the Era duration.",
-				action: function() {
-					if (self.Criteria.EraLength() == null)
-						self.Criteria.EraLength(new Range());				
-				}
-			},
-			{
-				text: "Add New Diagnosis Criteria",
-				selected: false,
-				description: "Limit Condition Eras to new diagnosis.",
+				description: "Limit Condition Eras to first diagnosis era in history.",
 				action: function() {
 					if (self.Criteria.First() == null)
 						self.Criteria.First(true);				
@@ -78,6 +42,42 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ConditionEraTem
 				action: function() {
 					if (self.Criteria.Gender() == null)
 						self.Criteria.Gender(ko.observableArray());				
+				}
+			},
+			{
+				text: "Add Start Date Criteria",
+				selected: false,
+				description: "Filter Condition Eras by the Era Start Date.",
+				action: function() {
+					if (self.Criteria.EraStartDate() == null)
+						self.Criteria.EraStartDate(new Range({Op: "lt"}));				
+				}
+			},
+			{
+				text: "Add End Date Criteria",
+				selected: false,
+				description: "Filter Condition Eras  by the Era End Date",
+				action: function() {
+					if (self.Criteria.EraEndDate() == null)
+						self.Criteria.EraEndDate(new Range({Op: "lt"}));				
+				}
+			},
+			{
+				text: "Add Era Conditon Count Criteria",
+				selected: false,
+				description: "Filter Condition Eras by the Condition Count.",
+				action: function() {
+					if (self.Criteria.OccurrenceCount() == null)
+						self.Criteria.OccurrenceCount(new Range());				
+				}
+			},
+			{
+				text: "Add Era Length Criteria",
+				selected: false,
+				description: "Filter Condition Eras by the Era duration.",
+				action: function() {
+					if (self.Criteria.EraLength() == null)
+						self.Criteria.EraLength(new Range());				
 				}
 			}
 		];

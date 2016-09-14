@@ -36,7 +36,7 @@
 
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore') };"><a>Explore</a></li>
 
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export'); $component.showSql(); };">
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export');}">
 			<a>Export</a>
 		</li>
 	</ul>
@@ -138,19 +138,23 @@
 		</div>
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
 			<ul class="nav nav-pills">
-				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'printfriendly' }, click: function() { $component.exportTabMode('printfriendly') };">
+				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'printfriendly' }, click: function() { $component.exportTabMode('printfriendly'); }">
 					<a>Print Friendly</a>
 				</li>
 
-				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'cartoon' }, click: function() { $component.exportTabMode('cartoon') };">
+				<li role="presentation" data-bind="
+							css: { active: $component.exportTabMode() == 'cartoon' }, 
+							click: function() { 
+								$component.exportTabMode('cartoon'); 
+								$component.delayedCartoonUpdate($component.delayedCartoonUpdate()+1) }">
 					<a>Cartoon</a>
 				</li>
 
-				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'json' }, click: function() { $component.exportTabMode('json') };">
+				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'json' }, click: function() { $component.exportTabMode('json'); }">
 					<a>JSON</a>
 				</li>
 
-				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'sql' }, click: function() { $component.exportTabMode('sql') };">
+				<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'sql' }, click: function() { $component.exportTabMode('sql');  $component.showSql();}">
 					<a>SQL</a>
 				</li>
 			</ul>
@@ -198,7 +202,7 @@
 						<!-- /ko -->
 						<div data-bind="cohortExpressionCartoon:{expression:model.currentCohortDefinition().expression,
 														selectedCriteria: $component.selectedCriteria,
-														tabPath: $component.tabPath,
+														exportTabMode: $component.exportTabMode,
 														delayedCartoonUpdate: $component.delayedCartoonUpdate}"></div>
 					</div>
 				</div>
@@ -232,7 +236,7 @@
 						</div>
 
 						<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'mssql' && !$component.isLoadingSql()">
-							<pre data-bind="text: $component.generatedSql.mssql"></pre>
+							<pre data-bind="html: $component.generatedSql.mssql"></pre>
 						</div>
 						<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'msaps' && !$component.isLoadingSql()">
 							<pre data-bind="text: $component.generatedSql.msaps"></pre>
@@ -308,13 +312,13 @@
 							<input data-bind="attr: { name : sourceKey, value : $parent.name }" type="checkbox">
 							<!-- /ko -->
 							<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().checking -->
-							<i class="fa fa-refresh fa-spin"></i>
+							<i class="fa fa-circle-o-notch fa-spin"></i>
 							<!-- /ko -->
 							<!-- ko if:!$component.model.sourceAnalysesStatus[sourceKey]().checking && !$component.model.sourceAnalysesStatus[sourceKey]().ready -->
 							<i class="fa fa-exclamation-circle"></i>
 							<!-- /ko -->
 							<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]()[$parent.name] > 0 -->
-							<div data-bind="click: $component.viewReport.bind($data, sourceKey, $parent.name)" class="btn btn-xs btn-primary">view</div>
+							<div data-bind="click: $component.viewReport.bind($data, sourceKey, $parent.name)" class="btn btn-sm btn-primary">view</div>
 							<!-- /ko -->
 						</td>
 						<!-- /ko -->
@@ -340,7 +344,7 @@
 
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'explore' }" class="tab-pane">
 			<div class="paddedWrapper">
-				<explore-cohort params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false, showing: $component.tabMode()=='explore'}"></explore-cohort>
+				<explore-cohort params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false, showing: $component.tabMode}"></explore-cohort>
 			</div>
 		</div>
 

@@ -5,13 +5,30 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 		var addActions = [
 			{
-				text: "Add Device Exposure Start Date Criteria",
+				text: "Add First Exposure Criteria",
+				value: 6,
+				selected: false,
+				description: "Limit Device Exposures to first exposure in history."
+			},
+			{
+				text: "Add Age at Occurrence Criteria",
+				value: 7,
+				selected: false,
+				description: "Filter Device Exposures by age at occurrence."
+			}, 
+			{
+				text: "Add Gender Criteria",
+				value: 8,
+				selected: false,
+				description: "Filter Device Exposures based on Gender."
+			},			{
+				text: "Add Start Date Criteria",
 				value: 0,
 				selected: false,
 				description: "Filter Procedure Occurrences by the Procedure Start Date."
 			},
 			{
-				text: "Add Device Exposure End Date Criteria",
+				text: "Add End Date Criteria",
 				value: 1,
 				selected: false,
 				description: "Filter Device Exposure by the Procedure Start Date."
@@ -21,6 +38,12 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 2,
 				selected: false,
 				description: "Filter Procedure Occurrences  by the Procedure Type."
+			},
+			{
+				text: "Add Visit Criteria",
+				value: 10,
+				selected: false,
+				description: "Filter Device Exposures based on visit occurrence of exposure."
 			},
 			{
 				text: "Add Unique Id Criteria",
@@ -39,24 +62,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 5,
 				selected: false,
 				description: "Filter Device Exposures by the Device Source Concept."
-					},
-			{
-				text: "Add New Exposure Criteria",
-				value: 6,
-				selected: false,
-				description: "Limit Device Exposures to first exposure."
-			},
-			{
-				text: "Add Age at Occurrence Criteria",
-				value: 7,
-				selected: false,
-				description: "Filter Device Exposures by age at occurrence."
-			}, 
-			{
-				text: "Add Gender Criteria",
-				value: 8,
-				selected: false,
-				description: "Filter Device Exposures based on Gender."
 			},
 /*
  			{
@@ -77,12 +82,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 9,
 				selected: false,
 				description: "Filter Device Exposures based on provider specialty."
-					},
-			{
-				text: "Add Visit Criteria",
-				value: 10,
-				selected: false,
-				description: "Filter Device Exposures based on visit occurrence of exposure."
 			}
 		];
 

@@ -8,6 +8,33 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 		
 		var addActions = [
 			{
+				text: "Add First Occurrence Criteria",
+				selected: false,
+				description: "Limit Specimen to the first occurrence in history.",
+				action: function() {
+					if (self.Criteria.First() == null)
+						self.Criteria.First(true);					
+				}
+			},
+			{
+				text: "Add Age at Occurrence Criteria",
+				selected: false,
+				description: "Filter specimens by age at occurrence.",
+				action: function() {
+					if (self.Criteria.Age() == null)
+						self.Criteria.Age(new Range());					
+				}
+			}, 
+			{
+				text: "Add Gender Criteria",
+				selected: false,
+				description: "Filter specimens based on Gender.",
+				action: function() {
+					if (self.Criteria.Gender() == null)
+						self.Criteria.Gender(ko.observableArray());					
+				}
+			},
+			{
 				text: "Add Specimen Date Criteria",
 				selected: false,
 				description: "Filter Specimen by Date.",
@@ -68,33 +95,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				action: function() {
 					if (self.Criteria.SourceId() == null)
 						self.Criteria.SourceId(new Text({Op: "contains"}));
-				}
-			},
-			{
-				text: "Add First Observation Criteria",
-				selected: false,
-				description: "Limit Specimen to the first occurrence.",
-				action: function() {
-					if (self.Criteria.First() == null)
-						self.Criteria.First(true);					
-				}
-			},
-			{
-				text: "Add Age at Occurrence Criteria",
-				selected: false,
-				description: "Filter specimens by age at occurrence.",
-				action: function() {
-					if (self.Criteria.Age() == null)
-						self.Criteria.Age(new Range());					
-				}
-			}, 
-			{
-				text: "Add Gender Criteria",
-				selected: false,
-				description: "Filter specimens based on Gender.",
-				action: function() {
-					if (self.Criteria.Gender() == null)
-						self.Criteria.Gender(ko.observableArray());					
 				}
 			}
 		];

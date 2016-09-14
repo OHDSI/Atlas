@@ -62,7 +62,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 								 'definition'
 								);
 		self.tabMode.subscribe(function(tab) {
-			util.setState('cohortDefTab', tab);
+			//util.setState('cohortDefTab', tab);
 		});
 
 		self.exportTabMode = ko.observable('printfriendly');
@@ -73,20 +73,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.isSaveable = ko.pureComputed(function () {
 			return self.dirtyFlag() && self.dirtyFlag().isDirty();
 		});
-		self.tabPath = ko.computed(function() {
-			var path = self.tabMode();
-			if (path === 'export') {
-				path += '/' + self.exportTabMode();
-			}
-			//console.log('tabPath:', path);
-			if (self.exportTabMode() === 'cartoon') {
-				setTimeout(function() {
-					self.delayedCartoonUpdate('ready');
-				}, 10);
-			}
-			return path;
-		});
-		self.delayedCartoonUpdate = ko.observable(null);
+		self.delayedCartoonUpdate = ko.observable(0);
 
 		self.canGenerate = ko.pureComputed(function () {
 			var isDirty = self.dirtyFlag() && self.dirtyFlag().isDirty();

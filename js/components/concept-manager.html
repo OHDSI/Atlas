@@ -13,13 +13,13 @@
 		</li>
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('related');}, attr: {class: model.currentConceptMode() == 'related' ? 'active' : ''}">
 			<a><span data-bind="if:model.loadingRelated();">
-							<i class="fa fa-refresh fa-spin"></i>
+							<i class="fa fa-circle-o-notch fa-spin"></i>
 						</span>Related Concepts</a>
 		</li>
 
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('hierarchy');}, attr: {class: model.currentConceptMode() == 'hierarchy' ? 'active' : ''}">
 			<a><span data-bind="if:model.loadingRelated();">
-							<i class="fa fa-refresh fa-spin"></i>
+							<i class="fa fa-circle-o-notch fa-spin"></i>
 						</span>Hierarchy</a>
 		</li>
 

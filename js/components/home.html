@@ -4,13 +4,18 @@
 
 <div class="paddedWrapper">
 	<div class="home-welcome">
-		<h4>Welcome to ATLAS</h4> ATLAS is an open source application developed as a part of <a href="http://www.ohdsi.org">OHDSI</a> intended to provide a unified interface to patient level data and analytics.
+		<div class="heading">Welcome to ATLAS.</div>
+		<div> ATLAS is an open source application developed as a part of <a href="http://www.ohdsi.org">OHDSI</a> intended to provide a unified interface to patient level data and analytics.</div>
 	</div>
 	<div class="home-documentation">
-		<a target="_new" href="https://github.com/OHDSI/Atlas/wiki"><i class="fa fa-book" aria-hidden="true"></i></a>The ATLAS user guide can be found <a target="_new" href="https://github.com/OHDSI/Atlas/wiki">here</a>.
+		<div class="heading">Documentation</div>
+		<a target="_new" href="https://github.com/OHDSI/Atlas/wiki"><i class="fa fa-fw fa-3x fa-book" aria-hidden="true"></i></a>The ATLAS user guide can be found <a target="_new" href="http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:atlas">here</a>.
+	</div>
+
+	<div class="heading">
+		Getting Started
 	</div>
 	<div class="home-getting-started">
-		<h4>Getting Started</h4>
 		<div>
 			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.newCohortDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined}">Define a New Cohort</span> Begin performing research by defining the group of people you intend to study
 		</div>
@@ -19,24 +24,23 @@
 		</div>
 	</div>
 
+	<div class="heading">Release Notes</div>
 	<div class="release-notes">
-		<h4>Release Notes</h4>
-
 		<div>
-			ATLAS Version  1.2.0 Current Release Notes
+			ATLAS Version 1.2.0 Current Release Notes
 			<ul>
 				<li>Cohort Definition End Dates</li>
 				<li>New Feature: Estimation</li>
-                <li>Concept Set Copy Enabled</li>
+				<li>Concept Set Copy Enabled</li>
 			</ul>
 		</div>
-		
+
 		<div>
 			ATLAS Version 1.1.0 Current Release Notes
 			<ul>
 				<li>Fix: Cohort Definition UI bugfixes</li>
 				<li>Fix: Data Sources report fixes (Measurement reports and trellis graph rendering NaNs)</li>
-				<li>Feature: Cohort Definitions (CIRCE)  UI and Backend Changes: Inclusion rules and Inclusion Rule Impact Reports</li>
+				<li>Feature: Cohort Definitions (CIRCE) UI and Backend Changes: Inclusion rules and Inclusion Rule Impact Reports</li>
 				<li>Feature: Patient Profiles</li>
 			</ul>
 		</div>
@@ -48,7 +52,7 @@
 				<li>Feature: Inclusion rule impact analysis</li>
 			</ul>
 		</div>
-		
+
 		<div style="padding-bottom: 10px;">
 			<div><a href="https://github.com/OHDSI/Atlas/releases">Prior Atlas releases</a></div>
 			<div><a href="https://github.com/OHDSI/WebAPI/releases">Prior WebAPI releases</a></div>
@@ -58,7 +62,7 @@
 			Additional Details:
 			<br/> This latest release contains <strong data-bind="text:github_status().length"></strong> feature enhancements and issue resolutions.
 		</div>
-		
+
 		<div class="github-issue-container" data-bind="foreach:github_status">
 			<div class="github-issue">
 				<a target="_blank" data-bind="attr:{href: html_url, title: title}, text:title"></a>

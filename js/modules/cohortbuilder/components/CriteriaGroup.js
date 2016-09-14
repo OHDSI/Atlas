@@ -1,4 +1,5 @@
-define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteria', '../options', 'text!./CriteriaGroupTemplate.html'], function (ko, criteriaTypes, CriteriaGroup, AdditionalCriteria, options, template) {
+define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window', '../AdditionalCriteria', '../options', 'text!./CriteriaGroupTemplate.html'
+			 ], function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, template) {
 
 	function CriteriaGroupViewModel(params) {
 		var self = this;
@@ -11,76 +12,16 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 				action: function () { self.addDemographicCriteria(); }
 			},
 			{
-				text: "Add Condition Criteria",
-				selected: false,
-				description: "Find patients with specific diagnoses.",
-				action: function () { self.addConditionCriteria(); }
-			},
-			{
 				text: "Add Condition Era Criteria",
 				selected: false,
-				description: "Find patients with specific diagnosis era.",
+				description: "Find patients with specific condition era.",
 				action: function () { self.addConditionEraCriteria(); }
 			},
 			{
-				text: "Add Drug Criteria",
+				text: "Add Condition Occurrence Criteria",
 				selected: false,
-				description: "Find patients with exposure to specific drugs or drug classes.",
-				action: function () { self.addDrugExposureCriteria(); }
-			},
-			{
-				text: "Add Drug Era Criteria",
-				selected: false,
-				description: "Find patients with with exposure to drugs over time.",
-				action: function () { self.addDrugEraCriteria(); }
-			},
-			{
-				text: "Add Dose Era Criteria",
-				selected: false,
-				description: "Find patients with dose eras.",
-				action: function () { self.addDoseEraCriteria(); }
-			},
-			{
-				text: "Add Procedure Criteria",
-				selected: false,
-				description: "Find patients that experienced a specific procedure.",
-				action: function () { self.addProcedureCriteria(); }
-			},
-			{
-				text: "Add Observation Criteria",
-				selected: false,
-				description: "Find patients based on lab tests or other observations.",
-				action: function () { self.addObservationCriteria(); }
-			},
-			{
-				text: "Add Visit Criteria",
-				selected: false,
-				description: "Find patients based on visit information.",
-				action: function () { self.addVisitCriteria(); }
-			},
-			{
-				text: "Add Device Exposure Criteria",
-				selected: false,
-				description: "Find patients based on device exposure.",
-				action: function () { self.addDeviceCriteria(); }
-			},
-			{
-				text: "Add Measurement Criteria",
-				selected: false,
-				description: "Find patients based on Measurements.",
-				action: function () { self.addMeasurementCriteria(); }
-			},
-			{
-				text: "Add Specimen Criteria",
-				selected: false,
-				description: "Find patients based on Specimen.",
-				action: function () { self.addSpecimenCriteria(); }
-			},			
-			{
-				text: "Add Observation Period Criteria",
-				selected: false,
-				description: "Find patients based on Observation Period.",
-				action: function () { self.addObservationPeriodCriteria(); }
+				description: "Find patients with specific conditions.",
+				action: function () { self.addConditionCriteria(); }
 			},
 			{
 				text: "Add Death Criteria",
@@ -89,9 +30,69 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 				action: function () { self.addDeathCriteria(); }
 			},
 			{
-				text: "Add Filter Group",
+				text: "Add Device Exposure Criteria",
 				selected: false,
-				description: "Add a group to combine Filters.",
+				description: "Find patients based on device exposure.",
+				action: function () { self.addDeviceCriteria(); }
+			},
+			{
+				text: "Add Dose Era Criteria",
+				selected: false,
+				description: "Find patients with dose eras.",
+				action: function () { self.addDoseEraCriteria(); }
+			},
+			{
+				text: "Add Drug Era Criteria",
+				selected: false,
+				description: "Find patients with with drug eras.",
+				action: function () { self.addDrugEraCriteria(); }
+			},
+			{
+				text: "Add Drug Exposure Criteria",
+				selected: false,
+				description: "Find patients with exposure to specific drugs or drug classes.",
+				action: function () { self.addDrugExposureCriteria(); }
+			},
+			{
+				text: "Add Measurement Criteria",
+				selected: false,
+				description: "Find patients based on measurements.",
+				action: function () { self.addMeasurementCriteria(); }
+			},
+			{
+				text: "Add Observation Criteria",
+				selected: false,
+				description: "Find patients based on observations.",
+				action: function () { self.addObservationCriteria(); }
+			},
+			{
+				text: "Add Observation Period Criteria",
+				selected: false,
+				description: "Find patients based on pbservation periods.",
+				action: function () { self.addObservationPeriodCriteria(); }
+			},
+			{
+				text: "Add Procedure Occurrence Criteria",
+				selected: false,
+				description: "Find patients that experienced a specific procedure.",
+				action: function () { self.addProcedureCriteria(); }
+			},
+			{
+				text: "Add Specimen Criteria",
+				selected: false,
+				description: "Find patients based on specimen.",
+				action: function () { self.addSpecimenCriteria(); }
+			},			
+			{
+				text: "Add Visit Criteria",
+				selected: false,
+				description: "Find patients based on visit information.",
+				action: function () { self.addVisitCriteria(); }
+			},
+			{
+				text: "Add Group",
+				selected: false,
+				description: "Add a group to combine criteria using and/or relationships.",
 				action: function () { self.addAdditionalCriteria(); }
 			}
 		];
@@ -273,6 +274,15 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../AdditionalCriteri
 			observableList.remove(data);
 		};
 
+		
+		self.addEndWindow = function(corelatedCriteria){
+			corelatedCriteria.EndWindow(new Window());
+		};
+		
+		self.removeEndWindow = function(corelatedCriteria) {
+			corelatedCriteria.EndWindow(null);
+		};
+		
 		self.addCriteriaSettings = {
 			selectText: "Add New Criteria...",
 			width:250,

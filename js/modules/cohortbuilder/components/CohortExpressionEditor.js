@@ -8,16 +8,6 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 
 		var primaryCriteriaOptions = [
 			{
-				text: "Add Condition Criteria",
-				selected: false,
-				description: "Find patients with specific diagnoses.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						ConditionOccurrence: new criteriaTypes.ConditionOccurrence(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
 				text: "Add Condition Era Criteria",
 				selected: false,
 				description: "Find patients with specific diagosis era.",
@@ -26,107 +16,17 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 						ConditionEra: new criteriaTypes.ConditionEra(null, self.expression().ConceptSets)
 					});
 				}
-				},
+			},
 			{
-				text: "Add Drug Criteria",
+				text: "Add Condition Occurrence Criteria",
 				selected: false,
-				description: "Find patients with exposure to specific drugs or drug classes.",
+				description: "Find patients with specific diagnoses.",
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
-						DrugExposure: new criteriaTypes.DrugExposure(null, self.expression().ConceptSets)
+						ConditionOccurrence: new criteriaTypes.ConditionOccurrence(null, self.expression().ConceptSets)
 					});
 				}
-				},
-			{
-				text: "Add Drug Era Criteria",
-				selected: false,
-				description: "Find patients with with exposure to drugs over time.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						DrugEra: new criteriaTypes.DrugEra(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Dose Era Criteria",
-				selected: false,
-				description: "Find patients with dose eras.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						DoseEra: new criteriaTypes.DoseEra(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Procedure Criteria",
-				selected: false,
-				description: "Find patients that experienced a specific procedure.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						ProcedureOccurrence: new criteriaTypes.ProcedureOccurrence(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Observation Criteria",
-				selected: false,
-				description: "Find patients based on lab tests or other observations.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						Observation: new criteriaTypes.Observation(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Visit Criteria",
-				selected: false,
-				description: "Find patients based on visit information.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						VisitOccurrence: new criteriaTypes.VisitOccurrence(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Device Criteria",
-				selected: false,
-				description: "Find patients based on device exposure.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						DeviceExposure: new criteriaTypes.DeviceExposure(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Measurement Criteria",
-				selected: false,
-				description: "Find patients based on Measurement.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						Measurement: new criteriaTypes.Measurement(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Specimen Criteria",
-				selected: false,
-				description: "Find patients based on Specimen.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						Specimen: new criteriaTypes.Specimen(null, self.expression().ConceptSets)
-					});
-				}
-				},
-			{
-				text: "Add Observation Period Criteria",
-				selected: false,
-				description: "Find patients based on Observation Period.",
-				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
-						ObservationPeriod: new criteriaTypes.ObservationPeriod(null, self.expression().ConceptSets)
-					});
-				}
-				},
+			},
 			{
 				text: "Add Death Criteria",
 				selected: false,
@@ -136,8 +36,108 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 						Death: new criteriaTypes.Death(null, self.expression().ConceptSets)
 					});
 				}
+			},
+			{
+				text: "Add Device Exposure Criteria",
+				selected: false,
+				description: "Find patients based on device exposure.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						DeviceExposure: new criteriaTypes.DeviceExposure(null, self.expression().ConceptSets)
+					});
 				}
-			];
+			},
+			{
+				text: "Add Dose Era Criteria",
+				selected: false,
+				description: "Find patients with dose eras.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						DoseEra: new criteriaTypes.DoseEra(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Drug Era Criteria",
+				selected: false,
+				description: "Find patients with with exposure to drugs over time.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						DrugEra: new criteriaTypes.DrugEra(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Drug Exposure Criteria",
+				selected: false,
+				description: "Find patients with exposure to specific drugs or drug classes.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						DrugExposure: new criteriaTypes.DrugExposure(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Measurement Criteria",
+				selected: false,
+				description: "Find patients based on Measurement.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						Measurement: new criteriaTypes.Measurement(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Observation Criteria",
+				selected: false,
+				description: "Find patients based on lab tests or other observations.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						Observation: new criteriaTypes.Observation(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Observation Period Criteria",
+				selected: false,
+				description: "Find patients based on Observation Period.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						ObservationPeriod: new criteriaTypes.ObservationPeriod(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Procedure Occurrence Criteria",
+				selected: false,
+				description: "Find patients that experienced a specific procedure.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						ProcedureOccurrence: new criteriaTypes.ProcedureOccurrence(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Specimen Criteria",
+				selected: false,
+				description: "Find patients based on Specimen.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						Specimen: new criteriaTypes.Specimen(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
+				text: "Add Visit Criteria",
+				selected: false,
+				description: "Find patients based on visit information.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						VisitOccurrence: new criteriaTypes.VisitOccurrence(null, self.expression().ConceptSets)
+					});
+				}
+			}
+		];
 
 		if (params.widget) {
 			params.widget(this);

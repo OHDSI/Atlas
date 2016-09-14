@@ -27,24 +27,6 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./DemographicCrit
 				}
 			},
 			{
-				text: "Add Race Criteria",
-				selected: false,
-				description: "Filter events based on Gender.",
-				action: function() {
-					if (self.Criteria.Race() == null)
-						self.Criteria.Race(ko.observableArray());				
-				}
-			},
-			{
-				text: "Add Ethnicity Criteria",
-				selected: false,
-				description: "Filter events based on Ethnicity.",
-				action: function() {
-					if (self.Criteria.Ethnicity() == null)
-						self.Criteria.Ethnicity(ko.observableArray());				
-				}
-			},
-			{
 				text: "Add Event Start Date Criteria",
 				selected: false,
 				description: "Filter Events by Start Date.",
@@ -60,6 +42,24 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./DemographicCrit
 				action: function() {
 					if (self.Criteria.OccurrenceEndDate() == null)
 						self.Criteria.OccurrenceEndDate(new Range({Op: "lt"}));				
+				}
+			},
+			{
+				text: "Add Race Criteria",
+				selected: false,
+				description: "Filter events based on Gender.",
+				action: function() {
+					if (self.Criteria.Race() == null)
+						self.Criteria.Race(ko.observableArray());				
+				}
+			},
+			{
+				text: "Add Ethnicity Criteria",
+				selected: false,
+				description: "Filter events based on Ethnicity.",
+				action: function() {
+					if (self.Criteria.Ethnicity() == null)
+						self.Criteria.Ethnicity(ko.observableArray());				
 				}
 			}
 		];

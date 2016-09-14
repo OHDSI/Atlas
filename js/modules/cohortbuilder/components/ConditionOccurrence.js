@@ -10,52 +10,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 		var addActions = [
 			{
-				text: "Add Condition Start Date Criteria",
-				selected: false,
-				description: "Filter Condition Occurrences by the Condition Start Date.",
-				action: function() {
-					if (self.Criteria.OccurrenceStartDate() == null)
-						self.Criteria.OccurrenceStartDate(new Range({Op: "lt"}));				
-				}
-			},
-			{
-				text: "Add Condition End Date Criteria",
-				selected: false,
-				description: "Filter Condition Occurrences  by the Condition End Date",
-				action: function() {
-					if (self.Criteria.OccurrenceEndDate() == null)
-						self.Criteria.OccurrenceEndDate(new Range({Op: "lt"}));				
-				}
-			},
-			{
-				text: "Add Condition Type Criteria",
-				selected: false,
-				description: "Filter Condition Occurrences  by the Condition Type.",
-				action: function() {
-					if (self.Criteria.ConditionType() == null)
-						self.Criteria.ConditionType(ko.observableArray());				
-				}
-			},
-			{
-				text: "Add Stop Reason Criteria",
-				selected: false,
-				description: "Filter Condition Occurrences  by the Stop Reason.",
-				action: function() {
-					if (self.Criteria.StopReason() == null)
-						self.Criteria.StopReason(new Text({Op: "contains"}));				
-				}
-			},
-			{
-				text: "Add Condition Source Concept Criteria",
-				selected: false,
-				description: "Filter Condition Occurrences  by the Condition Source Concept.",
-				action: function() {
-					if (self.Criteria.ConditionSourceConcept() == null)
-						self.Criteria.ConditionSourceConcept(ko.observable());				
-				}
-			},
-			{
-				text: "Add New Diagnosis Criteria",
+				text: "Add First Diagnosis Criteria",
 				selected: false,
 				description: "Limit Condition Occurrences to new diagnosis.",
 				action: function() {
@@ -83,12 +38,30 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 			},
 			{
-				text: "Add Provider Specialty Criteria",
+				text: "Add Condition Start Date Criteria",
 				selected: false,
-				description: "Filter Condition Occurrences based on provider specialty.",
+				description: "Filter Condition Occurrences by the Condition Start Date.",
 				action: function() {
-					if (self.Criteria.ProviderSpecialty() == null)
-						self.Criteria.ProviderSpecialty(ko.observableArray());				
+					if (self.Criteria.OccurrenceStartDate() == null)
+						self.Criteria.OccurrenceStartDate(new Range({Op: "lt"}));				
+				}
+			},
+			{
+				text: "Add Condition End Date Criteria",
+				selected: false,
+				description: "Filter Condition Occurrences  by the Condition End Date",
+				action: function() {
+					if (self.Criteria.OccurrenceEndDate() == null)
+						self.Criteria.OccurrenceEndDate(new Range({Op: "lt"}));				
+				}
+			},
+			{
+				text: "Add Condition Type Criteria",
+				selected: false,
+				description: "Filter Condition Occurrences  by the Condition Type.",
+				action: function() {
+					if (self.Criteria.ConditionType() == null)
+						self.Criteria.ConditionType(ko.observableArray());				
 				}
 			},
 			{
@@ -98,6 +71,33 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				action: function() {
 					if (self.Criteria.VisitType() == null)
 						self.Criteria.VisitType(ko.observableArray());				
+				}
+			},
+			{
+				text: "Add Stop Reason Criteria",
+				selected: false,
+				description: "Filter Condition Occurrences  by the Stop Reason.",
+				action: function() {
+					if (self.Criteria.StopReason() == null)
+						self.Criteria.StopReason(new Text({Op: "contains"}));				
+				}
+			},
+			{
+				text: "Add Condition Source Concept Criteria",
+				selected: false,
+				description: "Filter Condition Occurrences  by the Condition Source Concept.",
+				action: function() {
+					if (self.Criteria.ConditionSourceConcept() == null)
+						self.Criteria.ConditionSourceConcept(ko.observable());				
+				}
+			},
+			{
+				text: "Add Provider Specialty Criteria",
+				selected: false,
+				description: "Filter Condition Occurrences based on provider specialty.",
+				action: function() {
+					if (self.Criteria.ProviderSpecialty() == null)
+						self.Criteria.ProviderSpecialty(ko.observableArray());				
 				}
 			}
 		];

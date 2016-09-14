@@ -1,10 +1,11 @@
 <div class="wrapperTitle">
 	<i class="fa fa-bolt"></i> Incidence Rate Analysis
 </div>
+<div class="paddedWrapper">
+	<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newAnalysis">New Analysis</span>
+	<div data-bind="eventListener: [{event: 'click', selector: '.linkish', callback: onAnalysisSelected}]">
+		<ir-analysis-browser params="analysisList: analysisList"></ir-analysis-browser>
+	</div>
 
-<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newAnalysis">New Analysis</span>
-<div data-bind="eventListener: [{event: 'click', selector: '.linkish', callback: onAnalysisSelected}]">
-    <ir-analysis-browser params="analysisList: analysisList"></ir-analysis-browser>
+	<div data-bind="visible:loading()" class="loading">loading</div>
 </div>
-
-<div data-bind="visible:loading()" class="loading">loading</div>

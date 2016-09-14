@@ -1,7 +1,7 @@
 <!-- ko if:$component.showSelectionArea -->
 <div class="wrapperTitle">
 	<span data-bind="if:!$component.model.loadingReport()"><i class="fa fa-area-chart"></i></span>
-	<span data-bind="if:$component.model.loadingReport()"><i class="fa fa-refresh fa-spin"></i></span> Cohort Reporting
+	<span data-bind="if:$component.model.loadingReport()"><i class="fa fa-circle-o-notch fa-spin"></i></span> Cohort Reporting
 </div>
 
 <div class="modal fade" id="cohortDefinitionChooser" tabindex="-1" role="dialog">
@@ -18,7 +18,7 @@
 <div class="reportControls pad-5">
 	<div class="row">
 		<div class="col-xs-12">
-			<button class="form-control btn btn-xs btn-primary" data-bind="click: $component.showBrowser, text:$component.cohortCaption"></button>
+			<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.showBrowser, text:$component.cohortCaption"></button>
 		</div>
 	</div>
 	<div class="row">
@@ -35,7 +35,7 @@
 		<div class="col-xs-10"></div>
 
 		<div class="col-xs-2">
-			<button class="pull-right form-control btn btn-xs btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'View Report'"></button>
+			<button class="pull-right form-control btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'View Report'"></button>
 		</div>
 	</div>
 
@@ -135,7 +135,7 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
-			<i class="fa fa-refresh fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div id="conditionDrilldownScatterplotHeading" class="reportSectionHeading">
@@ -182,7 +182,7 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
-			<i class="fa fa-refresh fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div id="drugDrilldownScatterplotHeading" class="reportSectionHeading">
@@ -273,7 +273,7 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
-			<i class="fa fa-refresh fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div class="heading" id="conditionEraDrilldown"></div>
@@ -333,7 +333,7 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
-			<i class="fa fa-refresh fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div id="procedureDrilldownScatterplotHeading" class="reportSectionHeading">
@@ -381,7 +381,7 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
-			<i class="fa fa-refresh fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div class="heading" id="conditionDrilldown"></div>
@@ -442,7 +442,7 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
-			<i class="fa fa-refresh fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
 
 		<div data-bind="if:$component.model.activeReportDrilldown">
@@ -505,7 +505,7 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
-			<i class="fa fa-refresh fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div class="heading" id="drugExposureDrilldown"></div>
@@ -578,7 +578,7 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
-			<i class="fa fa-refresh fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div class="heading" id="procedureDrilldown"></div>

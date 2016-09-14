@@ -1,11 +1,11 @@
-<button class="btn btn-primary btn-xs" data-bind="click: open, disable: isOpen">Add</button>
+<button class="btn btn-primary btn-sm" data-bind="click: open, disable: isOpen">Add</button>
 <!-- ko ifnot: isImportEnabled -->
-<button class="btn btn-primary btn-xs" data-bind="click: function() { isImportEnabled(true); }">Import</button>
+<button class="btn btn-primary btn-sm" data-bind="click: function() { isImportEnabled(true); }">Import</button>
 <!-- /ko -->
 <!-- ko if: isImportEnabled -->
 <div title="Import Concepts...." data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500 }">
 <textarea rows="1" style="width: 650px; height:400px; resize: none; overflow: auto; word-wrap: break-word"  data-bind=" textInput: importValues"></textarea>
-<button class="btn btn-primary btn-xs" data-bind="click: doImport">Done</button>
+<button class="btn btn-primary btn-sm" data-bind="click: doImport">Done</button>
 </div>
 <!-- /ko -->
 <!-- ko if: isOpen -->
@@ -37,7 +37,7 @@
 												}
 											}
 										 }"></table>
-		<div style="text-align: right; padding: 5px"><button class="btn btn-primary btn-xs" data-bind="click: add">Add Selected</button> <button class="btn btn-primary btn-xs" data-bind="click: addAndClose">Add And Close</button> <button class="btn btn-primary btn-xs" data-bind="click: function() { this.isOpen(false);}">Close</button></div>
+		<div style="text-align: right; padding: 5px"><button class="btn btn-primary btn-sm" data-bind="click: add">Add Selected</button> <button class="btn btn-primary btn-sm" data-bind="click: addAndClose">Add And Close</button> <button class="btn btn-primary btn-sm" data-bind="click: function() { this.isOpen(false);}">Close</button></div>
 	</div>
 	<div data-bind="if: !ProviderReady()">
 		Please wait while the Vocabulary Provider initalizes....

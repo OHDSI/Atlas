@@ -5,6 +5,18 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 		var addActions = [
 			{
+				text: "Add Age at Occurrence Criteria",
+				value: 3,
+				selected: false,
+				description: "Filter by age at death."
+			},
+			{
+				text: "Add Gender Criteria",
+				value: 4,
+				selected: false,
+				description: "Filter Deaths based on Gender."
+			}, 
+			{
 				text: "Add Death Date Criteria",
 				value: 0,
 				selected: false,
@@ -21,18 +33,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 2,
 				selected: false,
 				description: "Filter Death by the Death Source Concept."
-			},
-			{
-				text: "Add Age at Occurrence Criteria",
-				value: 3,
-				selected: false,
-				description: "Filter by age at death."
-					}, 
-			{
-				text: "Add Gender Criteria",
-				value: 4,
-				selected: false,
-				description: "Filter Deaths based on Gender."
 			}
 /*
  			{

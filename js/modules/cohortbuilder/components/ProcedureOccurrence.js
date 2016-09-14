@@ -5,7 +5,24 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 		var addActions = [
 			{
-				text: "Add Procedure Start Date Criteria",
+				text: "Add First Procedure Criteria",
+				value: 5,
+				selected: false,
+				description: "Limit Procedure Occurrences to first procedure in history."
+			},
+			{
+				text: "Add Age at Occurrence Criteria",
+				value: 6,
+				selected: false,
+				description: "Filter Procedure Occurrences by age at occurrence."
+					}, {
+				text: "Add Gender Criteria",
+				value: 7,
+				selected: false,
+				description: "Filter Procedure Occurrences based on Gender."
+			},
+			{
+				text: "Add Start Date Criteria",
 				value: 0,
 				selected: false,
 				description: "Filter Procedure Occurrences by the Procedure Start Date."
@@ -15,6 +32,12 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 2,
 				selected: false,
 				description: "Filter Procedure Occurrences  by the Procedure Type."
+			},
+			{
+				text: "Add Visit Criteria",
+				value: 11,
+				selected: false,
+				description: "Filter Procedure Occurrences based on visit occurrence of procedure."
 			},
 			{
 				text: "Add Modifier Criteria",
@@ -27,31 +50,13 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 3,
 				selected: false,
 				description: "Filter Procedure Occurrences  by Quantity."
-					},
+			},
 			{
 				text: "Add Procedure Source Concept Criteria",
 				value: 4,
 				selected: false,
 				description: "Filter Procedure Occurrences  by the Procedure Source Concept."
-					},
-			{
-				text: "Add New Diagnosis Criteria",
-				value: 5,
-				selected: false,
-				description: "Limit Procedure Occurrences to new diagnosis."
-					},
-
-			{
-				text: "Add Age at Occurrence Criteria",
-				value: 6,
-				selected: false,
-				description: "Filter Procedure Occurrences by age at occurrence."
-					}, {
-				text: "Add Gender Criteria",
-				value: 7,
-				selected: false,
-				description: "Filter Procedure Occurrences based on Gender."
-					},
+			},
 /*
  			{
 				text: "Add Prior Observation Duration Criteria",
@@ -71,12 +76,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 10,
 				selected: false,
 				description: "Filter Procedure Occurrences based on provider specialty."
-					},
-			{
-				text: "Add Visit Criteria",
-				value: 11,
-				selected: false,
-				description: "Filter Procedure Occurrences based on visit occurrence of procedure."
 			}
 		];
 

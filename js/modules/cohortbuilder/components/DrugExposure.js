@@ -5,13 +5,31 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 		var addActions = [
 			{
-				text: "Add Drug Exposure Start Date Criteria",
+				text: "Add First Exposure Criteria",
+				value: 5,
+				selected: false,
+				description: "Limit Drug Exposures to the first exposure in history."
+			},
+			{
+				text: "Add Age at Occurrence Criteria",
+				value: 6,
+				selected: false,
+				description: "Filter Drug Exposures by age at occurrence."
+			}, 
+			{
+				text: "Add Gender Criteria",
+				value: 7,
+				selected: false,
+				description: "Filter Drug Exposures based on Gender."
+			},
+			{
+				text: "Add Start Date Criteria",
 				value: 0,
 				selected: false,
 				description: "Filter Drug Exposures by the Drug Exposure Start Date."
 			},
 			{
-				text: "Add Drug Exposure End Date Criteria",
+				text: "Add End Date Criteria",
 				value: 1,
 				selected: false,
 				description: "Filter Drug Exposures  by the Drug Exposure End Date"
@@ -21,6 +39,12 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 2,
 				selected: false,
 				description: "Filter Drug Exposures  by the Drug Type."
+			},
+			{
+				text: "Add Visit Criteria",
+				value: 11,
+				selected: false,
+				description: "Filter Drug Exposures based on visit occurrence of drug exposure."
 			},
 			{
 				text: "Add Stop Reason Criteria",
@@ -76,24 +100,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				selected: false,
 				description: "Filter Drug Exposures by the Drug Source Concept."
 			},
-			{
-				text: "Add New Exposure Criteria",
-				value: 5,
-				selected: false,
-				description: "Limit Drug Exposures to new exposure."
-			},
-			{
-				text: "Add Age at Occurrence Criteria",
-				value: 6,
-				selected: false,
-				description: "Filter Drug Exposures by age at occurrence."
-			}, 
-			{
-				text: "Add Gender Criteria",
-				value: 7,
-				selected: false,
-				description: "Filter Drug Exposures based on Gender."
-			},
 /*
  			{
 				text: "Add Prior Observation Duration Criteria",
@@ -113,14 +119,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 10,
 				selected: false,
 				description: "Filter Drug Exposures based on provider specialty."
-					},
-			{
-				text: "Add Visit Criteria",
-				value: 11,
-				selected: false,
-				description: "Filter Drug Exposures based on visit occurrence of drug exposure."
-					}
-
+			}
 				];
 
 		self.addCriterionSettings = {
