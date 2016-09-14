@@ -168,6 +168,25 @@ define(function(require, exports) {
         return promise;
     };
 
+    var refreshToken = function() {
+        var promise = $.ajax({
+            url: getServiceUrl() + "user/refresh",
+            method: 'GET',
+            headers: {
+                Authorization: getAuthorizationHeader()
+            },
+            success: function (data, textStatus, jqXHR) {
+                var token = jqXHR.getResponseHeader('Bearer');
+                setToken(token);
+            },
+            error: function (error) {
+                setToken(null);
+            },
+        });
+
+        return promise;
+    }
+
     var isPermittedCreateConceptset = function() {
         return isPermitted('conceptset:edit:ui');
     }
@@ -176,6 +195,24 @@ define(function(require, exports) {
         return isPermitted('conceptset:edit:ui');
     };
 
+    var isPermittedReadCohorts = function() {
+        return isPermitted('cohort:read:ui');
+    }
+
+    var isPermittedCreateCohort = function() {
+        return isPermitted('cohort:edit:ui');
+    }
+
+    var isPermittedUpdateCohort = function(id) {
+        var permission = 'cohortdefinition:' + id + ':put';
+        return isPermitted(permission);
+    }
+
+    var isPermittedDeleteCohort = function(id) {
+        var permission = 'cohortdefinition:' + id + ':delete';
+        return isPermitted(permission);
+    }
+
     var api = {
         getToken: getToken,
         setToken: setToken,
@@ -183,10 +220,17 @@ define(function(require, exports) {
         getTokenExpirationDate: getTokenExpirationDate,
         getAuthorizationHeader: getAuthorizationHeader,
         verifyToken: verifyToken,
+        refreshToken: refreshToken,
 
         isAuthenticated: isAuthenticated,
+
         isPermittedCreateConceptset: isPermittedCreateConceptset,
         isPermittedUpdateConceptset: isPermittedUpdateConceptset,
+
+        isPermittedReadCohorts: isPermittedReadCohorts,
+        isPermittedCreateCohort: isPermittedCreateCohort,
+        isPermittedUpdateCohort: isPermittedUpdateCohort,
+        isPermittedDeleteCohort: isPermittedDeleteCohort
     };
 
     return api;

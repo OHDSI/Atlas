@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'facets', 'knockout-persist', 'css!styles/tabs.css', 'css!styles/buttons.css'], function ($, ko, jnj_chart, d3, ohdsiUtil, config) {
+define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'facets', 'knockout-persist', 'css!styles/tabs.css', 'css!styles/buttons.css', ], function ($, ko, jnj_chart, d3, ohdsiUtil, config, authApi) {
 	var appModel = function () {
 		$.support.cors = true;
 		var self = this;
@@ -1106,8 +1106,11 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					infoPromise.resolve();
 				} else {
 					definitionPromise = $.ajax({
-						url: config.services[0].url + 'cohortdefinition/' + cohortDefinitionId,
+					    url: config.services[0].url + 'cohortdefinition/' + cohortDefinitionId,
 						method: 'GET',
+						headers: {
+						    Authorization: authApi.getAuthorizationHeader()
+						},
 						contentType: 'application/json',
 						success: function (cohortDefinition) {
 							cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
@@ -1117,6 +1120,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					infoPromise = $.ajax({
 						url: config.services[0].url + 'cohortdefinition/' + cohortDefinitionId + '/info',
 						method: 'GET',
+						headers: {
+						    Authorization: authApi.getAuthorizationHeader()
+						},
 						contentType: 'application/json',
 						success: function (generationInfo) {
 							self.currentCohortDefinitionInfo(generationInfo);
@@ -1139,6 +1145,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 						conceptPromise = $.ajax({
 							url: self.vocabularyUrl() + 'lookup/identifiers',
 							method: 'POST',
+							headers: {
+							    Authorization: authApi.getAuthorizationHeader()
+							},
 							contentType: 'application/json',
 							data: JSON.stringify(identifiers),
 							success: function (data) {

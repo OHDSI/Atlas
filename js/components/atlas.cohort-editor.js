@@ -16,6 +16,7 @@ define(['knockout',
 		var self = this;
 
 		self.model = params.model;
+	    self.canEdit = params.canEdit;
 		self.tabMode = ko.observable('expression');
 		self.tabWidget = ko.observable();
 		self.cohortExpressionEditor = ko.observable();

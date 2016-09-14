@@ -1,5 +1,6 @@
 define(['knockout', 'text!./cohort-definition-manager.html',
-				'appConfig',
+				'appConfig', 
+                'webapi/AuthAPI',
 				'cohortbuilder/CohortDefinition',
 				'webapi/CohortDefinitionAPI',
 				'ohdsi.util',
@@ -11,8 +12,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'faceted-datatable',
 				'databindings', 
 				'cohortdefinitionviewer/expressionCartoonBinding',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet) {
-
+], function (ko, view, config, authApi, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet) {
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
 			url: config.webAPIRoot + 'sqlrender/translate',
@@ -165,7 +165,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			// reset view after save
 			cohortDefinitionAPI.deleteCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
-				self.model.currentCohortDefinition(null);
+			    self.model.currentCohortDefinition(null);
+			    authApi.refreshToken();
 				document.location = "#/cohortdefinitions"
 			});
 		}
@@ -193,7 +194,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				var redirectWhenComplete = definition.id() != self.model.currentCohortDefinition().id();
 				self.model.currentCohortDefinition(definition);
 				if (redirectWhenComplete) {
-					document.location = "#/cohortdefinition/" + definition.id();
+				    authApi.refreshToken().then(function() {
+				        document.location = "#/cohortdefinition/" + definition.id();
+				    });
 				}
 			});
 		}
@@ -218,7 +221,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			// reset view after save
 			cohortDefinitionAPI.copyCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
-				document.location = "#/cohortdefinition/" + result.id;
+			    authApi.refreshToken().then(function() {
+			        document.location = "#/cohortdefinition/" + result.id;
+			    });
 			});
 		}
 
@@ -472,6 +477,28 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return "unknownCriteriaType";
 		};
 		self.selectedCriteria = ko.observable();
+
+	    self.canEdit = function() {
+	        if (!authApi.isAuthenticated()) return false;
+
+	        if (!self.model.currentCohortDefinition() || !self.model.currentCohortDefinition().id() || self.model.currentCohortDefinition().id() == 0) {
+	            return authApi.isPermittedCreateCohort();
+	        } else {
+	            return authApi.isPermittedUpdateCohort(self.model.currentCohortDefinition().id());
+	        }
+	    }();
+
+        self.canCopy = function() {
+            return authApi.isAuthenticated() && authApi.isPermittedCreateCohort();
+        }
+
+        self.canDelete = function() {
+            if (!self.model.currentCohortDefinition() || !self.model.currentCohortDefinition().id() || self.model.currentCohortDefinition().id() == 0) {
+                return false;
+            }
+
+            return authApi.isAuthenticated() && authApi.isPermittedDeleteCohort(self.model.currentCohortDefinition().id());
+        }
 	}
 
 	var component = {

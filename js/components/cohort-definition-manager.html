@@ -3,19 +3,23 @@
 		<i class="fa fa-users"></i>Cohort
 	</div>
 
-	<div class="asset-heading">
-		<input type="text" data-bind="textInput: model.currentCohortDefinition().name, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></input>
-		<div class="btn-group" role="group">
-			<button class="btn btn-sm btn-success" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
-			<button class="btn btn-sm btn-primary" data-bind="click: close">Close</button>
-			<!-- ko if: model.currentCohortDefinition().id() != null -->
-			<button class="btn btn-sm btn-primary" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
-			<!-- ko ifnot: isRunning -->
-			<button class="btn btn-sm btn-danger" data-bind="click: $component.delete">Delete</button>
-			<!-- /ko -->
-			<!-- /ko -->
-		</div>
-	</div>
+    <div class="asset-heading">
+        <input type="text" data-bind="attr: { disabled: canEdit ? null : true }, textInput: model.currentCohortDefinition().name, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></input>
+        <div class="btn-group" role="group">
+            <!-- ko if: canEdit -->
+            <button class="btn btn-sm btn-success" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
+            <!-- /ko -->
+            <button class="btn btn-sm btn-primary" data-bind="click: close">Close</button>
+            <!-- ko if: model.currentCohortDefinition().id() != null && model.currentCohortDefinition().id() != 0 -->
+            <!-- ko if: canCopy() -->
+            <button class="btn btn-sm btn-primary" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
+            <!-- /ko -->
+            <!-- ko if: !isRunning() && canDelete() -->
+            <button class="btn btn-sm btn-danger" data-bind="click: $component.delete">Delete</button>
+            <!-- /ko -->
+            <!-- /ko -->
+        </div>
+    </div>
 
 	<ul class="nav nav-tabs">
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition') };">
@@ -42,7 +46,7 @@
 	</ul>
 	<div class="tab-content">
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'definition' }" class="tab-pane">
-			<atlas.cohort-editor params="model: model"></atlas.cohort-editor>
+			<atlas.cohort-editor params="model: model, canEdit: canEdit"></atlas.cohort-editor>
 		</div>
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
 			<div style="padding-bottom: 10px;" class="pull-right">
