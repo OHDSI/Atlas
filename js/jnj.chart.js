@@ -1783,12 +1783,13 @@
 			//cp.updateDomains(data, series);
 			//cp.tooltipSetup(data, series);
 			//cp.updateRanges(layout);
-			self.cp = cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
+			this.cp = cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
 
 		});
 		this.updateData = function(data) {
-			var series = dataToSeries(data, self.cp.series);
-			self.cp.chart.chart.gEl
+			var series = dataToSeries(data, this.cp.series);
+			this.latestData = data;
+			this.cp.chart.chart.gEl
 					.child('series')
 						//.run({data: series});
 						.run({data: series, delay: 500, duration: 2000});
