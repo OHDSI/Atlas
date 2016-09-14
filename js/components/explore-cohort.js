@@ -5,7 +5,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'lodash', '
 			var self = this;
 			self.sources = ko.observableArray([]);
 			self.sourceKey = ko.observable(util.getState('sourceKey'));
-			if (!params.showing() === 'explore')
+			if (!params.showing())
 				return;
 			window._ = _;
 			window.exploreCohort = self;
