@@ -250,7 +250,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			self.data(groupAll.value());
 			//self.data(self.recs());
 
-			console.log('triggering filteredRecs', groupAll.value());
+			//console.log('triggering filteredRecs', groupAll.value());
 			$(self.jqEventSpace)
 				.trigger('filteredRecs', {
 															source:'datatable',
@@ -259,10 +259,10 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		}
 		$(self.jqEventSpace).on('filter', function(evt, {filterName, func, source} = {}) {
 			if (source === 'datatable') {
-				console.log('internally set filter', arguments);
+				//console.log('internally set filter', arguments);
 				return;
 			}
-			console.log('externally set filter', evt, filterName, func);
+			//console.log('externally set filter', evt, filterName, func);
 			var dim = self.externalFilters[filterName] =
 								self.externalFilters[filterName] || 
 									self.crossfilter.dimension(d=>d);

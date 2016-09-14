@@ -285,7 +285,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			var {delay=0, duration=0} = transitionOpts;
 
 			if (exit) {
-				if (selection.exit().size()) console.log(`exiting ${self.name}`);
+				//if (selection.exit().size()) console.log(`exiting ${self.name}`);
 				selection.exit()
 						.transition()
 						.delay(delay).duration(duration)

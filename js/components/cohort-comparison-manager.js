@@ -59,10 +59,12 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				self.chartOptions = opts;
 			});
 			self.ready = ko.computed(function() {
-				return self.chartData().length && self.chartObj() && self.domElement();
+				return self.chartData().length && self.chartObj() && self.domElement() &&
+								self.pillMode() === 'balance';
 			});
 			self.ready.subscribe(function(ready) {
 				if (ready) {
+					console.log('drawing scatterplot');
 					self.chartObj().chartSetup(self.domElement(), 460, 150, self.chartOptions);
 					self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
 					//self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
@@ -77,10 +79,11 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					if (self.chartData() && recs.length < self.chartData().length
 							|| self.chartObj() && self.chartObj().latestData !== recs
 						 ) {
-									console.log('caught filteredRecs', recs);
+									//console.log('caught filteredRecs', recs);
 									self.chartObj().render(recs, self.domElement(), 460, 150, self.chartOptions);
 								}
 				});
+			/*
 			function dataSetup(raw) {
 				var points = raw.map(d => ({
 					x: Math.abs(d.beforeMatchingStdDiff),
@@ -89,6 +92,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				}));
 				return points;
 			}
+			*/
 
 			// end for balance chart
 
@@ -263,8 +267,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					contentType: 'application/json',
 					success: function (response) {
 
-						debugger;
-						self.chartData(dataSetup(response));
+						self.chartData(response);
 
 						nv.addGraph(function () {
 
@@ -964,7 +967,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				//dispatch: d3.dispatch("brush", "filter"), // in default opts for zoomScatter
 				//additionalDispatchEvents: ["foo"],
 				x: {
-							//value: d=>d.beforeMatchingStdDiff,
+							value: d => {
+								return Math.abs(d.beforeMatchingStdDiff);
+							},
 							label: 'Before matching StdDiff',
 							tooltipOrder: 1,
 							propName: 'beforeMatchingStdDiff',
@@ -973,7 +978,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							isField: true,
 				},
 				y: {
-							value: d=>d.afterMatchingStdDiff,
+							value: d => Math.abs(d.afterMatchingStdDiff),
 							label: "After matching StdDiff",
 							/*
 							format: d => {
@@ -1008,22 +1013,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							isField: true,
 				},
 				*/
+				/*
 				size: {
 							//value: d=>d.afterMatchingMeanTreated,
 							propName: 'afterMatchingMeanTreated',
 							//scale: d3.scale.log(),
 							label: "After matching mean treated",
 							tooltipOrder: 3,
-							/*
-							tooltipFunc: function(d, i, j, props, data, series, propName) {
-								var avg = d3.mean(
-														data.map(props.size.value));
-								return {
-									name: `After matching mean treated (avg: ${round(avg,4)})`,
-									value: round(props.size.value(d), 4),
-								};
-							},
-							*/
 							isField: true,
 							_accessors: {
 								avg: {
@@ -1047,6 +1043,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 								},
 							},
 				},
+				*/
 				series: {
 							value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
 							sortBy:  d => d.afterMatchingStdDiff,

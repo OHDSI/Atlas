@@ -1708,12 +1708,16 @@
 			},
 			size: {
 						scale: d3.scale.linear(),
-						range: [.5, 8],
 						defaultValue: ()=>1,
 						needsLabel: true,
 						needsValueFunc: true,
 						needsScale: true,
 						isField: true,
+						_accessors: {
+							range: {
+								func: () => [.5, 8],
+							},
+						}
 			},
 			color: {
 						//scale: null,
