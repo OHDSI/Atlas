@@ -1021,7 +1021,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			});
 		}
 		self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow, mode) {
-			self.currentView('loading');
 			// don't load if it is already loaded or a new concept set
 			if (self.currentCohortDefinition() && self.currentCohortDefinition().id() == cohortDefinitionId) {
 				if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId && self.currentConceptSetSource() == 'cohort') {
@@ -1050,6 +1049,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 				// If we continue, then clear the loaded concept set
 				self.clearConceptSet();
 			}
+			self.currentView('loading');
 			var definitionPromise, infoPromise;
 			requirejs(['cohortbuilder/CohortDefinition'], function (CohortDefinition) {
 				if (cohortDefinitionId == '0') {
