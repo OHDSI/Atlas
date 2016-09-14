@@ -100,7 +100,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.cantFindPerson(false)
 				self.loadingPerson(true);
 
-				var personCache = sessionStorage.getItem(`person_${self.personId()}`, person);
+				//var personCache = sessionStorage.getItem(`person_${self.personId()}`, person); // what's that second param? just a mistake i think
+				var personCache = sessionStorage.getItem(`person_${self.personId()}`);
 				if (personCache) {
 					var person = JSON.parse(
 						LZString.decompressFromBase64(personCache));

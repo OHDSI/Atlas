@@ -126,7 +126,7 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll'], function (ko, app, config) {
+	requirejs(['knockout', 'app', 'appConfig', 'lz-string', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll'], function (ko, app, config, LZString) {
 		$('#splash').fadeIn();
 		var pageModel = new app();
 		window.pageModel = pageModel;
@@ -137,8 +137,12 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		var vocabularyPriority = 0;
 		var densityPriority = 0;
 
+		var servicesCache = sessionStorage.getItem('services');
+		if (servicesCache) {
+			config.services = JSON.parse(LZString.decompressFromBase64(servicesCache));
+		}
 		// initialize all service information asynchronously
-		$.each(config.services, function (serviceIndex, service) {
+		!servicesCache && $.each(config.services, function (serviceIndex, service) {
 			service.sources = [];
 			var servicePromise = $.Deferred();
 			pageModel.initPromises.push(servicePromise);
@@ -253,6 +257,10 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		$.when.apply($, pageModel.initPromises).done(function () {
 			pageModel.initComplete();
+			if (!sessionStorage.services)
+				sessionStorage.setItem(
+					'services', 
+					LZString.compressToBase64(JSON.stringify(config.services)));
 		});
 
 		pageModel.currentView.subscribe(function (newView) {
