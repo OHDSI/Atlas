@@ -356,11 +356,11 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 			if (!divWidth()) {
 				return;
 			}
-			var expression = valueAccessor().expression();
-
-			if (valueAccessor().tabPath() !== "export/cartoon") {
+			if (valueAccessor().exportTabMode() !== "cartoon") {
 				return;
 			}
+			var expression = valueAccessor().expression();
+
 			var cohdef = dataSetup(expression);
 			cohdef.selectedCriteria = valueAccessor().selectedCriteria;
 			expressionChangeSetup(element, cohdef);

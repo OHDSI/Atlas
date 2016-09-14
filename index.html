@@ -44,45 +44,22 @@
 		<div id="wrapperLogo">
 			<a href="#/splash">ATLAS</a>
 		</div>
-		<ul>
-			<li>
-				<a href="#/home"><i class="fa fa-home"></i>Home</a>
-			</li>
-			<li>
-				<a href="#/datasources"><i class="fa fa-database"></i>Data Sources</a>
-			</li>
-			<li>
-				<a href="#/search"><i class="fa fa-search"></i>Vocabulary</a>
-			</li>
-			<li>
-				<a href="#/conceptsets"><i class="fa fa-shopping-cart"></i>Concept Sets</a>
-			</li>
-			<li>
-				<a href="#/cohortdefinitions"><i class="fa fa-users"></i>Cohorts</a>
-			</li>
-			<li>
-				<a data-bind="css: irStatusCss, attr: {href: irAnalysisURL}"><i class="fa fa-bolt"></i>Incidence Rates</a>
-			</li>
-			<li>
-				<!-- force a reload to reset in case already on the profiles page -->
-				<a href="#/profiles" onclick="window.location.reload(); return true;"><i class="fa fa-user"></i>Profiles</a>
-			</li>
-			<li>
-				<a href="#/estimation"><i class="fa fa-balance-scale"></i>Estimation</a>
-			</li>
-			<li>
-				<a href="#/jobs"><i class="fa fa-tasks"></i>Jobs</a>
-			</li>
-			<li>
-				<a href="#/configure"><i class="fa fa-cogs"></i>Configuration</a>
-			</li>
-			<li>
-				<a href="#/r"><i class="fa fa-registered"></i>R Services</a>
-			</li>
-			<li>
-				<a target="_blank" href="https://github.com/ohdsi/atlas/issues"><i class="fa fa-comment"></i>Feedback</a>
-			</li>
-		</ul>
+
+		<div class="list-group">
+			<a class="list-group-item" href="#/home"><i class="fa fa-fw fa-home" aria-hidden="true"></i>&nbsp;Home</a>
+			<a class="list-group-item" href="#/datasources"><i class="fa fa-fw fa-database" aria-hidden="true"></i>&nbsp;Data Sources</a>
+			<a class="list-group-item" href="#/search"><i class="fa fa-fw fa-search" aria-hidden="true"></i>&nbsp;Vocabulary</a>
+			<a class="list-group-item" href="#/conceptsets"><i class="fa fa-fw fa-shopping-cart" aria-hidden="true"></i>&nbsp;Concept Sets</a>
+			<a class="list-group-item" href="#/cohortdefinitions"><i class="fa fa-fw  fa-users" aria-hidden="true"></i>&nbsp;Cohorts</a>
+			<a class="list-group-item" data-bind="attr: {href: irAnalysisURL}"><i class="fa fa-fw fa-bolt" aria-hidden="true"></i>&nbsp;Incidence Rates</a>
+			<!-- force a reload to reset in case already on the profiles page -->
+			<a class="list-group-item" href="#/profiles" onclick="window.location.reload(); return true;"><i class="fa fa-fw fa-user" aria-hidden="true"></i>&nbsp;Profiles</a>
+			<a class="list-group-item" href="#/estimation"><i class="fa fa-fw fa-balance-scale" aria-hidden="true"></i>&nbsp;Estimation</a>
+			<a class="list-group-item" href="#/jobs"><i class="fa fa-fw fa-tasks" aria-hidden="true"></i>&nbsp;Jobs</a>
+			<a class="list-group-item" href="#/configure"><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>&nbsp;Configuration</a>
+			<a class="list-group-item" href="#/r"><i class="fa fa-fw fa-registered" aria-hidden="true"></i>&nbsp;R Services</a>
+			<a class="list-group-item" target="_blank" href="https://github.com/ohdsi/atlas/issues" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
+		</div>
 	</div>
 	<!-- /ko -->
 	<div data-bind="if:currentView() != 'splash', css: { minibar: minibar() }" id="wrapperMainWindow">
@@ -111,10 +88,10 @@
 			<!-- /ko -->
 
 			<!-- /ko -->
-			
+
 			<div id="wrapperLoading" data-bind="if: currentView() == 'loading'">
 				<div class="wrapperTitle">
-					<i class="fa fa-circle-o-notch fa-spin"></i> Loading...
+					<i class="fa fa-fw fa-circle-o-notch fa-spin"></i> Loading...
 				</div>
 			</div>
 
@@ -195,8 +172,8 @@
 
 				<div id="wrapperConfigure">
 					<div data-bind="if:appInitializationFailed">
-						<div class="heading">Application Initialization Failed</div>
-						<div class="error">Unable to connect to an instance of the WebAPI. Please contact your administrator to resolve this issue.</div>
+						<div class="heading">application initialization failed</div>
+						<div class="error">unable to connect to an instance of the webapi. please contact your administrator to resolve this issue.</div>
 					</div>
 					<div data-bind="if:!appInitializationFailed()">
 						<div class="heading">Configured Services</div>

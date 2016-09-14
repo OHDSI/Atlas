@@ -19,7 +19,7 @@
 			</td>
 			<td data-bind="text: source.sourceKey"></td>
 			<td data-bind="text: source.sourceName"></td>
-			<td nowrap><button class="btn btn-xs btn-success execute">Execute</button></td>
+			<td nowrap><button class="btn btn-sm btn-success execute">Execute</button></td>
 			<!-- ko if: info().executionInfo.status != "COMPLETE" -->
 			<td colspan="7" style="text-align: left"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
 			<!-- /ko -->
@@ -37,7 +37,7 @@
 				<!-- /ko -->
 				<td style="font-size: .9em" class="dataCol" data-bind="text: info().executionInfo.startTime"></td>
 				<td class="dataCol" data-bind="text: $component.msToTime(info().executionInfo.executionDuration)"></td>			
-				<td><button class="btn btn-xs btn-danger removeResult">Remove</button></td>
+				<td><button class="btn btn-sm btn-danger removeResult">Remove</button></td>
 			<!-- /ko -->
 		</tr>
 	</tbody>

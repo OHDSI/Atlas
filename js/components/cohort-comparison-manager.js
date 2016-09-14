@@ -243,7 +243,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 						var data = [
 							{
 								values: response.map(d => ({
-									'x': d.ps,
+									'x': d.score,
 									'y': d.comparator
 								})).sort(function (a, b) {
 									return a.x - b.x
@@ -254,7 +254,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 							},
 							{
 								values: response.map(d => ({
-									'x': d.ps,
+									'x': d.score,
 									'y': d.treatment
 								})).sort(function (a, b) {
 									return a.x - b.x
@@ -287,14 +287,11 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
-						var comparatorMax = d3.max(response, d => d.comparator);
-						var treatmentMax = d3.max(response, d => d.treatment);
-
 						var data = [
 							{
 								values: response.map(d => ({
-									'x': d3.round(d.ps,2),
-									'y': d3.round(d.comparator / comparatorMax,2)
+									'x': d.score,
+									'y': d.comparator
 								})).sort(function (a, b) {
 									return a.x - b.x
 								}),
@@ -304,8 +301,8 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 							},
 							{
 								values: response.map(d => ({
-									'x': d3.round(d.ps,2),
-									'y': d3.round(d.treatment / treatmentMax,2)
+									'x': d.score,
+									'y': d.treatment
 								})).sort(function (a, b) {
 									return a.x - b.x
 								}),
