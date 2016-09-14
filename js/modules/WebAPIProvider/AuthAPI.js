@@ -56,6 +56,7 @@ define(function(require, exports) {
     };
 
     var checkPermission = function(permission, etalon) {
+        // etalon may be like '*:read,write:etc'
         if (!etalon || !permission) {
             return false;
         }
@@ -73,9 +74,9 @@ define(function(require, exports) {
 
         for (var i = 0; i < permissionLevels.length; i++) {
             var pLevel = permissionLevels[i];
-            var eLevel = etalonLevels[i];
+            var eLevels = etalonLevels[i].split(',');
 
-            if (eLevel != '*' && eLevel != pLevel) {
+            if (eLevels.indexOf('*') < 0 && eLevels.indexOf(pLevel) < 0) {
                 return false;
             }
         }
@@ -202,6 +203,10 @@ define(function(require, exports) {
         return isPermitted('job:execution:get');
     }
 
+    var isPermittedEditConfiguration = function() {
+        return isPermitted('configuration:edit:ui')
+    }
+
     var api = {
         getToken: getToken,
         setToken: setToken,
@@ -219,7 +224,10 @@ define(function(require, exports) {
         isPermittedCreateCohort: isPermittedCreateCohort,
         isPermittedUpdateCohort: isPermittedUpdateCohort,
         isPermittedDeleteCohort: isPermittedDeleteCohort,
-        isPermittedReadJobs: isPermittedReadJobs
+
+        isPermittedReadJobs: isPermittedReadJobs,
+
+        isPermittedEditConfiguration: isPermittedEditConfiguration,
     };
 
     return api;

@@ -1,9 +1,12 @@
-define(['knockout', 'text!./configuration.html', 'appConfig'], function (ko, view, config) {
+define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'forbidden', 'unauthenticated'], function (ko, view, config, authApi) {
 	function configuration(params) {
 		var self = this;
 		self.config = config;
 		self.enableRecordCounts = params.enableRecordCounts;
 		self.services = config.services;
+
+		self.isAuthenticated = authApi.isAuthenticated();
+	    self.hasAccess = self.isAuthenticated && authApi.isPermittedEditConfiguration();
 	}
 
 	var component = {
