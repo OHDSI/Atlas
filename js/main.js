@@ -127,11 +127,16 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'ohdsi.util', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll'], function (ko, app, config, util) {
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll'], function (ko, app, config, authApi, util) {
 		$('#splash').fadeIn();
 		var pageModel = new app();
 		window.pageModel = pageModel;
 		ko.applyBindings(pageModel,document.getElementsByTagName('html')[0]);
+
+	    // update access token
+        if (authApi.getToken()) {
+            authApi.refreshToken();
+        }
 
 		// establish base priorities for daimons
 		var evidencePriority = 0;

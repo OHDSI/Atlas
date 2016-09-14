@@ -153,21 +153,6 @@ define(function(require, exports) {
         console.log(msg);
     };
 
-    var verifyToken = function() {
-        var promise = $.ajax({
-            url: getServiceUrl() + "user/loggedIn",
-            method: 'GET',
-            headers: {
-                Authorization: getAuthorizationHeader()
-            },
-            error: function (error) {
-                logError(error);
-            }
-        });
-
-        return promise;
-    };
-
     var refreshToken = function() {
         var promise = $.ajax({
             url: getServiceUrl() + "user/refresh",
@@ -219,7 +204,6 @@ define(function(require, exports) {
         getSubject: getSubject,
         getTokenExpirationDate: getTokenExpirationDate,
         getAuthorizationHeader: getAuthorizationHeader,
-        verifyToken: verifyToken,
         refreshToken: refreshToken,
 
         isAuthenticated: isAuthenticated,

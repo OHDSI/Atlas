@@ -2,9 +2,13 @@ define(['knockout', 'text!./welcome.html', 'appConfig', 'webapi/AuthAPI'], funct
     function welcome(params) {
         var self = this;
 
+        if (authApi.getToken()) {
+            authApi.refreshToken();
+        }
+
         self.serviceUrl = appConfig.webAPIRoot;
         self.errorMsg = ko.observable();
-        self.token = ko.observable();
+        self.token = ko.observable(authApi.getToken());
         self.isInProgress = ko.observable(false);
         self.login = ko.computed(function () {
             if (!self.token()) return null;
@@ -107,22 +111,6 @@ define(['knockout', 'text!./welcome.html', 'appConfig', 'webapi/AuthAPI'], funct
             self.errorMsg(null);
         };
 
-        // check if token works
-        var token = authApi.getToken();
-        if (token != null) {
-            self.isInProgress(true);
-            authApi.verifyToken()
-                .then(function(isValid) {
-                    if (isValid === true) {
-                        setToken(token);
-                    } else {
-                        setToken(null);
-                    }
-                })
-                .always(function() {
-                    self.isInProgress(false);
-                });
-        }
     }
 
 	var component = {
