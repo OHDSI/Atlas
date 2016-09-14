@@ -2,6 +2,7 @@ define(['knockout',
         'text!./conceptset-manager.html', 
         'appConfig', 
         'ohdsi.util', 
+        'webapi/CDMResultsAPI',
         'vocabularyprovider',
         'conceptsetbuilder/InputTypes/ConceptSet',
         'knockout.dataTables.binding', 
@@ -10,7 +11,7 @@ define(['knockout',
         'databindings', 
         'negative-controls',
         'circe',
-], function (ko, view, config, ohdsiUtil, vocabularyAPI, ConceptSet) {
+], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, ConceptSet) {
 	function conceptsetManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -66,6 +67,28 @@ define(['knockout',
         });
         self.compareResults = ko.observable();
         self.compareNewConceptSetName = ko.observable(self.model.currentConceptSet().name() + " - From Comparison");
+        self.defaultResultsUrl = self.model.resultsUrl;
+        self.currentResultSource = ko.observable();
+        self.recordCountsRefreshing = ko.observable(false);
+        self.recordCountClass = ko.pureComputed(function() {
+            return self.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
+        });
+        
+        self.resultSources = ko.computed(function () {
+            var resultSources = [];
+            $.each(config.services, function (sourceIndex, service) {
+                $.each(service.sources, function (i, source) {
+                    if (source.hasResults) {
+                        resultSources.push(source);
+                        if (source.resultsUrl == self.defaultResultsUrl()) {
+                            self.currentResultSource(source);
+                        }
+                    }
+                })
+            });
+
+            return resultSources;
+        }, this);        
         
         self.fields = {
             membership: {
@@ -116,16 +139,15 @@ define(['knockout',
                 value: 'conceptClassId',
                 isColumn: true,
                 isFacet: true,
-                label: 'Code',
+                label: 'Class',
                 isField: true,
             },
-            /*
             RC: {
                 propName: 'recordCount',
                 value: 'recordCount',
                 isColumn: true,
                 isFacet: false,
-                label: '<i id="dtNegCtrlRC" class="fa fa-database" aria-hidden="true"></i> RC',
+                label: '<i id="dtConeptManagerRC" class="fa fa-database" aria-hidden="true"></i> RC',
                 isField: true,
             },
             DRC: {
@@ -133,16 +155,15 @@ define(['knockout',
                 value: 'descendantRecordCount',
                 isColumn: true,
                 isFacet: false,
-                label: '<i id="dtNegCtrlDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
+                label: '<i id="dtConeptManagerDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
                 isField: true,
             },
-            */
             domainId: {
                 propName: 'domainId',
                 value: 'domainId',
                 isColumn: true,
                 isFacet: true,
-                label: 'Domain Id',
+                label: 'Domain',
                 isField: true,
             },        
             vocabularyId: {
@@ -150,9 +171,49 @@ define(['knockout',
                 value: 'vocabularyId',
                 isColumn: true,
                 isFacet: true,
-                label: 'Vocabulary Id',
+                label: 'Vocabulary',
                 isField: true,
             },        
+            fRC: {
+                propName: 'fRecordCount',
+                label: 'Has Records',
+                value: d => {
+                	var val = 0;
+                	if (d.recordCount.replace) {
+                		val = parseInt(d.recordCount.replace(/\,/g,'')); // Remove comma formatting and treat as int
+                	} else {
+                		val = d.recordCount;
+                	}
+                    if (val > 0) {
+                        return 'true'
+                    } else {
+                        return 'false'
+                    }
+                },
+                isField: true,
+                isColumn: false,
+                isFacet: true,
+            },
+            fDRC: {
+                propName: 'fDescendantRecordCount',
+                label: 'Has Descendant Records',
+                value: d => {
+                	var val = 0;
+                	if (d.descendantRecordCount.replace) {
+                		val = parseInt(d.descendantRecordCount.replace(/\,/g,'')); // Remove comma formatting and treat as int
+                	} else {
+                		val = d.descendantRecordCount;
+                	}
+                    if (val > 0) {
+                        return 'true'
+                    } else {
+                        return 'false'
+                    }
+                },
+                isField: true,
+                isColumn: false,
+                isFacet: true,
+            },            
         }
         
 		self.renderLink = function (s, p, d) {
@@ -425,8 +486,13 @@ define(['knockout',
             console.log("compare");
             var compareTargets = [{items: self.compareCS1ConceptSet()}, {items: self.compareCS2ConceptSet()}];
             vocabularyAPI.compareConceptSet(compareTargets).then(function (compareResults) {
-            	self.compareResults(null);
-            	self.compareResults(compareResults);
+                var conceptIds = $.map(compareResults, function (o, n) {
+                    return o.conceptId;
+                });                
+                cdmResultsAPI.getConceptRecordCount(self.currentResultSource().sourceKey, conceptIds, compareResults).then(function (rowcounts) {
+                    self.compareResults(null);
+                    self.compareResults(compareResults);
+                });
             });
         }
         
@@ -466,6 +532,98 @@ define(['knockout',
             self.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
             $('conceptset-manager #modalSaveNew').modal('hide');
         }
+        
+        self.toggleOnSelectAllCheckbox = function(selector, selectAllElement) {
+        	$(document).on('init.dt', selector, function (e, settings) {       		
+            	$(selectAllElement).addClass("selected");
+        	});
+        }
+        self.toggleOffSelectAllCheckbox = function(selector, selectAllElement) {
+        	$(document).on('init.dt', selector, function (e, settings) {       		
+            	$(selectAllElement).removeClass("selected");
+        	});
+        }
+        
+        self.refreshRecordCounts = function(obj, event) {
+			if (event.originalEvent) {                
+                // User changed event
+                console.log("Record count refresh");
+                self.recordCountsRefreshing(true);
+                $("#dtConeptManagerRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
+                $("#dtConeptManagerDRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
+                var compareResults = self.compareResults();
+                var conceptIds = $.map(compareResults, function(o, n) { 
+                    return o.conceptId; 
+                });
+                cdmResultsAPI.getConceptRecordCount(self.currentResultSource().sourceKey, conceptIds, compareResults).then(function (rowcounts) {
+                    self.compareResults(compareResults);
+                    console.log('record counts different?');
+                    self.recordCountsRefreshing(false);
+					$("#dtConeptManagerRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
+					$("#dtConeptManagerDRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
+                });
+            }
+        }        
+
+        // Initialize the select all checkboxes
+        var excludeCount = 0;
+        var descendantCount = 0;
+        var mappedCount = 0;
+        _.each(self.model.selectedConcepts(), (conceptSetItem) => {
+            if (conceptSetItem.isExcluded()) {
+                excludeCount++;
+            }
+            if (conceptSetItem.includeDescendants()) {
+                descendantCount++;
+            }
+            if (conceptSetItem.includeMapped()) {
+                mappedCount++;
+            }
+        });        
+        if (excludeCount == self.model.selectedConcepts().length) {
+            self.toggleOnSelectAllCheckbox('.conceptSetTable', '#selectAllExclude');
+        } else {
+            self.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllExclude');
+        }
+        if (descendantCount == self.model.selectedConcepts().length) {
+            self.toggleOnSelectAllCheckbox('.conceptSetTable', '#selectAllDescendants');
+        } else {
+            self.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllDescendants');
+        }
+        if (mappedCount == self.model.selectedConcepts().length) {            
+            self.toggleOnSelectAllCheckbox('.conceptSetTable', '#selectAllMapped');
+        } else {            
+            self.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllMapped');
+        }
+        // Create event handlers for all of the select all elements
+        $(document).on('click', '#selectAllExclude', function() { 
+        	var isExcluded = !($("#selectAllExclude").hasClass("selected"));
+        	$("#selectAllExclude").toggleClass("selected");
+        	_.each(self.model.selectedConcepts(), (conceptSetItem) => {
+            	conceptSetItem.isExcluded(isExcluded);
+            });
+        	self.model.resolveConceptSetExpression();          
+        });
+        $(document).on('click', '#selectAllDescendants', function() { 
+        	var includeDescendants = !($("#selectAllDescendants").hasClass("selected"));
+        	$("#selectAllDescendants").toggleClass("selected");
+            var currentConcepts = self.model.selectedConcepts();
+        	_.each(currentConcepts, (conceptSetItem) => {
+            	conceptSetItem.includeDescendants(includeDescendants);
+            });
+            self.model.selectedConcepts(currentConcepts);
+        	self.model.resolveConceptSetExpression();          
+        });
+        $(document).on('click', '#selectAllMapped', function() { 
+        	var includeMapped = !($("#selectAllMapped").hasClass("selected"));
+        	$("#selectAllMapped").toggleClass("selected");
+        	_.each(self.model.selectedConcepts(), (conceptSetItem) => {
+            	conceptSetItem.includeMapped(includeMapped);
+            });
+        	self.model.resolveConceptSetExpression();          
+        });
+        
+        
 	}
 
 	var component = {

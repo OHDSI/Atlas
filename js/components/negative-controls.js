@@ -22,6 +22,7 @@ define(['knockout',
         self.defaultResultsUrl = params.defaultResultsUrl;
         self.negativeControls = params.negativeControls;
         self.dirtyFlag = params.dirtyFlag;
+        self.saveConceptSet = params.saveConceptSet;
         self.conceptSetValid = ko.observable(false);
         self.conceptSetValidText = ko.observable("");
         self.conceptDomainId = ko.observable(null);
@@ -34,9 +35,9 @@ define(['knockout',
         self.selectedReportCaption = ko.observable();
         self.recordCountsRefreshing = ko.observable(false);
         self.recordCountClass = ko.pureComputed(function() {
-            return self.recordCountsRefreshing() ? "fa fa-refresh fa-spin fa-lg" : "fa fa-database fa-lg";
+            return self.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
         });
-        
+        self.newConceptSetName = ko.observable(self.conceptSet().name() + " - Candidate Controls");
         
         self.fields = {
             id: {
@@ -228,7 +229,7 @@ define(['knockout',
                 isColumn: true,
                 isFacet: false,
                 colIdx: 15,
-                label: 'AERS PRR',
+                label: 'Prediction',
                 isField: true,                
             },
             RC: {
@@ -269,6 +270,36 @@ define(['knockout',
                 isColumn: false,
                 isFacet: true,
                 label: 'Subset to candidate',
+            },
+            fRC: {
+                propName: 'fRecordCount',
+                label: 'Has Records',
+                value: d => {
+                	var val = parseInt(d.recordCount.replace(/\,/g,'')); // Remove comma formatting and treat as int
+                    if (val > 0) {
+                        return 'true'
+                    } else {
+                        return 'false'
+                    }
+                },
+                isField: true,
+                isColumn: false,
+                isFacet: true,
+            },
+            fDRC: {
+                propName: 'fDescendantRecordCount',
+                label: 'Has Descendant Records',
+                value: d => {
+                	var val = parseInt(d.descendantRecordCount.replace(/\,/g,'')); // Remove comma formatting and treat as int
+                    if (val > 0) {
+                        return 'true'
+                    } else {
+                        return 'false'
+                    }
+                },
+                isField: true,
+                isColumn: false,
+                isFacet: true,
             },
             fMedlineCT: {
                 propName: 'medlineCt',
@@ -371,7 +402,6 @@ define(['knockout',
 			return (canGenerate);
 		});
         
-
         self.pollForInfo = function () {
             if (pollTimeout)
                 clearTimeout(pollTimeout);
@@ -542,8 +572,8 @@ define(['knockout',
                 // User changed event
                 console.log("Record count refresh");
                 self.recordCountsRefreshing(true);
-                $("#dtNegCtrlRC").toggleClass("fa-database").toggleClass("fa-refresh").toggleClass("fa-spin");
-                $("#dtNegCtrlDRC").toggleClass("fa-database").toggleClass("fa-refresh").toggleClass("fa-spin");
+                $("#dtNegCtrlRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
+                $("#dtNegCtrlDRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
                 var negativeControls = self.negativeControls();
                 var conceptIdsForNegativeControls = $.map(negativeControls, function(o, n) { 
                     return o.conceptId; 
@@ -552,8 +582,8 @@ define(['knockout',
                     self.negativeControls(negativeControls);
                     console.log('record counts different?');
                     self.recordCountsRefreshing(false);
-					$("#dtNegCtrlRC").toggleClass("fa-database").toggleClass("fa-refresh").toggleClass("fa-spin");
-					$("#dtNegCtrlDRC").toggleClass("fa-database").toggleClass("fa-refresh").toggleClass("fa-spin");
+					$("#dtNegCtrlRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
+					$("#dtNegCtrlDRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
                 });
             }
         }
@@ -593,6 +623,43 @@ define(['knockout',
 				return false;
 			}
 		}        
+        
+        self.showNegControlsSaveNewModal = function() {
+            $('negative-controls #modalNegControlsSaveNew').modal('show');
+        }
+        
+        self.saveNewConceptSet = function() {
+            var dtItems = $('#negControlResults table').DataTable().data();
+            var conceptSet = {};
+            conceptSet.id = 0;
+            conceptSet.name = self.newConceptSetName;
+            var selectedConcepts = [];
+            _.each(dtItems, (item) => {
+                var concept;
+                concept = {
+                    CONCEPT_CLASS_ID: item.conceptClassId,
+                    CONCEPT_CODE: item.conceptCode,
+                    CONCEPT_ID: item.conceptId,
+                    CONCEPT_NAME: item.conceptName,
+                    DOMAIN_ID: item.domainId,
+                    INVALID_REASON: null,
+                    INVALID_REASON_CAPTION: null,
+                    STANDARD_CONCEPT: null,
+                    STANDARD_CONCEPT_CAPTION: null,
+                    VOCABULARY_ID: null,                    
+                }
+            	var newItem;
+            	newItem = {
+            		concept: concept,
+            		isExcluded: ko.observable(false),
+					includeDescendants: ko.observable(false),
+					includeMapped: ko.observable(false),
+            	}
+            	selectedConcepts.push(newItem);
+            })
+            self.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
+            $('conceptset-manager #modalSaveNew').modal('hide');
+        }
                 
         // Evalute the concept set when this component is loaded
         self.evaluateConceptSet();
