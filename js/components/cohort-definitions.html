@@ -4,19 +4,19 @@
 	</div>
 
     <div class="paddedWrapper">
-        <div data-bind="if:$component.canReadCohorts()">
-            <span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined || !$component.canCreateCohort()}">New Cohort</span>
+        <div data-bind="if:$component.canReadCohorts">
+            <span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined || !$component.canCreateCohort}">New Cohort</span>
             <div class="clear">
                 <cohort-definition-browser params="{cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
             </div>
         </div>
-        <div data-bind="if:!$component.canReadCohorts()">
-            <p>
-                You do not have access to this feature.
-            </p>
-            <p>
-                For more information on how to get access please contact the Ajit Londhe, Erica Voss and/or Anthony Sena.
-            </p>    
+        <div data-bind="if:!$component.canReadCohorts">
+            <div data-bind="if:$component.isAuthenticated">
+                <forbidden></forbidden>
+            </div>
+            <div data-bind="ifnot:$component.isAuthenticated">
+                <unauthenticated></unauthenticated>
+            </div>
         </div>
     </div>
 </div>

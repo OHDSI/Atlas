@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-definitions.html', 'appConfig', 'webapi/AuthAPI', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, config, authApi) {
+define(['knockout', 'text!./cohort-definitions.html', 'appConfig', 'webapi/AuthAPI', 'knockout.dataTables.binding', 'faceted-datatable', 'forbidden', 'unauthenticated'], function (ko, view, config, authApi) {
 	function cohortDefinitions(params) {
 		var self = this;
 		self.model = params.model;
@@ -15,13 +15,9 @@ define(['knockout', 'text!./cohort-definitions.html', 'appConfig', 'webapi/AuthA
 			self.cohortDefinitionId('0');
 		}
 
-        self.canReadCohorts = function() {
-            return authApi.isAuthenticated() && authApi.isPermittedReadCohorts();
-        }
-
-	    self.canCreateCohort = function() {
-	        return authApi.isAuthenticated() && authApi.isPermittedCreateCohort();
-	    }
+		self.isAuthenticated = authApi.isAuthenticated();
+		self.canReadCohorts = self.isAuthenticated && authApi.isPermittedReadCohorts();
+		self.canCreateCohort = self.isAuthenticated && authApi.isPermittedCreateCohort();
 	}
 
 	var component = {
