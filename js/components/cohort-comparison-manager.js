@@ -286,7 +286,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 						self.chartData(response);
 
 						nv.addGraph(function () {
-
 							var points = response.map(d => ({
 								x: Math.abs(d.beforeMatchingStdDiff),
 								y: Math.abs(d.afterMatchingStdDiff),

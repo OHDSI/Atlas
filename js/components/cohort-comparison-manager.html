@@ -39,14 +39,16 @@
 					<div class="row">
 						<div class="col-sm-8" data-bind="text:sourceName"></div>
 						<div class="col-sm-4 text-right">
-							<button data-bind="visible: !$component.sourceProcessingStatus[sourceKey](), click:function() {$component.executeCohortComparison(sourceKey);}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
-							<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
-							<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
-							<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">
-								&nbsp;(<span data-bind="text:$component.sourceExecutions[sourceKey]().length"></span> Results)
-								<i data-bind="visible:!$component.sourceHistoryDisplay[sourceKey]()" class="fa fa-angle-double-down"></i>
-								<i data-bind="visible:$component.sourceHistoryDisplay[sourceKey]" class="fa fa-angle-double-up"></i>
+							<span class="btn-group">
+								<button data-bind="visible: !$component.sourceProcessingStatus[sourceKey](), click:function() {$component.executeCohortComparison(sourceKey);}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
+								<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
+								<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
+								<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">
+									&nbsp;(<span data-bind="text:$component.sourceExecutions[sourceKey]().length"></span> Results)
+							<i data-bind="visible:!$component.sourceHistoryDisplay[sourceKey]()" class="fa fa-angle-double-down"></i>
+							<i data-bind="visible:$component.sourceHistoryDisplay[sourceKey]" class="fa fa-angle-double-up"></i>
 							</button>
+							</span>
 						</div>
 					</div>
 					<div data-bind="foreach:$component.sourceExecutions[sourceKey], visible:$component.sourceHistoryDisplay[sourceKey]">
@@ -92,9 +94,14 @@
 					</li>
 					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'balance' }, click: function() { $component.pillMode('balance') };"><a>Balance</a>
 					</li>
+					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'om' }, click: function() { $component.pillMode('om') };"><a>Outcome Model</a>
+					</li>
 				</ul>
 
 				<div class="tab-content">
+					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'om'">
+						place holder for the outcome model
+					</div>
 					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'covariates'">
 						<faceted-datatable params="{orderColumn:3, reference:covariates, columns: covariateColumns, options:covariateOptions, rowClick:covariateSelected}">
 						</faceted-datatable>

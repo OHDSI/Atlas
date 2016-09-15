@@ -1412,6 +1412,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			return {};
 
 		var hashparts = location.hash.substr(1).split(/\?/);
+		//var state = { hashpath: hashparts[0] }; // do we want this for anything?
 		var state = { };
 		if (hashparts.length > 1) {
 			var compressedStateStr = hashparts[1];
