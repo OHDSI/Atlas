@@ -105,6 +105,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					var person = util.storageGet(personKey);
 					self.loadingPerson(false);
 					self.crossfilter(crossfilter(person.records));
+					self.shadedRegions(person.shadedRegions);
 					self.person(person);
 					return;
 				}
@@ -143,17 +144,17 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 							rec.endDay = rec.endDate ?
 								Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
 						});
-						self.shadedRegions(
+						person.shadedRegions =
 							person.observationPeriods.map(op => {
 								return {
 									x1: Math.floor((op.startDate - cohort.startDate) / (1000 * 60 * 60 * 24)),
 									x2: Math.floor((op.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)),
 									className: 'observation-period',
 								};
-							})
-						);
+							});
 						self.crossfilter(crossfilter(person.records));
 						util.storagePut(personKey, person);
+						self.shadedRegions(person.shadedRegions);
 						self.person(person);
 					}
 				});
