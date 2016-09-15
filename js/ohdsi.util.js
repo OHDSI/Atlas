@@ -23,6 +23,7 @@
 *			  ChartProps
 *			  getState, setState, deleteState
 *			  Field
+*			  cachedAjax
 */
 define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString, _) {
 
@@ -1442,6 +1443,27 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			this.crossfilter = crossfilter;
 		}
 	}
+	//var ajaxCache = {}; // only save till reload
+	//var ajaxCache = localStorage; // save indefinitely
+	var ajaxCache = sessionStorage; // save for session
+	function cachedAjax(opts) {
+		var key = JSON.stringify(opts);
+		if (!_.has(ajaxCache, key)) {
+			var ajax = $.ajax(opts);
+			ajax.then(function(results) {
+				ajaxCache[key] = LZString.compressToBase64(JSON.stringify(results));
+			});
+			return ajax;
+		} else {
+			var results = JSON.parse(LZString.decompressFromBase64(ajaxCache[key]));
+			var deferred = $.Deferred();
+			if (opts.success) {
+				opts.success(results);
+			}
+			deferred.resolve(results);
+			return deferred;
+		}
+	}
 
 	// END module functions
 	
@@ -1467,6 +1489,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	utilModule.deleteState = deleteState;
 	utilModule.Field = Field;
 	utilModule.tooltipBuilderForFields = tooltipBuilderForFields;
+	utilModule.cachedAjax = cachedAjax;
 	
 	if (DEBUG) {
 		window.util = utilModule;
