@@ -1,4 +1,4 @@
-define(['knockout', 'text!./sptest_smoking.html','lodash','d3ChartBinding', 'components/faceted-datatable-cf',], 
+define(['knockout', 'text!./sptest_smoking.html','lodash','databindings/d3ChartBinding', 'components/faceted-datatable-cf',], 
 			 function (ko, view, _) {
 	var getData = _.once(function(self) {
 		var request = $.ajax({
