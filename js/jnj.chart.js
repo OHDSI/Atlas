@@ -1787,18 +1787,30 @@
 			//cp.updateDomains(data, series);
 			//cp.tooltipSetup(data, series);
 			//cp.updateRanges(layout);
-			this.cp = cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
+			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
+			this.cp = cp;
 
 		});
 		this.updateData = function(data) {
+			console.log('updateData');
 			var series = dataToSeries(data, this.cp.series);
 			this.latestData = data;
-			this.cp.chart.chart.gEl
+
+
+			this.fields.forEach(field => {
+				field.bindParams({data, series, allFields:this.cp, layout:this.layout});
+			});
+			var tooltipBuilder = util.tooltipBuilderForFields(this.fields, data, series);
+			this.layout.positionZones();
+			this.layout.positionZones();
+
+			this.cp.chart && this.cp.chart.chart.gEl
 					.child('series')
 						//.run({data: series});
-						.run({data: series, delay: 500, duration: 2000});
+						.run({data: series, delay: 500, duration: 2000, cp: this.cp});
 		}
 		this.render = function (data, target, w, h, cp) {
+			var self = this;
 			if (!data.length) return;
 			DEBUG && (window.cp = cp);
 			if (!cp.data.alreadyInSeries) {
@@ -1884,6 +1896,9 @@
 					// but it's d3.v4
 
 					$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
+					$('.extent').hide();
+					$('.resize').hide();
+					return;
 
 					if (brush.empty()) {
 						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
@@ -1904,16 +1919,14 @@
 
 					seriesGs.as('d3')
 						.selectAll(".dot")
-						//.transition()
-						//.duration(750)
+						.transition()
+						.duration(750)
 						.attr("transform", function (d) {
 							var xVal = cp.x.scale(cp.x.accessors.value(d));
 							var yVal = cp.y.scale(cp.y.accessors.value(d));
 							return "translate(" + xVal + "," + yVal + ")";
 						});
 
-					$('.extent').hide();
-					$('.resize').hide();
 
 					//$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
 				});
@@ -1966,7 +1979,25 @@
 													return "translate(" + xVal + "," + yVal + ")";
 												})
 										},
-										updateCb: function(selection, params, opts) {
+										updateCb: function(selection, params, opts = {}) {
+											var {delay=0, duration=0, transition, cp=self.cp} = opts;
+											console.log('updating');
+
+											cp.x.axisEl.gEl.as('d3').transition().duration(duration).call(cp.x.axisEl.axis);
+											cp.y.axisEl.gEl.as('d3').transition().duration(duration).call(cp.y.axisEl.axis);
+
+											selection
+												//.selectAll(".dot")
+												.transition()
+												.delay(delay)
+												.duration(duration)
+												.attr("transform", function (d) {
+													var xVal = cp.x.scale(cp.x.accessors.value(d));
+													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													return "translate(" + xVal + "," + yVal + ")";
+												});
+
+											/*
 											selection
 												.attr("d", function(d) {
 													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
@@ -1989,6 +2020,7 @@
 													var yVal = cp.y.scale(cp.y.accessors.value(d));
 													return "translate(" + xVal + "," + yVal + ")";
 												})
+												*/
 										},
 										/* testing transitions on exit 
 										*/

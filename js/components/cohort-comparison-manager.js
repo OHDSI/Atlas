@@ -73,16 +73,32 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				}
 			});
 			//$(self.jqEventSpace).on('filter', filterChange);
-			//$(self.jqEventSpace).on('brush', brushEvent);
+			$(self.jqEventSpace).on('brush', brushEvent);
 			$(self.jqEventSpace).on('filteredRecs', 
 				function(evt, {source, recs} = {}) {
 					if (self.chartData() && recs.length < self.chartData().length
 							|| self.chartObj() && self.chartObj().latestData !== recs
 						 ) {
-									//console.log('caught filteredRecs', recs);
-									self.chartObj().render(recs, self.domElement(), 460, 150, self.chartOptions);
+									console.log('caught filteredRecs');
+									//self.chartObj().recFilter(recs);
+									self.chartObj().updateData(recs);
 								}
 				});
+				function brushEvent(evt, brush, x, y) {
+					console.log('brush event', arguments);
+					var [[x1,y1],[x2,y2]] = brush.extent();
+					var xyFilt = brush.empty() ?
+						null :
+						(d => {
+							return x.accessors.value(d) >= x1 &&
+										 x.accessors.value(d) <= x2 &&
+										 y.accessors.value(d) >= y1 &&
+										 x.accessors.value(d) <= y2;
+						});
+					util.setState('filters.brush', xyFilt);
+					$(self.jqEventSpace).trigger('filter', 
+										{filterName:'xy', func:xyFilt});
+				}
 			/*
 			function dataSetup(raw) {
 				var points = raw.map(d => ({
@@ -1012,7 +1028,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							isFacet: true,
 							label: "Direction after matching",
 				},
-				/*
 				xy: { // for brushing
 							_accessors: {
 								value: {
@@ -1026,7 +1041,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							},
 							isField: true,
 				},
-				*/
 				/*
 				size: {
 							//value: d=>d.afterMatchingMeanTreated,
