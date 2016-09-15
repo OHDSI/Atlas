@@ -67,7 +67,7 @@
 </div>
 <div class="loading" data-bind="if:$component.loadingEvidenceSources()">loading</div>
 <div id="modalNegControlsSaveNew" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -78,7 +78,7 @@
                 <div class="input-group">
                     <input class="form-control" id="txtNewConceptSetName" type="text" data-bind="textInput: $component.newConceptSetName" />
                     <span class="input-group-btn">
-                     <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveNewConceptSet(); }">Save</button>                    
+                     <button type="button" class="btn btn-success" data-bind="click:function() { saveNewConceptSet(); }">Save</button>                    
                     </span>
                 </div>
             </div>

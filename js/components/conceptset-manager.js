@@ -4,6 +4,7 @@ define(['knockout',
         'ohdsi.util', 
         'webapi/CDMResultsAPI',
         'vocabularyprovider',
+        'webapi/ConceptSetAPI',
         'conceptsetbuilder/InputTypes/ConceptSet',
         'knockout.dataTables.binding', 
         'bootstrap',
@@ -11,7 +12,7 @@ define(['knockout',
         'databindings', 
         'negative-controls',
         'circe',
-], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, ConceptSet) {
+], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet) {
 	function conceptsetManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -52,7 +53,7 @@ define(['knockout',
         self.compareCS1Id = ko.observable(self.model.currentConceptSet().id); // Init to the currently loaded cs
         self.compareCS1Caption = ko.observable(self.model.currentConceptSet().name());
         self.compareCS1ConceptSet = ko.observableArray(self.currentConceptSet());
-        self.compareCS2Id = ko.observable();
+        self.compareCS2Id = ko.observable(0);
         self.compareCS2Caption = ko.observable();
         self.compareCS2ConceptSet = ko.observableArray(null);
         self.compareError = ko.pureComputed(function() {
@@ -65,6 +66,10 @@ define(['knockout',
                     (self.compareCS1Id() != self.compareCS2Id())
                    )
         });
+        self.compareLoading = ko.observable(false);
+        self.compareLoadingClass = ko.pureComputed(function() {
+            return self.compareLoading() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-question-circle fa-lg"
+        })
         self.compareResults = ko.observable();
         self.compareNewConceptSetName = ko.observable(self.model.currentConceptSet().name() + " - From Comparison");
         self.defaultResultsUrl = self.model.resultsUrl;
@@ -340,7 +345,9 @@ define(['knockout',
 		}
 
 		self.raiseConceptSetNameProblem = function (msg, elem) {
-			self.model.currentConceptSet().name.valueHasMutated();
+			if (self.model.currentConceptSet()) {
+				self.model.currentConceptSet().name.valueHasMutated();
+			}
 			alert(msg);
 			$(elem).select().focus();
 		}
@@ -484,6 +491,7 @@ define(['knockout',
         
         self.compareConceptSets = function() {
             console.log("compare");
+            self.compareLoading(true);
             var compareTargets = [{items: self.compareCS1ConceptSet()}, {items: self.compareCS2ConceptSet()}];
             vocabularyAPI.compareConceptSet(compareTargets).then(function (compareResults) {
                 var conceptIds = $.map(compareResults, function (o, n) {
@@ -492,6 +500,7 @@ define(['knockout',
                 cdmResultsAPI.getConceptRecordCount(self.currentResultSource().sourceKey, conceptIds, compareResults).then(function (rowcounts) {
                     self.compareResults(null);
                     self.compareResults(compareResults);
+                    self.compareLoading(false);
                 });
             });
         }
@@ -538,10 +547,33 @@ define(['knockout',
             	$(selectAllElement).addClass("selected");
         	});
         }
+        
         self.toggleOffSelectAllCheckbox = function(selector, selectAllElement) {
-        	$(document).on('init.dt', selector, function (e, settings) {       		
+        	$(document).on('init.dt', selector, function (e, settings) { 
             	$(selectAllElement).removeClass("selected");
         	});
+        }
+        
+        self.selectAllConceptSetItems = function(selector, props) {
+        	console.log("select all: " + props)
+            props = props || {};
+            props.isExcluded = props.isExcluded || null;
+            props.includeDescendants = props.includeDescendants || null;
+            props.includeMapped = props.includeMapped || null;
+            var selectAllValue = !($(selector).hasClass("selected"));
+			$(selector).toggleClass("selected");
+			_.each(self.model.selectedConcepts(), (conceptSetItem) => {
+                if (props.isExcluded !== null) {
+                    conceptSetItem.isExcluded(selectAllValue);                    
+                }
+                if (props.includeDescendants !== null) {
+                    conceptSetItem.includeDescendants(selectAllValue);
+                }
+                if (props.includeMapped !== null) {
+                    conceptSetItem.includeMapped(selectAllValue);
+                }
+			});
+			self.model.resolveConceptSetExpression();  
         }
         
         self.refreshRecordCounts = function(obj, event) {
@@ -564,6 +596,17 @@ define(['knockout',
                 });
             }
         }        
+        
+        self.delete = function() {
+			if (!confirm("Delete concept set? Warning: deletion can not be undone!"))
+				return;
+			
+            // reset view after save
+			conceptSetAPI.deleteConceptSet(self.model.currentConceptSet().id).then(function (result) {
+				self.model.currentConceptSet(null);
+				document.location = "#/conceptsets"
+			});
+        }
 
         // Initialize the select all checkboxes
         var excludeCount = 0;
@@ -596,34 +639,12 @@ define(['knockout',
             self.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllMapped');
         }
         // Create event handlers for all of the select all elements
-        $(document).on('click', '#selectAllExclude', function() { 
-        	var isExcluded = !($("#selectAllExclude").hasClass("selected"));
-        	$("#selectAllExclude").toggleClass("selected");
-        	_.each(self.model.selectedConcepts(), (conceptSetItem) => {
-            	conceptSetItem.isExcluded(isExcluded);
-            });
-        	self.model.resolveConceptSetExpression();          
-        });
-        $(document).on('click', '#selectAllDescendants', function() { 
-        	var includeDescendants = !($("#selectAllDescendants").hasClass("selected"));
-        	$("#selectAllDescendants").toggleClass("selected");
-            var currentConcepts = self.model.selectedConcepts();
-        	_.each(currentConcepts, (conceptSetItem) => {
-            	conceptSetItem.includeDescendants(includeDescendants);
-            });
-            self.model.selectedConcepts(currentConcepts);
-        	self.model.resolveConceptSetExpression();          
-        });
-        $(document).on('click', '#selectAllMapped', function() { 
-        	var includeMapped = !($("#selectAllMapped").hasClass("selected"));
-        	$("#selectAllMapped").toggleClass("selected");
-        	_.each(self.model.selectedConcepts(), (conceptSetItem) => {
-            	conceptSetItem.includeMapped(includeMapped);
-            });
-        	self.model.resolveConceptSetExpression();          
-        });
-        
-        
+        $(document).off('click', '#selectAllExclude');
+        $(document).on('click', '#selectAllExclude', function() { self.selectAllConceptSetItems("#selectAllExclude", { isExcluded: true })});
+        $(document).off('click', '#selectAllDescendants');
+        $(document).on('click', '#selectAllDescendants', function() { self.selectAllConceptSetItems("#selectAllDescendants", { includeDescendants: true })});
+        $(document).off('click', '#selectAllMapped');
+        $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeDescendants: true })});
 	}
 
 	var component = {

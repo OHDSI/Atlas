@@ -8,7 +8,8 @@
 			<button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty()}">Save</button>
 			<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }">Close</button>
 			<button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0">Copy</button>
-            <div class="pull-right"><button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { optimize(); }">Optimize</button></div>
+            <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { optimize(); }">Optimize</button>
+            <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.delete(); }">Delete</button>
 		</div>
 	</div>
 
@@ -48,7 +49,7 @@
 		<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
 	</div>
 
-	<div data-bind="if: model.currentConceptSetMode() == 'details'">
+	<div data-bind="visible: model.currentConceptSetMode() == 'details'">
 		<div class="paddedWrapper">
 			<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
             data: model.selectedConcepts(),
@@ -134,7 +135,7 @@
         <negative-controls params="{model: pageModel, negativeControls: model.currentConceptSetNegativeControls, selectedConcepts: model.selectedConcepts, conceptSet: model.currentConceptSet, dirtyFlag: model.currentConceptSetDirtyFlag, conceptIds: model.conceptSetInclusionIdentifiers, services: model.services, defaultResultsUrl: model.resultsUrl, saveConceptSet: $component.saveConceptSet}"></negative-controls>
     </div>
     
-	<div id="wrapperConceptSetExport" data-bind="if: model.currentConceptSetMode() == 'export'">
+	<div id="wrapperConceptSetExport" data-bind="visible: model.currentConceptSetMode() == 'export'">
 		<div class="heading">Concept Set Expression JSON</div>
 		<pre data-bind="html: model.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
 		<div class="heading">Concept Identifer List</div>
@@ -155,7 +156,7 @@
                     <input class="form-control" type="text" disabled data-bind="value: $component.compareCS1Caption" />
                     <span class="input-group-btn">
                         <button class="btn btn-primary" data-bind="click:chooseCS1"><i class="fa fa-folder-open"></i></button>
-                        <span data-bind="if: $component.compareCS1Id() > 0"><button class="btn btn-danger" data-bind="click:clearCS1" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
+                        <button class="btn btn-danger" data-bind="disable: $component.compareCS1Id() == 0, click: clearCS1" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                     </span>
                 </div>
             </div>
@@ -166,13 +167,13 @@
                     <input class="form-control" type="text" disabled data-bind="value: $component.compareCS2Caption" />
                     <span class="input-group-btn">
                         <button class="btn btn-primary" data-bind="click:chooseCS2"><i class="fa fa-folder-open"></i></button>
-                        <span data-bind="if: $component.compareCS2Id() > 0"><button class="btn btn-danger" data-bind="click:clearCS2" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
+                        <button class="btn btn-danger" data-bind="disable: $component.compareCS2Id() == 0,click:clearCS2" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                     </span>
                 </div>
             </div>
             <div data-bind="if: $component.compareReady() && !$component.compareResults()">
                 <div class="paddedWrapper" style="padding-top: 20px;">
-                    <button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.compareConceptSets;">Compare Concept Sets</button>
+                    <button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.compareConceptSets;"><i data-bind="css: $component.compareLoadingClass"></i> Compare Concept Sets</button>
                 </div>
             </div>
             <div data-bind="if: $component.compareError()">
@@ -207,7 +208,7 @@
     </div>
 
     <div id="modalCS" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -221,7 +222,7 @@
     </div>
 
     <div id="modalConceptSetOptimize" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -264,9 +265,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="heading">
-                            <h4>Optimized Concept Set</h4>
-                        </div>
+                        <div class="heading">Optimized Concept Set</div>
                         <div class="paddedWrapper">
                             <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
                                     data: $component.optimalConceptSet(),
@@ -280,7 +279,7 @@
                                                         restore: 'Reset Columns'
                                                     },
                                                     rowCallback: model.contextSensitiveLinkColor,
-                                                    lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+                                                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100,'All']],
                                                     orderClasses: false,
                                                     deferRender: true,
                                                     autoWidth: false,
@@ -301,8 +300,8 @@
                             </table>
                         </div>
                         <div data-bind="if: $component.optimizerRemovedConceptSet() && !$component.optimizerSavingNew()">
-                            <div class="heading" style="padding-top:10px;margin-bottom:10px;">
-                                <h4>Concepts Removed</h4>
+                            <div class="heading" style="padding-top:10px;margin-bottom:10px;">Concepts Removed</div>
+                            <div style="padding-bottom: 10px;">
                                 The following concepts were removed since the optimized version already includes them.
                             </div>
                             <div class="paddedWrapper">
@@ -318,7 +317,7 @@
                                                             restore: 'Reset Columns'
                                                         },
                                                         rowCallback: model.contextSensitiveLinkColor,
-                                                        lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+                                                        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100,'All']],
                                                         orderClasses: false,
                                                         deferRender: true,
                                                         autoWidth: false,
@@ -343,22 +342,24 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
 
     <div id="modalSaveNew" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <div class="modal-title">Save New Concept Set</div>
                 </div>
                 <div class="modal-body">
-                    <label>Concept Set Name:</label>
-                    <div class="input-group">
-                        <input class="form-control" id="txtNewConceptSetName" type="text" data-bind="textInput: $component.compareNewConceptSetName" />
-                        <span class="input-group-btn">
-                         <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { compareCreateNewConceptSet(); }">Save</button>                    
-                        </span>
+                    <div>
+                        <label>Concept Set Name:</label>
+                        <div class="input-group">
+                            <input class="form-control" id="txtNewConceptSetName" type="text" data-bind="textInput: $component.compareNewConceptSetName" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-success" data-bind="click:function() { compareCreateNewConceptSet(); }">Save</button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
