@@ -139,7 +139,7 @@
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'balance'">
-						<div class="paddedWrapper" data-bind="if: $component.pillMode() == 'balance'">
+						<div class="paddedWrapper" data-bind="visible: $component.pillMode() == 'balance'">
 							<div data-bind="d3ChartBinding: 
 								{	
 									c1:null, // ko only allows comment on same line as param (and not after last param)

@@ -64,7 +64,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			});
 			self.ready.subscribe(function(ready) {
 				if (ready) {
-					console.log('drawing scatterplot');
+					//console.log('drawing scatterplot');
 					self.chartObj().chartSetup(self.domElement(), 460, 150, self.chartOptions);
 					self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
 					//self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
@@ -79,13 +79,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					if (self.chartData() && recs.length < self.chartData().length
 							|| self.chartObj() && self.chartObj().latestData !== recs
 						 ) {
-									console.log('caught filteredRecs');
+									//console.log('caught filteredRecs');
 									//self.chartObj().recFilter(recs);
 									self.chartObj().updateData(recs);
 								}
 				});
 				function brushEvent(evt, brush, x, y) {
-					console.log('brush event', arguments);
+					//console.log('brush event', arguments);
 					var [[x1,y1],[x2,y2]] = brush.extent();
 					var xyFilt = brush.empty() ?
 						null :

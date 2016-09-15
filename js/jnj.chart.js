@@ -1788,7 +1788,7 @@
 
 		});
 		this.updateData = function(data) {
-			console.log('updateData');
+			//console.log('updateData');
 			var series = dataToSeries(data, this.cp.series);
 			this.latestData = data;
 
@@ -1977,7 +1977,7 @@
 										},
 										updateCb: function(selection, params, opts = {}) {
 											var {delay=0, duration=0, transition, cp=self.cp} = opts;
-											console.log('updating');
+											//console.log('updating');
 
 											cp.x.axisEl.gEl.as('d3').transition().duration(duration).call(cp.x.axisEl.axis);
 											cp.y.axisEl.gEl.as('d3').transition().duration(duration).call(cp.y.axisEl.axis);
@@ -2186,137 +2186,20 @@
 			cp.chart = cp.chart || {};
 			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
 			this.cp = cp;
-
 		});
 		this.render = function (data, target, w, h, cp) {
 			var self = this;
 			if (!data.length) return;
-			DEBUG && (window.cp = cp);
 			if (!cp.data.alreadyInSeries) {
 				var series = dataToSeries(data, cp.series);
-				//var series = dataToSeries(data.slice(0,1000), cp.series);
-			}
-			if (!data.length) { // do this some more efficient way
-				nodata(this.svgEl.as("d3"));
-				return;
 			}
 			this.fields.forEach(field => {
 				field.bindParams({data, series, allFields:cp, layout:this.layout});
 			});
-			var tooltipBuilder = util.tooltipBuilderForFields(this.fields, data, series);
-			
 			var chart = cp.chart.chart.gEl.as('d3');
 
-			/*
-			var legendWidth = 0;
-			if (cp.legend.show) {
-				var legend = this.svgEl.as("d3").append("g")
-					.attr("class", "legend");
-
-				var maxWidth = 0;
-
-				series.forEach(function (d, i) {
-					legend.append("rect")
-						.attr("x", 0)
-						.attr("y", (i * 15))
-						.attr("width", 10)
-						.attr("height", 10)
-						.style("fill", cp.color.scale(d.name));
-
-					var legendItem = legend.append("text")
-						.attr("x", 12)
-						.attr("y", (i * 15) + 9)
-						.text(d.name);
-					maxWidth = Math.max(legendItem.node().getBBox().width + 12, maxWidth);
-				});
-				legend.attr("transform", "translate(" + (this.layout.w() - this.layout.zone('right') - maxWidth) + ",0)")
-				legendWidth += maxWidth + 5;
-			}
-			*/
-
 			this.layout.positionZones();
 			this.layout.positionZones();
-			//this.svgEl.update({data:series})
-			//this.svgEl.data(series)
-
-			// brush stuff needs to go before dots so tooltips will work
-			var orig_x_domain = cp.x.scale.domain();
-			var orig_y_domain = cp.y.scale.domain();
-			/*
-			var idleTimeout, idleDelay = 350;
-			function idled() {
-				idleTimeout = null;
-			}
-			*/
-			var brush = d3.svg.brush()
-				.x(cp.x.scale)
-				.y(cp.y.scale)
-				.on('brushstart', function() {
-					$('.extent').show();
-					$('.resize').show();
-				});
-
-			/*
-			chart.append('g')  // use addChild?
-				.attr('class', 'brush')
-				.call(brush);
-			*/
-			var brushEl = cp.chart.chart.gEl.addChild('brush',
-																	{ tag: 'g',
-																		classes:['brush'],
-																		data: [null],
-																	});
-			brushEl.as('d3').call(brush);
-
-			brush
-				.on('brushend', function () {
-					//var s = d3.event.selection;
-					// wanted to use https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
-					// but it's d3.v4
-
-					$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
-					$('.extent').hide();
-					$('.resize').hide();
-					return;
-
-					if (brush.empty()) {
-						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
-						cp.x.scale.domain(orig_x_domain);
-						cp.y.scale.domain(orig_y_domain);
-					} else {
-						cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]]);
-						cp.y.scale.domain([brush.extent()[0][1], brush.extent()[1][1]]);
-						//cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]].map(cp.x.scale.invert, cp.x.scale));
-						//cp.y.scale.domain([brush.extent()[1][1], brush.extent()[0][1]].map(cp.y.scale.invert, cp.y.scale));
-						//brushEl.as('d3').call(brush.move, null);
-					}
-
-
-					//var t = cp.chart.chart.gEl.as('d3').transition().duration(2750);
-					cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
-					cp.y.axisEl.gEl.as('d3').transition().duration(750).call(cp.y.axisEl.axis);
-
-					seriesGs.as('d3')
-						.selectAll(".dot")
-						.transition()
-						.duration(750)
-						.attr("transform", function (d) {
-							var xVal = cp.x.scale(cp.x.accessors.value(d));
-							var yVal = cp.y.scale(cp.y.accessors.value(d));
-							return "translate(" + xVal + "," + yVal + ")";
-						});
-
-
-					//$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
-				});
-
-
-			var focusTip = d3.tip()
-				.attr('class', 'd3-tip')
-				.offset([-10, 0])
-				.html(tooltipBuilder);
-				//.html(cp.tooltip.builder);
-			this.svgEl.as("d3").call(focusTip);
 
 			var seriesGs = cp.chart.chart.gEl
 												.addChild('series',
