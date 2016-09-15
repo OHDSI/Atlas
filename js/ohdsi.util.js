@@ -24,6 +24,9 @@
 *			  getState, setState, deleteState
 *			  Field
 *			  cachedAjax
+*			  storagePut
+*			  storageExists
+*			  storageGet
 */
 define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString, _) {
 
@@ -1448,14 +1451,14 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	var ajaxCache = sessionStorage; // save for session
 	function cachedAjax(opts) {
 		var key = JSON.stringify(opts);
-		if (!_.has(ajaxCache, key)) {
+		if (!storageExists(key, ajaxCache)) {
 			var ajax = $.ajax(opts);
 			ajax.then(function(results) {
-				ajaxCache[key] = LZString.compressToBase64(JSON.stringify(results));
+				storagePut(key, results, ajaxCache);
 			});
 			return ajax;
 		} else {
-			var results = JSON.parse(LZString.decompressFromBase64(ajaxCache[key]));
+			var results = storageGet(key, ajaxCache);
 			var deferred = $.Deferred();
 			if (opts.success) {
 				opts.success(results);
@@ -1463,6 +1466,15 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			deferred.resolve(results);
 			return deferred;
 		}
+	}
+	function storagePut(key, val, store = sessionStorage) {
+		store[key] = LZString.compressToBase64(JSON.stringify(val));
+	}
+	function storageExists(key, store = sessionStorage) {
+		return _.has(store, key);
+	}
+	function storageGet(key, store = sessionStorage) {
+		return JSON.parse(LZString.decompressFromBase64(store[key]));
 	}
 
 	// END module functions
@@ -1490,6 +1502,9 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	utilModule.Field = Field;
 	utilModule.tooltipBuilderForFields = tooltipBuilderForFields;
 	utilModule.cachedAjax = cachedAjax;
+	utilModule.storagePut = storagePut;
+	utilModule.storageExists = storageExists;
+	utilModule.storageGet = storageGet;
 	
 	if (DEBUG) {
 		window.util = utilModule;
