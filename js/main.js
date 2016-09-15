@@ -137,10 +137,12 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		var vocabularyPriority = 0;
 		var densityPriority = 0;
 
+		/*
 		if (util.storageExists('services', sessionStorage)) {
 			console.warn("fetching services from sessionStorage. if anything went wrong in constructing services you'll need to delete sessionStorage.services");
 			config.services = util.storageGet('services', sessionStorage);
 		} else {
+		*/
 			// initialize all service information asynchronously
 			$.each(config.services, function (serviceIndex, service) {
 				service.sources = [];
@@ -254,14 +256,18 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					}
 				});
 			});
+		/*
 		}
+		*/
 
 		$.when.apply($, pageModel.initPromises).done(function () {
 			pageModel.initComplete();
+			/*
 			if (!util.storageExists('services', sessionStorage)) {
 				console.warn("saving services to sessionStorage. if anything went wrong in constructing services you'll need to delete sessionStorage.services");
 				util.storagePut('services', config.services, sessionStorage);
 			}
+			*/
 		});
 
 		pageModel.currentView.subscribe(function (newView) {

@@ -867,7 +867,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			this.axis && selection.call(this.axis);
 		}
 	}
-	/* ChartProps
+	/* ChartProps OBSOLETE, using _.merge now
 	 * The chart class should have default options
 	 * which can be overridden when instantiating the chart.
 	 * All options are grouped into named chartProps, like:
@@ -1263,20 +1263,9 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 				this.scale.range(this.accessors.range());
 			}
 		}
-
-		/*
-												prop.ac.bindParam('chartProps', this);
-												prop.ac.bindParam('data', data);
-												prop.ac.bindParam('series', series);
-												prop.ac.bindParam('chartPropName', name);
-												prop.accessor = prop.ac.generate();
-		get accessor() {
-			return _.accessor;
-		}
-		*/
 	}
 	/*
-	class ProxyField {
+	class ProxyField { // good idea but hard to implement
 		constructor(name, opts = {}, proxyFor, allFields) {
 			this.parentField = new Field(name, opts, allFields);
 			this.baseField = proxyFor;
