@@ -977,6 +977,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							colIdx: 1,
 							isField: true,
 				},
+				beforeMatchingDirection: {
+							value: d => d.beforeMatchingStdDiff > 0 ? "positive" : d.beforeMatchingStdDiff < 0 ? "negative" : "0",
+							tooltipOrder: 1.5,
+							isField: true,
+							isFacet: true,
+							label: "Direction before matching",
+				},
 				y: {
 							value: d => Math.abs(d.afterMatchingStdDiff),
 							label: "After matching StdDiff",
@@ -997,6 +1004,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							isColumn: true,
 							colIdx: 1,
 							isField: true,
+				},
+				afterMatchingDirection: {
+							value: d => d.afterMatchingStdDiff > 0 ? "positive" : d.afterMatchingStdDiff < 0 ? "negative" : "0",
+							tooltipOrder: 2.5,
+							isField: true,
+							isFacet: true,
+							label: "Direction after matching",
 				},
 				/*
 				xy: { // for brushing
@@ -1043,7 +1057,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 								},
 							},
 				},
-				*/
 				series: {
 							value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
 							sortBy:  d => d.afterMatchingStdDiff,
@@ -1076,7 +1089,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 														 d.coefficient.toLowerCase()
 														 .trim()) > -1
 										? 0 : d.coefficient || 0, // (set NA = 0)
-										*/
+										* /
 							//label: "Coefficient",
 							label: "Nonsense series",
 							scale: d3.scale.ordinal(),
@@ -1099,14 +1112,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 
 
 							},
-							*/
+							* /
 							//range: ['red', 'yellow', 'blue'],
 				},
 				shape: {
-							//value: d => Math.floor(Math.random() * 3),
-							//
-							//  i as always 0! fix!
-							//  value: (d,i) => i % 3,
 							value: () => junk++ % 3,
 							label: "Random",
 							tooltipOrder: 4,
@@ -1116,6 +1125,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							value: d => d.upperBound,
 							value: d => y(d) - d.upperBoundDiff,
 				},
+				*/
 				covariateName: {
 							propName: 'covariateName',
 							value: d => {
@@ -1150,6 +1160,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							},
 							*/
 				},
+				/*
 				conceptId: {
 							propName: 'conceptId',
 							isColumn: true,
@@ -1162,15 +1173,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 																		// zoomScatter field
 							isField: true,
 				},
-				analysisId: {
-							propName: 'analysisId',
-							isColumn: true,
-							isFacet: true,
-							colIdx: 4,
-							tooltipOrder: 6,
-							label: 'Analysis ID',
-							isField: true,
-				},
+				*/
 			};
 		}
 	}
