@@ -32,6 +32,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.expressionMode = ko.observable('print');
 			self.cohortComparison = ko.observable();
 			self.cohortComparisonDirtyFlag = ko.observable();
+			self.om = ko.observable();
 
 
 			// for balance chart
@@ -432,6 +433,16 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					}
 				});
 
+				var p6 = ohdsiUtil.cachedAjax({
+					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/om',
+					method: 'GET',
+					contentType: 'application/json',
+					success: function (response) {
+						self.om(response);
+					}
+				});
+				
+				
 				Promise.all([p1, p2, p3, p4, p5])
 					.then(results => {
 						self.loadingExecution(false);
