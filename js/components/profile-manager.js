@@ -21,6 +21,12 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 
 			self.sourceKey = ko.observable(util.getState('sourceKey'));
 			self.personId = ko.observable(util.getState('personId'));
+			util.onStateChange('sourceKey', function(evt, {val} = {}) {
+				self.sourceKey(val);
+			});
+			util.onStateChange('personId', function(evt, {val} = {}) {
+				self.personId(val);
+			});
 			self.cohortSource = ko.observable();
 			self.person = ko.observable();
 			self.loadingPerson = ko.observable(false);

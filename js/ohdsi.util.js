@@ -1466,6 +1466,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 		var newstate = _getState(newhash);
 		var oldpaths = listpaths(oldstate).map(d=>d.join('.'));
 		var newpaths = listpaths(newstate).map(d=>d.join('.'));
+		//console.log(oldpaths, newpaths);
 		var changes = {};
 		_.difference(oldpaths, newpaths).forEach(function(oldpath) {
 			changes[oldpath] = {
