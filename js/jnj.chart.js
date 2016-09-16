@@ -1810,7 +1810,7 @@
 						.run({data: series, delay: 500, duration: 2000, cp: this.cp});
 
 			if (this.data.length !== data.length) {
-				this.cp.inset.chart.render(data, this.cp.inset, this.layout);
+				this.cp.inset.chart.render(this.data, this.cp.inset, this.layout);
 			} else {
 				this.cp.inset.el.gEl.as('d3').html('');
 			}
@@ -2266,6 +2266,20 @@
 												});
 										},
 									});
+			console.log(parentOpts);
+			var focusRect = inset.el.gEl.addChild('focus', 
+												{tag:'rect',classes:['inset-focus'],
+													updateCb: function(selection,params) {
+														var [x1,x2] = parentOpts.x.accessors.domain();
+														var [y1,y2] = parentOpts.y.accessors.domain();
+														var w = cp.x.scale(x2) - cp.x.scale(x1);
+														var h = cp.y.scale(y1) - cp.y.scale(y2);
+														selection
+																.attr('x', cp.x.scale(x1))
+																.attr('y', cp.y.scale(y2))
+																.attr('width', w)
+																.attr('height', h)
+													}});
 		}
 	};
 

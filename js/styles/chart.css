@@ -203,5 +203,9 @@ table.data td {
 	fill: white;
 	stroke: black;
 }
+.zoom-scatter rect.inset-focus {
+	fill-opacity: 0;
+	stroke: black;
+}
 
 
