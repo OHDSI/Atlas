@@ -190,8 +190,18 @@ table.data td {
 	left: 100%;
 }
 
+
+
+/* zoomScatter, inset */
+
 .zoom-scatter .dot {
 	opacity: 0.4;
 	stroke-width: .4;
 	fill: white;
 }
+.zoom-scatter rect.inset-border {
+	fill: white;
+	stroke: black;
+}
+
+

@@ -761,6 +761,24 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 								`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
 		}
 	}
+	class ChartInset extends SvgElement {
+		emptyG() { return true; }
+		cssClasses() { // classes needed on g element
+			return ['insetG'];
+		}
+		zone() { return 'top'; }
+		subzone() { return 'inset'; }
+		tagName() { return 'g'; }
+		sizedim() { return 0; }
+		updatePosition(selection, params, opts) {
+			selection.attr('transform', 
+				`translate(${params.layout.w(params.layout) - this.w(params.layout)},0)`);
+		}
+		// could hold on to original layout instead of passing in as param...maybe
+		//   not sure if it would get stale
+		w(layout) { return layout.w() * 0.15; }
+		h(layout) { return layout.h() * 0.15; }
+	}
 	class ChartLabel extends SvgElement {
 		tagName() { return 'text'; }
 	}
@@ -868,6 +886,8 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 		}
 	}
 	/* ChartProps OBSOLETE, using _.merge now
+				some of this documentation is worth keep and putting in new places
+				even though it describes a class that is no longer present
 	 * The chart class should have default options
 	 * which can be overridden when instantiating the chart.
 	 * All options are grouped into named chartProps, like:
@@ -972,150 +992,6 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	 * Tooltip content will only be generated for props where prop.tooltipOrder 
 	 * is provided (it should be a non-zero number.)
 	 */
-	class ChartPropsJUNK {
-		constructor(defaults, explicit) {
-			//this.props = {};
-			_.union(_.keys(defaults), _.keys(explicit)).forEach(name => {
-								var prop = $.extend({}, defaults[name], explicit[name]);
-								prop.name = name;
-								prop.label = d3.functor(prop.label || name);
-								if (prop.needsValueFunc) {
-									prop.ac = new AccessorGenerator({
-																	func: prop.value,
-																	propName: (typeof prop.value === "string" || 
-																						 isFinite(prop.value)) ? prop.value
-																						 : name,
-																	posParams: ['i', 'j', 'chartProps',
-																							'data', 'series', 'chartPropName'],
-																});
-									prop.accessor = prop.ac.generate();
-									/*
-									if (typeof prop.value === "string" || isFinite(prop.value)) {
-										prop.value = obj => obj[prop.value];
-									} else if (!prop.value) {
-										var label = prop.label || d3.functor(name);
-										//prop.value = obj => (label in obj) ? obj[label] : label;
-										prop.value = label;
-									} else if (typeof prop.value === "function") {
-									} else {
-										throw new Error("can't figure out how to make value accessor");
-									}
-									prop._originalValueAccessor = prop.value;
-									*/
-									// add params to call below when data is known
-								}
-								if (prop.needsScale) { // if it needsScale, it must also needsValueFunc
-									prop.scale = prop.scale || d3.scale.linear();
-									// domainFunc should be called with args: data,series
-									// domainFunc will receive args:
-									//		data, series, props, propname
-									prop.domainFunc = prop.domainFunc ||
-																		prop.domain && d3.functor(prop.domain) ||
-																		((data,series,props,name) => {
-																			var localProp = props[name]; 
-																			// can't remember why or if props[name] would
-																			// be different from prop
-																			localProp.ac.bindParam('chartProps', this);
-																			localProp.ac.bindParam('data', data);
-																			localProp.ac.bindParam('series', series);
-																			localProp.ac.bindParam('chartPropName', name);
-																			var accessor = localProp.ac.generate();
-																			/*
-																			return d3.extent(data.map(
-																					_.partial(props[name]._originalValueAccessor, 
-																							 _, _, _, // d, i, undefined,
-																							this, data, series, name)))
-																			*/
-																			return d3.extent(data.map(accessor));
-																		})
-									//prop._origDomainFunc = prop.domainFunc;
-									prop.rangeFunc = prop.rangeFunc ||
-																		prop.range && d3.functor(prop.range) ||
-																		function() {throw new Error(`no range for prop ${name}`)};
-								}
-								//this.props[name] = prop;
-								this[name] = prop;
-							});
-			//this.d3dispatch = d3.dispatch.apply(null, _.union(defaults.dispatchEvents, explicit.additionalDispatchEvents));
-		}
-		updateDomains(data, series) {
-			_.each(this, (prop, name) => {
-											if (prop.needsScale) {
-												prop.scale.domain(
-													prop.domainFunc(data, series, this, name));
-												// brushing may temporaryily change the scale domain
-												// hold on to the domain as calculated from the data
-												prop.domain = prop.scale.domain();
-											}
-										});
-		}
-		updateRanges(layout) {
-			_.each(this, (prop, name) => {
-											if (prop.needsScale) {
-												var range = prop.rangeFunc(layout, this[name], this, name);
-												if (range) {
-													prop.scale.range(range)
-													prop.range = range;
-												}
-											}
-										});
-		}
-		updateAccessors(data, series) {
-			_.each(this, (prop, name) => {
-											if (prop.needsValueFunc) {
-												/*
-												prop.value = _.partial(prop._originalValueAccessor, 
-																							 _, _, _, // d, i, j,
-																							this, data, series, name);
-												*/
-												prop.ac.bindParam('chartProps', this);
-												prop.ac.bindParam('data', data);
-												prop.ac.bindParam('series', series);
-												prop.ac.bindParam('chartPropName', name);
-												prop.accessor = prop.ac.generate();
-											}
-										});
-		}
-		/*
-		 * for value or tooltip functions that make use of aggregation over data or series
-		 * there should be a way to perform the aggregation calculations only once
-		 * rather than on every call to the value/tooltip func (actually, for tooltips
-		 * it doesn't matter too much since only one point gets processed at a time)
-		 */
-		tooltipSetup(data, series) {
-			this.tooltip = this.tooltip || { funcs: [] };
-			this.tooltip.funcs = 
-				_.chain(this)
-					.filter('tooltipOrder')
-					.sortBy('tooltipOrder')
-					.map((prop) => {
-						var func = prop.tooltipFunc ||
-											 function(d,i,j) {
-												 return {
-													 value: prop.accessor(d,i,j),
-													 name: prop.label(),
-													 /*
-													 value: _.partial(prop._originalValueAccessor, 
-																	_, _, _, // d, i, j,
-																	this, data, series, name)(d,i,j),
-													 //name: prop.label(),
-													 name: _.partial(prop.label, 
-																	_, _, _, // d, i, j,
-																	this, data, series, name)(d,i,j)
-													*/
-												 };
-											 };
-						return func;
-					})
-					.value();
-			this.tooltip.builder = // not configurable but could be, but would be
-														 // func that knows what to do with a bunch of funcs
-				(d, i, j) => this.tooltip.funcs
-													.map(func => func(d,i,j,this,data,series,name))
-													.map(o => `${o.name}: ${o.value}<br/>`)
-													.join('')
-		}
-	}
 
 
 	/*
@@ -1193,6 +1069,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	 */
 	class Field {
 		constructor(name, opts = {}, allFields) {
+			if (opts.DEBUG) debugger;
 			this.name = name;
 			_.extend(this, opts);
 
@@ -1570,6 +1447,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	utilModule.ChartAxis = ChartAxis;
 	utilModule.ChartAxisY = ChartAxisY;
 	utilModule.ChartAxisX = ChartAxisX;
+	utilModule.ChartInset = ChartInset;
 	//utilModule.ChartProps = ChartProps;
 	utilModule.AccessorGenerator = AccessorGenerator;
 	utilModule.getState = getState;

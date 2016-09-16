@@ -1760,6 +1760,9 @@
 						needsValueFunc: true,
 						isField: true,
 			},
+			inset: {
+				name: 'inset',
+			}
 			//interpolate: "linear", // not used
 			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
 			//showXAxis: true
@@ -1786,12 +1789,8 @@
 			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
 			this.cp = cp;
 
-			this.insetChart = new module.inset(cp, jqEventSpace);
-			this.insetG = this.svgEl.addChild('insetG',
-																					{ tag: 'g',
-																						classes:['insetG'],
-																						data: [null],
-																					});
+			cp.inset.chart = new module.inset(cp, jqEventSpace);
+			cp.inset.el = new util.ChartInset(this.svgEl, layout, cp.inset);
 		});
 		this.updateData = function(data) {
 			var series = dataToSeries(data, this.cp.series);
@@ -1811,9 +1810,9 @@
 						.run({data: series, delay: 500, duration: 2000, cp: this.cp});
 
 			if (this.data.length !== data.length) {
-				this.insetChart.render( data, this.insetG, 
-																this.layout.w(), this.layout.h());
-
+				this.cp.inset.chart.render(data, this.cp.inset, this.layout);
+			} else {
+				this.cp.inset.el.gEl.as('d3').html('');
 			}
 		}
 		this.render = function (data, target, w, h, cp) {
@@ -2115,15 +2114,17 @@
 				alreadyInSeries: false,
 			},
 			availableDatapointBindings: 
-				['d', 'i', 'j', 'data', 'series', 'allFields', 'layout'],
+				['d', 'i', 'j', 'data', 'series', 'allFields', 'layout','inset'],
 			chart: {
 			},
+			/*
 			layout: {
 				top: { margin: { size: 0}, },
 				bottom: { margin: { size: 0}, },
 				left: { margin: { size: 0}, },
 				right: { margin: { size: 0}, },
 			},
+			*/
 			x: {
 						requiredOptions: ['value'],
 						value: parentOpts.x.value,
@@ -2131,8 +2132,8 @@
 						isField: true,
 						_accessors: {
 							range: {
-								func: layout => [0, layout.svgWidth()],
-								posParams: ['layout'],
+								func: (layout,inset) => [0, inset.el.w(layout)],
+								posParams: ['layout','inset'],
 							},
 						}
 			},
@@ -2143,23 +2144,24 @@
 						isField: true,
 						_accessors: {
 							range: {
-								func: layout => [layout.svgHeight(), 0],
-								posParams: ['layout'],
+								func: (layout,inset) => [inset.el.h(layout), 0],
+								posParams: ['layout','inset'],
 							},
 						}
 			},
 			size: {
-						value: parentOpts.size.value,
+						value: parentOpts.size.value || parentOpts.size.defaultValue,
 						needsScale: true,
 						isField: true,
 						_accessors: {
 							range: {
 								func: () => [.5, 8],
 							},
-						}
+						},
+						//DEBUG: true,
 			},
 			color: {
-						value: parentOpts.color.value,
+						value: parentOpts.color.value || parentOpts.color.defaultValue,
 						needsScale: true,
 						isField: true,
 						scale: parentOpts.color.scale,
@@ -2171,7 +2173,7 @@
 						}
 			},
 			shape: {
-						value: parentOpts.shape.value,
+						value: parentOpts.shape.value || parentOpts.shape.defaultValue,
 						scale: parentOpts.shape.scale,
 						needsScale: true,
 						isField: true,
@@ -2189,7 +2191,7 @@
 						isField: true,
 			},
 		};
-		this.render = function (data, gEl, w, h) {
+		this.render = function (data, inset, layout) {
 			var self = this;
 			var cp = this.cp;
 			if (!data.length) return;
@@ -2197,22 +2199,23 @@
 				var series = dataToSeries(data, cp.series);
 			}
 
-			this.fields = _.filter(cp, opt=>opt instanceof util.Field);
-			var layout = this.layout = new util.SvgLayout(w, h, cp.layout || {});
+			this.fields = _.map(cp, (field, name) => {
+												if (field.isField)
+													cp[name] = new util.Field(name, field, cp);
+												return cp[name];
+											})
+											.filter(field=>field.isField);
 
 			this.fields.forEach(field => {
-				field.bindParams({data, series, allFields:cp, layout:this.layout});
+				field.bindParams({data, series, allFields:cp, layout, inset});
 			});
 
-			this.layout.positionZones();
-			this.layout.positionZones();
-
-			var border = gEl.addChild('border', {tag:'rect',classes:['border'],
+			var border = inset.el.gEl.addChild('border', {tag:'rect',classes:['inset-border'],
 													updateCb: function(selection,params) {
-														selection.attr('width', w)
-																			.attr('height', h);
+														selection.attr('width', inset.el.w(layout))
+																			.attr('height', inset.el.h(layout));
 													}});
-			var seriesGs = gEl.addChild('series',
+			var seriesGs = inset.el.gEl.addChild('series',
 																	{ tag: 'g',
 																		classes:['series'],
 																		data: series,
@@ -2250,9 +2253,6 @@
 										updateCb: function(selection, params, opts = {}) {
 											var {delay=0, duration=0, transition, cp=self.cp} = opts;
 											console.log('updating');
-
-											cp.x.axisEl.gEl.as('d3').transition().duration(duration).call(cp.x.axisEl.axis);
-											cp.y.axisEl.gEl.as('d3').transition().duration(duration).call(cp.y.axisEl.axis);
 
 											selection
 												//.selectAll(".dot")
