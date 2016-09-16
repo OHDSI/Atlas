@@ -1786,9 +1786,16 @@
 			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
 			this.cp = cp;
 
+/*
+			this.insetChart = new module.inset(cp, jqEventSpace);
+			this.insetG = this.svgEl.addChild('insetG',
+																					{ tag: 'g',
+																						classes:['insetG'],
+																						data: [null],
+																					});
+*/
 		});
 		this.updateData = function(data) {
-			//console.log('updateData');
 			var series = dataToSeries(data, this.cp.series);
 			this.latestData = data;
 
@@ -1811,6 +1818,7 @@
 			DEBUG && (window.cp = cp);
 			if (!cp.data.alreadyInSeries) {
 				var series = dataToSeries(data, cp.series);
+				this.data = data;
 				//var series = dataToSeries(data.slice(0,1000), cp.series);
 			}
 			if (!data.length) { // do this some more efficient way
@@ -2097,7 +2105,7 @@
 			}
 		}
 	};
-	module.inset = function (opts, parentOpts, jqEventSpace) {
+	module.inset = function (parentOpts, jqEventSpace) {
 		this.defaultOptions = {
 			data: {
 				alreadyInSeries: false,
@@ -2177,48 +2185,39 @@
 						isField: true,
 			},
 		};
-		this.chartSetup = _.once(function(target, w, h, cp) {
-			this.fields = _.filter(cp, opt=>opt instanceof util.Field);
-			this.divEl = new util.ResizableSvgContainer(target, [null], w, h, ['zoom-scatter']);
-			this.svgEl = this.divEl.child('svg')
-			var layout = this.layout = new util.SvgLayout(w, h, cp.layout);
-
-			cp.chart = cp.chart || {};
-			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
-			this.cp = cp;
-		});
-		this.render = function (data, target, w, h, cp) {
+		this.render = function (data, gEl, w, h, cp) {
 			var self = this;
 			if (!data.length) return;
 			if (!cp.data.alreadyInSeries) {
 				var series = dataToSeries(data, cp.series);
 			}
+
+			this.fields = _.filter(cp, opt=>opt instanceof util.Field);
+			var layout = this.layout = new util.SvgLayout(w, h, cp.layout);
+			cp.chart = cp.chart || {};
+			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
+			this.cp = cp;
+
 			this.fields.forEach(field => {
 				field.bindParams({data, series, allFields:cp, layout:this.layout});
 			});
-			var chart = cp.chart.chart.gEl.as('d3');
 
 			this.layout.positionZones();
 			this.layout.positionZones();
 
-			var seriesGs = cp.chart.chart.gEl
-												.addChild('series',
+			var seriesGs = gEl.addChild('series',
 																	{ tag: 'g',
 																		classes:['series'],
 																		data: series,
 																	});
 			seriesGs.addChild('dots',
-									{tag: 'path',
+									{	tag: 'path',
 										data: function(series) {
 											return series.values;
 										},
 										classes: ['dot'],
 										enterCb: function(selection,params) {
 											selection
-												.on('mouseover', focusTip.show)
-												.on('mouseout', focusTip.hide)
-												//.transition()
-												//.delay(1000).duration(1500)
 												.attr("d", function(d) {
 													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
 													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
@@ -2258,109 +2257,8 @@
 													var yVal = cp.y.scale(cp.y.accessors.value(d));
 													return "translate(" + xVal + "," + yVal + ")";
 												});
-
-											/*
-											selection
-												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
-													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessors.value(d)),
-																		xVal, // 0, //options.xValue(d),
-																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessors.value(d)));
-												})
-												.style("stroke", function (d) {
-													// calling with this so default can reach up to parent
-													// for series name
-													//return cp.color.scale(cp.series.value.call(this, d));
-													return cp.color.scale(cp.color.accessors.value(d));
-												})
-												//.transition()
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
-													return "translate(" + xVal + "," + yVal + ")";
-												})
-												*/
-										},
-										/* testing transitions on exit 
-										*/
-										exitCb: function(selection, params, transitionOpts={}) {
-											var {delay=0, duration=0, transition} = transitionOpts;
-											/*
-											if (!transition && (delay || transition))
-												transition = d3.transition().delay(delay).duration(duration);
-											*/
-
-											selection
-												//.transition(transition)
-												/*
-												//.transition().delay(delay).duration(duration)
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
-													return `translate(${xVal},${yVal}) scale(.8,.8)`;
-												})
-												*/
-												.style("stroke", "black")
-												//.transition(transition)
-												/*
-												.transition()
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
-													return `translate(${xVal},${yVal}) scale(5,4)`;
-												})
-												//.transition(transition)
-												.transition()
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
-													return `translate(${xVal},${yVal}) scale(0,0)`;
-													//return `scale(0,0)`;
-												})
-												.remove()
-												*/
 										},
 									});
-
-			/*
-			series = dataToSeries(data.slice(0,500), cp.series);
-			cp.chart.chart.gEl
-					.child('series')
-						.run({data: series, delay: 1500, duration: 2000});
-			*/
-
-			return;
-
-			if (cp.series.showLabel) {
-				series.append("text")
-					.datum(function (d) {
-						return {
-							name: d.name,
-							value: d.values[d.values.length - 1]
-						};
-					})
-					.attr("transform", function (d) {
-						return "translate(" + cp.x.scale(cp.x.accessors.value(d.value)) + "," + cp.y.scale(cp.y.accessors.value(d.value)) + ")";
-					})
-					.attr("x", 3)
-					.attr("dy", 2)
-					.style("font-size", "8px")
-					.text(function (d) {
-						return d.name;
-					});
-			}
-
-			if (cp.chart.labelIndexDate) {
-				chart.append("rect")
-					.attr("transform", function () {
-						return "translate(" + (indexPoints.x - 0.5) + "," + indexPoints.y + ")";
-					})
-					.attr("width", 1)
-					.attr("height", this.layout.svgHeight());
-			}
 		}
 	};
 

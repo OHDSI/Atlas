@@ -60,12 +60,11 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				self.chartOptions = opts;
 			});
 			self.ready = ko.computed(function() {
-				return self.chartData().length && self.chartObj() && self.domElement() &&
-								self.pillMode() === 'balance';
+				return self.chartData().length && self.domElement() && self.pillMode() === 'balance';
 			});
 			self.ready.subscribe(function(ready) {
 				if (ready) {
-					//console.log('drawing scatterplot');
+					if (!self.chartObj()) return;
 					self.chartObj().chartSetup(self.domElement(), 460, 150, self.chartOptions);
 					self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
 					//self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
