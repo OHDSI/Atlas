@@ -213,23 +213,27 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 								return 'Other';
 							}
 						}
-				},
+					},
 					{
 						'caption': 'Analysis',
 						'binding': function (o) {
 							return o.name.split(/[:,=]/)[0];
 						}
-				}
-
-			]
+					}
+				]
 			};
 
-			self.tabMode = ko.observable(
-									 util.getState('cohortCompTab') ||
-									 'specification'
-									);
+			var defaultTab = 'specification';
+			self.tabMode = ko.observable(util.getState('cohortCompTab') || defaultTab);
 			self.tabMode.subscribe(function(tab) {
+				if (util.getState('cohortCompTab') === tab)
+					return;
+				if (!util.hasState('cohortCompTab') && tab === defaultTab)
+					return;
 				util.setState('cohortCompTab', tab);
+			});
+			util.onStateChange('cohortCompTab', function(evt, {val} = {}) {
+				self.tabMode(val || defaultTab);
 			});
 
 			self.resultsMode = ko.observable('sources');

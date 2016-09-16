@@ -62,8 +62,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 								 'definition'
 								);
 		self.tabMode.subscribe(function(tab) {
-			console.log('setting tab state', tab);
-			// back button triggers two state changes, but that's probably ok
+			if (util.getState('cohortDefTab') === tab)
+				return;
+			if (!util.hasState('cohortDefTab') && tab === defaultTab)
+				return;
 			util.setState('cohortDefTab', tab);
 		});
 		util.onStateChange('cohortDefTab', function(evt, {val} = {}) {

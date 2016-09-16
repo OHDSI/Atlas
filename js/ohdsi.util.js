@@ -21,7 +21,7 @@
 *			  ChartAxisX extends ChartAxis
 *			  ChartChart extends SvgElement
 *			  ChartProps
-*			  getState, setState, deleteState, onStateChange
+*			  getState, setState, deleteState, hasState, onStateChange
 *			  Field
 *			  cachedAjax
 *			  storagePut
@@ -1379,6 +1379,10 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 		// otherwise use lodash _.get to extract path from state object
 		return _.get(state, path);
 	}
+	function hasState(path) {
+		var state = _getState();
+		return _.has(state, path);
+	}
 	function deleteState(path) {
 		var state = _getState();
 		_.unset(state, path);
@@ -1570,6 +1574,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	utilModule.getState = getState;
 	utilModule.setState = setState;
 	utilModule.deleteState = deleteState;
+	utilModule.hasState = hasState;
 	utilModule.onStateChange = onStateChange;
 	utilModule.Field = Field;
 	utilModule.tooltipBuilderForFields = tooltipBuilderForFields;
