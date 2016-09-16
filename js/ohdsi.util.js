@@ -21,7 +21,7 @@
 *			  ChartAxisX extends ChartAxis
 *			  ChartChart extends SvgElement
 *			  ChartProps
-*			  getState, setState, deleteState
+*			  getState, setState, deleteState, onStateChange
 *			  Field
 *			  cachedAjax
 *			  storagePut
@@ -1370,35 +1370,32 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	}
 
 	
-	// these functions associate state with a compressed stringified
-	// object in the querystring
+	// these functions associate state with a compressed stringified object in the querystring
 	function getState(path) {
 		var state = _getState();
+		// if path is empty, return whole state
 		if (typeof path === "undefined" || path === null || !path.length)
 			return state;
+		// otherwise use lodash _.get to extract path from state object
 		return _.get(state, path);
 	}
 	function deleteState(path) {
 		var state = _getState();
 		_.unset(state, path);
 		_setState(state);
+		stateChangeTrigger(path, val, 'delete', state);
 	}
 	function setState(path, val) {
 		if (typeof val === "undefined") {
+			// if only one arg, then it's the val, not the path; set whole state to that
 			val = path;
 			_setState(val);
 			return;
 		}
 		var state = _getState();
-		/*
-		_.set(state, path, val);
-		that didn't work because:
-			_.set({}, 'foo.5', true)  => {"foo":[null,null,null,null,null,true]}
-		but:
-			_.setWith({}, 'foo.5', true, Object)  => {"foo":{"5":true}}
-		*/
 		_.setWith(state, path, val, Object);
 		_setState(state);
+		stateChangeTrigger(path, val, 'set', state);
 	}
 	function _setState(state) {
 			var stateStr = JSON.stringify(state);
@@ -1407,21 +1404,105 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			var h = hash.replace(/\?.*/, '');
 			location.hash = h + '?' + compressed;
 	}
-	function _getState() {
-		if (!location.hash.length)
+	function _getState(hash = location.hash) {
+		//console.log(hash === location.hash, hash);
+		if (!hash.length)
 			return {};
 
-		var hashparts = location.hash.substr(1).split(/\?/);
-		//var state = { hashpath: hashparts[0] }; // do we want this for anything?
-		var state = { };
-		if (hashparts.length > 1) {
-			var compressedStateStr = hashparts[1];
-			var stateStr = LZString.decompressFromBase64(compressedStateStr);
-			var s = stateStr ? JSON.parse(stateStr) : {};
-			_.extend(state, s);
+		var [hashpath, querystring] = hash.substr(1).split(/\?/);
+		var state = {};
+		// state.hashpath = hashpath; // do we want this for anything?
+		// do we want a way to put stuff in the state that's not in the url?
+		if (querystring && querystring.length) {
+			try {
+				var compressedStateStr = querystring;
+				var stateStr = LZString.decompressFromBase64(compressedStateStr);
+				//console.log(stateStr, hash);
+				var s = stateStr ? JSON.parse(stateStr) : {};
+				_.extend(state, s);
+			} catch(e) {
+				console.error("can't parse querystring", e);
+			}
 		}
 		return state;
 	}
+
+	var stateEventSpace = {};
+	function onStateChange(path, listener, data) {
+		var evtName = JSON.stringify(path);
+		$(stateEventSpace).on(evtName, data, listener);
+	}
+	function stateChangeTrigger(path, val, change, state) {
+		// might want access to old state or old val, but not doing that right now
+		var evtName = JSON.stringify(path);
+		$(stateEventSpace).trigger(evtName, [{path, val, change, state}]);
+	}
+
+	// catch state changes from back button (probably better ways to do this)
+
+	// from https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onhashchange:
+	//let this snippet run before your hashchange event binding code
+	if(!window.HashChangeEvent)(function(){
+		var lastURL=document.URL;
+		window.addEventListener("hashchange",function(event){
+			Object.defineProperty(event,"oldURL",{enumerable:true,configurable:true,value:lastURL});
+			Object.defineProperty(event,"newURL",{enumerable:true,configurable:true,value:document.URL});
+			lastURL=document.URL;
+		});
+	}());
+
+	window.addEventListener('hashchange', function(evt) {
+		var changedPaths = getChangedPaths(
+												evt.oldURL.replace(/[^#]*#/,'#'),
+												evt.newURL.replace(/[^#]*#/,'#'));
+		changedPaths.forEach(c => stateChangeTrigger(c.path,c.val,c.change,c.state));
+	}, false);
+	function getChangedPaths(oldhash, newhash) {
+		var oldstate = _getState(oldhash);
+		var newstate = _getState(newhash);
+		var oldpaths = listpaths(oldstate).map(d=>d.join('.'));
+		var newpaths = listpaths(newstate).map(d=>d.join('.'));
+		var changes = {};
+		_.difference(oldpaths, newpaths).forEach(function(oldpath) {
+			changes[oldpath] = {
+				path: oldpath,
+				val: _.get(newstate, oldpath),
+				change: 'delete',
+				state: newstate,
+			};
+		});
+		_.difference(newpaths, oldpaths).forEach(function(newpath) {
+			var c = changes[newpath] = changes[newpath] || {};
+			c.path = newpath;
+			c.val = c.val || _.get(newstate, newpath);
+			c.change = 'add';
+			c.state ; c.state || newstate;
+		});
+		_.intersection(newpaths, oldpaths).forEach(function(sharedpath) {
+			if ( !_.eq(_.get(oldstate, sharedpath), _.get(newstate, sharedpath))) {
+				changes[sharedpath] = {
+					path: sharedpath,
+					val: _.get(newstate, sharedpath),
+					change: 'change',
+					state: newstate,
+				};
+			}
+		});
+		return _.values(changes);
+	}
+	function listpaths(obj, par=[]) {
+		return _.reduce(obj, 
+						function(paths, node, key, col) { 
+							var thispath = par.concat(key); 
+							//console.log(`looking at ${key} from ${par}: ${thispath}`);
+							paths.push(thispath); 
+							return _.isObject(node) ? 
+												paths.concat(listpaths(node,thispath)) : 
+												paths; 
+						}, []);
+	}
+
+
 	class Filter {
 		constructor(name, type, val) {
 			this.name = name;
@@ -1489,6 +1570,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	utilModule.getState = getState;
 	utilModule.setState = setState;
 	utilModule.deleteState = deleteState;
+	utilModule.onStateChange = onStateChange;
 	utilModule.Field = Field;
 	utilModule.tooltipBuilderForFields = tooltipBuilderForFields;
 	utilModule.cachedAjax = cachedAjax;

@@ -1786,14 +1786,12 @@
 			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
 			this.cp = cp;
 
-/*
 			this.insetChart = new module.inset(cp, jqEventSpace);
 			this.insetG = this.svgEl.addChild('insetG',
 																					{ tag: 'g',
 																						classes:['insetG'],
 																						data: [null],
 																					});
-*/
 		});
 		this.updateData = function(data) {
 			var series = dataToSeries(data, this.cp.series);
@@ -1811,6 +1809,12 @@
 					.child('series')
 						//.run({data: series});
 						.run({data: series, delay: 500, duration: 2000, cp: this.cp});
+
+			if (this.data.length !== data.length) {
+				this.insetChart.render( data, this.insetG, 
+																this.layout.w(), this.layout.h());
+
+			}
 		}
 		this.render = function (data, target, w, h, cp) {
 			var self = this;
@@ -2106,7 +2110,7 @@
 		}
 	};
 	module.inset = function (parentOpts, jqEventSpace) {
-		this.defaultOptions = {
+		this.cp = {
 			data: {
 				alreadyInSeries: false,
 			},
@@ -2185,18 +2189,16 @@
 						isField: true,
 			},
 		};
-		this.render = function (data, gEl, w, h, cp) {
+		this.render = function (data, gEl, w, h) {
 			var self = this;
+			var cp = this.cp;
 			if (!data.length) return;
 			if (!cp.data.alreadyInSeries) {
 				var series = dataToSeries(data, cp.series);
 			}
 
 			this.fields = _.filter(cp, opt=>opt instanceof util.Field);
-			var layout = this.layout = new util.SvgLayout(w, h, cp.layout);
-			cp.chart = cp.chart || {};
-			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
-			this.cp = cp;
+			var layout = this.layout = new util.SvgLayout(w, h, cp.layout || {});
 
 			this.fields.forEach(field => {
 				field.bindParams({data, series, allFields:cp, layout:this.layout});
@@ -2205,6 +2207,11 @@
 			this.layout.positionZones();
 			this.layout.positionZones();
 
+			var border = gEl.addChild('border', {tag:'rect',classes:['border'],
+													updateCb: function(selection,params) {
+														selection.attr('width', w)
+																			.attr('height', h);
+													}});
 			var seriesGs = gEl.addChild('series',
 																	{ tag: 'g',
 																		classes:['series'],

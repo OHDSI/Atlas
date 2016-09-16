@@ -224,7 +224,14 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			]
 			};
 
-			self.tabMode = ko.observable('specification');
+			self.tabMode = ko.observable(
+									 util.getState('cohortCompTab') ||
+									 'specification'
+									);
+			self.tabMode.subscribe(function(tab) {
+				util.setState('cohortCompTab', tab);
+			});
+
 			self.resultsMode = ko.observable('sources');
 			self.pillMode = ko.observable('covariates');
 
