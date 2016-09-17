@@ -126,7 +126,7 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'lz-string', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll'], function (ko, app, config, LZString) {
+	requirejs(['knockout', 'app', 'appConfig', 'ohdsi.util', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll'], function (ko, app, config, util) {
 		$('#splash').fadeIn();
 		var pageModel = new app();
 		window.pageModel = pageModel;
@@ -137,122 +137,137 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		var vocabularyPriority = 0;
 		var densityPriority = 0;
 
-		// initialize all service information asynchronously
-		$.each(config.services, function (serviceIndex, service) {
-			service.sources = [];
-			var servicePromise = $.Deferred();
-			pageModel.initPromises.push(servicePromise);
+		/*
+		if (util.storageExists('services', sessionStorage)) {
+			console.warn("fetching services from sessionStorage. if anything went wrong in constructing services you'll need to delete sessionStorage.services");
+			config.services = util.storageGet('services', sessionStorage);
+		} else {
+		*/
+			// initialize all service information asynchronously
+			$.each(config.services, function (serviceIndex, service) {
+				service.sources = [];
+				var servicePromise = $.Deferred();
+				pageModel.initPromises.push(servicePromise);
 
-			$.ajax({
-				url: service.url + 'source/sources',
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (sources) {
-					service.available = true;
-					var completedSources = 0;
+				$.ajax({
+					url: service.url + 'source/sources',
+					method: 'GET',
+					contentType: 'application/json',
+					success: function (sources) {
+						service.available = true;
+						var completedSources = 0;
 
-					$.each(sources, function (sourceIndex, source) {
-						source.hasVocabulary = false;
-						source.hasEvidence = false;
-						source.hasResults = false;
-						source.hasCDM = false;
-						source.vocabularyUrl = '';
-						source.evidenceUrl = '';
-						source.resultsUrl = '';
-						source.error = '';
+						$.each(sources, function (sourceIndex, source) {
+							source.hasVocabulary = false;
+							source.hasEvidence = false;
+							source.hasResults = false;
+							source.hasCDM = false;
+							source.vocabularyUrl = '';
+							source.evidenceUrl = '';
+							source.resultsUrl = '';
+							source.error = '';
 
-						source.initialized = true;
-						for (var d = 0; d < source.daimons.length; d++) {
-							var daimon = source.daimons[d];
+							source.initialized = true;
+							for (var d = 0; d < source.daimons.length; d++) {
+								var daimon = source.daimons[d];
 
-							// evaluate vocabulary daimons
-							if (daimon.daimonType == 'Vocabulary') {
-								source.hasVocabulary = true;
-								source.vocabularyUrl = service.url + source.sourceKey + '/vocabulary/';
-								if (daimon.priority >= vocabularyPriority) {
-									vocabularyPriority = daimon.priority;
-									pageModel.vocabularyUrl(source.vocabularyUrl);
-								}
-							}
-
-							// evaluate evidence daimons
-							if (daimon.daimonType == 'Evidence') {
-								source.hasEvidence = true;
-								source.evidenceUrl = service.url + source.sourceKey + '/evidence/';
-								if (daimon.priority >= evidencePriority) {
-									evidencePriority = daimon.priority;
-									pageModel.evidenceUrl(source.evidenceUrl);
-								}
-							}
-
-							// evaluate results daimons
-							if (daimon.daimonType == 'Results') {
-								source.hasResults = true;
-								source.resultsUrl = service.url + source.sourceKey + '/cdmresults/';
-								if (daimon.priority >= densityPriority) {
-									densityPriority = daimon.priority;
-									pageModel.resultsUrl(source.resultsUrl);
-								}
-							}
-
-							// evaluate cdm daimons
-							if (daimon.daimonType == 'CDM') {
-								source.hasCDM = true;
-							}
-						}
-
-						service.sources.push(source);
-
-						if (source.hasVocabulary) {
-							$.ajax({
-								url: service.url + source.sourceKey + '/vocabulary/info',
-								timeout: 20000,
-								method: 'GET',
-								contentType: 'application/json',
-								success: function (info) {
-									completedSources++;
-									source.version = info.version;
-									source.dialect = info.dialect;
-
-									if (completedSources == sources.length) {
-										servicePromise.resolve();
-									}
-								},
-								error: function (err) {
-									completedSources++;
-									pageModel.initializationErrors++;
-									source.version = 'unknown';
-									source.dialect = 'unknown';
-									source.url = service.url + source.sourceKey + '/';
-									if (completedSources == sources.length) {
-										servicePromise.resolve();
+								// evaluate vocabulary daimons
+								if (daimon.daimonType == 'Vocabulary') {
+									source.hasVocabulary = true;
+									source.vocabularyUrl = service.url + source.sourceKey + '/vocabulary/';
+									if (daimon.priority >= vocabularyPriority) {
+										vocabularyPriority = daimon.priority;
+										pageModel.vocabularyUrl(source.vocabularyUrl);
 									}
 								}
-							});
-						} else {
-							completedSources++;
-							source.version = 'not available'
-							if (completedSources == sources.length) {
-								servicePromise.resolve();
+
+								// evaluate evidence daimons
+								if (daimon.daimonType == 'Evidence') {
+									source.hasEvidence = true;
+									source.evidenceUrl = service.url + source.sourceKey + '/evidence/';
+									if (daimon.priority >= evidencePriority) {
+										evidencePriority = daimon.priority;
+										pageModel.evidenceUrl(source.evidenceUrl);
+									}
+								}
+
+								// evaluate results daimons
+								if (daimon.daimonType == 'Results') {
+									source.hasResults = true;
+									source.resultsUrl = service.url + source.sourceKey + '/cdmresults/';
+									if (daimon.priority >= densityPriority) {
+										densityPriority = daimon.priority;
+										pageModel.resultsUrl(source.resultsUrl);
+									}
+								}
+
+								// evaluate cdm daimons
+								if (daimon.daimonType == 'CDM') {
+									source.hasCDM = true;
+								}
 							}
-						}
-					});
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					service.available = false;
-					service.xhr = xhr;
-					service.thrownError = thrownError;
 
-					pageModel.appInitializationFailed(true);
-					pageModel.currentView('configure');
+							service.sources.push(source);
 
-					servicePromise.resolve();
-				}
+							if (source.hasVocabulary) {
+								$.ajax({
+									url: service.url + source.sourceKey + '/vocabulary/info',
+									timeout: 20000,
+									method: 'GET',
+									contentType: 'application/json',
+									success: function (info) {
+										completedSources++;
+										source.version = info.version;
+										source.dialect = info.dialect;
+
+										if (completedSources == sources.length) {
+											servicePromise.resolve();
+										}
+									},
+									error: function (err) {
+										completedSources++;
+										pageModel.initializationErrors++;
+										source.version = 'unknown';
+										source.dialect = 'unknown';
+										source.url = service.url + source.sourceKey + '/';
+										if (completedSources == sources.length) {
+											servicePromise.resolve();
+										}
+									}
+								});
+							} else {
+								completedSources++;
+								source.version = 'not available'
+								if (completedSources == sources.length) {
+									servicePromise.resolve();
+								}
+							}
+						});
+					},
+					error: function (xhr, ajaxOptions, thrownError) {
+						service.available = false;
+						service.xhr = xhr;
+						service.thrownError = thrownError;
+
+						pageModel.appInitializationFailed(true);
+						pageModel.currentView('configure');
+
+						servicePromise.resolve();
+					}
+				});
 			});
-		});
+		/*
+		}
+		*/
 
 		$.when.apply($, pageModel.initPromises).done(function () {
 			pageModel.initComplete();
+			/*
+			if (!util.storageExists('services', sessionStorage)) {
+				console.warn("saving services to sessionStorage. if anything went wrong in constructing services you'll need to delete sessionStorage.services");
+				util.storagePut('services', config.services, sessionStorage);
+			}
+			*/
 		});
 
 		pageModel.currentView.subscribe(function (newView) {
