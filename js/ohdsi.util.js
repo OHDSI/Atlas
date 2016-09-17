@@ -27,8 +27,9 @@
 *			  storagePut
 *			  storageExists
 *			  storageGet
+*				SharedCrossfilter
 */
-define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString, _) {
+define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], function($,ko, LZString, _, crossfilter) {
 
 	var DEBUG = true;
 	
@@ -1264,7 +1265,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 		var state = _getState();
 		_.unset(state, path);
 		_setState(state);
-		stateChangeTrigger(path, val, 'delete', state);
+		stateChangeTrigger(path, null, 'delete', state);
 	}
 	function setState(path, val) {
 		if (typeof val === "undefined") {
@@ -1384,21 +1385,6 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 						}, []);
 	}
 
-
-	class Filter {
-		constructor(name, type, val) {
-			this.name = name;
-		}
-	}
-	class CrossfilterFilter {
-		constructor(name, {dimension, accessor, filter, crossfilter} = {}) {
-			this.name = name;
-			this.dimension = dimension;
-			this.accessor = accessor;
-			this.filter = filter;
-			this.crossfilter = crossfilter;
-		}
-	}
 	//var ajaxCache = {}; // only save till reload
 	//var ajaxCache = localStorage; // save indefinitely
 	var ajaxCache = sessionStorage; // save for session
@@ -1429,6 +1415,114 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	function storageGet(key, store = sessionStorage) {
 		return JSON.parse(LZString.decompressFromBase64(store[key]));
 	}
+	class SharedCrossfilter {
+		constructor(recs) {
+			this.recs = recs;
+			this.cf = crossfilter(this.recs);
+			this.dimFields = {};
+			this.groupAll = this.cf.groupAll();
+			this.groupAll.reduce(...reduceToRecs);
+			/* 
+					this.dimFields :
+						{
+							fieldName1: {
+								field: { // this is what gets passed in
+									name: fieldName1,
+									accessor: function(d) { ... },
+								},
+								cfDim: < result of: this.cf.dimension(field.accessor) >,
+								groupings: {}, // allow multiple (named) groupings
+							},
+							...
+						}
+			 */
+		}
+		filteredRecs() {
+			return this.groupAll.value();
+		}
+		replaceData(recs) {
+			var dummy = this.cf.dimension(d=>d);
+			dummy.filter(()=>false);
+			this.cf.remove();
+			dummy.dispose();
+			this.cf.add(recs);
+			$(this).trigger('newData', [{scf:this}]);
+		}
+		dimField(name, field, replace) {
+			// fields can be Field objects
+			// at minimum they need 'name' and 'accessor' properties
+			if (typeof field === "undefined") {
+				return this.dimFields[name] && this.dimFields[name].field;
+			}
+			if (_.has(this.dimFields, name)) {
+				var dimField = this.dimFields[name];
+				if (dimField.field === field)
+					return dimField.field;
+				if (typeof replace === "undefined") {
+					throw new Error("trying to clobber dimension without replace=true");
+				}
+				if (!replace) {
+					console.warn(`keeping old dimField ${name}`);
+					return dimField.field;
+				}
+			}
+			this.dimFields[name] = {
+				field,
+				cfDim: this.cf.dimension(field.accessor),
+				groupings: {},
+			};
+			return this.dimFields[name].field;
+		}
+		filter(name, func) {
+			if (!_.has(this.dimFields, name))
+				throw new Error(`no dimField ${name}`);
+
+			var dimField = this.dimFields[name];
+			if (typeof func === "undefined") {
+				return dimField.filter;
+			}
+			dimField.filter = func; // send null func to remove filter
+			dimField.cfDim.filter(func);
+			// what if setting filter redundantly? still trigger filter change?
+			$(this).trigger('filter', [{dimField}]);
+		}
+		grouping(dimName, groupingName, func, reduceFuncs=reduceToRecs) {
+			if (!_.has(this.dimFields, name))
+				throw new Error(`no dimField ${name}`);
+
+			var dimField = this.dimFields[name];
+			if (typeof func === "undefined") {
+				return dimField.groupings[groupingName];
+			}
+			var grouping = dimField.groupings[groupingName] = {
+				name: groupingName,
+				func,
+				cfDimGroup: dimField.cfDim.group(func),
+			};
+			// default to reduceToRecs instead of normal crossfilter behavior that
+			//		reduces to counts
+			grouping.cfDimGroup.reduce(...reduceToRecs);
+			return grouping;
+		}
+		group(dimName, groupingName = 'default') {
+			if (!_.has(this.dimFields, dimName))
+				throw new Error(`no dimField ${dimName}`);
+
+			var dimField = this.dimFields[dimName];
+
+			if (groupingName === 'default' && !dimField.groupings.default) {
+				dimField.groupings.default =
+					{
+						name: 'default',
+						cfDimGroup: dimField.cfDim.group(),
+					};
+				dimField.groupings.default.cfDimGroup.reduce(...reduceToRecs);
+			}
+
+			return dimField.groupings[groupingName].cfDimGroup;
+		}
+	}
+	var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
 
 	// END module functions
 	
@@ -1461,6 +1555,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	utilModule.storagePut = storagePut;
 	utilModule.storageExists = storageExists;
 	utilModule.storageGet = storageGet;
+	utilModule.SharedCrossfilter = SharedCrossfilter;
 	
 	if (DEBUG) {
 		window.util = utilModule;

@@ -2,8 +2,8 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util', 
 				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options', 
 				'cohortbuilder/CohortDefinition', 'vocabularyprovider', 
-				'conceptsetbuilder/InputTypes/ConceptSet', 'nvd3', 
-				'databindings/d3ChartBinding','components/faceted-datatable-cf',
+				'conceptsetbuilder/InputTypes/ConceptSet', 
+				'nvd3', 'databindings/d3ChartBinding','components/faceted-datatable-cf',
 				'css!./styles/nv.d3.min.css'],
 	function ($, ko, view, _, cohortDefinitionAPI, config, ohdsiUtil, 
 						ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI, 
@@ -39,6 +39,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.chartObj = ko.observable();
 			self.domElement = ko.observable();
 			self.chartData = ko.observableArray(self.chartData && self.chartData() || []);
+			self.sharedCrossfilter = ko.observable(new ohdsiUtil.SharedCrossfilter([]));
+			self.chartData.subscribe(function(recs) {
+				self.sharedCrossfilter().replaceData(recs);
+			});
+			$(self.sharedCrossfilter()).on('filter newData', function(evt, stuff) {
+				console.log("something happened to sharedCrossfilter", stuff);
+			});
 			self.chartResolution = ko.observable(); // junk
 			self.chartOptions = chartOptions();
 			self.jqEventSpace = params.jqEventSpace || {};
@@ -73,9 +80,29 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				}
 			});
 			//$(self.jqEventSpace).on('filter', filterChange);
-			$(self.jqEventSpace).on('brush', brushEvent);
-			$(self.jqEventSpace).on('filteredRecs', 
+			$(self.jqEventSpace).on('brush', function(evt, brush, x, y) {
+					//console.log('brush event', arguments);
+					var [[x1,y1],[x2,y2]] = brush.extent();
+					if (brush.empty()) {
+						util.deleteState('filters.brush');
+					} else {
+						var xyFilt = d => {
+																return x.accessors.value(d) >= x1 &&
+																			 x.accessors.value(d) <= x2 &&
+																			 y.accessors.value(d) >= y1 &&
+																			 x.accessors.value(d) <= y2;
+															};
+						util.setState('filters.brush', xyFilt);
+					}
+					$(self.jqEventSpace).trigger('filter', {filterName:'xy', func:xyFilt});
+					// as of now, 'filter' trigger is caught by faceted-datatable-cf, which
+					// updates facets and triggers 'filteredRecs', which is caught below and
+					// causes updateData... need to fix this
+				});
+			$(self.sharedCrossfilter()).on('filteredRecs', 
 				function(evt, {source, recs} = {}) {
+					console.warn("FIX this behavior!");
+					return;
 					if (self.chartData() && recs.length < self.chartData().length
 							|| self.chartObj() && self.chartObj().latestData !== recs
 						 ) {
@@ -84,21 +111,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 									self.chartObj().updateData(recs);
 								}
 				});
-				function brushEvent(evt, brush, x, y) {
-					//console.log('brush event', arguments);
-					var [[x1,y1],[x2,y2]] = brush.extent();
-					var xyFilt = brush.empty() ?
-						null :
-						(d => {
-							return x.accessors.value(d) >= x1 &&
-										 x.accessors.value(d) <= x2 &&
-										 y.accessors.value(d) >= y1 &&
-										 x.accessors.value(d) <= y2;
-						});
-					util.setState('filters.brush', xyFilt);
-					$(self.jqEventSpace).trigger('filter', 
-										{filterName:'xy', func:xyFilt});
-				}
 			/*
 			function dataSetup(raw) {
 				var points = raw.map(d => ({
