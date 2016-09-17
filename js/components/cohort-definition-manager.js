@@ -61,6 +61,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 								 util.getState('cohortDefTab') ||
 								 'definition'
 								);
+		var defaultTab = 'definition';
 		self.tabMode.subscribe(function(tab) {
 			if (util.getState('cohortDefTab') === tab)
 				return;
