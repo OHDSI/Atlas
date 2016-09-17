@@ -21,10 +21,15 @@
 *			  ChartAxisX extends ChartAxis
 *			  ChartChart extends SvgElement
 *			  ChartProps
-*			  getState, setState, deleteState
+*			  getState, setState, deleteState, hasState, onStateChange
 *			  Field
+*			  cachedAjax
+*			  storagePut
+*			  storageExists
+*			  storageGet
+*				SharedCrossfilter
 */
-define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString, _) {
+define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], function($,ko, LZString, _, crossfilter) {
 
 	var DEBUG = true;
 	
@@ -285,7 +290,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			var {delay=0, duration=0} = transitionOpts;
 
 			if (exit) {
-				if (selection.exit().size()) console.log(`exiting ${self.name}`);
+				//if (selection.exit().size()) console.log(`exiting ${self.name}`);
 				selection.exit()
 						.transition()
 						.delay(delay).duration(duration)
@@ -757,6 +762,24 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 								`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
 		}
 	}
+	class ChartInset extends SvgElement {
+		emptyG() { return true; }
+		cssClasses() { // classes needed on g element
+			return ['insetG'];
+		}
+		zone() { return 'top'; }
+		subzone() { return 'inset'; }
+		tagName() { return 'g'; }
+		sizedim() { return 0; }
+		updatePosition(selection, params, opts) {
+			selection.attr('transform', 
+				`translate(${params.layout.w(params.layout) - this.w(params.layout)},0)`);
+		}
+		// could hold on to original layout instead of passing in as param...maybe
+		//   not sure if it would get stale
+		w(layout) { return layout.w() * 0.15; }
+		h(layout) { return layout.h() * 0.15; }
+	}
 	class ChartLabel extends SvgElement {
 		tagName() { return 'text'; }
 	}
@@ -863,7 +886,9 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			this.axis && selection.call(this.axis);
 		}
 	}
-	/* ChartProps
+	/* ChartProps OBSOLETE, using _.merge now
+				some of this documentation is worth keep and putting in new places
+				even though it describes a class that is no longer present
 	 * The chart class should have default options
 	 * which can be overridden when instantiating the chart.
 	 * All options are grouped into named chartProps, like:
@@ -968,150 +993,6 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	 * Tooltip content will only be generated for props where prop.tooltipOrder 
 	 * is provided (it should be a non-zero number.)
 	 */
-	class ChartPropsJUNK {
-		constructor(defaults, explicit) {
-			//this.props = {};
-			_.union(_.keys(defaults), _.keys(explicit)).forEach(name => {
-								var prop = $.extend({}, defaults[name], explicit[name]);
-								prop.name = name;
-								prop.label = d3.functor(prop.label || name);
-								if (prop.needsValueFunc) {
-									prop.ac = new AccessorGenerator({
-																	func: prop.value,
-																	propName: (typeof prop.value === "string" || 
-																						 isFinite(prop.value)) ? prop.value
-																						 : name,
-																	posParams: ['i', 'j', 'chartProps',
-																							'data', 'series', 'chartPropName'],
-																});
-									prop.accessor = prop.ac.generate();
-									/*
-									if (typeof prop.value === "string" || isFinite(prop.value)) {
-										prop.value = obj => obj[prop.value];
-									} else if (!prop.value) {
-										var label = prop.label || d3.functor(name);
-										//prop.value = obj => (label in obj) ? obj[label] : label;
-										prop.value = label;
-									} else if (typeof prop.value === "function") {
-									} else {
-										throw new Error("can't figure out how to make value accessor");
-									}
-									prop._originalValueAccessor = prop.value;
-									*/
-									// add params to call below when data is known
-								}
-								if (prop.needsScale) { // if it needsScale, it must also needsValueFunc
-									prop.scale = prop.scale || d3.scale.linear();
-									// domainFunc should be called with args: data,series
-									// domainFunc will receive args:
-									//		data, series, props, propname
-									prop.domainFunc = prop.domainFunc ||
-																		prop.domain && d3.functor(prop.domain) ||
-																		((data,series,props,name) => {
-																			var localProp = props[name]; 
-																			// can't remember why or if props[name] would
-																			// be different from prop
-																			localProp.ac.bindParam('chartProps', this);
-																			localProp.ac.bindParam('data', data);
-																			localProp.ac.bindParam('series', series);
-																			localProp.ac.bindParam('chartPropName', name);
-																			var accessor = localProp.ac.generate();
-																			/*
-																			return d3.extent(data.map(
-																					_.partial(props[name]._originalValueAccessor, 
-																							 _, _, _, // d, i, undefined,
-																							this, data, series, name)))
-																			*/
-																			return d3.extent(data.map(accessor));
-																		})
-									//prop._origDomainFunc = prop.domainFunc;
-									prop.rangeFunc = prop.rangeFunc ||
-																		prop.range && d3.functor(prop.range) ||
-																		function() {throw new Error(`no range for prop ${name}`)};
-								}
-								//this.props[name] = prop;
-								this[name] = prop;
-							});
-			//this.d3dispatch = d3.dispatch.apply(null, _.union(defaults.dispatchEvents, explicit.additionalDispatchEvents));
-		}
-		updateDomains(data, series) {
-			_.each(this, (prop, name) => {
-											if (prop.needsScale) {
-												prop.scale.domain(
-													prop.domainFunc(data, series, this, name));
-												// brushing may temporaryily change the scale domain
-												// hold on to the domain as calculated from the data
-												prop.domain = prop.scale.domain();
-											}
-										});
-		}
-		updateRanges(layout) {
-			_.each(this, (prop, name) => {
-											if (prop.needsScale) {
-												var range = prop.rangeFunc(layout, this[name], this, name);
-												if (range) {
-													prop.scale.range(range)
-													prop.range = range;
-												}
-											}
-										});
-		}
-		updateAccessors(data, series) {
-			_.each(this, (prop, name) => {
-											if (prop.needsValueFunc) {
-												/*
-												prop.value = _.partial(prop._originalValueAccessor, 
-																							 _, _, _, // d, i, j,
-																							this, data, series, name);
-												*/
-												prop.ac.bindParam('chartProps', this);
-												prop.ac.bindParam('data', data);
-												prop.ac.bindParam('series', series);
-												prop.ac.bindParam('chartPropName', name);
-												prop.accessor = prop.ac.generate();
-											}
-										});
-		}
-		/*
-		 * for value or tooltip functions that make use of aggregation over data or series
-		 * there should be a way to perform the aggregation calculations only once
-		 * rather than on every call to the value/tooltip func (actually, for tooltips
-		 * it doesn't matter too much since only one point gets processed at a time)
-		 */
-		tooltipSetup(data, series) {
-			this.tooltip = this.tooltip || { funcs: [] };
-			this.tooltip.funcs = 
-				_.chain(this)
-					.filter('tooltipOrder')
-					.sortBy('tooltipOrder')
-					.map((prop) => {
-						var func = prop.tooltipFunc ||
-											 function(d,i,j) {
-												 return {
-													 value: prop.accessor(d,i,j),
-													 name: prop.label(),
-													 /*
-													 value: _.partial(prop._originalValueAccessor, 
-																	_, _, _, // d, i, j,
-																	this, data, series, name)(d,i,j),
-													 //name: prop.label(),
-													 name: _.partial(prop.label, 
-																	_, _, _, // d, i, j,
-																	this, data, series, name)(d,i,j)
-													*/
-												 };
-											 };
-						return func;
-					})
-					.value();
-			this.tooltip.builder = // not configurable but could be, but would be
-														 // func that knows what to do with a bunch of funcs
-				(d, i, j) => this.tooltip.funcs
-													.map(func => func(d,i,j,this,data,series,name))
-													.map(o => `${o.name}: ${o.value}<br/>`)
-													.join('')
-		}
-	}
 
 
 	/*
@@ -1189,6 +1070,7 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	 */
 	class Field {
 		constructor(name, opts = {}, allFields) {
+			if (opts.DEBUG) debugger;
 			this.name = name;
 			_.extend(this, opts);
 
@@ -1244,6 +1126,11 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			this.allFields = allFields;
 		}
 		get accessors() {
+			if (!this.__accessors) {
+				console.warn(`using accessors for ${this.name} before explicitly binding parameters. Trying to bind now.`);
+				// probably not such a good idea :
+				// this.bindParams({allFields: this.allFields}); // at least allFields should be available
+			}
 			return this.__accessors;
 		}
 		bindParams(params) {
@@ -1259,20 +1146,9 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 				this.scale.range(this.accessors.range());
 			}
 		}
-
-		/*
-												prop.ac.bindParam('chartProps', this);
-												prop.ac.bindParam('data', data);
-												prop.ac.bindParam('series', series);
-												prop.ac.bindParam('chartPropName', name);
-												prop.accessor = prop.ac.generate();
-		get accessor() {
-			return _.accessor;
-		}
-		*/
 	}
 	/*
-	class ProxyField {
+	class ProxyField { // good idea but hard to implement
 		constructor(name, opts = {}, proxyFor, allFields) {
 			this.parentField = new Field(name, opts, allFields);
 			this.baseField = proxyFor;
@@ -1377,35 +1253,36 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	}
 
 	
-	// these functions associate state with a compressed stringified
-	// object in the querystring
+	// these functions associate state with a compressed stringified object in the querystring
 	function getState(path) {
 		var state = _getState();
+		// if path is empty, return whole state
 		if (typeof path === "undefined" || path === null || !path.length)
 			return state;
+		// otherwise use lodash _.get to extract path from state object
 		return _.get(state, path);
+	}
+	function hasState(path) {
+		var state = _getState();
+		return _.has(state, path);
 	}
 	function deleteState(path) {
 		var state = _getState();
 		_.unset(state, path);
 		_setState(state);
+		stateChangeTrigger(path, null, 'delete', state);
 	}
 	function setState(path, val) {
 		if (typeof val === "undefined") {
+			// if only one arg, then it's the val, not the path; set whole state to that
 			val = path;
 			_setState(val);
 			return;
 		}
 		var state = _getState();
-		/*
-		_.set(state, path, val);
-		that didn't work because:
-			_.set({}, 'foo.5', true)  => {"foo":[null,null,null,null,null,true]}
-		but:
-			_.setWith({}, 'foo.5', true, Object)  => {"foo":{"5":true}}
-		*/
 		_.setWith(state, path, val, Object);
 		_setState(state);
+		stateChangeTrigger(path, val, 'set', state);
 	}
 	function _setState(state) {
 			var stateStr = JSON.stringify(state);
@@ -1414,35 +1291,246 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 			var h = hash.replace(/\?.*/, '');
 			location.hash = h + '?' + compressed;
 	}
-	function _getState() {
-		if (!location.hash.length)
+	function _getState(hash = location.hash) {
+		//console.log(hash === location.hash, hash);
+		if (!hash.length)
 			return {};
 
-		var hashparts = location.hash.substr(1).split(/\?/);
-		//var state = { hashpath: hashparts[0] };
-		var state = { };
-		if (hashparts.length > 1) {
-			var compressedStateStr = hashparts[1];
-			var stateStr = LZString.decompressFromBase64(compressedStateStr);
-			var s = stateStr ? JSON.parse(stateStr) : {};
-			_.extend(state, s);
+		var [hashpath, querystring] = hash.substr(1).split(/\?/);
+		var state = {};
+		// state.hashpath = hashpath; // do we want this for anything?
+		// do we want a way to put stuff in the state that's not in the url?
+		if (querystring && querystring.length) {
+			try {
+				var compressedStateStr = querystring;
+				var stateStr = LZString.decompressFromBase64(compressedStateStr);
+				//console.log(stateStr, hash);
+				var s = stateStr ? JSON.parse(stateStr) : {};
+				_.extend(state, s);
+			} catch(e) {
+				console.error("can't parse querystring", e);
+			}
 		}
 		return state;
 	}
-	class Filter {
-		constructor(name, type, val) {
-			this.name = name;
+
+	var stateEventSpace = {};
+	function onStateChange(path, listener, data) {
+		var evtName = JSON.stringify(path);
+		$(stateEventSpace).on(evtName, data, listener);
+	}
+	function stateChangeTrigger(path, val, change, state) {
+		// might want access to old state or old val, but not doing that right now
+		var evtName = JSON.stringify(path);
+		$(stateEventSpace).trigger(evtName, [{path, val, change, state}]);
+	}
+
+	// catch state changes from back button (probably better ways to do this)
+
+	// from https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onhashchange:
+	//let this snippet run before your hashchange event binding code
+	if(!window.HashChangeEvent)(function(){
+		var lastURL=document.URL;
+		window.addEventListener("hashchange",function(event){
+			Object.defineProperty(event,"oldURL",{enumerable:true,configurable:true,value:lastURL});
+			Object.defineProperty(event,"newURL",{enumerable:true,configurable:true,value:document.URL});
+			lastURL=document.URL;
+		});
+	}());
+
+	window.addEventListener('hashchange', function(evt) {
+		var changedPaths = getChangedPaths(
+												evt.oldURL.replace(/[^#]*#/,'#'),
+												evt.newURL.replace(/[^#]*#/,'#'));
+		changedPaths.forEach(c => stateChangeTrigger(c.path,c.val,c.change,c.state));
+	}, false);
+	function getChangedPaths(oldhash, newhash) {
+		var oldstate = _getState(oldhash);
+		var newstate = _getState(newhash);
+		var oldpaths = listpaths(oldstate).map(d=>d.join('.'));
+		var newpaths = listpaths(newstate).map(d=>d.join('.'));
+		//console.log(oldpaths, newpaths);
+		var changes = {};
+		_.difference(oldpaths, newpaths).forEach(function(oldpath) {
+			changes[oldpath] = {
+				path: oldpath,
+				val: _.get(newstate, oldpath),
+				change: 'delete',
+				state: newstate,
+			};
+		});
+		_.difference(newpaths, oldpaths).forEach(function(newpath) {
+			var c = changes[newpath] = changes[newpath] || {};
+			c.path = newpath;
+			c.val = c.val || _.get(newstate, newpath);
+			c.change = 'add';
+			c.state ; c.state || newstate;
+		});
+		_.intersection(newpaths, oldpaths).forEach(function(sharedpath) {
+			if ( !_.eq(_.get(oldstate, sharedpath), _.get(newstate, sharedpath))) {
+				changes[sharedpath] = {
+					path: sharedpath,
+					val: _.get(newstate, sharedpath),
+					change: 'change',
+					state: newstate,
+				};
+			}
+		});
+		return _.values(changes);
+	}
+	function listpaths(obj, par=[]) {
+		return _.reduce(obj, 
+						function(paths, node, key, col) { 
+							var thispath = par.concat(key); 
+							//console.log(`looking at ${key} from ${par}: ${thispath}`);
+							paths.push(thispath); 
+							return _.isObject(node) ? 
+												paths.concat(listpaths(node,thispath)) : 
+												paths; 
+						}, []);
+	}
+
+	//var ajaxCache = {}; // only save till reload
+	//var ajaxCache = localStorage; // save indefinitely
+	var ajaxCache = sessionStorage; // save for session
+	function cachedAjax(opts) {
+		var key = JSON.stringify(opts);
+		if (!storageExists(key, ajaxCache)) {
+			var ajax = $.ajax(opts);
+			ajax.then(function(results) {
+				storagePut(key, results, ajaxCache);
+			});
+			return ajax;
+		} else {
+			var results = storageGet(key, ajaxCache);
+			var deferred = $.Deferred();
+			if (opts.success) {
+				opts.success(results);
+			}
+			deferred.resolve(results);
+			return deferred;
 		}
 	}
-	class CrossfilterFilter {
-		constructor(name, {dimension, accessor, filter, crossfilter} = {}) {
-			this.name = name;
-			this.dimension = dimension;
-			this.accessor = accessor;
-			this.filter = filter;
-			this.crossfilter = crossfilter;
+	function storagePut(key, val, store = sessionStorage) {
+		store[key] = LZString.compressToBase64(JSON.stringify(val));
+	}
+	function storageExists(key, store = sessionStorage) {
+		return _.has(store, key);
+	}
+	function storageGet(key, store = sessionStorage) {
+		return JSON.parse(LZString.decompressFromBase64(store[key]));
+	}
+	class SharedCrossfilter {
+		constructor(recs) {
+			this.recs = recs;
+			this.cf = crossfilter(this.recs);
+			this.dimFields = {};
+			this.groupAll = this.cf.groupAll();
+			this.groupAll.reduce(...reduceToRecs);
+			/* 
+					this.dimFields :
+						{
+							fieldName1: {
+								field: { // this is what gets passed in
+									name: fieldName1,
+									accessor: function(d) { ... },
+								},
+								cfDim: < result of: this.cf.dimension(field.accessor) >,
+								groupings: {}, // allow multiple (named) groupings
+							},
+							...
+						}
+			 */
+		}
+		filteredRecs() {
+			return this.groupAll.value();
+		}
+		replaceData(recs) {
+			console.log("replacing crossfilter data. you want to do this?");
+			var dummy = this.cf.dimension(d=>d);
+			dummy.filter(()=>false);
+			this.cf.remove();
+			dummy.dispose();
+			this.cf.add(recs);
+			$(this).trigger('newData', [{scf:this}]);
+		}
+		dimField(name, field, replace) {
+			// fields can be Field objects
+			// at minimum they need 'name' and 'accessor' properties
+			if (typeof field === "undefined") {
+				return this.dimFields[name] && this.dimFields[name].field;
+			}
+			if (_.has(this.dimFields, name)) {
+				var dimField = this.dimFields[name];
+				if (dimField.field === field)
+					return dimField.field;
+				if (typeof replace === "undefined") {
+					throw new Error("trying to clobber dimension without replace=true");
+				}
+				if (!replace) {
+					console.warn(`keeping old dimField ${name}`);
+					return dimField.field;
+				}
+			}
+			this.dimFields[name] = {
+				field,
+				cfDim: this.cf.dimension(field.accessor),
+				groupings: {},
+			};
+			return this.dimFields[name].field;
+		}
+		filter(name, func, triggerData = {}) {
+			if (!_.has(this.dimFields, name))
+				throw new Error(`no dimField ${name}`);
+
+			var dimField = this.dimFields[name];
+			if (typeof func === "undefined") {
+				return dimField.filter;
+			}
+			dimField.filter = func; // send null func to remove filter
+			dimField.cfDim.filter(func);
+			// what if setting filter redundantly? still trigger filter change?
+			triggerData.dimField = dimField;
+
+			$(this).trigger('filter', [triggerData]);
+		}
+		grouping(dimName, groupingName, func, reduceFuncs=reduceToRecs) {
+			if (!_.has(this.dimFields, name))
+				throw new Error(`no dimField ${name}`);
+
+			var dimField = this.dimFields[name];
+			if (typeof func === "undefined") {
+				return dimField.groupings[groupingName];
+			}
+			var grouping = dimField.groupings[groupingName] = {
+				name: groupingName,
+				func,
+				cfDimGroup: dimField.cfDim.group(func),
+			};
+			// default to reduceToRecs instead of normal crossfilter behavior that
+			//		reduces to counts
+			grouping.cfDimGroup.reduce(...reduceToRecs);
+			return grouping;
+		}
+		group(dimName, groupingName = 'default') {
+			if (!_.has(this.dimFields, dimName))
+				throw new Error(`no dimField ${dimName}`);
+
+			var dimField = this.dimFields[dimName];
+
+			if (groupingName === 'default' && !dimField.groupings.default) {
+				dimField.groupings.default =
+					{
+						name: 'default',
+						cfDimGroup: dimField.cfDim.group(),
+					};
+				dimField.groupings.default.cfDimGroup.reduce(...reduceToRecs);
+			}
+
+			return dimField.groupings[groupingName].cfDimGroup;
 		}
 	}
+	var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
 
 	// END module functions
 	
@@ -1461,13 +1549,21 @@ define(['jquery','knockout','lz-string', 'lodash-full'], function($,ko, LZString
 	utilModule.ChartAxis = ChartAxis;
 	utilModule.ChartAxisY = ChartAxisY;
 	utilModule.ChartAxisX = ChartAxisX;
+	utilModule.ChartInset = ChartInset;
 	//utilModule.ChartProps = ChartProps;
 	utilModule.AccessorGenerator = AccessorGenerator;
 	utilModule.getState = getState;
 	utilModule.setState = setState;
 	utilModule.deleteState = deleteState;
+	utilModule.hasState = hasState;
+	utilModule.onStateChange = onStateChange;
 	utilModule.Field = Field;
 	utilModule.tooltipBuilderForFields = tooltipBuilderForFields;
+	utilModule.cachedAjax = cachedAjax;
+	utilModule.storagePut = storagePut;
+	utilModule.storageExists = storageExists;
+	utilModule.storageGet = storageGet;
+	utilModule.SharedCrossfilter = SharedCrossfilter;
 	
 	if (DEBUG) {
 		window.util = utilModule;

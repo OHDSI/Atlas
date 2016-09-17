@@ -1,4 +1,4 @@
-define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','d3ChartBinding','components/faceted-datatable-cf',], 
+define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3ChartBinding','components/faceted-datatable-cf',], 
 			 function (ko, view, _, util) {
 	var getData = _.once(function(self) {
 		var request = $.ajax({

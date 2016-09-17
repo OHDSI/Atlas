@@ -39,14 +39,16 @@
 					<div class="row">
 						<div class="col-sm-8" data-bind="text:sourceName"></div>
 						<div class="col-sm-4 text-right">
-							<button data-bind="visible: !$component.sourceProcessingStatus[sourceKey](), click:function() {$component.executeCohortComparison(sourceKey);}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
-							<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
-							<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
-							<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">
-								&nbsp;(<span data-bind="text:$component.sourceExecutions[sourceKey]().length"></span> Results)
-								<i data-bind="visible:!$component.sourceHistoryDisplay[sourceKey]()" class="fa fa-angle-double-down"></i>
-								<i data-bind="visible:$component.sourceHistoryDisplay[sourceKey]" class="fa fa-angle-double-up"></i>
+							<span class="btn-group">
+								<button data-bind="visible: !$component.sourceProcessingStatus[sourceKey](), click:function() {$component.executeCohortComparison(sourceKey);}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
+								<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
+								<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
+								<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">
+									&nbsp;(<span data-bind="text:$component.sourceExecutions[sourceKey]().length"></span> Results)
+							<i data-bind="visible:!$component.sourceHistoryDisplay[sourceKey]()" class="fa fa-angle-double-down"></i>
+							<i data-bind="visible:$component.sourceHistoryDisplay[sourceKey]" class="fa fa-angle-double-up"></i>
 							</button>
+							</span>
 						</div>
 					</div>
 					<div data-bind="foreach:$component.sourceExecutions[sourceKey], visible:$component.sourceHistoryDisplay[sourceKey]">
@@ -92,9 +94,14 @@
 					</li>
 					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'balance' }, click: function() { $component.pillMode('balance') };"><a>Balance</a>
 					</li>
+					<li role="presentation" data-bind="css: { active: $component.pillMode() == 'om' }, click: function() { $component.pillMode('om') };"><a>Outcome Model</a>
+					</li>
 				</ul>
 
 				<div class="tab-content">
+					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'om'">
+						place holder for the outcome model
+					</div>
 					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'covariates'">
 						<faceted-datatable params="{orderColumn:3, reference:covariates, columns: covariateColumns, options:covariateOptions, rowClick:covariateSelected}">
 						</faceted-datatable>
@@ -132,6 +139,36 @@
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'balance'">
+						<div class="paddedWrapper" data-bind="if: $component.pillMode() == 'balance'">
+							<div data-bind="d3ChartBinding: 
+								{	
+									c1:null, // ko only allows comment on same line as param (and not after last param)
+
+									chartType:'zoomScatter',// required string
+
+									c3:null,								// optional observables
+									chartData,							// whatever data chart expects
+									chartOptions,						// whatever options chart expects
+									chartResolution,				// {width: w, height: h}
+									chartObj,								// to pass back ref to chart obj
+									domElement,							// ref to dom element for use by chart or caller
+									jqEventSpace,						// any object, so chart can share events with caller
+
+									c3:null,
+								}">
+							</div>
+
+							<div data-bind="if:chartData().length && fields().length">
+								<faceted-datatable-cf
+									params="options:{}, 
+													jqEventSpace: jqEventSpace,
+													fields: fields,
+													recs:chartData,
+													saveStateToUrl: true,
+													sharedCrossfilter: sharedCrossfilter,
+													"></faceted-datatable-cf>
+							</div>
+						</div>
 						<div id="balanceChart">
 							<svg></svg>
 						</div>
@@ -147,9 +184,9 @@
 						<div class="input-group">
 							<input class="form-control" type="text" disabled data-bind="value: cohortComparison().treatmentCaption" />
 							<span class="input-group-btn">
-                                <button class="btn btn-primary" data-bind="click:chooseTreatment"><i class="fa fa-folder-open"></i></button>
-                                <button class="btn btn-danger" data-bind="disable:cohortComparison().treatmentId() == 0, click:clearTreatment" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
-                            </span>
+									<button class="btn btn-primary" data-bind="click:chooseTreatment"><i class="fa fa-folder-open"></i></button>
+									<button class="btn btn-danger" data-bind="disable:cohortComparison().treatmentId() == 0, click:clearTreatment" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+							</span>
 						</div>
 					</div>
 					<div>
@@ -157,8 +194,8 @@
 						<div class="input-group">
 							<input class="form-control" type="text" disabled data-bind="value: cohortComparison().comparatorCaption" />
 							<span class="input-group-btn">
-        				<button class="btn btn-primary" data-bind="click:chooseComparator"><i class="fa fa-folder-open"></i></button>
-                <button class="btn btn-danger" data-bind="disable: cohortComparison().comparatorId() == 0, click:clearComparator" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+								<button class="btn btn-primary" data-bind="click:chooseComparator"><i class="fa fa-folder-open"></i></button>
+								<button class="btn btn-danger" data-bind="disable: cohortComparison().comparatorId() == 0, click:clearComparator" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 							</span>
 						</div>
 					</div>
@@ -168,7 +205,7 @@
 							<input class="form-control" type="text" disabled data-bind="value: cohortComparison().outcomeCaption" />
 							<span class="input-group-btn">
 								<button class="btn btn-primary" data-bind="click:chooseOutcome"><i class="fa fa-folder-open"></i></button>
-                <button class="btn btn-danger" data-bind="disable:cohortComparison().outcomeId() == 0,click:clearOutcome" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+								<button class="btn btn-danger" data-bind="disable:cohortComparison().outcomeId() == 0,click:clearOutcome" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 							</span>
 						</div>
 					</div>
@@ -503,8 +540,8 @@
 							<div class="input-group">
 								<input class="form-control" type="text" disabled data-bind="value: cohortComparison().omInclusionCaption" />
 								<span class="input-group-btn">
-        				            <button class="btn btn-primary" data-bind="click:chooseOmInclusion"><i class="fa fa-folder-open"></i></button>
-                                    <span data-bind="if: cohortComparison().omInclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearOmInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
+									<button class="btn btn-primary" data-bind="click:chooseOmInclusion"><i class="fa fa-folder-open"></i></button>
+									<span data-bind="if: cohortComparison().omInclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearOmInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
 								</span>
 							</div>
 						</div>
@@ -513,8 +550,8 @@
 							<div class="input-group">
 								<input class="form-control" type="text" disabled data-bind="value: cohortComparison().omExclusionCaption" />
 								<span class="input-group-btn">
-        				            <button class="btn btn-primary" data-bind="click:chooseOmExclusion"><i class="fa fa-folder-open"></i></button>
-                                    <span data-bind="if: cohortComparison().omExclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearOmExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
+									<button class="btn btn-primary" data-bind="click:chooseOmExclusion"><i class="fa fa-folder-open"></i></button>
+									<span data-bind="if: cohortComparison().omExclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearOmExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
 								</span>
 							</div>
 						</div>
@@ -524,8 +561,8 @@
 						<div class="input-group">
 							<input class="form-control" type="text" disabled data-bind="value: cohortComparison().negativeControlCaption" />
 							<span class="input-group-btn">
-                                <button class="btn btn-primary" data-bind="click:chooseNegativeControl"><i class="fa fa-folder-open"></i></button>
-                                <span data-bind="if: cohortComparison().negativeControlId() > 0"><button class="btn btn-danger" data-bind="click:clearNegativeControl" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
+								<button class="btn btn-primary" data-bind="click:chooseNegativeControl"><i class="fa fa-folder-open"></i></button>
+								<span data-bind="if: cohortComparison().negativeControlId() > 0"><button class="btn btn-danger" data-bind="click:clearNegativeControl" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
 							</span>
 						</div>
 					</div>

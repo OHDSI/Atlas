@@ -13,5 +13,5 @@ define(function (require) {
 	var sortExtender = require("./sortExtender");
 	var bootstrapModal = require("./bootstrapModal");
 	var treemap= require("./treemapBinding");
-	var d3ChartBinding = require("../../d3ChartBinding");
+	var d3ChartBinding = require("./d3ChartBinding");
 });

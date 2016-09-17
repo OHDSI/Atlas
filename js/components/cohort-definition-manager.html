@@ -80,7 +80,7 @@
 				<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'included'}, click: function() {$component.conceptSetTabMode('included')};">
 					<a>Included Concepts
 					<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
-					<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-refresh fa-spin"></i></span></a>
+					<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-circle-o-notch fa-spin"></i></span></a>
 				</li>
 				<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'sourcecodes'}, click: function() {$component.conceptSetTabMode('sourcecodes')};">
 					<a>Included Source Codes</a>
@@ -339,8 +339,9 @@
 		</div>
 
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'explore' }" class="tab-pane">
-			<div class="paddedWrapper">
-				<explore-cohort params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false, showing: $component.tabMode()=='explore'}"></explore-cohort>
+			<div class="paddedWrapper"
+					data-bind="if: $component.tabMode()==='explore'" >
+				<explore-cohort params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false }"></explore-cohort>
 			</div>
 		</div>
 

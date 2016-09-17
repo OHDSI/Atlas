@@ -21,10 +21,13 @@
  *	- the records observable changes (externally)
  *	- facets are initialized
  *	- ?
+
+ 		replacing crossfilter with ohdsi.util.SharedCrossfilter
+		(not sure if this invalidates comments above...rushing to meet deadline)
  */
 "use strict";
-define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter', 'lodash', 'ohdsi.util', 'knockout.dataTables.binding', 'colvis'], 
-			 function (ko, view, crossfilter, _, util) {
+define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 'knockout.dataTables.binding', 'colvis'], 
+			 function (ko, view, _, util) {
 
 	var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
 	function facetedDatatable(params) {
@@ -33,13 +36,16 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		var self = this;
 
 		self.options = params.options; // passed directly to datatable binding
-		self.saveState = params.saveStateToUrl;
+		self.saveState = ko.utils.unwrapObservable(params.saveStateToUrl);
+		if (typeof self.saveState !== "undefined" && !self.saveState) {
+			console.warn("not currently possible to turn off saving state to url");
+		}
 		self.filterNameSpace = params.filterNameSpace || '';
-		/*
-		 * was going to allow shared crossfilter, but not for now
-		self.crossfilter = ko.utils.unwrapObservable(params.crossfilter) || 
-												crossfilter(self.recs);
-		*/
+
+		// must be observable or undefined
+		self.sharedCrossfilter = params.sharedCrossfilter || 
+						ko.observable(new util.SharedCrossfilter([]));
+
 
 		self.jqEventSpace = params.jqEventSpace || {};
 
@@ -76,19 +82,22 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 
 		self.searchFilter = params.searchFilter;
 
-		self.externalFilters = {};
-
 		newRecs(ko.utils.unwrapObservable(params.recs));
 		if (ko.isSubscribable(params.recs)) {
 			params.recs.subscribe(function(recs) {
+				console.warn("changing recs externally. if you're trying to filter you should probably be using ohdsi.util.SharedCrossfilter");
 				newRecs(recs);
 			});
 		}
 
 		function newRecs(recs) {
-			self.crossfilter = crossfilter(recs);
+			var scf = self.sharedCrossfilter();
+			if (recs !== ko.utils.unwrapObservable(params.recs)) {
+				scf.replaceData(recs);
+			}
 			processFieldFacetColumnParams();
-			self.data(recs);
+			self.data(recs); // for passing to datatable binding
+				// really facets and datatables should be separate components
 			columnSetup();
 			facetSetup();
 		}
@@ -114,6 +123,8 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 				self._facets = ko.utils.unwrapObservable(params.facets);
 				if (ko.isSubscribable(params.facets)) {
 					params.facets.subscribe(function(facets) {
+						// this should only trigger if new facets are set externally
+						throw new Error("not allowing changing external facets for now");
 						newRecs(ko.utils.unwrapObservable(params.recs));
 					});
 				}
@@ -136,11 +147,15 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 			self._facets.forEach(function(facet) {
 				facet.caption = facet.caption || d3.functor(facet.label)();
 				facet.Members = [];
+				self.sharedCrossfilter().dimField(facet.name, facet);
+				/*
 				facet.cfDim = self.crossfilter.dimension(facet.accessor);
 				facet.cfDimGroup = facet.cfDim.group();
-				facet.cfDimGroupAll = facet.cfDim.groupAll();
 				facet.cfDimGroup.reduce(...reduceToRecs);
-				facet.cfDimGroupAll.reduce(...reduceToRecs);
+				// can't recall why these were needed at one time
+				//facet.cfDimGroupAll = facet.cfDim.groupAll();
+				//facet.cfDimGroupAll.reduce(...reduceToRecs);
+				*/
 			})
 			//self.facets(self._facets);
 			self._facets.forEach(facet=>{
@@ -226,55 +241,58 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'crossfilter/crossfilter
 		}
 		function updateFilters(facet) {
 			var filters = util.getState(filterStateKey()) || {};
+			/*
 			if (filters[facet.name]) {
 				facet.cfDim.filter(memberName=>filterVal(facet.name, memberName));
 			} else {
 				facet.cfDim.filter(null);
 			}
+			*/
+			var func = filters[facet.name] ? (d => filterVal(facet.name, d)) : null;
+			self.sharedCrossfilter().filter(facet.name, func, {source:'datatable'});
+			// should maybe say *which* datatable, in case there's more than one
+			// on a page, but not dealing with that yet.
 			updateFacets();
 		};
 		function updateFacets() {
 			self._facets.forEach(facet=>{
-				facet.Members = facet.cfDimGroup.all().map(group=>{
-					var selected = filterVal(facet.name, group.key);
-					return {
-						Name: group.key,
-						ActiveCount: facet.countFunc ? facet.countFunc(group) : group.value.length,
-						Selected: selected,
-					};
-				});
+				//facet.Members = facet.cfDimGroup.all().map(group=>{   // })
+				facet.Members = 
+					self.sharedCrossfilter().group(facet.name).all()
+						.map(group => {
+							var selected = filterVal(facet.name, group.key);
+							return {
+								Name: group.key,
+								ActiveCount: facet.countFunc ? facet.countFunc(group) : group.value.length,
+								Selected: selected,
+							};
+						});
 			});
 			self.facets.removeAll()
 			self.facets.push(...self._facets);
 
+			/*
 			var groupAll = self.crossfilter.groupAll();
 			groupAll.reduce(...reduceToRecs);
 			self.data(groupAll.value());
+			*/
+			self.data(self.sharedCrossfilter().filteredRecs());
 			//self.data(self.recs());
 
-			console.log('triggering filteredRecs', groupAll.value());
-			$(self.jqEventSpace)
+			console.warn('REVIEW: triggering filteredRecs' );
+			$(self.sharedCrossfilter())
 				.trigger('filteredRecs', {
 															source:'datatable',
-															recs: groupAll.value(),
+															//recs: groupAll.value(),
 														});
 		}
-		$(self.jqEventSpace).on('filter', function(evt, {filterName, func, source} = {}) {
-			if (source === 'datatable') {
-				console.log('internally set filter', arguments);
-				return;
-			}
-			console.log('externally set filter', evt, filterName, func);
-			var dim = self.externalFilters[filterName] =
-								self.externalFilters[filterName] || 
-									self.crossfilter.dimension(d=>d);
-			if (func) {
-				dim.filter(func);
-			} else {
-				dim.dispose();
-			}
-			updateFacets();
-		});
+		$(self.sharedCrossfilter()).on('filter', 
+			function(evt, {dimField, source} = {}) {
+				if (source === 'datatable') {
+					return; // already handled
+				}
+				updateFacets();
+			});
 	};
 
 	var component = {

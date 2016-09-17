@@ -106,8 +106,8 @@ requirejs.config({
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
 		"nvd3":"nv.d3",
-		"lodash": "lodash.min",
-		"lodash-full": "lodash.4.15.0.full",
+		//"lodash": "lodash.min",
+		"lodash": "lodash.4.15.0.full",
 		"lscache": "lscache.min",
 		"localStorageExtender": "localStorageExtender",
 		"cohortbuilder": "modules/cohortbuilder",
@@ -137,12 +137,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		var vocabularyPriority = 0;
 		var densityPriority = 0;
 
-		var servicesCache = sessionStorage.getItem('services');
-		if (servicesCache) {
-			config.services = JSON.parse(LZString.decompressFromBase64(servicesCache));
-		}
 		// initialize all service information asynchronously
-		!servicesCache && $.each(config.services, function (serviceIndex, service) {
+		$.each(config.services, function (serviceIndex, service) {
 			service.sources = [];
 			var servicePromise = $.Deferred();
 			pageModel.initPromises.push(servicePromise);
@@ -257,10 +253,6 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		$.when.apply($, pageModel.initPromises).done(function () {
 			pageModel.initComplete();
-			if (!sessionStorage.services)
-				sessionStorage.setItem(
-					'services', 
-					LZString.compressToBase64(JSON.stringify(config.services)));
 		});
 
 		pageModel.currentView.subscribe(function (newView) {

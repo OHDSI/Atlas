@@ -1,5 +1,13 @@
-define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util', 'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options', 'cohortbuilder/CohortDefinition', 'vocabularyprovider', 'conceptsetbuilder/InputTypes/ConceptSet', 'nvd3', 'css!./styles/nv.d3.min.css'],
-	function ($, ko, view, cohortDefinitionAPI, config, ohdsiUtil, ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI, ConceptSet) {
+define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash', 
+				'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util', 
+				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options', 
+				'cohortbuilder/CohortDefinition', 'vocabularyprovider', 
+				'conceptsetbuilder/InputTypes/ConceptSet', 
+				'nvd3', 'databindings/d3ChartBinding','components/faceted-datatable-cf',
+				'css!./styles/nv.d3.min.css'],
+	function ($, ko, view, _, cohortDefinitionAPI, config, ohdsiUtil, 
+						ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI, 
+						ConceptSet) {
 		function cohortComparisonManager(params) {
 
 			var self = this;
@@ -24,6 +32,107 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 			self.expressionMode = ko.observable('print');
 			self.cohortComparison = ko.observable();
 			self.cohortComparisonDirtyFlag = ko.observable();
+			self.om = ko.observable();
+
+
+			// for balance chart
+			self.chartObj = ko.observable();
+			self.domElement = ko.observable();
+			self.chartData = ko.observableArray(self.chartData && self.chartData() || []);
+			self.sharedCrossfilter = ko.observable(new ohdsiUtil.SharedCrossfilter([]));
+			self.chartData.subscribe(function(recs) {
+				self.sharedCrossfilter().replaceData(recs);
+			});
+			$(self.sharedCrossfilter()).on('filter newData', function(evt, stuff) {
+				console.log("something happened to sharedCrossfilter", stuff);
+			});
+			self.chartResolution = ko.observable(); // junk
+			self.chartOptions = chartOptions();
+			self.jqEventSpace = params.jqEventSpace || {};
+			self.fields = ko.observable([]);
+			self.chartObj.subscribe(function(chart) {
+				var opts = _.merge(chart.defaultOptions, chartOptions());
+				//var opts = chart.chartOptions; // after applying defaults
+
+				//self.fields(_.filter(opts, d=>d.isColumn||d.isFacet));
+
+				var fields = [];
+				_.each(opts, (opt, name) => {
+					if (opt.isField) {
+						opts[name] = new ohdsiUtil.Field(name, opt, opts);
+						fields.push(opts[name]);
+					}
+				});
+				self.fields(fields);
+				self.chartOptions = opts;
+			});
+			self.ready = ko.computed(function() {
+				return self.chartData().length && self.domElement() && self.pillMode() === 'balance';
+			});
+			self.ready.subscribe(function(ready) {
+				if (ready) {
+					if (!self.chartObj()) return;
+					self.chartObj().chartSetup(self.domElement(), 460, 150, self.chartOptions);
+					self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
+					self.chartOptions.xy.accessor = self.chartOptions.xy.accessors.value;
+					self.sharedCrossfilter().dimField('xy', self.chartOptions.xy);
+					//self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
+					//setTimeout(() => self.chartObj().updateData(self.chartData().slice(0,2000)), 4000);
+					//self.chartObj().updateData(self.chartData().slice(0,2000));
+				}
+			});
+			//$(self.jqEventSpace).on('filter', filterChange);
+			$(self.jqEventSpace).on('brush', function(evt, {brush, x, y} = {}) {
+					//console.log('brush event', arguments);
+					var [[x1,y1],[x2,y2]] = brush.extent();
+					if (brush.empty()) {
+						util.deleteState('filters.brush');
+					} else {
+						var xyFilt = d => {
+																return x.accessors.value(d) >= x1 &&
+																			 x.accessors.value(d) <= x2 &&
+																			 y.accessors.value(d) >= y1 &&
+																			 x.accessors.value(d) <= y2;
+															};
+						util.setState('filters.brush', xyFilt);
+					}
+					self.sharedCrossfilter().filter('xy', xyFilt);
+					//$(self.jqEventSpace).trigger('filter', {filterName:'xy', func:xyFilt});
+					// as of now, 'filter' trigger is caught by faceted-datatable-cf, which
+					// updates facets and triggers 'filteredRecs', which is caught below and
+					// causes updateData... need to fix this
+				});
+			$(self.sharedCrossfilter()).on('filter',
+				function(evt, {dimField} = {}) {
+					if (dimField.name === 'xy') {
+						// scatter has already zoomed.
+						return;
+					}
+				});
+			$(self.sharedCrossfilter()).on('filteredRecs', 
+				function(evt, {source, recs} = {}) {
+					console.warn("FIX this behavior!");
+					return;
+					if (self.chartData() && recs.length < self.chartData().length
+							|| self.chartObj() && self.chartObj().latestData !== recs
+						 ) {
+									//console.log('caught filteredRecs');
+									//self.chartObj().recFilter(recs);
+									self.chartObj().updateData(recs);
+								}
+				});
+			/*
+			function dataSetup(raw) {
+				var points = raw.map(d => ({
+					x: Math.abs(d.beforeMatchingStdDiff),
+					y: Math.abs(d.afterMatchingStdDiff),
+					tooltip: d.covariateName
+				}));
+				return points;
+			}
+			*/
+
+			// end for balance chart
 
 			var initSources = config.services[0].sources.filter(s => s.hasCDM);
 			for (var i = 0; i < initSources.length; i++) {
@@ -43,7 +152,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					}
 				});
 
-				$.ajax({
+				ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId() + '/executions',
 					method: 'GET',
 					contentType: 'application/json',
@@ -127,18 +236,29 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 								return 'Other';
 							}
 						}
-				},
+					},
 					{
 						'caption': 'Analysis',
 						'binding': function (o) {
 							return o.name.split(/[:,=]/)[0];
 						}
-				}
-
-			]
+					}
+				]
 			};
 
-			self.tabMode = ko.observable('specification');
+			var defaultTab = 'specification';
+			self.tabMode = ko.observable(util.getState('cohortCompTab') || defaultTab);
+			self.tabMode.subscribe(function(tab) {
+				if (util.getState('cohortCompTab') === tab)
+					return;
+				if (!util.hasState('cohortCompTab') && tab === defaultTab)
+					return;
+				util.setState('cohortCompTab', tab);
+			});
+			util.onStateChange('cohortCompTab', function(evt, {val} = {}) {
+				self.tabMode(val || defaultTab);
+			});
+
 			self.resultsMode = ko.observable('sources');
 			self.pillMode = ko.observable('covariates');
 
@@ -170,7 +290,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 				var sourceName = self.sources().filter(s => s.sourceId == d.sourceId)[0].sourceName;
 				self.currentExecutionSourceName(sourceName);
 
-				var p1 = $.ajax({
+				var p1 = ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/psmodel',
 					method: 'GET',
 					contentType: 'application/json',
@@ -181,7 +301,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					}
 				});
 
-				var p2 = $.ajax({
+				var p2 = ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/attrition',
 					method: 'GET',
 					contentType: 'application/json',
@@ -190,13 +310,15 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					}
 				});
 
-				var p3 = $.ajax({
+				var p3 = ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/balance',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
-						nv.addGraph(function () {
 
+						self.chartData(response);
+
+						nv.addGraph(function () {
 							var points = response.map(d => ({
 								x: Math.abs(d.beforeMatchingStdDiff),
 								y: Math.abs(d.afterMatchingStdDiff),
@@ -233,7 +355,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					}
 				});
 
-				var p4 = $.ajax({
+				var p4 = ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/poppropdist',
 					method: 'GET',
 					contentType: 'application/json',
@@ -282,7 +404,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					}
 				});
 
-				var p5 = $.ajax({
+				var p5 = ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/psmodelpropscore',
 					method: 'GET',
 					contentType: 'application/json',
@@ -333,6 +455,16 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 					}
 				});
 
+				var p6 = ohdsiUtil.cachedAjax({
+					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/om',
+					method: 'GET',
+					contentType: 'application/json',
+					success: function (response) {
+						self.om(response);
+					}
+				});
+				
+				
 				Promise.all([p1, p2, p3, p4, p5])
 					.then(results => {
 						self.loadingExecution(false);
@@ -497,7 +629,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 
 				var json = JSON.stringify(cca);
 
-				var savePromise = $.ajax({
+				var savePromise = ohdsiUtil.cachedAjax({
 					method: 'POST',
 					url: config.services[0].url + 'comparativecohortanalysis/',
 					contentType: 'application/json',
@@ -666,7 +798,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 
 			self.monitorJobExecution = function (jobExecutionId, sourceKey) {
 				setTimeout(function () {
-					$.ajax({
+					ohdsiUtil.cachedAjax({
 						url: config.services[0].url + 'job/execution/' + jobExecutionId,
 						method: 'GET',
 						contentType: 'application/json',
@@ -686,7 +818,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 			self.executeCohortComparison = function (sourceKey) {
 				self.sourceProcessingStatus[sourceKey](true);
 
-				var generatePromise = $.ajax({
+				var generatePromise = ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId() + '/execute/' + sourceKey,
 					method: 'GET',
 					contentType: 'application/json',
@@ -701,7 +833,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 				self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison()));
 				self.loading(false);
 			} else {
-				$.ajax({
+				ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
 					method: 'GET',
 					contentType: 'application/json',
@@ -883,4 +1015,222 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'webapi/C
 
 		ko.components.register('cohort-comparison-manager', component);
 		return component;
-	});
+
+		function chartOptions() {
+			var junk = 1;
+			return {
+				data: {
+					alreadyInSeries: false,
+				},
+				//dispatch: d3.dispatch("brush", "filter"), // in default opts for zoomScatter
+				//additionalDispatchEvents: ["foo"],
+				x: {
+							value: d => {
+								return Math.abs(d.beforeMatchingStdDiff);
+							},
+							label: 'Before matching StdDiff',
+							tooltipOrder: 1,
+							propName: 'beforeMatchingStdDiff',
+							isColumn: true,
+							colIdx: 1,
+							isField: true,
+				},
+				beforeMatchingDirection: {
+							value: d => d.beforeMatchingStdDiff > 0 ? "positive" : d.beforeMatchingStdDiff < 0 ? "negative" : "0",
+							tooltipOrder: 1.5,
+							isField: true,
+							isFacet: true,
+							label: "Direction before matching",
+				},
+				y: {
+							value: d => Math.abs(d.afterMatchingStdDiff),
+							label: "After matching StdDiff",
+							/*
+							format: d => {
+								var str = d.toString();
+								var idx = str.indexOf('.');
+								if (idx == -1) {
+									return d3.format('0%')(d);
+								}
+
+								var precision = (str.length - (idx+1) - 2).toString();
+								return d3.format('0.' + precision + '%')(d);
+							},
+							*/
+							tooltipOrder: 2,
+							propName: 'afterMatchingStdDiff',
+							isColumn: true,
+							colIdx: 1,
+							isField: true,
+				},
+				afterMatchingDirection: {
+							value: d => d.afterMatchingStdDiff > 0 ? "positive" : d.afterMatchingStdDiff < 0 ? "negative" : "0",
+							tooltipOrder: 2.5,
+							isField: true,
+							isFacet: true,
+							label: "Direction after matching",
+				},
+				xy: { // for brushing
+							_accessors: {
+								value: {
+									func: function(d,allFields) {
+										return [
+														allFields.x.accessors.value(d),
+														allFields.y.accessors.value(d)];
+									},
+									posParams: ['d','allFields'],
+								},
+							},
+							isField: true,
+				},
+				/*
+				size: {
+							//value: d=>d.afterMatchingMeanTreated,
+							propName: 'afterMatchingMeanTreated',
+							//scale: d3.scale.log(),
+							label: "After matching mean treated",
+							tooltipOrder: 3,
+							isField: true,
+							_accessors: {
+								avg: {
+									posParams: ['data','allFields'],
+									func: (data, allFields) => {
+										return d3.mean(data.map(allFields.size.accessors.value));
+									},
+								},
+								tooltip: {
+									posParams: ['d','allFields'],
+									func: (d, allFields) => {
+										return {
+											name: `After matching mean treated 
+															(avg: ${round(allFields.size.accessors.avg(),4)})`,
+											value: round(allFields.size.accessors.value(d), 4),
+										}
+									},
+								},
+								range: {
+									func: () => [1,8],
+								},
+							},
+				},
+				series: {
+							value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
+							sortBy:  d => d.afterMatchingStdDiff,
+							tooltipOrder: 5,
+							isField: true,
+				},
+				color: {
+							_accessors: {
+								value: {
+													func: function(d,i,j,allFields,data,series) {
+														return allFields.series.value(d,i,j,data,series);
+													},
+													posParams: ['d','i','j','allFields','data','series'],
+								},
+								domain: {
+													func: function(data, series, allFields) {
+														return _.uniq(data.map(allFields.series.value));
+													},
+													posParams: ['data', 'series', 'allFields'],
+								},
+								range: {
+									func: () => ['red', 'green', 'pink', 'blue'],
+								},
+							},
+							//value: d=>nthroot(d.coefficient, 7),
+							//value: d=>d.coefficient,
+									/*
+									['NA','N/A','null','.']
+										.indexOf(d.coefficient &&
+														 d.coefficient.toLowerCase()
+														 .trim()) > -1
+										? 0 : d.coefficient || 0, // (set NA = 0)
+										* /
+							//label: "Coefficient",
+							label: "Nonsense series",
+							scale: d3.scale.ordinal(),
+							//range: ['#ef8a62','#ddd','#67a9cf'],
+							//range: ['red', 'green', 'pink', 'blue'],
+							isField: true,
+							//domainFuncNeedsExtent: true,
+							//domainFunc: (data, ext) => [ext[0], 0, ext[1]],
+							/*
+							rangeFunc: (layout, prop) => {
+								prop.scale.rangePoints(
+									['#ef8a62','#ddd','#67a9cf']);
+							},
+							domainFunc: (data, prop) => {
+								var vals = data.map(prop.value).sort(d3.ascending);
+								return vals;
+								var preScale = d3.scale.ordinal()
+																.domain(vals)
+																.rangePoints([-1, 0, 1]);
+
+
+							},
+							* /
+							//range: ['red', 'yellow', 'blue'],
+				},
+				shape: {
+							value: () => junk++ % 3,
+							label: "Random",
+							tooltipOrder: 4,
+							isField: true,
+				},
+				CIup: { // support CI in both directions
+							value: d => d.upperBound,
+							value: d => y(d) - d.upperBoundDiff,
+				},
+				*/
+				covariateName: {
+							propName: 'covariateName',
+							value: d => {
+								return d.covariateName.split(/:/).shift();
+							},
+							isColumn: true,
+							isFacet: true,
+							colIdx: 0,
+							tooltipOrder: 7,
+							label: 'Covariate Name',
+							isField: true,
+				},
+				covariateValue: {
+							propName: 'covariateName',
+							value: d => d.covariateName.split(/:/).pop(),
+							isColumn: true,
+							colIdx: 0,
+							tooltipOrder: 8,
+							label: 'Covariate Value',
+							isField: true,
+							/*
+							_accessors: {
+								tooltip: {
+									posParams: ['d','allFields'],
+									func: (d, allFields) => {
+										return {
+											name: `Covariate value`,
+											value: allFields.covariateName.accessors.value(d).split(/:/).pop(),
+										}
+									},
+								},
+							},
+							*/
+				},
+				/*
+				conceptId: {
+							propName: 'conceptId',
+							isColumn: true,
+							isFacet: true,
+							colIdx: 3,
+							tooltipOrder: 5,
+							label: 'Concept ID',
+							needsValueFunc: true, // so ChartProps will make one
+																		// even though this isn't a normal
+																		// zoomScatter field
+							isField: true,
+				},
+				*/
+			};
+		}
+	}
+);

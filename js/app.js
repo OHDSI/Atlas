@@ -107,7 +107,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					},
 					*/
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
-						require(['conceptset-manager'], function () {
+						require(['conceptset-manager', 'cohort-definition-browser'], function () {
 							self.loadConceptSet(conceptSetId, 'conceptset', 'repository', mode);
 							self.resolveConceptSetExpression();
 						});

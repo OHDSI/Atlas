@@ -1,6 +1,6 @@
 "use strict";
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'lz-string', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf-profile', 'components/profileChart', 'css!./styles/profileManager.css'],
-	function (ko, view, d3, config, _, crossfilter, LZString) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'ohdsi.util', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf-profile', 'components/profileChart', 'css!./styles/profileManager.css'],
+	function (ko, view, d3, config, _, crossfilter, util) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
 												 // is an array of recs in the group
@@ -21,6 +21,12 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 
 			self.sourceKey = ko.observable(util.getState('sourceKey'));
 			self.personId = ko.observable(util.getState('personId'));
+			util.onStateChange('sourceKey', function(evt, {val} = {}) {
+				self.sourceKey(val);
+			});
+			util.onStateChange('personId', function(evt, {val} = {}) {
+				self.personId(val);
+			});
 			self.cohortSource = ko.observable();
 			self.person = ko.observable();
 			self.loadingPerson = ko.observable(false);
@@ -100,13 +106,12 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.cantFindPerson(false)
 				self.loadingPerson(true);
 
-				//var personCache = sessionStorage.getItem(`person_${self.personId()}`, person); // what's that second param? just a mistake i think
-				var personCache = sessionStorage.getItem(`person_${self.personId()}`);
-				if (personCache) {
-					var person = JSON.parse(
-						LZString.decompressFromBase64(personCache));
+				var personKey = `person_${self.personId()}`;
+				if (util.storageExists(personKey)) {
+					var person = util.storageGet(personKey);
 					self.loadingPerson(false);
 					self.crossfilter(crossfilter(person.records));
+					self.shadedRegions(person.shadedRegions);
 					self.person(person);
 					return;
 				}
@@ -145,19 +150,17 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 							rec.endDay = rec.endDate ?
 								Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
 						});
-						self.shadedRegions(
+						person.shadedRegions =
 							person.observationPeriods.map(op => {
 								return {
 									x1: Math.floor((op.startDate - cohort.startDate) / (1000 * 60 * 60 * 24)),
 									x2: Math.floor((op.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)),
 									className: 'observation-period',
 								};
-							})
-						);
+							});
 						self.crossfilter(crossfilter(person.records));
-						sessionStorage.setItem(
-							`person_${person.personId}`, 
-							LZString.compressToBase64(JSON.stringify(person)));
+						util.storagePut(personKey, person);
+						self.shadedRegions(person.shadedRegions);
 						self.person(person);
 					}
 				});
@@ -228,7 +231,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					func: d => {
 						return (_.chain(self.conceptSets())
 											.map(function(ids, conceptSetName) {
-												if (_.contains(ids, d.conceptId))
+												if (_.includes(ids, d.conceptId))
 													//return conceptSetName;
 													return conceptSetName + '-cs';
 											})
