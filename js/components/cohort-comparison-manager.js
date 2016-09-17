@@ -74,13 +74,15 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					if (!self.chartObj()) return;
 					self.chartObj().chartSetup(self.domElement(), 460, 150, self.chartOptions);
 					self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
+					self.chartOptions.xy.accessor = self.chartOptions.xy.accessors.value;
+					self.sharedCrossfilter().dimField('xy', self.chartOptions.xy);
 					//self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
 					//setTimeout(() => self.chartObj().updateData(self.chartData().slice(0,2000)), 4000);
 					//self.chartObj().updateData(self.chartData().slice(0,2000));
 				}
 			});
 			//$(self.jqEventSpace).on('filter', filterChange);
-			$(self.jqEventSpace).on('brush', function(evt, brush, x, y) {
+			$(self.jqEventSpace).on('brush', function(evt, {brush, x, y} = {}) {
 					//console.log('brush event', arguments);
 					var [[x1,y1],[x2,y2]] = brush.extent();
 					if (brush.empty()) {
@@ -94,10 +96,18 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 															};
 						util.setState('filters.brush', xyFilt);
 					}
-					$(self.jqEventSpace).trigger('filter', {filterName:'xy', func:xyFilt});
+					self.sharedCrossfilter().filter('xy', xyFilt);
+					//$(self.jqEventSpace).trigger('filter', {filterName:'xy', func:xyFilt});
 					// as of now, 'filter' trigger is caught by faceted-datatable-cf, which
 					// updates facets and triggers 'filteredRecs', which is caught below and
 					// causes updateData... need to fix this
+				});
+			$(self.sharedCrossfilter()).on('filter',
+				function(evt, {dimField} = {}) {
+					if (dimField.name === 'xy') {
+						// scatter has already zoomed.
+						return;
+					}
 				});
 			$(self.sharedCrossfilter()).on('filteredRecs', 
 				function(evt, {source, recs} = {}) {
@@ -1065,8 +1075,8 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 								value: {
 									func: function(d,allFields) {
 										return [
-														allFields.accessors.x.value(d),
-														allFields.accessors.y.value(d)];
+														allFields.x.accessors.value(d),
+														allFields.y.accessors.value(d)];
 									},
 									posParams: ['d','allFields'],
 								},

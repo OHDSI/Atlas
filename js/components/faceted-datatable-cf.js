@@ -42,8 +42,9 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 		}
 		self.filterNameSpace = params.filterNameSpace || '';
 
-		self.sharedCrossfilter = params.sharedCrossfilter || ko.observable();
-					// must be observable or undefined
+		// must be observable or undefined
+		self.sharedCrossfilter = params.sharedCrossfilter || 
+						ko.observable(new util.SharedCrossfilter([]));
 
 
 		self.jqEventSpace = params.jqEventSpace || {};
@@ -81,8 +82,6 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 
 		self.searchFilter = params.searchFilter;
 
-		self.externalFilters = {};
-
 		newRecs(ko.utils.unwrapObservable(params.recs));
 		if (ko.isSubscribable(params.recs)) {
 			params.recs.subscribe(function(recs) {
@@ -93,10 +92,8 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 
 		function newRecs(recs) {
 			var scf = self.sharedCrossfilter();
-			if (scf && recs !== ko.unwrapObservable(params.recs)) {
+			if (recs !== ko.utils.unwrapObservable(params.recs)) {
 				scf.replaceData(recs);
-			} else {
-				self.sharedCrossfilter(new util.SharedCrossfilter(recs));
 			}
 			processFieldFacetColumnParams();
 			self.data(recs); // for passing to datatable binding
@@ -252,7 +249,9 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 			}
 			*/
 			var func = filters[facet.name] ? (d => filterVal(facet.name, d)) : null;
-			self.sharedCrossfilter().filter(facet.name, func);
+			self.sharedCrossfilter().filter(facet.name, func, {source:'datatable'});
+			// should maybe say *which* datatable, in case there's more than one
+			// on a page, but not dealing with that yet.
 			updateFacets();
 		};
 		function updateFacets() {
@@ -287,24 +286,13 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 															//recs: groupAll.value(),
 														});
 		}
-		$(self.jqEventSpace).on('filter', function(evt, {filterName, func, source} = {}) {
-			if (source === 'datatable') {
-				//console.log('internally set filter', arguments);
-				return;
-			}
-			console.warn('NO LONGER SETTING externally set filter', evt, filterName, func);
-			/*
-			var dim = self.externalFilters[filterName] =
-								self.externalFilters[filterName] || 
-									self.crossfilter.dimension(d=>d);
-			if (func) {
-				dim.filter(func);
-			} else {
-				dim.dispose();
-			}
-			*/
-			updateFacets();
-		});
+		$(self.sharedCrossfilter()).on('filter', 
+			function(evt, {dimField, source} = {}) {
+				if (source === 'datatable') {
+					return; // already handled
+				}
+				updateFacets();
+			});
 	};
 
 	var component = {

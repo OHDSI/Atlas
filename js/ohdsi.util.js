@@ -1126,6 +1126,11 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			this.allFields = allFields;
 		}
 		get accessors() {
+			if (!this.__accessors) {
+				console.warn(`using accessors for ${this.name} before explicitly binding parameters. Trying to bind now.`);
+				// probably not such a good idea :
+				// this.bindParams({allFields: this.allFields}); // at least allFields should be available
+			}
 			return this.__accessors;
 		}
 		bindParams(params) {
@@ -1441,6 +1446,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			return this.groupAll.value();
 		}
 		replaceData(recs) {
+			console.log("replacing crossfilter data. you want to do this?");
 			var dummy = this.cf.dimension(d=>d);
 			dummy.filter(()=>false);
 			this.cf.remove();
@@ -1473,7 +1479,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			};
 			return this.dimFields[name].field;
 		}
-		filter(name, func) {
+		filter(name, func, triggerData = {}) {
 			if (!_.has(this.dimFields, name))
 				throw new Error(`no dimField ${name}`);
 
@@ -1484,7 +1490,9 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			dimField.filter = func; // send null func to remove filter
 			dimField.cfDim.filter(func);
 			// what if setting filter redundantly? still trigger filter change?
-			$(this).trigger('filter', [{dimField}]);
+			triggerData.dimField = dimField;
+
+			$(this).trigger('filter', [triggerData]);
 		}
 		grouping(dimName, groupingName, func, reduceFuncs=reduceToRecs) {
 			if (!_.has(this.dimFields, name))

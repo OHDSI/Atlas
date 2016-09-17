@@ -1902,10 +1902,8 @@
 					// wanted to use https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
 					// but it's d3.v4
 
-					$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
 					$('.extent').hide();
 					$('.resize').hide();
-					return;
 
 					if (brush.empty()) {
 						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
@@ -1934,8 +1932,7 @@
 							return "translate(" + xVal + "," + yVal + ")";
 						});
 
-
-					//$(jqEventSpace).trigger('brush', [brush, cp.x, cp.y]);
+					$(jqEventSpace).trigger('brush', [{brush, x:cp.x, y:cp.y}]);
 				});
 
 
