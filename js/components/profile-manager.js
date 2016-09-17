@@ -231,7 +231,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					func: d => {
 						return (_.chain(self.conceptSets())
 											.map(function(ids, conceptSetName) {
-												if (_.contains(ids, d.conceptId))
+												if (_.includes(ids, d.conceptId))
 													//return conceptSetName;
 													return conceptSetName + '-cs';
 											})
