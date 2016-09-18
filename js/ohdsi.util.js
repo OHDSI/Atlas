@@ -1446,6 +1446,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			return this.groupAll.value();
 		}
 		replaceData(recs) {
+			this.recs = recs;
 			console.log("replacing crossfilter data. you want to do this?");
 			var dummy = this.cf.dimension(d=>d);
 			dummy.filter(()=>false);

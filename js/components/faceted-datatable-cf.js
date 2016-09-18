@@ -237,9 +237,9 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 															source:'datatable',
 															filter: {[filterSwitched]: filterOn},
 														});
-			updateFilters(facet);
+			updateFilters(facet, true);
 		}
-		function updateFilters(facet) {
+		function updateFilters(facet, facetUpdate = false) {
 			var filters = util.getState(filterStateKey()) || {};
 			/*
 			if (filters[facet.name]) {
@@ -252,7 +252,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 			self.sharedCrossfilter().filter(facet.name, func, {source:'datatable'});
 			// should maybe say *which* datatable, in case there's more than one
 			// on a page, but not dealing with that yet.
-			updateFacets();
+			facetUpdate && updateFacets();
 		};
 		function updateFacets() {
 			self._facets.forEach(facet=>{

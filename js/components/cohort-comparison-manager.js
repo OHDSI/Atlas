@@ -10,6 +10,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 						ConceptSet) {
 		function cohortComparisonManager(params) {
 
+			var DEBUG = true;
 			var self = this;
 			self.cohortComparisonId = params.currentCohortComparisonId;
 			self.config = config;
@@ -40,11 +41,12 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.domElement = ko.observable();
 			self.chartData = ko.observableArray(self.chartData && self.chartData() || []);
 			self.sharedCrossfilter = ko.observable(new ohdsiUtil.SharedCrossfilter([]));
+			window.scf = self.sharedCrossfilter();
 			self.chartData.subscribe(function(recs) {
 				self.sharedCrossfilter().replaceData(recs);
 			});
 			$(self.sharedCrossfilter()).on('filter newData', function(evt, stuff) {
-				console.log("something happened to sharedCrossfilter", stuff);
+				console.log("new data in sharedCrossfilter", stuff);
 			});
 			self.chartResolution = ko.observable(); // junk
 			self.chartOptions = chartOptions();
@@ -85,15 +87,17 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			$(self.jqEventSpace).on('brush', function(evt, {brush, x, y} = {}) {
 					//console.log('brush event', arguments);
 					var [[x1,y1],[x2,y2]] = brush.extent();
+					var xyFilt;
 					if (brush.empty()) {
+						xyFilt = null;
 						util.deleteState('filters.brush');
 					} else {
-						var xyFilt = d => {
-																return x.accessors.value(d) >= x1 &&
-																			 x.accessors.value(d) <= x2 &&
-																			 y.accessors.value(d) >= y1 &&
-																			 x.accessors.value(d) <= y2;
-															};
+						xyFilt = ([x,y] = [], i) => {
+																					return x >= x1 &&
+																								 x <= x2 &&
+																								 y >= y1 &&
+																								 y <= y2;
+																				};
 						util.setState('filters.brush', xyFilt);
 					}
 					self.sharedCrossfilter().filter('xy', xyFilt);
