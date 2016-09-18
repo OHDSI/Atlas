@@ -1936,6 +1936,15 @@ table.sourceTable .selected
                                   not supported by any browser */
 }
 
+a.open > i.fa {
+	color:#5bb75b !important;
+}
+
+a.unsaved > i.fa {
+	color:#d04541 !important;
+}
+	
+
 cohort-comparison-manager .x-axislabel.axislabel,
 cohort-comparison-manager .y-axislabel.axislabel {
 	font-size: 8px
