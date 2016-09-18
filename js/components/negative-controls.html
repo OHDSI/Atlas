@@ -54,6 +54,7 @@
         </div>
     </div>
     <div class="paddedWrapper" id="negControlResults">     
+        <!-- ko if: $component.useCF() -->
         <faceted-datatable-cf
 			params="options:{},
 							fields: $component.fields,
@@ -63,6 +64,11 @@
                             order: [[16, 'asc'], [17, 'desc']]
 							saveStateToUrl: false,
 							"></faceted-datatable-cf>
+        <!-- /ko -->
+        <!-- ko ifnot: $component.useCF() -->
+        <faceted-datatable params="{reference:$component.negativeControls, columns: negControlColumns, options:negControlOptions, order: $component.negControlOptions.order}">
+        </faceted-datatable>
+        <!-- /ko -->
     </div>
 </div>
 <div class="loading" data-bind="if:$component.loadingEvidenceSources()">loading</div>

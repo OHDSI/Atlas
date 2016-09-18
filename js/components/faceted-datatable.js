@@ -12,13 +12,33 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 		self.rowCallback = params.rowCallback;
 		self.rowClick = params.rowClick;
 
-		self.orderColumn = 1;
-		if (params.orderColumn) {
-			self.orderColumn = params.orderColumn;
-		}
+		// Set some defaults for the data table
+		self.autoWidth = params.autoWidth || true;
+		self.buttons = params.buttons || [
+				'colvis','copyHtml5','excelHtml5','csvHtml5','pdfHtml5'
+		];
+		self.colVis = params.colVis || {
+						buttonText: 'Change Columns',
+						align: 'right',
+						overlayFade: 0,
+						showAll: 'Show All Columns',
+						restore: 'Reset Columns'
+					};
+		self.dom = params.dom || 'Blfiprt';
+		self.language = params.language || {
+						search: 'Filter: '
+					};
+		self.lengthMenu = params.lengthMenu || [[15, 30, 45, -1], [15, 30, 45,'All']];
+		self.order = params.order || [[1,'desc']];
+        self.orderColumn = 1;
+        if (params.orderColumn) {
+            self.order = [[ params.orderColumn, 'desc' ]]
+		}        
+		self.orderClasses = params.orderClasses || false;
+		self.ordering = params.ordering || true;
 
-		self.lengthMenu = self.options.lengthMenu || [[15, 30, 45, -1], [15, 30, 45, 'All']];
-
+		self.searchFilter = params.searchFilter;
+                
 		self.facetEngine = ko.observable();
 
 		self.updateFilters = function (data, event) {
