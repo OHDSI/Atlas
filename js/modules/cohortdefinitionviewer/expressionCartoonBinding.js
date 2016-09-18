@@ -247,7 +247,7 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 				if (crit._isWrapper) return crit;
 				var wrapper = crit.Criteria || crit;
 				Object.defineProperty(wrapper, '_isWrapper', {value: true, configurable:true});
-				var kv = _.pairs(wrapper);
+				var kv = _.toPairs(wrapper);
 				if (kv.length !== 1)
 					throw new Error("can't find wrapper in crit");
 				if (!kv[0][1]._domain) {
