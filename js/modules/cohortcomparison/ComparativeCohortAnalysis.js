@@ -13,6 +13,7 @@ define(function (require, exports) {
         self.matchingOptions = [{name: 'No matching/stratification', id: 0}, {name: 'Matching', id: 1}, {name: 'Stratification', id: 2}];
 
         // Properties
+		self.analysisId = data.analysisId || null;
 		self.name = ko.observable(data.name || null);
         self.nameMultiLine = ko.pureComputed(function() {
             var maxLength = 45;

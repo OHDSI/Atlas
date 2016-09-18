@@ -423,7 +423,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		$(window).bind('beforeunload', function () {
 			if ((pageModel.currentCohortDefinitionDirtyFlag() && pageModel.currentCohortDefinitionDirtyFlag().isDirty())  || 
 					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()) ||
-				 	pageModel.currentIRAnalysisDirtyFlag().isDirty())
+				 	pageModel.currentIRAnalysisDirtyFlag().isDirty() ||
+				 	pageModel.currentCohortComparisonDirtyFlag().isDirty())
 				return "Changes will be lost if you do not save.";
 		});		
 	});

@@ -1428,9 +1428,28 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.conceptSetInclusionIdentifiers = ko.observableArray();
 		self.currentConceptSetExpressionJson = ko.observable();
 		self.currentConceptIdentifierList = ko.observable();
+		
 		self.currentConceptSet = ko.observable();
+		self.currentConceptSetDirtyFlag = new ohdsiUtil.dirtyFlag({
+			header: self.currentConceptSet,
+			details: self.selectedConcepts
+		});
+		self.conceptSetCss = ko.pureComputed(function() {
+			if (self.currentConceptSet())
+				return self.currentConceptSetDirtyFlag.isDirty() ? "unsaved" : "open";
+		});
+		self.conceptSetURL = ko.pureComputed(function() {
+			var url = "#/";
+			if (self.currentConceptSet())
+				url = url + "conceptset/" + (self.currentConceptSet().id || '0') + '/details';
+			else
+				url = url + "conceptsets";
+			return url;
+		});
+
+		
 		self.currentConceptSetSource = ko.observable('repository');
-        self.currentConceptSetNegativeControls = ko.observable();
+    self.currentConceptSetNegativeControls = ko.observable();
 		self.currentIncludedConceptIdentifierList = ko.observable();
 		self.searchResultsConcepts = ko.observableArray();
 		self.relatedConcepts = ko.observableArray();
@@ -1440,8 +1459,37 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.denseSiblings = ko.observableArray();
 		self.includedSourcecodes = ko.observableArray();
 		self.cohortDefinitions = ko.observableArray();
+		
 		self.currentCohortDefinition = ko.observable();
+		self.cohortDefCss = ko.pureComputed(function() {
+			if (self.currentCohortDefinition())
+				return self.currentCohortDefinitionDirtyFlag().isDirty() ? "unsaved" : "open";
+		});
+		self.cohortDefURL = ko.pureComputed(function() {
+			var url = "#/";
+			if (self.currentCohortDefinition())
+				url = url + "cohortdefinition/" + (self.currentCohortDefinition().id() || '0');
+			else
+				url = url + "cohortdefinitions"
+			return url;
+		});
+		
+		
 		self.currentCohortComparisonId = ko.observable();
+		self.currentCohortComparison = ko.observable();
+		self.currentCohortComparisonDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(self.currentCohortComparison()));
+		self.ccaCss = ko.pureComputed(function() {
+			if (self.currentCohortComparison())
+				return self.currentCohortComparisonDirtyFlag().isDirty() ? "unsaved" : "open";
+		});
+		self.ccaURL = ko.pureComputed(function() {
+			var url = "#/estimation";
+			if (self.currentCohortComparison())
+				url = url + "/" + (self.currentCohortComparison().analysisId || 0);
+			return url;
+		});
+		
+		
 		self.currentCohortDefinitionInfo = ko.observable();
 		self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
 		self.feasibilityId = ko.observable();
@@ -1460,13 +1508,19 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.currentConcept = ko.observable();
 		self.currentConceptId = ko.observable();
 		self.currentConceptMode = ko.observable('details');
-    	self.currentIRAnalysisId = ko.observable();
+    self.currentIRAnalysisId = ko.observable();
+
+		self.irStatusCss = ko.pureComputed(function() {
+			if (self.currentIRAnalysis())
+				return self.currentIRAnalysisDirtyFlag().isDirty() ? "unsaved" : "open";
+		});
 		self.irAnalysisURL = ko.pureComputed(function() {
 			var url = "#/iranalysis";
 			if (self.currentIRAnalysis())
 				url = url + "/" + (self.currentIRAnalysis().id() || 'new');
 			return url;
 		});
+
 		self.irStatusCss = ko.pureComputed(function() {
 			if (self.currentIRAnalysis())
 				return self.currentIRAnalysisDirtyFlag().isDirty() ? "unsaved" : "open";
@@ -1496,10 +1550,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.selectedConcepts = ko.observableArray(null);
 		//.extend({ persist: 'atlas.selectedConcepts' });
 		self.selectedConceptsWarnings = ko.observableArray();
-		self.currentConceptSetDirtyFlag = new ohdsiUtil.dirtyFlag({
-			header: self.currentConceptSet,
-			details: self.selectedConcepts
-		});
+
 		self.checkCurrentSource = function (source) {
 			return source.url == self.curentVocabularyUrl();
 		};
