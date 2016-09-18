@@ -13,6 +13,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			var DEBUG = true;
 			var self = this;
 			self.cohortComparisonId = params.currentCohortComparisonId;
+			self.cohortComparison = params.currentCohortComparison;
+			self.cohortComparisonDirtyFlag = params.dirtyFlag;
+			
 			self.config = config;
 			self.loading = ko.observable(true);
 			self.loadingExecution = ko.observable(false);
@@ -31,8 +34,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.sourceExecutions = {};
 			self.options = options;
 			self.expressionMode = ko.observable('print');
-			self.cohortComparison = ko.observable();
-			self.cohortComparisonDirtyFlag = ko.observable();
 			self.om = ko.observable();
 
 
@@ -497,6 +498,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.save = function () {
 
 				var cca = {
+					analysisId: self.cohortComparison().analysisId || null,
 					name: self.cohortComparison().name(),
 					treatmentId: self.cohortComparison().treatmentId(),
 					comparatorId: self.cohortComparison().comparatorId(),
@@ -627,10 +629,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					negativeControlId: self.cohortComparison().negativeControlId()
 				};
 
-				if (self.cohortComparisonId() != 0) {
-					cca.analysisId = self.cohortComparisonId();
-				}
-
 				var json = JSON.stringify(cca);
 
 				var savePromise = ohdsiUtil.cachedAjax({
@@ -643,17 +641,25 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				});
 
 				savePromise.then(function (saveResult) {
-					var redirectWhenComplete = saveResult.analysisId != self.cohortComparisonId();
+					var redirectWhenComplete = saveResult.analysisId != self.cohortComparison().analysisId;
 					self.cohortComparisonId(saveResult.analysisId);
+					self.cohortComparison().analysisId = saveResult.analysisId;
 					if (redirectWhenComplete) {
 						document.location = "#/estimation/" + self.cohortComparisonId();
 					}
 					self.cohortComparisonDirtyFlag().reset();
+					self.cohortComparison.valueHasMutated();
 					console.log(saveResult);
 				});
 			}
 
 			self.close = function () {
+				if (self.cohortComparisonDirtyFlag().isDirty() && !confirm("Estimation analysis changes are not saved. Would you like to continue?")) {
+					return;
+				}
+				self.cohortComparison(null);
+				self.cohortComparisonId(null);
+				self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison()));
 				document.location = '#/estimation';
 			}
 
@@ -832,11 +838,15 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				});
 			};
 
-			if (self.cohortComparisonId() == 0) {
+			// startup actions
+			
+			if ((self.cohortComparisonId() || 0) == 0 && self.cohortComparison() == null) {
+				// create new
 				self.cohortComparison(new ComparativeCohortAnalysis());
 				self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison()));
 				self.loading(false);
-			} else {
+			} else if (self.cohortComparisonId() != (self.cohortComparison() && self.cohortComparison().analysisId)) {
+				// load cca
 				ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
 					method: 'GET',
@@ -1009,7 +1019,11 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 						});
 					}
 				});
+			} else {
+				// already loaded
+				self.loading(false);
 			}
+			
 		}
 
 		var component = {
