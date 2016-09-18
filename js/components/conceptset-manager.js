@@ -95,6 +95,8 @@ define(['knockout',
             return resultSources;
         }, this);        
         
+        self.useCF = ko.observable(false);
+        
         self.fields = {
             membership: {
                 propName: 'conceptIn1And2',
@@ -220,6 +222,113 @@ define(['knockout',
                 isFacet: true,
             },            
         }
+
+        self.compareResultsColumns = [
+            {                
+                title: 'Match',
+                data: d => { 
+                    if (d.conceptIn1Only == 1) {
+                        return '1 Only'   
+                    } else if (d.conceptIn2Only == 1) {
+                    	return '2 Only'
+                    } else {
+                    	return 'Both'
+                    }
+                },
+            },
+            {
+                title: 'Id',
+                data: d => d.conceptId,
+            },
+            {
+                title: 'Code',
+                data: d => d.conceptCode,
+            },
+            {
+                title: 'Name',
+                data: d => {
+                    var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+                    return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
+                },
+            },
+            {
+                title: 'Class',
+                data: d => d.conceptClassId,
+            },            
+            {
+                title: '<i id="dtConeptManagerRC" class="fa fa-database" aria-hidden="true"></i> RC',
+                data: d => d.recordCount,
+            },
+            {
+                title: '<i id="dtConeptManagerDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
+                data: d => d.descendantRecordCount,
+            },
+            {
+                title: 'Domain Id',
+                data: d => d.domainId,
+            },
+            {
+                title: 'Vocabulary',
+                data: d => d.vocabularyId,
+            },        
+		];
+
+        self.compareResultsOptions = {
+            lengthMenu: [[10, 25, 50, 100, -1], ['10', '25', '50', '100', 'All']],
+            order: [[1, 'asc'], [2, 'desc']],
+            Facets: [
+                {
+                    'caption': 'Match',
+                    'binding': d => { 
+                        if (d.conceptIn1Only == 1) {
+                            return '1 Only'   
+                        } else if (d.conceptIn2Only == 1) {
+                            return '2 Only'
+                        } else {
+                            return 'Both'
+                        }
+                    },
+                },
+                {
+                    'caption': 'Class',
+                    'binding': d => d.conceptClassId,
+                },
+                {
+                    'caption': 'Domain',
+                    'binding': d => d.domainId,
+                },
+                {
+                    'caption': 'Vocabulary',
+                    'binding': d => d.vocabularyId,
+                },
+                {
+                    'caption': 'Has Records',
+                    'binding': d => {
+                        var val = d.recordCount;
+                        if (val.replace) 
+                        	val = parseInt(val.replace(/\,/g,'')); // Remove comma formatting and treat as int
+                        if (val > 0) {
+                            return 'true'
+                        } else {
+                            return 'false'
+                        }
+                    },
+                },
+                {
+                    'caption': 'Has Descendant Records',
+                    'binding': d => {
+                    	var val = d.descendantRecordCount;
+                    	if (val.replace)
+                        	val = parseInt(val.replace(/\,/g,'')); // Remove comma formatting and treat as int
+                        if (val > 0) {
+                            return 'true'
+                        } else {
+                            return 'false'
+                        }
+                    },
+                },
+            ]
+        };
         
 		self.renderLink = function (s, p, d) {
 			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';

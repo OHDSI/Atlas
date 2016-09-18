@@ -14,29 +14,22 @@
 	<div class="col-xs-10">
 		<div class="facetedDataTable">
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-            data: $component.data,
-            options: {
-							dom: 'Clfiprt',
-							colVis: {
-								buttonText: 'Change Columns',
-								align: 'right',
-								overlayFade: 0,
-								showAll: 'Show All Columns',
-								restore: 'Reset Columns'
-							},																																													 
-							language: {
-								search: 'Filter: '
-							},
-							rowCallback: $component.rowCallback,
-							lengthMenu: $component.lengthMenu,
-							orderClasses: false,
-							ordering: true,
-							order: [[ $component.orderColumn, 'desc' ]],
-							columns: $component.columns,
-							autoWidth: true
-					},
-					onRowClick: $component.rowClick
-        }">
+                data: $component.data,
+                options: {
+                    dom: $component.dom,
+                    colVis: $component.colVis,
+                    language: $component.language,
+                    buttons: $component.buttons,
+                    rowCallback: $component.rowCallback,
+                    lengthMenu: $component.lengthMenu,
+                    orderClasses: $component.orderClasses,
+                    ordering: $component.ordering,
+                    order: $component.order,
+                    columns: $component.columns,
+                    autoWidth: $component.autoWidth,
+                },                                                                                                     
+                onRowClick: $component.rowClick
+            }">
 			</table>
 		</div>
 	</div>

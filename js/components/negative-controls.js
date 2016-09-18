@@ -377,6 +377,229 @@ define(['knockout',
             }            
         }
 
+        self.useCF = ko.observable(false);
+        
+        self.negControlColumns = [
+            {
+                title: 'Id',
+                data: d => d.conceptId,
+            },
+            {
+                title: 'Name',
+                data: d => {
+                    var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+                    return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
+                },
+            },            
+            {
+                title: 'Domain Id',
+                data: d => d.domainId,
+            },
+            {
+                title: 'Medline CT',
+                data: d => {
+                    return d.medlineCt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+            },
+            {
+                title: 'Medline Case',
+                data: d => {
+                    return d.medlineCase.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+            },
+            {
+                title: 'Medline Other',
+                data: d => {
+                    return d.medlineOther.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+            },
+            {
+                title: 'SemMedDB CT (True)',
+                data: d => {
+                    return d.semmeddbCtT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                visible: false,
+            },
+            {
+                title: 'SemMedDB Case (True)',
+                data: d => {
+                    return d.semmeddbCaseT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                visible: false,
+            },
+            {
+                title: 'SemMedDB Other (True)',
+                data: d => {
+                    return d.semmeddbOtherT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                visible: false,
+            },
+            {
+                title: 'SemMedDB CT (False)',
+                data: d => {
+                    return d.semmeddbCtF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                visible: false,
+            },
+            {
+                title: 'SemMedDB Case (False)',
+                data: d => {
+                    return d.semmeddbCaseF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                visible: false,
+            }, 
+            {
+                title: 'SemMedDB Other (False)',
+                data: d => {
+                    return d.semmeddbOtherF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                visible: false,
+            }, 
+            {
+                title: 'euSPC',
+                data: d => {
+                    return d.euSPC.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+                visible: false,
+            }, 
+            {
+                title: 'Splicer ADR',
+                data: d => {
+                    return d.splADR.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+            }, 
+            {
+                title: 'AERS',
+                data: d => {
+                    return d.aers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");    
+                },
+            },
+            {
+                title: 'AERS PRR',
+                data: d => {
+                    return (Math.ceil(d.aersPRR * 1000) / 1000).toFixed(4);
+                },
+            },
+            {
+                title: 'Prediction',
+                data: d => {
+                    return (Math.ceil(d.prediction * 1000) / 1000).toFixed(4);
+                },
+            },
+            {
+                title: '<i id="dtNegCtrlRC" class="fa fa-database" aria-hidden="true"></i> RC',
+                data: d => d.recordCount,
+            },
+            {
+                title: '<i id="dtNegCtrlDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
+                data: d => d.descendantRecordCount,
+            },
+		];
+
+        self.negControlOptions = {
+            lengthMenu: [[10, 25, 50, 100, -1], ['10', '25', '50', '100', 'All']],
+            order: [[16, 'asc'], [17, 'desc']],
+            Facets: [
+                {
+                    'caption': 'Subset to candidate',
+                    'binding': d => { 
+                        if (d.medlineCt == 0 &&  
+                            d.medlineCase == 0 &&  
+                            d.medlineOther == 0 &&
+                            d.splADR == 0 &&
+                            d.aersPRR.toFixed(2) < 2.00 &&
+                            d.prediction.toFixed(2) < 0.10) {
+                            return 'Negative Controls';                         
+                        } else if (d.prediction.toFixed(2) > 0.80) {
+                            return 'Positive Controls'
+                        } else {
+                            return 'Other'
+                        }
+                    },
+                },
+                {
+                    'caption': 'Has Records',
+                    'binding': d => {
+                        var val = d.recordCount;
+                        if (val.replace) 
+                        	val = parseInt(val.replace(/\,/g,'')); // Remove comma formatting and treat as int
+                        if (val > 0) {
+                            return 'true'
+                        } else {
+                            return 'false'
+                        }
+                    },
+                },
+                {
+                    'caption': 'Has Descendant Records',
+                    'binding': d => {
+                    	var val = d.descendantRecordCount;
+                    	if (val.replace)
+                        	val = parseInt(val.replace(/\,/g,'')); // Remove comma formatting and treat as int
+                        if (val > 0) {
+                            return 'true'
+                        } else {
+                            return 'false'
+                        }
+                    },
+                },
+                {
+                    'caption': 'Medline CT',
+                    'binding': d => { 
+                        if (d.medlineCt == 0) {
+                            return '0';                         
+                        } else if (d.medlineCt > 0 && d.medlineCt <= 10) {
+                            return '1-10'
+                        } else {
+                            return '11 +'
+                        }
+                    },
+                },
+                {
+                    'caption': 'Medline Case',
+                    'binding': d => { 
+                        if (d.medlineCase == 0) {
+                            return '0';                         
+                        } else if (d.medlineCase > 0 && d.medlineCase <= 10) {
+                            return '1-10'
+                        } else {
+                            return '11 +'
+                        }
+                    },
+                },
+                {
+                    'caption': 'Medline Other',
+                    'binding': d => { 
+                        if (d.medlineOther == 0) {
+                            return '0';                         
+                        } else if (d.medlineOther > 0 && d.medlineOther <= 10) {
+                            return '1-10'
+                        } else {
+                            return '11 +'
+                        }
+                    },
+                },
+                {
+                    'caption': 'Splicer ADR',
+                    'binding': d => d.splADR,
+                },
+                {
+                    'caption': 'AERS',
+                    'binding': d => { 
+                        if (d.aers == 0) {
+                            return '0';                         
+                        } else if (d.aers > 0 && d.aers <= 10) {
+                            return '1-10'
+                        } else if (d.aers > 10 && d.aers <= 100) {
+                            return '11-100'
+                        } else {
+                            return '100+'
+                        }
+                    },
+                } 
+            ]
+        };
+        
         self.selectedConceptsSubscription = self.selectedConcepts.subscribe(function (newValue) {
             if (newValue != null) {
                 self.evaluateConceptSet();
