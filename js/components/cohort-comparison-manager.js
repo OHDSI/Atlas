@@ -84,11 +84,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				}
 			});
 			//$(self.jqEventSpace).on('filter', filterChange);
-			$(self.jqEventSpace).on('brush', function(evt, {brush, x, y} = {}) {
+			$(self.jqEventSpace).on('brush', function(evt, {empty, x1,x2,y1,y2} = {}) {
 					//console.log('brush event', arguments);
-					var [[x1,y1],[x2,y2]] = brush.extent();
 					var xyFilt;
-					if (brush.empty()) {
+					if (empty) {
 						xyFilt = null;
 						util.deleteState('filters.brush');
 					} else {
@@ -98,13 +97,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 																								 y >= y1 &&
 																								 y <= y2;
 																				};
-						util.setState('filters.brush', xyFilt);
+						util.setState('filters.brush', {x1,x2,y1,y2});
 					}
 					self.sharedCrossfilter().filter('xy', xyFilt);
-					//$(self.jqEventSpace).trigger('filter', {filterName:'xy', func:xyFilt});
-					// as of now, 'filter' trigger is caught by faceted-datatable-cf, which
-					// updates facets and triggers 'filteredRecs', which is caught below and
-					// causes updateData... need to fix this
 				});
 			$(self.sharedCrossfilter()).on('filter',
 				function(evt, {dimField} = {}) {

@@ -1910,15 +1910,12 @@
 						cp.x.scale.domain(orig_x_domain);
 						cp.y.scale.domain(orig_y_domain);
 					} else {
-						cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]]);
-						cp.y.scale.domain([brush.extent()[0][1], brush.extent()[1][1]]);
-						//cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]].map(cp.x.scale.invert, cp.x.scale));
-						//cp.y.scale.domain([brush.extent()[1][1], brush.extent()[0][1]].map(cp.y.scale.invert, cp.y.scale));
+						var [[x1,y1],[x2,y2]] = brush.extent();
+						cp.x.scale.domain([x1,x2]);
+						cp.y.scale.domain([y1,y2]);
 						//brushEl.as('d3').call(brush.move, null);
 					}
 
-
-					//var t = cp.chart.chart.gEl.as('d3').transition().duration(2750);
 					cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
 					cp.y.axisEl.gEl.as('d3').transition().duration(750).call(cp.y.axisEl.axis);
 
@@ -1932,7 +1929,7 @@
 							return "translate(" + xVal + "," + yVal + ")";
 						});
 
-					$(jqEventSpace).trigger('brush', [{brush, x:cp.x, y:cp.y}]);
+					$(jqEventSpace).trigger('brush', [{empty:brush.empty(), x1,x2,y1,y2}]);
 				});
 
 
