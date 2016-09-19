@@ -70,41 +70,44 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				console.log("new data in sharedCrossfilter; shouldn't happen much", stuff);
 			});
 			self.chartResolution = ko.observable(); // junk
-			self.chartOptions = chartOptions();
 			self.jqEventSpace = params.jqEventSpace || {};
 			self.fields = ko.observable([]);
 			self.chartObj.subscribe(function(chart) {
-				var opts = _.merge(chart.defaultOptions, chartOptions());
-				//var opts = chart.chartOptions; // after applying defaults
-
-				//self.fields(_.filter(opts, d=>d.isColumn||d.isFacet));
-
-				var fields = [];
-				_.each(opts, (opt, name) => {
-					if (opt.isField) {
-						opts[name] = new ohdsiUtil.Field(name, opt, opts);
-						fields.push(opts[name]);
-					}
-				});
-				self.fields(fields);
-				self.chartOptions = opts;
 			});
 			self.ready = ko.computed(function() {
-				return self.chartData().length && self.domElement() && self.pillMode() === 'balance';
+				return  self.chartObj() && 
+								self.chartData().length && 
+								self.domElement() && 
+								self.pillMode() === 'balance';
 			});
+			self.chartOptions = chartOptions();
 			self.ready.subscribe(function(ready) {
 				if (ready) {
-					if (!self.chartObj()) return;
-					self.chartObj().chartSetup(self.domElement(), 460, 150, self.chartOptions);
-					self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
-					self.chartOptions.xy.accessor = self.chartOptions.xy.accessors.value;
-					self.sharedCrossfilter().dimField('xy', self.chartOptions.xy);
-					//self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
-					//setTimeout(() => self.chartObj().updateData(self.chartData().slice(0,2000)), 4000);
-					//self.chartObj().updateData(self.chartData().slice(0,2000));
+					initializeBalanceComponents();
 				}
 			});
-			//$(self.jqEventSpace).on('filter', filterChange);
+			var initializeBalanceComponents = _.once(function() {
+				var opts = _.merge(self.chartObj().defaultOptions, self.chartOptions);
+				var fields = _.map(opts, 
+					(opt, name) => {
+						if (opt.isField) {
+							if (!(opt instanceof ohdsiUtil.Field)) {
+								opt = new ohdsiUtil.Field(name, opt, opts);
+							}
+							opt.bindParams({data:self.chartData()}, false);
+						}
+						return opts[name] = opt;
+					});
+				self.fields(fields);
+				self.chartObj().chartSetup(self.domElement(), 460, 150, opts);
+				self.chartObj().render(self.chartData(), self.domElement(), 460, 150, opts);
+				self.sharedCrossfilter().dimField('xy', opts.xy);
+				self.pillMode.subscribe(function(pillMode) {
+					if (pillMode === 'balance')
+						self.chartObj().render(self.chartData(), self.domElement(), 460, 150, opts);
+				});
+				//self.chartOptions.xy.accessor = self.chartOptions.xy.accessors.value;
+			});
 			$(self.jqEventSpace).on('brush', function(evt, {empty, x1,x2,y1,y2} = {}) {
 					//console.log('brush event', arguments);
 					var xyFilt;
@@ -134,7 +137,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							self.chartObj().cp.x.setZoomScale([x1,x2]);
 							self.chartObj().cp.y.setZoomScale([y1,y2]);
 						}
-						self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());
+						self.chartObj().updateData(self.sharedCrossfilter().dimRecs('xy'));
 					} else {
 						if (!waitForMore || waitForMore === 'done') {
 							self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());
