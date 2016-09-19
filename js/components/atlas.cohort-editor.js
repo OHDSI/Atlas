@@ -2,13 +2,14 @@ define(['knockout',
 				'text!./atlas.cohort-editor.html',
 				'appConfig',
 				'cohortbuilder/CohortDefinition',
-                'conceptsetbuilder/InputTypes/ConceptSet',
+				'conceptsetbuilder/InputTypes/ConceptSet',
+				'ohdsi.util',
 				'cohortbuilder/components',
 				'conceptsetbuilder/components',
 				'knockout-jqueryui/tabs',
 				'cohortdefinitionviewer',
                 'circe',
-				'databindings'
+				'databindings',
 ], function (ko, view, config, CohortDefinition, ConceptSet) {
 
 	function cohortEditor(params) {
