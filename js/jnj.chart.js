@@ -1985,12 +1985,15 @@
 					$('.extent').hide();
 					$('.resize').hide();
 
+					var [[x1,y1],[x2,y2]] = brush.extent();
+					$(jqEventSpace).trigger('brush', [{empty:brush.empty(), x1,x2,y1,y2}]);
+					return;
+
 					if (brush.empty()) {
 						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
 						cp.x.scale.domain(orig_x_domain);
 						cp.y.scale.domain(orig_y_domain);
 					} else {
-						var [[x1,y1],[x2,y2]] = brush.extent();
 						cp.x.scale.domain([x1,x2]);
 						cp.y.scale.domain([y1,y2]);
 						//brushEl.as('d3').call(brush.move, null);
@@ -2009,7 +2012,6 @@
 							return "translate(" + xVal + "," + yVal + ")";
 						});
 
-					$(jqEventSpace).trigger('brush', [{empty:brush.empty(), x1,x2,y1,y2}]);
 				});
 
 
