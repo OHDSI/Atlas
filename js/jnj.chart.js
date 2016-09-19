@@ -1987,6 +1987,7 @@
 
 					var [[x1,y1],[x2,y2]] = brush.extent();
 					$(jqEventSpace).trigger('brush', [{empty:brush.empty(), x1,x2,y1,y2}]);
+					brush.x(cp.x.scale).y(cp.y.scale);
 					return;
 
 					if (brush.empty()) {
