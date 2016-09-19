@@ -2283,9 +2283,10 @@
 			}
 
 			this.fields = _.map(cp, (field, name) => {
-												if (field.isField)
-													cp[name] = new util.Field(name, field, cp);
-												return cp[name];
+												if (field.isField && !(field instanceof util.Field)) {
+													field = new util.Field(name, field, cp);
+												}
+												return cp[name] = field;
 											})
 											.filter(field=>field.isField);
 

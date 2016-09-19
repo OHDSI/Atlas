@@ -173,7 +173,8 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 				// need to consistently define what labels and titles and stuff are called and how they're defined
 				// but this is ok for now
 				if (field instanceof util.Field) {
-					field.accessor = field.accessors.value;
+					//field.accessor = field.accessors.value;
+					//happening if Field class now
 				} else {
 					field.label = field.label || field.fname;
 					field.value = field.value || field.fname;
