@@ -20,7 +20,7 @@
 		</li>
 		<li role="presentation" data-bind="visible: config.cohortComparisonResultsEnabled, css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a>
 		</li>
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>Export</a>
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>Utilities</a>
 		</li>
 	</ul>
 
@@ -575,6 +575,8 @@
 				<ul class="nav nav-pills">
 					<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'print' }, click: function() {$component.expressionMode('print') };"><a>Print Friendly</a></li>
 					<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'rcode' }, click: function() {$component.expressionMode('rcode') };"><a>R Code</a></li>
+                    <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
+                    <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
 				</ul>
 				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'print'" class="tab-pane">
 					<div class="paddedWrapper">
@@ -584,6 +586,19 @@
 				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'rcode'" class="tab-pane">
 					<div class="paddedWrapper">
 						<cohort-comparison-r-code params="cohortComparison: $component.cohortComparison"></cohort-comparison-r-code>
+					</div>
+				</div>
+				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
+					<div class="paddedWrapper">
+                        <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.importJSON"></textarea>
+                        <div style="text-align: right">
+                            <button class="btn btn-sm btn-primary" data-bind="click: $component.import">Import</button>
+                        </div>
+					</div>
+				</div>                
+				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'export'" class="tab-pane">
+					<div class="paddedWrapper">
+						<textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
 					</div>
 				</div>
 			</div>

@@ -1606,7 +1606,7 @@ div.button-overlay {
 
 textarea.code {
 	font-style='Courier New';
-	font-size: 8px;
+	/* font-size: 8px; */
 }
 
 .panel-default>.panel-heading {

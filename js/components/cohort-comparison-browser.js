@@ -38,7 +38,9 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohort
 			},
 			{
 				title: 'Name',
-				data: 'name'
+                data: d => {
+                    return '<span class=\'linkish\'>' + d.name + '</span>';
+                },
 			},
 			{
 				title: 'Created',

@@ -4,12 +4,13 @@ define(['knockout',
 				'webapi/SourceAPI',
 				'webapi/CohortDefinitionAPI',
 				'iranalysis/IRAnalysisDefinition', 
+				'iranalysis/IRAnalysisExpression', 
 				'ohdsi.util',
 				'iranalysis', 
 				'databindings', 
 				'conceptsetbuilder/components', 
 				'circe'
-], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, ohdsiUtil) {
+], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil) {
 	function IRAnalysisManager(params) {
 		
 		
@@ -64,6 +65,24 @@ define(['knockout',
 				data.selectedData.action();
 			}
 		};		
+        
+        self.modifiedJSON = "";
+        self.importJSON = ko.observable();
+        self.expressionJSON = ko.pureComputed({
+            read: function () {
+                return ko.toJSON(self.selectedAnalysis().expression(), function (key, value) {
+                    if (value === 0 || value) {
+                        return value;
+                    } else {
+                        return
+                    }
+                }, 2);
+            },
+            write: function (value) {
+                self.modifiedJSON = value;
+            }
+        });
+        self.expressionMode = ko.observable('import');
 		
 		// model behaviors
 
@@ -165,7 +184,16 @@ define(['knockout',
 				pollForInfo();
 			});			
 		}
-		
+
+        self.import = function () {
+            if (self.importJSON() && self.importJSON().length > 0) {
+                var updatedExpression = JSON.parse(self.importJSON());
+                self.selectedAnalysis().expression(new IRAnalysisExpression(updatedExpression));
+                self.importJSON("");
+                self.activeTab('definition');
+            }
+        };
+        
 		self.init = function() {
 			self.refreshDefs();
 			if (self.selectedAnalysisId() == null && self.selectedAnalysis() == null) {
@@ -207,7 +235,7 @@ define(['knockout',
 		}
 		
 		// startup actions        
-    self.init();
+        self.init();
 
 		sourceAPI.getSources().then(function(sources) {
 			var sourceList = [];

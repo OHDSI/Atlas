@@ -32,8 +32,12 @@
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'generation' }, click: function() { $component.activeTab('generation') };">
-				<a>Generation</a>
+				<a>Generation</a>                
 			</li>
+            
+            <li role="presentation" data-bind="css: { active: $component.activeTab() == 'utilities' }, click: function() { $component.activeTab('utilities') };"><a>Utilities</a>
+            </li>
+            
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'definition' }" class="tab-pane">
@@ -53,7 +57,28 @@
 																			eventListener: [{ event: 'click', selector: 'button.removeResult', callback: removeResult}, {event: 'click', selector: 'button.execute', callback: onExecuteClick}]" class="tab-pane">
 				<ir-analysis-results params="sources: filteredSources, analysisCohorts: analysisCohorts"></ir-analysis-results>
 			</div>		
-		</div>	
+            <div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'utilities' }" class="tab-pane">
+                <div class="paddedWrapper">
+                    <ul class="nav nav-pills">
+                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
+                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
+                    </ul>
+                    <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
+                        <div class="paddedWrapper">
+                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.importJSON"></textarea>
+                            <div style="text-align: right">
+                                <button class="btn btn-sm btn-primary" data-bind="click: $component.import">Import</button>
+                            </div>
+                        </div>
+                    </div>                
+                    <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'export'" class="tab-pane">
+                        <div class="paddedWrapper">
+                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>	
 	</div>
 
 	<div data-bind="modal: showConceptSetBrowser" class="modal fade" tabindex="-1" role="dialog">

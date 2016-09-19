@@ -35,7 +35,24 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.options = options;
 			self.expressionMode = ko.observable('print');
 			self.om = ko.observable();
-
+            self.modifiedJSON = "";
+            self.importJSON = ko.observable();
+            self.expressionJSON = ko.pureComputed({
+                read: function () {
+                    return ko.toJSON(self.cohortComparison(), function (key, value) {
+                        if (value === 0 || value) {
+                            delete value.analysisId;
+                            delete value.name;
+                            return value;
+                        } else {
+                            return
+                        }
+                    }, 2);
+                },
+                write: function (value) {
+                    self.modifiedJSON = value;
+                }
+            });
 
 			// for balance chart
 			self.chartObj = ko.observable();
@@ -834,7 +851,16 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 						self.monitorJobExecution(c.executionId, sourceKey);
 					}
 				});
-			};
+			};  
+            
+            self.import = function () {
+                if (self.importJSON().length > 0) {
+                    var updatedExpression = JSON.parse(self.importJSON());
+                    self.cohortComparison(new ComparativeCohortAnalysis(updatedExpression));
+                    self.importJSON("");
+                    self.tabMode('specification');
+                }
+            };
 
 			// startup actions
 			
