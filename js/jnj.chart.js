@@ -1723,16 +1723,18 @@
 									thisField._zoomScale.domain(domain);
 								},
 								posParams: ['thisField'],
+								accessorOrder: 5, // depends on fullScale
 							},
 							fullScale: {
 								func: (thisField, data, layout) => {
 									thisField._fullScale = 
 										d3.scale.linear()
-											.domain(d3.extent(data.map(thisField.accessors.value)))
+											.domain(d3.extent(data.map(thisField.accessor)))
 											.range([0, layout.svgWidth()])
 								},
 								posParams: ['thisField','data','layout'],
 								runOnGenerate: true,
+								accessorOrder: 2,
 							}
 						},
 						//get zoomScale() { return this._zoomScale || this.scale; },
@@ -1764,16 +1766,18 @@
 									thisField._zoomScale.domain(domain);
 								},
 								posParams: ['thisField'],
+								accessorOrder: 5, // depends on fullScale
 							},
 							fullScale: {
 								func: (thisField, data, layout) => {
 									thisField._fullScale = 
 										d3.scale.linear()
-											.domain(d3.extent(data.map(thisField.accessors.value)))
+											.domain(d3.extent(data.map(thisField.accessor)))
 											.range([0, layout.svgWidth()])
 								},
 								posParams: ['thisField','data','layout'],
 								runOnGenerate: true,
+								accessorOrder: 2,
 							}
 						},
 			},
@@ -1795,6 +1799,7 @@
 						//rangeFunc: (layout, prop) => prop.scale.range(), // does this belong here?
 						needsLabel: true,
 						needsValueFunc: true,
+						defaultValue: () => '#003142',
 						needsScale: true,
 						isField: true,
 						scale: d3.scale.category10(),
@@ -1807,6 +1812,7 @@
 			},
 			shape: {
 						value: 0,
+						defaultValue: () => 'circle',
 						scale: d3.scale.ordinal(),
 						needsLabel: true,
 						needsValueFunc: true,
@@ -1870,9 +1876,7 @@
 
 
 			this.fields.forEach(field => {
-				//field.bindParams({data, series, allFields:this.cp, layout:this.layout});
-				// shouldn't need to bind allFields
-				field.bindParams({data, series, layout:this.layout});
+				//field.bindParams({data, series, layout:this.layout});
 			});
 			var tooltipBuilder = util.tooltipBuilderForFields(this.fields, data, series);
 			this.layout.positionZones();
@@ -1899,7 +1903,6 @@
 			if (!cp.data.alreadyInSeries) {
 				var series = dataToSeries(data, cp.series);
 				this.data = data;
-				//var series = dataToSeries(data.slice(0,1000), cp.series);
 			}
 			if (!data.length) { // do this some more efficient way
 				nodata(this.svgEl.as("d3"));
@@ -2001,8 +2004,8 @@
 						.transition()
 						.duration(750)
 						.attr("transform", function (d) {
-							var xVal = cp.x.scale(cp.x.accessors.value(d));
-							var yVal = cp.y.scale(cp.y.accessors.value(d));
+							var xVal = cp.x.scale(cp.x.accessor(d));
+							var yVal = cp.y.scale(cp.y.accessor(d));
 							return "translate(" + xVal + "," + yVal + ")";
 						});
 
@@ -2036,23 +2039,23 @@
 												//.transition()
 												//.delay(1000).duration(1500)
 												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
+													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
+													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
 													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessors.value(d)),
+																		cp.shape.scale(cp.shape.accessor(d)),
 																		xVal, // 0, //options.xValue(d),
 																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessors.value(d)));
+																		cp.size.scale(cp.size.accessor(d)));
 												})
 												.style("stroke", function (d) {
 													// calling with this so default can reach up to parent
 													// for series name
 													//return cp.color.scale(cp.series.value.call(this, d));
-													return cp.color.scale(cp.color.accessors.value(d));
+													return cp.color.scale(cp.color.accessor(d));
 												})
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													//return `translate(${xVal},${yVal}) scale(1,1)`;
 													return "translate(" + xVal + "," + yVal + ")";
 												})
@@ -2070,32 +2073,32 @@
 												.delay(delay)
 												.duration(duration)
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return "translate(" + xVal + "," + yVal + ")";
 												});
 
 											/*
 											selection
 												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
+													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
+													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
 													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessors.value(d)),
+																		cp.shape.scale(cp.shape.accessor(d)),
 																		xVal, // 0, //options.xValue(d),
 																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessors.value(d)));
+																		cp.size.scale(cp.size.accessor(d)));
 												})
 												.style("stroke", function (d) {
 													// calling with this so default can reach up to parent
 													// for series name
 													//return cp.color.scale(cp.series.value.call(this, d));
-													return cp.color.scale(cp.color.accessors.value(d));
+													return cp.color.scale(cp.color.accessor(d));
 												})
 												//.transition()
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return "translate(" + xVal + "," + yVal + ")";
 												})
 												*/
@@ -2114,8 +2117,8 @@
 												/*
 												//.transition().delay(delay).duration(duration)
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return `translate(${xVal},${yVal}) scale(.8,.8)`;
 												})
 												*/
@@ -2124,15 +2127,15 @@
 												/*
 												.transition()
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return `translate(${xVal},${yVal}) scale(5,4)`;
 												})
 												//.transition(transition)
 												.transition()
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return `translate(${xVal},${yVal}) scale(0,0)`;
 													//return `scale(0,0)`;
 												})
@@ -2159,7 +2162,7 @@
 						};
 					})
 					.attr("transform", function (d) {
-						return "translate(" + cp.x.scale(cp.x.accessors.value(d.value)) + "," + cp.y.scale(cp.y.accessors.value(d.value)) + ")";
+						return "translate(" + cp.x.scale(cp.x.accessor(d.value)) + "," + cp.y.scale(cp.y.accessor(d.value)) + ")";
 					})
 					.attr("x", 3)
 					.attr("dy", 2)
@@ -2198,7 +2201,7 @@
 			*/
 			x: {
 						requiredOptions: ['value'],
-						value: (d,i,j) => parentOpts.x.accessors.value(d,i,j),
+						value: (d,i,j) => parentOpts.x.accessor(d,i,j),
 						getters: {
 							scale: function() {
 								return this._scale || d3.scale.linear();
@@ -2220,7 +2223,7 @@
 			},
 			y: {
 						requiredOptions: ['value'],
-						value: (d,i,j) => parentOpts.y.accessors.value(d,i,j),
+						value: (d,i,j) => parentOpts.y.accessor(d,i,j),
 						isField: true,
 						getters: {
 							scale: function() {
@@ -2307,23 +2310,23 @@
 										enterCb: function(selection,params) {
 											selection
 												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
+													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
+													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
 													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessors.value(d)),
+																		cp.shape.scale(cp.shape.accessor(d)),
 																		xVal, // 0, //options.xValue(d),
 																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessors.value(d)));
+																		cp.size.scale(cp.size.accessor(d)));
 												})
 												.style("stroke", function (d) {
 													// calling with this so default can reach up to parent
 													// for series name
 													//return cp.color.scale(cp.series.value.call(this, d));
-													return cp.color.scale(cp.color.accessors.value(d));
+													return cp.color.scale(cp.color.accessor(d));
 												})
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													//return `translate(${xVal},${yVal}) scale(1,1)`;
 													return "translate(" + xVal + "," + yVal + ")";
 												})
@@ -2338,8 +2341,8 @@
 												.delay(delay)
 												.duration(duration)
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return "translate(" + xVal + "," + yVal + ")";
 												});
 										},

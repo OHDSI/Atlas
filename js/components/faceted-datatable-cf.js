@@ -158,10 +158,15 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 				*/
 			})
 			//self.facets(self._facets);
+			var filtersExist = false;
 			self._facets.forEach(facet=>{
-				updateFilters(facet);
+				filtersExist = filtersExist || updateOneFacetsFilters(facet, true);
 			});
-			updateFacets();
+			updateFacetUI();
+			if (filtersExist) {
+				$(self.sharedCrossfilter()).trigger('filter', 
+						[{ source: 'datatable', waitForMore: 'done' }]);
+			}
 		}
 		function sharedSetup(fields) {
 			fields.forEach(function(field) {
@@ -237,26 +242,32 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 															source:'datatable',
 															filter: {[filterSwitched]: filterOn},
 														});
-			updateFilters(facet, true);
+			var filterOn = updateOneFacetsFilters(facet);
+			updateFacetUI();
 		}
-		function updateFilters(facet, facetUpdate = false) {
+		function updateOneFacetsFilters(facet, tellListenersToWait = false) {
+			// should only get here if:
+			//		1) loading page and initializing facet filters
 			var filters = util.getState(filterStateKey()) || {};
-			var func = filters[facet.name] ? (d => filterVal(facet.name, d)) : null;
-			self.sharedCrossfilter().filter(facet.name, func, {source:'datatable'});
+			if (filters[facet.name]) {
+				// there's at least one Member chosen for this facet
+				// func will receive the member name (the result of applying
+				//		the facet's accessor to a data record) and will return
+				//		true if that member is included in the filter state for
+				//		the facet
+				var func = d => filterVal(facet.name, d);
+			} else {
+				// no members chosen for this facet. clear filter, which means all
+				//		records pass
+				var func = null;
+			}
+			self.sharedCrossfilter().filter(facet.name, func, 
+							{source:'datatable', waitForMore: tellListenersToWait});
 			// should maybe say *which* datatable, in case there's more than one
 			// on a page, but not dealing with that yet.
-
-			/*
-			console.warn('REVIEW: triggering filteredRecs' );
-			$(self.sharedCrossfilter())
-				.trigger('filteredRecs', {
-															source:'datatable',
-															//recs: groupAll.value(),
-														});
-			*/
-			facetUpdate && updateFacets();
+			return !!func;
 		};
-		function updateFacets() {
+		function updateFacetUI() {
 			self._facets.forEach(facet=>{
 				facet.Members = self.sharedCrossfilter().group(facet.name).all().map(
 					group => {
@@ -278,7 +289,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 				if (source === 'datatable') {
 					return; // already handled
 				}
-				updateFacets();
+				updateFacetUI();
 			});
 	};
 

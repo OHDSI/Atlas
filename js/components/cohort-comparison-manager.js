@@ -46,7 +46,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.chartData.subscribe(function(recs) {
 				self.sharedCrossfilter().replaceData(recs);
 			});
-			$(self.sharedCrossfilter()).on('filter newData', function(evt, stuff) {
+			$(self.sharedCrossfilter()).on('filter', function(evt, stuff) {
 				console.log("filter in sharedCrossfilter", stuff);
 			});
 			$(self.sharedCrossfilter()).on('newData', function(evt, stuff) {
@@ -103,15 +103,26 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 																				};
 						util.setState('filters.brush', {x1,x2,y1,y2});
 					}
-					self.sharedCrossfilter().filter('xy', xyFilt, {source:'brush'});
+					self.sharedCrossfilter().filter('xy', xyFilt, 
+							{source:'brush', x1, x2, y1, y2, empty});
 				});
 			$(self.sharedCrossfilter()).on('filter',
-				function(evt, {dimField, source} = {}) {
+				function(evt, {dimField, source, x1, x2, y1, y2, empty, waitForMore} = {}) {
 					if (source === 'brush') {
 						// scatter has already zoomed.
-						return;
+						if (empty) {
+							self.chartObj().cp.x.setZoomScale();
+							self.chartObj().cp.y.setZoomScale();
+						} else {
+							self.chartObj().cp.x.setZoomScale([x1,x2]);
+							self.chartObj().cp.y.setZoomScale([y1,y2]);
+						}
+						self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());
+					} else {
+						if (!waitForMore || waitForMore === 'done') {
+							self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());
+						}
 					}
-					self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());
 				});
 			/*
 			function dataSetup(raw) {
