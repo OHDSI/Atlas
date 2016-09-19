@@ -480,6 +480,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
+						response.forEach(function(r) { 
+								r.caption = r.estimate + ' (' + d3.round(r.lower95,2) + '-' + d3.round(r.upper95,2) + ')';
+						});
 						self.om(response);
 					}
 				});
@@ -509,7 +512,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.canSave = ko.pureComputed(function () {
 				return (self.cohortComparison().name() && self.cohortComparison().comparatorId() && self.cohortComparison().comparatorId() > 0 && self.cohortComparison().treatmentId() && self.cohortComparison().treatmentId() > 0 && self.cohortComparison().outcomeId() && self.cohortComparison().outcomeId() > 0 && self.cohortComparison().modelType && self.cohortComparison().modelType() > 0 && self.cohortComparisonDirtyFlag() && self.cohortComparisonDirtyFlag().isDirty());
 			});
-
+			
 			self.save = function () {
 
 				var cca = {

@@ -18,7 +18,7 @@
 
 #profile-chart .observation-period {
 	fill: #b7cbdc;
-	opacity: .5;
+	opacity: .3;
 }
 
 #profile-chart svg {
@@ -190,16 +190,14 @@ rect.dim {
 	cursor: pointer;
 }
 .highlighted path, .highlighted line, .highlighted rect {
-	/*opacity: 1;*/
-	stroke: black;
-	stroke-opacity: .6;
+	fill: #f19119;
 }
 text.highlighted {
 	opacity: 1;
 	fill: black !important;
 }
 .unhighlighted {
-	opacity: 0.1;
+	opacity: .9;
 }
 g.inset rect.inset-point {
 	fill: black;

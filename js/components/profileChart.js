@@ -462,7 +462,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.attr('r', radius(datum))
 	}
 	function rectangle(datum) {
-		var minBoxPix = 2;
+		var minBoxPix = 5;
 		var g = d3.select(this);
 		g.selectAll('rect.point.' + pointClass(datum))
 			.data([datum])
