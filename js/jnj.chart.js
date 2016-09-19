@@ -2110,40 +2110,7 @@
 										*/
 										exitCb: function(selection, params, transitionOpts={}) {
 											var {delay=0, duration=0, transition} = transitionOpts;
-											/*
-											if (!transition && (delay || transition))
-												transition = d3.transition().delay(delay).duration(duration);
-											*/
-
-											selection
-												//.transition(transition)
-												/*
-												//.transition().delay(delay).duration(duration)
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
-													return `translate(${xVal},${yVal}) scale(.8,.8)`;
-												})
-												*/
-												.style("stroke", "black")
-												//.transition(transition)
-												/*
-												.transition()
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
-													return `translate(${xVal},${yVal}) scale(5,4)`;
-												})
-												//.transition(transition)
-												.transition()
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
-													return `translate(${xVal},${yVal}) scale(0,0)`;
-													//return `scale(0,0)`;
-												})
-												.remove()
-												*/
+											selection.remove()
 										},
 									});
 

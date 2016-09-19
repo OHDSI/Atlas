@@ -120,7 +120,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							self.chartObj().cp.x.setZoomScale([x1,x2]);
 							self.chartObj().cp.y.setZoomScale([y1,y2]);
 						}
-						self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());
+						self.chartObj().updateData(self.sharedCrossfilter().dimRecs('xy'));
 					} else {
 						if (!waitForMore || waitForMore === 'done') {
 							self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());

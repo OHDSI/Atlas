@@ -1612,6 +1612,15 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 
 			return dimField.groupings[groupingName].cfDimGroup;
 		}
+		dimRecs(dimName, groupingName = 'default') {
+			// return all the records filtered by all dims except this one
+			if (!_.has(this.dimFields, dimName))
+				throw new Error(`no dimField ${dimName}`);
+
+			var dimField = this.dimFields[dimName];
+			return dimField.cfDim.groupAll().reduce(...reduceToRecs).value();
+
+		}
 	}
 	var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
 
