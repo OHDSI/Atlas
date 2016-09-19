@@ -380,6 +380,10 @@ div#wrapperMainWindowContainer {}
 	background-image: linear-gradient(to bottom, #F9B813 0, #EFAB00 100%);
 }
 
+.omHighlight {
+	color: #337ab7;
+}
+
 .feFilter .facetScrollBox {
 	max-height: 125px;
 	overflow-y: auto;
