@@ -158,17 +158,23 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 				*/
 			})
 			//self.facets(self._facets);
+			var filtersExist = false;
 			self._facets.forEach(facet=>{
-				updateFilters(facet);
+				filtersExist = filtersExist || updateOneFacetsFilters(facet, true);
 			});
-			updateFacets();
+			updateFacetUI();
+			if (filtersExist) {
+				$(self.sharedCrossfilter()).trigger('filter', 
+						[{ source: 'datatable', waitForMore: 'done' }]);
+			}
 		}
 		function sharedSetup(fields) {
 			fields.forEach(function(field) {
 				// need to consistently define what labels and titles and stuff are called and how they're defined
 				// but this is ok for now
 				if (field instanceof util.Field) {
-					field.accessor = field.accessors.value;
+					//field.accessor = field.accessors.value;
+					//happening if Field class now
 				} else {
 					field.label = field.label || field.fname;
 					field.value = field.value || field.fname;
@@ -237,61 +243,54 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 															source:'datatable',
 															filter: {[filterSwitched]: filterOn},
 														});
-			updateFilters(facet, true);
+			var filterOn = updateOneFacetsFilters(facet);
+			updateFacetUI();
 		}
-		function updateFilters(facet, facetUpdate = false) {
+		function updateOneFacetsFilters(facet, tellListenersToWait = false) {
+			// should only get here if:
+			//		1) loading page and initializing facet filters
 			var filters = util.getState(filterStateKey()) || {};
-			/*
 			if (filters[facet.name]) {
-				facet.cfDim.filter(memberName=>filterVal(facet.name, memberName));
+				// there's at least one Member chosen for this facet
+				// func will receive the member name (the result of applying
+				//		the facet's accessor to a data record) and will return
+				//		true if that member is included in the filter state for
+				//		the facet
+				var func = d => filterVal(facet.name, d);
 			} else {
-				facet.cfDim.filter(null);
+				// no members chosen for this facet. clear filter, which means all
+				//		records pass
+				var func = null;
 			}
-			*/
-			var func = filters[facet.name] ? (d => filterVal(facet.name, d)) : null;
-			self.sharedCrossfilter().filter(facet.name, func, {source:'datatable'});
+			self.sharedCrossfilter().filter(facet.name, func, 
+							{source:'datatable', waitForMore: tellListenersToWait});
 			// should maybe say *which* datatable, in case there's more than one
 			// on a page, but not dealing with that yet.
-			facetUpdate && updateFacets();
+			return !!func;
 		};
-		function updateFacets() {
+		function updateFacetUI() {
 			self._facets.forEach(facet=>{
-				//facet.Members = facet.cfDimGroup.all().map(group=>{   // })
-				facet.Members = 
-					self.sharedCrossfilter().group(facet.name).all()
-						.map(group => {
-							var selected = filterVal(facet.name, group.key);
-							return {
-								Name: group.key,
-								ActiveCount: facet.countFunc ? facet.countFunc(group) : group.value.length,
-								Selected: selected,
-							};
-						});
+				facet.Members = self.sharedCrossfilter().group(facet.name).all().map(
+					group => {
+						var selected = filterVal(facet.name, group.key);
+						return {
+							Name: group.key,
+							ActiveCount: facet.countFunc ? facet.countFunc(group) : group.value.length,
+							Selected: selected,
+						};
+					});
 			});
 			self.facets.removeAll()
 			self.facets.push(...self._facets);
 
-			/*
-			var groupAll = self.crossfilter.groupAll();
-			groupAll.reduce(...reduceToRecs);
-			self.data(groupAll.value());
-			*/
 			self.data(self.sharedCrossfilter().filteredRecs());
-			//self.data(self.recs());
-
-			console.warn('REVIEW: triggering filteredRecs' );
-			$(self.sharedCrossfilter())
-				.trigger('filteredRecs', {
-															source:'datatable',
-															//recs: groupAll.value(),
-														});
 		}
 		$(self.sharedCrossfilter()).on('filter', 
 			function(evt, {dimField, source} = {}) {
 				if (source === 'datatable') {
 					return; // already handled
 				}
-				updateFacets();
+				updateFacetUI();
 			});
 	};
 

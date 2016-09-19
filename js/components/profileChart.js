@@ -340,7 +340,6 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 		return svg;
 	}
 	function inset(svg, allPoints, filteredPoints, zoomFilter) {
-		zoomFilterG = zoomFilter;
 		var insetWidth = (width + margin.left + margin.right) * .15
 		var insetHeight = (vizHeight + margin.top + margin.bottom) * .15;
 		var ixScale = d3.scale.linear()

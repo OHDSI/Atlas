@@ -1658,7 +1658,7 @@
 				alreadyInSeries: false,
 			},
 			availableDatapointBindings: 
-				['d', 'i', 'j', 'data', 'series', 'allFields', 'layout'],
+				['d', 'i', 'j', 'data', 'series', 'allFields', 'thisField', 'layout'],
 			chart: {
 				cssClass: "lineplot",
 				labelIndexDate: false,
@@ -1671,6 +1671,26 @@
 				right: { margin: { size: 5}, },
 			},
 			x: {
+				/* lots of different scale requirements:
+						original data: full domain, full range for chart size
+						brush zoom: domain limited to brush extent
+						external filter zoom: domain limited to filtered data extent
+
+						what if brush and external filter?
+						maybe brush trumps
+
+						main chart should use brush zoom domain if exists
+						and return to full when brush cleared
+
+						inset domain: full data extent, regardless of zoom
+						inset range: small area
+						inset focus: zoom extent with zoom, none with full
+
+						so:
+						main domain, zoom domain (control zoom by brush or filter externally)
+						main range, inset range
+						inset focus = zoom domain
+					*/
 						requiredOptions: ['value','label'],
 						showAxis: true,
 						showLabel: true,
@@ -1678,14 +1698,46 @@
 						ticks: 10,
 						needsLabel: true,
 						needsValueFunc: true,
-						needsScale: true,
+						//needsScale: true, // don't use automatic stuff, too complicated here
+						/* annoying: inline getter won't survive merging into default opts
+								so have to let Field constructor make them enumerable with
+								Object.defineProperty
+						get scale() {
+							return this._zoomScale || this._fullScale || d3.scale.linear();
+						},
+						*/
+						getters: {
+							scale: function() {
+								return this._zoomScale || this._fullScale || d3.scale.linear();
+							},
+						},
 						isField: true,
 						_accessors: {
-							range: {
-								func: layout => [0, layout.svgWidth()],
-								posParams: ['layout'],
+							setZoomScale: {
+								func: (thisField, domain) => {
+									if (!domain) {
+										delete thisField._zoomScale;
+										return thisField.scale;
+									}
+									thisField._zoomScale = thisField._fullScale.copy();
+									thisField._zoomScale.domain(domain);
+								},
+								posParams: ['thisField'],
+								accessorOrder: 5, // depends on fullScale
 							},
-						}
+							fullScale: {
+								func: (thisField, data, layout) => {
+									thisField._fullScale = 
+										d3.scale.linear()
+											.domain(d3.extent(data.map(thisField.accessor)))
+											.range([0, layout.svgWidth()])
+								},
+								posParams: ['thisField','data','layout'],
+								runOnGenerate: true,
+								accessorOrder: 2,
+							}
+						},
+						//get zoomScale() { return this._zoomScale || this.scale; },
 			},
 			y: {
 						requiredOptions: ['value'],
@@ -1696,14 +1748,38 @@
 						scale: d3.scale.linear(),
 						needsLabel: true,
 						needsValueFunc: true,
-						needsScale: true,
+						isField: true,
+						getters: {
+							scale: function() {
+								return this._zoomScale || this._fullScale || d3.scale.linear();
+							},
+						},
 						isField: true,
 						_accessors: {
-							range: {
-								func: layout => [layout.svgHeight(), 0],
-								posParams: ['layout'],
+							setZoomScale: {
+								func: (thisField, domain) => {
+									if (!domain) {
+										delete thisField._zoomScale;
+										return thisField.scale;
+									}
+									thisField._zoomScale = thisField._fullScale.copy();
+									thisField._zoomScale.domain(domain);
+								},
+								posParams: ['thisField'],
+								accessorOrder: 5, // depends on fullScale
 							},
-						}
+							fullScale: {
+								func: (thisField, data, layout) => {
+									thisField._fullScale = 
+										d3.scale.linear()
+											.domain(d3.extent(data.map(thisField.accessor)))
+											.range([0, layout.svgWidth()])
+								},
+								posParams: ['thisField','data','layout'],
+								runOnGenerate: true,
+								accessorOrder: 2,
+							}
+						},
 			},
 			size: {
 						scale: d3.scale.linear(),
@@ -1723,18 +1799,20 @@
 						//rangeFunc: (layout, prop) => prop.scale.range(), // does this belong here?
 						needsLabel: true,
 						needsValueFunc: true,
+						defaultValue: () => '#003142',
 						needsScale: true,
 						isField: true,
 						scale: d3.scale.category10(),
 						_accessors: {
 							range: {
-								func: (allFields) => allFields.color.scale.range(),
-								posParams: ['allFields'],
+								func: (thisField) => thisField.scale.range(),
+								posParams: ['thisField'],
 							},
 						}
 			},
 			shape: {
 						value: 0,
+						defaultValue: () => 'circle',
 						scale: d3.scale.ordinal(),
 						needsLabel: true,
 						needsValueFunc: true,
@@ -1798,7 +1876,7 @@
 
 
 			this.fields.forEach(field => {
-				field.bindParams({data, series, allFields:this.cp, layout:this.layout});
+				//field.bindParams({data, series, layout:this.layout});
 			});
 			var tooltipBuilder = util.tooltipBuilderForFields(this.fields, data, series);
 			this.layout.positionZones();
@@ -1809,11 +1887,14 @@
 						//.run({data: series});
 						.run({data: series, delay: 500, duration: 2000, cp: this.cp});
 
+			this.cp.inset.chart.render(this.data, this.cp.inset, this.layout);
+			/*
 			if (this.data.length !== data.length) {
 				this.cp.inset.chart.render(this.data, this.cp.inset, this.layout);
 			} else {
 				this.cp.inset.el.gEl.as('d3').html('');
 			}
+			*/
 		}
 		this.render = function (data, target, w, h, cp) {
 			var self = this;
@@ -1822,14 +1903,13 @@
 			if (!cp.data.alreadyInSeries) {
 				var series = dataToSeries(data, cp.series);
 				this.data = data;
-				//var series = dataToSeries(data.slice(0,1000), cp.series);
 			}
 			if (!data.length) { // do this some more efficient way
 				nodata(this.svgEl.as("d3"));
 				return;
 			}
 			this.fields.forEach(field => {
-				field.bindParams({data, series, allFields:cp, layout:this.layout});
+				field.bindParams({data, series, layout:this.layout});
 			});
 			var tooltipBuilder = util.tooltipBuilderForFields(this.fields, data, series);
 			
@@ -1905,20 +1985,21 @@
 					$('.extent').hide();
 					$('.resize').hide();
 
+					var [[x1,y1],[x2,y2]] = brush.extent();
+					$(jqEventSpace).trigger('brush', [{empty:brush.empty(), x1,x2,y1,y2}]);
+					brush.x(cp.x.scale).y(cp.y.scale);
+					return;
+
 					if (brush.empty()) {
 						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
 						cp.x.scale.domain(orig_x_domain);
 						cp.y.scale.domain(orig_y_domain);
 					} else {
-						cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]]);
-						cp.y.scale.domain([brush.extent()[0][1], brush.extent()[1][1]]);
-						//cp.x.scale.domain([brush.extent()[0][0], brush.extent()[1][0]].map(cp.x.scale.invert, cp.x.scale));
-						//cp.y.scale.domain([brush.extent()[1][1], brush.extent()[0][1]].map(cp.y.scale.invert, cp.y.scale));
+						cp.x.scale.domain([x1,x2]);
+						cp.y.scale.domain([y1,y2]);
 						//brushEl.as('d3').call(brush.move, null);
 					}
 
-
-					//var t = cp.chart.chart.gEl.as('d3').transition().duration(2750);
 					cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
 					cp.y.axisEl.gEl.as('d3').transition().duration(750).call(cp.y.axisEl.axis);
 
@@ -1927,12 +2008,11 @@
 						.transition()
 						.duration(750)
 						.attr("transform", function (d) {
-							var xVal = cp.x.scale(cp.x.accessors.value(d));
-							var yVal = cp.y.scale(cp.y.accessors.value(d));
+							var xVal = cp.x.scale(cp.x.accessor(d));
+							var yVal = cp.y.scale(cp.y.accessor(d));
 							return "translate(" + xVal + "," + yVal + ")";
 						});
 
-					$(jqEventSpace).trigger('brush', [{brush, x:cp.x, y:cp.y}]);
 				});
 
 
@@ -1962,23 +2042,23 @@
 												//.transition()
 												//.delay(1000).duration(1500)
 												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
+													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
+													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
 													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessors.value(d)),
+																		cp.shape.scale(cp.shape.accessor(d)),
 																		xVal, // 0, //options.xValue(d),
 																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessors.value(d)));
+																		cp.size.scale(cp.size.accessor(d)));
 												})
 												.style("stroke", function (d) {
 													// calling with this so default can reach up to parent
 													// for series name
 													//return cp.color.scale(cp.series.value.call(this, d));
-													return cp.color.scale(cp.color.accessors.value(d));
+													return cp.color.scale(cp.color.accessor(d));
 												})
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													//return `translate(${xVal},${yVal}) scale(1,1)`;
 													return "translate(" + xVal + "," + yVal + ")";
 												})
@@ -1996,32 +2076,32 @@
 												.delay(delay)
 												.duration(duration)
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return "translate(" + xVal + "," + yVal + ")";
 												});
 
 											/*
 											selection
 												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
+													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
+													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
 													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessors.value(d)),
+																		cp.shape.scale(cp.shape.accessor(d)),
 																		xVal, // 0, //options.xValue(d),
 																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessors.value(d)));
+																		cp.size.scale(cp.size.accessor(d)));
 												})
 												.style("stroke", function (d) {
 													// calling with this so default can reach up to parent
 													// for series name
 													//return cp.color.scale(cp.series.value.call(this, d));
-													return cp.color.scale(cp.color.accessors.value(d));
+													return cp.color.scale(cp.color.accessor(d));
 												})
 												//.transition()
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return "translate(" + xVal + "," + yVal + ")";
 												})
 												*/
@@ -2040,8 +2120,8 @@
 												/*
 												//.transition().delay(delay).duration(duration)
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return `translate(${xVal},${yVal}) scale(.8,.8)`;
 												})
 												*/
@@ -2050,15 +2130,15 @@
 												/*
 												.transition()
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return `translate(${xVal},${yVal}) scale(5,4)`;
 												})
 												//.transition(transition)
 												.transition()
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return `translate(${xVal},${yVal}) scale(0,0)`;
 													//return `scale(0,0)`;
 												})
@@ -2085,7 +2165,7 @@
 						};
 					})
 					.attr("transform", function (d) {
-						return "translate(" + cp.x.scale(cp.x.accessors.value(d.value)) + "," + cp.y.scale(cp.y.accessors.value(d.value)) + ")";
+						return "translate(" + cp.x.scale(cp.x.accessor(d.value)) + "," + cp.y.scale(cp.y.accessor(d.value)) + ")";
 					})
 					.attr("x", 3)
 					.attr("dy", 2)
@@ -2124,27 +2204,47 @@
 			*/
 			x: {
 						requiredOptions: ['value'],
-						value: parentOpts.x.value,
-						needsScale: true,
+						value: (d,i,j) => parentOpts.x.accessor(d,i,j),
+						getters: {
+							scale: function() {
+								return this._scale || d3.scale.linear();
+							},
+						},
 						isField: true,
 						_accessors: {
-							range: {
-								func: (layout,inset) => [0, inset.el.w(layout)],
-								posParams: ['layout','inset'],
-							},
-						}
+							makeScale: {
+								func: (thisField, data, layout, inset) => {
+									thisField._scale = 
+										d3.scale.linear()
+											.domain(parentOpts.x._fullScale.domain())
+											.range([0, inset.el.w(layout)])
+								},
+								posParams: ['thisField','data','layout','inset'],
+								runOnGenerate: true,
+							}
+						},
 			},
 			y: {
 						requiredOptions: ['value'],
-						value: parentOpts.y.value,
-						needsScale: true,
+						value: (d,i,j) => parentOpts.y.accessor(d,i,j),
 						isField: true,
-						_accessors: {
-							range: {
-								func: (layout,inset) => [inset.el.h(layout), 0],
-								posParams: ['layout','inset'],
+						getters: {
+							scale: function() {
+								return this._scale || d3.scale.linear();
 							},
-						}
+						},
+						_accessors: {
+							makeScale: {
+								func: (thisField, data, layout, inset) => {
+									thisField._scale = 
+										d3.scale.linear()
+											.domain(parentOpts.y._fullScale.domain())
+											.range([inset.el.h(layout), 0])
+								},
+								posParams: ['thisField','data','layout','inset'],
+								runOnGenerate: true,
+							}
+						},
 			},
 			size: {
 						value: parentOpts.size.value || parentOpts.size.defaultValue,
@@ -2159,26 +2259,13 @@
 			},
 			color: {
 						value: parentOpts.color.value || parentOpts.color.defaultValue,
-						needsScale: true,
 						isField: true,
 						scale: parentOpts.color.scale,
-						_accessors: {
-							range: {
-								func: (allFields) => allFields.color.scale.range(),
-								posParams: ['allFields'],
-							},
-						}
 			},
 			shape: {
 						value: parentOpts.shape.value || parentOpts.shape.defaultValue,
 						scale: parentOpts.shape.scale,
-						needsScale: true,
 						isField: true,
-						_accessors: {
-							range: {
-								func: () => util.shapePath("types"),
-							},
-						}
 			},
 			legend: {
 						show: false,
@@ -2197,14 +2284,15 @@
 			}
 
 			this.fields = _.map(cp, (field, name) => {
-												if (field.isField)
-													cp[name] = new util.Field(name, field, cp);
-												return cp[name];
+												if (field.isField && !(field instanceof util.Field)) {
+													field = new util.Field(name, field, cp);
+												}
+												return cp[name] = field;
 											})
 											.filter(field=>field.isField);
 
 			this.fields.forEach(field => {
-				field.bindParams({data, series, allFields:cp, layout, inset});
+				field.bindParams({data, series, layout, inset, parentOpts});
 			});
 
 			var border = inset.el.gEl.addChild('border', {tag:'rect',classes:['inset-border'],
@@ -2226,23 +2314,23 @@
 										enterCb: function(selection,params) {
 											selection
 												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessors.value(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessors.value(d));
+													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
+													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
 													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessors.value(d)),
+																		cp.shape.scale(cp.shape.accessor(d)),
 																		xVal, // 0, //options.xValue(d),
 																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessors.value(d)));
+																		cp.size.scale(cp.size.accessor(d)));
 												})
 												.style("stroke", function (d) {
 													// calling with this so default can reach up to parent
 													// for series name
 													//return cp.color.scale(cp.series.value.call(this, d));
-													return cp.color.scale(cp.color.accessors.value(d));
+													return cp.color.scale(cp.color.accessor(d));
 												})
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													//return `translate(${xVal},${yVal}) scale(1,1)`;
 													return "translate(" + xVal + "," + yVal + ")";
 												})
@@ -2257,8 +2345,8 @@
 												.delay(delay)
 												.duration(duration)
 												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessors.value(d));
-													var yVal = cp.y.scale(cp.y.accessors.value(d));
+													var xVal = cp.x.scale(cp.x.accessor(d));
+													var yVal = cp.y.scale(cp.y.accessor(d));
 													return "translate(" + xVal + "," + yVal + ")";
 												});
 										},
@@ -2267,8 +2355,8 @@
 			var focusRect = inset.el.gEl.addChild('focus', 
 												{tag:'rect',classes:['inset-focus'],
 													updateCb: function(selection,params) {
-														var [x1,x2] = parentOpts.x.accessors.domain();
-														var [y1,y2] = parentOpts.y.accessors.domain();
+														var [x1,x2] = parentOpts.x.scale.domain();
+														var [y1,y2] = parentOpts.y.scale.domain();
 														var w = cp.x.scale(x2) - cp.x.scale(x1);
 														var h = cp.y.scale(y1) - cp.y.scale(y2);
 														selection

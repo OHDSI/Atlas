@@ -33,7 +33,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 
 	var DEBUG = true;
 	var ALLOW_CACHING = [
-		'/WebAPI/[^/]+/person/',
+		//'.*',
+		//'/WebAPI/[^/]+/person/',
 	];
 	
 	var utilModule = { version: '1.0.0' };
@@ -998,7 +999,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	 */
 
 
-	/*
+	/* @class Field
 	 * fields are complex things that get used and accessed in different
 	 * ways in different places. most simply a field might be 'age' in
 	 * a recordset like:
@@ -1057,25 +1058,32 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	 * scatterplot's legend wants a 'label' property and all three of these should
 	 * contain the same string for certain fields.)
 	 *
+	 * the main accessor for a field will be available as field.accessor
+	 * it will be generated from, in this order:
+	 *		1) an _accessor object called 'value'
+	 *		2) a function called 'value'
+	 *		3) a string called propName (will become function:
+	 *					d => d[propName]
+	 *		4) a function called 'defaultValue'
 	 *
-	 * further thoughts:
-	 *
-	 * fields should have a single data accessor function?
-	 *
-	 * but domain and tooltip functions are also accessors, though they will
-	 * depend on the main accessor function. same with grouping funcs.
-	 *
-	 * maybe: every field needs either a propName or accessor
-	 *				accessor will be generated from propName if doesn't exist
-	 *				every field needs a label, but can have labels for more than one
-	 *				context
-	 *
+	 *	all _accessors (except 'value', which will be made into field.accessor)
+	 *	will be copied (with same name as _accessor prop) to methods of the main 
+	 *	field object when field.bindParams() is called
+	 *	(unless accessor.runOnGenerate=true)
 	 */
 	class Field {
 		constructor(name, opts = {}, allFields) {
 			if (opts.DEBUG) debugger;
+			if (typeof opts.accessor !== "undefined")
+				throw new Error("accessor will be generated, do not define it. see instructions above");
 			this.name = name;
 			_.extend(this, opts);
+			_.each(opts.getters, (func, name) => {
+				// inline getters will get clobbered when merging. put them in a getters prop
+				Object.defineProperty(this, name, {
+					get: func, enumerable: true,
+				});
+			});
 
 			/*
 			(this.requiredOptions || []).forEach(opt => {
@@ -1085,17 +1093,23 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			*/
 			var defaultAccessors = {
 				value: {
-					func: dataAccessor(this, ['value', 'propName', 'defaultValue']),
+					func: 
+								dataAccessor(this, 'value', null, false, true) ||
+								fieldAccessor(this, 'propName', null, false, true) && (d=>d[propName]) ||
+								this.defaultValue,
 					posParams: ['d'],
+					//posParams: ['d', 'i', 'j'], // should it be this for d3 ease of use?
 				},
-				label: {
-					func: fieldAccessor(this, ['label']),
+				labelFunc: {
+					func: fieldAccessor(this, ['label','title','caption','name']),
 				},
 			};
 			this._accessors = _.merge(defaultAccessors, this._accessors);
 
+			this._accessors.value.accessorOrder = -1000;
 			if (this.needsScale) {
 				this.scale = this.scale || d3.scale.linear();
+				// usually the domain is just the extent of that field in the data
 				this._accessors.domain = this._accessors.domain || {
 					func: (data) => {
 						return d3.extent(data.map(this.accessors.value));
@@ -1103,27 +1117,47 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 					//func: (data) => d3.extent(data.map(this.accessors.value)),
 					posParams: ['data']
 				};
-				if (!this._accessors.range)
+				if (!this._accessors.range) // not trying to figure out a default range
 					throw new Error(`no range for prop ${name}`);
 			}
 			if (typeof this.tooltipOrder !== "undefined" || this.tooltip) {
 				this._accessors.tooltip = this._accessors.tooltip || {
 					func: (d) => {
 						return {
-							name: this.accessors.label(),
-							value: this.accessors.value(d),
+							name: this.labelFunc(),
+							value: this.accessor(d),
 						};
 					},
 					posParams: ['d']
 				};
 			}
-			this.possibleBindings = this.possibleBindings || allFields.availableDatapointBindings;
+			this.possibleBindings = this.possibleBindings || allFields.availableDatapointBindings || [];
+			this.possibleBindings.push('allFields', 'thisField');
+			// possibleBindings stuff is really here to help programmers figure out
+			// what params are available when they write accessor functions...but what
+			// determines whether the accessor will fail is really whether the params
+			// they require have actually been bound (with field.bindParams) before
+			// the accessor is used
+
+			// the whole thing is somewhat dangerous, maybe wrong-headed? because
+			// what if two components bind and call the same accessor, but one of
+			// them manages to bind in between when the other bound and when it called:
+			// the other would make the accessor call with unexpected bindings.
+
+			// the point of all this is to allow separation of concerns: an axis
+			// scale range depends on chart size, whereas an axis scale domain depends
+			// on data. these are available at different times and places and when
+			// one changes, the other shouldn't have to worry about it.
 
 			_.each(this._accessors, (acc,name) => {
+				/*
 				if (_.difference(acc.posParams, this.possibleBindings).length ||
 						_.difference(acc.namedParams, this.possibleBindings).length)
 					throw new Error(`${this.name} accessor requested an unavailable binding`);
+				*/
+				acc.name = name;
 				acc.accGen = new AccessorGenerator(acc);
+				acc.accGen.runOnGenerate = acc.runOnGenerate;
 			});
 
 			this.allFields = allFields;
@@ -1137,77 +1171,36 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			return this.__accessors;
 		}
 		bindParams(params) {
+			// make allFields and thisField always available
+			params = _.extend({}, params, {allFields: this.allFields, thisField: this}); 
 			this.__accessors = {};
-			_.each(this._accessors, (acc,name) => {
-				acc.accGen.bindParams(params);
-				acc.accessor = acc.accGen.generate();
-				this.__accessors[name] = acc.accessor;
-				//this[name] = acc.accessor;
+			_.each(_.sortBy(this._accessors, 'accessorOrder'), acc => {
+				if (acc.name === 'scale') {
+					throw new Error("don't name an accessor 'scale'");
+				}
+				try {
+					acc.accGen.bindParams(params);
+					acc.accessor = acc.accGen.generate();
+					this.__accessors[acc.name] = acc.accessor;
+					if (!acc.runOnGenerate && acc.name !== 'value')
+						this[acc.name] = acc.accessor;
+					if (acc.name === 'value')
+						this.accessor = acc.accessor;
+				} catch(e) {
+					throw new Error("something went wrong binding/generating", this.name, acc, e);
+				}
 			});
-			if (this.needsScale) {
-				this.scale.domain(this.accessors.domain());
-				this.scale.range(this.accessors.range());
+			try {
+				if (this.needsScale) {
+					this.scale.domain(this.accessors.domain());
+					this.scale.range(this.accessors.range());
+				}
+			} catch(e) {
+				throw new Error("something went wrong setting scale", this.name, e);
 			}
 		}
 	}
 
-
-	/*
-	class ProxyField { // good idea but hard to implement
-		constructor(name, opts = {}, proxyFor, allFields) {
-			this.parentField = new Field(name, opts, allFields);
-			this.baseField = proxyFor;
-		}
-	}
-	*/
-
-	/*
-		* for value or tooltip functions that make use of aggregation over data or series
-		* there should be a way to perform the aggregation calculations only once
-		* rather than on every call to the value/tooltip func (actually, for tooltips
-		* it doesn't matter too much since only one point gets processed at a time)
-		*/
-	function tooltipBuilderForFields(fields) {
-		var accessors = _.chain(fields)
-									.filter(field=>field.accessors.tooltip)
-									.sortBy('tooltipOrder')
-									.map((field) => field.accessors.tooltip)
-									.value();
-		return (d, i, j) => {
-													return (accessors
-																		.map(func => func(d,i,j))
-																		.map(o => `${o.name}: ${o.value}<br/>`)
-																		.join(''))
-												};
-	}
-	function fishForProp(field, propNames, defaultVal) {
-		propNames = Array.isArray(propNames) ? propNames : [propNames];
-		// get first propName that appears in the field
-		var propName = _.find(propNames, propName => _.has(field, propName)); 
-		var propVal = field[propName];
-
-		if (typeof propVal === "undefined")
-			propVal = defaultVal || _.first(propNames);
-
-		return propVal;
-	}
-	function fieldAccessor(field, propNames, defaultVal) {
-		var propVal = fishForProp(field, propNames, defaultVal);
-		if (typeof propVal === "function") {
-			return propVal;
-		}
-		return () => propVal;
-	}
-	function dataAccessor(field, propNames, defaultFunc) {
-		var propVal = fishForProp(field, propNames, defaultFunc);
-		if (typeof propVal === "function") {
-			return propVal;
-		}
-		if (typeof propVal === "string" || isFinite(propVal)) {
-			return d => d[propVal];
-		}
-		throw new Error("can't find what you want");
-	}
 	/*	@class AccessorGenerator
    *	@param {string} [propName] key of property to extract
    *	@param {function} [func] to be called with record obj to return value
@@ -1239,10 +1232,18 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			var pos = this.posParams.map(
 				p => _.has(this.boundParams, p) ? this.boundParams[p] : _);
 			var named = _.pick(this.boundParams, this.namedParams);
-			return _.bind.apply(_, [this.plainAccessor, this.thisArg].concat(pos, named));
+			var allArgs = _.isEmpty(named) ?
+												[this.plainAccessor, this.thisArg].concat(pos) :
+												[this.plainAccessor, this.thisArg].concat(pos, named);
+			var boundFunc = _.bind.apply(_, allArgs);
 			// first arg of apply, _, is context for _.bind (https://lodash.com/docs#bind)
 			// then bind gets passed: accessor func, thisArg, posParams, 
-			// and (as final arg) namedParams
+			// and (as final arg) namedParams if any are specified.
+			// any additional args you want to pass when calling the accessor
+			// must come after all posParams and the named args object if there is one
+			if (this.runOnGenerate)
+				boundFunc();
+			return boundFunc;
 		}
 		/* @method bindParam
 		 * @param {string} paramName
@@ -1254,6 +1255,75 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		bindParams(params) {
 			_.each(params, (val, name) => this.bindParam(name, val));
 		}
+	}
+
+	/*
+	class ProxyField { // good idea but hard to implement
+		constructor(name, opts = {}, proxyFor, allFields) {
+			this.parentField = new Field(name, opts, allFields);
+			this.baseField = proxyFor;
+		}
+	}
+	*/
+
+	/*
+		* for value or tooltip functions that make use of aggregation over data or series
+		* there should be a way to perform the aggregation calculations only once
+		* rather than on every call to the value/tooltip func (actually, for tooltips
+		* it doesn't matter too much since only one point gets processed at a time)
+		*/
+	function tooltipBuilderForFields(fields) {
+		var accessors = _.chain(fields)
+									.filter(field=>field.accessors.tooltip)
+									.sortBy('tooltipOrder')
+									.map((field) => field.accessors.tooltip)
+									.value();
+		return (d, i, j) => {
+													return (accessors
+																		.map(func => func(d,i,j))
+																		.map(o => `${o.name}: ${o.value}<br/>`)
+																		.join(''))
+												};
+	}
+	function fishForProp(field, propNames) {
+		propNames = Array.isArray(propNames) ? propNames : [propNames];
+		// get first propName that appears in the field
+		var propName = _.find(propNames, propName => _.has(field, propName)); 
+		return field[propName];
+	}
+	function firstMatchingProp(obj, props) {
+		var props = Array.isArray(props) ? props : [props];
+		return _.find(props, prop => _.has(obj, prop)); 
+	}
+	function fieldAccessor(field, propNames, defaultVal, allowFuncs=true, noError=false) {
+		var propName = firstMatchingProp(field, propNames);
+		if (typeof propName === "undefined") {
+			if (noError) return defaultVal;
+			throw new Error("can't find what you want");
+		}
+		var propVal = field[propName];
+		if (allowFuncs && typeof propVal === "function") {
+			return propVal;
+		}
+		return () => propVal;
+	}
+	function dataAccessor(field, propNames, defaultFunc, allowNonFuncs = true, noError= false) {
+		var propName = firstMatchingProp(field, propNames) || defaultFunc;
+		if (typeof propName === "undefined") {
+			if (defaultFunc) return defaultFunc;
+			if (noError) return;
+			throw new Error("can't find what you want");
+		}
+		var propVal = field[propName];
+		if (typeof propVal === "function") {
+			return propVal;
+		}
+		if (allowNonFuncs && (typeof propVal === "string" || isFinite(propVal))) {
+			return d => d[propVal];
+		}
+		if (defaultFunc) return defaultFunc;
+		if (noError) return;
+		throw new Error("can't find what you want");
 	}
 	
 	// these functions associate state with a compressed stringified object in the querystring

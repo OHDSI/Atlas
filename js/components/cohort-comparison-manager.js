@@ -46,8 +46,11 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.chartData.subscribe(function(recs) {
 				self.sharedCrossfilter().replaceData(recs);
 			});
-			$(self.sharedCrossfilter()).on('filter newData', function(evt, stuff) {
-				console.log("new data in sharedCrossfilter", stuff);
+			$(self.sharedCrossfilter()).on('filter', function(evt, stuff) {
+				console.log("filter in sharedCrossfilter", stuff);
+			});
+			$(self.sharedCrossfilter()).on('newData', function(evt, stuff) {
+				console.log("new data in sharedCrossfilter; shouldn't happen much", stuff);
 			});
 			self.chartResolution = ko.observable(); // junk
 			self.chartOptions = chartOptions();
@@ -85,11 +88,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				}
 			});
 			//$(self.jqEventSpace).on('filter', filterChange);
-			$(self.jqEventSpace).on('brush', function(evt, {brush, x, y} = {}) {
+			$(self.jqEventSpace).on('brush', function(evt, {empty, x1,x2,y1,y2} = {}) {
 					//console.log('brush event', arguments);
-					var [[x1,y1],[x2,y2]] = brush.extent();
 					var xyFilt;
-					if (brush.empty()) {
+					if (empty) {
 						xyFilt = null;
 						util.deleteState('filters.brush');
 					} else {
@@ -99,32 +101,28 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 																								 y >= y1 &&
 																								 y <= y2;
 																				};
-						util.setState('filters.brush', xyFilt);
+						util.setState('filters.brush', {x1,x2,y1,y2});
 					}
-					self.sharedCrossfilter().filter('xy', xyFilt);
-					//$(self.jqEventSpace).trigger('filter', {filterName:'xy', func:xyFilt});
-					// as of now, 'filter' trigger is caught by faceted-datatable-cf, which
-					// updates facets and triggers 'filteredRecs', which is caught below and
-					// causes updateData... need to fix this
+					self.sharedCrossfilter().filter('xy', xyFilt, 
+							{source:'brush', x1, x2, y1, y2, empty});
 				});
 			$(self.sharedCrossfilter()).on('filter',
-				function(evt, {dimField} = {}) {
-					if (dimField.name === 'xy') {
+				function(evt, {dimField, source, x1, x2, y1, y2, empty, waitForMore} = {}) {
+					if (source === 'brush') {
 						// scatter has already zoomed.
-						return;
+						if (empty) {
+							self.chartObj().cp.x.setZoomScale();
+							self.chartObj().cp.y.setZoomScale();
+						} else {
+							self.chartObj().cp.x.setZoomScale([x1,x2]);
+							self.chartObj().cp.y.setZoomScale([y1,y2]);
+						}
+						self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());
+					} else {
+						if (!waitForMore || waitForMore === 'done') {
+							self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());
+						}
 					}
-				});
-			$(self.sharedCrossfilter()).on('filteredRecs', 
-				function(evt, {source, recs} = {}) {
-					console.warn("FIX this behavior!");
-					return;
-					if (self.chartData() && recs.length < self.chartData().length
-							|| self.chartObj() && self.chartObj().latestData !== recs
-						 ) {
-									//console.log('caught filteredRecs');
-									//self.chartObj().recFilter(recs);
-									self.chartObj().updateData(recs);
-								}
 				});
 			/*
 			function dataSetup(raw) {
