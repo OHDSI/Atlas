@@ -300,9 +300,14 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.viewLastExecution = function (source) {
-				var lastIndex = self.sourceExecutions[source.sourceKey]().length - 1;
-				var execution = self.sourceExecutions[source.sourceKey]()[lastIndex];
-				self.executionSelected(execution);
+				var executionCount = self.sourceExecutions[source.sourceKey]().length-1;
+				for (var e=executionCount; e>=0; e--) {
+					var execution = self.sourceExecutions[source.sourceKey]()[e];
+					if (execution.executionStatus == 'COMPLETED') {
+						self.executionSelected(execution);
+						break;
+					}
+				}
 			}
 
 			self.executionSelected = function (d) {
