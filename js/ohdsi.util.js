@@ -1343,7 +1343,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		var state = _getState();
 		_.unset(state, path);
 		_setState(state);
-		stateChangeTrigger(path, null, 'delete', state);
+		//stateChangeTrigger(path, null, 'delete', state);
 	}
 	function setState(path, val) {
 		if (typeof val === "undefined") {
@@ -1355,7 +1355,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		var state = _getState();
 		_.setWith(state, path, val, Object);
 		_setState(state);
-		stateChangeTrigger(path, val, 'set', state);
+		//stateChangeTrigger(path, val, 'set', state);
 	}
 	function _setState(state) {
 			var stateStr = JSON.stringify(state);

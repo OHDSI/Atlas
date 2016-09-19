@@ -65,7 +65,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.tabMode.subscribe(function(tab) {
 			if (tab && util.getState('cohortDefTab') === tab)
 				return;
-			util.setState('cohortDefTab', tab || defaultTab);
+			tab = tab || self.model.currentCohortDefinitionMode() || defaultTab;
+			util.setState('cohortDefTab', tab);
 		});
 		util.onStateChange('cohortDefTab', function(evt, {val} = {}) {
 			console.log('caught tab change', val);
@@ -414,7 +415,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			})) + 1 : 0;
 			cohortConceptSets.push(newConceptSet);
 			self.model.loadConceptSet(newConceptSet.id, 'cohortdefinition', 'cohort', 'details');
-			self.model.currentCohortDefinitionMode("conceptsets");
+			//self.model.currentCohortDefinitionMode("conceptsets");
 		}
 
 		self.viewReport = function (sourceKey, reportName) {

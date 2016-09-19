@@ -41,9 +41,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
 						require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor','explore-cohort'], function (CohortDefinition) {
 							self.currentView('cohortdefinition');
-							self.currentCohortDefinitionMode('conceptsets');
-							ohdsiUtil.setState('cohortDefTab', ohdsiUtil.getState('cohortDefTab') ||
-																								'conceptsets');
+							//self.currentCohortDefinitionMode('conceptsets');
+							if (!ohdsiUtil.hasState('cohortDefTab'))
+								ohdsiUtil.setState('cohortDefTab', 'conceptsets');
 							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortdefinition', 'details');
 						});
 					},
