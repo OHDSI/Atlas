@@ -32,6 +32,9 @@
 define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], function($,ko, LZString, _, crossfilter) {
 
 	var DEBUG = true;
+	var ALLOW_CACHING = [
+		'/WebAPI/[^/]+/person/',
+	];
 	
 	var utilModule = { version: '1.0.0' };
 	
@@ -1147,6 +1150,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			}
 		}
 	}
+
+
 	/*
 	class ProxyField { // good idea but hard to implement
 		constructor(name, opts = {}, proxyFor, allFields) {
@@ -1203,7 +1208,6 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		}
 		throw new Error("can't find what you want");
 	}
-
 	/*	@class AccessorGenerator
    *	@param {string} [propName] key of property to extract
    *	@param {function} [func] to be called with record obj to return value
@@ -1251,7 +1255,6 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			_.each(params, (val, name) => this.bindParam(name, val));
 		}
 	}
-
 	
 	// these functions associate state with a compressed stringified object in the querystring
 	function getState(path) {
@@ -1394,6 +1397,13 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	//var ajaxCache = localStorage; // save indefinitely
 	var ajaxCache = sessionStorage; // save for session
 	function cachedAjax(opts) {
+		var allowed = _.find(ALLOW_CACHING, url => opts.url.match(url));
+		if (allowed) {
+			console.log(`using cache for ${opts.url}. remove ${allowed} from ohdsi.util.ALLOW_CACHING to disable caching for it`);
+		} else {
+			console.log(`not caching ${opts.url}. add to ohdsi.util.ALLOW_CACHING to enable caching for it`);
+			return $.ajax(opts);
+		}
 		var key = JSON.stringify(opts);
 		if (!storageExists(key, ajaxCache)) {
 			var ajax = $.ajax(opts);

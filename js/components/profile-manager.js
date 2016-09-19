@@ -106,18 +106,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.cantFindPerson(false)
 				self.loadingPerson(true);
 
-				var personKey = `person_${self.personId()}`;
-				if (util.storageExists(personKey)) {
-					var person = util.storageGet(personKey);
-					self.loadingPerson(false);
-					self.crossfilter(crossfilter(person.records));
-					self.shadedRegions(person.shadedRegions);
-					self.person(person);
-					return;
-				}
 
 				let url = self.services.url + self.sourceKey() + '/person/' + self.personId();
-				personRequest = personRequests[url] = $.ajax({
+				personRequest = personRequests[url] = util.cachedAjax({
 					url: url,
 					method: 'GET',
 					contentType: 'application/json',
@@ -159,7 +150,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 								};
 							});
 						self.crossfilter(crossfilter(person.records));
-						util.storagePut(personKey, person);
 						self.shadedRegions(person.shadedRegions);
 						self.person(person);
 					}
