@@ -33,6 +33,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 
 	var DEBUG = true;
 	var ALLOW_CACHING = [
+		'.*',
 		'/WebAPI/[^/]+/person/',
 	];
 	
@@ -1076,6 +1077,11 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			if (opts.DEBUG) debugger;
 			this.name = name;
 			_.extend(this, opts);
+			_.each(opts.getters, (func, name) => {
+				Object.defineProperty(this, name, {
+					get: func, enumerable: true,
+				});
+			});
 
 			/*
 			(this.requiredOptions || []).forEach(opt => {
@@ -1096,6 +1102,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 
 			if (this.needsScale) {
 				this.scale = this.scale || d3.scale.linear();
+				// usually the domain is just the extent of that field in the data
 				this._accessors.domain = this._accessors.domain || {
 					func: (data) => {
 						return d3.extent(data.map(this.accessors.value));
@@ -1103,7 +1110,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 					//func: (data) => d3.extent(data.map(this.accessors.value)),
 					posParams: ['data']
 				};
-				if (!this._accessors.range)
+				if (!this._accessors.range) // not trying to figure out a default range
 					throw new Error(`no range for prop ${name}`);
 			}
 			if (typeof this.tooltipOrder !== "undefined" || this.tooltip) {
@@ -1117,13 +1124,32 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 					posParams: ['d']
 				};
 			}
-			this.possibleBindings = this.possibleBindings || allFields.availableDatapointBindings;
+			this.possibleBindings = this.possibleBindings || allFields.availableDatapointBindings || [];
+			this.possibleBindings.push('allFields', 'thisField');
+			// possibleBindings stuff is really here to help programmers figure out
+			// what params are available when they write accessor functions...but what
+			// determines whether the accessor will fail is really whether the params
+			// they require have actually been bound (with field.bindParams) before
+			// the accessor is used
+
+			// the whole thing is somewhat dangerous, maybe wrong-headed? because
+			// what if two components bind and call the same accessor, but one of
+			// them manages to bind in between when the other bound and when it called:
+			// the other would make the accessor call with unexpected bindings.
+
+			// the point of all this is to allow separation of concerns: an axis
+			// scale range depends on chart size, whereas an axis scale domain depends
+			// on data. these are available at different times and places and when
+			// one changes, the other shouldn't have to worry about it.
 
 			_.each(this._accessors, (acc,name) => {
+				/*
 				if (_.difference(acc.posParams, this.possibleBindings).length ||
 						_.difference(acc.namedParams, this.possibleBindings).length)
 					throw new Error(`${this.name} accessor requested an unavailable binding`);
+				*/
 				acc.accGen = new AccessorGenerator(acc);
+				acc.accGen.runOnGenerate = acc.runOnGenerate;
 			});
 
 			this.allFields = allFields;
@@ -1137,20 +1163,84 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			return this.__accessors;
 		}
 		bindParams(params) {
+			// make allFields and thisField always available
+			params = _.extend({}, params, {allFields: this.allFields, thisField: this}); 
 			this.__accessors = {};
 			_.each(this._accessors, (acc,name) => {
-				acc.accGen.bindParams(params);
-				acc.accessor = acc.accGen.generate();
-				this.__accessors[name] = acc.accessor;
-				//this[name] = acc.accessor;
+				try {
+					acc.accGen.bindParams(params);
+					acc.accessor = acc.accGen.generate();
+					this.__accessors[name] = acc.accessor;
+				} catch(e) {
+					throw new Error("something went wrong binding/generating", this.name, name, acc, e);
+				}
 			});
-			if (this.needsScale) {
-				this.scale.domain(this.accessors.domain());
-				this.scale.range(this.accessors.range());
+			try {
+				if (this.needsScale) {
+					this.scale.domain(this.accessors.domain());
+					this.scale.range(this.accessors.range());
+				}
+			} catch(e) {
+				throw new Error("something went wrong setting scale", this.name, e);
 			}
 		}
 	}
 
+	/*	@class AccessorGenerator
+   *	@param {string} [propName] key of property to extract
+   *	@param {function} [func] to be called with record obj to return value
+   *	@param {string} [thisArg] object to set as *this* for func
+   *	@param {string[]} [posParams] list of positioned parameters of func
+	 *																(except first param, which is assumed to be
+	 *																 the record object)
+   *	@param {string[]} [namedParams] list of named parameters of func
+   *	@param {object} [bindValues] values to bind to parameters (this can also
+	 *																	be done later)
+	 */
+	class AccessorGenerator {
+		constructor({propName, func, posParams, namedParams, thisArg, bindValues} = {}) {
+			if (typeof func === "function") {
+				this.plainAccessor = func;
+			} else if (typeof propName === "string") {
+				this.plainAccessor = d => d[propName];
+			} else {
+				throw new Error("must specify func function or propName string");
+			}
+			this.posParams = posParams || [];
+			this.namedParams = namedParams || [];
+			this.boundParams = bindValues || {};
+			this.thisArg = thisArg || null;
+		}
+		/* @method generate
+		 */
+		generate() {
+			var pos = this.posParams.map(
+				p => _.has(this.boundParams, p) ? this.boundParams[p] : _);
+			var named = _.pick(this.boundParams, this.namedParams);
+			var allArgs = _.isEmpty(named) ?
+												[this.plainAccessor, this.thisArg].concat(pos) :
+												[this.plainAccessor, this.thisArg].concat(pos, named);
+			var boundFunc = _.bind.apply(_, allArgs);
+			// first arg of apply, _, is context for _.bind (https://lodash.com/docs#bind)
+			// then bind gets passed: accessor func, thisArg, posParams, 
+			// and (as final arg) namedParams if any are specified.
+			// any additional args you want to pass when calling the accessor
+			// must come after all posParams and the named args object if there is one
+			if (this.runOnGenerate)
+				boundFunc();
+			return boundFunc;
+		}
+		/* @method bindParam
+		 * @param {string} paramName
+		 * @param {string} paramValue
+		 */
+		bindParam(paramName, paramValue) {
+			this.boundParams[paramName] = paramValue;
+		}
+		bindParams(params) {
+			_.each(params, (val, name) => this.bindParam(name, val));
+		}
+	}
 
 	/*
 	class ProxyField { // good idea but hard to implement
@@ -1207,53 +1297,6 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			return d => d[propVal];
 		}
 		throw new Error("can't find what you want");
-	}
-	/*	@class AccessorGenerator
-   *	@param {string} [propName] key of property to extract
-   *	@param {function} [func] to be called with record obj to return value
-   *	@param {string} [thisArg] object to set as *this* for func
-   *	@param {string[]} [posParams] list of positioned parameters of func
-	 *																(except first param, which is assumed to be
-	 *																 the record object)
-   *	@param {string[]} [namedParams] list of named parameters of func
-   *	@param {object} [bindValues] values to bind to parameters (this can also
-	 *																	be done later)
-	 */
-	class AccessorGenerator {
-		constructor({propName, func, posParams, namedParams, thisArg, bindValues} = {}) {
-			if (typeof func === "function") {
-				this.plainAccessor = func;
-			} else if (typeof propName === "string") {
-				this.plainAccessor = d => d[propName];
-			} else {
-				throw new Error("must specify func function or propName string");
-			}
-			this.posParams = posParams || [];
-			this.namedParams = namedParams || [];
-			this.boundParams = bindValues || {};
-			this.thisArg = thisArg || null;
-		}
-		/* @method generate
-		 */
-		generate() {
-			var pos = this.posParams.map(
-				p => _.has(this.boundParams, p) ? this.boundParams[p] : _);
-			var named = _.pick(this.boundParams, this.namedParams);
-			return _.bind.apply(_, [this.plainAccessor, this.thisArg].concat(pos, named));
-			// first arg of apply, _, is context for _.bind (https://lodash.com/docs#bind)
-			// then bind gets passed: accessor func, thisArg, posParams, 
-			// and (as final arg) namedParams
-		}
-		/* @method bindParam
-		 * @param {string} paramName
-		 * @param {string} paramValue
-		 */
-		bindParam(paramName, paramValue) {
-			this.boundParams[paramName] = paramValue;
-		}
-		bindParams(params) {
-			_.each(params, (val, name) => this.bindParam(name, val));
-		}
 	}
 	
 	// these functions associate state with a compressed stringified object in the querystring

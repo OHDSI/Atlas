@@ -241,50 +241,37 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 		}
 		function updateFilters(facet, facetUpdate = false) {
 			var filters = util.getState(filterStateKey()) || {};
-			/*
-			if (filters[facet.name]) {
-				facet.cfDim.filter(memberName=>filterVal(facet.name, memberName));
-			} else {
-				facet.cfDim.filter(null);
-			}
-			*/
 			var func = filters[facet.name] ? (d => filterVal(facet.name, d)) : null;
 			self.sharedCrossfilter().filter(facet.name, func, {source:'datatable'});
 			// should maybe say *which* datatable, in case there's more than one
 			// on a page, but not dealing with that yet.
-			facetUpdate && updateFacets();
-		};
-		function updateFacets() {
-			self._facets.forEach(facet=>{
-				//facet.Members = facet.cfDimGroup.all().map(group=>{   // })
-				facet.Members = 
-					self.sharedCrossfilter().group(facet.name).all()
-						.map(group => {
-							var selected = filterVal(facet.name, group.key);
-							return {
-								Name: group.key,
-								ActiveCount: facet.countFunc ? facet.countFunc(group) : group.value.length,
-								Selected: selected,
-							};
-						});
-			});
-			self.facets.removeAll()
-			self.facets.push(...self._facets);
 
 			/*
-			var groupAll = self.crossfilter.groupAll();
-			groupAll.reduce(...reduceToRecs);
-			self.data(groupAll.value());
-			*/
-			self.data(self.sharedCrossfilter().filteredRecs());
-			//self.data(self.recs());
-
 			console.warn('REVIEW: triggering filteredRecs' );
 			$(self.sharedCrossfilter())
 				.trigger('filteredRecs', {
 															source:'datatable',
 															//recs: groupAll.value(),
 														});
+			*/
+			facetUpdate && updateFacets();
+		};
+		function updateFacets() {
+			self._facets.forEach(facet=>{
+				facet.Members = self.sharedCrossfilter().group(facet.name).all().map(
+					group => {
+						var selected = filterVal(facet.name, group.key);
+						return {
+							Name: group.key,
+							ActiveCount: facet.countFunc ? facet.countFunc(group) : group.value.length,
+							Selected: selected,
+						};
+					});
+			});
+			self.facets.removeAll()
+			self.facets.push(...self._facets);
+
+			self.data(self.sharedCrossfilter().filteredRecs());
 		}
 		$(self.sharedCrossfilter()).on('filter', 
 			function(evt, {dimField, source} = {}) {
