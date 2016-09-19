@@ -58,9 +58,7 @@ define(['knockout', 'text!./conceptset-browser.html', 'appConfig', 'webapi/AuthA
 			}
 		}
 
-	    self.disableConceptSetButton = function() {
-	        return self.model.currentConceptSet() != undefined || !authApi.isAuthenticated() || !authApi.isPermittedCreateConceptset();
-	    };
+	    self.canCreateConceptSet = authApi.isAuthenticated() && authApi.isPermittedCreateConceptset();
 	}
 
 	var component = {

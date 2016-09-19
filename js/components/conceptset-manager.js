@@ -435,6 +435,9 @@ define(['knockout',
 				url: urlEncoded,
 				method: 'GET',
 				contentType: 'application/json',
+                headers : {
+                    Authorization: authApi.getAuthorizationHeader()
+                },
 				success: function (results) {
 					if (results.length > 0) {
 						self.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
@@ -465,10 +468,22 @@ define(['knockout',
 
 				var json = ko.toJSON(conceptSet);
 
+			    // for create - PUT: /conceptset/
+                // for update - POST: /conceptset/{id}/
+				var updateConceptSet = conceptSet.id > 0;
+				var method = updateConceptSet ? 'POST' : 'PUT';
+				var url = config.services[0].url + 'conceptset/';
+				if (updateConceptSet) {
+				    url += conceptSet.id + '/';
+				}
+
 				$.ajax({
-					method: 'POST',
-					url: config.services[0].url + 'conceptset/',
+					method: method,
+					url: url,
 					contentType: 'application/json',
+					headers: {
+					    Authorization: authApi.getAuthorizationHeader()
+					},
 					data: json,
 					dataType: 'json',
 					success: function (data) {
@@ -476,14 +491,19 @@ define(['knockout',
 						$.ajax({
 							method: 'POST',
 							url: config.services[0].url + 'conceptset/' + data.id + '/items',
+							headers: {
+							    Authorization: authApi.getAuthorizationHeader()
+							},
 							data: JSON.stringify(conceptSetItems),
 							dataType: 'json',
 							contentType: 'application/json',
 							success: function (itemSave) {
-								$('#conceptSetSaveDialog').modal('hide');
-								document.location = '#/conceptset/' + data.id + '/details';
-								self.compareResults(null);
-								self.model.currentConceptSetDirtyFlag.reset();
+							    $('#conceptSetSaveDialog').modal('hide');
+							    authApi.refreshToken().then(function() {
+							        document.location = '#/conceptset/' + data.id + '/details';
+							        self.compareResults(null);
+							        self.model.currentConceptSetDirtyFlag.reset();
+							    });
 							}
 						});
 					}
@@ -808,9 +828,7 @@ define(['knockout',
 	        }
 	    }();
 
-	    self.canCopy = function() {
-	        return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset();
-	    }();
+	    self.canCopy = authApi.isAuthenticated() && authApi.isPermittedCreateConceptset();
 	}
 
 	var component = {

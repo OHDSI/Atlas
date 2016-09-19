@@ -178,7 +178,7 @@ define(function(require, exports) {
     }
 
     var isPermittedUpdateConceptset = function(conceptsetId) {
-        return isPermitted('conceptset:edit:ui');
+        return isPermitted('conceptset:' + conceptsetId + ':post');
     };
 
     var isPermittedReadCohorts = function() {
