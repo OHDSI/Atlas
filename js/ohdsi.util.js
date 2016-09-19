@@ -1170,7 +1170,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			}
 			return this.__accessors;
 		}
-		bindParams(params) {
+		bindParams(params, throwGenerateError=true) {
 			// make allFields and thisField always available
 			params = _.extend({}, params, {allFields: this.allFields, thisField: this}); 
 			this.__accessors = {};
@@ -1178,8 +1178,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				if (acc.name === 'scale') {
 					throw new Error("don't name an accessor 'scale'");
 				}
+				acc.accGen.bindParams(params);
 				try {
-					acc.accGen.bindParams(params);
 					acc.accessor = acc.accGen.generate();
 					this.__accessors[acc.name] = acc.accessor;
 					if (!acc.runOnGenerate && acc.name !== 'value')
@@ -1187,7 +1187,9 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 					if (acc.name === 'value')
 						this.accessor = acc.accessor;
 				} catch(e) {
-					throw new Error("something went wrong binding/generating", this.name, acc, e);
+					if (throwGenerateError) {
+						throw new Error("something went wrong binding/generating", this.name, acc, e);
+					}
 				}
 			});
 			try {

@@ -139,39 +139,37 @@
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'balance'">
-						<div class="paddedWrapper" data-bind="if: $component.pillMode() == 'balance'">
-							<div data-bind="d3ChartBinding: 
-								{	
-									c1:null, // ko only allows comment on same line as param (and not after last param)
+						<div data-bind="d3ChartBinding: 
+							{	
+								c1:null, // ko only allows comment on same line as param (and not after last param)
 
-									chartType:'zoomScatter',// required string
+								chartType:'zoomScatter',// required string
 
-									c3:null,								// optional observables
-									chartData,							// whatever data chart expects
-									chartOptions,						// whatever options chart expects
-									chartResolution,				// {width: w, height: h}
-									chartObj,								// to pass back ref to chart obj
-									domElement,							// ref to dom element for use by chart or caller
-									jqEventSpace,						// any object, so chart can share events with caller
+								c3:null,								// optional observables
+								chartData,							// whatever data chart expects
+								chartOptions,						// whatever options chart expects
+								chartResolution,				// {width: w, height: h}
+								chartObj,								// to pass back ref to chart obj
+								domElement,							// ref to dom element for use by chart or caller
+								jqEventSpace,						// any object, so chart can share events with caller
 
-									c3:null,
-								}">
-							</div>
-
-							<div data-bind="if:chartData().length && fields().length">
-								<faceted-datatable-cf
-									params="options:{}, 
-													jqEventSpace: jqEventSpace,
-													fields: fields,
-													recs:chartData,
-													saveStateToUrl: true,
-													sharedCrossfilter: sharedCrossfilter,
-													"></faceted-datatable-cf>
-							</div>
+								c3:null,
+							}">
 						</div>
-						<div id="balanceChart">
-							<svg></svg>
+
+						<div data-bind="if:chartData().length && fields().length">
+							<faceted-datatable-cf
+								params="options:{}, 
+												jqEventSpace: jqEventSpace,
+												fields: fields,
+												recs:chartData,
+												saveStateToUrl: true,
+												sharedCrossfilter: sharedCrossfilter,
+												"></faceted-datatable-cf>
 						</div>
+					</div>
+					<div id="balanceChart">
+						<svg></svg>
 					</div>
 				</div>
 			</div>
