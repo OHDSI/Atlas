@@ -16,7 +16,7 @@
 		Getting Started
 	</div>
 	<div class="home-getting-started">
-		<div>
+		<div data-bind="if:canCreateCohort">
 			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.newCohortDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined}">Define a New Cohort</span> Begin performing research by defining the group of people you intend to study
 		</div>
 		<div>

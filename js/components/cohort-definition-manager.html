@@ -51,7 +51,9 @@
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
 			<div style="padding-bottom: 10px;" class="pull-right">
 				<button type="button" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
-				<button type="button" style="margin-right: 3px" class="btn btn-sm btn-primary pull-right" data-bind="click:function() { newConceptSet(); }">New Concept Set</button>
+                <!-- ko if:canEdit -->
+			    <button type="button" style="margin-right: 3px" class="btn btn-sm btn-primary pull-right" data-bind="click:function() { newConceptSet(); }">New Concept Set</button>
+                <!-- /ko -->
 			</div>
 			<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
 											data: model.currentCohortDefinition() && model.currentCohortDefinition().expression().ConceptSets,
@@ -99,13 +101,14 @@
 						Name:
 					</div>
 					<div contenteditable class="divtext" data-bind="htmlValue:model.currentConceptSet().name"></div>
-					<conceptset-editor params="model: model, conceptSets: model.selectedConcepts"></conceptset-editor>
+                    <conceptset-editor params="model: model, conceptSets: model.selectedConcepts, readonly: !canEdit"></conceptset-editor>
 
 					<div class="clear"></div>
 
 					<button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
+                    <!-- ko if:canEdit -->
 					<button type="button" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
-
+                    <!-- /ko -->
 					<div id="wrapperConceptSetWarnings" data-bind="visible: model.selectedConceptsWarnings().length > 0">
 						<div class="heading">Concept Set Warnings</div>
 						<table data-bind="foreach:model.selectedConceptsWarnings">

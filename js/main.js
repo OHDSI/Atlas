@@ -139,7 +139,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		if (authApi.getToken()) {
 		    var refreshTokenPromise = $.Deferred();
 		    pageModel.initPromises.push(refreshTokenPromise);
-		    authApi.refreshToken().then(refreshTokenPromise.resolve);
+		    authApi.refreshToken().always(refreshTokenPromise.resolve);
 		}
 
 		// establish base priorities for daimons

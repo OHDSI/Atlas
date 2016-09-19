@@ -795,29 +795,22 @@ define(['knockout',
         $(document).off('click', '#selectAllMapped');
         $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeDescendants: true })});
 
-	    self.isSaveDisabled = ko.computed(function() {
-	        if (self.model.currentConceptSet() != null && !self.model.currentConceptSetDirtyFlag.isDirty()) {
-	            return true;
-	        }
 
+	    self.canSave = function() {
 	        if (!authApi.isAuthenticated()) {
-	            return true;
+	            return false;
 	        }
 
-	        if (self.model.currentConceptSet() != null) {
-	            if (self.model.currentConceptSet().id != null) {
-	                return !authApi.isPermittedUpdateConceptset(self.model.currentConceptSet().id);
-	            } else {
-	                return !authApi.isPermittedCreateConceptset();
-	            }
+	        if (self.model.currentConceptSet() && self.model.currentConceptSet().id) {
+	            return authApi.isPermittedUpdateConceptset(self.model.currentConceptSet().id)
+	        } else {
+	            return authApi.isPermittedCreateConceptset();
 	        }
+	    }();
 
-	        return true;
-	    });
-
-        self.isCopyDisabled = function () {
-	        return !authApi.isAuthenticated() || !authApi.isPermittedCreateConceptset();
-	    }
+	    self.canCopy = function() {
+	        return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset();
+	    }();
 	}
 
 	var component = {

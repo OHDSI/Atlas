@@ -5,9 +5,13 @@
 	<div class="asset-heading" data-bind="if: model.currentConceptSet">
 		<input id="txtConceptSetName" type="text" data-bind="textInput: model.currentConceptSet().name" />
 		<div class="btn-group">
-			<button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled: isSaveDisabled}">Save</button>
+            <!-- ko if:canSave -->
+		    <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty()}">Save</button>
+            <!-- /ko -->
 			<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }">Close</button>
-            <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0, css: {disabled: isCopyDisabled()}">Copy</button>
+            <!-- ko if:canCopy -->
+            <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0">Copy</button>
+            <!-- /ko -->
             <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { optimize(); }">Optimize</button>
             <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.delete(); }">Delete</button>
 		</div>
@@ -80,19 +84,19 @@
                                      title: '<span id=\'selectAllExclude\' class=\'fa fa-check\'></span> Exclude'
                                      , class:'text-center'
                                      , orderable:false
-                                     , render: function() { return model.renderCheckbox('isExcluded');} 
+                                     , render: function() { return canSave ? model.renderCheckbox('isExcluded') : model.renderCheckboxReadonly('isExcluded');} 
                                     },
 									{
                                      title: '<span id=\'selectAllDescendants\' class=\'fa fa-check\'></span> Descendants'
                                      , class:'text-center'
                                      , orderable:false
-                                     , render: function() { return model.renderCheckbox('includeDescendants');} 
+                                     , render: function() { return canSave ? model.renderCheckbox('includeDescendants') : model.renderCheckboxReadonly('includeDescendants');} 
                                     },
 									{ 
                                      title: '<span id=\'selectAllMapped\' class=\'fa fa-check\'></span> Mapped'
                                      , class:'text-center'
                                      , orderable:false
-                                     ,render: function() { return model.renderCheckbox('includeMapped');} 
+                                     ,render: function() { return canSave ? model.renderCheckbox('includeMapped') : model.renderCheckboxReadonly('includeMapped');} 
                                     }
               ]
            }

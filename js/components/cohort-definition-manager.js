@@ -305,7 +305,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			var route = config.services[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + source.sourceKey;
 			self.getSourceInfo(source.sourceKey).status('PENDING');			
 			$.ajax(route, {
-				success: function (data) {
+			    headers: {
+			        Authorization: authApi.getAuthorizationHeader()
+			    },
+			    success: function (data) {
 					setTimeout(function () {
 						self.pollForInfo();
 					}, 3000);

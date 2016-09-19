@@ -1,4 +1,4 @@
-define(['knockout', 'text!./home.html'], function (ko, view) {
+define(['knockout', 'text!./home.html', 'webapi/AuthAPI'], function (ko, view, authApi) {
 	function home(params) {
 		var self = this;
 		self.github_status = ko.observableArray();
@@ -19,6 +19,8 @@ define(['knockout', 'text!./home.html'], function (ko, view) {
 		self.browseVocabulary = function() {
 			document.location = "#/search";
 		}
+
+		self.canCreateCohort = authApi.isAuthenticated() && authApi.isPermittedCreateCohort();
 	}
 
 	var component = {

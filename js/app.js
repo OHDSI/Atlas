@@ -826,7 +826,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		}
 		self.renderBoundLink = function (s, p, d) {
 				return '<a href=\"#/concept/' + d.concept.CONCEPT_ID + '\">' + d.concept.CONCEPT_NAME + '</a>';
-			}
+		}
 			// for the current selected concepts:
 			// update the export panel
 			// resolve the included concepts and update the include concept set identifier list
@@ -882,6 +882,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.renderCheckbox = function (field) {
 			return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); pageModel.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
 		}
+        self.renderCheckboxReadonly = function(field) {
+            return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check"></span>';
+        }
 		self.enableRecordCounts = ko.observable(true);
 		self.loadingIncluded = ko.observable(false);
 		self.loadingSourcecodes = ko.observable(false);
