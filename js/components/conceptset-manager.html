@@ -171,9 +171,14 @@
                     </span>
                 </div>
             </div>
-            <div data-bind="if: $component.compareReady() && !$component.compareResults()">
+            <div data-bind="if: $component.compareReady()">
                 <div class="paddedWrapper" style="padding-top: 20px;">
                     <button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.compareConceptSets;"><i data-bind="css: $component.compareLoadingClass"></i> Compare Concept Sets</button>
+                </div>
+            </div>
+            <div data-bind="if: !$component.compareReady() && model.currentConceptSetDirtyFlag.isDirty()">
+                <div class="paddedWrapper" style="padding-top: 20px;">
+                    <i class="fa fa-exclamation-triangle"></i> You must save the current concept set before you can perform this comparison.
                 </div>
             </div>
             <div data-bind="if: $component.compareError()">
@@ -181,7 +186,7 @@
                     <span style="font-weight: bold; color: #ff0000;">You cannot compare the same concept sets.</span>
                 </div>
             </div>
-            <div data-bind="if: $component.compareResults()">
+            <div data-bind="if: $component.compareReady() && $component.compareUnchanged() && $component.compareResults()">
                 <div class="heading" style="padding-top: 10px;">
                     <b>Comparison Results</b>
                 </div>

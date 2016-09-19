@@ -57,9 +57,12 @@ define(['knockout', 'text!./faceted-datatable.html', 'facets', 'knockout.dataTab
 		self.reference.subscribe(function () {
 			self.feTemp = new facetEngine(self.options);
 
-			for (var i = 0; i < self.reference().length; i++) {
-				self.feTemp.Process(self.reference()[i]);
+			if (self.reference() != null) {
+				for (var i = 0; i < self.reference().length; i++) {
+					self.feTemp.Process(self.reference()[i]);
+				}				
 			}
+			
 			self.feTemp.MemberSortFunction = function () {
 				return this.ActiveCount
 			};

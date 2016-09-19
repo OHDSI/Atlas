@@ -56,21 +56,58 @@ define(['knockout',
         self.compareCS2Id = ko.observable(0);
         self.compareCS2Caption = ko.observable();
         self.compareCS2ConceptSet = ko.observableArray(null);
+        self.compareResults = ko.observable();
+        self.compareIds = ko.observable(null);
         self.compareError = ko.pureComputed(function() {
             return (self.compareCS1Id() == self.compareCS2Id())
         });
         self.compareReady = ko.pureComputed(function() {
             // both are specified & not the same
-            return (
+            var conceptSetsSpecifiedAndDifferent = (
                     (self.compareCS1Id() > 0 && self.compareCS2Id() > 0) &&
                     (self.compareCS1Id() != self.compareCS2Id())
-                   )
+                   );
+            
+            // Check to see if one of the concept sets is the one 
+            // that is currently open. If so, check to see if it is
+            // "dirty" and if so, we are not ready to compare.
+            var currentConceptSetClean = true;
+            if (conceptSetsSpecifiedAndDifferent && self.model.currentConceptSet()) {
+                // If we passed the check above, then we'll enforce this condition
+                // which also ensures that we have 2 valid concept sets specified
+                if (self.compareCS1Id() == self.model.currentConceptSet().id || 
+                    self.compareCS2Id() == self.model.currentConceptSet().id) {
+                    // One of the concept sets that is involved in the comparison
+                    // is the one that is currently loaded; check to see if it is dirty
+                    currentConceptSetClean = !self.model.currentConceptSetDirtyFlag.isDirty();
+                }
+            }
+            
+            
+            return (conceptSetsSpecifiedAndDifferent && currentConceptSetClean);
+        });
+        self.compareUnchanged = ko.pureComputed(function() {
+            // both are specified & not the same
+            var conceptSetsSpecifiedAndDifferent = (
+                    (self.compareCS1Id() > 0 && self.compareCS2Id() > 0) &&
+                    (self.compareCS1Id() != self.compareCS2Id())
+                   );
+            
+            // Next, determine if one of the concept sets that was used to show
+            // results was changed. In that case, we do not want to show the 
+            // current results
+            var currentComparisonCriteriaUnchanged = true;
+            if (conceptSetsSpecifiedAndDifferent && self.compareIds()) {
+                // Check to see if the comparison crtieria has changed
+                currentComparisonCriteriaUnchanged = (self.compareIds() == (self.compareCS1Id() + "-" + self.compareCS2Id()))
+            }
+            
+            return (conceptSetsSpecifiedAndDifferent && currentComparisonCriteriaUnchanged);
         });
         self.compareLoading = ko.observable(false);
         self.compareLoadingClass = ko.pureComputed(function() {
             return self.compareLoading() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-question-circle fa-lg"
         })
-        self.compareResults = ko.observable();
         self.compareNewConceptSetName = ko.observable(self.model.currentConceptSet().name() + " - From Comparison");
         self.defaultResultsUrl = self.model.resultsUrl;
         self.currentResultSource = ko.observable();
@@ -444,6 +481,7 @@ define(['knockout',
 							success: function (itemSave) {
 								$('#conceptSetSaveDialog').modal('hide');
 								document.location = '#/conceptset/' + data.id + '/details';
+								self.compareResults(null);
 								self.model.currentConceptSetDirtyFlag.reset();
 							}
 						});
@@ -607,8 +645,9 @@ define(['knockout',
                     return o.conceptId;
                 });                
                 cdmResultsAPI.getConceptRecordCount(self.currentResultSource().sourceKey, conceptIds, compareResults).then(function (rowcounts) {
-                    self.compareResults(null);
+                    //self.compareResults(null);
                     self.compareResults(compareResults);
+            		self.compareIds(self.compareCS1Id() + "-" + self.compareCS2Id()); // Stash the currently selected concept ids so we can use this to determine when to show/hide results
                     self.compareLoading(false);
                 });
             });
