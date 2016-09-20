@@ -710,7 +710,12 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 									 `);
 	}
 	function inclusionRuleHeaderUpdate(d3element, {cohdef, rule} = {}) {
-		var html = `<div class="subheading">${rule.name} (${rule.description})</div>`; 
+		var html;
+		if (rule.description) {
+			html = `<div class="subheading">${rule.name} (${rule.description})</div>`; 
+		} else {
+			html = `<div class="subheading">${rule.name}</div>`; 
+		}
 		d3element.select('div.header-content').html(html);
 	}
 	function critName(selection, cohdef, critType) {

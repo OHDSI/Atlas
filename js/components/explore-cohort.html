@@ -3,7 +3,7 @@
 			data-bind="
 				css: { active: $component.sourceKey() == sourceKey }, 
 				click: function() { $component.sourceKey(sourceKey) } ">
-					<a data-bind="text: sourceKey"></a>
+					<a data-bind="text: sourceName"></a>
 	</li>
 </ul>
 <div data-bind="foreach: sources" class="tab-content">
