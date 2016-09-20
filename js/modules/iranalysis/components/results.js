@@ -29,6 +29,13 @@ define(['knockout',
 			return "per " + multiplier  + " years";
 		});
 		
+		self.ipCaption = ko.pureComputed(function () {
+			var multiplier = self.rateMultiplier();
+			if (multiplier >= 1000)
+				multiplier = (multiplier / 1000) + "k"
+			return "per " + multiplier  + " persons";
+		});		
+		
 		self.getSummaryData = function (summaryList) {
 			var targetId = self.selectedTarget();
 			var outcomeId = self.selectedOutcome();			
@@ -42,10 +49,18 @@ define(['knockout',
 		self.calculateRate = function(cases, timeAtRisk)
 		{
 			if (timeAtRisk > 0)
-				return ((1.0 * cases) / (1.0 * timeAtRisk) * self.rateMultiplier()).toFixed(4);
+				return ((1.0 * cases) / (1.0 * timeAtRisk) * self.rateMultiplier()).toFixed(2);
 			else 
-				return (0);
+				return (0).toFixed(2);
 		}
+		
+		self.calculateProportion = function(cases, persons)
+		{
+			if (persons > 0)
+				return (((1.0 * cases) / (1.0 * persons)) * self.rateMultiplier()).toFixed(2);
+			else 
+				return (0).toFixed(2);
+		}		
 
 		self.stepUp = function() {
 			self.rateMultiplier(Math.min(self.rateMultiplier() * 10, 100000));	

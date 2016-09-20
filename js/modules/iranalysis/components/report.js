@@ -29,8 +29,10 @@ define(['knockout',
 		self.targetCohortId = params.target;
 		self.outcomeCohortId = params.outcome;
 		self.calculateRate = params.calculateRate;
+		self.calculateProportion = params.calculateProportion;
 		self.rateModifiers = params.rateModifiers;
 		self.rateCaption = params.rateCaption;
+		self.ipCaption = params.ipCaption;
 		self.rectSummary = ko.observable();
 		self.pass = ko.observableArray();
 		self.fail = ko.observableArray();

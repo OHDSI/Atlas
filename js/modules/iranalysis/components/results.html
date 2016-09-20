@@ -6,8 +6,9 @@
 		<th style="width:75px"></th>
 		<th style="width: 80px" class="smallHeading dataCol">Persons</th>
 		<th style="width: 75px" class="smallHeading dataCol">Cases</th>
+		<th style="width: 100px" class="smallHeading dataCol">Proportion [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: ipCaption"></span></small></th>
 		<th style="width: 90px" class="smallHeading dataCol">Time At Risk<br/><small>(years)</small></th>
-		<th style="width: 100px" class="smallHeading dataCol noselect">Rate [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: irCaption"></span> </small></th>
+		<th style="width: 100px" class="smallHeading dataCol noselect">Rate [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: irCaption"></span></small></th>
 		<th style="width: 135px" class="smallHeading dataCol">Started</th>
 		<th style="width: 90px" class="smallHeading dataCol">Duration</th>
 		<th></th>
@@ -25,6 +26,7 @@
 					<!-- ko with: $component.getSummaryData(info().summaryList) -->
 					<td class="dataCol"><div data-bind="text: totalPersons.toLocaleString()"></div></td>
 					<td class="dataCol" data-bind="text: cases.toLocaleString()"></td>
+					<td class="dataCol" data-bind="text: $component.calculateProportion(cases, totalPersons)"></td>
 					<td class="dataCol" data-bind="text: timeAtRisk.toLocaleString()"></td>
 					<td class="dataCol" data-bind="text: $component.calculateRate(cases, timeAtRisk)"></td>
 					<!-- /ko -->
@@ -37,7 +39,7 @@
 				<td><button class="btn btn-sm btn-danger removeResult">Remove</button></td>
 			<!-- /ko -->
 			<!-- ko ifnot: info().executionInfo.status == "COMPLETE" -->
-			<td colspan="8" style="text-align: center; padding-top: 5px; padding-bottom: 5px"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
+			<td colspan="9" style="text-align: center; padding-top: 5px; padding-bottom: 5px"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
 			<!-- /ko -->
 		</tr>
 	</tbody>
@@ -57,7 +59,7 @@ Showing target cohort: <select data-bind="options: analysisCohorts().targetCohor
 </select>
 <!-- ko if: selectedReport -->
 <div style="padding-top: 10px" data-bind="visible: !isLoading()">
-	<ir-analysis-report params="report: selectedReport, calculateRate: calculateRate, rateModifiers: {up: stepUp, down: stepDown}, rateCaption: irCaption"></ir-analysis-report>
+	<ir-analysis-report params="report: selectedReport, calculateRate: calculateRate, calculateProportion: calculateProportion, rateModifiers: {up: stepUp, down: stepDown}, rateCaption: irCaption, ipCaption: ipCaption"></ir-analysis-report>
 </div>
 <!-- /ko -->
 <div data-bind="visible: isLoading()" class="loading">loading</div>
