@@ -19,11 +19,8 @@
 			</td>
 			<td data-bind="text: source.sourceKey"></td>
 			<td data-bind="text: source.sourceName"></td>
-			<td nowrap><button class="btn btn-sm btn-success execute">Execute</button></td>
-			<!-- ko if: info().executionInfo.status != "COMPLETE" -->
-			<td colspan="7" style="text-align: left"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
-			<!-- /ko -->
 			<!-- ko if: info().executionInfo.status == "COMPLETE" -->
+				<td nowrap><button class="btn btn-sm btn-success execute">Execute</button></td>
 				<!-- ko if: info().executionInfo.isValid -->
 					<!-- ko with: $component.getSummaryData(info().summaryList) -->
 					<td class="dataCol"><div data-bind="text: totalPersons.toLocaleString()"></div></td>
@@ -32,12 +29,15 @@
 					<td class="dataCol" data-bind="text: $component.calculateRate(cases, timeAtRisk)"></td>
 					<!-- /ko -->
 				<!-- /ko -->
-				<!-- ko if: !info().executionInfo.isValid -->
+				<!-- ko ifnot: info().executionInfo.isValid -->
 				<td colspan="4"><div class="overflow-ellipsis" style="width:345px" data-bind="text: 'Error: ' + info().executionInfo.message, attr:{title: info().executionInfo.message}"></div></td>
 				<!-- /ko -->
 				<td style="font-size: .9em" class="dataCol" data-bind="text: info().executionInfo.startTime"></td>
 				<td class="dataCol" data-bind="text: $component.msToTime(info().executionInfo.executionDuration)"></td>			
 				<td><button class="btn btn-sm btn-danger removeResult">Remove</button></td>
+			<!-- /ko -->
+			<!-- ko ifnot: info().executionInfo.status == "COMPLETE" -->
+			<td colspan="8" style="text-align: center; padding-top: 5px; padding-bottom: 5px"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
 			<!-- /ko -->
 		</tr>
 	</tbody>

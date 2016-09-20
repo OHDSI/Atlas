@@ -13,6 +13,27 @@ define(['knockout',
 ], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil) {
 	function IRAnalysisManager(params) {
 		
+		// polling support
+		var pollTimeout = null;
+		function pollForInfo() {
+			iraAPI.getInfo(self.selectedAnalysis().id()).then(function(infoList) {
+				var hasPending = false;
+				infoList.forEach(function(info){
+					var source = self.sources().filter(function (s) { return s.source.sourceId == info.executionInfo.id.sourceId })[0];
+					if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
+						source.info(info);
+					if (info.executionInfo.status != "COMPLETE")
+						hasPending = true;
+				});
+
+				if (hasPending)
+				{
+					pollTimeout = setTimeout(function () {
+						pollForInfo();
+					},10000);
+				}
+			});
+		}
 		
 		resolveCohortId = function(cohortId) {
 			var cohortDef = self.cohortDefs().filter(function(def) { 
@@ -196,10 +217,54 @@ define(['knockout',
         
 		self.init = function() {
 			self.refreshDefs();
+			sourceAPI.getSources().then(function(sources) {
+				var sourceList = [];
+				sources.forEach(function(source) {
+					if (source.daimons.filter(function (daimon) { return daimon.daimonType == "CDM"; }).length > 0
+							&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0)
+					{
+						sourceList.push({
+							source: source,
+							info: ko.observable()
+						});
+					}
+				});
+				self.sources(sourceList);
+				self.generateActionsSettings.actionOptions = sourceList.map(function (sourceItem) {
+					return {
+						text: sourceItem.source.sourceName,
+						selected: false,
+						description: "Perform Study on source: " + sourceItem.source.sourceName,
+						action: function() {
+							if (sourceItem.info()) {
+								sourceItem.info().executionInfo.status = "PENDING";
+								sourceItem.info.notifySubscribers();
+							} 
+							else {
+								// creating 'fake' temporary source info makes the UI respond to the generate action.
+								tempInfo = { 
+									source: sourceItem,
+									executionInfo : {
+										id : { sourceId: sourceItem.source.sourceId }
+									}, 
+									summaryList: []
+								};
+								sourceItem.info(tempInfo);
+							}
+							var executePromise = iraAPI.execute(self.selectedAnalysis().id(), sourceItem.source.sourceKey);
+							executePromise.then(function (result) {
+								pollForInfo();
+							});
+						}
+					}
+				});				
+			});
 			if (self.selectedAnalysisId() == null && self.selectedAnalysis() == null) {
-					self.newAnalysis();
+				self.newAnalysis();
 			} else if (self.selectedAnalysisId() != (self.selectedAnalysis() && self.selectedAnalysis().id())) {
-					self.onAnalysisSelected();
+				self.onAnalysisSelected();
+			} else {
+				pollForInfo();
 			}
 		}
 		
@@ -210,79 +275,13 @@ define(['knockout',
 				self.onAnalysisSelected();
 		});
 		
-		// polling support
-		
-		var pollTimeout = null;
-
-		function pollForInfo() {
-			iraAPI.getInfo(self.selectedAnalysis().id()).then(function(infoList) {
-				var hasPending = false;
-				infoList.forEach(function(info){
-					var source = self.sources().filter(function (s) { return s.source.sourceId == info.executionInfo.id.sourceId })[0];
-					if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
-						source.info(info);
-					if (info.executionInfo.status != "COMPLETE")
-						hasPending = true;
-				});
-
-				if (hasPending)
-				{
-					pollTimeout = setTimeout(function () {
-						pollForInfo();
-					},10000);
-				}
-			});
-		}
-		
 		// startup actions        
-        self.init();
-
-		sourceAPI.getSources().then(function(sources) {
-			var sourceList = [];
-			sources.forEach(function(source) {
-				if (source.daimons.filter(function (daimon) { return daimon.daimonType == "CDM"; }).length > 0
-						&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0)
-				{
-					sourceList.push({
-						source: source,
-						info: ko.observable()
-					});
-				}
-			});
-			self.sources(sourceList);
-			self.generateActionsSettings.actionOptions = sourceList.map(function (sourceItem) {
-				return {
-					text: sourceItem.source.sourceName,
-					selected: false,
-					description: "Perform Study on source: " + sourceItem.source.sourceName,
-					action: function() {
-						if (sourceItem.info()) {
-							sourceItem.info().executionInfo.status = "PENDING";
-							sourceItem.info.notifySubscribers();
-						} 
-						else {
-							// creating 'fake' temporary source info makes the UI respond to the generate action.
-							tempInfo = { 
-								source: sourceItem,
-								executionInfo : {
-									id : { sourceId: sourceItem.source.sourceId }
-								}, 
-								summaryList: []
-							};
-							sourceItem.info(tempInfo);
-						}
-						var executePromise = iraAPI.execute(self.selectedAnalysis().id(), sourceItem.source.sourceKey);
-						executePromise.then(function (result) {
-							pollForInfo();
-						});
-					}
-				}
-			});				
-		});
+    self.init();
 		
 		// cleanup
 		self.dispose = function() {
 			selectedAnalysisIdSub.dispose();
+			clearTimeout(pollTimeout);
 			console.log("IR manager disposed");
 		}
 
