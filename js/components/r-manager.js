@@ -1,4 +1,4 @@
-define(['knockout', 'text!./r-manager.html','appConfig'], function (ko, view, config) {
+define(['knockout', 'text!./r-manager.html', 'appConfig'], function (ko, view, config) {
 	function rManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -8,7 +8,8 @@ define(['knockout', 'text!./r-manager.html','appConfig'], function (ko, view, co
 		self.rsbJobs = ko.observableArray();
 		self.selectedJob = ko.observable();
 		self.selectedJobData = ko.observable();
-		
+		self.config = config;
+
 		self.jobOptions = {
 			Facets: [
 				{
@@ -25,7 +26,7 @@ define(['knockout', 'text!./r-manager.html','appConfig'], function (ko, view, co
 				}
 			]
 		};
-		
+
 		self.options = {
 			Facets: [
 				{
@@ -35,7 +36,7 @@ define(['knockout', 'text!./r-manager.html','appConfig'], function (ko, view, co
 					}
 				}
 			]
-		};		
+		};
 
 		self.columns = [
 			{
@@ -58,7 +59,7 @@ define(['knockout', 'text!./r-manager.html','appConfig'], function (ko, view, co
 				data: 'lent_count'
 			}
 		];
-		
+
 		self.jobColumns = [
 			{
 				title: 'Job Id',
@@ -79,21 +80,21 @@ define(['knockout', 'text!./r-manager.html','appConfig'], function (ko, view, co
 					return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
 				}
 			}
-		];		
+		];
 
-		self.showJobDetails = function(d) {
+		self.showJobDetails = function (d) {
 			$('#jobDetailModal').modal('show');
 			self.selectedJob(d);
-			
+
 			$.ajax({
 				url: config.rServicesHost + 'rsb/api/rest/result/TESTING/' + self.selectedJob().jobId + '.json',
 				method: 'GET',
 				success: function (response) {
 					self.selectedJobData(response);
 				}
-			});			
+			});
 		}
-		
+
 		self.loadNodes = function () {
 			$.ajax({
 				url: config.rServicesHost + 'rpooli/api/v1/nodes',
@@ -104,7 +105,7 @@ define(['knockout', 'text!./r-manager.html','appConfig'], function (ko, view, co
 			});
 		}
 
-		self.loadNodesConfig = function() {
+		self.loadNodesConfig = function () {
 			$.ajax({
 				url: config.rServicesHost + 'rpooli/api/v1/config/r',
 				method: 'GET',
@@ -113,8 +114,8 @@ define(['knockout', 'text!./r-manager.html','appConfig'], function (ko, view, co
 				}
 			});
 		}
-		
-		self.loadJobInfo = function() {
+
+		self.loadJobInfo = function () {
 			var ticks = new Date().getTime();
 			$.ajax({
 				url: config.rServicesHost + 'rsb/api/rest/results/TESTING?_=' + ticks,
@@ -127,7 +128,7 @@ define(['knockout', 'text!./r-manager.html','appConfig'], function (ko, view, co
 				}
 			});
 		}
-			
+
 		self.loadSystemInfo = function () {
 			$.ajax({
 				url: config.rServicesHost + 'rsb/api/rest/system/info',
@@ -141,9 +142,11 @@ define(['knockout', 'text!./r-manager.html','appConfig'], function (ko, view, co
 			});
 		}
 
-		self.loadNodes();
-		self.loadSystemInfo();
-		self.loadJobInfo();
+		if (config.rServicesHost) {
+			self.loadNodes();
+			self.loadSystemInfo();
+			self.loadJobInfo();
+		}
 	}
 
 	var component = {

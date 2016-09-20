@@ -58,7 +58,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 						});
 					},
 					'/configure': function () {
-						require(['configuration'], function () {
+						require(['configuration','r-manager'], function () {
 							self.currentView('configure');
 						});
 					},
@@ -142,11 +142,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 						require(['feasibility-analyzer'], function () {
 							self.currentView('feasibility');
 							self.feasibilityId(feasibilityId);
-						});
-					},
-					'/r': function () {
-						require(['r-manager'], function () {
-							self.currentView('r');
 						});
 					},
 					'/estimation': function () {

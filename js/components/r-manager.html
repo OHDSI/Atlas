@@ -1,8 +1,4 @@
-<div class="wrapperTitle">
-	<i class="fa fa-registered"></i> R Service Manager
-</div>
-
-<div class="paddedWrapper">
+<div class="paddedWrapper" data-bind="if:$component.config.rServicesHost">
 	<div class="heading">R Service Bus Instance</div>
 	<div class="paddedWrapper" data-bind="if:rsbInfo">
 		<div data-bind="text:rsbInfo().name"></div>

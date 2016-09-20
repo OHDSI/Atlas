@@ -56,7 +56,6 @@
 			<a class="list-group-item" data-bind="css: ccaCss, attr: {href: ccaURL}"><i class="fa fa-fw fa-balance-scale" aria-hidden="true"></i>&nbsp;Estimation</a>
 			<a class="list-group-item" href="#/jobs"><i class="fa fa-fw fa-tasks" aria-hidden="true"></i>&nbsp;Jobs</a>
 			<a class="list-group-item" href="#/configure"><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>&nbsp;Configuration</a>
-			<a class="list-group-item" href="#/r"><i class="fa fa-fw fa-registered" aria-hidden="true"></i>&nbsp;R Services</a>
 			<a class="list-group-item" target="_blank" href="https://github.com/ohdsi/atlas/issues" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
 		</div>
 	</div>
@@ -160,13 +159,9 @@
 				<cohort-comparison-manager params="currentCohortComparisonId:pageModel.currentCohortComparisonId, currentCohortComparison: pageModel.currentCohortComparison, dirtyFlag: pageModel.currentCohortComparisonDirtyFlag"></cohort-comparison-manager>
 			</div>
 
-			<div data-bind="if:pageModel.currentView() == 'r'">
-				<r-manager></r-manager>
-			</div>
-
 			<div data-bind="if: currentView() == 'configure'">
 				<div class="wrapperTitle">
-					<i class="fa fa-cogs"></i>Configure
+					<i class="fa fa-cogs"></i>Configuration
 				</div>
 
 				<div id="wrapperConfigure">
@@ -177,6 +172,7 @@
 					<div data-bind="if:!appInitializationFailed()">
 						<div class="heading">Configured Services</div>
 						<ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
+						<r-manager></r-manager>				
 					</div>
 				</div>
 			</div>
