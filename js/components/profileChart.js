@@ -181,7 +181,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 						return ls + 'em';
 					});
 
-		console.log(shadedRegions);
+		//console.log(shadedRegions);
 		var regions = focus.selectAll('rect.shaded-region')
 									.data(shadedRegions);
 		regions.exit().remove();
@@ -394,6 +394,12 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			insetZoom.call(drag);
 			drag.on('drag', function(d) {
 				d.x += d3.event.dx;
+				var newX = d.x + d3.event.dx;
+				if (newX < ixScale.range()[0] - 10)
+					newX = ixScale.range()[0] - 10;
+				if (newX > ixScale.range()[1] - edges[0].width + 10)
+					newX = ixScale.range()[1] - edges[0].width + 10;
+				d.x = newX;
 				insetZoom.attr('x', d.x)
 				//.style('cursor', '-webkit-grabbing') doesn't work
 			});
