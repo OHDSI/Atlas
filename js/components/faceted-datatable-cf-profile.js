@@ -28,7 +28,7 @@ define(['knockout', 'text!./faceted-datatable-cf-profile.html', 'knockout.dataTa
 					return ()=>false;
 				}
 				self.searchFilter(rec => {
-					return _.chain(rec).values().compact().any(val => val.toString().match(new RegExp(s,'i'))).value();
+					return _.chain(rec).values().compact().some(val => val.toString().match(new RegExp(s,'i'))).value();
 				})
 				return true;
 			});

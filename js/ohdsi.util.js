@@ -1095,7 +1095,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				value: {
 					func: 
 								dataAccessor(this, 'value', null, false, true) ||
-								fieldAccessor(this, 'propName', null, false, true) && (d=>d[propName]) ||
+								fieldAccessor(this, 'propName', null, false, true) && (d=>d[this.propName]) ||
 								this.defaultValue,
 					posParams: ['d'],
 					//posParams: ['d', 'i', 'j'], // should it be this for d3 ease of use?
