@@ -145,6 +145,11 @@
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="visible: $component.pillMode() == 'balance'">
+						<div id="balanceChart">
+							<svg></svg>
+						</div>
+
+						<!--
 						<div data-bind="d3ChartBinding: 
 							{	
 								c1:null, // ko only allows comment on same line as param (and not after last param)
@@ -173,9 +178,7 @@
 												sharedCrossfilter: sharedCrossfilter,
 												"></faceted-datatable-cf>
 						</div>
-					</div>
-					<div id="balanceChart">
-						<svg></svg>
+						-->
 					</div>
 				</div>
 			</div>

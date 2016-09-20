@@ -54,7 +54,8 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
                 }
             });
 
-			// for balance chart
+			// for new scatter balance chart
+			/*
 			self.chartObj = ko.observable();
 			self.domElement = ko.observable();
 			self.chartData = ko.observableArray(self.chartData && self.chartData() || []);
@@ -144,6 +145,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 						}
 					}
 				});
+			*/
 			/*
 			function dataSetup(raw) {
 				var points = raw.map(d => ({
@@ -344,7 +346,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					contentType: 'application/json',
 					success: function (response) {
 
-						self.chartData(response);
+						// self.chartData(response);
 
 						nv.addGraph(function () {
 							var points = response.map(d => ({
@@ -358,8 +360,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							}];
 
 							var balanceChart = nv.models.scatterChart()
-								.forceY([0, 2])
-								.forceX([0, 2])
 								.showDistX(true)
 								.showDistY(true)
 								.color(d3.scale.category10().range());
