@@ -110,7 +110,7 @@ define(['knockout',
 			self.pass(passed);
 			self.fail(failed);
 			//self.rectSummary(`${size people} (${percentage.toFixed(2)}%), ${pass_count} criteria passed, ${fail_count} criteria failed.`);
-			self.rectSummary(`${size.toLocaleString()} (${percentage.toFixed(2)}%) people, ${cases.toLocaleString()} cases, ${timeAtRisk.toLocaleString()} TAR, Rate: ${self.calculateRate(cases, timeAtRisk)}<br/>${pass_count} criteria passed, ${fail_count} criteria failed.`);
+			self.rectSummary(`${cases.toLocaleString()} cases, ${timeAtRisk.toLocaleString()} TAR, Rate: ${self.calculateRate(cases, timeAtRisk)} ${self.rateCaption()}<br/>${size.toLocaleString()} (${percentage.toFixed(2)}%) people, ${pass_count} criteria passed, ${fail_count} criteria failed.`);
 		}
 
 		self.handleCellOver = function (data, event) {
