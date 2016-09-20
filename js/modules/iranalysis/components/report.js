@@ -4,6 +4,7 @@ define(['knockout',
 				'webapi/IRAnalysisAPI',
 				'd3',
 				'databindings',
+				'../databindings/irTreemapLegend',
 				'css!cohortbuilder/css/report.css'
 ], function (
 	ko,
@@ -24,6 +25,7 @@ define(['knockout',
 	
 	function IRAnalysisReportsViewer(params) {
 		var self = this;
+		var colors = ["#2c7bb6", "#00a6ca","#00ccbc","#90eb9d","#ffff8c","#f9d057","#f29e2e","#e76818","#d7191c"];
 		
 		self.report = params.report;
 		self.targetCohortId = params.target;
@@ -63,16 +65,19 @@ define(['knockout',
 			
 			var color = d3.scale.quantize()
 				.domain([extent[0], extent[1]])
-				.range(["#2c7bb6", "#00a6ca","#00ccbc","#90eb9d","#ffff8c","#f9d057","#f29e2e","#e76818","#d7191c"]);	
+				.range(colors);	
 			
-			return (function(d) {
+			var picker = function(d) {
 				if (d.cases == 0)
 					return "#000000";
 				else if (d.timeAtRisk > 0)
 					return color(d.cases/d.timeAtRisk);
 				else
 					return "#bababa";
-			});
+				
+			};
+			picker.scale = color;
+			return picker;
 		});
 		
 		self.describeClear = function () {
