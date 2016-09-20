@@ -34,16 +34,16 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
 						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
 							self.currentView('cohortdefinition');
-							//self.currentCohortDefinitionMode('definition');
+							self.currentCohortDefinitionMode('definition');
 							self.loadCohortDefinition(cohortDefinitionId, null, 'cohortdefinition', 'details');
 						});
 					},
 					'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
 						require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor','explore-cohort'], function (CohortDefinition) {
 							self.currentView('cohortdefinition');
-							//self.currentCohortDefinitionMode('conceptsets');
-							if (!ohdsiUtil.hasState('cohortDefTab'))
-								ohdsiUtil.setState('cohortDefTab', 'conceptsets');
+							self.currentCohortDefinitionMode('conceptsets');
+							//if (!ohdsiUtil.hasState('cohortDefTab'))
+								//ohdsiUtil.setState('cohortDefTab', 'conceptsets');
 							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohortdefinition', 'details');
 						});
 					},
@@ -1542,7 +1542,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		}
 		self.currentConceptSetMode = ko.observable('details');
 		//ohdsiUtil.setState('cohortDefTab', 'definition');
-		//self.currentCohortDefinitionMode = ko.observable('definition');
+		self.currentCohortDefinitionMode = ko.observable('definition');
 		self.currentImportMode = ko.observable('identifiers');
 		self.feRelated = ko.observable();
 		self.feSearch = ko.observable();

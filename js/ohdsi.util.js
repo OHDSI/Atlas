@@ -1414,9 +1414,10 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	}());
 
 	window.addEventListener('hashchange', function(evt) {
-		var changedPaths = getChangedPaths(
-												evt.oldURL.replace(/[^#]*#/,'#'),
-												evt.newURL.replace(/[^#]*#/,'#'));
+		var oldhash = evt.oldURL.replace(/[^#]*#/,'#');
+		var newhash = evt.newURL.replace(/[^#]*#/,'#');
+		if (!newhash.match(/\?.+/)) return;
+		var changedPaths = getChangedPaths(oldhash, newhash);
 		changedPaths.forEach(c => stateChangeTrigger(c.path,c.val,c.change,c.state));
 	}, false);
 	function getChangedPaths(oldhash, newhash) {
