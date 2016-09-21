@@ -1884,8 +1884,21 @@
 
 			this.cp.chart && this.cp.chart.chart.gEl
 					.child('series')
-						//.run({data: series});
-						.run({data: series, delay: 500, duration: 2000, cp: this.cp});
+						.run({data: series, cp: this.cp});
+			/*
+			this.cp.chart && this.cp.chart.chart.gEl
+					.child('series')
+						.run({data: series, delay: 1000, duration: 1000, cp: this.cp});
+			this.cp.chart && this.cp.chart.chart.gEl
+					.child('series')
+						.update({data: series, delay: 0, duration: 1000, cp: this.cp});
+			this.cp.chart && this.cp.chart.chart.gEl
+					.child('series')
+						.exit({data: series, delay: 1000, duration: 0, cp: this.cp});
+			this.cp.chart && this.cp.chart.chart.gEl
+					.child('series')
+						.enter({data: series, delay: 1000, duration: 0, cp: this.cp});
+			*/
 
 			this.cp.inset.chart.render(this.data, this.cp.inset, this.layout);
 			/*
@@ -1944,18 +1957,11 @@
 
 			this.layout.positionZones();
 			this.layout.positionZones();
-			//this.svgEl.update({data:series})
-			//this.svgEl.data(series)
 
 			// brush stuff needs to go before dots so tooltips will work
 			var orig_x_domain = cp.x.scale.domain();
 			var orig_y_domain = cp.y.scale.domain();
-			/*
-			var idleTimeout, idleDelay = 350;
-			function idled() {
-				idleTimeout = null;
-			}
-			*/
+
 			var brush = d3.svg.brush()
 				.x(cp.x.scale)
 				.y(cp.y.scale)
@@ -1964,11 +1970,6 @@
 					$('.resize').show();
 				});
 
-			/*
-			chart.append('g')  // use addChild?
-				.attr('class', 'brush')
-				.call(brush);
-			*/
 			var brushEl = cp.chart.chart.gEl.addChild('brush',
 																	{ tag: 'g',
 																		classes:['brush'],
@@ -2000,13 +2001,17 @@
 						//brushEl.as('d3').call(brush.move, null);
 					}
 
-					cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
-					cp.y.axisEl.gEl.as('d3').transition().duration(750).call(cp.y.axisEl.axis);
+					//cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
+					//cp.y.axisEl.gEl.as('d3').transition().duration(750).call(cp.y.axisEl.axis);
+					cp.x.axisEl.gEl.as('d3').call(cp.x.axisEl.axis);
+					cp.y.axisEl.gEl.as('d3').call(cp.y.axisEl.axis);
 
 					seriesGs.as('d3')
 						.selectAll(".dot")
+						/*
 						.transition()
 						.duration(750)
+						*/
 						.attr("transform", function (d) {
 							var xVal = cp.x.scale(cp.x.accessor(d));
 							var yVal = cp.y.scale(cp.y.accessor(d));
@@ -2027,6 +2032,7 @@
 												.addChild('series',
 																	{ tag: 'g',
 																		classes:['series'],
+																		//data: [],
 																		data: series,
 																	});
 			seriesGs.addChild('dots',
@@ -2035,12 +2041,29 @@
 											return series.values;
 										},
 										classes: ['dot'],
-										enterCb: function(selection,params) {
+										enterCb: function(selection, params, opts={}, el, trans) {
+											var {delay=0, duration=0, transition, cp=self.cp} = opts;
+											//console.log('adding with', opts);
+
+
+											/*
+											 * don't have a way to pass transitions through enter/exit/update
+											 * should i?
+											 * (whole thing should be simplified)
+											if (transition)
+												selection = selection.transition(transition);
+											else if (delay || duration)
+												selection = selection.transition().delay(delay).duration(duration)
+											selection
+												.transition()
+												.delay(delay).duration(duration)
+											*/
+
 											selection
 												.on('mouseover', focusTip.show)
 												.on('mouseout', focusTip.hide)
-												//.transition()
-												//.delay(1000).duration(1500)
+											//selection
+												//.transition(trans)
 												.attr("d", function(d) {
 													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
 													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
@@ -2065,54 +2088,36 @@
 										},
 										updateCb: function(selection, params, opts = {}) {
 											var {delay=0, duration=0, transition, cp=self.cp} = opts;
-											//console.log('updating');
+											//console.log('updating with', opts);
 
-											cp.x.axisEl.gEl.as('d3').transition().duration(duration).call(cp.x.axisEl.axis);
-											cp.y.axisEl.gEl.as('d3').transition().duration(duration).call(cp.y.axisEl.axis);
+											//cp.x.axisEl.gEl.as('d3').transition().duration(duration).call(cp.x.axisEl.axis);
+											//cp.y.axisEl.gEl.as('d3').transition().duration(duration).call(cp.y.axisEl.axis);
+											cp.x.axisEl.gEl.as('d3').call(cp.x.axisEl.axis);
+											cp.y.axisEl.gEl.as('d3').call(cp.y.axisEl.axis);
 
 											selection
 												//.selectAll(".dot")
-												.transition()
-												.delay(delay)
-												.duration(duration)
+												//.transition()
+												//.delay(delay)
+												//.duration(duration)
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.accessor(d));
 													var yVal = cp.y.scale(cp.y.accessor(d));
 													return "translate(" + xVal + "," + yVal + ")";
 												});
-
-											/*
-											selection
-												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
-													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessor(d)),
-																		xVal, // 0, //options.xValue(d),
-																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessor(d)));
-												})
-												.style("stroke", function (d) {
-													// calling with this so default can reach up to parent
-													// for series name
-													//return cp.color.scale(cp.series.value.call(this, d));
-													return cp.color.scale(cp.color.accessor(d));
-												})
-												//.transition()
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
-													return "translate(" + xVal + "," + yVal + ")";
-												})
-												*/
 										},
-										/* testing transitions on exit 
-										*/
 										exitCb: function(selection, params, transitionOpts={}) {
 											var {delay=0, duration=0, transition} = transitionOpts;
-											selection.remove()
+											selection
+												//.transition()
+												//.delay(delay)
+												//.duration(duration)
+												.style("opacity", 0)
+												.remove()
 										},
-									});
+									}
+									//,{ delay: 0, duration: 1000, }
+								);
 
 			/*
 			series = dataToSeries(data.slice(0,500), cp.series);
@@ -2249,6 +2254,7 @@
 			if (!cp.data.alreadyInSeries) {
 				var series = dataToSeries(data, cp.series);
 			}
+			//inset.el.gEl.as('d3').remove();
 
 			this.fields = _.map(cp, (field, name) => {
 												if (field.isField && !(field instanceof util.Field)) {
@@ -2308,9 +2314,9 @@
 
 											selection
 												//.selectAll(".dot")
-												.transition()
-												.delay(delay)
-												.duration(duration)
+												//.transition()
+												//.delay(delay)
+												//.duration(duration)
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.accessor(d));
 													var yVal = cp.y.scale(cp.y.accessor(d));

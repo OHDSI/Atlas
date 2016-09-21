@@ -20,15 +20,15 @@
 			c3:null,
 		}">
 	</div>
-
 	<div data-bind="if:chartData().length && fields().length">
 		<faceted-datatable-cf
 			params="options:{}, 
 							jqEventSpace: jqEventSpace,
-							//d3dispatch: d3dispatch,
 							fields: fields,
 							recs:chartData,
 							saveStateToUrl: true,
-							"></faceted-datatable-cf>
+							sharedCrossfilter: sharedCrossfilter,
+						">
+		</faceted-datatable-cf>
 	</div>
 </div>

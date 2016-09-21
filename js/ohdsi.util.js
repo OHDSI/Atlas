@@ -33,8 +33,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 
 	var DEBUG = true;
 	var ALLOW_CACHING = [
-		//'.*',
-		//'/WebAPI/[^/]+/person/',
+		'.*',
+		'/WebAPI/[^/]+/person/',
 	];
 	
 	var utilModule = { version: '1.0.0' };
@@ -251,6 +251,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	}
 	class D3Element {
 		constructor(props, transitionOpts) {
+			// really need to change (simplify) the way data and opts are
+			// handled...  this whole thing is a bit of a monstrosity
 			this.parentElement = props.parentElement; // any form ok: d3, jq, dom, id
 			this.el = getContainer(this.parentElement, "d3");
 			this._data = Array.isArray(props.data) || typeof props.data === 'function'
@@ -293,19 +295,22 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			var transitionOpts = _.omit(opts, ['data']); // delay, duration
 			var {delay=0, duration=0} = transitionOpts;
 
+			var mainTrans = opts.transition || d3.transition();
+			transitionOpts.transition = mainTrans;
+			// should allow callbacks to pass transitions back so they
+			// can be passed on to next callback?
+
 			if (exit) {
 				//if (selection.exit().size()) console.log(`exiting ${self.name}`);
 				selection.exit()
-						.transition()
-						.delay(delay).duration(duration)
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
 								self.child(name).exit(transitionOpts);
 								// allow enter/update on children of exiting elements? probably no reason to
 							});
 						})
-						.call(self.exitCb, self.cbParams, opts, self)
-						.remove()
+						.call(self.exitCb, self.cbParams, opts, self, mainTrans)
+						.remove() // allow exitCb to remove? -> doesn't seem to work
 			}
 			if (enter) {
 				selection.enter()
@@ -316,7 +321,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 									newNode.classed(cls, true);
 								});
 							})
-						.call(self.enterCb, self.cbParams, opts, self)
+						.call(self.enterCb, self.cbParams, opts, self, mainTrans)
 						.each(function(d) {
 							// make children
 							_.each(self.children(), (c, name) => {
@@ -331,11 +336,13 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				selection
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
+								// this recursive stuff is not working right, needs to 
+								// be rethought
 								self.child(name).run(transitionOpts, enter, exit, update);
 								// data will be passed down to children don't override it with data from opts
 							});
 						})
-						.call(self.updateCbsCombined, self.cbParams, opts, self)
+						.call(self.updateCbsCombined, self.cbParams, opts, self, mainTrans)
 			}
 			return selection;
 		}
@@ -1414,10 +1421,9 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	}());
 
 	window.addEventListener('hashchange', function(evt) {
-		var oldhash = evt.oldURL.replace(/[^#]*#/,'#');
-		var newhash = evt.newURL.replace(/[^#]*#/,'#');
-		if (!newhash.match(/\?.+/)) return;
-		var changedPaths = getChangedPaths(oldhash, newhash);
+		var changedPaths = getChangedPaths(
+												evt.oldURL.replace(/[^#]*#/,'#'),
+												evt.newURL.replace(/[^#]*#/,'#'));
 		changedPaths.forEach(c => stateChangeTrigger(c.path,c.val,c.change,c.state));
 	}, false);
 	function getChangedPaths(oldhash, newhash) {

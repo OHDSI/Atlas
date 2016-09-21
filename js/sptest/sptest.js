@@ -22,80 +22,99 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 		var self = this;
 		self.model = params.model;
 		var filters = {};
+		self.jsonFile = 'js/sptest/sample.json';
+
 		self.chartObj = ko.observable();
 		self.domElement = ko.observable();
 		self.chartData = ko.observableArray(self.chartData && self.chartData() || []);
+		self.sharedCrossfilter = ko.observable(new util.SharedCrossfilter([]));
+		window.scf = self.sharedCrossfilter();
+		self.chartData.subscribe(function(recs) {
+			self.sharedCrossfilter().replaceData(recs);
+		});
+		$(self.sharedCrossfilter()).on('filter', function(evt, stuff) {
+			//console.log("filter in sharedCrossfilter", stuff);
+		});
+		$(self.sharedCrossfilter()).on('newData', function(evt, stuff) {
+			//console.log("new data in sharedCrossfilter; shouldn't happen much", stuff);
+		});
 		self.chartResolution = ko.observable(); // junk
-		self.jsonFile = 'js/sptest/sample.json';
-		self.chartOptions = chartOptions();
-		self.fields = ko.observable([]);
 		self.jqEventSpace = params.jqEventSpace || {};
-		//self.d3dispatch = ko.observable(d3.dispatch());
+		self.fields = ko.observable([]);
 		self.chartObj.subscribe(function(chart) {
-			var opts = _.merge(chart.defaultOptions, chartOptions());
-			//var opts = chart.chartOptions; // after applying defaults
-
-			//self.fields(_.filter(opts, d=>d.isColumn||d.isFacet));
-
-			var fields = [];
-			_.each(opts, (opt, name) => {
-				if (opt.isField) {
-					opts[name] = new util.Field(name, opt, opts);
-					fields.push(opts[name]);
-				}
-			});
-			self.fields(fields);
-			self.chartOptions = opts;
 		});
 		self.ready = ko.computed(function() {
-			return self.chartData().length && self.chartObj() && self.domElement();
+			return  self.chartObj() && 
+							self.chartData().length && 
+							self.domElement() 
+							//&& self.pillMode() === 'balance';
 		});
+		self.chartOptions = chartOptions();
 		self.ready.subscribe(function(ready) {
 			if (ready) {
-				self.chartObj().chartSetup(self.domElement(), 460, 150, self.chartOptions);
-				self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
-				//self.chartObj().render(self.chartData().slice(0,1000), self.domElement(), 460, 150, self.chartOptions);
-				//setTimeout(() => self.chartObj().updateData(self.chartData().slice(0,2000)), 4000);
-				//self.chartObj().updateData(self.chartData().slice(0,2000));
+				initializeBalanceComponents();
 			}
 		});
-		$(self.jqEventSpace).on('filter', filterChange);
-		$(self.jqEventSpace).on('brush', brushEvent);
-		$(self.jqEventSpace).on('filteredRecs', 
-			function(evt, {source, recs} = {}) {
-				if (self.chartData() && recs.length < self.chartData().length
-						|| self.chartObj() && self.chartObj().latestData !== recs
-					 ) {
-								console.log('caught filteredRecs', recs);
-								self.chartObj().render(recs, self.domElement(), 460, 150, self.chartOptions);
-							}
-			});
-		function filterChange() {
-			console.log('filter event', arguments);
-			//self.chartObj().render(self.chartData(), self.domElement(), 460, 150, self.chartOptions);
-		}
-		function brushEvent(evt, brush, x, y) {
-			console.log('brush event', arguments);
-			var [[x1,y1],[x2,y2]] = brush.extent();
-			var xyFilt = brush.empty() ?
-				null :
-				(d => {
-					return x.accessors.value(d) >= x1 &&
-								 x.accessors.value(d) <= x2 &&
-								 y.accessors.value(d) >= y1 &&
-								 x.accessors.value(d) <= y2;
+		var initializeBalanceComponents = _.once(function() {
+			var opts = _.merge(self.chartObj().defaultOptions, self.chartOptions);
+			var fields = _.map(opts, 
+				(opt, name) => {
+					if (opt.isField) {
+						if (!(opt instanceof util.Field)) {
+							opt = new util.Field(name, opt, opts);
+						}
+						opt.bindParams({data:self.chartData()}, false);
+					}
+					return opts[name] = opt;
 				});
-			util.setState('filters.brush', xyFilt);
-			$(self.jqEventSpace).trigger('filter', 
-								{filterName:'xy', func:xyFilt});
-		}
-
-		/*
-		self.dispatch = opts.dispatch;
-		self.dispatch.on("brush", function() {
-			console.log(arguments);
+			self.fields(fields);
+			self.chartObj().chartSetup(self.domElement(), 460, 150, opts);
+			self.chartObj().render(self.chartData(), self.domElement(), 460, 150, opts);
+			self.sharedCrossfilter().dimField('xy', opts.xy);
+			/*  for coming back to tab
+			self.pillMode.subscribe(function(pillMode) {
+				if (pillMode === 'balance')
+					self.chartObj().render(self.chartData(), self.domElement(), 460, 150, opts);
+			});
+			*/
+			//self.chartOptions.xy.accessor = self.chartOptions.xy.accessors.value;
 		});
-		*/
+		$(self.jqEventSpace).on('brush', function(evt, {empty, x1,x2,y1,y2} = {}) {
+				//console.log('brush event', arguments);
+				var xyFilt;
+				if (empty) {
+					xyFilt = null;
+					util.deleteState('filters.brush');
+				} else {
+					xyFilt = ([x,y] = [], i) => {
+																				return x >= x1 &&
+																								x <= x2 &&
+																								y >= y1 &&
+																								y <= y2;
+																			};
+					util.setState('filters.brush', {x1,x2,y1,y2});
+				}
+				self.sharedCrossfilter().filter('xy', xyFilt, 
+						{source:'brush', x1, x2, y1, y2, empty});
+			});
+		$(self.sharedCrossfilter()).on('filter',
+			function(evt, {dimField, source, x1, x2, y1, y2, empty, waitForMore} = {}) {
+				if (source === 'brush') {
+					// scatter has already zoomed.
+					if (empty) {
+						self.chartObj().cp.x.setZoomScale();
+						self.chartObj().cp.y.setZoomScale();
+					} else {
+						self.chartObj().cp.x.setZoomScale([x1,x2]);
+						self.chartObj().cp.y.setZoomScale([y1,y2]);
+					}
+					self.chartObj().updateData(self.sharedCrossfilter().dimRecs('xy'));
+				} else {
+					if (!waitForMore || waitForMore === 'done') {
+						self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());
+					}
+				}
+			});
 		self.dataSetup = function(vectors) {
 			/* sample:
 				{                               
@@ -116,19 +135,6 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 			}
 			return arr;
 		};
-		/*
-		self.columns = [
-			{ title: 'Covariate', data: 'covariateName', },
-			{ title: 'Analysis ID', data: 'analysisId', },
-			{ title: 'Concept ID', data: 'conceptId', },
-			{ title: 'Before Match Mean Treated', data: 'beforeMatchingMeanTreated', },
-			{ title: 'Before Match Mean Comparator', data: 'beforeMatchingMeanComparator', },
-		];
-		self.facets = ko.observableArray([
-			{ caption: 'Analysis ID', func: d=>d.analysisId, filter:ko.observable(null), Members:[] },
-			{ caption: 'Concept ID', data: d=>d.conceptId, filter:ko.observable(null), Members:[] },
-		]);
-		*/
 		getData(self);
 	}
 
@@ -191,21 +197,19 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 						colIdx: 1,
 						isField: true,
 			},
-			/*
 			xy: { // for brushing
 						_accessors: {
 							value: {
 								func: function(d,allFields) {
 									return [
-													allFields.accessors.x.value(d),
-													allFields.accessors.y.value(d)];
+													allFields.x.accessor(d),
+													allFields.y.accessor(d)];
 								},
 								posParams: ['d','allFields'],
 							},
 						},
 						isField: true,
 			},
-			*/
 			size: {
 						//value: d=>d.afterMatchingMeanTreated,
 						propName: 'afterMatchingMeanTreated',
