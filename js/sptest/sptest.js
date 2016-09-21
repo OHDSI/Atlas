@@ -165,6 +165,32 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 			data: {
 				alreadyInSeries: false,
 			},
+			lines: [
+				{
+						name: 'x = .1',
+						x1: () => .1,
+						x2: () => .1,
+						y1: (xdom, ydom) => ydom[0] * 10, // give it some extra room
+						y2: (xdom, ydom) => ydom[1] * 10,
+						color:'#003142',
+				},
+				{
+						name: 'y = .1',
+						y1: () => .01,
+						y2: () => .01,
+						x1: (xdom, ydom) => xdom[0] * 10,
+						x2: (xdom, ydom) => xdom[1] * 10,
+						color:'#003142',
+				},
+				{
+						name: 'y = x',
+						x1: (xdom, ydom) => Math.max(xdom[0],ydom[0]) * 10,
+						y1: (xdom, ydom) => Math.max(xdom[0],ydom[0]) * 10,
+						x2: (xdom, ydom) => Math.max(xdom[1],ydom[1]) * 10,
+						y2: (xdom, ydom) => Math.max(xdom[1],ydom[1]) * 10,
+						color:'#003142',
+				},
+			],
 			//dispatch: d3.dispatch("brush", "filter"), // in default opts for zoomScatter
 			//additionalDispatchEvents: ["foo"],
 			x: {

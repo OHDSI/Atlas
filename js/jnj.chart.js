@@ -1958,6 +1958,33 @@
 			this.layout.positionZones();
 			this.layout.positionZones();
 
+			if (cp.lines) {
+				var lines = cp.chart.chart.gEl.addChild('lines',
+					{ tag: 'line',
+						classes:['refline'],
+						data: cp.lines,
+						updateCb: function(selection, params, opts = {}) {
+							var {delay=0, duration=0, transition, cp=self.cp} = opts;
+							selection
+								.attr('x1', function(lineOpts) {
+									return cp.x.scale(lineOpts.x1( cp.x.scale.domain(), cp.y.scale.domain()));
+								})
+								.attr('x2', function(lineOpts) {
+									return cp.x.scale(lineOpts.x2( cp.x.scale.domain(), cp.y.scale.domain()));
+								})
+								.attr('y1', function(lineOpts) {
+									return cp.y.scale(lineOpts.y1( cp.x.scale.domain(), cp.y.scale.domain()));
+								})
+								.attr('y2', function(lineOpts) {
+									return cp.y.scale(lineOpts.y2( cp.x.scale.domain(), cp.y.scale.domain()));
+								})
+								.style('stroke', function(lineOpts) {
+									return lineOpts.color;
+								})
+						},
+					});
+			}
+
 			// brush stuff needs to go before dots so tooltips will work
 			var orig_x_domain = cp.x.scale.domain();
 			var orig_y_domain = cp.y.scale.domain();
