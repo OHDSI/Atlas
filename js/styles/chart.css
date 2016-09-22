@@ -195,17 +195,25 @@ table.data td {
 /* zoomScatter, inset */
 
 .zoom-scatter .dot {
-	opacity: 0.4;
+	opacity: 0.8;
 	stroke-width: .4;
 	fill: white;
+}
+.zoom-scatter .dot.out-of-zoom {
+	opacity: 0.1;
 }
 .zoom-scatter rect.inset-border {
 	fill: white;
 	stroke: black;
+	stroke-width: 0.3;
 }
 .zoom-scatter rect.inset-focus {
+	stroke: #f19119;
 	fill-opacity: 0;
-	stroke: black;
+	stroke-width: 0.3;
 }
 
-
+.zoom-scatter .refline {
+	stroke:#003142;
+	stroke-width: 0.3;
+}

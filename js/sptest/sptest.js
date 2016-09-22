@@ -1,7 +1,7 @@
 define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3ChartBinding','components/faceted-datatable-cf',], 
 			 function (ko, view, _, util) {
 	var getData = _.once(function(self) {
-		var request = $.ajax({
+		var request = util.cachedAjax({
 			url: self.jsonFile,
 			method: 'GET',
 			contentType: 'application/json',
@@ -57,18 +57,20 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 		});
 		var initializeBalanceComponents = _.once(function() {
 			var opts = _.merge(self.chartObj().defaultOptions, self.chartOptions);
-			var fields = _.map(opts, 
-				(opt, name) => {
-					if (opt.isField) {
-						if (!(opt instanceof util.Field)) {
-							opt = new util.Field(name, opt, opts);
-						}
-						opt.bindParams({data:self.chartData()}, false);
-					}
-					return opts[name] = opt;
-				});
+			var fields = _.chain(opts)
+										.toPairs()
+										.sortBy(d=>_.has(d[1], 'bindOrder') ? d[1].bindOrder : 1000)
+										.filter(d=>d[1].isField)
+										.map(([name,opt] = []) => {
+											if (!(opt instanceof util.Field)) {
+												opt = new util.Field(name, opt, opts);
+											}
+											opt.bindParams({data:self.chartData()}, false);
+											return opts[name] = opt;
+										})
+										.value();
 			self.fields(fields);
-			self.chartObj().chartSetup(self.domElement(), 460, 150, opts);
+			self.chartObj().chartSetup(self.domElement(), 460, 150, opts, fields);
 			self.chartObj().render(self.chartData(), self.domElement(), 460, 150, opts);
 			self.sharedCrossfilter().dimField('xy', opts.xy);
 			/*  for coming back to tab
@@ -99,6 +101,7 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 			});
 		$(self.sharedCrossfilter()).on('filter',
 			function(evt, {dimField, source, x1, x2, y1, y2, empty, waitForMore} = {}) {
+				console.log("what if we have a brush and a facet filter?");
 				if (source === 'brush') {
 					// scatter has already zoomed.
 					if (empty) {
@@ -108,7 +111,8 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 						self.chartObj().cp.x.setZoomScale([x1,x2]);
 						self.chartObj().cp.y.setZoomScale([y1,y2]);
 					}
-					self.chartObj().updateData(self.sharedCrossfilter().dimRecs('xy'));
+					//self.chartObj().updateData(self.sharedCrossfilter().dimRecs('xy'));
+					self.chartObj().updateData(self.sharedCrossfilter().groupAll.value());
 				} else {
 					if (!waitForMore || waitForMore === 'done') {
 						self.chartObj().updateData(self.sharedCrossfilter().filteredRecs());
@@ -162,37 +166,79 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 	function chartOptions() {
 		var junk = 1;
 		return {
-			data: {
-				alreadyInSeries: false,
-			},
 			lines: [
 				{
 						name: 'x = .1',
 						x1: () => .1,
 						x2: () => .1,
-						y1: (xdom, ydom) => ydom[0] * 10, // give it some extra room
-						y2: (xdom, ydom) => ydom[1] * 10,
-						color:'#003142',
+						y1: (xdom, ydom) => ydom[0],
+						y2: (xdom, ydom) => ydom[1],
+						/*
+						styles: {
+							stroke:'#003142',
+							'stroke-width': 0.3,
+						}
+						attrs: {
+							'class': 'xref refline',
+						}
+						*/
+					 classes: ['xref'],
 				},
 				{
 						name: 'y = .1',
 						y1: () => .01,
 						y2: () => .01,
-						x1: (xdom, ydom) => xdom[0] * 10,
-						x2: (xdom, ydom) => xdom[1] * 10,
-						color:'#003142',
+						x1: (xdom, ydom) => xdom[0],
+						x2: (xdom, ydom) => xdom[1],
+					 classes: ['yref'],
 				},
 				{
 						name: 'y = x',
-						x1: (xdom, ydom) => Math.max(xdom[0],ydom[0]) * 10,
-						y1: (xdom, ydom) => Math.max(xdom[0],ydom[0]) * 10,
-						x2: (xdom, ydom) => Math.max(xdom[1],ydom[1]) * 10,
-						y2: (xdom, ydom) => Math.max(xdom[1],ydom[1]) * 10,
-						color:'#003142',
+						x1: (xdom, ydom) => Math.max(xdom[0],ydom[0]),
+						y1: (xdom, ydom) => Math.max(xdom[0],ydom[0]),
+						x2: (xdom, ydom) => Math.max(xdom[1],ydom[1]),
+						y2: (xdom, ydom) => Math.max(xdom[1],ydom[1]),
+					 classes: ['diag'],
 				},
 			],
 			//dispatch: d3.dispatch("brush", "filter"), // in default opts for zoomScatter
 			//additionalDispatchEvents: ["foo"],
+			covariateName: {
+						propName: 'covariateName',
+						value: d => {
+							return d.covariateName.split(/:/).shift();
+						},
+						isColumn: true,
+						isFacet: true,
+						colIdx: 0,
+						tooltipOrder: 7,
+						label: 'Covariate Name',
+						isField: true,
+						bindOrder: 1,
+			},
+			covariateValue: {
+						propName: 'covariateName',
+						value: d => d.covariateName.split(/:/).pop(),
+						isColumn: true,
+						colIdx: 0,
+						tooltipOrder: 8,
+						label: 'Covariate Value',
+						isField: true,
+			},
+			series: {
+						sortBy:  d => d.afterMatchingStdDiff,
+						tooltipOrder: 5,
+						isField: true,
+						_accessors: {
+							value: {
+												func: function(d,allFields) {
+													return allFields.covariateName.accessor(d);
+												},
+												posParams: ['d','allFields'],
+							},
+						},
+						bindOrder: 2,
+			},
 			x: {
 						//value: d=>d.beforeMatchingStdDiff,
 						label: 'Before matching StdDiff',
@@ -255,18 +301,19 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 						isField: true,
 						_accessors: {
 							avg: {
-								posParams: ['data','allFields'],
-								func: (data, allFields) => {
-									return d3.mean(data.map(allFields.size.accessors.value));
+								posParams: ['data','thisField'],
+								func: (data, thisField) => {
+									thisField._avg = d3.mean(data.map(thisField.accessor));
 								},
+								runOnGenerate: true,
 							},
 							tooltip: {
-								posParams: ['d','allFields'],
-								func: (d, allFields) => {
+								posParams: ['d','thisField'],
+								func: (d, thisField) => {
 									return {
 										name: `After matching mean treated 
-														(avg: ${round(allFields.size.accessors.avg(),4)})`,
-										value: round(allFields.size.accessors.value(d), 4),
+														(avg: ${round(thisField._avg,4)})`,
+										value: round(thisField.accessor(d), 4),
 									}
 								},
 							},
@@ -275,23 +322,17 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 							},
 						},
 			},
-			series: {
-						value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
-						sortBy:  d => d.afterMatchingStdDiff,
-						tooltipOrder: 5,
-						isField: true,
-			},
 			color: {
 						_accessors: {
 							value: {
 												func: function(d,i,j,allFields,data,series) {
-													return allFields.series.value(d,i,j,data,series);
+													return allFields.series.accessor(d,i,j,data,series);
 												},
 												posParams: ['d','i','j','allFields','data','series'],
 							},
 							domain: {
 												func: function(data, series, allFields) {
-													return _.uniq(data.map(allFields.series.value));
+													return _.uniq(data.map(allFields.series.accessor));
 												},
 												posParams: ['data', 'series', 'allFields'],
 							},
@@ -334,52 +375,21 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 						//range: ['red', 'yellow', 'blue'],
 			},
 			shape: {
-						//value: d => Math.floor(Math.random() * 3),
-						//
-						//  i as always 0! fix!
-						//  value: (d,i) => i % 3,
-						value: () => junk++ % 3,
-						label: "Random",
+						label: "Covariate name (shape)",
 						tooltipOrder: 4,
 						isField: true,
+						_accessors: {
+							value: {
+												func: function(d,allFields) {
+													return allFields.series.accessor(d);
+												},
+												posParams: ['d','allFields'],
+							},
+						},
 			},
 			CIup: { // support CI in both directions
 						value: d => d.upperBound,
 						value: d => y(d) - d.upperBoundDiff,
-			},
-			covariateName: {
-						propName: 'covariateName',
-						value: d => {
-							return d.covariateName.split(/:/).shift();
-						},
-						isColumn: true,
-						isFacet: true,
-						colIdx: 0,
-						tooltipOrder: 7,
-						label: 'Covariate Name',
-						isField: true,
-			},
-			covariateValue: {
-						propName: 'covariateName',
-						value: d => d.covariateName.split(/:/).pop(),
-						isColumn: true,
-						colIdx: 0,
-						tooltipOrder: 8,
-						label: 'Covariate Value',
-						isField: true,
-						/*
-						_accessors: {
-							tooltip: {
-								posParams: ['d','allFields'],
-								func: (d, allFields) => {
-									return {
-										name: `Covariate value`,
-										value: allFields.covariateName.accessors.value(d).split(/:/).pop(),
-									}
-								},
-							},
-						},
-						*/
 			},
 			conceptId: {
 						propName: 'conceptId',

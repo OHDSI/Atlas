@@ -1,5 +1,5 @@
 requirejs.config({
-	waitSeconds: 60, // FOR DEVELOPMENT, REMOVE WHEN NOT NEEDED? default is 7
+	//waitSeconds: 60, // FOR DEVELOPMENT, REMOVE WHEN NOT NEEDED? default is 7
 	//urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: 'js',
 	config: {
@@ -143,7 +143,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			var servicePromise = $.Deferred();
 			pageModel.initPromises.push(servicePromise);
 
-			$.ajax({
+			util.cachedAjax({
 				url: service.url + 'source/sources',
 				method: 'GET',
 				contentType: 'application/json',
@@ -204,7 +204,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 						service.sources.push(source);
 
 						if (source.hasVocabulary) {
-							$.ajax({
+							util.cachedAjax({
 								url: service.url + source.sourceKey + '/vocabulary/info',
 								timeout: 20000,
 								method: 'GET',

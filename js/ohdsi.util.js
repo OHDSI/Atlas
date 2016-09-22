@@ -33,7 +33,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 
 	var DEBUG = true;
 	var ALLOW_CACHING = [
-		//'.*',
+		'.*',
 		//'/WebAPI/[^/]+/person/',
 	];
 	
@@ -250,7 +250,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		return (...args) => { return funcs.map(function(f) { return f.apply(this, args) }) }
 	}
 	class D3Element {
-		constructor(props, transitionOpts) {
+		constructor(props, passParams) {
 			// really need to change (simplify) the way data and opts are
 			// handled...  this whole thing is a bit of a monstrosity
 			this.parentElement = props.parentElement; // any form ok: d3, jq, dom, id
@@ -268,7 +268,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			this._children = {};
 			this.dataPropogationSelectors = props.dataPropogationSelectors; // not implemented yet
 			if (!props.stub)
-				this.run(transitionOpts);
+				this.run(passParams);
 		}
 		selectAll(data) {
 		 var selection = this.el.selectAll([this.tag].concat(this.classes).join('.'));
@@ -286,17 +286,17 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			this._data = data;
 			return this.selectAll(data);
 		}
-		run(opts={}, enter=true, exit=true, update=true) {
+		run(passParams={}, enter=true, exit=true, update=true) {
 			// fix opts: split up data and transition
 			var self = this;
-			var data = opts.data || self._data;
+			var data = passParams.data || self._data;
 			var selection = self.selectAll(data);
 
-			var transitionOpts = _.omit(opts, ['data']); // delay, duration
-			var {delay=0, duration=0} = transitionOpts;
+			var passParamsForChildren = _.omit(passParams, ['data']); // data gets passed automatically
+			//var {delay=0, duration=0} = passParams;
 
-			var mainTrans = opts.transition || d3.transition();
-			transitionOpts.transition = mainTrans;
+			//var mainTrans = passParams.transition || d3.transition();
+			//passParams.transition = mainTrans;
 			// should allow callbacks to pass transitions back so they
 			// can be passed on to next callback?
 
@@ -305,11 +305,12 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				selection.exit()
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
-								self.child(name).exit(transitionOpts);
+								self.child(name).exit(passParamsForChildren);
 								// allow enter/update on children of exiting elements? probably no reason to
 							});
 						})
-						.call(self.exitCb, self.cbParams, opts, self, mainTrans)
+						//.call(self.exitCb, self.cbParams, passParams, self, mainTrans)
+						.call(self.exitCb, self.cbParams, passParams, self)
 						.remove() // allow exitCb to remove? -> doesn't seem to work
 			}
 			if (enter) {
@@ -321,11 +322,12 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 									newNode.classed(cls, true);
 								});
 							})
-						.call(self.enterCb, self.cbParams, opts, self, mainTrans)
+						//.call(self.enterCb, self.cbParams, passParams, self, mainTrans)
+						.call(self.enterCb, self.cbParams, passParams, self)
 						.each(function(d) {
 							// make children
 							_.each(self.children(), (c, name) => {
-								var child = self.makeChild(name, this, transitionOpts); // 'this' is the dom element we just appended
+								var child = self.makeChild(name, this, passParamsForChildren); // 'this' is the dom element we just appended
 								child.enter();
 								// allow exit/update on children of entering elements? probably no reason to
 							});
@@ -338,11 +340,12 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 							_.each(self.children(), (c, name) => {
 								// this recursive stuff is not working right, needs to 
 								// be rethought
-								self.child(name).run(transitionOpts, enter, exit, update);
+								self.child(name).run(passParamsForChildren, enter, exit, update);
 								// data will be passed down to children don't override it with data from opts
 							});
 						})
-						.call(self.updateCbsCombined, self.cbParams, opts, self, mainTrans)
+						//.call(self.updateCbsCombined, self.cbParams, passParams, self, mainTrans)
+						.call(self.updateCbsCombined, self.cbParams, passParams, self)
 			}
 			return selection;
 		}
@@ -360,21 +363,21 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				this._children[name].el = el;
 			return this._children[name].el;
 		}
-		addChild(name, desc, transitionOpts) {
+		addChild(name, desc, passParams) {
 			this.childDesc(name, desc);
-			return this.makeChild(name, this.selectAll(), transitionOpts);
+			return this.makeChild(name, this.selectAll(), passParams);
 		}
 		// should we attempt to send selectAll options (for transition durations)
 		// through addChild/makeChild? not doing this yet. but update calls will
 		// send these options down the D3Element tree
-		makeChild(name, parentElement, transitionOpts) {
+		makeChild(name, parentElement, passParams) {
 			var desc = this.childDesc(name);
-			var params = $.extend(
+			var d3ElProps = $.extend(
 				{ parentElement,
 					data: d=>[d],	// pass data down to child unless desc provides
 											// its own data function
 				}, desc);
-			return this.child(name, new D3Element(params, transitionOpts));
+			return this.child(name, new D3Element(d3ElProps, passParams));
 			// it sort of doesn't matter because if you repeatedly create D3Elements
 			// with the same parameters, d3 enter and exit selections will be empty
 			// and update won't have a visible effect since data is the same,
@@ -387,14 +390,14 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		}
 		implicitChild(selectorFunc) {
 		}
-		exit(opts) {
-			return this.run(opts, false, true, false);
+		exit(passParams) {
+			return this.run(passParams, false, true, false);
 		}
-		enter(opts) {
-			return this.run(opts, true, false, false);
+		enter(passParams) {
+			return this.run(passParams, true, false, false);
 		}
-		update(opts) {
-			return this.run(opts, false, false, true);
+		update(passParams) {
+			return this.run(passParams, false, false, true);
 		}
 	}
 	function shapePath(type, cx, cy, r) {
@@ -1119,9 +1122,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				// usually the domain is just the extent of that field in the data
 				this._accessors.domain = this._accessors.domain || {
 					func: (data) => {
-						return d3.extent(data.map(this.accessors.value));
+						return d3.extent(data.map(this.accessor));
 					},
-					//func: (data) => d3.extent(data.map(this.accessors.value)),
 					posParams: ['data']
 				};
 				if (!this._accessors.range) // not trying to figure out a default range

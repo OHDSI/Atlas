@@ -1072,11 +1072,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 		function chartOptions() {
 			var junk = 1;
 			return {
-				data: {
-					alreadyInSeries: false,
-				},
-				//dispatch: d3.dispatch("brush", "filter"), // in default opts for zoomScatter
-				//additionalDispatchEvents: ["foo"],
 				x: {
 							value: d => {
 								return Math.abs(d.beforeMatchingStdDiff);
