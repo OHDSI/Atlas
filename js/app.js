@@ -867,7 +867,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			reportKey: 'Condition Eras',
 			analyses: [1001, 1000, 1007, 1006, 1004, 1002, 116, 117, 1]
         }, {
-			name: "Conditions By Index",
+			name: "Conditions by Index",
 			reportKey: 'Conditions by Index',
 			analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
         }, {

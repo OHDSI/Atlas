@@ -990,7 +990,7 @@
 			};
 			var options = $.extend({}, defaults, options);
 
-			tooltipBuilder = line_defaultTooltip(options.xLabel || "x", options.xFormat, function (d) {
+			var tooltipBuilder = line_defaultTooltip(options.xLabel || "x", options.xFormat, function (d) {
 					return d[options.xValue];
 				},
 				options.yLabel || "y", options.yFormat,
@@ -2975,7 +2975,7 @@
 
 				$('.grouper').remove();
 
-				top_nodes = treemap.nodes(target)
+				var top_nodes = treemap.nodes(target)
 					.filter(function (d) {
 						return d.parent == target;
 					});
