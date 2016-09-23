@@ -1828,7 +1828,7 @@
 			},
 			series: {
 						//value: function(d) { return this.parentNode.__data__.name; },
-						value: ()=>null,
+						defaultValue: ()=>null,
 						//value: d=>1,
 						showLabel: false,
 						//showSeriesLabel: false,
@@ -1961,8 +1961,8 @@
 					{ tag: 'line',
 						classes:['refline','main-chart'],
 						data: cp.lines,
-						updateCb: function(selection, params, opts = {}) {
-							var {delay=0, duration=0, transition, cp=self.cp} = opts;
+						updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+							//var {delay=0, duration=0, transition, cp=self.cp} = opts;
 							selection
 								.attr('x1', function(lineOpts) {
 									return cp.x.scale(lineOpts.x1(cp.x.scale.domain(), cp.y.scale.domain()));
@@ -2064,15 +2064,19 @@
 																		classes:['series'],
 																		//data: [],
 																		data: series,
+																		dataKey: d=>d.name,
 																	});
 			seriesGs.addChild('dots',
 									{tag: 'path',
 										data: function(series) {
 											return series.values;
 										},
-										classes: ['dot'],
-										enterCb: function(selection, params, opts={}, el, trans) {
-											var {delay=0, duration=0, transition, cp=self.cp} = opts;
+										dataKey: function(d,i,j) {
+											return this[i] === d;
+										},
+										classes: ['dot','main-chart'],
+										enterCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+											//var {delay=0, duration=0, transition, cp=self.cp} = opts;
 											//console.log('adding with', opts);
 
 
@@ -2116,8 +2120,8 @@
 													return "translate(" + xVal + "," + yVal + ")";
 												})
 										},
-										updateCb: function(selection, params, opts = {}) {
-											var {delay=0, duration=0, transition, cp=self.cp} = opts;
+										updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+											//var {delay=0, duration=0, transition, cp=self.cp} = opts;
 											//console.log('updating with', opts);
 
 											//cp.x.axisEl.gEl.as('d3').transition().duration(duration).call(cp.x.axisEl.axis);
@@ -2136,8 +2140,8 @@
 													return "translate(" + xVal + "," + yVal + ")";
 												});
 										},
-										exitCb: function(selection, params, transitionOpts={}) {
-											var {delay=0, duration=0, transition} = transitionOpts;
+										exitCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+											//var {delay=0, duration=0, transition} = transitionOpts;
 											selection
 												//.transition()
 												//.delay(delay)
@@ -2204,6 +2208,9 @@
 			x: {
 						requiredOptions: ['value'],
 						value: (d,i,j) => parentOpts.x.accessor(d,i,j),
+						//x and y are weird, not sure right settings
+						//proxyFor: parentOpts.size, 
+						//bindSeparately: false,
 						getters: {
 							scale: function() {
 								return this._scale || d3.scale.linear();
@@ -2226,6 +2233,9 @@
 			y: {
 						requiredOptions: ['value'],
 						value: (d,i,j) => parentOpts.y.accessor(d,i,j),
+						//x and y are weird, not sure right settings
+						//proxyFor: parentOpts.size, 
+						//bindSeparately: false,
 						isField: true,
 						getters: {
 							scale: function() {
@@ -2246,7 +2256,8 @@
 						},
 			},
 			size: {
-						value: parentOpts.size.accessor,
+						proxyFor: parentOpts.size,
+						bindSeparately: false,
 						needsScale: true,
 						isField: true,
 						_accessors: {
@@ -2257,12 +2268,14 @@
 						//DEBUG: true,
 			},
 			color: {
-						value: parentOpts.color.accessor,
+						proxyFor: parentOpts.size,
+						bindSeparately: false,
 						isField: true,
 						scale: parentOpts.color.scale,
 			},
 			shape: {
-						value: parentOpts.shape.accessor,
+						proxyFor: parentOpts.size,
+						bindSeparately: false,
 						scale: parentOpts.shape.scale,
 						isField: true,
 			},
@@ -2270,7 +2283,8 @@
 						show: false,
 			},
 			series: {
-						value: parentOpts.series.value,
+						proxyFor: parentOpts.size,
+						bindSeparately: false,
 						isField: true,
 			},
 		};
@@ -2296,7 +2310,7 @@
 										.value();
 
 			var border = inset.el.gEl.addChild('border', {tag:'rect',classes:['inset-border'],
-													updateCb: function(selection,params) {
+													updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
 														selection.attr('width', inset.el.w(layout))
 																			.attr('height', inset.el.h(layout));
 													}});
@@ -2305,7 +2319,7 @@
 					{ tag: 'line',
 						classes:['refline', 'inset'],
 						data: parentOpts.lines,
-						updateCb: function(selection, params, opts = {}) {
+						updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
 							//var {delay=0, duration=0, transition, cp=self.cp} = opts;
 							selection
 								.attr('x1', function(lineOpts) {
@@ -2342,8 +2356,8 @@
 											return series.values;
 										},
 										classes: ['dot','inset'],
-										enterCb: function(selection,params) {
-											console.log('adding inset dots', selection.size());
+										enterCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+											console.log('adding inset dots', selection.size(), passParams.zoomData.length);
 											selection
 												.attr("d", function(d) {
 													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
@@ -2363,7 +2377,7 @@
 										},
 										updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
 											//var {delay=0, duration=0, transition, cp=self.cp} = opts;
-											console.log('updating inset dots', selection.size());
+											console.log('updating inset dots', selection.size(), passParams.zoomData.length);
 											selection
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.accessor(d));
@@ -2377,7 +2391,7 @@
 													return !_.includes(passParams.zoomData, d);
 												})
 										},
-										cbParams: {zoomData},
+										cbParams: {zoomData}, // thought this might get stale, but doesn't seem to
 									},
 									{zoomData} // passParams
 									);

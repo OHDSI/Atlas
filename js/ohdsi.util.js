@@ -6,7 +6,7 @@
  *			dirtyFlag
  *
  * Author: Sigfried Gold
- *			getContainer
+ *			elementConvert
  *			d3AddIfNeeded
  *			D3Element
  *			shapePath
@@ -70,26 +70,26 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		return result;
 	}	
 
-	/* getContainer
+	/* elementConvert
 	 * call with css id (with or without #)
 	 *				or dom node or d3 selection or jquery selection
 	 *
 	 * returns type requested ("dom", "d3", "jquery", "id")
 	 */
-	function getContainer(target, type = "dom") {
+	function elementConvert(target, type = "dom") {
 		if (target.selectAll) { // it's a d3 selection
 			if (type === "d3") return target;
-			return getContainer(target.node(), type); // call again with dom node
+			return elementConvert(target.node(), type); // call again with dom node
 																						    // (first in selection, that is)
 		}
 		if (target.jquery) { // it's a jquery selection
 			if (type === "jquery") return target;
-			return getContainer(target[0], type); // call again with dom node
+			return elementConvert(target[0], type); // call again with dom node
 		}
 		if (typeof target === "string") { // only works with ids for now, not other css selectors
 			var id = target[0] === '#' ? target.slice(1) : target;
 			var dom = document.getElementById(id);
-			if (dom) return getContainer(dom, type); // call again with dom node
+			if (dom) return elementConvert(dom, type); // call again with dom node
 			throw new Error(`not a valid element id: ${target}`);
 		}
 		// target ought to be a dom node
@@ -148,7 +148,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	 */
 	function d3AddIfNeeded({parentElement, data, tag, classes=[], addCb=()=>{}, updateCb=()=>{}, 
 												  cbParams} = {}) {
-		var el = getContainer(parentElement, "d3");
+		var el = elementConvert(parentElement, "d3");
 		var selection = el.selectAll([tag].concat(classes).join('.'));
 		if (Array.isArray(data)) {
 			selection = selection.data(data);
@@ -253,32 +253,65 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		constructor(props, passParams) {
 			// really need to change (simplify) the way data and opts are
 			// handled...  this whole thing is a bit of a monstrosity
-			this.parentElement = props.parentElement; // any form ok: d3, jq, dom, id
-			this.el = getContainer(this.parentElement, "d3");
-			this._data = Array.isArray(props.data) || typeof props.data === 'function'
-										? props.data : [props.data];
+			this.parentD3El = props.parentD3El;
+			this.parentElement = props.parentElement // any form ok: d3, jq, dom, id
+														|| this.parentD3El.selectAll();
+			this.el = elementConvert(this.parentElement, "d3");
 			this.tag = props.tag;
 			this.classes = props.classes || [];
 			this.enterCb = props.enterCb || (()=>{});
 			this.updateCb = props.updateCb || (()=>{});
-			this.updateCbs = props.updateCbs || [this.updateCb]; // in case you want to run more than one callback on update
-			this.updateCbsCombined = combineFuncs(this.updateCbs);
+			this.updateCb = props.updateCbs ? combineFuncs(props.updateCbs) // in case you want to run more than one callback on update
+											: this.updateCb; 
 			this.exitCb = props.exitCb || (()=>{});
 			this.cbParams = props.cbParams;
 			this._children = {};
-			this.dataPropogationSelectors = props.dataPropogationSelectors; // not implemented yet
-			if (!props.stub)
+			//this.dataPropogationSelectors = props.dataPropogationSelectors; // not implemented yet
+			if (typeof props.data === "function")
+				console.warn(`d3 is supposed to handle selectAll().data(fn) nicely, 
+										 but it doesn't. so you can pass a func that accepts its
+										 parentD3El and returns a data array`);
+
+			this.dataKey = props.dataKey;
+			if (!props.stub) {
+				// props.data can be array or function that accepts this.parentD3El
+				// or it will default to parent's data
+				// but it can be overridden later:
+				//	 permanently by calling this.data(newData)
+				//	 or temporarily by calling this.selectAll(newData)
+				this._data = props.data || this.parentD3El._data;
+				if (! (Array.isArray(this.data) || typeof this.data === 'function'))
+					throw new Error("data must be array or function");
 				this.run(passParams);
+			}
 		}
 		selectAll(data) {
-		 var selection = this.el.selectAll([this.tag].concat(this.classes).join('.'));
-		 if (data)
-			 selection = selection.data(data);
-		 //if (duration||delay) return selection.transition().delay(delay||0).duration(duration||0);
-		 return selection;
+			var selection;
+			if (data) {
+				if (typeof data === "function") {
+					throw new Error("d3 is supposed to handle selectAll().data(fn) nicely, but it doesn't");
+SAVING THIS BROKEN COMMIT UNLESS I NEED TO GET THESE LINES BACK:
+					selection = // this is ridiculous and excessively fragile
+								this.parentD3El.el
+										.selectAll([this.parentD3El.tag]
+															 .concat(this.parentD3El.classes).join('.'))
+										.selectAll([this.tag].concat(this.classes).join('.'));
+				} else {
+					selection = this.el.selectAll([this.tag].concat(this.classes).join('.'));
+				}
+				if (this.dataKey) {
+					selection = selection.data(data, this.dataKey);
+				} else {
+					selection = selection.data(data);
+				}
+			} else {
+				selection = this.el.selectAll([this.tag].concat(this.classes).join('.'));
+			}
+			//if (duration||delay) return selection.transition().delay(delay||0).duration(duration||0);
+			return selection;
 		}
 		as(type) {
-			return getContainer(this.selectAll(), type);
+			return elementConvert(this.selectAll(), type);
 		}
 		data(data) {
 			if (typeof data === "undefined")
@@ -288,7 +321,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		}
 		run(passParams={}, enter=true, exit=true, update=true) {
 			// fix opts: split up data and transition
-			var self = this;
+			let self = this;
 			var data = passParams.data || self._data;
 			var selection = self.selectAll(data);
 
@@ -300,7 +333,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			// should allow callbacks to pass transitions back so they
 			// can be passed on to next callback?
 
-			if (exit) {
+			if (exit && selection.exit().size()) {
 				//if (selection.exit().size()) console.log(`exiting ${self.name}`);
 				selection.exit()
 						.each(function(d) {
@@ -313,7 +346,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 						.call(self.exitCb, self.cbParams, passParams, self)
 						.remove() // allow exitCb to remove? -> doesn't seem to work
 			}
-			if (enter) {
+			if (enter && selection.enter().size()) {
 				selection.enter()
 						.append(self.tag)
 							.each(function(d) { // add classes
@@ -334,7 +367,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 						});
 			}
 			selection = self.selectAll(data);
-			if (update) {
+			if (update && selection.size()) {
 				selection
 						.each(function(d) {
 							_.each(self.children(), (c, name) => {
@@ -344,8 +377,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 								// data will be passed down to children don't override it with data from opts
 							});
 						})
-						//.call(self.updateCbsCombined, self.cbParams, passParams, self, mainTrans)
-						.call(self.updateCbsCombined, self.cbParams, passParams, self)
+						//.call(self.updateCb, self.cbParams, passParams, self, mainTrans)
+						.call(self.updateCb, self.cbParams, passParams, self)
 			}
 			return selection;
 		}
@@ -370,11 +403,12 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		// should we attempt to send selectAll options (for transition durations)
 		// through addChild/makeChild? not doing this yet. but update calls will
 		// send these options down the D3Element tree
-		makeChild(name, parentElement, passParams) {
+		makeChild(name, thisSelectAll, passParams) {
 			var desc = this.childDesc(name);
 			var d3ElProps = $.extend(
-				{ parentElement,
-					data: d=>[d],	// pass data down to child unless desc provides
+				{ parentD3El: this,
+					// wasn't working
+					//data: d=>[d],	// pass data down to child unless desc provides
 											// its own data function
 				}, desc);
 			return this.child(name, new D3Element(d3ElProps, passParams));
@@ -512,7 +546,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			//	it may need to be propogated explicitly to svg children)
 			// returns a D3Element
 		// ( maybe shouldn't send data to this func, attach it later)
-			this.container = this.container || getContainer(target, "dom");
+			this.container = this.container || elementConvert(target, "dom");
 			if (Array.isArray(data) && data.length > 1) {
 				data = [data];
 			}
@@ -1115,8 +1149,11 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				},
 			};
 			this._accessors = _.merge(defaultAccessors, this._accessors);
-
 			this._accessors.value.accessorOrder = -1000;
+
+			if (this.proxyFor)
+				delete this._accessors.value;
+
 			if (this.needsScale) {
 				this.scale = this.scale || d3.scale.linear();
 				// usually the domain is just the extent of that field in the data
@@ -1183,6 +1220,11 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			// make allFields and thisField always available
 			params = _.extend({}, params, {allFields: this.allFields, thisField: this}); 
 			this.__accessors = {};
+			if (this.proxyFor) {
+				if (this.separateBinding)
+					throw new Error("not handling yet");
+				this.accessor = this.proxyFor.accessor;
+			}
 			_.each(_.sortBy(this._accessors, 'accessorOrder'), acc => {
 				if (acc.name === 'scale') {
 					throw new Error("don't name an accessor 'scale'");
@@ -1637,7 +1679,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	
 	utilModule.dirtyFlag = dirtyFlag;
 	utilModule.d3AddIfNeeded = d3AddIfNeeded;
-	utilModule.getContainer = getContainer;
+	utilModule.elementConvert = elementConvert;
 	utilModule.D3Element = D3Element;
 	utilModule.shapePath = shapePath;
 	utilModule.ResizableSvgContainer = ResizableSvgContainer;
