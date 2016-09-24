@@ -56,25 +56,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.generatedSql.postgresql = ko.observable('');
 		self.generatedSql.redshift = ko.observable('');
 		self.generatedSql.msaps = ko.observable('');
-
-		self.tabMode = ko.observable(
-								 util.getState('cohortDefTab') ||
-								 'definition'
-								);
-		/*
-		var defaultTab = 'definition';
-		self.tabMode.subscribe(function(tab) {
-			if (tab && util.getState('cohortDefTab') === tab)
-				return;
-			tab = tab || self.model.currentCohortDefinitionMode() || defaultTab;
-			util.setState('cohortDefTab', tab);
-		});
-		util.onStateChange('cohortDefTab', function(evt, {val} = {}) {
-			console.log('caught tab change', val);
-			self.tabMode(val);
-		});
-		*/
-
+		self.tabMode = self.model.currentCohortDefinitionMode;
 		self.exportTabMode = ko.observable('printfriendly');
 		self.exportSqlMode = ko.observable('mssql');
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
@@ -190,7 +172,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 		self.save = function () {
 			clearTimeout(pollTimeout);
-
+			self.model.clearConceptSet();
+			
 			// If we are saving a new cohort definition (id ==0) then clear
 			// the id field before saving
 			if (self.model.currentCohortDefinition().id() == 0) {
