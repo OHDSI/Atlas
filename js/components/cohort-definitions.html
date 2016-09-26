@@ -10,13 +10,8 @@
                 <cohort-definition-browser params="{cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
             </div>
         </div>
-        <div data-bind="if:!$component.canReadCohorts">
-            <div data-bind="if:$component.isAuthenticated">
-                <forbidden></forbidden>
-            </div>
-            <div data-bind="ifnot:$component.isAuthenticated">
-                <unauthenticated></unauthenticated>
-            </div>
+        <div data-bind="ifnot:$component.canReadCohorts">
+            <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
         </div>
     </div>
 </div>

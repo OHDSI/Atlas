@@ -1,4 +1,4 @@
-define(['knockout', 'text!./roles.html', 'appConfig', 'webapi/AuthAPI', 'knockout.dataTables.binding', 'databindings', 'forbidden', 'unauthenticated'], function (ko, view, config, authApi) {
+define(['knockout', 'text!./roles.html', 'appConfig', 'webapi/AuthAPI', 'knockout.dataTables.binding', 'databindings', 'access-denied'], function (ko, view, config, authApi) {
     function roles(params) {
         var self = this;
 

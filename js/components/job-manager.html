@@ -33,10 +33,5 @@
     </div>
 </div>
 <div data-bind="ifnot:canReadJobs">
-    <div data-bind="if:isAuthenticated">
-        <forbidden/>
-    </div>
-    <div data-bind="ifnot:isAuthenticated">
-        <unauthenticated/>
-    </div>
+    <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
 </div>

@@ -1,4 +1,4 @@
-define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/AuthAPI', 'knockout.dataTables.binding', 'forbidden', 'unauthenticated'], function (ko, view, config, authApi) {
+define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/AuthAPI', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config, authApi) {
 	function jobManager(params) {
 		var self = this;
 		self.model = params.model;

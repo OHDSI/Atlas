@@ -58,10 +58,5 @@
     <a href="#/roles" class="btn btn-sm btn-primary" style="width: 175px">Manage Permissions</a>
 </div>
 <div data-bind="ifnot:hasAccess">
-    <div data-bind="if:isAuthenticated">
-        <forbidden />
-    </div>
-    <div data-bind="ifnot:isAuthenticated">
-        <unauthenticated />
-    </div>
+    <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
 </div>

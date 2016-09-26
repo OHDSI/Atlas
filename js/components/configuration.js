@@ -1,4 +1,4 @@
-define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'forbidden', 'unauthenticated'], function (ko, view, config, authApi) {
+define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'access-denied'], function (ko, view, config, authApi) {
 	function configuration(params) {
 		var self = this;
 		self.config = config;
