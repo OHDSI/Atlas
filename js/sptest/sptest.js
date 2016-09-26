@@ -30,8 +30,10 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 		self.sharedCrossfilter = ko.observable(new util.SharedCrossfilter([]));
 		window.scf = self.sharedCrossfilter();
 		self.chartData.subscribe(function(recs) {
+			recs.forEach((d,i) => d._id = i);
 			self.sharedCrossfilter().replaceData(recs);
 		});
+		self.recId = d=>d._id;
 		$(self.sharedCrossfilter()).on('filter', function(evt, stuff) {
 			//console.log("filter in sharedCrossfilter", stuff);
 		});
@@ -70,7 +72,7 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 										})
 										.value();
 			self.fields(fields);
-			self.chartObj().chartSetup(self.domElement(), 460, 150, opts, fields);
+			self.chartObj().chartSetup(self.domElement(), 460, 150, opts, fields, self.recId);
 			self.chartObj().render(self.chartData(), self.domElement(), 460, 150, opts);
 			self.sharedCrossfilter().dimField('xy', opts.xy);
 			/*  for coming back to tab
@@ -337,7 +339,7 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 												posParams: ['data', 'series', 'allFields'],
 							},
 							range: {
-								func: () => ['red', 'green', 'pink', 'blue'],
+								func: () => ['red', 'green', 'orange', 'blue'],
 							},
 						},
 						//value: d=>nthroot(d.coefficient, 7),

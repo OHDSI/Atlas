@@ -1844,9 +1844,14 @@
 			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
 			//showXAxis: true
 		};
-		this.chartSetup = _.once(function(target, w, h, mergedOpts, fields) {
+		this.chartSetup = _.once(function(target, w, h, mergedOpts, fields, recId) {
 			var cp = this.cp = mergedOpts;
+			cp.chartObj = this;
 			this.fields = fields;
+			if (!recId) {
+				throw new Error("must send a recId function that accepts a record and returns a unique id for that record.");
+			}
+			this.recId = recId;
 			this.divEl = new util.ResizableSvgContainer(target, [null], w, h, ['zoom-scatter']);
 			this.svgEl = this.divEl.child('svg')
 			var layout = this.layout = new util.SvgLayout(w, h, cp.layout);
@@ -1866,9 +1871,9 @@
 			cp.chart = cp.chart || {};
 			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
 
-			cp.inset.chart = new module.inset(cp, jqEventSpace);
+			cp.inset.chart = new module.inset(cp, jqEventSpace, this.recId);
 												// no current ability to specify override inset opts
-			cp.inset.el = new util.ChartInset(this.svgEl, layout, cp.inset);
+			cp.inset.d3El = new util.ChartInset(this.svgEl, layout, cp.inset);
 		});
 		this.updateData = function(data) {
 			var series = dataToSeries(data, this.cp.series);
@@ -1880,6 +1885,9 @@
 			this.layout.positionZones();
 			this.layout.positionZones();
 
+			this.cp.chart && this.cp.chart.chart.gEl
+					.child('lines')
+						.run({data: cp.lines, cp: this.cp});
 			this.cp.chart && this.cp.chart.chart.gEl
 					.child('series')
 						.run({data: series, cp: this.cp});
@@ -1898,17 +1906,17 @@
 						.enter({data: series, delay: 1000, duration: 0, cp: this.cp});
 			*/
 
-			//this.cp.inset.el.gEl.as('d3').remove();
+			//this.cp.inset.d3El.gEl.as('d3').remove();
 			this.cp.inset.chart.render(this.data, this.series, data, this.cp.inset, this.layout);
 			/*
 			if (this.data.length !== data.length) {
 				this.cp.inset.chart.render(this.data, this.cp.inset, this.layout);
 			} else {
-				this.cp.inset.el.gEl.as('d3').html('');
+				this.cp.inset.d3El.gEl.as('d3').html('');
 			}
 			*/
 		}
-		this.render = function (data, target, w, h, cp) {
+		this.render = function (data, target, w, h, cp, recId) {
 			var self = this;
 			if (!data.length) return;
 			DEBUG && (window.cp = cp);
@@ -2061,18 +2069,17 @@
 			var seriesGs = cp.chart.chart.gEl
 												.addChild('series',
 																	{ tag: 'g',
-																		classes:['series'],
+																		classes:['series','main-chart'],
 																		//data: [],
 																		data: series,
 																		dataKey: d=>d.name,
 																	});
 			seriesGs.addChild('dots',
 									{tag: 'path',
-										data: function(series) {
-											return series.values;
-										},
-										dataKey: function(d,i,j) {
-											return this[i] === d;
+										data: function(d3el) {
+											return (d3el.parentD3El.selectAllJoin(series)
+																.selectAll([d3el.tag].concat(d3el.classes).join('.'))
+																.data(d=>d.values, d=>self.recId(d)));
 										},
 										classes: ['dot','main-chart'],
 										enterCb: function(selection, cbParams={}, passParams={}, thisD3El) {
@@ -2191,7 +2198,8 @@
 			}
 		}
 	};
-	module.inset = function (parentOpts, jqEventSpace) {
+	module.inset = function (parentOpts, jqEventSpace, recId) {
+		this.recId = recId;
 		this.cp = {
 			availableDatapointBindings: 
 				['d', 'i', 'j', 'data', 'series', 'allFields', 'layout','inset'],
@@ -2223,7 +2231,7 @@
 									thisField._scale = 
 										d3.scale.linear()
 											.domain(parentOpts.x._fullScale.domain())
-											.range([0, inset.el.w(layout)])
+											.range([0, inset.d3El.w(layout)])
 								},
 								posParams: ['thisField','data','layout','inset'],
 								runOnGenerate: true,
@@ -2248,7 +2256,7 @@
 									thisField._scale = 
 										d3.scale.linear()
 											.domain(parentOpts.y._fullScale.domain())
-											.range([inset.el.h(layout), 0])
+											.range([inset.d3El.h(layout), 0])
 								},
 								posParams: ['thisField','data','layout','inset'],
 								runOnGenerate: true,
@@ -2268,13 +2276,13 @@
 						//DEBUG: true,
 			},
 			color: {
-						proxyFor: parentOpts.size,
+						proxyFor: parentOpts.color,
 						bindSeparately: false,
 						isField: true,
 						scale: parentOpts.color.scale,
 			},
 			shape: {
-						proxyFor: parentOpts.size,
+						proxyFor: parentOpts.shape,
 						bindSeparately: false,
 						scale: parentOpts.shape.scale,
 						isField: true,
@@ -2283,7 +2291,7 @@
 						show: false,
 			},
 			series: {
-						proxyFor: parentOpts.size,
+						proxyFor: parentOpts.series,
 						bindSeparately: false,
 						isField: true,
 			},
@@ -2309,13 +2317,13 @@
 										})
 										.value();
 
-			var border = inset.el.gEl.addChild('border', {tag:'rect',classes:['inset-border'],
+			var border = inset.d3El.gEl.addChild('border', {tag:'rect',classes:['inset-border'],
 													updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
-														selection.attr('width', inset.el.w(layout))
-																			.attr('height', inset.el.h(layout));
+														selection.attr('width', inset.d3El.w(layout))
+																			.attr('height', inset.d3El.h(layout));
 													}});
 			if (parentOpts.lines) {
-				var lines = inset.el.gEl.addChild('lines',
+				var lines = inset.d3El.gEl.addChild('lines',
 					{ tag: 'line',
 						classes:['refline', 'inset'],
 						data: parentOpts.lines,
@@ -2345,15 +2353,15 @@
 						},
 					});
 			}
-			var seriesGs = inset.el.gEl.addChild('series',
+			var seriesGs = inset.d3El.gEl.addChild('series',
 																	{ tag: 'g',
-																		classes:['series'],
+																		classes:['series','inset'],
 																		data: seriesAll,
 																	});
 			seriesGs.addChild('dots',
 									{	tag: 'path',
-										data: function(series) {
-											return series.values;
+										data: function(d3el) {
+											return d3el.selectAll().data(d=>d.values, d=>self.recId(d));
 										},
 										classes: ['dot','inset'],
 										enterCb: function(selection, cbParams={}, passParams={}, thisD3El) {
@@ -2388,14 +2396,15 @@
 													return cp.color.scale(cp.color.accessor(d));
 												})
 												.classed('out-of-zoom', function(d) {
-													return !_.includes(passParams.zoomData, d);
+													return !_.some(passParams.zoomData, 
+																				 z=>self.recId(z) === self.recId(d));
 												})
 										},
 										cbParams: {zoomData}, // thought this might get stale, but doesn't seem to
 									},
 									{zoomData} // passParams
 									);
-			var focusRect = inset.el.gEl.addChild('focus', 
+			var focusRect = inset.d3El.gEl.addChild('focus', 
 												{tag:'rect',classes:['inset-focus'],
 													updateCb: function(selection,params) {
 														var [x1,x2] = parentOpts.x.scale.domain();
