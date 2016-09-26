@@ -80,7 +80,58 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 		self.orderClasses = params.orderClasses || false;
 		self.ordering = params.ordering || true;
 
-		self.searchFilter = params.searchFilter;
+		self.searchDim = {
+			name: 'datatable-search',
+			accessor: d=>d,
+		};
+		self.initCompleteCallback = function(dtStuff) {
+			//var dt=$('table.dataTable.cf').DataTable();
+			var dt = self.dt = $(dtStuff.nTableWrapper).find('table').DataTable();
+			var firstTimeThrough = true;
+			var noSearchState = true;
+			var searchStr;
+			dt.on('search.dt', function(e, settings) { 
+				if (firstTimeThrough) {
+					firstTimeThrough = false;
+					searchStr = util.getState([filterStateKey(), 'search']);
+					if (_.isEmpty(searchStr))
+						return;
+					firstTimeThrough = false;
+					noSearchState = false;
+					dt.search(searchStr);
+				} else {
+					searchStr = dt.search();
+				}
+				var ret;
+				if(noSearchState && searchStr === (util.getState([filterStateKey(), 'search'])||'')) {
+					ret = ()=>false; //
+				} else if (searchStr.length === 0) {
+					util.deleteState([filterStateKey(), 'search']);
+					ret = ()=>false; //
+					updateSearchFilter(searchStr);
+				} else {
+					util.setState([filterStateKey(), 'search'], searchStr);
+					updateSearchFilter(searchStr);
+					ret = true;
+				}
+				return ret;
+			});
+		};
+		function searchSetup() {
+			self.sharedCrossfilter().dimField('datatable-search', self.searchDim);
+		}
+		function updateSearchFilter(searchStr, tellListenersToWait = false) {
+			if (searchStr) {
+				var func = rec => {
+					return _.chain(rec).values().compact().some(val => val.toString().match(new RegExp(searchStr,'i'))).value();
+				};
+			} else {
+				var func = null;
+			}
+			self.sharedCrossfilter().filter('datatable-search', func, 
+							{source:'datatable-search', waitForMore: tellListenersToWait});
+			return !!func;
+		};
 
 		newRecs(ko.utils.unwrapObservable(params.recs));
 		if (ko.isSubscribable(params.recs)) {
@@ -100,6 +151,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 				// really facets and datatables should be separate components
 			columnSetup();
 			facetSetup();
+			searchSetup();
 		}
 		function processFieldFacetColumnParams() {
 			// if fields parameter is supplied, columns and facets will be ignored
@@ -164,8 +216,8 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 			});
 			updateFacetUI();
 			if (filtersExist) {
-				$(self.sharedCrossfilter()).trigger('filter', 
-						[{ source: 'datatable', waitForMore: 'done' }]);
+				$(self.sharedCrossfilter()).trigger('filterEvt', 
+						[{ source: 'datatable.facet', waitForMore: 'done' }]);
 			}
 		}
 		function sharedSetup(fields) {
@@ -189,24 +241,6 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 				}
 			});
 		}
-
-		/*
-		 * PUT THIS BACK!
-		self.initCompleteCallback = function() {
-			var dt=$('#profile-manager-table table').DataTable();
-			dt.on('search.dt', function(e, settings) { 
-				var s = dt.search();
-				if (s.length === 0) {
-					self.searchFilter(null);
-					return ()=>false;
-				}
-				self.searchFilter(rec => {
-					return _.chain(rec).values().compact().any(val => val.toString().match(new RegExp(s,'i'))).value();
-				})
-				return true;
-			});
-		};
-		*/
 
 		function filterStateKey() {
 			return `filters${self.filterNameSpace ?
@@ -238,17 +272,20 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 					util.deleteState(filterName(facetName));
 				}
 			}
+			/*
 			$(self.jqEventSpace)
 				.trigger('filter', {
 															source:'datatable',
 															filter: {[filterSwitched]: filterOn},
 														});
+			*/
 			var filterOn = updateOneFacetsFilters(facet);
 			updateFacetUI();
 		}
 		function updateOneFacetsFilters(facet, tellListenersToWait = false) {
 			// should only get here if:
 			//		1) loading page and initializing facet filters
+			//		2) toggled a facet filter
 			var filters = util.getState(filterStateKey()) || {};
 			if (filters[facet.name]) {
 				// there's at least one Member chosen for this facet
@@ -263,12 +300,12 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 				var func = null;
 			}
 			self.sharedCrossfilter().filter(facet.name, func, 
-							{source:'datatable', waitForMore: tellListenersToWait});
+							{source:'datatable.facet', waitForMore: tellListenersToWait});
 			// should maybe say *which* datatable, in case there's more than one
 			// on a page, but not dealing with that yet.
 			return !!func;
 		};
-		function updateFacetUI() {
+		function updateFacetUI(updateData=true) {
 			self._facets.forEach(facet=>{
 				facet.Members = self.sharedCrossfilter().group(facet.name).all().map(
 					group => {
@@ -283,14 +320,15 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 			self.facets.removeAll()
 			self.facets.push(...self._facets);
 
+			//updateData && 
 			self.data(self.sharedCrossfilter().filteredRecs());
 		}
-		$(self.sharedCrossfilter()).on('filter', 
+		$(self.sharedCrossfilter()).on('filterEvt', 
 			function(evt, {dimField, source} = {}) {
-				if (source === 'datatable') {
+				if (source === 'datatable.facet') {
 					return; // already handled
 				}
-				updateFacetUI();
+				updateFacetUI(source!=='datatable-search');
 			});
 	};
 

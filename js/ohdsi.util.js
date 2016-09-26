@@ -80,7 +80,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		if (target.selectAll) { // it's a d3 selection
 			if (type === "d3") return target;
 
-			console.warn("this should't return target.node(), it should return target[0]");
+			//console.warn("this should't return target.node(), it should return target[0]");
+			//   but i haven't been able to get that to work yet
 			return elementConvert(target.node(), type); // call again with dom node
 																						    // (first in selection, that is)
 		}
@@ -273,10 +274,11 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			this._children = {};
 			//this.dataPropogationSelectors = props.dataPropogationSelectors; // not implemented yet
 			if (typeof props.data === "function")
+				/*
 				console.warn(`d3 is supposed to handle selectAll().data(fn) nicely, 
 										 but it doesn't. so you can pass a func that accepts its
-										 parentD3El and returns a data array`);
-
+										 d3El and returns a data array`);
+				*/
 			this.dataKey = props.dataKey;
 			if (!props.stub) {
 				// props.data can be array or function that accepts this.parentD3El
@@ -1574,7 +1576,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		}
 		replaceData(recs) {
 			this.recs = recs;
-			console.log("replacing crossfilter data. you want to do this?");
+			//console.log("replacing crossfilter data. you want to do this?");
 			var dummy = this.cf.dimension(d=>d);
 			dummy.filter(()=>false);
 			this.cf.remove();
@@ -1620,7 +1622,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			// what if setting filter redundantly? still trigger filter change?
 			triggerData.dimField = dimField;
 
-			$(this).trigger('filter', [triggerData]);
+			$(this).trigger('filterEvt', [triggerData]);
 		}
 		grouping(dimName, groupingName, func, reduceFuncs=reduceToRecs) {
 			if (!_.has(this.dimFields, name))

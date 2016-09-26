@@ -64,7 +64,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.chartData.subscribe(function(recs) {
 				self.sharedCrossfilter().replaceData(recs);
 			});
-			$(self.sharedCrossfilter()).on('filter', function(evt, stuff) {
+			$(self.sharedCrossfilter()).on('filterEvt', function(evt, stuff) {
 				console.log("filter in sharedCrossfilter", stuff);
 			});
 			$(self.sharedCrossfilter()).on('newData', function(evt, stuff) {
@@ -127,7 +127,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					self.sharedCrossfilter().filter('xy', xyFilt, 
 							{source:'brush', x1, x2, y1, y2, empty});
 				});
-			$(self.sharedCrossfilter()).on('filter',
+			$(self.sharedCrossfilter()).on('filterEvt',
 				function(evt, {dimField, source, x1, x2, y1, y2, empty, waitForMore} = {}) {
 					if (source === 'brush') {
 						// scatter has already zoomed.

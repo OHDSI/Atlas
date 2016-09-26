@@ -34,7 +34,7 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 			self.sharedCrossfilter().replaceData(recs);
 		});
 		self.recId = d=>d._id;
-		$(self.sharedCrossfilter()).on('filter', function(evt, stuff) {
+		$(self.sharedCrossfilter()).on('filterEvt', function(evt, stuff) {
 			//console.log("filter in sharedCrossfilter", stuff);
 		});
 		$(self.sharedCrossfilter()).on('newData', function(evt, stuff) {
@@ -101,7 +101,7 @@ define(['knockout', 'text!./sptest.html','lodash','ohdsi.util','databindings/d3C
 				self.sharedCrossfilter().filter('xy', xyFilt, 
 						{source:'brush', x1, x2, y1, y2, empty});
 			});
-		$(self.sharedCrossfilter()).on('filter',
+		$(self.sharedCrossfilter()).on('filterEvt',
 			function(evt, {dimField, source, x1, x2, y1, y2, empty, waitForMore} = {}) {
 				console.log("what if we have a brush and a facet filter?");
 				if (source === 'brush') {

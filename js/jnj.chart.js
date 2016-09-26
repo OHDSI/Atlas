@@ -1888,6 +1888,7 @@
 			this.cp.chart && this.cp.chart.chart.gEl
 					.child('lines')
 						.run({data: cp.lines, cp: this.cp});
+			this.filteredSeries = series; // SUPERKLUDGE!!!
 			this.cp.chart && this.cp.chart.chart.gEl
 					.child('series')
 						.run({data: series, cp: this.cp});
@@ -2077,7 +2078,7 @@
 			seriesGs.addChild('dots',
 									{tag: 'path',
 										data: function(d3el) {
-											return (d3el.parentD3El.selectAllJoin(series)
+											return (d3el.parentD3El.selectAllJoin(self.filteredSeries)
 																.selectAll([d3el.tag].concat(d3el.classes).join('.'))
 																.data(d=>d.values, d=>self.recId(d)));
 										},
@@ -2362,6 +2363,13 @@
 									{	tag: 'path',
 										data: function(d3el) {
 											return d3el.selectAll().data(d=>d.values, d=>self.recId(d));
+											/* not sure why the above works for inset but not for
+											 * main-chart, which requires below, but don't have time
+											 * to look into it now
+											return (d3el.parentD3El.selectAllJoin(series)
+																.selectAll([d3el.tag].concat(d3el.classes).join('.'))
+																.data(d=>d.values, d=>self.recId(d)));
+											*/
 										},
 										classes: ['dot','inset'],
 										enterCb: function(selection, cbParams={}, passParams={}, thisD3El) {
