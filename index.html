@@ -176,8 +176,15 @@
 					</div>
 				</div>
 			</div>
+            
+            <div data-bind="if:pageModel.currentView() == 'roles'">
+                <roles params="model: pageModel"></roles>
+            </div>
+            <div data-bind="if:pageModel.currentView() == 'role'">
+                <role-details params="model: pageModel"></role-details>
+            </div>
 
-			<div data-bind="if: currentView() == 'irbrowser'">
+		    <div data-bind="if: currentView() == 'irbrowser'">
 				<ir-browser params="model: pageModel"></ir-browser>
 			</div>
 

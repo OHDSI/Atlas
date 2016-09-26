@@ -1913,3 +1913,17 @@ cohort-comparison-manager .y-axislabel.axislabel {
 div.welcome-login-ntlm div {
     padding-bottom: 10px;
 }
+
+span.new-role {
+	margin: 5px;
+}
+.fa.fa-check.readonly {
+	color: #f0f0f0;
+	border-color: #E0E0E0;
+	cursor: default;
+}
+.fa.fa-check.readonly.selected {
+	color: #9E9E9E;
+	border-color: #E0E0E0;
+	cursor: default;
+}

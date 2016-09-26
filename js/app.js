@@ -103,6 +103,17 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 							self.currentView('configure');
 						});
 					},
+					'/roles': function () {
+						require(['roles'], function () {
+							self.currentView('roles');
+						});
+					},
+					'/role/:id': function (id) {
+						require(['role-details'], function () {
+                            self.currentRoleId(id);
+						    self.currentView('role');
+						});
+					},
 					'/home': function () {
 						require(['home'], function () {
 							self.currentView('home');
@@ -1716,6 +1727,31 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 				 	pageModel.currentIRAnalysisDirtyFlag().isDirty() ||
 				 	pageModel.currentCohortComparisonDirtyFlag().isDirty());
 		});
+
+		self.currentRoleId = ko.observable();
+	    self.roles = ko.observableArray();
+	    self.updateRoles = function () {
+	        var promise = $.Deferred();
+	        if (self.roles() && self.roles().length > 0) {
+	            promise.resolve();
+	        } else {
+	            $.ajax({
+	                url: config.services[0].url + 'role',
+	                method: 'GET',
+	                headers: {
+	                    Authorization: authApi.getAuthorizationHeader()
+	                },
+	                contentType: 'application/json',
+	                success: function(data) {
+	                    self.roles(data);
+	                    promise.resolve();
+	                }
+	            });
+	        }
+	        return promise;
+	    }
+	    self.users = ko.observableArray();
+	    self.permissions = ko.observableArray();
 	}
 	return appModel;
 });

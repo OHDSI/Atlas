@@ -1,0 +1,78 @@
+<div class="wrapperTitle">
+    <!-- ko if:loading -->
+    <i class="fa fa-circle-o-notch fa-spin"></i> Loading...
+    <!-- /ko -->
+    <!-- ko ifnot:loading -->
+    <i class="fa fa-cogs"></i> Role
+    <!-- /ko -->
+</div>
+<div data-bind="ifnot:loading">
+    <div data-bind="if:$component.hasAccess">
+        <div class="asset-heading">
+            <input type="text" data-bind="textInput:$component.roleName, attr: { disabled: canEditRole() ? null : true, placeholder: isNewRole() ? 'Role Name' : null}" />
+            <div class="btn-group">
+                <!-- ko if:canSave -->
+                <button type="button" class="btn btn-sm btn-success" data-bind="click:$component.save, css: { disabled: !dirtyFlag.isDirty() }">Save</button>
+                <!-- /ko -->
+                <button type="button" class="btn btn-sm btn-primary" data-bind="click:$component.close">Close</button>
+                <!-- ko if:canDelete -->
+                <button type="button" class="btn btn-sm btn-danger" data-bind="click: $component.delete">Delete</button>
+                <!-- /ko -->
+            </div>
+        </div>
+        <ul class="nav nav-tabs">
+            <li role="presentation" data-bind="click: function() {$component.currentTab('users');}, attr: {class: $component.currentTab() == 'users' ? 'active' : ''}"><a>Users</a></li>
+            <li role="presentation" data-bind="click: function() {$component.currentTab('permissions');}, attr: {class: $component.currentTab() == 'permissions' ? 'active' : ''}"><a>Permissions</a></li>
+        </ul>
+        <div data-bind="if:$component.currentTab() == 'users'">
+            <table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
+            data: $component.userItems,
+            options: {
+						dom: 'lfiprt',
+						language: {
+							search : 'Filter:'
+						},
+						lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+						orderClasses: false,
+						deferRender: true,
+						autoWidth: false,
+						ordering: true,
+						columnDefs: [
+								{ targets: 0, width: '80px' },
+						],
+						columns: [
+								{ title: 'Included', class:'text-center', render: function() { return renderCheckbox('isRoleUser', $component.canEditRoleUsers); } },
+								{ title: 'Login', data: 'login' }
+						]
+				}
+        }"></table>
+        </div>
+        <div data-bind="if:$component.currentTab() == 'permissions'">
+            <table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
+            data: $component.permissionItems,
+            options: {
+						dom: 'lfiprt',
+						language: {
+							search : 'Filter:'
+						},
+						lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+						orderClasses: false,
+						deferRender: true,
+						autoWidth: false,
+						ordering: true,
+						columnDefs: [
+								{ targets: 0, width: '80px', orderable: false },
+						],
+						columns: [
+								{ title: 'Included', class:'text-center', render: function() { return renderCheckbox('isRolePermission', $component.canEditRolePermissions()); } },
+								{ title: 'Permission', data: 'permission' },
+								{ title: 'Description', data: 'description' }
+						]
+				}
+        }"></table>
+        </div>
+    </div>
+    <div class="paddedWrapper" data-bind="ifnot:$component.hasAccess">
+        <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+    </div>
+</div>

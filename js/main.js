@@ -122,10 +122,13 @@ requirejs.config({
 		"prism": "prism",
 		"sptest": "sptest/sptest",
 		"sptest_smoking": "sptest/sptest_smoking",
-        "welcome": "components/welcome",
-        "forbidden": "components/forbidden",
-        "unauthenticated": "components/unauthenticated"
-	}
+		"welcome": "components/welcome",
+		"forbidden": "components/ac-forbidden",
+		"unauthenticated": "components/ac-unauthenticated",
+		"access-denied": "components/ac-access-denied",
+		"roles": "components/roles",
+		"role-details": "components/role-details"
+}
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first

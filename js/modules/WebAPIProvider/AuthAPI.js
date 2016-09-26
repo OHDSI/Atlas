@@ -207,6 +207,34 @@ define(function(require, exports) {
         return isPermitted('configuration:edit:ui')
     }
 
+    var isPermittedReadRoles = function() {
+        return isPermitted('role:get');
+    }
+    var isPermittedReadRole = function (roleId) {
+        var permitted =
+                isPermitted('role:' + roleId + ':get') &&
+                isPermitted('permission:get') &&
+                isPermitted('role:' + roleId + ':permissions:get') &&
+                isPermitted('user:get') &&
+                isPermitted('role:' + roleId + ':users:get');
+        return permitted;
+    }
+    var isPermittedEditRole = function(roleId) {
+        return isPermitted('role:' + roleId + ':post');
+    }
+    var isPermittedCreateRole = function() {
+        return isPermitted('role:put');
+    }
+    var isPermittedDeleteRole = function(roleId) {
+        return isPermitted('role:' + roleId + ':delete');
+    }
+    var isPermittedEditRoleUsers = function(roleId) {
+        return isPermitted('role:' + roleId + ':users:*:put') && isPermitted('role:' + roleId + ':users:*:delete');
+    }
+    var isPermittedEditRolePermissions = function(roleId) {
+        return isPermitted('role:' + roleId + ':permissions:*:put') && isPermitted('role:' + roleId + ':permissions:*:delete');
+    }
+
     var api = {
         getToken: getToken,
         setToken: setToken,
@@ -228,6 +256,14 @@ define(function(require, exports) {
         isPermittedReadJobs: isPermittedReadJobs,
 
         isPermittedEditConfiguration: isPermittedEditConfiguration,
+
+        isPermittedReadRoles: isPermittedReadRoles,
+        isPermittedReadRole: isPermittedReadRole,
+        isPermittedEditRole: isPermittedEditRole,
+        isPermittedCreateRole: isPermittedCreateRole,
+        isPermittedDeleteRole: isPermittedDeleteRole,
+        isPermittedEditRoleUsers: isPermittedEditRoleUsers,
+        isPermittedEditRolePermissions: isPermittedEditRolePermissions,
     };
 
     return api;

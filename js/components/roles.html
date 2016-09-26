@@ -1,0 +1,42 @@
+<div class="wrapperTitle">
+    <!-- ko if:loading -->
+    <i class="fa fa-circle-o-notch fa-spin"></i> Loading...
+    <!-- /ko -->
+    <!-- ko ifnot:loading -->
+    <i class="fa fa-cogs"></i> Roles
+    <!-- /ko -->
+</div>
+<div class="paddedWrapper">
+    <!-- ko if:canCreate -->
+    <span class="pull-right btn btn-sm btn-primary new-role" data-bind="click:newRole">New Role</span>
+    <!-- /ko -->
+    <div class="clear" data-bind="if:$component.canRead, eventListener: [{event: 'click', selector: '.roleItem', callback: $component.selectRole}]">
+        <table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
+            data: roles(),
+            options: {
+						dom: 'lfiprt',
+						language: {
+							search : 'Filter Roles:'
+						},
+						lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+						orderClasses: false,
+						deferRender: true,
+						autoWidth: true,
+						ordering: true,
+						order: [[ 0, 'asc' ]],
+						columns: [
+								{ title: 'Role', data: 'role' }
+						],
+                        stripeClasses : [ 'roleItem' ]
+				}
+        }"></table>
+    </div>
+    <div data-bind="ifnot:$component.canRead">
+        <div data-bind="if:$component.isAuthenticated">
+            <forbidden />
+        </div>
+        <div data-bind="ifnot:$component.isAuthenticated">
+            <unauthenticated />
+        </div>
+    </div>
+</div>
