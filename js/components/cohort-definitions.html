@@ -5,7 +5,9 @@
 
     <div class="paddedWrapper">
         <div data-bind="if:$component.canReadCohorts">
-            <span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined || !$component.canCreateCohort}">New Cohort</span>
+            <!-- ko if: $component.canCreateCohort -->
+            <span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined}">New Cohort</span>
+            <!-- /ko -->
             <div class="clear">
                 <cohort-definition-browser params="{cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
             </div>
