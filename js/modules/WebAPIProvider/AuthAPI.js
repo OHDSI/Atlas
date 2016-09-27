@@ -181,8 +181,12 @@ define(function(require, exports) {
         return isPermitted('conceptset:' + conceptsetId + ':post');
     };
 
+    var isPermittedReadCohort = function(id) {
+        return isPermitted('cohortdefinition:' + id + ':get') && isPermitted('cohortdefinition:sql:post');
+    }
+
     var isPermittedReadCohorts = function() {
-        return isPermitted('cohort:read:ui');
+        return isPermitted('cohortdefinition:get');
     }
 
     var isPermittedCreateCohort = function() {
@@ -197,6 +201,15 @@ define(function(require, exports) {
     var isPermittedDeleteCohort = function(id) {
         var permission = 'cohortdefinition:' + id + ':delete';
         return isPermitted(permission);
+    }
+
+    var isPermittedGenerateCohort = function(cohortId, sourceKey) {
+        return isPermitted('cohortdefinition:' + cohortId + ':generate:' + sourceKey + ':get') &&
+            isPermitted('cohortdefinition:' + cohortId + ':info:get');
+    }
+
+    var isPermittedReadCohortReport = function(cohortId, sourceKey) {
+        return isPermitted('cohortdefinition:' + cohortId + ':report:' + sourceKey + ':get');
     }
 
     var isPermittedReadJobs = function() {
@@ -249,9 +262,12 @@ define(function(require, exports) {
         isPermittedUpdateConceptset: isPermittedUpdateConceptset,
 
         isPermittedReadCohorts: isPermittedReadCohorts,
+        isPermittedReadCohort: isPermittedReadCohort,
         isPermittedCreateCohort: isPermittedCreateCohort,
         isPermittedUpdateCohort: isPermittedUpdateCohort,
         isPermittedDeleteCohort: isPermittedDeleteCohort,
+        isPermittedGenerateCohort: isPermittedGenerateCohort,
+        isPermittedReadCohortReport: isPermittedReadCohortReport,
 
         isPermittedReadJobs: isPermittedReadJobs,
 
