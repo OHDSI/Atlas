@@ -3,6 +3,9 @@ define(function(require, exports) {
     var $ = require('jquery');
     var config = require('appConfig');
 
+    var _expirationDate = null;
+    var _permissions = null;
+
     var getServiceUrl = function() {
         return config.webAPIRoot;
     };
@@ -17,6 +20,9 @@ define(function(require, exports) {
 
     var setToken = function(token) {
         localStorage.bearerToken = token;
+
+        _expirationDate = null;
+        _permissions = null;
     };
 
     var isAuthenticated = function() {
@@ -39,20 +45,23 @@ define(function(require, exports) {
         return "Bearer " + token;
     };
 
-    var extractPermissions = function() {
-        var token = getToken();
-        if (!token) {
-            return null;
+    var extractPermissions = function () {
+        if (_permissions == null) {
+            var token = getToken();
+            if (!token) {
+                return null;
+            }
+
+            var payload = parseJwtPayload(token);
+            var permissionsString = payload.permissions;
+            if (!permissionsString) {
+                return null;
+            }
+
+            _permissions = permissionsString.split('|');
         }
 
-        var payload = parseJwtPayload(token);
-        var permissionsString = payload.permissions;
-        if (!permissionsString) {
-            return null;
-        }
-
-        var permissions = permissionsString.split('|');
-        return permissions;
+        return _permissions;
     };
 
     var checkPermission = function(permission, etalon) {
@@ -106,15 +115,18 @@ define(function(require, exports) {
             : null;
     };
 
-    var getTokenExpirationDate = function() {
-        var token = getToken();
-        if (!token) {
-            return null;
+    var getTokenExpirationDate = function () {
+        if (_expirationDate == null) {
+            var token = getToken();
+            if (!token) {
+                return null;
+            }
+
+            var expirationInSeconds = parseJwtPayload(token).exp;
+            _expirationDate = new Date(expirationInSeconds * 1000);
         }
 
-        var expirationInSeconds = parseJwtPayload(token).exp;
-        var expirationDate = new Date(expirationInSeconds * 1000);
-        return expirationDate;
+        return _expirationDate;
     };
 
     var base64urldecode = function (arg) {
