@@ -427,14 +427,18 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.searchConceptsColumns = [{
 			title: '<i class="fa fa-shopping-cart"></i>',
 			render: function (s, p, d) {
-				var css = '';
-				var icon = 'fa-shopping-cart';
-				if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-					css = ' selected';
-				}
-				return '<i class="fa ' + icon + ' ' + css + '"></i>';
-			},
-			orderable: false,
+			    var css = '';
+			    var icon = 'fa-shopping-cart';
+                var tag = 'i'
+			    if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+			        css = ' selected';
+			    }
+                if (!self.canEditCurrentConceptSet()) {
+                    css += ' readonly';
+                    tag = 'span';
+                }
+			    return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
+			}, orderable: false,
 			searchable: false
         }, {
 			title: 'Id',
@@ -521,12 +525,17 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.relatedSourcecodesColumns = [{
 			title: '',
 			render: function (s, p, d) {
-				var css = '';
-				var icon = 'fa-shopping-cart';
-				if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-					css = ' selected';
-				}
-				return '<i class="fa ' + icon + ' ' + css + '"></i>';
+			    var css = '';
+			    var icon = 'fa-shopping-cart';
+			    var tag = 'i'
+			    if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+			        css = ' selected';
+			    }
+			    if (!self.canEditCurrentConceptSet()) {
+			        css += ' readonly';
+			        tag = 'span';
+			    }
+			    return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
 			},
 			orderable: false,
 			searchable: false
@@ -824,15 +833,15 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			}
 			return false;
 		}
-		self.renderConceptSetItemSelector = function (s, p, d, readonly) {
+		self.renderConceptSetItemSelector = function (s, p, d) {
 		    var css = '';
 		    var tag = 'i';
 			if (self.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
 				css = ' selected';
 			}
-            if (readonly) {
+            if (!self.canEditCurrentConceptSet()) {
                 css += ' readonly';
-                tag = 'span'; // <i> is bound to 'click' event handler
+                tag = 'span'; // to avoid call to 'click' event handler which is bound to <i> tag
             }
             return '<' + tag + ' class="fa fa-shopping-cart' + css + '"></' + tag + '>';
 		}
@@ -1516,7 +1525,17 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			return url;
 		});
 
-		
+	    self.canEditCurrentConceptSet = ko.pureComputed(function() {
+	        if (!authApi.isAuthenticated()) {
+	            return false;
+	        }
+
+	        if (self.currentConceptSet() && self.currentConceptSet().id != 0) {
+	            return authApi.isPermittedUpdateConceptset(self.currentConceptSet().id)
+	        } else {
+	            return authApi.isPermittedCreateConceptset();
+	        }
+	    });
 		self.currentConceptSetSource = ko.observable('repository');
     self.currentConceptSetNegativeControls = ko.observable();
 		self.currentIncludedConceptIdentifierList = ko.observable();

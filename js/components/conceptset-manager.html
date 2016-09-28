@@ -73,7 +73,7 @@
 							autoWidth: false,
 							order: [[3, 'desc']],
               columns: [
-									{ title: '<li class=\'fa fa-shopping-cart\'></li>', render: function (s, p, d) { return model.renderConceptSetItemSelector(s, p, d, !canSave); }, orderable:false, searchable:false},
+									{ title: '<li class=\'fa fa-shopping-cart\'></li>', render: model.renderConceptSetItemSelector, orderable:false, searchable:false},
 									{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
 									{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
                   { title: 'Concept Name', render: model.renderBoundLink},

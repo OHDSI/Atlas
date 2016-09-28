@@ -1928,10 +1928,10 @@ span.new-role {
 	cursor: default;
 }
 .fa.fa-shopping-cart.readonly {
-	color: #f0f0f0;
+	color: #ededed;
 	cursor: default;
 }
 .fa.fa-shopping-cart.readonly.selected {
-	color: #9E9E9E;
+	color: #9C9C9C;
 	cursor: default;
 }

@@ -816,17 +816,7 @@ define(['knockout',
         $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeDescendants: true })});
 
 
-	    self.canSave = function() {
-	        if (!authApi.isAuthenticated()) {
-	            return false;
-	        }
-
-	        if (self.model.currentConceptSet() && self.model.currentConceptSet().id) {
-	            return authApi.isPermittedUpdateConceptset(self.model.currentConceptSet().id)
-	        } else {
-	            return authApi.isPermittedCreateConceptset();
-	        }
-	    }();
+	    self.canSave = self.model.canEditCurrentConceptSet();
 
 	    self.canCopy = authApi.isAuthenticated() && authApi.isPermittedCreateConceptset();
 	}
