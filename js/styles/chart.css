@@ -199,7 +199,10 @@ table.data td {
 	stroke-width: .4;
 	fill: white;
 }
-.zoom-scatter .dot.out-of-zoom {
+.zoom-scatter .dot.inset {
+	opacity: 0.7;
+}
+.zoom-scatter .dot.inset.out-of-zoom {
 	opacity: 0.1;
 }
 .zoom-scatter rect.inset-border {

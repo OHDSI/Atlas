@@ -1828,7 +1828,7 @@
 			},
 			series: {
 						//value: function(d) { return this.parentNode.__data__.name; },
-						value: ()=>null,
+						defaultValue: ()=>null,
 						//value: d=>1,
 						showLabel: false,
 						//showSeriesLabel: false,
@@ -1844,9 +1844,14 @@
 			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
 			//showXAxis: true
 		};
-		this.chartSetup = _.once(function(target, w, h, mergedOpts, fields) {
+		this.chartSetup = _.once(function(target, w, h, mergedOpts, fields, recId) {
 			var cp = this.cp = mergedOpts;
+			cp.chartObj = this;
 			this.fields = fields;
+			if (!recId) {
+				throw new Error("must send a recId function that accepts a record and returns a unique id for that record.");
+			}
+			this.recId = recId;
 			this.divEl = new util.ResizableSvgContainer(target, [null], w, h, ['zoom-scatter']);
 			this.svgEl = this.divEl.child('svg')
 			var layout = this.layout = new util.SvgLayout(w, h, cp.layout);
@@ -1866,9 +1871,9 @@
 			cp.chart = cp.chart || {};
 			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
 
-			cp.inset.chart = new module.inset(cp, jqEventSpace);
+			cp.inset.chart = new module.inset(cp, jqEventSpace, this.recId);
 												// no current ability to specify override inset opts
-			cp.inset.el = new util.ChartInset(this.svgEl, layout, cp.inset);
+			cp.inset.d3El = new util.ChartInset(this.svgEl, layout, cp.inset);
 		});
 		this.updateData = function(data) {
 			var series = dataToSeries(data, this.cp.series);
@@ -1880,6 +1885,10 @@
 			this.layout.positionZones();
 			this.layout.positionZones();
 
+			this.cp.chart && this.cp.chart.chart.gEl
+					.child('lines')
+						.run({data: cp.lines, cp: this.cp});
+			this.filteredSeries = series; // SUPERKLUDGE!!!
 			this.cp.chart && this.cp.chart.chart.gEl
 					.child('series')
 						.run({data: series, cp: this.cp});
@@ -1898,17 +1907,17 @@
 						.enter({data: series, delay: 1000, duration: 0, cp: this.cp});
 			*/
 
-			//this.cp.inset.el.gEl.as('d3').remove();
+			//this.cp.inset.d3El.gEl.as('d3').remove();
 			this.cp.inset.chart.render(this.data, this.series, data, this.cp.inset, this.layout);
 			/*
 			if (this.data.length !== data.length) {
 				this.cp.inset.chart.render(this.data, this.cp.inset, this.layout);
 			} else {
-				this.cp.inset.el.gEl.as('d3').html('');
+				this.cp.inset.d3El.gEl.as('d3').html('');
 			}
 			*/
 		}
-		this.render = function (data, target, w, h, cp) {
+		this.render = function (data, target, w, h, cp, recId) {
 			var self = this;
 			if (!data.length) return;
 			DEBUG && (window.cp = cp);
@@ -1961,8 +1970,8 @@
 					{ tag: 'line',
 						classes:['refline','main-chart'],
 						data: cp.lines,
-						updateCb: function(selection, params, opts = {}) {
-							var {delay=0, duration=0, transition, cp=self.cp} = opts;
+						updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+							//var {delay=0, duration=0, transition, cp=self.cp} = opts;
 							selection
 								.attr('x1', function(lineOpts) {
 									return cp.x.scale(lineOpts.x1(cp.x.scale.domain(), cp.y.scale.domain()));
@@ -2061,18 +2070,21 @@
 			var seriesGs = cp.chart.chart.gEl
 												.addChild('series',
 																	{ tag: 'g',
-																		classes:['series'],
+																		classes:['series','main-chart'],
 																		//data: [],
 																		data: series,
+																		dataKey: d=>d.name,
 																	});
 			seriesGs.addChild('dots',
 									{tag: 'path',
-										data: function(series) {
-											return series.values;
+										data: function(d3el) {
+											return (d3el.parentD3El.selectAllJoin(self.filteredSeries)
+																.selectAll([d3el.tag].concat(d3el.classes).join('.'))
+																.data(d=>d.values, d=>self.recId(d)));
 										},
-										classes: ['dot'],
-										enterCb: function(selection, params, opts={}, el, trans) {
-											var {delay=0, duration=0, transition, cp=self.cp} = opts;
+										classes: ['dot','main-chart'],
+										enterCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+											//var {delay=0, duration=0, transition, cp=self.cp} = opts;
 											//console.log('adding with', opts);
 
 
@@ -2116,8 +2128,8 @@
 													return "translate(" + xVal + "," + yVal + ")";
 												})
 										},
-										updateCb: function(selection, params, opts = {}) {
-											var {delay=0, duration=0, transition, cp=self.cp} = opts;
+										updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+											//var {delay=0, duration=0, transition, cp=self.cp} = opts;
 											//console.log('updating with', opts);
 
 											//cp.x.axisEl.gEl.as('d3').transition().duration(duration).call(cp.x.axisEl.axis);
@@ -2136,8 +2148,8 @@
 													return "translate(" + xVal + "," + yVal + ")";
 												});
 										},
-										exitCb: function(selection, params, transitionOpts={}) {
-											var {delay=0, duration=0, transition} = transitionOpts;
+										exitCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+											//var {delay=0, duration=0, transition} = transitionOpts;
 											selection
 												//.transition()
 												//.delay(delay)
@@ -2187,7 +2199,8 @@
 			}
 		}
 	};
-	module.inset = function (parentOpts, jqEventSpace) {
+	module.inset = function (parentOpts, jqEventSpace, recId) {
+		this.recId = recId;
 		this.cp = {
 			availableDatapointBindings: 
 				['d', 'i', 'j', 'data', 'series', 'allFields', 'layout','inset'],
@@ -2204,6 +2217,9 @@
 			x: {
 						requiredOptions: ['value'],
 						value: (d,i,j) => parentOpts.x.accessor(d,i,j),
+						//x and y are weird, not sure right settings
+						//proxyFor: parentOpts.size, 
+						//bindSeparately: false,
 						getters: {
 							scale: function() {
 								return this._scale || d3.scale.linear();
@@ -2216,7 +2232,7 @@
 									thisField._scale = 
 										d3.scale.linear()
 											.domain(parentOpts.x._fullScale.domain())
-											.range([0, inset.el.w(layout)])
+											.range([0, inset.d3El.w(layout)])
 								},
 								posParams: ['thisField','data','layout','inset'],
 								runOnGenerate: true,
@@ -2226,6 +2242,9 @@
 			y: {
 						requiredOptions: ['value'],
 						value: (d,i,j) => parentOpts.y.accessor(d,i,j),
+						//x and y are weird, not sure right settings
+						//proxyFor: parentOpts.size, 
+						//bindSeparately: false,
 						isField: true,
 						getters: {
 							scale: function() {
@@ -2238,7 +2257,7 @@
 									thisField._scale = 
 										d3.scale.linear()
 											.domain(parentOpts.y._fullScale.domain())
-											.range([inset.el.h(layout), 0])
+											.range([inset.d3El.h(layout), 0])
 								},
 								posParams: ['thisField','data','layout','inset'],
 								runOnGenerate: true,
@@ -2246,7 +2265,8 @@
 						},
 			},
 			size: {
-						value: parentOpts.size.accessor,
+						proxyFor: parentOpts.size,
+						bindSeparately: false,
 						needsScale: true,
 						isField: true,
 						_accessors: {
@@ -2257,12 +2277,14 @@
 						//DEBUG: true,
 			},
 			color: {
-						value: parentOpts.color.accessor,
+						proxyFor: parentOpts.color,
+						bindSeparately: false,
 						isField: true,
 						scale: parentOpts.color.scale,
 			},
 			shape: {
-						value: parentOpts.shape.accessor,
+						proxyFor: parentOpts.shape,
+						bindSeparately: false,
 						scale: parentOpts.shape.scale,
 						isField: true,
 			},
@@ -2270,7 +2292,8 @@
 						show: false,
 			},
 			series: {
-						value: parentOpts.series.value,
+						proxyFor: parentOpts.series,
+						bindSeparately: false,
 						isField: true,
 			},
 		};
@@ -2295,17 +2318,17 @@
 										})
 										.value();
 
-			var border = inset.el.gEl.addChild('border', {tag:'rect',classes:['inset-border'],
-													updateCb: function(selection,params) {
-														selection.attr('width', inset.el.w(layout))
-																			.attr('height', inset.el.h(layout));
+			var border = inset.d3El.gEl.addChild('border', {tag:'rect',classes:['inset-border'],
+													updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+														selection.attr('width', inset.d3El.w(layout))
+																			.attr('height', inset.d3El.h(layout));
 													}});
 			if (parentOpts.lines) {
-				var lines = inset.el.gEl.addChild('lines',
+				var lines = inset.d3El.gEl.addChild('lines',
 					{ tag: 'line',
 						classes:['refline', 'inset'],
 						data: parentOpts.lines,
-						updateCb: function(selection, params, opts = {}) {
+						updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
 							//var {delay=0, duration=0, transition, cp=self.cp} = opts;
 							selection
 								.attr('x1', function(lineOpts) {
@@ -2331,19 +2354,26 @@
 						},
 					});
 			}
-			var seriesGs = inset.el.gEl.addChild('series',
+			var seriesGs = inset.d3El.gEl.addChild('series',
 																	{ tag: 'g',
-																		classes:['series'],
+																		classes:['series','inset'],
 																		data: seriesAll,
 																	});
 			seriesGs.addChild('dots',
 									{	tag: 'path',
-										data: function(series) {
-											return series.values;
+										data: function(d3el) {
+											return d3el.selectAll().data(d=>d.values, d=>self.recId(d));
+											/* not sure why the above works for inset but not for
+											 * main-chart, which requires below, but don't have time
+											 * to look into it now
+											return (d3el.parentD3El.selectAllJoin(series)
+																.selectAll([d3el.tag].concat(d3el.classes).join('.'))
+																.data(d=>d.values, d=>self.recId(d)));
+											*/
 										},
 										classes: ['dot','inset'],
-										enterCb: function(selection,params) {
-											console.log('adding inset dots', selection.size());
+										enterCb: function(selection, cbParams={}, passParams={}, thisD3El) {
+											console.log('adding inset dots', selection.size(), passParams.zoomData.length);
 											selection
 												.attr("d", function(d) {
 													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
@@ -2363,7 +2393,7 @@
 										},
 										updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
 											//var {delay=0, duration=0, transition, cp=self.cp} = opts;
-											console.log('updating inset dots', selection.size());
+											console.log('updating inset dots', selection.size(), passParams.zoomData.length);
 											selection
 												.attr("transform", function (d) {
 													var xVal = cp.x.scale(cp.x.accessor(d));
@@ -2374,14 +2404,15 @@
 													return cp.color.scale(cp.color.accessor(d));
 												})
 												.classed('out-of-zoom', function(d) {
-													return !_.includes(passParams.zoomData, d);
+													return !_.some(passParams.zoomData, 
+																				 z=>self.recId(z) === self.recId(d));
 												})
 										},
-										cbParams: {zoomData},
+										cbParams: {zoomData}, // thought this might get stale, but doesn't seem to
 									},
 									{zoomData} // passParams
 									);
-			var focusRect = inset.el.gEl.addChild('focus', 
+			var focusRect = inset.d3El.gEl.addChild('focus', 
 												{tag:'rect',classes:['inset-focus'],
 													updateCb: function(selection,params) {
 														var [x1,x2] = parentOpts.x.scale.domain();

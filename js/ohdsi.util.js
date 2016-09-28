@@ -6,7 +6,7 @@
  *			dirtyFlag
  *
  * Author: Sigfried Gold
- *			getContainer
+ *			elementConvert
  *			d3AddIfNeeded
  *			D3Element
  *			shapePath
@@ -70,26 +70,29 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		return result;
 	}	
 
-	/* getContainer
+	/* elementConvert
 	 * call with css id (with or without #)
 	 *				or dom node or d3 selection or jquery selection
 	 *
 	 * returns type requested ("dom", "d3", "jquery", "id")
 	 */
-	function getContainer(target, type = "dom") {
+	function elementConvert(target, type = "dom") {
 		if (target.selectAll) { // it's a d3 selection
 			if (type === "d3") return target;
-			return getContainer(target.node(), type); // call again with dom node
+
+			//console.warn("this should't return target.node(), it should return target[0]");
+			//   but i haven't been able to get that to work yet
+			return elementConvert(target.node(), type); // call again with dom node
 																						    // (first in selection, that is)
 		}
 		if (target.jquery) { // it's a jquery selection
 			if (type === "jquery") return target;
-			return getContainer(target[0], type); // call again with dom node
+			return elementConvert(target[0], type); // call again with dom node
 		}
 		if (typeof target === "string") { // only works with ids for now, not other css selectors
 			var id = target[0] === '#' ? target.slice(1) : target;
 			var dom = document.getElementById(id);
-			if (dom) return getContainer(dom, type); // call again with dom node
+			if (dom) return elementConvert(dom, type); // call again with dom node
 			throw new Error(`not a valid element id: ${target}`);
 		}
 		// target ought to be a dom node
@@ -148,7 +151,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	 */
 	function d3AddIfNeeded({parentElement, data, tag, classes=[], addCb=()=>{}, updateCb=()=>{}, 
 												  cbParams} = {}) {
-		var el = getContainer(parentElement, "d3");
+		var el = elementConvert(parentElement, "d3");
 		var selection = el.selectAll([tag].concat(classes).join('.'));
 		if (Array.isArray(data)) {
 			selection = selection.data(data);
@@ -172,29 +175,29 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	/* D3Element
 	 * this is an OO class to replace the d3AddIfNeeded function above
 	 *
-	 * making a new D3Element instance (el) will add <tag> elements to the
+	 * making a new D3Element instance (d3El) will add <tag> elements to the
 	 * parentElement using a D3 join to the data param. but if elements
 	 * already exist, they elements will be appropriately joined to the
 	 * data: extras will be removed (after running an exit callback if
 	 * you specify one), entering items will be appended, and the update
 	 * callback will be run on everything remaining after the join.
 	 *
-	 * you could also just say: el.data(newData); el.run(). that will
+	 * you could also just say: d3El.data(newData); d3El.run(). that will
 	 * also perform the appropriate join and run the callbacks.
 	 *
 	 * so you do not need to keep track of whether you've already created
 	 * the elements. if you have and you still have a reference to the
-	 * D3Element instance, el.data(d); el.run(); works. but calling the
+	 * D3Element instance, d3El.data(d); d3El.run(); works. but calling the
 	 * same code that created it originally and sending new data will
 	 * work as well.
 	 *
 	 * if you also create child elements like:
-	 *    var el = new D3Element(params);
-	 *    el.addChild(params);
-	 * then calling el.data(newData); el.run(); will not only update el,
+	 *    var d3El = new D3Element(params);
+	 *    d3El.addChild(params);
+	 * then calling d3El.data(newData); d3El.run(); will not only update d3El,
 	 * it will also rejoin and update its children with newData.
 	 *
-	 * var el = new D3Element({parentElement:p, 
+	 * var d3El = new D3Element({parentElement:p, 
 	 *													data:arrOrObj, // data to be joined to selection
 	 *																				 // if it's scalar, will be turned
 	 *																				 // into single-item array
@@ -207,20 +210,20 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	 *																				 // only returns elements elements
 	 *																				 // created here
 	 *													enterCb: null, // only needed if you want to
-	 *																				 // run extra code when el is
+	 *																				 // run extra code when d3El is
 	 *																				 // first created
 	 *												  exitCb: null,  // only needed if you want
 	 *																				 // to run extra code (transition?)
-	 *																				 // when el is removed
+	 *																				 // when d3El is removed
 	 *												  cbParams: null,// will be passed to all callbacks
 	 *																				 // along with d3 selection
 	 *												  updateCb:			 // code to run on creation and
 	 *																				 // after possible data changes
 	 *																		function(selection, cbParams, updateOpts) {
 	 *																			// updateOpts are set by calling
-	 *																			// el.run(opts) or el.update(opts)
+	 *																			// d3El.run(opts) or d3El.update(opts)
 	 *																			// and they are sent to the updateCb not
-	 *																			// just for the el in question, but to
+	 *																			// just for the d3El in question, but to
 	 *																			// all its children
 	 *																			selection
 	 *																				.attr('x', function(d) {
@@ -228,18 +231,18 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	 *																				})
 	 *																		},
 	 *													children: null,// k/v obj with child descriptors (need to document)
-	 *																				 // should only allow children with explicite el.addChild
+	 *																				 // should only allow children with explicit d3El.addChild
 	 *													dataPropogationSelectors: null, // document when implemented
 	 *												});
 	 *
-	 * el.run() returns the d3 selection after performing joins and running callbacks.
-	 * you can also get the d3 selection with el.selectAll();
+	 * d3El.run() returns the d3 selection after performing joins and running callbacks.
+	 * you can also get the d3 selection with d3El.selectAll();
 	 *
 	 * there are many ways to add child elements (using the addChild method, using
 	 * the d3 selection returned from run and selectAll methods, or in the add or
 	 * update callbacks). I recommend:
 	 *
-	 *		add using el.addChild()
+	 *		add using d3El.addChild()
 	 *		set attributes in the update callback
 	 *		don't use the d3 selections at all
 	 *		you probably don't need to do anything in the enterCb
@@ -250,47 +253,84 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		return (...args) => { return funcs.map(function(f) { return f.apply(this, args) }) }
 	}
 	class D3Element {
-		constructor(props, passParams) {
+		constructor(props, passParams = {}, parentSelection, parentD3El) {
 			// really need to change (simplify) the way data and opts are
 			// handled...  this whole thing is a bit of a monstrosity
-			this.parentElement = props.parentElement; // any form ok: d3, jq, dom, id
-			this.el = getContainer(this.parentElement, "d3");
-			this._data = Array.isArray(props.data) || typeof props.data === 'function'
-										? props.data : [props.data];
+			this.parentD3El = parentD3El;
+			/* not using anymore:
+			this.parentElement = props.parentElement // any form ok: d3, jq, dom, id
+														|| this.parentD3El.selectAll();
+			this.el = elementConvert(this.parentElement, "d3");
+			*/
+			this.parentSelection = parentSelection;
 			this.tag = props.tag;
 			this.classes = props.classes || [];
 			this.enterCb = props.enterCb || (()=>{});
 			this.updateCb = props.updateCb || (()=>{});
-			this.updateCbs = props.updateCbs || [this.updateCb]; // in case you want to run more than one callback on update
-			this.updateCbsCombined = combineFuncs(this.updateCbs);
+			this.updateCb = props.updateCbs ? combineFuncs(props.updateCbs) // in case you want to run more than one callback on update
+											: this.updateCb; 
 			this.exitCb = props.exitCb || (()=>{});
 			this.cbParams = props.cbParams;
 			this._children = {};
-			this.dataPropogationSelectors = props.dataPropogationSelectors; // not implemented yet
-			if (!props.stub)
+			//this.dataPropogationSelectors = props.dataPropogationSelectors; // not implemented yet
+			if (typeof props.data === "function")
+				/*
+				console.warn(`d3 is supposed to handle selectAll().data(fn) nicely, 
+										 but it doesn't. so you can pass a func that accepts its
+										 d3El and returns a data array`);
+				*/
+			this.dataKey = props.dataKey;
+			if (!props.stub) {
+				// props.data can be array or function that accepts this.parentD3El
+				// or it will default to parent's data
+				// but it can be overridden later:
+				//	 permanently by calling this.data(parentD3El, newData)
+				//	 or temporarily by calling this.selectAll(newData)
+				this._data = props.data || this.parentD3El._data;
+				if (! (Array.isArray(this._data) || typeof this._data === 'function'))
+					throw new Error("data must be array or function");
 				this.run(passParams);
+			}
 		}
-		selectAll(data) {
-		 var selection = this.el.selectAll([this.tag].concat(this.classes).join('.'));
-		 if (data)
-			 selection = selection.data(data);
-		 //if (duration||delay) return selection.transition().delay(delay||0).duration(duration||0);
-		 return selection;
+		selectAll() {
+			var cssSelector = [this.tag].concat(this.classes).join('.');
+			return this.parentSelection.selectAll(cssSelector);
+		}
+		selectAllJoin(data) {
+			data = data || this._data;
+			if (typeof data === "function") {
+				// the function should accept 'this' and return the join selection
+				return data(this);
+				/*
+				return this.dataKey ?
+								this.selectAll().data(data(this.parentD3El._data), this.dataKey) :
+								this.selectAll().data(data(this.parentD3El._data));
+				*/
+			} else {
+				return this.dataKey ?
+								this.selectAll().data(data, this.dataKey) :
+								this.selectAll().data(data);
+			}
 		}
 		as(type) {
-			return getContainer(this.selectAll(), type);
+			return elementConvert(this.selectAll(), type);
 		}
 		data(data) {
-			if (typeof data === "undefined")
-				return this.selectAll().data();
+			//bad idea:
+			//if (typeof data === "undefined") return this.selectAll().data();
+			//hope i'm not breaking anything by doing the more expectable:
+			if (typeof data === "undefined") return this._data;
+			if (! (Array.isArray(data) || typeof data === 'function'))
+				throw new Error("data must be array or function");
 			this._data = data;
-			return this.selectAll(data);
+			//return this.selectAll(data);  same here... don't think this was being used
+			return this;
 		}
 		run(passParams={}, enter=true, exit=true, update=true) {
 			// fix opts: split up data and transition
-			var self = this;
+			let self = this;
 			var data = passParams.data || self._data;
-			var selection = self.selectAll(data);
+			var selection = self.selectAllJoin(data);
 
 			var passParamsForChildren = _.omit(passParams, ['data']); // data gets passed automatically
 			//var {delay=0, duration=0} = passParams;
@@ -300,21 +340,19 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			// should allow callbacks to pass transitions back so they
 			// can be passed on to next callback?
 
-			if (exit) {
+			if (exit && selection.exit().size()) {
 				//if (selection.exit().size()) console.log(`exiting ${self.name}`);
-				selection.exit()
-						.each(function(d) {
-							_.each(self.children(), (c, name) => {
-								self.child(name).exit(passParamsForChildren);
-								// allow enter/update on children of exiting elements? probably no reason to
-							});
-						})
+				var exitSelection = selection.exit();
+				_.each(self.children(), (c, name) => {
+					self.child(name).exit(passParamsForChildren, exitSelection);
+				});
+				exitSelection
 						//.call(self.exitCb, self.cbParams, passParams, self, mainTrans)
 						.call(self.exitCb, self.cbParams, passParams, self)
 						.remove() // allow exitCb to remove? -> doesn't seem to work
 			}
-			if (enter) {
-				selection.enter()
+			if (enter && selection.enter().size()) {
+				var enterSelection = selection.enter()
 						.append(self.tag)
 							.each(function(d) { // add classes
 								var newNode = d3.select(this);
@@ -324,28 +362,18 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 							})
 						//.call(self.enterCb, self.cbParams, passParams, self, mainTrans)
 						.call(self.enterCb, self.cbParams, passParams, self)
-						.each(function(d) {
-							// make children
-							_.each(self.children(), (c, name) => {
-								var child = self.makeChild(name, this, passParamsForChildren); // 'this' is the dom element we just appended
-								child.enter();
-								// allow exit/update on children of entering elements? probably no reason to
-							});
-						});
+				_.each(self.children(), (c, name) => {
+					var child = self.makeChild(name, passParamsForChildren, enterSelection);
+				});
 			}
-			selection = self.selectAll(data);
-			if (update) {
+			selection = self.selectAllJoin(data);
+			if (update && selection.size()) {
 				selection
-						.each(function(d) {
-							_.each(self.children(), (c, name) => {
-								// this recursive stuff is not working right, needs to 
-								// be rethought
-								self.child(name).run(passParamsForChildren, enter, exit, update);
-								// data will be passed down to children don't override it with data from opts
-							});
-						})
-						//.call(self.updateCbsCombined, self.cbParams, passParams, self, mainTrans)
-						.call(self.updateCbsCombined, self.cbParams, passParams, self)
+						//.call(self.updateCb, self.cbParams, passParams, self, mainTrans)
+						.call(self.updateCb, self.cbParams, passParams, self)
+				_.each(self.children(), (c, name) => {
+					self.child(name).run(passParamsForChildren, enter, exit, update, selection);
+				});
 			}
 			return selection;
 		}
@@ -356,28 +384,27 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				throw new Error(`${name} child not created yet`);
 			return this._children[name].desc;
 		}
-		child(name, el) {
+		child(name, d3El) {
 			if (!this._children[name])
 				throw new Error(`${name} child not created yet`);
-			if (el)
-				this._children[name].el = el;
-			return this._children[name].el;
+			if (d3El)
+				this._children[name].d3El = d3El;
+			return this._children[name].d3El;
 		}
 		addChild(name, desc, passParams) {
 			this.childDesc(name, desc);
-			return this.makeChild(name, this.selectAll(), passParams);
+			if (desc.stub)
+				return this.childDesc(name);
+			return this.makeChild(name, passParams, this.selectAll()); // this.selectAll()?
 		}
 		// should we attempt to send selectAll options (for transition durations)
 		// through addChild/makeChild? not doing this yet. but update calls will
 		// send these options down the D3Element tree
-		makeChild(name, parentElement, passParams) {
+		makeChild(name, passParams, selection) {
 			var desc = this.childDesc(name);
-			var d3ElProps = $.extend(
-				{ parentElement,
-					data: d=>[d],	// pass data down to child unless desc provides
-											// its own data function
-				}, desc);
-			return this.child(name, new D3Element(d3ElProps, passParams));
+			//var d3ElProps = $.extend( { parentD3El: this }, desc);
+			var d3ElProps = _.merge( { parentD3El: this }, _.cloneDeep(desc));
+			return this.child(name, new D3Element(d3ElProps, passParams, selection, this));
 			// it sort of doesn't matter because if you repeatedly create D3Elements
 			// with the same parameters, d3 enter and exit selections will be empty
 			// and update won't have a visible effect since data is the same,
@@ -462,11 +489,11 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				return w / h;
 			}
 			super({
-				parentElement: target,
+				//parentElement: target,
 				data, 
 				tag:'div', 
 				classes: divClasses, 
-			})
+			}, undefined, elementConvert(target,'d3'));
 			var divEl = this;
 			var svgEl = divEl.addChild('svg', {
 				tag: 'svg',
@@ -512,7 +539,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			//	it may need to be propogated explicitly to svg children)
 			// returns a D3Element
 		// ( maybe shouldn't send data to this func, attach it later)
-			this.container = this.container || getContainer(target, "dom");
+			this.container = this.container || elementConvert(target, "dom");
 			if (Array.isArray(data) && data.length > 1) {
 				data = [data];
 			}
@@ -716,7 +743,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			this.layout = layout;
 			this.chartProp = chartProp;
 			this.gEl = d3El.addChild(chartProp.name, 
-											{ tag:'g', data:chartProp,
+											{ tag:'g', data:[chartProp],
 												classes: this.cssClasses(), // move to gEnterCb
 																										// no, don't, will break D3Element
 												enterCb: this.gEnterCb.bind(this),
@@ -727,7 +754,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				// if g is empty, don't use enterCb ot updateContent methods
 				this.contentEl = this.gEl.addChild(chartProp.name, 
 											{ tag: this.tagName(), 
-												data:chartProp,
+												data:[chartProp],
 												classes: this.cssClasses(), // move to enterCb
 												enterCb: this.enterCb.bind(this),
 												updateCb: this.updateContent.bind(this),
@@ -1115,8 +1142,19 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				},
 			};
 			this._accessors = _.merge(defaultAccessors, this._accessors);
-
 			this._accessors.value.accessorOrder = -1000;
+
+			if (this.proxyFor) {
+				delete this._accessors.value;
+				if (this.separateBinding)
+					throw new Error("not handling yet");
+				Object.defineProperty(this, 'accessor', {
+					get: function(){ 
+						return this.proxyFor.accessor; 
+					}
+				});
+			}
+
 			if (this.needsScale) {
 				this.scale = this.scale || d3.scale.linear();
 				// usually the domain is just the extent of that field in the data
@@ -1538,7 +1576,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		}
 		replaceData(recs) {
 			this.recs = recs;
-			console.log("replacing crossfilter data. you want to do this?");
+			//console.log("replacing crossfilter data. you want to do this?");
 			var dummy = this.cf.dimension(d=>d);
 			dummy.filter(()=>false);
 			this.cf.remove();
@@ -1584,7 +1622,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			// what if setting filter redundantly? still trigger filter change?
 			triggerData.dimField = dimField;
 
-			$(this).trigger('filter', [triggerData]);
+			$(this).trigger('filterEvt', [triggerData]);
 		}
 		grouping(dimName, groupingName, func, reduceFuncs=reduceToRecs) {
 			if (!_.has(this.dimFields, name))
@@ -1637,7 +1675,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	
 	utilModule.dirtyFlag = dirtyFlag;
 	utilModule.d3AddIfNeeded = d3AddIfNeeded;
-	utilModule.getContainer = getContainer;
+	utilModule.elementConvert = elementConvert;
 	utilModule.D3Element = D3Element;
 	utilModule.shapePath = shapePath;
 	utilModule.ResizableSvgContainer = ResizableSvgContainer;
