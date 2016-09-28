@@ -17,17 +17,13 @@ define([
 	function dataSources(params) {
 		var self = this;
 		self.model = params.model;
-
-		self.reportName = params.reportName;
-		self.sourceKey = params.sourceKey;
-
 		self.dashboardData = ko.observable();
 		self.conditionsData = ko.observable();
 		self.personData = ko.observable();
 		self.observationPeriodsData = ko.observable();
 		self.datasource = ko.observable();
 		self.datasources = ko.observableArray();
-
+		self.datasourceReport = ko.observable();
 		self.reportView = ko.observable('treemap');
 		self.datasourceReports = ko.observableArray([{
 				id: 'dashboard',
@@ -86,8 +82,6 @@ define([
 				name: 'Death'
 			}
         ]);
-		self.datasourceReport = ko.observable();
-		self.datasourceReport(self.datasourceReports()[0]);
 
 		ko.amdTemplateEngine.defaultPath = "components/datasources/templates";
 
@@ -167,31 +161,39 @@ define([
 			updateObservationPeriods(newData);
 		});
 
-		self.setDatasource = function (data) {
-			self.datasource(data);
-			document.location = '#/datasources/' + data.name + '/' + self.datasourceReport().id;
-		}
+		$.ajax({
+			type: 'GET',
+			/*url: config.dataSourcesLocation,*/
+			url: config.webAPIRoot + "source/sources",
+			contentType: "application/json; charset=utf-8",
+			success: function (data) {
+				/*self.datasources(data.datasources);*/
+				self.datasources(data); /**/
+				var datasources = self.datasources();
+				datasource = datasources[0];
+				var datasourceReports = self.datasourceReports();
+				datasourceReport = datasourceReports[0];
 
-		self.setReportName = function (data) {
-			document.location = '#/datasources/' + self.datasource().name + '/' + data.id;
+				if (self.datasources().length > 0) {
+					self.datasource(datasource);
+					self.datasourceReport(datasourceReport);
+					self.loadDashboard();
+					//document.location = '#/datasources/' + datasource.name + '/' + datasourceReport.id;
+					document.location = '#/datasources/' + datasource.sourceName + '/' + datasourceReport.id;
+				}
+			}
+		});
+
+		self.setDatasource = function (data) {
+
+			self.datasource(data);
+			self.setReport(self.datasourceReport());
+			document.location = '#/datasources/' + data.name + '/' + self.datasourceReport().id;
+
 		}
 
 		self.setReportView = function (viewName) {
 			self.reportView(viewName);
-		};
-
-		self.setReportByName = function (reportName) {
-			for (var i = 0; i < self.datasourceReports().length; i++) {
-				if (self.datasourceReports()[i].id == reportName)
-					self.setReport(self.datasourceReports()[i]);
-			}
-		};
-
-		self.setSourceByKey = function (sourceKey) {
-			for (var i = 0; i < self.datasources().length; i++) {
-				if (self.datasources()[i].name == sourceKey)
-					self.datasource(self.datasources()[i]);
-			}
 		}
 
 		self.setReport = function (report) {
@@ -234,25 +236,9 @@ define([
 			self.setReportView('treemap');
 			if (reportId == 'death')
 				reports.Death.render(self.datasource());
+			document.location = '#/datasources/' + self.datasource().name + '/' + reportId;
 		}
 
-		$.ajax({
-			type: 'GET',
-			url: config.dataSourcesLocation,
-			contentType: "application/json; charset=utf-8",
-			success: function (data) {
-				self.datasources(data.datasources);
-				var datasources = self.datasources();
-
-				if (!params.sourceKey || !params.reportName) {
-					self.setDatasource(datasources[0]);
-					self.setReport(self.datasourceReports()[0]);
-				} else {
-					self.setSourceByKey(params.sourceKey);
-					self.setReportByName(params.reportName);
-				}
-			}
-		});
 	}
 
 	function updateDashboard(data) {
@@ -584,6 +570,8 @@ define([
 			xLabel: 'Year',
 			yLabel: 'People'
 		});
+
+
 	}
 
 	var component = {
