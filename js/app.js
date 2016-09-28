@@ -824,12 +824,17 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			}
 			return false;
 		}
-		self.renderConceptSetItemSelector = function (s, p, d) {
-			var css = '';
+		self.renderConceptSetItemSelector = function (s, p, d, readonly) {
+		    var css = '';
+		    var tag = 'i';
 			if (self.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
 				css = ' selected';
 			}
-			return '<i class="fa fa-shopping-cart' + css + '"></i>';
+            if (readonly) {
+                css += ' readonly';
+                tag = 'span'; // <i> is bound to 'click' event handler
+            }
+            return '<' + tag + ' class="fa fa-shopping-cart' + css + '"></' + tag + '>';
 		}
 		self.renderLink = function (s, p, d) {
 			var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
@@ -894,7 +899,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); pageModel.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
 		}
         self.renderCheckboxReadonly = function(field) {
-            return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check"></span>';
+            return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check readonly"></span>';
         }
 		self.enableRecordCounts = ko.observable(true);
 		self.loadingIncluded = ko.observable(false);

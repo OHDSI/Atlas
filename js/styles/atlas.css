@@ -1927,3 +1927,11 @@ span.new-role {
 	border-color: #E0E0E0;
 	cursor: default;
 }
+.fa.fa-shopping-cart.readonly {
+	color: #f0f0f0;
+	cursor: default;
+}
+.fa.fa-shopping-cart.readonly.selected {
+	color: #9E9E9E;
+	cursor: default;
+}

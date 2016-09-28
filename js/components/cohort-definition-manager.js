@@ -497,7 +497,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		    }
 		});
 	    self.canCopy = ko.pureComputed(function() {
-		    return self.isAuthenticated() && authApi.isPermittedCreateCohort();
+	        return !isNew() && self.isAuthenticated() && authApi.isPermittedCopyCohort(self.model.currentCohortDefinition().id());
 		})
 	    self.canDelete = ko.pureComputed(function() {
 		    if (isNew()) {
