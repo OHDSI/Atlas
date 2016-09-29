@@ -163,11 +163,9 @@ define([
 
 		$.ajax({
 			type: 'GET',
-			/*url: config.dataSourcesLocation,*/
 			url: config.webAPIRoot + "source/sources",
 			contentType: "application/json; charset=utf-8",
 			success: function (data) {
-				/*self.datasources(data.datasources);*/
 				self.datasources(data); /**/
 				var datasources = self.datasources();
 				datasource = datasources[0];
@@ -178,7 +176,6 @@ define([
 					self.datasource(datasource);
 					self.datasourceReport(datasourceReport);
 					self.loadDashboard();
-					//document.location = '#/datasources/' + datasource.name + '/' + datasourceReport.id;
 					document.location = '#/datasources/' + datasource.sourceName + '/' + datasourceReport.id;
 				}
 			}

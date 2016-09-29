@@ -42,8 +42,6 @@ define(["d3","appConfig"], function (d3,config) {
 
 	function getUrlFromData(datasource, name) {
 
-		//console.log("url: " + config.webAPIRoot +  datasource.name + "/" + "cdmresults" + "/" + name)
-
 		if (datasource === undefined) {
 			console.error("datasource is undefined.");
 			return;
@@ -87,8 +85,8 @@ define(["d3","appConfig"], function (d3,config) {
 			if (simpledata.indexOf(name) >= 0) pth += ".json";
 		} else {
 			//datasource.filter(function (x) {return x.sourceName == name}) !== undefined)
-			console.log(datasource);
-			console.log(datasource.length);
+			//console.log(datasource);
+			//console.log(datasource.length);
 			pth = config.webAPIRoot + datasource.sourceName + "/" + "cdmresults" + "/" + name;
 			console.log("pth=" + pth);
 			var serviceDependent = true;
