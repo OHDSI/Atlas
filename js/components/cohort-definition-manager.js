@@ -485,17 +485,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		    return authApi.isAuthenticated(); 
 		}) 
 	    var isNew = ko.pureComputed(function() {
-	        return !self.model.currentCohortDefinition() || self.model.currentCohortDefinition().id() == 0;
+	        return !self.model.currentCohortDefinition() || (self.model.currentCohortDefinition().id() == 0);
 	    })
-	    self.canEdit = ko.pureComputed(function() {
-		    if (!self.isAuthenticated()) return false;
-
-		    if (isNew()) {
-		        return authApi.isPermittedCreateCohort();
-		    } else {
-		        return authApi.isPermittedUpdateCohort(self.model.currentCohortDefinition().id());
-		    }
-		});
+	    self.canEdit = self.model.canEditCurrentCohortDefinition;
 	    self.canCopy = ko.pureComputed(function() {
 	        return !isNew() && self.isAuthenticated() && authApi.isPermittedCopyCohort(self.model.currentCohortDefinition().id());
 		})

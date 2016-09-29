@@ -50,7 +50,7 @@
         </ul>
         <div class="tab-content">
             <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'definition' }" class="tab-pane">
-                <atlas.cohort-editor params="model: model, canEdit: canEdit"></atlas.cohort-editor>
+                <atlas.cohort-editor params="model: model"></atlas.cohort-editor>
             </div>
             <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
                 <div style="padding-bottom: 10px;" class="pull-right">
@@ -105,7 +105,7 @@
                         <div class="heading">
                             Name:
                         </div>
-                        <div contenteditable class="divtext" data-bind="htmlValue:model.currentConceptSet().name"></div>
+                        <div class="divtext" data-bind="attr: { contenteditable:canEdit() }, htmlValue:model.currentConceptSet().name"></div>
                         <conceptset-editor params="model: model, conceptSets: model.selectedConcepts, readonly: !canEdit()"></conceptset-editor>
 
                         <div class="clear"></div>

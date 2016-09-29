@@ -8,7 +8,7 @@
         Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer 
         qualifies for the cohort.
     </div>
-    <div class="divtext cohort-description" data-bind="attr: { contenteditable:canEdit }, htmlValue:model.currentCohortDefinition().description"></div>
+    <div class="divtext cohort-description" data-bind="attr: { contenteditable:canEdit() }, htmlValue:model.currentCohortDefinition().description"></div>
 </div>
 
 <div class="paddedWrapper">

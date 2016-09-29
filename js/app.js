@@ -1526,14 +1526,20 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		});
 
 	    self.canEditCurrentConceptSet = ko.pureComputed(function() {
-	        if (!authApi.isAuthenticated()) {
-	            return false;
-	        }
+	        if (self.currentConceptSetSource() == 'cohort') {
+	            return self.canEditCurrentCohortDefinition();
+	        } else if (self.currentConceptSetSource() == 'repository') {
+	            if (!authApi.isAuthenticated()) {
+	                return false;
+	            }
 
-	        if (self.currentConceptSet() && self.currentConceptSet().id != 0) {
-	            return authApi.isPermittedUpdateConceptset(self.currentConceptSet().id)
+	            if (self.currentConceptSet() && (self.currentConceptSet().id != 0)) {
+	                return authApi.isPermittedUpdateConceptset(self.currentConceptSet().id)
+	            } else {
+	                return authApi.isPermittedCreateConceptset();
+	            }
 	        } else {
-	            return authApi.isPermittedCreateConceptset();
+	            return false;
 	        }
 	    });
 		self.currentConceptSetSource = ko.observable('repository');
@@ -1562,7 +1568,17 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			return url;
 		});
 		
-		
+	    self.canEditCurrentCohortDefinition = ko.pureComputed(function() {
+	        if (!authApi.isAuthenticated()) {
+	            return false;
+	        }
+
+	        if (self.currentCohortDefinition() && (self.currentCohortDefinition().id() != 0)) {
+	            return authApi.isPermittedUpdateCohort(self.currentCohortDefinition().id());
+	        } else {
+	            return authApi.isPermittedCreateCohort();
+	        }
+	    });
 		self.currentCohortComparisonId = ko.observable();
 		self.currentCohortComparison = ko.observable();
 		self.currentCohortComparisonDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(self.currentCohortComparison()));

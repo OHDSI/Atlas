@@ -2,31 +2,38 @@ define(function(require, exports) {
 
     var $ = require('jquery');
     var config = require('appConfig');
+    var ko = require('knockout');
 
     var _expirationDate = null;
     var _permissions = null;
+    var _token = ko.observable();
 
     var getServiceUrl = function() {
         return config.webAPIRoot;
     };
 
-    var getToken = function() {
-        if (localStorage.bearerToken && localStorage.bearerToken != 'null') {
-            return localStorage.bearerToken;
+    var getToken = function () {
+        if (!_token()) {
+            if (localStorage.bearerToken && localStorage.bearerToken != 'null') {
+                _token(localStorage.bearerToken);
+            } else {
+                _token(null);
+            }
         }
 
-        return null;
+        return _token();
     };
 
     var setToken = function(token) {
         localStorage.bearerToken = token;
 
+        _token(token);
         _expirationDate = null;
         _permissions = null;
     };
 
-    var isAuthenticated = function() {
-        var token = getToken();
+    var isAuthenticated = ko.computed(function() {
+        var token = _token();
         if (!token) {
             return false;
         }
@@ -35,7 +42,7 @@ define(function(require, exports) {
         var now = new Date();
 
         return now < expiration;
-    };
+    });
 
     var getAuthorizationHeader = function() {
         var token = getToken();
