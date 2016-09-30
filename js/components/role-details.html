@@ -72,7 +72,9 @@
         }"></table>
         </div>
     </div>
-    <div class="paddedWrapper" data-bind="ifnot:$component.hasAccess">
-        <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+    <div data-bind="ifnot:$component.hasAccess">
+        <div class="padded">
+            <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+        </div>
     </div>
 </div>

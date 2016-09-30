@@ -33,5 +33,7 @@
     </div>
 </div>
 <div data-bind="ifnot:canReadJobs">
-    <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+    <div class="padded">
+        <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+    </div>
 </div>

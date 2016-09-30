@@ -1935,3 +1935,6 @@ span.new-role {
 	color: #9C9C9C;
 	cursor: default;
 }
+.padded {
+	padding: 5px;
+}

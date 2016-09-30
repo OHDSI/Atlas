@@ -1,10 +1,12 @@
-<div data-bind="if: model.currentCohortDefinition() && model.currentView() == 'cohortdefinition'">
-    <div class="wrapperTitle">
-        <i class="fa fa-users"></i>Cohort
-    </div>
+<div data-bind="if: model.currentView() == 'cohortdefinition'">
+	<div class="wrapperTitle">
+		<i class="fa fa-users"></i>Cohort
+	</div>
     
     <div data-bind="ifnot:hasAccess()">
-        <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+        <div class="padded">
+            <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+        </div>
     </div>    
     <div data-bind="if:hasAccess()">
         <div class="asset-heading">
@@ -26,25 +28,25 @@
         </div>
 
         <ul class="nav nav-tabs">
-            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition') };">
+            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition'); }">
                 <a>Definition</a>
             </li>
 
-            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets') };">
+            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets'); }">
                 <a>Concept Sets</a>
             </li>
 
-            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation') };">
+            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation'); }">
                 <a>Generation</a>
             </li>
 
-            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.tabMode('reporting') };">
+            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.tabMode('reporting'); }">
                 <a>Reporting</a>
             </li>
 
-            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore') };"><a>Explore</a></li>
+            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore'); }"><a>Explore</a></li>
 
-            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export');}">
+            <li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export'); }">
                 <a>Export</a>
             </li>
         </ul>

@@ -6,12 +6,13 @@
     <i class="fa fa-cogs"></i> Roles
     <!-- /ko -->
 </div>
-<div class="paddedWrapper">
-    <!-- ko if:canCreate -->
-    <span class="pull-right btn btn-sm btn-primary new-role" data-bind="click:newRole">New Role</span>
-    <!-- /ko -->
-    <div class="clear" data-bind="if:$component.canRead, eventListener: [{event: 'click', selector: '.roleItem', callback: $component.selectRole}]">
-        <table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
+<div data-bind="if:$component.canRead">
+    <div class="paddedWrapper">
+        <!-- ko if:canCreate -->
+        <span class="pull-right btn btn-sm btn-primary new-role" data-bind="click:newRole">New Role</span>
+        <!-- /ko -->
+        <div class="clear" data-bind="eventListener: [{event: 'click', selector: '.roleItem', callback: $component.selectRole}]">
+            <table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
             data: roles(),
             options: {
 						dom: 'lfiprt',
@@ -30,8 +31,11 @@
                         stripeClasses : [ 'roleItem' ]
 				}
         }"></table>
+        </div>
     </div>
-    <div data-bind="ifnot:$component.canRead">
+</div>
+<div data-bind="ifnot:$component.canRead">
+    <div class="padded">
         <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
     </div>
 </div>
