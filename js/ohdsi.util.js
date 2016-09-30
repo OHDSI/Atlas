@@ -33,7 +33,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 
 	var DEBUG = true;
 	var ALLOW_CACHING = [
-		'.*',
+		//'.*',
 		//'/WebAPI/[^/]+/person/',
 	];
 	
