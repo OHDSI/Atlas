@@ -147,11 +147,11 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 				scf.replaceData(recs);
 			}
 			processFieldFacetColumnParams();
-			self.data(recs); // for passing to datatable binding
 				// really facets and datatables should be separate components
 			columnSetup();
 			facetSetup();
 			searchSetup();
+			self.data(recs); // for passing to datatable binding
 		}
 		function processFieldFacetColumnParams() {
 			// if fields parameter is supplied, columns and facets will be ignored
@@ -172,7 +172,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 					throw new Error("can't deal with observable columns");
 				}
 				self.columns = params.columns;
-				self._facets = ko.utils.unwrapObservable(params.facets);
+				self._facets = ko.utils.unwrapObservable(params.facets || []);
 				if (ko.isSubscribable(params.facets)) {
 					params.facets.subscribe(function(facets) {
 						// this should only trigger if new facets are set externally
@@ -220,7 +220,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 						[{ source: 'datatable.facet', waitForMore: 'done' }]);
 			}
 		}
-		function sharedSetup(fields) {
+		function sharedSetup(fields = []) {
 			fields.forEach(function(field) {
 				// need to consistently define what labels and titles and stuff are called and how they're defined
 				// but this is ok for now
@@ -231,7 +231,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 					field.label = field.label || field.fname;
 					field.value = field.value || field.fname;
                     field.name = field.name || field.fname || field.propName || field.label;
-					field.accessor = field.value;
+					field.accessor = field.value || (d=>d);
 					if (typeof field.accessor === "string" || isFinite(field.accessor)) {
 						field.accessor = d => d[field.value];
 					}
@@ -282,7 +282,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 			var filterOn = updateOneFacetsFilters(facet);
 			updateFacetUI();
 		}
-		function updateOneFacetsFilters(facet, tellListenersToWait = false) {
+		function updateOneFacetsFilters(facet, initialSetup = false) {
 			// should only get here if:
 			//		1) loading page and initializing facet filters
 			//		2) toggled a facet filter
@@ -298,9 +298,10 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 				// no members chosen for this facet. clear filter, which means all
 				//		records pass
 				var func = null;
+				if (initialSetup) return;
 			}
 			self.sharedCrossfilter().filter(facet.name, func, 
-							{source:'datatable.facet', waitForMore: tellListenersToWait});
+							{source:'datatable.facet', waitForMore: initialSetup});
 			// should maybe say *which* datatable, in case there's more than one
 			// on a page, but not dealing with that yet.
 			return !!func;
@@ -316,6 +317,7 @@ define(['knockout', 'text!./faceted-datatable-cf.html', 'lodash', 'ohdsi.util', 
 							Selected: selected,
 						};
 					});
+				facet.Members = _.sortBy(facet.Members, d => -d.ActiveCount);
 			});
 			self.facets.removeAll()
 			self.facets.push(...self._facets);
