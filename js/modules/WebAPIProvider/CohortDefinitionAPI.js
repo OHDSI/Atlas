@@ -17,7 +17,8 @@ define(function (require, exports) {
 			url: config.webAPIRoot + 'cohortdefinition/',
 			headers: {
 			    Authorization: authApi.getAuthorizationHeader()
-			}
+			},
+            error: authApi.handleAccessDenied
 		});
 		return promise;
 	}
@@ -33,6 +34,7 @@ define(function (require, exports) {
 	        data: JSON.stringify(definition),
 	        error: function(error) {
 	            console.log("Error: " + error);
+	            authApi.handleAccessDenied(error);
 	        }
 	    });
 		return savePromise;
@@ -47,7 +49,8 @@ define(function (require, exports) {
 			},
 			contentType: 'application/json',
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return copyPromise;
@@ -61,7 +64,8 @@ define(function (require, exports) {
 			    Authorization: authApi.getAuthorizationHeader()
 			},
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return deletePromise;
@@ -74,7 +78,8 @@ define(function (require, exports) {
 			    Authorization: authApi.getAuthorizationHeader()
 			},
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return loadPromise;	
@@ -93,7 +98,8 @@ define(function (require, exports) {
 				options: options
 			}),
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});	
 		return getSqlPromise;
@@ -106,7 +112,8 @@ define(function (require, exports) {
 			    Authorization: authApi.getAuthorizationHeader()
 			},
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return generatePromise;
@@ -119,7 +126,8 @@ define(function (require, exports) {
 			    Authorization: authApi.getAuthorizationHeader()
 			},
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return infoPromise;
@@ -132,7 +140,8 @@ define(function (require, exports) {
 			    Authorization: authApi.getAuthorizationHeader()
 			},
 			error: function (error) {
-				console.log("Error: " + error);
+			    console.log("Error: " + error);
+			    authApi.handleAccessDenied(error);
 			}
 		});
 		return reportPromise;

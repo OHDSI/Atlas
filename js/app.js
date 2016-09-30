@@ -3,6 +3,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		$.support.cors = true;
 		var self = this;
 		$('#querytext').focus();
+		self.authApi = authApi;
 		self.appInitializationFailed = ko.observable(false);
 		self.initPromises = [];
 		self.applicationStatus = ko.observable('initializing');
@@ -1178,6 +1179,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 							},
 							contentType: 'application/json',
 							data: JSON.stringify(identifiers),
+							error: authApi.handleAccessDenied,
 							success: function (data) {
 								// Update each concept set
 								for (var i = 0; i < self.currentCohortDefinition().expression().ConceptSets().length; i++) {
@@ -1301,7 +1303,12 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 							self.currentView(viewToShow);
 						}
 					});
-				});
+			    })
+			    .fail(function(xhr) {
+			        if (xhr.status == 403 || xhr.status == 401) {
+			            self.currentView(viewToShow);
+			        }
+			    });
 			});
 		}
 		self.loadConceptSet = function (conceptSetId, viewToShow, loadingSource, mode) {
@@ -1782,6 +1789,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 	                    Authorization: authApi.getAuthorizationHeader()
 	                },
 	                contentType: 'application/json',
+	                error: authApi.handleAccessDenied,
 	                success: function(data) {
 	                    self.roles(data);
 	                    promise.resolve();

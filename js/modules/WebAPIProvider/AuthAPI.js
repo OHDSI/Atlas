@@ -4,73 +4,73 @@ define(function(require, exports) {
     var config = require('appConfig');
     var ko = require('knockout');
 
-    var _expirationDate = null;
-    var _permissions = null;
-    var _token = ko.observable();
-
-    var getServiceUrl = function() {
+    var getServiceUrl = function () {
         return config.webAPIRoot;
     };
 
-    var getToken = function () {
-        if (!_token()) {
-            if (localStorage.bearerToken && localStorage.bearerToken != 'null') {
-                _token(localStorage.bearerToken);
-            } else {
-                _token(null);
-            }
+    var tokenExpirationDate = ko.pureComputed(function() {
+        if (!token()) {
+            return null;
         }
 
-        return _token();
-    };
+        var expirationInSeconds = parseJwtPayload(token()).exp;
+        return new Date(expirationInSeconds * 1000);
 
-    var setToken = function(token) {
-        localStorage.bearerToken = token;
+    });
+    var permissions = ko.pureComputed(function() {
+        if (!token()) {
+            return null;
+        }
 
-        _token(token);
-        _expirationDate = null;
-        _permissions = null;
-    };
+        var payload = parseJwtPayload(token());
+        var permissionsString = payload.permissions;
+        if (!permissionsString) {
+            return null;
+        }
 
-    var isAuthenticated = ko.computed(function() {
-        var token = _token();
-        if (!token) {
+        return permissionsString.split('|');
+    });
+    var subject = ko.pureComputed(function() {
+        return token()
+            ? parseJwtPayload(token()).sub
+            : null;
+    });
+    var token = ko.observable();
+    if (localStorage.bearerToken && localStorage.bearerToken != 'null') {
+        token(localStorage.bearerToken);
+    } else {
+        token(null);
+    }
+    token.subscribe(function(newValue) {
+        localStorage.bearerToken = newValue;
+    });
+
+    var isAuthenticated = ko.pureComputed(function() {
+        if (!token()) {
             return false;
         }
 
-        var expiration = getTokenExpirationDate();
-        var now = new Date();
-
-        return now < expiration;
+        return new Date() < tokenExpirationDate();
     });
 
-    var getAuthorizationHeader = function() {
-        var token = getToken();
-        if (!token) {
+    var getAuthorizationHeader = function () {
+        if (!token()) {
             return null;
         }
-        return "Bearer " + token;
+        return "Bearer " + token();
     };
 
-    var extractPermissions = function () {
-        if (_permissions == null) {
-            var token = getToken();
-            if (!token) {
-                return null;
-            }
-
-            var payload = parseJwtPayload(token);
-            var permissionsString = payload.permissions;
-            if (!permissionsString) {
-                return null;
-            }
-
-            _permissions = permissionsString.split('|');
+    var handleAccessDenied = function(xhr) {
+        switch (xhr.status) {
+        case 401:
+            token(null);
+            break;
+        case 403:
+            refreshToken();
+            break;
         }
-
-        return _permissions;
-    };
-
+    }
+    
     var checkPermission = function(permission, etalon) {
         // etalon may be like '*:read,write:etc'
         if (!etalon || !permission) {
@@ -101,7 +101,7 @@ define(function(require, exports) {
     };
 
     var isPermitted = function (permission) {
-        var etalons = extractPermissions();
+        var etalons = permissions();
         if (!etalons) {
             return false;
         }
@@ -113,27 +113,6 @@ define(function(require, exports) {
         }
 
         return false;
-    };
-
-    var getSubject = function() {
-        var token = getToken();
-        return token
-            ? parseJwtPayload(token).sub
-            : null;
-    };
-
-    var getTokenExpirationDate = function () {
-        if (_expirationDate == null) {
-            var token = getToken();
-            if (!token) {
-                return null;
-            }
-
-            var expirationInSeconds = parseJwtPayload(token).exp;
-            _expirationDate = new Date(expirationInSeconds * 1000);
-        }
-
-        return _expirationDate;
     };
 
     var base64urldecode = function (arg) {
@@ -160,19 +139,6 @@ define(function(require, exports) {
         return $.parseJSON(payload);
     };
 
-    var logError = function(error) {
-        if (!error) {
-            return;
-        }
-
-        var msg = "";
-        if (error.responseText) {
-            msg += error.responseText;
-        }
-
-        console.log(msg);
-    };
-
     var refreshToken = function() {
         var promise = $.ajax({
             url: getServiceUrl() + "user/refresh",
@@ -181,11 +147,10 @@ define(function(require, exports) {
                 Authorization: getAuthorizationHeader()
             },
             success: function (data, textStatus, jqXHR) {
-                var token = jqXHR.getResponseHeader('Bearer');
-                setToken(token);
+                token(jqXHR.getResponseHeader('Bearer'));
             },
             error: function (error) {
-                setToken(null);
+                token(null);
             },
         });
 
@@ -272,11 +237,11 @@ define(function(require, exports) {
     }
 
     var api = {
-        getToken: getToken,
-        setToken: setToken,
-        getSubject: getSubject,
-        getTokenExpirationDate: getTokenExpirationDate,
+        token: token,
+        subject: subject,
+        tokenExpirationDate: tokenExpirationDate,
         getAuthorizationHeader: getAuthorizationHeader,
+        handleAccessDenied: handleAccessDenied,
         refreshToken: refreshToken,
 
         isAuthenticated: isAuthenticated,

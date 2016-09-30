@@ -1,8 +1,9 @@
-define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config, authApi, ohdsiUtils) {
+define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config, ohdsiUtils) {
     function roleDetails(params) {
         var self = this;
         var serviceUrl = config.services[0].url;
         var defaultRoleName = null;
+        var authApi = params.model.authApi;
 
         self.currentTab = ko.observable('users');
 
@@ -28,38 +29,27 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
             role: self.roleName
         });
 
-        self.isNewRole = ko.computed(function() { return self.roleId() == 0; });
+        self.isNewRole = ko.pureComputed(function() { return self.roleId() == 0; });
 
-        self.isAuthenticated = ko.observable();
-        self.canReadRoles = ko.observable();
-        self.canReadRole = ko.observable();
-        self.canEditRole = ko.observable();
-        self.canEditRoleUsers = ko.observable();
-        self.canEditRolePermissions = ko.observable();
-        self.hasAccess = ko.observable();
-        self.canDelete = ko.observable();
-        self.canSave = ko.observable();
-
-        var updateAccessControl = function() {
-            self.isAuthenticated(authApi.isAuthenticated());
-            self.canReadRole(
-                self.isAuthenticated() &&
+        self.isAuthenticated = authApi.isAuthenticated;
+        self.canReadRoles = ko.pureComputed(function() { return self.isAuthenticated() && authApi.isPermittedReadRoles(); });
+        self.canReadRole = ko.pureComputed(function() {
+            return self.isAuthenticated() &&
                 self.isNewRole()
                 ? authApi.isPermittedCreateRole()
-                : authApi.isPermittedReadRole(self.roleId()));
-            self.canReadRoles(self.isAuthenticated() && authApi.isPermittedReadRoles());
-            self.canEditRole(
-                self.isAuthenticated() &&
+                : authApi.isPermittedReadRole(self.roleId());
+        });
+        self.canEditRole = ko.pureComputed(function() {
+            return self.isAuthenticated() &&
                 self.isNewRole()
                 ? authApi.isPermittedCreateRole()
-                : authApi.isPermittedEditRole(self.roleId()));
-            self.canEditRoleUsers(self.isAuthenticated() && (self.isNewRole() || authApi.isPermittedEditRoleUsers(self.roleId())));
-            self.canEditRolePermissions(self.isAuthenticated() && (self.isNewRole() || authApi.isPermittedEditRolePermissions(self.roleId())));
-            self.hasAccess(self.canReadRole());
-            self.canDelete(self.isAuthenticated() && self.roleId() && authApi.isPermittedDeleteRole(self.roleId()));
-            self.canSave(self.canEditRole() || self.canEditRoleUsers() || self.canEditRolePermissions());
-        }
-        updateAccessControl();
+                : authApi.isPermittedEditRole(self.roleId());
+        });
+        self.canEditRoleUsers = ko.pureComputed(function() { return self.isAuthenticated() && (self.isNewRole() || authApi.isPermittedEditRoleUsers(self.roleId())); });
+        self.canEditRolePermissions = ko.pureComputed(function() { return self.isAuthenticated() && (self.isNewRole() || authApi.isPermittedEditRolePermissions(self.roleId())); });
+        self.hasAccess = ko.pureComputed(function() { return self.canReadRole(); });
+        self.canDelete = ko.pureComputed(function() { return self.isAuthenticated() && self.roleId() && authApi.isPermittedDeleteRole(self.roleId()); });
+        self.canSave = ko.pureComputed(function() { return self.canEditRole() || self.canEditRoleUsers() || self.canEditRolePermissions(); });
 
         self.renderCheckbox = function (field, editable) {
             return editable
@@ -75,6 +65,7 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
                     Authorization: authApi.getAuthorizationHeader()
                 },
                 contentType: 'application/json',
+                error: authApi.handleAccessDenied,
                 success: function(data) {
                     self.roleName(data.role);
                 }
@@ -82,26 +73,22 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
         }
 
         var getUsers = function() {
-            var promise = $.Deferred();
-
             if (!self.users() || self.users().length == 0) {
-                $.ajax({
+                return $.ajax({
                     url: serviceUrl + 'user',
                     method: 'GET',
                     headers: {
                         Authorization: authApi.getAuthorizationHeader()
                     },
                     contentType: 'application/json',
+                    error: authApi.handleAccessDenied,
                     success: function(data) {
                         self.users(data);
-                        promise.resolve();
                     }
                 });
             } else {
-                promise.resolve();
+                return null;
             }
-
-            return promise;
         }
         var getRoleUsers = function() {
             return $.ajax({
@@ -111,6 +98,7 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
                     Authorization: authApi.getAuthorizationHeader()
                 },
                 contentType: 'application/json',
+                error: authApi.handleAccessDenied,
                 success: function (roleUsers) {
                     $.each(roleUsers, function (index, user) {
                         self.roleUserIds.push(user.id);
@@ -120,26 +108,22 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
         }
 
         var getPermissions = function() {
-            var promise = $.Deferred();
-
             if (!self.permissions() || self.permissions().length == 0) {
-                $.ajax({
+                return $.ajax({
                     url: serviceUrl + 'permission',
                     method: 'GET',
                     headers: {
                         Authorization: authApi.getAuthorizationHeader()
                     },
                     contentType: 'application/json',
+                    error: authApi.handleAccessDenied,
                     success: function (data) {
                         self.permissions(data);
-                        promise.resolve();
                     }
                 });
             } else {
-                promise.resolve();
+                return null;
             }
-
-            return promise;
         }
 
         var getRolePermissions = function() {
@@ -150,6 +134,7 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
                     Authorization: authApi.getAuthorizationHeader()
                 },
                 contentType: 'application/json',
+                error: authApi.handleAccessDenied,
                 success: function(rolePermissions) {
                     $.each(rolePermissions, function(index, permission) {
                         self.rolePermissionIds.push(permission.id);
@@ -199,74 +184,57 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
         self.updateRole = function () {
             self.loading(true);
 
-            var rolesPromise = $.Deferred();
-            if (self.canReadRoles()) {
-                self.model.updateRoles().done(rolesPromise.resolve);
-            } else {
-                rolesPromise.resolve();
-            }
+            var rolesPromise =
+                self.canReadRoles()
+                    ? self.model.updateRoles()
+                    : null;
 
-            var usersPromise = getUsers();
-            var permissionsPromise = getPermissions();
-
-            var rolePromise = $.Deferred();
-            var roleUsersPromise = $.Deferred();
-            var rolePermissionsPromise = $.Deferred();
+            var rolePromise = null;
+            var roleUsersPromise = null;
+            var rolePermissionsPromise = null;
 
             if (self.isNewRole()) {
                 self.roleName(defaultRoleName)
-                rolePromise.resolve();
-
                 self.roleUserIds = [];
-                roleUsersPromise.resolve();
-
                 self.rolePermissionIds = [];
-                rolePermissionsPromise.resolve();
             } else {
-                getRole().done(rolePromise.resolve);
-                getRoleUsers().done(roleUsersPromise.resolve);
-                getRolePermissions().done(rolePermissionsPromise.resolve)
+                rolePromise = getRole();
+                roleUsersPromise = getRoleUsers();
+                rolePermissionsPromise = getRolePermissions();
             }
 
             var userItemsPromise = $.Deferred();
-            $.when(usersPromise, roleUsersPromise).done(function() {
+            $.when(getUsers(), roleUsersPromise).done(function() {
                 updateUserItems();
                 userItemsPromise.resolve();
             });
 
             var permissionItemsPromise = $.Deferred();
-            $.when(permissionsPromise, rolePermissionsPromise).done(function() {
+            $.when(getPermissions(), rolePermissionsPromise).done(function() {
                 updatePermissionItems();
                 permissionItemsPromise.resolve();
             });
 
-            $.when(rolesPromise, rolePromise, userItemsPromise, permissionItemsPromise).done(function () {
-                self.roleDirtyFlag.reset();
-                self.dirtyFlag.reset();
-                self.loading(false);
-            });
+            $.when(rolesPromise, rolePromise, userItemsPromise, permissionItemsPromise)
+                .done(function() {
+                    self.roleDirtyFlag.reset();
+                    self.dirtyFlag.reset();
+                })
+                .always(function() { self.loading(false); });
         }
 
         var saveRelations = function(ids, relation, httpMethod) {
-            var promise = $.Deferred();
-
-            if (ids.length > 0) {
-                $.ajax({
+            return ids.length > 0
+                ? $.ajax({
                     url: serviceUrl + 'role/' + self.roleId() + '/' + relation + '/' + ids.join('+'),
                     method: httpMethod,
                     headers: {
                         Authorization: authApi.getAuthorizationHeader()
                     },
                     contentType: 'application/json',
-                    success: function(data) {
-                        promise.resolve();
-                    }
-                });
-            } else {
-                promise.resolve();
-            }
-
-            return promise;
+                    error: authApi.handleAccessDenied,
+                })
+                : null;
         }
 
         var arraysDiff = function(base, another) {
@@ -276,8 +244,6 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
         }
 
         var saveUsers = function() {
-            var promise = $.Deferred();
-
             var currentRoleUserIds = [];
             $.each(self.userItems(), function(index, user) {
                 if (user.isRoleUser()) {
@@ -289,17 +255,12 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
             var userIdsToRemove = arraysDiff(self.roleUserIds, currentRoleUserIds);
             self.roleUserIds = currentRoleUserIds;
 
-            $.when(
+            return $.when(
                 saveRelations(userIdsToAdd, 'users', 'PUT'),
-                saveRelations(userIdsToRemove, 'users', 'DELETE'))
-            .done(promise.resolve);
-
-            return promise;
+                saveRelations(userIdsToRemove, 'users', 'DELETE'));
         }
 
         var savePermissions = function () {
-            var promise = $.Deferred();
-
             var currentRolePermissionIds = [];
             $.each(self.permissionItems(), function(index, permission) {
                 if (permission.isRolePermission()) {
@@ -311,19 +272,14 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
             var permissionIdsToRemove = arraysDiff(self.rolePermissionIds, currentRolePermissionIds);
             self.rolePermissionIds = currentRolePermissionIds;
 
-            $.when(
+            return $.when(
                 saveRelations(permissionIdsToAdd, 'permissions', 'PUT'),
-                saveRelations(permissionIdsToRemove, 'permissions', 'DELETE'))
-            .done(promise.resolve);
-
-            return promise;
+                saveRelations(permissionIdsToRemove, 'permissions', 'DELETE'));
         }
 
         var saveRole = function () {
-            var promise = $.Deferred();
             if (!self.roleDirtyFlag.isDirty()) {
-                promise.resolve();
-                return promise;
+                return null;
             }
 
             var data = ko.toJSON({
@@ -341,9 +297,9 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
                     contentType: 'application/json',
                     data: data,
                     dataType: 'json',
+                    error: authApi.handleAccessDenied,
                     success: function(data) {
                         self.roleId(data.id);
-                        promise.resolve();
                     }
                 })
                 : $.ajax({
@@ -355,13 +311,11 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
                     contentType: 'application/json',
                     data: data,
                     dataType: 'json',
+                    error: authApi.handleAccessDenied,
                     success: function(data) {
                         self.roleId(data.id);
-                        promise.resolve();
                     }
                 });
-
-            return promise;
         }
 
         self.save = function () {
@@ -387,7 +341,7 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
             var create = self.isNewRole();
 
             self.loading(true);
-            saveRole().done(function () {
+            $.when(saveRole()).done(function () {
                 var roles = self.model.roles();
                 if (create) {
                     roles.push({
@@ -403,17 +357,16 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
                 self.model.roles(roles);
 
                 $.when(
-                    saveUsers(),
-                    savePermissions()
-                ).done(function () {
-                    authApi.refreshToken().done(function () {
-                        updateAccessControl();
-                        self.roleDirtyFlag.reset();
-                        self.dirtyFlag.reset();
-                        document.location = '#/role/' + self.roleId();
-                        self.loading(false);
-                    });
-                });
+                        saveUsers(),
+                        savePermissions())
+                    .done(function() {
+                        authApi.refreshToken().done(function() {
+                            self.roleDirtyFlag.reset();
+                            self.dirtyFlag.reset();
+                            document.location = '#/role/' + self.roleId();
+                        });
+                    })
+                    .always(function() { self.loading(false); });
             });
         }
 
@@ -430,14 +383,17 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'webapi/AuthAPI', '
                     Authorization: authApi.getAuthorizationHeader()
                 },
                 contentType: 'application/json',
+                error: authApi.handleAccessDenied,
                 success: function () {
                     authApi.refreshToken();
                     var roles = self.model.roles().filter(function (role) {
                         return role.id != self.roleId();
                     });
                     self.model.roles(roles);
-                    self.loading(false);
                     self.close();
+                },
+                complete: function() {
+                    self.loading(false);
                 }
             });
         }

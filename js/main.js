@@ -139,7 +139,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		ko.applyBindings(pageModel,document.getElementsByTagName('html')[0]);
 
 	    // update access token
-		if (authApi.getToken()) {
+		if (authApi.token()) {
 		    var refreshTokenPromise = $.Deferred();
 		    pageModel.initPromises.push(refreshTokenPromise);
 		    authApi.refreshToken().always(refreshTokenPromise.resolve);

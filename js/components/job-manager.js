@@ -1,6 +1,8 @@
-define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/AuthAPI', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config, authApi) {
+define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config) {
 	function jobManager(params) {
 		var self = this;
+
+		var authApi = params.model.authApi;
 		self.model = params.model;
 		self.updateJobs = function () {
 			self.model.jobs([]);
@@ -25,14 +27,17 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/AuthAPI', 'k
 						}
 					}
 					self.model.jobs(jobs.content);
-				}
+				},
+                error: authApi.handleAccessDenied
 			});
 		}
 
-	    self.isAuthenticated = authApi.isAuthenticated();
-	    self.canReadJobs = self.isAuthenticated && authApi.isPermittedReadJobs();
+	    self.isAuthenticated = authApi.isAuthenticated;
+	    self.canReadJobs = ko.pureComputed(function() {
+	       return self.isAuthenticated() && authApi.isPermittedReadJobs();
+	    });
 
-		if (self.canReadJobs) {
+		if (self.canReadJobs()) {
 		    self.updateJobs();
 		}
 	}

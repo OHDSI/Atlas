@@ -3,7 +3,7 @@
 		<i class="fa fa-shopping-cart"></i> Concept Set
 	</div>
 	<div class="asset-heading" data-bind="if: model.currentConceptSet">
-        <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: canSave ? null : true }, textInput: model.currentConceptSet().name" />
+        <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: canSave() ? null : true }, textInput: model.currentConceptSet().name" />
 		<div class="btn-group">
             <!-- ko if:canSave -->
 		    <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty()}">Save</button>

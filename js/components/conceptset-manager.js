@@ -1,7 +1,6 @@
 define(['knockout', 
         'text!./conceptset-manager.html', 
         'appConfig',
-        'webapi/AuthAPI',
         'ohdsi.util', 
         'webapi/CDMResultsAPI',
         'vocabularyprovider',
@@ -13,9 +12,10 @@ define(['knockout',
         'databindings', 
         'negative-controls',
         'circe',
-], function (ko, view, config, authApi, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet) {
+], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet) {
 	function conceptsetManager(params) {
-		var self = this;
+	    var self = this;
+	    var authApi = params.model.authApi;
 		self.model = params.model;
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
@@ -438,6 +438,7 @@ define(['knockout',
                 headers : {
                     Authorization: authApi.getAuthorizationHeader()
                 },
+                error: authApi.handleAccessDenied,
 				success: function (results) {
 					if (results.length > 0) {
 						self.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
@@ -486,6 +487,7 @@ define(['knockout',
 					},
 					data: json,
 					dataType: 'json',
+					error: authApi.handleAccessDenied,
 					success: function (data) {
 
 						$.ajax({
@@ -497,6 +499,7 @@ define(['knockout',
 							data: JSON.stringify(conceptSetItems),
 							dataType: 'json',
 							contentType: 'application/json',
+							error: authApi.handleAccessDenied,
 							success: function (itemSave) {
 							    $('#conceptSetSaveDialog').modal('hide');
 							    authApi.refreshToken().then(function() {
@@ -816,9 +819,9 @@ define(['knockout',
         $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeDescendants: true })});
 
 
-	    self.canSave = self.model.canEditCurrentConceptSet();
+	    self.canSave = self.model.canEditCurrentConceptSet;
 
-	    self.canCopy = authApi.isAuthenticated() && authApi.isPermittedCreateConceptset();
+	    self.canCopy = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset(); });
 	}
 
 	var component = {

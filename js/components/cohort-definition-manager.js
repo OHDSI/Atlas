@@ -1,6 +1,5 @@
 define(['knockout', 'text!./cohort-definition-manager.html',
-				'appConfig', 
-                'webapi/AuthAPI',
+				'appConfig',
 				'cohortbuilder/CohortDefinition',
 				'webapi/CohortDefinitionAPI',
 				'ohdsi.util',
@@ -12,7 +11,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'faceted-datatable',
 				'databindings', 
 				'cohortdefinitionviewer/expressionCartoonBinding',
-], function (ko, view, config, authApi, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet) {
+
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
 			url: config.webAPIRoot + 'sqlrender/translate',
@@ -47,8 +47,53 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	function cohortDefinitionManager(params) {
 		var self = this;
 		var pollTimeout = null;
+		var authApi = params.model.authApi;
 		self.config = config;
 		self.model = params.model;
+
+	    self.isAuthenticated = ko.pureComputed(function() {
+	        return authApi.isAuthenticated();
+	    });
+	    var isNew = ko.pureComputed(function() {
+	        return !self.model.currentCohortDefinition() || (self.model.currentCohortDefinition().id() == 0);
+	    });
+		self.canEdit = self.model.canEditCurrentCohortDefinition;
+	    self.canCopy = ko.pureComputed(function() {
+	        return !isNew() && self.isAuthenticated() && authApi.isPermittedCopyCohort(self.model.currentCohortDefinition().id());
+	    });
+	    self.canDelete = ko.pureComputed(function() {
+	        if (isNew()) {
+	            return false;
+	        }
+
+	        return self.isAuthenticated() && authApi.isPermittedDeleteCohort(self.model.currentCohortDefinition().id());
+	    });
+	    self.hasAccess = ko.pureComputed(function() {
+	        if (!self.isAuthenticated()) {
+	            return false;
+	        }
+
+	        if (isNew()) {
+	            return authApi.isPermittedCreateCohort();
+	        }
+
+	        return authApi.isPermittedReadCohort(self.model.currentCohortDefinition().id());
+	    });
+		self.hasAccessToGenerate = function(sourceKey) {
+		    if (isNew()) {
+		        return false;
+		    }
+
+		    return self.isAuthenticated() && authApi.isPermittedGenerateCohort(self.model.currentCohortDefinition().id(), sourceKey);
+		}
+		self.hasAccessToReadCohortReport = function(sourceKey) {
+		    if (isNew()) {
+		        return false;
+		    }
+
+		    return self.isAuthenticated() && authApi.isPermittedReadCohortReport(self.model.currentCohortDefinition().id(), sourceKey);
+		}
+		if (!self.hasAccess()) return;
 
 		self.generatedSql = {};
 		self.generatedSql.mssql = ko.observable('');
@@ -106,7 +151,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.selectedReport = ko.observable();
 		self.selectedReportCaption = ko.observable();
 		self.loadingInclusionReport = ko.observable(false);
-		self.sortedConceptSets = self.model.currentCohortDefinition().expression().ConceptSets.extend({sorted: conceptSetSorter});
+	    self.sortedConceptSets = self.model.currentCohortDefinition().expression().ConceptSets.extend({ sorted: conceptSetSorter });
 
 		// model behaviors
 		self.onConceptSetTabRespositoryConceptSetSelected = function (conceptSet) {
@@ -308,6 +353,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			    headers: {
 			        Authorization: authApi.getAuthorizationHeader()
 			    },
+			    error: authApi.handleAccessDenied,
 			    success: function (data) {
 					setTimeout(function () {
 						self.pollForInfo();
@@ -480,49 +526,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return "unknownCriteriaType";
 		};
 		self.selectedCriteria = ko.observable();
-
-		self.isAuthenticated = ko.pureComputed(function() {
-		    return authApi.isAuthenticated(); 
-		}) 
-	    var isNew = ko.pureComputed(function() {
-	        return !self.model.currentCohortDefinition() || (self.model.currentCohortDefinition().id() == 0);
-	    })
-	    self.canEdit = self.model.canEditCurrentCohortDefinition;
-	    self.canCopy = ko.pureComputed(function() {
-	        return !isNew() && self.isAuthenticated() && authApi.isPermittedCopyCohort(self.model.currentCohortDefinition().id());
-		})
-	    self.canDelete = ko.pureComputed(function() {
-		    if (isNew()) {
-		        return false;
-		    }
-
-		    return self.isAuthenticated() && authApi.isPermittedDeleteCohort(self.model.currentCohortDefinition().id());
-		})
-	    self.hasAccess = ko.pureComputed(function() {
-            if (!self.isAuthenticated()) {
-                return false;
-            }
-
-            if (isNew()) {
-		        return authApi.isPermittedCreateCohort();
-		    }
-
-		    return authApi.isPermittedReadCohort(self.model.currentCohortDefinition().id());
-		})
-	    self.hasAccessToGenerate = function(sourceKey) {
-		    if (isNew()) {
-		        return false;
-		    }
-
-		    return self.isAuthenticated() && authApi.isPermittedGenerateCohort(self.model.currentCohortDefinition().id(), sourceKey);
-		}
-	    self.hasAccessToReadCohortReport = function(sourceKey) {
-            if (isNew()) {
-                return false;
-            }
-
-            return self.isAuthenticated() && authApi.isPermittedReadCohortReport(self.model.currentCohortDefinition().id(), sourceKey);
-        }
 	}
 
 	var component = {

@@ -58,7 +58,7 @@ define(['knockout', 'text!./conceptset-browser.html', 'appConfig', 'webapi/AuthA
 			}
 		}
 
-	    self.canCreateConceptSet = authApi.isAuthenticated() && authApi.isPermittedCreateConceptset();
+	    self.canCreateConceptSet = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset(); });
 	}
 
 	var component = {

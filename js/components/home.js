@@ -1,6 +1,7 @@
-define(['knockout', 'text!./home.html', 'webapi/AuthAPI'], function (ko, view, authApi) {
+define(['knockout', 'text!./home.html'], function (ko, view) {
 	function home(params) {
-		var self = this;
+	    var self = this;
+	    var authApi = params.model.authApi;
 		self.github_status = ko.observableArray();
 
 		$.ajax({
@@ -20,7 +21,7 @@ define(['knockout', 'text!./home.html', 'webapi/AuthAPI'], function (ko, view, a
 			document.location = "#/search";
 		}
 
-		self.canCreateCohort = authApi.isAuthenticated() && authApi.isPermittedCreateCohort();
+		self.canCreateCohort = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedCreateCohort(); });
 	}
 
 	var component = {

@@ -5,8 +5,8 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 		self.enableRecordCounts = params.enableRecordCounts;
 		self.services = config.services;
 
-		self.isAuthenticated = authApi.isAuthenticated();
-	    self.hasAccess = self.isAuthenticated && authApi.isPermittedEditConfiguration();
+		self.isAuthenticated = authApi.isAuthenticated;
+	    self.hasAccess = ko.pureComputed(function() { return self.isAuthenticated() && authApi.isPermittedEditConfiguration(); });
 	}
 
 	var component = {
