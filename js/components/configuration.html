@@ -55,7 +55,7 @@
         </div>
     </div>
     
-    <a href="#/roles" class="btn btn-sm btn-primary" style="width: 175px">Manage Permissions</a>
+    <a href="#/roles" class="btn btn-sm btn-primary" style="width: 175px" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
 </div>
 <div data-bind="ifnot:hasAccess">
     <access-denied params="isAuthenticated: isAuthenticated"></access-denied>

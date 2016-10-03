@@ -6,7 +6,8 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 		self.services = config.services;
 
 		self.isAuthenticated = authApi.isAuthenticated;
-	    self.hasAccess = ko.pureComputed(function() { return self.isAuthenticated() && authApi.isPermittedEditConfiguration(); });
+		self.hasAccess = ko.pureComputed(function () { return self.isAuthenticated() && authApi.isPermittedEditConfiguration(); });
+		self.canReadRoles = ko.pureComputed(function () { return self.isAuthenticated() && authApi.isPermittedReadRoles(); })
 	}
 
 	var component = {

@@ -11,13 +11,9 @@
         <div class="asset-heading">
             <input type="text" data-bind="textInput:$component.roleName, attr: { disabled: canEditRole() ? null : true, placeholder: isNewRole() ? 'Role Name' : null}" />
             <div class="btn-group">
-                <!-- ko if:canSave -->
-                <button type="button" class="btn btn-sm btn-success" data-bind="click:$component.save, css: { disabled: !dirtyFlag.isDirty() }">Save</button>
-                <!-- /ko -->
+                <button type="button" class="btn btn-sm btn-success" data-bind="click:$component.save, css: { disabled: !dirtyFlag.isDirty() || !canSave()}">Save</button>
                 <button type="button" class="btn btn-sm btn-primary" data-bind="click:$component.close">Close</button>
-                <!-- ko if:canDelete -->
-                <button type="button" class="btn btn-sm btn-danger" data-bind="click: $component.delete">Delete</button>
-                <!-- /ko -->
+                <button type="button" class="btn btn-sm btn-danger" data-bind="click: $component.delete, css: { disabled: !canDelete()}">Delete</button>
             </div>
         </div>
         <ul class="nav nav-tabs">

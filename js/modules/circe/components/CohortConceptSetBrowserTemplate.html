@@ -4,9 +4,7 @@
 			<select class="form-control" data-bind="enable: loading()==false, options:$component.sources, optionsText:'name', value:selectedSource"></select>
 		</td>
 		<td>
-            <!-- ko ifnot: hideConceptSetButton -->
             <div class="btn btn-sm btn-primary" style="width: 175px" data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText"></div>
-            <!-- /ko -->
 		</td>
 	</tr>
 </table>

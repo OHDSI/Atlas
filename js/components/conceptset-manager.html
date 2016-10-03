@@ -5,13 +5,9 @@
 	<div class="asset-heading" data-bind="if: model.currentConceptSet">
         <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: canSave() ? null : true }, textInput: model.currentConceptSet().name" />
 		<div class="btn-group">
-            <!-- ko if:canSave -->
-		    <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty()}">Save</button>
-            <!-- /ko -->
+            <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:(model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty()) || !canSave()}">Save</button>
 			<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }">Close</button>
-            <!-- ko if:canCopy -->
-            <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0">Copy</button>
-            <!-- /ko -->
+            <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0, css: {disabled:!canCopy()}">Copy</button>
             <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { optimize(); }">Optimize</button>
             <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.delete(); }">Delete</button>
 		</div>

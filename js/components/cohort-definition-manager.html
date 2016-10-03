@@ -8,20 +8,16 @@
             <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
         </div>
     </div>    
-    <div data-bind="if:hasAccess()">
+    <div data-bind="if:hasAccess() && model.currentCohortDefinition()">
         <div class="asset-heading">
             <input type="text" data-bind="attr: { disabled: canEdit() ? null : true }, textInput: model.currentCohortDefinition().name, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></input>
             <div class="btn-group" role="group">
-                <!-- ko if: canEdit -->
-                <button class="btn btn-sm btn-success" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
-                <!-- /ko -->
+                <button class="btn btn-sm btn-success" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty() || !canEdit(), 'btn-success': dirtyFlag().isDirty}">Save</button>
                 <button class="btn btn-sm btn-primary" data-bind="click: close">Close</button>
                 <!-- ko if: model.currentCohortDefinition().id() != null && model.currentCohortDefinition().id() != 0 -->
-                <!-- ko if: canCopy -->
-                <button class="btn btn-sm btn-primary" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
-                <!-- /ko -->
-                <!-- ko if: !isRunning() && canDelete() -->
-                <button class="btn btn-sm btn-danger" data-bind="click: $component.delete">Delete</button>
+                <button class="btn btn-sm btn-primary" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()">Copy</button>
+                <!-- ko if: !isRunning() -->
+                <button class="btn btn-sm btn-danger" data-bind="click: $component.delete, enable: canDelete()">Delete</button>
                 <!-- /ko -->
                 <!-- /ko -->
             </div>
@@ -57,9 +53,7 @@
             <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
                 <div style="padding-bottom: 10px;" class="pull-right">
                     <button type="button" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
-                    <!-- ko if:canEdit -->
-                    <button type="button" style="margin-right: 3px" class="btn btn-sm btn-primary pull-right" data-bind="click:function() { newConceptSet(); }">New Concept Set</button>
-                    <!-- /ko -->
+                    <button type="button" style="margin-right: 3px" class="btn btn-sm btn-primary pull-right" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
                 </div>
                 <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
 											data: model.currentCohortDefinition() && model.currentCohortDefinition().expression().ConceptSets,
@@ -113,9 +107,7 @@
                         <div class="clear"></div>
 
                         <button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
-                        <!-- ko if:canEdit -->
-                        <button type="button" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
-                        <!-- /ko -->
+                        <button type="button" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet();}, enable:canEdit">Delete Concept Set</button>
                         <div id="wrapperConceptSetWarnings" data-bind="visible: model.selectedConceptsWarnings().length > 0">
                             <div class="heading">Concept Set Warnings</div>
                             <table data-bind="foreach:model.selectedConceptsWarnings">
@@ -280,10 +272,8 @@
                     <tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
                         <tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
                             <td>
-                                <!-- ko if: $component.hasAccessToGenerate($data.sourceKey) -->
-                                <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data), attr: {'disabled':$component.canGenerate()==false}, click:$component.generateCohort"><i class="fa fa-play"></i>&nbsp;&nbsp;Generate</div>
+                                <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data), attr: {'disabled':$component.canGenerate()==false || !$component.hasAccessToGenerate($data.sourceKey)}, click:$component.generateCohort"><i class="fa fa-play"></i>&nbsp;&nbsp;Generate</div>
                                 <div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i></div>
-                                <!-- /ko -->
                             </td>
                             <td data-bind="text:name"></td>
                             <td class="statusIndicator">
@@ -293,9 +283,7 @@
                             <td class="text-right" data-bind="text: startTime"></td>
                             <td class="text-right" data-bind="text: executionDuration"></td>
                             <td>
-                                <!-- ko if: $component.hasAccessToReadCohortReport($data.sourceKey) -->
-                                <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid, click:$component.selectInclusionReport"><i class="fa fa-eye"></i>&nbsp;View Inclusion Report</div>
-                                <!-- /ko -->
+                                <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid, click:$component.selectInclusionReport, attr: {'disabled':!$component.hasAccessToReadCohortReport($data.sourceKey)}"><i class="fa fa-eye"></i>&nbsp;View Inclusion Report</div>
                             </td>
                         </tr>
                     </tbody>

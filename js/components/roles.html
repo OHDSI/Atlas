@@ -8,9 +8,7 @@
 </div>
 <div data-bind="if:$component.canRead">
     <div class="paddedWrapper">
-        <!-- ko if:canCreate -->
-        <span class="pull-right btn btn-sm btn-primary new-role" data-bind="click:newRole">New Role</span>
-        <!-- /ko -->
+        <span class="pull-right btn btn-sm btn-primary new-role" data-bind="click:newRole, css: { disabled: !canCreate() }">New Role</span>
         <div class="clear" data-bind="eventListener: [{event: 'click', selector: '.roleItem', callback: $component.selectRole}]">
             <table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
             data: roles(),
