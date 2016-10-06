@@ -727,6 +727,9 @@ define(['knockout',
         }
         
         self.selectAllConceptSetItems = function(selector, props) {
+			if (!self.canEdit()) {
+				return;
+			}
         	console.log("select all: " + props)
             props = props || {};
             props.isExcluded = props.isExcluded || null;
@@ -818,11 +821,10 @@ define(['knockout',
         $(document).off('click', '#selectAllMapped');
         $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeDescendants: true })});
 
-
-	    self.canSave = self.model.canEditCurrentConceptSet;
-
-	    self.canCopy = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset(); });
-	}
+        self.canEdit = self.model.canEditCurrentConceptSet;
+        self.canCreate = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset(); });
+        self.canDelete = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedDeleteConceptset(); });
+    }
 
 	var component = {
 		viewModel: conceptsetManager,

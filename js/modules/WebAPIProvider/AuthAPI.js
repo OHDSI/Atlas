@@ -164,6 +164,10 @@ define(function(require, exports) {
     var isPermittedUpdateConceptset = function(conceptsetId) {
         return isPermitted('conceptset:' + conceptsetId + ':post') && isPermitted('conceptset:' + conceptsetId + ':items:post');
     };
+    
+    var isPermittedDeleteConceptset = function(id) {
+        return isPermitted('conceptset:' + id + ':delete:post');
+    }
 
     var isPermittedReadCohort = function(id) {
         return isPermitted('cohortdefinition:' + id + ':get') && isPermitted('cohortdefinition:sql:post');
@@ -248,6 +252,7 @@ define(function(require, exports) {
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,
         isPermittedUpdateConceptset: isPermittedUpdateConceptset,
+        isPermittedDeleteConceptset: isPermittedDeleteConceptset,
 
         isPermittedReadCohorts: isPermittedReadCohorts,
         isPermittedReadCohort: isPermittedReadCohort,
