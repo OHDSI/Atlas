@@ -46,7 +46,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			}
 				
 			if (self.hasUnsavedChanges()) {
-				pageTitle = pageTitle + " (unsaved)";
+				pageTitle = "*" + pageTitle + " (unsaved)";
 			}
 			
 			return pageTitle;
