@@ -130,7 +130,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		$('#splash').fadeIn();
 		var pageModel = new app();
 		window.pageModel = pageModel;
-		ko.applyBindings(pageModel);
+		ko.applyBindings(pageModel,document.getElementsByTagName('html')[0]);
 
 		// establish base priorities for daimons
 		var evidencePriority = 0;
@@ -421,10 +421,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		});
 		
 		$(window).bind('beforeunload', function () {
-			if ((pageModel.currentCohortDefinitionDirtyFlag() && pageModel.currentCohortDefinitionDirtyFlag().isDirty())  || 
-					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()) ||
-				 	pageModel.currentIRAnalysisDirtyFlag().isDirty() ||
-				 	pageModel.currentCohortComparisonDirtyFlag().isDirty())
+			if (pageModel.hasUnsavedChanges())
 				return "Changes will be lost if you do not save.";
 		});		
 	});

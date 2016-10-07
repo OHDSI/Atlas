@@ -9,6 +9,48 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.minibar = ko.observable(false);
 		self.searchTabMode = ko.observable('simple');
 		self.pendingSearch = ko.observable(false);
+		self.pageTitle = ko.pureComputed(function () {
+			var pageTitle = "ATLAS";
+			switch (self.currentView()){
+				case 'loading':
+					pageTitle = pageTitle + ": Loading";
+					break;
+				case 'home':
+					pageTitle = pageTitle + ": Home";
+					break;
+				case 'search':
+					pageTitle = pageTitle + ": Search";
+					break;
+				case 'conceptsets':
+				case 'conceptset':
+					pageTitle = pageTitle + ": Concept Sets";
+					break;
+				case 'concept':
+					pageTitle = pageTitle + ": Concept";
+					break;
+				case 'cohortdefinitions':
+				case 'cohortdefinition':
+					pageTitle = pageTitle + ": Cohorts";
+					break;
+				case 'irbrowser':
+				case 'iranalysis':
+					pageTitle = pageTitle + ": Incidence Rate";
+					break;
+				case 'estimations':
+				case 'estimation':
+					pageTitle = pageTitle + ": Estimation";
+					break;
+				case 'profiles':
+					pageTitle = pageTitle + ": Profiles";
+					break;
+			}
+				
+			if (self.hasUnsavedChanges()) {
+				pageTitle = "*" + pageTitle + " (unsaved)";
+			}
+			
+			return pageTitle;
+		});
 		self.initComplete = function () {
 			if (!self.appInitializationFailed()) {
 				var routerOptions = {
@@ -1651,6 +1693,12 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			if (newValue != null) {
 				self.currentCohortDefinitionDirtyFlag(new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
 			}
+		});
+		self.hasUnsavedChanges = ko.pureComputed(function() {
+			return ((pageModel.currentCohortDefinitionDirtyFlag() && pageModel.currentCohortDefinitionDirtyFlag().isDirty())  || 
+					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()) ||
+				 	pageModel.currentIRAnalysisDirtyFlag().isDirty() ||
+				 	pageModel.currentCohortComparisonDirtyFlag().isDirty());
 		});
 	}
 	return appModel;
