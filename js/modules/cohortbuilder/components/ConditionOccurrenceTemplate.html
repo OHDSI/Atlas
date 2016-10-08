@@ -44,7 +44,7 @@
 					<text-filter-input params="Filter: StopReason"></text-filter-input>
 				</td>
 			</tr>
-			<tr data-bind="if: ConditionSourceConcept != null, visible: ConditionSourceConcept() != null">
+			<tr data-bind="if: ConditionSourceConcept() != null, visible: ConditionSourceConcept() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ConditionSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
