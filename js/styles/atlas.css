@@ -780,10 +780,6 @@ ul.ColVis_collection li {
 	/* line-height: 7px; */
 }
 
-#wrapperMiniBar i.fa {
-	font-size: 16px;
-}
-
 #wrapperReportMenu {
 	margin: 5px;
 }
@@ -1297,17 +1293,8 @@ tbody {
 	border-bottom-color: #ccc;
 }
 
-#wrapperMainWindow.minibar {
-	left: 49px;
-}
-
 i.fa.fa-compress {
 	cursor: pointer;
-}
-
-#wrapperMiniBar img {
-	width: 32px;
-	padding-top: 7px;
 }
 
 table.dataTable.no-footer {
@@ -1324,11 +1311,6 @@ table.dataTable thead td {
 	color: #f00;
 }
 
-.nav>li>a {
-	padding: 5px 10px 5px 10px;
-	background-color: #888;
-	color: #ccc;
-}
 
 .facetName i.fa.fa-filter {
 	margin-right: 3px;
@@ -1416,45 +1398,10 @@ circle.child {
 	cursor: pointer;
 }
 
-#wrapperMiniBar li a {
-	cursor: pointer;
-}
-
-.timewave-condition {
-	stroke: #192B33;
-	stroke-width: 1px;
-	shape-rendering: crispEdges;
-	stroke-linecap: round;
-}
-
-.timewave-drug {
-	stroke: #FF8000;
-	stroke-width: 1px;
-	shape-rendering: crispEdges;
-	stroke-linecap: round;
-}
-
-.timewave-observation {
-	stroke: #8FB359;
-	stroke-width: 1px;
-	shape-rendering: crispEdges;
-	stroke-linecap: round;
-}
-
-.timewave-line {
-	stroke: #ccc;
-	stroke-width: 1px;
-	shape-rendering: crispEdges;
-	stroke-linecap: round;
-}
 
 .overlay {
 	fill: none;
 	cursor: crosshair;
-}
-
-div.timewave {
-	text-align: center;
 }
 
 div.scatter {
@@ -1594,6 +1541,12 @@ div.button-overlay {
 [contenteditable=true]:empty:before{
   content: attr(placeholder);
 
+}
+
+.nav>li>a {
+  padding: 5px 10px 5px 10px;
+  background-color: #888;
+  color: #ccc;
 }
 
 .nav-tabs li a,
@@ -1952,4 +1905,8 @@ a.unsaved > i.fa {
 cohort-comparison-manager .x-axislabel.axislabel,
 cohort-comparison-manager .y-axislabel.axislabel {
 	font-size: 6px
+}
+
+.dropdown-menu {
+	font-size:12px;
 }

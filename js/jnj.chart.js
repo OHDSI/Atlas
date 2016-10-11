@@ -1,18 +1,16 @@
-"use strict";
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module with d3 as a dependency.
-		define(["jquery", "d3", "lodash", "ohdsi.util", "d3_tip"], factory)
+		define(["jquery", "d3", "lodash", "ohdsi.util", "d3_tip"], factory);
 	} else {
 		// Browser global.
-		root.jnj_chart = factory(root.$, root.d3, root._, root.util)
+		root.jnj_chart = factory(root.$, root.d3, root._, root.util);
 	}
 }(this, function (jQuery, d3, _, util) {
 	var module = {
 		version: "0.0.1"
 	};
 	var $ = jQuery;
-	var d3 = d3;
 	var DEBUG = true;
 
 	// should module.util functions be moved to ohdsi.util?
@@ -29,7 +27,7 @@
 				y = text.attr("y"),
 				dy = parseFloat(text.attr("dy")),
 				tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-			while (word = words.pop()) {
+			while ((word = words.pop())) {
 				line.push(word);
 				tspan.text(line.join(" "));
 				if (tspan.node().getComputedTextLength() > width) {
@@ -39,11 +37,12 @@
 						tspan.text(line.join(" "));
 					}
 					line = [];
-					tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em");
+					lineNumber += 1;
+					tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", lineNumber * lineHeight + dy + "em");
 				}
 			}
 		});
-	}
+	};
 
 	var intFormat = d3.format("0,000");
 	var commaseparated = d3.format(',');
@@ -51,7 +50,7 @@
 
 	module.util.formatInteger = function (d) {
 		return intFormat(d);
-	}
+	};
 
 	module.util.formatSI = function (p) {
 		p = p || 0;
@@ -61,30 +60,31 @@
 			}
 			var prefix = d3.formatPrefix(d);
 			return d3.round(prefix.scale(d), p) + prefix.symbol;
-		}
-	}
+		};
+	};
 
 	function line_defaultTooltip(xLabel, xFormat, xAccessor,
 		yLabel, yFormat, yAccessor,
 		seriesAccessor) {
 		return function (d) {
 			var tipText = "";
-			if (seriesAccessor(d))
+			if (seriesAccessor(d)) {
 				tipText = "Series: " + seriesAccessor(d) + "</br>";
+			}
 			tipText += xLabel + ": " + xFormat(xAccessor(d)) + "</br>";
 			tipText += yLabel + ": " + yFormat(yAccessor(d));
 			return tipText;
-		}
+		};
 	}
 
 	function tooltipFactory(tooltips) {
 		return function (d) {
 			var tipText = "";
 
-			if (tooltips != undefined) {
-				for (var i = 0; i < tooltips.length; i++) {
+			if (tooltips !== undefined) {
+				for (var i = 0; i < tooltips.length; i = i + 1) {
 					var value = tooltips[i].accessor(d);
-					if (tooltips[i].format != undefined) {
+					if (tooltips[i].format !== undefined) {
 						value = tooltips[i].format(value);
 					}
 					tipText += tooltips[i].label + ": " + value + '</br>';
@@ -92,13 +92,13 @@
 			}
 
 			return tipText;
-		}
+		};
 	}
 
 	function donut_defaultTooltip(labelAccessor, valueAccessor, percentageAccessor) {
 		return function (d) {
 			return labelAccessor(d) + ": " + valueAccessor(d) + " (" + percentageAccessor(d) + ")";
-		}
+		};
 	}
 
 	module.donut = function () {
@@ -115,7 +115,7 @@
 				}
 			};
 
-			var options = $.extend({}, defaults, options);
+			options = $.extend({}, defaults, options);
 
 			var width = w - options.margin.left - options.margin.right,
 				or = width / 2,
@@ -131,7 +131,7 @@
 			}, function (d) {
 				return intFormat(d.data.value);
 			}, function (d) {
-				return formatpercent(total != 0 ? d.data.value / total : 0.0);
+				return formatpercent(total !== 0 ? d.data.value / total : 0.0);
 			});
 
 			var chart = d3.select(target)
@@ -162,7 +162,7 @@
 
 				var pie = d3.layout.pie() //this will create arc data for us given a list of values
 					.value(function (d) {
-						return d.value > 0 ? Math.max(d.value, total * .015) : 0; // we want slices to appear if they have data, so we return a minimum of 1.5% of the overall total if the datapoint has a value > 0.
+						return d.value > 0 ? Math.max(d.value, total * 0.015) : 0; // we want slices to appear if they have data, so we return a minimum of 1.5% of the overall total if the datapoint has a value > 0.
 					}); //we must tell it out to access the value of each element in our data array
 
 				var arcs = vis.selectAll("g.slice") //this selects all <g> elements with class slice (there aren't any yet)
@@ -230,8 +230,8 @@
 					event.data.chart.attr("width", targetWidth);
 					event.data.chart.attr("height", Math.round(targetWidth / event.data.aspect));
 				}).trigger("resize");
-		}
-	}
+		};
+	};
 
 	module.histogram = function () {
 		var self = this;
@@ -242,7 +242,7 @@
 				x = self.xScale,
 				whiskerHeight = height / 2;
 
-			if (data.LIF != data.q1) // draw whisker
+			if (data.LIF !== data.q1) // draw whisker
 			{
 				boxplot.append("line")
 					.attr("class", "bar")
@@ -256,7 +256,7 @@
 					.attr("x1", x(data.LIF))
 					.attr("y1", height / 2)
 					.attr("x2", x(data.q1))
-					.attr("y2", height / 2)
+					.attr("y2", height / 2);
 			}
 
 			boxplot.append("rect")
@@ -272,7 +272,7 @@
 				.attr("x2", x(data.median))
 				.attr("y2", height);
 
-			if (data.UIF != data.q3) // draw whisker
+			if (data.UIF !== data.q3) // draw whisker
 			{
 				boxplot.append("line")
 					.attr("class", "bar")
@@ -286,9 +286,9 @@
 					.attr("x1", x(data.q3))
 					.attr("y1", height / 2)
 					.attr("x2", x(data.UIF))
-					.attr("y2", height / 2)
+					.attr("y2", height / 2);
 			}
-		}
+		};
 
 		self.render = function (data, target, w, h, options) {
 
@@ -307,7 +307,7 @@
 				boxplotHeight: 10
 			};
 
-			var options = $.extend({}, defaults, options);
+			options = $.extend({}, defaults, options);
 
 			// alocate the SVG container, only creating it if it doesn't exist using the selector
 			var chart;
@@ -327,25 +327,26 @@
 				.offset([-10, 0])
 				.html(function (d) {
 					return module.util.formatInteger(d.y);
-				})
+				});
 			chart.call(tip);
 
 			var xAxisLabelHeight = 0;
 			var yAxisLabelWidth = 0;
+			var bboxNode, bbox;
 
 			// apply labels (if specified) and offset margins accordingly
 			if (options.xLabel) {
 				var xAxisLabel = chart.append("g")
-					.attr("transform", "translate(" + w / 2 + "," + (h - options.margin.bottom) + ")")
+					.attr("transform", "translate(" + w / 2 + "," + (h - options.margin.bottom) + ")");
 
 				xAxisLabel.append("text")
 					.attr("class", "axislabel")
 					.style("text-anchor", "middle")
 					.text(options.xLabel);
 
-				var bboxNode = xAxisLabel.node();
+				bboxNode = xAxisLabel.node();
 				if (bboxNode) {
-					var bbox = bboxNode.getBBox();
+					bbox = bboxNode.getBBox();
 					if (bbox) {
 						xAxisLabelHeight = bbox.height;
 					}
@@ -364,9 +365,9 @@
 					.style("text-anchor", "middle")
 					.text(options.yLabel);
 
-				var bboxNode = yAxisLabel.node();
+				bboxNode = yAxisLabel.node();
 				if (bboxNode) {
-					var bbox = bboxNode.getBBox();
+					bbox = bboxNode.getBBox();
 					if (bbox) {
 						yAxisLabelWidth = 1.5 * bbox.width; // width is calculated as 1.5 * box height due to rotation anomolies that cause the y axis label to appear shifted.
 					}
@@ -408,11 +409,12 @@
 			var tempXAxis = chart.append("g").attr("class", "axis");
 			tempXAxis.call(xAxis);
 
+			var yAxisWidth, xAxisHeight, xAxisWidth;
 
 			if (tempXAxis.node() && tempXAxis.node().getBBox()) {
 				// update width & height based on temp xaxis dimension and remove
-				var xAxisHeight = Math.round(tempXAxis.node().getBBox().height);
-				var xAxisWidth = Math.round(tempXAxis.node().getBBox().width);
+				xAxisHeight = Math.round(tempXAxis.node().getBBox().height);
+				xAxisWidth = Math.round(tempXAxis.node().getBBox().width);
 				height = height - xAxisHeight;
 				width = width - Math.max(0, (xAxisWidth - width)); // trim width if xAxisWidth bleeds over the allocated width.
 				tempXAxis.remove();
@@ -424,7 +426,7 @@
 
 			if (tempYAxis.node() && tempYAxis.node().getBBox()) {
 				// update height based on temp xaxis dimension and remove
-				var yAxisWidth = Math.round(tempYAxis.node().getBBox().width);
+				yAxisWidth = Math.round(tempYAxis.node().getBBox().width);
 				width = width - yAxisWidth;
 				tempYAxis.remove();
 			}
@@ -452,12 +454,12 @@
 					return "translate(" + x(d.x) + "," + y(d.y) + ")";
 				})
 				.on('mouseover', tip.show)
-				.on('mouseout', tip.hide)
+				.on('mouseout', tip.hide);
 
 			bar.append("rect")
 				.attr("x", 1)
 				.attr("width", function (d) {
-					return Math.max((x(d.x + d.dx) - x(d.x) - 1), .5);
+					return Math.max((x(d.x + d.dx) - x(d.x) - 1), 0.5);
 				})
 				.attr("height", function (d) {
 					return height - y(d.y);
@@ -485,8 +487,8 @@
 						event.data.chart.attr("height", Math.round(targetWidth / event.data.aspect));
 					}).trigger("resize");
 			}
-		}
-	}
+		};
+	};
 
 	module.boxplot = function () {
 		this.render = function (data, target, w, h, options) {
@@ -501,7 +503,7 @@
 				tickPadding: 15
 			};
 
-			var options = $.extend({}, defaults, options);
+			options = $.extend({}, defaults, options);
 			var valueFormatter = module.util.formatSI(3);
 
 			var svg;
@@ -520,13 +522,14 @@
 				.html(function (d) {
 					var content = '<table class="boxplotValues">' + '<tr><td>Max:</td><td>' + valueFormatter(d.max) + '</td></tr>' + '<tr><td>P90:</td><td>' + valueFormatter(d.UIF) + '</td></tr>' + '<tr><td>P75:</td><td>' + valueFormatter(d.q3) + '</td></tr>' + '<tr><td>Median:</td><td>' + valueFormatter(d.median) + '</td></tr>' + '<tr><td>P25:</td><td>' + valueFormatter(d.q1) + '</td></tr>' + '<tr><td>P10:</td><td>' + valueFormatter(d.LIF) + '</td></tr>' + '<tr><td>Min:</td><td>' + valueFormatter(d.min) + '</td></tr>' + '</table>';
 					return content;
-				})
+				});
 			svg.call(tip);
 
+			var bbox;
 			// apply labels (if specified) and offset margins accordingly
 			if (options.xLabel) {
 				var xAxisLabel = svg.append("g")
-					.attr("transform", "translate(" + w / 2 + "," + (h - 5) + ")")
+					.attr("transform", "translate(" + w / 2 + "," + (h - 5) + ")");
 
 				xAxisLabel.append("text")
 					.attr("class", "axislabel")
@@ -534,7 +537,7 @@
 					.text(options.xLabel);
 
 				if (xAxisLabel.node()) {
-					var bbox = xAxisLabel.node().getBBox();
+					bbox = xAxisLabel.node().getBBox();
 					options.margin.bottom += bbox.height + 5;
 				}
 			}
@@ -552,7 +555,7 @@
 					.text(options.yLabel);
 
 				if (yAxisLabel.node()) {
-					var bbox = yAxisLabel.node().getBBox();
+					bbox = yAxisLabel.node().getBBox();
 					options.margin.left += bbox.width + 5;
 				}
 			}
@@ -595,20 +598,20 @@
 			// for each g element (containing the boxplot render surface), draw the whiskers, bars and rects
 			boxplots.each(function (d, i) {
 				var boxplot = d3.select(this);
-				if (d.LIF != d.q1) // draw whisker
+				if (d.LIF !== d.q1) // draw whisker
 				{
 					boxplot.append("line")
 						.attr("class", "bar")
 						.attr("x1", whiskerOffset)
 						.attr("y1", y(d.LIF))
 						.attr("x2", whiskerOffset + whiskerWidth)
-						.attr("y2", y(d.LIF))
+						.attr("y2", y(d.LIF));
 					boxplot.append("line")
 						.attr("class", "whisker")
 						.attr("x1", x.rangeBand() / 2)
 						.attr("y1", y(d.LIF))
 						.attr("x2", x.rangeBand() / 2)
-						.attr("y2", y(d.q1))
+						.attr("y2", y(d.q1));
 				}
 
 				boxplot.append("rect")
@@ -627,20 +630,20 @@
 					.attr("x2", boxOffset + boxWidth)
 					.attr("y2", y(d.median));
 
-				if (d.UIF != d.q3) // draw whisker
+				if (d.UIF !== d.q3) // draw whisker
 				{
 					boxplot.append("line")
 						.attr("class", "bar")
 						.attr("x1", whiskerOffset)
 						.attr("y1", y(d.UIF))
 						.attr("x2", x.rangeBand() - whiskerOffset)
-						.attr("y2", y(d.UIF))
+						.attr("y2", y(d.UIF));
 					boxplot.append("line")
 						.attr("class", "whisker")
 						.attr("x1", x.rangeBand() / 2)
 						.attr("y1", y(d.UIF))
 						.attr("x2", x.rangeBand() / 2)
-						.attr("y2", y(d.q3))
+						.attr("y2", y(d.q3));
 				}
 				// to do: add max/min indicators
 
@@ -683,8 +686,8 @@
 					event.data.chart.attr("height", Math.round(targetWidth / event.data.aspect));
 				}).trigger("resize");
 
-		}
-	}
+		};
+	};
 
 	module.barchart = function () {
 		this.render = function (data, target, w, h, options) {
@@ -697,14 +700,14 @@
 				showLabels: false
 			};
 
-			var options = $.extend({}, defaults, options);
+			options = $.extend({}, defaults, options);
 
 			var label = options.label;
 			var value = options.value;
 
 
 			var total = 0;
-			for (d = 0; d < data.length; d++) {
+			for (var d = 0; d < data.length; d = d + 1) {
 				total = total + data[d][value];
 			}
 
@@ -757,7 +760,7 @@
 				.selectAll(".tick text")
 				.style("text-anchor", options.textAnchor)
 				.attr("transform", function (d) {
-					return "rotate(" + options.rotate + ")"
+					return "rotate(" + options.rotate + ")";
 				});
 
 			if (options.wrap) {
@@ -780,7 +783,7 @@
 					return height - y(d[value]);
 				})
 				.attr("title", function (d) {
-					temp_title = d[label] + ": " + commaseparated(d[value], ",")
+					var temp_title = d[label] + ": " + commaseparated(d[value], ",");
 					if (total > 0) {
 						temp_title = temp_title + ' (' + formatpercent(d[value] / total) + ')';
 					} else {
@@ -820,8 +823,8 @@
 					event.data.chart.attr("width", targetWidth);
 					event.data.chart.attr("height", Math.round(targetWidth / event.data.aspect));
 				}).trigger("resize");
-		}
-	}
+		};
+	};
 
 	module.areachart = function () {
 		this.render = function (data, target, w, h, options) {
@@ -835,7 +838,7 @@
 				xFormat: d3.format(',.0f'),
 				yFormat: d3.format('s')
 			};
-			var options = $.extend({}, defaults, options);
+			options = $.extend({}, defaults, options);
 
 			var width = w - options.margin.left - options.margin.right,
 				height = h - options.margin.top - options.margin.bottom;
@@ -895,7 +898,7 @@
 
 			vis.append("g")
 				.attr("class", "y axis")
-				.call(yAxis)
+				.call(yAxis);
 
 			$(window).on("resize", {
 					container: $(target),
@@ -907,8 +910,8 @@
 					event.data.chart.attr("width", targetWidth);
 					event.data.chart.attr("height", Math.round(targetWidth / event.data.aspect));
 				}).trigger("resize");
-		}
-	}
+		};
+	};
 
 
 	/* NOT IMPLEMENTED */
@@ -988,7 +991,7 @@
 				labelIndexDate: false,
 				colorBasedOnIndex: false
 			};
-			var options = $.extend({}, defaults, options);
+			options = $.extend({}, defaults, options);
 
 			var tooltipBuilder = line_defaultTooltip(options.xLabel || "x", options.xFormat, function (d) {
 					return d[options.xValue];
@@ -1020,7 +1023,7 @@
 							values: data
 						}];
 				}
-				chart.data(data)
+				chart.data(data);
 
 				var focusTip = d3.tip()
 					.attr('class', 'd3-tip')
@@ -1030,18 +1033,18 @@
 
 				var xAxisLabelHeight = 0;
 				var yAxisLabelWidth = 0;
-
+				var bbox;
 				// apply labels (if specified) and offset margins accordingly
 				if (options.xLabel) {
 					var xAxisLabel = chart.append("g")
-						.attr("transform", "translate(" + w / 2 + "," + (h - options.margin.bottom) + ")")
+						.attr("transform", "translate(" + w / 2 + "," + (h - options.margin.bottom) + ")");
 
 					xAxisLabel.append("text")
 						.attr("class", "axislabel")
 						.style("text-anchor", "middle")
 						.text(options.xLabel);
 
-					var bbox = xAxisLabel.node().getBBox();
+					bbox = xAxisLabel.node().getBBox();
 					xAxisLabelHeight += bbox.height;
 				}
 
@@ -1057,7 +1060,7 @@
 						.style("text-anchor", "middle")
 						.text(options.yLabel);
 
-					var bbox = yAxisLabel.node().getBBox();
+					bbox = yAxisLabel.node().getBBox();
 					yAxisLabelWidth = 1.5 * bbox.width; // width is calculated as 1.5 * box height due to rotation anomolies that cause the y axis label to appear shifted.
 				}
 
@@ -1082,7 +1085,7 @@
 							.text(d.name);
 						maxWidth = Math.max(legendItem.node().getBBox().width + 12, maxWidth);
 					});
-					legend.attr("transform", "translate(" + (w - options.margin.right - maxWidth) + ",0)")
+					legend.attr("transform", "translate(" + (w - options.margin.right - maxWidth) + ",0)");
 					legendWidth += maxWidth + 5;
 				}
 
@@ -1136,7 +1139,6 @@
 					.ticks(4)
 					.orient("left");
 
-				// create temporary x axis
 				var tempXAxis = chart.append("g").attr("class", "axis");
 				tempXAxis.call(xAxis);
 				var xAxisHeight = Math.round(tempXAxis.node().getBBox().height);
@@ -1145,9 +1147,6 @@
 				width = width - Math.max(0, (xAxisWidth - width)); // trim width if xAxisWidth bleeds over the allocated width.
 				tempXAxis.remove();
 
-				// create temporary y axis
-
-				// create temporary y axis
 				var tempYAxis = chart.append("g").attr("class", "axis");
 				tempYAxis.call(yAxis);
 
@@ -1185,7 +1184,7 @@
 				var series = vis.selectAll(".series")
 					.data(data)
 					.enter()
-					.append("g")
+					.append("g");
 
 				var seriesLines = series.append("path")
 					.attr("class", "line")
@@ -1193,16 +1192,13 @@
 						return line(d.values.sort(function (a, b) {
 							return d3.ascending(a[options.xValue], b[options.xValue]);
 						}));
-					})
+					});
 
-				if (options.colorBasedOnIndex) {
-
-				} else if (options.colors) {
+				if (options.colors) {
 					seriesLines.style("stroke", function (d) {
 						return options.colors(d.name);
-					})
+					});
 				}
-
 
 				if (options.showSeriesLabel) {
 					series.append("text")
@@ -1259,7 +1255,7 @@
 
 				vis.append("g")
 					.attr("class", "y axis")
-					.call(yAxis)
+					.call(yAxis);
 
 
 				if (options.labelIndexDate) {
@@ -1295,7 +1291,7 @@
 			setTimeout(function () {
 				$(window).trigger('resize');
 			}, 0);
-		}
+		};
 	};
 
 	module.scatterplot = function () {
@@ -1321,21 +1317,7 @@
 				colorBasedOnIndex: false,
 				showXAxis: true
 			};
-			var options = $.extend({}, defaults, options);
-
-			/*
-				// old school tooltip logic
-				options.xLabel || "x", options.xFormat, function (d) {
-									return d[options.xValue];
-								},
-								options.yLabel || "y", options.yFormat,
-								function (d) {
-									return d[options.yValue];
-								},
-								function (d) {
-									return d[options.seriesName];
-								},
-			*/
+			options = $.extend({}, defaults, options);
 
 			var tooltipBuilder = tooltipFactory(options.tooltips);
 
@@ -1358,7 +1340,7 @@
 							values: data
 						}];
 				}
-				chart.data(data)
+				chart.data(data);
 
 				var focusTip = d3.tip()
 					.attr('class', 'd3-tip')
@@ -1368,18 +1350,19 @@
 
 				var xAxisLabelHeight = 0;
 				var yAxisLabelWidth = 0;
+				var bbox;
 
 				// apply labels (if specified) and offset margins accordingly
 				if (options.xLabel) {
 					var xAxisLabel = chart.append("g")
-						.attr("transform", "translate(" + w / 2 + "," + (h - options.margin.bottom) + ")")
+						.attr("transform", "translate(" + w / 2 + "," + (h - options.margin.bottom) + ")");
 
 					xAxisLabel.append("text")
 						.attr("class", "axislabel")
 						.style("text-anchor", "middle")
 						.text(options.xLabel);
 
-					var bbox = xAxisLabel.node().getBBox();
+					bbox = xAxisLabel.node().getBBox();
 					xAxisLabelHeight += bbox.height;
 				}
 
@@ -1395,7 +1378,7 @@
 						.style("text-anchor", "middle")
 						.text(options.yLabel);
 
-					var bbox = yAxisLabel.node().getBBox();
+					bbox = yAxisLabel.node().getBBox();
 					yAxisLabelWidth = 1.5 * bbox.width; // width is calculated as 1.5 * box height due to rotation anomolies that cause the y axis label to appear shifted.
 				}
 
@@ -1420,7 +1403,7 @@
 							.text(d.name);
 						maxWidth = Math.max(legendItem.node().getBBox().width + 12, maxWidth);
 					});
-					legend.attr("transform", "translate(" + (w - options.margin.right - maxWidth) + ",0)")
+					legend.attr("transform", "translate(" + (w - options.margin.right - maxWidth) + ",0)");
 					legendWidth += maxWidth + 5;
 				}
 
@@ -1587,7 +1570,7 @@
 
 				vis.append("g")
 					.attr("class", "y axis")
-					.call(yAxis)
+					.call(yAxis);
 
 
 				if (options.labelIndexDate) {
@@ -1623,51 +1606,77 @@
 			setTimeout(function () {
 				$(window).trigger('resize');
 			}, 0);
-		}
+		};
 	};
 
 	function nodata(chart, w, h) {
+		"use strict";
 		chart.html('');
 		chart.append("text")
 			.attr("transform", "translate(" + (w / 2) + "," + (h / 2) + ")")
 			.style("text-anchor", "middle")
 			.text("No Data");
 	}
+
 	function dataToSeries(data, seriesProp) {
-		//if (dataInSeries(data)) throw new Error("didn't expect data in series");
-		if (!seriesProp) return [{ name: '', values: data }];
+		"use strict";
+		if (!seriesProp) {
+			return [{
+				name: '',
+				values: data
+		}];
+		}
+
 		return (_.chain(data)
-							.groupBy(seriesProp.accessor)
-							.map((v, k) => ({name: k, values: v}))
-							// i don't think sorting is working
-							//.sort(series => series.values = _.sortBy(series.values, seriesProp.sortBy))
-							.value());
+			.groupBy(seriesProp.accessor)
+			.map((v, k) => ({
+				name: k,
+				values: v
+			}))
+			// i don't think sorting is working
+			//.sort(series => series.values = _.sortBy(series.values, seriesProp.sortBy))
+			.value());
 	}
+
 	function dataFromSeries(series) {
+		"use strict";
 		return (_.chain(series)
-							.map('values')
-							.flatten()
-							.value());
+			.map('values')
+			.flatten()
+			.value());
 	}
-	/*
-	function dataInSeries(data) {
-		return _.chain(data).map(_.keys).flatten().uniq().eq(['name','values']).value();
-	}
-	*/
+
 	module.zoomScatter = function (opts, jqEventSpace) {
+		"use strict";
+
 		this.defaultOptions = {
-			availableDatapointBindings: 
-				['d', 'i', 'j', 'data', 'series', 'allFields', 'thisField', 'layout'],
+			availableDatapointBindings: ['d', 'i', 'j', 'data', 'series', 'allFields', 'thisField', 'layout'],
 			chart: {
 				cssClass: "lineplot",
 				labelIndexDate: false,
 				colorBasedOnIndex: false,
 			},
 			layout: {
-				top: { margin: { size: 5}, },
-				bottom: { margin: { size: 5}, },
-				left: { margin: { size: 5}, },
-				right: { margin: { size: 5}, },
+				top: {
+					margin: {
+						size: 5
+					},
+				},
+				bottom: {
+					margin: {
+						size: 5
+					},
+				},
+				left: {
+					margin: {
+						size: 5
+					},
+				},
+				right: {
+					margin: {
+						size: 5
+					},
+				},
 			},
 			x: {
 				/* lots of different scale requirements:
@@ -1690,152 +1699,151 @@
 						main range, inset range
 						inset focus = zoom domain
 					*/
-						requiredOptions: ['value','label'],
-						showAxis: true,
-						showLabel: true,
-						format: module.util.formatSI(3),
-						ticks: 10,
-						needsLabel: true,
-						needsValueFunc: true,
-						//needsScale: true, // don't use automatic stuff, too complicated here
-						/* annoying: inline getter won't survive merging into default opts
-								so have to let Field constructor make them enumerable with
-								Object.defineProperty
-						get scale() {
-							return this._zoomScale || this._fullScale || d3.scale.linear();
-						},
-						*/
-						getters: {
-							scale: function() {
-								return this._zoomScale || this._fullScale || d3.scale.linear();
-							},
-						},
-						isField: true,
-						_accessors: {
-							setZoomScale: {
-								func: (thisField, domain) => {
-									if (!domain) {
-										delete thisField._zoomScale;
-										return thisField.scale;
-									}
-									thisField._zoomScale = thisField._fullScale.copy();
-									thisField._zoomScale.domain(domain);
-								},
-								posParams: ['thisField'],
-								accessorOrder: 5, // depends on fullScale
-							},
-							fullScale: {
-								func: (thisField, data, layout) => {
-									thisField._fullScale = 
-										d3.scale.linear()
-											.domain(d3.extent(data.map(thisField.accessor)))
-											.range([0, layout.svgWidth()])
-								},
-								posParams: ['thisField','data','layout'],
-								runOnGenerate: true,
-								accessorOrder: 2,
+				requiredOptions: ['value', 'label'],
+				showAxis: true,
+				showLabel: true,
+				format: module.util.formatSI(3),
+				ticks: 10,
+				needsLabel: true,
+				needsValueFunc: true,
+				//needsScale: true, // don't use automatic stuff, too complicated here
+				/* annoying: inline getter won't survive merging into default opts
+						so have to let Field constructor make them enumerable with
+						Object.defineProperty
+				get scale() {
+					return this._zoomScale || this._fullScale || d3.scale.linear();
+				},
+				*/
+				getters: {
+					scale: function () {
+						return this._zoomScale || this._fullScale || d3.scale.linear();
+					},
+				},
+				isField: true,
+				_accessors: {
+					setZoomScale: {
+						func: (thisField, domain) => {
+							if (!domain) {
+								delete thisField._zoomScale;
+								return thisField.scale;
 							}
+							thisField._zoomScale = thisField._fullScale.copy();
+							thisField._zoomScale.domain(domain);
 						},
-						//get zoomScale() { return this._zoomScale || this.scale; },
+						posParams: ['thisField'],
+						accessorOrder: 5, // depends on fullScale
+					},
+					fullScale: {
+						func: (thisField, data, layout) => {
+							thisField._fullScale =
+								d3.scale.linear()
+								.domain(d3.extent(data.map(thisField.accessor)))
+								.range([0, layout.svgWidth()]);
+						},
+						posParams: ['thisField', 'data', 'layout'],
+						runOnGenerate: true,
+						accessorOrder: 2,
+					}
+				},
+				//get zoomScale() { return this._zoomScale || this.scale; },
 			},
 			y: {
-						requiredOptions: ['value'],
-						showAxis: true,
-						showLabel: true,
-						format: module.util.formatSI(3),
-						ticks: 4,
-						scale: d3.scale.linear(),
-						needsLabel: true,
-						needsValueFunc: true,
-						isField: true,
-						getters: {
-							scale: function() {
-								return this._zoomScale || this._fullScale || d3.scale.linear();
-							},
-						},
-						isField: true,
-						_accessors: {
-							setZoomScale: {
-								func: (thisField, domain) => {
-									if (!domain) {
-										delete thisField._zoomScale;
-										return thisField.scale;
-									}
-									thisField._zoomScale = thisField._fullScale.copy();
-									thisField._zoomScale.domain(domain);
-								},
-								posParams: ['thisField'],
-								accessorOrder: 5, // depends on fullScale
-							},
-							fullScale: {
-								func: (thisField, data, layout) => {
-									thisField._fullScale = 
-										d3.scale.linear()
-											.domain(d3.extent(data.map(thisField.accessor)))
-											.range([0, layout.svgWidth()])
-								},
-								posParams: ['thisField','data','layout'],
-								runOnGenerate: true,
-								accessorOrder: 2,
+				requiredOptions: ['value'],
+				showAxis: true,
+				showLabel: true,
+				format: module.util.formatSI(3),
+				ticks: 4,
+				scale: d3.scale.linear(),
+				needsLabel: true,
+				needsValueFunc: true,
+				isField: true,
+				getters: {
+					scale: function () {
+						return this._zoomScale || this._fullScale || d3.scale.linear();
+					},
+				},
+				_accessors: {
+					setZoomScale: {
+						func: (thisField, domain) => {
+							if (!domain) {
+								delete thisField._zoomScale;
+								return thisField.scale;
 							}
+							thisField._zoomScale = thisField._fullScale.copy();
+							thisField._zoomScale.domain(domain);
 						},
+						posParams: ['thisField'],
+						accessorOrder: 5, // depends on fullScale
+					},
+					fullScale: {
+						func: (thisField, data, layout) => {
+							thisField._fullScale =
+								d3.scale.linear()
+								.domain(d3.extent(data.map(thisField.accessor)))
+								.range([0, layout.svgWidth()]);
+						},
+						posParams: ['thisField', 'data', 'layout'],
+						runOnGenerate: true,
+						accessorOrder: 2,
+					}
+				},
 			},
 			size: {
-						scale: d3.scale.linear(),
-						defaultValue: ()=>1,
-						needsLabel: true,
-						needsValueFunc: true,
-						needsScale: true,
-						isField: true,
-						_accessors: {
-							range: {
-								func: () => [.5, 8],
-							},
-						}
+				scale: d3.scale.linear(),
+				defaultValue: () => 1,
+				needsLabel: true,
+				needsValueFunc: true,
+				needsScale: true,
+				isField: true,
+				_accessors: {
+					range: {
+						func: () => [0.5, 8],
+					},
+				}
 			},
 			color: {
-						//scale: null,
-						//rangeFunc: (layout, prop) => prop.scale.range(), // does this belong here?
-						needsLabel: true,
-						needsValueFunc: true,
-						defaultValue: () => '#003142',
-						needsScale: true,
-						isField: true,
-						scale: d3.scale.category10(),
-						_accessors: {
-							range: {
-								func: (thisField) => thisField.scale.range(),
-								posParams: ['thisField'],
-							},
-						}
+				//scale: null,
+				//rangeFunc: (layout, prop) => prop.scale.range(), // does this belong here?
+				needsLabel: true,
+				needsValueFunc: true,
+				defaultValue: () => '#003142',
+				needsScale: true,
+				isField: true,
+				scale: d3.scale.category10(),
+				_accessors: {
+					range: {
+						func: (thisField) => thisField.scale.range(),
+						posParams: ['thisField'],
+					},
+				}
 			},
 			shape: {
-						value: 0,
-						defaultValue: () => 'circle',
-						scale: d3.scale.ordinal(),
-						needsLabel: true,
-						needsValueFunc: true,
-						needsScale: true,
-						isField: true,
-						_accessors: {
-							range: {
-								func: () => util.shapePath("types"),
-							},
-						}
+				value: 0,
+				defaultValue: () => 'circle',
+				scale: d3.scale.ordinal(),
+				needsLabel: true,
+				needsValueFunc: true,
+				needsScale: true,
+				isField: true,
+				_accessors: {
+					range: {
+						func: () => util.shapePath("types"),
+					},
+				}
 			},
 			legend: {
-						show: true,
+				show: true,
 			},
 			series: {
-						//value: function(d) { return this.parentNode.__data__.name; },
-						defaultValue: ()=>null,
-						//value: d=>1,
-						showLabel: false,
-						//showSeriesLabel: false,
-						//needsLabel: true,
-						needsLabel: false,
-						needsValueFunc: true,
-						isField: true,
+				//value: function(d) { return this.parentNode.__data__.name; },
+				defaultValue: () => null,
+				//value: d=>1,
+				showLabel: false,
+				//showSeriesLabel: false,
+				//needsLabel: true,
+				needsLabel: false,
+				needsValueFunc: true,
+				isField: true,
 			},
 			inset: {
 				name: 'inset',
@@ -1844,7 +1852,7 @@
 			//sizeScale: d3.scale.linear(), //d3.scale.pow().exponent(2),
 			//showXAxis: true
 		};
-		this.chartSetup = _.once(function(target, w, h, mergedOpts, fields, recId) {
+		this.chartSetup = _.once(function (target, w, h, mergedOpts, fields, recId) {
 			var cp = this.cp = mergedOpts;
 			cp.chartObj = this;
 			this.fields = fields;
@@ -1853,7 +1861,7 @@
 			}
 			this.recId = recId;
 			this.divEl = new util.ResizableSvgContainer(target, [null], w, h, ['zoom-scatter']);
-			this.svgEl = this.divEl.child('svg')
+			this.svgEl = this.divEl.child('svg');
 			var layout = this.layout = new util.SvgLayout(w, h, cp.layout);
 			if (cp.y.showLabel) {
 				cp.y.labelEl = new util.ChartLabelLeft(this.svgEl, layout, cp.y);
@@ -1872,10 +1880,10 @@
 			cp.chart.chart = new util.ChartChart(this.svgEl, layout, cp.chart, [null]);
 
 			cp.inset.chart = new module.inset(cp, jqEventSpace, this.recId);
-												// no current ability to specify override inset opts
+			// no current ability to specify override inset opts
 			cp.inset.d3El = new util.ChartInset(this.svgEl, layout, cp.inset);
 		});
-		this.updateData = function(data) {
+		this.updateData = function (data) {
 			var series = dataToSeries(data, this.cp.series);
 
 			this.fields.forEach(field => {
@@ -1886,12 +1894,18 @@
 			this.layout.positionZones();
 
 			this.cp.chart && this.cp.chart.chart.gEl
-					.child('lines')
-						.run({data: cp.lines, cp: this.cp});
+				.child('lines')
+				.run({
+					data: cp.lines,
+					cp: this.cp
+				});
 			this.filteredSeries = series; // SUPERKLUDGE!!!
 			this.cp.chart && this.cp.chart.chart.gEl
-					.child('series')
-						.run({data: series, cp: this.cp});
+				.child('series')
+				.run({
+					data: series,
+					cp: this.cp
+				});
 			/*
 			this.cp.chart && this.cp.chart.chart.gEl
 					.child('series')
@@ -1916,10 +1930,12 @@
 				this.cp.inset.d3El.gEl.as('d3').html('');
 			}
 			*/
-		}
+		};
 		this.render = function (data, target, w, h, cp, recId) {
 			var self = this;
-			if (!data.length) return;
+			if (!data.length) {
+				return;
+			}
 			DEBUG && (window.cp = cp);
 			var series = dataToSeries(data, cp.series);
 			this.data = data;
@@ -1929,10 +1945,12 @@
 				return;
 			}
 			this.fields.forEach(field => {
-				field.bindParams({data, series, layout:this.layout});
+				field.bindParams({
+					data, series, layout: this.layout
+				});
 			});
 			var tooltipBuilder = util.tooltipBuilderForFields(this.fields, data, series);
-			
+
 			var chart = cp.chart.chart.gEl.as('d3');
 
 			/*
@@ -1966,35 +1984,32 @@
 			this.layout.positionZones();
 
 			if (cp.lines) {
-				var lines = cp.chart.chart.gEl.addChild('lines',
-					{ tag: 'line',
-						classes:['refline','main-chart'],
-						data: cp.lines,
-						updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
-							//var {delay=0, duration=0, transition, cp=self.cp} = opts;
-							selection
-								.attr('x1', function(lineOpts) {
-									return cp.x.scale(lineOpts.x1(cp.x.scale.domain(), cp.y.scale.domain()));
-								})
-								.attr('x2', function(lineOpts) {
-									return cp.x.scale(lineOpts.x2(cp.x.scale.domain(), cp.y.scale.domain()));
-								})
-								.attr('y1', function(lineOpts) {
-									return cp.y.scale(lineOpts.y1(cp.x.scale.domain(), cp.y.scale.domain()));
-								})
-								.attr('y2', function(lineOpts) {
-									return cp.y.scale(lineOpts.y2(cp.x.scale.domain(), cp.y.scale.domain()));
-								})
-								.each(function(lineOpts) {
-									_.each(lineOpts.classes, 
-										(val, key) => d3.select(this).classed(key,val));
-									_.each(lineOpts.attrs, 
-										(val, key) => d3.select(this).attr(key,val));
-									_.each(lineOpts.styles, 
-										(val, key) => d3.select(this).style(key,val));
-								})
-						},
-					});
+				var lines = cp.chart.chart.gEl.addChild('lines', {
+					tag: 'line',
+					classes: ['refline', 'main-chart'],
+					data: cp.lines,
+					updateCb: function (selection, cbParams = {}, passParams = {}, thisD3El) {
+						//var {delay=0, duration=0, transition, cp=self.cp} = opts;
+						selection
+							.attr('x1', function (lineOpts) {
+								return cp.x.scale(lineOpts.x1(cp.x.scale.domain(), cp.y.scale.domain()));
+							})
+							.attr('x2', function (lineOpts) {
+								return cp.x.scale(lineOpts.x2(cp.x.scale.domain(), cp.y.scale.domain()));
+							})
+							.attr('y1', function (lineOpts) {
+								return cp.y.scale(lineOpts.y1(cp.x.scale.domain(), cp.y.scale.domain()));
+							})
+							.attr('y2', function (lineOpts) {
+								return cp.y.scale(lineOpts.y2(cp.x.scale.domain(), cp.y.scale.domain()));
+							})
+							.each(function (lineOpts) {
+								_.each(lineOpts.classes, (val, key) => d3.select(this).classed(key, val));
+								_.each(lineOpts.attrs, (val, key) => d3.select(this).attr(key, val));
+								_.each(lineOpts.styles, (val, key) => d3.select(this).style(key, val));
+							});
+					},
+				});
 			}
 
 			// brush stuff needs to go before dots so tooltips will work
@@ -2004,16 +2019,16 @@
 			var brush = d3.svg.brush()
 				.x(cp.x.scale)
 				.y(cp.y.scale)
-				.on('brushstart', function() {
+				.on('brushstart', function () {
 					$('.extent').show();
 					$('.resize').show();
 				});
 
-			var brushEl = cp.chart.chart.gEl.addChild('brush',
-																	{ tag: 'g',
-																		classes:['brush'],
-																		data: [null],
-																	});
+			var brushEl = cp.chart.chart.gEl.addChild('brush', {
+				tag: 'g',
+				classes: ['brush'],
+				data: [null],
+			});
 			brushEl.as('d3').call(brush);
 
 			brush
@@ -2025,151 +2040,135 @@
 					$('.extent').hide();
 					$('.resize').hide();
 
-					var [[x1,y1],[x2,y2]] = brush.extent();
-					$(jqEventSpace).trigger('brush', [{empty:brush.empty(), x1,x2,y1,y2}]);
+					var [[x1, y1], [x2, y2]] = brush.extent();
+					$(jqEventSpace).trigger('brush', [{
+						empty: brush.empty(),
+						x1,
+						x2,
+						y1,
+						y2
+					}]);
 					brush.x(cp.x.scale).y(cp.y.scale);
-					return;
 
+					/*
 					if (brush.empty()) {
-						//if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
 						cp.x.scale.domain(orig_x_domain);
 						cp.y.scale.domain(orig_y_domain);
 					} else {
-						cp.x.scale.domain([x1,x2]);
-						cp.y.scale.domain([y1,y2]);
-						//brushEl.as('d3').call(brush.move, null);
+						cp.x.scale.domain([x1, x2]);
+						cp.y.scale.domain([y1, y2]);
 					}
 
-					//cp.x.axisEl.gEl.as('d3').transition().duration(750).call(cp.x.axisEl.axis);
-					//cp.y.axisEl.gEl.as('d3').transition().duration(750).call(cp.y.axisEl.axis);
 					cp.x.axisEl.gEl.as('d3').call(cp.x.axisEl.axis);
 					cp.y.axisEl.gEl.as('d3').call(cp.y.axisEl.axis);
 
 					seriesGs.as('d3')
 						.selectAll(".dot")
-						/*
 						.transition()
 						.duration(750)
-						*/
 						.attr("transform", function (d) {
 							var xVal = cp.x.scale(cp.x.accessor(d));
 							var yVal = cp.y.scale(cp.y.accessor(d));
 							return "translate(" + xVal + "," + yVal + ")";
 						});
-
+					*/
 				});
-
 
 			var focusTip = d3.tip()
 				.attr('class', 'd3-tip')
 				.offset([-10, 0])
 				.html(tooltipBuilder);
-				//.html(cp.tooltip.builder);
+			//.html(cp.tooltip.builder);
 			this.svgEl.as("d3").call(focusTip);
 
 			var seriesGs = cp.chart.chart.gEl
-												.addChild('series',
-																	{ tag: 'g',
-																		classes:['series','main-chart'],
-																		//data: [],
-																		data: series,
-																		dataKey: d=>d.name,
-																	});
-			seriesGs.addChild('dots',
-									{tag: 'path',
-										data: function(d3el) {
-											return (d3el.parentD3El.selectAllJoin(self.filteredSeries)
-																.selectAll([d3el.tag].concat(d3el.classes).join('.'))
-																.data(d=>d.values, d=>self.recId(d)));
-										},
-										classes: ['dot','main-chart'],
-										enterCb: function(selection, cbParams={}, passParams={}, thisD3El) {
-											//var {delay=0, duration=0, transition, cp=self.cp} = opts;
-											//console.log('adding with', opts);
+				.addChild('series', {
+					tag: 'g',
+					classes: ['series', 'main-chart'],
+					//data: [],
+					data: series,
+					dataKey: d => d.name,
+				});
+			seriesGs.addChild('dots', {
+				tag: 'path',
+				data: function (d3el) {
+					return (d3el.parentD3El.selectAllJoin(self.filteredSeries)
+						.selectAll([d3el.tag].concat(d3el.classes).join('.'))
+						.data(d => d.values, d => self.recId(d)));
+				},
+				classes: ['dot', 'main-chart'],
+				enterCb: function (selection, cbParams = {}, passParams = {}, thisD3El) {
+					//var {delay=0, duration=0, transition, cp=self.cp} = opts;
+					//console.log('adding with', opts);
 
 
-											/*
-											 * don't have a way to pass transitions through enter/exit/update
-											 * should i?
-											 * (whole thing should be simplified)
-											if (transition)
-												selection = selection.transition(transition);
-											else if (delay || duration)
-												selection = selection.transition().delay(delay).duration(duration)
-											selection
-												.transition()
-												.delay(delay).duration(duration)
-											*/
+					/*
+					 * don't have a way to pass transitions through enter/exit/update
+					 * should i?
+					 * (whole thing should be simplified)
+					if (transition)
+						selection = selection.transition(transition);
+					else if (delay || duration)
+						selection = selection.transition().delay(delay).duration(duration)
+					selection
+						.transition()
+						.delay(delay).duration(duration)
+					*/
 
-											selection
-												.on('mouseover', focusTip.show)
-												.on('mouseout', focusTip.hide)
-											//selection
-												//.transition(trans)
-												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
-													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessor(d)),
-																		xVal, // 0, //options.xValue(d),
-																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessor(d)));
-												})
-												.style("stroke", function (d) {
-													// calling with this so default can reach up to parent
-													// for series name
-													//return cp.color.scale(cp.series.value.call(this, d));
-													return cp.color.scale(cp.color.accessor(d));
-												})
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
-													//return `translate(${xVal},${yVal}) scale(1,1)`;
-													return "translate(" + xVal + "," + yVal + ")";
-												})
-										},
-										updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
-											//var {delay=0, duration=0, transition, cp=self.cp} = opts;
-											//console.log('updating with', opts);
+					selection
+						.on('mouseover', focusTip.show)
+						.on('mouseout', focusTip.hide)
+						//selection
+						//.transition(trans)
+						.attr("d", function (d) {
+							var xVal = 0; //cp.x.scale(cp.x.accessor(d));
+							var yVal = 0; //cp.y.scale(cp.y.accessor(d));
+							return util.shapePath(
+								cp.shape.scale(cp.shape.accessor(d)),
+								xVal, // 0, //options.xValue(d),
+								yVal, // 0, //options.yValue(d),
+								cp.size.scale(cp.size.accessor(d)));
+						})
+						.style("stroke", function (d) {
+							// calling with this so default can reach up to parent
+							// for series name
+							//return cp.color.scale(cp.series.value.call(this, d));
+							return cp.color.scale(cp.color.accessor(d));
+						})
+						.attr("transform", function (d) {
+							var xVal = cp.x.scale(cp.x.accessor(d));
+							var yVal = cp.y.scale(cp.y.accessor(d));
+							//return `translate(${xVal},${yVal}) scale(1,1)`;
+							return "translate(" + xVal + "," + yVal + ")";
+						});
+				},
+				updateCb: function (selection, cbParams = {}, passParams = {}, thisD3El) {
+					cp.x.axisEl.gEl.as('d3').call(cp.x.axisEl.axis);
+					cp.y.axisEl.gEl.as('d3').call(cp.y.axisEl.axis);
 
-											//cp.x.axisEl.gEl.as('d3').transition().duration(duration).call(cp.x.axisEl.axis);
-											//cp.y.axisEl.gEl.as('d3').transition().duration(duration).call(cp.y.axisEl.axis);
-											cp.x.axisEl.gEl.as('d3').call(cp.x.axisEl.axis);
-											cp.y.axisEl.gEl.as('d3').call(cp.y.axisEl.axis);
-
-											selection
-												//.selectAll(".dot")
-												//.transition()
-												//.delay(delay)
-												//.duration(duration)
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
-													return "translate(" + xVal + "," + yVal + ")";
-												});
-										},
-										exitCb: function(selection, cbParams={}, passParams={}, thisD3El) {
-											//var {delay=0, duration=0, transition} = transitionOpts;
-											selection
-												//.transition()
-												//.delay(delay)
-												//.duration(duration)
-												.style("opacity", 0)
-												.remove()
-										},
-									}
-									//,{ delay: 0, duration: 1000, }
-								);
+					selection
+					//.selectAll(".dot")
+					//.transition()
+					//.delay(delay)
+					//.duration(duration)
+						.attr("transform", function (d) {
+						var xVal = cp.x.scale(cp.x.accessor(d));
+						var yVal = cp.y.scale(cp.y.accessor(d));
+						return "translate(" + xVal + "," + yVal + ")";
+					});
+				},
+				exitCb: function (selection, cbParams = {}, passParams = {}, thisD3El) {
+					//var {delay=0, duration=0, transition} = transitionOpts;
+					selection
+					//.transition()
+					//.delay(delay)
+					//.duration(duration)
+						.style("opacity", 0)
+						.remove();
+				},
+			});
 
 			/*
-			series = dataToSeries(data.slice(0,500), cp.series);
-			cp.chart.chart.gEl
-					.child('series')
-						.run({data: series, delay: 1500, duration: 2000});
-			*/
-
-			return;
-
 			if (cp.series.showLabel) {
 				series.append("text")
 					.datum(function (d) {
@@ -2197,15 +2196,15 @@
 					.attr("width", 1)
 					.attr("height", this.layout.svgHeight());
 			}
-		}
+			*/
+		};
 	};
+
 	module.inset = function (parentOpts, jqEventSpace, recId) {
 		this.recId = recId;
 		this.cp = {
-			availableDatapointBindings: 
-				['d', 'i', 'j', 'data', 'series', 'allFields', 'layout','inset'],
-			chart: {
-			},
+			availableDatapointBindings: ['d', 'i', 'j', 'data', 'series', 'allFields', 'layout', 'inset'],
+			chart: {},
 			/*
 			layout: {
 				top: { margin: { size: 0}, },
@@ -2215,217 +2214,228 @@
 			},
 			*/
 			x: {
-						requiredOptions: ['value'],
-						value: (d,i,j) => parentOpts.x.accessor(d,i,j),
-						//x and y are weird, not sure right settings
-						//proxyFor: parentOpts.size, 
-						//bindSeparately: false,
-						getters: {
-							scale: function() {
-								return this._scale || d3.scale.linear();
-							},
+				requiredOptions: ['value'],
+				value: (d, i, j) => parentOpts.x.accessor(d, i, j),
+				//x and y are weird, not sure right settings
+				//proxyFor: parentOpts.size, 
+				//bindSeparately: false,
+				getters: {
+					scale: function () {
+						return this._scale || d3.scale.linear();
+					},
+				},
+				isField: true,
+				_accessors: {
+					makeScale: {
+						func: (thisField, data, layout, inset) => {
+							thisField._scale =
+								d3.scale.linear()
+								.domain(parentOpts.x._fullScale.domain())
+								.range([0, inset.d3El.w(layout)]);
 						},
-						isField: true,
-						_accessors: {
-							makeScale: {
-								func: (thisField, data, layout, inset) => {
-									thisField._scale = 
-										d3.scale.linear()
-											.domain(parentOpts.x._fullScale.domain())
-											.range([0, inset.d3El.w(layout)])
-								},
-								posParams: ['thisField','data','layout','inset'],
-								runOnGenerate: true,
-							}
-						},
+						posParams: ['thisField', 'data', 'layout', 'inset'],
+						runOnGenerate: true,
+					}
+				},
 			},
 			y: {
-						requiredOptions: ['value'],
-						value: (d,i,j) => parentOpts.y.accessor(d,i,j),
-						//x and y are weird, not sure right settings
-						//proxyFor: parentOpts.size, 
-						//bindSeparately: false,
-						isField: true,
-						getters: {
-							scale: function() {
-								return this._scale || d3.scale.linear();
-							},
+				requiredOptions: ['value'],
+				value: (d, i, j) => parentOpts.y.accessor(d, i, j),
+				//x and y are weird, not sure right settings
+				//proxyFor: parentOpts.size, 
+				//bindSeparately: false,
+				isField: true,
+				getters: {
+					scale: function () {
+						return this._scale || d3.scale.linear();
+					},
+				},
+				_accessors: {
+					makeScale: {
+						func: (thisField, data, layout, inset) => {
+							thisField._scale =
+								d3.scale.linear()
+								.domain(parentOpts.y._fullScale.domain())
+								.range([inset.d3El.h(layout), 0]);
 						},
-						_accessors: {
-							makeScale: {
-								func: (thisField, data, layout, inset) => {
-									thisField._scale = 
-										d3.scale.linear()
-											.domain(parentOpts.y._fullScale.domain())
-											.range([inset.d3El.h(layout), 0])
-								},
-								posParams: ['thisField','data','layout','inset'],
-								runOnGenerate: true,
-							}
-						},
+						posParams: ['thisField', 'data', 'layout', 'inset'],
+						runOnGenerate: true,
+					}
+				},
 			},
 			size: {
-						proxyFor: parentOpts.size,
-						bindSeparately: false,
-						needsScale: true,
-						isField: true,
-						_accessors: {
-							range: {
-								func: () => [.5, 8],
-							},
-						},
-						//DEBUG: true,
+				proxyFor: parentOpts.size,
+				bindSeparately: false,
+				needsScale: true,
+				isField: true,
+				_accessors: {
+					range: {
+						func: () => [0.5, 8],
+					},
+				},
+				//DEBUG: true,
 			},
 			color: {
-						proxyFor: parentOpts.color,
-						bindSeparately: false,
-						isField: true,
-						scale: parentOpts.color.scale,
+				proxyFor: parentOpts.color,
+				bindSeparately: false,
+				isField: true,
+				scale: parentOpts.color.scale,
 			},
 			shape: {
-						proxyFor: parentOpts.shape,
-						bindSeparately: false,
-						scale: parentOpts.shape.scale,
-						isField: true,
+				proxyFor: parentOpts.shape,
+				bindSeparately: false,
+				scale: parentOpts.shape.scale,
+				isField: true,
 			},
 			legend: {
-						show: false,
+				show: false,
 			},
 			series: {
-						proxyFor: parentOpts.series,
-						bindSeparately: false,
-						isField: true,
+				proxyFor: parentOpts.series,
+				bindSeparately: false,
+				isField: true,
 			},
 		};
 		this.render = function (allData, seriesAll, zoomData, inset, layout) {
 			var self = this;
 			var cp = this.cp;
-			if (!allData.length) return;
+			if (!allData.length) {
+				return;
+			}
 			//var seriesAll = dataToSeries(allData, parentOpts.series);
 			//var seriesZoom = dataToSeries(zoomData, parentOpts.series);
 
-			var fields = this.fields = 
-									 _.chain(cp)
-										.toPairs()
-										.sortBy(d=>_.has(d[1], 'bindOrder') ? d[1].bindOrder : 1000)
-										.filter(d=>d[1].isField)
-										.map(([name,opt] = []) => {
-											if (!(opt instanceof util.Field)) {
-												opt = new util.Field(name, opt, cp);
-											}
-											opt.bindParams({data:allData, seriesAll, layout, inset, parentOpts});
-											return cp[name] = opt;
-										})
-										.value();
-
-			var border = inset.d3El.gEl.addChild('border', {tag:'rect',classes:['inset-border'],
-													updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
-														selection.attr('width', inset.d3El.w(layout))
-																			.attr('height', inset.d3El.h(layout));
-													}});
-			if (parentOpts.lines) {
-				var lines = inset.d3El.gEl.addChild('lines',
-					{ tag: 'line',
-						classes:['refline', 'inset'],
-						data: parentOpts.lines,
-						updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
-							//var {delay=0, duration=0, transition, cp=self.cp} = opts;
-							selection
-								.attr('x1', function(lineOpts) {
-									return cp.x.scale(lineOpts.x1(cp.x.scale.domain(), cp.y.scale.domain()));
-								})
-								.attr('x2', function(lineOpts) {
-									return cp.x.scale(lineOpts.x2(cp.x.scale.domain(), cp.y.scale.domain()));
-								})
-								.attr('y1', function(lineOpts) {
-									return cp.y.scale(lineOpts.y1(cp.x.scale.domain(), cp.y.scale.domain()));
-								})
-								.attr('y2', function(lineOpts) {
-									return cp.y.scale(lineOpts.y2(cp.x.scale.domain(), cp.y.scale.domain()));
-								})
-								.each(function(lineOpts) {
-									_.each(lineOpts.classes, 
-										(val, key) => d3.select(this).classed(key,val));
-									_.each(lineOpts.attrs, 
-										(val, key) => d3.select(this).attr(key,val));
-									_.each(lineOpts.styles, 
-										(val, key) => d3.select(this).style(key,val));
-								})
-						},
+			var fields = this.fields =
+				_.chain(cp)
+				.toPairs()
+				.sortBy(d => _.has(d[1], 'bindOrder') ? d[1].bindOrder : 1000)
+				.filter(d => d[1].isField)
+				.map(([name, opt] = []) => {
+					if (!(opt instanceof util.Field)) {
+						opt = new util.Field(name, opt, cp);
+					}
+					opt.bindParams({
+						data: allData,
+						seriesAll,
+						layout,
+						inset,
+						parentOpts
 					});
+					return cp[name] = opt;
+				})
+				.value();
+
+			var border = inset.d3El.gEl.addChild('border', {
+				tag: 'rect',
+				classes: ['inset-border'],
+				updateCb: function (selection, cbParams = {}, passParams = {}, thisD3El) {
+					selection.attr('width', inset.d3El.w(layout))
+						.attr('height', inset.d3El.h(layout));
+				}
+			});
+			if (parentOpts.lines) {
+				var lines = inset.d3El.gEl.addChild('lines', {
+					tag: 'line',
+					classes: ['refline', 'inset'],
+					data: parentOpts.lines,
+					updateCb: function (selection, cbParams = {}, passParams = {}, thisD3El) {
+						//var {delay=0, duration=0, transition, cp=self.cp} = opts;
+						selection
+							.attr('x1', function (lineOpts) {
+								return cp.x.scale(lineOpts.x1(cp.x.scale.domain(), cp.y.scale.domain()));
+							})
+							.attr('x2', function (lineOpts) {
+								return cp.x.scale(lineOpts.x2(cp.x.scale.domain(), cp.y.scale.domain()));
+							})
+							.attr('y1', function (lineOpts) {
+								return cp.y.scale(lineOpts.y1(cp.x.scale.domain(), cp.y.scale.domain()));
+							})
+							.attr('y2', function (lineOpts) {
+								return cp.y.scale(lineOpts.y2(cp.x.scale.domain(), cp.y.scale.domain()));
+							})
+							.each(function (lineOpts) {
+								_.each(lineOpts.classes, (val, key) => d3.select(this).classed(key, val));
+								_.each(lineOpts.attrs, (val, key) => d3.select(this).attr(key, val));
+								_.each(lineOpts.styles, (val, key) => d3.select(this).style(key, val));
+							});
+					},
+				});
 			}
-			var seriesGs = inset.d3El.gEl.addChild('series',
-																	{ tag: 'g',
-																		classes:['series','inset'],
-																		data: seriesAll,
-																	});
-			seriesGs.addChild('dots',
-									{	tag: 'path',
-										data: function(d3el) {
-											return d3el.selectAll().data(d=>d.values, d=>self.recId(d));
-											/* not sure why the above works for inset but not for
-											 * main-chart, which requires below, but don't have time
-											 * to look into it now
-											return (d3el.parentD3El.selectAllJoin(series)
-																.selectAll([d3el.tag].concat(d3el.classes).join('.'))
-																.data(d=>d.values, d=>self.recId(d)));
-											*/
-										},
-										classes: ['dot','inset'],
-										enterCb: function(selection, cbParams={}, passParams={}, thisD3El) {
-											console.log('adding inset dots', selection.size(), passParams.zoomData.length);
-											selection
-												.attr("d", function(d) {
-													var xVal = 0; //cp.x.scale(cp.x.accessor(d));
-													var yVal = 0; //cp.y.scale(cp.y.accessor(d));
-													return util.shapePath(
-																		cp.shape.scale(cp.shape.accessor(d)),
-																		xVal, // 0, //options.xValue(d),
-																		yVal, // 0, //options.yValue(d),
-																		cp.size.scale(cp.size.accessor(d)));
-												})
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
-													//return `translate(${xVal},${yVal}) scale(1,1)`;
-													return "translate(" + xVal + "," + yVal + ")";
-												})
-										},
-										updateCb: function(selection, cbParams={}, passParams={}, thisD3El) {
-											//var {delay=0, duration=0, transition, cp=self.cp} = opts;
-											console.log('updating inset dots', selection.size(), passParams.zoomData.length);
-											selection
-												.attr("transform", function (d) {
-													var xVal = cp.x.scale(cp.x.accessor(d));
-													var yVal = cp.y.scale(cp.y.accessor(d));
-													return "translate(" + xVal + "," + yVal + ")";
-												})
-												.style("stroke", function (d) {
-													return cp.color.scale(cp.color.accessor(d));
-												})
-												.classed('out-of-zoom', function(d) {
-													return !_.some(passParams.zoomData, 
-																				 z=>self.recId(z) === self.recId(d));
-												})
-										},
-										cbParams: {zoomData}, // thought this might get stale, but doesn't seem to
-									},
-									{zoomData} // passParams
-									);
-			var focusRect = inset.d3El.gEl.addChild('focus', 
-												{tag:'rect',classes:['inset-focus'],
-													updateCb: function(selection,params) {
-														var [x1,x2] = parentOpts.x.scale.domain();
-														var [y1,y2] = parentOpts.y.scale.domain();
-														var w = cp.x.scale(x2) - cp.x.scale(x1);
-														var h = cp.y.scale(y1) - cp.y.scale(y2);
-														selection
-																.attr('x', cp.x.scale(x1))
-																.attr('y', cp.y.scale(y2))
-																.attr('width', w)
-																.attr('height', h)
-													}});
-		}
+			var seriesGs = inset.d3El.gEl.addChild('series', {
+				tag: 'g',
+				classes: ['series', 'inset'],
+				data: seriesAll,
+			});
+			seriesGs.addChild('dots', {
+					tag: 'path',
+					data: function (d3el) {
+						return d3el.selectAll().data(d => d.values, d => self.recId(d));
+						/* not sure why the above works for inset but not for
+						 * main-chart, which requires below, but don't have time
+						 * to look into it now
+						return (d3el.parentD3El.selectAllJoin(series)
+											.selectAll([d3el.tag].concat(d3el.classes).join('.'))
+											.data(d=>d.values, d=>self.recId(d)));
+						*/
+					},
+					classes: ['dot', 'inset'],
+					enterCb: function (selection, cbParams = {}, passParams = {}, thisD3El) {
+						selection
+							.attr("d", function (d) {
+								var xVal = 0; //cp.x.scale(cp.x.accessor(d));
+								var yVal = 0; //cp.y.scale(cp.y.accessor(d));
+								return util.shapePath(
+									cp.shape.scale(cp.shape.accessor(d)),
+									xVal, // 0, //options.xValue(d),
+									yVal, // 0, //options.yValue(d),
+									cp.size.scale(cp.size.accessor(d)));
+							})
+							.attr("transform", function (d) {
+								var xVal = cp.x.scale(cp.x.accessor(d));
+								var yVal = cp.y.scale(cp.y.accessor(d));
+								return "translate(" + xVal + "," + yVal + ")";
+							});
+					},
+					updateCb: function (selection, cbParams = {}, passParams = {}, thisD3El) {
+						//var {delay=0, duration=0, transition, cp=self.cp} = opts;
+						console.log('updating inset dots', selection.size(), passParams.zoomData.length);
+						selection
+							.attr("transform", function (d) {
+								var xVal = cp.x.scale(cp.x.accessor(d));
+								var yVal = cp.y.scale(cp.y.accessor(d));
+								return "translate(" + xVal + "," + yVal + ")";
+							})
+							.style("stroke", function (d) {
+								return cp.color.scale(cp.color.accessor(d));
+							})
+							.classed('out-of-zoom', function (d) {
+								return !_.some(passParams.zoomData,
+									z => self.recId(z) === self.recId(d));
+							});
+					},
+					cbParams: {
+						zoomData
+					}, // thought this might get stale, but doesn't seem to
+				}, {
+					zoomData
+				} // passParams
+			);
+			var focusRect = inset.d3El.gEl.addChild('focus', {
+				tag: 'rect',
+				classes: ['inset-focus'],
+				updateCb: function (selection, params) {
+					var [x1, x2] = parentOpts.x.scale.domain();
+					var [y1, y2] = parentOpts.y.scale.domain();
+					var w = cp.x.scale(x2) - cp.x.scale(x1);
+					var h = cp.y.scale(y1) - cp.y.scale(y2);
+					selection
+						.attr('x', cp.x.scale(x1))
+						.attr('y', cp.y.scale(y2))
+						.attr('width', w)
+						.attr('height', h);
+				}
+			});
+		};
 	};
 
 	module.trellisline = function () {
@@ -2447,11 +2457,11 @@
 				colors: d3.scale.category10()
 			};
 
-			var options = $.extend({}, defaults, options);
+			options = $.extend({}, defaults, options);
 
 			var bisect = d3.bisector(function (d) {
 				return d.date;
-			}).left
+			}).left;
 			var minDate = d3.min(dataByTrellis, function (trellis) {
 					return d3.min(trellis.values, function (series) {
 						return d3.min(series.values, function (d) {
@@ -2607,6 +2617,37 @@
 					.attr("transform", "rotate(-90)");
 			}
 
+			function mouseover() {
+				gTrellis.selectAll(".g-end").style("display", "none");
+				gTrellis.selectAll(".g-value").style("display", null);
+				mousemove.call(this);
+			}
+
+			function mousemove() {
+				var date = seriesScale.invert(d3.mouse(event.currentTarget)[0]);
+				gTrellis.selectAll(".g-label-value.g-start").call(valueLabel, date);
+				gTrellis.selectAll(".g-label-year.g-start").call(yearLabel, date);
+				gTrellis.selectAll(".g-value").attr("transform", function (d) {
+					var s = d.values;
+					if (s) {
+						var v = s[bisect(s, date, 0, s.length - 1)];
+						var yValue = (v.Y_PREVALENCE_1000PP === 0 || v.Y_PREVALENCE_1000PP) ? v.Y_PREVALENCE_1000PP : v.yPrevalence1000Pp;
+						if (v && v.date) {
+							return "translate(" + seriesScale(v.date) + "," + yScale(yValue) + ")";
+						} else {
+							return "translate(0,0);";
+						}
+					}
+				});
+			}
+
+			function mouseout() {
+				gTrellis.selectAll(".g-end").style("display", null);
+				gTrellis.selectAll(".g-label-value.g-start").call(valueLabel, minDate);
+				gTrellis.selectAll(".g-label-year.g-start").call(yearLabel, minDate);
+				gTrellis.selectAll(".g-label-year.g-end").call(yearLabel, maxDate);
+				gTrellis.selectAll(".g-value").style("display", "none");
+			}
 
 			var seriesLine = d3.svg.line()
 				.x(function (d) {
@@ -2653,10 +2694,10 @@
 				.attr("class", "y-guide")
 				.call(seriesGuideYAxis);
 
-			gSeries = gTrellis.selectAll(".g-series")
+			var gSeries = gTrellis.selectAll(".g-series")
 				.data(function (trellis) {
 					var seriesData = dataByTrellis.filter(function (e) {
-						return e.key == trellis;
+						return e.key === trellis;
 					});
 					if (seriesData.length > 0)
 						return seriesData[0].values;
@@ -2675,7 +2716,7 @@
 					}));
 				})
 				.style("stroke", function (d) {
-					return options.colors(d.key)
+					return options.colors(d.key);
 				});
 
 			gSeries.append("circle")
@@ -2719,7 +2760,7 @@
 			gTrellis.append("g")
 				.attr("class", "g-label-trellis")
 				.attr("transform", function (d) {
-					return "translate(" + (trellisScale.rangeBand() / 2) + ",0)"
+					return "translate(" + (trellisScale.rangeBand() / 2) + ",0)";
 				})
 				.append("text")
 				.attr("dy", "-1em")
@@ -2740,7 +2781,7 @@
 			d3.select(gTrellis[0][0]).append("g")
 				.attr("class", "y axis")
 				.attr("transform", "translate(-4,0)")
-				.call(yAxis)
+				.call(yAxis);
 
 			chart.call(renderLegend);
 
@@ -2753,40 +2794,8 @@
 					var targetWidth = event.data.container.width();
 					var targetHeight = Math.round(targetWidth / event.data.aspect);
 					event.data.chart.attr("width", targetWidth);
-					event.data.chart.attr("height",targetHeight);
+					event.data.chart.attr("height", targetHeight);
 				}).trigger("resize");
-
-			function mouseover() {
-				gTrellis.selectAll(".g-end").style("display", "none");
-				gTrellis.selectAll(".g-value").style("display", null);
-				mousemove.call(this);
-			}
-
-			function mousemove() {
-				var date = seriesScale.invert(d3.mouse(this)[0]);
-				gTrellis.selectAll(".g-label-value.g-start").call(valueLabel, date);
-				gTrellis.selectAll(".g-label-year.g-start").call(yearLabel, date);
-				gTrellis.selectAll(".g-value").attr("transform", function (d) {
-					var s = d.values;
-					if (s) {
-						var v = s[bisect(s, date, 0, s.length - 1)];
-						var yValue = (v.Y_PREVALENCE_1000PP === 0 || v.Y_PREVALENCE_1000PP) ? v.Y_PREVALENCE_1000PP : v.yPrevalence1000Pp;
-						if (v && v.date) {
-							return "translate(" + seriesScale(v.date) + "," + yScale(yValue) + ")";
-						} else {
-							return "translate(0,0);";
-						}
-					}
-				});
-			}
-
-			function mouseout() {
-				gTrellis.selectAll(".g-end").style("display", null);
-				gTrellis.selectAll(".g-label-value.g-start").call(valueLabel, minDate);
-				gTrellis.selectAll(".g-label-year.g-start").call(yearLabel, minDate);
-				gTrellis.selectAll(".g-label-year.g-end").call(yearLabel, maxDate);
-				gTrellis.selectAll(".g-value").style("display", "none");
-			}
 
 			function valueLabel(text, date) {
 				var offsetScale = d3.scale.linear().domain(seriesScale.range());
@@ -2812,7 +2821,6 @@
 			}
 
 			function yearLabel(text, date) {
-
 				var offsetScale = d3.scale.linear().domain(seriesScale.range());
 				// derive the x vale by using the first trellis/series set of values.
 				// All series are assumed to contain the same domain of X values.
@@ -2855,8 +2863,8 @@
 					offset += legendItem.node().getBBox().width + 5;
 				});
 			}
-		}
-	}
+		};
+	};
 
 	module.treemap = function () {
 		var self = this;
@@ -2961,7 +2969,7 @@
 					} else if (d3.event.ctrlKey) {
 						var target = d;
 
-						while (target.depth != current_depth + 1) {
+						while (target.depth !== current_depth + 1) {
 							target = target.parent;
 						}
 						current_depth = target.depth;
@@ -2978,8 +2986,6 @@
 					}
 				});
 
-			applyGroupers(root);
-			$('.grouper').show();
 
 			$(window).on("resize", {
 					container: $(target),
@@ -2998,10 +3004,10 @@
 				x.domain([d.x, d.x + d.dx]);
 				y.domain([d.y, d.y + d.dy]);
 
-				if (d.name == 'root') {
+				if (d.name === 'root') {
 					container.find('.treemap_zoomtarget').text('');
 				} else {
-					current_zoom_caption = container.find('.treemap_zoomtarget').text()
+					var current_zoom_caption = container.find('.treemap_zoomtarget').text();
 					container.find('.treemap_zoomtarget').text(current_zoom_caption + ' > ' + d.name);
 				}
 
@@ -3021,7 +3027,7 @@
 					})
 					.attr("height", function (d) {
 						return Math.max(0, ky * d.dy - 1);
-					})
+					});
 
 				node = d;
 				d3.event.stopPropagation();
@@ -3037,7 +3043,7 @@
 
 				var top_nodes = treemap.nodes(target)
 					.filter(function (d) {
-						return d.parent == target;
+						return d.parent === target;
 					});
 
 				var groupers = svg.selectAll(".grouper")
@@ -3063,8 +3069,10 @@
 					});
 			}
 
-		}
-	}
+			applyGroupers(root);
+			$('.grouper').show();
+		};
+	};
 
 	return module;
 }));

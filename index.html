@@ -8,7 +8,6 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" type="text/css" href="js/styles/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap.min.css">
@@ -20,7 +19,6 @@
 	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/chart.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/achilles.css">
-	<!-- cartoon.css, maybe others, loaded dynamically -->
 
 	<title data-bind="text: pageTitle">ATLAS</title>
 	<!--Adobe Edge Runtime-->
@@ -39,15 +37,14 @@
 		</div>
 	</div>
 
-	<!-- ko if: pageModel.currentView() != 'splash' -->
-	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible:!pageModel.minibar();">
+	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible: pageModel.currentView() != 'splash'">
 		<div id="wrapperLogo">
 			<a href="#/splash">ATLAS</a>
 		</div>
 
 		<div class="list-group">
 			<a class="list-group-item" href="#/home"><i class="fa fa-fw fa-home" aria-hidden="true"></i>&nbsp;Home</a>
-			<!-- <a class="list-group-item" href="#/datasources"><i class="fa fa-fw fa-database" aria-hidden="true"></i>&nbsp;Data Sources</a> -->
+			<a class="list-group-item" href="#/datasources"><i class="fa fa-fw fa-database" aria-hidden="true"></i>&nbsp;Data Sources</a>
 			<a class="list-group-item" href="#/search"><i class="fa fa-fw fa-search" aria-hidden="true"></i>&nbsp;Vocabulary</a>
 			<a class="list-group-item" href="#/conceptsets"><i class="fa fa-fw fa-shopping-cart" aria-hidden="true"></i>&nbsp;Concept Sets</a>
 			<a class="list-group-item" href="#/cohortdefinitions"><i class="fa fa-fw  fa-users" aria-hidden="true"></i>&nbsp;Cohorts</a>
@@ -59,8 +56,8 @@
 			<a class="list-group-item" target="_blank" href="https://github.com/ohdsi/atlas/issues" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
 		</div>
 	</div>
-	<!-- /ko -->
-	<div data-bind="if:currentView() != 'splash', css: { minibar: minibar() }" id="wrapperMainWindow">
+
+	<div data-bind="if:currentView() != 'splash'" id="wrapperMainWindow">
 		<div id="wrapperMainWindowContainer">
 			<!-- ko if: pageModel.currentView() != 'loading' -->
 
