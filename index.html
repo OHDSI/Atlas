@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -41,6 +41,7 @@
 		<div id="wrapperLogo">
 			<a href="#/splash">ATLAS</a>
 		</div>
+
 		<div class="list-group">
 			<a class="list-group-item" href="#/home"><i class="fa fa-fw fa-home" aria-hidden="true"></i>&nbsp;Home</a>
 			<a class="list-group-item" href="#/welcome"><i class="fa fa-fw fa-sign-in" aria-hidden="true"></i>&nbsp;Welcome</a>
@@ -81,8 +82,9 @@
 			</div>
 			<!-- /ko -->
 			<!-- /ko -->
-
 			<!-- /ko -->
+
+			<user-bar></user-bar>
 
 			<div id="wrapperLoading" data-bind="if: currentView() == 'loading'">
 				<div class="wrapperTitle">
@@ -96,10 +98,6 @@
 
 			<div data-bind="if:pageModel.currentView()=='home'">
 				<home params="{model: pageModel}"></home>
-			</div>
-
-			<div data-bind="if:pageModel.currentView()=='welcome'">
-                <welcome params="{model: pageModel}"></welcome>
 			</div>
 
 			<div data-bind="if:pageModel.currentView()=='conceptsets'">
@@ -171,20 +169,21 @@
 						<div class="error">unable to connect to an instance of the webapi. please contact your administrator to resolve this issue.</div>
 					</div>
 					<div data-bind="if:!appInitializationFailed()">
+						<div class="heading">Configured Services</div>
 						<ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
-						<r-manager></r-manager>				
+						<r-manager></r-manager>
 					</div>
 				</div>
 			</div>
-            
-            <div data-bind="if:pageModel.currentView() == 'roles'">
-                <roles params="model: pageModel"></roles>
-            </div>
-            <div data-bind="if:pageModel.currentView() == 'role'">
-                <role-details params="model: pageModel"></role-details>
-            </div>
 
-		    <div data-bind="if: currentView() == 'irbrowser'">
+			<div data-bind="if:pageModel.currentView() == 'roles'">
+				<roles params="model: pageModel"></roles>
+			</div>
+			<div data-bind="if:pageModel.currentView() == 'role'">
+				<role-details params="model: pageModel"></role-details>
+			</div>
+
+			<div data-bind="if: currentView() == 'irbrowser'">
 				<ir-browser params="model: pageModel"></ir-browser>
 			</div>
 

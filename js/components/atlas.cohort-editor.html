@@ -12,22 +12,22 @@
 </div>
 
 <div class="paddedWrapper">
-    <div data-bind="eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">
-        <!-- ko if:canEdit-->
-        <cohort-expression-editor params="expression: model.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
-        <!-- /ko -->
-        <!-- ko ifnot:canEdit-->
-        <cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
-        <!-- /ko -->
-        <div class="modal fade" id="conceptSetSelectorDialog" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">Select Concept Set...</div>
-                    <div class="paddedWrapper">
-                        <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div data-bind="eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">
+		<!-- ko if:canEdit-->
+		<cohort-expression-editor params="expression: model.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
+		<!-- /ko -->
+		<!-- ko ifnot:canEdit-->
+		<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
+		<!-- /ko -->
+		<div class="modal fade" id="conceptSetSelectorDialog" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">Select Concept Set...</div>
+					<div class="paddedWrapper">
+						<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

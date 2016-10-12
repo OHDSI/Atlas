@@ -3,7 +3,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'cohortbuilder/CohortDefinition',
 				'webapi/CohortDefinitionAPI',
 				'ohdsi.util',
-        'cohortbuilder/CohortExpression',
+		'cohortbuilder/CohortExpression',
 				'cohortbuilder/InclusionRule',
 				'conceptsetbuilder/InputTypes/ConceptSet',
 				'cohortbuilder/components/FeasibilityReportViewer',
@@ -51,47 +51,47 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.config = config;
 		self.model = params.model;
 
-	    self.isAuthenticated = ko.pureComputed(function() {
-	        return authApi.isAuthenticated();
-	    });
-	    var isNew = ko.pureComputed(function() {
-	        return !self.model.currentCohortDefinition() || (self.model.currentCohortDefinition().id() == 0);
-	    });
+		self.isAuthenticated = ko.pureComputed(function() {
+			return authApi.isAuthenticated();
+		});
+		var isNew = ko.pureComputed(function() {
+			return !self.model.currentCohortDefinition() || (self.model.currentCohortDefinition().id() == 0);
+		});
 		self.canEdit = self.model.canEditCurrentCohortDefinition;
-	    self.canCopy = ko.pureComputed(function() {
-	        return !isNew() && self.isAuthenticated() && authApi.isPermittedCopyCohort(self.model.currentCohortDefinition().id());
-	    });
-	    self.canDelete = ko.pureComputed(function() {
-	        if (isNew()) {
-	            return false;
-	        }
+		self.canCopy = ko.pureComputed(function() {
+			return !isNew() && self.isAuthenticated() && authApi.isPermittedCopyCohort(self.model.currentCohortDefinition().id());
+		});
+		self.canDelete = ko.pureComputed(function() {
+			if (isNew()) {
+				return false;
+			}
 
-	        return self.isAuthenticated() && authApi.isPermittedDeleteCohort(self.model.currentCohortDefinition().id());
-	    });
-	    self.hasAccess = ko.pureComputed(function() {
-	        if (!self.isAuthenticated()) {
-	            return false;
-	        }
+			return self.isAuthenticated() && authApi.isPermittedDeleteCohort(self.model.currentCohortDefinition().id());
+		});
+		self.hasAccess = ko.pureComputed(function() {
+			if (!self.isAuthenticated()) {
+				return false;
+			}
 
-	        if (isNew()) {
-	            return authApi.isPermittedCreateCohort();
-	        }
+			if (isNew()) {
+				return authApi.isPermittedCreateCohort();
+			}
 
-	        return authApi.isPermittedReadCohort(self.model.currentCohortDefinition().id());
-	    });
+			return authApi.isPermittedReadCohort(self.model.currentCohortDefinition().id());
+		});
 		self.hasAccessToGenerate = function(sourceKey) {
-		    if (isNew()) {
-		        return false;
-		    }
+			if (isNew()) {
+				return false;
+			}
 
-		    return self.isAuthenticated() && authApi.isPermittedGenerateCohort(self.model.currentCohortDefinition().id(), sourceKey);
+			return self.isAuthenticated() && authApi.isPermittedGenerateCohort(self.model.currentCohortDefinition().id(), sourceKey);
 		}
 		self.hasAccessToReadCohortReport = function(sourceKey) {
-		    if (isNew()) {
-		        return false;
-		    }
+			if (isNew()) {
+				return false;
+			}
 
-		    return self.isAuthenticated() && authApi.isPermittedReadCohortReport(self.model.currentCohortDefinition().id(), sourceKey);
+			return self.isAuthenticated() && authApi.isPermittedReadCohortReport(self.model.currentCohortDefinition().id(), sourceKey);
 		}
 		if (!self.hasAccess()) return;
 
@@ -132,6 +132,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return (canGenerate);
 		});
 
+
 		self.modifiedJSON = "";
 		self.expressionJSON = ko.pureComputed({
 			read: function () {
@@ -151,7 +152,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.selectedReport = ko.observable();
 		self.selectedReportCaption = ko.observable();
 		self.loadingInclusionReport = ko.observable(false);
-	    self.sortedConceptSets = self.model.currentCohortDefinition().expression().ConceptSets.extend({ sorted: conceptSetSorter });
+		self.sortedConceptSets = self.model.currentCohortDefinition().expression().ConceptSets.extend({ sorted: conceptSetSorter });
 
 		// model behaviors
 		self.onConceptSetTabRespositoryConceptSetSelected = function (conceptSet) {
@@ -209,8 +210,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			// reset view after save
 			cohortDefinitionAPI.deleteCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
-			    self.model.currentCohortDefinition(null);
-			    authApi.refreshToken();
+				self.model.currentCohortDefinition(null);
+				authApi.refreshToken();
 				document.location = "#/cohortdefinitions"
 			});
 		}
@@ -237,12 +238,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				var redirectWhenComplete = definition.id() != self.model.currentCohortDefinition().id();
 
 				var refreshTokenPromise = redirectWhenComplete ? authApi.refreshToken() : null;
-			    $.when(refreshTokenPromise).done(function() {
-			        self.model.currentCohortDefinition(definition);
-			        if (redirectWhenComplete) {
-			            document.location = "#/cohortdefinition/" + definition.id();
-			        }
-			    });
+				$.when(refreshTokenPromise).done(function() {
+					self.model.currentCohortDefinition(definition);
+					if (redirectWhenComplete) {
+						document.location = "#/cohortdefinition/" + definition.id();
+					}
+				});
 			});
 		}
 
@@ -266,9 +267,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			// reset view after save
 			cohortDefinitionAPI.copyCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
-			    authApi.refreshToken().then(function() {
-			        document.location = "#/cohortdefinition/" + result.id;
-			    });
+				authApi.refreshToken().then(function() {
+					document.location = "#/cohortdefinition/" + result.id;
+				});
 			});
 		}
 
@@ -350,11 +351,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			var route = config.services[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + source.sourceKey;
 			self.getSourceInfo(source.sourceKey).status('PENDING');			
 			$.ajax(route, {
-			    headers: {
-			        Authorization: authApi.getAuthorizationHeader()
-			    },
-			    error: authApi.handleAccessDenied,
-			    success: function (data) {
+				headers: {
+					Authorization: authApi.getAuthorizationHeader()
+				},
+				error: authApi.handleAccessDenied,
+				success: function (data) {
 					setTimeout(function () {
 						self.pollForInfo();
 					}, 3000);

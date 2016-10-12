@@ -74,17 +74,17 @@ body {
 }
 
 #wrapperLeftMenu a.list-group-item {
-    color: #fff;
+	color: #fff;
 }
 
 #wrapperLeftMenu .list-group-item {
-    position: relative;
-    display: block;
-    padding: 5px 5px;
-    margin-bottom: 1px;
-    background-color: #003142;
-    border: none;
-    border-bottom: solid 1px #333;
+	position: relative;
+	display: block;
+	padding: 5px 5px;
+	margin-bottom: 1px;
+	background-color: #003142;
+	border: none;
+	border-bottom: solid 1px #333;
 }
 
 #wrapperLeftMenu .list-group-item:hover {
@@ -103,6 +103,7 @@ body {
 	padding: 0px 5px 0px 5px;
 	border-bottom: solid 1px #ccc;
 }
+
 .subheading {
 	font-size: 12px;
 	color: #000;
@@ -247,7 +248,7 @@ pre span.key {
 
 #wrapperLogo {
 	position: relative;
-	height: 32px;
+	height: 34px;
 	padding: 0px 10px 0px 10px;
 	line-height: 36px;
 	font-size: 14px;
@@ -290,14 +291,27 @@ div#wrapperMainWindowContainer {}
 
 .wrapperTitle {
 	position: relative;
-	background-color: #003142;
-	height: 32px;
-	color: #FFFFFF;
-	line-height: 36px;
+	background-color: #333333;
+	height: 28px;
+	color: #fff;
+	line-height: 28px;
 	padding: 0px 0px 0px 30px;
+	font-size: 14px;
+	border-bottom: solid 1px #333;
+	white-space: nowrap;
+}
+
+.wrapperHeader {
+	position: relative;
+	background-color: #003142;
+	height: 34px;
+	color: #FFFFFF;
+	line-height: 28px;
+	padding: 0px 1px 0px 0px;
 	font-size: 14px;
 	border-bottom: solid 1px #ccc;
 	white-space: nowrap;
+	text-align: right;
 }
 
 .wrapperTitle textarea {
@@ -716,10 +730,10 @@ ul.ColVis_collection li {
 }
 
 .wrapperTitle .fa {
-	font-size: 14px;
-	position: absolute;
-	top: 10px;
-	left: 7px;
+  font-size: 14px;
+  position: absolute;
+  top: 7px;
+  left: 7px;
 }
 
 .fa-check-circle {
@@ -914,7 +928,7 @@ i.fa.fa-refresh.fa-spin {
 
 .i.fa.fa-circle-o-notch.fa-spin {
 	font-size: .9em;
-	padding-right: 0px;	
+	padding-right: 0px;
 }
 
 rect.box {}
@@ -1311,7 +1325,6 @@ table.dataTable thead td {
 	color: #f00;
 }
 
-
 .facetName i.fa.fa-filter {
 	margin-right: 3px;
 }
@@ -1349,6 +1362,7 @@ ul.ColVis_collection li {
 	color: #fff;
 	border-bottom: none;
 	font-size: 14px;
+	padding: 7px;
 }
 
 circle {
@@ -1397,7 +1411,6 @@ circle.child {
 #wrapperLeftMenu li a {
 	cursor: pointer;
 }
-
 
 .overlay {
 	fill: none;
@@ -1538,15 +1551,14 @@ div.button-overlay {
 	outline: none;
 }
 
-[contenteditable=true]:empty:before{
-  content: attr(placeholder);
-
+[contenteditable=true]:empty:before {
+	content: attr(placeholder);
 }
 
 .nav>li>a {
-  padding: 5px 10px 5px 10px;
-  background-color: #888;
-  color: #ccc;
+	padding: 5px 10px 5px 10px;
+	background-color: #888;
+	color: #ccc;
 }
 
 .nav-tabs li a,
@@ -1798,13 +1810,13 @@ cohort-comparison-manager .results-tab-pane .row {
 }
 
 cohort-comparison-manager .results-tab-pane .row.executionrow {
-	background-color:#fff;
+	background-color: #fff;
 	border-left: solid 1px #ccc;
 	border-right: solid 1px #ccc;
 	border-top: none;
 	border-bottom: solid 1px #ccc;
-	margin-bottom:0px;
-	margin-top:0px;
+	margin-bottom: 0px;
+	margin-top: 0px;
 }
 
 cohort-comparison-manager .row .btn {
@@ -1812,7 +1824,7 @@ cohort-comparison-manager .row .btn {
 }
 
 .cohort-comparison-pf-reference {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 #wrapperLeftMenu li:hover {
@@ -1839,9 +1851,8 @@ table.cohort-generate-sources tr:hover {
 	background-color: #eee;
 }
 
-
 .modal-header button.close {
-    color: #fff;
+	color: #fff;
 }
 
 #matchedpopdistChart svg {
@@ -1868,48 +1879,51 @@ table.cohort-generate-sources tr:hover {
 
 div.generateAction {
 	display: inline-block;
-  vertical-align: bottom;
-  line-height: 19px;
+	vertical-align: bottom;
+	line-height: 19px;
 }
 
-table.sourceTable tr td, table.sourceTable th
-{
+table.sourceTable tr td,
+table.sourceTable th {
 	padding: 2px 5px;
-	line-height:12px;
-	user-select:none;
+	line-height: 12px;
+	user-select: none;
 }
 
-table.sourceTable .selected
-{
+table.sourceTable .selected {
 	color: #F19119;
-	font-size:1.5em;
+	font-size: 1.5em;
 }
-
 
 .overflow-ellipsis {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none;   /* Chrome/Safari/Opera */
-  -khtml-user-select: none;    /* Konqueror */
-  -moz-user-select: none;      /* Firefox */
-  -ms-user-select: none;       /* Internet Explorer/Edge */
-  user-select: none;           /* Non-prefixed version, currently
+	-webkit-touch-callout: none;
+	/* iOS Safari */
+	-webkit-user-select: none;
+	/* Chrome/Safari/Opera */
+	-khtml-user-select: none;
+	/* Konqueror */
+	-moz-user-select: none;
+	/* Firefox */
+	-ms-user-select: none;
+	/* Internet Explorer/Edge */
+	user-select: none;
+	/* Non-prefixed version, currently
                                   not supported by any browser */
 }
 
 a.open > i.fa {
-	color:#5bb75b !important;
+	color: #5bb75b !important;
 }
 
 a.unsaved > i.fa {
-	color:#d04541 !important;
+	color: #d04541 !important;
 }
-	
 
 cohort-comparison-manager .x-axislabel.axislabel,
 cohort-comparison-manager .y-axislabel.axislabel {
@@ -1917,33 +1931,35 @@ cohort-comparison-manager .y-axislabel.axislabel {
 }
 
 .dropdown-menu {
-	font-size:12px;
-}
-div.welcome-login-ntlm div {
-    padding-bottom: 10px;
+	font-size: 12px;
 }
 
 span.new-role {
 	margin: 5px;
 }
+
 .fa.fa-check.readonly {
 	color: #f0f0f0;
 	border-color: #E0E0E0;
 	cursor: default;
 }
+
 .fa.fa-check.readonly.selected {
 	color: #9E9E9E;
 	border-color: #E0E0E0;
 	cursor: default;
 }
+
 .fa.fa-shopping-cart.readonly {
 	color: #ededed;
 	cursor: default;
 }
+
 .fa.fa-shopping-cart.readonly.selected {
 	color: #9C9C9C;
 	cursor: default;
 }
+
 .padded {
 	padding: 5px;
 }
