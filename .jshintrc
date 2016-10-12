@@ -27,7 +27,7 @@
 	// with different skill levels.
 	"bitwise": true, // Prohibit bitwise operators (&, |, ^, etc.).
 	"curly": true, // Require {} for every new block or scope.
-	"eqeqeq": true, // Require triple equals i.e. `===`.
+	"eqeqeq": false, // Require triple equals i.e. `===`.
 	"forin": true, // Tolerate `for in` loops without `hasOwnPrototype`.
 	"immed": true, // Require immediate invocations to be wrapped in parens e.g. `( function(){}() );`
 	"latedef": true, // Prohibit variable use before definition.
@@ -35,7 +35,7 @@
 	"noarg": true, // Prohibit use of `arguments.caller` and `arguments.callee`.
 	"noempty": true, // Prohibit use of empty blocks.
 	"nonew": true, // Prohibit use of constructors for side-effects.
-	"plusplus": true, // Prohibit use of `++` & `--`.
+	"plusplus": false, // Prohibit use of `++` & `--`.
 	"regexp": true, // Prohibit `.` and `[^...]` in regular expressions.
 	"undef": true, // Require all non-global variables be declared before they are used.
 	"strict": false, // Require `use strict` pragma in every file.
@@ -51,8 +51,6 @@
 	"boss": false, // Tolerate assignments inside if, for & while. Usually conditions & loops are for comparison, not assignments.
 	"debug": false, // Allow debugger statements e.g. browser breakpoints.
 	"eqnull": false, // Tolerate use of `== null`.
-	"es5": false, // Allow EcmaScript 5 syntax.
-	"esnext": false, // Allow ES.next specific features such as `const` and `let`.
 	"evil": false, // Tolerate use of `eval`.
 	"expr": false, // Tolerate `ExpressionStatement` as Programs.
 	"funcscope": false, // Tolerate declarations of variables inside of control structures while accessing them later from the outside.
@@ -78,10 +76,10 @@
 	// These options pre-define global variables that are exposed by
 	// popular JavaScript libraries and runtime environments—such as
 	// browser or node.js.
-	"esversion": 6,
+	"esversion": 5,
 	"browser": true, // Standard browser globals e.g. `window`, `document`.
 	"couch": false, // Enable globals exposed by CouchDB.
-	"devel": true, // Allow development statements e.g. `console.log();`.
+	"devel": false, // Allow development statements e.g. `console.log();`.
 	"dojo": false, // Enable globals exposed by Dojo Toolkit.
 	"jquery": false, // Enable globals exposed by jQuery JavaScript library.
 	"mootools": false, // Enable globals exposed by MooTools JavaScript framework.
