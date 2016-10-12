@@ -8,7 +8,7 @@
         <div>
             <span>
                 <span data-bind="if: !isLoggedIn()">
-                    <span class="btn btn-sm btn-primary" data-bind="click: $component.signin">Login</span>
+                    <span class="btn btn-sm btn-primary" data-bind="click: $component.signin">Login</span> with my <select data-bind="options:$component.authProviders, optionsText:'name', value:$component.currentAuthProvider"></select> credentials
                 </span>
                 <span data-bind="if: isLoggedIn()">
                     <span class="btn btn-sm btn-primary" data-bind="click: $component.signout">Logout</span>

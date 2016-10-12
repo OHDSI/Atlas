@@ -125,6 +125,12 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					        self.currentView('welcome');
 						});
 					},
+					'/welcome/:token': function (token) {
+					    require(['welcome'], function () {
+					    	authApi.token(token);
+					        document.location = "#/welcome";
+						});
+					},
 					'/jobs': function () {
 						require(['job-manager'], function () {
 							self.currentView('jobs');

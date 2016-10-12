@@ -27,6 +27,19 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
             }
             return 'Not logged in';
         });
+        self.authProviders = [
+            {
+                name: 'Windows',
+                url: 'user/login',
+                ajax: true
+            },
+            {
+                name: 'Google',
+                url: 'user/oauth/google',
+                ajax: false
+            },
+        ];
+        self.currentAuthProvider = ko.observable(self.authProviders[0]);
 
         var fromatErrMsg = function(jqXHR, textStatus, errorThrown) {
             var msg = "";
@@ -51,25 +64,30 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
         };
 
         self.signin = function () {
-            self.isInProgress(true);
-            $.ajax({
-                url: self.serviceUrl + "user/login",
-                method: 'GET',
-                xhrFields: {
-                    withCredentials: true
-                },
-                success: function (data, textStatus, jqXHR) {
-                    var token = jqXHR.getResponseHeader('Bearer');
-                    setToken(token);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    setToken(null);
-                    self.errorMsg(fromatErrMsg(jqXHR, textStatus, errorThrown));
-                },
-                complete: function (data) {
-                    self.isInProgress(false);
-                }
-            });
+            var loginUrl = self.serviceUrl + self.currentAuthProvider().url;
+
+            if (self.currentAuthProvider().ajax == true) {
+                self.isInProgress(true);
+                $.ajax({
+                    url: loginUrl,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        var token = jqXHR.getResponseHeader('Bearer');
+                        setToken(token);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        setToken(null);
+                        self.errorMsg(fromatErrMsg(jqXHR, textStatus, errorThrown));
+                    },
+                    complete: function (data) {
+                        self.isInProgress(false);
+                    }
+                });
+            } else {
+                document.location = loginUrl;
+            }
         };
 
         self.signout = function () {
