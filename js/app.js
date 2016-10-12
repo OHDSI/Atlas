@@ -111,8 +111,8 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					},
 					'/role/:id': function (id) {
 						require(['role-details'], function () {
-                            self.currentRoleId(id);
-						    self.currentView('role');
+						self.currentRoleId(id);
+							self.currentView('role');
 						});
 					},
 					'/home': function () {
@@ -120,9 +120,10 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 							self.currentView('home');
 						});
 					},
-					'/welcome': function () {
-					    require(['welcome'], function () {
-					        self.currentView('welcome');
+					'/welcome/:token': function (token) {
+						require(['welcome'], function () {
+							authApi.token(token);
+							document.location = "#/welcome";
 						});
 					},
 					'/jobs': function () {
@@ -428,17 +429,17 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.searchConceptsColumns = [{
 			title: '<i class="fa fa-shopping-cart"></i>',
 			render: function (s, p, d) {
-			    var css = '';
-			    var icon = 'fa-shopping-cart';
-                var tag = 'i'
-			    if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-			        css = ' selected';
-			    }
-                if (!self.canEditCurrentConceptSet()) {
-                    css += ' readonly';
-                    tag = 'span';
-                }
-			    return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
+				var css = '';
+				var icon = 'fa-shopping-cart';
+				var tag = 'i'
+				if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+					css = ' selected';
+				}
+				if (!self.canEditCurrentConceptSet()) {
+					css += ' readonly';
+					tag = 'span';
+				}
+				return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
 			}, orderable: false,
 			searchable: false
         }, {
@@ -526,17 +527,17 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.relatedSourcecodesColumns = [{
 			title: '',
 			render: function (s, p, d) {
-			    var css = '';
-			    var icon = 'fa-shopping-cart';
-			    var tag = 'i'
-			    if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-			        css = ' selected';
-			    }
-			    if (!self.canEditCurrentConceptSet()) {
-			        css += ' readonly';
-			        tag = 'span';
-			    }
-			    return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
+				var css = '';
+				var icon = 'fa-shopping-cart';
+				var tag = 'i'
+				if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+					css = ' selected';
+				}
+				if (!self.canEditCurrentConceptSet()) {
+					css += ' readonly';
+					tag = 'span';
+				}
+				return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
 			},
 			orderable: false,
 			searchable: false
@@ -854,16 +855,16 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			return false;
 		}
 		self.renderConceptSetItemSelector = function (s, p, d) {
-		    var css = '';
-		    var tag = 'i';
+			var css = '';
+			var tag = 'i';
 			if (self.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
 				css = ' selected';
 			}
-            if (!self.canEditCurrentConceptSet()) {
-                css += ' readonly';
-                tag = 'span'; // to avoid call to 'click' event handler which is bound to <i> tag
-            }
-            return '<' + tag + ' class="fa fa-shopping-cart' + css + '"></' + tag + '>';
+			if (!self.canEditCurrentConceptSet()) {
+				css += ' readonly';
+				tag = 'span'; // to avoid call to 'click' event handler which is bound to <i> tag
+			}
+			return '<' + tag + ' class="fa fa-shopping-cart' + css + '"></' + tag + '>';
 		}
 		self.renderLink = function (s, p, d) {
 			var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
@@ -1155,10 +1156,10 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					infoPromise.resolve();
 				} else {
 					definitionPromise = $.ajax({
-					    url: config.services[0].url + 'cohortdefinition/' + cohortDefinitionId,
+						url: config.services[0].url + 'cohortdefinition/' + cohortDefinitionId,
 						method: 'GET',
 						headers: {
-						    Authorization: authApi.getAuthorizationHeader()
+							Authorization: authApi.getAuthorizationHeader()
 						},
 						contentType: 'application/json',
 						success: function (cohortDefinition) {
@@ -1170,7 +1171,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 						url: config.services[0].url + 'cohortdefinition/' + cohortDefinitionId + '/info',
 						method: 'GET',
 						headers: {
-						    Authorization: authApi.getAuthorizationHeader()
+							Authorization: authApi.getAuthorizationHeader()
 						},
 						contentType: 'application/json',
 						success: function (generationInfo) {
@@ -1195,7 +1196,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 							url: self.vocabularyUrl() + 'lookup/identifiers',
 							method: 'POST',
 							headers: {
-							    Authorization: authApi.getAuthorizationHeader()
+								Authorization: authApi.getAuthorizationHeader()
 							},
 							contentType: 'application/json',
 							data: JSON.stringify(identifiers),
@@ -1323,12 +1324,12 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 							self.currentView(viewToShow);
 						}
 					});
-			    })
-			    .fail(function(xhr) {
-			        if (xhr.status == 403 || xhr.status == 401) {
-			            self.currentView(viewToShow);
-			        }
-			    });
+				})
+				.fail(function(xhr) {
+					if (xhr.status == 403 || xhr.status == 401) {
+						self.currentView(viewToShow);
+					}
+				});
 			});
 		}
 		self.loadConceptSet = function (conceptSetId, viewToShow, loadingSource, mode) {
@@ -1552,23 +1553,23 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			return url;
 		});
 
-	    self.canEditCurrentConceptSet = ko.pureComputed(function() {
-	        if (self.currentConceptSetSource() == 'cohort') {
-	            return self.canEditCurrentCohortDefinition();
-	        } else if (self.currentConceptSetSource() == 'repository') {
-	            if (!authApi.isAuthenticated()) {
-	                return false;
-	            }
+		self.canEditCurrentConceptSet = ko.pureComputed(function() {
+			if (self.currentConceptSetSource() == 'cohort') {
+				return self.canEditCurrentCohortDefinition();
+			} else if (self.currentConceptSetSource() == 'repository') {
+				if (!authApi.isAuthenticated()) {
+					return false;
+				}
 
-	            if (self.currentConceptSet() && (self.currentConceptSet().id != 0)) {
-	                return authApi.isPermittedUpdateConceptset(self.currentConceptSet().id)
-	            } else {
-	                return authApi.isPermittedCreateConceptset();
-	            }
-	        } else {
-	            return false;
-	        }
-	    });
+				if (self.currentConceptSet() && (self.currentConceptSet().id != 0)) {
+					return authApi.isPermittedUpdateConceptset(self.currentConceptSet().id)
+				} else {
+					return authApi.isPermittedCreateConceptset();
+				}
+			} else {
+				return false;
+			}
+		});
 		self.currentConceptSetSource = ko.observable('repository');
     self.currentConceptSetNegativeControls = ko.observable();
 		self.currentIncludedConceptIdentifierList = ko.observable();
@@ -1595,17 +1596,17 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			return url;
 		});
 		
-	    self.canEditCurrentCohortDefinition = ko.pureComputed(function() {
-	        if (!authApi.isAuthenticated()) {
-	            return false;
-	        }
+		self.canEditCurrentCohortDefinition = ko.pureComputed(function() {
+			if (!authApi.isAuthenticated()) {
+				return false;
+			}
 
-	        if (self.currentCohortDefinition() && (self.currentCohortDefinition().id() != 0)) {
-	            return authApi.isPermittedUpdateCohort(self.currentCohortDefinition().id());
-	        } else {
-	            return authApi.isPermittedCreateCohort();
-	        }
-	    });
+			if (self.currentCohortDefinition() && (self.currentCohortDefinition().id() != 0)) {
+				return authApi.isPermittedUpdateCohort(self.currentCohortDefinition().id());
+			} else {
+				return authApi.isPermittedCreateCohort();
+			}
+		});
 		self.currentCohortComparisonId = ko.observable();
 		self.currentCohortComparison = ko.observable();
 		self.currentCohortComparisonDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(self.currentCohortComparison()));
@@ -1795,31 +1796,31 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 				 	pageModel.currentCohortComparisonDirtyFlag().isDirty());
 		});
 
-		self.currentRoleId = ko.observable();
-	    self.roles = ko.observableArray();
-	    self.updateRoles = function () {
-	        var promise = $.Deferred();
-	        if (self.roles() && self.roles().length > 0) {
-	            promise.resolve();
-	        } else {
-	            $.ajax({
-	                url: config.services[0].url + 'role',
-	                method: 'GET',
-	                headers: {
-	                    Authorization: authApi.getAuthorizationHeader()
-	                },
-	                contentType: 'application/json',
-	                error: authApi.handleAccessDenied,
-	                success: function(data) {
-	                    self.roles(data);
-	                    promise.resolve();
-	                }
-	            });
-	        }
-	        return promise;
-	    }
-	    self.users = ko.observableArray();
-	    self.permissions = ko.observableArray();
+	self.currentRoleId = ko.observable();
+	self.roles = ko.observableArray();
+	self.updateRoles = function () {
+		var promise = $.Deferred();
+		if (self.roles() && self.roles().length > 0) {
+			promise.resolve();
+		} else {
+			$.ajax({
+				url: config.services[0].url + 'role',
+				method: 'GET',
+				headers: {
+					Authorization: authApi.getAuthorizationHeader()
+				},
+				contentType: 'application/json',
+				error: authApi.handleAccessDenied,
+				success: function(data) {
+					self.roles(data);
+					promise.resolve();
+				}
+			});
+		}
+		return promise;
+	}
+	self.users = ko.observableArray();
+	self.permissions = ko.observableArray();
 	}
 	return appModel;
 });

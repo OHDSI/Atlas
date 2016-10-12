@@ -1,19 +1,29 @@
-﻿<div class="wrapperTitle">
-    <i class="fa fa-sign-in"></i> Welcome
-</div>
-
 <div class="paddedWrapper">
-    <div class="welcome-login-ntlm">
-        <div data-bind="text: $component.status"></div>
-        <div>
-            <span>
-                <span data-bind="if: !isLoggedIn()">
-                    <span class="btn btn-sm btn-primary" data-bind="click: $component.signin">Login</span>
-                </span>
-                <span data-bind="if: isLoggedIn()">
-                    <span class="btn btn-sm btn-primary" data-bind="click: $component.signout">Logout</span>
-                </span>
-            </span>
-        </div>
-    </div>
+	<div>
+		<!--
+		<div data-bind="text: $component.status"></div>
+		-->
+		<div>
+			<div data-bind="if: !isLoggedIn()">
+				<!--
+				<span class="btn btn-sm btn-primary" data-bind="click: $component.signin">Login</span> with my
+				<select data-bind="options:$component.authProviders, optionsText:'name', value:$component.currentAuthProvider"></select> credentials
+				-->
+
+				<div>
+					Sign In with:
+				</div>
+				<div data-bind="foreach:$component.authProviders" class="text-centered">
+					<div class="paddedWrapper">
+						<div class="btn btn-sm btn-block btn-default"><i data-bind="css:icon"></i> <span data-bind="text:name"></span></div>
+					</div>
+				</div>
+
+			</div>
+
+			<div data-bind="if: isLoggedIn()">
+				<span class="btn btn-sm btn-default" data-bind="click: $component.signout"><i class="fa fa-sign-out"></i> Sign Out</span>
+			</div>
+		</div>
+	</div>
 </div>

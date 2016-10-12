@@ -1,0 +1,24 @@
+<div class="wrapperHeader">
+	<div data-bind="if:appConfig.userAuthenticationEnabled===true" class="btn-group" role="group">
+		<!-- <div class="btn btn-sm btn-primary"><i class="fa fa-bell"></i></div> -->
+		<!-- for notifications, job completion, etc. -->
+		<div class="btn btn-sm btn-primary" data-toggle="modal" data-target="#myModal"><i class="fa fa-sign-in"></i> SIGN IN</div>
+	</div>
+</div>
+
+<div data-bind="if:appConfig.userAuthenticationEnabled===true" class="modal fade" id="myModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<div class="modal-title" id="myModalLabel"><i class="fa fa-sign-in"></i> Sign In</div>
+			</div>
+			<div class="modal-body">
+				<welcome params="{model: pageModel}"></welcome>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

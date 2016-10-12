@@ -2,17 +2,17 @@
 	<div class="wrapperTitle">
 		<i class="fa fa-users"></i> Cohorts
 	</div>
-    <div data-bind="if:$component.canReadCohorts">
-        <div class="paddedWrapper">
-            <span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined || !$component.canCreateCohort()}">New Cohort</span>
-            <div class="clear">
-                <cohort-definition-browser params="{cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
-            </div>
-        </div>
-    </div>
-    <div data-bind="ifnot:$component.canReadCohorts">
-        <div class="padded">
-            <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-        </div>
-    </div>
+	<div data-bind="if:$component.canReadCohorts">
+		<div class="paddedWrapper">
+			<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined || !$component.canCreateCohort()}">New Cohort</span>
+			<div class="clear">
+				<cohort-definition-browser params="{cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
+			</div>
+		</div>
+	</div>
+	<div data-bind="ifnot:$component.canReadCohorts">
+		<div class="padded">
+			<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+		</div>
+	</div>
 </div>

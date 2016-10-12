@@ -1,7 +1,7 @@
 define(['knockout', 'text!./home.html'], function (ko, view) {
 	function home(params) {
-	    var self = this;
-	    var authApi = params.model.authApi;
+		var self = this;
+		var authApi = params.model.authApi;
 		self.github_status = ko.observableArray();
 
 		$.ajax({

@@ -90,6 +90,7 @@ requirejs.config({
 		"cohort-comparison-browser": "components/cohort-comparison-browser",
 		"cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
 		"cohort-comparison-r-code": "components/cohort-comparison-r-code",
+		"user-bar" : "components/user-bar",
 		"feasibility-manager": "components/feasibility-manager",
 		"feasibility-browser": "components/feasibility-browser",
 		"feasibility-analyzer": "components/feasibility-analyzer",
@@ -132,17 +133,17 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll'], function (ko, app, config, authApi, util) {
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll','user-bar'], function (ko, app, config, authApi, util) {
 		$('#splash').fadeIn();
 		var pageModel = new app();
 		window.pageModel = pageModel;
 		ko.applyBindings(pageModel,document.getElementsByTagName('html')[0]);
 
-	    // update access token
+		// update access token
 		if (authApi.token()) {
-		    var refreshTokenPromise = $.Deferred();
-		    pageModel.initPromises.push(refreshTokenPromise);
-		    authApi.refreshToken().always(refreshTokenPromise.resolve);
+			var refreshTokenPromise = $.Deferred();
+			pageModel.initPromises.push(refreshTokenPromise);
+			authApi.refreshToken().always(refreshTokenPromise.resolve);
 		}
 
 		// establish base priorities for daimons

@@ -27,49 +27,57 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
             }
             return 'Not logged in';
         });
-
-        var fromatErrMsg = function(jqXHR, textStatus, errorThrown) {
-            var msg = "";
-            if (errorThrown) {
-                msg += errorThrown;
-            } else if (textStatus) {
-                msg += textStatus;
-            }
-
-            if (jqXHR.responseText) {
-                if (msg) {
-                    msg += ": ";
-                }
-                msg += jqXHR.responseText;
-            }
-
-            return msg;
-        };
+        self.authProviders = [
+            {
+                name: 'Windows',
+                url: 'user/login',
+                ajax: true,
+								icon: 'fa fa-windows'
+            },
+            {
+                name: 'Google',
+                url: 'user/oauth/google',
+                ajax: false,
+								icon: 'fa fa-google'
+            },
+            {
+                name: 'Facebook',
+                url: 'user/oauth/facebook',
+                ajax: false,
+								icon: 'fa fa-facebook'
+            },
+        ];
+        self.currentAuthProvider = ko.observable(self.authProviders[0]);
 
         self.getAuthorizationHeader = function() {
             return "Bearer " + self.token();
         };
 
         self.signin = function () {
-            self.isInProgress(true);
-            $.ajax({
-                url: self.serviceUrl + "user/login",
-                method: 'GET',
-                xhrFields: {
-                    withCredentials: true
-                },
-                success: function (data, textStatus, jqXHR) {
-                    var token = jqXHR.getResponseHeader('Bearer');
-                    setToken(token);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    setToken(null);
-                    self.errorMsg(fromatErrMsg(jqXHR, textStatus, errorThrown));
-                },
-                complete: function (data) {
-                    self.isInProgress(false);
-                }
-            });
+            var loginUrl = self.serviceUrl + self.currentAuthProvider().url;
+
+            if (self.currentAuthProvider().ajax == true) {
+                self.isInProgress(true);
+                $.ajax({
+                    url: loginUrl,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        var token = jqXHR.getResponseHeader('Bearer');
+                        setToken(token);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        setToken(null);
+                        self.errorMsg("Login failed.");
+                    },
+                    complete: function (data) {
+                        self.isInProgress(false);
+                    }
+                });
+            } else {
+                document.location = loginUrl;
+            }
         };
 
         self.signout = function () {
@@ -88,9 +96,6 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
                 success: function (data, textStatus, jqXHR) {
                     setToken(null);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    self.errorMsg(fromatErrMsg(jqXHR, textStatus, errorThrown));
-                },
                 complete: function (data) {
                     self.isInProgress(false);
                 }
@@ -103,11 +108,11 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
         };
     }
 
-	var component = {
-		viewModel: welcome,
-		template: view
-	};
+    var component = {
+        viewModel: welcome,
+        template: view
+    };
 
-	ko.components.register('welcome', component);
-	return component;
+    ko.components.register('welcome', component);
+    return component;
 });
