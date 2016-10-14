@@ -6,7 +6,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.appInitializationFailed = ko.observable(false);
 		self.initPromises = [];
 		self.applicationStatus = ko.observable('initializing');
-		self.minibar = ko.observable(false);
 		self.searchTabMode = ko.observable('simple');
 		self.pendingSearch = ko.observable(false);
 		self.pageTitle = ko.pureComputed(function () {
@@ -193,7 +192,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					},
 					'/estimation/:cohortComparisonId:': function (cohortComparisonId) {
 						require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code'], function () {
-							self.currentCohortComparisonId(cohortComparisonId)
+							self.currentCohortComparisonId(cohortComparisonId);
 							self.currentView('estimation');
 						});
 					},
@@ -204,13 +203,13 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					},
           '/iranalysis/new': function(analysisId) {
 						require(['ir-manager'], function () {
-            	self.selectedIRAnalysisId(null)
+            	self.selectedIRAnalysisId(null);
 							self.currentView('iranalysis');
 						});
 					},
           '/iranalysis/:analysisId': function(analysisId) {
 						require(['ir-manager'], function () {
-            	self.selectedIRAnalysisId(+analysisId)
+            	self.selectedIRAnalysisId(+analysisId);
 							self.currentView('iranalysis');
 						});
 					},
@@ -226,7 +225,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.currentView('sptest_smoking');
 						});
 					},
-        	}
+        	};
 				self.router = new Router(routes).configure(routerOptions);
 				self.router.init('/');
 				self.applicationStatus('running');
@@ -241,7 +240,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 				$('#wrapperLeftMenu').fadeIn();
 				$('#wrapperMainWindow').fadeIn();
 			}, 10);
-		}
+		};
 		self.loadConcept = function (conceptId) {
 			self.currentView('loading');
 			var conceptPromise = $.ajax({
@@ -299,7 +298,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			$.when(conceptPromise).done(function () {
 				self.currentView('concept');
 			});
-		}
+		};
 		self.metagorize = function (metarchy, related) {
 			var concept = self.currentConcept();
 			var key = concept.VOCABULARY_ID + '.' + concept.CONCEPT_CLASS_ID;
@@ -312,7 +311,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					metarchy.parents.push(related);
 				}
 			}
-		}
+		};
 		self.searchConceptsOptions = {
 			Facets: [{
 				'caption': 'Vocabulary',

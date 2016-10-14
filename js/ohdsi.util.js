@@ -1520,7 +1520,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		if (allowed) {
 			console.log(`using cache for ${opts.url}. remove ${allowed} from ohdsi.util.ALLOW_CACHING to disable caching for it`);
 		} else {
-			console.log(`not caching ${opts.url}. add to ohdsi.util.ALLOW_CACHING to enable caching for it`);
+			// console.log(`not caching ${opts.url}. add to ohdsi.util.ALLOW_CACHING to enable caching for it`);
 			return $.ajax(opts);
 		}
 		var key = JSON.stringify(opts);
