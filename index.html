@@ -171,6 +171,7 @@
 						<div class="error">unable to connect to an instance of the webapi. please contact your administrator to resolve this issue.</div>
 					</div>
 					<div data-bind="if:!appInitializationFailed()">
+						<div class="heading">Configured Services</div>
 						<ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
 						<r-manager></r-manager>				
 					</div>

@@ -819,7 +819,7 @@ define(['knockout',
         $(document).off('click', '#selectAllDescendants');
         $(document).on('click', '#selectAllDescendants', function() { self.selectAllConceptSetItems("#selectAllDescendants", { includeDescendants: true })});
         $(document).off('click', '#selectAllMapped');
-        $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeDescendants: true })});
+        $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeMapped: true })});
 
         self.canEdit = self.model.canEditCurrentConceptSet;
         self.canCreate = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset(); });
