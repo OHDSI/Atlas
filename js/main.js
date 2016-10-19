@@ -138,11 +138,11 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		window.pageModel = pageModel;
 		ko.applyBindings(pageModel,document.getElementsByTagName('html')[0]);
 
-	    // update access token
+		// update access token
 		if (authApi.token()) {
-		    var refreshTokenPromise = $.Deferred();
-		    pageModel.initPromises.push(refreshTokenPromise);
-		    authApi.refreshToken().always(refreshTokenPromise.resolve);
+			var refreshTokenPromise = $.Deferred();
+			pageModel.initPromises.push(refreshTokenPromise);
+			authApi.refreshToken().always(refreshTokenPromise.resolve);
 		}
 
 		// establish base priorities for daimons

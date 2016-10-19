@@ -53,9 +53,9 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 					$.ajax({
 						url: params.services.url + source.sourceKey + '/cohortresults/' + params.model.currentCohortDefinition().id() + '/breakdown',
 						method: 'GET',
-                        headers: {
-                            Authorization: authApi.getAuthorizationHeader()
-                        },
+						headers: {
+							Authorization: authApi.getAuthorizationHeader()
+						},
 						contentType: 'application/json',
 						success: function (breakdown) {
 							let cf = crossfilter(breakdown);

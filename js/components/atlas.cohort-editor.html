@@ -1,33 +1,33 @@
 <div class="paddedWrapper">
-    <div class="heading">
-        <b>Cohort definition:</b>  A cohort is defined as the set of persons satisfying one or more inclusion criteria for a duration of time.  
-        One person may qualify for one cohort multiple times during non-overlapping time intervals.  
-        Cohorts are constructed in ATLAS by specifying cohort entry criteria and cohort exit criteria.  
-        Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, 
-        and optionally specifying additional inclusion criteria which filter to the qualifying events.  
-        Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer 
-        qualifies for the cohort.
-    </div>
-    <div class="divtext cohort-description" data-bind="attr: { contenteditable:canEdit() }, htmlValue:model.currentCohortDefinition().description"></div>
+	<div class="heading">
+		<b>Cohort definition:</b>  A cohort is defined as the set of persons satisfying one or more inclusion criteria for a duration of time.  
+		One person may qualify for one cohort multiple times during non-overlapping time intervals.  
+		Cohorts are constructed in ATLAS by specifying cohort entry criteria and cohort exit criteria.  
+		Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, 
+		and optionally specifying additional inclusion criteria which filter to the qualifying events.  
+		Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer 
+		qualifies for the cohort.
+	</div>
+	<div class="divtext cohort-description" data-bind="attr: { contenteditable:canEdit() }, htmlValue:model.currentCohortDefinition().description"></div>
 </div>
 
 <div class="paddedWrapper">
-    <div data-bind="eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">
-        <!-- ko if:canEdit-->
-        <cohort-expression-editor params="expression: model.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
-        <!-- /ko -->
-        <!-- ko ifnot:canEdit-->
-        <cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
-        <!-- /ko -->
-        <div class="modal fade" id="conceptSetSelectorDialog" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">Select Concept Set...</div>
-                    <div class="paddedWrapper">
-                        <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div data-bind="eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">
+		<!-- ko if:canEdit-->
+		<cohort-expression-editor params="expression: model.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
+		<!-- /ko -->
+		<!-- ko ifnot:canEdit-->
+		<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
+		<!-- /ko -->
+		<div class="modal fade" id="conceptSetSelectorDialog" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">Select Concept Set...</div>
+					<div class="paddedWrapper">
+						<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

@@ -11,7 +11,7 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables
 				url: config.services[0].url + 'job/execution?comprehensivePage=true',
 				method: 'GET',
 				headers: {
-				    Authorization: authApi.getAuthorizationHeader()
+					Authorization: authApi.getAuthorizationHeader()
 				},
 				contentType: 'application/json',
 				success: function (jobs) {
@@ -28,17 +28,17 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables
 					}
 					self.model.jobs(jobs.content);
 				},
-                error: authApi.handleAccessDenied
+				error: authApi.handleAccessDenied
 			});
 		}
 
-	    self.isAuthenticated = authApi.isAuthenticated;
-	    self.canReadJobs = ko.pureComputed(function() {
-	       return self.isAuthenticated() && authApi.isPermittedReadJobs();
-	    });
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canReadJobs = ko.pureComputed(function() {
+			return self.isAuthenticated() && authApi.isPermittedReadJobs();
+		});
 
 		if (self.canReadJobs()) {
-		    self.updateJobs();
+			self.updateJobs();
 		}
 	}
 

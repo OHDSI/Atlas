@@ -46,24 +46,6 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
         ];
         self.currentAuthProvider = ko.observable(self.authProviders[0]);
 
-        var fromatErrMsg = function(jqXHR, textStatus, errorThrown) {
-            var msg = "";
-            if (errorThrown) {
-                msg += errorThrown;
-            } else if (textStatus) {
-                msg += textStatus;
-            }
-
-            if (jqXHR.responseText) {
-                if (msg) {
-                    msg += ": ";
-                }
-                msg += jqXHR.responseText;
-            }
-
-            return msg;
-        };
-
         self.getAuthorizationHeader = function() {
             return "Bearer " + self.token();
         };
@@ -84,7 +66,7 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         setToken(null);
-                        self.errorMsg(fromatErrMsg(jqXHR, textStatus, errorThrown));
+                        self.errorMsg("Login failed.");
                     },
                     complete: function (data) {
                         self.isInProgress(false);
@@ -111,9 +93,6 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
                 success: function (data, textStatus, jqXHR) {
                     setToken(null);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    self.errorMsg(fromatErrMsg(jqXHR, textStatus, errorThrown));
-                },
                 complete: function (data) {
                     self.isInProgress(false);
                 }
@@ -126,11 +105,11 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
         };
     }
 
-	var component = {
-		viewModel: welcome,
-		template: view
-	};
+    var component = {
+        viewModel: welcome,
+        template: view
+    };
 
-	ko.components.register('welcome', component);
-	return component;
+    ko.components.register('welcome', component);
+    return component;
 });
