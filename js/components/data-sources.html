@@ -1,56 +1,51 @@
 <!-- ko if:$component.showSelectionArea -->
 <div class="wrapperTitle">
-	<span data-bind="if:!$component.model.loadingReport()"><i class="fa fa-area-chart"></i></span>
-	<span data-bind="if:$component.model.loadingReport()"><i class="fa fa-circle-o-notch fa-spin"></i></span> Data Source Profiles
+	<span data-bind="if:!$component.loadingReport()"><i class="fa fa-area-chart"></i></span>
+	<span data-bind="if:$component.loadingReport()"><i class="fa fa-circle-o-notch fa-spin"></i></span> Data Source Profiles
 </div>
 
 <div class="reportControls pad-5">
 	<div class="row">
 		<div class="col-xs-12">
-			<select class="form-control" data-bind="css : { invalid: $component.currentReport()==undefined }, options:$component.reports(), optionsCaption:'Select a Report', optionsText:'name', value:$component.currentReport"></select>
+			<select class="form-control" data-bind="css : { invalid: $component.currentSource()==undefined }, options:$component.sources, optionsText:'sourceName', value:$component.currentSource, optionsCaption:'Select a Source'"></select>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-xs-12">
-			<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.model.services()[0].sources, optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
+			<select class="form-control" data-bind="css : { invalid: $component.currentReport()==undefined }, options:$component.reports, optionsCaption:'Select a Report', optionsText:'name', value:$component.currentReport"></select>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-xs-10"></div>
-
-		<div class="col-xs-2">
-			<button class="pull-right form-control btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.model.reportValid(), text: $component.model.loadingReport() ? 'Loading...' : 'View Report'"></button>
-		</div>
-	</div>
-
 	<div class="clear"></div>
 </div>
 <!-- /ko -->
 
-<div id="reportVisit" data-bind="if: $component.currentReport() == 'Visit' && !model.loadingReport()">
+<div id="report">
 		<div class="pad-10 report">
-			<div class="reportHeading"><i class="fa fa-area-chart"></i> Visit Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
-			<div class="reportSectionHeading">Visit Prevalence</div>
+			<div class="reportHeading"><i class="fa fa-area-chart"></i>
+				<span data-bind="text:$component.currentReport().name"></span> Report
+				(<span data-bind="text:$component.currentSource().sourceKey"></span>)
+			</div>
+			<div class="reportSectionHeading"><span data-bind="$component.currentReport().name"></span> Prevalence</div>
 
 			<ul class="nav nav-tabs" id="myTab" role="tablist">
-				<li class="active" id="treemap-tab"><a href="#visit-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+				<li class="active" id="treemap-tab"><a href="#treemap-panel" role="tab" data-toggle="tab">Treemap</a>
 				</li>
-				<li><a href="#visit-table-panel" role="tab" data-toggle="tab">Table</a>
+				<li><a href="#table-panel" role="tab" data-toggle="tab">Table</a>
 				</li>
 			</ul>
 			<div id='content' class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="visit-treemap-panel">
+				<div role="tabpanel" class="tab-pane active" id="treemap-panel">
 					<div id="treemap_container">
 						<div class="treemap_zoomtarget"></div>
 					</div>
 					<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 				</div>
-				<div role="tabpanel" class="tab-pane" id="visit-table-panel" data-bind="eventListener: { event: 'click', selector: '.visit_table_selector', callback: handleVisitTableClick}">
-					<table id="visit_table" class="display">
+				<div role="tabpanel" class="tab-pane" id="table-panel" data-bind="eventListener: { event: 'click', selector: '.table_selector', callback: handleTableClick}">
+					<table id="report_table" class="display">
 						<thead>
 						<tr>
 							<th>Concept Id</th>
-							<th>Visit type</th>
+							<th>Name</th>
 							<th>Person Count</th>
 							<th>Prevalence</th>
 							<th>Records per Person</th>
@@ -58,6 +53,28 @@
 						</thead>
 					</table>
 				</div>
+			</div>
+			<div class="loader" data-bind="if:$component.loadingReportDrilldown">
+				<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
+			</div>
+			<div data-bind="if:$component.activeReportDrilldown">
+				<div class="heading" id="drilldown"><span data-bind="text:$component.currentReport().name"></span> Drilldown Report</div>
+
+				<div class="reportSectionHeading">Prevalence</div>
+				<div class="evidenceVisualization" id="trellisLinePlot"></div>
+				<div class="evidenceDescription">Prevalence</div>
+
+				<div class="reportSectionHeading">Prevalence by Month</div>
+				<div class="evidenceVisualization" id="prevalenceByMonth"></div>
+				<div class="evidenceDescription">Prevalence by Month</div>
+
+				<div class="reportSectionHeading">Type</div>
+				<div class="evidenceDescription">Type</div>
+				<div class="evidenceVisualization" id="byType"></div>
+
+				<div class="reportSectionHeading">Age at First Occurrence</div>
+				<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
+				<div class="evidenceDescription">Age at First Occurrence</div>
 			</div>
 
 		</div>
