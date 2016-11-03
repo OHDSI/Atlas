@@ -702,8 +702,7 @@ define(['knockout',
         	});
         }
         
-        self.selectAllConceptSetItems = function(selector, props) {
-        	console.log("select all: " + props)
+        self.selectAllConceptSetItems = function(selector, props) {        	
             props = props || {};
             props.isExcluded = props.isExcluded || null;
             props.includeDescendants = props.includeDescendants || null;
@@ -792,7 +791,7 @@ define(['knockout',
         $(document).off('click', '#selectAllDescendants');
         $(document).on('click', '#selectAllDescendants', function() { self.selectAllConceptSetItems("#selectAllDescendants", { includeDescendants: true })});
         $(document).off('click', '#selectAllMapped');
-        $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeDescendants: true })});
+        $(document).on('click', '#selectAllMapped', function() { self.selectAllConceptSetItems("#selectAllMapped", { includeMapped: true })});
 	}
 
 	var component = {
