@@ -565,6 +565,16 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
             }]
 		};
 		self.metatrix = {
+            'ATC.ATC 4th': {                
+				childRelationships: [{
+					name: 'Has descendant of',
+					range: [0, 1]
+                }],
+				parentRelationships: [{
+					name: 'Has ancestor of',
+					range: [0, 5]
+                }]
+            },
 			'ICD9CM.5-dig billing code': {
 				childRelationships: [{
 					name: 'Subsumes',
@@ -604,8 +614,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					range: [0, 999]
                 }],
 				parentRelationships: [{
-					name: 'Has inferred drug class (OMOP)',
-					range: [0, 999]
+                    name: 'Has ancestor of',
+                    vocabulary: ['ATC', 'ETC'],
+                    range: [0, 1]
                 }]
 			},
 			'RxNorm.Brand Name': {
@@ -750,7 +761,15 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 				for (var i = 0; i < relationships.length; i++) {
 					if (concept.RELATIONSHIPS[r].RELATIONSHIP_NAME == relationships[i].name) {
 						if (concept.RELATIONSHIPS[r].RELATIONSHIP_DISTANCE >= relationships[i].range[0] && concept.RELATIONSHIPS[r].RELATIONSHIP_DISTANCE <= relationships[i].range[1]) {
-							return true;
+                            if (relationships[i].vocabulary) {
+                                for(var v = 0; v < relationships[i].vocabulary.length; v++) {
+                                    if (relationships[i].vocabulary[v] == concept.VOCABULARY_ID) {
+                                        return true;
+                                    }
+                                }
+                            } else {
+                                return true;
+                            }
 						}
 					}
 				}
