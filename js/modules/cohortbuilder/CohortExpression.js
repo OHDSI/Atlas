@@ -15,7 +15,7 @@ define(function (require, exports) {
 		self.ConceptSets = ko.observableArray(data.ConceptSets && data.ConceptSets.map(function(d) { return new ConceptSet(d) }));
 		self.PrimaryCriteria = ko.observable(new PrimaryCriteria(data.PrimaryCriteria, self.ConceptSets));
 		self.AdditionalCriteria = ko.observable(data.AdditionalCriteria && new CriteriaGroup(data.AdditionalCriteria, self.ConceptSets));
-		self.QualifiedLimit =  { Type: ko.observable(data.QualifiedLimit && data.ExpressionLimit.Type || "First") }
+		self.QualifiedLimit =  { Type: ko.observable(data.QualifiedLimit && data.QualifiedLimit.Type || "First") }
 		self.ExpressionLimit =  { Type: ko.observable(data.ExpressionLimit && data.ExpressionLimit.Type || "First") }
 		self.InclusionRules = ko.observableArray(data.InclusionRules && data.InclusionRules.map(function (rule) {
 			return new InclusionRule(rule, self.ConceptSets);	
