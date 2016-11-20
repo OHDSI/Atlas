@@ -370,11 +370,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 							"id": data.conceptId[i],
 							"path": data.conceptPath[i],
 							"pct_persons": data.percentPersons[i],
-							"records_per_person": data.recordsPerPerson[i],
-							"relative_risk": data.logRRAfterBefore[i],
-							"pct_persons_after": data.percentPersonsAfter[i],
-							"pct_persons_before": data.percentPersonsBefore[i],
-							"risk_difference": data.riskDiffAfterBefore[i]
+							"records_per_person": data.recordsPerPerson[i]
 						};
 
 						if ((data.percentPersons[i] / total) > threshold) {
