@@ -14,7 +14,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 			{name: "Measurement", path: "measurement"}];
 		self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.currentSource = ko.observable(self.sources[0]);
-		self.currentReport = ko.observable(self.reports[0]);
+		self.currentReport = ko.observable();
 		self.formatPercent = d3.format('.2%');
 		self.formatFixed = d3.format('.2f');
 		self.formatComma = d3.format(',');
@@ -38,11 +38,16 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 			var minimum_area = 50;
 			var threshold = minimum_area / (width * height);
 
+			$('#treemap_container svg').remove();
+			$('.evidenceVisualization').empty();
+
 			$.ajax({
 				url: url,
 				success: function (data){
 					var normalizedData = self.normalizeDataframe(self.normalizeArray(data, true));
 					data = normalizedData;
+					self.loadingReport(false);
+
 					if (!data.empty) {
 						var table_data = normalizedData.conceptPath.map(function (d, i) {
 							var pathParts = this.conceptPath[i].split('||');
@@ -124,8 +129,6 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 						});
 						$('[data-toggle="popover"]').popover();
 					}
-
-					self.loadingReport(false);
 				}
 			});
 
@@ -186,6 +189,11 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 			var currentSource = self.currentSource();
 			var currentReport = self.currentReport();
 			var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path + '/' + concept_id;
+
+			$('.evidenceVisualization').empty();
+			self.loadingReportDrilldown(true);
+			self.activeReportDrilldown(false);
+
 			$.ajax({
 				type: "GET",
 				url: url,

@@ -19,7 +19,7 @@
 </div>
 <!-- /ko -->
 
-<div id="report">
+<div id="report" data-bind="if: !$component.loadingReport() && $component.currentReport()">
 		<div class="pad-10 report">
 			<div class="reportHeading"><i class="fa fa-area-chart"></i>
 				<span data-bind="text:$component.currentReport().name"></span> Report
@@ -57,7 +57,7 @@
 			<div class="loader" data-bind="if:$component.loadingReportDrilldown">
 				<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 			</div>
-			<div data-bind="if:$component.activeReportDrilldown">
+			<div data-bind="visible: $component.activeReportDrilldown()">
 				<div class="heading" id="drilldown"><span data-bind="text:$component.currentReport().name"></span> Drilldown Report</div>
 
 				<div class="reportSectionHeading">Prevalence</div>
