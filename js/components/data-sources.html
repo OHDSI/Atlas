@@ -55,26 +55,35 @@
 				</div>
 			</div>
 			<div class="loader" data-bind="if:$component.loadingReportDrilldown">
-				<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
+				<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown Report:
+				<!-- ko if: $component.currentConcept() -->
+				  <span data-bind="text:$component.currentConcept().name"></span>
+				<!-- /ko -->
+				 ...
 			</div>
 			<div data-bind="visible: $component.activeReportDrilldown()">
-				<div class="heading" id="drilldown"><span data-bind="text:$component.currentReport().name"></span> Drilldown Report</div>
+
+				<!-- ko if: $component.currentConcept() -->
+				<div class="heading" id="drilldown">
+					Drilldown Report: <span data-bind="text:$component.currentConcept().name"></span>
+				</div>
+				<!-- /ko -->
 
 				<div class="reportSectionHeading">Prevalence</div>
 				<div class="evidenceVisualization" id="trellisLinePlot"></div>
-				<div class="evidenceDescription">Prevalence</div>
+				<div class="evidenceDescription"></div>
 
 				<div class="reportSectionHeading">Prevalence by Month</div>
 				<div class="evidenceVisualization" id="prevalenceByMonth"></div>
-				<div class="evidenceDescription">Prevalence by Month</div>
+				<div class="evidenceDescription"></div>
 
 				<div class="reportSectionHeading">Type</div>
-				<div class="evidenceDescription">Type</div>
 				<div class="evidenceVisualization" id="byType"></div>
+				<div class="evidenceDescription"></div>
 
 				<div class="reportSectionHeading">Age at First Occurrence</div>
 				<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
-				<div class="evidenceDescription">Age at First Occurrence</div>
+				<div class="evidenceDescription"></div>
 			</div>
 
 		</div>

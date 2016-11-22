@@ -20,6 +20,8 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 		self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.currentSource = ko.observable(self.sources[0]);
 		self.currentReport = ko.observable();
+		self.currentConcept = ko.observable();
+
 		self.formatPercent = d3.format('.2%');
 		self.formatFixed = d3.format('.2f');
 		self.formatComma = d3.format(',');
@@ -102,6 +104,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 						var treemap = new jnj_chart.treemap();
 						treemap.render(tree, '#treemap_container', width, height, {
 							onclick: function (node) {
+								self.currentConcept(node);
 								self.drilldown(node.id, node.name);
 							},
 							getsizevalue: function (node) {
