@@ -1,4 +1,4 @@
-define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding'], function (ko, view, d3, jnj_chart, colorbrewer, _, config) {
+define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function (ko, view, d3, jnj_chart, colorbrewer, _, config) {
 	function dataSources(params) {
 		var self = this;
 		var recordsPerPersonProperty = {name: "recordsPerPerson", description: "Records per person"};
@@ -108,7 +108,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 						treemap.render(tree, '#treemap_container', width, height, {
 							onclick: function (node) {
 								self.currentConcept(node);
-								self.drilldown(node.id, node.name);
+								self.drilldown(node.id);
 							},
 							getsizevalue: function (node) {
 								return node.num_persons;
@@ -196,7 +196,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 			return obj;
 		}
 
-		self.drilldown = function (concept_id, concept_name) {
+		self.drilldown = function (concept_id) {
 			var currentSource = self.currentSource();
 			var currentReport = self.currentReport();
 			var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path + '/' + concept_id;
@@ -408,7 +408,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 			var rowIndex = valueAccessor.target._DT_CellIndex.row;
 			var data = dataTable.row(rowIndex).data();
 
-			self.visitDrilldown(data.concept_id, data.conceptPath);
+			self.drilldown(data.concept_id);
 		};
 
 
