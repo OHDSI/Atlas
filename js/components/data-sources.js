@@ -6,12 +6,17 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 		self.loadingReport = ko.observable(false);
 		self.loadingReportDrilldown = ko.observable(false);
 		self.activeReportDrilldown = ko.observable(false);
-		self.reports = [{name: "Dashboard", path: "dashboard"},
-			{name: "Visit", path: "visit"},
-			{name: "Condition", path: "condition"},
-			{name: "Procedure", path: "procedure"},
-			{name: "Drug", path: "drug"},
-			{name: "Measurement", path: "measurement"}];
+		self.reports = [
+			{name: "Dashboard", path: "dashboard"},
+			{name: "Visit", path: "visit", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
+			{name: "Condition", path: "condition", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
+			{name: "Condition Era", path: "conditionera", aggProperty: {name: "lengthOfEra", description: "Length of era"}},
+			{name: "Procedure", path: "procedure", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
+			{name: "Drug", path: "drug", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
+			{name: "Drug Era", path: "drugera", aggProperty: {name: "lengthOfEra", description: "Length of era"}},
+			{name: "Measurement", path: "measurement", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
+			{name: "Observation", path: "observation", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
+		];
 		self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.currentSource = ko.observable(self.sources[0]);
 		self.currentReport = ko.observable();
@@ -56,7 +61,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 								name: pathParts[pathParts.length-1],
 								num_persons: self.formatComma(this.numPersons[i]),
 								percent_persons: self.formatPercent(this.percentPersons[i]),
-								records_per_person: self.formatFixed(this.recordsPerPerson[i])
+								agg_value: self.formatFixed(this[currentReport.aggProperty.name][i])
 							};
 						}, data);
 
@@ -83,7 +88,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 									className: 'numeric'
 								},
 								{
-									data: 'records_per_person',
+									data: 'agg_value',
 									className: 'numeric'
 								}
 							],
@@ -103,7 +108,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 								return node.num_persons;
 							},
 							getcolorvalue: function (node) {
-								return node.records_per_person;
+								return node.agg_value;
 							},
 							getcolorrange: function () {
 								return self.treemapGradient;
@@ -115,7 +120,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 								result += '<div class="pathleaf">' + steps[i] + '</div>';
 								result += '<div class="pathleafstat">Prevalence: ' + self.formatPercent(node.pct_persons) + '</div>';
 								result += '<div class="pathleafstat">Number of People: ' + self.formatComma(node.num_persons) + '</div>';
-								result += '<div class="pathleafstat">Records per Person: ' + self.formatFixed(node.records_per_person) + '</div>';
+								result += '<div class="pathleafstat">' + currentReport.aggProperty.description + ': ' + self.formatFixed(node.agg_value) + '</div>';
 								return result;
 							},
 							gettitle: function (node) {
@@ -334,6 +339,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 
 		self.buildHierarchyFromJSON = function (data, threshold) {
 			var total = 0;
+			var currentReport = self.currentReport();
 
 			var root = {
 				"name": "root",
@@ -378,7 +384,7 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 							"id": data.conceptId[i],
 							"path": data.conceptPath[i],
 							"pct_persons": data.percentPersons[i],
-							"records_per_person": data.recordsPerPerson[i]
+							"agg_value": data[currentReport.aggProperty.name][i]
 						};
 
 						if ((data.percentPersons[i] / total) > threshold) {

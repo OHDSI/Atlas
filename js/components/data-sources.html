@@ -38,7 +38,7 @@
 					<div id="treemap_container">
 						<div class="treemap_zoomtarget"></div>
 					</div>
-					<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+					<div class="treemap_legend">Box Size: Prevalence, Color: <span data-bind="text:$component.currentReport().aggProperty.description"></span> (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="table-panel" data-bind="eventListener: { event: 'click', selector: '.table_selector', callback: handleTableClick}">
 					<table id="report_table" class="display">
@@ -48,7 +48,7 @@
 							<th>Name</th>
 							<th>Person Count</th>
 							<th>Prevalence</th>
-							<th>Records per Person</th>
+							<th><span data-bind="text:$component.currentReport().aggProperty.description"></span></th>
 						</tr>
 						</thead>
 					</table>
