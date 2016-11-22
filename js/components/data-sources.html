@@ -77,9 +77,11 @@
 				<div class="evidenceVisualization" id="prevalenceByMonth"></div>
 				<div class="evidenceDescription"></div>
 
+				<!-- ko if: $component.currentReport().byType -->
 				<div class="reportSectionHeading">Type</div>
 				<div class="evidenceVisualization" id="byType"></div>
 				<div class="evidenceDescription"></div>
+				<!-- /ko -->
 
 				<div class="reportSectionHeading">Age at First Occurrence</div>
 				<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>

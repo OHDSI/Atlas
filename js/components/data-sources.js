@@ -1,6 +1,9 @@
 define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding'], function (ko, view, d3, jnj_chart, colorbrewer, _, config) {
 	function dataSources(params) {
 		var self = this;
+		var recordsPerPersonProperty = {name: "recordsPerPerson", description: "Records per person"};
+		var lengthOfEraProperty = {name: "lengthOfEra", description: "Length of era"};
+
 		self.model = params.model;
 		self.sources = config.services[0].sources;
 		self.loadingReport = ko.observable(false);
@@ -8,14 +11,14 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 		self.activeReportDrilldown = ko.observable(false);
 		self.reports = [
 			{name: "Dashboard", path: "dashboard"},
-			{name: "Visit", path: "visit", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
-			{name: "Condition", path: "condition", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
-			{name: "Condition Era", path: "conditionera", aggProperty: {name: "lengthOfEra", description: "Length of era"}},
-			{name: "Procedure", path: "procedure", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
-			{name: "Drug", path: "drug", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
-			{name: "Drug Era", path: "drugera", aggProperty: {name: "lengthOfEra", description: "Length of era"}},
-			{name: "Measurement", path: "measurement", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
-			{name: "Observation", path: "observation", aggProperty: {name: "recordsPerPerson", description: "Records per person"}},
+			{name: "Visit", path: "visit", byType: false, aggProperty: recordsPerPersonProperty},
+			{name: "Condition", path: "condition", byType: true, aggProperty: recordsPerPersonProperty},
+			{name: "Condition Era", path: "conditionera", byType: false, aggProperty: lengthOfEraProperty},
+			{name: "Procedure", path: "procedure", byType: true, aggProperty: recordsPerPersonProperty},
+			{name: "Drug", path: "drug", byType: true, aggProperty: recordsPerPersonProperty},
+			{name: "Drug Era", path: "drugera", byType: false, aggProperty: lengthOfEraProperty},
+			{name: "Measurement", path: "measurement", byType: true, aggProperty: recordsPerPersonProperty},
+			{name: "Observation", path: "observation", byType: true, aggProperty: recordsPerPersonProperty},
 		];
 		self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.currentSource = ko.observable(self.sources[0]);
@@ -254,17 +257,17 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 					}
 
 					// procedure type visualization
-					//if (data.visitsByType && data.visitsByType.length > 0) {
-					//	var donut = new jnj_chart.donut();
-					//	donut.render(self.mapConceptData(data.visitsByType), "#byType", self.donutWidth, self.donutHeight, {
-					//		margin: {
-					//			top: 5,
-					//			left: 5,
-					//			right: 200,
-					//			bottom: 5
-					//		}
-					//	});
-					//}
+					if (data.byType && data.byType.length > 0) {
+						var donut = new jnj_chart.donut();
+						donut.render(self.mapConceptData(data.byType), "#byType", self.donutWidth, self.donutHeight, {
+							margin: {
+								top: 5,
+								left: 5,
+								right: 200,
+								bottom: 5
+							}
+						});
+					}
 
 					// render trellis
 					var trellisData = self.normalizeArray(data.prevalenceByGenderAgeYear);
@@ -437,6 +440,45 @@ define(['knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer'
 			return [series]; // return series wrapped in an array
 		};
 
+		self.mapConceptData = function (data) {
+			var result;
+
+			if (data instanceof Array) {
+				result = [];
+				$.each(data, function () {
+					var datum = {}
+					datum.id = (+this.conceptId || this.conceptName);
+					datum.label = this.conceptName;
+					datum.value = +this.countValue;
+					result.push(datum);
+				});
+			} else if (data.countValue instanceof Array) // multiple rows, each value of each column is in the indexed properties.
+			{
+				result = data.countValue.map(function (d, i) {
+					var datum = {}
+					datum.id = (this.conceptId || this.conceptName)[i];
+					datum.label = this.conceptName[i];
+					datum.value = this.countValue[i];
+					return datum;
+				}, data);
+
+
+			} else // the dataset is a single value result, so the properties are not arrays.
+			{
+				result = [
+					{
+						id: data.conceptId,
+						label: data.conceptName,
+						value: data.countValue
+					}];
+			}
+
+			result = result.sort(function (a, b) {
+				return b.label < a.label ? 1 : -1;
+			});
+
+			return result;
+		}
 	}
 
 	var component = {
