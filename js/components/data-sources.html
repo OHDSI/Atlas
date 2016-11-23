@@ -31,9 +31,11 @@
         <div class="reportSectionHeading"><span data-bind="$component.currentReport().name"></span> Prevalence</div>
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="active" id="treemap-tab"><a href="#treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+            <li class="active" id="treemap-tab">
+                <a href="#treemap-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('tree')">Treemap</a>
             </li>
-            <li><a href="#table-panel" role="tab" data-toggle="tab">Table</a>
+            <li>
+                <a href="#table-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('table')">Table</a>
             </li>
         </ul>
         <div id='content' class="tab-content">

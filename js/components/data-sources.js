@@ -3,6 +3,11 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
         var self = this;
         var RecordsPerPersonProperty = {name: "recordsPerPerson", description: "Records per person"};
         var LengthOfEraProperty = {name: "lengthOfEra", description: "Length of era"};
+        var width = 1000;
+        var height = 250;
+        var minimum_area = 50;
+        var threshold = minimum_area / (width * height);
+        var treemapContainer = $("#treemap_container");
 
         self.model = params.model;
         self.sources = config.services[0].sources;
@@ -34,7 +39,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
         self.boxplotHeight = 125;
         self.donutWidth = 500;
         self.donutHeight = 300;
-        self.datatables = {};
 
         self.runReport = function runReport() {
             self.loadingReport(true);
@@ -44,12 +48,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
             var currentSource = self.currentSource();
             var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path;
 
-            var width = 1000;
-            var height = 250;
-            var minimum_area = 50;
-            var threshold = minimum_area / (width * height);
-
-            $('#treemap_container svg').remove();
+            treemapContainer.find('svg').remove();
             $('.evidenceVisualization').empty();
 
             $.ajax({
@@ -60,7 +59,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
                     self.loadingReport(false);
 
                     if (!data.empty) {
-                        var table_data = normalizedData.conceptPath.map(function (d, i) {
+                        var tableData = normalizedData.conceptPath.map(function(d, i) {
                             var pathParts = this.conceptPath[i].split('||');
                             return {
                                 concept_id: this.conceptId[i],
@@ -70,33 +69,19 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
                                 agg_value: self.formatFixed(this[currentReport.aggProperty.name][i])
                             };
                         }, data);
-
-                        datatable = $('#report_table').DataTable({
+                        $("#report_table").DataTable({
                             order: [1, 'desc'],
                             dom: 'T<"clear">lfrtip',
-                            data: table_data,
-                            "createdRow": function (row, data, dataIndex) {
+                            data: tableData,
+                            createdRow: function (row) {
                                 $(row).addClass('table_selector');
                             },
                             columns: [
-                                {
-                                    data: 'concept_id'
-                                },
-                                {
-                                    data: 'name'
-                                },
-                                {
-                                    data: 'num_persons',
-                                    className: 'numeric'
-                                },
-                                {
-                                    data: 'percent_persons',
-                                    className: 'numeric'
-                                },
-                                {
-                                    data: 'agg_value',
-                                    className: 'numeric'
-                                }
+                                { data: 'concept_id' },
+                                { data: 'name' },
+                                { data: 'num_persons', className: 'numeric' },
+                                { data: 'percent_persons', className: 'numeric' },
+                                { data: 'agg_value', className: 'numeric' }
                             ],
                             pageLength: 5,
                             lengthChange: false,
@@ -104,28 +89,21 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
                             destroy: true
                         });
 
-                        tree = self.buildHierarchyFromJSON(data, threshold);
+                        var treeData = self.buildHierarchyFromJSON(data, threshold);
                         var treemap = new jnj_chart.treemap();
-                        treemap.render(tree, '#treemap_container', width, height, {
+                        treemap.render(treeData, '#treemap_container', width, height, {
                             onclick: function (node) {
                                 self.currentConcept(node);
-                                self.drilldown(node.id);
                             },
-                            getsizevalue: function (node) {
-                                return node.num_persons;
-                            },
-                            getcolorvalue: function (node) {
-                                return node.agg_value;
-                            },
-                            getcolorrange: function () {
-                                return self.treemapGradient;
-                            },
+                            getsizevalue: function (node) { return node.num_persons; },
+                            getcolorvalue: function (node) { return node.agg_value; },
+                            getcolorrange: function () { return self.treemapGradient; },
                             getcontent: function (node) {
                                 var result = '',
                                     steps = node.path.split('||'),
                                     i = steps.length - 1;
                                 result += '<div class="pathleaf">' + steps[i] + '</div>';
-                                result += '<div class="pathleafstat">Prevalence: ' + self.formatPercent(node.pct_persons) + '</div>';
+                                result += '<div class="pathleafstat">Prevalence: ' + self.formatPercent(node.percent_persons) + '</div>';
                                 result += '<div class="pathleafstat">Number of People: ' + self.formatComma(node.num_persons) + '</div>';
                                 result += '<div class="pathleafstat">' + currentReport.aggProperty.description + ': ' + self.formatFixed(node.agg_value) + '</div>';
                                 return result;
@@ -139,6 +117,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
                                 return title;
                             }
                         });
+
                         $('[data-toggle="popover"]').popover();
                     }
                 }
@@ -153,52 +132,28 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
 
         self.currentReport.subscribe(onChange);
         self.currentSource.subscribe(onChange);
-
-        self.normalizeDataframe = function (dataframe) {
-            // rjson serializes dataframes with 1 row as single element properties.  This function ensures fields are always arrays.
-            var keys = d3.keys(dataframe);
-            keys.forEach(function (key) {
-                if (!(dataframe[key] instanceof Array)) {
-                    dataframe[key] = [dataframe[key]];
-                }
-            });
-            return dataframe;
-        };
-
-        self.normalizeArray = function (ary, numerify) {
-            var obj = {};
-            var keys;
-
-            if (ary && ary.length > 0 && ary instanceof Array) {
-                keys = d3.keys(ary[0]);
-
-                $.each(keys, function () {
-                    obj[this] = [];
-                });
-
-                $.each(ary, function () {
-                    var thisAryObj = this;
-                    $.each(keys, function () {
-                        var val = thisAryObj[this];
-                        if (numerify) {
-                            if (_.isFinite(+val)) {
-                                val = (+val);
-                            }
-                        }
-                        obj[this].push(val);
-                    });
-                });
-            } else {
-                obj.empty = true;
+        self.currentConcept.subscribe(function (newValue){
+            if (newValue) {
+                self.drilldown();
             }
+        });
 
-            return obj;
+        self.selectTab = function(tab) {
+            if (tab == 'tree') {
+                // force resize of treemap (resize bug in jnj.chart)
+                var aspect = width / height;
+                var targetWidth = $('#content').width();
+                var chart = treemapContainer.find("svg");
+                chart.attr("width", targetWidth);
+                chart.attr("height", Math.round(targetWidth / aspect));
+            }
         };
 
-        self.drilldown = function (concept_id) {
+        self.drilldown = function () {
             var currentSource = self.currentSource();
             var currentReport = self.currentReport();
-            var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path + '/' + concept_id;
+            var currentConcept = self.currentConcept();
+            var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path + '/' + currentConcept.concept_id;
 
             $('.evidenceVisualization').empty();
             self.loadingReportDrilldown(true);
@@ -342,6 +297,55 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
             });
         };
 
+        self.handleTableClick = function (element, valueAccessor) {
+            var dataTable = $("#report_table").DataTable();
+            var rowIndex = valueAccessor.target._DT_CellIndex.row;
+            var concept = dataTable.row(rowIndex).data();
+
+            self.currentConcept(concept);
+        };
+
+        self.normalizeDataframe = function (dataframe) {
+            // rjson serializes dataframes with 1 row as single element properties.  This function ensures fields are always arrays.
+            var keys = d3.keys(dataframe);
+            keys.forEach(function (key) {
+                if (!(dataframe[key] instanceof Array)) {
+                    dataframe[key] = [dataframe[key]];
+                }
+            });
+            return dataframe;
+        };
+
+        self.normalizeArray = function (ary, numerify) {
+            var obj = {};
+            var keys;
+
+            if (ary && ary.length > 0 && ary instanceof Array) {
+                keys = d3.keys(ary[0]);
+
+                $.each(keys, function () {
+                    obj[this] = [];
+                });
+
+                $.each(ary, function () {
+                    var thisAryObj = this;
+                    $.each(keys, function () {
+                        var val = thisAryObj[this];
+                        if (numerify) {
+                            if (_.isFinite(+val)) {
+                                val = (+val);
+                            }
+                        }
+                        obj[this].push(val);
+                    });
+                });
+            } else {
+                obj.empty = true;
+            }
+
+            return obj;
+        };
+
         self.buildHierarchyFromJSON = function (data, threshold) {
             var total = 0;
             var currentReport = self.currentReport();
@@ -386,9 +390,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
                         childNode = {
                             "name": nodeName,
                             "num_persons": data.numPersons[i],
-                            "id": data.conceptId[i],
+                            "concept_id": data.conceptId[i],
                             "path": data.conceptPath[i],
-                            "pct_persons": data.percentPersons[i],
+                            "percent_persons": data.percentPersons[i],
                             "agg_value": data[currentReport.aggProperty.name][i]
                         };
 
@@ -399,14 +403,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
                 }
             }
             return root;
-        };
-
-        self.handleTableClick = function (element, valueAccessor) {
-            var dataTable = $("#report_table").DataTable();
-            var rowIndex = valueAccessor.target._DT_CellIndex.row;
-            var data = dataTable.row(rowIndex).data();
-
-            self.drilldown(data.concept_id);
         };
 
         self.mapMonthYearDataToSeries = function (data, options) {
