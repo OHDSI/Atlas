@@ -23,11 +23,12 @@
 <!-- /ko -->
 
 <div id="report" data-bind="if: !$component.loadingReport() && $component.currentReport()">
-    <div class="pad-10 report">
+    <div class="row pad-10 report">
         <div class="reportHeading"><i class="fa fa-area-chart"></i>
             <span data-bind="text:$component.currentReport().name"></span> Report
             (<span data-bind="text:$component.currentSource().sourceKey"></span>)
         </div>
+
         <div class="reportSectionHeading"><span data-bind="$component.currentReport().name"></span> Prevalence</div>
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -38,6 +39,7 @@
                 <a href="#table-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('table')">Table</a>
             </li>
         </ul>
+
         <div id='content' class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="treemap-panel">
                 <div id="treemap_container">
@@ -50,7 +52,7 @@
             </div>
             <div role="tabpanel" class="tab-pane" id="table-panel"
                  data-bind="eventListener: { event: 'click', selector: '.table_selector', callback: handleTableClick}">
-                <table id="report_table" class="display">
+                <table id="report_table" class="display" style="width:100%">
                     <thead>
                     <tr>
                         <th>Concept Id</th>
@@ -63,6 +65,7 @@
                 </table>
             </div>
         </div>
+
         <div class="loader" data-bind="if:$component.loadingReportDrilldown">
             <i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown Report:
             <!-- ko if: $component.currentConcept() -->
@@ -70,6 +73,7 @@
             <!-- /ko -->
             ...
         </div>
+
         <div data-bind="visible: $component.activeReportDrilldown()">
 
             <!-- ko if: $component.currentConcept() -->
@@ -78,23 +82,31 @@
             </div>
             <!-- /ko -->
 
-            <div class="reportSectionHeading">Prevalence</div>
-            <div class="evidenceVisualization" id="trellisLinePlot"></div>
-            <div class="evidenceDescription"></div>
+            <div class="col-xs-12">
+                <div class="reportSectionHeading">Prevalence</div>
+                <div class="evidenceVisualization" id="trellisLinePlot"></div>
+                <div class="evidenceDescription"></div>
+            </div>
 
-            <div class="reportSectionHeading">Prevalence by Month</div>
-            <div class="evidenceVisualization" id="prevalenceByMonth"></div>
-            <div class="evidenceDescription"></div>
+            <div class="col-xs-12">
+                <div class="reportSectionHeading">Prevalence by Month</div>
+                <div class="evidenceVisualization" id="prevalenceByMonth"></div>
+                <div class="evidenceDescription"></div>
+            </div>
 
             <!-- ko if: $component.currentReport().byType -->
-            <div class="reportSectionHeading">Type</div>
-            <div class="evidenceVisualization" id="byType"></div>
-            <div class="evidenceDescription"></div>
+            <div class="col-xs-6">
+                <div class="reportSectionHeading">Type</div>
+                <div class="evidenceVisualization" id="byType"></div>
+                <div class="evidenceDescription"></div>
+            </div>
             <!-- /ko -->
 
-            <div class="reportSectionHeading">Age at First Occurrence</div>
-            <div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
-            <div class="evidenceDescription"></div>
+            <div class="col-xs-6">
+                <div class="reportSectionHeading">Age at First Occurrence</div>
+                <div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
+                <div class="evidenceDescription"></div>
+            </div>
         </div>
 
     </div>
