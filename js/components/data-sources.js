@@ -7,7 +7,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
         var height = 250;
         var minimum_area = 50;
         var threshold = minimum_area / (width * height);
-        var treemapContainer = $("#treemap_container");
 
         self.model = params.model;
         self.sources = config.services[0].sources;
@@ -48,7 +47,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
             var currentSource = self.currentSource();
             var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path;
 
-            treemapContainer.find('svg').remove();
+            $("#treemap_container").find('svg').remove();
             $('.evidenceVisualization').empty();
 
             $.ajax({
@@ -143,7 +142,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
                 // force resize of treemap (resize bug in jnj.chart)
                 var aspect = width / height;
                 var targetWidth = $('#content').width();
-                var chart = treemapContainer.find("svg");
+                var chart = $("#treemap_container").find("svg");
                 chart.attr("width", targetWidth);
                 chart.attr("height", Math.round(targetWidth / aspect));
             }
