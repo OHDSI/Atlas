@@ -39,7 +39,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
         self.donutWidth = 500;
         self.donutHeight = 300;
 
-        self.runReport = function runReport() {
+        self.loadTreemap = function () {
             self.loadingReport(true);
             self.activeReportDrilldown(false);
 
@@ -123,19 +123,165 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
             });
         };
 
-        function onChange(newValue) {
-            if (newValue) {
-                self.runReport();
-            }
-        }
+		self.loadDrilldown = function () {
+			var currentSource = self.currentSource();
+			var currentReport = self.currentReport();
+			var currentConcept = self.currentConcept();
+			var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path + '/' + currentConcept.concept_id;
 
-        self.currentReport.subscribe(onChange);
-        self.currentSource.subscribe(onChange);
-        self.currentConcept.subscribe(function (newValue){
-            if (newValue) {
-                self.drilldown();
-            }
-        });
+			$('.evidenceVisualization').empty();
+			self.loadingReportDrilldown(true);
+			self.activeReportDrilldown(false);
+
+			$.ajax({
+				type: "GET",
+				url: url,
+				success: function (data) {
+					self.loadingReportDrilldown(false);
+					self.activeReportDrilldown(true);
+
+					// age at first diagnosis visualization
+					var boxplot = new jnj_chart.boxplot();
+					var bpseries = [];
+					var bpdata = self.normalizeArray(data.ageAtFirstOccurrence);
+					if (!bpdata.empty) {
+						for (var i = 0; i < bpdata.category.length; i++) {
+							bpseries.push({
+								Category: bpdata.category[i],
+								min: bpdata.minValue[i],
+								max: bpdata.maxValue[i],
+								median: bpdata.medianValue[i],
+								LIF: bpdata.p10Value[i],
+								q1: bpdata.p25Value[i],
+								q3: bpdata.p75Value[i],
+								UIF: bpdata.p90Value[i]
+							});
+						}
+						boxplot.render(bpseries, "#ageAtFirstOccurrence", self.boxplotWidth, self.boxplotHeight, {
+							xLabel: 'Gender',
+							yLabel: 'Age at First Occurrence'
+						});
+					}
+
+					// prevalence by month
+					var prevData = self.normalizeArray(data.prevalenceByMonth);
+					if (!prevData.empty) {
+						var byMonthSeries = self.mapMonthYearDataToSeries(prevData, {
+							dateField: 'xCalendarMonth',
+							yValue: 'yPrevalence1000Pp',
+							yPercent: 'yPrevalence1000Pp'
+						});
+
+						var prevalenceByMonth = new jnj_chart.line();
+						prevalenceByMonth.render(byMonthSeries, "#prevalenceByMonth", 1000, 300, {
+							xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+								return d.xValue;
+							})),
+							xFormat: d3.time.format("%m/%Y"),
+							tickFormat: d3.time.format("%Y"),
+							xLabel: "Date",
+							yLabel: "Prevalence per 1000 People"
+						});
+					}
+
+					// procedure type visualization
+					if (data.byType && data.byType.length > 0) {
+						var donut = new jnj_chart.donut();
+						donut.render(self.mapConceptData(data.byType), "#byType", self.donutWidth, self.donutHeight, {
+							margin: {
+								top: 5,
+								left: 5,
+								right: 200,
+								bottom: 5
+							}
+						});
+					}
+
+					// render trellis
+					var trellisData = self.normalizeArray(data.prevalenceByGenderAgeYear);
+					if (!trellisData.empty) {
+
+						var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
+						var minYear = d3.min(trellisData.xCalendarYear),
+							maxYear = d3.max(trellisData.xCalendarYear);
+
+						var seriesInitializer = function (tName, sName, x, y) {
+							return {
+								trellisName: tName,
+								seriesName: sName,
+								xCalendarYear: x,
+								yPrevalence1000Pp: y
+							};
+						};
+
+						var nestByDecile = d3.nest()
+							.key(function (d) {
+								return d.trellisName;
+							})
+							.key(function (d) {
+								return d.seriesName;
+							})
+							.sortValues(function (a, b) {
+								return a.xCalendarYear - b.xCalendarYear;
+							});
+
+						// map data into chartable form
+						var normalizedSeries = trellisData.trellisName.map(function (d, i) {
+							var item = {};
+							var container = this;
+							d3.keys(container).forEach(function (p) {
+								item[p] = container[p][i];
+							});
+							return item;
+						}, trellisData);
+
+						var dataByDecile = nestByDecile.entries(normalizedSeries);
+						// fill in gaps
+						var yearRange = d3.range(minYear, maxYear, 1);
+
+						dataByDecile.forEach(function (trellis) {
+							trellis.values.forEach(function (series) {
+								series.values = yearRange.map(function (year) {
+									yearData = series.values.filter(function (f) {
+											return f.xCalendarYear === year;
+										})[0] || seriesInitializer(trellis.key, series.key, year, 0);
+									yearData.date = new Date(year, 0, 1);
+									return yearData;
+								});
+							});
+						});
+
+						// create svg with range bands based on the trellis names
+						var chart = new jnj_chart.trellisline();
+						chart.render(dataByDecile, "#trellisLinePlot", 1000, 300, {
+							trellisSet: allDeciles,
+							trellisLabel: "Age Decile",
+							seriesLabel: "Year of Observation",
+							yLabel: "Prevalence Per 1000 People",
+							xFormat: d3.time.format("%Y"),
+							yFormat: d3.format("0.2f"),
+							tickPadding: 20,
+							colors: d3.scale.ordinal()
+								.domain(["MALE", "FEMALE", "UNKNOWN"])
+								.range(["#1F78B4", "#FB9A99", "#33A02C"])
+
+						});
+					}
+				}
+			});
+		};
+
+        //
+        // Subscriptions
+        //
+
+        self.currentReport.subscribe(self.loadTreemap);
+        self.currentSource.subscribe(self.loadTreemap);
+        self.currentConcept.subscribe(self.loadDrilldown);
+
+        //
+        // UI Event handlers
+        //
 
         self.selectTab = function(tab) {
             if (tab == 'tree') {
@@ -148,161 +294,17 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
             }
         };
 
-        self.drilldown = function () {
-            var currentSource = self.currentSource();
-            var currentReport = self.currentReport();
-            var currentConcept = self.currentConcept();
-            var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path + '/' + currentConcept.concept_id;
-
-            $('.evidenceVisualization').empty();
-            self.loadingReportDrilldown(true);
-            self.activeReportDrilldown(false);
-
-            $.ajax({
-                type: "GET",
-                url: url,
-                success: function (data) {
-                    self.loadingReportDrilldown(false);
-                    self.activeReportDrilldown(true);
-
-                    // age at first diagnosis visualization
-                    var boxplot = new jnj_chart.boxplot();
-                    var bpseries = [];
-                    var bpdata = self.normalizeArray(data.ageAtFirstOccurrence);
-                    if (!bpdata.empty) {
-                        for (var i = 0; i < bpdata.category.length; i++) {
-                            bpseries.push({
-                                Category: bpdata.category[i],
-                                min: bpdata.minValue[i],
-                                max: bpdata.maxValue[i],
-                                median: bpdata.medianValue[i],
-                                LIF: bpdata.p10Value[i],
-                                q1: bpdata.p25Value[i],
-                                q3: bpdata.p75Value[i],
-                                UIF: bpdata.p90Value[i]
-                            });
-                        }
-                        boxplot.render(bpseries, "#ageAtFirstOccurrence", self.boxplotWidth, self.boxplotHeight, {
-                            xLabel: 'Gender',
-                            yLabel: 'Age at First Occurrence'
-                        });
-                    }
-
-                    // prevalence by month
-                    var prevData = self.normalizeArray(data.prevalenceByMonth);
-                    if (!prevData.empty) {
-                        var byMonthSeries = self.mapMonthYearDataToSeries(prevData, {
-                            dateField: 'xCalendarMonth',
-                            yValue: 'yPrevalence1000Pp',
-                            yPercent: 'yPrevalence1000Pp'
-                        });
-
-                        var prevalenceByMonth = new jnj_chart.line();
-                        prevalenceByMonth.render(byMonthSeries, "#prevalenceByMonth", 1000, 300, {
-                            xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
-                                return d.xValue;
-                            })),
-                            xFormat: d3.time.format("%m/%Y"),
-                            tickFormat: d3.time.format("%Y"),
-                            xLabel: "Date",
-                            yLabel: "Prevalence per 1000 People"
-                        });
-                    }
-
-                    // procedure type visualization
-                    if (data.byType && data.byType.length > 0) {
-                        var donut = new jnj_chart.donut();
-                        donut.render(self.mapConceptData(data.byType), "#byType", self.donutWidth, self.donutHeight, {
-                            margin: {
-                                top: 5,
-                                left: 5,
-                                right: 200,
-                                bottom: 5
-                            }
-                        });
-                    }
-
-                    // render trellis
-                    var trellisData = self.normalizeArray(data.prevalenceByGenderAgeYear);
-                    if (!trellisData.empty) {
-
-                        var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
-                        var minYear = d3.min(trellisData.xCalendarYear),
-                            maxYear = d3.max(trellisData.xCalendarYear);
-
-                        var seriesInitializer = function (tName, sName, x, y) {
-                            return {
-                                trellisName: tName,
-                                seriesName: sName,
-                                xCalendarYear: x,
-                                yPrevalence1000Pp: y
-                            };
-                        };
-
-                        var nestByDecile = d3.nest()
-                            .key(function (d) {
-                                return d.trellisName;
-                            })
-                            .key(function (d) {
-                                return d.seriesName;
-                            })
-                            .sortValues(function (a, b) {
-                                return a.xCalendarYear - b.xCalendarYear;
-                            });
-
-                        // map data into chartable form
-                        var normalizedSeries = trellisData.trellisName.map(function (d, i) {
-                            var item = {};
-                            var container = this;
-                            d3.keys(container).forEach(function (p) {
-                                item[p] = container[p][i];
-                            });
-                            return item;
-                        }, trellisData);
-
-                        var dataByDecile = nestByDecile.entries(normalizedSeries);
-                        // fill in gaps
-                        var yearRange = d3.range(minYear, maxYear, 1);
-
-                        dataByDecile.forEach(function (trellis) {
-                            trellis.values.forEach(function (series) {
-                                series.values = yearRange.map(function (year) {
-                                    yearData = series.values.filter(function (f) {
-                                            return f.xCalendarYear === year;
-                                        })[0] || seriesInitializer(trellis.key, series.key, year, 0);
-                                    yearData.date = new Date(year, 0, 1);
-                                    return yearData;
-                                });
-                            });
-                        });
-
-                        // create svg with range bands based on the trellis names
-                        var chart = new jnj_chart.trellisline();
-                        chart.render(dataByDecile, "#trellisLinePlot", 1000, 300, {
-                            trellisSet: allDeciles,
-                            trellisLabel: "Age Decile",
-                            seriesLabel: "Year of Observation",
-                            yLabel: "Prevalence Per 1000 People",
-                            xFormat: d3.time.format("%Y"),
-                            yFormat: d3.format("0.2f"),
-                            tickPadding: 20,
-                            colors: d3.scale.ordinal()
-                                .domain(["MALE", "FEMALE", "UNKNOWN"])
-                                .range(["#1F78B4", "#FB9A99", "#33A02C"])
-
-                        });
-                    }
-                }
-            });
-        };
-
-        self.handleTableClick = function (element, valueAccessor) {
+        self.onReportTableRowClick = function (element, valueAccessor) {
             var dataTable = $("#report_table").DataTable();
             var rowIndex = valueAccessor.target._DT_CellIndex.row;
             var concept = dataTable.row(rowIndex).data();
 
             self.currentConcept(concept);
         };
+
+        //
+        // Utility functions
+        //
 
         self.normalizeDataframe = function (dataframe) {
             // rjson serializes dataframes with 1 row as single element properties.  This function ensures fields are always arrays.
