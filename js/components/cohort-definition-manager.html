@@ -270,7 +270,7 @@
 						</td>
 						<td data-bind="text:name"></td>
 						<td class="statusIndicator">
-							<span data-bind="text: status"></span>
+							<span data-bind="text: $component.getStatusMessage($data)"></span>
 						</td>
 						<td class="text-right" data-bind="html: distinctPeople()">
 						</td>
@@ -279,7 +279,7 @@
 						<td class="text-right" data-bind="text: executionDuration">
 						</td>
 						<td>
-							<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid, click:$component.selectInclusionReport"><i class="fa fa-eye"></i>&nbsp;View Inclusion Report</div>
+							<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.selectInclusionReport"><i class="fa fa-eye"></i>&nbsp;View Inclusion Report</div>
 						</td>
 					</tr>
 				</tbody>
