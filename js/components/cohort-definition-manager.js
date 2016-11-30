@@ -434,6 +434,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				self.loadingInclusionReport(false);
 			});
 		}
+		
+		self.getStatusMessage = function (info) {
+			if (info.status() == "COMPLETE" && !info.isValid())
+				return "FAILED";
+			else
+				return info.status();
+		}
 
 		// dispose subscriptions
 		self.dispose = function () {
