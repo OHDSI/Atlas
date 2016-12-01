@@ -81,6 +81,7 @@ requirejs.config({
 		"job-manager": "components/job-manager",
 		"importer": "components/importer",
 		"data-sources": "components/data-sources",
+        "data-sources-json": "components/data-sources-json",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definition-browser",

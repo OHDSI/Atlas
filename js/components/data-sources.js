@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, _, config) {
+define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lodash', 'data-sources-json', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, _, legacy, config) {
     function dataSources(params) {
         var self = this;
         var RecordsPerPersonProperty = {name: "recordsPerPerson", description: "Records per person"};
@@ -480,6 +480,10 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
         template: view
     };
 
+    // use json-based component if dataSourcesRoot configured
+    if(!!config.dataSourcesRoot) {
+        component = { viewModel: legacy.viewModel, template: legacy.template };
+    }
     ko.components.register('data-sources', component);
     return component;
 });
