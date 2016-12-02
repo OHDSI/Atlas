@@ -17,6 +17,10 @@ define([
 	function dataSources(params) {
 		var self = this;
 		self.model = params.model;
+
+		self.reportName = params.reportName;
+		self.sourceKey = params.sourceKey;
+
 		self.dashboardData = ko.observable();
 		self.conditionsData = ko.observable();
 		self.personData = ko.observable();
@@ -161,36 +165,30 @@ define([
 			updateObservationPeriods(newData);
 		});
 
-		$.ajax({
-			type: 'GET',
-			url: config.dataSourcesLocation,
-			contentType: "application/json; charset=utf-8",
-			success: function (data) {
-				self.datasources(data.datasources);
-				var datasources = self.datasources();
-				datasource = datasources[0];
-				var datasourceReports = self.datasourceReports();
-				datasourceReport = datasourceReports[0];
-
-				if (self.datasources().length > 0) {
-					self.datasource(datasource);
-					self.datasourceReport(datasourceReport);
-					self.loadDashboard();
-					document.location = '#/datasources/' + datasource.name + '/' + datasourceReport.id;
-				}
-			}
-		});
-
 		self.setDatasource = function (data) {
-
-			self.datasource(data);
-			self.setReport(self.datasourceReport());
 			document.location = '#/datasources/' + data.name + '/' + self.datasourceReport().id;
-
+		}
+		
+		self.setReportName = function(data) {
+			document.location = '#/datasources/' + self.datasource().name + '/' + data.id;
 		}
 
 		self.setReportView = function (viewName) {
 			self.reportView(viewName);
+		};
+
+		self.setReportByName = function (reportName) {
+			for (var i = 0; i < self.datasourceReports().length; i++) {
+				if (self.datasourceReports()[i].id == reportName)
+					self.setReport(self.datasourceReports()[i]);
+			}
+		};
+
+		self.setSourceByKey = function (sourceKey) {
+			for (var i = 0; i < self.datasources().length; i++) {
+				if (self.datasources()[i].name == sourceKey)
+					self.datasource(self.datasources()[i]);
+			}
 		}
 
 		self.setReport = function (report) {
@@ -233,9 +231,20 @@ define([
 			self.setReportView('treemap');
 			if (reportId == 'death')
 				reports.Death.render(self.datasource());
-			document.location = '#/datasources/' + self.datasource().name + '/' + reportId;
 		}
 
+		$.ajax({
+			type: 'GET',
+			url: config.dataSourcesLocation,
+			contentType: "application/json; charset=utf-8",
+			success: function (data) {
+				self.datasources(data.datasources);
+				var datasources = self.datasources();
+				
+				self.setSourceByKey(params.sourceKey);
+				self.setReportByName(params.reportName);
+			}
+		});
 	}
 
 	function updateDashboard(data) {
@@ -567,8 +576,6 @@ define([
 			xLabel: 'Year',
 			yLabel: 'People'
 		});
-
-
 	}
 
 	var component = {

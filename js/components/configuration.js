@@ -2,7 +2,7 @@ define(['knockout', 'text!./configuration.html', 'appConfig'], function (ko, vie
 	function configuration(params) {
 		var self = this;
 		self.config = config;
-		self.enableRecordCounts = params.enableRecordCounts;
+		self.appInitializationFailed = params.model.appInitializationFailed;
 		self.services = config.services;
 	}
 
