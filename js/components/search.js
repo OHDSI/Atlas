@@ -1,4 +1,4 @@
-define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view) {
+define(['knockout', 'text!./search.html', 'vocabularyprovider', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, vocabAPI) {
 	function search(params) {
 		var self = this;
 		if (params.controller) {
@@ -230,7 +230,7 @@ define(['knockout', 'text!./search.html', 'knockout.dataTables.binding', 'facete
 				return;
 			}
 
-			var densityPromise = self.model.loadDensity(results);
+			var densityPromise = vocabAPI.loadDensity(results);
 
 			$.when(densityPromise).done(function () {
 				self.model.searchResultsConcepts(results);

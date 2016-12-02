@@ -1,4 +1,4 @@
-<div data-bind="if: model.currentView() == 'datasources'">
+<div>
 	<div class="wrapperTitle">
 		<i class="data-sources fa fa-database"></i> Data Sources
 	</div>
@@ -18,7 +18,7 @@
 				<button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown">Reports <span class="caret"></span></button>
 				<ul class="dropdown-menu dropdown-menu-right" data-bind="foreach: datasourceReports">
 					<li>
-						<a href="#" data-bind="text: name, click: $parent.setReport"></a>
+						<a href="#" data-bind="text: name, click: $parent.setReportName"></a>
 					</li>
 				</ul>
 			</div>
