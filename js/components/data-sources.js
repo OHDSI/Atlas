@@ -27,7 +27,7 @@ define([
 		self.observationPeriodsData = ko.observable();
 		self.datasource = ko.observable();
 		self.datasources = ko.observableArray();
-		self.datasourceReport = ko.observable();
+
 		self.reportView = ko.observable('treemap');
 		self.datasourceReports = ko.observableArray([{
 				id: 'dashboard',
@@ -86,6 +86,8 @@ define([
 				name: 'Death'
 			}
         ]);
+		self.datasourceReport = ko.observable();
+		self.datasourceReport(self.datasourceReports()[0]);
 
 		ko.amdTemplateEngine.defaultPath = "components/datasources/templates";
 
@@ -168,8 +170,8 @@ define([
 		self.setDatasource = function (data) {
 			document.location = '#/datasources/' + data.name + '/' + self.datasourceReport().id;
 		}
-		
-		self.setReportName = function(data) {
+
+		self.setReportName = function (data) {
 			document.location = '#/datasources/' + self.datasource().name + '/' + data.id;
 		}
 
@@ -240,9 +242,14 @@ define([
 			success: function (data) {
 				self.datasources(data.datasources);
 				var datasources = self.datasources();
-				
-				self.setSourceByKey(params.sourceKey);
-				self.setReportByName(params.reportName);
+
+				if (!params.sourceKey || !params.reportName) {
+					self.setDatasource(datasources[0]);
+					self.setReport(self.datasourceReports()[0]);
+				} else {
+					self.setSourceByKey(params.sourceKey);
+					self.setReportByName(params.reportName);
+				}
 			}
 		});
 	}
