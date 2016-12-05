@@ -126,7 +126,7 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'ohdsi.util', 'atlas-state', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading'], function (ko, app, config, util, sharedState) {
+	requirejs(['knockout', 'app', 'appConfig', 'ohdsi.util', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading'], function (ko, app, config, util, sharedState, vocabAPI) {
 		$('#splash').fadeIn();
 		var pageModel = new app();
 		window.pageModel = pageModel;
@@ -288,7 +288,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				contentType: 'application/json',
 				data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
 				success: function (data) {
-					var densityPromise = pageModel.loadDensity(data);
+					var densityPromise = vocabAPI.loadDensity(data);
 
 					$.when(densityPromise).done(function () {
 						pageModel.includedConcepts(data);

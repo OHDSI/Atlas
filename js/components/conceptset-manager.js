@@ -6,13 +6,14 @@ define(['knockout',
         'vocabularyprovider',
         'webapi/ConceptSetAPI',
         'conceptsetbuilder/InputTypes/ConceptSet',
+				'atlas-state',				
         'knockout.dataTables.binding', 
         'bootstrap',
         'faceted-datatable', 
         'databindings', 
         'negative-controls',
         'circe',
-], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet) {
+], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState) {
 	function conceptsetManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -109,7 +110,6 @@ define(['knockout',
             return self.compareLoading() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-question-circle fa-lg"
         })
         self.compareNewConceptSetName = ko.observable(self.model.currentConceptSet().name() + " - From Comparison");
-        self.defaultResultsUrl = self.model.resultsUrl;
         self.currentResultSource = ko.observable();
         self.recordCountsRefreshing = ko.observable(false);
         self.recordCountClass = ko.pureComputed(function() {
@@ -122,7 +122,7 @@ define(['knockout',
                 $.each(service.sources, function (i, source) {
                     if (source.hasResults) {
                         resultSources.push(source);
-                        if (source.resultsUrl == self.defaultResultsUrl()) {
+                        if (source.resultsUrl == sharedState.resultsUrl()) {
                             self.currentResultSource(source);
                         }
                     }
@@ -515,7 +515,7 @@ define(['knockout',
             self.loading(true);
             self.optimalConceptSet(null);
             self.optimizerRemovedConceptSet(null);
-            $('conceptset-manager #modalConceptSetOptimize').modal('show');
+            $('#modalConceptSetOptimize').modal('show');
             
             var conceptSetItems = [];
 
