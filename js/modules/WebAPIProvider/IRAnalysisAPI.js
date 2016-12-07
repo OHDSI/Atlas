@@ -42,7 +42,7 @@ define(function (require, exports) {
 		var savePromise = $.Deferred();
 		$.ajax({
 			url: config.webAPIRoot + 'ir/' + (definitionCopy.id || ""),
-			method: 'PUT',
+			method: definitionCopy.id ? 'PUT' : 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify(definitionCopy),
 			error: function (error) {

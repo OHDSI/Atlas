@@ -465,15 +465,15 @@ define(['knockout',
 				var json = ko.toJSON(conceptSet);
 
 				$.ajax({
-					method: 'POST',
-					url: config.services[0].url + 'conceptset/',
+					method: conceptSet.id ? 'PUT' : 'POST',
+					url: config.services[0].url + 'conceptset/' + (conceptSet.id || ''),
 					contentType: 'application/json',
 					data: json,
 					dataType: 'json',
 					success: function (data) {
 
 						$.ajax({
-							method: 'POST',
+							method: 'PUT',
 							url: config.services[0].url + 'conceptset/' + data.id + '/items',
 							data: JSON.stringify(conceptSetItems),
 							dataType: 'json',
