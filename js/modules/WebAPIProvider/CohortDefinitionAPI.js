@@ -21,7 +21,7 @@ define(function (require, exports) {
 	function saveCohortDefinition(definition) {
 		var savePromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (definition.id || ""),
-			method: 'PUT',
+			method: definition.id ? 'PUT' : 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify(definition),
 			error: function (error) {

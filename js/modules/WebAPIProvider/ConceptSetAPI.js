@@ -15,8 +15,8 @@ define(function (require, exports) {
     
     function deleteConceptSet(conceptSetId) {
 		var promise = $.ajax({
-			url: config.webAPIRoot + 'conceptset/' + + (conceptSetId || '-1') + '/delete',
-			method: 'POST',
+			url: config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') ,
+			method: 'DELETE',
 			contentType: 'application/json',            
 			error: function (error) {
 				console.log("Error: " + error);

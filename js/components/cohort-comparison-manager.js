@@ -658,8 +658,8 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				var json = JSON.stringify(cca);
 
 				var savePromise = ohdsiUtil.cachedAjax({
-					method: 'POST',
-					url: config.services[0].url + 'comparativecohortanalysis/',
+					method: self.cohortComparisonId() ? 'PUT' : 'POST',
+					url: config.services[0].url + 'comparativecohortanalysis/' + (self.cohortComparisonId() || ''),
 					contentType: 'application/json',
 					data: json,
 					dataType: 'json',
