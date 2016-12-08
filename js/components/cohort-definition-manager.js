@@ -6,12 +6,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
         'cohortbuilder/CohortExpression',
 				'cohortbuilder/InclusionRule',
 				'conceptsetbuilder/InputTypes/ConceptSet',
+				'atlas-state',
 				'cohortbuilder/components/FeasibilityReportViewer',
 				'knockout.dataTables.binding',
 				'faceted-datatable',
-				'databindings', 
+				'databindings',
 				'cohortdefinitionviewer/expressionCartoonBinding',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, sharedState) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -37,17 +38,17 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 	}
 
-	function conceptSetSorter(a,b)
-	{
+	function conceptSetSorter(a, b) {
 		var textA = a.name().toUpperCase();
 		var textB = b.name().toUpperCase();
 		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
 	}
-	
+
 	function cohortDefinitionManager(params) {
 		var self = this;
 		var pollTimeout = null;
 		self.config = config;
+		self.selectedConcepts = sharedState.selectedConcepts;
 		self.model = params.model;
 
 		self.generatedSql = {};
@@ -65,14 +66,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.isSaveable = ko.pureComputed(function () {
 			return self.dirtyFlag() && self.dirtyFlag().isDirty();
 		});
-		self.tabPath = ko.computed(function() {
+		self.tabPath = ko.computed(function () {
 			var path = self.tabMode();
 			if (path === 'export') {
 				path += '/' + self.exportTabMode();
 			}
 			//console.log('tabPath:', path);
 			if (self.exportTabMode() === 'cartoon') {
-				setTimeout(function() {
+				setTimeout(function () {
 					self.delayedCartoonUpdate('ready');
 				}, 10);
 			}
@@ -107,12 +108,101 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.selectedReport = ko.observable();
 		self.selectedReportCaption = ko.observable();
 		self.loadingInclusionReport = ko.observable(false);
-		self.sortedConceptSets = self.model.currentCohortDefinition().expression().ConceptSets.extend({sorted: conceptSetSorter});
+		self.sortedConceptSets = self.model.currentCohortDefinition().expression().ConceptSets.extend({
+			sorted: conceptSetSorter
+		});
 
 		// model behaviors
 		self.onConceptSetTabRespositoryConceptSetSelected = function (conceptSet) {
-			self.model.loadConceptSet(conceptSet.id, 'cohortdefinition', 'cohort', 'details');
+			self.model.loadConceptSet(conceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
 		}
+
+		self.includedConceptsColumns = [{
+			title: '<i class="fa fa-shopping-cart"></i>',
+			render: function (s, p, d) {
+				var css = '';
+				var icon = 'fa-shopping-cart';
+				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+					css = ' selected';
+				}
+				return '<i class="fa ' + icon + ' ' + css + '"></i>';
+			},
+			orderable: false,
+			searchable: false
+        }, {
+			title: 'Id',
+			data: 'CONCEPT_ID'
+        }, {
+			title: 'Code',
+			data: 'CONCEPT_CODE'
+        }, {
+			title: 'Name',
+			data: 'CONCEPT_NAME',
+			render: function (s, p, d) {
+				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+			}
+        }, {
+			title: 'Class',
+			data: 'CONCEPT_CLASS_ID'
+        }, {
+			title: 'Standard Concept Caption',
+			data: 'STANDARD_CONCEPT_CAPTION',
+			visible: false
+        }, {
+			title: 'RC',
+			data: 'RECORD_COUNT',
+			className: 'numeric'
+        }, {
+			title: 'DRC',
+			data: 'DESCENDANT_RECORD_COUNT',
+			className: 'numeric'
+        }, {
+			title: 'Domain',
+			data: 'DOMAIN_ID'
+        }, {
+			title: 'Vocabulary',
+			data: 'VOCABULARY_ID'
+        }];
+
+		self.includedConceptsOptions = {
+			Facets: [{
+				'caption': 'Vocabulary',
+				'binding': function (o) {
+					return o.VOCABULARY_ID;
+				}
+            }, {
+				'caption': 'Class',
+				'binding': function (o) {
+					return o.CONCEPT_CLASS_ID;
+				}
+            }, {
+				'caption': 'Domain',
+				'binding': function (o) {
+					return o.DOMAIN_ID;
+				}
+            }, {
+				'caption': 'Standard Concept',
+				'binding': function (o) {
+					return o.STANDARD_CONCEPT_CAPTION;
+				}
+            }, {
+				'caption': 'Invalid Reason',
+				'binding': function (o) {
+					return o.INVALID_REASON_CAPTION;
+				}
+            }, {
+				'caption': 'Has Records',
+				'binding': function (o) {
+					return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
+				}
+            }, {
+				'caption': 'Has Descendant Records',
+				'binding': function (o) {
+					return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
+				}
+            }]
+		};
 
 		self.pollForInfo = function () {
 			if (pollTimeout)
@@ -121,11 +211,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			var id = pageModel.currentCohortDefinition().id();
 			cohortDefinitionAPI.getInfo(id).then(function (infoList) {
 				var hasPending = false;
-				
+
 				infoList.forEach(function (info) {
 					// obtain source reference
 					var source = self.model.cohortDefinitionSourceInfo().filter(function (cdsi) {
-						var sourceId = self.config.services[0].sources.filter(source=>source.sourceKey==cdsi.sourceKey)[0].sourceId;
+						var sourceId = self.config.services[0].sources.filter(source => source.sourceKey == cdsi.sourceKey)[0].sourceId;
 						return sourceId == info.id.sourceId;
 					})[0];
 
@@ -148,7 +238,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 						}
 					}
 				});
-				
+
 				if (hasPending) {
 					pollTimeout = setTimeout(function () {
 						self.pollForInfo();
@@ -160,7 +250,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.delete = function () {
 			if (!confirm("Delete cohort definition? Warning: deletion can not be undone!"))
 				return;
-			
+
 			clearTimeout(pollTimeout);
 
 			// reset view after save
@@ -173,7 +263,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.save = function () {
 			clearTimeout(pollTimeout);
 			self.model.clearConceptSet();
-			
+
 			// If we are saving a new cohort definition (id ==0) then clear
 			// the id field before saving
 			if (self.model.currentCohortDefinition().id() == 0) {
@@ -222,12 +312,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			});
 		}
 
-		self.isRunning = ko.pureComputed(function() {
-				return self.model.cohortDefinitionSourceInfo().filter(function (info) {
-					return !(info.status() == "COMPLETE" || info.status() == "n/a") ;
-				}).length > 0;
+		self.isRunning = ko.pureComputed(function () {
+			return self.model.cohortDefinitionSourceInfo().filter(function (info) {
+				return !(info.status() == "COMPLETE" || info.status() == "n/a");
+			}).length > 0;
 		});
-		
+
 		self.isSourceRunning = function (source) {
 			if (source) {
 				switch (source.status()) {
@@ -298,7 +388,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 		self.generateCohort = function (source, event) {
 			var route = config.services[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + source.sourceKey;
-			self.getSourceInfo(source.sourceKey).status('PENDING');			
+			self.getSourceInfo(source.sourceKey).status('PENDING');
 			$.ajax(route, {
 				success: function (data) {
 					setTimeout(function () {
@@ -390,16 +480,16 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			);
 			self.closeConceptSet();
 		}
-		
-		self.newConceptSet = function() {
+
+		self.newConceptSet = function () {
 			console.log("new concept set selected");
 			var newConceptSet = new ConceptSet();
 			var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
 			newConceptSet.id = cohortConceptSets().length > 0 ? Math.max.apply(null, cohortConceptSets().map(function (d) {
-			 return d.id;
+				return d.id;
 			})) + 1 : 0;
 			cohortConceptSets.push(newConceptSet);
-			self.model.loadConceptSet(newConceptSet.id, 'cohortdefinition', 'cohort', 'details');
+			self.model.loadConceptSet(newConceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
 			self.model.currentCohortDefinitionMode("conceptsets");
 		}
 
@@ -434,7 +524,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				self.loadingInclusionReport(false);
 			});
 		}
-		
+
 		self.getStatusMessage = function (info) {
 			if (info.status() == "COMPLETE" && !info.isValid())
 				return "FAILED";
@@ -462,19 +552,19 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			else if (data.hasOwnProperty("ProcedureOccurrence"))
 				return "procedure-occurrence-criteria-viewer";
 			else if (data.hasOwnProperty("Observation"))
-				return "observation-criteria-viewer";			
+				return "observation-criteria-viewer";
 			else if (data.hasOwnProperty("VisitOccurrence"))
-				return "visit-occurrence-criteria-viewer";			
+				return "visit-occurrence-criteria-viewer";
 			else if (data.hasOwnProperty("DeviceExposure"))
-				return "device-exposure-criteria-viewer";			
+				return "device-exposure-criteria-viewer";
 			else if (data.hasOwnProperty("Measurement"))
 				return "measurement-criteria-viewer";
 			else if (data.hasOwnProperty("Specimen"))
 				return "specimen-criteria-viewer";
 			else if (data.hasOwnProperty("ObservationPeriod"))
-				return "observation-period-criteria-viewer";			
+				return "observation-period-criteria-viewer";
 			else if (data.hasOwnProperty("Death"))
-				return "death-criteria-viewer";			
+				return "death-criteria-viewer";
 			else
 				return "unknownCriteriaType";
 		};

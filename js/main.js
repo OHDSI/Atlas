@@ -350,19 +350,19 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			var concepts = table.rows({
 				search: 'applied'
 			}).data();
-			var selectedConcepts = pageModel.selectedConcepts();
+			var selectedConcepts = sharedState.selectedConcepts();
 
 			for (var i = 0; i < concepts.length; i++) {
 				var concept = concepts[i];
-				if (pageModel.selectedConceptsIndex[concept.CONCEPT_ID]) {
+				if (sharedState.selectedConceptsIndex[concept.CONCEPT_ID]) {
 					// ignore if already selected
 				} else {
 					var conceptSetItem = pageModel.createConceptSetItem(concept);
-					pageModel.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
+					sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
 					selectedConcepts.push(conceptSetItem)
 				}
 			}
-			pageModel.selectedConcepts(selectedConcepts);
+			sharedState.selectedConcepts(selectedConcepts);
 			ko.contextFor(this).$component.reference.valueHasMutated();
 		});
 
@@ -385,16 +385,14 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 			if ($(this).hasClass('selected')) {
 				var conceptSetItem = pageModel.createConceptSetItem(concept);
-				pageModel.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
-				pageModel.selectedConcepts.push(conceptSetItem);
+				sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
+				sharedState.selectedConcepts.push(conceptSetItem);
 			} else {
-				delete pageModel.selectedConceptsIndex[concept.CONCEPT_ID];
-				pageModel.selectedConcepts.remove(function (i) {
+				delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
+				sharedState.selectedConcepts.remove(function (i) {
 					return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
 				});
 			}
-
-			pageModel.analyzeSelectedConcepts();
 
 			// If we are updating a concept set that is part of a cohort definition
 			// then we need to notify any dependent observables about this change in the concept set
@@ -411,13 +409,12 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			$(this).toggleClass('selected');
 			var conceptSetItem = ko.contextFor(this).$data;
 
-			delete pageModel.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
-			pageModel.selectedConcepts.remove(function (i) {
+			delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
+			sharedState.selectedConcepts.remove(function (i) {
 				return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
 			});
 
 			pageModel.resolveConceptSetExpression();
-			pageModel.analyzeSelectedConcepts();
 		});
 
 		$(window).bind('beforeunload', function () {

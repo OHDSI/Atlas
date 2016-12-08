@@ -1,29 +1,133 @@
-define(['knockout', 'text!./search.html', 'vocabularyprovider', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, vocabAPI) {
+define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, vocabAPI, sharedState) {
 	function search(params) {
 		var self = this;
-		if (params.controller) {
-			params.controller(this);
-		}
-
 		self.model = params.model;
 		self.loading = ko.observable(false);
 		self.advancedQuery = ko.observable('');
 		self.initialized = false;
 		self.vocabularies = ko.observableArray();
 		self.domains = ko.observableArray();
-		self.tabMode = self.model.searchTabMode;
-
-		self.updateCurrentSearchValue = function () {
-			self.model.currentSearchValue(escape(self.model.currentSearch()));
-			self.model.currentSearch('');
+		self.tabMode = ko.observable('simple');
+		self.currentSearch = ko.observable();
+		if (params.query) {
+			self.currentSearch(params.query);
 		}
+		self.concepts = ko.observableArray();		
+		self.currentSearchValue = ko.observable();
+		self.feSearch = ko.observable();
+		
+		self.searchConceptsColumns = [{
+			title: '<i class="fa fa-shopping-cart"></i>',
+			render: function (s, p, d) {
+				var css = '';
+				var icon = 'fa-shopping-cart';
+				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+					css = ' selected';
+				}
+				return '<i class="fa ' + icon + ' ' + css + '"></i>';
+			},
+			orderable: false,
+			searchable: false
+        }, {
+			title: 'Id',
+			data: 'CONCEPT_ID'
+        }, {
+			title: 'Code',
+			data: 'CONCEPT_CODE'
+        }, {
+			title: 'Name',
+			data: 'CONCEPT_NAME',
+			render: function (s, p, d) {
+				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+			}
+        }, {
+			title: 'Class',
+			data: 'CONCEPT_CLASS_ID'
+        }, {
+			title: 'Standard Concept Caption',
+			data: 'STANDARD_CONCEPT_CAPTION',
+			visible: false
+        }, {
+			title: 'RC',
+			data: 'RECORD_COUNT',
+			className: 'numeric'
+        }, {
+			title: 'DRC',
+			data: 'DESCENDANT_RECORD_COUNT',
+			className: 'numeric'
+        }, {
+			title: 'Domain',
+			data: 'DOMAIN_ID'
+        }, {
+			title: 'Vocabulary',
+			data: 'VOCABULARY_ID'
+        }];
 
-		self.model.currentSearchValue.subscribe(function (value) {
-			self.executeSearch();
-		});
+		self.searchConceptsOptions = {
+			Facets: [{
+				'caption': 'Vocabulary',
+				'binding': function (o) {
+					return o.VOCABULARY_ID;
+				}
+            }, {
+				'caption': 'Class',
+				'binding': function (o) {
+					return o.CONCEPT_CLASS_ID;
+				}
+            }, {
+				'caption': 'Domain',
+				'binding': function (o) {
+					return o.DOMAIN_ID;
+				}
+            }, {
+				'caption': 'Standard Concept',
+				'binding': function (o) {
+					return o.STANDARD_CONCEPT_CAPTION;
+				}
+            }, {
+				'caption': 'Invalid Reason',
+				'binding': function (o) {
+					return o.INVALID_REASON_CAPTION;
+				}
+            }, {
+				'caption': 'Has Records',
+				'binding': function (o) {
+					return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
+				}
+            }, {
+				'caption': 'Has Descendant Records',
+				'binding': function (o) {
+					return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
+				}
+            }]
+		};		
+		
+		self.updateSearchFilters = function () {
+			$(event.target).toggleClass('selected');
+			var filters = [];
+			$('#wrapperSearchResultsFilter .facetMemberName.selected').each(function (i, d) {
+				filters.push(d.id);
+			});
+			self.feSearch().SetFilter(filters);
+			// update filter data binding
+			self.feSearch(self.feSearch());
+			// update table data binding
+			self.concepts(self.feSearch().GetCurrentObjects());
+		};
+		
+		self.selectConcept = function (concept) {
+			document.location = '#/concept/' + concept.CONCEPT_ID;
+		};
+		
 
-		self.model.currentSearch.subscribe(function (query) {
-			if (self.model.currentSearch().length > 2) {
+		self.currentSearchValue = ko.computed(function () {
+			return unescape(self.currentSearch());
+		}, this);
+
+
+		self.currentSearch.subscribe(function (query) {
+			if (self.currentSearch().length > 2) {
 				document.location = '#/search/' + escape(query);
 			}
 		});
@@ -37,8 +141,8 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'knockout.dataTa
 					id: 0
 				});
 				pageModel.currentConceptSetSource('repository');
-			}			
-			
+			}
+
 			for (var i = 0; i < items.length; i++) {
 				var conceptSetItem = {}
 
@@ -47,8 +151,8 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'knockout.dataTa
 				conceptSetItem.includeDescendants = ko.observable(items[i].includeDescendants);
 				conceptSetItem.includeMapped = ko.observable(items[i].includeMapped);
 
-				self.model.selectedConceptsIndex[items[i].concept.CONCEPT_ID] = 1;
-				self.model.selectedConcepts.push(conceptSetItem);
+				sharedState.selectedConceptsIndex[items[i].concept.CONCEPT_ID] = 1;
+				sharedState.selectedConcepts.push(conceptSetItem);
 			}
 		}
 
@@ -59,10 +163,10 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'knockout.dataTa
 				method: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(identifers),
-				success: function (data) {                    
-                    // Automatically add these concepts to the active concept set
-                    self.initConceptSet(data);
-					self.model.importedConcepts(data);                    
+				success: function (data) {
+					// Automatically add these concepts to the active concept set
+					self.initConceptSet(data);
+					self.model.importedConcepts(data);
 				}
 			});
 		}
@@ -75,35 +179,35 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'knockout.dataTa
 				contentType: 'application/json',
 				data: JSON.stringify(sourcecodes),
 				success: function (data) {
-                    // Automatically add these concepts to the active concept set
-                    self.initConceptSet(data);                    
+					// Automatically add these concepts to the active concept set
+					self.initConceptSet(data);
 					self.model.importedConcepts(data);
 				}
 			});
 		}
-        
-        self.initConceptSet = function(conceptSetItems) {
-            if (self.model.currentConceptSet() == undefined) {
-                self.model.currentConceptSet({
-                    name: ko.observable("New Concept Set"),
-                    id: 0
-                });
-                self.model.currentConceptSetSource('repository');
-            }
 
-            for (var i = 0; i < conceptSetItems.length; i++) {
-                if (self.model.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] != 1) {
-                    self.model.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
-                    var conceptSetItem = self.model.createConceptSetItem(conceptSetItems[i]);
-                    self.model.selectedConcepts.push(conceptSetItem);
-                }
-            }
-        }
-        
-        self.clearImportedConceptSet = function(textArea) {
-            $(textArea).val('');
-            self.model.importedConcepts([]);
-        }
+		self.initConceptSet = function (conceptSetItems) {
+			if (self.model.currentConceptSet() == undefined) {
+				self.model.currentConceptSet({
+					name: ko.observable("New Concept Set"),
+					id: 0
+				});
+				self.model.currentConceptSetSource('repository');
+			}
+
+			for (var i = 0; i < conceptSetItems.length; i++) {
+				if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] != 1) {
+					sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
+					var conceptSetItem = self.model.createConceptSetItem(conceptSetItems[i]);
+					sharedState.selectedConcepts.push(conceptSetItem);
+				}
+			}
+		}
+
+		self.clearImportedConceptSet = function (textArea) {
+			$(textArea).val('');
+			self.model.importedConcepts([]);
+		}
 
 		self.tabMode.subscribe(function (value) {
 			switch (value) {
@@ -180,7 +284,7 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'knockout.dataTa
 		};
 
 		self.executeSearch = function () {
-			var query = self.model.currentSearchValue();
+			var query = self.currentSearchValue();
 			self.loading(true);
 
 			filters = [];
@@ -189,32 +293,6 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'knockout.dataTa
 			$.ajax({
 				url: self.model.vocabularyUrl() + 'search/' + escape(query),
 				success: function (results) {
-					var tempCaption;
-
-					if (decodeURI(query).length > 20) {
-						tempCaption = decodeURI(query).substring(0, 20) + '...';
-					} else {
-						tempCaption = decodeURI(query);
-					}
-
-					lastQuery = {
-						query: escape(query),
-						caption: tempCaption,
-						resultLength: results.length
-					};
-
-					var exists = false;
-					for (var i = 0; i < self.model.recentSearch().length; i++) {
-						if (self.model.recentSearch()[i].query == query)
-							exists = true;
-					}
-					if (!exists) {
-						self.model.recentSearch.unshift(lastQuery);
-					}
-					if (self.model.recentSearch().length > 7) {
-						self.model.recentSearch.pop();
-					}
-
 					self.handleSearchResults(results);
 				},
 				error: function (xhr, message) {
@@ -233,8 +311,7 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'knockout.dataTa
 			var densityPromise = vocabAPI.loadDensity(results);
 
 			$.when(densityPromise).done(function () {
-				self.model.searchResultsConcepts(results);
-				self.tabMode('results');
+				self.concepts(results);
 				self.loading(false);
 			});
 		}
@@ -243,13 +320,13 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'knockout.dataTa
 			var css = '';
 			var icon = 'fa-shopping-cart';
 
-			if (self.model.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+			if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
 				css = ' selected';
 			}
 			return '<i class="fa ' + icon + ' ' + css + '"></i>';
 		}
 
-		if (self.model.currentSearchValue()) {
+		if (params.query) {
 			self.executeSearch();
 		}
 	}

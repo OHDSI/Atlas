@@ -57,7 +57,7 @@ define(['knockout',
 					   return d.id;
 				    })) + 1 : 0;
 				    cohortConceptSets.push(newConceptSet);
-				    self.model.loadConceptSet(newConceptSet.id, 'cohortdefinition', 'cohort', 'details');
+				    self.model.loadConceptSet(newConceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
 						self.model.currentCohortDefinitionMode("conceptsets");
 						self.model.criteriaContext().conceptSetId(newConceptSet.id);
 				}

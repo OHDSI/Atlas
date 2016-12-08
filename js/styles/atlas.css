@@ -96,12 +96,11 @@ body {
 }
 
 .heading {
-	font-size: 14px;
+	font-size: 12px;
 	color: #000;
 	font-weight: normal;
-	margin: 7px 0px 3px 0px;
-	padding: 0px 5px 0px 5px;
-	border-bottom: solid 1px #ccc;
+	margin: 12px 0px 3px 0px;
+	padding: 0px 3px 0px 3px;
 }
 .subheading {
 	font-size: 12px;
@@ -205,12 +204,6 @@ body {
 
 textarea {
 	padding: 2px 0px 2px 5px;
-}
-
-#wrapperSearch #querytext {
-	margin-top: 10px;
-	margin-bottom: 10px;
-	padding-left: 10px;
 }
 
 #wrapperConcept .nav.nav-pills {
@@ -347,6 +340,7 @@ div#wrapperMainWindowContainer {}
 
 .feFilter {
 	padding-left: 0px;
+	padding-top: 99px;
 }
 
 .fa.fa-refresh.fa-spin {
@@ -354,10 +348,9 @@ div#wrapperMainWindowContainer {}
 }
 
 .feFilter .facetName {
-	padding: 10px 2px 0px 3px;
-	color: #003142;
+	padding: 2px;
 	font-size: 12px;
-	border-bottom: solid 1px #C1C1C1;
+	background-color: #c1c1c1;
 }
 
 .feFilter .facetMemberName {
@@ -385,10 +378,10 @@ div#wrapperMainWindowContainer {}
 }
 
 .feFilter .facetScrollBox {
-	max-height: 125px;
+	max-height: 75px;
 	overflow-y: auto;
 	border-bottom: solid 1px #eee;
-	margin-bottom: ;
+	margin-bottom:;
 }
 
 #wrapperSearchResultsTable {
@@ -410,29 +403,8 @@ div#wrapperMainWindowContainer {}
 	margin-left: -200px;
 }
 
-#wrapperConceptSetWarnings {
-	padding: 10px;
-	margin-top: 10px;
-	clear: left;
-}
-
-.conceptWarning {
-	margin-top: 10px;
-}
-
-#wrapperConceptSetWarnings table td {
-	padding: 5px;
-	line-height: 20px;
-	font-size: 11px;
-}
-
 .facetedDataTable {
 	width: 100%;
-}
-
-.conceptWarning .fa {
-	color: rgb(136, 0, 0);
-	font-size: 20px;
 }
 
 table.datatable {
@@ -945,7 +917,6 @@ pre {
 .form-control:focus {
 	outline: 1px;
 	outline-offset: 0px;
-	border: solid 1px #F9B813;
 	box-shadow: none;
 }
 
