@@ -60,7 +60,7 @@
 															{ width: '25px', targets: 0},
 															{ width: '100%', targets: 1},
 													],
-                                                    stripeClasses : [ 'repositoryConceptSetItem' ],
+                          stripeClasses : [ 'repositoryConceptSetItem' ],
 													columns: [
 															{ data: 'id', title: 'Id', width: '25px'},
 															{ data: 'name', title: 'Title', width: '100%' },
@@ -95,31 +95,19 @@
 						Name:
 					</div>
 					<div contenteditable class="divtext" data-bind="htmlValue:model.currentConceptSet().name"></div>
-					<conceptset-editor params="model: model, conceptSets: model.selectedConcepts"></conceptset-editor>
+					<conceptset-editor params="model: model, conceptSets:selectedConcepts"></conceptset-editor>
 
 					<div class="clear"></div>
 
 					<button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
 					<button type="button" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
-
-					<div id="wrapperConceptSetWarnings" data-bind="visible: model.selectedConceptsWarnings().length > 0">
-						<div class="heading">Concept Set Warnings</div>
-						<table data-bind="foreach:model.selectedConceptsWarnings">
-							<tr class="conceptWarning">
-								<td><i class="fa fa-exclamation-triangle"></i>
-								</td>
-								<td><span class="conceptWarningText" data-bind="text:$data"></span>
-								</td>
-							</tr>
-						</table>
-					</div>
 				</div>
 			</div>
 
 			<div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
 
 			<div data-bind="visible: $component.conceptSetTabMode() == 'included' && !model.loadingIncluded()">
-				<faceted-datatable params="{columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
+				<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
 			</div>
 
 			<div data-bind="visible: $component.conceptSetTabMode() == 'sourcecodes' && !model.loadingSourcecodes() && !model.loadingIncluded()">

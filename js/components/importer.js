@@ -1,4 +1,4 @@
-define(['knockout', 'text!./importer.html', 'knockout.dataTables.binding'], function (ko, view) {
+define(['knockout', 'text!./importer.html', 'atlas-state', 'knockout.dataTables.binding'], function (ko, view, sharedState) {
 	function importer(params) {
 		var self = this;
 		self.model = params.model;
@@ -14,8 +14,8 @@ define(['knockout', 'text!./importer.html', 'knockout.dataTables.binding'], func
 				conceptSetItem.includeDescendants = ko.observable(items[i].includeDescendants);
 				conceptSetItem.includeMapped = ko.observable(items[i].includeMapped);
 
-				self.model.selectedConceptsIndex[items[i].concept.CONCEPT_ID] = 1;
-				self.model.selectedConcepts.push(conceptSetItem);
+				sharedState.selectedConceptsIndex[items[i].concept.CONCEPT_ID] = 1;
+				sharedState.selectedConcepts.push(conceptSetItem);
 			}
 		}
 

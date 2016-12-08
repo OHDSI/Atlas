@@ -59,7 +59,6 @@
 
 	<div data-bind="if:currentView() != 'splash'" id="wrapperMainWindow">
 		<div id="wrapperMainWindowContainer">
-			<!-- ko if: pageModel.currentView() != 'loading' -->
 
 			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
 			<!-- ko if: pageModel.currentCohortDefinition() != null && pageModel.currentView() !='cohort-definition-manager' -->
@@ -69,7 +68,6 @@
 				<!-- ko if: pageModel.currentConceptSet() != null && pageModel.currentConceptSetSource() == 'cohort' -->
 				<i class="fa fa-chevron-right"></i>
 				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name()"></a>
-				<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 				<!-- /ko -->
 			</div>
 			<!-- /ko -->
@@ -77,9 +75,7 @@
 			<div class="breadcrumb-container">
 				<i class="fa fa-arrow-left"></i>
 				<a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
-				&nbsp;<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 			</div>
-			<!-- /ko -->
 			<!-- /ko -->
 			<!-- /ko -->
 

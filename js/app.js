@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'facets', 'knockout-persist', 'css!styles/tabs.css', 'css!styles/buttons.css'], function ($, ko, jnj_chart, d3, ohdsiUtil, config) {
+define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'atlas-state', 'facets', 'knockout-persist', 'css!styles/tabs.css', 'css!styles/buttons.css'], function ($, ko, jnj_chart, d3, ohdsiUtil, config, sharedState) {
 	var appModel = function () {
 		$.support.cors = true;
 		var self = this;
@@ -7,7 +7,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.componentParams = {};
 		self.initPromises = [];
 		self.applicationStatus = ko.observable('initializing');
-		self.searchTabMode = ko.observable('simple');
 		self.pendingSearch = ko.observable(false);
 		self.pageTitle = ko.pureComputed(function () {
 			var pageTitle = "ATLAS";
@@ -88,7 +87,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 							self.componentParams = {
 								model: self
 							};
-							self.currentView('cohort-definition');
+							self.currentView('cohort-definition-manager');
 							self.currentCohortDefinitionMode('definition');
 							self.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details');
 						});
@@ -198,16 +197,14 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 					'/search/:query:': function (query) {
 						require(['search'], function (search) {
 							self.componentParams = {
-								model: self
+								model: self,
+								query: query
 							};
 							self.currentView('search');
-							self.currentSearchValue(unescape(query));
 						});
 					},
 					'/search': function () {
 						require(['search'], function (search) {
-							self.currentSearch('');
-							self.searchTabMode('simple');
 							self.componentParams = {
 								model: self
 							};
@@ -297,44 +294,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			}, 10);
 		};
 
-		self.searchConceptsOptions = {
-			Facets: [{
-				'caption': 'Vocabulary',
-				'binding': function (o) {
-					return o.VOCABULARY_ID;
-				}
-            }, {
-				'caption': 'Class',
-				'binding': function (o) {
-					return o.CONCEPT_CLASS_ID;
-				}
-            }, {
-				'caption': 'Domain',
-				'binding': function (o) {
-					return o.DOMAIN_ID;
-				}
-            }, {
-				'caption': 'Standard Concept',
-				'binding': function (o) {
-					return o.STANDARD_CONCEPT_CAPTION;
-				}
-            }, {
-				'caption': 'Invalid Reason',
-				'binding': function (o) {
-					return o.INVALID_REASON_CAPTION;
-				}
-            }, {
-				'caption': 'Has Records',
-				'binding': function (o) {
-					return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
-				}
-            }, {
-				'caption': 'Has Descendant Records',
-				'binding': function (o) {
-					return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
-				}
-            }]
-		};
 		self.relatedConceptsOptions = {
 			Facets: [{
 				'caption': 'Vocabulary',
@@ -393,59 +352,13 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 				}
             }]
 		};
-		self.searchConceptsColumns = [{
-			title: '<i class="fa fa-shopping-cart"></i>',
-			render: function (s, p, d) {
-				var css = '';
-				var icon = 'fa-shopping-cart';
-				if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-					css = ' selected';
-				}
-				return '<i class="fa ' + icon + ' ' + css + '"></i>';
-			},
-			orderable: false,
-			searchable: false
-        }, {
-			title: 'Id',
-			data: 'CONCEPT_ID'
-        }, {
-			title: 'Code',
-			data: 'CONCEPT_CODE'
-        }, {
-			title: 'Name',
-			data: 'CONCEPT_NAME',
-			render: function (s, p, d) {
-				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-			}
-        }, {
-			title: 'Class',
-			data: 'CONCEPT_CLASS_ID'
-        }, {
-			title: 'Standard Concept Caption',
-			data: 'STANDARD_CONCEPT_CAPTION',
-			visible: false
-        }, {
-			title: 'RC',
-			data: 'RECORD_COUNT',
-			className: 'numeric'
-        }, {
-			title: 'DRC',
-			data: 'DESCENDANT_RECORD_COUNT',
-			className: 'numeric'
-        }, {
-			title: 'Domain',
-			data: 'DOMAIN_ID'
-        }, {
-			title: 'Vocabulary',
-			data: 'VOCABULARY_ID'
-        }];
+
 		self.relatedConceptsColumns = [{
 			title: '<i class="fa fa-shopping-cart"></i>',
 			render: function (s, p, d) {
 				var css = '';
 				var icon = 'fa-shopping-cart';
-				if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
 					css = ' selected';
 				}
 				return '<i class="fa ' + icon + ' ' + css + '"></i>';
@@ -492,7 +405,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			render: function (s, p, d) {
 				var css = '';
 				var icon = 'fa-shopping-cart';
-				if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
 					css = ' selected';
 				}
 				return '<i class="fa ' + icon + ' ' + css + '"></i>';
@@ -584,7 +497,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		}
 		self.renderConceptSetItemSelector = function (s, p, d) {
 			var css = '';
-			if (self.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
+			if (sharedState.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
 				css = ' selected';
 			}
 			return '<i class="fa fa-shopping-cart' + css + '"></i>';
@@ -601,12 +514,12 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			// resolve the included concepts and update the include concept set identifier list
 		self.resolveConceptSetExpression = function () {
 			self.resolvingConceptSetExpression(true);
-			var conceptSetExpression = '{"items" :' + ko.toJSON(self.selectedConcepts()) + '}';
+			var conceptSetExpression = '{"items" :' + ko.toJSON(sharedState.selectedConcepts()) + '}';
 			var highlightedJson = self.syntaxHighlight(conceptSetExpression);
 			self.currentConceptSetExpressionJson(highlightedJson);
 			var conceptIdentifierList = [];
-			for (var i = 0; i < self.selectedConcepts().length; i++) {
-				conceptIdentifierList.push(self.selectedConcepts()[i].concept.CONCEPT_ID);
+			for (var i = 0; i < sharedState.selectedConcepts().length; i++) {
+				conceptIdentifierList.push(sharedState.selectedConcepts()[i].concept.CONCEPT_ID);
 			}
 			self.currentConceptIdentifierList(conceptIdentifierList.join(','));
 			var resolvingPromise = $.ajax({
@@ -820,10 +733,10 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 				conceptSetItem.isExcluded = ko.observable(conceptSetItem.isExcluded);
 				conceptSetItem.includeDescendants = ko.observable(conceptSetItem.includeDescendants);
 				conceptSetItem.includeMapped = ko.observable(conceptSetItem.includeMapped);
-				self.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
-				self.selectedConcepts.push(conceptSetItem);
+				sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
+				sharedState.selectedConcepts.push(conceptSetItem);
 			}
-			self.analyzeSelectedConcepts();
+
 			self.currentConceptSet({
 				name: ko.observable(conceptset.name),
 				id: conceptset.id
@@ -1074,6 +987,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		};
 		self.loadRepositoryConceptSet = function (conceptSetId, viewToShow, mode) {
 			$('body').removeClass('modal-open');
+			self.componentParams = {
+				model: self
+			};
 			if (conceptSetId == 0 && !self.currentConceptSet()) {
 				// Create a new concept set
 				self.currentConceptSet({
@@ -1083,7 +999,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			}
 			// don't load if it is already loaded or a new concept set
 			if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId) {
-				self.analyzeSelectedConcepts();
 				self.currentConceptSetMode(mode);
 				self.currentView(viewToShow);
 				return;
@@ -1144,10 +1059,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			$.when(conceptPromise).done(function (cp) {
 				// Reconstruct the expression items
 				for (var i = 0; i < conceptSet.expression.items().length; i++) {
-					self.selectedConceptsIndex[conceptSet.expression.items()[i].concept.CONCEPT_ID] = 1;
+					sharedState.selectedConceptsIndex[conceptSet.expression.items()[i].concept.CONCEPT_ID] = 1;
 				}
-				self.selectedConcepts(conceptSet.expression.items());
-				self.analyzeSelectedConcepts();
+				sharedState.selectedConcepts(conceptSet.expression.items());
 				self.currentConceptSet({
 					name: conceptSet.name,
 					id: conceptSet.id
@@ -1174,8 +1088,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.cohortDefinitionSourceInfo = ko.observableArray();
 		self.recentSearch = ko.observableArray(null);
 		self.recentConcept = ko.observableArray(null);
-		self.currentSearch = ko.observable();
-		self.currentSearchValue = ko.observable();
 		self.currentView = ko.observable('splash');
 		self.conceptSetInclusionIdentifiers = ko.observableArray();
 		self.currentConceptSetExpressionJson = ko.observable();
@@ -1203,7 +1115,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.currentConceptSetSource = ko.observable('repository');
 		self.currentConceptSetNegativeControls = ko.observable();
 		self.currentIncludedConceptIdentifierList = ko.observable();
-		self.searchResultsConcepts = ko.observableArray();
 		self.relatedConcepts = ko.observableArray();
 		self.relatedSourcecodes = ko.observableArray();
 		self.importedConcepts = ko.observableArray();
@@ -1278,7 +1189,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		});
 		self.renderCurrentConceptSelector = function () {
 			var css = '';
-			if (self.selectedConceptsIndex[self.currentConcept().CONCEPT_ID] == 1) {
+			if (sharedState.selectedConceptsIndex[self.currentConcept().CONCEPT_ID] == 1) {
 				css = ' selected';
 			}
 			return '<i class="fa fa-shopping-cart' + css + '"></i>';
@@ -1286,7 +1197,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.renderConceptSelector = function (s, p, d) {
 			var css = '';
 			var icon = 'fa-shopping-cart';
-			if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+			if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
 				css = ' selected';
 			}
 			return '<i class="fa ' + icon + ' ' + css + '"></i>';
@@ -1296,20 +1207,13 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 		self.currentCohortDefinitionMode = ko.observable('definition');
 		self.currentImportMode = ko.observable('identifiers');
 		self.feRelated = ko.observable();
-		self.feSearch = ko.observable();
 		self.metarchy = {};
-		self.selectedConcepts = ko.observableArray(null);
-		//.extend({ persist: 'atlas.selectedConcepts' });
-		self.selectedConceptsWarnings = ko.observableArray();
-
 		self.checkCurrentSource = function (source) {
 			return source.url == self.curentVocabularyUrl();
 		};
 		self.clearConceptSet = function () {
 			self.currentConceptSet(null);
-			self.selectedConcepts([]);
-			self.selectedConceptsIndex = {};
-			self.analyzeSelectedConcepts();
+			sharedState.clearSelectedConcepts();
 			self.resolveConceptSetExpression();
 			self.currentConceptSetDirtyFlag.reset();
 		}
@@ -1317,38 +1221,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 			var valid = d.INVALID_REASON_CAPTION == 'Invalid' || d.STANDARD_CONCEPT != 'S' ? 'invalid' : '';
 			return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 		};
-		self.analyzeSelectedConcepts = function () {
-			self.selectedConceptsWarnings.removeAll();
-			var domains = [];
-			var standards = [];
-			var includeNonStandard = false;
-			for (var i = 0; i < self.selectedConcepts().length; i++) {
-				var domain = self.selectedConcepts()[i].concept.DOMAIN_ID;
-				var standard = self.selectedConcepts()[i].concept.STANDARD_CONCEPT_CAPTION;
-				if (standard != 'Standard') {
-					includeNonStandard = true;
-				}
-				var index;
-				index = $.inArray(domain, domains);
-				if (index < 0) {
-					domains.push(domain);
-				}
-				index = $.inArray(standard, standards);
-				if (index < 0) {
-					standards.push(standard);
-				}
-			}
-			if (domains.length > 1) {
-				self.selectedConceptsWarnings.push('Your saved concepts come from multiple Domains (' + domains.join(', ') + ').  A useful set of concepts will typically all come from the same Domain.');
-			}
-			if (standards.length > 1) {
-				self.selectedConceptsWarnings.push('Your saved concepts include different standard concept types (' + standards.join(', ') + ').  A useful set of concepts will typically all be of the same standard concept type.');
-			}
-			if (includeNonStandard) {
-				self.selectedConceptsWarnings.push('Your saved concepts include Non-Standard or Classification concepts.  Typically concept sets should only include Standard concepts unless advanced use of this concept set is planned.');
-			}
-		};
-		self.selectedConceptsIndex = {};
+		
 		self.createConceptSetItem = function (concept) {
 			var conceptSetItem = {};
 			conceptSetItem.concept = concept;
@@ -1379,21 +1252,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'fac
 				}
 				return '<span class="' + cls + '">' + match + '</span>';
 			});
-		};
-		self.updateSearchFilters = function () {
-			$(event.target).toggleClass('selected');
-			var filters = [];
-			$('#wrapperSearchResultsFilter .facetMemberName.selected').each(function (i, d) {
-				filters.push(d.id);
-			});
-			self.feSearch().SetFilter(filters);
-			// update filter data binding
-			self.feSearch(self.feSearch());
-			// update table data binding
-			self.searchResultsConcepts(self.feSearch().GetCurrentObjects());
-		};
-		self.selectConcept = function (concept) {
-			document.location = '#/concept/' + concept.CONCEPT_ID;
 		};
 		self.currentConceptSetSubscription = self.currentConceptSet.subscribe(function (newValue) {
 			if (newValue != null) {
