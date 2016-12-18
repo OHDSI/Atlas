@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', 'text!./ProcedureOccurrenceTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./ProcedureOccurrenceTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
 
 	function ProcedureOccurrenceViewModel(params) {
 		var self = this;
@@ -76,6 +76,12 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 10,
 				selected: false,
 				description: "Filter Procedure Occurrences based on provider specialty."
+			},
+			{
+				text: "Add Correlated Criteria",
+				value: 19,
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
 			}
 		];
 
@@ -136,7 +142,10 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					if (self.Criteria.VisitType() == null)
 						self.Criteria.VisitType(ko.observableArray());
 					break;
-				}
+				case 19:
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
+					break;				}
 			}
 		};
 

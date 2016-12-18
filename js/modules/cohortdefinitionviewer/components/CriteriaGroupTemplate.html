@@ -1,8 +1,8 @@
 <span data-bind="if: parentGroup">
-	<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? 'And' : 'Or'"></span> people having</span>
-	<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">People having</span>
+	<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? 'And' : 'Or'"></span> having</span>
+	<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">Having</span>
 </span>
-<span data-bind="ifnot: parentGroup">People having</span> <span data-bind="text: groupType"></span> <!-- ko if: group().Type().startsWith('AT_') --> <span data-bind="text: group().Count"></span> <!-- /ko --> of the following criteria:
+<span data-bind="ifnot: parentGroup">Having</span> <span data-bind="text: groupType"></span> <!-- ko if: group().Type().startsWith('AT_') --> <span data-bind="text: group().Count"></span> <!-- /ko --> of the following criteria:
 <ul>
 <!-- ko foreach: group().DemographicCriteriaList -->
 	<li>

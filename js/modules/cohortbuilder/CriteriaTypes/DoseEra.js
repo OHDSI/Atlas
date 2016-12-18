@@ -1,9 +1,11 @@
-define(['knockout', '../InputTypes/Range', 'conceptpicker/InputTypes/Concept'], function (ko, Range, Concept) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Concept) {
 
 	function DoseEra(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
+		Criteria.call(this, data, conceptSets);
+		
 		// set up subscription to update CodesetId if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
 			changes.forEach(function(change) {
@@ -38,8 +40,11 @@ define(['knockout', '../InputTypes/Range', 'conceptpicker/InputTypes/Concept'], 
 		})));
 	}
 
+	DoseEra.prototype = new Criteria();
+	DoseEra.prototype.constructor = DoseEra;
 	DoseEra.prototype.toJSON = function () {
 		return this;
 	}
+	
 	return DoseEra;
 });

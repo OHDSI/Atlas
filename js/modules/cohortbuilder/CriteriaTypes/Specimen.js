@@ -1,9 +1,11 @@
-define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Range, Concept, Text) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
 
 	function Specimen(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
+		Criteria.call(this, data, conceptSets);
+		
 		// set up subscription to update CodesetId if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
 			changes.forEach(function(change) {
@@ -46,6 +48,8 @@ define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '.
 		})));
 	}
 
+	Specimen.prototype = new Criteria();
+	Specimen.prototype.constructor = Specimen;
 	Specimen.prototype.toJSON = function () {
 		return this;
 	}

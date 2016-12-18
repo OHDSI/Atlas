@@ -31,5 +31,8 @@ a a specimen of <conceptset-reference params="{conceptSetId: CodesetId, conceptS
 <!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
 	<li>gender is any of: <concept-list-viewer params="ConceptList:ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+<!-- /ko -->
 </ul>
 <!-- /ko -->

@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', 'text!./MeasurementTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./MeasurementTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
 
 	function MeasurementViewModel(params) {
 		var self = this;
@@ -177,6 +177,16 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					if (self.Criteria.MeasurementSourceConcept() == null)
 						self.Criteria.MeasurementSourceConcept(ko.observable());
 				}
+			},
+			{
+				text: "Add Correlated Criteria",
+				value: 19,
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
+				action: function() {
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
+				}				
 			}
 		];
 

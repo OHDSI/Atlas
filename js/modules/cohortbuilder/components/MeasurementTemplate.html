@@ -127,6 +127,12 @@
 					with a Visit of: <concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
 				</td>									
 			</tr>								
+			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" /></td>
+				<td style="background-color: white">
+					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group>
+				</td>
+			</tr>			
 		</table>
 	</div>
 	<div class="addCriterion" data-bind="ddSlickAction: $component.addCriterionSettings"></div>

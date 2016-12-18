@@ -52,5 +52,8 @@ a measurement of <conceptset-reference params="{conceptSetId: CodesetId, concept
 <!-- ko if: ko.utils.unwrapObservable(VisitType) != null -->
 	<li>visit occurrence is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+<!-- /ko -->
 </ul>
 <!-- /ko -->

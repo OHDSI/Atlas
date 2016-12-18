@@ -1,6 +1,6 @@
 div.criteriaGroup {
 	position: relative;
-	margin-top: 20px;
+	margin-top: 15px;
 	margin-bottom: 5px;
 	padding-top: 15px;
 	padding-right: 0px;
@@ -89,7 +89,7 @@ img.deleteIcon {
 	vertical-align: middle;
 	cursor: pointer;
 }
-table.criteriaTable tbody tr td {
+table.criteriaTable>tbody>tr>td {
 	padding-top:3px;
 	line-height:20px
 }

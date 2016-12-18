@@ -1,9 +1,11 @@
-define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], function (ko, Range, Concept) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Concept) {
 
 	function ProcedureOccurrence(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
+		Criteria.call(this, data, conceptSets);
+		
 		// set up subscription to update CodesetId and ProcedureSourceConcept if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
 			changes.forEach(function(change) {
@@ -57,10 +59,12 @@ define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], f
 
 	}
 
+	ProcedureOccurrence.prototype = new Criteria();
+	ProcedureOccurrence.prototype.constructor = ProcedureOccurrence;
 	ProcedureOccurrence.prototype.toJSON = function () {
 		return this;
 	}
-
+	
 	return ProcedureOccurrence;
 
 });

@@ -22,5 +22,8 @@ an observation period
 <!-- ko if: ko.utils.unwrapObservable(AgeAtEnd) != null -->
 	<li>with age at period end <numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+<!-- /ko -->
 </ul>
 <!-- /ko -->

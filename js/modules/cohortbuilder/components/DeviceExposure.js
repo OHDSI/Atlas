@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', 'text!./DeviceExposureTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./DeviceExposureTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
 
 	function DeviceExposureViewModel(params) {
 		var self = this;
@@ -82,6 +82,12 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 9,
 				selected: false,
 				description: "Filter Device Exposures based on provider specialty."
+			},
+			{
+				text: "Add Correlated Criteria",
+				value: 11,
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
 			}
 		];
 
@@ -145,6 +151,10 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				case 10:
 					if (self.Criteria.VisitType() == null)
 						self.Criteria.VisitType(ko.observableArray());
+					break;
+				case 11:
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
 					break;
 				}
 			}

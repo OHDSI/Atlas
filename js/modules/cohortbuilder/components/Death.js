@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', 'text!./DeathTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./DeathTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
 
 	function DeathViewModel(params) {
 		var self = this;
@@ -33,6 +33,12 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 2,
 				selected: false,
 				description: "Filter Death by the Death Source Concept."
+			},
+			{
+				text: "Add Correlated Criteria",
+				value: 11,
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
 			}
 /*
  			{
@@ -76,6 +82,10 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				case 4:
 					if (self.Criteria.Gender() == null)
 						self.Criteria.Gender(ko.observableArray());
+					break;
+				case 11:
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
 					break;
 /*
  				case 8:

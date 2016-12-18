@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', 'text!./SpecimenTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./SpecimenTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
 
 	function SpecimenViewModel(params) {
 		var self = this;
@@ -96,6 +96,15 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					if (self.Criteria.SourceId() == null)
 						self.Criteria.SourceId(new Text({Op: "contains"}));
 				}
+			},
+			{
+				text: "Add Correlated Criteria",
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
+				action: function() {
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
+				}				
 			}
 		];
 

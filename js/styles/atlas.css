@@ -1708,16 +1708,13 @@ td div.criteria-content {
 	border: solid 1px #ccc;
 }
 
-div.demographicCriteria div.criteria-content {
-	border: solid 1px #2749ff;
-}
-
-div.demographicCriteria div.criteria-content {
-	border: solid 1px #2749ff;
-}
 
 div.additionalCriteria div.criteria-content {
 	border: solid 1px #00a031;
+}
+
+div.demographicCriteria div.criteria-content {
+	border: solid 1px #2749ff;
 }
 
 

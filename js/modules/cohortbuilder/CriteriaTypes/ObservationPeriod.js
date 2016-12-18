@@ -1,8 +1,10 @@
-define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], function (ko, Range, Concept) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Concept) {
 	function ObservationPeriod(data) {
 		var self = this;
 		data = data || {};
 
+		Criteria.call(this, data, conceptSets);
+		
 		self.First = ko.observable(data.First || null);
 		self.PeriodStartDate = ko.observable(data.PeriodStartDate && new Range(data.PeriodStartDate));
 		self.PeriodEndDate = ko.observable(data.PeriodEndDate && new Range(data.PeriodEndDate));
@@ -16,8 +18,11 @@ define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], f
 		self.PeriodLength = ko.observable(data.PeriodLength && new Range(data.PeriodLength));
 	}
 
+	ObservationPeriod.prototype = new Criteria();
+	ObservationPeriod.prototype.constructor = ObservationPeriod;
 	ObservationPeriod.prototype.toJSON = function () {
 		return this;
 	}
+
 	return ObservationPeriod;
 });

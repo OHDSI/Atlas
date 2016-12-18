@@ -1,9 +1,11 @@
-define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Range, Concept, Text) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
 
 	function DeviceOccurence(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
+		Criteria.call(this, data, conceptSets);
+		
 		// set up subscription to update CodesetId and DeviceSourceConcept if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
 			changes.forEach(function(change) {
@@ -53,6 +55,8 @@ define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '.
 		
 	}
 
+	DeviceOccurence.prototype = new Criteria();
+	DeviceOccurence.prototype.constructor = DeviceOccurence;
 	DeviceOccurence.prototype.toJSON = function () {
 		return this;
 	}
