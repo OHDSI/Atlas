@@ -39,3 +39,19 @@ People having any of the following:
 
 <end-strategy-viewer params="strategy: expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-viewer>
 
+<!-- ko if: expression().CensoringCriteria().length > 0 -->
+<div class="heading">Censoring Events:</div>
+Exit Cohot based on the following:
+<br>
+
+<ul>
+	<!-- ko foreach: expression().CensoringCriteria -->
+	<li>
+		<div data-bind='component: { 
+						name: $component.getCriteriaIndexComponent($data),
+						params: {expression: $component.expression(), criteria: $data} }'></div>
+	</li>
+	<!-- /ko -->
+</ul>
+<!-- /ko -->
+

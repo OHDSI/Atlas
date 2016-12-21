@@ -149,5 +149,56 @@
 	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'exit' || $component.expressionMode() == 'all'}" class="tab-pane">
 		<div><b>Cohort Exit Criteria</b></div>
 		<end-strategy-editor params="strategy: $component.expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-editor>
+
+		<div><b>Censoring Events</b><br>
+			Censoring events are used to indicate when a person will exit the cohort due to one or more event triggers.  Add censoring events using the dropdown below.<br>
+			The first censoring event found after entering the cohort will be used to exit the cohort.<br>
+			<i>Note: censoring events occurring prior to cohort entry will not exclude the person from the cohort.  Use inclusion criteria to filter the people that have the censoring event prior to index.</i>
+		</div>
+		<div class="criteriaGroup">
+			<div class="criteriaHeading">
+				<table>
+					<colgroup>
+						<col />
+						<col />
+					</colgroup>
+					<tbody>
+						<tr>
+							<td>
+								Exit Cohot based on the following:
+							</td>
+							<td>
+								<div data-bind="ddSlickAction: $component.addCensorCriteriaOptions"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<table class="criteria">
+				<colgroup>
+					<col span="1" class="rule" />
+					<col span="1" class="delete" />
+				</colgroup>
+				<tbody data-bind="sortable: {data: expression().CensoringCriteria, connectClass : 'censoringCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
+					<tr>
+						<td>
+							<div class="criteria-content">
+								<div data-bind='component: { 
+											name: $component.getCriteriaIndexComponent($data),
+											params: {expression: $component.expression(), criteria: $data}
+										}'></div>
+							</div>
+						</td>
+						<td style="vertical-align: top;">
+							<button class="btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCensoringCriteria(data) }">Delete Criteria</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div data-bind="visible: expression().CensoringCriteria().length == 0">
+				No censoring events selected.
+			</div>
+		</div>	
 	</div>	
 </div>
