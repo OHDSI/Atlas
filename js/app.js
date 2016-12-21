@@ -110,7 +110,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'atl
 							self.currentView('data-sources');
 						});
 					},
-					'/datasources/:sourceKame/:reportName': function (sourceKey, reportName) {
+					'/datasources/:sourceKey/:reportName': function (sourceKey, reportName) {
 						require(['data-sources'], function () {
 							self.componentParams = {
 								model: self,
