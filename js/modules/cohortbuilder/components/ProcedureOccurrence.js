@@ -78,7 +78,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				description: "Filter Procedure Occurrences based on provider specialty."
 			},
 			{
-				text: "Add Correlated Criteria",
+				text: "Add Nested Criteria...",
 				value: 19,
 				selected: false,
 				description: "Apply criteria using the condition occurrence as the index date",

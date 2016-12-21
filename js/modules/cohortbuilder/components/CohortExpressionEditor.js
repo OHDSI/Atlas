@@ -325,7 +325,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 		};
 
 		self.addCensorCriteriaOptions = {
-			selectText: "Add Censor Event...",
+			selectText: "Add Censoring Event...",
 			width: 250,
 			height: 300,
 			actionOptions: censorCriteriaOptions,

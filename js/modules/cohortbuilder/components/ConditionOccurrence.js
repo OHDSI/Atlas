@@ -101,7 +101,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				}
 			},
 			{
-				text: "Add Correlated Criteria",
+				text: "Add Nested Criteria...",
 				selected: false,
 				description: "Apply criteria using the condition occurrence as the index date",
 				action: function() {
