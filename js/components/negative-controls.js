@@ -5,11 +5,12 @@ define(['knockout',
         'webapi/CDMResultsAPI',
         'webapi/ConceptSetAPI',
         'lodash', 
+				'atlas-state',
         'ohdsi.util',
         'knockout.dataTables.binding',
         'components/faceted-datatable-cf',
         'databindings'
-], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, lodash) {
+], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, lodash, sharedState) {
     function negativeControls(params) {
         var self = this;
 
@@ -780,7 +781,7 @@ define(['knockout',
                 $.each(service.sources, function (i, source) {
                     if (source.hasResults) {
                         resultSources.push(source);
-                        if (source.resultsUrl == self.defaultResultsUrl()) {
+                        if (source.resultsUrl == sharedState.resultsUrl()) {
                             self.currentResultSource(source);
                         }
                     }

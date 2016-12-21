@@ -60,58 +60,30 @@
 
 	<div data-bind="if:currentView() != 'splash'" id="wrapperMainWindow">
 		<div id="wrapperMainWindowContainer">
-			<!-- ko if: pageModel.currentView() != 'loading' -->
 
 			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
-			<!-- ko if: pageModel.currentCohortDefinition() != null && pageModel.currentView() !='cohortdefinition' -->
+			<!-- ko if: pageModel.currentCohortDefinition() != null && pageModel.currentView() !='cohort-definition-manager' -->
 			<div class="breadcrumb-container">
 				<i class="fa fa-arrow-left"></i>
 				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text: pageModel.currentCohortDefinition().name"></a>
 				<!-- ko if: pageModel.currentConceptSet() != null && pageModel.currentConceptSetSource() == 'cohort' -->
 				<i class="fa fa-chevron-right"></i>
 				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name()"></a>
-				<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 				<!-- /ko -->
 			</div>
 			<!-- /ko -->
-			<!-- ko if: pageModel.currentConceptSet() && pageModel.currentConceptSetSource() == 'repository' && pageModel.currentView() != 'conceptset' -->
+			<!-- ko if: pageModel.currentConceptSet() && pageModel.currentConceptSetSource() == 'repository' && pageModel.currentView() != 'conceptset-manager' -->
 			<div class="breadcrumb-container">
 				<i class="fa fa-arrow-left"></i>
 				<a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
-				&nbsp;<span class="badge" data-bind="text:pageModel.selectedConcepts().length"></span>
 			</div>
-			<!-- /ko -->
 			<!-- /ko -->
 			<!-- /ko -->
 
 			<user-bar></user-bar>
+			<div id="currentComponent" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
 
-			<div id="wrapperLoading" data-bind="if: currentView() == 'loading'">
-				<div class="wrapperTitle">
-					<i class="fa fa-fw fa-circle-o-notch fa-spin"></i> Loading...
-				</div>
-			</div>
-
-			<div data-bind="if:pageModel.currentView()=='import'">
-				<importer params="{model: pageModel}"></importer>
-			</div>
-
-			<div data-bind="if:pageModel.currentView()=='home'">
-				<home params="{model: pageModel}"></home>
-			</div>
-
-			<div data-bind="if:pageModel.currentView()=='conceptsets'">
-				<conceptset-browser params="{model: pageModel}"></conceptset-browser>
-			</div>
-
-			<div data-bind="if: pageModel.currentView() == 'conceptset'">
-				<conceptset-manager params="{model: pageModel}"></conceptset-manager>
-			</div>
-
-			<div data-bind="visible: pageModel.currentView() == 'search'">
-				<search id="componentSearch" params="{model: pageModel}"></search>
-			</div>
-
+			<!--			
 			<div data-bind="if: pageModel.currentView() == 'concept'">
 				<concept-manager params="{model: pageModel, currentConceptId: pageModel.currentConceptId}"></concept-manager>
 			</div>
@@ -157,53 +129,7 @@
 			<div data-bind="if:pageModel.currentView() == 'estimation'">
 				<cohort-comparison-manager params="currentCohortComparisonId:pageModel.currentCohortComparisonId, currentCohortComparison: pageModel.currentCohortComparison, dirtyFlag: pageModel.currentCohortComparisonDirtyFlag"></cohort-comparison-manager>
 			</div>
-
-			<div data-bind="if: currentView() == 'configure'">
-				<div class="wrapperTitle">
-					<i class="fa fa-cogs"></i>Configuration
-				</div>
-
-				<div id="wrapperConfigure">
-					<div data-bind="if:appInitializationFailed">
-						<div class="heading">application initialization failed</div>
-						<div class="error">unable to connect to an instance of the webapi. please contact your administrator to resolve this issue.</div>
-					</div>
-					<div data-bind="if:!appInitializationFailed()">
-						<div class="heading">Configured Services</div>
-						<ohdsi-configuration params="{enableRecordCounts: pageModel.enableRecordCounts, services: pageModel.services}"></ohdsi-configuration>
-						<r-manager></r-manager>
-					</div>
-				</div>
-			</div>
-
-			<div data-bind="if:pageModel.currentView() == 'roles'">
-				<roles params="model: pageModel"></roles>
-			</div>
-			<div data-bind="if:pageModel.currentView() == 'role'">
-				<role-details params="model: pageModel"></role-details>
-			</div>
-
-			<div data-bind="if: currentView() == 'irbrowser'">
-				<ir-browser params="model: pageModel"></ir-browser>
-			</div>
-
-			<div data-bind="if: currentView() == 'iranalysis'">
-				<ir-manager params="model: pageModel"></ir-manager>
-			</div>
-
-			<div data-bind="if: currentView() == 'template'">
-				<div class="wrapperTitle">
-					Template
-				</div>
-			</div>
-
-			<div data-bind="if:pageModel.currentView() == 'sptest'">
-				<sptest></sptest>
-			</div>
-			<div data-bind="if:pageModel.currentView() == 'sptest_smoking'">
-				<sptest_smoking></sptest_smoking>
-			</div>
-
+			-->
 		</div>
 	</div>
 	<script data-main="js/main" src="js/require.js"></script>
