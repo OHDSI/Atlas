@@ -145,7 +145,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				selected: false,
 				description: "Exit cohort based on diagosis era.",
 				action: function () {
-					self.expression().PrimaryCriteria().CriteriaList.push({
+					self.expression().CensoringCriteria.push({
 						ConditionEra: new criteriaTypes.ConditionEra(null, self.expression().ConceptSets)
 					});
 				}
