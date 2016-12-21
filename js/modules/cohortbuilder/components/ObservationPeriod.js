@@ -79,7 +79,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 				}
 			},
 			{
-				text: "Add Correlated Criteria",
+				text: "Add Nested Criteria...",
 				value: 19,
 				selected: false,
 				description: "Apply criteria using the condition occurrence as the index date",

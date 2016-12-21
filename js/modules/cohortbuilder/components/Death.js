@@ -35,7 +35,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				description: "Filter Death by the Death Source Concept."
 			},
 			{
-				text: "Add Correlated Criteria",
+				text: "Add Nested Criteria...",
 				value: 11,
 				selected: false,
 				description: "Apply criteria using the condition occurrence as the index date",
