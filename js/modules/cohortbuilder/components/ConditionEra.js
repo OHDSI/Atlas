@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', 'text!./ConditionEraTemplate.html'], function (ko, options, Range, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./ConditionEraTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
 
 	function ConditionEraViewModel(params) {
 		
@@ -79,6 +79,15 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ConditionEraTem
 					if (self.Criteria.EraLength() == null)
 						self.Criteria.EraLength(new Range());				
 				}
+			},
+			{
+				text: "Add Correlated Criteria",
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
+				action: function() {
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
+				}				
 			}
 		];
 

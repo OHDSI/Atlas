@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeriodTemplate.html'], function (ko, options, Range, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./ObservationPeriodTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
 
 	function ObservationPeriodViewModel(params) {
 		var self = this;
@@ -77,6 +77,16 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./ObservationPeri
 					if (self.Criteria.PeriodLength() == null)
 						self.Criteria.PeriodLength(new Range());
 				}
+			},
+			{
+				text: "Add Correlated Criteria",
+				value: 19,
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
+				action: function() {
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
+				}				
 			}
 		];
 

@@ -1,9 +1,11 @@
-define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Range, Concept, Text) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
 
 	function Measurement(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
+		Criteria.call(this, data, conceptSets);
+		
 		// set up subscription to update CodesetId and MeasurementSourceConcept if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
 			changes.forEach(function(change) {
@@ -64,10 +66,12 @@ define(['knockout', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '.
 
 	}
 
+	Measurement.prototype = new Criteria();
+	Measurement.prototype.constructor = Measurement;
 	Measurement.prototype.toJSON = function () {
 		return this;
 	}
-
+	
 	return Measurement;
 
 });

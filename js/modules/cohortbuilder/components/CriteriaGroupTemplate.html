@@ -9,10 +9,10 @@
 				<tr>
 					<td>
 						<span data-bind="if: parentGroup">
-							<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? 'And ' : 'Or '"></span>people having</span>
-						<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">People having</span>
+							<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? 'And ' : 'Or '"></span>having</span>
+						<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">having</span>
 						</span>
-						<span data-bind="ifnot: parentGroup">People having</span>
+						<span data-bind="ifnot: parentGroup">having</span>
 						<select data-bind="options: $component.options.groupTypeOptions, optionsText: 'name', optionsValue: 'id', value: group().Type"></select>
 						<!-- ko if: group().Type().startsWith("AT_") -->
 						<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: group().Count.numeric(), ko_autocomplete: { value: group().Count, source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }" />

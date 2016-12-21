@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', 'text!./VisitOccurrenceTemplate.html'], function (ko, options, Range, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./VisitOccurrenceTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
 
 	function VisitOccurrenceViewModel(params) {
 		var self = this;
@@ -93,6 +93,15 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./VisitOccurrence
 					if (self.Criteria.PlaceOfService() == null)
 						self.Criteria.PlaceOfService(ko.observableArray());
 				}
+			},
+			{
+				text: "Add Correlated Criteria",
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
+				action: function() {
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
+				}				
 			}
 		];
 

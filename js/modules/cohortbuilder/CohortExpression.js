@@ -6,6 +6,7 @@ define(function (require, exports) {
 	var PrimaryCriteria = require('./PrimaryCriteria');
 	var InclusionRule = require('./InclusionRule');
 	var EndStrategies = require('./EndStrategies');
+	var CriteriaTypes = require('./CriteriaTypes');
 	
 	function CohortExpression(data) {
 		var self = this;
@@ -20,7 +21,11 @@ define(function (require, exports) {
 		self.InclusionRules = ko.observableArray(data.InclusionRules && data.InclusionRules.map(function (rule) {
 			return new InclusionRule(rule, self.ConceptSets);	
 		}));
-		self.EndStrategy = ko.observable(data.EndStrategy && EndStrategies.GetStrategyFromObject(data.EndStrategy, self.ConceptSets));		
+		self.EndStrategy = ko.observable(data.EndStrategy && EndStrategies.GetStrategyFromObject(data.EndStrategy, self.ConceptSets));
+
+		self.CensoringCriteria = ko.observableArray(data.CensoringCriteria && data.CensoringCriteria.map(function (criteria) {
+			return CriteriaTypes.GetCriteriaFromObject(criteria, self.ConceptSets);
+		}));
 		
 	}
 	return CohortExpression;

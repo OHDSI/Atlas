@@ -1,5 +1,5 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', 'text!./ConditionOccurrenceTemplate.html', './ConceptSetSelector'
-], function (ko, options, Range, Text, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./ConditionOccurrenceTemplate.html', './ConceptSetSelector'
+], function (ko, options, Range, Text, CriteriaGroup, template) {
 
 	function ConditionOccurrenceViewModel(params) {
 
@@ -99,6 +99,15 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					if (self.Criteria.ProviderSpecialty() == null)
 						self.Criteria.ProviderSpecialty(ko.observableArray());				
 				}
+			},
+			{
+				text: "Add Correlated Criteria",
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
+				action: function() {
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
+				}				
 			}
 		];
 

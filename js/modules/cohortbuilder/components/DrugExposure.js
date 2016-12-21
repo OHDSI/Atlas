@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', 'text!./DrugExposureTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./DrugExposureTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
 
 	function DrugExposureViewModel(params) {
 		var self = this;
@@ -119,8 +119,14 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 10,
 				selected: false,
 				description: "Filter Drug Exposures based on provider specialty."
+			},
+			{
+				text: "Add Correlated Criteria",
+				value: 19,
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
 			}
-				];
+		];
 
 		self.addCriterionSettings = {
 			selectText: "Add criteria attribute…",
@@ -207,6 +213,10 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					if (self.Criteria.VisitType() == null)
 						self.Criteria.VisitType(ko.observableArray());
 					break;
+				case 19:
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
+					break;						
 				}
 			}
 		};

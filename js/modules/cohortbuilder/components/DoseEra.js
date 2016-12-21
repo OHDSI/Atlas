@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', 'text!./DoseEraTemplate.html'], function (ko, options, Range, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./DoseEraTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
 
 	function DoseEraViewModel(params) {
 		
@@ -88,6 +88,15 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./DoseEraTemplate
 					if (self.Criteria.DoseValue() == null)
 						self.Criteria.DoseValue(new Range());				
 				}
+			},
+			{
+				text: "Add Correlated Criteria",
+				selected: false,
+				description: "Apply criteria using the condition occurrence as the index date",
+				action: function() {
+					if (self.Criteria.CorrelatedCriteria() == null)
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
+				}				
 			}
 		];
 
