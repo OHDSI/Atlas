@@ -168,6 +168,7 @@ define([
 		});
 
 		self.setDatasource = function (data) {
+			self.datasource(data);
 			document.location = '#/datasources/' + data.name + '/' + self.datasourceReport().id;
 		}
 
