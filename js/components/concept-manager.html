@@ -1,6 +1,6 @@
-<div id="wrapperConcept" data-bind="if: model.currentConcept() && model.currentView() == 'concept'">
+<div id="wrapperConcept">
 	<div class="wrapperTitle">
-		<i class="fa fa-search"></i>Vocabulary<i class="fa fa-chevron-right"></i>Concept
+		<i class="fa fa-search"></i>Vocabulary <i class="fa fa-chevron-right"></i> Concept
 	</div>
 
 	<div class="asset-heading" data-bind="with:model.currentConcept()">
@@ -12,13 +12,13 @@
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('details');}, attr: {class: model.currentConceptMode() == 'details' ? 'active' : ''}"><a>Details</a>
 		</li>
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('related');}, attr: {class: model.currentConceptMode() == 'related' ? 'active' : ''}">
-			<a><span data-bind="if:model.loadingRelated();">
+			<a><span data-bind="if:loadingRelated();">
 							<i class="fa fa-circle-o-notch fa-spin"></i>
 						</span>Related Concepts</a>
 		</li>
 
 		<li role="presentation" data-bind="click: function() {model.currentConceptMode('hierarchy');}, attr: {class: model.currentConceptMode() == 'hierarchy' ? 'active' : ''}">
-			<a><span data-bind="if:model.loadingRelated();">
+			<a><span data-bind="if:loadingRelated();">
 							<i class="fa fa-circle-o-notch fa-spin"></i>
 						</span>Hierarchy</a>
 		</li>
@@ -56,12 +56,12 @@
 		</div>
 	</div>
 
-	<div id="wrapperConceptHierarchy" data-bind="if:model.currentConceptMode() == 'hierarchy' && !model.loadingRelated()">
+	<div id="wrapperConceptHierarchy" data-bind="if:model.currentConceptMode() == 'hierarchy' && !loadingRelated()">
 
 		<div id="wrapperParents">
 			<div class="heading">Parents</div>
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-								data: model.metarchy.parents(),
+								data: metarchy.parents(),
 								options: {
 									dom: 't',
 									language: {
@@ -92,7 +92,7 @@
 		<div id="wrapperChildren">
 			<div class="heading">Children</div>
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-								data: model.metarchy.children(),
+								data: metarchy.children(),
 								language: {
 									search: 'Filter Specific Concepts: '
 								},
@@ -165,7 +165,7 @@
 		</table>
 	</div>
 
-	<div data-bind="visible: model.currentConceptMode() == 'related' && !model.loadingRelated()">
+	<div data-bind="visible: model.currentConceptMode() == 'related' && !loadingRelated()">
 		<faceted-datatable params="{orderColumn: 7, columns: model.relatedConceptsColumns, options: model.relatedConceptsOptions, reference: model.relatedConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
 	</div>
 </div>

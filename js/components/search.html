@@ -12,40 +12,23 @@
 		</li>
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'advanced' }, click: function() { $component.tabMode('advanced') };"><a>Advanced</a>
 		</li>
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a>
-		</li>
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'import' }, click: function() { $component.tabMode('import') };"><a>Import</a>
 		</li>
 	</ul>
 
 	<div class="tab-content">
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'simple' }" class="tab-pane">
-			<input id="querytext" placeholder="type your search here" class="form-control" type="text" data-bind="value:model.currentSearch" />
+			<input id="querytext" placeholder="type your search here" class="form-control" type="text" data-bind="value:$component.currentSearch" />
 
-			<!-- ko if: model.recentSearch().length > 0 -->
-			<div class="heading">Recent Searches (number of results)</div>
-
-			<ul data-bind="foreach:pageModel.recentSearch">
-				<li>
-					<a data-bind="attr: {href:'#/search/' + query}, text: caption + ' (' + resultLength + ')'"></a>
-				</li>
-			</ul>
-			<!-- /ko -->
-
-			<!-- ko if: model.recentConcept().length > 0 -->
-			<div class="heading">
-				Recent Concepts
+			<div data-bind="visible:concepts().length > 0">
+			<div class="heading" data-bind="text: 'Search Results for ' + decodeURI($component.currentSearch())">
 			</div>
-			<ul data-bind="foreach:pageModel.recentConcept">
-				<li>
-					<a data-bind="text: CONCEPT_NAME, attr: { href: '#/concept/' + CONCEPT_ID}"></a>
-				</li>
-			</ul>
-			<!-- /ko -->
+			<faceted-datatable params="{orderColumn: 7, columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: $component.concepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
+			</div>
 		</div>
 
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'import' }" class="tab-pane">
-			<ul class="nav nav-tabs">
+			<ul class="nav nav-pills">
 				<li role="presentation" data-bind="click: function() {model.currentImportMode('identifiers');}, attr: {class: model.currentImportMode() == 'identifiers' ? 'active' : ''}"><a>Concept Identifiers</a>
 				</li>
 
@@ -150,12 +133,6 @@
 			</div>
 
 			<div class="btn btn-sm btn-primary pull-right" data-bind="click:executeAdvancedSearch">Search</div>
-		</div>
-
-		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'results' }" class="tab-pane">
-			<div class="heading" data-bind="text: 'Search Results for ' + decodeURI(model.currentSearch())">
-			</div>
-			<faceted-datatable params="{orderColumn: 7, columns: model.searchConceptsColumns, options: model.searchConceptsOptions, reference: model.searchResultsConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
 		</div>
 	</div>
 
