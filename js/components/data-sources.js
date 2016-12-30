@@ -1,6 +1,8 @@
 define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lodash', 'data-sources-json', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, _, legacy, config) {
     function dataSources(params) {
         var self = this;
+
+        // aggregate property descriptors
         var RecordsPerPersonProperty = {name: "recordsPerPerson", description: "Records per person"};
         var LengthOfEraProperty = {name: "lengthOfEra", description: "Length of era"};
         var width = 1000;
@@ -13,16 +15,25 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
         self.loadingReport = ko.observable(false);
         self.loadingReportDrilldown = ko.observable(false);
         self.activeReportDrilldown = ko.observable(false);
+
+        /**
+         * Each report object may contain the following properties
+         *   name: displayed in report heading
+         *   path: CDMResultsService path for summary payload (e.g. tree map)
+         *   byType: true if summary contains a byType report, false otherwise
+         *   aggProperty: if tree map/table supported, describes the aggregate property to use (see descriptors above)
+         *   conceptDomain: true if concept-driven domain report (treemap and drilldown reports supported), false otherwise
+         */
         self.reports = [
-            {name: "Dashboard", path: "dashboard"},
-            {name: "Visit", path: "visit", byType: false, aggProperty: RecordsPerPersonProperty},
-            {name: "Condition", path: "condition", byType: true, aggProperty: RecordsPerPersonProperty},
-            {name: "Condition Era", path: "conditionera", byType: false, aggProperty: LengthOfEraProperty},
-            {name: "Procedure", path: "procedure", byType: true, aggProperty: RecordsPerPersonProperty},
-            {name: "Drug", path: "drug", byType: true, aggProperty: RecordsPerPersonProperty},
-            {name: "Drug Era", path: "drugera", byType: false, aggProperty: LengthOfEraProperty},
-            {name: "Measurement", path: "measurement", byType: true, aggProperty: RecordsPerPersonProperty},
-            {name: "Observation", path: "observation", byType: true, aggProperty: RecordsPerPersonProperty},
+            {name: "Dashboard", path: "dashboard", conceptDomain: false},
+            {name: "Visit", path: "visit", byType: false, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
+            {name: "Condition", path: "condition", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
+            {name: "Condition Era", path: "conditionera", byType: false, aggProperty: LengthOfEraProperty, conceptDomain: true},
+            {name: "Procedure", path: "procedure", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
+            {name: "Drug", path: "drug", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
+            {name: "Drug Era", path: "drugera", byType: false, aggProperty: LengthOfEraProperty, conceptDomain: true},
+            {name: "Measurement", path: "measurement", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
+            {name: "Observation", path: "observation", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
         ];
 
         self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
@@ -39,10 +50,36 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
         self.donutWidth = 500;
         self.donutHeight = 300;
 
-        self.loadTreemap = function () {
+        self.loadSummary = function () {
+            var currentReport = self.currentReport();
+            var currentSource = self.currentSource();
+            var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path;
             self.loadingReport(true);
             self.activeReportDrilldown(false);
 
+            if(currentReport.name == 'Dashboard') {
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        self.loadingReport(false);
+                        var genderDonut = new jnj_chart.donut();
+                        var genderConceptData = self.mapConceptData(data.gender);
+                        genderDonut.render(genderConceptData, "#populationByGender", self.donutWidth, self.donutHeight, {
+                            margin: {
+                                top: 5,
+                                left: 5,
+                                right: 200,
+                                bottom: 5
+                            }
+                        });
+                    }
+                });
+            } else if (currentReport.conceptDomain) {
+                self.loadTreemap();
+            }
+        };
+
+        self.loadTreemap = function () {
             var currentReport = self.currentReport();
             var currentSource = self.currentSource();
             var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path;
@@ -184,7 +221,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
 						});
 					}
 
-					// procedure type visualization
+					// by type visualization
 					if (data.byType && data.byType.length > 0) {
 						var donut = new jnj_chart.donut();
 						donut.render(self.mapConceptData(data.byType), "#byType", self.donutWidth, self.donutHeight, {
@@ -275,8 +312,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
         // Subscriptions
         //
 
-        self.currentReport.subscribe(self.loadTreemap);
-        self.currentSource.subscribe(self.loadTreemap);
+        self.currentReport.subscribe(self.loadSummary);
+        self.currentSource.subscribe(self.loadSummary);
         self.currentConcept.subscribe(self.loadDrilldown);
 
         //

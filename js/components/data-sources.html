@@ -29,6 +29,7 @@
             (<span data-bind="text:$component.currentSource().sourceKey"></span>)
         </div>
 
+        <!-- ko if:$component.currentReport().conceptDomain -->
         <div class="reportSectionHeading"><span data-bind="$component.currentReport().name"></span> Prevalence</div>
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -109,5 +110,13 @@
             </div>
         </div>
 
+        <!-- /ko -->
+
+        <!-- ko if: $component.currentReport().name == 'Dashboard' && !$component.loadingReport() -->
+            <div class="col-xs-6">
+                <div class="reportSectionHeading">Population by Gender</div>
+                <div class="evidenceVisualization" id="populationByGender"></div>
+            </div>
+        <!-- /ko -->
     </div>
 </div>
