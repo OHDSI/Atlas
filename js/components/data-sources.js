@@ -92,6 +92,60 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
                             });
                         }
 
+                        d3.selectAll("#cumulativeObservation svg").remove();
+                        var cumObsData = self.normalizeArray(data.cumulativeObservation);
+                        if (!cumObsData.empty) {
+                            var cumulativeObservationLine = new jnj_chart.line();
+                            var cumulativeData = self.normalizeDataframe(cumObsData).xLengthOfObservation
+                                .map(function (d, i) {
+                                    var item = {
+                                        xValue: this.xLengthOfObservation[i],
+                                        yValue: this.yPercentPersons[i]
+                                    };
+                                    return item;
+                                }, cumObsData);
+
+                            var cumulativeObservationXLabel = 'Days';
+                            if (cumulativeData.length > 0) {
+                                if (cumulativeData.slice(-1)[0].xValue - cumulativeData[0].xValue > 1000) {
+                                    // convert x data to years
+                                    cumulativeData.forEach(function (d) {
+                                        d.xValue = d.xValue / 365.25;
+                                    });
+                                    cumulativeObservationXLabel = 'Years';
+                                }
+                            }
+
+                            cumulativeObservationLine.render(cumulativeData, "#cumulativeObservation", 230, 115, {
+                                yFormat: d3.format('0%'),
+                                interpolate: "step-before",
+                                xLabel: cumulativeObservationXLabel,
+                                yLabel: 'Percent of Population'
+                            });
+                        }
+
+                        d3.selectAll("#oppeoplebymonthsingle svg").remove();
+                        var obsByMonthData = self.normalizeArray(data.observedByMonth);
+                        if (!obsByMonthData.empty) {
+                            var byMonthSeries = self.mapMonthYearDataToSeries(obsByMonthData, {
+                                dateField: 'monthYear',
+                                yValue: 'countValue',
+                                yPercent: 'percentValue'
+                            });
+                            d3.selectAll("#oppeoplebymonthsingle svg").remove();
+                            var observationByMonthSingle = new jnj_chart.line();
+                            observationByMonthSingle.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
+                                xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+                                    return d.xValue;
+                                })),
+                                xFormat: d3.time.format("%m/%Y"),
+                                tickFormat: d3.time.format("%Y"),
+                                ticks: 10,
+                                xLabel: "Date",
+                                yLabel: "People"
+                            });
+                        }
+
                     }
                 });
             } else if (currentReport.conceptDomain) {
