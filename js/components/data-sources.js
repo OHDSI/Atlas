@@ -72,6 +72,26 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
                                 bottom: 5
                             }
                         });
+
+                        var ageAtFirstData = self.normalizeArray(data.ageAtFirstObservation);
+                        if (!ageAtFirstData.empty) {
+                            var histData = {};
+                            histData.intervalSize = 1;
+                            histData.min = d3.min(ageAtFirstData.countValue);
+                            histData.max = d3.max(ageAtFirstData.countValue);
+                            histData.intervals = 120;
+                            histData.data = ageAtFirstData;
+
+                            d3.selectAll("#ageAtFirstObservation svg").remove();
+                            var ageAtFirstObservationData = self.mapHistogram(histData);
+                            var ageAtFirstObservationHistogram = new jnj_chart.histogram();
+                            ageAtFirstObservationHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", self.boxplotWidth, self.boxplotHeight, {
+                                xFormat: d3.format('d'),
+                                xLabel: 'Age',
+                                yLabel: 'People'
+                            });
+                        }
+
                     }
                 });
             } else if (currentReport.conceptDomain) {
@@ -507,6 +527,27 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
             result = result.sort(function (a, b) {
                 return b.label < a.label ? 1 : -1;
             });
+
+            return result;
+        };
+
+
+        self.mapHistogram = function (histogramData) {
+            // result is an array of arrays, each element in the array is another array containing information about each bar of the histogram.
+            var result = new Array();
+            if (!histogramData.data || histogramData.data.empty) {
+                return result;
+            }
+            var minValue = histogramData.min;
+            var intervalSize = histogramData.intervalSize;
+
+            for (var i = 0; i <= histogramData.intervals; i++) {
+                var target = new Object();
+                target.x = minValue + 1.0 * i * intervalSize;
+                target.dx = intervalSize;
+                target.y = histogramData.data.countValue[histogramData.data.intervalIndex.indexOf(i)] || 0;
+                result.push(target);
+            }
 
             return result;
         };
