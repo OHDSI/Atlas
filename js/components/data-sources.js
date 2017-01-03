@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lodash', 'data-sources-json', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, _, legacy, config) {
+define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'data-sources-json', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, colorbrewer, _, legacy, config) {
     function dataSources(params) {
         var self = this;
 
@@ -26,6 +26,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
          */
         self.reports = [
             {name: "Dashboard", path: "dashboard", conceptDomain: false},
+            {name: "Person", path: "person", conceptDomain: false},
             {name: "Visit", path: "visit", byType: false, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
             {name: "Condition", path: "condition", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
             {name: "Condition Era", path: "conditionera", byType: false, aggProperty: LengthOfEraProperty, conceptDomain: true},
@@ -145,7 +146,69 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'lo
                                 yLabel: "People"
                             });
                         }
+                    }
+                });
+            } else if (currentReport.name == 'Person') {
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        self.loadingReport(false);
 
+                        if (!!data.yearOfBirth && data.yearOfBirth.length > 0 &&
+                            !!data.yearOfBirthStats && data.yearOfBirthStats.length > 0) {
+                            var yearHistogram = new jnj_chart.histogram();
+                            var histData = {};
+                            histData.intervalSize = 1;
+                            histData.min = data.yearOfBirthStats[0].minValue;
+                            histData.max = data.yearOfBirthStats[0].maxValue;
+                            histData.intervals = 100;
+                            histData.data = (self.normalizeArray(data.yearOfBirth));
+                            yearHistogram.render(self.mapHistogram(histData), "#hist", 460, 195, {
+                                xFormat: d3.format('d'),
+                                xLabel: 'Year',
+                                yLabel: 'People'
+                            });
+                        }
+
+                        var genderDonut = new jnj_chart.donut();
+                        genderDonut.render(self.mapConceptData(data.gender), "#gender", 260, 130, {
+                            colors: d3.scale.ordinal()
+                                .domain([8507, 8551, 8532])
+                                .range(["#1F78B4", "#33A02C", "#FB9A99"]),
+                            margin: {
+                                top: 5,
+                                bottom: 10,
+                                right: 150,
+                                left: 10
+                            }
+
+                        });
+
+                        var raceDonut = new jnj_chart.donut();
+                        raceDonut.render(self.mapConceptData(data.race), "#race", 260, 130, {
+                            margin: {
+                                top: 5,
+                                bottom: 10,
+                                right: 150,
+                                left: 10
+                            },
+                            colors: d3.scale.ordinal()
+                                .domain(data.race)
+                                .range(colorbrewer.Paired[10])
+                        });
+
+                        var ethnicityDonut = new jnj_chart.donut();
+                        ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", 260, 130, {
+                            margin: {
+                                top: 5,
+                                bottom: 10,
+                                right: 150,
+                                left: 10
+                            },
+                            colors: d3.scale.ordinal()
+                                .domain(data.ethnicity)
+                                .range(colorbrewer.Paired[10])
+                        });
                     }
                 });
             } else if (currentReport.conceptDomain) {
