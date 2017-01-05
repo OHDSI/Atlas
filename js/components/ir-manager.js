@@ -6,11 +6,12 @@ define(['knockout',
 				'iranalysis/IRAnalysisDefinition', 
 				'iranalysis/IRAnalysisExpression', 
 				'ohdsi.util',
+				'appConfig',
 				'iranalysis', 
 				'databindings', 
 				'conceptsetbuilder/components', 
 				'circe'
-], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil) {
+], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil, config) {
 	function IRAnalysisManager(params) {
 		
 		// polling support
@@ -206,15 +207,19 @@ define(['knockout',
 			});			
 		}
 
-        self.import = function () {
-            if (self.importJSON() && self.importJSON().length > 0) {
-                var updatedExpression = JSON.parse(self.importJSON());
-                self.selectedAnalysis().expression(new IRAnalysisExpression(updatedExpression));
-                self.importJSON("");
-                self.activeTab('definition');
-            }
-        };
-        
+		self.import = function () {
+				if (self.importJSON() && self.importJSON().length > 0) {
+						var updatedExpression = JSON.parse(self.importJSON());
+						self.selectedAnalysis().expression(new IRAnalysisExpression(updatedExpression));
+						self.importJSON("");
+						self.activeTab('definition');
+				}
+		};
+
+		self.exportAnalysisCSV = function () {
+			window.open(config.services[0].url + 'ir/' + self.selectedAnalysis().id() + '/export');
+		}
+		
 		self.init = function() {
 			self.refreshDefs();
 			sourceAPI.getSources().then(function(sources) {
