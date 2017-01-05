@@ -35,6 +35,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
             {name: "Drug Era", path: "drugera", byType: false, aggProperty: LengthOfEraProperty, conceptDomain: true},
             {name: "Measurement", path: "measurement", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
             {name: "Observation", path: "observation", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
+            {name: "Achilles Heel", path: "achillesheel", conceptDomain: false},
         ];
 
         self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
@@ -208,6 +209,53 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
                             colors: d3.scale.ordinal()
                                 .domain(data.ethnicity)
                                 .range(colorbrewer.Paired[10])
+                        });
+                    }
+                });
+            } else if (currentReport.name == 'Achilles Heel') {
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        self.loadingReport(false);
+
+                        var table_data = [];
+                        for (var i = 0; i < data.messages.length; i++) {
+                            var temp = data.messages[i].attributeValue;
+                            var colon_index = temp.indexOf(':');
+                            var message_type = temp.substring(0, colon_index);
+                            var message_content = temp.substring(colon_index + 1);
+
+                            // RSD - A quick hack to put commas into large numbers.
+                            // Found the regexp at:
+                            // https://stackoverflow.com/questions/23104663/knockoutjs-format-numbers-with-commas
+                            message_content = message_content.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            table_data.push({
+                                'type': message_type,
+                                'content': message_content
+                            });
+                        }
+
+                        $('#achillesheel_table').DataTable({
+                            dom: 'lfrt<"row"<"col-sm-4" i ><"col-sm-4" T ><"col-sm-4" p >>',
+                            tableTools: {
+                                "sSwfPath": "js/components/datasources/swf/copy_csv_xls_pdf.swf"
+                            },
+                            data: table_data,
+                            columns: [
+                                {
+                                    data: 'type',
+                                    visible: true,
+                                    width:200
+                                },
+                                {
+                                    data: 'content',
+                                    visible: true
+                                }
+                            ],
+                            pageLength: 15,
+                            lengthChange: false,
+                            deferRender: true,
+                            destroy: true
                         });
                     }
                 });
