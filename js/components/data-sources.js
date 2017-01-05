@@ -26,6 +26,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
          */
         self.reports = [
             {name: "Dashboard", path: "dashboard", conceptDomain: false},
+            {name: "Data Density", path: "datadensity", conceptDomain: false},
             {name: "Person", path: "person", conceptDomain: false},
             {name: "Visit", path: "visit", byType: false, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
             {name: "Condition", path: "condition", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
@@ -257,6 +258,103 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
                             deferRender: true,
                             destroy: true
                         });
+                    }
+                });
+            } else if (currentReport.name == 'Data Density') {
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        self.loadingReport(false);
+
+                        if (!!data.totalRecords) {
+                            var totalRecords = data.totalRecords;
+                            // convert yyyymm to date
+                            totalRecords.forEach(function (d,i,ar) {
+                                var v = d.xCalendarMonth;
+                                ar[i] = new Date(Math.floor(v/100), (v % 100)-1,1)
+                            });
+
+                            // nest dataframe data into key->values pair
+                            var totalRecordsData = d3.nest()
+                                .key(function (d) { return d.seriesName; })
+                                .entries(totalRecords)
+                                .map(function (d) {
+                                    return { name: d.key, values: d.values};
+                                });
+
+
+                            var totalRecordsLine = new jnj_chart.line();
+                            totalRecordsLine.render(totalRecordsData, "#totalrecords", 900, 250, {
+                                xScale: d3.time.scale().domain(d3.extent(normalizedTotalRecords, function (d) {
+                                    return d.X_CALENDAR_MONTH;
+                                })),
+                                xFormat: d3.time.format("%m/%Y"),
+                                tickFormat: d3.time.format("%Y"),
+                                xValue: "X_CALENDAR_MONTH",
+                                yValue: "Y_RECORD_COUNT",
+                                xLabel: "Year",
+                                yLabel: "# of Records",
+                                showLegend: true,
+                                colors: d3.scale.category10()
+                            });
+                        }
+
+                        if(!!data.recordsPerPerson) {
+                            var recordsPerPerson = data.recordsPerPerson;
+                            // convert yyyymm to date
+                            recordsPerPerson.forEach(function (d,i,ar) {
+                                var v = d.xCalendarMonth;
+                                ar[i].xCalendarMonth = new Date(Math.floor(v/100), (v % 100)-1,1)
+                            });
+
+                            // nest dataframe data into key->values pair
+                            var recordsPerPersonData = d3.nest()
+                                .key(function (d) { return d.seriesName; })
+                                .entries(recordsPerPerson)
+                                .map(function (d) {
+                                    return { name: d.key, values: d.values};
+                                });
+
+
+                            var recordsPerPersonLine = new jnj_chart.line();
+                            recordsPerPersonLine.render(recordsPerPersonData, "#recordsperperson", 900, 250, {
+                                xScale: d3.time.scale().domain(d3.extent(recordsPerPerson, function (d) {
+                                    return d.xCalendarMonth;
+                                })),
+                                xFormat: d3.time.format("%m/%Y"),
+                                tickFormat: d3.time.format("%Y"),
+                                xValue: "xCalendarMonth",
+                                yValue: "yRecordCount",
+                                xLabel: "Year",
+                                yLabel: "Records Per Person",
+                                showLegend: true,
+                                colors: d3.scale.category10()
+                            });
+                        }
+
+                        if(!!data.conceptsPerPerson){
+                            var conceptsBoxplot = new jnj_chart.boxplot();
+                            var conceptsSeries = [];
+                            var conceptsData = self.normalizeArray(data.conceptsPerPerson);
+                            for (i = 0; i < conceptsData.category.length; i++) {
+                                conceptsSeries.push({
+                                    Category: conceptsData.category[i],
+                                    min: conceptsData.minValue[i],
+                                    max: conceptsData.maxValue[i],
+                                    median: conceptsData.medianValue[i],
+                                    LIF: conceptsData.p10Value[i],
+                                    q1: conceptsData.p25Value[i],
+                                    q3: conceptsData.p75Value[i],
+                                    UIF: conceptsData.p90Value[i]
+                                });
+                            }
+                            conceptsBoxplot.render(conceptsSeries, "#conceptsperperson", 800, 200, {
+                                yMax: d3.max(conceptsData.p90Value),
+                                xLabel: 'Concept Type',
+                                yLabel: 'Concepts per Person'
+                            });
+                        }
+
                     }
                 });
             } else if (currentReport.conceptDomain) {
@@ -695,7 +793,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
             return result;
         };
-
 
         self.mapHistogram = function (histogramData) {
             // result is an array of arrays, each element in the array is another array containing information about each bar of the histogram.

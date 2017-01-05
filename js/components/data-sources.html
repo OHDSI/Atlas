@@ -166,5 +166,29 @@
             </div>
         </div>
         <!-- /ko -->
+
+        <!-- ko if: $component.currentReport().name == 'Data Density' && !$component.loadingReport() -->
+        <div class="col-sm-12">
+            <div class="reportSectionHeading">
+                Total Rows
+            </div>
+            <div class="evidenceVisualization" id="totalrecords">
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="reportSectionHeading">
+                Records Per Person
+            </div>
+            <div class="evidenceVisualization" id="recordsperperson">
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="reportSectionHeading">
+                Concepts Per Person
+            </div>
+            <div class="evidenceVisualization" id="conceptsperperson">
+            </div>
+        </div>
+        <!-- /ko -->
     </div>
 </div>
