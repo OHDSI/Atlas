@@ -28,9 +28,12 @@ People having any of the following:
 	</div>
 </div>
 
-<div data-bind="with: expression">
+<div class="inclusionRules" data-bind="with: expression">
 	<div data-bind="foreach: InclusionRules">
 		<div class="heading" data-bind="text: 'Inclusion Criteria #' + ($index()+1) + ': ' + name()"></div>
+		<!-- ko if: (description() || '').length > 0 -->
+		<div class="description" data-bind="text: description()"></div>
+		<!-- /ko -->
 		<criteria-group-viewer params="{expression: $parent, group: ko.observable($data.expression)}"></criteria-group-viewer>
 	</div>
 </div>

@@ -119,7 +119,12 @@
 										<tr data-bind="click: $component.selectInclusionRule, css: { selectedInclusion: $data == $component.selectedInclusionRule() }">
 											<td style="width:20px; text-align: right; vertical-align: top;" data-bind="text: ($index() + 1) + '.'">
 											</td>
-											<td style="vertical-align: top;" class="inclusionRules" data-bind="text: ((name() || '').length > 0) ? name() : 'Unnamed Criteria’' "></td>
+											<td style="vertical-align: top;" class="inclusionRules">
+												<div data-bind="text: ((name() || '').length > 0) ? name() : 'Unnamed Criteria'"></div>
+												<!-- ko if: (description() || '').length > 0 -->
+												<div class="description" data-bind="text: description()"></div>
+												<!-- /ko -->
+											</td>
 										</tr>
 									</tbody>
 								</table>

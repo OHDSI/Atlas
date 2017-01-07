@@ -2,6 +2,7 @@
 define(function (require) {
 	var autocompleteBinding = require("./autocompleteBinding");
 	var htmlValueBinding = require("./htmlValueBinding");
+	var contentEditableBinding = require("./contentEditable");
 	var numericFn = require("./numericFn");
 	var ddSlickAction = require("./ddSlickActionBinding");
 	var clickToEdit = require("./clickToEditBinding");

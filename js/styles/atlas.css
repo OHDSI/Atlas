@@ -1688,6 +1688,18 @@ table.inclusionRules {
 	margin-top: 5px;
 }
 
+div.inclusionRules div.description {
+	font-size: 75%;
+	font-style: italic;
+  white-space: pre-wrap;	
+}
+
+table.inclusionRules td div.description {
+	font-size: 75%;
+	font-style: italic;
+  white-space: pre-wrap;	
+}
+
 table.inclusionRules td {
 	padding: 2px;
 }
