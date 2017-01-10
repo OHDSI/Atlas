@@ -271,7 +271,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
                             // convert yyyymm to date
                             totalRecords.forEach(function (d,i,ar) {
                                 var v = d.xCalendarMonth;
-                                ar[i] = new Date(Math.floor(v/100), (v % 100)-1,1)
+                                ar[i].xCalendarMonth = new Date(Math.floor(v/100), (v % 100)-1,1)
                             });
 
                             // nest dataframe data into key->values pair
@@ -285,13 +285,13 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
                             var totalRecordsLine = new jnj_chart.line();
                             totalRecordsLine.render(totalRecordsData, "#totalrecords", 900, 250, {
-                                xScale: d3.time.scale().domain(d3.extent(normalizedTotalRecords, function (d) {
-                                    return d.X_CALENDAR_MONTH;
+                                xScale: d3.time.scale().domain(d3.extent(totalRecords, function (d) {
+                                    return d.xCalendarMonth;
                                 })),
                                 xFormat: d3.time.format("%m/%Y"),
                                 tickFormat: d3.time.format("%Y"),
-                                xValue: "X_CALENDAR_MONTH",
-                                yValue: "Y_RECORD_COUNT",
+                                xValue: "xCalendarMonth",
+                                yValue: "yRecordCount",
                                 xLabel: "Year",
                                 yLabel: "# of Records",
                                 showLegend: true,
