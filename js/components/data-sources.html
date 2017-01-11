@@ -113,12 +113,24 @@
         <!-- /ko -->
 
         <!-- ko if: $component.currentReport().name == 'Dashboard' && !$component.loadingReport() -->
-            <div class="col-xs-12 col-md-6">
+            <div class="col-sm-12 col-md-4">
+                <div class="reportSectionHeading">CDM Summary</div>
+                <table class="table table-striped table-hover">
+                    <tbody data-bind="foreach: $component.currentReport().summary">
+                        <tr>
+                            <td data-bind="text: attributeName"></td>
+                            <td data-bind="text: attributeValue"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-xs-12 col-md-4">
                 <div class="reportSectionHeading">Population by Gender</div>
                 <div class="evidenceVisualization" id="populationByGender"></div>
             </div>
 
-            <div class="col-xs-12 col-md-6">
+            <div class="col-xs-12 col-md-4">
                 <div class="reportSectionHeading">Age at First Observation</div>
                 <div class="evidenceVisualization" id="ageAtFirstObservation"></div>
             </div>
@@ -187,6 +199,42 @@
                 Concepts Per Person
             </div>
             <div class="evidenceVisualization" id="conceptsperperson">
+            </div>
+        </div>
+        <!-- /ko -->
+
+
+        <!-- ko if: $component.currentReport().name == 'Death' && !$component.loadingReport() -->
+        <div class="col-sm-12">
+            <div class="reportSectionHeading">
+                Death Prevalence by Age, Gender, Year
+            </div>
+            <div class="evidenceVisualization">
+                <div id="deathPrevalenceByGenderAgeYear"></div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="reportSectionHeading">
+                Death Prevalence by Month
+            </div>
+            <div class="evidenceVisualization">
+                <div class="drilldown" id="deathPrevalenceByMonth"></div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="reportSectionHeading">
+                Death by Type
+            </div>
+            <div class="evidenceVisualization">
+                <div id="deathByType"></div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="reportSectionHeading">
+                Age at Death
+            </div>
+            <div class="evidenceVisualization">
+                <div id="ageAtDeath"></div>
             </div>
         </div>
         <!-- /ko -->

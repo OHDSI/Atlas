@@ -25,7 +25,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
          *   conceptDomain: true if concept-driven domain report (treemap and drilldown reports supported), false otherwise
          */
         self.reports = [
-            {name: "Dashboard", path: "dashboard", conceptDomain: false},
+            {name: "Dashboard", path: "dashboard", conceptDomain: false, summary: ko.observable() },
             {name: "Data Density", path: "datadensity", conceptDomain: false},
             {name: "Person", path: "person", conceptDomain: false},
             {name: "Visit", path: "visit", byType: false, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
@@ -36,6 +36,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
             {name: "Drug Era", path: "drugera", byType: false, aggProperty: LengthOfEraProperty, conceptDomain: true},
             {name: "Measurement", path: "measurement", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
             {name: "Observation", path: "observation", byType: true, aggProperty: RecordsPerPersonProperty, conceptDomain: true},
+            {name: "Death", path: "death", conceptDomain: false },
             {name: "Achilles Heel", path: "achillesheel", conceptDomain: false},
         ];
 
@@ -65,6 +66,14 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
                     url: url,
                     success: function (data) {
                         self.loadingReport(false);
+                        if(!!data.summary) {
+                            data.summary.forEach(function (d) {
+                                if (!isNaN(d.attributeValue)) {
+                                    d.attributeValue = self.formatSI(d.attributeValue, 2);
+                                }
+                            });
+                            currentReport.summary(data.summary);
+                        }
                         var genderDonut = new jnj_chart.donut();
                         var genderConceptData = self.mapConceptData(data.gender);
                         genderDonut.render(genderConceptData, "#populationByGender", self.donutWidth, self.donutHeight, {
@@ -269,17 +278,19 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
                         if (!!data.totalRecords) {
                             var totalRecords = data.totalRecords;
                             // convert yyyymm to date
-                            totalRecords.forEach(function (d,i,ar) {
+                            totalRecords.forEach(function (d, i, ar) {
                                 var v = d.xCalendarMonth;
-                                ar[i].xCalendarMonth = new Date(Math.floor(v/100), (v % 100)-1,1)
+                                ar[i].xCalendarMonth = new Date(Math.floor(v / 100), (v % 100) - 1, 1)
                             });
 
                             // nest dataframe data into key->values pair
                             var totalRecordsData = d3.nest()
-                                .key(function (d) { return d.seriesName; })
+                                .key(function (d) {
+                                    return d.seriesName;
+                                })
                                 .entries(totalRecords)
                                 .map(function (d) {
-                                    return { name: d.key, values: d.values};
+                                    return {name: d.key, values: d.values};
                                 });
 
 
@@ -299,20 +310,22 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
                             });
                         }
 
-                        if(!!data.recordsPerPerson) {
+                        if (!!data.recordsPerPerson) {
                             var recordsPerPerson = data.recordsPerPerson;
                             // convert yyyymm to date
-                            recordsPerPerson.forEach(function (d,i,ar) {
+                            recordsPerPerson.forEach(function (d, i, ar) {
                                 var v = d.xCalendarMonth;
-                                ar[i].xCalendarMonth = new Date(Math.floor(v/100), (v % 100)-1,1)
+                                ar[i].xCalendarMonth = new Date(Math.floor(v / 100), (v % 100) - 1, 1)
                             });
 
                             // nest dataframe data into key->values pair
                             var recordsPerPersonData = d3.nest()
-                                .key(function (d) { return d.seriesName; })
+                                .key(function (d) {
+                                    return d.seriesName;
+                                })
                                 .entries(recordsPerPerson)
                                 .map(function (d) {
-                                    return { name: d.key, values: d.values};
+                                    return {name: d.key, values: d.values};
                                 });
 
 
@@ -332,7 +345,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
                             });
                         }
 
-                        if(!!data.conceptsPerPerson){
+                        if (!!data.conceptsPerPerson) {
                             var conceptsBoxplot = new jnj_chart.boxplot();
                             var conceptsSeries = [];
                             var conceptsData = self.normalizeArray(data.conceptsPerPerson);
@@ -357,6 +370,80 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
                     }
                 });
+            } else if (currentReport.name == 'Death') {
+
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        self.loadingReport(false);
+
+                        var trellisData = self.normalizeArray(data.prevalenceByGenderAgeYear);
+                        var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
+                        var minYear = d3.min(trellisData.xCalendarYear),
+                            maxYear = d3.max(trellisData.xCalendarYear);
+
+                        var seriesInitializer = function (tName, sName, x, y) {
+                            return {
+                                trellisName: tName,
+                                seriesName: sName,
+                                xCalendarYear: x,
+                                yPrevalence1000Pp: y
+                            };
+                        };
+
+                        var nestByDecile = d3.nest()
+                            .key(function (d) {
+                                return d.trellisName;
+                            })
+                            .key(function (d) {
+                                return d.seriesName;
+                            })
+                            .sortValues(function (a, b) {
+                                return a.xCalendarYear - b.xCalendarYear;
+                            });
+
+                        var normalizedSeries = trellisData.trellisName.map(function (d, i) {
+                            var item = {};
+                            var container = this;
+                            d3.keys(container).forEach(function (p) {
+                                item[p] = container[p][i];
+                            });
+                            return item;
+                        }, trellisData);
+
+                        var dataByDecile = nestByDecile.entries(normalizedSeries);
+                        // fill in gaps
+                        var yearRange = d3.range(minYear, maxYear, 1);
+
+                        dataByDecile.forEach(function (trellis) {
+                            trellis.values.forEach(function (series) {
+                                series.values = yearRange.map(function (year) {
+                                    yearData = series.values.filter(function (f) {
+                                            return f.xCalendarYear === year;
+                                        })[0] || seriesInitializer(trellis.key, series.key, year, 0);
+                                    yearData.date = new Date(year, 0, 1);
+                                    return yearData;
+                                });
+                            });
+                        });
+
+                        // create svg with range bands based on the trellis names
+                        var chart = new jnj_chart.trellisline();
+                        chart.render(dataByDecile, "#deathPrevalenceByGenderAgeYear", 1000, 300, {
+                            trellisSet: allDeciles,
+                            trellisLabel: "Age Decile",
+                            seriesLabel: "Year of Observation",
+                            yLabel: "Prevalence Per 1000 People",
+                            xFormat: d3.time.format("%Y"),
+                            yFormat: d3.format("0.2f"),
+                            tickPadding: 20,
+                            colors: d3.scale.ordinal()
+                                .domain(["MALE", "FEMALE", "UNKNOWN"])
+                                .range(["#1F78B4", "#FB9A99", "#33A02C"])
+                        });
+                    }
+                });
+
             } else if (currentReport.conceptDomain) {
                 self.loadTreemap();
             }
@@ -812,6 +899,14 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
             }
 
             return result;
+        };
+
+        self.formatSI = function (d, p) {
+            if (d < 1) {
+                return d3.round(d, p);
+            }
+            var prefix = d3.formatPrefix(d);
+            return d3.round(prefix.scale(d), p) + prefix.symbol;
         };
     }
 
