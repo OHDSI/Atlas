@@ -781,7 +781,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			}
 			self.currentConceptIdentifierList(conceptIdentifierList.join(','));
 			var resolvingPromise = $.ajax({
-				url: self.vocabularyUrl() + 'resolveConceptSetExpression',
+				url: sharedState.vocabularyUrl() + 'resolveConceptSetExpression',
 				data: conceptSetExpression,
 				method: 'POST',
 				contentType: 'application/json',
@@ -801,7 +801,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		};
 		self.resolveConceptSetExpressionSimple = function (expression, success) {
 			var resolvingPromise = $.ajax({
-				url: self.vocabularyUrl() + 'resolveConceptSetExpression',
+				url: sharedState.vocabularyUrl() + 'resolveConceptSetExpression',
 				data: expression,
 				method: 'POST',
 				contentType: 'application/json',
@@ -1086,7 +1086,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 							return allConceptIDs;
 						}));
 						conceptPromise = $.ajax({
-							url: self.vocabularyUrl() + 'lookup/identifiers',
+							url: sharedState.vocabularyUrl() + 'lookup/identifiers',
 							method: 'POST',
 							headers: {
 								Authorization: authApi.getAuthorizationHeader()
@@ -1318,7 +1318,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					return this.concept.CONCEPT_ID;
 				}));
 				conceptPromise = $.ajax({
-					url: self.vocabularyUrl() + 'lookup/identifiers',
+					url: sharedState.vocabularyUrl() + 'lookup/identifiers',
 					method: 'POST',
 					contentType: 'application/json',
 					data: JSON.stringify(identifiers),
@@ -1469,8 +1469,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.resolvingSourcecodes = ko.observable();
 		self.evidence = ko.observableArray();
 		self.initializationErrors = 0;
-		self.vocabularyUrl = ko.observable();
-		self.evidenceUrl = ko.observable();
+
 		self.currentConcept = ko.observable();
 		self.currentConceptId = ko.observable();
 		self.currentConceptMode = ko.observable('details');
@@ -1511,9 +1510,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.currentImportMode = ko.observable('identifiers');
 		self.feRelated = ko.observable();
 		self.metarchy = {};
-		self.checkCurrentSource = function (source) {
-			return source.url == self.curentVocabularyUrl();
-		};
+
 		self.clearConceptSet = function () {
 			self.currentConceptSet(null);
 			sharedState.clearSelectedConcepts();

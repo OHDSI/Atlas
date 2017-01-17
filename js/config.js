@@ -1,21 +1,21 @@
 define([], function () {
 	var config = {};
 
+	/*
 	config.services = [
 		{
 			name: 'HixBeta',
 			url: 'https://hixbeta.jnj.com:8443/WebAPI/'
 		}
 	];
-
-	/*
+	*/
+	
 	config.services = [
         {
 			name: 'Local',
 			url: 'http://localhost:8080/WebAPI/'
           }
 		];
-	*/
 	
 	config.webAPIRoot = config.services[0].url;
 	// config.rServicesHost = 'http://hixbeta.jnj.com:8999/';
@@ -23,7 +23,7 @@ define([], function () {
 	config.dataSourcesLocation = '/achilles/data/datasources.json';
 	config.dataSourcesRoot = '/achilles/data';
 	config.cohortComparisonResultsEnabled = true;
-	config.userAuthenticationEnabled = true;
+	config.userAuthenticationEnabled = false;
 
 	return config;
 });

@@ -1,4 +1,4 @@
-define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovider', 'faceted-datatable'], function (ko, view, config, vocabAPI) {
+define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovider', 'atlas-state', 'faceted-datatable'], function (ko, view, config, vocabAPI, sharedState) {
 	function conceptManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -307,7 +307,7 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 
 		self.loadConcept = function (conceptId) {
 			var conceptPromise = $.ajax({
-				url: self.model.vocabularyUrl() + 'concept/' + conceptId,
+				url: sharedState.vocabularyUrl() + 'concept/' + conceptId,
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (c, status, xhr) {
@@ -335,7 +335,7 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 					synonyms: ko.observableArray()
 				};
 				$.ajax({
-					url: self.model.vocabularyUrl() + 'concept/' + conceptId + '/related',
+					url: sharedState.vocabularyUrl() + 'concept/' + conceptId + '/related',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (related) {
