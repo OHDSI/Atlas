@@ -87,7 +87,7 @@ requirejs.config({
 		"cohort-comparison-browser": "components/cohort-comparison-browser",
 		"cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
 		"cohort-comparison-r-code": "components/cohort-comparison-r-code",
-		"user-bar" : "components/user-bar",
+		"user-bar": "components/user-bar",
 		"feasibility-manager": "components/feasibility-manager",
 		"feasibility-browser": "components/feasibility-browser",
 		"feasibility-analyzer": "components/feasibility-analyzer",
@@ -128,15 +128,15 @@ requirejs.config({
 		"role-details": "components/role-details",
 		"loading": "components/loading",
 		"atlas-state": "components/atlas-state"
-}
+	}
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll','user-bar'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
 		$('#splash').fadeIn();
 		var pageModel = new app();
 		window.pageModel = pageModel;
-		ko.applyBindings(pageModel,document.getElementsByTagName('html')[0]);
+		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
 
 		// update access token
 		if (authApi.token()) {
@@ -154,8 +154,38 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		$.each(config.services, function (serviceIndex, service) {
 			var serviceCacheKey = 'ATLAS|' + service.url;
 			cachedService = lscache.get(serviceCacheKey);
+			
 			if (cachedService) {
 				config.services[serviceIndex] = cachedService;
+
+				for (var s = 0; s < cachedService.sources.length; s++) {
+					var source = cachedService.sources[s];
+					
+					for (var d = 0; d < source.daimons.length; d++) {
+						var daimon = source.daimons[d];
+
+						if (daimon.daimonType == 'Vocabulary') {
+							if (daimon.priority >= vocabularyPriority) {
+								vocabularyPriority = daimon.priority;
+								sharedState.vocabularyUrl(source.vocabularyUrl);
+							}
+						}
+
+						if (daimon.daimonType == 'Evidence') {
+							if (daimon.priority >= evidencePriority) {
+								evidencePriority = daimon.priority;
+								sharedState.evidenceUrl(source.evidenceUrl);
+							}
+						}
+
+						if (daimon.daimonType == 'Results') {
+							if (daimon.priority >= densityPriority) {
+								densityPriority = daimon.priority;
+								sharedState.resultsUrl(source.resultsUrl);
+							}
+						}
+					}
+				}
 				return;
 			}
 
@@ -191,7 +221,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 								source.vocabularyUrl = service.url + source.sourceKey + '/vocabulary/';
 								if (daimon.priority >= vocabularyPriority) {
 									vocabularyPriority = daimon.priority;
-									pageModel.vocabularyUrl(source.vocabularyUrl);
+									sharedState.vocabularyUrl(source.vocabularyUrl);
 								}
 							}
 
@@ -201,7 +231,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 								source.evidenceUrl = service.url + source.sourceKey + '/evidence/';
 								if (daimon.priority >= evidencePriority) {
 									evidencePriority = daimon.priority;
-									pageModel.evidenceUrl(source.evidenceUrl);
+									sharedState.evidenceUrl(source.evidenceUrl);
 								}
 							}
 
@@ -304,7 +334,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			var includedPromise = $.Deferred();
 
 			$.ajax({
-				url: pageModel.vocabularyUrl() + 'lookup/identifiers',
+				url: sharedState.vocabularyUrl() + 'lookup/identifiers',
 				method: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
@@ -333,7 +363,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 
 			return $.ajax({
-				url: pageModel.vocabularyUrl() + 'lookup/mapped',
+				url: sharedState.vocabularyUrl() + 'lookup/mapped',
 				method: 'POST',
 				data: JSON.stringify(identifiers),
 				contentType: 'application/json',

@@ -159,7 +159,7 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', '
 		self.importConceptIdentifiers = function () {
 			var identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
 			$.ajax({
-				url: self.model.vocabularyUrl() + 'lookup/identifiers',
+				url: sharedState.vocabularyUrl() + 'lookup/identifiers',
 				method: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(identifers),
@@ -174,7 +174,7 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', '
 		self.importSourcecodes = function () {
 			var sourcecodes = $('#textImportSourcecodes').val().match(/[0-9a-zA-Z\.-]+/g);
 			$.ajax({
-				url: self.model.vocabularyUrl() + 'lookup/sourcecodes',
+				url: sharedState.vocabularyUrl() + 'lookup/sourcecodes',
 				method: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(sourcecodes),
@@ -216,14 +216,14 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', '
 					self.loading(true);
 
 					var vocabularyDeferred = $.ajax({
-						url: self.model.vocabularyUrl() + 'vocabularies',
+						url: sharedState.vocabularyUrl() + 'vocabularies',
 						success: function (data) {
 							self.vocabularies(data);
 						}
 					});
 
 					var domainDeferred = $.ajax({
-						url: self.model.vocabularyUrl() + 'domains',
+						url: sharedState.vocabularyUrl() + 'domains',
 						success: function (data) {
 							self.domains(data);
 						}
@@ -273,7 +273,7 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', '
 			}
 
 			$.ajax({
-				url: self.model.vocabularyUrl() + 'search',
+				url: sharedState.vocabularyUrl() + 'search',
 				contentType: 'application/json',
 				method: 'POST',
 				success: function (results) {
@@ -291,7 +291,7 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', '
 			$('#querytext').blur();
 
 			$.ajax({
-				url: self.model.vocabularyUrl() + 'search/' + escape(query),
+				url: sharedState.vocabularyUrl() + 'search/' + escape(query),
 				success: function (results) {
 					self.handleSearchResults(results);
 				},

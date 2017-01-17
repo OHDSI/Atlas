@@ -44,7 +44,6 @@
 
 		<div class="list-group">
 			<a class="list-group-item" href="#/home"><i class="fa fa-fw fa-home" aria-hidden="true"></i>&nbsp;Home</a>
-			<a class="list-group-item" href="#/welcome"><i class="fa fa-fw fa-sign-in" aria-hidden="true"></i>&nbsp;Welcome</a>
 			<a class="list-group-item" href="#/datasources"><i class="fa fa-fw fa-database" aria-hidden="true"></i>&nbsp;Data Sources</a>
 			<a class="list-group-item" href="#/search"><i class="fa fa-fw fa-search" aria-hidden="true"></i>&nbsp;Vocabulary</a>
 			<a class="list-group-item" href="#/conceptsets"><i class="fa fa-fw fa-shopping-cart" aria-hidden="true"></i>&nbsp;Concept Sets</a>
@@ -60,7 +59,7 @@
 
 	<div data-bind="if:currentView() != 'splash'" id="wrapperMainWindow">
 		<div id="wrapperMainWindowContainer">
-
+			<user-bar></user-bar>
 			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
 			<!-- ko if: pageModel.currentCohortDefinition() != null && pageModel.currentView() !='cohort-definition-manager' -->
 			<div class="breadcrumb-container">
@@ -80,9 +79,7 @@
 			<!-- /ko -->
 			<!-- /ko -->
 
-			<user-bar></user-bar>
 			<div id="currentComponent" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
-
 			<!--			
 			<div data-bind="if: pageModel.currentView() == 'concept'">
 				<concept-manager params="{model: pageModel, currentConceptId: pageModel.currentConceptId}"></concept-manager>

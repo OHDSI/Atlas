@@ -23,7 +23,7 @@ define(['knockout',
 		self.defaultConceptSetName = "New Concept Set";
 		self.selectedConcepts = sharedState.selectedConcepts;
 		self.displayEvidence = ko.pureComputed(function () {
-			return (self.model.evidenceUrl() && self.model.evidenceUrl().length > 0);
+			return (sharedState.evidenceUrl() && sharedState.evidenceUrl().length > 0);
 		});
 		self.activeUtility = ko.observable("");
 		self.loading = ko.observable(false);
@@ -522,7 +522,7 @@ define(['knockout',
 				url: urlEncoded,
 				method: 'GET',
 				contentType: 'application/json',
-				headers : {
+				headers: {
 					Authorization: authApi.getAuthorizationHeader()
 				},
 				error: authApi.handleAccessDenied,
@@ -589,7 +589,7 @@ define(['knockout',
 							error: authApi.handleAccessDenied,
 							success: function (itemSave) {
 								$('#conceptSetSaveDialog').modal('hide');
-								authApi.refreshToken().then(function() {
+								authApi.refreshToken().then(function () {
 									document.location = '#/conceptset/' + data.id + '/details';
 									self.compareResults(null);
 									self.model.currentConceptSetDirtyFlag.reset();
@@ -820,10 +820,10 @@ define(['knockout',
 		}
 
 		self.selectAllConceptSetItems = function (selector, props) {
-            if (!self.canEdit()) {
-                return;
-            }
-        	console.log("select all: " + props)
+			if (!self.canEdit()) {
+				return;
+			}
+			console.log("select all: " + props)
 			props = props || {};
 			props.isExcluded = props.isExcluded || null;
 			props.includeDescendants = props.includeDescendants || null;
@@ -924,6 +924,14 @@ define(['knockout',
 			self.selectAllConceptSetItems("#selectAllMapped", {
 				includeMapped: true
 			})
+		});
+
+		self.canEdit = self.model.canEditCurrentConceptSet;
+		self.canCreate = ko.pureComputed(function () {
+			return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset();
+		});
+		self.canDelete = ko.pureComputed(function () {
+			return authApi.isAuthenticated() && authApi.isPermittedDeleteConceptset();
 		});
 	}
 
