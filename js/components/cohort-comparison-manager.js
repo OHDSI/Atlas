@@ -1,11 +1,11 @@
-define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash', 
+define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash', 'clipboard', 
 				'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util', 
 				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options', 
 				'cohortbuilder/CohortDefinition', 'vocabularyprovider', 
 				'conceptsetbuilder/InputTypes/ConceptSet', 
 				'nvd3', 'databindings/d3ChartBinding','components/faceted-datatable-cf',
 				'css!./styles/nv.d3.min.css'],
-	function ($, ko, view, _, cohortDefinitionAPI, config, ohdsiUtil, 
+	function ($, ko, view, _, clipboard, cohortDefinitionAPI, config, ohdsiUtil, 
 						ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI, 
 						ConceptSet) {
 		function cohortComparisonManager(params) {
@@ -702,9 +702,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					self.targetExpression.removeAll();
 					self.targetExpression.push(conceptSetData);
 
-					vocabularyAPI.resolveConceptSetExpression(csExpression).then(
+					vocabularyAPI.getConceptSetExpressionSQL(csExpression).then(
 						function (data) {
-							self.targetConceptIds(data);
+							self.targetConceptSetSQL(data);
 						});
 				});
 			}
@@ -788,7 +788,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				self.targetId = self.cohortComparison().psExclusionId;
 				self.targetCaption = self.cohortComparison().psExclusionCaption;
 				self.targetExpression = self.cohortComparison().psExclusionConceptSet;
-				self.targetConceptIds = self.cohortComparison().psExclusionConceptSetSQL;
+				self.targetConceptSetSQL = self.cohortComparison().psExclusionConceptSetSQL;
 			}
 
 			self.choosePsInclusion = function () {
@@ -796,7 +796,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				self.targetId = self.cohortComparison().psInclusionId;
 				self.targetCaption = self.cohortComparison().psInclusionCaption;
 				self.targetExpression = self.cohortComparison().psInclusionConceptSet;
-				self.targetConceptIds = self.cohortComparison().psInclusionConceptSetSQL;
+				self.targetConceptSetSQL = self.cohortComparison().psInclusionConceptSetSQL;
 			}
 
 			self.chooseOmExclusion = function () {
@@ -804,7 +804,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				self.targetId = self.cohortComparison().omExclusionId;
 				self.targetCaption = self.cohortComparison().omExclusionCaption;
 				self.targetExpression = self.cohortComparison().omExclusionConceptSet;
-				self.targetConceptIds = self.cohortComparison().omExclusionConceptSetSQL;
+				self.targetConceptSetSQL = self.cohortComparison().omExclusionConceptSetSQL;
 			}
 
 			self.chooseOmInclusion = function () {
@@ -812,7 +812,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				self.targetId = self.cohortComparison().omInclusionId;
 				self.targetCaption = self.cohortComparison().omInclusionCaption;
 				self.targetExpression = self.cohortComparison().omInclusionConceptSet;
-				self.targetConceptIds = self.cohortComparison().omInclusionConceptSetSQL;
+				self.targetConceptSetSQL = self.cohortComparison().omInclusionConceptSetSQL;
 			}
 
 			self.chooseNegativeControl = function () {
@@ -820,7 +820,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				self.targetId = self.cohortComparison().negativeControlId;
 				self.targetCaption = self.cohortComparison().negativeControlCaption;
 				self.targetExpression = self.cohortComparison().negativeControlConceptSet;
-				self.targetConceptIds = self.cohortComparison().negativeControlConceptSetSQL;
+				self.targetConceptSetSQL = self.cohortComparison().negativeControlConceptSetSQL;
 			}
 
 			self.chooseConceptSet = function (conceptSetType, observable) {
@@ -872,6 +872,24 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
                     self.tabMode('specification');
                 }
             };
+            
+            self.copyToClipboard = function (element) {
+                var currentClipboard = new clipboard('#btnCopyToClipboard');
+
+                currentClipboard.on('success', function(e) {
+                    console.log('Copied to clipboard');
+                    e.clearSelection();
+                    $('cohort-comparison-manager #copyToClipboardMessage').fadeIn();
+                    setTimeout(function () {
+				        $('cohort-comparison-manager #copyToClipboardMessage').fadeOut();
+			         }, 1500);
+                });
+                
+                currentClipboard.on('error', function(e) {
+                    console.log('Error copying to clipboard');
+                    console.log(e);
+                });
+            }
 
 			// startup actions
 			

@@ -13,7 +13,7 @@ define([], function () {
 	config.services = [
         {
 			name: 'Local',
-			url: 'http://localhost:8080/WebAPI/'
+			url: 'http://rndusrdhit01.jnj.com:8999/WebAPI/'
           }
 		];
 	
@@ -22,7 +22,7 @@ define([], function () {
 	// config.rServicesHost = 'http://rndusrdhit09.jnj.com:8080/';
 	config.dataSourcesLocation = '/achilles/data/datasources.json';
 	config.dataSourcesRoot = '/achilles/data';
-	config.cohortComparisonResultsEnabled = true;
+    config.cohortComparisonResultsEnabled = false;
 	config.userAuthenticationEnabled = false;
 
 	return config;
