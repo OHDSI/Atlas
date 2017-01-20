@@ -255,7 +255,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 						});
 					},
 					'/estimation/:cohortComparisonId:': function (cohortComparisonId) {
-						require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code'], function () {
+						require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
 							self.currentCohortComparisonId(+cohortComparisonId);
 							self.componentParams = {
 								currentCohortComparisonId: self.currentCohortComparisonId,

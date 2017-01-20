@@ -592,7 +592,12 @@
 				</div>
 				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'rcode'" class="tab-pane">
 					<div class="paddedWrapper">
-						<cohort-comparison-r-code params="cohortComparison: $component.cohortComparison"></cohort-comparison-r-code>
+                        <h4>Multi-Analysis Approach</h4>
+                        <button class="btn btn-sm btn-primary" id="btnCopyToClipboard" data-bind="click: copyToClipboard" data-clipboard-target="#estimation-r-code"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span id="copyToClipboardMessage" style="display:none;"><strong>Copied!</strong></span>
+						<cohort-comparison-multi-r-code params="cohortComparison: $component.cohortComparison, codeElementId: 'estimation-r-code'"></cohort-comparison-multi-r-code>
+                        <hr/>
+                        <h4>Single-Analysis Approach</h4>
+                        <cohort-comparison-r-code params="cohortComparison: $component.cohortComparison"></cohort-comparison-r-code>
 					</div>
 				</div>
 				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
