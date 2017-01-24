@@ -891,14 +891,17 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
                 });
             }
 
-			// startup actions
-			
-			if ((self.cohortComparisonId() || 0) == 0 && self.cohortComparison() == null) {
-				// create new
+            self.newCohortComparison = function() {
 				self.cohortComparison(new ComparativeCohortAnalysis());
-				self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison()));
-				self.loading(false);
-			} else if (self.cohortComparisonId() != (self.cohortComparison() && self.cohortComparison().analysisId)) {
+				// The ComparativeCohortAnalysis module is pretty big - use the setTimeout({}, 0) 
+				// to allow the event loop to catch up.
+				// http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
+                setTimeout(function() {
+                    self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison()));
+                }, 0);
+            }
+            
+            self.loadCohortComparison = function () {
 				// load cca
 				ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
@@ -1071,12 +1074,19 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							});
 						});
 					}
-				});
+				});                
+            }
+            
+			// startup actions
+			if (self.cohortComparisonId() == 0 && self.cohortComparison() == null) {
+				self.newCohortComparison();
+				self.loading(false);
+			} else if (self.cohortComparisonId() > 0 && self.cohortComparisonId() != (self.cohortComparison() && self.cohortComparison().analysisId)) {
+				self.loadCohortComparison();
 			} else {
 				// already loaded
 				self.loading(false);
 			}
-			
 		}
 
 		var component = {
