@@ -53,8 +53,8 @@ define(function (require, exports) {
 		self.treatmentCaption = ko.observable(data.treatmentCaption != null ? data.treatmentCaption : null);
         self.treatmentCohortDefinition = ko.observable(null);
 
+		self.comparatorId = ko.observable(data.comparatorId != null ? data.comparatorId : 0);
         self.comparatorCaption = ko.observable(data.comparatorCaption != null ?  data.comparatorCaption : null);
-		self.comparatorId = ko.observable(data.comparatorId != null ? data.comparatorId : null);
         self.comparatorCohortDefinition = ko.observable(null);
         
 		self.outcomeId = ko.observable(data.outcomeId != null ? data.outcomeId : 0);
