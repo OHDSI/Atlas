@@ -15,13 +15,14 @@
 				</div>
 				<div data-bind="foreach:$component.authProviders" class="text-centered">
 					<div class="paddedWrapper">
-						<div class="btn btn-sm btn-block btn-default"><i data-bind="css:icon"></i> <span data-bind="text:name"></span></div>
+						<div class="btn btn-sm btn-block btn-default" data-bind="click: $component.signin"><i data-bind="css:icon"></i> <span data-bind="text:name"></span></div>
 					</div>
 				</div>
 
 			</div>
 
 			<div data-bind="if: isLoggedIn()">
+                <div data-bind="text: $component.status"></div>
 				<span class="btn btn-sm btn-default" data-bind="click: $component.signout"><i class="fa fa-sign-out"></i> Sign Out</span>
 			</div>
 		</div>

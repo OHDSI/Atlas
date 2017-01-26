@@ -84,13 +84,20 @@ define(["d3","appConfig"], function (d3,config) {
 			pth += "data/" + datasource.folder + "/" + name;
 			if (simpledata.indexOf(name) >= 0) pth += ".json";
 		} else {
-			console.error("Could not construct path from map, datasource.url or datasource.folder");
-			return;
+			//datasource.filter(function (x) {return x.sourceName == name}) !== undefined)
+			//console.log(datasource);
+			//console.log(datasource.length);
+			pth = config.webAPIRoot + datasource.sourceName + "/" + "cdmresults" + "/" + name;
+			console.log("pth=" + pth);
+			var serviceDependent = true;
+			//console.error("Could not construct path from map, datasource.url or datasource.folder");
+			//return;
 		}
 
-		parent = config.dataSourcesRoot;
-		pth = parent + "/" + datasource.folder + "/" + name + ".json"
-
+		if (!serviceDependent) {
+			parent = config.dataSourcesRoot;
+			pth = parent + "/" + datasource.folder + "/" + name + ".json";
+		}
 
 		return pth;
 	}
@@ -124,6 +131,7 @@ define(["d3","appConfig"], function (d3,config) {
 
 		return pth;
 	}
+
 
 	function mapHistogram(histogramData) {
 		// result is an array of arrays, each element in the array is another array containing information about each bar of the histogram.
