@@ -81,6 +81,7 @@ requirejs.config({
 		"job-manager": "components/job-manager",
 		"importer": "components/importer",
 		"data-sources": "components/data-sources",
+        "data-sources-json": "components/data-sources-json",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definition-browser",
@@ -133,7 +134,7 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
 		$('#splash').fadeIn();
 		var pageModel = new app();
 		window.pageModel = pageModel;
