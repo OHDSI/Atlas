@@ -46,6 +46,10 @@ define(function(require, exports) {
     });
 
     var isAuthenticated = ko.pureComputed(function() {
+				if (!config.userAuthenticationEnabled) {
+					return true;
+				}
+			
         if (!token()) {
             return false;
         }

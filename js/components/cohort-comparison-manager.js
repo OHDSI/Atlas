@@ -508,7 +508,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.cohortSelected = function (id) {
-				$('cohort-comparison-manager #modalCohortDefinition').modal('hide');
+				$('#modalCohortDefinition').modal('hide');
 				cohortDefinitionAPI.getCohortDefinition(id).then(function (cohortDefinition) {
 					self.targetId(cohortDefinition.id);
 					self.targetCaption(cohortDefinition.name);
@@ -690,7 +690,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.conceptsetSelected = function (d) {
-				$('cohort-comparison-manager #modalConceptSet').modal('hide');
+				$('#modalConceptSet').modal('hide');
 				vocabularyAPI.getConceptSetExpression(d.id).then(function (csExpression) {
 					self.targetId(d.id);
 					self.targetCaption(d.name);
@@ -710,21 +710,21 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.chooseTreatment = function () {
-				$('cohort-comparison-manager #modalCohortDefinition').modal('show');
+				$('#modalCohortDefinition').modal('show');
 				self.targetId = self.cohortComparison().treatmentId;
 				self.targetCaption = self.cohortComparison().treatmentCaption;
 				self.targetCohortDefinition = self.cohortComparison().treatmentCohortDefinition;
 			}
 
 			self.chooseComparator = function () {
-				$('cohort-comparison-manager #modalCohortDefinition').modal('show');
+				$('#modalCohortDefinition').modal('show');
 				self.targetId = self.cohortComparison().comparatorId;
 				self.targetCaption = self.cohortComparison().comparatorCaption;
 				self.targetCohortDefinition = self.cohortComparison().comparatorCohortDefinition;
 			}
 
 			self.chooseOutcome = function () {
-				$('cohort-comparison-manager #modalCohortDefinition').modal('show');
+				$('#modalCohortDefinition').modal('show');
 				self.targetId = self.cohortComparison().outcomeId;
 				self.targetCaption = self.cohortComparison().outcomeCaption;
 				self.targetCohortDefinition = self.cohortComparison().outcomeCohortDefinition;
@@ -784,7 +784,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.choosePsExclusion = function () {
-				$('cohort-comparison-manager #modalConceptSet').modal('show');
+				$('#modalConceptSet').modal('show');
 				self.targetId = self.cohortComparison().psExclusionId;
 				self.targetCaption = self.cohortComparison().psExclusionCaption;
 				self.targetExpression = self.cohortComparison().psExclusionConceptSet;
@@ -792,7 +792,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.choosePsInclusion = function () {
-				$('cohort-comparison-manager #modalConceptSet').modal('show');
+				$('#modalConceptSet').modal('show');
 				self.targetId = self.cohortComparison().psInclusionId;
 				self.targetCaption = self.cohortComparison().psInclusionCaption;
 				self.targetExpression = self.cohortComparison().psInclusionConceptSet;
@@ -800,7 +800,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.chooseOmExclusion = function () {
-				$('cohort-comparison-manager #modalConceptSet').modal('show');
+				$('#modalConceptSet').modal('show');
 				self.targetId = self.cohortComparison().omExclusionId;
 				self.targetCaption = self.cohortComparison().omExclusionCaption;
 				self.targetExpression = self.cohortComparison().omExclusionConceptSet;
@@ -808,7 +808,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.chooseOmInclusion = function () {
-				$('cohort-comparison-manager #modalConceptSet').modal('show');
+				$('#modalConceptSet').modal('show');
 				self.targetId = self.cohortComparison().omInclusionId;
 				self.targetCaption = self.cohortComparison().omInclusionCaption;
 				self.targetExpression = self.cohortComparison().omInclusionConceptSet;
@@ -816,7 +816,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.chooseNegativeControl = function () {
-				$('cohort-comparison-manager #modalConceptSet').modal('show');
+				$('#modalConceptSet').modal('show');
 				self.targetId = self.cohortComparison().negativeControlId;
 				self.targetCaption = self.cohortComparison().negativeControlCaption;
 				self.targetExpression = self.cohortComparison().negativeControlConceptSet;
@@ -825,7 +825,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 
 			self.chooseConceptSet = function (conceptSetType, observable) {
 				self.targetObservable = observable;
-				$('cohort-comparison-manager #modalConceptSet').modal('show');
+				$('#modalConceptSet').modal('show');
 			}
 
 			self.isHistoryVisible = function (d) {
@@ -879,9 +879,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
                 currentClipboard.on('success', function(e) {
                     console.log('Copied to clipboard');
                     e.clearSelection();
-                    $('cohort-comparison-manager #copyToClipboardMessage').fadeIn();
+                    $('#copyToClipboardMessage').fadeIn();
                     setTimeout(function () {
-				        $('cohort-comparison-manager #copyToClipboardMessage').fadeOut();
+				        $('#copyToClipboardMessage').fadeOut();
 			         }, 1500);
                 });
                 

@@ -1373,7 +1373,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.currentConceptSet = ko.observable();
 		self.currentConceptSetDirtyFlag = new ohdsiUtil.dirtyFlag({
 			header: self.currentConceptSet,
-			details: self.selectedConcepts
+			details: sharedState.selectedConcepts
 		});
 		self.conceptSetCss = ko.pureComputed(function () {
 			if (self.currentConceptSet())
@@ -1397,9 +1397,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 				}
 
 				if (self.currentConceptSet() && (self.currentConceptSet().id != 0)) {
-					return authApi.isPermittedUpdateConceptset(self.currentConceptSet().id)
+					return authApi.isPermittedUpdateConceptset(self.currentConceptSet().id) ||  !config.userAuthenticationEnabled;
 				} else {
-					return authApi.isPermittedCreateConceptset();
+					return authApi.isPermittedCreateConceptset() || !config.userAuthenticationEnabled;
 				}
 			} else {
 				return false;
@@ -1437,9 +1437,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			}
 
 			if (self.currentCohortDefinition() && (self.currentCohortDefinition().id() != 0)) {
-				return authApi.isPermittedUpdateCohort(self.currentCohortDefinition().id());
+				return authApi.isPermittedUpdateCohort(self.currentCohortDefinition().id()) || !config.userAuthenticationEnabled;
 			} else {
-				return authApi.isPermittedCreateCohort();
+				return authApi.isPermittedCreateCohort() || !config.userAuthenticationEnabled;
 			}
 		});
 		self.currentCohortComparisonId = ko.observable();
@@ -1557,7 +1557,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			if (newValue != null) {
 				self.currentConceptSetDirtyFlag = new ohdsiUtil.dirtyFlag({
 					header: self.currentConceptSet,
-					details: self.selectedConcepts
+					details: sharedState.selectedConcepts
 				});
 			}
 		});
