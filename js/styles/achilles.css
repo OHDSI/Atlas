@@ -122,3 +122,6 @@ th.data-sources {
 	margin-bottom: 10px;
 	font-size: 16px;
 }
+#report .evidenceVisualization circle {
+    fill: #333;
+}
