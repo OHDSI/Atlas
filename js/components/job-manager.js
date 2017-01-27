@@ -34,7 +34,7 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables
 
 		self.isAuthenticated = authApi.isAuthenticated;
 		self.canReadJobs = ko.pureComputed(function() {
-			return self.isAuthenticated() && authApi.isPermittedReadJobs();
+			return (self.isAuthenticated() && authApi.isPermittedReadJobs()) || !config.userAuthenticationEnabled;
 		});
 
 		if (self.canReadJobs()) {

@@ -16,8 +16,12 @@ define(['knockout', 'text!./cohort-definitions.html', 'appConfig', 'webapi/AuthA
 		}
 
 		self.isAuthenticated = authApi.isAuthenticated;
-		self.canReadCohorts = ko.pureComputed(function() { return self.isAuthenticated() && authApi.isPermittedReadCohorts(); });
-		self.canCreateCohort = ko.pureComputed(function() { return self.isAuthenticated() && authApi.isPermittedCreateCohort(); });
+		self.canReadCohorts = ko.pureComputed(function () {
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled;
+		});
+		self.canCreateCohort = ko.pureComputed(function () {
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled;
+		});
 	}
 
 	var component = {
