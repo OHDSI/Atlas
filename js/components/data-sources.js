@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'data-sources-json', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, colorbrewer, _, legacy, config) {
+define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, colorbrewer, _, config) {
     function dataSources(params) {
         var self = this;
 
@@ -865,10 +865,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
         template: view
     };
 
-    // use json-based component if dataSourcesRoot configured
-    if(!!config.dataSourcesRoot) {
-        component = { viewModel: legacy.viewModel, template: legacy.template };
-    }
     ko.components.register('data-sources', component);
     return component;
 });
