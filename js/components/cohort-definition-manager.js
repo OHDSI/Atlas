@@ -70,6 +70,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return self.isAuthenticated() && authApi.isPermittedDeleteCohort(self.model.currentCohortDefinition().id());
 		});
 		self.hasAccess = ko.pureComputed(function() {
+			
+			if (!config.userAuthenticationEnabled) {
+				return true;
+			}
+			
 			if (!self.isAuthenticated()) {
 				return false;
 			}
