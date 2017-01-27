@@ -80,53 +80,6 @@
 			<!-- /ko -->
 
 			<div id="currentComponent" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
-			<!--			
-			<div data-bind="if: pageModel.currentView() == 'concept'">
-				<concept-manager params="{model: pageModel, currentConceptId: pageModel.currentConceptId}"></concept-manager>
-			</div>
-
-			<div data-bind="if:pageModel.currentView()=='jobs'">
-				<job-manager params="{model: pageModel}"></job-manager>
-			</div>
-
-			<div data-bind="if: pageModel.currentView() == 'cohortdefinitions'">
-				<cohort-definitions params="{model: pageModel}"></cohort-definitions>
-			</div>
-
-			<div data-bind="if: pageModel.currentView() == 'datasources'">
-				<data-sources params="{model: pageModel}"></data-sources>
-			</div>
-
-			<div data-bind="if: pageModel.currentView() == 'cohortdefinition'">
-				<cohort-definition-manager params="{model: pageModel}"></cohort-definition-manager>
-			</div>
-
-			<div data-bind="if: pageModel.currentView() == 'reports'">
-				<report-manager params="{model: pageModel}"></report-manager>
-			</div>
-
-			<div data-bind="if:pageModel.currentView() == 'profiles'">
-				<profile-manager params="model: pageModel"></profile-manager>
-			</div>
-
-			<analytics-manager data-bind="if:pageModel.currentView()== 'analytics'" params="{model: pageModel}"></analytics-manager>
-
-			<div data-bind="if:pageModel.currentView() == 'feasibilities'">
-				<feasibility-manager></feasibility-manager>
-			</div>
-
-			<div data-bind="if:pageModel.currentView() == 'feasibility'">
-				<feasibility-analyzer params="services: pageModel.services, feasibilityId: pageModel.feasibilityId"></feasibility-analyzer>
-			</div>
-
-			<div data-bind="if:pageModel.currentView() == 'estimations'">
-				<cohort-comparison-browser></cohort-comparison-browser>
-			</div>
-
-			<div data-bind="if:pageModel.currentView() == 'estimation'">
-				<cohort-comparison-manager params="currentCohortComparisonId:pageModel.currentCohortComparisonId, currentCohortComparison: pageModel.currentCohortComparison, dirtyFlag: pageModel.currentCohortComparisonDirtyFlag"></cohort-comparison-manager>
-			</div>
-			-->
 		</div>
 	</div>
 	<script data-main="js/main" src="js/require.js"></script>

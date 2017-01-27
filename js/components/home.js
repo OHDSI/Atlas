@@ -1,4 +1,4 @@
-define(['knockout', 'text!./home.html'], function (ko, view) {
+define(['knockout', 'text!./home.html', 'appConfig'], function (ko, view, config) {
 	function home(params) {
 		var self = this;
 		var authApi = params.model.authApi;
@@ -12,16 +12,18 @@ define(['knockout', 'text!./home.html'], function (ko, view) {
 				self.github_status(data);
 			}
 		});
-		
-		self.newCohortDefinition = function() {
+
+		self.newCohortDefinition = function () {
 			document.location = "#/cohortdefinition/0";
 		}
-		
-		self.browseVocabulary = function() {
+
+		self.browseVocabulary = function () {
 			document.location = "#/search";
 		}
 
-		self.canCreateCohort = ko.pureComputed(function() { return authApi.isAuthenticated() && authApi.isPermittedCreateCohort(); });
+		self.canCreateCohort = ko.pureComputed(function () {
+			return (authApi.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled;
+		});
 	}
 
 	var component = {

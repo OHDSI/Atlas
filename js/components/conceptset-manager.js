@@ -926,12 +926,15 @@ define(['knockout',
 			})
 		});
 
+		self.canSave = ko.computed(function() {
+			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());
+		});
 		self.canEdit = self.model.canEditCurrentConceptSet;
 		self.canCreate = ko.pureComputed(function () {
-			return authApi.isAuthenticated() && authApi.isPermittedCreateConceptset();
+			return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 		});
 		self.canDelete = ko.pureComputed(function () {
-			return authApi.isAuthenticated() && authApi.isPermittedDeleteConceptset();
+			return ((authApi.isAuthenticated() && authApi.isPermittedDeleteConceptset()) || !config.userAuthenticationEnabled);
 		});
 	}
 
