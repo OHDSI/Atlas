@@ -34,6 +34,7 @@
     outcomeTable <span class="token operator"><-</span> <span class="token string">"outcome_table"</span>
     cdmVersion <span class="token operator"><-</span> <span class="token string">"5" </span>
     outputFolder <span class="token operator"><-</span> <span class="token string">"&lt;insert your directory here&gt;"</span>
+    maxCores <span class="token operator"><-</span> <span class="token number">1</span> 
     
     targetCohortId <span class="token operator"><-</span> <span class="token number" data-bind="text: $component.cohortComparison().treatmentId"></span>
     comparatorCohortId <span class="token operator"><-</span> <span class="token number" data-bind="text: $component.cohortComparison().comparatorId"></span>
@@ -244,18 +245,19 @@
                             drugComparatorOutcomesList = drugComparatorOutcomesList,
                             getDbCohortMethodDataThreads = <span class="token number">1</span>,
                             createPsThreads = <span class="token number">1</span>,
-                            psCvThreads = <span class="token number">10</span>,
-                            computeCovarBalThreads = <span class="token number">2</span>,
-                            createStudyPopThreads = <span class="token number">4</span>,
-                            trimMatchStratifyThreads = <span class="token number">10</span>,
-                            fitOutcomeModelThreads = <span class="token number">2</span>,
-                            outcomeCvThreads = <span class="token number">10</span>)
+                            psCvThreads = min(<span class="token number">16</span>, maxCores),
+                            computeCovarBalThreads = min(<span class="token number">3</span>, maxCores),
+                            createStudyPopThreads = min(<span class="token number">3</span>, maxCores),
+                            trimMatchStratifyThreads = min(<span class="token number">10</span>, maxCores),
+                            fitOutcomeModelThreads = max(<span class="token number">1</span>, round(maxCores/4)),
+                            outcomeCvThreads = min(<span class="token number">4</span>, maxCores),
+                            outcomeIdsOfInterest = outcomeList,
+                            refitPsForEveryOutcome = FALSE)
 
     <span class="token comment">## Summarize the results</span>
     analysisSummary <- summarizeAnalyses(result)
     head(analysisSummary)
 
-<div data-bind="if: $component.cohortComparison().negativeControlConceptSetSQL() != null">
     <span class="token comment"># Perform Empirical Calibration ----</span>
     newSummary <span class="token operator"><-</span> data.frame()
     <span class="token comment"># Calibrate p-values:</span>
@@ -273,33 +275,33 @@
         hoiSubset <span class="token operator"><-</span> hoiSubset[<span class="token operator">!</span>is.na(hoiSubset$logRr) <span class="token operator">&</span> hoiSubset$logRr <span class="token operator">!=</span> <span class="token number">0</span>, ]
 
         <span class="token keyword">if</span> (nrow(negControlSubset) <span class="token operator">></span> <span class="token number">10</span>) {
-          null <- EmpiricalCalibration::fitMcmcNull(negControlSubset$logRr, negControlSubset$seLogRr)
+          null <- fitMcmcNull(negControlSubset$logRr, negControlSubset$seLogRr)
           
           <span class="token comment"># View the empirical calibration plot with only negative controls</span>
-          EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
+          plotCalibrationEffect(negControlSubset$logRr,
                                                       negControlSubset$seLogRr)
 
           <span class="token comment"># Save the empirical calibration plot with only negative controls</span>
           plotName <span class="token operator"><-</span> paste(<span class="token string">"calEffectNoHois_a"</span>,analysisId, <span class="token string">"_t"</span>, drugComparatorOutcome$targetId, <span class="token string">"_c"</span>, drugComparatorOutcome$comparatorId, <span class="token string">".png"</span>, sep = <span class="token string">""</span>)
-          EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
+          plotCalibrationEffect(negControlSubset$logRr,
                                                       negControlSubset$seLogRr,
                                                       fileName = file.path(outputFolder, plotName))
 
           <span class="token comment"># View the empirical calibration plot with  negative controls and HOIs plotted</span>
-          EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
+          plotCalibrationEffect(negControlSubset$logRr,
                                                       negControlSubset$seLogRr,
                                                       hoiSubset$logRr, 
                                                       hoiSubset$seLogRr)
 
           <span class="token comment"># Save the empirical calibration plot with  negative controls and HOIs plotted</span>
           plotName <span class="token operator"><-</span> paste(<span class="token string">"calEffect_a"</span>,analysisId, <span class="token string">"_t"</span>, drugComparatorOutcome$targetId, <span class="token string">"_c"</span>, drugComparatorOutcome$comparatorId, <span class="token string">".png"</span>, sep = <span class="token string">""</span>)
-          EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
+          plotCalibrationEffect(negControlSubset$logRr,
                                                       negControlSubset$seLogRr,
                                                       hoiSubset$logRr, 
                                                       hoiSubset$seLogRr,
                                                       fileName = file.path(outputFolder, plotName))
 
-          calibratedP <span class="token operator"><-</span> EmpiricalCalibration::calibrateP(null, subset$logRr, subset$seLogRr)
+          calibratedP <span class="token operator"><-</span> calibrateP(null, subset$logRr, subset$seLogRr)
           subset$calibratedP <span class="token operator"><-</span> calibratedP$p
           subset$calibratedP_lb95ci <span class="token operator"><-</span> calibratedP$lb95ci
           subset$calibratedP_ub95ci <span class="token operator"><-</span> calibratedP$ub95ci
@@ -316,7 +318,7 @@
         newSummary <span class="token operator"><-</span> rbind(newSummary, subset)
       }
     }
-</div>
+
     <span class="token comment"># Results ----</span>
     drugComparatorOutcome <span class="token operator"><-</span> drugComparatorOutcomesList[[1]]
     <span class="token keyword">for</span> (drugComparatorOutcome <span class="token keyword">in</span> drugComparatorOutcomesList) {
@@ -446,15 +448,46 @@
                                                      result$outcomeId == currentOutcomeId &
                                                      result$analysisId == analysisId]
             outcomeModel <span class="token operator"><-</span> readRDS(outcomeFile)
-            outcomeModel
             
-            <div data-bind="if: $component.cohortComparison().negativeControlConceptSetSQL() != null">
             <span class="token comment"># Calibrated results -----</span>
-            newSummary[newSummary$targetId == currentAnalysisSubset$targetId & 
-                         newSummary$comparatorId == currentAnalysisSubset$comparatorId & 
-                         newSummary$outcomeId == currentOutcomeId & 
-                         newSummary$analysisId == analysisId, ]             
-            </div>
+            outcomeSummary <span class="token operator"><-</span> newSummary[newSummary$targetId == currentAnalysisSubset$targetId & 
+                                            newSummary$comparatorId == currentAnalysisSubset$comparatorId & 
+                                            newSummary$outcomeId == currentOutcomeId & 
+                                            newSummary$analysisId == analysisId, ]  
+
+            outcomeSummaryOutput <span class="token operator"><-</span> data.frame(outcomeSummary$rr, 
+                                               outcomeSummary$ci95lb, 
+                                               outcomeSummary$ci95ub, 
+                                               outcomeSummary$logRr, 
+                                               outcomeSummary$seLogRr,
+                                               outcomeSummary$p,
+                                               outcomeSummary$calibratedP, 
+                                               outcomeSummary$calibratedP_lb95ci,
+                                               outcomeSummary$calibratedP_ub95ci,
+                                               outcomeSummary$null_mean,
+                                               outcomeSummary$null_sd)
+                                               
+            colnames(outcomeSummaryOutput) <span class="token operator"><-</span> c(<span class="token string">"Estimate"</span>, 
+                                                  <span class="token string">"lower .95"</span>, 
+                                                  <span class="token string">"upper .95"</span>, 
+                                                  <span class="token string">"logRr"</span>, 
+                                                  <span class="token string">"seLogRr"</span>, 
+                                                  <span class="token string">"p"</span>, 
+                                                  <span class="token string">"cal p"</span>,  
+                                                  <span class="token string">"cal p - lower .95"</span>,  
+                                                  <span class="token string">"cal p - upper .95"</span>, 
+                                                  <span class="token string">"null mean"</span>,  
+                                                  <span class="token string">"null sd"</span>)
+                                                  
+            rownames(outcomeSummaryOutput) <- "treatment"
+                         
+            <span class="token comment"># View the outcome model -----</span>
+            outcomeModelOutput <span class="token operator"><-</span> capture.output(outcomeModel)
+            outcomeModelOutput <span class="token operator"><-</span> head(outcomeModelOutput,n=length(outcomeModelOutput)-<span class="token number">2</span>)
+            outcomeSummaryOutput <span class="token operator"><-</span> capture.output(printCoefmat(outcomeSummaryOutput))
+            outcomeModelOutput <span class="token operator"><-</span> c(outcomeModelOutput, outcomeSummaryOutput)
+            writeLines(outcomeModelOutput)
+            
           }
       }
     }
