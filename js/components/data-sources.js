@@ -17,7 +17,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 		var threshold = minimum_area / (width * height);
 
 		self.model = params.model;
-		self.sources = config.services[0].sources;
+		self.sources = config.services[0].sources.filter(function(s) { return s.hasResults});
 		self.loadingReport = ko.observable(false);
 		self.hasError = ko.observable(false);
 		self.loadingReportDrilldown = ko.observable(false);
@@ -135,7 +135,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 			var currentSource = self.currentSource();
 
 			if (!currentReport) {
-				console.log('no current report');
 				return;
 			}
 

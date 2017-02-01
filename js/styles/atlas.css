@@ -96,7 +96,7 @@ body {
 }
 
 .heading {
-	font-size: 12px;
+	font-size: 14px;
 	color: #000;
 	font-weight: normal;
 	margin: 12px 0px 3px 0px;
@@ -548,9 +548,8 @@ td.select .fa-check-circle.selected {
 }
 
 .error {
-	font-size: 20px;
+	font-size: 14px;
 	text-align: center;
-	font-variant: small-caps;
 	padding: 7px;
 	color: #F44;
 	margin: 7px;
@@ -861,15 +860,14 @@ g.trellisLegend {}
 
 .loading {
 	color: #A5B3BD;
-	font-size: 20px;
+	font-size: 14px;
 	text-align: center;
-	font-variant: small-caps;
 	padding-top: 10px;
 }
 
 div.loader {
 	margin-top: 20px;
-	font-size: 20px;
+	font-size: 14px;
 	text-align: center;
 }
 
@@ -895,8 +893,8 @@ input.btn.btn-default:disabled {
 
 .report {
 	background-color: #eee;
-	margin: 10px 10px 10px 10px;
-	border: solid 1px #ccc;
+	margin: 10px 3px 3px 3px;
+	border: solid 1px #ddd;
 }
 
 .reportHeading .fa-area-chart {
