@@ -13,7 +13,7 @@ define([], function () {
 	config.services = [
         {
 			name: 'Local',
-			url: 'http://rndusrdhit01.jnj.com:8999/WebAPI/'
+			url: 'http://localhost:8080/WebAPI/'
           }
 		];
 	

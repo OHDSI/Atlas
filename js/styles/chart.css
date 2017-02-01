@@ -87,7 +87,7 @@ table.boxplotValues tr td
 }
 .axis text {
 	font-family: arial;
-	font-size: 10px;
+	font-size: 1em;
 }
 .axislabel, .axislabel text {
 	font-family: arial;
