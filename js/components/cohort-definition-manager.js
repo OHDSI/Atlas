@@ -52,29 +52,29 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.selectedConcepts = sharedState.selectedConcepts;
 		self.model = params.model;
 
-		self.isAuthenticated = ko.pureComputed(function() {
+		self.isAuthenticated = ko.pureComputed(function () {
 			return authApi.isAuthenticated();
 		});
-		var isNew = ko.pureComputed(function() {
+		var isNew = ko.pureComputed(function () {
 			return !self.model.currentCohortDefinition() || (self.model.currentCohortDefinition().id() == 0);
 		});
 		self.canEdit = self.model.canEditCurrentCohortDefinition;
-		self.canCopy = ko.pureComputed(function() {
-			return !isNew() && self.isAuthenticated() && authApi.isPermittedCopyCohort(self.model.currentCohortDefinition().id());
+		self.canCopy = ko.pureComputed(function () {
+			return !isNew() && (self.isAuthenticated() && authApi.isPermittedCopyCohort(self.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled);
 		});
-		self.canDelete = ko.pureComputed(function() {
+		self.canDelete = ko.pureComputed(function () {
 			if (isNew()) {
 				return false;
 			}
 
-			return self.isAuthenticated() && authApi.isPermittedDeleteCohort(self.model.currentCohortDefinition().id());
+			return ((self.isAuthenticated() && authApi.isPermittedDeleteCohort(self.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled));
 		});
-		self.hasAccess = ko.pureComputed(function() {
-			
+		self.hasAccess = ko.pureComputed(function () {
+
 			if (!config.userAuthenticationEnabled) {
 				return true;
 			}
-			
+
 			if (!self.isAuthenticated()) {
 				return false;
 			}
@@ -85,14 +85,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			return authApi.isPermittedReadCohort(self.model.currentCohortDefinition().id());
 		});
-		self.hasAccessToGenerate = function(sourceKey) {
+		self.hasAccessToGenerate = function (sourceKey) {
 			if (isNew()) {
 				return false;
 			}
 
 			return self.isAuthenticated() && authApi.isPermittedGenerateCohort(self.model.currentCohortDefinition().id(), sourceKey);
 		}
-		self.hasAccessToReadCohortReport = function(sourceKey) {
+		self.hasAccessToReadCohortReport = function (sourceKey) {
 			if (isNew()) {
 				return false;
 			}
@@ -306,7 +306,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			// reset view after save
 			cohortDefinitionAPI.deleteCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
 				self.model.currentCohortDefinition(null);
-				authApi.refreshToken();
+				if (config.userAuthenticationEnabled) {
+					authApi.refreshToken();
+				}
 				document.location = "#/cohortdefinitions"
 			});
 		}
@@ -332,8 +334,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				var definition = new CohortDefinition(result);
 				var redirectWhenComplete = definition.id() != self.model.currentCohortDefinition().id();
 
-				var refreshTokenPromise = redirectWhenComplete ? authApi.refreshToken() : null;
-				$.when(refreshTokenPromise).done(function() {
+				var refreshTokenPromise = (redirectWhenComplete && config.userAuthenticationEnabled) ? authApi.refreshToken() : null;
+				$.when(refreshTokenPromise).done(function () {
 					self.model.currentCohortDefinition(definition);
 					if (redirectWhenComplete) {
 						document.location = "#/cohortdefinition/" + definition.id();
@@ -362,7 +364,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			// reset view after save
 			cohortDefinitionAPI.copyCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
-				authApi.refreshToken().then(function() {
+				var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
+				$.when(refreshTokenPromise).done(function () {				
 					document.location = "#/cohortdefinition/" + result.id;
 				});
 			});
@@ -584,7 +587,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				self.loadingInclusionReport(false);
 			});
 		}
-		
+
 		self.getStatusMessage = function (info) {
 			if (info.status() == "COMPLETE" && !info.isValid())
 				return "FAILED";

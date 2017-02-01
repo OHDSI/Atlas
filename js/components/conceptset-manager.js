@@ -589,7 +589,8 @@ define(['knockout',
 							error: authApi.handleAccessDenied,
 							success: function (itemSave) {
 								$('#conceptSetSaveDialog').modal('hide');
-								authApi.refreshToken().then(function () {
+								var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
+								$.when(refreshTokenPromise).then(function () {
 									document.location = '#/conceptset/' + data.id + '/details';
 									self.compareResults(null);
 									self.model.currentConceptSetDirtyFlag.reset();
@@ -615,7 +616,6 @@ define(['knockout',
 		}
 
 		self.copy = function () {
-			console.log("copy concept set: " + self.model.currentConceptSet().name());
 			self.conceptSetName("COPY OF: " + self.model.currentConceptSet().name());
 			self.model.currentConceptSet(undefined);
 			self.saveConceptSet("#txtConceptSetName");
@@ -661,7 +661,6 @@ define(['knockout',
 		}
 
 		self.overwriteConceptSet = function () {
-			console.log("overwriteConceptSet");
 			var newConceptSet = [];
 			_.each(self.optimalConceptSet(), (item) => {
 				var newItem;
@@ -678,7 +677,6 @@ define(['knockout',
 		}
 
 		self.copyOptimizedConceptSet = function () {
-			console.log("copyOptimizedConceptSet");
 			if (self.model.currentConceptSet() == undefined) {
 				self.optimizerSavingNewName(self.conceptSetName());
 			} else {
@@ -688,7 +686,6 @@ define(['knockout',
 		}
 
 		self.saveNewOptimizedConceptSet = function () {
-			console.log('save new concept set');
 			var conceptSet = {};
 			conceptSet.id = 0;
 			conceptSet.name = self.optimizerSavingNewName;
@@ -708,7 +705,6 @@ define(['knockout',
 		}
 
 		self.cancelSaveNewOptimizedConceptSet = function () {
-			console.log("cancel");
 			self.optimizerSavingNew(false);
 		}
 
@@ -750,7 +746,6 @@ define(['knockout',
 		}
 
 		self.compareConceptSets = function () {
-			console.log("compare");
 			self.compareLoading(true);
 			var compareTargets = [{
 				items: self.compareCS1ConceptSet()
@@ -823,7 +818,6 @@ define(['knockout',
 			if (!self.canEdit()) {
 				return;
 			}
-			console.log("select all: " + props)
 			props = props || {};
 			props.isExcluded = props.isExcluded || null;
 			props.includeDescendants = props.includeDescendants || null;
@@ -847,7 +841,6 @@ define(['knockout',
 		self.refreshRecordCounts = function (obj, event) {
 			if (event.originalEvent) {
 				// User changed event
-				console.log("Record count refresh");
 				self.recordCountsRefreshing(true);
 				$("#dtConeptManagerRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
 				$("#dtConeptManagerDRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
@@ -857,7 +850,6 @@ define(['knockout',
 				});
 				cdmResultsAPI.getConceptRecordCount(self.currentResultSource().sourceKey, conceptIds, compareResults).then(function (rowcounts) {
 					self.compareResults(compareResults);
-					console.log('record counts different?');
 					self.recordCountsRefreshing(false);
 					$("#dtConeptManagerRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
 					$("#dtConeptManagerDRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
@@ -930,10 +922,10 @@ define(['knockout',
 			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());
 		});
 		self.canEdit = self.model.canEditCurrentConceptSet;
-		self.canCreate = ko.pureComputed(function () {
+		self.canCreate = ko.computed(function () {
 			return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 		});
-		self.canDelete = ko.pureComputed(function () {
+		self.canDelete = ko.computed(function () {
 			return ((authApi.isAuthenticated() && authApi.isPermittedDeleteConceptset()) || !config.userAuthenticationEnabled);
 		});
 	}
