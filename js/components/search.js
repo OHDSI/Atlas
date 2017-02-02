@@ -1,21 +1,26 @@
-define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, vocabAPI, sharedState) {
+define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', 'knockout.dataTables.binding', 'faceted-datatable'], function ($, ko, view, vocabAPI, sharedState) {
 	function search(params) {
 		var self = this;
 		self.model = params.model;
 		self.loading = ko.observable(false);
-		self.advancedQuery = ko.observable('');
 		self.initialized = false;
 		self.vocabularies = ko.observableArray();
 		self.domains = ko.observableArray();
 		self.tabMode = ko.observable('simple');
 		self.currentSearch = ko.observable();
+		self.searchExecuted = ko.observable(false);
 		if (params.query) {
 			self.currentSearch(params.query);
 		}
-		self.concepts = ko.observableArray();		
+		self.showAdvanced = ko.observable(false);
+		self.concepts = ko.observableArray();
 		self.currentSearchValue = ko.observable();
 		self.feSearch = ko.observable();
-		
+
+		self.toggleAdvanced = function () {
+			self.showAdvanced(!self.showAdvanced());
+		}
+
 		self.searchConceptsColumns = [{
 			title: '<i class="fa fa-shopping-cart"></i>',
 			render: function (s, p, d) {
@@ -101,8 +106,8 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', '
 					return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
 				}
             }]
-		};		
-		
+		};
+
 		self.updateSearchFilters = function () {
 			$(event.target).toggleClass('selected');
 			var filters = [];
@@ -115,22 +120,16 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', '
 			// update table data binding
 			self.concepts(self.feSearch().GetCurrentObjects());
 		};
-		
+
 		self.selectConcept = function (concept) {
 			document.location = '#/concept/' + concept.CONCEPT_ID;
 		};
-		
+
 
 		self.currentSearchValue = ko.computed(function () {
 			return unescape(self.currentSearch());
 		}, this);
 
-
-		self.currentSearch.subscribe(function (query) {
-			if (self.currentSearch().length > 2) {
-				document.location = '#/search/' + escape(query);
-			}
-		});
 
 		self.importConceptSetExpression = function () {
 			var expressionJson = $('#textImportConceptSet').val();
@@ -209,102 +208,90 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', '
 			self.model.importedConcepts([]);
 		}
 
-		self.tabMode.subscribe(function (value) {
-			switch (value) {
-			case 'advanced':
-				if (!self.initialized) {
-					self.loading(true);
-
-					var vocabularyDeferred = $.ajax({
-						url: sharedState.vocabularyUrl() + 'vocabularies',
-						success: function (data) {
-							self.vocabularies(data);
-						}
-					});
-
-					var domainDeferred = $.ajax({
-						url: sharedState.vocabularyUrl() + 'domains',
-						success: function (data) {
-							self.domains(data);
-						}
-					});
-
-					$.when([vocabularyDeferred, domainDeferred]).done(function () {
-						self.loading(false);
-						self.initialized = true;
-					});
+		self.onEnter = function(d,e){
+				if (e.keyCode === 13) {
+					self.searchClick();
+				} else {
+					return true;
 				}
-				break;
-			}
-		});
-
-		self.executeAdvancedSearch = function () {
-			self.loading(true);
-
-			var advancedSearch = {
-				"QUERY": self.advancedQuery()
-			};
-
-			var vocabs = [];
+		};		
+		
+		self.searchClick = function() {
 			var vocabElements = $('[name="vocabularyId"]input:checkbox:checked');
-			for (var i = 0; i < vocabElements.length; i++) {
-				vocabs.push(vocabElements[i].value);
-			}
-
-			if (vocabs.length > 0) {
-				advancedSearch["VOCABULARY_ID"] = vocabs;
-			}
-
-			var domains = [];
 			var domainElements = $('[name="domainId"]input:checkbox:checked');
-			for (var i = 0; i < domainElements.length; i++) {
-				domains.push(domainElements[i].value);
+			
+			if (vocabElements.length > 0 || domainElements.length > 0) {
+				self.executeSearch();
+			} else if (self.currentSearch().length > 2) {
+				document.location = '#/search/' + self.currentSearch();
+			} else {
+				alert('invalid search');
 			}
-
-			if (domains.length > 0) {
-				advancedSearch["DOMAIN_ID"] = domains;
-			}
-
-			if (vocabs.length == 0 && domains.length == 0 && self.advancedQuery().length == 0) {
-				$('#helpErrorMessage').text('Please select criteria or enter a query string.');
-				self.loading(false);
-				$('#modalError').modal('show');
-				return;
-			}
-
-			$.ajax({
-				url: sharedState.vocabularyUrl() + 'search',
-				contentType: 'application/json',
-				method: 'POST',
-				success: function (results) {
-					self.handleSearchResults(results);
-				},
-				data: JSON.stringify(advancedSearch)
-			});
-		};
-
+		}
+		
 		self.executeSearch = function () {
-			var query = self.currentSearchValue();
+			var vocabElements = $('[name="vocabularyId"]input:checkbox:checked');
+			var domainElements = $('[name="domainId"]input:checkbox:checked');
+			
+			// if we don't have a search and aren't looking up domain or vocabulary details, abort.
+			if (self.currentSearch() === undefined && vocabElements.length == 0 && domainElements.length == 0)
+				return;
+			
+			self.searchExecuted(true);
+			
+			var query = self.currentSearch() === undefined ? '' : self.currentSearch();
 			self.loading(true);
 
-			filters = [];
-			$('#querytext').blur();
+			if (vocabElements.length > 0 || domainElements.length > 0) {
+				// advanced search
+				var advancedSearch = {
+					"QUERY": query
+				};
 
-			$.ajax({
-				url: sharedState.vocabularyUrl() + 'search/' + escape(query),
-				success: function (results) {
-					self.handleSearchResults(results);
-				},
-				error: function (xhr, message) {
-					alert('error while searching ' + message);
+				var vocabs = [];
+				for (var i = 0; i < vocabElements.length; i++) {
+					vocabs.push(vocabElements[i].value);
 				}
-			});
+				if (vocabs.length > 0) {
+					advancedSearch["VOCABULARY_ID"] = vocabs;
+				}
+
+				var domains = [];
+				for (var i = 0; i < domainElements.length; i++) {
+					domains.push(domainElements[i].value);
+				}
+				if (domains.length > 0) {
+					advancedSearch["DOMAIN_ID"] = domains;
+				}
+				
+				$.ajax({
+					url: sharedState.vocabularyUrl() + 'search',
+					contentType: 'application/json',
+					method: 'POST',
+					success: function (results) {
+						self.handleSearchResults(results);
+					},
+					data: JSON.stringify(advancedSearch)
+				});
+			} else {
+				// simple search
+				$.ajax({
+					url: sharedState.vocabularyUrl() + 'search/' + query,
+					success: function (results) {
+						self.handleSearchResults(results);
+					},
+					error: function (xhr, message) {
+						self.loading(false);
+						console.log('error while searching');
+					}
+				});
+			}
 		}
 
 		self.handleSearchResults = function (results) {
 			if (results.length == 0) {
 				self.loading(false);
-				$('#modalNoSearchResults').modal('show');
+				self.concepts(results);
 				return;
 			}
 
@@ -326,9 +313,31 @@ define(['knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', '
 			return '<i class="fa ' + icon + ' ' + css + '"></i>';
 		}
 
-		if (params.query) {
-			self.executeSearch();
-		}
+		var vocabularyDeferred = $.ajax({
+			url: sharedState.vocabularyUrl() + 'vocabularies',
+			success: function (data) {
+				data = data.sort(function (a, b) {
+					return (a.VOCABULARY_ID.toUpperCase() < b.VOCABULARY_ID.toUpperCase()) ? -1 : (a.VOCABULARY_ID.toUpperCase() > b.VOCABULARY_ID.toUpperCase()) ? 1 : 0;
+				})
+				self.vocabularies(data);
+			}
+		});
+
+		var domainDeferred = $.ajax({
+			url: sharedState.vocabularyUrl() + 'domains',
+			success: function (data) {
+				self.domains(data);
+			}
+		});
+
+		$.when([vocabularyDeferred, domainDeferred]).done(function () {
+			self.loading(false);
+			self.initialized = true;
+
+			if (params.query) {
+				self.executeSearch();
+			}
+		});
 	}
 
 	var component = {
