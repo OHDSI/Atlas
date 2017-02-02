@@ -639,15 +639,15 @@ ul.ColVis_collection li {
 }
 
 .linkLegend .swatch.classification {
-	background-color: #080;
+	background-color: #a335ee;
 }
 
 .linkLegend .swatch.standard {
-	background-color: #528BCA;
+	background-color: #0070dd;
 }
 
 .linkLegend .swatch.nonStandard {
-	background-color: #800;
+	background-color: #a71a19;
 }
 
 .linkLegend .linkLegendTitle {
@@ -1387,7 +1387,7 @@ circle.child {
 
 .checkboxListing {
 	overflow-y: scroll;
-	height: 300px;
+	height: 150px;
 	border-top: solid 1px #ddd;
 	border-bottom: solid 1px #ddd;
 	margin-bottom: 10px;

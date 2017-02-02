@@ -2,7 +2,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 	var appModel = function () {
 		$.support.cors = true;
 		var self = this;
-		$('#querytext').focus();
 		self.authApi = authApi;
 		self.appInitializationFailed = ko.observable(false);
 		self.componentParams = {};

@@ -62,7 +62,7 @@ requirejs.config({
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"text": "plugins/text",
 		"css": "plugins/css.min",
-        "clipboard": "clipboard.min",
+		"clipboard": "clipboard.min",
 		"knockout": "knockout.min",
 		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/0.11.0/knockout-sortable",
 		"knockout-mapping": "knockout.mapping",
@@ -87,7 +87,7 @@ requirejs.config({
 		"cohort-comparison-browser": "components/cohort-comparison-browser",
 		"cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
 		"cohort-comparison-r-code": "components/cohort-comparison-r-code",
-        "cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
+		"cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
 		"user-bar": "components/user-bar",
 		"feasibility-manager": "components/feasibility-manager",
 		"feasibility-browser": "components/feasibility-browser",
@@ -155,13 +155,13 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		$.each(config.services, function (serviceIndex, service) {
 			var serviceCacheKey = 'ATLAS|' + service.url;
 			cachedService = lscache.get(serviceCacheKey);
-			
+
 			if (cachedService) {
 				config.services[serviceIndex] = cachedService;
 
 				for (var s = 0; s < cachedService.sources.length; s++) {
 					var source = cachedService.sources[s];
-					
+
 					for (var d = 0; d < source.daimons.length; d++) {
 						var daimon = source.daimons[d];
 
@@ -277,6 +277,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 									source.dialect = 'unknown';
 									source.url = service.url + source.sourceKey + '/';
 									if (completedSources == sources.length) {
+										lscache.set(serviceCacheKey, service, 720);
 										servicePromise.resolve();
 									}
 								}
