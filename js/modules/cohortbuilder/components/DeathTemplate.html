@@ -16,7 +16,7 @@
 			<tr data-bind="if: DeathType() != null, visible: DeathType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DeathType') }" class="fa fa-times" /></td>
 				<td>
-					Death Type is: <concept-list params="PickerParams: { DefaultDomain: 'Death Type', DefaultQuery: ''}, ConceptList: DeathType()"></concept-list>
+					Death Type is: <concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DeathType()"></concept-list>
 				</td>									
 			</tr>
 			<tr data-bind="if: DeathSourceConcept() != null, visible: DeathSourceConcept() != null">

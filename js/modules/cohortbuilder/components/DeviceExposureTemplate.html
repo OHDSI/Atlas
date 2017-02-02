@@ -26,7 +26,7 @@
 			<tr data-bind="if: DeviceType() != null, visible: DeviceType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DeviceType') }" class="fa fa-times" /></td>
 				<td>
-					Device Type is: <concept-list params="PickerParams: { DefaultDomain: 'Device Type', DefaultQuery: ''}, ConceptList: DeviceType()"></concept-list>
+					Device Type is: <concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DeviceType()"></concept-list>
 				</td>									
 			</tr>
 			<tr data-bind="if: UniqueDeviceId() != null, visible: UniqueDeviceId() != null">

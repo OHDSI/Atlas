@@ -21,7 +21,7 @@
 			<tr data-bind="if: ObservationType() != null, visible: ObservationType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ObservationType') }" class="fa fa-times" /></td>
 				<td>
-					Observation Type is: <concept-list params="PickerParams: { DefaultDomain: 'Observation Type', DefaultQuery: ''}, ConceptList: ObservationType()"></concept-list>
+					Observation Type is: <concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: ObservationType()"></concept-list>
 				</td>									
 			</tr>
 			<tr data-bind="if: ValueAsNumber() != null, visible: ValueAsNumber() != null">
