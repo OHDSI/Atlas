@@ -26,7 +26,7 @@
 			<tr data-bind="if: PeriodType() != null, visible: PeriodType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PeriodType') }" class="fa fa-times" /></td>
 				<td>
-					Period Type is: <concept-list params="PickerParams: { DefaultDomain: 'Obs Period Type', DefaultQuery: ''}, ConceptList: PeriodType()"></concept-list>
+					Period Type is: <concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: PeriodType()"></concept-list>
 				</td>									
 			</tr>
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">

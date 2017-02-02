@@ -20,7 +20,7 @@
 			<tr data-bind="if: MeasurementType() != null, visible: MeasurementType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('MeasurementType') }" class="fa fa-times" /></td>
 				<td>
-					Measurement Type is: <concept-list params="PickerParams: { DefaultDomain: 'Meas Type', DefaultQuery: ''}, ConceptList: MeasurementType()"></concept-list>
+					Measurement Type is: <concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: MeasurementType()"></concept-list>
 				</td>									
 			</tr>
 			<tr data-bind="if: Operator() != null, visible: Operator() != null">

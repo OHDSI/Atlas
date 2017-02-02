@@ -26,7 +26,7 @@
 			<tr data-bind="if: DrugType() != null, visible: DrugType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DrugType') }" class="fa fa-times" /></td>
 				<td>
-					Drug Type is: <concept-list params="PickerParams: { DefaultDomain: 'Drug Type', DefaultQuery: ''}, ConceptList: DrugType()"></concept-list>
+					Drug Type is: <concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DrugType()"></concept-list>
 				</td>									
 			</tr>
 			<tr data-bind="if: StopReason() != null, visible: StopReason() != null">
