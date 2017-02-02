@@ -265,11 +265,11 @@
 						<td class="statusIndicator">
 							<span data-bind="text: $component.getStatusMessage($data)"></span>
 						</td>
-						<td class="text-right" data-bind="html: distinctPeople()">
+						<td data-bind="html: distinctPeople()">
 						</td>
-						<td class="text-right" data-bind="text: startTime">
+						<td data-bind="text: startTime">
 						</td>
-						<td class="text-right" data-bind="text: executionDuration">
+						<td data-bind="text: executionDuration">
 						</td>
 						<td>
 							<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.selectInclusionReport"><i class="fa fa-eye"></i>&nbsp;View Inclusion Report</div>
