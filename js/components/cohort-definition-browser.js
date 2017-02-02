@@ -31,7 +31,10 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webap
 				{
 					'caption': 'Last Modified',
 					'binding': function (o) {
-						var daysSinceModification = (new Date().getTime() - new Date(o.modifiedDate).getTime()) / 1000 / 60 / 60 / 24;
+                        var createDate = new Date(o.createdDate);
+                        var modDate = new Date(o.modifiedDate);
+                        var dateForCompare = (createDate > modDate) ? createDate : modDate;
+						var daysSinceModification = (new Date().getTime() - dateForCompare.getTime()) / 1000 / 60 / 60 / 24;
 						if (daysSinceModification < 7) {
 							return 'This Week';
 						} else if (daysSinceModification < 14) {
