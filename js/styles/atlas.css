@@ -555,6 +555,11 @@ td.select .fa-check-circle.selected {
 	margin: 7px;
 }
 
+.errorInline {
+	font-size: 14px;
+	color: #F44;
+}
+
 .helpText {
 	color: #888;
 	font-style: italic;
