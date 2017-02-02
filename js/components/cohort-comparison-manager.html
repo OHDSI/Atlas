@@ -195,6 +195,7 @@
 									<button class="btn btn-danger" data-bind="disable:cohortComparison().treatmentId() == 0, click:clearTreatment" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 							</span>
 						</div>
+                        <div data-bind="visible: cohortComparison().treatmentId() > 0 && cohortComparison().treatmentCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The target cohort specified (#<span data-bind="text:cohortComparison().treatmentId()"></span>) was deleted. Please select a different cohort.</div>
 					</div>
 					<div>
 						<label>Choose your comparator cohort:</label>
@@ -205,6 +206,7 @@
 								<button class="btn btn-danger" data-bind="disable: cohortComparison().comparatorId() == 0, click:clearComparator" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 							</span>
 						</div>
+                        <div data-bind="visible: cohortComparison().comparatorId() > 0 && cohortComparison().comparatorCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The comparator cohort specified (#<span data-bind="text:cohortComparison().comparatorId()"></span>) was deleted. Please select a different cohort.</div>
 					</div>
 					<div>
 						<label>Choose your outcome cohort:</label>
@@ -215,6 +217,7 @@
 								<button class="btn btn-danger" data-bind="disable:cohortComparison().outcomeId() == 0,click:clearOutcome" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 							</span>
 						</div>
+                        <div data-bind="visible: cohortComparison().outcomeId() > 0 && cohortComparison().outcomeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The outcome cohort specified (#<span data-bind="text:cohortComparison().outcomeId()"></span>) was deleted. Please select a different cohort.</div>
 					</div>
 					<div>
 						<label>Specify the statistical model used to estimate the risk of outcome between target and comparator cohorts:</label>
@@ -391,6 +394,7 @@
 									<button class="btn btn-danger" data-bind="disable: cohortComparison().psInclusionId() == 0, click:clearPsInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 								</span>
 							</div>
+                            <div data-bind="visible: cohortComparison().psInclusionId() > 0 && cohortComparison().psInclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().psInclusionId()"></span>) was deleted. Please select a different concept set.</div>
 						</div>
 						<div>
 							<label>What concepts do you want to exclude from baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
@@ -401,6 +405,7 @@
 									<button class="btn btn-danger" data-bind="disable:cohortComparison().psExclusionId() == 0, click:clearPsExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 								</span>
 							</div>
+                            <div data-bind="visible: cohortComparison().psExclusionId() > 0 && cohortComparison().psExclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().psExclusionId()"></span>) was deleted. Please select a different concept set.</div>
 						</div>
 						<div>
 							<label>How do you want to restrict your cohorts based on the propensity score distribution?</label>
@@ -551,6 +556,7 @@
 									<span data-bind="if: cohortComparison().omInclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearOmInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
 								</span>
 							</div>
+                            <div data-bind="visible: cohortComparison().omInclusionId() > 0 && cohortComparison().omInclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().omInclusionId()"></span>) was deleted. Please select a different concept set.</div>
 						</div>
 						<div>
 							<label>What concepts do you want to exclude from baseline covariates in the outcome model? (Leave blank if you want to include everything)</label>
@@ -561,6 +567,7 @@
 									<span data-bind="if: cohortComparison().omExclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearOmExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
 								</span>
 							</div>
+                            <div data-bind="visible: cohortComparison().omExclusionId() > 0 && cohortComparison().omExclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().omExclusionId()"></span>) was deleted. Please select a different concept set.</div>
 						</div>
 					</div>
 					<div>
@@ -572,6 +579,7 @@
 								<span data-bind="if: cohortComparison().negativeControlId() > 0"><button class="btn btn-danger" data-bind="click:clearNegativeControl" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
 							</span>
 						</div>
+                        <div data-bind="visible: cohortComparison().negativeControlId() > 0 && cohortComparison().negativeControlCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().omInclusionId()"></span>) was deleted. Please select a different concept set.</div>
 					</div>
 				</div>
 				<div class="col-md-4"></div>

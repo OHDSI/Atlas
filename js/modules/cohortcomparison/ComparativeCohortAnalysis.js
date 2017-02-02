@@ -1,6 +1,8 @@
 define(function (require, exports) {
 
 	var ko = require('knockout');
+    var CohortDefinition = require('cohortbuilder/CohortDefinition')
+    var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet')
 
 	function ComparativeCohortAnalysis(data) {
 		var self = this;
@@ -51,40 +53,105 @@ define(function (require, exports) {
 
 		self.treatmentId = ko.observable(data.treatmentId != null ? data.treatmentId : 0);
 		self.treatmentCaption = ko.observable(data.treatmentCaption != null ? data.treatmentCaption : null);
-        self.treatmentCohortDefinition = ko.observable(null);
+        if (data.treatmentCohortDefinition != null) {
+			jsonCohortDefinition = JSON.parse(data.treatmentCohortDefinition);
+			self.treatmentCohortDefinition = ko.observable(new CohortDefinition(jsonCohortDefinition));
+        } else {        	
+        	self.treatmentCohortDefinition = ko.observable(null);
+        }
 
 		self.comparatorId = ko.observable(data.comparatorId != null ? data.comparatorId : 0);
         self.comparatorCaption = ko.observable(data.comparatorCaption != null ?  data.comparatorCaption : null);
-        self.comparatorCohortDefinition = ko.observable(null);
+        if (data.comparatorCohortDefinition != null) {
+			jsonCohortDefinition = JSON.parse(data.comparatorCohortDefinition);
+			self.comparatorCohortDefinition = ko.observable(new CohortDefinition(jsonCohortDefinition));
+        } else {        	
+        	self.comparatorCohortDefinition = ko.observable(null);
+        }
         
 		self.outcomeId = ko.observable(data.outcomeId != null ? data.outcomeId : 0);
 		self.outcomeCaption = ko.observable(data.outcomeCaption != null ? data.outcomeCaption : null);
-        self.outcomeCohortDefinition = ko.observable(null);
+        if (data.outcomeCohortDefinition != null) {
+			jsonCohortDefinition = JSON.parse(data.outcomeCohortDefinition);
+			self.outcomeCohortDefinition = ko.observable(new CohortDefinition(jsonCohortDefinition));
+        } else {        	
+        	self.outcomeCohortDefinition = ko.observable(null);
+        }
 
         self.psExclusionId = ko.observable(data.psExclusionId != null ? data.psExclusionId : 0);
         self.psExclusionCaption = ko.observable(data.psExclusionCaption != null ? data.psExclusionCaption : null);
-        self.psExclusionConceptSet = ko.observableArray(null);
-        self.psExclusionConceptSetSQL = ko.observable(null);
+		self.psExclusionConceptSet = ko.observableArray(null);
+        if (self.psExclusionId() > 0) {
+            var conceptSetData = {
+                                    id: self.psExclusionId(),
+                                    name: self.psExclusionCaption(),
+                                    expression: data.psExclusionConceptSet
+                                 };
+            self.psExclusionConceptSet.push(new ConceptSet(conceptSetData));
+            self.psExclusionConceptSetSQL = ko.observable(data.psExclusionConceptSetSql)
+        } else {
+            self.psExclusionConceptSetSQL = ko.observable(null);            
+        }
         
         self.psInclusionId = ko.observable(data.psInclusionId != null ? data.psInclusionId : 0);
         self.psInclusionCaption = ko.observable(data.psInclusionCaption != null ? data.psInclusionCaption : null);
         self.psInclusionConceptSet = ko.observableArray(null);
-        self.psInclusionConceptSetSQL = ko.observable(null);
+        if (self.psInclusionId() > 0) {
+            var conceptSetData = {
+                                    id: self.psInclusionId(),
+                                    name: self.psInclusionCaption(),
+                                    expression: data.psInclusionConceptSet
+                                 };
+            self.psInclusionConceptSet.push(new ConceptSet(conceptSetData));
+            self.psInclusionConceptSetSQL = ko.observable(data.psInclusionConceptSetSql)
+        } else {
+            self.psInclusionConceptSetSQL = ko.observable(null);
+        }
 
         self.omExclusionId = ko.observable(data.omExclusionId != null ? data.omExclusionId : 0);
         self.omExclusionCaption = ko.observable(data.omExclusionCaption != null ? data.omExclusionCaption : null);
         self.omExclusionConceptSet = ko.observableArray(null);
-        self.omExclusionConceptSetSQL = ko.observable(null);
+        if (self.omExclusionId() > 0) {
+            var conceptSetData = {
+                                    id: self.omExclusionId(),
+                                    name: self.omExclusionCaption(),
+                                    expression: data.omExclusionConceptSet
+                                 };
+            self.omExclusionConceptSet.push(new ConceptSet(conceptSetData));
+            self.omExclusionConceptSetSQL = ko.observable(data.omExclusionConceptSetSql)
+        } else {
+            self.omExclusionConceptSetSQL = ko.observable(null);
+        }
         
         self.omInclusionId = ko.observable(data.omInclusionId != null ? data.omInclusionId : 0);
         self.omInclusionCaption = ko.observable(data.omExclusionCaption != null ? data.omExclusionCaption : null);
         self.omInclusionConceptSet = ko.observableArray(null);
-        self.omInclusionConceptSetSQL = ko.observable(null);
+        if (self.omInclusionId() > 0) {
+            var conceptSetData = {
+                                    id: self.omInclusionId(),
+                                    name: self.omInclusionCaption(),
+                                    expression: data.omInclusionConceptSet
+                                 };
+            self.omInclusionConceptSet.push(new ConceptSet(conceptSetData));
+            self.omInclusionConceptSetSQL = ko.observable(data.omInclusionConceptSetSql)
+        } else {
+            self.omInclusionConceptSetSQL = ko.observable(null);
+        }
 
         self.negativeControlId = ko.observable(data.negativeControlId != null ? data.negativeControlId : 0);
 		self.negativeControlCaption = ko.observable(data.negativeControlCaption != null ? data.negativeControlCaption : null);
         self.negativeControlConceptSet = ko.observableArray(null);
-        self.negativeControlConceptSetSQL = ko.observable(null);
+        if (self.negativeControlId() > 0) {
+            var conceptSetData = {
+                                    id: self.negativeControlId(),
+                                    name: self.negativeControlCaption(),
+                                    expression: data.negativeControlConceptSet
+                                 };
+            self.negativeControlConceptSet.push(new ConceptSet(conceptSetData));
+            self.negativeControlConceptSetSQL = ko.observable(data.negativeControlConceptSetSql)
+        } else {
+            self.negativeControlConceptSetSQL = ko.observable(null);
+        }
         
         self.modelType = ko.observable(data.modelType != null ? data.modelType : null);
         self.delCovariatesSmallCount = ko.observable(data.delCovariatesSmallCount != null ? data.delCovariatesSmallCount : 100);
