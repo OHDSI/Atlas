@@ -1,5 +1,5 @@
 define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Concept) {
-	function ObservationPeriod(data) {
+	function ObservationPeriod(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
