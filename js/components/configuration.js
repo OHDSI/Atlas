@@ -1,10 +1,11 @@
-define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'access-denied'], function (ko, view, config, authApi) {
+define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'access-denied'], function (ko, view, config, authApi, sharedState) {
 	function configuration(params) {
 		var self = this;
 		self.config = config;
 		self.appInitializationFailed = params.model.appInitializationFailed;
 		self.services = config.services;
-
+		self.sharedState = sharedState;
+		
 		self.isAuthenticated = authApi.isAuthenticated;
 		self.hasAccess = ko.pureComputed(function () { return self.isAuthenticated() && authApi.isPermittedEditConfiguration(); });
 		self.canReadRoles = ko.pureComputed(function () { return self.isAuthenticated() && authApi.isPermittedReadRoles(); })
