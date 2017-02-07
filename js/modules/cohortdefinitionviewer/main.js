@@ -56,6 +56,9 @@ define(function (require, exports) {
 	var dateRange = require('./components/DateRange');
 	ko.components.register('date-range-viewer', dateRange);
 	
+	var periodInput = require('./components/Period');
+	ko.components.register('period-viewer', periodInput);
+	
 	var windowInput = require('./components/WindowInput');
 	ko.components.register('window-input-viewer',windowInput);
 	

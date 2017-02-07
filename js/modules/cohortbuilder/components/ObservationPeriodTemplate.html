@@ -11,6 +11,12 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td><div>limited to the patients first observation period</div></td>
 			</tr>
+			<tr data-bind="if: UserDefinedPeriod() != null, visible: UserDefinedPeriod() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }" class="fa fa-times" /></td>
+				<td>
+					using specified period: <period-input params="Period: UserDefinedPeriod"></period-input>
+				</td>									
+			</tr>
 			<tr data-bind="if: PeriodStartDate() != null, visible: PeriodStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }" class="fa fa-times" /></td>
 				<td>
