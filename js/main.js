@@ -219,7 +219,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 							// evaluate vocabulary daimons
 							if (daimon.daimonType == 'Vocabulary') {
 								source.hasVocabulary = true;
-								source.vocabularyUrl = service.url + source.sourceKey + '/vocabulary/';
+								source.vocabularyUrl = service.url + 'vocabulary/' + source.sourceKey + '/';
 								if (daimon.priority >= vocabularyPriority) {
 									vocabularyPriority = daimon.priority;
 									sharedState.vocabularyUrl(source.vocabularyUrl);
@@ -229,7 +229,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 							// evaluate evidence daimons
 							if (daimon.daimonType == 'Evidence') {
 								source.hasEvidence = true;
-								source.evidenceUrl = service.url + source.sourceKey + '/evidence/';
+								source.evidenceUrl = service.url + 'evidence/' + source.sourceKey + '/';
 								if (daimon.priority >= evidencePriority) {
 									evidencePriority = daimon.priority;
 									sharedState.evidenceUrl(source.evidenceUrl);
@@ -239,7 +239,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 							// evaluate results daimons
 							if (daimon.daimonType == 'Results') {
 								source.hasResults = true;
-								source.resultsUrl = service.url + source.sourceKey + '/cdmresults/';
+								source.resultsUrl = service.url + 'cdmresults/' + source.sourceKey + '/';
 								if (daimon.priority >= densityPriority) {
 									densityPriority = daimon.priority;
 									sharedState.resultsUrl(source.resultsUrl);
@@ -256,7 +256,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 						if (source.hasVocabulary) {
 							$.ajax({
-								url: service.url + source.sourceKey + '/vocabulary/info',
+								url: service.url + 'vocabulary/' + source.sourceKey + '/info',
 								timeout: 20000,
 								method: 'GET',
 								contentType: 'application/json',

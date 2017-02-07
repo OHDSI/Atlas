@@ -138,7 +138,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				return;
 			}
 
-			var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path;
+			var url = config.services[0].url + 'cdmresults/' + currentSource.sourceKey + '/' +currentReport.path;
 			self.loadingReport(true);
 			self.hasError(false);
 			self.activeReportDrilldown(false);
@@ -505,7 +505,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 		self.loadTreemap = function () {
 			var currentReport = self.currentReport();
 			var currentSource = self.currentSource();
-			var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path;
+			var url = config.services[0].url + 'cdmresults/' + currentSource.sourceKey + '/' + currentReport.path;
 
 			$("#treemap_container").find('svg').remove();
 			$('.evidenceVisualization').empty();
@@ -611,7 +611,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 			var currentSource = self.currentSource();
 			var currentReport = self.currentReport();
 			var currentConcept = self.currentConcept();
-			var url = config.services[0].url + currentSource.sourceKey + '/cdmresults/' + currentReport.path + '/' + currentConcept.concept_id;
+			var url = config.services[0].url + 'cdmresults/'+ currentSource.sourceKey + '/' + currentReport.path + '/' + currentConcept.concept_id;
 
 			$('.evidenceVisualization').empty();
 			self.loadingReportDrilldown(true);

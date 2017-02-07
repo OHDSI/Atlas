@@ -953,7 +953,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			var sourceKey = source.sourceKey;
 			var cohortDefinitionId = self.currentCohortDefinition() && self.currentCohortDefinition().id();
 			if (cohortDefinitionId != undefined) {
-				$.ajax(config.services[0].url + sourceKey + '/cohortresults/' + cohortDefinitionId + '/distinctPersonCount', {
+				$.ajax(config.services[0].url + 'cohortresults/' + sourceKey + '/' + cohortDefinitionId + '/distinctPersonCount', {
 					observable: observable,
 					success: function (result) {
 						this.observable(result);
@@ -970,7 +970,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		}
 		self.getCompletedAnalyses = function (source) {
 			var cohortDefinitionId = self.currentCohortDefinition().id();
-			$.ajax(config.services[0].url + source.sourceKey + '/cohortresults/' + cohortDefinitionId + '/analyses', {
+			$.ajax(config.services[0].url + 'cohortresults/' + source.sourceKey + '/' + cohortDefinitionId + '/analyses', {
 				success: function (analyses) {
 					sourceAnalysesStatus = {};
 					// initialize cohort analyses status
