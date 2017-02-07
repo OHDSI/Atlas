@@ -65,6 +65,9 @@ define(function (require, exports) {
 	var textFilter = require('./components/TextFilter');
 	ko.components.register('text-filter-input',textFilter);	
 	
+	var periodInput = require('./components/Period');
+	ko.components.register('period-input',periodInput);
+
 	var conceptList = require('./components/ConceptList');
 	ko.components.register('concept-list',conceptList);
 	
