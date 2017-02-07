@@ -30,7 +30,7 @@ define(function (require, exports) {
 
 		// preload domain list once for all future calls to getDomains()
 		$.ajax({
-			url: config.webAPIRoot + defaultSource.sourceKey + '/' + 'vocabulary/domains',
+			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
 		}).then(function (results) {
 			$.each(results, function (i, v) {
 				domains.push(v.DOMAIN_ID);
@@ -130,7 +130,7 @@ define(function (require, exports) {
 		if (url)
 			repositoryUrl = url + 'conceptset/';
 		else
-			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/conceptset/';
+			repositoryUrl = config.webAPIRoot + 'conceptset/';
 
 		var getConceptSetListPromise = $.ajax({
 			url: repositoryUrl
@@ -156,13 +156,9 @@ define(function (require, exports) {
 		return getConceptSetPromise;
 	}
 
-	function resolveConceptSetExpression(expression, url) {
-		var repositoryUrl;
-
-		if (url)
-			repositoryUrl = url + 'vocabulary/resolveConceptSetExpression';
-		else
-			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/vocabulary/resolveConceptSetExpression';
+	function resolveConceptSetExpression(expression, url, sourceKey) {
+		
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/resolveConceptSetExpression';
 
 		var resolveConceptSetExpressionPromise = $.ajax({
 			url: repositoryUrl,
@@ -174,13 +170,8 @@ define(function (require, exports) {
 		return resolveConceptSetExpressionPromise;
 	}
 
-	function getConceptSetExpressionSQL(expression, url) {
-		var repositoryUrl;
-
-		if (url)
-			repositoryUrl = url + 'vocabulary/conceptSetExpressionSQL';
-		else
-			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/vocabulary/conceptSetExpressionSQL';
+	function getConceptSetExpressionSQL(expression, url, sourceKey) {
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/conceptSetExpressionSQL';
 
 		var conceptSetExpressionSQLPromise = $.ajax({
 			url: repositoryUrl,
@@ -192,13 +183,8 @@ define(function (require, exports) {
 		return conceptSetExpressionSQLPromise;
 	}
 
-	function getConceptsById(identifiers, url) {
-		var repositoryUrl;
-
-		if (url)
-			repositoryUrl = url + 'vocabulary/lookup/identifiers';
-		else
-			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/vocabulary/lookup/identifiers';
+	function getConceptsById(identifiers, url, sourceKey) {
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/lookup/identifiers';
 
 		var getConceptsByIdPromise = $.ajax({
 			url: repositoryUrl,
@@ -210,13 +196,8 @@ define(function (require, exports) {
 		return getConceptsByIdPromise;
 	}
 
-	function getMappedConceptsById(identifiers, url) {
-		var repositoryUrl;
-
-		if (url)
-			repositoryUrl = url + 'vocabulary/lookup/mapped';
-		else
-			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/vocabulary/lookup/mapped';
+	function getMappedConceptsById(identifiers, url, sourceKey) {
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/lookup/mapped';
 
 		var getMappedConceptsByIdPromise = $.ajax({
 			url: repositoryUrl,
@@ -229,12 +210,7 @@ define(function (require, exports) {
 	}
 
 	function optimizeConceptSet(conceptSetItems, url) {
-		var repositoryUrl;
-
-		if (url)
-			repositoryUrl = url + 'vocabulary/optimize';
-		else
-			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/vocabulary/optimize';
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/optimize';
 
 		var getOptimizedConceptSetPromise = $.ajax({
 			url: repositoryUrl,
@@ -246,13 +222,8 @@ define(function (require, exports) {
 		return getOptimizedConceptSetPromise;
 	}
 
-	function compareConceptSet(compareTargets, url) {
-		var repositoryUrl;
-
-		if (url)
-			repositoryUrl = url + 'vocabulary/compare';
-		else
-			repositoryUrl = config.webAPIRoot + defaultSource.sourceKey + '/vocabulary/compare';
+	function compareConceptSet(compareTargets, url, sourceKey) {
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/compare';
 
 		var getComparedConceptSetPromise = $.ajax({
 			url: repositoryUrl,

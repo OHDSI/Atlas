@@ -14,7 +14,7 @@ define(function (require, exports) {
         }
 
         $.ajax({
-            url: config.webAPIRoot + sourceKey + '/cdmresults/conceptRecordCount',
+            url: config.webAPIRoot + 'cdmresults/' + sourceKey + '/conceptRecordCount',
             method: 'POST',
             contentType: 'application/json',
             timeout: 10000,
