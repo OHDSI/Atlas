@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./ObservationPeriodTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Period', '../CriteriaGroup', 'text!./ObservationPeriodTemplate.html'], function (ko, options, Range, Period, CriteriaGroup, template) {
 
 	function ObservationPeriodViewModel(params) {
 		var self = this;
@@ -26,6 +26,16 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 				action: function() { 
 					if (self.Criteria.AgeAtStart() == null)
 						self.Criteria.AgeAtStart(new Range());
+				}
+			},	
+			{
+				text: "Specify Start and End Dates",
+				value: 6,
+				selected: false,
+				description: "Specify start and end date to use for the Observation Period.",
+				action: function() { 
+					if (self.Criteria.UserDefinedPeriod() == null)
+						self.Criteria.UserDefinedPeriod(new Period());
 				}
 			}, 
 			{

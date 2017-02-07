@@ -1,5 +1,5 @@
-define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Concept) {
-	function ObservationPeriod(data) {
+define(['knockout', './Criteria', '../InputTypes/Range', '../InputTypes/Period', 'conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Period, Concept) {
+	function ObservationPeriod(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
@@ -11,7 +11,8 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.PeriodType = ko.observable(data.PeriodType && ko.observableArray(data.PeriodType.map(function (d) {
 			return new Concept(d);
 		})));
-
+		self.UserDefinedPeriod = ko.observable(data.UserDefinedPeriod && new Period(data.UserDefinedPeriod));
+		
 		// Derived Fields
 		self.AgeAtStart = ko.observable(data.AgeAtStart && new Range(data.AgeAtStart));
 		self.AgeAtEnd = ko.observable(data.AgeAtEnd && new Range(data.AgeAtEnd));

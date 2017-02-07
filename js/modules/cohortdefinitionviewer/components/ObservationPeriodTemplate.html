@@ -4,6 +4,9 @@ an observation period
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>limited to the patients first observation period</li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(UserDefinedPeriod) != null -->
+	<li>using specified period: <period-viewer params="Period: UserDefinedPeriod"></period-viewer></li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PeriodStartDate) != null -->
 	<li>period start is <date-range-viewer params="Range: PeriodStartDate"></date-range-viewer></li>
 <!-- /ko -->
