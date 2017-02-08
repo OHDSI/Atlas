@@ -88,7 +88,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 								model: self
 							};
 							self.currentView('cohort-definition-manager');
-							self.currentCohortDefinitionMode('definition');
+							self.currentCohortDefinitionMode(util.getState('currentCohortDefinitionMode') || 'definition');
 							self.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details');
 						});
 					},
