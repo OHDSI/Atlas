@@ -320,7 +320,7 @@
 							<!-- ko if:$component.model.sourceAnalysesStatus[sourceKey]().ready -->
 							<div data-bind="click:$component.generateAnalyses" class="btn btn-sm btn-primary">Generate</div>
 
-							<a class="btn btn-sm btn-success" data-bind="attr: {href: $component.config.services[0].url + sourceKey + '/cohortresults/' + $component.model.currentCohortDefinition().id() + '/export.zip'}"><i class="fa fa-cloud-download"></i> Export</a>
+							<a class="btn btn-sm btn-success" data-bind="attr: {href: $component.config.services[0].url + 'cohortresults/' + sourceKey + '/' + $component.model.currentCohortDefinition().id() + '/export.zip'}"><i class="fa fa-cloud-download"></i> Export</a>
 							<!-- /ko -->
 						</td>
 						<!-- /ko -->
