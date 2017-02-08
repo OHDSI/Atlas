@@ -5,11 +5,13 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 			var self = this;
 			self.sources = ko.observableArray([]);
 			self.sourceKey = ko.observable(util.getState('sourceKey'));
+            self.model = params.model;
 			window._ = _;
 			window.exploreCohort = self;
 			self.defaultFetchMax = 100;
 			self.sourceKey.subscribe(function(sourceKey) {
 				util.setState('sourceKey', sourceKey);
+                util.setState('currentCohortDefinitionMode', self.model.currentCohortDefinitionMode())
 			});
 			/*
 			self.cohortDefSource = ko.computed(function() {
