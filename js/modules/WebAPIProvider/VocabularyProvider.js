@@ -99,7 +99,7 @@ define(function (require, exports) {
 		}
 
 		$.ajax({
-			url: config.webAPIRoot + defaultSource.sourceKey + '/' + 'vocabulary/search',
+			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/search',
 			method: 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify(search),
@@ -118,7 +118,7 @@ define(function (require, exports) {
 
 	function getConcept(id) {
 		var getConceptPromise = $.ajax({
-			url: config.webAPIRoot + defaultSource.sourceKey + '/vocabulary/concept/' + id
+			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/concept/' + id
 		});
 
 		return getConceptPromise;

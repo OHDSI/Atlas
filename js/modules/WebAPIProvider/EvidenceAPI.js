@@ -5,7 +5,7 @@ define(function (require, exports) {
 	
 	function getNegativeControls(sourceKey, conceptSetId) {
 		var infoPromise = $.ajax({
-			url: config.webAPIRoot + '/evidence/' + sourceKey + '/negativecontrols/' + (conceptSetId || '-1'),
+			url: config.webAPIRoot + 'evidence/' + sourceKey + '/negativecontrols/' + (conceptSetId || '-1'),
 			error: function (error) {
 				console.log("Error: " + error);
 			}
@@ -15,7 +15,7 @@ define(function (require, exports) {
     
     function generateNegativeControls(sourceKey, conceptSetId, conceptSetName, conceptDomainId, targetDomainId, conceptIds) {
         var negativeControlsJob = $.ajax({
-            url: config.webAPIRoot +'/evidence/' + sourceKey + '/negativecontrols',
+            url: config.webAPIRoot +'evidence/' + sourceKey + '/negativecontrols',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({

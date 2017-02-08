@@ -15,7 +15,6 @@
                 <th></th>
                 <th>Source Name</th>
                 <th>Generation Status</th>
-                <th>Distinct People</th>
                 <th>Generated</th>
                 <th>Generation Duration</th>
                 <th></th>
@@ -30,9 +29,9 @@
                     <td class="statusIndicator">
                         <span data-bind="text: status"></span>
                     </td>
-                    <td class="text-right" data-bind="text: startTime">
+                    <td data-bind="text: startTime">
                     </td>
-                    <td class="text-right" data-bind="text: executionDuration">
+                    <td data-bind="text: executionDuration">
                     </td>
                     <td class="rightaligned">
                         <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid, click:$component.loadResults"><i class="fa fa-eye"></i>&nbsp;View Evidence</div>

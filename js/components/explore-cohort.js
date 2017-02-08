@@ -51,7 +51,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 					source.fetchMax = ko.observable(self.defaultFetchMax);
 					self.sources.push(source);
 					$.ajax({
-						url: params.services.url + source.sourceKey + '/cohortresults/' + params.model.currentCohortDefinition().id() + '/breakdown',
+                        url: params.services.url + 'cohortresults/' + source.sourceKey + '/' + params.model.currentCohortDefinition().id() + '/breakdown', 
 						method: 'GET',
 						headers: {
 							Authorization: authApi.getAuthorizationHeader()
@@ -98,7 +98,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 								let drugss = source.facets()[3].Members.filter(d => d.Selected);
 								let drugs = drugss.length ?
 									drugss.map(d => d.Name).join(',') : "''";
-								let url = params.services.url + source.sourceKey + '/cohortresults/' + params.model.currentCohortDefinition().id() + '/breakdown/' + gender + '/' + age + '/' + conditions + '/' + drugs + '/' + 100; // max number of cohort people to retrieve
+								let url = params.services.url + 'cohortresults/' + source.sourceKey + '/' + params.model.currentCohortDefinition().id() + '/breakdown/' + gender + '/' + age + '/' + conditions + '/' + drugs + '/' + 100; // max number of cohort people to retrieve
 								$.ajax({
 									url: url,
 									method: 'GET',
