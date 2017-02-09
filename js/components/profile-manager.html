@@ -30,9 +30,10 @@
 	</form>
 	<div style="margin-top:5px;" data-bind="visible:person, with:person">
 		<i data-bind="attr: {class : $component.getGenderClass}"></i>&nbsp;
-		<span data-bind="text: gender"></span>&nbsp;&nbsp;
-		<span data-bind="text: recordCount + ' events'"></span>&nbsp;&nbsp;
+		<span data-bind="text: gender"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
+		<span data-bind="text: recordCount + ' events'"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
 		<span data-bind="text: `Age ${age} at index`"></span>
+        <span data-bind="if: $component.currentCohortDefinition() != null">|&nbsp;&nbsp;Cohort: <a class="asset-heading-link" data-bind="text: $component.currentCohortDefinition().name(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId()}" target="_new"></a></span>
 	</div>
 </div>
 
@@ -78,6 +79,7 @@
 				data-bind="visible:showSection.datatable" 
 				params="{
 						recs: filteredRecs,
+                        dom: 'Blfiprt',
 						updateOnPersonChange: person,
 						columns: columns, 
 						facets: facetsObs, 

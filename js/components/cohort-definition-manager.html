@@ -330,14 +330,11 @@
 			<div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingReport()">loading</div>
 			<report-manager params="{model: pageModel, showSelectionArea: false}"></report-manager>
 		</div>
-
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'explore' }" class="tab-pane">
-				<div class="paddedWrapper"
-					 data-bind="if: $component.tabMode()==='explore'" >
+				<div class="paddedWrapper">
 					<explore-cohort params="{services:$component.config.services[0], model: pageModel, showSelectionArea: false }"></explore-cohort>
 				</div>
 			</div>
-
 		</div>
 	</div>
 </div>

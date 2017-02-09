@@ -3,131 +3,101 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 
 		function exploreCohort(params) {
 			var self = this;
-			self.sources = ko.observableArray([]);
-			self.sourceKey = ko.observable(util.getState('sourceKey'));
-            self.model = params.model;
 			window._ = _;
 			window.exploreCohort = self;
 			self.defaultFetchMax = 100;
-			self.sourceKey.subscribe(function(sourceKey) {
-				util.setState('sourceKey', sourceKey);
-                util.setState('currentCohortDefinitionMode', self.model.currentCohortDefinitionMode())
-			});
-			/*
-			self.cohortDefSource = ko.computed(function() {
-				return {
-									cohortDef: params.model.currentCohortDefinition(),
-									sourceKey: self.sourceKey(),
-				};
-			});
-			self.cohortDefSource.subscribe(function(o) {
-				self.loadConceptSets(o);
-			});
-			self.loadConceptSets = function(o) {
-				var conceptSets = ko.toJS(o.cohortDef.expression().ConceptSets());
-				var cs = {};
-				window.cs = cs;
-				conceptSets.forEach(function(conceptSet) {
-					var success = function(results) {
-						console.log(results);
-						cs[conceptSet.name] = results;
-					};
-					pageModel.resolveConceptSetExpressionSimple(
-						ko.toJSON(conceptSet.expression), success)
-				});
-			};
-			self.loadConceptSets(self.cohortDefSource());
-			*/
-
-			params.services.sources
-				.filter(source => source.hasCDM)
-				.map(source => _.clone(source))
-				.forEach(source => {
-					source.breakdown = ko.observable({});
-					source.cf = ko.observable({});
-					source.facets = ko.observableArray([]);
-					source.filtersChanged = ko.observable();
-					source.filteredRecs = ko.observable([]);
-					source.someMembers = ko.observableArray([]);
-					source.membersChosen = ko.observable('');
-					source.fetchMax = ko.observable(self.defaultFetchMax);
-					self.sources.push(source);
-					$.ajax({
-                        url: params.services.url + 'cohortresults/' + source.sourceKey + '/' + params.model.currentCohortDefinition().id() + '/breakdown', 
-						method: 'GET',
-						headers: {
-							Authorization: authApi.getAuthorizationHeader()
-						},
-						contentType: 'application/json',
-						success: function (breakdown) {
-							let cf = crossfilter(breakdown);
-							source.breakdown(breakdown);
-							source.cf(cf);
-							source.facets.push(..._.map(dimConfig, function (dc, dimKey) {
-								let dim = _.clone(dc);
-								dim.key = dimKey;
-								dim.Members = [];
-								dim.cfdim = cf.dimension(dim.func);
-								dim.filter = ko.observable(null);
-								dim.filter.subscribe(filter => {
-									dim.cfdim.filter(filter);
-									source.filtersChanged(filter);
-								});
-								dim.group = dim.cfdim.group();
-								dim.group.reduceSum(d => d.people);
-								dim.groupAll = dim.cfdim.groupAll();
-								dim.groupAll.reduceSum(d => d.people);
-								dim.countFunc = group => group.value;
-								return dim;
-							}));
-							source.groupAll = source.cf().groupAll();
-							source.groupAll.reduceSum(d => d.people);
-							source.filtersChanged.subscribe(() => {
-								source.filteredRecs(source.groupAll.value());
-							});
-							source.filteredRecs.subscribe(function () {
-								source.someMembers.removeAll();
-								source.membersChosen(source.groupAll.value() + ' people in cohort matching:');
-								let genders = source.facets()[0].Members.filter(d => d.Selected);
-								let gender = genders.length ?
-									genders.map(d => `'${d.Name}'`).join(',') : "''";
-								let ages = source.facets()[1].Members.filter(d => d.Selected);
-								let age = ages.length ?
-									ages.map(d => `'${d.Name}'`).join(',') : "''";
-								let conditionss = source.facets()[2].Members.filter(d => d.Selected);
-								let conditions = conditionss.length ?
-									conditionss.map(d => d.Name).join(',') : "''";
-								let drugss = source.facets()[3].Members.filter(d => d.Selected);
-								let drugs = drugss.length ?
-									drugss.map(d => d.Name).join(',') : "''";
-								let url = params.services.url + 'cohortresults/' + source.sourceKey + '/' + params.model.currentCohortDefinition().id() + '/breakdown/' + gender + '/' + age + '/' + conditions + '/' + drugs + '/' + 100; // max number of cohort people to retrieve
-								$.ajax({
-									url: url,
-									method: 'GET',
-									contentType: 'application/json',
-									success: function (people) {
-										people.forEach(function (person) {
-											//person.url = '#/profiles/' + source.sourceKey + '/' + params.model.currentCohortDefinition().id() + '/' + person.personId;
-											person.url = '#/profiles';
-										});
-										source.someMembers.removeAll();
-										source.someMembers.push(...people);
-										source.fetchMax(Math.min(self.defaultFetchMax, people.length));
-									}
-								});
-							});
-							source.filteredRecs(source.breakdown())
-						}
-					});
-				});
-
-			self.viewProfile = function(person) {
-				//console.log(person);
-				util.setState('currentCohortDefinitionId', params.model.currentCohortDefinition().id());
-				util.setState('personId', person.personId);
-				location.hash = '#/profiles?' + location.hash.replace(/^.*\?/,'');
-				//return true;
-			};
+            
+			self.sources = ko.observableArray(params.services.sources.filter(source => source.hasCDM));
+			self.sourceKey = ko.observable();
+            self.cohortDefinitionId = params.model.currentCohortDefinition().id;
+            self.model = params.model;
+            self.breakdown = ko.observable({});
+            self.cf = ko.observable({});
+            self.facets = ko.observableArray([]);
+            self.filtersChanged = ko.observable();
+            self.filteredRecs = ko.observable([]);
+            self.someMembers = ko.observableArray([]);
+            self.membersChosen = ko.observable('');
+            self.fetchMax = ko.observable(self.defaultFetchMax);
+            self.loading = ko.observable(false);
+            
+            self.getBreakdown = function(source) {
+                self.sourceKey(source.sourceKey);
+                self.loading(true);
+                $.ajax({
+                    url: params.services.url + 'cohortresults/' + source.sourceKey + '/' + self.cohortDefinitionId() + '/breakdown', 
+                    method: 'GET',
+                    headers: {
+                        Authorization: authApi.getAuthorizationHeader()
+                    },
+                    contentType: 'application/json',
+					error: function (err) {
+						self.loading(false);
+					},                    
+                    success: function (breakdown) {
+                        let cf = crossfilter(breakdown);
+                        self.breakdown(breakdown);
+                        self.cf(cf);
+                        self.facets.removeAll();
+                        self.facets.push(..._.map(dimConfig, function (dc, dimKey) {
+                            let dim = _.clone(dc);
+                            dim.key = dimKey;
+                            dim.Members = [];
+                            dim.cfdim = cf.dimension(dim.func);
+                            dim.filter = ko.observable(null);
+                            dim.filter.subscribe(filter => {
+                                dim.cfdim.filter(filter);
+                                self.filtersChanged(filter);
+                            });
+                            dim.group = dim.cfdim.group();
+                            dim.group.reduceSum(d => d.people);
+                            dim.groupAll = dim.cfdim.groupAll();
+                            dim.groupAll.reduceSum(d => d.people);
+                            dim.countFunc = group => group.value;
+                            return dim;
+                        }));
+                        self.groupAll = self.cf().groupAll();
+                        self.groupAll.reduceSum(d => d.people);
+                        self.filtersChanged.subscribe(() => {
+                            self.filteredRecs(self.groupAll.value());
+                        });
+                        self.filteredRecs.subscribe(function () {
+                            self.someMembers.removeAll();
+                            self.membersChosen(self.groupAll.value() + ' people in cohort matching:');
+                            let genders = self.facets()[0].Members.filter(d => d.Selected);
+                            let gender = genders.length ?
+                                genders.map(d => `'${d.Name}'`).join(',') : "''";
+                            let ages = self.facets()[1].Members.filter(d => d.Selected);
+                            let age = ages.length ?
+                                ages.map(d => `'${d.Name}'`).join(',') : "''";
+                            let conditionss = self.facets()[2].Members.filter(d => d.Selected);
+                            let conditions = conditionss.length ?
+                                conditionss.map(d => d.Name).join(',') : "''";
+                            let drugss = self.facets()[3].Members.filter(d => d.Selected);
+                            let drugs = drugss.length ?
+                                drugss.map(d => d.Name).join(',') : "''";
+                            let url = params.services.url + 'cohortresults/' + source.sourceKey + '/' + self.cohortDefinitionId() + '/breakdown/' + gender + '/' + age + '/' + conditions + '/' + drugs + '/' + 100; // max number of cohort people to retrieve
+                            $.ajax({
+                                url: url,
+                                method: 'GET',
+                                contentType: 'application/json',
+                                success: function (people) {
+                                    people.forEach(function (person) {
+                                        //person.url = '#/profiles/' + source.sourceKey + '/' + self.cohortDefinitionId() + '/' + person.personId;
+                                        person.url = '#/profiles/' + source.sourceKey + '/' + person.personId + '/' + self.cohortDefinitionId();
+                                    });
+                                    self.someMembers.removeAll();
+                                    self.someMembers.push(...people);
+                                    self.fetchMax(Math.min(self.defaultFetchMax, people.length));
+                                }
+                            });
+                        });
+                        self.filteredRecs(self.breakdown());
+                        self.loading(false);
+                    }
+                });                
+            }
+    
 			self.selectedDesc = function (facet) {
 				let selected = facet.Members.filter(d => d.Selected);
 				if (selected.length) {

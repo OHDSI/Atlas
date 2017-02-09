@@ -2,41 +2,38 @@
 	<li role="presentation" 
 			data-bind="
 				css: { active: $component.sourceKey() == sourceKey }, 
-				click: function() { $component.sourceKey(sourceKey) } ">
+				click: $component.getBreakdown.bind(sourceKey)">
 					<a data-bind="text: sourceName"></a>
 	</li>
 </ul>
-<div data-bind="foreach: sources" class="tab-content">
-	<div role="tabpanel" 
-				data-bind="css: {active: $component.sourceKey() == sourceKey}" 
-				class="tab-pane">
+<div class="tab-content">
+    <div data-bind="visible: loading" class="loading">loading</div>
+	<div data-bind="visible: (loading() == false && $component.breakdown().length > 0)">
 		<div class="paddedWrapper">
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="row">
 						<faceted-datatable-cf-profile class="feFilter col-xs-2" id="explore-cohort-table" params="{
-								recs: filteredRecs,
-								facets: facets,
+								recs: $component.filteredRecs,
+								facets: $component.facets,
 								columns: $component.columns, 
 								facetsOnly: true,
 							}"></faceted-datatable-cf-profile>
 						<div class="col-xs-8 col-xs-offset-2">
-							<div data-bind="text:membersChosen" />
-							<div data-bind="foreach:facets">
+							<div data-bind="text:$component.membersChosen" />
+							<div data-bind="foreach:$component.facets">
 								<div data-bind="text:$component.selectedDesc($data)" />
 							</div>
-							<div data-bind="if: !someMembers().length">
+							<div data-bind="if: !$component.someMembers().length">
 								Fetching first <span data-bind="text:$component.defaultFetchMax"/> members
 							</div>
-							<div data-bind="if: someMembers().length">
-								<span data-bind="text:someMembers().length === $component.defaultFetchMax 
+							<div data-bind="if: $component.someMembers().length">
+								<span data-bind="text:$component.someMembers().length === $component.defaultFetchMax 
 																	? 'First' : 'Found'"/>
-								<span data-bind="text:someMembers().length"/> members:
+								<span data-bind="text:$component.someMembers().length"/> members:
 							</div>
-							<div data-bind="foreach:someMembers">
-								<a data-bind="text:personId, 
-															click:$component.viewProfile,
-															attr: {href: '#/profiles'}" />
+							<div data-bind="foreach:$component.someMembers">
+								<a data-bind="text:personId, attr: {href: url}" target="_blank" />
 							</div>
 						</div>
 					</div>
@@ -65,5 +62,9 @@
 			</div>
 		</div>
 	</div>
-
+    <div data-bind="visible: (loading() == false && $component.breakdown().length <= 0)">
+		<div class="paddedWrapper">
+            This cohort has no members available to view for the selected data source. Please ensure that you have generated the cohort using the Generation tab.
+        </div>        
+    </div>
 </div>

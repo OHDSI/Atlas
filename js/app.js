@@ -92,7 +92,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 								model: self
 							};
 							self.currentView('cohort-definition-manager');
-							self.currentCohortDefinitionMode(util.getState('currentCohortDefinitionMode') || 'definition');
+							self.currentCohortDefinitionMode('definition');
 							self.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details');
 						});
 					},
@@ -181,14 +181,15 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 							self.currentView('importer');
 						});
 					},
-					'/profiles': function () {
+					'/profiles/?((\w|.)*)': function (path) {
 						require(['profile-manager', 'cohort-definition-browser'], function () {
+							path = path.split("/");
 							self.componentParams = {
-								model: self
+								model: self,
+								sourceKey: (path[0] || null),
+								personId: (path[1] || null),
+								cohortDefinitionId: (path[2] || null) 
 							};
-							var cohortDefinitionId = util.getState('currentCohortDefinitionId');
-							if (typeof cohortDefinitionId !== "undefined")
-								self.loadCohortDefinition(cohortDefinitionId, null, 'profile-manager');
 							self.currentView('profile-manager');
 						});
 					},

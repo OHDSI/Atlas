@@ -50,6 +50,16 @@ table.cohort-generate-sources thead {
 	font-size: 14px;
 }
 
+.asset-heading-link {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.asset-heading-link:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
 body.splash {
 	font-size: 12px;
 	margin: 0px;

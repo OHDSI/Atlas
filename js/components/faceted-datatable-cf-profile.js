@@ -16,7 +16,26 @@ define(['knockout', 'text!./faceted-datatable-cf-profile.html', 'knockout.dataTa
 		self.rowClick = params.rowClick;
 		self.facetsOnly = params.facetsOnly;
 
+        // Set some defaults for the data table
+		self.autoWidth = params.autoWidth || true;
+		self.buttons = params.buttons || [
+				'colvis','copyHtml5','excelHtml5','csvHtml5','pdfHtml5'
+		];
+		self.colVis = params.colVis || {
+						buttonText: 'Change Columns',
+						align: 'right',
+						overlayFade: 0,
+						showAll: 'Show All Columns',
+						restore: 'Reset Columns'
+					};
+		self.dom = params.dom || 'Blfiprt';
+		self.language = params.language || {
+						search: 'Filter: '
+					};
+		self.lengthMenu = params.lengthMenu || [[15, 30, 45, -1], [15, 30, 45,'All']];
 		self.order = params.order || [[1,'desc']];
+		self.orderClasses = params.orderClasses || false;
+		self.ordering = params.ordering || true;
 
 		self.searchFilter = params.searchFilter;
 		self.initCompleteCallback = function() {
