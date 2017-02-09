@@ -1,6 +1,6 @@
 "use strict";
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'ohdsi.util', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf-profile', 'components/profileChart', 'css!./styles/profileManager.css'],
-	function (ko, view, d3, config, _, crossfilter, util) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter/crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3_tip', 'knockout.dataTables.binding', 'components/faceted-datatable-cf-profile', 'components/profileChart', 'css!./styles/profileManager.css'],
+	function (ko, view, d3, config, _, crossfilter, util, CohortDefinition, cohortDefinitionAPI) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
 												 // is an array of recs in the group
@@ -19,14 +19,24 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.model = params.model;
 			self.aspectRatio = ko.observable();
 
-			self.sourceKey = ko.observable(util.getState('sourceKey'));
-			self.personId = ko.observable(util.getState('personId'));
-			util.onStateChange('sourceKey', function(evt, {val} = {}) {
-				self.sourceKey(val);
-			});
-			util.onStateChange('personId', function(evt, {val} = {}) {
-				self.personId(val);
-			});
+			self.sourceKey = ko.observable(params.sourceKey); 
+			self.personId = ko.observable(params.personId); 
+            self.cohortDefinitionId = ko.observable(params.cohortDefinitionId);
+            self.currentCohortDefinition = ko.observable(null);
+            
+            // if a cohort definition id has been specified, see if it is 
+            // already loaded into the page model. If not, load it from the 
+            // server
+            if (self.cohortDefinitionId() && (self.model.currentCohortDefinition() && self.model.currentCohortDefinition().id() == self.cohortDefinitionId)) {
+                // The cohort definition requested is already loaded into the page model - just reference it
+                self.currentCohortDefinition(self.model.currentCohortDefintion())
+            } else if (self.cohortDefinitionId()) {
+                cohortDefinitionAPI.getCohortDefinition(self.cohortDefinitionId()).then(function (cohortDefinition) {
+					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+					self.currentCohortDefinition(new CohortDefinition(cohortDefinition));
+				});
+            }
+            
 			self.cohortSource = ko.observable();
 			self.person = ko.observable();
 			self.loadingPerson = ko.observable(false);
@@ -39,8 +49,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 
 			self.cohortDefSource = ko.computed(function() {
 				return {
-									cohortDef: params.model.currentCohortDefinition(),
-									sourceKey: self.sourceKey(),
+                    cohortDef: self.currentCohortDefinition(),
+                    sourceKey: self.sourceKey(),
 				};
 			});
 			self.cohortDefSource.subscribe(function(o) {
@@ -73,32 +83,12 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			});
 
 			self.sourceKey.subscribe(function (sourceKey) {
-				util.setState('sourceKey', sourceKey);
-				/*
-				self.cohortSource(_.find(
-					self.model.cohortDefinitionSourceInfo(), {
-						sourceKey: sourceKey
-					}));
-				self.personId(null);
-				self.person(null);
-				document.location = '#/profiles/' + sourceKey;
-				*/
+                document.location = '#/profiles/' + sourceKey;
 			});
 			self.personId.subscribe(function (personId) {
-				util.setState('personId', personId);
+				document.location = "#/profiles/" + self.sourceKey() + '/' + personId;
 			});
 
-			/*
-			if (params.model.currentCohortDefinition()) {
-				console.log("might be clobbering route here");
-				self.sourceKey(self.services.sources[0].sourceKey);
-			}
-			*/
-		  /*
-			params.model.currentCohortDefinition.subscribe(function (def) {
-				self.sourceKey(self.services.sources[0].sourceKey);
-			});
-			*/
 
 			let personRequests = {};
 			let personRequest;
@@ -123,10 +113,15 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						person.personId = self.personId();
 						self.loadingPerson(false);
 						let cohort;
-						let cohortDefinitionId = util.getState('currentCohortDefinitionId');
+						let cohortDefinitionId = self.cohortDefinitionId();
 						if (cohortDefinitionId) {
-							cohort = _.find(person.cohorts, { cohortDefinitionId });
-						} else {
+							cohort = _.find(person.cohorts, function(o) { return o.cohortDefinitionId == cohortDefinitionId; });
+						}
+						// In the event that we could not find
+						// the matching cohort in the person object
+						// or the cohort definition id is not specified
+						// default it
+						if (typeof cohort === "undefined") {
 							cohort = {
 								startDate: _.chain(person.records)
 									.map(d => d.startDate)
