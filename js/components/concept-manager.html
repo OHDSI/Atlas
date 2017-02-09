@@ -166,6 +166,6 @@
 	</div>
 
 	<div data-bind="visible: model.currentConceptMode() == 'related' && !loadingRelated()">
-		<faceted-datatable params="{orderColumn: 7, columns: model.relatedConceptsColumns, options: model.relatedConceptsOptions, reference: model.relatedConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
+		<faceted-datatable params="{orderColumn: 7, columns: relatedConceptsColumns, options: relatedConceptsOptions, reference: model.relatedConcepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
 	</div>
 </div>

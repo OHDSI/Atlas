@@ -3,7 +3,6 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		$.support.cors = true;
 		var self = this;
 		self.authApi = authApi;
-		self.appInitializationFailed = ko.observable(false);
 		self.componentParams = {};
 		self.initPromises = [];
 		self.applicationStatus = ko.observable('initializing');
@@ -50,9 +49,14 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 
 			return pageTitle;
 		});
-
+		self.sharedState = sharedState;
+		
+		self.initializationComplete = ko.pureComputed(function() {
+			return sharedState.appInitializationStatus() != 'initializing';
+		});
+		
 		self.initComplete = function () {
-			if (!self.appInitializationFailed()) {
+			if (self.sharedState.appInitializationStatus()=='initializing') {
 				var routerOptions = {
 					notfound: function () {
 						self.currentView('search');
@@ -135,7 +139,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					},
 					'/role/:id': function (id) {
 						require(['role-details'], function () {
-						self.currentRoleId(id);
+							self.currentRoleId(id);
 							self.currentView('role');
 						});
 					},
@@ -205,17 +209,11 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 							self.currentView('conceptset-browser');
 						});
 					},
-					'/splash': function () {
-						self.componentParams = {
-							model: self
-						};
-						self.currentView('splash');
-					},
 					'/search/:query:': function (query) {
 						require(['search'], function (search) {
 							self.componentParams = {
 								model: self,
-								query: query
+								query: unescape(query)
 							};
 							self.currentView('search');
 						});
@@ -295,12 +293,14 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 				self.router = new Router(routes).configure(routerOptions);
 				self.router.init('/');
 				self.applicationStatus('running');
+				self.sharedState.appInitializationStatus("complete");
 			} else {
 				self.componentParams = {
 					model: self
 				};
-				self.currentView('configure');
+
 				self.applicationStatus('initialization error');
+				document.location = '#/configure';
 			}
 			setTimeout(function () {
 				$('#splash').hide();
@@ -308,7 +308,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			setTimeout(function () {
 				$('#wrapperLeftMenu').show();
 				$('#wrapperMainWindow').show();
-			}, 10);
+			}, 5);
 		};
 
 		self.relatedConceptsOptions = {
@@ -485,7 +485,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
             }]
 		};
 		self.metatrix = {
-            'ATC.ATC 4th': {                
+			'ATC.ATC 4th': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
@@ -494,7 +494,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					name: 'Has ancestor of',
 					range: [0, 5]
                 }]
-            },
+			},
 			'ICD9CM.5-dig billing code': {
 				childRelationships: [{
 					name: 'Subsumes',
@@ -534,9 +534,9 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					range: [0, 999]
                 }],
 				parentRelationships: [{
-                    name: 'Has ancestor of',
-                    vocabulary: ['ATC', 'ETC'],
-                    range: [0, 1]
+					name: 'Has ancestor of',
+					vocabulary: ['ATC', 'ETC'],
+					range: [0, 1]
                 }]
 			},
 			'RxNorm.Brand Name': {
@@ -681,15 +681,15 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 				for (var i = 0; i < relationships.length; i++) {
 					if (concept.RELATIONSHIPS[r].RELATIONSHIP_NAME == relationships[i].name) {
 						if (concept.RELATIONSHIPS[r].RELATIONSHIP_DISTANCE >= relationships[i].range[0] && concept.RELATIONSHIPS[r].RELATIONSHIP_DISTANCE <= relationships[i].range[1]) {
-                            if (relationships[i].vocabulary) {
-                                for(var v = 0; v < relationships[i].vocabulary.length; v++) {
-                                    if (relationships[i].vocabulary[v] == concept.VOCABULARY_ID) {
-                                        return true;
-                                    }
-                                }
-                            } else {
-                                return true;
-                            }
+							if (relationships[i].vocabulary) {
+								for (var v = 0; v < relationships[i].vocabulary.length; v++) {
+									if (relationships[i].vocabulary[v] == concept.VOCABULARY_ID) {
+										return true;
+									}
+								}
+							} else {
+								return true;
+							}
 						}
 					}
 				}
@@ -765,7 +765,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		}
 		self.renderBoundLink = function (s, p, d) {
 				return '<a href=\"#/concept/' + d.concept.CONCEPT_ID + '\">' + d.concept.CONCEPT_NAME + '</a>';
-		}
+			}
 			// for the current selected concepts:
 			// update the export panel
 			// resolve the included concepts and update the include concept set identifier list
@@ -792,8 +792,8 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					self.resolvingConceptSetExpression(false);
 				},
 				error: function (err) {
-					self.currentView('configure');
 					self.resolvingConceptSetExpression(false);
+					document.location = '#/configure';
 				}
 			});
 			return resolvingPromise;
@@ -812,8 +812,8 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					self.resolvingConceptSetExpression(false);
 				},
 				error: function (err) {
-					self.currentView('configure');
 					self.resolvingConceptSetExpression(false);
+					document.location = '#/configure';
 				}
 			});
 			return resolvingPromise;
@@ -1072,156 +1072,156 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					});
 				}
 				$.when(infoPromise, definitionPromise).done(function (ip, dp) {
-					// Now that we have loaded up the cohort definition, we'll need to
-					// resolve all of the concepts embedded in the concept set collection
-					// to ensure they have all of the proper properties for editing in the cohort
-					// editior
-					var conceptPromise;
-					if (self.currentCohortDefinition().expression().ConceptSets()) {
-						var identifiers = $.makeArray($(self.currentCohortDefinition().expression().ConceptSets()).map(function (cs) {
-							var allConceptIDs = $.makeArray($(this.expression.items()).map(function (item) {
-								return this.concept.CONCEPT_ID;
+						// Now that we have loaded up the cohort definition, we'll need to
+						// resolve all of the concepts embedded in the concept set collection
+						// to ensure they have all of the proper properties for editing in the cohort
+						// editior
+						var conceptPromise;
+						if (self.currentCohortDefinition().expression().ConceptSets()) {
+							var identifiers = $.makeArray($(self.currentCohortDefinition().expression().ConceptSets()).map(function (cs) {
+								var allConceptIDs = $.makeArray($(this.expression.items()).map(function (item) {
+									return this.concept.CONCEPT_ID;
+								}));
+								return allConceptIDs;
 							}));
-							return allConceptIDs;
-						}));
-						conceptPromise = $.ajax({
-							url: sharedState.vocabularyUrl() + 'lookup/identifiers',
-							method: 'POST',
-							headers: {
-								Authorization: authApi.getAuthorizationHeader()
-							},
-							contentType: 'application/json',
-							data: JSON.stringify(identifiers),
-							error: authApi.handleAccessDenied,
-							success: function (data) {
-								// Update each concept set
-								for (var i = 0; i < self.currentCohortDefinition().expression().ConceptSets().length; i++) {
-									// Update each of the concept set items
-									var currentConceptSet = self.currentCohortDefinition().expression().ConceptSets()[i];
-									for (var j = 0; j < currentConceptSet.expression.items().length; j++) {
-										var selectedConcept = $(data).filter(function (item) {
-											return this.CONCEPT_ID == currentConceptSet.expression.items()[j].concept.CONCEPT_ID
-										});
-										if (selectedConcept.length == 1)
-											currentConceptSet.expression.items()[j].concept = selectedConcept[0];
-										else
-											console.error("Concept not found: " + currentConceptSet.expression.items()[j].concept.CONCEPT_ID + "," + currentConceptSet.expression.items()[j].concept.CONCEPT_NAME);
+							conceptPromise = $.ajax({
+								url: sharedState.vocabularyUrl() + 'lookup/identifiers',
+								method: 'POST',
+								headers: {
+									Authorization: authApi.getAuthorizationHeader()
+								},
+								contentType: 'application/json',
+								data: JSON.stringify(identifiers),
+								error: authApi.handleAccessDenied,
+								success: function (data) {
+									// Update each concept set
+									for (var i = 0; i < self.currentCohortDefinition().expression().ConceptSets().length; i++) {
+										// Update each of the concept set items
+										var currentConceptSet = self.currentCohortDefinition().expression().ConceptSets()[i];
+										for (var j = 0; j < currentConceptSet.expression.items().length; j++) {
+											var selectedConcept = $(data).filter(function (item) {
+												return this.CONCEPT_ID == currentConceptSet.expression.items()[j].concept.CONCEPT_ID
+											});
+											if (selectedConcept.length == 1)
+												currentConceptSet.expression.items()[j].concept = selectedConcept[0];
+											else
+												console.error("Concept not found: " + currentConceptSet.expression.items()[j].concept.CONCEPT_ID + "," + currentConceptSet.expression.items()[j].concept.CONCEPT_NAME);
+										}
+										currentConceptSet.expression.items.valueHasMutated();
 									}
-									currentConceptSet.expression.items.valueHasMutated();
+									self.currentCohortDefinitionDirtyFlag().reset();
 								}
-								self.currentCohortDefinitionDirtyFlag().reset();
-							}
-						});
-					} else {
-						conceptPromise = $.Deferred();
-						conceptPromise.resolve();
-					}
-					$.when(conceptPromise).done(function (cp) {
-						// now that we have required information lets compile them into data objects for our view
-						var cdmSources = config.services[0].sources.filter(self.hasCDM);
-						var results = [];
-						for (var s = 0; s < cdmSources.length; s++) {
-							var source = cdmSources[s];
-							self.sourceAnalysesStatus[source.sourceKey] = ko.observable({
-								ready: false,
-								checking: false
 							});
-							var sourceInfo = self.getSourceInfo(source);
-							var cdsi = {};
-							cdsi.name = cdmSources[s].sourceName;
-							cdsi.sourceKey = cdmSources[s].sourceKey;
-							if (sourceInfo != null) {
-								cdsi.isValid = ko.observable(sourceInfo.isValid);
-								cdsi.sourceId = sourceInfo.id.sourceId;
-								cdsi.status = ko.observable(sourceInfo.status);
-								var date = new Date(sourceInfo.startTime);
-								cdsi.startTime = ko.observable(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
-								cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
-								cdsi.distinctPeople = ko.observable('...');
-								self.getCohortCount(source, cdsi.distinctPeople);
-							} else {
-								cdsi.isValid = ko.observable(false);
-								cdsi.status = ko.observable('n/a');
-								cdsi.startTime = ko.observable('n/a');
-								cdsi.executionDuration = ko.observable('n/a');
-								cdsi.distinctPeople = ko.observable('n/a');
-							}
-							results.push(cdsi);
-						}
-						self.cohortDefinitionSourceInfo(results);
-						// load universe of analyses
-						self.cohortAnalyses(self.visualizationPacks().filter(function (n) {
-							return n.reportKey != undefined
-						}));
-						var index = {};
-						for (var a = 0; a < self.visualizationPacks().length; a++) {
-							self.analysisLookup[a] = self.visualizationPacks()[a].name;
-						}
-						// obtain completed result status for each source
-						for (var s = 0; s < cdmSources.length; s++) {
-							var source = cdmSources[s];
-							var info = self.getSourceInfo(source);
-							if (info) {
-								var sourceAnalysesStatus = {};
-								sourceAnalysesStatus.checking = true;
-								self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
-								self.getCompletedAnalyses(source);
-							}
-						}
-						// This is the original approach but it does not reflect some of the interdependencies between analyses
-						// so commenting it out for now. We should revisit this as hardcoding the object above is not sustainable
-						/*
-						var analysesPromise = $.ajax({
-						    url: config.services[0].url + 'cohortanalysis/',
-						    method: 'GET',
-						    contentType: 'application/json',
-						    success: function (analyses) {
-						        var index = {};
-						        var nestedAnalyses = [];
-
-						        for (var a = 0; a < analyses.length; a++) {
-						            var analysis = analyses[a];
-
-						            if (index[analysis.analysisType] == undefined) {
-						                var analysisType = {
-						                    name: analysis.analysisType,
-						                    analyses: []
-						                };
-						                nestedAnalyses.push(analysisType);
-						                index[analysis.analysisType] = nestedAnalyses.indexOf(analysisType);
-						            }
-						            self.analysisLookup[analysis.analysisId] = analysis.analysisType;
-						            nestedAnalyses[index[analysis.analysisType]].analyses.push(analysis);
-						        }
-
-						        self.cohortAnalyses(nestedAnalyses);
-
-						        // obtain completed result status for each source
-						        for (var s = 0; s < cdmSources.length; s++) {
-						            var source = cdmSources[s];
-						            var info = self.getSourceInfo(source);
-						            if (info) {
-						                var sourceAnalysesStatus = {};
-						                sourceAnalysesStatus.checking = true;
-						                self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
-						                self.getCompletedAnalyses(source);
-						            }
-						        }
-						    }
-						});
-						*/
-						if (conceptSetId != null) {
-							self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 						} else {
+							conceptPromise = $.Deferred();
+							conceptPromise.resolve();
+						}
+						$.when(conceptPromise).done(function (cp) {
+							// now that we have required information lets compile them into data objects for our view
+							var cdmSources = config.services[0].sources.filter(self.hasCDM);
+							var results = [];
+							for (var s = 0; s < cdmSources.length; s++) {
+								var source = cdmSources[s];
+								self.sourceAnalysesStatus[source.sourceKey] = ko.observable({
+									ready: false,
+									checking: false
+								});
+								var sourceInfo = self.getSourceInfo(source);
+								var cdsi = {};
+								cdsi.name = cdmSources[s].sourceName;
+								cdsi.sourceKey = cdmSources[s].sourceKey;
+								if (sourceInfo != null) {
+									cdsi.isValid = ko.observable(sourceInfo.isValid);
+									cdsi.sourceId = sourceInfo.id.sourceId;
+									cdsi.status = ko.observable(sourceInfo.status);
+									var date = new Date(sourceInfo.startTime);
+									cdsi.startTime = ko.observable(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+									cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
+									cdsi.distinctPeople = ko.observable('...');
+									self.getCohortCount(source, cdsi.distinctPeople);
+								} else {
+									cdsi.isValid = ko.observable(false);
+									cdsi.status = ko.observable('n/a');
+									cdsi.startTime = ko.observable('n/a');
+									cdsi.executionDuration = ko.observable('n/a');
+									cdsi.distinctPeople = ko.observable('n/a');
+								}
+								results.push(cdsi);
+							}
+							self.cohortDefinitionSourceInfo(results);
+							// load universe of analyses
+							self.cohortAnalyses(self.visualizationPacks().filter(function (n) {
+								return n.reportKey != undefined
+							}));
+							var index = {};
+							for (var a = 0; a < self.visualizationPacks().length; a++) {
+								self.analysisLookup[a] = self.visualizationPacks()[a].name;
+							}
+							// obtain completed result status for each source
+							for (var s = 0; s < cdmSources.length; s++) {
+								var source = cdmSources[s];
+								var info = self.getSourceInfo(source);
+								if (info) {
+									var sourceAnalysesStatus = {};
+									sourceAnalysesStatus.checking = true;
+									self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
+									self.getCompletedAnalyses(source);
+								}
+							}
+							// This is the original approach but it does not reflect some of the interdependencies between analyses
+							// so commenting it out for now. We should revisit this as hardcoding the object above is not sustainable
+							/*
+							var analysesPromise = $.ajax({
+							    url: config.services[0].url + 'cohortanalysis/',
+							    method: 'GET',
+							    contentType: 'application/json',
+							    success: function (analyses) {
+							        var index = {};
+							        var nestedAnalyses = [];
+
+							        for (var a = 0; a < analyses.length; a++) {
+							            var analysis = analyses[a];
+
+							            if (index[analysis.analysisType] == undefined) {
+							                var analysisType = {
+							                    name: analysis.analysisType,
+							                    analyses: []
+							                };
+							                nestedAnalyses.push(analysisType);
+							                index[analysis.analysisType] = nestedAnalyses.indexOf(analysisType);
+							            }
+							            self.analysisLookup[analysis.analysisId] = analysis.analysisType;
+							            nestedAnalyses[index[analysis.analysisType]].analyses.push(analysis);
+							        }
+
+							        self.cohortAnalyses(nestedAnalyses);
+
+							        // obtain completed result status for each source
+							        for (var s = 0; s < cdmSources.length; s++) {
+							            var source = cdmSources[s];
+							            var info = self.getSourceInfo(source);
+							            if (info) {
+							                var sourceAnalysesStatus = {};
+							                sourceAnalysesStatus.checking = true;
+							                self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
+							                self.getCompletedAnalyses(source);
+							            }
+							        }
+							    }
+							});
+							*/
+							if (conceptSetId != null) {
+								self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
+							} else {
+								self.currentView(viewToShow);
+							}
+						});
+					})
+					.fail(function (xhr) {
+						if (xhr.status == 403 || xhr.status == 401) {
 							self.currentView(viewToShow);
 						}
 					});
-				})
-				.fail(function(xhr) {
-					if (xhr.status == 403 || xhr.status == 401) {
-						self.currentView(viewToShow);
-					}
-				});
 			});
 		}
 		self.loadConceptSet = function (conceptSetId, viewToShow, loadingSource, mode) {
@@ -1364,7 +1364,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.cohortDefinitionSourceInfo = ko.observableArray();
 		self.recentSearch = ko.observableArray(null);
 		self.recentConcept = ko.observableArray(null);
-		self.currentView = ko.observable('splash');
+		self.currentView = ko.observable(null);
 		self.conceptSetInclusionIdentifiers = ko.observableArray();
 		self.currentConceptSetExpressionJson = ko.observable();
 		self.currentConceptIdentifierList = ko.observable();
@@ -1387,7 +1387,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			return url;
 		});
 
-		self.canEditCurrentConceptSet = ko.pureComputed(function() {
+		self.canEditCurrentConceptSet = ko.pureComputed(function () {
 			if (self.currentConceptSetSource() == 'cohort') {
 				return self.canEditCurrentCohortDefinition();
 			} else if (self.currentConceptSetSource() == 'repository') {
@@ -1396,7 +1396,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 				}
 
 				if (self.currentConceptSet() && (self.currentConceptSet().id != 0)) {
-					return authApi.isPermittedUpdateConceptset(self.currentConceptSet().id) ||  !config.userAuthenticationEnabled;
+					return authApi.isPermittedUpdateConceptset(self.currentConceptSet().id) || !config.userAuthenticationEnabled;
 				} else {
 					return authApi.isPermittedCreateConceptset() || !config.userAuthenticationEnabled;
 				}
@@ -1405,7 +1405,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			}
 		});
 		self.currentConceptSetSource = ko.observable('repository');
-    self.currentConceptSetNegativeControls = ko.observable();
+		self.currentConceptSetNegativeControls = ko.observable();
 		self.currentIncludedConceptIdentifierList = ko.observable();
 		self.searchResultsConcepts = ko.observableArray();
 		self.relatedConcepts = ko.observableArray();
@@ -1429,8 +1429,8 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 				url = url + "cohortdefinitions"
 			return url;
 		});
-		
-		self.canEditCurrentCohortDefinition = ko.pureComputed(function() {
+
+		self.canEditCurrentCohortDefinition = ko.pureComputed(function () {
 			if (!authApi.isAuthenticated()) {
 				return false;
 			}
@@ -1520,7 +1520,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			var valid = d.INVALID_REASON_CAPTION == 'Invalid' || d.STANDARD_CONCEPT != 'S' ? 'invalid' : '';
 			return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 		};
-		
+
 		self.createConceptSetItem = function (concept) {
 			var conceptSetItem = {};
 			conceptSetItem.concept = concept;
@@ -1565,38 +1565,38 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 				self.currentCohortDefinitionDirtyFlag(new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
 			}
 		});
-		self.hasUnsavedChanges = ko.pureComputed(function() {
-			return ((pageModel.currentCohortDefinitionDirtyFlag() && pageModel.currentCohortDefinitionDirtyFlag().isDirty())  || 
-					(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()) ||
-				 	pageModel.currentIRAnalysisDirtyFlag().isDirty() ||
-				 	pageModel.currentCohortComparisonDirtyFlag().isDirty());
+		self.hasUnsavedChanges = ko.pureComputed(function () {
+			return ((pageModel.currentCohortDefinitionDirtyFlag() && pageModel.currentCohortDefinitionDirtyFlag().isDirty()) ||
+				(pageModel.currentConceptSetDirtyFlag && pageModel.currentConceptSetDirtyFlag.isDirty()) ||
+				pageModel.currentIRAnalysisDirtyFlag().isDirty() ||
+				pageModel.currentCohortComparisonDirtyFlag().isDirty());
 		});
 
-	self.currentRoleId = ko.observable();
-	self.roles = ko.observableArray();
-	self.updateRoles = function () {
-		var promise = $.Deferred();
-		if (self.roles() && self.roles().length > 0) {
-			promise.resolve();
-		} else {
-			$.ajax({
-				url: config.services[0].url + 'role',
-				method: 'GET',
-				headers: {
-					Authorization: authApi.getAuthorizationHeader()
-				},
-				contentType: 'application/json',
-				error: authApi.handleAccessDenied,
-				success: function(data) {
-					self.roles(data);
-					promise.resolve();
-				}
-			});
+		self.currentRoleId = ko.observable();
+		self.roles = ko.observableArray();
+		self.updateRoles = function () {
+			var promise = $.Deferred();
+			if (self.roles() && self.roles().length > 0) {
+				promise.resolve();
+			} else {
+				$.ajax({
+					url: config.services[0].url + 'role',
+					method: 'GET',
+					headers: {
+						Authorization: authApi.getAuthorizationHeader()
+					},
+					contentType: 'application/json',
+					error: authApi.handleAccessDenied,
+					success: function (data) {
+						self.roles(data);
+						promise.resolve();
+					}
+				});
+			}
+			return promise;
 		}
-		return promise;
-	}
-	self.users = ko.observableArray();
-	self.permissions = ko.observableArray();
+		self.users = ko.observableArray();
+		self.permissions = ko.observableArray();
 	}
 	return appModel;
 });

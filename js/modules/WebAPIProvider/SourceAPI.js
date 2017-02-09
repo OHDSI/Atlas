@@ -2,23 +2,23 @@ define(function (require, exports) {
 
 	var $ = require('jquery');
 	var config = require('appConfig');
-	
+	var sharedState = require('atlas-state');
+
 	var sources;
-	
-	var loadPromise = $.ajax({
+
+	function getSources() {
+		var promise = $.ajax({
 			url: config.webAPIRoot + 'source/sources/',
 			error: function (error) {
-				console.log("Error: " + error);
+				sharedState.appInitializationStatus('failed');
 			}
-	});
-	
-	function getSources() {
-		return loadPromise;
+		});
+		return promise;
 	}
-	
-	var api= {
+
+	var api = {
 		getSources: getSources
 	};
-	
+
 	return api;
 });
