@@ -223,7 +223,7 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 			if (vocabElements.length > 0 || domainElements.length > 0) {
 				self.executeSearch();
 			} else if (self.currentSearch().length > 2) {
-				document.location = '#/search/' + self.currentSearch();
+				document.location = '#/search/' + escape(self.currentSearch());
 			} else {
 				alert('invalid search');
 			}

@@ -2,7 +2,6 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 	function configuration(params) {
 		var self = this;
 		self.config = config;
-		self.appInitializationFailed = params.model.appInitializationFailed;
 		self.services = config.services;
 		self.sharedState = sharedState;
 		

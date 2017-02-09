@@ -3,11 +3,7 @@
 </div>
 <div>
 <div id="wrapperConfigure">
-	<div data-bind="if:appInitializationFailed">
-		<div class="heading">application initialization failed</div>
-		<div class="error">unable to connect to an instance of the webapi. please contact your administrator to resolve this issue.</div>
-	</div>
-	<div data-bind="if:!appInitializationFailed()">
+	<div data-bind="if:sharedState.appInitializationStatus()=='complete'">
 		<div class="heading">Configured Services</div>
 		<div data-bind="foreach:services">
 			<div data-bind="if:available==true">

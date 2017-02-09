@@ -6,6 +6,7 @@ define(['knockout'], function (ko) {
 	
 	state.selectedConceptsIndex = {};
 	state.selectedConcepts = ko.observableArray(null);			
+	state.appInitializationStatus = ko.observable('initializing');
 	
 	state.clearSelectedConcepts = function() {
 		this.selectedConceptsIndex = {};		

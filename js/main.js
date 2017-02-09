@@ -134,7 +134,7 @@ requirejs.config({
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
 	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
-		$('#splash').fadeIn();
+		$('#splash').show();
 		var pageModel = new app();
 		window.pageModel = pageModel;
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
@@ -296,8 +296,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					service.xhr = xhr;
 					service.thrownError = thrownError;
 
-					pageModel.appInitializationFailed(true);
-					pageModel.currentView('configure');
+					sharedState.appInitializationStatus('failed');
+					document.location = '#/configure';
 
 					servicePromise.resolve();
 				}
@@ -309,15 +309,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		});
 
 		pageModel.currentView.subscribe(function (newView) {
-			if (newView != 'splash') {
-				$('#splash').hide();
-			}
-
 			switch (newView) {
-			case 'splash':
-				// switching back to atlas splash for activity view
-				$('#splash').show();
-				break;
 			case 'reports':
 				$.ajax({
 					url: config.services[0].url + 'cohortdefinition',

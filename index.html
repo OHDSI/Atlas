@@ -37,9 +37,9 @@
 		</div>
 	</div>
 
-	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible: pageModel.currentView() != 'splash'">
+	<div id="wrapperLeftMenu" style="display:none;" data-bind="if:initializationComplete">
 		<div id="wrapperLogo">
-			<a href="#/splash">ATLAS</a>
+			<a href="#/home">ATLAS</a>
 		</div>
 
 		<div class="list-group">
@@ -56,10 +56,15 @@
 			<a class="list-group-item" target="_blank" href="https://github.com/ohdsi/atlas/issues" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
 		</div>
 	</div>
-
-	<div data-bind="if:currentView() != 'splash'" id="wrapperMainWindow">
+	
+	<div id="wrapperMainWindow" data-bind="if:initializationComplete">
 		<div id="wrapperMainWindowContainer">
 			<user-bar></user-bar>
+			<div data-bind="if:sharedState.appInitializationStatus() == 'failed'">
+				<div class="error">application initialization failed</div>
+				<div class="error">unable to connect to an instance of the webapi. please contact your administrator to resolve this issue.</div>
+			</div>
+
 			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
 			<!-- ko if: pageModel.currentCohortDefinition() != null && pageModel.currentView() !='cohort-definition-manager' -->
 			<div class="breadcrumb-container">
@@ -79,7 +84,9 @@
 			<!-- /ko -->
 			<!-- /ko -->
 
+			<!-- ko if: pageModel.currentView && sharedState.appInitializationStatus() != 'failed' -->
 			<div id="currentComponent" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
+			<!-- /ko -->
 		</div>
 	</div>
 	<script data-main="js/main" src="js/require.js"></script>
