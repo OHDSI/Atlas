@@ -209,7 +209,7 @@ define(function (require, exports) {
 		return getMappedConceptsByIdPromise;
 	}
 
-	function optimizeConceptSet(conceptSetItems, url) {
+	function optimizeConceptSet(conceptSetItems, url, sourceKey) {
 		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/optimize';
 
 		var getOptimizedConceptSetPromise = $.ajax({

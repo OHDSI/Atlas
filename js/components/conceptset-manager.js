@@ -673,7 +673,7 @@ define(['knockout',
 				newConceptSet.push(newItem);
 			})
 			self.selectedConcepts(newConceptSet);
-			$('conceptset-manager #modalConceptSetOptimize').modal('hide');
+			$('#modalConceptSetOptimize').modal('hide');
 		}
 
 		self.copyOptimizedConceptSet = function () {
@@ -709,7 +709,7 @@ define(['knockout',
 		}
 
 		self.chooseCS1 = function () {
-			$('conceptset-manager #modalCS').modal('show');
+			$('#modalCS').modal('show');
 			self.targetId = self.compareCS1Id;
 			self.targetCaption = self.compareCS1Caption;
 			self.targetExpression = self.compareCS1ConceptSet;
@@ -723,7 +723,7 @@ define(['knockout',
 		}
 
 		self.chooseCS2 = function () {
-			$('conceptset-manager #modalCS').modal('show');
+			$('#modalCS').modal('show');
 			self.targetId = self.compareCS2Id;
 			self.targetCaption = self.compareCS2Caption;
 			self.targetExpression = self.compareCS2ConceptSet;
@@ -737,7 +737,7 @@ define(['knockout',
 		}
 
 		self.conceptsetSelected = function (d) {
-			$('conceptset-manager #modalCS').modal('hide');
+			$('#modalCS').modal('hide');
 			vocabularyAPI.getConceptSetExpression(d.id).then(function (csExpression) {
 				self.targetId(d.id);
 				self.targetCaption(d.name);
@@ -766,7 +766,7 @@ define(['knockout',
 		}
 
 		self.showSaveNewModal = function () {
-			$('conceptset-manager #modalSaveNew').modal('show');
+			$('#modalSaveNew').modal('show');
 		}
 
 		self.compareCreateNewConceptSet = function () {
@@ -799,7 +799,7 @@ define(['knockout',
 				selectedConcepts.push(newItem);
 			})
 			self.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
-			$('conceptset-manager #modalSaveNew').modal('hide');
+			$('#modalSaveNew').modal('hide');
 		}
 
 		self.toggleOnSelectAllCheckbox = function (selector, selectAllElement) {
