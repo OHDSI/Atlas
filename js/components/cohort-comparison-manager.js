@@ -520,6 +520,27 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.canSave = ko.pureComputed(function () {
 				return (self.cohortComparison().name() && self.cohortComparison().comparatorId() && self.cohortComparison().comparatorId() > 0 && self.cohortComparison().treatmentId() && self.cohortComparison().treatmentId() > 0 && self.cohortComparison().outcomeId() && self.cohortComparison().outcomeId() > 0 && self.cohortComparison().modelType && self.cohortComparison().modelType() > 0 && self.cohortComparisonDirtyFlag() && self.cohortComparisonDirtyFlag().isDirty());
 			});
+            
+            self.canDelete = ko.pureComputed(function() {
+               return (self.cohortComparisonId() && self.cohortComparisonId() > 0);
+            });
+            
+            self.delete = function () {
+                if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
+                    return;
+
+                $.ajax({
+                    url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
+                    method: 'DELETE',
+                    error: function (error) {
+                        console.log("Error: " + error);
+                        authApi.handleAccessDenied(error);
+                    }, 
+                    success: function(data) {
+                        document.location = "#/estimation"
+                    }
+                });
+            }            
 			
 			self.save = function () {
 
