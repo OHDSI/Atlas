@@ -3,10 +3,10 @@
 </div>
 <div class="clear">
 	<div class="paddedWrapper">
-        <div data-bind="attr: {class: $component.mode() == 'add' ? 'active' : 'hidden'}">
+        <div data-bind="if:$component.mode() == 'add'">
             <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null, onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected, onActionComplete: $component.onConceptSetBrowserAction, disableConceptSetButton: model.currentConceptSet() != undefined || !canCreateConceptSet()"></cohort-concept-set-browser>
         </div>
-        <div data-bind="attr: {class: $component.mode() == 'export' ? 'active' : 'hidden'}">
+        <div data-bind="if:$component.mode() == 'export'">
             <div class="heading">
                 Concept Set Export
             </div>
