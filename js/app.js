@@ -1365,7 +1365,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.cohortDefinitionSourceInfo = ko.observableArray();
 		self.recentSearch = ko.observableArray(null);
 		self.recentConcept = ko.observableArray(null);
-		self.currentView = ko.observable(null);
+		self.currentView = ko.observable('loading');
 		self.conceptSetInclusionIdentifiers = ko.observableArray();
 		self.currentConceptSetExpressionJson = ko.observable();
 		self.currentConceptIdentifierList = ko.observable();
