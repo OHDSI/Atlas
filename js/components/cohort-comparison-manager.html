@@ -12,6 +12,7 @@
 		<div class="btn-group" role="group">
 			<button class="btn btn-sm btn-success" data-bind="click: save, enable:canSave">Save</button>
 			<button class="btn btn-sm btn-primary" data-bind="click: close">Close</button>
+            <button class="btn btn-sm btn-danger" data-bind="click: $component.delete, enable: canDelete()">Delete</button>
 		</div>
 	</div>
 
