@@ -1,6 +1,6 @@
 define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularyprovider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'databindings'
 ], function (ko, template, VocabularyProvider, appConfig, ConceptSet) {
-	function CohortConcptSetBrowser(params) {
+	function CohortConceptSetBrowser(params) {
 		var self = this;
 
 		function defaultRepositoryConceptSetSelected(conceptSet) {
@@ -117,7 +117,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 	}
 
 	var component = {
-		viewModel: CohortConcptSetBrowser,
+		viewModel: CohortConceptSetBrowser,
 		template: template
 	};
 
