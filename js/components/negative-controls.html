@@ -70,6 +70,11 @@
         <!-- /ko -->
     </div>
 </div>
+<div data-bind="if: $component.negativeControls() && $component.negativeControls().length <= 0 && $component.currentEvidenceService() && $component.currentResultSource() && $component.conceptSet() && !$component.loadingResults()">
+    <div class="paddedWrapper">
+        <div class="heading">No evidence found for <span data-bind="text: $component.conceptSet().name()"></span></div>
+    </div>
+</div>
 <div class="loading" data-bind="if:$component.loadingEvidenceSources()">loading</div>
 <div id="modalNegControlsSaveNew" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
