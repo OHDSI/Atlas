@@ -484,7 +484,8 @@ td.numeric {
 }
 
 th .fa {
-	font-size: 10px;
+	font-size: 12px;
+	cursor: pointer;
 }
 
 td .fa {
@@ -519,16 +520,26 @@ td .fa-shopping-cart {
 	white-space: nowrap;
 }
 
+td.classification {
+	background-color: #a335ee;
+	color: #fff;
+}
+
+span.classification {
+	color: #fff;
+	background-color: #a335ee;
+	padding: 5px;
+}
+
 td.invalid {
-	background-color: #c00;
+	background-color: #a71a19;
 	color: #fff;
 }
 
 span.invalid {
-	color: #ECECEC;
-	background-color: #C00;
+	color: #fff;
+	background-color: #a71a19;
 	padding: 5px;
-	border-bottom: solid 1px #c00;
 }
 
 label {
