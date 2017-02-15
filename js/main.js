@@ -389,6 +389,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					name: ko.observable("New Concept Set"),
 					id: 0
 				}
+				pageModel.currentConceptSet(newConceptSet);
 			}
 
 			var table = $(this).closest('.dataTable').DataTable();

@@ -5,7 +5,7 @@
 
 	<div class="asset-heading" data-bind="with:model.currentConcept()">
 		<span data-bind="html: $root.renderCurrentConceptSelector()"></span>
-		<span data-bind="css: {invalid: STANDARD_CONCEPT!='S'}, text:CONCEPT_NAME"></span>
+		<span data-bind="css: {classification: STANDARD_CONCEPT=='C', invalid: STANDARD_CONCEPT=='N'}, text:CONCEPT_NAME"></span>
 	</div>
 
 	<ul class="nav nav-tabs">
@@ -80,6 +80,7 @@
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'RC', data: 'RECORD_COUNT'},
 											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
+											{ title: 'Distance', data: function (d) { return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;}))}},							
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]
@@ -111,6 +112,7 @@
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'RC', data: 'RECORD_COUNT'},
 											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
+											{ title: 'Distance', data: function (d) { return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;}))}},
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]
@@ -155,11 +157,11 @@
 				</tr>
 				<tr>
 					<td>Invalid Reason</td>
-					<td data-bind="text:INVALID_REASON_CAPTION, attr: { class: INVALID_REASON_CAPTION == 'Valid' ? '' : 'invalid'}"></td>
+					<td data-bind="text:INVALID_REASON_CAPTION, css: { invalid: INVALID_REASON_CAPTION != 'Valid'}"></td>
 				</tr>
 				<tr>
 					<td>Standard Concept</td>
-					<td data-bind="text:STANDARD_CONCEPT_CAPTION, attr: { class: STANDARD_CONCEPT_CAPTION == 'Standard' ? '' : 'invalid'}"></td>
+					<td data-bind="text:STANDARD_CONCEPT_CAPTION, css: {classification: STANDARD_CONCEPT=='C', invalid: STANDARD_CONCEPT=='N'}"></td>
 				</tr>
 			</tbody>
 		</table>
