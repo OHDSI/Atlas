@@ -7,33 +7,32 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webap
 		self.loading = ko.observable(false);
 		self.config = config;
 
-		self.currentService.subscribe(function (d) {
-			self.loading(true);
+		self.loading(true);
 
-			$.ajax({
-				url: self.currentService() + 'cohortdefinition',
-				headers: {
-					Authorization: authApi.getAuthorizationHeader()
-				},
-				method: 'GET',
-				error: authApi.handleAccessDenied,
-				success: function (d) {
-					self.reference(d);
-				},
-				complete: function() {
-					self.loading(false);
-				}
-			});
+		$.ajax({
+			url: config.services[0].url + 'cohortdefinition',
+			headers: {
+				Authorization: authApi.getAuthorizationHeader()
+			},
+			method: 'GET',
+			error: authApi.handleAccessDenied,
+			success: function (d) {
+				self.reference(d);
+			},
+			complete: function () {
+				self.loading(false);
+			}
 		});
+
 
 		self.options = {
 			Facets: [
 				{
 					'caption': 'Last Modified',
 					'binding': function (o) {
-                        var createDate = new Date(o.createdDate);
-                        var modDate = new Date(o.modifiedDate);
-                        var dateForCompare = (createDate > modDate) ? createDate : modDate;
+						var createDate = new Date(o.createdDate);
+						var modDate = new Date(o.modifiedDate);
+						var dateForCompare = (createDate > modDate) ? createDate : modDate;
 						var daysSinceModification = (new Date().getTime() - dateForCompare.getTime()) / 1000 / 60 / 60 / 24;
 						if (daysSinceModification < 7) {
 							return 'This Week';
