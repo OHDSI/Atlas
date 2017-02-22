@@ -5,7 +5,7 @@ define(['knockout', 'text!./home.html', 'appConfig'], function (ko, view, config
 		self.github_status = ko.observableArray();
 
 		$.ajax({
-			url: "https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=8",
+			url: "https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=9",
 			method: 'GET',
 			contentType: 'application/json',
 			success: function (data) {
