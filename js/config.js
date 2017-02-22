@@ -1,15 +1,6 @@
 define([], function () {
 	var config = {};
 
-	/*
-	config.services = [
-		{
-			name: 'HixBeta',
-			url: 'https://hixbeta.jnj.com:8443/WebAPI/'
-		}
-	];
-	*/
-	
 	config.services = [
         {
 			name: 'Local',
@@ -18,8 +9,7 @@ define([], function () {
 		];
 	
 	config.webAPIRoot = config.services[0].url;
-	// config.rServicesHost = 'http://hixbeta.jnj.com:8999/';
-	// config.rServicesHost = 'http://rndusrdhit09.jnj.com:8080/';
+	// config.rServicesHost = 'http://localhost:8081/';
 	config.cohortComparisonResultsEnabled = false;
 	config.userAuthenticationEnabled = false;
 
