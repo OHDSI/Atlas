@@ -13,6 +13,10 @@ requirejs.config({
 			location: "modules/databindings"
 		},
 		{
+			name: "cohortbuilder",
+			location: "modules/cohortbuilder"
+		},
+		{
 			name: "cohortdefinitionviewer",
 			location: "modules/cohortdefinitionviewer"
 		},
@@ -50,18 +54,23 @@ requirejs.config({
 			'jquery-ui/draggable': 'jquery-ui',
 			'jquery-ui/dialog': 'jquery-ui',
 			'jquery-ui/autocomplete': 'jquery-ui',
-			'jquery-ui/tabs': 'jquery-ui'
+			'jquery-ui/tabs': 'jquery-ui',
+			'css': 'require-css/css'
 		}
 	},
-	deps: ['css!styles/jquery.dataTables.min',
-				 'css!styles/jquery.dataTables.colVis.css'
-	],
+//	deps: ['cohortbuilder.min',
+//				 'css!styles/jquery.dataTables.min.css',
+//				 'css!styles/jquery.dataTables.colVis.css'
+//	],
+	bundles: {
+		//'cohortbuilder.min':['cohortbuilder/CohortDefinition', 'cohortbuilder/components']
+	},
 	paths: {
+		//"cohortbuilder.min": "../dist/cohortbuilder.min",
 		"jquery": "https://code.jquery.com/jquery-1.11.2.min",
 		"jquery-ui": "https://code.jquery.com/ui/1.11.4/jquery-ui.min",
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"text": "plugins/text",
-		"css": "plugins/css.min",
 		"clipboard": "clipboard.min",
 		"knockout": "knockout.min",
 		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/0.11.0/knockout-sortable",
@@ -110,6 +119,7 @@ requirejs.config({
 		"lscache": "lscache.min",
 		"localStorageExtender": "localStorageExtender",
 		"cohortbuilder": "modules/cohortbuilder",
+		"cohortbuilder-optimized": "cohortbuilder.min",
 		"conceptsetbuilder": "modules/conceptsetbuilder",
 		"conceptpicker": "modules/conceptpicker",
 		"webapi": "modules/WebAPIProvider",

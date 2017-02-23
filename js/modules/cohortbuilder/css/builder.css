@@ -109,10 +109,6 @@ table.criteriaTable>tbody>tr>td {
 }
 .dropdown {
 	margin: 2px 0px;
-	padding-right: 18px;
-	background-image: url(images/arrow_down.png);
-	background-position: center right;
-	background-repeat: no-repeat;
 }
 .smallInputField {
 	width: 100px;

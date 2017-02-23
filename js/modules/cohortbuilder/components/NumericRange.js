@@ -1,4 +1,4 @@
-define(['knockout', 'text!./NumericRangeTemplate.html', 'databindings/autoGrowInput'], function (ko, componentTemplate) {
+define(['knockout', 'text!./NumericRangeTemplate.html', 'databindings'], function (ko, componentTemplate) {
 
 	function NumericRangeViewModel(params) {
 		var self = this;
