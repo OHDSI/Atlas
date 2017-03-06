@@ -2,26 +2,32 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 	function conceptManager(params) {
 		var self = this;
 		self.model = params.model;
+		self.subscriptions = [];
+		
 		self.sourceCounts = ko.observableArray();
 		self.loadingSourceCounts = ko.observable(false);
 		self.loadingRelated = ko.observable(false);
 
 		self.currentConceptId = params.model.currentConceptId;
 
-		self.currentConceptId.subscribe(function (value) {
-			if (self.model.currentConceptMode() == 'recordcounts') {
-				self.loadRecordCounts();
-			}
-			self.loadConcept(value);
-		});
+		self.subscriptions.push(
+			self.currentConceptId.subscribe(function (value) {
+				if (self.model.currentConceptMode() == 'recordcounts') {
+					self.loadRecordCounts();
+				}
+				self.loadConcept(value);
+			})
+		);
 
-		self.model.currentConceptMode.subscribe(function (mode) {
-			switch (mode) {
-			case 'recordcounts':
-				self.loadRecordCounts();
-				break;
-			}
-		});
+		self.subscriptions.push(
+			self.model.currentConceptMode.subscribe(function (mode) {
+				switch (mode) {
+				case 'recordcounts':
+					self.loadRecordCounts();
+					break;
+				}
+			})
+		);
 
 		self.relatedConceptsOptions = {
 			Facets: [{
@@ -470,6 +476,12 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 		};
 
 		self.loadConcept(self.model.currentConceptId());
+		
+		self.dispose = function () {
+			self.subscriptions.forEach(function(subscription) {
+				subscription.dispose();
+			});
+		};
 	}
 
 	var component = {
