@@ -287,7 +287,6 @@ define(['knockout',
 		self.dispose = function() {
 			selectedAnalysisIdSub.dispose();
 			clearTimeout(pollTimeout);
-			console.log("IR manager disposed");
 		}
 
 	}
