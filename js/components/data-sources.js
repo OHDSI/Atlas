@@ -52,6 +52,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Visit",
 				path: "visit",
 				byType: false,
+				byFrequency: false,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -59,6 +60,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Condition",
 				path: "condition",
 				byType: true,
+				byFrequency: false,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -66,6 +68,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Condition Era",
 				path: "conditionera",
 				byType: false,
+				byFrequency: false,
 				aggProperty: LengthOfEraProperty,
 				conceptDomain: true
 			},
@@ -73,6 +76,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Procedure",
 				path: "procedure",
 				byType: true,
+				byFrequency: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -80,6 +84,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Drug",
 				path: "drug",
 				byType: true,
+				byFrequency: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -87,6 +92,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Drug Era",
 				path: "drugera",
 				byType: false,
+				byFrequency: false,
 				aggProperty: LengthOfEraProperty,
 				conceptDomain: true
 			},
@@ -94,6 +100,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Measurement",
 				path: "measurement",
 				byType: true,
+				byFrequency: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -101,6 +108,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Observation",
 				path: "observation",
 				byType: true,
+				byFrequency: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -633,6 +641,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 					self.prevalenceByMonth(data.prevalenceByMonth, '#prevalenceByMonth');
 					self.prevalenceByType(data.byType, '#byType');
 					self.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear, '#trellisLinePlot')
+					if (currentReport.byFrequency) {
+						self.frequencyDistribution(data, '#frequencyDistribution', currentReport.path)
+					}
 				}
 			});
 		};
@@ -767,6 +778,47 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 					xLabel: 'Gender',
 					yLabel: yLabel
 				});
+			}
+		};
+		
+		self.frequencyDistribution = function (data, selector, report) {
+			if (!!data ) {
+				var freqData = self.normalizeArray(data.frequencyDistribution);
+				if (!freqData.empty) {
+								
+					var freqDistributionLine = new jnj_chart.line();
+					var frequencyData = self.normalizeDataframe(freqData).xCount
+						.map(function (d, i) {
+							if (this.xCount[i] <= 10) {
+							var item = {
+								xValue: this.xCount[i],
+								yValue: this.yNumPersons[i]
+							};
+							return item;}
+							else return null;
+						}, freqData);
+						
+					frequencyData = frequencyData.filter(function(n){ return n != undefined }); 
+
+					if (frequencyData.length > 0) {
+						if (frequencyData.length < 10) {
+							for (i = frequencyData.length; i < 10; i++) {
+								var item = {
+									xValue: i + 1,
+									yValue: 0};	
+								frequencyData.splice(i+1,0,item);
+							}
+						}
+						freqDistributionLine.render(frequencyData, selector, 1000, 300, {
+							xScale: d3.scale.linear().domain([1,10]),
+							yScale: d3.scale.linear().domain([0,100]),
+							yFormat: d3.format('0'),
+							interpolate: "step-after",
+							xLabel: 'Count (\'x\' or more ' + report + 's)',
+							yLabel: 'Percentage of total #persons'
+						});
+					}
+				}
 			}
 		};
 
