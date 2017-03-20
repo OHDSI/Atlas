@@ -234,7 +234,6 @@ define(['knockout',
 						});
 					}
 				});
-				self.sources(sourceList);
 				self.generateActionsSettings.actionOptions = sourceList.map(function (sourceItem) {
 					return {
 						text: sourceItem.source.sourceName,
@@ -262,8 +261,13 @@ define(['knockout',
 							});
 						}
 					}
-				});				
+				});		
+
+				// set sources observable, which will show the Generate action dropdown.
+				self.sources(sourceList);
+
 			});
+
 			if (self.selectedAnalysisId() == null && self.selectedAnalysis() == null) {
 				self.newAnalysis();
 			} else if (self.selectedAnalysisId() != (self.selectedAnalysis() && self.selectedAnalysis().id())) {

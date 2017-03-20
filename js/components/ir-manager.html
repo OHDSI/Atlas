@@ -15,7 +15,7 @@
 				<button class="btn btn-sm btn-danger" data-bind="click: $component.delete">Delete</button>
 				<!-- /ko -->
 				<!-- /ko -->
-				<!-- ko if: selectedAnalysis().id() != null && !dirtyFlag().isDirty() && !isRunning() -->
+				<!-- ko if: selectedAnalysis().id() != null && !dirtyFlag().isDirty() && !isRunning() && sources().length > 0 -->
 				<div class="generateAction" data-bind="ddSlickAction: generateActionsSettings "></div>
 				<!-- /ko -->
 

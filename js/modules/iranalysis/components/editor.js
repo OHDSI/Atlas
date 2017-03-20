@@ -83,7 +83,7 @@ define(['knockout', 'text!./editor.html','../inputTypes/StudyWindow', '../Strati
 		// Cleanup
 		
 		self.dispose = function() {
-			console.log("Cohort Expression Editor Dispose.");
+			console.debug && console.debug("IR Analysis Editor Dispose.");
 			self.analysisSubscription.dispose();
 		};		
 	}
