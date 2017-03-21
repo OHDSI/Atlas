@@ -785,10 +785,11 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 			if (!!data ) {
 				var freqData = self.normalizeArray(data.frequencyDistribution);
 				if (!freqData.empty) {
-								
+					var maxY = 0.0;
 					var freqDistributionLine = new jnj_chart.line();
 					var frequencyData = self.normalizeDataframe(freqData).xCount
 						.map(function (d, i) {
+							if (this.yNumPersons[i] > maxY) maxY = this.yNumPersons[i];
 							if (this.xCount[i] <= 10) {
 							var item = {
 								xValue: this.xCount[i],
@@ -809,9 +810,10 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								frequencyData.splice(i+1,0,item);
 							}
 						}
+						var yScaleMax = (Math.floor((maxY + 5) / 10) + 1) * 10;
 						freqDistributionLine.render(frequencyData, selector, 1000, 300, {
 							xScale: d3.scale.linear().domain([1,10]),
-							yScale: d3.scale.linear().domain([0,100]),
+							yScale: d3.scale.linear().domain([0,yScaleMax <=100 ? yScaleMax : 100]),
 							yFormat: d3.format('0'),
 							interpolate: "step-after",
 							xLabel: 'Count (\'x\' or more ' + report + 's)',
