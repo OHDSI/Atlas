@@ -100,7 +100,7 @@
 					<div class="heading">
 						Name:
 					</div>
-						<div class="divtext" data-bind="attr: { contenteditable:canEdit() }, htmlValue:model.currentConceptSet().name"></div>
+						<div class="divtext" data-bind="attr: { disabled:!canEdit() }, contentEditable:model.currentConceptSet().name"></div>
 					<conceptset-editor params="model: model, conceptSets:selectedConcepts"></conceptset-editor>
 
 					<div class="clear"></div>
