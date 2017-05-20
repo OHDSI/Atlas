@@ -229,26 +229,26 @@
 					<div>
 						<label>Define the time-at-risk window start, relative to target/comparator cohort entry:</label>
 						<div class="input-group">
-							<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().timeAtRiskStart.numeric(), ko_autocomplete: { value: cohortComparison().timeAtRiskStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days from cohort start date
+							<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().timeAtRiskStart.numeric(), eventType:'blur', ko_autocomplete: { value: cohortComparison().timeAtRiskStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days from cohort start date
 						</div>
 					</div>
 					<div>
 						<label>Define the time-at-risk window end:</label>
 						<div class="input-group">
-							<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().timeAtRiskEnd.numeric(), ko_autocomplete: { value: cohortComparison().timeAtRiskEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days from
+							<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().timeAtRiskEnd.numeric(), eventType:'blur', ko_autocomplete: { value: cohortComparison().timeAtRiskEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days from
 							<select data-bind="options: cohortComparison().timeAtRiskEndOptions, optionsText:'name', optionsValue:'id', value: cohortComparison().addExposureDaysToEnd"></select>
 						</div>
 					</div>
 					<div>
 						<label>Minimum washout period applied to target and comparator cohorts:</label>
 						<div class="input-group">
-							<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().minimumWashoutPeriod.numeric(), ko_autocomplete: { value: cohortComparison().minimumWashoutPeriod, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+							<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().minimumWashoutPeriod.numeric(), eventType:'blur', ko_autocomplete: { value: cohortComparison().minimumWashoutPeriod, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
 						</div>
 					</div>
 					<div>
 						<label>Minimum required days at risk, applied to target and comparator cohorts:</label>
 						<div class="input-group">
-							<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().minimumDaysAtRisk.numeric(), ko_autocomplete: { value: cohortComparison().minimumDaysAtRisk, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+							<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().minimumDaysAtRisk.numeric(), eventType:'blur', ko_autocomplete: { value: cohortComparison().minimumDaysAtRisk, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
 						</div>
 					</div>
 					<div>

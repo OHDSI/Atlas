@@ -7,8 +7,9 @@ define(['jquery', 'knockout', 'jquery-ui'], function ($, ko) {
 			});
 
 			$(element).on("autocompleteselect", function (event, ui) {
-				element.innerText = ui.item.value.trim();
+				element.innerText = ui.item.value.trim().length == 0 ? null : ui.item.value.trim();
 				$(element).blur();
+				return false;
 			});
 		},
 		update: function (element, valueAccessor, allBindingsAccessor) {
