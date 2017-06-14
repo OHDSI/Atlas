@@ -465,8 +465,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			$(event.target).prop("disabled", true);
 
 			var requestedAnalysisTypes = [];
+			var runHeel = false;
 			$('input[type="checkbox"][name="' + data.sourceKey + '"]:checked').each(function () {
 				requestedAnalysisTypes.push($(this).val());
+				if ($(this).val() == 'Heracles Heel') {
+					runHeel = true;
+				}
 			});
 
 			var analysisIdentifiers = [];
@@ -489,7 +493,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.cohortDefinitionIds = [];
 				cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
 				cohortJob.analysisIds = analysisIdentifiers;
-				cohortJob.runHeraclesHeel = false;
+				cohortJob.runHeraclesHeel = runHeel;
 				cohortJob.cohortPeriodOnly = false;
 
 				// set concepts
