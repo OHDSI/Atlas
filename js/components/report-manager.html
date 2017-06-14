@@ -43,6 +43,13 @@
 </div>
 <!-- /ko -->
 
+<div id="reportHeel" data-bind="if: model.currentReport() == 'Heracles Heel' && !model.loadingReport()">
+	<div class="pad-10 report">
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Heracles Heel (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
+		<faceted-datatable params="{columns: $component.heelDataColumns, reference:$component.reference, options:$component.heelOptions }"></faceted-datatable>
+	</div>
+</div>
+
 <div id="reportPerson" data-bind="if: model.currentReport() == 'Person' && !model.loadingReport()">
 	<div class="pad-10 report">
 		<div class="reportHeading"><i class="fa fa-area-chart"></i> Person Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>

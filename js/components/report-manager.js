@@ -1,9 +1,56 @@
-define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding'], function (ko, view, d3, jnj_chart, colorbrewer, _, config) {
+define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding','faceted-datatable'], function (ko, view, d3, jnj_chart, colorbrewer, _, config) {
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
 		self.cohortCaption = ko.observable('Click Here to Choose a Cohort');
         self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
+		self.reference = ko.observableArray();
+		self.heelOptions = {
+				Facets: [
+				         {'caption': 'Error Msg',
+						  'binding': d => { 
+		                        if (d.attributeName < 10) {
+		                            return 'Person'
+		                        } else if ((d.attributeName >= 100 && d.attributeName < 200) || (d.attributeName >= 800 && d.attributeName < 900)) {
+		                            return 'Observation'
+		                        } else if (d.attributeName >= 200 && d.attributeName < 300) {
+		                            return 'Visits'
+		                        } else if (d.attributeName >= 400 && d.attributeName < 500) {
+		                            return 'Condition'
+		                        } else if (d.attributeName >= 500 && d.attributeName < 600) {
+		                            return 'Death'
+		                        } else if (d.attributeName >= 600 && d.attributeName < 700) {
+		                            return 'Procedure'
+		                        } else if (d.attributeName >= 700 && d.attributeName < 800) {
+		                            return 'Drug'
+		                        } else if (d.attributeName >= 900 && d.attributeName < 1000) {
+		                            return 'Drug Era'
+		                        } else if (d.attributeName >= 1000 && d.attributeName < 1100) {
+		                            return 'Condition Era'
+		                        } else if (d.attributeName >= 1100 && d.attributeName < 1200) {
+		                            return 'Location'
+		                        } else if (d.attributeName >= 1200 && d.attributeName < 1300) {
+		                            return 'Care Site'
+		                        } else if (d.attributeName >= 1700 && d.attributeName < 1800) {
+		                            return 'Cohort'
+		                        } else if (d.attributeName >= 1800 && d.attributeName < 1900) {
+		                            return 'Cohort Specific'
+		                        } else if (d.attributeName >= 1300 && d.attributeName < 1400) {
+		                            return 'Measurement'
+		                        } else {
+		                            return 'Other'
+		                        } 
+						  	}
+				         }
+				        ]};
+		
+		self.heelDataColumns = [{
+			title: 'Message Type',
+			data: 'attributeName'
+        }, {
+			title: 'Message',
+			data: 'attributeValue'
+        }];
 
         self.reportTriggerRunSuscription = self.model.reportTriggerRun.subscribe(function (newValue) {
         	if (newValue) {
@@ -1758,6 +1805,17 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					}
 				});
 				break; // person report
+			case 'Heracles Heel':
+				$.ajax({
+					url: config.services[0].url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/heraclesheel?refresh=true',
+					success: function (data) {
+						self.model.currentReport(self.model.reportReportName());
+						self.model.loadingReport(false);
+						
+						self.reference(data);						
+					}
+				});
+				break; // Heracles Heel report
 			}
 		}
 
