@@ -103,7 +103,7 @@ requirejs.config({
 		"negative-controls": "components/negative-controls",
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
-		"jnj_chart": "https://cdn.rawgit.com/johnSamilin/atlascharts/master/index",
+		"jnj_chart": "https://cdn.rawgit.com/odysseusinc/atlascharts/master/index",
 		"nvd3": "nv.d3",
 		//"lodash": "lodash.min",
 		"lodash": "lodash.4.15.0.full",
