@@ -165,10 +165,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								trellisLabel: "Age Decile",
 								seriesLabel: "Year of Observation",
 								yLabel: "Prevalence Per 1000 People",
-								xFormat: d3.time.format("%Y"),
+								xFormat: d3.timeFormat("%Y"),
 								yFormat: d3.format("0.2f"),
 								tickPadding: 20,
-								colors: d3.scale.ordinal()
+								colors: d3.scaleOrdinal()
 									.domain(["MALE", "FEMALE", "UNKNOWN"])
 									.range(["#1F78B4", "#FB9A99", "#33A02C"])
 							});
@@ -185,11 +185,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 							var prevalenceByMonth = new jnj_chart.line();
 							prevalenceByMonth.render(byMonthSeries, "#deathPrevalenceByMonth", 1000, 300, {
-								xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+								xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
-								xFormat: d3.time.format("%m/%Y"),
-								tickFormat: d3.time.format("%Y"),
+								xFormat: d3.timeFormat("%m/%Y"),
+								tickFormat: d3.timeFormat("%Y"),
 								xLabel: "Date",
 								yLabel: "Prevalence per 1000 People"
 							});
@@ -967,11 +967,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							d3.selectAll("#oppeoplebymonthsingle svg").remove();
 							var observationByMonthSingle = new jnj_chart.line();
 							observationByMonthSingle.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
-								xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+								xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
-								xFormat: d3.time.format("%m/%Y"),
-								tickFormat: d3.time.format("%Y"),
+								xFormat: d3.timeFormat("%m/%Y"),
+								tickFormat: d3.timeFormat("%Y"),
 								ticks: 10,
 								xLabel: "Date",
 								yLabel: "People"
@@ -1566,11 +1566,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 							var prevalenceByMonth = new jnj_chart.line();
 							prevalenceByMonth.render(byMonthSeries, "#prevalenceByMonth", 400, 200, {
-								xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+								xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
-								xFormat: d3.time.format("%m/%Y"),
-								tickFormat: d3.time.format("%Y"),
+								xFormat: d3.timeFormat("%m/%Y"),
+								tickFormat: d3.timeFormat("%Y"),
 								xLabel: "Date",
 								yLabel: "Prevalence per 1000 People"
 							});
@@ -1658,7 +1658,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							});
 							var observationByMonthSingle = new jnj_chart.line();
 							observationByMonthSingle.render(personsInCohortFromCohortStartToEndSeries, "#personinCohortFromStartToEnd", 460, 250, {
-								xScale: d3.time.scale().domain(d3.extent(personsInCohortFromCohortStartToEndSeries[0].values, function (d) {
+								xScale: d3.timeScale().domain(d3.extent(personsInCohortFromCohortStartToEndSeries[0].values, function (d) {
 									return d.xValue;
 								})),
 								xLabel: "30 Day Increments",
@@ -1727,10 +1727,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								trellisLabel: "Age Decile",
 								seriesLabel: "Year",
 								yLabel: "Prevalence Per 1000 People",
-								xFormat: d3.time.format("%Y"),
+								xFormat: d3.timeFormat("%Y"),
 								yFormat: d3.format("0.2f"),
 								tickPadding: 20,
-								colors: d3.scale.ordinal()
+								colors: d3.scaleOrdinal()
 									.domain(["MALE", "FEMALE", "UNKNOWN"])
 									.range(["#1F78B4", "#FB9A99", "#33A02C"])
 
@@ -1764,7 +1764,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 						var genderDonut = new jnj_chart.donut();
 						genderDonut.render(self.mapConceptData(data.gender), "#reportPerson #gender", 260, 130, {
-							colors: d3.scale.ordinal()
+							colors: d3.scaleOrdinal()
 								.domain([8507, 8551, 8532])
 								.range(["#1F78B4", "#33A02C", "#FB9A99"]),
 							margin: {
@@ -1784,7 +1784,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								right: 150,
 								left: 10
 							},
-							colors: d3.scale.ordinal()
+							colors: d3.scaleOrdinal()
 								.domain(data.race)
 								.range(colorbrewer.Paired[10])
 						});
@@ -1797,7 +1797,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								right: 150,
 								left: 10
 							},
-							colors: d3.scale.ordinal()
+							colors: d3.scaleOrdinal()
 								.domain(data.ethnicity)
 								.range(colorbrewer.Paired[10])
 						});
@@ -1869,11 +1869,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 						var prevalenceByMonth = new jnj_chart.line();
 						prevalenceByMonth.render(byMonthSeries, "#conditionPrevalenceByMonth", 230, 115, {
-							xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
 							})),
-							xFormat: d3.time.format("%m/%Y"),
-							tickFormat: d3.time.format("%Y"),
+							xFormat: d3.timeFormat("%m/%Y"),
+							tickFormat: d3.timeFormat("%Y"),
 							xLabel: "Date",
 							yLabel: "Prevalence per 1000 People"
 						});
@@ -1891,7 +1891,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								right: 200,
 								bottom: 5
 							},
-							colors: d3.scale.ordinal()
+							colors: d3.scaleOrdinal()
 								.domain(conditionType)
 								.range(colorbrewer.Paired[10])
 						});
@@ -1959,10 +1959,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
 							yLabel: "Prevalence Per 1000 People",
-							xFormat: d3.time.format("%Y"),
+							xFormat: d3.timeFormat("%Y"),
 							yFormat: d3.format("0.2f"),
 							tickPadding: 20,
-							colors: d3.scale.ordinal()
+							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN"])
 								.range(["#1F78B4", "#FB9A99", "#33A02C"])
 
@@ -1999,7 +1999,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							right: 200,
 							bottom: 5
 						},
-						colors: d3.scale.ordinal()
+						colors: d3.scaleOrdinal()
 							.domain(drugsByType)
 							.range(colorbrewer.Paired[10])
 					});
@@ -2016,11 +2016,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						d3.selectAll("#drugPrevalenceByMonth svg").remove();
 						var prevalenceByMonth = new jnj_chart.line();
 						prevalenceByMonth.render(byMonthSeries, "#drugPrevalenceByMonth", 900, 250, {
-							xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
 							})),
-							xFormat: d3.time.format("%m/%Y"),
-							tickFormat: d3.time.format("%Y"),
+							xFormat: d3.timeFormat("%m/%Y"),
+							tickFormat: d3.timeFormat("%Y"),
 							xLabel: "Date",
 							yLabel: "Prevalence per 1000 People"
 						});
@@ -2088,10 +2088,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
 							yLabel: "Prevalence Per 1000 People",
-							xFormat: d3.time.format("%Y"),
+							xFormat: d3.timeFormat("%Y"),
 							yFormat: d3.format("0.2f"),
 							tickPadding: 20,
-							colors: d3.scale.ordinal()
+							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN", ])
 								.range(["#1F78B4", "#FB9A99", "#33A02C"])
 						});
@@ -2128,11 +2128,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						d3.selectAll("#conditioneraPrevalenceByMonth svg").remove();
 						var prevalenceByMonth = new jnj_chart.line();
 						prevalenceByMonth.render(byMonthSeries, "#conditioneraPrevalenceByMonth", 230, 115, {
-							xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
 							})),
-							xFormat: d3.time.format("%m/%Y"),
-							tickFormat: d3.time.format("%Y"),
+							xFormat: d3.timeFormat("%m/%Y"),
+							tickFormat: d3.timeFormat("%Y"),
 							xLabel: "Date",
 							yLabel: "Prevalence per 1000 People"
 						});
@@ -2199,9 +2199,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
 							yLabel: "Prevalence Per 1000 People",
-							xFormat: d3.time.format("%Y"),
+							xFormat: d3.timeFormat("%Y"),
 							yFormat: d3.format("0.2f"),
-							colors: d3.scale.ordinal()
+							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN"])
 								.range(["#1F78B4", "#FB9A99", "#33A02C"])
 
@@ -2240,11 +2240,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						d3.selectAll("#drugeraPrevalenceByMonth svg").remove();
 						var prevalenceByMonth = new jnj_chart.line();
 						prevalenceByMonth.render(byMonthSeries, "#drugeraPrevalenceByMonth", 400, 200, {
-							xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
 							})),
-							xFormat: d3.time.format("%m/%Y"),
-							tickFormat: d3.time.format("%Y"),
+							xFormat: d3.timeFormat("%m/%Y"),
+							tickFormat: d3.timeFormat("%Y"),
 							xLabel: "Date",
 							yLabel: "Prevalence per 1000 People"
 						});
@@ -2311,9 +2311,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
 							yLabel: "Prevalence Per 1000 People",
-							xFormat: d3.time.format("%Y"),
+							xFormat: d3.timeFormat("%Y"),
 							yFormat: d3.format("0.2f"),
-							colors: d3.scale.ordinal()
+							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN"])
 								.range(["#1F78B4", "#FB9A99", "#33A02C"])
 
@@ -2369,11 +2369,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 						var prevalenceByMonth = new jnj_chart.line();
 						prevalenceByMonth.render(byMonthSeries, "#procedurePrevalenceByMonth", 1000, 300, {
-							xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
 							})),
-							xFormat: d3.time.format("%m/%Y"),
-							tickFormat: d3.time.format("%Y"),
+							xFormat: d3.timeFormat("%m/%Y"),
+							tickFormat: d3.timeFormat("%Y"),
 							xLabel: "Date",
 							yLabel: "Prevalence per 1000 People"
 						});
@@ -2453,10 +2453,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
 							yLabel: "Prevalence Per 1000 People",
-							xFormat: d3.time.format("%Y"),
+							xFormat: d3.timeFormat("%Y"),
 							yFormat: d3.format("0.2f"),
 							tickPadding: 20,
-							colors: d3.scale.ordinal()
+							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN"])
 								.range(["#1F78B4", "#FB9A99", "#33A02C"])
 

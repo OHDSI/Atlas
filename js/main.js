@@ -103,7 +103,7 @@ requirejs.config({
 		"negative-controls": "components/negative-controls",
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
-		"jnj_chart": "jnj.chart",
+		"jnj_chart": "atlascharts",
 		"nvd3": "nv.d3",
 		//"lodash": "lodash.min",
 		"lodash": "lodash.4.15.0.full",
@@ -128,7 +128,9 @@ requirejs.config({
 		"roles": "components/roles",
 		"role-details": "components/role-details",
 		"loading": "components/loading",
-		"atlas-state": "components/atlas-state"
+		"atlas-state": "components/atlas-state",
+		"d3-collection": "d3-collection.v1.min",
+		"d3-selection": "d3-selection.v1.min"
 	}
 });
 

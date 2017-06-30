@@ -4,13 +4,12 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 
 		w = 400;
 		h = 400;
-		x = d3.scale.linear().range([0, w]);
-		y = d3.scale.linear().range([0, h]);
+		x = d3.scaleLinear().range([0, w]);
+		y = d3.scaleLinear().range([0, h]);
 
-		treemap = d3.layout.treemap()
+		treemap = d3.treemap()
 			.round(false)
 			.size([w, h])
-			.sticky(true)
 			.value(function (d) {
 				return d.size;
 			});

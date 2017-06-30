@@ -1,4 +1,4 @@
-define(['jquery', 'd3', 'd3_tip'], function ($, d3) {
+define(['jquery', 'd3', 'd3_tip'], function ($, d3, d3tip) {
 	var packingHierarchy = function () {
 
 		var ph = this;
@@ -27,7 +27,7 @@ define(['jquery', 'd3', 'd3_tip'], function ($, d3) {
 
 			node = root = data;
 
-			ph.tip = d3.tip().attr('class', 'd3-tip').html(function (d) {				
+			ph.tip = d3tip().attr('class', 'd3-tip').html(function (d) {				
 				if (d.conceptName == 'root') {
 					return 'Concept Set Analysis';
 				}

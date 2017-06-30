@@ -1,5 +1,5 @@
 "use strict";
-define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
+define(['knockout','d3', 'd3_tip', 'lodash', 'd3-selection', 'D3-Labeler/labeler'], function (ko, d3, d3tip, _, d3Selection) {
 
 	var margin = {
 			top: 0,
@@ -11,11 +11,11 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 	var width = 900;
 	//var width = minWidth - margin.left - margin.right;
 
-	var xScale = d3.scale.linear();
+	var xScale = d3.scaleLinear();
 	function relativeXscale(x) {
 		return xScale(x) - xScale(0);
 	}
-	var yScale = d3.scale.ordinal();
+	var yScale = d3.scaleBand();
 	// these are hardcoded now, but should be parameters to make this chart more reusable
 	var x = d=>{
 		if (!d) debugger;
@@ -31,7 +31,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 		var ext = zoomFilter() && zoomFilter().ext() || [x(d), endX(d)];
 		var mid = (x(d) + endX(d)) / 2;
 		if (mid < ext[0] || mid > ext[1]) {
-			return (d3.scale.linear()
+			return (d3.scaleLinear()
 								.domain([x(d), endX(d)])
 								.range(ext)
 								(mid));
@@ -42,10 +42,10 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 	var highlightFunc = ()=>{};
 	var highlightFunc2 = ()=>{};
 	var zoomFilterG;
-	var focusTip = d3.tip()
+	var focusTip = d3tip()
 		.attr('class', 'd3-tip')
 		.offset(function(d) {
-			return [this.getBBox().height / 2, 0];
+			// return [d.getBBox().height / 2, 0];
 			return [-10,0];
 			var offset = [0, labelX(d, zoomFilterG) - x(d)];
 			console.log(offset)
@@ -97,7 +97,8 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 
 		var categories = _.chain(points).map(y).uniq().value();
 		yScale.domain(categories.sort())
-					.rangeRoundBands([margin.top, vizHeight + margin.top], .04);
+					.range([margin.top, vizHeight + margin.top])
+					.round(.04);
 
 		$(element).empty();
 
@@ -112,11 +113,11 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			//.attr("class", "focus")
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+		var xAxis = d3.axisBottom().scale(xScale);
 
 		var brushed = function () {
 			/*
-			//xScale.domain(brush.empty() ? x2Scale.domain() : brush.extent());
+			//xScale.domain(d3.event.selection === null ? x2Scale.domain() : brush.extent());
 			focus.selectAll('g.point')
 				.attr("transform", function(d,i) {
 					return "translate(" + (xScale(x(d)) + jitter(i).x) + "," + 
@@ -136,24 +137,23 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			*/
 		}
 
-		var brush = d3.svg.brush()
-			.x(xScale)
-			.on("brush", brushed)
-			.on("brushend", function() {
+		var brush = d3.brushX()
+			.extent([[0, 0], [width, vizHeight]])
+			.on("end", function() {
 				focusTip.hide();
-				if (brush.empty()) {
+				if (d3.event.selection === null) {
 					zoomFilter(null);
 				} else {
-					zoomFilter(makeFilter(brush.extent()));
+					zoomFilter(makeFilter(d3.event.selection));
 				}
 			});
 
 		svg.call(focusTip);
 
-		var letterSpacingScale = d3.scale.log()
+		var letterSpacingScale = d3.scaleLog()
 					.domain([.8,20])
 					.range([-.05, 2]);
-		var fontSizeScale = d3.scale.pow(1/2)
+		var fontSizeScale = d3.scalePow(1/2)
 					.domain([10, vizHeight])
 					.range([15, 75]);
 		focus.selectAll('rect.category')
@@ -162,15 +162,15 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 					.append('rect')
 					.attr('class','category')
 					.attr('width', width)
-					.attr('height', yScale.rangeBand())
+					.attr('height', yScale.bandwidth())
 					.attr('y', d => yScale(d))
 		focus.selectAll('text.category')
 					.data(categories)
 					.enter()
 					.append('text')
 					.attr('class','category')
-					.attr('font-size', fontSizeScale(yScale.rangeBand()))
-					.attr('y', d => yScale(d) + yScale.rangeBand() / 2 + fontSizeScale(yScale.rangeBand()) / 2)
+					.attr('font-size', fontSizeScale(yScale.bandwidth()))
+					.attr('y', d => yScale(d) + yScale.bandwidth() / 2 + fontSizeScale(yScale.bandwidth()) / 2)
 					.attr('x', width/2)
 					.attr('text-anchor', 'middle')
 					.style('letter-spacing', 0)
@@ -193,16 +193,17 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 					.classed('shaded-region', true);
 		focus.selectAll('rect.shaded-region')
 			.attr('x',d=>xScale(d.x1))
-			.attr('y', yScale.rangeExtent()[0])
+			.attr('y', yScale.range()[0])
 			.attr('width',d => xScale(d.x2) - xScale(d.x1))
-			.attr('height', yScale.rangeExtent()[1])
+			.attr('height', yScale.range()[1])
 
 		focus.append("g")
 			.attr("class", "x brush")
 			.call(brush)
 			.selectAll("rect")
 			.attr("y", margin.top)
-			.attr("height", vizHeight);
+			.attr("height", vizHeight)
+			.attr("width", width);
 
 		var vLines = focus.selectAll('line.vertical')
 									.data(verticalLines);
@@ -213,8 +214,8 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 		focus.selectAll('line.vertical')
 			.attr('x1',d=>xScale(d.x))
 			.attr('x2',d=>xScale(d.x))
-			.attr('y1', yScale.rangeExtent()[0])
-			.attr('y2', yScale.rangeExtent()[1])
+			.attr('y1', yScale.range()[0])
+			.attr('y2', yScale.range()[1])
 			.style('stroke', d=>d.color);
 
 		var pointGs = focus.selectAll("g.point")
@@ -233,7 +234,10 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				return pointClass(d);
 			})
 			.classed('point', true)
-			.on('mouseover', focusTip.show)
+			.on('mouseover', (d) => {
+				d3Selection.event = d3.event; // otherwise, d3Selection.event is null
+				return focusTip.show(d);
+			})
 			.on('mouseout', focusTip.hide)
 			/*
 			// these stubs don't do anything useful yet but
@@ -342,12 +346,13 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 	function inset(svg, allPoints, filteredPoints, zoomFilter) {
 		var insetWidth = (width + margin.left + margin.right) * .15
 		var insetHeight = (vizHeight + margin.top + margin.bottom) * .15;
-		var ixScale = d3.scale.linear()
+		var ixScale = d3.scaleLinear()
 										.range([5,insetWidth - 5])
 										.domain([d3.min(allPoints.map(x)), d3.max(allPoints.map(endX))]);
 		var categories = _.chain(allPoints).map(y).uniq().value();
-		var iyScale = d3.scale.ordinal().rangePoints([insetHeight * .1, insetHeight * .9 ])
-																		.domain(categories.sort());
+		var iyScale = d3.scalePoint()
+											.range([insetHeight * .1, insetHeight * .9 ])
+											.domain(categories.sort());
 		var g = svg.append("g")
 								.attr("class", "inset")
 								.attr("transform",`translate(${width - insetWidth}, 0)`)
@@ -390,7 +395,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 												.attr('width', d=>d.width)
 												.attr('y', 0)
 												.attr('height', insetHeight)
-			var drag = d3.behavior.drag();
+			var drag = d3.drag();
 			insetZoom.call(drag);
 			drag.on('drag', function(d) {
 				d.x += d3.event.dx;
@@ -403,7 +408,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				insetZoom.attr('x', d.x)
 				//.style('cursor', '-webkit-grabbing') doesn't work
 			});
-			drag.on('dragend', function(d) {
+			drag.on('end', function(d) {
 				var x = ixScale.invert(d.x);
 				//insetZoom.style('cursor', '-webkit-grab')
 				zoomFilter(makeFilter([x, x + zoomDays]));
@@ -419,7 +424,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 												.attr('width', 6)
 												.attr('y', 5)
 												.attr('height', insetHeight)
-			var resizeLeftDrag = d3.behavior.drag();
+			var resizeLeftDrag = d3.drag();
 			resizeLeft.call(resizeLeftDrag);
 			resizeLeftDrag.on('drag', function(d) {
 				d.x += d3.event.dx;
@@ -428,7 +433,7 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 				insetZoom.attr('x', d.x)
 				 					.attr('width', d.width)
 			});
-			resizeLeftDrag.on('dragend', function(d) {
+			resizeLeftDrag.on('end', function(d) {
 				var x = ixScale.invert(d.x);
 				//insetZoom.style('cursor', '-webkit-grab')
 				zoomFilter(makeFilter([x, zoomFilter().ext()[1]]));
@@ -444,14 +449,14 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 														.attr('width', 6)
 														.attr('y', 5)
 														.attr('height', insetHeight)
-			var resizeRightDrag = d3.behavior.drag();
+			var resizeRightDrag = d3.drag();
 			resizeRight.call(resizeRightDrag);
 			resizeRightDrag.on('drag', function(d) {
 				d.width += d3.event.dx;
 				resizeRight.attr('x', d.x + d.width - 3)
 				insetZoom.attr('width', d.width)
 			});
-			resizeRightDrag.on('dragend', function(d) {
+			resizeRightDrag.on('end', function(d) {
 				var width = ixScale.invert(d.width) - ixScale.invert(0);
 				zoomFilter(makeFilter([zoomFilter().ext()[0], zoomFilter().ext()[0] + width]));
 			});
@@ -527,9 +532,9 @@ define(['knockout','d3', 'lodash', 'D3-Labeler/labeler'], function (ko, d3, _) {
 			.classed(pointClass(datum), true);
 	}
 	var jitterOffsets = []; // keep them stable as points move around
-	var jitterYScale = d3.scale.linear().domain([-.5,.5]);
+	var jitterYScale = d3.scaleLinear().domain([-.5,.5]);
 	function jitter(i, maxX=6, maxY=12) {
-		jitterYScale.range([yScale.rangeBand() * .1, yScale.rangeBand() * .9]);
+		jitterYScale.range([yScale.bandwidth() * .1, yScale.bandwidth() * .9]);
 		jitterOffsets[i] = jitterOffsets[i] || [Math.random() - .5, Math.random() - .5];
 		return { x: jitterOffsets[i][0] * maxX, y: jitterYScale(jitterOffsets[i][1]) };
 	}
