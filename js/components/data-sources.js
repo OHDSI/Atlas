@@ -156,21 +156,15 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						if (!!data.summary) {
 							data.summary.forEach(function (d) {
 								if (!isNaN(d.attributeValue)) {
-									d.attributeValue = self.formatSI(d.attributeValue, 2);
+									var formatter = jnj_chart.Chart.getFormatters().formatSI(2);
+									d.attributeValue = formatter(d.attributeValue);
 								}
 							});
 							currentReport.summary(data.summary);
 						}
-						var genderDonut = new jnj_chart.donut();
+
 						var genderConceptData = self.mapConceptData(data.gender);
-						genderDonut.render(genderConceptData, "#populationByGender", self.donutWidth, self.donutHeight, {
-							margin: {
-								top: 5,
-								left: 5,
-								right: 200,
-								bottom: 5
-							}
-						});
+						jnj_chart.Donut.render(genderConceptData, "#populationByGender", self.donutWidth, self.donutHeight);
 
 						var ageAtFirstData = self.normalizeArray(data.ageAtFirstObservation);
 						if (!ageAtFirstData.empty) {
@@ -181,11 +175,11 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 							histData.intervals = 120;
 							histData.data = ageAtFirstData;
 
-							d3.selectAll("#ageAtFirstObservation svg").remove();
 							var ageAtFirstObservationData = self.mapHistogram(histData);
-							var ageAtFirstObservationHistogram = new jnj_chart.histogram();
-							ageAtFirstObservationHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", self.boxplotWidth, self.boxplotHeight, {
+
+							jnj_chart.Histogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", self.boxplotWidth, self.boxplotHeight, {
 								xFormat: d3.format('d'),
+								yFormat: d3.format(',.1s'),
 								xLabel: 'Age',
 								yLabel: 'People'
 							});
@@ -194,7 +188,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						d3.selectAll("#cumulativeObservation svg").remove();
 						var cumObsData = self.normalizeArray(data.cumulativeObservation);
 						if (!cumObsData.empty) {
-							var cumulativeObservationLine = new jnj_chart.line();
 							var cumulativeData = self.normalizeDataframe(cumObsData).xLengthOfObservation
 								.map(function (d, i) {
 									var item = {
@@ -215,9 +208,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								}
 							}
 
-							cumulativeObservationLine.render(cumulativeData, "#cumulativeObservation", 230, 115, {
-								yFormat: d3.format('0%'),
-								interpolate: "step-before",
+							jnj_chart.Line.render(cumulativeData, "#cumulativeObservation", 230, 115, {
+								yFormat: d3.format('0.0%'),
+								interpolate: jnj_chart.Line.getInterpolation().curveStepBefore,
 								xLabel: cumulativeObservationXLabel,
 								yLabel: 'Percent of Population'
 							});
@@ -232,13 +225,12 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								yPercent: 'percentValue'
 							});
 							d3.selectAll("#oppeoplebymonthsingle svg").remove();
-							var observationByMonthSingle = new jnj_chart.line();
-							observationByMonthSingle.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
-								xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							jnj_chart.Line.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
+								xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
-								xFormat: d3.time.format("%m/%Y"),
-								tickFormat: d3.time.format("%Y"),
+								xFormat: d3.timeFormat("%m/%Y"),
+								tickFormat: d3.timeFormat("%Y"),
 								ticks: 10,
 								xLabel: "Date",
 								yLabel: "People"
@@ -259,59 +251,22 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
 						if (!!data.yearOfBirth && data.yearOfBirth.length > 0 &&
 							!!data.yearOfBirthStats && data.yearOfBirthStats.length > 0) {
-							var yearHistogram = new jnj_chart.histogram();
 							var histData = {};
 							histData.intervalSize = 1;
 							histData.min = data.yearOfBirthStats[0].minValue;
 							histData.max = data.yearOfBirthStats[0].maxValue;
 							histData.intervals = 100;
-							histData.data = (self.normalizeArray(data.yearOfBirth));
-							yearHistogram.render(self.mapHistogram(histData), "#hist", 460, 195, {
+							histData.data = self.normalizeArray(data.yearOfBirth);
+							jnj_chart.Histogram.render(self.mapHistogram(histData), "#hist", 460, 195, {
 								xFormat: d3.format('d'),
+								yFormat: d3.format(',.1s'),
 								xLabel: 'Year',
 								yLabel: 'People'
 							});
 						}
-
-						var genderDonut = new jnj_chart.donut();
-						genderDonut.render(self.mapConceptData(data.gender), "#gender", 260, 130, {
-							colors: d3.scale.ordinal()
-								.domain([8507, 8551, 8532])
-								.range(["#1F78B4", "#33A02C", "#FB9A99"]),
-							margin: {
-								top: 5,
-								bottom: 10,
-								right: 150,
-								left: 10
-							}
-
-						});
-
-						var raceDonut = new jnj_chart.donut();
-						raceDonut.render(self.mapConceptData(data.race), "#race", 260, 130, {
-							margin: {
-								top: 5,
-								bottom: 10,
-								right: 150,
-								left: 10
-							},
-							colors: d3.scale.ordinal()
-								.domain(data.race)
-								.range(colorbrewer.Paired[10])
-						});
-
-						var ethnicityDonut = new jnj_chart.donut();
-						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", 260, 130, {
-							margin: {
-								top: 5,
-								bottom: 10,
-								right: 150,
-								left: 10
-							},
-							colors: d3.scale.ordinal()
-								.domain(data.ethnicity)
-								.range(colorbrewer.Paired[10])
-						});
+						jnj_chart.Donut.render(self.mapConceptData(data.gender), "#gender", 260, 130);
+						jnj_chart.Donut.render(self.mapConceptData(data.race), "#race", 260, 130);
+						jnj_chart.Donut.render(self.mapConceptData(data.ethnicity), "#ethnicity", 260, 130);
 					}
 				});
 			} else if (currentReport.name == 'Achilles Heel') {
@@ -353,12 +308,12 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 									data: 'type',
 									visible: true,
 									width: 200
-                                },
+                },
 								{
 									data: 'content',
 									visible: true
-                                }
-                            ],
+                }
+              ],
 							pageLength: 15,
 							lengthChange: false,
 							deferRender: true,
@@ -399,19 +354,19 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								});
 
 
-							var totalRecordsLine = new jnj_chart.line();
-							totalRecordsLine.render(totalRecordsData, "#totalrecords", 900, 250, {
-								xScale: d3.time.scale().domain(d3.extent(totalRecords, function (d) {
+
+							jnj_chart.Line.render(totalRecordsData, "#totalrecords", 900, 250, {
+								xScale: d3.scaleTime().domain(d3.extent(totalRecords, function (d) {
 									return d.xCalendarMonth;
 								})),
-								xFormat: d3.time.format("%m/%Y"),
-								tickFormat: d3.time.format("%Y"),
+								xFormat: d3.timeFormat("%m/%Y"),
+								tickFormat: d3.timeFormat("%Y"),
 								xValue: "xCalendarMonth",
 								yValue: "yRecordCount",
 								xLabel: "Year",
 								yLabel: "# of Records",
 								showLegend: true,
-								colors: d3.scale.category10()
+								colors: d3.schemeCategory10
 							});
 						}
 
@@ -437,24 +392,24 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								});
 
 
-							var recordsPerPersonLine = new jnj_chart.line();
-							recordsPerPersonLine.render(recordsPerPersonData, "#recordsperperson", 900, 250, {
-								xScale: d3.time.scale().domain(d3.extent(recordsPerPerson, function (d) {
+
+							jnj_chart.Line.render(recordsPerPersonData, "#recordsperperson", 900, 250, {
+								xScale: d3.scaleTime().domain(d3.extent(recordsPerPerson, function (d) {
 									return d.xCalendarMonth;
 								})),
-								xFormat: d3.time.format("%m/%Y"),
-								tickFormat: d3.time.format("%Y"),
+								xFormat: d3.timeFormat("%m/%Y"),
+								tickFormat: d3.timeFormat("%Y"),
 								xValue: "xCalendarMonth",
 								yValue: "yRecordCount",
 								xLabel: "Year",
 								yLabel: "Records Per Person",
 								showLegend: true,
-								colors: d3.scale.category10()
+								colors: d3.schemeCategory10
 							});
 						}
 
 						if (!!data.conceptsPerPerson) {
-							var conceptsBoxplot = new jnj_chart.boxplot();
+
 							var conceptsSeries = [];
 							var conceptsData = self.normalizeArray(data.conceptsPerPerson);
 							for (i = 0; i < conceptsData.category.length; i++) {
@@ -469,8 +424,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 									UIF: conceptsData.p90Value[i]
 								});
 							}
-							conceptsBoxplot.render(conceptsSeries, "#conceptsperperson", 800, 200, {
+							jnj_chart.BoxPlot.render(conceptsSeries, "#conceptsperperson", 800, 200, {
 								yMax: d3.max(conceptsData.p90Value),
+								yFormat: d3.format(',.1s'),
 								xLabel: 'Concept Type',
 								yLabel: 'Concepts per Person'
 							});
@@ -567,8 +523,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						});
 
 						var treeData = self.buildHierarchyFromJSON(data, threshold);
-						var treemap = new jnj_chart.treemap();
-						treemap.render(treeData, '#treemap_container', width, height, {
+
+						jnj_chart.Treemap.render(treeData, '#treemap_container', width, height, {
 							onclick: function (node) {
 								self.currentConcept(node);
 							},
@@ -692,20 +648,22 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				});
 
 				// create svg with range bands based on the trellis names
-				var chart = new jnj_chart.trellisline();
-				chart.render(dataByDecile, selector, 1000, 300, {
+
+				jnj_chart.Trellisline.render(dataByDecile, selector, 1000, 300, {
 					trellisSet: allDeciles,
 					trellisLabel: "Age Decile",
 					seriesLabel: "Year of Observation",
 					yLabel: "Prevalence Per 1000 People",
-					xFormat: d3.time.format("%Y"),
+					xFormat: d3.timeFormat("%Y"),
 					yFormat: d3.format("0.2f"),
 					tickPadding: 20,
-					colors: d3.scale.ordinal()
-						.domain(["MALE", "FEMALE", "UNKNOWN"])
+					colors: d3.scaleOrdinal()
+						.domain(['MALE', 'FEMALE', 'UNKNOWN'])
 						.range(["#1F78B4", "#FB9A99", "#33A02C"])
-
 				});
+				d3.select(selector).select('svg')
+					.attr('width', '1000px')
+					.attr('height', '300px');
 			}
 		};
 
@@ -718,13 +676,12 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 					yPercent: 'yPrevalence1000Pp'
 				});
 
-				var prevalenceByMonth = new jnj_chart.line();
-				prevalenceByMonth.render(byMonthSeries, selector, 1000, 300, {
-					xScale: d3.time.scale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+				jnj_chart.Line.render(byMonthSeries, selector, 1000, 300, {
+					xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 						return d.xValue;
 					})),
-					xFormat: d3.time.format("%m/%Y"),
-					tickFormat: d3.time.format("%Y"),
+					xFormat: d3.timeFormat("%m/%Y"),
+					tickFormat: d3.timeFormat("%Y"),
 					xLabel: "Date",
 					yLabel: "Prevalence per 1000 People"
 				});
@@ -733,8 +690,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
 		self.prevalenceByType = function (data, selector) {
 			if (!!data && data.length > 0) {
-				var donut = new jnj_chart.donut();
-				donut.render(self.mapConceptData(data), selector, self.donutWidth, self.donutHeight, {
+
+				jnj_chart.Donut.render(self.mapConceptData(data), selector, self.donutWidth, self.donutHeight, {
 					margin: {
 						top: 5,
 						left: 5,
@@ -747,7 +704,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
 		self.ageBoxplot = function (data, selector, yLabel) {
 			yLabel = yLabel ? yLabel : 'Age at First Occurrence';
-			var boxplot = new jnj_chart.boxplot();
 			var bpseries = [];
 			var bpdata = self.normalizeArray(data);
 			if (!bpdata.empty) {
@@ -763,9 +719,10 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						UIF: bpdata.p90Value[i]
 					});
 				}
-				boxplot.render(bpseries, selector, self.boxplotWidth, self.boxplotHeight, {
+				jnj_chart.BoxPlot.render(bpseries, selector, self.boxplotWidth, self.boxplotHeight, {
 					xLabel: 'Gender',
-					yLabel: yLabel
+					yLabel: yLabel,
+					yFormat: d3.format(',.1s'),
 				});
 			}
 		};
@@ -963,14 +920,21 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						id: data.conceptId,
 						label: data.conceptName,
 						value: data.countValue
-                    }];
+          }];
 			}
 
 			result = result.sort(function (a, b) {
 				return b.label < a.label ? 1 : -1;
 			});
 
-			return result;
+			return {
+				data: result.map(function(series) {
+					return series.value;
+				}),
+				legend: result.map(function(series) {
+					return series.label;
+				})
+			};
 		};
 
 		self.mapHistogram = function (histogramData) {

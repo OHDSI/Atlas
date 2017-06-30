@@ -4,7 +4,7 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 
 		w = 400;
 		h = 40;
-		x = d3.scale.linear()
+		x = d3.scaleLinear()
 			.domain(data().scale.domain())
 			.range([0, w - 30]);
 		
@@ -38,7 +38,7 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 				.style("fill", data().scale((intervals[boxIndex] + intervals[boxIndex + 1]) / 2.0));
 		}
 		
-		var xAxis = d3.svg.axis()
+		var xAxis = d3.axisBottom()
 			.scale(x)
 			//.ticks(data().scale.range().length)
 			.tickValues(intervals)

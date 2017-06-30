@@ -4,6 +4,7 @@ define(function (require, exports) {
 	var config = require('appConfig');
 	var sourceAPI = require('webapi/SourceAPI');
 	var sharedState = require('atlas-state');
+	var numeral = require('numeral');
 
 	var loadedPromise = $.Deferred();
 	loadedPromise.resolve();
@@ -61,15 +62,15 @@ define(function (require, exports) {
 			timeout: 10000,
 			data: JSON.stringify(searchResultIdentifiers),
 			success: function (entries) {
-				var formatComma = d3.format(',');
+				var formatComma = "0,0";
 				for (var e = 0; e < entries.length; e++) {
 					densityIndex[entries[e].key] = entries[e].value;
 				}
 				for (var c = 0; c < results.length; c++) {
 					var concept = results[c];
 					if (densityIndex[concept.CONCEPT_ID] != undefined) {
-						concept.RECORD_COUNT = formatComma(densityIndex[concept.CONCEPT_ID][0]);
-						concept.DESCENDANT_RECORD_COUNT = formatComma(densityIndex[concept.CONCEPT_ID][1]);
+						concept.RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][0]).format(formatComma);
+						concept.DESCENDANT_RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][1]).format(formatComma);
 					} else {
 						concept.RECORD_COUNT = 0;
 						concept.DESCENDANT_RECORD_COUNT = 0;
