@@ -169,10 +169,11 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 						data: JSON.stringify([self.currentConceptId()]),
 						success: function (data) {
 							completedCounts++;
+							var recordCountObject = Object.values(data[0])[0];
 							sourceData.push({
 								sourceName: this.source.sourceName,
-								recordCount: data[0].value[0],
-								descendantRecordCount: data[0].value[1]
+								recordCount: recordCountObject[0],
+								descendantRecordCount: recordCountObject[1]
 							});
 
 							if (completedCounts == totalCounts) {

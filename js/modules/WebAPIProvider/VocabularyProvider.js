@@ -63,7 +63,7 @@ define(function (require, exports) {
 			success: function (entries) {
 				var formatComma = d3.format(',');
 				for (var e = 0; e < entries.length; e++) {
-					densityIndex[entries[e].key] = entries[e].value;
+					densityIndex[Object.keys(entries[e])[0]] = Object.values(entries[e])[0];
 				}
 				for (var c = 0; c < results.length; c++) {
 					var concept = results[c];
