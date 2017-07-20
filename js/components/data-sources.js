@@ -176,9 +176,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						if (!ageAtFirstData.empty) {
 							var histData = {};
 							histData.intervalSize = 1;
-							histData.min = d3.min(ageAtFirstData.countValue);
-							histData.max = d3.max(ageAtFirstData.countValue);
-							histData.intervals = 120;
+							histData.min = d3.min(ageAtFirstData.intervalIndex);
+							histData.max = d3.max(ageAtFirstData.intervalIndex);
+							histData.intervals = (histData.max - histData.min) > 100 ? (histData.max - histData.min) : 100;
 							histData.data = ageAtFirstData;
 
 							d3.selectAll("#ageAtFirstObservation svg").remove();
