@@ -10,35 +10,37 @@
  *			d3AddIfNeeded
  *			D3Element
  *			shapePath
-*				ResizableSvgContainer extends D3Element
-*			  SvgLayout
-*			  SvgElement
-*			  ChartLabel extends SvgElement
-*			  ChartLabelLeft extends ChartLabel
-*			  ChartLabelBottom extends ChartLabel
-*			  ChartAxis extends SvgElement
-*			  ChartAxisY extends ChartAxis
-*			  ChartAxisX extends ChartAxis
-*			  ChartChart extends SvgElement
-*			  ChartProps
-*			  getState, setState, deleteState, hasState, onStateChange
-*			  Field
-*			  cachedAjax
-*			  storagePut
-*			  storageExists
-*			  storageGet
-*				SharedCrossfilter
-*/
-define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], function($,ko, LZString, _, crossfilter) {
+ *				ResizableSvgContainer extends D3Element
+ *			  SvgLayout
+ *			  SvgElement
+ *			  ChartLabel extends SvgElement
+ *			  ChartLabelLeft extends ChartLabel
+ *			  ChartLabelBottom extends ChartLabel
+ *			  ChartAxis extends SvgElement
+ *			  ChartAxisY extends ChartAxis
+ *			  ChartAxisX extends ChartAxis
+ *			  ChartChart extends SvgElement
+ *			  ChartProps
+ *			  getState, setState, deleteState, hasState, onStateChange
+ *			  Field
+ *			  cachedAjax
+ *			  storagePut
+ *			  storageExists
+ *			  storageGet
+ *				SharedCrossfilter
+ */
+define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($, ko, LZString, _, crossfilter) {
 
 	var DEBUG = true;
 	var ALLOW_CACHING = [
 		//'.*',
 		//'/WebAPI/[^/]+/person/',
 	];
-	
-	var utilModule = { version: '1.0.0' };
-	
+
+	var utilModule = {
+		version: '1.0.0'
+	};
+
 	// private functions 	
 	function _pruneJSON(key, value) {
 		if (value === 0 || value) {
@@ -47,9 +49,9 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			return
 		}
 	}
-	
+
 	// END private functions
-	
+
 	// module functions
 	function dirtyFlag(root, isInitiallyDirty) {
 		var result = function () {},
@@ -68,7 +70,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		};
 
 		return result;
-	}	
+	}
 
 	/* elementConvert
 	 * call with css id (with or without #)
@@ -83,7 +85,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			//console.warn("this should't return target.node(), it should return target[0]");
 			//   but i haven't been able to get that to work yet
 			return elementConvert(target.node(), type); // call again with dom node
-																						    // (first in selection, that is)
+			// (first in selection, that is)
 		}
 		if (target.jquery) { // it's a jquery selection
 			if (type === "jquery") return target;
@@ -149,8 +151,15 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	 *																	 },
 	 *												 cbParams: []});
 	 */
-	function d3AddIfNeeded({parentElement, data, tag, classes=[], addCb=()=>{}, updateCb=()=>{}, 
-												  cbParams} = {}) {
+	function d3AddIfNeeded({
+		parentElement,
+		data,
+		tag,
+		classes = [],
+		addCb = () => {},
+		updateCb = () => {},
+		cbParams
+	} = {}) {
 		var el = elementConvert(parentElement, "d3");
 		var selection = el.selectAll([tag].concat(classes).join('.'));
 		if (Array.isArray(data)) {
@@ -161,13 +170,13 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		}
 		selection.exit().remove();
 		selection.enter().append(tag)
-				.each(function(d) {
-					var newNode = d3.select(this);
-					classes.forEach(cls => {
-						newNode.classed(cls, true);
-					});
-				})
-				.call(addCb, cbParams);
+			.each(function (d) {
+				var newNode = d3.select(this);
+				classes.forEach(cls => {
+					newNode.classed(cls, true);
+				});
+			})
+			.call(addCb, cbParams);
 		selection = el.selectAll([tag].concat(classes).join('.'));
 		selection.call(updateCb, cbParams);
 		return selection;
@@ -250,7 +259,11 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	 *		below the one you're adding, and then how would you access those?)
 	 */
 	function combineFuncs(funcs) {
-		return (...args) => { return funcs.map(function(f) { return f.apply(this, args) }) }
+		return (...args) => {
+			return funcs.map(function (f) {
+				return f.apply(this, args)
+			})
+		}
 	}
 	class D3Element {
 		constructor(props, passParams = {}, parentSelection, parentD3El) {
@@ -265,11 +278,12 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			this.parentSelection = parentSelection;
 			this.tag = props.tag;
 			this.classes = props.classes || [];
-			this.enterCb = props.enterCb || (()=>{});
-			this.updateCb = props.updateCb || (()=>{});
+			this.enterCb = props.enterCb || (() => {});
+			this.updateCb = props.updateCb || (() => {});
 			this.updateCb = props.updateCbs ? combineFuncs(props.updateCbs) // in case you want to run more than one callback on update
-											: this.updateCb; 
-			this.exitCb = props.exitCb || (()=>{});
+				:
+				this.updateCb;
+			this.exitCb = props.exitCb || (() => {});
 			this.cbParams = props.cbParams;
 			this._children = {};
 			//this.dataPropogationSelectors = props.dataPropogationSelectors; // not implemented yet
@@ -279,7 +293,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 										 but it doesn't. so you can pass a func that accepts its
 										 d3El and returns a data array`);
 				*/
-			this.dataKey = props.dataKey;
+				this.dataKey = props.dataKey;
 			if (!props.stub) {
 				// props.data can be array or function that accepts this.parentD3El
 				// or it will default to parent's data
@@ -287,7 +301,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				//	 permanently by calling this.data(parentD3El, newData)
 				//	 or temporarily by calling this.selectAll(newData)
 				this._data = props.data || this.parentD3El._data;
-				if (! (Array.isArray(this._data) || typeof this._data === 'function'))
+				if (!(Array.isArray(this._data) || typeof this._data === 'function'))
 					throw new Error("data must be array or function");
 				this.run(passParams);
 			}
@@ -308,8 +322,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				*/
 			} else {
 				return this.dataKey ?
-								this.selectAll().data(data, this.dataKey) :
-								this.selectAll().data(data);
+					this.selectAll().data(data, this.dataKey) :
+					this.selectAll().data(data);
 			}
 		}
 		as(type) {
@@ -320,13 +334,13 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			//if (typeof data === "undefined") return this.selectAll().data();
 			//hope i'm not breaking anything by doing the more expectable:
 			if (typeof data === "undefined") return this._data;
-			if (! (Array.isArray(data) || typeof data === 'function'))
+			if (!(Array.isArray(data) || typeof data === 'function'))
 				throw new Error("data must be array or function");
 			this._data = data;
 			//return this.selectAll(data);  same here... don't think this was being used
 			return this;
 		}
-		run(passParams={}, enter=true, exit=true, update=true) {
+		run(passParams = {}, enter = true, exit = true, update = true) {
 			// fix opts: split up data and transition
 			let self = this;
 			var data = passParams.data || self._data;
@@ -347,21 +361,21 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 					self.child(name).exit(passParamsForChildren, exitSelection);
 				});
 				exitSelection
-						//.call(self.exitCb, self.cbParams, passParams, self, mainTrans)
-						.call(self.exitCb, self.cbParams, passParams, self)
-						.remove() // allow exitCb to remove? -> doesn't seem to work
+					//.call(self.exitCb, self.cbParams, passParams, self, mainTrans)
+					.call(self.exitCb, self.cbParams, passParams, self)
+					.remove() // allow exitCb to remove? -> doesn't seem to work
 			}
 			if (enter && selection.enter().size()) {
 				var enterSelection = selection.enter()
-						.append(self.tag)
-							.each(function(d) { // add classes
-								var newNode = d3.select(this);
-								self.classes.forEach(cls => {
-									newNode.classed(cls, true);
-								});
-							})
-						//.call(self.enterCb, self.cbParams, passParams, self, mainTrans)
-						.call(self.enterCb, self.cbParams, passParams, self)
+					.append(self.tag)
+					.each(function (d) { // add classes
+						var newNode = d3.select(this);
+						self.classes.forEach(cls => {
+							newNode.classed(cls, true);
+						});
+					})
+					//.call(self.enterCb, self.cbParams, passParams, self, mainTrans)
+					.call(self.enterCb, self.cbParams, passParams, self)
 				_.each(self.children(), (c, name) => {
 					var child = self.makeChild(name, passParamsForChildren, enterSelection);
 				});
@@ -369,8 +383,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			selection = self.selectAllJoin(data);
 			if (update && selection.size()) {
 				selection
-						//.call(self.updateCb, self.cbParams, passParams, self, mainTrans)
-						.call(self.updateCb, self.cbParams, passParams, self)
+					//.call(self.updateCb, self.cbParams, passParams, self, mainTrans)
+					.call(self.updateCb, self.cbParams, passParams, self)
 				_.each(self.children(), (c, name) => {
 					self.child(name).run(passParamsForChildren, enter, exit, update, selection);
 				});
@@ -379,7 +393,9 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		}
 		childDesc(name, desc) {
 			if (desc)
-				this._children[name] = {desc};
+				this._children[name] = {
+					desc
+				};
 			else if (!this._children[name])
 				throw new Error(`${name} child not created yet`);
 			return this._children[name].desc;
@@ -403,7 +419,9 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		makeChild(name, passParams, selection) {
 			var desc = this.childDesc(name);
 			//var d3ElProps = $.extend( { parentD3El: this }, desc);
-			var d3ElProps = _.merge( { parentD3El: this }, _.cloneDeep(desc));
+			var d3ElProps = _.merge({
+				parentD3El: this
+			}, _.cloneDeep(desc));
 			return this.child(name, new D3Element(d3ElProps, passParams, selection, this));
 			// it sort of doesn't matter because if you repeatedly create D3Elements
 			// with the same parameters, d3 enter and exit selections will be empty
@@ -415,8 +433,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		children() {
 			return this._children;
 		}
-		implicitChild(selectorFunc) {
-		}
+		implicitChild(selectorFunc) {}
 		exit(passParams) {
 			return this.run(passParams, false, true, false);
 		}
@@ -427,21 +444,22 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			return this.run(passParams, false, false, true);
 		}
 	}
+
 	function shapePath(type, cx, cy, r) {
 		// shape fits inside the radius
 		var shapes = {
-			circle: function(cx, cy, r) {
-								// http://stackoverflow.com/questions/5737975/circle-drawing-with-svgs-arc-path
-								return `
+			circle: function (cx, cy, r) {
+				// http://stackoverflow.com/questions/5737975/circle-drawing-with-svgs-arc-path
+				return `
 													M ${cx} ${cy}
 													m -${r}, 0
 													a ${r},${r} 0 1,0 ${r * 2},0
 													a ${r},${r} 0 1,0 ${-r * 2},0
 												`;
-							},
-			square: function(cx, cy, r) {
-								var side = Math.sqrt(1/2) * r * 2;
-								return `
+			},
+			square: function (cx, cy, r) {
+				var side = Math.sqrt(1 / 2) * r * 2;
+				return `
 													M ${cx} ${cy}
 													m ${-side / 2} ${-side / 2}
 													l ${side} 0
@@ -449,22 +467,22 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 													l ${-side} 0
 													z
 												`;
-							},
-			triangle: function(cx, cy, r) {
-								var side = r * Math.sqrt(3);
-								var alt = r * 1.5;
-								return `
+			},
+			triangle: function (cx, cy, r) {
+				var side = r * Math.sqrt(3);
+				var alt = r * 1.5;
+				return `
 													M ${cx} ${cy}
 													m 0 ${-r}
 													l ${side/2} ${alt}
 													l ${-side} 0
 													z
 												`;
-							},
+			},
 		}
 		if (type === "types")
 			return _.keys(shapes);
-		if (! (type in shapes)) throw new Error("unrecognized shape type");
+		if (!(type in shapes)) throw new Error("unrecognized shape type");
 		return shapes[type](cx, cy, r);
 	}
 
@@ -481,24 +499,25 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		//	it may need to be propogated explicitly to svg children)
 		// returns a D3Element
 		// ( maybe shouldn't send data to this func, attach it later)
-		constructor(target, data, w, h, divClasses=[], svgClasses=[], makeMany=false) {
+		constructor(target, data, w, h, divClasses = [], svgClasses = [], makeMany = false) {
 			if (Array.isArray(data) && data.length > 1 && !makeMany) {
 				data = [data];
 			}
+
 			function aspect() {
 				return w / h;
 			}
 			super({
 				//parentElement: target,
-				data, 
-				tag:'div', 
-				classes: divClasses, 
-			}, undefined, elementConvert(target,'d3'));
+				data,
+				tag: 'div',
+				classes: divClasses,
+			}, undefined, elementConvert(target, 'd3'));
 			var divEl = this;
 			var svgEl = divEl.addChild('svg', {
 				tag: 'svg',
 				classes: svgClasses,
-				updateCb: function(selection, params, updateOpts, thisEl) {
+				updateCb: function (selection, params, updateOpts, thisEl) {
 					var targetWidth = divEl.divWidth();
 					selection
 						.attr('width', targetWidth)
@@ -510,9 +529,9 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			this.h = h;
 			this.svgClasses = svgClasses;
 			var resizeHandler = $(window).on("resize",
-							() => svgEl.as('d3')
-												.attr("width", this.divWidth())
-												.attr("height", Math.round(this.divWidth() / aspect())));
+				() => svgEl.as('d3')
+				.attr("width", this.divWidth())
+				.attr("height", Math.round(this.divWidth() / aspect())));
 			setTimeout(function () {
 				$(window).trigger('resize');
 			}, 0);
@@ -520,7 +539,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		divWidth() {
 			try {
 				return this.as("jquery").width();
-			} catch(e) {
+			} catch (e) {
 				return this.w;
 			}
 		}
@@ -649,15 +668,15 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		constructor(w, h, zones) {
 			this._w = w;
 			this._h = h;
-			['left','right','top','bottom'].forEach(
+			['left', 'right', 'top', 'bottom'].forEach(
 				zone => this[zone] = _.cloneDeep(zones[zone]));
 			this.chart = {};
 		}
 		svgWidth() {
-			return this._w - this.zone(['left','right']);
+			return this._w - this.zone(['left', 'right']);
 		}
 		svgHeight() {
-			return this._h - this.zone(['top','bottom']);
+			return this._h - this.zone(['top', 'bottom']);
 		}
 		w() {
 			return this._w;
@@ -668,22 +687,22 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		zone(zones) {
 			zones = typeof zones === "string" ? [zones] : zones;
 			var size = _.chain(zones)
-									.map(zone=>{
-										var zoneParts = zone.split(/\./);
-										if (zoneParts.length === 1 && this[zoneParts]) {
-											return _.values(this[zoneParts]);
-										}
-										if (zoneParts.length === 2 && this[zoneParts[0]][zoneParts[1]]) {
-											return this[zoneParts[0]][zoneParts[1]];
-										}
-										throw new Error(`invalid zone: ${zone}`);
-									})
-									.flatten()
-									.map(d=>{
-												return d.obj ? d.obj.getBBox()[d.dim] : d3.functor(d.size)();
-									})
-									.sum()
-									.value();
+				.map(zone => {
+					var zoneParts = zone.split(/\./);
+					if (zoneParts.length === 1 && this[zoneParts]) {
+						return _.values(this[zoneParts]);
+					}
+					if (zoneParts.length === 2 && this[zoneParts[0]][zoneParts[1]]) {
+						return this[zoneParts[0]][zoneParts[1]];
+					}
+					throw new Error(`invalid zone: ${zone}`);
+				})
+				.flatten()
+				.map(d => {
+					return d.obj ? d.obj.getBBox()[d.dim] : d3.functor(d.size)();
+				})
+				.sum()
+				.value();
 			//console.log(zones, size);
 			return size;
 		};
@@ -697,7 +716,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				.flatten()
 				.map('position')
 				.compact()
-				.each(position=>position(this))
+				.each(position => position(this))
 				.value();
 		}
 	}
@@ -742,30 +761,37 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			this.parentEl = d3El;
 			this.layout = layout;
 			this.chartProp = chartProp;
-			this.gEl = d3El.addChild(chartProp.name, 
-											{ tag:'g', data:[chartProp],
-												classes: this.cssClasses(), // move to gEnterCb
-																										// no, don't, will break D3Element
-												enterCb: this.gEnterCb.bind(this),
-												updateCb: this.updatePosition.bind(this),
-												cbParams: {layout},
-											});
+			this.gEl = d3El.addChild(chartProp.name, {
+				tag: 'g',
+				data: [chartProp],
+				classes: this.cssClasses(), // move to gEnterCb
+				// no, don't, will break D3Element
+				enterCb: this.gEnterCb.bind(this),
+				updateCb: this.updatePosition.bind(this),
+				cbParams: {
+					layout
+				},
+			});
 			if (!this.emptyG()) {
 				// if g is empty, don't use enterCb ot updateContent methods
-				this.contentEl = this.gEl.addChild(chartProp.name, 
-											{ tag: this.tagName(), 
-												data:[chartProp],
-												classes: this.cssClasses(), // move to enterCb
-												enterCb: this.enterCb.bind(this),
-												updateCb: this.updateContent.bind(this),
-												cbParams: {layout},
-											});
+				this.contentEl = this.gEl.addChild(chartProp.name, {
+					tag: this.tagName(),
+					data: [chartProp],
+					classes: this.cssClasses(), // move to enterCb
+					enterCb: this.enterCb.bind(this),
+					updateCb: this.updateContent.bind(this),
+					cbParams: {
+						layout
+					},
+				});
 			}
 
-			layout.add(this.zone(), this.subzone(), 
-								{ size:this.size.bind(this), 
-									position:this.updatePosition.bind(this, this.gEl.as('d3'), {layout:this.layout}),
-								});
+			layout.add(this.zone(), this.subzone(), {
+				size: this.size.bind(this),
+				position: this.updatePosition.bind(this, this.gEl.as('d3'), {
+					layout: this.layout
+				}),
+			});
 		}
 		enterCb() {}
 		gEnterCb() {}
@@ -778,15 +804,21 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	}
 
 	class ChartChart extends SvgElement {
-		zone () { return 'chart'; }
-		subzone () { return 'chart'; }
+		zone() {
+			return 'chart';
+		}
+		subzone() {
+			return 'chart';
+		}
 		cssClasses() { // classes needed on g element
 			return [this.chartProp.cssClass];
 		}
 		gEnterCb(selection, params, opts) {
-			selection.attr('clip-path','url(#clip)');
+			selection.attr('clip-path', 'url(#clip)');
 		}
-		tagName() { return 'defs'; }
+		tagName() {
+			return 'defs';
+		}
 		enterCb(selection, params, opts) {
 			selection.append("defs")
 				.append("clipPath")
@@ -799,38 +831,60 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		}
 		updatePosition(selection, params, opts) {
 			selection
-					.attr("transform", 
-								`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
+				.attr("transform",
+					`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
 		}
 	}
 	class ChartInset extends SvgElement {
-		emptyG() { return true; }
+		emptyG() {
+			return true;
+		}
 		cssClasses() { // classes needed on g element
 			return ['insetG'];
 		}
-		zone() { return 'top'; }
-		subzone() { return 'inset'; }
-		tagName() { return 'g'; }
-		sizedim() { return 0; }
+		zone() {
+			return 'top';
+		}
+		subzone() {
+			return 'inset';
+		}
+		tagName() {
+			return 'g';
+		}
+		sizedim() {
+			return 0;
+		}
 		updatePosition(selection, params, opts) {
-			selection.attr('transform', 
+			selection.attr('transform',
 				`translate(${params.layout.w(params.layout) - this.w(params.layout)},0)`);
 		}
 		// could hold on to original layout instead of passing in as param...maybe
 		//   not sure if it would get stale
-		w(layout) { return layout.w() * 0.15; }
-		h(layout) { return layout.h() * 0.15; }
+		w(layout) {
+			return layout.w() * 0.15;
+		}
+		h(layout) {
+			return layout.h() * 0.15;
+		}
 	}
 	class ChartLabel extends SvgElement {
-		tagName() { return 'text'; }
+		tagName() {
+			return 'text';
+		}
 	}
 	class ChartLabelLeft extends ChartLabel {
 		cssClasses() { // classes needed on g element
-			return ['y-axislabel','axislabel'];
+			return ['y-axislabel', 'axislabel'];
 		}
-		zone () { return 'left'; }
-		subzone () { return 'axisLabel'; }
-		sizedim() { return 'width'; }
+		zone() {
+			return 'left';
+		}
+		subzone() {
+			return 'axisLabel';
+		}
+		sizedim() {
+			return 'width';
+		}
 		size() {
 			return this.gEl.as('dom').getBBox().width * 1.5;
 			// width is calculated as 1.5 * box height due to rotation anomolies 
@@ -843,7 +897,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				.attr("x", 0)
 				.attr("dy", "1em")
 				.style("text-anchor", "middle")
-				.text(field => fieldAccessor(field, ['label','title','name'], 'Y Axis')())
+				.text(field => fieldAccessor(field, ['label', 'title', 'name'], 'Y Axis')())
 		}
 		updatePosition(selection, params, opts) {
 			selection.attr('transform',
@@ -853,18 +907,24 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	}
 	class ChartLabelBottom extends ChartLabel {
 		cssClasses() { // classes needed on g element
-			return ['x-axislabel','axislabel'];
+			return ['x-axislabel', 'axislabel'];
 		}
-		zone () { return 'bottom'; }
-		subzone () { return 'axisLabel'; }
-		sizedim() { return 'height'; }
+		zone() {
+			return 'bottom';
+		}
+		subzone() {
+			return 'axisLabel';
+		}
+		sizedim() {
+			return 'height';
+		}
 		enterCb(selection, params, opts) {
 			selection
 				.style("text-anchor", "middle")
 		}
 		updateContent(selection, params, opts) {
 			selection
-				.text(field => fieldAccessor(field, ['label','title','name'], 'X Axis')())
+				.text(field => fieldAccessor(field, ['label', 'title', 'name'], 'X Axis')())
 		}
 		updatePosition(selection, params, opts) {
 			selection.attr('transform',
@@ -874,44 +934,60 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 
 	class ChartAxis extends SvgElement {
 		//tagName() { return 'g'; }  // pretty bad. axes have an unneeded extra g
-		emptyG() { return true; }
+		emptyG() {
+			return true;
+		}
 		gEnterCb(selection, params, opts) {
 			this.axis = this.chartProp.axis || d3.svg.axis();
 			// somewhat weird that scale belongs to chartProp and axis belongs to svgElement
 		}
 		updatePosition(selection, params, opts) {
 			this.axis.scale(this.chartProp.scale)
-								.tickFormat(this.chartProp.format)
-								.ticks(this.chartProp.ticks)
-								.orient(this.zone());
+				.tickFormat(this.chartProp.format)
+				.ticks(this.chartProp.ticks)
+				.orient(this.zone());
 		}
 	}
 	class ChartAxisY extends ChartAxis {
-		zone () { return 'left'; }
-		subzone () { return 'axis'; }
-		sizedim() { return 'width'; }
-		cssClasses() { return ['y','axis']; } // classes needed on g element
+		zone() {
+			return 'left';
+		}
+		subzone() {
+			return 'axis';
+		}
+		sizedim() {
+			return 'width';
+		}
+		cssClasses() {
+			return ['y', 'axis'];
+		} // classes needed on g element
 		updatePosition(selection, params, opts) {
 			this.chartProp.scale.range([params.layout.svgHeight(), 0]);
 			super.updatePosition(selection, params, opts);
-															// params.layout === this.layout (i think)
+			// params.layout === this.layout (i think)
 			selection
-					.attr('transform',
-								`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
+				.attr('transform',
+					`translate(${params.layout.zone(['left'])},${params.layout.zone(['top'])})`)
 			this.axis && selection.call(this.axis);
 		}
 	}
 	class ChartAxisX extends ChartAxis {
-		zone () { return 'bottom'; }
-		subzone () { return 'axis'; }
-		sizedim() { return 'height'; }
+		zone() {
+			return 'bottom';
+		}
+		subzone() {
+			return 'axis';
+		}
+		sizedim() {
+			return 'height';
+		}
 		updatePosition(selection, params, opts) {
 			if (this.chartProp.tickFormat) { // check for custom tick formatter
 				this.axis.tickFormat(this.chartProp.tickFormat); // otherwise uses chartProp.format above
 			}
 		}
 		cssClasses() { // classes needed on g element
-			return ['x','axis'];
+			return ['x', 'axis'];
 		}
 		updatePosition(selection, params, opts) {
 			// if x scale is ordinal, then apply rangeRoundBands, else apply standard range
@@ -922,7 +998,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			}
 			super.updatePosition(selection, params, opts);
 			selection
-					.attr('transform', `translate(${params.layout.zone('left')},
+				.attr('transform', `translate(${params.layout.zone('left')},
 																${params.layout.h() - params.layout.zone('bottom')})`);
 			this.axis && selection.call(this.axis);
 		}
@@ -1118,7 +1194,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			_.each(opts.getters, (func, name) => {
 				// inline getters will get clobbered when merging. put them in a getters prop
 				Object.defineProperty(this, name, {
-					get: func, enumerable: true,
+					get: func,
+					enumerable: true,
 				});
 			});
 
@@ -1130,15 +1207,14 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			*/
 			var defaultAccessors = {
 				value: {
-					func: 
-								dataAccessor(this, 'value', null, false, true) ||
-								fieldAccessor(this, 'propName', null, false, true) && (d=>d[this.propName]) ||
-								this.defaultValue,
+					func: dataAccessor(this, 'value', null, false, true) ||
+						fieldAccessor(this, 'propName', null, false, true) && (d => d[this.propName]) ||
+						this.defaultValue,
 					posParams: ['d'],
 					//posParams: ['d', 'i', 'j'], // should it be this for d3 ease of use?
 				},
 				labelFunc: {
-					func: fieldAccessor(this, ['label','title','caption','name']),
+					func: fieldAccessor(this, ['label', 'title', 'caption', 'name']),
 				},
 			};
 			this._accessors = _.merge(defaultAccessors, this._accessors);
@@ -1149,8 +1225,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				if (this.separateBinding)
 					throw new Error("not handling yet");
 				Object.defineProperty(this, 'accessor', {
-					get: function(){ 
-						return this.proxyFor.accessor; 
+					get: function () {
+						return this.proxyFor.accessor;
 					}
 				});
 			}
@@ -1196,7 +1272,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			// on data. these are available at different times and places and when
 			// one changes, the other shouldn't have to worry about it.
 
-			_.each(this._accessors, (acc,name) => {
+			_.each(this._accessors, (acc, name) => {
 				/*
 				if (_.difference(acc.posParams, this.possibleBindings).length ||
 						_.difference(acc.namedParams, this.possibleBindings).length)
@@ -1217,9 +1293,12 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			}
 			return this.__accessors;
 		}
-		bindParams(params, throwGenerateError=true) {
+		bindParams(params, throwGenerateError = true) {
 			// make allFields and thisField always available
-			params = _.extend({}, params, {allFields: this.allFields, thisField: this}); 
+			params = _.extend({}, params, {
+				allFields: this.allFields,
+				thisField: this
+			});
 			this.__accessors = {};
 			_.each(_.sortBy(this._accessors, 'accessorOrder'), acc => {
 				if (acc.name === 'scale') {
@@ -1233,7 +1312,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 						this[acc.name] = acc.accessor;
 					if (acc.name === 'value')
 						this.accessor = acc.accessor;
-				} catch(e) {
+				} catch (e) {
 					if (throwGenerateError) {
 						throw new Error("something went wrong binding/generating", this.name, acc, e);
 					}
@@ -1244,25 +1323,32 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 					this.scale.domain(this.accessors.domain());
 					this.scale.range(this.accessors.range());
 				}
-			} catch(e) {
+			} catch (e) {
 				throw new Error("something went wrong setting scale", this.name, e);
 			}
 		}
 	}
 
 	/*	@class AccessorGenerator
-   *	@param {string} [propName] key of property to extract
-   *	@param {function} [func] to be called with record obj to return value
-   *	@param {string} [thisArg] object to set as *this* for func
-   *	@param {string[]} [posParams] list of positioned parameters of func
+	 *	@param {string} [propName] key of property to extract
+	 *	@param {function} [func] to be called with record obj to return value
+	 *	@param {string} [thisArg] object to set as *this* for func
+	 *	@param {string[]} [posParams] list of positioned parameters of func
 	 *																(except first param, which is assumed to be
 	 *																 the record object)
-   *	@param {string[]} [namedParams] list of named parameters of func
-   *	@param {object} [bindValues] values to bind to parameters (this can also
+	 *	@param {string[]} [namedParams] list of named parameters of func
+	 *	@param {object} [bindValues] values to bind to parameters (this can also
 	 *																	be done later)
 	 */
 	class AccessorGenerator {
-		constructor({propName, func, posParams, namedParams, thisArg, bindValues} = {}) {
+		constructor({
+			propName,
+			func,
+			posParams,
+			namedParams,
+			thisArg,
+			bindValues
+		} = {}) {
 			if (typeof func === "function") {
 				this.plainAccessor = func;
 			} else if (typeof propName === "string") {
@@ -1281,9 +1367,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			var pos = this.posParams.map(
 				p => _.has(this.boundParams, p) ? this.boundParams[p] : _);
 			var named = _.pick(this.boundParams, this.namedParams);
-			var allArgs = _.isEmpty(named) ?
-												[this.plainAccessor, this.thisArg].concat(pos) :
-												[this.plainAccessor, this.thisArg].concat(pos, named);
+			var allArgs = _.isEmpty(named) ? [this.plainAccessor, this.thisArg].concat(pos) : [this.plainAccessor, this.thisArg].concat(pos, named);
 			var boundFunc = _.bind.apply(_, allArgs);
 			// first arg of apply, _, is context for _.bind (https://lodash.com/docs#bind)
 			// then bind gets passed: accessor func, thisArg, posParams, 
@@ -1316,35 +1400,38 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	*/
 
 	/*
-		* for value or tooltip functions that make use of aggregation over data or series
-		* there should be a way to perform the aggregation calculations only once
-		* rather than on every call to the value/tooltip func (actually, for tooltips
-		* it doesn't matter too much since only one point gets processed at a time)
-		*/
+	 * for value or tooltip functions that make use of aggregation over data or series
+	 * there should be a way to perform the aggregation calculations only once
+	 * rather than on every call to the value/tooltip func (actually, for tooltips
+	 * it doesn't matter too much since only one point gets processed at a time)
+	 */
 	function tooltipBuilderForFields(fields) {
 		var accessors = _.chain(fields)
-									.filter(field=>field.accessors.tooltip)
-									.sortBy('tooltipOrder')
-									.map((field) => field.accessors.tooltip)
-									.value();
+			.filter(field => field.accessors.tooltip)
+			.sortBy('tooltipOrder')
+			.map((field) => field.accessors.tooltip)
+			.value();
 		return (d, i, j) => {
-													return (accessors
-																		.map(func => func(d,i,j))
-																		.map(o => `${o.name}: ${o.value}<br/>`)
-																		.join(''))
-												};
+			return (accessors
+				.map(func => func(d, i, j))
+				.map(o => `${o.name}: ${o.value}<br/>`)
+				.join(''))
+		};
 	}
+
 	function fishForProp(field, propNames) {
 		propNames = Array.isArray(propNames) ? propNames : [propNames];
 		// get first propName that appears in the field
-		var propName = _.find(propNames, propName => _.has(field, propName)); 
+		var propName = _.find(propNames, propName => _.has(field, propName));
 		return field[propName];
 	}
+
 	function firstMatchingProp(obj, props) {
 		var props = Array.isArray(props) ? props : [props];
-		return _.find(props, prop => _.has(obj, prop)); 
+		return _.find(props, prop => _.has(obj, prop));
 	}
-	function fieldAccessor(field, propNames, defaultVal, allowFuncs=true, noError=false) {
+
+	function fieldAccessor(field, propNames, defaultVal, allowFuncs = true, noError = false) {
 		var propName = firstMatchingProp(field, propNames);
 		if (typeof propName === "undefined") {
 			if (noError) return defaultVal;
@@ -1356,7 +1443,8 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		}
 		return () => propVal;
 	}
-	function dataAccessor(field, propNames, defaultFunc, allowNonFuncs = true, noError= false) {
+
+	function dataAccessor(field, propNames, defaultFunc, allowNonFuncs = true, noError = false) {
 		var propName = firstMatchingProp(field, propNames) || defaultFunc;
 		if (typeof propName === "undefined") {
 			if (defaultFunc) return defaultFunc;
@@ -1374,7 +1462,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		if (noError) return;
 		throw new Error("can't find what you want");
 	}
-	
+
 	// these functions associate state with a compressed stringified object in the querystring
 	function getState(path) {
 		var state = _getState();
@@ -1384,16 +1472,19 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		// otherwise use lodash _.get to extract path from state object
 		return _.get(state, path);
 	}
+
 	function hasState(path) {
 		var state = _getState();
 		return _.has(state, path);
 	}
+
 	function deleteState(path) {
 		var state = _getState();
 		_.unset(state, path);
 		_setState(state);
 		//stateChangeTrigger(path, null, 'delete', state);
 	}
+
 	function setState(path, val) {
 		if (typeof val === "undefined") {
 			// if only one arg, then it's the val, not the path; set whole state to that
@@ -1406,13 +1497,15 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		_setState(state);
 		//stateChangeTrigger(path, val, 'set', state);
 	}
+
 	function _setState(state) {
-			var stateStr = JSON.stringify(state);
-			var compressed = LZString.compressToBase64(stateStr);
-			var hash = location.hash.startsWith('#') ? location.hash : '#';
-			var h = hash.replace(/\?.*/, '');
-			location.hash = h + '?' + compressed;
+		var stateStr = JSON.stringify(state);
+		var compressed = LZString.compressToBase64(stateStr);
+		var hash = location.hash.startsWith('#') ? location.hash : '#';
+		var h = hash.replace(/\?.*/, '');
+		location.hash = h + '?' + compressed;
 	}
+
 	function _getState(hash = location.hash) {
 		//console.log(hash === location.hash, hash);
 		if (!hash.length)
@@ -1429,7 +1522,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				//console.log(stateStr, hash);
 				var s = stateStr ? JSON.parse(stateStr) : {};
 				_.extend(state, s);
-			} catch(e) {
+			} catch (e) {
 				console.error("can't parse querystring", e);
 			}
 		}
@@ -1437,43 +1530,59 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	}
 
 	var stateEventSpace = {};
+
 	function onStateChange(path, listener, data) {
 		var evtName = JSON.stringify(path);
 		$(stateEventSpace).on(evtName, data, listener);
 	}
+
 	function stateChangeTrigger(path, val, change, state) {
 		// might want access to old state or old val, but not doing that right now
 		var evtName = JSON.stringify(path);
-		$(stateEventSpace).trigger(evtName, [{path, val, change, state}]);
+		$(stateEventSpace).trigger(evtName, [{
+			path,
+			val,
+			change,
+			state
+		}]);
 	}
 
 	// catch state changes from back button (probably better ways to do this)
 
 	// from https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onhashchange:
 	//let this snippet run before your hashchange event binding code
-	if(!window.HashChangeEvent)(function(){
-		var lastURL=document.URL;
-		window.addEventListener("hashchange",function(event){
-			Object.defineProperty(event,"oldURL",{enumerable:true,configurable:true,value:lastURL});
-			Object.defineProperty(event,"newURL",{enumerable:true,configurable:true,value:document.URL});
-			lastURL=document.URL;
+	if (!window.HashChangeEvent)(function () {
+		var lastURL = document.URL;
+		window.addEventListener("hashchange", function (event) {
+			Object.defineProperty(event, "oldURL", {
+				enumerable: true,
+				configurable: true,
+				value: lastURL
+			});
+			Object.defineProperty(event, "newURL", {
+				enumerable: true,
+				configurable: true,
+				value: document.URL
+			});
+			lastURL = document.URL;
 		});
 	}());
 
-	window.addEventListener('hashchange', function(evt) {
+	window.addEventListener('hashchange', function (evt) {
 		var changedPaths = getChangedPaths(
-												evt.oldURL.replace(/[^#]*#/,'#'),
-												evt.newURL.replace(/[^#]*#/,'#'));
-		changedPaths.forEach(c => stateChangeTrigger(c.path,c.val,c.change,c.state));
+			evt.oldURL.replace(/[^#]*#/, '#'),
+			evt.newURL.replace(/[^#]*#/, '#'));
+		changedPaths.forEach(c => stateChangeTrigger(c.path, c.val, c.change, c.state));
 	}, false);
+
 	function getChangedPaths(oldhash, newhash) {
 		var oldstate = _getState(oldhash);
 		var newstate = _getState(newhash);
-		var oldpaths = listpaths(oldstate).map(d=>d.join('.'));
-		var newpaths = listpaths(newstate).map(d=>d.join('.'));
+		var oldpaths = listpaths(oldstate).map(d => d.join('.'));
+		var newpaths = listpaths(newstate).map(d => d.join('.'));
 		//console.log(oldpaths, newpaths);
 		var changes = {};
-		_.difference(oldpaths, newpaths).forEach(function(oldpath) {
+		_.difference(oldpaths, newpaths).forEach(function (oldpath) {
 			changes[oldpath] = {
 				path: oldpath,
 				val: _.get(newstate, oldpath),
@@ -1481,15 +1590,16 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 				state: newstate,
 			};
 		});
-		_.difference(newpaths, oldpaths).forEach(function(newpath) {
+		_.difference(newpaths, oldpaths).forEach(function (newpath) {
 			var c = changes[newpath] = changes[newpath] || {};
 			c.path = newpath;
 			c.val = c.val || _.get(newstate, newpath);
 			c.change = 'add';
-			c.state ; c.state || newstate;
+			c.state;
+			c.state || newstate;
 		});
-		_.intersection(newpaths, oldpaths).forEach(function(sharedpath) {
-			if ( !_.eq(_.get(oldstate, sharedpath), _.get(newstate, sharedpath))) {
+		_.intersection(newpaths, oldpaths).forEach(function (sharedpath) {
+			if (!_.eq(_.get(oldstate, sharedpath), _.get(newstate, sharedpath))) {
 				changes[sharedpath] = {
 					path: sharedpath,
 					val: _.get(newstate, sharedpath),
@@ -1500,16 +1610,17 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		});
 		return _.values(changes);
 	}
-	function listpaths(obj, par=[]) {
-		return _.reduce(obj, 
-						function(paths, node, key, col) { 
-							var thispath = par.concat(key); 
-							//console.log(`looking at ${key} from ${par}: ${thispath}`);
-							paths.push(thispath); 
-							return _.isObject(node) ? 
-												paths.concat(listpaths(node,thispath)) : 
-												paths; 
-						}, []);
+
+	function listpaths(obj, par = []) {
+		return _.reduce(obj,
+			function (paths, node, key, col) {
+				var thispath = par.concat(key);
+				//console.log(`looking at ${key} from ${par}: ${thispath}`);
+				paths.push(thispath);
+				return _.isObject(node) ?
+					paths.concat(listpaths(node, thispath)) :
+					paths;
+			}, []);
 	}
 
 	//var ajaxCache = {}; // only save till reload
@@ -1526,7 +1637,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		var key = JSON.stringify(opts);
 		if (!storageExists(key, ajaxCache)) {
 			var ajax = $.ajax(opts);
-			ajax.then(function(results) {
+			ajax.then(function (results) {
 				storagePut(key, results, ajaxCache);
 			});
 			return ajax;
@@ -1540,12 +1651,15 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			return deferred;
 		}
 	}
+
 	function storagePut(key, val, store = sessionStorage) {
 		store[key] = LZString.compressToBase64(JSON.stringify(val));
 	}
+
 	function storageExists(key, store = sessionStorage) {
 		return _.has(store, key);
 	}
+
 	function storageGet(key, store = sessionStorage) {
 		return JSON.parse(LZString.decompressFromBase64(store[key]));
 	}
@@ -1577,12 +1691,14 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 		replaceData(recs) {
 			this.recs = recs;
 			//console.log("replacing crossfilter data. you want to do this?");
-			var dummy = this.cf.dimension(d=>d);
-			dummy.filter(()=>false);
+			var dummy = this.cf.dimension(d => d);
+			dummy.filter(() => false);
 			this.cf.remove();
 			dummy.dispose();
 			this.cf.add(recs);
-			$(this).trigger('newData', [{scf:this}]);
+			$(this).trigger('newData', [{
+				scf: this
+			}]);
 		}
 		dimField(name, field, replace) {
 			// fields can be Field objects
@@ -1624,7 +1740,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 
 			$(this).trigger('filterEvt', [triggerData]);
 		}
-		grouping(dimName, groupingName, func, reduceFuncs=reduceToRecs) {
+		grouping(dimName, groupingName, func, reduceFuncs = reduceToRecs) {
 			if (!_.has(this.dimFields, name))
 				throw new Error(`no dimField ${name}`);
 
@@ -1649,11 +1765,10 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 			var dimField = this.dimFields[dimName];
 
 			if (groupingName === 'default' && !dimField.groupings.default) {
-				dimField.groupings.default =
-					{
-						name: 'default',
-						cfDimGroup: dimField.cfDim.group(),
-					};
+				dimField.groupings.default = {
+					name: 'default',
+					cfDimGroup: dimField.cfDim.group(),
+				};
 				dimField.groupings.default.cfDimGroup.reduce(...reduceToRecs);
 			}
 
@@ -1672,7 +1787,7 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	var reduceToRecs = [(p, v, nf) => p.concat(v), (p, v, nf) => _.without(p, v), () => []];
 
 	// END module functions
-	
+
 	utilModule.dirtyFlag = dirtyFlag;
 	utilModule.d3AddIfNeeded = d3AddIfNeeded;
 	utilModule.elementConvert = elementConvert;
@@ -1703,10 +1818,10 @@ define(['jquery','knockout','lz-string', 'lodash', 'crossfilter/crossfilter'], f
 	utilModule.storageExists = storageExists;
 	utilModule.storageGet = storageGet;
 	utilModule.SharedCrossfilter = SharedCrossfilter;
-	
+
 	if (DEBUG) {
 		window.util = utilModule;
 	}
 	return utilModule;
-	
+
 });

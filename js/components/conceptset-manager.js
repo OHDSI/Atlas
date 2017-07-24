@@ -32,16 +32,16 @@ define(['knockout',
 		self.optimizerSavingNew = ko.observable(false);
 		self.optimizerSavingNewName = ko.observable();
 		self.optimizerFoundSomething = ko.pureComputed(function () {
-				var returnVal = false;
-				if (self.optimalConceptSet() &&
-					self.optimalConceptSet().length > 0 &&
-					self.selectedConcepts() &&
-					self.selectedConcepts().length > 0) {
-					returnVal = self.optimalConceptSet().length != self.selectedConcepts().length;
-				}
-				return returnVal;
-			})
-			// Set the default concept set to be the current concept set
+			var returnVal = false;
+			if (self.optimalConceptSet() &&
+				self.optimalConceptSet().length > 0 &&
+				self.selectedConcepts() &&
+				self.selectedConcepts().length > 0) {
+				returnVal = self.optimalConceptSet().length != self.selectedConcepts().length;
+			}
+			return returnVal;
+		})
+		// Set the default concept set to be the current concept set
 		self.currentConceptSet = ko.observableArray();
 		_.each(self.selectedConcepts(), (conceptSetItem) => {
 			var item = {
@@ -132,8 +132,6 @@ define(['knockout',
 
 			return resultSources;
 		}, this);
-
-		self.useCF = ko.observable(false);
 
 		self.fields = {
 			membership: {
@@ -918,7 +916,7 @@ define(['knockout',
 			})
 		});
 
-		self.canSave = ko.computed(function() {
+		self.canSave = ko.computed(function () {
 			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());
 		});
 		self.canEdit = self.model.canEditCurrentConceptSet;

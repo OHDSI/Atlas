@@ -47,10 +47,14 @@ define(function (require, exports) {
 			return densityPromise;
 		}
 		var searchResultIdentifiers = [];
+		var resultsIndex = [];
 		for (c = 0; c < results.length; c++) {
 			// optimization - only lookup standard concepts as non standard concepts will not have records
+			results[c].RECORD_COUNT = 0;
+			results[c].DESCENDANT_RECORD_COUNT = 0;
 			if (results[c].STANDARD_CONCEPT_CAPTION == 'Standard' || results[c].STANDARD_CONCEPT_CAPTION == 'Classification') {
 				searchResultIdentifiers.push(results[c].CONCEPT_ID);
+				resultsIndex.push(c);
 			}
 		}
 		var densityIndex = {};
@@ -65,14 +69,11 @@ define(function (require, exports) {
 				for (var e = 0; e < entries.length; e++) {
 					densityIndex[Object.keys(entries[e])[0]] = Object.values(entries[e])[0];
 				}
-				for (var c = 0; c < results.length; c++) {
-					var concept = results[c];
+				for (var c = 0; c < resultsIndex.length; c++) {
+					var concept = results[resultsIndex[c]];
 					if (densityIndex[concept.CONCEPT_ID] != undefined) {
 						concept.RECORD_COUNT = formatComma(densityIndex[concept.CONCEPT_ID][0]);
 						concept.DESCENDANT_RECORD_COUNT = formatComma(densityIndex[concept.CONCEPT_ID][1]);
-					} else {
-						concept.RECORD_COUNT = 0;
-						concept.DESCENDANT_RECORD_COUNT = 0;
 					}
 				}
 				densityPromise.resolve();

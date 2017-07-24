@@ -206,21 +206,8 @@
 				</div>
 			</div>
 			<div id="compareResults">
-				<!-- ko if: $component.useCF() -->
-				<faceted-datatable-cf params="id:,
-                                options:{},
-                                fields: $component.fields,
-                                recs: $component.compareResults(),
-                                dom: 'Blfiprt',
-                                language: {search : 'Filter Rows:'},
-                                order: [[1, 'asc'], [2, 'desc']]
-                                saveStateToUrl: false,
-                                "></faceted-datatable-cf>
-				<!-- /ko -->
-				<!-- ko ifnot: $component.useCF() -->
 				<faceted-datatable params="{reference:$component.compareResults, columns: compareResultsColumns, options:compareResultsOptions, order: $component.compareResultsOptions.order}">
 				</faceted-datatable>
-				<!-- /ko -->
 			</div>
 		</div>
 	</div>

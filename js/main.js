@@ -70,6 +70,7 @@ requirejs.config({
 		"datatables.net-buttons": "jquery.dataTables.buttons.min",
 		"datatables.net-buttons-html5": "jquery.dataTables.buttons.html5.min",
 		"colvis": "jquery.dataTables.colVis.min",
+		"crossfilter": "crossfilter.min",
 		"director": "director.min",
 		"search": "components/search",
 		"configuration": "components/configuration",
@@ -310,16 +311,16 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		pageModel.currentView.subscribe(function (newView) {
 			switch (newView) {
-			case 'reports':
-				$.ajax({
-					url: config.services[0].url + 'cohortdefinition',
-					method: 'GET',
-					contentType: 'application/json',
-					success: function (cohortDefinitions) {
-						pageModel.cohortDefinitions(cohortDefinitions);
-					}
-				});
-				break;
+				case 'reports':
+					$.ajax({
+						url: config.services[0].url + 'cohortdefinition',
+						method: 'GET',
+						contentType: 'application/json',
+						success: function (cohortDefinitions) {
+							pageModel.cohortDefinitions(cohortDefinitions);
+						}
+					});
+					break;
 			}
 		});
 
@@ -370,15 +371,15 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		pageModel.currentConceptSetMode.subscribe(function (newMode) {
 			switch (newMode) {
-			case 'included':
-				pageModel.loadIncluded();
-				break;
-			case 'sourcecodes':
-				var includedPromise = pageModel.loadIncluded();
-				$.when(includedPromise).done(function () {
-					pageModel.loadSourcecodes();
-				});
-				break;
+				case 'included':
+					pageModel.loadIncluded();
+					break;
+				case 'sourcecodes':
+					var includedPromise = pageModel.loadIncluded();
+					$.when(includedPromise).done(function () {
+						pageModel.loadSourcecodes();
+					});
+					break;
 			}
 		});
 
