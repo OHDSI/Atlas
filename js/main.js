@@ -70,7 +70,7 @@ requirejs.config({
 		"datatables.net-buttons": "jquery.dataTables.buttons.min",
 		"datatables.net-buttons-html5": "jquery.dataTables.buttons.html5.min",
 		"colvis": "jquery.dataTables.colVis.min",
-		"crossfilter": "crossfilter.min",
+		"crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.0/crossfilter.min",
 		"director": "director.min",
 		"search": "components/search",
 		"configuration": "components/configuration",
