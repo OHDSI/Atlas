@@ -300,7 +300,7 @@
 					bottom: 5,
 					left: 5
 				},
-				ticks: 10,
+				ticks: 6,
 				xFormat: d3.format(',.0f'),
 				yFormat: d3.format('s'),
 				yScale: d3.scale.linear(),
