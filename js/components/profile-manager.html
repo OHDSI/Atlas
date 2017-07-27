@@ -33,7 +33,7 @@
 		<span data-bind="text: gender"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
 		<span data-bind="text: recordCount + ' events'"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
 		<span data-bind="text: `Age ${age} at index`"></span>
-        <span data-bind="if: $component.currentCohortDefinition() != null">|&nbsp;&nbsp;Cohort: <a class="asset-heading-link" data-bind="text: $component.currentCohortDefinition().name(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId()}" target="_new"></a></span>
+		<span data-bind="if: $component.currentCohortDefinition() != null">|&nbsp;&nbsp;Cohort: <a class="asset-heading-link" data-bind="text: $component.currentCohortDefinition().name(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId()}" target="_new"></a></span>
 	</div>
 </div>
 
@@ -58,8 +58,7 @@
 	</div>
 	<!-- /ko -->
 	<div data-bind="if: person, attr: { class: showSection.wordcloud() ? 'col-xs-9' : 'col-xs-12'}">
-		<div id="profile-chart" 
-				data-bind="
+		<div id="profile-chart" data-bind="
 					attr: {
 						 style:`padding-bottom:${aspectRatio()*100}%`
 						},
@@ -74,18 +73,13 @@
 							verticalLines: [{x:0, color:'#003142'}],
 							shadedRegions: shadedRegions,
 						}"></div>
-		<faceted-datatable-cf-profile
-				id="profile-manager-table" 
-				data-bind="visible:showSection.datatable" 
-				params="{
-						recs: filteredRecs,
-                        dom: 'Blfiprt',
-						updateOnPersonChange: person,
+		<faceted-datatable id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
+						reference: filteredRecs,
 						columns: columns, 
-						facets: facetsObs, 
+						options: options, 
 						order: [[3,'asc']],
 						searchFilter: searchHighlight,
 						rowClick: datatableRowClickCallback,
-					}"></faceted-datatable-cf-profile>
+					}"></faceted-datatable>
 	</div>
 </div>

@@ -1,13 +1,13 @@
-define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash', 'clipboard', 
-				'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util', 
-				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options', 
-				'cohortbuilder/CohortDefinition', 'vocabularyprovider', 
-				'conceptsetbuilder/InputTypes/ConceptSet', 
-				'nvd3', 'databindings/d3ChartBinding','components/faceted-datatable-cf',
+define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash', 'clipboard',
+				'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util',
+				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options',
+				'cohortbuilder/CohortDefinition', 'vocabularyprovider',
+				'conceptsetbuilder/InputTypes/ConceptSet',
+				'nvd3', 'databindings/d3ChartBinding',
 				'css!./styles/nv.d3.min.css'],
-	function ($, ko, view, _, clipboard, cohortDefinitionAPI, config, ohdsiUtil, 
-						ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI, 
-						ConceptSet) {
+	function ($, ko, view, _, clipboard, cohortDefinitionAPI, config, ohdsiUtil,
+		ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI,
+		ConceptSet) {
 		function cohortComparisonManager(params) {
 
 			var DEBUG = true;
@@ -15,7 +15,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.cohortComparisonId = params.currentCohortComparisonId;
 			self.cohortComparison = params.currentCohortComparison;
 			self.cohortComparisonDirtyFlag = params.dirtyFlag;
-			
+
 			self.config = config;
 			self.loading = ko.observable(true);
 			self.loadingExecution = ko.observable(false);
@@ -35,24 +35,24 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.options = options;
 			self.expressionMode = ko.observable('print');
 			self.om = ko.observable();
-            self.modifiedJSON = "";
-            self.importJSON = ko.observable();
-            self.expressionJSON = ko.pureComputed({
-                read: function () {
-                    return ko.toJSON(self.cohortComparison(), function (key, value) {
-                        if (value === 0 || value) {
-                            delete value.analysisId;
-                            delete value.name;
-                            return value;
-                        } else {
-                            return
-                        }
-                    }, 2);
-                },
-                write: function (value) {
-                    self.modifiedJSON = value;
-                }
-            });
+			self.modifiedJSON = "";
+			self.importJSON = ko.observable();
+			self.expressionJSON = ko.pureComputed({
+				read: function () {
+					return ko.toJSON(self.cohortComparison(), function (key, value) {
+						if (value === 0 || value) {
+							delete value.analysisId;
+							delete value.name;
+							return value;
+						} else {
+							return
+						}
+					}, 2);
+				},
+				write: function (value) {
+					self.modifiedJSON = value;
+				}
+			});
 
 			// for new scatter balance chart
 			/*
@@ -235,14 +235,14 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			},
 				{
 					title: 'Coefficient',
-					data: function(d) {
-						return d3.round(d.value,2);
+					data: function (d) {
+						return d3.round(d.value, 2);
 					}
 			},
 				{
 					title: '|Coefficient|',
 					data: function (d) {
-						return d3.round(Math.abs(d.value),2);
+						return d3.round(Math.abs(d.value), 2);
 					}
 				}
 		];
@@ -273,14 +273,16 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 
 			var defaultTab = 'specification';
 			self.tabMode = ko.observable(util.getState('cohortCompTab') || defaultTab);
-			self.tabMode.subscribe(function(tab) {
+			self.tabMode.subscribe(function (tab) {
 				if (util.getState('cohortCompTab') === tab)
 					return;
 				if (!util.hasState('cohortCompTab') && tab === defaultTab)
 					return;
 				util.setState('cohortCompTab', tab);
 			});
-			util.onStateChange('cohortCompTab', function(evt, {val} = {}) {
+			util.onStateChange('cohortCompTab', function (evt, {
+				val
+			} = {}) {
 				self.tabMode(val || defaultTab);
 			});
 
@@ -302,8 +304,8 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.viewLastExecution = function (source) {
-				var executionCount = self.sourceExecutions[source.sourceKey]().length-1;
-				for (var e=executionCount; e>=0; e--) {
+				var executionCount = self.sourceExecutions[source.sourceKey]().length - 1;
+				for (var e = executionCount; e >= 0; e--) {
 					var execution = self.sourceExecutions[source.sourceKey]()[e];
 					if (execution.executionStatus == 'COMPLETED') {
 						self.executionSelected(execution);
@@ -488,14 +490,14 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
-						response.forEach(function(r) { 
-								r.caption = r.estimate + ' (' + d3.round(r.lower95,2) + '-' + d3.round(r.upper95,2) + ')';
+						response.forEach(function (r) {
+							r.caption = r.estimate + ' (' + d3.round(r.lower95, 2) + '-' + d3.round(r.upper95, 2) + ')';
 						});
 						self.om(response);
 					}
 				});
-				
-				
+
+
 				Promise.all([p1, p2, p3, p4, p5])
 					.then(results => {
 						self.loadingExecution(false);
@@ -520,28 +522,28 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.canSave = ko.pureComputed(function () {
 				return (self.cohortComparison().name() && self.cohortComparison().comparatorId() && self.cohortComparison().comparatorId() > 0 && self.cohortComparison().treatmentId() && self.cohortComparison().treatmentId() > 0 && self.cohortComparison().outcomeId() && self.cohortComparison().outcomeId() > 0 && self.cohortComparison().modelType && self.cohortComparison().modelType() > 0 && self.cohortComparisonDirtyFlag() && self.cohortComparisonDirtyFlag().isDirty());
 			});
-            
-            self.canDelete = ko.pureComputed(function() {
-               return (self.cohortComparisonId() && self.cohortComparisonId() > 0);
-            });
-            
-            self.delete = function () {
-                if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
-                    return;
 
-                $.ajax({
-                    url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
-                    method: 'DELETE',
-                    error: function (error) {
-                        console.log("Error: " + error);
-                        authApi.handleAccessDenied(error);
-                    }, 
-                    success: function(data) {
-                        document.location = "#/estimation"
-                    }
-                });
-            }            
-			
+			self.canDelete = ko.pureComputed(function () {
+				return (self.cohortComparisonId() && self.cohortComparisonId() > 0);
+			});
+
+			self.delete = function () {
+				if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
+					return;
+
+				$.ajax({
+					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
+					method: 'DELETE',
+					error: function (error) {
+						console.log("Error: " + error);
+						authApi.handleAccessDenied(error);
+					},
+					success: function (data) {
+						document.location = "#/estimation"
+					}
+				});
+			}
+
 			self.save = function () {
 
 				var cca = {
@@ -883,46 +885,46 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 						self.monitorJobExecution(c.executionId, sourceKey);
 					}
 				});
-			};  
-            
-            self.import = function () {
-                if (self.importJSON().length > 0) {
-                    var updatedExpression = JSON.parse(self.importJSON());
-                    self.cohortComparison(new ComparativeCohortAnalysis(updatedExpression));
-                    self.importJSON("");
-                    self.tabMode('specification');
-                }
-            };
-            
-            self.copyToClipboard = function (element) {
-                var currentClipboard = new clipboard('#btnCopyToClipboard');
+			};
 
-                currentClipboard.on('success', function(e) {
-                    console.log('Copied to clipboard');
-                    e.clearSelection();
-                    $('#copyToClipboardMessage').fadeIn();
-                    setTimeout(function () {
-				        $('#copyToClipboardMessage').fadeOut();
-			         }, 1500);
-                });
-                
-                currentClipboard.on('error', function(e) {
-                    console.log('Error copying to clipboard');
-                    console.log(e);
-                });
-            }
+			self.import = function () {
+				if (self.importJSON().length > 0) {
+					var updatedExpression = JSON.parse(self.importJSON());
+					self.cohortComparison(new ComparativeCohortAnalysis(updatedExpression));
+					self.importJSON("");
+					self.tabMode('specification');
+				}
+			};
 
-            self.newCohortComparison = function() {
+			self.copyToClipboard = function (element) {
+				var currentClipboard = new clipboard('#btnCopyToClipboard');
+
+				currentClipboard.on('success', function (e) {
+					console.log('Copied to clipboard');
+					e.clearSelection();
+					$('#copyToClipboardMessage').fadeIn();
+					setTimeout(function () {
+						$('#copyToClipboardMessage').fadeOut();
+					}, 1500);
+				});
+
+				currentClipboard.on('error', function (e) {
+					console.log('Error copying to clipboard');
+					console.log(e);
+				});
+			}
+
+			self.newCohortComparison = function () {
 				self.cohortComparison(new ComparativeCohortAnalysis());
 				// The ComparativeCohortAnalysis module is pretty big - use the setTimeout({}, 0) 
 				// to allow the event loop to catch up.
 				// http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
-                setTimeout(function() {
-                    self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison()));
-                }, 0);
-            }
-            
-            self.loadCohortComparison = function () {
+				setTimeout(function () {
+					self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison()));
+				}, 0);
+			}
+
+			self.loadCohortComparison = function () {
 				// load cca
 				ohdsiUtil.cachedAjax({
 					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
@@ -930,13 +932,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					contentType: 'application/json',
 					success: function (comparativeCohortAnalysis) {
 						self.cohortComparison(new ComparativeCohortAnalysis(comparativeCohortAnalysis));
-						setTimeout(function() {
+						setTimeout(function () {
 							self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison()));
 						}, 0);
 					}
-				});                
-            }
-            
+				});
+			}
+
 			// startup actions
 			if (self.cohortComparisonId() == 0 && self.cohortComparison() == null) {
 				self.newCohortComparison();
@@ -962,63 +964,63 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			var junk = 1;
 			return {
 				x: {
-							value: d => {
-								return Math.abs(d.beforeMatchingStdDiff);
-							},
-							label: 'Before matching StdDiff',
-							tooltipOrder: 1,
-							propName: 'beforeMatchingStdDiff',
-							isColumn: true,
-							colIdx: 1,
-							isField: true,
+					value: d => {
+						return Math.abs(d.beforeMatchingStdDiff);
+					},
+					label: 'Before matching StdDiff',
+					tooltipOrder: 1,
+					propName: 'beforeMatchingStdDiff',
+					isColumn: true,
+					colIdx: 1,
+					isField: true,
 				},
 				beforeMatchingDirection: {
-							value: d => d.beforeMatchingStdDiff > 0 ? "positive" : d.beforeMatchingStdDiff < 0 ? "negative" : "0",
-							tooltipOrder: 1.5,
-							isField: true,
-							isFacet: true,
-							label: "Direction before matching",
+					value: d => d.beforeMatchingStdDiff > 0 ? "positive" : d.beforeMatchingStdDiff < 0 ? "negative" : "0",
+					tooltipOrder: 1.5,
+					isField: true,
+					isFacet: true,
+					label: "Direction before matching",
 				},
 				y: {
-							value: d => Math.abs(d.afterMatchingStdDiff),
-							label: "After matching StdDiff",
-							/*
-							format: d => {
-								var str = d.toString();
-								var idx = str.indexOf('.');
-								if (idx == -1) {
-									return d3.format('0%')(d);
-								}
+					value: d => Math.abs(d.afterMatchingStdDiff),
+					label: "After matching StdDiff",
+					/*
+					format: d => {
+						var str = d.toString();
+						var idx = str.indexOf('.');
+						if (idx == -1) {
+							return d3.format('0%')(d);
+						}
 
-								var precision = (str.length - (idx+1) - 2).toString();
-								return d3.format('0.' + precision + '%')(d);
-							},
-							*/
-							tooltipOrder: 2,
-							propName: 'afterMatchingStdDiff',
-							isColumn: true,
-							colIdx: 1,
-							isField: true,
+						var precision = (str.length - (idx+1) - 2).toString();
+						return d3.format('0.' + precision + '%')(d);
+					},
+					*/
+					tooltipOrder: 2,
+					propName: 'afterMatchingStdDiff',
+					isColumn: true,
+					colIdx: 1,
+					isField: true,
 				},
 				afterMatchingDirection: {
-							value: d => d.afterMatchingStdDiff > 0 ? "positive" : d.afterMatchingStdDiff < 0 ? "negative" : "0",
-							tooltipOrder: 2.5,
-							isField: true,
-							isFacet: true,
-							label: "Direction after matching",
+					value: d => d.afterMatchingStdDiff > 0 ? "positive" : d.afterMatchingStdDiff < 0 ? "negative" : "0",
+					tooltipOrder: 2.5,
+					isField: true,
+					isFacet: true,
+					label: "Direction after matching",
 				},
 				xy: { // for brushing
-							_accessors: {
-								value: {
-									func: function(d,allFields) {
-										return [
+					_accessors: {
+						value: {
+							func: function (d, allFields) {
+								return [
 														allFields.x.accessors.value(d),
 														allFields.y.accessors.value(d)];
-									},
-									posParams: ['d','allFields'],
-								},
 							},
-							isField: true,
+							posParams: ['d', 'allFields'],
+						},
+					},
+					isField: true,
 				},
 				/*
 				size: {
@@ -1120,38 +1122,38 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				},
 				*/
 				covariateName: {
-							propName: 'covariateName',
-							value: d => {
-								return d.covariateName.split(/:/).shift();
-							},
-							isColumn: true,
-							isFacet: true,
-							colIdx: 0,
-							tooltipOrder: 7,
-							label: 'Covariate Name',
-							isField: true,
+					propName: 'covariateName',
+					value: d => {
+						return d.covariateName.split(/:/).shift();
+					},
+					isColumn: true,
+					isFacet: true,
+					colIdx: 0,
+					tooltipOrder: 7,
+					label: 'Covariate Name',
+					isField: true,
 				},
 				covariateValue: {
-							propName: 'covariateName',
-							value: d => d.covariateName.split(/:/).pop(),
-							isColumn: true,
-							colIdx: 0,
-							tooltipOrder: 8,
-							label: 'Covariate Value',
-							isField: true,
-							/*
-							_accessors: {
-								tooltip: {
-									posParams: ['d','allFields'],
-									func: (d, allFields) => {
-										return {
-											name: `Covariate value`,
-											value: allFields.covariateName.accessors.value(d).split(/:/).pop(),
-										}
-									},
-								},
+					propName: 'covariateName',
+					value: d => d.covariateName.split(/:/).pop(),
+					isColumn: true,
+					colIdx: 0,
+					tooltipOrder: 8,
+					label: 'Covariate Value',
+					isField: true,
+					/*
+					_accessors: {
+						tooltip: {
+							posParams: ['d','allFields'],
+							func: (d, allFields) => {
+								return {
+									name: `Covariate value`,
+									value: allFields.covariateName.accessors.value(d).split(/:/).pop(),
+								}
 							},
-							*/
+						},
+					},
+					*/
 				},
 				/*
 				conceptId: {
