@@ -63,16 +63,16 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 				        ]};
 		
 		self.dataCompletColumns = [{
-			title: 'Category',
+			title: 'Age',
 			data: 'covariance'
         }, {
-			title: 'Gender',
+			title: 'Gender (%)',
 			data: 'genderP'
         }, {
-			title: 'Race',
+			title: 'Race (%)',
 			data: 'raceP'
         }, {
-			title: 'Ethnicity',
+			title: 'Ethnicity (%)',
 			data: 'ethP'
         }];
 		
