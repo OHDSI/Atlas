@@ -46,7 +46,7 @@
 					<col span="1" class="rule" />
 					<col span="1" class="delete" />
 				</colgroup>
-				<tbody data-bind="sortable: {data: expression().PrimaryCriteria().CriteriaList, connectClass : 'primaryCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
+				<tbody data-bind="sortable: {data: expression().PrimaryCriteria().CriteriaList, connectClass : 'primaryCriteria', options: {cancel: ':input, button, [contenteditable], .undraggable'}}">
 					<tr>
 						<td>
 							<div class="criteria-content">
@@ -99,8 +99,7 @@
 		</div>
 		<div data-bind="eventListener: [
 			 { event: 'click', selector: '.copyInclusionRule', callback: copyInclusionRule},
-			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule},
-			 { event: 'click', selector: '.addConceptSet', callback: addConceptSet}]">
+			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule}]">
 
 			<table style="width: 100%">
 				<colgroup>

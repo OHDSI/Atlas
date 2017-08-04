@@ -41,7 +41,7 @@
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'definition' }" class="tab-pane">
-				<div data-bind="eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">
+				<div data-bind="eventListener: { event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}">
 					<ir-analysis-editor params="analysis: selectedAnalysis().expression, analysisCohorts: analysisCohorts"></ir-analysis-editor>
 				</div>
 			</div>

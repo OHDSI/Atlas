@@ -46,8 +46,9 @@ requirejs.config({
 	},
 	map: {
 		"*": {
-			'jquery-ui/sortable': 'jquery-ui',
-			'jquery-ui/draggable': 'jquery-ui',
+			'jquery-ui/ui/widgets/sortable': 'jquery-ui',
+			'jquery-ui/ui/widgets/draggable': 'jquery-ui',
+			'jquery-ui/ui/widgets/droppable': 'jquery-ui',
 			'jquery-ui/dialog': 'jquery-ui',
 			'jquery-ui/autocomplete': 'jquery-ui',
 			'jquery-ui/tabs': 'jquery-ui'
@@ -64,7 +65,7 @@ requirejs.config({
 		"css": "plugins/css.min",
 		"clipboard": "clipboard.min",
 		"knockout": "knockout.min",
-		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/0.11.0/knockout-sortable",
+		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
 		"knockout-mapping": "knockout.mapping",
 		"datatables.net": "jquery.dataTables.min",
 		"datatables.net-buttons": "jquery.dataTables.buttons.min",
