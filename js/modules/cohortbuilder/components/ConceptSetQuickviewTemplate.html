@@ -1,0 +1,17 @@
+
+<table>
+	<thead>
+		<th>Name</th>
+		<th style="width:15px; cursor: pointer; user-select:none" data-bind="click: toggleExcludes">E</th>
+		<th style="width:15px; cursor: pointer; user-select:none" data-bind="click: toggleDescendants">D</th>
+		<th style="width:15px; cursor: pointer; user-select:none" data-bind="click: toggleMapped">M</th>
+	</thead>
+	<tbody data-bind="foreach: conceptSet().expression.items">
+		<tr>
+			<td data-bind="attr:{title: concept.CONCEPT_NAME}"><div style="width:275px; overflow-x: hidden; text-overflow:ellipsis; white-space:nowrap" data-bind="text: concept.CONCEPT_NAME"></div></td>
+			<td><span class="fa fa-check" data-bind="css: {selected: isExcluded}, click: () => isExcluded(!isExcluded())"></span></td>
+			<td><span class="fa fa-check" data-bind="css: {selected: includeDescendants}, click: () => includeDescendants(!includeDescendants())"></span></td>
+			<td><span class="fa fa-check" data-bind="css: {selected: includeMapped}, click: () => includeMapped(!includeMapped())"></span></td>
+		</tr>
+	</tbody>
+</table>

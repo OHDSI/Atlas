@@ -7,7 +7,7 @@ define(['knockout'], function (ko) {
 			}
 			params.forEach(function (param) {
 				$(element).on(param.event, param.selector, function (event) {
-					param.callback(ko.dataFor(this), event);
+					param.callback(ko.dataFor(this), ko.contextFor(this), event);
 				});
 			});
 		}

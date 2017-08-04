@@ -126,7 +126,7 @@ define(['knockout',
 			});
 		};
 		
-		self.handleConceptSetSelect = function (item) {
+		self.handleConceptSetImport = function (item) {
 			self.criteriaContext(item);
 			self.showConceptSetBrowser(true);
 		}
