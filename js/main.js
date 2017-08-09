@@ -105,6 +105,7 @@ requirejs.config({
 		"d3": "d3.min",
 		"d3_tip": "d3.tip",
 		"jnj_chart": "jnj.chart",
+		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@0.0.11/dist/atlascharts.min",
 		"nvd3": "nv.d3",
 		//"lodash": "lodash.min",
 		"lodash": "lodash.4.15.0.full",
