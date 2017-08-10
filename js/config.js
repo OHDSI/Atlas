@@ -1,17 +1,15 @@
-define([], function () {
+define(['optional!config-local'], function (localConfig) {
 	var config = {};
 
-	config.services = [
-		{
-			name: 'Local',
-			url: 'http://localhost:8080/WebAPI/'
-          }
-		];
-
-	config.webAPIRoot = config.services[0].url;
-	// config.rServicesHost = 'http://localhost:8081/';
+	// default configuration
+	config.services = [{
+		name: 'Local',
+		url: 'http://localhost:8080/WebAPI/'
+	}];
 	config.cohortComparisonResultsEnabled = false;
 	config.userAuthenticationEnabled = false;
 
+	Object.assign(config, localConfig);
+	config.webAPIRoot = config.services[0].url;
 	return config;
 });

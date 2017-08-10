@@ -63,6 +63,7 @@ requirejs.config({
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"text": "plugins/text",
 		"css": "plugins/css.min",
+		"optional": "plugins/optional",
 		"clipboard": "clipboard.min",
 		"knockout": "knockout.min",
 		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
