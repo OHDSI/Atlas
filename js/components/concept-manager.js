@@ -3,7 +3,7 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 		var self = this;
 		self.model = params.model;
 		self.subscriptions = [];
-		
+
 		self.sourceCounts = ko.observableArray();
 		self.loadingSourceCounts = ko.observable(false);
 		self.loadingRelated = ko.observable(false);
@@ -22,9 +22,9 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 		self.subscriptions.push(
 			self.model.currentConceptMode.subscribe(function (mode) {
 				switch (mode) {
-				case 'recordcounts':
-					self.loadRecordCounts();
-					break;
+					case 'recordcounts':
+						self.loadRecordCounts();
+						break;
 				}
 			})
 		);
@@ -58,12 +58,11 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
             }, {
 				'caption': 'Relationship',
 				'binding': function (o) {
-					values = [];
-					for (var i = 0; i < o.RELATIONSHIPS.length; i++) {
-						values.push(o.RELATIONSHIPS[i].RELATIONSHIP_NAME);
-					}
-					return values;
-				}
+					return $.map(o.RELATIONSHIPS, function (val) {
+						return val.RELATIONSHIP_NAME
+					});
+				},
+				isArray: true,
             }, {
 				'caption': 'Has Records',
 				'binding': function (o) {
@@ -77,15 +76,11 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
             }, {
 				'caption': 'Distance',
 				'binding': function (o) {
-					values = [];
-					for (var i = 0; i < o.RELATIONSHIPS.length; i++) {
-						if (values.indexOf(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE) == -1) {
-							values.push(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE);
-						}
-					}
-					return values;
-				}
-            }]
+					return Math.max.apply(Math, o.RELATIONSHIPS.map(function (d) {
+						return d.RELATIONSHIP_DISTANCE;
+					}))
+				},
+			}]
 		};
 
 		self.relatedConceptsColumns = [{
@@ -477,9 +472,9 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 		};
 
 		self.loadConcept(self.model.currentConceptId());
-		
+
 		self.dispose = function () {
-			self.subscriptions.forEach(function(subscription) {
+			self.subscriptions.forEach(function (subscription) {
 				subscription.dispose();
 			});
 		};

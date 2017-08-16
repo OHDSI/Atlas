@@ -86,9 +86,10 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 				if (self.options && self.options.Facets) {
 					// Iterate over the facets and set the dimensions
 					$.each(self.options.Facets, function (i, facetConfig) {
+						var isArray = facetConfig.isArray || false;
 						var dimension = self.data().dimension(function (d) {
 							return self.facetDimensionHelper(facetConfig.binding(d));
-						});
+						}, isArray);
 						var facet = {
 							'caption': facetConfig.caption,
 							'binding': facetConfig.binding,
