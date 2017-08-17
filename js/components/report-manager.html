@@ -61,7 +61,8 @@
 	<div class="pad-10 report">
 		<div class="reportHeading"><i class="fa fa-area-chart"></i> Entropy Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Entropy by Date</div>
-		<div class="evidenceVisualization" id="entropyByDate"></div>
+ 		<div class="evidenceVisualization" id="entropyByDate"/>
+	</div>
 </div>
 
 <div id="reportPerson" data-bind="if: model.currentReport() == 'Person' && !model.loadingReport()">
