@@ -139,8 +139,11 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 					},
 					'/role/:id': function (id) {
 						require(['role-details'], function () {
+							self.componentParams = {
+								model: self
+							};
 							self.currentRoleId(id);
-							self.currentView('role');
+							self.currentView('role-details');
 						});
 					},
 					'/home': function () {
