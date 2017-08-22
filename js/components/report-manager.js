@@ -2147,6 +2147,36 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						}
 					});
 					break; // Entropy report
+				case 'Timeliness':
+					$.ajax({
+						url: config.services[0].url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/timeliness',
+						success: function (data) {
+							self.model.currentReport(self.model.reportReportName());
+							self.model.loadingReport(false);
+
+							var timelinessData = self.normalizeArray(data, true);
+							if (!timelinessData.empty) {
+								var byDateSeries = self.mapDateDataToSeries(timelinessData, {
+
+									dateField: 'date',
+									yValue: 'entropy',
+									yPercent: 'entropy'
+								});
+
+								var timelinessByDate  = new atlascharts.line();
+								timelinessByDate.render(byDateSeries, "#timelinessByDate", 400, 200, {
+									xScale: d3.scaleTime().domain(d3.extent(byDateSeries[0].values, function (d) {
+										return d.xValue;
+									})),
+									xFormat: d3.timeFormat("%Y/%m/%d"),
+									tickFormat: d3.timeFormat("%Y"),
+									xLabel: "Date",
+									yLabel: "Delay in Day"
+								});
+							}
+						}
+					});
+					break; // Timeliness report
 			}
 		}
 
