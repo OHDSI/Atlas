@@ -76,6 +76,14 @@
 	</div>
 </div>
 
+<div id="reportTimeliness" data-bind="if: model.currentReport() == 'Timeliness' && !model.loadingReport()">
+	<div class="pad-10 report">
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Timeliness Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
+		<div class="reportSectionHeading">Timeliness by Date</div>
+		<div class="evidenceVisualization" id="timelinessByDate" />
+	</div>
+</div>
+
 <div id="reportPerson" data-bind="if: model.currentReport() == 'Person' && !model.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">

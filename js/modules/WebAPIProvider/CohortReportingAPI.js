@@ -107,6 +107,10 @@ define(function (require, exports) {
 			reportKey: "Entropy",
 			analyses: [2031, 2032]
 		}, {
+			name: "Timeliness",
+			reportKey: "Timeliness",
+			analyses: [2051]
+		}, {
 			name: "Tornado",
 			reportKey: "Tornado",
 			analyses: [3000, 3001]
