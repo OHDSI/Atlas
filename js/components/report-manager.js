@@ -1,4 +1,4 @@
-define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding','faceted-datatable'], function (ko, view, d3, jnj_chart, colorbrewer, _, config) {
+define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding','faceted-datatable'], function (ko, view, d3, atlascharts, colorbrewer, _, config) {
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -159,7 +159,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							});
 
 							// create svg with range bands based on the trellis names
-							var chart = new jnj_chart.Trellisline();
+							var chart = new atlascharts.trellisline();
 							chart.render(dataByDecile, "#trellisLinePlot", 1000, 300, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
@@ -183,7 +183,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								yPercent: 'yPrevalence1000Pp'
 							});
 
-							var prevalenceByMonth = new jnj_chart.Line();
+							var prevalenceByMonth = new atlascharts.line();
 							prevalenceByMonth.render(byMonthSeries, "#deathPrevalenceByMonth", 1000, 300, {
 								xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
@@ -197,7 +197,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 						// death type
 						if (data.deathByType && data.deathByType.length > 0) {
-							var genderDonut = new jnj_chart.Donut();
+							var genderDonut = new atlascharts.donut();
 							genderDonut.render(self.mapConceptData(data.deathByType), "#deathByType", self.donutWidth, self.donutHeight, {
 								margin: {
 									top: 5,
@@ -211,7 +211,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						// Age At Death
 						var bpdata = self.normalizeArray(data.agetAtDeath);
 						if (!bpdata.empty) {
-							var boxplot = new jnj_chart.BoxPlot();
+							var boxplot = new atlascharts.boxplot();
 							var bpseries = [];
 
 							for (var i = 0; i < bpdata.category.length; i++) {
@@ -326,7 +326,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
                             */
 
 							var tree = self.buildHierarchyFromJSON(normalizedData, threshold);
-							var treemap = new jnj_chart.Treemap();
+							var treemap = new atlascharts.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
 								onclick: function (node) {
 									self.procedureDrilldown(node.id, node.name);
@@ -452,7 +452,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							});
 */
 							var tree = self.buildHierarchyFromJSON(data, threshold);
-							var treemap = new jnj_chart.Treemap();
+							var treemap = new atlascharts.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
 								onclick: function (node) {
 									self.drugExposureDrilldown(node.id, node.name);
@@ -572,7 +572,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
                             */
 
 							var tree = self.eraBuildHierarchyFromJSON(data, threshold);
-							var treemap = new jnj_chart.Treemap();
+							var treemap = new atlascharts.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
 								onclick: function (node) {
 									self.drugeraDrilldown(node.id, node.name);
@@ -697,7 +697,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
                             */
                             
 							tree = self.buildHierarchyFromJSON(data, threshold);
-							var treemap = new jnj_chart.Treemap();
+							var treemap = new atlascharts.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
 								onclick: function (node) {
 									self.conditionDrilldown(node.id, node.name);
@@ -744,7 +744,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						// age by gender
 						var ageByGenderData = self.normalizeArray(data.ageByGender);
 						if (!ageByGenderData.empty) {
-							var agegenderboxplot = new jnj_chart.BoxPlot();
+							var agegenderboxplot = new atlascharts.boxplot();
 							var agData = ageByGenderData.category
 								.map(function (d, i) {
 									var item = {
@@ -776,7 +776,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							histData.data = ageAtFirstData;
 							d3.selectAll("#ageatfirstobservation svg").remove();
 							var ageAtFirstObservationData = self.mapHistogram(histData);
-							var ageAtFirstObservationHistogram = new jnj_chart.Histogram();
+							var ageAtFirstObservationHistogram = new atlascharts.histogram();
 							ageAtFirstObservationHistogram.render(ageAtFirstObservationData, "#ageatfirstobservation", 230, 115, {
 								xFormat: d3.format('d'),
 								xLabel: 'Age',
@@ -805,7 +805,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 										observationLengthXLabel = 'Years';
 									}
 								}
-								var observationLengthHistogram = new jnj_chart.Histogram();
+								var observationLengthHistogram = new atlascharts.histogram();
 								observationLengthHistogram.render(observationLengthData, "#observationlength", 230, 115, {
 									xLabel: observationLengthXLabel,
 									yLabel: 'People'
@@ -817,7 +817,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						d3.selectAll("#cumulativeobservation svg").remove();
 						var cumObsData = self.normalizeArray(data.cumulativeObservation);
 						if (!cumObsData.empty) {
-							var cumulativeObservationLine = new jnj_chart.Line();
+							var cumulativeObservationLine = new atlascharts.line();
 							var cumulativeData = self.normalizeDataframe(cumObsData).xLengthOfObservation
 								.map(function (d, i) {
 									var item = {
@@ -850,7 +850,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						var obsPeriodByGenderData = self.normalizeArray(data.durationByGender);
 						if (!obsPeriodByGenderData.empty) {
 							d3.selectAll("#opbygender svg").remove();
-							var opbygenderboxplot = new jnj_chart.BoxPlot();
+							var opbygenderboxplot = new atlascharts.boxplot();
 							var opgData = obsPeriodByGenderData.category
 								.map(function (d, i) {
 									var item = {
@@ -896,7 +896,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						d3.selectAll("#opbyage svg").remove();
 						var obsPeriodByLenByAgeData = self.normalizeArray(data.durationByAgeDecile);
 						if (!obsPeriodByLenByAgeData.empty) {
-							var opbyageboxplot = new jnj_chart.BoxPlot();
+							var opbyageboxplot = new atlascharts.BoxPlot();
 							var opaData = obsPeriodByLenByAgeData.category
 								.map(function (d, i) {
 									var item = {
@@ -948,7 +948,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							histData3.max = +data.personsWithContinuousObservationsByYearStats[0].maxValue;
 							histData3.intervals = Math.round((histData3.max - histData3.min + histData3.intervalSize) / histData3.intervalSize) + histData3.intervalSize;
 							d3.selectAll("#oppeoplebyyear svg").remove();
-							var observationLengthByYearHistogram = new jnj_chart.Histogram();
+							var observationLengthByYearHistogram = new atlascharts.histogram();
 							observationLengthByYearHistogram.render(self.mapHistogram(histData3), "#oppeoplebyyear", 460, 195, {
 								xFormat: d3.format('d'),
 								xLabel: 'Year',
@@ -965,7 +965,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								yPercent: 'percentValue'
 							});
 							d3.selectAll("#oppeoplebymonthsingle svg").remove();
-							var observationByMonthSingle = new jnj_chart.Line();
+							var observationByMonthSingle = new atlascharts.line();
 							observationByMonthSingle.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
 								xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
@@ -982,7 +982,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						var personPeriodData = self.normalizeArray(data.observationPeriodsPerPerson);
 						if (!personPeriodData.empty) {
 							d3.selectAll("#opperperson svg").remove();
-							var donut = new jnj_chart.Donut();
+							var donut = new atlascharts.donut();
 							donut.render(self.mapConceptData(data.observationPeriodsPerPerson), "#opperperson", 230, 230, {
 								margin: {
 									top: 5,
@@ -1082,7 +1082,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
                             */
                             
 							var tree = self.eraBuildHierarchyFromJSON(data, threshold);
-							var treemap = new jnj_chart.Treemap();
+							var treemap = new atlascharts.treemap();
 							treemap.render(tree, '#treemap_container', width, height, {
 								onclick: function (node) {
 									self.conditionEraDrilldown(node.id, node.name);
@@ -1208,7 +1208,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								self.datatables['drugera_table'] = datatable;
 
 								tree = self.buildHierarchyFromJSON(drugEraPrevalence, threshold);
-								treemap = new jnj_chart.Treemap();
+								treemap = new atlascharts.treemap();
 								treemap.render(tree, '#treemap_container', width, height, {
 									onclick: function (node) {
 										self.drilldown(node.id, node.name, 'drug');
@@ -1346,7 +1346,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								self.datatables['condition_table'] = datatable;
 
 								tree = self.buildHierarchyFromJSON(conditionOccurrencePrevalence, threshold);
-								treemap = new jnj_chart.Treemap();
+								treemap = new atlascharts.treemap();
 								treemap.render(tree, '#treemap_container', width, height, {
 									onclick: function (node) {
 										self.drilldown(node.id, node.name, 'condition');
@@ -1479,7 +1479,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								self.datatables['procedure_table'] = datatable;
 
 								tree = self.buildHierarchyFromJSON(procedureOccurrencePrevalence, threshold);
-								treemap = new jnj_chart.Treemap();
+								treemap = new atlascharts.treemap();
 								treemap.render(tree, '#treemap_container', width, height, {
 									onclick: function (node) {
 										self.drilldown(node.id, node.name, 'procedure');
@@ -1544,7 +1544,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 									return item;
 								}, result);
 
-							var personsByDurationSingle = new jnj_chart.Line();
+							var personsByDurationSingle = new atlascharts.line();
 							personsByDurationSingle.render(personsByDurationData, "#personsByDurationFromStartToEnd", 230, 115, {
 								yFormat: d3.format('0%'),
 								xLabel: 'Day',
@@ -1564,7 +1564,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								yPercent: 'yPrevalence1000Pp'
 							});
 
-							var prevalenceByMonth = new jnj_chart.Line();
+							var prevalenceByMonth = new atlascharts.line();
 							prevalenceByMonth.render(byMonthSeries, "#prevalenceByMonth", 400, 200, {
 								xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
@@ -1579,7 +1579,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						// age at index
 						var ageAtIndexDistribution = self.normalizeArray(data.ageAtIndexDistribution);
 						if (!ageAtIndexDistribution.empty) {
-							var boxplot = new jnj_chart.BoxPlot();
+							var boxplot = new atlascharts.boxplot();
 							var agData = ageAtIndexDistribution.category
 								.map(function (d, i) {
 									var item = {
@@ -1603,7 +1603,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						// distributionAgeCohortStartByCohortStartYear
 						var distributionAgeCohortStartByCohortStartYear = self.normalizeArray(data.distributionAgeCohortStartByCohortStartYear);
 						if (!distributionAgeCohortStartByCohortStartYear.empty) {
-							var boxplotCsy = new jnj_chart.BoxPlot();
+							var boxplotCsy = new atlascharts.boxplot();
 							var csyData = distributionAgeCohortStartByCohortStartYear.category
 								.map(function (d, i) {
 									var item = {
@@ -1627,7 +1627,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						// distributionAgeCohortStartByGender
 						var distributionAgeCohortStartByGender = self.normalizeArray(data.distributionAgeCohortStartByGender);
 						if (!distributionAgeCohortStartByGender.empty) {
-							var boxplotBg = new jnj_chart.BoxPlot();
+							var boxplotBg = new atlascharts.boxplot();
 							var bgData = distributionAgeCohortStartByGender.category
 								.map(function (d, i) {
 									var item = {
@@ -1656,7 +1656,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								yValue: 'countValue',
 								yPercent: 'percentValue'
 							});
-							var observationByMonthSingle = new jnj_chart.Line();
+							var observationByMonthSingle = new atlascharts.line();
 							observationByMonthSingle.render(personsInCohortFromCohortStartToEndSeries, "#personinCohortFromStartToEnd", 460, 250, {
 								xScale: d3.timeScale().domain(d3.extent(personsInCohortFromCohortStartToEndSeries[0].values, function (d) {
 									return d.xValue;
@@ -1721,7 +1721,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							});
 
 							// create svg with range bands based on the trellis names
-							var chart = new jnj_chart.Trellisline();
+							var chart = new atlascharts.trellisline();
 							chart.render(dataByDecile, "#trellisLinePlot", 400, 200, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
@@ -1748,7 +1748,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						self.model.loadingReport(false);
 
 						if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
-							var yearHistogram = new jnj_chart.Histogram();
+							var yearHistogram = new atlascharts.histogram();
 							var histData = {};
 							histData.intervalSize = 1;
 							histData.min = data.yearOfBirthStats[0].minValue;
@@ -1762,7 +1762,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							});
 						}
 
-						var genderDonut = new jnj_chart.Donut();
+						var genderDonut = new atlascharts.donut();
 						genderDonut.render(self.mapConceptData(data.gender), "#reportPerson #gender", 260, 130, {
 							colors: d3.scaleOrdinal()
 								.domain([8507, 8551, 8532])
@@ -1776,7 +1776,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 						});
 
-						var raceDonut = new jnj_chart.Donut();
+						var raceDonut = new atlascharts.donut();
 						raceDonut.render(self.mapConceptData(data.race), "#reportPerson #race", 260, 130, {
 							margin: {
 								top: 5,
@@ -1789,7 +1789,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 								.range(colorbrewer.Paired[10])
 						});
 
-						var ethnicityDonut = new jnj_chart.Donut();
+						var ethnicityDonut = new atlascharts.donut();
 						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#reportPerson #ethnicity", 260, 130, {
 							margin: {
 								top: 5,
@@ -1834,7 +1834,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 					// age at first diagnosis visualization
 					d3.selectAll("#ageAtFirstDiagnosis svg").remove();
-					var boxplot = new jnj_chart.BoxPlot();
+					var boxplot = new atlascharts.boxplot();
 					var bpseries = [];
 					var bpdata = self.normalizeArray(data.ageAtFirstDiagnosis, true);
 					if (!bpdata.empty) {
@@ -1867,7 +1867,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							yPercent: 'yPrevalence1000Pp'
 						});
 
-						var prevalenceByMonth = new jnj_chart.Line();
+						var prevalenceByMonth = new atlascharts.line();
 						prevalenceByMonth.render(byMonthSeries, "#conditionPrevalenceByMonth", 230, 115, {
 							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
@@ -1883,7 +1883,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					var conditionType = self.mapConceptData(data.conditionsByType);
 					d3.selectAll("#conditionsByType svg").remove();
 					if (conditionType) {
-						var donut = new jnj_chart.Donut();
+						var donut = new atlascharts.donut();
 						donut.render(conditionType, "#conditionsByType", 260, 130, {
 							margin: {
 								top: 5,
@@ -1953,7 +1953,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						});
 
 						// create svg with range bands based on the trellis names
-						var chart = new jnj_chart.Trellisline();
+						var chart = new atlascharts.trellisline();
 						chart.render(dataByDecile, "#trellisLinePlot", 400, 200, {
 							trellisSet: allDeciles,
 							trellisLabel: "Age Decile",
@@ -1990,7 +1990,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					self.boxplotHelper(data.refillsDistribution, '#refillsDistribution', self.boxplotWidth, self.boxplotHeight, 'Refills', 'Refills');
 
 					// drug  type visualization
-					var donut = new jnj_chart.Donut();
+					var donut = new atlascharts.donut();
 					var drugsByType = self.mapConceptData(data.drugsByType);
 					donut.render(drugsByType, "#drugsByType", self.donutWidth, self.donutHeight, {
 						margin: {
@@ -2014,7 +2014,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						});
 
 						d3.selectAll("#drugPrevalenceByMonth svg").remove();
-						var prevalenceByMonth = new jnj_chart.Line();
+						var prevalenceByMonth = new atlascharts.line();
 						prevalenceByMonth.render(byMonthSeries, "#drugPrevalenceByMonth", 900, 250, {
 							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
@@ -2082,7 +2082,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						});
 
 						// create svg with range bands based on the trellis names
-						var chart = new jnj_chart.Trellisline();
+						var chart = new atlascharts.trellisline();
 						chart.render(dataByDecile, "#trellisLinePlot", 1000, 300, {
 							trellisSet: allDeciles,
 							trellisLabel: "Age Decile",
@@ -2126,7 +2126,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						});
 
 						d3.selectAll("#conditioneraPrevalenceByMonth svg").remove();
-						var prevalenceByMonth = new jnj_chart.Line();
+						var prevalenceByMonth = new atlascharts.line();
 						prevalenceByMonth.render(byMonthSeries, "#conditioneraPrevalenceByMonth", 230, 115, {
 							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
@@ -2193,7 +2193,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						});
 
 						// create svg with range bands based on the trellis names
-						var chart = new jnj_chart.Trellisline();
+						var chart = new atlascharts.trellisline();
 						chart.render(dataByDecile, "#trellisLinePlot", 400, 200, {
 							trellisSet: allDeciles,
 							trellisLabel: "Age Decile",
@@ -2238,7 +2238,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						});
 
 						d3.selectAll("#drugeraPrevalenceByMonth svg").remove();
-						var prevalenceByMonth = new jnj_chart.Line();
+						var prevalenceByMonth = new atlascharts.line();
 						prevalenceByMonth.render(byMonthSeries, "#drugeraPrevalenceByMonth", 400, 200, {
 							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
@@ -2305,7 +2305,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						});
 
 						// create svg with range bands based on the trellis names
-						var chart = new jnj_chart.Trellisline();
+						var chart = new atlascharts.trellisline();
 						chart.render(dataByDecile, "#trellisLinePlot", 400, 200, {
 							trellisSet: allDeciles,
 							trellisLabel: "Age Decile",
@@ -2336,7 +2336,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					$('#procedureDrilldown').text(concept_name + ' Drilldown Report');
 
 					// age at first diagnosis visualization
-					var boxplot = new jnj_chart.BoxPlot();
+					var boxplot = new atlascharts.boxplot();
 					var bpseries = [];
 					var bpdata = self.normalizeArray(data.ageAtFirstOccurrence);
 					if (!bpdata.empty) {
@@ -2367,7 +2367,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							yPercent: 'yPrevalence1000Pp'
 						});
 
-						var prevalenceByMonth = new jnj_chart.Line();
+						var prevalenceByMonth = new atlascharts.line();
 						prevalenceByMonth.render(byMonthSeries, "#procedurePrevalenceByMonth", 1000, 300, {
 							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
@@ -2381,7 +2381,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 
 					// procedure type visualization
 					if (data.proceduresByType && data.proceduresByType.length > 0) {
-						var donut = new jnj_chart.Donut();
+						var donut = new atlascharts.donut();
 						donut.render(self.mapConceptData(data.proceduresByType), "#proceduresByType", self.donutWidth, self.donutHeight, {
 							margin: {
 								top: 5,
@@ -2447,7 +2447,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 						});
 
 						// create svg with range bands based on the trellis names
-						var chart = new jnj_chart.Trellisline();
+						var chart = new atlascharts.trellisline();
 						chart.render(dataByDecile, "#trellisLinePlot", 1000, 300, {
 							trellisSet: allDeciles,
 							trellisLabel: "Age Decile",
@@ -2492,7 +2492,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 							};
 						});
 
-					var scatter = new jnj_chart.scatterplot();
+					var scatter = new atlascharts.scatterplot();
 					self.model.activeReportDrilldown(true);
 					$('#' + type + 'DrilldownScatterplotHeading').html(name);
 
@@ -2881,7 +2881,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 		}
 
 		self.boxplotHelper = function (data, target, width, height, xlabel, ylabel) {
-			var boxplot = new jnj_chart.BoxPlot();
+			var boxplot = new atlascharts.boxplot();
 			var yMax = 0;
 			var bpseries = [];
 			data = self.normalizeArray(data);

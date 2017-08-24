@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css', ], function ($, ko, jnj_chart, d3, ohdsiUtil, config, authApi, sharedState) {
+define(['jquery', 'knockout', 'atlascharts', 'd3', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css', ], function ($, ko, atlascharts, d3, ohdsiUtil, config, authApi, sharedState) {
 	var appModel = function () {
 		$.support.cors = true;
 		var self = this;

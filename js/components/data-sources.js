@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, colorbrewer, _, config) {
+define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, atlascharts, colorbrewer, _, config) {
 	function dataSources(params) {
 		var self = this;
 
@@ -154,9 +154,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 					success: function (data) {
 						self.loadingReport(false);
 						if (!!data.summary) {
+							var formatter = (new atlascharts.chart()).formatters.formatSI(2);
 							data.summary.forEach(function (d) {
 								if (!isNaN(d.attributeValue)) {
-									var formatter = jnj_chart.Chart.getFormatters().formatSI(2);
 									d.attributeValue = formatter(d.attributeValue);
 								}
 							});
@@ -164,7 +164,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						}
 
 						var genderConceptData = self.mapConceptData(data.gender);
-						var populationDonut = new jnj_chart.Donut();
+						var populationDonut = new atlascharts.donut();
 						populationDonut.render(genderConceptData, "#populationByGender", self.donutWidth, self.donutHeight);
 
 						var ageAtFirstData = self.normalizeArray(data.ageAtFirstObservation);
@@ -178,7 +178,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
 							var ageAtFirstObservationData = self.mapHistogram(histData);
 
-							var ageHistogram = new jnj_chart.Histogram();
+							var ageHistogram = new atlascharts.histogram();
 							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", self.boxplotWidth, self.boxplotHeight, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
@@ -209,10 +209,10 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 									cumulativeObservationXLabel = 'Years';
 								}
 							}
-							var observationLine = new jnj_chart.Line();
+							var observationLine = new atlascharts.line();
 							observationLine.render(cumulativeData, "#cumulativeObservation", 230, 115, {
 								yFormat: d3.format('0.0%'),
-								interpolate: jnj_chart.Line.getInterpolation().curveStepBefore,
+								interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
 								xLabel: cumulativeObservationXLabel,
 								yLabel: 'Percent of Population'
 							});
@@ -227,7 +227,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								yPercent: 'percentValue'
 							});
 							d3.selectAll("#oppeoplebymonthsingle svg").remove();
-							var singleLine = new jnj_chart.Line();
+							var singleLine = new atlascharts.line();
 							singleLine.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
 								xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
@@ -260,7 +260,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 							histData.max = data.yearOfBirthStats[0].maxValue;
 							histData.intervals = 100;
 							histData.data = self.normalizeArray(data.yearOfBirth);
-							var histogram = new jnj_chart.Histogram();
+							var histogram = new atlascharts.histogram();
 							histogram.render(self.mapHistogram(histData), "#hist", 460, 195, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
@@ -268,9 +268,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								yLabel: 'People'
 							});
 						}
-						var genderDonut = new jnj_chart.Donut();
-						var raceDonut = new jnj_chart.Donut();
-						var ethnicityDonut = new jnj_chart.Donut();
+						var genderDonut = new atlascharts.donut();
+						var raceDonut = new atlascharts.donut();
+						var ethnicityDonut = new atlascharts.donut();
 						genderDonut.render(self.mapConceptData(data.gender), "#gender", 260, 130);
 						raceDonut.render(self.mapConceptData(data.race), "#race", 260, 130);
 						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", 260, 130);
@@ -361,7 +361,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								});
 
 
-							var totalLine = new jnj_chart.Line();
+							var totalLine = new atlascharts.line();
 							totalLine.render(totalRecordsData, "#totalrecords", 900, 250, {
 								xScale: d3.scaleTime().domain(d3.extent(totalRecords, function (d) {
 									return d.xCalendarMonth;
@@ -399,7 +399,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								});
 
 
-							var recordsperpersonLine = new jnj_chart.Line();
+							var recordsperpersonLine = new atlascharts.line();
 							recordsperpersonLine.render(recordsPerPersonData, "#recordsperperson", 900, 250, {
 								xScale: d3.scaleTime().domain(d3.extent(recordsPerPerson, function (d) {
 									return d.xCalendarMonth;
@@ -431,7 +431,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 									UIF: conceptsData.p90Value[i]
 								});
 							}
-							var conceptsperpersonBoxPlot = new jnj_chart.BoxPlot();
+							var conceptsperpersonBoxPlot = new atlascharts.boxplot();
 							conceptsperpersonBoxPlot.render(conceptsSeries, "#conceptsperperson", 800, 200, {
 								yMax: d3.max(conceptsData.p90Value),
 								yFormat: d3.format(',.1s'),
@@ -531,7 +531,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						});
 
 						var treeData = self.buildHierarchyFromJSON(data, threshold);
-						var treemap = new jnj_chart.Treemap();
+						var treemap = new atlascharts.treemap();
 						treemap.render(treeData, '#treemap_container', width, height, {
 							onclick: function (node) {
 								self.currentConcept(node);
@@ -656,7 +656,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				});
 
 				// create svg with range bands based on the trellis names
-				var dataByDecileTrellisline = new jnj_chart.Trellisline();
+				var dataByDecileTrellisline = new atlascharts.trellisline();
 				dataByDecileTrellisline.render(dataByDecile, selector, 1000, 300, {
 					trellisSet: allDeciles,
 					trellisLabel: "Age Decile",
@@ -683,7 +683,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 					yValue: 'yPrevalence1000Pp',
 					yPercent: 'yPrevalence1000Pp'
 				});
-				var byMonthSeriesLine = new jnj_chart.Line();
+				var byMonthSeriesLine = new atlascharts.line();
 				byMonthSeriesLine.render(byMonthSeries, selector, 1000, 300, {
 					xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 						return d.xValue;
@@ -698,7 +698,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
 		self.prevalenceByType = function (data, selector) {
 			if (!!data && data.length > 0) {
-				var prevalenceByTypeDonut = new jnj_chart.Donut();
+				var prevalenceByTypeDonut = new atlascharts.donut();
 				prevalenceByTypeDonut.render(self.mapConceptData(data), selector, self.donutWidth, self.donutHeight, {
 					margin: {
 						top: 5,
@@ -727,7 +727,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						UIF: bpdata.p90Value[i]
 					});
 				}
-				var ageBoxplot = new jnj_chart.BoxPlot();
+				var ageBoxplot = new atlascharts.boxplot();
 				ageBoxplot.render(bpseries, selector, self.boxplotWidth, self.boxplotHeight, {
 					xLabel: 'Gender',
 					yLabel: yLabel,
