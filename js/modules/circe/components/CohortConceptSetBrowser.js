@@ -71,8 +71,8 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 
 		// datatable callbacks:
 
-		self.selectRepositoryConceptSet = function (conceptSet, valueAccessor) {
-			self.onRespositoryConceptSetSelected(conceptSet, valueAccessor);
+		self.selectRepositoryConceptSet = function (data, context, event) {
+			self.onRespositoryConceptSetSelected(data, event);
 		}
 
 		self.addConceptSet = function () {
