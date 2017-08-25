@@ -1,5 +1,5 @@
 "use strict";
-define(['knockout','d3', 'd3_tip', 'lodash', 'd3-selection', 'D3-Labeler/labeler'], function (ko, d3, d3tip, _, d3Selection) {
+define(['knockout','d3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labeler'], function (ko, d3, d3tip, _, d3Selection) {
 
 	var margin = {
 			top: 0,
