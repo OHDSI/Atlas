@@ -4,7 +4,7 @@
 <div class="clear">
 	<div class="paddedWrapper">
         <div data-bind="if:$component.mode() == 'add'">
-            <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null, onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected, onActionComplete: $component.onConceptSetBrowserAction, disableConceptSetButton: model.currentConceptSet() != undefined || !canCreateConceptSet()"></cohort-concept-set-browser>
+            <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected, onActionComplete: $component.onConceptSetBrowserAction, disableConceptSetButton: model.currentConceptSet() != undefined || !canCreateConceptSet()"></cohort-concept-set-browser>
         </div>
         <div data-bind="if:$component.mode() == 'export'">
             <div class="heading">
@@ -12,7 +12,7 @@
             </div>
             <b>Instructions:</b>Select the concept sets for export by selecting each row in the grid. When done, use the 'Export Concept Sets' button which will start the download in a new window.
             <hr/>
-            <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null, onRespositoryConceptSetSelected: $component.exportOnConceptSetSelected, onActionComplete: $component.onExportAction, buttonActionText: 'Export Concept Sets', repositoryConceptSetTableId: 'exportConceptSetTable'"></cohort-concept-set-browser>            
+            <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, onRespositoryConceptSetSelected: $component.exportOnConceptSetSelected, onActionComplete: $component.onExportAction, buttonActionText: 'Export Concept Sets', repositoryConceptSetTableId: 'exportConceptSetTable'"></cohort-concept-set-browser>            
             <hr/>
             <b><span data-bind="text: $component.exportRowCount()"></span></b> concept sets selected for export.
         </div>

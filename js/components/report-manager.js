@@ -5,6 +5,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 		self.cohortCaption = ko.observable('Click Here to Choose a Cohort');
         self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.reference = ko.observableArray();
+		self.dataCompleteReference = ko.observableArray();
 		self.heelOptions = {
 				Facets: [
 				         {'caption': 'Error Msg',
@@ -52,7 +53,30 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 			data: 'attributeValue'
         }];
 
-        self.reportTriggerRunSuscription = self.model.reportTriggerRun.subscribe(function (newValue) {
+		self.dataCompleteOptions =  {
+				Facets: [
+				         {'caption': 'Filter',
+						  'binding': d => { 
+							  return ''
+						  	}
+				         }
+				        ]};
+		
+		self.dataCompletColumns = [{
+			title: 'Age',
+			data: 'covariance'
+        }, {
+			title: 'Gender (%)',
+			data: 'genderP'
+        }, {
+			title: 'Race (%)',
+			data: 'raceP'
+        }, {
+			title: 'Ethnicity (%)',
+			data: 'ethP'
+        }];
+		
+		self.reportTriggerRunSuscription = self.model.reportTriggerRun.subscribe(function (newValue) {
         	if (newValue) {
         		self.runReport();
         	}
@@ -1816,6 +1840,47 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					}
 				});
 				break; // Heracles Heel report
+			case 'Data Completeness':
+				$.ajax({
+					url: config.services[0].url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/datacompleteness',
+					success: function (data) {
+						self.model.currentReport(self.model.reportReportName());
+						self.model.loadingReport(false);
+
+						self.dataCompleteReference(data);						
+					}
+				});
+				break; // Data Completeness report
+			case 'Entropy':
+				$.ajax({
+					url: config.services[0].url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/entropy',
+					success: function (data) {
+						self.model.currentReport(self.model.reportReportName());
+						self.model.loadingReport(false);
+
+						var entropyData = self.normalizeArray(data, true);
+						if (!entropyData.empty) {
+							var byDateSeries = self.mapDateDataToSeries(entropyData, {
+
+								dateField: 'date',
+								yValue: 'entropy',
+								yPercent: 'entropy'
+							});
+
+							var prevalenceByDate = new jnj_chart.line();
+							prevalenceByDate.render(byDateSeries, "#entropyByDate", 400, 200, {
+								xScale: d3.time.scale().domain(d3.extent(byDateSeries[0].values, function (d) {
+									return d.xValue;
+								})),
+								xFormat: d3.time.format("%Y/%m/%d"),
+								tickFormat: d3.time.format("%Y"),
+								xLabel: "Date",
+								yLabel: "Entropy"
+							});
+						}
+					}
+				});
+				break; // Entropy report
 			}
 		}
 
@@ -2771,6 +2836,33 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 					var dateInt = data[options.dateField][i];
 					series.values.push({
 						xValue: new Date(Math.floor(data[options.dateField][i] / 100), (data[options.dateField][i] % 100) - 1, 1),
+						yValue: data[options.yValue][i],
+						yPercent: data[options.yPercent][i]
+					});
+				}
+				series.values.sort(function (a, b) {
+					return a.xValue - b.xValue;
+				});
+			}
+			return [series]; // return series wrapped in an array
+		}
+
+		self.mapDateDataToSeries = function (data, options) {
+			var defaults = {
+				dateField: "x",
+				yValue: "y",
+				yPercent: "p"
+			};
+
+			var options = $.extend({}, defaults, options);
+
+			var series = {};
+			series.name = "All Time";
+			series.values = [];
+			if (data && !data.empty) {
+				for (var i = 0; i < data[options.dateField].length; i++) {
+					series.values.push({
+						xValue: new Date(data[options.dateField][i]),
 						yValue: data[options.yValue][i],
 						yPercent: data[options.yPercent][i]
 					});

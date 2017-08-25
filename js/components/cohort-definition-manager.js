@@ -107,6 +107,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.generatedSql.postgresql = ko.observable('');
 		self.generatedSql.redshift = ko.observable('');
 		self.generatedSql.msaps = ko.observable('');
+		self.generatedSql.impala = ko.observable('');
 		self.tabMode = self.model.currentCohortDefinitionMode;
 		self.exportTabMode = ko.observable('printfriendly');
 		self.exportSqlMode = ko.observable('mssql');
@@ -402,6 +403,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			self.generatedSql.postgresql('');
 			self.generatedSql.redshift('');
 			self.generatedSql.msaps('');
+			self.generatedSql.impala('');
 
 			var expression = ko.toJS(self.model.currentCohortDefinition().expression, pruneJSON);
 			var templateSqlPromise = cohortDefinitionAPI.getSql(expression);
@@ -433,7 +435,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					self.generatedSql.redshift(result.targetSQL);
 				});
 
-				$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise).then(function () {
+				var impalaTranslatePromise = translateSql(result.templateSql, 'impala');
+				impalaTranslatePromise.then(function (result) {
+					self.generatedSql.impala(result.targetSQL);
+				});
+
+				$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise).then(function () {
 					self.isLoadingSql(false);
 				});
 			});

@@ -12,7 +12,10 @@
 </div>
 
 <div class="paddedWrapper">
-	<div data-bind="eventListener: { event: 'click', selector: '.conceptset_selector', callback: handleConceptSetSelect}">
+	<div data-bind="eventListener: [
+									{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport},
+									{ event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}
+									]">
 		<!-- ko if:canEdit-->
 		<cohort-expression-editor params="expression: model.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
 		<!-- /ko -->
@@ -22,7 +25,7 @@
 		<div class="modal fade" id="conceptSetSelectorDialog" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
-					<div class="modal-header">Select Concept Set...</div>
+					<div class="modal-header">Import Concept Set From Repository...</div>
 					<div class="paddedWrapper">
 						<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
 					</div>

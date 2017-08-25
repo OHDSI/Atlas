@@ -10,37 +10,37 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 		self.pageTitle = ko.pureComputed(function () {
 			var pageTitle = "ATLAS";
 			switch (self.currentView()) {
-			case 'loading':
-				pageTitle = pageTitle + ": Loading";
-				break;
-			case 'home':
-				pageTitle = pageTitle + ": Home";
-				break;
-			case 'search':
-				pageTitle = pageTitle + ": Search";
-				break;
-			case 'conceptsets':
-			case 'conceptset':
-				pageTitle = pageTitle + ": Concept Sets";
-				break;
-			case 'concept':
-				pageTitle = pageTitle + ": Concept";
-				break;
-			case 'cohortdefinitions':
-			case 'cohortdefinition':
-				pageTitle = pageTitle + ": Cohorts";
-				break;
-			case 'irbrowser':
-			case 'iranalysis':
-				pageTitle = pageTitle + ": Incidence Rate";
-				break;
-			case 'estimations':
-			case 'estimation':
-				pageTitle = pageTitle + ": Estimation";
-				break;
-			case 'profiles':
-				pageTitle = pageTitle + ": Profiles";
-				break;
+				case 'loading':
+					pageTitle = pageTitle + ": Loading";
+					break;
+				case 'home':
+					pageTitle = pageTitle + ": Home";
+					break;
+				case 'search':
+					pageTitle = pageTitle + ": Search";
+					break;
+				case 'conceptsets':
+				case 'conceptset':
+					pageTitle = pageTitle + ": Concept Sets";
+					break;
+				case 'concept':
+					pageTitle = pageTitle + ": Concept";
+					break;
+				case 'cohortdefinitions':
+				case 'cohortdefinition':
+					pageTitle = pageTitle + ": Cohorts";
+					break;
+				case 'irbrowser':
+				case 'iranalysis':
+					pageTitle = pageTitle + ": Incidence Rate";
+					break;
+				case 'estimations':
+				case 'estimation':
+					pageTitle = pageTitle + ": Estimation";
+					break;
+				case 'profiles':
+					pageTitle = pageTitle + ": Profiles";
+					break;
 			}
 
 			if (self.hasUnsavedChanges()) {
@@ -50,13 +50,13 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			return pageTitle;
 		});
 		self.sharedState = sharedState;
-		
-		self.initializationComplete = ko.pureComputed(function() {
+
+		self.initializationComplete = ko.pureComputed(function () {
 			return sharedState.appInitializationStatus() != 'initializing';
 		});
-		
+
 		self.initComplete = function () {
-			if (self.sharedState.appInitializationStatus()=='initializing') {
+			if (self.sharedState.appInitializationStatus() == 'initializing') {
 				var routerOptions = {
 					notfound: function () {
 						self.currentView('search');
@@ -188,7 +188,7 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 								model: self,
 								sourceKey: (path[0] || null),
 								personId: (path[1] || null),
-								cohortDefinitionId: (path[2] || null) 
+								cohortDefinitionId: (path[2] || null)
 							};
 							self.currentView('profile-manager');
 						});
@@ -341,12 +341,11 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
             }, {
 				'caption': 'Relationship',
 				'binding': function (o) {
-					values = [];
-					for (var i = 0; i < o.RELATIONSHIPS.length; i++) {
-						values.push(o.RELATIONSHIPS[i].RELATIONSHIP_NAME);
-					}
-					return values;
-				}
+					return $.map(o.RELATIONSHIPS, function (val) {
+						return val.RELATIONSHIP_NAME
+					});
+				},
+				isArray: true,
             }, {
 				'caption': 'Has Records',
 				'binding': function (o) {
@@ -360,15 +359,11 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
             }, {
 				'caption': 'Distance',
 				'binding': function (o) {
-					values = [];
-					for (var i = 0; i < o.RELATIONSHIPS.length; i++) {
-						if (values.indexOf(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE) == -1) {
-							values.push(o.RELATIONSHIPS[i].RELATIONSHIP_DISTANCE);
-						}
-					}
-					return values;
-				}
-            }]
+					return Math.max.apply(Math, o.RELATIONSHIPS.map(function (d) {
+						return d.RELATIONSHIP_DISTANCE;
+					}))
+				},
+			}]
 		};
 
 		self.relatedConceptsColumns = [{
@@ -724,12 +719,12 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 				switchContext = data.STANDARD_CONCEPT;
 			}
 			switch (switchContext) {
-			case 'N':
-				$('a', row).css('color', '#a71a19');
-				break;
-			case 'C':
-				$('a', row).css('color', '#a335ee');
-				break;
+				case 'N':
+					$('a', row).css('color', '#a71a19');
+					break;
+				case 'C':
+					$('a', row).css('color', '#a335ee');
+					break;
 			}
 		}
 		self.hasCDM = function (source) {
@@ -765,11 +760,11 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 		}
 		self.renderBoundLink = function (s, p, d) {
-				return '<a href=\"#/concept/' + d.concept.CONCEPT_ID + '\">' + d.concept.CONCEPT_NAME + '</a>';
-			}
-			// for the current selected concepts:
-			// update the export panel
-			// resolve the included concepts and update the include concept set identifier list
+			return '<a href=\"#/concept/' + d.concept.CONCEPT_ID + '\">' + d.concept.CONCEPT_NAME + '</a>';
+		}
+		// for the current selected concepts:
+		// update the export panel
+		// resolve the included concepts and update the include concept set identifier list
 		self.resolveConceptSetExpression = function () {
 			self.resolvingConceptSetExpression(true);
 			var conceptSetExpression = '{"items" :' + ko.toJSON(sharedState.selectedConcepts()) + '}';
@@ -919,6 +914,14 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 			name: "Visit",
 			reportKey: null,
 			analyses: [202, 203, 206, 204, 116, 117, 211, 200, 201, 1]
+        }, {
+			name: "Data Completeness",
+			reportKey: "Data Completeness",
+			analyses: [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2021, 2022, 2023, 2024, 2025, 2026, 2027]
+        }, {
+			name: "Entropy",
+			reportKey: "Entropy",
+			analyses: [2031]
         }]);
 		/*
         self.reports = ko.observableArray([
@@ -982,13 +985,13 @@ define(['jquery', 'knockout', 'jnj_chart', 'd3', 'ohdsi.util', 'appConfig', 'web
 						var allAnalysesCompleted = analyses.filter(function (elem) {
 							return self.cohortAnalyses()[i].analyses.indexOf(elem) > -1;
 						}).length == self.cohortAnalyses()[i].analyses.length;
-						if(self.cohortAnalyses()[8].reportKey == 'Heracles Heel'){
-							if(analyses.filter(function (elem) {
-								return self.cohortAnalyses()[i].analyses.indexOf(elem) > -1;
-							}).length > 0){
+						if (self.cohortAnalyses()[8].reportKey == 'Heracles Heel') {
+							if (analyses.filter(function (elem) {
+									return self.cohortAnalyses()[i].analyses.indexOf(elem) > -1;
+								}).length > 0) {
 								sourceAnalysesStatus[self.cohortAnalyses()[i].name] = true;
 							}
-						}else{
+						} else {
 							sourceAnalysesStatus[self.cohortAnalyses()[i].name] = allAnalysesCompleted ? 1 : 0;
 						}
 					}
