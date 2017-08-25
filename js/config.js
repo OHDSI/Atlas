@@ -1,17 +1,18 @@
-define([], function () {
+define(['optional!config-local'], function (localConfig) {
 	var config = {};
+	if (JSON.stringify(localConfig) == JSON.stringify({})) {
+		console.warn(`Local configuration not found.  Using default values. To use a local configuration and suppress 404 errors, create a file called config-local.js under the /js directory`);
+	}
 
-	config.services = [
-        {
-			name: 'Local',
-			url: 'http://localhost:8080/WebAPI/'
-          }
-		];
-	
-	config.webAPIRoot = config.services[0].url;
-	// config.rServicesHost = 'http://localhost:8081/';
+	// default configuration
+	config.services = [{
+		name: 'Local',
+		url: 'http://localhost:8080/WebAPI/'
+	}];
 	config.cohortComparisonResultsEnabled = false;
 	config.userAuthenticationEnabled = false;
 
+	Object.assign(config, localConfig);
+	config.webAPIRoot = config.services[0].url;
 	return config;
 });

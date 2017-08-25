@@ -375,7 +375,7 @@ div#wrapperMainWindowContainer {}
 
 .feFilter {
 	padding-left: 0px;
-	padding-top: 99px;
+	padding-top: 75px;
 }
 
 .fa.fa-refresh.fa-spin {
@@ -1757,10 +1757,6 @@ div.demographicCriteria div.criteria-content {
 
 .criteriaHeading .dd-container {
 	margin-top: -5px;
-}
-
-inclusion-rule-editor .btn-group {
-	margin-top: -3px;
 }
 
 inclusion-rule-editor .inclusion-rule-header {

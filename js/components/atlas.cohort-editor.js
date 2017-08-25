@@ -40,11 +40,21 @@ define(['knockout',
         
 		// model behaviors
 
-		self.handleConceptSetSelect = function (item) {
+		self.handleConceptSetImport = function (item, context) {
 			//alert(item);
-            self.model.criteriaContext(item);
-            $('#conceptSetSelectorDialog').modal('show');
+			self.model.criteriaContext(item);
+			$('#conceptSetSelectorDialog').modal('show');
 		}
+		
+		self.handleEditConceptSet = function(item, context) {
+			if (item.conceptSetId() == null) {
+				return;
+			}
+			
+			self.model.loadConceptSet(item.conceptSetId(), 'cohort-definition-manager', 'cohort', 'details');
+			self.model.currentCohortDefinitionMode("conceptsets");
+		}
+		
 
 		self.onAtlasConceptSetSelectAction = function(result, valueAccessor) {
 				$('#conceptSetSelectorDialog').modal('hide');

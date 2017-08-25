@@ -1,6 +1,6 @@
-define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../CohortExpression', '../InclusionRule', 'text!./CohortExpressionEditorTemplate.html', './EndStrategyEditor',
+define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaTypes', '../CohortExpression', '../InclusionRule', 'text!./CohortExpressionEditorTemplate.html', './EndStrategyEditor',
 				'databindings', 'conceptpicker/ConceptPicker', 'css!../css/builder.css', 'css!../css/ddslick.criteria.css', 'ko.sortable'
-			 ], function (ko, options, CriteriaGroup, criteriaTypes, CohortExpression, InclusionRule, template) {
+			 ], function (ko, $, options, CriteriaGroup, criteriaTypes, CohortExpression, InclusionRule, template) {
 	
 	function CohortExpressionEditorViewModel(params) {
 		var self = this;
@@ -276,7 +276,7 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 			self.selectedInclusionRule(inclusionRule);
 			self.selectedInclusionRuleIndex = params.expression().InclusionRules().indexOf(inclusionRule);
 			console.log("Selected Index: " + self.selectedInclusionRuleIndex);
-		}
+		};
 
 		self.removeAdditionalCriteria = function () {
 			self.expression().AdditionalCriteria(null);
@@ -288,31 +288,29 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 
 		self.removePrimaryCriteria = function (criteria) {
 			self.expression().PrimaryCriteria().CriteriaList.remove(criteria);
-		}
+		};
 		
 		self.removeCensoringCriteria = function (criteria) {
 			self.expression().CensoringCriteria.remove(criteria);	
-		}
+		};
 
 		self.addInclusionRule = function () {
 			var newInclusionRule = new InclusionRule(null, self.expression().ConceptSets);
 			self.expression().InclusionRules.push(newInclusionRule);
 			self.selectInclusionRule(newInclusionRule);
-		}
+		};
 
 		self.deleteInclusionRule = function (inclusionRule) {
 			self.selectedInclusionRule(null);
 			self.expression().InclusionRules.remove(inclusionRule);
-		}
+		};
 
 		self.copyInclusionRule = function (inclusionRule) {
 			var copiedRule = new InclusionRule(ko.toJS(inclusionRule), self.expression().ConceptSets);
 			copiedRule.name("Copy of: " + copiedRule.name());
 			self.expression().InclusionRules.push(copiedRule);
 			self.selectedInclusionRule(copiedRule);
-		}
-
-		self.addConceptSet = function (item) {}
+		};
 
 		self.addPrimaryCriteriaOptions = {
 			selectText: "Add Initial Event...",
@@ -373,10 +371,10 @@ define(['knockout', '../options', '../CriteriaGroup', '../CriteriaTypes', '../Co
 				if (value === 0 || value) {
 					return value;
 				} else {
-					return
+					return;
 				}
-			}, 2)
-		}
+			}, 2);
+		};
 		
 		// Subscriptions
 		

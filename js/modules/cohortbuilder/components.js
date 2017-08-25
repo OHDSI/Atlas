@@ -73,5 +73,8 @@ define(function (require, exports) {
 	
 	var endStrategyEditor = require('./components/EndStrategyEditor');
 	ko.components.register('end-strategy-editor', endStrategyEditor);
+
+	var conceptSetPreview = require('./components/ConceptSetQuickview');
+	ko.components.register('conceptset-quickview', conceptSetPreview);
 	
 });

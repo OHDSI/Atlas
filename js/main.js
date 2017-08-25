@@ -46,8 +46,9 @@ requirejs.config({
 	},
 	map: {
 		"*": {
-			'jquery-ui/sortable': 'jquery-ui',
-			'jquery-ui/draggable': 'jquery-ui',
+			'jquery-ui/ui/widgets/sortable': 'jquery-ui',
+			'jquery-ui/ui/widgets/draggable': 'jquery-ui',
+			'jquery-ui/ui/widgets/droppable': 'jquery-ui',
 			'jquery-ui/dialog': 'jquery-ui',
 			'jquery-ui/autocomplete': 'jquery-ui',
 			'jquery-ui/tabs': 'jquery-ui'
@@ -62,14 +63,16 @@ requirejs.config({
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"text": "plugins/text",
 		"css": "plugins/css.min",
+		"optional": "plugins/optional",
 		"clipboard": "clipboard.min",
 		"knockout": "knockout.min",
-		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/0.11.0/knockout-sortable",
+		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
 		"knockout-mapping": "knockout.mapping",
 		"datatables.net": "jquery.dataTables.min",
 		"datatables.net-buttons": "jquery.dataTables.buttons.min",
 		"datatables.net-buttons-html5": "jquery.dataTables.buttons.html5.min",
 		"colvis": "jquery.dataTables.colVis.min",
+		"crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.1/crossfilter.min",
 		"director": "director.min",
 		"search": "components/search",
 		"configuration": "components/configuration",
@@ -324,16 +327,16 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		pageModel.currentView.subscribe(function (newView) {
 			switch (newView) {
-			case 'reports':
-				$.ajax({
-					url: config.services[0].url + 'cohortdefinition',
-					method: 'GET',
-					contentType: 'application/json',
-					success: function (cohortDefinitions) {
-						pageModel.cohortDefinitions(cohortDefinitions);
-					}
-				});
-				break;
+				case 'reports':
+					$.ajax({
+						url: config.services[0].url + 'cohortdefinition',
+						method: 'GET',
+						contentType: 'application/json',
+						success: function (cohortDefinitions) {
+							pageModel.cohortDefinitions(cohortDefinitions);
+						}
+					});
+					break;
 			}
 		});
 
@@ -384,15 +387,15 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		pageModel.currentConceptSetMode.subscribe(function (newMode) {
 			switch (newMode) {
-			case 'included':
-				pageModel.loadIncluded();
-				break;
-			case 'sourcecodes':
-				var includedPromise = pageModel.loadIncluded();
-				$.when(includedPromise).done(function () {
-					pageModel.loadSourcecodes();
-				});
-				break;
+				case 'included':
+					pageModel.loadIncluded();
+					break;
+				case 'sourcecodes':
+					var includedPromise = pageModel.loadIncluded();
+					$.when(includedPromise).done(function () {
+						pageModel.loadSourcecodes();
+					});
+					break;
 			}
 		});
 

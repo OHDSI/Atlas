@@ -1,7 +1,42 @@
-<select data-bind="options: sortedConceptSets, 
-	optionsText: function(item) { return item.name }, 
-	optionsCaption: defaultText, 
-	optionsValue: 'id',
-	value: conceptSetId" class="mediumInputField">
-</select>
-<div class="btn btn-sm btn-success conceptset_selector" aria-expanded="false">Add</div>
+<div class="undraggable" style="position: relative; display: inline">
+	<div style="position:relative" class="btn-group btn-group-sm thumb-dropdown" data-bind="dropup, eventListener: [
+																																	{ event: 'mouseenter', selector: '.conceptset', callback: showConceptSetPreview},	
+																																	{ event: 'hidden.bs.dropdown', callback: hideConceptSetPreview}		
+																																]">
+		<button type="button" class="btn btn-success conceptset_edit" style="max-width:200px; overflow-x: hidden; text-overflow:ellipsis; white-space:nowrap" data-bind="text:conceptSetName, attr:{'title': conceptSetName}"></button>
+		<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+			<span class="caret"></span>  <!-- caret -->
+			<span class="sr-only" data-bind="text:conceptSetName"></span>
+		</button>
+			
+		<ul class="dropdown-menu dropdown-menu-right" style="height: auto; max-height:200px; width:200px; overflow-x: hidden; padding:4px" role="menu">
+			<li class="dropdown-item" onclick="event.stopPropagation();"><input type="text" style="width:100%; border: solid 1px #9bc1fd; border-radius: 3px" data-bind="textInput: filterText"></li>
+			<!-- ko foreach: filteredConceptSets -->
+			<li class="dropdown-item conceptset" style="cursor:pointer">
+				<a>
+					<div style="max-width:195px; overflow-x: hidden; text-overflow:ellipsis;" data-bind="text: name, attr:{'title': name}, click: $component.itemClicked"></div>
+					<div class="thumbnail" style="position:absolute"><conceptset-quickview params="conceptSet: $data"></conceptset-quickview></div>
+				</a>
+			</li>
+			<!-- ko if: $component.conceptSetId() != null && $index() == 0  -->
+			<li class="divider"></li>			
+			<!-- /ko -->
+			<!-- /ko -->
+			<!-- ko if: filteredConceptSets().length > 1 -->
+			<li class="divider"></li>
+			<!-- /ko -->
+			<li class="conceptset_import" style="cursor:pointer">Import Concept Set</li>
+			<li data-bind="click: clear" style="cursor:pointer">Clear Concept Set</li>
+		</ul>
+		<ul>
+		<!-- ko if: previewVisible -->
+		<div onclick="event.stopPropagation();" class="undraggable" style="border: solid 1px black;padding:5px; z-index: 999; background-color:white; position: absolute; max-height:200px; overflow-y:auto" data-bind="style: { top: `${previewTop()}px`, left: `${previewLeft()}px`}">
+			<div style="background-color:#aaa; font-weight: bold" data-bind="text: previewConceptSet().name"></div>
+			<conceptset-quickview params="conceptSet: previewConceptSet"></conceptset-quickview>
+		</div>
+		<!-- /ko -->
+		</ul>	
+
+	</div>
+
+</div>
