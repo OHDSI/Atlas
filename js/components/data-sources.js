@@ -793,9 +793,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 			}
 		};
 
-		self.onReportTableRowClick = function (element, valueAccessor) {
+		self.onReportTableRowClick = function (data, context, event) {
 			var dataTable = $("#report_table").DataTable();
-			var rowIndex = valueAccessor.target._DT_CellIndex.row;
+			var rowIndex = event.target._DT_CellIndex.row;
 			var concept = dataTable.row(rowIndex).data();
 
 			self.currentConcept(concept);

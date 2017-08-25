@@ -3006,41 +3006,41 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewe
 			self.reportTriggerRunSuscription.dispose();
 		}
         
-        self.handleDrugTableClick = function(element, valueAccessor) {
+        self.handleDrugTableClick = function(data, context, event) {
             var dataTable = $("#drug_table").DataTable();
-            var rowIndex = valueAccessor.target._DT_CellIndex.row; 
+            var rowIndex = event.target._DT_CellIndex.row; 
             var data = dataTable.row(rowIndex).data();
 			
             self.drugExposureDrilldown(data.concept_id, data.rxnorm);
         }
         
-        self.handleProcedureTableClick = function(element, valueAccessor) {
+        self.handleProcedureTableClick = function(data, context, event) {
             var dataTable = $("#procedure_table").DataTable();
-            var rowIndex = valueAccessor.target._DT_CellIndex.row; 
+            var rowIndex = event.target._DT_CellIndex.row; 
             var data = dataTable.row(rowIndex).data();
 			
             self.procedureDrilldown(data.concept_id, data.procedure_name);
         }
         
-        self.handleDrugEraTableClick = function(element, valueAccessor) {
+        self.handleDrugEraTableClick = function(data, context, event) {
             var dataTable = $("#drugera_table").DataTable();
-            var rowIndex = valueAccessor.target._DT_CellIndex.row; 
+            var rowIndex = event.target._DT_CellIndex.row; 
             var data = dataTable.row(rowIndex).data();
 			
             self.drugeraDrilldown(data.concept_id, data.ingredient);
         }
         
-        self.handleConditionTableClick = function(element, valueAccessor) {
+        self.handleConditionTableClick = function(data, context, event) {
             var dataTable = $("#condition_table").DataTable();
-            var rowIndex = valueAccessor.target._DT_CellIndex.row; 
+            var rowIndex = event.target._DT_CellIndex.row; 
             var data = dataTable.row(rowIndex).data();
 			
             self.conditionDrilldown(data.concept_id, data.snomed);
         }
         
-        self.handleConditionEraTableClick  = function(element, valueAccessor) {
+        self.handleConditionEraTableClick  = function(data, context, event) {
             var dataTable = $("#conditionera_table").DataTable();
-            var rowIndex = valueAccessor.target._DT_CellIndex.row; 
+            var rowIndex = event.target._DT_CellIndex.row; 
             var data = dataTable.row(rowIndex).data();
 			
             self.conditionEraDrilldown(data.concept_id, data.snomed);

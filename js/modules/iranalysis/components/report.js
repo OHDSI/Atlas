@@ -113,7 +113,7 @@ define(['knockout',
 			self.rectSummary(`${cases.toLocaleString()} cases, ${timeAtRisk.toLocaleString()} TAR, Rate: ${self.calculateRate(cases, timeAtRisk)} ${self.rateCaption()}<br/>${size.toLocaleString()} (${percentage.toFixed(2)}%) people, ${pass_count} criteria passed, ${fail_count} criteria failed.`);
 		}
 
-		self.handleCellOver = function (data, event) {
+		self.handleCellOver = function (data, context, event) {
 			if (event.target.__data__) {
 				var treemapDatum = event.target.__data__;
 				self.describe(treemapDatum.name, treemapDatum.size, treemapDatum.cases, treemapDatum.timeAtRisk);

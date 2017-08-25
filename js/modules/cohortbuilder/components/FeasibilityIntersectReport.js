@@ -59,7 +59,7 @@ define(['knockout',
 			self.rectSummary(size + ' people (' + percentage.toFixed(2) + '%), ' + pass_count + ' criteria passed, ' + fail_count + ' criteria failed.');
 		}
 
-		self.handleCellOver = function (data, event) {
+		self.handleCellOver = function (data, context, event) {
 			if (event.target.__data__) {
 				var treemapDatum = event.target.__data__;
 				self.describe(treemapDatum.name, treemapDatum.size);
