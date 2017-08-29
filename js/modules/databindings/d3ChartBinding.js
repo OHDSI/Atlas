@@ -1,11 +1,11 @@
-define(['jquery', 'knockout', 'jnj_chart'], function ($, ko, jnjChart) {
+define(['jquery', 'knockout', 'atlascharts'], function ($, ko, atlascharts) {
 	ko.bindingHandlers.d3ChartBinding = {
 		init: function (element, valueAccessor) {
 			var va = ko.utils.unwrapObservable(valueAccessor());
 			var chartType = ko.utils.unwrapObservable(va.chartType);
 			var chartOptions = ko.utils.unwrapObservable(va.chartOptions)||{};
 			var jqEventSpace = ko.utils.unwrapObservable(va.jqEventSpace)||{};
-			var chart = new jnjChart[chartType](chartOptions, jqEventSpace);
+			var chart = new atlascharts[chartType](chartOptions, jqEventSpace);
 			if (va.chartObj) {
 				va.chartObj(chart);
 			}

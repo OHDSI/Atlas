@@ -63,7 +63,7 @@ define(['knockout',
 			
 			var extent = self.treeIRExtent();
 			
-			var color = d3.scale.quantize()
+			var color = d3.scaleQuantize()
 				.domain([extent[0], extent[1]])
 				.range(colors);	
 			
