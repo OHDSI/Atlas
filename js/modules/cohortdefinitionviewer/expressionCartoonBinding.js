@@ -1,6 +1,6 @@
 "use strict";
-define(['knockout','d3', 'lodash','css!styles/cartoon.css'], 
-			 function (ko, d3, _) {
+define(['knockout','d3', 'd3-tip', 'lodash','css!styles/cartoon.css'], 
+			 function (ko, d3, d3tip, _) {
 
 	var divWidth = ko.observable(); // triggers update
 	var cartoonWidth = ko.computed(function() {
@@ -197,8 +197,8 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 
 		var obsext = obsExtent(cohdef)
 		cohdef.obsExt = obsext;
-		cohdef.obsScale = d3.scale.linear();
-		cohdef.obsAxis = d3.svg.axis().orient('top').scale(cohdef.obsScale);
+		cohdef.obsScale = d3.scaleLinear();
+		cohdef.obsAxis = d3.svg.axisTop().scale(cohdef.obsScale);
 		return cohdef;
 		/*
 		if (obsext && !(obsext[0] === 0 && obsext[1] === 0)) {
@@ -613,14 +613,14 @@ define(['knockout','d3', 'lodash','css!styles/cartoon.css'],
 			tt.css('display', 'none')
 		})
 	}
-	var focusTip = d3.tip()
+	/*var focusTip = d3tip()
 										.attr('class', 'd3-tip')
 										.offset([-10, 0])
 										.html(function (d) {
 											//return d3.select('#tooltip').html();
 											return "howdy";
 											return tipText(d);
-										});
+										});*/
 	function drawCrits(selection, cohdef, critType) {
 		selection.each(function(_crit) {
 			var el = d3.select(this); // the svg

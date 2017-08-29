@@ -71,6 +71,7 @@ table.boxplotValues tr td
 .g-trellis .x-guide path.domain,
 .g-trellis .y-guide path.domain {
 	fill: none;
+	stroke: none;
 }
 .g-trellis .x-guide .tick line {
 	stroke: #ccc;

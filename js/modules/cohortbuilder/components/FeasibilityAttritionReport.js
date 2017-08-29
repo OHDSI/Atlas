@@ -49,7 +49,7 @@ define(['knockout',
 			return (100.0 * value).toFixed(2) + '%';	
 		}
 		
-		self.color = d3.scale.quantize()
+		self.color = d3.scaleQuantize()
 				.domain([1.0, .75, .5, .25, .10])
 				.range(["#7BB209", "#95B90A", "#C9C40D", "#E77F13", "#FF3D19"]);
 	}

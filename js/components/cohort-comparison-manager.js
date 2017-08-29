@@ -364,7 +364,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							var balanceChart = nv.models.scatterChart()
 								.showDistX(true)
 								.showDistY(true)
-								.color(d3.scale.category10().range());
+								.color(
+									d3.scaleOrdinal()
+										.range(d3.schemeCategory10)
+								);
 
 							balanceChart.tooltip.contentGenerator(function (d) {
 								return '<div class="scatterTooltip"><div>' + d.point.tooltip + '</div><div>Before Matching: ' + d.point.x + '</div><div>After Matching: ' + d.point.y + '</div></div>';
