@@ -1,4 +1,4 @@
-define(['knockout', 'text!./report-manager.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding','faceted-datatable'], function (ko, view, d3, jnj_chart, colorbrewer, _, config) {
+define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding','faceted-datatable'], function (ko, view, d3, jnj_chart, colorbrewer, _, config) {
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;

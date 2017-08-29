@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, colorbrewer, _, config) {
+define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, colorbrewer, _, config) {
 	function dataSources(params) {
 		var self = this;
 
