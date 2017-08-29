@@ -372,8 +372,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 								yValue: "yRecordCount",
 								xLabel: "Year",
 								yLabel: "# of Records",
-								showLegend: true,
-								colors: d3.schemeCategory10
+								showLegend: true
 							});
 						}
 
@@ -410,8 +409,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 								yValue: "yRecordCount",
 								xLabel: "Year",
 								yLabel: "Records Per Person",
-								showLegend: true,
-								colors: d3.schemeCategory10
+								showLegend: true
 							});
 						}
 
