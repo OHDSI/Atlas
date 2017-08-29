@@ -936,14 +936,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 				return b.label < a.label ? 1 : -1;
 			});
 
-			return {
-				data: result.map(function(series) {
-					return series.value;
-				}),
-				legend: result.map(function(series) {
-					return series.label;
-				})
-			};
+			return result;
 		};
 
 		self.mapHistogram = function (histogramData) {

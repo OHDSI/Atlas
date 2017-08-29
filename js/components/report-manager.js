@@ -209,7 +209,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 							var prevalenceByMonth = new atlascharts.line();
 							prevalenceByMonth.render(byMonthSeries, "#deathPrevalenceByMonth", 1000, 300, {
-								xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+								xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
 								xFormat: d3.timeFormat("%m/%Y"),
@@ -991,7 +991,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							d3.selectAll("#oppeoplebymonthsingle svg").remove();
 							var observationByMonthSingle = new atlascharts.line();
 							observationByMonthSingle.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
-								xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+								xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
 								xFormat: d3.timeFormat("%m/%Y"),
@@ -1590,7 +1590,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 							var prevalenceByMonth = new atlascharts.line();
 							prevalenceByMonth.render(byMonthSeries, "#prevalenceByMonth", 400, 200, {
-								xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+								xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
 								xFormat: d3.timeFormat("%m/%Y"),
@@ -1682,7 +1682,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							});
 							var observationByMonthSingle = new atlascharts.line();
 							observationByMonthSingle.render(personsInCohortFromCohortStartToEndSeries, "#personinCohortFromStartToEnd", 460, 250, {
-								xScale: d3.timeScale().domain(d3.extent(personsInCohortFromCohortStartToEndSeries[0].values, function (d) {
+								xScale: d3.scaleTime().domain(d3.extent(personsInCohortFromCohortStartToEndSeries[0].values, function (d) {
 									return d.xValue;
 								})),
 								xLabel: "30 Day Increments",
@@ -1934,7 +1934,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 						var prevalenceByMonth = new atlascharts.line();
 						prevalenceByMonth.render(byMonthSeries, "#conditionPrevalenceByMonth", 230, 115, {
-							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
 							})),
 							xFormat: d3.timeFormat("%m/%Y"),
@@ -2081,7 +2081,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						d3.selectAll("#drugPrevalenceByMonth svg").remove();
 						var prevalenceByMonth = new atlascharts.line();
 						prevalenceByMonth.render(byMonthSeries, "#drugPrevalenceByMonth", 900, 250, {
-							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
 							})),
 							xFormat: d3.timeFormat("%m/%Y"),
@@ -2193,7 +2193,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						d3.selectAll("#conditioneraPrevalenceByMonth svg").remove();
 						var prevalenceByMonth = new atlascharts.line();
 						prevalenceByMonth.render(byMonthSeries, "#conditioneraPrevalenceByMonth", 230, 115, {
-							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
 							})),
 							xFormat: d3.timeFormat("%m/%Y"),
@@ -2305,7 +2305,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						d3.selectAll("#drugeraPrevalenceByMonth svg").remove();
 						var prevalenceByMonth = new atlascharts.line();
 						prevalenceByMonth.render(byMonthSeries, "#drugeraPrevalenceByMonth", 400, 200, {
-							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
 							})),
 							xFormat: d3.timeFormat("%m/%Y"),
@@ -2434,7 +2434,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 						var prevalenceByMonth = new atlascharts.line();
 						prevalenceByMonth.render(byMonthSeries, "#procedurePrevalenceByMonth", 1000, 300, {
-							xScale: d3.timeScale().domain(d3.extent(byMonthSeries[0].values, function (d) {
+							xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 								return d.xValue;
 							})),
 							xFormat: d3.timeFormat("%m/%Y"),
