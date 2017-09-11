@@ -1867,13 +1867,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								yPercent: 'entropy'
 							});
 
-							var prevalenceByDate = new jnj_chart.line();
+							var prevalenceByDate = new atlascharts.line();
 							prevalenceByDate.render(byDateSeries, "#entropyByDate", 400, 200, {
-								xScale: d3.time.scale().domain(d3.extent(byDateSeries[0].values, function (d) {
+								xScale: d3.scaleTime().domain(d3.extent(byDateSeries[0].values, function (d) {
 									return d.xValue;
 								})),
-								xFormat: d3.time.format("%Y/%m/%d"),
-								tickFormat: d3.time.format("%Y"),
+								xFormat: d3.timeFormat("%Y/%m/%d"),
+								tickFormat: d3.timeFormat("%Y"),
 								xLabel: "Date",
 								yLabel: "Entropy"
 							});
