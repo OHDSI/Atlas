@@ -925,7 +925,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
         }, {
 			name: "Entropy",
 			reportKey: "Entropy",
-			analyses: [2031]
+			analyses: [2031, 2032]
         }]);
 		/*
         self.reports = ko.observableArray([

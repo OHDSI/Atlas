@@ -76,6 +76,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			data: 'ethP'
         }];
 		
+		self.careSiteDatatable;
+
 		self.reportTriggerRunSuscription = self.model.reportTriggerRun.subscribe(function (newValue) {
         	if (newValue) {
         		self.runReport();
@@ -1853,31 +1855,71 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 				break; // Data Completeness report
 			case 'Entropy':
 				$.ajax({
-					url: config.services[0].url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/entropy',
+					//url: config.services[0].url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/entropy',
+					url: config.services[0].url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/allentropy',
 					success: function (data) {
 						self.model.currentReport(self.model.reportReportName());
 						self.model.loadingReport(false);
-
-						var entropyData = self.normalizeArray(data, true);
-						if (!entropyData.empty) {
-							var byDateSeries = self.mapDateDataToSeries(entropyData, {
-
-								dateField: 'date',
-								yValue: 'entropy',
-								yPercent: 'entropy'
-							});
-
-							var prevalenceByDate = new atlascharts.line();
-							prevalenceByDate.render(byDateSeries, "#entropyByDate", 400, 200, {
-								xScale: d3.scaleTime().domain(d3.extent(byDateSeries[0].values, function (d) {
-									return d.xValue;
-								})),
-								xFormat: d3.timeFormat("%Y/%m/%d"),
-								tickFormat: d3.timeFormat("%Y"),
-								xLabel: "Date",
-								yLabel: "Entropy"
-							});
+					    
+						var all_map_data = data.map(function(d) { 
+							   return d.insitution;
+						});
+						var care_site_array = []; 
+						for(var i = 0; i < all_map_data.length; i++) 
+						{
+							if (care_site_array.indexOf(all_map_data[i]) == -1){
+								care_site_array.push(all_map_data[i]);
+							}
 						}
+						var care_site_data = care_site_array.map(function(d) { 
+							   return {'institution': d};
+						});
+						
+						self.careSiteDatatable = $('#care_site_table').DataTable({
+							order: [],
+							dom: 'Clfrtip',
+							data: care_site_data,
+							columns: [
+								{
+									data: 'institution'
+								}
+							],
+							pageLength: 5,
+							lengthChange: false,
+							deferRender: true,
+							destroy: true
+						});
+						
+						$(document).on('click', '#care_site_table tbody tr', function () {
+							$('#care_site_table tbody tr.selected').removeClass('selected');
+							$(this).addClass('selected');
+							
+							var institution_id = self.careSiteDatatable.data()[self.careSiteDatatable.row(this)[0]].institution;
+
+							var entropyData = self.normalizeArray(data.filter(function(d){ return d.insitution == institution_id; }), true);
+							if (!entropyData.empty) {
+								var byDateSeries = self.mapDateDataToSeries(entropyData, {
+
+									dateField: 'date',
+									yValue: 'entropy',
+									yPercent: 'entropy'
+								});
+
+								var prevalenceByDate = new atlascharts.line();
+								prevalenceByDate.render(byDateSeries, "#entropyByDate", 400, 200, {
+									xScale: d3.scaleTime().domain(d3.extent(byDateSeries[0].values, function (d) {
+										return d.xValue;
+									})),
+									xFormat: d3.timeFormat("%Y/%m/%d"),
+									yFormat: d3.format(".3f"),
+									tickFormat: d3.timeFormat("%Y"),
+									xLabel: "Date",
+									yLabel: "Entropy"
+								});
+							}
+						});
+						
+						$('#care_site_table tbody tr:eq(0)').click();						
 					}
 				});
 				break; // Entropy report
@@ -2862,7 +2904,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			if (data && !data.empty) {
 				for (var i = 0; i < data[options.dateField].length; i++) {
 					series.values.push({
-						xValue: new Date(data[options.dateField][i]),
+						xValue: new Date(new Date(data[options.dateField][i]).getTime() + (new Date().getTimezoneOffset() + 60) * 60000), //offset timezone for date of "yyyy-mm-dd" 
 						yValue: data[options.yValue][i],
 						yPercent: data[options.yPercent][i]
 					});

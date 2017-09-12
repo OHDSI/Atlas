@@ -58,6 +58,16 @@
 </div>
 
 <div id="reportEntropy" data-bind="if: model.currentReport() == 'Entropy' && !model.loadingReport()">
+	<div class="tab-pane" id="care_site_div">
+		<table id="care_site_table" class="display">
+			<thead>
+				<tr>
+					<th>Care Site</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+
 	<div class="pad-10 report">
 		<div class="reportHeading"><i class="fa fa-area-chart"></i> Entropy Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Entropy by Date</div>
