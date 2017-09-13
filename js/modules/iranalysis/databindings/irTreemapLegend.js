@@ -2,6 +2,12 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 
 	function renderLegend(data, target, options) {
 
+		if (data().scale.domain().length == 0 || isNaN(data().scale.domain()[0]))
+		{
+			// scale is empty or was calculated as NaN so it's invalid. Do nothing.
+			return;
+		}
+
 		w = 400;
 		h = 40;
 		x = d3.scaleLinear()
