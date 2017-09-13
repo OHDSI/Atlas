@@ -1,8 +1,8 @@
 define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 
 		function bitCounter(bits) {
-			counted = 0;
-			for (b = 0; b < bits.length; b++) {
+			var counted = 0;
+			for (var b = 0; b < bits.length; b++) {
 				if (bits[b] == '1') {
 					counted++;
 				}
@@ -11,8 +11,8 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 		}
 	
 	function calculateColor(bits) {
-		passed = bitCounter(bits);
-		failed = bits.length - passed;
+		var passed = bitCounter(bits);
+		var failed = bits.length - passed;
 
 		if (passed == bits.length) {
 			return '#7BB209';
@@ -31,28 +31,24 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 	
 	function renderTreemap(data, target) {
 
-		w = 400;
-		h = 400;
-		x = d3.scaleLinear().range([0, w]);
-		y = d3.scaleLinear().range([0, h]);
+		var w = 400;
+		var h = 400;
+		var x = d3.scaleLinear().range([0, w]);
+		var y = d3.scaleLinear().range([0, h]);
 
-		treemap = d3.treemap()
+		var treemap = d3.treemap()
 			.round(false)
-			.size([w, h])
-			.value(function (d) {
-				return d.size;
-			});
-
-		svg = d3.select(target)
+			.size([w, h]);
+		var hierarchy = d3.hierarchy(data, d => d.children).sum(d => d.size);	
+		var tree = treemap(hierarchy);
+		var nodes = tree.leaves().filter(d => d.data.size);		
+		
+		var svg = d3.select(target)
 			.append("svg:svg")
 			.attr("width", w)
 			.attr("height", h)
 			.append("svg:g");
-		node = root = data;
-		var nodes = treemap.nodes(root)
-			.filter(function (d) {
-				return !d.children;
-			});
+
 		var cell = svg.selectAll("g")
 			.data(nodes)
 			.enter().append("svg:g")
@@ -60,25 +56,25 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 				return "cell";
 			})
 			.attr("transform", function (d) {
-				return "translate(" + d.x + "," + d.y + ")";
+				return `translate(${d.x0}, ${d.y0})`;
 			})
 		;
 		cell.append("svg:rect")
 			.attr("width", function (d) {
-				return Math.max(0, d.dx - 1);
+				return Math.max(0, d.x1 - d.x0 - 1);
 			})
 			.attr("height", function (d) {
-				return Math.max(0, d.dy - 1);
+				return Math.max(0, d.y1 - d.y0 - 1);
 			})
 			.attr("class", "")
 			.attr("id", function (d) {
-				return d.name;
+				return d.data.name;
 			})
 			.text(function (d) {
-				return d.children ? null : d.name;
+				return d.children ? null : d.data.name;
 			})
 			.style("fill", function (d) {
-				return calculateColor(d.name);
+				return calculateColor(d.data.name);
 			})
 			.on("mouseover", function() {
 				d3.select(this).classed("selected",true);

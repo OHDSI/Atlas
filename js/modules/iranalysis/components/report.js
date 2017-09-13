@@ -115,7 +115,7 @@ define(['knockout',
 
 		self.handleCellOver = function (data, context, event) {
 			if (event.target.__data__) {
-				var treemapDatum = event.target.__data__;
+				var treemapDatum = event.target.__data__.data;
 				self.describe(treemapDatum.name, treemapDatum.size, treemapDatum.cases, treemapDatum.timeAtRisk);
 			} else {
 				return false;
