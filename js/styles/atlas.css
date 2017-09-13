@@ -1130,7 +1130,7 @@ ul.nav.nav-tabs {
 }
 
 .label {
-	border-radius: 0
+	border-radius: 0;
 }
 
 .badge {
@@ -1963,4 +1963,16 @@ span.new-role {
 
 .padded {
 	padding: 5px;
+
+.radius-border {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 10px;
+	background-color: #fff;
+	border-color: #ddd;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 4px 4px 0 0;
+	-webkit-box-shadow: none;
+	box-shadow: none;
 }
