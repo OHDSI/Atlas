@@ -7,8 +7,7 @@ requirejs.config({
 			}
 		}
 	},
-	packages: [
-		{
+	packages: [{
 			name: "databindings",
 			location: "modules/databindings"
 		},
@@ -19,15 +18,15 @@ requirejs.config({
 		{
 			name: "circe",
 			location: "modules/circe"
-    	},
+		},
 		{
 			name: "iranalysis",
 			location: "modules/iranalysis"
-        },
+		},
 		{
 			name: "extenders",
 			location: "extenders"
-        }
+		}
 	],
 	shim: {
 		"colorbrewer": {
@@ -55,7 +54,7 @@ requirejs.config({
 		}
 	},
 	deps: ['css!styles/jquery.dataTables.min',
-				 'css!styles/jquery.dataTables.colVis.css'
+		'css!styles/jquery.dataTables.colVis.css'
 	],
 	paths: {
 		"jquery": "https://code.jquery.com/jquery-1.11.2.min",
@@ -92,9 +91,6 @@ requirejs.config({
 		"cohort-comparison-r-code": "components/cohort-comparison-r-code",
 		"cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
 		"user-bar": "components/user-bar",
-		"feasibility-manager": "components/feasibility-manager",
-		"feasibility-browser": "components/feasibility-browser",
-		"feasibility-analyzer": "components/feasibility-analyzer",
 		"report-manager": "components/report-manager",
 		"ir-manager": "components/ir-manager",
 		"ir-browser": "components/ir-browser",
@@ -105,7 +101,7 @@ requirejs.config({
 		"r-manager": "components/r-manager",
 		"negative-controls": "components/negative-controls",
 		"nvd3": "nv.d3",
-		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.1.0/dist/atlascharts.min",		
+		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.1.0/dist/atlascharts.min",
 		"jnj_chart": "jnj.chart", // scatterplot is not ported to separate library
 		"lodash": "lodash.4.15.0.full",
 		"lscache": "lscache.min",
@@ -151,7 +147,8 @@ requirejs.config({
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
 	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
-		$('#splash').show();
+		$('#splash')
+			.show();
 		var pageModel = new app();
 		window.pageModel = pageModel;
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
@@ -160,7 +157,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		if (authApi.token()) {
 			var refreshTokenPromise = $.Deferred();
 			pageModel.initPromises.push(refreshTokenPromise);
-			authApi.refreshToken().always(refreshTokenPromise.resolve);
+			authApi.refreshToken()
+				.always(refreshTokenPromise.resolve);
 		}
 
 		// establish base priorities for daimons
@@ -169,174 +167,173 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		var densityPriority = 0;
 
 		// initialize all service information asynchronously
-		$.each(config.services, function (serviceIndex, service) {
-			var serviceCacheKey = 'ATLAS|' + service.url;
-			cachedService = lscache.get(serviceCacheKey);
+		var serviceCacheKey = 'ATLAS|' + config.api.url;
+		cachedService = lscache.get(serviceCacheKey);
 
-			if (cachedService) {
-				config.services[serviceIndex] = cachedService;
+		if (cachedService) {
+			config.api = cachedService;
 
-				for (var s = 0; s < cachedService.sources.length; s++) {
-					var source = cachedService.sources[s];
+			for (var s = 0; s < cachedService.sources.length; s++) {
+				var source = cachedService.sources[s];
 
+				for (var d = 0; d < source.daimons.length; d++) {
+					var daimon = source.daimons[d];
+
+					if (daimon.daimonType == 'Vocabulary') {
+						if (daimon.priority >= vocabularyPriority) {
+							vocabularyPriority = daimon.priority;
+							sharedState.vocabularyUrl(source.vocabularyUrl);
+						}
+					}
+
+					if (daimon.daimonType == 'Evidence') {
+						if (daimon.priority >= evidencePriority) {
+							evidencePriority = daimon.priority;
+							sharedState.evidenceUrl(source.evidenceUrl);
+						}
+					}
+
+					if (daimon.daimonType == 'Results') {
+						if (daimon.priority >= densityPriority) {
+							densityPriority = daimon.priority;
+							sharedState.resultsUrl(source.resultsUrl);
+						}
+					}
+				}
+			}
+			return;
+		}
+
+		config.api.sources = [];
+		var servicePromise = $.Deferred();
+		pageModel.initPromises.push(servicePromise);
+
+		$.ajax({
+			url: config.api.url + 'source/sources',
+			method: 'GET',
+			contentType: 'application/json',
+			success: function (sources) {
+				config.api.available = true;
+				var completedSources = 0;
+
+				$.each(sources, function (sourceIndex, source) {
+					source.hasVocabulary = false;
+					source.hasEvidence = false;
+					source.hasResults = false;
+					source.hasCDM = false;
+					source.vocabularyUrl = '';
+					source.evidenceUrl = '';
+					source.resultsUrl = '';
+					source.error = '';
+
+					source.initialized = true;
 					for (var d = 0; d < source.daimons.length; d++) {
 						var daimon = source.daimons[d];
 
+						// evaluate vocabulary daimons
 						if (daimon.daimonType == 'Vocabulary') {
+							source.hasVocabulary = true;
+							source.vocabularyUrl = config.api.url + 'vocabulary/' + source.sourceKey + '/';
 							if (daimon.priority >= vocabularyPriority) {
 								vocabularyPriority = daimon.priority;
 								sharedState.vocabularyUrl(source.vocabularyUrl);
 							}
 						}
 
+						// evaluate evidence daimons
 						if (daimon.daimonType == 'Evidence') {
+							source.hasEvidence = true;
+							source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
 							if (daimon.priority >= evidencePriority) {
 								evidencePriority = daimon.priority;
 								sharedState.evidenceUrl(source.evidenceUrl);
 							}
 						}
 
+						// evaluate results daimons
 						if (daimon.daimonType == 'Results') {
+							source.hasResults = true;
+							source.resultsUrl = config.api.url + 'cdmresults/' + source.sourceKey + '/';
 							if (daimon.priority >= densityPriority) {
 								densityPriority = daimon.priority;
 								sharedState.resultsUrl(source.resultsUrl);
 							}
 						}
+
+						// evaluate cdm daimons
+						if (daimon.daimonType == 'CDM') {
+							source.hasCDM = true;
+						}
 					}
-				}
-				return;
+
+					config.api.sources.push(source);
+
+					if (source.hasVocabulary) {
+						$.ajax({
+							url: config.api.url + 'vocabulary/' + source.sourceKey + '/info',
+							timeout: 20000,
+							method: 'GET',
+							contentType: 'application/json',
+							success: function (info) {
+								completedSources++;
+								source.version = info.version;
+								source.dialect = info.dialect;
+
+								if (completedSources == sources.length) {
+									lscache.set(serviceCacheKey, config.api, 720);
+									servicePromise.resolve();
+								}
+							},
+							error: function (err) {
+								completedSources++;
+								pageModel.initializationErrors++;
+								source.version = 'unknown';
+								source.dialect = 'unknown';
+								source.url = service.url + source.sourceKey + '/';
+								if (completedSources == sources.length) {
+									lscache.set(serviceCacheKey, service, 720);
+									servicePromise.resolve();
+								}
+							}
+						});
+					} else {
+						completedSources++;
+						source.version = 'not available'
+						if (completedSources == sources.length) {
+							servicePromise.resolve();
+						}
+					}
+				});
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				config.api.available = false;
+				config.api.xhr = xhr;
+				config.api.thrownError = thrownError;
+
+				sharedState.appInitializationStatus('failed');
+				document.location = '#/configure';
+
+				servicePromise.resolve();
 			}
+		});
 
-			service.sources = [];
-			var servicePromise = $.Deferred();
-			pageModel.initPromises.push(servicePromise);
-
-			$.ajax({
-				url: service.url + 'source/sources',
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (sources) {
-					service.available = true;
-					var completedSources = 0;
-
-					$.each(sources, function (sourceIndex, source) {
-						source.hasVocabulary = false;
-						source.hasEvidence = false;
-						source.hasResults = false;
-						source.hasCDM = false;
-						source.vocabularyUrl = '';
-						source.evidenceUrl = '';
-						source.resultsUrl = '';
-						source.error = '';
-
-						source.initialized = true;
-						for (var d = 0; d < source.daimons.length; d++) {
-							var daimon = source.daimons[d];
-
-							// evaluate vocabulary daimons
-							if (daimon.daimonType == 'Vocabulary') {
-								source.hasVocabulary = true;
-								source.vocabularyUrl = service.url + 'vocabulary/' + source.sourceKey + '/';
-								if (daimon.priority >= vocabularyPriority) {
-									vocabularyPriority = daimon.priority;
-									sharedState.vocabularyUrl(source.vocabularyUrl);
-								}
-							}
-
-							// evaluate evidence daimons
-							if (daimon.daimonType == 'Evidence') {
-								source.hasEvidence = true;
-								source.evidenceUrl = service.url + 'evidence/' + source.sourceKey + '/';
-								if (daimon.priority >= evidencePriority) {
-									evidencePriority = daimon.priority;
-									sharedState.evidenceUrl(source.evidenceUrl);
-								}
-							}
-
-							// evaluate results daimons
-							if (daimon.daimonType == 'Results') {
-								source.hasResults = true;
-								source.resultsUrl = service.url + 'cdmresults/' + source.sourceKey + '/';
-								if (daimon.priority >= densityPriority) {
-									densityPriority = daimon.priority;
-									sharedState.resultsUrl(source.resultsUrl);
-								}
-							}
-
-							// evaluate cdm daimons
-							if (daimon.daimonType == 'CDM') {
-								source.hasCDM = true;
-							}
-						}
-
-						service.sources.push(source);
-
-						if (source.hasVocabulary) {
-							$.ajax({
-								url: service.url + 'vocabulary/' + source.sourceKey + '/info',
-								timeout: 20000,
-								method: 'GET',
-								contentType: 'application/json',
-								success: function (info) {
-									completedSources++;
-									source.version = info.version;
-									source.dialect = info.dialect;
-
-									if (completedSources == sources.length) {
-										lscache.set(serviceCacheKey, service, 720);
-										servicePromise.resolve();
-									}
-								},
-								error: function (err) {
-									completedSources++;
-									pageModel.initializationErrors++;
-									source.version = 'unknown';
-									source.dialect = 'unknown';
-									source.url = service.url + source.sourceKey + '/';
-									if (completedSources == sources.length) {
-										lscache.set(serviceCacheKey, service, 720);
-										servicePromise.resolve();
-									}
-								}
-							});
-						} else {
-							completedSources++;
-							source.version = 'not available'
-							if (completedSources == sources.length) {
-								servicePromise.resolve();
-							}
-						}
-					});
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					service.available = false;
-					service.xhr = xhr;
-					service.thrownError = thrownError;
-
-					sharedState.appInitializationStatus('failed');
-					document.location = '#/configure';
-
-					servicePromise.resolve();
-				}
+		$.when.apply($, pageModel.initPromises)
+			.done(function () {
+				pageModel.initComplete();
 			});
-		});
-
-		$.when.apply($, pageModel.initPromises).done(function () {
-			pageModel.initComplete();
-		});
 
 		pageModel.currentView.subscribe(function (newView) {
 			switch (newView) {
-				case 'reports':
-					$.ajax({
-						url: config.services[0].url + 'cohortdefinition',
-						method: 'GET',
-						contentType: 'application/json',
-						success: function (cohortDefinitions) {
-							pageModel.cohortDefinitions(cohortDefinitions);
-						}
-					});
-					break;
+			case 'reports':
+				$.ajax({
+					url: config.api.url + 'cohortdefinition',
+					method: 'GET',
+					contentType: 'application/json',
+					success: function (cohortDefinitions) {
+						pageModel.cohortDefinitions(cohortDefinitions);
+					}
+				});
+				break;
 			}
 		});
 
@@ -352,11 +349,12 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				success: function (data) {
 					var densityPromise = vocabAPI.loadDensity(data);
 
-					$.when(densityPromise).done(function () {
-						pageModel.includedConcepts(data);
-						includedPromise.resolve();
-						pageModel.loadingIncluded(false);
-					});
+					$.when(densityPromise)
+						.done(function () {
+							pageModel.includedConcepts(data);
+							includedPromise.resolve();
+							pageModel.loadingIncluded(false);
+						});
 				}
 			});
 
@@ -387,102 +385,120 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		pageModel.currentConceptSetMode.subscribe(function (newMode) {
 			switch (newMode) {
-				case 'included':
-					pageModel.loadIncluded();
-					break;
-				case 'sourcecodes':
-					var includedPromise = pageModel.loadIncluded();
-					$.when(includedPromise).done(function () {
+			case 'included':
+				pageModel.loadIncluded();
+				break;
+			case 'sourcecodes':
+				var includedPromise = pageModel.loadIncluded();
+				$.when(includedPromise)
+					.done(function () {
 						pageModel.loadSourcecodes();
 					});
-					break;
+				break;
 			}
 		});
 
 		// handle select all
-		$(document).on('click', 'th i.fa.fa-shopping-cart', function () {
-			if (pageModel.currentConceptSet() == undefined) {
-				var newConceptSet = {
-					name: ko.observable("New Concept Set"),
-					id: 0
+		$(document)
+			.on('click', 'th i.fa.fa-shopping-cart', function () {
+				if (pageModel.currentConceptSet() == undefined) {
+					var newConceptSet = {
+						name: ko.observable("New Concept Set"),
+						id: 0
+					}
+					pageModel.currentConceptSet(newConceptSet);
 				}
-				pageModel.currentConceptSet(newConceptSet);
-			}
 
-			var table = $(this).closest('.dataTable').DataTable();
-			var concepts = table.rows({
-				search: 'applied'
-			}).data();
-			var selectedConcepts = sharedState.selectedConcepts();
+				var table = $(this)
+					.closest('.dataTable')
+					.DataTable();
+				var concepts = table.rows({
+						search: 'applied'
+					})
+					.data();
+				var selectedConcepts = sharedState.selectedConcepts();
 
-			for (var i = 0; i < concepts.length; i++) {
-				var concept = concepts[i];
-				if (sharedState.selectedConceptsIndex[concept.CONCEPT_ID]) {
-					// ignore if already selected
-				} else {
-					var conceptSetItem = pageModel.createConceptSetItem(concept);
-					sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
-					selectedConcepts.push(conceptSetItem)
+				for (var i = 0; i < concepts.length; i++) {
+					var concept = concepts[i];
+					if (sharedState.selectedConceptsIndex[concept.CONCEPT_ID]) {
+						// ignore if already selected
+					} else {
+						var conceptSetItem = pageModel.createConceptSetItem(concept);
+						sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
+						selectedConcepts.push(conceptSetItem)
+					}
 				}
-			}
-			sharedState.selectedConcepts(selectedConcepts);
-			ko.contextFor(this).$component.reference.valueHasMutated();
-		});
-
-		// handling concept set selections
-		$(document).on('click', 'td i.fa.fa-shopping-cart, .asset-heading i.fa.fa-shopping-cart', function () {
-			if (pageModel.currentConceptSet() == undefined) {
-				var newConceptSet = {
-					name: ko.observable("New Concept Set"),
-					id: 0
-				}
-				pageModel.currentConceptSet({
-					name: ko.observable('New Concept Set'),
-					id: 0
-				});
-				pageModel.currentConceptSetSource('repository');
-			}
-
-			$(this).toggleClass('selected');
-			var concept = ko.contextFor(this).$data;
-
-			if ($(this).hasClass('selected')) {
-				var conceptSetItem = pageModel.createConceptSetItem(concept);
-				sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
-				sharedState.selectedConcepts.push(conceptSetItem);
-			} else {
-				delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
-				sharedState.selectedConcepts.remove(function (i) {
-					return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
-				});
-			}
-
-			// If we are updating a concept set that is part of a cohort definition
-			// then we need to notify any dependent observables about this change in the concept set
-			if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
-				var conceptSet = pageModel.currentCohortDefinition().expression().ConceptSets().filter(function (item) {
-					return item.id == pageModel.currentConceptSet().id
-				})[0];
-				conceptSet.expression.items.valueHasMutated();
-			}
-		});
-
-		// concept set selector handling
-		$(document).on('click', '.conceptSetTable i.fa.fa-shopping-cart', function () {
-			$(this).toggleClass('selected');
-			var conceptSetItem = ko.contextFor(this).$data;
-
-			delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
-			sharedState.selectedConcepts.remove(function (i) {
-				return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
+				sharedState.selectedConcepts(selectedConcepts);
+				ko.contextFor(this)
+					.$component.reference.valueHasMutated();
 			});
 
-			pageModel.resolveConceptSetExpression();
-		});
+		// handling concept set selections
+		$(document)
+			.on('click', 'td i.fa.fa-shopping-cart, .asset-heading i.fa.fa-shopping-cart', function () {
+				if (pageModel.currentConceptSet() == undefined) {
+					var newConceptSet = {
+						name: ko.observable("New Concept Set"),
+						id: 0
+					}
+					pageModel.currentConceptSet({
+						name: ko.observable('New Concept Set'),
+						id: 0
+					});
+					pageModel.currentConceptSetSource('repository');
+				}
 
-		$(window).bind('beforeunload', function () {
-			if (pageModel.hasUnsavedChanges())
-				return "Changes will be lost if you do not save.";
-		});
+				$(this)
+					.toggleClass('selected');
+				var concept = ko.contextFor(this)
+					.$data;
+
+				if ($(this)
+					.hasClass('selected')) {
+					var conceptSetItem = pageModel.createConceptSetItem(concept);
+					sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
+					sharedState.selectedConcepts.push(conceptSetItem);
+				} else {
+					delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
+					sharedState.selectedConcepts.remove(function (i) {
+						return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
+					});
+				}
+
+				// If we are updating a concept set that is part of a cohort definition
+				// then we need to notify any dependent observables about this change in the concept set
+				if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
+					var conceptSet = pageModel.currentCohortDefinition()
+						.expression()
+						.ConceptSets()
+						.filter(function (item) {
+							return item.id == pageModel.currentConceptSet()
+								.id
+						})[0];
+					conceptSet.expression.items.valueHasMutated();
+				}
+			});
+
+		// concept set selector handling
+		$(document)
+			.on('click', '.conceptSetTable i.fa.fa-shopping-cart', function () {
+				$(this)
+					.toggleClass('selected');
+				var conceptSetItem = ko.contextFor(this)
+					.$data;
+
+				delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
+				sharedState.selectedConcepts.remove(function (i) {
+					return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
+				});
+
+				pageModel.resolveConceptSetExpression();
+			});
+
+		$(window)
+			.bind('beforeunload', function () {
+				if (pageModel.hasUnsavedChanges())
+					return "Changes will be lost if you do not save.";
+			});
 	});
 });

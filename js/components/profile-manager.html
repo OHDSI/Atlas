@@ -8,7 +8,7 @@
 				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<span data-bind="text:$component.sourceKeyCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
 				</button>
-				<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:config.services[0].sources.filter(d=>d.hasCDM)">
+				<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:config.api.sources.filter(d=>d.hasCDM)">
 					<li>
 						<a data-bind="text:sourceName,click:$component.setSourceKey"></a>
 					</li>

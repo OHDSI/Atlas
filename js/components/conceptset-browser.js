@@ -28,7 +28,7 @@ define(['knockout', 'text!./conceptset-browser.html', 'appConfig', 'webapi/AuthA
 					return obj.id
 				}).join('%2B'); // + encoded
 				if (conceptSetIds.length > 0) {
-					window.open(config.services[0].url + 'conceptset/exportlist?conceptsets=' + conceptSetIds);
+					window.open(config.api.url + 'conceptset/exportlist?conceptsets=' + conceptSetIds);
 				}
 			}
 		}

@@ -266,7 +266,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				infoList.forEach(function (info) {
 					// obtain source reference
 					var source = self.model.cohortDefinitionSourceInfo().filter(function (cdsi) {
-						var sourceId = self.config.services[0].sources.filter(source => source.sourceKey == cdsi.sourceKey)[0].sourceId;
+						var sourceId = self.config.api.sources.filter(source => source.sourceKey == cdsi.sourceKey)[0].sourceId;
 						return sourceId == info.id.sourceId;
 					})[0];
 
@@ -453,7 +453,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.generateCohort = function (source, event) {
-			var route = config.services[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + source.sourceKey;
+			var route = config.api.url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + source.sourceKey;
 			self.getSourceInfo(source.sourceKey).status('PENDING');
 			$.ajax(route, {
 				headers: {
@@ -511,7 +511,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.measurementConceptIds = [];
 
 				$.ajax({
-					url: config.services[0].url + 'cohortanalysis',
+					url: config.api.url + 'cohortanalysis',
 					data: JSON.stringify(cohortJob),
 					method: 'POST',
 					contentType: 'application/json',
@@ -585,7 +585,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.exportConceptSetsCSV = function () {
-			window.open(config.services[0].url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/export/conceptset');
+			window.open(config.api.url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/export/conceptset');
 		}
 
 		self.selectInclusionReport = function (item) {

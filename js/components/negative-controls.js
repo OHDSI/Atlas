@@ -1,13 +1,13 @@
 define(['knockout',
-        'text!./negative-controls.html',
-        'appConfig',
-        'webapi/EvidenceAPI',
-        'webapi/CDMResultsAPI',
-        'webapi/ConceptSetAPI',
-				'atlas-state',
-        'ohdsi.util',
-        'knockout.dataTables.binding',
-        'databindings'
+	'text!./negative-controls.html',
+	'appConfig',
+	'webapi/EvidenceAPI',
+	'webapi/CDMResultsAPI',
+	'webapi/ConceptSetAPI',
+	'atlas-state',
+	'ohdsi.util',
+	'knockout.dataTables.binding',
+	'databindings'
 ], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, sharedState) {
 	function negativeControls(params) {
 		var self = this;
@@ -17,7 +17,6 @@ define(['knockout',
 		self.selectedConcepts = params.selectedConcepts;
 		self.conceptSet = params.conceptSet;
 		self.conceptIds = params.conceptIds;
-		self.services = params.services;
 		self.defaultResultsUrl = params.defaultResultsUrl;
 		self.negativeControls = params.negativeControls;
 		self.dirtyFlag = params.dirtyFlag;
@@ -36,7 +35,8 @@ define(['knockout',
 		self.recordCountClass = ko.pureComputed(function () {
 			return self.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
 		});
-		self.newConceptSetName = ko.observable(self.conceptSet().name() + " - Candidate Controls");
+		self.newConceptSetName = ko.observable(self.conceptSet()
+			.name() + " - Candidate Controls");
 
 		self.fields = {
 			id: {
@@ -72,7 +72,8 @@ define(['knockout',
 			medlineCT: {
 				propName: 'medlineCt',
 				value: d => {
-					return d.medlineCt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.medlineCt.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -83,7 +84,8 @@ define(['knockout',
 			medlineCase: {
 				propName: 'medlineCase',
 				value: d => {
-					return d.medlineCase.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.medlineCase.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -94,7 +96,8 @@ define(['knockout',
 			medlineOther: {
 				propName: 'medlineOther',
 				value: d => {
-					return d.medlineOther.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.medlineOther.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -105,7 +108,8 @@ define(['knockout',
 			semmeddbCtT: {
 				propName: 'semmeddbCtT',
 				value: d => {
-					return d.semmeddbCtT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbCtT.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -117,7 +121,8 @@ define(['knockout',
 			semmeddbCaseT: {
 				propName: 'semmeddbCaseT',
 				value: d => {
-					return d.semmeddbCaseT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbCaseT.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -129,7 +134,8 @@ define(['knockout',
 			semmeddbOtherT: {
 				propName: 'semmeddbOtherT',
 				value: d => {
-					return d.semmeddbOtherT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbOtherT.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -141,7 +147,8 @@ define(['knockout',
 			semmeddbCtF: {
 				propName: 'semmeddbCtF',
 				value: d => {
-					return d.semmeddbCtF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbCtF.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -153,7 +160,8 @@ define(['knockout',
 			semmeddbCaseF: {
 				propName: 'semmeddbCaseF',
 				value: d => {
-					return d.semmeddbCaseF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbCaseF.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -165,7 +173,8 @@ define(['knockout',
 			semmeddbOtherF: {
 				propName: 'semmeddbOtherF',
 				value: d => {
-					return d.semmeddbOtherF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbOtherF.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -177,7 +186,8 @@ define(['knockout',
 			euSPC: {
 				propName: 'euSPC',
 				value: d => {
-					return d.euSPC.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.euSPC.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -189,7 +199,8 @@ define(['knockout',
 			splicerADR: {
 				propName: 'splADR',
 				value: d => {
-					return d.splADR.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.splADR.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -200,7 +211,8 @@ define(['knockout',
 			aers: {
 				propName: 'aers',
 				value: d => {
-					return d.aers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.aers.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				isColumn: true,
 				isFacet: false,
@@ -212,7 +224,8 @@ define(['knockout',
 			aersPRR: {
 				propName: 'aersPRR',
 				value: d => {
-					return (Math.ceil(d.aersPRR * 1000) / 1000).toFixed(4);
+					return (Math.ceil(d.aersPRR * 1000) / 1000)
+						.toFixed(4);
 				},
 				isColumn: true,
 				isFacet: false,
@@ -223,7 +236,8 @@ define(['knockout',
 			prediction: {
 				propName: 'prediction',
 				value: d => {
-					return (Math.ceil(d.prediction * 1000) / 1000).toFixed(4);
+					return (Math.ceil(d.prediction * 1000) / 1000)
+						.toFixed(4);
 				},
 				isColumn: true,
 				isFacet: false,
@@ -376,128 +390,146 @@ define(['knockout',
 			}
 		}
 
-		self.negControlColumns = [
-			{
+		self.negControlColumns = [{
 				title: 'Id',
 				data: d => d.conceptId,
-            },
+			},
 			{
 				title: 'Name',
 				data: d => {
 					var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 					return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
 				},
-            },
+			},
 			{
 				title: 'Domain Id',
 				data: d => d.domainId,
-            },
+			},
 			{
 				title: 'Medline CT',
 				data: d => {
-					return d.medlineCt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.medlineCt.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
-            },
+			},
 			{
 				title: 'Medline Case',
 				data: d => {
-					return d.medlineCase.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.medlineCase.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
-            },
+			},
 			{
 				title: 'Medline Other',
 				data: d => {
-					return d.medlineOther.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.medlineOther.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
-            },
+			},
 			{
 				title: 'SemMedDB CT (True)',
 				data: d => {
-					return d.semmeddbCtT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbCtT.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				visible: false,
-            },
+			},
 			{
 				title: 'SemMedDB Case (True)',
 				data: d => {
-					return d.semmeddbCaseT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbCaseT.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				visible: false,
-            },
+			},
 			{
 				title: 'SemMedDB Other (True)',
 				data: d => {
-					return d.semmeddbOtherT.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbOtherT.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				visible: false,
-            },
+			},
 			{
 				title: 'SemMedDB CT (False)',
 				data: d => {
-					return d.semmeddbCtF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbCtF.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				visible: false,
-            },
+			},
 			{
 				title: 'SemMedDB Case (False)',
 				data: d => {
-					return d.semmeddbCaseF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbCaseF.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				visible: false,
-            },
+			},
 			{
 				title: 'SemMedDB Other (False)',
 				data: d => {
-					return d.semmeddbOtherF.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.semmeddbOtherF.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				visible: false,
-            },
+			},
 			{
 				title: 'euSPC',
 				data: d => {
-					return d.euSPC.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.euSPC.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				visible: false,
-            },
+			},
 			{
 				title: 'Splicer ADR',
 				data: d => {
-					return d.splADR.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.splADR.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
-            },
+			},
 			{
 				title: 'AERS',
 				data: d => {
-					return d.aers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.aers.toString()
+						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
-            },
+			},
 			{
 				title: 'AERS PRR',
 				data: d => {
-					return (Math.ceil(d.aersPRR * 1000) / 1000).toFixed(4);
+					return (Math.ceil(d.aersPRR * 1000) / 1000)
+						.toFixed(4);
 				},
-            },
+			},
 			{
 				title: 'Prediction',
 				data: d => {
-					return (Math.ceil(d.prediction * 1000) / 1000).toFixed(4);
+					return (Math.ceil(d.prediction * 1000) / 1000)
+						.toFixed(4);
 				},
-            },
+			},
 			{
 				title: '<i id="dtNegCtrlRC" class="fa fa-database" aria-hidden="true"></i> RC',
 				data: d => d.recordCount,
-            },
+			},
 			{
 				title: '<i id="dtNegCtrlDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
 				data: d => d.descendantRecordCount,
-            },
+			},
 		];
 
 		self.negControlOptions = {
-			lengthMenu: [[10, 25, 50, 100, -1], ['10', '25', '50', '100', 'All']],
-			order: [[16, 'asc'], [17, 'desc']],
-			Facets: [
-				{
+			lengthMenu: [
+				[10, 25, 50, 100, -1],
+				['10', '25', '50', '100', 'All']
+			],
+			order: [
+				[16, 'asc'],
+				[17, 'desc']
+			],
+			Facets: [{
 					'caption': 'Subset to candidate',
 					'binding': d => {
 						if (d.medlineCt == 0 &&
@@ -513,7 +545,7 @@ define(['knockout',
 							return 'Other'
 						}
 					},
-                },
+				},
 				{
 					'caption': 'Has Records',
 					'binding': d => {
@@ -526,7 +558,7 @@ define(['knockout',
 							return 'false'
 						}
 					},
-                },
+				},
 				{
 					'caption': 'Has Descendant Records',
 					'binding': d => {
@@ -539,7 +571,7 @@ define(['knockout',
 							return 'false'
 						}
 					},
-                },
+				},
 				{
 					'caption': 'Medline CT',
 					'binding': d => {
@@ -551,7 +583,7 @@ define(['knockout',
 							return '11 +'
 						}
 					},
-                },
+				},
 				{
 					'caption': 'Medline Case',
 					'binding': d => {
@@ -563,7 +595,7 @@ define(['knockout',
 							return '11 +'
 						}
 					},
-                },
+				},
 				{
 					'caption': 'Medline Other',
 					'binding': d => {
@@ -575,11 +607,11 @@ define(['knockout',
 							return '11 +'
 						}
 					},
-                },
+				},
 				{
 					'caption': 'Splicer ADR',
 					'binding': d => d.splADR,
-                },
+				},
 				{
 					'caption': 'AERS',
 					'binding': d => {
@@ -593,8 +625,8 @@ define(['knockout',
 							return '100+'
 						}
 					},
-                }
-            ]
+				}
+			]
 		};
 
 		self.selectedConceptsSubscription = self.selectedConcepts.subscribe(function (newValue) {
@@ -604,20 +636,25 @@ define(['knockout',
 		});
 
 		self.isRunning = ko.pureComputed(function () {
-			return self.evidenceSources().filter(function (info) {
-				return !(info.status() == "COMPLETE" || info.status() == "n/a");
-			}).length > 0;
+			return self.evidenceSources()
+				.filter(function (info) {
+					return !(info.status() == "COMPLETE" || info.status() == "n/a");
+				})
+				.length > 0;
 		});
 
 		self.getSourceInfo = function (sourceKey) {
-			return self.evidenceSources().filter(function (d) {
-				return d.sourceKey() == sourceKey
-			})[0];
+			return self.evidenceSources()
+				.filter(function (d) {
+					return d.sourceKey() == sourceKey
+				})[0];
 		}
 
 		self.canGenerate = ko.pureComputed(function () {
-			var isDirty = self.dirtyFlag() && self.dirtyFlag().isDirty();
-			var isNew = self.model.currentConceptSet() && (self.model.currentConceptSet().id == 0);
+			var isDirty = self.dirtyFlag() && self.dirtyFlag()
+				.isDirty();
+			var isNew = self.model.currentConceptSet() && (self.model.currentConceptSet()
+				.id == 0);
 			var canGenerate = !(isDirty || isNew);
 			return (canGenerate);
 		});
@@ -626,41 +663,44 @@ define(['knockout',
 			if (pollTimeout)
 				clearTimeout(pollTimeout);
 
-			var id = self.conceptSet().id;
-			conceptSetAPI.getGenerationInfo(id).then(function (infoList) {
-				var hasPending = false;
-				console.log("poll for evidence....")
+			var id = self.conceptSet()
+				.id;
+			conceptSetAPI.getGenerationInfo(id)
+				.then(function (infoList) {
+					var hasPending = false;
+					console.log("poll for evidence....")
 
-				infoList.forEach(function (info) {
-					// obtain source reference
-					var source = self.evidenceSources().filter(function (s) {
-						return s.sourceId() == info.sourceId
-					})[0];
+					infoList.forEach(function (info) {
+						// obtain source reference
+						var source = self.evidenceSources()
+							.filter(function (s) {
+								return s.sourceId() == info.sourceId
+							})[0];
 
-					if (source) {
-						// only bother updating those sources that we know are running
-						if (self.isSourceRunning(source)) {
-							source.status(info.status);
-							source.isValid(info.isValid);
-							var date = new Date(info.startTime);
-							source.startTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
-							source.executionDuration('...');
+						if (source) {
+							// only bother updating those sources that we know are running
+							if (self.isSourceRunning(source)) {
+								source.status(info.status);
+								source.isValid(info.isValid);
+								var date = new Date(info.startTime);
+								source.startTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+								source.executionDuration('...');
 
-							if (info.status != "COMPLETE") {
-								hasPending = true;
-							} else {
-								source.executionDuration((info.executionDuration / 1000) + 's');
+								if (info.status != "COMPLETE") {
+									hasPending = true;
+								} else {
+									source.executionDuration((info.executionDuration / 1000) + 's');
+								}
 							}
 						}
+					});
+
+					if (hasPending) {
+						pollTimeout = setTimeout(function () {
+							self.pollForInfo();
+						}, 5000);
 					}
 				});
-
-				if (hasPending) {
-					pollTimeout = setTimeout(function () {
-						self.pollForInfo();
-					}, 5000);
-				}
-			});
 		}
 
 		self.generate = function (service, event) {
@@ -671,17 +711,21 @@ define(['knockout',
 			}
 
 			// Call the ajax service to generate the results
-			var negativeControlsJob = evidenceAPI.generateNegativeControls(service.sourceKey(), self.conceptSet().id, self.conceptSet().name(), self.conceptDomainId(), self.targetDomainId(), self.conceptIds());
+			var negativeControlsJob = evidenceAPI.generateNegativeControls(service.sourceKey(), self.conceptSet()
+				.id, self.conceptSet()
+				.name(), self.conceptDomainId(), self.targetDomainId(), self.conceptIds());
 
 			// Mark as pending results
-			self.getSourceInfo(service.sourceKey()).status('PENDING');
+			self.getSourceInfo(service.sourceKey())
+				.status('PENDING');
 
-			// Kick the job off 
-			$.when(negativeControlsJob).done(function (jobInfo) {
-				pollTimeout = setTimeout(function () {
-					self.pollForInfo();
-				}, 3000);
-			});
+			// Kick the job off
+			$.when(negativeControlsJob)
+				.done(function (jobInfo) {
+					pollTimeout = setTimeout(function () {
+						self.pollForInfo();
+					}, 3000);
+				});
 		}
 
 		self.isGenerating = function () {
@@ -695,13 +739,18 @@ define(['knockout',
 			var conceptSetValid = false;
 			var conceptDomainId = null;
 			var targetDomainId = null;
-			var conceptSetLength = self.selectedConcepts().length;
-			var conditionLength = self.selectedConcepts().filter(function (elem) {
-				return elem.concept.DOMAIN_ID == "Condition";
-			}).length;
-			var drugLength = self.selectedConcepts().filter(function (elem) {
-				return elem.concept.DOMAIN_ID == "Drug";
-			}).length;
+			var conceptSetLength = self.selectedConcepts()
+				.length;
+			var conditionLength = self.selectedConcepts()
+				.filter(function (elem) {
+					return elem.concept.DOMAIN_ID == "Condition";
+				})
+				.length;
+			var drugLength = self.selectedConcepts()
+				.filter(function (elem) {
+					return elem.concept.DOMAIN_ID == "Drug";
+				})
+				.length;
 
 			if (conceptSetLength > 0) {
 				if (conditionLength == conceptSetLength) {
@@ -725,64 +774,65 @@ define(['knockout',
 
 		self.getEvidenceSourcesFromConfig = function () {
 			evidenceSources = [];
-			$.each(config.services, function (sourceIndex, service) {
-				$.each(service.sources, function (i, source) {
-					if (source.hasEvidence) {
-						var sourceInfo = {};
-						sourceInfo.sourceId = ko.observable(source.sourceId);
-						sourceInfo.sourceKey = ko.observable(source.sourceKey);
-						sourceInfo.sourceName = ko.observable(source.sourceName);
-						sourceInfo.startTime = ko.observable("n/a");
-						sourceInfo.executionDuration = ko.observable("n/a");
-						sourceInfo.status = ko.observable("n/a");
-						sourceInfo.isValid = ko.observable(false);
 
-						evidenceSources.push(sourceInfo);
-					}
-				})
+			$.each(config.api.sources, function (i, source) {
+				if (source.hasEvidence) {
+					var sourceInfo = {};
+					sourceInfo.sourceId = ko.observable(source.sourceId);
+					sourceInfo.sourceKey = ko.observable(source.sourceKey);
+					sourceInfo.sourceName = ko.observable(source.sourceName);
+					sourceInfo.startTime = ko.observable("n/a");
+					sourceInfo.executionDuration = ko.observable("n/a");
+					sourceInfo.status = ko.observable("n/a");
+					sourceInfo.isValid = ko.observable(false);
+
+					evidenceSources.push(sourceInfo);
+				}
 			});
+
 			return evidenceSources;
 		}
 
 		self.getEvidenceSources = function () {
 			self.loadingEvidenceSources(true);
-			var resolvingPromise = conceptSetAPI.getGenerationInfo(self.conceptSet().id);
-			$.when(resolvingPromise).done(function (generationInfo) {
-				var evidenceSources = self.getEvidenceSourcesFromConfig();
-				$.each(evidenceSources, function (i, evidenceSource) {
-					var gi = $.grep(generationInfo, function (a) {
-						return a.sourceId == evidenceSource.sourceId();
-					});
-					if (gi.length > 0) {
-						var date = new Date(gi[0].startTime);
-						var execDuration = (gi[0].executionDuration / 1000) + 's'
-						evidenceSources[i].startTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
-						evidenceSources[i].executionDuration(execDuration);
-						evidenceSources[i].status(gi[0].status);
-						evidenceSources[i].isValid(gi[0].isValid);
+			var resolvingPromise = conceptSetAPI.getGenerationInfo(self.conceptSet()
+				.id);
+			$.when(resolvingPromise)
+				.done(function (generationInfo) {
+					var evidenceSources = self.getEvidenceSourcesFromConfig();
+					$.each(evidenceSources, function (i, evidenceSource) {
+						var gi = $.grep(generationInfo, function (a) {
+							return a.sourceId == evidenceSource.sourceId();
+						});
+						if (gi.length > 0) {
+							var date = new Date(gi[0].startTime);
+							var execDuration = (gi[0].executionDuration / 1000) + 's'
+							evidenceSources[i].startTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+							evidenceSources[i].executionDuration(execDuration);
+							evidenceSources[i].status(gi[0].status);
+							evidenceSources[i].isValid(gi[0].isValid);
 
-						if (gi[0].status == "RUNNING") {
-							self.pollForInfo();
+							if (gi[0].status == "RUNNING") {
+								self.pollForInfo();
+							}
 						}
-					}
+					});
+					self.evidenceSources(evidenceSources);
+					self.loadingEvidenceSources(false);
 				});
-				self.evidenceSources(evidenceSources);
-				self.loadingEvidenceSources(false);
-			});
 		};
 
 		self.resultSources = ko.computed(function () {
 			var resultSources = [];
-			$.each(config.services, function (sourceIndex, service) {
-				$.each(service.sources, function (i, source) {
-					if (source.hasResults) {
-						resultSources.push(source);
-						if (source.resultsUrl == sharedState.resultsUrl()) {
-							self.currentResultSource(source);
-						}
+			$.each(config.api.sources, function (i, source) {
+				if (source.hasResults) {
+					resultSources.push(source);
+					if (source.resultsUrl == sharedState.resultsUrl()) {
+						self.currentResultSource(source);
 					}
-				})
+				}
 			});
+
 
 			return resultSources;
 		}, this);
@@ -792,19 +842,33 @@ define(['knockout',
 				// User changed event
 				console.log("Record count refresh");
 				self.recordCountsRefreshing(true);
-				$("#dtNegCtrlRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
-				$("#dtNegCtrlDRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
+				$("#dtNegCtrlRC")
+					.toggleClass("fa-database")
+					.toggleClass("fa-circle-o-notch")
+					.toggleClass("fa-spin");
+				$("#dtNegCtrlDRC")
+					.toggleClass("fa-database")
+					.toggleClass("fa-circle-o-notch")
+					.toggleClass("fa-spin");
 				var negativeControls = self.negativeControls();
 				var conceptIdsForNegativeControls = $.map(negativeControls, function (o, n) {
 					return o.conceptId;
 				});
-				cdmResultsAPI.getConceptRecordCount(self.currentResultSource().sourceKey, conceptIdsForNegativeControls, negativeControls).then(function (rowcounts) {
-					self.negativeControls(negativeControls);
-					console.log('record counts different?');
-					self.recordCountsRefreshing(false);
-					$("#dtNegCtrlRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
-					$("#dtNegCtrlDRC").toggleClass("fa-database").toggleClass("fa-circle-o-notch").toggleClass("fa-spin");
-				});
+				cdmResultsAPI.getConceptRecordCount(self.currentResultSource()
+						.sourceKey, conceptIdsForNegativeControls, negativeControls)
+					.then(function (rowcounts) {
+						self.negativeControls(negativeControls);
+						console.log('record counts different?');
+						self.recordCountsRefreshing(false);
+						$("#dtNegCtrlRC")
+							.toggleClass("fa-database")
+							.toggleClass("fa-circle-o-notch")
+							.toggleClass("fa-spin");
+						$("#dtNegCtrlDRC")
+							.toggleClass("fa-database")
+							.toggleClass("fa-circle-o-notch")
+							.toggleClass("fa-spin");
+					});
 			}
 		}
 
@@ -812,32 +876,36 @@ define(['knockout',
 			self.loadingResults(true);
 			self.currentEvidenceService(service);
 			self.selectedReportCaption(service.name);
-			evidenceAPI.getNegativeControls(service.sourceKey(), self.conceptSet().id).then(function (results) {
-				console.log("Get negative controls");
-				var conceptIdsForNegativeControls = $.map(results, function (o, n) {
-					return o.conceptId;
+			evidenceAPI.getNegativeControls(service.sourceKey(), self.conceptSet()
+					.id)
+				.then(function (results) {
+					console.log("Get negative controls");
+					var conceptIdsForNegativeControls = $.map(results, function (o, n) {
+						return o.conceptId;
+					});
+					cdmResultsAPI.getConceptRecordCount(self.currentResultSource()
+							.sourceKey, conceptIdsForNegativeControls, results)
+						.then(function (rowcounts) {
+							self.negativeControls(results);
+							self.loadingResults(false);
+						});
 				});
-				cdmResultsAPI.getConceptRecordCount(self.currentResultSource().sourceKey, conceptIdsForNegativeControls, results).then(function (rowcounts) {
-					self.negativeControls(results);
-					self.loadingResults(false);
-				});
-			});
 		}
 
 		self.isSourceRunning = function (source) {
 			if (source) {
 				switch (source.status()) {
-					case 'COMPLETE':
-						return false;
-						break;
-					case 'ERROR':
-						return false;
-						break;
-					case 'n/a':
-						return false;
-						break;
-					default:
-						return true;
+				case 'COMPLETE':
+					return false;
+					break;
+				case 'ERROR':
+					return false;
+					break;
+				case 'n/a':
+					return false;
+					break;
+				default:
+					return true;
 				}
 			} else {
 				return false;
@@ -845,11 +913,14 @@ define(['knockout',
 		}
 
 		self.showNegControlsSaveNewModal = function () {
-			$('negative-controls #modalNegControlsSaveNew').modal('show');
+			$('negative-controls #modalNegControlsSaveNew')
+				.modal('show');
 		}
 
 		self.saveNewConceptSet = function () {
-			var dtItems = $('#negControlResults table').DataTable().data();
+			var dtItems = $('#negControlResults table')
+				.DataTable()
+				.data();
 			var conceptSet = {};
 			conceptSet.id = 0;
 			conceptSet.name = self.newConceptSetName;
@@ -878,7 +949,8 @@ define(['knockout',
 				selectedConcepts.push(newItem);
 			})
 			self.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
-			$('conceptset-manager #modalSaveNew').modal('hide');
+			$('conceptset-manager #modalSaveNew')
+				.modal('hide');
 		}
 
 		// Evalute the concept set when this component is loaded

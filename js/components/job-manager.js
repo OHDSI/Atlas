@@ -8,7 +8,7 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables
 			self.model.jobs([]);
 
 			$.ajax({
-				url: config.services[0].url + 'job/execution?comprehensivePage=true',
+				url: config.api.url + 'job/execution?comprehensivePage=true',
 				method: 'GET',
 				headers: {
 					Authorization: authApi.getAuthorizationHeader()

@@ -217,7 +217,7 @@ define(['knockout',
 		};
 
 		self.exportAnalysisCSV = function () {
-			window.open(config.services[0].url + 'ir/' + self.selectedAnalysis().id() + '/export');
+			window.open(config.api.url + 'ir/' + self.selectedAnalysis().id() + '/export');
 		}
 		
 		self.init = function() {

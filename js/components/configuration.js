@@ -2,13 +2,22 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 	function configuration(params) {
 		var self = this;
 		self.config = config;
-		self.services = config.services;
+		self.api = config.api;
 		self.sharedState = sharedState;
-		
+
 		self.isAuthenticated = authApi.isAuthenticated;
-		self.hasAccess = ko.pureComputed(function () { return self.isAuthenticated() && authApi.isPermittedEditConfiguration(); });
-		self.canReadRoles = ko.pureComputed(function () { return self.isAuthenticated() && authApi.isPermittedReadRoles(); })
+		self.hasAccess = ko.pureComputed(function () {
+			return self.isAuthenticated() && authApi.isPermittedEditConfiguration();
+		});
+		self.canReadRoles = ko.pureComputed(function () {
+			return self.isAuthenticated() && authApi.isPermittedReadRoles();
+		})
+		self.clearLocalStorageCache = function () {
+			localStorage.clear();
+			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
+		}
 	}
+
 
 	var component = {
 		viewModel: configuration,

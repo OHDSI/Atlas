@@ -5,14 +5,14 @@ define(['optional!config-local'], function (localConfig) {
 	}
 
 	// default configuration
-	config.services = [{
+	config.api = {
 		name: 'Local',
 		url: 'http://localhost:8080/WebAPI/'
-	}];
+	};
 	config.cohortComparisonResultsEnabled = false;
 	config.userAuthenticationEnabled = false;
 
 	Object.assign(config, localConfig);
-	config.webAPIRoot = config.services[0].url;
+	config.webAPIRoot = config.api.url;
 	return config;
 });

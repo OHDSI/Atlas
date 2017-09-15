@@ -7,9 +7,10 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 			window.exploreCohort = self;
 			self.defaultFetchMax = 100;
 
-			self.sources = ko.observableArray(params.services.sources.filter(source => source.hasCDM));
+			self.sources = ko.observableArray(config.api.sources.filter(source => source.hasCDM));
 			self.sourceKey = ko.observable();
-			self.cohortDefinitionId = params.model.currentCohortDefinition().id;
+			self.cohortDefinitionId = params.model.currentCohortDefinition()
+				.id;
 			self.model = params.model;
 			self.breakdown = ko.observable({});
 			self.cf = ko.observable({});
@@ -25,7 +26,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 				self.sourceKey(source.sourceKey);
 				self.loading(true);
 				$.ajax({
-					url: params.services.url + 'cohortresults/' + source.sourceKey + '/' + self.cohortDefinitionId() + '/breakdown',
+					url: config.api.url + 'cohortresults/' + source.sourceKey + '/' + self.cohortDefinitionId() + '/breakdown',
 					method: 'GET',
 					headers: {
 						Authorization: authApi.getAuthorizationHeader()
@@ -56,7 +57,8 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 							dim.countFunc = group => group.value;
 							return dim;
 						}));
-						self.groupAll = self.cf().groupAll();
+						self.groupAll = self.cf()
+							.groupAll();
 						self.groupAll.reduceSum(d => d.people);
 						self.filtersChanged.subscribe(() => {
 							self.filteredRecs(self.groupAll.value());
@@ -66,17 +68,21 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 							self.membersChosen(self.groupAll.value() + ' people in cohort matching:');
 							let genders = self.facets()[0].Members.filter(d => d.Selected);
 							let gender = genders.length ?
-								genders.map(d => `'${d.Name}'`).join(',') : "''";
+								genders.map(d => `'${d.Name}'`)
+								.join(',') : "''";
 							let ages = self.facets()[1].Members.filter(d => d.Selected);
 							let age = ages.length ?
-								ages.map(d => `'${d.Name}'`).join(',') : "''";
+								ages.map(d => `'${d.Name}'`)
+								.join(',') : "''";
 							let conditionss = self.facets()[2].Members.filter(d => d.Selected);
 							let conditions = conditionss.length ?
-								conditionss.map(d => d.Name).join(',') : "''";
+								conditionss.map(d => d.Name)
+								.join(',') : "''";
 							let drugss = self.facets()[3].Members.filter(d => d.Selected);
 							let drugs = drugss.length ?
-								drugss.map(d => d.Name).join(',') : "''";
-							let url = params.services.url + 'cohortresults/' + source.sourceKey + '/' + self.cohortDefinitionId() + '/breakdown/' + gender + '/' + age + '/' + conditions + '/' + drugs + '/' + 100; // max number of cohort people to retrieve
+								drugss.map(d => d.Name)
+								.join(',') : "''";
+							let url = config.api.url + 'cohortresults/' + source.sourceKey + '/' + self.cohortDefinitionId() + '/breakdown/' + gender + '/' + age + '/' + conditions + '/' + drugs + '/' + 100; // max number of cohort people to retrieve
 							$.ajax({
 								url: url,
 								method: 'GET',
@@ -103,7 +109,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 				if (selected.length) {
 					if (['gender', 'age'].indexOf(facet.key) > -1) {
 						if (selected.length > 1) {
-							return `${facet.caption}: 
+							return `${facet.caption}:
 										${selected.slice(0,selected.length-1).map(d=>d.Name).join(', ')}
 										or ${selected[selected.length-1].Name}`;
 						} else {
@@ -156,8 +162,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 					//Members: [],
 				},
 			};
-			self.columns = [
-				{
+			self.columns = [{
 					title: 'Gender',
 					data: 'gender'
 				},
