@@ -2,7 +2,7 @@ requirejs.config({
 	baseUrl: 'js',
 	config: {
 		text: {
-			useXhr: function(url, protocol, hostname, port) {
+			useXhr: function (url, protocol, hostname, port) {
 				return true;
 			}
 		}
@@ -145,8 +145,8 @@ requirejs.config({
 	}
 });
 
-requirejs(['bootstrap'], function() { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function(ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
+requirejs(['bootstrap'], function () { // bootstrap must come first
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
 		$('#splash')
 			.show();
 		var pageModel = new app();
@@ -212,11 +212,11 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 			url: config.api.url + 'source/sources',
 			method: 'GET',
 			contentType: 'application/json',
-			success: function(sources) {
+			success: function (sources) {
 				config.api.available = true;
 				var completedSources = 0;
 
-				$.each(sources, function(sourceIndex, source) {
+				$.each(sources, function (sourceIndex, source) {
 					source.hasVocabulary = false;
 					source.hasEvidence = false;
 					source.hasResults = false;
@@ -274,7 +274,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 							timeout: 20000,
 							method: 'GET',
 							contentType: 'application/json',
-							success: function(info) {
+							success: function (info) {
 								completedSources++;
 								source.version = info.version;
 								source.dialect = info.dialect;
@@ -284,7 +284,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 									servicePromise.resolve();
 								}
 							},
-							error: function(err) {
+							error: function (err) {
 								completedSources++;
 								pageModel.initializationErrors++;
 								source.version = 'unknown';
@@ -305,7 +305,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 					}
 				});
 			},
-			error: function(xhr, ajaxOptions, thrownError) {
+			error: function (xhr, ajaxOptions, thrownError) {
 				config.api.available = false;
 				config.api.xhr = xhr;
 				config.api.thrownError = thrownError;
@@ -318,18 +318,18 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 		});
 
 		$.when.apply($, pageModel.initPromises)
-			.done(function() {
+			.done(function () {
 				pageModel.initComplete();
 			});
 
-		pageModel.currentView.subscribe(function(newView) {
+		pageModel.currentView.subscribe(function (newView) {
 			switch (newView) {
 				case 'reports':
 					$.ajax({
 						url: config.api.url + 'cohortdefinition',
 						method: 'GET',
 						contentType: 'application/json',
-						success: function(cohortDefinitions) {
+						success: function (cohortDefinitions) {
 							pageModel.cohortDefinitions(cohortDefinitions);
 						}
 					});
@@ -337,7 +337,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 			}
 		});
 
-		pageModel.loadIncluded = function() {
+		pageModel.loadIncluded = function () {
 			pageModel.loadingIncluded(true);
 			var includedPromise = $.Deferred();
 
@@ -346,11 +346,11 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 				method: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
-				success: function(data) {
+				success: function (data) {
 					var densityPromise = vocabAPI.loadDensity(data);
 
 					$.when(densityPromise)
-						.done(function() {
+						.done(function () {
 							pageModel.includedConcepts(data);
 							includedPromise.resolve();
 							pageModel.loadingIncluded(false);
@@ -361,7 +361,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 			return includedPromise;
 		}
 
-		pageModel.loadSourcecodes = function() {
+		pageModel.loadSourcecodes = function () {
 			pageModel.loadingSourcecodes(true);
 
 			// load mapped
@@ -376,14 +376,14 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 				method: 'POST',
 				data: JSON.stringify(identifiers),
 				contentType: 'application/json',
-				success: function(sourcecodes) {
+				success: function (sourcecodes) {
 					pageModel.includedSourcecodes(sourcecodes);
 					pageModel.loadingSourcecodes(false);
 				}
 			});
 		}
 
-		pageModel.currentConceptSetMode.subscribe(function(newMode) {
+		pageModel.currentConceptSetMode.subscribe(function (newMode) {
 			switch (newMode) {
 				case 'included':
 					pageModel.loadIncluded();
@@ -391,7 +391,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 				case 'sourcecodes':
 					var includedPromise = pageModel.loadIncluded();
 					$.when(includedPromise)
-						.done(function() {
+						.done(function () {
 							pageModel.loadSourcecodes();
 						});
 					break;
@@ -400,7 +400,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 
 		// handle select all
 		$(document)
-			.on('click', 'th i.fa.fa-shopping-cart', function() {
+			.on('click', 'th i.fa.fa-shopping-cart', function () {
 				if (pageModel.currentConceptSet() == undefined) {
 					var newConceptSet = {
 						name: ko.observable("New Concept Set"),
@@ -435,7 +435,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 
 		// handling concept set selections
 		$(document)
-			.on('click', 'td i.fa.fa-shopping-cart, .asset-heading i.fa.fa-shopping-cart', function() {
+			.on('click', 'td i.fa.fa-shopping-cart, .asset-heading i.fa.fa-shopping-cart', function () {
 				if (pageModel.currentConceptSet() == undefined) {
 					var newConceptSet = {
 						name: ko.observable("New Concept Set"),
@@ -460,7 +460,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 					sharedState.selectedConcepts.push(conceptSetItem);
 				} else {
 					delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
-					sharedState.selectedConcepts.remove(function(i) {
+					sharedState.selectedConcepts.remove(function (i) {
 						return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
 					});
 				}
@@ -471,7 +471,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 					var conceptSet = pageModel.currentCohortDefinition()
 						.expression()
 						.ConceptSets()
-						.filter(function(item) {
+						.filter(function (item) {
 							return item.id == pageModel.currentConceptSet()
 								.id
 						})[0];
@@ -481,14 +481,14 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 
 		// concept set selector handling
 		$(document)
-			.on('click', '.conceptSetTable i.fa.fa-shopping-cart', function() {
+			.on('click', '.conceptSetTable i.fa.fa-shopping-cart', function () {
 				$(this)
 					.toggleClass('selected');
 				var conceptSetItem = ko.contextFor(this)
 					.$data;
 
 				delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
-				sharedState.selectedConcepts.remove(function(i) {
+				sharedState.selectedConcepts.remove(function (i) {
 					return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
 				});
 
@@ -496,7 +496,7 @@ requirejs(['bootstrap'], function() { // bootstrap must come first
 			});
 
 		$(window)
-			.bind('beforeunload', function() {
+			.bind('beforeunload', function () {
 				if (pageModel.hasUnsavedChanges())
 					return "Changes will be lost if you do not save.";
 			});
