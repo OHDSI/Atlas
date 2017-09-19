@@ -171,6 +171,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		cachedService = lscache.get(serviceCacheKey);
 
 		if (cachedService) {
+			console.log('cached service');
 			config.api = cachedService;
 
 			for (var s = 0; s < cachedService.sources.length; s++) {
@@ -201,6 +202,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					}
 				}
 			}
+			pageModel.initComplete();
 			return;
 		}
 
@@ -289,9 +291,9 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 								pageModel.initializationErrors++;
 								source.version = 'unknown';
 								source.dialect = 'unknown';
-								source.url = service.url + source.sourceKey + '/';
+								source.url = config.api.url + source.sourceKey + '/';
 								if (completedSources == sources.length) {
-									lscache.set(serviceCacheKey, service, 720);
+									lscache.set(serviceCacheKey, config.api, 720);
 									servicePromise.resolve();
 								}
 							}

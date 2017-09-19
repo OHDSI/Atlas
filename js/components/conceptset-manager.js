@@ -130,7 +130,7 @@ define(['knockout',
 
 		self.resultSources = ko.computed(function () {
 			var resultSources = [];
-			$.each(config.service.sources, function (i, source) {
+			$.each(config.api.sources, function (i, source) {
 				if (source.hasResults) {
 					resultSources.push(source);
 					if (source.resultsUrl == sharedState.resultsUrl()) {
