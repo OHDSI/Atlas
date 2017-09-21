@@ -591,6 +591,7 @@ td.select .fa-check-circle.selected {
 	padding-right: 7px;
 	font-size: 11px;
 	border-bottom: 1px solid #ccc;
+  vertical-align:top;
 }
 
 .configureSourceTable tr.selected {

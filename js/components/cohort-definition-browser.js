@@ -1,7 +1,6 @@
 define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webapi/AuthAPI', 'faceted-datatable'], function (ko, view, config, authApi) {
 	function cohortDefinitionBrowser(params) {
 		var self = this;
-		self.currentService = ko.observable();
 		self.reference = ko.observableArray();
 		self.selected = params.cohortDefinitionSelected;
 		self.loading = ko.observable(false);
@@ -10,7 +9,7 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webap
 		self.loading(true);
 
 		$.ajax({
-			url: config.services[0].url + 'cohortdefinition',
+			url: config.api.url + 'cohortdefinition',
 			headers: {
 				Authorization: authApi.getAuthorizationHeader()
 			},
@@ -26,14 +25,14 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webap
 
 
 		self.options = {
-			Facets: [
-				{
+			Facets: [{
 					'caption': 'Last Modified',
 					'binding': function (o) {
 						var createDate = new Date(o.createdDate);
 						var modDate = new Date(o.modifiedDate);
 						var dateForCompare = (createDate > modDate) ? createDate : modDate;
-						var daysSinceModification = (new Date().getTime() - dateForCompare.getTime()) / 1000 / 60 / 60 / 24;
+						var daysSinceModification = (new Date()
+							.getTime() - dateForCompare.getTime()) / 1000 / 60 / 60 / 24;
 						if (daysSinceModification < 7) {
 							return 'This Week';
 						} else if (daysSinceModification < 14) {
@@ -60,8 +59,7 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webap
 			self.selected(d.id);
 		}
 
-		self.columns = [
-			{
+		self.columns = [{
 				title: 'Id',
 				data: 'id'
 			},
@@ -72,13 +70,15 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webap
 			{
 				title: 'Created',
 				render: function (s, p, d) {
-					return new Date(d.createdDate).toLocaleDateString();
+					return new Date(d.createdDate)
+						.toLocaleDateString();
 				}
 			},
 			{
 				title: 'Updated',
 				render: function (s, p, d) {
-					return new Date(d.modifiedDate).toLocaleDateString();
+					return new Date(d.modifiedDate)
+						.toLocaleDateString();
 				}
 			},
 			{

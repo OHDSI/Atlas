@@ -17,7 +17,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 		var threshold = minimum_area / (width * height);
 
 		self.model = params.model;
-		self.sources = config.services[0].sources.filter(function(s) { return s.hasResults});
+		self.sources = config.api.sources.filter(function(s) { return s.hasResults});
 		self.loadingReport = ko.observable(false);
 		self.hasError = ko.observable(false);
 		self.loadingReportDrilldown = ko.observable(false);
@@ -138,7 +138,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 				return;
 			}
 
-			var url = config.services[0].url + 'cdmresults/' + currentSource.sourceKey + '/' +currentReport.path;
+			var url = config.api.url + 'cdmresults/' + currentSource.sourceKey + '/' +currentReport.path;
 			self.loadingReport(true);
 			self.hasError(false);
 			self.activeReportDrilldown(false);
@@ -467,7 +467,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 		self.loadTreemap = function () {
 			var currentReport = self.currentReport();
 			var currentSource = self.currentSource();
-			var url = config.services[0].url + 'cdmresults/' + currentSource.sourceKey + '/' + currentReport.path;
+			var url = config.api.url + 'cdmresults/' + currentSource.sourceKey + '/' + currentReport.path;
 
 			$("#treemap_container").find('svg').remove();
 			$('.evidenceVisualization').empty();
@@ -573,7 +573,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 			var currentSource = self.currentSource();
 			var currentReport = self.currentReport();
 			var currentConcept = self.currentConcept();
-			var url = config.services[0].url + 'cdmresults/'+ currentSource.sourceKey + '/' + currentReport.path + '/' + currentConcept.concept_id;
+			var url = config.api.url + 'cdmresults/'+ currentSource.sourceKey + '/' + currentReport.path + '/' + currentConcept.concept_id;
 
 			$('.evidenceVisualization').empty();
 			self.loadingReportDrilldown(true);
