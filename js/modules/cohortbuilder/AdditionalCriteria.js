@@ -4,6 +4,7 @@ define(function (require, exports, module) {
 	var CriteriaTypes = require('./CriteriaTypes');		
 	var Occurrence = require('./InputTypes/Occurrence');
 	var Window = require('./InputTypes/Window');
+	var RestrictVisit = require('./InputTypes/RestrictVisit');
 	
 	var debug = false;
 
@@ -15,6 +16,7 @@ define(function (require, exports, module) {
 		self.StartWindow = new Window(data.StartWindow);
 		self.EndWindow = ko.observable(data.EndWindow && new Window(data.EndWindow));
 		self.Occurrence = new Occurrence(data.Occurrence);
+		self.RestrictVisit = new RestrictVisit(data.RestrictVisit);
 	}
 	
 	module.exports = AdditionalCriteria;
