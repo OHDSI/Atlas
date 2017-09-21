@@ -46,7 +46,7 @@
 					<col span="1" class="rule" />
 					<col span="1" class="delete" />
 				</colgroup>
-				<tbody data-bind="sortable: {data: expression().PrimaryCriteria().CriteriaList, connectClass : 'primaryCriteria', options: {cancel: ':input, button, [contenteditable], .undraggable'}}">
+				<tbody data-bind="sortable: {data: expression().PrimaryCriteria().CriteriaList, connectClass : 'primaryCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
 					<tr>
 						<td>
 							<div class="criteria-content">
@@ -99,7 +99,8 @@
 		</div>
 		<div data-bind="eventListener: [
 			 { event: 'click', selector: '.copyInclusionRule', callback: copyInclusionRule},
-			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule}]">
+			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule},
+			 { event: 'click', selector: '.addConceptSet', callback: addConceptSet}]">
 
 			<table style="width: 100%">
 				<colgroup>
@@ -205,4 +206,21 @@
 			</div>
 		</div>	
 	</div>	
+	
+	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'entry' || $component.expressionMode() == 'exit' || $component.expressionMode() == 'all'}" class="tab-pane">
+		<div class="heading"><b>Cohort Collapse Strategy</b></div>
+		<br>The default selection, Era, will collapse overlapping date ranges for the same subject into a continuous period.
+			<br>
+		<div style="padding: 5px 0px" data-bind="with: expression().CollapseSettings">
+			<ul>
+				<li>Collapse Strategy Type:
+					<select data-bind="options: $component.options.collapseStrategyOptions, value: CollapseType"></select>
+				</li>
+				<li>
+					Pad by: 
+					<select data-bind="options: $component.options.dayOptions, value: EraPad"></select> days
+				</li>
+			</ul>
+		</div>
+	</div>
 </div>

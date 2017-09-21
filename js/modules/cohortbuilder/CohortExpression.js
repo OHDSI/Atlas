@@ -7,6 +7,7 @@ define(function (require, exports) {
 	var InclusionRule = require('./InclusionRule');
 	var EndStrategies = require('./EndStrategies');
 	var CriteriaTypes = require('./CriteriaTypes');
+
 	
 	function CohortExpression(data) {
 		var self = this;
@@ -26,6 +27,7 @@ define(function (require, exports) {
 		self.CensoringCriteria = ko.observableArray(data.CensoringCriteria && data.CensoringCriteria.map(function (criteria) {
 			return CriteriaTypes.GetCriteriaFromObject(criteria, self.ConceptSets);
 		}));
+		self.CollapseSettings = {CollapseType: ko.observable(data.CollapseSettings && data.CollapseSettings.CollapseType || "Era"), EraPad: ko.observable(data.CollapseSettings && data.CollapseSettings.EraPad || "0") }
 		
 	}
 	return CohortExpression;
