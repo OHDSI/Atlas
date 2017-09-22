@@ -78,9 +78,8 @@ define([], function () {
         name: "No",
         id: "0"
 		}];
-	
+		
 	options.collapseStrategyOptions = ['Era', 'None'];
-	
-	
+
     return options;
 });

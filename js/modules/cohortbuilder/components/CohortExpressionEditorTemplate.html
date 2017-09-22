@@ -46,7 +46,7 @@
 					<col span="1" class="rule" />
 					<col span="1" class="delete" />
 				</colgroup>
-				<tbody data-bind="sortable: {data: expression().PrimaryCriteria().CriteriaList, connectClass : 'primaryCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
+				<tbody data-bind="sortable: {data: expression().PrimaryCriteria().CriteriaList, connectClass : 'primaryCriteria', options: {cancel: ':input, button, [contenteditable], .undraggable'}}">
 					<tr>
 						<td>
 							<div class="criteria-content">
@@ -99,8 +99,7 @@
 		</div>
 		<div data-bind="eventListener: [
 			 { event: 'click', selector: '.copyInclusionRule', callback: copyInclusionRule},
-			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule},
-			 { event: 'click', selector: '.addConceptSet', callback: addConceptSet}]">
+			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule}]">
 
 			<table style="width: 100%">
 				<colgroup>
@@ -205,8 +204,8 @@
 				No censoring events selected.
 			</div>
 		</div>	
-	</div>	
-	
+	</div>
+
 	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'entry' || $component.expressionMode() == 'exit' || $component.expressionMode() == 'all'}" class="tab-pane">
 		<div class="heading"><b>Cohort Collapse Strategy</b></div>
 		<br>The default selection, Era, will collapse overlapping date ranges for the same subject into a continuous period.
@@ -223,4 +222,5 @@
 			</ul>
 		</div>
 	</div>
+
 </div>
