@@ -244,7 +244,8 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							});
 						},
 						'/estimation/:cohortComparisonId:': function (cohortComparisonId) {
-							require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
+							require(['cohort-comparison-manager', 'cohort-definition-browser', 'cohort-comparison-spec-editor', 'cohort-comparison-results',
+								'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
 								self.currentCohortComparisonId(+cohortComparisonId);
 								self.componentParams = {
 									currentCohortComparisonId: self.currentCohortComparisonId,

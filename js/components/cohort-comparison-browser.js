@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config) {
+define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webapi/ComparativeCohortAnalysisAPI', 'cohortcomparison/ComparativeCohortAnalysis', 'faceted-datatable'], function (ko, view, config, comparativeCohortAnalysisAPI) {
 	function cohortComparisonBrowser(params) {
 		var self = this;
 		self.reference = ko.observableArray();
@@ -11,9 +11,9 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohort
 					'caption': 'Last Modified',
 					'binding': function (o) {
 						var daysSinceModification = (new Date().getTime() - new Date(o.modified).getTime()) / 1000 / 60 / 60 / 24;
-						if (daysSinceModification < .01) {					
+						if (daysSinceModification < .01) {
 							return 'Just Now';
-						} else if (daysSinceModification < 1) {					
+						} else if (daysSinceModification < 1) {
 							return 'Within 24 Hours';
 						} else if (daysSinceModification < 7) {
 							return 'This Week';
@@ -38,9 +38,9 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohort
 			},
 			{
 				title: 'Name',
-                data: d => {
-                    return '<span class=\'linkish\'>' + d.name + '</span>';
-                },
+				data: d => {
+					return '<span class=\'linkish\'>' + d.name + '</span>';
+				},
 			},
 			{
 				title: 'Created',
@@ -56,19 +56,14 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohort
 			}
 		];
 
-		self.newCohortComparison = function() {
-			document.location = '#/estimation/0'	;
+		self.newCohortComparison = function () {
+			document.location = '#/estimation/0';
 		}
-		
+
 		self.loading(true);
-		
-		$.ajax({
-			url: config.api.url + 'comparativecohortanalysis',
-			method: 'GET',
-			success: function (d) {
-				self.loading(false);
-				self.reference(d);
-			}
+		comparativeCohortAnalysisAPI.getComparativeCohortAnalysisList().then(function (d) {
+			self.loading(false);
+			self.reference(d);
 		});
 	}
 

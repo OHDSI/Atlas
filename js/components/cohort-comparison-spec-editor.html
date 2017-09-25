@@ -1,0 +1,450 @@
+<div class="row">
+	<div class="col-md-8">
+		<div>
+			<label>Choose your target cohort:</label>
+			<div class="input-group">
+				<input class="form-control" type="text" disabled data-bind="value: cohortComparison().targetComparator().targetCaption" />
+				<span class="input-group-btn">
+									<button class="btn btn-primary" data-bind="click:chooseTarget"><i class="fa fa-folder-open"></i></button>
+									<button class="btn btn-danger" data-bind="disable:cohortComparison().targetComparator().targetId() == 0, click:clearTarget" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+							</span>
+			</div>
+			<div data-bind="visible: cohortComparison().targetComparator().targetId() > 0 && cohortComparison().targetComparator().targetCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The target cohort specified (#<span data-bind="text:cohortComparison().targetComparator().targetId()"></span>) was deleted. Please select a different cohort.</div>
+		</div>
+		<div>
+			<label>Choose your comparator cohort:</label>
+			<div class="input-group">
+				<input class="form-control" type="text" disabled data-bind="value: cohortComparison().targetComparator().comparatorCaption" />
+				<span class="input-group-btn">
+								<button class="btn btn-primary" data-bind="click:chooseComparator"><i class="fa fa-folder-open"></i></button>
+								<button class="btn btn-danger" data-bind="disable: cohortComparison().targetComparator().comparatorId() == 0, click:clearComparator" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+							</span>
+			</div>
+			<div data-bind="visible: cohortComparison().targetComparator().comparatorId() > 0 && cohortComparison().targetComparator().comparatorCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The comparator cohort specified (#<span data-bind="text:cohortComparison().targetComparator().comparatorId()"></span>) was deleted. Please select a different cohort.</div>
+		</div>
+		<!--<div>
+			<label>Choose your outcome cohort:</label>
+			<div class="input-group">
+				<input class="form-control" type="text" disabled data-bind="value: cohortComparison().outcome().outcomeCaption" />
+				<span class="input-group-btn">
+					<button class="btn btn-primary" data-bind="click:chooseOutcome"><i class="fa fa-folder-open"></i></button>
+					<button class="btn btn-danger" data-bind="disable:cohortComparison().outcome().outcomeId() == 0,click:clearOutcome" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+				</span>
+			</div>
+			<div data-bind="visible: cohortComparison().outcome().outcomeId() > 0 && cohortComparison().outcome().outcomeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The outcome cohort specified (#<span data-bind="text:cohortComparison().outcome().outcomeId()"></span>) was deleted. Please select a different cohort.</div>
+		</div>-->
+		<div>
+			<label>Choose your outcome cohort:</label>
+			<div class="input-group">
+				<input class="form-control" type="text" placeholder="Search for an outcome ..." data-bind="typeahead: cohortDefinitionQueryURL, templateName: 'outcome-suggestion', value: outcomeAutocompleteValue, displayKey: 'name'" />
+				<script type="text/html" id="outcome-suggestion">
+					<strong data-bind="text: name"></strong>
+				</script>
+				<span class="input-group-addon" data-bind="html: outcomeLoadingMsg"></span>
+			</div>
+		</div>
+		<div class="panel panel-default" data-bind="visible: !$component.outcomeListEmpty()">
+			<div class="panel-heading">Outcomes</div>
+			<div class="panel-body panel-body-min">
+				<ul class="flat-list">
+					<!-- ko foreach: $component.cohortComparison().outcomeList() -->
+					<li class="button-box">
+						<span class="fa fa-close clickable" data-bind="click: function() { $component.removeOutcomeCohort($data.outcomeId()) }"></span>
+						<span data-bind="text: $data.outcomeCaption"></span>
+					</li>
+					<!-- /ko -->
+				</ul>			
+			</div>
+		</div>
+		<div>
+			<label>Specify the statistical model used to estimate the risk of outcome between target and comparator cohorts:</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: cohortComparison().analysis().modelTypeOptions, optionsText:'name', optionsValue:'id', value: cohortComparison().analysis().modelType, optionsCaption: 'Select a model...'"></select>
+			</div>
+		</div>
+		<div>
+			<label>Define the time-at-risk window start, relative to target/comparator cohort entry:</label>
+			<div class="input-group">
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().analysis().timeAtRiskStart.numeric(), eventType:'blur', ko_autocomplete: { value: cohortComparison().analysis().timeAtRiskStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days from cohort start date
+			</div>
+		</div>
+		<div>
+			<label>Define the time-at-risk window end:</label>
+			<div class="input-group">
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().analysis().timeAtRiskEnd.numeric(), eventType:'blur', ko_autocomplete: { value: cohortComparison().analysis().timeAtRiskEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days from
+				<select data-bind="options: cohortComparison().analysis().timeAtRiskEndOptions, optionsText:'name', optionsValue:'id', value: cohortComparison().analysis().addExposureDaysToEnd"></select>
+			</div>
+		</div>
+		<div>
+			<label>Minimum washout period applied to target and comparator cohorts:</label>
+			<div class="input-group">
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().analysis().minimumWashoutPeriod.numeric(), eventType:'blur', ko_autocomplete: { value: cohortComparison().analysis().minimumWashoutPeriod, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+			</div>
+		</div>
+		<div>
+			<label>Minimum required days at risk, applied to target and comparator cohorts:</label>
+			<div class="input-group">
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: cohortComparison().analysis().minimumDaysAtRisk.numeric(), eventType:'blur', ko_autocomplete: { value: cohortComparison().analysis().minimumDaysAtRisk, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+			</div>
+		</div>
+		<div>
+			<label>Remove patients who enter both cohorts?</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: cohortComparison().analysis().rmSubjectsInBothCohorts"></select>
+			</div>
+		</div>
+		<div>
+			<label>Remove patients who have observed the outcome prior to cohort entry?</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: cohortComparison().analysis().rmPriorOutcomes"></select>
+			</div>
+		</div>
+		<div>
+			<label>Use propensity score adjustment as a confounding adjustment strategy for baseline covariates?</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: cohortComparison().analysis().psAdjustment"></select>
+			</div>
+		</div>
+		<div data-bind="if: cohortComparison().analysis().psAdjustment() == 1">
+			<div>
+				<label>Which types of baseline covariates do you want to include in the propensity score model?</label>
+				<ul>
+					<li>Demographics</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDemographicsGender" />Gender</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDemographicsAge" />Age group (5-year bands)</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDemographicsYear" />Index year</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDemographicsMonth" />Index month</li>
+						<li>
+							<input type="checkbox" data-bind="checked: cohortComparison().analysis().psDemographicsRace" />Race</li>
+						<li>
+							<input type="checkbox" data-bind="checked: cohortComparison().analysis().psDemographicsEthnicity" />Ethnicity</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Conditions</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psConditionOcc30d" />In prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psConditionOcc365d" />In prior 365d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psConditionOccInpt180d" />In prior 180d within inpatient setting</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psConditionEraEver" />All time prior</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psConditionEraOverlap" />Overlapping index date</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Condition aggregation</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psConditionGroupSnomed" />SNOMED</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psConditionGroupMeddra" />MedDRA</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Drugs</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDrugInPrior30d" />In prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDrugInPrior365d" />In prior 365d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDrugEraEver" />All time prior</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDrugEraOverlap" />Overlapping index date</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Drug aggregation</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDrugExposure" />Clinical Drug</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDrugEra" />Ingredient</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psDrugGroup" />ATC Class</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Procedures</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psProcedureOcc30d" />In prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psProcedureOcc365d" />In prior 365d</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Measurement</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psMeasurement30d" />Existence in prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psMeasurement365d" />Existence in prior 365d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psMeasurementCount365d" />Count in prior 365d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psMeasurementBelow" />Has latest prior numeric value below normal range</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psMeasurementAbove" />Has latest prior numeric value above normal range</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Risk scores</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psRiskScoresCharlson" />Charlson</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psRiskScoresChads2" />CHADS2</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psRiskScoresDcsi" />DCSI</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>
+						<input type="checkbox" data-bind="checked: cohortComparison().analysis().psConceptCounts" />Concept counts (count of distinct conditions/procedures/visits in history)</li>
+				</ul>
+				<ul>
+					<li>Interaction terms</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psInteractionYear" />By index year</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().psInteractionMonth" />By index month</li>
+					</ul>
+				</ul>
+			</div>
+			<div>
+				<label>What concepts do you want to include in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+				<div class="input-group">
+					<input class="form-control" type="text" disabled data-bind="value: cohortComparison().targetComparator().psInclusionCaption" />
+					<span class="input-group-btn">
+									<button class="btn btn-primary" data-bind="click:choosePsInclusion"><i class="fa fa-folder-open"></i></button>
+									<button class="btn btn-danger" data-bind="disable: cohortComparison().targetComparator().psInclusionId() == 0, click:clearPsInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+								</span>
+				</div>
+				<div data-bind="visible: cohortComparison().targetComparator().psInclusionId() > 0 && cohortComparison().targetComparator().psInclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().targetComparator().psInclusionId()"></span>) was deleted. Please select a different concept set.</div>
+			</div>
+			<div>
+				<label>What concepts do you want to exclude from baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+				<div class="input-group">
+					<input class="form-control" type="text" disabled data-bind="value: cohortComparison().targetComparator().psExclusionCaption" />
+					<span class="input-group-btn">
+									<button class="btn btn-primary" data-bind="click:choosePsExclusion"><i class="fa fa-folder-open"></i></button>
+									<button class="btn btn-danger" data-bind="disable:cohortComparison().targetComparator().psExclusionId() == 0, click:clearPsExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+								</span>
+				</div>
+				<div data-bind="visible: cohortComparison().targetComparator().psExclusionId() > 0 && cohortComparison().targetComparator().psExclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().targetComparator().psExclusionId()"></span>) was deleted. Please select a different concept set.</div>
+			</div>
+			<div>
+				<label>How do you want to restrict your cohorts based on the propensity score distribution?</label>
+				<div class="input-group">
+					<select class="form-control" data-bind="options: cohortComparison().analysis().trimOptions, optionsText:'name', optionsValue:'id', value: cohortComparison().analysis().psTrim"></select>
+					<span data-bind="if: cohortComparison().analysis().psTrim() != 0">Trim Fraction (1-100%):<input class="form-control" type="text" data-bind="value: cohortComparison().analysis().psTrimFraction" /></span>
+				</div>
+			</div>
+			<div>
+				<label>Do you want to perform matching or stratification?</label>
+				<div class="input-group">
+					<select class="form-control" data-bind="options: cohortComparison().analysis().matchingOptions, optionsText:'name', optionsValue:'id', value: cohortComparison().analysis().psMatch"></select>
+					<span data-bind="if: cohortComparison().analysis().psMatch() == 1">How many comparator patients do you want to select for each target patient (within a defined caliper)?<input class="form-control" type="text" data-bind="value: cohortComparison().analysis().psMatchMaxRatio" /></span>
+					<span data-bind="if: cohortComparison().analysis().psStrat() == true">How many strata do you want to use?<input class="form-control" type="text" data-bind="value: cohortComparison().analysis().psStratNumStrata" /></span>
+				</div>
+			</div>
+		</div>
+		<div>
+			<label>Do you want to adjust for baseline covariates in the outcome model?</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: cohortComparison().analysis().omCovariates"></select>
+			</div>
+		</div>
+		<div data-bind="if: cohortComparison().analysis().omCovariates() == 1">
+			<div>
+				<label>Which types of baseline covariates do you want to include in the outcome model?</label>
+				<ul>
+					<li>Demographics</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDemographicsGender" />Gender</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDemographicsAge" />Age group (5-year bands)</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDemographicsYear" />Index year</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDemographicsMonth" />Index month</li>
+						<li>
+							<input type="checkbox" data-bind="checked: cohortComparison().analysis().omDemographicsRace" />Race</li>
+						<li>
+							<input type="checkbox" data-bind="checked: cohortComparison().analysis().omDemographicsEthnicity" />Ethnicity</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Conditions</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omConditionOcc30d" />In prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omConditionOcc365d" />In prior 365d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omConditionOccInpt180d" />In prior 180d within inpatient setting</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omConditionEraEver" />All time prior</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omConditionEraOverlap" />Overlapping index date</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Condition aggregation</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omConditionGroupSnomed" />SNOMED</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omConditionGroupMeddra" />MedDRA</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Drugs</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDrugInPrior30d" />In prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDrugInPrior365d" />In prior 365d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDrugEraEver" />All time prior</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDrugEraOverlap" />Overlapping index date</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Drug aggregation</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDrugExposure" />Clinical Drug</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDrugEra" />Ingredient</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omDrugGroup" />ATC Class</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Procedures</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omProcedureOcc30d" />In prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omProcedureOcc365d" />In prior 365d</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Measurement</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omMeasurement30d" />Existence in prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omMeasurement365d" />Existence in prior 365d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omMeasurementCount365d" />Count in prior 365d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omMeasurementBelow" />Has latest prior numeric value below normal range</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omMeasurementAbove" />Has latest prior numeric value above normal range</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Risk scores</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omRiskScoresCharlson" />Charlson</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omRiskScoresChads2" />CHADS2</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omRiskScoresDcsi" />DCSI</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>
+						<input type="checkbox" data-bind="checked: cohortComparison().analysis().omConceptCounts" />Concept counts (count of distinct conditions/procedures/visits in history)</li>
+				</ul>
+				<ul>
+					<li>Interaction terms</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omInteractionYear" />By index year</li>
+						<li>
+							<input type="checkbox" data-bind="checked:cohortComparison().analysis().omInteractionMonth" />By index month</li>
+					</ul>
+				</ul>
+			</div>
+			<div>
+				<label>What concepts do you want to include in baseline covariates in the outcome model? (Leave blank if you want to include everything)</label>
+				<div class="input-group">
+					<input class="form-control" type="text" disabled data-bind="value: cohortComparison().analysis().omInclusionCaption" />
+					<span class="input-group-btn">
+									<button class="btn btn-primary" data-bind="click:chooseOmInclusion"><i class="fa fa-folder-open"></i></button>
+									<span data-bind="if: cohortComparison().analysis().omInclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearOmInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
+					</span>
+				</div>
+				<div data-bind="visible: cohortComparison().analysis().omInclusionId() > 0 && cohortComparison().analysis().omInclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().analysis().omInclusionId()"></span>) was deleted. Please select a different concept set.</div>
+			</div>
+			<div>
+				<label>What concepts do you want to exclude from baseline covariates in the outcome model? (Leave blank if you want to include everything)</label>
+				<div class="input-group">
+					<input class="form-control" type="text" disabled data-bind="value: cohortComparison().analysis().omExclusionCaption" />
+					<span class="input-group-btn">
+									<button class="btn btn-primary" data-bind="click:chooseOmExclusion"><i class="fa fa-folder-open"></i></button>
+									<span data-bind="if: cohortComparison().analysis().omExclusionId() > 0"><button class="btn btn-danger" data-bind="click:clearOmExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button></span>
+					</span>
+				</div>
+				<div data-bind="visible: cohortComparison().analysis().omExclusionId() > 0 && cohortComparison().analysis().omExclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().analysis().omExclusionId()"></span>) was deleted. Please select a different concept set.</div>
+			</div>
+		</div>
+		<div>
+			<label>What outcomes would you like to use as your negative controls? These are concepts known not to be associated with either the target or comparator group, such that we can assume the true relative risk should equal 1. These negative control outcomes will be used for empirical calibration.</label>
+			<div class="input-group">
+				<input class="form-control" type="text" disabled data-bind="value: cohortComparison().analysis().negativeControlCaption" />
+				<span class="input-group-btn">
+								<button class="btn btn-primary" data-bind="click:chooseNegativeControl"><i class="fa fa-folder-open"></i></button>
+								<button class="btn btn-danger" data-bind="disable:cohortComparison().analysis().negativeControlId() == 0, click:clearNegativeControl" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+				</span>
+			</div>
+			<div data-bind="visible: cohortComparison().analysis().negativeControlId() > 0 && cohortComparison().analysis().negativeControlCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().analysis().omInclusionId()"></span>) was deleted. Please select a different concept set.</div>
+		</div>
+	</div>
+	<div class="col-md-4"></div>
+</div>
+
+<div id="modalCohortDefinition" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<div class="modal-title">Choose a Cohort</div>
+			</div>
+			<div class="modal-body">
+				<cohort-definition-browser params="{model: self.model, cohortDefinitionSelected: cohortSelected}"></cohort-definition-browser>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="modalConceptSet" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<div class="modal-title">Choose a Concept Set</div>
+			</div>
+			<div class="modal-body">
+				<cohort-concept-set-browser params="{onRespositoryConceptSetSelected: $component.conceptsetSelected}"></cohort-concept-set-browser>
+			</div>
+		</div>
+	</div>
+</div>
