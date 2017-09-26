@@ -26,7 +26,7 @@ requirejs.config({
 		{
 			name: "extenders",
 			location: "extenders"
-    },
+		},
 		{
 			name: "plp",
 			location: "modules/plp"
