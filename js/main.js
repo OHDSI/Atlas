@@ -18,15 +18,15 @@ requirejs.config({
 		{
 			name: "circe",
 			location: "modules/circe"
-    	},
+		},
 		{
 			name: "iranalysis",
 			location: "modules/iranalysis"
-        },
+		},
 		{
 			name: "extenders",
 			location: "extenders"
-        },
+    },
 		{
 			name: "plp",
 			location: "modules/plp"
@@ -58,7 +58,7 @@ requirejs.config({
 		}
 	},
 	deps: ['css!styles/jquery.dataTables.min',
-				 'css!styles/jquery.dataTables.colVis.css'
+		'css!styles/jquery.dataTables.colVis.css'
 	],
 	paths: {
 		"jquery": "https://code.jquery.com/jquery-1.11.2.min",
@@ -105,7 +105,7 @@ requirejs.config({
 		"r-manager": "components/r-manager",
 		"negative-controls": "components/negative-controls",
 		"nvd3": "nv.d3",
-		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.1.0/dist/atlascharts.min",		
+		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.1.0/dist/atlascharts.min",
 		"jnj_chart": "jnj.chart", // scatterplot is not ported to separate library
 		"lodash": "lodash.4.15.0.full",
 		"lscache": "lscache.min",
@@ -154,7 +154,7 @@ requirejs.config({
 		"d3-path": "https://cdnjs.cloudflare.com/ajax/libs/d3-path/1.0.5/d3-path.min",
 		"d3-dispatch": "https://cdnjs.cloudflare.com/ajax/libs/d3-dispatch/1.0.3/d3-dispatch.min",
 		"d3-tip": "https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min",
-		"d3-slider": "d3.slider"
+		"d3-slider": "d3.slider",
 	}
 });
 
@@ -180,40 +180,40 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		// initialize all service information asynchronously
 		var serviceCacheKey = 'ATLAS|' + config.api.url;
-			cachedService = lscache.get(serviceCacheKey);
+		cachedService = lscache.get(serviceCacheKey);
 
-			if (cachedService) {
+		if (cachedService) {
 			console.log('cached service');
 			config.api = cachedService;
 
-				for (var s = 0; s < cachedService.sources.length; s++) {
-					var source = cachedService.sources[s];
+			for (var s = 0; s < cachedService.sources.length; s++) {
+				var source = cachedService.sources[s];
 
-					for (var d = 0; d < source.daimons.length; d++) {
-						var daimon = source.daimons[d];
+				for (var d = 0; d < source.daimons.length; d++) {
+					var daimon = source.daimons[d];
 
-						if (daimon.daimonType == 'Vocabulary') {
-							if (daimon.priority >= vocabularyPriority) {
-								vocabularyPriority = daimon.priority;
-								sharedState.vocabularyUrl(source.vocabularyUrl);
-							}
+					if (daimon.daimonType == 'Vocabulary') {
+						if (daimon.priority >= vocabularyPriority) {
+							vocabularyPriority = daimon.priority;
+							sharedState.vocabularyUrl(source.vocabularyUrl);
 						}
+					}
 
-						if (daimon.daimonType == 'Evidence') {
-							if (daimon.priority >= evidencePriority) {
-								evidencePriority = daimon.priority;
-								sharedState.evidenceUrl(source.evidenceUrl);
-							}
+					if (daimon.daimonType == 'Evidence') {
+						if (daimon.priority >= evidencePriority) {
+							evidencePriority = daimon.priority;
+							sharedState.evidenceUrl(source.evidenceUrl);
 						}
+					}
 
-						if (daimon.daimonType == 'Results') {
-							if (daimon.priority >= densityPriority) {
-								densityPriority = daimon.priority;
-								sharedState.resultsUrl(source.resultsUrl);
-							}
+					if (daimon.daimonType == 'Results') {
+						if (daimon.priority >= densityPriority) {
+							densityPriority = daimon.priority;
+							sharedState.resultsUrl(source.resultsUrl);
 						}
 					}
 				}
+			}
 		} else {
 			config.api.sources = [];
 			var servicePromise = $.Deferred();
@@ -331,8 +331,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		$.when.apply($, pageModel.initPromises)
 			.done(function () {
-			pageModel.initComplete();
-		});
+				pageModel.initComplete();
+			});
 
 		pageModel.currentView.subscribe(function (newView) {
 			switch (newView) {
@@ -363,10 +363,10 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 					$.when(densityPromise)
 						.done(function () {
-						pageModel.includedConcepts(data);
-						includedPromise.resolve();
-						pageModel.loadingIncluded(false);
-					});
+							pageModel.includedConcepts(data);
+							includedPromise.resolve();
+							pageModel.loadingIncluded(false);
+						});
 				}
 			});
 
@@ -404,8 +404,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					var includedPromise = pageModel.loadIncluded();
 					$.when(includedPromise)
 						.done(function () {
-						pageModel.loadSourcecodes();
-					});
+							pageModel.loadSourcecodes();
+						});
 					break;
 			}
 		});
@@ -413,52 +413,52 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		// handle select all
 		$(document)
 			.on('click', 'th i.fa.fa-shopping-cart', function () {
-			if (pageModel.currentConceptSet() == undefined) {
-				var newConceptSet = {
-					name: ko.observable("New Concept Set"),
-					id: 0
+				if (pageModel.currentConceptSet() == undefined) {
+					var newConceptSet = {
+						name: ko.observable("New Concept Set"),
+						id: 0
+					}
+					pageModel.currentConceptSet(newConceptSet);
 				}
-				pageModel.currentConceptSet(newConceptSet);
-			}
 
 				var table = $(this)
 					.closest('.dataTable')
 					.DataTable();
-			var concepts = table.rows({
-				search: 'applied'
+				var concepts = table.rows({
+						search: 'applied'
 					})
 					.data();
-			var selectedConcepts = sharedState.selectedConcepts();
+				var selectedConcepts = sharedState.selectedConcepts();
 
-			for (var i = 0; i < concepts.length; i++) {
-				var concept = concepts[i];
-				if (sharedState.selectedConceptsIndex[concept.CONCEPT_ID]) {
-					// ignore if already selected
-				} else {
-					var conceptSetItem = pageModel.createConceptSetItem(concept);
-					sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
-					selectedConcepts.push(conceptSetItem)
+				for (var i = 0; i < concepts.length; i++) {
+					var concept = concepts[i];
+					if (sharedState.selectedConceptsIndex[concept.CONCEPT_ID]) {
+						// ignore if already selected
+					} else {
+						var conceptSetItem = pageModel.createConceptSetItem(concept);
+						sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
+						selectedConcepts.push(conceptSetItem)
+					}
 				}
-			}
-			sharedState.selectedConcepts(selectedConcepts);
+				sharedState.selectedConcepts(selectedConcepts);
 				ko.contextFor(this)
 					.$component.reference.valueHasMutated();
-		});
+			});
 
 		// handling concept set selections
 		$(document)
 			.on('click', 'td i.fa.fa-shopping-cart, .asset-heading i.fa.fa-shopping-cart', function () {
-			if (pageModel.currentConceptSet() == undefined) {
-				var newConceptSet = {
-					name: ko.observable("New Concept Set"),
-					id: 0
+				if (pageModel.currentConceptSet() == undefined) {
+					var newConceptSet = {
+						name: ko.observable("New Concept Set"),
+						id: 0
+					}
+					pageModel.currentConceptSet({
+						name: ko.observable('New Concept Set'),
+						id: 0
+					});
+					pageModel.currentConceptSetSource('repository');
 				}
-				pageModel.currentConceptSet({
-					name: ko.observable('New Concept Set'),
-					id: 0
-				});
-				pageModel.currentConceptSetSource('repository');
-			}
 
 				$(this)
 					.toggleClass('selected');
@@ -467,29 +467,29 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 				if ($(this)
 					.hasClass('selected')) {
-				var conceptSetItem = pageModel.createConceptSetItem(concept);
-				sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
-				sharedState.selectedConcepts.push(conceptSetItem);
-			} else {
-				delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
-				sharedState.selectedConcepts.remove(function (i) {
-					return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
-				});
-			}
+					var conceptSetItem = pageModel.createConceptSetItem(concept);
+					sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
+					sharedState.selectedConcepts.push(conceptSetItem);
+				} else {
+					delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
+					sharedState.selectedConcepts.remove(function (i) {
+						return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
+					});
+				}
 
-			// If we are updating a concept set that is part of a cohort definition
-			// then we need to notify any dependent observables about this change in the concept set
-			if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
+				// If we are updating a concept set that is part of a cohort definition
+				// then we need to notify any dependent observables about this change in the concept set
+				if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
 					var conceptSet = pageModel.currentCohortDefinition()
 						.expression()
 						.ConceptSets()
 						.filter(function (item) {
 							return item.id == pageModel.currentConceptSet()
 								.id
-				})[0];
-				conceptSet.expression.items.valueHasMutated();
-			}
-		});
+						})[0];
+					conceptSet.expression.items.valueHasMutated();
+				}
+			});
 
 		// concept set selector handling
 		$(document)
@@ -499,18 +499,18 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				var conceptSetItem = ko.contextFor(this)
 					.$data;
 
-			delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
-			sharedState.selectedConcepts.remove(function (i) {
-				return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
-			});
+				delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
+				sharedState.selectedConcepts.remove(function (i) {
+					return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
+				});
 
-			pageModel.resolveConceptSetExpression();
-		});
+				pageModel.resolveConceptSetExpression();
+			});
 
 		$(window)
 			.bind('beforeunload', function () {
-			if (pageModel.hasUnsavedChanges())
-				return "Changes will be lost if you do not save.";
-		});
+				if (pageModel.hasUnsavedChanges())
+					return "Changes will be lost if you do not save.";
+			});
 	});
 });
