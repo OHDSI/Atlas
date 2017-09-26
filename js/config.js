@@ -11,6 +11,7 @@ define(['optional!config-local'], function (localConfig) {
 	};
 	config.cohortComparisonResultsEnabled = false;
 	config.userAuthenticationEnabled = false;
+	config.plpResultsEnabled = false;
 
 	Object.assign(config, localConfig);
 	config.webAPIRoot = config.api.url;

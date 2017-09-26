@@ -26,7 +26,11 @@ requirejs.config({
 		{
 			name: "extenders",
 			location: "extenders"
-		}
+		},
+		{
+			name: "plp",
+			location: "modules/plp"
+		},
 	],
 	shim: {
 		"colorbrewer": {
@@ -126,6 +130,14 @@ requirejs.config({
 		"role-details": "components/role-details",
 		"loading": "components/loading",
 		"atlas-state": "components/atlas-state",
+		"plp-manager": "components/plp-manager",
+		"plp-inspector": "components/plp-inspector",
+		"plp-browser": "components/plp-browser",
+		"plp-roc": "components/plp-roc",
+		"plp-calibration": "components/plp-calibration",
+		"plp-spec-editor": "components/plp-spec-editor",
+		"plp-r-code": "components/plp-r-code",
+		"plp-print-friendly": "components/plp-print-friendly",
 
 		"d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.0/d3.min",
 		"d3-collection": "https://cdnjs.cloudflare.com/ajax/libs/d3-collection/1.0.4/d3-collection.min",
@@ -142,6 +154,7 @@ requirejs.config({
 		"d3-path": "https://cdnjs.cloudflare.com/ajax/libs/d3-path/1.0.5/d3-path.min",
 		"d3-dispatch": "https://cdnjs.cloudflare.com/ajax/libs/d3-dispatch/1.0.3/d3-dispatch.min",
 		"d3-tip": "https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min",
+		"d3-slider": "d3.slider",
 	}
 });
 

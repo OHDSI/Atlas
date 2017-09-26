@@ -1,0 +1,187 @@
+<div data-bind="if: $component.patientLevelPrediction() && ($component.patientLevelPrediction().readyForDisplay() == false)">
+	Please complete the full specification for the study
+</div>
+<div data-bind="if: $component.patientLevelPrediction() && $component.patientLevelPrediction().readyForDisplay()">
+	<h3>Prediction Aim</h3>
+	<br/> In <span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().treatmentCaption()"></span> predict who will develop <span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().outcomeCaption()"></span> during the period from <span data-bind="text: $component.patientLevelPrediction().timeAtRiskStart()"></span> days from cohort start date to <span data-bind="text: $component.patientLevelPrediction().timeAtRiskEnd()"></span> days.
+	<br/>
+	<h3>Prediction Options</h3>
+	The analysis will use the following options:
+	<br/>
+	<div>
+		<ul>
+			<li>Prediction Model: <span data-bind="text: $component.patientLevelPrediction().modelTypeName()"></span></li>
+			<div data-bind="if: $component.patientLevelPrediction().modelTypeSettings().length > 0">
+				<ul>
+					<!-- ko foreach: ko.observableArray($component.patientLevelPrediction().modelTypeSettings()) -->
+					<li><span data-bind="text: $data.name"></span>: <span data-bind="text: $data.reference"></span></li>
+					<!-- /ko -->
+				</ul>
+			</div>
+		</ul>
+	</div>
+
+	<div data-bind="if: $component.patientLevelPrediction().minimumWashoutPeriod() > 0">
+		<br /> We impose a requirement that patients must have at least <span data-bind="text: $component.patientLevelPrediction().minimumWashoutPeriod()"></span> days of continuous observation prior to cohort entry.
+	</div>
+	<br /> We consider <span data-bind="text: $component.patientLevelPrediction().firstExposureOnlyDescription()"></span> per subject in the prediction model.
+	<br/>
+	<br /> We <span data-bind="text: $component.patientLevelPrediction().includeAllOutcomesDescription()"></span> people with outcomes who are not observed for the whole at risk period.
+	<br/>
+	<div data-bind="if: $component.patientLevelPrediction().rmPriorOutcomes() == 1">
+		<br /> Patients with <span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().outcomeCaption()"></span> <span data-bind="text: $component.patientLevelPrediction().priorOutcomeLookbackFormatted()"></span> days prior to target cohort entry were excluded from consideration.
+	</div>
+	<br/>
+	<br /> <span data-bind="if: $component.patientLevelPrediction().testSplit() == 0">This data will split by using <span data-bind="text: $component.patientLevelPrediction().testFractionRemainderDescription"></span> to train the model and <span data-bind="text: $component.patientLevelPrediction().testFractionDescription"></span> to test. This is done by finding a reference date where <span data-bind="text: $component.patientLevelPrediction().testFractionDescription"></span> of subjects had an index after the date. Subjects with an index prior to this reference date are placed into the training set.</span><span data-bind="if: $component.patientLevelPrediction().testSplit() == 1">This data will split by using <span data-bind="text: $component.patientLevelPrediction().testFractionRemainderDescription"></span> of the subjects to train the model and <span data-bind="text: $component.patientLevelPrediction().testFractionDescription"></span> to test.</span>
+	<br/>
+	<br /> The hyper-parameter training will be conducted using a <span data-bind="text: $component.patientLevelPrediction().nFold()"></span>-fold cross validation.
+	<h3>Covariates</h3>
+	<br /> The types of covariates used in the prediction model will use:
+	<br />
+	<br />
+	<div>
+		<ul data-bind="visible: patientLevelPrediction().cvDemographics">
+			<li>Demographics</li>
+			<ul>
+				<li data-bind="visible:patientLevelPrediction().cvDemographicsGender">Gender</li>
+				<li data-bind="visible:patientLevelPrediction().cvDemographicsAge">Age group (5-year bands)</li>
+				<li data-bind="visible:patientLevelPrediction().cvDemographicsYear">Index year</li>
+				<li data-bind="visible:patientLevelPrediction().cvDemographicsMonth">Index month</li>
+				<li data-bind="visible:patientLevelPrediction().cvDemographicsRace">Race</li>
+				<li data-bind="visible:patientLevelPrediction().cvDemographicsEthnicity">Ethnicity</li>
+			</ul>
+		</ul>
+		<ul data-bind="visible: patientLevelPrediction().cvCondition">
+			<li>Conditions</li>
+			<ul>
+				<li data-bind="visible:patientLevelPrediction().cvConditionOcc30d">In prior 30d</li>
+				<li data-bind="visible:patientLevelPrediction().cvConditionOcc365d">In prior 365d</li>
+				<li data-bind="visible:patientLevelPrediction().cvConditionOccInpt180d">In prior 180d within inpatient setting</li>
+				<li data-bind="visible:patientLevelPrediction().cvConditionEraEver">All time prior</li>
+				<li data-bind="visible:patientLevelPrediction().cvConditionEraOverlap">Overlapping index date</li>
+			</ul>
+		</ul>
+		<ul data-bind="visible: patientLevelPrediction().cvConditionGroup">
+			<li>Condition aggregation</li>
+			<ul>
+				<li data-bind="visible:patientLevelPrediction().cvConditionGroupSnomed">SNOMED</li>
+				<li data-bind="visible:patientLevelPrediction().cvConditionGroupMeddra">MedDRA</li>
+			</ul>
+		</ul>
+		<ul data-bind="visible: patientLevelPrediction().cvDrug">
+			<li>Drugs</li>
+			<ul>
+				<li data-bind="visible:patientLevelPrediction().cvDrugInPrior30d">In prior 30d</li>
+				<li data-bind="visible:patientLevelPrediction().cvDrugInPrior365d">In prior 365d</li>
+				<li data-bind="visible:patientLevelPrediction().cvDrugEraEver">All time prior</li>
+				<li data-bind="visible:patientLevelPrediction().cvDrugEraOverlap">Overlapping index date</li>
+			</ul>
+		</ul>
+		<ul data-bind="visible: patientLevelPrediction().cvDrugAggregation">
+			<li>Drug aggregation</li>
+			<ul>
+				<li data-bind="visible:patientLevelPrediction().cvDrugExposure">Clinical Drug</li>
+				<li data-bind="visible:patientLevelPrediction().cvDrugEra">Ingredient</li>
+				<li data-bind="visible:patientLevelPrediction().cvDrugGroup">ATC Class</li>
+			</ul>
+		</ul>
+		<ul data-bind="visible: patientLevelPrediction().cvProcedureOcc">
+			<li>Procedures</li>
+			<ul>
+				<li data-bind="visible:patientLevelPrediction().cvProcedureOcc30d">In prior 30d</li>
+				<li data-bind="visible:patientLevelPrediction().cvProcedureOcc365d">In prior 365d</li>
+			</ul>
+		</ul>
+		<ul data-bind="visible: patientLevelPrediction().cvMeasurement">
+			<li>Measurement</li>
+			<ul>
+				<li data-bind="visible:patientLevelPrediction().cvMeasurement30d">Existence in prior 30d</li>
+				<li data-bind="visible:patientLevelPrediction().cvMeasurement365d">Existence in prior 365d</li>
+				<li data-bind="visible:patientLevelPrediction().cvMeasurementCount365d">Count in prior 365d</li>
+				<li data-bind="visible:patientLevelPrediction().cvMeasurementBelow">Has latest prior numeric value below normal range</li>
+				<li data-bind="visible:patientLevelPrediction().cvMeasurementAbove">Has latest prior numeric value above normal range</li>
+			</ul>
+		</ul>
+		<ul data-bind="visible: patientLevelPrediction().cvRiskScores">
+			<li>Risk scores</li>
+			<ul>
+				<li data-bind="visible:patientLevelPrediction().cvRiskScoresCharlson">Charlson</li>
+				<li data-bind="visible:patientLevelPrediction().cvRiskScoresChads2">CHADS2</li>
+				<li data-bind="visible:patientLevelPrediction().cvRiskScoresChads2vasc">CHADS2VASc</li>
+				<li data-bind="visible:patientLevelPrediction().cvRiskScoresDcsi">DCSI</li>
+			</ul>
+		</ul>
+		<ul>
+			<li data-bind="visible:patientLevelPrediction().cvConceptCounts">Concept counts (count of distinct conditions/procedures/visits in history)</li>
+		</ul>
+		<ul data-bind="visible: patientLevelPrediction().cvInteraction">
+			<li>Interaction terms</li>
+			<ul>
+				<li data-bind="visible:patientLevelPrediction().cvInteractionYear">By index year</li>
+				<li data-bind="visible:patientLevelPrediction().cvInteractionMonth">By index month</li>
+			</ul>
+		</ul>
+	</div>
+	<div data-bind="if: $component.patientLevelPrediction().cvInclusionId() > 0">
+		<br /> Specific covariates to be included in the propensity score model are labelled <span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().cvInclusionCaption"></span> as detailed in Appendix 2.
+	</div>
+	<div data-bind="if: $component.patientLevelPrediction().cvExclusionId() > 0">
+		<br /> Specific covariates to be excluded from the propensity score model are labelled <span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().cvExclusionCaption"></span> as detailed in Appendix 2.
+	</div>
+	<div>
+		<br/> All covariates that occur in fewer than <span data-bind="text: $component.patientLevelPrediction().delCovariatesSmallCount"></span> persons in the target cohort will be excluded prior to model fitting.
+	</div>
+	<br />
+	<br />
+	<h3>Appendix 1: Cohort Definitions</h3>
+	<div data-bind="if: $component.patientLevelPrediction().treatmentCohortDefinition() != null">
+		<br />
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				The target cohort <span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().treatmentCaption()"></span> is defined as:
+			</div>
+			<div class="panel-body">
+				<cohort-expression-viewer params="expression: $component.patientLevelPrediction().treatmentCohortDefinition().expression, selectedFragment: $component.patientLevelPrediction().treatmentCohortDefinition().expression"></cohort-expression-viewer>
+			</div>
+		</div>
+	</div>
+	<div data-bind="if: $component.patientLevelPrediction().outcomeCohortDefinition() != null">
+		<br />
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				The outcome <span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().outcomeCaption()"></span> is defined as:
+			</div>
+			<div class="panel-body">
+				<cohort-expression-viewer params="expression: $component.patientLevelPrediction().outcomeCohortDefinition().expression, selectedFragment: $component.patientLevelPrediction().outcomeCohortDefinition().expression"></cohort-expression-viewer>
+			</div>
+		</div>
+	</div>
+	<div data-bind="if: ($component.patientLevelPrediction().cvInclusionId() > 0 || $component.patientLevelPrediction().cvExclusionId() > 0)">
+		<h3>Appendix 2: Code List Definitions</h3>
+		<div data-bind="if: $component.patientLevelPrediction().cvInclusionId() > 0">
+			<br />
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().cvInclusionCaption()"></span>
+				</div>
+				<div class="panel-body">
+					<!-- ko foreach: ko.observableArray($component.patientLevelPrediction().cvInclusionConceptSet()) -->
+					<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+					<!-- /ko -->
+				</div>
+			</div>
+		</div>
+		<div data-bind="if: $component.patientLevelPrediction().cvExclusionId() > 0">
+			<br />
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().cvExclusionCaption()"></span>
+				</div>
+				<div class="panel-body">
+					<!-- ko foreach: ko.observableArray($component.patientLevelPrediction().cvExclusionConceptSet()) -->
+					<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+					<!-- /ko -->
+				</div>
+			</div>
+		</div>
+	</div>
