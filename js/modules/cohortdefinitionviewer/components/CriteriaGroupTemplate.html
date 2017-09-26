@@ -24,6 +24,9 @@
 			<!-- ko if: EndWindow -->
 			and ending between <window-input-viewer params="Window: EndWindow"></window-input-viewer> event index date
 			<!-- /ko -->
+			<br><span data-bind="text: RestrictVisit.RestrictVisit() ? 'occurring within the same visit' : ''"></span>
+			
+			
 		</div>	
 	</li>
 <!-- /ko -->
