@@ -206,21 +206,18 @@
 		</div>	
 	</div>
 
-	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'entry' || $component.expressionMode() == 'exit' || $component.expressionMode() == 'all'}" class="tab-pane">
-		<div class="heading"><b>Cohort Collapse Strategy</b></div>
-		<br>The default selection, Era, will collapse overlapping date ranges for the same subject into a continuous period.
-			<br>
+	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'exit' || $component.expressionMode() == 'all'}" class="tab-pane">
+		<div class="heading">
+			<b>Cohort Collapse Strategy</b>
+			This strategy collapses events into eras of a continous period and eliminates the duplicate rows for the same subjects.  
+		</div>
 		<div style="padding: 5px 0px" data-bind="with: expression().CollapseSettings">
 			<ul>
-				<li>Collapse Strategy Type:
-					<select data-bind="options: $component.options.collapseStrategyOptions, value: CollapseType"></select>
-				</li>
 				<li>
-					Pad by: 
+					Specify era collapse gap size: 
 					<select data-bind="options: $component.options.dayOptions, value: EraPad"></select> days
 				</li>
 			</ul>
 		</div>
 	</div>
-
 </div>
