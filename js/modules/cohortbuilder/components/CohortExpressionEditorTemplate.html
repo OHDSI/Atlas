@@ -215,7 +215,7 @@
 			<ul>
 				<li>
 					Specify era collapse gap size: 
-					<select data-bind="options: $component.options.dayOptions, value: EraPad"></select> days
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days
 				</li>
 			</ul>
 		</div>
