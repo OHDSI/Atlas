@@ -204,5 +204,20 @@
 				No censoring events selected.
 			</div>
 		</div>	
-	</div>	
+	</div>
+
+	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'exit' || $component.expressionMode() == 'all'}" class="tab-pane">
+		<div class="heading">
+			<b>Cohort Collapse Strategy</b>
+			This strategy collapses events into eras of a continous period and eliminates the duplicate rows for the same subjects.  
+		</div>
+		<div style="padding: 5px 0px" data-bind="with: expression().CollapseSettings">
+			<ul>
+				<li>
+					Specify era collapse gap size: 
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days
+				</li>
+			</ul>
+		</div>
+	</div>
 </div>
