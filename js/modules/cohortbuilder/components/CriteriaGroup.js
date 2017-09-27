@@ -292,6 +292,22 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 				data.selectedData.action();
 			}
 		}
+		
+		// do not show restrict visit option for criteria where visit occurrence id is set to null
+		self.hasVO = function (data) {
+			switch ( self.getCriteriaComponent(data) ) {
+				case "condition-era-criteria":
+				case "death-criteria":
+				case "drug-era-criteria":
+				case "dose-era-criteria":
+				case "observation-period-criteria":
+				case "specimen-criteria":
+					return false;
+					break;
+				default:
+					return true;
+			}
+		}
 	}
 
 	// return compoonent definition
