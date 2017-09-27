@@ -1689,7 +1689,7 @@ li.current-asset {
 	font-size: 18px;
 }
 
-inclusion-rule-editor input {
+inclusion-rule-editor input[type="text"] {
 	padding: 2px 0px 2px 5px;
 	width: 80%;
 }

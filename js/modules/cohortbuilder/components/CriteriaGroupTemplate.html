@@ -91,6 +91,11 @@
 									 <span class="linkish" data-bind="click: $component.addEndWindow">and ending any time.</span>
 									<!-- /ko -->
 								</div>
+	
+								<div class="restrictVisitSection" data-bind="if: $component.hasVO($data.Criteria)">
+									<input type="checkbox" data-bind="checked: RestrictVisit"> restrict to the same visit occurrence
+								</div>
+								
 							</div>
 						</td>
 						<td>
