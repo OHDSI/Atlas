@@ -32,6 +32,9 @@
     cdmVersion <span class="token operator"><-</span> <span class="token string">"5" </span>
     outputFolder <span class="token operator"><-</span> <span class="token string">"&lt;insert your directory here&gt;"</span>
     plpDataSaveName <span class="token operator"><-</span> <span class="token string">'your_plp_project_name'</span>
+    if(!dir.exists(outputFolder)){
+        dir.create(outputFolder, recursive = <span class="token boolean">TRUE</span>)
+    }
     setwd(outputFolder)
     
     targetCohortId <span class="token operator"><-</span> <span class="token number" data-bind="text: $component.patientLevelPrediction().treatmentId"></span> <span class="token comment"># <span data-bind="text: $component.patientLevelPrediction().treatmentCaption"></span></span>
@@ -177,8 +180,8 @@
 </span>
 <span data-bind="if: $component.patientLevelPrediction().modelType() == 3">
     <span class="token comment"># Create the model settings ----</span>
-    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setMLP(size = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSize"></span>,
-                                         alpha = <span class="token number" data-bind="text: $component.patientLevelPrediction().moAlpha"></span>,
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setMLP(size = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moSize"></span>),
+                                         alpha = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moAlpha"></span>),
                                          seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
 </span>
 <span data-bind="if: $component.patientLevelPrediction().modelType() == 4">
@@ -198,17 +201,17 @@
 <span data-bind="if: $component.patientLevelPrediction().modelType() == 6">
     <span class="token comment"># Create the model settings ----</span>
     modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setDecisionTree(max_depth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
-                                         min_samples_split = <span class="token number" data-bind="text: $component.patientLevelPrediction().moMinSamplesSplit"></span>,
-                                         min_samples_leaf = <span class="token number" data-bind="text: $component.patientLevelPrediction().moMinSamplesLeaf"></span>,
-                                         min_impurity_split = <span class="token number" data-bind="text: $component.patientLevelPrediction().moMinImpuritySplit"></span>,
+                                         min_samples_split = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinSamplesSplit"></span>),
+                                         min_samples_leaf = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinSamplesLeaf"></span>),
+                                         min_impurity_split = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinImpuritySplit"></span>),
                                          seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>,
                                          class_weight = <span class="token string">"</span><span class="token string" data-bind="text: $component.patientLevelPrediction().moClassWeight"></span><span class="token string">"</span>,
-																				 plot = outputFolder)
+                                         plot = F)
 </span>
 <span data-bind="if: $component.patientLevelPrediction().modelType() == 7">
     <span class="token comment"># Create the model settings ----</span>
-    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setAdaBoost(n_estimators = <span class="token number" data-bind="text: $component.patientLevelPrediction().moNEstimators"></span>,
-                                         learning_rate = <span class="token number" data-bind="text: $component.patientLevelPrediction().moLearningRate"></span>,
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setAdaBoost(n_estimators = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moNEstimators"></span>),
+                                         learning_rate = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moLearningRate"></span>),
                                          seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
 </span>
 <span data-bind="if: $component.patientLevelPrediction().modelType() == 8">
@@ -235,10 +238,14 @@
     # You can save and load the full results structure using:
     # PatientLevelPrediction::savePlpResult(results, dirPath = file.path(getwd(), "lr"))
     # results <span class="token operator"><-</span> PatientLevelPrediction::loadPlpResult(file.path(getwd(), "lr"))</span>
-		
+
+    <span class="token comment">#to interactively view the performance</span>
+    PatientLevelPrediction::viewPlp(results) 
+
+
     <span class="token comment"># add plots and document to output folder</span>
     PatientLevelPrediction::plotPlp(results, 
-                                         file.path(getwd(),'plpmodels', results$analysisRef$analysisId))
+                                    file.path(getwd(),'plpmodels', results$analysisRef$analysisId))
 																				 
 
     PatientLevelPrediction::createPlpJournalDocument(results, 
