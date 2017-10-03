@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, atlascharts, colorbrewer, _, config) {
+define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'd3-tip', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, atlascharts, colorbrewer, _, config, d3tip) {
 	function dataSources(params) {
 		var self = this;
 
@@ -767,8 +767,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					var freqHistChart = new self.freqhistogram();
 					freqHistChart.render(freqHistData, selector, 1000, 300, {
 						xFormat: d3.format('d'),
-						xScale: d3.scale.linear().domain([1,10]),
-						yScale: d3.scale.linear().domain([0,100]),
+						xScale: d3.scaleLinear().domain([1,10]),
+						yScale: d3.scaleLinear().domain([0,100]),
 						yMax: yScaleMax,
 						xLabel: 'Count (\'x\' or more ' + report + 's)',
 						yLabel: '% of total number of persons'
@@ -1088,7 +1088,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					ticks: 10,
 					xFormat: d3.format(',.0f'),
 					yFormat: d3.format('r'),
-					yScale: d3.scale.linear(),
+					yScale: d3.scaleLinear(),
 					boxplotHeight: 10
 				};
 
@@ -1118,7 +1118,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					chart = d3.select(target + " svg");
 				}
 
-				var tip = d3.tip()
+				var tip = d3tip()
 					.attr('class', 'd3-tip')
 					.offset([-10, 0])
 					.html(tooltipBuilder)
@@ -1173,7 +1173,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 				var height = h - options.margin.top - options.margin.bottom - xAxisLabelHeight;
 
 				// define the intial scale (range will be updated after we determine the final dimensions)
-				var x = self.xScale = d3.scale.linear()
+				var x = self.xScale = d3.scaleLinear()
 					.domain(options.xDomain || [d3.min(data, function (d) {
 						return d.x + 0.5;
 					}), d3.max(data, function (d) {
@@ -1181,9 +1181,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					})])
 					.range([0, width]);
 
-				var xAxis = d3.svg.axis()
+				var xAxis = d3.axisBottom()
 					.scale(x)
-					.orient("bottom")
 					.ticks(options.ticks)
 					.tickFormat(options.xFormat);
 
@@ -1193,9 +1192,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					})])
 					.range([height, 0]);
 
-				var yAxis = d3.svg.axis()
+				var yAxis = d3.axisLeft()
 					.scale(y)
-					.orient("left")
 					.ticks(4)
 					.tickFormat(options.yFormat);
 
