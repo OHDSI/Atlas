@@ -109,6 +109,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.generatedSql.msaps = ko.observable('');
 		self.generatedSql.impala = ko.observable('');
 		self.tabMode = self.model.currentCohortDefinitionMode;
+		self.generationTabMode = ko.observable("inclusion")
 		self.exportTabMode = ko.observable('printfriendly');
 		self.exportSqlMode = ko.observable('mssql');
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
@@ -452,8 +453,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			})[0];
 		}
 
-		self.generateCohort = function (source, event) {
-			var route = config.api.url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generate/' + source.sourceKey;
+		self.generateCohort = function (source, includeFeatures) {
+			var route = `${config.api.url}cohortdefinition/${self.model.currentCohortDefinition().id()}/generate/${source.sourceKey}`;
+			
+			if (includeFeatures) {
+				route = `${route}?includeFeatures`;
+			}
+			
 			self.getSourceInfo(source.sourceKey).status('PENDING');
 			$.ajax(route, {
 				headers: {
@@ -467,7 +473,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				}
 			});
 		}
-
+		
 		self.generateAnalyses = function (data, event) {
 			$(event.target).prop("disabled", true);
 
