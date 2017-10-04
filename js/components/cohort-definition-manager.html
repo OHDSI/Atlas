@@ -264,7 +264,16 @@
           <tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
             <tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
               <td>
-                <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data), attr: {'disabled':$component.canGenerate()==false}, click:$component.generateCohort"><i class="fa fa-play"></i>&nbsp;&nbsp;Generate</div>
+								<div style="position:relative" class="btn-group btn-group-sm thumb-dropdown" data-bind="visible:!$component.isSourceRunning($data), attr: {'disabled':$component.canGenerate()==false},">								
+									<a role="button" class="btn btn-sm btn-primary" style="max-width:200px; overflow-x: hidden; text-overflow:ellipsis; white-space:nowrap" data-bind="attr: {'disabled':$component.canGenerate()==false}, click:(data, event) => $component.generateCohort(data, false)"><i class="fa fa-play"></i>&nbsp;Generate</a>
+									<a role="button" class="btn btn-sm btn-primary dropdown-toggle" data-bind="attr: {'disabled':$component.canGenerate()==false}" data-toggle="dropdown">
+										<span class="caret"></span>  <!-- caret -->
+										<span class="sr-only">Generate</span>
+									</a>
+									<ul class="dropdown-menu" style="height: auto; max-height:200px; width:200px; overflow-x: hidden; padding:4px" role="menu">
+										<li style="cursor:pointer" data-bind="click:(data, event) => $component.generateCohort(data, true)">Gemerate With Features</li>
+									</ul>
+								</div>
                 <div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i></div>
               </td>
               <td data-bind="text:name"></td>
@@ -278,15 +287,30 @@
               <td data-bind="text: executionDuration">
               </td>
               <td>
-                <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.selectInclusionReport"><i class="fa fa-eye"></i>&nbsp;View Inclusion Report</div>
+                <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.selectInclusionReport"><i class="fa fa-eye"></i>&nbsp;View Reports</div>
               </td>
             </tr>
           </tbody>
         </table>
-        <div data-bind="visible:$component.loadingInclusionReport" class="loading">loading inclusion report</div>
+				<!-- ko if: (loadingInclusionReport() || selectedReport())   -->
+        <div data-bind="visible:$component.loadingInclusionReport" class="loading">loading inclusion and feature reports</div>
         <div data-bind="visible:!$component.loadingInclusionReport()">
-          <feasibility-report-viewer params="{report: selectedReport, reportCaption: selectedReportCaption}"></feasibility-report-viewer>
+					<ul class="nav nav-tabs">
+						<li role="presentation" data-bind="css: { active: $component.generationTabMode() == 'inclusion' }, click: function() { $component.generationTabMode('inclusion'); }">
+							<a>Inclusion Report</a>
+						</li>
+
+						<li role="presentation" data-bind="css: { active: $component.generationTabMode() == 'features' }, click: function() { $component.generationTabMode('features'); }">
+							<a>Cohort Features</a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div role="tabpanel" data-bind="css: {active: $component.generationTabMode() == 'inclusion'}" class="tab-pane">
+							<feasibility-report-viewer params="{report: selectedReport, reportCaption: selectedReportCaption}"></feasibility-report-viewer>
+						</div>
+					</div>
         </div>
+				<!-- /ko -->
       </div>
       <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'reporting' }" class="tab-pane">
         <table id="analysisStatus">
