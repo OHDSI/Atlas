@@ -14,6 +14,7 @@ define(function (require, exports) {
 	var ObservationPeriod = require("./CriteriaTypes/ObservationPeriod");	
 	var Death = require("./CriteriaTypes/Death");
 	var DemographicCriteria = require("./CriteriaTypes/DemographicCriteria");
+	var PayerPlanPeriod = require("./CriteriaTypes/PayerPlanPeriod");
 	
 	function GetCriteriaFromObject (data, conceptSets)
 	{
@@ -65,7 +66,7 @@ define(function (require, exports) {
 			};		
 		} else if (data.hasOwnProperty("ObservationPeriod")) {
 			return {
-				ObservationPeriod: new exports.ObservationPeriod(data.ObservationPeriod, conceptSets)
+				ObservationPeriod: new exports.ObservationPeriod(data.ObservationPeriod)
 			};		
 		} else if (data.hasOwnProperty("Specimen")) {
 			return {
@@ -75,11 +76,15 @@ define(function (require, exports) {
 			return {
 				Death: new exports.Death(data.Death, conceptSets)
 			};
+		}	else if (data.hasOwnProperty("PayerPlanPeriod")) {
+			return {
+				PayerPlanPeriod: new exports.PayerPlanPeriod(data.PayerPlanPeriod, conceptSets)
+			};
 		};	
 	}
 	
 	exports.ConditionOccurrence = ConditionOccurrence;
-	exports.ConditionEra = ConditionEra;
+	exports.ConditionEra = ConditionEra
 	exports.DrugExposure = DrugExposure;
 	exports.DrugEra = DrugEra;
 	exports.DoseEra = DoseEra;
@@ -92,6 +97,7 @@ define(function (require, exports) {
 	exports.ObservationPeriod = ObservationPeriod;
 	exports.Death = Death;
 	exports.DemographicCriteria = DemographicCriteria;
+	exports.PayerPlanPeriod = PayerPlanPeriod;
 	
 	exports.GetCriteriaFromObject = GetCriteriaFromObject;
 

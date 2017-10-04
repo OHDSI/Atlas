@@ -38,7 +38,9 @@ define(['knockout', 'cohortbuilder/options', 'text!./CohortExpressionViewerTempl
 			else if (data.hasOwnProperty("Specimen"))
 				return "specimen-criteria-viewer";
 			else if (data.hasOwnProperty("ObservationPeriod"))
-				return "observation-period-criteria-viewer";			
+				return "observation-period-criteria-viewer";
+			else if (data.hasOwnProperty("PayerPlanPeriod"))
+				return "payer-plan-period-criteria-viewer";
 			else if (data.hasOwnProperty("Death"))
 				return "death-criteria-viewer";			
 			else
