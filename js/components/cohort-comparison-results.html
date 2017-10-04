@@ -1,0 +1,150 @@
+<h3>PLEASE NOTE: THIS COMPONENT IS NO LONGER WORKING.</h3>
+<div class="padded-wrapper" data-bind="visible:$component.resultsMode() == 'sources'">
+	<div class="heading">Available Data Sources</div>
+	<div data-bind="foreach:$component.sources" class="results-tab-pane">
+		<div class="row">
+			<div class="col-sm-8" data-bind="text:sourceName"></div>
+			<div class="col-sm-4 text-right">
+				<span class="btn-group">
+								<button data-bind="css:{disabled:!$component.config.rServicesHost}, visible: !$component.sourceProcessingStatus[sourceKey](), click:function() {$component.executeCohortComparison(sourceKey);}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
+								<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
+								<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
+								<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">
+									&nbsp;(<span data-bind="text:$component.sourceExecutions[sourceKey]().length"></span> Results)
+				<i data-bind="visible:!$component.sourceHistoryDisplay[sourceKey]()" class="fa fa-angle-double-down"></i>
+				<i data-bind="visible:$component.sourceHistoryDisplay[sourceKey]" class="fa fa-angle-double-up"></i>
+				</button>
+				</span>
+			</div>
+		</div>
+		<div data-bind="foreach:$component.sourceExecutions[sourceKey], visible:$component.sourceHistoryDisplay[sourceKey]">
+			<div class="row executionrow">
+				<div class="col-sm-1" data-bind="text:executionId"></div>
+				<div class="col-sm-2" data-bind="text:executedCaption"></div>
+				<div class="col-sm-3 text-right" data-bind="text:durationCaption"></div>
+				<div class="col-sm-2 text-right" data-bind="text:executionStatus"></div>
+				<div class="col-sm-4 text-right">
+					<button class="btn btn-sm btn-primary" data-bind="css:{disabled:executionStatus!='COMPLETED'},click:$component.executionSelected"><i class="fa fa-eye"></i> View</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="paddedWrapper text-center loading" data-bind="visible: $component.loadingExecution">
+	<div>loading results</div>
+	<div>
+		<i class="fa fa-circle-o-notch fa-spin"></i>
+	</div>
+</div>
+
+<div class="paddedWrapper" data-bind="visible: $component.resultsMode() == 'execution' && !$component.loadingExecution()">
+
+	<div class="row">
+		<div class="col-sm-12 text-right">
+			<button data-bind="click:closeExecution" class="btn btn-sm btn-primary">Back to Sources</button>
+		</div>
+	</div>
+
+	<div class="heading" data-bind="text:$component.currentExecutionSourceName() + ' Results'">
+	</div>
+
+	<ul class="nav nav-pills">
+		<li role="presentation" data-bind="css: { active: $component.pillMode() == 'covariates' }, click: function() { $component.pillMode('covariates') };"><a>PS Covariates</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.pillMode() == 'psd' }, click: function() { $component.pillMode('psd') };"><a>PS Distribution</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.pillMode() == 'matched' }, click: function() { $component.pillMode('matched') };"><a>Matched PS Distribution</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.pillMode() == 'attrition' }, click: function() { $component.pillMode('attrition') };"><a>Attrition</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.pillMode() == 'balance' }, click: function() { $component.pillMode('balance') };"><a>Balance</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.pillMode() == 'om' }, click: function() { $component.pillMode('om') };"><a>Outcome Model</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div role="tabpanel" data-bind="if: $component.pillMode() == 'om'">
+			<div data-bind="foreach:$component.om">
+				<div id="row" class="paddedWrapper">
+					<div class="col-sm-9">
+						The result of the analysis when comparing the rate of the outcome defined by the cohort (<span class="omHighlight" data-bind="text:$component.cohortComparison().outcomeCaption"></span>) between the treatment cohort (<span class="omHighlight" data-bind="text:$component.cohortComparison().treatmentCaption"></span>) and the comparator cohort (<span class="omHighlight" data-bind="text:$component.cohortComparison().comparatorCaption"></span>) is <span class="omHighlight" data-bind="text:caption"></span>.
+					</div>
+				</div>
+			</div>
+		</div>
+		<div role="tabpanel" data-bind="visible: $component.pillMode() == 'covariates'">
+			<faceted-datatable params="{orderColumn:3, reference:covariates, columns: covariateColumns, options:covariateOptions, rowClick:covariateSelected}">
+			</faceted-datatable>
+		</div>
+		<div role="tabpanel" data-bind="visible: $component.pillMode() == 'attrition'">
+			<div class="paddedWrapper">
+				<table class="padded">
+					<thead>
+						<th>Description</th>
+						<th>Treated Persons</th>
+						<th>Comparator Persons</th>
+						<th>Treated Exposures</th>
+						<th>Comparator Exposures</th>
+					</thead>
+					<tbody data-bind="foreach:attrition">
+						<tr>
+							<td data-bind="text:description"></td>
+							<td class="numeric" data-bind="text:treatedPersons"></td>
+							<td class="numeric" data-bind="text:comparatorPersons"></td>
+							<td class="numeric" data-bind="text:treatedExposures"></td>
+							<td class="numeric" data-bind="text:comparatorExposures"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div role="tabpanel" data-bind="visible: $component.pillMode() == 'psd'">
+			<div id="psmodeldistChart">
+				<svg></svg>
+			</div>
+		</div>
+		<div role="tabpanel" data-bind="visible: $component.pillMode() == 'matched'">
+			<div id="popdistChart">
+				<svg></svg>
+			</div>
+		</div>
+		<div role="tabpanel" data-bind="visible: $component.pillMode() == 'balance'">
+			<div id="balanceChart">
+				<svg></svg>
+			</div>
+
+			<!--
+						<div data-bind="d3ChartBinding:
+							{
+								c1:null, // ko only allows comment on same line as param (and not after last param)
+
+								chartType:'zoomScatter',// required string
+
+								c3:null,								// optional observables
+								chartData,							// whatever data chart expects
+								chartOptions,						// whatever options chart expects
+								chartResolution,				// {width: w, height: h}
+								chartObj,								// to pass back ref to chart obj
+								domElement,							// ref to dom element for use by chart or caller
+								jqEventSpace,						// any object, so chart can share events with caller
+
+								c3:null,
+							}">
+						</div>
+
+						<div data-bind="if:chartData().length && fields().length">
+							<faceted-datatable-cf
+								params="options:{},
+												jqEventSpace: jqEventSpace,
+												fields: fields,
+												recs:chartData,
+												saveStateToUrl: true,
+												sharedCrossfilter: sharedCrossfilter,
+												"></faceted-datatable-cf>
+						</div>
+						-->
+		</div>
+	</div>
+</div>
