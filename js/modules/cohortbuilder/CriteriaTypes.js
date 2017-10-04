@@ -66,7 +66,7 @@ define(function (require, exports) {
 			};		
 		} else if (data.hasOwnProperty("ObservationPeriod")) {
 			return {
-				ObservationPeriod: new exports.ObservationPeriod(data.ObservationPeriod)
+				ObservationPeriod: new exports.ObservationPeriod(data.ObservationPeriod, conceptSets)
 			};		
 		} else if (data.hasOwnProperty("Specimen")) {
 			return {
@@ -84,7 +84,7 @@ define(function (require, exports) {
 	}
 	
 	exports.ConditionOccurrence = ConditionOccurrence;
-	exports.ConditionEra = ConditionEra
+	exports.ConditionEra = ConditionEra;
 	exports.DrugExposure = DrugExposure;
 	exports.DrugEra = DrugEra;
 	exports.DoseEra = DoseEra;
