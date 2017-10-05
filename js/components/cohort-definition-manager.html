@@ -256,7 +256,8 @@
             <th></th>
             <th>Source Name</th>
             <th>Generation Status</th>
-            <th>Distinct People</th>
+            <th>People</th>
+            <th>Records</th>
             <th>Generated</th>
             <th>Generation Duration</th>
             <th></th>
@@ -271,7 +272,7 @@
 										<span class="sr-only">Generate</span>
 									</a>
 									<ul class="dropdown-menu" style="height: auto; max-height:200px; width:200px; overflow-x: hidden; padding:4px" role="menu">
-										<li style="cursor:pointer" data-bind="click:(data, event) => $component.generateCohort(data, true)">Gemerate With Features</li>
+										<li style="cursor:pointer" data-bind="click:(data, event) => $component.generateCohort(data, true)">Generate With Features</li>
 									</ul>
 								</div>
                 <div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i></div>
@@ -280,21 +281,23 @@
               <td class="statusIndicator">
                 <span data-bind="text: $component.getStatusMessage($data)"></span>
               </td>
-              <td data-bind="html: distinctPeople()">
+              <td data-bind="html: personCount">
+              </td>
+              <td data-bind="html: recordCount">
               </td>
               <td data-bind="text: startTime">
               </td>
               <td data-bind="text: executionDuration">
               </td>
               <td>
-                <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.selectInclusionReport"><i class="fa fa-eye"></i>&nbsp;View Reports</div>
+                <div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.selectViewReport"><i class="fa fa-eye"></i>&nbsp;View Reports</div>
               </td>
             </tr>
           </tbody>
         </table>
-				<!-- ko if: (loadingInclusionReport() || selectedReport())   -->
-        <div data-bind="visible:$component.loadingInclusionReport" class="loading">loading inclusion and feature reports</div>
-        <div data-bind="visible:!$component.loadingInclusionReport()">
+				<!-- ko if: (loadingReport() || selectedReport())   -->
+        <div data-bind="visible:$component.loadingReport" class="loading">loading inclusion and feature reports</div>
+        <div data-bind="visible:!$component.loadingReport()">
 					<ul class="nav nav-tabs">
 						<li role="presentation" data-bind="css: { active: $component.generationTabMode() == 'inclusion' }, click: function() { $component.generationTabMode('inclusion'); }">
 							<a>Inclusion Report</a>
@@ -306,7 +309,18 @@
 					</ul>
 					<div class="tab-content">
 						<div role="tabpanel" data-bind="css: {active: $component.generationTabMode() == 'inclusion'}" class="tab-pane">
-							<feasibility-report-viewer params="{report: selectedReport, reportCaption: selectedReportCaption}"></feasibility-report-viewer>
+							<div class="heading">Inclusion Report for <span data-bind="text:selectedReportCaption"></span></div>
+							<feasibility-report-viewer params="report: selectedReport"></feasibility-report-viewer>
+						</div>
+						<div role="tabpanel" data-bind="css: {active: $component.generationTabMode() == 'features'}" class="tab-pane">
+							<!-- ko if: $component.selectedSource() && $component.selectedSource().includeFeatures -->
+							<div class="heading">Feature Report for <span data-bind="text:selectedReportCaption"></span></div>
+							<div><b>Features are basline characteristics (e.g collected before /on cohort start)</b></div>
+							<cohort-feature-browser params="cohortId: $component.model.currentCohortDefinition().id, sourceKey: $component.selectedSourceKey"></cohort-feature-browser>
+							<!-- /ko -->
+							<!-- ko ifnot: $component.selectedSource() && $component.selectedSource().includeFeatures -->
+							<div class="heading">Features were not generated for this source.</div>
+							<!-- /ko -->
 						</div>
 					</div>
         </div>

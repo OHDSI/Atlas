@@ -1197,14 +1197,26 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 											var date = new Date(sourceInfo.startTime);
 											cdsi.startTime = ko.observable(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
 											cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
-											cdsi.distinctPeople = ko.observable('...');
-											self.getCohortCount(source, cdsi.distinctPeople);
+											// For backwards compatability, query personCount from cdm if not populated in sourceInfo
+											if (sourceInfo.personCount == null)
+											{
+												cdsi.personCount = ko.observable('...');
+												self.getCohortCount(source, cdsi.personCount);
+											} else {
+												cdsi.personCount = ko.observable(sourceInfo.personCount);
+											}
+											cdsi.recordCount = ko.observable(sourceInfo.recordCount);
+											cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
+											cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 										} else {
 											cdsi.isValid = ko.observable(false);
 											cdsi.status = ko.observable('n/a');
 											cdsi.startTime = ko.observable('n/a');
 											cdsi.executionDuration = ko.observable('n/a');
-											cdsi.distinctPeople = ko.observable('n/a');
+											cdsi.personCount = ko.observable('n/a');
+											cdsi.recordCount = ko.observable('n/a');
+											cdsi.includeFeatures = ko.observable(false);
+											cdsi.failMessage = ko.observable(null);
 										}
 										results.push(cdsi);
 									}

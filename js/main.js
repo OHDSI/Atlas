@@ -31,6 +31,10 @@ requirejs.config({
 			name: "plp",
 			location: "modules/plp"
 		},
+		{
+			name: "cohortfeatures",
+			location: "modules/cohortfeatures"
+		},
 	],
 	shim: {
 		"colorbrewer": {
