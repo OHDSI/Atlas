@@ -1977,3 +1977,13 @@ span.new-role {
 	-webkit-box-shadow: none;
 	box-shadow: none;
 }
+
+.filter-results-select {
+	padding: 10px;
+	padding-bottom: 0px;
+	font-size: 14px;
+}
+
+.list-inline>li {
+	vertical-align: middle;
+}

@@ -12,6 +12,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'faceted-datatable',
 				'databindings',
 				'cohortdefinitionviewer/expressionCartoonBinding',
+				'cohortfeatures',
 ], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, sharedState) {
 
 	function translateSql(sql, dialect) {
@@ -157,9 +158,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 		});
 
+		self.selectedSource = ko.observable();
 		self.selectedReport = ko.observable();
 		self.selectedReportCaption = ko.observable();
-		self.loadingInclusionReport = ko.observable(false);
+		self.selectedSourceKey = ko.pureComputed(() => self.selectedSource().sourceKey);
+		self.loadingReport = ko.observable(false);
 		self.sortedConceptSets = self.model.currentCohortDefinition().expression().ConceptSets.extend({
 			sorted: conceptSetSorter
 		});
@@ -275,17 +278,21 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 						// only bother updating those sources that we know are running
 						if (self.isSourceRunning(source)) {
 							source.status(info.status);
+							source.includeFeatures(info.includeFeatures);
 							source.isValid(info.isValid);
 							var date = new Date(info.startTime);
 							source.startTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
 							source.executionDuration('...');
-							source.distinctPeople('...');
+							source.personCount('...');
+							source.recordCount('...');
 
 							if (info.status != "COMPLETE") {
 								hasPending = true;
 							} else {
 								source.executionDuration((info.executionDuration / 1000) + 's');
-								self.model.getCohortCount(source, source.distinctPeople);
+								source.personCount(info.personCount);
+								source.recordCount(info.recordCount);
+								source.failMessage(info.failMessage);
 							}
 						}
 					}
@@ -594,14 +601,15 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			window.open(config.api.url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/export/conceptset');
 		}
 
-		self.selectInclusionReport = function (item) {
-			self.loadingInclusionReport(true);
+		self.selectViewReport = function (item) {
+			self.selectedSource(item);
+			self.loadingReport(true);
 			self.selectedReportCaption(item.name);
 
 			cohortDefinitionAPI.getReport(self.model.currentCohortDefinition().id(), item.sourceKey).then(function (report) {
 				report.sourceKey = item.sourceKey;
 				self.selectedReport(report);
-				self.loadingInclusionReport(false);
+				self.loadingReport(false);
 			});
 		}
 
