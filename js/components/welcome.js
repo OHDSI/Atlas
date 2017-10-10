@@ -54,6 +54,9 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
         };
 
         self.signin = function () {
+			
+			self.currentAuthProvider = ko.observable(this);
+			
             var loginUrl = self.serviceUrl + self.currentAuthProvider().url;
 
             if (self.currentAuthProvider().ajax == true) {

@@ -111,6 +111,14 @@
 				<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
 				<div class="evidenceDescription"></div>
 			</div>
+		<!-- ko if: $component.currentReport().byFrequency && !$component.loadingReport() -->
+			<div class="col-xs-12">
+				<div class="reportSectionHeading">Frequency Distribution</div>
+				<div class="evidenceVisualization" id="frequencyDistribution"></div>
+				<div class="evidenceDescription"></div>
+			</div>
+			<!-- /ko -->
+
 		</div>
 
 		<!-- /ko -->
