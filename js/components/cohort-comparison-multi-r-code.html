@@ -11,9 +11,11 @@
 
     <span class="token comment">
     # Uncomment to install CohortMethod
+    # install.packages("devtools")
     # install.packages("drat")
     # drat::addRepo(c("OHDSI","cloudyr"))
-    # install.packages("CohortMethod")
+    # devtools::install_github("ohdsi/FeatureExtraction", ref = "v1.2.3")
+    # devtools::install_github("ohdsi/CohortMethod", ref = "v2.4.4")
     # install.packages("EmpiricalCalibration")
     
     # Load the Cohort Method library</span>
@@ -34,11 +36,11 @@
     outcomeTable <span class="token operator"><-</span> <span class="token string">"outcome_table"</span>
     cdmVersion <span class="token operator"><-</span> <span class="token string">"5" </span>
     outputFolder <span class="token operator"><-</span> <span class="token string">"&lt;insert your directory here&gt;"</span>
+    maxCores <span class="token operator"><-</span> <span class="token number">1</span> 
     if(!dir.exists(outputFolder)){
         dir.create(outputFolder, recursive = TRUE)
     }
     setwd(outputFolder)
-    maxCores <span class="token operator"><-</span> <span class="token number">1</span> 
     
     targetCohortId <span class="token operator"><-</span> <span class="token number" data-bind="text: $component.cohortComparison().treatmentId"></span>
     comparatorCohortId <span class="token operator"><-</span> <span class="token number" data-bind="text: $component.cohortComparison().comparatorId"></span>
