@@ -8,7 +8,7 @@ table.cohort-generate-sources td {
 	line-height: 28px;
 }
 
-table.cohort-generate-sources tbody {
+table.cohort-generate-sources tbody.overflow {
 	display: block;
 	max-height: 210px;
 	overflow: auto;

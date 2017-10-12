@@ -262,10 +262,10 @@
             <th>Generation Duration</th>
             <th></th>
           </thead>
-          <tbody data-bind="foreach:model.cohortDefinitionSourceInfo">
+          <tbody data-bind="foreach:model.cohortDefinitionSourceInfo, css: {overflow: model.cohortDefinitionSourceInfo().length > 3}">
             <tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
               <td>
-								<div style="position:relative" class="btn-group btn-group-sm thumb-dropdown" data-bind="visible:!$component.isSourceRunning($data), attr: {'disabled':$component.canGenerate()==false},">								
+								<div style="position:relative" class="btn-group btn-group-sm thumb-dropdown" data-bind="css: {dropup: ($index() > 0 && $index() === $parent.model.cohortDefinitionSourceInfo().length-1)}, visible:!$component.isSourceRunning($data), attr: {'disabled':$component.canGenerate()==false},">								
 									<a role="button" class="btn btn-sm btn-primary" style="max-width:200px; overflow-x: hidden; text-overflow:ellipsis; white-space:nowrap" data-bind="attr: {'disabled':$component.canGenerate()==false}, click:(data, event) => $component.generateCohort(data, false)"><i class="fa fa-play"></i>&nbsp;Generate</a>
 									<a role="button" class="btn btn-sm btn-primary dropdown-toggle" data-bind="attr: {'disabled':$component.canGenerate()==false}" data-toggle="dropdown">
 										<span class="caret"></span>  <!-- caret -->
