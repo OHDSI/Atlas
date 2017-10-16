@@ -12,11 +12,13 @@
     <span class="token comment">
     # Uncomment to install CohortMethod
     # install.packages("devtools")
-    # install.packages("drat")
-    # drat::addRepo(c("OHDSI","cloudyr"))
+    # library(devtools)
+    # install_github("ohdsi/SqlRender")
+    # install_github("ohdsi/DatabaseConnector")
+    # install_github("ohdsi/OhdsiRTools")
     # devtools::install_github("ohdsi/FeatureExtraction", ref = "v1.2.3")
     # devtools::install_github("ohdsi/CohortMethod", ref = "v2.4.4")
-    # install.packages("EmpiricalCalibration")
+    # install_github("ohdsi/EmpiricalCalibration")
     
     # Load the Cohort Method library</span>
     <span class="token function">library</span>(CohortMethod) 
@@ -31,16 +33,13 @@
                                                  user = <span class="token string">"joe"</span>,
                                                  password = <span class="token string">"supersecret"</span>)
     cdmDatabaseSchema <span class="token operator"><-</span> <span class="token string">"my_cdm_data"</span>
-    resultsDatabaseSchema <span class="token operator"><-</span> <span class="token string">"my_results"</span>
+    exposureDatabaseSchema <span class="token operator"><-</span> <span class="token string">"exposure_database_schema"</span>
+    outcomeDatabaseSchema <span class="token operator"><-</span> <span class="token string">"outcome_database_schema"</span>
     exposureTable <span class="token operator"><-</span> <span class="token string">"exposure_table"</span>
     outcomeTable <span class="token operator"><-</span> <span class="token string">"outcome_table"</span>
     cdmVersion <span class="token operator"><-</span> <span class="token string">"5" </span>
     outputFolder <span class="token operator"><-</span> <span class="token string">"&lt;insert your directory here&gt;"</span>
     maxCores <span class="token operator"><-</span> <span class="token number">1</span> 
-    if(!dir.exists(outputFolder)){
-        dir.create(outputFolder, recursive = TRUE)
-    }
-    setwd(outputFolder)
     
     targetCohortId <span class="token operator"><-</span> <span class="token number" data-bind="text: $component.cohortComparison().treatmentId"></span>
     comparatorCohortId <span class="token operator"><-</span> <span class="token number" data-bind="text: $component.cohortComparison().comparatorId"></span>
@@ -72,6 +71,7 @@
     connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
     excludedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
     excludedConcepts <span class="token operator"><-</span> excludedConcepts$CONCEPT_ID
+	DatabaseConnector::disconnect(connection)
     </span><span data-bind="if: $component.cohortComparison().psExclusionConceptSetSQL() == null">
     excludedConcepts <span class="token operator"><-</span> c()
     </span>
@@ -82,6 +82,7 @@
     connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
     includedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
     includedConcepts <span class="token operator"><-</span> includedConcepts$CONCEPT_ID
+	DatabaseConnector::disconnect(connection)
     </span><span data-bind="if: $component.cohortComparison().psInclusionConceptSetSQL() == null">
     includedConcepts <span class="token operator"><-</span> c()
     </span>
@@ -93,6 +94,7 @@
     connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
     omExcludedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
     omExcludedConcepts <span class="token operator"><-</span> omExcludedConcepts$CONCEPT_ID
+	DatabaseConnector::disconnect(connection)
     </span><span data-bind="if: $component.cohortComparison().omExclusionConceptSetSQL() == null">
     omExcludedConcepts <span class="token operator"><-</span> c()
     </span>
@@ -103,6 +105,7 @@
     connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
     omIncludedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
     omIncludedConcepts <span class="token operator"><-</span> omIncludedConcepts$CONCEPT_ID
+	DatabaseConnector::disconnect(connection)
     </span><span data-bind="if: $component.cohortComparison().omInclusionConceptSetSQL() == null">
     omIncludedConcepts <span class="token operator"><-</span> c()
     </span>
@@ -114,6 +117,7 @@
     connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
     negativeControlConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
     negativeControlConcepts <span class="token operator"><-</span> negativeControlConcepts$CONCEPT_ID
+	DatabaseConnector::disconnect(connection)
     </span><span data-bind="if: $component.cohortComparison().negativeControlConceptSetSQL() == null">
     negativeControlConcepts <span class="token operator"><-</span> c()
     </span>
@@ -243,9 +247,9 @@
     <span class="token comment"># Run the analysis ----</span>
     result <span class="token operator"><-</span> CohortMethod::runCmAnalyses(connectionDetails = connectionDetails,
                             cdmDatabaseSchema = cdmDatabaseSchema,
-                            exposureDatabaseSchema = resultsDatabaseSchema,
+                            exposureDatabaseSchema = exposureDatabaseSchema,
                             exposureTable = exposureTable,
-                            outcomeDatabaseSchema = resultsDatabaseSchema,
+                            outcomeDatabaseSchema = outcomeDatabaseSchema,
                             outcomeTable = outcomeTable,
                             cdmVersion = cdmVersion,
                             outputFolder = outputFolder,

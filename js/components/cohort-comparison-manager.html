@@ -414,10 +414,10 @@
               <div data-bind="visible: cohortComparison().psExclusionId() > 0 && cohortComparison().psExclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:cohortComparison().psExclusionId()"></span>) was deleted. Please select a different concept set.</div>
             </div>
             <div>
-              <label>How do you want to restrict your cohorts based on the propensity score distribution?</label>
+              <label>How do you want to trim your cohorts based on the propensity score distribution?</label>
               <div class="input-group">
                 <select class="form-control" data-bind="options: cohortComparison().trimOptions, optionsText:'name', optionsValue:'id', value: cohortComparison().psTrim"></select>
-                <span data-bind="if: cohortComparison().psTrim() != 0">Trim Fraction (1-100%):<input class="form-control" type="text" data-bind="value: cohortComparison().psTrimFraction" /></span>
+								<span data-bind="if: cohortComparison().psTrim() != 0"><span data-bind="text: cohortComparison().psTrimDescription"></span><input class="form-control" type="text" data-bind="value: cohortComparison().psTrimFraction" /></span>
               </div>
             </div>
             <div>
@@ -437,7 +437,7 @@
             </div>
           </div>
           <div data-bind="if: cohortComparison().omCovariates() == 1">
-            <div>
+            <!--<div>
               <label>Which types of baseline covariates do you want to include in the outcome model?</label>
               <ul>
                 <li>Demographics</li>
@@ -552,7 +552,7 @@
                     <input type="checkbox" data-bind="checked:cohortComparison().omInteractionMonth" />By index month</li>
                 </ul>
               </ul>
-            </div>
+            </div>-->
             <div>
               <label>What concepts do you want to include in baseline covariates in the outcome model? (Leave blank if you want to include everything)</label>
               <div class="input-group">
