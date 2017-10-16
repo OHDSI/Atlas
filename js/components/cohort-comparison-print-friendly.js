@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./cohort-comparison-print-friendly.html', 'appConfig', 'cohortcomparison/ComparativeCohortAnalysis', 'nvd3', 'css!./styles/nv.d3.min.css'],
+define(['jquery', 'knockout', 'text!./cohort-comparison-print-friendly.html', 'appConfig', 'cohortcomparison/ComparativeCohortAnalysis'],
 	function ($, ko, view, config, cohortComparison, options) {
 		function cohortComparisonPrintFriendly(params) {
 			var self = this;
