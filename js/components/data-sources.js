@@ -16,6 +16,10 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 		var minimum_area = 50;
 		var threshold = minimum_area / (width * height);
 
+		const size4 = {width: 400, height: 280},
+			size6 = {width: 500, height: 300},
+			size12 = {width:1000, height: 300};
+		
 		self.model = params.model;
 		self.sources = config.api.sources.filter(function(s) { return s.hasResults});
 		self.loadingReport = ko.observable(false);
@@ -101,6 +105,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 				path: "measurement",
 				byType: true,
 				byFrequency: true,
+				byUnit: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -133,10 +138,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 		self.formatFixed = d3.format('.2f');
 		self.formatComma = d3.format(',');
 		self.treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
-		self.boxplotWidth = 200;
-		self.boxplotHeight = 125;
-		self.donutWidth = 500;
-		self.donutHeight = 300;
+
 
 		self.loadSummary = function () {
 			var currentReport = self.currentReport();
@@ -173,7 +175,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 
 						var genderConceptData = self.mapConceptData(data.gender);
 						var populationDonut = new atlascharts.donut();
-						populationDonut.render(genderConceptData, "#populationByGender", self.donutWidth, self.donutHeight);
+						populationDonut.render(genderConceptData, "#populationByGender", size4.width, size4.height);
 
 						var ageAtFirstData = self.normalizeArray(data.ageAtFirstObservation);
 						if (!ageAtFirstData.empty) {
@@ -187,7 +189,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 							var ageAtFirstObservationData = self.mapHistogram(histData);
 
 							var ageHistogram = new atlascharts.histogram();
-							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", self.boxplotWidth, self.boxplotHeight, {
+							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", size4.width, size4.height , {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Age',
@@ -218,7 +220,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 								}
 							}
 							var observationLine = new atlascharts.line();
-							observationLine.render(cumulativeData, "#cumulativeObservation", 230, 115, {
+							observationLine.render(cumulativeData, "#cumulativeObservation", size6.width, size6.height, {
 								yFormat: d3.format('0.0%'),
 								interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
 								xLabel: cumulativeObservationXLabel,
@@ -236,7 +238,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 							});
 							d3.selectAll("#oppeoplebymonthsingle svg").remove();
 							var singleLine = new atlascharts.line();
-							singleLine.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
+							singleLine.render(byMonthSeries, "#oppeoplebymonthsingle", size6.width, size6.height, {
 								xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
@@ -269,7 +271,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 							histData.intervals = 100;
 							histData.data = self.normalizeArray(data.yearOfBirth);
 							var histogram = new atlascharts.histogram();
-							histogram.render(self.mapHistogram(histData), "#hist", 460, 195, {
+							histogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Year',
@@ -279,9 +281,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 						var genderDonut = new atlascharts.donut();
 						var raceDonut = new atlascharts.donut();
 						var ethnicityDonut = new atlascharts.donut();
-						genderDonut.render(self.mapConceptData(data.gender), "#gender", 260, 130);
-						raceDonut.render(self.mapConceptData(data.race), "#race", 260, 130);
-						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", 260, 130);
+						genderDonut.render(self.mapConceptData(data.gender), "#gender", size4.width, size4.height);
+						raceDonut.render(self.mapConceptData(data.race), "#race", size4.width, size4.height);
+						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", size4.width, size4.height);
 					}
 				});
 			} else if (currentReport.name == 'Achilles Heel') {
@@ -370,7 +372,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 
 
 							var totalLine = new atlascharts.line();
-							totalLine.render(totalRecordsData, "#totalrecords", 900, 250, {
+							totalLine.render(totalRecordsData, "#totalrecords", size12.width, size12.height, {
 								xScale: d3.scaleTime().domain(d3.extent(totalRecords, function (d) {
 									return d.xCalendarMonth;
 								})),
@@ -407,7 +409,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 
 
 							var recordsperpersonLine = new atlascharts.line();
-							recordsperpersonLine.render(recordsPerPersonData, "#recordsperperson", 900, 250, {
+							recordsperpersonLine.render(recordsPerPersonData, "#recordsperperson", size12.width, size12.height, {
 								xScale: d3.scaleTime().domain(d3.extent(recordsPerPerson, function (d) {
 									return d.xCalendarMonth;
 								})),
@@ -438,7 +440,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 								});
 							}
 							var conceptsperpersonBoxPlot = new atlascharts.boxplot();
-							conceptsperpersonBoxPlot.render(conceptsSeries, "#conceptsperperson", 800, 200, {
+							conceptsperpersonBoxPlot.render(conceptsSeries, "#conceptsperperson", size12.width, size12.height, {
 								yMax: d3.max(conceptsData.p90Value),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Concept Type',
@@ -606,6 +608,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					if (currentReport.byFrequency) {
 						self.frequencyDistribution(data, '#frequencyDistribution', currentReport.path)
 					}
+					if (currentReport.byUnit) {
+						// TODO: render measurement by unit reports
+					}
 				}
 			});
 		};
@@ -666,7 +671,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 
 				// create svg with range bands based on the trellis names
 				var dataByDecileTrellisline = new atlascharts.trellisline();
-				dataByDecileTrellisline.render(dataByDecile, selector, 1000, 300, {
+				dataByDecileTrellisline.render(dataByDecile, selector, size12.width, size12.height, {
 					trellisSet: allDeciles,
 					trellisLabel: "Age Decile",
 					seriesLabel: "Year of Observation",
@@ -678,9 +683,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 						.domain(['MALE', 'FEMALE', 'UNKNOWN'])
 						.range(["#1F78B4", "#FB9A99", "#33A02C"])
 				});
-				d3.select(selector).select('svg')
-					.attr('width', '1000px')
-					.attr('height', '300px');
 			}
 		};
 
@@ -693,7 +695,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					yPercent: 'yPrevalence1000Pp'
 				});
 				var byMonthSeriesLine = new atlascharts.line();
-				byMonthSeriesLine.render(byMonthSeries, selector, 1000, 300, {
+				byMonthSeriesLine.render(byMonthSeries, selector, size12.width, size12.height, {
 					xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 						return d.xValue;
 					})),
@@ -708,7 +710,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 		self.prevalenceByType = function (data, selector) {
 			if (!!data && data.length > 0) {
 				var prevalenceByTypeDonut = new atlascharts.donut();
-				prevalenceByTypeDonut.render(self.mapConceptData(data), selector, self.donutWidth, self.donutHeight, {
+				prevalenceByTypeDonut.render(self.mapConceptData(data), selector, size6.width, size6.height, {
 					margin: {
 						top: 5,
 						left: 5,
@@ -737,7 +739,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					});
 				}
 				var ageBoxplot = new atlascharts.boxplot();
-				ageBoxplot.render(bpseries, selector, self.boxplotWidth, self.boxplotHeight, {
+				ageBoxplot.render(bpseries, selector, size6.width, size6.height, {
 					xLabel: 'Gender',
 					yLabel: yLabel,
 					yFormat: d3.format(',.1s'),
@@ -765,7 +767,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					var yScaleMax = (Math.floor((Math.max.apply(null, freqData.yNumPersons) + 5) / 10) + 1) * 10;
 					var freqHistData = self.mapHistogram(frequencyHistogram);
 					var freqHistChart = new self.freqhistogram();
-					freqHistChart.render(freqHistData, selector, 1000, 300, {
+					freqHistChart.render(freqHistData, selector, size12.width, size12.height, {
 						xFormat: d3.format('d'),
 						xScale: d3.scaleLinear().domain([1,10]),
 						yScale: d3.scaleLinear().domain([0,100]),

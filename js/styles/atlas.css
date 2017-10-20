@@ -868,6 +868,12 @@ input.btn.btn-default {
 	font-size: 8px;
 }
 
+.evidenceVisualization .axislabel {
+	font-size: 1.8em;
+}
+
+
+
 .pad-10 {
 	padding: 10px;
 }
@@ -940,11 +946,6 @@ i.fa.fa-refresh.fa-spin {
 }
 
 rect.box {}
-
-div#trellisLinePlot {
-	display: flex;
-	flex-shrink: 1;
-}
 
 .img-thumbnail {
 	border-radius: 0
