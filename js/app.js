@@ -299,6 +299,46 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 								self.currentView('plp-manager');
 							});
 						},
+						'/panacea': function () {
+							require(['panacea', 'panacea-browser', 'panacea-study-def-manager'], function () {
+								self.componentParams = {
+										model: self
+									};
+								self.currentView('panacea');
+							});
+						},
+						'/panaceadef/:panaceaStudyId': function (panaceaStudyId) {
+							require(['panacea', 'panacea-browser', 'panacea-study-def-manager'], function () {
+								self.componentParams = {
+										model: self
+									};
+								self.panaceaStudyId = panaceaStudyId;
+								self.currentView('panaceadef');
+							});
+						},
+						'/panaceaclone/:panaceaStudyId': function (panaceaStudyId) {
+							require(['panacea', 'panacea-browser'], function () {
+								self.componentParams = {
+										model: self
+									};
+								$.ajax({
+									url: config.api.url + 'panacea/cloneStudy/' + panaceaStudyId,
+									method: 'GET',
+									success: function (d) {
+										self.currentView('panacea');
+									}
+								});							
+							});
+						},
+						'/panaceasunburstresult/:panaceaStudyId': function (panaceaStudyId) {
+							require(['panacea-sunburst-result', 'panacea-cohort-result', 'panacea-vi-result'], function () {
+								self.componentParams = {
+										model: self
+									};
+								self.panaceaResultStudyId = panaceaStudyId;
+								self.currentView('panaceasunburst');
+							});
+						}
 					};
 
 					self.router = new Router(routes)

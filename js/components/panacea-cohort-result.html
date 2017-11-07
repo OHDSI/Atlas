@@ -1,0 +1,52 @@
+<!-- <div data-bind="visible:resultMode() == 'cohortreport', if: !loading()"> -->
+<div data-bind="if: !loading()">
+<!-- 	<span>this is in the cohort info seciton...</span> -->
+
+	<div id="run-analysis-container" class="container detail-container" style="padding-left: 30px; padding-right: 30px;">
+		<div id="cohort-explorer-summary" class="row">
+			<div class="col-sm-4">
+				<div>
+					<h4 data-bind="text: cohortDefinition().name">
+					</h4>
+					<span style='margin-left:5px;' data-bind='text: currentResultSource().sourceName'></span>
+					<div>
+						<p class="cohort-description" data-bind='text: currentResultSource().description'>
+						</p>
+					</div>
+					<div class="summary-grouper">
+						<div data-bind="visible:  totalPatients() != null">
+							<label style="text-decoration:underline">Summary</label>
+						</div>
+						<div data-bind="visible:totalPatients() != null">
+							<label class="cohort-desc">Total Patients: </label>
+							<label class="cohort-desc" data-bind="text:totalPatients()"></label>
+						</div>
+						<div data-bind="visible: meanObsPeriod() != null">
+							<label class="cohort-desc">Mean Observation Period: </label>
+							<label class="cohort-desc" data-bin="text: meanObsPeriod()"></label>
+						</div>
+						<div data-biond="visible: meanAge() != null">
+							<label class="cohort-desc">Median Age: </label>
+							<label class="cohort-desc" data-bind="text: meanAge()"></label>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="col-sm-4">
+				<div>
+					<h4 style="text-align:center">Age Distribution</h4>
+					<div id="age_dist" class="d3-wrapper" />
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div>
+					<h4 style="text-align:center">Gender Distribution</h4>
+					<div id="gender_dist" class="d3-wrapper" style="margin-left:20%" />
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

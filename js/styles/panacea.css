@@ -1,0 +1,132 @@
+.optional-filters {
+	padding: 10px 15px;
+	margin-top: 10px;
+	background: #f9f9f9;
+	border: 1px solid #e5e5e5;
+}
+.input-label {
+	margin-right: 5px;
+}
+
+.pnc-path {
+  stroke: #fff;
+  fill-rule: evenodd;
+}
+
+.pnc-legend {
+    font-size: 12px;
+  }
+.pnc-rect {
+    stroke-width: 2;
+  }
+
+.pnc-tooltip {
+  background: #eee;
+  box-shadow: 0 0 5px #999999;
+  color: #333;
+  display: block;
+  visibility: hidden;
+  font-size: 12px;
+//  left: 130px;
+////  left: 400px;
+  padding: 10px;
+  position: absolute;
+  text-align: center;
+//  top: 95px;
+////  top: 350px;
+  width: 280px;
+  z-index: 10;
+}
+
+.pnc-tooltip-label {
+  color: black;
+  font-size: 12px;
+}
+
+.pnc-tooltip-line2 .pnc-tooltip-line3 .pnc-tooltip-line4 .pnc-tooltip-line5 .pnc-tooltip-line6 {
+  color: black;
+  font-size: 12px;
+}
+.pnc-tooltip-duration {
+  color: black;
+  font-size: 12px;
+}
+
+.container {
+    max-width: 100%;
+}
+
+.detail-container {
+    width: auto;
+}
+
+.cohort-description {
+    color: #898989;
+    padding: 2px;
+}
+
+.summary-grouper {
+    padding: 2px;
+}
+
+.cohort-desc {
+	padding-right: 4px;
+}
+
+#pnc_sunburst_result_div path, #pnc_sunburst_result_div_2 path {
+    stroke: #fff;
+}
+
+.explanation {
+    position: absolute;
+    z-index: 10000;
+    font-size: 30px;
+    color: #000000;
+
+}
+
+.explanation .percent {
+    font-size: 28px;
+    text-align: center;
+}
+
+.explanation .sublabel {
+    font-size: 13px;
+    text-align: center;
+}
+
+.explanation .nvalue {
+    font-size: 12px;
+    color: slategray;
+    text-align: center;
+}
+
+.pnc-sidebar {
+    float: right;
+    width: 250px;
+}
+
+.pnc-legend {
+    padding: 10px 0 0 3px;
+}
+
+.pnc-legend text {
+    font-weight: 600;
+    font-size: 11px;
+    fill: #fff;
+}
+
+.sequence {
+    width: 100%;
+    height: 100%;
+    font-size:11px;
+}
+
+.legend {
+    padding: 10px 0 0 3px;
+
+}
+
+.sequence text, .legend text {
+    font-weight: 600;
+}

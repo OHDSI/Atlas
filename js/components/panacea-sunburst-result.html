@@ -1,0 +1,211 @@
+<div id="pnc_result_main_div">
+	<div class="wrapperTitle">
+		<i class="fa fa-briefcase"></i> Pathways
+	</div>
+
+	<div class="row" style="padding:10px;">
+		<div class="col-xs-2">
+			<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() {back();}">Back</button>
+		</div>
+		<div class="col-xs-2" style="padding:8px 10px">
+			<a target="" data-bind="click:function() {popPrintView();}" id="printViewLink">
+				Print View
+			</a>
+		</div>
+	</div>
+		
+	<div class="form-group" style="padding:10px;">
+		<label class="heading" style="font-weight: bold;">Result Source: </label>
+		<select class="form-control" data-bind="options:sources, optionsText: function(item) {
+                      return item.sourceName;
+                  }, value: currentResultSource" style="width: 150px !important;">
+   		</select>
+	</div>
+	
+	<div style="padding:10px;" data-bind='if:currentStudy()'>
+		<div>
+			<label class="heading" style="font-weight: bold;">Study Name:</label>
+			<br/>
+			<span data-bind='text: currentStudy().studyName'/>
+			<br/>
+
+			<label class="heading" style="font-weight: bold;">Description:</label>
+            <br/>
+			<span data-bind="text: currentStudy().studyDesc"/>
+            <br/>
+		</div>
+	</div>
+	
+	<div class="paddedWrapper" data-bind="if:currentStudy() && !loading() " style="padding: 10px;">
+<!-- 		<div class="paddedWrapper"> -->
+			<label class="heading" style="font-weight: bold;">Cohort: </label>
+             <br/>
+            <span data-bind='text:cohortDefinition().name'/>
+			<br/>
+			<cohort-expression-viewer params="expression: cohortDefinition().expression"></cohort-expression-viewer>
+			<br/>
+  			<div>Appendix 1: Concept Set Definitions</div>
+			<br/>
+			<!-- ko foreach: cohortDefinition().expression().ConceptSets.sorted -->
+			<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
+			<div style="padding-left:20px">
+				<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+				<br/>
+			</div>
+			<!-- /ko -->                                                                                                                                                         
+<!--   		</div> -->
+
+		<label class="heading" style="font-weight: bold;">Treatment Concept Set</label>
+		<br/>
+<!-- 		<span style="width:300px;" data-bind="jqAuto: { source: conceptsets, value: currentConceptSet, labelProp: 'name'}" /> -->
+		<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+             data: selectedConcepts, 
+             options: { 
+ 							dom: 'Clfiprt', 
+ 							colVis: { 
+ 								buttonText: 'Change Columns', 
+ 								align: 'right', 
+ 								overlayFade: 0, 
+ 								showAll: 'Show All Columns', 
+ 								restore: 'Reset Columns' 
+ 							}, 
+ 							rowCallback: model.contextSensitiveLinkColor, 
+ 							lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']], 
+ 							orderClasses: false, 
+ 							deferRender: true, 
+ 							autoWidth: false, 
+ 							order: [[3, 'desc']], 
+               columns: [ 
+ 									{ title: 'Concept Id', data: 'concept.CONCEPT_ID'}, 
+ 									{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'}, 
+                   { title: 'Concept Name', data: 'concept.CONCEPT_NAME'}, 
+                   { title: 'Domain', data: 'concept.DOMAIN_ID' }, 
+ 									{ title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false }, 
+ 									{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' } 
+               ] 
+            } 
+         }"> 
+ 		</table> 
+ 		<br/> 
+		
+		<label class="heading" style="font-weight: bold;">Study Configuration:</label>
+		<br/>
+		<label class="heading">Study Duration</label>
+		<span data-bind='text: currentStudy().studyDuration'></span>
+		<br/>
+		
+		<label class="heading">Overlap Period to Consider a Drug Switch Event</label>
+		<span data-bind='text: currentStudy().switchWindow'></span>
+		<br/>
+
+		<div class="form-group">
+			<label class="input-label">Calendar start date (Optional)</label>
+			<span data-bind="text:startDate() ? startDate() : 'none'"/>
+			<br/>
+			<label class=class="input-label">Calendar end date (Optional)</label>
+			<span data-bind="text:endDate() ? endDate() : 'none'"/>
+		</div>
+		
+		<div class="form-group">
+			<label class="input-label">Minimum unit duration days: </label><span data-bind="text: currentStudy().minUnitDays ? currentStudy().minUnitDays : 'none'">
+		</div>
+			
+		<div class="form-group">
+			<label class="input-label">Minimum unit patient count: </label><span data-bind="text: currentStudy().minUnitCounts ? currentStudy().minUnitCounts : 'none'">
+		</div>
+			
+		<div class="form-group">
+			<label class="input-label">Minimum adherence percentage: </label><span data-bind="text: gapThreshold() ? gapThreshold() : 'none'">
+		</div>
+	</div>
+	
+<!-- 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'cohortreport' && !loading(), if: !loading()"> -->
+	<div id="wrapperConceptDetails1" data-bind="visible: !loading(), if: !loading()">
+		<label class="heading" style="font-weight: bold;padding-left:20px">Cohort Summary:</label>
+		<br/>
+		<div id="pnc_cohortreport_div">
+			<panacea-cohort-result params="{services: pageModel.services, model: pageModel, panaceaResultStudyId: panaceaResultStudyId(), 
+				resultMode: resultMode(), currentResultSource: currentResultSource(), currentStudy: currentStudy(),
+				cohortDefinition: cohortDefinition(), loading: loading(), rootJSON: rootJSON(), }"></panacea-cohort-result>
+		</div>
+	</div>
+	
+<!-- 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'sunburst'"> -->
+	<div id="wrapperConceptDetails2" style="padding-left:20px">
+		<label class="heading" style="font-weight: bold;">Pathway Overview (Interactive):</label>
+		<br/>
+        <div id="pnc1">
+            <div id="sequence_1" class="sequence"></div>
+            <div class="sb_stats" unique="false" style="opacity: 0;">
+                <!--<div>-->
+                    <!--<b>Total Count First Therapy:</b> <span class="total_first_therapy" unique="false"></span>-->
+                <!--</div>-->
+                <!--<div>-->
+                    <!--<b>Total Count:</b> <span class="total_cohort_count" unique="false"></span>-->
+                <!--</div>-->
+                <!--<div>-->
+                    <!--<b>First Therapy Percentage:</b> <span class="first_therapy_pct" unique="false"></span>-->
+                <!--</div>-->
+                <div>
+                    <b>Patient Count:</b> <span class="patient_count" unique="false"></span>
+                </div>
+                <div>
+                    <b>Days from Start:</b> <span class="days_from_start" unique="false"></span>
+                </div>
+                <div>
+                    <b>Adherence:</b> <span class="adherence" unique="false"></span>
+                </div>
+            </div>
+        </div>
+
+        <!--<div id="pnc_sidebar1" class="pnc-sidebar">-->
+            <!--<div id="pnc_legend1" class="pnc-legend"></div>-->
+        <!--</div>-->
+        <div id="pnc_explanation" class="explanation" style="visibility: hidden">
+            <div class="percent"></div>
+            <div class="nvalue"></div>
+            <div class="sublabel"></div>
+        </div>
+		<div id="pnc_sunburst_result_div">
+
+<!-- 			<label class="heading">Regular result</label> -->
+			<br/>
+		</div>
+
+        <!--<div id="pnc_sidebar2" class="pnc-sidebar">-->
+            <!--<div id="pnc_legend2" class="pnc-legend"></div>-->
+        <!--</div>-->
+        <div id="pnc2" class="main_pnc">
+            <div id="sequence_2" class="sequence"></div>
+            <div class="sb_stats" unique="true" style="opacity: 0;">
+                <div>
+                    <b>Patient Count:</b> <span class="patient_count" unique="true"></span>
+                </div>
+            </div>
+        </div>
+        <div id="pnc_explanation_2" class="explanation" style="visibility: hidden" >
+            <div class="percent"></div>
+            <div class="nvalue"></div>
+            <div class="sublabel"></div>
+        </div>
+
+		<div id="pnc_sunburst_result_div_2">
+
+<!-- 			<label class="heading">Unique path result</label> -->
+			<br/>
+		</div>
+
+	</div>
+	
+<!-- 	<div id="wrapperConceptDetails" data-bind="visible:resultMode() == 'visualization'  && !loading(), if: !loading()"> -->
+<!--  	<div id="wrapperConceptDetails3" data-bind="visible: !loading(), if: !loading()"> -->
+ 	<div id="wrapperConceptDetails3">
+		<label class="heading" style="font-weight: bold; padding-left:30px">Report Tables:</label>
+		<br/>
+		<div id="pnc_visualization_div">
+			<panacea-vi-result params="{services: pageModel.services, model: pageModel, panaceaResultStudyId: panaceaResultStudyId(), 
+				resultMode: resultMode(), currentResultSource: currentResultSource(), currentStudy: currentStudy(),
+				cohortDefinition: cohortDefinition(), loading: loading(), rootJSON: rootJSON(), }"></panacea-vi-result>
+		</div>
+	</div>	
+</div>

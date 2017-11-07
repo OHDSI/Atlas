@@ -1,0 +1,179 @@
+<div data-bind="if:show">
+	<div class="wrapperTitle">
+		<i class="fa fa-briefcase"></i> Pathways
+	</div>
+
+
+	<div class="paddedWrapper" style="padding-top: 20px; padding-right: 50px; padding-bottom: 20px; padding-left: 50px;">
+
+		<label class="heading">Study Name</label>
+		<br/>
+		<input type="text" id="pncStyNm" data-bind='value: studyName, valueUpdate: "afterkeydown"'>
+		<span data-bind='visible: studyName.hasError, text: studyName.validationMessage'> </span>
+		<br/>
+
+		<label class="heading">Description</label>
+		<br/>
+		<textarea class="form-control" rows="3" id="pncStyDesc" data-bind="value: studyDesc"></textarea>
+		<br/>
+
+		<label class="heading">Cohort</label>
+		<br/>
+		<div data-bind="if:loading()==false">
+<!-- 			<select class="form-control" id="pncChrtSlct" data-bind="options:cohortDefinitions, optionsText: function(item) { -->
+<!--                        return item.id + ' - ' + item.name + ')' -->
+<!--                    }, optionsValue:'id', value:currentStudy.cohortDefId"> -->
+<!-- 			</select> -->
+
+ 			<input style="width:300px;" data-bind="jqAuto: { source: cohortDefinitions, value: currentCohort, labelProp: 'showLabel' }" />
+<!--  			<input style="width:300px;" data-bind="if:loading()==false, htmlValue: currentCohort().id + ' - ' + currentCohort().name, eventType:'blur', ko_autocomplete: { source: cohortDefinitionsOptions(), value: currentCohort(), minLength: 0, maxShowItems: 10, scroll: true }" /> -->
+<!--  			<input style="width:300px;" data-bind="if:loading()==false, htmlValue: currentCohort().id + ' - ' + currentCohort().name, eventType:'blur', ko_autocomplete: { source: cohortDefinitionsOptions(), value: currentCohort().id + ' - ' + currentCohort().name, minLength: 0, maxShowItems: 10, scroll: true }" /> -->
+			<span data-bind='visible: currentCohort.hasError, text: currentCohort.validationMessage'> </span>
+		</div>
+		<br/>
+
+		<label class="heading">Treatment Concept Set</label>
+		<br/>
+<!-- 		<select class="form-control" data-bind="options:conceptsets, optionsText: function(item) { -->
+<!--                        return item.id + ' - ' + item.name + ')' -->
+<!--                    }, optionsValue:'id'"> -->
+<!--         </select> -->
+		<div data-bind="if:show">
+ 			<input style="width:300px;" data-bind="jqAuto: { source: conceptsets, value: currentConceptSet, labelProp: 'name'}" />
+<!-- 			<input style="width:300px;" data-bind="htmlValue: currentConceptSet().name, ko_autocomplete: { source: conceptsets, value: currentConceptSet }" /> -->
+		</div>
+		<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+            data: selectedConcepts,
+            options: {
+							dom: 'Clfiprt',
+							colVis: {
+								buttonText: 'Change Columns',
+								align: 'right',
+								overlayFade: 0,
+								showAll: 'Show All Columns',
+								restore: 'Reset Columns'
+							},
+							rowCallback: model.contextSensitiveLinkColor,
+							lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+							orderClasses: false,
+							deferRender: true,
+							autoWidth: false,
+							order: [[3, 'desc']],
+              columns: [
+									{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
+									{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
+                  { title: 'Concept Name', data: 'concept.CONCEPT_NAME'},
+                  { title: 'Domain', data: 'concept.DOMAIN_ID' },
+									{ title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
+									{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
+									{ title: 'Exclude', class:'text-center', orderable:false,render: function() { return renderConceptSetCheckBox('isExcluded');} },
+									{ title: 'Descendants', class:'text-center', orderable:false,render: function() { return renderConceptSetCheckBox('includeDescendants');} },
+									{ title: 'Mapped', class:'text-center', orderable:false,render: function() { return renderConceptSetCheckBox('includeMapped');} }
+              ]
+           }
+        }">
+		</table>
+		<br/>
+<!-- 		<div style="padding-top:10px;"> -->
+<!-- 			<span class="linkish" style="font-size:14px; font-weight: bold;" data-bind="click:function(){toggleShowConcetpSetImporter();}">Import Concept Set</span> -->
+<!-- 		</div> -->
+<!-- 		<div data-bind="visible: showConceptSetImporter" style="padding-top:10px;"> -->
+<!-- 			<textarea class="form-control" rows="5" id="pncStyCncptStDf" data-bind="value: currentConceptsExpression"></textarea> -->
+<!-- 		</div> -->
+<!-- 		<br/> -->
+		
+		<label class="heading">Study Duration</label>
+		<input type="number" data-bind='value: studyDuration, valueUpdate: "afterkeydown"'></input>
+		<span>Days (e.g., 180 days after the patient first met the criteria.)</span>
+		<span data-bind='visible: studyDuration.hasError, text: studyDuration.validationMessage'> </span>
+		<br/>
+		
+		<label class="heading">Overlap Period to Consider a Drug Switch Event</label>
+		<br/>
+		<input type="number" id="pncStySwtchWndw" data-bind='value: switchWindow, valueUpdate: "afterkeydown"'>
+		<span>(e.g., Mark drugs "Discontinued" after 90 days of overlap with another drug.)</span>
+		<span data-bind='visible: switchWindow.hasError, text: switchWindow.validationMessage'> </span>
+		<br/>
+
+		<div class="optional-filters">
+			<h4>Optional Filters</h4>
+<!-- 			<div class="form-group"> -->
+<!-- 				<label for="filter-1" class="input-label">Minimum Days</label> -->
+<!-- 				<input id="filter-1" type="text"> -->
+<!-- 			</div> -->
+<!-- 			<div class="form-group"> -->
+<!-- 				<label for="filter-2" class="input-label">Minimum Patients</label> -->
+<!-- 				<input id="filter-2" type="text"> -->
+<!-- 			</div> -->
+			
+			<div class="form-group">
+				<label class="input-label">Calendar start date (Optional)</label>
+				<input type="date" id="pncStdStDt" data-bind="value:startDate"/>
+				<label class=class="input-label">Calendar end date (Optional)</label>
+				<input type="date" id="pncStdEndDt" data-bind="value:endDate"/>
+			</div>
+		
+			<div class="form-group">
+				<label class="input-label">Minimum unit duration days: </label><input type="number" data-bind="value: minUnitDays">
+			</div>
+			
+			<div class="form-group">
+				<label class="input-label">Minimum unit patient count: </label><input type="number" data-bind="value: minUnitCounts">
+			</div>
+			
+<!-- 			<div class="form-group"> -->
+<!-- 			<label class="input-label">Maximum unit gap day percentage: </label><input type="number" data-bind="value: gapThreshold"> -->
+<!-- 			</div> -->
+
+			<div class="form-group">
+				<label class="input-label">Minimum adherence percentage: </label><input type="number" data-bind="value: gapThreshold">
+			</div>
+		</div>
+		
+		<div class="optional-filters" data-bind="if:panaceaStudyId">
+			<h4>Run study</h4>
+			<div class="form-group">
+				<select class="form-control" data-bind="options:sources, optionsText: function(item) {
+                        return item.sourceName;
+                    }, value: currentRunSource" style="width: 150px !important;">
+        		</select>
+        		
+        		<div class="row" style="padding-top:20px;">
+<!-- 		 			<div class="col-xs-2"> -->
+<!-- 						<button type="button" class="btn btn-sm btn-primary form-control" style="background" data-bind="click:function() {runGenerateStudySum();} ">Generate study summary</button> -->
+<!-- 					</div> -->
+	 				<div class="col-xs-2">
+						<button type="button" class="btn btn-sm btn-warning form-control" data-bind="click:function() {runStudy();}, enable: isAllValid " >Run study</button>
+					</div>
+		 			<div class="col-xs-2">
+						<button type="button" class="btn btn-sm btn-primary form-control" id="pncStdySbmt" data-bind="click:function() {saveStudy();}, enable: isAllValid ">Save</button>
+					</div>
+ 					<div class="col-xs-2">
+						<button type="button" class="btn btn-sm btn-danger form-control" id="pncStdyCncl" data-bind="click:function() {cancelStudy();}">Cancel</button>
+					</div>
+				</div>
+				
+				<div class="row" style="padding-top:20px; display:none; padding: 10px; background:#DAF7A6;" id="jobFeedbackDiv">
+		 			<div class="col-xs-2" style="width:90%; ">
+						<label id="jobFeedbackLabel" class="heading" style="font-size:medium; margin-right:10px;"></label>
+						<a target="" data-bind="click:function() {toggleFeedbackMsg();}">
+							Close
+						</a>
+					</div>
+				</div>
+			</div>
+		
+		</div>
+		
+<!-- 		<div class="row" style="padding-top:20px;"> -->
+<!--  			<div class="col-xs-2"> -->
+<!-- 				<button type="button" class="btn btn-sm btn-primary form-control" id="pncStdySbmt" data-bind="click:function() {saveStudy();}, enable: isAllValid ">Save</button> -->
+<!-- 			</div> -->
+<!--  			<div class="col-xs-2"> -->
+<!-- 				<button type="button" class="btn btn-sm btn-danger form-control" id="pncStdyCncl" data-bind="click:function() {cancelStudy();}">Cancel</button> -->
+<!-- 			</div> -->
+<!-- 		</div>	 -->
+<!-- 		<button type="button" class="btn btn-sm btn-primary form-control" data-bind="click:function() { saveClick(); }" id="pncStdySbmt">Submit</button> -->
+
+	</div>
+</div>

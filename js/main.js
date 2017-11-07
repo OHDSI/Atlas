@@ -158,6 +158,14 @@ requirejs.config({
 		"d3-dispatch": "https://cdnjs.cloudflare.com/ajax/libs/d3-dispatch/1.0.3/d3-dispatch.min",
 		"d3-tip": "https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min",
 		"d3-slider": "d3.slider",
+		"panacea": "components/panacea",
+		"panacea-browser": "components/panacea-browser",
+		"panacea-study-def-manager": "components/panacea-study-def-manager",
+		"panacea-jqAutocomplete": "components/panacea-jqAutocomplete",
+		"panacea-sunburst-result": "components/panacea-sunburst-result",
+		"panacea-cohort-result": "components/panacea-cohort-result",
+		"panacea-vi-build2": "components/panacea-vi-build2",
+		"panacea-vi-result": "components/panacea-vi-result",
 	}
 });
 

@@ -1,0 +1,34 @@
+<div class="paddedFloater pull-right btn btn-primary btn-sm" style="margin-bottom:10px;" data-bind="click:function() {createStudy();}">New Pathways Study</div>
+
+<!-- <faceted-datatable data-bind="visible:loading()==false" params="reference:reference, columns: columns, options:options, rowClick:rowClick"> -->
+<!-- </faceted-datatable> -->
+
+<!-- <faceted-datatable id="allStudyDatatable" params="reference:reference, columns: columns, rowClick:rowClick, options:model.searchConceptsOptions" data-bind="visible: panaceaView() =='review'"> -->
+<!-- </faceted-datatable> -->
+
+				<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+								data: reference,
+								options: {
+									dom: 'Clfiprt',
+									lengthMenu: [[15, 30, 45, -1], [15, 30, 45,'All']],
+									orderClasses: false,
+									deferRender: true,
+									autoWidth: false,
+									order: [[2, 'asc']], 
+									columns: [
+											{ title: 'Results', render: renderStudyResultsLink, 'bSortable': false, width: '3%' },
+											{ title: 'Clone', render: renderStudyCloneLink, 'bSortable': false, width: '3%' },
+											{ title: 'Study Name', render: renderStudyNameLink, width: '44%' },
+											{ title: 'Create time', render: renderStudyCreateTime, width: '25%'  },
+											{ title: 'Last run time', render: renderLastRunTime, width: '25%'  },
+											{ title: 'Study ID', render: renderStudyId, visible: false }
+									]
+							 },
+							 onRowClick: rowClick
+						}">
+				</table>
+
+<div data-bind="visible: panaceaView() =='edit'">
+	<div><span>this is a test...</span></div>
+	<panacea-study-def-manager params="{services: pageModel.services, panaceaStudy: selectedPanaceaStudy}"></panacea-study-def-manager>
+</div>
