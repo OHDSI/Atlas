@@ -534,7 +534,13 @@ define(['knockout',
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
 			var conceptSetId = conceptSet.id;
-			var urlEncoded = encodeURI(config.api.url + 'conceptset/' + conceptSetId + '/' + conceptSet.name() + "/exists");
+			var qsParams = "";
+			if (conceptSetId > 0) {
+				qsParam = "id=" + conceptSetId + "&";
+			}
+			qsParams += "name=" + encodeURIComponent(conceptSet.name())
+			
+			var urlEncoded = config.api.url + 'conceptset/exists?' + qsParams;
 			var existanceCheckPromise = $.ajax({
 				url: urlEncoded,
 				method: 'GET',
@@ -550,7 +556,7 @@ define(['knockout',
 					}
 				},
 				error: function () {
-					alert('An error occurred while attempting to load the concept from your currently configured provider.  Please check the status of your selection from the configuration button in the top right corner.');
+					alert('An error occurred while attempting to find a concept set with the name you provided.');
 				}
 			});
 
