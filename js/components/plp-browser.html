@@ -5,7 +5,7 @@
 <div class="paddedWrapper">
 	<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newPatientLevelPrediction">New Patient Level Prediction</span>
 
-	<faceted-datatable data-bind="visible:loading()==false" params="order: [[2, 'asc']], reference:analysisList, columns: columns, options:options, rowClick:rowClick">
+	<faceted-datatable data-bind="visible:loading()==false" params="order: [[3, 'desc']], reference:analysisList, columns: columns, options:options, rowClick:rowClick">
 	</faceted-datatable>
 
 	<div data-bind="visible:loading()" class="loading">loading</div>

@@ -1,4 +1,4 @@
-define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'd3', 'webapi/PatientLevelPredictionAPI'], function (ko, $, view, config, d3, plpAPI) {
+define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'moment', 'd3', 'webapi/PatientLevelPredictionAPI'], function (ko, $, view, config, moment, d3, plpAPI) {
 	function plpBrowser(params) {
 		var self = this;
 		self.loading = ko.observable(true);
@@ -42,11 +42,19 @@ define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'd3', 'web
 				},
 			},
 			{
+				title: 'Created',
+				render: function (s, p, d) {
+					return new moment(d.createdDate, "YYYY-MM-DD HH:mm")
+						.format('YYYY-MM-DD hh:mm:ss a');
+				}
+			},
+			{
 				title: 'Modified',
 				render: function (s, p, d) {
-					return new Date(d.modifiedDate || d.createdDate).toLocaleString();
-				},
-				sType: 'date-uk'
+					var dateToFormat = d.modifiedDate || d.createdDate
+					return new moment(dateToFormat, "YYYY-MM-DD HH:mm")
+						.format('YYYY-MM-DD hh:mm:ss a');					
+				}
 			},
 		];
 
