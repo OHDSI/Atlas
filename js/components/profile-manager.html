@@ -5,7 +5,7 @@
 	<form data-bind="submit:loadPerson">
 		<div class="input-group" role="group">
 			<div class="input-group-btn" role="group">
-				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button type="button" title="choose a data source" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<span data-bind="text:$component.sourceKeyCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:config.api.sources.filter(d=>d.hasCDM)">
@@ -16,15 +16,27 @@
 			</div>
 			<input type="text" class="form-control" placeholder="Person Id" data-bind="enable: sourceKey(),value: personId">
 			<div class="input-group-btn">
-				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.profileChart},click:$component.dispToggle, value:'profileChart'">
+				<div class="btn btn-primary" title="toggle chart display" data-bind="css:{active:$component.showSection.profileChart},click:$component.dispToggle, value:'profileChart'">
 					<i class="fa fa-line-chart" data-bind="value:'profileChart'" />
 				</div>
-				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.wordcloud},click:$component.dispToggle, value:'wordcloud'">
-					<i class="fa fa-bars" data-bind="value:'wordcloud'" />
-				</div>
-				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.datatable},click:$component.dispToggle, value:'datatable'">
+				<div class="btn btn-primary" title="toggle table display" data-bind="css:{active:$component.showSection.datatable},click:$component.dispToggle, value:'datatable'">
 					<i class="fa fa-table" data-bind="value:'datatable'" />
 				</div>
+			</div>
+			<div class="input-group-btn" role="group">
+				<button type="button" class="btn btn-primary dropdown-toggle" title="highlight data points" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span data-bind="html:$component.highlightCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-right" data-bind="enable: !person() && !loadingPerson()">
+					<!-- ko foreach:$component.words -->
+					<li>
+						<a href="#" data-bind="html:text,click:(word,evt)=>$component.highlight(word.recs, evt)"></a>
+					</li>
+					<!-- /ko -->
+					<li>
+						<a href="#" data-bind="html:'  clear highlighting',click:(word,evt)=>$component.highlight([], evt)"></a>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</form>
@@ -44,42 +56,26 @@
 </div>
 
 <div class="row">
-	<!-- ko if:$component.showSection.wordcloud -->
-	<div class="col-xs-3">
-		<div data-bind="visible:person, with:person">
-			<div class="wordcloud" data-bind="foreach:$component.words">
-				<span data-bind="
-					text:text, 
-					style:{/*fontSize:size*/},
-					event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
-					"></span>
-			</div>
-		</div>
-	</div>
-	<!-- /ko -->
-	<div data-bind="if: person, attr: { class: showSection.wordcloud() ? 'col-xs-9' : 'col-xs-12'}">
+	<div data-bind="if: person, attr: { class: 'col-xs-12'}">
 		<div id="profile-chart" data-bind="
 					attr: {
 						 style:`padding-bottom:${aspectRatio()*100}%`
 						},
 					visible:showSection.profileChart,
 					profileChart:{
-							recs:filteredRecs, 
-							zoomFilter:dimensions.profileChart.filter,
+							xfObservable:xfObservable,
 							highlightRecs:highlightRecs,
-							allRecs:crossfilter().all(),
 							aspectRatio: aspectRatio,
 							short: showSection.datatable(),
-							verticalLines: [{x:0, color:'#003142'}],
 							shadedRegions: shadedRegions,
 						}"></div>
 		<faceted-datatable id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
-						reference: filteredRecs,
-						columns: columns, 
-						options: options, 
+						reference: personRecords,
+						xfObservable: xfObservable,
+						columns: columns,
+						options: options,
 						order: [[3,'asc']],
-						searchFilter: searchHighlight,
-						rowClick: datatableRowClickCallback,
+						searchFilter: searchHighlight
 					}"></faceted-datatable>
 	</div>
 </div>

@@ -502,6 +502,10 @@ td .fa-shopping-cart {
 	cursor: pointer;
 }
 
+.asset-heading ul li .fa-shopping-cart {
+	color:#000;
+}
+
 .fa-shopping-cart.selected {
 	color: #F19119;
 }

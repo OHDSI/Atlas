@@ -6,7 +6,7 @@
 	vertical-align: top;
 	overflow: hidden;
 	text-align: center;
-	shape-rendering: crispEdges;	
+	shape-rendering: crispEdges;
 }
 
 #profile-chart .brush .extent {
@@ -17,8 +17,10 @@
 }
 
 #profile-chart .observation-period {
-	fill: #b7cbdc;
-	opacity: .3;
+	fill: none;
+	stroke: #b7cbdc;
+	opacity: 0.7;
+	stroke-width: 2;
 }
 
 #profile-chart svg {
@@ -182,43 +184,47 @@ rect.dim {
 	height: 100%;
 }
 .wordcloud span {
-	background-color: #ccc;
 	margin: 2px;
 	padding: 3px;
-	border-radius: 3px;
 	display: block;
 	cursor: pointer;
+	border: solid 1px #ccc;
+}
+.wordcloud-help {
+	text-align:center;
+	color:#aaa;
+	font-size:10px;
 }
 .highlighted path, .highlighted line, .highlighted rect {
 	fill: #f19119;
 }
 text.highlighted {
-	opacity: 1;
-	fill: black !important;
+	fill: #f19119;
 }
-.unhighlighted {
-	opacity: .9;
+text.unhighlighted {
+	opacity: .5;
 }
 g.inset rect.inset-point {
 	fill: black;
 }
 g.inset rect.background {
-	fill: white;
+	fill: #fff;
 	stroke: gray;
+	stroke-width: 2;
 }
 g.inset rect.highlighted {
-	fill: orangered !important;
+	fill: #f19119 !important;
 	width: 3px;
 	height: 3px;
 }
 g.inset rect.insetZoom {
 	opacity: 1;
 	cursor: -webkit-grab;
-	fill:transparent;
+	fill: transparent;
 	stroke:#f19119;
-
+	stroke-width: 2;
 }
-g.inset rect.resizeLeft, 
+g.inset rect.resizeLeft,
 g.inset rect.resizeRight {
 	opacity: 0;
 	cursor: ew-resize;
@@ -228,14 +234,20 @@ g.inset rect.filteredout {
 }
 rect.category {
 	fill: #fff;
+	stroke:#eee;
+	stroke-width:2px;
 }
 text.category {
-	fill: #ccc;
+	fill: #eee;
 	font-weight:bold;
 }
-
+text.label.highlighted {
+	fill:#f19119;
+}
 #cohortPeople {
 	display: inline-block;
 }
-
-
+g.unhighlighted rect {
+	opacity: 0.5;
+	fill: #ccc;
+}
