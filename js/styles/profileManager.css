@@ -197,12 +197,15 @@ rect.dim {
 }
 .highlighted path, .highlighted line, .highlighted rect {
 	fill: #f19119;
+	stroke: #f19119;
+	stroke-width: 2;
 }
 text.highlighted {
-	fill: #f19119;
+	fill: #000000;
+	text-decoration: underline;
 }
 text.unhighlighted {
-	opacity: .5;
+	opacity: 0.3;
 }
 g.inset rect.inset-point {
 	fill: black;
@@ -250,4 +253,10 @@ text.label.highlighted {
 g.unhighlighted rect {
 	opacity: 0.5;
 	fill: #ccc;
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
 }

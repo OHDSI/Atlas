@@ -10,7 +10,7 @@
 				</button>
 				<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:config.api.sources.filter(d=>d.hasCDM)">
 					<li>
-						<a data-bind="text:sourceName,click:$component.setSourceKey"></a>
+						<a href="#" data-bind="text:sourceName,click:$component.setSourceKey"></a>
 					</li>
 				</ul>
 			</div>
@@ -27,10 +27,10 @@
 				<button type="button" class="btn btn-primary dropdown-toggle" title="highlight data points" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<span data-bind="html:$component.highlightCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
 				</button>
-				<ul class="dropdown-menu dropdown-menu-right" data-bind="enable: !person() && !loadingPerson()">
+				<ul class="dropdown-menu dropdown-menu-right scrollable-menu" data-bind="enable: !person() && !loadingPerson()">
 					<!-- ko foreach:$component.words -->
 					<li>
-						<a href="#" data-bind="html:text,click:(word,evt)=>$component.highlight(word.recs, evt)"></a>
+						<a href="#" data-bind="title:text,html:caption,click:(word,evt)=>$component.highlight(word.recs, evt)"></a>
 					</li>
 					<!-- /ko -->
 					<li>
@@ -68,6 +68,7 @@
 							aspectRatio: aspectRatio,
 							short: showSection.datatable(),
 							shadedRegions: shadedRegions,
+							xfDimensions: xfDimensions
 						}"></div>
 		<faceted-datatable id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
 						reference: personRecords,
