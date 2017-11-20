@@ -24,18 +24,19 @@
 				</div>
 			</div>
 			<div class="input-group-btn" role="group">
-				<button type="button" class="btn btn-primary dropdown-toggle" title="highlight data points" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<span data-bind="html:$component.highlightCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
+				<button type="button" data-bind="visible: highlightEnabled, click: removeHighlight" class="btn btn-primary" title="remove highlight">
+					<i class="fa fa-remove remove-highlight"></i>
 				</button>
-				<ul class="dropdown-menu dropdown-menu-right scrollable-menu" data-bind="enable: !person() && !loadingPerson()">
+				<button type="button" class="btn btn-primary dropdown-toggle" title="highlight data points" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span><i class="fa fa-lightbulb-o"></i></span>&nbsp;&nbsp;<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-right scrollable-menu highlight-dropdown" data-bind="enable: !person() && !loadingPerson()">
+					<li class="highlight-filter"><input type="text" placeholder=" filter" class="form-control" data-bind="textInput: filterHighlightsText"/></li>
 					<!-- ko foreach:$component.words -->
 					<li>
 						<a href="#" data-bind="title:text,html:caption,click:(word,evt)=>$component.highlight(word.recs, evt)"></a>
 					</li>
 					<!-- /ko -->
-					<li>
-						<a href="#" data-bind="html:'  clear highlighting',click:(word,evt)=>$component.highlight([], evt)"></a>
-					</li>
 				</ul>
 			</div>
 		</div>
@@ -55,7 +56,7 @@
 	<span data-bind="text:personId" />
 </div>
 
-<div class="row">
+<div class="row profile-control">
 	<div data-bind="if: person, attr: { class: 'col-xs-12'}">
 		<div id="profile-chart" data-bind="
 					attr: {
