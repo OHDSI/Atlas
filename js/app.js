@@ -332,27 +332,27 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					'binding': function (o) {
 						return o.VOCABULARY_ID;
 					}
-			}, {
+				}, {
 					'caption': 'Standard Concept',
 					'binding': function (o) {
 						return o.STANDARD_CONCEPT_CAPTION;
 					}
-			}, {
+				}, {
 					'caption': 'Invalid Reason',
 					'binding': function (o) {
 						return o.INVALID_REASON_CAPTION;
 					}
-			}, {
+				}, {
 					'caption': 'Class',
 					'binding': function (o) {
 						return o.CONCEPT_CLASS_ID;
 					}
-			}, {
+				}, {
 					'caption': 'Domain',
 					'binding': function (o) {
 						return o.DOMAIN_ID;
 					}
-			}, {
+				}, {
 					'caption': 'Relationship',
 					'binding': function (o) {
 						return $.map(o.RELATIONSHIPS, function (val) {
@@ -360,26 +360,26 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						});
 					},
 					isArray: true,
-			}, {
+				}, {
 					'caption': 'Has Records',
 					'binding': function (o) {
 						return parseInt(o.RECORD_COUNT.toString()
 							.replace(',', '')) > 0;
 					}
-			}, {
+				}, {
 					'caption': 'Has Descendant Records',
 					'binding': function (o) {
 						return parseInt(o.DESCENDANT_RECORD_COUNT.toString()
 							.replace(',', '')) > 0;
 					}
-			}, {
+				}, {
 					'caption': 'Distance',
 					'binding': function (o) {
 						return Math.max.apply(Math, o.RELATIONSHIPS.map(function (d) {
 							return d.RELATIONSHIP_DISTANCE;
 						}))
 					},
-			}]
+				}]
 			};
 
 			self.relatedConceptsColumns = [{
@@ -394,41 +394,41 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 				},
 				orderable: false,
 				searchable: false
-		}, {
+			}, {
 				title: 'Id',
 				data: 'CONCEPT_ID'
-		}, {
+			}, {
 				title: 'Code',
 				data: 'CONCEPT_CODE'
-		}, {
+			}, {
 				title: 'Name',
 				data: 'CONCEPT_NAME',
 				render: function (s, p, d) {
 					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 				}
-		}, {
+			}, {
 				title: 'Class',
 				data: 'CONCEPT_CLASS_ID'
-		}, {
+			}, {
 				title: 'Standard Concept Caption',
 				data: 'STANDARD_CONCEPT_CAPTION',
 				visible: false
-		}, {
+			}, {
 				title: 'RC',
 				data: 'RECORD_COUNT',
 				className: 'numeric'
-		}, {
+			}, {
 				title: 'DRC',
 				data: 'DESCENDANT_RECORD_COUNT',
 				className: 'numeric'
-		}, {
+			}, {
 				title: 'Domain',
 				data: 'DOMAIN_ID'
-		}, {
+			}, {
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
-		}];
+			}];
 			self.relatedSourcecodesColumns = [{
 				title: '',
 				render: function (s, p, d) {
@@ -446,246 +446,246 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 				},
 				orderable: false,
 				searchable: false
-		}, {
+			}, {
 				title: 'Id',
 				data: 'CONCEPT_ID'
-		}, {
+			}, {
 				title: 'Code',
 				data: 'CONCEPT_CODE'
-		}, {
+			}, {
 				title: 'Name',
 				data: 'CONCEPT_NAME',
 				render: function (s, p, d) {
 					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 				}
-		}, {
+			}, {
 				title: 'Class',
 				data: 'CONCEPT_CLASS_ID'
-		}, {
+			}, {
 				title: 'Standard Concept Caption',
 				data: 'STANDARD_CONCEPT_CAPTION',
 				visible: false
-		}, {
+			}, {
 				title: 'Domain',
 				data: 'DOMAIN_ID'
-		}, {
+			}, {
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
-		}];
+			}];
 			self.relatedSourcecodesOptions = {
 				Facets: [{
 					'caption': 'Vocabulary',
 					'binding': function (o) {
 						return o.VOCABULARY_ID;
 					}
-			}, {
+				}, {
 					'caption': 'Invalid Reason',
 					'binding': function (o) {
 						return o.INVALID_REASON_CAPTION;
 					}
-			}, {
+				}, {
 					'caption': 'Class',
 					'binding': function (o) {
 						return o.CONCEPT_CLASS_ID;
 					}
-			}, {
+				}, {
 					'caption': 'Domain',
 					'binding': function (o) {
 						return o.DOMAIN_ID;
 					}
-			}]
+				}]
 			};
 			self.metatrix = {
 				'ATC.ATC 4th': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 5]
-				}]
+					}]
 				},
 				'ICD9CM.5-dig billing code': {
 					childRelationships: [{
 						name: 'Subsumes',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Is a',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'ICD9CM.4-dig nonbill code': {
 					childRelationships: [{
 						name: 'Subsumes',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Is a',
 						range: [0, 1]
-				}, {
+					}, {
 						name: 'Non-standard to Standard map (OMOP)',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'ICD9CM.3-dig nonbill code': {
 					childRelationships: [{
 						name: 'Subsumes',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Non-standard to Standard map (OMOP)',
 						range: [0, 999]
-				}]
+					}]
 				},
 				'RxNorm.Ingredient': {
 					childRelationships: [{
 						name: 'Ingredient of (RxNorm)',
 						range: [0, 999]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						vocabulary: ['ATC', 'ETC'],
 						range: [0, 1]
-				}]
+					}]
 				},
 				'RxNorm.Brand Name': {
 					childRelationships: [{
 						name: 'Ingredient of (RxNorm)',
 						range: [0, 999]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Tradename of (RxNorm)',
 						range: [0, 999]
-				}]
+					}]
 				},
 				'RxNorm.Branded Drug': {
 					childRelationships: [{
 						name: 'Consists of (RxNorm)',
 						range: [0, 999]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ingredient (RxNorm)',
 						range: [0, 999]
-				}, {
+					}, {
 						name: 'RxNorm to ATC (RxNorm)',
 						range: [0, 999]
-				}, {
+					}, {
 						name: 'RxNorm to ETC (FDB)',
 						range: [0, 999]
-				}]
+					}]
 				},
 				'RxNorm.Clinical Drug Comp': {
 					childRelationships: [],
 					parentRelationships: [{
 						name: 'Has precise ingredient (RxNorm)',
 						range: [0, 999]
-				}, {
+					}, {
 						name: 'Has ingredient (RxNorm)',
 						range: [0, 999]
-				}]
+					}]
 				},
 				'CPT4.CPT4': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'CPT4.CPT4 Hierarchy': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'ETC.ETC': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'MedDRA.LLT': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'MedDRA.PT': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'MedDRA.HLT': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'MedDRA.SOC': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'MedDRA.HLGT': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'SNOMED.Clinical Finding': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'SNOMED.Procedure': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				}
 			};
 			self.hasRelationship = function (concept, relationships) {
@@ -858,107 +858,91 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 				name: "Care Site",
 				reportKey: null,
 				analyses: [1200, 1201]
-	}, {
+			}, {
 				name: "Cohort Specific",
 				reportKey: 'Cohort Specific',
 				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-	}, {
+			}, {
 				name: "Condition",
 				reportKey: 'Condition',
 				analyses: [116, 117, 400, 401, 402, 404, 405, 406, 1]
-	}, {
+			}, {
 				name: "Condition Eras",
 				reportKey: 'Condition Eras',
 				analyses: [1001, 1000, 1007, 1006, 1004, 1002, 116, 117, 1]
-	}, {
+			}, {
 				name: "Conditions by Index",
 				reportKey: 'Conditions by Index',
 				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-	}, {
+			}, {
 				name: "Data Density",
 				reportKey: null,
 				analyses: [117, 220, 420, 502, 620, 720, 820, 920, 1020, 111, 403, 603, 703, 803, 903, 1003]
-	}, {
+			}, {
 				name: "Death",
 				reportKey: 'Death',
 				analyses: [501, 506, 505, 504, 502, 116, 117]
-	}, {
+			}, {
 				name: "Default",
 				reportKey: null,
 				analyses: [1, 2, 101, 108, 110]
-	}, {
+			}, {
 				name: "Drug Eras",
 				reportKey: 'Drug Eras',
 				analyses: [900, 901, 907, 906, 904, 902, 116, 117, 1]
-	}, {
+			}, {
 				name: "Drug Exposure",
 				reportKey: 'Drug Exposure',
 				analyses: [700, 701, 706, 715, 705, 704, 116, 702, 117, 717, 716, 1]
-	}, {
+			}, {
 				name: "Drugs by Index",
 				reportKey: 'Drugs by Index',
 				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-	}, {
+			}, {
 				name: "Heracles Heel",
 				reportKey: 'Heracles Heel',
 				analyses: [7, 8, 9, 114, 115, 207, 208, 209, 210, 302, 409, 410, 411, 412, 413, 509, 510, 609, 610, 612, 613, 709, 710, 711, 712, 713, 809, 810, 812, 813, 814, 908, 909, 910, 1008, 1009, 1010, 1415, 1500, 1501, 1600, 1601, 1701, 103, 105, 206, 406, 506, 606, 706, 715, 716, 717, 806, 906, 907, 1006, 1007, 1502, 1503, 1504, 1505, 1506, 1507, 1508, 1509, 1510, 1511, 1602, 1603, 1604, 1605, 1606, 1607, 1608, 511, 512, 513, 514, 515, 2, 4, 5, 200, 301, 400, 500, 505, 600, 700, 800, 900, 1000, 1609, 1610, 405, 605, 705, 805, 202, 3, 101, 420, 620, 720, 820, 920, 1020, 402, 602, 702, 802, 902, 1002, 1310, 1309, 1312, 1313, 1314]
-	}, {
+			}, {
 				name: "Location",
 				reportKey: null,
 				analyses: [1100, 1101]
-	}, {
+			}, {
 				name: "Measurement",
 				reportKey: null,
 				analyses: [1300, 1301, 1303, 1306, 1305, 1315, 1304, 1316, 1302, 1307, 1317, 1318, 1320, 117, 116, 1]
-	}, {
+			}, {
 				name: "Observation",
 				reportKey: null,
 				analyses: [800, 801, 806, 805, 815, 804, 802, 807, 816, 817, 818, 117, 116, 102, 112, 1]
-	}, {
+			}, {
 				name: "Observation Periods",
 				reportKey: 'Observation Periods',
 				analyses: [101, 104, 106, 107, 108, 109, 110, 113, 1]
-	}, {
+			}, {
 				name: "Person",
 				reportKey: 'Person',
 				analyses: [0, 1, 2, 3, 4, 5]
-	}, {
+			}, {
 				name: "Procedure",
 				reportKey: 'Procedure',
 				analyses: [606, 604, 116, 602, 117, 605, 600, 601, 1]
-	}, {
+			}, {
 				name: "Procedures by Index",
 				reportKey: 'Procedures by Index',
 				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-	}, {
+			}, {
 				name: "Visit",
 				reportKey: null,
 				analyses: [202, 203, 206, 204, 116, 117, 211, 200, 201, 1]
-	}, {
+			}, {
 				name: "Data Completeness",
 				reportKey: "Data Completeness",
 				analyses: [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2021, 2022, 2023, 2024, 2025, 2026, 2027]
-	}, {
+			}, {
 				name: "Entropy",
 				reportKey: "Entropy",
 				analyses: [2031, 2032]
-	}]);
-			/*
-        self.reports = ko.observableArray([
-			'Person',
-			'Cohort Specific',
-			'Condition Eras',
-			'Conditions by Index',
-			'Drugs by Index',
-			'Procedures by Index',
-			'Observation Periods',
-			'Condition',
-			'Drug Eras',
-			'Drug Exposure',
-			'Procedure',
-			'Death'
-		]);
-        */
+			}]);
 			// The reports available are defined as part of the visualizationPacks() definition above
 			self.reports = ko.observableArray(self.visualizationPacks()
 				.map(function (item) {
@@ -1004,8 +988,8 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					success: function (analyses) {
 						sourceAnalysesStatus = {};
 						// initialize cohort analyses status
-						for (var i = 0; i < self.cohortAnalyses()
-							.length; i++) {
+						sourceAnalysesStatus.analysesCount = analyses.length;
+						for (var i = 0; i < self.cohortAnalyses().length; i++) {
 							// If the analysis id's in the array returned from the ws call (analyses)
 							// contains all of the elements in cohortAnalyses()[i] array, then we
 							// know that the analysis has been completed
@@ -1198,8 +1182,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 											cdsi.startTime = ko.observable(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
 											cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
 											// For backwards compatability, query personCount from cdm if not populated in sourceInfo
-											if (sourceInfo.personCount == null)
-											{
+											if (sourceInfo.personCount == null) {
 												cdsi.personCount = ko.observable('...');
 												self.getCohortCount(source, cdsi.personCount);
 											} else {
@@ -1242,48 +1225,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 											self.getCompletedAnalyses(source);
 										}
 									}
-									// This is the original approach but it does not reflect some of the interdependencies between analyses
-									// so commenting it out for now. We should revisit this as hardcoding the object above is not sustainable
-									/*
-									var analysesPromise = $.ajax({
-									    url: config.api.url + 'cohortanalysis/',
-									    method: 'GET',
-									    contentType: 'application/json',
-									    success: function (analyses) {
-									        var index = {};
-									        var nestedAnalyses = [];
-
-									        for (var a = 0; a < analyses.length; a++) {
-									            var analysis = analyses[a];
-
-									            if (index[analysis.analysisType] == undefined) {
-									                var analysisType = {
-									                    name: analysis.analysisType,
-									                    analyses: []
-									                };
-									                nestedAnalyses.push(analysisType);
-									                index[analysis.analysisType] = nestedAnalyses.indexOf(analysisType);
-									            }
-									            self.analysisLookup[analysis.analysisId] = analysis.analysisType;
-									            nestedAnalyses[index[analysis.analysisType]].analyses.push(analysis);
-									        }
-
-									        self.cohortAnalyses(nestedAnalyses);
-
-									        // obtain completed result status for each source
-									        for (var s = 0; s < cdmSources.length; s++) {
-									            var source = cdmSources[s];
-									            var info = self.getSourceInfo(source);
-									            if (info) {
-									                var sourceAnalysesStatus = {};
-									                sourceAnalysesStatus.checking = true;
-									                self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
-									                self.getCompletedAnalyses(source);
-									            }
-									        }
-									    }
-									});
-									*/
 									if (conceptSetId != null) {
 										self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 									} else {

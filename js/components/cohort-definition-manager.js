@@ -1,18 +1,18 @@
 define(['knockout', 'text!./cohort-definition-manager.html',
-				'appConfig',
-				'cohortbuilder/CohortDefinition',
-				'webapi/CohortDefinitionAPI',
-				'ohdsi.util',
-		'cohortbuilder/CohortExpression',
-				'cohortbuilder/InclusionRule',
-				'conceptsetbuilder/InputTypes/ConceptSet',
-				'atlas-state',
-				'cohortbuilder/components/FeasibilityReportViewer',
-				'knockout.dataTables.binding',
-				'faceted-datatable',
-				'databindings',
-				'cohortdefinitionviewer/expressionCartoonBinding',
-				'cohortfeatures',
+	'appConfig',
+	'cohortbuilder/CohortDefinition',
+	'webapi/CohortDefinitionAPI',
+	'ohdsi.util',
+	'cohortbuilder/CohortExpression',
+	'cohortbuilder/InclusionRule',
+	'conceptsetbuilder/InputTypes/ConceptSet',
+	'atlas-state',
+	'cohortbuilder/components/FeasibilityReportViewer',
+	'knockout.dataTables.binding',
+	'faceted-datatable',
+	'databindings',
+	'cohortdefinitionviewer/expressionCartoonBinding',
+	'cohortfeatures',
 ], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, sharedState) {
 
 	function translateSql(sql, dialect) {
@@ -184,41 +184,41 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			},
 			orderable: false,
 			searchable: false
-        }, {
+		}, {
 			title: 'Id',
 			data: 'CONCEPT_ID'
-        }, {
+		}, {
 			title: 'Code',
 			data: 'CONCEPT_CODE'
-        }, {
+		}, {
 			title: 'Name',
 			data: 'CONCEPT_NAME',
 			render: function (s, p, d) {
 				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 			}
-        }, {
+		}, {
 			title: 'Class',
 			data: 'CONCEPT_CLASS_ID'
-        }, {
+		}, {
 			title: 'Standard Concept Caption',
 			data: 'STANDARD_CONCEPT_CAPTION',
 			visible: false
-        }, {
+		}, {
 			title: 'RC',
 			data: 'RECORD_COUNT',
 			className: 'numeric'
-        }, {
+		}, {
 			title: 'DRC',
 			data: 'DESCENDANT_RECORD_COUNT',
 			className: 'numeric'
-        }, {
+		}, {
 			title: 'Domain',
 			data: 'DOMAIN_ID'
-        }, {
+		}, {
 			title: 'Vocabulary',
 			data: 'VOCABULARY_ID'
-        }];
+		}];
 
 		self.includedConceptsOptions = {
 			Facets: [{
@@ -226,37 +226,37 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				'binding': function (o) {
 					return o.VOCABULARY_ID;
 				}
-            }, {
+			}, {
 				'caption': 'Class',
 				'binding': function (o) {
 					return o.CONCEPT_CLASS_ID;
 				}
-            }, {
+			}, {
 				'caption': 'Domain',
 				'binding': function (o) {
 					return o.DOMAIN_ID;
 				}
-            }, {
+			}, {
 				'caption': 'Standard Concept',
 				'binding': function (o) {
 					return o.STANDARD_CONCEPT_CAPTION;
 				}
-            }, {
+			}, {
 				'caption': 'Invalid Reason',
 				'binding': function (o) {
 					return o.INVALID_REASON_CAPTION;
 				}
-            }, {
+			}, {
 				'caption': 'Has Records',
 				'binding': function (o) {
 					return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
 				}
-            }, {
+			}, {
 				'caption': 'Has Descendant Records',
 				'binding': function (o) {
 					return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
 				}
-            }]
+			}]
 		};
 
 		self.pollForInfo = function () {
@@ -374,7 +374,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			// reset view after save
 			cohortDefinitionAPI.copyCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
 				var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
-				$.when(refreshTokenPromise).done(function () {				
+				$.when(refreshTokenPromise).done(function () {
 					document.location = "#/cohortdefinition/" + result.id;
 				});
 			});
@@ -389,14 +389,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.isSourceRunning = function (source) {
 			if (source) {
 				switch (source.status()) {
-				case 'COMPLETE':
-					return false;
-					break;
-				case 'n/a':
-					return false;
-					break;
-				default:
-					return true;
+					case 'COMPLETE':
+						return false;
+						break;
+					case 'n/a':
+						return false;
+						break;
+					default:
+						return true;
 				}
 			} else {
 				return false;
@@ -462,11 +462,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 		self.generateCohort = function (source, includeFeatures) {
 			var route = `${config.api.url}cohortdefinition/${self.model.currentCohortDefinition().id()}/generate/${source.sourceKey}`;
-			
+
 			if (includeFeatures) {
 				route = `${route}?includeFeatures`;
 			}
-			
+
 			self.getSourceInfo(source.sourceKey).status('PENDING');
 			$.ajax(route, {
 				headers: {
@@ -480,61 +480,135 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				}
 			});
 		}
-		
-		self.generateAnalyses = function (data, event) {
-			$(event.target).prop("disabled", true);
 
+		// reporting sub-system
+		self.generateButtonCaption = ko.observable('Generate');
+		self.generateReportsEnabled = ko.observable(false);
+		self.createReportJobFailed = ko.observable(false);
+		self.createReportJobError = ko.observable();
+		self.reportingError = ko.observable();
+
+		self.reportingState = ko.computed(function () {
+			if (self.model.reportSourceKey() == undefined) {
+				return "awaiting_selection";
+			}
+
+			if (self.model.sourceAnalysesStatus && self.model.sourceAnalysesStatus[self.model.reportSourceKey()]) {
+				if (self.model.sourceAnalysesStatus[self.model.reportSourceKey()]().checking) {
+					return "checking_status";
+				}
+
+				if (!self.model.sourceAnalysesStatus[self.model.reportSourceKey()]().ready) {
+					return "cohort_not_generated";
+				}
+
+				if (self.model.sourceAnalysesStatus[self.model.reportSourceKey()]().analysesCount == 0) {
+					self.generateReportsEnabled(true);
+					return "reports_not_generated";
+				}
+			}
+
+			if (self.model.reportReportName() == undefined) {
+				return "awaiting_selection";
+			}
+
+			if (self.model.sourceAnalysesStatus[self.model.reportSourceKey()]()[self.model.reportReportName()]) {
+				self.model.reportCohortDefinitionId(self.model.currentCohortDefinition().id());
+				self.model.reportTriggerRun(true);
+				return "report_active";
+			}
+
+			if (self.model.sourceAnalysesStatus[self.model.reportSourceKey()]()[self.model.reportReportName()] == undefined) {
+				self.generateReportsEnabled(true);
+				return "report_unavailable";
+			}
+
+			var errorPackage = {};
+			errorPackage.sourceAnalysesStatus = self.model.sourceAnalysesStatus[self.model.reportSourceKey()]();
+			errorPackage.report = self.model.reportReportName();
+			self.reportingError(JSON.stringify(errorPackage));
+			return "unknown_cohort_report_state";
+		});
+
+		self.showReportNameDropdown = ko.computed(function () {
+			return self.model.reportSourceKey() != undefined &&
+				self.reportingState() != 'checking_status' &&
+				self.reportingState() != 'cohort_not_generated' &&
+				self.reportingState() != 'reports_not_generated';
+		});
+
+		self.generateAnalyses = function () {
+			self.generateButtonCaption('Submitting Job');
+
+			self.generateReportsEnabled(false);
 			var requestedAnalysisTypes = [];
-			var runHeel = false;
-			$('input[type="checkbox"][name="' + data.sourceKey + '"]:checked').each(function () {
-				requestedAnalysisTypes.push($(this).val());
-				if ($(this).val() == 'Heracles Heel') {
-					runHeel = true;
+			var analysisIdentifiers = [];
+			var analysesTypes = pageModel.cohortAnalyses();
+			// run all analyses
+			for (var i = 0; i < analysesTypes.length; i++) {
+				analysisIdentifiers.push.apply(analysisIdentifiers, analysesTypes[i].analyses);
+			}
+
+			analysisIdentifiers = _.uniq(analysisIdentifiers);
+			var cohortDefinitionId = pageModel.currentCohortDefinition().id();
+			var cohortJob = {};
+
+			cohortJob.jobName = 'HERACLES_COHORT_' + cohortDefinitionId + '_' + self.model.reportSourceKey();
+			cohortJob.sourceKey = self.model.reportSourceKey();
+			cohortJob.smallCellCount = 5;
+			cohortJob.cohortDefinitionIds = [];
+			cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
+			cohortJob.analysisIds = analysisIdentifiers;
+			cohortJob.runHeraclesHeel = true;
+			cohortJob.cohortPeriodOnly = false;
+
+			// set concepts
+			cohortJob.conditionConceptIds = [];
+			cohortJob.drugConceptIds = [];
+			cohortJob.procedureConceptIds = [];
+			cohortJob.observationConceptIds = [];
+			cohortJob.measurementConceptIds = [];
+
+			var jobDetails = {
+				name: cohortJob.jobName,
+				status: ko.observable('loading'),
+				executionId: null,
+				statusUrl: self.config.api.url + 'job/execution/',
+				statusValue: 'status',
+				progress: ko.observable(0),
+				progressUrl: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + cohortDefinitionId + '/analyses',
+				progressValue: 'length',
+				progressMax: analysisIdentifiers.length,
+				viewed: ko.observable(false)
+			};
+
+			self.createReportJobFailed(false);
+
+			$.ajax({
+				url: config.api.url + 'cohortanalysis',
+				data: JSON.stringify(cohortJob),
+				method: 'POST',
+				context: jobDetails,
+				contentType: 'application/json',
+				success: function (info) {
+					self.generateButtonCaption('Job Submitted');
+					this.executionId = info.executionId;
+					this.status(info.status);
+					this.statusUrl = this.statusUrl + info.executionId;
+					sharedState.jobListing.push(this);
+				},
+				error: function (xhr, status, error) {
+					self.createReportJobFailed(true);
+					var createReportJobErrorPackage = {};
+					createReportJobErrorPackage.status = status;
+					createReportJobErrorPackage.error = xhr.responseText;
+					self.createReportJobError(JSON.stringify(createReportJobErrorPackage));
+
+					// reset button to allow generation attempt
+					self.generateReportsEnabled(true);
+					self.generateButtonCaption('Generate');
 				}
 			});
-
-			var analysisIdentifiers = [];
-
-			var analysesTypes = pageModel.cohortAnalyses();
-			for (var i = 0; i < analysesTypes.length; i++) {
-				if (requestedAnalysisTypes.indexOf(analysesTypes[i].name) >= 0) {
-					analysisIdentifiers.push.apply(analysisIdentifiers, analysesTypes[i].analyses);
-				}
-			}
-
-			if (analysisIdentifiers.length > 0) {
-				$(event.target).prop('value', 'Starting job...');
-				var cohortDefinitionId = pageModel.currentCohortDefinition().id();
-				var cohortJob = {};
-
-				cohortJob.jobName = 'HERACLES' + '_COHORT_' + cohortDefinitionId + '_' + data.sourceKey;
-				cohortJob.sourceKey = data.sourceKey;
-				cohortJob.smallCellCount = 5;
-				cohortJob.cohortDefinitionIds = [];
-				cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
-				cohortJob.analysisIds = analysisIdentifiers;
-				cohortJob.runHeraclesHeel = runHeel;
-				cohortJob.cohortPeriodOnly = false;
-
-				// set concepts
-				cohortJob.conditionConceptIds = [];
-				cohortJob.drugConceptIds = [];
-				cohortJob.procedureConceptIds = [];
-				cohortJob.observationConceptIds = [];
-				cohortJob.measurementConceptIds = [];
-
-				$.ajax({
-					url: config.api.url + 'cohortanalysis',
-					data: JSON.stringify(cohortJob),
-					method: 'POST',
-					contentType: 'application/json',
-					success: function (info) {
-						// to do - handle returned reference to job
-					}
-				});
-			} else {
-				$(event.target).prop("disabled", false);
-			}
 		}
 
 		self.hasCDM = function (source) {

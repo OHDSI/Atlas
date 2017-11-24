@@ -1,7 +1,7 @@
 <!-- ko if:$component.showSelectionArea -->
 <div class="wrapperTitle">
 	<span data-bind="if:!$component.loadingReport()"><i class="fa fa-area-chart"></i></span>
-	<span data-bind="if:$component.loadingReport()"><i class="fa fa-circle-o-notch fa-spin"></i></span> Data Source Profiles
+	<span data-bind="if:$component.loadingReport()"><i class="fa fa-circle-o-notch fa-spin"></i></span> Data Source Reports
 </div>
 
 <div class="reportControls pad-5">
@@ -111,7 +111,7 @@
 				<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
 				<div class="evidenceDescription"></div>
 			</div>
-			
+
 			<!-- ko if: $component.currentReport().byUnit && !$component.loadingReport() -->
 			<div class="row">
 				<div class="col-xs-6">
@@ -126,7 +126,7 @@
 					<div class="evidenceDescription"></div>
 				</div>
 			</div>
-			
+
 			<div class="row">
 				<div class="col-xs-4">
 					<div class="reportSectionHeading">Lower limit Distribution</div>
@@ -139,14 +139,14 @@
 					<div class="evidenceVisualization" id="upperLimit"></div>
 					<div class="evidenceDescription"></div>
 				</div>
-				
+
 				<div class="col-xs-4">
 					<div class="reportSectionHeading">Values Relative to Normal Range</div>
 					<div class="evidenceVisualization" id="relativeToNorm"></div>
 					<div class="evidenceDescription"></div>
 				</div>
-			</div>			
-			
+			</div>
+
 			<!-- /ko -->
 			<!-- ko if: $component.currentReport().byFrequency && !$component.loadingReport() -->
 			<div class="col-xs-12">
@@ -198,20 +198,20 @@
 		<div class="col-xs-12">
 			<div class="reportSectionHeading">Year of Birth</div>
 			<div class="evidenceDescription">The number of people in this cohort shown with respect to their year of birth.</div>
-			<div class="evidenceVisualization" id="hist"></div>		
+			<div class="evidenceVisualization" id="hist"></div>
 		</div>
 
-		<div class="col-xs-4">		
+		<div class="col-xs-4">
 			<div class="reportSectionHeading">Gender</div>
 			<div class="evidenceDescription">The number of people in this cohort stratified by gender.</div>
 			<div class="evidenceVisualization" id="gender"></div>
 		</div>
-		<div class="col-xs-4">	
+		<div class="col-xs-4">
 			<div class="reportSectionHeading">Race</div>
 			<div class="evidenceDescription">The number of people in this cohort stratified by race.</div>
 			<div class="evidenceVisualization" id="race"></div>
 		</div>
-		<div class="col-xs-4">	
+		<div class="col-xs-4">
 			<div class="reportSectionHeading">Ethnicity</div>
 			<div class="evidenceDescription">The number of people in this cohort stratified by ethnicity.</div>
 			<div class="evidenceVisualization" id="ethnicity"></div>

@@ -1,4 +1,4 @@
-define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, d3, atlascharts, colorbrewer, _, config) {
+define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'faceted-datatable', 'colvis'], function (ko, view, d3, atlascharts, colorbrewer, _, config) {
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -7,6 +7,12 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 		self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.reference = ko.observableArray();
 		self.dataCompleteReference = ko.observableArray();
+		self.dom = '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';
+		self.lengthMenu = params.lengthMenu || [
+			[15, 30, 45, 100, -1],
+			[15, 30, 45, 100, 'All']
+		];
+		self.buttons = ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'];
 		self.heelOptions = {
 			Facets: [{
 				'caption': 'Error Msg',
@@ -43,16 +49,16 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						return 'Other'
 					}
 				}
-					}]
+			}]
 		};
 
 		self.heelDataColumns = [{
 			title: 'Message Type',
 			data: 'attributeName'
-				}, {
+		}, {
 			title: 'Message',
 			data: 'attributeValue'
-				}];
+		}];
 
 		self.dataCompleteOptions = {
 			Facets: [{
@@ -60,22 +66,22 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 				'binding': d => {
 					return ''
 				}
-					}]
+			}]
 		};
 
 		self.dataCompletColumns = [{
 			title: 'Age',
 			data: 'covariance'
-				}, {
+		}, {
 			title: 'Gender (%)',
 			data: 'genderP'
-				}, {
+		}, {
 			title: 'Race (%)',
 			data: 'raceP'
-				}, {
+		}, {
 			title: 'Ethnicity (%)',
 			data: 'ethP'
-				}];
+		}];
 
 		self.careSiteDatatable;
 
@@ -310,7 +316,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								datatable = $('#procedure_table')
 									.DataTable({
 										order: [5, 'desc'],
-										dom: 'T<"clear">lfrtip',
+										dom: self.dom,
+										buttons: self.buttons,
+										lengthMenu: self.lengthMenu,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -318,33 +326,33 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										},
 										columns: [{
 												data: 'concept_id'
-													},
+											},
 											{
 												data: 'level_4'
-													},
+											},
 											{
 												data: 'level_3',
 												visible: false
-													},
+											},
 											{
 												data: 'level_2'
-													},
+											},
 											{
 												data: 'procedure_name'
-													},
+											},
 											{
 												data: 'num_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'percent_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'records_per_person',
 												className: 'numeric'
-													}
-												],
+											}
+										],
 										pageLength: 5,
 										lengthChange: false,
 										deferRender: true,
@@ -436,7 +444,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								datatable = $('#drug_table')
 									.DataTable({
 										order: [6, 'desc'],
-										dom: 'T<"clear">lfrtip',
+										dom: self.dom,
+										buttons: self.buttons,
+										lengthMenu: self.lengthMenu,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -444,37 +454,37 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										},
 										columns: [{
 												data: 'concept_id'
-													},
+											},
 											{
 												data: 'atc1'
-													},
+											},
 											{
 												data: 'atc3',
 												visible: false
-													},
+											},
 											{
 												data: 'atc5'
-													},
+											},
 											{
 												data: 'ingredient',
 												visible: false
-													},
+											},
 											{
 												data: 'rxnorm'
-													},
+											},
 											{
 												data: 'num_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'percent_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'records_per_person',
 												className: 'numeric'
-													}
-												],
+											}
+										],
 										pageLength: 5,
 										lengthChange: false,
 										deferRender: true,
@@ -562,7 +572,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								datatable = $('#drugera_table')
 									.DataTable({
 										order: [5, 'desc'],
-										dom: 'T<"clear">lfrtip',
+										dom: self.dom,
+										buttons: self.buttons,
+										lengthMenu: self.lengthMenu,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -570,47 +582,38 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										},
 										columns: [{
 												data: 'concept_id'
-													},
+											},
 											{
 												data: 'atc1'
-													},
+											},
 											{
 												data: 'atc3',
 												visible: false
-													},
+											},
 											{
 												data: 'atc5'
-													},
+											},
 											{
 												data: 'ingredient'
-													},
+											},
 											{
 												data: 'num_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'percent_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'length_of_era',
 												className: 'numeric'
-													}
-												],
+											}
+										],
 										pageLength: 5,
 										lengthChange: false,
 										deferRender: true,
 										destroy: true
 									});
-
-								/*
-							$(document).on('click', '.dataTable tbody tr', function () {
-								var data = $('.dataTable').DataTable().row(this).data();
-								if (data) {
-									drugeraDrilldown(data.concept_id, data.ingredient);
-								}
-							});
-                            */
 
 								var tree = self.eraBuildHierarchyFromJSON(data, threshold);
 								var treemap = new atlascharts.treemap();
@@ -685,8 +688,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 								datatable = $('#condition_table')
 									.DataTable({
+										dom: self.dom,
+										buttons: self.buttons,
+										lengthMenu: self.lengthMenu,
+										autoWidth: false,
 										order: [6, 'desc'],
-										dom: 'T<"clear">lfrtip',
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -694,51 +700,41 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										},
 										columns: [{
 												data: 'concept_id'
-													},
+											},
 											{
 												data: 'soc'
-													},
+											},
 											{
 												data: 'hlgt',
 												visible: false
-													},
+											},
 											{
 												data: 'hlt'
-													},
+											},
 											{
 												data: 'pt',
 												visible: false
-													},
+											},
 											{
 												data: 'snomed'
-													},
+											},
 											{
 												data: 'num_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'percent_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'records_per_person',
 												className: 'numeric'
-													}
-												],
-										pageLength: 5,
+											}
+										],
 										lengthChange: false,
 										deferRender: true,
 										destroy: true
 									});
-
-								/*
-							$(document).on('click', '.dataTable tbody tr', function () {
-								var data = $('.dataTable').DataTable().row(this.rowIndex).data();
-								if (data) {
-									self.conditionDrilldown(data.concept_id, data.snomed);
-								}
-							});
-                            */
 
 								tree = self.buildHierarchyFromJSON(data, threshold);
 								var treemap = new atlascharts.treemap();
@@ -1084,7 +1080,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								datatable = $('#conditionera_table')
 									.DataTable({
 										order: [6, 'desc'],
-										dom: 'T<"clear">lfrtip',
+										dom: self.dom,
+										buttons: self.buttons,
+										lengthMenu: self.lengthMenu,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -1092,51 +1090,42 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										},
 										columns: [{
 												data: 'concept_id'
-													},
+											},
 											{
 												data: 'soc'
-													},
+											},
 											{
 												data: 'hlgt',
 												visible: false
-													},
+											},
 											{
 												data: 'hlt'
-													},
+											},
 											{
 												data: 'pt',
 												visible: false
-													},
+											},
 											{
 												data: 'snomed'
-													},
+											},
 											{
 												data: 'num_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'percent_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'length_of_era',
 												className: 'numeric'
-													}
-												],
+											}
+										],
 										pageLength: 5,
 										lengthChange: false,
 										deferRender: true,
 										destroy: true
 									});
-
-								/*
-							$(document).on('click', '.dataTable tbody tr', function () {
-								var data = $('.dataTable').DataTable().row(this).data();
-								if (data) {
-									self.conditionEraDrilldown(data.concept_id, data.snomed);
-								}
-							});
-                            */
 
 								var tree = self.eraBuildHierarchyFromJSON(data, threshold);
 								var treemap = new atlascharts.treemap();
@@ -1233,37 +1222,39 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									datatable = $('#drugera_table')
 										.DataTable({
 											order: [5, 'desc'],
-											dom: 'T<"clear">lfrtip',
+											dom: self.dom,
+											buttons: self.buttons,
+											lengthMenu: self.lengthMenu,
 											data: table_data,
 											columns: [{
 													data: 'concept_id'
-														},
+												},
 												{
 													data: 'atc1'
-														},
+												},
 												{
 													data: 'atc3',
 													visible: false
-														},
+												},
 												{
 													data: 'atc5'
-														},
+												},
 												{
 													data: 'ingredient'
-														},
+												},
 												{
 													data: 'num_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'percent_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'relative_risk',
 													className: 'numeric'
-														}
-													],
+												}
+											],
 											pageLength: 5,
 											lengthChange: false,
 											deferRender: true,
@@ -1375,41 +1366,43 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									datatable = $('#condition_table')
 										.DataTable({
 											order: [6, 'desc'],
-											dom: 'T<"clear">lfrtip',
+											dom: self.dom,
+											buttons: self.buttons,
+											lengthMenu: self.lengthMenu,
 											data: table_data,
 											columns: [{
 													data: 'concept_id'
-														},
+												},
 												{
 													data: 'soc'
-														},
+												},
 												{
 													data: 'hlgt',
 													visible: false
-														},
+												},
 												{
 													data: 'hlt'
-														},
+												},
 												{
 													data: 'pt',
 													visible: false
-														},
+												},
 												{
 													data: 'snomed'
-														},
+												},
 												{
 													data: 'num_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'percent_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'relative_risk',
 													className: 'numeric'
-														}
-													],
+												}
+											],
 											pageLength: 5,
 											lengthChange: false,
 											deferRender: true,
@@ -1519,37 +1512,39 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									datatable = $('#procedure_table')
 										.DataTable({
 											order: [6, 'desc'],
-											dom: 'T<"clear">lfrtip',
+											dom: self.dom,
+											buttons: self.buttons,
+											lengthMenu: self.lengthMenu,
 											data: table_data,
 											columns: [{
 													data: 'concept_id'
-														},
+												},
 												{
 													data: 'level_4'
-														},
+												},
 												{
 													data: 'level_3',
 													visible: false
-														},
+												},
 												{
 													data: 'level_2'
-														},
+												},
 												{
 													data: 'procedure_name'
-														},
+												},
 												{
 													data: 'num_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'percent_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'relative_risk',
 													className: 'numeric'
-														}
-													],
+												}
+											],
 											pageLength: 5,
 											lengthChange: false,
 											deferRender: true,
@@ -1936,11 +1931,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 							self.careSiteDatatable = $('#care_site_table').DataTable({
 								order: [],
-								dom: 'Clfrtip',
+								dom: self.dom,
+								buttons: self.buttons,
+								lengthMenu: self.lengthMenu,
 								data: care_site_data,
 								columns: [{
 									data: 'institution'
-										}],
+								}],
 								pageLength: 5,
 								lengthChange: false,
 								deferRender: true,
@@ -2700,13 +2697,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									accessor: function (o) {
 										return o.recordType;
 									}
-												},
+								},
 								{
 									label: 'Percent Persons',
 									accessor: function (o) {
 										return d3.format('0.2%')(o.pctPersons);
 									}
-												},
+								},
 								{
 									label: 'Duration Relative to Index',
 									accessor: function (o) {
@@ -2719,13 +2716,14 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										result += days + 'd'
 										return result;
 									}
-												},
+								},
 								{
 									label: 'Person Count',
 									accessor: function (o) {
 										return o.countValue;
 									}
-												}]
+								}
+							]
 						});
 						self.model.loadingReportDrilldown(false);
 					}
@@ -2884,7 +2882,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					id: data.conceptId,
 					label: data.conceptName,
 					value: data.countValue
-							}];
+				}];
 			}
 
 			result = result.sort(function (a, b) {
