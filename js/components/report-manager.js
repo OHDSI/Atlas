@@ -319,6 +319,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										dom: self.dom,
 										buttons: self.buttons,
 										lengthMenu: self.lengthMenu,
+										autoWidth: false,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -358,15 +359,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										deferRender: true,
 										destroy: true
 									});
-
-								/*
-							$(document).on('click', '.dataTable tbody tr', function () {
-								var data = $('.dataTable').DataTable().row(this).data();
-								if (data) {
-									self.procedureDrilldown(data.concept_id, data.procedure_name);
-								}
-							});
-                            */
 
 								var tree = self.buildHierarchyFromJSON(normalizedData, threshold);
 								var treemap = new atlascharts.treemap();
@@ -447,6 +439,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										dom: self.dom,
 										buttons: self.buttons,
 										lengthMenu: self.lengthMenu,
+										autoWidth: false,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -491,14 +484,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										destroy: true
 									});
 
-								/*
-															$(document).on('click', '.dataTable tbody tr', function () {
-																var data = $('.dataTable').DataTable().row(this).data();
-																if (data) {
-																	self.drugExposureDrilldown(data.concept_id, data.rxnorm);
-																}
-															});
-								*/
 								var tree = self.buildHierarchyFromJSON(data, threshold);
 								var treemap = new atlascharts.treemap();
 								treemap.render(tree, '#treemap_container', width, height, {
@@ -575,6 +560,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										dom: self.dom,
 										buttons: self.buttons,
 										lengthMenu: self.lengthMenu,
+										autoWidth: false,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -1083,6 +1069,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										dom: self.dom,
 										buttons: self.buttons,
 										lengthMenu: self.lengthMenu,
+										autoWidth: false,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -1225,6 +1212,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 											dom: self.dom,
 											buttons: self.buttons,
 											lengthMenu: self.lengthMenu,
+											autoWidth: false,
 											data: table_data,
 											columns: [{
 													data: 'concept_id'
@@ -1370,6 +1358,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 											buttons: self.buttons,
 											lengthMenu: self.lengthMenu,
 											data: table_data,
+											autoWidth: false,
 											columns: [{
 													data: 'concept_id'
 												},
@@ -1515,6 +1504,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 											dom: self.dom,
 											buttons: self.buttons,
 											lengthMenu: self.lengthMenu,
+											autoWidth: false,
 											data: table_data,
 											columns: [{
 													data: 'concept_id'

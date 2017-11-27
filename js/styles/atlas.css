@@ -226,10 +226,6 @@ textarea {
 	width: 500px;
 }
 
-#wrapperConceptDetails tr:hover {
-	background-color: #eee;
-}
-
 #wrapperConceptSetExport {
 	padding: 10px;
 }
@@ -614,10 +610,6 @@ table.configureSourceTable {
 
 #wrapperJobs {
 	padding: 5px;
-}
-
-.configureSourceTable tbody tr:hover {
-	background-color: #eee;
 }
 
 .configureSourceTable tbody td {
@@ -1161,10 +1153,14 @@ ul.nav.nav-tabs {
 .progress {
 	border-radius: 0;
 	box-shadow: none;
+	margin-bottom: 0px;
 }
 
 .progress-bar {
 	box-shadow: none;
+	color: #eee;
+	font-size: 10px;
+	margin-bottom: 0px;
 }
 
 .list-group-item:first-child {
@@ -1351,16 +1347,6 @@ table.dataTable.display tbody tr.odd {
 
 table.dataTable.stripe tbody tr.even,
 table.dataTable.display tbody tr.even {
-	background-color: #f0f0f0;
-}
-
-table.dataTable.stripe tbody tr.odd:hover,
-table.dataTable.display tbody tr.odd:hover {
-	background-color: #fff;
-}
-
-table.dataTable.stripe tbody tr.even:hover,
-table.dataTable.display tbody tr.even:hover {
 	background-color: #f0f0f0;
 }
 
@@ -1852,10 +1838,6 @@ cohort-comparison-manager .row .btn {
 	font-size: 10px;
 }
 
-table.cohort-generate-sources tr:hover {
-	background-color: #eee;
-}
-
 .modal-header button.close {
 	color: #fff;
 }
@@ -1997,7 +1979,7 @@ span.new-role {
 	color: #888;
 }
 
-i.pending {
+i.fa.pending {
 	color: #f19119;
 }
 

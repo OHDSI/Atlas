@@ -19,7 +19,6 @@ define(['knockout', 'lscache'], function (ko, cache) {
 	}
 
 	state.jobListing.subscribe(function (data) {
-		console.log('jobListing cached');
 		cache.set(jobListingCacheKey, ko.toJSON(data));
 	});
 

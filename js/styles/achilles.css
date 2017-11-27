@@ -103,9 +103,10 @@ div.data-sources.personSummary .row div {
 	clear: both;
 }
 
-#condition_table {
+.report table {
 	width: 100%;
 }
+
 #condition_table tr {
 	cursor: pointer;
 }

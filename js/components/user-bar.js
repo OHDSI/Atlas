@@ -5,6 +5,9 @@ define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], functio
 		self.updateJobStatus = function () {
 			if (self.jobListing().length > 0) {
 				self.jobListing().forEach(d => {
+					if (d.status() == 'COMPLETED' || d.status() == 'FAILED')
+						return;
+
 					$.ajax(d.progressUrl, {
 						context: d,
 						success: function (progressData) {
@@ -32,7 +35,7 @@ define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], functio
 		};
 
 		self.calculateProgress = function (j) {
-			return (j.progress() / j.progressMax).toFixed(2) * 100 + '%';
+			return Math.round(j.progress() / j.progressMax * 100) + '%';
 		}
 
 		setInterval(self.updateJobStatus, 60000);
