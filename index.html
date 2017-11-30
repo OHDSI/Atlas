@@ -21,23 +21,20 @@
 	<link rel="stylesheet" type="text/css" href="js/styles/achilles.css">
 
 	<title data-bind="text: pageTitle">ATLAS</title>
-	<!--Adobe Edge Runtime-->
-	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 </head>
 
 <body>
-	<div id="splash">
-		<div id="stage" class="EDGE-8182598">
+	<div id="splash" data-bind="if:!initializationComplete()">
+		<div id="stage">
+			<img src="images/atlas_loading.svg" />
 		</div>
 		<div id="heading">
 			<a href="#/search">ATLAS</a>
 		</div>
 		<div data-bind="text:applicationStatus" id="status"></div>
-		<div id="activityTimeline" data-bind="if:applicationStatus=='running'">
-		</div>
 	</div>
 
-	<div id="wrapperLeftMenu" style="display:none;" data-bind="if:initializationComplete">
+	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible:initializationComplete()">
 		<div id="wrapperLogo">
 			<a href="#/home">ATLAS</a>
 		</div>
@@ -57,11 +54,27 @@
 			<a class="list-group-item" target="_blank" href="https://github.com/ohdsi/atlas/issues" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
 		</div>
 	</div>
-	
-	<div id="wrapperMainWindow" data-bind="if:initializationComplete">
+
+	<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete()">
 		<div id="wrapperMainWindowContainer">
 			<user-bar></user-bar>
 			<div data-bind="if:sharedState.appInitializationStatus() == 'failed'">
+				<div style="width:100px;margin-left:auto;margin-right:auto;">
+					<svg width="100" height="100" viewBox="0 -200 400 400">
+					<g id="rings">
+						<circle cx="205" cy="17" r="165" stroke="#800" fill="none" stroke-width="15px"></circle>
+
+						<ellipse cx="205" cy="17" rx="70" ry="70" stroke="#f00" fill="none" stroke-width="6px" stroke-opacity="0.4">
+						</ellipse>
+
+						<ellipse cx="205" cy="17" rx="100" ry="100" stroke="#c00" fill="none" stroke-width="10px" stroke-opacity="0.4">
+						</ellipse>
+
+						<ellipse cx="205" cy="17" rx="135" ry="135" stroke="#800" fill="none" stroke-width="12px" stroke-opacity="0.4">
+						</ellipse>
+					</g>
+				</svg>
+				</div>
 				<div class="error">application initialization failed</div>
 				<div class="error">unable to connect to an instance of the webapi. please contact your administrator to resolve this issue.</div>
 			</div>
@@ -91,22 +104,6 @@
 		</div>
 	</div>
 	<script data-main="js/main" src="js/require.js"></script>
-	<script type="text/javascript" charset="utf-8" src="https://animate.adobe.com/runtime/5.0.1/edge.5.0.1.min.js"></script>
-	<script>
-		AdobeEdge.loadComposition('atlas%20animation', 'EDGE-8182598', {
-			scaleToFit: "none",
-			centerStage: "none",
-			minW: "0",
-			maxW: "undefined",
-			width: "400px",
-			height: "400px"
-		}, {
-			"dom": {}
-		}, {
-			"dom": {}
-		});
-	</script>
-	<!--Adobe Edge Runtime End-->
 </body>
 
 </html>

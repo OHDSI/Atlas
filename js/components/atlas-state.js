@@ -3,13 +3,13 @@ define(['knockout'], function (ko) {
 	state.resultsUrl = ko.observable();
 	state.vocabularyUrl = ko.observable();
 	state.evidenceUrl = ko.observable();
-	
+
 	state.selectedConceptsIndex = {};
-	state.selectedConcepts = ko.observableArray(null);			
+	state.selectedConcepts = ko.observableArray(null);
 	state.appInitializationStatus = ko.observable('initializing');
-	
-	state.clearSelectedConcepts = function() {
-		this.selectedConceptsIndex = {};		
+
+	state.clearSelectedConcepts = function () {
+		this.selectedConceptsIndex = {};
 		this.selectedConcepts([]);
 	}
 
