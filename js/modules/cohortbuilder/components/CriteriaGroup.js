@@ -1,99 +1,127 @@
-define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window', '../AdditionalCriteria', '../options', 'text!./CriteriaGroupTemplate.html'
-			 ], function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, template) {
+define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Window', '../AdditionalCriteria', '../options', 'text!./CriteriaGroupTemplate.html'], function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, template) {
 
 	function CriteriaGroupViewModel(params) {
 		var self = this;
 
-		var addCriteriaActions = [
-			{
+		var addCriteriaActions = [{
 				text: "Add Demographic Criteria",
 				selected: false,
 				description: "Filter events based on demographic criteria.",
-				action: function () { self.addDemographicCriteria(); }
+				action: function () {
+					self.addDemographicCriteria();
+				}
 			},
 			{
 				text: "Add Condition Era Criteria",
 				selected: false,
 				description: "Find patients with specific condition era.",
-				action: function () { self.addConditionEraCriteria(); }
+				action: function () {
+					self.addConditionEraCriteria();
+				}
 			},
 			{
 				text: "Add Condition Occurrence Criteria",
 				selected: false,
 				description: "Find patients with specific conditions.",
-				action: function () { self.addConditionCriteria(); }
+				action: function () {
+					self.addConditionCriteria();
+				}
 			},
 			{
 				text: "Add Death Criteria",
 				selected: false,
 				description: "Find patients based on death.",
-				action: function () { self.addDeathCriteria(); }
+				action: function () {
+					self.addDeathCriteria();
+				}
 			},
 			{
 				text: "Add Device Exposure Criteria",
 				selected: false,
 				description: "Find patients based on device exposure.",
-				action: function () { self.addDeviceCriteria(); }
+				action: function () {
+					self.addDeviceCriteria();
+				}
 			},
 			{
 				text: "Add Dose Era Criteria",
 				selected: false,
 				description: "Find patients with dose eras.",
-				action: function () { self.addDoseEraCriteria(); }
+				action: function () {
+					self.addDoseEraCriteria();
+				}
 			},
 			{
 				text: "Add Drug Era Criteria",
 				selected: false,
 				description: "Find patients with with drug eras.",
-				action: function () { self.addDrugEraCriteria(); }
+				action: function () {
+					self.addDrugEraCriteria();
+				}
 			},
 			{
 				text: "Add Drug Exposure Criteria",
 				selected: false,
 				description: "Find patients with exposure to specific drugs or drug classes.",
-				action: function () { self.addDrugExposureCriteria(); }
+				action: function () {
+					self.addDrugExposureCriteria();
+				}
 			},
 			{
 				text: "Add Measurement Criteria",
 				selected: false,
 				description: "Find patients based on measurements.",
-				action: function () { self.addMeasurementCriteria(); }
+				action: function () {
+					self.addMeasurementCriteria();
+				}
 			},
 			{
 				text: "Add Observation Criteria",
 				selected: false,
 				description: "Find patients based on observations.",
-				action: function () { self.addObservationCriteria(); }
+				action: function () {
+					self.addObservationCriteria();
+				}
 			},
 			{
 				text: "Add Observation Period Criteria",
 				selected: false,
-				description: "Find patients based on pbservation periods.",
-				action: function () { self.addObservationPeriodCriteria(); }
+				description: "Find patients based on observation periods.",
+				action: function () {
+					self.addObservationPeriodCriteria();
+				}
 			},
 			{
 				text: "Add Procedure Occurrence Criteria",
 				selected: false,
 				description: "Find patients that experienced a specific procedure.",
-				action: function () { self.addProcedureCriteria(); }
+				action: function () {
+					self.addProcedureCriteria();
+				}
 			},
 			{
 				text: "Add Specimen Criteria",
 				selected: false,
 				description: "Find patients based on specimen.",
-				action: function () { self.addSpecimenCriteria(); }
-			},			
+				action: function () {
+					self.addSpecimenCriteria();
+				}
+			},
 			{
 				text: "Add Visit Criteria",
 				selected: false,
 				description: "Find patients based on visit information.",
-				action: function () { self.addVisitCriteria(); }
+				action: function () {
+					self.addVisitCriteria();
+				}
 			},
 			{
 				text: "Add Group",
 				selected: false,
 				description: "Add a group to combine criteria using and/or relationships.",
-				action: function () { self.addAdditionalCriteria(); }
+				action: function () {
+					self.addAdditionalCriteria();
+				}
 			}
 		];
 
@@ -101,10 +129,10 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;
 		self.options = options;
-		self.groupCountOptions = ko.pureComputed(function() {
+		self.groupCountOptions = ko.pureComputed(function () {
 			var optionsArray = ['0'];
-			for (var i=0;i < (self.group().CriteriaList().length + self.group().Groups().length); i++) {
-				optionsArray.push(""+(i+1));
+			for (var i = 0; i < (self.group().CriteriaList().length + self.group().Groups().length); i++) {
+				optionsArray.push("" + (i + 1));
 			}
 			return optionsArray;
 		});
@@ -136,7 +164,7 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 			else if (data.hasOwnProperty("Specimen"))
 				return "specimen-criteria";
 			else if (data.hasOwnProperty("ObservationPeriod"))
-				return "observation-period-criteria";			
+				return "observation-period-criteria";
 			else if (data.hasOwnProperty("Death"))
 				return "death-criteria";
 			else
@@ -148,10 +176,10 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 			self.group().Groups.push(new CriteriaGroup(null, unwrappedExpression.ConceptSets));
 		};
 
-		self.addDemographicCriteria = function() {
+		self.addDemographicCriteria = function () {
 			self.group().DemographicCriteriaList.push(new criteriaTypes.DemographicCriteria());
 		}
-		
+
 		self.addConditionCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
@@ -205,7 +233,7 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 				}
 			}, unwrappedExpression.ConceptSets));
 		};
-		
+
 		self.addObservationCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
@@ -213,7 +241,7 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 					Observation: {}
 				}
 			}, unwrappedExpression.ConceptSets));
-		};	
+		};
 
 		self.addVisitCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
@@ -223,7 +251,7 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 				}
 			}, unwrappedExpression.ConceptSets));
 		};
-		
+
 		self.addDeviceCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
@@ -232,7 +260,7 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 				}
 			}, unwrappedExpression.ConceptSets));
 		};
-		
+
 		self.addMeasurementCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
@@ -250,7 +278,7 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 				}
 			}, unwrappedExpression.ConceptSets));
 		};
-		
+
 		self.addObservationPeriodCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
@@ -258,10 +286,9 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 					ObservationPeriod: {}
 				}
 			}, unwrappedExpression.ConceptSets));
-		};		
-		
-		self.addDeathCriteria = function()
-		{
+		};
+
+		self.addDeathCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
@@ -269,33 +296,33 @@ define(['knockout', '../CriteriaTypes','../CriteriaGroup', '../InputTypes/Window
 				}
 			}, unwrappedExpression.ConceptSets));
 		}
-		
+
 		self.removeCriteria = function (observableList, data) {
 			observableList.remove(data);
 		};
 
-		
-		self.addEndWindow = function(corelatedCriteria){
+
+		self.addEndWindow = function (corelatedCriteria) {
 			corelatedCriteria.EndWindow(new Window());
 		};
-		
-		self.removeEndWindow = function(corelatedCriteria) {
+
+		self.removeEndWindow = function (corelatedCriteria) {
 			corelatedCriteria.EndWindow(null);
 		};
-		
+
 		self.addCriteriaSettings = {
 			selectText: "Add New Criteria...",
-			width:250,
-			height:300,
+			width: 250,
+			height: 300,
 			actionOptions: addCriteriaActions,
 			onAction: function (data) {
 				data.selectedData.action();
 			}
 		}
-		
+
 		// do not show restrict visit option for criteria where visit occurrence id is set to null
 		self.hasVO = function (data) {
-			switch ( self.getCriteriaComponent(data) ) {
+			switch (self.getCriteriaComponent(data)) {
 				case "condition-era-criteria":
 				case "death-criteria":
 				case "drug-era-criteria":

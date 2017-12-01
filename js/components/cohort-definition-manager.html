@@ -315,7 +315,7 @@
 						<div role="tabpanel" data-bind="css: {active: $component.generationTabMode() == 'features'}" class="tab-pane">
 							<!-- ko if: $component.selectedSource() && $component.selectedSource().includeFeatures -->
 							<div class="heading">Feature Report for <span data-bind="text:selectedReportCaption"></span></div>
-							<div><b>Features are basline characteristics (e.g collected before /on cohort start)</b></div>
+							<div><b>Features are baseline characteristics (e.g collected before /on cohort start)</b></div>
 							<cohort-feature-browser params="cohortId: $component.model.currentCohortDefinition().id, sourceKey: $component.selectedSourceKey"></cohort-feature-browser>
 							<!-- /ko -->
 							<!-- ko ifnot: $component.selectedSource() && $component.selectedSource().includeFeatures -->
