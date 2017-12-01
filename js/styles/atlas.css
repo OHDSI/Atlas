@@ -270,7 +270,6 @@ pre span.key {
 	left: 149px;
 	top: 0px;
 	right: 0px;
-	display: none;
 }
 
 #wrapperMainWindowContainer {
@@ -743,22 +742,6 @@ ul.ColVis_collection li {
 
 .fa-check-circle {
 	color: #080;
-}
-
-#activityTimeline {
-	display: none;
-	padding: 3px;
-	background-color: #eee;
-	height: 128px;
-	width: 100%;
-	bottom: 0px;
-	position: absolute;
-	border-top: solid 1px #ccc;
-	z-index: 100;
-}
-
-.edgeLoad-EDGE-8182598 {
-	visibility: hidden;
 }
 
 #wrapperCohortDefinition .fa-exclamation-circle {
@@ -1259,6 +1242,12 @@ div#stage {
 	margin-right: auto;
 	margin-left: auto;
 	margin-top: 25px;
+	width:400px;
+}
+
+div#stage img {
+	width: 400px;
+	height: 500px;
 }
 
 #splash {

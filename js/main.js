@@ -163,7 +163,6 @@ requirejs.config({
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
 	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
-		$('#splash').show();
 		var pageModel = new app();
 		window.pageModel = pageModel;
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
@@ -332,10 +331,9 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			});
 		}
 
-		$.when.apply($, pageModel.initPromises)
-			.done(function () {
-				pageModel.initComplete();
-			});
+		$.when.apply($, pageModel.initPromises).done(function () {
+			pageModel.initComplete();
+		});
 
 		pageModel.currentView.subscribe(function (newView) {
 			switch (newView) {

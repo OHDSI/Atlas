@@ -61,269 +61,249 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			});
 
 			self.initComplete = function () {
-				if (self.sharedState.appInitializationStatus() == 'initializing') {
-					var routerOptions = {
-						notfound: function () {
+				var routerOptions = {
+					notfound: function () {
+						self.currentView('search');
+					},
+					on: function () {
+						self.currentView('loading');
+					}
+				};
+				var routes = {
+					'/': function () {
+						document.location = "#/home";
+					},
+					'/concept/:conceptId:': function (conceptId) {
+						require(['concept-manager'], function () {
+							self.currentConceptId(conceptId);
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('concept-manager');
+						});
+					},
+					'/cohortdefinitions': function () {
+						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('cohort-definitions');
+						});
+					},
+					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
+						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('cohort-definition-manager');
+							self.currentCohortDefinitionMode('definition');
+							self.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details');
+						});
+					},
+					'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
+						require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'explore-cohort'], function (CohortDefinition) {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('cohort-definition-manager');
+							self.currentCohortDefinitionMode('conceptsets');
+							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
+						});
+					},
+					'/datasources': function () {
+						require(['data-sources'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('data-sources');
+						});
+					},
+					'/datasources/:sourceKey/:reportName': function (sourceKey, reportName) {
+						require(['data-sources'], function () {
+							self.componentParams = {
+								model: self,
+								reportName: reportName,
+								sourceKey: sourceKey
+							};
+							self.currentView('data-sources');
+						});
+					},
+					'/configure': function () {
+						require(['configuration'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('ohdsi-configuration');
+						});
+					},
+					'/roles': function () {
+						require(['roles'], function () {
+							self.currentView('roles');
+						});
+					},
+					'/role/:id': function (id) {
+						require(['role-details'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentRoleId(id);
+							self.currentView('role-details');
+						});
+					},
+					'/home': function () {
+						require(['home'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('home');
+						});
+					},
+					'/welcome/:token': function (token) {
+						require(['welcome'], function () {
+							authApi.token(token);
+							document.location = "#/welcome";
+						});
+					},
+					'/jobs': function () {
+						require(['job-manager'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('job-manager');
+						});
+					},
+					'/reports': function () {
+						require(['report-manager', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('report-manager');
+						});
+					},
+					'/import': function () {
+						require(['importer'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('importer');
+						});
+					},
+					'/profiles/?((\w|.)*)': function (path) {
+						require(['profile-manager', 'cohort-definition-browser'], function () {
+							path = path.split("/");
+							self.componentParams = {
+								model: self,
+								sourceKey: (path[0] || null),
+								personId: (path[1] || null),
+								cohortDefinitionId: (path[2] || null)
+							};
+							self.currentView('profile-manager');
+						});
+					},
+					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
+						require(['conceptset-manager', 'cohort-definition-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.loadConceptSet(conceptSetId, 'conceptset-manager', 'repository', mode);
+							self.resolveConceptSetExpression();
+						});
+					},
+					'/conceptsets': function () {
+						require(['conceptset-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('conceptset-browser');
+						});
+					},
+					'/search/:query:': function (query) {
+						require(['search'], function (search) {
+							self.componentParams = {
+								model: self,
+								query: unescape(query)
+							};
 							self.currentView('search');
-						},
-						on: function () {
-							self.currentView('loading');
-						}
-					};
-					var routes = {
-						'/': function () {
-							document.location = "#/home";
-						},
-						'/concept/:conceptId:': function (conceptId) {
-							require(['concept-manager'], function () {
-								self.currentConceptId(conceptId);
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('concept-manager');
-							});
-						},
-						'/cohortdefinitions': function () {
-							require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('cohort-definitions');
-							});
-						},
-						'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
-							require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('cohort-definition-manager');
-								self.currentCohortDefinitionMode('definition');
-								self.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details');
-							});
-						},
-						'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
-							require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'explore-cohort'], function (CohortDefinition) {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('cohort-definition-manager');
-								self.currentCohortDefinitionMode('conceptsets');
-								self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
-							});
-						},
-						'/datasources': function () {
-							require(['data-sources'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('data-sources');
-							});
-						},
-						'/datasources/:sourceKey/:reportName': function (sourceKey, reportName) {
-							require(['data-sources'], function () {
-								self.componentParams = {
-									model: self,
-									reportName: reportName,
-									sourceKey: sourceKey
-								};
-								self.currentView('data-sources');
-							});
-						},
-						'/configure': function () {
-							require(['configuration'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('ohdsi-configuration');
-							});
-						},
-						'/roles': function () {
-							require(['roles'], function () {
-								self.currentView('roles');
-							});
-						},
-						'/role/:id': function (id) {
-							require(['role-details'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentRoleId(id);
-								self.currentView('role-details');
-							});
-						},
-						'/home': function () {
-							require(['home'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('home');
-							});
-						},
-						'/welcome/:token': function (token) {
-							require(['welcome'], function () {
-								authApi.token(token);
-								document.location = "#/welcome";
-							});
-						},
-						'/jobs': function () {
-							require(['job-manager'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('job-manager');
-							});
-						},
-						'/reports': function () {
-							require(['report-manager', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('report-manager');
-							});
-						},
-						'/import': function () {
-							require(['importer'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('importer');
-							});
-						},
-						'/profiles/?((\w|.)*)': function (path) {
-							require(['profile-manager', 'cohort-definition-browser'], function () {
-								path = path.split("/");
-								self.componentParams = {
-									model: self,
-									sourceKey: (path[0] || null),
-									personId: (path[1] || null),
-									cohortDefinitionId: (path[2] || null)
-								};
-								self.currentView('profile-manager');
-							});
-						},
-						'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
-							require(['conceptset-manager', 'cohort-definition-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.loadConceptSet(conceptSetId, 'conceptset-manager', 'repository', mode);
-								self.resolveConceptSetExpression();
-							});
-						},
-						'/conceptsets': function () {
-							require(['conceptset-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('conceptset-browser');
-							});
-						},
-						'/search/:query:': function (query) {
-							require(['search'], function (search) {
-								self.componentParams = {
-									model: self,
-									query: unescape(query)
-								};
-								self.currentView('search');
-							});
-						},
-						'/search': function () {
-							require(['search'], function (search) {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('search');
-							});
-						},
-						'/estimation': function () {
-							require(['cohort-comparison-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('cohort-comparison-browser');
-							});
-						},
-						'/estimation/:cohortComparisonId:': function (cohortComparisonId) {
-							require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
-								self.currentCohortComparisonId(+cohortComparisonId);
-								self.componentParams = {
-									currentCohortComparisonId: self.currentCohortComparisonId,
-									currentCohortComparison: self.currentCohortComparison,
-									dirtyFlag: self.currentCohortComparisonDirtyFlag
-								};
-								self.currentView('cohort-comparison-manager');
-							});
-						},
-						'/iranalysis': function () {
-							require(['ir-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('ir-browser');
-							});
-						},
-						'/iranalysis/new': function (analysisId) {
-							require(['ir-manager'], function () {
-								self.selectedIRAnalysisId(null);
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('ir-manager');
-							});
-						},
-						'/iranalysis/:analysisId': function (analysisId) {
-							require(['ir-manager'], function () {
-								self.selectedIRAnalysisId(+analysisId);
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('ir-manager');
-							});
-						},
-						'/plp': function () {
-							require(['plp-browser', 'plp-manager', 'plp-inspector'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('plp-browser');
-							});
-						},
-						'/plp/:modelId:': function (modelId) {
-							require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
-								self.currentPatientLevelPredictionId(+modelId);
-								self.componentParams = {
-									currentPatientLevelPredictionId: self.currentPatientLevelPredictionId,
-									currentPatientLevelPrediction: self.currentPatientLevelPrediction,
-									dirtyFlag: self.currentPatientLevelPredictionDirtyFlag,
-								};
-								self.currentView('plp-manager');
-							});
-						},
-					};
+						});
+					},
+					'/search': function () {
+						require(['search'], function (search) {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('search');
+						});
+					},
+					'/estimation': function () {
+						require(['cohort-comparison-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('cohort-comparison-browser');
+						});
+					},
+					'/estimation/:cohortComparisonId:': function (cohortComparisonId) {
+						require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
+							self.currentCohortComparisonId(+cohortComparisonId);
+							self.componentParams = {
+								currentCohortComparisonId: self.currentCohortComparisonId,
+								currentCohortComparison: self.currentCohortComparison,
+								dirtyFlag: self.currentCohortComparisonDirtyFlag
+							};
+							self.currentView('cohort-comparison-manager');
+						});
+					},
+					'/iranalysis': function () {
+						require(['ir-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('ir-browser');
+						});
+					},
+					'/iranalysis/new': function (analysisId) {
+						require(['ir-manager'], function () {
+							self.selectedIRAnalysisId(null);
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('ir-manager');
+						});
+					},
+					'/iranalysis/:analysisId': function (analysisId) {
+						require(['ir-manager'], function () {
+							self.selectedIRAnalysisId(+analysisId);
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('ir-manager');
+						});
+					},
+					'/plp': function () {
+						require(['plp-browser', 'plp-manager', 'plp-inspector'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('plp-browser');
+						});
+					},
+					'/plp/:modelId:': function (modelId) {
+						require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
+							self.currentPatientLevelPredictionId(+modelId);
+							self.componentParams = {
+								currentPatientLevelPredictionId: self.currentPatientLevelPredictionId,
+								currentPatientLevelPrediction: self.currentPatientLevelPrediction,
+								dirtyFlag: self.currentPatientLevelPredictionDirtyFlag,
+							};
+							self.currentView('plp-manager');
+						});
+					},
+				};
 
-					self.router = new Router(routes)
-						.configure(routerOptions);
-					self.router.init('/');
-					self.applicationStatus('running');
-					self.sharedState.appInitializationStatus("complete");
-				} else {
-					self.componentParams = {
-						model: self
-					};
-
-					self.applicationStatus('initialization error');
-					document.location = '#/configure';
-				}
-				setTimeout(function () {
-					$('#splash')
-						.hide();
-				}, 0);
-				setTimeout(function () {
-					$('#wrapperLeftMenu')
-						.show();
-					$('#wrapperMainWindow')
-						.show();
-				}, 5);
+				self.router = new Router(routes)
+					.configure(routerOptions);
+				self.router.init('/');
+				self.applicationStatus('running');
 			};
 
 			self.relatedConceptsOptions = {
