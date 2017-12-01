@@ -226,10 +226,6 @@ textarea {
 	width: 500px;
 }
 
-#wrapperConceptDetails tr:hover {
-	background-color: #eee;
-}
-
 #wrapperConceptSetExport {
 	padding: 10px;
 }
@@ -501,6 +497,10 @@ td .fa-shopping-cart {
 	cursor: pointer;
 }
 
+.asset-heading ul li .fa-shopping-cart {
+	color:#000;
+}
+
 .fa-shopping-cart.selected {
 	color: #F19119;
 }
@@ -613,10 +613,6 @@ table.configureSourceTable {
 
 #wrapperJobs {
 	padding: 5px;
-}
-
-.configureSourceTable tbody tr:hover {
-	background-color: #eee;
 }
 
 .configureSourceTable tbody td {
@@ -831,11 +827,11 @@ input.btn.btn-default {
 }
 
 .reportSectionHeading {
-	font-size: 13px;
-	border-bottom: solid 1px #ccc;
-	margin-top: 10px;
-	margin-bottom: 0px;
-	color: #222;
+	font-size: 12px;
+	/* border-bottom: solid 1px #ccc; */
+	/* margin-top: 10px; */
+	margin-bottom: 10px;
+	color: #000;
 }
 
 .evidenceDescription {
@@ -852,7 +848,7 @@ input.btn.btn-default {
 }
 
 .evidenceVisualization .axislabel {
-	font-size: 1.8em;
+	/* font-size: 1.8em; */
 }
 
 
@@ -908,9 +904,9 @@ input.btn.btn-default:disabled {
 }
 
 .report {
-	background-color: #eee;
-	margin: 10px 3px 3px 3px;
-	border: solid 1px #ddd;
+	/* background-color: #eee; */
+	margin: 3px 3px 3px 3px;
+	/* border: solid 1px #ddd; */
 }
 
 .reportHeading .fa-area-chart {
@@ -1048,6 +1044,8 @@ ul.nav.nav-tabs {
 	white-space: nowrap;
 }
 
+.report ul.nav.nav-tabs {background-color: #2f71a9;}
+
 .nav-tabs span.badge {
 	background-color: #ddd;
 	color: #003142;
@@ -1142,10 +1140,14 @@ ul.nav.nav-tabs {
 .progress {
 	border-radius: 0;
 	box-shadow: none;
+	margin-bottom: 0px;
 }
 
 .progress-bar {
 	box-shadow: none;
+	color: #eee;
+	font-size: 10px;
+	margin-bottom: 0px;
 }
 
 .list-group-item:first-child {
@@ -1293,7 +1295,8 @@ table.dataTable {
 }
 
 .dataTables_wrapper {
-	margin: 5px 3px 5px 3px;
+	margin: 5px 0px 5px 0px;
+	width: 100%;
 }
 
 textarea.form-control {
@@ -1337,16 +1340,6 @@ table.dataTable.display tbody tr.odd {
 
 table.dataTable.stripe tbody tr.even,
 table.dataTable.display tbody tr.even {
-	background-color: #f0f0f0;
-}
-
-table.dataTable.stripe tbody tr.odd:hover,
-table.dataTable.display tbody tr.odd:hover {
-	background-color: #fff;
-}
-
-table.dataTable.stripe tbody tr.even:hover,
-table.dataTable.display tbody tr.even:hover {
 	background-color: #f0f0f0;
 }
 
@@ -1838,10 +1831,6 @@ cohort-comparison-manager .row .btn {
 	font-size: 10px;
 }
 
-table.cohort-generate-sources tr:hover {
-	background-color: #eee;
-}
-
 .modal-header button.close {
 	color: #fff;
 }
@@ -1977,3 +1966,32 @@ span.new-role {
 .list-inline>li {
 	vertical-align: middle;
 }
+
+.user-bar-container i.fa {
+	padding: 10px;
+	color: #888;
+}
+
+i.fa.pending {
+	color: #f19119;
+}
+
+#jobModal .progress {
+	margin-bottom: 0px;
+}
+
+
+.report .panel-heading i.fa.fa-question-circle {
+	font-size: 18px;
+	float: right;
+	margin-right: 7px;
+	color: #fff;
+	cursor: pointer;
+}
+
+
+.report .panel-body {
+    padding: 0px 0px 5px 0px;
+}
+
+.report ul.nav.nav-tabs {}

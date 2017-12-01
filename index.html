@@ -80,7 +80,7 @@
 			</div>
 
 			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
-			<!-- ko if: pageModel.currentCohortDefinition() != null && pageModel.currentView() !='cohort-definition-manager' -->
+			<!-- ko if: pageModel.currentCohortDefinition() != null && pageModel.currentView() !='cohort-definition-manager' && pageModel.currentView() != 'loading' -->
 			<div class="breadcrumb-container">
 				<i class="fa fa-arrow-left"></i>
 				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text: pageModel.currentCohortDefinition().name"></a>

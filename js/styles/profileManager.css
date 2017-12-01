@@ -6,19 +6,22 @@
 	vertical-align: top;
 	overflow: hidden;
 	text-align: center;
-	shape-rendering: crispEdges;	
+	shape-rendering: crispEdges;
+	border-bottom: solid 1px #ccc;
 }
 
 #profile-chart .brush .extent {
 	stroke: #f19119;
 	fill: #f19119;
-	fill-opacity: .125;
+	fill-opacity: 0.15;
 	shape-rendering: crispEdges;
 }
 
 #profile-chart .observation-period {
-	fill: #b7cbdc;
-	opacity: .3;
+	fill: none;
+	stroke: #b7cbdc;
+	opacity: 0.7;
+	stroke-width: 2;
 }
 
 #profile-chart svg {
@@ -31,11 +34,6 @@
 	font-size: 10px;
 }
 
-#profile-chart {
-	text-align: center;
-	border-bottom: solid 1px #ccc;
-}
-
 #profile-chart .axis path, .axis line {
 		stroke: #666 !important;
 		stroke-width: 1px !important;
@@ -43,182 +41,116 @@
 
 path.drug {
 	fill:#337AB7;
-	opacity: 0.6;
+	opacity: 0.3;
 }
 path.condition {
 	fill:rgb(166,206,227);
-	opacity:0.6;
+	opacity:0.3;
 }
 path.observation {
 	fill:rgb(31,120,180);
-	opacity:0.6;
+	opacity:0.3;
 }
 path.visit {
 	fill:rgb(178,223,138);
-	opacity:0.6;
+	opacity:0.3;
 }
 path.conditionera {
 	fill:rgb(51,160,44);
-	opacity:0.6;
+	opacity:0.3;
 }
 path.drugera {
 	fill:rgb(251,154,153);
-	opacity:0.6;
+	opacity:0.3;
 }
 path.doseera {
 	fill:rgb(227,26,28);
-	opacity:0.6;
+	opacity:0.3;
 }
 path.procedure {
 	fill:rgb(253,191,111);
-	opacity:0.6;
+	opacity:0.3;
 }
 path.device {
 	fill:rgb(255,127,0);
-	opacity:0.6;
+	opacity:0.3;
 }
 path.measurement {
 	fill:rgb(202,178,214);
-	opacity:0.6;
+	opacity:0.3;
 }
 path.specimen {
 	fill:rgb(106,61,154);
-	opacity:0.6;
+	opacity:0.3;
 }
 path.death {
 	fill:rgb(255,255,153);
-	opacity:0.6;
+	opacity:0.3;
 }
 
 rect.point {
-	opacity: 1;
-}
-rect.drug,
-text.drug
-{
-	fill:#337AB7;
-	opacity:.7;
-}
-rect.condition,
-text.condition
-{
-	fill:#337AB7;
-	opacity:.7;
-
-}
-rect.observation,
-text.observation
-{
-	fill:#337AB7;
-	opacity:.7;
-
-}
-rect.visit,
-text.visit
-{
-	fill:#337AB7;
-	opacity:.7;
-
-}
-rect.conditionera,
-text.conditionera
-{
-	fill:#337AB7;
-	opacity:.7;
-
-}
-rect.drugera,
-text.drugera
-{
-	fill:#337AB7;
-	opacity:.7;
-}
-rect.doseera,
-text.doseera
-{
-	fill:#337AB7;
-	opacity:.7;
-}
-rect.procedure,
-text.procedure
-{
-	fill:#337AB7;
-	opacity:.7;
-}
-rect.device,
-text.device
-{
-	fill:#337AB7;
-	opacity:.7;
-}
-rect.measurement,
-text.measurement
-{
-	fill:#337AB7;
-	opacity:.7;
-}
-rect.specimen,
-text.specimen
-{
-	fill:#337AB7;
-	opacity:.7;
-}
-rect.death,
-text.death
-{
-	fill:#337AB7;
-	opacity:.7;
+	opacity: 0.3;
+	fill: #337AB7;
 }
 
 rect.dim {
 	opacity: 0.2 !important;
 }
 .link {
-	stroke: gray;
-	stroke-width: 0.5;
+	stroke: #444;
+	stroke-width: 2;
+	shape-rendering: crispedges;
+}
+.link.highlighted {
+	stroke: #f19119;
+	fill: #f19119;
 }
 #wordcloud {
 	overflow: auto;
 	height: 100%;
 }
 .wordcloud span {
-	background-color: #ccc;
 	margin: 2px;
 	padding: 3px;
-	border-radius: 3px;
 	display: block;
 	cursor: pointer;
+	border: solid 1px #ccc;
+}
+.wordcloud-help {
+	text-align:center;
+	color:#aaa;
+	font-size:10px;
 }
 .highlighted path, .highlighted line, .highlighted rect {
 	fill: #f19119;
+	stroke: #f19119;
+	stroke-width: 1;
+	opacity:0.7;
 }
-text.highlighted {
-	opacity: 1;
-	fill: black !important;
-}
-.unhighlighted {
-	opacity: .9;
+text.unhighlighted {
+	opacity: 0.3;
 }
 g.inset rect.inset-point {
 	fill: black;
 }
 g.inset rect.background {
-	fill: white;
+	fill: #fff;
 	stroke: gray;
+	stroke-width: 2;
 }
 g.inset rect.highlighted {
-	fill: orangered !important;
+	fill: #f19119 !important;
 	width: 3px;
 	height: 3px;
 }
 g.inset rect.insetZoom {
 	opacity: 1;
 	cursor: -webkit-grab;
-	fill:transparent;
+	fill: transparent;
 	stroke:#f19119;
-
+	stroke-width: 2;
 }
-g.inset rect.resizeLeft, 
+g.inset rect.resizeLeft,
 g.inset rect.resizeRight {
 	opacity: 0;
 	cursor: ew-resize;
@@ -228,14 +160,47 @@ g.inset rect.filteredout {
 }
 rect.category {
 	fill: #fff;
+	stroke:#eee;
+	stroke-width:1px;
 }
 text.category {
-	fill: #ccc;
-	font-weight:bold;
+	fill: #ddd;
+	font-weight:normal;
 }
-
+text.label.highlighted {
+	fill: #000;
+	font-size:1.1em;
+	stroke:#f19119;
+	stroke-width:0.3
+}
 #cohortPeople {
 	display: inline-block;
 }
+g.unhighlighted rect {
+	opacity: 0.5;
+	fill: #ccc;
+}
 
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
 
+.profile-control .feFilter .facetScrollBox {
+	max-height: none;
+}
+
+.fa-remove.remove-highlight {
+	color:#f19119;
+	font-weight:normal;
+}
+
+.dropdown-menu.highlight-dropdown {
+	margin-top:0px;
+	padding-top:0px
+}
+
+.highlight-dropdown.dropdown-menu>li>a {
+	padding-left:5px;
+}
