@@ -57,7 +57,7 @@
 			<a class="list-group-item" target="_blank" href="https://github.com/ohdsi/atlas/issues" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
 		</div>
 	</div>
-	
+
 	<div id="wrapperMainWindow" data-bind="if:initializationComplete">
 		<div id="wrapperMainWindowContainer">
 			<user-bar></user-bar>
@@ -67,7 +67,7 @@
 			</div>
 
 			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
-			<!-- ko if: pageModel.currentCohortDefinition() != null && pageModel.currentView() !='cohort-definition-manager' -->
+			<!-- ko if: pageModel.currentCohortDefinition() != null && pageModel.currentView() !='cohort-definition-manager' && pageModel.currentView() != 'loading' -->
 			<div class="breadcrumb-container">
 				<i class="fa fa-arrow-left"></i>
 				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text: pageModel.currentCohortDefinition().name"></a>

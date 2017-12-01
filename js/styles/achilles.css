@@ -2,7 +2,7 @@
 	margin-right: 7px;
 }
 .panel {
-	margin-bottom: 10px;
+	/* margin-bottom: 10px; */
 }
 .panel-default {
 	border-color: #888;
@@ -19,7 +19,7 @@
 .panel-heading {
 	padding-top: 5px;
 	padding-bottom: 5px;
-	font-size: 14px;
+	font-size: 12px;
 }
 .datasources.col-xs-1,
 .datasources.col-sm-1,
@@ -102,6 +102,11 @@ div.data-sources.personSummary .row div {
 .clear {
 	clear: both;
 }
+
+.report table {
+	width: 100%;
+}
+
 #condition_table tr {
 	cursor: pointer;
 }
