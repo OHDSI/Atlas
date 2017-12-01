@@ -275,6 +275,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					});
 					break;
 					// not yet implemented
+				case 'Care Site':
+					$.ajax({
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/caresite?refresh=true',
+						success: function (data) {
+							self.model.currentReport(self.model.reportReportName());
+							self.model.loadingReport(false);
+						}
+					});
+					break;
 				case 'Measurement':
 					$.ajax({
 						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/measurement?refresh=true',

@@ -90,6 +90,17 @@
 	</div>
 </div>
 
+<!-- ko if: model.currentReport() == 'Measurement' && !model.loadingReport() -->
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		Report Not implemented
+	</div>
+	<div class="panel-body">
+		This report has not been implemented.
+	</div>
+</div>
+<!-- /ko -->
+
 <div id="reportCohortSpecific" data-bind="if: model.currentReport() == 'Cohort Specific' && !model.loadingReport()">
 	<div class="pad-10 report">
 		<div class="reportSectionHeading">Prevalence by Month</div>

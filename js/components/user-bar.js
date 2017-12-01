@@ -7,29 +7,33 @@ define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], functio
 				self.jobListing().forEach(d => {
 					if (d.status() == 'COMPLETED' || d.status() == 'FAILED')
 						return;
+					if (d.progressUrl) {
+						$.ajax(d.progressUrl, {
+							context: d,
+							success: function (progressData) {
+								var job = self.jobListing().find(j => j.executionId == d.executionId);
+								if (job.progress() != progressData.length) {
+									job.progress(progressData[d.progressValue]);
+									job.viewed(false);
+									self.jobListing.valueHasMutated();
+								}
+							}
+						});
+					}
 
-					$.ajax(d.progressUrl, {
-						context: d,
-						success: function (progressData) {
-							var job = self.jobListing().find(j => j.executionId == d.executionId);
-							if (job.progress() != progressData.length) {
-								job.progress(progressData[d.progressValue]);
-								job.viewed(false);
-								self.jobListing.valueHasMutated();
+					if (d.statusUrl) {
+						$.ajax(d.statusUrl, {
+							context: d,
+							success: function (statusData) {
+								var job = self.jobListing().find(j => j.executionId == d.executionId);
+								if (job.status() != statusData[d.statusValue]) {
+									job.status(statusData[d.statusValue]);
+									job.viewed(false);
+									self.jobListing.valueHasMutated();
+								}
 							}
-						}
-					});
-					$.ajax(d.statusUrl, {
-						context: d,
-						success: function (statusData) {
-							var job = self.jobListing().find(j => j.executionId == d.executionId);
-							if (job.status() != statusData[d.statusValue]) {
-								job.status(statusData[d.statusValue]);
-								job.viewed(false);
-								self.jobListing.valueHasMutated();
-							}
-						}
-					});
+						});
+					}
 				});
 			}
 		};

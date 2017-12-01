@@ -6,6 +6,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'cohortbuilder/CohortExpression',
 	'cohortbuilder/InclusionRule',
 	'conceptsetbuilder/InputTypes/ConceptSet',
+	'webapi/CohortReportingAPI',
 	'atlas-state',
 	'cohortbuilder/components/FeasibilityReportViewer',
 	'knockout.dataTables.binding',
@@ -13,7 +14,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'databindings',
 	'cohortdefinitionviewer/expressionCartoonBinding',
 	'cohortfeatures',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, sharedState) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -132,6 +133,17 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 			return path;
 		});
+
+		self.tabMode.subscribe(t => {
+			switch (t) {
+				case 'reporting':
+					{
+						console.log('reporting');
+						break;
+					}
+			}
+		});
+
 		self.delayedCartoonUpdate = ko.observable(null);
 
 		self.canGenerate = ko.pureComputed(function () {
@@ -571,44 +583,62 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.createReportJobError = ko.observable();
 		self.reportingError = ko.observable();
 		self.currentJob = ko.observable();
-
+		self.reportingSourceStatusAvailable = ko.observable(false);
+		self.reportingSourceStatusLoading = ko.observable(false);
+		self.reportingSourceStatus = ko.observable();
+		self.reportingAvailableReports = ko.observableArray();
 
 		self.calculateProgress = function (j) {
 			return Math.round(j.progress() / j.progressMax * 100) + '%';
 		}
 
+		self.model.reportSourceKey.subscribe(s => {
+			self.reportingSourceStatusAvailable(false);
+			self.reportingAvailableReports.removeAll();
+		});
+
 		self.reportingState = ko.computed(function () {
+			// require a data source selection
 			if (self.model.reportSourceKey() == undefined) {
 				return "awaiting_selection";
 			}
 
-			if (self.model.sourceAnalysesStatus && self.model.sourceAnalysesStatus[self.model.reportSourceKey()]) {
-				if (self.model.sourceAnalysesStatus[self.model.reportSourceKey()]().checking) {
-					return "checking_status";
-				}
+			// check if the cohort has been generated
+			var sourceInfo = self.model.cohortDefinitionSourceInfo().find(d => d.sourceKey == self.model.reportSourceKey());
+			if (self.getStatusMessage(sourceInfo) != 'COMPLETE') {
+				return "cohort_not_generated";
+			}
 
-				var sourceInfo = self.model.cohortDefinitionSourceInfo().find(d => d.sourceKey == self.model.reportSourceKey());
-				if (self.getStatusMessage(sourceInfo) != 'COMPLETE') {
-					return "cohort_not_generated";
+			// check which reports have required data
+			if (!self.reportingSourceStatusAvailable() && !self.reportingSourceStatusLoading()) {
+				self.reportingSourceStatusLoading(true);
+				cohortReportingAPI.getCompletedAnalyses(sourceInfo, self.model.currentCohortDefinition().id()).done(results => {
+					self.reportingSourceStatusAvailable(true);
+					self.reportingSourceStatusLoading(false);
+					var reports = cohortReportingAPI.getAvailableReports(results);
+					self.reportingAvailableReports(reports);
+				});
+				return "checking_status";
+			}
+
+			// check if we can tell if the job to generate the reports is already running
+			if (self.model.currentCohortDefinition()) {
+				var listing = sharedState.jobListing;
+				var tempJob = listing().find(j => j.name == "HERACLES_COHORT_" + self.model.currentCohortDefinition().id() + "_" + self.model.reportSourceKey());
+				if (tempJob) {
+					if (tempJob.status() == 'STARTED' || tempJob.status() == 'STARTING') {
+						self.currentJob(tempJob);
+						return "generating_reports";
+					}
 				}
 			}
 
-
-			var listing = sharedState.jobListing;
-			var tempJob = listing().find(j => j.name == "HERACLES_COHORT_" + self.model.currentCohortDefinition().id() + "_" + self.model.reportSourceKey());
-			if (tempJob) {
-				if (tempJob.status() == 'STARTED' || tempJob.status() == 'STARTING') {
-					self.currentJob(tempJob);
-					return "generating_reports";
-				}
-			}
-
-			var status = self.model.sourceAnalysesStatus[self.model.reportSourceKey()]();
-			if (!status.analysesCount || status.analysesCount == 0) {
+			if (self.reportingAvailableReports().length == 0) {
+				// reset button to allow generation
 				self.generateReportsEnabled(true);
-				return "reports_not_generated";
+				self.generateButtonCaption('Generate Reports');
+				return "report_unavailable";
 			}
-
 
 			if (self.model.reportReportName() == undefined) {
 				// reset button to allow regeneration
@@ -617,20 +647,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return "awaiting_selection";
 			}
 
-			if (self.model.sourceAnalysesStatus[self.model.reportSourceKey()]()[self.model.reportReportName()]) {
-				// reset button to allow regeneration
+			if (self.model.currentCohortDefinition()) {
 				self.generateReportsEnabled(true);
 				self.generateButtonCaption('Generate Reports');
 				self.model.reportCohortDefinitionId(self.model.currentCohortDefinition().id());
 				self.model.reportTriggerRun(true);
 				return "report_active";
-			}
-
-			if (self.model.sourceAnalysesStatus[self.model.reportSourceKey()]()[self.model.reportReportName()] == undefined) {
-				// reset button to allow generation
-				self.generateReportsEnabled(true);
-				self.generateButtonCaption('Generate Reports');
-				return "report_unavailable";
 			}
 
 			var errorPackage = {};
@@ -642,6 +664,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return "unknown_cohort_report_state";
 		});
 
+		self.reportingState.subscribe(s => {
+			console.log(s);
+		});
 		self.showReportNameDropdown = ko.computed(function () {
 			return self.model.reportSourceKey() != undefined &&
 				self.reportingState() != 'checking_status' &&
@@ -654,14 +679,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			self.generateButtonCaption('Submitting Job');
 
 			self.generateReportsEnabled(false);
-			var requestedAnalysisTypes = [];
-			var analysisIdentifiers = [];
-			var analysesTypes = pageModel.cohortAnalyses();
-			// run all analyses
-			for (var i = 0; i < analysesTypes.length; i++) {
-				analysisIdentifiers.push.apply(analysisIdentifiers, analysesTypes[i].analyses);
-			}
-
+			var analysisIdentifiers = cohortReportingAPI.getAnalysisIdentifiers()
 			analysisIdentifiers = _.uniq(analysisIdentifiers);
 			var cohortDefinitionId = pageModel.currentCohortDefinition().id();
 			var cohortJob = {};

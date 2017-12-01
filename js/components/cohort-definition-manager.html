@@ -334,7 +334,7 @@
 						</div>
 						<div class="panel-body">
 							<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.config.api.sources.filter($component.model.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
-							<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $component.model.loadingReport, attr:{disabled: $component.model.loadingReport}, css : {invalid: $component.model.reportReportName()==undefined }, options:$component.model.cohortAnalyses, optionsCaption:'Select a Report', optionsText:'name', optionsValue:'name', value:$component.model.reportReportName"></select>
+							<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $component.model.loadingReport, attr:{disabled: $component.model.loadingReport}, css : {invalid: $component.model.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:'Select a Report', optionsText:'name', optionsValue:'name', value:$component.model.reportReportName"></select>
 						</div>
 					</div>
 					<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='cohort_not_generated'">
