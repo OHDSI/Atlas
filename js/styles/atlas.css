@@ -1955,6 +1955,12 @@ span.new-role {
 	vertical-align: middle;
 }
 
+.user-bar-container {
+	width: 300px; 
+	height: 34px; 
+	float: right;
+}
+
 .user-bar-container i.fa {
 	padding: 10px;
 	color: #888;

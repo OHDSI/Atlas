@@ -2,30 +2,30 @@
 	<!-- for notifications, job completion, etc. -->
 	<div class="user-bar-container">
 		<a data-toggle="modal" data-target="#jobModal"><i data-bind="css: {pending: jobNotificationsPending}" class="fa fa-bell"></i></a>
-	</div>
-	<div data-bind="if:appConfig.userAuthenticationEnabled===true ">
-		<a data-toggle="modal " data-target="#myModal "><i class="fa fa-sign-in "></i> Sign In</a>
+		<span data-bind="if:appConfig.userAuthenticationEnabled===true">
+			<a data-toggle="modal" data-target="#myModal"><i class="fa fa-sign-in"></i> Sign In</a>
+		</span>
 	</div>
 </div>
 
-<div data-bind="if:appConfig.userAuthenticationEnabled===true " class="modal fade" id="myModal " tabindex="-1 " role="dialog ">
-	<div class="modal-dialog " role="document ">
-		<div class="modal-content ">
-			<div class="modal-header ">
-				<button type="button " class="close " data-dismiss="modal " aria-label="Close "><span aria-hidden="true ">&times;</span></button>
-				<div class="modal-title " id="myModalLabel "><i class="fa fa-sign-in "></i> Sign In</div>
+<div data-bind="if:appConfig.userAuthenticationEnabled===true" class="modal fade" id="myModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<div class="modal-title" id="myModalLabel"><i class="fa fa-sign-in"></i> Sign In</div>
 			</div>
-			<div class="modal-body ">
-				<welcome params="{model: pageModel} "></welcome>
+			<div class="modal-body">
+				<welcome params="{model: pageModel}"></welcome>
 			</div>
-			<div class="modal-footer ">
-				<button type="button " class="btn btn-sm btn-default " data-dismiss="modal ">Close</button>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div class="modal" id="jobModal" tabindex="-1 " role="dialog">
+<div class="modal" id="jobModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
