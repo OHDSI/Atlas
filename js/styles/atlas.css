@@ -1595,11 +1595,6 @@ textarea.code {
 	font-size: 12px;
 }
 
-.asset-heading .btn[disabled] {
-	color: #fff;
-	border: solid 1px #222;
-}
-
 .nav-tabs>li>a:hover {
 	border-top-color: #ccc;
 	border-left-color: #ccc;
@@ -1749,13 +1744,6 @@ inclusion-rule-editor .inclusion-rule-header {
 
 .fa.fa-ban {
 	color: red;
-	cursor: pointer;
-}
-
-.fa.fa-times {
-	color: red;
-	font-size: 1.7em;
-	margin-right: 2px;
 	cursor: pointer;
 }
 
@@ -1995,3 +1983,10 @@ i.fa.pending {
 }
 
 .report ul.nav.nav-tabs {}
+
+
+.asset-heading
+ .btn {
+    font-weight: bold;
+    font-size: 14px;
+}

@@ -10,17 +10,19 @@
 	</div>
 	<div data-bind="if:hasAccess() && model.currentCohortDefinition() != null">
 		<div class="asset-heading">
-			<input type="text" data-bind="enabled: canEdit(), textInput: model.currentCohortDefinition().name, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></input>
-			<div class="btn-group" role="group">
-				<button class="btn btn-sm btn-success" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning() && canEdit())">Save</button>
-				<button class="btn btn-sm btn-primary" data-bind="click: close">Close</button>
-				<!-- ko if: model.currentCohortDefinition().id() != null && model.currentCohortDefinition().id() != 0 -->
-				<button data-toggle="modal" data-target="#linkModal" class="btn btn-sm btn-primary" title="get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty()"><i class="fa fa-link"></i></button>
-				<button class="btn btn-sm btn-primary" title="create a copy of this cohort definition" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()"><i class="fa fa-copy"></i></button>
-				<!-- ko if: !isRunning() -->
-				<button class="btn btn-sm btn-danger" data-bind="click: $component.delete, enable: canDelete()">Delete</button>
-				<!-- /ko -->
-				<!-- /ko -->
+			<div class="input-group">
+				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: model.currentCohortDefinition().name, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></input>
+				<div class="input-group-btn">
+					<button class="btn btn-success" title="save cohort definition" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning() && canEdit())"><i class="fa fa-save"></i></button>
+					<button class="btn btn-primary" title="close cohort definition" data-bind="click: close"><i class="fa fa-times"></i></button>
+					<!-- ko if: model.currentCohortDefinition().id() != null && model.currentCohortDefinition().id() != 0 -->
+					<button class="btn btn-primary" title="create a copy of this cohort definition" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()"><i class="fa fa-copy"></i></button>
+					<button data-toggle="modal" data-target="#linkModal" class="btn btn-primary" title="get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty()"><i class="fa fa-link"></i></button>
+					<!-- ko if: !isRunning() -->
+					<button class="btn btn-danger" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
+					<!-- /ko -->
+					<!-- /ko -->
+				</div>
 			</div>
 		</div>
 
@@ -459,6 +461,9 @@
 				</div>
 				<div class="modal-body">
 					<input readonly data-bind="value:cohortDefinitionLink" type="text" class="form-control"></input>
+				</div>
+				<div class="modal-footer">
+					This link can be used to access this cohort definition directly from the WebAPI from other tools like R as well as for importing across ATLAS instances.
 				</div>
 			</div>
 		</div>

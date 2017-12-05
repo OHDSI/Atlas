@@ -42,13 +42,13 @@
 <!-- /ko -->
 
 <div id="reportHeel" data-bind="if: model.currentReport() == 'Heracles Heel' && !model.loadingReport()">
-	<div class="pad-10 report">
+	<div class=" report">
 		<faceted-datatable params="{columns: $component.heelDataColumns, reference:$component.reference, options:$component.heelOptions }"></faceted-datatable>
 	</div>
 </div>
 
 <div id="reportDataCompleteness" data-bind="if: model.currentReport() == 'Data Completeness' && !model.loadingReport()">
-	<div class="pad-10 report">
+	<div class=" report">
 		<faceted-datatable params="{columns: $component.dataCompletColumns, reference:$component.dataCompleteReference, options:$component.dataCompleteOptions }"></faceted-datatable>
 	</div>
 </div>
@@ -64,7 +64,7 @@
 		</table>
 	</div>
 
-	<div class="pad-10 report">
+	<div class=" report">
 		<div class="reportSectionHeading">Entropy by Date</div>
 		<div class="evidenceVisualization" id="entropyByDate" />
 	</div>
@@ -127,38 +127,74 @@
 				<div class="evidenceVisualization" id="prevalenceByMonth"></div>
 			</div>
 		</div>
-		<div class="reportSectionHeading">Cohort Start</div>
-		<div class="evidenceVisualization" id="trellisLinePlot"></div>
 
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Cohort Start<i data-bind="click:setHelpContent('cohort-specific-cohort-start')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="trellisLinePlot"></div>
+			</div>
+		</div>
 
-		<div class="reportSectionHeading">Persons in Cohort from Start to End</div>
-		<div class="evidenceVisualization" id="personinCohortFromStartToEnd"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Persons in Cohort from Start to End<i data-bind="click:setHelpContent('cohort-specific-start-to-end')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="personinCohortFromStartToEnd"></div>
+			</div>
+		</div>
 
-		<div class="reportSectionHeading">Number of Persons by Duration from Cohort Start to Cohort End</div>
-		<div class="evidenceVisualization" id="personsByDurationFromStartToEnd"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Number of Persons by Duration from Cohort Start to Cohort End<i data-bind="click:setHelpContent('cohort-specific-duration-start-to-end')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="personsByDurationFromStartToEnd"></div>
+			</div>
+		</div>
 
-		<div class="reportSectionHeading">Distribution of Age at Cohort Start by Cohort Start Year</div>
-		<div class="evidenceVisualization" id="distributionAgeCohortStartByCohortStartYear"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Distribution of Age at Cohort Start by Cohort Start Year<i data-bind="click:setHelpContent('cohort-specific-duration-start-to-end')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="distributionAgeCohortStartByCohortStartYear"></div>
+			</div>
+		</div>
 
-		<div class="reportSectionHeading">Age at Index</div>
-		<div class="evidenceVisualization" id="ageAtIndex"></div>
-
-		<div class="reportSectionHeading">Distribution of Age at Cohort Start by Gender</div>
-		<div class="evidenceVisualization" id="distributionAgeCohortStartByGender"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Age Distributions<i data-bind="click:setHelpContent('cohort-specific-age-distributions')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="evidenceVisualization" id="distributionAgeCohortStartByGender"></div>
+						<div class="evidenceDescription">Distribution of Age at Cohort Start by Gender</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="evidenceVisualization" id="ageAtIndex"></div>
+						<div class="evidenceDescription">Age at Index</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
 <div id="reportConditionsByIndex" data-bind="if: model.currentReport() == 'Conditions by Index' && !model.loadingReport()">
-	<div class="pad-10 report">
+	<div class="pad-5 report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Condition Prevalence
+				Condition Prevalence<i data-bind="click:setHelpContent('conditions-by-index-condition-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<ul class="nav nav-pills" id="myTab" role="tablist">
-					<li id="treemap-tab"><a href="#condition-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
-					</li>
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
 					<li class="active"><a href="#condition-table-panel" role="tab" data-toggle="tab">Table</a>
+					</li>
+					<li id="treemap-tab"><a href="#condition-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
 					</li>
 				</ul>
 				<div id='content' class="tab-content">
@@ -201,39 +237,46 @@
 </div>
 
 <div id="reportDrugErasByIndex" data-bind="if: model.currentReport() == 'Drugs by Index' && !model.loadingReport()">
-	<div class="pad-10 report">
-		<div class="reportSectionHeading">Drug Era Prevalence</div>
-
-		<ul class="nav nav-pills" id="myTab" role="tablist">
-			<li class="active" id="treemap-tab"><a href="#drugs-by-index-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
-			</li>
-			<li><a href="#drugs-by-index-table-panel" role="tab" data-toggle="tab">Table</a>
-			</li>
-		</ul>
-		<div id='content' class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="drugs-by-index-treemap-panel">
-				<div id="treemap_container">
-					<div class="treemap_zoomtarget"></div>
-				</div>
-				<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Drugs by Index Date <i data-bind="click:setHelpContent('drugs-by-index')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="drugs-by-index-table-panel">
-				<table id="drugs-by-index-table" class="display treemap_table" type="drug">
-					<thead>
-						<tr>
-							<th>Concept Id</th>
-							<th>ATC 1</th>
-							<th>ATC 3</th>
-							<th>ATC 5</th>
-							<th>Ingredient</th>
-							<th>Person Count</th>
-							<th>Prevalence</th>
-							<th>Relative Risk per Person</th>
-						</tr>
-					</thead>
-				</table>
+			<div class="panel-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="active"><a href="#drugs-by-index-table-panel" role="tab" data-toggle="tab">Table</a>
+					</li>
+					<li id="treemap-tab"><a href="#drugs-by-index-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					</li>
+				</ul>
+				<div id='content' class="tab-content">
+					<div role="tabpanel" class="tab-pane" id="drugs-by-index-treemap-panel">
+						<div id="treemap_container">
+							<div class="treemap_zoomtarget"></div>
+						</div>
+						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+					</div>
+					<div role="tabpanel" class="tab-pane active" id="drugs-by-index-table-panel">
+						<table id="drugs-by-index-table" class="display treemap_table" type="drug">
+							<thead>
+								<tr>
+									<th>Concept Id</th>
+									<th>ATC 1</th>
+									<th>ATC 3</th>
+									<th>ATC 5</th>
+									<th>Ingredient</th>
+									<th>Person Count</th>
+									<th>Prevalence</th>
+									<th>Relative Risk per Person</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+
 			</div>
 		</div>
+
 		<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
 			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
@@ -246,79 +289,142 @@
 </div>
 
 <div id="reportConditionPeriods" data-bind="if: model.currentReport() == 'Observation Periods' && !model.loadingReport()">
-	<div class="pad-10 report">
-		<div class="reportSectionHeading">Age at First Observation</div>
-		<div class="evidenceDescription">The distribution of age at first observation in the cohort.</div>
-		<div class="evidenceVisualization" id="ageatfirstobservation"></div>
+	<div class="report">
 
-		<div class="reportSectionHeading">Age by Gender</div>
-		<div class="evidenceDescription">The distribution of age at first observation in the cohort stratified by gender.</div>
-		<div class="evidenceVisualization" id="agebygender"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Age at First Observation <i data-bind="click:setHelpContent('observation-periods-age-at-first-observation')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="ageatfirstobservation"></div>
+			</div>
+			<div class="panel-footer">
+				The distribution of age at first observation in the cohort.
+			</div>
+		</div>
 
-		<div class="reportSectionHeading">Observation Length</div>
-		<div class="evidenceDescription">Distribution of total observation time in cohort</div>
-		<div class="evidenceVisualization" id="observationlength"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Age by Gender <i data-bind="click:setHelpContent('observation-periods-age-by-gender')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="agebygender"></div>
+			</div>
+			<div class="panel-footer">
+				The distribution of age at first observation in the cohort stratified by gender.
+			</div>
+		</div>
 
-		<div class="reportSectionHeading">Observation Length by Gender</div>
-		<div class="evidenceDescription">Distribution of total observation time in cohort by gender</div>
-		<div class="evidenceVisualization" id="opbygender"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Observation Length<i data-bind="click:setHelpContent('observation-periods-length')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="observationlength"></div>
+			</div>
+			<div class="panel-footer">
+				Distribution of total observation time in cohort.
+			</div>
+		</div>
 
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Observation Length by Gender<i data-bind="click:setHelpContent('observation-periods-length-by-gender')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="opbygender"></div>
+			</div>
+			<div class="panel-footer">
+				Distribution of total observation time in cohort by gender.
+			</div>
+		</div>
+
+		<!-- charting library error pending -->
+		<!--
 		<div class="reportSectionHeading">Cumulative Observation</div>
 		<div class="evidenceDescription">Observation time in cohort by % of people in the cohort.</div>
 		<div class="evidenceVisualization" id="cumulativeobservation"></div>
+		-->
 
-		<div class="reportSectionHeading">Observation Length by Age Decile</div>
-		<div class="evidenceDescription">Observation time in cohort by age decile.</div>
-		<div class="evidenceVisualization" id="opbyage"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Observation Length by Age Decile<i data-bind="click:setHelpContent('observation-periods-length-by-age-decile')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="opbyage"></div>
+			</div>
+		</div>
 
-		<div class="reportSectionHeading">Perons with Continuous Observation by Year</div>
-		<div class="evidenceDescription">Perons with Continuous Observation by Year.</div>
-		<div class="evidenceVisualization" id="oppeoplebyyear"></div>
+		<!-- tooltip bug
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Persons with Continuous Observation by Year<i data-bind="click:setHelpContent('observation-periods-continuous')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="opbyage"></div>
+			</div>
+		</div>
+		-->
 
-		<div class="reportSectionHeading">Observation Periods per Person</div>
-		<div class="evidenceDescription">The count of observation periods per person</div>
-		<div class="evidenceVisualization" id="opperperson"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Observation Periods per Person<i data-bind="click:setHelpContent('observation-periods-per-person')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="opperperson"></div>
+			</div>
+		</div>
 
-		<div class="reportSectionHeading">Persons With Continuous Observation By Month</div>
-		<div class="evidenceDescription">Persons With Continuous Observation By Month</div>
-		<div class="evidenceVisualization" id="oppeoplebymonthsingle"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Persons With Continuous Observation By Month<i data-bind="click:setHelpContent('observation-periods-continuous-by-month')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="oppeoplebymonthsingle"></div>
+			</div>
+		</div>
 
 	</div>
 </div>
 
 <div id="reportConditionEras" data-bind="if: model.currentReport() == 'Condition Eras' && !model.loadingReport()">
-	<div class="pad-10 report">
-		<div class="reportSectionHeading">Condition Era Prevalence</div>
-
-		<ul class="nav nav-pills" id="myTab" role="tablist">
-			<li class="active"><a href="#conditionera-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
-			</li>
-			<li><a href="#conditionera-table-panel" role="tab" data-toggle="tab">Table</a>
-			</li>
-		</ul>
-		<div id='content' class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="conditionera-treemap-panel">
-				<div id="treemap_container">
-					<div class="treemap_zoomtarget"></div>
-				</div>
-				<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Condition Era Prevalence<i data-bind="click:setHelpContent('condition-era-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="conditionera-table-panel" data-bind="eventListener: { event: 'click', selector: '.conditionera_table_selector', callback: handleConditionEraTableClick}">
-				<table id="conditionera_table" class="display">
-					<thead>
-						<tr>
-							<th>Concept Id</th>
-							<th>SOC</th>
-							<th>HLGT</th>
-							<th>HLT</th>
-							<th>PT</th>
-							<th>SNOMED</th>
-							<th>Person Count</th>
-							<th>Prevalence</th>
-							<th>Length of Era</th>
-						</tr>
-					</thead>
-				</table>
+			<div class="panel-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="active"><a href="#conditionera-table-panel" role="tab" data-toggle="tab">Table</a>
+					</li>
+					<li><a href="#conditionera-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					</li>
+				</ul>
+				<div id='content' class="tab-content">
+					<div role="tabpanel" class="tab-pane" id="conditionera-treemap-panel">
+						<div id="treemap_container">
+							<div class="treemap_zoomtarget"></div>
+						</div>
+						<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+					</div>
+					<div role="tabpanel" class="tab-pane active" id="conditionera-table-panel" data-bind="eventListener: { event: 'click', selector: '.conditionera_table_selector', callback: handleConditionEraTableClick}">
+						<table id="conditionera_table" class="display">
+							<thead>
+								<tr>
+									<th>Concept Id</th>
+									<th>SOC</th>
+									<th>HLGT</th>
+									<th>HLT</th>
+									<th>PT</th>
+									<th>SNOMED</th>
+									<th>Person Count</th>
+									<th>Prevalence</th>
+									<th>Length of Era</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -343,39 +449,44 @@
 </div>
 
 <div id="reportProceduresByIndex" data-bind="if: model.currentReport() == 'Procedures by Index' && !model.loadingReport()">
-	<div class="pad-10 report">
-		<div class="reportSectionHeading">Procedure Prevalence</div>
-		<ul class="nav nav-pills" id="myTab" role="tablist">
-			<li class="active" id="treemap-tab"><a href="#procedure-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
-			</li>
-			<li><a href="#procedure-table-panel" role="tab" data-toggle="tab">Table</a>
-			</li>
-		</ul>
-		<div id='content' class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="procedure-treemap-panel">
-				<div id="treemap_container">
-					<div class="treemap_zoomtarget"></div>
-				</div>
-				<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Procedure Prevalence<i data-bind="click:setHelpContent('procedure-by-index-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="procedure-table-panel">
-				<table id="procedure_table" class="display treemap_table" type="procedure">
-					<thead>
-						<tr>
-							<th>Concept Id</th>
-							<th>Level 4</th>
-							<th>Level 3</th>
-							<th>Level 2</th>
-							<th>Procedure</th>
-							<th>Person Count</th>
-							<th>Prevalence</th>
-							<th>Relative Risk per Person</th>
-						</tr>
-					</thead>
-				</table>
+			<div class="panel-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li id="treemap-tab"><a href="#procedure-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					</li>
+					<li class="active"><a href="#procedure-table-panel" role="tab" data-toggle="tab">Table</a>
+					</li>
+				</ul>
+				<div id='content' class="tab-content">
+					<div role="tabpanel" class="tab-pane" id="procedure-treemap-panel">
+						<div id="treemap_container">
+							<div class="treemap_zoomtarget"></div>
+						</div>
+						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+					</div>
+					<div role="tabpanel" class="tab-pane active" id="procedure-table-panel">
+						<table id="procedure_table" class="display treemap_table" type="procedure">
+							<thead>
+								<tr>
+									<th>Concept Id</th>
+									<th>Level 4</th>
+									<th>Level 3</th>
+									<th>Level 2</th>
+									<th>Procedure</th>
+									<th>Person Count</th>
+									<th>Prevalence</th>
+									<th>Relative Risk per Person</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
-
 		<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
 			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
@@ -462,36 +573,42 @@
 </div>
 
 <div id="reportDrugEras" data-bind="if: model.currentReport() == 'Drug Eras' && !model.loadingReport()">
-	<div class="pad-10 report">
-		<div class="reportSectionHeading">Drug Era Prevalence</div>
-		<ul class="nav nav-pills" id="myTab" role="tablist">
-			<li class="active"><a href="#drugera-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
-			</li>
-			<li><a href="#drugera-table-panel" role="tab" data-toggle="tab">Table</a>
-			</li>
-		</ul>
-		<div id='content' class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="drugera-treemap-panel">
-				<div id="treemap_container">
-					<div class="treemap_zoomtarget"></div>
-				</div>
-				<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Drug Era Prevalence<i data-bind="click:setHelpContent('drug-era-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="drugera-table-panel" data-bind="eventListener: { event: 'click', selector: '.drugera_table_selector', callback: handleDrugEraTableClick}">
-				<table id="drugera_table" class="display">
-					<thead>
-						<tr>
-							<th>Concept Id</th>
-							<th>ATC 1</th>
-							<th>ATC 3</th>
-							<th>ATC 5</th>
-							<th>Ingredient</th>
-							<th>Person Count</th>
-							<th>Prevalence</th>
-							<th>Length of Era</th>
-						</tr>
-					</thead>
-				</table>
+			<div class="panel-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="active"><a href="#drugera-table-panel" role="tab" data-toggle="tab">Table</a>
+					</li>
+					<li><a href="#drugera-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					</li>
+				</ul>
+				<div id='content' class="tab-content">
+					<div role="tabpanel" class="tab-pane" id="drugera-treemap-panel">
+						<div id="treemap_container">
+							<div class="treemap_zoomtarget"></div>
+						</div>
+						<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+					</div>
+					<div role="tabpanel" class="tab-pane active" id="drugera-table-panel" data-bind="eventListener: { event: 'click', selector: '.drugera_table_selector', callback: handleDrugEraTableClick}">
+						<table id="drugera_table" class="display">
+							<thead>
+								<tr>
+									<th>Concept Id</th>
+									<th>ATC 1</th>
+									<th>ATC 3</th>
+									<th>ATC 5</th>
+									<th>Ingredient</th>
+									<th>Person Count</th>
+									<th>Prevalence</th>
+									<th>Length of Era</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -522,38 +639,43 @@
 </div>
 
 <div id="reportDrugExposure" data-bind="if: model.currentReport() == 'Drug Exposure' && !model.loadingReport()">
-	<div class="pad-10 report">
-		<div class="reportSectionHeading">Drug Exposure Prevalence</div>
-		<ul class="nav nav-pills" id="myTab" role="tablist">
-			<li class="active" id="treemap-tab"><a href="#drug_treemap_panel" role="tab" data-toggle="tab">Treemap</a>
-			</li>
-			<li><a href="#drug_table_panel" role="tab" data-toggle="tab">Table</a>
-			</li>
-		</ul>
-		<div id='content' class="tab-content">
-			<div class="tab-pane active" id="drug_treemap_panel">
-				<div id="treemap_container">
-					<div class="treemap_zoomtarget"></div>
-				</div>
-
-				<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Drug Exposure<i data-bind="click:setHelpContent('drug-exposure')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
-			<div class="tab-pane" id="drug_table_panel" data-bind="eventListener: { event: 'click', selector: '.drug_table_selector', callback: handleDrugTableClick}">
-				<table id="drug_table" class="display">
-					<thead>
-						<tr>
-							<th>Concept Id</th>
-							<th>ATC 1</th>
-							<th>ATC 3</th>
-							<th>ATC 5</th>
-							<th>Ingredient</th>
-							<th>RxNorm</th>
-							<th>Person Count</th>
-							<th>Prevalence</th>
-							<th>Records per Person</th>
-						</tr>
-					</thead>
-				</table>
+			<div class="panel-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="active"><a href="#drug_table_panel" role="tab" data-toggle="tab">Table</a>
+					</li>
+					<li id="treemap-tab"><a href="#drug_treemap_panel" role="tab" data-toggle="tab">Treemap</a>
+					</li>
+				</ul>
+				<div id='content' class="tab-content">
+					<div class="tab-pane" id="drug_treemap_panel">
+						<div id="treemap_container">
+							<div class="treemap_zoomtarget"></div>
+						</div>
+						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+					</div>
+					<div class="tab-pane active" id="drug_table_panel" data-bind="eventListener: { event: 'click', selector: '.drug_table_selector', callback: handleDrugTableClick}">
+						<table id="drug_table" class="display">
+							<thead>
+								<tr>
+									<th>Concept Id</th>
+									<th>ATC 1</th>
+									<th>ATC 3</th>
+									<th>ATC 5</th>
+									<th>Ingredient</th>
+									<th>RxNorm</th>
+									<th>Person Count</th>
+									<th>Prevalence</th>
+									<th>Records per Person</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -595,37 +717,42 @@
 </div>
 
 <div id="reportProcedure" data-bind="if: model.currentReport() == 'Procedure' && !model.loadingReport()">
-	<div class="pad-10 report">
-		<div class="reportSectionHeading">Procedure Prevalence</div>
-
-		<ul class="nav nav-pills" id="myTab" role="tablist">
-			<li class="active"><a href="#procedure-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
-			</li>
-			<li><a href="#procedure-table-panel" role="tab" data-toggle="tab">Table</a>
-			</li>
-		</ul>
-		<div id='content' class="tab-content">
-			<div class="tab-pane active" role="tabpanel" id="procedure-treemap-panel">
-				<div id="treemap_container">
-					<div class="treemap_zoomtarget"></div>
-				</div>
-				<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+	<div class=" report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Procedure Prevalence<i data-bind="click:setHelpContent('procedure-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
-			<div class="tab-pane" role="tabpanel" id="procedure-table-panel" data-bind="eventListener: { event: 'click', selector: '.procedure_table_selector', callback: handleProcedureTableClick}">
-				<table id="procedure_table" class="display">
-					<thead>
-						<tr>
-							<th>Concept Id</th>
-							<th>Level 4</th>
-							<th>Level 3</th>
-							<th>Level 2</th>
-							<th>Procedure</th>
-							<th>Person Count</th>
-							<th>Prevalence</th>
-							<th>Records per Person</th>
-						</tr>
-					</thead>
-				</table>
+			<div class="panel-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="active"><a href="#procedure-table-panel" role="tab" data-toggle="tab">Table</a>
+					</li>
+					<li><a href="#procedure-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					</li>
+				</ul>
+				<div id='content' class="tab-content">
+					<div class="tab-pane" role="tabpanel" id="procedure-treemap-panel">
+						<div id="treemap_container">
+							<div class="treemap_zoomtarget"></div>
+						</div>
+						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+					</div>
+					<div class="tab-pane active" role="tabpanel" id="procedure-table-panel" data-bind="eventListener: { event: 'click', selector: '.procedure_table_selector', callback: handleProcedureTableClick}">
+						<table id="procedure_table" class="display">
+							<thead>
+								<tr>
+									<th>Concept Id</th>
+									<th>Level 4</th>
+									<th>Level 3</th>
+									<th>Level 2</th>
+									<th>Procedure</th>
+									<th>Person Count</th>
+									<th>Prevalence</th>
+									<th>Records per Person</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -655,19 +782,41 @@
 </div>
 
 <div id="reportDeath" data-bind="if: model.currentReport() == 'Death' && !model.loadingReport()">
-	<div class="pad-10 report">
-		<div class="reportSectionHeading">Death Prevalence by Age, Gender, Year</div>
-		<div class="evidenceVisualization" id="trellisLinePlot"></div>
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Death Prevalence by Age, Gender, Year<i data-bind="click:setHelpContent('death-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="trellisLinePlot"></div>
+			</div>
+		</div>
 
-		<div class="reportSectionHeading">Death Prevalence by Month</div>
-		<div class="evidenceVisualization" id="deathPrevalenceByMonth"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Death Prevalence by Month<i data-bind="click:setHelpContent('death-prevalence-by-month')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="deathPrevalenceByMonth"></div>
+			</div>
+		</div>
 
-		<div class="reportSectionHeading">Death by Type</div>
-		<div class="evidenceDescription">Death by Type</div>
-		<div class="evidenceVisualization" id="deathByType"></div>
-
-		<div class="reportSectionHeading">Age at Death</div>
-		<div style="width:30%" class="evidenceDescription">Age at Death</div>
-		<div class="evidenceVisualization" id="ageAtDeath"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Death Details<i data-bind="click:setHelpContent('death-details')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="evidenceVisualization" id="ageAtDeath"></div>
+						<div class="evidenceDescription">Age at Death</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="evidenceVisualization" id="deathByType"></div>
+						<div class="evidenceDescription">Death by Type</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

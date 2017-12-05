@@ -3,6 +3,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 		var self = this;
 		self.model = params.model;
 		self.config = config;
+		self.refresh = ko.observable(false);
 		self.cohortCaption = ko.observable('Click Here to Choose a Cohort');
 		self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.reference = ko.observableArray();
@@ -23,7 +24,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			},
 			size12 = {
 				width: 1000,
-				height: 150
+				height: 250
 			};
 
 		self.buttons = ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'];
@@ -160,7 +161,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			switch (self.model.reportReportName()) {
 				case 'Template':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -169,7 +170,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Death':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/death?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/death?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -270,7 +271,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							// death type
 							if (data.deathByType && data.deathByType.length > 0) {
 								var genderDonut = new atlascharts.donut();
-								genderDonut.render(self.mapConceptData(data.deathByType), "#deathByType", self.donutWidth, self.donutHeight, {
+								genderDonut.render(self.mapConceptData(data.deathByType), "#deathByType", size6.width, size6.height, {
 									margin: {
 										top: 5,
 										left: 5,
@@ -298,7 +299,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										UIF: bpdata.p90Value[i]
 									});
 								}
-								boxplot.render(bpseries, "#ageAtDeath", self.boxplotWidth, self.boxplotHeight, {
+								boxplot.render(bpseries, "#ageAtDeath", size6.width, size6.height, {
 									xLabel: 'Gender',
 									yLabel: 'Age at Death'
 								});
@@ -309,7 +310,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					// not yet implemented
 				case 'Care Site':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/caresite?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/caresite?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -318,7 +319,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Measurement':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/measurement?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/measurement?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -333,7 +334,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 					$.ajax({
 						type: "GET",
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/procedure?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/procedure?refresh=' + self.refresh(),
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
@@ -395,8 +396,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 												className: 'numeric'
 											}
 										],
-										pageLength: 5,
-										lengthChange: false,
 										deferRender: true,
 										destroy: true
 									});
@@ -450,7 +449,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 					$.ajax({
 						type: "GET",
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drug?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drug?refresh=' + self.refresh(),
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
@@ -519,8 +518,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 												className: 'numeric'
 											}
 										],
-										pageLength: 5,
-										lengthChange: false,
 										deferRender: true,
 										destroy: true
 									});
@@ -573,7 +570,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					threshold = minimum_area / (width * height);
 
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drugera?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drugera?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -636,8 +633,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 												className: 'numeric'
 											}
 										],
-										pageLength: 5,
-										lengthChange: false,
 										deferRender: true,
 										destroy: true
 									});
@@ -690,7 +685,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					threshold = minimum_area / (width * height);
 
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/condition?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/condition?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -798,15 +793,14 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										return title;
 									}
 								});
-								$('[data-toggle="popover"]')
-									.popover();
+								$('[data-toggle="popover"]').popover();
 							}
 						}
 					});
 					break;
 				case 'Observation Periods':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/observationperiod?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/observationperiod?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -828,9 +822,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										};
 										return item;
 									}, data.ageByGender);
-								agegenderboxplot.render(agData, "#agebygender", 230, 115, {
+								agegenderboxplot.render(agData, "#agebygender", size12.width, size12.height, {
 									xLabel: "Gender",
-									yLabel: "Age"
+									yLabel: "Age",
+									yFormat: d3.format("0f"),
 								});
 							}
 
@@ -847,8 +842,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									.remove();
 								var ageAtFirstObservationData = self.mapHistogram(histData);
 								var ageAtFirstObservationHistogram = new atlascharts.histogram();
-								ageAtFirstObservationHistogram.render(ageAtFirstObservationData, "#ageatfirstobservation", 230, 115, {
-									xFormat: d3.format('d'),
+								ageAtFirstObservationHistogram.render(ageAtFirstObservationData, "#ageatfirstobservation", size12.width, size12.height, {
+									xFormat: d3.format('0.0d'),
 									xLabel: 'Age',
 									yLabel: 'People'
 								});
@@ -877,13 +872,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										}
 									}
 									var observationLengthHistogram = new atlascharts.histogram();
-									observationLengthHistogram.render(observationLengthData, "#observationlength", 230, 115, {
+									observationLengthHistogram.render(observationLengthData, "#observationlength", size12.width, size12.height, {
 										xLabel: observationLengthXLabel,
-										yLabel: 'People'
+										yLabel: 'People',
+										yFormat: d3.format("0.1d")
 									});
 								}
 							}
 
+							/* error in charting library
 							// cumulative observation
 							d3.selectAll("#cumulativeobservation svg")
 								.remove();
@@ -918,6 +915,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									yLabel: 'Percent of Population'
 								});
 							}
+							*/
 
 							// observation period length by gender
 							var obsPeriodByGenderData = self.normalizeArray(data.durationByGender);
@@ -960,7 +958,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									opgDataYlabel = 'Years';
 								}
 
-								opbygenderboxplot.render(opgData, "#opbygender", 230, 115, {
+								opbygenderboxplot.render(opgData, "#opbygender", size12.width, size12.height, {
 									xLabel: 'Gender',
 									yLabel: opgDataYlabel
 								});
@@ -971,7 +969,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								.remove();
 							var obsPeriodByLenByAgeData = self.normalizeArray(data.durationByAgeDecile);
 							if (!obsPeriodByLenByAgeData.empty) {
-								var opbyageboxplot = new atlascharts.BoxPlot();
+								var opbyageboxplot = new atlascharts.boxplot();
 								var opaData = obsPeriodByLenByAgeData.category
 									.map(function (d, i) {
 										var item = {
@@ -1007,13 +1005,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									opaDataYlabel = 'Years';
 								}
 
-								opbyageboxplot.render(opaData, "#opbyage", 230, 115, {
+								opbyageboxplot.render(opaData, "#opbyage", size12.width, size12.height, {
 									xLabel: 'Age Decile',
 									yLabel: opaDataYlabel
 								});
 							}
 
 							// observed by year
+							// tooltip bug
+							/*
 							var obsByYearData = self.normalizeArray(data.personsWithContinuousObservationsByYear);
 							if (!obsByYearData.empty && data.personsWithContinuousObservationsByYearStats) {
 								var histData3 = {};
@@ -1025,12 +1025,12 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								d3.selectAll("#oppeoplebyyear svg")
 									.remove();
 								var observationLengthByYearHistogram = new atlascharts.histogram();
-								observationLengthByYearHistogram.render(self.mapHistogram(histData3), "#oppeoplebyyear", 460, 195, {
-									xFormat: d3.format('d'),
+								observationLengthByYearHistogram.render(self.mapHistogram(histData3), "#oppeoplebyyear", size12.width, size12.height, {
 									xLabel: 'Year',
 									yLabel: 'People'
 								});
 							}
+							*/
 
 							// observed by month
 							var obsByMonthData = self.normalizeArray(data.observedByMonth);
@@ -1043,7 +1043,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								d3.selectAll("#oppeoplebymonthsingle svg")
 									.remove();
 								var observationByMonthSingle = new atlascharts.line();
-								observationByMonthSingle.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
+								observationByMonthSingle.render(byMonthSeries, "#oppeoplebymonthsingle", size12.width, size12.height, {
 									xScale: d3.scaleTime()
 										.domain(d3.extent(byMonthSeries[0].values, function (d) {
 											return d.xValue;
@@ -1062,7 +1062,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								d3.selectAll("#opperperson svg")
 									.remove();
 								var donut = new atlascharts.donut();
-								donut.render(self.mapConceptData(data.observationPeriodsPerPerson), "#opperperson", 230, 230, {
+								donut.render(self.mapConceptData(data.observationPeriodsPerPerson), "#opperperson", size12.width, size12.height, {
 									margin: {
 										top: 5,
 										bottom: 10,
@@ -1081,7 +1081,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					var threshold = minimum_area / (width * height);
 
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/conditionera?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/conditionera?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1149,8 +1149,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 												className: 'numeric'
 											}
 										],
-										pageLength: 5,
-										lengthChange: false,
 										deferRender: true,
 										destroy: true
 									});
@@ -1198,7 +1196,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Drugs by Index':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1247,7 +1245,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 											}
 										});
 
-									datatable = $('#drugera_table')
+									datatable = $('#drugs-by-index-table')
 										.DataTable({
 											order: [5, 'desc'],
 											dom: self.dom,
@@ -1284,12 +1282,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 													className: 'numeric'
 												}
 											],
-											pageLength: 5,
-											lengthChange: false,
 											deferRender: true,
 											destroy: true
 										});
-									self.datatables['drugera_table'] = datatable;
+									self.datatables['drugs-by-index-table'] = datatable;
 
 									tree = self.buildHierarchyFromJSON(drugEraPrevalence, threshold);
 									treemap = new atlascharts.treemap();
@@ -1342,7 +1338,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Conditions by Index':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1433,7 +1429,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 													className: 'numeric'
 												}
 											],
-											pageLength: 5,
 											lengthChange: false,
 											deferRender: true,
 											destroy: true
@@ -1491,7 +1486,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Procedures by Index':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1576,8 +1571,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 													className: 'numeric'
 												}
 											],
-											pageLength: 5,
-											lengthChange: false,
 											deferRender: true,
 											destroy: true
 										});
@@ -1634,7 +1627,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Cohort Specific':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1653,7 +1646,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									}, result);
 
 								var personsByDurationSingle = new atlascharts.line();
-								personsByDurationSingle.render(personsByDurationData, "#personsByDurationFromStartToEnd", 230, 115, {
+								personsByDurationSingle.render(personsByDurationData, "#personsByDurationFromStartToEnd", size12.width, size12.height, {
 									yFormat: d3.format('0%'),
 									xLabel: 'Day',
 									yLabel: 'Percent of Population',
@@ -1666,7 +1659,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							var byMonthData = self.normalizeArray(data.prevalenceByMonth, true);
 							if (!byMonthData.empty) {
 								var byMonthSeries = self.mapMonthYearDataToSeries(byMonthData, {
-
 									dateField: 'xCalendarMonth',
 									yValue: 'yPrevalence1000Pp',
 									yPercent: 'yPrevalence1000Pp'
@@ -1703,7 +1695,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										};
 										return item;
 									}, ageAtIndexDistribution);
-								boxplot.render(agData, "#ageAtIndex", 230, 115, {
+								boxplot.render(agData, "#ageAtIndex", size6.width, size6.height, {
 									xLabel: "Gender",
 									yLabel: "Age"
 								});
@@ -1727,7 +1719,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										};
 										return item;
 									}, distributionAgeCohortStartByCohortStartYear);
-								boxplotCsy.render(csyData, "#distributionAgeCohortStartByCohortStartYear", 235, 210, {
+								boxplotCsy.render(csyData, "#distributionAgeCohortStartByCohortStartYear", size4.width, size4.height, {
 									xLabel: "Cohort Start Year",
 									yLabel: "Age"
 								});
@@ -1751,7 +1743,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										};
 										return item;
 									}, distributionAgeCohortStartByGender);
-								boxplotBg.render(bgData, "#distributionAgeCohortStartByGender", 230, 115, {
+								boxplotBg.render(bgData, "#distributionAgeCohortStartByGender", size6.width, size6.height, {
 									xLabel: "Gender",
 									yLabel: "Age"
 								});
@@ -1766,7 +1758,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									yPercent: 'percentValue'
 								});
 								var observationByMonthSingle = new atlascharts.line();
-								observationByMonthSingle.render(personsInCohortFromCohortStartToEndSeries, "#personinCohortFromStartToEnd", 460, 250, {
+								observationByMonthSingle.render(personsInCohortFromCohortStartToEndSeries, "#personinCohortFromStartToEnd", size12.width, size12.height, {
 									xScale: d3.scaleTime()
 										.domain(d3.extent(personsInCohortFromCohortStartToEndSeries[0].values, function (d) {
 											return d.xValue;
@@ -1833,14 +1825,14 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 								// create svg with range bands based on the trellis names
 								var chart = new atlascharts.trellisline();
-								chart.render(dataByDecile, "#trellisLinePlot", 400, 200, {
+								chart.render(dataByDecile, "#trellisLinePlot", size12.width, size12.height, {
 									trellisSet: allDeciles,
 									trellisLabel: "Age Decile",
 									seriesLabel: "Year",
 									yLabel: "Prevalence Per 1000 People",
 									xFormat: d3.timeFormat("%Y"),
-									yFormat: d3.format("0.2f"),
-									tickPadding: 20,
+									yFormat: d3.format("0.1f"),
+									tickPadding: 5,
 									colors: d3.scaleOrdinal()
 										.domain(["MALE", "FEMALE", "UNKNOWN"])
 										.range(["#1F78B4", "#FB9A99", "#33A02C"])
@@ -1853,7 +1845,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Person':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/person?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/person?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1886,7 +1878,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break; // person report
 				case 'Heracles Heel':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/heraclesheel?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/heraclesheel?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1937,8 +1929,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								columns: [{
 									data: 'institution'
 								}],
-								pageLength: 5,
-								lengthChange: false,
 								deferRender: true,
 								destroy: true
 							});
@@ -2147,7 +2137,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 			$.ajax({
 				type: "GET",
-				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drug/' + concept_id + '?refresh=true',
+				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drug/' + concept_id + '?refresh=' + self.refresh(),
 				success: function (data) {
 					$('#drugExposureDrilldown')
 						.text(concept_name);
@@ -2279,7 +2269,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 			$.ajax({
 				type: "GET",
-				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/conditionera/' + concept_id + '?refresh=true',
+				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/conditionera/' + concept_id + '?refresh=' + self.refresh(),
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2394,7 +2384,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 			$.ajax({
 				type: "GET",
-				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drugera/' + concept_id + '?refresh=true',
+				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drugera/' + concept_id + '?refresh=' + self.refresh(),
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2510,7 +2500,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 			$.ajax({
 				type: "GET",
-				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/procedure/' + concept_id + '?refresh=true',
+				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/procedure/' + concept_id + '?refresh=' + self.refresh(),
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2656,7 +2646,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 			$.ajax({
 					type: "GET",
-					url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific' + type + "/" + id + '?refresh=true',
+					url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific' + type + "/" + id + '?refresh=' + self.refresh(),
 					contentType: "application/json; charset=utf-8"
 				})
 				.done(function (result) {
