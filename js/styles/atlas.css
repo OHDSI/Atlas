@@ -1968,8 +1968,7 @@ i.fa.pending {
 	margin-bottom: 0px;
 }
 
-
-.report .panel-heading i.fa.fa-question-circle {
+.panel-heading i.fa.fa-question-circle {
 	font-size: 18px;
 	float: right;
 	margin-right: 7px;
@@ -1977,6 +1976,9 @@ i.fa.pending {
 	cursor: pointer;
 }
 
+.cohort-definition-panel ul.nav.nav-tabs {
+	background-color:#ccc;
+}
 
 .report .panel-body {
     padding: 0px 0px 5px 0px;
@@ -1989,4 +1991,23 @@ i.fa.pending {
  .btn {
     font-weight: bold;
     font-size: 14px;
+}
+
+
+atlas.cohort-editor .panel-body {}
+
+.cohort-definition-panel .cohort-definition-panel {
+	margin:10px;
+}
+
+.cohort-definition-panel .cohort-definition-panel .panel-body {
+	padding:10px;
+}
+
+ul.nav-tabs a i.fa.fa-question-circle-o {
+    margin-left: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #444;
 }
