@@ -12,6 +12,20 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			[15, 30, 45, 100, -1],
 			[15, 30, 45, 100, 'All']
 		];
+
+		const size4 = {
+				width: 400,
+				height: 140
+			},
+			size6 = {
+				width: 500,
+				height: 150
+			},
+			size12 = {
+				width: 1000,
+				height: 150
+			};
+
 		self.buttons = ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'];
 		self.heelOptions = {
 			Facets: [{
@@ -52,6 +66,24 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			}]
 		};
 
+		self.helpTitle = ko.observable();
+		self.helpContent = ko.observable();
+
+		self.setHelpContent = function (h) {
+			switch (h) {
+				case 'condition-prevalence':
+					{
+						self.helpTitle("Condition Prevalence");
+						self.helpContent("not available");
+						break;
+					}
+				default:
+					{
+						self.helpTitle("Help Unavailable");
+						self.helpContent("Help not yet available for this topic: " + h);
+					}
+			}
+		}
 		self.heelDataColumns = [{
 			title: 'Message Type',
 			data: 'attributeName'
@@ -1641,7 +1673,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								});
 
 								var prevalenceByMonth = new atlascharts.line();
-								prevalenceByMonth.render(byMonthSeries, "#prevalenceByMonth", 400, 200, {
+								prevalenceByMonth.render(byMonthSeries, "#prevalenceByMonth", size12.width, size12.height, {
 									xScale: d3.scaleTime()
 										.domain(d3.extent(byMonthSeries[0].values, function (d) {
 											return d.xValue;
@@ -1834,52 +1866,20 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								histData.max = data.yearOfBirthStats[0].maxValue;
 								histData.intervals = 100;
 								histData.data = (self.normalizeArray(data.yearOfBirth));
-								yearHistogram.render(self.mapHistogram(histData), "#reportPerson #hist", 460, 195, {
+								yearHistogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
 									xFormat: d3.format('d'),
+									yFormat: d3.format(',.1s'),
 									xLabel: 'Year',
 									yLabel: 'People'
 								});
 							}
 
 							var genderDonut = new atlascharts.donut();
-							genderDonut.render(self.mapConceptData(data.gender), "#reportPerson #gender", 260, 130, {
-								colors: d3.scaleOrdinal()
-									.domain([8507, 8551, 8532])
-									.range(["#1F78B4", "#33A02C", "#FB9A99"]),
-								margin: {
-									top: 5,
-									bottom: 10,
-									right: 150,
-									left: 10
-								}
-
-							});
-
 							var raceDonut = new atlascharts.donut();
-							raceDonut.render(self.mapConceptData(data.race), "#reportPerson #race", 260, 130, {
-								margin: {
-									top: 5,
-									bottom: 10,
-									right: 150,
-									left: 10
-								},
-								colors: d3.scaleOrdinal()
-									.domain(data.race)
-									.range(colorbrewer.Paired[10])
-							});
-
 							var ethnicityDonut = new atlascharts.donut();
-							ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#reportPerson #ethnicity", 260, 130, {
-								margin: {
-									top: 5,
-									bottom: 10,
-									right: 150,
-									left: 10
-								},
-								colors: d3.scaleOrdinal()
-									.domain(data.ethnicity)
-									.range(colorbrewer.Paired[10])
-							});
+							genderDonut.render(self.mapConceptData(data.gender), "#gender", size4.width, size4.height);
+							raceDonut.render(self.mapConceptData(data.race), "#race", size4.width, size4.height);
+							ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", size4.width, size4.height);
 							self.model.loadingReport(false);
 						}
 					});

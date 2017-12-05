@@ -125,23 +125,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			if (path === 'export') {
 				path += '/' + self.exportTabMode();
 			}
-			//console.log('tabPath:', path);
 			if (self.exportTabMode() === 'cartoon') {
 				setTimeout(function () {
 					self.delayedCartoonUpdate('ready');
 				}, 10);
 			}
 			return path;
-		});
-
-		self.tabMode.subscribe(t => {
-			switch (t) {
-				case 'reporting':
-					{
-						console.log('reporting');
-						break;
-					}
-			}
 		});
 
 		self.delayedCartoonUpdate = ko.observable(null);
@@ -576,6 +565,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return info.status();
 		}
 
+		self.cohortDefinitionLink = ko.computed(() => {
+			if (self.model.currentCohortDefinition()) {
+				return self.config.api.url + "/cohortdefinition/" + self.model.currentCohortDefinition().id();
+			}
+		});
+
 		// reporting sub-system
 		self.generateButtonCaption = ko.observable('Generate Reports');
 		self.generateReportsEnabled = ko.observable(false);
@@ -596,6 +591,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			self.reportingSourceStatusAvailable(false);
 			self.reportingAvailableReports.removeAll();
 		});
+
+		self.isActiveJob = function (j) {
+			var testName = "HERACLES_COHORT_" + self.model.currentCohortDefinition().id() + "_" + self.model.reportSourceKey();
+			return j.name == testName && j.status() != 'FAILED' && j.status() != 'COMPLETED';
+		}
 
 		self.reportingState = ko.computed(function () {
 			// require a data source selection
@@ -624,7 +624,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			// check if we can tell if the job to generate the reports is already running
 			if (self.model.currentCohortDefinition()) {
 				var listing = sharedState.jobListing;
-				var tempJob = listing().find(j => j.name == "HERACLES_COHORT_" + self.model.currentCohortDefinition().id() + "_" + self.model.reportSourceKey());
+				var tempJob = listing().find(self.isActiveJob)
 				if (tempJob) {
 					if (tempJob.status() == 'STARTED' || tempJob.status() == 'STARTING') {
 						self.currentJob(tempJob);
@@ -664,9 +664,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return "unknown_cohort_report_state";
 		});
 
-		self.reportingState.subscribe(s => {
-			console.log(s);
-		});
 		self.showReportNameDropdown = ko.computed(function () {
 			return self.model.reportSourceKey() != undefined &&
 				self.reportingState() != 'checking_status' &&
@@ -702,7 +699,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			var jobDetails = {
 				name: cohortJob.jobName,
-				status: ko.observable('loading'),
+				status: ko.observable('LOADING'),
 				executionId: null,
 				statusUrl: self.config.api.url + 'job/execution/',
 				statusValue: 'status',

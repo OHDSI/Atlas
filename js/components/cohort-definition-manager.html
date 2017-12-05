@@ -15,7 +15,8 @@
 				<button class="btn btn-sm btn-success" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning() && canEdit())">Save</button>
 				<button class="btn btn-sm btn-primary" data-bind="click: close">Close</button>
 				<!-- ko if: model.currentCohortDefinition().id() != null && model.currentCohortDefinition().id() != 0 -->
-				<button class="btn btn-sm btn-primary" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()">Copy</button>
+				<button data-toggle="modal" data-target="#linkModal" class="btn btn-sm btn-primary" title="get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty()"><i class="fa fa-link"></i></button>
+				<button class="btn btn-sm btn-primary" title="create a copy of this cohort definition" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()"><i class="fa fa-copy"></i></button>
 				<!-- ko if: !isRunning() -->
 				<button class="btn btn-sm btn-danger" data-bind="click: $component.delete, enable: canDelete()">Delete</button>
 				<!-- /ko -->
@@ -333,8 +334,19 @@
 							Report Selections
 						</div>
 						<div class="panel-body">
-							<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.config.api.sources.filter($component.model.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
-							<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $component.model.loadingReport, attr:{disabled: $component.model.loadingReport}, css : {invalid: $component.model.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:'Select a Report', optionsText:'name', optionsValue:'name', value:$component.model.reportReportName"></select>
+							<div class="row">
+								<div class="col-sm-6">
+									<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.config.api.sources.filter($component.model.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
+								</div>
+								<div class="col-sm-6">
+									<button class="btn btn-primary btn-sm pull-right" data-bind="visible: $component.generateReportsEnabled, text: generateButtonCaption, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateAnalyses"></button>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $component.model.loadingReport, attr:{disabled: $component.model.loadingReport}, css : {invalid: $component.model.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:'Select a Report', optionsText:'name', optionsValue:'name', value:$component.model.reportReportName"></select>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='cohort_not_generated'">
@@ -426,9 +438,6 @@
 							Please wait while for the report status to be loaded.
 						</div>
 					</div>
-					<div data-bind="visible: $component.generateReportsEnabled" class="text-center">
-						<button class="btn btn-primary btn-sm" data-bind="text: generateButtonCaption, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateAnalyses"></button>
-					</div>
 				</div>
 				<div class="loading" data-bind="visible:model.currentView() == 'loading' || model.loadingReport()">
 					<i class="fa fa-circle-o-notch fa-spin "></i> Loading...
@@ -438,6 +447,18 @@
 			<div role="tabpanel " data-bind="css: { active: $component.tabMode()=='explore' } " class="tab-pane ">
 				<div class="paddedWrapper ">
 					<explore-cohort params="{model: pageModel, showSelectionArea: false } "></explore-cohort>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal" id="linkModal" tabindex="-1 " role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<i class="fa fa-group"></i> Link to Cohort Definition
+				</div>
+				<div class="modal-body">
+					<input readonly data-bind="value:cohortDefinitionLink" type="text" class="form-control"></input>
 				</div>
 			</div>
 		</div>

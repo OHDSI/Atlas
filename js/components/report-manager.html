@@ -15,7 +15,7 @@
 	</div>
 </div>
 
-<div class="reportControls pad-5">
+<div class="reportControls">
 	<div class="row">
 		<div class="col-xs-12">
 			<button class="form-control btn btn-sm btn-primary" data-bind="click: $component.showBrowser, text:$component.cohortCaption"></button>
@@ -71,22 +71,38 @@
 </div>
 
 <div id="reportPerson" data-bind="if: model.currentReport() == 'Person' && !model.loadingReport()">
-	<div class="pad-10 report">
-		<div class="reportSectionHeading">Year of Birth</div>
-		<div class="evidenceDescription">The number of people in this cohort shown with respect to their year of birth.</div>
-		<div class="evidenceVisualization" id="hist"></div>
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Year of Birth <i data-bind="click:setHelpContent('year-of-birth')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="hist"></div>
+			</div>
+			<div class="panel-footer">The number of people in this cohort shown with respect to their year of birth.</div>
+		</div>
 
-		<div class="reportSectionHeading">Gender</div>
-		<div class="evidenceDescription">The number of people in this cohort stratified by gender.</div>
-		<div class="evidenceVisualization" id="gender"></div>
-
-		<div class="reportSectionHeading">Race</div>
-		<div class="evidenceDescription">The number of people in this cohort stratified by race.</div>
-		<div class="evidenceVisualization" id="race"></div>
-
-		<div class="reportSectionHeading">Ethnicity</div>
-		<div class="evidenceDescription">The number of people in this cohort stratified by ethnicity.</div>
-		<div class="evidenceVisualization" id="ethnicity"></div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Demographics <i data-bind="click:setHelpContent('demographics')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-xs-4">
+						<div class="evidenceVisualization" id="gender"></div>
+						<div class="evidenceDescription">Gender</div>
+					</div>
+					<div class="col-xs-4">
+						<div class="evidenceVisualization" id="race"></div>
+						<div class="evidenceDescription">Race</div>
+					</div>
+					<div class="col-xs-4">
+						<div class="evidenceVisualization" id="ethnicity"></div>
+						<div class="evidenceDescription">Ethnicity</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -102,10 +118,15 @@
 <!-- /ko -->
 
 <div id="reportCohortSpecific" data-bind="if: model.currentReport() == 'Cohort Specific' && !model.loadingReport()">
-	<div class="pad-10 report">
-		<div class="reportSectionHeading">Prevalence by Month</div>
-		<div class="evidenceVisualization" id="prevalenceByMonth"></div>
-
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Prevalence by Month <i data-bind="click:setHelpContent('cohort-specific-prevalence-per-month')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<div class="evidenceVisualization" id="prevalenceByMonth"></div>
+			</div>
+		</div>
 		<div class="reportSectionHeading">Cohort Start</div>
 		<div class="evidenceVisualization" id="trellisLinePlot"></div>
 
@@ -366,14 +387,12 @@
 	</div>
 </div>
 
-<div class="modal" id="reportConditionModal" tabindex="-1 " role="dialog">
+<div class="modal" id="helpModal" tabindex="-1 " role="dialog">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
-			<div class="modal-header">
-				Condition Prevalence
+			<div class="modal-header" data-bind="html:helpTitle">
 			</div>
-			<div class="modal-body ">
-				Condition Prevalence is...
+			<div class="modal-body" data-bind="html:helpContent">
 			</div>
 		</div>
 	</div>
@@ -383,7 +402,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Condition Prevalence <i data-toggle="modal" data-target="#reportConditionModal" class="fa fa-question-circle pull-right"></i>
+				Condition Prevalence <i data-bind="click:setHelpContent('condition-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
