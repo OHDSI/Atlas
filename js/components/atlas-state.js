@@ -1,21 +1,29 @@
-define(['knockout', 'lscache'], function (ko, cache) {
+define(['knockout', 'lscache', 'job/jobDetail'], function (ko, cache, jobDetail) {
 	var state = {};
 	state.resultsUrl = ko.observable();
 	state.vocabularyUrl = ko.observable();
 	state.evidenceUrl = ko.observable();
+	state.jobListing = ko.observableArray();
+	
+	// Extending the jobListing array to include a 'queue' 
+	// function that will check if an existing job is 
+	// already present in the list and replace it.
+	state.jobListing.queue = function(newItem) {
+		var oldItem = state.jobListing().find(j => j.executionUniqueId() == newItem.executionUniqueId());
+		if (oldItem != null) {
+			state.jobListing.replace(oldItem, newItem);
+		} else {
+			state.jobListing.push(newItem);
+		}
+	}
 
 	// job listing notification management
 	var jobListingCacheKey = "atlas:jobListing";
 	var jobListingCache = cache.get(jobListingCacheKey);
 	if (jobListingCache) {
-		state.jobListing = ko.observableArray(jobListingCache);
-		state.jobListing().forEach(j => {
-			j.progress = ko.observable(j.progress);
-			j.status = ko.observable(j.status);
-			j.viewed = ko.observable(j.viewed);
+		jobListingCache.forEach(j => {
+			state.jobListing.push(new jobDetail(j));
 		})
-	} else {
-		state.jobListing = ko.observableArray();
 	}
 
 	state.jobListing.subscribe(function (data) {

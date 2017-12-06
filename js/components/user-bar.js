@@ -4,16 +4,17 @@ define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], functio
 
 		self.updateJobStatus = function () {
 			if (self.jobListing().length > 0) {
-				self.jobListing().forEach(d => {
-					if (d.status() == 'COMPLETED' || d.status() == 'FAILED')
+				self.jobListing().forEach(job => {
+					if (job.isComplete() || job.isFailed()) {
 						return;
-					if (d.progressUrl) {
-						$.ajax(d.progressUrl, {
-							context: d,
+					}
+					
+					if (job.progressUrl) {
+						$.ajax(job.progressUrl, {
+							context: job,
 							success: function (progressData) {
-								var job = self.jobListing().find(j => j.executionId == d.executionId);
 								if (job.progress() != progressData.length) {
-									job.progress(progressData[d.progressValue]);
+									job.progress(progressData[job.progressValue]);
 									job.viewed(false);
 									self.jobListing.valueHasMutated();
 								}
@@ -21,13 +22,14 @@ define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], functio
 						});
 					}
 
-					if (d.statusUrl) {
-						$.ajax(d.statusUrl, {
-							context: d,
+					if (job.statusUrl) {
+						$.ajax(job.statusUrl, {
+							context: job,
 							success: function (statusData) {
-								var job = self.jobListing().find(j => j.executionId == d.executionId);
-								if (job.status() != statusData[d.statusValue]) {
-									job.status(statusData[d.statusValue]);
+								var currentStatus = job.getStatusFromResponse(statusData);
+								//console.log(job.executionUniqueId() + "::" + currentStatus);
+								if (job.status() != currentStatus) {
+									job.status(currentStatus);
 									job.viewed(false);
 									self.jobListing.valueHasMutated();
 								}
@@ -64,6 +66,11 @@ define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], functio
 			}).length;
 			return unviewedNotificationCount;
 		});
+		
+		self.jobNameClick = function(j) {
+			$('#jobModal').modal('hide');
+			window.location = '#/' + j.url;
+		}
 
 		self.appConfig = appConfig;
 	}

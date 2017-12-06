@@ -8,13 +8,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'webapi/CohortReportingAPI',
 	'atlas-state',
+	'job/jobDetail',
 	'cohortbuilder/components/FeasibilityReportViewer',
 	'knockout.dataTables.binding',
 	'faceted-datatable',
 	'databindings',
 	'cohortdefinitionviewer/expressionCartoonBinding',
 	'cohortfeatures',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, jobDetail) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -460,7 +461,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return d.sourceKey == sourceKey
 			})[0];
 		}
-
+		
+		self.getSourceId = function(sourceKey) {
+			return self.config.api.sources.filter(source => source.sourceKey == sourceKey)[0].sourceId;
+		}
+		
 		self.generateCohort = function (source, includeFeatures) {
 			var route = `${config.api.url}cohortdefinition/${self.model.currentCohortDefinition().id()}/generate/${source.sourceKey}`;
 
@@ -469,12 +474,26 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			self.getSourceInfo(source.sourceKey).status('PENDING');
+			
+			var job = new jobDetail({
+				name: self.model.currentCohortDefinition().name() + "_" + source.sourceKey,
+				type: 'cohort-generation',
+				status: 'PENDING',
+				executionId: String(self.model.currentCohortDefinition().id()) + String(self.getSourceId(source.sourceKey)),
+				statusUrl: self.config.api.url + 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/info',
+				statusValue: 'status',
+				viewed: false,
+				url: 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generation',
+			});
+			
 			$.ajax(route, {
 				headers: {
 					Authorization: authApi.getAuthorizationHeader()
 				},
 				error: authApi.handleAccessDenied,
 				success: function (data) {
+					job.status(data.status);
+					sharedState.jobListing.queue(job);
 					setTimeout(function () {
 						self.pollForInfo();
 					}, 3000);
@@ -697,18 +716,19 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			cohortJob.observationConceptIds = [];
 			cohortJob.measurementConceptIds = [];
 
-			var jobDetails = {
+			var jobDetails = new jobDetail({
 				name: cohortJob.jobName,
-				status: ko.observable('LOADING'),
+				status: 'LOADING',
 				executionId: null,
 				statusUrl: self.config.api.url + 'job/execution/',
 				statusValue: 'status',
-				progress: ko.observable(0),
+				progress: 0,
 				progressUrl: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + cohortDefinitionId + '/analyses',
 				progressValue: 'length',
 				progressMax: analysisIdentifiers.length,
-				viewed: ko.observable(false)
-			};
+				viewed: false,
+				url: 'cohortdefinition/' + cohortDefinitionId + '/reporting?sourceKey=' + self.model.reportSourceKey(),
+			});
 
 			self.createReportJobFailed(false);
 
@@ -722,7 +742,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					this.executionId = info.executionId;
 					this.status(info.status);
 					this.statusUrl = this.statusUrl + info.executionId;
-					sharedState.jobListing.push(this);
+					sharedState.jobListing.queue(this);
 				},
 				error: function (xhr, status, error) {
 					self.createReportJobFailed(true);

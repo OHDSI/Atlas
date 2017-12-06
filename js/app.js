@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, sharedState) {
+define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'querystring', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
+	function ($, ko, ohdsiUtil, config, authApi, sharedState, querystring) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
@@ -90,14 +90,23 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							self.currentView('cohort-definitions');
 						});
 					},
-					'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
+					'/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': function (cohortDefinitionId, path) {
 						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
+							// Determine the view to show on the cohort manager screen based on the path
+							path = path.split("/");
+							var view = 'definition'
+							if (path.length > 0 && path[0] != "") {
+								view = path[0];
+							}
+							// Determine any optional parameters to set based on the query string
+							qs = self.router.qs(); // Get the query string parameters
+							var sourceKey = qs.sourceKey || null;
 							self.componentParams = {
 								model: self
 							};
 							self.currentView('cohort-definition-manager');
-							self.currentCohortDefinitionMode('definition');
-							self.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details');
+							self.currentCohortDefinitionMode(view);
+							self.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details', sourceKey);
 						});
 					},
 					'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
@@ -270,11 +279,17 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							self.currentView('ir-manager');
 						});
 					},
-					'/iranalysis/:analysisId': function (analysisId) {
+					'/iranalysis/:analysisId:/?((\w|.)*)': function (analysisId, path) {
+						path = path.split("/");
+						var activeTab = null;
+						if (path.length > 0 && path[0] != "") {
+							activeTab = path[0];
+						}
 						require(['ir-manager'], function () {
 							self.selectedIRAnalysisId(+analysisId);
 							self.componentParams = {
-								model: self
+								model: self,
+								activeTab: activeTab
 							};
 							self.currentView('ir-manager');
 						});
@@ -302,6 +317,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 
 				self.router = new Router(routes)
 					.configure(routerOptions);
+				self.router.qs = function() {
+					return querystring.parse(window.location.href.split('?')[1]);
+				};
 				self.router.init('/');
 				self.applicationStatus('running');
 			};
@@ -875,16 +893,18 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					id: conceptset.id
 				});
 			}
-			self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow, mode) {
+			self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow, mode, sourceKey) {
 				// don't load if it is already loaded or a new concept set
 				if (self.currentCohortDefinition() && self.currentCohortDefinition().id() == cohortDefinitionId) {
 					if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId && self.currentConceptSetSource() == 'cohort') {
+						self.reportSourceKey(sourceKey);
 						self.currentView(viewToShow);
 						return;
 					} else if (conceptSetId != null) {
 						self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 						return;
 					} else {
+						self.reportSourceKey(sourceKey);
 						self.currentView(viewToShow);
 						return;
 					}
@@ -1051,6 +1071,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 									if (conceptSetId != null) {
 										self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 									} else {
+										self.reportSourceKey(sourceKey);
 										self.currentView(viewToShow);
 									}
 								});

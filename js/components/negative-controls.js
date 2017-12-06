@@ -5,10 +5,11 @@ define(['knockout',
 	'webapi/CDMResultsAPI',
 	'webapi/ConceptSetAPI',
 	'atlas-state',
+	'job/jobDetail',
 	'ohdsi.util',
 	'knockout.dataTables.binding',
 	'databindings'
-], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, sharedState) {
+], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, sharedState, jobDetail) {
 	function negativeControls(params) {
 		var self = this;
 
@@ -718,6 +719,19 @@ define(['knockout',
 			// Mark as pending results
 			self.getSourceInfo(service.sourceKey())
 				.status('PENDING');
+			
+			// Create a job to monitor progress
+			var job = new jobDetail({
+				name: self.conceptSet().name() + "_" + service.sourceKey(),
+				type: 'negative-controls',
+				status: 'PENDING',
+				executionId: String(self.conceptSet().id) + String(service.sourceId()),
+				statusUrl: config.api.url + 'conceptset/' + self.conceptSet().id + '/generationinfo',
+				statusValue: 'status',
+				viewed: false,
+				url: 'conceptset/' + self.conceptSet().id + '/evidence',
+			});
+			sharedState.jobListing.queue(job);
 
 			// Kick the job off
 			$.when(negativeControlsJob)
