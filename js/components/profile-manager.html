@@ -1,3 +1,51 @@
+<div class="modal" id="modalHighlights" tabindex="-1 " role="dialog" data-backdrop="false">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<i class="fa fa-lightbulb"></i> Event Highlighting
+			</div>
+			<div class="modal-body">
+				<div class="row" style="text-align:center;">
+					<div class="btn-group" role="group">
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(0), style: {borderColor: getHighlightColor(0), backgroundColor: getHighlightBackground(0)}">
+							<i data-bind="style: {color: getHighlightColor(0)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(1), style: {borderColor: getHighlightColor(1), backgroundColor: getHighlightBackground(1)}">
+							<i data-bind="style: {color: getHighlightColor(1)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(2), style: {borderColor: getHighlightColor(2), backgroundColor: getHighlightBackground(2)}">
+							<i data-bind="style: {color: getHighlightColor(2)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(3), style: {borderColor: getHighlightColor(3), backgroundColor: getHighlightBackground(3)}">
+							<i data-bind="style: {color: getHighlightColor(3)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(4), style: {borderColor: getHighlightColor(4), backgroundColor: getHighlightBackground(4)}">
+							<i data-bind="style: {color: getHighlightColor(4)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(5), style: {borderColor: getHighlightColor(5), backgroundColor: getHighlightBackground(5)}">
+							<i data-bind="style: {color: getHighlightColor(5)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="clear all highlight colors" class="btn btn-default" data-bind="click:clearHighlights">
+							<i class="fa fa-eraser"></i>
+						</button>
+					</div>
+				</div>
+				<faceted-datatable id="highlight-table" params="{
+								reference: highlightData,
+								columns: highlightColumns,
+								options: highlightOptions,
+								order: [[4,'desc']],
+								pageLength: 5,
+								rowClick: highlightRowClick,
+								dom: highlightDom
+							}"></faceted-datatable>
+			</div>
+			<div class="modal-footer">
+				<div data-toggle="modal" data-target="#modalHighlights" class="btn btn-sm btn-primary pull-right">Close</div>
+			</div>
+		</div>
+	</div>
+</div>
 <div class="wrapperTitle">
 	<i class="fa fa-user"></i> Profiles
 </div>
@@ -24,20 +72,9 @@
 				</div>
 			</div>
 			<div class="input-group-btn" role="group">
-				<button type="button" data-bind="visible: highlightEnabled, click: removeHighlight" class="btn btn-primary" title="remove highlight">
-					<i class="fa fa-remove remove-highlight"></i>
+				<button type="button" class="btn btn-primary" title="highlight events" data-toggle="modal" data-target="#modalHighlights">
+					<span><i class="fa fa-paint-brush"></i></span>
 				</button>
-				<button type="button" class="btn btn-primary dropdown-toggle" title="highlight data points" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<span><i class="fa fa-lightbulb-o"></i></span>&nbsp;&nbsp;<span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu dropdown-menu-right scrollable-menu highlight-dropdown" data-bind="enable: !person() && !loadingPerson()">
-					<li class="highlight-filter"><input type="text" placeholder=" filter" class="form-control" data-bind="textInput: filterHighlightsText"/></li>
-					<!-- ko foreach:$component.words -->
-					<li>
-						<a href="#" data-bind="title:text,html:caption,click:(word,evt)=>$component.highlight(word.recs, evt)"></a>
-					</li>
-					<!-- /ko -->
-				</ul>
 			</div>
 		</div>
 	</form>
@@ -50,7 +87,9 @@
 	</div>
 </div>
 
-<div data-bind="visible: loadingPerson" class="loading">loading</div>
+<!-- ko if:loadingPerson -->
+<loading params="status: loadingStatus"></loading>
+<!-- /ko -->
 
 <div data-bind="visible: cantFindPerson" class="loading">Can't find
 	<span data-bind="text:personId" />

@@ -1202,17 +1202,6 @@ ul.nav.nav-tabs {
 	text-shadow: none
 }
 
-.modal-content {
-	border-radius: 0;
-	box-shadow: none;
-}
-
-@media screen and (min-width: 768px) {
-	.modal-content {
-		box-shadow: none;
-	}
-}
-
 .tooltip-inner {
 	border-radius: 0
 }
@@ -1338,11 +1327,6 @@ table.dataTable.display tbody tr.odd {
 	background-color: #fff;
 }
 
-table.dataTable.stripe tbody tr.even,
-table.dataTable.display tbody tr.even {
-	background-color: #f0f0f0;
-}
-
 ul.ColVis_collection li {
 	padding: 3px 10px 3px 7px;
 }
@@ -1368,6 +1352,10 @@ circle.child.selected {
 	stroke: #ccc;
 	stroke-width: 1px;
 	fill: #F19119;
+}
+
+tr.selected td span.fa.fa-check {
+	color:#F19119;
 }
 
 circle.parent {
@@ -1956,8 +1944,8 @@ span.new-role {
 }
 
 .user-bar-container {
-	width: 300px; 
-	height: 34px; 
+	width: 300px;
+	height: 34px;
 	float: right;
 }
 
@@ -1993,12 +1981,9 @@ i.fa.pending {
 .report ul.nav.nav-tabs {}
 
 
-.asset-heading
- .btn {
-    font-weight: bold;
+.asset-heading .btn .fa {
     font-size: 14px;
 }
-
 
 atlas.cohort-editor .panel-body {}
 

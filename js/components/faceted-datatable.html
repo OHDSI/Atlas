@@ -3,7 +3,7 @@
 </div>
 <div data-bind="ifnot: $component.componentLoading(), css: {visible: !componentLoading(), hidden: componentLoading()}">
 	<div class="row">
-		<div class="feFilter" data-bind="css: {'col-xs-2': $component.facets().length > 0}">
+		<div class="feFilter" data-bind="visible:$component.facets().length > 0, css: {'col-xs-2': $component.facets().length > 0}">
 			<div data-bind="with: $component.facets">
 				<div data-bind="foreach:$data">
 					<div class="facetName"><i class="fa fa-filter"></i><span data-bind="text:caption"></span></div>
@@ -17,24 +17,25 @@
 		</div>
 		<div data-bind="css: {'col-xs-10': $component.facets().length > 0, 'col-xs-12': $component.facets().length == 0}">
 			<div class="facetedDataTable">
-				<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" cellspacing="0" data-bind="dataTable:{ 
-							data: $component.tableData, 
-							options: { 
-								dom: $component.dom, 
-								colVis: $component.colVis, 
-								language: $component.language, 
-								buttons: $component.buttons, 
-								rowCallback: $component.rowCallback, 
-								lengthMenu: $component.lengthMenu, 
-								orderClasses: $component.orderClasses, 
-								ordering: $component.ordering, 
-								order: $component.order, 
-								columns: $component.columns, 
-								autoWidth: $component.autoWidth, 
+				<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" cellspacing="0" data-bind="dataTable:{
+							data: $component.tableData,
+							options: {
+								dom: $component.dom,
+								colVis: $component.colVis,
+								language: $component.language,
+								buttons: $component.buttons,
+								rowCallback: $component.rowCallback,
+								lengthMenu: $component.lengthMenu,
+								orderClasses: $component.orderClasses,
+								ordering: $component.ordering,
+								order: $component.order,
+								columns: $component.columns,
+								autoWidth: $component.autoWidth,
 								deferRender: $component.deferRender,
-							}, 
-							scrollOptions: $component.scrollOptions, 
-							onRowClick: $component.rowClick 
+								pageLength: $component.pageLength
+							},
+							scrollOptions: $component.scrollOptions,
+							onRowClick: $component.rowClick
 					} ">
 				</table>
 			</div>

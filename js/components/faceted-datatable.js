@@ -38,6 +38,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.language = params.language || {
 			search: 'Filter: '
 		};
+		self.pageLength = params.pageLength || 15;
 		self.lengthMenu = params.lengthMenu || [
 			[15, 30, 45, 100, -1],
 			[15, 30, 45, 100, 'All']
