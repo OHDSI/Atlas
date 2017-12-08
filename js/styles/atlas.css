@@ -110,7 +110,6 @@ body {
 	color: #000;
 	font-weight: normal;
 	margin: 12px 0px 3px 0px;
-	padding: 0px 3px 0px 3px;
 }
 
 .subheading {
@@ -1462,7 +1461,9 @@ li.assetlink {
 	background-color: #eee;
 }
 
-table.conceptsetviewer th {}
+table.conceptsetviewer th {
+	background-color:#ccc;
+}
 
 table.conceptsetviewer th.fixed-width {
 	width: 75px;

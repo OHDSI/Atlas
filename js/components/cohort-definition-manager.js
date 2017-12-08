@@ -166,8 +166,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.selectedReportCaption = ko.observable();
 		self.selectedSourceKey = ko.pureComputed(() => self.selectedSource().sourceKey);
 		self.loadingReport = ko.observable(false);
-		self.sortedConceptSets = self.model.currentCohortDefinition().expression().ConceptSets.extend({
-			sorted: conceptSetSorter
+		self.sortedConceptSets = ko.computed(function (d) {
+			return self.model.currentCohortDefinition().expression().ConceptSets().sort(conceptSetSorter);
 		});
 
 		// model behaviors
@@ -462,11 +462,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return d.sourceKey == sourceKey
 			})[0];
 		}
-		
-		self.getSourceId = function(sourceKey) {
+
+		self.getSourceId = function (sourceKey) {
 			return self.config.api.sources.filter(source => source.sourceKey == sourceKey)[0].sourceId;
 		}
-		
+
 		self.generateCohort = function (source, includeFeatures) {
 			var route = `${config.api.url}cohortdefinition/${self.model.currentCohortDefinition().id()}/generate/${source.sourceKey}`;
 
@@ -475,7 +475,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			self.getSourceInfo(source.sourceKey).status('PENDING');
-			
+
 			var job = new jobDetail({
 				name: self.model.currentCohortDefinition().name() + "_" + source.sourceKey,
 				type: 'cohort-generation',
@@ -486,7 +486,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				viewed: false,
 				url: 'cohortdefinition/' + self.model.currentCohortDefinition().id() + '/generation',
 			});
-			
+
 			$.ajax(route, {
 				headers: {
 					Authorization: authApi.getAuthorizationHeader()
@@ -796,8 +796,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return "unknownCriteriaType";
 		};
 		self.selectedCriteria = ko.observable();
-		
-		self.copyToClipboard = function(clipboardButtonId, clipboardButtonMessageId) {
+
+		self.copyToClipboard = function (clipboardButtonId, clipboardButtonMessageId) {
 			var currentClipboard = new clipboard(clipboardButtonId);
 
 			currentClipboard.on('success', function (e) {
@@ -812,31 +812,31 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			currentClipboard.on('error', function (e) {
 				console.log('Error copying to clipboard');
 				console.log(e);
-			});			
+			});
 		}
-		
-		self.copyExpressionToClipboard = function() {
+
+		self.copyExpressionToClipboard = function () {
 			self.copyToClipboard('#btnCopyExpressionClipboard', '#copyExpressionToClipboardMessage');
 		}
-		
-		self.copyIdentifierListToClipboard = function() {
+
+		self.copyIdentifierListToClipboard = function () {
 			self.copyToClipboard('#btnCopyIdentifierListClipboard', '#copyIdentifierListMessage');
 		}
-		
-		self.copyIncludedConceptIdentifierListToClipboard = function() {
+
+		self.copyIncludedConceptIdentifierListToClipboard = function () {
 			self.copyToClipboard('#btnCopyIncludedConceptIdentifierListClipboard', '#copyIncludedConceptIdentifierListMessage');
 		}
-		
-		self.copyTextViewToClipboard = function() {
-			self.copyToClipboard('#btnCopyTextViewClipboard', '#copyTextViewMessage');			
+
+		self.copyTextViewToClipboard = function () {
+			self.copyToClipboard('#btnCopyTextViewClipboard', '#copyTextViewMessage');
 		}
-		
-		self.copyCohortExpressionJSONToClipboard = function() {
+
+		self.copyCohortExpressionJSONToClipboard = function () {
 			self.copyToClipboard('#btnCopyExpressionJSONClipboard', '#copyCohortExpressionJSONMessage');
 		}
-		
-		self.copyCohortSQLToClipboard = function() {
-			self.copyToClipboard('#btnCopyCohortSQLClipboard', '#copyCopyCohortSQLMessage');			
+
+		self.copyCohortSQLToClipboard = function () {
+			self.copyToClipboard('#btnCopyCohortSQLClipboard', '#copyCopyCohortSQLMessage');
 		}
 	}
 

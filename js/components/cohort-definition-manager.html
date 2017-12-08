@@ -124,11 +124,17 @@
 				</div>
 
 				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() == 'export'">
-					<div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
+					<div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
+						<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+					</div>
 					<pre id="conceptSetExpression" data-bind="html: model.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
-					<div class="heading">Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
+					<div class="heading">Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
+						<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+					</div>
 					<pre id="conceptIdentifierList" data-bind="html: model.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
-					<div class="heading">Included Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
+					<div class="heading">Included Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
+						<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+					</div>
 					<pre id="includedConceptIdentifierList" data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 				</div>
 				<!-- /ko -->
@@ -155,11 +161,14 @@
 				<div class="tab-content">
 					<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'printfriendly'}" class="tab-pane">
 						<div class="paddedWrapper">
-							<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyTextViewClipboard" data-bind="click: copyTextViewToClipboard" data-clipboard-target="#cohortTextView"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span id="copyTextViewMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
-							<div id="cohortTextView">
+							<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyTextViewClipboard" data-bind="click: copyTextViewToClipboard" data-clipboard-target="#cohortTextView"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;
+							<span id="copyTextViewMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+							<div id="cohortTextView" class="pad-10">
+								<div class="heading" data-bind="text:model.currentCohortDefinition().name"></div>
+								<div data-bind="text:model.currentCohortDefinition().description"></div>
 								<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
 								<br/>
-								<div>Appendix 1: Concept Set Definitions</div>
+								<div class="heading">Appendix 1: Concept Set Definitions</div>
 								<br/>
 								<!-- ko foreach: sortedConceptSets -->
 								<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
@@ -205,7 +214,8 @@
 						<textarea id="cohortExpressionJSON" class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
 						<div class="row">
 							<div class="col-md-6" style="float: left">
-								<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionJSONClipboard" data-bind="click: copyCohortExpressionJSONToClipboard" data-clipboard-target="#cohortExpressionJSON"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span id="copyCohortExpressionJSONMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+								<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionJSONClipboard" data-bind="click: copyCohortExpressionJSONToClipboard" data-clipboard-target="#cohortExpressionJSON"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;
+								<span id="copyCohortExpressionJSONMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
 							</div>
 							<div class="col-md-6" style="text-align: right">
 								<button class="btn btn-sm btn-primary" data-bind="click: $component.reload">Reload</button>
@@ -237,7 +247,8 @@
 								</ul>
 							</div>
 							<div class="col-md-6" style="text-align: right">
-								<span id="copyCopyCohortSQLMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyCohortSQLClipboard" data-bind="click: copyCohortSQLToClipboard" data-clipboard-target="#cohortSQL"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>
+								<span id="copyCopyCohortSQLMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>&nbsp;&nbsp;<button class="btn btn-sm btn-primary"
+								  title="Copy to clipboard" id="btnCopyCohortSQLClipboard" data-bind="click: copyCohortSQLToClipboard" data-clipboard-target="#cohortSQL"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>
 							</div>
 						</div>
 						<div class="tab-content">
