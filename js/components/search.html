@@ -23,11 +23,11 @@
 					<div data-bind="click:searchClick" class="pull-right btn btn-primary" title="Search" type="button"><i class="fa fa-search"></i></div>
 				</div>
 			</div>
-			
+
 			<div class="clear"></div>
 			<div data-bind="click:toggleAdvanced" class="pull-right btn btn-sm btn-link">Advanced Options</div>
 			<div class="clear"></div>
-			
+
 			<div class="padded-wrapper" data-bind="visible:showAdvanced">
 				<div class="heading">Vocabularies</div>
 				<div class="checkboxListing">
@@ -47,7 +47,7 @@
 					<!-- /ko -->
 				</div>
 			</div>
-			
+
 			<div data-bind="visible:concepts().length > 0 || searchExecuted()">
 				<faceted-datatable params="{orderColumn: 7, columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: $component.concepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
 				<div class="linkLegend">
@@ -67,23 +67,25 @@
 						<div class="linkLegendTitle">Classification</div>
 					</div>
 				</div>
-
 				<div class="clear"></div>
 			</div>
 		</div>
-
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'import' }" class="tab-pane">
+			<!-- ko if: model.currentConceptSet()!=null -->
+			<div class="panel panel-danger">
+				<div class="panel-heading">Concept Set Open</div>
+				<div class="panel-body">Please close your current Concept Set before trying to import concepts.</div>
+			</div>
+			<!-- /ko -->
+			<!-- ko if: model.currentConceptSet()==null -->
 			<ul class="nav nav-pills">
 				<li role="presentation" data-bind="click: function() {model.currentImportMode('identifiers');}, attr: {class: model.currentImportMode() == 'identifiers' ? 'active' : ''}"><a>Concept Identifiers</a>
 				</li>
-
 				<li role="presentation" data-bind="click: function() {model.currentImportMode('sourcecodes');}, attr: {class: model.currentImportMode() == 'sourcecodes' ? 'active' : ''}"><a>Source Codes</a>
 				</li>
-
 				<li role="presentation" data-bind="click: function() {model.currentImportMode('conceptset');}, attr: {class: model.currentImportMode() == 'conceptset' ? 'active' : ''}"><a>Concept Set</a>
 				</li>
 			</ul>
-
 			<div id="wrapperImportSourcecodes" class="paddedWrapper form-group" data-bind="if:model.currentImportMode() == 'sourcecodes'">
 				<div class="heading">Enter Source Codes (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportSourcecodes');}">click to clear</a>)</div>
 				<textarea class="form-control" rows="5" id="textImportSourcecodes"></textarea>
@@ -97,37 +99,13 @@
 				<div class="clear"></div>
 			</div>
 
-			<div data-bind="visible: (model.currentImportMode() == 'sourcecodes' || model.currentImportMode() == 'identifiers') && model.importedConcepts().length > 0">
-				<div class="heading paddedWrapper">Imported Concepts</div>
-				<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.importedConcepts }"></faceted-datatable>
-				<div class="linkLegend">
-					<div class="linkLegendItem">
-						<div class="swatch standard">
-						</div>
-						<div class="linkLegendTitle">Standard</div>
-					</div>
-					<div class="linkLegendItem">
-						<div class="swatch nonStandard">
-						</div>
-						<div class="linkLegendTitle">Non-Standard</div>
-					</div>
-					<div class="linkLegendItem">
-						<div class="swatch classification">
-						</div>
-						<div class="linkLegendTitle">Classification</div>
-					</div>
-				</div>
-
-				<div class="clear"></div>
-			</div>
-
 			<div id="wrapperImportConceptSet" class="paddedWrapper form-group" data-bind="if:model.currentImportMode() == 'conceptset'">
 				<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $('#textImportConceptSet').val('');}">click to clear</a>)</div>
 				<textarea class="form-control" rows="5" id="textImportConceptSet"></textarea>
-				<a type="button" data-bind="click:function() {importConceptSetExpression();}" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</a>
+				<div type="button" data-bind="css: {disabled: model.currentConceptSet()!=null}, click:function() {importConceptSetExpression();}" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 				<div class="clear"></div>
 
-				<!-- ko if: model.selectedConcepts().length > 0 -->
+				<!-- ko if: model.selectedConcepts && model.selectedConcepts().length > 0 -->
 				<div class="heading ">Imported Concept Set Expression</div>
 				<table class="conceptSetTable stripe compact hover " cellspacing="0 " width="100% " data-bind="dataTable:{
 				data: model.selectedConcepts(),
@@ -172,6 +150,7 @@
 				</div>
 				<!-- /ko -->
 			</div>
+			<!-- /ko -->
 		</div>
 	</div>
 </div>

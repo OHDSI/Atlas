@@ -93,7 +93,6 @@ requirejs.config({
 		"conceptset-manager": "components/conceptset-manager",
 		"cohort-comparison-manager": "components/cohort-comparison-manager",
 		"job-manager": "components/job-manager",
-		"importer": "components/importer",
 		"data-sources": "components/data-sources",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
@@ -162,7 +161,7 @@ requirejs.config({
 		"d3-dispatch": "https://cdnjs.cloudflare.com/ajax/libs/d3-dispatch/1.0.3/d3-dispatch.min",
 		"d3-tip": "https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min",
 		"d3-slider": "d3.slider",
-		
+
 		"moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min",
 		"querystring": "https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min",
 	}

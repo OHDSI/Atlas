@@ -189,14 +189,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							self.currentView('report-manager');
 						});
 					},
-					'/import': function () {
-						require(['importer'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('importer');
-						});
-					},
 					'/profiles/?((\w|.)*)': function (path) {
 						require(['profile-manager', 'cohort-definition-browser'], function () {
 							path = path.split("/");
@@ -317,7 +309,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 
 				self.router = new Router(routes)
 					.configure(routerOptions);
-				self.router.qs = function() {
+				self.router.qs = function () {
 					return querystring.parse(window.location.href.split('?')[1]);
 				};
 				self.router.init('/');
@@ -1300,7 +1292,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			self.searchResultsConcepts = ko.observableArray();
 			self.relatedConcepts = ko.observableArray();
 			self.relatedSourcecodes = ko.observableArray();
-			self.importedConcepts = ko.observableArray();
 			self.includedConcepts = ko.observableArray();
 			self.denseSiblings = ko.observableArray();
 			self.includedSourcecodes = ko.observableArray();

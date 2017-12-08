@@ -1296,7 +1296,7 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'css!styles/cartoon.css'],
 
 		function conceptName(crit, cohdef) {
 			return crit.CodesetId > -1 ?
-				cohdef.ConceptSets[crit.CodesetId].name : '';
+				_.find(cohdef.ConceptSets, d=> d.id == crit.CodesetId).name : '';
 		}
 
 		function critLabel(crit, cohdef) {
