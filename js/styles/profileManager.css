@@ -8,8 +8,38 @@
 	text-align: center;
 	shape-rendering: crispEdges;
 	border-bottom: solid 1px #ccc;
+	-webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently */
 }
 
+#modalHighlights .modal-body {
+	padding: 5px;
+}
+#modalHighlights .swatch {
+	width:15px;
+	height:15px;
+	margin:auto;
+}
+#modalHighlights .modal-header {
+	cursor: move;
+}
+
+#modalHighlights .modal-footer {
+	padding:3px;
+	background-color:#888;
+}
+
+#modalHighlights input[type="color"] {
+	height:34px;
+	vertical-align:middle;
+	width:50px;
+	border-radius:3px;
+	padding:0px;
+}
 #profile-chart .brush .extent {
 	stroke: #f19119;
 	fill: #f19119;
@@ -37,6 +67,33 @@
 #profile-chart .axis path, .axis line {
 		stroke: #666 !important;
 		stroke-width: 1px !important;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
 }
 
 path.drug {
@@ -89,7 +146,7 @@ path.death {
 }
 
 rect.point {
-	opacity: 0.3;
+	opacity: 0.8;
 	fill: #337AB7;
 }
 
@@ -98,13 +155,8 @@ rect.dim {
 }
 .link {
 	stroke: #444;
-	stroke-width: 2;
-	shape-rendering: crispedges;
 }
-.link.highlighted {
-	stroke: #f19119;
-	fill: #f19119;
-}
+
 #wordcloud {
 	overflow: auto;
 	height: 100%;
@@ -122,8 +174,6 @@ rect.dim {
 	font-size:10px;
 }
 .highlighted path, .highlighted line, .highlighted rect {
-	fill: #f19119;
-	stroke: #f19119;
 	stroke-width: 1;
 	opacity:0.7;
 }
@@ -139,7 +189,6 @@ g.inset rect.background {
 	stroke-width: 2;
 }
 g.inset rect.highlighted {
-	fill: #f19119 !important;
 	width: 3px;
 	height: 3px;
 }
@@ -159,7 +208,7 @@ g.inset rect.filteredout {
 	fill: lightgray;
 }
 rect.category {
-	fill: #fff;
+	fill: #222;
 	stroke:#eee;
 	stroke-width:1px;
 }
@@ -168,9 +217,7 @@ text.category {
 	font-weight:normal;
 }
 text.label.highlighted {
-	fill: #000;
 	font-size:1.1em;
-	stroke:#f19119;
 	stroke-width:0.3
 }
 #cohortPeople {

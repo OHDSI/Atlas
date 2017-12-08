@@ -18,6 +18,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.aspectRatio = ko.observable();
 			self.config = config;
 			self.filterHighlightsText = ko.observable();
+			self.loadingStatus = ko.observable('loading');
 
 			self.sourceKey = ko.observable(params.sourceKey);
 			self.personId = ko.observable(params.personId);
@@ -101,7 +102,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.loadingPerson(true);
 
 				let url = self.config.api.url + self.sourceKey() + '/person/' + self.personId();
-				personRequest = personRequests[url] = util.cachedAjax({
+
+				self.loadingStatus('loading profile data from database');
+				personRequest = personRequests[url] = $.ajax({
 					url: url,
 					method: 'GET',
 					contentType: 'application/json',
@@ -113,6 +116,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						if (personRequest !== personRequests[url]) {
 							return;
 						}
+						self.loadingStatus('processing profile data');
 						person.personId = self.personId();
 						self.loadingPerson(false);
 						let cohort;
@@ -135,9 +139,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 							.getFullYear() - person.yearOfBirth;
 						person.records.forEach(function (rec) {
 							// have to get startDate from person.cohorts
-							rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24))
-							rec.endDay = rec.endDate ?
-								Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
+							rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
+							rec.endDay = rec.endDate ? Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
+							rec.highlight = self.defaultColor;
 						});
 						self.personRecords(person.records);
 						person.shadedRegions =
@@ -169,7 +173,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				} else {
 					self.highlightEnabled(false);
 				}
-				self.highlightRecs(recs || []);
+				self.highlightRecs([{
+					'color': '#f00',
+					'recs': recs
+				}] || []);
 			};
 
 			self.getGenderClass = ko.computed(function () {
@@ -238,6 +245,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				dim.groupAll.reduce(...reduceToRecs);
 			};
 
+			self.highlightData = ko.observableArray();
+			self.defaultColor = '#888';
+
 			self.words = ko.computed(function () {
 				if (!self.xfObservable())
 					return;
@@ -259,28 +269,24 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					.filter(d => {
 						var filtered = true;
 						if (self.filterHighlightsText() && self.filterHighlightsText().length > 0) {
-							if (d.key.toLowerCase().indexOf(self.filterHighlightsText().toLowerCase())==-1)					 
-							{
+							if (d.key.toLowerCase().indexOf(self.filterHighlightsText().toLowerCase()) == -1) {
 								filtered = false;
 							}
 						}
-
 						return d.value.length && stopWords.indexOf(d.key) === -1 && filtered;
 					})
 					.map(d => {
-						if (d.key.length > 100) {
-							d.caption = d.key.substring(0, 97) + '...';
-						} else {
-							d.caption = d.key;
-						}
 						return {
-							caption: d.caption + ' (' + d.value.length + ')',
+							caption: d.key,
+							domain: d.value[0].domain,
 							text: d.key,
-							recs: d.value
+							recs: d.value,
+							count: d.value.length,
+							highlight: ko.observable(self.defaultColor)
 						}
 					});
 				words = _.sortBy(words, d => -d.recs.length)
-				return words;
+				self.highlightData(words);
 			});
 
 			self.searchHighlight = ko.observable();
@@ -304,17 +310,37 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.showSection[section](!self.showSection[section]());
 			};
 
+			self.swatch = function (d) {
+				return '<div class="swatch" style="background-color:' + d + '"></div>';
+			}
+
+			self.highlightDom = '<<"row vertical-align"<"col-xs-6"><"col-xs-6 search"f>><t><"row vertical-align"<"col-xs-6"i><"col-xs-6"p>>>';
+			self.highlightColumns = ['select', {
+				render: self.swatch,
+				data: 'highlight()',
+				sortable: false
+			}, {
+				title: 'Concept Name',
+				data: 'caption'
+			}, {
+				title: 'Domain',
+				data: 'domain'
+			}, {
+				title: 'Total Records',
+				data: 'count'
+			}];
+
 			self.columns = [{
-					title: 'Domain',
-					data: 'domain'
-				},
-				{
 					title: 'Concept Id',
 					data: 'conceptId'
 				},
 				{
 					title: 'Concept Name',
 					data: 'conceptName'
+				},
+				{
+					title: 'Domain',
+					data: 'domain'
 				},
 				{
 					title: 'Start Day',
@@ -326,12 +352,61 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				}
 			];
 
+			self.daysBeforeIndex = function (d) {
+				if (d.startDay >= -30 && d.startDay <= 0) {
+					return '0-30 days';
+				} else if (d.startDay >= -60 && d.startDay < -30) {
+					return '31-60 days';
+				} else if (d.startDay >= -90 && d.startDay < -60) {
+					return '61-90 days';
+				} else if (d.startDay < -90) {
+					return '90+ days';
+				}
+			}
+			self.setHighlights = function (colorIndex) {
+				var selectedData = $('#highlight-table table').DataTable().rows('.selected').data();
+				for (var i = 0; i < selectedData.length; i++) {
+					selectedData[i].highlight(self.getHighlightColor(colorIndex)); // set the swatch color
+					selectedData[i].recs.forEach(r => r.highlight = self.getHighlightColor(colorIndex)); // set the record colors
+				};
+
+				self.highlightRecs.valueHasMutated();
+			}
+
+			// d3.schemePaired
+			self.palette = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ff9', '#b15928'];
+
+			self.getHighlightBackground = function (i) {
+				return self.palette[i * 2];
+			}
+
+			self.getHighlightColor = function (i) {
+				return self.palette[i * 2 + 1];
+			}
+
+			self.clearHighlights = function () {
+				var selectedData = $('#highlight-table table').DataTable().data();
+				for (var i = 0; i < selectedData.length; i++) {
+					selectedData[i].highlight(self.defaultColor); // set the swatch color
+					selectedData[i].recs.forEach(r => r.highlight = self.defaultColor); // set the record colors
+				};
+
+				self.highlightRecs.valueHasMutated();
+			}
+
+			self.highlightRowClick = function (data, context) {
+				event.stopPropagation();
+				$(context).toggleClass('selected');
+			}
+			self.highlightOptions = {};
 			self.options = {
 				Facets: [{
 					'caption': 'Domain',
 					'binding': d => d.domain,
-				}, ]
+				}]
 			};
+
+			$("#modalHighlights").draggable();
 
 			if (self.personId()) {
 				self.loadPerson();

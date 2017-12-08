@@ -13,12 +13,17 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 	var xScale = d3.scaleLinear();
 	var yScale = d3.scaleBand();
 
-	var tipText = d => d.conceptName;
+	var tipText = d => {
+		return d.conceptName;
+	};
+
+	var htmlTipText = d => {
+		return '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p>';
+	};
 	var pointClass = d => d.domain;
 	var radius = d => 2;
 
 	var highlightFunc = () => {};
-	var highlightFunc2 = () => {};
 	var zoomDimension = null;
 	var xfObservable = null;
 
@@ -28,20 +33,19 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 			return [-10, 0];
 		})
 		.html(function (d) {
-			return tipText(d);
+			return htmlTipText(d);
 		});
 
 	ko.bindingHandlers.profileChart = {
 		init: function (element, valueAccessor, allBindingsAccessor) {
 			valueAccessor().highlightRecs.subscribe(xfObservable => {
 				highlightFunc(xfObservable);
-				highlightFunc2(xfObservable);
 			});
 		},
 		update: function (element, valueAccessor, allBindingsAccessor) {
 			var va = valueAccessor();
 
-			vizHeight = (window.innerHeight * 0.60) / (va.short ? 2 : 1) - margin.top - margin.bottom;
+			vizHeight = 250 - margin.top - margin.bottom;
 			va.aspectRatio((vizHeight + margin.top + margin.bottom) / width);
 
 			if (va.xfObservable() === undefined)
@@ -56,6 +60,9 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 				ko.utils.unwrapObservable(va.shadedRegions || []),
 				va.xfDimensions
 			);
+
+			// maintain highlights
+			valueAccessor().highlightRecs.valueHasMutated();
 		}
 	};
 
@@ -76,7 +83,7 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 					return calculateWidth(d);
 				})
 				.attr('x', function (d) {
-					return -calculateWidth(d) / 2;
+					return -minBoxPix / 2;
 				})
 				.attr('y', -minBoxPix / 2)
 		}
@@ -121,7 +128,9 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 			.domain([10, vizHeight])
 			.range([15, 75]);
 
-		profilePlot.selectAll('rect.category')
+		var categoryContainer = profilePlot.append("g");
+
+		categoryContainer.selectAll('rect.category')
 			.data(categories)
 			.enter()
 			.append('rect')
@@ -176,9 +185,13 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 			.attr('y2', yScale.range()[1])
 			.style('stroke', d => d.color);
 
-		var brush = d3.brushX().on("end", brushEnded);
+		var brush = d3.brushX().extent([
+				[0, 0],
+				[width, yScale.bandwidth() * categories.length]
+			])
+			.on("end", brushEnded);
 
-		profilePlot.append("g")
+		categoryContainer.append("g")
 			.attr("class", "brush")
 			.call(brush);
 
@@ -248,13 +261,12 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 				.anchor(points)
 				.width(width)
 				.height(vizHeight)
-				.start(2000)
-			labels.transition().duration(0)
-				.attr('x', d => d.x)
-				.attr('y', d => d.y)
-			links.transition().duration(0)
-				.attr('x2', d => d.x)
-				.attr('y2', d => d.y)
+				.start();
+
+			labels.attr('x', d => d.x)
+				.attr('y', d => d.y);
+			links.attr('x2', d => d.x)
+				.attr('y2', d => d.y);
 		}
 
 		profilePlot.append("g")
@@ -262,22 +274,10 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 			.attr("transform", "translate(0," + (vizHeight + 2) + ")")
 			.call(xAxis);
 
-		highlightFunc = function (recs) {
-			if (recs.length === 0) {
-				pointGs.classed('highlighted', false);
-				pointGs.classed('unhighlighted', false);
-				labels && labels.classed('highlighted', false);
-				labels && labels.classed('unhighlighted', false);
-				links && links.classed('highlighted', false);
-				links && links.classed('unhighlighted', false);
-			} else {
-				pointGs.classed('highlighted', d => _.find(recs, d));
-				pointGs.classed('unhighlighted', d => !_.find(recs, d));
-				labels && labels.classed('highlighted', d => _.find(recs, d.rec));
-				labels && labels.classed('unhighlighted', d => !_.find(recs, d.rec));
-				links && links.classed('highlighted', d => _.find(recs, d.rec));
-				links && links.classed('unhighlighted', d => !_.find(recs, d.rec));
-			}
+		highlightFunc = function () {
+			pointGs.selectAll('rect').style('fill', function (d) {
+				return d.highlight;
+			});
 		};
 		return svg;
 	}
