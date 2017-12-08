@@ -7,12 +7,12 @@
 		<div class="asset-heading">
 			<input type="text" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !(selectedAnalysis().name() && (selectedAnalysis().name().length > 0)) }"></input>
 			<div class="btn-group" role="group">
-				<button class="btn btn-sm btn-success" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">Save</button>
-				<button class="btn btn-sm btn-primary" data-bind="click: close">Close</button>
+				<button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}"><i class="fa fa-save"></i></button>
+				<button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
 				<!-- ko if: selectedAnalysis().id() != null -->
-				<button class="btn btn-sm btn-primary" data-bind="click: copy, enable: !dirtyFlag().isDirty()">Copy</button>
+				<button class="btn btn-sm btn-primary" title="Create a copy" data-bind="click: copy, enable: !dirtyFlag().isDirty()"><i class="fa fa-copy"></i></button>
 				<!-- ko ifnot: isRunning -->
-				<button class="btn btn-sm btn-danger" data-bind="click: $component.delete">Delete</button>
+				<button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete"><i class="fa fa-trash-o"></i></button>
 				<!-- /ko -->
 				<!-- /ko -->
 				<!-- ko if: selectedAnalysis().id() != null && !dirtyFlag().isDirty() && !isRunning() && sources().length > 0 -->

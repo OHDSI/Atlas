@@ -13,13 +13,13 @@
 			<div class="input-group">
 				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: model.currentCohortDefinition().name, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></input>
 				<div class="input-group-btn">
-					<button class="btn btn-success" title="save cohort definition" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning() && canEdit())"><i class="fa fa-save"></i></button>
-					<button class="btn btn-primary" title="close cohort definition" data-bind="click: close"><i class="fa fa-times"></i></button>
+					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning() && canEdit())"><i class="fa fa-save"></i></button>
+					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
 					<!-- ko if: model.currentCohortDefinition().id() != null && model.currentCohortDefinition().id() != 0 -->
-					<button class="btn btn-primary" title="create a copy of this cohort definition" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()"><i class="fa fa-copy"></i></button>
-					<button data-toggle="modal" data-target="#linkModal" class="btn btn-primary" title="get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty()"><i class="fa fa-link"></i></button>
+					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()"><i class="fa fa-copy"></i></button>
+					<button data-toggle="modal" data-target="#linkModal" class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty()"><i class="fa fa-link"></i></button>
 					<!-- ko if: !isRunning() -->
-					<button class="btn btn-danger" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
+					<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
 					<!-- /ko -->
 				</div>
@@ -124,12 +124,12 @@
 				</div>
 
 				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() == 'export'">
-					<div class="heading">Concept Set Expression JSON</div>
-					<pre data-bind="html: model.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']"></pre>
-					<div class="heading">Concept Identifer List</div>
-					<pre data-bind="html: model.currentConceptIdentifierList, selectOnFocus: {events: ['click']"></pre>
-					<div class="heading">Included Concept Identifer List</div>
-					<pre data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']"></pre>
+					<div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
+					<pre id="conceptSetExpression" data-bind="html: model.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
+					<div class="heading">Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
+					<pre id="conceptIdentifierList" data-bind="html: model.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+					<div class="heading">Included Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
+					<pre id="includedConceptIdentifierList" data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 				</div>
 				<!-- /ko -->
 			</div>
@@ -155,17 +155,20 @@
 				<div class="tab-content">
 					<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'printfriendly'}" class="tab-pane">
 						<div class="paddedWrapper">
-							<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
-							<br/>
-							<div>Appendix 1: Concept Set Definitions</div>
-							<br/>
-							<!-- ko foreach: sortedConceptSets -->
-							<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
-							<div style="padding-left:20px">
-								<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+							<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyTextViewClipboard" data-bind="click: copyTextViewToClipboard" data-clipboard-target="#cohortTextView"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span id="copyTextViewMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+							<div id="cohortTextView">
+								<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
 								<br/>
+								<div>Appendix 1: Concept Set Definitions</div>
+								<br/>
+								<!-- ko foreach: sortedConceptSets -->
+								<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
+								<div style="padding-left:20px">
+									<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+									<br/>
+								</div>
+								<!-- /ko -->
 							</div>
-							<!-- /ko -->
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'cartoon'}" class="tab-pane">
@@ -199,54 +202,68 @@
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="css: { active: $component.exportTabMode() == 'json' }" class="tab-pane">
-						<textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
-						<div style="text-align: right">
-							<button class="btn btn-sm btn-primary" data-bind="click: $component.reload">Reload</button>
+						<textarea id="cohortExpressionJSON" class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
+						<div class="row">
+							<div class="col-md-6" style="float: left">
+								<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionJSONClipboard" data-bind="click: copyCohortExpressionJSONToClipboard" data-clipboard-target="#cohortExpressionJSON"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span id="copyCohortExpressionJSONMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+							</div>
+							<div class="col-md-6" style="text-align: right">
+								<button class="btn btn-sm btn-primary" data-bind="click: $component.reload">Reload</button>
+							</div>
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="css: { active: $component.exportTabMode() == 'sql'}" class="tab-pane">
-						<ul class="nav nav-pills">
-							<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'mssql' }, click: function() { $component.exportSqlMode('mssql') };">
-								<a>MSSQL Server</a>
-							</li>
-							<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'msaps' }, click: function() { $component.exportSqlMode('msaps') };">
-								<a>MS APS</a>
-							</li>
-							<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'oracle' }, click: function() { $component.exportSqlMode('oracle') };">
-								<a>Oracle</a>
-							</li>
-							<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'postgresql' }, click: function() { $component.exportSqlMode('postgresql') };">
-								<a>PostgreSQL</a>
-							</li>
-							<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'redshift' }, click: function() { $component.exportSqlMode('redshift') };">
-								<a>Amazon Red Shift</a>
-							</li>
-							<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'impala' }, click: function() { $component.exportSqlMode('impala') };">
-								<a>Impala</a>
-							</li>
-						</ul>
+						<div class="row">
+							<div class="col-md-6" style="text-align: left">
+								<ul class="nav nav-pills">
+									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'mssql' }, click: function() { $component.exportSqlMode('mssql') };">
+										<a>MSSQL Server</a>
+									</li>
+									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'msaps' }, click: function() { $component.exportSqlMode('msaps') };">
+										<a>MS APS</a>
+									</li>
+									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'oracle' }, click: function() { $component.exportSqlMode('oracle') };">
+										<a>Oracle</a>
+									</li>
+									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'postgresql' }, click: function() { $component.exportSqlMode('postgresql') };">
+										<a>PostgreSQL</a>
+									</li>
+									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'redshift' }, click: function() { $component.exportSqlMode('redshift') };">
+										<a>Amazon Red Shift</a>
+									</li>
+									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'impala' }, click: function() { $component.exportSqlMode('impala') };">
+										<a>Impala</a>
+									</li>
+								</ul>
+							</div>
+							<div class="col-md-6" style="text-align: right">
+								<span id="copyCopyCohortSQLMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyCohortSQLClipboard" data-bind="click: copyCohortSQLToClipboard" data-clipboard-target="#cohortSQL"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>
+							</div>
+						</div>
 						<div class="tab-content">
 							<div role="tabpanel" data-bind="visible: $component.isLoadingSql()">
 								<div class="loading">Loading</div>
 							</div>
 
-							<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'mssql' && !$component.isLoadingSql()">
-								<pre data-bind="html: $component.generatedSql.mssql"></pre>
-							</div>
-							<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'msaps' && !$component.isLoadingSql()">
-								<pre data-bind="text: $component.generatedSql.msaps"></pre>
-							</div>
-							<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'oracle' && !$component.isLoadingSql()">
-								<pre data-bind="text: $component.generatedSql.oracle"></pre>
-							</div>
-							<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'postgresql' && !$component.isLoadingSql()">
-								<pre data-bind="text: $component.generatedSql.postgresql"></pre>
-							</div>
-							<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'redshift' && !$component.isLoadingSql()">
-								<pre data-bind="text: $component.generatedSql.redshift"></pre>
-							</div>
-							<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'impala' && !$component.isLoadingSql()">
-								<pre data-bind="text: $component.generatedSql.impala"></pre>
+							<div id="cohortSQL">
+								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'mssql' && !$component.isLoadingSql()">
+									<pre data-bind="html: $component.generatedSql.mssql"></pre>
+								</div>
+								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'msaps' && !$component.isLoadingSql()">
+									<pre data-bind="text: $component.generatedSql.msaps"></pre>
+								</div>
+								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'oracle' && !$component.isLoadingSql()">
+									<pre data-bind="text: $component.generatedSql.oracle"></pre>
+								</div>
+								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'postgresql' && !$component.isLoadingSql()">
+									<pre data-bind="text: $component.generatedSql.postgresql"></pre>
+								</div>
+								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'redshift' && !$component.isLoadingSql()">
+									<pre data-bind="text: $component.generatedSql.redshift"></pre>
+								</div>
+								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'impala' && !$component.isLoadingSql()">
+									<pre data-bind="text: $component.generatedSql.impala"></pre>
+								</div>
 							</div>
 						</div>
 					</div>

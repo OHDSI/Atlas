@@ -8,6 +8,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'webapi/CohortReportingAPI',
 	'atlas-state',
+	'clipboard',
 	'job/jobDetail',
 	'cohortbuilder/components/FeasibilityReportViewer',
 	'knockout.dataTables.binding',
@@ -15,7 +16,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'databindings',
 	'cohortdefinitionviewer/expressionCartoonBinding',
 	'cohortfeatures',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, jobDetail) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, clipboard, jobDetail) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -795,6 +796,48 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return "unknownCriteriaType";
 		};
 		self.selectedCriteria = ko.observable();
+		
+		self.copyToClipboard = function(clipboardButtonId, clipboardButtonMessageId) {
+			var currentClipboard = new clipboard(clipboardButtonId);
+
+			currentClipboard.on('success', function (e) {
+				console.log('Copied to clipboard');
+				e.clearSelection();
+				$(clipboardButtonMessageId).fadeIn();
+				setTimeout(function () {
+					$(clipboardButtonMessageId).fadeOut();
+				}, 1500);
+			});
+
+			currentClipboard.on('error', function (e) {
+				console.log('Error copying to clipboard');
+				console.log(e);
+			});			
+		}
+		
+		self.copyExpressionToClipboard = function() {
+			self.copyToClipboard('#btnCopyExpressionClipboard', '#copyExpressionToClipboardMessage');
+		}
+		
+		self.copyIdentifierListToClipboard = function() {
+			self.copyToClipboard('#btnCopyIdentifierListClipboard', '#copyIdentifierListMessage');
+		}
+		
+		self.copyIncludedConceptIdentifierListToClipboard = function() {
+			self.copyToClipboard('#btnCopyIncludedConceptIdentifierListClipboard', '#copyIncludedConceptIdentifierListMessage');
+		}
+		
+		self.copyTextViewToClipboard = function() {
+			self.copyToClipboard('#btnCopyTextViewClipboard', '#copyTextViewMessage');			
+		}
+		
+		self.copyCohortExpressionJSONToClipboard = function() {
+			self.copyToClipboard('#btnCopyExpressionJSONClipboard', '#copyCohortExpressionJSONMessage');
+		}
+		
+		self.copyCohortSQLToClipboard = function() {
+			self.copyToClipboard('#btnCopyCohortSQLClipboard', '#copyCopyCohortSQLMessage');			
+		}
 	}
 
 	var component = {
