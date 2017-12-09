@@ -23,31 +23,37 @@
 					<div data-bind="click:searchClick" class="pull-right btn btn-primary" title="Search" type="button"><i class="fa fa-search"></i></div>
 				</div>
 			</div>
-
-			<div class="clear"></div>
-			<div data-bind="click:toggleAdvanced" class="pull-right btn btn-sm btn-link">Advanced Options</div>
-			<div class="clear"></div>
-
-			<div class="padded-wrapper" data-bind="visible:showAdvanced">
-				<div class="heading">Vocabularies</div>
-				<div class="checkboxListing">
-					<!-- ko foreach: vocabularies -->
-					<div>
-						<input type="checkbox" name="vocabularyId" data-bind="value: VOCABULARY_ID"> <span data-bind="text: VOCABULARY_ID + ' : ' + VOCABULARY_NAME"></span>
+			<div class="row">
+				<div data-bind="click:toggleAdvanced" class="pull-right btn btn-sm btn-link">Advanced Options</div>
+			</div>
+			<div class="pad-10 advanced-options" data-bind="visible:showAdvanced">
+				<div class="row pad-10">
+					<div class="btn btn-success btn-sm pull-right" data-bind="click: clearAllAdvanced"><i class="fa fa-eraser"></i> Clear All Selections</div>
+				</div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">Domains</div>
+					<div class="checkboxListing row">
+						<!-- ko foreach: domains -->
+						<div class="col-sm-6">
+							<input type="checkbox" name="domainId" data-bind="value: DOMAIN_ID"> <span data-bind="text: DOMAIN_NAME"></span>
+						</div>
+						<!-- /ko -->
 					</div>
-					<!-- /ko -->
 				</div>
 
-				<div class="heading">Domains</div>
-				<div class="checkboxListing">
-					<!-- ko foreach: domains -->
-					<div>
-						<input type="checkbox" name="domainId" data-bind="value: DOMAIN_ID"> <span data-bind="text: DOMAIN_NAME"></span>
+				<div class="panel panel-primary">
+					<div class="panel-heading">Vocabularies</div>
+					<div class="panel-body">
+						<div class="checkboxListing row">
+							<!-- ko foreach: vocabularies -->
+							<div class="col-sm-6">
+								<input type="checkbox" name="vocabularyId" data-bind="value: VOCABULARY_ID"> <span data-bind="text: VOCABULARY_ID + ' : ' + VOCABULARY_NAME"></span>
+							</div>
+							<!-- /ko -->
+						</div>
 					</div>
-					<!-- /ko -->
 				</div>
 			</div>
-
 			<div data-bind="visible:concepts().length > 0 || searchExecuted()">
 				<faceted-datatable params="{orderColumn: 7, columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: $component.concepts, rowCallback: model.contextSensitiveLinkColor }"></faceted-datatable>
 				<div class="linkLegend">

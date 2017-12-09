@@ -1164,7 +1164,7 @@ ul.nav.nav-tabs {
 
 .panel {
 	border-radius: 0;
-	box-shadow: none;
+	/* box-shadow: none; */
 }
 
 .panel-heading {
@@ -1381,11 +1381,11 @@ circle.child {
 }
 
 .checkboxListing {
-	overflow-y: scroll;
-	height: 150px;
-	border-top: solid 1px #ddd;
-	border-bottom: solid 1px #ddd;
-	margin-bottom: 10px;
+	/* overflow-y: scroll; */
+	/* height: 150px; */
+	/* border-top: solid 1px #ddd; */
+	/* border-bottom: solid 1px #ddd; */
+	/* margin-bottom: 10px; */
 }
 
 #wrapperLeftMenu li a {

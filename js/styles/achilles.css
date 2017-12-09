@@ -11,11 +11,9 @@
 	min-width: 800px;
 }
 .panel-default .panel-heading {
-	background-color: #ddd;
+	/* background-color: #ddd; */
 }
-.panel-body {
-	padding: 15px;
-}
+
 .panel-heading {
 	padding-top: 5px;
 	padding-bottom: 5px;

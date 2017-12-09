@@ -20,6 +20,9 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 		self.toggleAdvanced = function () {
 			self.showAdvanced(!self.showAdvanced());
 		}
+		self.clearAllAdvanced = function () {
+			$('.advanced-options input').attr('checked', false);
+		}
 
 		self.searchConceptsColumns = [{
 			title: '<i class="fa fa-shopping-cart"></i>',
