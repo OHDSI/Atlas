@@ -15,18 +15,24 @@
 						<span data-bind="ifnot: parentGroup">having</span>
 						<select data-bind="options: $component.options.groupTypeOptions, optionsText: 'name', optionsValue: 'id', value: group().Type"></select>
 						<!-- ko if: group().Type().startsWith("AT_") -->
-						<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: group().Count.numeric(), eventType:'blur', ko_autocomplete: { value: group().Count, source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }" />
+						<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: group().Count.numeric(), eventType:'blur', ko_autocomplete: { value: group().Count, source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }"
+						/>
 						<!-- /ko -->
 						of the following criteria:
 					</td>
 					<td>
-						<div data-bind="ddSlickAction: $component.addCriteriaSettings"></div>
+						<div class="btn-group pull-right">
+							<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">Add criteria attribute…<span class="caret"></span></button>
+							<ul class="dropdown-menu" data-bind="foreach:$component.addCriteriaActions">
+								<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							</ul>
+						</div>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
-	
+
 	<div style="min-height: 10px;" data-bind="sortable: {data: group().DemographicCriteriaList, connectClass: 'demographicCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
 		<div class="demographicCriteria">
 			<table>
@@ -54,7 +60,7 @@
 			</table>
 		</div>
 	</div>
-	
+
 	<div style="min-height: 10px;" data-bind="sortable: {data: group().CriteriaList, connectClass: 'additionalCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
 		<div class="additionalCriteria">
 			<table>
@@ -71,11 +77,10 @@
 									with
 									<select data-bind="options: $component.options.occurrenceTypeOptions, optionsText: 'name', optionsValue: 'id', value: Occurrence.Type" />
 									<select data-bind="options: $component.options.occurrenceCountOptions, value: Occurrence.Count" />
-									<button data-bind="click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())}, text: Occurrence.IsDistinct() ? 'using distinct' : 'using all'"></button>
-									occurrences of:
+									<button data-bind="click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())}, text: Occurrence.IsDistinct() ? 'using distinct' : 'using all'"></button> occurrences of:
 								</div>
-								<div data-bind="component: { 
-									name: $component.getCriteriaComponent($data.Criteria), 
+								<div data-bind="component: {
+									name: $component.getCriteriaComponent($data.Criteria),
 									params: {expression: $component.expression, criteria: $data.Criteria }
 								}"></div>
 
@@ -84,32 +89,32 @@
 									<window-input params="Window: StartWindow"></window-input> event index date
 									<!-- ko if: EndWindow -->
 									<div>
-									 <i data-bind="click: $component.removeEndWindow" class="fa fa-times" /> and ending between <window-input params="Window: EndWindow"></window-input> event index date
+										<i data-bind="click: $component.removeEndWindow" class="fa fa-times" /> and ending between
+										<window-input params="Window: EndWindow"></window-input> event index date
 									</div>
 									<!-- /ko -->
 									<!-- ko ifnot: EndWindow -->
-									 <span class="linkish" data-bind="click: $component.addEndWindow">and ending any time.</span>
+									<span class="linkish" data-bind="click: $component.addEndWindow">and ending any time.</span>
 									<!-- /ko -->
 								</div>
-	
+
 								<div class="restrictVisitSection" data-bind="if: $component.hasVO($data.Criteria)">
 									<input type="checkbox" data-bind="checked: RestrictVisit"> restrict to the same visit occurrence
 								</div>
-								
+
 							</div>
 						</td>
 						<td>
-							<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Criteria</button>
+							<button class="deletecriteria btn btn-sm btn-danger pull-right" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Criteria</button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
-	
-	
+
 	<!-- ko foreach: group().Groups -->
-	<div style="position:relative">
+	<div class="critera-group-container" style="position:relative">
 		<criteria-group params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group()}"></criteria-group>
 		<button class="deletegroup btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().Groups, data) }">Delete Group</button>
 	</div>

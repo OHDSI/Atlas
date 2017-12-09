@@ -2,72 +2,90 @@
 	<div style="position: relative">
 		<table class="criteriaTable">
 			<col style="width:16px" />
-			<col />							
+			<col />
 			<tr>
-				<td colspan="2"> a drug era of <conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Drug'"></conceptset-selector>
+				<td colspan="2"> a drug era of
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Drug'"></conceptset-selector>
+				</td>
+				<td>
+					<div class="btn-group pull-right">
+						<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">Add criteria attribute…<span class="caret"></span></button>
+						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
+							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+						</ul>
+					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
-				<td><div>for the first time in the person's history</div></td>
+				<td>
+					<div>for the first time in the person's history</div>
+				</td>
 			</tr>
 			<tr data-bind="if: EraStartDate() != null, visible: EraStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('EraStartDate') }" class="fa fa-times" /></td>
 				<td>
-					era start is: <date-range params="Range: EraStartDate"></date-range>
-				</td>									
+					era start is:
+					<date-range params="Range: EraStartDate"></date-range>
+				</td>
 			</tr>
 			<tr data-bind="if: EraEndDate() != null, visible: EraEndDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('EraEndDate') }" class="fa fa-times" /></td>
 				<td>
-					era end is: <date-range params="Range: EraEndDate"></date-range>
-				</td>									
+					era end is:
+					<date-range params="Range: EraEndDate"></date-range>
+				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceCount() != null, visible: OccurrenceCount() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceCount') }" class="fa fa-times" /></td>
 				<td>
-					with exposure count <numeric-range params="Range: OccurrenceCount"></numeric-range>
+					with exposure count
+					<numeric-range params="Range: OccurrenceCount"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: GapDays() != null, visible: GapDays() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('GapDays') }" class="fa fa-times" /></td>
 				<td>
-					with gap days of <numeric-range params="Range: GapDays"></numeric-range> days
+					with gap days of
+					<numeric-range params="Range: GapDays"></numeric-range> days
 				</td>
 			</tr>
 			<tr data-bind="if: EraLength() != null, visible: EraLength() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('EraLength') }" class="fa fa-times" /></td>
 				<td>
-					with era length <numeric-range params="Range: EraLength"></numeric-range> days
+					with era length
+					<numeric-range params="Range: EraLength"></numeric-range> days
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }" class="fa fa-times" /></td>
 				<td>
-					with age at era start <numeric-range params="Range: AgeAtStart"></numeric-range>
+					with age at era start
+					<numeric-range params="Range: AgeAtStart"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtEnd() != null, visible: AgeAtEnd() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }" class="fa fa-times" /></td>
 				<td>
-					with age at era end <numeric-range params="Range: AgeAtEnd"></numeric-range>
+					with age at era end
+					<numeric-range params="Range: AgeAtEnd"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: Gender() != null, visible: Gender() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-					with a gender of: <concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
-					</div>						
+						with a gender of:
+						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
+					</div>
 				</td>
-			</tr>					
+			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" /></td>
 				<td style="background-color: white">
 					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group>
 				</td>
-			</tr>			
+			</tr>
 		</table>
 	</div>
-	<div class="addCriterion" data-bind="ddSlickAction: $component.addCriterionSettings"></div>
 </div>

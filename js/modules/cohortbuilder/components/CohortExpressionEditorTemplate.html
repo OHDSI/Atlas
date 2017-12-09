@@ -54,22 +54,19 @@
 	<div class="panel-body">
 		<div class="criteriaGroup">
 			<div class="criteriaHeading">
-				<table>
-					<colgroup>
-						<col />
-						<col />
-					</colgroup>
-					<tbody>
-						<tr>
-							<td>
-								People having any of the following:
-							</td>
-							<td>
-								<div data-bind="ddSlickAction: $component.addPrimaryCriteriaOptions"></div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="row">
+					<div class="col-sm-4">
+						People having any of the following:
+					</div>
+					<div class="col-sm-8">
+						<div class="btn-group pull-right">
+							<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">Add Initial Event <span class="caret"></span></button>
+							<ul class="dropdown-menu" data-bind="foreach:$component.primaryCriteriaOptions">
+								<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
 			</div>
 			<table class="criteria">
 				<colgroup>
@@ -122,6 +119,7 @@
 			</div>
 		</div>
 	</div>
+</div>
 </div>
 
 <div class="panel panel-primary cohort-definition-panel">
@@ -203,7 +201,12 @@
 								Exit Cohort based on the following:
 							</td>
 							<td>
-								<div data-bind="ddSlickAction: $component.addCensorCriteriaOptions"></div>
+								<div class="btn-group pull-right">
+									<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">Add Censoring Event <span class="caret"></span></button>
+									<ul class="dropdown-menu" data-bind="foreach:$component.censorCriteriaOptions">
+										<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+									</ul>
+								</div>
 							</td>
 						</tr>
 					</tbody>

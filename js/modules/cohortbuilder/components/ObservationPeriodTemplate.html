@@ -2,55 +2,72 @@
 	<div style="position: relative">
 		<table class="criteriaTable">
 			<col style="width:16px" />
-			<col />							
+			<col />
 			<tr>
-				<td colspan="2">observation periods with the following criteria: 
+				<td colspan="2">observation periods with the following criteria:
+				</td>
+				<td>
+					<div class="btn-group pull-right">
+						<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">Add criteria attribute…<span class="caret"></span></button>
+						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
+							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+						</ul>
+					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
-				<td><div>limited to the patients first observation period</div></td>
+				<td>
+					<div>limited to the patients first observation period</div>
+				</td>
 			</tr>
 			<tr data-bind="if: UserDefinedPeriod() != null, visible: UserDefinedPeriod() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }" class="fa fa-times" /></td>
 				<td>
-					using specified period: <period-input params="Period: UserDefinedPeriod"></period-input>
-				</td>									
+					using specified period:
+					<period-input params="Period: UserDefinedPeriod"></period-input>
+				</td>
 			</tr>
 			<tr data-bind="if: PeriodStartDate() != null, visible: PeriodStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }" class="fa fa-times" /></td>
 				<td>
-					observation period start is: <date-range params="Range: PeriodStartDate"></date-range>
-				</td>									
+					observation period start is:
+					<date-range params="Range: PeriodStartDate"></date-range>
+				</td>
 			</tr>
 			<tr data-bind="if: PeriodEndDate() != null, visible: PeriodEndDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PeriodEndDate') }" class="fa fa-times" /></td>
 				<td>
-					observation period end is: <date-range params="Range: PeriodEndDate"></date-range>
-				</td>									
+					observation period end is:
+					<date-range params="Range: PeriodEndDate"></date-range>
+				</td>
 			</tr>
 			<tr data-bind="if: PeriodType() != null, visible: PeriodType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PeriodType') }" class="fa fa-times" /></td>
 				<td>
-					Period Type is: <concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: PeriodType()"></concept-list>
-				</td>									
+					Period Type is:
+					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: PeriodType()"></concept-list>
+				</td>
 			</tr>
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }" class="fa fa-times" /></td>
 				<td>
-					with age at period start <numeric-range params="Range: AgeAtStart"></numeric-range>
+					with age at period start
+					<numeric-range params="Range: AgeAtStart"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtEnd() != null, visible: AgeAtEnd() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }" class="fa fa-times" /></td>
 				<td>
-					with age at period end <numeric-range params="Range: AgeAtEnd"></numeric-range>
+					with age at period end
+					<numeric-range params="Range: AgeAtEnd"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodLength() != null, visible: PeriodLength() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PeriodLength') }" class="fa fa-times" /></td>
 				<td>
-					with period duration <numeric-range params="Range: PeriodLength"></numeric-range> days.
+					with period duration
+					<numeric-range params="Range: PeriodLength"></numeric-range> days.
 				</td>
 			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
@@ -58,9 +75,7 @@
 				<td style="background-color: white">
 					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group>
 				</td>
-			</tr>			
+			</tr>
 		</table>
 	</div>
-	<div class="addCriterion" data-bind="ddSlickAction: $component.addCriterionSettings"></div>
-
 </div>

@@ -7,6 +7,14 @@
 				<td colspan="2"> a condition occurrence of
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Condition'"></conceptset-selector>
 				</td>
+				<td>
+					<div class="btn-group pull-right">
+						<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">Add criteria attribute…<span class="caret"></span></button>
+						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
+							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+						</ul>
+					</div>
+				</td>
 			</tr>
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
@@ -16,7 +24,7 @@
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td>
-					<i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times"/>
+					<i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" />
 				</td>
 				<td>
 					occurrence start is:
@@ -104,9 +112,7 @@
 				<td style="background-color: white">
 					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group>
 				</td>
-			</tr>			
+			</tr>
 		</table>
 	</div>
-	<div class="addCriterion" data-bind="ddSlickAction: $component.addCriterionSettings"></div>
-
 </div>

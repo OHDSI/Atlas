@@ -2,8 +2,11 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 
 	function CriteriaGroupViewModel(params) {
 		var self = this;
-
-		var addCriteriaActions = [{
+		self.formatOption = function (d) {
+			return '<div class="optionText">' + d.text + '</div>' +
+				'<div class="optionDescription">' + d.description + '</div>';
+		};
+		self.addCriteriaActions = [{
 				text: "Add Demographic Criteria",
 				selected: false,
 				description: "Filter events based on demographic criteria.",
@@ -314,7 +317,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 			selectText: "Add New Criteria...",
 			width: 250,
 			height: 300,
-			actionOptions: addCriteriaActions,
+			actionOptions: self.addCriteriaActions,
 			onAction: function (data) {
 				data.selectedData.action();
 			}
