@@ -19,7 +19,8 @@
 </div>
 <!-- /ko -->
 
-<div class="loading" data-bind="visible:$component.loadingReport() && !$component.hasError()">loading</div>
+<loading params="status: 'loading report'" data-bind="visible:$component.loadingReport() && !$component.hasError()">
+</loading>
 
 <div class="paddedWrapper text-center error" data-bind="visible:$component.hasError()">
 	<div>

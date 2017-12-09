@@ -174,7 +174,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					success: function (data) {
 						self.loadingReport(false);
 						if (!!data.summary) {
-							var formatter = (new atlascharts.chart()).formatters.formatSI(2);
+							var formatter = d3.format(".5s");
 							data.summary.forEach(function (d) {
 								if (!isNaN(d.attributeValue)) {
 									d.attributeValue = formatter(d.attributeValue);
