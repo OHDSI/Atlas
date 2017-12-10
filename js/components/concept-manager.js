@@ -35,27 +35,27 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 				'binding': function (o) {
 					return o.VOCABULARY_ID;
 				}
-            }, {
+			}, {
 				'caption': 'Standard Concept',
 				'binding': function (o) {
 					return o.STANDARD_CONCEPT_CAPTION;
 				}
-            }, {
+			}, {
 				'caption': 'Invalid Reason',
 				'binding': function (o) {
 					return o.INVALID_REASON_CAPTION;
 				}
-            }, {
+			}, {
 				'caption': 'Class',
 				'binding': function (o) {
 					return o.CONCEPT_CLASS_ID;
 				}
-            }, {
+			}, {
 				'caption': 'Domain',
 				'binding': function (o) {
 					return o.DOMAIN_ID;
 				}
-            }, {
+			}, {
 				'caption': 'Relationship',
 				'binding': function (o) {
 					return $.map(o.RELATIONSHIPS, function (val) {
@@ -63,17 +63,17 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 					});
 				},
 				isArray: true,
-            }, {
+			}, {
 				'caption': 'Has Records',
 				'binding': function (o) {
 					return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
 				}
-            }, {
+			}, {
 				'caption': 'Has Descendant Records',
 				'binding': function (o) {
 					return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
 				}
-            }, {
+			}, {
 				'caption': 'Distance',
 				'binding': function (o) {
 					return Math.max.apply(Math, o.RELATIONSHIPS.map(function (d) {
@@ -95,48 +95,48 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 			},
 			orderable: false,
 			searchable: false
-        }, {
+		}, {
 			title: 'Id',
 			data: 'CONCEPT_ID'
-        }, {
+		}, {
 			title: 'Code',
 			data: 'CONCEPT_CODE'
-        }, {
+		}, {
 			title: 'Name',
 			data: 'CONCEPT_NAME',
 			render: function (s, p, d) {
 				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 			}
-        }, {
+		}, {
 			title: 'Class',
 			data: 'CONCEPT_CLASS_ID'
-        }, {
+		}, {
 			title: 'Standard Concept Caption',
 			data: 'STANDARD_CONCEPT_CAPTION',
 			visible: false
-        }, {
+		}, {
 			title: 'RC',
 			data: 'RECORD_COUNT',
 			className: 'numeric'
-        }, {
+		}, {
 			title: 'DRC',
 			data: 'DESCENDANT_RECORD_COUNT',
 			className: 'numeric'
-        }, {
+		}, {
 			title: 'Distance',
 			data: function (d) {
 				return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {
 					return o.RELATIONSHIP_DISTANCE;
 				}))
 			}
-			}, {
+		}, {
 			title: 'Domain',
 			data: 'DOMAIN_ID'
-        }, {
+		}, {
 			title: 'Vocabulary',
 			data: 'VOCABULARY_ID'
-      }];
+		}];
 
 		self.loadRecordCounts = function () {
 			self.loadingSourceCounts(true);
@@ -165,11 +165,13 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 						success: function (data) {
 							completedCounts++;
 							var recordCountObject = Object.values(data[0])[0];
-							sourceData.push({
-								sourceName: this.source.sourceName,
-								recordCount: recordCountObject[0],
-								descendantRecordCount: recordCountObject[1]
-							});
+							if (recordCountObject) {
+								sourceData.push({
+									sourceName: this.source.sourceName,
+									recordCount: recordCountObject[0],
+									descendantRecordCount: recordCountObject[1]
+								});
+							}
 
 							if (completedCounts == totalCounts) {
 								allCounts.resolve();
@@ -244,182 +246,183 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 				childRelationships: [{
 					name: 'Subsumes',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Is a',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'ICD9CM.4-dig nonbill code': {
 				childRelationships: [{
 					name: 'Subsumes',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Is a',
 					range: [0, 1]
-                }, {
+				}, {
 					name: 'Non-standard to Standard map (OMOP)',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'ICD9CM.3-dig nonbill code': {
 				childRelationships: [{
 					name: 'Subsumes',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Non-standard to Standard map (OMOP)',
 					range: [0, 999]
-                }]
+				}]
 			},
 			'RxNorm.Ingredient': {
 				childRelationships: [{
 					name: 'Ingredient of (RxNorm)',
 					range: [0, 999]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has inferred drug class (OMOP)',
 					range: [0, 999]
-                }]
+				}]
 			},
 			'RxNorm.Brand Name': {
 				childRelationships: [{
 					name: 'Ingredient of (RxNorm)',
 					range: [0, 999]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Tradename of (RxNorm)',
 					range: [0, 999]
-                }]
+				}]
 			},
 			'RxNorm.Branded Drug': {
 				childRelationships: [{
 					name: 'Consists of (RxNorm)',
 					range: [0, 999]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ingredient (RxNorm)',
 					range: [0, 999]
-                }, {
+				}, {
 					name: 'RxNorm to ATC (RxNorm)',
 					range: [0, 999]
-                }, {
+				}, {
 					name: 'RxNorm to ETC (FDB)',
 					range: [0, 999]
-                }]
+				}]
 			},
 			'RxNorm.Clinical Drug Comp': {
 				childRelationships: [],
 				parentRelationships: [{
 					name: 'Has precise ingredient (RxNorm)',
 					range: [0, 999]
-                }, {
+				}, {
 					name: 'Has ingredient (RxNorm)',
 					range: [0, 999]
-                }]
+				}]
 			},
 			'CPT4.CPT4': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'CPT4.CPT4 Hierarchy': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'ETC.ETC': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'MedDRA.LLT': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'MedDRA.PT': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'MedDRA.HLT': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'MedDRA.SOC': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'MedDRA.HLGT': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'SNOMED.Clinical Finding': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-                }]
+				}]
 			},
 			'SNOMED.Procedure': {
 				childRelationships: [{
 					name: 'Has descendant of',
 					range: [0, 1]
-                }],
+				}],
 				parentRelationships: [{
 					name: 'Has ancestor of',
 					range: [0, 1]
-                }]
+				}]
 			}
 		};
+		self.currentConceptArray = ko.observableArray();
 
 		self.loadConcept = function (conceptId) {
 			var conceptPromise = $.ajax({
@@ -460,6 +463,8 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 						}
 						var densityPromise = vocabAPI.loadDensity(related);
 						$.when(densityPromise).done(function () {
+							var currentConceptObject = _.find(related, c => c.CONCEPT_ID == self.currentConceptId());
+							self.currentConceptArray.push(currentConceptObject);
 							self.model.relatedConcepts(related);
 							relatedPromise.resolve();
 						});

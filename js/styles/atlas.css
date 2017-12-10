@@ -723,9 +723,9 @@ ul.ColVis_collection li {
 	margin-left: 30px;
 	padding-bottom: 10px;
 	padding-top: 10px;
-	font-size: 14px;
+	/* font-size: 14px; */
 	padding-left: 10px;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 
 #wrapperCohort {
