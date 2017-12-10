@@ -2679,7 +2679,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							xLabel: "Duration Relative to Index",
 							yLabel: "% Persons",
 							seriesName: "recordType",
-							showLegend: true,
+							showLegend: false,
 							colors: d3.scaleOrdinal(d3.schemeCategory10),
 							tooltips: [{
 									label: 'Series',

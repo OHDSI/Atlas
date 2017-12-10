@@ -222,17 +222,24 @@
 						</table>
 					</div>
 				</div>
-
-				<div class="loader" data-bind="if:$component.model.loadingReportDrilldown">
-					<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
-				</div>
-				<div data-bind="if:$component.model.activeReportDrilldown">
+			</div>
+		</div>
+		<!-- ko if:model.loadingReportDrilldown -->
+		<loading params="status:'Loading Drilldown Report'">
+		</loading>
+		<!-- /ko -->
+		<!-- ko: if data-bind="if: model.activeReportDrilldown -->
+		<div class="panel panel-primary">
+			<div class="panel-heading">Drilldown Report</div>
+			<div class="panel-body">
+				<div>
 					<div id="conditionDrilldownScatterplotHeading" class="reportSectionHeading">
 					</div>
 					<div class="evidenceVisualization" id="conditionDrilldownScatterplot"></div>
 				</div>
 			</div>
 		</div>
+		<!-- /ko -->
 	</div>
 </div>
 
