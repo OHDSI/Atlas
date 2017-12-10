@@ -167,7 +167,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.selectedSourceKey = ko.pureComputed(() => self.selectedSource().sourceKey);
 		self.loadingReport = ko.observable(false);
 		self.sortedConceptSets = ko.computed(function (d) {
-			return self.model.currentCohortDefinition().expression().ConceptSets().sort(conceptSetSorter);
+			if (self.model.currentCohortDefinition() != null) {
+				return self.model.currentCohortDefinition().expression().ConceptSets().sort(conceptSetSorter);
+			}
 		});
 
 		// model behaviors
