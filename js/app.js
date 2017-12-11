@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'querystring', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, sharedState, querystring) {
+define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
+	function ($, ko, ohdsiUtil, config, authApi, sharedState, querystring, d3) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
@@ -1037,14 +1037,15 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 											var date = new Date(sourceInfo.startTime);
 											cdsi.startTime = ko.observable(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
 											cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
+											var commaFormatted = d3.format(",");
 											// For backwards compatability, query personCount from cdm if not populated in sourceInfo
 											if (sourceInfo.personCount == null) {
 												cdsi.personCount = ko.observable('...');
 												self.getCohortCount(source, cdsi.personCount);
 											} else {
-												cdsi.personCount = ko.observable(sourceInfo.personCount);
+												cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
 											}
-											cdsi.recordCount = ko.observable(sourceInfo.recordCount);
+											cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
 											cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
 											cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 										} else {

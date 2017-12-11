@@ -9,6 +9,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'webapi/CohortReportingAPI',
 	'atlas-state',
 	'clipboard',
+	'd3',
 	'job/jobDetail',
 	'cohortbuilder/components/FeasibilityReportViewer',
 	'knockout.dataTables.binding',
@@ -16,7 +17,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'databindings',
 	'cohortdefinitionviewer/expressionCartoonBinding',
 	'cohortfeatures',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, clipboard, jobDetail) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, clipboard, d3, jobDetail) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -294,9 +295,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 							if (info.status != "COMPLETE") {
 								hasPending = true;
 							} else {
+								var commaFormatted = d3.format(",");
 								source.executionDuration((info.executionDuration / 1000) + 's');
-								source.personCount(info.personCount);
-								source.recordCount(info.recordCount);
+								source.personCount(commaFormatted(info.personCount));
+								source.recordCount(commaFormatted(info.recordCount));
 								source.failMessage(info.failMessage);
 							}
 						}

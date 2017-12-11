@@ -309,16 +309,16 @@
 								<div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i></div>
 							</td>
 							<td data-bind="text:name"></td>
-							<td class="statusIndicator">
+							<td class="statusIndicator text-right">
 								<span data-bind="text: $component.getStatusMessage($data)"></span>
 							</td>
-							<td data-bind="html: personCount">
+							<td class="text-right" data-bind="html: personCount">
 							</td>
-							<td data-bind="html: recordCount">
+							<td class="text-right" data-bind="html: recordCount">
 							</td>
-							<td data-bind="text: startTime">
+							<td class="text-right" data-bind="text: startTime">
 							</td>
-							<td data-bind="text: executionDuration">
+							<td class="text-right" data-bind="text: executionDuration">
 							</td>
 							<td>
 								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.selectViewReport"><i class="fa fa-eye"></i>&nbsp;View Reports</div>
