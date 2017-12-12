@@ -122,10 +122,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.generatedSql.redshift = ko.observable('');
 		self.generatedSql.msaps = ko.observable('');
 		self.generatedSql.impala = ko.observable('');
+		self.templateSql = ko.observable('');
 		self.tabMode = self.model.currentCohortDefinitionMode;
 		self.generationTabMode = ko.observable("inclusion")
 		self.exportTabMode = ko.observable('printfriendly');
-		self.exportSqlMode = ko.observable('mssql');
+		self.exportSqlMode = ko.observable('ohdsisql');
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
 		self.dirtyFlag = self.model.currentCohortDefinitionDirtyFlag;
 		self.isLoadingSql = ko.observable(false);
@@ -422,6 +423,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.showSql = function () {
 			self.isLoadingSql(true);
 
+			self.templateSql('');
 			self.generatedSql.mssql('');
 			self.generatedSql.oracle('');
 			self.generatedSql.postgresql('');
@@ -433,7 +435,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			var templateSqlPromise = cohortDefinitionAPI.getSql(expression);
 
 			templateSqlPromise.then(function (result) {
-
+				self.templateSql(result.templateSql);
 				var mssqlTranslatePromise = translateSql(result.templateSql, 'sql server');
 				mssqlTranslatePromise.then(function (result) {
 					self.generatedSql.mssql(result.targetSQL);
