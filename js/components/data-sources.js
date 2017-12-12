@@ -280,7 +280,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 							histData.max = data.yearOfBirthStats[0].maxValue;
 							histData.intervals = 100;
 							histData.data = (self.normalizeArray(data.yearOfBirth));
-							histogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
+							yearHistogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Year',
@@ -325,10 +325,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 						}
 
 						$('#achillesheel_table').DataTable({
-							dom: 'lfrt<"row"<"col-sm-4" i ><"col-sm-4" T ><"col-sm-4" p >>',
-							tableTools: {
-								"sSwfPath": "js/components/datasources/swf/copy_csv_xls_pdf.swf"
-							},
+							dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
+							buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
+							autoWidth: false,
 							data: table_data,
 							columns: [{
 									data: 'type',
@@ -516,7 +515,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 						}, data);
 						$("#report_table").DataTable({
 							order: [1, 'desc'],
-							dom: 'T<"clear">lfrtip',
+							dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
+							buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
+							autoWidth: false,
 							data: tableData,
 							createdRow: function (row) {
 								$(row).addClass('table_selector');
@@ -540,7 +541,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 									className: 'numeric'
 								}
 							],
-							pageLength: 5,
+							pageLength: 15,
 							lengthChange: false,
 							deferRender: true,
 							destroy: true
