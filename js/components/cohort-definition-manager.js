@@ -179,7 +179,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.loadingReport = ko.observable(false);
 		self.sortedConceptSets = ko.computed(function (d) {
 			if (self.model.currentCohortDefinition() != null) {
-				return self.model.currentCohortDefinition().expression().ConceptSets().sort(conceptSetSorter);
+				var clone = self.model.currentCohortDefinition().expression().ConceptSets().slice(0);
+				return clone.sort(conceptSetSorter);
 			}
 		});
 
