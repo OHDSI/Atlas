@@ -31,7 +31,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 
 		self.model = params.model;
 		self.sources = config.api.sources.filter(function (s) {
-			return s.hasResults
+			return s.hasResults && s.hasCDM;
 		});
 		self.loadingReport = ko.observable(false);
 		self.hasError = ko.observable(false);
