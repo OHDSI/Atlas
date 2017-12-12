@@ -75,7 +75,34 @@
 				</svg>
 				</div>
 				<div class="error">application initialization failed</div>
-				<div class="error">unable to connect to an instance of the webapi. please contact your administrator to resolve this issue.</div>
+				<div class="error">
+					<p>unable to connect to an instance of the webapi.</p>
+					<p>please contact your administrator to resolve this issue.</p>
+				</div>
+			</div>
+
+			<div data-bind="if:sharedState.appInitializationStatus() == 'no-sources-available'">
+				<div style="width:100px;margin-left:auto;margin-right:auto;">
+					<svg width="100" height="100" viewBox="0 -200 400 400">
+					<g id="rings">
+						<circle cx="205" cy="17" r="165" stroke="#800" fill="none" stroke-width="15px"></circle>
+
+						<ellipse cx="205" cy="17" rx="70" ry="70" stroke="#f00" fill="none" stroke-width="6px" stroke-opacity="0.4">
+						</ellipse>
+
+						<ellipse cx="205" cy="17" rx="100" ry="100" stroke="#c00" fill="none" stroke-width="10px" stroke-opacity="0.4">
+						</ellipse>
+
+						<ellipse cx="205" cy="17" rx="135" ry="135" stroke="#800" fill="none" stroke-width="12px" stroke-opacity="0.4">
+						</ellipse>
+					</g>
+				</svg>
+				</div>
+				<div class="error">application initialization failed</div>
+				<div class="error">
+					<p>the current webapi has no sources defined.</p>
+					<p>please contact your administrator to resolve this issue.</p>
+				</div>
 			</div>
 
 			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
@@ -97,7 +124,7 @@
 			<!-- /ko -->
 			<!-- /ko -->
 
-			<!-- ko if: pageModel.currentView && sharedState.appInitializationStatus() != 'failed' -->
+			<!-- ko if: pageModel.currentView && (sharedState.appInitializationStatus() != 'failed' && sharedState.appInitializationStatus() != 'no-sources-available') -->
 			<div id="currentComponent" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
 			<!-- /ko -->
 		</div>
