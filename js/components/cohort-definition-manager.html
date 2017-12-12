@@ -1,6 +1,6 @@
 <div data-bind="if: model.currentCohortDefinition() && model.currentView() == 'cohort-definition-manager'">
 	<div class="wrapperTitle">
-		<i class="fa fa-users"></i>Cohort
+		<i class="fa fa-users"></i> <span data-bind="text:cohortDefinitionCaption"></span>
 	</div>
 
 	<div data-bind="ifnot:hasAccess()">

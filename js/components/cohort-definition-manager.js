@@ -57,6 +57,15 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.selectedConcepts = sharedState.selectedConcepts;
 		self.model = params.model;
 
+		self.cohortDefinitionCaption = ko.computed(function () {
+			if (self.model.currentCohortDefinition()) {
+				if (self.model.currentCohortDefinition().id() == 0) {
+					return 'New Cohort';
+				} else {
+					return 'Cohort #' + self.model.currentCohortDefinition().id();
+				}
+			}
+		});
 		self.isAuthenticated = ko.pureComputed(function () {
 			return authApi.isAuthenticated();
 		});
