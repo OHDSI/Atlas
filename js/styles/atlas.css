@@ -1968,7 +1968,6 @@ i.fa.pending {
 
 .panel-heading i.fa.fa-question-circle {
 	font-size: 18px;
-	float: right;
 	margin-right: 7px;
 	color: #fff;
 	cursor: pointer;
@@ -2042,4 +2041,8 @@ ul.nav-tabs a i.fa.fa-question-circle-o {
 
 conceptset-selector {
     margin-left: 3px;
+}
+
+button i.fa.fa-question-circle {
+    font-size: 16px;
 }

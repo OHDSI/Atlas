@@ -4,14 +4,12 @@ define(function (require, exports) {
 	var config = require('appConfig');
 	var ko = require('knockout');
 
-	var visualizationPacks = [
-		// not implemented in the WebAPI results service
+	var visualizationPacks = [ // not implemented in the WebAPI results service
 		{
 			name: "Care Site",
 			reportKey: null,
 			analyses: [1200, 1201]
-		},
-		{
+		}, {
 			name: "Cohort Specific",
 			reportKey: 'Cohort Specific',
 			analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
@@ -22,33 +20,31 @@ define(function (require, exports) {
 		}, {
 			name: "Condition Eras",
 			reportKey: 'Condition Eras',
-			analyses: [1001, 1000, 1007, 1006, 1004, 1002, 116, 117, 1]
+			// analyses: [1001, 1000, 1007, 1006, 1004, 1002, 116, 117, 1]
+			analyses: [1, 1000, 1007] // allows for quick analysis minimum requirements
 		}, {
 			name: "Conditions by Index",
 			reportKey: 'Conditions by Index',
 			analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-		},
-		// not implemented in cohort reporting
+		}, // not implemented in cohort reporting
 		{
 			name: "Data Density",
 			reportKey: null,
 			analyses: [117, 220, 420, 502, 620, 720, 820, 920, 1020, 111, 403, 603, 703, 803, 903, 1003]
-		},
-		{
+		}, {
 			name: "Death",
 			reportKey: 'Death',
 			analyses: [501, 506, 505, 504, 502, 116, 117]
-		},
-		// required for all reports
+		}, // required for all reports
 		{
 			name: "Default",
 			reportKey: null,
 			analyses: [1, 2, 101, 108, 110]
-		},
-		{
+		}, {
 			name: "Drug Eras",
 			reportKey: 'Drug Eras',
-			analyses: [900, 901, 907, 906, 904, 902, 116, 117, 1]
+			// analyses: [900, 901, 907, 906, 904, 902, 116, 117, 1]
+			analyses: [1, 900, 907] // allows for quick analysis minimum requirements
 		}, {
 			name: "Drug Exposure",
 			reportKey: 'Drug Exposure',
@@ -71,20 +67,17 @@ define(function (require, exports) {
 			name: "Location",
 			reportKey: null,
 			analyses: [1100, 1101]
-		},
-		// not implemented in the UI
+		}, // not implemented in the UI
 		{
 			name: "Measurement",
 			reportKey: null,
 			analyses: [1300, 1301, 1303, 1306, 1305, 1315, 1304, 1316, 1302, 1307, 1317, 1318, 1320, 117, 116, 1]
-		},
-		// not implemented
+		}, // not implemented
 		{
 			name: "Observation",
 			reportKey: null,
 			analyses: [800, 801, 806, 805, 815, 804, 802, 807, 816, 817, 818, 117, 116, 102, 112, 1]
-		},
-		{
+		}, {
 			name: "Observation Periods",
 			reportKey: 'Observation Periods',
 			analyses: [101, 104, 106, 107, 108, 109, 110, 113, 1]
@@ -100,14 +93,12 @@ define(function (require, exports) {
 			name: "Procedures by Index",
 			reportKey: 'Procedures by Index',
 			analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-		},
-		// not implemented
+		}, // not implemented
 		{
 			name: "Visit",
 			reportKey: null,
 			analyses: [202, 203, 206, 204, 116, 117, 211, 200, 201, 1]
-		},
-		{
+		}, {
 			name: "Data Completeness",
 			reportKey: "Data Completeness",
 			analyses: [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2021, 2022, 2023, 2024, 2025, 2026, 2027]
@@ -115,6 +106,10 @@ define(function (require, exports) {
 			name: "Entropy",
 			reportKey: "Entropy",
 			analyses: [2031, 2032]
+		}, {
+			name: "Tornado",
+			reportKey: "Tornado",
+			analyses: [3000, 3001]
 		}
 	];
 
@@ -128,25 +123,32 @@ define(function (require, exports) {
 		return identifiers;
 	}
 
-	function getAvailableReports(analyses) {
+	function getQuickAnalysisIdentifiers() {
+		return [0, 1, 2, 3, 4, 5, 900, 907, 1000, 1007, 3000, 3001];
+	}
+
+	function getAvailableReports(completedAnalyses) {
 		var reports = [];
-		if (analyses.length == 0) {
+		if (completedAnalyses.length == 0) {
 			return reports;
 		}
 
-		visualizationPacks.forEach(v => {
-			if (v.reportKey == null) {
+		visualizationPacks.forEach(vp => {
+			if (vp.reportKey == null) {
 				// null report keys won't be listed as available reports
 				// but we keep them as their analysis identifiers are still necessary
 				// for the analysis to complete
 				return;
 			}
-			analyses.forEach(a => {
-				if (v.analyses.indexOf(a) == -1) {
-					return;
+			var analysisMissing = false;
+			vp.analyses.forEach(a => {
+				if (completedAnalyses.indexOf(a) == -1) {
+					analysisMissing = true;
 				};
 			});
-			reports.push(v);
+			if (!analysisMissing) {
+				reports.push(vp);
+			}
 		});
 		return reports;
 	}
@@ -159,7 +161,8 @@ define(function (require, exports) {
 	var api = {
 		getCompletedAnalyses: getCompletedAnalyses,
 		getAvailableReports: getAvailableReports,
-		getAnalysisIdentifiers: getAnalysisIdentifiers
+		getAnalysisIdentifiers: getAnalysisIdentifiers,
+		getQuickAnalysisIdentifiers: getQuickAnalysisIdentifiers
 	}
 
 	return api;

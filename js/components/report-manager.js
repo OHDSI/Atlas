@@ -3,7 +3,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 		var self = this;
 		self.model = params.model;
 		self.config = config;
-		self.refresh = ko.observable(false);
+		self.refresh = ko.observable(true);
 		self.cohortCaption = ko.observable('Click Here to Choose a Cohort');
 		self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.reference = ko.observableArray();
@@ -76,6 +76,12 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					{
 						self.helpTitle("Condition Prevalence");
 						self.helpContent("not available");
+						break;
+					}
+				case 'year-of-birth':
+					{
+						self.helpTitle("Year of Birth");
+						self.helpContent("The number of people in this cohort shown with respect to their year of birth.");
 						break;
 					}
 				default:

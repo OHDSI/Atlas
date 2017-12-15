@@ -370,15 +370,20 @@
 						</div>
 						<div class="panel-body">
 							<div class="row">
-								<div class="col-sm-6">
-									<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.config.api.sources.filter($component.model.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
+								<div class="btn-group pull-right pad-5">
+									<button class="btn btn-primary btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateAnalyses">Full Analysis</button>
+									<button class="btn btn-success btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateQuickAnalysis">Quick Analysis</button>
+									<button class="btn btn-default btn-sm" data-bind="visible: $component.generateReportsEnabled" data-toggle="modal" data-target="#analysisHelpModal"><i class="fa fa-question-circle text-primary"></i></button>
 								</div>
-								<div class="col-sm-6">
-									<button class="btn btn-primary btn-sm pull-right" data-bind="visible: $component.generateReportsEnabled, text: generateButtonCaption, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateAnalyses"></button>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-12">
+									<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.config.api.sources.filter($component.model.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-sm-6">
+								<div class="col-sm-12">
 									<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $component.model.loadingReport, attr:{disabled: $component.model.loadingReport}, css : {invalid: $component.model.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:'Select a Report', optionsText:'name', optionsValue:'name', value:$component.model.reportReportName"></select>
 								</div>
 							</div>
@@ -474,14 +479,28 @@
 						</div>
 					</div>
 				</div>
-				<div class="loading" data-bind="visible:model.currentView() == 'loading' || model.loadingReport()">
-					<i class="fa fa-circle-o-notch fa-spin "></i> Loading...
-				</div>
+				<loading params="status:'loading'" data-bind="visible:model.currentView() == 'loading' || model.loadingReport()">
+				</loading>
 				<report-manager data-bind="visible:$component.reportingState()=='report_active' " params="{model: pageModel, showSelectionArea: false} "></report-manager>
 			</div>
 			<div role="tabpanel " data-bind="css: { active: $component.tabMode()=='explore' } " class="tab-pane ">
 				<div class="paddedWrapper ">
 					<explore-cohort params="{model: pageModel, showSelectionArea: false } "></explore-cohort>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal" id="analysisHelpModal" tabindex="-1 " role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<i class="fa fa-group"></i> Analysis Types
+				</div>
+				<div class="modal-body">
+					<b>Quick Analysis</b>
+					<p>Runs minimal analysis to provide a quick overview of this cohort's year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)</p>
+					<b>Full Analysis</b>
+					<p>Runs a complete set of characterization reports. (estimated: 60 minutes)</p>
 				</div>
 			</div>
 		</div>

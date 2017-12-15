@@ -636,12 +636,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.reportingState = ko.computed(function () {
 			// require a data source selection
 			if (self.model.reportSourceKey() == undefined) {
+				self.generateReportsEnabled(false);
 				return "awaiting_selection";
 			}
 
 			// check if the cohort has been generated
 			var sourceInfo = self.model.cohortDefinitionSourceInfo().find(d => d.sourceKey == self.model.reportSourceKey());
 			if (self.getStatusMessage(sourceInfo) != 'COMPLETE') {
+				self.generateReportsEnabled(false);
 				return "cohort_not_generated";
 			}
 
@@ -654,6 +656,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					var reports = cohortReportingAPI.getAvailableReports(results);
 					self.reportingAvailableReports(reports);
 				});
+				self.generateReportsEnabled(false);
 				return "checking_status";
 			}
 
@@ -664,6 +667,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				if (tempJob) {
 					if (tempJob.status() == 'STARTED' || tempJob.status() == 'STARTING') {
 						self.currentJob(tempJob);
+						self.generateReportsEnabled(false);
 						return "generating_reports";
 					}
 				}
@@ -672,20 +676,17 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			if (self.reportingAvailableReports().length == 0) {
 				// reset button to allow generation
 				self.generateReportsEnabled(true);
-				self.generateButtonCaption('Generate Reports');
 				return "report_unavailable";
 			}
 
 			if (self.model.reportReportName() == undefined) {
 				// reset button to allow regeneration
 				self.generateReportsEnabled(true);
-				self.generateButtonCaption('Generate Reports');
 				return "awaiting_selection";
 			}
 
 			if (self.model.currentCohortDefinition()) {
 				self.generateReportsEnabled(true);
-				self.generateButtonCaption('Generate Reports');
 				self.model.reportCohortDefinitionId(self.model.currentCohortDefinition().id());
 				self.model.reportTriggerRun(true);
 				return "report_active";
@@ -708,9 +709,71 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				self.reportingState() != 'generating_reports';
 		});
 
-		self.generateAnalyses = function () {
-			self.generateButtonCaption('Submitting Job');
+		self.generateQuickAnalysis = function () {
+			self.generateReportsEnabled(false);
+			var analysisIdentifiers = cohortReportingAPI.getQuickAnalysisIdentifiers()
+			var cohortDefinitionId = pageModel.currentCohortDefinition().id();
+			var cohortJob = {};
 
+			cohortJob.jobName = 'HERACLES_COHORT_' + cohortDefinitionId + '_' + self.model.reportSourceKey();
+			cohortJob.sourceKey = self.model.reportSourceKey();
+			cohortJob.smallCellCount = 5;
+			cohortJob.cohortDefinitionIds = [];
+			cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
+			cohortJob.analysisIds = analysisIdentifiers;
+			cohortJob.runHeraclesHeel = false;
+			cohortJob.cohortPeriodOnly = false;
+
+			// set concepts
+			cohortJob.conditionConceptIds = [];
+			cohortJob.drugConceptIds = [];
+			cohortJob.procedureConceptIds = [];
+			cohortJob.observationConceptIds = [];
+			cohortJob.measurementConceptIds = [];
+
+			var jobDetails = new jobDetail({
+				name: cohortJob.jobName,
+				status: 'LOADING',
+				executionId: null,
+				statusUrl: self.config.api.url + 'job/execution/',
+				statusValue: 'status',
+				progress: 0,
+				progressUrl: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + cohortDefinitionId + '/analyses',
+				progressValue: 'length',
+				progressMax: analysisIdentifiers.length,
+				viewed: false,
+				url: 'cohortdefinition/' + cohortDefinitionId + '/reporting?sourceKey=' + self.model.reportSourceKey(),
+			});
+
+			self.createReportJobFailed(false);
+
+			$.ajax({
+				url: config.api.url + 'cohortanalysis',
+				data: JSON.stringify(cohortJob),
+				method: 'POST',
+				context: jobDetails,
+				contentType: 'application/json',
+				success: function (info) {
+					this.executionId = info.executionId;
+					this.status(info.status);
+					this.statusUrl = this.statusUrl + info.executionId;
+					sharedState.jobListing.queue(this);
+				},
+				error: function (xhr, status, error) {
+					self.createReportJobFailed(true);
+					var createReportJobErrorPackage = {};
+					createReportJobErrorPackage.status = status;
+					createReportJobErrorPackage.error = xhr.responseText;
+					self.createReportJobError(JSON.stringify(createReportJobErrorPackage));
+
+					// reset button to allow generation attempt
+					self.generateReportsEnabled(true);
+					self.generateButtonCaption('Generate');
+				}
+			});
+		}
+
+		self.generateAnalyses = function () {
 			self.generateReportsEnabled(false);
 			var analysisIdentifiers = cohortReportingAPI.getAnalysisIdentifiers()
 			analysisIdentifiers = _.uniq(analysisIdentifiers);
