@@ -537,7 +537,7 @@ define(['knockout',
 			var conceptSetId = conceptSet.id;
 			var qsParams = "";
 			if (conceptSetId > 0) {
-				qsParam = "id=" + conceptSetId + "&";
+				qsParams = "id=" + conceptSetId + "&";
 			}
 			qsParams += "name=" + encodeURIComponent(conceptSet.name())
 			

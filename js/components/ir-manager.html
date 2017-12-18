@@ -16,9 +16,19 @@
 				<!-- /ko -->
 				<!-- /ko -->
 				<!-- ko if: selectedAnalysis().id() != null && !dirtyFlag().isDirty() && !isRunning() && sources().length > 0 -->
-				<div class="generateAction" data-bind="ddSlickAction: generateActionsSettings "></div>
+				<div class="btn-group" role="group">
+					<div>
+						<button class="btn btn-sm btn-default dropdown-toggle" type="button" id="generateSources" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Generate...
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="generateSources" data-bind="foreach: generateActionsSettings.actionOptions">
+							<li><a class="clickable" data-bind="click: $data.action, html: $data.text + '<br /><i class=\'disabled\'>' + $data.description + '</i>'"></a></li>
+							<li role="separator" class="divider" data-bind="visible: ($index() < ($parent.generateActionsSettings.actionOptions.length - 1))"></li>
+						</ul>
+					</div>
+				</div>
 				<!-- /ko -->
-
 			</div>
 		</div>
 	
