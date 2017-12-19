@@ -327,15 +327,6 @@
 					</ul>
 				</ul>
 				<ul>
-					<li>Condition aggregation</li>
-					<ul>
-						<li>
-							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvConditionGroupSnomed" />SNOMED</li>
-						<li>
-							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvConditionGroupMeddra" />MedDRA</li>
-					</ul>
-				</ul>
-				<ul>
 					<li>Drugs</li>
 					<ul>
 						<li>
@@ -346,17 +337,6 @@
 							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDrugEraEver" />All time prior</li>
 						<li>
 							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDrugEraOverlap" />Overlapping index date</li>
-					</ul>
-				</ul>
-				<ul>
-					<li>Drug aggregation</li>
-					<ul>
-						<li>
-							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDrugExposure" />Clinical Drug</li>
-						<li>
-							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDrugEra" />Ingredient</li>
-						<li>
-							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDrugGroup" />ATC Class</li>
 					</ul>
 				</ul>
 				<ul>
@@ -375,12 +355,6 @@
 							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvMeasurement30d" />Existence in prior 30d</li>
 						<li>
 							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvMeasurement365d" />Existence in prior 365d</li>
-						<li>
-							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvMeasurementCount365d" />Count in prior 365d</li>
-						<li>
-							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvMeasurementBelow" />Has latest prior numeric value below normal range</li>
-						<li>
-							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvMeasurementAbove" />Has latest prior numeric value above normal range</li>
 					</ul>
 				</ul>
 				<ul>
@@ -394,19 +368,6 @@
 							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvRiskScoresChads2vasc" />CHADS2VASc</li>
 						<li>
 							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvRiskScoresDcsi" />DCSI</li>
-					</ul>
-				</ul>
-				<ul>
-					<li>
-						<input type="checkbox" data-bind="checked: patientLevelPrediction().cvConceptCounts" />Concept counts (count of distinct conditions/procedures/visits in history)</li>
-				</ul>
-				<ul>
-					<li>Interaction terms</li>
-					<ul>
-						<li>
-							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvInteractionYear" />By index year</li>
-						<li>
-							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvInteractionMonth" />By index month</li>
 					</ul>
 				</ul>
 			</div>
