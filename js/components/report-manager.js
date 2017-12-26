@@ -123,6 +123,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 		}];
 
 		self.careSiteDatatable;
+		
+		self.currentAgeGroup = ko.observable();
 
 		self.reportTriggerRunSuscription = self.model.reportTriggerRun.subscribe(function (newValue) {
 			if (newValue) {
@@ -1901,8 +1903,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							self.model.loadingReport(false);
 
 							self.dataCompleteReference(data);
+
+							var initOneBarData = self.normalizeArray(data.filter(function (d) {
+								return d.covariance == "0~10";
+							}), true);
+
+							self.showHorizontalBar(initOneBarData);
 						}
 					});
+					
 					break; // Data Completeness report
 				case 'Entropy':
 					$.ajax({
@@ -1975,6 +1984,84 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					});
 					break; // Entropy report
 			}
+		}
+		
+		self.showHorizontalBar = function(oneBarData){
+			var svg = d3.select("svg");
+			if(svg){
+				svg.remove();
+			}
+			
+			self.currentAgeGroup('Age group of: ' + oneBarData.covariance);
+			svg = d3.select("#dataCompletenessSvgDiv").append("svg");
+		    margin = {top: 20, right: 20, bottom: 30, left: 80}
+		    svg.attr("width", 960)
+		    svg.attr("height", 500)
+		    width = svg.attr("width") - margin.left - margin.right
+		    height = svg.attr("height") - margin.top - margin.bottom;
+		  
+			var tooltip = d3.select("body").append("div").style('position', 'absolute')
+				.style('display', 'none')
+				.style('min-width', '80px')
+				.style('height', 'auto')
+				.style('background', 'none repeat scroll 0 0 #ffffff')
+				.style('border', '1px solid #6F257F')
+				.style('padding', '14px')
+				.style('text-align', 'center');
+		  
+			var x = d3.scaleLinear().range([0, width]);
+			var y = d3.scaleBand().range([height, 0]);
+
+			var g = svg.append("g")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		  
+			var barDataTxt = "[{\"attr\":\"Gender\", \"value\":" + oneBarData.genderP 
+				+ "}, {\"attr\":\"Race\", \"value\":" + oneBarData.raceP 
+				+ "}, {\"attr\":\"Ethnicity\", \"value\":" + oneBarData.ethP + "}]";
+
+
+			var barData = JSON.parse(barDataTxt);
+			x.domain([0, d3.max(barData, function(d) { return 100; })]);
+		  	y.domain(barData.map(function(d) { return d.attr; })).padding(0.1);
+
+		    g.append("g")
+		        .attr("class", "x axis")
+		       	.attr("transform", "translate(0," + height + ")")
+		      	.call(d3.axisBottom(x).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+		    
+		    //label for the x axis
+		    svg.append("text")             
+		        .attr("transform",
+		              "translate(" + (width/2) + " ," + (height + margin.top + 20) + ")")
+		        .style("text-anchor", "middle")
+		        .text("Percentage");
+		    
+		    g.append("g")
+		        .attr("class", "y axis")
+		        .call(d3.axisLeft(y));
+
+		    g.selectAll(".bar")
+		        .data(barData)
+		        .enter().append("rect")
+		        .attr("class", "bar")
+		        .attr("x", 0)
+		        .attr("height", y.bandwidth())
+		        .attr("y", function(d) { return y(d.attr); })
+		        .attr("width", function(d) { 
+		        	return x(d.value); 
+		        })
+		        .on("mousemove", function(d){
+		            tooltip
+		              .style("left", d3.event.pageX - 50 + "px")
+		              .style("top", d3.event.pageY - 70 + "px")
+		              .style("display", "inline-block")
+		              .html((d.attr) + "<br>" + (d.value) + "%");
+		        })
+		    	.on("mouseout", function(d){ tooltip.style("display", "none");});
+		}
+		
+		self.dataCompleteRowClick = function (d){
+			self.showHorizontalBar(d);
 		}
 
 		// drilldown functions
