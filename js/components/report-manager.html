@@ -48,8 +48,14 @@
 </div>
 
 <div id="reportDataCompleteness" data-bind="if: model.currentReport() == 'Data Completeness' && !model.loadingReport()">
-	<div class=" report">
-		<faceted-datatable params="{columns: $component.dataCompletColumns, reference:$component.dataCompleteReference, options:$component.dataCompleteOptions }"></faceted-datatable>
+	<div class="pad-10 report">
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> Data Completeness (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
+		<faceted-datatable params="{columns: $component.dataCompletColumns, reference:$component.dataCompleteReference, options:$component.dataCompleteOptions, rowClick:$component.dataCompleteRowClick }"></faceted-datatable>
+	</div>
+	<div class="pad-10 report">
+		<span data-bind="text:$component.currentAgeGroup()"></span>
+	</div>
+	<div class="pad-10 report" id="dataCompletenessSvgDiv">
 	</div>
 </div>
 
