@@ -275,9 +275,13 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 			.call(xAxis);
 
 		highlightFunc = function () {
-			pointGs.selectAll('rect').style('fill', function (d) {
-				return d.highlight;
-			});
+			pointGs.selectAll('rect')
+				.style('fill', function (d) {
+					return d.highlight;
+				})
+				.style('stroke', function (d) {
+					return d.stroke;
+				});
 		};
 		return svg;
 	}

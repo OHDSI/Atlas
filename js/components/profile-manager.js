@@ -142,6 +142,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 							rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
 							rec.endDay = rec.endDate ? Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
 							rec.highlight = self.defaultColor;
+							rec.stroke = self.defaultColor;
 						});
 						self.personRecords(person.records);
 						person.shadedRegions =
@@ -366,8 +367,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.setHighlights = function (colorIndex) {
 				var selectedData = $('#highlight-table table').DataTable().rows('.selected').data();
 				for (var i = 0; i < selectedData.length; i++) {
-					selectedData[i].highlight(self.getHighlightColor(colorIndex)); // set the swatch color
-					selectedData[i].recs.forEach(r => r.highlight = self.getHighlightColor(colorIndex)); // set the record colors
+					selectedData[i].highlight(self.getHighlightBackground(colorIndex)); // set the swatch color
+					selectedData[i].recs.forEach(r => {
+						r.highlight = self.getHighlightBackground(colorIndex);
+						r.stroke = self.getHighlightColor(colorIndex);
+					}); // set the record colors
 				};
 
 				self.highlightRecs.valueHasMutated();
@@ -376,11 +380,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			// d3.schemePaired
 			self.palette = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ff9', '#b15928'];
 
-			self.getHighlightBackground = function (i) {
+			self.getHighlightColor = function (i) {
 				return self.palette[i * 2];
 			}
 
-			self.getHighlightColor = function (i) {
+			self.getHighlightBackground = function (i) {
 				return self.palette[i * 2 + 1];
 			}
 
@@ -388,7 +392,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				var selectedData = $('#highlight-table table').DataTable().data();
 				for (var i = 0; i < selectedData.length; i++) {
 					selectedData[i].highlight(self.defaultColor); // set the swatch color
-					selectedData[i].recs.forEach(r => r.highlight = self.defaultColor); // set the record colors
+					selectedData[i].recs.forEach(r => {
+						r.highlight = self.defaultColor; // set the record colors
+						r.stroke = self.defaultColor; // set the record colors
+					})
 				};
 
 				self.highlightRecs.valueHasMutated();

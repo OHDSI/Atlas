@@ -20,10 +20,10 @@ an observation period
 	<li>with period duration <numeric-range-viewer params="Range: PeriodLength"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(AgeAtStart) != null -->
-	<li>with age at period start <numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
+	<li>with age in years at period start <numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(AgeAtEnd) != null -->
-	<li>with age at period end <numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
+	<li>with age in years at period end <numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
 		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	

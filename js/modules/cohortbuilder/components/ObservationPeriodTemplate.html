@@ -52,14 +52,14 @@
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }" class="fa fa-times" /></td>
 				<td>
-					with age at period start
+					with age in years at period start
 					<numeric-range params="Range: AgeAtStart"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtEnd() != null, visible: AgeAtEnd() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }" class="fa fa-times" /></td>
 				<td>
-					with age at period end
+					with age in years at period end
 					<numeric-range params="Range: AgeAtEnd"></numeric-range>
 				</td>
 			</tr>

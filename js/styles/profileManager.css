@@ -148,6 +148,7 @@ path.death {
 rect.point {
 	opacity: 0.8;
 	fill: #337AB7;
+	stroke-width:1px;
 }
 
 rect.dim {
