@@ -252,3 +252,8 @@ g.unhighlighted rect {
 .highlight-dropdown.dropdown-menu>li>a {
 	padding-left:5px;
 }
+
+
+text.label {
+    fill: #ccc;
+}

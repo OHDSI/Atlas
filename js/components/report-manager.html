@@ -190,6 +190,40 @@
 	</div>
 </div>
 
+<div id="reportTornado" data-bind="if: model.currentReport() == 'Tornado' && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Tornado<i data-bind="click:setHelpContent('tornado')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body pad-5">
+				<div id="tornadoPlot" class="text-center"><svg width="1000" height="300" preserveAspectRatio></svg></div>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Sample Profiles<i data-bind="click:setHelpContent('tornado')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+		</div>
+		<div class="panel-body" style="background-color:#222;">
+			<div id="tornadoProfiles" class="text-center">
+				<div style="color:#eee;" data-bind="if:$component.tornadoProfiles().length == 0">
+					Select a Bar from the Tornado Plot to view Sample Profiles for that Strata.
+				</div>
+				<div class="col-sm-1"></div>
+				<!-- ko foreach:$component.tornadoProfiles -->
+				<div class="col-sm-2">
+					<a target="_new" data-bind="attr: {href: $component.buildProfileLink($data)}">
+						<i data-bind="css: $component.genderIcon($data)" class="fa"></i>
+						<div data-bind="html:personId"></div>
+					</a>
+				</div>
+				<!-- /ko -->
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="reportConditionsByIndex" data-bind="if: model.currentReport() == 'Conditions by Index' && !model.loadingReport()">
 	<div class="pad-5 report">
 		<div class="panel panel-primary">

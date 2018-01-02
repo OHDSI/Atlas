@@ -123,7 +123,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 		}];
 
 		self.careSiteDatatable;
-		
+
 		self.currentAgeGroup = ko.observable();
 
 		self.reportTriggerRunSuscription = self.model.reportTriggerRun.subscribe(function (newValue) {
@@ -150,6 +150,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 		self.treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
 		self.boxplotWidth = 200;
 		self.boxplotHeight = 125;
+		self.genderIcon = function (d) {
+			if (d.genderConceptId == 8507) {
+				return 'fa-male';
+			}
+
+			if (d.genderConceptId == 8532) {
+				return 'fa-female';
+			}
+		}
 
 		self.showBrowser = function () {
 			$('#cohortDefinitionChooser')
@@ -161,6 +170,149 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 		self.datatables = {};
 
+		self.tornadoChart = function (target, data, profiles, profilesSelected) {
+			data.sort((a, b) => {
+				return b.ageGroup - a.ageGroup;
+			});
+			data.forEach(d => {
+				if (d.genderConceptId == 8532) {
+					d.personCount = d.personCount * -1;
+				}
+			})
+
+			var margin = {
+					top: 20,
+					right: 20,
+					bottom: 20,
+					left: 60
+				},
+				width = 600 - margin.left - margin.right,
+				height = 300 - margin.top - margin.bottom;
+
+			var x = d3.scaleLinear()
+				.range([0, width]);
+
+			var y = d3.scaleLinear()
+				.range([0, height]);
+
+			var formatSI = d3.format(".2s");
+			var xAxis = d3.axisBottom()
+				.scale(x)
+				.ticks(7)
+				.tickFormat(d => {
+					return formatSI(Math.abs(d));
+				});
+
+			var yAxis = d3.axisLeft()
+				.scale(y)
+				.tickSize(0)
+				.tickValues([5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105])
+				.tickFormat(d => {
+					d = d - 5;
+					if (d == 100)
+						return '100+';
+
+					return d + '-' + (d + 9);
+				})
+
+			var svg = d3.select(target)
+				.attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
+				.append("g")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+			xExtent = d3.extent(data, d => {
+				return d.personCount;
+			});
+			xMax = Math.max(Math.abs(xExtent[0]), Math.abs(xExtent[1]));
+			x.domain([-1 * xMax, xMax]);
+			y.domain([100, 0]);
+
+			var bar = svg.selectAll(".bar")
+				.data(data)
+
+			bar.enter().append("rect")
+				.attr("class", function (d) {
+					return "bar bar--" + (d.personCount < 0 ? "negative" : "positive");
+				})
+				.attr("x", function (d) {
+					var minWidth = 5;
+					var correction = 0;
+					var xPos = x(Math.min(0, d.personCount));
+					if (d.personCount < 0 && (xPos - x(0)) > -5) {
+						correction = minWidth;
+					}
+					return xPos - correction;
+				})
+				.attr("y", function (d) {
+					return y(d.ageGroup) - (height / 11);
+				})
+				.attr("width", function (d) {
+					return Math.max(Math.abs(x(d.personCount) - x(0)), 5);
+				})
+				.attr("height", height / 11)
+				.on('click', d => {
+					var filteredProfiles = profiles.filter(s => {
+						return s.genderConceptId == d.genderConceptId && s.ageGroup == d.ageGroup;
+					});
+					profilesSelected(filteredProfiles);
+				});
+
+			bar.enter().append('text')
+				.attr("text-anchor", "middle")
+				.attr("alignment-baseline", "middle")
+				.style("stroke-width", 2)
+				.style("stroke", "#fff")
+				.attr("x", function (d, i) {
+					var xPos = x(Math.min(0, d.personCount)) + (Math.abs(x(d.personCount) - x(0)) / 2);
+					var correction = 0;
+					if ((Math.abs(x(d.personCount) - x(0))) <= 100) {
+						correction = Math.abs(d.personCount) / d.personCount * 10;
+					}
+					return xPos + correction;
+				})
+				.attr("y", function (d, i) {
+					return y(d.ageGroup - 5) - (height / 11);
+				})
+				.text(function (d) {
+					return Math.abs(d.personCount);
+				})
+
+			bar.enter().append('text')
+				.attr("text-anchor", "middle")
+				.attr("alignment-baseline", "middle")
+				.style("stroke-width", 1)
+				.style("stroke", "#000")
+				.attr("x", function (d, i) {
+					var xPos = x(Math.min(0, d.personCount)) + (Math.abs(x(d.personCount) - x(0)) / 2);
+					var correction = 0;
+					if ((Math.abs(x(d.personCount) - x(0))) <= 100) {
+						correction = Math.abs(d.personCount) / d.personCount * 10;
+					}
+					return xPos + correction;
+				})
+				.attr("y", function (d, i) {
+					return y(d.ageGroup - 5) - (height / 11);
+				})
+				.text(function (d) {
+					return Math.abs(d.personCount);
+				})
+
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis);
+
+			svg.append("g")
+				.attr("class", "y axis")
+				.call(yAxis);
+		}
+		self.tornadoProfiles = ko.observableArray();
+		self.profilesSelected = function (profiles) {
+			self.tornadoProfiles(profiles);
+		}
+		self.buildProfileLink = function (p) {
+			return '#/profiles/' + self.model.reportSourceKey() + '/' + p.personId + '/' + self.model.reportCohortDefinitionId();
+		}
 		self.runReport = function runReport() {
 			self.model.loadingReport(true);
 			self.model.activeReportDrilldown(false);
@@ -173,6 +325,18 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
+						}
+					});
+					break;
+				case 'Tornado':
+					$.ajax({
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/tornado?refresh=' + self.refresh(),
+						success: function (data) {
+							self.tornadoRecords = data.tornadoRecords;
+							self.tornadoSamples = data.profileSamples;
+							self.model.currentReport(self.model.reportReportName());
+							self.model.loadingReport(false);
+							self.tornadoChart("#tornadoPlot svg", self.tornadoRecords, self.tornadoSamples, self.profilesSelected);
 						}
 					});
 					break;
@@ -1911,7 +2075,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							self.showHorizontalBar(initOneBarData);
 						}
 					});
-					
+
 					break; // Data Completeness report
 				case 'Entropy':
 					$.ajax({
@@ -1985,21 +2149,26 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break; // Entropy report
 			}
 		}
-		
-		self.showHorizontalBar = function(oneBarData){
+
+		self.showHorizontalBar = function (oneBarData) {
 			var svg = d3.select("svg");
-			if(svg){
+			if (svg) {
 				svg.remove();
 			}
-			
+
 			self.currentAgeGroup('Age group of: ' + oneBarData.covariance);
 			svg = d3.select("#dataCompletenessSvgDiv").append("svg");
-		    margin = {top: 20, right: 20, bottom: 30, left: 80}
-		    svg.attr("width", 960)
-		    svg.attr("height", 500)
-		    width = svg.attr("width") - margin.left - margin.right
-		    height = svg.attr("height") - margin.top - margin.bottom;
-		  
+			margin = {
+				top: 20,
+				right: 20,
+				bottom: 30,
+				left: 80
+			}
+			svg.attr("width", 960)
+			svg.attr("height", 500)
+			width = svg.attr("width") - margin.left - margin.right
+			height = svg.attr("height") - margin.top - margin.bottom;
+
 			var tooltip = d3.select("body").append("div").style('position', 'absolute')
 				.style('display', 'none')
 				.style('min-width', '80px')
@@ -2008,59 +2177,69 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 				.style('border', '1px solid #6F257F')
 				.style('padding', '14px')
 				.style('text-align', 'center');
-		  
+
 			var x = d3.scaleLinear().range([0, width]);
 			var y = d3.scaleBand().range([height, 0]);
 
 			var g = svg.append("g")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-		  
-			var barDataTxt = "[{\"attr\":\"Gender\", \"value\":" + oneBarData.genderP 
-				+ "}, {\"attr\":\"Race\", \"value\":" + oneBarData.raceP 
-				+ "}, {\"attr\":\"Ethnicity\", \"value\":" + oneBarData.ethP + "}]";
+
+			var barDataTxt = "[{\"attr\":\"Gender\", \"value\":" + oneBarData.genderP +
+				"}, {\"attr\":\"Race\", \"value\":" + oneBarData.raceP +
+				"}, {\"attr\":\"Ethnicity\", \"value\":" + oneBarData.ethP + "}]";
 
 
 			var barData = JSON.parse(barDataTxt);
-			x.domain([0, d3.max(barData, function(d) { return 100; })]);
-		  	y.domain(barData.map(function(d) { return d.attr; })).padding(0.1);
+			x.domain([0, d3.max(barData, function (d) {
+				return 100;
+			})]);
+			y.domain(barData.map(function (d) {
+				return d.attr;
+			})).padding(0.1);
 
-		    g.append("g")
-		        .attr("class", "x axis")
-		       	.attr("transform", "translate(0," + height + ")")
-		      	.call(d3.axisBottom(x).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
-		    
-		    //label for the x axis
-		    svg.append("text")             
-		        .attr("transform",
-		              "translate(" + (width/2) + " ," + (height + margin.top + 20) + ")")
-		        .style("text-anchor", "middle")
-		        .text("Percentage");
-		    
-		    g.append("g")
-		        .attr("class", "y axis")
-		        .call(d3.axisLeft(y));
+			g.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(d3.axisBottom(x).ticks(5).tickFormat(function (d) {
+					return parseInt(d);
+				}).tickSizeInner([-height]));
 
-		    g.selectAll(".bar")
-		        .data(barData)
-		        .enter().append("rect")
-		        .attr("class", "bar")
-		        .attr("x", 0)
-		        .attr("height", y.bandwidth())
-		        .attr("y", function(d) { return y(d.attr); })
-		        .attr("width", function(d) { 
-		        	return x(d.value); 
-		        })
-		        .on("mousemove", function(d){
-		            tooltip
-		              .style("left", d3.event.pageX - 50 + "px")
-		              .style("top", d3.event.pageY - 70 + "px")
-		              .style("display", "inline-block")
-		              .html((d.attr) + "<br>" + (d.value) + "%");
-		        })
-		    	.on("mouseout", function(d){ tooltip.style("display", "none");});
+			//label for the x axis
+			svg.append("text")
+				.attr("transform",
+					"translate(" + (width / 2) + " ," + (height + margin.top + 20) + ")")
+				.style("text-anchor", "middle")
+				.text("Percentage");
+
+			g.append("g")
+				.attr("class", "y axis")
+				.call(d3.axisLeft(y));
+
+			g.selectAll(".bar")
+				.data(barData)
+				.enter().append("rect")
+				.attr("class", "bar")
+				.attr("x", 0)
+				.attr("height", y.bandwidth())
+				.attr("y", function (d) {
+					return y(d.attr);
+				})
+				.attr("width", function (d) {
+					return x(d.value);
+				})
+				.on("mousemove", function (d) {
+					tooltip
+						.style("left", d3.event.pageX - 50 + "px")
+						.style("top", d3.event.pageY - 70 + "px")
+						.style("display", "inline-block")
+						.html((d.attr) + "<br>" + (d.value) + "%");
+				})
+				.on("mouseout", function (d) {
+					tooltip.style("display", "none");
+				});
 		}
-		
-		self.dataCompleteRowClick = function (d){
+
+		self.dataCompleteRowClick = function (d) {
 			self.showHorizontalBar(d);
 		}
 
