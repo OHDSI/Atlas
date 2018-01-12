@@ -2169,6 +2169,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										return d.xValue;
 									})),
 									xFormat: d3.timeFormat("%Y/%m/%d"),
+									yFormat: d3.format("d"),
 									tickFormat: d3.timeFormat("%Y"),
 									xLabel: "Date",
 									yLabel: "Delay in Day"
