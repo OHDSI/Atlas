@@ -96,6 +96,9 @@ table.criteriaTable>tbody>tr>td {
 	height: 32px;
 	vertical-align: middle;
 }
+table.criteriaTable td[colspan="2"] {
+	width:100%;
+}
 .numericInputField {
 	padding-left: 3px;
 	padding-right: 3px;
