@@ -1,10 +1,12 @@
 <div class="criteriaSection" data-bind="with: Criteria">
 	<div style="position: relative">
 		<table class="criteriaTable">
-			<col style="width:16px" />
-			<col />
+			<colgroup>
+				<col style="width:100%"/>
+				<col />
+			</colgroup>
 			<tr>
-				<td colspan="2"> a death occurrence from
+				<td> a death occurrence from
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Death'"></conceptset-selector>
 				</td>
 				<td>
@@ -15,7 +17,13 @@
 						</ul>
 					</div>
 				</td>
-			</tr>
+			</tr>		
+		</table>
+		<table class="criteriaTable">
+			<colgroup>
+				<col style="width:20px"/>
+				<col />
+			</colgroup>		
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
