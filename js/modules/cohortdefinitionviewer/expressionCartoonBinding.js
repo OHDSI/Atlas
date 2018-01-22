@@ -1,5 +1,5 @@
 "use strict";
-define(['knockout','d3', 'd3_tip', 'lodash','css!styles/cartoon.css'], 
+define(['knockout','d3', 'd3-tip', 'lodash','css!styles/cartoon.css'],
 			 function (ko, d3, d3tip, _) {
 
 	var divWidth = ko.observable(); // triggers update

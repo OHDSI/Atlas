@@ -8,7 +8,7 @@ table.cohort-generate-sources td {
 	line-height: 28px;
 }
 
-table.cohort-generate-sources tbody {
+table.cohort-generate-sources tbody.overflow {
 	display: block;
 	max-height: 210px;
 	overflow: auto;
@@ -591,6 +591,7 @@ td.select .fa-check-circle.selected {
 	padding-right: 7px;
 	font-size: 11px;
 	border-bottom: 1px solid #ccc;
+  vertical-align:top;
 }
 
 .configureSourceTable tr.selected {
@@ -867,6 +868,12 @@ input.btn.btn-default {
 	font-size: 8px;
 }
 
+.evidenceVisualization .axislabel {
+	font-size: 1.8em;
+}
+
+
+
 .pad-10 {
 	padding: 10px;
 }
@@ -939,11 +946,6 @@ i.fa.fa-refresh.fa-spin {
 }
 
 rect.box {}
-
-div#trellisLinePlot {
-	display: flex;
-	flex-shrink: 1;
-}
 
 .img-thumbnail {
 	border-radius: 0
@@ -1129,7 +1131,7 @@ ul.nav.nav-tabs {
 }
 
 .label {
-	border-radius: 0
+	border-radius: 0;
 }
 
 .badge {
@@ -1688,7 +1690,7 @@ li.current-asset {
 	font-size: 18px;
 }
 
-inclusion-rule-editor input {
+inclusion-rule-editor input[type="text"] {
 	padding: 2px 0px 2px 5px;
 	width: 80%;
 }
@@ -1962,4 +1964,27 @@ span.new-role {
 
 .padded {
 	padding: 5px;
+}
+
+.radius-border {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 10px;
+	background-color: #fff;
+	border-color: #ddd;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 4px 4px 0 0;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.filter-results-select {
+	padding: 10px;
+	padding-bottom: 0px;
+	font-size: 14px;
+}
+
+.list-inline>li {
+	vertical-align: middle;
 }

@@ -1,23 +1,27 @@
-define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularyprovider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'databindings'
-], function (ko, template, VocabularyProvider, appConfig, ConceptSet) {
+define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularyprovider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'databindings'], function (ko, template, VocabularyProvider, appConfig, ConceptSet) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
 		function defaultRepositoryConceptSetSelected(conceptSet) {
 			// Default functionality
-			VocabularyProvider.getConceptSetExpression(conceptSet.id, self.selectedSource().url)
+			VocabularyProvider.getConceptSetExpression(conceptSet.id, self.selectedSource()
+					.url)
 				.done(function (result) {
-					var newId = self.cohortConceptSets().length > 0 ? Math.max.apply(null, self.cohortConceptSets().map(function (d) {
-						return d.id;
-					})) + 1 : 0;
+					var newId = self.cohortConceptSets()
+						.length > 0 ? Math.max.apply(null, self.cohortConceptSets()
+							.map(function (d) {
+								return d.id;
+							})) + 1 : 0;
 
 					var newConceptSet = new ConceptSet({
 						id: newId,
 						name: conceptSet.name,
 						expression: result
 					});
-					params.$raw.cohortConceptSets().push(newConceptSet);
-					self.criteriaContext() && self.criteriaContext().conceptSetId(newConceptSet.id);
+					params.$raw.cohortConceptSets()
+						.push(newConceptSet);
+					self.criteriaContext() && self.criteriaContext()
+						.conceptSetId(newConceptSet.id);
 					self.onActionComplete({
 						action: 'load',
 						status: 'Success'
@@ -49,11 +53,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 		self.repositoryConceptSets = ko.observableArray();
 
 		self.sources = [];
-
-		appConfig.services.forEach(function (service) {
-			self.sources.push(service);
-		});
-
+		self.sources.push(appConfig.api);
 		self.selectedSource = ko.observable(self.sources[0]);
 
 		self.loadConceptSetsFromRepository = function (url) {
@@ -71,8 +71,8 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 
 		// datatable callbacks:
 
-		self.selectRepositoryConceptSet = function (conceptSet, valueAccessor) {
-			self.onRespositoryConceptSetSelected(conceptSet, valueAccessor);
+		self.selectRepositoryConceptSet = function (data, context, event) {
+			self.onRespositoryConceptSetSelected(data, event);
 		}
 
 		self.addConceptSet = function () {
@@ -83,9 +83,10 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 		}
 
 		// dispose subscriptions
-		
+
 		// startup actions
-		self.loadConceptSetsFromRepository(self.selectedSource().url);
+		self.loadConceptSetsFromRepository(self.selectedSource()
+			.url);
 	}
 
 	var component = {

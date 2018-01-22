@@ -63,7 +63,7 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohort
 		self.loading(true);
 		
 		$.ajax({
-			url: config.services[0].url + 'comparativecohortanalysis',
+			url: config.api.url + 'comparativecohortanalysis',
 			method: 'GET',
 			success: function (d) {
 				self.loading(false);

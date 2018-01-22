@@ -1,0 +1,287 @@
+<div data-bind="if: $component.patientLevelPrediction() && ($component.patientLevelPrediction().readyForDisplay() == false)">
+	Please complete the full specification for the study
+</div>
+<div data-bind="if: $component.patientLevelPrediction() && $component.patientLevelPrediction().readyForDisplay()">
+	<pre class="language-r">
+<code data-bind="attr:{'id': $component.codeElementId}" contenteditable="true" spellcheck="false">
+    <span class="token comment"># Study: ----<!-- ko foreach: $component.patientLevelPrediction().nameMultiLine() -->
+    # <span data-bind="text: $data"></span><!-- /ko --></span>
+    
+    <span class="token comment"># PatientLevelPrediction Installation &amp; Load ----</span>
+
+    <span class="token comment">
+    # Uncomment to install PatientLevelPrediction
+    # install.packages("drat")
+    # drat::addRepo("OHDSI")
+    # install.packages("PatientLevelPrediction")
+    
+    # Load the PatientLevelPrediction library</span>
+    <span class="token function">library</span>(PatientLevelPrediction) 
+    
+    <span class="token comment"># Data extraction ----
+    
+    # TODO: Insert your connection details here</span>
+    connectionDetails <span class="token operator"><-</span></span> DatabaseConnector::createConnectionDetails(dbms = <span class="token string">"postgresql"</span></span>,
+                                                 server = <span class="token string">"localhost/ohdsi"</span>,
+                                                 user = <span class="token string">"joe"</span>,
+                                                 password = <span class="token string">"supersecret"</span>)
+    cdmDatabaseSchema <span class="token operator"><-</span> <span class="token string">"my_cdm_data"</span>
+    cohortsDatabaseSchema <span class="token operator"><-</span> <span class="token string">"my_results"</span>
+    cohortTable <span class="token operator"><-</span> <span class="token string">"cohort_table"</span>
+    outcomeTable <span class="token operator"><-</span> <span class="token string">"outcome_table"</span>
+    cdmVersion <span class="token operator"><-</span> <span class="token string">"5" </span>
+    outputFolder <span class="token operator"><-</span> <span class="token string">"&lt;insert your directory here&gt;"</span>
+    plpDataSaveName <span class="token operator"><-</span> <span class="token string">'your_plp_project_name'</span>
+    if(!dir.exists(outputFolder)){
+        dir.create(outputFolder, recursive = <span class="token boolean">TRUE</span>)
+    }
+    setwd(outputFolder)
+    
+    targetCohortId <span class="token operator"><-</span> <span class="token number" data-bind="text: $component.patientLevelPrediction().treatmentId"></span> <span class="token comment"># <span data-bind="text: $component.patientLevelPrediction().treatmentCaption"></span></span>
+    outcomeCohortId <span class="token operator"><-</span> <span class="token number" data-bind="text: $component.patientLevelPrediction().outcomeId"></span> <span class="token comment"># <span data-bind="text: $component.patientLevelPrediction().outcomeCaption"></span></span>
+    outcomeList <- c(outcomeCohortId)
+    
+    <span class="token comment"># PLEASE NOTE ----
+    # If you want to use your code in a distributed network study
+    # you will need to create a temporary cohort table with common cohort IDs.
+    # The code below ASSUMES you are only running in your local network 
+    # where common cohort IDs have already been assigned in the cohort table.</span>
+		
+    <span class="token comment"># Get all <!-- ko text: $component.patientLevelPrediction().cvExclusionCaption --><!-- /ko --> Concept IDs for exclusion ----</span>
+    <span data-bind="if: $component.patientLevelPrediction().cvExclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.patientLevelPrediction().cvExclusionConceptSetSQL"></span>")
+    sql <span class="token operator"><span class="token operator"><-</span></span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
+    connection <span class="token operator"><-</span> connect(connectionDetails)
+    excludedConcepts <span class="token operator"><-</span> querySql(connection, sql)
+    excludedConcepts <span class="token operator"><-</span> excludedConcepts$CONCEPT_ID
+    </span><span data-bind="if: $component.patientLevelPrediction().cvExclusionConceptSetSQL() == null">
+    excludedConcepts <span class="token operator"><-</span> c()
+    </span>
+    <span class="token comment"># Get all <span data-bind="text: $component.patientLevelPrediction().cvInclusionCaption"></span> Concept IDs for inclusion ----</span>
+    <span data-bind="if: $component.patientLevelPrediction().cvInclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.patientLevelPrediction().cvInclusionConceptSetSQL"></span>")
+    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
+    connection <span class="token operator"><-</span> connect(connectionDetails)
+    includedConcepts <span class="token operator"><-</span> querySql(connection, sql)
+    includedConcepts <span class="token operator"><-</span> includedConcepts$CONCEPT_ID
+    </span><span data-bind="if: $component.patientLevelPrediction().cvInclusionConceptSetSQL() == null">
+    includedConcepts <span class="token operator"><-</span> c()
+    </span>
+    
+
+    <span class="token comment"># Define which types of covariates must be constructed ----</span>
+    covariateSettings <span class="token operator"><-</span> FeatureExtraction::createCovariateSettings(useCovariateDemographics = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDemographics"></span>,
+                                         useCovariateDemographicsGender = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDemographicsGender"></span>,
+                                         useCovariateDemographicsRace = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDemographicsRace"></span>,
+                                         useCovariateDemographicsEthnicity = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDemographicsEthnicity"></span>,
+                                         useCovariateDemographicsAge = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDemographicsAge"></span>, 
+                                         useCovariateDemographicsYear = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDemographicsYear"></span>,
+                                         useCovariateDemographicsMonth = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDemographicsMonth"></span>,
+                                         useCovariateConditionOccurrence = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConditionOcc"></span>,    
+                                         useCovariateConditionOccurrenceLongTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConditionOcc365d"></span>,
+                                         useCovariateConditionOccurrenceShortTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConditionOcc30d"></span>,
+                                         useCovariateConditionOccurrenceInptMediumTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConditionOccInpt180d"></span>,
+                                         useCovariateConditionEra = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConditionEra"></span>, 
+                                         useCovariateConditionEraEver = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConditionEraEver"></span>,
+                                         useCovariateConditionEraOverlap = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConditionEraOverlap"></span>,
+                                         useCovariateConditionGroup = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConditionGroup"></span>,
+                                         useCovariateConditionGroupMeddra = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConditionGroupMeddra"></span>,
+                                         useCovariateConditionGroupSnomed = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConditionGroupSnomed"></span>,
+                                         useCovariateDrugExposure = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDrugExposure"></span>, 
+                                         useCovariateDrugExposureLongTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDrugExposure365d"></span>,
+                                         useCovariateDrugExposureShortTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDrugExposure30d"></span>, 
+                                         useCovariateDrugEra = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDrugEra"></span>,
+                                         useCovariateDrugEraLongTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDrugEra365d"></span>, 
+                                         useCovariateDrugEraShortTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDrugEra30d"></span>,
+                                         useCovariateDrugEraOverlap = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDrugEraOverlap"></span>, 
+                                         useCovariateDrugEraEver = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDrugEraEver"></span>,
+                                         useCovariateDrugGroup = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvDrugGroup"></span>, 
+                                         useCovariateProcedureOccurrence = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvProcedureOcc"></span>,
+                                         useCovariateProcedureOccurrenceLongTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvProcedureOcc365d"></span>,
+                                         useCovariateProcedureOccurrenceShortTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvProcedureOcc30d"></span>,
+                                         useCovariateProcedureGroup = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvProcedureGroup"></span>, 
+                                         useCovariateObservation = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvObservation"></span>,
+                                         useCovariateObservationLongTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvObservation365d"></span>, 
+                                         useCovariateObservationShortTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvObservation30d"></span>,
+                                         useCovariateObservationCountLongTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvObservationCount365d"></span>, 
+                                         useCovariateMeasurement = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvMeasurement"></span>,
+                                         useCovariateMeasurementLongTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvMeasurement365d"></span>, 
+                                         useCovariateMeasurementShortTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvMeasurement30d"></span>,
+                                         useCovariateMeasurementCountLongTerm = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvMeasurement365d"></span>,
+                                         useCovariateMeasurementBelow = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvMeasurementBelow"></span>,
+                                         useCovariateMeasurementAbove = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvMeasurementAbove"></span>, 
+                                         useCovariateConceptCounts = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvConceptCounts"></span>,
+                                         useCovariateRiskScores = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvRiskScores"></span>, 
+                                         useCovariateRiskScoresCharlson = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvRiskScoresCharlson"></span>,
+                                         useCovariateRiskScoresDCSI = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvRiskScoresDcsi"></span>, 
+                                         useCovariateRiskScoresCHADS2 = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvRiskScoresChads2"></span>,
+                                         useCovariateRiskScoresCHADS2VASc = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvRiskScoresChads2vasc"></span>,
+                                         useCovariateInteractionYear = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvInteractionYear"></span>, 
+                                         useCovariateInteractionMonth = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().cvInteractionMonth"></span>,
+                                         excludedCovariateConceptIds = excludedConcepts,
+                                         includedCovariateConceptIds = includedConcepts,
+                                         deleteCovariatesSmallCount = <span class="token number" data-bind="text: $component.patientLevelPrediction().delCovariatesSmallCount"></span>,
+                                         longTermDays = <span class="token number">365</span>,
+                                         mediumTermDays = <span class="token number">180</span>,
+                                         shortTermDays = <span class="token number">30</span>,
+                                         windowEndDays = <span class="token number">0</span>)
+
+    plpData <span class="token operator"><-</span> PatientLevelPrediction::getPlpData(connectionDetails = connectionDetails,
+                                         cdmDatabaseSchema = cdmDatabaseSchema,
+                                         cohortId = targetCohortId,
+                                         outcomeIds = outcomeList,
+                                         studyStartDate = <span class="token string">""</span>,
+                                         studyEndDate = <span class="token string">""</span>,
+                                         cohortDatabaseSchema = cohortsDatabaseSchema,
+                                         cohortTable = cohortTable,
+                                         outcomeDatabaseSchema = cohortsDatabaseSchema,
+                                         outcomeTable = outcomeTable,
+                                         cdmVersion = cdmVersion,
+                                         firstExposureOnly = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().firstExposureOnlyFormatted"></span>,
+                                         washoutPeriod = <span class="token number" data-bind="text: $component.patientLevelPrediction().minimumWashoutPeriod"></span>,
+                                         sampleSize = <span class="token number" data-bind="text: $component.patientLevelPrediction().sampleSizeFormatted"></span>,
+                                         covariateSettings = covariateSettings)
+
+    <span class="token comment"># PLEASE NOTE ----
+    # Creating the plpData object can take considerable computing time, and it is probably a good idea to save it
+    # for future sessions. Uncomment this line to save the data to the file system.
+    # PatientLevelPrediction::savePlpData(plpData, plpDataSaveName)
+
+    # Use this command to load the data from the file system
+    # plpData <- PatientLevelPrediction::loadPlpData(plpDataSaveName)</span>
+
+    <span class="token comment"># Create study population ----</span>
+    population <span class="token operator"><-</span> PatientLevelPrediction::createStudyPopulation(plpData = plpData,
+                                         outcomeId = outcomeCohortId,
+                                         binary = <span class="token boolean">TRUE</span>,
+                                         includeAllOutcomes = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().includeAllOutcomesFormatted"></span>,
+                                         firstExposureOnly = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().firstExposureOnlyFormatted"></span>,
+                                         washoutPeriod = <span class="token number" data-bind="text: $component.patientLevelPrediction().minimumWashoutPeriod"></span>,
+                                         removeSubjectsWithPriorOutcome = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().rmPriorOutcomesFormatted"></span>,
+                                         priorOutcomeLookback = <span class="token number" data-bind="text: $component.patientLevelPrediction().priorOutcomeLookback"></span>,
+                                         requireTimeAtRisk = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().requireTimeAtRiskFormatted">FALSE</span>,
+                                         minTimeAtRisk = <span class="token number" data-bind="text: $component.patientLevelPrediction().minTimeAtRisk"></span>,
+                                         riskWindowStart = <span class="token number" data-bind="text: $component.patientLevelPrediction().timeAtRiskStart"></span>,
+                                         addExposureDaysToStart = <span class="token boolean">FALSE</span>,
+                                         riskWindowEnd = <span class="token number" data-bind="text: $component.patientLevelPrediction().timeAtRiskEnd"></span>,
+                                         addExposureDaysToEnd = <span class="token boolean" data-bind="text: $component.patientLevelPrediction().addExposureDaysToEndFormatted"></span>)
+
+<span data-bind="if: $component.patientLevelPrediction().modelType() == 1">
+    <span class="token comment"># Create the model settings ----</span>
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setRandomForest(mtries = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMTries"></span>),
+                                         ntrees = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moNTrees"></span>),
+                                         max_depth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
+                                         varImp = <span class="token number" data-bind="text: $component.patientLevelPrediction().moVarImp"></span>,
+                                         seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
+</span>
+<span data-bind="if: $component.patientLevelPrediction().modelType() == 2">
+    <span class="token comment"># Create the model settings ----</span>
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setNaiveBayes()
+</span>
+<span data-bind="if: $component.patientLevelPrediction().modelType() == 3">
+    <span class="token comment"># Create the model settings ----</span>
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setMLP(size = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moSize"></span>),
+                                         alpha = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moAlpha"></span>),
+                                         seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
+</span>
+<span data-bind="if: $component.patientLevelPrediction().modelType() == 4">
+    <span class="token comment"># Create the model settings ----</span>
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setKNN(k = <span class="token number" data-bind="text: $component.patientLevelPrediction().moK"></span>,
+                                         indexFolder = outputFolder)
+</span>
+<span data-bind="if: $component.patientLevelPrediction().modelType() == 5">
+    <span class="token comment"># Create the model settings ----</span>
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setGradientBoostingMachine(ntrees = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moNTrees"></span>),
+                                         nthread = <span class="token number" data-bind="text: $component.patientLevelPrediction().moNThread"></span>,
+                                         max_depth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
+                                         min_rows = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinRows"></span>),
+                                         learn_rate = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moLearnRate"></span>),
+                                         seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
+</span>
+<span data-bind="if: $component.patientLevelPrediction().modelType() == 6">
+    <span class="token comment"># Create the model settings ----</span>
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setDecisionTree(max_depth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
+                                         min_samples_split = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinSamplesSplit"></span>),
+                                         min_samples_leaf = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinSamplesLeaf"></span>),
+                                         min_impurity_split = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinImpuritySplit"></span>),
+                                         seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>,
+                                         class_weight = <span class="token string">"</span><span class="token string" data-bind="text: $component.patientLevelPrediction().moClassWeight"></span><span class="token string">"</span>,
+                                         plot = F)
+</span>
+<span data-bind="if: $component.patientLevelPrediction().modelType() == 7">
+    <span class="token comment"># Create the model settings ----</span>
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setAdaBoost(n_estimators = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moNEstimators"></span>),
+                                         learning_rate = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moLearningRate"></span>),
+                                         seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
+</span>
+<span data-bind="if: $component.patientLevelPrediction().modelType() == 8">
+    <span class="token comment"># Create the model settings ----</span>
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setLassoLogisticRegression(variance = <span class="token number" data-bind="text: $component.patientLevelPrediction().moVariance"></span>,
+                                         seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
+</span>
+		
+
+    <span class="token comment"># Run the model ----</span>
+    results <span class="token operator"><-</span> PatientLevelPrediction::runPlp(population = population,
+                                         plpData = plpData, 
+                                         modelSettings = modelSettings, 
+                                         testSplit = <span class="token string">'</span><span class="token string" data-bind="text: $component.patientLevelPrediction().testSplitDescription"></span><span class="token string">'</span>,
+                                         testFraction = <span class="token number" data-bind="text: $component.patientLevelPrediction().testFractionFormatted">0.25</span>, 
+                                         nfold = <span class="token number" data-bind="text: $component.patientLevelPrediction().nFold"></span>)
+		
+		
+    <span class="token comment"># PLEASE NOTE ----
+    # You can save and load the model using:
+    # PatientLevelPrediction::savePlpModel(results$model, dirPath = file.path(getwd(), "model"))
+    # plpModel <span class="token operator"><-</span> PatientLevelPrediction::loadPlpModel(file.path(getwd(), "model")) 
+
+    # You can save and load the full results structure using:
+    # PatientLevelPrediction::savePlpResult(results, dirPath = file.path(getwd(), "lr"))
+    # results <span class="token operator"><-</span> PatientLevelPrediction::loadPlpResult(file.path(getwd(), "lr"))</span>
+
+    <span class="token comment">#to interactively view the performance</span>
+    PatientLevelPrediction::viewPlp(results) 
+
+
+    <span class="token comment"># add plots and document to output folder</span>
+    PatientLevelPrediction::plotPlp(results, 
+                                    file.path(getwd(),'plpmodels', results$analysisRef$analysisId))
+																				 
+
+    PatientLevelPrediction::createPlpJournalDocument(results, 
+                                         plpData, 
+                                         targetName = <span class="token string">'<span data-bind="text: $component.patientLevelPrediction().treatmentCaption"></span>'</span>,
+                                         outcomeName = <span class="token string">'<span data-bind="text: $component.patientLevelPrediction().outcomeCaption"></span>'</span>,
+                                         outputLocation = file.path(getwd(),<span class="token string">'plpmodels'</span>, results$analysisRef$analysisId,'ready_for_JAMA.docx'))
+																				 
+    writeLines(paste0('Model output saved to ', file.path(getwd(),<span class="token string">'plpmodels'</span>, results$analysisRef$analysisId)))
+		
+    <span class="token comment">######################################################################################</span>
+    <span class="token comment"># The plots can be found in the output older, but you can view them within R by removing the comments below:</span>
+    <span class="token comment">######################################################################################</span>
+    <span class="token comment"># plot F1 over thresholds ----</span>
+    <span class="token comment">#PatientLevelPrediction::plotF1Measure(results$performanceEvaluation, type = "test")</span>
+    <span class="token comment"># precision recall plot ----</span>
+    <span class="token comment">#PatientLevelPrediction:: plotPrecisionRecall(results$performanceEvaluation, type = "test")</span>
+    <span class="token comment"># plot outcome probability distribution vs non-outcome probability distribution ----</span>
+    <span class="token comment">#PatientLevelPrediction:: plotPredictedPDF(results$performanceEvaluation, type = "test")</span>
+    <span class="token comment">#PatientLevelPrediction:: plotPreferencePDF(results$performanceEvaluation, type = "test")</span>
+    <span class="token comment">#PatientLevelPrediction:: plotPredictionDistribution(results$performanceEvaluation, type = "test")</span>
+    <span class="token comment"># Plot the calibration ---- </span>
+    <span class="token comment">#PatientLevelPrediction::plotSparseCalibration(results$performanceEvaluation, type = "test") </span>
+    <span class="token comment"># Plot the ROC ---- </span>
+    <span class="token comment">#PatientLevelPrediction::plotSparseRoc(results$performanceEvaluation, type = "test")</span>
+
+    <span class="token comment"># plot variable frequency in outcome vs non-outcome ----</span>
+    <span class="token comment">#PatientLevelPrediction::plotVariableScatterplot(results$covariateSummary)</span>
+    <span class="token comment"># plot variable frequency comparing test/train split ----</span>
+    <span class="token comment">#PatientLevelPrediction::plotGeneralizability(results$covariateSummary)</span>
+    <span class="token comment"># Plot the calibration ----</span>
+    <span class="token comment">#PatientLevelPrediction::plotSparseCalibration2(results$performanceEvaluation, type = <span class="token string">"test"</span>)</span>
+    <span class="token comment"># Plot the ROC ----</span>
+    <span class="token comment">#PatientLevelPrediction::plotSparseRoc(results$performanceEvaluation, type = <span class="token string">"test"</span>)</span>
+		
+</div>
+</code>
+</pre>
+</div>

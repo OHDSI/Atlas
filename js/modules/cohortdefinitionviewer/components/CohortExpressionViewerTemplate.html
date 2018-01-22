@@ -58,3 +58,7 @@ Exit Cohort based on the following:
 </ul>
 <!-- /ko -->
 
+<div class="heading">Cohort Collapse Strategy:</div>
+<span data-bind="with: expression().CollapseSettings">
+	Collapse cohort by era with a gap size of <span class="numericField" data-bind="text: EraPad" /> days.
+</span>

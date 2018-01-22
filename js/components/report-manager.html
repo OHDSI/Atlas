@@ -9,7 +9,7 @@
 		<div class="modal-content">
 			<div class="modal-header">Choose Cohort Definition</div>
 			<div class="modal-body">
-				<cohort-definition-browser params="{services: pageModel.services, cohortDefinitionSelected: $component.model.reportCohortDefinitionId}"></cohort-definition-browser>
+				<cohort-definition-browser params="{cohortDefinitionSelected: $component.model.reportCohortDefinitionId}"></cohort-definition-browser>
 			</div>
 		</div>
 	</div>
@@ -28,7 +28,7 @@
 	</div>
 	<div class="row">
 		<div class="col-xs-12">
-			<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.model.services()[0].sources.filter($component.model.hasResults), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
+			<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.config.api.sources.filter($component.model.hasResults), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
 		</div>
 	</div>
 	<div class="row">
@@ -58,10 +58,20 @@
 </div>
 
 <div id="reportEntropy" data-bind="if: model.currentReport() == 'Entropy' && !model.loadingReport()">
+	<div class="tab-pane" id="care_site_div">
+		<table id="care_site_table" class="display">
+			<thead>
+				<tr>
+					<th>Care Site</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+
 	<div class="pad-10 report">
 		<div class="reportHeading"><i class="fa fa-area-chart"></i> Entropy Report (<span data-bind="text:$component.model.reportSourceKey()"></span>)</div>
 		<div class="reportSectionHeading">Entropy by Date</div>
- 		<div class="evidenceVisualization" id="entropyByDate"/>
+		<div class="evidenceVisualization" id="entropyByDate" />
 	</div>
 </div>
 

@@ -1,0 +1,138 @@
+<!--<style>
+	body {
+		font: 12px Arial;
+	}
+	
+	path {
+		stroke: steelblue;
+		stroke-width: 2;
+		fill: none;
+	}
+	
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: grey;
+		stroke-width: 1;
+		shape-rendering: crispEdges;
+	}
+	
+	div.tooltip {
+		position: absolute;
+		text-align: center;
+		width: 160px;
+		height: auto;
+		padding: 2px;
+		font: 12px sans-serif;
+		background: lightsteelblue;
+		border: 0px;
+		border-radius: 8px;
+		pointer-events: none;
+	}
+	
+	div.covname {
+		position: absolute;
+		text-align: center;
+		width: auto;
+		height: auto;
+		padding: 2px;
+		font: 12px sans-serif;
+		background: white;
+		border: 0px;
+		border-radius: 1px;
+		pointer-events: none;
+	}
+	
+	div.tooltipMain {
+		position: absolute;
+		top: 100px;
+		margin-left: 100px;
+		text-align: center;
+		width: 300px;
+		height: auto;
+		padding: 2px;
+		font: 14px sans-serif;
+		background: black;
+		color: white;
+		border: 0px;
+		border-radius: 8px;
+		pointer-events: none;
+	}
+	
+	.grid .tick {
+		stroke: lightgrey;
+		opacity: 0.3;
+	}
+	
+	.grid path {
+		stroke-width: 0;
+	}
+	
+	div.wrapper {
+		position: relative;
+	}
+	
+	div#plotarea {
+		position: relative;
+		top: 0;
+		left: 0;
+		width: 80%;
+	}
+	
+	div#sidebar {
+		position: absolute;
+		width: 15%;
+		left: 85%;
+		top: 50px;
+	}
+	
+	button {
+		padding: auto;
+		margin: 0;
+		width: 80%;
+		height: 30px;
+	}
+
+</style> -->
+<div class='wrapper'>
+
+	<div id='plotarea'> </div>
+
+	<div id='sidebar'>
+		<span id='heading'> Filter Options</span> <br>
+		<div id='filterDemographics'></div>
+		<div id='filterConditions'></div>
+		<div id='filterDrugs'></div>
+		<div id='filterProcs'></div>
+		<div id='filterMeasobs'></div>
+		<br>
+
+		<div id='settings'>
+			Size Option:
+			<form id="size_select">
+				<select name="size">
+            <option value="covariateValue">Covariate Value</option>
+            <option value="frequency">Frequency in outcome</option>
+            <option value="none">None</option>
+          </select>
+			</form>
+			<br> Color Option:
+			<form id="color_select">
+				<select name="color">
+              <option value="none">None</option>
+            <option value="analysis">Analysis Id</option>
+              <option value="model">Selected in Model</option>
+            <option value="covariateValue">Covariate Value</option>
+            <option value="frequency">Frequency</option>
+          </select>
+			</form>
+		</div>
+
+		<div id='helper'>
+			<span id='guide'></span>
+		</div>
+
+	</div>
+	<div id="covTable"> </div>
+</div>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>

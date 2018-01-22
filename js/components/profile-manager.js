@@ -1,9 +1,9 @@
 "use strict";
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3_tip', 'knockout.dataTables.binding', 'faceted-datatable', 'components/profileChart', 'css!./styles/profileManager.css'],
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3-tip', 'knockout.dataTables.binding', 'faceted-datatable', 'components/profileChart', 'css!./styles/profileManager.css'],
 	function (ko, view, d3, config, _, crossfilter, util, CohortDefinition, cohortDefinitionAPI) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
-												 // is an array of recs in the group
+			// is an array of recs in the group
 			(p, v, nf) => p.concat(v),
 			(p, v, nf) => _.without(p, v),
 			() => []
@@ -14,27 +14,28 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			window._ = _;
 			var self = this;
 			window.profileManager = self;
-			self.config = config;
-			self.services = config.services[0];
 			self.model = params.model;
 			self.aspectRatio = ko.observable();
+			self.config = config;
 
 			self.sourceKey = ko.observable(params.sourceKey);
 			self.personId = ko.observable(params.personId);
 			self.cohortDefinitionId = ko.observable(params.cohortDefinitionId);
 			self.currentCohortDefinition = ko.observable(null);
 
-			// if a cohort definition id has been specified, see if it is 
-			// already loaded into the page model. If not, load it from the 
+			// if a cohort definition id has been specified, see if it is
+			// already loaded into the page model. If not, load it from the
 			// server
-			if (self.cohortDefinitionId() && (self.model.currentCohortDefinition() && self.model.currentCohortDefinition().id() == self.cohortDefinitionId)) {
+			if (self.cohortDefinitionId() && (self.model.currentCohortDefinition() && self.model.currentCohortDefinition()
+					.id() == self.cohortDefinitionId)) {
 				// The cohort definition requested is already loaded into the page model - just reference it
 				self.currentCohortDefinition(self.model.currentCohortDefintion())
 			} else if (self.cohortDefinitionId()) {
-				cohortDefinitionAPI.getCohortDefinition(self.cohortDefinitionId()).then(function (cohortDefinition) {
-					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
-					self.currentCohortDefinition(new CohortDefinition(cohortDefinition));
-				});
+				cohortDefinitionAPI.getCohortDefinition(self.cohortDefinitionId())
+					.then(function (cohortDefinition) {
+						cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+						self.currentCohortDefinition(new CohortDefinition(cohortDefinition));
+					});
 			}
 
 			self.cohortSource = ko.observable();
@@ -59,7 +60,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.loadConceptSets = function (o) {
 				if (!o.cohortDef)
 					return;
-				var conceptSets = ko.toJS(o.cohortDef.expression().ConceptSets());
+				var conceptSets = ko.toJS(o.cohortDef.expression()
+					.ConceptSets());
 				conceptSets.forEach(function (conceptSet) {
 					pageModel.resolveConceptSetExpressionSimple(
 						ko.toJSON(conceptSet.expression),
@@ -98,7 +100,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.loadingPerson(true);
 
 
-				let url = self.services.url + self.sourceKey() + '/person/' + self.personId();
+				let url = self.config.api.url + self.sourceKey() + '/person/' + self.personId();
 				personRequest = personRequests[url] = util.cachedAjax({
 					url: url,
 					method: 'GET',
@@ -132,7 +134,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 									.value()
 							};
 						}
-						person.age = new Date(cohort.startDate).getFullYear() - person.yearOfBirth;
+						person.age = new Date(cohort.startDate)
+							.getFullYear() - person.yearOfBirth;
 						person.records.forEach(function (rec) {
 							// have to get startDate from person.cohorts
 							rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24))
@@ -167,16 +170,19 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			};
 			self.datatableRowClickCallback = function (rec) {
 				if (event.target.childNodes[0].data === rec.conceptName) {
-					self.highlightRecs(self.filteredRecs().filter(d => d.conceptName === rec.conceptName));
+					self.highlightRecs(self.filteredRecs()
+						.filter(d => d.conceptName === rec.conceptName));
 				} else {
 					self.highlightRecs([rec]);
 				}
 			};
 			self.getGenderClass = ko.computed(function () {
 				if (self.person()) {
-					if (self.person().gender == 'FEMALE') {
+					if (self.person()
+						.gender == 'FEMALE') {
 						return "fa fa-female";
-					} else if (self.person().gender == 'MALE') {
+					} else if (self.person()
+						.gender == 'MALE') {
 						return "fa fa-male";
 					} else {
 						return "fa fa-question";
@@ -275,7 +281,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.searchHighlight = ko.observable();
 			self.searchHighlight.subscribe(func => {
 				if (func)
-					self.highlight(self.filteredRecs().filter(func));
+					self.highlight(self.filteredRecs()
+						.filter(func));
 				else
 					self.highlight([]);
 			});
@@ -288,7 +295,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				});
 			});
 			self.filtersChanged.subscribe(() => {
-				var groupAll = self.crossfilter().groupAll();
+				var groupAll = self.crossfilter()
+					.groupAll();
 				groupAll.reduce(...reduceToRecs);
 				self.filteredRecs(groupAll.value());
 			});
@@ -302,13 +310,15 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				});
 				self.facetsObs.removeAll();
 				self.facetsObs.push(...self.facets);
-				var groupAll = self.crossfilter().groupAll();
+				var groupAll = self.crossfilter()
+					.groupAll();
 				groupAll.reduce(...reduceToRecs);
 				self.filteredRecs(groupAll.value());
 			});
 
 			self.showBrowser = function () {
-				$('#cohortDefinitionChooser').modal('show');
+				$('#cohortDefinitionChooser')
+					.modal('show');
 			};
 
 			self.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
@@ -324,8 +334,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.showSection[section](!self.showSection[section]());
 			};
 
-			self.columns = [
-				{
+			self.columns = [{
 					title: 'Domain',
 					data: 'domain'
 				},
@@ -348,12 +357,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			];
 
 			self.options = {
-				Facets: [
-					{
-						'caption': 'Domain',
-						'binding': d => d.domain,
-        },
-				]
+				Facets: [{
+					'caption': 'Domain',
+					'binding': d => d.domain,
+				}, ]
 			};
 
 			if (self.personId()) {

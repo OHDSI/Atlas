@@ -1,57 +1,68 @@
 <div class="wrapperTitle">
-	<i class="fa fa-cogs"></i>Configuration
+  <i class="fa fa-cogs"></i>Configuration
 </div>
 <div>
-<div id="wrapperConfigure">
-	<div data-bind="if:sharedState.appInitializationStatus()=='complete'">
-		<div class="heading">Configured Services</div>
-		<div data-bind="foreach:services">
-			<div data-bind="if:available==true">
-				<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
-			</div>
+  <div id="wrapperConfigure">
+    <div data-bind="if:sharedState.appInitializationStatus()=='complete'">
+      <div data-bind="with:config.api">
+        <div data-bind="if:available==true">
+          <div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
+        </div>
 
-			<div data-bind="if:available==false">
-				<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
-			</div>
+        <div data-bind="if:available==false">
+          <div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
+        </div>
 
-			<span class="serviceName" data-bind="text:name"></span> (
-			<span class="serviceUrl" data-bind="text:url"></span>)
-			<div data-bind="if:available==false">
-				<div class="error" data-bind="text:xhr.statusText"></div>
-			</div>
-			<table data-bind="if:$data.sources.length > 0" class="configureSourceTable">
-				<thead>
-					<th></th>
-					<th>Source Name [Source Key]</th>
-					<th>Dialect</th>
-					<th>Vocabulary Version</th>
-					<th>Evidence</th>
-					<th>Record Counts (RC / DRC)</th>
-					<th>Incidence</th>
-				</thead>
-				<tbody data-bind="foreach:$data.sources">
-					<tr>
-						<td><i class="fa" data-bind="if:!initialized, attr: { title : error }, css: { 'fa-check-circle': initialized, 'fa-exclamation-circle': !initialized }"></i>
-							<span data-bind="text:error"></span>
-						</td>
-						<td data-bind="text:sourceName + ' [' + sourceKey + ']'"></td>
-						<td data-bind="text:sourceDialect"></td>
-						<td class="configureRadio">
-							<input type="radio" name="radioSource" data-bind="disable:!hasVocabulary, checkedValue:vocabularyUrl, checked:$component.sharedState.vocabularyUrl">
-							<span data-bind="text:version"></span>
-						</td>
-						<td class="configureRadio">
-							<input type="radio" name="radioEvidence" data-bind="disable:!hasEvidence, checkedValue:evidenceUrl, checked:$component.sharedState.evidenceUrl">
-						</td>
-						<td class="configureRadio">
-							<input type="radio" name="radioDensity" data-bind="disable:!hasResults, checkedValue:resultsUrl, checked:$component.sharedState.resultsUrl">
-						</td>
-						<td class="configureCheckbox">
-							<input type="checkbox" name="checkResults" data-bind="disable:!hasResults, checked:hasResults">
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-</div>
+        <span class="serviceName" data-bind="text:name"></span> (
+        <span class="serviceUrl" data-bind="text:url"></span>)
+        <div data-bind="if:available==false">
+          <div class="error" data-bind="text:xhr.statusText"></div>
+        </div>
+        <table data-bind="if:$data.sources.length > 0" class="configureSourceTable">
+          <thead>
+            <th></th>
+            <th>Source Name [Source Key]</th>
+            <th>Table Qualifiers</th>
+            <th>Dialect</th>
+            <th>Vocabulary Version</th>
+            <th>Evidence</th>
+            <th>Record Counts (RC / DRC)</th>
+            <th>Incidence</th>
+          </thead>
+          <tbody data-bind="foreach:$data.sources">
+            <tr>
+              <td><i class="fa" data-bind="if:!initialized, attr: { title : error }, css: { 'fa-check-circle': initialized, 'fa-exclamation-circle': !initialized }"></i>
+                <span data-bind="text:error"></span>
+              </td>
+              <td data-bind="text:sourceName + ' [' + sourceKey + ']'"></td>
+              <td>
+                <div data-bind="foreach:daimons">
+                  <div data-bind="text:daimonType + ': ' + tableQualifier"></div>
+                </div>
+              </td>
+              <td data-bind="text:sourceDialect"></td>
+              <td class="configureRadio">
+                <input type="radio" name="radioSource" data-bind="disable:!hasVocabulary, checkedValue:vocabularyUrl, checked:$component.sharedState.vocabularyUrl">
+                <span data-bind="text:version"></span>
+              </td>
+              <td class="configureRadio">
+                <input type="radio" name="radioEvidence" data-bind="disable:!hasEvidence, checkedValue:evidenceUrl, checked:$component.sharedState.evidenceUrl">
+              </td>
+              <td class="configureRadio">
+                <input type="radio" name="radioDensity" data-bind="disable:!hasResults, checkedValue:resultsUrl, checked:$component.sharedState.resultsUrl">
+              </td>
+              <td class="configureCheckbox">
+                <input type="checkbox" name="checkResults" data-bind="disable:!hasResults, checked:hasResults">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache">Clear Configuration Cache</div>
+      <div data-bind="if: config.userAuthenticationEnabled">
+        <a href="#/roles" class="btn btn-sm btn-primary" style="width: 175px" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
+      </div>
+    </div>
+  </div>
 </div>

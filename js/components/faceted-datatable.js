@@ -78,8 +78,8 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			return ret;
 		}
 
-		self.reference.subscribe(function () {
-			if (self.reference() != null && self.reference().length > 0) {
+		self.reference.subscribe(function (newValue) {
+			if (self.reference() != null) {
 				self.componentLoading(true);
 				self.data(new crossfilter(self.reference()));
 				self.facets.removeAll();
@@ -120,8 +120,6 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 					});
 				}
 				self.componentLoading(false);
-			} else if (self.reference() != null && self.reference().length == 0) {
-				self.componentLoading(false); // This is an empty set
 			}
 		});
 
