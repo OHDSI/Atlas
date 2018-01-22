@@ -7,13 +7,14 @@ define(['knockout',
 	'webapi/ConceptSetAPI',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
+	'clipboard',
 	'knockout.dataTables.binding',
 	'bootstrap',
 	'faceted-datatable',
 	'databindings',
 	'negative-controls',
 	'circe',
-], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState) {
+], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard) {
 	function conceptsetManager(params) {
 		var self = this;
 		var authApi = params.model.authApi;
@@ -536,7 +537,7 @@ define(['knockout',
 			var conceptSetId = conceptSet.id;
 			var qsParams = "";
 			if (conceptSetId > 0) {
-				qsParam = "id=" + conceptSetId + "&";
+				qsParams = "id=" + conceptSetId + "&";
 			}
 			qsParams += "name=" + encodeURIComponent(conceptSet.name())
 			
@@ -1006,6 +1007,36 @@ define(['knockout',
 		self.canDelete = ko.computed(function () {
 			return ((authApi.isAuthenticated() && authApi.isPermittedDeleteConceptset()) || !config.userAuthenticationEnabled);
 		});
+		
+		self.copyToClipboard = function(clipboardButtonId, clipboardButtonMessageId) {
+			var currentClipboard = new clipboard(clipboardButtonId);
+
+			currentClipboard.on('success', function (e) {
+				console.log('Copied to clipboard');
+				e.clearSelection();
+				$(clipboardButtonMessageId).fadeIn();
+				setTimeout(function () {
+					$(clipboardButtonMessageId).fadeOut();
+				}, 1500);
+			});
+
+			currentClipboard.on('error', function (e) {
+				console.log('Error copying to clipboard');
+				console.log(e);
+			});			
+		}
+		
+		self.copyExpressionToClipboard = function() {
+			self.copyToClipboard('#btnCopyExpressionClipboard', '#copyExpressionToClipboardMessage');
+		}
+		
+		self.copyIdentifierListToClipboard = function() {
+			self.copyToClipboard('#btnCopyIdentifierListClipboard', '#copyIdentifierListMessage');
+		}
+		
+		self.copyIncludedConceptIdentifierListToClipboard = function() {
+			self.copyToClipboard('#btnCopyIncludedConceptIdentifierListClipboard', '#copyIncludedConceptIdentifierListMessage');
+		}
 	}
 
 	var component = {

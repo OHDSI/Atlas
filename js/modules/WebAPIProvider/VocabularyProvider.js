@@ -14,6 +14,10 @@ define(function (require, exports) {
 	var domains = [];
 
 	sourceAPI.getSources().then(function (sources) {
+		if (sources.length == 0) {
+			sharedState.appInitializationStatus('no-sources-available');
+			return;
+		}
 		// find the source which has a Vocabulary Daimon with priority = 1
 		var prioritySources = sources.filter(function (source) {
 			return source.daimons.filter(function (daimon) {

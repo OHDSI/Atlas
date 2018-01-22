@@ -4,7 +4,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		var self = this;
 
 		self.reference = params.reference;
-		self.data = ko.observable();
+		self.data = params.xfObservable || ko.observable();
 		self.tableData = ko.pureComputed(function () {
 			if (self.data() && self.data().size() && self.data().size() > 0) {
 				return self.data().allFiltered();
@@ -24,7 +24,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		// Set some defaults for the data table
 		self.autoWidth = params.autoWidth || true;
 		self.buttons = params.buttons || [
-				'colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'
+			'colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'
 		];
 		self.colVis = params.colVis || {
 			buttonText: 'Change Columns',
@@ -38,18 +38,26 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.language = params.language || {
 			search: 'Filter: '
 		};
-		self.lengthMenu = params.lengthMenu || [[15, 30, 45, 100, -1], [15, 30, 45, 100, 'All']];
-		self.order = params.order || [[1, 'desc']];
+		self.pageLength = params.pageLength || 15;
+		self.lengthMenu = params.lengthMenu || [
+			[15, 30, 45, 100, -1],
+			[15, 30, 45, 100, 'All']
+		];
+		self.order = params.order || [
+			[1, 'desc']
+		];
 		self.orderColumn = 1;
 		if (params.orderColumn) {
-			self.order = [[params.orderColumn, 'desc']]
+			self.order = [
+				[params.orderColumn, 'desc']
+			]
 		}
 		self.orderClasses = params.orderClasses || false;
 		self.ordering = params.ordering || true;
 		self.scrollOptions = params.scrollOptions || null;
 
 		self.updateFilters = function (data, event) {
-			var facet = self.facets()[data.dimension.id()];
+			var facet = data.facet;
 			data.selected(!data.selected());
 			if (data.selected()) {
 				if (!facet.selectedItems.hasOwnProperty(data.key)) {
@@ -101,6 +109,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 						$.each(dimension.group().top(Number.POSITIVE_INFINITY), function (i, facetItem) {
 							facetItem.dimension = dimension;
 							facetItem.selected = ko.observable(false);
+							facetItem.facet = facet;
 							facet.facetItems.push(facetItem);
 						});
 						self.facets.push(facet);

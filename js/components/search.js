@@ -20,6 +20,9 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 		self.toggleAdvanced = function () {
 			self.showAdvanced(!self.showAdvanced());
 		}
+		self.clearAllAdvanced = function () {
+			$('.advanced-options input').attr('checked', false);
+		}
 
 		self.searchConceptsColumns = [{
 			title: '<i class="fa fa-shopping-cart"></i>',
@@ -33,41 +36,41 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 			},
 			orderable: false,
 			searchable: false
-        }, {
+		}, {
 			title: 'Id',
 			data: 'CONCEPT_ID'
-        }, {
+		}, {
 			title: 'Code',
 			data: 'CONCEPT_CODE'
-        }, {
+		}, {
 			title: 'Name',
 			data: 'CONCEPT_NAME',
 			render: function (s, p, d) {
 				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 			}
-        }, {
+		}, {
 			title: 'Class',
 			data: 'CONCEPT_CLASS_ID'
-        }, {
+		}, {
 			title: 'Standard Concept Caption',
 			data: 'STANDARD_CONCEPT_CAPTION',
 			visible: false
-        }, {
+		}, {
 			title: 'RC',
 			data: 'RECORD_COUNT',
 			className: 'numeric'
-        }, {
+		}, {
 			title: 'DRC',
 			data: 'DESCENDANT_RECORD_COUNT',
 			className: 'numeric'
-        }, {
+		}, {
 			title: 'Domain',
 			data: 'DOMAIN_ID'
-        }, {
+		}, {
 			title: 'Vocabulary',
 			data: 'VOCABULARY_ID'
-        }];
+		}];
 
 		self.searchConceptsOptions = {
 			Facets: [{
@@ -75,37 +78,37 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 				'binding': function (o) {
 					return o.VOCABULARY_ID;
 				}
-            }, {
+			}, {
 				'caption': 'Class',
 				'binding': function (o) {
 					return o.CONCEPT_CLASS_ID;
 				}
-            }, {
+			}, {
 				'caption': 'Domain',
 				'binding': function (o) {
 					return o.DOMAIN_ID;
 				}
-            }, {
+			}, {
 				'caption': 'Standard Concept',
 				'binding': function (o) {
 					return o.STANDARD_CONCEPT_CAPTION;
 				}
-            }, {
+			}, {
 				'caption': 'Invalid Reason',
 				'binding': function (o) {
 					return o.INVALID_REASON_CAPTION;
 				}
-            }, {
+			}, {
 				'caption': 'Has Records',
 				'binding': function (o) {
 					return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
 				}
-            }, {
+			}, {
 				'caption': 'Has Descendant Records',
 				'binding': function (o) {
 					return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
 				}
-            }]
+			}]
 		};
 
 		self.updateSearchFilters = function () {
@@ -153,6 +156,8 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 				sharedState.selectedConceptsIndex[items[i].concept.CONCEPT_ID] = 1;
 				sharedState.selectedConcepts.push(conceptSetItem);
 			}
+
+			document.location = '#/conceptset/0/details';
 		}
 
 		self.importConceptIdentifiers = function () {
@@ -165,7 +170,7 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 				success: function (data) {
 					// Automatically add these concepts to the active concept set
 					self.initConceptSet(data);
-					self.model.importedConcepts(data);
+					document.location = '#/conceptset/0/details';
 				}
 			});
 		}
@@ -180,7 +185,7 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 				success: function (data) {
 					// Automatically add these concepts to the active concept set
 					self.initConceptSet(data);
-					self.model.importedConcepts(data);
+					document.location = '#/conceptset/0/details';
 				}
 			});
 		}
@@ -208,18 +213,18 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 			self.model.importedConcepts([]);
 		}
 
-		self.onEnter = function(d,e){
-				if (e.keyCode === 13) {
-					self.searchClick();
-				} else {
-					return true;
-				}
-		};		
-		
-		self.searchClick = function() {
+		self.onEnter = function (d, e) {
+			if (e.keyCode === 13) {
+				self.searchClick();
+			} else {
+				return true;
+			}
+		};
+
+		self.searchClick = function () {
 			var vocabElements = $('[name="vocabularyId"]input:checkbox:checked');
 			var domainElements = $('[name="domainId"]input:checkbox:checked');
-			
+
 			if (vocabElements.length > 0 || domainElements.length > 0) {
 				self.executeSearch();
 			} else if (self.currentSearch().length > 2) {
@@ -228,17 +233,17 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 				alert('invalid search');
 			}
 		}
-		
+
 		self.executeSearch = function () {
 			var vocabElements = $('[name="vocabularyId"]input:checkbox:checked');
 			var domainElements = $('[name="domainId"]input:checkbox:checked');
-			
+
 			// if we don't have a search and aren't looking up domain or vocabulary details, abort.
 			if (self.currentSearch() === undefined && vocabElements.length == 0 && domainElements.length == 0)
 				return;
-			
+
 			self.searchExecuted(true);
-			
+
 			var query = self.currentSearch() === undefined ? '' : self.currentSearch();
 			self.loading(true);
 
@@ -263,7 +268,7 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 				if (domains.length > 0) {
 					advancedSearch["DOMAIN_ID"] = domains;
 				}
-				
+
 				$.ajax({
 					url: sharedState.vocabularyUrl() + 'search',
 					contentType: 'application/json',

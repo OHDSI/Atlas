@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, sharedState) {
+define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
+	function ($, ko, ohdsiUtil, config, authApi, sharedState, querystring, d3) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
@@ -61,269 +61,259 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			});
 
 			self.initComplete = function () {
-				if (self.sharedState.appInitializationStatus() == 'initializing') {
-					var routerOptions = {
-						notfound: function () {
+				var routerOptions = {
+					notfound: function () {
+						self.currentView('search');
+					},
+					on: function () {
+						self.currentView('loading');
+					}
+				};
+				var routes = {
+					'/': function () {
+						document.location = "#/home";
+					},
+					'/concept/:conceptId:': function (conceptId) {
+						require(['concept-manager'], function () {
+							self.currentConceptId(conceptId);
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('concept-manager');
+						});
+					},
+					'/cohortdefinitions': function () {
+						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('cohort-definitions');
+						});
+					},
+					'/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': function (cohortDefinitionId, path) {
+						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
+							// Determine the view to show on the cohort manager screen based on the path
+							path = path.split("/");
+							var view = 'definition'
+							if (path.length > 0 && path[0] != "") {
+								view = path[0];
+							}
+							// Determine any optional parameters to set based on the query string
+							qs = self.router.qs(); // Get the query string parameters
+							var sourceKey = qs.sourceKey || null;
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('cohort-definition-manager');
+							self.currentCohortDefinitionMode(view);
+							self.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details', sourceKey);
+						});
+					},
+					'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
+						require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'explore-cohort'], function (CohortDefinition) {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('cohort-definition-manager');
+							self.currentCohortDefinitionMode('conceptsets');
+							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
+						});
+					},
+					'/datasources': function () {
+						require(['data-sources'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('data-sources');
+						});
+					},
+					'/datasources/:sourceKey/:reportName': function (sourceKey, reportName) {
+						require(['data-sources'], function () {
+							self.componentParams = {
+								model: self,
+								reportName: reportName,
+								sourceKey: sourceKey
+							};
+							self.currentView('data-sources');
+						});
+					},
+					'/configure': function () {
+						require(['configuration'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('ohdsi-configuration');
+						});
+					},
+					'/roles': function () {
+						require(['roles'], function () {
+							self.currentView('roles');
+						});
+					},
+					'/role/:id': function (id) {
+						require(['role-details'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentRoleId(id);
+							self.currentView('role-details');
+						});
+					},
+					'/home': function () {
+						require(['home'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('home');
+						});
+					},
+					'/welcome/:token': function (token) {
+						require(['welcome'], function () {
+							authApi.token(token);
+							document.location = "#/welcome";
+						});
+					},
+					'/jobs': function () {
+						require(['job-manager'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('job-manager');
+						});
+					},
+					'/reports': function () {
+						require(['report-manager', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('report-manager');
+						});
+					},
+					'/profiles/?((\w|.)*)': function (path) {
+						require(['profile-manager', 'cohort-definition-browser'], function () {
+							path = path.split("/");
+							self.componentParams = {
+								model: self,
+								sourceKey: (path[0] || null),
+								personId: (path[1] || null),
+								cohortDefinitionId: (path[2] || null)
+							};
+							self.currentView('profile-manager');
+						});
+					},
+					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
+						require(['conceptset-manager', 'cohort-definition-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.loadConceptSet(conceptSetId, 'conceptset-manager', 'repository', mode);
+							self.resolveConceptSetExpression();
+						});
+					},
+					'/conceptsets': function () {
+						require(['conceptset-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('conceptset-browser');
+						});
+					},
+					'/search/:query:': function (query) {
+						require(['search'], function (search) {
+							self.componentParams = {
+								model: self,
+								query: unescape(query)
+							};
 							self.currentView('search');
-						},
-						on: function () {
-							self.currentView('loading');
+						});
+					},
+					'/search': function () {
+						require(['search'], function (search) {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('search');
+						});
+					},
+					'/estimation': function () {
+						require(['cohort-comparison-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('cohort-comparison-browser');
+						});
+					},
+					'/estimation/:cohortComparisonId:': function (cohortComparisonId) {
+						require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
+							self.currentCohortComparisonId(+cohortComparisonId);
+							self.componentParams = {
+								currentCohortComparisonId: self.currentCohortComparisonId,
+								currentCohortComparison: self.currentCohortComparison,
+								dirtyFlag: self.currentCohortComparisonDirtyFlag
+							};
+							self.currentView('cohort-comparison-manager');
+						});
+					},
+					'/iranalysis': function () {
+						require(['ir-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('ir-browser');
+						});
+					},
+					'/iranalysis/new': function (analysisId) {
+						require(['ir-manager'], function () {
+							self.selectedIRAnalysisId(null);
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('ir-manager');
+						});
+					},
+					'/iranalysis/:analysisId:/?((\w|.)*)': function (analysisId, path) {
+						path = path.split("/");
+						var activeTab = null;
+						if (path.length > 0 && path[0] != "") {
+							activeTab = path[0];
 						}
-					};
-					var routes = {
-						'/': function () {
-							document.location = "#/home";
-						},
-						'/concept/:conceptId:': function (conceptId) {
-							require(['concept-manager'], function () {
-								self.currentConceptId(conceptId);
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('concept-manager');
-							});
-						},
-						'/cohortdefinitions': function () {
-							require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('cohort-definitions');
-							});
-						},
-						'/cohortdefinition/:cohortDefinitionId:': function (cohortDefinitionId) {
-							require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('cohort-definition-manager');
-								self.currentCohortDefinitionMode('definition');
-								self.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details');
-							});
-						},
-						'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
-							require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'explore-cohort'], function (CohortDefinition) {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('cohort-definition-manager');
-								self.currentCohortDefinitionMode('conceptsets');
-								self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
-							});
-						},
-						'/datasources': function () {
-							require(['data-sources'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('data-sources');
-							});
-						},
-						'/datasources/:sourceKey/:reportName': function (sourceKey, reportName) {
-							require(['data-sources'], function () {
-								self.componentParams = {
-									model: self,
-									reportName: reportName,
-									sourceKey: sourceKey
-								};
-								self.currentView('data-sources');
-							});
-						},
-						'/configure': function () {
-							require(['configuration'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('ohdsi-configuration');
-							});
-						},
-						'/roles': function () {
-							require(['roles'], function () {
-								self.currentView('roles');
-							});
-						},
-						'/role/:id': function (id) {
-							require(['role-details'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentRoleId(id);
-								self.currentView('role-details');
-							});
-						},
-						'/home': function () {
-							require(['home'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('home');
-							});
-						},
-						'/welcome/:token': function (token) {
-							require(['welcome'], function () {
-								authApi.token(token);
-								document.location = "#/welcome";
-							});
-						},
-						'/jobs': function () {
-							require(['job-manager'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('job-manager');
-							});
-						},
-						'/reports': function () {
-							require(['report-manager', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('report-manager');
-							});
-						},
-						'/import': function () {
-							require(['importer'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('importer');
-							});
-						},
-						'/profiles/?((\w|.)*)': function (path) {
-							require(['profile-manager', 'cohort-definition-browser'], function () {
-								path = path.split("/");
-								self.componentParams = {
-									model: self,
-									sourceKey: (path[0] || null),
-									personId: (path[1] || null),
-									cohortDefinitionId: (path[2] || null)
-								};
-								self.currentView('profile-manager');
-							});
-						},
-						'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
-							require(['conceptset-manager', 'cohort-definition-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.loadConceptSet(conceptSetId, 'conceptset-manager', 'repository', mode);
-								self.resolveConceptSetExpression();
-							});
-						},
-						'/conceptsets': function () {
-							require(['conceptset-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('conceptset-browser');
-							});
-						},
-						'/search/:query:': function (query) {
-							require(['search'], function (search) {
-								self.componentParams = {
-									model: self,
-									query: unescape(query)
-								};
-								self.currentView('search');
-							});
-						},
-						'/search': function () {
-							require(['search'], function (search) {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('search');
-							});
-						},
-						'/estimation': function () {
-							require(['cohort-comparison-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('cohort-comparison-browser');
-							});
-						},
-						'/estimation/:cohortComparisonId:': function (cohortComparisonId) {
-							require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
-								self.currentCohortComparisonId(+cohortComparisonId);
-								self.componentParams = {
-									currentCohortComparisonId: self.currentCohortComparisonId,
-									currentCohortComparison: self.currentCohortComparison,
-									dirtyFlag: self.currentCohortComparisonDirtyFlag
-								};
-								self.currentView('cohort-comparison-manager');
-							});
-						},
-						'/iranalysis': function () {
-							require(['ir-browser'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('ir-browser');
-							});
-						},
-						'/iranalysis/new': function (analysisId) {
-							require(['ir-manager'], function () {
-								self.selectedIRAnalysisId(null);
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('ir-manager');
-							});
-						},
-						'/iranalysis/:analysisId': function (analysisId) {
-							require(['ir-manager'], function () {
-								self.selectedIRAnalysisId(+analysisId);
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('ir-manager');
-							});
-						},
-						'/plp': function () {
-							require(['plp-browser', 'plp-manager', 'plp-inspector'], function () {
-								self.componentParams = {
-									model: self
-								};
-								self.currentView('plp-browser');
-							});
-						},
-						'/plp/:modelId:': function (modelId) {
-							require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
-								self.currentPatientLevelPredictionId(+modelId);
-								self.componentParams = {
-									currentPatientLevelPredictionId: self.currentPatientLevelPredictionId,
-									currentPatientLevelPrediction: self.currentPatientLevelPrediction,
-									dirtyFlag: self.currentPatientLevelPredictionDirtyFlag,
-								};
-								self.currentView('plp-manager');
-							});
-						},
-					};
+						require(['ir-manager'], function () {
+							self.selectedIRAnalysisId(+analysisId);
+							self.componentParams = {
+								model: self,
+								activeTab: activeTab
+							};
+							self.currentView('ir-manager');
+						});
+					},
+					'/plp': function () {
+						require(['plp-browser', 'plp-manager', 'plp-inspector'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('plp-browser');
+						});
+					},
+					'/plp/:modelId:': function (modelId) {
+						require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
+							self.currentPatientLevelPredictionId(+modelId);
+							self.componentParams = {
+								currentPatientLevelPredictionId: self.currentPatientLevelPredictionId,
+								currentPatientLevelPrediction: self.currentPatientLevelPrediction,
+								dirtyFlag: self.currentPatientLevelPredictionDirtyFlag,
+							};
+							self.currentView('plp-manager');
+						});
+					},
+				};
 
-					self.router = new Router(routes)
-						.configure(routerOptions);
-					self.router.init('/');
-					self.applicationStatus('running');
-					self.sharedState.appInitializationStatus("complete");
-				} else {
-					self.componentParams = {
-						model: self
-					};
-
-					self.applicationStatus('initialization error');
-					document.location = '#/configure';
-				}
-				setTimeout(function () {
-					$('#splash')
-						.hide();
-				}, 0);
-				setTimeout(function () {
-					$('#wrapperLeftMenu')
-						.show();
-					$('#wrapperMainWindow')
-						.show();
-				}, 5);
+				self.router = new Router(routes)
+					.configure(routerOptions);
+				self.router.qs = function () {
+					return querystring.parse(window.location.href.split('?')[1]);
+				};
+				self.router.init('/');
+				self.applicationStatus('running');
 			};
 
 			self.relatedConceptsOptions = {
@@ -332,27 +322,27 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					'binding': function (o) {
 						return o.VOCABULARY_ID;
 					}
-			}, {
+				}, {
 					'caption': 'Standard Concept',
 					'binding': function (o) {
 						return o.STANDARD_CONCEPT_CAPTION;
 					}
-			}, {
+				}, {
 					'caption': 'Invalid Reason',
 					'binding': function (o) {
 						return o.INVALID_REASON_CAPTION;
 					}
-			}, {
+				}, {
 					'caption': 'Class',
 					'binding': function (o) {
 						return o.CONCEPT_CLASS_ID;
 					}
-			}, {
+				}, {
 					'caption': 'Domain',
 					'binding': function (o) {
 						return o.DOMAIN_ID;
 					}
-			}, {
+				}, {
 					'caption': 'Relationship',
 					'binding': function (o) {
 						return $.map(o.RELATIONSHIPS, function (val) {
@@ -360,26 +350,26 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						});
 					},
 					isArray: true,
-			}, {
+				}, {
 					'caption': 'Has Records',
 					'binding': function (o) {
 						return parseInt(o.RECORD_COUNT.toString()
 							.replace(',', '')) > 0;
 					}
-			}, {
+				}, {
 					'caption': 'Has Descendant Records',
 					'binding': function (o) {
 						return parseInt(o.DESCENDANT_RECORD_COUNT.toString()
 							.replace(',', '')) > 0;
 					}
-			}, {
+				}, {
 					'caption': 'Distance',
 					'binding': function (o) {
 						return Math.max.apply(Math, o.RELATIONSHIPS.map(function (d) {
 							return d.RELATIONSHIP_DISTANCE;
 						}))
 					},
-			}]
+				}]
 			};
 
 			self.relatedConceptsColumns = [{
@@ -394,41 +384,41 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 				},
 				orderable: false,
 				searchable: false
-		}, {
+			}, {
 				title: 'Id',
 				data: 'CONCEPT_ID'
-		}, {
+			}, {
 				title: 'Code',
 				data: 'CONCEPT_CODE'
-		}, {
+			}, {
 				title: 'Name',
 				data: 'CONCEPT_NAME',
 				render: function (s, p, d) {
 					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 				}
-		}, {
+			}, {
 				title: 'Class',
 				data: 'CONCEPT_CLASS_ID'
-		}, {
+			}, {
 				title: 'Standard Concept Caption',
 				data: 'STANDARD_CONCEPT_CAPTION',
 				visible: false
-		}, {
+			}, {
 				title: 'RC',
 				data: 'RECORD_COUNT',
 				className: 'numeric'
-		}, {
+			}, {
 				title: 'DRC',
 				data: 'DESCENDANT_RECORD_COUNT',
 				className: 'numeric'
-		}, {
+			}, {
 				title: 'Domain',
 				data: 'DOMAIN_ID'
-		}, {
+			}, {
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
-		}];
+			}];
 			self.relatedSourcecodesColumns = [{
 				title: '',
 				render: function (s, p, d) {
@@ -446,246 +436,246 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 				},
 				orderable: false,
 				searchable: false
-		}, {
+			}, {
 				title: 'Id',
 				data: 'CONCEPT_ID'
-		}, {
+			}, {
 				title: 'Code',
 				data: 'CONCEPT_CODE'
-		}, {
+			}, {
 				title: 'Name',
 				data: 'CONCEPT_NAME',
 				render: function (s, p, d) {
 					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 				}
-		}, {
+			}, {
 				title: 'Class',
 				data: 'CONCEPT_CLASS_ID'
-		}, {
+			}, {
 				title: 'Standard Concept Caption',
 				data: 'STANDARD_CONCEPT_CAPTION',
 				visible: false
-		}, {
+			}, {
 				title: 'Domain',
 				data: 'DOMAIN_ID'
-		}, {
+			}, {
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
-		}];
+			}];
 			self.relatedSourcecodesOptions = {
 				Facets: [{
 					'caption': 'Vocabulary',
 					'binding': function (o) {
 						return o.VOCABULARY_ID;
 					}
-			}, {
+				}, {
 					'caption': 'Invalid Reason',
 					'binding': function (o) {
 						return o.INVALID_REASON_CAPTION;
 					}
-			}, {
+				}, {
 					'caption': 'Class',
 					'binding': function (o) {
 						return o.CONCEPT_CLASS_ID;
 					}
-			}, {
+				}, {
 					'caption': 'Domain',
 					'binding': function (o) {
 						return o.DOMAIN_ID;
 					}
-			}]
+				}]
 			};
 			self.metatrix = {
 				'ATC.ATC 4th': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 5]
-				}]
+					}]
 				},
 				'ICD9CM.5-dig billing code': {
 					childRelationships: [{
 						name: 'Subsumes',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Is a',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'ICD9CM.4-dig nonbill code': {
 					childRelationships: [{
 						name: 'Subsumes',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Is a',
 						range: [0, 1]
-				}, {
+					}, {
 						name: 'Non-standard to Standard map (OMOP)',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'ICD9CM.3-dig nonbill code': {
 					childRelationships: [{
 						name: 'Subsumes',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Non-standard to Standard map (OMOP)',
 						range: [0, 999]
-				}]
+					}]
 				},
 				'RxNorm.Ingredient': {
 					childRelationships: [{
 						name: 'Ingredient of (RxNorm)',
 						range: [0, 999]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						vocabulary: ['ATC', 'ETC'],
 						range: [0, 1]
-				}]
+					}]
 				},
 				'RxNorm.Brand Name': {
 					childRelationships: [{
 						name: 'Ingredient of (RxNorm)',
 						range: [0, 999]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Tradename of (RxNorm)',
 						range: [0, 999]
-				}]
+					}]
 				},
 				'RxNorm.Branded Drug': {
 					childRelationships: [{
 						name: 'Consists of (RxNorm)',
 						range: [0, 999]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ingredient (RxNorm)',
 						range: [0, 999]
-				}, {
+					}, {
 						name: 'RxNorm to ATC (RxNorm)',
 						range: [0, 999]
-				}, {
+					}, {
 						name: 'RxNorm to ETC (FDB)',
 						range: [0, 999]
-				}]
+					}]
 				},
 				'RxNorm.Clinical Drug Comp': {
 					childRelationships: [],
 					parentRelationships: [{
 						name: 'Has precise ingredient (RxNorm)',
 						range: [0, 999]
-				}, {
+					}, {
 						name: 'Has ingredient (RxNorm)',
 						range: [0, 999]
-				}]
+					}]
 				},
 				'CPT4.CPT4': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'CPT4.CPT4 Hierarchy': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'ETC.ETC': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'MedDRA.LLT': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'MedDRA.PT': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'MedDRA.HLT': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'MedDRA.SOC': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'MedDRA.HLGT': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'SNOMED.Clinical Finding': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				},
 				'SNOMED.Procedure': {
 					childRelationships: [{
 						name: 'Has descendant of',
 						range: [0, 1]
-				}],
+					}],
 					parentRelationships: [{
 						name: 'Has ancestor of',
 						range: [0, 1]
-				}]
+					}]
 				}
 			};
 			self.hasRelationship = function (concept, relationships) {
@@ -849,125 +839,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			self.loadingReportDrilldown = ko.observable(false);
 			self.activeReportDrilldown = ko.observable(false);
 			self.criteriaContext = ko.observable();
-			self.cohortAnalyses = ko.observableArray();
 			self.currentReport = ko.observable();
-			// TODO: This object array was lifted from Heracles to capture the
-			// various analysis "packages" to use when viewing. This information should be relocated
-			// to the database and be made available through the WebAPI.
-			self.visualizationPacks = ko.observableArray([{
-				name: "Care Site",
-				reportKey: null,
-				analyses: [1200, 1201]
-	}, {
-				name: "Cohort Specific",
-				reportKey: 'Cohort Specific',
-				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-	}, {
-				name: "Condition",
-				reportKey: 'Condition',
-				analyses: [116, 117, 400, 401, 402, 404, 405, 406, 1]
-	}, {
-				name: "Condition Eras",
-				reportKey: 'Condition Eras',
-				analyses: [1001, 1000, 1007, 1006, 1004, 1002, 116, 117, 1]
-	}, {
-				name: "Conditions by Index",
-				reportKey: 'Conditions by Index',
-				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-	}, {
-				name: "Data Density",
-				reportKey: null,
-				analyses: [117, 220, 420, 502, 620, 720, 820, 920, 1020, 111, 403, 603, 703, 803, 903, 1003]
-	}, {
-				name: "Death",
-				reportKey: 'Death',
-				analyses: [501, 506, 505, 504, 502, 116, 117]
-	}, {
-				name: "Default",
-				reportKey: null,
-				analyses: [1, 2, 101, 108, 110]
-	}, {
-				name: "Drug Eras",
-				reportKey: 'Drug Eras',
-				analyses: [900, 901, 907, 906, 904, 902, 116, 117, 1]
-	}, {
-				name: "Drug Exposure",
-				reportKey: 'Drug Exposure',
-				analyses: [700, 701, 706, 715, 705, 704, 116, 702, 117, 717, 716, 1]
-	}, {
-				name: "Drugs by Index",
-				reportKey: 'Drugs by Index',
-				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-	}, {
-				name: "Heracles Heel",
-				reportKey: 'Heracles Heel',
-				analyses: [7, 8, 9, 114, 115, 207, 208, 209, 210, 302, 409, 410, 411, 412, 413, 509, 510, 609, 610, 612, 613, 709, 710, 711, 712, 713, 809, 810, 812, 813, 814, 908, 909, 910, 1008, 1009, 1010, 1415, 1500, 1501, 1600, 1601, 1701, 103, 105, 206, 406, 506, 606, 706, 715, 716, 717, 806, 906, 907, 1006, 1007, 1502, 1503, 1504, 1505, 1506, 1507, 1508, 1509, 1510, 1511, 1602, 1603, 1604, 1605, 1606, 1607, 1608, 511, 512, 513, 514, 515, 2, 4, 5, 200, 301, 400, 500, 505, 600, 700, 800, 900, 1000, 1609, 1610, 405, 605, 705, 805, 202, 3, 101, 420, 620, 720, 820, 920, 1020, 402, 602, 702, 802, 902, 1002, 1310, 1309, 1312, 1313, 1314]
-	}, {
-				name: "Location",
-				reportKey: null,
-				analyses: [1100, 1101]
-	}, {
-				name: "Measurement",
-				reportKey: null,
-				analyses: [1300, 1301, 1303, 1306, 1305, 1315, 1304, 1316, 1302, 1307, 1317, 1318, 1320, 117, 116, 1]
-	}, {
-				name: "Observation",
-				reportKey: null,
-				analyses: [800, 801, 806, 805, 815, 804, 802, 807, 816, 817, 818, 117, 116, 102, 112, 1]
-	}, {
-				name: "Observation Periods",
-				reportKey: 'Observation Periods',
-				analyses: [101, 104, 106, 107, 108, 109, 110, 113, 1]
-	}, {
-				name: "Person",
-				reportKey: 'Person',
-				analyses: [0, 1, 2, 3, 4, 5]
-	}, {
-				name: "Procedure",
-				reportKey: 'Procedure',
-				analyses: [606, 604, 116, 602, 117, 605, 600, 601, 1]
-	}, {
-				name: "Procedures by Index",
-				reportKey: 'Procedures by Index',
-				analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
-	}, {
-				name: "Visit",
-				reportKey: null,
-				analyses: [202, 203, 206, 204, 116, 117, 211, 200, 201, 1]
-	}, {
-				name: "Data Completeness",
-				reportKey: "Data Completeness",
-				analyses: [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2021, 2022, 2023, 2024, 2025, 2026, 2027]
-	}, {
-				name: "Entropy",
-				reportKey: "Entropy",
-				analyses: [2031, 2032]
-	}]);
-			/*
-        self.reports = ko.observableArray([
-			'Person',
-			'Cohort Specific',
-			'Condition Eras',
-			'Conditions by Index',
-			'Drugs by Index',
-			'Procedures by Index',
-			'Observation Periods',
-			'Condition',
-			'Drug Eras',
-			'Drug Exposure',
-			'Procedure',
-			'Death'
-		]);
-        */
-			// The reports available are defined as part of the visualizationPacks() definition above
-			self.reports = ko.observableArray(self.visualizationPacks()
-				.map(function (item) {
-					return item.reportKey
-				})
-				.filter(function (n) {
-					return n != undefined
-				})
-				.sort());
 			self.getSourceInfo = function (source) {
 				var info = self.currentCohortDefinitionInfo();
 				for (var i = 0; i < info.length; i++) {
@@ -997,38 +869,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						.id + "/details";
 				}
 			}
-			self.getCompletedAnalyses = function (source) {
-				var cohortDefinitionId = self.currentCohortDefinition()
-					.id();
-				$.ajax(config.api.url + 'cohortresults/' + source.sourceKey + '/' + cohortDefinitionId + '/analyses', {
-					success: function (analyses) {
-						sourceAnalysesStatus = {};
-						// initialize cohort analyses status
-						for (var i = 0; i < self.cohortAnalyses()
-							.length; i++) {
-							// If the analysis id's in the array returned from the ws call (analyses)
-							// contains all of the elements in cohortAnalyses()[i] array, then we
-							// know that the analysis has been completed
-							var allAnalysesCompleted = analyses.filter(function (elem) {
-									return self.cohortAnalyses()[i].analyses.indexOf(elem) > -1;
-								})
-								.length == self.cohortAnalyses()[i].analyses.length;
-							if (self.cohortAnalyses()[8].reportKey == 'Heracles Heel') {
-								if (analyses.filter(function (elem) {
-										return self.cohortAnalyses()[i].analyses.indexOf(elem) > -1;
-									})
-									.length > 0) {
-									sourceAnalysesStatus[self.cohortAnalyses()[i].name] = true;
-								}
-							} else {
-								sourceAnalysesStatus[self.cohortAnalyses()[i].name] = allAnalysesCompleted ? 1 : 0;
-							}
-						}
-						sourceAnalysesStatus.ready = true;
-						self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
-					}
-				});
-			}
+
 			self.setConceptSet = function (conceptset, expressionItems) {
 				for (var i = 0; i < expressionItems.length; i++) {
 					var conceptSetItem = expressionItems[i];
@@ -1044,24 +885,23 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					id: conceptset.id
 				});
 			}
-			self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow, mode) {
+			self.loadCohortDefinition = function (cohortDefinitionId, conceptSetId, viewToShow, mode, sourceKey) {
 				// don't load if it is already loaded or a new concept set
-				if (self.currentCohortDefinition() && self.currentCohortDefinition()
-					.id() == cohortDefinitionId) {
-					if (self.currentConceptSet() && self.currentConceptSet()
-						.id == conceptSetId && self.currentConceptSetSource() == 'cohort') {
+				if (self.currentCohortDefinition() && self.currentCohortDefinition().id() == cohortDefinitionId) {
+					if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId && self.currentConceptSetSource() == 'cohort') {
+						self.reportSourceKey(sourceKey);
 						self.currentView(viewToShow);
 						return;
 					} else if (conceptSetId != null) {
 						self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 						return;
 					} else {
+						self.reportSourceKey(sourceKey);
 						self.currentView(viewToShow);
 						return;
 					}
 				}
-				if (self.currentCohortDefinition() && self.currentCohortDefinitionDirtyFlag() && self.currentCohortDefinitionDirtyFlag()
-					.isDirty() && !confirm("Cohort changes are not saved. Would you like to continue?")) {
+				if (self.currentCohortDefinition() && self.currentCohortDefinitionDirtyFlag() && self.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Cohort changes are not saved. Would you like to continue?")) {
 					window.location.href = "#/cohortdefinitions";
 					return;
 				}; // if we are loading a cohort definition, unload any active concept set that was loaded from
@@ -1197,15 +1037,15 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 											var date = new Date(sourceInfo.startTime);
 											cdsi.startTime = ko.observable(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
 											cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
+											var commaFormatted = d3.format(",");
 											// For backwards compatability, query personCount from cdm if not populated in sourceInfo
-											if (sourceInfo.personCount == null)
-											{
+											if (sourceInfo.personCount == null) {
 												cdsi.personCount = ko.observable('...');
 												self.getCohortCount(source, cdsi.personCount);
 											} else {
-												cdsi.personCount = ko.observable(sourceInfo.personCount);
+												cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
 											}
-											cdsi.recordCount = ko.observable(sourceInfo.recordCount);
+											cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
 											cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
 											cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 										} else {
@@ -1221,72 +1061,10 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 										results.push(cdsi);
 									}
 									self.cohortDefinitionSourceInfo(results);
-									// load universe of analyses
-									self.cohortAnalyses(self.visualizationPacks()
-										.filter(function (n) {
-											return n.reportKey != undefined
-										}));
-									var index = {};
-									for (var a = 0; a < self.visualizationPacks()
-										.length; a++) {
-										self.analysisLookup[a] = self.visualizationPacks()[a].name;
-									}
-									// obtain completed result status for each source
-									for (var s = 0; s < cdmSources.length; s++) {
-										var source = cdmSources[s];
-										var info = self.getSourceInfo(source);
-										if (info) {
-											var sourceAnalysesStatus = {};
-											sourceAnalysesStatus.checking = true;
-											self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
-											self.getCompletedAnalyses(source);
-										}
-									}
-									// This is the original approach but it does not reflect some of the interdependencies between analyses
-									// so commenting it out for now. We should revisit this as hardcoding the object above is not sustainable
-									/*
-									var analysesPromise = $.ajax({
-									    url: config.api.url + 'cohortanalysis/',
-									    method: 'GET',
-									    contentType: 'application/json',
-									    success: function (analyses) {
-									        var index = {};
-									        var nestedAnalyses = [];
-
-									        for (var a = 0; a < analyses.length; a++) {
-									            var analysis = analyses[a];
-
-									            if (index[analysis.analysisType] == undefined) {
-									                var analysisType = {
-									                    name: analysis.analysisType,
-									                    analyses: []
-									                };
-									                nestedAnalyses.push(analysisType);
-									                index[analysis.analysisType] = nestedAnalyses.indexOf(analysisType);
-									            }
-									            self.analysisLookup[analysis.analysisId] = analysis.analysisType;
-									            nestedAnalyses[index[analysis.analysisType]].analyses.push(analysis);
-									        }
-
-									        self.cohortAnalyses(nestedAnalyses);
-
-									        // obtain completed result status for each source
-									        for (var s = 0; s < cdmSources.length; s++) {
-									            var source = cdmSources[s];
-									            var info = self.getSourceInfo(source);
-									            if (info) {
-									                var sourceAnalysesStatus = {};
-									                sourceAnalysesStatus.checking = true;
-									                self.sourceAnalysesStatus[source.sourceKey](sourceAnalysesStatus);
-									                self.getCompletedAnalyses(source);
-									            }
-									        }
-									    }
-									});
-									*/
 									if (conceptSetId != null) {
 										self.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 									} else {
+										self.reportSourceKey(sourceKey);
 										self.currentView(viewToShow);
 									}
 								});
@@ -1515,7 +1293,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			self.searchResultsConcepts = ko.observableArray();
 			self.relatedConcepts = ko.observableArray();
 			self.relatedSourcecodes = ko.observableArray();
-			self.importedConcepts = ko.observableArray();
 			self.includedConcepts = ko.observableArray();
 			self.denseSiblings = ko.observableArray();
 			self.includedSourcecodes = ko.observableArray();

@@ -2,9 +2,12 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 
 	function DrugExposureViewModel(params) {
 		var self = this;
+		self.formatOption = function (d) {
+			return '<div class="optionText">' + d.text + '</div>' +
+				'<div class="optionDescription">' + d.description + '</div>';
+		};
 
-		var addActions = [
-			{
+		self.addActions = [{
 				text: "Add First Exposure Criteria",
 				value: 5,
 				selected: false,
@@ -15,7 +18,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 6,
 				selected: false,
 				description: "Filter Drug Exposures by age at occurrence."
-			}, 
+			},
 			{
 				text: "Add Gender Criteria",
 				value: 7,
@@ -57,7 +60,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 12,
 				selected: false,
 				description: "Filter Drug Exposures by Refills."
-			},			
+			},
 			{
 				text: "Add Quantity Criteria",
 				value: 13,
@@ -69,7 +72,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 14,
 				selected: false,
 				description: "Filter Drug Exposures by Days Supply."
-			},			
+			},
 			{
 				text: "Add Route Criteria",
 				value: 15,
@@ -93,27 +96,27 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 18,
 				selected: false,
 				description: "Filter Drug Exposures by Lot Number."
-			},				
+			},
 			{
 				text: "Add Drug Source Concept Criteria",
 				value: 4,
 				selected: false,
 				description: "Filter Drug Exposures by the Drug Source Concept."
 			},
-/*
- 			{
-				text: "Add Prior Observation Duration Criteria",
-				value: 8,
-				selected: false,
-				description: "Filter Drug Exposures based on Prior Observation Duration."
-					},
-			{
-				text: "Add Post Observation Duration Criteria",
-				value: 9,
-				selected: false,
-				description: "Filter Drug Exposures based on Prior Observation Duration."
-					},
-*/
+			/*
+			 			{
+							text: "Add Prior Observation Duration Criteria",
+							value: 8,
+							selected: false,
+							description: "Filter Drug Exposures based on Prior Observation Duration."
+								},
+						{
+							text: "Add Post Observation Duration Criteria",
+							value: 9,
+							selected: false,
+							description: "Filter Drug Exposures based on Prior Observation Duration."
+								},
+			*/
 			{
 				text: "Add Provider Specialty Criteria",
 				value: 10,
@@ -128,20 +131,20 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 			}
 		];
 
-		self.addCriterionSettings = {
-			selectText: "Add criteria attribute…",
-			height:300,
-			actionOptions: addActions,
-			onAction: function (data) {
-				var criteriaType = data.selectedData.value;
-				switch (criteriaType) {
+		self.actionHandler = function (data) {
+			var criteriaType = data.value;
+			switch (criteriaType) {
 				case 0:
 					if (self.Criteria.OccurrenceStartDate() == null)
-						self.Criteria.OccurrenceStartDate(new Range({Op: "lt"}));
+						self.Criteria.OccurrenceStartDate(new Range({
+							Op: "lt"
+						}));
 					break;
 				case 1:
 					if (self.Criteria.OccurrenceEndDate() == null)
-						self.Criteria.OccurrenceEndDate(new Range({Op: "lt"}));
+						self.Criteria.OccurrenceEndDate(new Range({
+							Op: "lt"
+						}));
 					break;
 				case 2:
 					if (self.Criteria.DrugType() == null)
@@ -149,35 +152,47 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					break;
 				case 3:
 					if (self.Criteria.StopReason() == null)
-						self.Criteria.StopReason(new Text({Op: "contains"}));
+						self.Criteria.StopReason(new Text({
+							Op: "contains"
+						}));
 					break;
 				case 12:
 					if (self.Criteria.Refills() == null)
-						self.Criteria.Refills(new Range({Op: "lt"}));
-					break;			
+						self.Criteria.Refills(new Range({
+							Op: "lt"
+						}));
+					break;
 				case 13:
 					if (self.Criteria.Quantity() == null)
-						self.Criteria.Quantity(new Range({Op: "lt"}));
-					break;			
+						self.Criteria.Quantity(new Range({
+							Op: "lt"
+						}));
+					break;
 				case 14:
 					if (self.Criteria.DaysSupply() == null)
-						self.Criteria.DaysSupply(new Range({Op: "lt"}));
-					break;			
+						self.Criteria.DaysSupply(new Range({
+							Op: "lt"
+						}));
+					break;
 				case 15:
 					if (self.Criteria.RouteConcept() == null)
 						self.Criteria.RouteConcept(ko.observableArray());
-					break;			
+					break;
 				case 16:
 					if (self.Criteria.EffectiveDrugDose() == null)
-						self.Criteria.EffectiveDrugDose(new Range({Op: "lt"}));
-					break;			
+						self.Criteria.EffectiveDrugDose(new Range({
+							Op: "lt"
+						}));
+					break;
 				case 17:
 					if (self.Criteria.DoseUnit() == null)
 						self.Criteria.DoseUnit(ko.observableArray());
-					break;			
+					break;
 				case 18:
 					if (self.Criteria.LotNumber() == null)
-						self.Criteria.LotNumber(new Text({Op: "contains"}));
+						self.Criteria.LotNumber(new Text({
+							Op: "contains"
+						}));
 					break;
 				case 4:
 					if (self.Criteria.DrugSourceConcept() == null)
@@ -195,16 +210,16 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					if (self.Criteria.Gender() == null)
 						self.Criteria.Gender(ko.observableArray());
 					break;
-/*
- 				case 8:
-					if (typeof self.Criteria.PriorEnrollDays() != "number")
-						self.Criteria.PriorEnrollDays(0);
-					break;
-				case 9:
-					if (typeof self.Criteria.AfterEnrollDays() != "number")
-						self.Criteria.AfterEnrollDays(0);
-					break;
-*/
+					/*
+								case 8:
+									if (typeof self.Criteria.PriorEnrollDays() != "number")
+										self.Criteria.PriorEnrollDays(0);
+									break;
+								case 9:
+									if (typeof self.Criteria.AfterEnrollDays() != "number")
+										self.Criteria.AfterEnrollDays(0);
+									break;
+					*/
 				case 10:
 					if (self.Criteria.ProviderSpecialty() == null)
 						self.Criteria.ProviderSpecialty(ko.observableArray());
@@ -215,10 +230,16 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					break;
 				case 19:
 					if (self.Criteria.CorrelatedCriteria() == null)
-						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
-					break;						
-				}
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));
+					break;
 			}
+		}
+
+		self.addCriterionSettings = {
+			selectText: "Add criteria attribute…",
+			height: 300,
+			actionOptions: self.addActions,
+			onAction: self.actionHandler
 		};
 
 		self.expression = ko.utils.unwrapObservable(params.expression);

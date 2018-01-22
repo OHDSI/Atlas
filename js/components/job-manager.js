@@ -1,4 +1,4 @@
-define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config) {
+define(['knockout', 'text!./job-manager.html', 'appConfig', 'moment', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config, moment) {
 	function jobManager(params) {
 		var self = this;
 
@@ -16,11 +16,13 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'knockout.dataTables
 				contentType: 'application/json',
 				success: function (jobs) {
 					for (var j = 0; j < jobs.content.length; j++) {
-						var startDate = new Date(jobs.content[j].startDate);
-						jobs.content[j].startDate = startDate.toLocaleDateString() + ' ' + startDate.toLocaleTimeString();
+						if (moment(jobs.content[j].startDate).isValid()) {
+							jobs.content[j].startDate = moment(jobs.content[j].startDate).format('YYYY-MM-DD hh:mm:ss a');
+						}
 
-						var endDate = new Date(jobs.content[j].endDate);
-						jobs.content[j].endDate = endDate.toLocaleDateString() + ' ' + endDate.toLocaleTimeString();
+						if (moment(jobs.content[j].endDate).isValid()) {							
+							jobs.content[j].endDate = moment(jobs.content[j].endDate).format('YYYY-MM-DD hh:mm:ss a');
+						}
 
 						if (jobs.content[j].jobParameters.jobName == undefined) {
 							jobs.content[j].jobParameters.jobName = 'n/a';
