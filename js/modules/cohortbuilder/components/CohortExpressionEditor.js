@@ -108,6 +108,16 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
+				text: "Add Payer Plan Period Criteria",
+				selected: false,
+				description: "Find patients based on Payer Plan Period.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						PayerPlanPeriod: new criteriaTypes.PayerPlanPeriod(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
 				text: "Add Procedure Occurrence Criteria",
 				selected: false,
 				description: "Find patients that experienced a specific procedure.",
@@ -360,6 +370,8 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				return "specimen-criteria";
 			else if (data.hasOwnProperty("ObservationPeriod"))
 				return "observation-period-criteria";
+			else if (data.hasOwnProperty("PayerPlanPeriod"))
+				return "payer-plan-period-criteria";
 			else if (data.hasOwnProperty("Death"))
 				return "death-criteria";
 			else
