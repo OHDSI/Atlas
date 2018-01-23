@@ -42,10 +42,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 					});
 			}
 
-      self.isAuthenticated = authApi.isAuthenticated;
-      self.canViewProfiles = ko.pureComputed(function () {
-        return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedViewProfiles()) || !config.userAuthenticationEnabled;
-      });
+             self.isAuthenticated = authApi.isAuthenticated;
+             self.canViewProfiles = ko.pureComputed(function () {
+               return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedViewProfiles()) || !config.userAuthenticationEnabled;
+             });
 
 			self.cohortSource = ko.observable();
 			self.person = ko.observable();

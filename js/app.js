@@ -1140,19 +1140,19 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					url: config.api.url + 'conceptset/' + conceptSetId,
 					method: 'GET',
 					contentType: 'application/json',
-          headers: {
-            Authorization: self.authApi.getAuthorizationHeader(),
-          },
-          error: self.authApi.handleAccessDenied,
-          success: function (conceptset) {
+                    headers: {
+                      Authorization: self.authApi.getAuthorizationHeader(),
+                    },
+                    error: self.authApi.handleAccessDenied,
+                    success: function (conceptset) {
 						$.ajax({
 							url: config.api.url + 'conceptset/' + conceptSetId + '/expression',
 							method: 'GET',
 							contentType: 'application/json',
-              headers: {
-                Authorization: self.authApi.getAuthorizationHeader(),
-              },
-              error: self.authApi.handleAccessDenied,
+                            headers: {
+                              Authorization: self.authApi.getAuthorizationHeader(),
+                            },
+                            error: self.authApi.handleAccessDenied,
 							success: function (expression) {
 								self.setConceptSet(conceptset, expression.items);
 								self.currentView(viewToShow);

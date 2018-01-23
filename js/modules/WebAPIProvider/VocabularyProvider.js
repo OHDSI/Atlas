@@ -184,10 +184,10 @@ define(function (require, exports) {
 			data: JSON.stringify(expression),
 			method: 'POST',
 			contentType: 'application/json',
-      headers: {
-        Authorization: authAPI.getAuthorizationHeader(),
-      },
-      error: authAPI.handleAccessDenied,
+            headers: {
+              Authorization: authAPI.getAuthorizationHeader(),
+            },
+            error: authAPI.handleAccessDenied,
     });
 
 		return resolveConceptSetExpressionPromise;
@@ -201,10 +201,10 @@ define(function (require, exports) {
 			data: JSON.stringify(expression),
 			method: 'POST',
 			contentType: 'application/json',
-      headers: {
-        Authorization: authAPI.getAuthorizationHeader(),
-      },
-      error: authAPI.handleAccessDenied,
+            headers: {
+              Authorization: authAPI.getAuthorizationHeader(),
+            },
+            error: authAPI.handleAccessDenied,
     });
 
 		return conceptSetExpressionSQLPromise;
@@ -218,10 +218,10 @@ define(function (require, exports) {
 			data: JSON.stringify(identifiers),
 			method: 'POST',
 			contentType: 'application/json',
-      headers: {
-        Authorization: authAPI.getAuthorizationHeader(),
-      },
-      error: authAPI.handleAccessDenied,
+            headers: {
+              Authorization: authAPI.getAuthorizationHeader(),
+            },
+            error: authAPI.handleAccessDenied,
     });
 
 		return getConceptsByIdPromise;
@@ -235,10 +235,10 @@ define(function (require, exports) {
 			data: JSON.stringify(identifiers),
 			method: 'POST',
 			contentType: 'application/json',
-      headers: {
-        Authorization: authAPI.getAuthorizationHeader(),
-      },
-      error: authAPI.handleAccessDenied,
+            headers: {
+              Authorization: authAPI.getAuthorizationHeader(),
+            },
+            error: authAPI.handleAccessDenied,
     });
 
 		return getMappedConceptsByIdPromise;
@@ -252,10 +252,10 @@ define(function (require, exports) {
 			data: JSON.stringify(conceptSetItems),
 			method: 'POST',
 			contentType: 'application/json',
-      headers: {
-        Authorization: authAPI.getAuthorizationHeader(),
-      },
-      error: authAPI.handleAccessDenied,
+            headers: {
+              Authorization: authAPI.getAuthorizationHeader(),
+            },
+            error: authAPI.handleAccessDenied,
     });
 
 		return getOptimizedConceptSetPromise;
@@ -269,10 +269,10 @@ define(function (require, exports) {
 			data: JSON.stringify(compareTargets),
 			method: 'POST',
 			contentType: 'application/json',
-      headers: {
-        Authorization: authAPI.getAuthorizationHeader(),
-      },
-      error: authAPI.handleAccessDenied,
+            headers: {
+              Authorization: authAPI.getAuthorizationHeader(),
+            },
+            error: authAPI.handleAccessDenied,
     });
 
 		return getComparedConceptSetPromise;
