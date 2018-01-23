@@ -41,6 +41,13 @@ define(function(require, exports) {
     } else {
         token(null);
     }
+
+    window.addEventListener('storage', function(event) {
+        if (event.storageArea === localStorage && localStorage.bearerToken !== token()) {
+            token(localStorage.bearerToken);
+        };
+    }, false);
+
     token.subscribe(function(newValue) {
         localStorage.bearerToken = newValue;
     });
@@ -143,22 +150,33 @@ define(function(require, exports) {
         return $.parseJSON(payload);
     };
 
+    var refreshTokenPromise = null;
+    var isPromisePending = function(p) {
+        return p && typeof p === 'object' && typeof p.status === 'function' && p.status() === 'pending';
+    }
     var refreshToken = function() {
-        var promise = $.ajax({
-            url: getServiceUrl() + "user/refresh",
-            method: 'GET',
-            headers: {
-                Authorization: getAuthorizationHeader()
-            },
-            success: function (data, textStatus, jqXHR) {
-                token(jqXHR.getResponseHeader('Bearer'));
-            },
-            error: function (error) {
-                token(null);
-            },
-        });
 
-        return promise;
+        if (!isPromisePending(refreshTokenPromise)) {
+            refreshTokenPromise = $.ajax({
+                url: getServiceUrl() + "user/refresh",
+                method: 'GET',
+                headers: {
+                    Authorization: getAuthorizationHeader()
+                },
+
+            }).then(
+                // success
+                function (data, textStatus, jqXHR) {
+                    token(jqXHR.getResponseHeader('Bearer'));
+                },
+                // error
+                function (error) {
+                    token(null);
+                },
+            );
+        }
+
+        return refreshTokenPromise;
     }
 
     var isPermittedCreateConceptset = function() {
@@ -168,10 +186,70 @@ define(function(require, exports) {
     var isPermittedUpdateConceptset = function(conceptsetId) {
         return isPermitted('conceptset:' + conceptsetId + ':put') && isPermitted('conceptset:' + conceptsetId + ':items:put');
     };
-    
+
+    var isPermittedReadConceptsets = function () {
+      return isPermitted('conceptset:get');
+    };
+
     var isPermittedDeleteConceptset = function(id) {
         return isPermitted('conceptset:' + id + ':delete:post');
     }
+
+    var isPermittedReadIRs = function () {
+        return isPermitted('ir:get');
+    };
+
+    var isPermittedEditIR = function (id) {
+        return isPermitted('ir:' + id + ':put');
+    };
+
+    var isPermittedCreateIR = function () {
+        return isPermitted('ir:post');
+    };
+
+    var isPermittedDeleteIR = function(id){
+        return isPermitted('ir:' + id + ':delete');
+    };
+
+    var isPermittedReadEstimations = function () {
+        return isPermitted('comparativecohortanalysis:get');
+    };
+
+    var isPermittedReadEstimation = function (id) {
+        return isPermitted('comparativecohortanalysis:' + id + ':get');
+    };
+
+    var isPermittedCreateEstimation = function() {
+        return isPermitted('comparativecohortanalysis:post');
+    };
+
+    var isPermittedReadPlps = function() {
+        return isPermitted('plp:get');
+    };
+
+    var isPermittedCreatePlp = function () {
+        return isPermitted('plp:post');
+    };
+
+    var isPermittedReadPlp = function(id) {
+        return isPermitted('plp:' + id + ':get');
+    };
+
+    var isPermittedDeletePlp = function(id) {
+        return isPermitted('plp:' + id + ':delete');
+    };
+
+    var isPermittedSearch = function() {
+        return isPermitted('vocabulary:*:search:*:get');
+    };
+
+    var isPermittedViewCdmResults = function () {
+        return isPermitted('cdmresults:*:get');
+    };
+
+    var isPermittedViewProfiles = function () {
+        return isPermitted('person:*:get');
+    };
 
     var isPermittedReadCohort = function(id) {
         return isPermitted('cohortdefinition:' + id + ':get') && isPermitted('cohortdefinition:sql:post');
@@ -244,6 +322,12 @@ define(function(require, exports) {
         return isPermitted('role:' + roleId + ':permissions:*:put') && isPermitted('role:' + roleId + ':permissions:*:delete');
     }
 
+    $.ajaxSetup({
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('Authorization', getAuthorizationHeader());
+        }
+    });
+
     var api = {
         token: token,
         subject: subject,
@@ -257,6 +341,7 @@ define(function(require, exports) {
         isPermittedCreateConceptset: isPermittedCreateConceptset,
         isPermittedUpdateConceptset: isPermittedUpdateConceptset,
         isPermittedDeleteConceptset: isPermittedDeleteConceptset,
+        isPermittedReadConceptsets: isPermittedReadConceptsets,
 
         isPermittedReadCohorts: isPermittedReadCohorts,
         isPermittedReadCohort: isPermittedReadCohort,
@@ -278,6 +363,24 @@ define(function(require, exports) {
         isPermittedDeleteRole: isPermittedDeleteRole,
         isPermittedEditRoleUsers: isPermittedEditRoleUsers,
         isPermittedEditRolePermissions: isPermittedEditRolePermissions,
+
+        isPermittedReadIRs: isPermittedReadIRs,
+        isPermittedCreateIR: isPermittedCreateIR,
+        isPermittedEditIR: isPermittedEditIR,
+        isPermittedDeleteID: isPermittedDeleteIR,
+
+        isPermittedReadEstimations: isPermittedReadEstimations,
+        isPermittedReadEstimation: isPermittedReadEstimation,
+        isPermittedCreateEstimation: isPermittedCreateEstimation,
+
+        isPermittedReadPlps: isPermittedReadPlps,
+        isPermittedReadPlp: isPermittedReadPlp,
+        isPermittedCreatePlp: isPermittedCreatePlp,
+        isPermittedDeletePlp: isPermittedDeletePlp,
+
+        isPermittedSearch: isPermittedSearch,
+        isPermittedViewCdmResults: isPermittedViewCdmResults,
+        isPermittedViewProfiles: isPermittedViewProfiles,
     };
 
     return api;

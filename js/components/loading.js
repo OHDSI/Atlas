@@ -2,7 +2,8 @@ define(['knockout', 'text!./loading.html', 'appConfig'], function (ko, view, con
 	function loading(params) {
 		var self = this;
 		self.status = params.status || 'loading';
-	}
+        self.isLightTheme = params.theme === 'light';
+    }
 
 	var component = {
 		viewModel: loading,

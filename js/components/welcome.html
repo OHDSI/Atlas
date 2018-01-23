@@ -15,10 +15,24 @@
 				</div>
 				<div data-bind="foreach:$component.authProviders" class="text-centered">
 					<div class="paddedWrapper">
-						<div class="btn btn-sm btn-block btn-default" data-bind="click: $component.signin"><i data-bind="css:icon"></i> <span data-bind="text:name"></span></div>
+						<div class="btn btn-sm btn-block btn-default" data-bind="click: function() { $component.signin(name) }"><i data-bind="css:icon"></i> <span data-bind="text:name"></span></div>
 					</div>
 				</div>
-
+				<form data-bind="if: isDbLoginAtt(), submit:signinWithLoginPass" class="text-centered paddedWrapper">
+					<div class="form-group">
+						<input type="text" class="form-control" id="lg_username" placeholder="Username">
+						<input type="password" class="form-control" id="lg_password" placeholder="Password">
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-sm btn-default">
+							Submit
+						</button>
+					</div>
+					<div data-bind="if: isInProgress()" class="text-center">
+						<loading params="theme: 'light'" />
+					</div>
+				</form>
+				<div data-bind="if: isBadCredentials() && !isInProgress()" class="error text-center">Bad credentials</div>
 			</div>
 
 			<div data-bind="if: isLoggedIn()">
