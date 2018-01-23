@@ -2,11 +2,17 @@
 	<i class="fa fa-heartbeat"></i> Patient Level Prediction
 </div>
 
-<div class="paddedWrapper">
-	<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newPatientLevelPrediction">New Patient Level Prediction</span>
+<div data-bind="if:$component.canReadPlps" class="paddedWrapper">
+	<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newPatientLevelPrediction, css: {disabled: !$component.canCreatePlp()}">New Patient Level Prediction</span>
 
 	<faceted-datatable data-bind="visible:loading()==false" params="order: [[3, 'desc']], reference:analysisList, columns: columns, options:options, rowClick:rowClick">
 	</faceted-datatable>
 
 	<div data-bind="visible:loading()" class="loading">loading</div>
+</div>
+
+<div data-bind="ifnot:$component.canReadPlps">
+	<div class="padded">
+		<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+	</div>
 </div>

@@ -3,7 +3,8 @@ define(function (require, exports) {
 	var $ = require('jquery');
 	var ko = require('knockout');
 	var config = require('appConfig');
-	
+  var authApi = require('webapi/AuthAPI');
+
 	function pruneJSON(key, value) {
 		if (value === 0 || value) {
 			return value;
@@ -14,7 +15,11 @@ define(function (require, exports) {
 	
 	function getAnalysisList() {
 		var promise = $.ajax({
-			url: config.webAPIRoot + 'ir/'
+			url: config.webAPIRoot + 'ir/',
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 		});
 		return promise;
 	}
@@ -23,9 +28,10 @@ define(function (require, exports) {
 		var loadPromise = $.Deferred();
 		$.ajax({
 			url: config.webAPIRoot + 'ir/' + id,
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 		}).then(function (result) {
 			result.expression = JSON.parse(result.expression);
 			loadPromise.resolve(result);
@@ -45,9 +51,10 @@ define(function (require, exports) {
 			method: definitionCopy.id ? 'PUT' : 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify(definitionCopy),
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 		}).then(function (result) {
 			result.expression = JSON.parse(result.expression);
 			savePromise.resolve(result);
@@ -61,9 +68,10 @@ define(function (require, exports) {
 			url: config.webAPIRoot + 'ir/' + (id || "") +"/copy",
 			method: 'GET',
 			contentType: 'application/json',
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 		}).then(function (result) {
 			result.expression = JSON.parse(result.expression);
 			copyPromise.resolve(result);
@@ -75,9 +83,10 @@ define(function (require, exports) {
 		var deletePromise = $.ajax({
 			url: config.webAPIRoot + 'ir/' + (id || ""),
 			method: 'DELETE',
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 		});
 		return deletePromise;
 	}		
@@ -85,9 +94,10 @@ define(function (require, exports) {
 	function execute(id, sourceKey) {
 		var executePromise = $.ajax({
 			url: config.webAPIRoot + 'ir/' + (id || '-1') + '/execute/' + sourceKey,
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 		});
 		return executePromise;
 	}
@@ -95,9 +105,10 @@ define(function (require, exports) {
 	function getInfo(id) {
 		var infoPromise = $.ajax({
 			url: config.webAPIRoot + 'ir/' + (id || '-1') + '/info',
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 		});
 		return infoPromise;
 	}
@@ -107,9 +118,10 @@ define(function (require, exports) {
 		var deletePromise = $.ajax({
 			url: config.webAPIRoot + 'ir/' + (id || "") + "/info/" + sourceKey,
 			method: 'DELETE',
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 		});
 		return deletePromise;
 	}		
@@ -117,9 +129,10 @@ define(function (require, exports) {
 	function getReport(id, sourceKey, targetId, outcomeId) {
 		var reportPromise = $.ajax({
 			url: config.webAPIRoot + 'ir/' + (id || '-1') + '/report/' + sourceKey + "?targetId=" + targetId + "&outcomeId=" + outcomeId,
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 		});
 		return reportPromise;
 	}	

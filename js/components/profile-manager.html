@@ -49,7 +49,14 @@
 <div class="wrapperTitle">
 	<i class="fa fa-user"></i> Profiles
 </div>
-<div class="asset-heading">
+
+<div data-bind="ifnot:$component.canViewProfiles">
+	<div class="padded">
+		<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+	</div>
+</div>
+
+<div class="asset-heading" data-bind="if:$component.canViewProfiles">
 	<form data-bind="submit:loadPerson">
 		<div class="input-group" role="group">
 			<div class="input-group-btn" role="group">
@@ -91,9 +98,9 @@
 <loading params="status: loadingStatus"></loading>
 <!-- /ko -->
 
-<div data-bind="visible: cantFindPerson" class="loading">Can't find
-	<span data-bind="text:personId" />
-</div>
+	<div data-bind="visible: cantFindPerson" class="loading">Can't find
+		<span data-bind="text:personId" />
+	</div>
 
 <div class="row profile-control">
 	<div data-bind="if: person, attr: { class: 'col-xs-12'}">

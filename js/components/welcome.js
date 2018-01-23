@@ -3,6 +3,8 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
         var self = this;
         var authApi = params.model.authApi;
         self.token = authApi.token;
+        self.setAuthParams = authApi.setAuthParams;
+        self.resetAuthParams = authApi.resetAuthParams;
         self.serviceUrl = appConfig.webAPIRoot;
         self.errorMsg = ko.observable();
         self.isInProgress = ko.observable(false);
@@ -67,12 +69,14 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
                         withCredentials: true
                     },
                     success: function (data, textStatus, jqXHR) {
-                        var token = jqXHR.getResponseHeader('Bearer');
-                        setToken(token);
+                        self.setAuthParams(jqXHR);
+                        self.errorMsg(null);
+                        self.isBadCredentials(false);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        setToken(null);
+                        self.resetAuthParams();
                         self.errorMsg("Login failed.");
+                        self.isBadCredentials(true);
                     },
                     complete: function (data) {
                         self.isInProgress(false);
@@ -93,21 +97,17 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
                 },
                 statusCode: {
                     401: function () {
-                        setToken(null);
+                        self.resetAuthParams();
                     }
                 },
                 success: function (data, textStatus, jqXHR) {
-                    setToken(null);
+                    self.resetAuthParams();
                 },
                 complete: function (data) {
-                    self.isInProgress(false);
+                  self.errorMsg(null);
+                  self.isInProgress(false);
                 }
             });
-        };
-
-        var setToken = function (token) {
-            self.token(token);
-            self.errorMsg(null);
         };
     }
 

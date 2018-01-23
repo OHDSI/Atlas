@@ -290,7 +290,7 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
             return self.isNewRole()
                 ? $.ajax({
                     url: serviceUrl + 'role',
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         Authorization: authApi.getAuthorizationHeader()
                     },
@@ -304,7 +304,7 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
                 })
                 : $.ajax({
                     url: serviceUrl + 'role/' + self.roleId(),
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         Authorization: authApi.getAuthorizationHeader()
                     },

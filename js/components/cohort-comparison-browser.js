@@ -1,11 +1,19 @@
-define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'moment', 'cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config, moment) {
-	function cohortComparisonBrowser(params) {
+define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webapi/AuthAPI', 'access-denied', 'cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config, authApi) {
+    function cohortComparisonBrowser(params) {
 		var self = this;
 		self.reference = ko.observableArray();
 		self.loading = ko.observable(false);
 		self.config = config;
 
-		self.options = {
+    self.isAuthenticated = authApi.isAuthenticated;
+    self.canReadEstimations = ko.pureComputed(function () {
+      return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadEstimations()) || !config.userAuthenticationEnabled;
+    });
+    self.canCreateEstimation = ko.pureComputed(function(){
+    	return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCreateEstimation()) || !config.userAuthenticationEnabled;
+		});
+
+    self.options = {
 			Facets: [
 				{
 					'caption': 'Last Modified',
@@ -68,6 +76,10 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'momen
 		$.ajax({
 			url: config.api.url + 'comparativecohortanalysis',
 			method: 'GET',
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 			success: function (d) {
 				self.loading(false);
 				self.reference(d);

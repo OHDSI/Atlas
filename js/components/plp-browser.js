@@ -1,11 +1,19 @@
-define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'moment', 'd3', 'webapi/PatientLevelPredictionAPI'], function (ko, $, view, config, moment, d3, plpAPI) {
-	function plpBrowser(params) {
+define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'webapi/AuthAPI', 'd3', 'webapi/PatientLevelPredictionAPI', 'access-denied'], function (ko, $, view, config, authApi, d3, plpAPI) {
+    function plpBrowser(params) {
 		var self = this;
 		self.loading = ko.observable(true);
 		self.analysisList = ko.observableArray();
 		self.config = config;
 
-		self.options = {
+    self.isAuthenticated = authApi.isAuthenticated;
+    self.canReadPlps = ko.pureComputed(function () {
+      return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadPlps()) || !config.userAuthenticationEnabled;
+    });
+    self.canCreatePlp = ko.pureComputed(function(){
+      return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCreatePlp()) || !config.userAuthenticationEnabled;
+		});
+
+    self.options = {
 			Facets: [
 				{
 					'caption': 'Last Modified',

@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', 'knockout.dataTables.binding', 'faceted-datatable'], function ($, ko, view, vocabAPI, sharedState) {
+define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', 'appConfig', 'webapi/AuthAPI', 'knockout.dataTables.binding', 'faceted-datatable', 'access-denied'], function ($, ko, view, vocabAPI, sharedState, config, authApi) {
 	function search(params) {
 		var self = this;
 		self.model = params.model;
@@ -16,13 +16,16 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 		self.concepts = ko.observableArray();
 		self.currentSearchValue = ko.observable();
 		self.feSearch = ko.observable();
-
+    self.isAuthenticated = authApi.isAuthenticated;
+    self.canSearch = ko.pureComputed(function () {
+      return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedSearch()) || !config.userAuthenticationEnabled;
+    });
 		self.toggleAdvanced = function () {
 			self.showAdvanced(!self.showAdvanced());
 		}
 		self.clearAllAdvanced = function () {
 			$('.advanced-options input').attr('checked', false);
-		}
+		};
 
 		self.searchConceptsColumns = [{
 			title: '<i class="fa fa-shopping-cart"></i>',

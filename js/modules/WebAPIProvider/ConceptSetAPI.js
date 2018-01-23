@@ -2,13 +2,15 @@ define(function (require, exports) {
 
 	var $ = require('jquery');
 	var config = require('appConfig');
-	
+	var authApi = require('webapi/AuthAPI');
+
 	function getGenerationInfo(conceptSetId) {
 		var infoPromise = $.ajax({
 			url: config.webAPIRoot + 'conceptset/' + + (conceptSetId || '-1') + '/generationinfo',
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+      headers: {
+        Authorization: authApi.getAuthorizationHeader(),
+      },
+      error: authApi.handleAccessDenied,
 		});
 		return infoPromise;
 	}
@@ -17,10 +19,11 @@ define(function (require, exports) {
 		var promise = $.ajax({
 			url: config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') ,
 			method: 'DELETE',
-			contentType: 'application/json',            
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+			headers: {
+				Authorization: authApi.getAuthorizationHeader()
+			},
+			contentType: 'application/json',
+			error: authApi.handleAccessDenied,
 		});
 		return promise;
     }
