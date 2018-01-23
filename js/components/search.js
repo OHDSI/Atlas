@@ -16,10 +16,10 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 		self.concepts = ko.observableArray();
 		self.currentSearchValue = ko.observable();
 		self.feSearch = ko.observable();
-    self.isAuthenticated = authApi.isAuthenticated;
-    self.canSearch = ko.pureComputed(function () {
-      return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedSearch()) || !config.userAuthenticationEnabled;
-    });
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canSearch = ko.pureComputed(function () {
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedSearch()) || !config.userAuthenticationEnabled;
+		});
 		self.toggleAdvanced = function () {
 			self.showAdvanced(!self.showAdvanced());
 		}

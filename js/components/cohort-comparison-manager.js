@@ -181,9 +181,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					method: 'GET',
 					contentType: 'application/json',
 					headers: {
-                    Authorization: authApi.getAuthorizationHeader(),
-                    },
-                    error: authApi.handleAccessDenied,
+					Authorization: authApi.getAuthorizationHeader(),
+					},
+					error: authApi.handleAccessDenied,
 					success: function (response) {
 
 						response = response.sort(function (a, b) {
@@ -329,8 +329,8 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/psmodel',
 					method: 'GET',
 					contentType: 'application/json',
-                    headers: {
-                      Authorization: authApi.getAuthorizationHeader(),
+					headers: {
+					 	Authorization: authApi.getAuthorizationHeader(),
 					},
                     error: authApi.handleAccessDenied,
 					success: function (response) {
@@ -344,10 +344,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/attrition',
 					method: 'GET',
 					contentType: 'application/json',
-                    headers: {
-                      Authorization: authApi.getAuthorizationHeader(),
-                    },
-                    error: authApi.handleAccessDenied,
+					headers: {
+						Authorization: authApi.getAuthorizationHeader(),
+					},
+					error: authApi.handleAccessDenied,
 					success: function (response) {
 						self.attrition(response);
 					}
@@ -357,10 +357,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/balance',
 					method: 'GET',
 					contentType: 'application/json',
-                    headers: {
-                      Authorization: authApi.getAuthorizationHeader(),
-                    },
-                    error: authApi.handleAccessDenied,
+					headers: {
+						Authorization: authApi.getAuthorizationHeader(),
+					},
+					error: authApi.handleAccessDenied,
 					success: function (response) {
 
 						// self.chartData(response);
@@ -407,10 +407,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/poppropdist',
 					method: 'GET',
 					contentType: 'application/json',
-                    headers: {
-                      Authorization: authApi.getAuthorizationHeader(),
-                    },
-                    error: authApi.handleAccessDenied,
+					headers: {
+						Authorization: authApi.getAuthorizationHeader(),
+					},
+					error: authApi.handleAccessDenied,
 					success: function (response) {
 						self.poppropdist(response);
 
@@ -460,10 +460,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/psmodelpropscore',
 					method: 'GET',
 					contentType: 'application/json',
-                    headers: {
-                      Authorization: authApi.getAuthorizationHeader(),
-                    },
-                    error: authApi.handleAccessDenied,
+					headers: {
+						Authorization: authApi.getAuthorizationHeader(),
+					},
+					error: authApi.handleAccessDenied,
 					success: function (response) {
 						var data = [
 							{
@@ -515,10 +515,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/om',
 					method: 'GET',
 					contentType: 'application/json',
-                    headers: {
-                      Authorization: authApi.getAuthorizationHeader(),
-                    },
-                    error: authApi.handleAccessDenied,
+					headers: {
+						Authorization: authApi.getAuthorizationHeader(),
+					},
+					error: authApi.handleAccessDenied,
 					success: function (response) {
 						response.forEach(function (r) {
 							r.caption = r.estimate + ' (' + d3.round(r.lower95, 2) + '-' + d3.round(r.upper95, 2) + ')';
@@ -564,10 +564,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				$.ajax({
 					url: config.api.url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
 					method: 'DELETE',
-                    headers: {
-                      Authorization: authApi.getAuthorizationHeader(),
-                    },
-                    error: authApi.handleAccessDenied,
+					headers: {
+						Authorization: authApi.getAuthorizationHeader(),
+					},
+					error: authApi.handleAccessDenied,
 					error: function (error) {
 						console.log("Error: " + error);
 						authApi.handleAccessDenied(error);
@@ -720,10 +720,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					contentType: 'application/json',
 					data: json,
 					dataType: 'json',
-                    headers: {
-                      Authorization: authApi.getAuthorizationHeader(),
-                    },
-                    error: authApi.handleAccessDenied,
+					headers: {
+						Authorization: authApi.getAuthorizationHeader(),
+					},
+					error: authApi.handleAccessDenied,
 					success: function (data) {}
 				});
 
@@ -899,10 +899,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 						url: config.api.url + 'job/execution/' + jobExecutionId,
 						method: 'GET',
 						contentType: 'application/json',
-                        headers: {
-                          Authorization: authApi.getAuthorizationHeader(),
-                        },
-                        error: authApi.handleAccessDenied,
+						headers: {
+							Authorization: authApi.getAuthorizationHeader(),
+						},
+						error: authApi.handleAccessDenied,
 						success: function (d) {
 							if (d.status == 'COMPLETED') {
 								completed = true;
@@ -972,10 +972,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					url: config.api.url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
 					method: 'GET',
 					contentType: 'application/json',
-                    headers: {
-                      Authorization: authApi.getAuthorizationHeader(),
-                    },
-                    error: authApi.handleAccessDenied,
+					headers: {
+						Authorization: authApi.getAuthorizationHeader(),
+					},
+					error: authApi.handleAccessDenied,
 					success: function (comparativeCohortAnalysis) {
 						self.cohortComparison(new ComparativeCohortAnalysis(comparativeCohortAnalysis));
 						setTimeout(function () {

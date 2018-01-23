@@ -10,8 +10,8 @@ define(['knockout', 'text!./conceptset-browser.html', 'appConfig', 'webapi/AuthA
 
 		self.isAuthenticated = authApi.isAuthenticated;
 		self.canReadConceptsets = ko.pureComputed(function () {
-      return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
-    });
+		return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
+	});
 
 		self.onRespositoryConceptSetSelected = function (conceptSet) {
 			window.location.href = "#/conceptset/" + conceptSet.id + '/details';

@@ -22,10 +22,10 @@ define(['knockout',
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
 		self.defaultConceptSetName = "New Concept Set";
-        self.isAuthenticated = authApi.isAuthenticated;
-        self.canReadConceptsets = ko.pureComputed(function () {
-          return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
-        });
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canReadConceptsets = ko.pureComputed(function () {
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
+		});
 		self.selectedConcepts = sharedState.selectedConcepts;
 		self.displayEvidence = ko.pureComputed(function () {
 			return (sharedState.evidenceUrl() && sharedState.evidenceUrl()

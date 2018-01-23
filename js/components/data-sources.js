@@ -38,11 +38,11 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 		self.loadingReportDrilldown = ko.observable(false);
 		self.activeReportDrilldown = ko.observable(false);
 
-         self.isAuthenticated = authApi.isAuthenticated;
-         self.canViewCdmResults = ko.pureComputed(function () {
-           return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedViewCdmResults()) || !config.userAuthenticationEnabled;
-         });
-    /**
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canViewCdmResults = ko.pureComputed(function () {
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedViewCdmResults()) || !config.userAuthenticationEnabled;
+		});
+	/**
 		 * Each report object may contain the following properties
 		 *   name: displayed in report heading
 		 *   path: CDMResultsService path for summary payload (e.g. tree map)
