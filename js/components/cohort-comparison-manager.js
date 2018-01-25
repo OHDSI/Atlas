@@ -543,7 +543,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				$.ajax({
 					url: config.api.url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
 					method: 'DELETE',
-					error: authApi.handleAccessDenied,
 					error: function (error) {
 						console.log("Error: " + error);
 						authApi.handleAccessDenied(error);
