@@ -126,9 +126,6 @@ define(function (require, exports) {
 	function getConcept(id) {
 		var getConceptPromise = $.ajax({
 			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/concept/' + id,
-			headers: {
-				Authorization: authAPI.getAuthorizationHeader(),
-			},
 			error: authAPI.handleAccessDenied,
 		});
 
@@ -145,9 +142,6 @@ define(function (require, exports) {
 
 		var getConceptSetListPromise = $.ajax({
 			url: repositoryUrl,
-			headers: {
-				Authorization: authAPI.getAuthorizationHeader(),
-			},
 			error: authAPI.handleAccessDenied,
 		});
 
@@ -166,9 +160,6 @@ define(function (require, exports) {
 
 		var getConceptSetPromise = $.ajax({
 			url: repositoryUrl,
-			headers: {
-				Authorization: authAPI.getAuthorizationHeader(),
-			},
 			error: authAPI.handleAccessDenied,
 		});
 
@@ -184,11 +175,8 @@ define(function (require, exports) {
 			data: JSON.stringify(expression),
 			method: 'POST',
 			contentType: 'application/json',
-            headers: {
-              Authorization: authAPI.getAuthorizationHeader(),
-            },
-            error: authAPI.handleAccessDenied,
-    });
+			error: authAPI.handleAccessDenied,
+	});
 
 		return resolveConceptSetExpressionPromise;
 	}
@@ -201,11 +189,8 @@ define(function (require, exports) {
 			data: JSON.stringify(expression),
 			method: 'POST',
 			contentType: 'application/json',
-            headers: {
-              Authorization: authAPI.getAuthorizationHeader(),
-            },
-            error: authAPI.handleAccessDenied,
-    });
+			error: authAPI.handleAccessDenied,
+	});
 
 		return conceptSetExpressionSQLPromise;
 	}
@@ -218,11 +203,8 @@ define(function (require, exports) {
 			data: JSON.stringify(identifiers),
 			method: 'POST',
 			contentType: 'application/json',
-            headers: {
-              Authorization: authAPI.getAuthorizationHeader(),
-            },
-            error: authAPI.handleAccessDenied,
-    });
+			error: authAPI.handleAccessDenied,
+	});
 
 		return getConceptsByIdPromise;
 	}
@@ -235,11 +217,8 @@ define(function (require, exports) {
 			data: JSON.stringify(identifiers),
 			method: 'POST',
 			contentType: 'application/json',
-            headers: {
-              Authorization: authAPI.getAuthorizationHeader(),
-            },
-            error: authAPI.handleAccessDenied,
-    });
+			error: authAPI.handleAccessDenied,
+	});
 
 		return getMappedConceptsByIdPromise;
 	}
@@ -252,11 +231,8 @@ define(function (require, exports) {
 			data: JSON.stringify(conceptSetItems),
 			method: 'POST',
 			contentType: 'application/json',
-            headers: {
-              Authorization: authAPI.getAuthorizationHeader(),
-            },
-            error: authAPI.handleAccessDenied,
-    });
+			error: authAPI.handleAccessDenied,
+	});
 
 		return getOptimizedConceptSetPromise;
 	}
@@ -269,11 +245,8 @@ define(function (require, exports) {
 			data: JSON.stringify(compareTargets),
 			method: 'POST',
 			contentType: 'application/json',
-            headers: {
-              Authorization: authAPI.getAuthorizationHeader(),
-            },
-            error: authAPI.handleAccessDenied,
-    });
+			error: authAPI.handleAccessDenied,
+	});
 
 		return getComparedConceptSetPromise;
 	}

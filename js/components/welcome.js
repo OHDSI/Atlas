@@ -92,9 +92,6 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
             $.ajax({
                 url: self.serviceUrl + "user/logout",
                 method: 'GET',
-                headers: {
-                    Authorization: self.getAuthorizationHeader()
-                },
                 statusCode: {
                     401: function () {
                         self.resetAuthParams();

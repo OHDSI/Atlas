@@ -550,9 +550,6 @@ define(['knockout',
 				url: urlEncoded,
 				method: 'GET',
 				contentType: 'application/json',
-				headers: {
-					Authorization: authApi.getAuthorizationHeader()
-				},
 				error: authApi.handleAccessDenied,
 				success: function (results) {
 					if (results.length > 0) {
@@ -598,9 +595,6 @@ define(['knockout',
 						method: conceptSet.id ? 'PUT' : 'POST',
 						url: config.api.url + 'conceptset/' + (conceptSet.id || ''),
 						contentType: 'application/json',
-						headers: {
-							Authorization: authApi.getAuthorizationHeader()
-						},
 						data: json,
 						dataType: 'json',
 						error: authApi.handleAccessDenied,
@@ -609,9 +603,6 @@ define(['knockout',
 							$.ajax({
 								method: 'PUT',
 								url: config.api.url + 'conceptset/' + data.id + '/items',
-								headers: {
-									Authorization: authApi.getAuthorizationHeader()
-								},
 								data: JSON.stringify(conceptSetItems),
 								dataType: 'json',
 								contentType: 'application/json',

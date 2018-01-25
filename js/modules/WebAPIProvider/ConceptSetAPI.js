@@ -7,10 +7,7 @@ define(function (require, exports) {
 	function getGenerationInfo(conceptSetId) {
 		var infoPromise = $.ajax({
 			url: config.webAPIRoot + 'conceptset/' + + (conceptSetId || '-1') + '/generationinfo',
-      headers: {
-        Authorization: authApi.getAuthorizationHeader(),
-      },
-      error: authApi.handleAccessDenied,
+			error: authApi.handleAccessDenied,
 		});
 		return infoPromise;
 	}
@@ -19,9 +16,6 @@ define(function (require, exports) {
 		var promise = $.ajax({
 			url: config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') ,
 			method: 'DELETE',
-			headers: {
-				Authorization: authApi.getAuthorizationHeader()
-			},
 			contentType: 'application/json',
 			error: authApi.handleAccessDenied,
 		});

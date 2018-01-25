@@ -7,9 +7,6 @@ define(function (require, exports) {
 	function getPlpList() {
 		var promise = $.ajax({
 			url: config.webAPIRoot + 'plp/',
-			headers: {
-				Authorization: authApi.getAuthorizationHeader()
-			},
 			error: authApi.handleAccessDenied
 		});
 		return promise;
@@ -19,9 +16,6 @@ define(function (require, exports) {
 		var savePromise = $.ajax({
 			url: config.webAPIRoot + 'plp/' + (analysis.analysisId || ""),
 			method: analysis.analysisId ? 'PUT' : 'POST',
-			headers: {
-				Authorization: authApi.getAuthorizationHeader()
-			},
 			contentType: 'application/json',
 			data: JSON.stringify(analysis),
 			error: function (error) {
@@ -36,9 +30,6 @@ define(function (require, exports) {
 		var copyPromise = $.ajax({
 			url: config.webAPIRoot + 'plp/' + (id || "") + "/copy",
 			method: 'GET',
-			headers: {
-				Authorization: authApi.getAuthorizationHeader()
-			},
 			contentType: 'application/json',
 			error: function (error) {
 				console.log("Error: " + error);
@@ -52,9 +43,6 @@ define(function (require, exports) {
 		var deletePromise = $.ajax({
 			url: config.webAPIRoot + 'plp/' + (id || ""),
 			method: 'DELETE',
-			headers: {
-				Authorization: authApi.getAuthorizationHeader()
-			},
 			error: function (error) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
@@ -66,9 +54,6 @@ define(function (require, exports) {
 	function getPlp(id) {
 		var loadPromise = $.ajax({
 			url: config.webAPIRoot + 'plp/' + id,
-			headers: {
-				Authorization: authApi.getAuthorizationHeader()
-			},
 			error: function (error) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
