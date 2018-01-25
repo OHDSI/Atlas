@@ -1,7 +1,7 @@
 define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], function (ko, view, appConfig, state) {
 	function userBar(params) {
 		var self = this;
-        var authApi = params.model.authApi;
+		var authApi = params.model.authApi;
 
 		self.updateJobStatus = function () {
 			if (self.jobListing().length > 0) {

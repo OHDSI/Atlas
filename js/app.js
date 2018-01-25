@@ -5,7 +5,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			var self = this;
 			self.authApi = authApi;
 			self.componentParams = {};
-            self.config = config;
+			self.config = config;
 			self.initPromises = [];
 			self.applicationStatus = ko.observable('initializing');
 			self.pendingSearch = ko.observable(false);
@@ -62,11 +62,11 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			});
 
 			self.initComplete = function () {
-				if (self.sharedState.appInitializationStatus() == 'initializing') {
 					var prevToken = authApi.token();
 					var routerOptions = {
 						notfound: function () {
-							self.currentView('search');},
+							self.currentView('search');
+						},
 						on: function () {
 							self.currentView('loading');
 							var promise = (self.config.userAuthenticationEnabled && (authApi.token() != null || (prevToken != null && authApi.token() === null))) ? authApi.refreshToken : null;
