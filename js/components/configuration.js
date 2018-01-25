@@ -12,7 +12,7 @@ define([
 		self.config = config;
 		self.api = config.api;
 		self.sharedState = sharedState;
-    self.isInProgress = ko.observable(false);
+		self.isInProgress = ko.observable(false);
 
 		self.isAuthenticated = authApi.isAuthenticated;
 		self.hasAccess = ko.pureComputed(function () {
