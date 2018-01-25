@@ -696,6 +696,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 						.domain(['MALE', 'FEMALE', 'UNKNOWN'])
 						.range(["#1F78B4", "#FB9A99", "#33A02C"])
 				});
+			}
 		};
 
 		self.prevalenceByMonth = function (data, selector) {
