@@ -1280,22 +1280,22 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					return false;
 				}
 			});
-            self.canDeleteCurrentConceptSet = ko.pureComputed(function () {
-                if (!config.userAuthenticationEnabled)
-                    return true;
+			self.canDeleteCurrentConceptSet = ko.pureComputed(function () {
+				if (!config.userAuthenticationEnabled)
+					return true;
 
-                /*
-                TODO:
-                    if (self.currentConceptSetSource() == 'cohort') {
-                        return self.canDeleteCurrentCohortDefinition();
-                    } else
-                */
-                if (self.currentConceptSetSource() == 'repository') {
-                    return authApi.isPermittedDeleteConceptset(self.currentConceptSet().id);
-                } else {
-                    return false;
-                }
-            });
+				/*
+				TODO:
+					if (self.currentConceptSetSource() == 'cohort') {
+						return self.canDeleteCurrentCohortDefinition();
+					} else
+				*/
+				if (self.currentConceptSetSource() == 'repository') {
+					return authApi.isPermittedDeleteConceptset(self.currentConceptSet().id);
+				} else {
+					return false;
+				}
+			});
 
 			self.currentConceptSetSource = ko.observable('repository');
 			self.currentConceptSetNegativeControls = ko.observable();
