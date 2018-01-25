@@ -27,8 +27,8 @@ define(function (require, exports) {
 			contentType: 'application/json',
 			data: JSON.stringify(definition),
 			error: function(error) {
-			console.log("Error: " + error);
-			authApi.handleAccessDenied(error);
+				console.log("Error: " + error);
+				authApi.handleAccessDenied(error);
 			}
 	    });
 		return savePromise;

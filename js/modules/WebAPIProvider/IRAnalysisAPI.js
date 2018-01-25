@@ -3,7 +3,7 @@ define(function (require, exports) {
 	var $ = require('jquery');
 	var ko = require('knockout');
 	var config = require('appConfig');
-  var authApi = require('webapi/AuthAPI');
+	var authApi = require('webapi/AuthAPI');
 
 	function pruneJSON(key, value) {
 		if (value === 0 || value) {
@@ -79,7 +79,7 @@ define(function (require, exports) {
 	function execute(id, sourceKey) {
 		var executePromise = $.ajax({
 			url: config.webAPIRoot + 'ir/' + (id || '-1') + '/execute/' + sourceKey,
-            error: authApi.handleAccessDenied,
+			error: authApi.handleAccessDenied,
 		});
 		return executePromise;
 	}

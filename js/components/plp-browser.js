@@ -1,4 +1,4 @@
-define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'webapi/AuthAPI', 'd3', 'webapi/PatientLevelPredictionAPI', 'access-denied'], function (ko, $, view, config, authApi, d3, plpAPI) {
+define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'webapi/AuthAPI', 'moment', 'd3', 'webapi/PatientLevelPredictionAPI', 'access-denied'], function (ko, $, view, config, authApi, d3, plpAPI) {
     function plpBrowser(params) {
 		var self = this;
 		self.loading = ko.observable(true);
