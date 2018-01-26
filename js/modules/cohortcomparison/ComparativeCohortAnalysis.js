@@ -250,7 +250,7 @@ define(function (require, exports) {
         self.psConditionGroupMeddra = ko.observable((data.psConditionGroupMeddra == 1)||false);
         self.psConditionGroupSnomed = ko.observable((data.psConditionGroupSnomed == 1)||false);        
         
-        self.psDrugExposure = ko.observable((data.psDrugExposure == 1)||false);
+        //self.psDrugExposure = ko.observable((data.psDrugExposure == 1)||false);
         self.psDrugInPrior30d = ko.observable((data.psDrugExposure30d == 1 || data.psDrugEra30d == 1) || false); 
         self.psDrugInPrior365d = ko.observable((data.psDrugExposure365d == 1 || data.psDrugEra365d == 1) || false);
         
@@ -319,14 +319,17 @@ define(function (require, exports) {
         self.psDrug = ko.pureComputed(function() {
             return (self.psDrugInPrior30d() || self.psDrugInPrior365d() || self.psDrugEraOverlap() || self.psDrugEraEver())
         });
+        self.psDrugExposure = ko.pureComputed(function() {
+        	return (self.psDrugInPrior30d() || self.psDrugInPrior365d())
+        });
         self.psDrugAggregation = ko.pureComputed(function() {
-            return (self.psDrugExposure() || self.psDrugEra() || self.psDrugGroup())
+            return (self.psDrugEra() || self.psDrugGroup())
         });
         self.psDrugExposure365d = ko.pureComputed(function() {
-            return (self.psDrugExposure() && self.psDrugInPrior365d())
+            return self.psDrugInPrior365d()
         });
         self.psDrugExposure30d = ko.pureComputed(function() {
-            return (self.psDrugExposure() && self.psDrugInPrior30d())
+            return self.psDrugInPrior30d()
         });
         self.psDrugEra365d = ko.pureComputed(function() {
             return (self.psDrugEra() && self.psDrugInPrior365d())
