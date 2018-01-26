@@ -71,7 +71,7 @@ define(['jquery', 'knockout', 'datatables.net', 'datatables.net-buttons', 'datat
 			{
 				$(element).on("click", "tr", function (evt) {
 					if (this._DT_RowIndex != null) {
-						binding.onRowClick(data[this._DT_RowIndex], evt);
+						binding.onRowClick(data[this._DT_RowIndex], evt, this);
 					}
 				});
 			}

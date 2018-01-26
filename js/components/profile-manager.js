@@ -401,9 +401,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.highlightRecs.valueHasMutated();
 			}
 
-			self.highlightRowClick = function (data, context) {
-				event.stopPropagation();
-				$(context).toggleClass('selected');
+			self.highlightRowClick = function (data, evt, row) {
+				evt.stopPropagation();
+				$(row).toggleClass('selected');
 			}
 			self.highlightOptions = {};
 			self.options = {
