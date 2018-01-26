@@ -1,8 +1,8 @@
 <div data-bind="if: $component.cohortComparison() && ($component.cohortComparison().readyForDisplay() == false)">
-    Please complete the full specification for the study
+	Please complete the full specification for the study
 </div>
 <div data-bind="if: $component.cohortComparison() && $component.cohortComparison().readyForDisplay()">
-<pre class="language-r">
+	<pre class="language-r">
 <code data-bind="attr:{'id': $component.codeElementId}" contenteditable="true" spellcheck="false">
     <span class="token comment"># Study: ----<!-- ko foreach: $component.cohortComparison().nameMultiLine() -->
     # <span data-bind="text: $data"></span><!-- /ko --></span>
@@ -325,7 +325,6 @@
     <span class="token comment"># Perform Empirical Calibration ----</span>
     newSummary <span class="token operator"><-</span> data.frame()
     <span class="token comment"># Calibrate p-values:</span>
-    drugComparatorOutcome <span class="token operator"><-</span> drugComparatorOutcomesList[[<span class="token number">1</span>]]
     <span class="token keyword">for</span> (drugComparatorOutcome <span class="token keyword">in</span> drugComparatorOutcomesList) {
       <span class="token keyword">for</span> (analysisId <span class="token keyword">in</span> <span class="token keyword">unique</span>(analysisSummary$analysisId)) {
         subset <span class="token operator"><-</span> analysisSummary[analysisSummary$analysisId == analysisId &
@@ -343,19 +342,19 @@
           
           <span class="token comment"># View the empirical calibration plot with only negative controls</span>
           EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
-                                                      negControlSubset$seLogRr)
+                                                      negControlSubset$seLogRr,showCis = TRUE)
 
           <span class="token comment"># Save the empirical calibration plot with only negative controls</span>
           plotName <span class="token operator"><-</span> paste(<span class="token string">"calEffectNoHois_a"</span>,analysisId, <span class="token string">"_t"</span>, drugComparatorOutcome$targetId, <span class="token string">"_c"</span>, drugComparatorOutcome$comparatorId, <span class="token string">".png"</span>, sep = <span class="token string">""</span>)
           EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
                                                       negControlSubset$seLogRr,
-                                                      fileName = file.path(outputFolder, plotName))
+                                                      fileName = file.path(outputFolder, plotName),showCis = TRUE)
 
           <span class="token comment"># View the empirical calibration plot with  negative controls and HOIs plotted</span>
           EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
                                                       negControlSubset$seLogRr,
                                                       hoiSubset$logRr, 
-                                                      hoiSubset$seLogRr)
+                                                      hoiSubset$seLogRr,showCis = TRUE)
 
           <span class="token comment"># Save the empirical calibration plot with  negative controls and HOIs plotted</span>
           plotName <span class="token operator"><-</span> paste(<span class="token string">"calEffect_a"</span>,analysisId, <span class="token string">"_t"</span>, drugComparatorOutcome$targetId, <span class="token string">"_c"</span>, drugComparatorOutcome$comparatorId, <span class="token string">".png"</span>, sep = <span class="token string">""</span>)
@@ -363,7 +362,7 @@
                                                       negControlSubset$seLogRr,
                                                       hoiSubset$logRr, 
                                                       hoiSubset$seLogRr,
-                                                      fileName = file.path(outputFolder, plotName))
+                                                      fileName = file.path(outputFolder, plotName),showCis = TRUE)
 
           calibratedP <span class="token operator"><-</span> calibrateP(null, subset$logRr, subset$seLogRr)
           subset$calibratedP <span class="token operator"><-</span> calibratedP$p
@@ -384,7 +383,6 @@
     }
 
     <span class="token comment"># Results ----</span>
-    drugComparatorOutcome <span class="token operator"><-</span> drugComparatorOutcomesList[[1]]
     <span class="token keyword">for</span> (drugComparatorOutcome <span class="token keyword">in</span> drugComparatorOutcomesList) {
       <span class="token keyword">for</span> (analysisId <span class="token keyword">in</span> <span class="token keyword">unique</span>(analysisSummary$analysisId)) {
           currentAnalysisSubset <span class="token operator"><-</span> analysisSummary[analysisSummary$analysisId == analysisId &
@@ -393,7 +391,7 @@
                                                    analysisSummary$outcomeId %in% outcomeList, ]
 
           <span class="token keyword">for</span>(currentOutcomeId <span class="token keyword">in</span> <span class="token keyword">unique</span>(currentAnalysisSubset$outcomeId)) {
-            outputImageSuffix <span class="token operator"><-</span> paste0(<span class="token string">"_a"</span>,analysisId, <span class="token string">"_t"</span>, currentAnalysisSubset$targetId, <span class="token string">"_c"</span>, currentAnalysisSubset$comparatorId, <span class="token string">"_o"</span>, currentOutcomeId, <span class="token string">".png"</span>)
+            outputImageSuffix <span class="token operator"><-</span> paste0(<span class="token string">"_a"</span>,analysisId, <span class="token string">"_t"</span>, drugComparatorOutcome$targetId, <span class="token string">"_c"</span>, drugComparatorOutcome$comparatorId, <span class="token string">"_o"</span>, currentOutcomeId, <span class="token string">".png"</span>)
 
             cohortMethodFile <span class="token operator"><-</span> result$cohortMethodDataFolder[result$target == currentAnalysisSubset$targetId &
                                                                 result$comparatorId == currentAnalysisSubset$comparatorId &
