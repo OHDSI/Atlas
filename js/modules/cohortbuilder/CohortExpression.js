@@ -7,6 +7,7 @@ define(function (require, exports) {
 	var InclusionRule = require('./InclusionRule');
 	var EndStrategies = require('./EndStrategies');
 	var CriteriaTypes = require('./CriteriaTypes');
+	var Period = require('./InputTypes/Period');
 	
 	function CohortExpression(data) {
 		var self = this;
@@ -27,7 +28,10 @@ define(function (require, exports) {
 			return CriteriaTypes.GetCriteriaFromObject(criteria, self.ConceptSets);
 		}));
 		self.CollapseSettings = {CollapseType: ko.observable(data.CollapseSettings && data.CollapseSettings.CollapseType || "ERA"), EraPad: ko.observable(data.CollapseSettings && data.CollapseSettings.EraPad || 0 ) }
-		
+		self.CensorWindow = ko.observable(new Period({
+			StartDate: data.CensorWindow ? data.CensorWindow.StartDate : null,
+			EndDate: data.CensorWindow ? data.CensorWindow.EndDate : null,
+		}));
 	}
 	return CohortExpression;
 });
