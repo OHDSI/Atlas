@@ -220,4 +220,18 @@
 			</ul>
 		</div>
 	</div>
+
+	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'censorWindow' || $component.expressionMode() == 'all'}" class="tab-pane">
+		<div class="heading">
+			<b>Cohort Censor Window</b>
+			Drops all persons, who do no fall inside the censor window.
+		</div>
+		<div style="padding: 5px 0px">
+			<ul>
+				<li>
+					<period-input params="Period: expression().CensorWindow"></period-input>
+				</li>
+			</ul>
+		</div>
+	</div>
 </div>
