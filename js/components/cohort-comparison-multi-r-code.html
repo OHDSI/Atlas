@@ -394,15 +394,15 @@
           <span class="token keyword">for</span>(currentOutcomeId <span class="token keyword">in</span> <span class="token keyword">unique</span>(currentAnalysisSubset$outcomeId)) {
             outputImageSuffix <span class="token operator"><-</span> paste0(<span class="token string">"_a"</span>,analysisId, <span class="token string">"_t"</span>, drugComparatorOutcome$targetId, <span class="token string">"_c"</span>, drugComparatorOutcome$comparatorId, <span class="token string">"_o"</span>, currentOutcomeId, <span class="token string">".png"</span>)
 
-            cohortMethodFile <span class="token operator"><-</span> result$cohortMethodDataFolder[result$target == currentAnalysisSubset$targetId &
-                                                                result$comparatorId == currentAnalysisSubset$comparatorId &
+            cohortMethodFile <span class="token operator"><-</span> result$cohortMethodDataFolder[result$target == drugComparatorOutcome$targetId &
+                                                                result$comparatorId == drugComparatorOutcome$comparatorId &
                                                                 result$outcomeId == currentOutcomeId &
                                                                 result$analysisId == analysisId]
 
             cohortMethodData <span class="token operator"><-</span> loadCohortMethodData(cohortMethodFile)
 
-            studyPopFile <span class="token operator"><-</span> result$studyPopFile[result$target == currentAnalysisSubset$targetId &
-                                                  result$comparatorId == currentAnalysisSubset$comparatorId &
+            studyPopFile <span class="token operator"><-</span> result$studyPopFile[result$target == drugComparatorOutcome$targetId &
+                                                  result$comparatorId == drugComparatorOutcome$comparatorId &
                                                   result$outcomeId == currentOutcomeId &
                                                   result$analysisId == analysisId]
 
@@ -423,8 +423,8 @@
                                  fileName = file.path(outputFolder, plotName))
 
 
-            psFile <span class="token operator"><-</span> result$psFile[result$target == currentAnalysisSubset$targetId &
-                                      result$comparatorId == currentAnalysisSubset$comparatorId &
+            psFile <span class="token operator"><-</span> result$psFile[result$target == drugComparatorOutcome$targetId &
+                                      result$comparatorId == drugComparatorOutcome$comparatorId &
                                       result$outcomeId == currentOutcomeId &
                                       result$analysisId == analysisId]
 
@@ -449,8 +449,8 @@
             head(propensityModel)
 
 
-            strataFile <span class="token operator"><-</span> result$strataFile[result$target == currentAnalysisSubset$targetId &
-                                              result$comparatorId == currentAnalysisSubset$comparatorId &
+            strataFile <span class="token operator"><-</span> result$strataFile[result$target == drugComparatorOutcome$targetId &
+                                              result$comparatorId == drugComparatorOutcome$comparatorId &
                                               result$outcomeId == currentOutcomeId &
                                               result$analysisId == analysisId]
             strataPop <span class="token operator"><-</span> readRDS(strataFile)
@@ -481,8 +481,8 @@
 
 
             <span class="token comment"># Plot the covariate balance ----</span>
-            balanceFile <span class="token operator"><-</span> result$covariateBalanceFile[result$target == currentAnalysisSubset$targetId &
-                                                         result$comparatorId == currentAnalysisSubset$comparatorId &
+            balanceFile <span class="token operator"><-</span> result$covariateBalanceFile[result$target == drugComparatorOutcome$targetId &
+                                                         result$comparatorId == drugComparatorOutcome$comparatorId &
                                                          result$outcomeId == currentOutcomeId &
                                                          result$analysisId == analysisId]
             balance <span class="token operator"><-</span> readRDS(balanceFile)
@@ -506,15 +506,15 @@
 
             <span class="token comment"># Outcome Model ----</span>
 
-            outcomeFile <span class="token operator"><-</span> result$outcomeModelFile[result$target == currentAnalysisSubset$targetId &
-                                                     result$comparatorId == currentAnalysisSubset$comparatorId &
+            outcomeFile <span class="token operator"><-</span> result$outcomeModelFile[result$target == drugComparatorOutcome$targetId &
+                                                     result$comparatorId == drugComparatorOutcome$comparatorId &
                                                      result$outcomeId == currentOutcomeId &
                                                      result$analysisId == analysisId]
             outcomeModel <span class="token operator"><-</span> readRDS(outcomeFile)
             
             <span class="token comment"># Calibrated results -----</span>
-            outcomeSummary <span class="token operator"><-</span> newSummary[newSummary$targetId == currentAnalysisSubset$targetId & 
-                                            newSummary$comparatorId == currentAnalysisSubset$comparatorId & 
+            outcomeSummary <span class="token operator"><-</span> newSummary[newSummary$targetId == drugComparatorOutcome$targetId & 
+                                            newSummary$comparatorId == drugComparatorOutcome$comparatorId & 
                                             newSummary$outcomeId == currentOutcomeId & 
                                             newSummary$analysisId == analysisId, ]  
 
