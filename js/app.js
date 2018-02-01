@@ -147,6 +147,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					},
 					'/roles': function () {
 						require(['roles'], function () {
+							self.componentParams = {
+								model: self
+							};
 							self.currentView('roles');
 						});
 					},
