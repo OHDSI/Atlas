@@ -5,11 +5,11 @@
   <div class="asset-heading" data-bind="if: model.currentConceptSet">
     <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: canEdit() ? null : true }, textInput: model.currentConceptSet().name" />
     <div class="btn-group">
-      <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:!canSave()}">Save</button>
-      <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }">Close</button>
-      <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0, css: {disabled:!canCreate()}">Copy</button>
-      <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { optimize(); }, css: {disabled: !canEdit() && !canCreate()}">Optimize</button>
-      <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}">Delete</button>
+      <button type="button" class="btn btn-sm btn-success" title="Save concept set" data-bind="click:function() { saveClick(); }, css: {disabled:!canSave()}"><i class="fa fa-save"></i></button>
+      <button type="button" class="btn btn-sm btn-primary" title="Close concept set" data-bind="click:function() { closeConceptSet(); }"><i class="fa fa-times"></i></button>
+      <button type="button" class="btn btn-sm btn-primary" title="Create a copy" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0, css: {disabled:!canCreate()}"><i class="fa fa-copy"></i></button>
+      <button type="button" class="btn btn-sm btn-primary" title="Optimize concept set definition" data-bind="click:function() { optimize(); }, css: {disabled: !canEdit() && !canCreate()}">Optimize</button>
+      <button type="button" class="btn btn-sm btn-danger" title="Delete" data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
     </div>
   </div>
 
@@ -142,12 +142,12 @@
 </div>
 
 <div id="wrapperConceptSetExport" data-bind="visible: model.currentConceptSetMode() == 'export'">
-  <div class="heading">Concept Set Expression JSON</div>
-  <pre data-bind="html: model.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
-  <div class="heading">Concept Identifer List</div>
-  <pre data-bind="html: model.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
-  <div class="heading">Included Concept Identifer List</div>
-  <pre data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+  <div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
+  <pre id="conceptSetExpression" data-bind="html: model.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
+  <div class="heading">Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
+  <pre id="conceptIdentifierList" data-bind="html: model.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+  <div class="heading">Included Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
+  <pre id="includedConceptIdentifierList" data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
   <br/>
   <button type="button" class="btn btn-success" data-bind="click:function() { exportCSV(); }, css: {disabled:!(model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty())}"><i class="fa fa-download" aria-hidden="true"></i>Export To CSV</button>
 </div>

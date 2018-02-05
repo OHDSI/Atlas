@@ -434,7 +434,6 @@ define(function (require, exports) {
 		self.cvConditionGroupMeddra = ko.observable((data.cvConditionGroupMeddra == 1) || false);
 		self.cvConditionGroupSnomed = ko.observable((data.cvConditionGroupSnomed == 1) || false);
 
-		self.cvDrugExposure = ko.observable((data.cvDrugExposure == 1) || false);
 		self.cvDrugInPrior30d = ko.observable((data.cvDrugExposure30d == 1 || data.cvDrugEra30d == 1) || false);
 		self.cvDrugInPrior365d = ko.observable((data.cvDrugExposure365d == 1 || data.cvDrugEra365d == 1) || false);
 
@@ -497,14 +496,17 @@ define(function (require, exports) {
 		self.cvDrug = ko.pureComputed(function () {
 			return (self.cvDrugInPrior30d() || self.cvDrugInPrior365d() || self.cvDrugEraOverlap() || self.cvDrugEraEver())
 		});
+		self.cvDrugExposure = ko.pureComputed(function() {
+			return (self.cvDrugInPrior30d() || self.cvDrugInPrior365d())
+		})
 		self.cvDrugAggregation = ko.pureComputed(function () {
-			return (self.cvDrugExposure() || self.cvDrugEra() || self.cvDrugGroup())
+			return (self.cvDrugEra() || self.cvDrugGroup())
 		});
 		self.cvDrugExposure365d = ko.pureComputed(function () {
-			return (self.cvDrugExposure() && self.cvDrugInPrior365d())
+			return self.cvDrugInPrior365d()
 		});
 		self.cvDrugExposure30d = ko.pureComputed(function () {
-			return (self.cvDrugExposure() && self.cvDrugInPrior30d())
+			return self.cvDrugInPrior30d()
 		});
 		self.cvDrugEra365d = ko.pureComputed(function () {
 			return (self.cvDrugEra() && self.cvDrugInPrior365d())

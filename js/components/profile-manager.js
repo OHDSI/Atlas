@@ -17,9 +17,13 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			self.model = params.model;
 			self.aspectRatio = ko.observable();
 			self.config = config;
+			self.filterHighlightsText = ko.observable();
+			self.loadingStatus = ko.observable('loading');
 
 			self.sourceKey = ko.observable(params.sourceKey);
 			self.personId = ko.observable(params.personId);
+			self.personRecords = ko.observableArray();
+
 			self.cohortDefinitionId = ko.observable(params.cohortDefinitionId);
 			self.currentCohortDefinition = ko.observable(null);
 
@@ -70,7 +74,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			};
 			self.conceptSets = ko.observable({});
 			self.loadedConceptSet = function (conceptSet, ids, status) {
-				//console.log(conceptSet.name, ids);
 				self.conceptSets(_.extend({}, self.conceptSets(), {
 					[conceptSet.name]: ids
 				}));
@@ -92,16 +95,16 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				document.location = "#/profiles/" + self.sourceKey() + '/' + personId;
 			});
 
-
 			let personRequests = {};
 			let personRequest;
 			self.loadPerson = function () {
 				self.cantFindPerson(false)
 				self.loadingPerson(true);
 
-
 				let url = self.config.api.url + self.sourceKey() + '/person/' + self.personId();
-				personRequest = personRequests[url] = util.cachedAjax({
+
+				self.loadingStatus('loading profile data from database');
+				personRequest = personRequests[url] = $.ajax({
 					url: url,
 					method: 'GET',
 					contentType: 'application/json',
@@ -113,6 +116,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						if (personRequest !== personRequests[url]) {
 							return;
 						}
+						self.loadingStatus('processing profile data');
 						person.personId = self.personId();
 						self.loadingPerson(false);
 						let cohort;
@@ -122,10 +126,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 								return o.cohortDefinitionId == cohortDefinitionId;
 							});
 						}
-						// In the event that we could not find
-						// the matching cohort in the person object
-						// or the cohort definition id is not specified
-						// default it
+						// In the event that we could not find the matching cohort in the person object or the cohort definition id is not specified default it
 						if (typeof cohort === "undefined") {
 							cohort = {
 								startDate: _.chain(person.records)
@@ -138,10 +139,12 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 							.getFullYear() - person.yearOfBirth;
 						person.records.forEach(function (rec) {
 							// have to get startDate from person.cohorts
-							rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24))
-							rec.endDay = rec.endDate ?
-								Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
+							rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
+							rec.endDay = rec.endDate ? Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
+							rec.highlight = self.defaultColor;
+							rec.stroke = self.defaultColor;
 						});
+						self.personRecords(person.records);
 						person.shadedRegions =
 							person.observationPeriods.map(op => {
 								return {
@@ -150,32 +153,33 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 									className: 'observation-period',
 								};
 							});
-						self.crossfilter(crossfilter(person.records));
 						self.shadedRegions(person.shadedRegions);
 						self.person(person);
 					}
 				});
 			};
 
-			//self.sourceKey(params.model.sourceKey);
-			//self.personId(params.model.personId);
-
-			self.crossfilter = ko.observable();
+			self.xfObservable = ko.observable();
+			self.xfDimensions = [];
+			self.highlightEnabled = ko.observable(false);
 			self.filtersChanged = ko.observable();
-			self.filteredRecs = ko.observableArray([]);
 			self.facetsObs = ko.observableArray([]);
+			self.removeHighlight = function () {
+				self.highlight([]);
+			}
 			self.highlightRecs = ko.observableArray([]);
 			self.highlight = function (recs, evt) {
-				self.highlightRecs(recs || []);
-			};
-			self.datatableRowClickCallback = function (rec) {
-				if (event.target.childNodes[0].data === rec.conceptName) {
-					self.highlightRecs(self.filteredRecs()
-						.filter(d => d.conceptName === rec.conceptName));
+				if (recs && recs.length > 0) {
+					self.highlightEnabled(true);
 				} else {
-					self.highlightRecs([rec]);
+					self.highlightEnabled(false);
 				}
+				self.highlightRecs([{
+					'color': '#f00',
+					'recs': recs
+				}] || []);
 			};
+
 			self.getGenderClass = ko.computed(function () {
 				if (self.person()) {
 					if (self.person()
@@ -193,21 +197,17 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				if (self.person()) {}
 			});
 
+			$('.highlight-filter').on('click', function (evt) {
+				return false;
+			});
+
 			self.dimensions = {
 				'Domain': {
 					caption: 'Domain',
 					func: d => d.domain,
 					filter: ko.observable(null),
-					Members: [], //ko.observableArray([{Name:'foo', ActiveCount:'bar',Selected:false}]),
+					Members: [],
 				},
-				/*
-				'Year Start': {
-						caption: 'Year Start',
-						func: d => new Date(d.startDate).getFullYear(),
-						filter: ko.observable(null),
-						Members: [],//ko.observableArray([]),
-				},
-				*/
 				'profileChart': {
 					name: 'profileChart',
 					func: d => [d.startDay, d.endDay],
@@ -218,25 +218,24 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 					func: d => d.conceptName,
 					filter: ko.observable(null),
 				},
-				'concepts': { // includes conceptSets and specific conceptName
+				'concepts': {
 					name: 'concepts',
 					isArray: true,
 					func: d => {
 						return (_.chain(self.conceptSets())
 							.map(function (ids, conceptSetName) {
 								if (_.includes(ids, d.conceptId))
-									//return conceptSetName;
-									return conceptSetName + '-cs';
+									return '<i class="fa fa-shopping-cart"></i> ' + conceptSetName;
 							})
 							.compact()
 							.value()
 							.concat(d.conceptName)
-							//.concat(d.conceptName + '-c')
 						);
 					},
 					filter: ko.observable(null),
 				},
 			};
+
 			self.dimensionSetup = function (dim, cf) {
 				if (!cf) return;
 				dim.dimension = cf.dimension(dim.func, dim.isArray);
@@ -246,39 +245,53 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				dim.groupAll = dim.dimension.groupAll();
 				dim.groupAll.reduce(...reduceToRecs);
 			};
+
+			self.highlightData = ko.observableArray();
+			self.defaultColor = '#888';
+
 			self.words = ko.computed(function () {
-				var recs = self.filteredRecs();
+				if (!self.xfObservable())
+					return;
+
+				if (self.xfDimensions.length == 0) {
+					self.xfDimensions.push(self.xfObservable().dimension(d => d.startDay));
+				}
+
+				var recs = self.xfObservable().allFiltered();
+
 				var conceptSets = self.conceptSets();
-				self.dimensionSetup(self.dimensions.concepts,
-					self.crossfilter());
-				//self.crossfilter.valueHasMutated();
-				//console.log(conceptSets);
+				self.dimensionSetup(self.dimensions.concepts, self.xfObservable());
+
 				var stopWords = [
 					'Outpatient Visit', 'No matching concept',
 				];
-				if (!self.dimensions.concepts.dimension) return [];
-				var words = self.dimensions.concepts.group.top(20)
-					.filter(d => d.value.length &&
-						stopWords.indexOf(d.key) === -1)
+
+				var words = self.dimensions.concepts.group.all()
+					.filter(d => {
+						var filtered = true;
+						if (self.filterHighlightsText() && self.filterHighlightsText().length > 0) {
+							if (d.key.toLowerCase().indexOf(self.filterHighlightsText().toLowerCase()) == -1) {
+								filtered = false;
+							}
+						}
+						return d.value.length && stopWords.indexOf(d.key) === -1 && filtered;
+					})
 					.map(d => {
 						return {
-							//text: d.key,
-							text: `${d.key} (${d.value.length})`,
-							recs: d.value
+							caption: d.key,
+							domain: d.value[0].domain,
+							text: d.key,
+							recs: d.value,
+							count: d.value.length,
+							highlight: ko.observable(self.defaultColor)
 						}
 					});
 				words = _.sortBy(words, d => -d.recs.length)
-				/* not varying word size anymore
-				var avgSize = average(words.map(d => d.recs.length));
-				var std = standardDeviation(words.map(d => d.recs.length));
-				words.forEach(word => {
-					word.size = (100 + Math.round(((word.recs.length - avgSize) / std) * 10)) + '%';
-				});
-				*/
-				//console.log(words);
-				return words;
+				self.highlightData(words);
 			});
+
 			self.searchHighlight = ko.observable();
+
 			self.searchHighlight.subscribe(func => {
 				if (func)
 					self.highlight(self.filteredRecs()
@@ -286,46 +299,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				else
 					self.highlight([]);
 			});
-			self.facets = ['Domain'].map(d => self.dimensions[d]);
-			self.crossfilter(crossfilter([]));
-			_.each(self.dimensions, dim => {
-				dim.filter.subscribe(filter => {
-					dim.dimension.filter(filter);
-					self.filtersChanged(filter);
-				});
-			});
-			self.filtersChanged.subscribe(() => {
-				var groupAll = self.crossfilter()
-					.groupAll();
-				groupAll.reduce(...reduceToRecs);
-				self.filteredRecs(groupAll.value());
-			});
-			self.crossfilter.subscribe(cf => {
-				_.each(self.dimensions, dim => {
-					self.dimensionSetup(dim, cf);
-					//dim.recs(dim.groupAll.value());
-				});
-				self.facets.forEach(facet => {
-					facet.Members = [];
-				});
-				self.facetsObs.removeAll();
-				self.facetsObs.push(...self.facets);
-				var groupAll = self.crossfilter()
-					.groupAll();
-				groupAll.reduce(...reduceToRecs);
-				self.filteredRecs(groupAll.value());
-			});
-
-			self.showBrowser = function () {
-				$('#cohortDefinitionChooser')
-					.modal('show');
-			};
-
 			self.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
 
 			self.showSection = {
 				profileChart: ko.observable(true),
-				wordcloud: ko.observable(true),
 				datatable: ko.observable(true),
 			};
 
@@ -334,17 +311,37 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.showSection[section](!self.showSection[section]());
 			};
 
+			self.swatch = function (d) {
+				return '<div class="swatch" style="background-color:' + d + '"></div>';
+			}
+
+			self.highlightDom = '<<"row vertical-align"<"col-xs-6"><"col-xs-6 search"f>><t><"row vertical-align"<"col-xs-6"i><"col-xs-6"p>>>';
+			self.highlightColumns = ['select', {
+				render: self.swatch,
+				data: 'highlight()',
+				sortable: false
+			}, {
+				title: 'Concept Name',
+				data: 'caption'
+			}, {
+				title: 'Domain',
+				data: 'domain'
+			}, {
+				title: 'Total Records',
+				data: 'count'
+			}];
+
 			self.columns = [{
-					title: 'Domain',
-					data: 'domain'
-				},
-				{
 					title: 'Concept Id',
 					data: 'conceptId'
 				},
 				{
 					title: 'Concept Name',
 					data: 'conceptName'
+				},
+				{
+					title: 'Domain',
+					data: 'domain'
 				},
 				{
 					title: 'Start Day',
@@ -356,12 +353,67 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				}
 			];
 
+			self.daysBeforeIndex = function (d) {
+				if (d.startDay >= -30 && d.startDay <= 0) {
+					return '0-30 days';
+				} else if (d.startDay >= -60 && d.startDay < -30) {
+					return '31-60 days';
+				} else if (d.startDay >= -90 && d.startDay < -60) {
+					return '61-90 days';
+				} else if (d.startDay < -90) {
+					return '90+ days';
+				}
+			}
+			self.setHighlights = function (colorIndex) {
+				var selectedData = $('#highlight-table table').DataTable().rows('.selected').data();
+				for (var i = 0; i < selectedData.length; i++) {
+					selectedData[i].highlight(self.getHighlightBackground(colorIndex)); // set the swatch color
+					selectedData[i].recs.forEach(r => {
+						r.highlight = self.getHighlightBackground(colorIndex);
+						r.stroke = self.getHighlightColor(colorIndex);
+					}); // set the record colors
+				};
+
+				self.highlightRecs.valueHasMutated();
+			}
+
+			// d3.schemePaired
+			self.palette = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ff9', '#b15928'];
+
+			self.getHighlightColor = function (i) {
+				return self.palette[i * 2];
+			}
+
+			self.getHighlightBackground = function (i) {
+				return self.palette[i * 2 + 1];
+			}
+
+			self.clearHighlights = function () {
+				var selectedData = $('#highlight-table table').DataTable().data();
+				for (var i = 0; i < selectedData.length; i++) {
+					selectedData[i].highlight(self.defaultColor); // set the swatch color
+					selectedData[i].recs.forEach(r => {
+						r.highlight = self.defaultColor; // set the record colors
+						r.stroke = self.defaultColor; // set the record colors
+					})
+				};
+
+				self.highlightRecs.valueHasMutated();
+			}
+
+			self.highlightRowClick = function (data, evt, row) {
+				evt.stopPropagation();
+				$(row).toggleClass('selected');
+			}
+			self.highlightOptions = {};
 			self.options = {
 				Facets: [{
 					'caption': 'Domain',
 					'binding': d => d.domain,
-				}, ]
+				}]
 			};
+
+			$("#modalHighlights").draggable();
 
 			if (self.personId()) {
 				self.loadPerson();
@@ -372,30 +424,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 			viewModel: profileManager,
 			template: view
 		};
+
 		ko.components.register('profile-manager', component);
 		return component;
-
-		function standardDeviation(values) {
-			var avg = average(values);
-
-			var squareDiffs = values.map(function (value) {
-				var diff = value - avg;
-				var sqrDiff = diff * diff;
-				return sqrDiff;
-			});
-
-			var avgSquareDiff = average(squareDiffs);
-
-			var stdDev = Math.sqrt(avgSquareDiff);
-			return stdDev;
-		}
-
-		function average(data) {
-			var sum = data.reduce(function (sum, value) {
-				return sum + value;
-			}, 0);
-
-			var avg = sum / data.length;
-			return avg;
-		}
 	});

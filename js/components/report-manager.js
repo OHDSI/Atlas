@@ -1,12 +1,33 @@
-define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'faceted-datatable'], function (ko, view, d3, atlascharts, colorbrewer, _, config) {
+define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'faceted-datatable', 'colvis'], function (ko, view, d3, atlascharts, colorbrewer, _, config) {
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
 		self.config = config;
+		self.refresh = ko.observable(true);
 		self.cohortCaption = ko.observable('Click Here to Choose a Cohort');
 		self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.reference = ko.observableArray();
 		self.dataCompleteReference = ko.observableArray();
+		self.dom = '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';
+		self.lengthMenu = params.lengthMenu || [
+			[15, 30, 45, 100, -1],
+			[15, 30, 45, 100, 'All']
+		];
+
+		const size4 = {
+				width: 400,
+				height: 140
+			},
+			size6 = {
+				width: 500,
+				height: 150
+			},
+			size12 = {
+				width: 1000,
+				height: 250
+			};
+
+		self.buttons = ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'];
 		self.heelOptions = {
 			Facets: [{
 				'caption': 'Error Msg',
@@ -43,16 +64,40 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						return 'Other'
 					}
 				}
-					}]
+			}]
 		};
 
+		self.helpTitle = ko.observable();
+		self.helpContent = ko.observable();
+
+		self.setHelpContent = function (h) {
+			switch (h) {
+				case 'condition-prevalence':
+					{
+						self.helpTitle("Condition Prevalence");
+						self.helpContent("not available");
+						break;
+					}
+				case 'year-of-birth':
+					{
+						self.helpTitle("Year of Birth");
+						self.helpContent("The number of people in this cohort shown with respect to their year of birth.");
+						break;
+					}
+				default:
+					{
+						self.helpTitle("Help Unavailable");
+						self.helpContent("Help not yet available for this topic: " + h);
+					}
+			}
+		}
 		self.heelDataColumns = [{
 			title: 'Message Type',
 			data: 'attributeName'
-				}, {
+		}, {
 			title: 'Message',
 			data: 'attributeValue'
-				}];
+		}];
 
 		self.dataCompleteOptions = {
 			Facets: [{
@@ -60,24 +105,26 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 				'binding': d => {
 					return ''
 				}
-					}]
+			}]
 		};
 
 		self.dataCompletColumns = [{
 			title: 'Age',
 			data: 'covariance'
-				}, {
+		}, {
 			title: 'Gender (%)',
 			data: 'genderP'
-				}, {
+		}, {
 			title: 'Race (%)',
 			data: 'raceP'
-				}, {
+		}, {
 			title: 'Ethnicity (%)',
 			data: 'ethP'
-				}];
+		}];
 
 		self.careSiteDatatable;
+
+		self.currentAgeGroup = ko.observable();
 
 		self.reportTriggerRunSuscription = self.model.reportTriggerRun.subscribe(function (newValue) {
 			if (newValue) {
@@ -103,6 +150,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 		self.treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
 		self.boxplotWidth = 200;
 		self.boxplotHeight = 125;
+		self.genderIcon = function (d) {
+			if (d.genderConceptId == 8507) {
+				return 'fa-male';
+			}
+
+			if (d.genderConceptId == 8532) {
+				return 'fa-female';
+			}
+		}
 
 		self.showBrowser = function () {
 			$('#cohortDefinitionChooser')
@@ -114,6 +170,149 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 		self.datatables = {};
 
+		self.tornadoChart = function (target, data, profiles, profilesSelected) {
+			data.sort((a, b) => {
+				return b.ageGroup - a.ageGroup;
+			});
+			data.forEach(d => {
+				if (d.genderConceptId == 8532) {
+					d.personCount = d.personCount * -1;
+				}
+			})
+
+			var margin = {
+					top: 20,
+					right: 20,
+					bottom: 20,
+					left: 60
+				},
+				width = 600 - margin.left - margin.right,
+				height = 300 - margin.top - margin.bottom;
+
+			var x = d3.scaleLinear()
+				.range([0, width]);
+
+			var y = d3.scaleLinear()
+				.range([0, height]);
+
+			var formatSI = d3.format(".2s");
+			var xAxis = d3.axisBottom()
+				.scale(x)
+				.ticks(7)
+				.tickFormat(d => {
+					return formatSI(Math.abs(d));
+				});
+
+			var yAxis = d3.axisLeft()
+				.scale(y)
+				.tickSize(0)
+				.tickValues([5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105])
+				.tickFormat(d => {
+					d = d - 5;
+					if (d == 100)
+						return '100+';
+
+					return d + '-' + (d + 9);
+				})
+
+			var svg = d3.select(target)
+				.attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
+				.append("g")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+			xExtent = d3.extent(data, d => {
+				return d.personCount;
+			});
+			xMax = Math.max(Math.abs(xExtent[0]), Math.abs(xExtent[1]));
+			x.domain([-1 * xMax, xMax]);
+			y.domain([100, 0]);
+
+			var bar = svg.selectAll(".bar")
+				.data(data)
+
+			bar.enter().append("rect")
+				.attr("class", function (d) {
+					return "bar bar--" + (d.personCount < 0 ? "negative" : "positive");
+				})
+				.attr("x", function (d) {
+					var minWidth = 5;
+					var correction = 0;
+					var xPos = x(Math.min(0, d.personCount));
+					if (d.personCount < 0 && (xPos - x(0)) > -5) {
+						correction = minWidth;
+					}
+					return xPos - correction;
+				})
+				.attr("y", function (d) {
+					return y(d.ageGroup) - (height / 11);
+				})
+				.attr("width", function (d) {
+					return Math.max(Math.abs(x(d.personCount) - x(0)), 5);
+				})
+				.attr("height", height / 11)
+				.on('click', d => {
+					var filteredProfiles = profiles.filter(s => {
+						return s.genderConceptId == d.genderConceptId && s.ageGroup == d.ageGroup;
+					});
+					profilesSelected(filteredProfiles);
+				});
+
+			bar.enter().append('text')
+				.attr("text-anchor", "middle")
+				.attr("alignment-baseline", "middle")
+				.style("stroke-width", 2)
+				.style("stroke", "#fff")
+				.attr("x", function (d, i) {
+					var xPos = x(Math.min(0, d.personCount)) + (Math.abs(x(d.personCount) - x(0)) / 2);
+					var correction = 0;
+					if ((Math.abs(x(d.personCount) - x(0))) <= 100) {
+						correction = Math.abs(d.personCount) / d.personCount * 10;
+					}
+					return xPos + correction;
+				})
+				.attr("y", function (d, i) {
+					return y(d.ageGroup - 5) - (height / 11);
+				})
+				.text(function (d) {
+					return Math.abs(d.personCount);
+				})
+
+			bar.enter().append('text')
+				.attr("text-anchor", "middle")
+				.attr("alignment-baseline", "middle")
+				.style("stroke-width", 1)
+				.style("stroke", "#000")
+				.attr("x", function (d, i) {
+					var xPos = x(Math.min(0, d.personCount)) + (Math.abs(x(d.personCount) - x(0)) / 2);
+					var correction = 0;
+					if ((Math.abs(x(d.personCount) - x(0))) <= 100) {
+						correction = Math.abs(d.personCount) / d.personCount * 10;
+					}
+					return xPos + correction;
+				})
+				.attr("y", function (d, i) {
+					return y(d.ageGroup - 5) - (height / 11);
+				})
+				.text(function (d) {
+					return Math.abs(d.personCount);
+				})
+
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis);
+
+			svg.append("g")
+				.attr("class", "y axis")
+				.call(yAxis);
+		}
+		self.tornadoProfiles = ko.observableArray();
+		self.profilesSelected = function (profiles) {
+			self.tornadoProfiles(profiles);
+		}
+		self.buildProfileLink = function (p) {
+			return '#/profiles/' + self.model.reportSourceKey() + '/' + p.personId + '/' + self.model.reportCohortDefinitionId();
+		}
 		self.runReport = function runReport() {
 			self.model.loadingReport(true);
 			self.model.activeReportDrilldown(false);
@@ -122,16 +321,28 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			switch (self.model.reportReportName()) {
 				case 'Template':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
 						}
 					});
 					break;
+				case 'Tornado':
+					$.ajax({
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/tornado?refresh=' + self.refresh(),
+						success: function (data) {
+							self.tornadoRecords = data.tornadoRecords;
+							self.tornadoSamples = data.profileSamples;
+							self.model.currentReport(self.model.reportReportName());
+							self.model.loadingReport(false);
+							self.tornadoChart("#tornadoPlot svg", self.tornadoRecords, self.tornadoSamples, self.profilesSelected);
+						}
+					});
+					break;
 				case 'Death':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/death?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/death?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -232,7 +443,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							// death type
 							if (data.deathByType && data.deathByType.length > 0) {
 								var genderDonut = new atlascharts.donut();
-								genderDonut.render(self.mapConceptData(data.deathByType), "#deathByType", self.donutWidth, self.donutHeight, {
+								genderDonut.render(self.mapConceptData(data.deathByType), "#deathByType", size6.width, size6.height, {
 									margin: {
 										top: 5,
 										left: 5,
@@ -260,7 +471,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										UIF: bpdata.p90Value[i]
 									});
 								}
-								boxplot.render(bpseries, "#ageAtDeath", self.boxplotWidth, self.boxplotHeight, {
+								boxplot.render(bpseries, "#ageAtDeath", size6.width, size6.height, {
 									xLabel: 'Gender',
 									yLabel: 'Age at Death'
 								});
@@ -269,9 +480,18 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					});
 					break;
 					// not yet implemented
+				case 'Care Site':
+					$.ajax({
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/caresite?refresh=' + self.refresh(),
+						success: function (data) {
+							self.model.currentReport(self.model.reportReportName());
+							self.model.loadingReport(false);
+						}
+					});
+					break;
 				case 'Measurement':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/measurement?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/measurement?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -286,7 +506,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 					$.ajax({
 						type: "GET",
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/procedure?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/procedure?refresh=' + self.refresh(),
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
@@ -310,7 +530,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								datatable = $('#procedure_table')
 									.DataTable({
 										order: [5, 'desc'],
-										dom: 'T<"clear">lfrtip',
+										dom: self.dom,
+										buttons: self.buttons,
+										lengthMenu: self.lengthMenu,
+										autoWidth: false,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -318,47 +541,36 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										},
 										columns: [{
 												data: 'concept_id'
-													},
+											},
 											{
 												data: 'level_4'
-													},
+											},
 											{
 												data: 'level_3',
 												visible: false
-													},
+											},
 											{
 												data: 'level_2'
-													},
+											},
 											{
 												data: 'procedure_name'
-													},
+											},
 											{
 												data: 'num_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'percent_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'records_per_person',
 												className: 'numeric'
-													}
-												],
-										pageLength: 5,
-										lengthChange: false,
+											}
+										],
 										deferRender: true,
 										destroy: true
 									});
-
-								/*
-							$(document).on('click', '.dataTable tbody tr', function () {
-								var data = $('.dataTable').DataTable().row(this).data();
-								if (data) {
-									self.procedureDrilldown(data.concept_id, data.procedure_name);
-								}
-							});
-                            */
 
 								var tree = self.buildHierarchyFromJSON(normalizedData, threshold);
 								var treemap = new atlascharts.treemap();
@@ -409,7 +621,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 					$.ajax({
 						type: "GET",
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drug?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drug?refresh=' + self.refresh(),
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
@@ -436,7 +648,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								datatable = $('#drug_table')
 									.DataTable({
 										order: [6, 'desc'],
-										dom: 'T<"clear">lfrtip',
+										dom: self.dom,
+										buttons: self.buttons,
+										lengthMenu: self.lengthMenu,
+										autoWidth: false,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -444,51 +659,41 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										},
 										columns: [{
 												data: 'concept_id'
-													},
+											},
 											{
 												data: 'atc1'
-													},
+											},
 											{
 												data: 'atc3',
 												visible: false
-													},
+											},
 											{
 												data: 'atc5'
-													},
+											},
 											{
 												data: 'ingredient',
 												visible: false
-													},
+											},
 											{
 												data: 'rxnorm'
-													},
+											},
 											{
 												data: 'num_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'percent_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'records_per_person',
 												className: 'numeric'
-													}
-												],
-										pageLength: 5,
-										lengthChange: false,
+											}
+										],
 										deferRender: true,
 										destroy: true
 									});
 
-								/*
-															$(document).on('click', '.dataTable tbody tr', function () {
-																var data = $('.dataTable').DataTable().row(this).data();
-																if (data) {
-																	self.drugExposureDrilldown(data.concept_id, data.rxnorm);
-																}
-															});
-								*/
 								var tree = self.buildHierarchyFromJSON(data, threshold);
 								var treemap = new atlascharts.treemap();
 								treemap.render(tree, '#treemap_container', width, height, {
@@ -537,7 +742,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					threshold = minimum_area / (width * height);
 
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drugera?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drugera?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -562,7 +767,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								datatable = $('#drugera_table')
 									.DataTable({
 										order: [5, 'desc'],
-										dom: 'T<"clear">lfrtip',
+										dom: self.dom,
+										buttons: self.buttons,
+										lengthMenu: self.lengthMenu,
+										autoWidth: false,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -570,47 +778,36 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										},
 										columns: [{
 												data: 'concept_id'
-													},
+											},
 											{
 												data: 'atc1'
-													},
+											},
 											{
 												data: 'atc3',
 												visible: false
-													},
+											},
 											{
 												data: 'atc5'
-													},
+											},
 											{
 												data: 'ingredient'
-													},
+											},
 											{
 												data: 'num_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'percent_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'length_of_era',
 												className: 'numeric'
-													}
-												],
-										pageLength: 5,
-										lengthChange: false,
+											}
+										],
 										deferRender: true,
 										destroy: true
 									});
-
-								/*
-							$(document).on('click', '.dataTable tbody tr', function () {
-								var data = $('.dataTable').DataTable().row(this).data();
-								if (data) {
-									drugeraDrilldown(data.concept_id, data.ingredient);
-								}
-							});
-                            */
 
 								var tree = self.eraBuildHierarchyFromJSON(data, threshold);
 								var treemap = new atlascharts.treemap();
@@ -660,7 +857,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					threshold = minimum_area / (width * height);
 
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/condition?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/condition?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -685,8 +882,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 								datatable = $('#condition_table')
 									.DataTable({
+										dom: self.dom,
+										buttons: self.buttons,
+										lengthMenu: self.lengthMenu,
+										autoWidth: false,
 										order: [6, 'desc'],
-										dom: 'T<"clear">lfrtip',
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -694,51 +894,41 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										},
 										columns: [{
 												data: 'concept_id'
-													},
+											},
 											{
 												data: 'soc'
-													},
+											},
 											{
 												data: 'hlgt',
 												visible: false
-													},
+											},
 											{
 												data: 'hlt'
-													},
+											},
 											{
 												data: 'pt',
 												visible: false
-													},
+											},
 											{
 												data: 'snomed'
-													},
+											},
 											{
 												data: 'num_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'percent_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'records_per_person',
 												className: 'numeric'
-													}
-												],
-										pageLength: 5,
+											}
+										],
 										lengthChange: false,
 										deferRender: true,
 										destroy: true
 									});
-
-								/*
-							$(document).on('click', '.dataTable tbody tr', function () {
-								var data = $('.dataTable').DataTable().row(this.rowIndex).data();
-								if (data) {
-									self.conditionDrilldown(data.concept_id, data.snomed);
-								}
-							});
-                            */
 
 								tree = self.buildHierarchyFromJSON(data, threshold);
 								var treemap = new atlascharts.treemap();
@@ -775,15 +965,14 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										return title;
 									}
 								});
-								$('[data-toggle="popover"]')
-									.popover();
+								$('[data-toggle="popover"]').popover();
 							}
 						}
 					});
 					break;
 				case 'Observation Periods':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/observationperiod?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/observationperiod?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -805,9 +994,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										};
 										return item;
 									}, data.ageByGender);
-								agegenderboxplot.render(agData, "#agebygender", 230, 115, {
+								agegenderboxplot.render(agData, "#agebygender", size12.width, size12.height, {
 									xLabel: "Gender",
-									yLabel: "Age"
+									yLabel: "Age",
+									yFormat: d3.format("0f"),
 								});
 							}
 
@@ -824,8 +1014,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									.remove();
 								var ageAtFirstObservationData = self.mapHistogram(histData);
 								var ageAtFirstObservationHistogram = new atlascharts.histogram();
-								ageAtFirstObservationHistogram.render(ageAtFirstObservationData, "#ageatfirstobservation", 230, 115, {
-									xFormat: d3.format('d'),
+								ageAtFirstObservationHistogram.render(ageAtFirstObservationData, "#ageatfirstobservation", size12.width, size12.height, {
+									xFormat: d3.format('0.0d'),
 									xLabel: 'Age',
 									yLabel: 'People'
 								});
@@ -854,13 +1044,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										}
 									}
 									var observationLengthHistogram = new atlascharts.histogram();
-									observationLengthHistogram.render(observationLengthData, "#observationlength", 230, 115, {
+									observationLengthHistogram.render(observationLengthData, "#observationlength", size12.width, size12.height, {
 										xLabel: observationLengthXLabel,
-										yLabel: 'People'
+										yLabel: 'People',
+										yFormat: d3.format("0.1d")
 									});
 								}
 							}
 
+							/* error in charting library
 							// cumulative observation
 							d3.selectAll("#cumulativeobservation svg")
 								.remove();
@@ -890,11 +1082,12 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 								cumulativeObservationLine.render(cumulativeData, "#cumulativeobservation", 230, 115, {
 									yFormat: d3.format('0%'),
-									interpolate: "step-before",
+									interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
 									xLabel: cumulativeObservationXLabel,
 									yLabel: 'Percent of Population'
 								});
 							}
+							*/
 
 							// observation period length by gender
 							var obsPeriodByGenderData = self.normalizeArray(data.durationByGender);
@@ -937,7 +1130,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									opgDataYlabel = 'Years';
 								}
 
-								opbygenderboxplot.render(opgData, "#opbygender", 230, 115, {
+								opbygenderboxplot.render(opgData, "#opbygender", size12.width, size12.height, {
 									xLabel: 'Gender',
 									yLabel: opgDataYlabel
 								});
@@ -948,7 +1141,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								.remove();
 							var obsPeriodByLenByAgeData = self.normalizeArray(data.durationByAgeDecile);
 							if (!obsPeriodByLenByAgeData.empty) {
-								var opbyageboxplot = new atlascharts.BoxPlot();
+								var opbyageboxplot = new atlascharts.boxplot();
 								var opaData = obsPeriodByLenByAgeData.category
 									.map(function (d, i) {
 										var item = {
@@ -984,13 +1177,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									opaDataYlabel = 'Years';
 								}
 
-								opbyageboxplot.render(opaData, "#opbyage", 230, 115, {
+								opbyageboxplot.render(opaData, "#opbyage", size12.width, size12.height, {
 									xLabel: 'Age Decile',
 									yLabel: opaDataYlabel
 								});
 							}
 
 							// observed by year
+							// tooltip bug
+							/*
 							var obsByYearData = self.normalizeArray(data.personsWithContinuousObservationsByYear);
 							if (!obsByYearData.empty && data.personsWithContinuousObservationsByYearStats) {
 								var histData3 = {};
@@ -1002,12 +1197,12 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								d3.selectAll("#oppeoplebyyear svg")
 									.remove();
 								var observationLengthByYearHistogram = new atlascharts.histogram();
-								observationLengthByYearHistogram.render(self.mapHistogram(histData3), "#oppeoplebyyear", 460, 195, {
-									xFormat: d3.format('d'),
+								observationLengthByYearHistogram.render(self.mapHistogram(histData3), "#oppeoplebyyear", size12.width, size12.height, {
 									xLabel: 'Year',
 									yLabel: 'People'
 								});
 							}
+							*/
 
 							// observed by month
 							var obsByMonthData = self.normalizeArray(data.observedByMonth);
@@ -1020,7 +1215,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								d3.selectAll("#oppeoplebymonthsingle svg")
 									.remove();
 								var observationByMonthSingle = new atlascharts.line();
-								observationByMonthSingle.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
+								observationByMonthSingle.render(byMonthSeries, "#oppeoplebymonthsingle", size12.width, size12.height, {
 									xScale: d3.scaleTime()
 										.domain(d3.extent(byMonthSeries[0].values, function (d) {
 											return d.xValue;
@@ -1039,7 +1234,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								d3.selectAll("#opperperson svg")
 									.remove();
 								var donut = new atlascharts.donut();
-								donut.render(self.mapConceptData(data.observationPeriodsPerPerson), "#opperperson", 230, 230, {
+								donut.render(self.mapConceptData(data.observationPeriodsPerPerson), "#opperperson", size12.width, size12.height, {
 									margin: {
 										top: 5,
 										bottom: 10,
@@ -1058,7 +1253,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					var threshold = minimum_area / (width * height);
 
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/conditionera?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/conditionera?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1084,7 +1279,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								datatable = $('#conditionera_table')
 									.DataTable({
 										order: [6, 'desc'],
-										dom: 'T<"clear">lfrtip',
+										dom: self.dom,
+										buttons: self.buttons,
+										lengthMenu: self.lengthMenu,
+										autoWidth: false,
 										data: table_data,
 										"createdRow": function (row, data, dataIndex) {
 											$(row)
@@ -1092,51 +1290,40 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										},
 										columns: [{
 												data: 'concept_id'
-													},
+											},
 											{
 												data: 'soc'
-													},
+											},
 											{
 												data: 'hlgt',
 												visible: false
-													},
+											},
 											{
 												data: 'hlt'
-													},
+											},
 											{
 												data: 'pt',
 												visible: false
-													},
+											},
 											{
 												data: 'snomed'
-													},
+											},
 											{
 												data: 'num_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'percent_persons',
 												className: 'numeric'
-													},
+											},
 											{
 												data: 'length_of_era',
 												className: 'numeric'
-													}
-												],
-										pageLength: 5,
-										lengthChange: false,
+											}
+										],
 										deferRender: true,
 										destroy: true
 									});
-
-								/*
-							$(document).on('click', '.dataTable tbody tr', function () {
-								var data = $('.dataTable').DataTable().row(this).data();
-								if (data) {
-									self.conditionEraDrilldown(data.concept_id, data.snomed);
-								}
-							});
-                            */
 
 								var tree = self.eraBuildHierarchyFromJSON(data, threshold);
 								var treemap = new atlascharts.treemap();
@@ -1181,7 +1368,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Drugs by Index':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1230,46 +1417,47 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 											}
 										});
 
-									datatable = $('#drugera_table')
+									datatable = $('#drugs-by-index-table')
 										.DataTable({
 											order: [5, 'desc'],
-											dom: 'T<"clear">lfrtip',
+											dom: self.dom,
+											buttons: self.buttons,
+											lengthMenu: self.lengthMenu,
+											autoWidth: false,
 											data: table_data,
 											columns: [{
 													data: 'concept_id'
-														},
+												},
 												{
 													data: 'atc1'
-														},
+												},
 												{
 													data: 'atc3',
 													visible: false
-														},
+												},
 												{
 													data: 'atc5'
-														},
+												},
 												{
 													data: 'ingredient'
-														},
+												},
 												{
 													data: 'num_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'percent_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'relative_risk',
 													className: 'numeric'
-														}
-													],
-											pageLength: 5,
-											lengthChange: false,
+												}
+											],
 											deferRender: true,
 											destroy: true
 										});
-									self.datatables['drugera_table'] = datatable;
+									self.datatables['drugs-by-index-table'] = datatable;
 
 									tree = self.buildHierarchyFromJSON(drugEraPrevalence, threshold);
 									treemap = new atlascharts.treemap();
@@ -1322,7 +1510,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Conditions by Index':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1375,42 +1563,44 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									datatable = $('#condition_table')
 										.DataTable({
 											order: [6, 'desc'],
-											dom: 'T<"clear">lfrtip',
+											dom: self.dom,
+											buttons: self.buttons,
+											lengthMenu: self.lengthMenu,
 											data: table_data,
+											autoWidth: false,
 											columns: [{
 													data: 'concept_id'
-														},
+												},
 												{
 													data: 'soc'
-														},
+												},
 												{
 													data: 'hlgt',
 													visible: false
-														},
+												},
 												{
 													data: 'hlt'
-														},
+												},
 												{
 													data: 'pt',
 													visible: false
-														},
+												},
 												{
 													data: 'snomed'
-														},
+												},
 												{
 													data: 'num_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'percent_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'relative_risk',
 													className: 'numeric'
-														}
-													],
-											pageLength: 5,
+												}
+											],
 											lengthChange: false,
 											deferRender: true,
 											destroy: true
@@ -1468,7 +1658,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Procedures by Index':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecifictreemap?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1519,39 +1709,40 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									datatable = $('#procedure_table')
 										.DataTable({
 											order: [6, 'desc'],
-											dom: 'T<"clear">lfrtip',
+											dom: self.dom,
+											buttons: self.buttons,
+											lengthMenu: self.lengthMenu,
+											autoWidth: false,
 											data: table_data,
 											columns: [{
 													data: 'concept_id'
-														},
+												},
 												{
 													data: 'level_4'
-														},
+												},
 												{
 													data: 'level_3',
 													visible: false
-														},
+												},
 												{
 													data: 'level_2'
-														},
+												},
 												{
 													data: 'procedure_name'
-														},
+												},
 												{
 													data: 'num_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'percent_persons',
 													className: 'numeric'
-														},
+												},
 												{
 													data: 'relative_risk',
 													className: 'numeric'
-														}
-													],
-											pageLength: 5,
-											lengthChange: false,
+												}
+											],
 											deferRender: true,
 											destroy: true
 										});
@@ -1608,7 +1799,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Cohort Specific':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1627,7 +1818,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									}, result);
 
 								var personsByDurationSingle = new atlascharts.line();
-								personsByDurationSingle.render(personsByDurationData, "#personsByDurationFromStartToEnd", 230, 115, {
+								personsByDurationSingle.render(personsByDurationData, "#personsByDurationFromStartToEnd", size12.width, size12.height, {
 									yFormat: d3.format('0%'),
 									xLabel: 'Day',
 									yLabel: 'Percent of Population',
@@ -1640,14 +1831,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							var byMonthData = self.normalizeArray(data.prevalenceByMonth, true);
 							if (!byMonthData.empty) {
 								var byMonthSeries = self.mapMonthYearDataToSeries(byMonthData, {
-
 									dateField: 'xCalendarMonth',
 									yValue: 'yPrevalence1000Pp',
 									yPercent: 'yPrevalence1000Pp'
 								});
 
 								var prevalenceByMonth = new atlascharts.line();
-								prevalenceByMonth.render(byMonthSeries, "#prevalenceByMonth", 400, 200, {
+								prevalenceByMonth.render(byMonthSeries, "#prevalenceByMonth", size12.width, size12.height, {
 									xScale: d3.scaleTime()
 										.domain(d3.extent(byMonthSeries[0].values, function (d) {
 											return d.xValue;
@@ -1677,7 +1867,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										};
 										return item;
 									}, ageAtIndexDistribution);
-								boxplot.render(agData, "#ageAtIndex", 230, 115, {
+								boxplot.render(agData, "#ageAtIndex", size6.width, size6.height, {
 									xLabel: "Gender",
 									yLabel: "Age"
 								});
@@ -1701,7 +1891,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										};
 										return item;
 									}, distributionAgeCohortStartByCohortStartYear);
-								boxplotCsy.render(csyData, "#distributionAgeCohortStartByCohortStartYear", 235, 210, {
+								boxplotCsy.render(csyData, "#distributionAgeCohortStartByCohortStartYear", size4.width, size4.height, {
 									xLabel: "Cohort Start Year",
 									yLabel: "Age"
 								});
@@ -1725,7 +1915,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										};
 										return item;
 									}, distributionAgeCohortStartByGender);
-								boxplotBg.render(bgData, "#distributionAgeCohortStartByGender", 230, 115, {
+								boxplotBg.render(bgData, "#distributionAgeCohortStartByGender", size6.width, size6.height, {
 									xLabel: "Gender",
 									yLabel: "Age"
 								});
@@ -1740,7 +1930,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									yPercent: 'percentValue'
 								});
 								var observationByMonthSingle = new atlascharts.line();
-								observationByMonthSingle.render(personsInCohortFromCohortStartToEndSeries, "#personinCohortFromStartToEnd", 460, 250, {
+								observationByMonthSingle.render(personsInCohortFromCohortStartToEndSeries, "#personinCohortFromStartToEnd", size12.width, size12.height, {
 									xScale: d3.scaleTime()
 										.domain(d3.extent(personsInCohortFromCohortStartToEndSeries[0].values, function (d) {
 											return d.xValue;
@@ -1807,14 +1997,14 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 								// create svg with range bands based on the trellis names
 								var chart = new atlascharts.trellisline();
-								chart.render(dataByDecile, "#trellisLinePlot", 400, 200, {
+								chart.render(dataByDecile, "#trellisLinePlot", size12.width, size12.height, {
 									trellisSet: allDeciles,
 									trellisLabel: "Age Decile",
 									seriesLabel: "Year",
 									yLabel: "Prevalence Per 1000 People",
 									xFormat: d3.timeFormat("%Y"),
-									yFormat: d3.format("0.2f"),
-									tickPadding: 20,
+									yFormat: d3.format("0.1f"),
+									tickPadding: 5,
 									colors: d3.scaleOrdinal()
 										.domain(["MALE", "FEMALE", "UNKNOWN"])
 										.range(["#1F78B4", "#FB9A99", "#33A02C"])
@@ -1827,7 +2017,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					break;
 				case 'Person':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/person?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/person?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1840,59 +2030,27 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								histData.max = data.yearOfBirthStats[0].maxValue;
 								histData.intervals = 100;
 								histData.data = (self.normalizeArray(data.yearOfBirth));
-								yearHistogram.render(self.mapHistogram(histData), "#reportPerson #hist", 460, 195, {
+								yearHistogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
 									xFormat: d3.format('d'),
+									yFormat: d3.format(',.1s'),
 									xLabel: 'Year',
 									yLabel: 'People'
 								});
 							}
 
 							var genderDonut = new atlascharts.donut();
-							genderDonut.render(self.mapConceptData(data.gender), "#reportPerson #gender", 260, 130, {
-								colors: d3.scaleOrdinal()
-									.domain([8507, 8551, 8532])
-									.range(["#1F78B4", "#33A02C", "#FB9A99"]),
-								margin: {
-									top: 5,
-									bottom: 10,
-									right: 150,
-									left: 10
-								}
-
-							});
-
 							var raceDonut = new atlascharts.donut();
-							raceDonut.render(self.mapConceptData(data.race), "#reportPerson #race", 260, 130, {
-								margin: {
-									top: 5,
-									bottom: 10,
-									right: 150,
-									left: 10
-								},
-								colors: d3.scaleOrdinal()
-									.domain(data.race)
-									.range(colorbrewer.Paired[10])
-							});
-
 							var ethnicityDonut = new atlascharts.donut();
-							ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#reportPerson #ethnicity", 260, 130, {
-								margin: {
-									top: 5,
-									bottom: 10,
-									right: 150,
-									left: 10
-								},
-								colors: d3.scaleOrdinal()
-									.domain(data.ethnicity)
-									.range(colorbrewer.Paired[10])
-							});
+							genderDonut.render(self.mapConceptData(data.gender), "#gender", size4.width, size4.height);
+							raceDonut.render(self.mapConceptData(data.race), "#race", size4.width, size4.height);
+							ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", size4.width, size4.height);
 							self.model.loadingReport(false);
 						}
 					});
 					break; // person report
 				case 'Heracles Heel':
 					$.ajax({
-						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/heraclesheel?refresh=true',
+						url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/heraclesheel?refresh=' + self.refresh(),
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
@@ -1909,8 +2067,15 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							self.model.loadingReport(false);
 
 							self.dataCompleteReference(data);
+
+							var initOneBarData = self.normalizeArray(data.filter(function (d) {
+								return d.covariance == "0~10";
+							}), true);
+
+							self.showHorizontalBar(initOneBarData);
 						}
 					});
+
 					break; // Data Completeness report
 				case 'Entropy':
 					$.ajax({
@@ -1936,13 +2101,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 							self.careSiteDatatable = $('#care_site_table').DataTable({
 								order: [],
-								dom: 'Clfrtip',
+								dom: self.dom,
+								buttons: self.buttons,
+								lengthMenu: self.lengthMenu,
 								data: care_site_data,
 								columns: [{
 									data: 'institution'
-										}],
-								pageLength: 5,
-								lengthChange: false,
+								}],
 								deferRender: true,
 								destroy: true
 							});
@@ -1983,6 +2148,99 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					});
 					break; // Entropy report
 			}
+		}
+
+		self.showHorizontalBar = function (oneBarData) {
+			var svg = d3.select("svg");
+			if (svg) {
+				svg.remove();
+			}
+
+			self.currentAgeGroup('Age group of: ' + oneBarData.covariance);
+			svg = d3.select("#dataCompletenessSvgDiv").append("svg");
+			margin = {
+				top: 20,
+				right: 20,
+				bottom: 30,
+				left: 80
+			}
+			svg.attr("width", 960)
+			svg.attr("height", 500)
+			width = svg.attr("width") - margin.left - margin.right
+			height = svg.attr("height") - margin.top - margin.bottom;
+
+			var tooltip = d3.select("body").append("div").style('position', 'absolute')
+				.style('display', 'none')
+				.style('min-width', '80px')
+				.style('height', 'auto')
+				.style('background', 'none repeat scroll 0 0 #ffffff')
+				.style('border', '1px solid #6F257F')
+				.style('padding', '14px')
+				.style('text-align', 'center');
+
+			var x = d3.scaleLinear().range([0, width]);
+			var y = d3.scaleBand().range([height, 0]);
+
+			var g = svg.append("g")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+			var barDataTxt = "[{\"attr\":\"Gender\", \"value\":" + oneBarData.genderP +
+				"}, {\"attr\":\"Race\", \"value\":" + oneBarData.raceP +
+				"}, {\"attr\":\"Ethnicity\", \"value\":" + oneBarData.ethP + "}]";
+
+
+			var barData = JSON.parse(barDataTxt);
+			x.domain([0, d3.max(barData, function (d) {
+				return 100;
+			})]);
+			y.domain(barData.map(function (d) {
+				return d.attr;
+			})).padding(0.1);
+
+			g.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(d3.axisBottom(x).ticks(5).tickFormat(function (d) {
+					return parseInt(d);
+				}).tickSizeInner([-height]));
+
+			//label for the x axis
+			svg.append("text")
+				.attr("transform",
+					"translate(" + (width / 2) + " ," + (height + margin.top + 20) + ")")
+				.style("text-anchor", "middle")
+				.text("Percentage");
+
+			g.append("g")
+				.attr("class", "y axis")
+				.call(d3.axisLeft(y));
+
+			g.selectAll(".bar")
+				.data(barData)
+				.enter().append("rect")
+				.attr("class", "bar")
+				.attr("x", 0)
+				.attr("height", y.bandwidth())
+				.attr("y", function (d) {
+					return y(d.attr);
+				})
+				.attr("width", function (d) {
+					return x(d.value);
+				})
+				.on("mousemove", function (d) {
+					tooltip
+						.style("left", d3.event.pageX - 50 + "px")
+						.style("top", d3.event.pageY - 70 + "px")
+						.style("display", "inline-block")
+						.html((d.attr) + "<br>" + (d.value) + "%");
+				})
+				.on("mouseout", function (d) {
+					tooltip.style("display", "none");
+				});
+		}
+
+		self.dataCompleteRowClick = function (d) {
+			self.showHorizontalBar(d);
 		}
 
 		// drilldown functions
@@ -2151,7 +2409,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 			$.ajax({
 				type: "GET",
-				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drug/' + concept_id + '?refresh=true',
+				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drug/' + concept_id + '?refresh=' + self.refresh(),
 				success: function (data) {
 					$('#drugExposureDrilldown')
 						.text(concept_name);
@@ -2283,7 +2541,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 			$.ajax({
 				type: "GET",
-				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/conditionera/' + concept_id + '?refresh=true',
+				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/conditionera/' + concept_id + '?refresh=' + self.refresh(),
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2398,7 +2656,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 			$.ajax({
 				type: "GET",
-				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drugera/' + concept_id + '?refresh=true',
+				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/drugera/' + concept_id + '?refresh=' + self.refresh(),
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2514,7 +2772,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 			$.ajax({
 				type: "GET",
-				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/procedure/' + concept_id + '?refresh=true',
+				url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/procedure/' + concept_id + '?refresh=' + self.refresh(),
 				success: function (data) {
 					self.model.loadingReportDrilldown(false);
 					self.model.activeReportDrilldown(true);
@@ -2660,7 +2918,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 			$.ajax({
 					type: "GET",
-					url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific' + type + "/" + id + '?refresh=true',
+					url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/cohortspecific' + type + "/" + id + '?refresh=' + self.refresh(),
 					contentType: "application/json; charset=utf-8"
 				})
 				.done(function (result) {
@@ -2693,20 +2951,20 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							xLabel: "Duration Relative to Index",
 							yLabel: "% Persons",
 							seriesName: "recordType",
-							showLegend: true,
-							colors: d3.scaleOrdinal(d3.schemeCategory10),
+							showLegend: false,
+							colors: d3.schemeCategory10,
 							tooltips: [{
 									label: 'Series',
 									accessor: function (o) {
 										return o.recordType;
 									}
-												},
+								},
 								{
 									label: 'Percent Persons',
 									accessor: function (o) {
 										return d3.format('0.2%')(o.pctPersons);
 									}
-												},
+								},
 								{
 									label: 'Duration Relative to Index',
 									accessor: function (o) {
@@ -2719,13 +2977,14 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										result += days + 'd'
 										return result;
 									}
-												},
+								},
 								{
 									label: 'Person Count',
 									accessor: function (o) {
 										return o.countValue;
 									}
-												}]
+								}
+							]
 						});
 						self.model.loadingReportDrilldown(false);
 					}
@@ -2884,7 +3143,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					id: data.conceptId,
 					label: data.conceptName,
 					value: data.countValue
-							}];
+				}];
 			}
 
 			result = result.sort(function (a, b) {

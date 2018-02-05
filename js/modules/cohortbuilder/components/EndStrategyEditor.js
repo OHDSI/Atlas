@@ -27,10 +27,6 @@ define(['knockout', 'text!./EndStrategyEditorTemplate.html', '../EndStrategies',
 			}		
 		}
 		
-		self.strategy.subscribe(function(newVal) {
-			console.log("Strategy Updated!");
-		});
-		
 		self.clearStrategy = function()
 		{
 			self.strategy(null);	

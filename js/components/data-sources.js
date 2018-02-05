@@ -16,12 +16,23 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 		var minimum_area = 50;
 		var threshold = minimum_area / (width * height);
 
-		const size4 = {width: 400, height: 280},
-			size6 = {width: 500, height: 300},
-			size12 = {width:1000, height: 300};
-		
+		const size4 = {
+				width: 400,
+				height: 280
+			},
+			size6 = {
+				width: 500,
+				height: 300
+			},
+			size12 = {
+				width: 1000,
+				height: 300
+			};
+
 		self.model = params.model;
-		self.sources = config.api.sources.filter(function(s) { return s.hasResults});
+		self.sources = config.api.sources.filter(function (s) {
+			return s.hasResults && s.hasCDM;
+		});
 		self.loadingReport = ko.observable(false);
 		self.hasError = ko.observable(false);
 		self.loadingReportDrilldown = ko.observable(false);
@@ -35,8 +46,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 		 *   aggProperty: if tree map/table supported, describes the aggregate property to use (see descriptors above)
 		 *   conceptDomain: true if concept-driven domain report (treemap and drilldown reports supported), false otherwise
 		 */
-		self.reports = [
-			{
+		self.reports = [{
 				name: "Dashboard",
 				path: "dashboard",
 				conceptDomain: false,
@@ -127,7 +137,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 				path: "achillesheel",
 				conceptDomain: false
 			},
-        ];
+		];
 
 		self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.currentSource = ko.observable(self.sources[0]);
@@ -148,7 +158,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 				return;
 			}
 
-			var url = config.api.url + 'cdmresults/' + currentSource.sourceKey + '/' +currentReport.path;
+			var url = config.api.url + 'cdmresults/' + currentSource.sourceKey + '/' + currentReport.path;
 			self.loadingReport(true);
 			self.hasError(false);
 			self.activeReportDrilldown(false);
@@ -164,7 +174,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					success: function (data) {
 						self.loadingReport(false);
 						if (!!data.summary) {
-							var formatter = (new atlascharts.chart()).formatters.formatSI(2);
+							var formatter = d3.format(".5s");
 							data.summary.forEach(function (d) {
 								if (!isNaN(d.attributeValue)) {
 									d.attributeValue = formatter(d.attributeValue);
@@ -189,7 +199,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 							var ageAtFirstObservationData = self.mapHistogram(histData);
 
 							var ageHistogram = new atlascharts.histogram();
-							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", size4.width, size4.height , {
+							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", size4.width, size4.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Age',
@@ -262,22 +272,22 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					success: function (data) {
 						self.loadingReport(false);
 
-						if (!!data.yearOfBirth && data.yearOfBirth.length > 0 &&
-							!!data.yearOfBirthStats && data.yearOfBirthStats.length > 0) {
+						if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
+							var yearHistogram = new atlascharts.histogram();
 							var histData = {};
 							histData.intervalSize = 1;
 							histData.min = data.yearOfBirthStats[0].minValue;
 							histData.max = data.yearOfBirthStats[0].maxValue;
 							histData.intervals = 100;
-							histData.data = self.normalizeArray(data.yearOfBirth);
-							var histogram = new atlascharts.histogram();
-							histogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
+							histData.data = (self.normalizeArray(data.yearOfBirth));
+							yearHistogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Year',
 								yLabel: 'People'
 							});
 						}
+
 						var genderDonut = new atlascharts.donut();
 						var raceDonut = new atlascharts.donut();
 						var ethnicityDonut = new atlascharts.donut();
@@ -315,22 +325,20 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 						}
 
 						$('#achillesheel_table').DataTable({
-							dom: 'lfrt<"row"<"col-sm-4" i ><"col-sm-4" T ><"col-sm-4" p >>',
-							tableTools: {
-								"sSwfPath": "js/components/datasources/swf/copy_csv_xls_pdf.swf"
-							},
+							dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
+							buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
+							autoWidth: false,
 							data: table_data,
-							columns: [
-								{
+							columns: [{
 									data: 'type',
 									visible: true,
 									width: 200
-                },
+								},
 								{
 									data: 'content',
 									visible: true
-                }
-              ],
+								}
+							],
 							pageLength: 15,
 							lengthChange: false,
 							deferRender: true,
@@ -507,13 +515,14 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 						}, data);
 						$("#report_table").DataTable({
 							order: [1, 'desc'],
-							dom: 'T<"clear">lfrtip',
+							dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
+							buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
+							autoWidth: false,
 							data: tableData,
 							createdRow: function (row) {
 								$(row).addClass('table_selector');
 							},
-							columns: [
-								{
+							columns: [{
 									data: 'concept_id'
 								},
 								{
@@ -531,8 +540,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 									data: 'agg_value',
 									className: 'numeric'
 								}
-                            ],
-							pageLength: 5,
+							],
+							pageLength: 15,
 							lengthChange: false,
 							deferRender: true,
 							destroy: true
@@ -583,7 +592,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 			var currentSource = self.currentSource();
 			var currentReport = self.currentReport();
 			var currentConcept = self.currentConcept();
-			var url = config.api.url + 'cdmresults/'+ currentSource.sourceKey + '/' + currentReport.path + '/' + currentConcept.concept_id;
+			var url = config.api.url + 'cdmresults/' + currentSource.sourceKey + '/' + currentReport.path + '/' + currentConcept.concept_id;
 
 			$('.evidenceVisualization').empty();
 			self.loadingReportDrilldown(true);
@@ -746,19 +755,23 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 				});
 			}
 		};
-		
+
 		self.frequencyDistribution = function (data, selector, report) {
-			if (!!data ) {
+			if (!!data) {
 				var freqData = self.normalizeArray(data.frequencyDistribution);
 				if (!freqData.empty) {
 					// Histogram
 					var frequencyHistogram = new Object();
 					var frequencyHistData = new Object();
 					var totalCnt = 0;
-					for (var i in freqData.yNumPersons) { totalCnt += freqData.yNumPersons[i]; }
+					for (var i in freqData.yNumPersons) {
+						totalCnt += freqData.yNumPersons[i];
+					}
 					frequencyHistData.countValue = freqData.yNumPersons.slice();
 					frequencyHistData.intervalIndex = freqData.xCount.slice();
-					frequencyHistData.percentValue = freqData.yNumPersons.map(function(value) { return (value/totalCnt)*100;});
+					frequencyHistData.percentValue = freqData.yNumPersons.map(function (value) {
+						return (value / totalCnt) * 100;
+					});
 					frequencyHistogram.data = frequencyHistData;
 					frequencyHistogram.min = 0;
 					frequencyHistogram.max = 10;
@@ -769,8 +782,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					var freqHistChart = new self.freqhistogram();
 					freqHistChart.render(freqHistData, selector, size12.width, size12.height, {
 						xFormat: d3.format('d'),
-						xScale: d3.scaleLinear().domain([1,10]),
-						yScale: d3.scaleLinear().domain([0,100]),
+						xScale: d3.scaleLinear().domain([1, 10]),
+						yScale: d3.scaleLinear().domain([0, 100]),
 						yMax: yScaleMax,
 						xLabel: 'Count (\'x\' or more ' + report + 's)',
 						yLabel: '% of total number of persons'
@@ -967,12 +980,11 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 
 			} else // the dataset is a single value result, so the properties are not arrays.
 			{
-				result = [
-					{
-						id: data.conceptId,
-						label: data.conceptName,
-						value: data.countValue
-          }];
+				result = [{
+					id: data.conceptId,
+					label: data.conceptName,
+					value: data.countValue
+				}];
 			}
 
 			result = result.sort(function (a, b) {
@@ -1009,7 +1021,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 			var prefix = d3.formatPrefix(d);
 			return d3.round(prefix.scale(d), p) + prefix.symbol;
 		};
-		
+
 		function freq_defaultTooltip(xLabel, xFormat, xAccessor,
 			yLabel, yFormat, yAccessor) {
 			return function (d) {
@@ -1020,7 +1032,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 			};
 		}
 
-		
+
 		self.freqhistogram = function () {
 			var self = this;
 			self.xScale = {}; // shared xScale for histogram and boxplot
@@ -1096,12 +1108,12 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 
 				var options = $.extend({}, defaults, options);
 
-				var tooltipBuilder = freq_defaultTooltip(options.xLabel || "x", 
-					options.xFormat, 
+				var tooltipBuilder = freq_defaultTooltip(options.xLabel || "x",
+					options.xFormat,
 					function (d) {
 						return d.x;
 					},
-					options.yLabel || "y", 
+					options.yLabel || "y",
 					options.yFormat,
 					function (d) {
 						return d.y;
@@ -1209,7 +1221,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					xAxisHeight = Math.round(tempXAxis.node().getBBox().height);
 					xAxisWidth = Math.round(tempXAxis.node().getBBox().width);
 					height = height - xAxisHeight;
-					width = width - Math.max(0,(xAxisWidth - width)); // trim width if xAxisWidth bleeds over the allocated width.
+					width = width - Math.max(0, (xAxisWidth - width)); // trim width if xAxisWidth bleeds over the allocated width.
 					tempXAxis.remove();
 				}
 
@@ -1223,7 +1235,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					width = width - yAxisWidth;
 					tempYAxis.remove();
 				}
-			
+
 				if (options.boxplot) {
 					height -= 12; // boxplot takes up 12 vertical space
 					var boxplotG = chart.append("g")
@@ -1233,8 +1245,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 				}
 
 				// reset axis ranges
-				x.range([0,width]);
-				y.range([height,0]);
+				x.range([0, width]);
+				y.range([height, 0]);
 
 				var hist = chart.append("g")
 					.attr("transform", "translate(" + (options.margin.left + yAxisLabelWidth + yAxisWidth) + "," + options.margin.top + ")");

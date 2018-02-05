@@ -7,11 +7,13 @@ define(['knockout',
 				'iranalysis/IRAnalysisExpression', 
 				'ohdsi.util',
 				'appConfig',
+				'atlas-state',
+				'job/jobDetail',
 				'iranalysis', 
 				'databindings', 
 				'conceptsetbuilder/components', 
 				'circe'
-], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil, config) {
+], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil, config, sharedState, jobDetail) {
 	function IRAnalysisManager(params) {
 		
 		// polling support
@@ -52,7 +54,7 @@ define(['knockout',
 		
 		self.dirtyFlag = self.model.currentIRAnalysisDirtyFlag;
 		self.isRunning = ko.observable(false);
-		self.activeTab = ko.observable('definition');
+		self.activeTab = ko.observable(params.activeTab || 'definition');
 		self.conceptSetEditor = ko.observable(); // stores a refrence to the concept set editor
 		self.sources = ko.observableArray();
 		self.filteredSources = ko.pureComputed(function () {
@@ -120,7 +122,6 @@ define(['knockout',
 			iraAPI.getAnalysis(self.selectedAnalysisId()).then(function (analysis) {
 				self.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedAnalysis()));				
-				self.activeTab('definition');
 				self.loading(false);
 				pollForInfo();
 			});
@@ -201,10 +202,26 @@ define(['knockout',
 		};
 		
 		self.onExecuteClick = function(sourceItem) {
+			self.queueJob(sourceItem);
 			var executePromise = iraAPI.execute(self.selectedAnalysis().id(), sourceItem.source.sourceKey);
 			executePromise.then(function (result) {
 				pollForInfo();
 			});			
+		}
+		
+		self.queueJob = function(sourceItem) {
+			// Create a job to monitor progress
+			var job = new jobDetail({
+				name: self.selectedAnalysis().name() + "_" + sourceItem.source.sourceKey,
+				type: 'ir-analysis',
+				status: 'PENDING',
+				executionId: String(self.selectedAnalysis().id()) + String(sourceItem.source.sourceId),
+				statusUrl: config.api.url + 'ir/' + self.selectedAnalysis().id() + '/info',
+				statusValue: 'status',
+				viewed: false,
+				url: 'iranalysis/' + self.selectedAnalysis().id() + '/generation',
+			});
+			sharedState.jobListing.queue(job);
 		}
 
 		self.import = function () {
@@ -254,6 +271,7 @@ define(['knockout',
 									summaryList: []
 								};
 								sourceItem.info(tempInfo);
+								self.queueJob(sourceItem);
 							}
 							var executePromise = iraAPI.execute(self.selectedAnalysis().id(), sourceItem.source.sourceKey);
 							executePromise.then(function (result) {

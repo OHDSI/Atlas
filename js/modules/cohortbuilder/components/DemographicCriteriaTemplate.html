@@ -3,6 +3,16 @@
 		<table class="criteriaTable">
 			<col style="width:16px" />
 			<col />
+			<tr>
+				<td colspan="2">
+					<div class="btn-group pull-right">
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add criteria attribute…<span class="caret"></span></button>
+						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
+							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+						</ul>
+					</div>
+				</td>
+			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
@@ -39,7 +49,7 @@
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td>
-					<i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times"/>
+					<i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" />
 				</td>
 				<td>
 					occurrence start is:
@@ -55,5 +65,4 @@
 			</tr>
 		</table>
 	</div>
-	<div style="display: table-cell; width: 200px; vertical-align:top" data-bind="ddSlickAction: $component.addCriterionSettings"></div>
 </div>

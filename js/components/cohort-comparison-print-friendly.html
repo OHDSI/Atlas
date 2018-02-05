@@ -258,7 +258,7 @@ Covariate balance will be summarized in tabular form by showing the mean value f
 </div>
 <div data-bind="if: $component.cohortComparison().psAdjustment() == 1">
 <br/>
-Once the propensity score model is fit, we will plot the propensity score distribution of the target and comparator cohorts to evaluate the comparability of the two cohorts. The plot will be scaled to the preference score, normalizing for any imbalance in cohort size.  The area under the Receiver Operating Characteric (ROC) curve (AUC) will be reported.  The covariates selected within the propensity score model, with associated coefficients will also be reported.
+Once the propensity score model is fit, we will plot the propensity score distribution of the target and comparator cohorts to evaluate the comparability of the two cohorts. The plot will be scaled to the preference score, normalizing for any imbalance in cohort size.  The area under the Receiver Operating Characteristic (ROC) curve (AUC) will be reported.  The covariates selected within the propensity score model, with associated coefficients will also be reported.
 <div data-bind="if: $component.cohortComparison().psMatch() == 1">
 <br/>
 A plot showing the propensity score distributions for both cohorts after matching will be provided.  Covariate balance will be evaluated by plotting the standardized mean difference of each covariate before propensity score matching against the standardized mean difference for each covariate after propensity score matching.

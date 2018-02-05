@@ -205,11 +205,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							}
 
 							// this will ensure that if the last execution is still running that we don't allow additional executions to begin
-							if (d.executionStatus != 'COMPLETED') {
-								self.sourceProcessingStatus[sourceKey](true);
-							} else {
-								self.sourceProcessingStatus[sourceKey](false);
-							}
+							self.sourceProcessingStatus[sourceKey](d.executionStatus !== 'COMPLETED' && d.executionStatus !== 'FAILED');
 
 							self.sourceExecutions[sourceKey].push(d);
 						});
@@ -864,7 +860,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 						method: 'GET',
 						contentType: 'application/json',
 						success: function (d) {
-							if (d.status == 'COMPLETED') {
+							if (d.status === 'COMPLETED' || d.status === 'FAILED') {
 								completed = true;
 								self.sourceProcessingStatus[sourceKey](false);
 								self.loadExecutions();

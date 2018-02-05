@@ -1,46 +1,73 @@
-<div class="paddedWrapper">
-	<ul class="nav nav-pills">
-		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'all' }, click: function() { $component.expressionMode('all') };">
-			<a>All</a>
-		</li>
-		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'entry' }, click: function() { $component.expressionMode('entry') };">
-			<a>Cohort Entry Criteria</a>
-		</li>
-		<li role="presentation" data-bind="css: { active: $component.expressionMode() == 'exit' }, click: function() { $component.expressionMode('exit') };">
-			<a>Cohort Exit Criteria</a>
-		</li>
-
-	</ul>
+<div class="modal" id="helpModalInitialEventCohort" tabindex="-1 " role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				Initial event cohort
+			</div>
+			<div class="modal-body">
+				Events are recorded time-stamped observations for the persons, such as drug exposures, conditions, procedures, measurements and visits. All events have a start date and end date, though some events may have a start date and end date with the same value
+				(such as procedures or measurements). The event index date is set to be equal to the event start date.
+			</div>
+		</div>
+	</div>
 </div>
 
-<div class="tab-content">
-	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'entry' || $component.expressionMode() == 'all' }" class="tab-pane">
-		<div class="heading">
-			<b>Initial event cohort:</b>  Events are recorded time-stamped observations for the persons, such as drug exposures, 
-			conditions, procedures, measurements and visits.  All events have a start date and end date, though some events may have a 
-			start date and end date with the same value (such as procedures or measurements).  The event index date is set to be equal 
-			to the event start date.
+<div class="modal" id="helpModalAdditionalQualifyingInclusionCritiera" tabindex="-1 " role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				Additional Qualifying Inclusion Criteria
+			</div>
+			<div class="modal-body">
+				The qualifying cohort will be defined as all persons who have an initial event, satisfy the initial event inclusion criteria, and fulfill all additional qualifying inclusion criteria. Each qualifying inclusion criteria will be evaluated to determine the
+				impact of the criteria on the attrition of persons from the initial cohort.
+			</div>
 		</div>
+	</div>
+</div>
+
+<div class="modal" id="helpModalCensoringEvents" tabindex="-1 " role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				Censoring Events
+			</div>
+			<div class="modal-body">
+				<p>
+					Censoring events are used to indicate when a person will exit the cohort due to one or more event triggers.
+				</p>
+				<p>
+					The first censoring event found after entering the cohort will be used to exit the cohort.
+				</p>
+				<p>
+					<i>Note: censoring events occurring prior to cohort entry will not exclude the person from the cohort.  Use inclusion criteria to filter the people that have the censoring event prior to index.</i>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-primary cohort-definition-panel">
+	<div class="panel-heading">
+		Initial Event Cohort <i data-toggle="modal" data-target="#helpModalInitialEventCohort" class="fa fa-question-circle pull-right"></i>
+	</div>
+	<div class="panel-body">
 		<div class="criteriaGroup">
 			<div class="criteriaHeading">
-				<table>
-					<colgroup>
-						<col />
-						<col />
-					</colgroup>
-					<tbody>
-						<tr>
-							<td>
-								People having any of the following:
-							</td>
-							<td>
-								<div data-bind="ddSlickAction: $component.addPrimaryCriteriaOptions"></div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="row">
+					<div class="col-sm-4">
+						People having any of the following:
+					</div>
+					<div class="col-sm-8">
+						<div class="btn-group pull-right">
+							<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add Initial Event <span class="caret"></span></button>
+							<ul class="dropdown-menu" data-bind="foreach:$component.primaryCriteriaOptions">
+								<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
 			</div>
-
 			<table class="criteria">
 				<colgroup>
 					<col span="1" class="rule" />
@@ -50,7 +77,7 @@
 					<tr>
 						<td>
 							<div class="criteria-content">
-								<div data-bind='component: { 
+								<div data-bind='component: {
 											name: $component.getCriteriaIndexComponent($data),
 											params: {expression: $component.expression(), criteria: $data}
 										}'></div>
@@ -63,11 +90,12 @@
 				</tbody>
 			</table>
 			<div class="observation-window" data-bind="with: $component.expression().PrimaryCriteria().ObservationWindow"> with continuous observation of at least
-				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorDays.numeric(), eventType: 'blur', ko_autocomplete: { value: PriorDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days before and <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PostDays.numeric(), eventType: 'blur', ko_autocomplete: { value: PostDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days after event index date
-			</div>			
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorDays.numeric(), eventType: 'blur', ko_autocomplete: { value: PriorDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />				days before and <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PostDays.numeric(), eventType: 'blur', ko_autocomplete: { value: PostDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }"
+				/> days after event index date
+			</div>
 			<div style="padding-top: 3px" data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit">Limit initial events to:
-				<select data-bind="options: $component.options.resultLimitOptions, 
-				optionsText: function(item) { return item.name }, 
+				<select data-bind="options: $component.options.resultLimitOptions,
+				optionsText: function(item) { return item.name },
 				optionsValue: 'id',
 				value: Type">
 				</select> per person.
@@ -75,28 +103,30 @@
 		</div>
 		<div data-bind="with: expression">
 			<div data-bind="if: AdditionalCriteria">
-				<div><b>Initial event inclusion criteria:</b>  From among the initial events, include:</div>
+				<div><b>Initial event inclusion criteria:</b> From among the initial events, include:</div>
 				<criteria-group params="{expression: $data, group: AdditionalCriteria}"> </criteria-group>
 				<div style="padding: 3px 0px" data-bind="with: QualifiedLimit">Limit cohort of initial events to:
-					<select data-bind="options: $component.options.resultLimitOptions, 
-					optionsText: function(item) { return item.name }, 
+					<select data-bind="options: $component.options.resultLimitOptions,
+					optionsText: function(item) { return item.name },
 					optionsValue: 'id',
 					value: Type">
 					</select> per person.
-				</div>				
+				</div>
 				<button class="btn btn-sm btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove initial event inclusion criteria</button>
 			</div>
 			<div data-bind="ifnot: AdditionalCriteria">
 				<button class="btn btn-sm btn-success" data-bind="click: function () { $component.addAdditionalCriteria() }">Add initial event inclusion criteria</button>
 			</div>
-		</div>		
-
-		<div class="heading">
-			<b>Additional qualifying inclusion criteria:  </b>
-			The qualifying cohort will be defined as all persons who have an initial event, satisfy the initial event 
-			inclusion criteria, and fulfill all additional qualifying inclusion criteria.  Each qualifying inclusion criteria 
-			will be evaluated to determine the impact of the criteria on the attrition of persons from the initial cohort.
 		</div>
+	</div>
+</div>
+</div>
+
+<div class="panel panel-primary cohort-definition-panel">
+	<div class="panel-heading">
+		Additional Qualifying Inclusion Criteria <i data-toggle="modal" data-target="#helpModalAdditionalQualifyingInclusionCritiera" class="fa fa-question-circle pull-right"></i>
+	</div>
+	<div class="panel-body">
 		<div data-bind="eventListener: [
 			 { event: 'click', selector: '.copyInclusionRule', callback: copyInclusionRule},
 			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule}]">
@@ -142,23 +172,22 @@
 			</table>
 		</div>
 		<div style="padding-top: 3px" data-bind="with: expression().ExpressionLimit">Limit qualifying cohort to:
-			<select data-bind="options: $component.options.resultLimitOptions, 
-			optionsText: function(item) { return item.name }, 
+			<select data-bind="options: $component.options.resultLimitOptions,
+			optionsText: function(item) { return item.name },
 			optionsValue: 'id',
 			value: Type">
 			</select> per person.
 		</div>
 	</div>
-	
-	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'exit' || $component.expressionMode() == 'all'}" class="tab-pane">
-		<div><b>Cohort Exit Criteria</b></div>
-		<end-strategy-editor params="strategy: $component.expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-editor>
+</div>
 
-		<div><b>Censoring Events</b><br>
-			Censoring events are used to indicate when a person will exit the cohort due to one or more event triggers.  Add censoring events using the dropdown below.<br>
-			The first censoring event found after entering the cohort will be used to exit the cohort.<br>
-			<i>Note: censoring events occurring prior to cohort entry will not exclude the person from the cohort.  Use inclusion criteria to filter the people that have the censoring event prior to index.</i>
-		</div>
+<end-strategy-editor params="strategy: $component.expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-editor>
+
+<div class="panel panel-primary cohort-definition-panel">
+	<div class="panel-heading">
+		Censoring Events <i data-toggle="modal" data-target="#helpModalCensoringEvents" class="fa fa-question-circle pull-right"></i>
+	</div>
+	<div class="panel-body">
 		<div class="criteriaGroup">
 			<div class="criteriaHeading">
 				<table>
@@ -172,7 +201,12 @@
 								Exit Cohort based on the following:
 							</td>
 							<td>
-								<div data-bind="ddSlickAction: $component.addCensorCriteriaOptions"></div>
+								<div class="btn-group pull-right">
+									<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add Censoring Event <span class="caret"></span></button>
+									<ul class="dropdown-menu" data-bind="foreach:$component.censorCriteriaOptions">
+										<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+									</ul>
+								</div>
 							</td>
 						</tr>
 					</tbody>
@@ -188,7 +222,7 @@
 					<tr>
 						<td>
 							<div class="criteria-content">
-								<div data-bind='component: { 
+								<div data-bind='component: {
 											name: $component.getCriteriaIndexComponent($data),
 											params: {expression: $component.expression(), criteria: $data}
 										}'></div>
@@ -203,21 +237,25 @@
 			<div data-bind="visible: expression().CensoringCriteria().length == 0">
 				No censoring events selected.
 			</div>
-		</div>	
-	</div>
-
-	<div role="tabpanel" data-bind="css: { active: $component.expressionMode() == 'exit' || $component.expressionMode() == 'all'}" class="tab-pane">
-		<div class="heading">
-			<b>Cohort Collapse Strategy</b>
-			This strategy collapses events into eras of a continous period and eliminates the duplicate rows for the same subjects.  
 		</div>
-		<div style="padding: 5px 0px" data-bind="with: expression().CollapseSettings">
+	</div>
+</div>
+
+<div class="panel panel-primary cohort-definition-panel">
+	<div class="panel-heading">
+		Cohort Collapse Strategy
+	</div>
+	<div class="panel-body">
+		<div data-bind="with: expression().CollapseSettings">
 			<ul>
 				<li>
-					Specify era collapse gap size: 
-					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days
+					Specify era collapse gap size:
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />					days
 				</li>
 			</ul>
 		</div>
+	</div>
+	<div class="panel-footer">
+		This strategy collapses events into eras of a continous period and eliminates the duplicate rows for the same subjects.
 	</div>
 </div>

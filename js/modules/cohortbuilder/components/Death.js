@@ -3,8 +3,12 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 	function DeathViewModel(params) {
 		var self = this;
 
-		var addActions = [
-			{
+		self.formatOption = function (d) {
+			return '<div class="optionText">' + d.text + '</div>' +
+				'<div class="optionDescription">' + d.description + '</div>';
+		};
+
+		self.addActions = [{
 				text: "Add Age at Occurrence Criteria",
 				value: 3,
 				selected: false,
@@ -15,7 +19,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				value: 4,
 				selected: false,
 				description: "Filter Deaths based on Gender."
-			}, 
+			},
 			{
 				text: "Add Death Date Criteria",
 				value: 0,
@@ -40,32 +44,30 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				selected: false,
 				description: "Apply criteria using the condition occurrence as the index date",
 			}
-/*
- 			{
-				text: "Add Prior Observation Duration Criteria",
-				value: 8,
-				selected: false,
-				description: "Filter Condition Occurrences based on Prior Observation Duration."
-					},
-			{
-				text: "Add Post Observation Duration Criteria",
-				value: 9,
-				selected: false,
-				description: "Filter Condition Occurrences based on Prior Observation Duration."
-					}
-*/
+			/*
+			 			{
+							text: "Add Prior Observation Duration Criteria",
+							value: 8,
+							selected: false,
+							description: "Filter Condition Occurrences based on Prior Observation Duration."
+								},
+						{
+							text: "Add Post Observation Duration Criteria",
+							value: 9,
+							selected: false,
+							description: "Filter Condition Occurrences based on Prior Observation Duration."
+								}
+			*/
 		];
 
-		self.addCriterionSettings = {
-			selectText: "Add criteria attribute…",
-			height:300,
-			actionOptions: addActions,
-			onAction: function (data) {
-				var criteriaType = data.selectedData.value;
-				switch (criteriaType) {
+		self.actionHandler = function (data) {
+			var criteriaType = data.value;
+			switch (criteriaType) {
 				case 0:
 					if (self.Criteria.OccurrenceStartDate() == null)
-						self.Criteria.OccurrenceStartDate(new Range({Op: "lt"}));
+						self.Criteria.OccurrenceStartDate(new Range({
+							Op: "lt"
+						}));
 					break;
 				case 1:
 					if (self.Criteria.DeathType() == null)
@@ -85,26 +87,31 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					break;
 				case 11:
 					if (self.Criteria.CorrelatedCriteria() == null)
-						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));				
+						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));
 					break;
-/*
- 				case 8:
-					if (typeof self.Criteria.PriorEnrollDays() != "number")
-						self.Criteria.PriorEnrollDays(0);
-					break;
-				case 9:
-					if (typeof self.Criteria.AfterEnrollDays() != "number")
-						self.Criteria.AfterEnrollDays(0);
-					break;
-*/
-				}
+					/*
+									case 8:
+										if (typeof self.Criteria.PriorEnrollDays() != "number")
+											self.Criteria.PriorEnrollDays(0);
+										break;
+									case 9:
+										if (typeof self.Criteria.AfterEnrollDays() != "number")
+											self.Criteria.AfterEnrollDays(0);
+										break;
+					*/
+			};
+			self.addCriterionSettings = {
+				selectText: "Add criteria attribute…",
+				height: 300,
+				actionOptions: self.addActions,
+				onAction: self.actionHandler
 			}
 		};
 
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.Death;
 		self.options = options;
-		
+
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}
