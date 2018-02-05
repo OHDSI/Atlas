@@ -65,7 +65,7 @@
 
 	<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete()">
 		<div id="wrapperMainWindowContainer">
-			<user-bar></user-bar>
+			<user-bar params="{model: pageModel}"></user-bar>
 			<div data-bind="if:sharedState.appInitializationStatus() == 'failed'">
 				<div style="width:100px;margin-left:auto;margin-right:auto;">
 					<svg width="100" height="100" viewBox="0 -200 400 400">

@@ -5,6 +5,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			var self = this;
 			self.authApi = authApi;
 			self.componentParams = {};
+			self.config = config;
 			self.initPromises = [];
 			self.applicationStatus = ko.observable('initializing');
 			self.pendingSearch = ko.observable(false);
@@ -61,14 +62,20 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			});
 
 			self.initComplete = function () {
-				var routerOptions = {
-					notfound: function () {
-						self.currentView('search');
-					},
-					on: function () {
-						self.currentView('loading');
-					}
-				};
+					var prevToken = authApi.token();
+					var routerOptions = {
+						notfound: function () {
+							self.currentView('search');
+						},
+						on: function () {
+							self.currentView('loading');
+							var promise = (self.config.userAuthenticationEnabled && (authApi.token() != null || (prevToken != null && authApi.token() === null))) ? authApi.refreshToken : null;
+							$.when(promise).done(function(){
+								prevToken = authApi.token();
+								self.currentView('loading');
+							});
+						}
+					};
 				var routes = {
 					'/': function () {
 						document.location = "#/home";
@@ -252,7 +259,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							self.componentParams = {
 								currentCohortComparisonId: self.currentCohortComparisonId,
 								currentCohortComparison: self.currentCohortComparison,
-								dirtyFlag: self.currentCohortComparisonDirtyFlag
+								dirtyFlag: self.currentCohortComparisonDirtyFlag,
 							};
 							self.currentView('cohort-comparison-manager');
 						});

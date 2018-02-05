@@ -7,6 +7,9 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
         self.errorMsg = ko.observable();
         self.isInProgress = ko.observable(false);
         self.login = authApi.subject;
+        self.isDbLoginAtt = ko.observable(false);
+        self.authUrl=ko.observable();
+        self.isBadCredentials=ko.observable(false);
         self.expiration = ko.computed(function () {
             var expDate = authApi.tokenExpirationDate();
             return expDate
@@ -27,59 +30,76 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
             }
             return 'Not logged in';
         });
-        self.authProviders = [
-            {
-                name: 'Windows',
-                url: 'user/login',
-                ajax: true,
-								icon: 'fa fa-windows'
-            },
-            {
-                name: 'Google',
-                url: 'user/oauth/google',
-                ajax: false,
-								icon: 'fa fa-google'
-            },
-            {
-                name: 'Facebook',
-                url: 'user/oauth/facebook',
-                ajax: false,
-								icon: 'fa fa-facebook'
-            },
-        ];
-        self.currentAuthProvider = ko.observable(self.authProviders[0]);
+        self.authProviders = appConfig.authProviders;
+
+        self.getAuthProvider = name => self.authProviders.filter(ap => ap.name === name)[0];
+
+        self.toggleCredentialsForm =function () {
+            self.isDbLoginAtt(!self.isDbLoginAtt());
+        };
 
         self.getAuthorizationHeader = function() {
             return "Bearer " + self.token();
         };
 
-        self.signin = function () {
-			
-			self.currentAuthProvider = ko.observable(this);
-			
-            var loginUrl = self.serviceUrl + self.currentAuthProvider().url;
+        self.signinWithLoginPass = function(data) {
+            self.isInProgress(true);
+            $.ajax({
+                method: 'POST',
+                url: appConfig.webAPIRoot + self.authUrl(),
+                data: {
+                    login: data.elements.lg_username.value,
+                    password: data.elements.lg_password.value
+                },
+                success: function (data, textStatus, jqXHR) {
+                    var token = jqXHR.getResponseHeader('Bearer');
+                    setToken(token);
+                    self.isBadCredentials(false);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    setToken(null);
+                    self.isBadCredentials(true);
+                    self.errorMsg("Login failed.");
+                },
+                complete: function (data) {
+                    self.isInProgress(false);
+                }
+            });
+        };
 
-            if (self.currentAuthProvider().ajax == true) {
-                self.isInProgress(true);
-                $.ajax({
-                    url: loginUrl,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    success: function (data, textStatus, jqXHR) {
-                        var token = jqXHR.getResponseHeader('Bearer');
-                        setToken(token);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        setToken(null);
-                        self.errorMsg("Login failed.");
-                    },
-                    complete: function (data) {
-                        self.isInProgress(false);
-                    }
-                });
-            } else {
-                document.location = loginUrl;
+        self.signin = function (name) {
+            if(self.getAuthProvider(name).isUseCredentialsForm){
+                self.authUrl(self.getAuthProvider(name).url);
+                self.toggleCredentialsForm();
+            }
+            else {
+                var authProvider = self.getAuthProvider(name);
+                var loginUrl = self.serviceUrl + authProvider.url;
+
+                if (authProvider.ajax == true) {
+                    self.isInProgress(true);
+                    $.ajax({
+                        url: loginUrl,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        success: function (data, textStatus, jqXHR) {
+                            var token = jqXHR.getResponseHeader('Bearer');
+                            setToken(token);
+                            self.isBadCredentials(false);
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            setToken(null);
+                            self.errorMsg("Login failed.");
+                            self.isBadCredentials(true);
+                        },
+                        complete: function (data) {
+                            self.isInProgress(false);
+                        }
+                    });
+                } else {
+                    document.location = loginUrl;
+                }
             }
         };
 
