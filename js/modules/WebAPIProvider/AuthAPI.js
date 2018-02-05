@@ -216,6 +216,10 @@ define(function(require, exports) {
         return isPermitted('configuration:edit:ui')
     }
 
+    var isPermittedEditSourcePriortiy = function() {
+        return isPermitted('source:*:daimons:*:set-priority:post')
+    }
+
     var isPermittedReadRoles = function() {
         return isPermitted('role:get');
     }
@@ -270,6 +274,7 @@ define(function(require, exports) {
         isPermittedReadJobs: isPermittedReadJobs,
 
         isPermittedEditConfiguration: isPermittedEditConfiguration,
+        isPermittedEditSourcePriortiy,
 
         isPermittedReadRoles: isPermittedReadRoles,
         isPermittedReadRole: isPermittedReadRole,
