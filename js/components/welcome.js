@@ -61,7 +61,8 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
 			
             var loginUrl = self.serviceUrl + self.currentAuthProvider().url;
 
-            if (self.currentAuthProvider().ajax == true) {
+
+            if (authProvider.ajax == true) {
                 self.isInProgress(true);
                 $.ajax({
                     url: loginUrl,
@@ -85,7 +86,8 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
             } else {
                 document.location = loginUrl;
             }
-        };
+         }
+     };
 
         self.signout = function () {
             self.isInProgress(true);

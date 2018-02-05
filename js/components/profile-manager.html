@@ -56,7 +56,8 @@
 	</div>
 </div>
 
-<div class="asset-heading" data-bind="if:$component.canViewProfiles">
+<div data-bind="if:$component.canViewProfiles">
+	<div class="asset-heading">
 	<form data-bind="submit:loadPerson">
 		<div class="input-group" role="group">
 			<div class="input-group-btn" role="group">
@@ -91,6 +92,7 @@
 		<span data-bind="text: recordCount + ' events'"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
 		<span data-bind="text: `Age ${age} at index`"></span>
 		<span data-bind="if: $component.currentCohortDefinition() != null">|&nbsp;&nbsp;Cohort: <a class="asset-heading-link" data-bind="text: $component.currentCohortDefinition().name(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId()}" target="_new"></a></span>
+	</div>
 	</div>
 </div>
 
