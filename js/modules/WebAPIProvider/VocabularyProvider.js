@@ -14,6 +14,10 @@ define(function (require, exports) {
 	var domains = [];
 
 	sourceAPI.getSources().then(function (sources) {
+		if (sources.length == 0) {
+			sharedState.appInitializationStatus('no-sources-available');
+			return;
+		}
 		// find the source which has a Vocabulary Daimon with priority = 1
 		var prioritySources = sources.filter(function (source) {
 			return source.daimons.filter(function (daimon) {
@@ -24,10 +28,10 @@ define(function (require, exports) {
 			defaultSource = prioritySources[0];
 		else // find the first vocabulary or CDM daimon
 			defaultSource = sources.filter(function (source) {
-			return source.daimons.filter(function (daimon) {
-				return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
-			}).length > 0
-		})[0];
+				return source.daimons.filter(function (daimon) {
+					return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
+				}).length > 0
+			})[0];
 
 		// preload domain list once for all future calls to getDomains()
 		$.ajax({
@@ -159,7 +163,7 @@ define(function (require, exports) {
 	}
 
 	function resolveConceptSetExpression(expression, url, sourceKey) {
-		
+
 		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/resolveConceptSetExpression';
 
 		var resolveConceptSetExpressionPromise = $.ajax({
@@ -172,8 +176,8 @@ define(function (require, exports) {
 		return resolveConceptSetExpressionPromise;
 	}
 
-	function getConceptSetExpressionSQL(expression, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/conceptSetExpressionSQL';
+	function getConceptSetExpressionSQL(expression, url) {
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/conceptSetExpressionSQL';
 
 		var conceptSetExpressionSQLPromise = $.ajax({
 			url: repositoryUrl,

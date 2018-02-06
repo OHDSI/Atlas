@@ -11,7 +11,7 @@ define(function (require, exports) {
         // Options
         self.modelTypeOptions = [{name: 'Logistic regression', cmArgValue: '"logistic"', rate: 'odds', id: 1}, {name: 'Poisson regression', cmArgValue: '"poisson"', rate: 'rate', id: 2}, {name: 'Cox proportional hazards', cmArgValue: '"cox"', rate: 'hazards', id: 3}];
         self.timeAtRiskEndOptions = [{name: 'cohort end date', id: 1}, {name: 'cohort start date', id: 0}];
-        self.trimOptions = [{name: 'None', id: 0}, {name: 'by Percentile', id: 1}, {name: 'by Equipoise', id: 2}];
+        self.trimOptions = [{name: 'None', id: 0}, {name: 'by Percentile', id: 1}, {name: 'to Equipoise', id: 2}];
         self.matchingOptions = [{name: 'No matching/stratification', id: 0}, {name: 'Matching', id: 1}, {name: 'Stratification', id: 2}];
 
         // Properties
@@ -124,7 +124,7 @@ define(function (require, exports) {
         }
         
         self.omInclusionId = ko.observable(data.omInclusionId != null ? data.omInclusionId : 0);
-        self.omInclusionCaption = ko.observable(data.omExclusionCaption != null ? data.omExclusionCaption : null);
+        self.omInclusionCaption = ko.observable(data.omInclusionCaption != null ? data.omInclusionCaption : null);
         self.omInclusionConceptSet = ko.observableArray(null);
         if (self.omInclusionId() > 0) {
             var conceptSetData = {
@@ -222,6 +222,14 @@ define(function (require, exports) {
                 return trimFraction + ", " + (1 - trimFraction);
             }
         });
+        self.psTrimDescription = ko.pureComputed(function() {
+            if (self.psTrim() == 1) {
+              return "Trim Fraction (1-100%):";
+            }
+            if (self.psTrim() == 2) {
+              return "Bounds (1-100%):";
+            }
+        });
         self.psMatch = ko.observable(data.psMatch != null ? data.psMatch : 1);
         self.psMatchMaxRatio = ko.observable(data.psMatchMaxRatio != null ? data.psMatchMaxRatio : 1);
         self.psStratNumStrata = ko.observable(data.psStratNumStrata != null ? data.psStratNumStrata : 5);
@@ -242,7 +250,7 @@ define(function (require, exports) {
         self.psConditionGroupMeddra = ko.observable((data.psConditionGroupMeddra == 1)||false);
         self.psConditionGroupSnomed = ko.observable((data.psConditionGroupSnomed == 1)||false);        
         
-        self.psDrugExposure = ko.observable((data.psDrugExposure == 1)||false);
+        //self.psDrugExposure = ko.observable((data.psDrugExposure == 1)||false);
         self.psDrugInPrior30d = ko.observable((data.psDrugExposure30d == 1 || data.psDrugEra30d == 1) || false); 
         self.psDrugInPrior365d = ko.observable((data.psDrugExposure365d == 1 || data.psDrugEra365d == 1) || false);
         
@@ -311,14 +319,17 @@ define(function (require, exports) {
         self.psDrug = ko.pureComputed(function() {
             return (self.psDrugInPrior30d() || self.psDrugInPrior365d() || self.psDrugEraOverlap() || self.psDrugEraEver())
         });
+        self.psDrugExposure = ko.pureComputed(function() {
+        	return (self.psDrugInPrior30d() || self.psDrugInPrior365d())
+        });
         self.psDrugAggregation = ko.pureComputed(function() {
-            return (self.psDrugExposure() || self.psDrugEra() || self.psDrugGroup())
+            return (self.psDrugEra() || self.psDrugGroup())
         });
         self.psDrugExposure365d = ko.pureComputed(function() {
-            return (self.psDrugExposure() && self.psDrugInPrior365d())
+            return self.psDrugInPrior365d()
         });
         self.psDrugExposure30d = ko.pureComputed(function() {
-            return (self.psDrugExposure() && self.psDrugInPrior30d())
+            return self.psDrugInPrior30d()
         });
         self.psDrugEra365d = ko.pureComputed(function() {
             return (self.psDrugEra() && self.psDrugInPrior365d())

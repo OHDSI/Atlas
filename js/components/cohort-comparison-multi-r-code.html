@@ -1,8 +1,8 @@
 <div data-bind="if: $component.cohortComparison() && ($component.cohortComparison().readyForDisplay() == false)">
-    Please complete the full specification for the study
+	Please complete the full specification for the study
 </div>
 <div data-bind="if: $component.cohortComparison() && $component.cohortComparison().readyForDisplay()">
-<pre class="language-r">
+	<pre class="language-r">
 <code data-bind="attr:{'id': $component.codeElementId}" contenteditable="true" spellcheck="false">
     <span class="token comment"># Study: ----<!-- ko foreach: $component.cohortComparison().nameMultiLine() -->
     # <span data-bind="text: $data"></span><!-- /ko --></span>
@@ -11,10 +11,14 @@
 
     <span class="token comment">
     # Uncomment to install CohortMethod
-    # install.packages("drat")
-    # drat::addRepo(c("OHDSI","cloudyr"))
-    # install.packages("CohortMethod")
-    # install.packages("EmpiricalCalibration")
+    # install.packages("devtools")
+    # library(devtools)
+    # devtools::install_github("ohdsi/SqlRender")
+    # devtools::install_github("ohdsi/DatabaseConnector")
+    # devtools::install_github("ohdsi/OhdsiRTools")
+    # devtools::install_github("ohdsi/FeatureExtraction", ref = "v2.0.2")
+    # devtools::install_github("ohdsi/CohortMethod", ref = "v2.5.0")
+    # devtools::install_github("ohdsi/EmpiricalCalibration")
     
     # Load the Cohort Method library</span>
     <span class="token function">library</span>(CohortMethod) 
@@ -24,12 +28,14 @@
     <span class="token comment"># Data extraction ----
     
     # TODO: Insert your connection details here</span>
-    connectionDetails <span class="token operator"><-</span></span> createConnectionDetails(dbms = <span class="token string">"postgresql"</span></span>,
+    connectionDetails <span class="token operator"><-</span></span> DatabaseConnector::createConnectionDetails(dbms = <span class="token string">"postgresql"</span></span>,
                                                  server = <span class="token string">"localhost/ohdsi"</span>,
                                                  user = <span class="token string">"joe"</span>,
+                                                 port = <span class="token string">5432</span>,
                                                  password = <span class="token string">"supersecret"</span>)
     cdmDatabaseSchema <span class="token operator"><-</span> <span class="token string">"my_cdm_data"</span>
-    resultsDatabaseSchema <span class="token operator"><-</span> <span class="token string">"my_results"</span>
+    exposureDatabaseSchema <span class="token operator"><-</span> <span class="token string">"exposure_database_schema"</span>
+    outcomeDatabaseSchema <span class="token operator"><-</span> <span class="token string">"outcome_database_schema"</span>
     exposureTable <span class="token operator"><-</span> <span class="token string">"exposure_table"</span>
     outcomeTable <span class="token operator"><-</span> <span class="token string">"outcome_table"</span>
     cdmVersion <span class="token operator"><-</span> <span class="token string">"5" </span>
@@ -42,11 +48,11 @@
     outcomeList <- c(outcomeCohortId)
     
     <span class="token comment"># Default Prior &amp; Control settings ----</span>
-    defaultPrior <span class="token operator"><-</span> createPrior(<span class="token string">"laplace"</span>, 
+    defaultPrior <span class="token operator"><-</span> Cyclops::createPrior(<span class="token string">"laplace"</span>, 
                                 exclude = c(<span class="token number">0</span>),
                                 useCrossValidation = <span class="token boolean">TRUE</span>)
                                 
-    defaultControl <span class="token operator"><-</span> createControl(cvType = <span class="token string">"auto"</span>,
+    defaultControl <span class="token operator"><-</span> Cyclops::createControl(cvType = <span class="token string">"auto"</span>,
                                 startingVariance = <span class="token number">0.01</span>,
                                 noiseLevel = <span class="token string">"quiet"</span>,
                                 tolerance  = <span class="token number">2e-07</span>,
@@ -63,9 +69,10 @@
     <span data-bind="if: $component.cohortComparison().psExclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().psExclusionConceptSetSQL"></span>")
     sql <span class="token operator"><span class="token operator"><-</span></span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
-    connection <span class="token operator"><-</span> connect(connectionDetails)
-    excludedConcepts <span class="token operator"><-</span> querySql(connection, sql)
+    connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
+    excludedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
     excludedConcepts <span class="token operator"><-</span> excludedConcepts$CONCEPT_ID
+	DatabaseConnector::disconnect(connection)
     </span><span data-bind="if: $component.cohortComparison().psExclusionConceptSetSQL() == null">
     excludedConcepts <span class="token operator"><-</span> c()
     </span>
@@ -73,9 +80,10 @@
     <span data-bind="if: $component.cohortComparison().psInclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().psInclusionConceptSetSQL"></span>")
     sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
-    connection <span class="token operator"><-</span> connect(connectionDetails)
-    includedConcepts <span class="token operator"><-</span> querySql(connection, sql)
+    connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
+    includedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
     includedConcepts <span class="token operator"><-</span> includedConcepts$CONCEPT_ID
+	DatabaseConnector::disconnect(connection)
     </span><span data-bind="if: $component.cohortComparison().psInclusionConceptSetSQL() == null">
     includedConcepts <span class="token operator"><-</span> c()
     </span>
@@ -84,9 +92,10 @@
     <span data-bind="if: $component.cohortComparison().omExclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().omExclusionConceptSetSQL"></span>")
     sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
-    connection <span class="token operator"><-</span> connect(connectionDetails)
-    omExcludedConcepts <span class="token operator"><-</span> querySql(connection, sql)
+    connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
+    omExcludedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
     omExcludedConcepts <span class="token operator"><-</span> omExcludedConcepts$CONCEPT_ID
+	DatabaseConnector::disconnect(connection)
     </span><span data-bind="if: $component.cohortComparison().omExclusionConceptSetSQL() == null">
     omExcludedConcepts <span class="token operator"><-</span> c()
     </span>
@@ -94,9 +103,10 @@
     <span data-bind="if: $component.cohortComparison().omInclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().omInclusionConceptSetSQL"></span>")
     sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
-    connection <span class="token operator"><-</span> connect(connectionDetails)
-    omIncludedConcepts <span class="token operator"><-</span> querySql(connection, sql)
+    connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
+    omIncludedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
     omIncludedConcepts <span class="token operator"><-</span> omIncludedConcepts$CONCEPT_ID
+	DatabaseConnector::disconnect(connection)
     </span><span data-bind="if: $component.cohortComparison().omInclusionConceptSetSQL() == null">
     omIncludedConcepts <span class="token operator"><-</span> c()
     </span>
@@ -105,15 +115,16 @@
     <span data-bind="if: $component.cohortComparison().negativeControlConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().negativeControlConceptSetSQL"></span>")
     sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
-    connection <span class="token operator"><-</span> connect(connectionDetails)
-    negativeControlConcepts <span class="token operator"><-</span> querySql(connection, sql)
+    connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
+    negativeControlConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
     negativeControlConcepts <span class="token operator"><-</span> negativeControlConcepts$CONCEPT_ID
+	DatabaseConnector::disconnect(connection)
     </span><span data-bind="if: $component.cohortComparison().negativeControlConceptSetSQL() == null">
     negativeControlConcepts <span class="token operator"><-</span> c()
     </span>
     
     <span class="token comment"># Create drug comparator and outcome arguments by combining target + comparitor + outcome + negative controls ----</span>
-    dcos <- createDrugComparatorOutcomes(targetId = targetCohortId,
+    dcos <- CohortMethod::createDrugComparatorOutcomes(targetId = targetCohortId,
                                          comparatorId = comparatorCohortId,
                                          excludedCovariateConceptIds = excludedConcepts,
                                          includedCovariateConceptIds = includedConcepts,
@@ -124,61 +135,116 @@
     
 <div data-bind="if: $component.cohortComparison().psAdjustment() == 1">
     <span class="token comment"># Define which types of covariates must be constructed ----</span>
-    covariateSettings <span class="token operator"><-</span> createCovariateSettings(useCovariateDemographics = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographics"></span>,
-                                         useCovariateDemographicsGender = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsGender"></span>,
-                                         useCovariateDemographicsRace = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsRace"></span>,
-                                         useCovariateDemographicsEthnicity = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsEthnicity"></span>,
-                                         useCovariateDemographicsAge = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsAge"></span>, 
-                                         useCovariateDemographicsYear = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsYear"></span>,
-                                         useCovariateDemographicsMonth = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsMonth"></span>,
-                                         useCovariateConditionOccurrence = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionOcc"></span>,    
-                                         useCovariateConditionOccurrence365d = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionOcc365d"></span>,
-                                         useCovariateConditionOccurrence30d = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionOcc30d"></span>,
-                                         useCovariateConditionOccurrenceInpt180d = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionOccInpt180d"></span>,
-                                         useCovariateConditionEra = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionEra"></span>, 
-                                         useCovariateConditionEraEver = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionEraEver"></span>,
-                                         useCovariateConditionEraOverlap = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionEraOverlap"></span>,
-                                         useCovariateConditionGroup = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionGroup"></span>,
-                                         useCovariateConditionGroupMeddra = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionGroupMeddra"></span>,
-                                         useCovariateConditionGroupSnomed = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionGroupSnomed"></span>,
-                                         useCovariateDrugExposure = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugExposure"></span>, 
-                                         useCovariateDrugExposure365d = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugExposure365d"></span>,
-                                         useCovariateDrugExposure30d = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugExposure30d"></span>, 
-                                         useCovariateDrugEra = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugEra"></span>,
-                                         useCovariateDrugEra365d = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugEra365d"></span>, 
-                                         useCovariateDrugEra30d = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugEra30d"></span>,
-                                         useCovariateDrugEraOverlap = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugEraOverlap"></span>, 
-                                         useCovariateDrugEraEver = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugEraEver"></span>,
-                                         useCovariateDrugGroup = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugGroup"></span>, 
-                                         useCovariateProcedureOccurrence = <span class="token boolean" data-bind="text: $component.cohortComparison().psProcedureOcc"></span>,
-                                         useCovariateProcedureOccurrence365d = <span class="token boolean" data-bind="text: $component.cohortComparison().psProcedureOcc365d"></span>,
-                                         useCovariateProcedureOccurrence30d = <span class="token boolean" data-bind="text: $component.cohortComparison().psProcedureOcc30d"></span>,
-                                         useCovariateProcedureGroup = <span class="token boolean" data-bind="text: $component.cohortComparison().psProcedureGroup"></span>, 
-                                         useCovariateObservation = <span class="token boolean" data-bind="text: $component.cohortComparison().psObservation"></span>,
-                                         useCovariateObservation365d = <span class="token boolean" data-bind="text: $component.cohortComparison().psObservation365d"></span>, 
-                                         useCovariateObservation30d = <span class="token boolean" data-bind="text: $component.cohortComparison().psObservation30d"></span>,
-                                         useCovariateObservationCount365d = <span class="token boolean" data-bind="text: $component.cohortComparison().psObservationCount365d"></span>, 
-                                         useCovariateMeasurement = <span class="token boolean" data-bind="text: $component.cohortComparison().psMeasurement"></span>,
-                                         useCovariateMeasurement365d = <span class="token boolean" data-bind="text: $component.cohortComparison().psMeasurement365d"></span>, 
-                                         useCovariateMeasurement30d = <span class="token boolean" data-bind="text: $component.cohortComparison().psMeasurement30d"></span>,
-                                         useCovariateMeasurementCount365d = <span class="token boolean" data-bind="text: $component.cohortComparison().psMeasurement365d"></span>,
-                                         useCovariateMeasurementBelow = <span class="token boolean" data-bind="text: $component.cohortComparison().psMeasurementBelow"></span>,
-                                         useCovariateMeasurementAbove = <span class="token boolean" data-bind="text: $component.cohortComparison().psMeasurementAbove"></span>, 
-                                         useCovariateConceptCounts = <span class="token boolean" data-bind="text: $component.cohortComparison().psConceptCounts"></span>,
-                                         useCovariateRiskScores = <span class="token boolean" data-bind="text: $component.cohortComparison().psRiskScores"></span>, 
-                                         useCovariateRiskScoresCharlson = <span class="token boolean" data-bind="text: $component.cohortComparison().psRiskScoresCharlson"></span>,
-                                         useCovariateRiskScoresDCSI = <span class="token boolean" data-bind="text: $component.cohortComparison().psRiskScoresDcsi"></span>, 
-                                         useCovariateRiskScoresCHADS2 = <span class="token boolean" data-bind="text: $component.cohortComparison().psRiskScoresChads2"></span>,
-                                         useCovariateRiskScoresCHADS2VASc = <span class="token boolean" data-bind="text: $component.cohortComparison().psRiskScoresChads2vasc"></span>,
-                                         useCovariateInteractionYear = <span class="token boolean" data-bind="text: $component.cohortComparison().psInteractionYear"></span>, 
-                                         useCovariateInteractionMonth = <span class="token boolean" data-bind="text: $component.cohortComparison().psInteractionMonth"></span>,
-                                         excludedCovariateConceptIds = excludedConcepts,
-                                         includedCovariateConceptIds = includedConcepts,
-                                         deleteCovariatesSmallCount = <span class="token number" data-bind="text: $component.cohortComparison().delCovariatesSmallCount"></span>)
-
+    covariateSettings <span class="token operator"><-</span> FeatureExtraction::createCovariateSettings(useDemographicsGender = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsGender"></span>,
+                                         useDemographicsAge = <span class="token boolean">FALSE</span>, 
+                                         useDemographicsAgeGroup = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsAge"></span>,
+                                         useDemographicsRace = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsRace"></span>,
+                                         useDemographicsEthnicity = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsEthnicity"></span>,
+                                         useDemographicsIndexYear = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsYear"></span>,
+                                         useDemographicsIndexMonth = <span class="token boolean" data-bind="text: $component.cohortComparison().psDemographicsMonth"></span>,
+                                         useDemographicsPriorObservationTime = <span class="token boolean">FALSE</span>,
+                                         useDemographicsPostObservationTime = <span class="token boolean">FALSE</span>,
+                                         useDemographicsTimeInCohort = <span class="token boolean">FALSE</span>,
+                                         useDemographicsIndexYearMonth = <span class="token boolean">FALSE</span>,
+                                         useConditionOccurrenceAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useConditionOccurrenceLongTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionOcc365d"></span>,
+                                         useConditionOccurrenceMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionOccurrenceShortTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionOcc30d"></span>,
+                                         useConditionOccurrenceInpatientAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useConditionOccurrenceInpatientLongTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionOccurrenceInpatientMediumTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionOccInpt180d"></span>,
+                                         useConditionOccurrenceInpatientShortTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionEraAnyTimePrior = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionEraEver"></span>,
+                                         useConditionEraLongTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionEraMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionEraShortTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionEraOverlapping = <span class="token boolean" data-bind="text: $component.cohortComparison().psConditionEraOverlap"></span>,
+                                         useConditionEraStartLongTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionEraStartMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionEraStartShortTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionGroupEraAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useConditionGroupEraLongTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionGroupEraMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionGroupEraShortTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionGroupEraOverlapping = <span class="token boolean">FALSE</span>,
+                                         useConditionGroupEraStartLongTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionGroupEraStartMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useConditionGroupEraStartShortTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugExposureAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useDrugExposureLongTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugExposure365d"></span>,
+                                         useDrugExposureMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugExposureShortTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugExposure30d"></span>, 
+                                         useDrugEraAnyTimePrior = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugEraEver"></span>,
+                                         useDrugEraLongTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugEraMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugEraShortTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugEraOverlapping = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugEraOverlap"></span>, 
+                                         useDrugEraStartLongTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugEra365d"></span>, 
+                                         useDrugEraStartMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugEraStartShortTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psDrugEra30d"></span>,
+                                         useDrugGroupEraAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useDrugGroupEraLongTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugGroupEraMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugGroupEraShortTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugGroupEraOverlapping = <span class="token boolean">FALSE</span>,
+                                         useDrugGroupEraStartLongTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugGroupEraStartMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useDrugGroupEraStartShortTerm = <span class="token boolean">FALSE</span>,
+                                         useProcedureOccurrenceAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useProcedureOccurrenceLongTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psProcedureOcc365d"></span>,
+                                         useProcedureOccurrenceMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useProcedureOccurrenceShortTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psProcedureOcc30d"></span>,
+                                         useDeviceExposureAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useDeviceExposureLongTerm = <span class="token boolean">FALSE</span>,
+                                         useDeviceExposureMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useDeviceExposureShortTerm = <span class="token boolean">FALSE</span>,
+                                         useMeasurementAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useMeasurementLongTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psMeasurement365d"></span>, 
+                                         useMeasurementMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useMeasurementShortTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psMeasurement30d"></span>,
+                                         useMeasurementValueAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useMeasurementValueLongTerm = <span class="token boolean">FALSE</span>,
+                                         useMeasurementValueMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useMeasurementValueShortTerm = <span class="token boolean">FALSE</span>,
+                                         useMeasurementRangeGroupAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useMeasurementRangeGroupLongTerm = <span class="token boolean">FALSE</span>,
+                                         useMeasurementRangeGroupMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useMeasurementRangeGroupShortTerm = <span class="token boolean">FALSE</span>,
+                                         useObservationAnyTimePrior = <span class="token boolean">FALSE</span>,
+                                         useObservationLongTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psObservation365d"></span>, 
+                                         useObservationMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useObservationShortTerm = <span class="token boolean" data-bind="text: $component.cohortComparison().psObservation30d"></span>,
+                                         useCharlsonIndex = <span class="token boolean" data-bind="text: $component.cohortComparison().psRiskScoresCharlson"></span>,
+                                         useDcsi = <span class="token boolean" data-bind="text: $component.cohortComparison().psRiskScoresDcsi"></span>, 
+                                         useChads2 = <span class="token boolean" data-bind="text: $component.cohortComparison().psRiskScoresChads2"></span>,
+                                         useChads2Vasc = <span class="token boolean" data-bind="text: $component.cohortComparison().psRiskScoresChads2vasc"></span>,
+                                         useDistinctConditionCountLongTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctConditionCountMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctConditionCountShortTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctIngredientCountLongTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctIngredientCountMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctIngredientCountShortTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctProcedureCountLongTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctProcedureCountMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctProcedureCountShortTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctMeasurementCountLongTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctMeasurementCountMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useDistinctMeasurementCountShortTerm = <span class="token boolean">FALSE</span>,
+                                         useVisitCountLongTerm = <span class="token boolean">FALSE</span>,
+                                         useVisitCountMediumTerm = <span class="token boolean">FALSE</span>,
+                                         useVisitCountShortTerm = <span class="token boolean">FALSE</span>,
+                                         longTermStartDays = <span class="token number">-365</span>,
+                                         mediumTermStartDays = <span class="token number">-180</span>, 
+                                         shortTermStartDays = <span class="token number">-30</span>, 
+                                         endDays = <span class="token number">0</span>,
+                                         includedCovariateConceptIds = includedConcepts, 
+                                         addDescendantsToInclude = <span class="token boolean">FALSE</span>,
+                                         excludedCovariateConceptIds = excludedConcepts, 
+                                         addDescendantsToExclude = <span class="token number">FALSE</span>,
+                                         includedCovariateIds = c())																				 
 </div>   
 
-    getDbCmDataArgs <span class="token operator"><-</span> createGetDbCohortMethodDataArgs(washoutPeriod = <span class="token number" data-bind="text: $component.cohortComparison().minimumWashoutPeriod"></span>,
+    getDbCmDataArgs <span class="token operator"><-</span> CohortMethod::createGetDbCohortMethodDataArgs(washoutPeriod = <span class="token number" data-bind="text: $component.cohortComparison().minimumWashoutPeriod"></span>,
                                               firstExposureOnly = <span class="token boolean">FALSE</span>,
                                               removeDuplicateSubjects = <span class="token boolean" data-bind="text: $component.cohortComparison().rmSubjectsInBothCohortsFormatted"></span>,
                                               studyStartDate = <span class="token string">""</span>,
@@ -186,7 +252,7 @@
                                               excludeDrugsFromCovariates = <span class="token boolean">FALSE</span>,
                                               <span data-bind="if: $component.cohortComparison().psAdjustment() == 1">covariateSettings = covariateSettings</span>)
 
-    createStudyPopArgs <span class="token operator"><-</span> createCreateStudyPopulationArgs(removeSubjectsWithPriorOutcome = <span class="token boolean" data-bind="text: $component.cohortComparison().rmPriorOutcomesFormatted"></span>,
+    createStudyPopArgs <span class="token operator"><-</span> CohortMethod::createCreateStudyPopulationArgs(removeSubjectsWithPriorOutcome = <span class="token boolean" data-bind="text: $component.cohortComparison().rmPriorOutcomesFormatted"></span>,
                                         firstExposureOnly = <span class="token boolean">FALSE</span>,
                                         washoutPeriod = <span class="token number" data-bind="text: $component.cohortComparison().minimumWashoutPeriod"></span>,
                                         removeDuplicateSubjects = <span class="token boolean" data-bind="text: $component.cohortComparison().rmSubjectsInBothCohortsFormatted"></span>,
@@ -197,7 +263,7 @@
                                         addExposureDaysToEnd = <span class="token boolean" data-bind="text: $component.cohortComparison().addExposureDaysToEndFormatted"></span>)
 
 
-    fitOutcomeModelArgs1 <span class="token operator"><-</span> createFitOutcomeModelArgs(useCovariates = <span class="token boolean"><!-- ko if: $component.cohortComparison().omCovariates() == 1 -->TRUE<!-- /ko --><!-- ko if: $component.cohortComparison().omCovariates() == 0 -->FALSE<!-- /ko --></span>,
+    fitOutcomeModelArgs1 <span class="token operator"><-</span> CohortMethod::createFitOutcomeModelArgs(useCovariates = <span class="token boolean"><!-- ko if: $component.cohortComparison().omCovariates() == 1 -->TRUE<!-- /ko --><!-- ko if: $component.cohortComparison().omCovariates() == 0 -->FALSE<!-- /ko --></span>,
                                     modelType = <span class="token string" data-bind="text: $component.cohortComparison().modelTypeCmArgValue()"></span>,
                                     <!-- ko if: $component.cohortComparison().psStratOrMatch() == 1 -->stratified = <span class="token boolean">TRUE</span>,<!-- /ko --><!-- ko ifnot: $component.cohortComparison().psStratOrMatch() -->stratified = <span class="token boolean">FALSE</span>,<!-- /ko -->
                                     includeCovariateIds = omIncludedConcepts, 
@@ -205,13 +271,13 @@
                                     prior = defaultPrior, 
                                     control = defaultControl)
                                     
-    createPsArgs1 <span class="token operator"><-</span> createCreatePsArgs(control = defaultControl) <span class="token comment"># Using only defaults</span>
-    trimByPsArgs1 <span class="token operator"><-</span> <!-- ko if: $component.cohortComparison().psTrim() == 1 -->createTrimByPsArgs(trimFraction = <span class="token number" data-bind="text: $component.cohortComparison().psTrimFractionFormatted"></span>)<!-- /ko --><!-- ko ifnot: $component.cohortComparison().psTrim() == 1 -->createTrimByPsArgs() <span class="token comment"># Using only defaults</span><!-- /ko --> 
-    trimByPsToEquipoiseArgs1 <span class="token operator"><-</span> <!-- ko if: $component.cohortComparison().psTrim() == 2 -->createTrimByPsToEquipoiseArgs(bounds = c(<span class="token number" data-bind="text: $component.cohortComparison().psTrimFractionFormatted"></span>)</span>)<!-- /ko --><!-- ko ifnot: $component.cohortComparison().psTrim() == 2 -->createTrimByPsToEquipoiseArgs() <span class="token comment"># Using only defaults</span><!-- /ko --> 
-    matchOnPsArgs1 <span class="token operator"><-</span> <!-- ko if: $component.cohortComparison().psMatch() == 1 -->createMatchOnPsArgs(caliper = <span class="token number">0.25</span>, caliperScale = <span class="token string">"standardized"</span>, maxRatio = <span class="token number" data-bind="text: $component.cohortComparison().psMatchMaxRatio"></span>)<!-- /ko --><!-- ko ifnot: $component.cohortComparison().psMatch() == 1 -->createMatchOnPsArgs() <span class="token comment"># Using only defaults</span><!-- /ko --> 
-    stratifyByPsArgs1 <span class="token operator"><-</span> <!-- ko if: $component.cohortComparison().psStrat() == true -->createStratifyByPsArgs(strataPop, numberOfStrata = <span data-bind="text: $component.cohortComparison().psStratNumStrata"></span>)<!-- /ko --><!-- ko ifnot: $component.cohortComparison().psStrat() == true -->createStratifyByPsArgs() <span class="token comment"># Using only defaults</span><!-- /ko --> 
+    createPsArgs1 <span class="token operator"><-</span> CohortMethod::createCreatePsArgs(control = defaultControl) <span class="token comment"># Using only defaults</span>
+    trimByPsArgs1 <span class="token operator"><-</span> <!-- ko if: $component.cohortComparison().psTrim() == 1 -->CohortMethod::createTrimByPsArgs(trimFraction = <span class="token number" data-bind="text: $component.cohortComparison().psTrimFractionFormatted"></span>)<!-- /ko --><!-- ko ifnot: $component.cohortComparison().psTrim() == 1 -->CohortMethod::createTrimByPsArgs() <span class="token comment"># Using only defaults</span><!-- /ko --> 
+    trimByPsToEquipoiseArgs1 <span class="token operator"><-</span> <!-- ko if: $component.cohortComparison().psTrim() == 2 -->CohortMethod::createTrimByPsToEquipoiseArgs(bounds = c(<span class="token number" data-bind="text: $component.cohortComparison().psTrimFractionFormatted"></span>)</span>)<!-- /ko --><!-- ko ifnot: $component.cohortComparison().psTrim() == 2 -->CohortMethod::createTrimByPsToEquipoiseArgs() <span class="token comment"># Using only defaults</span><!-- /ko --> 
+    matchOnPsArgs1 <span class="token operator"><-</span> <!-- ko if: $component.cohortComparison().psMatch() == 1 -->CohortMethod::createMatchOnPsArgs(caliper = <span class="token number">0.25</span>, caliperScale = <span class="token string">"standardized"</span>, maxRatio = <span class="token number" data-bind="text: $component.cohortComparison().psMatchMaxRatio"></span>)<!-- /ko --><!-- ko ifnot: $component.cohortComparison().psMatch() == 1 -->CohortMethod::createMatchOnPsArgs() <span class="token comment"># Using only defaults</span><!-- /ko --> 
+    stratifyByPsArgs1 <span class="token operator"><-</span> <!-- ko if: $component.cohortComparison().psStrat() == true -->CohortMethod::createStratifyByPsArgs(numberOfStrata = <span data-bind="text: $component.cohortComparison().psStratNumStrata"></span>)<!-- /ko --><!-- ko ifnot: $component.cohortComparison().psStrat() == true -->CohortMethod::createStratifyByPsArgs() <span class="token comment"># Using only defaults</span><!-- /ko --> 
 
-    cmAnalysis1 <span class="token operator"><-</span> createCmAnalysis(analysisId = <span class="token number">1</span>,
+    cmAnalysis1 <span class="token operator"><-</span> CohortMethod::createCmAnalysis(analysisId = <span class="token number">1</span>,
                                     description = "<span class="token string" data-bind="text: $component.cohortComparison().name"></span>",
                                     getDbCohortMethodDataArgs = getDbCmDataArgs,
                                     createStudyPopArgs = createStudyPopArgs,
@@ -233,11 +299,11 @@
     cmAnalysisList <- list(cmAnalysis1)
 
     <span class="token comment"># Run the analysis ----</span>
-    result <span class="token operator"><-</span> runCmAnalyses(connectionDetails = connectionDetails,
+    result <span class="token operator"><-</span> CohortMethod::runCmAnalyses(connectionDetails = connectionDetails,
                             cdmDatabaseSchema = cdmDatabaseSchema,
-                            exposureDatabaseSchema = resultsDatabaseSchema,
+                            exposureDatabaseSchema = exposureDatabaseSchema,
                             exposureTable = exposureTable,
-                            outcomeDatabaseSchema = resultsDatabaseSchema,
+                            outcomeDatabaseSchema = outcomeDatabaseSchema,
                             outcomeTable = outcomeTable,
                             cdmVersion = cdmVersion,
                             outputFolder = outputFolder,
@@ -251,17 +317,15 @@
                             trimMatchStratifyThreads = min(<span class="token number">10</span>, maxCores),
                             fitOutcomeModelThreads = max(<span class="token number">1</span>, round(maxCores/4)),
                             outcomeCvThreads = min(<span class="token number">4</span>, maxCores),
-                            outcomeIdsOfInterest = outcomeList,
                             refitPsForEveryOutcome = FALSE)
 
     <span class="token comment">## Summarize the results</span>
-    analysisSummary <- summarizeAnalyses(result)
+    analysisSummary <- CohortMethod::summarizeAnalyses(result)
     head(analysisSummary)
 
     <span class="token comment"># Perform Empirical Calibration ----</span>
     newSummary <span class="token operator"><-</span> data.frame()
     <span class="token comment"># Calibrate p-values:</span>
-    drugComparatorOutcome <span class="token operator"><-</span> drugComparatorOutcomesList[[<span class="token number">1</span>]]
     <span class="token keyword">for</span> (drugComparatorOutcome <span class="token keyword">in</span> drugComparatorOutcomesList) {
       <span class="token keyword">for</span> (analysisId <span class="token keyword">in</span> <span class="token keyword">unique</span>(analysisSummary$analysisId)) {
         subset <span class="token operator"><-</span> analysisSummary[analysisSummary$analysisId == analysisId &
@@ -275,31 +339,31 @@
         hoiSubset <span class="token operator"><-</span> hoiSubset[<span class="token operator">!</span>is.na(hoiSubset$logRr) <span class="token operator">&</span> hoiSubset$logRr <span class="token operator">!=</span> <span class="token number">0</span>, ]
 
         <span class="token keyword">if</span> (nrow(negControlSubset) <span class="token operator">></span> <span class="token number">10</span>) {
-          null <- fitMcmcNull(negControlSubset$logRr, negControlSubset$seLogRr)
+          null <- EmpiricalCalibration::fitMcmcNull(negControlSubset$logRr, negControlSubset$seLogRr)
           
           <span class="token comment"># View the empirical calibration plot with only negative controls</span>
-          plotCalibrationEffect(negControlSubset$logRr,
-                                                      negControlSubset$seLogRr)
+          EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
+                                                      negControlSubset$seLogRr,showCis = TRUE)
 
           <span class="token comment"># Save the empirical calibration plot with only negative controls</span>
           plotName <span class="token operator"><-</span> paste(<span class="token string">"calEffectNoHois_a"</span>,analysisId, <span class="token string">"_t"</span>, drugComparatorOutcome$targetId, <span class="token string">"_c"</span>, drugComparatorOutcome$comparatorId, <span class="token string">".png"</span>, sep = <span class="token string">""</span>)
-          plotCalibrationEffect(negControlSubset$logRr,
+          EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
                                                       negControlSubset$seLogRr,
-                                                      fileName = file.path(outputFolder, plotName))
+                                                      fileName = file.path(outputFolder, plotName),showCis = TRUE)
 
           <span class="token comment"># View the empirical calibration plot with  negative controls and HOIs plotted</span>
-          plotCalibrationEffect(negControlSubset$logRr,
+          EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
                                                       negControlSubset$seLogRr,
                                                       hoiSubset$logRr, 
-                                                      hoiSubset$seLogRr)
+                                                      hoiSubset$seLogRr,showCis = TRUE)
 
           <span class="token comment"># Save the empirical calibration plot with  negative controls and HOIs plotted</span>
           plotName <span class="token operator"><-</span> paste(<span class="token string">"calEffect_a"</span>,analysisId, <span class="token string">"_t"</span>, drugComparatorOutcome$targetId, <span class="token string">"_c"</span>, drugComparatorOutcome$comparatorId, <span class="token string">".png"</span>, sep = <span class="token string">""</span>)
-          plotCalibrationEffect(negControlSubset$logRr,
+          EmpiricalCalibration::plotCalibrationEffect(negControlSubset$logRr,
                                                       negControlSubset$seLogRr,
                                                       hoiSubset$logRr, 
                                                       hoiSubset$seLogRr,
-                                                      fileName = file.path(outputFolder, plotName))
+                                                      fileName = file.path(outputFolder, plotName),showCis = TRUE)
 
           calibratedP <span class="token operator"><-</span> calibrateP(null, subset$logRr, subset$seLogRr)
           subset$calibratedP <span class="token operator"><-</span> calibratedP$p
@@ -320,7 +384,6 @@
     }
 
     <span class="token comment"># Results ----</span>
-    drugComparatorOutcome <span class="token operator"><-</span> drugComparatorOutcomesList[[1]]
     <span class="token keyword">for</span> (drugComparatorOutcome <span class="token keyword">in</span> drugComparatorOutcomesList) {
       <span class="token keyword">for</span> (analysisId <span class="token keyword">in</span> <span class="token keyword">unique</span>(analysisSummary$analysisId)) {
           currentAnalysisSubset <span class="token operator"><-</span> analysisSummary[analysisSummary$analysisId == analysisId &
@@ -329,7 +392,7 @@
                                                    analysisSummary$outcomeId %in% outcomeList, ]
 
           <span class="token keyword">for</span>(currentOutcomeId <span class="token keyword">in</span> <span class="token keyword">unique</span>(currentAnalysisSubset$outcomeId)) {
-            outputImageSuffix <span class="token operator"><-</span> paste0(<span class="token string">"_a"</span>,analysisId, <span class="token string">"_t"</span>, currentAnalysisSubset$targetId, <span class="token string">"_c"</span>, currentAnalysisSubset$comparatorId, <span class="token string">"_o"</span>, currentOutcomeId, <span class="token string">".png"</span>)
+            outputImageSuffix <span class="token operator"><-</span> paste0(<span class="token string">"_a"</span>,analysisId, <span class="token string">"_t"</span>, drugComparatorOutcome$targetId, <span class="token string">"_c"</span>, drugComparatorOutcome$comparatorId, <span class="token string">"_o"</span>, currentOutcomeId, <span class="token string">".png"</span>)
 
             cohortMethodFile <span class="token operator"><-</span> result$cohortMethodDataFolder[result$target == currentAnalysisSubset$targetId &
                                                                 result$comparatorId == currentAnalysisSubset$comparatorId &
@@ -368,21 +431,21 @@
             ps <span class="token operator"><-</span> readRDS(psFile)
 
             <span class="token comment"># Compute the area under the receiver-operator curve (AUC) for the propensity score model ----</span>
-            computePsAuc(ps)
+            CohortMethod::computePsAuc(ps)
 
             <span class="token comment"># Plot the propensity score distribution ----</span>
-            plotPs(ps, 
+            CohortMethod::plotPs(ps, 
                    scale = <span class="token string">"preference"</span>)
 
             <span class="token comment"># Save the propensity score distribution ----</span>
             plotName <span class="token operator"><-</span> paste0(<span class="token string">"propensityScorePlot"</span>, outputImageSuffix);
-            plotPs(ps, 
+            CohortMethod::plotPs(ps, 
                    scale = <span class="token string">"preference"</span>,
                    fileName = file.path(outputFolder, plotName))
 
 
             <span class="token comment"># Inspect the propensity model ----</span>
-            propensityModel <span class="token operator"><-</span> getPsModel(ps, cohortMethodData)
+            propensityModel <span class="token operator"><-</span> CohortMethod::getPsModel(ps, cohortMethodData)
             head(propensityModel)
 
 
@@ -393,27 +456,27 @@
             strataPop <span class="token operator"><-</span> readRDS(strataFile)
 
             <span class="token comment"># View PS With Population Trimmed By Percentile ----</span>
-            plotPs(strataPop, 
+            CohortMethod::plotPs(strataPop, 
                    ps, 
                    scale = <span class="token string">"preference"</span>)
 
             <span class="token comment"># Save PS With Population Trimmed By Percentile ----</span>
             plotName <span class="token operator"><-</span> paste0(<span class="token string">"propensityScorePlotStrata"</span>, outputImageSuffix);
-            plotPs(strataPop, 
+            CohortMethod::plotPs(strataPop, 
                    ps, 
                    scale = <span class="token string">"preference"</span>,
                    fileName = file.path(outputFolder, plotName))
 
 
             <span class="token comment"># Get the attrition table and diagram for the strata pop ----</span>
-            getAttritionTable(strataPop)
+            CohortMethod::getAttritionTable(strataPop)
 
             <span class="token comment"># View the attrition diagram for the strata pop ----</span>
-            drawAttritionDiagram(strataPop)
+            CohortMethod::drawAttritionDiagram(strataPop)
 
             <span class="token comment"># Save the attrition diagram for the strata pop ----</span>
             plotName <span class="token operator"><-</span> paste0(<span class="token string">"attritionDiagramStrata"</span>, outputImageSuffix);
-            drawAttritionDiagram(strataPop,
+            CohortMethod::drawAttritionDiagram(strataPop,
                                  fileName = file.path(outputFolder, plotName))
 
 
@@ -425,19 +488,19 @@
             balance <span class="token operator"><-</span> readRDS(balanceFile)
 
             <span class="token comment"># View the covariate balance scatter plot ----</span>
-            plotCovariateBalanceScatterPlot(balance)
+            CohortMethod::plotCovariateBalanceScatterPlot(balance)
 
             <span class="token comment"># Save the covariate balance scatter plot ----</span>
             plotName <span class="token operator"><-</span> paste0(<span class="token string">"covBalScatter"</span>, outputImageSuffix);
-            plotCovariateBalanceScatterPlot(balance,
+            CohortMethod::plotCovariateBalanceScatterPlot(balance,
                                             fileName = file.path(outputFolder, plotName))
 
             <span class="token comment"># View the plot of top variables ----</span>
-            plotCovariateBalanceOfTopVariables(balance)
+            CohortMethod::plotCovariateBalanceOfTopVariables(balance)
 
             <span class="token comment"># Save the plot of top variables ----</span>
             plotName <span class="token operator"><-</span> paste0(<span class="token string">"covBalTop"</span>, outputImageSuffix);
-            plotCovariateBalanceOfTopVariables(balance,
+            CohortMethod::plotCovariateBalanceOfTopVariables(balance,
                                             fileName = file.path(outputFolder, plotName))
 
 

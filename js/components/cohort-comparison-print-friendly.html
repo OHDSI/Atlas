@@ -155,10 +155,10 @@ The target cohort and comparator cohorts will be stratified into <span data-bind
 </div>
 <div data-bind="if: $component.cohortComparison().omCovariates() == 1">
 <br />
-A multivariate <span data-bind="if: ($component.cohortComparison().psMatch() == 1 || $component.cohortComparison().psStrat() == 1)">conditional</span> <span data-bind="text: $component.cohortComparison().modelTypeName()"></span> will be used to estimate the <span class="modelTypeRate" data-bind="text: $component.cohortComparison().modelTypeRate()"></span> of <span class="cohort-comparison-pf-reference" data-bind="text: $component.cohortComparison().outcomeCaption()"></span> in <span class="cohort-comparison-pf-reference" data-bind="text: $component.cohortComparison().treatmentCaption()"></span>, relative to <span class="cohort-comparison-pf-reference" data-bind="text: $component.cohortComparison().comparatorCaption()"></span>, adjusting for the following baseline covariates:  
+A multivariate <span data-bind="if: ($component.cohortComparison().psMatch() == 1 || $component.cohortComparison().psStrat() == 1)">conditional</span> <span data-bind="text: $component.cohortComparison().modelTypeName()"></span> will be used to estimate the <span class="modelTypeRate" data-bind="text: $component.cohortComparison().modelTypeRate()"></span> of <span class="cohort-comparison-pf-reference" data-bind="text: $component.cohortComparison().outcomeCaption()"></span> in <span class="cohort-comparison-pf-reference" data-bind="text: $component.cohortComparison().treatmentCaption()"></span>, relative to <span class="cohort-comparison-pf-reference" data-bind="text: $component.cohortComparison().comparatorCaption()"></span>, adjusting for baseline covariates.  
 <br />
 <br />
-<div>
+<!--<div>
     <ul data-bind="visible: cohortComparison().omDemographics">
         <li>Demographics</li>
         <ul>
@@ -241,7 +241,7 @@ A multivariate <span data-bind="if: ($component.cohortComparison().psMatch() == 
     </ul>
 </div>
 <br />
-<br />
+<br />-->
 A regularized regression model will be fit with a LaPlace prior (LASSO) for all covariates except for the cohort classifier (target vs. comparator); the regularization hyperparameter will be selected by optimizing the likelihood in a 10-fold cross validation, using a starting variance of 0.01 and a tolerance of 2e-7.
 <div data-bind="if: $component.cohortComparison().omInclusionId() > 0">
 <br/>
@@ -258,7 +258,7 @@ Covariate balance will be summarized in tabular form by showing the mean value f
 </div>
 <div data-bind="if: $component.cohortComparison().psAdjustment() == 1">
 <br/>
-Once the propensity score model is fit, we will plot the propensity score distribution of the target and comparator cohorts to evaluate the comparability of the two cohorts. The plot will be scaled to the preference score, normalizing for any imbalance in cohort size.  The area under the Receiver Operating Characteric (ROC) curve (AUC) will be reported.  The covariates selected within the propensity score model, with associated coefficients will also be reported.
+Once the propensity score model is fit, we will plot the propensity score distribution of the target and comparator cohorts to evaluate the comparability of the two cohorts. The plot will be scaled to the preference score, normalizing for any imbalance in cohort size.  The area under the Receiver Operating Characteristic (ROC) curve (AUC) will be reported.  The covariates selected within the propensity score model, with associated coefficients will also be reported.
 <div data-bind="if: $component.cohortComparison().psMatch() == 1">
 <br/>
 A plot showing the propensity score distributions for both cohorts after matching will be provided.  Covariate balance will be evaluated by plotting the standardized mean difference of each covariate before propensity score matching against the standardized mean difference for each covariate after propensity score matching.

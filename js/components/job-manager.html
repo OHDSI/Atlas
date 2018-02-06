@@ -21,12 +21,13 @@
 						deferRender: true,
 						autoWidth: false,
 						ordering: true,
-						order: [[ 2, 'desc' ]],
+						order: [[ 0, 'desc' ]],
 						columns: [
+								{ title: 'ExecutionId', data: 'executionId'},
 								{ title: 'Job Name', data: 'jobParameters.jobName' },
 								{ title: 'status', data: 'status'},
-								{ title: 'Start Date', data: 'startDate'},
-								{ title: 'End Date', data: 'endDate'}
+								{ title: 'Start Date', data: 'startDate', type: 'date'},
+								{ title: 'End Date', data: 'endDate', type: 'date'}
 						]
 				}
 		}"></table>

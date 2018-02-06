@@ -1,5 +1,5 @@
-define(['knockout', 'text!./browser.html', 'appConfig', 'faceted-datatable'
-], function (ko, template, config) {
+define(['knockout', 'text!./browser.html', 'appConfig', 'moment', 'faceted-datatable'
+], function (ko, template, config, moment) {
 	
 	function renderLink(s, p, d) {
 		return '<span class="linkish">' + d.name + '</span>';
@@ -51,13 +51,16 @@ define(['knockout', 'text!./browser.html', 'appConfig', 'faceted-datatable'
 			{
 				title: 'Created',
 				render: function (s, p, d) {
-					return new Date(d.createdDate).toLocaleDateString();
+					return new moment(d.createdDate, "YYYY-MM-DD HH:mm")
+						.format('YYYY-MM-DD hh:mm:ss a');
 				}
 			},
 			{
 				title: 'Updated',
 				render: function (s, p, d) {
-					return d.modifiedDate ? new Date(d.modifiedDate).toLocaleDateString() : null;
+					var dateToFormat = d.modifiedDate || d.createdDate
+					return new moment(dateToFormat, "YYYY-MM-DD HH:mm")
+						.format('YYYY-MM-DD hh:mm:ss a');
 				}
 			},
 			{

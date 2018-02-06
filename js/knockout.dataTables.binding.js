@@ -1,17 +1,16 @@
-define(['jquery', 'knockout', 'datatables.net','datatables.net-buttons','datatables.net-buttons-html5'], function ($, ko) {
+define(['jquery', 'knockout', 'datatables.net', 'datatables.net-buttons', 'datatables.net-buttons-html5'], function ($, ko) {
 
 	function renderSelected(s, p, d) {
 		return '<span class="fa fa-check"></span>';
 	}
 
-	function _getSelectedData(element)
-	{
+	function _getSelectedData(element) {
 		var selectedRows = $(element).DataTable().rows('tr:has(td.select:has(span.selected))', {
 			'search': 'applied'
 		}).data();
 
 		var selectedData = [];
-		$.each(selectedRows, function(index, value) {
+		$.each(selectedRows, function (index, value) {
 			selectedData.push(value);
 		});
 
@@ -31,19 +30,25 @@ define(['jquery', 'knockout', 'datatables.net','datatables.net-buttons','datatab
 				};
 				// test for 'select' column (must be first column in column definition
 				if (binding.options.columns && binding.options.columns[0] == 'select') {
-					binding.options.columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected }
-					$(element).on("click","td > span.fa-check", function () {
+					binding.options.columns[0] = {
+						width: '20px',
+						orderable: false,
+						class: 'select',
+						render: renderSelected
+					}
+					$(element).on("click", "td > span.fa-check", function () {
 						$(this).toggleClass('selected');
 					});
 				}
 
 				$(element).DataTable(binding.options);
 
-				if (binding.api != null)
-				{
+				if (binding.api != null) {
 					// expose datatable API to context's api binding.
 					binding.api({
-						getSelectedData: function() { return _getSelectedData(element);}
+						getSelectedData: function () {
+							return _getSelectedData(element);
+						}
 					});
 				}
 			}
@@ -60,15 +65,13 @@ define(['jquery', 'knockout', 'datatables.net','datatables.net-buttons','datatab
 			var data = ko.utils.unwrapObservable(binding.data || binding);
 
 			// clear events that .on() attached to previously. Prior to this update, the binding may have specified an 'onRowClick' option, but no longer does.
-			$(element).off("click","tr");
+			$(element).off("click", "tr");
 
 			if (binding.onRowClick != null) // attach a onRowclick handler if the options binding specifies it.
 			{
-				$(element).on("click","tr", function()
-				{
-					if (this._DT_RowIndex != null)
-					{
-						binding.onRowClick(data[this._DT_RowIndex]);
+				$(element).on("click", "tr", function (evt) {
+					if (this._DT_RowIndex != null) {
+						binding.onRowClick(data[this._DT_RowIndex], evt, this);
 					}
 				});
 			}

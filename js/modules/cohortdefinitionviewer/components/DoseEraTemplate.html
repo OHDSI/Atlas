@@ -20,10 +20,10 @@ a dose era of <conceptset-reference params="{conceptSetId: CodesetId, conceptSet
 	<li>with era length <numeric-range-viewer params="Range: EraLength"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(AgeAtStart) != null -->
-	<li>with age at era start <numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
+	<li>with age in years at era start <numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(AgeAtEnd) != null -->
-	<li>with age at era end <numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
+	<li>with age in years at era end <numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
 	<li>gender is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>

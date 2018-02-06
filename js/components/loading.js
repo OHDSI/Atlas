@@ -1,6 +1,7 @@
 define(['knockout', 'text!./loading.html', 'appConfig'], function (ko, view, config) {
 	function loading(params) {
 		var self = this;
+		self.status = params.status || 'loading';
 	}
 
 	var component = {

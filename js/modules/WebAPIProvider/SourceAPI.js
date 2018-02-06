@@ -11,6 +11,11 @@ define(function (require, exports) {
 			url: config.webAPIRoot + 'source/sources/',
 			error: function (error) {
 				sharedState.appInitializationStatus('failed');
+			},
+			success: function (o) {
+				// this is the initial communication to WebAPI and if it succeeds
+				// the initialization is complete and the application is ready.
+				sharedState.appInitializationStatus('complete');
 			}
 		});
 		return promise;

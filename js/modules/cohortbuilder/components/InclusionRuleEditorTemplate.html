@@ -1,11 +1,13 @@
 <!-- ko with: InclusionRule -->
 <div class="inclusion-rule-header">
-	<input type="text" maxlength="255" placeholder="Unnamed Criteria" data-bind="textInput: name, css: { emptyInput: !(name() && (name().length > 0)) }"/>
-	<div class="btn-group">
-		<button class="btn btn-sm btn-primary copyInclusionRule">Copy</button>
-		<button class="btn btn-sm btn-danger deleteInclusionRule">Delete</button>
+	<div class="input-group">
+		<input type="text" class="form-control" maxlength="255" placeholder="Unnamed Criteria" data-bind="textInput: name, css: { emptyInput: !(name() && (name().length > 0)) }" />
+		<div class="input-group-btn">
+			<button class="btn btn-sm btn-primary copyInclusionRule">Copy</button>
+			<button class="btn btn-sm btn-danger deleteInclusionRule">Delete</button>
+		</div>
 	</div>
 </div>
-<div class="divtext" data-bind="contentEditable:description"></div>
+<div class="divtext" placeholder="enter an inclusion rule description" data-bind="contentEditable:description"></div>
 <!-- /ko -->
 <criteria-group params="{expression: IndexRule, group: InclusionRule().expression}"></criteria-group>

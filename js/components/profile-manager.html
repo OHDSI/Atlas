@@ -1,3 +1,51 @@
+<div class="modal" id="modalHighlights" tabindex="-1 " role="dialog" data-backdrop="false">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<i class="fa fa-lightbulb"></i> Event Highlighting
+			</div>
+			<div class="modal-body">
+				<div class="row" style="text-align:center;">
+					<div class="btn-group" role="group">
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(0), style: {borderColor: getHighlightColor(0), backgroundColor: getHighlightBackground(0)}">
+							<i data-bind="style: {color: getHighlightColor(0)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(1), style: {borderColor: getHighlightColor(1), backgroundColor: getHighlightBackground(1)}">
+							<i data-bind="style: {color: getHighlightColor(1)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(2), style: {borderColor: getHighlightColor(2), backgroundColor: getHighlightBackground(2)}">
+							<i data-bind="style: {color: getHighlightColor(2)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(3), style: {borderColor: getHighlightColor(3), backgroundColor: getHighlightBackground(3)}">
+							<i data-bind="style: {color: getHighlightColor(3)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(4), style: {borderColor: getHighlightColor(4), backgroundColor: getHighlightBackground(4)}">
+							<i data-bind="style: {color: getHighlightColor(4)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="set selected events color" class="btn" data-bind="click: setHighlights(5), style: {borderColor: getHighlightColor(5), backgroundColor: getHighlightBackground(5)}">
+							<i data-bind="style: {color: getHighlightColor(5)}" class="fa fa-paint-brush"></i>
+						</button>
+						<button title="clear all highlight colors" class="btn btn-default" data-bind="click:clearHighlights">
+							<i class="fa fa-eraser"></i>
+						</button>
+					</div>
+				</div>
+				<faceted-datatable id="highlight-table" params="{
+								reference: highlightData,
+								columns: highlightColumns,
+								options: highlightOptions,
+								order: [[4,'desc']],
+								pageLength: 5,
+								rowClick: highlightRowClick,
+								dom: highlightDom
+							}"></faceted-datatable>
+			</div>
+			<div class="modal-footer">
+				<div data-toggle="modal" data-target="#modalHighlights" class="btn btn-sm btn-primary pull-right">Close</div>
+			</div>
+		</div>
+	</div>
+</div>
 <div class="wrapperTitle">
 	<i class="fa fa-user"></i> Profiles
 </div>
@@ -5,26 +53,28 @@
 	<form data-bind="submit:loadPerson">
 		<div class="input-group" role="group">
 			<div class="input-group-btn" role="group">
-				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button type="button" title="choose a data source" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<span data-bind="text:$component.sourceKeyCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
 				</button>
-				<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:config.services[0].sources.filter(d=>d.hasCDM)">
+				<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:config.api.sources.filter(d=>d.hasCDM)">
 					<li>
-						<a data-bind="text:sourceName,click:$component.setSourceKey"></a>
+						<a href="#" data-bind="text:sourceName,click:$component.setSourceKey"></a>
 					</li>
 				</ul>
 			</div>
 			<input type="text" class="form-control" placeholder="Person Id" data-bind="enable: sourceKey(),value: personId">
 			<div class="input-group-btn">
-				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.profileChart},click:$component.dispToggle, value:'profileChart'">
+				<div class="btn btn-primary" title="toggle chart display" data-bind="css:{active:$component.showSection.profileChart},click:$component.dispToggle, value:'profileChart'">
 					<i class="fa fa-line-chart" data-bind="value:'profileChart'" />
 				</div>
-				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.wordcloud},click:$component.dispToggle, value:'wordcloud'">
-					<i class="fa fa-bars" data-bind="value:'wordcloud'" />
-				</div>
-				<div class="btn btn-primary" data-bind="css:{active:$component.showSection.datatable},click:$component.dispToggle, value:'datatable'">
+				<div class="btn btn-primary" title="toggle table display" data-bind="css:{active:$component.showSection.datatable},click:$component.dispToggle, value:'datatable'">
 					<i class="fa fa-table" data-bind="value:'datatable'" />
 				</div>
+			</div>
+			<div class="input-group-btn" role="group">
+				<button type="button" class="btn btn-primary" title="highlight events" data-toggle="modal" data-target="#modalHighlights">
+					<span><i class="fa fa-paint-brush"></i></span>
+				</button>
 			</div>
 		</div>
 	</form>
@@ -37,49 +87,36 @@
 	</div>
 </div>
 
-<div data-bind="visible: loadingPerson" class="loading">loading</div>
+<!-- ko if:loadingPerson -->
+<loading params="status: loadingStatus"></loading>
+<!-- /ko -->
 
 <div data-bind="visible: cantFindPerson" class="loading">Can't find
 	<span data-bind="text:personId" />
 </div>
 
-<div class="row">
-	<!-- ko if:$component.showSection.wordcloud -->
-	<div class="col-xs-3">
-		<div data-bind="visible:person, with:person">
-			<div class="wordcloud" data-bind="foreach:$component.words">
-				<span data-bind="
-					text:text, 
-					style:{/*fontSize:size*/},
-					event:{mouseenter:(word,evt)=>$component.highlight(word.recs, evt), mouseleave:(word,evt)=>$component.highlight([], evt)},
-					"></span>
-			</div>
-		</div>
-	</div>
-	<!-- /ko -->
-	<div data-bind="if: person, attr: { class: showSection.wordcloud() ? 'col-xs-9' : 'col-xs-12'}">
+<div class="row profile-control">
+	<div data-bind="if: person, attr: { class: 'col-xs-12'}">
 		<div id="profile-chart" data-bind="
 					attr: {
 						 style:`padding-bottom:${aspectRatio()*100}%`
 						},
 					visible:showSection.profileChart,
 					profileChart:{
-							recs:filteredRecs, 
-							zoomFilter:dimensions.profileChart.filter,
+							xfObservable:xfObservable,
 							highlightRecs:highlightRecs,
-							allRecs:crossfilter().all(),
 							aspectRatio: aspectRatio,
 							short: showSection.datatable(),
-							verticalLines: [{x:0, color:'#003142'}],
 							shadedRegions: shadedRegions,
+							xfDimensions: xfDimensions
 						}"></div>
 		<faceted-datatable id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
-						reference: filteredRecs,
-						columns: columns, 
-						options: options, 
+						reference: personRecords,
+						xfObservable: xfObservable,
+						columns: columns,
+						options: options,
 						order: [[3,'asc']],
-						searchFilter: searchHighlight,
-						rowClick: datatableRowClickCallback,
+						searchFilter: searchHighlight
 					}"></faceted-datatable>
 	</div>
 </div>

@@ -1,11 +1,12 @@
 define(['knockout',
 				'jquery',
-				'text!./FeasibilityAttritionReport.html',
 				'd3',
+				'text!./FeasibilityAttritionReport.html',
 			  'css!../css/report.css'
 			 ], function (
 	ko,
 	$,
+	d3,
 	template) {
 
 	function FeasibilityAttritionReport(params) {

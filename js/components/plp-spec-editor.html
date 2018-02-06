@@ -1,0 +1,431 @@
+<div class="row">
+	<div class="col-md-8">
+		<div>
+			<label>Choose your target cohort:</label>
+			<div class="input-group">
+				<input class="form-control" type="text" disabled data-bind="value: patientLevelPrediction().treatmentCaption" />
+				<span class="input-group-btn">
+									<button class="btn btn-primary" data-bind="click:chooseTreatment"><i class="fa fa-folder-open"></i></button>
+									<button class="btn btn-danger" data-bind="disable:patientLevelPrediction().treatmentId() == 0, click:clearTreatment" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+							</span>
+			</div>
+			<div data-bind="visible: patientLevelPrediction().treatmentId() > 0 && patientLevelPrediction().treatmentCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The target cohort specified (#<span data-bind="text:patientLevelPrediction().treatmentId()"></span>) was deleted. Please select a different cohort.</div>
+		</div>
+		<div>
+			<label>Choose your outcome cohort:</label>
+			<div class="input-group">
+				<input class="form-control" type="text" disabled data-bind="value: patientLevelPrediction().outcomeCaption" />
+				<span class="input-group-btn">
+								<button class="btn btn-primary" data-bind="click:chooseOutcome"><i class="fa fa-folder-open"></i></button>
+								<button class="btn btn-danger" data-bind="disable:patientLevelPrediction().outcomeId() == 0,click:clearOutcome" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+							</span>
+			</div>
+			<div data-bind="visible: patientLevelPrediction().outcomeId() > 0 && patientLevelPrediction().outcomeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The outcome cohort specified (#<span data-bind="text:patientLevelPrediction().outcomeId()"></span>) was deleted. Please select a different cohort.</div>
+		</div>
+		<div>
+			<label>Specify the statistical model used predict the outcome amongst the target cohort:</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: patientLevelPrediction().modelTypeOptions, optionsText:'name', optionsValue:'id', value: patientLevelPrediction().modelType, optionsCaption: 'Select a model...'"></select>
+			</div>
+		</div>
+		<div data-bind="visible: $component.patientLevelPrediction().modelTypeSettings().length > 0">
+			<div class="radius-border">
+				<strong><span data-bind="text: $component.patientLevelPrediction().modelTypeName()"></span> model options:</strong>
+				<div data-bind="if: $component.modelSettingExists('moAlpha')">
+					<label data-bind="text: $component.modelSettingDescription('moAlpha')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moAlpha" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moAlphaIsDefault(), click: function(data, event) { resetToDefault('moAlpha') }, css: {'btn-danger': !($component.patientLevelPrediction().moAlphaIsDefault())}, text: $component.patientLevelPrediction().moAlphaIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moClassWeight')">
+					<label data-bind="text: $component.modelSettingDescription('moClassWeight')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moClassWeight" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moClassWeightIsDefault(), click: function(data, event) { resetToDefault('moClassWeight') }, css: {'btn-danger': !($component.patientLevelPrediction().moClassWeightIsDefault())}, text: $component.patientLevelPrediction().moClassWeightIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moIndexFolder')">
+					<label data-bind="text: $component.modelSettingDescription('moIndexFolder')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moIndexFolder" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moIndexFolderIsDefault(), click: function(data, event) { resetToDefault('moIndexFolder') }, css: {'btn-danger': !($component.patientLevelPrediction().moIndexFolderIsDefault())}, text: $component.patientLevelPrediction().moIndexFolderIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moK')">
+					<label data-bind="text: $component.modelSettingDescription('moK')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moK" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moKIsDefault(), click: function(data, event) { resetToDefault('moK') }, css: {'btn-danger': !($component.patientLevelPrediction().moKIsDefault())}, text: $component.patientLevelPrediction().moKIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moLearnRate')">
+					<label data-bind="text: $component.modelSettingDescription('moLearnRate')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moLearnRate" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moLearnRateIsDefault(), click: function(data, event) { resetToDefault('moLearnRate') }, css: {'btn-danger': !($component.patientLevelPrediction().moLearnRateIsDefault())}, text: $component.patientLevelPrediction().moLearnRateIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moLearningRate')">
+					<label data-bind="text: $component.modelSettingDescription('moLearningRate')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moLearningRate" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moLearningRateIsDefault(), click: function(data, event) { resetToDefault('moLearningRate') }, css: {'btn-danger': !($component.patientLevelPrediction().moLearningRateIsDefault())}, text: $component.patientLevelPrediction().moLearningRateIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moMaxDepth')">
+					<label data-bind="text: $component.modelSettingDescription('moMaxDepth')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moMaxDepth" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moMaxDepthIsDefault(), click: function(data, event) { resetToDefault('moMaxDepth') }, css: {'btn-danger': !($component.patientLevelPrediction().moMaxDepthIsDefault())}, text: $component.patientLevelPrediction().moMaxDepthIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moMinImpuritySplit')">
+					<label data-bind="text: $component.modelSettingDescription('moMinImpuritySplit')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moMinImpuritySplit" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moMinImpuritySplitIsDefault(), click: function(data, event) { resetToDefault('moMinImpuritySplit') }, css: {'btn-danger': !($component.patientLevelPrediction().moMinImpuritySplitIsDefault())}, text: $component.patientLevelPrediction().moMinImpuritySplitIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moMinRows')">
+					<label data-bind="text: $component.modelSettingDescription('moMinRows')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moMinRows" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moMinRowsIsDefault(), click: function(data, event) { resetToDefault('moMinRows') }, css: {'btn-danger': !($component.patientLevelPrediction().moMinRowsIsDefault())}, text: $component.patientLevelPrediction().moMinRowsIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moMinSamplesLeaf')">
+					<label data-bind="text: $component.modelSettingDescription('moMinSamplesLeaf')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moMinSamplesLeaf" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moMinSamplesLeafIsDefault(), click: function(data, event) { resetToDefault('moMinSamplesLeaf') }, css: {'btn-danger': !($component.patientLevelPrediction().moMinSamplesLeafIsDefault())}, text: $component.patientLevelPrediction().moMinSamplesLeafIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moMinSamplesSplit')">
+					<label data-bind="text: $component.modelSettingDescription('moMinSamplesSplit')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moMinSamplesSplit" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moMinSamplesSplitIsDefault(), click: function(data, event) { resetToDefault('moMinSamplesSplit') }, css: {'btn-danger': !($component.patientLevelPrediction().moMinSamplesSplitIsDefault())}, text: $component.patientLevelPrediction().moMinSamplesSplitIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moMTries')">
+					<label data-bind="text: $component.modelSettingDescription('moMTries')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moMTries" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moMTriesIsDefault(), click: function(data, event) { resetToDefault('moMTries') }, css: {'btn-danger': !($component.patientLevelPrediction().moMTriesIsDefault())}, text: $component.patientLevelPrediction().moMTriesIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moNEstimators')">
+					<label data-bind="text: $component.modelSettingDescription('moNEstimators')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moNEstimators" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moNEstimatorsIsDefault(), click: function(data, event) { resetToDefault('moNEstimators') }, css: {'btn-danger': !($component.patientLevelPrediction().moNEstimatorsIsDefault())}, text: $component.patientLevelPrediction().moNEstimatorsIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moNThread')">
+					<label data-bind="text: $component.modelSettingDescription('moNThread')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moNThread" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moNThreadIsDefault(), click: function(data, event) { resetToDefault('moNThread') }, css: {'btn-danger': !($component.patientLevelPrediction().moNThreadIsDefault())}, text: $component.patientLevelPrediction().moNThreadIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moNTrees')">
+					<label data-bind="text: $component.modelSettingDescription('moNTrees')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moNTrees" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moNTreesIsDefault(), click: function(data, event) { resetToDefault('moNTrees') }, css: {'btn-danger': !($component.patientLevelPrediction().moNTreesIsDefault())}, text: $component.patientLevelPrediction().moNTreesIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moPlot')">
+					<label data-bind="text: $component.modelSettingDescription('moPlot')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moPlot" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moPlotIsDefault(), click: function(data, event) { resetToDefault('moPlot') }, css: {'btn-danger': !($component.patientLevelPrediction().moPlotIsDefault())}, text: $component.patientLevelPrediction().moPlotIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moSeed')">
+					<label data-bind="text: $component.modelSettingDescription('moSeed')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moSeed" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moSeedIsDefault(), click: function(data, event) { resetToDefault('moSeed') }, css: {'btn-danger': !($component.patientLevelPrediction().moSeedIsDefault())}, text: $component.patientLevelPrediction().moSeedIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moSize')">
+					<label data-bind="text: $component.modelSettingDescription('moSize')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moSize" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moSizeIsDefault(), click: function(data, event) { resetToDefault('moSize') }, css: {'btn-danger': !($component.patientLevelPrediction().moSizeIsDefault())}, text: $component.patientLevelPrediction().moSizeIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moVariance')">
+					<label data-bind="text: $component.modelSettingDescription('moVariance')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moVariance" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moVarianceIsDefault(), click: function(data, event) { resetToDefault('moVariance') }, css: {'btn-danger': !($component.patientLevelPrediction().moVarianceIsDefault())}, text: $component.patientLevelPrediction().moVarianceIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.modelSettingExists('moVarImp')">
+					<label data-bind="text: $component.modelSettingDescription('moVarImp')"></label>
+					<div class="input-group">
+						<input class="form-control" type="text" data-bind="value: patientLevelPrediction().moVarImp" />
+						<span class="input-group-btn">
+								<button class="btn" data-bind="disable: $component.patientLevelPrediction().moVarImpIsDefault(), click: function(data, event) { resetToDefault('moVarImp') }, css: {'btn-danger': !($component.patientLevelPrediction().moVarImpIsDefault())}, text: $component.patientLevelPrediction().moVarImpIsDefault() ? 'Using default' : 'Reset to default'"></button>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div>
+			<label>Define the time-at-risk window start, relative to target cohort entry:</label>
+			<div class="input-group">
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: patientLevelPrediction().timeAtRiskStart.numeric(), eventType:'blur', ko_autocomplete: { value: patientLevelPrediction().timeAtRiskStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from cohort start date
+			</div>
+		</div>
+		<div>
+			<label>Define the time-at-risk window end:</label>
+			<div class="input-group">
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: patientLevelPrediction().timeAtRiskEnd.numeric(), eventType:'blur', ko_autocomplete: { value: patientLevelPrediction().timeAtRiskEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from cohort start date
+			</div>
+		</div>
+		<div>
+			<label>Minimum lookback period applied to target cohort:</label>
+			<div class="input-group">
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: patientLevelPrediction().minimumWashoutPeriod.numeric(), eventType:'blur', ko_autocomplete: { value: patientLevelPrediction().minimumWashoutPeriod, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+			</div>
+		</div>
+		<div>
+			<label>Should subjects without time at risk be removed?</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: patientLevelPrediction().requireTimeAtRisk"></select>
+			</div>
+		</div>
+		<div>
+			<label>Should only the first exposure per subject be included?</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: patientLevelPrediction().firstExposureOnly"></select>
+			</div>
+		</div>
+		<div>
+			<label>Include people with outcomes who are not observed for the whole at risk period?</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: patientLevelPrediction().includeAllOutcomes"></select>
+			</div>
+		</div>
+		<div>
+			<label>Sample a subset of the target group for testing?</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: patientLevelPrediction().sample"></select>
+			</div>
+			<div data-bind="visible: patientLevelPrediction().sample() == 1">
+				<div class="input-group">
+					<label>How many patients to use for a subset?&nbsp;&nbsp;</label>
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: patientLevelPrediction().sampleSize.numeric(), eventType:'blur', ko_autocomplete: { value: patientLevelPrediction().sampleSize, source: $component.options.sampleSizeOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> patients
+				</div>
+			</div>
+		</div>
+		<div>
+			<label>Remove patients who have observed the outcome prior to cohort entry?</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: patientLevelPrediction().rmPriorOutcomes"></select>
+			</div>
+			<div data-bind="visible: patientLevelPrediction().rmPriorOutcomes() == 1">
+				<div class="input-group">
+					<label>How many days to look back from cohort entry for the outcome?&nbsp;&nbsp;</label>
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: patientLevelPrediction().priorOutcomeLookback.numeric(), eventType:'blur', ko_autocomplete: { value: patientLevelPrediction().priorOutcomeLookback, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days prior to cohort start
+				</div>
+			</div>
+		</div>
+		<div>
+			<label>Specify how to split the test/train set:</label>
+			<div class="input-group">
+				<select class="form-control" data-bind="options: patientLevelPrediction().testSplitOptions, optionsText:'desc', optionsValue:'id', value: patientLevelPrediction().testSplit"></select>
+			</div>
+		</div>
+		<div class="input-group">
+			<label>Percentage of the data to be used as the test set (0-100%):</label>
+			<div class="input-group">
+				<input class="form-control" type="text" data-bind="value: patientLevelPrediction().testFraction" />
+			</div>
+		</div>
+		<div class="input-group">
+			<label>The number of folds used in the cross validation:</label>
+			<div class="input-group">
+				<input class="form-control" type="text" data-bind="value: patientLevelPrediction().nFold" />
+			</div>
+		</div>
+		<div>
+			<div>
+				<label>Which types of baseline covariates do you want to include in the prediction model?</label>
+				<ul>
+					<li>Demographics</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDemographicsGender" />Gender</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDemographicsAge" />Age group (5-year bands)</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDemographicsYear" />Index year</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDemographicsMonth" />Index month</li>
+						<li>
+							<input type="checkbox" data-bind="checked: patientLevelPrediction().cvDemographicsRace" />Race</li>
+						<li>
+							<input type="checkbox" data-bind="checked: patientLevelPrediction().cvDemographicsEthnicity" />Ethnicity</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Conditions</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvConditionOcc30d" />In prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvConditionOcc365d" />In prior 365d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvConditionOccInpt180d" />In prior 180d within inpatient setting</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvConditionEraEver" />All time prior</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvConditionEraOverlap" />Overlapping index date</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Drugs</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDrugInPrior30d" />In prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDrugInPrior365d" />In prior 365d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDrugEraEver" />All time prior</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvDrugEraOverlap" />Overlapping index date</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Procedures</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvProcedureOcc30d" />In prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvProcedureOcc365d" />In prior 365d</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Measurement</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvMeasurement30d" />Existence in prior 30d</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvMeasurement365d" />Existence in prior 365d</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>Risk scores</li>
+					<ul>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvRiskScoresCharlson" />Charlson</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvRiskScoresChads2" />CHADS2</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvRiskScoresChads2vasc" />CHADS2VASc</li>
+						<li>
+							<input type="checkbox" data-bind="checked:patientLevelPrediction().cvRiskScoresDcsi" />DCSI</li>
+					</ul>
+				</ul>
+			</div>
+		</div>
+		<div>
+			<label>Specify the minimum number of subjects for a covariate to enter the model:</label>
+			<div class="input-group">
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: patientLevelPrediction().delCovariatesSmallCount.numeric(), eventType:'blur', ko_autocomplete: { value: patientLevelPrediction().delCovariatesSmallCount, source: $component.options.delCovariatesSmallCount, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;
+			</div>
+		</div>
+		<div>
+			<label>What concepts do you want to include as covariates? (Leave blank if you want to include everything)</label>
+			<div class="input-group">
+				<input class="form-control" type="text" disabled data-bind="value: patientLevelPrediction().cvInclusionCaption" />
+				<span class="input-group-btn">
+									<button class="btn btn-primary" data-bind="click:choosePsInclusion"><i class="fa fa-folder-open"></i></button>
+									<button class="btn btn-danger" data-bind="disable: patientLevelPrediction().cvInclusionId() == 0, click:clearPsInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+								</span>
+			</div>
+			<div data-bind="visible: patientLevelPrediction().cvInclusionId() > 0 && patientLevelPrediction().cvInclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:patientLevelPrediction().cvInclusionId()"></span>) was deleted. Please select a different concept set.</div>
+		</div>
+		<div>
+			<label>What concepts do you want to exclude? (Leave blank if you want to include everything)</label>
+			<div class="input-group">
+				<input class="form-control" type="text" disabled data-bind="value: patientLevelPrediction().cvExclusionCaption" />
+				<span class="input-group-btn">
+									<button class="btn btn-primary" data-bind="click:choosePsExclusion"><i class="fa fa-folder-open"></i></button>
+									<button class="btn btn-danger" data-bind="disable:patientLevelPrediction().cvExclusionId() == 0, click:clearPsExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+								</span>
+			</div>
+			<div data-bind="visible: patientLevelPrediction().cvExclusionId() > 0 && patientLevelPrediction().cvExclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:patientLevelPrediction().cvExclusionId()"></span>) was deleted. Please select a different concept set.</div>
+		</div>
+	</div>
+	<div class="col-md-4"></div>
+	<div id="modalCohortDefinition" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title">Choose a Cohort</div>
+				</div>
+				<div class="modal-body">
+					<cohort-definition-browser params="{model: self.model, cohortDefinitionSelected: cohortSelected}"></cohort-definition-browser>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="modalConceptSet" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title">Choose a Concept Set</div>
+				</div>
+				<div class="modal-body">
+					<cohort-concept-set-browser params="{onRespositoryConceptSetSelected: $component.conceptsetSelected}"></cohort-concept-set-browser>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

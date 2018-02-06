@@ -1,13 +1,16 @@
 define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaTypes', '../CohortExpression', '../InclusionRule', 'text!./CohortExpressionEditorTemplate.html', './EndStrategyEditor',
-				'databindings', 'conceptpicker/ConceptPicker', 'css!../css/builder.css', 'css!../css/ddslick.criteria.css', 'ko.sortable'
-			 ], function (ko, $, options, CriteriaGroup, criteriaTypes, CohortExpression, InclusionRule, template) {
-	
+	'databindings', 'conceptpicker/ConceptPicker', 'css!../css/builder.css', 'ko.sortable'
+], function (ko, $, options, CriteriaGroup, criteriaTypes, CohortExpression, InclusionRule, template) {
+
 	function CohortExpressionEditorViewModel(params) {
 		var self = this;
 		this.expressionMode = ko.observable('all');
+		self.formatOption = function (d) {
+			return '<div class="optionText">' + d.text + '</div>' +
+				'<div class="optionDescription">' + d.description + '</div>';
+		};
 
-		var primaryCriteriaOptions = [
-			{
+		self.primaryCriteriaOptions = [{
 				text: "Add Condition Era Criteria",
 				selected: false,
 				description: "Find patients with specific diagosis era.",
@@ -139,8 +142,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 			}
 		];
 
-		var censorCriteriaOptions = [
-			{
+		self.censorCriteriaOptions = [{
 				text: "Add Condition Era Criteria",
 				selected: false,
 				description: "Exit cohort based on diagosis era.",
@@ -271,11 +273,10 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 
 		self.selectedInclusionRule = ko.observable(null);
 		self.selectedInclusionRuleIndex = null;
-		
+
 		self.selectInclusionRule = function (inclusionRule) {
 			self.selectedInclusionRule(inclusionRule);
 			self.selectedInclusionRuleIndex = params.expression().InclusionRules().indexOf(inclusionRule);
-			console.log("Selected Index: " + self.selectedInclusionRuleIndex);
 		};
 
 		self.removeAdditionalCriteria = function () {
@@ -289,9 +290,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 		self.removePrimaryCriteria = function (criteria) {
 			self.expression().PrimaryCriteria().CriteriaList.remove(criteria);
 		};
-		
+
 		self.removeCensoringCriteria = function (criteria) {
-			self.expression().CensoringCriteria.remove(criteria);	
+			self.expression().CensoringCriteria.remove(criteria);
 		};
 
 		self.addInclusionRule = function () {
@@ -316,7 +317,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 			selectText: "Add Initial Event...",
 			width: 250,
 			height: 300,
-			actionOptions: primaryCriteriaOptions,
+			actionOptions: self.primaryCriteriaOptions,
 			onAction: function (data) {
 				data.selectedData.action();
 			}
@@ -326,13 +327,13 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 			selectText: "Add Censoring Event...",
 			width: 250,
 			height: 300,
-			actionOptions: censorCriteriaOptions,
+			actionOptions: self.censorCriteriaOptions,
 			onAction: function (data) {
 				data.selectedData.action();
 			}
 		};
 
-		
+
 		self.getCriteriaIndexComponent = function (data) {
 			data = ko.utils.unwrapObservable(data);
 
@@ -375,23 +376,23 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			}, 2);
 		};
-		
+
 		// Subscriptions
-		
+
 		self.expressionSubscription = self.expression.subscribe(function (newVal) {
 			console.log("New Cohort Expression set.");
 			self.selectedInclusionRule(params.expression().InclusionRules()[self.selectedInclusionRuleIndex]);
 		});
-		
+
 		// Cleanup
-		
-		self.dispose = function() {
+
+		self.dispose = function () {
 			console.log("Cohort Expression Editor Dispose.");
 			self.expressionSubscription.dispose();
 		};
-		
-		
-		
+
+
+
 	}
 
 	// return factory

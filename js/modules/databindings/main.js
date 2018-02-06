@@ -7,12 +7,12 @@ define(function (require) {
 	var ddSlickAction = require("./ddSlickActionBinding");
 	var clickToEdit = require("./clickToEditBinding");
 	var datePicker = require("./datepickerBinding");
-	var dataTable = require("./datatableBinding");
+	// var dataTable = require("./datatableBinding");
 	var templateDataTable = require("./knockout.datatables");
 	var eventListener = require("./eventListenerBinding");
 	var selectOnFocus = require("./knockout.selectOnFocus");
 	var sortExtender = require("./sortExtender");
 	var bootstrapModal = require("./bootstrapModal");
-	var treemap= require("./treemapBinding");
+	var treemap = require("./treemapBinding");
 	var d3ChartBinding = require("./d3ChartBinding");
 });

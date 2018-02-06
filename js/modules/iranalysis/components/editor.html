@@ -22,7 +22,6 @@
 							<td align="top">#<span data-bind="text: id"/>: </td>
 							<td align="top"><span data-bind="text: name"/></td>
 						</tr>					
-					</div>
 					</table>
 				</td>
 				<td valign="top">
@@ -35,7 +34,6 @@
 							<td align="top">#<span data-bind="text: id"/>: </td>
 							<td align="top"><span data-bind="text: name"/></td>
 						</tr>					
-					</div>
 					</table>
 				</td>
 			</tr>
@@ -54,10 +52,10 @@
 		<div style="padding: 5px 0px">
 			<ul>
 				<li>
-					Time at risk starts with <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.start.DateField" /> plus  <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.start.Offset.numeric(), ko_autocomplete: { value: analysis().timeAtRisk.start.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days.
+					Time at risk starts with <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.start.DateField" /> plus  <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.start.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.start.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days.
 				</li>
 				<li>
-					Time at risk ends with <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.end.DateField" /> plus  <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.end.Offset.numeric(), ko_autocomplete: { value: analysis().timeAtRisk.end.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days.
+					Time at risk ends with <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.end.DateField" /> plus  <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.end.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.end.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days.
 				</li>
 			</ul>
 		</div>
