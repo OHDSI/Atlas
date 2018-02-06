@@ -990,6 +990,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 			result = result.sort(function (a, b) {
 				return b.label < a.label ? 1 : -1;
 			});
+
+			return result;
 		};
 
 		self.mapHistogram = function (histogramData) {
