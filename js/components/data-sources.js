@@ -692,9 +692,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 						.domain(['MALE', 'FEMALE', 'UNKNOWN'])
 						.range(["#1F78B4", "#FB9A99", "#33A02C"])
 				});
-				d3.select(selector).select('svg')
-					.attr('width', '1000px')
-					.attr('height', '300px');
 			}
 		};
 
@@ -993,15 +990,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 			result = result.sort(function (a, b) {
 				return b.label < a.label ? 1 : -1;
 			});
-
-			return {
-				data: result.map(function(series) {
-					return series.value;
-				}),
-				legend: result.map(function(series) {
-					return series.label;
-				})
-			};
 		};
 
 		self.mapHistogram = function (histogramData) {
