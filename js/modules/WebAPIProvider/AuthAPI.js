@@ -6,6 +6,11 @@ define(function(require, exports) {
     var TOKEN_HEADER = 'Bearer';
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
 
+    var authProviders = config.authProviders.reduce(function(result, current) {
+        result[config.api.url + current.url] = current;
+        return result;
+    }, {});
+
     var getServiceUrl = function () {
         return config.webAPIRoot;
     };
@@ -320,8 +325,10 @@ define(function(require, exports) {
     }
 
     $.ajaxSetup({
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader('Authorization', getAuthorizationHeader());
+        beforeSend: function(xhr, settings) {
+            if (!authProviders[settings.url]) {
+                xhr.setRequestHeader('Authorization', getAuthorizationHeader());
+            }
         }
     });
 
