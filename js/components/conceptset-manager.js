@@ -22,6 +22,10 @@ define(['knockout',
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
 		self.defaultConceptSetName = "New Concept Set";
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canReadConceptsets = ko.pureComputed(function () {
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
+		});
 		self.selectedConcepts = sharedState.selectedConcepts;
 		self.displayEvidence = ko.pureComputed(function () {
 			return (sharedState.evidenceUrl() && sharedState.evidenceUrl()
@@ -46,7 +50,7 @@ define(['knockout',
 					.length;
 			}
 			return returnVal;
-		})
+		});
 		// Set the default concept set to be the current concept set
 		self.currentConceptSet = ko.observableArray();
 		_.each(self.selectedConcepts(), (conceptSetItem) => {
@@ -546,9 +550,6 @@ define(['knockout',
 				url: urlEncoded,
 				method: 'GET',
 				contentType: 'application/json',
-				headers: {
-					Authorization: authApi.getAuthorizationHeader()
-				},
 				error: authApi.handleAccessDenied,
 				success: function (results) {
 					if (results.length > 0) {
@@ -594,9 +595,6 @@ define(['knockout',
 						method: conceptSet.id ? 'PUT' : 'POST',
 						url: config.api.url + 'conceptset/' + (conceptSet.id || ''),
 						contentType: 'application/json',
-						headers: {
-							Authorization: authApi.getAuthorizationHeader()
-						},
 						data: json,
 						dataType: 'json',
 						error: authApi.handleAccessDenied,
@@ -605,9 +603,6 @@ define(['knockout',
 							$.ajax({
 								method: 'PUT',
 								url: config.api.url + 'conceptset/' + data.id + '/items',
-								headers: {
-									Authorization: authApi.getAuthorizationHeader()
-								},
 								data: JSON.stringify(conceptSetItems),
 								dataType: 'json',
 								contentType: 'application/json',
@@ -1004,9 +999,7 @@ define(['knockout',
 		self.canCreate = ko.computed(function () {
 			return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 		});
-		self.canDelete = ko.computed(function () {
-			return ((authApi.isAuthenticated() && authApi.isPermittedDeleteConceptset()) || !config.userAuthenticationEnabled);
-		});
+		self.canDelete = self.model.canDeleteCurrentConceptSet;
 		
 		self.copyToClipboard = function(clipboardButtonId, clipboardButtonMessageId) {
 			var currentClipboard = new clipboard(clipboardButtonId);

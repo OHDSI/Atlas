@@ -937,9 +937,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						definitionPromise = $.ajax({
 							url: config.api.url + 'cohortdefinition/' + cohortDefinitionId,
 							method: 'GET',
-							headers: {
-								Authorization: authApi.getAuthorizationHeader()
-							},
 							contentType: 'application/json',
 							success: function (cohortDefinition) {
 								cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
@@ -949,9 +946,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						infoPromise = $.ajax({
 							url: config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info',
 							method: 'GET',
-							headers: {
-								Authorization: authApi.getAuthorizationHeader()
-							},
 							contentType: 'application/json',
 							success: function (generationInfo) {
 								self.currentCohortDefinitionInfo(generationInfo);
@@ -981,9 +975,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 								conceptPromise = $.ajax({
 									url: sharedState.vocabularyUrl() + 'lookup/identifiers',
 									method: 'POST',
-									headers: {
-										Authorization: authApi.getAuthorizationHeader()
-									},
 									contentType: 'application/json',
 									data: JSON.stringify(identifiers),
 									error: authApi.handleAccessDenied,
@@ -1143,11 +1134,13 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					url: config.api.url + 'conceptset/' + conceptSetId,
 					method: 'GET',
 					contentType: 'application/json',
+					error: self.authApi.handleAccessDenied,
 					success: function (conceptset) {
 						$.ajax({
 							url: config.api.url + 'conceptset/' + conceptSetId + '/expression',
 							method: 'GET',
 							contentType: 'application/json',
+							error: self.authApi.handleAccessDenied,
 							success: function (expression) {
 								self.setConceptSet(conceptset, expression.items);
 								self.currentView(viewToShow);
@@ -1290,6 +1283,23 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					return false;
 				}
 			});
+			self.canDeleteCurrentConceptSet = ko.pureComputed(function () {
+				if (!config.userAuthenticationEnabled)
+					return true;
+
+				/*
+				TODO:
+					if (self.currentConceptSetSource() == 'cohort') {
+						return self.canDeleteCurrentCohortDefinition();
+					} else
+				*/
+				if (self.currentConceptSetSource() == 'repository') {
+					return authApi.isPermittedDeleteConceptset(self.currentConceptSet().id);
+				} else {
+					return false;
+				}
+			});
+
 			self.currentConceptSetSource = ko.observable('repository');
 			self.currentConceptSetNegativeControls = ko.observable();
 			self.currentIncludedConceptIdentifierList = ko.observable();
@@ -1483,9 +1493,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					$.ajax({
 						url: config.api.url + 'role',
 						method: 'GET',
-						headers: {
-							Authorization: authApi.getAuthorizationHeader()
-						},
 						contentType: 'application/json',
 						error: authApi.handleAccessDenied,
 						success: function (data) {

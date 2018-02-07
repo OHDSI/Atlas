@@ -3,6 +3,8 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
         var self = this;
         var authApi = params.model.authApi;
         self.token = authApi.token;
+        self.setAuthParams = authApi.setAuthParams;
+        self.resetAuthParams = authApi.resetAuthParams;
         self.serviceUrl = appConfig.webAPIRoot;
         self.errorMsg = ko.observable();
         self.isInProgress = ko.observable(false);
@@ -59,7 +61,8 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
 			
             var loginUrl = self.serviceUrl + self.currentAuthProvider().url;
 
-            if (self.currentAuthProvider().ajax == true) {
+
+            if (authProvider.ajax == true) {
                 self.isInProgress(true);
                 $.ajax({
                     url: loginUrl,
@@ -67,12 +70,14 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
                         withCredentials: true
                     },
                     success: function (data, textStatus, jqXHR) {
-                        var token = jqXHR.getResponseHeader('Bearer');
-                        setToken(token);
+                        self.setAuthParams(jqXHR);
+                        self.errorMsg(null);
+                        self.isBadCredentials(false);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        setToken(null);
+                        self.resetAuthParams();
                         self.errorMsg("Login failed.");
+                        self.isBadCredentials(true);
                     },
                     complete: function (data) {
                         self.isInProgress(false);
@@ -81,33 +86,27 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
             } else {
                 document.location = loginUrl;
             }
-        };
+         }
+     };
 
         self.signout = function () {
             self.isInProgress(true);
             $.ajax({
                 url: self.serviceUrl + "user/logout",
                 method: 'GET',
-                headers: {
-                    Authorization: self.getAuthorizationHeader()
-                },
                 statusCode: {
                     401: function () {
-                        setToken(null);
+                        self.resetAuthParams();
                     }
                 },
                 success: function (data, textStatus, jqXHR) {
-                    setToken(null);
+                    self.resetAuthParams();
                 },
                 complete: function (data) {
-                    self.isInProgress(false);
+                  self.errorMsg(null);
+                  self.isInProgress(false);
                 }
             });
-        };
-
-        var setToken = function (token) {
-            self.token(token);
-            self.errorMsg(null);
         };
     }
 
