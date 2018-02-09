@@ -36,10 +36,6 @@ define(function (require, exports) {
 		var promise = $.ajax({
 			url: url,
 			method: 'GET',
-			/*
-			headers: {
-				Authorization: authApi.getAuthorizationHeader()
-			},*/
 			contentType: 'application/json',
 			error: function (error) {
 				console.log("Error: " + error);
@@ -82,10 +78,6 @@ define(function (require, exports) {
 		var promise = $.ajax({
 			url: url,
 			method: 'GET',
-			/*
-			headers: {
-				Authorization: authApi.getAuthorizationHeader()
-			},*/
 			contentType: 'application/json',
 			error: function (error) {
 				console.log("Error: " + error);
@@ -101,9 +93,6 @@ define(function (require, exports) {
 		var promise = $.ajax({
 			url: url,
 			method: 'GET',
-			/*headers: {
-				Authorization: authApi.getAuthorizationHeader()
-			},*/
 			contentType: 'application/json',
 			error: function (error) {
 				console.log("Error: " + error);

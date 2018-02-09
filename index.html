@@ -50,7 +50,7 @@
 			<a class="list-group-item" data-bind="css: plpCss, attr: {href: plpURL}"><i class="fa fa-fw fa-heartbeat" aria-hidden="true"></i>&nbsp;Prediction</a>
 			<a class="list-group-item" href="#/jobs"><i class="fa fa-fw fa-tasks" aria-hidden="true"></i>&nbsp;Jobs</a>
 			<a class="list-group-item" href="#/configure"><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>&nbsp;Configuration</a>
-			<a class="list-group-item" target="_blank" href="https://github.com/ohdsi/atlas/issues" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
+			<a class="list-group-item" target="_blank" data-bind="attr: {href: supportURL}" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
 		</div>
 
 		<div id="wrapper_ohdsi">
@@ -65,7 +65,7 @@
 
 	<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete()">
 		<div id="wrapperMainWindowContainer">
-			<user-bar></user-bar>
+			<user-bar params="{model: pageModel}"></user-bar>
 			<div data-bind="if:sharedState.appInitializationStatus() == 'failed'">
 				<div style="width:100px;margin-left:auto;margin-right:auto;">
 					<svg width="100" height="100" viewBox="0 -200 400 400">
