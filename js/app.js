@@ -309,6 +309,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
 							self.currentPatientLevelPredictionId(+modelId);
 							self.componentParams = {
+								model:self,
 								currentPatientLevelPredictionId: self.currentPatientLevelPredictionId,
 								currentPatientLevelPrediction: self.currentPatientLevelPrediction,
 								dirtyFlag: self.currentPatientLevelPredictionDirtyFlag,
