@@ -55,6 +55,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 
 				return pageTitle;
 			});
+			self.supportURL = config.supportUrl;
 			self.sharedState = sharedState;
 
 			self.initializationComplete = ko.pureComputed(function () {
