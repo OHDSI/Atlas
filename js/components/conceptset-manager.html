@@ -15,11 +15,11 @@
     <div class="asset-heading" data-bind="if: model.currentConceptSet">
       <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: canEdit() ? null : true }, textInput: model.currentConceptSet().name" />
       <div class="btn-group">
-        <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:!canSave()}">Save</button>
-        <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }">Close</button>
-        <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0, css: {disabled:!canCreate()}">Copy</button>
+        <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:!canSave()}"><i class="fa fa-save"></i></button>
+        <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }"><i class="fa fa-times"></i></button>
+        <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0, css: {disabled:!canCreate()}"><i class="fa fa-copy"></i></button>
         <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { optimize(); }, css: {disabled: !canEdit() && !canCreate()}">Optimize</button>
-        <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}">Delete</button>
+        <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
       </div>
     </div>
 
