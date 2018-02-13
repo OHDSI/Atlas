@@ -54,15 +54,11 @@ define(function (require, exports) {
 			reportKey: 'Drugs by Index',
 			analyses: [1700, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1820, 1821, 1830, 1831, 1840, 1841, 1850, 1851, 1860, 1861, 1870, 1871, 116, 117, 1]
 		},
-		/*
-		// this requires a table with the names of the analyses be populated and it doesn't exist in any database currently
 		{
 			name: "Heracles Heel",
-			reportKey: 'Heracles Heel',
+			reportKey: null,
 			analyses: [7, 8, 9, 114, 115, 207, 208, 209, 210, 302, 409, 410, 411, 412, 413, 509, 510, 609, 610, 612, 613, 709, 710, 711, 712, 713, 809, 810, 812, 813, 814, 908, 909, 910, 1008, 1009, 1010, 1415, 1500, 1501, 1600, 1601, 1701, 103, 105, 206, 406, 506, 606, 706, 715, 716, 717, 806, 906, 907, 1006, 1007, 1502, 1503, 1504, 1505, 1506, 1507, 1508, 1509, 1510, 1511, 1602, 1603, 1604, 1605, 1606, 1607, 1608, 511, 512, 513, 514, 515, 2, 4, 5, 200, 301, 400, 500, 505, 600, 700, 800, 900, 1000, 1609, 1610, 405, 605, 705, 805, 202, 3, 101, 420, 620, 720, 820, 920, 1020, 402, 602, 702, 802, 902, 1002, 1310, 1309, 1312, 1313, 1314]
-		}
-		,*/
-		// not implemented
+		},
 		{
 			name: "Location",
 			reportKey: null,
@@ -152,14 +148,20 @@ define(function (require, exports) {
 		});
 		return reports;
 	}
-
+	
 	function getCompletedAnalyses(source, cohortDefinitionId) {
 		var promise = $.ajax(config.api.url + 'cohortresults/' + source.sourceKey + '/' + cohortDefinitionId + '/analyses');
 		return promise;
 	}
 
+	function getCompletedHeraclesHeelAnalyses(source, cohortDefinitionId) {
+		var promise = $.ajax(config.api.url + 'cohortresults/' + source.sourceKey + '/' + cohortDefinitionId + '/heraclesheel?refresh=true');
+		return promise;
+	}
+
 	var api = {
 		getCompletedAnalyses: getCompletedAnalyses,
+		getCompletedHeraclesHeelAnalyses: getCompletedHeraclesHeelAnalyses,
 		getAvailableReports: getAvailableReports,
 		getAnalysisIdentifiers: getAnalysisIdentifiers,
 		getQuickAnalysisIdentifiers: getQuickAnalysisIdentifiers
