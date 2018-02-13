@@ -77,4 +77,7 @@ define(function (require, exports) {
 	var conceptSetPreview = require('./components/ConceptSetQuickview');
 	ko.components.register('conceptset-quickview', conceptSetPreview);
 	
+	var payerPlanPeriod = require('./components/PayerPlanPeriod');
+	ko.components.register('payer-plan-period-criteria', payerPlanPeriod);
+	
 });
