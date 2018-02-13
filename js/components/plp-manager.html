@@ -1,0 +1,98 @@
+<div class="wrapperTitle" data-bind="visible:loading">
+	<i class="fa fa-circle-o-notch fa-spin"></i> Loading...
+</div>
+
+<div data-bind="if:!loading() && patientLevelPrediction()">
+	<div class="wrapperTitle">
+		<i class="fa fa-heartbeat"></i>Patient Level Prediction
+	</div>
+
+	<div class="asset-heading">
+		<input type="text" data-bind="textInput: patientLevelPrediction().name, css: { emptyInput: !(patientLevelPrediction().name() && (patientLevelPrediction().name().length > 0)) }" />
+		<div class="btn-group" role="group">
+			<button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable:canSave"><i class="fa fa-save"></i></button>
+			<button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
+			<button class="btn btn-sm btn-primary" title="Copy" data-bind="click: copy"><i class="fa fa-copy"></i></button>
+			<button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
+		</div>
+	</div>
+
+	<ul class="nav nav-tabs">
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'specification' }, click: function() { $component.tabMode('specification'); }">
+			<a>Specification</a>
+		</li>
+		<li role="presentation" data-bind="visible: config.plpResultsEnabled, css: { active: $component.tabMode() == 'inspector' }, click: function() { $component.tabMode('inspector'); }">
+			<a>Inspector</a>
+		</li>
+		<li role="presentation" data-bind="visible: config.plpResultsEnabled, css: { active: $component.tabMode() == 'performance' }, click: function() { $component.tabMode('performance'); }">
+			<a>Performance</a>
+		</li>
+		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>Utilities</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'specification' }" class="tab-pane">
+			<plp-spec-editor params="patientLevelPrediction: patientLevelPrediction"></plp-spec-editor>
+		</div>
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'inspector' }" class="tab-pane">
+			<plp-inspector params="modelId:$component.patientLevelPredictionId()"></plp-inspector>
+		</div>
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'performance' }" class="tab-pane">
+
+			<ul class="nav nav-pills">
+				<li role="presentation" data-bind="css: {active: $component.performanceTabMode() == 'discrimination'}, click: function() {$component.performanceTabMode('discrimination')};">
+					<a>Discrimination</a>
+				</li>
+				<li role="presentation" data-bind="css: {active: $component.performanceTabMode() == 'calibration'}, click: function() {$component.performanceTabMode('calibration')};">
+					<a>Calibration</a>
+				</li>
+			</ul>
+
+			<div data-bind="if: $component.performanceTabMode() == 'discrimination'">
+				<plp-roc params="modelId:$component.patientLevelPredictionId()"></plp-roc>
+			</div>
+			<div data-bind="if: $component.performanceTabMode() == 'calibration'">
+				<plp-calibration params="modelId:$component.patientLevelPredictionId()"></plp-calibration>
+			</div>
+		</div>
+		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
+			<div class="paddedWrapper">
+				<ul class="nav nav-pills">
+					<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'print' }, click: function() {$component.expressionMode('print') };"><a>Print Friendly</a></li>
+					<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'rcode' }, click: function() {$component.expressionMode('rcode') };"><a>R Code</a></li>
+					<!--<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
+					<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>-->
+				</ul>
+				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'print'" class="tab-pane">
+					<div class="paddedWrapper">
+						<button class="btn btn-sm btn-primary" id="btnCopyToClipboard" data-bind="click: copyToClipboard" data-clipboard-target="#plp-print-friendly"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span id="copyToClipboardMessage" style="display:none;"><strong>Copied!</strong></span>
+						<div class="radius-border" id="plp-print-friendly">
+							<plp-print-friendly params="patientLevelPrediction: $component.patientLevelPrediction"></plp-print-friendly>
+						</div>
+					</div>
+				</div>
+				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'rcode'" class="tab-pane">
+					<div class="paddedWrapper">
+						<button class="btn btn-sm btn-primary" id="btnCopyToClipboard" data-bind="click: copyToClipboard" data-clipboard-target="#plp-r-code"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span id="copyToClipboardMessage" style="display:none;"><strong>Copied!</strong></span>
+						<plp-r-code params="patientLevelPrediction: $component.patientLevelPrediction, codeElementId: 'plp-r-code'"></plp-r-code>
+					</div>
+				</div>
+				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
+					<div class="paddedWrapper">
+						<textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.importJSON"></textarea>
+						<div style="text-align: right">
+							<button class="btn btn-sm btn-primary" data-bind="click: $component.import">Import</button>
+						</div>
+					</div>
+				</div>
+				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'export'" class="tab-pane">
+					<div class="paddedWrapper">
+						<textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>

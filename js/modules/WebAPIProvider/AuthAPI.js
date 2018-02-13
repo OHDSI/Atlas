@@ -162,11 +162,11 @@ define(function(require, exports) {
     }
 
     var isPermittedCreateConceptset = function() {
-        return isPermitted('conceptset:put');
+        return isPermitted('conceptset:post');
     }
 
     var isPermittedUpdateConceptset = function(conceptsetId) {
-        return isPermitted('conceptset:' + conceptsetId + ':post') && isPermitted('conceptset:' + conceptsetId + ':items:post');
+        return isPermitted('conceptset:' + conceptsetId + ':put') && isPermitted('conceptset:' + conceptsetId + ':items:put');
     };
     
     var isPermittedDeleteConceptset = function(id) {
@@ -182,7 +182,7 @@ define(function(require, exports) {
     }
 
     var isPermittedCreateCohort = function() {
-        return isPermitted('cohortdefinition:put');
+        return isPermitted('cohortdefinition:post');
     }
 
     var isPermittedCopyCohort = function(id) {

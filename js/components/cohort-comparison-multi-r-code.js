@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./cohort-comparison-multi-r-code.html', 'appConfig', 'cohortcomparison/ComparativeCohortAnalysis', 'vocabularyprovider', 'nvd3', 'css!./styles/nv.d3.min.css', 'prism', 'css!./styles/prism.css'],
+define(['jquery', 'knockout', 'text!./cohort-comparison-multi-r-code.html', 'appConfig', 'cohortcomparison/ComparativeCohortAnalysis', 'vocabularyprovider', 'prism', 'css!./styles/prism.css'],
 	function ($, ko, view, config, cohortComparison, vocabularyAPI, options) {
 		function cohortComparisonMultiRCode(params) {
 			var self = this;

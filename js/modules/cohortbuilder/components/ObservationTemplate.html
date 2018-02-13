@@ -1,88 +1,117 @@
 <div class="criteriaSection" data-bind="with: Criteria">
 	<div style="position: relative">
 		<table class="criteriaTable">
-			<col style="width:16px" />
-			<col />							
+			<colgroup>
+				<col style="width:100%"/>
+				<col />
+			</colgroup>
 			<tr>
-				<td colspan="2"> an observation of <conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Observation'"></conceptset-selector>
+				<td> an observation of
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Observation'"></conceptset-selector>
+				</td>
+				<td>
+					<div class="btn-group pull-right">
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add criteria attribute…<span class="caret"></span></button>
+						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
+							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+						</ul>
+					</div>
 				</td>
 			</tr>
+		</table>
+		<table class="criteriaTable">
+			<colgroup>
+				<col style="width:20px"/>
+				<col />
+			</colgroup>		
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
-				<td><div>for the first time in the person's history</div></td>
+				<td>
+					<div>for the first time in the person's history</div>
+				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
-					occurrence start is: <date-range params="Range: OccurrenceStartDate"></date-range>
-				</td>									
+					occurrence start is:
+					<date-range params="Range: OccurrenceStartDate"></date-range>
+				</td>
 			</tr>
 
 			<tr data-bind="if: ObservationType() != null, visible: ObservationType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ObservationType') }" class="fa fa-times" /></td>
 				<td>
-					Observation Type is: <concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: ObservationType()"></concept-list>
-				</td>									
+					Observation Type is:
+					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: ObservationType()"></concept-list>
+				</td>
 			</tr>
 			<tr data-bind="if: ValueAsNumber() != null, visible: ValueAsNumber() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsNumber') }" class="fa fa-times" /></td>
 				<td>
-					with Value as Number <numeric-range params="Range: ValueAsNumber"></numeric-range>
-				</td>									
-			</tr>				
+					with Value as Number
+					<numeric-range params="Range: ValueAsNumber"></numeric-range>
+				</td>
+			</tr>
 			<tr data-bind="if: ValueAsString() != null, visible: ValueAsString() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsString') }" class="fa fa-times" /></td>
 				<td>
-					with Value as String <text-filter-input params="Filter: ValueAsString"></text-filter-input>
-				</td>									
-			</tr>	
+					with Value as String
+					<text-filter-input params="Filter: ValueAsString"></text-filter-input>
+				</td>
+			</tr>
 			<tr data-bind="if: ValueAsConcept() != null, visible: ValueAsConcept() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with Value as Concept: <concept-list params="PickerParams: { DefaultDomain: 'Meas Value'}, ConceptList: ValueAsConcept()"></concept-list>
+						with Value as Concept:
+						<concept-list params="PickerParams: { DefaultDomain: 'Meas Value'}, ConceptList: ValueAsConcept()"></concept-list>
 					</div>
-			 </td>									
-			</tr>										
+				</td>
+			</tr>
 			<tr data-bind="if: Qualifier() != null, visible: Qualifier() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Qualifier') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with Qualifier: <concept-list params="PickerParams: { DefaultDomain: 'Condition'}, ConceptList: Qualifier()"></concept-list>
+						with Qualifier:
+						<concept-list params="PickerParams: { DefaultDomain: 'Condition'}, ConceptList: Qualifier()"></concept-list>
 					</div>
-			 </td>									
-			</tr>										
+				</td>
+			</tr>
 			<tr data-bind="if: Unit() != null, visible: Unit() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Unit') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with Unit: <concept-list params="PickerParams: { DefaultDomain: 'Unit'}, ConceptList: Unit()"></concept-list>
+						with Unit:
+						<concept-list params="PickerParams: { DefaultDomain: 'Unit'}, ConceptList: Unit()"></concept-list>
 					</div>
-			 </td>									
-			</tr>										
+				</td>
+			</tr>
 			<tr data-bind="if: ObservationSourceConcept() != null, visible: ObservationSourceConcept() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ObservationSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Observation Source Concept is: <conceptset-selector params="conceptSetId: ObservationSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Observation'"></conceptset-selector>
+						Observation Source Concept is:
+						<conceptset-selector params="conceptSetId: ObservationSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Observation'"></conceptset-selector>
 					</div>
-			 </td>									
-			</tr>										
+				</td>
+			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					with age <numeric-range params="Range: Age"></numeric-range>
+					with age
+					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: Gender() != null, visible: Gender() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-					with a gender of: <concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
-					</div>						
+						with a gender of:
+						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
+					</div>
 				</td>
 			</tr>
-		 <!--
+			<!--
 			<tr data-bind="if: PriorEnrollDays() != null, visible: PriorEnrollDays() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PriorEnrollDays') }" class="fa fa-times" /></td>
 				<td>with at least
@@ -100,24 +129,24 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-					with a Provider Specialty of: <concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()"></concept-list>
+						with a Provider Specialty of:
+						<concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()"></concept-list>
 					</div>
-			  </td>									
-			</tr>	
+				</td>
+			</tr>
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }" class="fa fa-times" /></td>
 				<td>
-					with a Visit occurrence of: <concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
-				</td>									
-			</tr>								
+					with a Visit occurrence of:
+					<concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
+				</td>
+			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" /></td>
 				<td style="background-color: white">
 					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group>
 				</td>
-			</tr>			
+			</tr>
 		</table>
 	</div>
-	<div class="addCriterion" data-bind="ddSlickAction: $component.addCriterionSettings"></div>
-
 </div>

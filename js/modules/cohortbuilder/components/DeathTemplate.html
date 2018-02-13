@@ -1,44 +1,66 @@
 <div class="criteriaSection" data-bind="with: Criteria">
 	<div style="position: relative">
 		<table class="criteriaTable">
-			<col style="width:16px" />
-			<col />							
+			<colgroup>
+				<col style="width:100%"/>
+				<col />
+			</colgroup>
 			<tr>
-				<td colspan="2"> a death occurrence from <conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Death'"></conceptset-selector>
+				<td> a death occurrence from
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Death'"></conceptset-selector>
 				</td>
-			</tr>
+				<td>
+					<div class="btn-group pull-right">
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add criteria attribute…<span class="caret"></span></button>
+						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
+							<li><a data-bind="html:$component.formatOption($data), click:$component.actionHandler" href="#"></a></li>
+						</ul>
+					</div>
+				</td>
+			</tr>		
+		</table>
+		<table class="criteriaTable">
+			<colgroup>
+				<col style="width:20px"/>
+				<col />
+			</colgroup>		
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
-					occurrence start is: <date-range params="Range: OccurrenceStartDate"></date-range>
-				</td>									
+					occurrence start is:
+					<date-range params="Range: OccurrenceStartDate"></date-range>
+				</td>
 			</tr>
 			<tr data-bind="if: DeathType() != null, visible: DeathType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DeathType') }" class="fa fa-times" /></td>
 				<td>
-					Death Type is: <concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DeathType()"></concept-list>
-				</td>									
+					Death Type is:
+					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DeathType()"></concept-list>
+				</td>
 			</tr>
 			<tr data-bind="if: DeathSourceConcept() != null, visible: DeathSourceConcept() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DeathSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-					Death Source Concept is <conceptset-selector params="conceptSetId: DeathSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Death'"></conceptset-selector>
+						Death Source Concept is
+						<conceptset-selector params="conceptSetId: DeathSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Death'"></conceptset-selector>
 					</div>
-			 </td>									
-			</tr>										
+				</td>
+			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					with age <numeric-range params="Range: Age"></numeric-range>
+					with age
+					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: Gender() != null, visible: Gender() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a gender of: <concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
-					</div>						
+						with a gender of:
+						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
+					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
@@ -46,8 +68,8 @@
 				<td style="background-color: white">
 					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group>
 				</td>
-			</tr>			
-		 <!--
+			</tr>
+			<!--
 			<tr data-bind="if: PriorEnrollDays() != null, visible: PriorEnrollDays() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PriorEnrollDays') }" class="fa fa-times" /></td>
 				<td>with at least
@@ -60,9 +82,7 @@
 					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: AfterEnrollDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days of observation after diagnosis
 				</td>
 			</tr>
- 			-->					
+ 			-->
 		</table>
 	</div>
-	<div class="addCriterion" data-bind="ddSlickAction: $component.addCriterionSettings"></div>
-
 </div>

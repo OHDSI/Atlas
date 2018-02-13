@@ -33,8 +33,10 @@
 		<div data-bind="visible:loadingSourceCounts()" class="loading">loading</div>
 
 		<div data-bind="visible:!loadingSourceCounts()">
-			<div class="heading">Record Counts across Sources</div>
-			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+			<div class="panel panel-primary">
+				<div class="panel-heading">Record Counts across Sources</div>
+				<div class="panel-body">
+					<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
 								data: sourceCounts(),
 								options: {
 									dom: 't',
@@ -52,7 +54,9 @@
 									]
 							}
 						}">
-			</table>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -80,7 +84,7 @@
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'RC', data: 'RECORD_COUNT'},
 											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
-											{ title: 'Distance', data: function (d) { return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;}))}},							
+											{ title: 'Distance', data: function (d) { return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;}))}},
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]
@@ -88,7 +92,33 @@
 						}">
 			</table>
 		</div>
-		<div id="wrapperHierarchyAnchor" class="heading" data-bind="text:model.currentConcept().CONCEPT_CODE + ' ' + model.currentConcept().CONCEPT_NAME">
+		<div id="wrapperHierarchyAnchor">
+			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+									data: currentConceptArray,
+									options: {
+										dom: 't',
+										language: {
+											search: 'Filter Broader Concepts: '
+										},
+										rowCallback: model.contextSensitiveLinkColor,
+										lengthMenu: [[-1], ['All']],
+										orderClasses: false,
+										ordering: true,
+										order: [[ 6, 'desc' ]],
+										columns: [
+												{ title: 'Id', data: 'CONCEPT_ID'},
+												{ title: 'Code', data: 'CONCEPT_CODE'},
+												{ title: 'Name', data: 'CONCEPT_NAME', render: model.renderLink, width: '50%'},
+												{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
+												{ title: 'RC', data: 'RECORD_COUNT'},
+												{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
+												{ title: 'Distance', data: function (d) { return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;}))}},
+												{ title: 'Domain', data: 'DOMAIN_ID' },
+												{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
+										]
+								}
+							}">
+			</table>
 		</div>
 		<div id="wrapperChildren">
 			<div class="heading">Children</div>

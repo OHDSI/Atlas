@@ -7,8 +7,7 @@ requirejs.config({
 			}
 		}
 	},
-	packages: [
-		{
+	packages: [{
 			name: "databindings",
 			location: "modules/databindings"
 		},
@@ -19,15 +18,27 @@ requirejs.config({
 		{
 			name: "circe",
 			location: "modules/circe"
-    	},
+		},
 		{
 			name: "iranalysis",
 			location: "modules/iranalysis"
-        },
+		},
 		{
 			name: "extenders",
 			location: "extenders"
-        }
+		},
+		{
+			name: "job",
+			location: "modules/job"
+		},
+		{
+			name: "plp",
+			location: "modules/plp"
+		},
+		{
+			name: "cohortfeatures",
+			location: "modules/cohortfeatures"
+		},
 	],
 	shim: {
 		"colorbrewer": {
@@ -55,7 +66,7 @@ requirejs.config({
 		}
 	},
 	deps: ['css!styles/jquery.dataTables.min',
-				 'css!styles/jquery.dataTables.colVis.css'
+		'css!styles/jquery.dataTables.colVis.css'
 	],
 	paths: {
 		"jquery": "https://code.jquery.com/jquery-1.11.2.min",
@@ -82,7 +93,6 @@ requirejs.config({
 		"conceptset-manager": "components/conceptset-manager",
 		"cohort-comparison-manager": "components/cohort-comparison-manager",
 		"job-manager": "components/job-manager",
-		"importer": "components/importer",
 		"data-sources": "components/data-sources",
 		"cohort-definitions": "components/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definition-manager",
@@ -92,9 +102,6 @@ requirejs.config({
 		"cohort-comparison-r-code": "components/cohort-comparison-r-code",
 		"cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
 		"user-bar": "components/user-bar",
-		"feasibility-manager": "components/feasibility-manager",
-		"feasibility-browser": "components/feasibility-browser",
-		"feasibility-analyzer": "components/feasibility-analyzer",
 		"report-manager": "components/report-manager",
 		"ir-manager": "components/ir-manager",
 		"ir-browser": "components/ir-browser",
@@ -104,11 +111,8 @@ requirejs.config({
 		"cohortcomparison": "modules/cohortcomparison",
 		"r-manager": "components/r-manager",
 		"negative-controls": "components/negative-controls",
-		"d3": "d3.min",
-		"d3_tip": "d3.tip",
-		"jnj_chart": "https://cdn.rawgit.com/odysseusinc/atlascharts/master/index",
-		"nvd3": "nv.d3",
-		//"lodash": "lodash.min",
+		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.1.0/dist/atlascharts.min",
+		"jnj_chart": "jnj.chart", // scatterplot is not ported to separate library
 		"lodash": "lodash.4.15.0.full",
 		"lscache": "lscache.min",
 		"localStorageExtender": "localStorageExtender",
@@ -132,14 +136,39 @@ requirejs.config({
 		"role-details": "components/role-details",
 		"loading": "components/loading",
 		"atlas-state": "components/atlas-state",
-		"d3-collection": "d3-collection.v1.min",
-		"d3-selection": "d3-selection.v1.min"
+		"plp-manager": "components/plp-manager",
+		"plp-inspector": "components/plp-inspector",
+		"plp-browser": "components/plp-browser",
+		"plp-roc": "components/plp-roc",
+		"plp-calibration": "components/plp-calibration",
+		"plp-spec-editor": "components/plp-spec-editor",
+		"plp-r-code": "components/plp-r-code",
+		"plp-print-friendly": "components/plp-print-friendly",
+
+		"d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.0/d3.min",
+		"d3-collection": "https://cdnjs.cloudflare.com/ajax/libs/d3-collection/1.0.4/d3-collection.min",
+		"d3-selection": "https://cdnjs.cloudflare.com/ajax/libs/d3-selection/1.1.0/d3-selection.min",
+		"d3-shape": "https://cdnjs.cloudflare.com/ajax/libs/d3-shape/1.2.0/d3-shape.min",
+		"d3-drag": "https://cdnjs.cloudflare.com/ajax/libs/d3-drag/1.1.1/d3-drag.min",
+		"d3-scale": "https://cdnjs.cloudflare.com/ajax/libs/d3-scale/1.0.6/d3-scale.min",
+		"d3-array": "https://cdnjs.cloudflare.com/ajax/libs/d3-array/1.2.0/d3-array.min",
+		"d3-interpolate": "https://cdnjs.cloudflare.com/ajax/libs/d3-interpolate/1.1.5/d3-interpolate.min",
+		"d3-format": "https://cdnjs.cloudflare.com/ajax/libs/d3-format/1.2.0/d3-format.min",
+		"d3-time": "https://cdnjs.cloudflare.com/ajax/libs/d3-time/1.0.7/d3-time.min",
+		"d3-time-format": "https://cdnjs.cloudflare.com/ajax/libs/d3-time-format/2.0.5/d3-time-format.min",
+		"d3-color": "https://cdnjs.cloudflare.com/ajax/libs/d3-color/1.0.3/d3-color.min",
+		"d3-path": "https://cdnjs.cloudflare.com/ajax/libs/d3-path/1.0.5/d3-path.min",
+		"d3-dispatch": "https://cdnjs.cloudflare.com/ajax/libs/d3-dispatch/1.0.3/d3-dispatch.min",
+		"d3-tip": "https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min",
+		"d3-slider": "d3.slider",
+
+		"moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min",
+		"querystring": "https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min",
 	}
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
 	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
-		$('#splash').show();
 		var pageModel = new app();
 		window.pageModel = pageModel;
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
@@ -148,7 +177,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		if (authApi.token()) {
 			var refreshTokenPromise = $.Deferred();
 			pageModel.initPromises.push(refreshTokenPromise);
-			authApi.refreshToken().always(refreshTokenPromise.resolve);
+			authApi.refreshToken()
+				.always(refreshTokenPromise.resolve);
 		}
 
 		// establish base priorities for daimons
@@ -157,54 +187,52 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		var densityPriority = 0;
 
 		// initialize all service information asynchronously
-		$.each(config.services, function (serviceIndex, service) {
-			var serviceCacheKey = 'ATLAS|' + service.url;
-			cachedService = lscache.get(serviceCacheKey);
+		var serviceCacheKey = 'ATLAS|' + config.api.url;
+		cachedService = lscache.get(serviceCacheKey);
 
-			if (cachedService) {
-				config.services[serviceIndex] = cachedService;
+		if (cachedService) {
+			console.log('cached service');
+			config.api = cachedService;
 
-				for (var s = 0; s < cachedService.sources.length; s++) {
-					var source = cachedService.sources[s];
+			for (var s = 0; s < cachedService.sources.length; s++) {
+				var source = cachedService.sources[s];
 
-					for (var d = 0; d < source.daimons.length; d++) {
-						var daimon = source.daimons[d];
+				for (var d = 0; d < source.daimons.length; d++) {
+					var daimon = source.daimons[d];
 
-						if (daimon.daimonType == 'Vocabulary') {
-							if (daimon.priority >= vocabularyPriority) {
-								vocabularyPriority = daimon.priority;
-								sharedState.vocabularyUrl(source.vocabularyUrl);
-							}
+					if (daimon.daimonType == 'Vocabulary') {
+						if (daimon.priority >= vocabularyPriority) {
+							vocabularyPriority = daimon.priority;
+							sharedState.vocabularyUrl(source.vocabularyUrl);
 						}
+					}
 
-						if (daimon.daimonType == 'Evidence') {
-							if (daimon.priority >= evidencePriority) {
-								evidencePriority = daimon.priority;
-								sharedState.evidenceUrl(source.evidenceUrl);
-							}
+					if (daimon.daimonType == 'Evidence') {
+						if (daimon.priority >= evidencePriority) {
+							evidencePriority = daimon.priority;
+							sharedState.evidenceUrl(source.evidenceUrl);
 						}
+					}
 
-						if (daimon.daimonType == 'Results') {
-							if (daimon.priority >= densityPriority) {
-								densityPriority = daimon.priority;
-								sharedState.resultsUrl(source.resultsUrl);
-							}
+					if (daimon.daimonType == 'Results') {
+						if (daimon.priority >= densityPriority) {
+							densityPriority = daimon.priority;
+							sharedState.resultsUrl(source.resultsUrl);
 						}
 					}
 				}
-				return;
 			}
-
-			service.sources = [];
+		} else {
+			config.api.sources = [];
 			var servicePromise = $.Deferred();
 			pageModel.initPromises.push(servicePromise);
 
 			$.ajax({
-				url: service.url + 'source/sources',
+				url: config.api.url + 'source/sources',
 				method: 'GET',
 				contentType: 'application/json',
 				success: function (sources) {
-					service.available = true;
+					config.api.available = true;
 					var completedSources = 0;
 
 					$.each(sources, function (sourceIndex, source) {
@@ -224,7 +252,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 							// evaluate vocabulary daimons
 							if (daimon.daimonType == 'Vocabulary') {
 								source.hasVocabulary = true;
-								source.vocabularyUrl = service.url + 'vocabulary/' + source.sourceKey + '/';
+								source.vocabularyUrl = config.api.url + 'vocabulary/' + source.sourceKey + '/';
 								if (daimon.priority >= vocabularyPriority) {
 									vocabularyPriority = daimon.priority;
 									sharedState.vocabularyUrl(source.vocabularyUrl);
@@ -234,7 +262,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 							// evaluate evidence daimons
 							if (daimon.daimonType == 'Evidence') {
 								source.hasEvidence = true;
-								source.evidenceUrl = service.url + 'evidence/' + source.sourceKey + '/';
+								source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
 								if (daimon.priority >= evidencePriority) {
 									evidencePriority = daimon.priority;
 									sharedState.evidenceUrl(source.evidenceUrl);
@@ -244,7 +272,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 							// evaluate results daimons
 							if (daimon.daimonType == 'Results') {
 								source.hasResults = true;
-								source.resultsUrl = service.url + 'cdmresults/' + source.sourceKey + '/';
+								source.resultsUrl = config.api.url + 'cdmresults/' + source.sourceKey + '/';
 								if (daimon.priority >= densityPriority) {
 									densityPriority = daimon.priority;
 									sharedState.resultsUrl(source.resultsUrl);
@@ -257,11 +285,11 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 							}
 						}
 
-						service.sources.push(source);
+						config.api.sources.push(source);
 
 						if (source.hasVocabulary) {
 							$.ajax({
-								url: service.url + 'vocabulary/' + source.sourceKey + '/info',
+								url: config.api.url + 'vocabulary/' + source.sourceKey + '/info',
 								timeout: 20000,
 								method: 'GET',
 								contentType: 'application/json',
@@ -271,7 +299,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 									source.dialect = info.dialect;
 
 									if (completedSources == sources.length) {
-										lscache.set(serviceCacheKey, service, 720);
+										lscache.set(serviceCacheKey, config.api, 720);
 										servicePromise.resolve();
 									}
 								},
@@ -280,9 +308,9 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 									pageModel.initializationErrors++;
 									source.version = 'unknown';
 									source.dialect = 'unknown';
-									source.url = service.url + source.sourceKey + '/';
+									source.url = config.api.url + source.sourceKey + '/';
 									if (completedSources == sources.length) {
-										lscache.set(serviceCacheKey, service, 720);
+										lscache.set(serviceCacheKey, config.api, 720);
 										servicePromise.resolve();
 									}
 								}
@@ -297,9 +325,9 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					});
 				},
 				error: function (xhr, ajaxOptions, thrownError) {
-					service.available = false;
-					service.xhr = xhr;
-					service.thrownError = thrownError;
+					config.api.available = false;
+					config.api.xhr = xhr;
+					config.api.thrownError = thrownError;
 
 					sharedState.appInitializationStatus('failed');
 					document.location = '#/configure';
@@ -307,7 +335,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					servicePromise.resolve();
 				}
 			});
-		});
+		}
 
 		$.when.apply($, pageModel.initPromises).done(function () {
 			pageModel.initComplete();
@@ -317,7 +345,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			switch (newView) {
 				case 'reports':
 					$.ajax({
-						url: config.services[0].url + 'cohortdefinition',
+						url: config.api.url + 'cohortdefinition',
 						method: 'GET',
 						contentType: 'application/json',
 						success: function (cohortDefinitions) {
@@ -340,11 +368,12 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				success: function (data) {
 					var densityPromise = vocabAPI.loadDensity(data);
 
-					$.when(densityPromise).done(function () {
-						pageModel.includedConcepts(data);
-						includedPromise.resolve();
-						pageModel.loadingIncluded(false);
-					});
+					$.when(densityPromise)
+						.done(function () {
+							pageModel.includedConcepts(data);
+							includedPromise.resolve();
+							pageModel.loadingIncluded(false);
+						});
 				}
 			});
 
@@ -380,97 +409,115 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					break;
 				case 'sourcecodes':
 					var includedPromise = pageModel.loadIncluded();
-					$.when(includedPromise).done(function () {
-						pageModel.loadSourcecodes();
-					});
+					$.when(includedPromise)
+						.done(function () {
+							pageModel.loadSourcecodes();
+						});
 					break;
 			}
 		});
 
 		// handle select all
-		$(document).on('click', 'th i.fa.fa-shopping-cart', function () {
-			if (pageModel.currentConceptSet() == undefined) {
-				var newConceptSet = {
-					name: ko.observable("New Concept Set"),
-					id: 0
+		$(document)
+			.on('click', 'th i.fa.fa-shopping-cart', function () {
+				if (pageModel.currentConceptSet() == undefined) {
+					var newConceptSet = {
+						name: ko.observable("New Concept Set"),
+						id: 0
+					}
+					pageModel.currentConceptSet(newConceptSet);
 				}
-				pageModel.currentConceptSet(newConceptSet);
-			}
 
-			var table = $(this).closest('.dataTable').DataTable();
-			var concepts = table.rows({
-				search: 'applied'
-			}).data();
-			var selectedConcepts = sharedState.selectedConcepts();
+				var table = $(this)
+					.closest('.dataTable')
+					.DataTable();
+				var concepts = table.rows({
+						search: 'applied'
+					})
+					.data();
+				var selectedConcepts = sharedState.selectedConcepts();
 
-			for (var i = 0; i < concepts.length; i++) {
-				var concept = concepts[i];
-				if (sharedState.selectedConceptsIndex[concept.CONCEPT_ID]) {
-					// ignore if already selected
-				} else {
-					var conceptSetItem = pageModel.createConceptSetItem(concept);
-					sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
-					selectedConcepts.push(conceptSetItem)
+				for (var i = 0; i < concepts.length; i++) {
+					var concept = concepts[i];
+					if (sharedState.selectedConceptsIndex[concept.CONCEPT_ID]) {
+						// ignore if already selected
+					} else {
+						var conceptSetItem = pageModel.createConceptSetItem(concept);
+						sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
+						selectedConcepts.push(conceptSetItem)
+					}
 				}
-			}
-			sharedState.selectedConcepts(selectedConcepts);
-			ko.contextFor(this).$component.reference.valueHasMutated();
-		});
-
-		// handling concept set selections
-		$(document).on('click', 'td i.fa.fa-shopping-cart, .asset-heading i.fa.fa-shopping-cart', function () {
-			if (pageModel.currentConceptSet() == undefined) {
-				var newConceptSet = {
-					name: ko.observable("New Concept Set"),
-					id: 0
-				}
-				pageModel.currentConceptSet({
-					name: ko.observable('New Concept Set'),
-					id: 0
-				});
-				pageModel.currentConceptSetSource('repository');
-			}
-
-			$(this).toggleClass('selected');
-			var concept = ko.contextFor(this).$data;
-
-			if ($(this).hasClass('selected')) {
-				var conceptSetItem = pageModel.createConceptSetItem(concept);
-				sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
-				sharedState.selectedConcepts.push(conceptSetItem);
-			} else {
-				delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
-				sharedState.selectedConcepts.remove(function (i) {
-					return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
-				});
-			}
-
-			// If we are updating a concept set that is part of a cohort definition
-			// then we need to notify any dependent observables about this change in the concept set
-			if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
-				var conceptSet = pageModel.currentCohortDefinition().expression().ConceptSets().filter(function (item) {
-					return item.id == pageModel.currentConceptSet().id
-				})[0];
-				conceptSet.expression.items.valueHasMutated();
-			}
-		});
-
-		// concept set selector handling
-		$(document).on('click', '.conceptSetTable i.fa.fa-shopping-cart', function () {
-			$(this).toggleClass('selected');
-			var conceptSetItem = ko.contextFor(this).$data;
-
-			delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
-			sharedState.selectedConcepts.remove(function (i) {
-				return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
+				sharedState.selectedConcepts(selectedConcepts);
+				ko.contextFor(this)
+					.$component.reference.valueHasMutated();
 			});
 
-			pageModel.resolveConceptSetExpression();
-		});
+		// handling concept set selections
+		$(document)
+			.on('click', 'td i.fa.fa-shopping-cart, .asset-heading i.fa.fa-shopping-cart', function () {
+				if (pageModel.currentConceptSet() == undefined) {
+					var newConceptSet = {
+						name: ko.observable("New Concept Set"),
+						id: 0
+					}
+					pageModel.currentConceptSet({
+						name: ko.observable('New Concept Set'),
+						id: 0
+					});
+					pageModel.currentConceptSetSource('repository');
+				}
 
-		$(window).bind('beforeunload', function () {
-			if (pageModel.hasUnsavedChanges())
-				return "Changes will be lost if you do not save.";
-		});
+				$(this)
+					.toggleClass('selected');
+				var concept = ko.contextFor(this)
+					.$data;
+
+				if ($(this)
+					.hasClass('selected')) {
+					var conceptSetItem = pageModel.createConceptSetItem(concept);
+					sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
+					sharedState.selectedConcepts.push(conceptSetItem);
+				} else {
+					delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
+					sharedState.selectedConcepts.remove(function (i) {
+						return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
+					});
+				}
+
+				// If we are updating a concept set that is part of a cohort definition
+				// then we need to notify any dependent observables about this change in the concept set
+				if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
+					var conceptSet = pageModel.currentCohortDefinition()
+						.expression()
+						.ConceptSets()
+						.filter(function (item) {
+							return item.id == pageModel.currentConceptSet()
+								.id
+						})[0];
+					conceptSet.expression.items.valueHasMutated();
+				}
+			});
+
+		// concept set selector handling
+		$(document)
+			.on('click', '.conceptSetTable i.fa.fa-shopping-cart', function () {
+				$(this)
+					.toggleClass('selected');
+				var conceptSetItem = ko.contextFor(this)
+					.$data;
+
+				delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
+				sharedState.selectedConcepts.remove(function (i) {
+					return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
+				});
+
+				pageModel.resolveConceptSetExpression();
+			});
+
+		$(window)
+			.bind('beforeunload', function () {
+				if (pageModel.hasUnsavedChanges())
+					return "Changes will be lost if you do not save.";
+			});
 	});
 });

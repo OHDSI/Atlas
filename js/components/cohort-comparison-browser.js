@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config) {
+define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'moment', 'cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config, moment) {
 	function cohortComparisonBrowser(params) {
 		var self = this;
 		self.reference = ko.observableArray();
@@ -45,13 +45,16 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohort
 			{
 				title: 'Created',
 				render: function (s, p, d) {
-					return new Date(d.created).toLocaleDateString();
+					return new moment(d.created)
+						.format('YYYY-MM-DD hh:mm:ss a');
 				}
 			},
 			{
 				title: 'Modified',
 				render: function (s, p, d) {
-					return new Date(d.modified).toLocaleDateString();
+					var dateToFormat = d.modified || d.created
+					return new moment(dateToFormat)
+						.format('YYYY-MM-DD hh:mm:ss a');					
 				}
 			}
 		];
@@ -63,7 +66,7 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig','cohort
 		self.loading(true);
 		
 		$.ajax({
-			url: config.services[0].url + 'comparativecohortanalysis',
+			url: config.api.url + 'comparativecohortanalysis',
 			method: 'GET',
 			success: function (d) {
 				self.loading(false);

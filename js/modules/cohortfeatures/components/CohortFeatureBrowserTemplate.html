@@ -1,0 +1,106 @@
+<ul class="list-inline">
+	<li>
+		<ul class="nav nav-pills" role="tablist">
+			<li role="presentation" data-bind="css: { active: $component.chrMode() == 'demo' }, click: function() { chrPillClick('demo') }"><a>Demographics</a></li>
+			<li role="presentation" data-bind="css: { active: $component.chrMode() == 'cond' }, click: function() { chrPillClick('cond') }"><a>Conditions</a></li>
+			<li role="presentation" data-bind="css: { active: $component.chrMode() == 'drug' }, click: function() { chrPillClick('drug') }"><a>Drugs</a></li>
+			<li role="presentation" data-bind="css: { active: $component.chrMode() == 'proc' }, click: function() { chrPillClick('proc') }"><a>Procedures</a></li>
+			<li role="presentation" data-bind="css: { active: $component.chrMode() == 'meas' }, click: function() { chrPillClick('meas') }"><a>Measurements</a></li>
+			<li role="presentation" data-bind="css: { active: $component.chrMode() == 'obsr' }, click: function() { chrPillClick('obsr') }"><a>Observations</a></li>
+			<li role="presentation" data-bind="css: { active: $component.chrMode() == 'dist' }, click: function() { chrPillClick('dist') }"><a>Distributions</a></li>
+		</ul>
+	</li>
+</ul>
+<div class="tab-content clear-border">
+	<div role="tabpanel" data-bind="css: { active: $component.chrMode() == 'demo'}" class="tab-pane explore-enabled-table">
+		<div class="text-center" data-bind="visible: $component.demoSection.loadingFlag()">
+			<h3><i class="fa fa-spinner fa-spin"></i> Loading...</h3>
+		</div>
+		<div data-bind="visible: !$component.demoSection.loadingFlag()">
+			<faceted-datatable params="{order: [[4, 'asc'], [2, 'asc']], columns: $component.demoColumns, options: $component.chrDemoOptions, reference: $component.demoSection.data, rowClick: $component.covariateSelected }"></faceted-datatable>
+		</div>
+	</div>
+	<div role="tabpanel" data-bind="css: { active: $component.chrMode() == 'cond'}, with: $component.condSection" class="tab-pane explore-enabled-table">
+		<div class="text-center" data-bind="visible: loadingFlag()">
+			<h3><i class="fa fa-spinner fa-spin"></i> Loading...</h3>
+		</div>
+		<div data-bind="visible: !loadingFlag()">
+			<div data-bind="visible: !filteredFlag()">
+				<div><b>Long Term:</b> 365 day lookback.  <b>Medium Term:</b> 180d lookback  <b>Short Term:</b> 30d lookback.  <b>Overlapping:</b>  Event spans cohort start date.</div>
+				<faceted-datatable params="{orderColumn: 9, columns: $component.domainTableColumns, options: $component.chrCondOptions, reference: data, rowClick: $component.covariateSelected }"></faceted-datatable>
+			</div>
+			<div data-bind="if: filteredFlag()">
+				<div><i data-bind="click: $component.clearFilter" class="fa fa-times" /><b>Exploring concept hierarchy for: <span data-bind="text: currentFilter().conceptName"></span></b></div>
+				<faceted-datatable params="{orderColumn: 3, columns: $component.domainTableFilteredColumns, options: $component.chrCondOptionsFiltered, reference: dataFiltered, rowClick: $component.covariateSelected }"></faceted-datatable>
+			</div>
+		</div>
+	</div>
+	<div role="tabpanel" data-bind="css: { active: $component.chrMode() == 'drug'}, with: $component.drugSection" class="tab-pane explore-enabled-table">
+		<div class="text-center" data-bind="visible: loadingFlag()">
+			<h3><i class="fa fa-spinner fa-spin"></i> Loading...</h3>
+		</div>
+		<div data-bind="visible: !loadingFlag()">
+			<div><b>Long Term:</b> 365 day lookback.  <b>Short Term:</b> 30d lookback.  <b>Overlapping:</b>  Event spans cohort start date.</div>
+			<div data-bind="visible: !filteredFlag()">
+				<faceted-datatable params="{orderColumn: 9, columns: $component.domainTableColumns, options: $component.chrDrugOptions, reference: data, rowClick: $component.covariateSelected }"></faceted-datatable>
+			</div>
+			<div data-bind="if: filteredFlag()">
+				<div><i data-bind="click: $component.clearFilter" class="fa fa-times" /><b>Exploring concept hierarchy for: <span data-bind="text: currentFilter().conceptName"></span></b></div>
+				<faceted-datatable params="{orderColumn: 3, columns: $component.domainTableFilteredColumns, options: $component.chrDrugOptionsFiltered, reference: dataFiltered, rowClick: $component.covariateSelected }"></faceted-datatable>
+			</div>
+		</div>
+	</div>
+	<div role="tabpanel" data-bind="css: { active: $component.chrMode() == 'proc'}, with: $component.procSection" class="tab-pane explore-enabled-table">
+		<div class="text-center" data-bind="visible: loadingFlag()">
+			<h3><i class="fa fa-spinner fa-spin"></i> Loading...</h3>
+		</div>
+		<div data-bind="visible: !loadingFlag()">
+			<div><b>Long Term:</b> 365 day lookback.  <b>Short Term:</b> 30d lookback.  <b>Overlapping:</b>  Event spans cohort start date.</div>
+			<div data-bind="visible: !filteredFlag()">
+				<faceted-datatable params="{orderColumn: 9, columns: $component.domainTableColumns, options: $component.chrProcOptions, reference: data, rowClick: $component.covariateSelected }"></faceted-datatable>
+			</div>
+			<div data-bind="if: filteredFlag()">
+				<div><i data-bind="click: $component.clearFilter" class="fa fa-times" /><b>Exploring concept hierarchy for: <span data-bind="text: currentFilter().conceptName"></span></b></div>
+				<faceted-datatable params="{orderColumn: 3, columns: $component.domainTableFilteredColumns, options: $component.chrProcOptionsFiltered, reference: dataFiltered, rowClick: $component.covariateSelected }"></faceted-datatable>
+			</div>
+		</div>
+	</div>
+	<div role="tabpanel" data-bind="css: { active: $component.chrMode() == 'meas'}, with: $component.measSection" class="tab-pane explore-enabled-table">
+		<div class="text-center" data-bind="visible: loadingFlag()">
+			<h3><i class="fa fa-spinner fa-spin"></i> Loading...</h3>
+		</div>
+		<div data-bind="visible: !loadingFlag()">
+			<div><b>Long Term:</b> 365 day lookback.  <b>Short Term:</b> 30d lookback.  <b>Overlapping:</b>  Event spans cohort start date.</div>
+			<div data-bind="visible: !filteredFlag()">
+				<faceted-datatable params="{orderColumn: 9, columns: $component.domainTableColumns, options: $component.chrMeasOptions, reference: data, rowClick: $component.covariateSelected }"></faceted-datatable>
+			</div>
+			<div data-bind="if: filteredFlag()">
+				<div><i data-bind="click: $component.clearFilter" class="fa fa-times" /><b>Exploring concept hierarchy for: <span data-bind="text: currentFilter().conceptName"></span></b></div>
+				<faceted-datatable params="{orderColumn: 3, columns: $component.domainTableFilteredColumns, options: $component.chrMeasOptionsFiltered, reference: dataFiltered, rowClick: $component.covariateSelected }"></faceted-datatable>
+			</div>
+		</div>
+	</div>
+	<div role="tabpanel" data-bind="css: { active: $component.chrMode() == 'obsr'}, with: $component.obsrSection" class="tab-pane explore-enabled-table">
+		<div class="text-center" data-bind="visible: loadingFlag()">
+			<h3><i class="fa fa-spinner fa-spin"></i> Loading...</h3>
+		</div>
+		<div data-bind="visible: !loadingFlag()">
+			<div><b>Long Term:</b> 365 day lookback.  <b>Short Term:</b> 30d lookback.  <b>Overlapping:</b>  Event spans cohort start date.</div>
+			<div data-bind="visible: !filteredFlag()">
+					<faceted-datatable params="{orderColumn: 9, columns: $component.domainTableColumns, options: $component.chrObsrOptions, reference: data, rowClick: $component.covariateSelected }"></faceted-datatable>
+			</div>
+			<div data-bind="if: filteredFlag()">
+				<div><i data-bind="click: $component.clearFilter" class="fa fa-times" /><b>Exploring concept hierarchy for: <span data-bind="text: currentFilter().conceptName"></span></b></div>
+				<faceted-datatable params="{orderColumn: 3, columns: $component.domainTableFilteredColumns, options: $component.chrObsrOptionsFiltered, reference: dataFiltered, rowClick: $component.covariateSelected }"></faceted-datatable>
+			</div>
+		</div>
+	</div>
+	<div role="tabpanel" data-bind="css: { active: $component.chrMode() == 'dist'}, with: $component.distSection" class="tab-pane explore-enabled-table">
+		<div class="text-center" data-bind="visible: loadingFlag()">
+			<h3><i class="fa fa-spinner fa-spin"></i> Loading...</h3>
+		</div>
+		<div data-bind="visible: !loadingFlag()">
+			<faceted-datatable params="{orderColumn: 1, columns: $component.distributionColumns, options: $component.chrDistOptions, reference: data, rowClick: $component.covariateSelected }"></faceted-datatable>
+		</div>
+	</div>
+</div>

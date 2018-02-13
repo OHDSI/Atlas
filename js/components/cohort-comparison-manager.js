@@ -3,8 +3,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options',
 				'cohortbuilder/CohortDefinition', 'vocabularyprovider',
 				'conceptsetbuilder/InputTypes/ConceptSet',
-				'nvd3', 'databindings/d3ChartBinding',
-				'css!./styles/nv.d3.min.css'],
+				'databindings/d3ChartBinding'],
 	function ($, ko, view, _, clipboard, cohortDefinitionAPI, config, ohdsiUtil,
 		ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI,
 		ConceptSet) {
@@ -159,7 +158,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 
 			// end for balance chart
 
-			var initSources = config.services[0].sources.filter(s => s.hasCDM);
+			var initSources = config.api.sources.filter(s => s.hasCDM);
 			for (var i = 0; i < initSources.length; i++) {
 				self.sourceHistoryDisplay[initSources[i].sourceKey] = ko.observable(false);
 				self.sourceProcessingStatus[initSources[i].sourceKey] = ko.observable(false);
@@ -178,7 +177,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				});
 
 				ohdsiUtil.cachedAjax({
-					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId() + '/executions',
+					url: config.api.url + 'comparativecohortanalysis/' + self.cohortComparisonId() + '/executions',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
@@ -206,11 +205,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 							}
 
 							// this will ensure that if the last execution is still running that we don't allow additional executions to begin
-							if (d.executionStatus != 'COMPLETED') {
-								self.sourceProcessingStatus[sourceKey](true);
-							} else {
-								self.sourceProcessingStatus[sourceKey](false);
-							}
+							self.sourceProcessingStatus[sourceKey](d.executionStatus !== 'COMPLETED' && d.executionStatus !== 'FAILED');
 
 							self.sourceExecutions[sourceKey].push(d);
 						});
@@ -323,7 +318,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				self.currentExecutionSourceName(sourceName);
 
 				var p1 = ohdsiUtil.cachedAjax({
-					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/psmodel',
+					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/psmodel',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
@@ -334,7 +329,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				});
 
 				var p2 = ohdsiUtil.cachedAjax({
-					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/attrition',
+					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/attrition',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
@@ -343,7 +338,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				});
 
 				var p3 = ohdsiUtil.cachedAjax({
-					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/balance',
+					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/balance',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
@@ -389,7 +384,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				});
 
 				var p4 = ohdsiUtil.cachedAjax({
-					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/poppropdist',
+					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/poppropdist',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
@@ -438,7 +433,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				});
 
 				var p5 = ohdsiUtil.cachedAjax({
-					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/psmodelpropscore',
+					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/psmodelpropscore',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
@@ -489,7 +484,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				});
 
 				var p6 = ohdsiUtil.cachedAjax({
-					url: config.services[0].url + 'comparativecohortanalysis/execution/' + d.executionId + '/om',
+					url: config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/om',
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (response) {
@@ -535,7 +530,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					return;
 
 				$.ajax({
-					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
+					url: config.api.url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
 					method: 'DELETE',
 					error: function (error) {
 						console.log("Error: " + error);
@@ -685,7 +680,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 
 				var savePromise = ohdsiUtil.cachedAjax({
 					method: self.cohortComparisonId() ? 'PUT' : 'POST',
-					url: config.services[0].url + 'comparativecohortanalysis/' + (self.cohortComparisonId() || ''),
+					url: config.api.url + 'comparativecohortanalysis/' + (self.cohortComparisonId() || ''),
 					contentType: 'application/json',
 					data: json,
 					dataType: 'json',
@@ -861,11 +856,11 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.monitorJobExecution = function (jobExecutionId, sourceKey) {
 				setTimeout(function () {
 					ohdsiUtil.cachedAjax({
-						url: config.services[0].url + 'job/execution/' + jobExecutionId,
+						url: config.api.url + 'job/execution/' + jobExecutionId,
 						method: 'GET',
 						contentType: 'application/json',
 						success: function (d) {
-							if (d.status == 'COMPLETED') {
+							if (d.status === 'COMPLETED' || d.status === 'FAILED') {
 								completed = true;
 								self.sourceProcessingStatus[sourceKey](false);
 								self.loadExecutions();
@@ -881,7 +876,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				self.sourceProcessingStatus[sourceKey](true);
 
 				var generatePromise = ohdsiUtil.cachedAjax({
-					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId() + '/execute/' + sourceKey,
+					url: config.api.url + 'comparativecohortanalysis/' + self.cohortComparisonId() + '/execute/' + sourceKey,
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (c, status, xhr) {
@@ -930,7 +925,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.loadCohortComparison = function () {
 				// load cca
 				ohdsiUtil.cachedAjax({
-					url: config.services[0].url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
+					url: config.api.url + 'comparativecohortanalysis/' + self.cohortComparisonId(),
 					method: 'GET',
 					contentType: 'application/json',
 					success: function (comparativeCohortAnalysis) {

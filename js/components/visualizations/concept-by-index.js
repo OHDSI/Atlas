@@ -93,7 +93,6 @@ define(['knockout', 'text!./concept-by-index.html','d3', 'jnj_chart'], function 
 							yLabel: "% Persons",
 							seriesName: "recordType",
 							showLegend: true,
-							colors: d3.schemeCategory10(),
 							tooltips: [
 								{
 									label: 'Series',

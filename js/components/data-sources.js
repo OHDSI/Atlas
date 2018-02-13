@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'colorbrewer', 'lodash', 'appConfig', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, jnj_chart, colorbrewer, _, config) {
+define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'd3-tip', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, atlascharts, colorbrewer, _, config, d3tip) {
 	function dataSources(params) {
 		var self = this;
 
@@ -16,8 +16,23 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 		var minimum_area = 50;
 		var threshold = minimum_area / (width * height);
 
+		const size4 = {
+				width: 400,
+				height: 280
+			},
+			size6 = {
+				width: 500,
+				height: 300
+			},
+			size12 = {
+				width: 1000,
+				height: 300
+			};
+
 		self.model = params.model;
-		self.sources = config.services[0].sources.filter(function(s) { return s.hasResults});
+		self.sources = config.api.sources.filter(function (s) {
+			return s.hasResults && s.hasCDM;
+		});
 		self.loadingReport = ko.observable(false);
 		self.hasError = ko.observable(false);
 		self.loadingReportDrilldown = ko.observable(false);
@@ -31,8 +46,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 		 *   aggProperty: if tree map/table supported, describes the aggregate property to use (see descriptors above)
 		 *   conceptDomain: true if concept-driven domain report (treemap and drilldown reports supported), false otherwise
 		 */
-		self.reports = [
-			{
+		self.reports = [{
 				name: "Dashboard",
 				path: "dashboard",
 				conceptDomain: false,
@@ -52,6 +66,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Visit",
 				path: "visit",
 				byType: false,
+				byFrequency: false,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -59,6 +74,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Condition",
 				path: "condition",
 				byType: true,
+				byFrequency: false,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -66,6 +82,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Condition Era",
 				path: "conditionera",
 				byType: false,
+				byFrequency: false,
 				aggProperty: LengthOfEraProperty,
 				conceptDomain: true
 			},
@@ -73,6 +90,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Procedure",
 				path: "procedure",
 				byType: true,
+				byFrequency: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -80,6 +98,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Drug",
 				path: "drug",
 				byType: true,
+				byFrequency: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -87,6 +106,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Drug Era",
 				path: "drugera",
 				byType: false,
+				byFrequency: false,
 				aggProperty: LengthOfEraProperty,
 				conceptDomain: true
 			},
@@ -94,6 +114,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Measurement",
 				path: "measurement",
 				byType: true,
+				byFrequency: true,
+				byUnit: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -101,6 +123,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				name: "Observation",
 				path: "observation",
 				byType: true,
+				byFrequency: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -114,7 +137,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				path: "achillesheel",
 				conceptDomain: false
 			},
-        ];
+		];
 
 		self.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 		self.currentSource = ko.observable(self.sources[0]);
@@ -125,10 +148,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 		self.formatFixed = d3.format('.2f');
 		self.formatComma = d3.format(',');
 		self.treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
-		self.boxplotWidth = 200;
-		self.boxplotHeight = 125;
-		self.donutWidth = 500;
-		self.donutHeight = 300;
+
 
 		self.loadSummary = function () {
 			var currentReport = self.currentReport();
@@ -138,7 +158,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				return;
 			}
 
-			var url = config.services[0].url + 'cdmresults/' + currentSource.sourceKey + '/' +currentReport.path;
+			var url = config.api.url + 'cdmresults/' + currentSource.sourceKey + '/' + currentReport.path;
 			self.loadingReport(true);
 			self.hasError(false);
 			self.activeReportDrilldown(false);
@@ -154,9 +174,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 					success: function (data) {
 						self.loadingReport(false);
 						if (!!data.summary) {
+							var formatter = d3.format(".5s");
 							data.summary.forEach(function (d) {
 								if (!isNaN(d.attributeValue)) {
-									var formatter = jnj_chart.Chart.getFormatters().formatSI(2);
 									d.attributeValue = formatter(d.attributeValue);
 								}
 							});
@@ -164,8 +184,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						}
 
 						var genderConceptData = self.mapConceptData(data.gender);
-						var populationDonut = new jnj_chart.Donut();
-						populationDonut.render(genderConceptData, "#populationByGender", self.donutWidth, self.donutHeight);
+						var populationDonut = new atlascharts.donut();
+						populationDonut.render(genderConceptData, "#populationByGender", size4.width, size4.height);
 
 						var ageAtFirstData = self.normalizeArray(data.ageAtFirstObservation);
 						if (!ageAtFirstData.empty) {
@@ -178,8 +198,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
 							var ageAtFirstObservationData = self.mapHistogram(histData);
 
-							var ageHistogram = new jnj_chart.Histogram();
-							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", self.boxplotWidth, self.boxplotHeight, {
+							var ageHistogram = new atlascharts.histogram();
+							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", size4.width, size4.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Age',
@@ -209,10 +229,10 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 									cumulativeObservationXLabel = 'Years';
 								}
 							}
-							var observationLine = new jnj_chart.Line();
-							observationLine.render(cumulativeData, "#cumulativeObservation", 230, 115, {
+							var observationLine = new atlascharts.line();
+							observationLine.render(cumulativeData, "#cumulativeObservation", size6.width, size6.height, {
 								yFormat: d3.format('0.0%'),
-								interpolate: jnj_chart.Line.getInterpolation().curveStepBefore,
+								interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
 								xLabel: cumulativeObservationXLabel,
 								yLabel: 'Percent of Population'
 							});
@@ -227,8 +247,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								yPercent: 'percentValue'
 							});
 							d3.selectAll("#oppeoplebymonthsingle svg").remove();
-							var singleLine = new jnj_chart.Line();
-							singleLine.render(byMonthSeries, "#oppeoplebymonthsingle", 400, 200, {
+							var singleLine = new atlascharts.line();
+							singleLine.render(byMonthSeries, "#oppeoplebymonthsingle", size6.width, size6.height, {
 								xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
@@ -252,28 +272,28 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 					success: function (data) {
 						self.loadingReport(false);
 
-						if (!!data.yearOfBirth && data.yearOfBirth.length > 0 &&
-							!!data.yearOfBirthStats && data.yearOfBirthStats.length > 0) {
+						if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
+							var yearHistogram = new atlascharts.histogram();
 							var histData = {};
 							histData.intervalSize = 1;
 							histData.min = data.yearOfBirthStats[0].minValue;
 							histData.max = data.yearOfBirthStats[0].maxValue;
 							histData.intervals = 100;
-							histData.data = self.normalizeArray(data.yearOfBirth);
-							var histogram = new jnj_chart.Histogram();
-							histogram.render(self.mapHistogram(histData), "#hist", 460, 195, {
+							histData.data = (self.normalizeArray(data.yearOfBirth));
+							yearHistogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Year',
 								yLabel: 'People'
 							});
 						}
-						var genderDonut = new jnj_chart.Donut();
-						var raceDonut = new jnj_chart.Donut();
-						var ethnicityDonut = new jnj_chart.Donut();
-						genderDonut.render(self.mapConceptData(data.gender), "#gender", 260, 130);
-						raceDonut.render(self.mapConceptData(data.race), "#race", 260, 130);
-						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", 260, 130);
+
+						var genderDonut = new atlascharts.donut();
+						var raceDonut = new atlascharts.donut();
+						var ethnicityDonut = new atlascharts.donut();
+						genderDonut.render(self.mapConceptData(data.gender), "#gender", size4.width, size4.height);
+						raceDonut.render(self.mapConceptData(data.race), "#race", size4.width, size4.height);
+						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", size4.width, size4.height);
 					}
 				});
 			} else if (currentReport.name == 'Achilles Heel') {
@@ -305,22 +325,20 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						}
 
 						$('#achillesheel_table').DataTable({
-							dom: 'lfrt<"row"<"col-sm-4" i ><"col-sm-4" T ><"col-sm-4" p >>',
-							tableTools: {
-								"sSwfPath": "js/components/datasources/swf/copy_csv_xls_pdf.swf"
-							},
+							dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
+							buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
+							autoWidth: false,
 							data: table_data,
-							columns: [
-								{
+							columns: [{
 									data: 'type',
 									visible: true,
 									width: 200
-                },
+								},
 								{
 									data: 'content',
 									visible: true
-                }
-              ],
+								}
+							],
 							pageLength: 15,
 							lengthChange: false,
 							deferRender: true,
@@ -361,8 +379,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								});
 
 
-							var totalLine = new jnj_chart.Line();
-							totalLine.render(totalRecordsData, "#totalrecords", 900, 250, {
+							var totalLine = new atlascharts.line();
+							totalLine.render(totalRecordsData, "#totalrecords", size12.width, size12.height, {
 								xScale: d3.scaleTime().domain(d3.extent(totalRecords, function (d) {
 									return d.xCalendarMonth;
 								})),
@@ -372,8 +390,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								yValue: "yRecordCount",
 								xLabel: "Year",
 								yLabel: "# of Records",
-								showLegend: true,
-								colors: d3.schemeCategory10
+								showLegend: true
 							});
 						}
 
@@ -399,8 +416,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								});
 
 
-							var recordsperpersonLine = new jnj_chart.Line();
-							recordsperpersonLine.render(recordsPerPersonData, "#recordsperperson", 900, 250, {
+							var recordsperpersonLine = new atlascharts.line();
+							recordsperpersonLine.render(recordsPerPersonData, "#recordsperperson", size12.width, size12.height, {
 								xScale: d3.scaleTime().domain(d3.extent(recordsPerPerson, function (d) {
 									return d.xCalendarMonth;
 								})),
@@ -410,8 +427,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 								yValue: "yRecordCount",
 								xLabel: "Year",
 								yLabel: "Records Per Person",
-								showLegend: true,
-								colors: d3.schemeCategory10
+								showLegend: true
 							});
 						}
 
@@ -431,8 +447,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 									UIF: conceptsData.p90Value[i]
 								});
 							}
-							var conceptsperpersonBoxPlot = new jnj_chart.BoxPlot();
-							conceptsperpersonBoxPlot.render(conceptsSeries, "#conceptsperperson", 800, 200, {
+							var conceptsperpersonBoxPlot = new atlascharts.boxplot();
+							conceptsperpersonBoxPlot.render(conceptsSeries, "#conceptsperperson", size12.width, size12.height, {
 								yMax: d3.max(conceptsData.p90Value),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Concept Type',
@@ -469,7 +485,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 		self.loadTreemap = function () {
 			var currentReport = self.currentReport();
 			var currentSource = self.currentSource();
-			var url = config.services[0].url + 'cdmresults/' + currentSource.sourceKey + '/' + currentReport.path;
+			var url = config.api.url + 'cdmresults/' + currentSource.sourceKey + '/' + currentReport.path;
 
 			$("#treemap_container").find('svg').remove();
 			$('.evidenceVisualization').empty();
@@ -499,13 +515,14 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						}, data);
 						$("#report_table").DataTable({
 							order: [1, 'desc'],
-							dom: 'T<"clear">lfrtip',
+							dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
+							buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
+							autoWidth: false,
 							data: tableData,
 							createdRow: function (row) {
 								$(row).addClass('table_selector');
 							},
-							columns: [
-								{
+							columns: [{
 									data: 'concept_id'
 								},
 								{
@@ -523,15 +540,15 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 									data: 'agg_value',
 									className: 'numeric'
 								}
-                            ],
-							pageLength: 5,
+							],
+							pageLength: 15,
 							lengthChange: false,
 							deferRender: true,
 							destroy: true
 						});
 
 						var treeData = self.buildHierarchyFromJSON(data, threshold);
-						var treemap = new jnj_chart.Treemap();
+						var treemap = new atlascharts.treemap();
 						treemap.render(treeData, '#treemap_container', width, height, {
 							onclick: function (node) {
 								self.currentConcept(node);
@@ -575,7 +592,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 			var currentSource = self.currentSource();
 			var currentReport = self.currentReport();
 			var currentConcept = self.currentConcept();
-			var url = config.services[0].url + 'cdmresults/'+ currentSource.sourceKey + '/' + currentReport.path + '/' + currentConcept.concept_id;
+			var url = config.api.url + 'cdmresults/' + currentSource.sourceKey + '/' + currentReport.path + '/' + currentConcept.concept_id;
 
 			$('.evidenceVisualization').empty();
 			self.loadingReportDrilldown(true);
@@ -597,6 +614,12 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 					self.prevalenceByMonth(data.prevalenceByMonth, '#prevalenceByMonth');
 					self.prevalenceByType(data.byType, '#byType');
 					self.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear, '#trellisLinePlot')
+					if (currentReport.byFrequency) {
+						self.frequencyDistribution(data, '#frequencyDistribution', currentReport.path)
+					}
+					if (currentReport.byUnit) {
+						// TODO: render measurement by unit reports
+					}
 				}
 			});
 		};
@@ -656,8 +679,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 				});
 
 				// create svg with range bands based on the trellis names
-				var dataByDecileTrellisline = new jnj_chart.Trellisline();
-				dataByDecileTrellisline.render(dataByDecile, selector, 1000, 300, {
+				var dataByDecileTrellisline = new atlascharts.trellisline();
+				dataByDecileTrellisline.render(dataByDecile, selector, size12.width, size12.height, {
 					trellisSet: allDeciles,
 					trellisLabel: "Age Decile",
 					seriesLabel: "Year of Observation",
@@ -669,9 +692,6 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						.domain(['MALE', 'FEMALE', 'UNKNOWN'])
 						.range(["#1F78B4", "#FB9A99", "#33A02C"])
 				});
-				d3.select(selector).select('svg')
-					.attr('width', '1000px')
-					.attr('height', '300px');
 			}
 		};
 
@@ -683,8 +703,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 					yValue: 'yPrevalence1000Pp',
 					yPercent: 'yPrevalence1000Pp'
 				});
-				var byMonthSeriesLine = new jnj_chart.Line();
-				byMonthSeriesLine.render(byMonthSeries, selector, 1000, 300, {
+				var byMonthSeriesLine = new atlascharts.line();
+				byMonthSeriesLine.render(byMonthSeries, selector, size12.width, size12.height, {
 					xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 						return d.xValue;
 					})),
@@ -698,8 +718,8 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
 		self.prevalenceByType = function (data, selector) {
 			if (!!data && data.length > 0) {
-				var prevalenceByTypeDonut = new jnj_chart.Donut();
-				prevalenceByTypeDonut.render(self.mapConceptData(data), selector, self.donutWidth, self.donutHeight, {
+				var prevalenceByTypeDonut = new atlascharts.donut();
+				prevalenceByTypeDonut.render(self.mapConceptData(data), selector, size6.width, size6.height, {
 					margin: {
 						top: 5,
 						left: 5,
@@ -727,12 +747,48 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 						UIF: bpdata.p90Value[i]
 					});
 				}
-				var ageBoxplot = new jnj_chart.BoxPlot();
-				ageBoxplot.render(bpseries, selector, self.boxplotWidth, self.boxplotHeight, {
+				var ageBoxplot = new atlascharts.boxplot();
+				ageBoxplot.render(bpseries, selector, size6.width, size6.height, {
 					xLabel: 'Gender',
 					yLabel: yLabel,
 					yFormat: d3.format(',.1s'),
 				});
+			}
+		};
+
+		self.frequencyDistribution = function (data, selector, report) {
+			if (!!data) {
+				var freqData = self.normalizeArray(data.frequencyDistribution);
+				if (!freqData.empty) {
+					// Histogram
+					var frequencyHistogram = new Object();
+					var frequencyHistData = new Object();
+					var totalCnt = 0;
+					for (var i in freqData.yNumPersons) {
+						totalCnt += freqData.yNumPersons[i];
+					}
+					frequencyHistData.countValue = freqData.yNumPersons.slice();
+					frequencyHistData.intervalIndex = freqData.xCount.slice();
+					frequencyHistData.percentValue = freqData.yNumPersons.map(function (value) {
+						return (value / totalCnt) * 100;
+					});
+					frequencyHistogram.data = frequencyHistData;
+					frequencyHistogram.min = 0;
+					frequencyHistogram.max = 10;
+					frequencyHistogram.intervals = 10;
+					frequencyHistogram.intervalSize = 1;
+					var yScaleMax = (Math.floor((Math.max.apply(null, freqData.yNumPersons) + 5) / 10) + 1) * 10;
+					var freqHistData = self.mapHistogram(frequencyHistogram);
+					var freqHistChart = new self.freqhistogram();
+					freqHistChart.render(freqHistData, selector, size12.width, size12.height, {
+						xFormat: d3.format('d'),
+						xScale: d3.scaleLinear().domain([1, 10]),
+						yScale: d3.scaleLinear().domain([0, 100]),
+						yMax: yScaleMax,
+						xLabel: 'Count (\'x\' or more ' + report + 's)',
+						yLabel: '% of total number of persons'
+					});
+				}
 			}
 		};
 
@@ -759,9 +815,9 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 			}
 		};
 
-		self.onReportTableRowClick = function (element, valueAccessor) {
+		self.onReportTableRowClick = function (data, context, event) {
 			var dataTable = $("#report_table").DataTable();
-			var rowIndex = valueAccessor.target._DT_CellIndex.row;
+			var rowIndex = event.target._DT_CellIndex.row;
 			var concept = dataTable.row(rowIndex).data();
 
 			self.currentConcept(concept);
@@ -924,26 +980,18 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 
 			} else // the dataset is a single value result, so the properties are not arrays.
 			{
-				result = [
-					{
-						id: data.conceptId,
-						label: data.conceptName,
-						value: data.countValue
-          }];
+				result = [{
+					id: data.conceptId,
+					label: data.conceptName,
+					value: data.countValue
+				}];
 			}
 
 			result = result.sort(function (a, b) {
 				return b.label < a.label ? 1 : -1;
 			});
 
-			return {
-				data: result.map(function(series) {
-					return series.value;
-				}),
-				legend: result.map(function(series) {
-					return series.label;
-				})
-			};
+			return result;
 		};
 
 		self.mapHistogram = function (histogramData) {
@@ -973,6 +1021,279 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'jnj_chart', 'co
 			var prefix = d3.formatPrefix(d);
 			return d3.round(prefix.scale(d), p) + prefix.symbol;
 		};
+
+		function freq_defaultTooltip(xLabel, xFormat, xAccessor,
+			yLabel, yFormat, yAccessor) {
+			return function (d) {
+				var tipText = "";
+				tipText += xLabel + ": " + xFormat(xAccessor(d)) + "</br>";
+				tipText += yLabel + ": " + yFormat(yAccessor(d));
+				return tipText;
+			};
+		}
+
+
+		self.freqhistogram = function () {
+			var self = this;
+			self.xScale = {}; // shared xScale for histogram and boxplot
+
+			self.drawBoxplot = function (g, data, width, height) {
+				var boxplot = g,
+					x = self.xScale,
+					whiskerHeight = height / 2;
+
+				if (data.LIF != data.q1) // draw whisker
+				{
+					boxplot.append("line")
+						.attr("class", "bar")
+						.attr("x1", x(data.LIF))
+						.attr("y1", (height / 2) - (whiskerHeight / 2))
+						.attr("x2", x(data.LIF))
+						.attr("y2", (height / 2) + (whiskerHeight / 2));
+
+					boxplot.append("line")
+						.attr("class", "whisker")
+						.attr("x1", x(data.LIF))
+						.attr("y1", height / 2)
+						.attr("x2", x(data.q1))
+						.attr("y2", height / 2)
+				}
+
+				boxplot.append("rect")
+					.attr("class", "box")
+					.attr("x", x(data.q1))
+					.attr("width", x(data.q3) - x(data.q1))
+					.attr("height", height);
+
+				boxplot.append("line")
+					.attr("class", "median")
+					.attr("x1", x(data.median))
+					.attr("y1", 0)
+					.attr("x2", x(data.median))
+					.attr("y2", height);
+
+				if (data.UIF != data.q3) // draw whisker
+				{
+					boxplot.append("line")
+						.attr("class", "bar")
+						.attr("x1", x(data.UIF))
+						.attr("y1", (height / 2) - (whiskerHeight / 2))
+						.attr("x2", x(data.UIF))
+						.attr("y2", (height / 2) + (whiskerHeight / 2));
+
+					boxplot.append("line")
+						.attr("class", "whisker")
+						.attr("x1", x(data.q3))
+						.attr("y1", height / 2)
+						.attr("x2", x(data.UIF))
+						.attr("y2", height / 2)
+				}
+			}
+
+			self.render = function (data, target, w, h, options) {
+				data = data || []; // default to empty set if null is passed in
+				var defaults = {
+					margin: {
+						top: 5,
+						right: 5,
+						bottom: 5,
+						left: 5
+					},
+					ticks: 10,
+					xFormat: d3.format(',.0f'),
+					yFormat: d3.format('r'),
+					yScale: d3.scaleLinear(),
+					boxplotHeight: 10
+				};
+
+				var options = $.extend({}, defaults, options);
+
+				var tooltipBuilder = freq_defaultTooltip(options.xLabel || "x",
+					options.xFormat,
+					function (d) {
+						return d.x;
+					},
+					options.yLabel || "y",
+					options.yFormat,
+					function (d) {
+						return d.y;
+					});
+
+				// alocate the SVG container, only creating it if it doesn't exist using the selector
+				var chart;
+				var isNew = false; // this is a flag to determine if chart has already been ploted on this target.
+				if (!$(target + " svg")[0]) {
+					chart = d3.select(target).append("svg")
+						.attr("width", w)
+						.attr("height", h)
+						.attr("viewBox", "0 0 " + w + " " + h);
+					isNew = true;
+				} else {
+					chart = d3.select(target + " svg");
+				}
+
+				var tip = d3tip()
+					.attr('class', 'd3-tip')
+					.offset([-10, 0])
+					.html(tooltipBuilder)
+				chart.call(tip);
+
+				var xAxisLabelHeight = 0;
+				var yAxisLabelWidth = 0;
+				var bboxNode, bbox;
+
+				// apply labels (if specified) and offset margins accordingly
+				if (options.xLabel) {
+					var xAxisLabel = chart.append("g")
+						.attr("transform", "translate(" + w / 2 + "," + (h - options.margin.bottom) + ")")
+
+					xAxisLabel.append("text")
+						.attr("class", "axislabel")
+						.style("text-anchor", "middle")
+						.text(options.xLabel);
+
+					bboxNode = xAxisLabel.node();
+					if (bboxNode) {
+						bbox = bboxNode.getBBox();
+						if (bbox) {
+							xAxisLabelHeight = bbox.height;
+						}
+					}
+				}
+
+				if (options.yLabel) {
+					var yAxisLabel = chart.append("g")
+						.attr("transform", "translate(" + options.margin.left + "," + (((h - options.margin.bottom - options.margin.top) / 2) + options.margin.top) + ")");
+					yAxisLabel.append("text")
+						.attr("class", "axislabel")
+						.attr("transform", "rotate(-90)")
+						.attr("y", 0)
+						.attr("x", 0)
+						.attr("dy", "1em")
+						.style("text-anchor", "middle")
+						.text(options.yLabel);
+
+					bboxNode = yAxisLabel.node();
+					if (bboxNode) {
+						bbox = bboxNode.getBBox();
+						if (bbox) {
+							yAxisLabelWidth = 1.5 * bbox.width; // width is calculated as 1.5 * box height due to rotation anomolies that cause the y axis label to appear shifted.
+						}
+					}
+				}
+
+				// calculate an intial width and height that does not take into account the tick text dimensions
+				var width = w - options.margin.left - options.margin.right - yAxisLabelWidth;
+				var height = h - options.margin.top - options.margin.bottom - xAxisLabelHeight;
+
+				// define the intial scale (range will be updated after we determine the final dimensions)
+				var x = self.xScale = d3.scaleLinear()
+					.domain(options.xDomain || [d3.min(data, function (d) {
+						return d.x + 0.5;
+					}), d3.max(data, function (d) {
+						return d.x + d.dx - 0.5;
+					})])
+					.range([0, width]);
+
+				var xAxis = d3.axisBottom()
+					.scale(x)
+					.ticks(options.ticks)
+					.tickFormat(options.xFormat);
+
+				var y = options.yScale
+					.domain([0, options.yMax || d3.max(data, function (d) {
+						return d.y;
+					})])
+					.range([height, 0]);
+
+				var yAxis = d3.axisLeft()
+					.scale(y)
+					.ticks(4)
+					.tickFormat(options.yFormat);
+
+				// create temporary x axis
+				var tempXAxis = chart.append("g").attr("class", "axis");
+				tempXAxis.call(xAxis);
+				var yAxisWidth, xAxisHeight, xAxisWidth;
+
+				if (tempXAxis.node() && tempXAxis.node().getBBox()) {
+					// update width & height based on temp xaxis dimension and remove
+					xAxisHeight = Math.round(tempXAxis.node().getBBox().height);
+					xAxisWidth = Math.round(tempXAxis.node().getBBox().width);
+					height = height - xAxisHeight;
+					width = width - Math.max(0, (xAxisWidth - width)); // trim width if xAxisWidth bleeds over the allocated width.
+					tempXAxis.remove();
+				}
+
+				// create temporary y axis
+				var tempYAxis = chart.append("g").attr("class", "axis");
+				tempYAxis.call(yAxis);
+
+				if (tempYAxis.node() && tempYAxis.node().getBBox()) {
+					// update height based on temp xaxis dimension and remove
+					yAxisWidth = Math.round(tempYAxis.node().getBBox().width);
+					width = width - yAxisWidth;
+					tempYAxis.remove();
+				}
+
+				if (options.boxplot) {
+					height -= 12; // boxplot takes up 12 vertical space
+					var boxplotG = chart.append("g")
+						.attr("class", "boxplot")
+						.attr("transform", "translate(" + (options.margin.left + yAxisLabelWidth + yAxisWidth) + "," + (options.margin.top + height + xAxisHeight) + ")");
+					self.drawBoxplot(boxplotG, options.boxplot, width, 8);
+				}
+
+				// reset axis ranges
+				x.range([0, width]);
+				y.range([height, 0]);
+
+				var hist = chart.append("g")
+					.attr("transform", "translate(" + (options.margin.left + yAxisLabelWidth + yAxisWidth) + "," + options.margin.top + ")");
+
+				var bar = hist.selectAll(".bar")
+					.data(data)
+					.enter().append("g")
+					.attr("class", "bar")
+					.attr("transform", function (d) {
+						return "translate(" + x(d.x - 0.5) + "," + y(d.y) + ")";
+					})
+					.on('mouseover', tip.show)
+					.on('mouseout', tip.hide)
+
+				bar.append("rect")
+					.attr("x", 1)
+					.attr("width", function (d) {
+						return Math.max((x(d.x + d.dx) - x(d.x) - 1), .5);
+					})
+					.attr("height", function (d) {
+						return height - y(d.y);
+					});
+
+				if (isNew) {
+					hist.append("g")
+						.attr("class", "x axis")
+						.attr("transform", "translate(0," + height + ")")
+						.call(xAxis);
+
+					hist.append("g")
+						.attr("class", "y axis")
+						.attr("transform", "translate(0," + 0 + ")")
+						.call(yAxis);
+
+					$(window).on("resize", {
+							container: $(target),
+							chart: $(target + " svg"),
+							aspect: w / h
+						},
+						function (event) {
+							var targetWidth = event.data.container.width();
+							event.data.chart.attr("width", targetWidth);
+							event.data.chart.attr("height", Math.round(targetWidth / event.data.aspect));
+						}).trigger("resize");
+				}
+			}
+		}
 	}
 
 	var component = {

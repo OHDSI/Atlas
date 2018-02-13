@@ -15,6 +15,7 @@ define(function (require, exports, module) {
 		self.StartWindow = new Window(data.StartWindow);
 		self.EndWindow = ko.observable(data.EndWindow && new Window(data.EndWindow));
 		self.Occurrence = new Occurrence(data.Occurrence);
+		self.RestrictVisit = ko.observable(data.RestrictVisit || false);
 	}
 	
 	module.exports = AdditionalCriteria;
