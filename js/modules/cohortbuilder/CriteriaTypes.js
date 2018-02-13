@@ -14,6 +14,7 @@ define(function (require, exports) {
 	var ObservationPeriod = require("./CriteriaTypes/ObservationPeriod");	
 	var Death = require("./CriteriaTypes/Death");
 	var DemographicCriteria = require("./CriteriaTypes/DemographicCriteria");
+	var PayerPlanPeriod = require("./CriteriaTypes/PayerPlanPeriod");
 	
 	function GetCriteriaFromObject (data, conceptSets)
 	{
@@ -75,6 +76,10 @@ define(function (require, exports) {
 			return {
 				Death: new exports.Death(data.Death, conceptSets)
 			};
+		}	else if (data.hasOwnProperty("PayerPlanPeriod")) {
+			return {
+				PayerPlanPeriod: new exports.PayerPlanPeriod(data.PayerPlanPeriod, conceptSets)
+			};
 		};	
 	}
 	
@@ -92,6 +97,7 @@ define(function (require, exports) {
 	exports.ObservationPeriod = ObservationPeriod;
 	exports.Death = Death;
 	exports.DemographicCriteria = DemographicCriteria;
+	exports.PayerPlanPeriod = PayerPlanPeriod;
 	
 	exports.GetCriteriaFromObject = GetCriteriaFromObject;
 
