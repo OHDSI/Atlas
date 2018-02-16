@@ -504,9 +504,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			$.ajax(route, {
-				headers: {
-					Authorization: authApi.getAuthorizationHeader()
-				},
 				error: authApi.handleAccessDenied,
 				success: function (data) {
 					job.status(data.status);

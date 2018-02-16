@@ -1,6 +1,7 @@
 define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], function (ko, view, appConfig, state) {
 	function userBar(params) {
 		var self = this;
+		var authApi = params.model.authApi;
 
 		self.updateJobStatus = function () {
 			if (self.jobListing().length > 0) {
@@ -73,6 +74,11 @@ define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], functio
 		}
 
 		self.appConfig = appConfig;
+		self.token = authApi.token;
+		self.isLoggedIn = ko.computed(function () {
+			if (!self.token()) return null;
+			return authApi.isAuthenticated();
+		});
 	}
 
 	var component = {

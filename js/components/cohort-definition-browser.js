@@ -10,9 +10,6 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webap
 
 		$.ajax({
 			url: config.api.url + 'cohortdefinition',
-			headers: {
-				Authorization: authApi.getAuthorizationHeader()
-			},
 			method: 'GET',
 			error: authApi.handleAccessDenied,
 			success: function (d) {

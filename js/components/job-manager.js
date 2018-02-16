@@ -10,9 +10,6 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'moment', 'knockout.
 			$.ajax({
 				url: config.api.url + 'job/execution?comprehensivePage=true',
 				method: 'GET',
-				headers: {
-					Authorization: authApi.getAuthorizationHeader()
-				},
 				contentType: 'application/json',
 				success: function (jobs) {
 					for (var j = 0; j < jobs.content.length; j++) {
