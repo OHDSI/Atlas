@@ -550,7 +550,6 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.save = function () {
-
 				var cca = {
 					analysisId: self.cohortComparison().analysisId || null,
 					name: self.cohortComparison().name(),
