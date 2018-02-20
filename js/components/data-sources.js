@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'knockout.dataTables.binding', 'databindings/eventListenerBinding', 'access-denied'], function ($, ko, view, d3, atlascharts, colorbrewer, _, config, authApi, d3tip) {
+define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'databindings', 'access-denied'], function ($, ko, view, d3, atlascharts, colorbrewer, _, config, authApi, d3tip) {
 	function dataSources(params) {
 		var self = this;
 

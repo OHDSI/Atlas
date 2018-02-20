@@ -66,7 +66,15 @@ define(['optional!config-local'], function (localConfig) {
       "icon": "fa fa-cubes",
       "isUseCredentialsForm": true
     }
-	];
+  ];
+  config.xssOptions = {
+    "whiteList": {
+      "a": ["href", "class"],
+      "span": ["class"]
+    },
+    "stripIgnoreTag": true,
+    "stripIgnoreTagBody": ['script'],
+  };
 
 	Object.assign(config, localConfig);
 	config.webAPIRoot = config.api.url;
