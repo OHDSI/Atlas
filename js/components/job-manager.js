@@ -1,4 +1,4 @@
-define(['knockout', 'text!./job-manager.html', 'appConfig', 'moment', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config, moment) {
+define(['knockout', 'text!./job-manager.html', 'appConfig', 'moment', 'databindings', 'access-denied'], function (ko, view, config, moment) {
 	function jobManager(params) {
 		var self = this;
 

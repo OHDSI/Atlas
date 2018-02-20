@@ -1,5 +1,5 @@
 "use strict";
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/AuthAPI', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3-tip', 'knockout.dataTables.binding', 'faceted-datatable', 'components/profileChart', 'css!./styles/profileManager.css', 'access-denied'],
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/AuthAPI', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3-tip', 'databindings', 'faceted-datatable', 'components/profileChart', 'css!./styles/profileManager.css', 'access-denied'],
 	function (ko, view, d3, config, authApi, _, crossfilter, util, CohortDefinition, cohortDefinitionAPI) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
