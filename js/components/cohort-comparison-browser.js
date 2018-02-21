@@ -5,6 +5,14 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webap
 		self.loading = ko.observable(false);
 		self.config = config;
 
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canReadEstimations = ko.pureComputed(function () {
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadEstimations()) || !config.userAuthenticationEnabled;
+		});
+		self.canCreateEstimation = ko.pureComputed(function(){
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCreateEstimation()) || !config.userAuthenticationEnabled;
+			});
+
 		self.options = {
 			Facets: [
 				{
@@ -69,6 +77,7 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webap
 		$.ajax({
 			url: config.api.url + 'comparativecohortanalysis',
 			method: 'GET',
+			error: authApi.handleAccessDenied,
 			success: function (d) {
 				self.loading(false);
 				self.reference(d);

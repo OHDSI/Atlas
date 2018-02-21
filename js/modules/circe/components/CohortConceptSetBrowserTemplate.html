@@ -1,20 +1,22 @@
-<table width="width:100%" style="margin-bottom: 10px">
-	<tr>
-		<td width="100%" style="padding-right:15px">
-		</td>
-		<td>
-			<div class="btn btn-sm btn-primary" style="width: 175px" data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText"></div>
-		</td>
-	</tr>
-</table>
+<div data-bind="if:$component.canReadConceptsets">
+    <table width="width:100%" style="margin-bottom: 10px">
+        <tr>
+            <td width="100%" style="padding-right:15px">
+            </td>
+            <td>
+                <div class="btn btn-sm btn-primary" style="width: 175px"
+                     data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText"></div>
+            </td>
+        </tr>
+    </table>
 
-<div data-bind="visible:$component.selectedSource().url != null,
+    <div data-bind="visible:$component.selectedSource().url != null,
 								eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: selectRepositoryConceptSet}]">
-	<!-- ko if: loading -->
-	Loading...
-	<!-- /ko -->
-	<div data-bind="visible: !loading()">
-		<table class="stripe compact hover" cellspacing="0" width="100%" data-bind="attr: { id: $component.repositoryConceptSetTableId}, dataTable:{
+        <!-- ko if: loading -->
+        Loading...
+        <!-- /ko -->
+        <div data-bind="visible: !loading()">
+            <table class="stripe compact hover" cellspacing="0" width="100%" data-bind="attr: { id: $component.repositoryConceptSetTableId}, dataTable:{
 				data: repositoryConceptSets(),
 				options: {
 					deferRender: true,
@@ -41,6 +43,7 @@
 					order: [3, 'desc']
 				}
 			 }">
-		</table>
-	</div>
+            </table>
+        </div>
+    </div>
 </div>

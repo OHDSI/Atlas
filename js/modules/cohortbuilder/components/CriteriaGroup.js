@@ -95,6 +95,14 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
+				text: "Add Payer Plan Period Criteria",
+				selected: false,
+				description: "Find patients based on Payer Plan Period.",
+				action: function () {
+					self.addPayerPlanPeriodCriteria();
+				}
+			},
+			{
 				text: "Add Procedure Occurrence Criteria",
 				selected: false,
 				description: "Find patients that experienced a specific procedure.",
@@ -154,6 +162,8 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				return "drug-era-criteria";
 			else if (data.hasOwnProperty("DoseEra"))
 				return "dose-era-criteria";
+			else if (data.hasOwnProperty("PayerPlanPeriod"))
+				return "payer-plan-period-criteria";			
 			else if (data.hasOwnProperty("ProcedureOccurrence"))
 				return "procedure-occurrence-criteria";
 			else if (data.hasOwnProperty("VisitOccurrence"))
@@ -228,6 +238,15 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 			}, unwrappedExpression.ConceptSets));
 		};
 
+		self.addPayerPlanPeriodCriteria = function() {
+			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+			self.group().CriteriaList.push(new AdditionalCriteria({
+				Criteria: {
+					PayerPlanPeriod: {}
+				}
+			}, unwrappedExpression.ConceptSets));			
+		};
+		
 		self.addProcedureCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({

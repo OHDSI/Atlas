@@ -60,6 +60,14 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 		self.sources.push(appConfig.api);
 		self.selectedSource = ko.observable(self.sources[0]);
 
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canReadConceptsets = ko.pureComputed(function () {
+		  return (appConfig.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !appConfig.userAuthenticationEnabled;
+		});
+		self.canReadCohorts = ko.pureComputed(function () {
+		  return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled;
+		});
+
 		self.loadConceptSetsFromRepository = function (url) {
 			self.loading(true);
 

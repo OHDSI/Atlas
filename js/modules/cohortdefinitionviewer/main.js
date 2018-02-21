@@ -77,5 +77,7 @@ define(function (require, exports) {
 	var conceptSetViewer = require('./components/EndStrategyViewer');
 	ko.components.register('end-strategy-viewer',conceptSetViewer);
 	
+	var payerPlanPeriod = require('./components/PayerPlanPeriod');
+	ko.components.register('payer-plan-period-criteria-viewer', payerPlanPeriod);
 	
 });
