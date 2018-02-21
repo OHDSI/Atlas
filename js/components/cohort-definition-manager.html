@@ -384,7 +384,7 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-12">
-									<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $component.model.loadingReport, attr:{disabled: $component.model.loadingReport}, css : {invalid: $component.model.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:'Select a Report', optionsText:'name', optionsValue:'name', value:$component.model.reportReportName"></select>
+									<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $component.model.loadingReport, attr:{disabled: $component.model.loadingReport}, css : {invalid: $component.model.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:$component.reportOptionCaption, optionsText:'name', optionsValue:'name', value:$component.model.reportReportName"></select>
 								</div>
 							</div>
 						</div>
@@ -413,7 +413,7 @@
 							Please make a selection in the Report Selections panel.
 						</div>
 					</div>
-					<div class="panel panel-info" data-bind="visible: $component.reportingState()=='generating_reports'">
+					<div class="panel panel-info" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='generating_reports')">
 						<div class="panel-heading ">
 							Generating Reports
 						</div>
@@ -440,7 +440,7 @@
 							</table>
 						</div>
 					</div>
-					<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='report_unavailable'">
+					<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='report_unavailable')">
 						<div class="panel-heading ">
 							Report Unavailable
 						</div>
@@ -448,7 +448,7 @@
 							The report you requested is not available. Please click the generate button to generate cohort reports for this data source.
 						</div>
 					</div>
-					<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='unknown_cohort_report_state'">
+					<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='unknown_cohort_report_state')">
 						<div class="panel-heading ">
 							Whoops
 						</div>
@@ -459,7 +459,7 @@
 							<div data-bind="html:$component.reportingError"></div>
 						</div>
 					</div>
-					<div class="panel panel-danger" data-bind="visible: $component.createReportJobFailed">
+					<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.createReportJobFailed)">
 						<div class="panel-heading ">
 							Create Reporting Job Failed
 						</div>
@@ -470,7 +470,7 @@
 							<div data-bind="html:$component.createReportJobError"></div>
 						</div>
 					</div>
-					<div class="panel panel-warning" data-bind="visible: $component.reportingState()=='checking_status'">
+					<div class="panel panel-warning" data-bind="visible: $component.reportingSourceStatusLoading()">
 						<div class="panel-heading ">
 							Please Wait
 						</div>
