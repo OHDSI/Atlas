@@ -1,4 +1,4 @@
-define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularyprovider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'webapi/AuthAPI', 'access-denied', 'databindings'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi) {
+define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularyprovider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'webapi/AuthAPI', 'webapi/MomentAPI', 'access-denied', 'databindings'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, momentApi) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
@@ -40,6 +40,10 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 				return false;
 			}
 		}
+
+    self.formatDate = function(data, type, row) {
+    	return momentApi.formatDateTimeUTC(data);
+		};
 
 		self.criteriaContext = params.criteriaContext;
 		self.cohortConceptSets = params.cohortConceptSets;

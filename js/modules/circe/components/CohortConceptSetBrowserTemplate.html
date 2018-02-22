@@ -1,40 +1,49 @@
 <div data-bind="if:$component.canReadConceptsets">
-	<table width="width:100%" style="margin-bottom: 10px">
-		<tr>
-			<td width="100%" style="padding-right:15px">
-			</td>
-			<td>
-				<div class="btn btn-sm btn-primary" style="width: 175px" data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText"></div>
-			</td>
-		</tr>
-	</table>
-	<div data-bind="visible:$component.selectedSource().url != null,
-									eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: selectRepositoryConceptSet}]">
-		<!-- ko if: loading -->
-		Loading...
-		<!-- /ko -->
-		<div data-bind="visible: !loading()">
-			<table class="stripe compact hover" cellspacing="0" width="100%" data-bind="attr: { id: $component.repositoryConceptSetTableId}, dataTable:{
-					data: repositoryConceptSets(),
-					options: {
-						deferRender: true,
-						orderClasses: false,
-						autoWidth: false,
-						columnDefs: [
-							{ width: '25px', targets: 0},
-							{ width: '100%', targets: 1},
-						],
-						stripeClasses : [ 'repositoryConceptSetItem' ],
-						columns: [
-							{ data: 'id', title: 'Id', width: '25px'},
-							{ data: 'name', title: 'Title', width: '100%' },
-						],
-						language: {
-							search: 'Filter Repository Concept Sets:'
-						}
-					}
-				 }">
-			</table>
-		</div>
-	</div>
+    <table width="width:100%" style="margin-bottom: 10px">
+        <tr>
+            <td width="100%" style="padding-right:15px">
+            </td>
+            <td>
+                <div class="btn btn-sm btn-primary" style="width: 175px"
+                     data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText"></div>
+            </td>
+        </tr>
+    </table>
+
+    <div data-bind="visible:$component.selectedSource().url != null,
+								eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: selectRepositoryConceptSet}]">
+        <!-- ko if: loading -->
+        Loading...
+        <!-- /ko -->
+        <div data-bind="visible: !loading()">
+            <table class="stripe compact hover" cellspacing="0" width="100%" data-bind="attr: { id: $component.repositoryConceptSetTableId}, dataTable:{
+				data: repositoryConceptSets(),
+				options: {
+					deferRender: true,
+					orderClasses: false,
+					autoWidth: false,
+					columnDefs: [
+						{ width: '25px', targets: 0},
+						{ width: '55%', targets: 1},
+						{ width: '15%', targets: 2},
+						{ width: '15%', targets: 3},
+						{ width: '15%', targets: 4}
+					],
+                    stripeClasses : [ 'repositoryConceptSetItem' ],
+                    columns: [
+						{ data: 'id', title: 'Id', width: '25px'},
+						{ data: 'name', title: 'Title', width: '55%' },
+						{ data: 'createdDate', title: 'Created', width: '15%', render: $component.formatDate },
+						{ data: 'modifiedDate', title: 'Modified', width: '15%', render: $component.formatDate },
+						{ data: 'createdBy', title: 'Author', width: '15%' },
+					],
+					language: {
+						search: 'Filter Repository Concept Sets:'
+					},
+					order: [3, 'desc']
+				}
+			 }">
+            </table>
+        </div>
+    </div>
 </div>
