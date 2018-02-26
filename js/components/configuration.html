@@ -59,13 +59,13 @@
 				</table>
 			</div>
 
-			<div data-bind="ifnot:$component.hasAccess">
+			<div>
 				<div class="padded">
-					<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
 					<div class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache">Clear Configuration Cache</div>
 				</div>
 			</div>
-			<div data-bind="if: config.userAuthenticationEnabled">
+			<div data-bind="if: config.userAuthenticationEnabled && $component.hasAccess">
+				<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
 				<a href="#/roles" class="btn btn-sm btn-primary" style="width: 175px" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
 			</div>
 		</div>
