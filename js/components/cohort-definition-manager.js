@@ -122,7 +122,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.generatedSql.redshift = ko.observable('');
 		self.generatedSql.msaps = ko.observable('');
 		self.generatedSql.impala = ko.observable('');
-    self.generatedSql.netezza = ko.observable('');
+		self.generatedSql.netezza = ko.observable('');
 		self.templateSql = ko.observable('');
 		self.tabMode = self.model.currentCohortDefinitionMode;
 		self.generationTabMode = ko.observable("inclusion")
