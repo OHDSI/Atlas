@@ -74,7 +74,7 @@ define(['optional!config-local'], function (localConfig) {
       "i": ["class", "id", "aria-hidden"],
       "div": ["class", "style", "id"],
       "option": ["value"],
-      "input" ["type", "class"],
+      "input": ["type", "class"],
       "ui": ["class"],
       "path": ["d", "class"]
     },
