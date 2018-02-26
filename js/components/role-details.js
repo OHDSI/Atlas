@@ -1,4 +1,4 @@
-define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config, ohdsiUtils) {
+define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'databindings', 'access-denied'], function (ko, view, config, ohdsiUtils) {
     function roleDetails(params) {
         var self = this;
         var serviceUrl = config.api.url;
@@ -61,9 +61,6 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
             return $.ajax({
                 url: serviceUrl + 'role/' + self.roleId(),
                 method: 'GET',
-                headers: {
-                    Authorization: authApi.getAuthorizationHeader()
-                },
                 contentType: 'application/json',
                 error: authApi.handleAccessDenied,
                 success: function(data) {
@@ -77,9 +74,6 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
                 return $.ajax({
                     url: serviceUrl + 'user',
                     method: 'GET',
-                    headers: {
-                        Authorization: authApi.getAuthorizationHeader()
-                    },
                     contentType: 'application/json',
                     error: authApi.handleAccessDenied,
                     success: function(data) {
@@ -94,9 +88,6 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
             return $.ajax({
                 url: serviceUrl + 'role/' + self.roleId() + '/users',
                 method: 'GET',
-                headers: {
-                    Authorization: authApi.getAuthorizationHeader()
-                },
                 contentType: 'application/json',
                 error: authApi.handleAccessDenied,
                 success: function (roleUsers) {
@@ -112,9 +103,6 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
                 return $.ajax({
                     url: serviceUrl + 'permission',
                     method: 'GET',
-                    headers: {
-                        Authorization: authApi.getAuthorizationHeader()
-                    },
                     contentType: 'application/json',
                     error: authApi.handleAccessDenied,
                     success: function (data) {
@@ -130,9 +118,6 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
             return $.ajax({
                 url: serviceUrl + 'role/' + self.roleId() + '/permissions',
                 method: 'GET',
-                headers: {
-                    Authorization: authApi.getAuthorizationHeader()
-                },
                 contentType: 'application/json',
                 error: authApi.handleAccessDenied,
                 success: function(rolePermissions) {
@@ -228,9 +213,6 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
                 ? $.ajax({
                     url: serviceUrl + 'role/' + self.roleId() + '/' + relation + '/' + ids.join('+'),
                     method: httpMethod,
-                    headers: {
-                        Authorization: authApi.getAuthorizationHeader()
-                    },
                     contentType: 'application/json',
                     error: authApi.handleAccessDenied,
                 })
@@ -290,10 +272,7 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
             return self.isNewRole()
                 ? $.ajax({
                     url: serviceUrl + 'role',
-                    method: 'PUT',
-                    headers: {
-                        Authorization: authApi.getAuthorizationHeader()
-                    },
+                    method: 'POST',
                     contentType: 'application/json',
                     data: data,
                     dataType: 'json',
@@ -304,10 +283,7 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
                 })
                 : $.ajax({
                     url: serviceUrl + 'role/' + self.roleId(),
-                    method: 'POST',
-                    headers: {
-                        Authorization: authApi.getAuthorizationHeader()
-                    },
+                    method: 'PUT',
                     contentType: 'application/json',
                     data: data,
                     dataType: 'json',
@@ -379,9 +355,6 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knoc
             $.ajax({
                 url: serviceUrl + 'role/' + self.roleId(),
                 method: 'DELETE',
-                headers: {
-                    Authorization: authApi.getAuthorizationHeader()
-                },
                 contentType: 'application/json',
                 error: authApi.handleAccessDenied,
                 success: function () {

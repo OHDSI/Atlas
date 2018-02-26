@@ -1,0 +1,56 @@
+<!-- ko with: Criteria -->
+a payer plan period
+<ul>
+<!-- ko if: ko.utils.unwrapObservable(First) != null -->
+	<li>limited to the patients first payer plan period</li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(UserDefinedPeriod) != null -->
+	<li>using specified period: <period-viewer params="Period: UserDefinedPeriod"></period-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(PeriodStartDate) != null -->
+	<li>period start is <date-range-viewer params="Range: PeriodStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(PeriodEndDate) != null -->
+	<li>period end is <date-range-viewer params="Range: PeriodEndDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(PeriodLength) != null -->
+	<li>with period duration <numeric-range-viewer params="Range: PeriodLength"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(AgeAtStart) != null -->
+	<li>with age at start <numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(AgeAtEnd) != null -->
+	<li>with age at end <numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(PayerConcept) != null -->
+	<li>Payer Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PayerConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(PlanConcept) != null -->
+	<li>Plan Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PlanConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(SponsorConcept) != null -->
+	<li>Sponsor Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(SponsorConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(StopReasonConcept) != null -->
+	<li>Stop Reason Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(StopReasonConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(PayerSourceConcept) != null -->
+	<li>Payer Source Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PayerSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(PlanSourceConcept) != null -->
+	<li>Plan Source Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PlanSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(SponsorSourceConcept) != null -->
+	<li>Sponsor Source Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(SponsorSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(StopReasonSourceConcept) != null -->
+	<li>Stop Reason Source Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(StopReasonSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
+	<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+<!-- /ko -->
+</ul>
+<!-- /ko -->

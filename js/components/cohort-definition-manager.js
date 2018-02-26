@@ -12,7 +12,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'd3',
 	'job/jobDetail',
 	'cohortbuilder/components/FeasibilityReportViewer',
-	'knockout.dataTables.binding',
+	'databindings',
 	'faceted-datatable',
 	'databindings',
 	'cohortdefinitionviewer/expressionCartoonBinding',
@@ -504,9 +504,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			$.ajax(route, {
-				headers: {
-					Authorization: authApi.getAuthorizationHeader()
-				},
 				error: authApi.handleAccessDenied,
 				success: function (data) {
 					job.status(data.status);
@@ -616,6 +613,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.currentJob = ko.observable();
 		self.reportingSourceStatusAvailable = ko.observable(false);
 		self.reportingSourceStatusLoading = ko.observable(false);
+		self.reportOptionCaption = ko.pureComputed(function() {
+			 return self.reportingSourceStatusLoading() ? "Loading Reports..." : "Select a Report";
+		});
 		self.reportingSourceStatus = ko.observable();
 		self.reportingAvailableReports = ko.observableArray();
 
@@ -651,13 +651,25 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			if (!self.reportingSourceStatusAvailable() && !self.reportingSourceStatusLoading()) {
 				self.reportingSourceStatusLoading(true);
 				cohortReportingAPI.getCompletedAnalyses(sourceInfo, self.model.currentCohortDefinition().id()).done(results => {
-					self.reportingSourceStatusAvailable(true);
-					self.reportingSourceStatusLoading(false);
 					var reports = cohortReportingAPI.getAvailableReports(results);
-					self.reportingAvailableReports(reports);
+					if (reports.length == 0) {
+						self.reportingAvailableReports(reports);
+						self.generateReportsEnabled(false);
+						self.reportingSourceStatusAvailable(true);
+						self.reportingSourceStatusLoading(false);
+						return "checking_status";
+					}
+					cohortReportingAPI.getCompletedHeraclesHeelAnalyses(sourceInfo, self.model.currentCohortDefinition().id()).done(heelResults => {
+						if (heelResults.length > 0) {
+							reports.push({name: "Heracles Heel", reportKey: "Heracles Heel", analyses: []});
+						}
+						self.reportingAvailableReports(reports);
+						self.generateReportsEnabled(false);
+						self.reportingSourceStatusAvailable(true);
+						self.reportingSourceStatusLoading(false);
+						return "checking_status";
+					});
 				});
-				self.generateReportsEnabled(false);
-				return "checking_status";
 			}
 
 			// check if we can tell if the job to generate the reports is already running
@@ -786,7 +798,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			cohortJob.cohortDefinitionIds = [];
 			cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
 			cohortJob.analysisIds = analysisIdentifiers;
-			cohortJob.runHeraclesHeel = false;
+			cohortJob.runHeraclesHeel = true;
 			cohortJob.cohortPeriodOnly = false;
 
 			// set concepts
@@ -869,6 +881,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return "specimen-criteria-viewer";
 			else if (data.hasOwnProperty("ObservationPeriod"))
 				return "observation-period-criteria-viewer";
+			else if (data.hasOwnProperty("PayerPlanPeriod"))
+				return "payer-plan-period-criteria-viewer";
 			else if (data.hasOwnProperty("Death"))
 				return "death-criteria-viewer";
 			else

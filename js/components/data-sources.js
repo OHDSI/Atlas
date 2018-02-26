@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'd3-tip', 'knockout.dataTables.binding', 'databindings/eventListenerBinding'], function ($, ko, view, d3, atlascharts, colorbrewer, _, config, d3tip) {
+define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'databindings', 'access-denied'], function ($, ko, view, d3, atlascharts, colorbrewer, _, config, authApi, d3tip) {
 	function dataSources(params) {
 		var self = this;
 
@@ -38,7 +38,11 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 		self.loadingReportDrilldown = ko.observable(false);
 		self.activeReportDrilldown = ko.observable(false);
 
-		/**
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canViewCdmResults = ko.pureComputed(function () {
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedViewCdmResults()) || !config.userAuthenticationEnabled;
+		});
+	/**
 		 * Each report object may contain the following properties
 		 *   name: displayed in report heading
 		 *   path: CDMResultsService path for summary payload (e.g. tree map)
