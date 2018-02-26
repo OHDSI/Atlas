@@ -70,7 +70,13 @@ define(['optional!config-local'], function (localConfig) {
   config.xssOptions = {
     "whiteList": {
       "a": ["href", "class"],
-      "span": ["class"]
+      "span": ["class", "data-bind"],
+      "i": ["class", "id", "aria-hidden"],
+      "div": ["class", "style", "id"],
+      "option": ["value"],
+      "input" ["type", "class"],
+      "ui": ["class"],
+      "path": ["d", "class"]
     },
     "stripIgnoreTag": true,
     "stripIgnoreTagBody": ['script'],
