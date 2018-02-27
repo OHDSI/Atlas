@@ -10,7 +10,7 @@
 				<button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}"><i class="fa fa-save"></i></button>
 				<button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
 				<!-- ko if: selectedAnalysis().id() != null -->
-				<button class="btn btn-sm btn-primary" title="Create a copy" data-bind="click: copy, enable: !dirtyFlag().isDirty()"><i class="fa fa-copy"></i></button>
+				<button class="btn btn-sm btn-primary" title="Create a copy" data-bind="click: copy, enable: canCreate && !dirtyFlag().isDirty()"><i class="fa fa-copy"></i></button>
 				<!-- ko ifnot: isRunning -->
 				<button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: isDeletable, css: { 'disabled': !isDeletable }"><i class="fa fa-trash-o"></i></button>
 				<!-- /ko -->
