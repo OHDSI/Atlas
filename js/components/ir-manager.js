@@ -9,11 +9,12 @@ define(['knockout',
 				'appConfig',
 				'atlas-state',
 				'job/jobDetail',
+				'webapi/AuthAPI',
 				'iranalysis', 
 				'databindings', 
 				'conceptsetbuilder/components', 
 				'circe'
-], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil, config, sharedState, jobDetail) {
+], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil, config, sharedState, jobDetail, authAPI) {
 	function IRAnalysisManager(params) {
 		
 		// polling support
@@ -51,6 +52,13 @@ define(['knockout',
 		self.analysisList = ko.observableArray();
 		self.selectedAnalysis = self.model.currentIRAnalysis;
 		self.selectedAnalysisId = self.model.selectedIRAnalysisId;
+		selft.canCreate = ko.observable(authAPI.isPermittedCreateIR());
+		self.isDeletable = ko.observable(authAPI.isPermittedDeleteIR(self.selectedAnalysisId()));
+		self.isEditable = ko.observable(self.selectedAnalysisId() === null || authAPI.isPermittedEditIR(self.selectedAnalysisId()));
+		self.selectedAnalysisId.subscribe((id) => {
+			self.isDeletable(id);
+			self.isEditable(id);
+		});
 		
 		self.dirtyFlag = self.model.currentIRAnalysisDirtyFlag;
 		self.isRunning = ko.observable(false);
@@ -172,8 +180,11 @@ define(['knockout',
 			iraAPI.saveAnalysis(self.selectedAnalysis()).then(function (analysis) {
 				self.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedAnalysis()));
-				document.location =  `#/iranalysis/${analysis.id}`
-				self.loading(false);
+				var refreshTokenPromise = config.userAuthenticationEnabled ? authAPI.refreshToken() : null;
+				$.when(refreshTokenPromise).done(function () {
+					document.location =  `#/iranalysis/${analysis.id}`
+					self.loading(false);
+				});
 			});
 		}
 		

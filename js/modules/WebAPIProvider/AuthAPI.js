@@ -389,7 +389,7 @@ define(function(require, exports) {
         isPermittedReadIRs: isPermittedReadIRs,
         isPermittedCreateIR: isPermittedCreateIR,
         isPermittedEditIR: isPermittedEditIR,
-        isPermittedDeleteID: isPermittedDeleteIR,
+        isPermittedDeleteIR: isPermittedDeleteIR,
 
         isPermittedReadEstimations: isPermittedReadEstimations,
         isPermittedReadEstimation: isPermittedReadEstimation,
