@@ -327,7 +327,7 @@ define(function(require, exports) {
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
-            if (!authProviders[settings.url]) {
+            if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
                 xhr.setRequestHeader('Authorization', getAuthorizationHeader());
             }
         }
