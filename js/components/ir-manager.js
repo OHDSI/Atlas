@@ -9,11 +9,12 @@ define(['knockout',
 				'appConfig',
 				'atlas-state',
 				'job/jobDetail',
+				'webapi/AuthAPI',
 				'iranalysis', 
 				'databindings', 
 				'conceptsetbuilder/components', 
 				'circe'
-], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil, config, sharedState, jobDetail) {
+], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil, config, sharedState, jobDetail, authAPI) {
 	function IRAnalysisManager(params) {
 		
 		// polling support
@@ -51,6 +52,12 @@ define(['knockout',
 		self.analysisList = ko.observableArray();
 		self.selectedAnalysis = self.model.currentIRAnalysis;
 		self.selectedAnalysisId = self.model.selectedIRAnalysisId;
+		self.isDeletable = ko.observable(authAPI.isPermittedDeleteIR(self.selectedAnalysisId()));
+		self.isEditable = ko.observable(self.selectedAnalysisId() === null || authAPI.isPermittedEditIR(self.selectedAnalysisId()));
+		self.selectedAnalysisId.subscribe((id) => {
+			self.isDeletable(id);
+			self.isEditable(id);
+		});
 		
 		self.dirtyFlag = self.model.currentIRAnalysisDirtyFlag;
 		self.isRunning = ko.observable(false);
