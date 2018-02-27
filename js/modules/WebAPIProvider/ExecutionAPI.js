@@ -8,7 +8,7 @@ define(function(require, exports){
 
   function runExecution(sourceKey, analysisId, analysisType, template, successHandler){
     ohdsiUtil.cachedAjax({
-      url: config.api.url + 'execution_service/run_script/',
+      url: config.api.url + 'execution_service/run_script',
       method: 'POST',
       contentType: 'application/json',
       error: authApi.handleAccessDenied,
