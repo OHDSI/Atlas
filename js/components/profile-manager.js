@@ -166,7 +166,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 
 			self.xfObservable = ko.observable();
 			self.xfDimensions = [];
-			self.highlightEnabled = ko.observable(false);
+      self.crossfilter = ko.observable();
+      self.highlightEnabled = ko.observable(false);
+      self.filteredRecs = ko.observableArray([]);
 			self.filtersChanged = ko.observable();
 			self.facetsObs = ko.observableArray([]);
 			self.removeHighlight = function () {
