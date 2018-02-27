@@ -180,8 +180,11 @@ define(['knockout',
 			iraAPI.saveAnalysis(self.selectedAnalysis()).then(function (analysis) {
 				self.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedAnalysis()));
-				document.location =  `#/iranalysis/${analysis.id}`
-				self.loading(false);
+				var refreshTokenPromise = config.userAuthenticationEnabled ? authAPI.refreshToken() : null;
+				$.when(refreshTokenPromise).done(function () {
+					document.location =  `#/iranalysis/${analysis.id}`
+					self.loading(false);
+				});
 			});
 		}
 		
