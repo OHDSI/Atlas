@@ -179,15 +179,9 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'xss', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI, filterXSS) {
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
-
-		const originalTextBinding = ko.bindingHandlers.text.update;
-		ko.bindingHandlers.text.update = function(element, valueAccessor, allBingings) {
-			const value = ko.utils.unwrapObservable(valueAccessor());
-			originalTextBinding(element, () => filterXSS(value, config.xssOptions));
-		};
 
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
 
