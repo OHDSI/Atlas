@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'datatables.net'], function ($, ko) {
+define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.net-buttons','datatables.net-buttons-html5'], function ($, ko, dataTables, config, filterXSS) {
 
 	function renderSelected(s, p, d) {
 		return '<span class="fa fa-check-circle"></span>';
@@ -40,6 +40,22 @@ define(['jquery', 'knockout', 'datatables.net'], function ($, ko) {
 						console.log(this);
 					});
 				}
+				binding.options.columns = binding.options.columns.map((column) => {
+					const originalRender = column.render;
+					const originalDataAccessor = column.data;
+					const hasOriginalRender = typeof originalRender === 'function';
+					const hasDataAccessor = typeof originalDataAccessor === 'function';
+					
+					return {
+						...column,
+						data: hasDataAccessor
+							? d => filterXSS(originalDataAccessor(d), config.xssOptions)
+							: filterXSS(originalDataAccessor, config.xssOptions),
+						render: hasOriginalRender
+							? (s, p, d) => filterXSS(originalRender(s, p, d), config.xssOptions)
+							: originalRender,
+					};
+				});
 
 				$(element).DataTable(binding.options);
 				

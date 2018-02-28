@@ -1,4 +1,4 @@
-define(['knockout', 'text!./conceptset-editor.html', 'knockout.dataTables.binding', 'bootstrap','faceted-datatable'], function (ko, view) {
+define(['knockout', 'text!./conceptset-editor.html', 'databindings', 'bootstrap','faceted-datatable'], function (ko, view) {
 	function conceptsetEditor(params) {
 		var self = this;
 		self.model = params.model;

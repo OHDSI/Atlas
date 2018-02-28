@@ -1,5 +1,5 @@
 "use strict";
-define(['knockout', 'text!./faceted-datatable-cf-profile.html', 'knockout.dataTables.binding', 'colvis'], function (ko, view) {
+define(['knockout', 'text!./faceted-datatable-cf-profile.html', 'databindings', 'colvis'], function (ko, view) {
 
 	function facetedDatatableProfile(params) {
 		window.ko = ko;

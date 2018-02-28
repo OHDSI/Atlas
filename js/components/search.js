@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', 'appConfig', 'webapi/AuthAPI', 'knockout.dataTables.binding', 'faceted-datatable', 'access-denied'], function ($, ko, view, vocabAPI, sharedState, config, authApi) {
+define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas-state', 'appConfig', 'webapi/AuthAPI', 'databindings', 'faceted-datatable', 'access-denied'], function ($, ko, view, vocabAPI, sharedState, config, authApi) {
 	function search(params) {
 		var self = this;
 		self.model = params.model;

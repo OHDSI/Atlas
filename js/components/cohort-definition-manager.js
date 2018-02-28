@@ -12,7 +12,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'd3',
 	'job/jobDetail',
 	'cohortbuilder/components/FeasibilityReportViewer',
-	'knockout.dataTables.binding',
+	'databindings',
 	'faceted-datatable',
 	'databindings',
 	'cohortdefinitionviewer/expressionCartoonBinding',
@@ -122,6 +122,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.generatedSql.redshift = ko.observable('');
 		self.generatedSql.msaps = ko.observable('');
 		self.generatedSql.impala = ko.observable('');
+		self.generatedSql.netezza = ko.observable('');
 		self.templateSql = ko.observable('');
 		self.tabMode = self.model.currentCohortDefinitionMode;
 		self.generationTabMode = ko.observable("inclusion")
@@ -431,6 +432,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			self.generatedSql.redshift('');
 			self.generatedSql.msaps('');
 			self.generatedSql.impala('');
+			self.generatedSql.netezza('');
 
 			var expression = ko.toJS(self.model.currentCohortDefinition().expression, pruneJSON);
 			var templateSqlPromise = cohortDefinitionAPI.getSql(expression);
@@ -467,7 +469,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					self.generatedSql.impala(result.targetSQL);
 				});
 
-				$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise).then(function () {
+				var netezzaTranslatePromise = translateSql(result.templateSql, 'netezza');
+				netezzaTranslatePromise.then(function(result){
+					self.generatedSql.netezza(result.targetSQL);
+				});
+
+				$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise, netezzaTranslatePromise).then(function () {
 					self.isLoadingSql(false);
 				});
 			});

@@ -1,4 +1,4 @@
-define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'knockout.dataTables.binding', 'access-denied'], function (ko, view, config, ohdsiUtils) {
+define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'databindings', 'access-denied'], function (ko, view, config, ohdsiUtils) {
     function roleDetails(params) {
         var self = this;
         var serviceUrl = config.api.url;

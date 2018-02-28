@@ -60,6 +60,9 @@ requirejs.config({
 			"prism": {
 				"exports": "Prism"
 			}
+		},
+		"xss": {
+			exports: "filterXSS"
 		}
 	},
 	map: {
@@ -168,6 +171,7 @@ requirejs.config({
 		"d3-dispatch": "https://cdnjs.cloudflare.com/ajax/libs/d3-dispatch/1.0.3/d3-dispatch.min",
 		"d3-tip": "https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min",
 		"d3-slider": "d3.slider",
+		"xss": "https://cdnjs.cloudflare.com/ajax/libs/js-xss/0.3.3/xss.min",
 
 		"moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min",
 		"querystring": "https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min",
@@ -175,9 +179,16 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'xss', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI, filterXSS) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
+
+		const originalTextBinding = ko.bindingHandlers.text.update;
+		ko.bindingHandlers.text.update = function(element, valueAccessor, allBingings) {
+			const value = ko.utils.unwrapObservable(valueAccessor());
+			originalTextBinding(element, () => filterXSS(value, config.xssOptions));
+		};
+
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
 
 		// update access token

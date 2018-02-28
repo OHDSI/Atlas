@@ -1,4 +1,4 @@
-define(['knockout', 'jquery', 'text!./plp-manager.html', 'appConfig', 'd3', 'ohdsi.util', 'plp/PatientLevelPredictionAnalysis', 'webapi/PatientLevelPredictionAPI', 'clipboard'], function (ko, $, view, config, d3, ohdsiUtil, PatientLevelPredictionAnalysis, plpAPI, clipboard) {
+define(['knockout', 'jquery', 'text!./plp-manager.html', 'appConfig', 'd3', 'ohdsi.util', 'plp/PatientLevelPredictionAnalysis', 'webapi/PatientLevelPredictionAPI', 'webapi/ExecutionAPI', 'webapi/AuthAPI',  'clipboard'], function (ko, $, view, config, d3, ohdsiUtil, PatientLevelPredictionAnalysis, plpAPI, executionAPI, authAPI, clipboard) {
 	function plpManager(params) {
 		//console.log("manager:" + params.model.currentModelId());
 		var self = this;
@@ -13,7 +13,87 @@ define(['knockout', 'jquery', 'text!./plp-manager.html', 'appConfig', 'd3', 'ohd
 		self.performanceTabMode = ko.observable('discrimination');
 		self.expressionMode = ko.observable('print');
 
-		self.copyToClipboard = function (element) {
+    self.sources = ko.observableArray();
+    self.sourceHistoryDisplay = {};
+    self.sourceProcessingStatus = {};
+    self.sourceExecutions = {};
+
+    var initSources = config.api.sources.filter(s => s.hasCDM);
+    for (var i = 0; i < initSources.length; i++) {
+      self.sourceHistoryDisplay[initSources[i].sourceKey] = ko.observable(false);
+      self.sourceProcessingStatus[initSources[i].sourceKey] = ko.observable(false);
+    }
+    self.sources(initSources);
+
+    self.loadExecutions = function () {
+      // reset before load
+      $.each(self.sources(), function (i, s) {
+        if (!self.sourceExecutions[s.sourceKey]) {
+          self.sourceExecutions[s.sourceKey] = ko.observableArray();
+        } else {
+          self.sourceExecutions[s.sourceKey].removeAll();
+        }
+
+        executionAPI.loadExecutions('PLP', self.patientLevelPredictionId(), function(exec){
+          var sourceKey = self.sources().filter(s => s.sourceId == exec.sourceId)[0].sourceKey;
+          self.sourceProcessingStatus[sourceKey](exec.executionStatus !== 'COMPLETED' && exec.executionStatus !== 'FAILED');
+          self.sourceExecutions[sourceKey].remove(e => e.id === exec.id);
+          self.sourceExecutions[sourceKey].push(exec);
+        });
+      });
+    };
+    self.loadExecutions();
+
+    self.monitorEEJobExecution = function (jobExecutionId, wait) {
+      setTimeout(function () {
+        ohdsiUtil.cachedAjax({
+          url: config.api.url + 'execution_service/execution/status/' + jobExecutionId,
+          method: 'GET',
+          error: authAPI.handleAccessDenied,
+          success: function (d) {
+            self.loadExecutions();
+            if (d !== 'COMPLETED' && d !== 'FAILED') {
+              self.monitorEEJobExecution(jobExecutionId, 6000);
+            }
+          }
+        });
+      }, wait);
+    };
+
+    self.executePLP = function (sourceKey) {
+      if (config.useExecutionEngine) {
+        self.sourceProcessingStatus[sourceKey](true);
+        executionAPI.runExecution(sourceKey, self.patientLevelPredictionId(), 'PLP',
+          $('.language-r').text(),
+          function (c, status, xhr) {
+            self.monitorEEJobExecution(c.executionId, 100);
+          });
+      }
+    };
+
+    self.viewLastExecution = function (source) {
+      var executionCount = self.sourceExecutions[source.sourceKey]().length - 1;
+      for (var e = executionCount; e >= 0; e--) {
+        var execution = self.sourceExecutions[source.sourceKey]()[e];
+        if (execution.executionStatus === 'COMPLETED' || execution.executionStatus === 'FAILED') {
+          self.executionSelected(execution);
+          break;
+        }
+      }
+    };
+
+    self.executionSelected = function (execution) {
+      if(config.useExecutionEngine){
+        executionAPI.viewResults(execution.id);
+      }
+    };
+
+    self.toggleHistoryDisplay = function (sourceKey) {
+      self.sourceHistoryDisplay[sourceKey](!self.sourceHistoryDisplay[sourceKey]());
+    };
+
+
+    self.copyToClipboard = function (element) {
 			var currentClipboard = new clipboard('#btnCopyToClipboard');
 
 			currentClipboard.on('success', function (e) {
