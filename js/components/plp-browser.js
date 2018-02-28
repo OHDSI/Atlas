@@ -1,6 +1,5 @@
-define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'webapi/AuthAPI', 'moment', 'd3', 'webapi/PatientLevelPredictionAPI', 'access-denied'],
-	function (ko, $, view, config, authApi, moment, d3, plpAPI) {
-    function plpBrowser(params) {
+define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'webapi/MomentAPI', 'd3', 'webapi/PatientLevelPredictionAPI', 'webapi/AuthAPI', 'access-denied'], function (ko, $, view, config, momentApi, d3, plpAPI, authApi) {
+	function plpBrowser(params) {
 		var self = this;
 		self.loading = ko.observable(true);
 		self.analysisList = ko.observableArray();
@@ -52,19 +51,22 @@ define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'webapi/Au
 			},
 			{
 				title: 'Created',
-				render: function (s, p, d) {
-					return new moment(d.createdDate, "YYYY-MM-DD HH:mm")
-						.format('YYYY-MM-DD hh:mm:ss a');
-				}
+				render: function(s, p, d){
+					return momentApi.formatDateTimeUTC(d.createdDate);
+				},
+				sType: 'date-uk'
 			},
 			{
 				title: 'Modified',
 				render: function (s, p, d) {
-					var dateToFormat = d.modifiedDate || d.createdDate
-					return new moment(dateToFormat, "YYYY-MM-DD HH:mm")
-						.format('YYYY-MM-DD hh:mm:ss a');					
-				}
+          return momentApi.formatDateTimeUTC(d.modifiedDate);
+				},
+        sType: 'date-uk'
 			},
+			{
+				title: 'Author',
+				data: 'createdBy'
+			}
 		];
 
 		self.newPatientLevelPrediction = function () {

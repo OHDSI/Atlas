@@ -7,7 +7,6 @@ define(['knockout',
 	'atlas-state',
 	'job/jobDetail',
 	'ohdsi.util',
-	'knockout.dataTables.binding',
 	'databindings'
 ], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, sharedState, jobDetail) {
 	function negativeControls(params) {
