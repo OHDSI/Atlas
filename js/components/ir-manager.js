@@ -52,9 +52,9 @@ define(['knockout',
 		self.analysisList = ko.observableArray();
 		self.selectedAnalysis = self.model.currentIRAnalysis;
 		self.selectedAnalysisId = self.model.selectedIRAnalysisId;
-		selft.canCreate = ko.observable(authAPI.isPermittedCreateIR());
-		self.isDeletable = ko.observable(authAPI.isPermittedDeleteIR(self.selectedAnalysisId()));
-		self.isEditable = ko.observable(self.selectedAnalysisId() === null || authAPI.isPermittedEditIR(self.selectedAnalysisId()));
+		self.canCreate = ko.observable(!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authAPI.isAuthenticated && authAPI.isPermittedCreateIR()));
+		self.isDeletable = ko.observable(!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authAPI.isAuthenticated && authAPI.isPermittedDeleteIR(self.selectedAnalysisId())));
+		self.isEditable = ko.observable(self.selectedAnalysisId() === null || !config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authAPI.isAuthenticated && authAPI.isPermittedEditIR(self.selectedAnalysisId())));
 		self.selectedAnalysisId.subscribe((id) => {
 			self.isDeletable(id);
 			self.isEditable(id);

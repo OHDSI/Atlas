@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webapi/MomentAPI', 'cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config, momentApi) {
+define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webapi/MomentAPI', 'webapi/AuthAPI', 'cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config, momentApi, authApi) {
 	function cohortComparisonBrowser(params) {
 		var self = this;
 		self.reference = ko.observableArray();
