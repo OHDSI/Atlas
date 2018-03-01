@@ -305,7 +305,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 							if (info.status != "COMPLETE") {
 								hasPending = true;
+								if (self.selectedSource() && source.sourceId === self.selectedSource().sourceId) {
+									self.loadingReport(true);
+								}
 							} else {
+								if (self.selectedSource() && source.sourceId === self.selectedSource().sourceId) {
+									self.loadingReport(false);
+									self.selectViewReport(source);
+								}
 								var commaFormatted = d3.format(",");
 								source.executionDuration((info.executionDuration / 1000) + 's');
 								source.personCount(commaFormatted(info.personCount));
@@ -491,7 +498,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			self.getSourceInfo(source.sourceKey).status('PENDING');
-
+			if (self.selectedSource() && self.selectedSource().sourceId === source.sourceId) {
+				self.loadingReport(true);
+			}
 			var job = new jobDetail({
 				name: self.model.currentCohortDefinition().name() + "_" + source.sourceKey,
 				type: 'cohort-generation',
