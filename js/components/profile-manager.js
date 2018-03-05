@@ -1,6 +1,6 @@
 "use strict";
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3-tip', 'knockout.dataTables.binding', 'faceted-datatable', 'components/profileChart', 'css!./styles/profileManager.css'],
-	function (ko, view, d3, config, _, crossfilter, util, CohortDefinition, cohortDefinitionAPI) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/AuthAPI', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3-tip', 'knockout.dataTables.binding', 'faceted-datatable', 'components/profileChart', 'css!./styles/profileManager.css', 'access-denied'],
+	function (ko, view, d3, config, authApi, _, crossfilter, util, CohortDefinition, cohortDefinitionAPI) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
 			// is an array of recs in the group
@@ -41,6 +41,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 						self.currentCohortDefinition(new CohortDefinition(cohortDefinition));
 					});
 			}
+
+			self.isAuthenticated = authApi.isAuthenticated;
+			self.canViewProfiles = ko.pureComputed(function () {
+			  return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedViewProfiles()) || !config.userAuthenticationEnabled;
+			});
 
 			self.cohortSource = ko.observable();
 			self.person = ko.observable();
@@ -401,9 +406,9 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'lodash', 
 				self.highlightRecs.valueHasMutated();
 			}
 
-			self.highlightRowClick = function (data, context) {
-				event.stopPropagation();
-				$(context).toggleClass('selected');
+			self.highlightRowClick = function (data, evt, row) {
+				evt.stopPropagation();
+				$(row).toggleClass('selected');
 			}
 			self.highlightOptions = {};
 			self.options = {

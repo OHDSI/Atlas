@@ -69,9 +69,9 @@ define(['jquery', 'knockout', 'datatables.net', 'datatables.net-buttons', 'datat
 
 			if (binding.onRowClick != null) // attach a onRowclick handler if the options binding specifies it.
 			{
-				$(element).on("click", "tr", function () {
+				$(element).on("click", "tr", function (evt) {
 					if (this._DT_RowIndex != null) {
-						binding.onRowClick(data[this._DT_RowIndex], this);
+						binding.onRowClick(data[this._DT_RowIndex], evt, this);
 					}
 				});
 			}

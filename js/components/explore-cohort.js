@@ -28,9 +28,6 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 				$.ajax({
 					url: config.api.url + 'cohortresults/' + source.sourceKey + '/' + self.cohortDefinitionId() + '/breakdown',
 					method: 'GET',
-					headers: {
-						Authorization: authApi.getAuthorizationHeader()
-					},
 					contentType: 'application/json',
 					error: function (err) {
 						self.loading(false);

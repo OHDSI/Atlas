@@ -1,10 +1,12 @@
 <div class="criteriaSection" data-bind="with: Criteria">
 	<div style="position: relative">
 		<table class="criteriaTable">
-			<col style="width:16px" />
-			<col />
+			<colgroup>
+				<col style="width:100%"/>
+				<col />
+			</colgroup>
 			<tr>
-				<td colspan="2"> a visit occurrence of
+				<td> a visit occurrence of
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Visit'"></conceptset-selector>
 				</td>
 				<td>
@@ -16,6 +18,12 @@
 					</div>
 				</td>
 			</tr>
+		</table>
+		<table class="criteriaTable">
+			<colgroup>
+				<col style="width:20px"/>
+				<col />
+			</colgroup>		
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>

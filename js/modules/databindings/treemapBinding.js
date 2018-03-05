@@ -10,9 +10,9 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 		var treemap = d3.treemap()
 			.round(false)
 			.size([w, h]);
-		var hierarchy = d3.hierarchy(data, d => d.children).sum(d => d.size);	
+		var hierarchy = d3.hierarchy(data, d => d.children).sum(d => d.size);
 		var tree = treemap(hierarchy);
-		var nodes = tree.leaves().filter(d => d.data.size);		
+		var nodes = tree.leaves().filter(d => d.data.size);
 
 		var svg = d3.select(target)
 			.append("svg:svg")

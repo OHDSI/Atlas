@@ -1082,7 +1082,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 								cumulativeObservationLine.render(cumulativeData, "#cumulativeobservation", 230, 115, {
 									yFormat: d3.format('0%'),
-									interpolate: "step-before",
+									interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
 									xLabel: cumulativeObservationXLabel,
 									yLabel: 'Percent of Population'
 								});
@@ -2983,7 +2983,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							yLabel: "% Persons",
 							seriesName: "recordType",
 							showLegend: false,
-							colors: d3.scaleOrdinal(d3.schemeCategory10),
+							colors: d3.schemeCategory10,
 							tooltips: [{
 									label: 'Series',
 									accessor: function (o) {

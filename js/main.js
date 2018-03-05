@@ -1,3 +1,9 @@
+const bustCache = (() => {
+	const key = 'bustCache';
+	let hash = localStorage.getItem(key) || (localStorage[key] = Math.random().toString(36).substring(7));
+	return '_=' + hash;
+})();
+
 requirejs.config({
 	baseUrl: 'js',
 	config: {
@@ -5,8 +11,9 @@ requirejs.config({
 			useXhr: function (url, protocol, hostname, port) {
 				return true;
 			}
-		}
+		},
 	},
+	urlArgs: bustCache,
 	packages: [{
 			name: "databindings",
 			location: "modules/databindings"

@@ -5,6 +5,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			var self = this;
 			self.authApi = authApi;
 			self.componentParams = {};
+			self.config = config;
 			self.initPromises = [];
 			self.applicationStatus = ko.observable('initializing');
 			self.pendingSearch = ko.observable(false);
@@ -54,6 +55,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 
 				return pageTitle;
 			});
+			self.supportURL = config.supportUrl;
 			self.sharedState = sharedState;
 
 			self.initializationComplete = ko.pureComputed(function () {
@@ -61,14 +63,20 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			});
 
 			self.initComplete = function () {
-				var routerOptions = {
-					notfound: function () {
-						self.currentView('search');
-					},
-					on: function () {
-						self.currentView('loading');
-					}
-				};
+					var prevToken = authApi.token();
+					var routerOptions = {
+						notfound: function () {
+							self.currentView('search');
+						},
+						on: function () {
+							self.currentView('loading');
+							var promise = (self.config.userAuthenticationEnabled && (authApi.token() != null || (prevToken != null && authApi.token() === null))) ? authApi.refreshToken : null;
+							$.when(promise).done(function(){
+								prevToken = authApi.token();
+								self.currentView('loading');
+							});
+						}
+					};
 				var routes = {
 					'/': function () {
 						document.location = "#/home";
@@ -147,6 +155,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					},
 					'/roles': function () {
 						require(['roles'], function () {
+							self.componentParams = {
+								model: self
+							};
 							self.currentView('roles');
 						});
 					},
@@ -249,7 +260,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							self.componentParams = {
 								currentCohortComparisonId: self.currentCohortComparisonId,
 								currentCohortComparison: self.currentCohortComparison,
-								dirtyFlag: self.currentCohortComparisonDirtyFlag
+								dirtyFlag: self.currentCohortComparisonDirtyFlag,
 							};
 							self.currentView('cohort-comparison-manager');
 						});
@@ -298,6 +309,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
 							self.currentPatientLevelPredictionId(+modelId);
 							self.componentParams = {
+								model:self,
 								currentPatientLevelPredictionId: self.currentPatientLevelPredictionId,
 								currentPatientLevelPrediction: self.currentPatientLevelPrediction,
 								dirtyFlag: self.currentPatientLevelPredictionDirtyFlag,
@@ -934,9 +946,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						definitionPromise = $.ajax({
 							url: config.api.url + 'cohortdefinition/' + cohortDefinitionId,
 							method: 'GET',
-							headers: {
-								Authorization: authApi.getAuthorizationHeader()
-							},
 							contentType: 'application/json',
 							success: function (cohortDefinition) {
 								cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
@@ -946,9 +955,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						infoPromise = $.ajax({
 							url: config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info',
 							method: 'GET',
-							headers: {
-								Authorization: authApi.getAuthorizationHeader()
-							},
 							contentType: 'application/json',
 							success: function (generationInfo) {
 								self.currentCohortDefinitionInfo(generationInfo);
@@ -978,9 +984,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 								conceptPromise = $.ajax({
 									url: sharedState.vocabularyUrl() + 'lookup/identifiers',
 									method: 'POST',
-									headers: {
-										Authorization: authApi.getAuthorizationHeader()
-									},
 									contentType: 'application/json',
 									data: JSON.stringify(identifiers),
 									error: authApi.handleAccessDenied,
@@ -1140,11 +1143,13 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					url: config.api.url + 'conceptset/' + conceptSetId,
 					method: 'GET',
 					contentType: 'application/json',
+					error: self.authApi.handleAccessDenied,
 					success: function (conceptset) {
 						$.ajax({
 							url: config.api.url + 'conceptset/' + conceptSetId + '/expression',
 							method: 'GET',
 							contentType: 'application/json',
+							error: self.authApi.handleAccessDenied,
 							success: function (expression) {
 								self.setConceptSet(conceptset, expression.items);
 								self.currentView(viewToShow);
@@ -1287,6 +1292,23 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					return false;
 				}
 			});
+			self.canDeleteCurrentConceptSet = ko.pureComputed(function () {
+				if (!config.userAuthenticationEnabled)
+					return true;
+
+				/*
+				TODO:
+					if (self.currentConceptSetSource() == 'cohort') {
+						return self.canDeleteCurrentCohortDefinition();
+					} else
+				*/
+				if (self.currentConceptSetSource() == 'repository') {
+					return authApi.isPermittedDeleteConceptset(self.currentConceptSet().id);
+				} else {
+					return false;
+				}
+			});
+
 			self.currentConceptSetSource = ko.observable('repository');
 			self.currentConceptSetNegativeControls = ko.observable();
 			self.currentIncludedConceptIdentifierList = ko.observable();
@@ -1480,9 +1502,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					$.ajax({
 						url: config.api.url + 'role',
 						method: 'GET',
-						headers: {
-							Authorization: authApi.getAuthorizationHeader()
-						},
 						contentType: 'application/json',
 						error: authApi.handleAccessDenied,
 						success: function (data) {

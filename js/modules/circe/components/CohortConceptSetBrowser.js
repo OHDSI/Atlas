@@ -1,4 +1,4 @@
-define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularyprovider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'databindings'], function (ko, template, VocabularyProvider, appConfig, ConceptSet) {
+define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularyprovider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'webapi/AuthAPI', 'webapi/MomentAPI', 'access-denied', 'databindings'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, momentApi) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
@@ -41,6 +41,10 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 			}
 		}
 
+    self.formatDate = function(data, type, row) {
+    	return momentApi.formatDateTimeUTC(data);
+		};
+
 		self.criteriaContext = params.criteriaContext;
 		self.cohortConceptSets = params.cohortConceptSets;
 		self.onActionComplete = params.onActionComplete;
@@ -55,6 +59,14 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 		self.sources = [];
 		self.sources.push(appConfig.api);
 		self.selectedSource = ko.observable(self.sources[0]);
+
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canReadConceptsets = ko.pureComputed(function () {
+		  return (appConfig.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !appConfig.userAuthenticationEnabled;
+		});
+		self.canReadCohorts = ko.pureComputed(function () {
+		  return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled;
+		});
 
 		self.loadConceptSetsFromRepository = function (url) {
 			self.loading(true);

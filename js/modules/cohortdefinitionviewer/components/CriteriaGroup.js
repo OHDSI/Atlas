@@ -24,6 +24,8 @@ define(['knockout', 'cohortbuilder/CriteriaTypes','cohortbuilder/CriteriaGroup',
 				return "drug-era-criteria-viewer";
 			else if (data.hasOwnProperty("DoseEra"))
 				return "dose-era-criteria-viewer";
+			else if (data.hasOwnProperty("PayerPlanPeriod"))
+				return "payer-plan-period-criteria-viewer";					
 			else if (data.hasOwnProperty("ProcedureOccurrence"))
 				return "procedure-occurrence-criteria-viewer";
 			else if (data.hasOwnProperty("VisitOccurrence"))

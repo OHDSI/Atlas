@@ -1,9 +1,17 @@
-define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'moment', 'cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config, moment) {
+define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webapi/MomentAPI', 'webapi/AuthAPI', 'cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config, momentApi, authApi) {
 	function cohortComparisonBrowser(params) {
 		var self = this;
 		self.reference = ko.observableArray();
 		self.loading = ko.observable(false);
 		self.config = config;
+
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canReadEstimations = ko.pureComputed(function () {
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadEstimations()) || !config.userAuthenticationEnabled;
+		});
+		self.canCreateEstimation = ko.pureComputed(function(){
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCreateEstimation()) || !config.userAuthenticationEnabled;
+			});
 
 		self.options = {
 			Facets: [
@@ -45,17 +53,18 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'momen
 			{
 				title: 'Created',
 				render: function (s, p, d) {
-					return new moment(d.created)
-						.format('YYYY-MM-DD hh:mm:ss a');
+					return momentApi.formatDateTimeUTC(d.created);
 				}
 			},
 			{
 				title: 'Modified',
 				render: function (s, p, d) {
-					var dateToFormat = d.modified || d.created
-					return new moment(dateToFormat)
-						.format('YYYY-MM-DD hh:mm:ss a');					
+					return momentApi.formatDateTimeUTC(d.updated);
 				}
+			},
+			{
+				title: 'Author',
+				data: 'createdBy'
 			}
 		];
 
@@ -68,6 +77,7 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'momen
 		$.ajax({
 			url: config.api.url + 'comparativecohortanalysis',
 			method: 'GET',
+			error: authApi.handleAccessDenied,
 			success: function (d) {
 				self.loading(false);
 				self.reference(d);

@@ -50,13 +50,22 @@
 			<a class="list-group-item" data-bind="css: plpCss, attr: {href: plpURL}"><i class="fa fa-fw fa-heartbeat" aria-hidden="true"></i>&nbsp;Prediction</a>
 			<a class="list-group-item" href="#/jobs"><i class="fa fa-fw fa-tasks" aria-hidden="true"></i>&nbsp;Jobs</a>
 			<a class="list-group-item" href="#/configure"><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>&nbsp;Configuration</a>
-			<a class="list-group-item" target="_blank" href="https://github.com/ohdsi/atlas/issues" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
+			<a class="list-group-item" target="_blank" data-bind="attr: {href: supportURL}" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
+		</div>
+
+		<div id="wrapper_ohdsi">
+			<div><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></div>
+			<div style="margin-bottom:10px;">open source software</div>
+
+			<div>provided by</div>
+			<div><a href="http://www.ohdsi.org"><img src="images/ohdsi_color.png"></a></div>
+			<div><a href="http://www.ohdsi.org">join the journey</a></div>
 		</div>
 	</div>
 
 	<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete()">
 		<div id="wrapperMainWindowContainer">
-			<user-bar></user-bar>
+			<user-bar params="{model: pageModel}"></user-bar>
 			<div data-bind="if:sharedState.appInitializationStatus() == 'failed'">
 				<div style="width:100px;margin-left:auto;margin-right:auto;">
 					<svg width="100" height="100" viewBox="0 -200 400 400">
@@ -112,7 +121,7 @@
 				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text: pageModel.currentCohortDefinition().name"></a>
 				<!-- ko if: pageModel.currentConceptSet() != null && pageModel.currentConceptSetSource() == 'cohort' -->
 				<i class="fa fa-chevron-right"></i>
-				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name()"></a>
+				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptsets/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name()"></a>
 				<!-- /ko -->
 			</div>
 			<!-- /ko -->
