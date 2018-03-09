@@ -15,7 +15,6 @@
 			<li class="dropdown-item conceptset" style="cursor:pointer">
 				<a>
 					<div style="max-width:195px; overflow-x: hidden; text-overflow:ellipsis;" data-bind="text: name, attr:{'title': name}, click: $component.itemClicked"></div>
-					<div class="thumbnail" style="position:absolute"><conceptset-quickview params="conceptSet: $data"></conceptset-quickview></div>
 				</a>
 			</li>
 			<!-- ko if: $component.conceptSetId() != null && $index() == 0  -->
