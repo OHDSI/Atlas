@@ -247,6 +247,9 @@
 									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'impala' }, click: function() { $component.exportSqlMode('impala') };">
 										<a>Impala</a>
 									</li>
+									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'netezza' }, click: function() { $component.exportSqlMode('netezza') };">
+										<a>Netezza</a>
+									</li>
 								</ul>
 							</div>
 							<div class="col-md-3" style="text-align: right">
@@ -279,6 +282,9 @@
 								</div>
 								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'impala' && !$component.isLoadingSql()">
 									<pre data-bind="text: $component.generatedSql.impala"></pre>
+								</div>
+								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'netezza' && !$component.isLoadingSql()">
+									<pre data-bind="text: $component.generatedSql.netezza"></pre>
 								</div>
 							</div>
 						</div>
