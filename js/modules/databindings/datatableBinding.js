@@ -46,15 +46,14 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 					const hasOriginalRender = typeof originalRender === 'function';
 					const hasDataAccessor = typeof originalDataAccessor === 'function';
 					
-					return {
-						...column,
+					return Object.assign({}, column, {
 						data: hasDataAccessor
 							? d => filterXSS(originalDataAccessor(d), config.xssOptions)
 							: filterXSS(originalDataAccessor, config.xssOptions),
 						render: hasOriginalRender
 							? (s, p, d) => filterXSS(originalRender(s, p, d), config.xssOptions)
 							: originalRender,
-					};
+					});
 				});
 
 				$(element).DataTable(binding.options);
