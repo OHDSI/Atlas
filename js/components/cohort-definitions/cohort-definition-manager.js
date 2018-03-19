@@ -1040,9 +1040,15 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			});
 		}
 
-		// dispose subscriptions
+		// dispose subscriptions / cleanup computed observables (non-pureComputeds)
 		self.dispose = function () {
-			//self.currentCohortDefinitionSubscription.dispose();
+			self.cohortDefinitionLink.dispose();
+			self.cohortDefinitionCaption.dispose();
+			self.tabPath.dispose();
+			self.sortedConceptSets.dispose();
+			self.self.reportingState();
+			self.showReportNameDropdown.dispose();
+			
 		}
 		self.getCriteriaIndexComponent = function (data) {
 			data = ko.utils.unwrapObservable(data);

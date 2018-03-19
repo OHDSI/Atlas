@@ -867,3 +867,17 @@
 		</div>
 	</div>
 </div>
+
+<div data-bind="if: model.currentReport() == 'Healthcare Utilization' && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Healthcare Utilization<i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+			TBD
+			</div>
+		</div>
+	</div>
+</div>
+
