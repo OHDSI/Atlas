@@ -106,6 +106,10 @@ define(function (require, exports) {
 			name: "Tornado",
 			reportKey: "Tornado",
 			analyses: [3000, 3001]
+		}, {
+			name: "Healthcare Utilization",
+			reportKey: "Healthcare Utilization",
+			analyses: [230,231,232,233, 1808, 1]
 		}
 	];
 
@@ -120,7 +124,8 @@ define(function (require, exports) {
 	}
 
 	function getQuickAnalysisIdentifiers() {
-		return [0, 1, 2, 3, 4, 5, 900, 907, 1000, 1007, 3000, 3001];
+		//return [0, 1, 2, 3, 4, 5, 900, 907, 1000, 1007, 3000, 3001];
+		return [230,231,232,233, 1808, 1];
 	}
 
 	function getAvailableReports(completedAnalyses) {
