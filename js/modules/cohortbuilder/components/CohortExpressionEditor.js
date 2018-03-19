@@ -398,6 +398,10 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			}, 2);
 		};
+		
+		self.inclusionRuleNavMinHeight = function() {
+			return Math.max(75, Math.min(550, self.expression().InclusionRules().length * 40) ) + "px";
+		}
 
 		// Subscriptions
 

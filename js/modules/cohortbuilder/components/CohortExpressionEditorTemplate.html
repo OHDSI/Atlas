@@ -131,45 +131,42 @@
 			 { event: 'click', selector: '.copyInclusionRule', callback: copyInclusionRule},
 			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule}]">
 
-			<table style="width: 100%">
-				<colgroup>
-					<col span="1" style="width: 200px;" />
-					<col span="1" />
-				</colgroup>
-				<tbody>
-					<tr>
-						<td style="vertical-align: top; padding-right: 20px;">
-							<div>
-								<button class="btn btn-sm btn-success" data-bind="click: addInclusionRule">New qualifying inclusion criteria</button>
-							</div>
-							<div>
-								<table style="width: 100%" class="inclusionRules">
-									<tbody data-bind="sortable: {data: expression().InclusionRules, connectClass: 'inclusionRuleItem'}">
-										<tr data-bind="click: $component.selectInclusionRule, css: { selectedInclusion: $data == $component.selectedInclusionRule() }">
-											<td style="width:20px; text-align: right; vertical-align: top;" data-bind="text: ($index() + 1) + '.'">
-											</td>
-											<td style="vertical-align: top;" class="inclusionRules">
-												<div data-bind="text: ((name() || '').length > 0) ? name() : 'Unnamed Criteria'"></div>
-												<!-- ko if: (description() || '').length > 0 -->
-												<div class="description" data-bind="text: description()"></div>
-												<!-- /ko -->
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</td>
-						<td style="vertical-align: top; padding-left: 25px; border-left: 1px #eee solid;">
-							<!-- ko if: $component.selectedInclusionRule() -->
-							<inclusion-rule-editor params="{IndexRule: expression, InclusionRule: selectedInclusionRule}"></inclusion-rule-editor>
-							<!-- /ko -->
-							<!-- ko ifnot: $component.selectedInclusionRule() -->
-							<div>Please select a qualifying inclusion criteria to edit.</div>
-							<!-- /ko -->
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			<div style="display: flex">
+				<div style="position:relative; min-width:220px; overflow-y:auto" data-bind="style: {'min-height': inclusionRuleNavMinHeight()}">
+
+					<div style="position:absolute; top:0px; bottom:0px; left:0px; right:2px;">
+						<div>
+							<button class="btn btn-sm btn-success" data-bind="click: addInclusionRule">New qualifying inclusion criteria</button>
+						</div>
+						<div>
+							<table style="width: 100%" class="inclusionRules">
+								<tbody data-bind="sortable: {data: expression().InclusionRules, connectClass: 'inclusionRuleItem'}">
+									<tr data-bind="click: $component.selectInclusionRule, css: { selectedInclusion: $data == $component.selectedInclusionRule() }">
+										<td style="width:20px; text-align: right; vertical-align: top;" data-bind="text: ($index() + 1) + '.'">
+										</td>
+										<td style="vertical-align: top;" class="inclusionRules">
+											<div data-bind="text: ((name() || '').length > 0) ? name() : 'Unnamed Criteria'"></div>
+											<!-- ko if: (description() || '').length > 0 -->
+											<div class="description" data-bind="text: description()"></div>
+											<!-- /ko -->
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>				
+					</div>
+					
+				</div>
+
+				<div>
+					<!-- ko if: $component.selectedInclusionRule() -->
+					<inclusion-rule-editor params="{IndexRule: expression, InclusionRule: selectedInclusionRule}"></inclusion-rule-editor>
+					<!-- /ko -->
+					<!-- ko ifnot: $component.selectedInclusionRule() -->
+					<div>Please select a qualifying inclusion criteria to edit.</div>
+					<!-- /ko -->							
+				</div>
+			</div>
 		</div>
 		<div style="padding-top: 3px" data-bind="with: expression().ExpressionLimit">Limit qualifying cohort to:
 			<select data-bind="options: $component.options.resultLimitOptions,
