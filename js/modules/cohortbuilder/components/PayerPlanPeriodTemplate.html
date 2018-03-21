@@ -15,14 +15,14 @@
 							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
 						</ul>
 					</div>
-				</td>				
+				</td>
 			</tr>
 		</table>
 		<table class="criteriaTable">
 			<colgroup>
 				<col style="width:20px"/>
 				<col />
-			</colgroup>		
+			</colgroup>
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
@@ -161,6 +161,7 @@
 				</td>
 			</tr>
 		</table>
-		<span class="fa fa-exclamation-triangle" style="color:#d4bd09"></span><i> Note: Payer Plan Period criteria is only available in CDM v5.3 and later.</i>
+        <div class="addCriterion" data-bind="ddSlickAction: $component.addCriterionSettings"></div>
+        <span class="fa fa-exclamation-triangle" style="color:#d4bd09"></span><i> Note: Payer Plan Period criteria is only available in CDM v5.3 and later.</i>
 	</div>
 </div>
