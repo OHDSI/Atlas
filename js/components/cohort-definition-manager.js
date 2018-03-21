@@ -1,23 +1,23 @@
 define(['knockout', 'text!./cohort-definition-manager.html',
-	'appConfig',
-	'cohortbuilder/CohortDefinition',
-	'webapi/CohortDefinitionAPI',
-	'ohdsi.util',
-	'cohortbuilder/CohortExpression',
-	'cohortbuilder/InclusionRule',
-	'conceptsetbuilder/InputTypes/ConceptSet',
-	'webapi/CohortReportingAPI',
-	'atlas-state',
-	'clipboard',
-	'd3',
-	'job/jobDetail',
-	'cohortbuilder/components/FeasibilityReportViewer',
-	'databindings',
-	'faceted-datatable',
-	'databindings',
-	'cohortdefinitionviewer/expressionCartoonBinding',
-	'cohortfeatures',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, clipboard, d3, jobDetail) {
+				'appConfig',
+				'cohortbuilder/CohortDefinition',
+				'webapi/CohortDefinitionAPI',
+				'webapi/MomentAPI',
+				'ohdsi.util',
+		'cohortbuilder/CohortExpression',
+				'cohortbuilder/InclusionRule',
+				'conceptsetbuilder/InputTypes/ConceptSet',
+        'webapi/CohortReportingAPI',
+				'atlas-state',
+        'clipboard',
+        'd3',
+        'job/jobDetail',
+        'cohortbuilder/components/FeasibilityReportViewer',
+				'faceted-datatable',
+				'databindings',
+				'cohortdefinitionviewer/expressionCartoonBinding',
+				'cohortfeatures',
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, clipboard, d3, jobDetail) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -298,17 +298,16 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 							source.status(info.status);
 							source.includeFeatures(info.includeFeatures);
 							source.isValid(info.isValid);
-							var date = new Date(info.startTime);
-							source.startTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+							source.startTime(momentApi.formatDateTime(new Date(info.startTime)));
 							source.executionDuration('...');
 							source.personCount('...');
 							source.recordCount('...');
 
-							if (info.status != "COMPLETE") {
+							if (info.status != "COMPLETE" && info.status != "FAILED") {
 								hasPending = true;
 							} else {
 								var commaFormatted = d3.format(",");
-								source.executionDuration((info.executionDuration / 1000) + 's');
+								source.executionDuration(momentApi.formatDuration(info.executionDuration));
 								source.personCount(commaFormatted(info.personCount));
 								source.recordCount(commaFormatted(info.recordCount));
 								source.failMessage(info.failMessage);
