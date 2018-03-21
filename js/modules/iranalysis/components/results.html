@@ -34,7 +34,7 @@
 				<!-- ko ifnot: info().executionInfo.isValid -->
 				<td colspan="4"><div class="overflow-ellipsis" style="width:345px" data-bind="text: 'Error: ' + info().executionInfo.message, attr:{title: info().executionInfo.message}"></div></td>
 				<!-- /ko -->
-				<td style="font-size: .9em" class="dataCol" data-bind="text: info().executionInfo.startTime"></td>
+				<td style="font-size: .9em" class="dataCol" data-bind="text: $component.formatDateTime(info().executionInfo.startTime)"></td>
 				<td class="dataCol" data-bind="text: $component.msToTime(info().executionInfo.executionDuration)"></td>			
 				<td><button class="btn btn-sm btn-danger removeResult">Remove</button></td>
 			<!-- /ko -->

@@ -1,23 +1,23 @@
 define(['knockout', 'text!./cohort-definition-manager.html',
-	'appConfig',
-	'cohortbuilder/CohortDefinition',
-	'webapi/CohortDefinitionAPI',
-	'ohdsi.util',
-	'cohortbuilder/CohortExpression',
-	'cohortbuilder/InclusionRule',
-	'conceptsetbuilder/InputTypes/ConceptSet',
-	'webapi/CohortReportingAPI',
-	'atlas-state',
-	'clipboard',
-	'd3',
-	'job/jobDetail',
-	'cohortbuilder/components/FeasibilityReportViewer',
-	'databindings',
-	'faceted-datatable',
-	'databindings',
-	'cohortdefinitionviewer/expressionCartoonBinding',
-	'cohortfeatures',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, clipboard, d3, jobDetail) {
+				'appConfig',
+				'cohortbuilder/CohortDefinition',
+				'webapi/CohortDefinitionAPI',
+				'webapi/MomentAPI',
+				'ohdsi.util',
+		'cohortbuilder/CohortExpression',
+				'cohortbuilder/InclusionRule',
+				'conceptsetbuilder/InputTypes/ConceptSet',
+        'webapi/CohortReportingAPI',
+				'atlas-state',
+        'clipboard',
+        'd3',
+        'job/jobDetail',
+        'cohortbuilder/components/FeasibilityReportViewer',
+				'faceted-datatable',
+				'databindings',
+				'cohortdefinitionviewer/expressionCartoonBinding',
+				'cohortfeatures',
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, clipboard, d3, jobDetail) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -298,17 +298,16 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 							source.status(info.status);
 							source.includeFeatures(info.includeFeatures);
 							source.isValid(info.isValid);
-							var date = new Date(info.startTime);
-							source.startTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+							source.startTime(momentApi.formatDateTime(new Date(info.startTime)));
 							source.executionDuration('...');
 							source.personCount('...');
 							source.recordCount('...');
 
-							if (info.status != "COMPLETE") {
+							if (info.status != "COMPLETE" && info.status != "FAILED") {
 								hasPending = true;
 							} else {
 								var commaFormatted = d3.format(",");
-								source.executionDuration((info.executionDuration / 1000) + 's');
+								source.executionDuration(momentApi.formatDuration(info.executionDuration));
 								source.personCount(commaFormatted(info.personCount));
 								source.recordCount(commaFormatted(info.recordCount));
 								source.failMessage(info.failMessage);
@@ -520,6 +519,62 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					}, 3000);
 				}
 			});
+		}
+
+		self.generateAnalyses = function (data, event) {
+			$(event.target).prop("disabled", true);
+
+			var requestedAnalysisTypes = [];
+			var runHeel = false;
+			$('input[type="checkbox"][name="' + data.sourceKey + '"]:checked').each(function () {
+				requestedAnalysisTypes.push($(this).val());
+				if ($(this).val() == 'Heracles Heel') {
+					runHeel = true;
+				}
+			});
+
+			var analysisIdentifiers = [];
+
+			var analysesTypes = pageModel.cohortAnalyses();
+			for (var i = 0; i < analysesTypes.length; i++) {
+				if (requestedAnalysisTypes.indexOf(analysesTypes[i].name) >= 0) {
+					analysisIdentifiers.push.apply(analysisIdentifiers, analysesTypes[i].analyses);
+				}
+			}
+
+			if (analysisIdentifiers.length > 0) {
+				$(event.target).prop('value', 'Starting job...');
+				var cohortDefinitionId = pageModel.currentCohortDefinition().id();
+				var cohortJob = {};
+
+				cohortJob.jobName = 'HERACLES' + '_COHORT_' + cohortDefinitionId + '_' + data.sourceKey;
+				cohortJob.sourceKey = data.sourceKey;
+				cohortJob.smallCellCount = 5;
+				cohortJob.cohortDefinitionIds = [];
+				cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
+				cohortJob.analysisIds = analysisIdentifiers;
+				cohortJob.runHeraclesHeel = runHeel;
+				cohortJob.cohortPeriodOnly = false;
+
+				// set concepts
+				cohortJob.conditionConceptIds = [];
+				cohortJob.drugConceptIds = [];
+				cohortJob.procedureConceptIds = [];
+				cohortJob.observationConceptIds = [];
+				cohortJob.measurementConceptIds = [];
+
+				$.ajax({
+					url: config.api.url + 'cohortanalysis',
+					data: JSON.stringify(cohortJob),
+					method: 'POST',
+					contentType: 'application/json',
+					success: function (info) {
+						// to do - handle returned reference to job
+					}
+				});
+			} else {
+				$(event.target).prop("disabled", false);
+			}
 		}
 
 		self.hasCDM = function (source) {

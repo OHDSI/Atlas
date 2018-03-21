@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webapi/AuthAPI', 'moment', 'faceted-datatable'], function (ko, view, config, authApi, moment) {
+define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webapi/AuthAPI', 'webapi/MomentAPI', 'faceted-datatable'], function (ko, view, config, authApi, momentApi) {
 	function cohortDefinitionBrowser(params) {
 		var self = this;
 		self.reference = ko.observableArray();
@@ -66,17 +66,16 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webap
 			},
 			{
 				title: 'Created',
+				type: 'date',
 				render: function (s, p, d) {
-					return new moment(d.createdDate, "YYYY-MM-DD HH:mm")
-						.format('YYYY-MM-DD hh:mm:ss a');
+					return momentApi.formatDateTimeUTC(d.createdDate);
 				}
 			},
 			{
 				title: 'Updated',
+				type: 'date',
 				render: function (s, p, d) {
-					var dateToFormat = d.modifiedDate || d.createdDate
-					return new moment(dateToFormat, "YYYY-MM-DD HH:mm")
-						.format('YYYY-MM-DD hh:mm:ss a');
+					return momentApi.formatDateTimeUTC(d.modifiedDate);
 				}
 			},
 			{
