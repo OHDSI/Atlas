@@ -57,6 +57,7 @@
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'conceptsets' }" class="tab-pane">
 				<div style="padding-bottom: 10px;" class="pull-right">
+					<!-- Button is hidden since function exportConceptSetsCSV not yet implemented -->
 					<button type="button" style="display: none" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
 				</div>
 				<!-- ko with: selectedAnalysis().expression -->										

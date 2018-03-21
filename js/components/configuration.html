@@ -59,20 +59,15 @@
 				</table>
 			</div>
 
-      <div data-bind="if: isInProgress()" class="text-center">
-        <loading params="theme: 'light'" />
-      </div>
-
-      <div class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache">Clear Configuration Cache</div>
-      <div data-bind="if: config.userAuthenticationEnabled">
-        <a href="#/roles" class="btn btn-sm btn-primary" style="width: 175px" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
-      </div>
-    </div>
-  </div>
-</div>
-<div data-bind="ifnot:$component.hasAccess">
-  <div class="padded">
-    <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-      <div class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache">Clear Configuration Cache</div>
-  </div>
+			<div>
+				<div class="padded">
+					<div class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache">Clear Configuration Cache</div>
+				</div>
+			</div>
+			<div data-bind="if: config.userAuthenticationEnabled && $component.hasAccess">
+				<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+				<a href="#/roles" class="btn btn-sm btn-primary" style="width: 175px" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
+			</div>
+		</div>
+	</div>
 </div>

@@ -8,11 +8,11 @@ define(function(require, exports) {
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
 
     var authProviders = config.authProviders.reduce(function(result, current) {
-      result[config.api.url + current.url] = current;
-      return result;
+        result[config.api.url + current.url] = current;
+        return result;
     }, {});
 
-  var getServiceUrl = function () {
+    var getServiceUrl = function () {
         return config.webAPIRoot;
     };
 
@@ -299,10 +299,6 @@ define(function(require, exports) {
         return isPermitted('configuration:edit:ui')
     }
 
-    var isPermittedEditSourcePriortiy = function() {
-        return isPermitted('source:*:daimons:*:set-priority:post')
-    }
-
     var isPermittedReadRoles = function() {
         return isPermitted('role:get');
     }
@@ -383,7 +379,6 @@ define(function(require, exports) {
         isPermittedReadJobs: isPermittedReadJobs,
 
         isPermittedEditConfiguration: isPermittedEditConfiguration,
-        isPermittedEditSourcePriortiy,
 
         isPermittedReadRoles: isPermittedReadRoles,
         isPermittedReadRole: isPermittedReadRole,
