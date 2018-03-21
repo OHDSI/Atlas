@@ -1,53 +1,55 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, sharedState, querystring, d3) {
-		var appModel = function () {
-			$.support.cors = true;
-			var self = this;
-			self.authApi = authApi;
-			self.componentParams = {};
-			self.config = config;
-			self.initPromises = [];
-			self.applicationStatus = ko.observable('initializing');
-			self.pendingSearch = ko.observable(false);
-			self.pageTitle = ko.pureComputed(function () {
-				var pageTitle = "ATLAS";
-				switch (self.currentView()) {
-					case 'loading':
-						pageTitle = pageTitle + ": Loading";
-						break;
-					case 'home':
-						pageTitle = pageTitle + ": Home";
-						break;
-					case 'search':
-						pageTitle = pageTitle + ": Search";
-						break;
-					case 'conceptsets':
-					case 'conceptset':
-						pageTitle = pageTitle + ": Concept Sets";
-						break;
-					case 'concept':
-						pageTitle = pageTitle + ": Concept";
-						break;
-					case 'cohortdefinitions':
-					case 'cohortdefinition':
-						pageTitle = pageTitle + ": Cohorts";
-						break;
-					case 'irbrowser':
-					case 'iranalysis':
-						pageTitle = pageTitle + ": Incidence Rate";
-						break;
-					case 'estimations':
-					case 'estimation':
-						pageTitle = pageTitle + ": Estimation";
-						break;
-					case 'profiles':
-						pageTitle = pageTitle + ": Profiles";
-						break;
-					case 'plp-browser':
+define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/MomentAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'], function ($, ko, ohdsiUtil, config, authApi, momentApi, sharedState, querystring, d3) {
+	var appModel = function () {
+		$.support.cors = true;
+		var self = this;
+		self.authApi = authApi;
+		self.config = config;
+		self.componentParams = {};
+		self.initPromises = [];
+		self.applicationStatus = ko.observable('initializing');
+		self.pendingSearch = ko.observable(false);
+		self.pageTitle = ko.pureComputed(function () {
+			var pageTitle = "ATLAS";
+			switch (self.currentView()) {
+				case 'loading':
+					pageTitle = pageTitle + ": Loading";
+					break;
+				case 'home':
+					pageTitle = pageTitle + ": Home";
+					break;
+				case 'feedback':
+					pageTitle = pageTitle + ": Feedback";
+					break;
+				case 'search':
+					pageTitle = pageTitle + ": Search";
+					break;
+				case 'conceptsets':
+				case 'conceptset':
+					pageTitle = pageTitle + ": Concept Sets";
+					break;
+				case 'concept':
+					pageTitle = pageTitle + ": Concept";
+					break;
+				case 'cohortdefinitions':
+				case 'cohortdefinition':
+					pageTitle = pageTitle + ": Cohorts";
+					break;
+				case 'irbrowser':
+				case 'iranalysis':
+					pageTitle = pageTitle + ": Incidence Rate";
+					break;
+				case 'estimations':
+				case 'estimation':
+					pageTitle = pageTitle + ": Estimation";
+					break;
+				case 'profiles':
+					pageTitle = pageTitle + ": Profiles";
+					break;
+			case 'plp-browser':
 					case 'plp-manager':
 						pageTitle = pageTitle + ": PLP";
 						break;
-				}
+			}
 
 				if (self.hasUnsavedChanges()) {
 					pageTitle = "*" + pageTitle + " (unsaved)";
@@ -56,27 +58,26 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 				return pageTitle;
 			});
 			self.supportURL = config.supportUrl;
+			self.targetSupportURL = config.supportUrl.startsWith("#") ? "_self" : "_blank";
 			self.sharedState = sharedState;
 
 			self.initializationComplete = ko.pureComputed(function () {
 				return sharedState.appInitializationStatus() != 'initializing';
 			});
 
-			self.initComplete = function () {
-					var prevToken = authApi.token();
-					var routerOptions = {
-						notfound: function () {
-							self.currentView('search');
-						},
-						on: function () {
-							self.currentView('loading');
-							var promise = (self.config.userAuthenticationEnabled && (authApi.token() != null || (prevToken != null && authApi.token() === null))) ? authApi.refreshToken : null;
-							$.when(promise).done(function(){
-								prevToken = authApi.token();
-								self.currentView('loading');
-							});
-						}
-					};
+		self.initComplete = function () {
+				var prevToken = authApi.token();
+				var routerOptions = {
+					notfound: function () {
+						self.currentView('search');},
+					on: function () {
+						var promise = (self.config.userAuthenticationEnabled && (authApi.token() != null || (prevToken != null && authApi.token() === null))) ? authApi.refreshToken : null;
+						$.when(promise).done(function(){
+							prevToken = authApi.token();
+              self.currentView('loading');
+            });
+					}
+				};
 				var routes = {
 					'/': function () {
 						document.location = "#/home";
@@ -98,7 +99,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							self.currentView('cohort-definitions');
 						});
 					},
-					'/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': function (cohortDefinitionId, path) {
+          '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': function (cohortDefinitionId, path) {
 						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
 							// Determine the view to show on the cohort manager screen based on the path
 							path = path.split("/");
@@ -178,6 +179,14 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							self.currentView('home');
 						});
 					},
+					'/feedback': function () {
+						require(['feedback'], function () {
+							self.componentParams = {
+								model: self,
+							};
+							self.currentView('feedback');
+            });
+          },
 					'/welcome/:token': function (token) {
 						require(['welcome'], function () {
 							authApi.token(token);
@@ -198,6 +207,14 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 								model: self
 							};
 							self.currentView('report-manager');
+						});
+					},
+					'/import': function () {
+						require(['importer'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('importer');
 						});
 					},
 					'/profiles/?((\w|.)*)': function (path) {
@@ -244,6 +261,23 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 								model: self
 							};
 							self.currentView('search');
+						});
+					},
+					'/feasibility': function () {
+						require(['feasibility-manager', 'feasibility-browser'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('feasibility-manager');
+						});
+					},
+					'/feasibility/:feasibilityId:': function (feasibilityId) {
+						require(['feasibility-analyzer'], function () {
+							self.componentParams = {
+								model: self
+							};
+							self.currentView('feasibility-manager');
+							self.feasibilityId(feasibilityId);
 						});
 					},
 					'/estimation': function () {
@@ -1366,9 +1400,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			});
 
 
-			self.currentCohortDefinitionInfo = ko.observable();
-			self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
-			self.feasibilityId = ko.observable();
+  		self.currentCohortDefinitionInfo = ko.observable();
+		  self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
+		  self.feasibilityId = ko.observable();
 
 			self.selectedIRAnalysisId = ko.observable();
 			self.currentIRAnalysis = ko.observable();
