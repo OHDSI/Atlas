@@ -3,8 +3,8 @@
 	<div class="user-bar-container">
 		<a data-toggle="modal" data-target="#jobModal"><i data-bind="css: {pending: jobNotificationsPending}" class="fa fa-bell"></i></a>
 		<span data-bind="if:appConfig.userAuthenticationEnabled===true" style="display: inline-block;">
-			<div data-bind="if: !isLoggedIn()"><a data-toggle="modal" data-target="#myModal"><i class="fa fa-sign-in"></i> Sign In</a></div>
-			<div data-bind="if: isLoggedIn()"><a data-toggle="modal" data-target="#myModal"><i class="fa fa-sign-in"></i> Sign Out</a></div>
+			<div title="Sign In" data-bind="if: !isLoggedIn()"><a data-toggle="modal" data-target="#myModal"><i class="fa fa-sign-in"></i></a></div>
+			<div title="Sign Out" data-bind="if: isLoggedIn()"><a data-toggle="modal" data-target="#myModal"><i class="fa fa-sign-in"></i></a></div>
 		</span>
 	</div>
 </div>

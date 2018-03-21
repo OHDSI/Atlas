@@ -21,7 +21,7 @@ table.cohort-generate-sources thead, table.cohort-generate-sources tbody tr {
 }
 
 table.cohort-generate-sources thead {
-  width: calc(100%-1em)
+  width: calc(100% - 1em)
 }
 
 .breadcrumb-container {
@@ -35,10 +35,10 @@ table.cohort-generate-sources thead {
 }
 
 .btn.btn-sm {
-  /* padding-top: 0px; */
-  /* padding-bottom: 0px; */
-  /* margin-top: 0px; */
-  /* line-height: 25px; */
+	/* padding-top: 0; */
+	/* padding-bottom: 0; */
+	/* margin-top: 0; */
+	/* line-height: 25px; */
 }
 
 .asset-heading {
@@ -60,10 +60,10 @@ table.cohort-generate-sources thead {
 }
 
 body.splash {
-  font-size: 12px;
-  margin: 0px;
-  padding: 0px;
-  background: none;
+	font-size: 12px;
+	margin: 0;
+	padding: 0;
+	background: none;
 }
 
 body {
@@ -73,13 +73,13 @@ body {
 }
 
 #wrapperLeftMenu {
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  width: 150px;
-  bottom: 0;
-  background-color: #003142;
-  border-right: solid 1px #888;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 150px;
+	bottom: 0;
+	background-color: #003142;
+	border-right: solid 1px #888;
 }
 
 #wrapperLeftMenu a.list-group-item {
@@ -105,18 +105,19 @@ body {
 }
 
 .heading {
-  font-size: 14px;
-  color: #000;
-  font-weight: normal;
-  margin: 12px 0px 3px 0px;
+	font-size: 14px;
+	color: #000;
+	font-weight: normal;
+	margin: 12px 0 3px 0;
+	padding: 0 3px 0 3px;
 }
 
 .subheading {
-  font-size: 12px;
-  color: #000;
-  font-weight: normal;
-  margin: 7px 0px 3px 0px;
-  padding: 0px 5px 0px 5px;
+	font-size: 12px;
+	color: #000;
+	font-weight: normal;
+	margin: 7px 0 3px 0;
+	padding: 0 5px 0 5px;
 }
 
 #wrapperConfigure {
@@ -156,9 +157,9 @@ body {
 }
 
 .serviceStatus {
-  float: left;
-  font-size: 16px;
-  padding: 0px 5px 0px 0px;
+	float: left;
+	font-size: 16px;
+	padding: 0 5px 0 0;
 }
 
 .serviceAvailable {
@@ -212,7 +213,7 @@ body {
 }
 
 textarea {
-  padding: 2px 0px 2px 5px;
+	padding: 2px 0 2px 5px;
 }
 
 #wrapperConcept .nav.nav-pills {
@@ -244,16 +245,16 @@ pre span.key {
 }
 
 #wrapperLogo {
-  position: relative;
-  height: 34px;
-  padding: 0px 10px 0px 10px;
-  line-height: 36px;
-  font-size: 14px;
-  background-color: #003142;
-  color: #fff;
-  cursor: pointer;
-  text-align: center;
-  border-bottom: solid 1px #CCC;
+	position: relative;
+	height: 34px;
+	padding: 0 10px 0 10px;
+	line-height: 36px;
+	font-size: 14px;
+	background-color: #003142;
+	color: #fff;
+	cursor: pointer;
+	text-align: center;
+	border-bottom: solid 1px #CCC;
 }
 
 #wrapperLogo img {
@@ -264,10 +265,10 @@ pre span.key {
 }
 
 #wrapperMainWindow {
-  position: absolute;
-  left: 149px;
-  top: 0px;
-  right: 0px;
+	position: absolute;
+	left: 149px;
+	top: 0;
+	right: 0;
 }
 
 #wrapperMainWindowContainer {
@@ -282,32 +283,32 @@ div#wrapperMainWindowContainer {}
 }
 
 #wrapperLeftMenu .panel {
-  border: 0px;
+	border: 0;
 }
 
 .wrapperTitle {
-  position: relative;
-  background-color: #333333;
-  height: 28px;
-  color: #fff;
-  line-height: 28px;
-  padding: 0px 0px 0px 30px;
-  font-size: 14px;
-  border-bottom: solid 1px #333;
-  white-space: nowrap;
+	position: relative;
+	background-color: #333333;
+	height: 28px;
+	color: #fff;
+	line-height: 28px;
+	padding: 0 0 0 30px;
+	font-size: 14px;
+	border-bottom: solid 1px #333;
+	white-space: nowrap;
 }
 
 .wrapperHeader {
-  position: relative;
-  background-color: #003142;
-  height: 34px;
-  color: #FFFFFF;
-  line-height: 28px;
-  padding: 0px 1px 0px 0px;
-  font-size: 14px;
-  border-bottom: solid 1px #ccc;
-  white-space: nowrap;
-  text-align: right;
+	position: relative;
+	background-color: #003142;
+	height: 34px;
+	color: #FFFFFF;
+	line-height: 28px;
+	padding: 0 1px 0 0;
+	font-size: 14px;
+	border-bottom: solid 1px #ccc;
+	white-space: nowrap;
+	text-align: right;
 }
 
 .wrapperHeader a {
@@ -328,8 +329,8 @@ div#wrapperMainWindowContainer {}
 }
 
 #wrapperLeftMenu ul {
-  padding: 0px;
-  margin-bottom: 0px;
+	padding: 0;
+	margin-bottom: 0;
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
@@ -344,11 +345,11 @@ div#wrapperMainWindowContainer {}
 }
 
 .tab-content .nav-tabs #wrapperLeftMenu li {
-  list-style: none;
-  text-indent: 0px;
-  padding: 2px 0px 2px 12px;
-  color: #fff;
-  line-height: 14px;
+	list-style: none;
+	text-indent: 0;
+	padding: 2px 0 2px 12px;
+	color: #fff;
+	line-height: 14px;
 }
 
 #wrapperLeftMenu li a {
@@ -365,8 +366,8 @@ div#wrapperMainWindowContainer {}
 }
 
 .feFilter {
-  padding-left: 0px;
-  padding-top: 75px;
+	padding-left: 0;
+	padding-top: 75px;
 }
 
 .fa.fa-refresh.fa-spin {
@@ -380,10 +381,10 @@ div#wrapperMainWindowContainer {}
 }
 
 .feFilter .facetMemberName {
-  font-size: 11px;
-  cursor: pointer;
-  padding: 0px 2px 0px 5px;
-  margin: 1px 0px 1px 0px;
+	font-size: 11px;
+	cursor: pointer;
+	padding: 0 2px 0 5px;
+	margin: 1px 0 1px 0;
 }
 
 .feFilter .facetMemberName:hover {
@@ -404,10 +405,10 @@ div#wrapperMainWindowContainer {}
 }
 
 .feFilter .facetScrollBox {
-  max-height: 75px;
-  overflow-y: auto;
-  border-bottom: solid 1px #eee;
-  margin-bottom: ;
+	max-height: 75px;
+	overflow-y: auto;
+	border-bottom: solid 1px #eee;
+	margin-bottom: unset;
 }
 
 #wrapperSearchResultsTable {
@@ -581,11 +582,11 @@ td.select .fa-check-circle.selected {
 }
 
 .configureSourceTable td {
-  padding-left: 7px;
-  padding-right: 7px;
-  font-size: 11px;
-  border-bottom: 1px solid #ccc;
-  vertical-align: top;
+	padding-left: 7px;
+	padding-right: 7px;
+	font-size: 11px;
+	border-bottom: 1px solid #ccc;
+    vertical-align:top;
 }
 
 .configureSourceTable tr.selected {
@@ -623,9 +624,9 @@ td.centered {
 }
 
 ul.ColVis_collection {
-  border-radius: 0px;
-  background-color: #fff;
-  margin-top: 3px;
+	border-radius: 0;
+	background-color: #fff;
+	margin-top: 3px;
 }
 
 ul.ColVis_collection li {
@@ -670,9 +671,9 @@ ul.ColVis_collection li {
 }
 
 .linkLegendItem {
-  margin: 0px;
-  height: 20px;
-  float: right;
+	margin: 0;
+	height: 20px;
+	float: right;
 }
 
 .clear {
@@ -686,9 +687,8 @@ ul.ColVis_collection li {
 }
 
 #wrapperSelf {
-  padding-left: 30px;
-  padding: 20px;
-  font-size: 1.3em;
+	padding: 20px 20px 20px 30px;
+	font-size: 1.3em;
 }
 
 #wrapperChildren {
@@ -696,9 +696,9 @@ ul.ColVis_collection li {
 }
 
 .configureSourceTable i.fa {
-  line-height: 9px;
-  font-size: 10px;
-  margin: 0px 3px 0px 3px;
+	line-height: 9px;
+	font-size: 10px;
+	margin: 0 3px 0 3px;
 }
 
 .configureSourceTable i.fa.fa-exclamation-circle {
@@ -706,13 +706,13 @@ ul.ColVis_collection li {
 }
 
 .wrapperTitle .fa.fa-chevron-right {
-  position: relative;
-  top: 0px;
-  left: 0px;
-  width: 5px;
-  font-size: 9px;
-  padding-left: 7px;
-  padding-right: 7px;
+	position: relative;
+	top: 0;
+	left: 0;
+	width: 5px;
+	font-size: 9px;
+	padding-left: 7px;
+	padding-right: 7px;
 }
 
 #wrapperHierarchyAnchor {
@@ -737,6 +737,22 @@ ul.ColVis_collection li {
 
 .fa-check-circle {
   color: #080;
+}
+
+#activityTimeline {
+	display: none;
+	padding: 3px;
+	background-color: #eee;
+	height: 128px;
+	width: 100%;
+	bottom: 0;
+	position: absolute;
+	border-top: solid 1px #ccc;
+	z-index: 100;
+}
+
+.edgeLoad-EDGE-8182598 {
+	visibility: hidden;
 }
 
 #wrapperCohortDefinition .fa-exclamation-circle {
@@ -816,9 +832,9 @@ input.btn.btn-default {
 }
 
 .reportHeading {
-  font-size: 14px;
-  margin-bottom: 25px;
-  margin-top: 0px;
+	font-size: 14px;
+	margin-bottom: 25px;
+	margin-top: 0;
 }
 
 .reportSectionHeading {
@@ -886,9 +902,9 @@ table#analysisStatus {
 }
 
 .reportControls {
-  background-color: #eee;
-  margin-left: 0px;
-  border-bottom: solid #ccc 1px;
+	background-color: #eee;
+	margin-left: 0;
+	border-bottom: solid #ccc 1px;
 }
 
 input.btn.btn-default:disabled {
@@ -908,13 +924,13 @@ input.btn.btn-default:disabled {
 }
 
 i.fa.fa-refresh.fa-spin {
-  font-size: .9em;
-  padding-right: 0px;
+	font-size: .9em;
+	padding-right: 0;
 }
 
 .i.fa.fa-circle-o-notch.fa-spin {
-  font-size: .9em;
-  padding-right: 0px;
+	font-size: .9em;
+	padding-right: 0;
 }
 
 rect.box {}
@@ -928,9 +944,10 @@ code {
 }
 
 pre {
-  border-radius: 0 font-size: 10px;
-  background-color: #eee;
-  margin: 5px 0px;
+	border-radius: 0;
+	font-size: 10px;
+	background-color: #eee;
+	margin: 5px 0;
 }
 
 .form-control {
@@ -938,9 +955,9 @@ pre {
 }
 
 .form-control:focus {
-  outline: 1px;
-  outline-offset: 0px;
-  box-shadow: none;
+	outline: 1px;
+	outline-offset: 0;
+	box-shadow: none;
 }
 
 .input-sm {
@@ -952,9 +969,8 @@ pre {
 }
 
 .dropdown-menu {
-  border-radius: 0;
-  box-shadow: none;
-  box-shadow: none
+	border-radius: 0;
+	box-shadow: none;
 }
 
 .btn-group-xs>.btn {
@@ -1096,7 +1112,7 @@ ul.nav.nav-tabs {
 }
 
 .label {
-  border-radius: 0;
+	border-radius: 0;
 }
 
 .badge {
@@ -1168,8 +1184,8 @@ ul.nav.nav-tabs {
 }
 
 .panel-group .panel+.panel {
-  margin-top: 0px;
-  border-top: solid 1px #eee;
+	margin-top: 0;
+	border-top: solid 1px #eee;
 }
 
 .well {
@@ -1433,8 +1449,8 @@ line.observation-period {
 }
 
 input[type="radio"] {
-  vertical-align: middle;
-  margin: 0px;
+	vertical-align: middle;
+	margin: 0;
 }
 
 li.assetlink {
@@ -1450,20 +1466,20 @@ table.conceptsetviewer th.fixed-width {
 }
 
 .panel-group {
-  margin-bottom: 0px;
+	margin-bottom: 0;
 }
 
 .cohortDefinitionNameTextArea {
-  font-size: 12px;
-  width: 500px;
-  resize: none;
-  overflow: hidden;
-  word-wrap: break-word;
-  outline: none;
-  padding: 0px 0px 0px 5px;
-  line-height: 28px;
-  height: 28px;
-  background-color: #fff;
+	font-size: 12px;
+	width: 500px;
+	resize: none;
+	overflow: hidden;
+	word-wrap: break-word;
+	outline: none;
+	padding: 0 0 0 5px;
+	line-height: 28px;
+	height: 28px;
+	background-color: #fff;
 }
 
 a:focus, a:hover {
@@ -1534,8 +1550,8 @@ div.button-overlay {
 }
 
 textarea.code {
-  font-style='Courier New';
-  /* font-size: 8px; */
+	font-family: 'Courier New', sans-serif;
+	/* font-size: 8px; */
 }
 
 .panel-default>.panel-heading {
@@ -1573,9 +1589,9 @@ textarea.code {
 }
 
 li.current-asset {
-  background-color: #ccc;
-  border-bottom: solid 1px #F19119;
-  padding: 2px 0px 2px 10px;
+	background-color: #ccc;
+	border-bottom: solid 1px #F19119;
+	padding: 2px 0 2px 10px;
 }
 
 #wrapperLeftMenu li.current-asset a {
@@ -1638,8 +1654,8 @@ li.current-asset {
 }
 
 inclusion-rule-editor input[type="text"] {
-  padding: 2px 0px 2px 5px;
-  width: 80%;
+	padding: 2px 0 2px 5px;
+	width: 80%;
 }
 
 inclusion-rule-editor input.emptyInput {
@@ -1681,10 +1697,10 @@ cohort-expression-editor td {
 }
 
 td div.criteria-content {
-  padding: 6px;
-  background-color: #eee;
-  margin: 1px 5px 5px 0px;
-  border: solid 1px #ccc;
+	padding: 6px;
+	background-color: #eee;
+	margin: 1px 5px 5px 0;
+	border: solid 1px #ccc;
 }
 
 div.additionalCriteria div.criteria-content {
@@ -1700,8 +1716,8 @@ div.demographicCriteria div.criteria-content {
 }
 
 .dd-select {
-  padding: 2px 0px 2px 5px;
-  margin-left: 5px;
+	padding: 2px 0 2px 5px;
+	margin-left: 5px;
 }
 
 .criteriaHeading .dd-container {
@@ -1718,16 +1734,16 @@ inclusion-rule-editor .inclusion-rule-header {
 }
 
 button.btn-conceptset_selector {
-  font-size: 10px;
-  color: #000;
-  height: 21px;
-  padding: 0px 4px;
-  margin-top: 0px;
-  margin-right: 0px;
-  margin-bottom: 3px;
-  margin-left: -1px;
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
+	font-size: 10px;
+	color: #000;
+	height: 21px;
+	padding: 0 4px;
+	margin-top: 0;
+	margin-right: 0;
+	margin-bottom: 3px;
+	margin-left: -1px;
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
 }
 
 select.mediumInputField {
@@ -1752,13 +1768,13 @@ cohort-expression-editor .fa.fa-ban {
 }
 
 .results-tab-pane .row.executionrow {
-  background-color: #fff;
-  border-left: solid 1px #ccc;
-  border-right: solid 1px #ccc;
-  border-top: none;
-  border-bottom: solid 1px #ccc;
-  margin-bottom: 0px;
-  margin-top: 0px;
+	background-color: #fff;
+	border-left: solid 1px #ccc;
+	border-right: solid 1px #ccc;
+	border-top: none;
+	border-bottom: solid 1px #ccc;
+	margin-bottom: 0;
+	margin-top: 0;
 }
 
 cohort-comparison-manager .row .btn {
@@ -1931,7 +1947,7 @@ span.new-role {
 
 .user-bar-container i.fa {
   padding: 10px;
-  color: #888;
+  color: #FFFFFF;
 }
 
 i.fa.pending {
@@ -2071,6 +2087,33 @@ button i.fa.fa-question-circle {
 
 #tornadoProfiles div.col-sm-2 {
   padding: 5px;
+}
+
+.radius-border {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 10px;
+	background-color: #fff;
+	border-color: #ddd;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 4px 4px 0 0;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.filter-results-select {
+	padding: 10px;
+	padding-bottom: 0;
+	font-size: 14px;
+}
+
+.list-inline>li {
+	vertical-align: middle;
+}
+
+.feedback-text {
+    font-size: 1.4rem;
 }
 
 

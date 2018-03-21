@@ -3,15 +3,16 @@ define(function(require, exports) {
     var $ = require('jquery');
     var config = require('appConfig');
     var ko = require('knockout');
+    var cookie = require('webapi/CookieAPI');
     var TOKEN_HEADER = 'Bearer';
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
 
     var authProviders = config.authProviders.reduce(function(result, current) {
-        result[config.api.url + current.url] = current;
-        return result;
+      result[config.api.url + current.url] = current;
+      return result;
     }, {});
 
-    var getServiceUrl = function () {
+  var getServiceUrl = function () {
         return config.webAPIRoot;
     };
 
@@ -52,6 +53,7 @@ define(function(require, exports) {
 
     token.subscribe(function(newValue) {
         localStorage.bearerToken = newValue;
+        cookie.setField("bearerToken", newValue);
     });
 
     var isAuthenticated = ko.pureComputed(function() {
@@ -297,6 +299,10 @@ define(function(require, exports) {
         return isPermitted('configuration:edit:ui')
     }
 
+    var isPermittedEditSourcePriortiy = function() {
+        return isPermitted('source:*:daimons:*:set-priority:post')
+    }
+
     var isPermittedReadRoles = function() {
         return isPermitted('role:get');
     }
@@ -327,9 +333,9 @@ define(function(require, exports) {
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
-            if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
-                xhr.setRequestHeader('Authorization', getAuthorizationHeader());
-            }
+          if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
+            xhr.setRequestHeader('Authorization', getAuthorizationHeader());
+          }
         }
     });
 
@@ -377,6 +383,7 @@ define(function(require, exports) {
         isPermittedReadJobs: isPermittedReadJobs,
 
         isPermittedEditConfiguration: isPermittedEditConfiguration,
+        isPermittedEditSourcePriortiy,
 
         isPermittedReadRoles: isPermittedReadRoles,
         isPermittedReadRole: isPermittedReadRole,

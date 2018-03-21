@@ -133,6 +133,7 @@ requirejs.config({
 		"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
 		"appConfig": "config",
 		"home": "components/home",
+		"feedback": "components/feedback",
 		"common": "components/datasources/app/common",
 		"reports": "components/datasources/app/reports",
 		"prism": "prism",
@@ -154,8 +155,9 @@ requirejs.config({
 		"plp-spec-editor": "components/plp-spec-editor",
 		"plp-r-code": "components/plp-r-code",
 		"plp-print-friendly": "components/plp-print-friendly",
+    "js-cookie": "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min",
 
-		"d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.0/d3.min",
+    "d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.0/d3.min",
 		"d3-collection": "https://cdnjs.cloudflare.com/ajax/libs/d3-collection/1.0.4/d3-collection.min",
 		"d3-selection": "https://cdnjs.cloudflare.com/ajax/libs/d3-selection/1.1.0/d3-selection.min",
 		"d3-shape": "https://cdnjs.cloudflare.com/ajax/libs/d3-shape/1.2.0/d3-shape.min",
@@ -179,9 +181,15 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, sourceAPI, util, lscache, sharedState, vocabAPI) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
+
+		const originalTextBinding = ko.bindingHandlers.text.update;
+		ko.bindingHandlers.text.update = function(element, valueAccessor, allBingings) {
+			const value = ko.utils.unwrapObservable(valueAccessor());
+			originalTextBinding(element, () => filterXSS(value, config.xssOptions));
+		};
 
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
 
@@ -199,7 +207,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		var densityPriority = 0;
 
 		// initialize all service information asynchronously
-		var serviceCacheKey = 'ATLAS|' + config.api.url;
+		var serviceCacheKey = sourceAPI.getCacheKey();// 'ATLAS|' + config.api.url;
 		cachedService = lscache.get(serviceCacheKey);
 
 		if (cachedService) {
@@ -239,119 +247,24 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			var servicePromise = $.Deferred();
 			pageModel.initPromises.push(servicePromise);
 
-			$.ajax({
-				url: config.api.url + 'source/sources',
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (sources) {
-					config.api.available = true;
-					var completedSources = 0;
-
-					$.each(sources, function (sourceIndex, source) {
-						source.hasVocabulary = false;
-						source.hasEvidence = false;
-						source.hasResults = false;
-						source.hasCDM = false;
-						source.vocabularyUrl = '';
-						source.evidenceUrl = '';
-						source.resultsUrl = '';
-						source.error = '';
-
-						source.initialized = true;
-						for (var d = 0; d < source.daimons.length; d++) {
-							var daimon = source.daimons[d];
-
-							// evaluate vocabulary daimons
-							if (daimon.daimonType == 'Vocabulary') {
-								source.hasVocabulary = true;
-								source.vocabularyUrl = config.api.url + 'vocabulary/' + source.sourceKey + '/';
-								if (daimon.priority >= vocabularyPriority) {
-									vocabularyPriority = daimon.priority;
-									sharedState.vocabularyUrl(source.vocabularyUrl);
-								}
-							}
-
-							// evaluate evidence daimons
-							if (daimon.daimonType == 'Evidence') {
-								source.hasEvidence = true;
-								source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
-								if (daimon.priority >= evidencePriority) {
-									evidencePriority = daimon.priority;
-									sharedState.evidenceUrl(source.evidenceUrl);
-								}
-							}
-
-							// evaluate results daimons
-							if (daimon.daimonType == 'Results') {
-								source.hasResults = true;
-								source.resultsUrl = config.api.url + 'cdmresults/' + source.sourceKey + '/';
-								if (daimon.priority >= densityPriority) {
-									densityPriority = daimon.priority;
-									sharedState.resultsUrl(source.resultsUrl);
-								}
-							}
-
-							// evaluate cdm daimons
-							if (daimon.daimonType == 'CDM') {
-								source.hasCDM = true;
-							}
-						}
-
-						config.api.sources.push(source);
-
-						if (source.hasVocabulary) {
-							$.ajax({
-								url: config.api.url + 'vocabulary/' + source.sourceKey + '/info',
-								timeout: 20000,
-								method: 'GET',
-								contentType: 'application/json',
-								success: function (info) {
-									completedSources++;
-									source.version = info.version;
-									source.dialect = info.dialect;
-
-									if (completedSources == sources.length) {
-										lscache.set(serviceCacheKey, config.api, 720);
-										servicePromise.resolve();
-									}
-								},
-								error: function (err) {
-									completedSources++;
-									pageModel.initializationErrors++;
-									source.version = 'unknown';
-									source.dialect = 'unknown';
-									source.url = config.api.url + source.sourceKey + '/';
-									if (completedSources == sources.length) {
-										lscache.set(serviceCacheKey, config.api, 720);
-										servicePromise.resolve();
-									}
-								}
-							});
-						} else {
-							completedSources++;
-							source.version = 'not available'
-							if (completedSources == sources.length) {
-								servicePromise.resolve();
-							}
-						}
-					});
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					config.api.available = false;
-					config.api.xhr = xhr;
-					config.api.thrownError = thrownError;
-
-					sharedState.appInitializationStatus('failed');
-					document.location = '#/configure';
-
-					servicePromise.resolve();
-				}
-			});
+//    TODO Check
+      if (authApi.isAuthenticated()) {
+        sourceAPI.initSourcesConfig();
+      } else {
+        var wasInitialized = false;
+        authApi.token.subscribe(function(token) {
+          if (token && !wasInitialized) {
+            sourceAPI.initSourcesConfig();
+            wasInitialized = true;
+          }
+        });
+      }
 		}
 
-		$.when.apply($, pageModel.initPromises).done(function () {
-			pageModel.initComplete();
-		});
+		$.when.apply($, pageModel.initPromises)
+			.done(function () {
+				pageModel.initComplete();
+			});
 
 		pageModel.currentView.subscribe(function (newView) {
 			switch (newView) {
