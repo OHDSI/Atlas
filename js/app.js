@@ -49,7 +49,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 					case 'plp-manager':
 						pageTitle = pageTitle + ": PLP";
 						break;
-			}
+				}
 
 				if (self.hasUnsavedChanges()) {
 					pageTitle = "*" + pageTitle + " (unsaved)";
@@ -65,19 +65,21 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 				return sharedState.appInitializationStatus() != 'initializing';
 			});
 
-		self.initComplete = function () {
-				var prevToken = authApi.token();
-				var routerOptions = {
-					notfound: function () {
-						self.currentView('search');},
-					on: function () {
-						var promise = (self.config.userAuthenticationEnabled && (authApi.token() != null || (prevToken != null && authApi.token() === null))) ? authApi.refreshToken : null;
-						$.when(promise).done(function(){
-							prevToken = authApi.token();
-              self.currentView('loading');
-            });
-					}
-				};
+			self.initComplete = function () {
+					var prevToken = authApi.token();
+					var routerOptions = {
+						notfound: function () {
+							self.currentView('search');
+						},
+						on: function () {
+							self.currentView('loading');
+							var promise = (self.config.userAuthenticationEnabled && (authApi.token() != null || (prevToken != null && authApi.token() === null))) ? authApi.refreshToken : null;
+							$.when(promise).done(function(){
+								prevToken = authApi.token();
+								self.currentView('loading');
+							});
+						}
+					};
 				var routes = {
 					'/': function () {
 						document.location = "#/home";
@@ -99,7 +101,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 							self.currentView('cohort-definitions');
 						});
 					},
-          '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': function (cohortDefinitionId, path) {
+					'/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': function (cohortDefinitionId, path) {
 						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
 							// Determine the view to show on the cohort manager screen based on the path
 							path = path.split("/");
@@ -209,14 +211,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 							self.currentView('report-manager');
 						});
 					},
-					'/import': function () {
-						require(['importer'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('importer');
-						});
-					},
 					'/profiles/?((\w|.)*)': function (path) {
 						require(['profile-manager', 'cohort-definition-browser'], function () {
 							path = path.split("/");
@@ -261,23 +255,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 								model: self
 							};
 							self.currentView('search');
-						});
-					},
-					'/feasibility': function () {
-						require(['feasibility-manager', 'feasibility-browser'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('feasibility-manager');
-						});
-					},
-					'/feasibility/:feasibilityId:': function (feasibilityId) {
-						require(['feasibility-analyzer'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('feasibility-manager');
-							self.feasibilityId(feasibilityId);
 						});
 					},
 					'/estimation': function () {
@@ -1400,9 +1377,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 			});
 
 
-  		self.currentCohortDefinitionInfo = ko.observable();
-		  self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
-		  self.feasibilityId = ko.observable();
+			self.currentCohortDefinitionInfo = ko.observable();
+			self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
+			self.feasibilityId = ko.observable();
 
 			self.selectedIRAnalysisId = ko.observable();
 			self.currentIRAnalysis = ko.observable();
