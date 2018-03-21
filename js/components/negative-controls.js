@@ -6,9 +6,10 @@ define(['knockout',
 	'webapi/ConceptSetAPI',
 	'atlas-state',
 	'job/jobDetail',
+  'webapi/MomentAPI',
 	'ohdsi.util',
 	'databindings'
-], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, sharedState, jobDetail) {
+], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, sharedState, jobDetail, momentApi) {
 	function negativeControls(params) {
 		var self = this;
 
@@ -683,7 +684,7 @@ define(['knockout',
 								source.status(info.status);
 								source.isValid(info.isValid);
 								var date = new Date(info.startTime);
-								source.startTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+								source.startTime(momentApi.formatDateTime(date));
 								source.executionDuration('...');
 
 								if (info.status != "COMPLETE") {
@@ -718,7 +719,7 @@ define(['knockout',
 			// Mark as pending results
 			self.getSourceInfo(service.sourceKey())
 				.status('PENDING');
-			
+
 			// Create a job to monitor progress
 			var job = new jobDetail({
 				name: self.conceptSet().name() + "_" + service.sourceKey(),
@@ -820,7 +821,7 @@ define(['knockout',
 						if (gi.length > 0) {
 							var date = new Date(gi[0].startTime);
 							var execDuration = (gi[0].executionDuration / 1000) + 's'
-							evidenceSources[i].startTime(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+							evidenceSources[i].startTime(momentApi.formatDateTime(date));
 							evidenceSources[i].executionDuration(execDuration);
 							evidenceSources[i].status(gi[0].status);
 							evidenceSources[i].isValid(gi[0].isValid);

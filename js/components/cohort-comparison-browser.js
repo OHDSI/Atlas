@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webapi/MomentAPI', 'webapi/AuthAPI', 'cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config, momentApi, authApi) {
+define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webapi/AuthAPI', 'webapi/MomentAPI', 'access-denied', 'cohortcomparison/ComparativeCohortAnalysis', 'faceted-datatable'], function (ko, view, config, authApi, momentApi) {
 	function cohortComparisonBrowser(params) {
 		var self = this;
 		self.reference = ko.observableArray();
@@ -11,7 +11,7 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webap
 		});
 		self.canCreateEstimation = ko.pureComputed(function(){
 			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCreateEstimation()) || !config.userAuthenticationEnabled;
-			});
+		});
 
 		self.options = {
 			Facets: [
@@ -52,14 +52,16 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webap
 			},
 			{
 				title: 'Created',
+				type: 'date',
 				render: function (s, p, d) {
 					return momentApi.formatDateTimeUTC(d.created);
 				}
 			},
 			{
 				title: 'Modified',
+				type: 'date',
 				render: function (s, p, d) {
-					return momentApi.formatDateTimeUTC(d.updated);
+					return momentApi.formatDateTimeUTC(d.modified);
 				}
 			},
 			{
