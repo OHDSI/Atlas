@@ -1,4 +1,4 @@
-define(['knockout', 'text!./job-manager.html', 'appConfig', 'moment', 'databindings', 'access-denied'], function (ko, view, config, moment) {
+define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/MomentAPI', 'databindings', 'access-denied'], function (ko, view, config, momentApi) {
 	function jobManager(params) {
 		var self = this;
 
@@ -13,13 +13,11 @@ define(['knockout', 'text!./job-manager.html', 'appConfig', 'moment', 'databindi
 				contentType: 'application/json',
 				success: function (jobs) {
 					for (var j = 0; j < jobs.content.length; j++) {
-						if (moment(jobs.content[j].startDate).isValid()) {
-							jobs.content[j].startDate = moment(jobs.content[j].startDate).format('YYYY-MM-DD hh:mm:ss a');
-						}
+						var startDate = new Date(jobs.content[j].startDate);
+						jobs.content[j].startDate = momentApi.formatDateTime(startDate);
 
-						if (moment(jobs.content[j].endDate).isValid()) {							
-							jobs.content[j].endDate = moment(jobs.content[j].endDate).format('YYYY-MM-DD hh:mm:ss a');
-						}
+						var endDate = new Date(jobs.content[j].endDate);
+						jobs.content[j].endDate = momentApi.formatDateTime(endDate);
 
 						if (jobs.content[j].jobParameters.jobName == undefined) {
 							jobs.content[j].jobParameters.jobName = 'n/a';
