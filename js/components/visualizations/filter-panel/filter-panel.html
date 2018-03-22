@@ -1,0 +1,35 @@
+<div class="visualizations-filter-panel panel panel-primary">
+    <div class="panel-heading">
+        Filter panel
+    </div>
+    <div class="visualizations-filter-panel__body panel-body">
+        <ul class="visualizations-filter-panel__list">
+            <!-- ko foreach: filterList -->
+                <!-- ko if: type === 'multiselect' -->
+                    <li class="visualizations-filter-panel__list-item">
+                        <div class="visualizations-filter-item">
+                            <span class="visualizations-filter-item__label" data-bind="text: label" />
+                            <div class="visualizations-filter-item__body">
+                                <visualizations-multi-select params="{ options: options, selectedValues: selectedValues }"/>
+                            </div>
+                        </div>
+                    </li>
+                <!-- /ko -->
+            <!-- /ko -->
+        </ul>
+        <div class="visualizations-filter-panel__btn-group">
+            <button
+                    class="visualizations-filter-panel__btn btn btn-sm btn-success"
+                    data-bind="{ click: apply }"
+            >
+                Apply
+            </button>
+            <button
+                    class="visualizations-filter-panel__btn visualizations-filter-panel__btn--cancel btn btn-sm btn-default"
+                    data-bind="{ click: clear }"
+            >
+                Clear
+            </button>
+        </div>
+    </div>
+</div>
