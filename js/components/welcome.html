@@ -32,7 +32,7 @@
 						<loading/>
 					</div>
 				</form>
-				<div data-bind="if: isBadCredentials() && !isInProgress()" class="error text-center">Bad credentials</div>
+				<div data-bind="if: isBadCredentials() && !isInProgress()" class="error text-center"><span data-bind="text: errorMsg">Bad credentials</span></div>
 			</div>
 
 			<div data-bind="if: isLoggedIn()">

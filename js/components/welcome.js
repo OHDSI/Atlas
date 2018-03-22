@@ -61,7 +61,8 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
                 error: function (jqXHR, textStatus, errorThrown) {
                     self.resetAuthParams();
                     self.isBadCredentials(true);
-                    self.errorMsg("Login failed.");
+                    var msg = jqXHR.getResponseHeader('x-auth-error');
+                    self.errorMsg(msg || "Bad credentials");
                 },
                 complete: function (data) {
                     self.isInProgress(false);
