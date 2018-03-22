@@ -84,6 +84,7 @@ requirejs.config({
 		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
 		"text": "plugins/text",
 		"css": "plugins/css.min",
+    "less": "plugins/less",
 		"optional": "plugins/optional",
 		"clipboard": "clipboard.min",
 		"knockout": "knockout.min",
@@ -180,6 +181,8 @@ requirejs.config({
 
 		"moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min",
 		"querystring": "https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min",
+
+    "test-page": "components/test-page",
 	}
 });
 
