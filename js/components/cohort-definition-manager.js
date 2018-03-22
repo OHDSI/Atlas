@@ -521,62 +521,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			});
 		}
 
-		self.generateAnalyses = function (data, event) {
-			$(event.target).prop("disabled", true);
-
-			var requestedAnalysisTypes = [];
-			var runHeel = false;
-			$('input[type="checkbox"][name="' + data.sourceKey + '"]:checked').each(function () {
-				requestedAnalysisTypes.push($(this).val());
-				if ($(this).val() == 'Heracles Heel') {
-					runHeel = true;
-				}
-			});
-
-			var analysisIdentifiers = [];
-
-			var analysesTypes = pageModel.cohortAnalyses();
-			for (var i = 0; i < analysesTypes.length; i++) {
-				if (requestedAnalysisTypes.indexOf(analysesTypes[i].name) >= 0) {
-					analysisIdentifiers.push.apply(analysisIdentifiers, analysesTypes[i].analyses);
-				}
-			}
-
-			if (analysisIdentifiers.length > 0) {
-				$(event.target).prop('value', 'Starting job...');
-				var cohortDefinitionId = pageModel.currentCohortDefinition().id();
-				var cohortJob = {};
-
-				cohortJob.jobName = 'HERACLES' + '_COHORT_' + cohortDefinitionId + '_' + data.sourceKey;
-				cohortJob.sourceKey = data.sourceKey;
-				cohortJob.smallCellCount = 5;
-				cohortJob.cohortDefinitionIds = [];
-				cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
-				cohortJob.analysisIds = analysisIdentifiers;
-				cohortJob.runHeraclesHeel = runHeel;
-				cohortJob.cohortPeriodOnly = false;
-
-				// set concepts
-				cohortJob.conditionConceptIds = [];
-				cohortJob.drugConceptIds = [];
-				cohortJob.procedureConceptIds = [];
-				cohortJob.observationConceptIds = [];
-				cohortJob.measurementConceptIds = [];
-
-				$.ajax({
-					url: config.api.url + 'cohortanalysis',
-					data: JSON.stringify(cohortJob),
-					method: 'POST',
-					contentType: 'application/json',
-					success: function (info) {
-						// to do - handle returned reference to job
-					}
-				});
-			} else {
-				$(event.target).prop("disabled", false);
-			}
-		}
-
 		self.hasCDM = function (source) {
 			for (var d = 0; d < source.daimons.length; d++) {
 				if (source.daimons[d].daimonType == 'CDM') {
