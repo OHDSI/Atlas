@@ -1,0 +1,8 @@
+<div class="filter-panel-multi-select">
+    <select data-bind="{ selectedOptions: selectedValues, multiSelect: { liveSearch: true, selectedTextFormat: 'count > 2' } }" multiple="multiple">
+        <!-- ko foreach: options -->
+        <option data-bind="text: label,
+                       value: value"></option>
+        <!-- /ko -->
+    </select>
+</div>
