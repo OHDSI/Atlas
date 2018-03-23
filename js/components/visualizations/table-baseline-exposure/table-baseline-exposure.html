@@ -1,0 +1,28 @@
+<table data-bind="css: classes({ extra: ['table', 'table-bordered', 'table-hover'] })">
+    <thead data-bind="css: classes('head')">
+    <tr>
+        <th data-bind="css: classes('th', 'centered')" rowspan="2">Period range</th>
+        <th data-bind="css: classes('th', 'centered')" colspan="2">Persons</th>
+        <th data-bind="css: classes('th', 'centered')" colspan="3">Exposure</th>
+    </tr>
+    <tr>
+        <th data-bind="css: classes('th', 'counts')">n</th>
+        <th data-bind="css: classes('th', 'counts')">%</th>
+        <th data-bind="css: classes('th', 'counts')">Total (in person years)</th>
+        <th data-bind="css: classes('th', 'counts')">%</th>
+        <th data-bind="css: classes('th', 'counts')">average</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- ko foreach: dataList -->
+    <tr>
+        <td data-bind="css: $parent.classes('td'), text: period"/>
+        <td data-bind="css: $parent.classes('td', 'counts'), text: personsCount" />
+        <td data-bind="css: $parent.classes('td', 'counts'), text: personsPct" />
+        <td data-bind="css: $parent.classes('td', 'counts'), text: exposureTotal" />
+        <td data-bind="css: $parent.classes('td', 'counts'), text: exposurePct" />
+        <td data-bind="css: $parent.classes('td', 'counts'), text: exposureAvg" />
+    </tr>
+    <!-- /ko -->
+    </tbody>
+</table>
