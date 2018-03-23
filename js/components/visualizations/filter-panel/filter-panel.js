@@ -1,15 +1,32 @@
 define(
   [
     'knockout',
-    'text!components/visualizations/filter-panel/filter-panel.html',
-    'less!components/visualizations/filter-panel/filter-panel.less',
-    'components/visualizations/filter-panel/multi-select/multi-select'
+    'text!./filter-panel.html',
+    'utils/BemHelper',
+    'less!./filter-panel.less',
+    './multi-select/multi-select'
   ],
-  function (ko, view) {
+  function (ko, view, BemHelper) {
+    const componentName = 'visualizations-filter-panel';
+
     function filterPanel(params) {
+      // Styling
+      const bemHelper = new BemHelper(componentName);
+      this.classes = bemHelper.run.bind(bemHelper);
+
+      //
+
       this.filterList = params.filterList;
+      this.live = params.live || false;
       this.apply = params.apply;
       this.clear = () => this.filterList.forEach(filter => filter.selectedValues([]));
+
+      // Do not show "Apply" button in live mode and trigger filtering immediately
+      if (this.live) {
+        Object.values(this.filterList).map(filter => {
+          filter.selectedValues.subscribe(this.apply);
+        });
+      }
     }
 
     const component = {
@@ -17,6 +34,6 @@ define(
       template: view
     };
 
-    ko.components.register('visualizations-filter-panel', component);
+    ko.components.register(componentName, component);
     return component;
 });

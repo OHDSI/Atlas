@@ -868,16 +868,38 @@
 	</div>
 </div>
 
-<div data-bind="if: model.currentReport() == 'Healthcare Utilization' && !model.loadingReport()">
+<div data-bind="if: model.currentReport() == visualizationPacks.healthcareUtilPersonAndExposureBaseline.name && !model.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Healthcare Utilization<i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Healthcare Utilization. Persons and Exposure during baseline period<i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-			TBD
+				<cost-utilization-persons-exposure params="{
+					mode: 'baseline',
+					source: model.reportSourceKey(),
+					cohortId: model.reportCohortDefinitionId(),
+					setLoading: model.loadingReport,
+				}"/>
 			</div>
 		</div>
 	</div>
 </div>
 
+<div data-bind="if: model.currentReport() == visualizationPacks.healthcareUtilPersonAndExposureCohort.name && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Healthcare Utilization. Distribution of observation period days per subject, by period_id during cohort period<i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<cost-utilization-persons-exposure params="{
+					mode: 'cohort',
+					source: model.reportSourceKey(),
+					cohortId: model.reportCohortDefinitionId(),
+					setLoading: model.loadingReport,
+				}"/>
+			</div>
+		</div>
+	</div>
+</div>

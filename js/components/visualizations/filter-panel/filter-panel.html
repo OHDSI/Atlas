@@ -1,35 +1,43 @@
-<div class="visualizations-filter-panel panel panel-primary">
+<div data-bind="css: classes({ extra: ['panel', 'panel-primary'] })">
     <div class="panel-heading">
         Filter panel
     </div>
-    <div class="visualizations-filter-panel__body panel-body">
-        <ul class="visualizations-filter-panel__list">
+    <div data-bind="css: classes({ element: 'body', extra: ['panel-body'] })">
+        <ul data-bind="css: classes('list')">
             <!-- ko foreach: filterList -->
-                <!-- ko if: type === 'multiselect' -->
-                    <li class="visualizations-filter-panel__list-item">
-                        <div class="visualizations-filter-item">
-                            <span class="visualizations-filter-item__label" data-bind="text: label" />
-                            <div class="visualizations-filter-item__body">
-                                <visualizations-multi-select params="{ options: options, selectedValues: selectedValues }"/>
-                            </div>
+                <li data-bind="css: $parent.classes('list-item')">
+                    <!-- ko if: type === 'select' -->
+                    <div class="visualizations-filter-item">
+                        <span class="visualizations-filter-item__label" data-bind="text: label" />
+                        <div class="visualizations-filter-item__body">
+                            <visualizations-multi-select params="{ options: options, selectedValues: selectedValues, multiple: false }"/>
                         </div>
-                    </li>
-                <!-- /ko -->
+                    </div>
+                    <!-- /ko -->
+                    <!-- ko if: type === 'multiselect' -->
+                    <div class="visualizations-filter-item">
+                        <span class="visualizations-filter-item__label" data-bind="text: label" />
+                        <div class="visualizations-filter-item__body">
+                            <visualizations-multi-select params="{ options: options, selectedValues: selectedValues, multiple: true }"/>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                </li>
             <!-- /ko -->
         </ul>
-        <div class="visualizations-filter-panel__btn-group">
-            <button
-                    class="visualizations-filter-panel__btn btn btn-sm btn-success"
-                    data-bind="{ click: apply }"
-            >
-                Apply
-            </button>
-            <button
-                    class="visualizations-filter-panel__btn visualizations-filter-panel__btn--cancel btn btn-sm btn-default"
-                    data-bind="{ click: clear }"
-            >
-                Clear
-            </button>
-        </div>
+        <!-- ko if: !live -->
+            <div data-bind="css: classes('btn-group')">
+                <button
+                        data-bind="{ css: classes({ element: 'btn', extra: ['btn', 'btn-sm', 'btn-success'] }), click: apply }"
+                >
+                    Apply
+                </button>
+                <button
+                        data-bind="{ css: classes({ element: 'btn', modifiers: ['cancel'], extra: ['btn', 'btn-sm', 'btn-default'] }), click: clear }"
+                >
+                    Clear
+                </button>
+            </div>
+        <!-- /ko -->
     </div>
 </div>
