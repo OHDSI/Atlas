@@ -295,7 +295,7 @@ Negative control outcomes will be used to evaluate the potential impact of resid
             The target cohort <span class="cohort-comparison-pf-reference" data-bind="text: $component.cohortComparison().treatmentCaption()"></span> is defined as:
         </div>
         <div class="panel-body">
-            <cohort-expression-viewer params="expression: $component.cohortComparison().treatmentCohortDefinition().expression, selectedFragment: $component.cohortComparison().treatmentCohortDefinition().expression"></cohort-expression-viewer>
+            <cohort-expression-viewer params="expression: $component.cohortComparison().treatmentCohortDefinition()"></cohort-expression-viewer>
         </div>
     </div>
 </div>
@@ -307,7 +307,7 @@ Negative control outcomes will be used to evaluate the potential impact of resid
             The comparator cohort <span class="cohort-comparison-pf-reference" data-bind="text: $component.cohortComparison().comparatorCaption()"></span> is defined as:
         </div>
         <div class="panel-body">
-            <cohort-expression-viewer params="expression: $component.cohortComparison().comparatorCohortDefinition().expression, selectedFragment: $component.cohortComparison().comparatorCohortDefinition().expression"></cohort-expression-viewer>
+            <cohort-expression-viewer params="expression: $component.cohortComparison().comparatorCohortDefinition()"></cohort-expression-viewer>
         </div>
     </div>
 </div>
@@ -318,7 +318,7 @@ Negative control outcomes will be used to evaluate the potential impact of resid
             The outcome <span class="cohort-comparison-pf-reference" data-bind="text: $component.cohortComparison().outcomeCaption()"></span> is defined as:
         </div>
         <div class="panel-body">
-            <cohort-expression-viewer params="expression: $component.cohortComparison().outcomeCohortDefinition().expression, selectedFragment: $component.cohortComparison().outcomeCohortDefinition().expression"></cohort-expression-viewer>
+            <cohort-expression-viewer params="expression: $component.cohortComparison().outcomeCohortDefinition()"></cohort-expression-viewer>
         </div>
     </div>
 </div>

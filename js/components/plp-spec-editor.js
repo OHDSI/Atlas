@@ -1,10 +1,10 @@
 define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 				'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util',
 				'plp/PatientLevelPredictionAnalysis', 'plp/options',
-				'cohortbuilder/CohortDefinition', 'vocabularyprovider',
+				'cohortbuilder/CohortExpression', 'vocabularyprovider',
 				'conceptsetbuilder/InputTypes/ConceptSet'],
 	function ($, ko, view, clipboard, cohortDefinitionAPI, config, ohdsiUtil,
-		PatientLevelPredictionAnalysis, options, CohortDefinition, vocabularyAPI,
+		PatientLevelPredictionAnalysis, options, CohortExpression, vocabularyAPI,
 		ConceptSet) {
 		function plpSpecEditor(params) {
 			var self = this;
@@ -18,7 +18,7 @@ define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 					self.targetId(cohortDefinition.id);
 					self.targetCaption(cohortDefinition.name);
 					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
-					self.targetCohortDefinition(new CohortDefinition(cohortDefinition));
+					self.targetCohortDefinition(new CohortExpression(cohortDefinition));
 				});
 			}
 
