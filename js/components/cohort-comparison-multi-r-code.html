@@ -67,7 +67,7 @@
 
     <span class="token comment"># Get all <!-- ko text: $component.cohortComparison().psExclusionCaption --><!-- /ko --> Concept IDs for exclusion ----</span>
     <span data-bind="if: $component.cohortComparison().psExclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().psExclusionConceptSetSQL"></span>")
-    sql <span class="token operator"><span class="token operator"><-</span></span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><span class="token operator"><-</span></span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
     connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
     excludedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
@@ -78,7 +78,7 @@
     </span>
     <span class="token comment"># Get all <span data-bind="text: $component.cohortComparison().psInclusionCaption"></span> Concept IDs for inclusion ----</span>
     <span data-bind="if: $component.cohortComparison().psInclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().psInclusionConceptSetSQL"></span>")
-    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
     connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
     includedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
@@ -90,7 +90,7 @@
     
     <span class="token comment"># Get all <span data-bind="text: $component.cohortComparison().omExclusionCaption"></span> Concept IDs for exclusion in the outcome model ----</span>
     <span data-bind="if: $component.cohortComparison().omExclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().omExclusionConceptSetSQL"></span>")
-    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
     connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
     omExcludedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
@@ -101,7 +101,7 @@
     </span>
     <span class="token comment"># Get all <span data-bind="text: $component.cohortComparison().omInclusionCaption"></span> Concept IDs for inclusion exclusion in the outcome model ----</span>
     <span data-bind="if: $component.cohortComparison().omInclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().omInclusionConceptSetSQL"></span>")
-    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
     connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
     omIncludedConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
@@ -113,7 +113,7 @@
 
     <span class="token comment"># Get all <span data-bind="text: $component.cohortComparison().negativeControlCaption"></span> Concept IDs for empirical calibration ----</span>
     <span data-bind="if: $component.cohortComparison().negativeControlConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().negativeControlConceptSetSQL"></span>")
-    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
     connection <span class="token operator"><-</span> DatabaseConnector::connect(connectionDetails)
     negativeControlConcepts <span class="token operator"><-</span> DatabaseConnector::querySql(connection, sql)
