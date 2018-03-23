@@ -1,4 +1,6 @@
-define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'databindings', 'faceted-datatable', 'colvis'], function (ko, view, d3, atlascharts, colorbrewer, _, config) {
+define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig',
+    'webapi/CohortReportingAPI', 'databindings', 'faceted-datatable', 'colvis', 'components/reports/cost-utilization/persons-exposure'],
+	function (ko, view, d3, atlascharts, colorbrewer, _, config, cohortReportingAPI) {
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -13,6 +15,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			[15, 30, 45, 100, -1],
 			[15, 30, 45, 100, 'All']
 		];
+		self.visualizationPacks = cohortReportingAPI.visualizationPacks;
 
 		const size4 = {
 				width: 400,
@@ -2147,19 +2150,12 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						}
 					});
 					break; // Entropy report
-					case 'Healthcare Utilization':
-					$.ajax({
-						//url: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + self.model.reportCohortDefinitionId() + '/healthcareutilization'
-						url: self.config.api.url + 'info'
-					}).then(data => {
-						self.model.currentReport(self.model.reportReportName());
-					}).fail(error => {
-						self.model.currentReport(null);
-						console.log("Failed to load Healthcare Utilization report.")
-					}).always(() => {
-						self.model.loadingReport(false);
-					});
-					break; // Healthcare Utilization
+
+				case self.visualizationPacks.healthcareUtilPersonAndExposureBaseline.name:
+        case self.visualizationPacks.healthcareUtilPersonAndExposureCohort.name:
+          self.model.loadingReport(false);
+          self.model.currentReport(self.model.reportReportName());
+          break;
 			}
 		}
 

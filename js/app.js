@@ -213,11 +213,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 							document.location = "#/welcome";
 						});
 					},
-          '/test-page': function () {
-            require(['test-page'], function () {
-              self.currentView('test-page');
-            });
-          },
 					'/jobs': function () {
 						require(['job-manager'], function () {
 							self.componentParams = {
