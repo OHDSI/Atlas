@@ -17,7 +17,9 @@ define(
           0
         );
 
-        data.selectedValues.subscribe(() => $select.selectpicker('refresh'));
+        if (data.selectedValues) {
+          data.selectedValues.subscribe(() => $select.selectpicker('refresh'));
+        }
 
         ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
           $select.selectpicker('destroy');
