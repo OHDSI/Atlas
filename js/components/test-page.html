@@ -1,8 +1,17 @@
 <div class="test-page paddedWrapper">
     <div class="test-page__block">
+        <h4 class="test-page__header">Persons and Exposure during baseline period</h4>
+    </div>
+    <div class="test-page__block">
         <visualizations-filter-panel params="{ filterList: $component.filterList, apply: apply }"/>
     </div>
     <div class="test-page__block">
         <table-baseline-exposure params="{ dataList: dataList }"/>
+    </div>
+    <div class="test-page__block">
+        <div class="test-page__chart-line">
+            <div class="test-page__chart" data-bind=" lineChart: { data: personExposureLinechartData, xLabel: '', yLabel: '', xFormat: xFormat, yFormat: yPercentFormat, xScale: xScale, ticks: ticks } "/>
+            <div class="test-page__chart" data-bind=" lineChart: { data: averageLinechartData, xLabel: '', yLabel: '', xFormat: xFormat, xScale: xScale, ticks: ticks } "/>
+        </div>
     </div>
 </div>

@@ -3,11 +3,15 @@ define(
     'knockout',
     'text!./test-page.html',
     'appConfig',
+    'atlascharts',
+    'd3',
+    'd3-scale',
+    'webapi/MomentAPI',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/table-baseline-exposure/table-baseline-exposure',
     'less!components/test-page.less',
   ],
-  function (ko, view, appConfig) {
+  function (ko, view, appConfig, atlascharts, d3, d3scale, MomentAPI) {
 
     function testPage(params) {
 
@@ -71,7 +75,7 @@ define(
           ],
           selectedValues: ko.observableArray(),
         },
-        {
+        /*{
           type: 'multiselect',
           label: 'Condition concept',
           name: 'condition_concept',
@@ -114,22 +118,23 @@ define(
             }
           ],
           selectedValues: ko.observableArray(),
-        },
+        },*/
       ];
     }
 
     this.dataList = [
       {
-        period: 'Jan 1st 2017 to Jan 7th 2017',
+        periodStart: '2017-01-01',
+        periodEnd: '2017-01-07',
         personsCount: 55,
         personsPct: '33.7%',
         exposureTotal: 1.0,
         exposurePct: '23.0%',
         exposureAvg: 0.02
       },
-
       {
-        period: 'Jan 8st 2017 to Jan 14th 2017',
+        periodStart: '2017-01-08',
+        periodEnd: '2017-01-14',
         personsCount: 98,
         personsPct: '60.1%',
         exposureTotal: 1.9,
@@ -137,7 +142,8 @@ define(
         exposureAvg: 0.02
       },
       {
-        period: 'Jan 15st 2017 to Jan 21th 2017',
+        periodStart: '2017-01-15',
+        periodEnd: '2017-01-21',
         personsCount: 54,
         personsPct: '33.1%',
         exposureTotal: 1.0,
@@ -145,7 +151,8 @@ define(
         exposureAvg: 0.02
       },
       {
-        period: 'Jan 22nd 2017 to Jan 31st 2017',
+        periodStart: '2017-01-22',
+        periodEnd: '2017-01-31',
         personsCount: 32,
         personsPct: '19.6%',
         exposureTotal: 0.4,
@@ -153,6 +160,118 @@ define(
         exposureAvg: 0.01
       },
     ];
+
+    // Persons / Exposure chart
+
+    this.xFormat = (idx) => {
+      if (!this.dataList[idx])
+        return;
+
+      const {
+        periodStart,
+        periodEnd,
+      } = this.dataList[idx];
+
+      return MomentAPI.formatDateTime(periodStart, 'D MMM Y') + '\nto\n' + MomentAPI.formatDateTime(periodEnd, 'D MMM Y');
+    };
+
+    this.yPercentFormat = (val) => `${val}%`;
+
+    const personsChartData = this.dataList.map((entry, idx) => ({
+      id: idx,
+      xValue: idx,
+      yValue: parseFloat(entry.personsPct),
+    }));
+
+    const exposureChartData = this.dataList.map((entry, idx) => ({
+      id: idx,
+      xValue: idx,
+      yValue: parseFloat(entry.exposurePct),
+    }));
+
+    this.xScale = d3scale.scaleLinear()
+      .domain([
+        -1,
+        personsChartData.length
+      ]);
+
+    this.ticks = exposureChartData.length + /* padding */ 2;
+
+    this.personExposureLinechartData = [
+      {
+        name: 'Persons',
+        values: personsChartData,
+      },
+      {
+        name: 'Exposure',
+        values: exposureChartData,
+      }
+    ];
+
+    // Average chart
+
+    this.averageLinechartData = [
+      {
+        name: 'Average',
+        values: this.dataList.map((entry, idx) => ({
+          id: idx,
+          xValue: idx,
+          yValue: parseFloat(entry.exposureAvg),
+        }))
+      },
+    ];
+
+    ko.bindingHandlers.lineChart = {
+      init: function(element, valueAccessor, allBindings, data, context) {
+
+        const $linechart = $(element);
+
+        const linechart = new atlascharts.line();
+        const width = $linechart.width();
+        const height = Math.min($linechart.width(), 500);
+
+        const {
+          data: lineChartData,
+          xLabel,
+          yLabel,
+          xFormat,
+          yFormat,
+          xScale,
+          ticks,
+        } = valueAccessor();
+
+        linechart.render(lineChartData, $linechart[0], width, height, {
+          xLabel,
+          yLabel,
+          showLegend: true,
+          ticks,
+          xFormat,
+          yFormat,
+          xScale,
+        });
+
+        var insertLinebreaks = function (d) {
+          var el = d3.select(this);
+          var words = el.text().split('\n');
+          el.text('');
+
+          for (var i = 0; i < words.length; i++) {
+            var tspan = el.append('tspan').text(words[i]);
+            if (i > 0)
+              tspan.attr('x', 0).attr('dy', '15');
+          }
+        };
+
+        $linechart.find('g.x.axis g text').each(insertLinebreaks);
+
+        const $svg = $linechart.find('svg');
+        const $content = $svg.find('> g');
+        const newHeight = $content[0].getBBox().height + 10;
+        const viewBox = $svg[0].getAttribute('viewBox').trim().replace(/( |\t|\n)+/g, ' ').split(' ');
+        viewBox[viewBox.length - 1] = newHeight;
+        $svg[0].setAttribute('viewBox', viewBox.join(' '));
+      }
+    };
 
     var component = {
       viewModel: testPage,

@@ -4,4 +4,25 @@
   &__block {
     margin-bottom: 2rem;
   }
+
+  &__header {
+    margin: 0;
+  }
+
+  &__chart-line {
+    display: flex;
+    margin-top: 5rem;
+  }
+
+  &__chart {
+    flex-grow: 1;
+
+    &:not(:first-child) {
+      margin-left: 3.5rem;
+    }
+
+    &:not(:last-child) {
+      margin-right: 3.5rem;
+    }
+  }
 }
