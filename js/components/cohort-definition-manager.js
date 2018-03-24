@@ -670,7 +670,15 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 						if (heelResults.length > 0) {
 							reports.push({name: "Heracles Heel", reportKey: "Heracles Heel", analyses: []});
 						}
-						self.reportingAvailableReports(reports);
+						self.reportingAvailableReports([
+							...reports,
+							// TODO: remove after integration w/ back
+							{
+								name: "Healthcare Utilization. Persons and Exposure during baseline period",
+								reportKey: "Healthcare Utilization. Persons and Exposure during baseline period",
+								analyses: [],
+							}
+            ]);
 						self.generateReportsEnabled(false);
 						self.reportingSourceStatusAvailable(true);
 						self.reportingSourceStatusLoading(false);

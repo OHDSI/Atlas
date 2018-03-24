@@ -1,6 +1,11 @@
 .test-page {
   padding: 1rem;
 
+  &__section-label {
+    font-weight: 500;
+    padding-right: 1rem;
+  }
+
   &__block {
     margin-bottom: 2rem;
   }
@@ -23,6 +28,12 @@
 
     &:not(:last-child) {
       margin-right: 3.5rem;
+    }
+
+    .axis, .legend {
+      text {
+        font-size: 1.2rem;
+      }
     }
   }
 }

@@ -176,8 +176,6 @@ requirejs.config({
 
 		"moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min",
 		"querystring": "https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min",
-
-    "test-page": "components/test-page",
 	}
 });
 

@@ -868,14 +868,14 @@
 	</div>
 </div>
 
-<div data-bind="if: model.currentReport() == 'Healthcare Utilization' && !model.loadingReport()">
+<div data-bind="if: model.currentReport() == 'Healthcare Utilization. Persons and Exposure during baseline period' && !model.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Healthcare Utilization<i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Healthcare Utilization. Persons and Exposure during baseline period<i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-			TBD
+				<cost-utilization />
 			</div>
 		</div>
 	</div>

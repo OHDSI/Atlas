@@ -1,7 +1,7 @@
 define(
   [
     'knockout',
-    'text!./test-page.html',
+    'text!./cost-utilization.html',
     'appConfig',
     'atlascharts',
     'd3',
@@ -9,7 +9,7 @@ define(
     'webapi/MomentAPI',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/table-baseline-exposure/table-baseline-exposure',
-    'less!components/test-page.less',
+    'less!components/reports/cost-utilization/cost-utilization.less',
   ],
   function (ko, view, appConfig, atlascharts, d3, d3scale, MomentAPI) {
 
@@ -250,13 +250,13 @@ define(
           xScale,
         });
 
-        var insertLinebreaks = function (d) {
-          var el = d3.select(this);
-          var words = el.text().split('\n');
+        const insertLinebreaks = function (d) {
+          const el = d3.select(this);
+          const words = el.text().split('\n');
           el.text('');
 
-          for (var i = 0; i < words.length; i++) {
-            var tspan = el.append('tspan').text(words[i]);
+          for (let i = 0; i < words.length; i++) {
+            const tspan = el.append('tspan').text(words[i]);
             if (i > 0)
               tspan.attr('x', 0).attr('dy', '15');
           }
@@ -273,12 +273,12 @@ define(
       }
     };
 
-    var component = {
+    const component = {
       viewModel: testPage,
       template: view
     };
 
-    ko.components.register('test-page', component);
+    ko.components.register('cost-utilization', component);
     return component;
   }
 );
