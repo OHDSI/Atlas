@@ -631,7 +631,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
             drawPie(data.recordsByUnit, "#recordsByUnit");
             drawPlot(data.measurementValueDistribution, "#measurementValues");
             drawPlot(data.lowerLimitDistribution, "#lowerLimit");
-            drawPlot(data.upperLimitDistribution, "#uperLimit");
+            drawPlot(data.upperLimitDistribution, "#upperLimit");
             drawPie(data.valuesRelativeToNorm, "#relativeToNorm");
           }
 				}
@@ -859,10 +859,10 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
             UIF: ndata.p90Value[i],
           };
         });
-        measurementValues.render(bpseries, selector, size6.width, size6.height, {
+        measurementValues.render(bpseries, selector, 300, 200, {
           yMax: d3.max(data, function (d) {
             return d.p90Value;
-          }),
+          }) || bpdata.p90Value,
           xLabel: 'Unit',
           yLabel: 'Measurement Value',
         });
