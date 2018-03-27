@@ -35,6 +35,7 @@
                                                  password = <span class="token string">"supersecret"</span>)
     cdmDatabaseSchema <span class="token operator"><-</span> <span class="token string">"my_cdm_data"</span>
     resultsDatabaseSchema <span class="token operator"><-</span> <span class="token string">"my_results"</span>
+    vocabularyDatabaseSchema <span class="token operator"><-</span> <span class="token string">"my_vocabulary_data"</span>
     exposureTable <span class="token operator"><-</span> <span class="token string">"exposure_table"</span>
     outcomeTable <span class="token operator"><-</span> <span class="token string">"outcome_table"</span>
     cdmVersion <span class="token operator"><-</span> <span class="token string">"5" </span>
@@ -50,7 +51,7 @@
     
     <span class="token comment"># Get all <!-- ko text: $component.cohortComparison().psExclusionCaption --><!-- /ko --> Concept IDs for exclusion:</span>
     <span data-bind="if: $component.cohortComparison().psExclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().psExclusionConceptSetSQL"></span>")
-    sql <span class="token operator"><span class="token operator"><-</span></span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><span class="token operator"><-</span></span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = vocabularyDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
     connection <span class="token operator"><-</span> connect(connectionDetails)
     excludedConcepts <span class="token operator"><-</span> querySql(connection, sql)
@@ -60,7 +61,7 @@
     </span>
     <span class="token comment"># Get all <span data-bind="text: $component.cohortComparison().psInclusionCaption"></span> Concept IDs for inclusion:</span>
     <span data-bind="if: $component.cohortComparison().psInclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.cohortComparison().psInclusionConceptSetSQL"></span>")
-    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = vocabularyDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
     connection <span class="token operator"><-</span> connect(connectionDetails)
     includedConcepts <span class="token operator"><-</span> querySql(connection, sql)
