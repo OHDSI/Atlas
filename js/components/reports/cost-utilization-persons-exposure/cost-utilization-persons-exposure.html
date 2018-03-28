@@ -1,0 +1,71 @@
+<div data-bind="css: classes()">
+    <div data-bind="css: classes('block')">
+        <visualizations-filter-panel params="{ filterList: $component.filterList, apply: $component.applyFilters, live: true }"/>
+    </div>
+    <div data-bind="visible: loading()">
+        <loading params="status:'loading'" />
+    </div>
+    <div data-bind="visible: !loading()">
+        <div data-bind="css: classes('block')">
+            <table data-bind="css: classes('sum')">
+
+            </table>
+        </div>
+        <ul class="nav nav-tabs">
+            <!-- ko foreach: Object.keys(tabLabels) -->
+            <li role="presentation" data-bind="click: function() { $component.currentTab($data); }, attr: {class: $component.currentTab() == $data ? 'active' : ''}">
+                <a data-bind="text: $component.tabLabels[$data]" />
+            </li>
+            <!-- /ko -->
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
+                <div data-bind="css: classes('chart-line')">
+                    <div data-bind="
+                        css: classes('chart'),
+                        lineChart: {
+                            data: $component.personsChartData,
+                            xLabel: '',
+                            xFormat: $component.formatDate,
+                            yLabel: 'Persons',
+                            tickFormat: $component.emptyTickFormat,
+                            height: 250,
+                            showLegend: false
+                        }
+                    "/>
+                </div>
+                <div data-bind="css: classes('chart-line')">
+                    <div data-bind="
+                        css: classes('chart'),
+                        lineChart: {
+                            data: $component.totalExposureChartData,
+                            xLabel: '',
+                            xFormat: $component.formatDate,
+                            yLabel: 'Total Exposure in years',
+                            tickFormat: $component.emptyTickFormat,
+                            height: 250,
+                            showLegend: false
+                        }
+                    "/>
+                </div>
+                <div data-bind="css: classes('chart-line')">
+                    <div data-bind="
+                        css: classes('chart'),
+                        lineChart: {
+                            data: $component.avgExposurePerPersonChartData,
+                            xLabel: 'Period start',
+                            xFormat: $component.formatDate,
+                            yLabel: 'Average Exposure per person',
+                            tickFormat: $component.dateTickFormat,
+                            height: 250,
+                            showLegend: false
+                        }
+                    "/>
+                </div>
+            </div>
+            <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading()">
+                <table-baseline-exposure params="{ dataList: dataList }"/>
+            </div>
+        </div>
+    </div>
+</div>

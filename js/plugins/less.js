@@ -1,8 +1,8 @@
-define("less", function factory() {
+define(['appConfig'], function factory() {
   return {
     load: function load(name, req, onload, _config) {
 
-      req(['https://cdnjs.cloudflare.com/ajax/libs/less.js/3.0.1/less.min.js'], function () {
+      req(['less-js'], function () {
         const url = req.toUrl(name);
 
         const head = document.getElementsByTagName('head')[0];
