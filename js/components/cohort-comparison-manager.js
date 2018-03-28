@@ -1,7 +1,7 @@
 define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash', 'clipboard',
 				'webapi/CohortDefinitionAPI', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util',
 				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options',
-				'cohortbuilder/CohortDefinition', 'vocabularyprovider',
+				'cohortbuilder/CohortExpression', 'vocabularyprovider',
 				'conceptsetbuilder/InputTypes/ConceptSet',
 				'webapi/ExecutionAPI',
 				'databindings/d3ChartBinding',
@@ -9,6 +9,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 	function ($, ko, view, _, clipboard, cohortDefinitionAPI, config, authApi, ohdsiUtil,
 			ComparativeCohortAnalysis, options, CohortDefinition, vocabularyAPI,
 			ConceptSet, executionAPI) {
+
 		function cohortComparisonManager(params) {
 
 			var DEBUG = true;
@@ -496,7 +497,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					self.targetId(cohortDefinition.id);
 					self.targetCaption(cohortDefinition.name);
 					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
-					self.targetCohortDefinition(new CohortDefinition(cohortDefinition));
+					self.targetCohortDefinition(new CohortExpression(cohortDefinition.expression));
 				});
 			}
 

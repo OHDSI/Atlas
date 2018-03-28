@@ -52,14 +52,16 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webap
 			},
 			{
 				title: 'Created',
+				type: 'date',
 				render: function (s, p, d) {
 					return momentApi.formatDateTimeUTC(d.created);
 				}
 			},
 			{
 				title: 'Modified',
+				type: 'date',
 				render: function (s, p, d) {
-					return momentApi.formatDateTimeUTC(d.updated);
+					return momentApi.formatDateTimeUTC(d.modified);
 				}
 			},
 			{

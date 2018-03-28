@@ -2,12 +2,14 @@ define(['knockout',
 				'jquery',
 				'text!./results.html',
 				'webapi/IRAnalysisAPI',
+				'webapi/MomentAPI',
 				'databindings'
 ], function (
 	ko,
 	$,
 	template,
-	iraAPI) {
+	iraAPI,
+	momentApi) {
 
 	function IRAnalysisResultsViewer(params) {
 		var self = this;
@@ -21,6 +23,9 @@ define(['knockout',
 		self.selectedTarget = ko.observable();
 		self.selectedOutcome = ko.observable();
 		self.isLoading = ko.observable();
+		self.formatDateTime = function(date){
+			return momentApi.formatDateTime(new Date(date));
+    };
 		
 		self.irCaption = ko.pureComputed(function () {
 			var multiplier = self.rateMultiplier();
@@ -82,34 +87,11 @@ define(['knockout',
 				self.selectedReport(report);
 				self.isLoading(false);
 			});
-		}
+		};
 
 		self.msToTime = function (s) {
-
-			function addZ(n) {
-				return (n < 10 ? '0' : '') + n;
-			}
-
-			function formatMS(n) {
-				if (n < 10) {
-					return '00' + n;
-				} else if (n < 100) {
-					return '0' + n;
-				} else {
-					return n;
-				}
-			}
-
-			var ms = s % 1000;
-			s = (s - ms) / 1000;
-			var secs = s % 60;
-			s = (s - secs) / 60;
-			var mins = s % 60;
-
-			var hrs = (s - mins) / 60;
-
-			return addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs);
-		}
+			return momentApi.formatDuration(s);
+		};
 		
 		// observable subscriptions
 		
