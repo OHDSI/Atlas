@@ -1,7 +1,7 @@
 define(
   [
     'knockout',
-    'text!./cost-utilization-persons-exposure.html',
+    'text!./persons-exposure.html',
     'appConfig',
     'atlascharts',
     'd3',
@@ -13,7 +13,7 @@ define(
     'bindings/lineChart',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/table-baseline-exposure/table-baseline-exposure',
-    'less!./cost-utilization-persons-exposure.less',
+    'less!./persons-exposure.less',
   ],
   function (ko, view, appConfig, atlascharts, d3, d3scale, MomentAPI, BemHelper, config, moment) {
 

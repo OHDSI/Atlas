@@ -1,5 +1,5 @@
 define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig',
-    'webapi/CohortReportingAPI', 'databindings', 'faceted-datatable', 'colvis', 'components/reports/cost-utilization-persons-exposure/cost-utilization-persons-exposure'],
+    'webapi/CohortReportingAPI', 'databindings', 'faceted-datatable', 'colvis', 'components/reports/cost-utilization/persons-exposure'],
 	function (ko, view, d3, atlascharts, colorbrewer, _, config, cohortReportingAPI) {
 	function reportManager(params) {
 		var self = this;
