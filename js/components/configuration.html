@@ -1,21 +1,30 @@
 <div class="wrapperTitle">
 	<i class="fa fa-cogs"></i>Configuration
 </div>
-<div data-bind="if:$component.hasAccess">
+<div id="configuration" data-bind="if:$component.hasAccess">
 	<div id="wrapperConfigure">
 		<div data-bind="if:sharedState.appInitializationStatus()=='complete'">
 			<div data-bind="with:config.api">
-				<div data-bind="if:available==true">
-					<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
-				</div>
+				<div class="configureHeader">
+					<div class="left">
+						<div data-bind="if:available==true">
+							<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
+						</div>
 
-				<div data-bind="if:available==false">
-					<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
-				</div>
+						<div data-bind="if:available==false">
+							<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
+						</div>
 
-				<span class="serviceName" data-bind="text:name"></span> (
-				<span class="serviceUrl" data-bind="text:url"></span>)
-				<span class="pull-right btn btn-sm btn-primary" data-bind="click: $component.newSource, css: {disabled: !$component.canCreateSource()}">New Source</span>
+						<span class="serviceName" data-bind="text:name"></span> (
+						<span class="serviceUrl" data-bind="text:url"></span>)
+					</div>
+					<div class="right">
+						<div class="padded priority" data-bind="if:$component.canChangePriority">
+							<div class="priority-label">Change source priorities in: </div><select class="form-control" style="margin-bottom: 0" data-bind="options: $component.priorityOptions, optionsText:'name', optionsValue:'id', value: $component.sharedState.priorityScope" />
+						</div>
+						<span class="btn btn-sm btn-primary" data-bind="click: $component.newSource, css: {disabled: !$component.canCreateSource()}">New Source</span>
+					</div>
+				</div>
 				<div data-bind="if:available==false">
 					<div class="error" data-bind="text:xhr.statusText"></div>
 				</div>
@@ -63,15 +72,14 @@
                 <loading params="theme: 'light'" />
             </div>
 			<div>
-                <div class="padded" data-bind="if:$component.canChangePriority">
-                    Change source priorities in: <select data-bind="options: $component.priorityOptions, optionsText:'name', optionsValue:'id', value: $component.sharedState.priorityScope" />
-                </div>
-				<div class="padded">
-					<div class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache">Clear Configuration Cache</div>
+				<div style="display: flex">
+					<div class="padded">
+						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache">Clear Configuration Cache</a>
+					</div>
+					<div class="padded" data-bind="if: config.userAuthenticationEnabled && $component.hasAccess">
+						<a href="#/roles" class="btn btn-sm btn-primary" style="width: 175px" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
+					</div>
 				</div>
-			</div>
-			<div data-bind="if: config.userAuthenticationEnabled && $component.hasAccess">
-				<a href="#/roles" class="btn btn-sm btn-primary" style="width: 175px" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
 			</div>
 			<div data-bind="if: config.userAuthenticationEnabled && !$component.hasAccess">
 				<access-denied params="isAuthenticated: isAuthenticated"></access-denied>

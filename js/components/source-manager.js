@@ -12,13 +12,12 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
 
     function mapDaimons(daimons) {
       daimons = daimons || [];
-      var defaultKeys = lodash.keys(defaultDaimons);
+      var defaultKeys = Object.keys(defaultDaimons);
       var keys = daimons.map(function (value) { return value.daimonType; });
       var result = daimons.map(function (value) {
         return {
-          ...lodash.omit(value, ['tableQualifier', 'priority']),
+          ...lodash.omit(value, ['tableQualifier']),
           tableQualifier: ko.observable(value.tableQualifier),
-          priority: ko.observable(value.priority),
           enabled: ko.observable(true),
       };
       });

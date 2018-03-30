@@ -18,34 +18,24 @@
         <div class="pad-10">
             <div class="panel panel-primary">
                 <div class="panel-body">
-                    <div class="container form" style="width: 100%">
-                        <div class="row pad-5">
-                            <div class="col-sm-2">
+                    <div class="" style="width: 100%">
+                        <div class="source-row">
+                            <div class="control-group">
                                 <label for="sourceKey">Source Key:</label>
-                            </div>
-                            <div class="col-sm-2">
                                 <div class="form-group">
                                     <input title="Source key" data-bind="textInput: selectedSource().key, enable: canEdit()" class="form-control" type="text" id="sourceKey"/>
                                 </div>
                             </div>
-                            <div class="col-sm-2">
+                            <div class="control-group">
                                 <label for="dialect">Source dialect:</label>
-                            </div>
-                            <div class="col-sm-3">
                                 <div class="form-group">
                                     <select title="Source dialect" class="form-control" data-bind="options: $component.options.dialectOptions, optionsText: 'name', optionsValue: 'id', value: $component.selectedSource().dialect, enable: canEdit()" id="dialect" />
                                 </div>
                             </div>
                         </div>
-                        <div class="row pad-5">
-                            <div class="col-sm-2">
-                                <label for="connectionString">Connection string:</label>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <input title="Connection string" data-bind="textInput: selectedSource().connectionString, enable: canEdit()" class="form-control" type="text" id="connectionString"/>
-                                </div>
-                            </div>
+                        <div class="control-group" style="flex-grow: 1">
+                            <label for="connectionString">Connection string:</label>
+                            <input title="Connection string" data-bind="textInput: selectedSource().connectionString, enable: canEdit()" class="form-control" type="text" id="connectionString"/>
                         </div>
                     </div>
                     <div class="panel panel-primary">
@@ -56,7 +46,6 @@
                                     <td data-bind="text:daimonType"></td>
                                     <td><input type="checkbox" data-bind="checked: enabled, enable: $component.canEdit()" /></td>
                                     <td><input type="text" data-bind="textInput: tableQualifier, enable: $component.canEdit() && $data.enabled, attr: { title: daimonType + ' table qualifier' }" /></td>
-                                    <td><input type="text" data-bind="textInput: priority, enable: $component.canEdit() && $data.enabled, attr:{ title: daimonType + ' priority' }" /></td>
                                 </tbody>
                             </table>
                         </div>
