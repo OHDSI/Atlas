@@ -3,7 +3,7 @@ define(['knockout', 'jquery', 'text!./plp-manager.html', 'appConfig', 'd3', 'ohd
 		//console.log("manager:" + params.model.currentModelId());
 		var self = this;
 		var authApi = params.model.authApi;
-		
+
 		self.patientLevelPredictionId = params.currentPatientLevelPredictionId;
 		self.patientLevelPrediction = params.currentPatientLevelPrediction;
 		self.patientLevelPredictionDirtyFlag = params.dirtyFlag;
