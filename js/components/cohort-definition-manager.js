@@ -863,7 +863,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			self.cohortDefinitionCaption.dispose();
 			self.tabPath.dispose();
 			self.sortedConceptSets.dispose();
-			self.self.reportingState();
+			self.reportingState.dispose();
 			self.showReportNameDropdown.dispose();
 			
 		}
