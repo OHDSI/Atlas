@@ -8,12 +8,6 @@
 	</div>
 </div>
 
-<div data-bind="ifnot:$component.canViewCdmResults">
-	<div class="padded">
-		<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-	</div>
-</div>
-
 <div data-bind="if:$component.canViewCdmResults">
 	<!-- ko if:$component.showSelectionArea -->
 

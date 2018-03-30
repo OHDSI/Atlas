@@ -184,12 +184,6 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		var pageModel = new app();
 		window.pageModel = pageModel;
 
-		const originalTextBinding = ko.bindingHandlers.text.update;
-		ko.bindingHandlers.text.update = function(element, valueAccessor, allBingings) {
-			const value = ko.utils.unwrapObservable(valueAccessor());
-			originalTextBinding(element, () => filterXSS(value, config.xssOptions));
-		};
-
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
 
 		// update access token
