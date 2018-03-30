@@ -146,13 +146,30 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						});
 					},
 					'/configure': function () {
-						require(['configuration'], function () {
+						require(['configuration', 'source-manager'], function () {
 							self.componentParams = {
 								model: self
 							};
 							self.currentView('ohdsi-configuration');
 						});
 					},
+					'/source/new': function () {
+						require(['source-manager'], function () {
+							self.componentParams = {
+								model: self,
+							};
+							self.currentView('source-manager');
+            });
+          },
+					'/source/:id': function (id) {
+            require(['source-manager'], function(){
+								self.componentParams = {
+									model: self,
+								};
+	              self.selectedSourceKey(id);
+								self.currentView('source-manager');
+							});
+          },
 					'/roles': function () {
 						require(['roles'], function () {
 							self.componentParams = {
@@ -1365,6 +1382,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 				return url;
 			});
 
+			self.selectedSourceKey = ko.observable();
+			self.currentSource = ko.observable();
+			self.currentSourceDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(self.currentSource()))
 
 			self.currentCohortDefinitionInfo = ko.observable();
 			self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));

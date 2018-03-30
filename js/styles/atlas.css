@@ -2096,3 +2096,13 @@ div#wrapper_ohdsi a {
  text-decoration:underline;
  color: #003142;
 }
+
+.form input[type=text] {
+  width: 100%;
+}
+
+.form label {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: 5px;
+}

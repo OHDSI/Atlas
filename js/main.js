@@ -97,6 +97,7 @@ requirejs.config({
 		"director": "director.min",
 		"search": "components/search",
 		"configuration": "components/configuration",
+		"source-manager": "components/source-manager",
 		"concept-manager": "components/concept-manager",
 		"conceptset-browser": "components/conceptset-browser",
 		"conceptset-editor": "components/conceptset-editor",
@@ -179,7 +180,7 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, util, lscache, sharedState, vocabAPI) {
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, sourceApi, util, lscache, sharedState, vocabAPI) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
 
@@ -202,7 +203,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		var serviceCacheKey = 'ATLAS|' + config.api.url;
 		cachedService = lscache.get(serviceCacheKey);
 
-		if (cachedService) {
+		if (cachedService && cachedService.sources) {
 			console.log('cached service');
 			config.api = cachedService;
 
@@ -239,114 +240,17 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			var servicePromise = $.Deferred();
 			pageModel.initPromises.push(servicePromise);
 
-			$.ajax({
-				url: config.api.url + 'source/sources',
-				method: 'GET',
-				contentType: 'application/json',
-				success: function (sources) {
-					config.api.available = true;
-					var completedSources = 0;
-
-					$.each(sources, function (sourceIndex, source) {
-						source.hasVocabulary = false;
-						source.hasEvidence = false;
-						source.hasResults = false;
-						source.hasCDM = false;
-						source.vocabularyUrl = '';
-						source.evidenceUrl = '';
-						source.resultsUrl = '';
-						source.error = '';
-
-						source.initialized = true;
-						for (var d = 0; d < source.daimons.length; d++) {
-							var daimon = source.daimons[d];
-
-							// evaluate vocabulary daimons
-							if (daimon.daimonType == 'Vocabulary') {
-								source.hasVocabulary = true;
-								source.vocabularyUrl = config.api.url + 'vocabulary/' + source.sourceKey + '/';
-								if (daimon.priority >= vocabularyPriority) {
-									vocabularyPriority = daimon.priority;
-									sharedState.vocabularyUrl(source.vocabularyUrl);
-								}
-							}
-
-							// evaluate evidence daimons
-							if (daimon.daimonType == 'Evidence') {
-								source.hasEvidence = true;
-								source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
-								if (daimon.priority >= evidencePriority) {
-									evidencePriority = daimon.priority;
-									sharedState.evidenceUrl(source.evidenceUrl);
-								}
-							}
-
-							// evaluate results daimons
-							if (daimon.daimonType == 'Results') {
-								source.hasResults = true;
-								source.resultsUrl = config.api.url + 'cdmresults/' + source.sourceKey + '/';
-								if (daimon.priority >= densityPriority) {
-									densityPriority = daimon.priority;
-									sharedState.resultsUrl(source.resultsUrl);
-								}
-							}
-
-							// evaluate cdm daimons
-							if (daimon.daimonType == 'CDM') {
-								source.hasCDM = true;
-							}
-						}
-
-						config.api.sources.push(source);
-
-						if (source.hasVocabulary) {
-							$.ajax({
-								url: config.api.url + 'vocabulary/' + source.sourceKey + '/info',
-								timeout: 20000,
-								method: 'GET',
-								contentType: 'application/json',
-								success: function (info) {
-									completedSources++;
-									source.version = info.version;
-									source.dialect = info.dialect;
-
-									if (completedSources == sources.length) {
-										lscache.set(serviceCacheKey, config.api, 720);
-										servicePromise.resolve();
-									}
-								},
-								error: function (err) {
-									completedSources++;
-									pageModel.initializationErrors++;
-									source.version = 'unknown';
-									source.dialect = 'unknown';
-									source.url = config.api.url + source.sourceKey + '/';
-									if (completedSources == sources.length) {
-										lscache.set(serviceCacheKey, config.api, 720);
-										servicePromise.resolve();
-									}
-								}
-							});
-						} else {
-							completedSources++;
-							source.version = 'not available'
-							if (completedSources == sources.length) {
-								servicePromise.resolve();
-							}
-						}
-					});
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					config.api.available = false;
-					config.api.xhr = xhr;
-					config.api.thrownError = thrownError;
-
-					sharedState.appInitializationStatus('failed');
-					document.location = '#/configure';
-
-					servicePromise.resolve();
-				}
-			});
+      if (authApi.isAuthenticated()) {
+        sourceApi.initSourcesConfig();
+      } else {
+        var wasInitialized = false;
+        authApi.token.subscribe(function(token) {
+          if (token && !wasInitialized) {
+            sourceApi.initSourcesConfig();
+            wasInitialized = true;
+          }
+        });
+      }
 		}
 
 		$.when.apply($, pageModel.initPromises).done(function () {
