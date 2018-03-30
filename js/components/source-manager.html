@@ -18,15 +18,15 @@
         <div class="pad-10">
             <div class="panel panel-primary">
                 <div class="panel-body">
-                    <div class="" style="width: 100%">
+                    <div class="source-params" style="width: 100%">
                         <div class="source-row">
-                            <div class="control-group">
+                            <div class="control-group" style="width: 50%">
                                 <label for="sourceKey">Source Key:</label>
                                 <div class="form-group">
                                     <input title="Source key" data-bind="textInput: selectedSource().key, enable: canEdit()" class="form-control" type="text" id="sourceKey"/>
                                 </div>
                             </div>
-                            <div class="control-group">
+                            <div class="control-group" style="width: 50%">
                                 <label for="dialect">Source dialect:</label>
                                 <div class="form-group">
                                     <select title="Source dialect" class="form-control" data-bind="options: $component.options.dialectOptions, optionsText: 'name', optionsValue: 'id', value: $component.selectedSource().dialect, enable: canEdit()" id="dialect" />

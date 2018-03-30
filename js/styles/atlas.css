@@ -2142,9 +2142,7 @@ div#wrapper_ohdsi a {
 }
 
 .control-group {
-  display: flex;
-  align-items: center;
-  padding: 5px;
+  padding: 5px 20px 5px 0;
 }
 
 .control-group label {
@@ -2153,4 +2151,8 @@ div#wrapper_ohdsi a {
 
 .control-group .form-group {
   margin: 0;
+}
+
+.source-params {
+  margin-bottom: 30px;
 }
