@@ -1934,6 +1934,11 @@ span.new-role {
   color: #888;
 }
 
+.user-bar-container span.pipe {
+  padding-right: 15px;
+  color: #888;
+}
+
 i.fa.pending {
   color: #f19119;
 }
