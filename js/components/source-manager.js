@@ -1,5 +1,5 @@
-define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'webapi/SourceAPI', 'lodash', 'access-denied'],
-  function (ko, view, config, ohdsiUtil, sourceApi, lodash) {
+define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'access-denied'],
+  function (ko, view, config, ohdsiUtil, sourceApi, roleApi, lodash) {
 
   var defaultDaimons = {
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
@@ -114,11 +114,16 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
           return lodash.omit(d, ['enabled']);
         }),
       };
-      sourceApi.saveSource(self.selectedSourceKey(), source).then(function(){
-        return sourceApi.initSourcesConfig();
-      }).then(function () {
-        self.goToConfigure();
-      });
+      sourceApi.saveSource(self.selectedSourceKey(), source)
+        .then(function(){
+          return sourceApi.initSourcesConfig();
+        })
+        .then(function(){
+          return roleApi.updateRoles();
+        })
+        .then(function () {
+          self.goToConfigure();
+        });
     };
 
     self.close = function () {
@@ -138,6 +143,9 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
       sourceApi.deleteSource(self.selectedSourceKey())
         .then(function () {
           return sourceApi.initSourcesConfig();
+        })
+        .then(function() {
+          return roleApi.updateRoles();
         })
         .then(function () {
           self.goToConfigure();

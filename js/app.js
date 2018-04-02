@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, sharedState, querystring, d3) {
+define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
+	function ($, ko, ohdsiUtil, config, authApi, roleApi, sharedState, querystring, d3) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
@@ -1512,13 +1512,17 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			});
 
 			self.currentRoleId = ko.observable();
-			self.roles = ko.observableArray();
+			self.roles = sharedState.roles;
 			self.updateRoles = function () {
 				var promise = $.Deferred();
 				if (self.roles() && self.roles()
 					.length > 0) {
 					promise.resolve();
 				} else {
+					roleApi.updateRoles().then(function(){
+						promise.resolve();
+					});
+/*
 					$.ajax({
 						url: config.api.url + 'role',
 						method: 'GET',
@@ -1529,6 +1533,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							promise.resolve();
 						}
 					});
+*/
 				}
 				return promise;
 			}
