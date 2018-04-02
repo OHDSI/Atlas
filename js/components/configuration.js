@@ -24,6 +24,10 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
     self.canChangePriority = ko.pureComputed(function () {
       return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditSourcePriority()) || !config.userAuthenticationEnabled;
     });
+    self.canReadSource = function(source) {
+      return (config.userAuthenticationEnabled && self.isAuthenticated()
+        && authApi.isPermittedReadSource(source.sourceKey)) || !config.userAuthenticationEnabled;
+    };
 		self.clearLocalStorageCache = function () {
 			localStorage.clear();
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
@@ -34,7 +38,7 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
     };
 
 		self.selectSource = function(source) {
-			document.location = "#/source/" + source.sourceKey;
+			document.location = "#/source/" + source.sourceId;
 		};
 
     function updateSourceDaimonPriority(sourceKey, daimonType) {

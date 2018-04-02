@@ -166,7 +166,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 								self.componentParams = {
 									model: self,
 								};
-	              self.selectedSourceKey(id);
+	              self.selectedSourceId(id);
 								self.currentView('source-manager');
 							});
           },
@@ -1382,7 +1382,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 				return url;
 			});
 
-			self.selectedSourceKey = ko.observable();
+			self.selectedSourceId = ko.observable();
 			self.currentSource = ko.observable();
 			self.currentSourceDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(self.currentSource()))
 

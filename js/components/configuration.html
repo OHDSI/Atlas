@@ -44,7 +44,10 @@
 							<td><i class="fa" data-bind="if:!initialized, attr: { title : error }, css: { 'fa-check-circle': initialized, 'fa-exclamation-circle': !initialized }"></i>
 								<span data-bind="text:error"></span>
 							</td>
-							<td><a href="#" data-bind="text:sourceName + ' [' + sourceKey + ']', click: $component.selectSource"></a></td>
+							<td>
+								<div data-bind="if:$component.canReadSource"><a href="#" data-bind="text:sourceName + ' [' + sourceKey + ']', click: $component.selectSource"></a></div>
+								<div data-bind="ifnot:$component.canReadSource"><span data-bind="text:sourceName + ' [' + sourceKey + ']'"></span></div>
+							</td>
 							<td>
 								<div data-bind="foreach:daimons">
 									<div data-bind="text:daimonType + ': ' + tableQualifier"></div>

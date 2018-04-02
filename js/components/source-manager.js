@@ -51,7 +51,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
     self.dirtyFlag = self.model.currentSourceDirtyFlag;
 
     self.selectedSource = params.model.currentSource;
-    self.selectedSourceKey = params.model.selectedSourceKey;
+    self.selectedSourceId = params.model.selectedSourceId;
 
     self.options = {};
 
@@ -59,8 +59,8 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
 
     self.canReadSource = function() {
       return (config.userAuthenticationEnabled && self.isAuthenticated()
-        && authApi.isPermittedReadSource(self.selectedSourceKey())) || !config.userAuthenticationEnabled
-        || !self.selectedSourceKey();
+        && authApi.isPermittedReadSource(self.selectedSourceId())) || !config.userAuthenticationEnabled
+        || !self.selectedSourceId();
     };
 
     self.isDeletePermitted = function() {
@@ -70,7 +70,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
 
     self.canEdit = function() {
       return (config.userAuthenticationEnabled && self.isAuthenticated() &&
-        authApi.isPermittedEditSource(self.selectedSourceKey())) || !config.userAuthenticationEnabled;
+        authApi.isPermittedEditSource(self.selectedSourceId())) || !config.userAuthenticationEnabled;
     };
 
     self.canSave = function () {
@@ -114,7 +114,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
           return lodash.omit(d, ['enabled']);
         }),
       };
-      sourceApi.saveSource(self.selectedSourceKey(), source)
+      sourceApi.saveSource(self.selectedSourceId(), source)
         .then(function(){
           return sourceApi.initSourcesConfig();
         })
@@ -131,7 +131,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
         return;
       }
       self.selectedSource(null);
-      self.selectedSourceKey(null);
+      self.selectedSourceId(null);
       self.dirtyFlag().reset();
       self.goToConfigure();
     };
@@ -140,7 +140,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
       if (!confirm('Delete source? Warning: deletion can not be undone!')){
         return;
       }
-      sourceApi.deleteSource(self.selectedSourceKey())
+      sourceApi.deleteSource(self.selectedSourceId())
         .then(function () {
           return sourceApi.initSourcesConfig();
         })
@@ -157,11 +157,11 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
     };
 
     self.init = function () {
-      if (self.selectedSourceKey() == null && self.selectedSource() == null) {
+      if (self.selectedSourceId() == null && self.selectedSource() == null) {
         self.newSource();
       } else {
         self.loading(true);
-        sourceApi.getSource(self.selectedSourceKey())
+        sourceApi.getSource(self.selectedSourceId())
           .then(function(source){
             self.selectedSource(new Source(source));
             self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
