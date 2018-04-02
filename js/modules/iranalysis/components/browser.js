@@ -1,5 +1,5 @@
-define(['knockout', 'text!./browser.html', 'appConfig', 'moment', 'faceted-datatable'
-], function (ko, template, config, moment) {
+define(['knockout', 'text!./browser.html', 'appConfig', 'webapi/MomentAPI', 'faceted-datatable'
+], function (ko, template, config, momentApi) {
 	
 	function renderLink(s, p, d) {
 		return '<span class="linkish">' + d.name + '</span>';
@@ -50,17 +50,16 @@ define(['knockout', 'text!./browser.html', 'appConfig', 'moment', 'faceted-datat
 			},
 			{
 				title: 'Created',
+				type: 'date',
 				render: function (s, p, d) {
-					return new moment(d.createdDate, "YYYY-MM-DD HH:mm")
-						.format('YYYY-MM-DD hh:mm:ss a');
+					return momentApi.formatDateTimeUTC(d.createdDate);
 				}
 			},
 			{
 				title: 'Updated',
+				type: 'date',
 				render: function (s, p, d) {
-					var dateToFormat = d.modifiedDate || d.createdDate
-					return new moment(dateToFormat, "YYYY-MM-DD HH:mm")
-						.format('YYYY-MM-DD hh:mm:ss a');
+					return momentApi.formatDateTimeUTC(d.modifiedDate);
 				}
 			},
 			{

@@ -141,7 +141,7 @@
 				The target cohort <span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().treatmentCaption()"></span> is defined as:
 			</div>
 			<div class="panel-body">
-				<cohort-expression-viewer params="expression: $component.patientLevelPrediction().treatmentCohortDefinition().expression, selectedFragment: $component.patientLevelPrediction().treatmentCohortDefinition().expression"></cohort-expression-viewer>
+				<cohort-expression-viewer params="expression: $component.patientLevelPrediction().treatmentCohortDefinition()"></cohort-expression-viewer>
 			</div>
 		</div>
 	</div>
@@ -152,7 +152,7 @@
 				The outcome <span class="cohort-comparison-pf-reference" data-bind="text: $component.patientLevelPrediction().outcomeCaption()"></span> is defined as:
 			</div>
 			<div class="panel-body">
-				<cohort-expression-viewer params="expression: $component.patientLevelPrediction().outcomeCohortDefinition().expression, selectedFragment: $component.patientLevelPrediction().outcomeCohortDefinition().expression"></cohort-expression-viewer>
+				<cohort-expression-viewer params="expression: $component.patientLevelPrediction().outcomeCohortDefinition()"></cohort-expression-viewer>
 			</div>
 		</div>
 	</div>

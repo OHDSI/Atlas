@@ -75,6 +75,7 @@ define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], functio
 
 		self.appConfig = appConfig;
 		self.token = authApi.token;
+		self.authLogin = authApi.subject;		
 		self.isLoggedIn = ko.computed(function () {
 			if (!self.token()) return null;
 			return authApi.isAuthenticated();
