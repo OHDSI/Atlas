@@ -45,8 +45,8 @@
 								<span data-bind="text:error"></span>
 							</td>
 							<td>
-								<div data-bind="if:$component.canReadSource"><a href="#" data-bind="text:sourceName + ' [' + sourceKey + ']', click: $component.selectSource"></a></div>
-								<div data-bind="ifnot:$component.canReadSource"><span data-bind="text:sourceName + ' [' + sourceKey + ']'"></span></div>
+								<div data-bind="if:$component.canReadSource($data)"><a href="#" data-bind="text:sourceName + ' [' + sourceKey + ']', click: $component.selectSource"></a></div>
+								<div data-bind="ifnot:$component.canReadSource($data)"><span data-bind="text:sourceName + ' [' + sourceKey + ']'"></span></div>
 							</td>
 							<td>
 								<div data-bind="foreach:daimons">
@@ -71,9 +71,9 @@
 					</tbody>
 				</table>
 			</div>
-            <div data-bind="if: isInProgress()" class="text-center">
-                <loading params="theme: 'light'" />
-            </div>
+			<div data-bind="if: isInProgress()" class="text-center">
+					<loading params="theme: 'light'" />
+			</div>
 			<div>
 				<div style="display: flex">
 					<div class="padded">
@@ -88,5 +88,8 @@
 	</div>
 </div>
 <div data-bind="ifnot:$component.hasAccess">
-	<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+	<div class="padded">
+		<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+	</div>
 </div>
+
