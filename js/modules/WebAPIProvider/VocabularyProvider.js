@@ -196,7 +196,12 @@ define(function (require, exports) {
 	}
 
 	function getConceptsById(identifiers, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/lookup/identifiers';
+		var repositoryUrl;
+		if (url || sourceKey) {
+      repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/lookup/identifiers';
+    } else {
+			repositoryUrl = sharedState.vocabularyUrl() + 'lookup/identifiers';
+		}
 
 		var getConceptsByIdPromise = $.ajax({
 			url: repositoryUrl,
@@ -207,6 +212,17 @@ define(function (require, exports) {
 	});
 
 		return getConceptsByIdPromise;
+	}
+
+	function getConceptsByCode(codes) {
+		var url = sharedState.vocabularyUrl() + 'lookup/sourcecodes';
+		return $.ajax({
+			url: url,
+			data: JSON.stringify(codes),
+			method: 'POST',
+			contentType: 'application/json',
+			error: authAPI.handleAccessDenied,
+		});
 	}
 
 	function getMappedConceptsById(identifiers, url, sourceKey) {
@@ -260,6 +276,7 @@ define(function (require, exports) {
 		getConceptSetExpression: getConceptSetExpression,
 		resolveConceptSetExpression: resolveConceptSetExpression,
 		getConceptsById: getConceptsById,
+		getConceptsByCode: getConceptsByCode,
 		getMappedConceptsById: getMappedConceptsById,
 		getConceptSetExpressionSQL: getConceptSetExpressionSQL,
 		optimizeConceptSet: optimizeConceptSet,

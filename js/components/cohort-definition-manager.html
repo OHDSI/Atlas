@@ -13,7 +13,7 @@
 			<div class="input-group">
 				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: model.currentCohortDefinition().name, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></input>
 				<div class="input-group-btn">
-					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning() && canEdit())"><i class="fa fa-save"></i></button>
+					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: canSave"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
 					<!-- ko if: model.currentCohortDefinition().id() != null && model.currentCohortDefinition().id() != 0 -->
 					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()"><i class="fa fa-copy"></i></button>
@@ -56,6 +56,7 @@
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
 				<div style="padding-bottom: 10px;" class="pull-right">
 					<button type="button" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
+					<button type="button" style="margin-right: 3px;" class="btn btn-sm btn-primary pull-right" data-bind="click:function(){ $component.importConceptSet() }, enable: canEdit"><i class="fa fa-upload" aria-hidden="true" /> Import</button>
 					<button type="button" style="margin-right: 3px" class="btn btn-sm btn-primary pull-right" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
 				</div>
 				<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
@@ -80,6 +81,13 @@
 											}
 									 }">
 				</table>
+				<div class="paddedWrapper form-group" data-bind="if:isImportingConceptSet()">
+					<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $('#textImportConceptSet').val('');}">click to clear</a>)</div>
+					<textarea class="form-control" rows="5" id="textImportConceptSet"></textarea>
+					<div type="button" data-bind="css: {disabled: model.currentConceptSet()!=null}, click:function() { importConceptSetExpression($('#textImportConceptSet').val()); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
+					<button class="btn btn-sm btn-primary pull-right" style="margin-right: 3px" data-bind="click: function(){ $component.closeConceptSetImport() }">Close Import</button>
+					<div class="clear"></div>
+				</div>
 				<!-- ko if: model.currentConceptSet() && model.currentConceptSetSource() == 'cohort' -->
 				<hr/>
 				<ul class="nav nav-pills">
@@ -96,6 +104,9 @@
 					</li>
 					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'export'}, click: function() {$component.conceptSetTabMode('export')};"> <a>Export</a>
 					</li>
+					<li role="presentation" data-bind="css: { active: $component.conceptSetTabMode() == 'import' }, click: function() { $component.conceptSetTabMode('import'); }">
+						<a>Import</a>
+					</li>
 				</ul>
 
 				<div data-bind="if: model.currentView() != 'loading' && $component.conceptSetTabMode() == 'details'">
@@ -109,7 +120,7 @@
 						<div class="clear"></div>
 
 						<button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
-						<button type="button" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
+						<button type="button" style="margin-right: 3px;" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
 					</div>
 				</div>
 
@@ -137,6 +148,30 @@
 					</div>
 					<pre id="includedConceptIdentifierList" data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 				</div>
+
+				<div id="wrapperConceptSetImport" data-bind="if:$component.conceptSetTabMode() == 'import'">
+					<ul class="nav nav-pills">
+						<li role="presentation" data-bind="css: {active: $component.importTabMode() == 'identifiers'}, click: function(){ $component.importTabMode('identifiers'); }">
+							<a>Concept Identifiers</a>
+						</li>
+						<li role="presentation" data-bind="css: {active: $component.importTabMode() == 'sourcecodes'}, click: function(){ $component.importTabMode('sourcecodes'); }">
+							<a>Source Codes</a>
+						</li>
+					</ul>
+					<div id="wrapperImportConceptIdentifiers" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() == 'identifiers'">
+						<div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportConceptIdentifiers');}">click to clear</a>)</div>
+						<textarea class="form-control" rows="5" id="textImportConceptIdentifiers" data-bind="if:model.currentImportMode() == 'conceptset'"></textarea>
+						<a data-bind="click:function() {importConceptIdentifiers($('#textImportConceptIdentifiers').val().match(/[0-9]+/g));}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Concept Identifiers</a>
+						<div class="clear"></div>
+					</div>
+					<div id="wrapperImportSourcecodes" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() == 'sourcecodes'">
+						<div class="heading">Enter Source Codes (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportSourcecodes');}">click to clear</a>)</div>
+						<textarea class="form-control" rows="5" id="textImportSourceCodes"></textarea>
+						<a data-bind="click:function() {importSourceCodes($('#textImportSourceCodes').val().match(/[0-9a-zA-Z\.-]+/g));}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Source Codes</a>
+						<div class="clear"></div>
+					</div>
+				</div>
+                <loading data-bind="visible: conceptLoading()" params="status: 'retrieving concepts'"></loading>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">

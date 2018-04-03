@@ -8,6 +8,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'cohortbuilder/InclusionRule',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'webapi/CohortReportingAPI',
+	'vocabularyprovider',
 	'atlas-state',
 	'clipboard',
 	'd3',
@@ -17,7 +18,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'faceted-datatable',
 	'cohortdefinitionviewer/expressionCartoonBinding',
 	'cohortfeatures',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, clipboard, d3, jobDetail) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -127,13 +128,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.tabMode = self.model.currentCohortDefinitionMode;
 		self.generationTabMode = ko.observable("inclusion")
 		self.exportTabMode = ko.observable('printfriendly');
+		self.importTabMode = ko.observable('identifiers');
 		self.exportSqlMode = ko.observable('ohdsisql');
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
 		self.dirtyFlag = self.model.currentCohortDefinitionDirtyFlag;
 		self.isLoadingSql = ko.observable(false);
-		self.isSaveable = ko.pureComputed(function () {
-			return self.dirtyFlag() && self.dirtyFlag().isDirty();
-		});
+		self.conceptLoading = ko.observable(false);
 		self.tabPath = ko.computed(function () {
 			var path = self.tabMode();
 			if (path === 'export') {
@@ -146,6 +146,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 			return path;
 		});
+    self.canSave = ko.pureComputed(function(){
+      return self.dirtyFlag().isDirty() && !self.isRunning() && self.canEdit();
+    });
 
 		self.delayedCartoonUpdate = ko.observable(null);
 
@@ -184,6 +187,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return clone.sort(conceptSetSorter);
 			}
 		});
+		self.importingConceptSet = ko.observable(false);
 
 		// model behaviors
 		self.onConceptSetTabRespositoryConceptSetSelected = function (conceptSet) {
@@ -549,7 +553,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.closeConceptSet = function () {
-			self.model.clearConceptSet()
+			self.model.clearConceptSet();
 		}
 
 		self.deleteConceptSet = function () {
@@ -561,17 +565,91 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			self.closeConceptSet();
 		}
 
+		function createConceptSet() {
+      var newConceptSet = new ConceptSet();
+      var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
+      newConceptSet.id = cohortConceptSets().reduce(function(max, val){ return Math.max(max, val.id) + 1; }, 0);
+			return newConceptSet;
+		}
+
+		function loadConceptSet(conceptSet) {
+      var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
+      cohortConceptSets.push(conceptSet);
+      self.model.loadConceptSet(conceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
+      self.model.currentCohortDefinitionMode("conceptsets");
+    }
+
 		self.newConceptSet = function () {
 			console.log("new concept set selected");
-			var newConceptSet = new ConceptSet();
-			var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
-			newConceptSet.id = cohortConceptSets().length > 0 ? Math.max.apply(null, cohortConceptSets().map(function (d) {
-				return d.id;
-			})) + 1 : 0;
-			cohortConceptSets.push(newConceptSet);
-			self.model.loadConceptSet(newConceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
-			self.model.currentCohortDefinitionMode("conceptsets");
-		}
+			loadConceptSet(createConceptSet());
+		};
+
+		self.isImportingConceptSet = ko.pureComputed(function () {
+			return self.importingConceptSet() && !self.model.currentConceptSet();
+    });
+
+		self.importConceptSet = function () {
+			self.importingConceptSet(true);
+			self.closeConceptSet();
+    };
+
+		self.closeConceptSetImport = function () {
+			self.importingConceptSet(false);
+    };
+
+		self.importConceptSetExpression = function(expressionJson){
+      var items = JSON.parse(expressionJson).items;
+			var conceptSet = createConceptSet();
+
+			items.forEach(function(item){
+				var conceptSetItem = {};
+				conceptSetItem.concept = item.concept;
+				conceptSetItem.isExcluded = ko.observable(item.isExcluded);
+				conceptSetItem.includeDescendants = ko.observable(item.includeDescendants);
+				conceptSetItem.includeMapped = ko.observable(item.includeMapped);
+
+				conceptSet.expression.items.push(conceptSetItem);
+			});
+
+      loadConceptSet(conceptSet);
+		};
+
+    function appendConcepts(data){
+      data.forEach(function(item){
+        sharedState.selectedConceptsIndex[item.CONCEPT_ID] = 1;
+        sharedState.selectedConcepts.push(self.model.createConceptSetItem(item));
+      });
+      if (self.model.currentCohortDefinition() && self.model.currentConceptSetSource() == "cohort") {
+        var conceptSet = self.model.currentCohortDefinition()
+          .expression()
+          .ConceptSets()
+          .filter(function (item) {
+            return item.id == self.model.currentConceptSet().id;
+          })[0];
+        if (conceptSet) {
+          conceptSet.expression.items.valueHasMutated();
+        }
+      }
+      self.conceptSetTabMode('details');
+    }
+
+		self.importConceptIdentifiers = function(identifiers) {
+      self.conceptLoading(true);
+			vocabularyApi
+        .getConceptsById(identifiers)
+        .then(appendConcepts)
+        .then(function(){ self.conceptLoading(false); })
+        .catch(function () { self.conceptLoading(false); });
+		};
+
+		self.importSourceCodes = function (sourcecodes) {
+		  self.conceptLoading(true);
+			vocabularyApi
+        .getConceptsByCode(sourcecodes)
+        .then(appendConcepts)
+        .then(function(){ self.conceptLoading(false); })
+        .catch(function(){ self.conceptLoading(false); });
+    };
 
 		self.viewReport = function (sourceKey, reportName) {
 			// TODO: Should we prevent running an analysis on an unsaved cohort definition?

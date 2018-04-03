@@ -163,34 +163,19 @@ define(['jquery', 'knockout', 'text!./search.html', 'vocabularyprovider', 'atlas
 			document.location = '#/conceptset/0/details';
 		}
 
+    function initConceptSet(data){
+      self.initConceptSet(data);
+      document.location = '#/conceptset/0/details';
+    }
+
 		self.importConceptIdentifiers = function () {
 			var identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
-			$.ajax({
-				url: sharedState.vocabularyUrl() + 'lookup/identifiers',
-				method: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify(identifers),
-				success: function (data) {
-					// Automatically add these concepts to the active concept set
-					self.initConceptSet(data);
-					document.location = '#/conceptset/0/details';
-				}
-			});
+			vocabAPI.getConceptsById(identifers).then(initConceptSet);
 		}
 
 		self.importSourcecodes = function () {
 			var sourcecodes = $('#textImportSourcecodes').val().match(/[0-9a-zA-Z\.-]+/g);
-			$.ajax({
-				url: sharedState.vocabularyUrl() + 'lookup/sourcecodes',
-				method: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify(sourcecodes),
-				success: function (data) {
-					// Automatically add these concepts to the active concept set
-					self.initConceptSet(data);
-					document.location = '#/conceptset/0/details';
-				}
-			});
+			vocabAPI.getConceptsByCode(sourcecodes).then(initConceptSet);
 		}
 
 		self.initConceptSet = function (conceptSetItems) {
