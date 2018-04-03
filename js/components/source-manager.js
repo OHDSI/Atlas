@@ -57,27 +57,26 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
 
     self.isAuthenticated = authApi.isAuthenticated;
 
-    self.canReadSource = function() {
+    self.canReadSource = ko.pureComputed(function() {
       return (config.userAuthenticationEnabled && self.isAuthenticated()
         && authApi.isPermittedReadSource(self.selectedSourceId())) || !config.userAuthenticationEnabled
         || !self.selectedSourceId();
-    };
+    });
 
-    self.isDeletePermitted = function() {
+    self.isDeletePermitted = ko.pureComputed(function() {
       return (config.userAuthenticationEnabled && self.isAuthenticated() &&
         authApi.isPermittedDeleteSource(self.selectedSource().key())) || !config.userAuthenticationEnabled;
-    };
+    });
 
-    self.canEdit = function() {
+    self.canEdit = ko.pureComputed(function() {
       return (config.userAuthenticationEnabled && self.isAuthenticated() &&
         authApi.isPermittedEditSource(self.selectedSourceId())) || !config.userAuthenticationEnabled;
-    };
+    });
 
-    self.canSave = function () {
-      console.log('canEdit', self.canEdit());
+    self.canSave = ko.pureComputed(function () {
       return (self.selectedSource() && self.selectedSource().name() && self.selectedSource().key()
         && self.selectedSource().connectionString() && self.canEdit());
-    };
+    });
 
     self.canDelete = function () {
       return (self.selectedSource() && self.selectedSource().key() && self.isDeletePermitted());

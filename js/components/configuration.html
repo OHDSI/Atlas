@@ -84,9 +84,9 @@
 					</div>
 				</div>
 			</div>
-			<div data-bind="if: config.userAuthenticationEnabled && !$component.hasAccess">
-				<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-			</div>
 		</div>
 	</div>
+</div>
+<div data-bind="ifnot:$component.hasAccess">
+	<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
 </div>
