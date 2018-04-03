@@ -236,9 +236,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				}
 			}
 		} else {
-			config.api.sources = [];
-			var servicePromise = $.Deferred();
-			pageModel.initPromises.push(servicePromise);
+			sharedState.sources([]);
 
       if (authApi.isAuthenticated()) {
         sourceApi.initSourcesConfig();

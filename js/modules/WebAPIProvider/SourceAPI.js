@@ -77,9 +77,10 @@ define(function (require, exports) {
       method: 'GET',
       contentType: 'application/json',
       success: function (sources) {
-        config.api.sources = [];
+        sharedState.sources([]);
         config.api.available = true;
         var completedSources = 0;
+        var result = [];
 
         $.each(sources, function (sourceIndex, source) {
           source.hasVocabulary = false;
@@ -90,6 +91,8 @@ define(function (require, exports) {
           source.evidenceUrl = '';
           source.resultsUrl = '';
           source.error = '';
+          source.version = ko.observable('unknown');
+          source.dialect = ko.observable();
 
           source.initialized = true;
           for (var d = 0; d < source.daimons.length; d++) {
@@ -131,7 +134,8 @@ define(function (require, exports) {
             }
           }
 
-          config.api.sources.push(source);
+          result.push(source);
+          //sharedState.sources.push(source);
 
           if (source.hasVocabulary) {
             $.ajax({
@@ -141,8 +145,8 @@ define(function (require, exports) {
               contentType: 'application/json',
               success: function (info) {
                 completedSources++;
-                source.version = info.version;
-                source.dialect = info.dialect;
+                source.version(info.version);
+                source.dialect(info.dialect);
 
                 if (completedSources == sources.length) {
                   lscache.set(serviceCacheKey, config.api, 720);
@@ -152,8 +156,8 @@ define(function (require, exports) {
               error: function (err) {
                 completedSources++;
                 pageModel.initializationErrors++;
-                source.version = 'unknown';
-                source.dialect = 'unknown';
+                source.version('unknown');
+                source.dialect('unknown');
                 source.url = config.api.url + source.sourceKey + '/';
                 if (completedSources == sources.length) {
                   lscache.set(serviceCacheKey, config.api, 720);
@@ -169,6 +173,7 @@ define(function (require, exports) {
             }
           }
         });
+        sharedState.sources(result);
       },
       error: function (xhr, ajaxOptions, thrownError) {
         config.api.available = false;

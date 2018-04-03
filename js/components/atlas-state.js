@@ -6,6 +6,7 @@ define(['knockout', 'lscache', 'job/jobDetail'], function (ko, cache, jobDetail)
 	state.jobListing = ko.observableArray();
 	state.priorityScope = ko.observable('session');
 	state.roles = ko.observableArray();
+	state.sources = ko.observableArray([]);
 
 	// Extending the jobListing array to include a 'queue' 
 	// function that will check if an existing job is 

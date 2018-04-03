@@ -1038,7 +1038,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 							$.when(conceptPromise)
 								.done(function (cp) {
 									// now that we have required information lets compile them into data objects for our view
-									var cdmSources = config.api.sources.filter(self.hasCDM);
+									var cdmSources = sharedState.sources().filter(self.hasCDM);
 									var results = [];
 									for (var s = 0; s < cdmSources.length; s++) {
 										var source = cdmSources[s];

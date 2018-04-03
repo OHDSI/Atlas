@@ -1,7 +1,7 @@
 <div class="wrapperTitle">
 	<i class="fa fa-cogs"></i>Configuration
 </div>
-<div id="configuration" data-bind="if:$component.hasAccess">
+<div id="configuration" data-bind="if:$component.hasAccess()">
 	<div id="wrapperConfigure">
 		<div data-bind="if:sharedState.appInitializationStatus()=='complete'">
 			<div data-bind="with:config.api">
@@ -56,7 +56,7 @@
 							<td data-bind="text:sourceDialect"></td>
 							<td class="configureRadio">
 								<input type="radio" name="radioSource" data-bind="disable:!hasVocabulary, checkedValue:vocabularyUrl, checked:$component.sharedState.vocabularyUrl, click: $component.updateVocabPriority">
-								<span data-bind="text:version"></span>
+								<span data-bind="text:$data.version()"></span>
 							</td>
 							<td class="configureRadio">
 								<input type="radio" name="radioEvidence" data-bind="disable:!hasEvidence, checkedValue:evidenceUrl, checked:$component.sharedState.evidenceUrl, click: $component.updateEvidencePriority">

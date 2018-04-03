@@ -5,7 +5,7 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 		self.api = config.api;
 		self.sharedState = sharedState;
     self.isInProgress = ko.observable(false);
-		self.sources = ko.observableArray(config.api.sources);
+		self.sources = sharedState.sources;
 		self.priorityOptions = [
       {name: 'Current Session', id: 'session'},
       {name: 'Whole Application', id: 'application'},
@@ -65,21 +65,21 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 
     self.updateVocabPriority = function() {
       var newVocabUrl = self.sharedState.vocabularyUrl();
-      var selectedSource = self.config.api.sources.find(function(item){ return item.vocabularyUrl === newVocabUrl; });
+      var selectedSource = self.sharedState.sources().find(function(item){ return item.vocabularyUrl === newVocabUrl; });
       updateSourceDaimonPriority(selectedSource.sourceKey, 'Vocabulary');
       return true;
     };
 
     self.updateEvidencePriority = function() {
       var newEvidenceUrl = self.sharedState.evidenceUrl();
-      var selectedSource = self.config.api.sources.find(function(item){ return item.evidenceUrl === newEvidenceUrl; });
+      var selectedSource = self.sharedState.sources().find(function(item){ return item.evidenceUrl === newEvidenceUrl; });
       updateSourceDaimonPriority(selectedSource.sourceKey, 'Evidence');
       return true;
     };
 
     self.updateResultsPriority = function() {
       var newResultsUrl = self.sharedState.resultsUrl();
-      var selectedSource = self.config.api.sources.find(function(item){ return item.resultsUrl === newResultsUrl; });
+      var selectedSource = self.sharedState.sources().find(function(item){ return item.resultsUrl === newResultsUrl; });
       updateSourceDaimonPriority(selectedSource.sourceKey, 'Results');
       return true;
     };

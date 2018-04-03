@@ -55,15 +55,19 @@ define(function(require, exports) {
     });
 
     var isAuthenticated = ko.pureComputed(function() {
-				if (!config.userAuthenticationEnabled) {
-					return true;
-				}
-			
-        if (!token()) {
-            return false;
+      try {
+        if (!config.userAuthenticationEnabled) {
+          return true;
+        }
+
+        if (!token() && token() !== 'undefined') {
+          return false;
         }
 
         return new Date() < tokenExpirationDate();
+      }catch(e) {
+        return false;
+      }
     });
 
     var getAuthorizationHeader = function () {

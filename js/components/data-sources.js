@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'databindings', 'access-denied'], function ($, ko, view, d3, atlascharts, colorbrewer, _, config, authApi, d3tip) {
+define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'databindings', 'access-denied'], function ($, ko, sharedState, view, d3, atlascharts, colorbrewer, _, config, authApi, d3tip) {
 	function dataSources(params) {
 		var self = this;
 
@@ -30,7 +30,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 			};
 
 		self.model = params.model;
-		self.sources = config.api.sources.filter(function (s) {
+		self.sources = sharedState.sources().filter(function (s) {
 			return s.hasResults && s.hasCDM;
 		});
 		self.loadingReport = ko.observable(false);
