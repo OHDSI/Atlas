@@ -22,7 +22,7 @@
 						<div class="padded priority" data-bind="if:$component.canChangePriority">
 							<div class="priority-label">Change source priorities in: </div><select class="form-control" style="margin-bottom: 0" data-bind="options: $component.priorityOptions, optionsText:'name', optionsValue:'id', value: $component.sharedState.priorityScope" />
 						</div>
-						<span class="btn btn-sm btn-primary" data-bind="click: $component.newSource, css: {disabled: !$component.canCreateSource()}">New Source</span>
+						<span class="btn btn-sm btn-primary" data-bind="click: $component.newSource, visible: $component.config.userAuthenticationEnabled, css: {disabled: !$component.canCreateSource()}">New Source</span>
 					</div>
 				</div>
 				<div data-bind="if:available==false">
@@ -56,7 +56,7 @@
 							<td data-bind="text:sourceDialect"></td>
 							<td class="configureRadio">
 								<input type="radio" name="radioSource" data-bind="disable:!hasVocabulary, checkedValue:vocabularyUrl, checked:$component.sharedState.vocabularyUrl, click: $component.updateVocabPriority">
-								<span data-bind="text:$data.version()"></span>
+								<span data-bind="text:version"></span>
 							</td>
 							<td class="configureRadio">
 								<input type="radio" name="radioEvidence" data-bind="disable:!hasEvidence, checkedValue:evidenceUrl, checked:$component.sharedState.evidenceUrl, click: $component.updateEvidencePriority">

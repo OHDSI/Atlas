@@ -56,6 +56,14 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
     self.options = {};
 
     self.isAuthenticated = authApi.isAuthenticated;
+		
+	self.hasAccess = ko.pureComputed(function () {
+		if (!config.userAuthenticationEnabled) { 
+			return false;
+		} else {				
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
+		}
+	});
 
     self.canReadSource = ko.pureComputed(function() {
       return (config.userAuthenticationEnabled && self.isAuthenticated()
@@ -154,17 +162,19 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
     };
 
     self.init = function () {
-      if (self.selectedSourceId() == null && self.selectedSource() == null) {
-        self.newSource();
-      } else {
-        self.loading(true);
-        sourceApi.getSource(self.selectedSourceId())
-          .then(function(source){
-            self.selectedSource(new Source(source));
-            self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
-            self.loading(false);
-          });
-      }
+		if (self.hasAccess()) {				
+			if (self.selectedSourceId() == null && self.selectedSource() == null) {
+				self.newSource();
+			} else {
+				self.loading(true);
+				sourceApi.getSource(self.selectedSourceId())
+					.then(function(source){
+						self.selectedSource(new Source(source));
+						self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
+						self.loading(false);
+					});
+			}
+		}
     };
 
     self.init();

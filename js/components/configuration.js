@@ -19,14 +19,25 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 			return self.isAuthenticated() && authApi.isPermittedReadRoles();
 		});
 		self.canCreateSource = ko.pureComputed(function () {
-      return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCreateSource()) || !config.userAuthenticationEnabled;
+			if (!config.userAuthenticationEnabled) {
+				return false;
+			} else {
+				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCreateSource());
+			}
     });
     self.canChangePriority = ko.pureComputed(function () {
-      return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditSourcePriority()) || !config.userAuthenticationEnabled;
+			if (!config.userAuthenticationEnabled) {
+				return false;
+			} else {
+				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditSourcePriority())
+			}
     });
     self.canReadSource = function(source) {
-      return (config.userAuthenticationEnabled && self.isAuthenticated()
-        && authApi.isPermittedReadSource(source.sourceKey)) || !config.userAuthenticationEnabled;
+			if (!config.userAuthenticationEnabled) {
+				return false;
+			} else {
+				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadSource(source.sourceKey));
+			}
     };
 		self.clearLocalStorageCache = function () {
 			localStorage.clear();
