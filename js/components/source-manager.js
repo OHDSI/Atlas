@@ -113,16 +113,15 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
           return lodash.omit(d, ['enabled']);
         }),
       };
+      self.loading(true);
       sourceApi.saveSource(self.selectedSourceId(), source)
-        .then(function(){
-          return sourceApi.initSourcesConfig();
-        })
-        .then(function(){
-          return roleApi.updateRoles();
-        })
+        .then(sourceApi.initSourcesConfig)
+        .then(roleApi.updateRoles)
         .then(function () {
+          self.loading(false);
           self.goToConfigure();
-        });
+        })
+        .catch(function () { self.loading(false); });
     };
 
     self.close = function () {
@@ -139,16 +138,15 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
       if (!confirm('Delete source? Warning: deletion can not be undone!')){
         return;
       }
+      self.loading(true);
       sourceApi.deleteSource(self.selectedSourceId())
+        .then(sourceApi.initSourcesConfig)
+        .then(roleApi.updateRoles)
         .then(function () {
-          return sourceApi.initSourcesConfig();
-        })
-        .then(function() {
-          return roleApi.updateRoles();
-        })
-        .then(function () {
+          self.loading(false);
           self.goToConfigure();
-        });
+        })
+        .catch(self.loading(false));
     };
 
     self.goToConfigure = function () {

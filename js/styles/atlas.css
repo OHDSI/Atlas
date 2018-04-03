@@ -2156,3 +2156,7 @@ div#wrapper_ohdsi a {
 .source-params {
   margin-bottom: 30px;
 }
+
+.command-pane {
+  display: flex;
+}

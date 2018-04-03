@@ -55,7 +55,6 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
           sourceApi.initSourcesConfig();
         },
         error: function (err) {
-          self.isInProgress(false);
           alert('Failed to update priority source daimon');
         },
         complete: function () {
