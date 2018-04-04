@@ -2174,6 +2174,6 @@ div#wrapper_ohdsi a {
   margin-right: 3px;
 }
 
-.cohort-conceptset-button-pane button.last {
+.cohort-conceptset-button-pane button:last-child {
   margin-right: 0;
 }
