@@ -1,5 +1,5 @@
-define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/AuthAPI', 'lodash', 'crossfilter', 'd3-tip', 'databindings', 'components/faceted-datatable-cf-profile', 'css!./styles/exploreCohort.css'],
-	function (ko, view, d3, config, authApi, lodash, crossfilter) {
+define(['knockout', 'text!./explore-cohort.html', 'd3', 'atlas-state', 'appConfig', 'webapi/AuthAPI', 'lodash', 'crossfilter', 'd3-tip', 'databindings', 'components/faceted-datatable-cf-profile', 'css!./styles/exploreCohort.css'],
+	function (ko, view, d3, sharedState, config, authApi, lodash, crossfilter) {
 
 		function exploreCohort(params) {
 			var self = this;
@@ -7,7 +7,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'appConfig', 'webapi/Aut
 			window.exploreCohort = self;
 			self.defaultFetchMax = 100;
 
-			self.sources = ko.observableArray(config.api.sources.filter(source => source.hasCDM));
+			self.sources = ko.observableArray(sharedState.sources().filter(source => source.hasCDM));
 			self.sourceKey = ko.observable();
 			self.cohortDefinitionId = params.model.currentCohortDefinition()
 				.id;

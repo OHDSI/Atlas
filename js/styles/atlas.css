@@ -120,7 +120,7 @@ body {
 }
 
 #wrapperConfigure {
-  padding: 5px;
+  padding: 10px;
 }
 
 #textImportConceptSet {
@@ -600,8 +600,26 @@ th {
   border-bottom: solid 1px #CCC;
 }
 
+.configureHeader {
+  display: flex;
+}
+
+.configureHeader .left{
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.configureHeader .right{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  flex-grow: 1;
+}
+
 table.configureSourceTable {
-  margin-top: 5px;
+  margin-top: 20px;
   margin-bottom: 20px;
   width: 100%;
 }
@@ -2100,4 +2118,50 @@ div#wrapper_ohdsi img {
 div#wrapper_ohdsi a {
  text-decoration:underline;
  color: #003142;
+}
+
+.form input[type=text] {
+  width: 100%;
+}
+
+.form label {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: 5px;
+}
+
+.priority {
+  display: flex;
+  padding: 0 40px 0 0;
+  width: auto;
+}
+
+.priority-label {
+  text-align: right;
+  margin-right: 20px;
+}
+
+.source-row {
+  display: flex;
+  margin: 0;
+}
+
+.control-group {
+  padding: 5px 20px 5px 0;
+}
+
+.control-group label {
+  margin: 0 10px 0 0;
+}
+
+.control-group .form-group {
+  margin: 0;
+}
+
+.source-params {
+  margin-bottom: 30px;
+}
+
+.command-pane {
+  display: flex;
 }

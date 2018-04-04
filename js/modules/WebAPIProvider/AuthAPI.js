@@ -57,15 +57,19 @@ define(function(require, exports) {
     });
 
     var isAuthenticated = ko.pureComputed(function() {
-				if (!config.userAuthenticationEnabled) {
-					return true;
-				}
-			
-        if (!token()) {
-            return false;
+      try {
+        if (!config.userAuthenticationEnabled) {
+          return true;
+        }
+
+        if (!token() && token() !== 'undefined') {
+          return false;
         }
 
         return new Date() < tokenExpirationDate();
+      }catch(e) {
+        return false;
+      }
     });
 
     var getAuthorizationHeader = function () {
@@ -219,6 +223,10 @@ define(function(require, exports) {
       return isPermitted('comparativecohortanalysis:get');
     };
 
+    var isPermittedEditSourcePriortiy = function() {
+      return isPermitted('source:*:daimons:*:set-priority:post')
+    };
+
     var isPermittedReadEstimation = function (id) {
       return isPermitted('comparativecohortanalysis:' + id + ':get');
     };
@@ -297,6 +305,22 @@ define(function(require, exports) {
 
     var isPermittedEditConfiguration = function() {
         return isPermitted('configuration:edit:ui')
+    }
+
+    var isPermittedCreateSource = function() {
+        return isPermitted('source:post');
+    }
+
+    var isPermittedReadSource = function(key) {
+        return isPermitted('source:' + key + ':get');
+    }
+
+    var isPermittedEditSource = function(key) {
+        return isPermitted('source:' + key + ':put');
+    }
+
+    var isPermittedDeleteSource = function(key) {
+        return isPermitted('source:' + key + ':delete');
     }
 
     var isPermittedReadRoles = function() {
@@ -379,6 +403,7 @@ define(function(require, exports) {
         isPermittedReadJobs: isPermittedReadJobs,
 
         isPermittedEditConfiguration: isPermittedEditConfiguration,
+        isPermittedEditSourcePriority: isPermittedEditSourcePriortiy,
 
         isPermittedReadRoles: isPermittedReadRoles,
         isPermittedReadRole: isPermittedReadRole,
@@ -405,6 +430,11 @@ define(function(require, exports) {
         isPermittedSearch: isPermittedSearch,
         isPermittedViewCdmResults: isPermittedViewCdmResults,
         isPermittedViewProfiles: isPermittedViewProfiles,
+
+        isPermittedReadSource: isPermittedReadSource,
+        isPermittedCreateSource: isPermittedCreateSource,
+        isPermittedEditSource: isPermittedEditSource,
+        isPermittedDeleteSource: isPermittedDeleteSource,
     };
 
     return api;
