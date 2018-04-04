@@ -420,7 +420,7 @@
 
 							<div class="row">
 								<div class="col-sm-12">
-									<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.config.api.sources.filter($component.model.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
+									<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.sharedState.sources().filter($component.model.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
 								</div>
 							</div>
 							<div class="row">

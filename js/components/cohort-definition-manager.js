@@ -133,6 +133,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
 		self.dirtyFlag = self.model.currentCohortDefinitionDirtyFlag;
 		self.isLoadingSql = ko.observable(false);
+		self.sharedState = sharedState;
+		self.isSaveable = ko.pureComputed(function () {
+			return self.dirtyFlag() && self.dirtyFlag().isDirty();
+		});
 		self.conceptLoading = ko.observable(false);
 		self.tabPath = ko.computed(function () {
 			var path = self.tabMode();
@@ -292,7 +296,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				infoList.forEach(function (info) {
 					// obtain source reference
 					var source = self.model.cohortDefinitionSourceInfo().filter(function (cdsi) {
-						var sourceId = self.config.api.sources.filter(source => source.sourceKey == cdsi.sourceKey)[0].sourceId;
+						var sourceId = sharedState.sources().filter(source => source.sourceKey == cdsi.sourceKey)[0].sourceId;
 						return sourceId == info.id.sourceId;
 					})[0];
 
@@ -497,7 +501,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.getSourceId = function (sourceKey) {
-			return self.config.api.sources.filter(source => source.sourceKey == sourceKey)[0].sourceId;
+			return sharedState.sources().filter(source => source.sourceKey == sourceKey)[0].sourceId;
 		}
 
 		self.generateCohort = function (source, includeFeatures) {

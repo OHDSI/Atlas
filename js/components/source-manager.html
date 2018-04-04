@@ -1,0 +1,70 @@
+<div class="wrapperTitle">
+    <i class="fa fa-fw fa-database"></i><span data-bind="text: $component.sourceCaption"></span>
+</div>
+<div data-bind="if:$component.hasAccess">
+	<div data-bind="visible: !loading()">
+			<!-- ko if: selectedSource() != null -->
+			<div data-bind="if:$component.canReadSource">
+					<div class="asset-heading">
+							<input type="text" data-bind="textInput: selectedSource().name, enable: canEdit()"/>
+							<div class="btn-group" role="group">
+									<button class="btn btn-sm btn-success" title="Save"
+													data-bind="click: save, enable: dirtyFlag().isDirty() && canSave(), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">
+											<i class="fa fa-save"></i></button>
+									<button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i
+													class="fa fa-times"></i></button>
+									<button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
+							</div>
+					</div>
+					<div class="pad-10">
+							<div class="panel panel-primary">
+									<div class="panel-body">
+											<div class="source-params" style="width: 100%">
+													<div class="source-row">
+															<div class="control-group" style="width: 50%">
+																	<label for="sourceKey">Source Key:</label>
+																	<div class="form-group">
+																			<input title="Source key" data-bind="textInput: selectedSource().key, enable: canEdit()" class="form-control" type="text" id="sourceKey"/>
+																	</div>
+															</div>
+															<div class="control-group" style="width: 50%">
+																	<label for="dialect">Source dialect:</label>
+																	<div class="form-group">
+																			<select title="Source dialect" class="form-control" data-bind="options: $component.options.dialectOptions, optionsText: 'name', optionsValue: 'id', value: $component.selectedSource().dialect, enable: canEdit()" id="dialect" />
+																	</div>
+															</div>
+													</div>
+													<div class="control-group" style="flex-grow: 1">
+															<label for="connectionString">Connection string:</label>
+															<input title="Connection string" data-bind="textInput: selectedSource().connectionString, enable: canEdit()" class="form-control" type="text" id="connectionString"/>
+													</div>
+											</div>
+											<div class="panel panel-primary">
+													<div class="panel-heading">Source daimons</div>
+													<div class="panel-body">
+															<table class="padded">
+																	<tbody data-bind="foreach: selectedSource().daimons">
+																			<td data-bind="text:daimonType"></td>
+																			<td><input type="checkbox" data-bind="checked: enabled, enable: $component.canEdit()" /></td>
+																			<td><input type="text" data-bind="textInput: tableQualifier, enable: $component.canEdit() && $data.enabled, attr: { title: daimonType + ' table qualifier' }" /></td>
+																	</tbody>
+															</table>
+													</div>
+											</div>
+									</div>
+							</div>
+					</div>
+			</div>
+			<div data-bind="ifnot:$component.canReadSource">
+					<div class="padded">
+							<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+					</div>
+			</div>
+			<!-- /ko -->
+	</div>
+</div>
+<div data-bind="ifnot:$component.hasAccess">
+	<div class="padded">
+		<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+	</div>
+</div>

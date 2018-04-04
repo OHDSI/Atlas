@@ -2,11 +2,11 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				'webapi/CohortDefinitionAPI', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util',
 				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options',
 				'cohortbuilder/CohortExpression', 'vocabularyprovider',
-				'conceptsetbuilder/InputTypes/ConceptSet',
+				'conceptsetbuilder/InputTypes/ConceptSet', 'atlas-state',
 				'databindings/d3ChartBinding'],
 	function ($, ko, view, _, clipboard, cohortDefinitionAPI, config, authApi, ohdsiUtil,
 		ComparativeCohortAnalysis, options, CohortExpression, vocabularyAPI,
-		ConceptSet) {
+		ConceptSet, sharedState) {
 		function cohortComparisonManager(params) {
 
 			var DEBUG = true;
@@ -158,7 +158,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 
 			// end for balance chart
 
-			var initSources = config.api.sources.filter(s => s.hasCDM);
+			var initSources = sharedState.sources().filter(s => s.hasCDM);
 			for (var i = 0; i < initSources.length; i++) {
 				self.sourceHistoryDisplay[initSources[i].sourceKey] = ko.observable(false);
 				self.sourceProcessingStatus[initSources[i].sourceKey] = ko.observable(false);
