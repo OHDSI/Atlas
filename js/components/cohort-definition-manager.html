@@ -54,10 +54,10 @@
 				<atlas.cohort-editor params="model: model"></atlas.cohort-editor>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
-				<div style="padding-bottom: 10px;" class="pull-right">
-					<button type="button" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
-					<button type="button" style="margin-right: 3px;" class="btn btn-sm btn-primary pull-right" data-bind="click:function(){ $component.importConceptSet() }, enable: canEdit"><i class="fa fa-upload" aria-hidden="true" /> Import</button>
-					<button type="button" style="margin-right: 3px" class="btn btn-sm btn-primary pull-right" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
+				<div class="cohort-conceptset-button-pane pull-right">
+					<button type="button" class="btn btn-sm btn-success pull-right last" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
+					<button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click:function(){ $component.importConceptSet() }, enable: canEdit"><i class="fa fa-upload" aria-hidden="true" /> Import</button>
+					<button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
 				</div>
 				<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
 											data: model.currentCohortDefinition() && model.currentCohortDefinition().expression().ConceptSets,
@@ -82,9 +82,9 @@
 									 }">
 				</table>
 				<div class="paddedWrapper form-group" data-bind="if:isImportingConceptSet()">
-					<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $('#textImportConceptSet').val('');}">click to clear</a>)</div>
-					<textarea class="form-control" rows="5" id="textImportConceptSet"></textarea>
-					<div type="button" data-bind="css: {disabled: model.currentConceptSet()!=null}, click:function() { importConceptSetExpression($('#textImportConceptSet').val()); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
+					<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $component.clearImportConceptSetJson(); }">click to clear</a>)</div>
+					<textarea class="form-control" rows="5" data-bind="value: importConceptSetJson"></textarea>
+					<div type="button" data-bind="css: {disabled: model.currentConceptSet()!=null}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 					<button class="btn btn-sm btn-primary pull-right" style="margin-right: 3px" data-bind="click: function(){ $component.closeConceptSetImport() }">Close Import</button>
 					<div class="clear"></div>
 				</div>
@@ -119,8 +119,8 @@
 
 						<div class="clear"></div>
 
-						<button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
-						<button type="button" style="margin-right: 3px;" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
+						<button type="button" class="btn btn-sm btn-primary pull-right last" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
+						<button type="button" class="btn btn-sm btn-danger pull-right tool" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
 					</div>
 				</div>
 
@@ -151,10 +151,10 @@
 
 				<div id="wrapperConceptSetImport" data-bind="if:$component.conceptSetTabMode() == 'import'">
 					<ul class="nav nav-pills">
-						<li role="presentation" data-bind="css: {active: $component.importTabMode() == 'identifiers'}, click: function(){ $component.importTabMode('identifiers'); }">
+						<li role="presentation" data-bind="css: {active: $component.importTabMode() == importTabModes.identifiers}, click: function(){ $component.importTabMode('identifiers'); }">
 							<a>Concept Identifiers</a>
 						</li>
-						<li role="presentation" data-bind="css: {active: $component.importTabMode() == 'sourcecodes'}, click: function(){ $component.importTabMode('sourcecodes'); }">
+						<li role="presentation" data-bind="css: {active: $component.importTabMode() == importTabModes.sourcecodes}, click: function(){ $component.importTabMode('sourcecodes'); }">
 							<a>Source Codes</a>
 						</li>
 					</ul>

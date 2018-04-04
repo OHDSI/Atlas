@@ -2165,3 +2165,15 @@ div#wrapper_ohdsi a {
 .command-pane {
   display: flex;
 }
+
+.cohort-conceptset-button-pane {
+  padding-bottom: 10px;
+}
+
+.cohort-conceptset-button-pane button, button.tool {
+  margin-right: 3px;
+}
+
+.cohort-conceptset-button-pane button.last {
+  margin-right: 0;
+}

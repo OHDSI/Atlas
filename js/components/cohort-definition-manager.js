@@ -128,8 +128,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.tabMode = self.model.currentCohortDefinitionMode;
 		self.generationTabMode = ko.observable("inclusion")
 		self.exportTabMode = ko.observable('printfriendly');
-		self.importTabMode = ko.observable('identifiers');
+    self.importTabModes = {
+			identifiers: 'identifiers',
+			sourcecodes: 'sourcecodes',
+    };
+    self.importTabMode = ko.observable(self.importTabModes.identifiers);
 		self.exportSqlMode = ko.observable('ohdsisql');
+		self.importConceptSetJson = ko.observable();
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
 		self.dirtyFlag = self.model.currentCohortDefinitionDirtyFlag;
 		self.isLoadingSql = ko.observable(false);
@@ -601,8 +606,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			self.importingConceptSet(false);
     };
 
-		self.importConceptSetExpression = function(expressionJson){
-      var items = JSON.parse(expressionJson).items;
+		self.clearImportConceptSetJson = function(){
+			self.importConceptSetJson('');
+		};
+
+		self.importConceptSetExpression = function(){
+      var items = JSON.parse(self.importConceptSetJson()).items;
 			var conceptSet = createConceptSet();
 
 			items.forEach(function(item){
@@ -623,13 +632,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
         sharedState.selectedConceptsIndex[item.CONCEPT_ID] = 1;
         sharedState.selectedConcepts.push(self.model.createConceptSetItem(item));
       });
-      if (self.model.currentCohortDefinition() && self.model.currentConceptSetSource() == "cohort") {
+      if (self.model.currentCohortDefinition() && self.model.currentConceptSetSource() === "cohort") {
         var conceptSet = self.model.currentCohortDefinition()
           .expression()
           .ConceptSets()
-          .filter(function (item) {
-            return item.id == self.model.currentConceptSet().id;
-          })[0];
+          .find(function (item) {
+            return item.id === self.model.currentConceptSet().id;
+          });
         if (conceptSet) {
           conceptSet.expression.items.valueHasMutated();
         }
