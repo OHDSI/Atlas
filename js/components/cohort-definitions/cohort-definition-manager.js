@@ -19,6 +19,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
   'faceted-datatable',
   'cohortdefinitionviewer/expressionCartoonBinding',
   'cohortfeatures',
+	'css!./cohort-definition-manager.css'
 ], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst) {
 
 	function translateSql(sql, dialect) {
