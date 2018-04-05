@@ -872,14 +872,13 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Healthcare Utilization. Persons and Exposure during baseline period<i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilPersonAndExposureBaseline.name" /><i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-persons-exposure params="{
-					mode: 'baseline',
+					mode: costUtilConst.windowType.baseline,
 					source: model.reportSourceKey(),
 					cohortId: model.reportCohortDefinitionId(),
-					setLoading: model.loadingReport,
 				}"/>
 			</div>
 		</div>
@@ -890,14 +889,119 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Healthcare Utilization. Distribution of observation period days per subject, by period_id during cohort period<i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilPersonAndExposureCohort.name" /><i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-persons-exposure params="{
-					mode: 'cohort',
+					mode: costUtilConst.windowType.atrisk,
 					source: model.reportSourceKey(),
 					cohortId: model.reportCohortDefinitionId(),
-					setLoading: model.loadingReport,
+				}"/>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div data-bind="if: model.currentReport() == visualizationPacks.healthcareUtilVisitRecordsBaseline.name && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<span data-bind="text: visualizationPacks.healthcareUtilVisitRecordsBaseline.name" /><i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<cost-utilization-visit-util params="{
+					source: model.reportSourceKey(),
+					cohortId: model.reportCohortDefinitionId(),
+					window: costUtilConst.windowType.baseline,
+					visitStat: costUtilConst.visitStat.occurrence,
+				}"/>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div data-bind="if: model.currentReport() == visualizationPacks.healthcareUtilVisitDatesBaseline.name && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<span data-bind="text: visualizationPacks.healthcareUtilVisitDatesBaseline.name" /><i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<cost-utilization-visit-util params="{
+					source: model.reportSourceKey(),
+					cohortId: model.reportCohortDefinitionId(),
+					window: costUtilConst.windowType.baseline,
+					visitStat: costUtilConst.visitStat.visitdate,
+				}"/>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div data-bind="if: model.currentReport() == visualizationPacks.healthcareUtilCareSiteDatesBaseline.name && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<span data-bind="text: visualizationPacks.healthcareUtilCareSiteDatesBaseline.name" /><i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<cost-utilization-visit-util params="{
+					source: model.reportSourceKey(),
+					cohortId: model.reportCohortDefinitionId(),
+					window: costUtilConst.windowType.baseline,
+					visitStat: costUtilConst.visitStat.caresitedate,
+				}"/>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div data-bind="if: model.currentReport() == visualizationPacks.healthcareUtilVisitRecordsCohort.name && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<span data-bind="text: visualizationPacks.healthcareUtilVisitRecordsCohort.name" /><i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<cost-utilization-visit-util params="{
+					source: model.reportSourceKey(),
+					cohortId: model.reportCohortDefinitionId(),
+					window: costUtilConst.windowType.atrisk,
+					visitStat: costUtilConst.visitStat.occurrence,
+				}"/>
+			</div>
+		</div>
+	</div>
+</div>
+<div data-bind="if: model.currentReport() == visualizationPacks.healthcareUtilVisitDatesCohort.name && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<span data-bind="text: visualizationPacks.healthcareUtilVisitDatesCohort.name" /><i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<cost-utilization-visit-util params="{
+					source: model.reportSourceKey(),
+					cohortId: model.reportCohortDefinitionId(),
+					window: costUtilConst.windowType.atrisk,
+					visitStat: costUtilConst.visitStat.visitdate,
+				}"/>
+			</div>
+		</div>
+	</div>
+</div>
+<div data-bind="if: model.currentReport() == visualizationPacks.healthcareUtilCareSiteDatesCohort.name && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<span data-bind="text: visualizationPacks.healthcareUtilCareSiteDatesCohort.name" /><i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<cost-utilization-visit-util params="{
+					source: model.reportSourceKey(),
+					cohortId: model.reportCohortDefinitionId(),
+					window: costUtilConst.windowType.atrisk,
+					visitStat: costUtilConst.visitStat.caresitedate,
 				}"/>
 			</div>
 		</div>

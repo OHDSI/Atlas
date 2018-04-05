@@ -24,7 +24,16 @@ define(
       // Do not show "Apply" button in live mode and trigger filtering immediately
       if (this.live) {
         Object.values(this.filterList).map(filter => {
-          filter.selectedValues.subscribe(this.apply);
+          let prevVal;
+          if (filter.type === 'select') {
+            prevVal = filter.selectedValue();
+            filter.selectedValue.subscribe(() => {
+              if (prevVal != filter.selectedValue()) {
+                prevVal = filter.selectedValue();
+                this.apply()
+              }
+            });
+          }
         });
       }
     }

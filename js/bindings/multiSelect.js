@@ -14,6 +14,12 @@ define(
           0
         );
 
+        if (data.options) {
+          data.options.subscribe(() => {
+            setTimeout(() => $select.selectpicker('refresh'));
+          });
+        }
+
         if (data.selectedValues) {
           data.selectedValues.subscribe(() => $select.selectpicker('refresh'));
         }

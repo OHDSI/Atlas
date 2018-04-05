@@ -1,6 +1,8 @@
 define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig',
-    'webapi/CohortReportingAPI', 'databindings', 'faceted-datatable', 'colvis', 'components/reports/cost-utilization/persons-exposure'],
-	function (ko, view, d3, atlascharts, colorbrewer, _, config, cohortReportingAPI) {
+    'webapi/CohortReportingAPI', 'components/reports/cost-utilization/const', 'databindings', 'faceted-datatable', 'colvis',
+		'components/reports/cost-utilization/persons-exposure',
+		'components/reports/cost-utilization/visit-util'],
+	function (ko, view, d3, atlascharts, colorbrewer, _, config, cohortReportingAPI, costUtilConst) {
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -16,6 +18,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			[15, 30, 45, 100, 'All']
 		];
 		self.visualizationPacks = cohortReportingAPI.visualizationPacks;
+		self.costUtilConst = costUtilConst;
 
 		const size4 = {
 				width: 400,
@@ -2153,6 +2156,12 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 				case self.visualizationPacks.healthcareUtilPersonAndExposureBaseline.name:
         case self.visualizationPacks.healthcareUtilPersonAndExposureCohort.name:
+				case self.visualizationPacks.healthcareUtilVisitRecordsBaseline.name:
+        case self.visualizationPacks.healthcareUtilVisitDatesBaseline.name:
+        case self.visualizationPacks.healthcareUtilCareSiteDatesBaseline.name:
+        case self.visualizationPacks.healthcareUtilVisitRecordsCohort.name:
+        case self.visualizationPacks.healthcareUtilVisitDatesCohort.name:
+        case self.visualizationPacks.healthcareUtilCareSiteDatesCohort.name:
           self.model.loadingReport(false);
           self.model.currentReport(self.model.reportReportName());
           break;

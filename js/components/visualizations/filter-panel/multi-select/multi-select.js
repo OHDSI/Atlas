@@ -11,6 +11,13 @@ define(
       this.multiple = params.multiple;
       this.options = params.options;
       this.selectedValues = params.selectedValues;
+      this.selectedValue = params.selectedValue;
+
+      this.optionVals = ko.computed(() => {
+        return params.options().map(opt => opt.value);
+      });
+
+      this.optionsText = (val) => params.options().find(opt => opt.value === val).label;
     }
 
     const component = {
