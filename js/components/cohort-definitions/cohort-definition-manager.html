@@ -160,15 +160,15 @@
 						</li>
 					</ul>
 					<div id="wrapperImportConceptIdentifiers" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() === cohortConst.importTabModes.identifiers">
-						<div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportConceptIdentifiers');}">click to clear</a>)</div>
-						<textarea class="form-control" rows="5" id="textImportConceptIdentifiers" data-bind="if:model.currentImportMode() == 'conceptset'"></textarea>
-						<a data-bind="click:function() {importConceptIdentifiers($('#textImportConceptIdentifiers').val().match(/[0-9]+/g));}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Concept Identifiers</a>
+						<div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { identifiers(''); }">click to clear</a>)</div>
+						<textarea class="form-control" rows="5" data-bind="value: identifiers"></textarea>
+						<a data-bind="click:function() {importConceptIdentifiers();}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Concept Identifiers</a>
 						<div class="clear"></div>
 					</div>
 					<div id="wrapperImportSourcecodes" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() == cohortConst.importTabModes.sourcecodes">
-						<div class="heading">Enter Source Codes (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportSourcecodes');}">click to clear</a>)</div>
-						<textarea class="form-control" rows="5" id="textImportSourceCodes"></textarea>
-						<a data-bind="click:function() {importSourceCodes($('#textImportSourceCodes').val().match(/[0-9a-zA-Z\.-]+/g));}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Source Codes</a>
+						<div class="heading">Enter Source Codes (<a class="linkish" data-bind="click: function() { sourcecodes(''); }">click to clear</a>)</div>
+						<textarea class="form-control" rows="5" data-bind="value: sourcecodes"></textarea>
+						<a data-bind="click:function() {importSourceCodes();}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Source Codes</a>
 						<div class="clear"></div>
 					</div>
 				</div>

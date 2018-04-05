@@ -137,6 +137,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.dirtyFlag = self.model.currentCohortDefinitionDirtyFlag;
 		self.isLoadingSql = ko.observable(false);
 		self.sharedState = sharedState;
+		self.identifiers = ko.observable();
+		self.sourcecodes = ko.observable();
 		self.isSaveable = ko.pureComputed(function () {
 			return self.dirtyFlag() && self.dirtyFlag().isDirty();
 		});
@@ -644,19 +646,19 @@ define(['knockout', 'text!./cohort-definition-manager.html',
       self.conceptSetTabMode('details');
     }
 
-		self.importConceptIdentifiers = function(identifiers) {
+		self.importConceptIdentifiers = function() {
       self.conceptLoading(true);
 			vocabularyApi
-        .getConceptsById(identifiers)
+        .getConceptsById(self.identifiers().match(/[0-9]+/g))
         .then(appendConcepts)
         .then(function(){ self.conceptLoading(false); })
         .catch(function () { self.conceptLoading(false); });
 		};
 
-		self.importSourceCodes = function (sourcecodes) {
+		self.importSourceCodes = function () {
 		  self.conceptLoading(true);
 			vocabularyApi
-        .getConceptsByCode(sourcecodes)
+        .getConceptsByCode(self.sourcecodes().match(/[0-9a-zA-Z\.-]+/g))
         .then(appendConcepts)
         .then(function(){ self.conceptLoading(false); })
         .catch(function(){ self.conceptLoading(false); });
