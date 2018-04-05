@@ -7,28 +7,20 @@ define(
   function (ko) {
     ko.bindingHandlers.multiSelect = {
       init: function(element, valueAccessor, allBindings, data, context) {
-        let $select;
-
-        setTimeout(
-          () => $select = $(element).selectpicker(valueAccessor()),
-          0
-        );
-
         if (data.options) {
-          data.options.subscribe(() => {
-            setTimeout(() => $select.selectpicker('refresh'));
-          });
+          data.options.subscribe(() => $(element).selectpicker('refresh'));
         }
 
         if (data.selectedValues) {
-          data.selectedValues.subscribe(() => $select.selectpicker('refresh'));
+          data.selectedValues.subscribe(() => $(element).selectpicker('refresh'));
         }
 
         ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-          if ($select) {
-            $select.selectpicker('destroy');
-          }
+          $(element).selectpicker('destroy');
         });
+      },
+      update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        $(element).selectpicker(valueAccessor());
       }
     };
   }

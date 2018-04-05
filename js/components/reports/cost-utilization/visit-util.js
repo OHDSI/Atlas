@@ -106,7 +106,13 @@ define(
           },
         ];
 
-        this.setupChartsData(this.tableColumns.filter(item => item.showInChart));
+
+        const chartList = this.tableColumns.filter(item => item.showInChart);
+
+        this.chartOptions = ko.observableArray(chartList.map(c => ({ label: c.title, value: c.title })));
+        this.displayedCharts = ko.observableArray(this.chartOptions().map(o => o.value));
+
+        this.setupChartsData(chartList);
         this.init();
       }
 
@@ -164,10 +170,14 @@ define(
       }
 
       setupChartsData(lines) {
-        this.chartDataList = ko.computed(() => lines.map(line => ({
-          name: line.title,
-          values: this.createChartDataObservable(line.data),
-        })));
+        this.chartDataList = ko.computed(() =>
+          lines
+            .map(line => ({
+              name: line.title,
+              values: this.createChartDataObservable(line.data),
+              visible: ko.computed(() => this.displayedCharts().includes(line.title))
+            }))
+        );
       }
     }
 

@@ -12,6 +12,7 @@ define(
       this.options = params.options;
       this.selectedValues = params.selectedValues;
       this.selectedValue = params.selectedValue;
+      this.selectedTextFormat = params.selectedTextFormat || 'count > 2';
 
       this.optionVals = ko.computed(() => {
         return params.options().map(opt => opt.value);

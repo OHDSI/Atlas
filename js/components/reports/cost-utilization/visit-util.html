@@ -56,10 +56,17 @@
             </ul>
             <div class="tab-content">
                 <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
+                    <div data-bind="css: $component.classes('chart-filter-line')">
+                        <div data-bind="css: $component.classes('chart-filter')">
+                            <label>Displayed charts:</label>
+                            <visualizations-multi-select params="{ options: chartOptions, selectedValues: displayedCharts, multiple: true, selectedTextFormat: 'count > 10' }"/>
+                        </div>
+                    </div>
                     <!-- ko foreach: chartDataList -->
                         <div data-bind="css: $component.classes('chart-line')">
                             <div data-bind="
                                 css: $component.classes('chart'),
+                                visible: $data.visible,
                                 lineChart: {
                                     data: $data.values,
                                     xLabel: ($index() == ($component.chartDataList().length - 1)) ? 'Period start' : '',
@@ -67,7 +74,7 @@
                                     yLabel: $data.name,
                                     tickFormat: $component.dateTickFormat,
                                     height: 250,
-                                    showLegend: false
+                                    showLegend: false,
                                 }
                         "/>
                         </div>
