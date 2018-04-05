@@ -1,0 +1,91 @@
+<div data-bind="css: classes()">
+    <div data-bind="css: classes('block')">
+        <visualizations-filter-panel params="{ filterList: $component.filterList, apply: $component.applyFilters, live: true }"/>
+    </div>
+    <div data-bind="visible: loading()">
+        <loading params="status:'loading'" />
+    </div>
+    <div data-bind="visible: !loading()">
+        <div data-bind="css: classes('block')">
+            <table data-bind="css: classes({ element: 'summary-table', extra: ['table', 'table-bordered', 'table-hover'] })">
+                <thead data-bind="css: classes('summary-table-head')">
+                <tr>
+                    <th data-bind="css: classes('summary-table-cell')">Person Count</th>
+                    <th data-bind="css: classes('summary-table-cell')">Total Records</th>
+                    <th data-bind="css: classes('summary-table-cell')">Records per 1,000</th>
+                    <th data-bind="css: classes('summary-table-cell')">Records per 1,000 with record</th>
+                    <th data-bind="css: classes('summary-table-cell')">Records per 1,000 Per Year</th>
+                    <th data-bind="css: classes('summary-table-cell')">Total length of stay (in days)</th>
+                    <th data-bind="css: classes('summary-table-cell')">Average Length of Stay (in days)</th>
+                    <th data-bind="css: classes('summary-table-cell')">Allowed cost pmpm</th>
+                    <th data-bind="css: classes('summary-table-cell')">Charged cost</th>
+                    <th data-bind="css: classes('summary-table-cell')">Charged cost PMPM</th>
+                    <th data-bind="css: classes('summary-table-cell')">Paid cost</th>
+                    <th data-bind="css: classes('summary-table-cell')">Paid Cost PMPM</th>
+                    <th data-bind="css: classes('summary-table-cell')">Allowed/Charged</th>
+                    <th data-bind="css: classes('summary-table-cell')">Paid/Allowed</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td data-bind="text: summary.personsCount"/>
+                    <td data-bind="text: summary.visitsCount"/>
+                    <td data-bind="text: summary.visitsPer1000"/>
+                    <td data-bind="text: summary.visitsPer1000WithVisits"/>
+                    <td data-bind="text: summary.visitsPer1000PerYear"/>
+                    <td data-bind="text: summary.lengthOfStayTotal"/>
+                    <td data-bind="text: summary.lengthOfStayAvg"/>
+                    <td/>
+                    <td/>
+                    <td/>
+                    <td/>
+                    <td/>
+                    <td/>
+                    <td/>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-bind="css: classes('block')">
+            <ul class="nav nav-tabs">
+                <!-- ko foreach: Object.keys(tabLabels) -->
+                <li role="presentation" data-bind="click: function() { $component.currentTab($data); }, attr: {class: $component.currentTab() == $data ? 'active' : ''}">
+                    <a data-bind="text: $component.tabLabels[$data]" />
+                </li>
+                <!-- /ko -->
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
+                    <div data-bind="css: $component.classes('chart-filter-line')">
+                        <div data-bind="css: $component.classes('chart-filter')">
+                            <label>Displayed charts:</label>
+                            <visualizations-multi-select params="{ options: chartOptions, selectedValues: displayedCharts, multiple: true, selectedTextFormat: 'count > 10' }"/>
+                        </div>
+                    </div>
+                    <!-- ko foreach: chartDataList -->
+                        <div data-bind="css: $component.classes('chart-line')">
+                            <div data-bind="
+                                css: $component.classes('chart'),
+                                visible: $data.visible,
+                                lineChart: {
+                                    data: $data.values,
+                                    xLabel: ($index() == ($component.chartDataList().length - 1)) ? 'Period start' : '',
+                                    xFormat: $component.formatDate,
+                                    yLabel: $data.name,
+                                    tickFormat: $component.dateTickFormat,
+                                    height: 250,
+                                    showLegend: false,
+                                }
+                        "/>
+                        </div>
+                    <!-- /ko -->
+                </div>
+                <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading()">
+                    <table data-bind="
+                        css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                        dataTable:{ data: $component.dataList, options: {columns: $component.tableColumns} } " />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
