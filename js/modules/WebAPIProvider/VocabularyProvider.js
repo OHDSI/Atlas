@@ -215,14 +215,19 @@ define(function (require, exports) {
 	}
 
 	function getConceptsByCode(codes) {
+		const promise = $.Deferred();
 		var url = sharedState.vocabularyUrl() + 'lookup/sourcecodes';
-		return $.ajax({
+		$.ajax({
 			url: url,
 			data: JSON.stringify(codes),
 			method: 'POST',
 			contentType: 'application/json',
 			error: authAPI.handleAccessDenied,
+			success: function(data) {
+				promise.resolve(data);
+			}
 		});
+		return promise;
 	}
 
 	function getMappedConceptsById(identifiers, url, sourceKey) {

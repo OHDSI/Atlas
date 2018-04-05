@@ -91,25 +91,25 @@
 				<!-- ko if: model.currentConceptSet() && model.currentConceptSetSource() == 'cohort' -->
 				<hr/>
 				<ul class="nav nav-pills">
-					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'details'}, click: function() {$component.conceptSetTabMode('details')};">
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == cohortConst.conceptSetTabModes.details}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.details)};">
 						<a>Concept Set Expression</a>
 					</li>
-					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'included'}, click: function() {$component.conceptSetTabMode('included')};">
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == cohortConst.conceptSetTabModes.included}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.included)};">
 						<a>Included Concepts
 					<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
 					<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-circle-o-notch fa-spin"></i></span></a>
 					</li>
-					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'sourcecodes'}, click: function() {$component.conceptSetTabMode('sourcecodes')};">
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.sourcecodes)};">
 						<a>Included Source Codes</a>
 					</li>
-					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'export'}, click: function() {$component.conceptSetTabMode('export')};"> <a>Export</a>
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.export}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.export)};"> <a>Export</a>
 					</li>
-					<li role="presentation" data-bind="css: { active: $component.conceptSetTabMode() == 'import' }, click: function() { $component.conceptSetTabMode('import'); }">
+					<li role="presentation" data-bind="css: { active: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.import }, click: function() { $component.conceptSetTabMode(cohortConst.conceptSetTabModes.import); }">
 						<a>Import</a>
 					</li>
 				</ul>
 
-				<div data-bind="if: model.currentView() != 'loading' && $component.conceptSetTabMode() == 'details'">
+				<div data-bind="if: model.currentView() != 'loading' && $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.details">
 					<div class="paddedWrapper">
 						<div class="heading">
 							Name:
@@ -118,23 +118,24 @@
 						<conceptset-editor params="model: model, conceptSets:selectedConcepts"></conceptset-editor>
 
 						<div class="clear"></div>
-
-						<button type="button" class="btn btn-sm btn-primary pull-right last" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
-						<button type="button" class="btn btn-sm btn-danger pull-right tool" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
+						<div class="cohort-conceptset-button-pane pull-right">
+						  <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
+						  <button type="button" class="btn btn-sm btn-primary" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
+						</div>
 					</div>
 				</div>
 
-				<div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
+				<div class="loading" data-bind="if:model.currentView() === 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
 
-				<div data-bind="visible: $component.conceptSetTabMode() == 'included' && !model.loadingIncluded()">
+				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !model.loadingIncluded()">
 					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
 				</div>
 
-				<div data-bind="visible: $component.conceptSetTabMode() == 'sourcecodes' && !model.loadingSourcecodes() && !model.loadingIncluded()">
+				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes && !model.loadingSourcecodes() && !model.loadingIncluded()">
 					<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
 				</div>
 
-				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() == 'export'">
+				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.export">
 					<div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
 						<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
 					</div>
@@ -149,22 +150,22 @@
 					<pre id="includedConceptIdentifierList" data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 				</div>
 
-				<div id="wrapperConceptSetImport" data-bind="if:$component.conceptSetTabMode() == 'import'">
+				<div id="wrapperConceptSetImport" data-bind="if:$component.conceptSetTabMode() === cohortConst.conceptSetTabModes.import">
 					<ul class="nav nav-pills">
-						<li role="presentation" data-bind="css: {active: $component.importTabMode() == importTabModes.identifiers}, click: function(){ $component.importTabMode('identifiers'); }">
+						<li role="presentation" data-bind="css: {active: $component.importTabMode() === cohortConst.importTabModes.identifiers}, click: function(){ $component.importTabMode(cohortConst.importTabModes.identifiers); }">
 							<a>Concept Identifiers</a>
 						</li>
-						<li role="presentation" data-bind="css: {active: $component.importTabMode() == importTabModes.sourcecodes}, click: function(){ $component.importTabMode('sourcecodes'); }">
+						<li role="presentation" data-bind="css: {active: $component.importTabMode() === cohortConst.importTabModes.sourcecodes}, click: function(){ $component.importTabMode(cohortConst.importTabModes.sourcecodes); }">
 							<a>Source Codes</a>
 						</li>
 					</ul>
-					<div id="wrapperImportConceptIdentifiers" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() == 'identifiers'">
+					<div id="wrapperImportConceptIdentifiers" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() === cohortConst.importTabModes.identifiers">
 						<div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportConceptIdentifiers');}">click to clear</a>)</div>
 						<textarea class="form-control" rows="5" id="textImportConceptIdentifiers" data-bind="if:model.currentImportMode() == 'conceptset'"></textarea>
 						<a data-bind="click:function() {importConceptIdentifiers($('#textImportConceptIdentifiers').val().match(/[0-9]+/g));}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Concept Identifiers</a>
 						<div class="clear"></div>
 					</div>
-					<div id="wrapperImportSourcecodes" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() == 'sourcecodes'">
+					<div id="wrapperImportSourcecodes" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() == cohortConst.importTabModes.sourcecodes">
 						<div class="heading">Enter Source Codes (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportSourcecodes');}">click to clear</a>)</div>
 						<textarea class="form-control" rows="5" id="textImportSourceCodes"></textarea>
 						<a data-bind="click:function() {importSourceCodes($('#textImportSourceCodes').val().match(/[0-9a-zA-Z\.-]+/g));}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Source Codes</a>

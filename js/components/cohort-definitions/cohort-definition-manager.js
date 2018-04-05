@@ -13,12 +13,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'clipboard',
 	'd3',
 	'job/jobDetail',
-	'cohortbuilder/components/FeasibilityReportViewer',
-	'databindings',
-	'faceted-datatable',
-	'cohortdefinitionviewer/expressionCartoonBinding',
-	'cohortfeatures',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail) {
+  'components/cohort-definitions/const',
+  'cohortbuilder/components/FeasibilityReportViewer',
+  'databindings',
+  'faceted-datatable',
+  'cohortdefinitionviewer/expressionCartoonBinding',
+  'cohortfeatures',
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -126,13 +127,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.generatedSql.netezza = ko.observable('');
 		self.templateSql = ko.observable('');
 		self.tabMode = self.model.currentCohortDefinitionMode;
+		self.cohortConst = cohortConst;
 		self.generationTabMode = ko.observable("inclusion")
 		self.exportTabMode = ko.observable('printfriendly');
-    self.importTabModes = {
-			identifiers: 'identifiers',
-			sourcecodes: 'sourcecodes',
-    };
-    self.importTabMode = ko.observable(self.importTabModes.identifiers);
+    self.importTabMode = ko.observable(cohortConst.importTabModes.identifiers);
 		self.exportSqlMode = ko.observable('ohdsisql');
 		self.importConceptSetJson = ko.observable();
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
