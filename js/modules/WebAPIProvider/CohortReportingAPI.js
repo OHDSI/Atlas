@@ -131,7 +131,37 @@ define(function (require, exports) {
       name: "Healthcare Utilization. Distribution of observation period days per subject, by period_id during cohort period",
       reportKey: "Healthcare Utilization. Distribution of observation period days per subject, by period_id during cohort period",
       analyses: [4006]
-    }
+    },
+    healthcareUtilVisitRecordsBaseline: {
+      name: "Visit Utilization Report: Visit records during baseline period",
+      reportKey: "Visit Utilization Report: Visit records during baseline period",
+      analyses: [4000, 4001, 4002]
+    },
+    healthcareUtilVisitDatesBaseline: {
+      name: "Visit Utilization Report: Visit dates during baseline period",
+      reportKey: "Visit Utilization Report: Visit dates during baseline period",
+      analyses: [4000, 4001, 4003]
+    },
+    healthcareUtilCareSiteDatesBaseline: {
+      name: "Visit Utilization Report: Care-site Visit dates during baseline period",
+      reportKey: "Visit Utilization Report: Care-site Visit dates during baseline period",
+      analyses: [4000, 4001, 4004]
+    },
+    healthcareUtilVisitRecordsCohort: {
+      name: "Visit Utilization Report: Visit records during cohort period",
+      reportKey: "Visit Utilization Report: Visit records during cohort period",
+      analyses: [4006, 4007, 4008]
+    },
+    healthcareUtilVisitDatesCohort: {
+      name: "Visit Utilization Report: Visit dates during cohort period",
+      reportKey: "Visit Utilization Report: Visit dates during cohort period",
+      analyses: [4006, 4007, 4009]
+    },
+    healthcareUtilCareSiteDatesCohort: {
+      name: "Visit Utilization Report: Care-site Visit dates during cohort period",
+      reportKey: "Visit Utilization Report: Care-site Visit dates during cohort period",
+      analyses: [4006, 4007, 4010]
+    },
   };
 
 	function getAnalysisIdentifiers() {
@@ -146,7 +176,7 @@ define(function (require, exports) {
 
 	function getQuickAnalysisIdentifiers() {
 		//return [0, 1, 2, 3, 4, 5, 900, 907, 1000, 1007, 3000, 3001];
-    return [230,231,232,233, 1808, 1];
+    return [4000,4001,4002,4003,4004, 4005, 4006, 4007, 4008, 4009, 4010, 4011]; //[4000, 4006];//
 	}
 
 	function getAvailableReports(completedAnalyses) {

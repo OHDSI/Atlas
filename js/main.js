@@ -182,7 +182,7 @@ requirejs.config({
 		"moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min",
 		"querystring": "https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min",
 
-    "bootstrap-select": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/js/bootstrap-select.min",
+    "bootstrap-select": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/js/bootstrap-select",
     "bootstrap-select-css": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/css/bootstrap-select.min",
     "less-js": "https://cdnjs.cloudflare.com/ajax/libs/less.js/3.0.1/less.min"
 	}

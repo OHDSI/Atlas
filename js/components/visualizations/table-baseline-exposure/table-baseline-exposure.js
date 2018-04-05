@@ -1,9 +1,9 @@
 define(
   [
     'knockout',
-    'text!components/visualizations/table-baseline-exposure/table-baseline-exposure.html',
+    'text!./table-baseline-exposure.html',
     'utils/BemHelper',
-    'less!components/visualizations/table-baseline-exposure/table-baseline-exposure.less',
+    'less!./table-baseline-exposure.less',
   ],
   function (ko, view, BemHelper) {
 

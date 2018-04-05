@@ -2,161 +2,66 @@ define(
   [
     'knockout',
     'text!./persons-exposure.html',
+    './base-report',
     'appConfig',
     'atlascharts',
-    'd3',
-    'd3-scale',
-    'webapi/MomentAPI',
     'utils/BemHelper',
     'appConfig',
-    'moment',
+    './const',
     'bindings/lineChart',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/table-baseline-exposure/table-baseline-exposure',
     'less!./persons-exposure.less',
   ],
-  function (ko, view, appConfig, atlascharts, d3, d3scale, MomentAPI, BemHelper, config, moment) {
+  function (ko, view, BaseCostUtilReport, appConfig, atlascharts, BemHelper, config, costUtilConst) {
 
     const componentName = 'cost-utilization-persons-exposure';
 
-    function costUtilPersonsAndExposure(params) {
+    class PersonAndExposureReport extends BaseCostUtilReport {
 
-      const self = this;
+      constructor(params) {
+        super(componentName, params);
 
-      // Input params
+        this.mode = params.mode;
 
-      this.mode = params.mode;
-      this.source = params.source();
-      this.cohortId = params.cohortId();
+        this.summary = {
+          personsCount: ko.observable(0),
+          exposureTotal: ko.observable(0),
+          exposureAvg: ko.observable(0),
+        };
 
-      // Styling
+        this.setupChartsData();
 
-      const bemHelper = new BemHelper(componentName);
-      this.classes = bemHelper.run.bind(bemHelper);
+        this.init();
+      }
 
-      this.loading = ko.observable(true);
+      getFilterList() {
+        return [
+          costUtilConst.getPeriodTypeFilter(),
+        ];
+      }
 
-      // Tabs
+      buildSearchUrl() {
+        return `${appConfig.api.url}cohortresults/${this.source}/${this.cohortId}/healthcareutilization/exposure/${this.mode}`;
+      }
 
-      this.visualizationTab = 0;
-      this.rawDataTab = 1;
-      this.tabLabels = {
-        [this.visualizationTab]: 'Visualization',
-        [this.rawDataTab]: 'Raw data',
-      };
-      this.currentTab = ko.observable(this.visualizationTab);
+      onDataLoaded({ summary, data }) {
+        this.summary.personsCount(summary.personsCount);
+        this.summary.exposureTotal(summary.exposureTotal);
+        this.summary.exposureAvg(summary.exposureAvg);
+        this.dataList(data);
+      }
 
-      // Data and filtering
+      setupChartsData() {
 
-      this.dataList = ko.observableArray();
-
-      this.summary = {
-        personsCount: ko.observable(0),
-        exposureTotal: ko.observable(0),
-        exposureAvg: ko.observable(0),
-      };
-
-      this.filterList = [
-        {
-          type: 'select',
-          label: 'Period type',
-          name: 'periodType',
-          options: [
-            {
-              label: 'Weekly',
-              value: 'ww',
-            },
-            {
-              label: 'Montly',
-              value: 'mm',
-            },
-            {
-              label: 'Quarterly',
-              value: 'qq',
-            },
-            {
-              label: 'Yearly',
-              value: 'yy',
-            },
-          ],
-          selectedValues: ko.observableArray(['ww']),
-        },
-      ];
-
-      this.loadData = (filters) => {
-        this.loading(true);
-
-        $.ajax({
-          url: `${appConfig.api.url}cohortresults/${this.source}/${this.cohortId}/healthcareutilization/exposure/${this.mode}`,
-          method: 'GET',
-          data: filters,
-          contentType: 'application/json',
-          success: ({ summary, data }) => {
-            self.summary.personsCount(summary.personsCount);
-            self.summary.exposureTotal(summary.exposureTotal);
-            self.summary.exposureAvg(summary.exposureAvg);
-
-            self.dataList(data);
-
-            self.loading(false);
-          },
-        });
-      };
-
-      this.getSelectedFilterValues = () => this.filterList.reduce(
-        (selectedAgg, filterEntry) => {
-
-          if (filterEntry.type === 'select') {
-            selectedAgg[filterEntry.name] = filterEntry.selectedValues()[0];
-          }
-          else if (filterEntry.type === 'multiselect') {
-            selectedAgg[filterEntry.name] = filterEntry.selectedValues()[0];
-          }
-
-          return selectedAgg;
-        },
-        {}
-      );
-
-      this.applyFilters = () => this.loadData(this.getSelectedFilterValues());
-
-      // Charts data
-
-      this.personsChartData = ko.computed(() => {
-        return this.dataList().map((entry, idx) => ({
-          id: idx,
-          xValue: moment(entry.periodStart).toDate(),
-          yValue: parseFloat(entry.personsCount),
-        }));
-      });
-
-      this.totalExposureChartData = ko.computed(() => {
-        return this.dataList().map((entry, idx) => ({
-          id: idx,
-          xValue: moment(entry.periodStart).toDate(),
-          yValue: parseFloat(entry.exposureTotal),
-        }));
-      });
-
-      this.avgExposurePerPersonChartData = ko.computed(() => {
-        return this.dataList().map((entry, idx) => ({
-          id: idx,
-          xValue: moment(entry.periodStart).toDate(),
-          yValue: parseFloat(entry.exposureAvg),
-        }));
-      });
-
-      this.dateTickFormat = d3.timeFormat('%Y-%m-%d');
-      this.emptyTickFormat = () => null;
-      this.formatDate = val => MomentAPI.formatDate(val, 'D MMM Y');
-
-      // On init
-
-      this.loadData(this.getSelectedFilterValues());
+        this.personsChartData = this.createChartDataObservable('personsCount');
+        this.totalExposureChartData = this.createChartDataObservable('exposureTotal');
+        this.avgExposurePerPersonChartData = this.createChartDataObservable('exposureAvg');
+      }
     }
 
     const component = {
-      viewModel: costUtilPersonsAndExposure,
+      viewModel: PersonAndExposureReport,
       template: view
     };
 
