@@ -1,6 +1,6 @@
 "use strict";
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3-tip', 'databindings', 'faceted-datatable', 'components/profile/profileChart', 'css!components/profile/profileManager.css', 'access-denied', ],
-	function (ko, view, d3, config, authApi, sharedState, _, crossfilter, util, CohortDefinition, cohortDefinitionAPI) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/AuthAPI', 'webapi/ProfileAPI', 'atlas-state', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3-tip', 'databindings', 'faceted-datatable', 'components/profile/profileChart', 'css!components/profile/profileManager.css', 'access-denied', ],
+	function (ko, view, d3, config, authApi, profileApi, sharedState, _, crossfilter, util, CohortDefinition, cohortDefinitionAPI) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
 			// is an array of recs in the group
@@ -106,18 +106,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 				let url = self.config.api.url + self.sourceKey() + '/person/' + self.personId();
 
 				self.loadingStatus('loading profile data from database');
-				personRequest = personRequests[url] = $.ajax({
-					url: url,
-					method: 'GET',
-					contentType: 'application/json',
-					data: {
-						cohort: self.cohortDefinitionId() || 0,
-					},
-					error: function (err) {
-						self.cantFindPerson(true);
-						self.loadingPerson(false);
-					},
-					success: function (person) {
+				personRequest = personRequests[url] = profileApi.getProfile(self.sourceKey(), self.personId(), self.cohortDefinitionId())
+					.then(function (person) {
 						if (personRequest !== personRequests[url]) {
 							return;
 						}
@@ -160,8 +150,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 							});
 						self.shadedRegions(person.shadedRegions);
 						self.person(person);
-					}
-				});
+					}, function(){
+            self.cantFindPerson(true);
+            self.loadingPerson(false);
+					});
 			};
 
 			self.xfObservable = ko.observable();

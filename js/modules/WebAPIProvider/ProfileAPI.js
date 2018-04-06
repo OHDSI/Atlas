@@ -10,7 +10,7 @@ define(function (require, exports) {
       method: 'GET',
       contentType: 'application/json',
       data: {
-        cohort,
+        cohort: cohort || 0,
       },
       error: authApi.handleAccessDenied,
     });
