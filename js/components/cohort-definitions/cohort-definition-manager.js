@@ -595,12 +595,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		};
 
 		self.isImportingConceptSet = ko.pureComputed(function () {
-			return self.importingConceptSet() && !self.model.currentConceptSet();
+			return self.importingConceptSet();
     });
 
 		self.importConceptSet = function () {
+		  self.newConceptSet();
 			self.importingConceptSet(true);
-			self.closeConceptSet();
+		//	self.closeConceptSet();
     };
 
 		self.closeConceptSetImport = function () {
@@ -613,7 +614,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 		self.importConceptSetExpression = function(){
       var items = JSON.parse(self.importConceptSetJson()).items;
-			var conceptSet = createConceptSet();
+			var conceptSet = self.model.currentConceptSet();
+			if (!conceptSet){
+				return;
+			}
 
 			items.forEach(function(item){
 				var conceptSetItem = {};

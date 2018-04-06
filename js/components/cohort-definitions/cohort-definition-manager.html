@@ -84,7 +84,7 @@
 				<div class="paddedWrapper form-group" data-bind="if:isImportingConceptSet()">
 					<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $component.clearImportConceptSetJson(); }">click to clear</a>)</div>
 					<textarea class="form-control" rows="5" data-bind="value: importConceptSetJson"></textarea>
-					<div type="button" data-bind="css: {disabled: model.currentConceptSet()!=null}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
+					<div type="button" data-bind="css: {disabled: !model.currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 					<button class="btn btn-sm btn-primary pull-right" style="margin-right: 3px" data-bind="click: function(){ $component.closeConceptSetImport() }">Close Import</button>
 					<div class="clear"></div>
 				</div>
