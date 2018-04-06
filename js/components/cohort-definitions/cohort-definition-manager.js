@@ -197,7 +197,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return clone.sort(conceptSetSorter);
 			}
 		});
-		self.importingConceptSet = ko.observable(false);
 
 		// model behaviors
 		self.onConceptSetTabRespositoryConceptSetSelected = function (conceptSet) {
@@ -582,10 +581,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return newConceptSet;
 		}
 
-		function loadConceptSet(conceptSet) {
+		function loadConceptSet(conceptSet, view) {
       var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
       cohortConceptSets.push(conceptSet);
-      self.model.loadConceptSet(conceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
+      self.model.loadConceptSet(conceptSet.id, 'cohort-definition-manager', 'cohort', view || 'details');
       self.model.currentCohortDefinitionMode("conceptsets");
     }
 
@@ -594,27 +593,28 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			loadConceptSet(createConceptSet());
 		};
 
-		self.isImportingConceptSet = ko.pureComputed(function () {
-			return self.importingConceptSet();
-    });
-
 		self.importConceptSet = function () {
-		  self.newConceptSet();
-			self.importingConceptSet(true);
+		  loadConceptSet(createConceptSet(), 'import');
+		  self.conceptSetTabMode(self.cohortConst.conceptSetTabModes.import);
 		//	self.closeConceptSet();
-    };
-
-		self.closeConceptSetImport = function () {
-			self.importingConceptSet(false);
     };
 
 		self.clearImportConceptSetJson = function(){
 			self.importConceptSetJson('');
 		};
 
+		self.findConceptSet = function(){
+      return self.model.currentCohortDefinition()
+        .expression()
+        .ConceptSets()
+        .find(function (item) {
+          return item.id === self.model.currentConceptSet().id;
+        });
+		};
+
 		self.importConceptSetExpression = function(){
       var items = JSON.parse(self.importConceptSetJson()).items;
-			var conceptSet = self.model.currentConceptSet();
+			var conceptSet = self.findConceptSet();
 			if (!conceptSet){
 				return;
 			}
@@ -626,10 +626,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				conceptSetItem.includeDescendants = ko.observable(item.includeDescendants);
 				conceptSetItem.includeMapped = ko.observable(item.includeMapped);
 
-				conceptSet.expression.items.push(conceptSetItem);
+				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1;
+				sharedState.selectedConcepts.push(conceptSetItem);
 			});
-
-      loadConceptSet(conceptSet);
+			conceptSet.expression.items.valueHasMutated();
+			self.clearImportConceptSetJson();
+			self.conceptSetTabMode(cohortConst.conceptSetTabModes.details);
 		};
 
     function appendConcepts(data){
@@ -656,15 +658,17 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			vocabularyApi
         .getConceptsById(self.identifiers().match(/[0-9]+/g))
         .then(appendConcepts, function () { self.conceptLoading(false); })
-        .then(function(){ self.conceptLoading(false); });
+        .then(function(){ self.conceptLoading(false); })
+				.then(function(){ self.identifiers(''); });
 		};
 
 		self.importSourceCodes = function () {
 		  self.conceptLoading(true);
 			vocabularyApi
         .getConceptsByCode(self.sourcecodes().match(/[0-9a-zA-Z\.-]+/g))
-        .then(appendConcepts, function(){ self.conceptLoading(false); })
-        .then(function(){ self.conceptLoading(false); });
+        .then(appendConcepts, function () { self.conceptLoading(false); })
+        .then(function(){ self.conceptLoading(false); })
+				.then(function(){ self.sourcecodes(''); };
     };
 
 		self.viewReport = function (sourceKey, reportName) {

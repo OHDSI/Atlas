@@ -12,6 +12,7 @@ define(['knockout'], function(ko){
   const importTabModes = {
     identifiers: 'identifiers',
     sourcecodes: 'sourcecodes',
+    conceptset: 'conceptset',
   };
   const conceptSetTabModes = {
     details: 'details',

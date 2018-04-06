@@ -81,13 +81,6 @@
 											}
 									 }">
 				</table>
-				<div class="paddedWrapper form-group" data-bind="if:isImportingConceptSet()">
-					<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $component.clearImportConceptSetJson(); }">click to clear</a>)</div>
-					<textarea class="form-control" rows="5" data-bind="value: importConceptSetJson"></textarea>
-					<div type="button" data-bind="css: {disabled: !model.currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
-					<button class="btn btn-sm btn-primary pull-right" style="margin-right: 3px" data-bind="click: function(){ $component.closeConceptSetImport() }">Close Import</button>
-					<div class="clear"></div>
-				</div>
 				<!-- ko if: model.currentConceptSet() && model.currentConceptSetSource() == 'cohort' -->
 				<hr/>
 				<ul class="nav nav-pills">
@@ -158,6 +151,9 @@
 						<li role="presentation" data-bind="css: {active: $component.importTabMode() === cohortConst.importTabModes.sourcecodes}, click: function(){ $component.importTabMode(cohortConst.importTabModes.sourcecodes); }">
 							<a>Source Codes</a>
 						</li>
+						<li role="presentation" data-bind="css: {active: $component.importTabMode() === cohortConst.importTabModes.conceptset}, click: function(){ $component.importTabMode(cohortConst.importTabModes.conceptset); }">
+							<a>Concept Set</a>
+						</li>
 					</ul>
 					<div id="wrapperImportConceptIdentifiers" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() === cohortConst.importTabModes.identifiers">
 						<div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { identifiers(''); }">click to clear</a>)</div>
@@ -169,6 +165,12 @@
 						<div class="heading">Enter Source Codes (<a class="linkish" data-bind="click: function() { sourcecodes(''); }">click to clear</a>)</div>
 						<textarea class="form-control" rows="5" data-bind="value: sourcecodes"></textarea>
 						<a data-bind="click:function() {importSourceCodes();}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Source Codes</a>
+						<div class="clear"></div>
+					</div>
+					<div class="paddedWrapper form-group" data-bind="if:$component.importTabMode() === cohortConst.importTabModes.conceptset">
+						<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $component.clearImportConceptSetJson(); }">click to clear</a>)</div>
+						<textarea class="form-control" rows="5" data-bind="value: importConceptSetJson"></textarea>
+						<div type="button" data-bind="css: {disabled: !model.currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 						<div class="clear"></div>
 					</div>
 				</div>
