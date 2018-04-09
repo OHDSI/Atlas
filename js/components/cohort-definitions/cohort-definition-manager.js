@@ -657,10 +657,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
       self.conceptLoading(true);
 			vocabularyApi
         .getConceptsById(self.identifiers().match(/[0-9]+/g))
-        .then(appendConcepts, function () {
-        	self.conceptLoading(false);
-        	self.identifiers('');
-        });
+        .then(appendConcepts, function () { self.conceptLoading(false); })
+        .then(function(){ self.conceptLoading(false); })
+				.then(function(){ self.identifiers(''); });
 		};
 
 		self.importSourceCodes = function () {
@@ -669,6 +668,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
         .getConceptsByCode(self.sourcecodes().match(/[0-9a-zA-Z\.-]+/g))
         .then(appendConcepts, function () {
           self.conceptLoading(false);
+        })
+        .then(function () {
+          self.conceptLoading(false);
+        })
+        .then(function () {
           self.sourcecodes('');
         });
     }
