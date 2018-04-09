@@ -12,7 +12,7 @@ define(function (require, exports) {
 		return infoPromise;
 	}
     
-    function deleteConceptSet(conceptSetId) {
+  function deleteConceptSet(conceptSetId) {
 		var promise = $.ajax({
 			url: config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') ,
 			method: 'DELETE',
@@ -20,12 +20,24 @@ define(function (require, exports) {
 			error: authApi.handleAccessDenied,
 		});
 		return promise;
-    }
-    
-    var api = {
+  }
+
+  function exists(name) {
+    return $.ajax({
+      url: config.webAPIRoot + 'conceptset/exists',
+			data: {
+      	name,
+			},
+			method: 'GET',
+			error: authApi.handleAccessDenied,
+    });
+  }
+
+  var api = {
 		getGenerationInfo: getGenerationInfo,
-        deleteConceptSet: deleteConceptSet,
-	}
+		deleteConceptSet: deleteConceptSet,
+		exists: exists,
+	};
 
 	return api;
 });

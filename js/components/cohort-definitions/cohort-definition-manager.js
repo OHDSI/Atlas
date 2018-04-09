@@ -19,6 +19,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
   'faceted-datatable',
   'cohortdefinitionviewer/expressionCartoonBinding',
   'cohortfeatures',
+	'conceptset-modal',
 	'css!./cohort-definition-manager.css'
 ], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst) {
 
@@ -144,6 +145,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return self.dirtyFlag() && self.dirtyFlag().isDirty();
 		});
 		self.conceptLoading = ko.observable(false);
+		self.conceptSetName = ko.observable();
 		self.tabPath = ko.computed(function () {
 			var path = self.tabMode();
 			if (path === 'export') {
@@ -161,6 +163,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
     });
 
 		self.delayedCartoonUpdate = ko.observable(null);
+
+		self.saveConceptSetShow = ko.observable(false);
+		self.newConceptSetName = ko.observable();
 
 		self.canGenerate = ko.pureComputed(function () {
 			var isDirty = self.dirtyFlag() && self.dirtyFlag().isDirty();
@@ -561,7 +566,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return false;
 		}
 
-		self.closeConceptSet = function () {
+    self.canCreateConceptSet = ko.computed(function () {
+      return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+    });
+
+    self.closeConceptSet = function () {
 			self.model.clearConceptSet();
 		}
 
@@ -573,6 +582,22 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			);
 			self.closeConceptSet();
 		}
+
+		self.showSaveConceptSet = function() {
+		  self.newConceptSetName(self.model.currentConceptSet().name());
+		  self.saveConceptSetShow(true);
+			// $("#saveConceptSetModal").modal('show');
+		};
+
+		self.hideSaveConceptSet = function() {
+		  self.saveConceptSetShow(false);
+			// $("#saveConceptSetModal").modal('hide');
+		};
+
+		self.saveConceptSet = function () {
+      console.log('save concept set', self.newConceptSetName());
+      self.saveConceptSetShow(false);
+    };
 
 		function createConceptSet() {
       var newConceptSet = new ConceptSet();
@@ -663,13 +688,19 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		};
 
 		self.importSourceCodes = function () {
-		  self.conceptLoading(true);
-			vocabularyApi
+      self.conceptLoading(true);
+      vocabularyApi
         .getConceptsByCode(self.sourcecodes().match(/[0-9a-zA-Z\.-]+/g))
-        .then(appendConcepts, function () { self.conceptLoading(false); })
-        .then(function(){ self.conceptLoading(false); })
-				.then(function(){ self.sourcecodes(''); };
-    };
+        .then(appendConcepts, function () {
+          self.conceptLoading(false);
+        })
+        .then(function () {
+          self.conceptLoading(false);
+        })
+        .then(function () {
+          self.sourcecodes('');
+        });
+    }
 
 		self.viewReport = function (sourceKey, reportName) {
 			// TODO: Should we prevent running an analysis on an unsaved cohort definition?

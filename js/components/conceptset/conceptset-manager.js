@@ -14,6 +14,7 @@ define(['knockout',
 	'databindings',
 	'negative-controls',
 	'circe',
+	'conceptset-modal',
 	'css!components/conceptset/style.css',
 ], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard) {
 	function conceptsetManager(params) {
@@ -52,6 +53,7 @@ define(['knockout',
 			}
 			return returnVal;
 		});
+		self.saveConceptSetShow = ko.observable(false);
 		// Set the default concept set to be the current concept set
 		self.currentConceptSet = ko.observableArray();
 		_.each(self.selectedConcepts(), (conceptSetItem) => {
@@ -806,8 +808,7 @@ define(['knockout',
 		}
 
 		self.showSaveNewModal = function () {
-			$('#modalSaveNew')
-				.modal('show');
+			self.saveConceptSetShow(true);
 		}
 
 		self.compareCreateNewConceptSet = function () {
@@ -842,8 +843,7 @@ define(['knockout',
 				selectedConcepts.push(newItem);
 			})
 			self.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
-			$('#modalSaveNew')
-				.modal('hide');
+			self.saveConceptSetShow(false);
 		}
 
 		self.toggleOnSelectAllCheckbox = function (selector, selectAllElement) {
