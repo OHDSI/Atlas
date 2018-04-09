@@ -13,7 +13,7 @@
 			<div class="input-group">
 				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: model.currentCohortDefinition().name, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></input>
 				<div class="input-group-btn">
-					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning() && canEdit())"><i class="fa fa-save"></i></button>
+					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: canSave"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
 					<!-- ko if: model.currentCohortDefinition().id() != null && model.currentCohortDefinition().id() != 0 -->
 					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()"><i class="fa fa-copy"></i></button>
@@ -54,9 +54,10 @@
 				<atlas.cohort-editor params="model: model"></atlas.cohort-editor>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
-				<div style="padding-bottom: 10px;" class="pull-right">
-					<button type="button" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
-					<button type="button" style="margin-right: 3px" class="btn btn-sm btn-primary pull-right" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
+				<div class="cohort-conceptset-button-pane pull-right">
+					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
+					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function(){ $component.importConceptSet() }, enable: canEdit"><i class="fa fa-upload" aria-hidden="true" /> Import</button>
+					<button type="button" class="btn btn-sm btn-success" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
 				</div>
 				<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
 											data: model.currentCohortDefinition() && model.currentCohortDefinition().expression().ConceptSets,
@@ -83,22 +84,25 @@
 				<!-- ko if: model.currentConceptSet() && model.currentConceptSetSource() == 'cohort' -->
 				<hr/>
 				<ul class="nav nav-pills">
-					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'details'}, click: function() {$component.conceptSetTabMode('details')};">
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == cohortConst.conceptSetTabModes.details}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.details)};">
 						<a>Concept Set Expression</a>
 					</li>
-					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'included'}, click: function() {$component.conceptSetTabMode('included')};">
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == cohortConst.conceptSetTabModes.included}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.included)};">
 						<a>Included Concepts
 					<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
 					<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-circle-o-notch fa-spin"></i></span></a>
 					</li>
-					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'sourcecodes'}, click: function() {$component.conceptSetTabMode('sourcecodes')};">
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.sourcecodes)};">
 						<a>Included Source Codes</a>
 					</li>
-					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == 'export'}, click: function() {$component.conceptSetTabMode('export')};"> <a>Export</a>
+					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.export}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.export)};"> <a>Export</a>
+					</li>
+					<li role="presentation" data-bind="css: { active: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.import }, click: function() { $component.conceptSetTabMode(cohortConst.conceptSetTabModes.import); }">
+						<a>Import</a>
 					</li>
 				</ul>
 
-				<div data-bind="if: model.currentView() != 'loading' && $component.conceptSetTabMode() == 'details'">
+				<div data-bind="if: model.currentView() != 'loading' && $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.details">
 					<div class="paddedWrapper">
 						<div class="heading">
 							Name:
@@ -107,23 +111,24 @@
 						<conceptset-editor params="model: model, conceptSets:selectedConcepts"></conceptset-editor>
 
 						<div class="clear"></div>
-
-						<button type="button" class="btn btn-sm btn-primary pull-right" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
-						<button type="button" class="btn btn-sm btn-danger pull-right" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
+						<div class="cohort-conceptset-button-pane pull-right">
+						  <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
+						  <button type="button" class="btn btn-sm btn-primary" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
+						</div>
 					</div>
 				</div>
 
-				<div class="loading" data-bind="if:model.currentView() == 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
+				<div class="loading" data-bind="if:model.currentView() === 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
 
-				<div data-bind="visible: $component.conceptSetTabMode() == 'included' && !model.loadingIncluded()">
+				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !model.loadingIncluded()">
 					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
 				</div>
 
-				<div data-bind="visible: $component.conceptSetTabMode() == 'sourcecodes' && !model.loadingSourcecodes() && !model.loadingIncluded()">
+				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes && !model.loadingSourcecodes() && !model.loadingIncluded()">
 					<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
 				</div>
 
-				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() == 'export'">
+				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.export">
 					<div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
 						<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
 					</div>
@@ -137,6 +142,39 @@
 					</div>
 					<pre id="includedConceptIdentifierList" data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 				</div>
+
+				<div id="wrapperConceptSetImport" data-bind="if:$component.conceptSetTabMode() === cohortConst.conceptSetTabModes.import">
+					<ul class="nav nav-pills">
+						<li role="presentation" data-bind="css: {active: $component.importTabMode() === cohortConst.importTabModes.identifiers}, click: function(){ $component.importTabMode(cohortConst.importTabModes.identifiers); }">
+							<a>Concept Identifiers</a>
+						</li>
+						<li role="presentation" data-bind="css: {active: $component.importTabMode() === cohortConst.importTabModes.sourcecodes}, click: function(){ $component.importTabMode(cohortConst.importTabModes.sourcecodes); }">
+							<a>Source Codes</a>
+						</li>
+						<li role="presentation" data-bind="css: {active: $component.importTabMode() === cohortConst.importTabModes.conceptset}, click: function(){ $component.importTabMode(cohortConst.importTabModes.conceptset); }">
+							<a>Concept Set</a>
+						</li>
+					</ul>
+					<div id="wrapperImportConceptIdentifiers" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() === cohortConst.importTabModes.identifiers">
+						<div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { identifiers(''); }">click to clear</a>)</div>
+						<textarea class="form-control" rows="5" data-bind="value: identifiers"></textarea>
+						<a data-bind="click:function() {importConceptIdentifiers();}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Concept Identifiers</a>
+						<div class="clear"></div>
+					</div>
+					<div id="wrapperImportSourcecodes" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() == cohortConst.importTabModes.sourcecodes">
+						<div class="heading">Enter Source Codes (<a class="linkish" data-bind="click: function() { sourcecodes(''); }">click to clear</a>)</div>
+						<textarea class="form-control" rows="5" data-bind="value: sourcecodes"></textarea>
+						<a data-bind="click:function() {importSourceCodes();}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Source Codes</a>
+						<div class="clear"></div>
+					</div>
+					<div class="paddedWrapper form-group" data-bind="if:$component.importTabMode() === cohortConst.importTabModes.conceptset">
+						<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $component.clearImportConceptSetJson(); }">click to clear</a>)</div>
+						<textarea class="form-control" rows="5" data-bind="value: importConceptSetJson"></textarea>
+						<div type="button" data-bind="css: {disabled: !model.currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
+						<div class="clear"></div>
+					</div>
+				</div>
+                <loading data-bind="visible: conceptLoading()" params="status: 'retrieving concepts'"></loading>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
