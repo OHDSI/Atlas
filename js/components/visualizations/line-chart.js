@@ -14,7 +14,7 @@ define(
     class LineChart {
       constructor(params, element) {
         this.element = element;
-        this.params = params;
+        this.lineChart = typeof params.lineChart === 'function' ? params.lineChart() : params.lineChart;
 
         const bemHelper = new BemHelper(componentName);
         this.classes = bemHelper.run.bind(bemHelper);

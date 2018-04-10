@@ -4,6 +4,6 @@
     </span>
     <div data-bind="
         css: $component.classes('chart'),
-        lineChart: { ...params.lineChart(), setChartRenderMethod: $component.setChartRenderMethod }
+        lineChart: { ...$component.lineChart, setChartRenderMethod: $component.setChartRenderMethod }
     "/>
 </div>

@@ -26,18 +26,21 @@
   &__chart {
     flex-grow: 1;
 
-    &:not(:first-child) {
-      margin-left: 3.5rem;
-    }
-
-    &:not(:last-child) {
-      margin-right: 3.5rem;
-    }
-
     .axis, .legend {
       text {
         font-size: 1.2rem;
       }
     }
+  }
+
+  &__save-csv-tab {
+    float: right !important;
+  }
+
+  &__save-csv-link {
+    background-color: #337ab7 !important;
+    color: white !important;
+    line-height: 10px;
+    border-radius: 3px;
   }
 }
