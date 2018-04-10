@@ -13,6 +13,7 @@ define(['optional!config-local'], function (localConfig) {
 	config.userAuthenticationEnabled = false;
 	config.plpResultsEnabled = false;
 	config.useExecutionEngine = false;
+	config.viewProfileDates = false;
 	config.supportUrl = "https://github.com/ohdsi/atlas/issues";
 	config.authProviders = [
     {
