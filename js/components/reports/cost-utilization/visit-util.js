@@ -12,10 +12,10 @@ define(
     'appConfig',
     'moment',
     './const',
-    'bindings/lineChart',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/table-baseline-exposure/table-baseline-exposure',
     'less!./visit-util.less',
+    'components/visualizations/line-chart',
   ],
   function (ko, view, BaseCostUtilReport, appConfig, atlascharts, d3, d3scale, MomentAPI, BemHelper, config, moment, costUtilConst) {
 
@@ -110,7 +110,7 @@ define(
         const chartList = this.tableColumns.filter(item => item.showInChart);
 
         this.chartOptions = ko.observableArray(chartList.map(c => ({ label: c.title, value: c.title })));
-        this.displayedCharts = ko.observableArray(this.chartOptions().map(o => o.value));
+        this.displayedCharts = ko.observableArray(this.chartOptions().map(o => o.value));//ko.observableArray([]);//
 
         this.setupChartsData(chartList);
         this.init();

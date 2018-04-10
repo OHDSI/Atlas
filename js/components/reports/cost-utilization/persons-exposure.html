@@ -30,13 +30,15 @@
                 <a data-bind="text: $component.tabLabels[$data]" />
             </li>
             <!-- /ko -->
+            <li data-bind="css: classes('save-csv-tab'), click: $component.saveAsCsv">
+                <a data-bind="css: classes('save-csv-link')">Save as CSV</a>
+            </li>
         </ul>
         <div class="tab-content">
             <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
                 <div data-bind="css: classes('chart-line')">
-                    <div data-bind="
-                        css: classes('chart'),
-                        lineChart: {
+                    <line-chart data-bind="css: $component.classes('chart')"
+                        params="{lineChart: {
                             data: $component.personsChartData,
                             xLabel: '',
                             xFormat: $component.formatDate,
@@ -44,13 +46,12 @@
                             tickFormat: $component.emptyTickFormat,
                             height: 250,
                             showLegend: false
-                        }
-                    "/>
+                        }}"
+                    />
                 </div>
                 <div data-bind="css: classes('chart-line')">
-                    <div data-bind="
-                        css: classes('chart'),
-                        lineChart: {
+                    <line-chart data-bind="css: $component.classes('chart')"
+                                params="{lineChart: {
                             data: $component.totalExposureChartData,
                             xLabel: '',
                             xFormat: $component.formatDate,
@@ -58,13 +59,12 @@
                             tickFormat: $component.emptyTickFormat,
                             height: 250,
                             showLegend: false
-                        }
-                    "/>
+                        }}"
+                    />
                 </div>
                 <div data-bind="css: classes('chart-line')">
-                    <div data-bind="
-                        css: classes('chart'),
-                        lineChart: {
+                    <line-chart data-bind="css: $component.classes('chart')"
+                                params="{lineChart: {
                             data: $component.avgExposurePerPersonChartData,
                             xLabel: 'Period start',
                             xFormat: $component.formatDate,
@@ -72,8 +72,8 @@
                             tickFormat: $component.dateTickFormat,
                             height: 250,
                             showLegend: false
-                        }
-                    "/>
+                        }}"
+                    />
                 </div>
             </div>
             <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading()">
