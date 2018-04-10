@@ -53,6 +53,9 @@
                     <a data-bind="text: $component.tabLabels[$data]" />
                 </li>
                 <!-- /ko -->
+                <li data-bind="css: classes('save-csv-tab'), click: $component.saveAsCsv">
+                    <a data-bind="css: classes('save-csv-link')">Save as CSV</a>
+                </li>
             </ul>
             <div class="tab-content">
                 <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">

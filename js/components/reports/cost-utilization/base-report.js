@@ -6,8 +6,9 @@ define(
     'moment',
     'd3',
     'webapi/MomentAPI',
+    'utils/CsvUtils',
   ],
-  function (ko, BemHelper, filterPanelUtils, moment, d3, MomentAPI) {
+  function (ko, BemHelper, filterPanelUtils, moment, d3, MomentAPI, CsvUtils) {
 
     class BaseCostUtilReport {
 
@@ -22,6 +23,7 @@ define(
         this.init = this.init.bind(this);
         this.buildSearchUrl = this.buildSearchUrl.bind(this);
         this.onDataLoaded = this.onDataLoaded.bind(this);
+        this.saveAsCsv = this.saveAsCsv.bind(this);
 
         // Input params
 
@@ -89,6 +91,10 @@ define(
 
       applyFilters() {
         this.loadData(this.getSelectedFilterValues());
+      }
+
+      saveAsCsv() {
+        CsvUtils.saveAsCsv(this.dataList());
       }
 
       createChartData(yValueField) {
