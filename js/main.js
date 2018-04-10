@@ -154,6 +154,7 @@ requirejs.config({
 		"plp-spec-editor": "components/plp-spec-editor",
 		"plp-r-code": "components/plp-r-code",
 		"plp-print-friendly": "components/plp-print-friendly",
+		"feedback": "components/feedback",
     "js-cookie": "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min",
 
     "d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.0/d3.min",
