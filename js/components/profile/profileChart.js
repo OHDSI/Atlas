@@ -1,7 +1,12 @@
 "use strict";
 define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'webapi/MomentAPI', 'webapi/AuthAPI', 'appConfig', 'D3-Labeler/labeler'], function (ko, d3, d3tip, _, d3Selection, momentApi, authApi, config) {
+
+	function canViewProfileDates() {
+		return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()));
+  }
+
 	var margin = {
-		get top(){ return (config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()))) ? 30 : 10; },
+		get top(){ return canViewProfileDates() ? 30 : 10; },
 		right: 20,
 		bottom: 30,
 		left: 20
@@ -287,7 +292,7 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'webapi/MomentAPI'
 
     addAxis(xAxis, vizHeight + 2);
 
-		if (config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()))) {
+		if (canViewProfileDates()) {
 			addAxis(x2Axis, 0);
 		}
 
