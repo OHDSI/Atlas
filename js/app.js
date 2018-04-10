@@ -804,6 +804,8 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 			// resolve the included concepts and update the include concept set identifier list
 			self.resolveConceptSetExpression = function () {
 				self.resolvingConceptSetExpression(true);
+        pageModel.includedConcepts.removeAll();
+        pageModel.includedSourcecodes.removeAll();
 				var conceptSetExpression = '{"items" :' + ko.toJSON(sharedState.selectedConcepts()) + '}';
 				var highlightedJson = self.syntaxHighlight(conceptSetExpression);
 				self.currentConceptSetExpressionJson(highlightedJson);
