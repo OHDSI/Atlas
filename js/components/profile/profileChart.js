@@ -275,16 +275,17 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'webapi/MomentAPI'
 				.attr('y2', d => d.y);
 		}
 
-		profilePlot.append("g")
-			.attr("class", "x axis")
-			.attr("transform", "translate(0," + (vizHeight + 2) + ")")
-			.call(xAxis);
+		function addAxis(axis, height){
+			profilePlot.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0, " + height + ")")
+				.call(axis);
+		}
+
+		addAxis(xAxis, vizHeight + 2);
 
 		if (authApi.isPermittedViewProfileDates()) {
-      profilePlot.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0, 0)")
-        .call(x2Axis);
+			addAxis(x2Axis, 0);
     }
 
 		highlightFunc = function () {
