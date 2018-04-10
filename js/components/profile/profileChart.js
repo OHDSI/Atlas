@@ -1,7 +1,7 @@
 "use strict";
-define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'webapi/MomentAPI', 'webapi/AuthAPI', 'D3-Labeler/labeler'], function (ko, d3, d3tip, _, d3Selection, momentApi, authApi) {
+define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'webapi/MomentAPI', 'webapi/AuthAPI', 'appConfig', 'D3-Labeler/labeler'], function (ko, d3, d3tip, _, d3Selection, momentApi, authApi, config) {
 	var margin = {
-		get top(){ return authApi.isPermittedViewProfileDates() ? 30 : 10; },
+		get top(){ return (config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()))) ? 30 : 10; },
 		right: 20,
 		bottom: 30,
 		left: 20
@@ -19,8 +19,11 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'webapi/MomentAPI'
 	};
 
 	var htmlTipText = d => {
-		return '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p><p>Start Date:'
-			+ momentApi.formatDate(new Date(d.startDate)) + '</p>';
+		var tipText = '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p>';
+		if (authApi.isPermittedViewProfileDates() && d.startDate != null) {
+			tipText += '<p>Start Date: '	+ momentApi.formatDate(new Date(d.startDate)) + '</p>'
+		}
+		return tipText;
 	};
 	var pointClass = d => d.domain;
 	var radius = d => 2;
@@ -275,18 +278,17 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'webapi/MomentAPI'
 				.attr('y2', d => d.y);
 		}
 
-		function addAxis(axis, height){
+		profilePlot.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + (vizHeight + 2) + ")")
+			.call(xAxis);
+
+		if (config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()))) {
 			profilePlot.append("g")
 				.attr("class", "x axis")
-				.attr("transform", "translate(0, " + height + ")")
-				.call(axis);
+				.attr("transform", "translate(0, 0)")
+				.call(x2Axis);
 		}
-
-		addAxis(xAxis, vizHeight + 2);
-
-		if (authApi.isPermittedViewProfileDates()) {
-			addAxis(x2Axis, 0);
-    }
 
 		highlightFunc = function () {
 			pointGs.selectAll('rect')

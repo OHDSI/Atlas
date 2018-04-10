@@ -264,7 +264,7 @@ define(function(require, exports) {
     };
 
     var isPermittedViewProfileDates = function() {
-      return isPermitted('profile:dates:view');
+      return isPermitted('*:person:*:get:dates');
     };
 
     var isPermittedReadCohort = function(id) {
