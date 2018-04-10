@@ -1,6 +1,6 @@
 "use strict";
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/AuthAPI', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3-tip', 'databindings', 'faceted-datatable', 'components/profileChart', 'css!./styles/profileManager.css', 'access-denied'],
-	function (ko, view, d3, config, authApi, _, crossfilter, util, CohortDefinition, cohortDefinitionAPI) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/AuthAPI', 'webapi/ProfileAPI', 'atlas-state', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3-tip', 'databindings', 'faceted-datatable', 'components/profile/profileChart', 'css!components/profile/profileManager.css', 'access-denied', ],
+	function (ko, view, d3, config, authApi, profileApi, sharedState, _, crossfilter, util, CohortDefinition, cohortDefinitionAPI) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
 			// is an array of recs in the group
@@ -31,7 +31,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 			// already loaded into the page model. If not, load it from the
 			// server
 			if (self.cohortDefinitionId() && (self.model.currentCohortDefinition() && self.model.currentCohortDefinition()
-					.id() == self.cohortDefinitionId)) {
+					.id() === self.cohortDefinitionId)) {
 				// The cohort definition requested is already loaded into the page model - just reference it
 				self.currentCohortDefinition(self.model.currentCohortDefintion())
 			} else if (self.cohortDefinitionId()) {
@@ -46,6 +46,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 			self.canViewProfiles = ko.pureComputed(function () {
 			  return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedViewProfiles()) || !config.userAuthenticationEnabled;
 			});
+			self.sharedState = sharedState;
 
 			self.cohortSource = ko.observable();
 			self.person = ko.observable();
@@ -55,7 +56,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 
 			self.setSourceKey = function (d) {
 				self.sourceKey(d.sourceKey);
-			}
+			};
 
 			self.cohortDefSource = ko.computed(function () {
 				return {
@@ -82,15 +83,11 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 				self.conceptSets(_.extend({}, self.conceptSets(), {
 					[conceptSet.name]: ids
 				}));
-			}
+			};
 			self.loadConceptSets(self.cohortDefSource());
 
 			self.sourceKeyCaption = ko.computed(function () {
-				if (self.sourceKey()) {
-					return self.sourceKey();
-				} else {
-					return "Select a Data Source";
-				}
+				return self.sourceKey() || "Select a Data Source";
 			});
 
 			self.sourceKey.subscribe(function (sourceKey) {
@@ -103,21 +100,14 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 			let personRequests = {};
 			let personRequest;
 			self.loadPerson = function () {
-				self.cantFindPerson(false)
+				self.cantFindPerson(false);
 				self.loadingPerson(true);
 
 				let url = self.config.api.url + self.sourceKey() + '/person/' + self.personId();
 
 				self.loadingStatus('loading profile data from database');
-				personRequest = personRequests[url] = $.ajax({
-					url: url,
-					method: 'GET',
-					contentType: 'application/json',
-					error: function (err) {
-						self.cantFindPerson(true);
-						self.loadingPerson(false);
-					},
-					success: function (person) {
+				personRequest = personRequests[url] = profileApi.getProfile(self.sourceKey(), self.personId(), self.cohortDefinitionId())
+					.then(function (person) {
 						if (personRequest !== personRequests[url]) {
 							return;
 						}
@@ -144,8 +134,8 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 							.getFullYear() - person.yearOfBirth;
 						person.records.forEach(function (rec) {
 							// have to get startDate from person.cohorts
-							rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
-							rec.endDay = rec.endDate ? Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
+							// rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
+							// rec.endDay = rec.endDate ? Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
 							rec.highlight = self.defaultColor;
 							rec.stroke = self.defaultColor;
 						});
@@ -153,15 +143,17 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 						person.shadedRegions =
 							person.observationPeriods.map(op => {
 								return {
-									x1: Math.floor((op.startDate - cohort.startDate) / (1000 * 60 * 60 * 24)),
-									x2: Math.floor((op.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)),
+									x1: op.x1,
+									x2: op.x2,
 									className: 'observation-period',
 								};
 							});
 						self.shadedRegions(person.shadedRegions);
 						self.person(person);
-					}
-				});
+					}, function(){
+            self.cantFindPerson(true);
+            self.loadingPerson(false);
+					});
 			};
 
 			self.xfObservable = ko.observable();
@@ -188,10 +180,10 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 			self.getGenderClass = ko.computed(function () {
 				if (self.person()) {
 					if (self.person()
-						.gender == 'FEMALE') {
+						.gender === 'FEMALE') {
 						return "fa fa-female";
 					} else if (self.person()
-						.gender == 'MALE') {
+						.gender === 'MALE') {
 						return "fa fa-male";
 					} else {
 						return "fa fa-question";
@@ -318,7 +310,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 
 			self.swatch = function (d) {
 				return '<div class="swatch" style="background-color:' + d + '"></div>';
-			}
+			};
 
 			self.highlightDom = '<<"row vertical-align"<"col-xs-6"><"col-xs-6 search"f>><t><"row vertical-align"<"col-xs-6"i><"col-xs-6"p>>>';
 			self.highlightColumns = ['select', {
@@ -368,7 +360,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 				} else if (d.startDay < -90) {
 					return '90+ days';
 				}
-			}
+			};
 			self.setHighlights = function (colorIndex) {
 				var selectedData = $('#highlight-table table').DataTable().rows('.selected').data();
 				for (var i = 0; i < selectedData.length; i++) {
@@ -377,21 +369,21 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 						r.highlight = self.getHighlightBackground(colorIndex);
 						r.stroke = self.getHighlightColor(colorIndex);
 					}); // set the record colors
-				};
+				}
 
 				self.highlightRecs.valueHasMutated();
-			}
+			};
 
 			// d3.schemePaired
 			self.palette = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ff9', '#b15928'];
 
 			self.getHighlightColor = function (i) {
 				return self.palette[i * 2];
-			}
+			};
 
 			self.getHighlightBackground = function (i) {
 				return self.palette[i * 2 + 1];
-			}
+			};
 
 			self.clearHighlights = function () {
 				var selectedData = $('#highlight-table table').DataTable().data();
@@ -401,15 +393,15 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 						r.highlight = self.defaultColor; // set the record colors
 						r.stroke = self.defaultColor; // set the record colors
 					})
-				};
+				}
 
 				self.highlightRecs.valueHasMutated();
-			}
+			};
 
 			self.highlightRowClick = function (data, evt, row) {
 				evt.stopPropagation();
 				$(row).toggleClass('selected');
-			}
+			};
 			self.highlightOptions = {};
 			self.options = {
 				Facets: [{

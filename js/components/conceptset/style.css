@@ -1,0 +1,36 @@
+.compare-pane {
+    padding-top: 20px;
+}
+
+.compare-message {
+    font-weight: bold; color: #ff0000;
+}
+
+.compare-results {
+    padding-top: 10px;
+}
+
+.optimizer-saving-new {
+    padding-bottom: 10px; margin-bottom: 15px;
+}
+
+.optimizer-header {
+    padding-top:10px;
+    margin-bottom:10px;
+}
+
+.optimizer-message {
+    padding-bottom: 10px;
+}
+
+.btn-group button {
+    margin-right: 3px;
+}
+
+.btn-group button:last-child {
+    margin-right: 0;
+}
+
+.optimizer-new-name {
+    margin-bottom: 5px;
+}

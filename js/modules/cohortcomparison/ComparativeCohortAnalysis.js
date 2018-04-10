@@ -54,7 +54,7 @@ define(function (require, exports) {
 		self.treatmentId = ko.observable(data.treatmentId != null ? data.treatmentId : 0);
 		self.treatmentCaption = ko.observable(data.treatmentCaption != null ? data.treatmentCaption : null);
         if (data.treatmentCohortDefinition != null) {
-			jsonCohortDefinition = JSON.parse(data.treatmentCohortDefinition);
+			jsonCohortDefinition = data.treatmentCohortDefinition;
 			self.treatmentCohortDefinition = ko.observable(new CohortExpression(jsonCohortDefinition))
         } else {        	
         	self.treatmentCohortDefinition = ko.observable(null);
@@ -63,7 +63,7 @@ define(function (require, exports) {
 		self.comparatorId = ko.observable(data.comparatorId != null ? data.comparatorId : 0);
         self.comparatorCaption = ko.observable(data.comparatorCaption != null ?  data.comparatorCaption : null);
         if (data.comparatorCohortDefinition != null) {
-			jsonCohortDefinition = JSON.parse(data.comparatorCohortDefinition);
+			jsonCohortDefinition = data.comparatorCohortDefinition;
 			self.comparatorCohortDefinition = ko.observable(new CohortExpression(jsonCohortDefinition));
         } else {        	
         	self.comparatorCohortDefinition = ko.observable(null);
@@ -72,7 +72,7 @@ define(function (require, exports) {
 		self.outcomeId = ko.observable(data.outcomeId != null ? data.outcomeId : 0);
 		self.outcomeCaption = ko.observable(data.outcomeCaption != null ? data.outcomeCaption : null);
         if (data.outcomeCohortDefinition != null) {
-			jsonCohortDefinition = JSON.parse(data.outcomeCohortDefinition);
+			jsonCohortDefinition = data.outcomeCohortDefinition;
 			self.outcomeCohortDefinition = ko.observable(new CohortExpression(jsonCohortDefinition));
         } else {        	
         	self.outcomeCohortDefinition = ko.observable(null);

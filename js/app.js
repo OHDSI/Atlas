@@ -1,51 +1,52 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/MomentAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'], function ($, ko, ohdsiUtil, config, authApi, momentApi, sharedState, querystring, d3) {
-	var appModel = function () {
-		$.support.cors = true;
-		var self = this;
-		self.authApi = authApi;
-		self.config = config;
-		self.componentParams = {};
-		self.initPromises = [];
-		self.applicationStatus = ko.observable('initializing');
-		self.pendingSearch = ko.observable(false);
-		self.pageTitle = ko.pureComputed(function () {
-			var pageTitle = "ATLAS";
-			switch (self.currentView()) {
-				case 'loading':
-					pageTitle = pageTitle + ": Loading";
-					break;
-				case 'home':
-					pageTitle = pageTitle + ": Home";
-					break;
-				case 'feedback':
-					pageTitle = pageTitle + ": Feedback";
-					break;
-				case 'search':
-					pageTitle = pageTitle + ": Search";
-					break;
-				case 'conceptsets':
-				case 'conceptset':
-					pageTitle = pageTitle + ": Concept Sets";
-					break;
-				case 'concept':
-					pageTitle = pageTitle + ": Concept";
-					break;
-				case 'cohortdefinitions':
-				case 'cohortdefinition':
-					pageTitle = pageTitle + ": Cohorts";
-					break;
-				case 'irbrowser':
-				case 'iranalysis':
-					pageTitle = pageTitle + ": Incidence Rate";
-					break;
-				case 'estimations':
-				case 'estimation':
-					pageTitle = pageTitle + ": Estimation";
-					break;
-				case 'profiles':
-					pageTitle = pageTitle + ": Profiles";
-					break;
-			case 'plp-browser':
+define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
+	function ($, ko, ohdsiUtil, config, authApi, roleApi, sharedState, querystring, d3) {
+		var appModel = function () {
+			$.support.cors = true;
+			var self = this;
+			self.authApi = authApi;
+			self.componentParams = {};
+			self.config = config;
+			self.initPromises = [];
+			self.applicationStatus = ko.observable('initializing');
+			self.pendingSearch = ko.observable(false);
+			self.pageTitle = ko.pureComputed(function () {
+				var pageTitle = "ATLAS";
+				switch (self.currentView()) {
+					case 'loading':
+						pageTitle = pageTitle + ": Loading";
+						break;
+					case 'home':
+						pageTitle = pageTitle + ": Home";
+						break;
+          case 'feedback':
+            pageTitle = pageTitle + ": Feedback";
+            break;
+					case 'search':
+						pageTitle = pageTitle + ": Search";
+						break;
+					case 'conceptsets':
+					case 'conceptset':
+						pageTitle = pageTitle + ": Concept Sets";
+						break;
+					case 'concept':
+						pageTitle = pageTitle + ": Concept";
+						break;
+					case 'cohortdefinitions':
+					case 'cohortdefinition':
+						pageTitle = pageTitle + ": Cohorts";
+						break;
+					case 'irbrowser':
+					case 'iranalysis':
+						pageTitle = pageTitle + ": Incidence Rate";
+						break;
+					case 'estimations':
+					case 'estimation':
+						pageTitle = pageTitle + ": Estimation";
+						break;
+					case 'profiles':
+						pageTitle = pageTitle + ": Profiles";
+						break;
+					case 'plp-browser':
 					case 'plp-manager':
 						pageTitle = pageTitle + ": PLP";
 						break;
@@ -149,13 +150,30 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 						});
 					},
 					'/configure': function () {
-						require(['configuration'], function () {
+						require(['configuration', 'source-manager'], function () {
 							self.componentParams = {
 								model: self
 							};
 							self.currentView('ohdsi-configuration');
 						});
 					},
+					'/source/new': function () {
+						require(['source-manager'], function () {
+							self.componentParams = {
+								model: self,
+							};
+							self.currentView('source-manager');
+            });
+          },
+					'/source/:id': function (id) {
+            require(['source-manager'], function(){
+								self.componentParams = {
+									model: self,
+								};
+	              self.selectedSourceId(id);
+								self.currentView('source-manager');
+							});
+          },
 					'/roles': function () {
 						require(['roles'], function () {
 							self.componentParams = {
@@ -1032,7 +1050,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 							$.when(conceptPromise)
 								.done(function (cp) {
 									// now that we have required information lets compile them into data objects for our view
-									var cdmSources = config.api.sources.filter(self.hasCDM);
+									var cdmSources = sharedState.sources().filter(self.hasCDM);
 									var results = [];
 									for (var s = 0; s < cdmSources.length; s++) {
 										var source = cdmSources[s];
@@ -1376,6 +1394,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 				return url;
 			});
 
+			self.selectedSourceId = ko.observable();
+			self.currentSource = ko.observable();
+			self.currentSourceDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(self.currentSource()))
 
 			self.currentCohortDefinitionInfo = ko.observable();
 			self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
@@ -1503,13 +1524,17 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 			});
 
 			self.currentRoleId = ko.observable();
-			self.roles = ko.observableArray();
+			self.roles = sharedState.roles;
 			self.updateRoles = function () {
 				var promise = $.Deferred();
 				if (self.roles() && self.roles()
 					.length > 0) {
 					promise.resolve();
 				} else {
+					roleApi.updateRoles().then(function(){
+						promise.resolve();
+					});
+/*
 					$.ajax({
 						url: config.api.url + 'role',
 						method: 'GET',
@@ -1520,6 +1545,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 							promise.resolve();
 						}
 					});
+*/
 				}
 				return promise;
 			}

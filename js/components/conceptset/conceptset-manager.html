@@ -188,29 +188,29 @@
         </div>
       </div>
       <div data-bind="if: $component.compareReady()">
-        <div class="paddedWrapper" style="padding-top: 20px;">
+        <div class="paddedWrapper compare-pane">
           <button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.compareConceptSets;"><i data-bind="css: $component.compareLoadingClass"></i> Compare Concept Sets</button>
         </div>
       </div>
       <div data-bind="if: !$component.compareReady() && model.currentConceptSetDirtyFlag.isDirty()">
-        <div class="paddedWrapper" style="padding-top: 20px;">
+        <div class="paddedWrapper compare-pane">
           <i class="fa fa-exclamation-triangle"></i> You must save the current concept set before you can perform this comparison.
         </div>
       </div>
       <div data-bind="if: $component.compareError()">
         <div class="paddedWrapper">
-          <span style="font-weight: bold; color: #ff0000;">You cannot compare the same concept sets.</span>
+          <span class="compare-message">You cannot compare the same concept sets.</span>
         </div>
       </div>
       <div data-bind="if: $component.compareReady() && $component.compareUnchanged() && $component.compareResults()">
-        <div class="heading" style="padding-top: 10px;">
+        <div class="heading compare-results">
           <b>Comparison Results</b>
         </div>
         <div class="container-fluid">
           <div class="pull-left">
             <button class="btn btn-sm btn-primary" data-bind="click:function() { showSaveNewModal(); }">Save New Concept Set From Selection Below</button>
           </div>
-          <div class="pull-right" style="padding-bottom: 10px;">
+          <div class="pull-right compare-results">
             <i data-bind="attr: { class: $component.recordCountClass }" aria-hidden="true"></i> View database record counts (RC) and descendant record counts (DRC) for:
             <select data-bind="options: $component.resultSources, optionsText: 'sourceName', optionsValue: 'sourceKey', value: $component.currentResultSource().sourceKey, event: { change: $component.refreshRecordCounts }"></select>
           </div>
@@ -253,7 +253,7 @@
           </div>
           <div data-bind="if: !$component.loading() && $component.optimizerFoundSomething()">
             <div data-bind="if: !$component.optimizerSavingNew()">
-              <div class="row heading" style="padding-bottom: 10px; margin-bottom: 15px;">
+              <div class="row heading optimizer-saving-new">
                 <div class="col-md-8">Please review the optimized definition and options for saving. </div>
                 <div class="col-md-4">
                   <div class="btn-group pull-right" role="group">
@@ -274,10 +274,10 @@
                 <div class="form-group">
                   <label for="txtOptimizerSavingNewName">Please provide a name for your new concept set:</label>
                   </br>
-                  <input id="txtOptimizerSavingNewName" class="form-control" type="text" data-bind="textInput: $component.optimizerSavingNewName()" />
+                  <input id="txtOptimizerSavingNewName" class="form-control optimizer-new-name" type="text" data-bind="textInput: optimizerSavingNewName" />
                   <div class="btn-group">
                     <button type="button" class="btn btn-sm btn-primary" data-bind="click: saveNewOptimizedConceptSet">Save</button>
-                    <button type="button" class="btn btn-sm btn-primary" data-bind="click: cancelSaveNewOptimizedConceptSet">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-bind="click: cancelSaveNewOptimizedConceptSet">Cancel</button>
                   </div>
                 </div>
               </div>
@@ -317,8 +317,8 @@
               </table>
             </div>
             <div data-bind="if: $component.optimizerRemovedConceptSet() && !$component.optimizerSavingNew()">
-              <div class="heading" style="padding-top:10px;margin-bottom:10px;">Concepts Removed</div>
-              <div style="padding-bottom: 10px;">
+              <div class="heading optimizer-header">Concepts Removed</div>
+              <div class="optimizer-message">
                 The following concepts were removed since the optimized version already includes them.
               </div>
               <div class="paddedWrapper">
