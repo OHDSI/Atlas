@@ -8,10 +8,10 @@ define(
     'utils/BemHelper',
     'appConfig',
     './const',
-    'bindings/lineChart',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/table-baseline-exposure/table-baseline-exposure',
     'less!./persons-exposure.less',
+    'components/visualizations/line-chart',
   ],
   function (ko, view, BaseCostUtilReport, appConfig, atlascharts, BemHelper, config, costUtilConst) {
 

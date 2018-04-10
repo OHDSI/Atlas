@@ -1,0 +1,9 @@
+<div data-bind="css: $component.classes()">
+    <span data-bind="css: $component.classes('save-btn'), click: $component.saveAsPng" title="Save as PNG">
+        <i data-bind="css: $component.classes({ element: 'save-btn-ico', extra: ['fa', 'fa-download'] })"></i>
+    </span>
+    <div data-bind="
+        css: $component.classes('chart'),
+        lineChart: { ...$component.lineChart, setChartRenderMethod: $component.setChartRenderMethod }
+    "/>
+</div>
