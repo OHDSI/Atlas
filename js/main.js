@@ -118,7 +118,7 @@ requirejs.config({
 		"ir-manager": "components/ir-manager",
 		"ir-browser": "components/ir-browser",
 		"faceted-datatable": "components/faceted-datatable",
-		"profile-manager": "components/profile-manager",
+		"profile-manager": "components/profile/profile-manager",
 		"explore-cohort": "components/explore-cohort",
 		"cohortcomparison": "modules/cohortcomparison",
 		"r-manager": "components/r-manager",

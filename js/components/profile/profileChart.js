@@ -1,7 +1,12 @@
 "use strict";
-define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labeler'], function (ko, d3, d3tip, _, d3Selection) {
+define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'webapi/MomentAPI', 'webapi/AuthAPI', 'appConfig', 'D3-Labeler/labeler'], function (ko, d3, d3tip, _, d3Selection, momentApi, authApi, config) {
+
+	function canViewProfileDates() {
+		return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()));
+  }
+
 	var margin = {
-		top: 5,
+		get top(){ return canViewProfileDates() ? 30 : 10; },
 		right: 20,
 		bottom: 30,
 		left: 20
@@ -11,6 +16,7 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 	var width = 900 - margin.left - margin.right;
 
 	var xScale = d3.scaleLinear();
+	var x2Scale = d3.scaleTime();
 	var yScale = d3.scaleBand();
 
 	var tipText = d => {
@@ -18,7 +24,11 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 	};
 
 	var htmlTipText = d => {
-		return '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p>';
+		var tipText = '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p>';
+		if (authApi.isPermittedViewProfileDates() && d.startDate != null) {
+			tipText += '<p>Start Date: '	+ momentApi.formatDate(new Date(d.startDate)) + '</p>'
+		}
+		return tipText;
 	};
 	var pointClass = d => d.domain;
 	var radius = d => 2;
@@ -101,6 +111,9 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 		var points = xfo().allFiltered();
 		var fullDomain = d3.extent(points.map(d => d.startDay));
 		xScale.domain(fullDomain).range([0, width]);
+		
+		var fullDateDomain = d3.extent(points.map(d => d.startDate));
+		x2Scale.domain(fullDateDomain).range([0, width]);
 
 		xfObservable = xfo;
 		var categories = _.chain(points).map(d => d.domain).uniq().value();
@@ -118,6 +131,7 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 		var xAxis = d3.axisBottom().scale(xScale);
+		var x2Axis = d3.axisTop().scale(x2Scale);
 		svg.call(focusTip);
 
 		var letterSpacingScale = d3.scaleLog()
@@ -269,10 +283,18 @@ define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'D3-Labeler/labele
 				.attr('y2', d => d.y);
 		}
 
-		profilePlot.append("g")
-			.attr("class", "x axis")
-			.attr("transform", "translate(0," + (vizHeight + 2) + ")")
-			.call(xAxis);
+		function addAxis(axis, top) {
+      profilePlot.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + top + ")")
+        .call(axis);
+    }
+
+    addAxis(xAxis, vizHeight + 2);
+
+		if (canViewProfileDates()) {
+			addAxis(x2Axis, 0);
+		}
 
 		highlightFunc = function () {
 			pointGs.selectAll('rect')

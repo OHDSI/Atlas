@@ -263,6 +263,10 @@ define(function(require, exports) {
       return isPermitted('*:person:*:get');
     };
 
+    var isPermittedViewProfileDates = function() {
+      return isPermitted('*:person:*:get:dates');
+    };
+
     var isPermittedReadCohort = function(id) {
         return isPermitted('cohortdefinition:' + id + ':get') && isPermitted('cohortdefinition:sql:post');
     }
@@ -430,6 +434,7 @@ define(function(require, exports) {
         isPermittedSearch: isPermittedSearch,
         isPermittedViewCdmResults: isPermittedViewCdmResults,
         isPermittedViewProfiles: isPermittedViewProfiles,
+        isPermittedViewProfileDates: isPermittedViewProfileDates,
 
         isPermittedReadSource: isPermittedReadSource,
         isPermittedCreateSource: isPermittedCreateSource,
