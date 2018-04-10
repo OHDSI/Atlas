@@ -343,11 +343,6 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 		});
 
-		// pageModel.currentConceptSet.subscribe(function(){
-		// 	pageModel.includedConcepts.removeAll();
-		// 	pageModel.includedSourcecodes.removeAll();
-		// });
-
 		// handle select all
 		$(document)
 			.on('click', 'th i.fa.fa-shopping-cart', function () {
