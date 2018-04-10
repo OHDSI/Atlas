@@ -4,7 +4,7 @@ define(
     'atlascharts',
   ],
   function (ko, atlascharts) {
-    const render = (element, valueAccessor) => {
+    function render(element, valueAccessor) {
       const $linechart = $(element);
       const {
         data: lineChartData,
@@ -33,19 +33,16 @@ define(
         yFormat,
         xScale,
       });
-    };
+    }
 
     ko.bindingHandlers.lineChart = {
       init: function(element, valueAccessor, allBindings, data, context) {
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.attributeName === 'style' && (mutation.oldValue || '').includes('display: none;') && mutation.target.style.display !== 'none') {
-              render(element, valueAccessor);
-            }
-          });
-        });
-        const config = { attributes: true, attributeOldValue: true };
-        observer.observe(element, config);
+        const {
+          setChartRenderMethod,
+        } = valueAccessor();
+        if (typeof setChartRenderMethod === 'function') {
+          setChartRenderMethod(render.bind(null, element, valueAccessor));
+        }
       },
       update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         render(element, valueAccessor);

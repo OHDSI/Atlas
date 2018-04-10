@@ -64,19 +64,21 @@
                     </div>
                     <!-- ko foreach: chartDataList -->
                         <div data-bind="css: $component.classes('chart-line')">
-                            <div data-bind="
-                                css: $component.classes('chart'),
-                                visible: $data.visible,
-                                lineChart: {
+                            <line-chart data-bind="
+                                    css: $component.classes('chart'),
+                                    visible: $data.visible
+                                "
+                                params="{lineChart: {
                                     data: $data.values,
                                     xLabel: ($index() == ($component.chartDataList().length - 1)) ? 'Period start' : '',
                                     xFormat: $component.formatDate,
                                     yLabel: $data.name,
                                     tickFormat: $component.dateTickFormat,
                                     height: 250,
-                                    showLegend: false,
-                                }
-                        "/>
+                                    showLegend: false
+                                    }
+                                }"
+                            />
                         </div>
                     <!-- /ko -->
                 </div>
