@@ -18,6 +18,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 					case 'home':
 						pageTitle = pageTitle + ": Home";
 						break;
+          case 'feedback':
+            pageTitle = pageTitle + ": Feedback";
+            break;
 					case 'search':
 						pageTitle = pageTitle + ": Search";
 						break;
@@ -56,6 +59,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 				return pageTitle;
 			});
 			self.supportURL = config.supportUrl;
+			self.targetSupportURL = config.supportUrl.startsWith("#") ? "_self" : "_blank";
 			self.sharedState = sharedState;
 
 			self.initializationComplete = ko.pureComputed(function () {
@@ -195,6 +199,14 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 							self.currentView('home');
 						});
 					},
+					'/feedback': function () {
+						require(['feedback'], function () {
+							self.componentParams = {
+								model: self,
+							};
+							self.currentView('feedback');
+            });
+          },
 					'/welcome/:token': function (token) {
 						require(['welcome'], function () {
 							authApi.token(token);
