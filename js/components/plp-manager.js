@@ -1,4 +1,4 @@
-define(['knockout', 'jquery', 'text!./plp-manager.html', 'appConfig', 'd3', 'ohdsi.util', 'plp/PatientLevelPredictionAnalysis', 'webapi/PatientLevelPredictionAPI', 'webapi/ExecutionAPI', 'webapi/AuthAPI',  'clipboard'], function (ko, $, view, config, d3, ohdsiUtil, PatientLevelPredictionAnalysis, plpAPI, executionAPI, authAPI, clipboard) {
+define(['knockout', 'jquery', 'text!./plp-manager.html', 'appConfig', 'd3', 'ohdsi.util', 'plp/PatientLevelPredictionAnalysis', 'webapi/PatientLevelPredictionAPI', 'webapi/ExecutionAPI', 'webapi/AuthAPI',  'clipboard', 'atlas-state'], function (ko, $, view, config, d3, ohdsiUtil, PatientLevelPredictionAnalysis, plpAPI, executionAPI, authAPI, clipboard, sharedState) {
 	function plpManager(params) {
 		//console.log("manager:" + params.model.currentModelId());
 		var self = this;
@@ -18,7 +18,7 @@ define(['knockout', 'jquery', 'text!./plp-manager.html', 'appConfig', 'd3', 'ohd
     self.sourceProcessingStatus = {};
     self.sourceExecutions = {};
 
-    var initSources = config.api.sources.filter(s => s.hasCDM);
+    var initSources = sharedState.sources().filter(s => s.hasCDM);
     for (var i = 0; i < initSources.length; i++) {
       self.sourceHistoryDisplay[initSources[i].sourceKey] = ko.observable(false);
       self.sourceProcessingStatus[initSources[i].sourceKey] = ko.observable(false);
