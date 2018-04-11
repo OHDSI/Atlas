@@ -586,16 +586,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.showSaveConceptSet = function() {
 		  self.newConceptSetName(self.model.currentConceptSet().name());
 		  self.saveConceptSetShow(true);
-			// $("#saveConceptSetModal").modal('show');
 		};
 
 		self.hideSaveConceptSet = function() {
 		  self.saveConceptSetShow(false);
-			// $("#saveConceptSetModal").modal('hide');
 		};
 
 		self.saveConceptSet = function () {
-      console.log('save concept set', self.newConceptSetName());
       self.saveConceptSetShow(false);
     };
 
@@ -614,14 +611,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
     }
 
 		self.newConceptSet = function () {
-			console.log("new concept set selected");
 			loadConceptSet(createConceptSet());
 		};
 
 		self.importConceptSet = function () {
 		  loadConceptSet(createConceptSet(), 'import');
 		  self.conceptSetTabMode(self.cohortConst.conceptSetTabModes.import);
-		//	self.closeConceptSet();
     };
 
 		self.clearImportConceptSetJson = function(){
