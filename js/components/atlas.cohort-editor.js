@@ -20,6 +20,7 @@ define(['knockout',
 		self.tabMode = ko.observable('expression');
 		self.tabWidget = ko.observable();
 		self.cohortExpressionEditor = ko.observable();
+		self.showModal = ko.observable(false);
         /*
 		self.modifiedJSON = "";
 		self.expressionJSON = ko.pureComputed({
@@ -40,10 +41,11 @@ define(['knockout',
         
 		// model behaviors
 
-		self.handleConceptSetImport = function (item, context) {
-			//alert(item);
+		self.handleConceptSetImport = function (item, context, event) {
+			event.stopPropagation();
 			self.model.criteriaContext(item);
-			$('#conceptSetSelectorDialog').modal('show');
+			self.showModal(true);
+			return false;
 		}
 		
 		self.handleEditConceptSet = function(item, context) {
@@ -57,13 +59,11 @@ define(['knockout',
 		
 
 		self.onAtlasConceptSetSelectAction = function(result, valueAccessor) {
-				$('#conceptSetSelectorDialog').modal('hide');
+			  self.showModal(false);
 
-				if (result.action=='add') {
-						//self.addConceptSet();
-						//alert("Add Concept Set Selected");
-                    var newConceptSet = new ConceptSet();
-                    var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
+				if (result.action === 'add') {
+            var newConceptSet = new ConceptSet();
+            var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
 				    newConceptSet.id = cohortConceptSets().length > 0 ? Math.max.apply(null, cohortConceptSets().map(function (d) {
 					   return d.id;
 				    })) + 1 : 0;

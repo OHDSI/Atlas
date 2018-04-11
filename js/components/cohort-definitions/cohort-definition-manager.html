@@ -154,6 +154,9 @@
 						<li role="presentation" data-bind="css: {active: $component.importTabMode() === cohortConst.importTabModes.conceptset}, click: function(){ $component.importTabMode(cohortConst.importTabModes.conceptset); }">
 							<a>Concept Set</a>
 						</li>
+						<li role="presentation" data-bind="click: importFromRepository">
+							<a>Repository</a>
+						</li>
 					</ul>
 					<div id="wrapperImportConceptIdentifiers" class="paddedWrapper form-group" data-bind="if:$component.importTabMode() === cohortConst.importTabModes.identifiers">
 						<div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { identifiers(''); }">click to clear</a>)</div>
@@ -172,6 +175,16 @@
 						<textarea class="form-control" rows="5" data-bind="value: importConceptSetJson"></textarea>
 						<div type="button" data-bind="css: {disabled: !model.currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 						<div class="clear"></div>
+					</div>
+					<div class="modal fade" data-bind="modal: showImportConceptSetModal" tabindex="-1" role="dialog">
+						<div class="modal-dialog modal-lg">
+							<div class="modal-content">
+								<div class="modal-header">Import Concept Set From Repository...</div>
+								<div class="paddedWrapper">
+									<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onRespositoryConceptSetSelected: onConceptSetRepositoryImport, buttonActionEnabled: false"></cohort-concept-set-browser>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
                 <loading data-bind="visible: conceptLoading()" params="status: 'retrieving concepts'"></loading>
