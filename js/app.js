@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, sharedState, querystring, d3) {
+define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
+	function ($, ko, ohdsiUtil, config, authApi, roleApi, sharedState, querystring, d3) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
@@ -18,6 +18,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 					case 'home':
 						pageTitle = pageTitle + ": Home";
 						break;
+          case 'feedback':
+            pageTitle = pageTitle + ": Feedback";
+            break;
 					case 'search':
 						pageTitle = pageTitle + ": Search";
 						break;
@@ -56,6 +59,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 				return pageTitle;
 			});
 			self.supportURL = config.supportUrl;
+			self.targetSupportURL = config.supportUrl.startsWith("#") ? "_self" : "_blank";
 			self.sharedState = sharedState;
 
 			self.initializationComplete = ko.pureComputed(function () {
@@ -146,13 +150,30 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 						});
 					},
 					'/configure': function () {
-						require(['configuration'], function () {
+						require(['configuration', 'source-manager'], function () {
 							self.componentParams = {
 								model: self
 							};
 							self.currentView('ohdsi-configuration');
 						});
 					},
+					'/source/new': function () {
+						require(['source-manager'], function () {
+							self.componentParams = {
+								model: self,
+							};
+							self.currentView('source-manager');
+            });
+          },
+					'/source/:id': function (id) {
+            require(['source-manager'], function(){
+								self.componentParams = {
+									model: self,
+								};
+	              self.selectedSourceId(id);
+								self.currentView('source-manager');
+							});
+          },
 					'/roles': function () {
 						require(['roles'], function () {
 							self.componentParams = {
@@ -178,6 +199,14 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							self.currentView('home');
 						});
 					},
+					'/feedback': function () {
+						require(['feedback'], function () {
+							self.componentParams = {
+								model: self,
+							};
+							self.currentView('feedback');
+            });
+          },
 					'/welcome/:token': function (token) {
 						require(['welcome'], function () {
 							authApi.token(token);
@@ -1021,7 +1050,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							$.when(conceptPromise)
 								.done(function (cp) {
 									// now that we have required information lets compile them into data objects for our view
-									var cdmSources = config.api.sources.filter(self.hasCDM);
+									var cdmSources = sharedState.sources().filter(self.hasCDM);
 									var results = [];
 									for (var s = 0; s < cdmSources.length; s++) {
 										var source = cdmSources[s];
@@ -1365,6 +1394,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 				return url;
 			});
 
+			self.selectedSourceId = ko.observable();
+			self.currentSource = ko.observable();
+			self.currentSourceDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(self.currentSource()))
 
 			self.currentCohortDefinitionInfo = ko.observable();
 			self.currentCohortDefinitionDirtyFlag = ko.observable(self.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(self.currentCohortDefinition()));
@@ -1492,13 +1524,17 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 			});
 
 			self.currentRoleId = ko.observable();
-			self.roles = ko.observableArray();
+			self.roles = sharedState.roles;
 			self.updateRoles = function () {
 				var promise = $.Deferred();
 				if (self.roles() && self.roles()
 					.length > 0) {
 					promise.resolve();
 				} else {
+					roleApi.updateRoles().then(function(){
+						promise.resolve();
+					});
+/*
 					$.ajax({
 						url: config.api.url + 'role',
 						method: 'GET',
@@ -1509,6 +1545,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'atla
 							promise.resolve();
 						}
 					});
+*/
 				}
 				return promise;
 			}

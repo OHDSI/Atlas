@@ -5,7 +5,7 @@
 				<i class="fa fa-lightbulb"></i> Event Highlighting
 			</div>
 			<div class="modal-body">
-				<div class="row" style="text-align:center;">
+				<div class="row highlight-pane">
 					<div class="btn-group" role="group">
 						<button title="set selected events color" class="btn" data-bind="click: setHighlights(0), style: {borderColor: getHighlightColor(0), backgroundColor: getHighlightBackground(0)}">
 							<i data-bind="style: {color: getHighlightColor(0)}" class="fa fa-paint-brush"></i>
@@ -64,7 +64,7 @@
 				<button type="button" title="choose a data source" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<span data-bind="text:$component.sourceKeyCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
 				</button>
-				<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:config.api.sources.filter(d=>d.hasCDM)">
+				<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:sharedState.sources().filter(d=>d.hasCDM)">
 					<li>
 						<a href="#" data-bind="text:sourceName,click:$component.setSourceKey"></a>
 					</li>
@@ -94,7 +94,6 @@
 		<span data-bind="if: $component.currentCohortDefinition() != null">|&nbsp;&nbsp;Cohort: <a class="asset-heading-link" data-bind="text: $component.currentCohortDefinition().name(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId()}" target="_new"></a></span>
 	</div>
 	</div>
-</div>
 
 <!-- ko if:loadingPerson -->
 <loading params="status: loadingStatus"></loading>
@@ -119,7 +118,8 @@
 							shadedRegions: shadedRegions,
 							xfDimensions: xfDimensions
 						}"></div>
-		<faceted-datatable id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
+		<div class="right-padded">
+		  <faceted-datatable id="profile-manager-table" data-bind="visible:showSection.datatable" params="{
 						reference: personRecords,
 						xfObservable: xfObservable,
 						columns: columns,
@@ -127,5 +127,7 @@
 						order: [[3,'asc']],
 						searchFilter: searchHighlight
 					}"></faceted-datatable>
+		</div>
 	</div>
+</div>
 </div>
