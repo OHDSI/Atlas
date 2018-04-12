@@ -23,12 +23,12 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
   }
 
   function filterAbsoluteUrls(html) {
-		return html.replace(/href="([^"]*)"|href='([^']*)'/g, function(match, p1, p2)
-      {
-      	const link = p1 || p2;
-      	if (isUrlAbsolute(link)) {
+    return html.replace(/href="([^"]*)"|href='([^']*)'/g, function(match, p1, p2)
+    	{
+        const link = p1 || p2;
+        if (isUrlAbsolute(link)) {
         	return match.replace(link, '#' + link);
-				}
+        }
         return match;
       }
     );
