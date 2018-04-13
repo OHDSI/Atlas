@@ -14,6 +14,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'd3',
 	'job/jobDetail',
   'components/cohort-definitions/const',
+  'components/cohort-definitions/checks/conceptset-warnings',
   'cohortbuilder/components/FeasibilityReportViewer',
   'databindings',
   'faceted-datatable',
@@ -59,6 +60,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.config = config;
 		self.selectedConcepts = sharedState.selectedConcepts;
 		self.model = params.model;
+		self.warningCount = ko.observable(0);
 
 		self.cohortDefinitionCaption = ko.computed(function () {
 			if (self.model.currentCohortDefinition()) {
@@ -566,13 +568,23 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.deleteConceptSet = function () {
-			self.model.currentCohortDefinition().expression().ConceptSets.remove(
-				function (item) {
-					return item.id == self.model.currentConceptSet().id;
-				}
-			);
+			self.removeConceptSet(self.model.currentConceptSet().id);
 			self.closeConceptSet();
-		}
+		};
+
+		self.removeConceptSet = function(id) {
+      self.model.currentCohortDefinition().expression().ConceptSets.remove(
+        function (item) {
+          return item.id == id;
+        }
+      );
+		};
+
+		self.fixConceptSet = function(warning) {
+			if (warning.type === 'ConceptSetWarning' && warning.conceptSetId) {
+				self.removeConceptSet(warning.conceptSetId);
+			}
+		};
 
 		function createConceptSet() {
       var newConceptSet = new ConceptSet();

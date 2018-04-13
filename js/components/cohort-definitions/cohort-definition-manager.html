@@ -48,6 +48,9 @@
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export'); $component.showSql(); }">
 				<a>Export</a>
 			</li>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
+				<a>Warnings <span class="badge" data-bind="text: warningCount, visible: warningCount() > 0"></span></a>
+			</li>
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'definition' }" class="tab-pane">
@@ -530,6 +533,11 @@
 			<div role="tabpanel " data-bind="css: { active: $component.tabMode()=='explore' } " class="tab-pane ">
 				<div class="paddedWrapper ">
 					<explore-cohort params="{model: pageModel, showSelectionArea: false } "></explore-cohort>
+				</div>
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() === 'warnings' }" class="tab-pane">
+				<div class="paddedWrapper">
+					<conceptset-warnings params="{model: $component.model, count: $component.warningCount, canDiagnose: $component.canSave, onFixCallback: fixConceptSet}"></conceptset-warnings>
 				</div>
 			</div>
 		</div>

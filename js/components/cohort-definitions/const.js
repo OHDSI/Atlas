@@ -26,5 +26,6 @@ define(['knockout'], function(ko){
   return {
     importTabModes,
     conceptSetTabModes,
+    cohortTabModes,
   };
 });
