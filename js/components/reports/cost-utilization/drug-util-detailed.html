@@ -1,0 +1,30 @@
+<div data-bind="css: classes()">
+    <div data-bind="css: classes('nav-block')">
+        <a data-bind="css: classes('back-link'), click: $component.displaySummary">
+            <i data-bind="css: classes({ element: 'back-ico', extra: ['fa fa-chevron-left'] })"></i>
+            <span data-bind="css: classes('back-text')">Return to the drugs summary</span>
+        </a>
+    </div>
+    <div data-bind="css: classes('filters-block')">
+        <visualizations-filter-panel params="{ filterList: $component.filterList, apply: $component.applyFilters, live: true }"/>
+        <div data-bind="visible: filtersLoading()">
+            <loading params="status:'loading'" />
+        </div>
+    </div>
+    <div data-bind="css: classes('loader'), visible: loading()">
+        <loading params="status:'loading'" />
+    </div>
+    <div data-bind="visible: !loading()">
+        <div data-bind="css: classes('table-block')">
+            <table data-bind="
+                css: classes({ element: 'drugs-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                dataTable:{
+                    data: $component.dataList,
+                    options: {columns: $component.drugsTableColumns},
+                    onRowClick: $component.onDrugSelect
+                }
+                "
+            />
+        </div>
+    </div>
+</div>

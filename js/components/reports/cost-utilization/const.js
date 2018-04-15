@@ -24,7 +24,7 @@ define(
           value: 'yy',
         },
       ]),
-      selectedValue: ko.observable('ww'),
+      selectedValue: ko.observable('mm'),
     });
 
     const windowType = {
