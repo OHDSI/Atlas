@@ -1,0 +1,53 @@
+<div data-bind="css: classes()">
+    <div class="panel-group" role="tablist">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab">
+                <h4 class="panel-title">
+                    <a role="button">
+                        Summary
+                    </a>
+                </h4>
+            </div>
+            <div class="panel-collapse collapse in" role="tabpanel">
+                <div class="panel-body">
+                    <div data-bind="css: classes('block')">
+                        <visualizations-filter-panel params="{ filterList: $component.filterList, apply: $component.applyFilters, live: true }"/>
+                        <div data-bind="visible: filtersLoading()">
+                            <loading params="status:'loading'" />
+                        </div>
+                    </div>
+                    <div data-bind="visible: loading()">
+                        <loading params="status:'loading'" />
+                    </div>
+                    <div data-bind="visible: !loading()">
+                        <div data-bind="css: classes('block')">
+                            <table data-bind="
+                        css: classes({ element: 'drugs-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                        dataTable:{
+                            data: $component.dataList,
+                            options: {columns: $component.drugsTableColumns},
+                            onRowClick: $component.showDetailedDrugReport
+                        }
+                        " />
+                            <!-- Split into two sub-components !!! -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab">
+                <h4 class="panel-title">
+                    <a role="button">
+                        Detailed drug report <i class="fa fa-question-circle"></i>
+                    </a>
+                </h4>
+            </div>
+            <div class="panel-collapse collapse" role="tabpanel">
+                <div class="panel-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

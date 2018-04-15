@@ -1007,3 +1007,35 @@
 		</div>
 	</div>
 </div>
+<div data-bind="if: model.currentReport() == visualizationPacks.healthcareUtilDrugBaseline.name && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<span data-bind="text: visualizationPacks.healthcareUtilDrugBaseline.name" /><i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<cost-utilization-drug-util params="{
+					source: model.reportSourceKey(),
+					cohortId: model.reportCohortDefinitionId(),
+					window: costUtilConst.windowType.baseline,
+				}"/>
+			</div>
+		</div>
+	</div>
+</div>
+<div data-bind="if: model.currentReport() == visualizationPacks.healthcareUtilDrugCohort.name && !model.loadingReport()">
+	<div class="report">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<span data-bind="text: visualizationPacks.healthcareUtilDrugCohort.name" /><i data-bind="click:setHelpContent('healthcareUtilization')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			</div>
+			<div class="panel-body">
+				<cost-utilization-drug-util params="{
+					source: model.reportSourceKey(),
+					cohortId: model.reportCohortDefinitionId(),
+					window: costUtilConst.windowType.baseline,
+				}"/>
+			</div>
+		</div>
+	</div>
+</div>
