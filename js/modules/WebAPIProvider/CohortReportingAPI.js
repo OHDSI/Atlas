@@ -133,34 +133,44 @@ define(function (require, exports) {
       analyses: [4006]
     },
     healthcareUtilVisitRecordsBaseline: {
-      name: "Visit Utilization Report: Visit records during baseline period",
-      reportKey: "Visit Utilization Report: Visit records during baseline period",
+      name: "Visit Utilization. Visit records during baseline period",
+      reportKey: "Visit Utilization. Visit records during baseline period",
       analyses: [4000, 4001, 4002]
     },
     healthcareUtilVisitDatesBaseline: {
-      name: "Visit Utilization Report: Visit dates during baseline period",
-      reportKey: "Visit Utilization Report: Visit dates during baseline period",
+      name: "Visit Utilization. Visit dates during baseline period",
+      reportKey: "Visit Utilization. Visit dates during baseline period",
       analyses: [4000, 4001, 4003]
     },
     healthcareUtilCareSiteDatesBaseline: {
-      name: "Visit Utilization Report: Care-site Visit dates during baseline period",
-      reportKey: "Visit Utilization Report: Care-site Visit dates during baseline period",
+      name: "Visit Utilization. Care-site Visit dates during baseline period",
+      reportKey: "Visit Utilization. Care-site Visit dates during baseline period",
       analyses: [4000, 4001, 4004]
     },
     healthcareUtilVisitRecordsCohort: {
-      name: "Visit Utilization Report: Visit records during cohort period",
-      reportKey: "Visit Utilization Report: Visit records during cohort period",
+      name: "Visit Utilization. Visit records during cohort period",
+      reportKey: "Visit Utilization. Visit records during cohort period",
       analyses: [4006, 4007, 4008]
     },
     healthcareUtilVisitDatesCohort: {
-      name: "Visit Utilization Report: Visit dates during cohort period",
-      reportKey: "Visit Utilization Report: Visit dates during cohort period",
+      name: "Visit Utilization. Visit dates during cohort period",
+      reportKey: "Visit Utilization. Visit dates during cohort period",
       analyses: [4006, 4007, 4009]
     },
     healthcareUtilCareSiteDatesCohort: {
-      name: "Visit Utilization Report: Care-site Visit dates during cohort period",
+      name: "Visit Utilization Report. Care-site Visit dates during cohort period",
       reportKey: "Visit Utilization Report: Care-site Visit dates during cohort period",
       analyses: [4006, 4007, 4010]
+    },
+    healthcareUtilDrugBaseline: {
+      name: "Drug Utilization during baseline period",
+      reportKey: "Drug Utilization during baseline period",
+      analyses: [4000, 4012, 4013, 4014, 4015]
+    },
+    healthcareUtilDrugCohort: {
+      name: "Drug Utilization during cohort period",
+      reportKey: "Drug Utilization during cohort period",
+      analyses: [4006, 4016, 4017, 4018, 4019]
     },
   };
 
@@ -176,7 +186,7 @@ define(function (require, exports) {
 
 	function getQuickAnalysisIdentifiers() {
 		//return [0, 1, 2, 3, 4, 5, 900, 907, 1000, 1007, 3000, 3001];
-    return [4000,4001,4002,4003,4004, 4005, 4006, 4007, 4008, 4009, 4010, 4011]; //[4000, 4006];//
+    return [4012, 4013, 4014, 4015, 4016, 4017, 4018, 4019]; //[4000, 4006];//
 	}
 
 	function getAvailableReports(completedAnalyses) {
