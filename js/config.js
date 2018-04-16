@@ -79,7 +79,8 @@ define(['optional!config-local'], function (localConfig) {
       "option": ["value"],
       "input": ["type", "class"],
       "ui": ["class"],
-      "path": ["d", "class"]
+      "path": ["d", "class"],
+      "br": "",
     },
     "stripIgnoreTag": true,
     "stripIgnoreTagBody": ['script'],

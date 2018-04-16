@@ -77,6 +77,9 @@ define(['knockout',
 		self.compareError = ko.pureComputed(function () {
 			return (self.compareCS1Id() == self.compareCS2Id())
 		});
+
+		self.ancestors = ko.observableArray([]);
+		
 		self.compareReady = ko.pureComputed(function () {
 			// both are specified & not the same
 			var conceptSetsSpecifiedAndDifferent = (
@@ -369,8 +372,34 @@ define(['knockout',
 		}, {
 			title: 'Vocabulary',
 			data: 'VOCABULARY_ID'
+		}, {
+			title: 'Ancestor',
+			data: 'ANCESTORS',
+			render: (s, p, d) => '<a class="clickable">' + d.ANCESTORS.length + '</a>'
 		}];
 
+		self.includedDrawCallback = function (settings) {
+			if (settings.aoData) {
+				const api = this.api();
+				const rows = api.rows({page: 'current'});
+				const data = rows.data();
+				const promise = self.model.loadAndApplyAncestors(data);
+				const columnIndex = self.searchConceptsColumns.findIndex(v => v.data === 'ANCESTORS');
+				promise.then(() => {
+					api.cells(null, columnIndex).invalidate();
+					rows.nodes().each((element, index) => {
+						const rowData = data[index];
+						self.model.contextSensitiveLinkColor(element, rowData);
+						$(element).children(`td:nth-child(${columnIndex})`).children(':first')
+							.on('click', function () {
+								self.showAncestorsModal(rowData.CONCEPT_ID);
+							})
+							.attr('title', '').tooltip({content: rowData.ANCESTORS.map(d => d.CONCEPT_NAME).join('<br>')});
+					})
+				});
+			}
+		};
+		
 		self.searchConceptsOptions = {
 			Facets: [{
 				'caption': 'Vocabulary',
@@ -921,6 +950,8 @@ define(['knockout',
 			}
 		}
 
+		self.title = 'title <br> titl2 second line';
+		
 		self.delete = function () {
 			if (!confirm("Delete concept set? Warning: deletion can not be undone!"))
 				return;
@@ -992,7 +1023,17 @@ define(['knockout',
 					includeMapped: true
 				})
 			});
-
+		
+		self.showAncestorsModal = function(conceptId) {
+			self.ancestors(self.model.includedConcepts()
+				.find(v => v.CONCEPT_ID === conceptId)
+				.ANCESTORS
+				.map(v => ({concept: v})));
+			if (!_.isEmpty(self.ancestors())) {
+				$('#ancestorsModal').modal();
+			}
+		};
+		
 		self.canSave = ko.computed(function () {
 			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());
 		});

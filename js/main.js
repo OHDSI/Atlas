@@ -272,30 +272,74 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 		});
 
-		pageModel.loadIncluded = function () {
-			pageModel.loadingIncluded(true);
-			var includedPromise = $.Deferred();
-
-			$.ajax({
-				url: sharedState.vocabularyUrl() + 'lookup/identifiers',
+		pageModel.loadAncestors = function(ancestors, descendants) {
+			return $.ajax({
+				url: sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors',
 				method: 'POST',
 				contentType: 'application/json',
-				data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
-				success: function (data) {
-					var densityPromise = vocabAPI.loadDensity(data);
-
-					$.when(densityPromise)
-						.done(function () {
-							pageModel.includedConcepts(data);
-							includedPromise.resolve();
-							pageModel.loadingIncluded(false);
-						});
+				data: JSON.stringify({
+					ancestors: ancestors,
+					descendants: descendants
+				})
+			});
+		};
+		
+		pageModel.loadAndApplyAncestors = function(data) {
+			const selectedConceptIds = sharedState.selectedConcepts().map(v => v.concept.CONCEPT_ID);
+			const ids = [];
+			$.each(data, (i, element ) => {
+				if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
+					ids.push(element.CONCEPT_ID);
 				}
 			});
+			let resultPromise = $.Deferred();
+			if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
+				pageModel.loadAncestors(selectedConceptIds, ids).then(ancestors => {
+					const map = pageModel.includedConceptsMap();
+					$.each(data, (j, line) => {
+						const ancArray = ancestors[line.CONCEPT_ID];
+						if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
+							line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
+						}
+					});
+					resultPromise.resolve();
+				});
+			} else {
+				resultPromise.resolve();
+			}
+			return resultPromise;
+		};
 
-			return includedPromise;
-		}
+    pageModel.loadIncluded = function () {
+      pageModel.loadingIncluded(true);
+      var includedPromise = $.Deferred();
 
+      $.ajax({
+        url: sharedState.vocabularyUrl() + 'lookup/identifiers',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
+        success: function (data) {
+          var densityPromise = vocabAPI.loadDensity(data);
+
+          $.when(densityPromise)
+            .done(function () {
+              pageModel.includedConcepts(data.map(v => ({...v, ANCESTORS: []})));
+              includedPromise.resolve();
+              pageModel.loadAndApplyAncestors(pageModel.includedConcepts());
+              pageModel.loadingIncluded(false);
+              const map = data.reduce((result, item) => {
+                result[item.CONCEPT_ID] = item;
+                return result;
+              }, {});
+              pageModel.includedConceptsMap(map);
+            });
+        }
+      });
+
+      return includedPromise;
+    }
+		
 		pageModel.loadSourcecodes = function () {
 			pageModel.loadingSourcecodes(true);
 
