@@ -13,7 +13,7 @@ define(function (require, exports) {
 		return infoPromise;
 	}
     
-    function generateNegativeControls(sourceKey, conceptSetId, conceptSetName, conceptDomainId, targetDomainId, conceptIds) {
+    function generateNegativeControls(sourceKey, conceptSetId, conceptSetName, conceptDomainId, targetDomainId, conceptIds, csToInclude, csToExclude) {
         var negativeControlsJob = $.ajax({
             url: config.webAPIRoot +'evidence/' + sourceKey + '/negativecontrols',
             method: 'POST',
@@ -23,8 +23,10 @@ define(function (require, exports) {
                 conceptSetId: conceptSetId,
                 conceptSetName: conceptSetName,
                 conceptDomainId: conceptDomainId,
-                targetDomainId: targetDomainId,
-                conceptIds: conceptIds
+                outcomeOfInterest: targetDomainId,
+                conceptsOfInterest: conceptIds,
+                csToInclude: csToInclude,
+                csToExclude: csToExclude,
             }),
             error: function (error) {
                 console.log("Error: " + error);
