@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'databindings', 'access-denied'], function ($, ko, view, d3, atlascharts, colorbrewer, _, config, authApi, d3tip) {
+define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'databindings', 'access-denied'], function ($, ko, sharedState, view, d3, atlascharts, colorbrewer, _, config, authApi, d3tip) {
 	function dataSources(params) {
 		var self = this;
 
@@ -30,7 +30,7 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 			};
 
 		self.model = params.model;
-		self.sources = config.api.sources.filter(function (s) {
+		self.sources = sharedState.sources().filter(function (s) {
 			return s.hasResults && s.hasCDM;
 		});
 		self.loadingReport = ko.observable(false);
@@ -619,11 +619,21 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 					self.prevalenceByType(data.byType, '#byType');
 					self.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear, '#trellisLinePlot')
 					if (currentReport.byFrequency) {
-						self.frequencyDistribution(data, '#frequencyDistribution', currentReport.path)
+						self.frequencyDistribution(data, '#frequencyDistribution', currentReport.path);
 					}
 					if (currentReport.byUnit) {
-						// TODO: render measurement by unit reports
-					}
+            var drawPlot = function(data, selector) {
+              self.boxplotChart(data, selector, currentConcept.concept_id);
+            };
+            var drawPie = function(data, selector) {
+            	self.pieChart(data, selector, currentConcept.concept_id);
+						};
+            drawPie(data.recordsByUnit, "#recordsByUnit");
+            drawPlot(data.measurementValueDistribution, "#measurementValues");
+            drawPlot(data.lowerLimitDistribution, "#lowerLimit");
+            drawPlot(data.upperLimitDistribution, "#upperLimit");
+            drawPie(data.valuesRelativeToNorm, "#relativeToNorm");
+          }
 				}
 			});
 		};
@@ -795,6 +805,69 @@ define(['jquery', 'knockout', 'text!./data-sources.html', 'd3', 'atlascharts', '
 				}
 			}
 		};
+
+    var filterByConcept = function(conceptId) {
+      return function (d) {
+        return d.conceptId === conceptId;
+      };
+    };
+
+    self.pieChart = function (data, selector, conceptId) {
+      var byUnit = new atlascharts.donut();
+      var dataByUnit = data
+        .filter(function(d){ return d.measurementConceptId === conceptId; })
+        .map(function (d, i) {
+        return {
+          id: d.conceptName,
+          label: d.conceptName,
+          value: d.countValue,
+        };
+      }, data);
+      dataByUnit.sort(function (a, b) {
+        var nameA = a.label.toLowerCase(),
+          nameB = b.label.toLowerCase();
+        if (nameA < nameB) //sort string ascending
+          return -1;
+        if (nameA > nameB)
+          return 1;
+        return 0; //default return value (no sorting)
+      });
+      byUnit.render(dataByUnit, selector, size6.width, size6.height, {
+        margin: {
+          top: 5,
+          left: 5,
+          right: 200,
+          bottom: 5
+        }
+      });
+    };
+		
+		self.boxplotChart = function(data, selector, conceptId) {
+		  var measurementValues = new atlascharts.boxplot();
+		  var ndata = self.normalizeArray(data.filter(filterByConcept(conceptId)));
+		  var bpdata = self.normalizeDataframe(ndata);
+		  if (!bpdata.empty) {
+        var bpseries = bpdata.category.map(function (v, i) {
+          return {
+            Category: ndata.category[i],
+            min: ndata.minValue[i],
+            max: ndata.maxValue[i],
+            median: ndata.medianValue[i],
+            LIF: ndata.p10Value[i],
+            q1: ndata.p25Value[i],
+            q3: ndata.p75Value[i],
+            UIF: ndata.p90Value[i],
+          };
+        });
+        measurementValues.render(bpseries, selector, 300, 200, {
+          yMax: d3.max(data, function (d) {
+            return d.p90Value;
+          }) || bpdata.p90Value,
+          xLabel: 'Unit',
+          yLabel: 'Measurement Value',
+        });
+      }
+    };
 
 		//
 		// Subscriptions

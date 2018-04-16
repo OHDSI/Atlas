@@ -3,6 +3,7 @@ define(function(require, exports) {
     var $ = require('jquery');
     var config = require('appConfig');
     var ko = require('knockout');
+    var cookie = require('webapi/CookieAPI');
     var TOKEN_HEADER = 'Bearer';
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
 
@@ -52,18 +53,23 @@ define(function(require, exports) {
 
     token.subscribe(function(newValue) {
         localStorage.bearerToken = newValue;
+        cookie.setField("bearerToken", newValue);
     });
 
     var isAuthenticated = ko.pureComputed(function() {
-				if (!config.userAuthenticationEnabled) {
-					return true;
-				}
-			
-        if (!token()) {
-            return false;
+      try {
+        if (!config.userAuthenticationEnabled) {
+          return true;
+        }
+
+        if (!token() && token() !== 'undefined') {
+          return false;
         }
 
         return new Date() < tokenExpirationDate();
+      }catch(e) {
+        return false;
+      }
     });
 
     var getAuthorizationHeader = function () {
@@ -217,6 +223,10 @@ define(function(require, exports) {
       return isPermitted('comparativecohortanalysis:get');
     };
 
+    var isPermittedEditSourcePriortiy = function() {
+      return isPermitted('source:*:daimons:*:set-priority:post')
+    };
+
     var isPermittedReadEstimation = function (id) {
       return isPermitted('comparativecohortanalysis:' + id + ':get');
     };
@@ -251,6 +261,10 @@ define(function(require, exports) {
 
     var isPermittedViewProfiles = function () {
       return isPermitted('*:person:*:get');
+    };
+
+    var isPermittedViewProfileDates = function() {
+      return isPermitted('*:person:*:get:dates');
     };
 
     var isPermittedReadCohort = function(id) {
@@ -297,6 +311,22 @@ define(function(require, exports) {
         return isPermitted('configuration:edit:ui')
     }
 
+    var isPermittedCreateSource = function() {
+        return isPermitted('source:post');
+    }
+
+    var isPermittedReadSource = function(key) {
+        return isPermitted('source:' + key + ':get');
+    }
+
+    var isPermittedEditSource = function(key) {
+        return isPermitted('source:' + key + ':put');
+    }
+
+    var isPermittedDeleteSource = function(key) {
+        return isPermitted('source:' + key + ':delete');
+    }
+
     var isPermittedReadRoles = function() {
         return isPermitted('role:get');
     }
@@ -327,9 +357,9 @@ define(function(require, exports) {
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
-            if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
-                xhr.setRequestHeader('Authorization', getAuthorizationHeader());
-            }
+          if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
+            xhr.setRequestHeader('Authorization', getAuthorizationHeader());
+          }
         }
     });
 
@@ -377,6 +407,7 @@ define(function(require, exports) {
         isPermittedReadJobs: isPermittedReadJobs,
 
         isPermittedEditConfiguration: isPermittedEditConfiguration,
+        isPermittedEditSourcePriority: isPermittedEditSourcePriortiy,
 
         isPermittedReadRoles: isPermittedReadRoles,
         isPermittedReadRole: isPermittedReadRole,
@@ -403,6 +434,12 @@ define(function(require, exports) {
         isPermittedSearch: isPermittedSearch,
         isPermittedViewCdmResults: isPermittedViewCdmResults,
         isPermittedViewProfiles: isPermittedViewProfiles,
+        isPermittedViewProfileDates: isPermittedViewProfileDates,
+
+        isPermittedReadSource: isPermittedReadSource,
+        isPermittedCreateSource: isPermittedCreateSource,
+        isPermittedEditSource: isPermittedEditSource,
+        isPermittedDeleteSource: isPermittedDeleteSource,
     };
 
     return api;

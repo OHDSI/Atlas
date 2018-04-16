@@ -21,5 +21,5 @@ ATLAS is built using HTML, CSS and [Knockout JavaScript](http://knockoutjs.com/ 
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 * We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 
-##License
+## License
 ATLAS is licensed under Apache License 2.

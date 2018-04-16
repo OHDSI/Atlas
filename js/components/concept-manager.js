@@ -140,7 +140,7 @@ define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovi
 
 		self.loadRecordCounts = function () {
 			self.loadingSourceCounts(true);
-			var sources = config.api.sources;
+			var sources = sharedState.sources();
 
 			var allCounts = $.Deferred();
 			var totalCounts = 0;

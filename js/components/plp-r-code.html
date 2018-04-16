@@ -49,7 +49,7 @@
 		
     <span class="token comment"># Get all <!-- ko text: $component.patientLevelPrediction().cvExclusionCaption --><!-- /ko --> Concept IDs for exclusion ----</span>
     <span data-bind="if: $component.patientLevelPrediction().cvExclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.patientLevelPrediction().cvExclusionConceptSetSQL"></span>")
-    sql <span class="token operator"><span class="token operator"><-</span></span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><span class="token operator"><-</span></span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
     connection <span class="token operator"><-</span> connect(connectionDetails)
     excludedConcepts <span class="token operator"><-</span> querySql(connection, sql)
@@ -59,7 +59,7 @@
     </span>
     <span class="token comment"># Get all <span data-bind="text: $component.patientLevelPrediction().cvInclusionCaption"></span> Concept IDs for inclusion ----</span>
     <span data-bind="if: $component.patientLevelPrediction().cvInclusionConceptSetSQL() != null">sql <span class="token operator"><-</span> paste("<span class="token string" data-bind="text: $component.patientLevelPrediction().cvInclusionConceptSetSQL"></span>")
-    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema)$sql
+    sql <span class="token operator"><-</span> SqlRender::renderSql(sql, cdm_database_schema = cdmDatabaseSchema, vocabulary_database_schema = cdmDatabaseSchema)$sql
     sql <span class="token operator"><-</span> SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
     connection <span class="token operator"><-</span> connect(connectionDetails)
     includedConcepts <span class="token operator"><-</span> querySql(connection, sql)

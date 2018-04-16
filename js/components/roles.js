@@ -1,8 +1,8 @@
-define(['knockout', 'text!./roles.html', 'appConfig', 'databindings', 'access-denied'], function (ko, view, config) {
+define(['knockout', 'text!./roles.html', 'appConfig', 'atlas-state', 'databindings', 'access-denied'], function (ko, view, config, sharedState) {
     function roles(params) {
         var self = this;
         var authApi = params.model.authApi;
-        self.roles = params.model.roles;
+        self.roles = sharedState.roles;
         self.updateRoles = params.model.updateRoles;
         self.loading = ko.observable();
         self.selectRole = function(data) {

@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webapi/MomentAPI', 'webapi/AuthAPI', 'cohortcomparison/ComparativeCohortAnalysis','faceted-datatable'], function (ko, view, config, momentApi, authApi) {
+define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webapi/MomentAPI', 'webapi/AuthAPI', 'cohortcomparison/ComparativeCohortAnalysis','faceted-datatable','access-denied'], function (ko, view, config, momentApi, authApi) {
 	function cohortComparisonBrowser(params) {
 		var self = this;
 		self.reference = ko.observableArray();
@@ -52,14 +52,16 @@ define(['knockout', 'text!./cohort-comparison-browser.html', 'appConfig', 'webap
 			},
 			{
 				title: 'Created',
+				type: 'date',
 				render: function (s, p, d) {
 					return momentApi.formatDateTimeUTC(d.created);
 				}
 			},
 			{
 				title: 'Modified',
+				type: 'date',
 				render: function (s, p, d) {
-					return momentApi.formatDateTimeUTC(d.updated);
+					return momentApi.formatDateTimeUTC(d.modified);
 				}
 			},
 			{

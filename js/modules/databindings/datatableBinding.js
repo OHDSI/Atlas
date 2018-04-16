@@ -17,7 +17,23 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 		
 		return selectedData;
 	}
-	
+
+  function isUrlAbsolute(url) {
+    return (url.indexOf('://') > 0 || url.indexOf('//') === 0);
+  }
+
+  function filterAbsoluteUrls(html) {
+    return html.replace(/href="([^"]*)"|href='([^']*)'/g, function(match, p1, p2)
+    	{
+        const link = p1 || p2;
+        if (isUrlAbsolute(link)) {
+        	return match.replace(link, '#' + link);
+        }
+        return match;
+      }
+    );
+	}
+
 	ko.bindingHandlers.dataTable = {
 	
 		init: function (element, valueAccessor) {
@@ -46,15 +62,16 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 					const hasOriginalRender = typeof originalRender === 'function';
 					const hasDataAccessor = typeof originalDataAccessor === 'function';
 					
-					return {
-						...column,
+					return Object.assign({}, column, {
 						data: hasDataAccessor
-							? d => filterXSS(originalDataAccessor(d), config.xssOptions)
-							: filterXSS(originalDataAccessor, config.xssOptions),
+							? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), config.xssOptions))
+							: filterAbsoluteUrls(filterXSS(originalDataAccessor, config.xssOptions)),
 						render: hasOriginalRender
-							? (s, p, d) => filterXSS(originalRender(s, p, d), config.xssOptions)
-							: originalRender,
-					};
+							? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), config.xssOptions))
+              // https://datatables.net/reference/option/columns.render
+              // "render" property having "string" or "object" data type is not obvious for filtering, so do not pass such things to UI for now
+							: undefined
+					});
 				});
 
 				$(element).DataTable(binding.options);

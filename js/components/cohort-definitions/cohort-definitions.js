@@ -13,14 +13,14 @@ define(['knockout', 'text!./cohort-definitions.html', 'appConfig', 'webapi/AuthA
 
 		self.newDefinition = function (data, event) {
 			self.cohortDefinitionId('0');
-		}
+		};
 
 		self.newCohortButtonCaption = ko.computed(function () {
 			if (self.model.currentCohortDefinition) {
-				if (self.model.currentCohortDefinition() != undefined) {
-					return 'Please close your current cohort definition before creating a new one.'
+				if (self.model.currentCohortDefinition() !== undefined) {
+					return 'Please close your current cohort definition before creating a new one.';
 				} else {
-					return 'Create a new cohort definition.'
+					return 'Create a new cohort definition.';
 				}
 			}
 		});
@@ -34,7 +34,7 @@ define(['knockout', 'text!./cohort-definitions.html', 'appConfig', 'webapi/AuthA
 		});
 	}
 
-	var component = {
+	const component = {
 		viewModel: cohortDefinitions,
 		template: view
 	};

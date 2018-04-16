@@ -1,7 +1,7 @@
 define(function (require, exports) {
 
 	var ko = require('knockout');
-	var CohortDefinition = require('cohortbuilder/CohortDefinition')
+	var CohortExpression = require('cohortbuilder/CohortExpression');
 	var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet')
 
 	function PatientLevelPredictionAnalysis(data) {
@@ -343,7 +343,7 @@ define(function (require, exports) {
 		self.treatmentCaption = ko.observable(data.treatmentCaption != null ? data.treatmentCaption : null);
 		if (data.treatmentCohortDefinition != null) {
 			jsonCohortDefinition = JSON.parse(data.treatmentCohortDefinition);
-			self.treatmentCohortDefinition = ko.observable(new CohortDefinition(jsonCohortDefinition));
+			self.treatmentCohortDefinition = ko.observable(new CohortExpression(jsonCohortDefinition));
 		} else {
 			self.treatmentCohortDefinition = ko.observable(null);
 		}
@@ -352,7 +352,7 @@ define(function (require, exports) {
 		self.outcomeCaption = ko.observable(data.outcomeCaption != null ? data.outcomeCaption : null);
 		if (data.outcomeCohortDefinition != null) {
 			jsonCohortDefinition = JSON.parse(data.outcomeCohortDefinition);
-			self.outcomeCohortDefinition = ko.observable(new CohortDefinition(jsonCohortDefinition));
+			self.outcomeCohortDefinition = ko.observable(new CohortExpression(jsonCohortDefinition));
 		} else {
 			self.outcomeCohortDefinition = ko.observable(null);
 		}

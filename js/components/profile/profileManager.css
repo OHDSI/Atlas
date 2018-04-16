@@ -257,3 +257,11 @@ g.unhighlighted rect {
 text.label {
     fill: #ccc;
 }
+
+.right-padded {
+	padding-right: 10px;
+}
+
+.highlight-pane {
+	text-align: center;
+}

@@ -14,6 +14,7 @@ define(['knockout',
 	'databindings',
 	'negative-controls',
 	'circe',
+	'css!components/conceptset/style.css',
 ], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard) {
 	function conceptsetManager(params) {
 		var self = this;
@@ -135,7 +136,7 @@ define(['knockout',
 
 		self.resultSources = ko.computed(function () {
 			var resultSources = [];
-			$.each(config.api.sources, function (i, source) {
+			$.each(sharedState.sources(), function (i, source) {
 				if (source.hasResults) {
 					resultSources.push(source);
 					if (source.resultsUrl == sharedState.resultsUrl()) {
@@ -530,7 +531,7 @@ define(['knockout',
 			var abortSave = false;
 
 			// Do not allow someone to save a concept set with the default name of "New Concept Set
-			if (conceptSet && conceptSet.name() == self.defaultConceptSetName) {
+			if (conceptSet && conceptSet.name() === self.defaultConceptSetName) {
 				self.raiseConceptSetNameProblem('Please provide a different name for your concept set', txtElem);
 				return;
 			}
