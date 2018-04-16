@@ -20,8 +20,8 @@ define(
 
     class CohortResultsService {
 
-      static loadDrugTypesConcepts({ source, cohortId }) {
-        const url = `${appConfig.api.url}cohortresults/${source}/${cohortId}/healthcareutilization/drugtypes`;
+      static loadDrugTypesConcepts({ source, cohortId, drugConceptId = null }) {
+        const url = `${appConfig.api.url}cohortresults/${source}/${cohortId}/healthcareutilization/drugtypes` + (drugConceptId ? `?drugConceptId=${drugConceptId}`: '');
         return loadData({ url });
       }
 
