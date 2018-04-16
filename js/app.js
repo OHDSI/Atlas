@@ -459,6 +459,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 			}, {
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
+			}, {
+				title: 'Ancestor',
+				data: 'ANCESTORS'
 			}];
 			self.relatedSourcecodesColumns = [{
 				title: '',
@@ -1345,6 +1348,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 			self.relatedConcepts = ko.observableArray();
 			self.relatedSourcecodes = ko.observableArray();
 			self.includedConcepts = ko.observableArray();
+			self.includedConceptsMap = ko.observable();
 			self.denseSiblings = ko.observableArray();
 			self.includedSourcecodes = ko.observableArray();
 			self.cohortDefinitions = ko.observableArray();
