@@ -92,6 +92,7 @@ table.boxplotValues tr td
 }
 .axislabel, .axislabel text {
 	font-family: arial;
+	font-size: 1.2rem;
 }
 table.data td:first-child {
 	text-align: right;
