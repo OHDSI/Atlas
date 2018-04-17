@@ -1,6 +1,7 @@
 define(function (require, exports) {
 
 	var $ = require('jquery');
+	var ko = require('knockout');
 	var config = require('appConfig');
 	var authApi = require('webapi/AuthAPI');
 
@@ -22,21 +23,47 @@ define(function (require, exports) {
 		return promise;
   }
 
-  function exists(name) {
+  function exists(name, id) {
     return $.ajax({
       url: config.webAPIRoot + 'conceptset/exists',
 			data: {
       	name,
+				id,
 			},
 			method: 'GET',
 			error: authApi.handleAccessDenied,
     });
   }
 
+  function saveConceptSet(conceptSet) {
+		var json = ko.toJSON(conceptSet);
+		return $.ajax({
+      method: conceptSet.id ? 'PUT' : 'POST',
+      url: config.api.url + 'conceptset/' + (conceptSet.id || ''),
+      contentType: 'application/json',
+      data: json,
+      dataType: 'json',
+      error: authApi.handleAccessDenied,
+		});
+	}
+
+	function saveConceptSetItems(id, conceptSetItems) {
+		return $.ajax({
+      method: 'PUT',
+      url: config.api.url + 'conceptset/' + id + '/items',
+      data: JSON.stringify(conceptSetItems),
+      dataType: 'json',
+      contentType: 'application/json',
+      error: authApi.handleAccessDenied,
+		});
+	}
+
   var api = {
 		getGenerationInfo: getGenerationInfo,
 		deleteConceptSet: deleteConceptSet,
 		exists: exists,
+		saveConceptSet,
+		saveConceptSetItems,
 	};
 
 	return api;

@@ -4,7 +4,7 @@ define(['knockout', 'appConfig', 'webapi/AuthAPI', 'webapi/ConceptSetAPI', 'text
     function ConceptSetSaveModal(params){
       var self = this;
       self.conceptSetName = params.conceptSetName;
-      self.onSave = params.onSave;
+      self.onSave = params.onSave || function(){};
       self.show = params.show;
       self.isNameUnique = ko.observable(false);
       self.isNameVerified = ko.observable(false);

@@ -3,7 +3,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'cohortbuilder/CohortDefinition',
 	'webapi/CohortDefinitionAPI',
 	'webapi/MomentAPI',
+	'webapi/ConceptSetAPI',
 	'ohdsi.util',
+	'components/conceptset/utils',
 	'cohortbuilder/CohortExpression',
 	'cohortbuilder/InclusionRule',
 	'conceptsetbuilder/InputTypes/ConceptSet',
@@ -21,7 +23,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
   'cohortfeatures',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -588,12 +590,22 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		  self.saveConceptSetShow(true);
 		};
 
-		self.hideSaveConceptSet = function() {
-		  self.saveConceptSetShow(false);
-		};
-
 		self.saveConceptSet = function () {
       self.saveConceptSetShow(false);
+      var conceptSet = {
+        id: 0,
+        name: self.newConceptSetName(),
+      };
+      var conceptSetItems = conceptSetUitls.toConceptSetItems(self.selectedConcepts());
+      var conceptSetId;
+      var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
+      var itemsPromise = function(data) {
+        conceptSetId = data.id;
+        return conceptSetApi.saveConceptSetItems(data.id, conceptSetItems);
+      };
+      conceptSetApi.saveConceptSet(conceptSet)
+        .then(itemsPromise)
+        .then(refreshTokenPromise);
     };
 
 		function createConceptSet() {
