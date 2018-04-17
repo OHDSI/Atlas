@@ -2,13 +2,14 @@ define(
   [
     'knockout',
     'utils/BemHelper',
+    'appConfig',
     'components/visualizations/filter-panel/utils',
     'moment',
     'd3',
     'webapi/MomentAPI',
     'utils/CsvUtils',
   ],
-  function (ko, BemHelper, filterPanelUtils, moment, d3, MomentAPI, CsvUtils) {
+  function (ko, BemHelper, appConfig, filterPanelUtils, moment, d3, MomentAPI, CsvUtils) {
 
     class BaseCostUtilReport {
 
@@ -24,6 +25,8 @@ define(
         this.buildSearchUrl = this.buildSearchUrl.bind(this);
         this.saveAsCsv = this.saveAsCsv.bind(this);
         this.setupChartsData = this.setupChartsData.bind(this);
+
+        this.enableCosts = appConfig.enableCosts;
 
         // Input params
 

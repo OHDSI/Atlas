@@ -6,7 +6,7 @@ define(
     'modules/cohortdefinition/const',
     'modules/cohortdefinition/services/CohortResultsService',
     'components/visualizations/filter-panel/filter-panel',
-    'components/visualizations/table-baseline-exposure/table-baseline-exposure',
+    'modules/cohortdefinition/components/view/reporting/cost-utilization/table-baseline-exposure/table-baseline-exposure',
     'less!./persons-exposure.less',
     'components/visualizations/line-chart',
   ],
