@@ -431,6 +431,7 @@
 								<div class="btn-group pull-right pad-5">
 									<button class="btn btn-primary btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateAnalyses">Full Analysis</button>
 									<button class="btn btn-success btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateQuickAnalysis">Quick Analysis</button>
+									<button class="btn btn-info btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateHealthcareAnalyses">Utilization</button>
 									<button class="btn btn-default btn-sm" data-bind="visible: $component.generateReportsEnabled" data-toggle="modal" data-target="#analysisHelpModal"><i class="fa fa-question-circle text-primary"></i></button>
 								</div>
 							</div>
@@ -557,6 +558,8 @@
 				<div class="modal-body">
 					<b>Quick Analysis</b>
 					<p>Runs minimal analysis to provide a quick overview of this cohort's year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)</p>
+					<b>Healthcare Utilization</b>
+					<p>Runs analyses to provide Exposure, Visit and Drug Utilization reports. (estimated: 10 - 40 minutes)</p>
 					<b>Full Analysis</b>
 					<p>Runs a complete set of characterization reports. (estimated: 60 minutes)</p>
 				</div>

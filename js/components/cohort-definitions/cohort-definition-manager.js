@@ -911,73 +911,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				self.reportingState() != 'generating_reports';
 		});
 
-		self.generateQuickAnalysis = function () {
+		self.generateAnalyses = function ({ analysisIdentifiers, runHeraclesHeel }) {
 			self.generateReportsEnabled(false);
-			var analysisIdentifiers = cohortReportingAPI.getQuickAnalysisIdentifiers()
-			var cohortDefinitionId = pageModel.currentCohortDefinition().id();
-			var cohortJob = {};
-
-			cohortJob.jobName = 'HERACLES_COHORT_' + cohortDefinitionId + '_' + self.model.reportSourceKey();
-			cohortJob.sourceKey = self.model.reportSourceKey();
-			cohortJob.smallCellCount = 5;
-			cohortJob.cohortDefinitionIds = [];
-			cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
-			cohortJob.analysisIds = analysisIdentifiers;
-			cohortJob.runHeraclesHeel = false;
-			cohortJob.cohortPeriodOnly = false;
-
-			// set concepts
-			cohortJob.conditionConceptIds = [];
-			cohortJob.drugConceptIds = [];
-			cohortJob.procedureConceptIds = [];
-			cohortJob.observationConceptIds = [];
-			cohortJob.measurementConceptIds = [];
-
-			var jobDetails = new jobDetail({
-				name: cohortJob.jobName,
-				status: 'LOADING',
-				executionId: null,
-				statusUrl: self.config.api.url + 'job/execution/',
-				statusValue: 'status',
-				progress: 0,
-				progressUrl: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + cohortDefinitionId + '/analyses',
-				progressValue: 'length',
-				progressMax: analysisIdentifiers.length,
-				viewed: false,
-				url: 'cohortdefinition/' + cohortDefinitionId + '/reporting?sourceKey=' + self.model.reportSourceKey(),
-			});
-
-			self.createReportJobFailed(false);
-
-			$.ajax({
-				url: config.api.url + 'cohortanalysis',
-				data: JSON.stringify(cohortJob),
-				method: 'POST',
-				context: jobDetails,
-				contentType: 'application/json',
-				success: function (info) {
-					this.executionId = info.executionId;
-					this.status(info.status);
-					this.statusUrl = this.statusUrl + info.executionId;
-					sharedState.jobListing.queue(this);
-				},
-				error: function (xhr, status, error) {
-					self.createReportJobFailed(true);
-					var createReportJobErrorPackage = {};
-					createReportJobErrorPackage.status = status;
-					createReportJobErrorPackage.error = xhr.responseText;
-					self.createReportJobError(JSON.stringify(createReportJobErrorPackage));
-
-					// reset button to allow generation attempt
-					self.generateReportsEnabled(true);
-					self.generateButtonCaption('Generate');
-				}
-			});
-		}
-
-		self.generateAnalyses = function () {
-			self.generateReportsEnabled(false);
-			var analysisIdentifiers = cohortReportingAPI.getAnalysisIdentifiers()
 			analysisIdentifiers = _.uniq(analysisIdentifiers);
 			var cohortDefinitionId = pageModel.currentCohortDefinition().id();
 			var cohortJob = {};
@@ -988,7 +923,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			cohortJob.cohortDefinitionIds = [];
 			cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
 			cohortJob.analysisIds = analysisIdentifiers;
-			cohortJob.runHeraclesHeel = true;
+			cohortJob.runHeraclesHeel = runHeraclesHeel;
 			cohortJob.cohortPeriodOnly = false;
 
 			// set concepts
@@ -1038,7 +973,19 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					self.generateButtonCaption('Generate');
 				}
 			});
-		}
+		};
+
+    self.generateQuickAnalysis = function () {
+      self.generateAnalyses({ analysisIdentifiers: cohortReportingAPI.getQuickAnalysisIdentifiers(), runHeraclesHeel: false });
+    };
+
+    self.generateHealthcareAnalyses = function () {
+      self.generateAnalyses({ analysisIdentifiers: cohortReportingAPI.getHealthcareAnalysesIdentifiers(), runHeraclesHeel: false });
+    };
+
+    self.generateAllAnalyses = function () {
+      self.generateAnalyses({ analysisIdentifiers: cohortReportingAPI.getAnalysisIdentifiers(), runHeraclesHeel: true });
+    };
 
 		// dispose subscriptions / cleanup computed observables (non-pureComputeds)
 		self.dispose = function () {
