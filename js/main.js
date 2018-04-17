@@ -272,15 +272,14 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 		});
 
-		pageModel.loadIncluded = function () {
+		pageModel.loadIncluded = function (identifiers) {
 			pageModel.loadingIncluded(true);
 			var includedPromise = $.Deferred();
-
 			$.ajax({
 				url: sharedState.vocabularyUrl() + 'lookup/identifiers',
 				method: 'POST',
 				contentType: 'application/json',
-				data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
+				data: JSON.stringify(identifiers || pageModel.conceptSetInclusionIdentifiers()),
 				success: function (data) {
 					var densityPromise = vocabAPI.loadDensity(data);
 
@@ -318,16 +317,28 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			});
 		}
 
+		function loadIncluded() {
+			var promise;
+      if (pageModel.includedConcepts().length == 0) {
+        promise = pageModel.loadIncluded();
+      } else {
+      	promise = $.Deferred();
+      	promise.resolve();
+			}
+			return promise;
+		}
+
 		pageModel.currentConceptSetMode.subscribe(function (newMode) {
 			switch (newMode) {
 				case 'included':
-					pageModel.loadIncluded();
+					loadIncluded();
 					break;
 				case 'sourcecodes':
-					var includedPromise = pageModel.loadIncluded();
-					$.when(includedPromise)
-						.done(function () {
-							pageModel.loadSourcecodes();
+					loadIncluded()
+						.then(function () {
+							if (pageModel.includedSourcecodes().length === 0) {
+                pageModel.loadSourcecodes();
+              }
 						});
 					break;
 			}
@@ -396,21 +407,28 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				} else {
 					delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
 					sharedState.selectedConcepts.remove(function (i) {
-						return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
+						return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
 					});
 				}
 
 				// If we are updating a concept set that is part of a cohort definition
 				// then we need to notify any dependent observables about this change in the concept set
-				if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
+				if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() === "cohort") {
 					var conceptSet = pageModel.currentCohortDefinition()
 						.expression()
 						.ConceptSets()
-						.filter(function (item) {
-							return item.id == pageModel.currentConceptSet()
-								.id
-						})[0];
-					conceptSet.expression.items.valueHasMutated();
+						.find(function (item) {
+							return item.id === pageModel.currentConceptSet().id;
+						});
+					if (!$(this).hasClass("selected")) {
+            conceptSet.expression.items.remove(function (i) {
+              return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
+            });
+          }
+          conceptSet.expression.items.valueHasMutated();
+					pageModel.resolveConceptSetExpressionSimple(ko.toJSON(conceptSet.expression))
+						.then(pageModel.loadIncluded)
+						.then(pageModel.loadSourcecodes);
 				}
 			});
 
