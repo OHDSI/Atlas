@@ -4,7 +4,7 @@ define(
     'text!./drug-util-detailed.html',
     './base-drug-util-report',
     'appConfig',
-    '../CohortResultsService',
+    'modules/cohortdefinition/services/CohortResultsService',
     'components/visualizations/filter-panel/filter-panel',
     'less!./drug-util-detailed.less',
   ],
