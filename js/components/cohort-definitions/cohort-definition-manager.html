@@ -49,7 +49,7 @@
 				<a>Export</a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
-				<a>Warnings <span class="badge" data-bind="text: warningCount, visible: warningCount() > 0"></span></a>
+				<a data-bind="attr: { class: warningClass }">Warnings <span class="badge" data-bind="text: warningCount, visible: warningCount() > 0"></span></a>
 			</li>
 		</ul>
 		<div class="tab-content">

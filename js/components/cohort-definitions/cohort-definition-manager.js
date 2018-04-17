@@ -61,6 +61,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.selectedConcepts = sharedState.selectedConcepts;
 		self.model = params.model;
 		self.warningCount = ko.observable(0);
+		self.warningClass = ko.computed(function(){
+		  return self.warningCount() > 0 ? 'warning-alarm' : '';
+    });
 
 		self.cohortDefinitionCaption = ko.computed(function () {
 			if (self.model.currentCohortDefinition()) {

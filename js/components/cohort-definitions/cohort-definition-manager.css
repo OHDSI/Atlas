@@ -9,3 +9,13 @@
 .cohort-conceptset-button-pane button:last-child {
     margin-right: 0;
 }
+
+.nav-tabs li a.warning-alarm, .nav-tabs li a.warning-alarm:hover {
+    background-color: #ff001a;
+    color: #e3e3e3;
+}
+
+.nav-tabs li.active a.warning-alarm, .nav-tabs li.active a.warning-alarm:hover {
+    color: #fefefe;
+    border-color: #ff001a;
+}
