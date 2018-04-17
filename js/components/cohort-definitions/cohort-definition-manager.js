@@ -610,6 +610,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				.done(function(result){
 					var conceptSet = self.findConceptSet();
 					conceptSet.name(newConceptSet.name);
+					conceptSet.expression.items().forEach(function(item){
+						sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 0;
+						sharedState.selectedConcepts.remove(function(v){
+							return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
+						});
+					});
 					self.importConceptSetExpressionItems(result.items);
 				});
 		};
