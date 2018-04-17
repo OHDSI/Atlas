@@ -2,13 +2,14 @@ define(
   [
     'knockout',
     'utils/BemHelper',
+    'appConfig',
     'components/visualizations/filter-panel/utils',
     'moment',
     'd3',
     'webapi/MomentAPI',
     'utils/CsvUtils',
   ],
-  function (ko, BemHelper, filterPanelUtils, moment, d3, MomentAPI, CsvUtils) {
+  function (ko, BemHelper, appConfig, filterPanelUtils, moment, d3, MomentAPI, CsvUtils) {
 
     class BaseCostUtilReport {
 
@@ -22,8 +23,10 @@ define(
         this.createChartDataObservable = this.createChartDataObservable.bind(this);
         this.init = this.init.bind(this);
         this.buildSearchUrl = this.buildSearchUrl.bind(this);
-        this.onDataLoaded = this.onDataLoaded.bind(this);
         this.saveAsCsv = this.saveAsCsv.bind(this);
+        this.setupChartsData = this.setupChartsData.bind(this);
+
+        this.enableCosts = appConfig.enableCosts;
 
         // Input params
 
@@ -70,19 +73,14 @@ define(
         throw new Error('Should be overriden!');
       }
 
-      onDataLoaded() {
-        throw new Error('Should be overriden!');
-      }
-
-      loadData(filters) {
+      async loadData(filters) {
         this.loading(true);
-        $.ajax({
-          url: this.buildSearchUrl(),
-          method: 'GET',
-          data: filters,
-          contentType: 'application/json',
-          success: (res) => { this.onDataLoaded(res); this.loading(false) }
-        })
+        try {
+          const res = await this.fetchAPI({ filters });
+        } catch (e) {
+          console.error(e);
+        }
+        this.loading(false);
       }
 
       getSelectedFilterValues() {
@@ -107,6 +105,17 @@ define(
 
       createChartDataObservable(yValueField) {
         return ko.computed(() => this.createChartData(yValueField));
+      }
+
+      setupChartsData(lines) {
+        this.chartDataList = ko.computed(() =>
+          lines
+            .map(line => ({
+              name: line.title,
+              values: this.createChartDataObservable(line.data),
+              visible: ko.computed(() => this.displayedCharts().includes(line.title))
+            }))
+        );
       }
 
       init() {

@@ -185,8 +185,7 @@ define(function (require, exports) {
 	}
 
 	function getQuickAnalysisIdentifiers() {
-		//return [0, 1, 2, 3, 4, 5, 900, 907, 1000, 1007, 3000, 3001];
-    return [4012, 4013, 4014, 4015, 4016, 4017, 4018, 4019]; //[4000, 4006];//
+    return [0, 1, 2, 3, 4, 5, 900, 907, 1000, 1007, 3000, 3001];
 	}
 
 	function getAvailableReports(completedAnalyses) {

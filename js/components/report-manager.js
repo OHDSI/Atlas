@@ -1,8 +1,8 @@
 define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig',
-    'webapi/CohortReportingAPI', 'components/reports/cost-utilization/const', 'databindings', 'faceted-datatable', 'colvis',
-		'components/reports/cost-utilization/persons-exposure',
-		'components/reports/cost-utilization/visit-util',
-    'components/reports/cost-utilization/drug-util'
+    'webapi/CohortReportingAPI', 'modules/cohortdefinition/const', 'databindings', 'faceted-datatable', 'colvis',
+		'modules/cohortdefinition/components/view/reporting/cost-utilization/persons-exposure',
+		'modules/cohortdefinition/components/view/reporting/cost-utilization/visit-util',
+    'modules/cohortdefinition/components/view/reporting/cost-utilization/drug-util'
 	],
 	function (ko, view, d3, atlascharts, colorbrewer, _, config, cohortReportingAPI, costUtilConst) {
 	function reportManager(params) {
