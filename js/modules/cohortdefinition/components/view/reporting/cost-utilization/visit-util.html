@@ -17,13 +17,15 @@
                     <th data-bind="css: classes('summary-table-cell')">Records per 1,000 Per Year</th>
                     <th data-bind="css: classes('summary-table-cell')">Total length of stay (in days)</th>
                     <th data-bind="css: classes('summary-table-cell')">Average Length of Stay (in days)</th>
-                    <th data-bind="css: classes('summary-table-cell')">Allowed cost pmpm</th>
-                    <th data-bind="css: classes('summary-table-cell')">Charged cost</th>
-                    <th data-bind="css: classes('summary-table-cell')">Charged cost PMPM</th>
-                    <th data-bind="css: classes('summary-table-cell')">Paid cost</th>
-                    <th data-bind="css: classes('summary-table-cell')">Paid Cost PMPM</th>
-                    <th data-bind="css: classes('summary-table-cell')">Allowed/Charged</th>
-                    <th data-bind="css: classes('summary-table-cell')">Paid/Allowed</th>
+                    <!-- ko if: $component.enableCosts -->
+                        <th data-bind="css: classes('summary-table-cell')">Allowed cost pmpm</th>
+                        <th data-bind="css: classes('summary-table-cell')">Charged cost</th>
+                        <th data-bind="css: classes('summary-table-cell')">Charged cost PMPM</th>
+                        <th data-bind="css: classes('summary-table-cell')">Paid cost</th>
+                        <th data-bind="css: classes('summary-table-cell')">Paid Cost PMPM</th>
+                        <th data-bind="css: classes('summary-table-cell')">Allowed/Charged</th>
+                        <th data-bind="css: classes('summary-table-cell')">Paid/Allowed</th>
+                    <!-- /ko -->
                 </tr>
                 </thead>
                 <tbody>
@@ -35,13 +37,15 @@
                     <td data-bind="text: summary.visitsPer1000PerYear"/>
                     <td data-bind="text: summary.lengthOfStayTotal"/>
                     <td data-bind="text: summary.lengthOfStayAvg"/>
-                    <td/>
-                    <td/>
-                    <td/>
-                    <td/>
-                    <td/>
-                    <td/>
-                    <td/>
+                    <!-- ko if: $component.enableCosts -->
+                        <td/>
+                        <td/>
+                        <td/>
+                        <td/>
+                        <td/>
+                        <td/>
+                        <td/>
+                    <!-- /ko -->
                 </tr>
                 </tbody>
             </table>
