@@ -3,21 +3,14 @@ define(
     'knockout',
     'text!./visit-util.html',
     './base-report',
-    'appConfig',
-    'atlascharts',
-    'd3',
-    'd3-scale',
-    'webapi/MomentAPI',
-    'utils/BemHelper',
-    'appConfig',
-    'moment',
-    './const',
+    '../const',
+    '../CohortResultsService',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/table-baseline-exposure/table-baseline-exposure',
     'less!./visit-util.less',
     'components/visualizations/line-chart',
   ],
-  function (ko, view, BaseCostUtilReport, appConfig, atlascharts, d3, d3scale, MomentAPI, BemHelper, config, moment, costUtilConst) {
+  function (ko, view, BaseCostUtilReport, costUtilConst, CohortResultsService) {
 
     const componentName = 'cost-utilization-visit-util';
 
@@ -106,11 +99,10 @@ define(
           },
         ];
 
-
         const chartList = this.tableColumns.filter(item => item.showInChart);
 
         this.chartOptions = ko.observableArray(chartList.map(c => ({ label: c.title, value: c.title })));
-        this.displayedCharts = ko.observableArray(this.chartOptions().map(o => o.value));//ko.observableArray([]);//
+        this.displayedCharts = ko.observableArray(this.chartOptions().map(o => o.value));
 
         this.setupChartsData(chartList);
         this.init();
@@ -152,32 +144,27 @@ define(
         ]);
       }
 
-      buildSearchUrl() {
-        return `${appConfig.api.url}cohortresults/${this.source}/${this.cohortId}/healthcareutilization/visit/${this.window}/${this.visitStat}`;
-      }
+      fetchAPI({ filters }) {
+        return CohortResultsService.loadVisitUtilReport({
+            source: this.source,
+            cohortId: this.cohortId,
+            window: this.window,
+            visitStat: this.visitStat,
+            filters,
+          })
+          .then(({ summary, data, visitConcepts, visitTypeConcepts }) => {
 
-      onDataLoaded({ summary, data, visitConcepts, visitTypeConcepts }) {
-        Object.keys(summary).forEach(sKey => {
-          if (typeof this.summary[sKey] === 'function') {
-            this.summary[sKey](summary[sKey]);
-          }
-        });
+            Object.keys(summary).forEach(sKey => {
+              if (typeof this.summary[sKey] === 'function') {
+                this.summary[sKey](summary[sKey]);
+              }
+            });
 
-        this.setupVisitConceptOptions(visitConcepts);
-        this.setupVisitTypeConceptOptions(visitTypeConcepts);
+            this.setupVisitConceptOptions(visitConcepts);
+            this.setupVisitTypeConceptOptions(visitTypeConcepts);
 
-        this.dataList(data);
-      }
-
-      setupChartsData(lines) {
-        this.chartDataList = ko.computed(() =>
-          lines
-            .map(line => ({
-              name: line.title,
-              values: this.createChartDataObservable(line.data),
-              visible: ko.computed(() => this.displayedCharts().includes(line.title))
-            }))
-        );
+            this.dataList(data);
+          });
       }
     }
 

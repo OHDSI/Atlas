@@ -5,12 +5,12 @@ define(
   ],
   function (ko, appConfig) {
 
-    function loadData({ url, params }) {
+    function loadData({ path, filters }) {
       return new Promise(function(resolve, reject) {
         $.ajax({
-          url: url,
+          url: appConfig.api.url + path,
           method: 'GET',
-          data: params,
+          data: filters,
           contentType: 'application/json',
           success: (res) => resolve(res),
           error: (jqXHR, textStatus, errorThrown) => reject({ jqXHR, textStatus, errorThrown })
@@ -21,8 +21,28 @@ define(
     class CohortResultsService {
 
       static loadDrugTypesConcepts({ source, cohortId, drugConceptId = null }) {
-        const url = `${appConfig.api.url}cohortresults/${source}/${cohortId}/healthcareutilization/drugtypes` + (drugConceptId ? `?drugConceptId=${drugConceptId}`: '');
-        return loadData({ url });
+        const path = `cohortresults/${source}/${cohortId}/healthcareutilization/drugtypes`;
+        return loadData({ path, params: { drugConceptId } });
+      }
+
+      static loadDrugUtilSummaryReport({ source, cohortId, window, filters }) {
+        const path = `cohortresults/${source}/${cohortId}/healthcareutilization/drug/${window}`;
+        return loadData({ path, filters });
+      }
+
+      static loadDrugUtilDetailedReport({ source, cohortId, window, drugConceptId, filters }) {
+        const path = `cohortresults/${source}/${cohortId}/healthcareutilization/drug/${window}/${drugConceptId}`;
+        return loadData({ path, filters });
+      }
+
+      static loadVisitUtilReport({ source, cohortId, window, visitStat, filters }) {
+        const path = `cohortresults/${source}/${cohortId}/healthcareutilization/visit/${window}/${visitStat}`;
+        return loadData({ path, filters });
+      }
+
+      static loadPersonExposureReport({ source, cohortId, mode, filters }) {
+        const path = `cohortresults/${source}/${cohortId}/healthcareutilization/exposure/${mode}`;
+        return loadData({ path, filters });
       }
 
     }

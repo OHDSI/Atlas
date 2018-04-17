@@ -3,17 +3,14 @@ define(
     'knockout',
     'text!./persons-exposure.html',
     './base-report',
-    'appConfig',
-    'atlascharts',
-    'utils/BemHelper',
-    'appConfig',
-    './const',
+    '../const',
+    '../CohortResultsService',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/table-baseline-exposure/table-baseline-exposure',
     'less!./persons-exposure.less',
     'components/visualizations/line-chart',
   ],
-  function (ko, view, BaseCostUtilReport, appConfig, atlascharts, BemHelper, config, costUtilConst) {
+  function (ko, view, BaseCostUtilReport, costUtilConst, CohortResultsService) {
 
     const componentName = 'cost-utilization-persons-exposure';
 
@@ -31,7 +28,6 @@ define(
         };
 
         this.setupChartsData();
-
         this.init();
       }
 
@@ -41,19 +37,22 @@ define(
         ];
       }
 
-      buildSearchUrl() {
-        return `${appConfig.api.url}cohortresults/${this.source}/${this.cohortId}/healthcareutilization/exposure/${this.mode}`;
-      }
-
-      onDataLoaded({ summary, data }) {
-        this.summary.personsCount(summary.personsCount);
-        this.summary.exposureTotal(summary.exposureTotal);
-        this.summary.exposureAvg(summary.exposureAvg);
-        this.dataList(data);
+      fetchAPI({ filters }) {
+        return CohortResultsService.loadPersonExposureReport({
+            source: this.source,
+            cohortId: this.cohortId,
+            mode: this.mode,
+            filters,
+          })
+          .then(({ summary, data }) => {
+            this.summary.personsCount(summary.personsCount);
+            this.summary.exposureTotal(summary.exposureTotal);
+            this.summary.exposureAvg(summary.exposureAvg);
+            this.dataList(data);
+          });
       }
 
       setupChartsData() {
-
         this.personsChartData = this.createChartDataObservable('personsCount');
         this.totalExposureChartData = this.createChartDataObservable('exposureTotal');
         this.avgExposurePerPersonChartData = this.createChartDataObservable('exposureAvg');

@@ -1,5 +1,5 @@
 define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig',
-    'webapi/CohortReportingAPI', 'components/reports/cost-utilization/const', 'databindings', 'faceted-datatable', 'colvis',
+    'webapi/CohortReportingAPI', 'components/reports/const', 'databindings', 'faceted-datatable', 'colvis',
 		'components/reports/cost-utilization/persons-exposure',
 		'components/reports/cost-utilization/visit-util',
     'components/reports/cost-utilization/drug-util'

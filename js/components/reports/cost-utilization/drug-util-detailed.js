@@ -4,10 +4,11 @@ define(
     'text!./drug-util-detailed.html',
     './base-drug-util-report',
     'appConfig',
+    '../CohortResultsService',
     'components/visualizations/filter-panel/filter-panel',
     'less!./drug-util-detailed.less',
   ],
-  function (ko, view, BaseDrugUtilReport, appConfig) {
+  function (ko, view, BaseDrugUtilReport, appConfig, CohortResultsService) {
 
     const componentName = 'cost-utilization-drug-detailed-util';
 
@@ -19,12 +20,40 @@ define(
         this.drugConceptId = params.drugConceptId();
         this.displaySummary = params.displaySummary;
 
+        this.drugsTableColumns = [
+          {
+            title: 'Period start',
+            data: 'periodStart',
+            className: this.classes('tbl-col', 'period-start'),
+          },
+          {
+            title: 'Period end',
+            data: 'periodEnd',
+            className: this.classes('tbl-col', 'period-end'),
+          },
+          ...this.drugsTableColumns,
+        ];
+
+
+        const chartList = this.drugsTableColumns.filter(item => item.showInChart);
+
+        this.chartOptions = ko.observableArray(chartList.map(c => ({ label: c.title, value: c.title })));
+        this.displayedCharts = ko.observableArray(this.chartOptions().map(o => o.value));
+
         this.init();
+        this.setupChartsData(chartList);
         this.loadFilterOptions({ drugConceptId: this.drugConceptId });
       }
 
-      buildSearchUrl() {
-        return `${appConfig.api.url}cohortresults/${this.source}/${this.cohortId}/healthcareutilization/drug/${this.window}/${this.drugConceptId}`;
+      fetchAPI({ filters }) {
+        return CohortResultsService.loadDrugUtilDetailedReport({
+            source: this.source,
+            cohortId: this.cohortId,
+            window: this.window,
+            drugConceptId: this.drugConceptId,
+            filters,
+          })
+          .then(({ data }) => this.dataList(data));
       }
     }
 

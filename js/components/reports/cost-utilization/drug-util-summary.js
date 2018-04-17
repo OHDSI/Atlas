@@ -3,11 +3,11 @@ define(
     'knockout',
     'text!./drug-util-summary.html',
     './base-drug-util-report',
-    'appConfig',
+    '../CohortResultsService',
     'components/visualizations/filter-panel/filter-panel',
     'less!./drug-util-summary.less',
   ],
-  function (ko, view, BaseDrugUtilReport, appConfig) {
+  function (ko, view, BaseDrugUtilReport, CohortResultsService) {
 
     const componentName = 'cost-utilization-drug-summary-util';
 
@@ -31,8 +31,14 @@ define(
         this.loadFilterOptions();
       }
 
-      buildSearchUrl() {
-        return `${appConfig.api.url}cohortresults/${this.source}/${this.cohortId}/healthcareutilization/drug/${this.window}`;
+      fetchAPI({ filters }) {
+        return CohortResultsService.loadDrugUtilSummaryReport({
+            source: this.source,
+            cohortId: this.cohortId,
+            window: this.window,
+            filters,
+          })
+          .then(({ data }) => this.dataList(data));
       }
     }
 
