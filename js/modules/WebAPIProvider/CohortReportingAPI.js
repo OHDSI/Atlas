@@ -188,6 +188,10 @@ define(function (require, exports) {
     return [0, 1, 2, 3, 4, 5, 900, 907, 1000, 1007, 3000, 3001];
 	}
 
+  function getHealthcareAnalysesIdentifiers() {
+    return getAnalysisIdentifiers().filter(id => id >= 4000 && id < 4100);
+  }
+
 	function getAvailableReports(completedAnalyses) {
 		var reports = [];
 		if (completedAnalyses.length == 0) {
@@ -230,6 +234,7 @@ define(function (require, exports) {
 		getAvailableReports,
 		getAnalysisIdentifiers,
 		getQuickAnalysisIdentifiers,
+    getHealthcareAnalysesIdentifiers,
     visualizationPacks,
 	};
 
