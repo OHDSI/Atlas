@@ -78,7 +78,7 @@ define(
         try {
           const res = await this.fetchAPI({ filters });
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
         this.loading(false);
       }

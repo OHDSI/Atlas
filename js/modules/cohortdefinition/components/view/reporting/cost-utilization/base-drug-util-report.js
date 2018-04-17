@@ -122,7 +122,7 @@ define(
           const res = await CohortResultsService.loadDrugTypesConcepts({ source: this.source, cohortId: this.cohortId, drugConceptId });
           this.setupDrugSourceConceptOptions(res);
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
         this.filtersLoading(false);
       }
