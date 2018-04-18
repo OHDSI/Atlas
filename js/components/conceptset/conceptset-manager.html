@@ -19,7 +19,7 @@
         <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }"><i class="fa fa-times"></i></button>
         <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0, css: {disabled:!canCreate()}"><i class="fa fa-copy"></i></button>
         <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { optimize(); }, css: {disabled: !canEdit() && !canCreate()}">Optimize</button>
-        <button type="button" class="btn btn-sm btn-danger" title="titlefromhtml" data-bind="tooltip: {title: $component.title}, click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
+        <button type="button" class="btn btn-sm btn-danger"  data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
       </div>
     </div>
 
@@ -384,46 +384,4 @@
   </div>
 </div>
 
-<div class="modal" id="ancestorsModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <div>
-          <div class="paddedWrapper">
-            <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
-                                      data:ancestors,
-                                      options: {
-                                                      dom: 'Clfiprt',
-                                                      colVis: {
-                                                          buttonText: 'Change Columns',
-                                                          align: 'right',
-                                                          overlayFade: 0,
-                                                          showAll: 'Show All Columns',
-                                                          restore: 'Reset Columns'
-                                                      },
-                                                      rowCallback: model.contextSensitiveLinkColor,
-                                                      lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100,'All']],
-                                                      orderClasses: false,
-                                                      deferRender: true,
-                                                      autoWidth: false,
-                                                      order: [[2, 'desc']],
-                                        columns: [
-                                                              { title: 'Concept Id', data: 'concept.CONCEPT_ID'},
-                                                              { title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-                                                              { title: 'Concept Name', render: model.renderBoundLink},
-                                                              { title: 'Domain', data: 'concept.DOMAIN_ID' },
-                                                              { title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
-                                                              { title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' }
-                                        ]
-                                     }
-                                  }">
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
+<conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model}"></conceptset-list-modal>

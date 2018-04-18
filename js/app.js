@@ -103,7 +103,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 						});
 					},
 					'/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': function (cohortDefinitionId, path) {
-						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
+						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort', 'conceptset-list-modal'], function (CohortDefinition) {
 							// Determine the view to show on the cohort manager screen based on the path
 							path = path.split("/");
 							var view = 'definition'
@@ -242,7 +242,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 						});
 					},
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
-						require(['conceptset-manager', 'cohort-definition-browser'], function () {
+						require(['conceptset-manager', 'cohort-definition-browser', 'conceptset-list-modal'], function () {
 							self.componentParams = {
 								model: self
 							};

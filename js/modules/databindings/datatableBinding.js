@@ -42,16 +42,19 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 			// If the binding is an object with an options field,
 			// initialise the dataTable with those options.
 			if (binding.options) {
+				
 				// allow row level binding context
 				const createdRow = binding.options.createdRow;  
 				binding.options.createdRow = (row, data, index) => {
-					ko.applyBindings(data, row);
 					if (createdRow) {
 						createdRow(row, data, index);
 					}
+					ko.cleanNode(row);
+					ko.applyBindings(bindingContext.createChildContext(data), row);
 				};
 				// test for 'select' column (must be first column in column definition
 				const columns = binding.options.columns;
+				
 				if (columns && columns[0] == 'select') {
 					columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected }	
 					$(element).on("click","td > span.fa.fa-check-circle", function () {

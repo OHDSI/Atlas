@@ -23,6 +23,7 @@ define(['knockout',
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
 		self.defaultConceptSetName = "New Concept Set";
+		self.ancestorsModalIsShown = ko.observable(false);
 		self.isAuthenticated = authApi.isAuthenticated;
 		self.canReadConceptsets = ko.pureComputed(function () {
 			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
@@ -375,30 +376,10 @@ define(['knockout',
 		}, {
 			title: 'Ancestor',
 			data: 'ANCESTORS',
-			render: (s, p, d) => '<a class="clickable">' + d.ANCESTORS.length + '</a>'
+			render: conceptSetAPI.getAncestorsRenderFunction()
 		}];
 
-		self.includedDrawCallback = function (settings) {
-			if (settings.aoData) {
-				const api = this.api();
-				const rows = api.rows({page: 'current'});
-				const data = rows.data();
-				const promise = self.model.loadAndApplyAncestors(data);
-				const columnIndex = self.searchConceptsColumns.findIndex(v => v.data === 'ANCESTORS');
-				promise.then(() => {
-					api.cells(null, columnIndex).invalidate();
-					rows.nodes().each((element, index) => {
-						const rowData = data[index];
-						self.model.contextSensitiveLinkColor(element, rowData);
-						$(element).children(`td:nth-child(${columnIndex})`).children(':first')
-							.on('click', function () {
-								self.showAncestorsModal(rowData.CONCEPT_ID);
-							})
-							.attr('title', '').tooltip({content: rowData.ANCESTORS.map(d => d.CONCEPT_NAME).join('<br>')});
-					})
-				});
-			}
-		};
+		self.includedDrawCallback = conceptSetAPI.getIncludedConceptSetDrawCallback(self);
 		
 		self.searchConceptsOptions = {
 			Facets: [{
@@ -1024,15 +1005,7 @@ define(['knockout',
 				})
 			});
 		
-		self.showAncestorsModal = function(conceptId) {
-			self.ancestors(self.model.includedConcepts()
-				.find(v => v.CONCEPT_ID === conceptId)
-				.ANCESTORS
-				.map(v => ({concept: v})));
-			if (!_.isEmpty(self.ancestors())) {
-				$('#ancestorsModal').modal();
-			}
-		};
+		self.showAncestorsModal = conceptSetAPI.getAncestorsModalHandler(self);
 		
 		self.canSave = ko.computed(function () {
 			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());

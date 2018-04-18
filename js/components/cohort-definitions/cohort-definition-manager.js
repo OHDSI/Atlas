@@ -8,11 +8,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'cohortbuilder/InclusionRule',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'webapi/CohortReportingAPI',
-	'vocabularyprovider',
 	'atlas-state',
 	'clipboard',
 	'd3',
 	'job/jobDetail',
+	'components/cohort-definitions/const',
 	'webapi/ConceptSetAPI',
 	'cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
@@ -20,7 +20,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'databindings',
 	'cohortdefinitionviewer/expressionCartoonBinding',
 	'cohortfeatures',
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, clipboard, d3, jobDetail, conceptSetAPI) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, sharedState, clipboard, d3, jobDetail, cohortConst, conceptSetAPI) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -102,40 +102,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			return authApi.isPermittedReadCohort(self.model.currentCohortDefinition().id());
 		});
-		
-		self.ancestors = ko.observableArray();
-		
-		self.showAncestorsModal = function(conceptId) {
-			self.ancestors(self.model.includedConcepts()
-				.find(v => v.CONCEPT_ID === conceptId)
-				.ANCESTORS
-				.map(v => ({concept: v})));
-			if (!_.isEmpty(self.ancestors())) {
-				$('#ancestorsModal').modal();
-			}
-		};
-
-		self.includedDrawCallback = function (settings) {
-			if (settings.aoData) {
-				const api = this.api();
-				const rows = api.rows({page: 'current'});
-				const data = rows.data();
-				const promise = self.model.loadAndApplyAncestors(data);
-				const columnIndex = self.includedConceptsColumns.findIndex(v => v.data === 'ANCESTORS');
-				promise.then(() => {
-					api.cells(null, columnIndex).invalidate();
-					rows.nodes().each((element, index) => {
-						const rowData = data[index];
-						self.model.contextSensitiveLinkColor(element, rowData);
-						$(element).children(`td:nth-child(${columnIndex})`).children(':first')
-							.on('click', function () {
-								self.showAncestorsModal(rowData.CONCEPT_ID);
-							})
-							.attr('title', '').tooltip({content: rowData.ANCESTORS.map(d => d.CONCEPT_NAME).join('<br>')});
-					})
-				});
-			}
-		};
 		
 		self.hasAccessToGenerate = function (sourceKey) {
 			if (isNew()) {
@@ -287,9 +253,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}, {
 			title: 'Ancestor',
 			data: 'ANCESTORS',
-			render: (s, p, d) => '<a class="clickable">' + d.ANCESTORS.length + '</a>'
+			render: conceptSetAPI.getAncestorsRenderFunction()
 		}];
 
+		self.ancestors = ko.observableArray();
+		self.ancestorsModalIsShown = ko.observable(false);
+		self.showAncestorsModal = conceptSetAPI.getAncestorsModalHandler(self);
+		self.includedDrawCallback = conceptSetAPI.getIncludedConceptSetDrawCallback({ ...self, searchConceptsColumns: self.includedConceptsColumns });
+		
 		self.includedConceptsOptions = {
 			Facets: [{
 				'caption': 'Vocabulary',

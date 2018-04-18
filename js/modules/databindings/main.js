@@ -14,4 +14,5 @@ define(function (require) {
 	var bootstrapModal = require("./bootstrapModal");
 	var treemap = require("./treemapBinding");
 	var d3ChartBinding = require("./d3ChartBinding");
+	var tooltipBinding = require("./tooltipBinding");
 });

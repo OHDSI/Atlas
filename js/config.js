@@ -71,7 +71,7 @@ define(['optional!config-local'], function (localConfig) {
   ];
   config.xssOptions = {
     "whiteList": {
-      "a": ["href", "class"],
+      "a": ["href", "class", "data-bind"],
 			"button": ["class", "type"],
       "span": ["class", "data-bind"],
       "i": ["class", "id", "aria-hidden"],
