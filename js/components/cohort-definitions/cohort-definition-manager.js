@@ -616,6 +616,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 							return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
 						});
 					});
+					conceptSet.expression.items().length = 0;
 					self.importConceptSetExpressionItems(result.items);
 				});
 		};
