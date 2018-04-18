@@ -1,0 +1,20 @@
+.concept-set-modal {
+    margin: 25% auto;
+}
+
+.concept-set-form{
+    display: flex;
+    align-items: center;
+}
+
+.concept-set-form label {
+    padding-right: 10px;
+}
+
+.concept-set-form input {
+    flex-grow: 1;
+}
+
+.concept-set-dialog {
+    background-color: #fff;
+}

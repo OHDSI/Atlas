@@ -3,7 +3,6 @@ define(function (require, exports) {
 	var $ = require('jquery');
 	var config = require('appConfig');
 	var authApi = require('webapi/AuthAPI');
-	var sharedState = require('atlas-state');
 	var ko = require('knockout');
 
 	function getGenerationInfo(conceptSetId) {
@@ -13,8 +12,8 @@ define(function (require, exports) {
 		});
 		return infoPromise;
 	}
-	
-	function deleteConceptSet(conceptSetId) {
+		
+		function deleteConceptSet(conceptSetId) {
 		var promise = $.ajax({
 			url: config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') ,
 			method: 'DELETE',
@@ -22,6 +21,41 @@ define(function (require, exports) {
 			error: authApi.handleAccessDenied,
 		});
 		return promise;
+	}
+
+	function exists(name, id) {
+		return $.ajax({
+			url: config.webAPIRoot + 'conceptset/exists',
+			data: {
+				name,
+				id,
+			},
+			method: 'GET',
+			error: authApi.handleAccessDenied,
+		});
+	}
+
+	function saveConceptSet(conceptSet) {
+		var json = ko.toJSON(conceptSet);
+		return $.ajax({
+			method: conceptSet.id ? 'PUT' : 'POST',
+			url: config.api.url + 'conceptset/' + (conceptSet.id || ''),
+			contentType: 'application/json',
+			data: json,
+			dataType: 'json',
+			error: authApi.handleAccessDenied,
+		});
+	}
+
+	function saveConceptSetItems(id, conceptSetItems) {
+		return $.ajax({
+			method: 'PUT',
+			url: config.api.url + 'conceptset/' + id + '/items',
+			data: JSON.stringify(conceptSetItems),
+			dataType: 'json',
+			contentType: 'application/json',
+			error: authApi.handleAccessDenied,
+		});
 	}
 
 	function getIncludedConceptSetDrawCallback({ model, searchConceptsColumns }) {
@@ -64,6 +98,9 @@ define(function (require, exports) {
 	const api = {
 		getGenerationInfo: getGenerationInfo, 
 		deleteConceptSet: deleteConceptSet,
+		exists: exists,
+		saveConceptSet: saveConceptSet,
+		saveConceptSetItems: saveConceptSetItems,
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
 		getAncestorsRenderFunction: getAncestorsRenderFunction,

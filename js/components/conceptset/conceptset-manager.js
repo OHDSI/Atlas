@@ -2,6 +2,7 @@ define(['knockout',
 	'text!./conceptset-manager.html',
 	'appConfig',
 	'ohdsi.util',
+	'components/conceptset/utils',
 	'webapi/CDMResultsAPI',
 	'vocabularyprovider',
 	'webapi/ConceptSetAPI',
@@ -14,8 +15,9 @@ define(['knockout',
 	'databindings',
 	'negative-controls',
 	'circe',
+	'conceptset-modal',
 	'css!components/conceptset/style.css',
-], function (ko, view, config, ohdsiUtil, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard) {
+], function (ko, view, config, ohdsiUtil, utils, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard) {
 	function conceptsetManager(params) {
 		var self = this;
 		var authApi = params.model.authApi;
@@ -53,6 +55,7 @@ define(['knockout',
 			}
 			return returnVal;
 		});
+		self.saveConceptSetShow = ko.observable(false);
 		// Set the default concept set to be the current concept set
 		self.currentConceptSet = ko.observableArray();
 		_.each(self.selectedConcepts(), (conceptSetItem) => {
@@ -549,90 +552,36 @@ define(['knockout',
 			// Next check to see that a concept set with this name does not already exist
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
-			var conceptSetId = conceptSet.id;
-			var qsParams = "";
-			if (conceptSetId > 0) {
-				qsParams = "id=" + conceptSetId + "&";
-			}
-			qsParams += "name=" + encodeURIComponent(conceptSet.name())
-			
-			var urlEncoded = config.api.url + 'conceptset/exists?' + qsParams;
-			var existanceCheckPromise = $.ajax({
-				url: urlEncoded,
-				method: 'GET',
-				contentType: 'application/json',
-				error: authApi.handleAccessDenied,
-				success: function (results) {
-					if (results.length > 0) {
-						self.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
-						abortSave = true;
-					}
-				},
-				error: function () {
-					alert('An error occurred while attempting to find a concept set with the name you provided.');
-				}
-			});
-
-			$.when(existanceCheckPromise)
-				.done(function () {
+			conceptSetAPI.exists(conceptSet.name, conceptSet.id)
+				.then(function(results){
+          if (results.length > 0) {
+            self.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
+            abortSave = true;
+          }
+				}, function(){
+          alert('An error occurred while attempting to find a concept set with the name you provided.');
+				})
+				.then(function () {
 					if (abortSave) {
 						return;
 					}
 
-					var conceptSetItems = [];
+					var conceptSetItems = utils.toConceptSetItems(selectedConcepts);
 
-					for (var i = 0; i < selectedConcepts.length; i++) {
-						var item = selectedConcepts[i];
-						conceptSetItems.push({
-							conceptId: item.concept.CONCEPT_ID,
-							isExcluded: +item.isExcluded(),
-							includeDescendants: +item.includeDescendants(),
-							includeMapped: +item.includeMapped()
+          var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
+					var conceptSetId;
+					var itemsPromise = function(data) {
+						conceptSetId = data.id;
+						return conceptSetAPI.saveConceptSetItems(data.id, conceptSetItems);
+					};
+					conceptSetAPI.saveConceptSet(conceptSet)
+						.then(itemsPromise)
+						.then(refreshTokenPromise)
+						.then(function(){
+              document.location = '#/conceptset/' + conceptSetId + '/details';
+              self.compareResults(null);
+              self.model.currentConceptSetDirtyFlag.reset();
 						});
-					}
-
-					var json = ko.toJSON(conceptSet);
-
-					// for create - PUT: /conceptset/
-					// for update - POST: /conceptset/{id}/
-					var updateConceptSet = conceptSet.id > 0;
-					var method = updateConceptSet ? 'POST' : 'PUT';
-					var url = config.api.url + 'conceptset/';
-					if (updateConceptSet) {
-						url += conceptSet.id + '/';
-					}
-
-					$.ajax({
-						method: conceptSet.id ? 'PUT' : 'POST',
-						url: config.api.url + 'conceptset/' + (conceptSet.id || ''),
-						contentType: 'application/json',
-						data: json,
-						dataType: 'json',
-						error: authApi.handleAccessDenied,
-						success: function (data) {
-
-							$.ajax({
-								method: 'PUT',
-								url: config.api.url + 'conceptset/' + data.id + '/items',
-								data: JSON.stringify(conceptSetItems),
-								dataType: 'json',
-								contentType: 'application/json',
-								error: authApi.handleAccessDenied,
-								success: function (itemSave) {
-									$('#conceptSetSaveDialog')
-										.modal('hide');
-									var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
-									$.when(refreshTokenPromise)
-										.then(function () {
-											document.location = '#/conceptset/' + data.id + '/details';
-											self.compareResults(null);
-											self.model.currentConceptSetDirtyFlag.reset();
-										});
-								}
-							});
-						}
-					});
-
 				});
 		}
 
@@ -816,8 +765,7 @@ define(['knockout',
 		}
 
 		self.showSaveNewModal = function () {
-			$('#modalSaveNew')
-				.modal('show');
+			self.saveConceptSetShow(true);
 		}
 
 		self.compareCreateNewConceptSet = function () {
@@ -852,8 +800,7 @@ define(['knockout',
 				selectedConcepts.push(newItem);
 			})
 			self.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
-			$('#modalSaveNew')
-				.modal('hide');
+			self.saveConceptSetShow(false);
 		}
 
 		self.toggleOnSelectAllCheckbox = function (selector, selectAllElement) {
