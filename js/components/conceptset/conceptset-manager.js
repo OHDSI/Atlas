@@ -378,7 +378,7 @@ define(['knockout',
 			title: 'Vocabulary',
 			data: 'VOCABULARY_ID'
 		}, {
-			title: 'Ancestor',
+			title: 'Ancestors',
 			data: 'ANCESTORS',
 			render: conceptSetService.getAncestorsRenderFunction()
 		}];

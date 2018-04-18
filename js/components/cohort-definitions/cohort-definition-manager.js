@@ -261,7 +261,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			title: 'Vocabulary',
 			data: 'VOCABULARY_ID'
 		}, {
-			title: 'Ancestor',
+			title: 'Ancestors',
 			data: 'ANCESTORS',
 			render: conceptSetService.getAncestorsRenderFunction()
 		}];
