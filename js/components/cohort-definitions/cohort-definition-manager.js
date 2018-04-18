@@ -3,7 +3,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'cohortbuilder/CohortDefinition',
 	'webapi/CohortDefinitionAPI',
 	'webapi/MomentAPI',
+	'webapi/ConceptSetAPI',
 	'ohdsi.util',
+	'components/conceptset/utils',
 	'cohortbuilder/CohortExpression',
 	'cohortbuilder/InclusionRule',
 	'conceptsetbuilder/InputTypes/ConceptSet',
@@ -19,8 +21,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
   'faceted-datatable',
   'cohortdefinitionviewer/expressionCartoonBinding',
   'cohortfeatures',
+	'conceptset-modal',
 	'css!./cohort-definition-manager.css'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, util, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -144,6 +147,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return self.dirtyFlag() && self.dirtyFlag().isDirty();
 		});
 		self.conceptLoading = ko.observable(false);
+		self.conceptSetName = ko.observable();
 		self.tabPath = ko.computed(function () {
 			var path = self.tabMode();
 			if (path === 'export') {
@@ -161,6 +165,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
     });
 
 		self.delayedCartoonUpdate = ko.observable(null);
+
+		self.saveConceptSetShow = ko.observable(false);
+		self.newConceptSetName = ko.observable();
 
 		self.canGenerate = ko.pureComputed(function () {
 			var isDirty = self.dirtyFlag() && self.dirtyFlag().isDirty();
@@ -561,7 +568,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return false;
 		}
 
-		self.closeConceptSet = function () {
+    self.canCreateConceptSet = ko.computed(function () {
+      return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+    });
+
+    self.closeConceptSet = function () {
 			self.model.clearConceptSet();
 		}
 
@@ -573,6 +584,29 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			);
 			self.closeConceptSet();
 		}
+
+		self.showSaveConceptSet = function() {
+		  self.newConceptSetName(self.model.currentConceptSet().name());
+		  self.saveConceptSetShow(true);
+		};
+
+		self.saveConceptSet = function () {
+      self.saveConceptSetShow(false);
+      var conceptSet = {
+        id: 0,
+        name: self.newConceptSetName(),
+      };
+      var conceptSetItems = conceptSetUitls.toConceptSetItems(self.selectedConcepts());
+      var conceptSetId;
+      var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
+      var itemsPromise = function(data) {
+        conceptSetId = data.id;
+        return conceptSetApi.saveConceptSetItems(data.id, conceptSetItems);
+      };
+      conceptSetApi.saveConceptSet(conceptSet)
+        .then(itemsPromise)
+        .then(refreshTokenPromise);
+    };
 
 		function createConceptSet() {
       var newConceptSet = new ConceptSet();
@@ -589,14 +623,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
     }
 
 		self.newConceptSet = function () {
-			console.log("new concept set selected");
 			loadConceptSet(createConceptSet());
 		};
 
 		self.importConceptSet = function () {
 		  loadConceptSet(createConceptSet(), 'import');
 		  self.conceptSetTabMode(self.cohortConst.conceptSetTabModes.import);
-		//	self.closeConceptSet();
     };
 
 		self.clearImportConceptSetJson = function(){
@@ -663,8 +695,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		};
 
 		self.importSourceCodes = function () {
-		  self.conceptLoading(true);
-			vocabularyApi
+      self.conceptLoading(true);
+      vocabularyApi
         .getConceptsByCode(self.sourcecodes().match(/[0-9a-zA-Z\.-]+/g))
         .then(appendConcepts, function () {
           self.conceptLoading(false);

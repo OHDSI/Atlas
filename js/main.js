@@ -102,6 +102,7 @@ requirejs.config({
 		"conceptset-browser": "components/conceptset/conceptset-browser",
 		"conceptset-editor": "components/conceptset/conceptset-editor",
 		"conceptset-manager": "components/conceptset/conceptset-manager",
+		"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
 		"cohort-comparison-manager": "components/cohort-comparison-manager",
 		"job-manager": "components/job-manager",
 		"data-sources": "components/data-sources",

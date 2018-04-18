@@ -112,8 +112,9 @@
 
 						<div class="clear"></div>
 						<div class="cohort-conceptset-button-pane pull-right">
-						  <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.deleteConceptSet()};">Delete Concept Set</button>
-						  <button type="button" class="btn btn-sm btn-primary" data-bind="click: function() { $component.closeConceptSet()};">Close Concept Set</button>
+						  <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.deleteConceptSet(); }">Delete Concept Set</button>
+						  <button type="button" class="btn btn-sm btn-success" data-bind="click:function(){ $component.showSaveConceptSet(); }, enable: canCreateConceptSet">Copy To Concept Set Repository</button>
+						  <button type="button" class="btn btn-sm btn-primary" data-bind="click: function() { $component.closeConceptSet(); }">Close Concept Set</button>
 						</div>
 					</div>
 				</div>
@@ -564,4 +565,5 @@
 			</div>
 		</div>
 	</div>
+	<conceptset-save params="conceptSetName: newConceptSetName, onSave: saveConceptSet, show: saveConceptSetShow"></conceptset-save>
 </div>
