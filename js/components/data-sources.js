@@ -153,6 +153,14 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 				width: 300,
 				height: 300 * 0.75,
 			},
+			guessFromNode: (selector) => {
+				const bounds = document.querySelector(selector).getBoundingClientRect();
+				
+				return {
+					width: bounds.width,
+					height: bounds.height,
+				};
+			},
 		};			 
 
 		self.loadSummary = function () {
@@ -296,9 +304,9 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 						var genderDonut = new atlascharts.donut();
 						var raceDonut = new atlascharts.donut();
 						var ethnicityDonut = new atlascharts.donut();
-						genderDonut.render(self.mapConceptData(data.gender), "#gender", self.breakpoints.wide.width, self.breakpoints.wide.height);
-						raceDonut.render(self.mapConceptData(data.race), "#race", self.breakpoints.wide.width, self.breakpoints.wide.height);
-						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", self.breakpoints.wide.width, self.breakpoints.wide.height);
+						genderDonut.render(self.mapConceptData(data.gender), "#gender", self.breakpoints.narrow.width, self.breakpoints.narrow.height);
+						raceDonut.render(self.mapConceptData(data.race), "#race", self.breakpoints.narrow.width, self.breakpoints.narrow.height);
+						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", self.breakpoints.narrow.width, self.breakpoints.narrow.height);
 					}
 				});
 			} else if (currentReport.name == 'Achilles Heel') {
@@ -554,7 +562,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 
 						var treeData = self.buildHierarchyFromJSON(data, threshold);
 						var treemap = new atlascharts.treemap();
-						treemap.render(treeData, '#treemap_container', self.breakpoints.wide.width, self.breakpoints.wide.height, {
+						const size = self.breakpoints.guessFromNode('#treemap_container');
+						treemap.render(treeData, '#treemap_container', size.width, self.breakpoints.wide.height, {
 							onclick: function (node) {
 								self.currentConcept(node);
 							},
