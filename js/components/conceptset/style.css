@@ -23,11 +23,11 @@
     padding-bottom: 10px;
 }
 
-.btn-group button {
+.form-group .btn-group button {
     margin-right: 3px;
 }
 
-.btn-group button:last-child {
+.form-group .btn-group button:last-child {
     margin-right: 0;
 }
 
