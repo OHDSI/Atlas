@@ -138,6 +138,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.exportSqlMode = ko.observable('ohdsisql');
 		self.importConceptSetJson = ko.observable();
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
+		self.showImportConceptSetModal = ko.observable(false);
 		self.dirtyFlag = self.model.currentCohortDefinitionDirtyFlag;
 		self.isLoadingSql = ko.observable(false);
 		self.sharedState = sharedState;
@@ -308,8 +309,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				infoList.forEach(function (info) {
 					// obtain source reference
 					var source = self.model.cohortDefinitionSourceInfo().filter(function (cdsi) {
-						var sourceId = sharedState.sources().filter(source => source.sourceKey == cdsi.sourceKey)[0].sourceId;
-						return sourceId == info.id.sourceId;
+						var sourceId = sharedState.sources().find(source => source.sourceKey == cdsi.sourceKey).sourceId;
+						return sourceId === info.id.sourceId;
 					})[0];
 
 					if (source) {
@@ -513,7 +514,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.getSourceId = function (sourceKey) {
-			return sharedState.sources().filter(source => source.sourceKey == sourceKey)[0].sourceId;
+			return sharedState.sources().find(source => source.sourceKey === sourceKey).sourceId;
 		}
 
 		self.generateCohort = function (source, includeFeatures) {
@@ -631,6 +632,28 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		  self.conceptSetTabMode(self.cohortConst.conceptSetTabModes.import);
     };
 
+		self.importFromRepository = function() {
+			self.showImportConceptSetModal(true);
+		};
+
+		self.onConceptSetRepositoryImport = function(newConceptSet, event){
+			event.stopPropagation();
+			self.showImportConceptSetModal(false);
+			vocabularyApi.getConceptSetExpression(newConceptSet.id)
+				.done(function(result){
+					var conceptSet = self.findConceptSet();
+					conceptSet.name(newConceptSet.name);
+					conceptSet.expression.items().forEach(function(item){
+						sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 0;
+						sharedState.selectedConcepts.remove(function(v){
+							return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
+						});
+					});
+					conceptSet.expression.items().length = 0;
+					self.importConceptSetExpressionItems(result.items);
+				});
+		};
+
 		self.clearImportConceptSetJson = function(){
 			self.importConceptSetJson('');
 		};
@@ -644,8 +667,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
         });
 		};
 
-		self.importConceptSetExpression = function(){
+		self.importConceptSetExpression = function() {
       var items = JSON.parse(self.importConceptSetJson()).items;
+      self.importConceptSetExpressionItems(items);
+    };
+
+    self.importConceptSetExpressionItems = function(items) {
 			var conceptSet = self.findConceptSet();
 			if (!conceptSet){
 				return;

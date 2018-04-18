@@ -1,14 +1,8 @@
 <div data-bind="if:$component.canReadConceptsets">
-    <table width="width:100%" style="margin-bottom: 10px">
-        <tr>
-            <td width="100%" style="padding-right:15px">
-            </td>
-            <td>
-                <div class="btn btn-sm btn-primary" style="width: 175px"
-                     data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText"></div>
-            </td>
-        </tr>
-    </table>
+    <div class="conceptset-browser-panel">
+        <div class="btn btn-sm btn-primary new-concept-set"
+             data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText, visible: buttonActionEnabled"></div>
+    </div>
 
     <div data-bind="visible:$component.selectedSource().url != null,
 								eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: selectRepositoryConceptSet}]">

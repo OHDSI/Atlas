@@ -10,12 +10,12 @@
 		<!-- ko ifnot:canEdit-->
 		<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
 		<!-- /ko -->
-		<div class="modal fade" id="conceptSetSelectorDialog" tabindex="-1" role="dialog">
+		<div class="modal fade" data-bind="modal: showModal" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<div class="modal-header">Import Concept Set From Repository...</div>
 					<div class="paddedWrapper">
-						<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction"></cohort-concept-set-browser>
+						<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction, buttonActionEnabled: true"></cohort-concept-set-browser>
 					</div>
 				</div>
 			</div>
