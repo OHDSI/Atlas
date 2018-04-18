@@ -17,6 +17,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'job/jobDetail',
 	'components/cohort-definitions/const',
 	'webapi/ConceptSetAPI',
+	'services/ConceptSetService',
 	'cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -24,7 +25,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'cohortfeatures',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst, conceptSetAPI) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst, conceptSetAPI, conceptSetService) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -262,13 +263,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}, {
 			title: 'Ancestor',
 			data: 'ANCESTORS',
-			render: conceptSetAPI.getAncestorsRenderFunction()
+			render: conceptSetService.getAncestorsRenderFunction()
 		}];
 
 		self.ancestors = ko.observableArray();
 		self.ancestorsModalIsShown = ko.observable(false);
-		self.showAncestorsModal = conceptSetAPI.getAncestorsModalHandler(self);
-		self.includedDrawCallback = conceptSetAPI.getIncludedConceptSetDrawCallback({ ...self, searchConceptsColumns: self.includedConceptsColumns });
+		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler(self);
+		self.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ ...self, searchConceptsColumns: self.includedConceptsColumns });
 		
 		self.includedConceptsOptions = {
 			Facets: [{

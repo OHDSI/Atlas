@@ -9,6 +9,7 @@ define(['knockout',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'clipboard',
+	'services/ConceptSetService',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -17,7 +18,7 @@ define(['knockout',
 	'circe',
 	'conceptset-modal',
 	'css!components/conceptset/style.css',
-], function (ko, view, config, ohdsiUtil, utils, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard) {
+], function (ko, view, config, ohdsiUtil, utils, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard, conceptSetService) {
 	function conceptsetManager(params) {
 		var self = this;
 		var authApi = params.model.authApi;
@@ -379,10 +380,10 @@ define(['knockout',
 		}, {
 			title: 'Ancestor',
 			data: 'ANCESTORS',
-			render: conceptSetAPI.getAncestorsRenderFunction()
+			render: conceptSetService.getAncestorsRenderFunction()
 		}];
 
-		self.includedDrawCallback = conceptSetAPI.getIncludedConceptSetDrawCallback(self);
+		self.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback(self);
 		
 		self.searchConceptsOptions = {
 			Facets: [{
@@ -950,7 +951,7 @@ define(['knockout',
 				})
 			});
 		
-		self.showAncestorsModal = conceptSetAPI.getAncestorsModalHandler(self);
+		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler(self);
 		
 		self.canSave = ko.computed(function () {
 			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());
