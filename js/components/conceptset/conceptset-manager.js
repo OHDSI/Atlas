@@ -878,8 +878,6 @@ define(['knockout',
 			}
 		}
 
-		self.title = 'title <br> titl2 second line';
-		
 		self.delete = function () {
 			if (!confirm("Delete concept set? Warning: deletion can not be undone!"))
 				return;

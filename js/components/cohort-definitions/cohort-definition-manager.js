@@ -10,19 +10,21 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'cohortbuilder/InclusionRule',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'webapi/CohortReportingAPI',
+	'vocabularyprovider',
 	'atlas-state',
 	'clipboard',
 	'd3',
 	'job/jobDetail',
-  'components/cohort-definitions/const',
-  'cohortbuilder/components/FeasibilityReportViewer',
-  'databindings',
-  'faceted-datatable',
-  'cohortdefinitionviewer/expressionCartoonBinding',
-  'cohortfeatures',
+	'components/cohort-definitions/const',
+	'webapi/ConceptSetAPI',
+	'cohortbuilder/components/FeasibilityReportViewer',
+	'databindings',
+	'faceted-datatable',
+	'cohortdefinitionviewer/expressionCartoonBinding',
+	'cohortfeatures',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst, conceptSetAPI) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
