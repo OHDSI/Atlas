@@ -6,9 +6,11 @@ define(function(require, exports){
   var authApi = require('webapi/AuthAPI');
   var momentApi = require('webapi/MomentAPI');
 
+  const executionPath  = 'executionservice';
+  
   function runExecution(sourceKey, analysisId, analysisType, template, successHandler){
-    ohdsiUtil.cachedAjax({
-      url: config.api.url + 'execution_service/run_script',
+    return ohdsiUtil.cachedAjax({
+      url: `${config.api.url}${executionPath}/execution/run`,
       method: 'POST',
       contentType: 'application/json',
       error: authApi.handleAccessDenied,
@@ -28,7 +30,7 @@ define(function(require, exports){
 
   function loadExecutions(analysisType, analysisId,  callback){
     ohdsiUtil.cachedAjax({
-      url: config.api.url + 'execution_service/' + analysisType + '/' + analysisId + '/executions',
+      url: `${config.api.url}${executionPath}/${analysisType}/${analysisId}/executions`,
       method: 'GET',
       contentType: 'application/json',
       error: authApi.handleAccessDenied,
@@ -54,13 +56,14 @@ define(function(require, exports){
   }
 
   function viewResults(executionId){
-    window.open(config.api.url + 'execution_service/execution/results/' + executionId);
+    window.open(`${config.api.url}${executionPath}/execution/results/${executionId}`);
   }
 
   var api = {
     runExecution: runExecution,
     loadExecutions: loadExecutions,
     viewResults: viewResults,
+		executionPath: executionPath
   };
 
   return api;

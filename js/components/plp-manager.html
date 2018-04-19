@@ -27,7 +27,7 @@
 		<li role="presentation" data-bind="visible: config.plpResultsEnabled, css: { active: $component.tabMode() == 'performance' }, click: function() { $component.tabMode('performance'); }">
 			<a>Performance</a>
 		</li>
-		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a></li>
+		<li role="presentation" data-bind="visible: config.plpResultsEnabled,css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a></li>
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>Utilities</a>
 		</li>
 	</ul>

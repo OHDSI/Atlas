@@ -45,7 +45,7 @@ define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], functio
 			return Math.round(j.progress() / j.progressMax * 100) + '%';
 		}
 
-		setInterval(self.updateJobStatus, 60000);
+		setInterval(self.updateJobStatus, 6000);
 
 		self.showJobModal = ko.observable(false);
 		self.jobListing = state.jobListing;

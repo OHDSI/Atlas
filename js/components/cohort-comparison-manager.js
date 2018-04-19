@@ -4,11 +4,12 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				'cohortbuilder/CohortExpression', 'vocabularyprovider',
 				'conceptsetbuilder/InputTypes/ConceptSet', 'atlas-state',
 				'webapi/ExecutionAPI',
+				'services/JobDetailsService',
 				'databindings/d3ChartBinding',
 				'css!./styles/nv.d3.min.css'],
 	function ($, ko, view, _, clipboard, cohortDefinitionAPI, config, authApi, ohdsiUtil,
 		ComparativeCohortAnalysis, options, CohortExpression, vocabularyAPI,
-		ConceptSet, sharedState, executionAPI) {
+		ConceptSet, sharedState, executionAPI, jobDetailsService) {
 		function cohortComparisonManager(params) {
 
 			var DEBUG = true;
@@ -839,7 +840,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.monitorEEJobExecution = function (jobExecutionId, wait) {
 				setTimeout(function () {
 					ohdsiUtil.cachedAjax({
-						url: config.api.url + 'execution_service/execution/status/' + jobExecutionId,
+						url: config.api.url + 'executionservice/execution/status/' + jobExecutionId,
 						method: 'GET',
 						error: authApi.handleAccessDenied,
 						success: function (d) {
@@ -858,6 +859,16 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					executionAPI.runExecution(sourceKey, self.cohortComparisonId(), 'CCA', $('.language-r').text(),
 						function (c, status, xhr) {
 							self.monitorEEJobExecution(c.executionId, 100);
+							jobDetailsService.createJob({
+								name: self.cohortComparison().name() + "_" + sourceKey,
+								type: 'cca',
+								status: 'PENDING',
+								executionId: c.executionId,
+								statusUrl: `${self.config.api.url}executionservice/execution/status/${c.executionId}`,
+								statusValue: 'status',
+								viewed: false,
+								url: 'estimation/' + self.cohortComparisonId(),
+							})
 						}
 					);
 				} else {

@@ -1,4 +1,29 @@
-define(['knockout', 'jquery', 'text!./plp-manager.html', 'appConfig', 'd3', 'ohdsi.util', 'plp/PatientLevelPredictionAnalysis', 'webapi/PatientLevelPredictionAPI', 'webapi/ExecutionAPI', 'webapi/AuthAPI',  'clipboard', 'atlas-state'], function (ko, $, view, config, d3, ohdsiUtil, PatientLevelPredictionAnalysis, plpAPI, executionAPI, authAPI, clipboard, sharedState) {
+define(['knockout',
+	'jquery',
+	'text!./plp-manager.html',
+	'appConfig',
+	'd3',
+	'ohdsi.util',
+	'plp/PatientLevelPredictionAnalysis',
+	'webapi/PatientLevelPredictionAPI',
+	'webapi/ExecutionAPI',
+	'webapi/AuthAPI',
+	'clipboard',
+	'atlas-state',
+	'services/JobDetailsService'],
+	function (ko,
+						$,
+						view,
+						config,
+						d3,
+						ohdsiUtil,
+						PatientLevelPredictionAnalysis,
+						plpAPI,
+						executionAPI,
+						authAPI,
+						clipboard,
+						sharedState,
+						jobDetailsService) {
 	function plpManager(params) {
 		//console.log("manager:" + params.model.currentModelId());
 		var self = this;
@@ -47,7 +72,7 @@ define(['knockout', 'jquery', 'text!./plp-manager.html', 'appConfig', 'd3', 'ohd
     self.monitorEEJobExecution = function (jobExecutionId, wait) {
       setTimeout(function () {
         ohdsiUtil.cachedAjax({
-          url: config.api.url + 'execution_service/execution/status/' + jobExecutionId,
+          url: config.api.url + 'executionservice/execution/status/' + jobExecutionId,
           method: 'GET',
           error: authAPI.handleAccessDenied,
           success: function (d) {
@@ -67,6 +92,16 @@ define(['knockout', 'jquery', 'text!./plp-manager.html', 'appConfig', 'd3', 'ohd
           $('.language-r').text(),
           function (c, status, xhr) {
             self.monitorEEJobExecution(c.executionId, 100);
+            jobDetailsService.createJob({
+              name: self.patientLevelPrediction().name() + "_" + sourceKey,
+              type: 'plp',
+              status: 'PENDING',
+              executionId: c.executionId,
+              statusUrl: `${self.config.api.url}executionservice/execution/status/${c.executionId}`,
+              statusValue: 'status',
+              viewed: false,
+              url: 'plp/' + self.patientLevelPredictionId(),
+            })
           });
       }
     };
