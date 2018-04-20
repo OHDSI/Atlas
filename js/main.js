@@ -253,8 +253,9 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
       }
 		}
 
+		config.api.isExecutionEngineAvailable = ko.observable(false);
 		executionAPI.getEngineStatus(v => {
-			config.api.isExecutionEngineAvailable = (v.status === 'ONLINE')
+			config.api.isExecutionEngineAvailable(v.status === 'ONLINE')
 		});
 
 

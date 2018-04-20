@@ -27,11 +27,11 @@
 				</div>
 				<div data-bind="if: $component.config.useExecutionEngine" class="configureHeader">
 					<div class="left">
-						<div data-bind="if:isExecutionEngineAvailable==true">
+						<div data-bind="if:isExecutionEngineAvailable()==true">
 							<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
 						</div>
 
-						<div data-bind="if:isExecutionEngineAvailable==false">
+						<div data-bind="if:isExecutionEngineAvailable()==false">
 							<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
 						</div>
 
