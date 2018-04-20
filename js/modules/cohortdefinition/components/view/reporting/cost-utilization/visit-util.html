@@ -11,6 +11,7 @@
                 <thead data-bind="css: classes('summary-table-head')">
                 <tr>
                     <th data-bind="css: classes('summary-table-cell')">Person Count</th>
+                    <th data-bind="css: classes('summary-table-cell')">Person Percent</th>
                     <th data-bind="css: classes('summary-table-cell')">Total Records</th>
                     <th data-bind="css: classes('summary-table-cell')">Records per 1,000</th>
                     <th data-bind="css: classes('summary-table-cell')">Records per 1,000 with record</th>
@@ -31,6 +32,7 @@
                 <tbody>
                 <tr>
                     <td data-bind="text: summary.personsCount"/>
+                    <td data-bind="text: summary.personsPct"/>
                     <td data-bind="text: summary.visitsCount"/>
                     <td data-bind="text: summary.visitsPer1000"/>
                     <td data-bind="text: summary.visitsPer1000WithVisits"/>
@@ -80,10 +82,11 @@
                                     xLabel: ($index() == ($component.chartDataList().length - 1)) ? 'Period start' : '',
                                     xFormat: $component.formatDate,
                                     yLabel: $data.name,
-                                    yFormat: $component.formatRounded,
+                                    yFormat: $data.yFormat || $component.formatRounded,
                                     tickFormat: $component.dateTickFormat,
                                     height: 250,
-                                    showLegend: false
+                                    showLegend: false,
+                                    getTooltipBuilder: $component.getTooltipBuilder
                                     }
                                 }"
                             />
