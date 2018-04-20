@@ -7,7 +7,8 @@ define(['optional!config-local'], function (localConfig) {
 	// default configuration
 	config.api = {
 		name: 'Local',
-		url: 'http://localhost:8080/WebAPI/'
+		url: 'http://localhost:8080/WebAPI/',
+		isExecutionEngineAvailable: false,
 	};
 	config.cohortComparisonResultsEnabled = false;
 	config.userAuthenticationEnabled = false;
