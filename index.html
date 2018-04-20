@@ -134,7 +134,7 @@
 			<!-- /ko -->
 
 			<!-- ko if: pageModel.currentView && (sharedState.appInitializationStatus() != 'failed' && sharedState.appInitializationStatus() != 'no-sources-available') -->
-			<div id="currentComponent" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
+			<div id="currentComponent" class="flexed" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
 			<!-- /ko -->
 		</div>
 	</div>

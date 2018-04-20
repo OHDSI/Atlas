@@ -195,10 +195,12 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 							});
 							currentReport.summary(data.summary);
 						}
+						let size;
 
 						var genderConceptData = self.mapConceptData(data.gender);
 						var populationDonut = new atlascharts.donut();
-						populationDonut.render(genderConceptData, "#populationByGender", self.breakpoints.narrow.width, self.breakpoints.narrow.height);
+						size = self.breakpoints.guessFromNode('#populationByGender');
+						populationDonut.render(genderConceptData, "#populationByGender", size.width, self.breakpoints.narrow.height);
 
 						var ageAtFirstData = self.normalizeArray(data.ageAtFirstObservation);
 						if (!ageAtFirstData.empty) {
@@ -212,7 +214,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 							var ageAtFirstObservationData = self.mapHistogram(histData);
 
 							var ageHistogram = new atlascharts.histogram();
-							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", self.breakpoints.wide.width, self.breakpoints.wide.height, {
+							size = self.breakpoints.guessFromNode('#ageAtFirstObservation');
+							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", size.width, self.breakpoints.wide.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Age',
@@ -243,7 +246,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 								}
 							}
 							var observationLine = new atlascharts.line();
-							observationLine.render(cumulativeData, "#cumulativeObservation", self.breakpoints.wide.width, self.breakpoints.wide.height, {
+							size = self.breakpoints.guessFromNode('#cumulativeObservation');
+							observationLine.render(cumulativeData, "#cumulativeObservation", size.width, self.breakpoints.wide.height, {
 								yFormat: d3.format('0.0%'),
 								interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
 								xLabel: cumulativeObservationXLabel,
@@ -261,7 +265,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 							});
 							d3.selectAll("#oppeoplebymonthsingle svg").remove();
 							var singleLine = new atlascharts.line();
-							singleLine.render(byMonthSeries, "#oppeoplebymonthsingle", self.breakpoints.wide.width, self.breakpoints.wide.height, {
+							size = self.breakpoints.guessFromNode('#oppeoplebymonthsingle');
+							singleLine.render(byMonthSeries, "#oppeoplebymonthsingle", size.width, self.breakpoints.wide.height, {
 								xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
@@ -284,6 +289,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					},
 					success: function (data) {
 						self.loadingReport(false);
+						let size;
 
 						if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
 							var yearHistogram = new atlascharts.histogram();
@@ -293,7 +299,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 							histData.max = data.yearOfBirthStats[0].maxValue;
 							histData.intervals = 100;
 							histData.data = (self.normalizeArray(data.yearOfBirth));
-							yearHistogram.render(self.mapHistogram(histData), "#hist", self.breakpoints.wide.width, self.breakpoints.wide.height, {
+							size = self.breakpoints.guessFromNode('#hist');
+							yearHistogram.render(self.mapHistogram(histData), "#hist", size.width, self.breakpoints.wide.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Year',
@@ -304,9 +311,12 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 						var genderDonut = new atlascharts.donut();
 						var raceDonut = new atlascharts.donut();
 						var ethnicityDonut = new atlascharts.donut();
-						genderDonut.render(self.mapConceptData(data.gender), "#gender", self.breakpoints.narrow.width, self.breakpoints.narrow.height);
-						raceDonut.render(self.mapConceptData(data.race), "#race", self.breakpoints.narrow.width, self.breakpoints.narrow.height);
-						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", self.breakpoints.narrow.width, self.breakpoints.narrow.height);
+						size = self.breakpoints.guessFromNode('#gender');
+						genderDonut.render(self.mapConceptData(data.gender), "#gender", size.width, self.breakpoints.narrow.height);
+						size = self.breakpoints.guessFromNode('#race');
+						raceDonut.render(self.mapConceptData(data.race), "#race", size.width, self.breakpoints.narrow.height);
+						size = self.breakpoints.guessFromNode('#ethnicity');
+						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", size.width, self.breakpoints.narrow.height);
 					}
 				});
 			} else if (currentReport.name == 'Achilles Heel') {
@@ -369,6 +379,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					},
 					success: function (data) {
 						self.loadingReport(false);
+						let size;
 
 						if (!!data.totalRecords) {
 							var totalRecords = data.totalRecords;
@@ -393,7 +404,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 
 
 							var totalLine = new atlascharts.line();
-							totalLine.render(totalRecordsData, "#totalrecords", self.breakpoints.wide.width, self.breakpoints.wide.height, {
+							size = self.breakpoints.guessFromNode('#totalrecords');
+							totalLine.render(totalRecordsData, "#totalrecords", size.width, self.breakpoints.wide.height, {
 								xScale: d3.scaleTime().domain(d3.extent(totalRecords, function (d) {
 									return d.xCalendarMonth;
 								})),
@@ -430,7 +442,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 
 
 							var recordsperpersonLine = new atlascharts.line();
-							recordsperpersonLine.render(recordsPerPersonData, "#recordsperperson", self.breakpoints.wide.width, self.breakpoints.wide.height, {
+							size = self.breakpoints.guessFromNode('#recordsperperson');
+							recordsperpersonLine.render(recordsPerPersonData, "#recordsperperson", size.width, self.breakpoints.wide.height, {
 								xScale: d3.scaleTime().domain(d3.extent(recordsPerPerson, function (d) {
 									return d.xCalendarMonth;
 								})),
@@ -461,7 +474,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 								});
 							}
 							var conceptsperpersonBoxPlot = new atlascharts.boxplot();
-							conceptsperpersonBoxPlot.render(conceptsSeries, "#conceptsperperson", self.breakpoints.wide.width, self.breakpoints.wide.height, {
+							size = self.breakpoints.guessFromNode('#conceptsperperson');
+							conceptsperpersonBoxPlot.render(conceptsSeries, "#conceptsperperson", size.width, self.breakpoints.wide.height, {
 								yMax: d3.max(conceptsData.p90Value),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Concept Type',
@@ -704,7 +718,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 
 				// create svg with range bands based on the trellis names
 				var dataByDecileTrellisline = new atlascharts.trellisline();
-				dataByDecileTrellisline.render(dataByDecile, selector, self.breakpoints.wide.width, self.breakpoints.wide.height, {
+				const size = self.breakpoints.guessFromNode(selector);
+				dataByDecileTrellisline.render(dataByDecile, selector, size.width, self.breakpoints.wide.height, {
 					trellisSet: allDeciles,
 					trellisLabel: "Age Decile",
 					seriesLabel: "Year of Observation",
@@ -728,7 +743,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					yPercent: 'yPrevalence1000Pp'
 				});
 				var byMonthSeriesLine = new atlascharts.line();
-				byMonthSeriesLine.render(byMonthSeries, selector, self.breakpoints.wide.width, self.breakpoints.wide.height, {
+				const size = self.breakpoints.guessFromNode(selector);
+				byMonthSeriesLine.render(byMonthSeries, selector, size.width, self.breakpoints.wide.height, {
 					xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 						return d.xValue;
 					})),
@@ -743,7 +759,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 		self.prevalenceByType = function (data, selector) {
 			if (!!data && data.length > 0) {
 				var prevalenceByTypeDonut = new atlascharts.donut();
-				prevalenceByTypeDonut.render(self.mapConceptData(data), selector, self.breakpoints.medium.width, self.breakpoints.medium.height, {
+				const size = self.breakpoints.guessFromNode(selector);
+				prevalenceByTypeDonut.render(self.mapConceptData(data), selector, size.width, self.breakpoints.medium.height, {
 					margin: {
 						top: 5,
 						left: 5,
@@ -772,7 +789,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					});
 				}
 				var ageBoxplot = new atlascharts.boxplot();
-				ageBoxplot.render(bpseries, selector, self.breakpoints.medium.width, self.breakpoints.medium.height, {
+				const size = self.breakpoints.guessFromNode(selector);
+				ageBoxplot.render(bpseries, selector, size.width, self.breakpoints.medium.height, {
 					xLabel: 'Gender',
 					yLabel: yLabel,
 					yFormat: d3.format(',.1s'),
@@ -804,7 +822,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					var yScaleMax = (Math.floor((Math.max.apply(null, freqData.yNumPersons) + 5) / 10) + 1) * 10;
 					var freqHistData = self.mapHistogram(frequencyHistogram);
 					var freqHistChart = new self.freqhistogram();
-					freqHistChart.render(freqHistData, selector, self.breakpoints.wide.width, self.breakpoints.wide.height, {
+					const size = self.breakpoints.guessFromNode(selector);
+					freqHistChart.render(freqHistData, selector, size.width, self.breakpoints.wide.height, {
 						xFormat: d3.format('d'),
 						xScale: d3.scaleLinear().domain([1, 10]),
 						yScale: d3.scaleLinear().domain([0, 100]),
@@ -842,7 +861,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
           return 1;
         return 0; //default return value (no sorting)
       });
-      byUnit.render(dataByUnit, selector, self.breakpoints.medium.width, self.breakpoints.medium.height, {
+			const size = self.breakpoints.guessFromNode(selector);
+      byUnit.render(dataByUnit, selector, size.width, self.breakpoints.medium.height, {
         margin: {
           top: 5,
           left: 5,
@@ -869,7 +889,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
             UIF: ndata.p90Value[i],
           };
         });
-        measurementValues.render(bpseries, selector, self.breakpoints.narrow.width, self.breakpoints.narrow.height, {
+				const size = self.breakpoints.guessFromNode(selector);
+        measurementValues.render(bpseries, selector, size.width, self.breakpoints.narrow.height, {
           yMax: d3.max(data, function (d) {
             return d.p90Value;
           }) || bpdata.p90Value,
