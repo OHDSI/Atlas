@@ -8,8 +8,9 @@ define(
     'd3',
     'webapi/MomentAPI',
     'utils/CsvUtils',
+    'numeral'
   ],
-  function (ko, BemHelper, appConfig, filterPanelUtils, moment, d3, MomentAPI, CsvUtils) {
+  function (ko, BemHelper, appConfig, filterPanelUtils, moment, d3, MomentAPI, CsvUtils, numeral) {
 
     class BaseCostUtilReport {
 
@@ -59,11 +60,29 @@ define(
         this.dateTickFormat = d3.timeFormat('%Y-%m-%d');
         this.emptyTickFormat = () => null;
         this.formatDate = val => MomentAPI.formatDate(val, 'D MMM Y'); // TODO: display interval
+        this.formatRounded = d3.format(".0s");
       }
 
       static conceptsToOptions(conceptList) {
         return conceptList.map(el => ({ label: el.conceptName, value: el.conceptId }));
       }
+
+      static formatFullNumber(val) {
+        return numeral(val).format();
+      }
+
+      static formatPercents(val) {
+        return numeral(val).format('0,0.00') + '%';
+      }
+
+      getTooltipBuilder(options) {
+        return (d) => {
+          let tipText = '';
+          tipText += `Period: ${options.xFormat(d.xValue)} - ${options.xFormat(d.periodEnd)}</br>`;
+          tipText += `${options.yLabel}: ${BaseCostUtilReport.formatFullNumber(d.yValue)}`;
+          return tipText;
+        };
+      };
 
       getFilterList() {
         throw new Error('Should be overriden!');
@@ -99,6 +118,7 @@ define(
         return this.dataList().map((entry, idx) => ({
           id: idx,
           xValue: moment(entry.periodStart).toDate(),
+          periodEnd: moment(entry.periodEnd).toDate(),
           yValue: parseFloat(entry[yValueField]),
         }));
       }
@@ -113,7 +133,8 @@ define(
             .map(line => ({
               name: line.title,
               values: this.createChartDataObservable(line.data),
-              visible: ko.computed(() => this.displayedCharts().includes(line.title))
+              visible: ko.computed(() => this.displayedCharts().includes(line.title)),
+              yFormat: line.yFormat,
             }))
         );
       }

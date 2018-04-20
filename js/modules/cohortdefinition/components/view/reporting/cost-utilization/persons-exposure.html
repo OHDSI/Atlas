@@ -12,7 +12,7 @@
                     <tr>
                         <th data-bind="css: classes('summary-table-cell')">Person Count</th>
                         <th data-bind="css: classes('summary-table-cell')">Total Exposure in Years</th>
-                        <th data-bind="css: classes('summary-table-cell')">Average Exposure per 1,000 persons</th>
+                        <th data-bind="css: classes('summary-table-cell')">Average Exposure Years per 1,000 persons</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,9 +43,11 @@
                             xLabel: '',
                             xFormat: $component.formatDate,
                             yLabel: 'Persons',
-                            tickFormat: $component.emptyTickFormat,
+                            yFormat: $component.formatRounded,
+                            tickFormat: $component.dateTickFormat,
                             height: 250,
-                            showLegend: false
+                            showLegend: false,
+                            getTooltipBuilder: $component.getTooltipBuilder
                         }}"
                     />
                 </div>
@@ -56,9 +58,11 @@
                             xLabel: '',
                             xFormat: $component.formatDate,
                             yLabel: 'Total Exposure in years',
-                            tickFormat: $component.emptyTickFormat,
+                            yFormat: $component.formatRounded,
+                            tickFormat: $component.dateTickFormat,
                             height: 250,
-                            showLegend: false
+                            showLegend: false,
+                            getTooltipBuilder: $component.getTooltipBuilder
                         }}"
                     />
                 </div>
@@ -69,9 +73,11 @@
                             xLabel: 'Period start',
                             xFormat: $component.formatDate,
                             yLabel: 'Average Exposure per person',
+                            yFormat: $component.formatRounded,
                             tickFormat: $component.dateTickFormat,
                             height: 250,
-                            showLegend: false
+                            showLegend: false,
+                            getTooltipBuilder: $component.getTooltipBuilder
                         }}"
                     />
                 </div>

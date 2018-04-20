@@ -45,9 +45,11 @@
                                     xLabel: ($index() == ($component.chartDataList().length - 1)) ? 'Period start' : '',
                                     xFormat: $component.formatDate,
                                     yLabel: $data.name,
+                                    yFormat: $component.formatRounded,
                                     tickFormat: $component.dateTickFormat,
                                     height: 250,
-                                    showLegend: false
+                                    showLegend: false,
+                                    getTooltipBuilder: $component.getTooltipBuilder
                                     }
                                 }"
                         />

@@ -30,6 +30,7 @@ define(
 
         this.summary = {
           personsCount: ko.observable(),
+          personsPct: ko.observable(),
           visitsCount: ko.observable(),
           visitsPer1000: ko.observable(),
           visitsPer1000WithVisits: ko.observable(),
@@ -54,48 +55,57 @@ define(
             data: 'personsCount',
             className: this.classes('tbl-col', 'persons-count'),
             showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
           },
           {
             title: 'Percent Persons',
             data: 'personsPct',
             className: this.classes('tbl-col', 'persons-pct'),
             showInChart: true,
+            render: BaseCostUtilReport.formatPercents,
+            yFormat: BaseCostUtilReport.formatPercents,
           },
           {
             title: 'Total Records',
             data: 'visitsCount',
             className: this.classes('tbl-col', 'records-total'),
             showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
           },
           {
             title: 'Records per 1000',
             data: 'visitsPer1000',
             className: this.classes('tbl-col', 'records-per-1000'),
             showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
           },
           {
             title: 'Records per 1,000 with record',
             data: 'visitsPer1000WithVisits',
             className: this.classes('tbl-col', 'records-per-1000-with-records'),
             showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
           },
           {
             title: 'Records per 1,000 Per Year',
             data: 'visitsPer1000PerYear',
             className: this.classes('tbl-col', 'records-per-1000-per-year'),
             showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
           },
           {
             title: 'Total length of stay (in days)',
             data: 'lengthOfStayTotal',
             className: this.classes('tbl-col', 'total-length-stay'),
             showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
           },
           {
             title: 'Average Length of Stay (in days)',
             data: 'lengthOfStayAvg',
             className: this.classes('tbl-col', 'total-length-avg'),
             showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
           },
         ];
 
@@ -153,12 +163,14 @@ define(
             filters,
           })
           .then(({ summary, data, visitConcepts, visitTypeConcepts }) => {
-
-            Object.keys(summary).forEach(sKey => {
-              if (typeof this.summary[sKey] === 'function') {
-                this.summary[sKey](summary[sKey]);
-              }
-            });
+            this.summary.personsCount(BaseCostUtilReport.formatFullNumber(summary.personsCount));
+            this.summary.personsPct(BaseCostUtilReport.formatPercents(summary.personsPct));
+            this.summary.visitsCount(BaseCostUtilReport.formatFullNumber(summary.visitsCount));
+            this.summary.visitsPer1000(BaseCostUtilReport.formatFullNumber(summary.visitsPer1000));
+            this.summary.visitsPer1000WithVisits(BaseCostUtilReport.formatFullNumber(summary.visitsPer1000WithVisits));
+            this.summary.visitsPer1000PerYear(BaseCostUtilReport.formatFullNumber(summary.visitsPer1000PerYear));
+            this.summary.lengthOfStayTotal(BaseCostUtilReport.formatFullNumber(summary.lengthOfStayTotal));
+            this.summary.lengthOfStayAvg(BaseCostUtilReport.formatFullNumber(summary.lengthOfStayAvg));
 
             this.setupVisitConceptOptions(visitConcepts);
             this.setupVisitTypeConceptOptions(visitTypeConcepts);

@@ -17,6 +17,7 @@ define(
         tickFormat,
         height: manualHeight,
         showLegend = true,
+        getTooltipBuilder,
       } = valueAccessor();
 
       const linechart = new atlascharts.line();
@@ -32,6 +33,7 @@ define(
         xFormat,
         yFormat,
         xScale,
+        getTooltipBuilder,
       });
     }
 

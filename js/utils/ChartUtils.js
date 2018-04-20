@@ -50,6 +50,9 @@ define(
             .treemap_zoomtarget {
               padding: 0.5rem 20px;
             }
+            .overlay {
+              opacity: 0;
+            }
           ]]>`;
       }
 
