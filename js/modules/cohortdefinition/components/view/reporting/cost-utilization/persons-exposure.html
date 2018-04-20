@@ -43,7 +43,8 @@
                             xLabel: '',
                             xFormat: $component.formatDate,
                             yLabel: 'Persons',
-                            tickFormat: $component.emptyTickFormat,
+                            yFormat: $component.formatRounded,
+                            tickFormat: $component.dateTickFormat,
                             height: 250,
                             showLegend: false
                         }}"
@@ -56,7 +57,8 @@
                             xLabel: '',
                             xFormat: $component.formatDate,
                             yLabel: 'Total Exposure in years',
-                            tickFormat: $component.emptyTickFormat,
+                            yFormat: $component.formatRounded,
+                            tickFormat: $component.dateTickFormat,
                             height: 250,
                             showLegend: false
                         }}"
@@ -69,6 +71,7 @@
                             xLabel: 'Period start',
                             xFormat: $component.formatDate,
                             yLabel: 'Average Exposure per person',
+                            yFormat: $component.formatRounded,
                             tickFormat: $component.dateTickFormat,
                             height: 250,
                             showLegend: false

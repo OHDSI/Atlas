@@ -59,6 +59,7 @@ define(
         this.dateTickFormat = d3.timeFormat('%Y-%m-%d');
         this.emptyTickFormat = () => null;
         this.formatDate = val => MomentAPI.formatDate(val, 'D MMM Y'); // TODO: display interval
+        this.formatRounded = d3.format(".0s");
       }
 
       static conceptsToOptions(conceptList) {
