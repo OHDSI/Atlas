@@ -287,7 +287,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		};
 		
 		pageModel.loadAndApplyAncestors = function(data) {
-			const selectedConceptIds = sharedState.selectedConcepts().map(v => v.concept.CONCEPT_ID);
+			const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
 			const ids = [];
 			$.each(data, (i, element ) => {
 				if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
