@@ -45,9 +45,9 @@ define(
             filters,
           })
           .then(({ summary, data }) => {
-            this.summary.personsCount(summary.personsCount);
-            this.summary.exposureTotal(summary.exposureTotal);
-            this.summary.exposureAvg(summary.exposureAvg);
+            this.summary.personsCount(BaseCostUtilReport.formatFullNumber(summary.personsCount));
+            this.summary.exposureTotal(BaseCostUtilReport.formatFullNumber(summary.exposureTotal));
+            this.summary.exposureAvg(BaseCostUtilReport.formatFullNumber(summary.exposureAvg));
             this.dataList(data);
           });
       }

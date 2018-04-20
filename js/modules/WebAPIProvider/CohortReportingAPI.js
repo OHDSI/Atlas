@@ -123,44 +123,44 @@ define(function (require, exports) {
       analyses: [3000, 3001]
     },
     healthcareUtilPersonAndExposureBaseline: {
-      name: "Healthcare Utilization. Persons and Exposure during baseline period",
-      reportKey: "Healthcare Utilization. Persons and Exposure during baseline period",
+      name: "Persons and Exposure during baseline period",
+      reportKey: "Persons and Exposure during baseline period",
       analyses: [4000]
     },
     healthcareUtilPersonAndExposureCohort: {
-      name: "Healthcare Utilization. Distribution of observation period days per subject, by period_id during cohort period",
-      reportKey: "Healthcare Utilization. Distribution of observation period days per subject, by period_id during cohort period",
+      name: "Persons and Exposure during cohort period",
+      reportKey: "Persons and Exposure during cohort period",
       analyses: [4006]
     },
     healthcareUtilVisitRecordsBaseline: {
-      name: "Visit Utilization. Visit records during baseline period",
-      reportKey: "Visit Utilization. Visit records during baseline period",
-      analyses: [4000, 4001, 4002]
+      name: "Visits during baseline period",
+      reportKey: "Visits during baseline period",
+      analyses: [4000, 4001, 4002, 4005]
     },
     healthcareUtilVisitDatesBaseline: {
-      name: "Visit Utilization. Visit dates during baseline period",
-      reportKey: "Visit Utilization. Visit dates during baseline period",
-      analyses: [4000, 4001, 4003]
+      name: "Visit-dates during baseline period",
+      reportKey: "Visit-dates during baseline period",
+      analyses: [4000, 4001, 4003, 4005]
     },
     healthcareUtilCareSiteDatesBaseline: {
-      name: "Visit Utilization. Care-site Visit dates during baseline period",
-      reportKey: "Visit Utilization. Care-site Visit dates during baseline period",
-      analyses: [4000, 4001, 4004]
+      name: "Care-site-visit-dates during baseline period",
+      reportKey: "Care-site-visit-dates during baseline period",
+      analyses: [4000, 4001, 4004, 4005]
     },
     healthcareUtilVisitRecordsCohort: {
-      name: "Visit Utilization. Visit records during cohort period",
-      reportKey: "Visit Utilization. Visit records during cohort period",
-      analyses: [4006, 4007, 4008]
+      name: "Visits during cohort period",
+      reportKey: "Visits during cohort period",
+      analyses: [4006, 4007, 4008, 4011]
     },
     healthcareUtilVisitDatesCohort: {
-      name: "Visit Utilization. Visit dates during cohort period",
-      reportKey: "Visit Utilization. Visit dates during cohort period",
-      analyses: [4006, 4007, 4009]
+      name: "Visit-dates during cohort period",
+      reportKey: "Visit-dates during cohort period",
+      analyses: [4006, 4007, 4009, 4011]
     },
     healthcareUtilCareSiteDatesCohort: {
-      name: "Visit Utilization Report. Care-site Visit dates during cohort period",
-      reportKey: "Visit Utilization Report: Care-site Visit dates during cohort period",
-      analyses: [4006, 4007, 4010]
+      name: "Care-site-visit-dates during cohort period",
+      reportKey: "Care-site-visit-dates during cohort period",
+      analyses: [4006, 4007, 4010, 4011]
     },
     healthcareUtilDrugBaseline: {
       name: "Drug Utilization during baseline period",
