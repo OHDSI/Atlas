@@ -55,14 +55,25 @@ define(function(require, exports){
     });
   }
 
+	function getEngineStatus(callback) {
+		return $.ajax({
+			url: `${config.api.url}${executionPath}/status`,
+			method: 'GET',
+			contentType: 'application/json',
+			error: authApi.handleAccessDenied,
+      success: callback
+		});
+  }
+
   function viewResults(executionId){
     window.open(`${config.api.url}${executionPath}/execution/results/${executionId}`);
   }
 
-  var api = {
+  const api = {
     runExecution: runExecution,
     loadExecutions: loadExecutions,
     viewResults: viewResults,
+		getEngineStatus: getEngineStatus,
 		executionPath: executionPath
   };
 

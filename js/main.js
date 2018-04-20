@@ -182,7 +182,7 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, sourceApi, util, lscache, sharedState, vocabAPI) {
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'webapi/ExecutionAPI', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, sourceApi, util, lscache, sharedState, vocabAPI, executionAPI) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
 
@@ -252,6 +252,11 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
         });
       }
 		}
+
+		executionAPI.getEngineStatus(v => {
+			config.api.isExecutionEngineAvailable = (v.status === 'ONLINE')
+		});
+
 
 		$.when.apply($, pageModel.initPromises).done(function () {
 			pageModel.initComplete();

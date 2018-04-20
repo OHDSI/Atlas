@@ -21,10 +21,10 @@
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'specification' }, click: function() { $component.tabMode('specification'); }">
 			<a>Specification</a>
 		</li>
-		<li role="presentation" data-bind="visible: config.plpResultsEnabled, css: { active: $component.tabMode() == 'inspector' }, click: function() { $component.tabMode('inspector'); }">
+		<li role="presentation" data-bind="visible: false, css: { active: $component.tabMode() == 'inspector' }, click: function() { $component.tabMode('inspector'); }">
 			<a>Inspector</a>
 		</li>
-		<li role="presentation" data-bind="visible: config.plpResultsEnabled, css: { active: $component.tabMode() == 'performance' }, click: function() { $component.tabMode('performance'); }">
+		<li role="presentation" data-bind="visible: false, css: { active: $component.tabMode() == 'performance' }, click: function() { $component.tabMode('performance'); }">
 			<a>Performance</a>
 		</li>
 		<li role="presentation" data-bind="visible: config.plpResultsEnabled,css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a></li>
@@ -101,7 +101,7 @@
 					<div class="col-sm-8" data-bind="text:sourceName"></div>
 					<div class="col-sm-4 text-right">
 					  <span class="btn-group">
-										<button data-bind="click:function() {$component.executePLP(sourceKey)}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
+										<button data-bind="css:{disabled: $component.config.api.isExecutionEngineAvailable==false}, click:function() {$component.executePLP(sourceKey)}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
 										<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
 										<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
 										<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">

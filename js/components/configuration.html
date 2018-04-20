@@ -25,6 +25,19 @@
 						<span class="btn btn-sm btn-primary" data-bind="click: $component.newSource, visible: $component.config.userAuthenticationEnabled, css: {disabled: !$component.canCreateSource()}">New Source</span>
 					</div>
 				</div>
+				<div data-bind="if: $component.config.useExecutionEngine" class="configureHeader">
+					<div class="left">
+						<div data-bind="if:isExecutionEngineAvailable==true">
+							<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
+						</div>
+
+						<div data-bind="if:isExecutionEngineAvailable==false">
+							<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
+						</div>
+
+						<span class="serviceName">Execution engine</span>
+					</div>
+				</div>
 				<div data-bind="if:available==false">
 					<div class="error" data-bind="text:xhr.statusText"></div>
 				</div>
