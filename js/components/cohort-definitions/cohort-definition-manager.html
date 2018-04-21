@@ -122,7 +122,7 @@
 				<div class="loading" data-bind="if:model.currentView() === 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
 
 				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !model.loadingIncluded()">
-					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
+					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: model.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
 				</div>
 
 				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes && !model.loadingSourcecodes() && !model.loadingIncluded()">
@@ -580,3 +580,5 @@
 	</div>
 	<conceptset-save params="conceptSetName: newConceptSetName, onSave: saveConceptSet, show: saveConceptSetShow"></conceptset-save>
 </div>
+
+<conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model, title: 'Common Ancestors'}"></conceptset-list-modal>

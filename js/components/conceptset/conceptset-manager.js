@@ -9,6 +9,7 @@ define(['knockout',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'clipboard',
+	'services/ConceptSetService',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -17,7 +18,7 @@ define(['knockout',
 	'circe',
 	'conceptset-modal',
 	'css!components/conceptset/style.css',
-], function (ko, view, config, ohdsiUtil, utils, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard) {
+], function (ko, view, config, ohdsiUtil, utils, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard, conceptSetService) {
 	function conceptsetManager(params) {
 		var self = this;
 		var authApi = params.model.authApi;
@@ -25,6 +26,7 @@ define(['knockout',
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
 		self.defaultConceptSetName = "New Concept Set";
+		self.ancestorsModalIsShown = ko.observable(false);
 		self.isAuthenticated = authApi.isAuthenticated;
 		self.canReadConceptsets = ko.pureComputed(function () {
 			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
@@ -80,6 +82,9 @@ define(['knockout',
 		self.compareError = ko.pureComputed(function () {
 			return (self.compareCS1Id() == self.compareCS2Id())
 		});
+
+		self.ancestors = ko.observableArray([]);
+		
 		self.compareReady = ko.pureComputed(function () {
 			// both are specified & not the same
 			var conceptSetsSpecifiedAndDifferent = (
@@ -372,8 +377,14 @@ define(['knockout',
 		}, {
 			title: 'Vocabulary',
 			data: 'VOCABULARY_ID'
+		}, {
+			title: 'Ancestors',
+			data: 'ANCESTORS',
+			render: conceptSetService.getAncestorsRenderFunction()
 		}];
 
+		self.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback(self);
+		
 		self.searchConceptsOptions = {
 			Facets: [{
 				'caption': 'Vocabulary',
@@ -939,7 +950,9 @@ define(['knockout',
 					includeMapped: true
 				})
 			});
-
+		
+		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler(self);
+		
 		self.canSave = ko.computed(function () {
 			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());
 		});

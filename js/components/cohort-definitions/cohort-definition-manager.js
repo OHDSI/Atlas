@@ -15,15 +15,17 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'clipboard',
 	'd3',
 	'job/jobDetail',
-  'components/cohort-definitions/const',
-  'cohortbuilder/components/FeasibilityReportViewer',
-  'databindings',
-  'faceted-datatable',
-  'cohortdefinitionviewer/expressionCartoonBinding',
-  'cohortfeatures',
+	'components/cohort-definitions/const',
+	'webapi/ConceptSetAPI',
+	'services/ConceptSetService',
+	'cohortbuilder/components/FeasibilityReportViewer',
+	'databindings',
+	'faceted-datatable',
+	'cohortdefinitionviewer/expressionCartoonBinding',
+	'cohortfeatures',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst, conceptSetAPI, conceptSetService) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -105,6 +107,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			return authApi.isPermittedReadCohort(self.model.currentCohortDefinition().id());
 		});
+		
 		self.hasAccessToGenerate = function (sourceKey) {
 			if (isNew()) {
 				return false;
@@ -257,8 +260,17 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}, {
 			title: 'Vocabulary',
 			data: 'VOCABULARY_ID'
+		}, {
+			title: 'Ancestors',
+			data: 'ANCESTORS',
+			render: conceptSetService.getAncestorsRenderFunction()
 		}];
 
+		self.ancestors = ko.observableArray();
+		self.ancestorsModalIsShown = ko.observable(false);
+		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler(self);
+		self.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ ...self, searchConceptsColumns: self.includedConceptsColumns });
+		
 		self.includedConceptsOptions = {
 			Facets: [{
 				'caption': 'Vocabulary',

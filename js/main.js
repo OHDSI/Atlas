@@ -103,6 +103,7 @@ requirejs.config({
 		"conceptset-editor": "components/conceptset/conceptset-editor",
 		"conceptset-manager": "components/conceptset/conceptset-manager",
 		"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
+		"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
 		"cohort-comparison-manager": "components/cohort-comparison-manager",
 		"job-manager": "components/job-manager",
 		"data-sources": "components/data-sources",
@@ -273,29 +274,74 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 		});
 
+		pageModel.loadAncestors = function(ancestors, descendants) {
+			return $.ajax({
+				url: sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					ancestors: ancestors,
+					descendants: descendants
+				})
+			});
+		};
+		
+		pageModel.loadAndApplyAncestors = function(data) {
+			const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
+			const ids = [];
+			$.each(data, (i, element ) => {
+				if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
+					ids.push(element.CONCEPT_ID);
+				}
+			});
+			let resultPromise = $.Deferred();
+			if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
+				pageModel.loadAncestors(selectedConceptIds, ids).then(ancestors => {
+					const map = pageModel.includedConceptsMap();
+					$.each(data, (j, line) => {
+						const ancArray = ancestors[line.CONCEPT_ID];
+						if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
+							line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
+						}
+					});
+					resultPromise.resolve();
+				});
+			} else {
+				resultPromise.resolve();
+			}
+			return resultPromise;
+		};
+		
 		pageModel.loadIncluded = function (identifiers) {
 			pageModel.loadingIncluded(true);
 			var includedPromise = $.Deferred();
+
 			$.ajax({
 				url: sharedState.vocabularyUrl() + 'lookup/identifiers',
 				method: 'POST',
 				contentType: 'application/json',
-				data: JSON.stringify(identifiers || pageModel.conceptSetInclusionIdentifiers()),
+				data: JSON.stringify(identifiers ||pageModel.conceptSetInclusionIdentifiers()),
 				success: function (data) {
 					var densityPromise = vocabAPI.loadDensity(data);
 
-					$.when(densityPromise)
-						.done(function () {
-							pageModel.includedConcepts(data);
-							includedPromise.resolve();
-							pageModel.loadingIncluded(false);
-						});
-				}
-			});
+          $.when(densityPromise)
+            .done(function () {
+              pageModel.includedConcepts(data.map(v => ({...v, ANCESTORS: []})));
+              includedPromise.resolve();
+              pageModel.loadAndApplyAncestors(pageModel.includedConcepts());
+              pageModel.loadingIncluded(false);
+              const map = data.reduce((result, item) => {
+                result[item.CONCEPT_ID] = item;
+                return result;
+              }, {});
+              pageModel.includedConceptsMap(map);
+            });
+        }
+      });
 
-			return includedPromise;
-		}
-
+      return includedPromise;
+    }
+		
 		pageModel.loadSourcecodes = function () {
 			pageModel.loadingSourcecodes(true);
 
