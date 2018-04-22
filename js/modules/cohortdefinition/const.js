@@ -12,7 +12,7 @@ define(
           value: 'ww',
         },
         {
-          label: 'Montly',
+          label: 'Monthly',
           value: 'mm',
         },
         {

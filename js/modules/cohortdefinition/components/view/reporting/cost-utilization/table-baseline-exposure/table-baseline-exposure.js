@@ -51,7 +51,7 @@ define(
           yFormat: BaseCostUtilReport.formatPercents,
         },
         {
-          title: 'Average Exposure per 1,000 persons',
+          title: 'Average Exposure Years per 1,000 persons',
           data: 'exposureAvg',
           className: bemHelper.run('exposure-avg'),
           render: BaseCostUtilReport.formatFullNumber,
