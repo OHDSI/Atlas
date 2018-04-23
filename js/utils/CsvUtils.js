@@ -1,6 +1,6 @@
 define(
-  [],
-  function () {
+  ['file-saver'],
+  function(saveAs) {
     class CsvUtils {
       /**
        * Converts a value to a string appropriate for entry into a CSV table.  E.g., a string value will be surrounded by quotes.
@@ -79,14 +79,7 @@ define(
         const csvText = CsvUtils.toCsv(objArray, sDelimiter, cDelimiter);
 
         const blob = new Blob([csvText], {type: "text/csv;charset=utf-8"});
-        const url = window.URL.createObjectURL(blob);
-
-        const a = document.body.appendChild(document.createElement('a'));
-        a.download = 'data.csv';
-        a.href = url;
-        a.target = '_blank';
-        a.click();
-        setTimeout(a.remove);
+        saveAs(blob, 'data.csv');
       }
     }
 
