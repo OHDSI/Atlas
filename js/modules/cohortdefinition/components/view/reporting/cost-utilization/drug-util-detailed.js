@@ -5,10 +5,11 @@ define(
     './base-drug-util-report',
     'appConfig',
     'modules/cohortdefinition/services/CohortResultsService',
+    'modules/cohortdefinition/const',
     'components/visualizations/filter-panel/filter-panel',
     'less!./drug-util-detailed.less',
   ],
-  function (ko, view, BaseDrugUtilReport, appConfig, CohortResultsService) {
+  function (ko, view, BaseDrugUtilReport, appConfig, CohortResultsService, costUtilConst) {
 
     const componentName = 'cost-utilization-drug-detailed-util';
 
@@ -43,6 +44,13 @@ define(
         this.init();
         this.setupChartsData(chartList);
         this.loadFilterOptions({ drugConceptId: this.drugConceptId });
+      }
+
+      getFilterList() {
+        return [
+          costUtilConst.getPeriodTypeFilter(),
+          ...super.getFilterList(),
+        ];
       }
 
       fetchAPI({ filters }) {

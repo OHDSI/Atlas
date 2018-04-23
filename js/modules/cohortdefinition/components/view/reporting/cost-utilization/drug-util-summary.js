@@ -20,9 +20,25 @@ define(
 
         this.drugsTableColumns = [
           {
+            title: 'OMOP Concept',
+            data: 'drugId',
+            className: this.classes('tbl-col', 'drug-id'),
+            render: id => `<a href=\"#/concept/${id}\">${id}</a>`,
+          },
+          {
             title: 'Drug',
             data: 'drugName',
             className: this.classes('tbl-col', 'drug'),
+          },
+          {
+            title: 'Concept vocabulary',
+            data: 'drugVocabularyId',
+            className: this.classes('tbl-col', 'drug-vocab'),
+          },
+          {
+            title: 'Concept class',
+            data: 'drugClass',
+            className: this.classes('tbl-col', 'drug-class'),
           },
           ...this.drugsTableColumns,
         ];

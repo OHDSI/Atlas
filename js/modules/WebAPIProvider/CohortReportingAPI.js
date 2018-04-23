@@ -125,54 +125,154 @@ define(function (require, exports) {
     healthcareUtilPersonAndExposureBaseline: {
       name: "Persons and Exposure during baseline period",
       reportKey: "Persons and Exposure during baseline period",
-      analyses: [4000]
+      analyses: [4000],
+      helpContent: `
+        <b>Baseline  period:</b> is the 365 days before the first cohort start date for each person not including cohort start date.<br/>
+        <b>Person count:</b> number of unique subjects with person time exposure during the interval period.<br/>
+        <b>Total Exposure in Years:</b> number of person years contributed by all subjects during the interval period.<br/>
+        <b>Average Exposure Years per 1,000 persons:</b> (Total Exposure in Years/Person count)*1,000.<br/>
+      `,
     },
     healthcareUtilPersonAndExposureCohort: {
       name: "Persons and Exposure during cohort period",
       reportKey: "Persons and Exposure during cohort period",
-      analyses: [4006]
+      analyses: [4006],
+      helpContent: `
+        <b>Cohort period:</b> is the interval between cohort start date and cohort end date for each subject including both dates.<br/>
+        <b>Person count:</b> number of unique subjects with exposure during the interval period.<br/>
+        <b>Total Exposure in Years:</b> number of years contributed by all subjects during the interval period.<br/>
+        <b>Average Exposure Years per 1,000 persons:</b> (Total Exposure in Years/Person count)*1,000.<br/>
+      `,
     },
     healthcareUtilVisitRecordsBaseline: {
       name: "Visits during baseline period",
       reportKey: "Visits during baseline period",
-      analyses: [4000, 4001, 4002, 4005]
+      analyses: [4000, 4001, 4002, 4005, ...ifCosts([4020])],
+      helpContent: `
+        <b>Baseline  period:</b> is the 365 days before the first cohort start date for each subject not including cohort start date.<br/>
+        <b>Visit Record:</b> A visit record corresponds to visit_occurrence_id in visit_occurrence table.<br/>
+        <b>Person Count:</b> number of unique persons with a visit record during the interval period.<br/>
+        <b>Person Percent:</b> percent of persons with exposure who had a visit record in the interval period.<br/>
+        <b>Total Records:</b> total number of records during the interval period.<br/>
+        <b>Records per 1,000:</b> Total number of records per 1,000 subjects with exposure during the interval period.<br/>
+        <b>Records per 1,000 with record:</b> Total number of visit records per 1,000 persons who have visit records during the interval period.<br/>
+        <b>Records per 1,000 Per Year:</b> Total number of visit records per 1,000 person years during interval period.<br/>
+        <b>Total length of stay (in days):</b> is the sum of duration of many single episodes of inpatient days are calculated by subtracting visit start date from visit end date. This information is only populated for inpatient visits.<br/>
+        <b>Average Length of Stay (in days):</b> is the average of total length of stay per person. This information is only populated for inpatient visits.<br/>
+      `,
     },
     healthcareUtilVisitDatesBaseline: {
       name: "Visit-dates during baseline period",
       reportKey: "Visit-dates during baseline period",
-      analyses: [4000, 4001, 4003, 4005]
+      analyses: [4000, 4001, 4003, 4005, ...ifCosts([4020])],
+      helpContent: `
+        <b>Baseline  period:</b> is the 365 days before the first cohort start date for each subject not including cohort start date.<br/>
+        <b>Visit Record:</b> A visit record corresponds to unique combination person_id and visit_start_date in the visit_occurrence table.<br/>
+        <b>Person Count:</b> number of unique persons with a visit record during the interval period.<br/>
+        <b>Person Percent:</b> percent of persons with exposure who had a visit record in the interval period.<br/>
+        <b>Total Records:</b> total number of records during the interval period.<br/>
+        <b>Records per 1,000:</b> Total number of records per 1,000 subjects with exposure during the interval period.<br/>
+        <b>Records per 1,000 with record:</b> Total number of visit records per 1,000 persons who have visit records during the interval period.<br/>
+        <b>Records per 1,000 Per Year:</b> Total number of visit records per 1,000 person years during interval period.<br/>
+        <b>Total length of stay (in days):</b> is the sum of duration of many single episodes of inpatient days are calculated by subtracting visit start date from visit end date. This information is only populated for inpatient visits.<br/>
+        <b>Average Length of Stay (in days):</b> is the average of total length of stay per person. This information is only populated for inpatient visits.<br/>
+      `,
     },
     healthcareUtilCareSiteDatesBaseline: {
       name: "Care-site-visit-dates during baseline period",
       reportKey: "Care-site-visit-dates during baseline period",
-      analyses: [4000, 4001, 4004, 4005]
+      analyses: [4000, 4001, 4004, 4005, ...ifCosts([4020])],
+      helpContent: `
+        <b>Baseline  period:</b> is the 365 days before the first cohort start date for each subject not including cohort start date.<br/>
+        <b>Visit Record:</b> A visit record corresponds to unique combination person_id, care_site_id and visit_start_date in the visit_occurrence table.<br/>
+        <b>Person Count:</b> number of unique persons with a visit record during the interval period.<br/>
+        <b>Person Percent:</b> percent of persons with exposure who had a visit record in the interval period.<br/>
+        <b>Total Records:</b> total number of records during the interval period.<br/>
+        <b>Records per 1,000:</b> Total number of records per 1,000 subjects with exposure during the interval period.<br/>
+        <b>Records per 1,000 with record:</b> Total number of visit records per 1,000 persons who have visit records during the interval period.<br/>
+        <b>Records per 1,000 Per Year:</b> Total number of visit records per 1,000 person years during interval period.<br/>
+        <b>Total length of stay (in days):</b> is the sum of duration of many single episodes of inpatient days are calculated by subtracting visit start date from visit end date. This information is only populated for inpatient visits.<br/>
+        <b>Average Length of Stay (in days):</b> is the average of total length of stay per person. This information is only populated for inpatient visits.<br/>
+      `
     },
     healthcareUtilVisitRecordsCohort: {
       name: "Visits during cohort period",
       reportKey: "Visits during cohort period",
-      analyses: [4006, 4007, 4008, 4011]
+      analyses: [4006, 4007, 4008, 4011, ...ifCosts([4021])],
+      helpContent: `
+        <b>Cohort period:</b> is the interval between cohort start date and cohort end date for each subject including both dates<br/>
+        <b>Visit Record:</b> A visit record corresponds to visit_occurrence_id in visit_occurrence table.<br/>
+        <b>Person Count:</b> number of unique persons with a visit record during the interval period.<br/>
+        <b>Person Percent:</b> percent of persons with exposure who had a visit record in the interval period.<br/>
+        <b>Total Records:</b> total number of records during the interval period.<br/>
+        <b>Records per 1,000:</b> Total number of records per 1,000 subjects with exposure during the interval period.<br/>
+        <b>Records per 1,000 with record:</b> Total number of visit records per 1,000 persons who have visit records during the interval period.<br/>
+        <b>Records per 1,000 Per Year:</b> Total number of visit records per 1,000 person years during interval period.<br/>
+        <b>Total length of stay (in days):</b> is the sum of duration of many single episodes of inpatient days are calculated by subtracting visit start date from visit end date. This information is only populated for inpatient visits.<br/>
+        <b>Average Length of Stay (in days):</b> is the average of total length of stay per person. This information is only populated for inpatient visits.<br/>
+      `
     },
     healthcareUtilVisitDatesCohort: {
       name: "Visit-dates during cohort period",
       reportKey: "Visit-dates during cohort period",
-      analyses: [4006, 4007, 4009, 4011]
+      analyses: [4006, 4007, 4009, 4011, ...ifCosts([4021])],
+      helpContent: `
+        <b>Cohort period:</b> is the interval between cohort start date and cohort end date for each subject including both dates.<br/>
+        <b>Visit Record:</b> A visit record corresponds to unique combination person_id and visit_start_date in the visit_occurrence table.<br/>
+        <b>Person Count:</b> number of unique persons with a visit record during the interval period.<br/>
+        <b>Person Percent:</b> percent of persons with exposure who had a visit record in the interval period.<br/>
+        <b>Total Records:</b> total number of records during the interval period.<br/>
+        <b>Records per 1,000:</b> Total number of records per 1,000 subjects with exposure during the interval period.<br/>
+        <b>Records per 1,000 with record:</b> Total number of visit records per 1,000 persons who have visit records during the interval period.<br/>
+        <b>Records per 1,000 Per Year:</b> Total number of visit records per 1,000 person years during interval period.<br/>
+        <b>Total length of stay (in days):</b> is the sum of duration of many single episodes of inpatient days are calculated by subtracting visit start date from visit end date. This information is only populated for inpatient visits.<br/>
+        <b>Average Length of Stay (in days):</b> is the average of total length of stay per person. This information is only populated for inpatient visits.<br/>
+      `,
     },
     healthcareUtilCareSiteDatesCohort: {
       name: "Care-site-visit-dates during cohort period",
       reportKey: "Care-site-visit-dates during cohort period",
-      analyses: [4006, 4007, 4010, 4011]
+      analyses: [4006, 4007, 4010, 4011, ...ifCosts([4021])],
+      helpContent: `
+        <b>Cohort period:</b> is the interval between cohort start date and cohort end date for each subject including both dates.<br/>
+        <b>Visit Record:</b> A visit record corresponds to unique combination person_id, care_site_id and visit_start_date in the visit_occurrence table.<br/>
+        <b>Person Count:</b> number of unique persons with a visit record during the interval period.<br/>
+        <b>Person Percent:</b> percent of persons with exposure who had a visit record in the interval period.<br/>
+        <b>Total Records:</b> total number of records during the interval period.<br/>
+        <b>Records per 1,000:</b> Total number of records per 1,000 subjects with exposure during the interval period.<br/>
+        <b>Records per 1,000 with record:</b> Total number of visit records per 1,000 persons who have visit records during the interval period.<br/>
+        <b>Records per 1,000 Per Year:</b> Total number of visit records per 1,000 person years during interval period.<br/>
+        <b>Total length of stay (in days):</b> is the sum of duration of many single episodes of inpatient days are calculated by subtracting visit start date from visit end date. This information is only populated for inpatient visits.<br/>
+        <b>Average Length of Stay (in days):</b> is the average of total length of stay per person. This information is only populated for inpatient visits.<br/>
+      `,
     },
     healthcareUtilDrugBaseline: {
       name: "Drug Utilization during baseline period",
       reportKey: "Drug Utilization during baseline period",
-      analyses: [4000, 4012, 4013, 4014, 4015]
+      analyses: [4000, 4012, 4013, 4014, 4015, ...ifCosts([4022])],
+      helpContent: `
+        <b>Baseline  period:</b> is the 365 days before the first cohort start date for each subject not including cohort start date.<br/>
+        <b>Person count:</b> number of unique persons with a drug exposure record during the interval period.<br/>
+        <b>Record:</b> corresponds to drug_exposure_id in drug_exposure table.<br/>
+        <b>Total records:</b> total number of records during the interval period.<br/>
+        <b>Records per 1,000:</b> Total number of records per 1,000 subjects with exposure during the interval period.<br/>
+        <b>Records per 1,000 with records:</b> Total number of visit records per 1,000 persons who have visit records during the interval period.<br/>
+        <b>Total Day Supply (in Days):</b> is the sum of day supply of drug_exposure records calculated by adding the values in the field days_supply<br/>
+        <b>Average Day Supply (in Days):</b> is the average of day supply of drug_exposure records calculated by adding the values in the field days_supply<br/>
+      `,
     },
     healthcareUtilDrugCohort: {
       name: "Drug Utilization during cohort period",
       reportKey: "Drug Utilization during cohort period",
-      analyses: [4006, 4016, 4017, 4018, 4019]
+      analyses: [4006, 4016, 4017, 4018, 4019, ...ifCosts([4023])],
+      helpContent: `
+      `
     },
   };
+
+	function ifCosts(ids) {
+	  return config.enableCosts ? ids : [];
+  }
 
 	function getAnalysisIdentifiers() {
 		var identifiers = [];

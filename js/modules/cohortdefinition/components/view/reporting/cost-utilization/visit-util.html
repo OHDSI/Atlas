@@ -19,6 +19,7 @@
                     <th data-bind="css: classes('summary-table-cell')">Total length of stay (in days)</th>
                     <th data-bind="css: classes('summary-table-cell')">Average Length of Stay (in days)</th>
                     <!-- ko if: $component.enableCosts -->
+                        <th data-bind="css: classes('summary-table-cell')">Allowed cost</th>
                         <th data-bind="css: classes('summary-table-cell')">Allowed cost pmpm</th>
                         <th data-bind="css: classes('summary-table-cell')">Charged cost</th>
                         <th data-bind="css: classes('summary-table-cell')">Charged cost PMPM</th>
@@ -40,13 +41,14 @@
                     <td data-bind="text: summary.lengthOfStayTotal"/>
                     <td data-bind="text: summary.lengthOfStayAvg"/>
                     <!-- ko if: $component.enableCosts -->
-                        <td/>
-                        <td/>
-                        <td/>
-                        <td/>
-                        <td/>
-                        <td/>
-                        <td/>
+                        <td data-bind="text: summary.allowed"/>
+                        <td data-bind="text: summary.allowedPmPm"/>
+                        <td data-bind="text: summary.charged"/>
+                        <td data-bind="text: summary.chargedPmPm"/>
+                        <td data-bind="text: summary.paid"/>
+                        <td data-bind="text: summary.paidPmPm"/>
+                        <td data-bind="text: summary.allowedChargedRatio"/>
+                        <td data-bind="text: summary.paidAllowedRatio"/>
                     <!-- /ko -->
                 </tr>
                 </tbody>
