@@ -24,7 +24,8 @@ define(
 
       const width = $linechart.width();
       const height = manualHeight || Math.min($linechart.width(), 500);
-      linechart.render(lineChartData(), $linechart[0], width, height, {
+      const data = lineChartData();
+      linechart.render(data, $linechart[0], width, height, {
         xLabel,
         yLabel,
         showLegend,
@@ -34,6 +35,7 @@ define(
         yFormat,
         xScale,
         getTooltipBuilder,
+        yScale: atlascharts.line.getRelativeY({ data, height }),
       });
     }
 
