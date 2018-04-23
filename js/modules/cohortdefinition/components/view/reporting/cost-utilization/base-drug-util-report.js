@@ -108,7 +108,6 @@ define(
 
       getFilterList() {
         return [
-          costUtilConst.getPeriodTypeFilter(),
           {
             type: 'select',
             label: 'Drug Source',
