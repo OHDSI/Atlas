@@ -103,12 +103,12 @@ define(
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
+          ...(appConfig.enableCosts ? BaseDrugUtilReport.getCostColumns() : []),
         ];
       }
 
       getFilterList() {
         return [
-          costUtilConst.getPeriodTypeFilter(),
           {
             type: 'select',
             label: 'Drug Source',

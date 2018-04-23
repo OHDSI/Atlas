@@ -75,6 +75,67 @@ define(
         return numeral(val).format('0,0.00') + '%';
       }
 
+      static getCostColumns() {
+        return [
+          {
+            title: 'Allowed cost',
+            data: 'allowed',
+            className: this.classes('tbl-col', 'allowed'),
+            showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
+          },
+          {
+            title: 'Allowed cost PMPM',
+            data: 'allowedPmPm',
+            className: this.classes('tbl-col', 'allowed-pmpm'),
+            showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
+          },
+          {
+            title: 'Charged cost',
+            data: 'charged',
+            className: this.classes('tbl-col', 'charged'),
+            showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
+          },
+          {
+            title: 'Charged cost PMPM',
+            data: 'chargedPmPm',
+            className: this.classes('tbl-col', 'charged'),
+            showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
+          },
+          {
+            title: 'Paid cost',
+            data: 'paid',
+            className: this.classes('tbl-col', 'paid'),
+            showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
+          },
+          {
+            title: 'Paid cost PMPM',
+            data: 'paidPmPm',
+            className: this.classes('tbl-col', 'paid-pmpm'),
+            showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
+          },
+          {
+            title: 'Allowed/Charged',
+            data: 'allowedChargedRatio',
+            className: this.classes('tbl-col', 'allowed-charged-ratio'),
+            showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
+          },
+          {
+            title: 'Paid/Allowed',
+            data: 'paidAllowedRatio',
+            className: this.classes('tbl-col', 'paid-allowed-ratio'),
+            showInChart: true,
+            render: BaseCostUtilReport.formatFullNumber,
+          },
+        ];
+      }
+
       getTooltipBuilder(options) {
         return (d) => {
           let tipText = '';

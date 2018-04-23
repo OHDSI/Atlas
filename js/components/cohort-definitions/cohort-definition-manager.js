@@ -911,7 +911,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				self.reportingState() != 'generating_reports';
 		});
 
-		self.generateAnalyses = function ({ analysisIdentifiers, runHeraclesHeel }) {
+		self.generateAnalyses = function ({ descr, duration, analysisIdentifiers, runHeraclesHeel }) {
+			if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
+				return;
+			}
+
 			self.generateReportsEnabled(false);
 			analysisIdentifiers = _.uniq(analysisIdentifiers);
 			var cohortDefinitionId = pageModel.currentCohortDefinition().id();
@@ -976,15 +980,30 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		};
 
     self.generateQuickAnalysis = function () {
-      self.generateAnalyses({ analysisIdentifiers: cohortReportingAPI.getQuickAnalysisIdentifiers(), runHeraclesHeel: false });
+      self.generateAnalyses({
+        descr: 'minimal analyses set to provide a quick overview of the cohort',
+        duration: '10 minutes',
+				analysisIdentifiers: cohortReportingAPI.getQuickAnalysisIdentifiers(),
+				runHeraclesHeel: false
+      });
     };
 
     self.generateHealthcareAnalyses = function () {
-      self.generateAnalyses({ analysisIdentifiers: cohortReportingAPI.getHealthcareAnalysesIdentifiers(), runHeraclesHeel: false });
+      self.generateAnalyses({
+        descr: 'the Cost and Utilization analyses',
+				duration: '10-45 minutes',
+				analysisIdentifiers: cohortReportingAPI.getHealthcareAnalysesIdentifiers(),
+				runHeraclesHeel: false
+      });
     };
 
     self.generateAllAnalyses = function () {
-      self.generateAnalyses({ analysisIdentifiers: cohortReportingAPI.getAnalysisIdentifiers(), runHeraclesHeel: true });
+      self.generateAnalyses({
+        descr: 'all analyses',
+        duration: '60-90 minutes',
+				analysisIdentifiers: cohortReportingAPI.getAnalysisIdentifiers(),
+				runHeraclesHeel: true
+      });
     };
 
 		// dispose subscriptions / cleanup computed observables (non-pureComputeds)
