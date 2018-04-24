@@ -5,12 +5,13 @@ define(
     './base-report',
     'modules/cohortdefinition/const',
     'modules/cohortdefinition/services/CohortResultsService',
+    'appConfig',
     'components/visualizations/filter-panel/filter-panel',
     'modules/cohortdefinition/components/view/reporting/cost-utilization/table-baseline-exposure/table-baseline-exposure',
     'less!./visit-util.less',
     'components/visualizations/line-chart',
   ],
-  function (ko, view, BaseCostUtilReport, costUtilConst, CohortResultsService) {
+  function (ko, view, BaseCostUtilReport, costUtilConst, CohortResultsService, appConfig) {
 
     const componentName = 'cost-utilization-visit-util';
 
@@ -107,6 +108,7 @@ define(
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
+          ...(appConfig.enableCosts ? VisitUtilReport.getCostColumns() : [])
         ];
 
         const chartList = this.tableColumns.filter(item => item.showInChart);

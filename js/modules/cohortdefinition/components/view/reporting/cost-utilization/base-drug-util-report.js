@@ -103,6 +103,7 @@ define(
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
+          ...(appConfig.enableCosts ? BaseDrugUtilReport.getCostColumns() : []),
         ];
       }
 
