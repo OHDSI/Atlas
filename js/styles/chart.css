@@ -108,10 +108,10 @@ table.data td {
 }
 .g-label-value,
 .g-label-year {
-	font-size: 5px;
+	font-size: 1.2em;
 }
 .trellisLegend {
-	font-size: 6px;
+	font-size: 1em;
 	font-family: arial;
 	/* margin: 10px; */
 }
