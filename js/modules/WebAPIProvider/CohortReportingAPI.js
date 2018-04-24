@@ -147,7 +147,7 @@ define(function (require, exports) {
     healthcareUtilVisitRecordsBaseline: {
       name: "Visits during baseline period",
       reportKey: "Visits during baseline period",
-      analyses: [4000, 4001, 4002, 4005],
+      analyses: [4000, 4001, 4002, 4005, ...ifCosts([4020])],
       helpContent: `
         <b>Baseline  period:</b> is the 365 days before the first cohort start date for each subject not including cohort start date.<br/>
         <b>Visit Record:</b> A visit record corresponds to visit_occurrence_id in visit_occurrence table.<br/>
@@ -164,7 +164,7 @@ define(function (require, exports) {
     healthcareUtilVisitDatesBaseline: {
       name: "Visit-dates during baseline period",
       reportKey: "Visit-dates during baseline period",
-      analyses: [4000, 4001, 4003, 4005],
+      analyses: [4000, 4001, 4003, 4005, ...ifCosts([4020])],
       helpContent: `
         <b>Baseline  period:</b> is the 365 days before the first cohort start date for each subject not including cohort start date.<br/>
         <b>Visit Record:</b> A visit record corresponds to unique combination person_id and visit_start_date in the visit_occurrence table.<br/>
@@ -181,7 +181,7 @@ define(function (require, exports) {
     healthcareUtilCareSiteDatesBaseline: {
       name: "Care-site-visit-dates during baseline period",
       reportKey: "Care-site-visit-dates during baseline period",
-      analyses: [4000, 4001, 4004, 4005],
+      analyses: [4000, 4001, 4004, 4005, ...ifCosts([4020])],
       helpContent: `
         <b>Baseline  period:</b> is the 365 days before the first cohort start date for each subject not including cohort start date.<br/>
         <b>Visit Record:</b> A visit record corresponds to unique combination person_id, care_site_id and visit_start_date in the visit_occurrence table.<br/>
@@ -198,7 +198,7 @@ define(function (require, exports) {
     healthcareUtilVisitRecordsCohort: {
       name: "Visits during cohort period",
       reportKey: "Visits during cohort period",
-      analyses: [4006, 4007, 4008, 4011],
+      analyses: [4006, 4007, 4008, 4011, ...ifCosts([4021])],
       helpContent: `
         <b>Cohort period:</b> is the interval between cohort start date and cohort end date for each subject including both dates<br/>
         <b>Visit Record:</b> A visit record corresponds to visit_occurrence_id in visit_occurrence table.<br/>
@@ -215,7 +215,7 @@ define(function (require, exports) {
     healthcareUtilVisitDatesCohort: {
       name: "Visit-dates during cohort period",
       reportKey: "Visit-dates during cohort period",
-      analyses: [4006, 4007, 4009, 4011],
+      analyses: [4006, 4007, 4009, 4011, ...ifCosts([4021])],
       helpContent: `
         <b>Cohort period:</b> is the interval between cohort start date and cohort end date for each subject including both dates.<br/>
         <b>Visit Record:</b> A visit record corresponds to unique combination person_id and visit_start_date in the visit_occurrence table.<br/>
@@ -232,7 +232,7 @@ define(function (require, exports) {
     healthcareUtilCareSiteDatesCohort: {
       name: "Care-site-visit-dates during cohort period",
       reportKey: "Care-site-visit-dates during cohort period",
-      analyses: [4006, 4007, 4010, 4011],
+      analyses: [4006, 4007, 4010, 4011, ...ifCosts([4021])],
       helpContent: `
         <b>Cohort period:</b> is the interval between cohort start date and cohort end date for each subject including both dates.<br/>
         <b>Visit Record:</b> A visit record corresponds to unique combination person_id, care_site_id and visit_start_date in the visit_occurrence table.<br/>
@@ -249,7 +249,7 @@ define(function (require, exports) {
     healthcareUtilDrugBaseline: {
       name: "Drug Utilization during baseline period",
       reportKey: "Drug Utilization during baseline period",
-      analyses: [4000, 4012, 4013, 4014, 4015],
+      analyses: [4000, 4012, 4013, 4014, 4015, ...ifCosts([4022])],
       helpContent: `
         <b>Baseline  period:</b> is the 365 days before the first cohort start date for each subject not including cohort start date.<br/>
         <b>Person count:</b> number of unique persons with a drug exposure record during the interval period.<br/>
@@ -264,11 +264,15 @@ define(function (require, exports) {
     healthcareUtilDrugCohort: {
       name: "Drug Utilization during cohort period",
       reportKey: "Drug Utilization during cohort period",
-      analyses: [4006, 4016, 4017, 4018, 4019],
+      analyses: [4006, 4016, 4017, 4018, 4019, ...ifCosts([4023])],
       helpContent: `
       `
     },
   };
+
+	function ifCosts(ids) {
+	  return config.enableCosts ? ids : [];
+  }
 
 	function getAnalysisIdentifiers() {
 		var identifiers = [];
