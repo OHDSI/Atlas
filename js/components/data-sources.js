@@ -16,19 +16,6 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 		var minimum_area = 50;
 		var threshold = minimum_area / (width * height);
 
-		const size4 = {
-				width: 400,
-				height: 280
-			},
-			size6 = {
-				width: 500,
-				height: 300
-			},
-			size12 = {
-				width: 1000,
-				height: 300
-			};
-
 		self.model = params.model;
 		self.sources = sharedState.sources().filter(function (s) {
 			return s.hasResults && s.hasCDM;
@@ -153,6 +140,36 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 		self.formatComma = d3.format(',');
 		self.treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
 
+		self.breakpoints = {
+			wide: {
+				width: 1000,
+				height: 1000 * 0.3,
+			},
+			medium: {
+				width: 500,
+				height: 500 * 0.75,
+			},
+			narrow: {
+				width: 300,
+				height: 300 * 0.75,
+			},
+			guessFromNode: (selector) => {
+				const bounds = document.querySelector(selector).getBoundingClientRect();
+				
+				return {
+					width: bounds.width,
+					height: bounds.height,
+				};
+			},
+		};
+		self.chartOptions = {
+			margins: {
+				top: 20,
+				right: 20,
+				bottom: 20,
+				left: 20,
+			},
+		};
 
 		self.loadSummary = function () {
 			var currentReport = self.currentReport();
@@ -186,10 +203,12 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 							});
 							currentReport.summary(data.summary);
 						}
+						let size;
 
 						var genderConceptData = self.mapConceptData(data.gender);
 						var populationDonut = new atlascharts.donut();
-						populationDonut.render(genderConceptData, "#populationByGender", size4.width, size4.height);
+						size = self.breakpoints.guessFromNode('#populationByGender');
+						populationDonut.render(genderConceptData, "#populationByGender", size.width, self.breakpoints.narrow.height, self.chartOptions);
 
 						var ageAtFirstData = self.normalizeArray(data.ageAtFirstObservation);
 						if (!ageAtFirstData.empty) {
@@ -203,11 +222,13 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 							var ageAtFirstObservationData = self.mapHistogram(histData);
 
 							var ageHistogram = new atlascharts.histogram();
-							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", size4.width, size4.height, {
+							size = self.breakpoints.guessFromNode('#ageAtFirstObservation');
+							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", size.width, self.breakpoints.wide.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Age',
-								yLabel: 'People'
+								yLabel: 'People',
+								...self.chartOptions,
 							});
 						}
 
@@ -234,11 +255,13 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 								}
 							}
 							var observationLine = new atlascharts.line();
-							observationLine.render(cumulativeData, "#cumulativeObservation", size6.width, size6.height, {
+							size = self.breakpoints.guessFromNode('#cumulativeObservation');
+							observationLine.render(cumulativeData, "#cumulativeObservation", size.width, self.breakpoints.wide.height, {
 								yFormat: d3.format('0.0%'),
 								interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
 								xLabel: cumulativeObservationXLabel,
-								yLabel: 'Percent of Population'
+								yLabel: 'Percent of Population',
+								...self.chartOptions,
 							});
 						}
 
@@ -252,15 +275,17 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 							});
 							d3.selectAll("#oppeoplebymonthsingle svg").remove();
 							var singleLine = new atlascharts.line();
-							singleLine.render(byMonthSeries, "#oppeoplebymonthsingle", size6.width, size6.height, {
+							size = self.breakpoints.guessFromNode('#oppeoplebymonthsingle');
+							singleLine.render(byMonthSeries, "#oppeoplebymonthsingle", size.width, self.breakpoints.wide.height, {
 								xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
 								})),
 								xFormat: d3.timeFormat("%m/%Y"),
-								tickFormat: d3.timeFormat("%Y"),
+								tickFormat: d3.timeFormat("%m/%Y"),
 								ticks: 10,
 								xLabel: "Date",
-								yLabel: "People"
+								yLabel: "People",
+								...self.chartOptions,
 							});
 						}
 					}
@@ -275,6 +300,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					},
 					success: function (data) {
 						self.loadingReport(false);
+						let size;
 
 						if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
 							var yearHistogram = new atlascharts.histogram();
@@ -284,20 +310,25 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 							histData.max = data.yearOfBirthStats[0].maxValue;
 							histData.intervals = 100;
 							histData.data = (self.normalizeArray(data.yearOfBirth));
-							yearHistogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
+							size = self.breakpoints.guessFromNode('#hist');
+							yearHistogram.render(self.mapHistogram(histData), "#hist", size.width, self.breakpoints.wide.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Year',
-								yLabel: 'People'
+								yLabel: 'People',
+								...self.chartOptions,
 							});
 						}
 
 						var genderDonut = new atlascharts.donut();
 						var raceDonut = new atlascharts.donut();
 						var ethnicityDonut = new atlascharts.donut();
-						genderDonut.render(self.mapConceptData(data.gender), "#gender", size4.width, size4.height);
-						raceDonut.render(self.mapConceptData(data.race), "#race", size4.width, size4.height);
-						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", size4.width, size4.height);
+						size = self.breakpoints.guessFromNode('#gender');
+						genderDonut.render(self.mapConceptData(data.gender), "#gender", size.width, self.breakpoints.narrow.height, self.chartOptions);
+						size = self.breakpoints.guessFromNode('#race');
+						raceDonut.render(self.mapConceptData(data.race), "#race", size.width, self.breakpoints.narrow.height, self.chartOptions);
+						size = self.breakpoints.guessFromNode('#ethnicity');
+						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", size.width, self.breakpoints.narrow.height, self.chartOptions);
 					}
 				});
 			} else if (currentReport.name == 'Achilles Heel') {
@@ -360,6 +391,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					},
 					success: function (data) {
 						self.loadingReport(false);
+						let size;
 
 						if (!!data.totalRecords) {
 							var totalRecords = data.totalRecords;
@@ -384,17 +416,19 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 
 
 							var totalLine = new atlascharts.line();
-							totalLine.render(totalRecordsData, "#totalrecords", size12.width, size12.height, {
+							size = self.breakpoints.guessFromNode('#totalrecords');
+							totalLine.render(totalRecordsData, "#totalrecords", size.width, self.breakpoints.wide.height, {
 								xScale: d3.scaleTime().domain(d3.extent(totalRecords, function (d) {
 									return d.xCalendarMonth;
 								})),
 								xFormat: d3.timeFormat("%m/%Y"),
-								tickFormat: d3.timeFormat("%Y"),
+								tickFormat: d3.timeFormat("%m/%Y"),
 								xValue: "xCalendarMonth",
 								yValue: "yRecordCount",
 								xLabel: "Year",
 								yLabel: "# of Records",
-								showLegend: true
+								showLegend: true,
+								...self.chartOptions,
 							});
 						}
 
@@ -421,17 +455,19 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 
 
 							var recordsperpersonLine = new atlascharts.line();
-							recordsperpersonLine.render(recordsPerPersonData, "#recordsperperson", size12.width, size12.height, {
+							size = self.breakpoints.guessFromNode('#recordsperperson');
+							recordsperpersonLine.render(recordsPerPersonData, "#recordsperperson", size.width, self.breakpoints.wide.height, {
 								xScale: d3.scaleTime().domain(d3.extent(recordsPerPerson, function (d) {
 									return d.xCalendarMonth;
 								})),
 								xFormat: d3.timeFormat("%m/%Y"),
-								tickFormat: d3.timeFormat("%Y"),
+								tickFormat: d3.timeFormat("%m/%Y"),
 								xValue: "xCalendarMonth",
 								yValue: "yRecordCount",
 								xLabel: "Year",
 								yLabel: "Records Per Person",
-								showLegend: true
+								showLegend: true,
+								...self.chartOptions,
 							});
 						}
 
@@ -452,11 +488,13 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 								});
 							}
 							var conceptsperpersonBoxPlot = new atlascharts.boxplot();
-							conceptsperpersonBoxPlot.render(conceptsSeries, "#conceptsperperson", size12.width, size12.height, {
+							size = self.breakpoints.guessFromNode('#conceptsperperson');
+							conceptsperpersonBoxPlot.render(conceptsSeries, "#conceptsperperson", size.width, self.breakpoints.wide.height, {
 								yMax: d3.max(conceptsData.p90Value),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Concept Type',
-								yLabel: 'Concepts per Person'
+								yLabel: 'Concepts per Person',
+								...self.chartOptions,
 							});
 						}
 
@@ -553,7 +591,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 
 						var treeData = self.buildHierarchyFromJSON(data, threshold);
 						var treemap = new atlascharts.treemap();
-						treemap.render(treeData, '#treemap_container', width, height, {
+						const size = self.breakpoints.guessFromNode('#treemap_container');
+						treemap.render(treeData, '#treemap_container', size.width, self.breakpoints.wide.height, {
 							onclick: function (node) {
 								self.currentConcept(node);
 							},
@@ -583,7 +622,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 									title += ' <div class="pathstep">' + Array(i + 1).join('&nbsp;&nbsp') + steps[i] + ' </div>';
 								}
 								return title;
-							}
+							},
+							...self.chartOptions,
 						});
 
 						$('[data-toggle="popover"]').popover();
@@ -694,17 +734,19 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 
 				// create svg with range bands based on the trellis names
 				var dataByDecileTrellisline = new atlascharts.trellisline();
-				dataByDecileTrellisline.render(dataByDecile, selector, size12.width, size12.height, {
+				const size = self.breakpoints.guessFromNode(selector);
+				dataByDecileTrellisline.render(dataByDecile, selector, size.width, self.breakpoints.wide.height, {
 					trellisSet: allDeciles,
 					trellisLabel: "Age Decile",
 					seriesLabel: "Year of Observation",
 					yLabel: "Prevalence Per 1000 People",
-					xFormat: d3.timeFormat("%Y"),
+					xFormat: d3.timeFormat("%m/%Y"),
 					yFormat: d3.format("0.2f"),
 					tickPadding: 20,
 					colors: d3.scaleOrdinal()
 						.domain(['MALE', 'FEMALE', 'UNKNOWN'])
-						.range(["#1F78B4", "#FB9A99", "#33A02C"])
+						.range(["#1F78B4", "#FB9A99", "#33A02C"]),
+					...self.chartOptions,
 				});
 			}
 		};
@@ -718,14 +760,16 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					yPercent: 'yPrevalence1000Pp'
 				});
 				var byMonthSeriesLine = new atlascharts.line();
-				byMonthSeriesLine.render(byMonthSeries, selector, size12.width, size12.height, {
+				const size = self.breakpoints.guessFromNode(selector);
+				byMonthSeriesLine.render(byMonthSeries, selector, size.width, self.breakpoints.wide.height, {
 					xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
 						return d.xValue;
 					})),
 					xFormat: d3.timeFormat("%m/%Y"),
-					tickFormat: d3.timeFormat("%Y"),
+					tickFormat: d3.timeFormat("%m/%Y"),
 					xLabel: "Date",
-					yLabel: "Prevalence per 1000 People"
+					yLabel: "Prevalence per 1000 People",
+					...self.chartOptions,
 				});
 			}
 		};
@@ -733,8 +777,9 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 		self.prevalenceByType = function (data, selector) {
 			if (!!data && data.length > 0) {
 				var prevalenceByTypeDonut = new atlascharts.donut();
-				prevalenceByTypeDonut.render(self.mapConceptData(data), selector, size6.width, size6.height, {
-					margin: {
+				const size = self.breakpoints.guessFromNode(selector);
+				prevalenceByTypeDonut.render(self.mapConceptData(data), selector, size.width, self.breakpoints.medium.height, {
+					margins: {
 						top: 5,
 						left: 5,
 						right: 200,
@@ -762,10 +807,12 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					});
 				}
 				var ageBoxplot = new atlascharts.boxplot();
-				ageBoxplot.render(bpseries, selector, size6.width, size6.height, {
+				const size = self.breakpoints.guessFromNode(selector);
+				ageBoxplot.render(bpseries, selector, size.width, self.breakpoints.medium.height, {
 					xLabel: 'Gender',
 					yLabel: yLabel,
 					yFormat: d3.format(',.1s'),
+					...self.chartOptions,
 				});
 			}
 		};
@@ -794,13 +841,15 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					var yScaleMax = (Math.floor((Math.max.apply(null, freqData.yNumPersons) + 5) / 10) + 1) * 10;
 					var freqHistData = self.mapHistogram(frequencyHistogram);
 					var freqHistChart = new self.freqhistogram();
-					freqHistChart.render(freqHistData, selector, size12.width, size12.height, {
+					const size = self.breakpoints.guessFromNode(selector);
+					freqHistChart.render(freqHistData, selector, size.width, self.breakpoints.wide.height, {
 						xFormat: d3.format('d'),
 						xScale: d3.scaleLinear().domain([1, 10]),
 						yScale: d3.scaleLinear().domain([0, 100]),
 						yMax: yScaleMax,
 						xLabel: 'Count (\'x\' or more ' + report + 's)',
-						yLabel: '% of total number of persons'
+						yLabel: '% of total number of persons',
+						...self.chartOptions,
 					});
 				}
 			}
@@ -832,8 +881,9 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
           return 1;
         return 0; //default return value (no sorting)
       });
-      byUnit.render(dataByUnit, selector, size6.width, size6.height, {
-        margin: {
+			const size = self.breakpoints.guessFromNode(selector);
+      byUnit.render(dataByUnit, selector, size.width, self.breakpoints.medium.height, {
+        margins: {
           top: 5,
           left: 5,
           right: 200,
@@ -859,12 +909,14 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
             UIF: ndata.p90Value[i],
           };
         });
-        measurementValues.render(bpseries, selector, 300, 200, {
+				const size = self.breakpoints.guessFromNode(selector);
+        measurementValues.render(bpseries, selector, size.width, self.breakpoints.narrow.height, {
           yMax: d3.max(data, function (d) {
             return d.p90Value;
           }) || bpdata.p90Value,
           xLabel: 'Unit',
           yLabel: 'Measurement Value',
+					...self.chartOptions,
         });
       }
     };

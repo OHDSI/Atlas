@@ -422,7 +422,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									trellisLabel: "Age Decile",
 									seriesLabel: "Year of Observation",
 									yLabel: "Prevalence Per 1000 People",
-									xFormat: d3.timeFormat("%Y"),
+									xFormat: d3.timeFormat("%m/%Y"),
 									yFormat: d3.format("0.2f"),
 									tickPadding: 20,
 									colors: d3.scaleOrdinal()
@@ -447,7 +447,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 											return d.xValue;
 										})),
 									xFormat: d3.timeFormat("%m/%Y"),
-									tickFormat: d3.timeFormat("%Y"),
+									tickFormat: d3.timeFormat("%m/%Y"),
 									xLabel: "Date",
 									yLabel: "Prevalence per 1000 People"
 								});
@@ -1234,7 +1234,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 											return d.xValue;
 										})),
 									xFormat: d3.timeFormat("%m/%Y"),
-									tickFormat: d3.timeFormat("%Y"),
+									tickFormat: d3.timeFormat("%m/%Y"),
 									ticks: 10,
 									xLabel: "Date",
 									yLabel: "People"
@@ -1856,7 +1856,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 											return d.xValue;
 										})),
 									xFormat: d3.timeFormat("%m/%Y"),
-									tickFormat: d3.timeFormat("%Y"),
+									tickFormat: d3.timeFormat("%m/%Y"),
 									xLabel: "Date",
 									yLabel: "Prevalence per 1000 People"
 								});
@@ -2015,7 +2015,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									trellisLabel: "Age Decile",
 									seriesLabel: "Year",
 									yLabel: "Prevalence Per 1000 People",
-									xFormat: d3.timeFormat("%Y"),
+									xFormat: d3.timeFormat("%m/%Y"),
 									yFormat: d3.format("0.1f"),
 									tickPadding: 5,
 									colors: d3.scaleOrdinal()
@@ -2149,7 +2149,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 										})),
 										xFormat: d3.timeFormat("%Y/%m/%d"),
 										yFormat: d3.format(".3f"),
-										tickFormat: d3.timeFormat("%Y"),
+										tickFormat: d3.timeFormat("%m/%Y"),
 										xLabel: "Date",
 										yLabel: "Entropy"
 									});
@@ -2328,7 +2328,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									return d.xValue;
 								})),
 							xFormat: d3.timeFormat("%m/%Y"),
-							tickFormat: d3.timeFormat("%Y"),
+							tickFormat: d3.timeFormat("%m/%Y"),
 							xLabel: "Date",
 							yLabel: "Prevalence per 1000 People"
 						});
@@ -2417,7 +2417,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
 							yLabel: "Prevalence Per 1000 People",
-							xFormat: d3.timeFormat("%Y"),
+							xFormat: d3.timeFormat("%m/%Y"),
 							yFormat: d3.format("0.2f"),
 							tickPadding: 20,
 							colors: d3.scaleOrdinal()
@@ -2481,7 +2481,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									return d.xValue;
 								})),
 							xFormat: d3.timeFormat("%m/%Y"),
-							tickFormat: d3.timeFormat("%Y"),
+							tickFormat: d3.timeFormat("%m/%Y"),
 							xLabel: "Date",
 							yLabel: "Prevalence per 1000 People"
 						});
@@ -2550,7 +2550,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
 							yLabel: "Prevalence Per 1000 People",
-							xFormat: d3.timeFormat("%Y"),
+							xFormat: d3.timeFormat("%m/%Y"),
 							yFormat: d3.format("0.2f"),
 							tickPadding: 20,
 							colors: d3.scaleOrdinal()
@@ -2597,7 +2597,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									return d.xValue;
 								})),
 							xFormat: d3.timeFormat("%m/%Y"),
-							tickFormat: d3.timeFormat("%Y"),
+							tickFormat: d3.timeFormat("%m/%Y"),
 							xLabel: "Date",
 							yLabel: "Prevalence per 1000 People"
 						});
@@ -2665,7 +2665,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
 							yLabel: "Prevalence Per 1000 People",
-							xFormat: d3.timeFormat("%Y"),
+							xFormat: d3.timeFormat("%m/%Y"),
 							yFormat: d3.format("0.2f"),
 							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN"])
@@ -2713,7 +2713,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									return d.xValue;
 								})),
 							xFormat: d3.timeFormat("%m/%Y"),
-							tickFormat: d3.timeFormat("%Y"),
+							tickFormat: d3.timeFormat("%m/%Y"),
 							xLabel: "Date",
 							yLabel: "Prevalence per 1000 People"
 						});
@@ -2781,7 +2781,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
 							yLabel: "Prevalence Per 1000 People",
-							xFormat: d3.timeFormat("%Y"),
+							xFormat: d3.timeFormat("%m/%Y"),
 							yFormat: d3.format("0.2f"),
 							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN"])
@@ -2845,7 +2845,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									return d.xValue;
 								})),
 							xFormat: d3.timeFormat("%m/%Y"),
-							tickFormat: d3.timeFormat("%Y"),
+							tickFormat: d3.timeFormat("%m/%Y"),
 							xLabel: "Date",
 							yLabel: "Prevalence per 1000 People"
 						});
@@ -2926,7 +2926,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
 							yLabel: "Prevalence Per 1000 People",
-							xFormat: d3.timeFormat("%Y"),
+							xFormat: d3.timeFormat("%m/%Y"),
 							yFormat: d3.format("0.2f"),
 							tickPadding: 20,
 							colors: d3.scaleOrdinal()
