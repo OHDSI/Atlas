@@ -102,6 +102,8 @@ requirejs.config({
 		"conceptset-browser": "components/conceptset/conceptset-browser",
 		"conceptset-editor": "components/conceptset/conceptset-editor",
 		"conceptset-manager": "components/conceptset/conceptset-manager",
+		"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
+		"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
 		"cohort-comparison-manager": "components/cohort-comparison-manager",
 		"job-manager": "components/job-manager",
 		"data-sources": "components/data-sources",
@@ -272,7 +274,45 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 		});
 
-		pageModel.loadIncluded = function () {
+		pageModel.loadAncestors = function(ancestors, descendants) {
+			return $.ajax({
+				url: sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					ancestors: ancestors,
+					descendants: descendants
+				})
+			});
+		};
+		
+		pageModel.loadAndApplyAncestors = function(data) {
+			const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
+			const ids = [];
+			$.each(data, (i, element ) => {
+				if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
+					ids.push(element.CONCEPT_ID);
+				}
+			});
+			let resultPromise = $.Deferred();
+			if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
+				pageModel.loadAncestors(selectedConceptIds, ids).then(ancestors => {
+					const map = pageModel.includedConceptsMap();
+					$.each(data, (j, line) => {
+						const ancArray = ancestors[line.CONCEPT_ID];
+						if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
+							line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
+						}
+					});
+					resultPromise.resolve();
+				});
+			} else {
+				resultPromise.resolve();
+			}
+			return resultPromise;
+		};
+		
+		pageModel.loadIncluded = function (identifiers) {
 			pageModel.loadingIncluded(true);
 			var includedPromise = $.Deferred();
 
@@ -280,22 +320,28 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				url: sharedState.vocabularyUrl() + 'lookup/identifiers',
 				method: 'POST',
 				contentType: 'application/json',
-				data: JSON.stringify(pageModel.conceptSetInclusionIdentifiers()),
+				data: JSON.stringify(identifiers ||pageModel.conceptSetInclusionIdentifiers()),
 				success: function (data) {
 					var densityPromise = vocabAPI.loadDensity(data);
 
-					$.when(densityPromise)
-						.done(function () {
-							pageModel.includedConcepts(data);
-							includedPromise.resolve();
-							pageModel.loadingIncluded(false);
-						});
-				}
-			});
+          $.when(densityPromise)
+            .done(function () {
+              pageModel.includedConcepts(data.map(v => ({...v, ANCESTORS: []})));
+              includedPromise.resolve();
+              pageModel.loadAndApplyAncestors(pageModel.includedConcepts());
+              pageModel.loadingIncluded(false);
+              const map = data.reduce((result, item) => {
+                result[item.CONCEPT_ID] = item;
+                return result;
+              }, {});
+              pageModel.includedConceptsMap(map);
+            });
+        }
+      });
 
-			return includedPromise;
-		}
-
+      return includedPromise;
+    }
+		
 		pageModel.loadSourcecodes = function () {
 			pageModel.loadingSourcecodes(true);
 
@@ -318,16 +364,28 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			});
 		}
 
+		function loadIncluded() {
+			var promise;
+      if (pageModel.includedConcepts().length == 0) {
+        promise = pageModel.loadIncluded();
+      } else {
+      	promise = $.Deferred();
+      	promise.resolve();
+			}
+			return promise;
+		}
+
 		pageModel.currentConceptSetMode.subscribe(function (newMode) {
 			switch (newMode) {
 				case 'included':
-					pageModel.loadIncluded();
+					loadIncluded();
 					break;
 				case 'sourcecodes':
-					var includedPromise = pageModel.loadIncluded();
-					$.when(includedPromise)
-						.done(function () {
-							pageModel.loadSourcecodes();
+					loadIncluded()
+						.then(function () {
+							if (pageModel.includedSourcecodes().length === 0) {
+                pageModel.loadSourcecodes();
+              }
 						});
 					break;
 			}
@@ -396,21 +454,28 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				} else {
 					delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
 					sharedState.selectedConcepts.remove(function (i) {
-						return i.concept.CONCEPT_ID == concept.CONCEPT_ID;
+						return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
 					});
 				}
 
 				// If we are updating a concept set that is part of a cohort definition
 				// then we need to notify any dependent observables about this change in the concept set
-				if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() == "cohort") {
+				if (pageModel.currentCohortDefinition() && pageModel.currentConceptSetSource() === "cohort") {
 					var conceptSet = pageModel.currentCohortDefinition()
 						.expression()
 						.ConceptSets()
-						.filter(function (item) {
-							return item.id == pageModel.currentConceptSet()
-								.id
-						})[0];
-					conceptSet.expression.items.valueHasMutated();
+						.find(function (item) {
+							return item.id === pageModel.currentConceptSet().id;
+						});
+					if (!$(this).hasClass("selected")) {
+            conceptSet.expression.items.remove(function (i) {
+              return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
+            });
+          }
+          conceptSet.expression.items.valueHasMutated();
+					pageModel.resolveConceptSetExpressionSimple(ko.toJSON(conceptSet.expression))
+						.then(pageModel.loadIncluded)
+						.then(pageModel.loadSourcecodes);
 				}
 			});
 
