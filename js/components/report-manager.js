@@ -79,24 +79,29 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 		self.helpContent = ko.observable();
 
 		self.setHelpContent = function (h) {
-			switch (h) {
-				case 'condition-prevalence':
-					{
-						self.helpTitle("Condition Prevalence");
-						self.helpContent("not available");
-						break;
-					}
-				case 'year-of-birth':
-					{
-						self.helpTitle("Year of Birth");
-						self.helpContent("The number of people in this cohort shown with respect to their year of birth.");
-						break;
-					}
-				default:
-					{
-						self.helpTitle("Help Unavailable");
-						self.helpContent("Help not yet available for this topic: " + h);
-					}
+			if (typeof h === 'string') {
+        switch (h) {
+          case 'condition-prevalence':
+          {
+            self.helpTitle("Condition Prevalence");
+            self.helpContent("not available");
+            break;
+          }
+          case 'year-of-birth':
+          {
+            self.helpTitle("Year of Birth");
+            self.helpContent("The number of people in this cohort shown with respect to their year of birth.");
+            break;
+          }
+          default:
+          {
+            self.helpTitle("Help Unavailable");
+            self.helpContent("Help not yet available for this topic: " + h);
+          }
+        }
+			} else if (typeof h === 'object' && (h.helpTitle || h.name) && h.helpContent) {
+        self.helpTitle(h.helpTitle || h.name);
+        self.helpContent(h.helpContent);
 			}
 		}
 		self.heelDataColumns = [{
