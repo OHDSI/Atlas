@@ -14,10 +14,12 @@ define(
         yFormat = val => val,
         xScale,
         ticks,
+        yTicks,
         tickFormat,
         height: manualHeight,
         showLegend = true,
         getTooltipBuilder,
+        yAxisWidth,
         yScale,
       } = valueAccessor();
 
@@ -31,11 +33,13 @@ define(
         yLabel,
         showLegend,
         ticks,
+        yTicks,
         tickFormat,
         xFormat,
         yFormat,
         xScale,
         getTooltipBuilder,
+        yAxisWidth,
         yScale: yScale || atlascharts.line.getRelativeY({ data, height }),
       });
     }
