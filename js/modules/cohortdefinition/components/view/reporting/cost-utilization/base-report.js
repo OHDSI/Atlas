@@ -124,14 +124,14 @@ define(
             render: BaseCostUtilReport.formatPreciseNumber,
           },
           {
-            title: 'Allowed/Charged',
+            title: 'Allowed /Charged',
             data: 'allowedChargedRatio',
             className: this.classes('tbl-col', 'allowed-charged-ratio'),
             showInChart: true,
             render: BaseCostUtilReport.formatPreciseNumber,
           },
           {
-            title: 'Paid/Allowed',
+            title: 'Paid /Allowed',
             data: 'paidAllowedRatio',
             className: this.classes('tbl-col', 'paid-allowed-ratio'),
             showInChart: true,

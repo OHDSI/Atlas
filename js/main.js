@@ -45,15 +45,7 @@ requirejs.config({
 		{
 			name: "cohortfeatures",
 			location: "modules/cohortfeatures"
-		},
-		{
-			name: "atlascharts",
-			location: "../node_modules/@ohdsi/atlascharts/atlascharts",
-		},
-		{
-			name: "get",
-			location: "../node_modules/@ohdsi/atlascharts/libs/_get"
-		},             
+		}            
 	],
 	shim: {
 		"colorbrewer": {
