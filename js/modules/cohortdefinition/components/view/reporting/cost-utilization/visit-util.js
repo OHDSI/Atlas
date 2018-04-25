@@ -38,6 +38,14 @@ define(
           visitsPer1000PerYear: ko.observable(),
           lengthOfStayTotal: ko.observable(),
           lengthOfStayAvg: ko.observable(),
+          allowed: ko.observable(),
+          allowedPmPm: ko.observable(),
+          charged: ko.observable(),
+          chargedPmPm: ko.observable(),
+          paid: ko.observable(),
+          paidPmPm: ko.observable(),
+          allowedChargedRatio: ko.observable(),
+          paidAllowedRatio: ko.observable(),
         };
 
         this.tableColumns = [
@@ -108,7 +116,7 @@ define(
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
-          ...(appConfig.enableCosts ? VisitUtilReport.getCostColumns() : [])
+          ...(appConfig.enableCosts ? this.getCostColumns() : [])
         ];
 
         const chartList = this.tableColumns.filter(item => item.showInChart);
@@ -173,6 +181,15 @@ define(
             this.summary.visitsPer1000PerYear(BaseCostUtilReport.formatFullNumber(summary.visitsPer1000PerYear));
             this.summary.lengthOfStayTotal(BaseCostUtilReport.formatFullNumber(summary.lengthOfStayTotal));
             this.summary.lengthOfStayAvg(BaseCostUtilReport.formatFullNumber(summary.lengthOfStayAvg));
+            /* Costs */
+            this.summary.allowed(BaseCostUtilReport.formatPreciseNumber(summary.allowed));
+            this.summary.allowedPmPm(BaseCostUtilReport.formatPreciseNumber(summary.allowedPmPm));
+            this.summary.charged(BaseCostUtilReport.formatPreciseNumber(summary.charged));
+            this.summary.chargedPmPm(BaseCostUtilReport.formatPreciseNumber(summary.chargedPmPm));
+            this.summary.paid(BaseCostUtilReport.formatPreciseNumber(summary.paid));
+            this.summary.paidPmPm(BaseCostUtilReport.formatPreciseNumber(summary.paidPmPm));
+            this.summary.allowedChargedRatio(BaseCostUtilReport.formatPreciseNumber(summary.allowedChargedRatio));
+            this.summary.paidAllowedRatio(BaseCostUtilReport.formatPreciseNumber(summary.paidAllowedRatio));
 
             this.setupVisitConceptOptions(visitConcepts);
             this.setupVisitTypeConceptOptions(visitTypeConcepts);
