@@ -57,14 +57,16 @@
                     <!-- /ko -->
                 </div>
                 <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading(), css: $component.classes('table-view')">
-                    <table data-bind="
-                        css: classes({ element: 'drugs-table', extra: ['table', 'table-bordered', 'table-hover'] }),
-                        dataTable:{
-                            data: $component.dataList,
-                            options: {columns: $component.drugsTableColumns}
-                        }
-                        "
-                    />
+                    <div data-bind="css: classes('table-block')">
+                        <table data-bind="
+                            css: classes({ element: 'drugs-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                            dataTable:{
+                                data: $component.dataList,
+                                options: {columns: $component.drugsTableColumns}
+                            }
+                            "
+                        />
+                    </div>
                 </div>
             </div>
         </div>

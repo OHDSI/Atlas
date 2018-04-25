@@ -96,9 +96,11 @@
                     <!-- /ko -->
                 </div>
                 <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading()">
-                    <table data-bind="
-                        css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
-                        dataTable:{ data: $component.dataList, options: {columns: $component.tableColumns} } " />
+                    <div data-bind="css: classes('table-block')">
+                        <table data-bind="
+                            css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                            dataTable:{ data: $component.dataList, options: {columns: $component.tableColumns} } " />
+                    </div>
                 </div>
             </div>
         </div>
