@@ -1,0 +1,110 @@
+<div data-bind="css: classes()">
+    <div data-bind="css: classes('block')">
+        <visualizations-filter-panel params="{ filterList: $component.filterList, apply: $component.applyFilters, live: true }"/>
+    </div>
+    <div data-bind="visible: loading()">
+        <loading params="status:'loading'" />
+    </div>
+    <div data-bind="visible: !loading()">
+        <div data-bind="css: classes('block')">
+            <table data-bind="css: classes({ element: 'summary-table', extra: ['table', 'table-bordered', 'table-hover'] })">
+                <thead data-bind="css: classes('summary-table-head')">
+                <tr>
+                    <th data-bind="css: classes('summary-table-cell')">Person Count</th>
+                    <th data-bind="css: classes('summary-table-cell')">Person Percent</th>
+                    <th data-bind="css: classes('summary-table-cell')">Total Records</th>
+                    <th data-bind="css: classes('summary-table-cell')">Records per 1,000</th>
+                    <th data-bind="css: classes('summary-table-cell')">Records per 1,000 with record</th>
+                    <th data-bind="css: classes('summary-table-cell')">Records per 1,000 Per Year</th>
+                    <th data-bind="css: classes('summary-table-cell')">Total length of stay (in days)</th>
+                    <th data-bind="css: classes('summary-table-cell')">Average Length of Stay (in days)</th>
+                    <!-- ko if: $component.enableCosts -->
+                        <th data-bind="css: classes('summary-table-cell')">Allowed cost</th>
+                        <th data-bind="css: classes('summary-table-cell')">Allowed cost pmpm</th>
+                        <th data-bind="css: classes('summary-table-cell')">Charged cost</th>
+                        <th data-bind="css: classes('summary-table-cell')">Charged cost PMPM</th>
+                        <th data-bind="css: classes('summary-table-cell')">Paid cost</th>
+                        <th data-bind="css: classes('summary-table-cell')">Paid Cost PMPM</th>
+                        <th data-bind="css: classes('summary-table-cell')">Allowed/Charged</th>
+                        <th data-bind="css: classes('summary-table-cell')">Paid/Allowed</th>
+                    <!-- /ko -->
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td data-bind="text: summary.personsCount"/>
+                    <td data-bind="text: summary.personsPct"/>
+                    <td data-bind="text: summary.visitsCount"/>
+                    <td data-bind="text: summary.visitsPer1000"/>
+                    <td data-bind="text: summary.visitsPer1000WithVisits"/>
+                    <td data-bind="text: summary.visitsPer1000PerYear"/>
+                    <td data-bind="text: summary.lengthOfStayTotal"/>
+                    <td data-bind="text: summary.lengthOfStayAvg"/>
+                    <!-- ko if: $component.enableCosts -->
+                        <td data-bind="text: summary.allowed"/>
+                        <td data-bind="text: summary.allowedPmPm"/>
+                        <td data-bind="text: summary.charged"/>
+                        <td data-bind="text: summary.chargedPmPm"/>
+                        <td data-bind="text: summary.paid"/>
+                        <td data-bind="text: summary.paidPmPm"/>
+                        <td data-bind="text: summary.allowedChargedRatio"/>
+                        <td data-bind="text: summary.paidAllowedRatio"/>
+                    <!-- /ko -->
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-bind="css: classes('block')">
+            <ul class="nav nav-tabs">
+                <!-- ko foreach: Object.keys(tabLabels) -->
+                <li role="presentation" data-bind="click: function() { $component.currentTab($data); }, attr: {class: $component.currentTab() == $data ? 'active' : ''}">
+                    <a data-bind="text: $component.tabLabels[$data]" />
+                </li>
+                <!-- /ko -->
+                <li data-bind="css: classes('save-csv-tab'), click: $component.saveAsCsv">
+                    <a data-bind="css: classes('save-csv-link')">Save as CSV</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
+                    <div data-bind="css: $component.classes('chart-filter-line')">
+                        <div data-bind="css: $component.classes('chart-filter')">
+                            <label>Displayed charts:</label>
+                            <visualizations-multi-select params="{ options: chartOptions, selectedValues: displayedCharts, multiple: true, selectedTextFormat: 'count > 10' }"/>
+                        </div>
+                    </div>
+                    <!-- ko foreach: chartDataList -->
+                        <div data-bind="css: $component.classes('chart-line')">
+                            <line-chart data-bind="
+                                    css: $component.classes('chart'),
+                                    visible: $data.visible
+                                "
+                                params="{lineChart: {
+                                    data: $data.values,
+                                    xLabel: ($index() == ($component.chartDataList().length - 1)) ? 'Period start' : '',
+                                    xFormat: $component.formatDate,
+                                    yLabel: $data.name,
+                                    yFormat: $data.yFormat || $component.formatRounded,
+                                    tickFormat: $component.dateTickFormat,
+                                    height: 125,
+                                    yTicks:2,
+                                    yAxisWidth:56,
+                                    showLegend: false,
+                                    getTooltipBuilder: $component.getTooltipBuilder
+                                    }
+                                }"
+                            />
+                        </div>
+                    <!-- /ko -->
+                </div>
+                <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading()">
+                    <div data-bind="css: classes('table-block')">
+                        <table data-bind="
+                            css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                            dataTable:{ data: $component.dataList, options: {columns: $component.tableColumns} } " />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

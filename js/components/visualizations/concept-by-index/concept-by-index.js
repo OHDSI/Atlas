@@ -139,6 +139,6 @@ define(['knockout', 'text!./concept-by-index.html','d3', 'jnj_chart'], function 
 		template: view
 	};
 
-	ko.components.register('concept-by-index', component);
+	ko.components.register('visualizations/concept-by-index', component);
 	return component;
 });

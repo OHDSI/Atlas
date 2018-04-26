@@ -1,0 +1,37 @@
+<div data-bind="css: classes()">
+    <!-- Summary view -->
+    <div data-bind="visible: $component.currentMode() == $component.modes.summary, css: classes('panel')">
+        <div data-bind="css: classes('panel-heading')">
+            <h4 data-bind="css: classes('panel-title')">
+                Summary for all drugs
+            </h4>
+        </div>
+        <div data-bind="css: classes('panel-body')">
+            <cost-utilization-drug-summary-util params="
+                source: $component.source,
+                cohortId: $component.cohortId,
+                window: $component.window,
+                onDrugSelect: $component.onDrugSelect,
+            " />
+        </div>
+    </div>
+    <!-- Detailed view -->
+    <div data-bind="if: $component.currentMode() == $component.modes.detailed">
+        <div data-bind="css: classes('panel')">
+            <div data-bind="css: classes('panel-heading')">
+                <h4 data-bind="css: classes('panel-title')">
+                    Detailed drug report for "<span data-bind="text: $component.drugName"></span>"
+                </h4>
+            </div>
+            <div data-bind="css: classes('panel-body')">
+                <cost-utilization-drug-detailed-util params="
+                    source: $component.source,
+                    cohortId: $component.cohortId,
+                    window: $component.window,
+                    drugConceptId: $component.drugConceptId,
+                    displaySummary: $component.displaySummary,
+                " />
+            </div>
+        </div>
+    </div>
+</div>

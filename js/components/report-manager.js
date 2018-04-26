@@ -1,4 +1,10 @@
-define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'databindings', 'faceted-datatable', 'colvis'], function (ko, view, d3, atlascharts, colorbrewer, _, config) {
+define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig',
+    'webapi/CohortReportingAPI', 'modules/cohortdefinition/const', 'databindings', 'faceted-datatable', 'colvis',
+		'modules/cohortdefinition/components/view/reporting/cost-utilization/persons-exposure',
+		'modules/cohortdefinition/components/view/reporting/cost-utilization/visit-util',
+    'modules/cohortdefinition/components/view/reporting/cost-utilization/drug-util'
+	],
+	function (ko, view, d3, atlascharts, colorbrewer, _, config, cohortReportingAPI, costUtilConst) {
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -13,6 +19,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			[15, 30, 45, 100, -1],
 			[15, 30, 45, 100, 'All']
 		];
+		self.visualizationPacks = cohortReportingAPI.visualizationPacks;
+		self.costUtilConst = costUtilConst;
 
 		const size4 = {
 				width: 400,
@@ -71,24 +79,29 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 		self.helpContent = ko.observable();
 
 		self.setHelpContent = function (h) {
-			switch (h) {
-				case 'condition-prevalence':
-					{
-						self.helpTitle("Condition Prevalence");
-						self.helpContent("not available");
-						break;
-					}
-				case 'year-of-birth':
-					{
-						self.helpTitle("Year of Birth");
-						self.helpContent("The number of people in this cohort shown with respect to their year of birth.");
-						break;
-					}
-				default:
-					{
-						self.helpTitle("Help Unavailable");
-						self.helpContent("Help not yet available for this topic: " + h);
-					}
+			if (typeof h === 'string') {
+        switch (h) {
+          case 'condition-prevalence':
+          {
+            self.helpTitle("Condition Prevalence");
+            self.helpContent("not available");
+            break;
+          }
+          case 'year-of-birth':
+          {
+            self.helpTitle("Year of Birth");
+            self.helpContent("The number of people in this cohort shown with respect to their year of birth.");
+            break;
+          }
+          default:
+          {
+            self.helpTitle("Help Unavailable");
+            self.helpContent("Help not yet available for this topic: " + h);
+          }
+        }
+			} else if (typeof h === 'object' && (h.helpTitle || h.name) && h.helpContent) {
+        self.helpTitle(h.helpTitle || h.name);
+        self.helpContent(h.helpContent);
 			}
 		}
 		self.heelDataColumns = [{
@@ -2147,6 +2160,20 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						}
 					});
 					break; // Entropy report
+
+				case self.visualizationPacks.healthcareUtilPersonAndExposureBaseline.name:
+        case self.visualizationPacks.healthcareUtilPersonAndExposureCohort.name:
+				case self.visualizationPacks.healthcareUtilVisitRecordsBaseline.name:
+        case self.visualizationPacks.healthcareUtilVisitDatesBaseline.name:
+        case self.visualizationPacks.healthcareUtilCareSiteDatesBaseline.name:
+        case self.visualizationPacks.healthcareUtilVisitRecordsCohort.name:
+        case self.visualizationPacks.healthcareUtilVisitDatesCohort.name:
+				case self.visualizationPacks.healthcareUtilCareSiteDatesCohort.name:
+				case self.visualizationPacks.healthcareUtilDrugBaseline.name:
+        case self.visualizationPacks.healthcareUtilDrugCohort.name:
+					self.model.loadingReport(false);
+          self.model.currentReport(self.model.reportReportName());
+          break;
 			}
 		}
 
