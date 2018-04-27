@@ -4,7 +4,7 @@ define(function (require, exports) {
 	var config = require('appConfig');
 	var sharedState = require('atlas-state');
 	var ohdsiUtil = require('ohdsi.util');
-	var authApi = require('webapi/AuthAPI');
+	var authApi = require('services/auth');
   var lscache = require('lscache');
   var ko = require('knockout');
 

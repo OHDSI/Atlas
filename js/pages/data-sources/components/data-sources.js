@@ -1,8 +1,37 @@
-define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'databindings', 'access-denied'], function ($, ko, sharedState, view, d3, atlascharts, colorbrewer, _, config, authApi, d3tip) {
-	console.warn('deprecated');
-	
+define([
+	'jquery',
+	'knockout',
+	'atlas-state',
+	'text!./data-sources.html',
+	'd3',
+	'atlascharts',
+	'colorbrewer',
+	'lodash',
+	'appConfig',
+	'webapi/AuthAPI',
+	'd3-tip',
+	'services/http',
+	'databindings',
+	'access-denied',
+	'./reports/dashboard/dashboard'
+	//'less!./data-sources.less'
+], function (
+	$,
+	ko,
+	sharedState,
+	view,
+	d3,
+	atlascharts,
+	colorbrewer,
+	_,
+	config,
+	authApi,
+	d3tip,
+	httpService
+) {
 	function dataSources(params) {
 		var self = this;
+		self.test = (e) => console.log(e)
 
 		// aggregate property descriptors
 		var RecordsPerPersonProperty = {
@@ -170,103 +199,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 			self.activeReportDrilldown(false);
 
 			if (currentReport.name == 'Dashboard') {
-				$.ajax({
-					url: url,
-					error: function (error) {
-						self.loadingReport(false);
-						self.hasError(true);
-						console.log(error);
-					},
-					success: function (data) {
-						self.loadingReport(false);
-						if (!!data.summary) {
-							var formatter = d3.format(".5s");
-							data.summary.forEach(function (d) {
-								if (!isNaN(d.attributeValue)) {
-									d.attributeValue = formatter(d.attributeValue);
-								}
-							});
-							currentReport.summary(data.summary);
-						}
-
-						var genderConceptData = self.mapConceptData(data.gender);
-						var populationDonut = new atlascharts.donut();
-						populationDonut.render(genderConceptData, "#populationByGender", size4.width, size4.height);
-
-						var ageAtFirstData = self.normalizeArray(data.ageAtFirstObservation);
-						if (!ageAtFirstData.empty) {
-							var histData = {};
-							histData.intervalSize = 1;
-							histData.min = d3.min(ageAtFirstData.intervalIndex);
-							histData.max = d3.max(ageAtFirstData.intervalIndex);
-							histData.intervals = 120;
-							histData.data = ageAtFirstData;
-
-							var ageAtFirstObservationData = self.mapHistogram(histData);
-
-							var ageHistogram = new atlascharts.histogram();
-							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", size4.width, size4.height, {
-								xFormat: d3.format('d'),
-								yFormat: d3.format(',.1s'),
-								xLabel: 'Age',
-								yLabel: 'People'
-							});
-						}
-
-						d3.selectAll("#cumulativeObservation svg").remove();
-						var cumObsData = self.normalizeArray(data.cumulativeObservation);
-						if (!cumObsData.empty) {
-							var cumulativeData = self.normalizeDataframe(cumObsData).xLengthOfObservation
-								.map(function (d, i) {
-									var item = {
-										xValue: this.xLengthOfObservation[i],
-										yValue: this.yPercentPersons[i]
-									};
-									return item;
-								}, cumObsData);
-
-							var cumulativeObservationXLabel = 'Days';
-							if (cumulativeData.length > 0) {
-								if (cumulativeData.slice(-1)[0].xValue - cumulativeData[0].xValue > 1000) {
-									// convert x data to years
-									cumulativeData.forEach(function (d) {
-										d.xValue = d.xValue / 365.25;
-									});
-									cumulativeObservationXLabel = 'Years';
-								}
-							}
-							var observationLine = new atlascharts.line();
-							observationLine.render(cumulativeData, "#cumulativeObservation", size6.width, size6.height, {
-								yFormat: d3.format('0.0%'),
-								interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
-								xLabel: cumulativeObservationXLabel,
-								yLabel: 'Percent of Population'
-							});
-						}
-
-						d3.selectAll("#oppeoplebymonthsingle svg").remove();
-						var obsByMonthData = self.normalizeArray(data.observedByMonth);
-						if (!obsByMonthData.empty) {
-							var byMonthSeries = self.mapMonthYearDataToSeries(obsByMonthData, {
-								dateField: 'monthYear',
-								yValue: 'countValue',
-								yPercent: 'percentValue'
-							});
-							d3.selectAll("#oppeoplebymonthsingle svg").remove();
-							var singleLine = new atlascharts.line();
-							singleLine.render(byMonthSeries, "#oppeoplebymonthsingle", size6.width, size6.height, {
-								xScale: d3.scaleTime().domain(d3.extent(byMonthSeries[0].values, function (d) {
-									return d.xValue;
-								})),
-								xFormat: d3.timeFormat("%m/%Y"),
-								tickFormat: d3.timeFormat("%Y"),
-								ticks: 10,
-								xLabel: "Date",
-								yLabel: "People"
-							});
-						}
-					}
-				});
+				
 			} else if (currentReport.name == 'Person') {
 				$.ajax({
 					url: url,

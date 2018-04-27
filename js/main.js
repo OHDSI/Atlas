@@ -46,6 +46,10 @@ requirejs.config({
 			name: "cohortfeatures",
 			location: "modules/cohortfeatures"
 		},
+		{
+			name: "pages",
+			location: "pages",
+		},
 	],
 	shim: {
 		"colorbrewer": {
@@ -105,7 +109,7 @@ requirejs.config({
 		"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
 		"cohort-comparison-manager": "components/cohort-comparison-manager",
 		"job-manager": "components/job-manager",
-		"data-sources": "components/data-sources",
+		//"data-sources": "components/data-sources",
 		"cohort-definitions": "components/cohort-definitions/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definitions/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definitions/cohort-definition-browser",
@@ -123,7 +127,7 @@ requirejs.config({
 		"cohortcomparison": "modules/cohortcomparison",
 		"r-manager": "components/r-manager",
 		"negative-controls": "components/negative-controls",
-		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.1.0/dist/atlascharts.min",
+		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.3.1/dist/atlascharts",
 		"jnj_chart": "jnj.chart", // scatterplot is not ported to separate library
 		"lodash": "lodash.4.15.0.full",
 		"lscache": "lscache.min",
@@ -183,18 +187,52 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, sourceApi, util, lscache, sharedState, vocabAPI) {
+	requirejs([
+		'knockout',
+		'app',
+		'appConfig',
+		'services/auth',
+		'webapi/SourceAPI',
+		'ohdsi.util',
+		'lscache',
+		'atlas-state',
+		'vocabularyprovider',
+		'services/http',
+		'services/bindings',
+		'director',
+		'search',
+		'localStorageExtender',
+		'jquery.ui.autocomplete.scroll',
+		'loading',
+		'user-bar',
+		'welcome',
+	],
+		function (
+			ko,
+			app,
+			config,
+			authService,
+			sourceApi,
+			util,
+			lscache,
+			sharedState,
+			vocabAPI,
+			httpService,
+			DataBindings,
+		) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
 
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
+		DataBindings.init();
 
+		httpService.setUnauthorizedHandler(() => authService.token(null));
 		// update access token
-		if (authApi.token()) {
+		if (authService.token()) {
 			var refreshTokenPromise = $.Deferred();
 			pageModel.initPromises.push(refreshTokenPromise);
-			authApi.refreshToken()
-				.always(refreshTokenPromise.resolve);
+			authService.refreshToken()
+				.finally(refreshTokenPromise.resolve);
 		}
 
 		// establish base priorities for daimons
@@ -241,11 +279,11 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		} else {
 			sharedState.sources([]);
 
-      if (authApi.isAuthenticated()) {
+      if (authService.isAuthenticated()) {
         sourceApi.initSourcesConfig();
       } else {
         var wasInitialized = false;
-        authApi.token.subscribe(function(token) {
+        authService.token.subscribe(function(token) {
           if (token && !wasInitialized) {
             sourceApi.initSourcesConfig();
             wasInitialized = true;

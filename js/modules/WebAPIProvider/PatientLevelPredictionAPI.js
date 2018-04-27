@@ -2,7 +2,7 @@ define(function (require, exports) {
 
 	var $ = require('jquery');
 	var config = require('appConfig');
-	var authApi = require('webapi/AuthAPI');
+	var authApi = require('services/auth');
 
 	function getPlpList() {
 		var promise = $.ajax({

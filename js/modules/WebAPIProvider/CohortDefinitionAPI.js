@@ -2,7 +2,7 @@ define(function (require, exports) {
 
 	var $ = require('jquery');
 	var config = require('appConfig');
-	var authApi = require('webapi/AuthAPI');
+	var authApi = require('services/auth');
 	
 	function pruneJSON(key, value) {
 		if (value === 0 || value) {

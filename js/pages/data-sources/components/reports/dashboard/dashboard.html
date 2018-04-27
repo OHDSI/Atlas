@@ -1,0 +1,34 @@
+<!-- ko if: !isLoading() -->
+<report-title params="name: name, sourceKey: sourceKey"></report-title>
+<div class="col-sm-12 col-md-4">
+  <div class="reportSectionHeading">CDM Summary</div>
+  <table class="table table-striped table-hover">
+    <tbody data-bind="foreach: summary()">
+      <tr>
+        <td data-bind="text: attributeName"></td>
+        <td data-bind="text: attributeValue"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="col-xs-12 col-md-4">
+  <div class="reportSectionHeading">Population by Gender</div>
+  <donut params="data: genderConceptData"></donut>
+</div>
+
+<div class="col-xs-12 col-md-4">
+  <div class="reportSectionHeading">Age at First Observation</div>
+  <histogram class="evidenceVisualization" params="data: ageAtFirstObservationData, format: chartFormats.ageAtFirstObservation"></histogram>
+</div>
+
+<div class="col-xs-12 col-md-6">
+  <div class="reportSectionHeading">Cumulative Observation</div>
+  <line class="evidenceVisualization" params="data: observationLineData, format: chartFormats.observationLine"></line>
+</div>
+
+<div class="col-xs-12 col-md-6">
+  <div class="reportSectionHeading">Persons With Continuous Observation By Month</div>
+  <line class="evidenceVisualization" params="data: byMonthSeriesData, format: chartFormats.byMonthSeries"></line>
+</div>
+<!-- /ko -->

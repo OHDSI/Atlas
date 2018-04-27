@@ -1,5 +1,6 @@
 define(function(require, exports) {
-
+    console.warn('deprecated');
+    
     var $ = require('jquery');
     var config = require('appConfig');
     var ko = require('knockout');
@@ -67,7 +68,7 @@ define(function(require, exports) {
         }
 
         return new Date() < tokenExpirationDate();
-      }catch(e) {
+      } catch(e) {
         return false;
       }
     });
