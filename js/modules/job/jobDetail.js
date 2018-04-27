@@ -54,6 +54,10 @@ define(function (require, exports) {
 				case 'negative-controls':
 					statusData = statusData.find(j => (String(j.conceptSetId) + String(j.sourceId)) == this.executionId);
 					break;
+				case 'plp':
+				case 'cca':
+					statusData = { status: statusData };
+					break;
 				default:
 					// Leave the object as-is 
 					break;

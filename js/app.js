@@ -134,7 +134,7 @@ define([
 						});
 					},
 					'/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': function (cohortDefinitionId, path) {
-						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
+						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort', 'conceptset-list-modal'], function (CohortDefinition) {
 							// Determine the view to show on the cohort manager screen based on the path
 							path = path.split("/");
 							var view = 'definition'
@@ -255,7 +255,7 @@ define([
 						});
 					},
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
-						require(['conceptset-manager', 'cohort-definition-browser'], function () {
+						require(['conceptset-manager', 'cohort-definition-browser', 'conceptset-list-modal'], function () {
 							self.componentParams = {
 								model: self
 							};
@@ -472,6 +472,9 @@ define([
 			}, {
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
+			}, {
+				title: 'Ancestor',
+				data: 'ANCESTORS'
 			}];
 			self.relatedSourcecodesColumns = [{
 				title: '',
@@ -1360,6 +1363,7 @@ define([
 			self.relatedConcepts = ko.observableArray();
 			self.relatedSourcecodes = ko.observableArray();
 			self.includedConcepts = ko.observableArray();
+			self.includedConceptsMap = ko.observable();
 			self.denseSiblings = ko.observableArray();
 			self.includedSourcecodes = ko.observableArray();
 			self.cohortDefinitions = ko.observableArray();

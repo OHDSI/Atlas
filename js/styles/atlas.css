@@ -268,14 +268,23 @@ pre span.key {
   left: 149px;
   top: 0px;
   right: 0px;
+  height: 100%;
 }
 
 #wrapperMainWindowContainer {
   position: relative;
   margin-left: 1px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-div#wrapperMainWindowContainer {}
+.flexed {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
 
 .panel-heading a {
   color: #003142;
@@ -854,7 +863,6 @@ input.btn.btn-default {
 }
 
 .evidenceVisualization {
-  padding: 10px;
   text-align: center;
   background-color: #fff;
   font-size: 8px;
@@ -1949,7 +1957,7 @@ span.new-role {
 
 .user-bar-container i.fa {
   padding: 10px;
-  color: #888;
+  color: #FFFFFF;
 }
 
 .user-bar-container span.pipe {
@@ -2164,4 +2172,9 @@ div#wrapper_ohdsi a {
 
 .command-pane {
   display: flex;
+}
+
+#report {
+  overflow-y: scroll;
+  flex-grow: 1;
 }

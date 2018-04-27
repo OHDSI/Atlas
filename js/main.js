@@ -85,9 +85,10 @@ requirejs.config({
 	paths: {
 		"jquery": "https://code.jquery.com/jquery-1.11.2.min",
 		"jquery-ui": "https://code.jquery.com/ui/1.11.4/jquery-ui.min",
-		"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min",
+		"bootstrap": "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min",
 		"text": "plugins/text",
 		"css": "plugins/css.min",
+    "less": "plugins/less",
 		"optional": "plugins/optional",
 		"clipboard": "clipboard.min",
 		"knockout": "knockout.min",
@@ -107,6 +108,7 @@ requirejs.config({
 		"conceptset-editor": "components/conceptset/conceptset-editor",
 		"conceptset-manager": "components/conceptset/conceptset-manager",
 		"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
+		"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
 		"cohort-comparison-manager": "components/cohort-comparison-manager",
 		"job-manager": "components/job-manager",
 		//"data-sources": "components/data-sources",
@@ -127,7 +129,7 @@ requirejs.config({
 		"cohortcomparison": "modules/cohortcomparison",
 		"r-manager": "components/r-manager",
 		"negative-controls": "components/negative-controls",
-		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.3.1/dist/atlascharts",
+		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.3.1/dist/atlascharts.min",
 		"jnj_chart": "jnj.chart", // scatterplot is not ported to separate library
 		"lodash": "lodash.4.15.0.full",
 		"lscache": "lscache.min",
@@ -183,6 +185,11 @@ requirejs.config({
 
 		"moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min",
 		"querystring": "https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min",
+
+    "bootstrap-select": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/js/bootstrap-select",
+    "bootstrap-select-css": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/css/bootstrap-select.min",
+    "less-js": "https://cdnjs.cloudflare.com/ajax/libs/less.js/3.0.1/less.min",
+		"file-saver": "FileSaver"//"https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min",
 	}
 });
 
@@ -199,6 +206,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		'vocabularyprovider',
 		'services/http',
 		'services/bindings',
+		'webapi/ExecutionAPI',
 		'director',
 		'search',
 		'localStorageExtender',
@@ -219,6 +227,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			vocabAPI,
 			httpService,
 			DataBindings,
+			executionAPI
 		) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
@@ -292,6 +301,12 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
       }
 		}
 
+		config.api.isExecutionEngineAvailable = ko.observable(false);
+		executionAPI.getEngineStatus(v => {
+			config.api.isExecutionEngineAvailable(v.status === 'ONLINE')
+		});
+
+
 		$.when.apply($, pageModel.initPromises).done(function () {
 			pageModel.initComplete();
 		});
@@ -311,29 +326,74 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 		});
 
+		pageModel.loadAncestors = function(ancestors, descendants) {
+			return $.ajax({
+				url: sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					ancestors: ancestors,
+					descendants: descendants
+				})
+			});
+		};
+		
+		pageModel.loadAndApplyAncestors = function(data) {
+			const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
+			const ids = [];
+			$.each(data, (i, element ) => {
+				if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
+					ids.push(element.CONCEPT_ID);
+				}
+			});
+			let resultPromise = $.Deferred();
+			if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
+				pageModel.loadAncestors(selectedConceptIds, ids).then(ancestors => {
+					const map = pageModel.includedConceptsMap();
+					$.each(data, (j, line) => {
+						const ancArray = ancestors[line.CONCEPT_ID];
+						if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
+							line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
+						}
+					});
+					resultPromise.resolve();
+				});
+			} else {
+				resultPromise.resolve();
+			}
+			return resultPromise;
+		};
+		
 		pageModel.loadIncluded = function (identifiers) {
 			pageModel.loadingIncluded(true);
 			var includedPromise = $.Deferred();
+
 			$.ajax({
 				url: sharedState.vocabularyUrl() + 'lookup/identifiers',
 				method: 'POST',
 				contentType: 'application/json',
-				data: JSON.stringify(identifiers || pageModel.conceptSetInclusionIdentifiers()),
+				data: JSON.stringify(identifiers ||pageModel.conceptSetInclusionIdentifiers()),
 				success: function (data) {
 					var densityPromise = vocabAPI.loadDensity(data);
 
-					$.when(densityPromise)
-						.done(function () {
-							pageModel.includedConcepts(data);
-							includedPromise.resolve();
-							pageModel.loadingIncluded(false);
-						});
-				}
-			});
+          $.when(densityPromise)
+            .done(function () {
+              pageModel.includedConcepts(data.map(v => ({...v, ANCESTORS: []})));
+              includedPromise.resolve();
+              pageModel.loadAndApplyAncestors(pageModel.includedConcepts());
+              pageModel.loadingIncluded(false);
+              const map = data.reduce((result, item) => {
+                result[item.CONCEPT_ID] = item;
+                return result;
+              }, {});
+              pageModel.includedConceptsMap(map);
+            });
+        }
+      });
 
-			return includedPromise;
-		}
-
+      return includedPromise;
+    }
+		
 		pageModel.loadSourcecodes = function () {
 			pageModel.loadingSourcecodes(true);
 

@@ -36,27 +36,35 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 
 	ko.bindingHandlers.dataTable = {
 	
-		init: function (element, valueAccessor) {
-			
+		init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
 			
 			var binding = ko.utils.unwrapObservable(valueAccessor());
-
 			// If the binding is an object with an options field,
 			// initialise the dataTable with those options.
 			if (binding.options) {
+				
 				// allow row level binding context
-				binding.options.createdRow = function (row, data, index) {
-					ko.applyBindings(data, row)
+				const createdRow = binding.options.createdRow;  
+				binding.options.createdRow = (row, data, index) => {
+					if (createdRow) {
+						createdRow(row, data, index);
+					}
+					ko.cleanNode(row);
+					ko.applyBindings(bindingContext.createChildContext(data), row);
 				};
 				// test for 'select' column (must be first column in column definition
-				if (binding.options.columns && binding.options.columns[0] == 'select') {
-					binding.options.columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected }	
+				const columns = binding.options.columns;
+				
+				if (columns && columns[0] == 'select') {
+					columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected }	
 					$(element).on("click","td > span.fa.fa-check-circle", function () {
 						$(this).toggleClass('selected');
-						console.log(this);
 					});
 				}
-				binding.options.columns = binding.options.columns.map((column) => {
+				
+				const xssOptions = config.xssOptions;
+
+				binding.options.columns = columns.map((column) => {
 					const originalRender = column.render;
 					const originalDataAccessor = column.data;
 					const hasOriginalRender = typeof originalRender === 'function';
@@ -64,10 +72,10 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 					
 					return Object.assign({}, column, {
 						data: hasDataAccessor
-							? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), config.xssOptions))
-							: filterAbsoluteUrls(filterXSS(originalDataAccessor, config.xssOptions)),
+							? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), xssOptions))
+							: filterAbsoluteUrls(filterXSS(originalDataAccessor, xssOptions)),
 						render: hasOriginalRender
-							? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), config.xssOptions))
+							? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), xssOptions))
               // https://datatables.net/reference/option/columns.render
               // "render" property having "string" or "object" data type is not obvious for filtering, so do not pass such things to UI for now
 							: undefined

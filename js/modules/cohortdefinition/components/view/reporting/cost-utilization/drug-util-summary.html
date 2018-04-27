@@ -1,0 +1,30 @@
+<div data-bind="css: classes()">
+    <div data-bind="css: classes('filters-block')">
+        <visualizations-filter-panel params="{ filterList: $component.filterList, apply: $component.applyFilters, live: true }"/>
+        <div data-bind="visible: filtersLoading()">
+            <loading params="status:'loading'" />
+        </div>
+    </div>
+    <div data-bind="css: classes('loader'), visible: loading()">
+        <loading params="status:'loading'" />
+    </div>
+    <div data-bind="visible: !loading()">
+        <div data-bind="css: classes('toolbar')">
+            <div data-bind="css: classes('descr')">
+                Click on a drug to get detailed statistics:
+            </div>
+            <button type="button" data-bind="css: classes({ element: 'save-csv-btn', extra: ['btn btn-primary']}), click: $component.saveAsCsv">Save as CSV</button>
+        </div>
+        <div data-bind="css: classes('table-block')">
+            <table data-bind="
+                css: classes({ element: 'drugs-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                dataTable:{
+                    data: $component.dataList,
+                    options: {columns: $component.drugsTableColumns},
+                    onRowClick: $component.onDrugSelect
+                }
+                "
+            />
+        </div>
+    </div>
+</div>

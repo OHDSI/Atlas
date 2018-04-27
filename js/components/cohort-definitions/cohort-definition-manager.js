@@ -15,15 +15,17 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'clipboard',
 	'd3',
 	'job/jobDetail',
-  'components/cohort-definitions/const',
-  'cohortbuilder/components/FeasibilityReportViewer',
-  'databindings',
-  'faceted-datatable',
-  'cohortdefinitionviewer/expressionCartoonBinding',
-  'cohortfeatures',
+	'components/cohort-definitions/const',
+	'webapi/ConceptSetAPI',
+	'services/ConceptSetService',
+	'cohortbuilder/components/FeasibilityReportViewer',
+	'databindings',
+	'faceted-datatable',
+	'cohortdefinitionviewer/expressionCartoonBinding',
+	'cohortfeatures',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst, conceptSetAPI, conceptSetService) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -105,6 +107,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			return authApi.isPermittedReadCohort(self.model.currentCohortDefinition().id());
 		});
+		
 		self.hasAccessToGenerate = function (sourceKey) {
 			if (isNew()) {
 				return false;
@@ -257,8 +260,17 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}, {
 			title: 'Vocabulary',
 			data: 'VOCABULARY_ID'
+		}, {
+			title: 'Ancestors',
+			data: 'ANCESTORS',
+			render: conceptSetService.getAncestorsRenderFunction()
 		}];
 
+		self.ancestors = ko.observableArray();
+		self.ancestorsModalIsShown = ko.observable(false);
+		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler(self);
+		self.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ ...self, searchConceptsColumns: self.includedConceptsColumns });
+		
 		self.includedConceptsOptions = {
 			Facets: [{
 				'caption': 'Vocabulary',
@@ -899,73 +911,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				self.reportingState() != 'generating_reports';
 		});
 
-		self.generateQuickAnalysis = function () {
+		self.generateAnalyses = function ({ descr, duration, analysisIdentifiers, runHeraclesHeel }) {
+			if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
+				return;
+			}
+
 			self.generateReportsEnabled(false);
-			var analysisIdentifiers = cohortReportingAPI.getQuickAnalysisIdentifiers()
-			var cohortDefinitionId = pageModel.currentCohortDefinition().id();
-			var cohortJob = {};
-
-			cohortJob.jobName = 'HERACLES_COHORT_' + cohortDefinitionId + '_' + self.model.reportSourceKey();
-			cohortJob.sourceKey = self.model.reportSourceKey();
-			cohortJob.smallCellCount = 5;
-			cohortJob.cohortDefinitionIds = [];
-			cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
-			cohortJob.analysisIds = analysisIdentifiers;
-			cohortJob.runHeraclesHeel = false;
-			cohortJob.cohortPeriodOnly = false;
-
-			// set concepts
-			cohortJob.conditionConceptIds = [];
-			cohortJob.drugConceptIds = [];
-			cohortJob.procedureConceptIds = [];
-			cohortJob.observationConceptIds = [];
-			cohortJob.measurementConceptIds = [];
-
-			var jobDetails = new jobDetail({
-				name: cohortJob.jobName,
-				status: 'LOADING',
-				executionId: null,
-				statusUrl: self.config.api.url + 'job/execution/',
-				statusValue: 'status',
-				progress: 0,
-				progressUrl: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + cohortDefinitionId + '/analyses',
-				progressValue: 'length',
-				progressMax: analysisIdentifiers.length,
-				viewed: false,
-				url: 'cohortdefinition/' + cohortDefinitionId + '/reporting?sourceKey=' + self.model.reportSourceKey(),
-			});
-
-			self.createReportJobFailed(false);
-
-			$.ajax({
-				url: config.api.url + 'cohortanalysis',
-				data: JSON.stringify(cohortJob),
-				method: 'POST',
-				context: jobDetails,
-				contentType: 'application/json',
-				success: function (info) {
-					this.executionId = info.executionId;
-					this.status(info.status);
-					this.statusUrl = this.statusUrl + info.executionId;
-					sharedState.jobListing.queue(this);
-				},
-				error: function (xhr, status, error) {
-					self.createReportJobFailed(true);
-					var createReportJobErrorPackage = {};
-					createReportJobErrorPackage.status = status;
-					createReportJobErrorPackage.error = xhr.responseText;
-					self.createReportJobError(JSON.stringify(createReportJobErrorPackage));
-
-					// reset button to allow generation attempt
-					self.generateReportsEnabled(true);
-					self.generateButtonCaption('Generate');
-				}
-			});
-		}
-
-		self.generateAnalyses = function () {
-			self.generateReportsEnabled(false);
-			var analysisIdentifiers = cohortReportingAPI.getAnalysisIdentifiers()
 			analysisIdentifiers = _.uniq(analysisIdentifiers);
 			var cohortDefinitionId = pageModel.currentCohortDefinition().id();
 			var cohortJob = {};
@@ -976,7 +927,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			cohortJob.cohortDefinitionIds = [];
 			cohortJob.cohortDefinitionIds.push(cohortDefinitionId);
 			cohortJob.analysisIds = analysisIdentifiers;
-			cohortJob.runHeraclesHeel = true;
+			cohortJob.runHeraclesHeel = runHeraclesHeel;
 			cohortJob.cohortPeriodOnly = false;
 
 			// set concepts
@@ -1026,11 +977,44 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					self.generateButtonCaption('Generate');
 				}
 			});
-		}
+		};
 
-		// dispose subscriptions
+    self.generateQuickAnalysis = function () {
+      self.generateAnalyses({
+        descr: 'minimal analyses set to provide a quick overview of the cohort',
+        duration: '10 minutes',
+				analysisIdentifiers: cohortReportingAPI.getQuickAnalysisIdentifiers(),
+				runHeraclesHeel: false
+      });
+    };
+
+    self.generateHealthcareAnalyses = function () {
+      self.generateAnalyses({
+        descr: 'the Cost and Utilization analyses',
+				duration: '10-45 minutes',
+				analysisIdentifiers: cohortReportingAPI.getHealthcareAnalysesIdentifiers(),
+				runHeraclesHeel: false
+      });
+    };
+
+    self.generateAllAnalyses = function () {
+      self.generateAnalyses({
+        descr: 'all analyses',
+        duration: '60-90 minutes',
+				analysisIdentifiers: cohortReportingAPI.getAnalysisIdentifiers(),
+				runHeraclesHeel: true
+      });
+    };
+
+		// dispose subscriptions / cleanup computed observables (non-pureComputeds)
 		self.dispose = function () {
-			//self.currentCohortDefinitionSubscription.dispose();
+			self.cohortDefinitionLink.dispose();
+			self.cohortDefinitionCaption.dispose();
+			self.tabPath.dispose();
+			self.sortedConceptSets.dispose();
+			self.reportingState.dispose();
+			self.showReportNameDropdown.dispose();
+			
 		}
 		self.getCriteriaIndexComponent = function (data) {
 			data = ko.utils.unwrapObservable(data);

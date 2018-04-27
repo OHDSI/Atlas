@@ -42,37 +42,41 @@
 		<div class="row pad-10 report">
 
 			<!-- ko if:$component.currentReport().conceptDomain -->
-			<div class="reportSectionHeading"><span data-bind="$component.currentReport().name"></span> Prevalence</div>
-
-			<ul class="nav nav-tabs" id="myTab" role="tablist">
-				<li class="active" id="treemap-tab">
-					<a href="#treemap-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('tree')">Treemap</a>
-				</li>
-				<li>
-					<a href="#table-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('table')">Table</a>
-				</li>
-			</ul>
-
-			<div id='content' class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="treemap-panel">
-					<div id="treemap_container">
-						<div class="treemap_zoomtarget"></div>
-					</div>
-					<div class="treemap_legend">Box Size: Prevalence, Color: <span data-bind="text:$component.currentReport().aggProperty.description"></span> (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom
-					</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<span data-bind="$component.currentReport().name"></span> Prevalence
 				</div>
-				<div role="tabpanel" class="tab-pane" id="table-panel" data-bind="eventListener: { event: 'click', selector: '.table_selector', callback: onReportTableRowClick}">
-					<table id="report_table" class="display" style="width:100%">
-						<thead>
-							<tr>
-								<th>Concept Id</th>
-								<th>Name</th>
-								<th>Person Count</th>
-								<th>Prevalence</th>
-								<th><span data-bind="text:$component.currentReport().aggProperty.description"></span></th>
-							</tr>
-						</thead>
-					</table>
+				<div class="panel-body">
+					<ul class="nav nav-tabs" id="myTab" role="tablist">
+						<li class="active" id="treemap-tab">
+							<a href="#treemap-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('tree')">Treemap</a>
+						</li>
+						<li>
+							<a href="#table-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('table')">Table</a>
+						</li>
+					</ul>
+					<div id='content' class="tab-content">
+						<div role="tabpanel" class="tab-pane active" id="treemap-panel">
+							<div id="treemap_container">
+								<div class="treemap_zoomtarget"></div>
+							</div>
+							<div class="treemap_legend">Box Size: Prevalence, Color: <span data-bind="text:$component.currentReport().aggProperty.description"></span> (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom
+							</div>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="table-panel" data-bind="eventListener: { event: 'click', selector: '.table_selector', callback: onReportTableRowClick}">
+								<table id="report_table" class="stripe compact hover dataTable no-footer" style="width:100%">
+								<thead>
+									<tr>
+										<th>Concept Id</th>
+										<th>Name</th>
+										<th>Person Count</th>
+										<th>Prevalence</th>
+										<th><span data-bind="text:$component.currentReport().aggProperty.description"></span></th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -93,180 +97,291 @@
 				<!-- /ko -->
 
 				<div class="col-xs-12">
-					<div class="reportSectionHeading">Prevalence</div>
-					<div class="evidenceVisualization" id="trellisLinePlot"></div>
-					<div class="evidenceDescription"></div>
-				</div>
-
-				<div class="col-xs-12">
-					<div class="reportSectionHeading">Prevalence by Month</div>
-					<div class="evidenceVisualization" id="prevalenceByMonth"></div>
-					<div class="evidenceDescription"></div>
-				</div>
-
-				<!-- ko if: $component.currentReport().byType -->
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								Prevalence
+							</div>
+							<div class="panel-body">
+								<div class="evidenceVisualization" id="trellisLinePlot"></div>
+							</div>
+						</div>
+					</div>
+	
+					<div class="col-xs-12">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								Prevalence by Month
+							</div>
+							<div class="panel-body">
+								<div class="evidenceVisualization" id="prevalenceByMonth"></div>
+							</div>
+						</div>
+					</div>
+	
+					<!-- ko if: $component.currentReport().byType -->
+					<div class="col-xs-6">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								Type
+							</div>
+							<div class="panel-body">
+								<div class="evidenceVisualization" id="byType"></div>
+							</div>
+						</div>
+					</div>
+					<!-- /ko -->
+	
 				<div class="col-xs-6">
-					<div class="reportSectionHeading">Type</div>
-					<div class="evidenceVisualization" id="byType"></div>
-					<div class="evidenceDescription"></div>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Age at First Occurrence
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
+						</div>
+					</div>
+				</div>
+	
+				<!-- ko if: $component.currentReport().byUnit && !$component.loadingReport() -->
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								Measurement Records by Unit
+							</div>
+							<div class="panel-body">
+								<div class="evidenceVisualization" id="recordsByUnit"></div>
+							</div>
+						</div>
+					</div>
+	
+					<div class="col-xs-6">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								Measurement Value Distribution
+							</div>
+							<div class="panel-body">
+								<div class="evidenceVisualization" id="measurementValues"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+	
+				<div class="row">
+					<div class="col-xs-4">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								Lower limit Distribution
+							</div>
+							<div class="panel-body">
+								<div class="evidenceVisualization" id="lowerLimit"></div>
+							</div>
+						</div>
+					</div>
+	
+					<div class="col-xs-4">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								Upper Limit Distribution
+							</div>
+							<div class="panel-body">
+								<div class="evidenceVisualization" id="upperLimit"></div>
+							</div>
+						</div>
+					</div>
+	
+					<div class="col-xs-4">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								Values Relative to Normal Range
+							</div>
+							<div class="panel-body">
+								<div class="evidenceVisualization" id="relativeToNorm"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+	
+				<!-- /ko -->
+				<!-- ko if: $component.currentReport().byFrequency && !$component.loadingReport() -->
+				<div class="col-xs-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Frequency Distribution
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization" id="frequencyDistribution"></div>
+						</div>
+					</div>
 				</div>
 				<!-- /ko -->
-
-			<div class="col-xs-6">
-				<div class="reportSectionHeading">Age at First Occurrence</div>
-				<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
-				<div class="evidenceDescription"></div>
-			</div>
-
-			<!-- ko if: $component.currentReport().byUnit && !$component.loadingReport() -->
-			<div class="row">
-				<div class="col-xs-6">
-					<div class="reportSectionHeading">Measurement Records by Unit</div>
-					<div class="evidenceVisualization" id="recordsByUnit"></div>
-					<div class="evidenceDescription"></div>
+	
 				</div>
-
-				<div class="col-xs-6">
-					<div class="reportSectionHeading">Measurement Value Distribution</div>
-					<div class="evidenceVisualization" id="measurementValues"></div>
-					<div class="evidenceDescription"></div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-xs-4">
-					<div class="reportSectionHeading">Lower limit Distribution</div>
-					<div class="evidenceVisualization" id="lowerLimit"></div>
-					<div class="evidenceDescription"></div>
-				</div>
-
-				<div class="col-xs-4">
-					<div class="reportSectionHeading">Upper Limit Distribution</div>
-					<div class="evidenceVisualization" id="upperLimit"></div>
-					<div class="evidenceDescription"></div>
-				</div>
-
-				<div class="col-xs-4">
-					<div class="reportSectionHeading">Values Relative to Normal Range</div>
-					<div class="evidenceVisualization" id="relativeToNorm"></div>
-					<div class="evidenceDescription"></div>
-				</div>
-			</div>
-
-			<!-- /ko -->
-			<!-- ko if: $component.currentReport().byFrequency && !$component.loadingReport() -->
-			<div class="col-xs-12">
-				<div class="reportSectionHeading">Frequency Distribution</div>
-				<div class="evidenceVisualization" id="frequencyDistribution"></div>
-				<div class="evidenceDescription"></div>
-			</div>
-			<!-- /ko -->
-
-			</div>
-
-			<!-- /ko -->
+	
+				<!-- /ko -->
 		<!-- ko if: $component.currentReport().name == 'Dashboard' -->
 			<dashboard params='context: $component'></dashboard>
 		<!-- /ko -->
 
 		<!-- ko if: $component.currentReport().name == 'Person' && !$component.loadingReport() -->
 		<div class="col-xs-12">
-			<div class="reportSectionHeading">Year of Birth</div>
-			<div class="evidenceDescription">The number of people in this cohort shown with respect to their year of birth.</div>
-			<div class="evidenceVisualization" id="hist"></div>
-		</div>
-
-		<div class="col-xs-4">
-			<div class="reportSectionHeading">Gender</div>
-			<div class="evidenceDescription">The number of people in this cohort stratified by gender.</div>
-			<div class="evidenceVisualization" id="gender"></div>
-		</div>
-		<div class="col-xs-4">
-			<div class="reportSectionHeading">Race</div>
-			<div class="evidenceDescription">The number of people in this cohort stratified by race.</div>
-			<div class="evidenceVisualization" id="race"></div>
-		</div>
-		<div class="col-xs-4">
-			<div class="reportSectionHeading">Ethnicity</div>
-			<div class="evidenceDescription">The number of people in this cohort stratified by ethnicity.</div>
-			<div class="evidenceVisualization" id="ethnicity"></div>
-		</div>
-		<!-- /ko -->
-
-			<!-- ko if: $component.currentReport().name == 'Achilles Heel' && !$component.loadingReport() -->
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<table id="achillesheel_table">
-						<thead>
-							<tr>
-								<th>Message Type</th>
-								<th>Message</th>
-							</tr>
-						</thead>
-					</table>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						Year of Birth
+					</div>
+					<div class="panel-body">
+						<div class="evidenceVisualization" id="hist"></div>
+					</div>
+					<div class="panel-footer">
+						The number of people in this cohort shown with respect to their year of birth.
+					</div>
+				</div>
+			</div>
+	
+			<div class="col-xs-4">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						Gender
+					</div>
+					<div class="panel-body">
+						<div class="evidenceVisualization" id="gender"></div>
+					</div>
+					<div class="panel-footer">
+						The number of people in this cohort stratified by gender.
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						Race
+					</div>
+					<div class="panel-body">
+						<div class="evidenceVisualization" id="race"></div>
+					</div>
+					<div class="panel-footer">
+						The number of people in this cohort stratified by race.
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						Ethnicity
+					</div>
+					<div class="panel-body">
+						<div class="evidenceVisualization" id="ethnicity"></div>
+					</div>
+					<div class="panel-footer">
+						The number of people in this cohort stratified by ethnicity.
+					</div>
 				</div>
 			</div>
 			<!-- /ko -->
-
-			<!-- ko if: $component.currentReport().name == 'Data Density' && !$component.loadingReport() -->
-			<div class="col-sm-12">
-				<div class="reportSectionHeading">
-					Total Rows
+	
+				<!-- ko if: $component.currentReport().name == 'Achilles Heel' && !$component.loadingReport() -->
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						Achilles Heel Results
+					</div>
+					<div class="panel-body">
+						<table id="achillesheel_table">
+							<thead>
+								<tr>
+									<th>Message Type</th>
+									<th>Message</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
 				</div>
-				<div class="evidenceVisualization" id="totalrecords">
+				<!-- /ko -->
+	
+				<!-- ko if: $component.currentReport().name == 'Data Density' && !$component.loadingReport() -->
+				<div class="col-sm-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Total Rows
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization" id="totalrecords"></div>
+						</div>
+					</div>
 				</div>
+				<div class="col-sm-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Records Per Person
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization" id="recordsperperson"></div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Concepts Per Person
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization" id="conceptsperperson"></div>
+						</div>
+					</div>
+				</div>
+				<!-- /ko -->
+	
+	
+				<!-- ko if: $component.currentReport().name == 'Death' && !$component.loadingReport() -->
+				<div class="col-sm-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Death Prevalence by Age, Gender, Year
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization">
+								<div id="deathPrevalenceByGenderAgeYear"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Death Prevalence by Month
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization">
+								<div class="drilldown" id="deathPrevalenceByMonth"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12 col-md-6">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Death by Type
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization">
+								<div id="deathByType"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12 col-md-6">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Age at Death
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization">
+								<div id="ageAtDeath"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /ko -->
 			</div>
-			<div class="col-sm-12">
-				<div class="reportSectionHeading">
-					Records Per Person
-				</div>
-				<div class="evidenceVisualization" id="recordsperperson">
-				</div>
-			</div>
-			<div class="col-sm-12">
-				<div class="reportSectionHeading">
-					Concepts Per Person
-				</div>
-				<div class="evidenceVisualization" id="conceptsperperson">
-				</div>
-			</div>
-			<!-- /ko -->
-
-
-			<!-- ko if: $component.currentReport().name == 'Death' && !$component.loadingReport() -->
-			<div class="col-sm-12">
-				<div class="reportSectionHeading">
-					Death Prevalence by Age, Gender, Year
-				</div>
-				<div class="evidenceVisualization">
-					<div id="deathPrevalenceByGenderAgeYear"></div>
-				</div>
-			</div>
-			<div class="col-sm-12">
-				<div class="reportSectionHeading">
-					Death Prevalence by Month
-				</div>
-				<div class="evidenceVisualization">
-					<div class="drilldown" id="deathPrevalenceByMonth"></div>
-				</div>
-			</div>
-			<div class="col-sm-12 col-md-6">
-				<div class="reportSectionHeading">
-					Death by Type
-				</div>
-				<div class="evidenceVisualization">
-					<div id="deathByType"></div>
-				</div>
-			</div>
-			<div class="col-sm-12 col-md-6">
-				<div class="reportSectionHeading">
-					Age at Death
-				</div>
-				<div class="evidenceVisualization">
-					<div id="ageAtDeath"></div>
-				</div>
-			</div>
-			<!-- /ko -->
 		</div>
 	</div>
-</div>
+	
