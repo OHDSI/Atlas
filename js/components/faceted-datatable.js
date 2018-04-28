@@ -20,6 +20,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.columns = params.columns;
 		self.rowCallback = params.rowCallback || function () {};
 		self.rowClick = params.rowClick;
+		self.drawCallback = params.drawCallback;
 
 		// Set some defaults for the data table
 		self.autoWidth = params.autoWidth || true;

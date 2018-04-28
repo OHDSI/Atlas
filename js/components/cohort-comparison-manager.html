@@ -41,7 +41,7 @@
             <div class="col-sm-8" data-bind="text:sourceName"></div>
             <div class="col-sm-4 text-right">
               <span class="btn-group">
-								<button data-bind="css:{disabled:!$component.config.rServicesHost}, visible: !$component.sourceProcessingStatus[sourceKey](), click:function() {$component.executeCohortComparison(sourceKey);}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
+								<button data-bind="css:{disabled: $component.config.api.isExecutionEngineAvailable()==false}, click:function() {$component.executeCohortComparison(sourceKey)}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
 								<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
 								<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
 								<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">
@@ -54,12 +54,13 @@
           </div>
           <div data-bind="foreach:$component.sourceExecutions[sourceKey], visible:$component.sourceHistoryDisplay[sourceKey]">
             <div class="row executionrow">
-              <div class="col-sm-1" data-bind="text:executionId"></div>
+              <div class="col-sm-1" data-bind="text:id"></div>
               <div class="col-sm-2" data-bind="text:executedCaption"></div>
               <div class="col-sm-3 text-right" data-bind="text:durationCaption"></div>
               <div class="col-sm-2 text-right" data-bind="text:executionStatus"></div>
               <div class="col-sm-4 text-right">
-                <button class="btn btn-sm btn-primary" data-bind="css:{disabled:executionStatus!='COMPLETED'},click:$component.executionSelected"><i class="fa fa-eye"></i> View</button>
+                <button class="btn btn-sm btn-primary"
+                        data-bind="css:{disabled:(executionStatus!='COMPLETED' && (!$component.config.useExecutionEngine || executionStatus!='FAILED'))},click:$component.executionSelected"><i class="fa fa-eye"></i> View</button>
               </div>
             </div>
           </div>
@@ -105,7 +106,7 @@
               <div id="row" class="paddedWrapper">
                 <div class="col-sm-9">
                   The result of the analysis when comparing the rate of the outcome defined by the cohort (<span class="omHighlight" data-bind="text:$component.cohortComparison().outcomeCaption"></span>) between the treatment cohort (<span class="omHighlight"
-                    data-bind="text:$component.cohortComparison().treatmentCaption"></span>) and the comparator cohort (<span class="omHighlight" data-bind="text:$component.cohortComparison().comparatorCaption"></span>) is <span class="omHighlight" data-bind="text:caption"></span>.
+                                                                                                                                                                                                                                                data-bind="text:$component.cohortComparison().treatmentCaption"></span>) and the comparator cohort (<span class="omHighlight" data-bind="text:$component.cohortComparison().comparatorCaption"></span>) is <span class="omHighlight" data-bind="text:caption"></span>.
                 </div>
               </div>
             </div>
@@ -118,20 +119,20 @@
             <div class="paddedWrapper">
               <table class="padded">
                 <thead>
-                  <th>Description</th>
-                  <th>Treated Persons</th>
-                  <th>Comparator Persons</th>
-                  <th>Treated Exposures</th>
-                  <th>Comparator Exposures</th>
+                <th>Description</th>
+                <th>Treated Persons</th>
+                <th>Comparator Persons</th>
+                <th>Treated Exposures</th>
+                <th>Comparator Exposures</th>
                 </thead>
                 <tbody data-bind="foreach:attrition">
-                  <tr>
-                    <td data-bind="text:description"></td>
-                    <td class="numeric" data-bind="text:treatedPersons"></td>
-                    <td class="numeric" data-bind="text:comparatorPersons"></td>
-                    <td class="numeric" data-bind="text:treatedExposures"></td>
-                    <td class="numeric" data-bind="text:comparatorExposures"></td>
-                  </tr>
+                <tr>
+                  <td data-bind="text:description"></td>
+                  <td class="numeric" data-bind="text:treatedPersons"></td>
+                  <td class="numeric" data-bind="text:comparatorPersons"></td>
+                  <td class="numeric" data-bind="text:treatedExposures"></td>
+                  <td class="numeric" data-bind="text:comparatorExposures"></td>
+                </tr>
                 </tbody>
               </table>
             </div>

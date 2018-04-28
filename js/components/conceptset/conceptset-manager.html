@@ -19,7 +19,7 @@
         <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }"><i class="fa fa-times"></i></button>
         <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0, css: {disabled:!canCreate()}"><i class="fa fa-copy"></i></button>
         <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { optimize(); }, css: {disabled: !canEdit() && !canCreate()}">Optimize</button>
-        <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
+        <button type="button" class="btn btn-sm btn-danger"  data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
       </div>
     </div>
 
@@ -52,7 +52,7 @@
   <div class="loading" data-bind="if:model.loadingSourcecodes() || model.loadingIncluded">loading</div>
 
   <div data-bind="visible: model.currentConceptSetMode() == 'included' && !model.loadingIncluded()">
-    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: model.includedConcepts, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
+    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: model.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
     <div class="linkLegend">
       <div class="linkLegendItem">
         <div class="swatch standard">
@@ -231,7 +231,7 @@
           <div class="modal-title">Choose a concept set</div>
         </div>
         <div class="modal-body">
-          <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null,onRespositoryConceptSetSelected: $component.conceptsetSelected"></cohort-concept-set-browser>
+          <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null,onRespositoryConceptSetSelected: $component.conceptsetSelected, repositoryConceptSetTableId: 'csCompareConceptSets'"></cohort-concept-set-browser>
         </div>
       </div>
     </div>
@@ -361,25 +361,7 @@
     </div>
   </div>
 
-  <div id="modalSaveNew" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <div class="modal-title">Save New Concept Set</div>
-        </div>
-        <div class="modal-body">
-          <div>
-            <label>Concept Set Name:</label>
-            <div class="input-group">
-              <input class="form-control" id="txtNewConceptSetName" type="text" data-bind="textInput: $component.compareNewConceptSetName" />
-              <span class="input-group-btn">
-                                  <button type="button" class="btn btn-success" data-bind="click:function() { compareCreateNewConceptSet(); }, css: {disabled: !canCreate()}">Save</button>
-                              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <conceptset-save params="conceptSetName: compareNewConceptSetName, onSave: compareCreateNewConceptSet, show: saveConceptSetShow"></conceptset-save>
 </div>
+
+<conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model, title: 'Common Ancestors'}"></conceptset-list-modal>

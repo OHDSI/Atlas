@@ -14,6 +14,7 @@ define(['optional!config-local'], function (localConfig) {
 	config.plpResultsEnabled = false;
 	config.useExecutionEngine = false;
 	config.viewProfileDates = false;
+	config.enableCosts = false;
 	config.supportUrl = "https://github.com/ohdsi/atlas/issues";
 	config.supportMail = "atlasadmin@your.org";
 	config.authProviders = [
@@ -71,7 +72,7 @@ define(['optional!config-local'], function (localConfig) {
   ];
   config.xssOptions = {
     "whiteList": {
-      "a": ["href", "class"],
+      "a": ["href", "class", "data-bind"],
 			"button": ["class", "type"],
       "span": ["class", "data-bind"],
       "i": ["class", "id", "aria-hidden"],
@@ -79,7 +80,8 @@ define(['optional!config-local'], function (localConfig) {
       "option": ["value"],
       "input": ["type", "class"],
       "ui": ["class"],
-      "path": ["d", "class"]
+      "path": ["d", "class"],
+      "br": "",
     },
     "stripIgnoreTag": true,
     "stripIgnoreTagBody": ['script'],

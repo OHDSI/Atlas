@@ -1,0 +1,8 @@
+<div class="filter-panel-multi-select">
+    <!-- ko if: multiple == true -->
+        <select data-bind="{ selectedOptions: selectedValues, options: optionVals, optionsText: optionsText, multiSelect: { liveSearch: true, selectedTextFormat: selectedTextFormat } }" multiple></select>
+    <!-- /ko -->
+    <!-- ko if: multiple == false -->
+        <select data-bind="{ value: selectedValue, multiSelect: { liveSearch: true, selectedTextFormat: 'count > 2' }, options: optionVals, optionsText: optionsText }"></select>
+    <!-- /ko -->
+</div>

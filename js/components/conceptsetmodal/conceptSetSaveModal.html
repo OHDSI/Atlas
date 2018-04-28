@@ -1,0 +1,19 @@
+<div class="modal fade" data-bind="modal: show" tabindex="-1" role="dialog">
+    <div class="concept-set-modal modal-dialog" role="document">
+        <div class="modal-header">
+            <i class="fa fa-save"></i> Save New Concept Set
+        </div>
+        <div class="concept-set-dialog modal-body">
+            <span class="help-block" data-bind="visible: notUniqueName"><i class="fa fa-warning"></i> Concept Set already exists</span>
+            <div class="concept-set-form">
+                <label>Concept Set Name:</label>
+                <input type="text" data-bind="textInput: conceptSetName" />
+            </div>
+        </div>
+        <div class="concept-set-dialog modal-footer">
+            <span class="input-group-btn">
+               <button type="button" data-bind="click: onSave, enable: canSave" class="btn btn-success">Save</button>
+            </span>
+        </div>
+    </div>
+</div>

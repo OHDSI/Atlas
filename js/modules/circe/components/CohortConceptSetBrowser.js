@@ -1,4 +1,4 @@
-define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularyprovider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'webapi/AuthAPI', 'webapi/MomentAPI', 'access-denied', 'databindings'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, momentApi) {
+define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularyprovider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'webapi/AuthAPI', 'webapi/MomentAPI', 'access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, momentApi) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
@@ -50,6 +50,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 		self.onActionComplete = params.onActionComplete;
 		self.onRespositoryConceptSetSelected = params.onRespositoryConceptSetSelected || defaultRepositoryConceptSetSelected;
 		self.disableConceptSetButton = setDisabledConceptSetButton(params.disableConceptSetButton);
+		self.buttonActionEnabled = params.buttonActionEnabled !== false;
 		self.buttonActionText = params.buttonActionText || "New Concept Set";
 		self.repositoryConceptSetTableId = params.repositoryConceptSetTableId || "repositoryConceptSetTable";
 

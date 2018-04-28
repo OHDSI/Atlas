@@ -86,13 +86,50 @@ table.boxplotValues tr td
 	fill: none;
 	stroke: black;
 }
+
 .axis text {
 	font-family: arial;
 	font-size: 1em;
 }
+
 .axislabel, .axislabel text {
 	font-family: arial;
+	font-size: 1.2rem;
 }
+
+@media(max-width:1440px) {
+  .axis text {
+    font-family: arial;
+    font-size: 1.1em;
+  }
+}
+
+@media(max-width:1280px) {
+  .axis text {
+    font-family: arial;
+    font-size: 1.3em;
+  }
+}
+
+@media(max-width:1024px) {
+  .axis text {
+    font-family: arial;
+    font-size: 1.5em;
+  }
+  .axislabel, .axislabel text {
+    display:none;
+    font-family: arial;
+  }
+}
+
+@media(max-width:800px) {
+  .axis text {
+    display:none;
+    font-family: arial;
+    font-size: 2em;
+  }
+}
+
 table.data td:first-child {
 	text-align: right;
 }
@@ -107,10 +144,10 @@ table.data td {
 }
 .g-label-value,
 .g-label-year {
-	font-size: 5px;
+	font-size: 1.2em;
 }
 .trellisLegend {
-	font-size: 6px;
+	font-size: 1em;
 	font-family: arial;
 	/* margin: 10px; */
 }

@@ -103,7 +103,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 						});
 					},
 					'/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': function (cohortDefinitionId, path) {
-						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort'], function (CohortDefinition) {
+						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort', 'conceptset-list-modal'], function (CohortDefinition) {
 							// Determine the view to show on the cohort manager screen based on the path
 							path = path.split("/");
 							var view = 'definition'
@@ -242,7 +242,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 						});
 					},
 					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
-						require(['conceptset-manager', 'cohort-definition-browser'], function () {
+						require(['conceptset-manager', 'cohort-definition-browser', 'conceptset-list-modal'], function () {
 							self.componentParams = {
 								model: self
 							};
@@ -459,6 +459,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 			}, {
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
+			}, {
+				title: 'Ancestor',
+				data: 'ANCESTORS'
 			}];
 			self.relatedSourcecodesColumns = [{
 				title: '',
@@ -816,6 +819,8 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 			// resolve the included concepts and update the include concept set identifier list
 			self.resolveConceptSetExpression = function () {
 				self.resolvingConceptSetExpression(true);
+        pageModel.includedConcepts.removeAll();
+        pageModel.includedSourcecodes.removeAll();
 				var conceptSetExpression = '{"items" :' + ko.toJSON(sharedState.selectedConcepts()) + '}';
 				var highlightedJson = self.syntaxHighlight(conceptSetExpression);
 				self.currentConceptSetExpressionJson(highlightedJson);
@@ -1345,6 +1350,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 			self.relatedConcepts = ko.observableArray();
 			self.relatedSourcecodes = ko.observableArray();
 			self.includedConcepts = ko.observableArray();
+			self.includedConceptsMap = ko.observable();
 			self.denseSiblings = ko.observableArray();
 			self.includedSourcecodes = ko.observableArray();
 			self.cohortDefinitions = ko.observableArray();

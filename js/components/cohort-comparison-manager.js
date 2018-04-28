@@ -3,10 +3,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options',
 				'cohortbuilder/CohortExpression', 'vocabularyprovider',
 				'conceptsetbuilder/InputTypes/ConceptSet', 'atlas-state',
-				'databindings/d3ChartBinding'],
+				'webapi/ExecutionAPI',
+				'services/JobDetailsService',
+				'databindings/d3ChartBinding',
+				'css!./styles/nv.d3.min.css'],
 	function ($, ko, view, _, clipboard, cohortDefinitionAPI, config, authApi, ohdsiUtil,
 		ComparativeCohortAnalysis, options, CohortExpression, vocabularyAPI,
-		ConceptSet, sharedState) {
+		ConceptSet, sharedState, executionAPI, jobDetailsService) {
 		function cohortComparisonManager(params) {
 
 			var DEBUG = true;
@@ -75,7 +78,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			self.chartObj.subscribe(function(chart) {
 			});
 			self.ready = ko.computed(function() {
-				return  self.chartObj() && 
+				return	self.chartObj() && 
 								self.chartData().length && 
 								self.domElement() && 
 								self.pillMode() === 'balance';
@@ -176,43 +179,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 					}
 				});
 
-				ohdsiUtil.cachedAjax({
-					url: config.api.url + 'comparativecohortanalysis/' + self.cohortComparisonId() + '/executions',
-					method: 'GET',
-					contentType: 'application/json',
-					error: authApi.handleAccessDenied,
-					success: function (response) {
-
-						response = response.sort(function (a, b) {
-							return a.executed - b.executed;
-						});
-
-						$.each(response, function (i, d) {
-							var sourceKey = self.sources().filter(s => s.sourceId == d.sourceId)[0].sourceKey;
-							var executedTimestamp = new Date(d.executed);
-							d.executedCaption = executedTimestamp.toLocaleDateString() + ' ' + executedTimestamp.toLocaleTimeString();
-
-							var h = Math.floor(((d.duration % 31536000) % 86400) / 3600);
-							var m = Math.floor((((d.duration % 31536000) % 86400) % 3600) / 60);
-							var s = (((d.duration % 31536000) % 86400) % 3600) % 60;
-
-							d.durationCaption = ''
-							if (h > 0) d.durationCaption += h + 'h ';
-							if (m > 0) d.durationCaption += m + 'm ';
-							if (s > 0) d.durationCaption += s + 's ';
-
-							if (h == 0 && m == 0 && s == 0) {
-								d.durationCaption = 'n/a';
-							}
-
-							// this will ensure that if the last execution is still running that we don't allow additional executions to begin
-							self.sourceProcessingStatus[sourceKey](d.executionStatus !== 'COMPLETED' && d.executionStatus !== 'FAILED');
-
-							self.sourceExecutions[sourceKey].push(d);
-						});
-					}
+				executionAPI.loadExecutions('CCA', self.cohortComparisonId(), function(exec){
+					var sourceKey = self.sources().filter(s => s.sourceId == exec.sourceId)[0].sourceKey;
+					self.sourceProcessingStatus[sourceKey](exec.executionStatus !== 'COMPLETED' && exec.executionStatus !== 'FAILED');
+					self.sourceExecutions[sourceKey].remove(e => e.id === exec.id);
+					self.sourceExecutions[sourceKey].push(exec);
 				});
-			}
+			};
 
 			self.loadExecutions();
 
@@ -311,6 +284,9 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 			}
 
 			self.executionSelected = function (d) {
+				if(config.useExecutionEngine){
+					executionAPI.viewResults(d.id);
+				} else {
 				self.loadingExecutionFailure(false);
 				self.resultsMode('execution');
 				self.loadingExecution(true);
@@ -512,7 +488,8 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 						self.resultsMode('sources');
 						self.loadingExecutionFailure(true);
 					});
-			}
+				}
+			};
 
 			self.cohortSelected = function (id) {
 				$('#modalCohortDefinition').modal('hide');
@@ -860,37 +837,43 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				return "fa fa-angle-double-down";
 			}
 
-			self.monitorJobExecution = function (jobExecutionId, sourceKey) {
+			self.monitorEEJobExecution = function (jobExecutionId, wait) {
 				setTimeout(function () {
 					ohdsiUtil.cachedAjax({
-						url: config.api.url + 'job/execution/' + jobExecutionId,
+						url: config.api.url + 'executionservice/execution/status/' + jobExecutionId,
 						method: 'GET',
-						contentType: 'application/json',
 						error: authApi.handleAccessDenied,
 						success: function (d) {
-							if (d.status === 'COMPLETED' || d.status === 'FAILED') {
-								completed = true;
-								self.sourceProcessingStatus[sourceKey](false);
-								self.loadExecutions();
-							} else {
-								self.monitorJobExecution(jobExecutionId, sourceKey);
+							self.loadExecutions();
+							if (d !== 'COMPLETED' && d !== 'FAILED') {
+								self.monitorEEJobExecution(jobExecutionId, 6000);
 							}
 						}
 					});
-				}, 60000);
-			}
+				}, wait);
+			};
 
 			self.executeCohortComparison = function (sourceKey) {
-				self.sourceProcessingStatus[sourceKey](true);
-
-				var generatePromise = ohdsiUtil.cachedAjax({
-					url: config.api.url + 'comparativecohortanalysis/' + self.cohortComparisonId() + '/execute/' + sourceKey,
-					method: 'GET',
-					contentType: 'application/json',
-					success: function (c, status, xhr) {
-						self.monitorJobExecution(c.executionId, sourceKey);
-					}
-				});
+				if (config.useExecutionEngine) {
+					self.sourceProcessingStatus[sourceKey](true);
+					executionAPI.runExecution(sourceKey, self.cohortComparisonId(), 'CCA', $('.language-r').text(),
+						function (c, status, xhr) {
+							self.monitorEEJobExecution(c.executionId, 100);
+							jobDetailsService.createJob({
+								name: self.cohortComparison().name() + "_" + sourceKey,
+								type: 'cca',
+								status: 'PENDING',
+								executionId: c.executionId,
+								statusUrl: `${self.config.api.url}executionservice/execution/status/${c.executionId}`,
+								statusValue: 'status',
+								viewed: false,
+								url: 'estimation/' + self.cohortComparisonId(),
+							})
+						}
+					);
+				} else {
+					self.sourceProcessingStatus[sourceKey](true);
+				}
 			};
 
 			self.import = function () {
@@ -1061,7 +1044,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				},
 				series: {
 							value: d => ['A','B','C','D'][Math.floor(Math.random() * 4)],
-							sortBy:  d => d.afterMatchingStdDiff,
+							sortBy:	d => d.afterMatchingStdDiff,
 							tooltipOrder: 5,
 							isField: true,
 				},
