@@ -6,7 +6,7 @@
         <loading params="status:'loading'" />
     </div>
     <div data-bind="visible: !loading()">
-        <div data-bind="css: classes('block')">
+        <div data-bind="css: classes('table-block')" style="margin-bottom:5px">
             <table data-bind="css: classes({ element: 'summary-table', extra: ['table', 'table-bordered', 'table-hover'] })">
                 <thead data-bind="css: classes('summary-table-head')">
                 <tr>
@@ -87,6 +87,7 @@
                                     yFormat: $data.yFormat || $component.formatRounded,
                                     tickFormat: $component.dateTickFormat,
                                     height: 125,
+                                    ticks:6,
                                     yTicks:2,
                                     yAxisWidth:56,
                                     showLegend: false,

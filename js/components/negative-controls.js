@@ -513,7 +513,7 @@ define(['knockout',
 							evidenceSources[i].executionDuration(execDuration);
 							evidenceSources[i].status(gi[0].status);
 							evidenceSources[i].isValid(gi[0].isValid);
-							var giParams = JSON.parse(gi[i].params);
+							var giParams = JSON.parse(gi[0].params);
 							evidenceSources[i].csToInclude = ko.observable(giParams.csToInclude != null ? giParams.csToInclude : 0);
 							evidenceSources[i].csToExclude = ko.observable(giParams.csToExclude != null ? giParams.csToExclude : 0);
 							

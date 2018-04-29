@@ -61,7 +61,7 @@
 
 <div id="reportEntropy" data-bind="if: model.currentReport() == 'Entropy' && !model.loadingReport()">
 	<div class="tab-pane" id="care_site_div">
-		<table id="care_site_table" class="display">
+		<table id="care_site_table" class="stripe compact hover dataTable no-footer">
 			<thead>
 				<tr>
 					<th>Care Site</th>
@@ -245,7 +245,7 @@
 						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="condition-table-panel">
-						<table id="condition_table" class="display treemap_table" type="condition">
+						<table id="condition_table" class="stripe compact hover dataTable no-footer" type="condition">
 							<thead>
 								<tr>
 									<th>Concept Id</th>
@@ -304,7 +304,7 @@
 						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="drugs-by-index-table-panel">
-						<table id="drugs-by-index-table" class="display treemap_table" type="drug">
+						<table id="drugs-by-index-table" class="stripe compact hover dataTable no-footer" type="drug">
 							<thead>
 								<tr>
 									<th>Concept Id</th>
@@ -455,7 +455,7 @@
 						<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="conditionera-table-panel" data-bind="eventListener: { event: 'click', selector: '.conditionera_table_selector', callback: handleConditionEraTableClick}">
-						<table id="conditionera_table" class="display">
+						<table id="conditionera_table" class="stripe compact hover dataTable no-footer">
 							<thead>
 								<tr>
 									<th>Concept Id</th>
@@ -479,18 +479,40 @@
 			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
 		</div>
 		<div data-bind="if:$component.model.activeReportDrilldown">
-			<div class="heading" id="conditionEraDrilldown"></div>
-			<div class="reportSectionHeading">Condition Era Prevalence</div>
-			<div class="evidenceVisualization" id="trellisLinePlot"></div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Condition Era Prevalence
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="trellisLinePlot"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Condition Era Prevalence by Month
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="conditioneraPrevalenceByMonth"></div>
+				</div>
+			</div>
 
-			<div class="reportSectionHeading">Condition Era Prevalence by Month</div>
-			<div class="evidenceVisualization" id="conditioneraPrevalenceByMonth"></div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Age at First Diagnosis
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="conditioneras_age_at_first_diagnosis"></div>
+				</div>
+			</div>
 
-			<div class="reportSectionHeading">Age at First Diagnosis</div>
-			<div class="evidenceVisualization" id="conditioneras_age_at_first_diagnosis"></div>
-
-			<div class="reportSectionHeading">Length of Condition Era</div>
-			<div class="evidenceVisualization" id="conditioneras_length_of_era"></div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Length of Condition Era
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="conditioneras_length_of_era"></div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -516,7 +538,7 @@
 						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="procedure-table-panel">
-						<table id="procedure_table" class="display treemap_table" type="procedure">
+						<table id="procedure_table" class="stripe compact hover dataTable no-footer" type="procedure">
 							<thead>
 								<tr>
 									<th>Concept Id</th>
@@ -575,7 +597,7 @@
 						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="condition-table-panel" data-bind="eventListener: { event: 'click', selector: '.condition_table_selector', callback: handleConditionTableClick}">
-						<table id="condition_table" class="display">
+						<table id="condition_table" class="stripe compact hover dataTable no-footer">
 							<thead>
 								<tr>
 									<th>Concept Id</th>
@@ -600,21 +622,41 @@
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div class="heading" id="conditionDrilldown"></div>
 
-			<div class="reportSectionHeading">Condition Prevalence</div>
-			<div class="evidenceVisualization" id="trellisLinePlot"></div>
-			<div class="evidenceDescription">Condition Prevalence</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Condition Prevalence
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="trellisLinePlot"></div>
+				</div>
+			</div>
 
-			<div class="reportSectionHeading">Condition Prevalence by Month</div>
-			<div class="evidenceVisualization" id="conditionPrevalenceByMonth"></div>
-			<div class="evidenceDescription">Condition Prevalence by Month</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Condition Prevalence by Month
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="conditionPrevalenceByMonth"></div>
+				</div>
+			</div>
 
-			<div class="reportSectionHeading">Condition Type</div>
-			<div class="evidenceDescription">Condition Type</div>
-			<div class="evidenceVisualization" id="conditionsByType"></div>
-
-			<div class="reportSectionHeading">Age at First Diagnosis</div>
-			<div class="evidenceVisualization" id="ageAtFirstDiagnosis"></div>
-			<div class="evidenceDescription">Age at First Diagnosis</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Condition Type
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="conditionsByType"></div>
+				</div>
+			</div>
+			
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Age at First Diagnosis
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="ageAtFirstDiagnosis"></div>
+				</div>
+		</div>
 		</div>
 	</div>
 </div>
@@ -640,7 +682,7 @@
 						<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="drugera-table-panel" data-bind="eventListener: { event: 'click', selector: '.drugera_table_selector', callback: handleDrugEraTableClick}">
-						<table id="drugera_table" class="display">
+						<table id="drugera_table" class="stripe compact hover dataTable no-footer">
 							<thead>
 								<tr>
 									<th>Concept Id</th>
@@ -666,21 +708,38 @@
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div class="heading" id="drugeraDrilldown"></div>
 
-			<div class="reportSectionHeading">Drug Era Prevalence</div>
-			<div class="evidenceVisualization" id="trellisLinePlot"></div>
-			<div class="evidenceDescription">Drug Era Prevalence</div>
-
-			<div class="reportSectionHeading">Drug Era Prevalence by Month</div>
-			<div class="evidenceVisualization" id="drugeraPrevalenceByMonth"></div>
-			<div class="evidenceDescription">Monthly drug era prevalence</div>
-
-			<div class="reportSectionHeading">Age at First Exposure by Gender</div>
-			<div class="evidenceVisualization" id="drugeras_age_at_first_exposure"></div>
-			<div class="evidenceDescription">Age at First Exposure by Gender</div>
-
-			<div class="reportSectionHeading">Length of Era Distribution</div>
-			<div class="evidenceVisualization" id="drugeras_length_of_era"></div>
-			<div class="evidenceDescription">Length of Era Distribution</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Drug Era Prevalence
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="trellisLinePlot"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Drug Era Prevalence by Month
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="drugeraPrevalenceByMonth"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Age at First Exposure by Gender
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="drugeras_age_at_first_exposure"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Length of Era Distribution
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="drugeras_length_of_era"></div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -706,7 +765,7 @@
 						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
 					<div class="tab-pane active" id="drug_table_panel" data-bind="eventListener: { event: 'click', selector: '.drug_table_selector', callback: handleDrugTableClick}">
-						<table id="drug_table" class="display">
+						<table id="drug_table" class="stripe compact hover dataTable no-footer">
 							<thead>
 								<tr>
 									<th>Concept Id</th>
@@ -732,33 +791,62 @@
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div class="heading" id="drugExposureDrilldown"></div>
 
-			<div class="reportSectionHeading">Drug Exposure Prevalence</div>
-			<div class="evidenceVisualization" id="trellisLinePlot"></div>
-			<div class="evidenceDescription">Drug Exposure Prevalence</div>
-
-			<div class="reportSectionHeading">Drug Exposure Prevalence by Month</div>
-			<div class="evidenceVisualization" id="drugPrevalenceByMonth"></div>
-			<div class="evidenceDescription">Drug Exposure Prevalence by Month</div>
-
-			<div class="reportSectionHeading">Age at First Exposure</div>
-			<div class="evidenceDescription">Age at First Exposure</div>
-			<div class="evidenceVisualization" id="ageAtFirstExposure"></div>
-
-			<div class="reportSectionHeading">Days Supply Distribution</div>
-			<div class="evidenceDescription">Days Supply Distribution</div>
-			<div class="evidenceVisualization" id="daysSupplyDistribution"></div>
-
-			<div class="reportSectionHeading">Quantity Distribution</div>
-			<div class="evidenceDescription">Quantity Distribution</div>
-			<div class="evidenceVisualization" id="quantityDistribution"></div>
-
-			<div class="reportSectionHeading">Refills Distribution</div>
-			<div class="evidenceDescription">Refills Distribution</div>
-			<div class="evidenceVisualization" id="refillsDistribution"></div>
-
-			<div class="reportSectionHeading">Drugs by Type</div>
-			<div class="evidenceDescription">Drugs by Type</div>
-			<div class="evidenceVisualization" id="drugsByType"></div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Drug Exposure Prevalence
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="trellisLinePlot"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Drug Exposure Prevalence by Month
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="drugPrevalenceByMonth"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Age at First Exposure
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="ageAtFirstExposure"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Days Supply Distribution
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="daysSupplyDistribution"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Quantity Distribution
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="quantityDistribution"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Refills Distribution
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="refillsDistribution"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Drugs by Type
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="drugsByType"></div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -784,7 +872,7 @@
 						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
 					<div class="tab-pane active" role="tabpanel" id="procedure-table-panel" data-bind="eventListener: { event: 'click', selector: '.procedure_table_selector', callback: handleProcedureTableClick}">
-						<table id="procedure_table" class="display">
+						<table id="procedure_table" class="stripe compact hover dataTable no-footer">
 							<thead>
 								<tr>
 									<th>Concept Id</th>
@@ -809,21 +897,38 @@
 		<div data-bind="if:$component.model.activeReportDrilldown">
 			<div class="heading" id="procedureDrilldown"></div>
 
-			<div class="reportSectionHeading">Procedure Prevalence</div>
-			<div class="evidenceVisualization" id="trellisLinePlot"></div>
-			<div class="evidenceDescription">Procedure Prevalence</div>
-
-			<div class="reportSectionHeading">Procedure Prevalence by Month</div>
-			<div class="evidenceVisualization" id="procedurePrevalenceByMonth"></div>
-			<div class="evidenceDescription">Procedure Prevalence by Month</div>
-
-			<div class="reportSectionHeading">Procedures by Type</div>
-			<div class="evidenceDescription">Procedures by Type</div>
-			<div class="evidenceVisualization" id="proceduresByType"></div>
-
-			<div class="reportSectionHeading">Age at First Occurrence</div>
-			<div style="width:30%" class="evidenceDescription">Age at First Occurrence</div>
-			<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Procedure Prevalence
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="trellisLinePlot"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Procedure Prevalence by Month
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="procedurePrevalenceByMonth"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Procedures by Type
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="proceduresByType"></div>
+				</div>
+			</div>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Age at First Occurrence
+				</div>
+				<div class="panel-body">
+					<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
