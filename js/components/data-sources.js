@@ -107,6 +107,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 				byType: true,
 				byFrequency: true,
 				byUnit: true,
+                byValueAsConcept: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -115,6 +116,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 				path: "observation",
 				byType: true,
 				byFrequency: true,
+                byValueAsConcept: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -657,23 +659,31 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					self.ageBoxplot(data.ageAtFirstOccurrence, '#ageAtFirstOccurrence');
 					self.prevalenceByMonth(data.prevalenceByMonth, '#prevalenceByMonth');
 					self.prevalenceByType(data.byType, '#byType');
-					self.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear, '#trellisLinePlot')
+					self.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear, '#trellisLinePlot');
+
 					if (currentReport.byFrequency) {
 						self.frequencyDistribution(data, '#frequencyDistribution', currentReport.path);
 					}
+
+					// For Observations and Measurements
+					if (currentReport.byValueAsConcept) {
+                        self.prevalenceByType(data.byValueAsConcept, "#valueAsConcept");
+                    }
+
+                    // For Measurements
 					if (currentReport.byUnit) {
-            var drawPlot = function(data, selector) {
-              self.boxplotChart(data, selector, currentConcept.concept_id);
-            };
-            var drawPie = function(data, selector) {
-            	self.pieChart(data, selector, currentConcept.concept_id);
+						var drawPlot = function(data, selector) {
+						  self.boxplotChart(data, selector, currentConcept.concept_id);
 						};
-            drawPie(data.recordsByUnit, "#recordsByUnit");
-            drawPlot(data.measurementValueDistribution, "#measurementValues");
-            drawPlot(data.lowerLimitDistribution, "#lowerLimit");
-            drawPlot(data.upperLimitDistribution, "#upperLimit");
-            drawPie(data.valuesRelativeToNorm, "#relativeToNorm");
-          }
+						var drawPie = function(data, selector) {
+							self.pieChart(data, selector, currentConcept.concept_id);
+						};
+						drawPie(data.recordsByUnit, "#recordsByUnit");
+						drawPlot(data.measurementValueDistribution, "#measurementValues");
+						drawPlot(data.lowerLimitDistribution, "#lowerLimit");
+						drawPlot(data.upperLimitDistribution, "#upperLimit");
+						drawPie(data.valuesRelativeToNorm, "#relativeToNorm");
+				    }
 				}
 			});
 		};

@@ -144,6 +144,21 @@
 				</div>
 			</div>
 
+			<!-- ko if: $component.currentReport().byValueAsConcept && !$component.loadingReport() -->
+			<div class="row">
+				<div class="col-xs-6">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Value As Concept
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization" id="valueAsConcept"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /ko -->
+
 			<!-- ko if: $component.currentReport().byUnit && !$component.loadingReport() -->
 			<div class="row">
 				<div class="col-xs-6">
