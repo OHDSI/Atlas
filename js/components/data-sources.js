@@ -558,7 +558,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 							};
 						}, data);
 						$("#report_table").DataTable({
-							order: [1, 'desc'],
+							order: [2, 'desc'],
 							dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
 							buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
 							autoWidth: false,
@@ -574,15 +574,18 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 								},
 								{
 									data: 'num_persons',
-									className: 'numeric'
+									className: 'numeric',
+                                    orderSequence: ['desc','asc']
 								},
 								{
 									data: 'percent_persons',
-									className: 'numeric'
+									className: 'numeric',
+                                    orderSequence: ['desc','asc']
 								},
 								{
 									data: 'agg_value',
-									className: 'numeric'
+									className: 'numeric',
+                                    orderSequence: ['desc','asc']
 								}
 							],
 							pageLength: 15,
