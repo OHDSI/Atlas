@@ -108,6 +108,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 				byFrequency: true,
 				byUnit: true,
                 byValueAsConcept: true,
+				byOperator: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -117,6 +118,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 				byType: true,
 				byFrequency: true,
                 byValueAsConcept: true,
+				byQualifier: true,
 				aggProperty: RecordsPerPersonProperty,
 				conceptDomain: true
 			},
@@ -671,6 +673,16 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					// For Observations and Measurements
 					if (currentReport.byValueAsConcept) {
                         self.prevalenceByType(data.byValueAsConcept, "#valueAsConcept");
+                    }
+
+                    // For measurements
+                    if (currentReport.byOperator) {
+                        self.prevalenceByType(data.byOperator, "#operatorConcept");
+					}
+
+                    // For observations
+                    if (currentReport.byQualifier) {
+                        self.prevalenceByType(data.byQualifier, "#qualifierConcept");
                     }
 
                     // For Measurements

@@ -120,6 +120,7 @@
 					</div>
 				</div>
 
+			<div class="row">
 				<!-- ko if: $component.currentReport().byType -->
 				<div class="col-xs-6">
 					<div class="panel panel-primary">
@@ -133,19 +134,20 @@
 				</div>
 				<!-- /ko -->
 
-			<div class="col-xs-6">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						Age at First Occurrence
-					</div>
-					<div class="panel-body">
-						<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
+				<div class="col-xs-6">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Age at First Occurrence
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<!-- ko if: $component.currentReport().byValueAsConcept && !$component.loadingReport() -->
 			<div class="row">
+				<!-- ko if: $component.currentReport().byValueAsConcept && !$component.loadingReport() -->
 				<div class="col-xs-6">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
@@ -156,8 +158,34 @@
 						</div>
 					</div>
 				</div>
+				<!-- /ko -->
+
+				<!-- ko if: $component.currentReport().byOperator && !$component.loadingReport() -->
+				<div class="col-xs-6">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Operator Concept
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization" id="operatorConcept"></div>
+						</div>
+					</div>
+				</div>
+				<!-- /ko -->
+
+				<!-- ko if: $component.currentReport().byQualifier && !$component.loadingReport() -->
+				<div class="col-xs-6">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Qualifier Concept
+						</div>
+						<div class="panel-body">
+							<div class="evidenceVisualization" id="qualifierConcept"></div>
+						</div>
+					</div>
+				</div>
+				<!-- /ko -->
 			</div>
-			<!-- /ko -->
 
 			<!-- ko if: $component.currentReport().byUnit && !$component.loadingReport() -->
 			<div class="row">
