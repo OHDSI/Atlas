@@ -47,7 +47,7 @@ define([
         byMonthSeries: {
           xScale: null,
           xFormat: d3.timeFormat("%m/%Y"),
-          tickFormat: d3.timeFormat("%Y"),
+          tickFormat: d3.timeFormat("%m/%Y"),
           ticks: 10,
           xLabel: "Date",
           yLabel: "People"
@@ -94,14 +94,14 @@ define([
                 return item;
               }, cumObsData);
 
-            this.chartFormats.observationLine = 'Days';
+            this.chartFormats.observationLine.xLabel = 'Days';
             if (cumulativeData.length > 0) {
               if (cumulativeData.slice(-1)[0].xValue - cumulativeData[0].xValue > 1000) {
                 // convert x data to years
                 cumulativeData.forEach(function (d) {
                   d.xValue = d.xValue / 365.25;
                 });
-                this.chartFormats.observationLine = 'Years';
+                this.chartFormats.observationLine.xLabel = 'Years';
               }
             }
 

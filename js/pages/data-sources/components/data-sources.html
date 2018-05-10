@@ -38,7 +38,7 @@
 		<div>error loading report</div>
 	</div>
 
-	<div id="report" data-bind="if: $component.currentReport() && !$component.hasError()">
+	<div id="report" class="flexed" data-bind="if: $component.currentReport() && !$component.hasError()">
 		<div class="row pad-10 report">
 
 			<!-- ko if:$component.currentReport().conceptDomain -->
@@ -384,4 +384,3 @@
 			</div>
 		</div>
 	</div>
-	
