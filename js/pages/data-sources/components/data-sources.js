@@ -13,7 +13,10 @@ define([
 	'services/http',
 	'databindings',
 	'access-denied',
-	'./reports/dashboard/dashboard'
+	'./reports/dashboard/dashboard',
+	'./reports/datadensity/datadensity',
+	'./reports/person/person',
+	'./reports/death/death'
 	//'less!./data-sources.less'
 ], function (
 	$,
@@ -31,7 +34,6 @@ define([
 ) {
 	function dataSources(params) {
 		var self = this;
-		self.test = (e) => console.log(e)
 
 		// aggregate property descriptors
 		var RecordsPerPersonProperty = {
@@ -201,40 +203,7 @@ define([
 			if (currentReport.name == 'Dashboard') {
 				
 			} else if (currentReport.name == 'Person') {
-				$.ajax({
-					url: url,
-					error: function (error) {
-						self.loadingReport(false);
-						self.hasError(true);
-						console.log(error);
-					},
-					success: function (data) {
-						self.loadingReport(false);
 
-						if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
-							var yearHistogram = new atlascharts.histogram();
-							var histData = {};
-							histData.intervalSize = 1;
-							histData.min = data.yearOfBirthStats[0].minValue;
-							histData.max = data.yearOfBirthStats[0].maxValue;
-							histData.intervals = 100;
-							histData.data = (self.normalizeArray(data.yearOfBirth));
-							yearHistogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
-								xFormat: d3.format('d'),
-								yFormat: d3.format(',.1s'),
-								xLabel: 'Year',
-								yLabel: 'People'
-							});
-						}
-
-						var genderDonut = new atlascharts.donut();
-						var raceDonut = new atlascharts.donut();
-						var ethnicityDonut = new atlascharts.donut();
-						genderDonut.render(self.mapConceptData(data.gender), "#gender", size4.width, size4.height);
-						raceDonut.render(self.mapConceptData(data.race), "#race", size4.width, size4.height);
-						ethnicityDonut.render(self.mapConceptData(data.ethnicity), "#ethnicity", size4.width, size4.height);
-					}
-				});
 			} else if (currentReport.name == 'Achilles Heel') {
 				$.ajax({
 					url: url,
@@ -286,135 +255,8 @@ define([
 					}
 				});
 			} else if (currentReport.name == 'Data Density') {
-				$.ajax({
-					url: url,
-					error: function (error) {
-						self.loadingReport(false);
-						self.hasError(true);
-						console.log(error);
-					},
-					success: function (data) {
-						self.loadingReport(false);
-
-						if (!!data.totalRecords) {
-							var totalRecords = data.totalRecords;
-							// convert yyyymm to date
-							totalRecords.forEach(function (d, i, ar) {
-								var v = d.xCalendarMonth;
-								ar[i].xCalendarMonth = new Date(Math.floor(v / 100), (v % 100) - 1, 1)
-							});
-
-							// nest dataframe data into key->values pair
-							var totalRecordsData = d3.nest()
-								.key(function (d) {
-									return d.seriesName;
-								})
-								.entries(totalRecords)
-								.map(function (d) {
-									return {
-										name: d.key,
-										values: d.values
-									};
-								});
-
-
-							var totalLine = new atlascharts.line();
-							totalLine.render(totalRecordsData, "#totalrecords", size12.width, size12.height, {
-								xScale: d3.scaleTime().domain(d3.extent(totalRecords, function (d) {
-									return d.xCalendarMonth;
-								})),
-								xFormat: d3.timeFormat("%m/%Y"),
-								tickFormat: d3.timeFormat("%Y"),
-								xValue: "xCalendarMonth",
-								yValue: "yRecordCount",
-								xLabel: "Year",
-								yLabel: "# of Records",
-								showLegend: true
-							});
-						}
-
-						if (!!data.recordsPerPerson) {
-							var recordsPerPerson = data.recordsPerPerson;
-							// convert yyyymm to date
-							recordsPerPerson.forEach(function (d, i, ar) {
-								var v = d.xCalendarMonth;
-								ar[i].xCalendarMonth = new Date(Math.floor(v / 100), (v % 100) - 1, 1)
-							});
-
-							// nest dataframe data into key->values pair
-							var recordsPerPersonData = d3.nest()
-								.key(function (d) {
-									return d.seriesName;
-								})
-								.entries(recordsPerPerson)
-								.map(function (d) {
-									return {
-										name: d.key,
-										values: d.values
-									};
-								});
-
-
-							var recordsperpersonLine = new atlascharts.line();
-							recordsperpersonLine.render(recordsPerPersonData, "#recordsperperson", size12.width, size12.height, {
-								xScale: d3.scaleTime().domain(d3.extent(recordsPerPerson, function (d) {
-									return d.xCalendarMonth;
-								})),
-								xFormat: d3.timeFormat("%m/%Y"),
-								tickFormat: d3.timeFormat("%Y"),
-								xValue: "xCalendarMonth",
-								yValue: "yRecordCount",
-								xLabel: "Year",
-								yLabel: "Records Per Person",
-								showLegend: true
-							});
-						}
-
-						if (!!data.conceptsPerPerson) {
-
-							var conceptsSeries = [];
-							var conceptsData = self.normalizeArray(data.conceptsPerPerson);
-							for (i = 0; i < conceptsData.category.length; i++) {
-								conceptsSeries.push({
-									Category: conceptsData.category[i],
-									min: conceptsData.minValue[i],
-									max: conceptsData.maxValue[i],
-									median: conceptsData.medianValue[i],
-									LIF: conceptsData.p10Value[i],
-									q1: conceptsData.p25Value[i],
-									q3: conceptsData.p75Value[i],
-									UIF: conceptsData.p90Value[i]
-								});
-							}
-							var conceptsperpersonBoxPlot = new atlascharts.boxplot();
-							conceptsperpersonBoxPlot.render(conceptsSeries, "#conceptsperperson", size12.width, size12.height, {
-								yMax: d3.max(conceptsData.p90Value),
-								yFormat: d3.format(',.1s'),
-								xLabel: 'Concept Type',
-								yLabel: 'Concepts per Person'
-							});
-						}
-
-					}
-				});
-			} else if (currentReport.name == 'Death') {
-
-				$.ajax({
-					url: url,
-					error: function (error) {
-						self.loadingReport(false);
-						self.hasError(true);
-						console.log(error);
-					},
-					success: function (data) {
-						self.loadingReport(false);
-
-						self.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear, '#deathPrevalenceByGenderAgeYear');
-						self.prevalenceByMonth(data.prevalenceByMonth, '#deathPrevalenceByMonth');
-						self.prevalenceByType(data.deathByType, '#deathByType');
-						self.ageBoxplot(data.ageAtDeath, '#ageAtDeath');
-					}
-				});
+				
+			} else if (currentReport.name == 'Death') {				
 
 			} else if (currentReport.conceptDomain) {
 				self.loadTreemap();

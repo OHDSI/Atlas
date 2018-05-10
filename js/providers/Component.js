@@ -1,7 +1,9 @@
 define([
-	'knockout',
+  'knockout',
+  'utils/BemHelper',  
 ], function (
-	ko,
+  ko,
+  BemHelper
 ) {
   class Component {
     constructor() {
@@ -9,7 +11,8 @@ define([
     }
 
     render(params) {
-      // This method should be extended
+      const bemHelper = new BemHelper(this.name);
+      this.classes = bemHelper.run.bind(bemHelper);
     }
 
     createViewModel(params, info) {

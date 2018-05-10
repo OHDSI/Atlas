@@ -223,61 +223,9 @@
 			<dashboard params='context: $component'></dashboard>
 		<!-- /ko -->
 
-		<!-- ko if: $component.currentReport().name == 'Person' && !$component.loadingReport() -->
-		<div class="col-xs-12">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						Year of Birth
-					</div>
-					<div class="panel-body">
-						<div class="evidenceVisualization" id="hist"></div>
-					</div>
-					<div class="panel-footer">
-						The number of people in this cohort shown with respect to their year of birth.
-					</div>
-				</div>
-			</div>
-	
-			<div class="col-xs-4">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						Gender
-					</div>
-					<div class="panel-body">
-						<div class="evidenceVisualization" id="gender"></div>
-					</div>
-					<div class="panel-footer">
-						The number of people in this cohort stratified by gender.
-					</div>
-				</div>
-			</div>
-			<div class="col-xs-4">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						Race
-					</div>
-					<div class="panel-body">
-						<div class="evidenceVisualization" id="race"></div>
-					</div>
-					<div class="panel-footer">
-						The number of people in this cohort stratified by race.
-					</div>
-				</div>
-			</div>
-			<div class="col-xs-4">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						Ethnicity
-					</div>
-					<div class="panel-body">
-						<div class="evidenceVisualization" id="ethnicity"></div>
-					</div>
-					<div class="panel-footer">
-						The number of people in this cohort stratified by ethnicity.
-					</div>
-				</div>
-			</div>
-			<!-- /ko -->
+		<!-- ko if: $component.currentReport().name == 'Person' -->
+			<person params='context: $component'></person>
+		<!-- /ko -->
 	
 				<!-- ko if: $component.currentReport().name == 'Achilles Heel' && !$component.loadingReport() -->
 				<div class="panel panel-primary">
@@ -297,89 +245,13 @@
 				</div>
 				<!-- /ko -->
 	
-				<!-- ko if: $component.currentReport().name == 'Data Density' && !$component.loadingReport() -->
-				<div class="col-sm-12">
-					<div class="panel panel-primary">
-						<div class="panel-heading">
-							Total Rows
-						</div>
-						<div class="panel-body">
-							<div class="evidenceVisualization" id="totalrecords"></div>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-12">
-					<div class="panel panel-primary">
-						<div class="panel-heading">
-							Records Per Person
-						</div>
-						<div class="panel-body">
-							<div class="evidenceVisualization" id="recordsperperson"></div>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-12">
-					<div class="panel panel-primary">
-						<div class="panel-heading">
-							Concepts Per Person
-						</div>
-						<div class="panel-body">
-							<div class="evidenceVisualization" id="conceptsperperson"></div>
-						</div>
-					</div>
-				</div>
+				<!-- ko if: $component.currentReport().name == 'Data Density' -->
+					<datadensity params='context: $component'></datadensity>				
 				<!-- /ko -->
 	
 	
-				<!-- ko if: $component.currentReport().name == 'Death' && !$component.loadingReport() -->
-				<div class="col-sm-12">
-					<div class="panel panel-primary">
-						<div class="panel-heading">
-							Death Prevalence by Age, Gender, Year
-						</div>
-						<div class="panel-body">
-							<div class="evidenceVisualization">
-								<div id="deathPrevalenceByGenderAgeYear"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-12">
-					<div class="panel panel-primary">
-						<div class="panel-heading">
-							Death Prevalence by Month
-						</div>
-						<div class="panel-body">
-							<div class="evidenceVisualization">
-								<div class="drilldown" id="deathPrevalenceByMonth"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-12 col-md-6">
-					<div class="panel panel-primary">
-						<div class="panel-heading">
-							Death by Type
-						</div>
-						<div class="panel-body">
-							<div class="evidenceVisualization">
-								<div id="deathByType"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-12 col-md-6">
-					<div class="panel panel-primary">
-						<div class="panel-heading">
-							Age at Death
-						</div>
-						<div class="panel-body">
-							<div class="evidenceVisualization">
-								<div id="ageAtDeath"></div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<!-- ko if: $component.currentReport().name == 'Death' -->
+					<death params='context: $component'></death>
 				<!-- /ko -->
 			</div>
 		</div>
