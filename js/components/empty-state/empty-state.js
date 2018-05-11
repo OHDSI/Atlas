@@ -1,20 +1,28 @@
 define([
 	'knockout',
 	'text!./empty-state.html',
-	//'less!./empty-state.less',
+  'providers/Component',
+	'less!./empty-state.less',
 ], function (
 	ko,
 	view,
+	Component
 ) {
-	function emptyState(params) {
-    this.message = params.message || 'No data';
+	class EmptyState extends Component {
+		constructor() {
+			super();
+			this.name = 'empty-state';
+			this.view = view;
+		}
+
+		render(params) {
+			super.render(params);
+			this.message = params.message || 'No data';
+
+			return this;
+		}
   }
 
-	var component = {
-		viewModel: emptyState,
-		template: view,
-	};
-
-	ko.components.register('empty-state', component);
-	return component;
+	const emptyState = new EmptyState();
+	return emptyState.build();
 });
