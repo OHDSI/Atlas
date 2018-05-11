@@ -372,12 +372,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			// reset view after save
 			cohortDefinitionAPI.deleteCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
-				self.model.currentCohortDefinition(null);
 				if (config.userAuthenticationEnabled) {
-					authApi.refreshToken();
+					return authApi.refreshToken();
 				}
-				document.location = "#/cohortdefinitions"
-			});
+				return new Promise(resolve => resolve());
+			}).then(() => {
+				self.model.currentCohortDefinition(null);
+				document.location = "#/cohortdefinitions";
+			}).catch(er => console.error(er));
 		}
 
 		self.save = function () {
