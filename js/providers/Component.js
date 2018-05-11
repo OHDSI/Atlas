@@ -7,6 +7,8 @@ define([
 ) {
   class Component {
     constructor() {
+      this.classes = null;
+      this.view = null;
       this.createViewModel = this.createViewModel.bind(this);
     }
 
@@ -17,6 +19,16 @@ define([
 
     createViewModel(params, info) {
       return this.render(params, info);
+    }
+
+    build() {
+      const component = {
+        viewModel: this,
+        template: this.view,
+      };
+    
+      ko.components.register(this.name, component);
+      return component;
     }
   }
 

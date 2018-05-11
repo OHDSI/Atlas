@@ -4,7 +4,7 @@ define([
 	'd3',
   'services/http',
   'pages/data-sources/const',
-  'pages/data-sources/Report',
+  'pages/data-sources/classes/Report',
   'pages/data-sources/components/report-title/report-title',
   'pages/data-sources/components/charts/donut',
   'pages/data-sources/components/charts/line',
@@ -23,6 +23,8 @@ define([
     constructor() {
       super();
       this.name = 'death';
+      this.view = view;
+      
       this.prevalenceByGenderAgeYearData = ko.observable();
       this.byMonthSeriesLineData = ko.observable();
       this.prevalenceByTypeDonutData = ko.observable();
@@ -181,12 +183,5 @@ define([
   }
 
   const report = new Death();
-
-	const component = {
-		viewModel: report,
-		template: view,
-	};
-
-	ko.components.register(report.name, component);
-	return component;
+	return report.build();
 });

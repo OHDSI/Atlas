@@ -1,6 +1,6 @@
 define([
 	'knockout',
-  'pages/data-sources/Chart',
+  'pages/data-sources/classes/Chart',
   'atlascharts',
 ], function (
   ko,
@@ -10,6 +10,7 @@ define([
   class Boxplot extends Chart {
     constructor() {
       super();
+      this.name = 'boxplot';
       this.chart = new atlascharts.boxplot();
     }
 
@@ -20,11 +21,5 @@ define([
   }
 
   const viewModel = new Boxplot();  
-	var component = {
-		viewModel,
-		template: viewModel.template,
-	};
-
-	ko.components.register('boxplot', component);
-	return component;
+	return viewModel.build();
 });

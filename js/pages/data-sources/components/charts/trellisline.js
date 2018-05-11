@@ -1,6 +1,6 @@
 define([
 	'knockout',
-  'pages/data-sources/Chart',
+  'pages/data-sources/classes/Chart',
   'atlascharts',
 ], function (
   ko,
@@ -10,6 +10,7 @@ define([
   class Trellisline extends Chart {
     constructor() {
       super();
+      this.name = 'trellisline';
       this.chart = new atlascharts.trellisline();
     }
 
@@ -20,11 +21,5 @@ define([
   }
 
   const viewModel = new Trellisline();  
-	var component = {
-		viewModel,
-		template: viewModel.template,
-	};
-
-	ko.components.register('trellisline', component);
-	return component;
+	return viewModel.build();
 });

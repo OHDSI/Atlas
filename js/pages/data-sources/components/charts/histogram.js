@@ -1,6 +1,6 @@
 define([
 	'knockout',
-  'pages/data-sources/Chart',
+  'pages/data-sources/classes/Chart',
   'atlascharts',
 ], function (
   ko,
@@ -10,6 +10,7 @@ define([
   class Histogram extends Chart {
     constructor() {
       super();
+      this.name = 'histogram';
       this.chart = new atlascharts.histogram();
     }
 
@@ -20,11 +21,5 @@ define([
   }
 
   const viewModel = new Histogram();  
-	var component = {
-		viewModel,
-		template: viewModel.template,
-	};
-
-	ko.components.register('histogram', component);
-	return component;
+	return viewModel.build();
 });

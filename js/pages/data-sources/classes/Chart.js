@@ -1,19 +1,19 @@
 define([
   'knockout',
   'providers/Component',
-  'text!./components/charts/chart.html',
+  'text!../components/charts/chart.html',
   'pages/data-sources/const',
   'components/empty-state/empty-state',
 ], function (
   ko,
   Component,
-  template,
+  view,
   constants,
 ) {
   class Chart extends Component {
     constructor() {
       super();
-      this.template = template;
+      this.view = view;
       this.container = ko.observable();
       this.container.subscribe(this.draw.bind(this));
       this.data = ko.observable();

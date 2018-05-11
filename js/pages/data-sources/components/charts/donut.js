@@ -1,6 +1,6 @@
 define([
 	'knockout',
-  'pages/data-sources/Chart',
+  'pages/data-sources/classes/Chart',
   'atlascharts',
 ], function (
   ko,
@@ -10,6 +10,7 @@ define([
   class Donut extends Chart {
     constructor() {
       super();
+      this.name = 'donut';
       this.chart = new atlascharts.donut();
     }
 
@@ -20,11 +21,5 @@ define([
   }
 
   const viewModel = new Donut();  
-	var component = {
-		viewModel,
-		template: viewModel.template,
-	};
-
-	ko.components.register('donut', component);
-	return component;
+	return viewModel.build();
 });

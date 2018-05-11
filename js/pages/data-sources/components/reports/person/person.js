@@ -4,7 +4,7 @@ define([
 	'd3',
   'services/http',
   'pages/data-sources/const',
-  'pages/data-sources/Report',
+  'pages/data-sources/classes/Report',
   'pages/data-sources/components/report-title/report-title',
   'pages/data-sources/components/charts/histogram',
   'pages/data-sources/components/charts/line',
@@ -20,7 +20,9 @@ define([
 	class Person extends Report {
     constructor() {
       super();
-      this.name = 'person';  
+      this.name = 'person';
+      this.view = view;
+      
       this.yearHistogramData = ko.observable();
       this.genderData = ko.observable();
       this.raceData = ko.observable();
@@ -61,13 +63,6 @@ define([
     }
   }
 
-  const report = new Person();
-
-	const component = {
-		viewModel: report,
-		template: view,
-	};
-
-	ko.components.register(report.name, component);
-	return component;
+  const report = new Person();	
+	return report.build();
 });

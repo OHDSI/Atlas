@@ -6,7 +6,7 @@ define([
 	'd3-tip',
   'services/http',
   'pages/data-sources/const',
-  'pages/data-sources/Report',
+  'pages/data-sources/classes/Report',
   'pages/data-sources/components/report-title/report-title',
   'pages/data-sources/components/charts/donut',
   'pages/data-sources/components/charts/histogram',
@@ -25,6 +25,9 @@ define([
 	class Dashboard extends Report {
     constructor() {
       super();
+      this.name = 'dashboard';      
+      this.view = view;
+      
       this.summary = ko.observableArray();
       this.genderConceptData = ko.observable();
       this.ageAtFirstObservationData = ko.observable();
@@ -128,12 +131,5 @@ define([
   }
 
   const report = new Dashboard();
-
-	var component = {
-		viewModel: report,
-		template: view,
-	};
-
-	ko.components.register('dashboard', component);
-	return component;
+  return report.build();
 });

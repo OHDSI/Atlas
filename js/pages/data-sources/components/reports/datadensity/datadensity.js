@@ -4,7 +4,7 @@ define([
 	'd3',
   'services/http',
   'pages/data-sources/const',
-  'pages/data-sources/Report',
+  'pages/data-sources/classes/Report',
   'pages/data-sources/components/report-title/report-title',
   'pages/data-sources/components/charts/boxplot',
   'pages/data-sources/components/charts/line',
@@ -20,7 +20,9 @@ define([
 	class DataDensity extends Report {
     constructor() {
       super();
-      this.name = 'datadensity';      
+      this.name = 'datadensity';
+      this.view = view;
+      
       this.totalLineData = ko.observable();
       this.recordsperpersonLineData = ko.observable();
       this.conceptsPerPersonData = ko.observable();
@@ -125,12 +127,5 @@ define([
   }
 
   const report = new DataDensity();
-
-	const component = {
-		viewModel: report,
-		template: view,
-	};
-
-	ko.components.register(report.name, component);
-	return component;
+	return report.build();
 });

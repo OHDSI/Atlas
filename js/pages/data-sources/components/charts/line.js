@@ -1,6 +1,6 @@
 define([
 	'knockout',
-  'pages/data-sources/Chart',
+  'pages/data-sources/classes/Chart',
   'atlascharts',
 ], function (
   ko,
@@ -10,6 +10,7 @@ define([
   class Line extends Chart {
     constructor() {
       super();
+      this.name = 'line';
       this.chart = new atlascharts.line();
     }
 
@@ -20,11 +21,5 @@ define([
   }
 
   const viewModel = new Line();  
-	var component = {
-		viewModel,
-		template: viewModel.template,
-	};
-
-	ko.components.register('line', component);
-	return component;
+	return viewModel.build();
 });
