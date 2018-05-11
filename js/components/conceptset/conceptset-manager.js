@@ -576,8 +576,8 @@ define(['knockout',
 						return conceptSetAPI.saveConceptSetItems(data.id, conceptSetItems);
 					};
 					conceptSetAPI.saveConceptSet(conceptSet)
-						.then(itemsPromise)
-						.then(refreshTokenPromise)
+						.then(() => itemsPromise)
+						.then(() => refreshTokenPromise)
 						.then(function(){
               document.location = '#/conceptset/' + conceptSetId + '/details';
               self.compareResults(null);
