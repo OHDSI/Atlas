@@ -16,6 +16,13 @@ define(function(require, exports) {
         return config.webAPIRoot;
     };
 
+    var token = ko.observable();
+    if (localStorage.bearerToken && localStorage.bearerToken != 'null') {
+        token(localStorage.bearerToken);
+    } else {
+        token(null);
+    }
+
     var tokenExpirationDate = ko.pureComputed(function() {
         if (!token()) {
             return null;
@@ -25,6 +32,33 @@ define(function(require, exports) {
         return new Date(expirationInSeconds * 1000);
 
     });
+
+    const tokenExpired = ko.observable(false);
+    const askLoginOnTokenExpire = (function() {
+        let expirationTimeout;
+        return () => {
+            if (expirationTimeout) {
+                clearTimeout(expirationTimeout);
+            }
+            if (tokenExpirationDate() > new Date()) {
+                tokenExpired(false);
+                expirationTimeout = setTimeout(
+                    () => {
+                        tokenExpired(true);
+                        $('#myModal').modal('show');
+                        expirationTimeout = null;
+                    },
+                    tokenExpirationDate() - new Date()
+                );
+            } else {
+                tokenExpired(true);
+            }
+        }
+    })();
+
+    askLoginOnTokenExpire();
+    tokenExpirationDate.subscribe(askLoginOnTokenExpire);
+
     var permissions = function() {
         var permissionsString = localStorage.getItem(LOCAL_STORAGE_PERMISSIONS_KEY);
         if (!permissionsString) {
@@ -38,12 +72,6 @@ define(function(require, exports) {
             ? parseJwtPayload(token()).sub
             : null;
     });
-    var token = ko.observable();
-    if (localStorage.bearerToken && localStorage.bearerToken != 'null') {
-        token(localStorage.bearerToken);
-    } else {
-        token(null);
-    }
 
     window.addEventListener('storage', function(event) {
         if (event.storageArea === localStorage && localStorage.bearerToken !== token()) {
@@ -134,7 +162,7 @@ define(function(require, exports) {
         return false;
     };
 
-    var base64urldecode = function (arg) {
+    function base64urldecode(arg) {
         var s = arg;
         s = s.replace(/-/g, '+'); // 62nd char of encoding
         s = s.replace(/_/g, '/'); // 63rd char of encoding
@@ -148,7 +176,7 @@ define(function(require, exports) {
         return window.atob(s); // Standard base64 decoder
     };
 
-    var parseJwtPayload = function (jwt) {
+    function parseJwtPayload(jwt) {
         var parts = jwt.split(".");
         if (parts.length != 3) {
             throw new Error("JSON Web Token must have three parts");
@@ -382,6 +410,7 @@ define(function(require, exports) {
         token: token,
         subject: subject,
         tokenExpirationDate: tokenExpirationDate,
+        tokenExpired: tokenExpired,
         setAuthParams: setAuthParams,
         resetAuthParams: resetAuthParams,
         getAuthorizationHeader: getAuthorizationHeader,

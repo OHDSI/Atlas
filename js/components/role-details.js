@@ -336,11 +336,9 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'data
                         saveUsers(),
                         savePermissions())
                     .done(function() {
-                        authApi.refreshToken().done(function() {
-                            self.roleDirtyFlag.reset();
-                            self.dirtyFlag.reset();
-                            document.location = '#/role/' + self.roleId();
-                        });
+                        self.roleDirtyFlag.reset();
+                        self.dirtyFlag.reset();
+                        document.location = '#/role/' + self.roleId();
                     })
                     .always(function() { self.loading(false); });
             });
@@ -358,7 +356,6 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'data
                 contentType: 'application/json',
                 error: authApi.handleAccessDenied,
                 success: function () {
-                    authApi.refreshToken();
                     var roles = self.model.roles().filter(function (role) {
                         return role.id != self.roleId();
                     });

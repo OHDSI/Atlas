@@ -289,10 +289,7 @@ define(['knockout',
 
 		self.copy = function () {
 			plpAPI.copyPlp(self.patientLevelPredictionId()).then(function (result) {
-				var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
-				$.when(refreshTokenPromise).done(function () {
-					document.location = "#/plp/" + result.analysisId;
-				});
+				document.location = "#/plp/" + result.analysisId;
 			});
 		}
 

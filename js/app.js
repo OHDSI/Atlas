@@ -67,20 +67,11 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 			});
 
 			self.initComplete = function () {
-					var prevToken = authApi.token();
-					var routerOptions = {
-						notfound: function () {
-							self.currentView('search');
-						},
-						on: function () {
-							self.currentView('loading');
-							var promise = (self.config.userAuthenticationEnabled && (authApi.token() != null || (prevToken != null && authApi.token() === null))) ? authApi.refreshToken : null;
-							$.when(promise).done(function(){
-								prevToken = authApi.token();
-								self.currentView('loading');
-							});
-						}
-					};
+				var routerOptions = {
+					notfound: function () {
+						self.currentView('search');
+					},
+				};
 				var routes = {
 					'/': function () {
 						document.location = "#/home";
@@ -348,7 +339,22 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 					},
 				};
 
-				self.router = new Router(routes)
+                const asyncBefore = function() {
+                	// Refresh auth token
+                	return (self.config.userAuthenticationEnabled && authApi.token() != null && authApi.tokenExpirationDate() > new Date()) ? authApi.refreshToken() : new Promise(resolve => resolve());
+                };
+
+                // Since the router's "before" hook doesn't work with promises,
+				// there is a need to wrap the routes manually
+                const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
+                	accumulator[key] = function() {
+                        self.currentView('loading');
+                		asyncBefore().then(() => routes[key].apply(null, arguments));
+                    };
+                	return accumulator;
+				}, {});
+
+				self.router = new Router(routesWithRefreshedToken)
 					.configure(routerOptions);
 				self.router.qs = function () {
 					return querystring.parse(window.location.href.split('?')[1]);
