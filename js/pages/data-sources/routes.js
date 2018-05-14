@@ -3,7 +3,7 @@ define(
     function dataSourcesRoutes(appModel) {
       return {
         '/datasources': function () {
-          require(['./components/data-sources'], function () {
+          require(['./data-sources'], function () {
             appModel.componentParams = {
               model: appModel
             };
@@ -11,7 +11,7 @@ define(
           });
         },
         '/datasources/:sourceKey/:reportName': function (sourceKey, reportName) {
-          require(['./components/data-sources'], function () {
+          require(['./data-sources'], function () {
             appModel.componentParams = {
               model: appModel,
               reportName: reportName,

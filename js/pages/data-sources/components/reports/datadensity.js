@@ -5,10 +5,9 @@ define([
   'services/http',
   'pages/data-sources/const',
   'pages/data-sources/classes/Report',
-  'pages/data-sources/components/report-title/report-title',
+  'pages/data-sources/components/report-title',
   'pages/data-sources/components/charts/boxplot',
   'pages/data-sources/components/charts/line',
-	'less!./datadensity.less'
 ], function (
 	ko,
 	view,

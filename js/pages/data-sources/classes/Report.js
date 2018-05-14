@@ -13,6 +13,7 @@ define([
     constructor() {
       super();
       this.isLoading = ko.observable(true);
+      this.chartFormats = {};
     }
 
     render(params) {
@@ -34,7 +35,7 @@ define([
       const response = httpService.doGet(url);
       response.catch((error) => {
           this.context.hasError(true);
-          console.log(error);
+          console.error(error);
         })
         .finally(() => {
           this.context.loadingReport(false);

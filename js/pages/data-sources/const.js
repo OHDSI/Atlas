@@ -138,14 +138,83 @@ define(
 			return [series]; // return series wrapped in an array
 		};
 
+		const formatPercent = d3.format('.2%');
+		const formatFixed = d3.format('.2f');
+		const formatComma = d3.format(',');
+
+		const buildHierarchyFromJSON = function (data, threshold, aggProperty = { name: '', description: '' }) {
+			let total = 0;
+
+			const root = {
+				"name": "root",
+				"children": []
+			};
+
+			for (var i = 0; i < data.percentPersons.length; i++) {
+				total += data.percentPersons[i];
+			}
+
+			for (var i = 0; i < data.conceptPath.length; i++) {
+				const parts = data.conceptPath[i].split("||");
+				let currentNode = root;
+				for (let j = 0; j < parts.length; j++) {
+					const children = currentNode.children;
+					const nodeName = parts[j];
+					let childNode;
+					if (j + 1 < parts.length) {
+						// Not yet at the end of the path; move down the tree.
+						let foundChild = false;
+						for (let k = 0; k < children.length; k++) {
+							if (children[k].name === nodeName) {
+								childNode = children[k];
+								foundChild = true;
+								break;
+							}
+						}
+						// If we don't already have a child node for this branch, create it.
+						if (!foundChild) {
+							childNode = {
+								"name": nodeName,
+								"children": []
+							};
+							children.push(childNode);
+						}
+						currentNode = childNode;
+					} else {
+						// Reached the end of the path; create a leaf node.
+						childNode = {
+							"name": nodeName,
+							"num_persons": data.numPersons[i],
+							"concept_id": data.conceptId[i],
+							"path": data.conceptPath[i],
+							"percent_persons": data.percentPersons[i],
+							"agg_value": data[aggProperty.name][i]
+						};
+
+						if ((data.percentPersons[i] / total) > threshold) {
+							children.push(childNode);
+						}
+					}
+				}
+			}
+			return root;
+		}
+
     return {
       apiPaths,
+			minChartHeight,
+
       mapConceptData,
-      mapHistogram,
-      normalizeArray,
-      normalizeDataframe,
+			mapHistogram,
       mapMonthYearDataToSeries,
-      minChartHeight,
+			
+      normalizeArray,
+			normalizeDataframe,			
+
+			formatPercent,
+			formatComma,
+			formatFixed,
+			buildHierarchyFromJSON,
     };
   }
 );

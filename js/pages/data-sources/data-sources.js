@@ -13,10 +13,11 @@ define([
 	'services/http',
 	'databindings',
 	'access-denied',
-	'./reports/dashboard/dashboard',
-	'./reports/datadensity/datadensity',
-	'./reports/person/person',
-	'./reports/death/death'
+	'./components/reports/dashboard',
+	'./components/reports/datadensity',
+	'./components/reports/person',
+	'./components/reports/visit',
+	'./components/reports/death'
 	//'less!./data-sources.less'
 ], function (
 	$,
@@ -181,11 +182,7 @@ define([
 		self.currentReport = ko.observable();
 		self.currentConcept = ko.observable();
 
-		self.formatPercent = d3.format('.2%');
-		self.formatFixed = d3.format('.2f');
-		self.formatComma = d3.format(',');
 		self.treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
-
 
 		self.loadSummary = function () {
 			var currentReport = self.currentReport();
@@ -259,115 +256,11 @@ define([
 			} else if (currentReport.name == 'Death') {				
 
 			} else if (currentReport.conceptDomain) {
-				self.loadTreemap();
+				// self.loadTreemap();
 			}
 		};
 
-		self.loadTreemap = function () {
-			var currentReport = self.currentReport();
-			var currentSource = self.currentSource();
-			var url = config.api.url + 'cdmresults/' + currentSource.sourceKey + '/' + currentReport.path;
-
-			$("#treemap_container").find('svg').remove();
-			$('.evidenceVisualization').empty();
-
-			$.ajax({
-				url: url,
-				error: function (error) {
-					self.loadingReport(false);
-					self.hasError(true);
-					console.log(error);
-				},
-				success: function (data) {
-					var normalizedData = self.normalizeDataframe(self.normalizeArray(data, true));
-					data = normalizedData;
-					self.loadingReport(false);
-
-					if (!data.empty) {
-						var tableData = normalizedData.conceptPath.map(function (d, i) {
-							var pathParts = this.conceptPath[i].split('||');
-							return {
-								concept_id: this.conceptId[i],
-								name: pathParts[pathParts.length - 1],
-								num_persons: self.formatComma(this.numPersons[i]),
-								percent_persons: self.formatPercent(this.percentPersons[i]),
-								agg_value: self.formatFixed(this[currentReport.aggProperty.name][i])
-							};
-						}, data);
-						$("#report_table").DataTable({
-							order: [1, 'desc'],
-							dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
-							buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
-							autoWidth: false,
-							data: tableData,
-							createdRow: function (row) {
-								$(row).addClass('table_selector');
-							},
-							columns: [{
-									data: 'concept_id'
-								},
-								{
-									data: 'name'
-								},
-								{
-									data: 'num_persons',
-									className: 'numeric'
-								},
-								{
-									data: 'percent_persons',
-									className: 'numeric'
-								},
-								{
-									data: 'agg_value',
-									className: 'numeric'
-								}
-							],
-							pageLength: 15,
-							lengthChange: false,
-							deferRender: true,
-							destroy: true
-						});
-
-						var treeData = self.buildHierarchyFromJSON(data, threshold);
-						var treemap = new atlascharts.treemap();
-						treemap.render(treeData, '#treemap_container', width, height, {
-							onclick: function (node) {
-								self.currentConcept(node);
-							},
-							getsizevalue: function (node) {
-								return node.num_persons;
-							},
-							getcolorvalue: function (node) {
-								return node.agg_value;
-							},
-							getcolorrange: function () {
-								return self.treemapGradient;
-							},
-							getcontent: function (node) {
-								var result = '',
-									steps = node.path.split('||'),
-									i = steps.length - 1;
-								result += '<div class="pathleaf">' + steps[i] + '</div>';
-								result += '<div class="pathleafstat">Prevalence: ' + self.formatPercent(node.percent_persons) + '</div>';
-								result += '<div class="pathleafstat">Number of People: ' + self.formatComma(node.num_persons) + '</div>';
-								result += '<div class="pathleafstat">' + currentReport.aggProperty.description + ': ' + self.formatFixed(node.agg_value) + '</div>';
-								return result;
-							},
-							gettitle: function (node) {
-								var title = '',
-									steps = node.path.split('||');
-								for (var i = 0; i < steps.length - 1; i++) {
-									title += ' <div class="pathstep">' + Array(i + 1).join('&nbsp;&nbsp') + steps[i] + ' </div>';
-								}
-								return title;
-							}
-						});
-
-						$('[data-toggle="popover"]').popover();
-					}
-				}
-			});
-		};
+		self.loadTreemap = function () {};
 
 		self.loadDrilldown = function () {
 			var currentSource = self.currentSource();
@@ -723,62 +616,7 @@ define([
 		};
 
 		self.buildHierarchyFromJSON = function (data, threshold) {
-			var total = 0;
-			var currentReport = self.currentReport();
-
-			var root = {
-				"name": "root",
-				"children": []
-			};
-
-			for (var i = 0; i < data.percentPersons.length; i++) {
-				total += data.percentPersons[i];
-			}
-
-			for (var i = 0; i < data.conceptPath.length; i++) {
-				var parts = data.conceptPath[i].split("||");
-				var currentNode = root;
-				for (var j = 0; j < parts.length; j++) {
-					var children = currentNode.children;
-					var nodeName = parts[j];
-					var childNode;
-					if (j + 1 < parts.length) {
-						// Not yet at the end of the path; move down the tree.
-						var foundChild = false;
-						for (var k = 0; k < children.length; k++) {
-							if (children[k].name === nodeName) {
-								childNode = children[k];
-								foundChild = true;
-								break;
-							}
-						}
-						// If we don't already have a child node for this branch, create it.
-						if (!foundChild) {
-							childNode = {
-								"name": nodeName,
-								"children": []
-							};
-							children.push(childNode);
-						}
-						currentNode = childNode;
-					} else {
-						// Reached the end of the path; create a leaf node.
-						childNode = {
-							"name": nodeName,
-							"num_persons": data.numPersons[i],
-							"concept_id": data.conceptId[i],
-							"path": data.conceptPath[i],
-							"percent_persons": data.percentPersons[i],
-							"agg_value": data[currentReport.aggProperty.name][i]
-						};
-
-						if ((data.percentPersons[i] / total) > threshold) {
-							children.push(childNode);
-						}
-					}
-				}
-			}
-			return root;
+			
 		};
 
 		self.mapMonthYearDataToSeries = function (data, options) {

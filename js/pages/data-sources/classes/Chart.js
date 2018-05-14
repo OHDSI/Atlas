@@ -3,7 +3,7 @@ define([
   'providers/Component',
   'text!../components/charts/chart.html',
   'pages/data-sources/const',
-  'components/empty-state/empty-state',
+  'components/empty-state',
 ], function (
   ko,
   Component,

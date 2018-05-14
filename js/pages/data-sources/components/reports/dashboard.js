@@ -7,11 +7,10 @@ define([
   'services/http',
   'pages/data-sources/const',
   'pages/data-sources/classes/Report',
-  'pages/data-sources/components/report-title/report-title',
+  'pages/data-sources/components/report-title',
   'pages/data-sources/components/charts/donut',
   'pages/data-sources/components/charts/histogram',
   'pages/data-sources/components/charts/line',
-	//'less!./dashboard.less'
 ], function (
 	ko,
 	view,
