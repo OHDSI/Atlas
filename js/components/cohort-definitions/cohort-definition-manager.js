@@ -373,9 +373,6 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			// reset view after save
 			cohortDefinitionAPI.deleteCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
 				self.model.currentCohortDefinition(null);
-				if (config.userAuthenticationEnabled) {
-					authApi.refreshToken();
-				}
 				document.location = "#/cohortdefinitions"
 			});
 		}
@@ -400,14 +397,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				result.expression = JSON.parse(result.expression);
 				var definition = new CohortDefinition(result);
 				var redirectWhenComplete = definition.id() != self.model.currentCohortDefinition().id();
-
-				var refreshTokenPromise = (redirectWhenComplete && config.userAuthenticationEnabled) ? authApi.refreshToken() : null;
-				$.when(refreshTokenPromise).done(function () {
-					self.model.currentCohortDefinition(definition);
-					if (redirectWhenComplete) {
-						document.location = "#/cohortdefinition/" + definition.id();
-					}
-				});
+				self.model.currentCohortDefinition(definition);
+				if (redirectWhenComplete) {
+					document.location = "#/cohortdefinition/" + definition.id();
+				}
 			});
 		}
 
@@ -431,10 +424,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			// reset view after save
 			cohortDefinitionAPI.copyCohortDefinition(self.model.currentCohortDefinition().id()).then(function (result) {
-				var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
-				$.when(refreshTokenPromise).done(function () {
-					document.location = "#/cohortdefinition/" + result.id;
-				});
+				document.location = "#/cohortdefinition/" + result.id;
 			});
 		}
 
@@ -611,14 +601,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
       };
       var conceptSetItems = conceptSetUitls.toConceptSetItems(self.selectedConcepts());
       var conceptSetId;
-      var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
       var itemsPromise = function(data) {
         conceptSetId = data.id;
         return conceptSetApi.saveConceptSetItems(data.id, conceptSetItems);
       };
       conceptSetApi.saveConceptSet(conceptSet)
         .then(itemsPromise)
-        .then(refreshTokenPromise);
     };
 
 		function createConceptSet() {
