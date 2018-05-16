@@ -180,10 +180,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				});
 
 				executionAPI.loadExecutions('CCA', self.cohortComparisonId(), function(exec){
-					var sourceKey = self.sources().filter(s => s.sourceId == exec.sourceId)[0].sourceKey;
-					self.sourceProcessingStatus[sourceKey](exec.executionStatus !== 'COMPLETED' && exec.executionStatus !== 'FAILED');
-					self.sourceExecutions[sourceKey].remove(e => e.id === exec.id);
-					self.sourceExecutions[sourceKey].push(exec);
+                    var source = self.sources().find(s => s.sourceId == exec.sourceId);
+                    if (source) {
+                        var sourceKey = source.sourceKey;
+                        self.sourceProcessingStatus[sourceKey](exec.executionStatus !== 'COMPLETED' && exec.executionStatus !== 'FAILED');
+                        self.sourceExecutions[sourceKey].remove(e => e.id === exec.id);
+                        self.sourceExecutions[sourceKey].push(exec);
+                    }
 				});
 			};
 

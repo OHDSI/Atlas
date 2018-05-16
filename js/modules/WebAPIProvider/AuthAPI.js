@@ -28,8 +28,12 @@ define(function(require, exports) {
             return null;
         }
 
-        var expirationInSeconds = parseJwtPayload(token()).exp;
-        return new Date(expirationInSeconds * 1000);
+        try {
+            var expirationInSeconds = parseJwtPayload(token()).exp;
+            return new Date(expirationInSeconds * 1000);
+        } catch (e) {
+            return new Date();
+        }
 
     });
 
@@ -68,9 +72,13 @@ define(function(require, exports) {
         return permissionsString.split('|');
     };
     var subject = ko.pureComputed(function() {
-        return token()
-            ? parseJwtPayload(token()).sub
-            : null;
+        try {
+            return token()
+                ? parseJwtPayload(token()).sub
+                : null;
+        } catch (e) {
+            return null;
+        }
     });
 
     window.addEventListener('storage', function(event) {
