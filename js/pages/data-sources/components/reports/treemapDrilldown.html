@@ -1,0 +1,137 @@
+<div class="loader" data-bind="if: isLoading()">
+  <i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown Report:
+  <span data-bind="text: currentConcept().name"></span>
+  ...
+</div>
+<!-- ko ifnot: isLoading() -->
+  <!-- ko if: isError -->
+    <empty-state params="message: 'No data'"></empty-state>
+  <!-- /ko -->
+
+  <div data-bind="visible: !isError()">
+    <!-- ko if: currentConcept() -->
+    <heading params="name: 'Drilldown Report', sourceKey: currentConcept().name"></heading>
+    <!-- /ko -->
+
+    <div class="col-xs-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Prevalence
+        </div>
+        <div class="panel-body">
+          <trellisline class="evidenceVisualization" params="data: prevalenceByGenderAgeYearData, format: chartFormats.prevalenceByGenderAgeYear"></trellisline>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Prevalence by Month
+        </div>
+        <div class="panel-body">
+            <line class="evidenceVisualization" params="data: prevalenceByMonthData, format: chartFormats.prevalenceByMonth"></line>
+        </div>
+      </div>
+    </div>
+
+    <!-- ko if: $component.currentReport().byType -->
+    <div class="col-xs-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Type
+        </div>
+        <div class="panel-body">
+          <donut class="evidenceVisualization" params="data: prevalenceByTypeData, format: chartFormats.prevalenceByType"></donut>
+        </div>
+      </div>
+    </div>
+    <!-- /ko -->
+
+  <div class="col-xs-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        Age at First Occurrence
+      </div>
+      <div class="panel-body">
+        <boxplot class="evidenceVisualization" params="data: ageData, format: chartFormats.age"></boxplot>
+      </div>
+    </div>
+  </div>
+
+  <!-- ko if: $component.currentReport().byUnit && !isLoading() -->
+  <div class="row">
+    <div class="col-xs-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Measurement Records by Unit
+        </div>
+        <div class="panel-body">
+          <div class="evidenceVisualization" id="recordsByUnit"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Measurement Value Distribution
+        </div>
+        <div class="panel-body">
+          <div class="evidenceVisualization" id="measurementValues"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-4">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Lower limit Distribution
+        </div>
+        <div class="panel-body">
+          <div class="evidenceVisualization" id="lowerLimit"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-4">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Upper Limit Distribution
+        </div>
+        <div class="panel-body">
+          <div class="evidenceVisualization" id="upperLimit"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-4">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Values Relative to Normal Range
+        </div>
+        <div class="panel-body">
+          <div class="evidenceVisualization" id="relativeToNorm"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- /ko -->
+  <!-- ko if: $component.currentReport().byFrequency && !isLoading() -->
+    <div class="col-xs-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Frequency Distribution
+        </div>
+        <div class="panel-body">
+          <div class="evidenceVisualization" id="frequencyDistribution"></div>
+        </div>
+      </div>
+    </div>
+  <!-- /ko -->
+
+  </div>
+<!-- /ko -->

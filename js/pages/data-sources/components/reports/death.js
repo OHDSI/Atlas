@@ -3,13 +3,13 @@ define([
 	'text!./death.html',
 	'd3',
   'services/http',
-  'pages/data-sources/const',
+  'const',
   'pages/data-sources/classes/Report',
-  'pages/data-sources/components/report-title',
-  'pages/data-sources/components/charts/donut',
-  'pages/data-sources/components/charts/line',
-  'pages/data-sources/components/charts/boxplot',
-  'pages/data-sources/components/charts/trellisline',
+  'components/heading',
+  'components/charts/donut',
+  'components/charts/line',
+  'components/charts/boxplot',
+  'components/charts/trellisline',
 ], function (
 	ko,
 	view,
@@ -67,62 +67,8 @@ define([
     }
 
     prevalenceByGenderAgeYear(data) {
-      const trellisData = helpers.normalizeArray(data);
-			if (!trellisData.empty) {
-				const allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
-				const minYear = d3.min(trellisData.xCalendarYear),
-					maxYear = d3.max(trellisData.xCalendarYear);
-
-				const seriesInitializer = function (tName, sName, x, y) {
-					return {
-						trellisName: tName,
-						seriesName: sName,
-						xCalendarYear: x,
-						yPrevalence1000Pp: y
-					};
-				};
-
-				const nestByDecile = d3.nest()
-					.key(function (d) {
-						return d.trellisName;
-					})
-					.key(function (d) {
-						return d.seriesName;
-					})
-					.sortValues(function (a, b) {
-						return a.xCalendarYear - b.xCalendarYear;
-					});
-
-				// map data into chartable form
-				const normalizedSeries = trellisData.trellisName.map(function (d, i) {
-					const item = {};
-					const container = this;
-					d3.keys(container).forEach(function (p) {
-						item[p] = container[p][i];
-					});
-					return item;
-				}, trellisData);
-
-				const dataByDecile = nestByDecile.entries(normalizedSeries);
-				// fill in gaps
-        const yearRange = d3.range(minYear, maxYear, 1);
-        let yearData = {};
-
-				dataByDecile.forEach(function (trellis) {
-					trellis.values.forEach(function (series) {
-						series.values = yearRange.map(function (year) {
-							yearData = series.values.filter(function (f) {
-								return f.xCalendarYear === year;
-							})[0] || seriesInitializer(trellis.key, series.key, year, 0);
-							yearData.date = new Date(year, 0, 1);
-							return yearData;
-						});
-					});
-				});
-
-        this.prevalenceByGenderAgeYearData(dataByDecile);
-        this.chartFormats.prevalenceByGenderAgeYear.trellisSet = allDeciles;
-			}
+			this.chartFormats.prevalenceByGenderAgeYear.trellisSet = helpers.defaultDeciles;
+			this.prevalenceByGenderAgeYearData(data);
     }
 
     
@@ -136,7 +82,7 @@ define([
 				});
         this.byMonthSeriesLineData(byMonthSeries);
         this.chartFormats.byMonthSeriesLine.xScale = d3.scaleTime()
-        .domain(d3.extent(byMonthSeries[0].values, d => d.xValue));
+        	.domain(d3.extent(byMonthSeries[0].values, d => d.xValue));
       }
     }
 

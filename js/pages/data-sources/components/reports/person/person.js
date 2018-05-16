@@ -8,6 +8,7 @@ define([
   'components/heading',
   'components/charts/histogram',
   'components/charts/line',
+	'less!./person.less'
 ], function (
 	ko,
 	view,

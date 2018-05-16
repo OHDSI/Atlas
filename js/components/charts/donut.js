@@ -1,6 +1,6 @@
 define([
 	'knockout',
-  'pages/data-sources/classes/Chart',
+  'providers/Chart',
   'atlascharts',
 ], function (
   ko,

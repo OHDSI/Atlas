@@ -21,15 +21,17 @@ define([
         context,
       } = params;
       this.context = context;
-      this.sourceKey = this.context.currentSource().sourceKey;
       this.name = this.context.currentReport().name;
+      this.sourceKey = this.context.currentSource().sourceKey;
       this.path = this.context.currentReport().path;
+      this.conceptId = null;
     }
 
     getData() {
       const url = helpers.apiPaths.report({
         sourceKey: this.sourceKey,
         path: this.path,
+        conceptId: this.conceptId,
       });
       this.isLoading(true);
       const response = httpService.doGet(url);

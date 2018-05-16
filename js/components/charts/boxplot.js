@@ -1,17 +1,17 @@
 define([
 	'knockout',
-  'pages/data-sources/classes/Chart',
+  'providers/Chart',
   'atlascharts',
 ], function (
   ko,
   Chart,
   atlascharts,
 ) {
-  class Line extends Chart {
+  class Boxplot extends Chart {
     constructor() {
       super();
-      this.name = 'line';
-      this.chart = new atlascharts.line();
+      this.name = 'boxplot';
+      this.chart = new atlascharts.boxplot();
     }
 
     render(params) {
@@ -20,6 +20,6 @@ define([
     }
   }
 
-  const viewModel = new Line();  
+  const viewModel = new Boxplot();  
 	return viewModel.build();
 });

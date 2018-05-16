@@ -2,8 +2,9 @@ define([
 	'knockout',
 	'text!./visit.html',
   'pages/data-sources/classes/Treemap',
-  'pages/data-sources/components/report-title',
-  'pages/data-sources/components/charts/treemap',
+  'components/heading',
+  'components/charts/treemap',
+  'pages/data-sources/components/reports/treemapDrilldown',
 ], function (
 	ko,
 	view,
@@ -14,25 +15,14 @@ define([
       super();
       this.name = 'visit';
       this.view = view;
-    }
-
-    selectTab(tabName) {
-
-    }
-
-    onReportTableRowClick(event) {
-
+      this.currentReport = {};
     }
 
     render(params) {
       super.render(params);
       this.aggProperty = params.report().aggProperty;
-      
-      this.getData()
-        .then(({ data }) => {
-          
-        });
-
+      // to pass down to drilldown
+      this.currentReport = params.report;
       return this;
     }
   }

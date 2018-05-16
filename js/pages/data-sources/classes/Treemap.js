@@ -1,13 +1,15 @@
 define([
 	'knockout',
-  'pages/data-sources/const',
+  'const',
   'services/http',
   './Report',
+  'text!components/charts/datatableTemplate.html'
 ], function (
 	ko,
   helpers,
   httpService,
-  Report
+  Report,
+  datatableTemplate
 ) {
   class TreemapReport extends Report {
     constructor() {
@@ -17,13 +19,15 @@ define([
         name: '',
         description: '',
       };
+      this.currentConcept = ko.observable();
 
       this.chartFormats = {
         treemap: {
+          minimumArea: 50,
           onclick: node => this.currentConcept(node),
           getsizevalue: node => node.num_persons,
           getcolorvalue: node => node.agg_value,
-          getcolorrange: () => this.treemapGradient,
+          getcolorrange: () => helpers.treemapGradient,
           getcontent: (node) => {
             const steps = node.path.split('||');
             const i = steps.length - 1;
@@ -42,29 +46,12 @@ define([
             return title;
           }
         },
-      };
-    }
-
-    parseData({ data }) {			
-      const normalizedData = helpers.normalizeDataframe(helpers.normalizeArray(data, true));
-
-      if (!normalizedData.empty) {
-        const tableData = normalizedData.conceptPath.map((d, i) => {
-          const pathParts = d.split('||');
-          return {
-            concept_id: normalizedData.conceptId[i],
-            name: pathParts[pathParts.length - 1],
-            num_persons: helpers.formatComma(normalizedData.numPersons[i]),
-            percent_persons: helpers.formatPercent(normalizedData.percentPersons[i]),
-            agg_value: helpers.formatFixed(normalizedData[this.aggProperty.name][i])
-          };
-        });
-        /*$("#report_table").DataTable({
+        table: {
           order: [1, 'desc'],
-          dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
+          dom: datatableTemplate,
           buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
           autoWidth: false,
-          data: tableData,
+          data: null,
           createdRow: function (row) {
             $(row).addClass('table_selector');
           },
@@ -90,22 +77,63 @@ define([
           pageLength: 15,
           lengthChange: false,
           deferRender: true,
-          destroy: true
-        });*/
+          destroy: true,
+        },
+      };
+    }
+    
+    selectTab(tab) {
+      
+    }
 
-        this.treeData(helpers.buildHierarchyFromJSON(data, threshold, this.aggProperty));
-        $('[data-toggle="popover"]').popover();
+    onReportTableRowClick(report, context, event) {
+      var dataTable = $("#report_table").DataTable();
+			var rowIndex = event.target._DT_CellIndex.row;
+			var concept = dataTable.row(rowIndex).data();
 
+			report.currentConcept(concept);
+    }
+
+    parseData({ data }) {			
+      const normalizedData = helpers.normalizeDataframe(helpers.normalizeArray(data, true));
+
+      if (!normalizedData.empty) {
+        const tableData = normalizedData.conceptPath.map((d, i) => {
+          const pathParts = d.split('||');
+          return {
+            concept_id: normalizedData.conceptId[i],
+            name: pathParts[pathParts.length - 1],
+            num_persons: helpers.formatComma(normalizedData.numPersons[i]),
+            percent_persons: helpers.formatPercent(normalizedData.percentPersons[i]),
+            agg_value: helpers.formatFixed(normalizedData[this.aggProperty.name][i])
+          };
+        });
+        this.chartFormats.table.data = tableData;
+        this.treeData(normalizedData);
+        
         return { data };
       }
-				
+      
 		}
-
+    
     getData() {
       const response = super.getData();
-      response.then((data) => this.parseData(data));
+      response
+      .then((data) => this.parseData(data));
 
       return response;
+    }
+
+    render(params) {
+      super.render(params);
+      return this.getData()
+        .then(() => {
+          // in order to get jquery working, we should set isLoading here instead of .finally block
+          this.context.loadingReport(false);
+          this.isLoading(false);
+          $("#report_table").DataTable(this.chartFormats.table);
+          $('[data-toggle="popover"]').popover();        
+        });
     }
   }
 
