@@ -12,14 +12,15 @@ define([
   TreemapReport,
   helpers
 ) {
-	class Visit extends TreemapReport {
+	class Condition extends TreemapReport {
     constructor() {
       super();
-      this.name = 'visit';
+      this.name = 'condition';
       this.view = view;
       this.currentReport = {};
-      
+
       this.aggProperty = helpers.aggProperties.byPerson;
+      this.byType = true;
     }
 
     render(params) {
@@ -28,6 +29,6 @@ define([
     }
   }
 
-  const report = new Visit();	
+  const report = new Condition();	
 	return report.build();
 });

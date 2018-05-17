@@ -10,7 +10,7 @@
 
   <div data-bind="visible: !isError()">
     <!-- ko if: currentConcept() -->
-    <heading params="name: 'Drilldown Report', sourceKey: currentConcept().name"></heading>
+    <heading-title params="name: 'Drilldown', sourceKey: currentConcept().name"></heading-title>
     <!-- /ko -->
 
     <div class="col-xs-12">
@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <!-- ko if: $component.currentReport().byType -->
+    <!-- ko if: byType -->
     <div class="col-xs-6">
       <div class="panel panel-primary">
         <div class="panel-heading">
@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <!-- ko if: $component.currentReport().byUnit && !isLoading() -->
+  <!-- ko if: byUnit -->
   <div class="row">
     <div class="col-xs-6">
       <div class="panel panel-primary">
@@ -67,7 +67,7 @@
           Measurement Records by Unit
         </div>
         <div class="panel-body">
-          <div class="evidenceVisualization" id="recordsByUnit"></div>
+            <donut class="evidenceVisualization" params="data: recordsByUnitData, format: chartFormats.recordsByUnit"></donut>
         </div>
       </div>
     </div>
@@ -78,7 +78,7 @@
           Measurement Value Distribution
         </div>
         <div class="panel-body">
-          <div class="evidenceVisualization" id="measurementValues"></div>
+            <boxplot class="evidenceVisualization" params="data: measurementValueDistributionData, format: chartFormats.measurementValueDistribution"></boxplot>
         </div>
       </div>
     </div>
@@ -91,7 +91,7 @@
           Lower limit Distribution
         </div>
         <div class="panel-body">
-          <div class="evidenceVisualization" id="lowerLimit"></div>
+            <boxplot class="evidenceVisualization" params="data: lowerLimitDistributionData, format: chartFormats.lowerLimitDistribution"></boxplot>
         </div>
       </div>
     </div>
@@ -102,7 +102,7 @@
           Upper Limit Distribution
         </div>
         <div class="panel-body">
-          <div class="evidenceVisualization" id="upperLimit"></div>
+            <boxplot class="evidenceVisualization" params="data: upperLimitDistributionData, format: chartFormats.upperLimitDistribution"></boxplot>
         </div>
       </div>
     </div>
@@ -113,21 +113,21 @@
           Values Relative to Normal Range
         </div>
         <div class="panel-body">
-          <div class="evidenceVisualization" id="relativeToNorm"></div>
+            <donut class="evidenceVisualization" params="data: valuesRelativeToNormData, format: chartFormats.valuesRelativeToNorm"></donut>
         </div>
       </div>
     </div>
   </div>
 
   <!-- /ko -->
-  <!-- ko if: $component.currentReport().byFrequency && !isLoading() -->
+  <!-- ko if: byFrequency -->
     <div class="col-xs-12">
       <div class="panel panel-primary">
         <div class="panel-heading">
           Frequency Distribution
         </div>
         <div class="panel-body">
-          <div class="evidenceVisualization" id="frequencyDistribution"></div>
+          <frequency-histogram class="evidenceVisualization" params="data: frequencyDistributionData, format: chartFormats.frequencyDistribution"></frequency-histogram>
         </div>
       </div>
     </div>

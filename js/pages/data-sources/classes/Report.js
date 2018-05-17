@@ -33,6 +33,7 @@ define([
         path: this.path,
         conceptId: this.conceptId,
       });
+      this.context.loadingReport(true);
       this.isLoading(true);
       const response = httpService.doGet(url);
       response.catch((error) => {

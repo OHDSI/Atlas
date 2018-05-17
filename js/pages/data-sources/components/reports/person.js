@@ -2,7 +2,6 @@ define([
 	'knockout',
 	'text!./person.html',
 	'd3',
-  'services/http',
   'const',
   'pages/data-sources/classes/Report',
   'components/heading',
@@ -12,7 +11,6 @@ define([
 	ko,
 	view,
 	d3,
-  httpService,
   helpers,
   Report
 ) {

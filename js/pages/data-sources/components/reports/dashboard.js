@@ -4,7 +4,6 @@ define([
 	'd3',
 	'atlascharts',
 	'd3-tip',
-  'services/http',
   'const',
   'pages/data-sources/classes/Report',
   'components/heading',
@@ -17,7 +16,6 @@ define([
 	d3,
 	atlascharts,
 	d3tip,
-  httpService,
   helpers,
   Report
 ) {

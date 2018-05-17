@@ -1,11 +1,11 @@
 define([
-	'knockout',
+  'knockout',
   'const',
   'services/http',
   './Report',
   'text!components/charts/datatableTemplate.html'
 ], function (
-	ko,
+  ko,
   helpers,
   httpService,
   Report,
@@ -15,14 +15,19 @@ define([
     constructor() {
       super();
       this.treeData = ko.observable();
+      this.currentConcept = ko.observable();
+
       this.aggProperty = {
         name: '',
         description: '',
       };
-      this.currentConcept = ko.observable();
+      this.byFrequency = false;
+      this.byUnit = false;
+      this.byType = false;
 
       this.chartFormats = {
         treemap: {
+          useTip: true,
           minimumArea: 50,
           onclick: node => this.currentConcept(node),
           getsizevalue: node => node.num_persons,
@@ -88,10 +93,10 @@ define([
 
     onReportTableRowClick(report, context, event) {
       var dataTable = $("#report_table").DataTable();
-			var rowIndex = event.target._DT_CellIndex.row;
-			var concept = dataTable.row(rowIndex).data();
+      var rowIndex = event.target._DT_CellIndex.row;
+      var concept = dataTable.row(rowIndex).data();
 
-			report.currentConcept(concept);
+      report.currentConcept(concept);
     }
 
     parseData({ data }) {			
@@ -114,18 +119,20 @@ define([
         return { data };
       }
       
-		}
+    }
     
     getData() {
       const response = super.getData();
       response
-      .then((data) => this.parseData(data));
+        .then((data) => this.parseData(data));
 
       return response;
     }
 
     render(params) {
       super.render(params);
+      // to pass down to drilldown
+      this.currentReport = params.report;
       return this.getData()
         .then(() => {
           // in order to get jquery working, we should set isLoading here instead of .finally block
