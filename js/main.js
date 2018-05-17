@@ -198,7 +198,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		'knockout',
 		'app',
 		'appConfig',
-		'services/auth',
+		'webapi/AuthAPI',
 		'webapi/SourceAPI',
 		'ohdsi.util',
 		'lscache',
@@ -219,7 +219,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			ko,
 			app,
 			config,
-			authService,
+			authApi,
 			sourceApi,
 			util,
 			lscache,
@@ -234,15 +234,6 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
 		DataBindings.init();
-
-		httpService.setUnauthorizedHandler(() => authService.token(null));
-		// update access token
-		if (authService.token()) {
-			var refreshTokenPromise = $.Deferred();
-			pageModel.initPromises.push(refreshTokenPromise);
-			authService.refreshToken()
-				.finally(refreshTokenPromise.resolve);
-		}
 
 		// establish base priorities for daimons
 		var evidencePriority = 0;
@@ -288,11 +279,11 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		} else {
 			sharedState.sources([]);
 
-      if (authService.isAuthenticated()) {
+      if (authApi.isAuthenticated()) {
         sourceApi.initSourcesConfig();
       } else {
         var wasInitialized = false;
-        authService.token.subscribe(function(token) {
+        authApi.token.subscribe(function(token) {
           if (token && !wasInitialized) {
             sourceApi.initSourcesConfig();
             wasInitialized = true;

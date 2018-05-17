@@ -4,11 +4,15 @@
 		<div data-bind="text: $component.status"></div>
 		-->
 		<div>
-			<div data-bind="if: !isLoggedIn()">
+			<div data-bind="if: !isLoggedIn() || tokenExpired()">
 				<!--
 				<span class="btn btn-sm btn-primary" data-bind="click: $component.signin">Login</span> with my
 				<select data-bind="options:$component.authProviders, optionsText:'name', value:$component.currentAuthProvider"></select> credentials
 				-->
+
+				<p class="text-danger" data-bind="if: isLoggedIn() && tokenExpired()">
+					Your session has expired. Please login again.
+				</p>
 
 				<div>
 					Sign In with:
@@ -35,7 +39,7 @@
 				<div data-bind="if: isBadCredentials() && !isInProgress()" class="error text-center"><span data-bind="text: errorMsg">Bad credentials</span></div>
 			</div>
 
-			<div data-bind="if: isLoggedIn()">
+			<div data-bind="if: isLoggedIn() && !tokenExpired()">
                 <div data-bind="text: $component.status"></div>
 				<span class="btn btn-sm btn-default" data-bind="click: $component.signout"><i class="fa fa-sign-out"></i> Sign Out</span>
 			</div>
