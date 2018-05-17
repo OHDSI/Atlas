@@ -10,7 +10,7 @@ define([
   class Line extends Chart {
     constructor() {
       super();
-      this.name = 'line';
+      this.name = 'atlasline';
       this.chart = new atlascharts.line();
     }
 
