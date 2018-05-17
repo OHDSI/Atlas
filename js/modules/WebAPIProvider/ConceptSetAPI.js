@@ -3,7 +3,7 @@ define(function (require, exports) {
 	var $ = require('jquery');
 	var ko = require('knockout');
 	var config = require('appConfig');
-	var authApi = require('services/auth');
+	var authApi = require('webapi/AuthAPI');
 
 	function getGenerationInfo(conceptSetId) {
 		var infoPromise = $.ajax({

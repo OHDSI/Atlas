@@ -2,7 +2,7 @@ define(function(require, exports) {
 
   var $ = require('jquery');
   var config = require('appConfig');
-  var authApi = require('services/auth');
+  var authApi = require('webapi/AuthAPI');
   var sharedState = require('atlas-state');
 
   var self  = this;

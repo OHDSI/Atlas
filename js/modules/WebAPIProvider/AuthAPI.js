@@ -1,6 +1,4 @@
-define(function(require, exports) {
-    console.warn('deprecated');
-    
+define(function(require, exports) {    
     var $ = require('jquery');
     var config = require('appConfig');
     var ko = require('knockout');
