@@ -67,7 +67,7 @@
 				</ul>
 				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'print'" class="tab-pane">
 					<div class="paddedWrapper">
-						<button class="btn btn-sm btn-primary" id="btnCopyToClipboard" data-bind="click: copyToClipboard" data-clipboard-target="#plp-print-friendly"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span id="copyToClipboardMessage" style="display:none;"><strong>Copied!</strong></span>
+						<button class="btn btn-sm btn-primary" id="btnCopyToClipboard" data-bind="click: copyToClipboard" data-clipboard-target="#plp-print-friendly"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span class="copyToClipboardMessage"  style="display:none;"><strong>Copied!</strong></span>
 						<div class="radius-border" id="plp-print-friendly">
 							<plp-print-friendly params="patientLevelPrediction: $component.patientLevelPrediction"></plp-print-friendly>
 						</div>
@@ -75,7 +75,7 @@
 				</div>
 				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'rcode'" class="tab-pane">
 					<div class="paddedWrapper">
-						<button class="btn btn-sm btn-primary" id="btnCopyToClipboard" data-bind="click: copyToClipboard" data-clipboard-target="#plp-r-code"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span id="copyToClipboardMessage" style="display:none;"><strong>Copied!</strong></span>
+						<button class="btn btn-sm btn-primary" id="btnCopyToClipboard" data-bind="click: copyToClipboard" data-clipboard-target="#plp-r-code"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span class="copyToClipboardMessage"  style="display:none;"><strong>Copied!</strong></span>
 						<plp-r-code params="patientLevelPrediction: $component.patientLevelPrediction, codeElementId: 'plp-r-code'"></plp-r-code>
 					</div>
 				</div>
