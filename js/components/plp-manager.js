@@ -137,9 +137,9 @@ define(['knockout',
 			currentClipboard.on('success', function (e) {
 				console.log('Copied to clipboard');
 				e.clearSelection();
-				$('#copyToClipboardMessage').fadeIn();
+				$('.copyToClipboardMessage').fadeIn();
 				setTimeout(function () {
-					$('#copyToClipboardMessage').fadeOut();
+					$('.copyToClipboardMessage').fadeOut();
 				}, 1500);
 			});
 
