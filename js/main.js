@@ -253,17 +253,10 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
       }
 		}
 
-		function checkExecutionEngineStatus(isAuthenticated) {
-			if (isAuthenticated && config.useExecutionEngine) {
-				executionAPI.getEngineStatus(v => {
-					config.api.isExecutionEngineAvailable(v.status === 'ONLINE')
-				});
-			}
-		}
 
 		config.api.isExecutionEngineAvailable = ko.observable(false);
-		authApi.isAuthenticated.subscribe(checkExecutionEngineStatus);
-		checkExecutionEngineStatus(authApi.isAuthenticated());
+		authApi.isAuthenticated.subscribe(executionAPI.checkExecutionEngineStatus);
+		executionAPI.checkExecutionEngineStatus(authApi.isAuthenticated());
 
 
 		$.when.apply($, pageModel.initPromises).done(function () {

@@ -69,12 +69,21 @@ define(function(require, exports){
     window.open(`${config.api.url}${executionPath}/execution/results/${executionId}`);
   }
 
+  function checkExecutionEngineStatus(isAuthenticated) {
+    if (isAuthenticated && config.useExecutionEngine) {
+      getEngineStatus(v => {
+        config.api.isExecutionEngineAvailable(v.status === 'ONLINE')
+      });
+    }
+  }
+
   const api = {
     runExecution: runExecution,
     loadExecutions: loadExecutions,
     viewResults: viewResults,
 		getEngineStatus: getEngineStatus,
-		executionPath: executionPath
+    executionPath: executionPath,
+    checkExecutionEngineStatus,
   };
 
   return api;
