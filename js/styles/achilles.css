@@ -1,6 +1,3 @@
-.data-sources.fa {
-	margin-right: 7px;
-}
 .panel {
 	/* margin-bottom: 10px; */
 }
@@ -19,59 +16,6 @@
 	padding-bottom: 5px;
 	font-size: 12px;
 }
-.datasources.col-xs-1,
-.datasources.col-sm-1,
-.datasources.col-md-1,
-.datasources.col-lg-1,
-.datasources.col-xs-2,
-.datasources.col-sm-2,
-.datasources.col-md-2,
-.datasources.col-lg-2,
-.datasources.col-xs-3,
-.datasources.col-sm-3,
-.datasources.col-md-3,
-.datasources.col-lg-3,
-.datasources.col-xs-4,
-.datasources.col-sm-4,
-.datasources.col-md-4,
-.datasources.col-lg-4,
-.datasources.col-xs-5,
-.datasources.col-sm-5,
-.datasources.col-md-5,
-.datasources.col-lg-5,
-.datasources.col-xs-6,
-.datasources.col-sm-6,
-.datasources.col-md-6,
-.datasources.col-lg-6,
-.datasources.col-xs-7,
-.datasources.col-sm-7,
-.datasources.col-md-7,
-.datasources.col-lg-7,
-.datasources.col-xs-8,
-.datasources.col-sm-8,
-.datasources.col-md-8,
-.datasources.col-lg-8,
-.datasources.col-xs-9,
-.datasources.col-sm-9,
-.datasources.col-md-9,
-.datasources.col-lg-9,
-.datasources.col-xs-10,
-.datasources.col-sm-10,
-.datasources.col-md-10,
-.datasources.col-lg-10,
-.datasources.col-xs-11,
-.datasources.col-sm-11,
-.datasources.col-md-11,
-.datasources.col-lg-11,
-.datasources.col-xs-12,
-.datasources.col-sm-12,
-.datasources.col-md-12,
-.datasources.col-lg-12 {
-	position: relative;
-	min-height: 1px;
-	padding-right: 5px;
-	padding-left: 5px;
-}
 /* Report Styles */
 
 .reportTitle {
@@ -82,20 +26,6 @@
 #wrapper {
 	padding: 5px;
 	width: 98%;
-}
-div.data-sources.personSummary .row div:first-child {
-	text-align: right;
-}
-div.data-sources.personSummary .row div {
-	padding-left: 2px;
-	padding-right: 2px;
-	font-size: 16px;
-}
-.data-sources.dataSourceReport {
-	width: 96%;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 0px;
 }
 .clear {
 	clear: both;
@@ -108,22 +38,11 @@ div.data-sources.personSummary .row div {
 #condition_table tr {
 	cursor: pointer;
 }
-#data-sources-treemap_container rect {
-	cursor: pointer;
-}
 th.data-sources {
 	white-space: nowrap;
 }
 .numeric {
 	text-align: right;
-}
-.data-sources.hidden {
-	display: none;
-}
-#datasourceTitle {
-	margin-top: 10px;
-	margin-bottom: 10px;
-	font-size: 16px;
 }
 #report .evidenceVisualization circle {
     fill: #333;

@@ -1,0 +1,41 @@
+<!-- ko if: !isLoading() -->
+<heading-title params="name: name, sourceKey: sourceKey"></heading-title>
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <span data-bind="name"></span> Prevalence
+  </div>
+  <div class="panel-body">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="active" id="treemap-tab">
+        <a href="#treemap-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('tree')">Treemap</a>
+      </li>
+      <li>
+        <a href="#table-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('table')">Table</a>
+      </li>
+    </ul>
+    <div id='content' class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="treemap-panel">
+        <treemap params="data: treeData, format: chartFormats.treemap, aggProperty: aggProperty"></treemap>
+        <div class="treemap_legend">Box Size: Prevalence, Color: <span data-bind="text: aggProperty.description"></span> (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom
+        </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="table-panel" data-bind="eventListener: { event: 'click', selector: '.table_selector', callback: onReportTableRowClick}">
+          <table id="report_table" class="stripe compact hover dataTable no-footer" style="width:100%">
+          <thead>
+            <tr>
+              <th>Concept Id</th>
+              <th>Name</th>
+              <th>Person Count</th>
+              <th>Prevalence</th>
+              <th><span data-bind="text: aggProperty.description"></span></th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ko if: currentConcept() -->
+  <treemap-drilldown params="context: context, currentReport: currentReport, currentConcept: currentConcept, byFrequency: byFrequency, byUnit: byUnit, byType: byType"></treemap-drilldown>
+<!-- /ko -->
+<!--/ko-->
