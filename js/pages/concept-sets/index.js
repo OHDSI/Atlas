@@ -3,10 +3,10 @@ define(
     const buildRoutes = require('./routes');
 
     return {
-      title: 'Data Sources',
+      title: 'Concept Sets',
       buildRoutes,
-      baseUrl: 'datasources',
-      icon: 'database',
+      baseUrl: 'conceptsets',
+      icon: 'shopping-cart',
     };
   }
 );

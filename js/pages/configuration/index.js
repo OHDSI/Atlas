@@ -3,10 +3,10 @@ define(
     const buildRoutes = require('./routes');
 
     return {
-      title: 'Data Sources',
+      title: 'Configuration',
       buildRoutes,
-      baseUrl: 'datasources',
-      icon: 'database',
+      baseUrl: 'configure',
+      icon: 'cogs',
     };
   }
 );

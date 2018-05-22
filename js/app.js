@@ -9,6 +9,8 @@ define([
 	'querystring',
 	'd3',
 	'pages',
+  'utils/BemHelper',
+	'less!app.less',
 	'facets',
 	'css!styles/tabs.css',
 	'css!styles/buttons.css',
@@ -24,15 +26,20 @@ define([
 		querystring,
 		d3,
 		pages,
+		BemHelper
 	) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
 			let appRoutes = {};
-			Object.entries(pages)
-				.forEach(([name, page]) => {
-					appRoutes = { ...appRoutes, ...page.buildRoutes(self) };
-				});
+			self.pages = Object.values(pages);
+			self.pages.forEach((page) => {
+				appRoutes = { ...appRoutes, ...page.buildRoutes(self) };
+			});
+			self.activePage = ko.observable();
+			const bemHelper = new BemHelper('app');
+			self.classes = bemHelper.run.bind(bemHelper);
+
 			self.authApi = authApi;
 			self.componentParams = {};
 			self.config = config;
@@ -45,15 +52,12 @@ define([
 					case 'loading':
 						pageTitle = pageTitle + ": Loading";
 						break;
-					case 'home':
+					/*case 'home':
 						pageTitle = pageTitle + ": Home";
 						break;
           case 'feedback':
             pageTitle = pageTitle + ": Feedback";
             break;
-					case 'search':
-						pageTitle = pageTitle + ": Search";
-						break;
 					case 'conceptsets':
 					case 'conceptset':
 						pageTitle = pageTitle + ": Concept Sets";
@@ -79,6 +83,9 @@ define([
 					case 'plp-browser':
 					case 'plp-manager':
 						pageTitle = pageTitle + ": PLP";
+						break;*/
+					default:
+						pageTitle = `${pageTitle}: ${self.activePage()}`;
 						break;
 				}
 
@@ -104,63 +111,6 @@ define([
 				};
 				var routes = {
 					...appRoutes,
-					'/': function () {
-						document.location = "#/home";
-					},
-					'/concept/:conceptId:': function (conceptId) {
-						require(['concept-manager'], function () {
-							self.currentConceptId(conceptId);
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('concept-manager');
-						});
-					},
-					'/cohortdefinitions': function () {
-						require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('cohort-definitions');
-						});
-					},
-					'/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': function (cohortDefinitionId, path) {
-						require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort', 'conceptset-list-modal'], function (CohortDefinition) {
-							// Determine the view to show on the cohort manager screen based on the path
-							path = path.split("/");
-							var view = 'definition'
-							if (path.length > 0 && path[0] != "") {
-								view = path[0];
-							}
-							// Determine any optional parameters to set based on the query string
-							qs = self.router.qs(); // Get the query string parameters
-							var sourceKey = qs.sourceKey || null;
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('cohort-definition-manager');
-							self.currentCohortDefinitionMode(view);
-							self.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details', sourceKey);
-						});
-					},
-					'/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': function (cohortDefinitionId, conceptSetId, mode) {
-						require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'explore-cohort'], function (CohortDefinition) {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('cohort-definition-manager');
-							self.currentCohortDefinitionMode('conceptsets');
-							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
-						});
-					},
-					'/configure': function () {
-						require(['configuration', 'source-manager'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('ohdsi-configuration');
-						});
-					},
 					'/source/new': function () {
 						require(['source-manager'], function () {
 							self.componentParams = {
@@ -177,179 +127,7 @@ define([
 	              self.selectedSourceId(id);
 								self.currentView('source-manager');
 							});
-          },
-					'/roles': function () {
-						require(['roles'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('roles');
-						});
-					},
-					'/role/:id': function (id) {
-						require(['role-details'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentRoleId(id);
-							self.currentView('role-details');
-						});
-					},
-					'/home': function () {
-						require(['home'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('home');
-						});
-					},
-					'/feedback': function () {
-						require(['feedback'], function () {
-							self.componentParams = {
-								model: self,
-							};
-							self.currentView('feedback');
-            });
-          },
-					'/welcome/:token': function (token) {
-						require(['welcome'], function () {
-							authApi.token(token);
-							document.location = "#/welcome";
-						});
-					},
-					'/jobs': function () {
-						require(['job-manager'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('job-manager');
-						});
-					},
-					'/reports': function () {
-						require(['report-manager', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('report-manager');
-						});
-					},
-					'/profiles/?((\w|.)*)': function (path) {
-						require(['profile-manager', 'cohort-definition-browser'], function () {
-							path = path.split("/");
-							self.componentParams = {
-								model: self,
-								sourceKey: (path[0] || null),
-								personId: (path[1] || null),
-								cohortDefinitionId: (path[2] || null)
-							};
-							self.currentView('profile-manager');
-						});
-					},
-					'/conceptset/:conceptSetId/:mode': function (conceptSetId, mode) {
-						require(['conceptset-manager', 'cohort-definition-browser', 'conceptset-list-modal'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.loadConceptSet(conceptSetId, 'conceptset-manager', 'repository', mode);
-							self.resolveConceptSetExpression();
-						});
-					},
-					'/conceptsets': function () {
-						require(['conceptset-browser'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('conceptset-browser');
-						});
-					},
-					'/search/:query:': function (query) {
-						require(['search'], function (search) {
-							self.componentParams = {
-								model: self,
-								query: unescape(query)
-							};
-							self.currentView('search');
-						});
-					},
-					'/search': function () {
-						require(['search'], function (search) {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('search');
-						});
-					},
-					'/estimation': function () {
-						require(['cohort-comparison-browser'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('cohort-comparison-browser');
-						});
-					},
-					'/estimation/:cohortComparisonId:': function (cohortComparisonId) {
-						require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
-							self.currentCohortComparisonId(+cohortComparisonId);
-							self.componentParams = {
-								currentCohortComparisonId: self.currentCohortComparisonId,
-								currentCohortComparison: self.currentCohortComparison,
-								dirtyFlag: self.currentCohortComparisonDirtyFlag,
-							};
-							self.currentView('cohort-comparison-manager');
-						});
-					},
-					'/iranalysis': function () {
-						require(['ir-browser'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('ir-browser');
-						});
-					},
-					'/iranalysis/new': function (analysisId) {
-						require(['ir-manager'], function () {
-							self.selectedIRAnalysisId(null);
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('ir-manager');
-						});
-					},
-					'/iranalysis/:analysisId:/?((\w|.)*)': function (analysisId, path) {
-						path = path.split("/");
-						var activeTab = null;
-						if (path.length > 0 && path[0] != "") {
-							activeTab = path[0];
-						}
-						require(['ir-manager'], function () {
-							self.selectedIRAnalysisId(+analysisId);
-							self.componentParams = {
-								model: self,
-								activeTab: activeTab
-							};
-							self.currentView('ir-manager');
-						});
-					},
-					'/plp': function () {
-						require(['plp-browser', 'plp-manager', 'plp-inspector'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('plp-browser');
-						});
-					},
-					'/plp/:modelId:': function (modelId) {
-						require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
-							self.currentPatientLevelPredictionId(+modelId);
-							self.componentParams = {
-								model:self,
-								currentPatientLevelPredictionId: self.currentPatientLevelPredictionId,
-								currentPatientLevelPrediction: self.currentPatientLevelPrediction,
-								dirtyFlag: self.currentPatientLevelPredictionDirtyFlag,
-							};
-							self.currentView('plp-manager');
-						});
-					},
+					},					
 				};
 
                 const asyncBefore = function() {

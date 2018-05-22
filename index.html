@@ -22,7 +22,7 @@
 	<title data-bind="text: pageTitle">ATLAS</title>
 </head>
 
-<body>
+<body class="app">
 	<div id="splash" data-bind="if:!initializationComplete()">
 		<div id="stage">
 			<img src="images/atlas_loading.svg" />
@@ -33,13 +33,19 @@
 		<div data-bind="text:applicationStatus" id="status"></div>
 	</div>
 
-	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible:initializationComplete()">
+	<div style="display:none;" data-bind="visible: initializationComplete(), css: classes('menu-container')">
 		<div id="wrapperLogo">
 			<a href="#/home">ATLAS</a>
 		</div>
 
-		<div class="list-group">
-			<a class="list-group-item" href="#/home"><i class="fa fa-fw fa-home" aria-hidden="true"></i>&nbsp;Home</a>
+		<div class="app__menu list-group">
+			<!-- ko foreach: pages -->
+				<a data-bind="attr: { href: `#/${$data.baseUrl}` }, css: $parent.classes({ element: 'menu-item', modifiers: $parent.activePage() === $data.title ? 'selected' : '' })">
+					<i data-bind="css: $parent.classes({ element: 'menu-icon', extra: `fa fa-fw fa-${$data.icon}` })" aria-hidden="true"></i>
+					<span data-bind="text: $data.title, css: $parent.classes('menu-title')"></span>
+				</a>	
+			<!-- /ko -->
+			<!--<a class="list-group-item" href="#/home"><i class="fa fa-fw fa-home" aria-hidden="true"></i>&nbsp;Home</a>
 			<a class="list-group-item" href="#/datasources"><i class="fa fa-fw fa-database" aria-hidden="true"></i>&nbsp;Data Sources</a>
 			<a class="list-group-item" href="#/search"><i class="fa fa-fw fa-search" aria-hidden="true"></i>&nbsp;Vocabulary</a>
 			<a class="list-group-item" href="#/conceptsets"><i class="fa fa-fw fa-shopping-cart" aria-hidden="true"></i>&nbsp;Concept Sets</a>
@@ -51,6 +57,7 @@
 			<a class="list-group-item" href="#/jobs"><i class="fa fa-fw fa-tasks" aria-hidden="true"></i>&nbsp;Jobs</a>
 			<a class="list-group-item" href="#/configure"><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>&nbsp;Configuration</a>
 			<a class="list-group-item" data-bind="attr: {href: supportURL, target: targetSupportURL}" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
+			-->
 		</div>
 
 		<div id="wrapper_ohdsi">

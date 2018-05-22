@@ -3,10 +3,10 @@ define(
     const buildRoutes = require('./routes');
 
     return {
-      title: 'Data Sources',
+      title: 'Jobs',
       buildRoutes,
-      baseUrl: 'datasources',
-      icon: 'database',
+      baseUrl: 'jobs',
+      icon: 'tasks',
     };
   }
 );

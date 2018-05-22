@@ -3,10 +3,10 @@ define(
     const buildRoutes = require('./routes');
 
     return {
-      title: 'Data Sources',
+      title: 'Prediction',
       buildRoutes,
-      baseUrl: 'datasources',
-      icon: 'database',
+      baseUrl: 'plp', // todo: css: plpCss, attr: {href: plpURL}
+      icon: 'heartbeat',
     };
   }
 );

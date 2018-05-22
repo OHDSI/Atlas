@@ -1,8 +1,9 @@
 define(
   (require, factory) => {
-    function dataSourcesRoutes(appModel) {
+    function routes(appModel) {
       return {
-        '/datasources': function () {
+        '/datasources': () => {
+          appModel.activePage(this.title);
           require(['./data-sources'], function () {
             appModel.componentParams = {
               model: appModel
@@ -10,7 +11,8 @@ define(
             appModel.currentView('data-sources');
           });
         },
-        '/datasources/:sourceKey/:reportName': function (sourceKey, reportName) {
+        '/datasources/:sourceKey/:reportName': (sourceKey, reportName) => {
+          appModel.activePage(this.title);
           require(['./data-sources'], function () {
             appModel.componentParams = {
               model: appModel,
@@ -23,6 +25,6 @@ define(
       };
     }
 
-    return dataSourcesRoutes;
+    return routes;
   }
 );
