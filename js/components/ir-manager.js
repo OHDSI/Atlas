@@ -26,7 +26,7 @@ define(['knockout',
 					var source = self.sources().filter(function (s) { return s.source.sourceId == info.executionInfo.id.sourceId })[0];
 					if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
 						source.info(info);
-					if (info.executionInfo.status != "COMPLETE")
+					if (info.executionInfo.status !== "COMPLETE" && info.executionInfo.status !== "ERROR")
 						hasPending = true;
 				});
 
