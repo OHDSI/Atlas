@@ -438,11 +438,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			if (source) {
 				switch (source.status()) {
 					case 'COMPLETE':
-						return false;
-						break;
+					case 'ERROR':
 					case 'n/a':
 						return false;
-						break;
 					default:
 						return true;
 				}
