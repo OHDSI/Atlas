@@ -5,7 +5,9 @@ define([
 	'appConfig',
 	'webapi/AuthAPI',
 	'providers/Component',
-	'less!./vocabulary.less'
+	'components/tabs',
+	'components/tab',
+	'less!./vocabulary.less',
 ], function (
 	ko,
 	sharedState,

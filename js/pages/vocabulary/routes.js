@@ -9,7 +9,7 @@ define(
               model: appModel,
               query: unescape(query)
             };
-            appModel.currentView('search');
+            appModel.currentView('vocabulary');
           });
         },
         '/search': () => {
@@ -18,7 +18,7 @@ define(
             appModel.componentParams = {
               model: appModel
             };
-            appModel.currentView('search');
+            appModel.currentView('vocabulary');
           });
         },
       };

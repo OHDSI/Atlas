@@ -38,7 +38,7 @@
 			<a href="#/home">ATLAS</a>
 		</div>
 
-		<div class="app__menu list-group">
+		<div class="app__menu">
 			<!-- ko foreach: pages -->
 				<a data-bind="attr: { href: `#/${$data.baseUrl}` }, css: $parent.classes({ element: 'menu-item', modifiers: $parent.activePage() === $data.title ? 'selected' : '' })">
 					<i data-bind="css: $parent.classes({ element: 'menu-icon', extra: `fa fa-fw fa-${$data.icon}` })" aria-hidden="true"></i>

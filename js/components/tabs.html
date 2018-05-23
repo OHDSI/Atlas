@@ -1,0 +1,14 @@
+<div data-bind="css: classes()">
+  <span data-bind="text: selectedTab()"></span>
+    <!-- ko foreach: tabs -->
+    <hr/>
+    <div data-bind="text: $component.selectedTab() == $index"></div>
+    <div data-bind="text: $index"></div>
+      <div data-bind="css: $component.classes({
+        element: 'tab',
+        modifiers: $component.selectedTab() == $index ? 'selected' : null,
+      })">
+        <!-- ko template: { nodes: [$data] } --><!-- /ko -->
+      </div>
+    <!-- /ko -->
+</div>

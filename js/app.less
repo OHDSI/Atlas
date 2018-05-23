@@ -38,7 +38,6 @@
       position: relative;
       display: flex;
       align-items: center;
-      margin-bottom: 1px;
       background-color: #003142;
       border: none;
       border-bottom: solid 1px #333;
@@ -49,15 +48,9 @@
       &:focus, &:hover, &--selected {
         background-color: #005471 !important;
       }
-
-      &:first-child {
-        border-top-right-radius: 0;
-        border-top-left-radius: 0
-      }
       
       &:last-child {
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0
+        border-bottom: none;
       }
     }
   } 
