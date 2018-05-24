@@ -285,6 +285,10 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				}
 			}
 
+			self.isResultAvailable = function (sourceKey) {
+				return self.sourceExecutions[sourceKey]().length === 0;
+			}
+
 			self.executionSelected = function (d) {
 				if(config.useExecutionEngine){
 					executionAPI.viewResults(d.id);
