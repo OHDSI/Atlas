@@ -43,8 +43,8 @@
               <span class="btn-group">
 								<button data-bind="css:{disabled: $component.config.api.isExecutionEngineAvailable()==false}, click:function() {$component.executeCohortComparison(sourceKey)}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
 								<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
-								<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
-								<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">
+								<button class="btn btn-sm btn-primary" data-bind="click: $component.viewLastExecution, attr: { disabled: $component.isResultAvailable(sourceKey, true) }"><i class="fa fa-eye"></i> View</button>
+								<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}, attr: { disabled: $component.isResultAvailable(sourceKey) }" class="btn btn-sm btn-primary">
 									&nbsp;(<span data-bind="text:$component.sourceExecutions[sourceKey]().length"></span> Results)
               <i data-bind="visible:!$component.sourceHistoryDisplay[sourceKey]()" class="fa fa-angle-double-down"></i>
               <i data-bind="visible:$component.sourceHistoryDisplay[sourceKey]" class="fa fa-angle-double-up"></i>
