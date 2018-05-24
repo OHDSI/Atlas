@@ -285,8 +285,15 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				}
 			}
 
-			self.isResultAvailable = function (sourceKey) {
-				return ko.computed(() => self.sourceExecutions[sourceKey]().length === 0);
+			self.isResultAvailable = function (sourceKey, onlySuccessful = false) {
+				return ko.computed(() => {
+					if (onlySuccessful) {
+						return self.sourceExecutions[sourceKey]()
+							.filter(execution => execution.executionStatus === 'COMPLETED')
+							.length === 0;
+					}
+					return self.sourceExecutions[sourceKey]().length === 0;
+				});
 			}
 
 			self.executionSelected = function (d) {
