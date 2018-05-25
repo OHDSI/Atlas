@@ -1,4 +1,6 @@
 define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'databindings', 'access-denied'], function ($, ko, sharedState, view, d3, atlascharts, colorbrewer, _, config, authApi, d3tip) {
+	console.warn('deprecated');
+	
 	function dataSources(params) {
 		var self = this;
 

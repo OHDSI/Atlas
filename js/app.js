@@ -1,8 +1,38 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, roleApi, sharedState, querystring, d3) {
+define([
+	'jquery',
+	'knockout',
+	'ohdsi.util',
+	'appConfig',
+	'webapi/AuthAPI',
+	'webapi/RoleAPI',
+	'atlas-state',
+	'querystring',
+	'd3',
+	'pages',
+	'facets',
+	'css!styles/tabs.css',
+	'css!styles/buttons.css',
+],
+	function (
+		$,
+		ko,
+		ohdsiUtil,
+		config,
+		authApi,
+		roleApi,
+		sharedState,
+		querystring,
+		d3,
+		pages,
+	) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
+			let appRoutes = {};
+			Object.entries(pages)
+				.forEach(([name, page]) => {
+					appRoutes = { ...appRoutes, ...page.buildRoutes(self) };
+				});
 			self.authApi = authApi;
 			self.componentParams = {};
 			self.config = config;
@@ -73,6 +103,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 					},
 				};
 				var routes = {
+					...appRoutes,
 					'/': function () {
 						document.location = "#/home";
 					},
@@ -120,24 +151,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 							self.currentView('cohort-definition-manager');
 							self.currentCohortDefinitionMode('conceptsets');
 							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
-						});
-					},
-					'/datasources': function () {
-						require(['data-sources'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('data-sources');
-						});
-					},
-					'/datasources/:sourceKey/:reportName': function (sourceKey, reportName) {
-						require(['data-sources'], function () {
-							self.componentParams = {
-								model: self,
-								reportName: reportName,
-								sourceKey: sourceKey
-							};
-							self.currentView('data-sources');
 						});
 					},
 					'/configure': function () {
