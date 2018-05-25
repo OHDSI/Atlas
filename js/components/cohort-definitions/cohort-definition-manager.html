@@ -431,7 +431,7 @@
 								<div class="btn-group pull-right pad-5">
 									<button class="btn btn-primary btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateAllAnalyses">Full Analysis</button>
 									<button class="btn btn-success btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateQuickAnalysis">Quick Analysis</button>
-									<button class="btn btn-info btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateHealthcareAnalyses">Utilization</button>
+									<button class="btn btn-info btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.selectHealthcareAnalyses">Utilization</button>
 									<button class="btn btn-default btn-sm" data-bind="visible: $component.generateReportsEnabled" data-toggle="modal" data-target="#analysisHelpModal"><i class="fa fa-question-circle text-primary"></i></button>
 								</div>
 							</div>
@@ -581,6 +581,14 @@
 			</div>
 		</div>
 	</div>
+	<modal-pick-options params="{
+		showModal: $component.showUtilizationToRunModal,
+		title: 'Select Utilization reports to run',
+		options: $component.utilReportOptions,
+		selectedOptions: $component.checkedUtilReports,
+		submitLabel: 'Run',
+		submit: $component.generateHealthcareAnalyses,
+	}"></modal-pick-options>
 	<conceptset-save params="conceptSetName: newConceptSetName, onSave: saveConceptSet, show: saveConceptSetShow"></conceptset-save>
 </div>
 
