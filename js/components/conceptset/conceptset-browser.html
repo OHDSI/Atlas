@@ -6,6 +6,7 @@
         <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
     </div>
 </div>
+<loading data-bind="visible: isInProgress"></loading>
 <div data-bind="if:$component.canReadConceptsets" class="clear">
 	<div class="paddedWrapper">
         <div data-bind="if:$component.mode() == 'add'">
