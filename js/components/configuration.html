@@ -3,7 +3,7 @@
 </div>
 <div id="configuration" data-bind="if:$component.hasAccess()">
 	<div id="wrapperConfigure">
-		<div data-bind="if:sharedState.appInitializationStatus()=='complete'">
+		<div data-bind="if: $component.initializationCompleted()">
 			<div data-bind="with:config.api">
 				<div class="configureHeader">
 					<div class="left">
