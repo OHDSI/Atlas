@@ -310,6 +310,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}]
 		};
 
+		self.stopping = self.model.cohortDefinitionSourceInfo().reduce((acc, target) => ({...acc, [target.sourceKey]: ko.observable(false)}), {});
+		self.isSourceStopping = (source) => self.stopping[source.sourceKey];
+
 		self.pollForInfo = function () {
 			if (pollTimeout)
 				clearTimeout(pollTimeout);
@@ -520,6 +523,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.generateCohort = function (source, includeFeatures) {
+			self.stopping[source.sourceKey](false);
 			var route = `${config.api.url}cohortdefinition/${self.model.currentCohortDefinition().id()}/generate/${source.sourceKey}`;
 
 			if (includeFeatures) {
@@ -552,6 +556,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				}
 			});
 		}
+
+		self.cancelGenerate = function(source) {
+      self.stopping[source.sourceKey](true);
+      cohortDefinitionAPI.cancelGenerate(self.model.currentCohortDefinition().id(), source.sourceKey);
+		};
 
 		self.hasCDM = function (source) {
 			for (var d = 0; d < source.daimons.length; d++) {

@@ -369,7 +369,8 @@
 										<li style="cursor:pointer" data-bind="click:(data, event) => $component.generateCohort(data, true)">Generate With Features</li>
 									</ul>
 								</div>
-								<div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i></div>
+								<div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i> </div>
+                                <a role="button" class="btn btn-sm btn-danger" data-bind="click:$component.cancelGenerate,visible: $component.isSourceRunning($data),attr: {disabled: $component.isSourceStopping($data)}">Cancel</a>
 							</td>
 							<td data-bind="text:name"></td>
 							<td class="statusIndicator text-right">
