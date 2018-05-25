@@ -1,4 +1,75 @@
 <tabs>
-	<tab>One</tab>
-	<tab>Two</tab>
+	<tab title='Search'>
+    <div class="input-group">
+      <input placeholder="Type your search here" type="text" data-bind="textInput: $parents[2].currentSearch,
+        event: { keypress: $parents[2].onEnter },
+        css: $parents[2].classes({
+          element: 'input',
+          extra: 'form-control'
+        })
+        " />
+      <div class="input-group-btn">
+        <div data-bind="click: $parents[2].search" class="pull-right btn btn-primary" title="Search" type="button"><i class="fa fa-search"></i></div>
+      </div>
+    </div>
+    <div class="row">
+      <div data-bind="click: $parents[2].toggleAdvanced" class="pull-right btn btn-sm btn-link">Advanced Options</div>
+    </div>
+    <div class="advanced-options" data-bind="visible: $parents[2].showAdvanced">
+      <div data-bind="css: $parents[2].classes({ element: 'clear-btn', extra: 'row' })">
+        <div class="btn btn-success btn-sm pull-right" data-bind="click: $parents[2].clearAllAdvanced">
+          <i class="fa fa-eraser"></i> Clear All Selections
+        </div>
+      </div>
+      <panel params="title: 'Domains'">
+        <div class="checkboxListing row">
+          <!-- ko foreach: $parents[3].domains -->
+          <div class="col-sm-6">
+            <input type="checkbox" name="domainId" data-bind="value: DOMAIN_ID"> <span data-bind="text: DOMAIN_NAME"></span>
+          </div>
+          <!-- /ko -->
+        </div>
+      </panel>
+
+      <panel params="title: 'Vocabularies'">
+        <div class="checkboxListing row">
+          <!-- ko foreach: $parents[3].vocabularies -->
+          <div class="col-sm-6">
+            <input type="checkbox" name="vocabularyId" data-bind="value: VOCABULARY_ID"> <span data-bind="text: VOCABULARY_ID + ': ' + VOCABULARY_NAME"></span>
+          </div>
+          <!-- /ko -->
+        </div>
+      </panel>
+    </div>
+    <div data-bind="visible: $parents[2].concepts().length > 0 || $parents[2].searchExecuted()">
+      <faceted-datatable params="{
+        orderColumn: 7,
+        columns: $parents[2].searchConceptsColumns,
+        options: $parents[2].searchConceptsOptions,
+        reference: $parents[2].concepts,
+        rowCallback: $parents[2].contextSensitiveLinkColor
+      }"></faceted-datatable>
+      <div class="linkLegend">
+        <div class="linkLegendItem">
+          <div class="swatch standard">
+          </div>
+          <div class="linkLegendTitle">Standard</div>
+        </div>
+        <div class="linkLegendItem">
+          <div class="swatch nonStandard">
+          </div>
+          <div class="linkLegendTitle">Non-Standard</div>
+        </div>
+        <div class="linkLegendItem">
+          <div class="swatch classification">
+          </div>
+          <div class="linkLegendTitle">Classification</div>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </tab>
+	<tab title='Import'>
+    
+  </tab>
 </tabs>

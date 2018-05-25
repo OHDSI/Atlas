@@ -1,10 +1,33 @@
 .tabs {
-  
+
   &__tab {
     display: none;
+    padding: 1rem;
     
     &--selected {
       display: block;
+    }
+  }
+
+  &__header {
+    background: #333;
+    padding: 5px 10px 0 10px;
+    display: flex;
+  }
+
+  &__header-title {
+    font-size: 1.4rem;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    padding: 5px 12px;
+    margin-right: 5px;
+    cursor: pointer;
+    color: #ccc;
+    background-color: #888;
+    
+    &--selected {
+      background: #fff;
+      color: initial;
     }
   }
 }

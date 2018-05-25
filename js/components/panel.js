@@ -1,27 +1,28 @@
 define([
 	'knockout',
-	'text!./tab.html',
+	'text!./panel.html',
   'providers/Component',
-	'less!./tab.less',
+	'less!./panel.less',
 ], function (
 	ko,
 	view,
 	Component
 ) {
-	class Tab extends Component {
+	class Panel extends Component {
 		constructor() {
 			super();
-			this.name = 'tab';
+			this.name = 'panel';
 			this.view = view;
-		}
+    }
 
 		render(params, info) {
       super.render(params);
-
+      this.title = params.title;
+			
 			return this;
 		}
   }
 
-	const tab = new Tab();
-	return tab.build();
+	const panel = new Panel();
+	return panel.build();
 });
