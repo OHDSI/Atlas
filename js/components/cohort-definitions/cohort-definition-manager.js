@@ -1019,6 +1019,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		  analysisIdentifiers: analysisIds,
 		  runHeraclesHeel: false
 		});
+
+        self.showUtilizationToRunModal(false);
     };
 
     self.generateAllAnalyses = function () {
