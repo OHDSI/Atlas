@@ -45,7 +45,11 @@ requirejs.config({
 		{
 			name: "cohortfeatures",
 			location: "modules/cohortfeatures"
-		}            
+		},
+		{
+			name: "pages",
+			location: "pages",
+		},
 	],
 	shim: {
 		"colorbrewer": {
@@ -107,7 +111,7 @@ requirejs.config({
 		"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
 		"cohort-comparison-manager": "components/cohort-comparison-manager",
 		"job-manager": "components/job-manager",
-		"data-sources": "components/data-sources",
+		//"data-sources": "components/data-sources",
 		"cohort-definitions": "components/cohort-definitions/cohort-definitions",
 		"cohort-definition-manager": "components/cohort-definitions/cohort-definition-manager",
 		"cohort-definition-browser": "components/cohort-definitions/cohort-definition-browser",
@@ -190,19 +194,48 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'webapi/ExecutionAPI', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, sourceApi, util, lscache, sharedState, vocabAPI, executionAPI) {
+	requirejs([
+		'knockout',
+		'app',
+		'appConfig',
+		'webapi/AuthAPI',
+		'webapi/SourceAPI',
+		'ohdsi.util',
+		'lscache',
+		'atlas-state',
+		'vocabularyprovider',
+		'services/http',
+		'services/bindings',
+		'webapi/ExecutionAPI',
+		'director',
+		'search',
+		'localStorageExtender',
+		'jquery.ui.autocomplete.scroll',
+		'loading',
+		'user-bar',
+		'welcome',
+	],
+		function (
+			ko,
+			app,
+			config,
+			authApi,
+			sourceApi,
+			util,
+			lscache,
+			sharedState,
+			vocabAPI,
+			httpService,
+			DataBindings,
+			executionAPI
+		) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
 
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
-
-		// update access token
-		if (authApi.token()) {
-			var refreshTokenPromise = $.Deferred();
-			pageModel.initPromises.push(refreshTokenPromise);
-			authApi.refreshToken()
-				.always(refreshTokenPromise.resolve);
-		}
+		DataBindings.init();
+		httpService.setUnauthorizedHandler(() => authApi.token(null));
+		httpService.setUserTokenGetter(() => authApi.token());
 
 		// establish base priorities for daimons
 		var evidencePriority = 0;

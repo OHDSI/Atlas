@@ -60,10 +60,13 @@ define(['knockout',
         }
 
         executionAPI.loadExecutions('PLP', self.patientLevelPredictionId(), function(exec){
-          var sourceKey = self.sources().filter(s => s.sourceId == exec.sourceId)[0].sourceKey;
-          self.sourceProcessingStatus[sourceKey](exec.executionStatus !== 'COMPLETED' && exec.executionStatus !== 'FAILED');
-          self.sourceExecutions[sourceKey].remove(e => e.id === exec.id);
-          self.sourceExecutions[sourceKey].push(exec);
+          var source = self.sources().find(s => s.sourceId == exec.sourceId);
+          if (source) {
+              var sourceKey = source.sourceKey;
+              self.sourceProcessingStatus[sourceKey](exec.executionStatus !== 'COMPLETED' && exec.executionStatus !== 'FAILED');
+              self.sourceExecutions[sourceKey].remove(e => e.id === exec.id);
+              self.sourceExecutions[sourceKey].push(exec);
+          }
         });
       });
     };
@@ -134,9 +137,9 @@ define(['knockout',
 			currentClipboard.on('success', function (e) {
 				console.log('Copied to clipboard');
 				e.clearSelection();
-				$('#copyToClipboardMessage').fadeIn();
+				$('.copyToClipboardMessage').fadeIn();
 				setTimeout(function () {
-					$('#copyToClipboardMessage').fadeOut();
+					$('.copyToClipboardMessage').fadeOut();
 				}, 1500);
 			});
 
@@ -289,10 +292,7 @@ define(['knockout',
 
 		self.copy = function () {
 			plpAPI.copyPlp(self.patientLevelPredictionId()).then(function (result) {
-				var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
-				$.when(refreshTokenPromise).done(function () {
-					document.location = "#/plp/" + result.analysisId;
-				});
+				document.location = "#/plp/" + result.analysisId;
 			});
 		}
 
