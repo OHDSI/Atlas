@@ -4,6 +4,7 @@ define([
 	'd3',
   'const',
   'pages/data-sources/classes/Report',
+  'providers/Component',
   'components/heading',
   'components/data-table'
 ], function (
@@ -11,13 +12,20 @@ define([
 	view,
 	d3,
   helpers,
-  Report
+  Report,
+  Component
 ) {
 	class AchillesHeel extends Report {
+    static get name() {
+      return 'achilles-heel';
+    }
+
+    static get view() {
+      return view;
+    }
+
     constructor(params) {
       super(params);
-      this.name = 'achilles-heel';
-      this.view = view;
       this.columns = [
         {
           title: 'Message Type',
@@ -55,6 +63,5 @@ define([
     }
   }
 
-  const report = new AchillesHeel();
-	return report.build();
+  return Component.build(AchillesHeel);
 });

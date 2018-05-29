@@ -14,8 +14,8 @@ define([
       return 'boxplot';
     }
 
-    constructor() {
-      super();
+    constructor(params) {
+      super(params);
       this.chart = new atlascharts.boxplot();
     }
 

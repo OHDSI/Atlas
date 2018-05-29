@@ -251,8 +251,8 @@ define([
       return 'frequency-histogram';
     }
 
-    constructor() {
-      super();
+    constructor(params) {
+      super(params);
       this.chart = new FrequencyHistogram();
     }
 

@@ -4,6 +4,7 @@ define([
   'd3',
   'const',
   'pages/data-sources/classes/Report',
+  'providers/Component',
   'components/charts/histogram',
   'components/charts/line',
   'components/charts/donut',
@@ -18,14 +19,21 @@ define([
   view,
   d3,
   helpers,
-  Report
+  Report,
+  Component
 ) {
   class TreemapDrilldown extends Report {
-    constructor() {
-      super();
-      this.name = 'treemap-drilldown';
-      this.view = view;
-      this.currentReport = {};
+    static get name() {
+      return 'treemap-drilldown';
+    }
+
+    static get view() {
+      return view;
+    }
+
+    constructor(params) {
+      super(params);
+       
       this.currentConcept = ko.observable({
         name: '',
       });
@@ -116,7 +124,13 @@ define([
           }
         },
       };
-
+      
+      this.currentReport = params.currentReport;
+      this.byFrequency = params.byFrequency;
+      this.byUnit = params.byUnit;
+      this.byType = params.byType;
+      params.currentConcept.subscribe(this.loadDrilldown.bind(this));
+      this.loadDrilldown(params.currentConcept());
     }
 
     parseAgeData(rawAgeData) {
@@ -197,7 +211,7 @@ define([
     parseBoxplotData(rawData) {
       let bpseries = {};
       const ndata = helpers.normalizeArray(
-        data.filter(filterByConcept(this.currentConcept().conceptId))
+        rawData.filter(helpers.filterByConcept(this.currentConcept().conceptId))
       );
       const bpdata = helpers.normalizeDataframe(ndata);
       if (!bpdata.empty) {
@@ -252,7 +266,7 @@ define([
       this.parsePrevalenceByType(data.byType);
       this.parsePrevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear);
       if (this.byFrequency) {
-        this.parseFrequencyDistribution(data.frequencyDistribution, this.currentReport().path);
+        this.parseFrequencyDistribution(data.frequencyDistribution, this.currentReport.path);
       }
       if (this.byUnit) {
         let boxplot = this.parseBoxplotData(data.measurementValueDistribution);
@@ -293,19 +307,7 @@ define([
         });
     }
 
-    createViewModel(params) {
-      super.createViewModel(params);
-      this.currentReport = params.currentReport;
-      this.byFrequency = params.byFrequency;
-      this.byUnit = params.byUnit;
-      this.byType = params.byType;
-      params.currentConcept.subscribe(this.loadDrilldown.bind(this));
-      this.loadDrilldown(params.currentConcept());
-      
-      return this;
-    }
   }
 
-  const report = new TreemapDrilldown();	
-  return report.build();
+  return Component.build(TreemapDrilldown);
 });

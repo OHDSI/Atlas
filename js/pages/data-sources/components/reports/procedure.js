@@ -2,6 +2,7 @@ define([
 	'knockout',
 	'text!./treemap.html',
   'pages/data-sources/classes/Treemap',
+  'providers/Component',
   'pages/data-sources/const',
   'components/heading',
   'components/charts/treemap',
@@ -10,26 +11,28 @@ define([
 	ko,
 	view,
   TreemapReport,
+  Component,
   helpers
 ) {
 	class Procedure extends TreemapReport {
-    constructor() {
-      super();
-      this.name = 'procedure';
-      this.view = view;
-      this.currentReport = {};
+    static get name() {
+      return 'procedure';
+    }
+
+    static get view() {
+      return view;
+    }
+
+    constructor(params) {
+      super(params);
+       
 
       this.aggProperty = helpers.aggProperties.byPerson;
       this.byFrequency = true;
       this.byType = true;
     }
 
-    createViewModel(params) {
-      super.createViewModel(params);
-      return this;
-    }
   }
 
-  const report = new Procedure();	
-	return report.build();
+  return Component.build(Procedure);
 });

@@ -25,5 +25,5 @@ define([
 		}
   }
 
-	Component.build(EmptyState);
+	return Component.build(EmptyState);
 });

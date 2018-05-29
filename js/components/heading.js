@@ -21,7 +21,6 @@ define([
 			super(params);
 			this.title = params.name;
 			this.sourceKey = params.sourceKey;
-			return this;
 		}
   }
 
