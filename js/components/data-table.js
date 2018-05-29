@@ -22,7 +22,7 @@ define([
 			this.template = '';
 			this.columns = []; // { title, data, visible?, width? }
 			this.data = ko.observableArray();
-			
+
 			this.options = {
 				dom: this.template,
 				buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
@@ -32,10 +32,11 @@ define([
 				lengthChange: false,
 				deferRender: true,
 				destroy: true,
-			};			
+			};
+
 			
 			if (params.template) {
-				this.options.dom = params.template;
+				this.options.template = params.template;
 			}
 			if (params.buttons) {
 				this.options.buttons = params.buttons;
@@ -55,17 +56,16 @@ define([
 			if (params.destroy) {
 				this.options.destroy = params.destroy;
 			}
-			this.options.columns = params.columns;
-			this.data.subscribe(() => this.draw());
-			this.container.subscribe(() => this.draw());
+			this.columns = params.columns;
+			this.data.subscribe(this.draw.bind(this));
 			this.data(params.data());
 		}
 
 		draw() {
-			if (!this.container() || !this.data()) {
+			if (!this.data()) {
 				return false;
 			}
-			$(this.container()).DataTable({
+			$(this.container).DataTable({
 				...this.options,
 				data: this.data(),
 			});
