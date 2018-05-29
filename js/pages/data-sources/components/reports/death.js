@@ -4,6 +4,7 @@ define([
 	'd3',
   'const',
   'pages/data-sources/classes/Report',
+  'providers/Component',
   'components/heading',
   'components/charts/donut',
   'components/charts/line',
@@ -14,13 +15,20 @@ define([
 	view,
 	d3,
   helpers,
-  Report
+  Report,
+  Component
 ) {
 	class Death extends Report {
-    constructor() {
-      super();
-      this.name = 'death';
-      this.view = view;
+    static get name() {
+      return 'death';
+    }
+
+    static get view() {
+      return view;
+    }
+
+    constructor(params) {
+      super(params);
       
       this.prevalenceByGenderAgeYearData = ko.observable();
       this.byMonthSeriesLineData = ko.observable();
@@ -61,6 +69,13 @@ define([
 					yFormat: d3.format(',.1s'),
 				},
       };
+      this.getData()
+        .then(({ data }) => {
+          this.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear);
+          this.prevalenceByMonth(data.prevalenceByMonth);
+          this.prevalenceByType(data.deathByType);
+          this.ageBoxplot(data.ageAtDeath);
+        });
 
     }
 
@@ -68,7 +83,6 @@ define([
 			this.chartFormats.prevalenceByGenderAgeYear.trellisSet = helpers.defaultDeciles;
 			this.prevalenceByGenderAgeYearData(data);
     }
-
     
     prevalenceByMonth(data) {
       const prevData = helpers.normalizeArray(data);
@@ -109,22 +123,7 @@ define([
 				this.ageBoxplotData(bpseries);
 			}
     }
-
-    createViewModel(params) {
-      super.createViewModel(params);
-      
-      this.getData()
-        .then(({ data }) => {
-          this.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear);
-          this.prevalenceByMonth(data.prevalenceByMonth);
-          this.prevalenceByType(data.deathByType);
-          this.ageBoxplot(data.ageAtDeath);
-        });
-
-        return this;
-    }
   }
 
-  const report = new Death();
-	return report.build();
+  return Component.build(Death);
 });

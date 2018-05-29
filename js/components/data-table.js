@@ -8,11 +8,17 @@ define([
 	Component
 ) {
 	class DataTable extends Component {
-		constructor() {
-			super();
-			this.name = 'data-table';
-			this.view = view;
-			this.element = null;
+		static get name() {
+			return 'data-table';
+		}
+
+		static get view() {
+			return view;
+		}
+
+		constructor(params) {
+			super(params);
+			this.container = ko.observable();
 			this.template = '';
 			this.columns = []; // { title, data, visible?, width? }
 			this.data = ko.observableArray();
@@ -28,26 +34,7 @@ define([
 				destroy: true,
 			};
 
-			this.data.subscribe(this.draw.bind(this));
-			this.setReference = this.setReference.bind(this);
-		}
-
-		setReference(element) {
-			this.element = element;
-		}
-
-		draw() {
-			if (!this.data()) {
-				return false;
-			}
-			$(this.element).DataTable({
-				...this.options,
-				data: this.data(),
-			});
-		}
-
-		render(params) {
-			super.render(params);
+			
 			if (params.template) {
 				this.options.template = params.template;
 			}
@@ -70,14 +57,21 @@ define([
 				this.options.destroy = params.destroy;
 			}
 			this.columns = params.columns;
+			this.data.subscribe(this.draw.bind(this));
 			this.data(params.data());
-
-			this.draw();
-
-			return this;
 		}
+
+		draw() {
+			if (!this.data()) {
+				return false;
+			}
+			$(this.container).DataTable({
+				...this.options,
+				data: this.data(),
+			});
+		}
+
   }
 
-	const component = new DataTable();
-	return component.build();
+	return Component.build(DataTable);
 });

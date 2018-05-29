@@ -2,6 +2,7 @@ define([
 	'knockout',
 	'text!./treemap.html',
   'pages/data-sources/classes/Treemap',
+  'providers/Component',
   'pages/data-sources/const',
   'components/heading',
   'components/charts/treemap',
@@ -10,14 +11,21 @@ define([
 	ko,
 	view,
   TreemapReport,
+  Component,
   helpers
 ) {
 	class Condition extends TreemapReport {
+    static get name() {
+      return 'condition';
+    }
+
+    static get view() {
+      return view;
+    }
+
     constructor(params) {
       super(params);
-      this.name = 'condition';
-      this.view = view;
-      this.currentReport = {};
+       
 
       this.aggProperty = helpers.aggProperties.byPerson;
       this.byType = true;
@@ -25,6 +33,5 @@ define([
 
   }
 
-  const report = new Condition();	
-	return report.build();
+  return Component.build(Condition);
 });

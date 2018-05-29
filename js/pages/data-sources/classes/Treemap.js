@@ -12,8 +12,10 @@ define([
   datatableTemplate
 ) {
   class TreemapReport extends Report {
-    constructor() {
-      super();
+    // abstract, no need to define component name here
+
+    constructor(params) {
+      super(params);
       this.treeData = ko.observable();
       this.currentConcept = ko.observable();
 
@@ -85,12 +87,22 @@ define([
           destroy: true,
         },
       };
+      // to pass down to drilldown
+      this.currentReport = params.report;
+      this.getData()
+        .then(() => {
+          // in order to get jquery working, we should set isLoading here instead of .finally block
+          this.context.loadingReport(false);
+          this.isLoading(false);
+          $("#report_table").DataTable(this.chartFormats.table);
+          $('[data-toggle="popover"]').popover();        
+        });
     }
     
     selectTab(tab) {
       
     }
-
+    
     onReportTableRowClick(report, context, event) {
       var dataTable = $("#report_table").DataTable();
       var rowIndex = event.target._DT_CellIndex.row;
@@ -129,19 +141,6 @@ define([
       return response;
     }
 
-    createViewModel(params) {
-      super.createViewModel(params);
-      // to pass down to drilldown
-      this.currentReport = params.report;
-      return this.getData()
-        .then(() => {
-          // in order to get jquery working, we should set isLoading here instead of .finally block
-          this.context.loadingReport(false);
-          this.isLoading(false);
-          $("#report_table").DataTable(this.chartFormats.table);
-          $('[data-toggle="popover"]').popover();        
-        });
-    }
   }
 
   return TreemapReport;

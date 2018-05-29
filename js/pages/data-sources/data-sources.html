@@ -39,8 +39,10 @@
 
 	<div id="report" class="flexed" data-bind="if: currentReport() && !hasError()">
 		<div class="row pad-10 report">
-			<Person params="context: $component"></Person>
-			<!-- ko if: $component.currentReport().name == 'Person' -->			
+			<!-- ko component: {
+				name: $component.currentReport().component,
+				params: { context: $component, report: currentReport() }
+			} -->
 			<!-- /ko -->
 		</div>
 	</div>

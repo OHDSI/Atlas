@@ -10,15 +10,13 @@ define([
   atlascharts,
 ) {
   class Line extends Chart {
-    constructor() {
-      super();
-      this.name = 'atlasline';
-      this.chart = new atlascharts.line();
+    static get name() {
+      return 'atlasline';
     }
 
-    createViewModel(params) {
-      super.createViewModel(params);
-      return this;
+    constructor(params) {
+      super(params);
+      this.chart = new atlascharts.line();
     }
   }
 
