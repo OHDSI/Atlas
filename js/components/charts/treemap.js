@@ -22,7 +22,7 @@ define([
       this.threshold = params.format.minimumArea / (width * this.minHeight);
     }
 
-    render(params) {
+    createViewModel(params) {
       this.storeParams(params);
       if (params.data()) {
         const hierarchy = helpers.buildHierarchyFromJSON(params.data(), this.threshold, params.aggProperty)

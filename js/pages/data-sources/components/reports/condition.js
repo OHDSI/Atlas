@@ -13,8 +13,8 @@ define([
   helpers
 ) {
 	class Condition extends TreemapReport {
-    constructor() {
-      super();
+    constructor(params) {
+      super(params);
       this.name = 'condition';
       this.view = view;
       this.currentReport = {};
@@ -23,10 +23,6 @@ define([
       this.byType = true;
     }
 
-    render(params) {
-      super.render(params);
-      return this;
-    }
   }
 
   const report = new Condition();	

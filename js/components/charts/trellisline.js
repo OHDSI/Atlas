@@ -77,8 +77,8 @@ define([
       return null;
     }
 
-    render(params) {
-      super.render(params);
+    createViewModel(params) {
+      super.createViewModel(params);
       return this;
     }
   }

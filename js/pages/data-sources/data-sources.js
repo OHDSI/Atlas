@@ -6,19 +6,7 @@ define([
 	'webapi/AuthAPI',
 	'providers/Component',
 	'databindings',
-	'./components/reports/dashboard',
-	'./components/reports/datadensity',
-	'./components/reports/person',
-	'./components/reports/visit',
-	'./components/reports/condition',
-	'./components/reports/conditionEra',
-	'./components/reports/procedure',
-	'./components/reports/drug',
-	'./components/reports/drugEra',
-	'./components/reports/measurement',
-	'./components/reports/observation',
-	'./components/reports/death',
-	'./components/reports/achillesHeel',	
+	'./components/reports/person',	
 	'less!./data-sources.less'
 ], function (
 	ko,
@@ -29,10 +17,16 @@ define([
 	Component
 ) {
 	class DataSources extends Component {
-		constructor() {
+		static get name() {
+			return 'data-sources';
+		}
+
+		static get view() {
+			return view;
+		}
+
+		constructor(params) {
 			super();
-			this.name = 'data-sources';
-			this.view = view;
 
 			this.reports = [
 				{
@@ -89,9 +83,7 @@ define([
 					path: "achillesheel",
 				},
 			];
-		}
 
-		render(params) {
 			this.model = params.model;
 			this.sources = sharedState.sources().filter(function (s) {
 				return s.hasResults && s.hasCDM;
@@ -108,11 +100,8 @@ define([
 			this.currentSource = ko.observable(this.sources[0]);
 			this.currentReport = ko.observable();
 			this.currentConcept = ko.observable();
-
-			return this;
 		}
 	}
 
-	const component = new DataSources();
-	return component.build();
+	return Component.build(DataSources);
 });

@@ -25,8 +25,8 @@ define([
       this.byType = true;
     }
 
-    render(params) {
-      super.render(params);
+    createViewModel(params) {
+      super.createViewModel(params);
       return this;
     }
   }
