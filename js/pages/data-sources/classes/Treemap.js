@@ -129,8 +129,8 @@ define([
       return response;
     }
 
-    render(params) {
-      super.render(params);
+    createViewModel(params) {
+      super.createViewModel(params);
       // to pass down to drilldown
       this.currentReport = params.report;
       return this.getData()

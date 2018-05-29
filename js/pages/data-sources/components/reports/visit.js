@@ -22,8 +22,8 @@ define([
       this.aggProperty = helpers.aggProperties.byPerson;
     }
 
-    render(params) {
-      super.render(params);
+    createViewModel(params) {
+      super.createViewModel(params);
       return this;
     }
   }

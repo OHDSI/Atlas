@@ -293,8 +293,8 @@ define([
         });
     }
 
-    render(params) {
-      super.render(params);
+    createViewModel(params) {
+      super.createViewModel(params);
       this.currentReport = params.currentReport;
       this.byFrequency = params.byFrequency;
       this.byUnit = params.byUnit;

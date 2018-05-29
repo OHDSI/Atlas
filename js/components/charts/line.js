@@ -1,10 +1,12 @@
 define([
 	'knockout',
   'providers/Chart',
+  'providers/Component',
   'atlascharts',
 ], function (
   ko,
   Chart,
+  Component,
   atlascharts,
 ) {
   class Line extends Chart {
@@ -14,12 +16,11 @@ define([
       this.chart = new atlascharts.line();
     }
 
-    render(params) {
-      super.render(params);
+    createViewModel(params) {
+      super.createViewModel(params);
       return this;
     }
   }
 
-  const viewModel = new Line();  
-	return viewModel.build();
+  return Component.build(Line);
 });

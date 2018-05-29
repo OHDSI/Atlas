@@ -86,8 +86,8 @@ define([
       return result;
     }
 
-    render(params) {
-      super.render(params);
+    createViewModel(params) {
+      super.createViewModel(params);
       
       this.getData()
         .then(({ data }) => {
