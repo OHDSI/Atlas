@@ -44,7 +44,7 @@ define([
     
       this.getData()
         .then(({ data }) => {
-          this.data(data.messages.forEach((message) => {
+          this.data(data.messages.map((message) => {
             const temp = message.attributeValue;
             const colon_index = temp.indexOf(':');
             const message_type = temp.substring(0, colon_index);
