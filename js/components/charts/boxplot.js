@@ -1,25 +1,25 @@
 define([
 	'knockout',
   'providers/Chart',
+  'providers/Component',  
   'atlascharts',
 ], function (
   ko,
   Chart,
+  Component,
   atlascharts,
 ) {
   class Boxplot extends Chart {
-    constructor() {
-      super();
-      this.name = 'boxplot';
+    static get name() {
+      return 'boxplot';
+    }
+
+    constructor(params) {
+      super(params);
       this.chart = new atlascharts.boxplot();
     }
 
-    render(params) {
-      super.render(params);
-      return this;
-    }
   }
 
-  const viewModel = new Boxplot();  
-	return viewModel.build();
+	return Component.build(Boxplot);
 });

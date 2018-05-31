@@ -6,6 +6,7 @@ define([
 	'd3-tip',
   'const',
   'pages/data-sources/classes/Report',
+  'providers/Component',
   'components/heading',
   'components/charts/donut',
   'components/charts/histogram',
@@ -17,13 +18,20 @@ define([
 	atlascharts,
 	d3tip,
   helpers,
-  Report
+  Report,
+  Component
 ) {
 	class Dashboard extends Report {
-    constructor() {
-      super();
-      this.name = 'dashboard';      
-      this.view = view;
+    static get name() {
+      return 'dashboard';
+    }
+
+    static get view() {
+      return view;
+    }
+
+    constructor(params) {
+      super(params);
       
       this.summary = ko.observableArray();
       this.genderConceptData = ko.observable();
@@ -54,11 +62,6 @@ define([
         },
       };
 
-    }
-
-    render(params) {
-      super.render(params);
-      
       this.getData()
         .then(({ data }) => {
           if (!!data.summary) {
@@ -79,7 +82,7 @@ define([
             histData.max = d3.max(ageAtFirstData.intervalIndex);
             histData.intervals = 120;
             histData.data = ageAtFirstData;
-
+  
             this.ageAtFirstObservationData(helpers.mapHistogram(histData));
           }
           const cumObsData = helpers.normalizeArray(data.cumulativeObservation);
@@ -93,7 +96,7 @@ define([
                 };
                 return item;
               }, cumObsData);
-
+  
             this.chartFormats.observationLine.xLabel = 'Days';
             if (cumulativeData.length > 0) {
               if (cumulativeData.slice(-1)[0].xValue - cumulativeData[0].xValue > 1000) {
@@ -104,7 +107,7 @@ define([
                 this.chartFormats.observationLine.xLabel = 'Years';
               }
             }
-
+  
             this.observationLineData(cumulativeData);
           }
           const obsByMonthData = helpers.normalizeArray(data.observedByMonth);
@@ -123,10 +126,9 @@ define([
             );
           }
         });
-        return this;
     }
+
   }
 
-  const report = new Dashboard();
-  return report.build();
+  return Component.build(Dashboard);
 });

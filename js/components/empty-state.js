@@ -9,20 +9,21 @@ define([
 	Component
 ) {
 	class EmptyState extends Component {
-		constructor() {
-			super();
-			this.name = 'empty-state';
-			this.view = view;
+		static get name() {
+			return 'empty-state';
 		}
 
-		render(params) {
-			super.render(params);
+		static get view() {
+			return view;
+		}
+
+		constructor(params) {
+			super(params);
 			this.message = params.message || 'No data';
 
 			return this;
 		}
   }
 
-	const emptyState = new EmptyState();
-	return emptyState.build();
+	return Component.build(EmptyState);
 });

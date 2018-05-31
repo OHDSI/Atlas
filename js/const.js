@@ -197,6 +197,12 @@ define(
 			return root;
 		}
 
+		const filterByConcept = function(conceptId) {
+      return function (d) {
+        return d.conceptId === conceptId;
+      };
+    };
+
     return {
 			minChartHeight,
 			treemapGradient,
@@ -213,6 +219,7 @@ define(
 			formatComma,
 			formatFixed,
 			buildHierarchyFromJSON,
+			filterByConcept,
     };
   }
 );
