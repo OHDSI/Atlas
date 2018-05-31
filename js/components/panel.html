@@ -4,6 +4,6 @@
     extra: 'panel-heading'
   }), text: title"></div>
   <div data-bind="css: classes({ element: 'content', extra: 'panel-body' })">
-    <!-- ko template: { nodes: $componentTemplateNodes } --><!-- /ko -->
+    <!-- ko template: { name: templateId, data: context } --><!-- /ko -->
   </div>
 </div>

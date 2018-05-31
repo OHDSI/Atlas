@@ -16,7 +16,7 @@
       element: 'tab',
       modifiers: $component.selectedTab() == $index() ? 'selected' : null,
     })">
-      <!-- ko template: { nodes: [$data] } --><!-- /ko -->
+      <!-- ko template: { name: $data.templateId, data: context } --><!-- /ko -->
     </div>
   <!-- /ko -->
 </div>

@@ -16,7 +16,9 @@ define([
 		}
 
 		render(params, info) {
-      super.render(params);
+			super.render(params);
+			this.templateId = params.templateId;
+			this.context = params.context;
 
 			return this;
 		}

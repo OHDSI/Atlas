@@ -1,0 +1,78 @@
+<script type="text/html" id="vocabulary-vocab-list">
+  <div class="checkboxListing row">
+      <!-- ko foreach: { data: vocabularies() } -->
+      <div class="col-sm-6">
+        <input
+          type="checkbox"
+          data-bind="value: VOCABULARY_ID, event: { change: (e) => $parent.toggleVocabulary(VOCABULARY_ID) }"
+        > <span data-bind="text: VOCABULARY_ID + ': ' + VOCABULARY_NAME"></span>
+      </div>
+      <!-- /ko -->
+    </div>
+</script>
+<script type="text/html" id="vocabulary-domain-list">
+  <div class="checkboxListing row">
+    <!-- ko foreach: domains() -->
+    <div class="col-sm-6">
+      <input
+        type="checkbox"
+        data-bind="value: DOMAIN_ID, event: { change: (e) => $parent.toggleDomain(DOMAIN_ID) }"
+      > <span data-bind="text: DOMAIN_NAME"></span>
+    </div>
+    <!-- /ko -->
+  </div>
+</script>
+
+<script type="text/html" id="vacabulary-search-tab">
+  <div class="input-group">
+    <input placeholder="Type your search here" type="text" data-bind="textInput: currentSearch,
+      css: classes({
+        element: 'input',
+        extra: 'form-control'
+      })
+      " />
+    <div class="input-group-btn">
+      <div data-bind="click: searchClick" class="pull-right btn btn-primary" title="Search" type="button"><i class="fa fa-search"></i></div>
+    </div>
+  </div>
+  <div class="row">
+    <div data-bind="click: toggleAdvanced" class="pull-right btn btn-sm btn-link">Advanced Options</div>
+  </div>
+  <div class="advanced-options" data-bind="visible: showAdvanced">
+    <div data-bind="css: classes({ element: 'clear-btn', extra: 'row' })">
+      <div class="btn btn-success btn-sm pull-right" data-bind="click: clearAllAdvanced">
+        <i class="fa fa-eraser"></i> Clear All Selections
+      </div>
+    </div>
+
+    <panel params="title: 'Domains', templateId: 'vocabulary-domain-list', context: $data"></panel>
+    <panel params="title: 'Vocabularies', templateId: 'vocabulary-vocab-list', context: $data"></panel>
+  </div>
+  <div data-bind="visible: concepts().length > 0">
+    <faceted-datatable params="{
+      orderColumn: 7,
+      columns: searchConceptsColumns,
+      options: searchConceptsOptions,
+      reference: concepts,
+      rowCallback: contextSensitiveLinkColor
+    }"></faceted-datatable>
+    <div class="linkLegend">
+      <div class="linkLegendItem">
+        <div class="swatch standard">
+        </div>
+        <div class="linkLegendTitle">Standard</div>
+      </div>
+      <div class="linkLegendItem">
+        <div class="swatch nonStandard">
+        </div>
+        <div class="linkLegendTitle">Non-Standard</div>
+      </div>
+      <div class="linkLegendItem">
+        <div class="swatch classification">
+        </div>
+        <div class="linkLegendTitle">Classification</div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+</script>

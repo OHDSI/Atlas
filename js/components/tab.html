@@ -1,3 +1,6 @@
 <div data-bind="css: classes()">
-  <!-- ko template: { nodes: $componentTemplateNodes } --><!-- /ko -->
+  <!-- ko template: {
+    name: $component.templateId,
+    data: context
+  } --><!-- /ko -->
 </div>

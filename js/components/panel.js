@@ -13,11 +13,13 @@ define([
 			super();
 			this.name = 'panel';
 			this.view = view;
-    }
+		}
 
-		render(params, info) {
+		render(params) {
       super.render(params);
-      this.title = params.title;
+			this.title = params.title;
+			this.templateId = params.templateId;
+			this.context = params.context;
 			
 			return this;
 		}

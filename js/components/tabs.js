@@ -1,7 +1,8 @@
 define([
 	'knockout',
 	'text!./tabs.html',
-  'providers/Component',
+	'providers/Component',
+	'components/tab',
 	'less!./tabs.less',
 ], function (
 	ko,
@@ -17,9 +18,10 @@ define([
 			this.tabs = ko.observableArray();
     }
 
-		render(params, info) {
+		render(params) {
 			super.render(params);
-      this.tabs = info.templateNodes.filter(node => node.nodeName === 'TAB');
+			this.tabs = params.tabs || [];
+			this.context = params.context;
 			
 			return this;
 		}
