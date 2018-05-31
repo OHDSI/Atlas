@@ -9,6 +9,7 @@ define([
 	'components/tabs',
   'components/panel',
   'faceted-datatable',
+  'less!./search.less'
 ], function (
 	ko,
 	sharedState,
@@ -19,10 +20,16 @@ define([
   httpService,
 ) {
 	class Search extends Component {
-		constructor() {
-			super();
-			this.name = 'vocabulary-search';
-      this.view = view;
+		static get name() {
+			return 'vocabulary-search';
+		}
+
+		static get view() {
+			return view;
+		}
+
+		constructor(params) {
+			super(params);
       this.currentSearch = ko.observable('');
       this.loading = ko.observable(false);
       this.canSearch = ko.observable(true);
@@ -221,13 +228,7 @@ define([
           console.error('error while searching', er);
         });
     }
-
-		render(params, info) {
-      super.render(params);
-			return this;
-		}
 	}
 
-	const component = new Search();
-	return component.build();
+	return Component.build(Search);
 });
