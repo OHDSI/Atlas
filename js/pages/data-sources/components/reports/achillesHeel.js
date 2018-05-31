@@ -6,7 +6,7 @@ define([
   'pages/data-sources/classes/Report',
   'providers/Component',
   'components/heading',
-  'components/data-table'
+  'faceted-datatable'
 ], function (
 	ko,
 	view,

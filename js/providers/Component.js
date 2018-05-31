@@ -16,7 +16,7 @@ define([
         viewModel: viewModelClass,
         template: viewModelClass.view,
       };
-      viewModelClass.componentName = viewModelClass.name;
+      viewModelClass.prototype.componentName = viewModelClass.name;
     
       ko.components.register(viewModelClass.name, component);
       return component;
