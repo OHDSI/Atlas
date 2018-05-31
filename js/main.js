@@ -91,7 +91,7 @@ requirejs.config({
     "less": "plugins/less",
 		"optional": "plugins/optional",
 		"clipboard": "clipboard.min",
-		"knockout": "knockout.min",
+		"knockout": "knockout",
 		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
 		"knockout-mapping": "knockout.mapping",
 		"datatables.net": "jquery.dataTables.min",

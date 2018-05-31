@@ -9,22 +9,22 @@ define([
 	Component
 ) {
 	class Panel extends Component {
-		constructor() {
-			super();
-			this.name = 'panel';
-			this.view = view;
+		static get name() {
+			return 'panel';
 		}
 
-		render(params) {
-      super.render(params);
+		static get view() {
+			return view;
+		}
+
+		constructor(params) {
+			super(params);
 			this.title = params.title;
 			this.templateId = params.templateId;
 			this.context = params.context;
 			
-			return this;
 		}
   }
 
-	const panel = new Panel();
-	return panel.build();
+	return Component.build(Panel);
 });
