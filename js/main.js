@@ -294,10 +294,10 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
       }
 		}
 
+
 		config.api.isExecutionEngineAvailable = ko.observable(false);
-		executionAPI.getEngineStatus(v => {
-			config.api.isExecutionEngineAvailable(v.status === 'ONLINE')
-		});
+		authApi.isAuthenticated.subscribe(executionAPI.checkExecutionEngineStatus);
+		executionAPI.checkExecutionEngineStatus(authApi.isAuthenticated());
 
 
 		$.when.apply($, pageModel.initPromises).done(function () {

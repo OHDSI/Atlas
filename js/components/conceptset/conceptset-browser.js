@@ -1,4 +1,20 @@
-define(['knockout', 'text!./conceptset-browser.html', 'appConfig', 'webapi/AuthAPI', 'bootstrap', 'circe', ], function (ko, view, config, authApi) {
+define([
+	'knockout',
+	'text!./conceptset-browser.html',
+	'appConfig',
+	'webapi/AuthAPI',
+	'FileSaver',
+	'services/file',
+	'bootstrap',
+	'circe',
+], function (
+	ko,
+	view,
+	config,
+	authApi,
+	FileSaver,
+	fileService
+) {
 	function conceptsetBrowser(params) {
 		var self = this;
 		self.model = params.model;
@@ -7,6 +23,7 @@ define(['knockout', 'text!./conceptset-browser.html', 'appConfig', 'webapi/AuthA
 		self.exportTable = null;
 		self.exportRowCount = ko.observable(0);
 		self.exportConceptSets = [];
+		self.isInProgress = ko.observable(false);
 
 		self.isAuthenticated = authApi.isAuthenticated;
 		self.canReadConceptsets = ko.pureComputed(function () {
@@ -27,13 +44,16 @@ define(['knockout', 'text!./conceptset-browser.html', 'appConfig', 'webapi/AuthA
 
 		self.onExportAction = function (result) {
 			if (result.action == 'add') {
+				self.isInProgress(true);
 				// Get the items we'd like to export from the table
 				var itemsForExport = $('#exportConceptSetTable').DataTable().rows('.selected').data();
 				var conceptSetIds = $.map(itemsForExport, function (obj) {
 					return obj.id
 				}).join('%2B'); // + encoded
 				if (conceptSetIds.length > 0) {
-					window.open(config.api.url + 'conceptset/exportlist?conceptsets=' + conceptSetIds);
+					fileService
+						.loadZip(config.api.url + 'conceptset/exportlist?conceptsets=' + conceptSetIds, 'exportedConceptSets.zip')
+						.finally(() => self.isInProgress(false));					
 				}
 			}
 		}
