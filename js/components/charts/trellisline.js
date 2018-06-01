@@ -20,7 +20,7 @@ define([
 
     constructor(params) {
       super(params);
-      this.chart = new atlascharts.trellisline();
+      this.renderer = new atlascharts.trellisline();
     }
 
     prepareData(rawData) {      

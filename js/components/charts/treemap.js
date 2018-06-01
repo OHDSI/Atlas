@@ -18,7 +18,7 @@ define([
     
     constructor(params) {
       super(params);
-      this.chart = new atlascharts.treemap();
+      this.renderer = new atlascharts.treemap();
       this.storeParams(params);
       if (params.data()) {
         const hierarchy = helpers.buildHierarchyFromJSON(params.data(), this.threshold, params.aggProperty)

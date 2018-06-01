@@ -16,7 +16,7 @@ define([
 
     constructor(params) {
       super(params);
-      this.chart = new atlascharts.boxplot();
+      this.renderer = new atlascharts.boxplot();
     }
 
   }

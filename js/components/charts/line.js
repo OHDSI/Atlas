@@ -16,7 +16,7 @@ define([
 
     constructor(params) {
       super(params);
-      this.chart = new atlascharts.line();
+      this.renderer = new atlascharts.line();
     }
   }
 

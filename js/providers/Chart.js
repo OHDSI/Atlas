@@ -17,6 +17,7 @@ define([
 
     constructor(params) {
       super(params);
+      this.renderer = null; // atlascharts
       this.rawData = ko.observable();
       this.format = {};
       this.storeParams(params);
