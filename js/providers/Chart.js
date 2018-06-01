@@ -17,10 +17,13 @@ define([
 
     constructor(params) {
       super(params);
-      this.data = ko.observable();
+      this.rawData = ko.observable();
       this.format = {};
       this.storeParams(params);
-      this.data(params.data());
+      this.rawData(params.data());
+      this.data = ko.computed(() => {
+        return this.prepareData(this.rawData());
+      });
     }
 
     prepareData(rawData) {

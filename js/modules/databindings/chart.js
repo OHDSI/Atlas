@@ -1,7 +1,6 @@
 define(['knockout'], (ko) => {
   function draw(
     data,
-    dataTransformator = data => data,
     container,
     minHeight,
     format,
@@ -9,7 +8,7 @@ define(['knockout'], (ko) => {
   ) {
     if (container && data) {
       atlaschart.render(
-        dataTransformator(data),
+        data,
         container,
         container.getBoundingClientRect().width,
         minHeight,
@@ -21,7 +20,7 @@ define(['knockout'], (ko) => {
   ko.bindingHandlers.chart = {
 		update: function (element, valueAccessor) {
       const chart = valueAccessor();
-			draw(chart.data(), chart.prepareData, element, chart.minHeight, chart.format, chart.chart);
+			draw(chart.data(), element, chart.minHeight, chart.format, chart.chart);
 		}
 	};
 });
