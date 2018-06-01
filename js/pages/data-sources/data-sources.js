@@ -19,7 +19,8 @@ define([
 	'./components/reports/measurement',
 	'./components/reports/observation',
 	'./components/reports/death',
-	'./components/reports/achillesHeel',
+  './components/reports/achillesHeel',
+  'components/heading',
 	'less!./data-sources.less'
 ], function (
 	ko,

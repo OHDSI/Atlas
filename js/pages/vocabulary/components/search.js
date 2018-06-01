@@ -18,7 +18,6 @@ define([
 	authApi,
   Component,
   httpService,
-  searchTab
 ) {
 	class Search extends Component {
 		static get name() {
