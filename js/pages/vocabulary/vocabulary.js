@@ -1,16 +1,18 @@
 define([
 	'knockout',
-  './components/search',
-	'text!./vocabulary.html',
-	'appConfig',
+  'text!./vocabulary.html',
   'providers/Component',
-	'less!./vocabulary.less',
+  './components/search',
+  './components/import',
+  'components/heading',
+  'less!./vocabulary.less'
 ], function (
   ko,
-  searchTab,
 	view,
 	config,
   Component,
+  searchTab,
+  importTab
 ) {
 	class Vocabulary extends Component {
 		constructor() {
@@ -22,7 +24,14 @@ define([
 		render(params, info) {
       super.render(params);
       this.tabs = {
-        search: searchTab
+        search: {
+					viewModel: new searchTab.viewModel(),
+					template: searchTab.template
+        },
+        import: {
+          viewModel: new importTab.viewModel({ model: params.model }),
+          template: importTab.template
+        },
 			};
 			console.log(searchTab)
 

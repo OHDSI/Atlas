@@ -17,7 +17,6 @@ define([
 	authApi,
   Component,
   httpService,
-  searchTab
 ) {
 	class Search extends Component {
 		constructor() {

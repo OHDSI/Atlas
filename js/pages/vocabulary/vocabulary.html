@@ -1,10 +1,11 @@
 <div data-bind="html: tabs.search.template"></div>
+<div data-bind="html: tabs.import.template"></div>
 
-<script type="text/html" id="vacabulary-import-tab">
-
-</script>
-
-<tabs params="tabs: [
+<div data-bind="css: classes()">
+  <div data-bind="css: classes('header')">
+    <heading-title params="name: 'Search', icon: 'search'"></heading-title>
+  </div>
+  <tabs params="tabs: [
   {
     title: 'Search',
     templateId: 'vacabulary-search-tab',
@@ -13,6 +14,7 @@
   {
     title: 'Import',
     templateId: 'vacabulary-import-tab',
-    context: $component
+    context: tabs.import.viewModel
   }
-]"></tabs>
+  ]"></tabs>
+</div>

@@ -20,7 +20,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.title = params.name;
-			this.sourceKey = params.sourceKey;
+			this.icon = params.icon;
 		}
   }
 
