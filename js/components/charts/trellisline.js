@@ -1,21 +1,26 @@
 define([
 	'knockout',
-  'providers/Chart',
+	'providers/Chart',
+	'providers/Component',
   'atlascharts',
   'd3',
   'const'
 ], function (
   ko,
-  Chart,
+	Chart,
+	Component,
   atlascharts,
   d3,
   helpers
 ) {
   class Trellisline extends Chart {
-    constructor() {
-      super();
-      this.name = 'trellisline';
-      this.chart = new atlascharts.trellisline();
+    static get name() {
+      return 'trellisline';
+    }
+
+    constructor(params) {
+      super(params);
+      this.renderer = new atlascharts.trellisline();
     }
 
     prepareData(rawData) {      
@@ -76,13 +81,7 @@ define([
       }
       return null;
     }
-
-    render(params) {
-      super.render(params);
-      return this;
-    }
   }
 
-  const viewModel = new Trellisline();  
-	return viewModel.build();
+  return Component.build(Trellisline);
 });

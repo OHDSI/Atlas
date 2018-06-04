@@ -2,12 +2,14 @@ define([
 	'knockout',
   'pages/data-sources/const',
   'providers/Chart',
+  'providers/Component',
   'atlascharts',
   'd3'
 ], function (
 	ko,
   helpers,
   Chart,
+  Component,
   atlascharts,
   d3
 ) {
@@ -245,18 +247,16 @@ define([
   }
 
   class FrequencyHistogramComponent extends Chart {
-    constructor() {
-      super();
-      this.name = 'frequency-histogram';
+    static get name() {
+      return 'frequency-histogram';
+    }
+
+    constructor(params) {
+      super(params);
       this.chart = new FrequencyHistogram();
     }
 
-    render(params) {
-      super.render(params);
-      return this;
-    }
   }
 
-  const chart = new FrequencyHistogramComponent();
-  return chart.build();
+  return Component.build(FrequencyHistogramComponent);
 });

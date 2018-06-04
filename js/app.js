@@ -103,6 +103,15 @@ define([
 				return sharedState.appInitializationStatus() != 'initializing';
 			});
 
+			self.currentViewAccessible = ko.pureComputed(function() {
+        return self.currentView && (sharedState.appInitializationStatus() !== 'failed' &&
+					(sharedState.appInitializationStatus() !== 'no-sources-available' || self.currentView() === 'ohdsi-configuration'));
+			});
+
+			self.noSourcesAvailable = ko.pureComputed(function() {
+				return sharedState.appInitializationStatus() == 'no-sources-available' && self.currentView() !== 'ohdsi-configuration';
+			});
+
 			self.initComplete = function () {
 				var routerOptions = {
 					notfound: function () {

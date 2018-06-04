@@ -7,27 +7,18 @@ define([
 ) {
   class Component {
     constructor() {
-      this.classes = null;
-      this.view = null;
-      this.createViewModel = this.createViewModel.bind(this);
-    }
-
-    render(params) {
-      const bemHelper = new BemHelper(this.name);
+      const bemHelper = new BemHelper(this.componentName);
       this.classes = bemHelper.run.bind(bemHelper);
     }
 
-    createViewModel(params, info) {
-      return this.render(params, info);
-    }
-
-    build() {
+    static build(viewModelClass) {
       const component = {
-        viewModel: this,
-        template: this.view,
+        viewModel: viewModelClass,
+        template: viewModelClass.view,
       };
+      viewModelClass.prototype.componentName = viewModelClass.name;
     
-      ko.components.register(this.name, component);
+      ko.components.register(viewModelClass.name, component);
       return component;
     }
   }

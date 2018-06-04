@@ -97,7 +97,7 @@
 				</div>
 			</div>
 
-			<div data-bind="if:sharedState.appInitializationStatus() == 'no-sources-available'">
+			<div data-bind="if: noSourcesAvailable">
 				<div style="width:100px;margin-left:auto;margin-right:auto;">
 					<svg width="100" height="100" viewBox="0 -200 400 400">
 					<g id="rings">
@@ -117,7 +117,7 @@
 				<div class="error">application initialization failed</div>
 				<div class="error">
 					<p>the current webapi has no sources defined.</p>
-					<p>please contact your administrator to resolve this issue.</p>
+                    <p>please add one or more on <a href="#/configure">configuration</a> page.</p>
 				</div>
 			</div>
 
@@ -140,9 +140,9 @@
 			<!-- /ko -->
 			<!-- /ko -->
 
-			<!-- ko if: pageModel.currentView && (sharedState.appInitializationStatus() != 'failed' && sharedState.appInitializationStatus() != 'no-sources-available') -->
-			<div id="currentComponent" class="flexed" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
-			<!-- /ko -->
+			<div data-bind="if: currentViewAccessible">
+				<div id="currentComponent" class="flexed" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
+			</div>
 		</div>
 	</div>
 	<script data-main="js/main" src="js/require.js"></script>

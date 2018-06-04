@@ -9,20 +9,20 @@ define([
 	Component
 ) {
 	class Heading extends Component {
-		constructor() {
-			super();
-			this.name = 'heading-title';
-			this.view = view;
+		static get name() {
+			return 'heading-title';
 		}
 
-		render(params) {
-			super.render(params);
-			this.name = params.name;
+		static get view() {
+			return view;
+		}
+
+		constructor(params) {
+			super(params);
+			this.title = params.name;
 			this.sourceKey = params.sourceKey;
-			return this;
 		}
   }
 
-	const heading = new Heading();
-	return heading.build();
+	return Component.build(Heading);
 });

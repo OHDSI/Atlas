@@ -3,7 +3,8 @@ define([
   'const',
   'services/http',
   './Report',
-  'text!components/charts/datatableTemplate.html'
+  'text!components/charts/datatableTemplate.html',
+  'faceted-datatable'
 ], function (
   ko,
   helpers,
@@ -12,9 +13,12 @@ define([
   datatableTemplate
 ) {
   class TreemapReport extends Report {
-    constructor() {
-      super();
+    // abstract, no need to define component name here
+
+    constructor(params) {
+      super(params);
       this.treeData = ko.observable();
+      this.tableData = ko.observable();
       this.currentConcept = ko.observable();
 
       this.aggProperty = {
@@ -56,7 +60,6 @@ define([
           dom: datatableTemplate,
           buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
           autoWidth: false,
-          data: null,
           createdRow: function (row) {
             $(row).addClass('table_selector');
           },
@@ -85,18 +88,18 @@ define([
           destroy: true,
         },
       };
+      // to pass down to drilldown
+      this.currentReport = params.report;
+      this.getData()
+        .then(() => {
+          // in order to get jquery working, we should set isLoading here instead of .finally block
+          this.context.loadingReport(false);
+          this.isLoading(false);      
+        });
     }
     
     selectTab(tab) {
       
-    }
-
-    onReportTableRowClick(report, context, event) {
-      var dataTable = $("#report_table").DataTable();
-      var rowIndex = event.target._DT_CellIndex.row;
-      var concept = dataTable.row(rowIndex).data();
-
-      report.currentConcept(concept);
     }
 
     parseData({ data }) {			
@@ -113,7 +116,7 @@ define([
             agg_value: helpers.formatFixed(normalizedData[this.aggProperty.name][i])
           };
         });
-        this.chartFormats.table.data = tableData;
+        this.tableData(tableData);
         this.treeData(normalizedData);
         
         return { data };
@@ -129,19 +132,6 @@ define([
       return response;
     }
 
-    render(params) {
-      super.render(params);
-      // to pass down to drilldown
-      this.currentReport = params.report;
-      return this.getData()
-        .then(() => {
-          // in order to get jquery working, we should set isLoading here instead of .finally block
-          this.context.loadingReport(false);
-          this.isLoading(false);
-          $("#report_table").DataTable(this.chartFormats.table);
-          $('[data-toggle="popover"]').popover();        
-        });
-    }
   }
 
   return TreemapReport;

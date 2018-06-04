@@ -1,25 +1,25 @@
 define([
 	'knockout',
   'providers/Chart',
+  'providers/Component',
   'atlascharts',
 ], function (
   ko,
   Chart,
+  Component,
   atlascharts,
 ) {
   class Histogram extends Chart {
-    constructor() {
-      super();
-      this.name = 'histogram';
-      this.chart = new atlascharts.histogram();
+    static get name() {
+      return 'histogram';
     }
 
-    render(params) {
-      super.render(params);
-      return this;
+    constructor(params) {
+      super(params);
+      this.renderer = new atlascharts.histogram();
     }
+
   }
 
-  const viewModel = new Histogram();  
-	return viewModel.build();
+  return Component.build(Histogram);
 });

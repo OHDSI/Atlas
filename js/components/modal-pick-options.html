@@ -1,0 +1,21 @@
+<div data-bind="modal: $component.showModal, css: $component.classes({ extra: 'modal fade' })" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" data-bind="text: $component.title"></div>
+            <div data-bind="css: $component.classes('content')">
+                <ul data-bind="foreach: $component.options, css: $component.classes('list')">
+                    <li data-bind="css: $component.classes('list-item')">
+                        <label data-bind="css: $component.classes('option')">
+                            <input type="checkbox"
+                                   data-bind="checkedValue: value, css: $component.classes('option-checkbox'), checked: $parent.selectedOptions">
+                            <span data-bind="text: $data.label, css: $component.classes('option-text')"></span>
+                        </label>
+                    </li>
+                </ul>
+                <div data-bind="css: $component.classes('btn-list')">
+                    <button class="btn btn-info btn-sm" data-bind="click:$component.submit, text: $component.submitLabel"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

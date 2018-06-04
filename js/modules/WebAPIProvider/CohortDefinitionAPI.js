@@ -98,6 +98,13 @@ define(function (require, exports) {
 		return generatePromise;
 	}
 
+	function cancelGenerate(cohortDefinitionId, sourceKey) {
+    return $.ajax({
+			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/cancel/' + sourceKey,
+			error: authApi.handleAccessDenied,
+		});
+	}
+
 	function getInfo(cohortDefinitionId) {
 		var infoPromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/info',
@@ -129,7 +136,8 @@ define(function (require, exports) {
 		getSql: getSql,
 		generate: generate,
 		getInfo: getInfo,
-		getReport: getReport
+		getReport: getReport,
+		cancelGenerate,
 	}
 
 	return api;
