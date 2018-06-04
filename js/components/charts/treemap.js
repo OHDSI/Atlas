@@ -22,7 +22,7 @@ define([
       this.storeParams(params);
       if (params.data()) {
         const hierarchy = helpers.buildHierarchyFromJSON(params.data(), this.threshold, params.aggProperty)
-        this.data(hierarchy);
+        this.rawData(hierarchy);
       }
     }
 
