@@ -9,36 +9,35 @@ define([
 ], function (
   ko,
 	view,
-	config,
   Component,
   searchTab,
   importTab
 ) {
 	class Vocabulary extends Component {
-		constructor() {
-			super();
-			this.name = 'vocabulary';
-      this.view = view;      
-    }    
+    static get name() {
+      return 'vocabulary';
+    }
 
-		render(params, info) {
-      super.render(params);
+    static get view() {
+      return view;
+    }
+
+		constructor(params) {
+			super(params);
       this.tabs = {
         search: {
-					viewModel: new searchTab.viewModel(),
+					viewModel: new searchTab.viewModel(params),
 					template: searchTab.template
         },
         import: {
-          viewModel: new importTab.viewModel({ model: params.model }),
+          viewModel: new importTab.viewModel(params),
           template: importTab.template
         },
 			};
-			console.log(searchTab)
 
 			return this;
 		}
 	}
 
-	const component = new Vocabulary();
-	return component.build();
+	return Component.build(Vocabulary);
 });

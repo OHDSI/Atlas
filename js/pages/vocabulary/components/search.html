@@ -1,6 +1,9 @@
 <script type="text/html" id="vocabulary-vocab-list">
   <div class="checkboxListing row">
-      <!-- ko foreach: { data: vocabularies() } -->
+      <!-- ko if: vocabularies().length === 0 -->
+        <empty-state params="message: 'No vocabularies available'"></empty-state>
+      <!-- /ko -->
+      <!-- ko foreach: vocabularies() -->
       <div class="col-sm-6">
         <input
           type="checkbox"
@@ -12,6 +15,9 @@
 </script>
 <script type="text/html" id="vocabulary-domain-list">
   <div class="checkboxListing row">
+    <!-- ko if: domains().length === 0 -->
+      <empty-state params="message: 'No domains available'"></empty-state>
+    <!-- /ko -->
     <!-- ko foreach: domains() -->
     <div class="col-sm-6">
       <input
@@ -24,6 +30,9 @@
 </script>
 
 <script type="text/html" id="vacabulary-search-tab">
+  <!-- ko if: isInProgress || loading -->
+    <loading></loading>
+  <!-- /ko -->
   <div class="input-group">
     <input placeholder="Type your search here" type="text" data-bind="textInput: currentSearch,
       css: classes({
@@ -48,6 +57,9 @@
     <panel params="title: 'Domains', templateId: 'vocabulary-domain-list', context: $data"></panel>
     <panel params="title: 'Vocabularies', templateId: 'vocabulary-vocab-list', context: $data"></panel>
   </div>
+  <!-- ko if: searchExecuted() && concepts().length === 0 -->
+    <empty-state params="message: 'No concept sets found'"></empty-state>
+  <!-- /ko -->
   <div data-bind="visible: concepts().length > 0">
     <faceted-datatable params="{
       orderColumn: 7,

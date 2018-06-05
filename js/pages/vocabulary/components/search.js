@@ -6,9 +6,11 @@ define([
 	'webapi/AuthAPI',
   'providers/Component',
   'services/http',
+  'pages/vocabulary/const',
 	'components/tabs',
   'components/panel',
   'faceted-datatable',
+  'components/empty-state',
   'less!./search.less'
 ], function (
 	ko,
@@ -18,6 +20,7 @@ define([
 	authApi,
   Component,
   httpService,
+  helpers
 ) {
 	class Search extends Component {
 		static get name() {
@@ -31,7 +34,9 @@ define([
 		constructor(params) {
 			super(params);
       this.currentSearch = ko.observable('');
-      this.loading = ko.observable(false);
+      this.loading = ko.observable(true);
+      this.domainsLoading = ko.observable(true);
+      this.vocabulariesLoading = ko.observable(true);
       this.canSearch = ko.observable(true);
       this.showAdvanced = ko.observable(false);
       this.domains = ko.observableArray();
@@ -45,6 +50,19 @@ define([
       this.searchConceptsColumns = ko.observableArray([]);
       this.searchConceptsOptions = ko.observable();
       this.contextSensitiveLinkColor = ko.observable();
+
+      this.isInProgress = ko.computed(() => {
+        return this.domainsLoading() === true && this.vocabulariesLoading() === true;
+      });
+      this.isInProgress.subscribe((isInProgress) => {
+        if (!isInProgress) {
+          if (params.query) {
+            this.currentSearch(params.query);
+            this.executeSearch();
+          }
+        }
+      });
+      this.currentSearch.subscribe(() => this.searchExecuted(false));
 
       this.searchConceptsColumns = [{
         title: '<i class="fa fa-shopping-cart"></i>',
@@ -139,6 +157,9 @@ define([
       this.toggleVocabulary = this.toggleVocabulary.bind(this);
       this.toggleDomain = this.toggleDomain.bind(this);
       this.updateSearchFilters = this.updateSearchFilters.bind(this);
+
+      this.getDomains();
+      this.getVocabularies();
     }
     
     searchClick() {
@@ -187,6 +208,7 @@ define([
     }
     
     executeSearch() {
+      this.searchExecuted(false);
       const vocabElements = this.selected.vocabularies;
 			const domainElements = this.selected.domains;
 
@@ -199,33 +221,63 @@ define([
         return;
       }
 
-			this.searchExecuted(true);
 			const query = this.currentSearch() === undefined ? '' : this.currentSearch();
       this.loading(true);
       
       let searchUrl = `${sharedState.vocabularyUrl()}search`;
       let searchParams = null;
-
+      
 			if (vocabElements.size > 0 || domainElements.size > 0) {
-				// advanced search
+        // advanced search
 				searchParams = {
           "QUERY": query,
 				};
 				if (vocabElements.size > 0) {
-					searchParams["VOCABULARY_ID"] = Array.from(vocabElements);
+          searchParams["VOCABULARY_ID"] = Array.from(vocabElements);
 				}
 				if (domainElements.size > 0) {
-					searchParams["DOMAIN_ID"] = Array.from(domainElements);
+          searchParams["DOMAIN_ID"] = Array.from(domainElements);
 				}
 			} else {
         // simple search
         searchUrl += `/${query}`;				
 			}
       httpService.doPost(searchUrl, searchParams)
-        .then(({ data }) => this.handleSearchResults(data))
-        .catch(er => {
-          this.loading(false);
-          console.error('error while searching', er);
+      .then(({ data }) => this.handleSearchResults(data))
+      .catch(er => {
+        this.loading(false);
+        console.error('error while searching', er);
+      })
+      .finally(() => {
+        this.searchExecuted(true);
+      });      
+    }
+
+    getVocabularies() {
+      httpService.doGet(helpers.apiPaths.vocabularies())
+        .then(({ data }) => {
+          const vocabularies = data.sort(function (a, b) {
+            return (a.VOCABULARY_ID.toUpperCase() < b.VOCABULARY_ID.toUpperCase()) ? -1 : (a.VOCABULARY_ID.toUpperCase() > b.VOCABULARY_ID.toUpperCase()) ? 1 : 0;
+          });
+          this.vocabularies(vocabularies);
+        })
+        .catch(er => console.error('Error occured when loading vocabularies', er))
+        .finally(() => {
+          this.vocabulariesLoading(false);
+        });
+    }
+
+    getDomains() {
+      httpService.doGet(helpers.apiPaths.domains())
+        .then(({ data }) => {
+          const domains = data.sort(function (a, b) {
+            return (a.VOCABULARY_ID.toUpperCase() < b.VOCABULARY_ID.toUpperCase()) ? -1 : (a.VOCABULARY_ID.toUpperCase() > b.VOCABULARY_ID.toUpperCase()) ? 1 : 0;
+          });
+          this.domains(domains);
+        })
+        .catch(er => console.error('Error occured when loading domains', er))
+        .finally(() => {
+          this.domainsLoading(false);
         });
     }
 	}
