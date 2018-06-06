@@ -24,7 +24,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'cohortdefinitionviewer/expressionCartoonBinding',
 	'cohortfeatures',
 	'conceptset-modal',
-	'css!./cohort-definition-manager.css'
+	'css!./cohort-definition-manager.css',
+    'components/modal-pick-options'
 ], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst, conceptSetAPI, conceptSetService) {
 
 	function translateSql(sql, dialect) {
@@ -310,6 +311,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}]
 		};
 
+		self.stopping = self.model.cohortDefinitionSourceInfo().reduce((acc, target) => ({...acc, [target.sourceKey]: ko.observable(false)}), {});
+		self.isSourceStopping = (source) => self.stopping[source.sourceKey];
+
 		self.pollForInfo = function () {
 			if (pollTimeout)
 				clearTimeout(pollTimeout);
@@ -520,6 +524,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		self.generateCohort = function (source, includeFeatures) {
+			self.stopping[source.sourceKey](false);
 			var route = `${config.api.url}cohortdefinition/${self.model.currentCohortDefinition().id()}/generate/${source.sourceKey}`;
 
 			if (includeFeatures) {
@@ -552,6 +557,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				}
 			});
 		}
+
+		self.cancelGenerate = function(source) {
+      self.stopping[source.sourceKey](true);
+      cohortDefinitionAPI.cancelGenerate(self.model.currentCohortDefinition().id(), source.sourceKey);
+		};
 
 		self.hasCDM = function (source) {
 			for (var d = 0; d < source.daimons.length; d++) {
@@ -976,13 +986,41 @@ define(['knockout', 'text!./cohort-definition-manager.html',
       });
     };
 
+    self.showUtilizationToRunModal = ko.observable(false);
+    self.checkedUtilReports = ko.observableArray([]);
+
+    const reportPacks = cohortReportingAPI.visualizationPacks;
+    self.utilReportOptions = [
+    	reportPacks.healthcareUtilPersonAndExposureBaseline,
+		reportPacks.healthcareUtilPersonAndExposureCohort,
+		reportPacks.healthcareUtilVisitRecordsBaseline,
+		reportPacks.healthcareUtilVisitDatesBaseline,
+		reportPacks.healthcareUtilCareSiteDatesBaseline,
+		reportPacks.healthcareUtilVisitRecordsCohort,
+		reportPacks.healthcareUtilVisitDatesCohort,
+		reportPacks.healthcareUtilCareSiteDatesCohort,
+		reportPacks.healthcareUtilDrugBaseline,
+		reportPacks.healthcareUtilDrugCohort,
+	].map(item => ({
+		label: item.name,
+		value: item.analyses,
+	}));
+
+    self.selectHealthcareAnalyses = function() {
+        self.showUtilizationToRunModal(true);
+	}
+
     self.generateHealthcareAnalyses = function () {
-      self.generateAnalyses({
-        descr: 'the Cost and Utilization analyses',
-				duration: '10-45 minutes',
-				analysisIdentifiers: cohortReportingAPI.getHealthcareAnalysesIdentifiers(),
-				runHeraclesHeel: false
-      });
+		const analysisIds = self.checkedUtilReports().reduce((acc, ids) => [...acc, ...ids], []);
+
+		self.generateAnalyses({
+		  descr: 'the Cost and Utilization analyses',
+		  duration: '10-45 minutes',
+		  analysisIdentifiers: analysisIds,
+		  runHeraclesHeel: false
+		});
+
+        self.showUtilizationToRunModal(false);
     };
 
     self.generateAllAnalyses = function () {

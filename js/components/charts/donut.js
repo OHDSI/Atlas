@@ -1,25 +1,25 @@
 define([
 	'knockout',
   'providers/Chart',
+  'providers/Component',
   'atlascharts',
 ], function (
   ko,
   Chart,
+  Component,
   atlascharts,
 ) {
   class Donut extends Chart {
-    constructor() {
-      super();
-      this.name = 'donut';
-      this.chart = new atlascharts.donut();
+    static get name() {
+      return 'donut';
     }
 
-    render(params) {
-      super.render(params);
-      return this;
+    constructor(params) {
+      super(params);
+      this.renderer = new atlascharts.donut();
     }
+
   }
 
-  const viewModel = new Donut();  
-	return viewModel.build();
+  return Component.build(Donut);
 });

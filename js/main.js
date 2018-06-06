@@ -205,8 +205,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		'atlas-state',
 		'vocabularyprovider',
 		'services/http',
-		'services/bindings',
 		'webapi/ExecutionAPI',
+		'databindings',
 		'director',
 		'search',
 		'localStorageExtender',
@@ -226,14 +226,12 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			sharedState,
 			vocabAPI,
 			httpService,
-			DataBindings,
 			executionAPI
 		) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
 
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
-		DataBindings.init();
 		httpService.setUnauthorizedHandler(() => authApi.token(null));
 		httpService.setUserTokenGetter(() => authApi.token());
 
@@ -294,10 +292,10 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
       }
 		}
 
+
 		config.api.isExecutionEngineAvailable = ko.observable(false);
-		executionAPI.getEngineStatus(v => {
-			config.api.isExecutionEngineAvailable(v.status === 'ONLINE')
-		});
+		authApi.isAuthenticated.subscribe(executionAPI.checkExecutionEngineStatus);
+		executionAPI.checkExecutionEngineStatus(authApi.isAuthenticated());
 
 
 		$.when.apply($, pageModel.initPromises).done(function () {

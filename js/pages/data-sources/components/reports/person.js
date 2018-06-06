@@ -4,21 +4,29 @@ define([
 	'd3',
   'const',
   'pages/data-sources/classes/Report',
+  'providers/Component',
   'components/heading',
   'components/charts/histogram',
-  'components/charts/line',
+  'components/charts/donut',
 ], function (
 	ko,
 	view,
 	d3,
   helpers,
-  Report
+  Report,
+  Component
 ) {
 	class Person extends Report {
-    constructor() {
-      super();
-      this.name = 'person';
-      this.view = view;
+    static get name() {
+      return 'person';
+    }
+
+    static get view() {
+      return view;
+    }
+
+    constructor(params) {
+      super(params);
       
       this.yearHistogramData = ko.observable();
       this.genderData = ko.observable();
@@ -33,11 +41,6 @@ define([
           yLabel: 'People',
         },        
       };
-
-    }
-
-    render(params) {
-      super.render(params);
       
       this.getData()
         .then(({ data }) => {
@@ -54,12 +57,11 @@ define([
           this.genderData(helpers.mapConceptData(data.gender));
           this.raceData(helpers.mapConceptData(data.race));
           this.ethnicityData(helpers.mapConceptData(data.ethnicity));
+
         });
 
-        return this;
     }
   }
 
-  const report = new Person();	
-	return report.build();
+  return Component.build(Person);
 });

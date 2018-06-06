@@ -4,20 +4,28 @@ define([
 	'd3',
   'const',
   'pages/data-sources/classes/Report',
+  'providers/Component',
   'components/heading',
-  'components/data-table'
+  'faceted-datatable'
 ], function (
 	ko,
 	view,
 	d3,
   helpers,
-  Report
+  Report,
+  Component
 ) {
 	class AchillesHeel extends Report {
-    constructor() {
-      super();
-      this.name = 'achilles-heel';
-      this.view = view;
+    static get name() {
+      return 'achilles-heel';
+    }
+
+    static get view() {
+      return view;
+    }
+
+    constructor(params) {
+      super(params);
       this.columns = [
         {
           title: 'Message Type',
@@ -33,14 +41,10 @@ define([
       ];
       this.data = ko.observableArray();
       this.template = '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';
-    }
-
-    render(params) {
-      super.render(params);
-      
+    
       this.getData()
         .then(({ data }) => {
-          this.data(data.messages.forEach((message) => {
+          this.data(data.messages.map((message) => {
             const temp = message.attributeValue;
             const colon_index = temp.indexOf(':');
             const message_type = temp.substring(0, colon_index);
@@ -56,11 +60,8 @@ define([
             };
           }));
         });
-
-        return this;
     }
   }
 
-  const report = new AchillesHeel();
-	return report.build();
+  return Component.build(AchillesHeel);
 });
