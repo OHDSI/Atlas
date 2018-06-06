@@ -30,6 +30,8 @@ define([
       this.aggProperty = helpers.aggProperties.byPerson;
       this.byFrequency = true;
       this.byType = true;
+      this.byValueAsConcept = true;
+      this.byQualifier = true;
     }
 
   }

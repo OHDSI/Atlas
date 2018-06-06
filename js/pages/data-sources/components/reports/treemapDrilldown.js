@@ -43,10 +43,16 @@ define([
       this.byFrequency = false;
       this.byUnit = false;
       this.byType = false;
+      this.byValueAsConcept = false;
+      this.byOperator = false;
+      this.byQualifier = false;
 
       // data
       this.prevalenceByMonthData = ko.observable();
       this.prevalenceByTypeData = ko.observable();
+      this.prevalenceByValueAsConceptData = ko.observable();
+      this.prevalenceByQualifierData = ko.observable();
+      this.prevalenceByOperatorData = ko.observable();
       this.ageData = ko.observable();
       this.frequencyDistributionData = ko.observable();
       this.prevalenceByGenderAgeYearData = ko.observable();
@@ -129,6 +135,9 @@ define([
       this.byFrequency = params.byFrequency;
       this.byUnit = params.byUnit;
       this.byType = params.byType;
+      this.byValueAsConcept = params.byValueAsConcept;
+      this.byOperator = params.byOperator;
+      this.byQualifier = params.byQualifier;
       params.currentConcept.subscribe(this.loadDrilldown.bind(this));
       this.loadDrilldown(params.currentConcept());
     }
@@ -237,6 +246,13 @@ define([
       };
     }
 
+    parseDonutData(rawData) {
+        if (!!rawData && rawData.length > 0) {
+            return helpers.mapConceptData(rawData);
+        }
+        return null;
+    };
+
     parsePieData(rawData) {
       const dataByUnit = rawData
         .filter(d => d.measurementConceptId === this.currentConcept().conceptId)
@@ -268,6 +284,19 @@ define([
       if (this.byFrequency) {
         this.parseFrequencyDistribution(data.frequencyDistribution, this.currentReport.path);
       }
+
+      if (this.byValueAsConcept) {
+          this.prevalenceByValueAsConceptData(this.parseDonutData(data.byValueAsConcept));
+      }
+
+      if (this.byQualifier) {
+          this.prevalenceByQualifierData(this.parseDonutData(data.byQualifier));
+      }
+
+      if (this.byOperator) {
+          this.prevalenceByOperatorData(this.parseDonutData(data.byOperator));
+      }
+
       if (this.byUnit) {
         let boxplot = this.parseBoxplotData(data.measurementValueDistribution);
         this.chartFormats.measurementValueDistribution.yMax = boxplot.chartFormat.yMax;

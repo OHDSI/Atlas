@@ -28,6 +28,9 @@ define([
       this.byFrequency = false;
       this.byUnit = false;
       this.byType = false;
+      this.byValueAsConcept = false;
+      this.byOperator = false;
+      this.byQualifier = false;
 
       this.chartFormats = {
         treemap: {
@@ -56,7 +59,7 @@ define([
           }
         },
         table: {
-          order: [1, 'desc'],
+          order: [2, 'desc'],
           dom: datatableTemplate,
           buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
           autoWidth: false,
@@ -71,15 +74,18 @@ define([
             },
             {
               data: 'num_persons',
-              className: 'numeric'
+              className: 'numeric',
+              orderSequence: ['desc','asc']
             },
             {
               data: 'percent_persons',
-              className: 'numeric'
+              className: 'numeric',
+              orderSequence: ['desc','asc']
             },
             {
               data: 'agg_value',
-              className: 'numeric'
+              className: 'numeric',
+              orderSequence: ['desc','asc']
             }
           ],
           pageLength: 15,
