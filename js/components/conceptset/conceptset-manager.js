@@ -568,8 +568,6 @@ define(['knockout',
 					}
 
 					var conceptSetItems = utils.toConceptSetItems(selectedConcepts);
-
-          var refreshTokenPromise = config.userAuthenticationEnabled ? authApi.refreshToken() : null;
 					var conceptSetId;
 					var itemsPromise = function(data) {
 						conceptSetId = data.id;
@@ -577,7 +575,6 @@ define(['knockout',
 					};
 					conceptSetAPI.saveConceptSet(conceptSet)
 						.then(itemsPromise)
-						.then(refreshTokenPromise)
 						.then(function(){
               document.location = '#/conceptset/' + conceptSetId + '/details';
               self.compareResults(null);

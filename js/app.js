@@ -1,8 +1,38 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, roleApi, sharedState, querystring, d3) {
+define([
+	'jquery',
+	'knockout',
+	'ohdsi.util',
+	'appConfig',
+	'webapi/AuthAPI',
+	'webapi/RoleAPI',
+	'atlas-state',
+	'querystring',
+	'd3',
+	'pages',
+	'facets',
+	'css!styles/tabs.css',
+	'css!styles/buttons.css',
+],
+	function (
+		$,
+		ko,
+		ohdsiUtil,
+		config,
+		authApi,
+		roleApi,
+		sharedState,
+		querystring,
+		d3,
+		pages,
+	) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
+			let appRoutes = {};
+			Object.entries(pages)
+				.forEach(([name, page]) => {
+					appRoutes = { ...appRoutes, ...page.buildRoutes(self) };
+				});
 			self.authApi = authApi;
 			self.componentParams = {};
 			self.config = config;
@@ -66,22 +96,23 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 				return sharedState.appInitializationStatus() != 'initializing';
 			});
 
+			self.currentViewAccessible = ko.pureComputed(function() {
+        return self.currentView && (sharedState.appInitializationStatus() !== 'failed' &&
+					(sharedState.appInitializationStatus() !== 'no-sources-available' || self.currentView() === 'ohdsi-configuration'));
+			});
+
+			self.noSourcesAvailable = ko.pureComputed(function() {
+				return sharedState.appInitializationStatus() == 'no-sources-available' && self.currentView() !== 'ohdsi-configuration';
+			});
+
 			self.initComplete = function () {
-					var prevToken = authApi.token();
-					var routerOptions = {
-						notfound: function () {
-							self.currentView('search');
-						},
-						on: function () {
-							self.currentView('loading');
-							var promise = (self.config.userAuthenticationEnabled && (authApi.token() != null || (prevToken != null && authApi.token() === null))) ? authApi.refreshToken : null;
-							$.when(promise).done(function(){
-								prevToken = authApi.token();
-								self.currentView('loading');
-							});
-						}
-					};
+				var routerOptions = {
+					notfound: function () {
+						self.currentView('search');
+					},
+				};
 				var routes = {
+					...appRoutes,
 					'/': function () {
 						document.location = "#/home";
 					},
@@ -129,24 +160,6 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 							self.currentView('cohort-definition-manager');
 							self.currentCohortDefinitionMode('conceptsets');
 							self.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
-						});
-					},
-					'/datasources': function () {
-						require(['data-sources'], function () {
-							self.componentParams = {
-								model: self
-							};
-							self.currentView('data-sources');
-						});
-					},
-					'/datasources/:sourceKey/:reportName': function (sourceKey, reportName) {
-						require(['data-sources'], function () {
-							self.componentParams = {
-								model: self,
-								reportName: reportName,
-								sourceKey: sourceKey
-							};
-							self.currentView('data-sources');
 						});
 					},
 					'/configure': function () {
@@ -348,7 +361,22 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 					},
 				};
 
-				self.router = new Router(routes)
+                const asyncBefore = function() {
+                	// Refresh auth token
+                	return (self.config.userAuthenticationEnabled && authApi.token() != null && authApi.tokenExpirationDate() > new Date()) ? authApi.refreshToken() : new Promise(resolve => resolve());
+                };
+
+                // Since the router's "before" hook doesn't work with promises,
+				// there is a need to wrap the routes manually
+                const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
+                	accumulator[key] = function() {
+                        self.currentView('loading');
+                		asyncBefore().then(() => routes[key].apply(null, arguments));
+                    };
+                	return accumulator;
+				}, {});
+
+				self.router = new Router(routesWithRefreshedToken)
 					.configure(routerOptions);
 				self.router.qs = function () {
 					return querystring.parse(window.location.href.split('?')[1]);

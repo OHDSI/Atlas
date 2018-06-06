@@ -18,6 +18,7 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
                 ? expDate.toLocaleString()
                 : null;
         });
+        self.tokenExpired = authApi.tokenExpired;
         self.isLoggedIn = ko.computed(function () {
             if (!self.token()) return null;
             return authApi.isAuthenticated();

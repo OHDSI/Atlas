@@ -5,8 +5,7 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				'conceptsetbuilder/InputTypes/ConceptSet', 'atlas-state',
 				'webapi/ExecutionAPI',
 				'services/JobDetailsService',
-				'databindings/d3ChartBinding',
-				'css!./styles/nv.d3.min.css'],
+				'databindings/d3ChartBinding'],
 	function ($, ko, view, _, clipboard, cohortDefinitionAPI, config, authApi, ohdsiUtil,
 		ComparativeCohortAnalysis, options, CohortExpression, vocabularyAPI,
 		ConceptSet, sharedState, executionAPI, jobDetailsService) {
@@ -180,10 +179,13 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 				});
 
 				executionAPI.loadExecutions('CCA', self.cohortComparisonId(), function(exec){
-					var sourceKey = self.sources().filter(s => s.sourceId == exec.sourceId)[0].sourceKey;
-					self.sourceProcessingStatus[sourceKey](exec.executionStatus !== 'COMPLETED' && exec.executionStatus !== 'FAILED');
-					self.sourceExecutions[sourceKey].remove(e => e.id === exec.id);
-					self.sourceExecutions[sourceKey].push(exec);
+                    var source = self.sources().find(s => s.sourceId == exec.sourceId);
+                    if (source) {
+                        var sourceKey = source.sourceKey;
+                        self.sourceProcessingStatus[sourceKey](exec.executionStatus !== 'COMPLETED' && exec.executionStatus !== 'FAILED');
+                        self.sourceExecutions[sourceKey].remove(e => e.id === exec.id);
+                        self.sourceExecutions[sourceKey].push(exec);
+                    }
 				});
 			};
 
@@ -281,6 +283,17 @@ define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash',
 						break;
 					}
 				}
+			}
+
+			self.isResultAvailable = function (sourceKey, onlySuccessful = false) {
+				return ko.computed(() => {
+					if (onlySuccessful) {
+						return self.sourceExecutions[sourceKey]()
+							.filter(execution => execution.executionStatus === 'COMPLETED')
+							.length === 0;
+					}
+					return self.sourceExecutions[sourceKey]().length === 0;
+				});
 			}
 
 			self.executionSelected = function (d) {

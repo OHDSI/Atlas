@@ -38,6 +38,8 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
     self.key = ko.observable(data.sourceKey || null);
     self.dialect = ko.observable(data.sourceDialect || null);
     self.connectionString = ko.observable(data.connectionString || null);
+    self.username = ko.observable(data.username || null);
+    self.password = ko.observable(data.password || null);
     self.daimons = ko.observableArray(mapDaimons(data.daimons));
     return self;
   }
@@ -117,6 +119,8 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
         key: self.selectedSource().key() || null,
         dialect: self.selectedSource().dialect() || null,
         connectionString: self.selectedSource().connectionString() || null,
+        username: self.selectedSource().username() || null,
+        password: self.selectedSource().password() || null,
         daimons: ko.toJS(self.selectedSource().daimons()).filter(function(d){ return d.enabled; }).map(function(d){
           return lodash.omit(d, ['enabled']);
         }),

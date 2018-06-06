@@ -34,6 +34,38 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 				width: 1000,
 				height: 250
 			};
+		
+		self.breakpoints = {
+			wide: {
+				width: 1000,
+				height: 1000 * 0.3,
+			},
+			medium: {
+				width: 500,
+				height: 500 * 0.75,
+			},
+			narrow: {
+				width: 300,
+				height: 300 * 0.75,
+			},
+			guessFromNode: (selector) => {
+				const bounds = document.querySelector(selector).getBoundingClientRect();
+				
+				return {
+					width: bounds.width,
+					height: bounds.height,
+				};
+			},
+		};
+		
+		self.chartOptions = {
+			margins: {
+				top: 20,
+				right: 20,
+				bottom: 20,
+				left: 20,
+			},
+		};
 
 		self.buttons = ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'];
 		self.heelOptions = {
@@ -485,8 +517,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 									});
 								}
 								boxplot.render(bpseries, "#ageAtDeath", size6.width, size6.height, {
+									yMax: d3.max(bpdata.p90Value),
+									yFormat: d3.format(',.1s'),
 									xLabel: 'Gender',
-									yLabel: 'Age at Death'
+									yLabel: 'Age at Death',
+									...self.chartOptions,
 								});
 							}
 						}
@@ -2303,9 +2338,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								UIF: bpdata.p90Value[i]
 							});
 						}
-						boxplot.render(bpseries, "#ageAtFirstDiagnosis", 230, 115, {
+						const size = self.breakpoints.guessFromNode("#ageAtFirstDiagnosis");
+						boxplot.render(bpseries, "#ageAtFirstDiagnosis", size.width, self.breakpoints.wide.height, {
+							yMax: d3.max(bpdata.p90Value),
+							yFormat: d3.format(',.1s'),
 							xLabel: 'Gender',
-							yLabel: 'Age at First Diagnosis'
+							yLabel: 'Age at First Diagnosis',
+							...self.chartOptions,
 						});
 					}
 
@@ -2322,7 +2361,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						});
 
 						var prevalenceByMonth = new atlascharts.line();
-						prevalenceByMonth.render(byMonthSeries, "#conditionPrevalenceByMonth", 230, 115, {
+						const size = self.breakpoints.guessFromNode("#conditionPrevalenceByMonth");
+						prevalenceByMonth.render(byMonthSeries, "#conditionPrevalenceByMonth", size.width, self.breakpoints.wide.height, {
 							xScale: d3.scaleTime()
 								.domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
@@ -2412,7 +2452,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 						// create svg with range bands based on the trellis names
 						var chart = new atlascharts.trellisline();
-						chart.render(dataByDecile, "#trellisLinePlot", 400, 200, {
+						const size = self.breakpoints.guessFromNode("#trellisLinePlot");
+						chart.render(dataByDecile, "#trellisLinePlot", size.width, self.breakpoints.wide.height, {
 							trellisSet: allDeciles,
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
@@ -2422,8 +2463,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							tickPadding: 20,
 							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN"])
-								.range(["#1F78B4", "#FB9A99", "#33A02C"])
-
+								.range(["#1F78B4", "#FB9A99", "#33A02C"]),
+							...self.chartOptions,
 						});
 					}
 				}
@@ -2591,7 +2632,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						d3.selectAll("#conditioneraPrevalenceByMonth svg")
 							.remove();
 						var prevalenceByMonth = new atlascharts.line();
-						prevalenceByMonth.render(byMonthSeries, "#conditioneraPrevalenceByMonth", 230, 115, {
+						const size = self.breakpoints.guessFromNode("#conditioneraPrevalenceByMonth");
+						prevalenceByMonth.render(byMonthSeries, "#conditioneraPrevalenceByMonth", size.width, self.breakpoints.wide.height, {
 							xScale: d3.scaleTime()
 								.domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
@@ -2660,7 +2702,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 						// create svg with range bands based on the trellis names
 						var chart = new atlascharts.trellisline();
-						chart.render(dataByDecile, "#trellisLinePlot", 400, 200, {
+						const size = self.breakpoints.guessFromNode("#trellisLinePlot");
+						chart.render(dataByDecile, "#trellisLinePlot", size.width, self.breakpoints.wide.height, {
 							trellisSet: allDeciles,
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
@@ -2669,8 +2712,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							yFormat: d3.format("0.2f"),
 							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN"])
-								.range(["#1F78B4", "#FB9A99", "#33A02C"])
-
+								.range(["#1F78B4", "#FB9A99", "#33A02C"]),
+							...self.chartOptions,
 						});
 					}
 				}
@@ -2707,7 +2750,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						d3.selectAll("#drugeraPrevalenceByMonth svg")
 							.remove();
 						var prevalenceByMonth = new atlascharts.line();
-						prevalenceByMonth.render(byMonthSeries, "#drugeraPrevalenceByMonth", 400, 200, {
+						const size = self.breakpoints.guessFromNode("#drugeraPrevalenceByMonth");
+						prevalenceByMonth.render(byMonthSeries, "#drugeraPrevalenceByMonth", size.width, self.breakpoints.wide.height, {
 							xScale: d3.scaleTime()
 								.domain(d3.extent(byMonthSeries[0].values, function (d) {
 									return d.xValue;
@@ -2715,7 +2759,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							xFormat: d3.timeFormat("%m/%Y"),
 							tickFormat: d3.timeFormat("%m/%Y"),
 							xLabel: "Date",
-							yLabel: "Prevalence per 1000 People"
+							yLabel: "Prevalence per 1000 People",
+							...self.chartOptions
 						});
 					}
 
@@ -2776,7 +2821,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 						// create svg with range bands based on the trellis names
 						var chart = new atlascharts.trellisline();
-						chart.render(dataByDecile, "#trellisLinePlot", 400, 200, {
+						const size = self.breakpoints.guessFromNode("#trellisLinePlot");
+						chart.render(dataByDecile, "#trellisLinePlot", size.width, size.breakpoints.wide.height, {
 							trellisSet: allDeciles,
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
@@ -2785,8 +2831,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							yFormat: d3.format("0.2f"),
 							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN"])
-								.range(["#1F78B4", "#FB9A99", "#33A02C"])
-
+								.range(["#1F78B4", "#FB9A99", "#33A02C"]),
+							...self.chartOptions,
 						});
 					}
 				}
@@ -2823,9 +2869,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 								UIF: bpdata.p90Value[i]
 							});
 						}
-						boxplot.render(bpseries, "#ageAtFirstOccurrence", self.boxplotWidth, self.boxplotHeight, {
+						const size = self.breakpoints.guessFromNode("#ageAtFirstOccurrence");
+						boxplot.render(bpseries, "#ageAtFirstOccurrence", size.width, self.breakpoints.wide.height, {
+							yMax: d3.max(bpdata.p90Value),
+							yFormat: d3.format(',.1s'),
 							xLabel: 'Gender',
-							yLabel: 'Age at First Occurrence'
+							yLabel: 'Age at First Occurrence',
+							...self.chartOptions,
 						});
 					}
 
@@ -2921,7 +2971,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 						// create svg with range bands based on the trellis names
 						var chart = new atlascharts.trellisline();
-						chart.render(dataByDecile, "#trellisLinePlot", 1000, 300, {
+						const size = self.breakpoints.guessFromNode("#trellisLinePlot");
+						chart.render(dataByDecile, "#trellisLinePlot", size.width, self.breakpoints.wide.height, {
 							trellisSet: allDeciles,
 							trellisLabel: "Age Decile",
 							seriesLabel: "Year of Observation",
@@ -2931,8 +2982,8 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							tickPadding: 20,
 							colors: d3.scaleOrdinal()
 								.domain(["MALE", "FEMALE", "UNKNOWN"])
-								.range(["#1F78B4", "#FB9A99", "#33A02C"])
-
+								.range(["#1F78B4", "#FB9A99", "#33A02C"]),
+							...self.chartOptions,
 						});
 					}
 				}
@@ -3401,11 +3452,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					});
 					yMax = Math.max(yMax, bpdata.p90Value[i]);
 				}
-
-				boxplot.render(bpseries, target, width, height, {
+				const size = self.breakpoints.guessFromNode(target);
+				boxplot.render(bpseries, target, size.width, self.breakpoints.wide.height, {
 					yMax: yMax,
+					yFormat: d3.format(',.1s'),
 					xLabel: xlabel,
-					yLabel: ylabel
+					yLabel: ylabel,
+					...self.chartOptions,
 				});
 			}
 		}
