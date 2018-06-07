@@ -17,14 +17,6 @@ define([
   Component
 ) {
 	class DataDensity extends Report {
-    static get name() {
-      return 'datadensity';
-    }
-
-    static get view() {
-      return view;
-    }
-
     constructor(params) {
       super(params);
       
@@ -122,8 +114,7 @@ define([
 
       return result;
     }
-
   }
 
-  return Component.build(DataDensity);
+  return helpers.build(DataDensity, 'datadensity', view);
 });

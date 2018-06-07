@@ -1,20 +1,14 @@
 define([
   'knockout',
   'providers/Component',
-  'text!components/charts/chart.html',
   'const',
   'components/empty-state',
 ], function (
   ko,
   Component,
-  view,
   constants,
 ) {
   class Chart extends Component {
-    static get view() {
-      return view;
-    }
-
     constructor(params) {
       super(params);
       this.renderer = null; // atlascharts

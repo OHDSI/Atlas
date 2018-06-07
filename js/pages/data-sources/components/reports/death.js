@@ -19,14 +19,6 @@ define([
   Component
 ) {
 	class Death extends Report {
-    static get name() {
-      return 'death';
-    }
-
-    static get view() {
-      return view;
-    }
-
     constructor(params) {
       super(params);
       
@@ -125,5 +117,5 @@ define([
     }
   }
 
-  return Component.build(Death);
+  return helpers.build(Death, 'death', view);
 });

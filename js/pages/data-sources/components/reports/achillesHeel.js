@@ -5,6 +5,7 @@ define([
   'const',
   'pages/data-sources/classes/Report',
   'providers/Component',
+  'const',
   'components/heading',
   'faceted-datatable'
 ], function (
@@ -13,17 +14,10 @@ define([
 	d3,
   helpers,
   Report,
-  Component
+  Component,
+  helpers
 ) {
 	class AchillesHeel extends Report {
-    static get name() {
-      return 'achilles-heel';
-    }
-
-    static get view() {
-      return view;
-    }
-
     constructor(params) {
       super(params);
       this.columns = [
@@ -63,5 +57,5 @@ define([
     }
   }
 
-  return Component.build(AchillesHeel);
+  return helpers.build(AchillesHeel, 'achilles-heel', view);
 });

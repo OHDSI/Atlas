@@ -4,14 +4,18 @@ define([
   'providers/Chart',
   'providers/Component',
   'atlascharts',
-  'd3'
+  'd3',
+  'text!components/charts/chart.html',
+  'const'
 ], function (
 	ko,
   helpers,
   Chart,
   Component,
   atlascharts,
-  d3
+  d3,
+  view,
+  globalHelpers
 ) {
   class FrequencyHistogram extends atlascharts.chart {
     drawBoxplot(g, data, width, height) {
@@ -247,10 +251,6 @@ define([
   }
 
   class FrequencyHistogramComponent extends Chart {
-    static get name() {
-      return 'frequency-histogram';
-    }
-
     constructor(params) {
       super(params);
       this.renderer = new FrequencyHistogram();
@@ -258,5 +258,5 @@ define([
 
   }
 
-  return Component.build(FrequencyHistogramComponent);
+  return globalHelpers.build(FrequencyHistogramComponent, 'frequency-histogram', view);
 });

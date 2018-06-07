@@ -3,17 +3,17 @@ define([
   'providers/Chart',
   'providers/Component',
   'atlascharts',
+  'text!components/charts/chart.html',
+  'const'
 ], function (
   ko,
   Chart,
   Component,
   atlascharts,
+  view,
+  helpers
 ) {
   class Histogram extends Chart {
-    static get name() {
-      return 'histogram';
-    }
-
     constructor(params) {
       super(params);
       this.renderer = new atlascharts.histogram();
@@ -21,5 +21,5 @@ define([
 
   }
 
-  return Component.build(Histogram);
+  return helpers.build(Histogram, 'histogram', view);
 });

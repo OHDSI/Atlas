@@ -4,6 +4,7 @@ define([
   'pages/data-sources/classes/Treemap',
   'providers/Component',
   'pages/data-sources/const',
+  'const',
   'components/heading',
   'components/charts/treemap',
   'pages/data-sources/components/reports/treemapDrilldown',
@@ -12,20 +13,12 @@ define([
 	view,
   TreemapReport,
   Component,
-  helpers
+  helpers,
+  globalHelpers
 ) {
 	class Condition extends TreemapReport {
-    static get name() {
-      return 'condition';
-    }
-
-    static get view() {
-      return view;
-    }
-
     constructor(params) {
-      super(params);
-       
+      super(params);       
 
       this.aggProperty = helpers.aggProperties.byPerson;
       this.byType = true;
@@ -33,5 +26,5 @@ define([
 
   }
 
-  return Component.build(Condition);
+  return globalHelpers.build(Condition, 'condition', view);
 });

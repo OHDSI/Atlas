@@ -3,22 +3,22 @@ define([
   'providers/Chart',
   'providers/Component',
   'atlascharts',
+  'text!components/charts/chart.html',
+  'const'
 ], function (
   ko,
   Chart,
   Component,
   atlascharts,
+  view,
+  helpers
 ) {
   class Line extends Chart {
-    static get name() {
-      return 'atlasline';
-    }
-
     constructor(params) {
       super(params);
       this.renderer = new atlascharts.line();
     }
   }
 
-  return Component.build(Line);
+  return helpers.build(Line, 'atlasline', view);
 });

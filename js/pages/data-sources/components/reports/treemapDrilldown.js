@@ -23,14 +23,6 @@ define([
   Component
 ) {
   class TreemapDrilldown extends Report {
-    static get name() {
-      return 'treemap-drilldown';
-    }
-
-    static get view() {
-      return view;
-    }
-
     constructor(params) {
       super(params);
        
@@ -306,5 +298,5 @@ define([
 
   }
 
-  return Component.build(TreemapDrilldown);
+  return helpers.build(TreemapDrilldown, 'treemap-drilldown', view);
 });

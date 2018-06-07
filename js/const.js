@@ -1,7 +1,8 @@
 define(
   (require, factory) => {
     const d3 = require('d3');
-    const _ = require('lodash');
+		const _ = require('lodash');
+		const ko = require('knockout');
 
 		const minChartHeight = 300;
 		const treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
@@ -201,7 +202,18 @@ define(
       return function (d) {
         return d.conceptId === conceptId;
       };
-    };
+		};
+		
+		const build = function(viewModelClass, name, view) {
+      const component = {
+        viewModel: viewModelClass,
+        template: view,
+      };
+      viewModelClass.prototype.componentName = name;
+    
+      ko.components.register(name, component);
+      return component;
+    }
 
     return {
 			minChartHeight,
@@ -220,6 +232,8 @@ define(
 			formatFixed,
 			buildHierarchyFromJSON,
 			filterByConcept,
+
+			build,
     };
   }
 );

@@ -17,14 +17,6 @@ define([
   Component
 ) {
 	class Person extends Report {
-    static get name() {
-      return 'person';
-    }
-
-    static get view() {
-      return view;
-    }
-
     constructor(params) {
       super(params);
       
@@ -63,5 +55,5 @@ define([
     }
   }
 
-  return Component.build(Person);
+  return helpers.build(Person, 'person', view);
 });

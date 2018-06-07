@@ -4,6 +4,7 @@ define([
   'pages/data-sources/classes/Treemap',
   'providers/Component',
   'pages/data-sources/const',
+  'const',
   'components/heading',
   'components/charts/treemap',
   'pages/data-sources/components/reports/treemapDrilldown',
@@ -12,20 +13,12 @@ define([
 	view,
   TreemapReport,
   Component,
-  helpers
+  helpers,
+  globalHelpers
 ) {
 	class Procedure extends TreemapReport {
-    static get name() {
-      return 'procedure';
-    }
-
-    static get view() {
-      return view;
-    }
-
     constructor(params) {
-      super(params);
-       
+      super(params);       
 
       this.aggProperty = helpers.aggProperties.byPerson;
       this.byFrequency = true;
@@ -34,5 +27,5 @@ define([
 
   }
 
-  return Component.build(Procedure);
+  return globalHelpers.build(Procedure, 'procedure', view);
 });

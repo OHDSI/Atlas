@@ -1,22 +1,16 @@
 define([
 	'knockout',
 	'text!./empty-state.html',
-  'providers/Component',
+	'providers/Component',
+	'const',
 	'less!./empty-state.less',
 ], function (
 	ko,
 	view,
-	Component
+	Component,
+	helpers
 ) {
 	class EmptyState extends Component {
-		static get name() {
-			return 'empty-state';
-		}
-
-		static get view() {
-			return view;
-		}
-
 		constructor(params) {
 			super(params);
 			this.message = params.message || 'No data';
@@ -25,5 +19,5 @@ define([
 		}
   }
 
-	return Component.build(EmptyState);
+	return helpers.build(EmptyState, 'empty-state', view);
 });

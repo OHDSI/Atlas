@@ -3,19 +3,17 @@ define([
   'providers/Chart',
   'providers/Component',
   'atlascharts',
-  'const',
+  'text!components/charts/chart.html',
+  'const'
 ], function (
   ko,
   Chart,
   Component,
   atlascharts,
+  view,
   helpers,
 ) {
   class Treemap extends Chart {
-    static get name() {
-      return 'treemap';
-    }
-    
     constructor(params) {
       super(params);
       this.renderer = new atlascharts.treemap();
@@ -34,5 +32,5 @@ define([
 
   }
 
-  return Component.build(Treemap);
+  return helpers.build(Treemap, 'treemap', view);
 });

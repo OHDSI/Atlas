@@ -3,23 +3,22 @@ define([
   'providers/Chart',
   'providers/Component',
   'atlascharts',
+  'text!components/charts/chart.html',
+  'const'
 ], function (
   ko,
   Chart,
   Component,
   atlascharts,
+  view,
+  helpers
 ) {
   class Donut extends Chart {
-    static get name() {
-      return 'donut';
-    }
-
     constructor(params) {
       super(params);
       this.renderer = new atlascharts.donut();
     }
-
   }
 
-  return Component.build(Donut);
+  return helpers.build(Donut, 'donut', view);
 });

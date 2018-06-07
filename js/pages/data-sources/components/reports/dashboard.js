@@ -22,14 +22,6 @@ define([
   Component
 ) {
 	class Dashboard extends Report {
-    static get name() {
-      return 'dashboard';
-    }
-
-    static get view() {
-      return view;
-    }
-
     constructor(params) {
       super(params);
       
@@ -130,5 +122,5 @@ define([
 
   }
 
-  return Component.build(Dashboard);
+  return helpers.build(Dashboard, 'dashboard', view);
 });

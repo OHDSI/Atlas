@@ -4,20 +4,18 @@ define([
 	'providers/Component',
   'atlascharts',
   'd3',
+  'text!components/charts/chart.html',
   'const'
 ], function (
   ko,
 	Chart,
 	Component,
   atlascharts,
-  d3,
+	d3,
+	view,
   helpers
 ) {
   class Trellisline extends Chart {
-    static get name() {
-      return 'trellisline';
-    }
-
     constructor(params) {
       super(params);
       this.renderer = new atlascharts.trellisline();
@@ -83,5 +81,5 @@ define([
     }
   }
 
-  return Component.build(Trellisline);
+  return helpers.build(Trellisline, 'trellisline', view);
 });
