@@ -43,10 +43,16 @@ define([
       this.byFrequency = false;
       this.byUnit = false;
       this.byType = false;
+      this.byValueAsConcept = false;
+      this.byOperator = false;
+      this.byQualifier = false;
 
       // data
       this.prevalenceByMonthData = ko.observable();
       this.prevalenceByTypeData = ko.observable();
+      this.prevalenceByValueAsConceptData = ko.observable();
+      this.prevalenceByQualifierData = ko.observable();
+      this.prevalenceByOperatorData = ko.observable();
       this.ageData = ko.observable();
       this.frequencyDistributionData = ko.observable();
       this.prevalenceByGenderAgeYearData = ko.observable();
@@ -129,28 +135,15 @@ define([
       this.byFrequency = params.byFrequency;
       this.byUnit = params.byUnit;
       this.byType = params.byType;
+      this.byValueAsConcept = params.byValueAsConcept;
+      this.byOperator = params.byOperator;
+      this.byQualifier = params.byQualifier;
       params.currentConcept.subscribe(this.loadDrilldown.bind(this));
       this.loadDrilldown(params.currentConcept());
     }
 
     parseAgeData(rawAgeData) {
-      const bpseries = [];
-      const bpdata = helpers.normalizeArray(rawAgeData);
-      if (!bpdata.empty) {
-        for (let i = 0; i < bpdata.category.length; i++) {
-          bpseries.push({
-            Category: bpdata.category[i],
-            min: bpdata.minValue[i],
-            max: bpdata.maxValue[i],
-            median: bpdata.medianValue[i],
-            LIF: bpdata.p10Value[i],
-            q1: bpdata.p25Value[i],
-            q3: bpdata.p75Value[i],
-            UIF: bpdata.p90Value[i]
-          });
-        }
-        this.ageData(bpseries);
-      }
+        this.ageData(this.parseBoxplotData(rawAgeData).data);
     }
 
     parsePrevalenceByMonth(rawPrevalenceByMonth) {
@@ -210,12 +203,9 @@ define([
 
     parseBoxplotData(rawData) {
       let bpseries = {};
-      const ndata = helpers.normalizeArray(
-        rawData.filter(helpers.filterByConcept(this.currentConcept().conceptId))
-      );
-      const bpdata = helpers.normalizeDataframe(ndata);
-      if (!bpdata.empty) {
-        bpseries = bpdata.category.map(function (v, i) {
+      const ndata = helpers.normalizeArray(rawData);
+      if (!ndata.empty) {
+        bpseries = ndata.category.map(function (v, i) {
           return {
             Category: ndata.category[i],
             min: ndata.minValue[i],
@@ -231,34 +221,28 @@ define([
 
       return {
         chartFormat: {
-          yMax: d3.max(rawData, d => d.p90Value) || bpdata.p90Value,
+          yMax: d3.max(rawData, d => d.p90Value) || ndata.p90Value
         },
-        data: bpseries,
-      };
+        data: bpseries
+      }
     }
 
-    parsePieData(rawData) {
-      const dataByUnit = rawData
-        .filter(d => d.measurementConceptId === this.currentConcept().conceptId)
-        .map(function (d, i) {
-          return {
-            id: d.conceptName,
-            label: d.conceptName,
-            value: d.countValue,
-          };
-        }, rawData);
-      dataByUnit.sort(function (a, b) {
-        const nameA = a.label.toLowerCase();
-        const nameB = b.label.toLowerCase();
-        if (nameA < nameB) //sort string ascending
-          return -1;
-        if (nameA > nameB)
-          return 1;
-        return 0; //default return value (no sorting)
-      });
-      
-      return dataByUnit;
-    }
+    parseDonutData(rawData) {
+        if (!!rawData && rawData.length > 0) {
+            let mappedData = helpers.mapConceptData(rawData);
+            mappedData.sort(function (a, b) {
+                const nameA = a.label.toLowerCase();
+                const nameB = b.label.toLowerCase();
+                if (nameA < nameB) //sort string ascending
+                    return -1;
+                if (nameA > nameB)
+                    return 1;
+                return 0; //default return value (no sorting)
+            });
+            return mappedData;
+        }
+        return null;
+    };
 
     parseData({ data }) {
       this.parseAgeData(data.ageAtFirstOccurrence);
@@ -268,6 +252,19 @@ define([
       if (this.byFrequency) {
         this.parseFrequencyDistribution(data.frequencyDistribution, this.currentReport.path);
       }
+
+      if (this.byValueAsConcept) {
+          this.prevalenceByValueAsConceptData(this.parseDonutData(data.byValueAsConcept));
+      }
+
+      if (this.byQualifier) {
+          this.prevalenceByQualifierData(this.parseDonutData(data.byQualifier));
+      }
+
+      if (this.byOperator) {
+          this.prevalenceByOperatorData(this.parseDonutData(data.byOperator));
+      }
+
       if (this.byUnit) {
         let boxplot = this.parseBoxplotData(data.measurementValueDistribution);
         this.chartFormats.measurementValueDistribution.yMax = boxplot.chartFormat.yMax;
@@ -281,8 +278,8 @@ define([
         this.chartFormats.upperLimitDistribution.yMax = boxplot.chartFormat.yMax;
         this.upperLimitDistributionData(boxplot.data);
 
-        this.recordsByUnitData(this.parsePieData(data.recordsByUnit));
-        this.valuesRelativeToNormData(this.parsePieData(data.valuesRelativeToNorm));
+        this.recordsByUnitData(this.parseDonutData(data.recordsByUnit));
+        this.valuesRelativeToNormData(this.parseDonutData(data.valuesRelativeToNorm));
       }
     }
 

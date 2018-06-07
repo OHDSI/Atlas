@@ -31,6 +31,8 @@ define([
       this.byFrequency = true;
       this.byUnit = true;
       this.byType = true;
+      this.byValueAsConcept = true;
+      this.byOperator = true;
     }
 
   }
