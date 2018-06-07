@@ -253,7 +253,7 @@ define([
 
     constructor(params) {
       super(params);
-      this.chart = new FrequencyHistogram();
+      this.renderer = new FrequencyHistogram();
     }
 
   }
