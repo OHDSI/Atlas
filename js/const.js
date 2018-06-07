@@ -15,7 +15,7 @@ define(
 				data.forEach((item) => {
 					var datum = {}
 					datum.id = (+item.conceptId || item.conceptName);
-					datum.label = item.conceptName;
+					datum.label = item.conceptName || 'NULL (empty)';
 					datum.value = +item.countValue;
 					result.push(datum);
 				});
