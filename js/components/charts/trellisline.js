@@ -5,7 +5,8 @@ define([
   'atlascharts',
   'd3',
   'text!components/charts/chart.html',
-  'const'
+	'utils/CommonUtils',
+	'const'
 ], function (
   ko,
 	Chart,
@@ -13,7 +14,8 @@ define([
   atlascharts,
 	d3,
 	view,
-  helpers
+	commonUtils,
+	constants
 ) {
   class Trellisline extends Chart {
     constructor(params) {
@@ -22,9 +24,9 @@ define([
     }
 
     prepareData(rawData) {      
-      const trellisData = helpers.normalizeArray(rawData);
+      const trellisData = commonUtils.normalizeArray(rawData);
 			if (!trellisData.empty) {
-				const allDeciles = helpers.defaultDeciles;
+				const allDeciles = constants.defaultDeciles;
 				const minYear = d3.min(trellisData.xCalendarYear),
 					maxYear = d3.max(trellisData.xCalendarYear);
 
@@ -81,5 +83,5 @@ define([
     }
   }
 
-  return helpers.build(Trellisline, 'trellisline', view);
+  return commonUtils.build(Trellisline, 'trellisline', view);
 });

@@ -2,7 +2,8 @@ define([
 	'knockout',
 	'text!./death.html',
 	'd3',
-  'const',
+	'utils/CommonUtils',
+	'const',
   'pages/data-sources/classes/Report',
   'providers/Component',
   'components/heading',
@@ -14,7 +15,8 @@ define([
 	ko,
 	view,
 	d3,
-  helpers,
+	commonUtils,
+	constants,
   Report,
   Component
 ) {
@@ -61,25 +63,26 @@ define([
 					yFormat: d3.format(',.1s'),
 				},
       };
-      this.getData()
-        .then(({ data }) => {
-          this.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear);
-          this.prevalenceByMonth(data.prevalenceByMonth);
-          this.prevalenceByType(data.deathByType);
-          this.ageBoxplot(data.ageAtDeath);
-        });
+      this.getData().then(rawData => this.parseData(rawData));
 
-    }
+		}
+		
+		parseData({ data }) {
+			this.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear);
+			this.prevalenceByMonth(data.prevalenceByMonth);
+			this.prevalenceByType(data.deathByType);
+			this.ageBoxplot(data.ageAtDeath);
+		}
 
     prevalenceByGenderAgeYear(data) {
-			this.chartFormats.prevalenceByGenderAgeYear.trellisSet = helpers.defaultDeciles;
+			this.chartFormats.prevalenceByGenderAgeYear.trellisSet = constants.defaultDeciles;
 			this.prevalenceByGenderAgeYearData(data);
     }
     
     prevalenceByMonth(data) {
-      const prevData = helpers.normalizeArray(data);
+      const prevData = commonUtils.normalizeArray(data);
 			if (!prevData.empty) {
-        const byMonthSeries = helpers.mapMonthYearDataToSeries(prevData, {
+        const byMonthSeries = commonUtils.mapMonthYearDataToSeries(prevData, {
           dateField: 'xCalendarMonth',
 					yValue: 'yPrevalence1000Pp',
 					yPercent: 'yPrevalence1000Pp'
@@ -92,13 +95,13 @@ define([
 
     prevalenceByType(data) {
       if (!!data && data.length > 0) {
-        this.prevalenceByTypeDonutData(helpers.mapConceptData(data));
+        this.prevalenceByTypeDonutData(commonUtils.mapConceptData(data));
       }
     }
 
     ageBoxplot(data) {
 			const bpseries = [];
-			const bpdata = helpers.normalizeArray(data);
+			const bpdata = commonUtils.normalizeArray(data);
 			if (!bpdata.empty) {
 				for (let i = 0; i < bpdata.category.length; i++) {
 					bpseries.push({
@@ -117,5 +120,5 @@ define([
     }
   }
 
-  return helpers.build(Death, 'death', view);
+  return commonUtils.build(Death, 'death', view);
 });

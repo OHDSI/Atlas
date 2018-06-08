@@ -2,13 +2,13 @@ define([
 	'knockout',
 	'text!./heading.html',
 	'providers/Component',
-	'const',
+	'utils/CommonUtils',
 	'less!./heading.less'
 ], function (
 	ko,
 	view,
 	Component,
-	helpers
+	commonUtils
 ) {
 	class Heading extends Component {
 		constructor(params) {
@@ -18,5 +18,5 @@ define([
 		}
   }
 
-	return helpers.build(Heading, 'heading-title', view);
+	return commonUtils.build(Heading, 'heading-title', view);
 });

@@ -2,13 +2,13 @@ define([
 	'knockout',
 	'text!./empty-state.html',
 	'providers/Component',
-	'const',
+	'utils/CommonUtils',
 	'less!./empty-state.less',
 ], function (
 	ko,
 	view,
 	Component,
-	helpers
+	commonUtils
 ) {
 	class EmptyState extends Component {
 		constructor(params) {
@@ -19,5 +19,5 @@ define([
 		}
   }
 
-	return helpers.build(EmptyState, 'empty-state', view);
+	return commonUtils.build(EmptyState, 'empty-state', view);
 });

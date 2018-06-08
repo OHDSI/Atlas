@@ -2,20 +2,20 @@ define([
 	'knockout',
 	'text!./achillesHeel.html',
 	'd3',
-  'const',
+  'utils/CommonUtils',
   'pages/data-sources/classes/Report',
   'providers/Component',
-  'const',
+  'utils/CommonUtils',
   'components/heading',
   'faceted-datatable'
 ], function (
 	ko,
 	view,
 	d3,
-  helpers,
+  commonUtils,
   Report,
   Component,
-  helpers
+  commonUtils
 ) {
 	class AchillesHeel extends Report {
     constructor(params) {
@@ -57,5 +57,5 @@ define([
     }
   }
 
-  return helpers.build(AchillesHeel, 'achilles-heel', view);
+  return commonUtils.build(AchillesHeel, 'achilles-heel', view);
 });

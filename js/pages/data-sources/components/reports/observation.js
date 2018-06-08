@@ -4,7 +4,7 @@ define([
   'pages/data-sources/classes/Treemap',
   'providers/Component',
   'pages/data-sources/const',
-  'const',
+  'utils/CommonUtils',
   'components/heading',
   'components/charts/treemap',
   'pages/data-sources/components/reports/treemapDrilldown',
@@ -13,14 +13,14 @@ define([
 	view,
   TreemapReport,
   Component,
-  helpers,
-  globalHelpers
+  constants,
+  commonUtils
 ) {
 	class Observation extends TreemapReport {
     constructor(params) {
       super(params);       
       
-      this.aggProperty = helpers.aggProperties.byPerson;
+      this.aggProperty = constants.aggProperties.byPerson;
       this.byFrequency = true;
       this.byType = true;
       this.byValueAsConcept = true;
@@ -29,5 +29,5 @@ define([
 
   }
 
-  return globalHelpers.build(Observation, 'observation', view);
+  return commonUtils.build(Observation, 'observation', view);
 });

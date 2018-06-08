@@ -4,7 +4,7 @@ define([
   'providers/Component',
   'pages/data-sources/classes/Treemap',
   'pages/data-sources/const',
-  'const',
+  'utils/CommonUtils',
   'components/heading',
   'components/charts/treemap',
   'pages/data-sources/components/reports/treemapDrilldown',
@@ -13,17 +13,17 @@ define([
   view,
   Component,
   TreemapReport,
-  helpers,
-  globalHelpers
+  constants,
+  commonUtils
 ) {
 	class ConditionEra extends TreemapReport {
     constructor(params) {
       super(params);
 
-      this.aggProperty = helpers.aggProperties.byLengthOfEra;
+      this.aggProperty = constants.aggProperties.byLengthOfEra;
     }
 
   }
 
-  return globalHelpers.build(ConditionEra, 'condition-era', view);
+  return commonUtils.build(ConditionEra, 'condition-era', view);
 });

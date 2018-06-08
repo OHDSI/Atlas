@@ -4,7 +4,7 @@ define([
   'pages/data-sources/classes/Treemap',
   'providers/Component',
   'pages/data-sources/const',
-  'const',
+  'utils/CommonUtils',
   'components/heading',
   'components/charts/treemap',
   'pages/data-sources/components/reports/treemapDrilldown',
@@ -13,17 +13,17 @@ define([
 	view,
   TreemapReport,
   Component,
-  helpers,
-  globalHelpers
+  constants,
+  commonUtils
 ) {
 	class DrugEra extends TreemapReport {
     constructor(params) {
       super(params);
 
-      this.aggProperty = helpers.aggProperties.byLengthOfEra;
+      this.aggProperty = constants.aggProperties.byLengthOfEra;
     }
 
   }
 
-  return globalHelpers.build(DrugEra, 'drug-era', view);
+  return commonUtils.build(DrugEra, 'drug-era', view);
 });

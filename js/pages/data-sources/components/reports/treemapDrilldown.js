@@ -2,6 +2,7 @@ define([
   'knockout',
   'text!./treemapDrilldown.html',
   'd3',
+  'utils/CommonUtils',
   'const',
   'pages/data-sources/classes/Report',
   'providers/Component',
@@ -18,7 +19,8 @@ define([
   ko,
   view,
   d3,
-  helpers,
+  commonUtils,
+  constants,
   Report,
   Component
 ) {
@@ -139,9 +141,9 @@ define([
     }
 
     parsePrevalenceByMonth(rawPrevalenceByMonth) {
-      const prevData = helpers.normalizeArray(rawPrevalenceByMonth);
+      const prevData = commonUtils.normalizeArray(rawPrevalenceByMonth);
       if (!prevData.empty) {
-        const byMonthSeries = helpers.mapMonthYearDataToSeries(prevData, {
+        const byMonthSeries = commonUtils.mapMonthYearDataToSeries(prevData, {
           dateField: 'xCalendarMonth',
           yValue: 'yPrevalence1000Pp',
           yPercent: 'yPrevalence1000Pp'
@@ -154,18 +156,18 @@ define([
 
     parsePrevalenceByType(rawPrevalenceByType) {
       if (!!rawPrevalenceByType && rawPrevalenceByType.length > 0) {
-        this.prevalenceByTypeData(helpers.mapConceptData(rawPrevalenceByType));
+        this.prevalenceByTypeData(commonUtils.mapConceptData(rawPrevalenceByType));
       }
     }
 
     parsePrevalenceByGenderAgeYear(rawPrevalenceByGenderAgeYear) {
-      this.chartFormats.prevalenceByGenderAgeYear.trellisSet = helpers.defaultDeciles;
+      this.chartFormats.prevalenceByGenderAgeYear.trellisSet = constants.defaultDeciles;
       this.prevalenceByGenderAgeYearData(rawPrevalenceByGenderAgeYear);
     }
 
     parseFrequencyDistribution(rawData, report) {
       if (!!rawData) {
-        const freqData = helpers.normalizeArray(rawData);
+        const freqData = commonUtils.normalizeArray(rawData);
         if (!freqData.empty) {
           // Histogram
           const frequencyHistogram = new Object();
@@ -187,7 +189,7 @@ define([
           const yScaleMax = (Math.floor((Math.max.apply(null, freqData.yNumPersons) + 5) / 10) + 1) * 10;
           this.chartFormats.frequencyDistribution.yMax = yScaleMax;
           this.chartFormats.frequencyDistribution.xLabel = `Count ('x' or more ${report}s)`;
-          const freqHistData = helpers.mapHistogram(frequencyHistogram);
+          const freqHistData = commonUtils.mapHistogram(frequencyHistogram);
           this.frequencyDistributionData(freqHistData);
         }
       }
@@ -195,7 +197,7 @@ define([
 
     parseBoxplotData(rawData) {
       let bpseries = {};
-      const ndata = helpers.normalizeArray(rawData);
+      const ndata = commonUtils.normalizeArray(rawData);
       if (!ndata.empty) {
         bpseries = ndata.category.map(function (v, i) {
           return {
@@ -221,7 +223,7 @@ define([
 
     parseDonutData(rawData) {
         if (!!rawData && rawData.length > 0) {
-            let mappedData = helpers.mapConceptData(rawData);
+            let mappedData = commonUtils.mapConceptData(rawData);
             mappedData.sort(function (a, b) {
                 const nameA = a.label.toLowerCase();
                 const nameB = b.label.toLowerCase();
@@ -298,5 +300,5 @@ define([
 
   }
 
-  return helpers.build(TreemapDrilldown, 'treemap-drilldown', view);
+  return commonUtils.build(TreemapDrilldown, 'treemap-drilldown', view);
 });

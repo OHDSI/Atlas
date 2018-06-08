@@ -4,7 +4,7 @@ define([
   'pages/data-sources/classes/Treemap',
   'providers/Component',
   'pages/data-sources/const',
-  'const',
+  'utils/CommonUtils',
   'components/heading',
   'components/charts/treemap',
   'pages/data-sources/components/reports/treemapDrilldown',
@@ -13,17 +13,17 @@ define([
 	view,
   TreemapReport,
   Component,
-  helpers,
-  globalHelpers
+  constants,
+  commonUtils
 ) {
 	class Visit extends TreemapReport {
     constructor(params) {
       super(params);       
       
-      this.aggProperty = helpers.aggProperties.byPerson;
+      this.aggProperty = constants.aggProperties.byPerson;
     }
 
   }
 
-  return globalHelpers.build(Visit, 'visit', view);
+  return commonUtils.build(Visit, 'visit', view);
 });

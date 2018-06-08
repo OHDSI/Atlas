@@ -5,7 +5,7 @@ define([
 	'appConfig',
 	'webapi/AuthAPI',
 	'providers/Component',
-	'const',
+	'utils/CommonUtils',
 	'databindings',
 	'./components/reports/person',
 	'./components/reports/dashboard',
@@ -29,7 +29,7 @@ define([
 	config,
 	authApi,
 	Component,
-	helpers
+	commonUtils
 ) {
 	class DataSources extends Component {
 		constructor(params) {
@@ -123,5 +123,5 @@ define([
 		}
 	}
 
-	return helpers.build(DataSources, 'data-sources', view);
+	return commonUtils.build(DataSources, 'data-sources', view);
 });

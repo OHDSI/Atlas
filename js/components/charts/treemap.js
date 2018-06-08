@@ -4,14 +4,14 @@ define([
   'providers/Component',
   'atlascharts',
   'text!components/charts/chart.html',
-  'const'
+  'utils/CommonUtils'
 ], function (
   ko,
   Chart,
   Component,
   atlascharts,
   view,
-  helpers,
+  commonUtils,
 ) {
   class Treemap extends Chart {
     constructor(params) {
@@ -19,7 +19,7 @@ define([
       this.renderer = new atlascharts.treemap();
       this.storeParams(params);
       if (params.data()) {
-        const hierarchy = helpers.buildHierarchyFromJSON(params.data(), this.threshold, params.aggProperty)
+        const hierarchy = commonUtils.buildHierarchyFromJSON(params.data(), this.threshold, params.aggProperty)
         this.rawData(hierarchy);
       }
     }
@@ -32,5 +32,5 @@ define([
 
   }
 
-  return helpers.build(Treemap, 'treemap', view);
+  return commonUtils.build(Treemap, 'treemap', view);
 });

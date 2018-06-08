@@ -4,14 +4,14 @@ define([
   'providers/Component',
   'atlascharts',
   'text!components/charts/chart.html',
-  'const'
+  'utils/CommonUtils'
 ], function (
   ko,
   Chart,
   Component,
   atlascharts,
   view,
-  helpers
+  commonUtils
 ) {
   class Donut extends Chart {
     constructor(params) {
@@ -20,5 +20,5 @@ define([
     }
   }
 
-  return helpers.build(Donut, 'donut', view);
+  return commonUtils.build(Donut, 'donut', view);
 });

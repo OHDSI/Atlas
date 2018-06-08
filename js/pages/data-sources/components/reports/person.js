@@ -2,7 +2,7 @@ define([
 	'knockout',
 	'text!./person.html',
 	'd3',
-  'const',
+  'utils/CommonUtils',
   'pages/data-sources/classes/Report',
   'providers/Component',
   'components/heading',
@@ -12,7 +12,7 @@ define([
 	ko,
 	view,
 	d3,
-  helpers,
+  commonUtils,
   Report,
   Component
 ) {
@@ -34,26 +34,26 @@ define([
         },        
       };
       
-      this.getData()
-        .then(({ data }) => {
-          if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
-            var histData = {};
-            histData.intervalSize = 1;
-            histData.min = data.yearOfBirthStats[0].minValue;
-            histData.max = data.yearOfBirthStats[0].maxValue;
-            histData.intervals = 100;
-            histData.data = (helpers.normalizeArray(data.yearOfBirth));
-            this.yearHistogramData(helpers.mapHistogram(histData));
-          }
+      this.getData().then(rawData => this.parseData(rawData));
+    }
 
-          this.genderData(helpers.mapConceptData(data.gender));
-          this.raceData(helpers.mapConceptData(data.race));
-          this.ethnicityData(helpers.mapConceptData(data.ethnicity));
+    parseData({ data }) {
+      if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
+        var histData = {};
+        histData.intervalSize = 1;
+        histData.min = data.yearOfBirthStats[0].minValue;
+        histData.max = data.yearOfBirthStats[0].maxValue;
+        histData.intervals = 100;
+        histData.data = (commonUtils.normalizeArray(data.yearOfBirth));
+        this.yearHistogramData(commonUtils.mapHistogram(histData));
+      }
 
-        });
+      this.genderData(commonUtils.mapConceptData(data.gender));
+      this.raceData(commonUtils.mapConceptData(data.race));
+      this.ethnicityData(commonUtils.mapConceptData(data.ethnicity));
 
     }
   }
 
-  return helpers.build(Person, 'person', view);
+  return commonUtils.build(Person, 'person', view);
 });

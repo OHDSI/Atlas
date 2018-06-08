@@ -2,7 +2,7 @@ define([
 	'knockout',
 	'text!./datadensity.html',
 	'd3',
-  'const',
+  'utils/CommonUtils',
   'pages/data-sources/classes/Report',
   'providers/Component',
   'components/heading',
@@ -12,7 +12,7 @@ define([
 	ko,
 	view,
 	d3,
-  helpers,
+  commonUtils,
   Report,
   Component
 ) {
@@ -53,35 +53,36 @@ define([
         },
       };
       
-      this.getData()
-        .then(({ data }) => {
-          const totalLine = this.parseLineData(data.totalRecords);
-          const recordsPerPerson = this.parseLineData(data.recordsPerPerson);
-  
-          this.totalLineData(totalLine.data);
-          this.chartFormats.totalLine.xScale = totalLine.xScale;
-          this.recordsperpersonLineData(recordsPerPerson.data);
-          this.chartFormats.recordsperpersonLine.xScale = recordsPerPerson.xScale;
-  
-          if (!!data.conceptsPerPerson) {
-            const conceptsSeries = [];
-            const conceptsData = helpers.normalizeArray(data.conceptsPerPerson);
-            for (let i = 0; i < conceptsData.category.length; i++) {
-              conceptsSeries.push({
-                Category: conceptsData.category[i],
-                min: conceptsData.minValue[i],
-                max: conceptsData.maxValue[i],
-                median: conceptsData.medianValue[i],
-                LIF: conceptsData.p10Value[i],
-                q1: conceptsData.p25Value[i],
-                q3: conceptsData.p75Value[i],
-                UIF: conceptsData.p90Value[i]
-              });
-            }
-            this.conceptsPerPersonData(conceptsSeries);
-            this.chartFormats.conceptsPerPerson.yMax = d3.max(conceptsData.p90Value);
-          }
-        });
+      this.getData().then(rawData => this.parseData(rawData));
+    }
+
+    parseData({ data }) {
+      const totalLine = this.parseLineData(data.totalRecords);
+      const recordsPerPerson = this.parseLineData(data.recordsPerPerson);
+
+      this.totalLineData(totalLine.data);
+      this.chartFormats.totalLine.xScale = totalLine.xScale;
+      this.recordsperpersonLineData(recordsPerPerson.data);
+      this.chartFormats.recordsperpersonLine.xScale = recordsPerPerson.xScale;
+
+      if (!!data.conceptsPerPerson) {
+        const conceptsSeries = [];
+        const conceptsData = commonUtils.normalizeArray(data.conceptsPerPerson);
+        for (let i = 0; i < conceptsData.category.length; i++) {
+          conceptsSeries.push({
+            Category: conceptsData.category[i],
+            min: conceptsData.minValue[i],
+            max: conceptsData.maxValue[i],
+            median: conceptsData.medianValue[i],
+            LIF: conceptsData.p10Value[i],
+            q1: conceptsData.p25Value[i],
+            q3: conceptsData.p75Value[i],
+            UIF: conceptsData.p90Value[i]
+          });
+        }
+        this.conceptsPerPersonData(conceptsSeries);
+        this.chartFormats.conceptsPerPerson.yMax = d3.max(conceptsData.p90Value);
+      }
     }
 
     parseLineData(rawData) {
@@ -116,5 +117,5 @@ define([
     }
   }
 
-  return helpers.build(DataDensity, 'datadensity', view);
+  return commonUtils.build(DataDensity, 'datadensity', view);
 });

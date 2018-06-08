@@ -4,14 +4,14 @@ define([
   'providers/Component',  
   'atlascharts',
   'text!components/charts/chart.html',
-  'const'
+  'utils/CommonUtils'
 ], function (
   ko,
   Chart,
   Component,
   atlascharts,
   view,
-  helpers
+  commonUtils
 ) {
   class Boxplot extends Chart {
     constructor(params) {
@@ -21,5 +21,5 @@ define([
 
   }
 
-	return helpers.build(Boxplot, 'boxplot', view);
+	return commonUtils.build(Boxplot, 'boxplot', view);
 });

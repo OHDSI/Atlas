@@ -6,16 +6,16 @@ define([
   'atlascharts',
   'd3',
   'text!components/charts/chart.html',
-  'const'
+  'utils/CommonUtils'
 ], function (
 	ko,
-  helpers,
+  commonUtils,
   Chart,
   Component,
   atlascharts,
   d3,
   view,
-  globalHelpers
+  commonUtils
 ) {
   class FrequencyHistogram extends atlascharts.chart {
     drawBoxplot(g, data, width, height) {
@@ -258,5 +258,5 @@ define([
 
   }
 
-  return globalHelpers.build(FrequencyHistogramComponent, 'frequency-histogram', view);
+  return commonUtils.build(FrequencyHistogramComponent, 'frequency-histogram', view);
 });
