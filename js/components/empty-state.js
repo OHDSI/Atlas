@@ -17,7 +17,7 @@ define([
 
 			return this;
 		}
-  }
+	}
 
-	return commonUtils.build(EmptyState, 'empty-state', view);
+	return commonUtils.build('empty-state', EmptyState, view);
 });

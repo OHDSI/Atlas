@@ -4,33 +4,33 @@ define([
 	'd3',
 	'utils/CommonUtils',
 	'const',
-  'pages/data-sources/classes/Report',
-  'providers/Component',
-  'components/heading',
-  'components/charts/donut',
-  'components/charts/line',
-  'components/charts/boxplot',
-  'components/charts/trellisline',
+	'pages/data-sources/classes/Report',
+	'providers/Component',
+	'components/heading',
+	'components/charts/donut',
+	'components/charts/line',
+	'components/charts/boxplot',
+	'components/charts/trellisline',
 ], function (
 	ko,
 	view,
 	d3,
 	commonUtils,
 	constants,
-  Report,
-  Component
+	Report,
+	Component
 ) {
 	class Death extends Report {
-    constructor(params) {
-      super(params);
-      
-      this.prevalenceByGenderAgeYearData = ko.observable();
-      this.byMonthSeriesLineData = ko.observable();
-      this.prevalenceByTypeDonutData = ko.observable();
-      this.ageBoxplotData = ko.observable();
+		constructor(params) {
+			super(params);
+			
+			this.prevalenceByGenderAgeYearData = ko.observable();
+			this.byMonthSeriesLineData = ko.observable();
+			this.prevalenceByTypeDonutData = ko.observable();
+			this.ageBoxplotData = ko.observable();
 
-      this.chartFormats = {
-        prevalenceByGenderAgeYear: {
+			this.chartFormats = {
+				prevalenceByGenderAgeYear: {
 					trellisSet: null,
 					trellisLabel: "Age Decile",
 					seriesLabel: "Year of Observation",
@@ -41,29 +41,29 @@ define([
 					colors: d3.scaleOrdinal()
 						.domain(['MALE', 'FEMALE', 'UNKNOWN'])
 						.range(["#1F78B4", "#FB9A99", "#33A02C"])
-        },
-        byMonthSeriesLine: {
+				},
+				byMonthSeriesLine: {
 					xScale: null,
 					xFormat: d3.timeFormat("%m/%Y"),
 					tickFormat: d3.timeFormat("%Y"),
 					xLabel: "Date",
 					yLabel: "Prevalence per 1000 People"
-        },
-        prevalenceByTypeDonut: {
+				},
+				prevalenceByTypeDonut: {
 					margin: {
 						top: 5,
 						left: 5,
 						right: 200,
 						bottom: 5
 					}
-        },
-        ageBoxplot: {
+				},
+				ageBoxplot: {
 					yLabel: 'Age at first occurence',
 					xLabel: 'Gender',
 					yFormat: d3.format(',.1s'),
 				},
-      };
-      this.getData().then(rawData => this.parseData(rawData));
+			};
+			this.getData().then(rawData => this.parseData(rawData));
 
 		}
 		
@@ -74,32 +74,32 @@ define([
 			this.ageBoxplot(data.ageAtDeath);
 		}
 
-    prevalenceByGenderAgeYear(data) {
+		prevalenceByGenderAgeYear(data) {
 			this.chartFormats.prevalenceByGenderAgeYear.trellisSet = constants.defaultDeciles;
 			this.prevalenceByGenderAgeYearData(data);
-    }
-    
-    prevalenceByMonth(data) {
-      const prevData = commonUtils.normalizeArray(data);
+		}
+		
+		prevalenceByMonth(data) {
+			const prevData = commonUtils.normalizeArray(data);
 			if (!prevData.empty) {
-        const byMonthSeries = commonUtils.mapMonthYearDataToSeries(prevData, {
-          dateField: 'xCalendarMonth',
+				const byMonthSeries = commonUtils.mapMonthYearDataToSeries(prevData, {
+					dateField: 'xCalendarMonth',
 					yValue: 'yPrevalence1000Pp',
 					yPercent: 'yPrevalence1000Pp'
 				});
-        this.byMonthSeriesLineData(byMonthSeries);
-        this.chartFormats.byMonthSeriesLine.xScale = d3.scaleTime()
-        	.domain(d3.extent(byMonthSeries[0].values, d => d.xValue));
-      }
-    }
+				this.byMonthSeriesLineData(byMonthSeries);
+				this.chartFormats.byMonthSeriesLine.xScale = d3.scaleTime()
+					.domain(d3.extent(byMonthSeries[0].values, d => d.xValue));
+			}
+		}
 
-    prevalenceByType(data) {
-      if (!!data && data.length > 0) {
-        this.prevalenceByTypeDonutData(commonUtils.mapConceptData(data));
-      }
-    }
+		prevalenceByType(data) {
+			if (!!data && data.length > 0) {
+				this.prevalenceByTypeDonutData(commonUtils.mapConceptData(data));
+			}
+		}
 
-    ageBoxplot(data) {
+		ageBoxplot(data) {
 			const bpseries = [];
 			const bpdata = commonUtils.normalizeArray(data);
 			if (!bpdata.empty) {
@@ -117,8 +117,8 @@ define([
 				}
 				this.ageBoxplotData(bpseries);
 			}
-    }
-  }
+		}
+	}
 
-  return commonUtils.build(Death, 'death', view);
+	return commonUtils.build('death', Death, view);
 });

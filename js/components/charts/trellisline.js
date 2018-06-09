@@ -2,29 +2,29 @@ define([
 	'knockout',
 	'providers/Chart',
 	'providers/Component',
-  'atlascharts',
-  'd3',
-  'text!components/charts/chart.html',
+	'atlascharts',
+	'd3',
+	'text!components/charts/chart.html',
 	'utils/CommonUtils',
 	'const'
 ], function (
-  ko,
+	ko,
 	Chart,
 	Component,
-  atlascharts,
+	atlascharts,
 	d3,
 	view,
 	commonUtils,
 	constants
 ) {
-  class Trellisline extends Chart {
-    constructor(params) {
-      super(params);
-      this.renderer = new atlascharts.trellisline();
-    }
+	class Trellisline extends Chart {
+		constructor(params) {
+			super(params);
+			this.renderer = new atlascharts.trellisline();
+		}
 
-    prepareData(rawData) {      
-      const trellisData = commonUtils.normalizeArray(rawData);
+		prepareData(rawData) {      
+			const trellisData = commonUtils.normalizeArray(rawData);
 			if (!trellisData.empty) {
 				const allDeciles = constants.defaultDeciles;
 				const minYear = d3.min(trellisData.xCalendarYear),
@@ -62,8 +62,8 @@ define([
 
 				const dataByDecile = nestByDecile.entries(normalizedSeries);
 				// fill in gaps
-        const yearRange = d3.range(minYear, maxYear, 1);
-        let yearData = {};
+				const yearRange = d3.range(minYear, maxYear, 1);
+				let yearData = {};
 
 				dataByDecile.forEach(function (trellis) {
 					trellis.values.forEach(function (series) {
@@ -75,13 +75,13 @@ define([
 							return yearData;
 						});
 					});
-        });
+				});
 
-        return dataByDecile;
-      }
-      return null;
-    }
-  }
+				return dataByDecile;
+			}
+			return null;
+		}
+	}
 
-  return commonUtils.build(Trellisline, 'trellisline', view);
+	return commonUtils.build('trellisline', Trellisline, view);
 });

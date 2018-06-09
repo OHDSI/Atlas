@@ -16,7 +16,7 @@ define([
 			this.title = params.name;
 			this.sourceKey = params.sourceKey;
 		}
-  }
+	}
 
-	return commonUtils.build(Heading, 'heading-title', view);
+	return commonUtils.build('heading-title', Heading, view);
 });

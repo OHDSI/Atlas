@@ -200,10 +200,10 @@ define(
       };
 		};
 		
-		const build = function(viewModelClass, name, view) {
+		const build = function(name, viewModelClass, template) {
       const component = {
         viewModel: viewModelClass,
-        template: view,
+        template,
       };
       viewModelClass.prototype.componentName = name;
     

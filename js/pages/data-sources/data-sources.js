@@ -123,5 +123,5 @@ define([
 		}
 	}
 
-	return commonUtils.build(DataSources, 'data-sources', view);
+	return commonUtils.build('data-sources', DataSources, view);
 });
