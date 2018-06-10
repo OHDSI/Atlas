@@ -190,6 +190,7 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
+    $.fn.bstooltip = $.fn.tooltip;
 	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'webapi/ExecutionAPI', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, sourceApi, util, lscache, sharedState, vocabAPI, executionAPI) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
