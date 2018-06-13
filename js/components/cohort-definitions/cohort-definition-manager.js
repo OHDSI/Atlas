@@ -363,7 +363,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				if (hasPending) {
 					pollTimeout = setTimeout(function () {
 						self.pollForInfo();
-					}, 5000);
+					}, 1000);
 				}
 			});
 		}
@@ -808,7 +808,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.reportingAvailableReports = ko.observableArray();
 
 		self.calculateProgress = function (j) {
-			return Math.round(j.progress() / j.progressMax * 100) + '%';
+		  return j.progress() + '%';
 		}
 
 		self.model.reportSourceKey.subscribe(s => {
@@ -942,9 +942,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				statusUrl: self.config.api.url + 'job/execution/',
 				statusValue: 'status',
 				progress: 0,
-				progressUrl: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + cohortDefinitionId + '/analyses',
-				progressValue: 'length',
-				progressMax: analysisIdentifiers.length,
+				progressUrl: self.config.api.url + 'cohortresults/' + self.model.reportSourceKey() + '/' + cohortDefinitionId + '/info',
+				progressValue: 'progress',
+				progressMax: 100,
 				viewed: false,
 				url: 'cohortdefinition/' + cohortDefinitionId + '/reporting?sourceKey=' + self.model.reportSourceKey(),
 			});
