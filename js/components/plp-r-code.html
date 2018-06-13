@@ -245,9 +245,9 @@
     <span class="token comment"># Create the model settings ----</span>
     modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setGradientBoostingMachine(ntrees = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moNTrees"></span>),
                                          nthread = <span class="token number" data-bind="text: $component.patientLevelPrediction().moNThread"></span>,
-                                         max_depth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
-                                         min_rows = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinRows"></span>),
-                                         learn_rate = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moLearnRate"></span>),
+                                         maxDepth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
+                                         minRows = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinRows"></span>),
+                                         learnRate = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moLearnRate"></span>),
                                          seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
 </span>
 <span data-bind="if: $component.patientLevelPrediction().modelType() == 6">
