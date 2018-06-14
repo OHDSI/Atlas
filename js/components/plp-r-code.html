@@ -222,7 +222,7 @@
     <span class="token comment"># Create the model settings ----</span>
     modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setRandomForest(mtries = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMTries"></span>),
                                          ntrees = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moNTrees"></span>),
-                                         max_depth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
+                                         maxDepth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
                                          varImp = <span class="token number" data-bind="text: $component.patientLevelPrediction().moVarImp"></span>,
                                          seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
 </span>
@@ -245,25 +245,25 @@
     <span class="token comment"># Create the model settings ----</span>
     modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setGradientBoostingMachine(ntrees = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moNTrees"></span>),
                                          nthread = <span class="token number" data-bind="text: $component.patientLevelPrediction().moNThread"></span>,
-                                         max_depth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
-                                         min_rows = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinRows"></span>),
-                                         learn_rate = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moLearnRate"></span>),
+                                         maxDepth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
+                                         minRows = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinRows"></span>),
+                                         learnRate = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moLearnRate"></span>),
                                          seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
 </span>
 <span data-bind="if: $component.patientLevelPrediction().modelType() == 6">
     <span class="token comment"># Create the model settings ----</span>
-    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setDecisionTree(max_depth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
-                                         min_samples_split = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinSamplesSplit"></span>),
-                                         min_samples_leaf = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinSamplesLeaf"></span>),
-                                         min_impurity_split = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinImpuritySplit"></span>),
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setDecisionTree(maxDepth = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMaxDepth"></span>),
+                                         minSamplesSplit = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinSamplesSplit"></span>),
+                                         minSamplesLeaf = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinSamplesLeaf"></span>),
+                                         minImpurityDecrease = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moMinImpuritySplit"></span>),
                                          seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>,
-                                         class_weight = <span class="token string">"</span><span class="token string" data-bind="text: $component.patientLevelPrediction().moClassWeight"></span><span class="token string">"</span>,
+                                         classWeight = <span class="token string">"</span><span class="token string" data-bind="text: $component.patientLevelPrediction().moClassWeight"></span><span class="token string">"</span>,
                                          plot = F)
 </span>
 <span data-bind="if: $component.patientLevelPrediction().modelType() == 7">
     <span class="token comment"># Create the model settings ----</span>
-    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setAdaBoost(n_estimators = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moNEstimators"></span>),
-                                         learning_rate = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moLearningRate"></span>),
+    modelSettings <span class="token operator"><-</span> PatientLevelPrediction::setAdaBoost(nEstimators = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moNEstimators"></span>),
+                                         learningRate = c(<span class="token number" data-bind="text: $component.patientLevelPrediction().moLearningRate"></span>),
                                          seed = <span class="token number" data-bind="text: $component.patientLevelPrediction().moSeed"></span>)
 </span>
 <span data-bind="if: $component.patientLevelPrediction().modelType() == 8">
