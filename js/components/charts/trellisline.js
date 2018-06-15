@@ -6,6 +6,7 @@ define([
 	'd3',
 	'text!components/charts/chart.html',
 	'utils/CommonUtils',
+	'utils/ChartUtils',
 	'const'
 ], function (
 	ko,
@@ -15,6 +16,7 @@ define([
 	d3,
 	view,
 	commonUtils,
+	ChartUtils,
 	constants
 ) {
 	class Trellisline extends Chart {
@@ -24,7 +26,7 @@ define([
 		}
 
 		prepareData(rawData) {      
-			const trellisData = commonUtils.normalizeArray(rawData);
+			const trellisData = ChartUtils.normalizeArray(rawData);
 			if (!trellisData.empty) {
 				const allDeciles = constants.defaultDeciles;
 				const minYear = d3.min(trellisData.xCalendarYear),

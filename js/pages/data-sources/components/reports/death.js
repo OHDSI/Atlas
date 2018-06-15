@@ -3,6 +3,7 @@ define([
 	'text!./death.html',
 	'd3',
 	'utils/CommonUtils',
+	'utils/ChartUtils',
 	'const',
 	'pages/data-sources/classes/Report',
 	'providers/Component',
@@ -16,6 +17,7 @@ define([
 	view,
 	d3,
 	commonUtils,
+	ChartUtils,
 	constants,
 	Report,
 	Component
@@ -80,9 +82,9 @@ define([
 		}
 		
 		prevalenceByMonth(data) {
-			const prevData = commonUtils.normalizeArray(data);
+			const prevData = ChartUtils.normalizeArray(data);
 			if (!prevData.empty) {
-				const byMonthSeries = commonUtils.mapMonthYearDataToSeries(prevData, {
+				const byMonthSeries = ChartUtils.mapMonthYearDataToSeries(prevData, {
 					dateField: 'xCalendarMonth',
 					yValue: 'yPrevalence1000Pp',
 					yPercent: 'yPrevalence1000Pp'
@@ -95,13 +97,13 @@ define([
 
 		prevalenceByType(data) {
 			if (!!data && data.length > 0) {
-				this.prevalenceByTypeDonutData(commonUtils.mapConceptData(data));
+				this.prevalenceByTypeDonutData(ChartUtils.mapConceptData(data));
 			}
 		}
 
 		ageBoxplot(data) {
 			const bpseries = [];
-			const bpdata = commonUtils.normalizeArray(data);
+			const bpdata = ChartUtils.normalizeArray(data);
 			if (!bpdata.empty) {
 				for (let i = 0; i < bpdata.category.length; i++) {
 					bpseries.push({

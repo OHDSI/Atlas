@@ -1,6 +1,6 @@
 define([
   'knockout',
-  'utils/CommonUtils',
+	'utils/ChartUtils',
   'const',
   'services/http',
   './Report',
@@ -8,7 +8,7 @@ define([
   'faceted-datatable'
 ], function (
   ko,
-  commonUtils,
+  ChartUtils,
   constants,
   httpService,
   Report,
@@ -46,9 +46,9 @@ define([
             const steps = node.path.split('||');
             const i = steps.length - 1;
             return `<div class="pathleaf">${steps[i]}</div>
-            <div class="pathleafstat">Prevalence: ${commonUtils.formatPercent(node.percent_persons)}</div>
-            <div class="pathleafstat">Number of People: ${commonUtils.formatComma(node.num_persons)}</div>
-            <div class="pathleafstat">${this.aggProperty.description}: ${commonUtils.formatFixed(node.agg_value)}</div>
+            <div class="pathleafstat">Prevalence: ${ChartUtils.formatPercent(node.percent_persons)}</div>
+            <div class="pathleafstat">Number of People: ${ChartUtils.formatComma(node.num_persons)}</div>
+            <div class="pathleafstat">${this.aggProperty.description}: ${ChartUtils.formatFixed(node.agg_value)}</div>
             `;
           },
           gettitle: (node) => {
@@ -111,7 +111,7 @@ define([
     }
 
     parseData({ data }) {			
-      const normalizedData = commonUtils.normalizeDataframe(commonUtils.normalizeArray(data, true));
+      const normalizedData = ChartUtils.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 
       if (!normalizedData.empty) {
         const tableData = normalizedData.conceptPath.map((d, i) => {
@@ -119,9 +119,9 @@ define([
           return {
             concept_id: normalizedData.conceptId[i],
             name: pathParts[pathParts.length - 1],
-            num_persons: commonUtils.formatComma(normalizedData.numPersons[i]),
-            percent_persons: commonUtils.formatPercent(normalizedData.percentPersons[i]),
-            agg_value: commonUtils.formatFixed(normalizedData[this.aggProperty.name][i])
+            num_persons: ChartUtils.formatComma(normalizedData.numPersons[i]),
+            percent_persons: ChartUtils.formatPercent(normalizedData.percentPersons[i]),
+            agg_value: ChartUtils.formatFixed(normalizedData[this.aggProperty.name][i])
           };
         });
         this.tableData(tableData);

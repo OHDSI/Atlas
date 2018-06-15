@@ -3,6 +3,7 @@ define([
 	'text!./datadensity.html',
 	'd3',
 	'utils/CommonUtils',
+	'utils/ChartUtils',
 	'pages/data-sources/classes/Report',
 	'providers/Component',
 	'components/heading',
@@ -13,6 +14,7 @@ define([
 	view,
 	d3,
 	commonUtils,
+	ChartUtils,
 	Report,
 	Component
 ) {
@@ -67,7 +69,7 @@ define([
 
 			if (!!data.conceptsPerPerson) {
 				const conceptsSeries = [];
-				const conceptsData = commonUtils.normalizeArray(data.conceptsPerPerson);
+				const conceptsData = ChartUtils.normalizeArray(data.conceptsPerPerson);
 				for (let i = 0; i < conceptsData.category.length; i++) {
 					conceptsSeries.push({
 						Category: conceptsData.category[i],

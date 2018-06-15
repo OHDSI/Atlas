@@ -5,7 +5,6 @@ define([
 	'utils/CommonUtils',
 	'pages/data-sources/classes/Report',
 	'providers/Component',
-	'utils/CommonUtils',
 	'components/heading',
 	'faceted-datatable'
 ], function (
@@ -15,7 +14,6 @@ define([
 	commonUtils,
 	Report,
 	Component,
-	commonUtils
 ) {
 	class AchillesHeel extends Report {
 		constructor(params) {

@@ -3,6 +3,7 @@ define([
 	'text!./treemapDrilldown.html',
 	'd3',
 	'utils/CommonUtils',
+	'utils/ChartUtils',
 	'const',
 	'pages/data-sources/classes/Report',
 	'providers/Component',
@@ -20,6 +21,7 @@ define([
 	view,
 	d3,
 	commonUtils,
+	ChartUtils,
 	constants,
 	Report,
 	Component
@@ -141,9 +143,9 @@ define([
 		}
 
 		parsePrevalenceByMonth(rawPrevalenceByMonth) {
-			const prevData = commonUtils.normalizeArray(rawPrevalenceByMonth);
+			const prevData = ChartUtils.normalizeArray(rawPrevalenceByMonth);
 			if (!prevData.empty) {
-				const byMonthSeries = commonUtils.mapMonthYearDataToSeries(prevData, {
+				const byMonthSeries = ChartUtils.mapMonthYearDataToSeries(prevData, {
 					dateField: 'xCalendarMonth',
 					yValue: 'yPrevalence1000Pp',
 					yPercent: 'yPrevalence1000Pp'
@@ -156,7 +158,7 @@ define([
 
 		parsePrevalenceByType(rawPrevalenceByType) {
 			if (!!rawPrevalenceByType && rawPrevalenceByType.length > 0) {
-				this.prevalenceByTypeData(commonUtils.mapConceptData(rawPrevalenceByType));
+				this.prevalenceByTypeData(ChartUtils.mapConceptData(rawPrevalenceByType));
 			}
 		}
 
@@ -167,7 +169,7 @@ define([
 
 		parseFrequencyDistribution(rawData, report) {
 			if (!!rawData) {
-				const freqData = commonUtils.normalizeArray(rawData);
+				const freqData = ChartUtils.normalizeArray(rawData);
 				if (!freqData.empty) {
 					// Histogram
 					const frequencyHistogram = new Object();
@@ -189,7 +191,7 @@ define([
 					const yScaleMax = (Math.floor((Math.max.apply(null, freqData.yNumPersons) + 5) / 10) + 1) * 10;
 					this.chartFormats.frequencyDistribution.yMax = yScaleMax;
 					this.chartFormats.frequencyDistribution.xLabel = `Count ('x' or more ${report}s)`;
-					const freqHistData = commonUtils.mapHistogram(frequencyHistogram);
+					const freqHistData = ChartUtils.mapHistogram(frequencyHistogram);
 					this.frequencyDistributionData(freqHistData);
 				}
 			}
@@ -197,7 +199,7 @@ define([
 
 		parseBoxplotData(rawData) {
 			let bpseries = {};
-			const ndata = commonUtils.normalizeArray(rawData);
+			const ndata = ChartUtils.normalizeArray(rawData);
 			if (!ndata.empty) {
 				bpseries = ndata.category.map(function (v, i) {
 					return {
@@ -223,7 +225,7 @@ define([
 
 		parseDonutData(rawData) {
 				if (!!rawData && rawData.length > 0) {
-						let mappedData = commonUtils.mapConceptData(rawData);
+						let mappedData = ChartUtils.mapConceptData(rawData);
 						mappedData.sort(function (a, b) {
 								const nameA = a.label.toLowerCase();
 								const nameB = b.label.toLowerCase();

@@ -3,6 +3,7 @@ define([
 	'text!./person.html',
 	'd3',
 	'utils/CommonUtils',
+	'utils/ChartUtils',
 	'pages/data-sources/classes/Report',
 	'providers/Component',
 	'components/heading',
@@ -13,6 +14,7 @@ define([
 	view,
 	d3,
 	commonUtils,
+	ChartUtils,
 	Report,
 	Component
 ) {
@@ -44,13 +46,13 @@ define([
 				histData.min = data.yearOfBirthStats[0].minValue;
 				histData.max = data.yearOfBirthStats[0].maxValue;
 				histData.intervals = 100;
-				histData.data = (commonUtils.normalizeArray(data.yearOfBirth));
-				this.yearHistogramData(commonUtils.mapHistogram(histData));
+				histData.data = (ChartUtils.normalizeArray(data.yearOfBirth));
+				this.yearHistogramData(ChartUtils.mapHistogram(histData));
 			}
 
-			this.genderData(commonUtils.mapConceptData(data.gender));
-			this.raceData(commonUtils.mapConceptData(data.race));
-			this.ethnicityData(commonUtils.mapConceptData(data.ethnicity));
+			this.genderData(ChartUtils.mapConceptData(data.gender));
+			this.raceData(ChartUtils.mapConceptData(data.race));
+			this.ethnicityData(ChartUtils.mapConceptData(data.ethnicity));
 
 		}
 	}

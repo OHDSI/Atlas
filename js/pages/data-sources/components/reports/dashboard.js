@@ -5,6 +5,7 @@ define([
 	'atlascharts',
 	'd3-tip',
 	'utils/CommonUtils',
+	'utils/ChartUtils',
 	'pages/data-sources/classes/Report',
 	'providers/Component',
 	'components/heading',
@@ -18,6 +19,7 @@ define([
 	atlascharts,
 	d3tip,
 	commonUtils,
+	ChartUtils,
 	Report,
 	Component
 ) {
@@ -67,8 +69,8 @@ define([
 				});
 				this.summary(data.summary);
 			}
-			this.genderConceptData(commonUtils.mapConceptData(data.gender));
-			const ageAtFirstData = commonUtils.normalizeArray(data.ageAtFirstObservation);
+			this.genderConceptData(ChartUtils.mapConceptData(data.gender));
+			const ageAtFirstData = ChartUtils.normalizeArray(data.ageAtFirstObservation);
 			if (!ageAtFirstData.empty) {
 				const histData = {};
 				histData.intervalSize = 1;
@@ -77,12 +79,12 @@ define([
 				histData.intervals = 120;
 				histData.data = ageAtFirstData;
 
-				this.ageAtFirstObservationData(commonUtils.mapHistogram(histData));
+				this.ageAtFirstObservationData(ChartUtils.mapHistogram(histData));
 			}
-			const cumObsData = commonUtils.normalizeArray(data.cumulativeObservation);
+			const cumObsData = ChartUtils.normalizeArray(data.cumulativeObservation);
 			let cumulativeData = {};
 			if (!cumObsData.empty) {
-				cumulativeData = commonUtils.normalizeDataframe(cumObsData).xLengthOfObservation
+				cumulativeData = ChartUtils.normalizeDataframe(cumObsData).xLengthOfObservation
 					.map(function (d, i) {
 						const item = {
 							xValue: this.xLengthOfObservation[i],
@@ -104,9 +106,9 @@ define([
 
 				this.observationLineData(cumulativeData);
 			}
-			const obsByMonthData = commonUtils.normalizeArray(data.observedByMonth);
+			const obsByMonthData = ChartUtils.normalizeArray(data.observedByMonth);
 			if (!obsByMonthData.empty) {
-				this.byMonthSeriesData(commonUtils.mapMonthYearDataToSeries(obsByMonthData, {
+				this.byMonthSeriesData(ChartUtils.mapMonthYearDataToSeries(obsByMonthData, {
 					dateField: 'monthYear',
 					yValue: 'countValue',
 					yPercent: 'percentValue'
