@@ -5,30 +5,25 @@ define([
   'providers/Component',
 ], function (
 	ko,
-  helpers,
+  constants,
   httpService,
   Component
 ) {
   class AbstractReport extends Component {
-    constructor() {
-      super();
+    constructor(params) {
+      super(params);
       this.isLoading = ko.observable(true);
       this.chartFormats = {};
-    }
 
-    render(params) {
-      const {
-        context,
-      } = params;
-      this.context = context;
-      this.name = this.context.currentReport().name;
+      this.context = params.context;
+      this.title = this.context.currentReport().name;
       this.sourceKey = this.context.currentSource().sourceKey;
       this.path = this.context.currentReport().path;
       this.conceptId = null;
     }
 
     getData() {
-      const url = helpers.apiPaths.report({
+      const url = constants.apiPaths.report({
         sourceKey: this.sourceKey,
         path: this.path,
         conceptId: this.conceptId,

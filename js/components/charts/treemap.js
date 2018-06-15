@@ -1,37 +1,38 @@
 define([
 	'knockout',
-  'providers/Chart',
-  'atlascharts',
-  'const',
+	'providers/Chart',
+	'providers/Component',
+	'atlascharts',
+	'text!components/charts/chart.html',
+	'utils/CommonUtils',
+	'utils/ChartUtils',
 ], function (
-  ko,
-  Chart,
-  atlascharts,
-  helpers,
+	ko,
+	Chart,
+	Component,
+	atlascharts,
+	view,
+	commonUtils,
+	ChartUtils
 ) {
-  class Treemap extends Chart {
-    constructor() {
-      super();
-      this.name = 'treemap';
-      this.chart = new atlascharts.treemap();
-    }
+	class Treemap extends Chart {
+		constructor(params) {
+			super(params);
+			this.renderer = new atlascharts.treemap();
+			this.storeParams(params);
+			if (params.data()) {
+				const hierarchy = ChartUtils.buildHierarchyFromJSON(params.data(), this.threshold, params.aggProperty)
+				this.rawData(hierarchy);
+			}
+		}
 
-    storeParams(params) {
-      super.storeParams(params);
-      const width = this.width || this.minHeight;
-      this.threshold = params.format.minimumArea / (width * this.minHeight);
-    }
+		storeParams(params) {
+			super.storeParams(params);
+			const width = this.width || this.minHeight;
+			this.threshold = params.format.minimumArea / (width * this.minHeight);
+		}
 
-    render(params) {
-      this.storeParams(params);
-      if (params.data()) {
-        const hierarchy = helpers.buildHierarchyFromJSON(params.data(), this.threshold, params.aggProperty)
-        this.data(hierarchy);
-      }
-      return this;
-    }
-  }
+	}
 
-  const viewModel = new Treemap();  
-	return viewModel.build();
+	return commonUtils.build('treemap', Treemap, view);
 });

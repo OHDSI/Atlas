@@ -1,28 +1,23 @@
 define([
 	'knockout',
 	'text!./empty-state.html',
-  'providers/Component',
+	'providers/Component',
+	'utils/CommonUtils',
 	'less!./empty-state.less',
 ], function (
 	ko,
 	view,
-	Component
+	Component,
+	commonUtils
 ) {
 	class EmptyState extends Component {
-		constructor() {
-			super();
-			this.name = 'empty-state';
-			this.view = view;
-		}
-
-		render(params) {
-			super.render(params);
+		constructor(params) {
+			super(params);
 			this.message = params.message || 'No data';
 
 			return this;
 		}
-  }
+	}
 
-	const emptyState = new EmptyState();
-	return emptyState.build();
+	return commonUtils.build('empty-state', EmptyState, view);
 });

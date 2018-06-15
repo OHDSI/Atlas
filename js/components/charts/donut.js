@@ -1,25 +1,24 @@
 define([
 	'knockout',
-  'providers/Chart',
-  'atlascharts',
+	'providers/Chart',
+	'providers/Component',
+	'atlascharts',
+	'text!components/charts/chart.html',
+	'utils/CommonUtils'
 ], function (
-  ko,
-  Chart,
-  atlascharts,
+	ko,
+	Chart,
+	Component,
+	atlascharts,
+	view,
+	commonUtils
 ) {
-  class Donut extends Chart {
-    constructor() {
-      super();
-      this.name = 'donut';
-      this.chart = new atlascharts.donut();
-    }
+	class Donut extends Chart {
+		constructor(params) {
+			super(params);
+			this.renderer = new atlascharts.donut();
+		}
+	}
 
-    render(params) {
-      super.render(params);
-      return this;
-    }
-  }
-
-  const viewModel = new Donut();  
-	return viewModel.build();
+	return commonUtils.build('donut', Donut, view);
 });

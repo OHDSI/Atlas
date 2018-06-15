@@ -1,25 +1,24 @@
 define([
 	'knockout',
-  'providers/Chart',
-  'atlascharts',
+	'providers/Chart',
+	'providers/Component',
+	'atlascharts',
+	'text!components/charts/chart.html',
+	'utils/CommonUtils'
 ], function (
-  ko,
-  Chart,
-  atlascharts,
+	ko,
+	Chart,
+	Component,
+	atlascharts,
+	view,
+	commonUtils
 ) {
-  class Line extends Chart {
-    constructor() {
-      super();
-      this.name = 'atlasline';
-      this.chart = new atlascharts.line();
-    }
+	class Line extends Chart {
+		constructor(params) {
+			super(params);
+			this.renderer = new atlascharts.line();
+		}
+	}
 
-    render(params) {
-      super.render(params);
-      return this;
-    }
-  }
-
-  const viewModel = new Line();  
-	return viewModel.build();
+	return commonUtils.build('atlasline', Line, view);
 });

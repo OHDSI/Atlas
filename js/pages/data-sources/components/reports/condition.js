@@ -1,34 +1,30 @@
 define([
 	'knockout',
 	'text!./treemap.html',
-  'pages/data-sources/classes/Treemap',
-  'pages/data-sources/const',
-  'components/heading',
-  'components/charts/treemap',
-  'pages/data-sources/components/reports/treemapDrilldown',
+	'pages/data-sources/classes/Treemap',
+	'providers/Component',
+	'pages/data-sources/const',
+	'utils/CommonUtils',
+	'components/heading',
+	'components/charts/treemap',
+	'pages/data-sources/components/reports/treemapDrilldown',
 ], function (
 	ko,
 	view,
-  TreemapReport,
-  helpers
+	TreemapReport,
+	Component,
+	constants,
+	commonUtils
 ) {
 	class Condition extends TreemapReport {
-    constructor() {
-      super();
-      this.name = 'condition';
-      this.view = view;
-      this.currentReport = {};
+		constructor(params) {
+			super(params);       
 
-      this.aggProperty = helpers.aggProperties.byPerson;
-      this.byType = true;
-    }
+			this.aggProperty = constants.aggProperties.byPerson;
+			this.byType = true;
+		}
 
-    render(params) {
-      super.render(params);
-      return this;
-    }
-  }
+	}
 
-  const report = new Condition();	
-	return report.build();
+	return commonUtils.build('condition', Condition, view);
 });

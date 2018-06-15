@@ -1,20 +1,26 @@
 define([
   'knockout',
+	'utils/ChartUtils',
   'const',
   'services/http',
   './Report',
-  'text!components/charts/datatableTemplate.html'
+  'text!components/charts/datatableTemplate.html',
+  'faceted-datatable'
 ], function (
   ko,
-  helpers,
+  ChartUtils,
+  constants,
   httpService,
   Report,
   datatableTemplate
 ) {
   class TreemapReport extends Report {
-    constructor() {
-      super();
+    // abstract, no need to define component name here
+
+    constructor(params) {
+      super(params);
       this.treeData = ko.observable();
+      this.tableData = ko.observable();
       this.currentConcept = ko.observable();
 
       this.aggProperty = {
@@ -24,6 +30,9 @@ define([
       this.byFrequency = false;
       this.byUnit = false;
       this.byType = false;
+      this.byValueAsConcept = false;
+      this.byOperator = false;
+      this.byQualifier = false;
 
       this.chartFormats = {
         treemap: {
@@ -32,14 +41,14 @@ define([
           onclick: node => this.currentConcept(node),
           getsizevalue: node => node.num_persons,
           getcolorvalue: node => node.agg_value,
-          getcolorrange: () => helpers.treemapGradient,
+          getcolorrange: () => constants.treemapGradient,
           getcontent: (node) => {
             const steps = node.path.split('||');
             const i = steps.length - 1;
             return `<div class="pathleaf">${steps[i]}</div>
-            <div class="pathleafstat">Prevalence: ${helpers.formatPercent(node.percent_persons)}</div>
-            <div class="pathleafstat">Number of People: ${helpers.formatComma(node.num_persons)}</div>
-            <div class="pathleafstat">${this.aggProperty.description}: ${helpers.formatFixed(node.agg_value)}</div>
+            <div class="pathleafstat">Prevalence: ${ChartUtils.formatPercent(node.percent_persons)}</div>
+            <div class="pathleafstat">Number of People: ${ChartUtils.formatComma(node.num_persons)}</div>
+            <div class="pathleafstat">${this.aggProperty.description}: ${ChartUtils.formatFixed(node.agg_value)}</div>
             `;
           },
           gettitle: (node) => {
@@ -52,11 +61,10 @@ define([
           }
         },
         table: {
-          order: [1, 'desc'],
+          order: [2, 'desc'],
           dom: datatableTemplate,
           buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
           autoWidth: false,
-          data: null,
           createdRow: function (row) {
             $(row).addClass('table_selector');
           },
@@ -68,15 +76,18 @@ define([
             },
             {
               data: 'num_persons',
-              className: 'numeric'
+              className: 'numeric',
+              orderSequence: ['desc','asc']
             },
             {
               data: 'percent_persons',
-              className: 'numeric'
+              className: 'numeric',
+              orderSequence: ['desc','asc']
             },
             {
               data: 'agg_value',
-              className: 'numeric'
+              className: 'numeric',
+              orderSequence: ['desc','asc']
             }
           ],
           pageLength: 15,
@@ -85,22 +96,22 @@ define([
           destroy: true,
         },
       };
+      // to pass down to drilldown
+      this.currentReport = params.report;
+      this.getData()
+        .then(() => {
+          // in order to get jquery working, we should set isLoading here instead of .finally block
+          this.context.loadingReport(false);
+          this.isLoading(false);      
+        });
     }
     
     selectTab(tab) {
       
     }
 
-    onReportTableRowClick(report, context, event) {
-      var dataTable = $("#report_table").DataTable();
-      var rowIndex = event.target._DT_CellIndex.row;
-      var concept = dataTable.row(rowIndex).data();
-
-      report.currentConcept(concept);
-    }
-
     parseData({ data }) {			
-      const normalizedData = helpers.normalizeDataframe(helpers.normalizeArray(data, true));
+      const normalizedData = ChartUtils.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 
       if (!normalizedData.empty) {
         const tableData = normalizedData.conceptPath.map((d, i) => {
@@ -108,12 +119,12 @@ define([
           return {
             concept_id: normalizedData.conceptId[i],
             name: pathParts[pathParts.length - 1],
-            num_persons: helpers.formatComma(normalizedData.numPersons[i]),
-            percent_persons: helpers.formatPercent(normalizedData.percentPersons[i]),
-            agg_value: helpers.formatFixed(normalizedData[this.aggProperty.name][i])
+            num_persons: ChartUtils.formatComma(normalizedData.numPersons[i]),
+            percent_persons: ChartUtils.formatPercent(normalizedData.percentPersons[i]),
+            agg_value: ChartUtils.formatFixed(normalizedData[this.aggProperty.name][i])
           };
         });
-        this.chartFormats.table.data = tableData;
+        this.tableData(tableData);
         this.treeData(normalizedData);
         
         return { data };
@@ -129,19 +140,6 @@ define([
       return response;
     }
 
-    render(params) {
-      super.render(params);
-      // to pass down to drilldown
-      this.currentReport = params.report;
-      return this.getData()
-        .then(() => {
-          // in order to get jquery working, we should set isLoading here instead of .finally block
-          this.context.loadingReport(false);
-          this.isLoading(false);
-          $("#report_table").DataTable(this.chartFormats.table);
-          $('[data-toggle="popover"]').popover();        
-        });
-    }
   }
 
   return TreemapReport;

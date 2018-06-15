@@ -1,35 +1,31 @@
 define([
 	'knockout',
 	'text!./treemap.html',
-  'pages/data-sources/classes/Treemap',
-  'pages/data-sources/const',
-  'components/heading',
-  'components/charts/treemap',
-  'pages/data-sources/components/reports/treemapDrilldown',
+	'pages/data-sources/classes/Treemap',
+	'providers/Component',
+	'pages/data-sources/const',
+	'utils/CommonUtils',
+	'components/heading',
+	'components/charts/treemap',
+	'pages/data-sources/components/reports/treemapDrilldown',
 ], function (
 	ko,
 	view,
-  TreemapReport,
-  helpers
+	TreemapReport,
+	Component,
+	constants,
+	commonUtils
 ) {
 	class Drug extends TreemapReport {
-    constructor() {
-      super();
-      this.name = 'drug';
-      this.view = view;
-      this.currentReport = {};
+		constructor(params) {
+			super(params);
+			 
+			this.aggProperty = constants.aggProperties.byPerson;
+			this.byFrequency = true;
+			this.byType = true;
+		}
 
-      this.aggProperty = helpers.aggProperties.byPerson;
-      this.byFrequency = true;
-      this.byType = true;
-    }
+	}
 
-    render(params) {
-      super.render(params);
-      return this;
-    }
-  }
-
-  const report = new Drug();	
-	return report.build();
+	return commonUtils.build('drug', Drug, view);
 });

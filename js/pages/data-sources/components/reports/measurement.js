@@ -1,36 +1,34 @@
 define([
 	'knockout',
 	'text!./treemap.html',
-  'pages/data-sources/classes/Treemap',
-  'pages/data-sources/const',
-  'components/heading',
-  'components/charts/treemap',
-  'pages/data-sources/components/reports/treemapDrilldown',
+	'pages/data-sources/classes/Treemap',
+	'providers/Component',
+	'pages/data-sources/const',
+	'utils/CommonUtils',
+	'components/heading',
+	'components/charts/treemap',
+	'pages/data-sources/components/reports/treemapDrilldown',
 ], function (
 	ko,
 	view,
-  TreemapReport,
-  helpers
+	TreemapReport,
+	Component,
+	constants,
+	commonUtils
 ) {
 	class Measurement extends TreemapReport {
-    constructor() {
-      super();
-      this.name = 'measurement';
-      this.view = view;
-      this.currentReport = {};
-      
-      this.aggProperty = helpers.aggProperties.byPerson;
-      this.byFrequency = true;
-      this.byUnit = true;
-      this.byType = true;
-    }
+		constructor(params) {
+			super(params);       
+			
+			this.aggProperty = constants.aggProperties.byPerson;
+			this.byFrequency = true;
+			this.byUnit = true;
+			this.byType = true;
+			this.byValueAsConcept = true;
+			this.byOperator = true;
+		}
 
-    render(params) {
-      super.render(params);
-      return this;
-    }
-  }
+	}
 
-  const report = new Measurement();	
-	return report.build();
+	return commonUtils.build('measurement', Measurement, view);
 });
