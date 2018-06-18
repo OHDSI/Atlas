@@ -1,7 +1,5 @@
-<div class="wrapperTitle">
-	<span data-bind="if: !loadingReport()">
-		<i class="fa fa-area-chart"></i>
-	</span> Data Source Reports
+<div data-bind="css: classes('header')">
+	<heading-title params="name: 'Data Sources reports', icon: 'area-chart', theme: 'dark'"></heading-title>
 </div>
 
 <div data-bind="ifnot: canViewCdmResults">

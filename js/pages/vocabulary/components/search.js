@@ -7,6 +7,7 @@ define([
   'providers/Component',
   'services/http',
   'pages/vocabulary/const',
+  'utils/CommonUtils',
 	'components/tabs',
   'components/panel',
   'faceted-datatable',
@@ -20,17 +21,10 @@ define([
 	authApi,
   Component,
   httpService,
-  helpers
+  contstants,
+  commonUtils
 ) {
 	class Search extends Component {
-		static get name() {
-			return 'vocabulary-search';
-		}
-
-		static get view() {
-			return view;
-		}
-
 		constructor(params) {
 			super(params);
       this.currentSearch = ko.observable('');
@@ -243,18 +237,18 @@ define([
         searchUrl += `/${query}`;				
 			}
       httpService.doPost(searchUrl, searchParams)
-      .then(({ data }) => this.handleSearchResults(data))
-      .catch(er => {
-        this.loading(false);
-        console.error('error while searching', er);
-      })
-      .finally(() => {
-        this.searchExecuted(true);
-      });      
+        .then(({ data }) => this.handleSearchResults(data))
+        .catch(er => {
+          this.loading(false);
+          console.error('error while searching', er);
+        })
+        .finally(() => {
+          this.searchExecuted(true);
+        });      
     }
 
     getVocabularies() {
-      httpService.doGet(helpers.apiPaths.vocabularies())
+      httpService.doGet(contstants.apiPaths.vocabularies())
         .then(({ data }) => {
           const vocabularies = data.sort(function (a, b) {
             return (a.VOCABULARY_ID.toUpperCase() < b.VOCABULARY_ID.toUpperCase()) ? -1 : (a.VOCABULARY_ID.toUpperCase() > b.VOCABULARY_ID.toUpperCase()) ? 1 : 0;
@@ -268,7 +262,7 @@ define([
     }
 
     getDomains() {
-      httpService.doGet(helpers.apiPaths.domains())
+      httpService.doGet(contstants.apiPaths.domains())
         .then(({ data }) => {
           const domains = data.sort(function (a, b) {
             return (a.VOCABULARY_ID.toUpperCase() < b.VOCABULARY_ID.toUpperCase()) ? -1 : (a.VOCABULARY_ID.toUpperCase() > b.VOCABULARY_ID.toUpperCase()) ? 1 : 0;
@@ -282,5 +276,5 @@ define([
     }
 	}
 
-	return Component.build(Search);
+	return commonUtils.build('vocabulary-search', Search, view);
 });

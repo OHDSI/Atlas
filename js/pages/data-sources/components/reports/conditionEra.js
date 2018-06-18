@@ -19,6 +19,8 @@ define([
 	class ConditionEra extends TreemapReport {
 		constructor(params) {
 			super(params);
+			
+			this.name = 'Condition Era'; // header
 
 			this.aggProperty = constants.aggProperties.byLengthOfEra;
 		}

@@ -19,6 +19,8 @@ define([
 	class Measurement extends TreemapReport {
 		constructor(params) {
 			super(params);       
+
+			this.name = 'Measurement'; // header
 			
 			this.aggProperty = constants.aggProperties.byPerson;
 			this.byFrequency = true;

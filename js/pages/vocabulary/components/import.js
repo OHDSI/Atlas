@@ -2,23 +2,17 @@ define([
 	'knockout',
 	'text!./import.html',
   'providers/Component',
-  'providers/Vocabulary',
+	'providers/Vocabulary',
+	'utils/CommonUtils',
   'less!./import.less',
 ], function (
 	ko,
 	view,
   Component,
-  vocabularyProvider
+	vocabularyProvider,
+	commonUtils
 ) {
 	class Import extends Component {
-		static get name() {
-			return 'vocabulary-import';
-		}
-
-		static get view() {
-			return view;
-		}
-
 		constructor(params) {
 			super(params);      
       this.model = params.model;
@@ -85,5 +79,5 @@ define([
 		}
   }
 
-	return Component.build(Import);
+	return commonUtils.build('vocabulary-import', Import, view);
 });

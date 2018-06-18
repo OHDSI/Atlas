@@ -20,6 +20,8 @@ define([
 		constructor(params) {
 			super(params);
 
+			this.name = 'Drug Era'; // header
+
 			this.aggProperty = constants.aggProperties.byLengthOfEra;
 		}
 

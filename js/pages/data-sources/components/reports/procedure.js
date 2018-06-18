@@ -20,6 +20,8 @@ define([
 		constructor(params) {
 			super(params);       
 
+			this.name = 'Procedure'; // header
+
 			this.aggProperty = constants.aggProperties.byPerson;
 			this.byFrequency = true;
 			this.byType = true;

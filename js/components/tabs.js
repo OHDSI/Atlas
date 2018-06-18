@@ -2,21 +2,15 @@ define([
 	'knockout',
 	'text!./tabs.html',
 	'providers/Component',
+	'utils/CommonUtils',
 	'less!./tabs.less',
 ], function (
 	ko,
 	view,
-	Component
+	Component,
+	commonUtils
 ) {
 	class Tabs extends Component {
-		static get name() {
-			return 'tabs';
-		}
-
-		static get view() {
-			return view;
-		}
-
 		constructor(params) {
 			super(params);
 			this.selectedTab = ko.observable(0);
@@ -24,5 +18,5 @@ define([
 		}
   }
 
-	return Component.build(Tabs);
+	return commonUtils.build('tabs', Tabs, view);
 });

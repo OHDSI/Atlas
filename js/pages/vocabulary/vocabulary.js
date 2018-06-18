@@ -4,6 +4,7 @@ define([
   'providers/Component',
   './components/search',
   './components/import',
+  'utils/CommonUtils',
   'components/heading',
   'less!./vocabulary.less'
 ], function (
@@ -11,18 +12,11 @@ define([
 	view,
   Component,
   searchTab,
-  importTab
+  importTab,
+  commonUtils
 ) {
 	class Vocabulary extends Component {
-    static get name() {
-      return 'vocabulary';
-    }
-
-    static get view() {
-      return view;
-    }
-
-		constructor(params) {
+    constructor(params) {
 			super(params);
       this.tabs = {
         search: {
@@ -39,5 +33,5 @@ define([
 		}
 	}
 
-	return Component.build(Vocabulary);
+	return commonUtils.build('vocabulary', Vocabulary, view);
 });

@@ -20,6 +20,8 @@ define([
 		constructor(params) {
 			super(params);       
 
+			this.name = 'Condition'; // header
+
 			this.aggProperty = constants.aggProperties.byPerson;
 			this.byType = true;
 		}

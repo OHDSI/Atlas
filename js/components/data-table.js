@@ -2,20 +2,14 @@ define([
 	'knockout',
 	'text!./data-table.html',
 	'providers/Component',
+	'utils/CommonUtils',
 ], function (
 	ko,
 	view,
-	Component
+	Component,
+	commonUtils
 ) {
 	class DataTable extends Component {
-		static get name() {
-			return 'data-table';
-		}
-
-		static get view() {
-			return view;
-		}
-
 		constructor(params) {
 			super(params);
 			this.container = ko.observable();
@@ -73,5 +67,5 @@ define([
 
   }
 
-	return Component.build(DataTable);
+	return commonUtils.build('data-table', DataTable, view);
 });
