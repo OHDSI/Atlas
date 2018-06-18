@@ -1,4 +1,4 @@
-define(['knockout', 'text!./roles.html', 'appConfig', 'atlas-state', 'databindings', 'access-denied'], function (ko, view, config, sharedState) {
+define(['knockout', 'text!./roles.html', 'appConfig', 'atlas-state', 'databindings', 'components/ac-access-denied'], function (ko, view, config, sharedState) {
     function roles(params) {
         var self = this;
         var authApi = params.model.authApi;

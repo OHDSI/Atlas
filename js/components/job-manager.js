@@ -1,4 +1,4 @@
-define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/MomentAPI', 'databindings', 'access-denied'], function (ko, view, config, momentApi) {
+define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/MomentAPI', 'databindings', 'components/ac-access-denied'], function (ko, view, config, momentApi) {
 	function jobManager(params) {
 		var self = this;
 

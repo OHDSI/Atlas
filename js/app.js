@@ -9,9 +9,11 @@ define([
 	'querystring',
 	'd3',
 	'pages',
+	'pages/vocabulary/index', // for not found route
   'utils/BemHelper',
 	'less!app.less',
 	'facets',
+	'components/ac-access-denied',
 	'css!styles/tabs.css',
 	'css!styles/buttons.css',
 ],
@@ -26,6 +28,7 @@ define([
 		querystring,
 		d3,
 		pages,
+		vocabularyPage,
 		BemHelper
 	) {
 		var appModel = function () {
@@ -52,38 +55,6 @@ define([
 					case 'loading':
 						pageTitle = pageTitle + ": Loading";
 						break;
-					/*case 'home':
-						pageTitle = pageTitle + ": Home";
-						break;
-          case 'feedback':
-            pageTitle = pageTitle + ": Feedback";
-            break;
-					case 'conceptsets':
-					case 'conceptset':
-						pageTitle = pageTitle + ": Concept Sets";
-						break;
-					case 'concept':
-						pageTitle = pageTitle + ": Concept";
-						break;
-					case 'cohortdefinitions':
-					case 'cohortdefinition':
-						pageTitle = pageTitle + ": Cohorts";
-						break;
-					case 'irbrowser':
-					case 'iranalysis':
-						pageTitle = pageTitle + ": Incidence Rate";
-						break;
-					case 'estimations':
-					case 'estimation':
-						pageTitle = pageTitle + ": Estimation";
-						break;
-					case 'profiles':
-						pageTitle = pageTitle + ": Profiles";
-						break;
-					case 'plp-browser':
-					case 'plp-manager':
-						pageTitle = pageTitle + ": PLP";
-						break;*/
 					default:
 						pageTitle = `${pageTitle}: ${self.activePage()}`;
 						break;
@@ -115,7 +86,7 @@ define([
 			self.initComplete = function () {
 				var routerOptions = {
 					notfound: function () {
-						self.currentView('search');
+						self.router.setRoute(vocabularyPage.baseUrl);
 					},
 				};
 				var routes = {

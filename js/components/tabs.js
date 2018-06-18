@@ -16,7 +16,7 @@ define([
 			this.selectedTab = ko.observable(0);
 			this.tabs = ko.observableArray(params.tabs || []);
 		}
-  }
+	}
 
 	return commonUtils.build('tabs', Tabs, view);
 });

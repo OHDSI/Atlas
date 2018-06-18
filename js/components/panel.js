@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./panel.html',
-  'providers/Component',
+	'providers/Component',
 	'utils/CommonUtils',
 	'less!./panel.less',
 ], function (
@@ -17,7 +17,7 @@ define([
 			this.templateId = params.templateId;
 			this.context = params.context;			
 		}
-  }
+	}
 
 	return commonUtils.build('panel', Panel, view);
 });

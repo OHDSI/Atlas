@@ -45,19 +45,6 @@
 					<span data-bind="text: $data.title, css: $parent.classes('menu-title')"></span>
 				</a>	
 			<!-- /ko -->
-			<!--<a class="list-group-item" href="#/home"><i class="fa fa-fw fa-home" aria-hidden="true"></i>&nbsp;Home</a>
-			<a class="list-group-item" href="#/datasources"><i class="fa fa-fw fa-database" aria-hidden="true"></i>&nbsp;Data Sources</a>
-			<a class="list-group-item" href="#/search"><i class="fa fa-fw fa-search" aria-hidden="true"></i>&nbsp;Vocabulary</a>
-			<a class="list-group-item" href="#/conceptsets"><i class="fa fa-fw fa-shopping-cart" aria-hidden="true"></i>&nbsp;Concept Sets</a>
-			<a class="list-group-item" href="#/cohortdefinitions"><i class="fa fa-fw  fa-users" aria-hidden="true"></i>&nbsp;Cohort Definitions</a>
-			<a class="list-group-item" data-bind="css: irStatusCss, attr: {href: irAnalysisURL}"><i class="fa fa-fw fa-bolt" aria-hidden="true"></i>&nbsp;Incidence Rates</a>
-			<a class="list-group-item" href="#/profiles"><i class="fa fa-fw fa-user" aria-hidden="true"></i>&nbsp;Profiles</a>
-			<a class="list-group-item" data-bind="css: ccaCss, attr: {href: ccaURL}"><i class="fa fa-fw fa-balance-scale" aria-hidden="true"></i>&nbsp;Estimation</a>
-			<a class="list-group-item" data-bind="css: plpCss, attr: {href: plpURL}"><i class="fa fa-fw fa-heartbeat" aria-hidden="true"></i>&nbsp;Prediction</a>
-			<a class="list-group-item" href="#/jobs"><i class="fa fa-fw fa-tasks" aria-hidden="true"></i>&nbsp;Jobs</a>
-			<a class="list-group-item" href="#/configure"><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>&nbsp;Configuration</a>
-			<a class="list-group-item" data-bind="attr: {href: supportURL, target: targetSupportURL}" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
-			-->
 		</div>
 
 		<div id="wrapper_ohdsi">
@@ -140,7 +127,7 @@
 			<!-- /ko -->
 			<!-- /ko -->
 
-			<div data-bind="if: currentViewAccessible">
+			<div data-bind="if: currentViewAccessible" class="flexed">
 				<div id="currentComponent" class="flexed" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
 			</div>
 		</div>

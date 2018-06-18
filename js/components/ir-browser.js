@@ -3,7 +3,7 @@ define(['knockout',
   'appConfig',
   'webapi/IRAnalysisAPI',
   'webapi/AuthAPI',
-  'access-denied',
+  'components/ac-access-denied',
   'faceted-datatable',
   'iranalysis'
 ], function (ko, view, config, iraAPI, authApi) {
