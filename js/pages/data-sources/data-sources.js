@@ -39,68 +39,68 @@ define([
 				{
 					name: "Dashboard",
 					path: "dashboard",
-					component: "dashboard",
+					component: "report-dashboard",
 					summary: ko.observable()
 				},
 				{
 					name: "Data Density",
 					path: "datadensity",
-					component: "datadensity",
+					component: "report-datadensity",
 				},
 				{
 					name: "Person",
 					path: "person",
-					component: "person",
+					component: "report-person",
 				},
 				{
 					name: "Visit",
 					path: "visit",
-					component: "visit",
+					component: "report-visit",
 				},
 				{
 					name: "Condition",
 					path: "condition",
-					component: "condition",
+					component: "report-condition",
 				},
 				{
 					name: "Condition Era",
 					path: "conditionera",
-					component: "condition-era",
+					component: "report-condition-era",
 				},
 				{
 					name: "Procedure",
 					path: "procedure",
-					component: "procedure",
+					component: "report-procedure",
 				},
 				{
 					name: "Drug",
 					path: "drug",
-					component: "drug",
+					component: "report-drug",
 				},
 				{
 					name: "Drug Era",
 					path: "drugera",
-					component: "drug-era",
+					component: "report-drug-era",
 				},
 				{
 					name: "Measurement",
 					path: "measurement",
-					component: "measurement",
+					component: "report-measurement",
 				},
 				{
 					name: "Observation",
 					path: "observation",
-					component: "observation",
+					component: "report-observation",
 				},
 				{
 					name: "Death",
 					path: "death",
-					component: "death",
+					component: "report-death",
 				},
 				{
 					name: "Achilles Heel",
 					path: "achillesheel",
-					component: "achilles-heel",
+					component: "report-achilles-heel",
 				},
 			];
 

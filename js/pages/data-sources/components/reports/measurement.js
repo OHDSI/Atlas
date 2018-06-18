@@ -32,5 +32,5 @@ define([
 
 	}
 
-	return commonUtils.build('measurement', Measurement, view);
+	return commonUtils.build('report-measurement', Measurement, view);
 });

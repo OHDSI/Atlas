@@ -29,5 +29,5 @@ define([
 
 	}
 
-	return commonUtils.build('procedure', Procedure, view);
+	return commonUtils.build('report-procedure', Procedure, view);
 });

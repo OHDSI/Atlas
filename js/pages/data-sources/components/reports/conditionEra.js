@@ -27,5 +27,5 @@ define([
 
 	}
 
-	return commonUtils.build('condition-era', ConditionEra, view);
+	return commonUtils.build('report-condition-era', ConditionEra, view);
 });

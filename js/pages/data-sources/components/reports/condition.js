@@ -28,5 +28,5 @@ define([
 
 	}
 
-	return commonUtils.build('condition', Condition, view);
+	return commonUtils.build('report-condition', Condition, view);
 });

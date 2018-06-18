@@ -31,5 +31,5 @@ define([
 
 	}
 
-	return commonUtils.build('observation', Observation, view);
+	return commonUtils.build('report-observation', Observation, view);
 });

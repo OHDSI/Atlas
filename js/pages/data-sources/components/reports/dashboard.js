@@ -125,5 +125,5 @@ define([
 
 	}
 
-	return commonUtils.build('dashboard', Dashboard, view);
+	return commonUtils.build('report-dashboard', Dashboard, view);
 });

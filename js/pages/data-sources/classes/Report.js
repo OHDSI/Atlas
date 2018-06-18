@@ -9,7 +9,7 @@ define([
   httpService,
   Component
 ) {
-  class AbstractReport extends Component {
+  class Report extends Component {
     constructor(params) {
       super(params);
       this.isLoading = ko.observable(true);
@@ -44,5 +44,5 @@ define([
     }
   }
 
-  return AbstractReport;
+  return Report;
 });

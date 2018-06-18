@@ -27,5 +27,5 @@ define([
 
 	}
 
-	return commonUtils.build('visit', Visit, view);
+	return commonUtils.build('report-visit', Visit, view);
 });

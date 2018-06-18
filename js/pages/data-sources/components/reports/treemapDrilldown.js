@@ -302,5 +302,5 @@ define([
 
 	}
 
-	return commonUtils.build('treemap-drilldown', TreemapDrilldown, view);
+	return commonUtils.build('report-treemap-drilldown', TreemapDrilldown, view);
 });

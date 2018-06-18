@@ -29,5 +29,5 @@ define([
 
 	}
 
-	return commonUtils.build('drug', Drug, view);
+	return commonUtils.build('report-drug', Drug, view);
 });

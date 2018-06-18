@@ -27,5 +27,5 @@ define([
 
 	}
 
-	return commonUtils.build('drug-era', DrugEra, view);
+	return commonUtils.build('report-drug-era', DrugEra, view);
 });
