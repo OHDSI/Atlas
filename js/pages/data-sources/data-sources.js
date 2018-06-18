@@ -5,6 +5,7 @@ define([
 	'appConfig',
 	'webapi/AuthAPI',
 	'providers/Component',
+	'utils/CommonUtils',
 	'databindings',
 	'./components/reports/person',
 	'./components/reports/dashboard',
@@ -19,8 +20,7 @@ define([
 	'./components/reports/measurement',
 	'./components/reports/observation',
 	'./components/reports/death',
-  './components/reports/achillesHeel',
-  'components/heading',
+	'./components/reports/achillesHeel',
 	'less!./data-sources.less'
 ], function (
 	ko,
@@ -28,17 +28,10 @@ define([
 	view,
 	config,
 	authApi,
-	Component
+	Component,
+	commonUtils
 ) {
 	class DataSources extends Component {
-		static get name() {
-			return 'data-sources';
-		}
-
-		static get view() {
-			return view;
-		}
-
 		constructor(params) {
 			super();
 
@@ -130,5 +123,5 @@ define([
 		}
 	}
 
-	return Component.build(DataSources);
+	return commonUtils.build('data-sources', DataSources, view);
 });

@@ -1,36 +1,29 @@
 define([
 	'knockout',
 	'text!./treemap.html',
-  'pages/data-sources/classes/Treemap',
-  'providers/Component',
-  'pages/data-sources/const',
-  'components/heading',
-  'components/charts/treemap',
-  'pages/data-sources/components/reports/treemapDrilldown',
+	'pages/data-sources/classes/Treemap',
+	'providers/Component',
+	'pages/data-sources/const',
+	'utils/CommonUtils',
+	'components/heading',
+	'components/charts/treemap',
+	'pages/data-sources/components/reports/treemapDrilldown',
 ], function (
 	ko,
 	view,
-  TreemapReport,
-  Component,
-  helpers
+	TreemapReport,
+	Component,
+	constants,
+	commonUtils
 ) {
 	class DrugEra extends TreemapReport {
-    static get name() {
-      return 'drug-era';
-    }
+		constructor(params) {
+			super(params);
 
-    static get view() {
-      return view;
-    }
+			this.aggProperty = constants.aggProperties.byLengthOfEra;
+		}
 
-    constructor(params) {
-      super(params);
-       
+	}
 
-      this.aggProperty = helpers.aggProperties.byLengthOfEra;
-    }
-
-  }
-
-  return Component.build(DrugEra);
+	return commonUtils.build('drug-era', DrugEra, view);
 });

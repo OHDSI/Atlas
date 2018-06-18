@@ -1,25 +1,25 @@
 define([
 	'knockout',
-  'providers/Chart',
-  'providers/Component',
-  'atlascharts',
+	'providers/Chart',
+	'providers/Component',
+	'atlascharts',
+	'text!components/charts/chart.html',
+	'utils/CommonUtils'
 ], function (
-  ko,
-  Chart,
-  Component,
-  atlascharts,
+	ko,
+	Chart,
+	Component,
+	atlascharts,
+	view,
+	commonUtils
 ) {
-  class Histogram extends Chart {
-    static get name() {
-      return 'histogram';
-    }
+	class Histogram extends Chart {
+		constructor(params) {
+			super(params);
+			this.renderer = new atlascharts.histogram();
+		}
 
-    constructor(params) {
-      super(params);
-      this.renderer = new atlascharts.histogram();
-    }
+	}
 
-  }
-
-  return Component.build(Histogram);
+	return commonUtils.build('histogram', Histogram, view);
 });

@@ -5,7 +5,7 @@ define([
   'providers/Component',
 ], function (
 	ko,
-  helpers,
+  constants,
   httpService,
   Component
 ) {
@@ -23,7 +23,7 @@ define([
     }
 
     getData() {
-      const url = helpers.apiPaths.report({
+      const url = constants.apiPaths.report({
         sourceKey: this.sourceKey,
         path: this.path,
         conceptId: this.conceptId,
