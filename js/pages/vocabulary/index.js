@@ -1,12 +1,12 @@
 define(
-  (require, exports) => {
-    const buildRoutes = require('./routes');
+	(require, exports) => {
+		const buildRoutes = require('./routes');
 
-    return {
-      title: 'Search',
-      buildRoutes,
-      baseUrl: 'search',
-      icon: 'search',
-    };
-  }
+		return {
+			title: 'Search',
+			buildRoutes,
+			baseUrl: 'search',
+			icon: 'search',
+		};
+	}
 );

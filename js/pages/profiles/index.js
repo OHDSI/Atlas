@@ -5,7 +5,7 @@ define(
     return {
       title: 'Profiles',
       buildRoutes,
-      baseUrl: 'profile',
+      baseUrl: 'profiles',
       icon: 'user',
     };
   }

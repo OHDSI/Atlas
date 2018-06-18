@@ -1,32 +1,32 @@
 define([
 	'knockout',
-  'text!./vocabulary.html',
-  'providers/Component',
-  './components/search',
-  './components/import',
-  'utils/CommonUtils',
-  'components/heading',
-  'less!./vocabulary.less'
+	'text!./vocabulary.html',
+	'providers/Component',
+	'./components/search',
+	'./components/import',
+	'utils/CommonUtils',
+	'components/heading',
+	'less!./vocabulary.less'
 ], function (
-  ko,
+	ko,
 	view,
-  Component,
-  searchTab,
-  importTab,
-  commonUtils
+	Component,
+	searchTab,
+	importTab,
+	commonUtils
 ) {
 	class Vocabulary extends Component {
-    constructor(params) {
+		constructor(params) {
 			super(params);
-      this.tabs = {
-        search: {
+			this.tabs = {
+				search: {
 					viewModel: new searchTab.viewModel(params),
 					template: searchTab.template
-        },
-        import: {
-          viewModel: new importTab.viewModel(params),
-          template: importTab.template
-        },
+				},
+				import: {
+					viewModel: new importTab.viewModel(params),
+					template: importTab.template
+				},
 			};
 
 			return this;

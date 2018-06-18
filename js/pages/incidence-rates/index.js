@@ -5,7 +5,7 @@ define(
     return {
       title: 'Incidence Rates',
       buildRoutes,
-      baseUrl: 'incidence-rates', // todo: css: irStatusCss, attr: {href: irAnalysisURL}
+      baseUrl: 'iranalysis', // todo: css: irStatusCss, attr: {href: irAnalysisURL}
       icon: 'bolt',
     };
   }
