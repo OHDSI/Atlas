@@ -220,6 +220,7 @@ define([
 			
 			let searchUrl = `${sharedState.vocabularyUrl()}search`;
 			let searchParams = null;
+			let promise = null;
 			
 			if (vocabElements.size > 0 || domainElements.size > 0) {
 				// advanced search
@@ -232,12 +233,14 @@ define([
 				if (domainElements.size > 0) {
 					searchParams["DOMAIN_ID"] = Array.from(domainElements);
 				}
+				promise = httpService.doPost(searchUrl, searchParams);
 			} else {
 				// simple search
-				searchUrl += `/${query}`;				
+				searchUrl += `/${query}`;
+				promise = httpService.doGet(searchUrl, searchParams);
 			}
-			httpService.doPost(searchUrl, searchParams)
-				.then(({ data }) => this.handleSearchResults(data))
+			
+			promise.then(({ data }) => this.handleSearchResults(data))
 				.catch(er => {
 					this.loading(false);
 					console.error('error while searching', er);
@@ -264,10 +267,7 @@ define([
 		getDomains() {
 			httpService.doGet(contstants.apiPaths.domains())
 				.then(({ data }) => {
-					const domains = data.sort(function (a, b) {
-						return (a.VOCABULARY_ID.toUpperCase() < b.VOCABULARY_ID.toUpperCase()) ? -1 : (a.VOCABULARY_ID.toUpperCase() > b.VOCABULARY_ID.toUpperCase()) ? 1 : 0;
-					});
-					this.domains(domains);
+					this.domains(data);
 				})
 				.catch(er => console.error('Error occured when loading domains', er))
 				.finally(() => {
