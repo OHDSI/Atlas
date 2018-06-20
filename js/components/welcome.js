@@ -19,10 +19,7 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
                 : null;
         });
         self.tokenExpired = authApi.tokenExpired;
-        self.isLoggedIn = ko.computed(function () {
-            if (!self.token()) return null;
-            return authApi.isAuthenticated();
-        });
+        self.isLoggedIn = authApi.isAuthenticated;
         self.status = ko.computed(function () {
             if (self.isInProgress())
                 return "Please wait...";

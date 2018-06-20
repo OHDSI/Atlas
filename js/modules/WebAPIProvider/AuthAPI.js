@@ -23,6 +23,40 @@ define(function(require, exports) {
         token(null);
     }
 
+    var getAuthorizationHeader = function () {
+        if (!token()) {
+            return null;
+        }
+        return TOKEN_HEADER + ' ' + token();
+    };
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
+                xhr.setRequestHeader('Authorization', getAuthorizationHeader());
+            }
+        }
+    });
+
+    var subject = ko.observable();
+    var permissions = ko.observable();
+
+    const loadUserInfo = function() {
+        $.ajax({
+            url: config.api.url + 'user/me',
+            method: 'GET',
+            success: function (info) {
+                subject(info.login);
+                permissions(info.permissions.map(p => p.permission));
+            },
+            error: function (err) {
+                console.log('User is not authed')
+            }
+        });
+    };
+
+    loadUserInfo();
+
     var tokenExpirationDate = ko.pureComputed(function() {
         if (!token()) {
             return null;
@@ -44,6 +78,10 @@ define(function(require, exports) {
             if (expirationTimeout) {
                 clearTimeout(expirationTimeout);
             }
+            if (!token()) {
+                tokenExpired(false);
+                return;
+            }
             if (tokenExpirationDate() > new Date()) {
                 tokenExpired(false);
                 expirationTimeout = setTimeout(
@@ -63,24 +101,6 @@ define(function(require, exports) {
     askLoginOnTokenExpire();
     tokenExpirationDate.subscribe(askLoginOnTokenExpire);
 
-    var permissions = function() {
-        var permissionsString = localStorage.getItem(LOCAL_STORAGE_PERMISSIONS_KEY);
-        if (!permissionsString) {
-            return null;
-        }
-
-        return permissionsString.split('|');
-    };
-    var subject = ko.pureComputed(function() {
-        try {
-            return token()
-                ? parseJwtPayload(token()).sub
-                : null;
-        } catch (e) {
-            return null;
-        }
-    });
-
     window.addEventListener('storage', function(event) {
         if (event.storageArea === localStorage && localStorage.bearerToken !== token()) {
             token(localStorage.bearerToken);
@@ -92,28 +112,7 @@ define(function(require, exports) {
         cookie.setField("bearerToken", newValue);
     });
 
-    var isAuthenticated = ko.pureComputed(function() {
-      try {
-        if (!config.userAuthenticationEnabled) {
-          return true;
-        }
-
-        if (!token() && token() !== 'undefined') {
-          return false;
-        }
-
-        return new Date() < tokenExpirationDate();
-      }catch(e) {
-        return false;
-      }
-    });
-
-    var getAuthorizationHeader = function () {
-        if (!token()) {
-            return null;
-        }
-        return TOKEN_HEADER + ' ' + token();
-    };
+    var isAuthenticated = ko.computed(() => !!subject());
 
     var handleAccessDenied = function(xhr) {
         switch (xhr.status) {
@@ -391,27 +390,15 @@ define(function(require, exports) {
         return isPermitted('role:' + roleId + ':permissions:*:put') && isPermitted('role:' + roleId + ':permissions:*:delete');
     }
 
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-          if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
-            xhr.setRequestHeader('Authorization', getAuthorizationHeader());
-          }
-        }
-    });
-
-    var setPermissions = function (permissions) {
-      localStorage.setItem(LOCAL_STORAGE_PERMISSIONS_KEY, permissions);
-    };
-
     var setAuthParams = function (jqXHR) {
-        var permissions = jqXHR.responseJSON.permissions;
-        setPermissions(permissions);
         token(jqXHR.getResponseHeader(TOKEN_HEADER));
+        loadUserInfo();
     };
 
     var resetAuthParams = function () {
-        setPermissions(null);
         token(null);
+        subject(null);
+        permissions(null);
     };
 
     var api = {
