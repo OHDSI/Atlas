@@ -6,6 +6,7 @@ define(function (require, exports) {
 	var sharedState = require('atlas-state');
 	var numeral = require('numeral');
 	var authAPI = require('webapi/AuthAPI');
+	const httpService = require('services/http');
 
 	var loadedPromise = $.Deferred();
 	loadedPromise.resolve();
@@ -203,30 +204,15 @@ define(function (require, exports) {
 			repositoryUrl = sharedState.vocabularyUrl() + 'lookup/identifiers';
 		}
 
-		var getConceptsByIdPromise = $.ajax({
-			url: repositoryUrl,
-			data: JSON.stringify(identifiers),
-			method: 'POST',
-			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
-	});
+		var getConceptsByIdPromise = httpService.doPost(repositoryUrl, identifiers);
 
 		return getConceptsByIdPromise;
 	}
 
 	function getConceptsByCode(codes) {
-		const promise = $.Deferred();
 		var url = sharedState.vocabularyUrl() + 'lookup/sourcecodes';
-		$.ajax({
-			url: url,
-			data: JSON.stringify(codes),
-			method: 'POST',
-			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
-			success: function(data) {
-				promise.resolve(data);
-			}
-		});
+		const promise = httpService.doPost(url, codes);
+
 		return promise;
 	}
 

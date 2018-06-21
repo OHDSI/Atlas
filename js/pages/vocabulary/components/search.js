@@ -8,6 +8,7 @@ define([
 	'services/http',
 	'pages/vocabulary/const',
 	'utils/CommonUtils',
+	'providers/Vocabulary',
 	'components/tabs',
 	'components/panel',
 	'faceted-datatable',
@@ -22,13 +23,14 @@ define([
 	Component,
 	httpService,
 	contstants,
-	commonUtils
+	commonUtils,
+	vocabularyProvider
 ) {
 	class Search extends Component {
 		constructor(params) {
 			super(params);
 			this.currentSearch = ko.observable('');
-			this.loading = ko.observable(true);
+			this.loading = ko.observable(false);
 			this.domainsLoading = ko.observable(true);
 			this.vocabulariesLoading = ko.observable(true);
 			this.canSearch = ko.observable(true);
@@ -39,10 +41,10 @@ define([
 				domains: new Set(),
 				vocabularies: new Set(),
 			};
-			this.concepts = ko.observableArray([]);
+			this.data = ko.observableArray([]);
 			this.searchExecuted = ko.observable(false);
-			this.searchConceptsColumns = ko.observableArray([]);
-			this.searchConceptsOptions = ko.observable();
+			this.searchColumns = ko.observableArray([]);
+			this.searchOptions = ko.observable();
 			this.contextSensitiveLinkColor = ko.observable();
 
 			this.isInProgress = ko.computed(() => {
@@ -57,8 +59,21 @@ define([
 				}
 			});
 			this.currentSearch.subscribe(() => this.searchExecuted(false));
+			this.loadingMessage = ko.computed(() => {
+				const entities = [];
+				if (this.domainsLoading()) {
+					entities.push('domains');
+				}
+				if (this.vocabulariesLoading()) {
+					entities.push('vocabularies');
+				}
+				if (this.loading()) {
+					entities.push('search results');
+				}
+				return `Loading ${entities.join(', ')}`;
+			});
 
-			this.searchConceptsColumns = [{
+			this.searchColumns = [{
 				title: '<i class="fa fa-shopping-cart"></i>',
 				render: function (s, p, d) {
 					var css = '';
@@ -106,7 +121,7 @@ define([
 				data: 'VOCABULARY_ID'
 			}];
 	
-			this.searchConceptsOptions = {
+			this.searchOptions = {
 				Facets: [{
 					'caption': 'Vocabulary',
 					'binding': function (o) {
@@ -157,10 +172,11 @@ define([
 		}
 		
 		searchClick() {
-			if (this.selected.vocabularies.size > 0 || this.selected.domains.size > 0) {
+			const redirectUrl = '#/search/' + escape(this.currentSearch());
+			if (this.selected.vocabularies.size > 0 || this.selected.domains.size > 0 || document.location.hash === redirectUrl) {
 				this.executeSearch();
 			} else if (this.currentSearch().length > 2) {
-				document.location = '#/search/' + escape(this.currentSearch());
+				document.location = redirectUrl;
 			} else {
 				alert('invalid search');
 			}
@@ -198,7 +214,15 @@ define([
 			// update filter data binding
 			this.feSearch(this.feSearch());
 			// update table data binding
-			this.concepts(this.feSearch().GetCurrentObjects());
+			this.data(this.feSearch().GetCurrentObjects());
+		}
+
+		onKeyPress(event) {
+			if (event.keyCode === 13) {
+				this.searchClick();
+			} else {
+				return true;
+			}
 		}
 		
 		executeSearch() {
@@ -217,6 +241,7 @@ define([
 
 			const query = this.currentSearch() === undefined ? '' : this.currentSearch();
 			this.loading(true);
+			this.data([]);
 			
 			let searchUrl = `${sharedState.vocabularyUrl()}search`;
 			let searchParams = null;
@@ -242,12 +267,25 @@ define([
 			
 			promise.then(({ data }) => this.handleSearchResults(data))
 				.catch(er => {
-					this.loading(false);
 					console.error('error while searching', er);
 				})
 				.finally(() => {
+					this.loading(false);
 					this.searchExecuted(true);
 				});      
+		}
+
+		handleSearchResults(results) {
+			if (results.length === 0) {
+				throw { message: 'No results found', results };
+			}
+
+			const promise = vocabularyProvider.loadDensity(results);
+			promise.then(() => {
+				this.data(results);
+			});
+
+			return promise;
 		}
 
 		getVocabularies() {

@@ -1236,6 +1236,7 @@ define([
 			self.currentConceptSetMode = ko.observable('details');
 			self.currentCohortDefinitionMode = ko.observable('definition');
 			self.currentImportMode = ko.observable('identifiers');
+			self.importedConcepts = ko.observable([]);
 			self.feRelated = ko.observable();
 			self.metarchy = {};
 

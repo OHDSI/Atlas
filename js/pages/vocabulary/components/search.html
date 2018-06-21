@@ -1,6 +1,9 @@
 <script type="text/html" id="vocabulary-vocab-list">
 	<div class="checkboxListing row">
-			<!-- ko if: vocabularies().length === 0 -->
+			<!-- ko if: vocabulariesLoading -->
+				<loading></loading>
+			<!-- /ko -->
+			<!-- ko if: vocabularies().length === 0 && !vocabulariesLoading() -->
 				<empty-state params="message: 'No vocabularies available'"></empty-state>
 			<!-- /ko -->
 			<!-- ko foreach: vocabularies() -->
@@ -15,7 +18,10 @@
 </script>
 <script type="text/html" id="vocabulary-domain-list">
 	<div class="checkboxListing row">
-		<!-- ko if: domains().length === 0 -->
+		<!-- ko if: domainsLoading -->
+			<loading></loading>
+		<!-- /ko -->
+		<!-- ko if: domains().length === 0 && !domainsLoading() -->
 			<empty-state params="message: 'No domains available'"></empty-state>
 		<!-- /ko -->
 		<!-- ko foreach: domains() -->
@@ -30,23 +36,25 @@
 </script>
 
 <script type="text/html" id="vacabulary-search-tab">
-	<!-- ko if: isInProgress || loading -->
-		<loading></loading>
-	<!-- /ko -->
-	<div class="input-group">
-		<input placeholder="Type your search here" type="text" data-bind="textInput: currentSearch,
-			css: classes({
-				element: 'input',
-				extra: 'form-control'
-			})
-			" />
-		<div class="input-group-btn">
-			<div data-bind="click: searchClick" class="pull-right btn btn-primary" title="Search" type="button"><i class="fa fa-search"></i></div>
+	<form data-bind="submit: searchClick">
+		<div class="input-group">
+			<input placeholder="Type your search here" type="text" data-bind="textInput: currentSearch,
+				css: classes({
+					element: 'input',
+					extra: 'form-control'
+				}),
+				" />
+			<div class="input-group-btn">
+				<button class="pull-right btn btn-primary" title="Search" type="submit"><i class="fa fa-search"></i></button>
+			</div>
 		</div>
-	</div>
+	</form>
 	<div class="row">
 		<div data-bind="click: toggleAdvanced" class="pull-right btn btn-sm btn-link">Advanced Options</div>
-	</div>
+	</div>	
+	<!-- ko if: isInProgress() || loading() -->
+		<loading params="status: loadingMessage"></loading>
+	<!-- /ko -->
 	<div class="advanced-options" data-bind="visible: showAdvanced">
 		<div data-bind="css: classes({ element: 'clear-btn', extra: 'row' })">
 			<div class="btn btn-success btn-sm pull-right" data-bind="click: clearAllAdvanced">
@@ -57,15 +65,15 @@
 		<panel params="title: 'Domains', templateId: 'vocabulary-domain-list', context: $data"></panel>
 		<panel params="title: 'Vocabularies', templateId: 'vocabulary-vocab-list', context: $data"></panel>
 	</div>
-	<!-- ko if: searchExecuted() && concepts().length === 0 -->
-		<empty-state params="message: 'No concept sets found'"></empty-state>
+	<!-- ko if: searchExecuted() && data().length === 0 -->
+		<empty-state params="message: 'No vocabularies found'"></empty-state>
 	<!-- /ko -->
-	<div data-bind="visible: concepts().length > 0">
+	<div data-bind="visible: data().length > 0">
 		<faceted-datatable params="{
 			orderColumn: 7,
-			columns: searchConceptsColumns,
-			options: searchConceptsOptions,
-			reference: concepts,
+			columns: searchColumns,
+			options: searchOptions,
+			reference: data,
 			rowCallback: contextSensitiveLinkColor
 		}"></faceted-datatable>
 		<div class="linkLegend">
