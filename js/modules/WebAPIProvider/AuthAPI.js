@@ -55,7 +55,9 @@ define(function(require, exports) {
         });
     };
 
-    loadUserInfo();
+    if (config.userAuthenticationEnabled) {
+        loadUserInfo();
+    }
 
     var tokenExpirationDate = ko.pureComputed(function() {
         if (!token()) {
@@ -161,6 +163,10 @@ define(function(require, exports) {
     };
 
     var isPermitted = function (permission) {
+        if (!config.userAuthenticationEnabled) {
+            return true;
+        }
+
         var etalons = permissions();
         if (!etalons) {
             return false;
