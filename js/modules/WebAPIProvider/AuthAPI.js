@@ -112,7 +112,13 @@ define(function(require, exports) {
         cookie.setField("bearerToken", newValue);
     });
 
-    var isAuthenticated = ko.computed(() => !!subject());
+    var isAuthenticated = ko.computed(() => {
+        if (!config.userAuthenticationEnabled) {
+            return true;
+        }
+
+        return !!subject();
+    });
 
     var handleAccessDenied = function(xhr) {
         switch (xhr.status) {
