@@ -114,7 +114,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return false;
 			}
 
-			return self.isAuthenticated() && authApi.isPermittedGenerateCohort(self.model.currentCohortDefinition().id(), sourceKey);
+			return authApi.isPermittedGenerateCohort(self.model.currentCohortDefinition().id(), sourceKey);
 		}
 		self.hasAccessToReadCohortReport = function (sourceKey) {
 			if (isNew()) {

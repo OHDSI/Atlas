@@ -78,7 +78,6 @@ define(['knockout', 'text!./user-bar.html', 'appConfig', 'atlas-state'], functio
     self.tokenExpired = authApi.tokenExpired;    
 		self.authLogin = authApi.subject;		
 		self.isLoggedIn = ko.computed(function () {
-			if (!self.token()) return null;
 			return authApi.isAuthenticated();
 		});
 	}
