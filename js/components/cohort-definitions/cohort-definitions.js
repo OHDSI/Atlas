@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-definitions.html', 'appConfig', 'webapi/AuthAPI', 'databindings', 'faceted-datatable', 'access-denied'], function (ko, view, config, authApi) {
+define(['knockout', 'text!./cohort-definitions.html', 'appConfig', 'webapi/AuthAPI', 'databindings', 'faceted-datatable', 'components/ac-access-denied'], function (ko, view, config, authApi) {
 	function cohortDefinitions(params) {
 		var self = this;
 		self.model = params.model;

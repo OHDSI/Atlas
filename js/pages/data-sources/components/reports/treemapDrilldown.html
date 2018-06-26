@@ -10,7 +10,7 @@
 
   <div data-bind="visible: !isError()">
     <!-- ko if: currentConcept() -->
-    <heading-title params="name: 'Drilldown', sourceKey: currentConcept().name"></heading-title>
+    <heading-title params="name: `Drilldown report (${currentConcept().name})`, icon: 'area-chart'"></heading-title>
     <!-- /ko -->
 
     <div class="col-xs-12">

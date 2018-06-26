@@ -19,11 +19,13 @@ define([
 	class ConditionEra extends TreemapReport {
 		constructor(params) {
 			super(params);
+			
+			this.name = 'Condition Era'; // header
 
 			this.aggProperty = constants.aggProperties.byLengthOfEra;
 		}
 
 	}
 
-	return commonUtils.build('condition-era', ConditionEra, view);
+	return commonUtils.build('report-condition-era', ConditionEra, view);
 });

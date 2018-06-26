@@ -1,14 +1,10 @@
-<div class="wrapperTitle">
-	<span data-bind="if: !loadingReport()">
-		<i class="fa fa-area-chart"></i>
-	</span> Data Source Reports
+<div data-bind="css: classes('header')">
+	<heading-title params="name: 'Data Sources reports', icon: 'area-chart', theme: 'dark'"></heading-title>
 </div>
 
-<div data-bind="ifnot: canViewCdmResults">
-	<div class="padded">
-		<access-denied params="isAuthenticated: $component.isAuthenticated"></access-denied>
-	</div>
-</div>
+<!-- ko ifnot: canViewCdmResults -->
+	<access-denied class="flexed" params="isAuthenticated: $component.isAuthenticated"></access-denied>
+<!-- /ko -->
 
 <div data-bind="if: canViewCdmResults">
 	<!-- ko if: showSelectionArea -->

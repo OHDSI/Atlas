@@ -19,6 +19,8 @@ define([
 	class Measurement extends TreemapReport {
 		constructor(params) {
 			super(params);       
+
+			this.name = 'Measurement'; // header
 			
 			this.aggProperty = constants.aggProperties.byPerson;
 			this.byFrequency = true;
@@ -30,5 +32,5 @@ define([
 
 	}
 
-	return commonUtils.build('measurement', Measurement, view);
+	return commonUtils.build('report-measurement', Measurement, view);
 });

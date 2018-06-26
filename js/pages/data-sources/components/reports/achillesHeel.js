@@ -55,5 +55,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('achilles-heel', AchillesHeel, view);
+	return commonUtils.build('report-achilles-heel', AchillesHeel, view);
 });

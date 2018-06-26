@@ -1,6 +1,8 @@
-<div data-bind="if:$component.isAuthenticated">
-    <forbidden />
-</div>
-<div data-bind="ifnot:$component.isAuthenticated">
-    <unauthenticated />
+<div data-bind="css: classes()">
+    <!-- ko if: isAuthenticated -->
+        <forbidden />
+    <!-- /ko -->
+    <!-- ko ifnot: isAuthenticated -->
+        <unauthenticated />
+    <!-- /ko -->
 </div>

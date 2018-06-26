@@ -1,4 +1,4 @@
-define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'atlas-state', 'access-denied'], function (ko, view, config, authApi, sourceApi, sharedState) {
+define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'atlas-state', 'components/ac-access-denied'], function (ko, view, config, authApi, sourceApi, sharedState) {
 	function configuration(params) {
 		var self = this;
 		self.config = config;

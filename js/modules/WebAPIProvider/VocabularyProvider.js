@@ -1,5 +1,5 @@
 define(function (require, exports) {
-
+  console.warn('deprecated, moved to /providers/Vocabulary')
 	var $ = require('jquery');
 	var config = require('appConfig');
 	var sourceAPI = require('webapi/SourceAPI');

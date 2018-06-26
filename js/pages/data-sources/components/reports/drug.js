@@ -20,6 +20,8 @@ define([
 		constructor(params) {
 			super(params);
 			 
+			this.name = 'Drug'; // header
+
 			this.aggProperty = constants.aggProperties.byPerson;
 			this.byFrequency = true;
 			this.byType = true;
@@ -27,5 +29,5 @@ define([
 
 	}
 
-	return commonUtils.build('drug', Drug, view);
+	return commonUtils.build('report-drug', Drug, view);
 });

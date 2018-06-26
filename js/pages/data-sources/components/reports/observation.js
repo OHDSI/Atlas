@@ -18,7 +18,9 @@ define([
 ) {
 	class Observation extends TreemapReport {
 		constructor(params) {
-			super(params);       
+			super(params);   
+			
+			this.name = 'Observation'; // header
 			
 			this.aggProperty = constants.aggProperties.byPerson;
 			this.byFrequency = true;
@@ -29,5 +31,5 @@ define([
 
 	}
 
-	return commonUtils.build('observation', Observation, view);
+	return commonUtils.build('report-observation', Observation, view);
 });

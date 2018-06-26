@@ -57,5 +57,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('person', Person, view);
+	return commonUtils.build('report-person', Person, view);
 });

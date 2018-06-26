@@ -1,4 +1,4 @@
-define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'access-denied'],
+define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'components/ac-access-denied'],
   function (ko, view, config, ohdsiUtil, sourceApi, roleApi, lodash) {
 
   var defaultDaimons = {

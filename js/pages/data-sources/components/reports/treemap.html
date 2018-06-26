@@ -1,5 +1,5 @@
 <!-- ko if: !isLoading() -->
-<heading-title params="name: name, sourceKey: sourceKey"></heading-title>
+<heading-title params="name: `${name} report (${sourceKey})`, icon: 'area-chart'"></heading-title>
 <div class="panel panel-primary">
   <div class="panel-heading">
     <span data-bind="name"></span> Prevalence
@@ -36,6 +36,6 @@
   </div>
 </div>
 <!-- ko if: currentConcept() -->
-  <treemap-drilldown params="context: context, currentReport: currentReport, currentConcept: currentConcept, byFrequency: byFrequency, byUnit: byUnit, byType: byType, byValueAsConcept: byValueAsConcept, byQualifier: byQualifier, byOperator: byOperator"></treemap-drilldown>
+  <report-treemap-drilldown params="context: context, currentReport: currentReport, currentConcept: currentConcept, byFrequency: byFrequency, byUnit: byUnit, byType: byType, byValueAsConcept: byValueAsConcept, byQualifier: byQualifier, byOperator: byOperator"></report-treemap-drilldown>
 <!-- /ko -->
 <!--/ko-->

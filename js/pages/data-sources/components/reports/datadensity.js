@@ -119,5 +119,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('datadensity', DataDensity, view);
+	return commonUtils.build('report-datadensity', DataDensity, view);
 });

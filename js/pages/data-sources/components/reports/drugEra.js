@@ -20,10 +20,12 @@ define([
 		constructor(params) {
 			super(params);
 
+			this.name = 'Drug Era'; // header
+
 			this.aggProperty = constants.aggProperties.byLengthOfEra;
 		}
 
 	}
 
-	return commonUtils.build('drug-era', DrugEra, view);
+	return commonUtils.build('report-drug-era', DrugEra, view);
 });

@@ -122,5 +122,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('death', Death, view);
+	return commonUtils.build('report-death', Death, view);
 });

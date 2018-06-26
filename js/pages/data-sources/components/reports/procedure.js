@@ -20,6 +20,8 @@ define([
 		constructor(params) {
 			super(params);       
 
+			this.name = 'Procedure'; // header
+
 			this.aggProperty = constants.aggProperties.byPerson;
 			this.byFrequency = true;
 			this.byType = true;
@@ -27,5 +29,5 @@ define([
 
 	}
 
-	return commonUtils.build('procedure', Procedure, view);
+	return commonUtils.build('report-procedure', Procedure, view);
 });
