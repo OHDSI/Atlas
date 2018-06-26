@@ -1,7 +1,7 @@
 define(
   [
     'webapi/AuthAPI',
-    'FileSaver',
+    'file-saver',
   ],
   (
     authApi,
