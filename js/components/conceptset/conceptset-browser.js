@@ -3,7 +3,6 @@ define([
 	'text!./conceptset-browser.html',
 	'appConfig',
 	'webapi/AuthAPI',
-	'FileSaver',
 	'services/file',
 	'bootstrap',
 	'circe',
@@ -12,7 +11,6 @@ define([
 	view,
 	config,
 	authApi,
-	FileSaver,
 	fileService
 ) {
 	function conceptsetBrowser(params) {
