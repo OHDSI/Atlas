@@ -245,8 +245,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
         sourceApi.initSourcesConfig();
       } else {
         var wasInitialized = false;
-        authApi.token.subscribe(function(token) {
-          if (token && !wasInitialized) {
+        authApi.isAuthenticated.subscribe(function(isAuthed) {
+          if (isAuthed && !wasInitialized) {
             sourceApi.initSourcesConfig();
             wasInitialized = true;
           }
