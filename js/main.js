@@ -194,6 +194,7 @@ requirejs.config({
 });
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
+    $.fn.bstooltip = $.fn.tooltip;
 	requirejs([
 		'knockout',
 		'app',
@@ -232,7 +233,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		window.pageModel = pageModel;
 
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
-		httpService.setUnauthorizedHandler(() => authApi.token(null));
+		httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
 		httpService.setUserTokenGetter(() => authApi.token());
 
 		// establish base priorities for daimons
@@ -283,8 +284,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
         sourceApi.initSourcesConfig();
       } else {
         var wasInitialized = false;
-        authApi.token.subscribe(function(token) {
-          if (token && !wasInitialized) {
+        authApi.isAuthenticated.subscribe(function(isAuthed) {
+          if (isAuthed && !wasInitialized) {
             sourceApi.initSourcesConfig();
             wasInitialized = true;
           }
