@@ -607,9 +607,17 @@ define(['knockout', 'text!./cohort-definition-manager.html',
       );
 		};
 
+		self.removeInclusionRule = function(name) {
+			self.model.currentCohortDefinition().expression().InclusionRules.remove(
+				(item) => item.name() === name
+			);
+		};
+
 		self.fixConceptSet = function(warning) {
 			if (warning.type === 'ConceptSetWarning' && warning.conceptSetId) {
 				self.removeConceptSet(warning.conceptSetId);
+			} else if (warning.type === 'IncompleteRuleWarning' && warning.ruleName) {
+				self.removeInclusionRule(warning.ruleName);
 			}
 		};
 

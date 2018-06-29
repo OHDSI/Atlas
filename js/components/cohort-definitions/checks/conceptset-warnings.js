@@ -21,7 +21,8 @@ define(['knockout', 'text!components/cohort-definitions/checks/conceptset-warnin
       };
 
       self.renderMessage = function(value, c, data) {
-        if (data.type === 'ConceptSetWarning' && data.conceptSetId) {
+        if ((data.type === 'ConceptSetWarning' && data.conceptSetId) ||
+          (data.type === 'IncompleteRuleWarning' && data.ruleName)) {
           return '<span class="warning-message">' + value +
             '</span><a href="#" class="btn-fix">Fix It</a>';
         } else {
@@ -65,6 +66,8 @@ define(['knockout', 'text!components/cohort-definitions/checks/conceptset-warnin
         }, 2);
         self.runDiagnostics(self.cohortDefinitionId(), expressionJSON);
       };
+
+      self.model.currentCohortDefinition.subscribe(() => self.getWarnings());
 
       self.getWarnings();
     }
