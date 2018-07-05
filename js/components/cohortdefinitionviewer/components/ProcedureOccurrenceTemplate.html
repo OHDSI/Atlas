@@ -8,7 +8,7 @@ a procedure of <conceptset-reference params="{conceptSetId: CodesetId, conceptSe
 	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(ProcedureType) != null -->
-	<li>procedure type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProcedureType)"></concept-list-viewer></li>
+	<li>procedure type <cycle-toggle-input-viewer params="{value: ProcedureTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProcedureType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Modifier) != null -->
 	<li>modifier is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Modifier)"></concept-list-viewer></li>

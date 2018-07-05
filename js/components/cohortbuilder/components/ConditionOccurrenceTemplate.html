@@ -49,7 +49,7 @@
 			<tr data-bind="if: ConditionType() != null, visible: ConditionType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ConditionType') }" class="fa fa-times" /></td>
 				<td>
-					Condition Type is:
+					Condition Type <cycle-toggle-input params="{value: ConditionTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input> 
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: ConditionType()"></concept-list>
 				</td>
 			</tr>

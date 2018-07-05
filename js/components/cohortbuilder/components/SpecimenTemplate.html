@@ -41,7 +41,7 @@
 			<tr data-bind="if: SpecimenType() != null, visible: SpecimenType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('SpecimenType') }" class="fa fa-times" /></td>
 				<td>
-					Specimen Type is:
+					Specimen Type <cycle-toggle-input params="{value: SpecimenTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: SpecimenType()"></concept-list>
 				</td>
 			</tr>

@@ -47,7 +47,7 @@
 			<tr data-bind="if: DrugType() != null, visible: DrugType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DrugType') }" class="fa fa-times" /></td>
 				<td>
-					Drug Type is:
+					Drug Type <cycle-toggle-input params="{value:  DrugTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DrugType()"></concept-list>
 				</td>
 			</tr>

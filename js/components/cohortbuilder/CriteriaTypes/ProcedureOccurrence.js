@@ -27,6 +27,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.ProcedureType = ko.observable(data.ProcedureType && ko.observableArray(data.ProcedureType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.ProcedureTypeExclude = ko.observable(data.ProcedureTypeExclude || null);				
 		
 		self.Modifier = ko.observable(data.Modifier && ko.observableArray(data.Modifier.map(function (d) {
 			return new Concept(d);

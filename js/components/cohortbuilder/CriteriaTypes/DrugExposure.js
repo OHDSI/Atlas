@@ -28,6 +28,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.DrugType = ko.observable(data.DrugType && ko.observableArray(data.DrugType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.DrugTypeExclude = ko.observable(data.DrugTypeExclude || null);		
 		self.StopReason = ko.observable(data.StopReason && new Text(data.StopReason));
 		self.Refills = ko.observable(data.Refills && new Range(data.Refills));
 		self.Quantity = ko.observable(data.Quantity && new Range(data.Quantity));
