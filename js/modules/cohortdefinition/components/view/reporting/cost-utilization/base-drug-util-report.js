@@ -13,7 +13,7 @@ define(
   ],
   function (ko, view, BaseCostUtilReport, appConfig, BemHelper, config, costUtilConst, CohortResultsService) {
 
-    const DRUG_SOURCE_CONCEPT = 'drugSourceConcept';
+    const DRUG_SOURCE_CONCEPT = 'drugType';
 
     class BaseDrugUtilReport extends BaseCostUtilReport {
 
