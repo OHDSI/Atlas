@@ -1097,7 +1097,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 				var target = new Object();
 				target.x = minValue + 1.0 * i * intervalSize;
 				target.dx = intervalSize;
-				target.y = histogramData.data.countValue[histogramData.data.intervalIndex.indexOf(i)] || 0;
+				target.y = histogramData.data.countValue[histogramData.data.intervalIndex.indexOf(target.x)] || 0;
 				result.push(target);
 			}
 
