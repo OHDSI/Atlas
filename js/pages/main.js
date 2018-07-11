@@ -5,6 +5,7 @@ define(
 		const vocabulary = require('./vocabulary/index');
 		const conceptSets = require('./concept-sets/index');
 		const cohortDefinitions = require('./cohort-definitions/index');
+        const characterizations = require('./characterizations/index');
 		const incidenceRates = require('./incidence-rates/index');
 		const profiles = require('./profiles/index');
 		const estimation = require('./estimation/index');
@@ -19,6 +20,7 @@ define(
 			vocabulary,
 			conceptSets,
 			cohortDefinitions,
+            characterizations,
 			incidenceRates,
 			profiles,
 			estimation,
