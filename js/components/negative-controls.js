@@ -102,7 +102,7 @@ define(['knockout',
 				visible: false,
 			},
 			{
-				title: 'Indicated',
+				title: 'Indicated / Contraindicated',
 				data: d => {
 					return d.indCi.toString() == "1" ? 'Y' : 'N';
 				},
