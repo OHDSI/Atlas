@@ -74,9 +74,8 @@ define([
 			if (!ageAtFirstData.empty) {
 				const histData = {};
 				histData.intervalSize = 1;
-				histData.min = d3.min(ageAtFirstData.intervalIndex);
-				histData.max = d3.max(ageAtFirstData.intervalIndex);
-				histData.intervals = 120;
+				histData.min = Math.min(0, d3.min(ageAtFirstData.intervalIndex));
+				histData.max = Math.max(90, d3.max(ageAtFirstData.intervalIndex));
 				histData.data = ageAtFirstData;
 
 				this.ageAtFirstObservationData(ChartUtils.mapHistogram(histData));
