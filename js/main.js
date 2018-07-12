@@ -71,13 +71,14 @@ requirejs.config({
 	},
 	map: {
 		"*": {
-			'jquery-ui/ui/widgets/sortable': 'assets/jqueryui',
-			'jquery-ui/ui/widgets/draggable': 'assets/jqueryui',
-			'jquery-ui/ui/widgets/droppable': 'assets/jqueryui',
-			'jquery-ui/dialog': 'assets/jqueryui',
-			'jquery-ui/autocomplete': 'assets/jqueryui',
-			'jquery-ui/tabs': 'assets/jqueryui',
-			'jqueryui': 'assets/jqueryui',
+			'jquery-ui/ui/widgets/sortable': 'jquery-ui',
+			'jquery-ui/ui/widgets/draggable': 'jquery-ui',
+			'jquery-ui/ui/widgets/droppable': 'jquery-ui',
+			'jquery-ui/dialog': 'jquery-ui',
+			'jquery-ui/autocomplete': 'jquery-ui',
+			'jquery-ui/tabs': 'jquery-ui',
+			'jqueryui/jquery.ddslick': 'assets/jqueryui/jquery.ddslick',
+			'jqueryui/autoGrowInput': 'assets/jqueryui/autoGrowInput',
 		}
 	},
 	deps: ['css!styles/jquery.dataTables.min',
@@ -193,6 +194,12 @@ requirejs.config({
 		"jquery.ui.autocomplete.scroll": "assets/jquery.ui.autocomplete.scroll",
 		"facets": "assets/facets",
 		"colorbrewer": "assets/colorbrewer",
+		"ohdsi-api": "https://unpkg.com/@ohdsi/ui-toolbox@1.0.0/lib/umd/api/index",
+		// needed for @ohdsi/ui-toolbox Api
+		"urijs": "https://unpkg.com/urijs@1.19.1/src/URI",
+		"punycode": "https://unpkg.com/urijs@1.19.1/src/punycode",
+		"SecondLevelDomains": "https://unpkg.com/urijs@1.19.1/src/SecondLevelDomains",		
+		"IPv6": "https://unpkg.com/urijs@1.19.1/src/IPv6",
 	}
 });
 
@@ -236,7 +243,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
 		httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
-		httpService.setUserTokenGetter(() => authApi.token());
+		httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
 
 		// establish base priorities for daimons
 		var evidencePriority = 0;

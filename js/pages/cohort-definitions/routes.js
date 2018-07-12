@@ -4,7 +4,11 @@ define(
       return {        
         '/cohortdefinitions': () => {
           appModel.activePage(this.title);
-          require(['./cohort-definitions', './cohort-definition-manager', './cohort-definition-browser'], function () {
+          require([
+            './cohort-definitions',
+            './cohort-definition-manager',
+            'components/cohort-definitions/cohort-definition-browser',
+          ], function () {
             appModel.componentParams = {
               model: appModel
             };
@@ -13,7 +17,17 @@ define(
         },
         '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': (cohortDefinitionId, path) => {
           appModel.activePage(this.title);
-          require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', './cohort-definitions', './cohort-definition-manager', './cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort', 'conceptset-list-modal'], function (CohortDefinition) {
+          require([
+            'cohortbuilder/CohortDefinition',
+            'components/atlas.cohort-editor',
+            './cohort-definitions',
+            './cohort-definition-manager',
+            'components/cohort-definitions/cohort-definition-browser',
+            'conceptset-editor',
+            'report-manager',
+            'explore-cohort',
+            'conceptset-list-modal',
+          ], function () {
             // Determine the view to show on the cohort manager screen based on the path
             path = path.split("/");
             var view = 'definition'
@@ -33,7 +47,16 @@ define(
         },
         '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': (cohortDefinitionId, conceptSetId, mode) => {
           appModel.activePage(this.title);
-          require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', './cohort-definitions', './cohort-definition-manager', './cohort-definition-browser', 'conceptset-editor', 'explore-cohort'], function (CohortDefinition) {
+          require([
+            'cohortbuilder/CohortDefinition',
+            'components/atlas.cohort-editor',
+            './cohort-definitions',
+            './cohort-definition-manager',
+            'components/cohort-definitions/cohort-definition-browser',
+            'conceptset-editor',
+            'report-manager',
+            'explore-cohort',
+          ], function () {
             appModel.componentParams = {
               model: appModel
             };
@@ -44,7 +67,11 @@ define(
         },
         '/reports': () => {
           appModel.activePage(this.title);
-          require(['report-manager', './cohort-definition-manager', './cohort-definition-browser'], function () {
+          require([
+            'report-manager',
+            './cohort-definition-manager',
+            'components/cohort-definitions/cohort-definition-browser',
+          ], function () {
             appModel.componentParams = {
               model: appModel
             };

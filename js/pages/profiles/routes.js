@@ -4,7 +4,7 @@ define(
       return {        
         '/profiles/?((\w|.)*)': (path) => {
           appModel.activePage(this.title);
-          require(['profile-manager', 'cohort-definition-browser'], function () {
+          require(['profile-manager', 'components/cohort-definitions/cohort-definition-browser'], function () {
             path = path.split("/");
             appModel.componentParams = {
               model: appModel,

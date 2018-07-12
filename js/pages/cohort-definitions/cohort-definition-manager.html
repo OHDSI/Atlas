@@ -1,14 +1,10 @@
-<div data-bind="if: model.currentCohortDefinition() && model.currentView() == 'cohort-definition-manager'">
-	<div class="wrapperTitle">
-		<i class="fa fa-users"></i> <span data-bind="text:cohortDefinitionCaption"></span>
-	</div>
-
-	<div data-bind="ifnot:hasAccess()">
-		<div class="padded">
-			<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-		</div>
-	</div>
-	<div data-bind="if:hasAccess() && model.currentCohortDefinition() != null">
+<div data-bind="if: model.currentCohortDefinition() && model.currentView() == 'cohort-definition-manager'" class="flexed">
+	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
+	<!-- ko ifnot: hasAccess -->
+		<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
+	<!-- /ko -->
+	<!-- ko if: hasAccess -->
+	<div data-bind="model.currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
 				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: model.currentCohortDefinition().name, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></input>
@@ -582,6 +578,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- /ko -->
 	<div class="modal" id="linkModal" tabindex="-1 " role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
