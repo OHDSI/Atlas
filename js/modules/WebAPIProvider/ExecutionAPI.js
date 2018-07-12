@@ -2,7 +2,7 @@ define(function(require, exports){
 
   var $ = require('jquery');
   var config = require('appConfig');
-  var ohdsiUtil = require('ohdsi.util');
+  var ohdsiUtil = require('assets/ohdsi.util');
   var authApi = require('webapi/AuthAPI');
   var momentApi = require('webapi/MomentAPI');
 

@@ -1,7 +1,7 @@
 define([
 	'jquery',
 	'knockout',
-	'ohdsi.util',
+	'assets/ohdsi.util',
 	'appConfig',
 	'webapi/AuthAPI',
 	'webapi/RoleAPI',

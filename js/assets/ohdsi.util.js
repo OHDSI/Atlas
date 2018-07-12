@@ -1,4 +1,4 @@
-/* ohdsi.util version 1.1.0
+/* assets/ohdsi.util version 1.1.0
  *
  * Author: Chris Knoll (I think)
  *			AMD setup
@@ -1629,9 +1629,9 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	function cachedAjax(opts) {
 		var allowed = _.find(ALLOW_CACHING, url => opts.url.match(url));
 		if (allowed) {
-			console.log(`using cache for ${opts.url}. remove ${allowed} from ohdsi.util.ALLOW_CACHING to disable caching for it`);
+			console.log(`using cache for ${opts.url}. remove ${allowed} from assets/ohdsi.util.ALLOW_CACHING to disable caching for it`);
 		} else {
-			// console.log(`not caching ${opts.url}. add to ohdsi.util.ALLOW_CACHING to enable caching for it`);
+			// console.log(`not caching ${opts.url}. add to assets/ohdsi.util.ALLOW_CACHING to enable caching for it`);
 			return $.ajax(opts);
 		}
 		var key = JSON.stringify(opts);

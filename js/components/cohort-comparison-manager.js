@@ -1,5 +1,5 @@
 define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash', 'clipboard',
-				'webapi/CohortDefinitionAPI', 'appConfig', 'webapi/AuthAPI', 'ohdsi.util',
+				'webapi/CohortDefinitionAPI', 'appConfig', 'webapi/AuthAPI', 'assets/ohdsi.util',
 				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options',
 				'cohortbuilder/CohortExpression', 'vocabularyprovider',
 				'conceptsetbuilder/InputTypes/ConceptSet', 'atlas-state',

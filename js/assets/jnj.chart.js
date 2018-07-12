@@ -1,7 +1,7 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module with d3 as a dependency.
-		define(["jquery", "d3", "lodash", "ohdsi.util", "d3-tip"], factory);
+		define(["jquery", "d3", "lodash", "assets/ohdsi.util", "d3-tip"], factory);
 	} else {
 		// Browser global.
 		root.jnj_chart = factory(root.$, root.d3, root._, root.util);
@@ -13,7 +13,7 @@
 	var $ = jQuery;
 	var DEBUG = true;
 
-	// should module.util functions be moved to ohdsi.util?
+	// should module.util functions be moved to assets/ohdsi.util?
 	module.util = module.util || {};
 	module.util.wrap = function (text, width) {
 		text.each(function () {

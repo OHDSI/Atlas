@@ -3,7 +3,7 @@ define(function (require, exports) {
 	var $ = require('jquery');
 	var config = require('appConfig');
 	var sharedState = require('atlas-state');
-	var ohdsiUtil = require('ohdsi.util');
+	var ohdsiUtil = require('assets/ohdsi.util');
 	var authApi = require('webapi/AuthAPI');
   var lscache = require('lscache');
   var ko = require('knockout');
