@@ -17,9 +17,11 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 		var threshold = minimum_area / (width * height);
 
 		self.model = params.model;
-		self.sources = sharedState.sources().filter(function (s) {
-			return s.hasResults && s.hasCDM;
-		});
+		self.sources = ko.computed(() => {
+			return sharedState.sources().filter(function (s) {
+				return s.hasResults && s.hasCDM;
+			});
+		})
 		self.loadingReport = ko.observable(false);
 		self.hasError = ko.observable(false);
 		self.loadingReportDrilldown = ko.observable(false);
