@@ -1,0 +1,40 @@
+<div data-bind="html: $component.tabs.design.template"></div>
+<div data-bind="html: $component.tabs.executions.template"></div>
+<div data-bind="html: $component.tabs.utils.template"></div>
+
+<div data-bind="css: classes()">
+    <div class="wrapperTitle">
+        <i class="fa fa-shopping-cart"></i> Characterization
+    </div>
+    <div class="asset-heading">
+        <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: 'Characterization'" />
+        <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:!canSave()}"><i class="fa fa-save"></i></button>
+            <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { $component.closeCharacterization(); }"><i class="fa fa-times"></i></button>
+            <button type="button" class="btn btn-sm btn-danger"  data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
+        </div>
+    </div>
+    <tabs params="tabs: [
+        {
+            title: 'Design',
+            templateId: 'characterization-view-edit-design',
+            context: tabs.design.viewModel
+        },
+        {
+            title: 'Executions',
+            templateId: 'characterization-view-edit-executions',
+            context: tabs.executions.viewModel
+        },
+        {
+            title: 'Utilities',
+            templateId: 'characterization-view-edit-utils',
+            context: tabs.utils.viewModel
+        },
+    ]"></tabs>
+</div>
+
+<!--{
+            title: 'Utils',
+            templateId: 'characterization-view-edit-design',
+            context: tabs.utils.viewModel
+        }-->

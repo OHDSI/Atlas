@@ -11,10 +11,15 @@ define(
 		
 			ko.components.register(name, component);
 			return component;
-		}
+		};
+
+        const routeTo = function (path) {
+            document.location = '#' + path;
+        };
 
 		return {
 			build,
+            routeTo,
 		};
 	}
 );

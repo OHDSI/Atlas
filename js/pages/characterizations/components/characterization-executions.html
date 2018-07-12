@@ -1,0 +1,60 @@
+<script type="text/html" id="characterization-view-edit-executions">
+    <div class="loading" data-bind="visible: loading()">loading</div>
+    <h2 data-bind="css: classes('title')">
+        Executions
+    </h2>
+    <div data-bind="css: classes('content')">
+        <!-- ko foreach: executionGroups -->
+            <div data-bind="
+                template: {
+                    name: 'characterization-view-edit-execution-group',
+                    data: Object.assign({}, $data, {
+                        classes: $parent.classes,
+                        execColumns: $parent.execColumns,
+                        isExpanded: $parent.expandedSection() === $index(),
+                        toggleSection: $parent.toggleSection.bind(null, $index())
+                    })
+                }
+            "></div>
+        <!-- /ko -->
+    </div>
+</script>
+
+<script type="text/html" id="characterization-view-edit-execution-group">
+    <div data-bind="css: classes('group', isExpanded ? 'expanded': null )">
+        <div data-bind="css: classes('heading')">
+            <label data-bind="css: classes('ds-title'), text: dataSourceName"></label>
+            <ul data-bind="css: classes({ element: 'action-list' })">
+                <li data-bind="css: classes({ element: 'action' })">
+                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']})">
+                        <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
+                        Generate
+                    </button>
+                </li>
+                <li data-bind="css: classes({ element: 'action' })">
+                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']})">
+                        <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
+                        View latest result
+                    </button>
+                </li>
+                <li data-bind="css: classes({ element: 'action' })">
+                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}), click: toggleSection">
+                        <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
+                        <span data-bind="text: 'All executions (' + executionList.length + ')'"></span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <ul data-bind="css: classes('result-list')">
+            <li data-bind="css: classes('result-line')">
+                <table data-bind="
+                    css: classes({ element: 'result-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                    dataTable:{
+                        data: executionList,
+                        options: {columns: execColumns, order: [[ 0, 'desc' ]]}
+                    }
+                "/>
+            </li>
+        </ul>
+    </div>
+</script>

@@ -10,7 +10,7 @@ define(['optional!config-local'], function (localConfig) {
 		url: 'http://localhost:8080/WebAPI/'
 	};
 	config.cohortComparisonResultsEnabled = false;
-	config.userAuthenticationEnabled = false;
+	config.userAuthenticationEnabled = false;// true;
 	config.plpResultsEnabled = false;
 	config.useExecutionEngine = false;
 	config.viewProfileDates = false;

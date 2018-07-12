@@ -29,12 +29,14 @@ define([
 
             this.data = ko.observableArray([
                 {
+                    id: 1,
                     name: 'Simple CC',
                     createdBy: 'Pavel Grafkin',
                     createdAt: '2018-07-07',
                     updatedAt: '2018-07-09',
                 },
                 {
+                    id: 2,
                     name: 'Cost & Util CC',
                     createdBy: 'Gowtham Rao',
                     createdAt: '2018-06-10',
@@ -47,6 +49,9 @@ define([
                     title: 'Name',
                     data: 'name',
                     className: this.classes('tbl-col', 'name'),
+                    render: function (s, p, d) {
+                        return '<a href="#/cc/characterizations/' + d.id + '">' + d.name + '</a>';
+                    },
                 },
                 {
                     title: 'Created',
