@@ -3,7 +3,8 @@ define(['knockout'], function (ko) {
 		init: function (element, valueAccessor) {
 			const value = ko.utils.unwrapObservable(valueAccessor());
 			$(element).attr('title', '').bstooltip({
-				title: value
+				title: value,
+				html: true,
 			});
 		}
 	}
