@@ -11,7 +11,20 @@ define(function (require, exports) {
 			}
 		});
 		return infoPromise;
-	}
+    }
+    
+    function getDrugLabelExists(sourceKey, conceptIds) {
+		var infoPromise = $.ajax({
+            url: config.webAPIRoot + 'evidence/' + sourceKey + '/druglabel',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(conceptIds),
+			error: function (error) {
+				console.log("Error: " + error);
+			}
+		});
+		return infoPromise;
+    }
     
     function generateNegativeControls(sourceKey, conceptSetId, conceptSetName, conceptDomainId, targetDomainId, conceptIds, csToInclude, csToExclude) {
         var negativeControlsJob = $.ajax({
@@ -38,6 +51,7 @@ define(function (require, exports) {
     }
     
     var api = {
+        getDrugLabelExists: getDrugLabelExists,
 		getNegativeControls: getNegativeControls,
         generateNegativeControls: generateNegativeControls
 	}

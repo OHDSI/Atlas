@@ -32,6 +32,9 @@ define(['knockout',
 		self.loadingResults = ko.observable(false);
 		self.evidenceSources = ko.observableArray();
 		self.loadingEvidenceSources = ko.observable(false);
+		self.drugLabelExists = ko.observableArray();
+		self.drugLabelDetailsDisplay = ko.observable(false);
+		self.loadingDrugLabelExists = ko.observable(false);
 		self.selectedReportCaption = ko.observable();
 		self.recordCountsRefreshing = ko.observable(false);
 		self.recordCountClass = ko.pureComputed(function () {
@@ -212,6 +215,13 @@ define(['knockout',
 					return d.notPrevalent.toString() == "1" ? 'Y' : 'N';
 				},
 				visible: false,
+			},
+			{ 
+				title: 'Drug Label Exists',
+				data: d => {
+					return d.drugLabelExists.toString()
+				},
+				visible: true,
 			},
 			{
 				title: '<i id="dtNegCtrlRC" class="fa fa-database" aria-hidden="true"></i> RC',
@@ -616,10 +626,83 @@ define(['knockout',
 							.sourceKey, conceptIdsForNegativeControls, results)
 						.then(function (rowcounts) {
 							self.negativeControls(results);
-							self.loadingResults(false);
+							// Get the drug label information
+							var conceptIdsForLabels = null;
+							if (self.targetDomainId() == "Drug") {
+								// Take the list of drugs from the results
+								conceptIdsForLabels = conceptIdsForNegativeControls;
+							} else {
+								// Take the list of drugs from the concept set
+								conceptIdsForLabels = self.conceptIds(); 
+							}
+							evidenceAPI.getDrugLabelExists("CEM", conceptIdsForLabels).then(function (results) {
+								var negativeControls = self.addDrugLabelToResults(results, self.negativeControls(), self.targetDomainId());
+								self.negativeControls(negativeControls);
+								self.drugLabelExists(results);								
+								self.loadingResults(false);
+							});				
 						});
 				});
 		}
+
+		self.addDrugLabelToResults = function(drugLabelExists, negativeControls, targetDomainId) {
+			var drugLabelExistsIndex = {};
+			for (i = 0; i < negativeControls.length; i++) {
+				negativeControls[i].drugLabelExists = 'N/A';
+			}
+
+			if (targetDomainId == "Drug") {
+				for (var e = 0; e < drugLabelExists.length; e++) {
+					drugLabelExistsIndex[Object.values(drugLabelExists[e])[0]] = Object.values(drugLabelExists[e])[2];
+				}
+	
+				for (var c = 0; c < negativeControls.length; c++) {
+					var concept = negativeControls[c];
+					if (drugLabelExistsIndex[concept.conceptId] != undefined) {
+						concept.drugLabelExists = drugLabelExistsIndex[concept.conceptId];
+					}
+				}
+			}
+
+			return negativeControls;
+		}
+
+		self.getDrugLabelExistsByBoolean = function(filter) {
+			return self.drugLabelExists()
+				.filter(function (elem) {
+					return elem.usaProductLabelExists == filter;
+				})
+				.sort(function (left, right) { 
+					return left.conceptName.toLowerCase() == right.conceptName.toLowerCase() ? 0 : (left.conceptName.toLowerCase() < right.conceptName.toLowerCase() ? -1 : 1) 
+				});
+		}
+
+		self.drugLabelExistsIsTrue = ko.pureComputed(function (){
+			return self.getDrugLabelExistsByBoolean("1");
+		});
+
+		self.drugLabelExistsIsFalse = ko.pureComputed(function (){
+			return self.getDrugLabelExistsByBoolean("0");
+		});
+
+		self.drugLabelExistsPercentage = ko.pureComputed(function() {
+			if (self.drugLabelExists().length > 0) {
+				var pct = (self.drugLabelExistsIsTrue().length / self.drugLabelExists().length) * 100;
+				return parseFloat(pct).toFixed(0);
+			} else {
+				return "0"
+			}
+		});
+
+		self.toggleLabelDetails = function() {
+			var newDisplay = !self.drugLabelDetailsDisplay();
+			self.drugLabelDetailsDisplay(newDisplay);
+		}
+
+		self.toggleLabelDisplay = ko.pureComputed(function() {
+			var displayVal = self.drugLabelDetailsDisplay() ? 'hide' : 'show';
+			return displayVal;
+		})
 
 		self.isSourceRunning = function (source) {
 			if (source) {
