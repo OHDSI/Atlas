@@ -6,7 +6,7 @@ define([
     'webapi/AuthAPI',
     'providers/Component',
     'utils/CommonUtils',
-    './tabbed-grid',
+    'cohort-definition-browser',
     'less!./characterization-design.less',
 ], function (
     ko,
@@ -27,6 +27,7 @@ define([
                 title: 'Cohort definitions',
                 descr: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
                 newItemLabel: 'Import',
+                newItemAction: this.showCohortBrowser,
                 columns: [
                     {
                         title: 'ID',
@@ -49,6 +50,7 @@ define([
                 title: 'Feature analyses',
                 descr: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
                 newItemLabel: 'Import',
+                newItemAction: () => {},
                 columns: [
                     {
                         title: 'ID',
@@ -68,7 +70,7 @@ define([
                 ],
                 data: [
                     {id: 1, name: 'Gender', descr: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry'},
-                    {id: 2, name: 'Age distribution', descr: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry'}
+                    {id: 2, name: 'Age', descr: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry'}
                 ]
             };
 
@@ -76,6 +78,7 @@ define([
                 title: 'Feature analyses parameters',
                 descr: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
                 newItemLabel: 'New parameter',
+                newItemAction: () => {},
                 columns: [
                     {
                         title: 'Name',
@@ -93,6 +96,22 @@ define([
                     {name: 'shortTermStartDays', value: '15'}
                 ]
             };
+
+            this.showCohortDefinitionBrowser = ko.observable(false);
+            this.cohortSelected = ko.observable();
+
+            this.cohortSelected.subscribe(id => this.attachCohort(id));
+
+            this.showCohortBrowser = this.showCohortBrowser.bind(this);
+        }
+
+        showCohortBrowser() {
+            this.showCohortDefinitionBrowser(true);
+        }
+
+        attachCohort(id) {
+            this.showCohortDefinitionBrowser(false);
+            alert('Attached cohort ID = ' + id);
         }
     }
 

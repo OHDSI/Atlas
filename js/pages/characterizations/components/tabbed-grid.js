@@ -10,7 +10,7 @@ define([
     'databindings',
     'less!./tabbed-grid.less',
     'components/heading',
-    'components/faceted-datatable'
+    'faceted-datatable'
 ], function (
     ko,
     sharedState,

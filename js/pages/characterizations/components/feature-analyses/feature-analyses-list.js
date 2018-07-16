@@ -1,15 +1,15 @@
 define([
     'knockout',
     'atlas-state',
-    'text!./characterizations.html',
+    'text!./feature-analyses-list.html',
     'appConfig',
     'webapi/AuthAPI',
     'providers/Component',
     'utils/CommonUtils',
     'utils/DatatableUtils',
     'pages/characterizations/const',
-    './tabbed-grid',
-    'less!./characterizations.less',
+    '../tabbed-grid',
+    'less!./feature-analyses-list.less',
 ], function (
     ko,
     sharedState,
@@ -21,23 +21,21 @@ define([
     datatableUtils,
     constants,
 ) {
-    class Characterizations extends Component {
+    class FeatureAnalyses extends Component {
         constructor(params) {
             super();
 
-            this.gridTab = constants.characterizationsTab;
+            this.gridTab = constants.featureAnalysesTab;
 
             this.data = ko.observableArray([
                 {
-                    id: 1,
-                    name: 'Simple CC',
+                    name: 'Basic feature',
                     createdBy: 'Pavel Grafkin',
                     createdAt: '2018-07-07',
                     updatedAt: '2018-07-09',
                 },
                 {
-                    id: 2,
-                    name: 'Cost & Util CC',
+                    name: 'Custom SQL feature',
                     createdBy: 'Gowtham Rao',
                     createdAt: '2018-06-10',
                     updatedAt: '2018-07-08',
@@ -49,9 +47,6 @@ define([
                     title: 'Name',
                     data: 'name',
                     className: this.classes('tbl-col', 'name'),
-                    render: function (s, p, d) {
-                        return '<a href="#/cc/characterizations/' + d.id + '">' + d.name + '</a>';
-                    },
                 },
                 {
                     title: 'Created',
@@ -91,5 +86,5 @@ define([
         }
     }
 
-    return commonUtils.build('characterizations', Characterizations, view);
+    return commonUtils.build('feature-analyses-list', FeatureAnalyses, view);
 });

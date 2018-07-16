@@ -7,8 +7,8 @@ define([
         'moment',
         'providers/Component',
         'utils/CommonUtils',
-        './tabbed-grid',
         'less!./characterization-executions.less',
+        './characterization-results',
     ], function (
     ko,
     sharedState,
@@ -30,6 +30,7 @@ define([
                 this.expandedSection = ko.observable();
 
                 this.toggleSection = this.toggleSection.bind(this);
+                this.goToResults = this.goToResults.bind(this);
 
                 this.execColumns = [
                     {
@@ -102,6 +103,10 @@ define([
 
             toggleSection(idx) {
                 this.expandedSection() === idx ? this.expandedSection(null) : this.expandedSection(idx);
+            }
+
+            goToResults() {
+                commonUtils.routeTo('/cc/characterizations/' + 1 + '/results');
             }
         }
 

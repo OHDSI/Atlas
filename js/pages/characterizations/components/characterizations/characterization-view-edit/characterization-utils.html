@@ -1,4 +1,4 @@
-<script type="text/html" id="characterization-view-edit-utils">
+<div data-bind="css: classes()">
     <div class="loading" data-bind="visible: loading()">loading</div>
     <h2 data-bind="css: classes('title')">
         Utilities
@@ -20,4 +20,4 @@
     <div data-bind="if: mode() == MODE_JSON, css: classes('content')">
         <textarea data-bind="css: classes('json-box'), text: JSON.stringify(expression, null, 2)"></textarea>
     </div>
-</script>
+</div>

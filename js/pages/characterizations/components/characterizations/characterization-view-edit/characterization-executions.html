@@ -1,4 +1,4 @@
-<script type="text/html" id="characterization-view-edit-executions">
+<div data-bind="css: classes()">
     <div class="loading" data-bind="visible: loading()">loading</div>
     <h2 data-bind="css: classes('title')">
         Executions
@@ -18,7 +18,7 @@
             "></div>
         <!-- /ko -->
     </div>
-</script>
+</div>
 
 <script type="text/html" id="characterization-view-edit-execution-group">
     <div data-bind="css: classes('group', isExpanded ? 'expanded': null )">
@@ -32,7 +32,7 @@
                     </button>
                 </li>
                 <li data-bind="css: classes({ element: 'action' })">
-                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']})">
+                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}), click: $component.goToResults">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
                         View latest result
                     </button>

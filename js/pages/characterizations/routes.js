@@ -4,30 +4,31 @@ define(
             return {
                 'cc/characterizations': () => {
                     appModel.activePage(this.title);
-                    require(['./components/characterizations'], function () {
+                    require(['./components/characterizations/characterizations-list'], function () {
                         appModel.componentParams = {
                             model: appModel
                         };
-                        appModel.currentView('characterizations');
+                        appModel.currentView('characterizations-list');
                     });
                 },
-                'cc/characterizations/:id:': (id) => {
+                'cc/characterizations/:id:/:section:': (id, section) => {
                     appModel.activePage(this.title);
-                    require(['./components/characterization-view-edit'], function (id) {
+                    require(['./components/characterizations/characterization-view-edit'], function () {
                         appModel.componentParams = {
                             model: appModel,
-                            characterizationId: unescape(id)
+                            characterizationId: id,
+                            section: section
                         };
                         appModel.currentView('characterization-view-edit');
                     });
                 },
                 'cc/feature-analyses': () => {
                     appModel.activePage(this.title);
-                    require(['./components/feature-analyses'], function () {
+                    require(['./components/feature-analyses/feature-analyses-list'], function () {
                         appModel.componentParams = {
                             model: appModel
                         };
-                        appModel.currentView('feature-analyses');
+                        appModel.currentView('feature-analyses-list');
                     });
                 },
             };

@@ -6,7 +6,6 @@ define([
     'webapi/AuthAPI',
     'providers/Component',
     'utils/CommonUtils',
-    './tabbed-grid',
     'less!./characterization-utils.less',
 ], function (
     ko,

@@ -18,17 +18,7 @@ define([
 	class Vocabulary extends Component {
 		constructor(params) {
 			super(params);
-			this.tabs = {
-				search: {
-					viewModel: new searchTab.viewModel(params),
-					template: searchTab.template
-				},
-				import: {
-					viewModel: new importTab.viewModel(params),
-					template: importTab.template
-				},
-			};
-
+			this.componentParams = params;
 			return this;
 		}
 	}

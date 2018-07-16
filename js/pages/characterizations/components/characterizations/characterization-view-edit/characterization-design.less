@@ -8,17 +8,19 @@
     }
 
     .dataTables_filter {
-      margin-bottom: 2rem;
+      position: absolute;
+      right: 0;
+      top: -4rem;
     }
 
     .dataTables_wrapper {
-      margin-top: -2.5rem;
+      margin-top: 1.5rem;
     }
   }
 
   &__linked-entities-title {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   &__linked-entities-descr {
@@ -62,6 +64,26 @@
 
   &__col-param-value {
     width: 50%;
+  }
+
+  &__cohort-def-modal-content {
+    width: 80rem;
+  }
+
+  &__cohort-def-modal-body {
+    padding: 1rem;
+
+    .feFilter {
+      padding-top: 57px; // I'm sorry
+    }
+
+    .dt-btn {
+      display: none;
+    }
+
+    .faceted-data-table-wrapper {
+      padding-left: 1rem;
+    }
   }
 
 }

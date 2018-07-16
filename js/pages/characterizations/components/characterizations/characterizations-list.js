@@ -1,15 +1,15 @@
 define([
     'knockout',
     'atlas-state',
-    'text!./feature-analyses.html',
+    'text!./characterizations-list.html',
     'appConfig',
     'webapi/AuthAPI',
     'providers/Component',
     'utils/CommonUtils',
     'utils/DatatableUtils',
     'pages/characterizations/const',
-    './tabbed-grid',
-    'less!./feature-analyses.less',
+    '../tabbed-grid',
+    'less!./characterizations-list.less',
 ], function (
     ko,
     sharedState,
@@ -21,21 +21,23 @@ define([
     datatableUtils,
     constants,
 ) {
-    class FeatureAnalyses extends Component {
+    class Characterizations extends Component {
         constructor(params) {
             super();
 
-            this.gridTab = constants.featureAnalysesTab;
+            this.gridTab = constants.characterizationsTab;
 
             this.data = ko.observableArray([
                 {
-                    name: 'Basic feature',
+                    id: 1,
+                    name: 'Simple CC',
                     createdBy: 'Pavel Grafkin',
                     createdAt: '2018-07-07',
                     updatedAt: '2018-07-09',
                 },
                 {
-                    name: 'Custom SQL feature',
+                    id: 2,
+                    name: 'Cost & Util CC',
                     createdBy: 'Gowtham Rao',
                     createdAt: '2018-06-10',
                     updatedAt: '2018-07-08',
@@ -47,6 +49,9 @@ define([
                     title: 'Name',
                     data: 'name',
                     className: this.classes('tbl-col', 'name'),
+                    render: function (s, p, d) {
+                        return '<a href="#/cc/characterizations/' + d.id + '/design">' + d.name + '</a>';
+                    },
                 },
                 {
                     title: 'Created',
@@ -86,5 +91,5 @@ define([
         }
     }
 
-    return commonUtils.build('feature-analyses', FeatureAnalyses, view);
+    return commonUtils.build('characterizations-list', Characterizations, view);
 });

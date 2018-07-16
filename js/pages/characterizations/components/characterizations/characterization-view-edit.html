@@ -1,6 +1,4 @@
-<div data-bind="html: $component.tabs.design.template"></div>
-<div data-bind="html: $component.tabs.executions.template"></div>
-<div data-bind="html: $component.tabs.utils.template"></div>
+<div data-bind="html: $component.template"></div>
 
 <div data-bind="css: classes()">
     <div class="wrapperTitle">
@@ -14,27 +12,27 @@
             <button type="button" class="btn btn-sm btn-danger"  data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
         </div>
     </div>
-    <tabs params="tabs: [
-        {
-            title: 'Design',
-            templateId: 'characterization-view-edit-design',
-            context: tabs.design.viewModel
-        },
-        {
-            title: 'Executions',
-            templateId: 'characterization-view-edit-executions',
-            context: tabs.executions.viewModel
-        },
-        {
-            title: 'Utilities',
-            templateId: 'characterization-view-edit-utils',
-            context: tabs.utils.viewModel
-        },
-    ]"></tabs>
+    <tabs params="
+        selectedTab: $component.selectedTab,
+        selectTab: $component.selectTab,
+        componentName: $component.componentName,
+        componentParams: $component.componentParams,
+        tabs: [
+            {
+                title: 'Design',
+                templateId: 'characterization-view-edit-design',
+                context: $component.viewModel
+            },
+            {
+                title: 'Executions',
+                templateId: 'characterization-view-edit-executions',
+                context: $component.viewModel
+            },
+            {
+                title: 'Utilities',
+                templateId: 'characterization-view-edit-utils',
+                context: $component.viewModel
+            },
+        ]">
+    </tabs>
 </div>
-
-<!--{
-            title: 'Utils',
-            templateId: 'characterization-view-edit-design',
-            context: tabs.utils.viewModel
-        }-->

@@ -1,0 +1,68 @@
+<div data-bind="css: classes()">
+    <div class="loading" data-bind="visible: loading()">loading</div>
+    <h2 data-bind="css: classes('title')">
+        <a href="#/cc/characterizations/1/executions">Executions</a>
+        <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
+        <span data-bind="text: 'Reports for ' + $component.dataSource.name"></span>
+    </h2>
+    <div data-bind="css: classes('toolbar')">
+        <ul data-bind="css: classes('detail-list')">
+            <li data-bind="css: classes('detail')">
+                <label data-bind="css: classes('detail-label')">Date:</label>
+                <span data-bind="css: classes('detail-value')">2018-07-12 15:05:00</span>
+            </li>
+            <li data-bind="css: classes('detail')">
+                <label data-bind="css: classes('detail-label')">Design:</label>
+                <a data-bind="css: classes('detail-value')">x6t21cda</a>
+            </li>
+            <li data-bind="css: classes('detail')">
+                <label data-bind="css: classes('detail-label')">Results:</label>
+                <span data-bind="css: classes('detail-value')">10 reports (6 - prevalence, 4 - distribution)</span>
+            </li>
+        </ul>
+        <div data-bind="css: classes('display-selector')">
+            <span data-bind="css: classes('display-selector-label')">Show as</span>
+            <!-- ko if: $component.displayMode() === 'table' -->
+                table / <a data-bind="click: $component.showAsChart">chart</a>
+            <!-- /ko -->
+            <!-- ko if: $component.displayMode() === 'chart' -->
+                <a data-bind="click: $component.showAsTable">table</a> / chart
+            <!-- /ko -->
+        </div>
+    </div>
+    <div data-bind="css: classes('filter')">
+        <visualizations-filter-panel params="{ filterList: $component.filterList, live: true }"/>
+    </div>
+    <div data-bind="css: classes('report-section')">
+        <!-- ko foreach: reportList -->
+            <div data-bind="css: $component.classes('report-group')">
+                <h3 data-bind="css: $component.classes('analysis-name'), text: $data.domain + ' / ' + $data.analysisName"></h3>
+                <!-- ko foreach: reports -->
+                    <div data-bind="css: $component.classes('report', $parent.reports.length < 2 ? 'hidden-cohort-name' : null)">
+                        <label data-bind="css: $component.classes('cohort-name'), text: $data.cohortName"></label>
+                        <!-- ko if: $component.displayMode() !== 'chart' || $parent.type !== 'prevalence' -->
+                            <table data-bind="
+                                css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                                dataTable:{
+                                    data: $data.data,
+                                    options: {columns: $data.columns}
+                                }
+                            "/>
+                        <!-- /ko -->
+                        <!-- ko if: $component.displayMode() === 'chart' && $parent.type === 'prevalence' -->
+                            <line-chart data-bind="css: $component.classes('chart')"
+                                        params="{lineChart: {
+                                                data: () => $component.createLineChartData($data.data),
+                                                xLabel: '',
+                                                yLabel: 'Count',
+                                                height: 250,
+                                                showLegend: false,
+                                            }}"
+                            ></line-chart>
+                        <!-- /ko -->
+                    </div>
+                <!-- /ko -->
+            </div>
+        <!-- /ko -->
+    </div>
+</div>
