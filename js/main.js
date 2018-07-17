@@ -20,7 +20,7 @@ requirejs.config({
 		},
 		{
 			name: "cohortdefinitionviewer",
-			location: "components/cohort-definitions/cohortdefinitionviewer"
+			location: "components/cohortdefinitionviewer"
 		},
 		{
 			name: "circe",

@@ -1,4 +1,4 @@
-define(['knockout','text!./ConceptSetSelectorTemplate.html', '../bindings/dropupBinding', 'databindings'
+define(['knockout','text!./ConceptSetSelectorTemplate.html', 'databindings/cohortbuilder/dropupBinding', 'databindings'
 ], function (ko, template) {
 	
 	function conceptSetSorter(a,b)
