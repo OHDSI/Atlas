@@ -1,5 +1,5 @@
 define(['knockout', 'text!./editor.html','../inputTypes/StudyWindow', '../StratifyRule','components/cohortbuilder/options',
-				'conceptsetbuilder/components','components/cohort-definitions/cohort-definition-browser', 
+				'conceptsetbuilder/components','components/cohort-definition-browser', 
 				'databindings','components/cohortbuilder/components'
 ], function (ko, template, StudyWindow, StratifyRule, options) {
 	function IRAnalysisEditorModel(params) {
