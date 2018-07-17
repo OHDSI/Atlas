@@ -7,7 +7,7 @@ define(
           require([
             './cohort-definitions',
             './cohort-definition-manager',
-            'components/cohort-definitions/cohort-definition-browser',
+            'components/cohort-definition-browser',
           ], function () {
             appModel.componentParams = {
               model: appModel
@@ -22,9 +22,9 @@ define(
             'components/atlas.cohort-editor',
             './cohort-definitions',
             './cohort-definition-manager',
-            'components/cohort-definitions/cohort-definition-browser',
+            'components/cohort-definition-browser',
             'conceptset-editor',
-            'report-manager',
+            './components/report-manager',
             'explore-cohort',
             'conceptset-list-modal',
           ], function () {
@@ -52,9 +52,9 @@ define(
             'components/atlas.cohort-editor',
             './cohort-definitions',
             './cohort-definition-manager',
-            'components/cohort-definitions/cohort-definition-browser',
+            'components/cohort-definition-browser',
             'conceptset-editor',
-            'report-manager',
+            './components/report-manager',
             'explore-cohort',
           ], function () {
             appModel.componentParams = {
@@ -68,9 +68,9 @@ define(
         '/reports': () => {
           appModel.activePage(this.title);
           require([
-            'report-manager',
+            './components/report-manager',
             './cohort-definition-manager',
-            'components/cohort-definitions/cohort-definition-browser',
+            'components/cohort-definition-browser',
           ], function () {
             appModel.componentParams = {
               model: appModel

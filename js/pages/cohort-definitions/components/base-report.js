@@ -1,7 +1,7 @@
 define(
   [
     'knockout',
-    'utils/BemHelper',
+    'providers/Component',
     'appConfig',
     'components/visualizations/filter-panel/utils',
     'moment',
@@ -10,12 +10,23 @@ define(
     'utils/CsvUtils',
     'numeral'
   ],
-  function (ko, BemHelper, appConfig, filterPanelUtils, moment, d3, MomentAPI, CsvUtils, numeral) {
+  function (
+    ko,
+    Component,
+    appConfig,
+    filterPanelUtils,
+    moment,
+    d3,
+    MomentAPI,
+    CsvUtils,
+    numeral
+  ) {
 
-    class BaseCostUtilReport {
+    class BaseCostUtilReport extends Component {
 
-      constructor(componentName, params) {
+      constructor(params) {
         // Preserve context, because it can be lost during knockout handling
+        super(params);
         this.getFilterList = this.getFilterList.bind(this);
         this.loadData = this.loadData.bind(this);
         this.getSelectedFilterValues = this.getSelectedFilterValues.bind(this);
@@ -36,8 +47,6 @@ define(
 
         // Styling
 
-        const bemHelper = new BemHelper(componentName);
-        this.classes = bemHelper.run.bind(bemHelper);
         this.loading = ko.observable(true);
 
         // Tabs

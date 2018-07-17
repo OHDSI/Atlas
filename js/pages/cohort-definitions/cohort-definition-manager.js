@@ -17,11 +17,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'services/ConceptSetService',
 	'providers/Component',
 	'utils/commonUtils',
-
 	'cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
-	'cohortdefinitionviewer/expressionCartoonBinding',
+	'databindings/expressionCartoonBinding',
 	'cohortfeatures',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css',
@@ -553,6 +552,54 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}));
 			
 			this.selectedCriteria = ko.observable();
+
+			// preserve context to use in knockout bindings
+			this.delete = this.delete.bind(this);
+			this.save = this.save.bind(this);
+			this.close = this.close.bind(this);
+			this.copy = this.copy.bind(this);
+			this.isSourceRunning = this.isSourceRunning.bind(this);
+			this.isSourceStopping = this.isSourceStopping.bind(this);
+			this.showSql = this.showSql.bind(this);
+			this.getSourceInfo = this.getSourceInfo.bind(this);
+			this.getSourceId = this.getSourceId.bind(this);
+			this.generateCohort = this.generateCohort.bind(this);
+			this.cancelGenerate = this.delete.bind(this);
+			this.hasCDM = this.hasCDM.bind(this);
+			this.hasResults = this.hasResults.bind(this);
+			this.closeConceptSet = this.closeConceptSet.bind(this);
+			this.deleteConceptSet = this.deleteConceptSet.bind(this);
+			this.showSaveConceptSet = this.showSaveConceptSet.bind(this);
+			this.saveConceptSet = this.saveConceptSet.bind(this);
+			this.createConceptSet = this.createConceptSet.bind(this);
+			this.loadConceptSet = this.loadConceptSet.bind(this);
+			this.newConceptSet = this.newConceptSet.bind(this);
+			this.importConceptSet = this.importConceptSet.bind(this);
+			this.importFromRepository = this.importFromRepository.bind(this);
+			this.onConceptSetRepositoryImport = this.onConceptSetRepositoryImport.bind(this);
+			this.clearImportConceptSetJson = this.clearImportConceptSetJson.bind(this);
+			this.findConceptSet = this.findConceptSet.bind(this);
+			this.importConceptSetExpression = this.importConceptSetExpression.bind(this);
+			this.importConceptSetExpressionItems = this.importConceptSetExpressionItems.bind(this);
+			this.appendConcepts = this.appendConcepts.bind(this);
+			this.importConceptIdentifiers = this.importConceptIdentifiers.bind(this);
+			this.importSourceCodes = this.importSourceCodes.bind(this);
+			this.viewReport = this.viewReport.bind(this);
+			this.reload = this.reload.bind(this);
+			this.selectViewReport = this.selectViewReport.bind(this);
+			this.isActiveJob = this.isActiveJob.bind(this);
+			this.generateAnalyses = this.generateAnalyses.bind(this);
+			this.generateQuickAnalysis = this.generateQuickAnalysis.bind(this);
+			this.selectHealthcareAnalyses = this.selectHealthcareAnalyses.bind(this);
+			this.generateHealthcareAnalyses = this.generateHealthcareAnalyses.bind(this);
+			this.generateAllAnalyses = this.generateAllAnalyses.bind(this);
+			this.dispose = this.dispose.bind(this);
+			this.copyExpressionToClipboard = this.copyExpressionToClipboard.bind(this);			
+			this.copyIdentifierListToClipboard = this.copyIdentifierListToClipboard.bind(this);
+			this.copyIncludedConceptIdentifierListToClipboard = this.copyIncludedConceptIdentifierListToClipboard.bind(this);
+			this.copyTextViewToClipboard = this.copyTextViewToClipboard.bind(this);
+			this.copyCohortExpressionJSONToClipboard = this.copyCohortExpressionJSONToClipboard.bind(this);
+			this.copyCohortSQLToClipboard = this.copyCohortSQLToClipboard.bind(this);
 		}
 
 			// METHODS
@@ -843,7 +890,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			clearImportConceptSetJson () {
 				this.importConceptSetJson('');
-		};
+			};
 
 			findConceptSet () {
 				return this.model.currentCohortDefinition()

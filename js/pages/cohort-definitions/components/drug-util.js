@@ -2,13 +2,19 @@ define(
   [
     'knockout',
     'text!./drug-util.html',
+    './base-drug-util-report',
+    'utils/commonUtils',
     'appConfig',
-    'utils/BemHelper',
     'less!./drug-util.less',
     './drug-util-summary',
     './drug-util-detailed',
   ],
-  function (ko, view, appConfig, BemHelper) {
+  function (
+    ko,
+    view,
+    BaseDrugUtilReport,
+    commonUtils
+  ) {
 
     const componentName = 'cost-utilization-drug-util';
 
@@ -17,19 +23,13 @@ define(
       detailed: 'detailed',
     };
 
-    class DrugUtilReport {
+    class DrugUtilReport extends BaseDrugUtilReport {
 
       constructor(params) {
 
         this.onDrugSelect = this.onDrugSelect.bind(this);
         this.displaySummary = this.displaySummary.bind(this);
 
-        // Styling
-        const bemHelper = new BemHelper(componentName);
-        this.classes = bemHelper.run.bind(bemHelper);
-
-        // Input params
-        this.source = params.source;
         this.cohortId = params.cohortId;
         this.window = params.window;
 
@@ -52,12 +52,6 @@ define(
       }
     }
 
-    const component = {
-      viewModel: DrugUtilReport,
-      template: view
-    };
-
-    ko.components.register(componentName, component);
-    return component;
+    return commonUtils.build(componentName, DrugUtilReport, view);
   }
 );

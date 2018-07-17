@@ -3,20 +3,27 @@ define(
     'knockout',
     'text!./drug-util-detailed.html',
     './base-drug-util-report',
-    'appConfig',
-    'modules/cohortdefinition/services/CohortResultsService',
-    'modules/cohortdefinition/const',
+    'services/CohortResultsService',
+    'pages/cohort-definitions/const',
+    'utils/commonUtils',
     'components/visualizations/filter-panel/filter-panel',
     'less!./drug-util-detailed.less',
   ],
-  function (ko, view, BaseDrugUtilReport, appConfig, CohortResultsService, costUtilConst) {
+  function (
+    ko,
+    view,
+    BaseDrugUtilReport,
+    CohortResultsService,
+    costUtilConst,
+    commonUtils
+  ) {
 
     const componentName = 'cost-utilization-drug-detailed-util';
 
     class DrugUtilDetailedReport extends BaseDrugUtilReport {
 
       constructor(params) {
-        super(componentName, params);
+        super(params);
 
         this.drugConceptId = params.drugConceptId();
         this.displaySummary = params.displaySummary;
@@ -65,12 +72,6 @@ define(
       }
     }
 
-    const component = {
-      viewModel: DrugUtilDetailedReport,
-      template: view
-    };
-
-    ko.components.register(componentName, component);
-    return component;
+    return commonUtils.build(componentName, DrugUtilDetailedReport, view);
   }
 );

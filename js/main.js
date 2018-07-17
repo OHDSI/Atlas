@@ -20,7 +20,7 @@ requirejs.config({
 		},
 		{
 			name: "cohortdefinitionviewer",
-			location: "modules/cohortdefinitionviewer"
+			location: "components/cohort-definitions/cohortdefinitionviewer"
 		},
 		{
 			name: "circe",
@@ -120,7 +120,6 @@ requirejs.config({
 		"cohort-comparison-r-code": "components/cohort-comparison-r-code",
 		"cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
 		"user-bar": "components/user-bar",
-		"report-manager": "components/report-manager",
 		"ir-manager": "components/ir-manager",
 		"ir-browser": "components/ir-browser",
 		"faceted-datatable": "components/faceted-datatable",
@@ -141,8 +140,6 @@ requirejs.config({
 		"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
 		"appConfig": "config",
 		"home": "components/home",
-		"common": "components/datasources/app/common",
-		"reports": "components/datasources/app/reports",
 		"prism": "assets/prism",
 		"sptest": "sptest/sptest",
 		"sptest_smoking": "sptest/sptest_smoking",

@@ -28,8 +28,8 @@ define([
 
 			this.loading(true);
 
-			httpService.doGet(`${config.api.url}/cohortdefinition`)
-				.then((data) => this.reference(data))
+			httpService.doGet(`${config.api.url}cohortdefinition`)
+				.then(({ data }) => this.reference(data))
 				.finally(() => { this.loading(false) });
 
 

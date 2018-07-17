@@ -2,16 +2,25 @@ define(
   [
     'knockout',
     'text!./visit-util.html',
-    './base-report',
-    'modules/cohortdefinition/const',
-    'modules/cohortdefinition/services/CohortResultsService',
+    'pages/cohort-definitions/components/base-report',
+    'pages/cohort-definitions/const',
+    'services/CohortResultsService',
     'appConfig',
+    'utils/commonUtils',
     'components/visualizations/filter-panel/filter-panel',
-    'modules/cohortdefinition/components/view/reporting/cost-utilization/table-baseline-exposure/table-baseline-exposure',
+    'pages/cohort-definitions/components/table-baseline-exposure',
     'less!./visit-util.less',
     'components/visualizations/line-chart',
   ],
-  function (ko, view, BaseCostUtilReport, costUtilConst, CohortResultsService, appConfig) {
+  function (
+    ko,
+    view,
+    BaseCostUtilReport,
+    costUtilConst,
+    CohortResultsService,
+    appConfig,
+    commonUtils
+  ) {
 
     const componentName = 'cost-utilization-visit-util';
 
@@ -21,7 +30,7 @@ define(
     class VisitUtilReport extends BaseCostUtilReport {
 
       constructor(params) {
-        super(componentName, params);
+        super(params);
 
         this.setupVisitConceptOptions = this.setupVisitConceptOptions.bind(this);
         this.setupVisitTypeConceptOptions = this.setupVisitTypeConceptOptions.bind(this);
@@ -199,12 +208,6 @@ define(
       }
     }
 
-    const component = {
-      viewModel: VisitUtilReport,
-      template: view
-    };
-
-    ko.components.register(componentName, component);
-    return component;
+    return commonUtils.build(componentName, VisitUtilReport, view);
   }
 );
