@@ -1,4 +1,4 @@
-define(['knockout', 'cohortbuilder/options', 'cohortbuilder/InputTypes/Range', 'text!./VisitOccurrenceTemplate.html'], function (ko, options, Range, template) {
+define(['knockout','components/cohortbuilder/options','components/cohortbuilder/InputTypes/Range', 'text!./VisitOccurrenceTemplate.html'], function (ko, options, Range, template) {
 
 	function VisitOccurrenceViewModel(params) {
 		var self = this;

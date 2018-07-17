@@ -18,7 +18,7 @@ define(
         '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': (cohortDefinitionId, path) => {
           appModel.activePage(this.title);
           require([
-            'cohortbuilder/CohortDefinition',
+           'components/cohortbuilder/CohortDefinition',
             'components/atlas.cohort-editor',
             './cohort-definitions',
             './cohort-definition-manager',
@@ -48,7 +48,7 @@ define(
         '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': (cohortDefinitionId, conceptSetId, mode) => {
           appModel.activePage(this.title);
           require([
-            'cohortbuilder/CohortDefinition',
+           'components/cohortbuilder/CohortDefinition',
             'components/atlas.cohort-editor',
             './cohort-definitions',
             './cohort-definition-manager',

@@ -1,7 +1,7 @@
 define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 				'webapi/CohortDefinitionAPI', 'appConfig', 'assets/ohdsi.util',
 				'plp/PatientLevelPredictionAnalysis', 'plp/options',
-				'cohortbuilder/CohortExpression', 'vocabularyprovider',
+				'components/cohortbuilder/CohortExpression', 'vocabularyprovider',
 				'conceptsetbuilder/InputTypes/ConceptSet'],
 	function ($, ko, view, clipboard, cohortDefinitionAPI, config, ohdsiUtil,
 		PatientLevelPredictionAnalysis, options, CohortExpression, vocabularyAPI,

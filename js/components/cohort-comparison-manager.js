@@ -1,14 +1,42 @@
-define(['jquery', 'knockout', 'text!./cohort-comparison-manager.html', 'lodash', 'clipboard',
-				'webapi/CohortDefinitionAPI', 'appConfig', 'webapi/AuthAPI', 'assets/ohdsi.util',
-				'cohortcomparison/ComparativeCohortAnalysis', 'cohortbuilder/options',
-				'cohortbuilder/CohortExpression', 'vocabularyprovider',
-				'conceptsetbuilder/InputTypes/ConceptSet', 'atlas-state',
-				'webapi/ExecutionAPI',
-				'services/JobDetailsService',
-				'databindings/d3ChartBinding'],
-	function ($, ko, view, _, clipboard, cohortDefinitionAPI, config, authApi, ohdsiUtil,
-		ComparativeCohortAnalysis, options, CohortExpression, vocabularyAPI,
-		ConceptSet, sharedState, executionAPI, jobDetailsService) {
+define([
+	'jquery',
+	'knockout',
+	'text!./cohort-comparison-manager.html',
+	'lodash',
+	'clipboard',
+	'webapi/CohortDefinitionAPI',
+	'appConfig',
+	'webapi/AuthAPI',
+	'assets/ohdsi.util',
+	'components/cohortcomparison/ComparativeCohortAnalysis',
+	'components/cohortbuilder/options',
+	'components/cohortbuilder/CohortExpression',
+	'vocabularyprovider',
+	'conceptsetbuilder/InputTypes/ConceptSet',
+	'atlas-state',
+	'webapi/ExecutionAPI',
+	'services/JobDetailsService',
+	'databindings/d3ChartBinding'
+],
+	function (
+		$,
+		ko,
+		view,
+		_,
+		clipboard,
+		cohortDefinitionAPI,
+		config,
+		authApi,
+		ohdsiUtil,
+		ComparativeCohortAnalysis,
+		options,
+		CohortExpression,
+		vocabularyAPI,
+		ConceptSet,
+		sharedState,
+		executionAPI,
+		jobDetailsService
+	) {
 		function cohortComparisonManager(params) {
 
 			var DEBUG = true;

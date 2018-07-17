@@ -43,10 +43,6 @@ requirejs.config({
 			location: "modules/plp"
 		},
 		{
-			name: "cohortfeatures",
-			location: "modules/cohortfeatures"
-		},
-		{
 			name: "pages",
 			location: "pages",
 		},
@@ -125,7 +121,6 @@ requirejs.config({
 		"faceted-datatable": "components/faceted-datatable",
 		"profile-manager": "components/profile/profile-manager",
 		"explore-cohort": "components/explore-cohort",
-		"cohortcomparison": "modules/cohortcomparison",
 		"r-manager": "components/r-manager",
 		"negative-controls": "components/negative-controls",
 		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.4.1/dist/atlascharts.min",
@@ -133,7 +128,6 @@ requirejs.config({
 		"lodash": "assets/lodash.4.15.0.full",
 		"lscache": "assets/lscache.min",
 		"localStorageExtender": "assets/localStorageExtender",
-		"cohortbuilder": "modules/cohortbuilder",
 		"conceptsetbuilder": "modules/conceptsetbuilder",
 		"conceptpicker": "modules/conceptpicker",
 		"webapi": "modules/WebAPIProvider",

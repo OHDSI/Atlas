@@ -741,7 +741,7 @@ define([
 				}
 				self.currentView('loading');
 				var definitionPromise, infoPromise;
-				requirejs(['cohortbuilder/CohortDefinition'], function (CohortDefinition) {
+				requirejs(['components/cohortbuilder/CohortDefinition'], function (CohortDefinition) {
 					if (cohortDefinitionId == '0') {
 						var def = new CohortDefinition({
 							id: '0',

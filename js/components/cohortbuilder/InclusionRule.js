@@ -1,9 +1,9 @@
-define(['knockout','components/cohortbuilder/CriteriaGroup'], function(ko, CriteriaGroup) {
+define(function (require, exports) {
 
 	var ko = require('knockout');
 	var CriteriaGroup = require('components/cohortbuilder/CriteriaGroup');
 	
-	function StrataRule(data, conceptSets) {
+	function InclusionRule(data, conceptSets) {
 		
 		var self = this;
 		var data = data || {};
@@ -13,5 +13,5 @@ define(['knockout','components/cohortbuilder/CriteriaGroup'], function(ko, Crite
 		self.expression = new CriteriaGroup(data.expression, conceptSets);
 	}
 	
-	return StrataRule;
+	return InclusionRule;
 });

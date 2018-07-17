@@ -1,4 +1,4 @@
-define(['knockout', 'cohortbuilder/options', 'text!./CohortExpressionViewerTemplate.html'], 
+define(['knockout', 'components/cohortbuilder/options', 'text!./CohortExpressionViewerTemplate.html'], 
 			 function (ko, options, template) {
 		
 	function CohortExpressionEditorViewModel(params) {

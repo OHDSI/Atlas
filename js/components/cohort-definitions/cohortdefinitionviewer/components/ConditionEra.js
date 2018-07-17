@@ -1,4 +1,4 @@
-define(['knockout', 'cohortbuilder/options', 'cohortbuilder/InputTypes/Range', 'text!./ConditionEraTemplate.html'], function (ko, options, Range, template) {
+define(['knockout', 'components/cohortbuilder/options', 'components/cohortbuilder/InputTypes/Range', 'text!./ConditionEraTemplate.html'], function (ko, options, Range, template) {
 
 	function ConditionEraViewModel(params) {
 		

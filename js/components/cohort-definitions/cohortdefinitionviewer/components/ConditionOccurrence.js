@@ -1,4 +1,4 @@
-define(['knockout', 'cohortbuilder/options', 'cohortbuilder/InputTypes/Range', 'cohortbuilder/InputTypes/Text', 'text!./ConditionOccurrenceTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout', 'components/cohortbuilder/options', 'components/cohortbuilder/InputTypes/Range', 'components/cohortbuilder/InputTypes/Text', 'text!./ConditionOccurrenceTemplate.html'], function (ko, options, Range, Text, template) {
 
 	function ConditionOccurrenceViewModel(params) {
 

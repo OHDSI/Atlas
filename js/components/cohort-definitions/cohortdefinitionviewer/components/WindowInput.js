@@ -1,4 +1,4 @@
-define(['knockout', 'cohortbuilder/options', 'text!./WindowInputTemplate.html'], function (ko, options, template) {
+define(['knockout','components/cohortbuilder/options', 'text!./WindowInputTemplate.html'], function (ko, options, template) {
 
 	function WindowInputViewModel(params) {
 		var self = this;
