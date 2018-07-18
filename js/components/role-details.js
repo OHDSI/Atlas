@@ -51,6 +51,13 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'data
         self.canDelete = ko.pureComputed(function() { return self.isAuthenticated() && self.roleId() && authApi.isPermittedDeleteRole(self.roleId()); });
         self.canSave = ko.pureComputed(function() { return self.canEditRole() || self.canEditRoleUsers() || self.canEditRolePermissions(); });
 
+        self.areUsersSelected = ko.pureComputed(function() { return !!self.userItems().find(user => user.isRoleUser()); });
+        
+        self.selectAllUsers = () => self.userItems().forEach(user => user.isRoleUser(true));
+        self.deselectAllUsers = () => self.userItems().forEach(user => user.isRoleUser(false));
+        
+        self.checkboxTitle = '<span class="fa fa-check" data-bind="css: { selected: $component.areUsersSelected }, click: function(){$parent.areUsersSelected()?$parent.deselectAllUsers():$parent.selectAllUsers();}"></span>';
+        
         self.renderCheckbox = function (field, editable) {
             return editable
                 ? '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); } , css: { selected: ' + field + '}" class="fa fa-check"></span>'
