@@ -13,7 +13,7 @@ define(
   ],
   function (ko, view, BaseCostUtilReport, appConfig, BemHelper, config, costUtilConst, CohortResultsService) {
 
-    const DRUG_SOURCE_CONCEPT = 'drugSourceConcept';
+    const DRUG_SOURCE_TYPE = 'drugType';
 
     class BaseDrugUtilReport extends BaseCostUtilReport {
 
@@ -112,7 +112,7 @@ define(
           {
             type: 'select',
             label: 'Drug Source',
-            name: DRUG_SOURCE_CONCEPT,
+            name: DRUG_SOURCE_TYPE,
             options: ko.observableArray([]),
             selectedValue: ko.observable(null),
           },
@@ -120,7 +120,7 @@ define(
       }
 
       setupDrugSourceConceptOptions(conceptList) {
-        const filter = this.filterList.find(filter => filter.name === DRUG_SOURCE_CONCEPT);
+        const filter = this.filterList.find(filter => filter.name === DRUG_SOURCE_TYPE);
         filter.options([
           { label: 'All drug sources', value: null },
           ...BaseCostUtilReport.conceptsToOptions(conceptList)
