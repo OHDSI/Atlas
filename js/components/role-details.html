@@ -36,8 +36,9 @@
                         columnDefs: [
                                 { targets: 0, width: '80px' },
                         ],
+                        order: [[1, 'desc']],
                         columns: [
-                                { title: 'Included', class:'text-center', render: function() { return renderCheckbox('isRoleUser', $component.canEditRoleUsers); } },
+                                { title: $component.checkboxTitle, class:'text-center', render: function() { return renderCheckbox('isRoleUser', $component.canEditRoleUsers); }, orderable: false },
                                 { title: 'Login', data: 'login' }
                         ]
                 }

@@ -63,7 +63,13 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 				}
 				
 				const xssOptions = config.xssOptions;
-
+				binding.options.headerCallback = (thead, data) => {
+					$(thead).find('th').each((v, th) => {
+						ko.cleanNode(th);
+						ko.applyBindings(bindingContext.createChildContext(data), th);
+					});
+				};
+				
 				binding.options.columns = columns.map((column) => {
 					const originalRender = column.render;
 					const originalDataAccessor = column.data;
