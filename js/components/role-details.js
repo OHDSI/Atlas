@@ -56,7 +56,7 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'data
         self.selectAllUsers = () => self.userItems().forEach(user => user.isRoleUser(true));
         self.deselectAllUsers = () => self.userItems().forEach(user => user.isRoleUser(false));
         
-        self.checkboxTitle = '<span class="fa fa-check" data-bind="css: { selected: $component.areUsersSelected }, click: function(){$parent.areUsersSelected()?$parent.deselectAllUsers():$parent.selectAllUsers();}"></span>';
+        self.checkboxTitle = '<span class="fa fa-check" data-bind="css: { selected: $component.areUsersSelected }, click: function(){$parent.areUsersSelected()?$parent.deselectAllUsers():$parent.selectAllUsers();}"></span> Included';
         
         self.renderCheckbox = function (field, editable) {
             return editable
