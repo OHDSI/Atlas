@@ -1,9 +1,12 @@
 define(['knockout', 'text!components/cohort-definitions/checks/conceptset-warnings.html',
     'webapi/CohortDefinitionAPI',
     './const',
-    'css!./style.css'
+    './utils',
+    'databindings',
+    'faceted-datatable',
+    'css!./style.css',
   ],
-  function (ko, view, cohortDefinitionApi, consts) {
+  function (ko, view, cohortDefinitionApi, consts, utils) {
 
     function conceptSetWarnings(params){
       var self = this;
@@ -14,19 +17,31 @@ define(['knockout', 'text!components/cohort-definitions/checks/conceptset-warnin
       self.canDiagnose = params.canDiagnose || ko.observable(false);
       self.warnings = ko.observableArray();
       self.loading = ko.observable(false);
-
-      self.renderSeverity = function(value){
-        var icon = consts.WarningSeverity[value];
-        return icon ? '<i class="fa ' + icon + '"></i>' : "";
+      self.warningsColumns = [
+        { data: 'severity', title: 'Severity', width: '100px', render: utils.renderSeverity, },
+        { data: 'message', title: 'Message', width: '100%', render: utils.renderMessage, }
+      ];
+      self.warningsOptions = {
+        Facets: [{
+          'caption': 'Severity',
+          'binding': o => o.severity,
+          defaultFacets: [
+            'WARNING', 'CRITICAL'
+          ],
+        }],
       };
 
-      self.renderMessage = function(value, c, data) {
-        if ((data.type === 'ConceptSetWarning' && data.conceptSetId) ||
-          (data.type === 'IncompleteRuleWarning' && data.ruleName)) {
-          return '<span class="warning-message">' + value +
-            '</span><a href="#" class="btn-fix">Fix It</a>';
-        } else {
-          return value;
+      self.drawCallback = function(settings) {
+        if (settings.aoData) {
+          const api = this.api();
+          const rows = this.api().rows({page: 'current'});
+          const data = rows.data();
+          rows.nodes().each((element, index) => {
+            const rowData = data[index];
+            const context = ko.contextFor(element);
+            ko.cleanNode(element);
+            ko.applyBindings(context, element);
+          });
         }
       };
 
