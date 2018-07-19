@@ -635,7 +635,7 @@ define(['knockout',
 								// Take the list of drugs from the concept set
 								conceptIdsForLabels = self.conceptIds(); 
 							}
-							evidenceAPI.getDrugLabelExists("CEM", conceptIdsForLabels).then(function (results) {
+							evidenceAPI.getDrugLabelExists(service.sourceKey(), conceptIdsForLabels).then(function (results) {
 								var negativeControls = self.addDrugLabelToResults(results, self.negativeControls(), self.targetDomainId());
 								self.negativeControls(negativeControls);
 								self.drugLabelExists(results);								

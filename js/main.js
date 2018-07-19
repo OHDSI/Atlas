@@ -140,7 +140,7 @@ require([
 						}
 					}
 
-					if (daimon.daimonType == 'Evidence') {
+					if (daimon.daimonType == 'CEM') {
 						if (daimon.priority >= evidencePriority) {
 							evidencePriority = daimon.priority;
 							sharedState.evidenceUrl(source.evidenceUrl);
