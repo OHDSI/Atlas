@@ -13,6 +13,7 @@ define(['knockout', 'text!components/cohort-definitions/checks/conceptset-warnin
       self.model = params.model;
       self.cohortDefinitionId = self.model.currentCohortDefinition().id || ko.observable(-1);
       self.count = params.count || ko.observable();
+      self.infoCount = params.infoCount || ko.observable();
       self.onFixCallback = params.onFixCallback || function() {};
       self.canDiagnose = params.canDiagnose || ko.observable(false);
       self.warnings = ko.observableArray();
@@ -53,6 +54,7 @@ define(['knockout', 'text!components/cohort-definitions/checks/conceptset-warnin
 
       function showWarnings(result){
         self.warnings(result.warnings);
+        self.infoCount(result.warnings.filter(w => w.severity === consts.WarningSeverity.INFO).length);
         self.count(result.warnings.length);
         self.loading(false);
       }

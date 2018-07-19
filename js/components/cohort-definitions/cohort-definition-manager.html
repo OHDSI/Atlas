@@ -553,7 +553,7 @@
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() === 'warnings' }" class="tab-pane">
 				<div class="paddedWrapper">
-					<conceptset-warnings params="{model: $component.model, count: $component.warningCount, canDiagnose: $component.canSave, onFixCallback: fixConceptSet}"></conceptset-warnings>
+					<conceptset-warnings params="{model: $component.model, count: $component.warningCount, infoCount: $component.infoCount, canDiagnose: $component.canSave, onFixCallback: fixConceptSet}"></conceptset-warnings>
 				</div>
 			</div>
 		</div>

@@ -1,7 +1,7 @@
 define(['knockout', './const'], function(ko, consts){
 
   function renderSeverity(data){
-    var icon = consts.WarningSeverity[data];
+    var icon = consts.WarningSeverityIcon[data];
     return icon ? '<i class="fa ' + icon + '"></i>' : "";
   }
 
