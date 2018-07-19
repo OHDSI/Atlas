@@ -1551,6 +1551,11 @@ li.current-asset {
   color: #000;
 }*/
 
+.configureSourceTable button.connection-check-button {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .configureSourceTable i.fa.fa-spinner.fa-spin {
   font-size: 14px;
   color: #FFF;

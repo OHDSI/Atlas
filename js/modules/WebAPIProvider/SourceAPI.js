@@ -7,6 +7,7 @@ define(function (require, exports) {
 	var authApi = require('webapi/AuthAPI');
   var lscache = require('lscache');
   var ko = require('knockout');
+	const httpService = require('services/http');
 
 	var sources;
 
@@ -198,11 +199,12 @@ define(function (require, exports) {
   }
 
 	function checkSourceConnection(sourceKey) {
-		return $.ajax({
-			url: config.webAPIRoot + 'source/connection/' + sourceKey,
-			method: 'GET',
-			error: authApi.handleAccessDenied,
-		});
+  	return httpService.doGet(config.webAPIRoot + 'source/connection/' + sourceKey)
+		// return $.ajax({
+			// url: config.webAPIRoot + 'source/connection/' + sourceKey,
+			// method: 'GET',
+			// error: authApi.handleAccessDenied,
+		// });
 	}
 
 	var api = {
