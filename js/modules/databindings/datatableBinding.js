@@ -63,12 +63,6 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 				}
 				
 				const xssOptions = config.xssOptions;
-				binding.options.headerCallback = (thead, data) => {
-					$(thead).find('th').each((v, th) => {
-						ko.cleanNode(th);
-						ko.applyBindings(bindingContext.createChildContext(data), th);
-					});
-				};
 				
 				binding.options.columns = columns.map((column) => {
 					const originalRender = column.render;
@@ -88,6 +82,11 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 					});
 				});
 
+				// For case of complex header which uses data-bindings (https://datatables.net/examples/advanced_init/complex_header.html)
+				if ($(element).find('thead')[0]) {
+					ko.applyBindings(bindingContext.createChildContext(), $(element).find('thead')[0]);
+				}
+				
 				$(element).DataTable(binding.options);
 				
 				if (binding.api != null)

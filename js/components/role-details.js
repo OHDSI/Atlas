@@ -1,4 +1,4 @@
-define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'databindings', 'components/ac-access-denied'], function (ko, view, config, ohdsiUtils) {
+define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'databindings', 'components/ac-access-denied', 'less!./role-details.less',], function (ko, view, config, ohdsiUtils) {
     function roleDetails(params) {
         var self = this;
         var serviceUrl = config.api.url;
@@ -55,8 +55,6 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'data
         
         self.selectAllUsers = () => self.userItems().forEach(user => user.isRoleUser(true));
         self.deselectAllUsers = () => self.userItems().forEach(user => user.isRoleUser(false));
-        
-        self.checkboxTitle = '<span class="fa fa-check" data-bind="css: { selected: $component.areUsersSelected }, click: function(){$parent.areUsersSelected()?$parent.deselectAllUsers():$parent.selectAllUsers();}"></span> Included';
         
         self.renderCheckbox = function (field, editable) {
             return editable
