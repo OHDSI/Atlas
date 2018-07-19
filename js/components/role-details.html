@@ -42,7 +42,7 @@
                 <thead>
                 <tr role="row">
                     <th class="roles-table__included-th text-center sorting_disabled" rowspan="1" colspan="1">
-                        <span class="fa fa-check" data-bind="css: { selected: $component.areUsersSelected }, click: function(){$parent.areUsersSelected()?$parent.deselectAllUsers():$parent.selectAllUsers();}"></span>
+                        <span class="fa fa-check" data-bind="css: { selected: $component.areUsersSelected }, click: function(){$component.areUsersSelected()?$component.deselectAllUsers():$component.selectAllUsers();}"></span>
                         Included
                     </th>
                     <th tabindex="0" rowspan="1" colspan="1">Login</th>
