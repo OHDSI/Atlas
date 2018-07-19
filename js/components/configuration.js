@@ -95,7 +95,38 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
       updateSourceDaimonPriority(selectedSource.sourceKey, 'Results');
       return true;
     };
-	}
+    
+    self.checkSourceConnection = function(source) {
+      sourceApi.checkSourceConnection(source.sourceKey).then(
+        () => source.connectionCheck(sourceApi.connectionCheckState.success), 
+        () => source.connectionCheck(sourceApi.connectionCheckState.failed)
+      );
+      source.connectionCheck(sourceApi.connectionCheckState.checking);
+    };
+    
+    self.getCheckButtonStyles = function(source) {
+      let iconClass = 'fa-caret-right';
+      let buttonClass = 'btn-primary';
+      switch(source.connectionCheck()) {
+        case sourceApi.connectionCheckState.success:
+          buttonClass = 'btn-success';
+          iconClass = 'fa-check-square';
+          break;
+        case sourceApi.connectionCheckState.failed:
+          buttonClass = 'btn-danger';
+          iconClass = 'fa-exclamation-circle';
+          break;
+        case sourceApi.connectionCheckState.checking:
+          buttonClass = 'btn-warning';
+          iconClass = 'fa-circle-o-notch fa-spin';
+          break;
+      }
+      return {
+        iconClass,
+        buttonClass,
+      }
+    }
+  }
 
 
 	var component = {
