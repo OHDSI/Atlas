@@ -84,8 +84,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	class CohortDefinitionManager extends Component {
 		constructor(params) {
 			super(params);
-			var pollTimeout = null;
-			var authApi = params.model.authApi;
+			this.pollTimeout = null;
+			this.authApi = params.model.authApi;
 			this.config = config;
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.model = params.model;
@@ -100,20 +100,20 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 			});
 			this.isAuthenticated = ko.pureComputed(() => {
-				return authApi.isAuthenticated();
+				return this.authApi.isAuthenticated();
 			});
 			var isNew = ko.pureComputed(() => {
 				return !this.model.currentCohortDefinition() || (this.model.currentCohortDefinition().id() == 0);
 			});
 			this.canEdit = this.model.canEditCurrentCohortDefinition;
 			this.canCopy = ko.pureComputed(() => {
-				return !isNew() && (this.isAuthenticated() && authApi.isPermittedCopyCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled);
+				return !isNew() && (this.isAuthenticated() && this.authApi.isPermittedCopyCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled);
 			});
 			this.canDelete = ko.pureComputed(() => {
 				if (isNew()) {
 					return false;
 				}
-				return ((this.isAuthenticated() && authApi.isPermittedDeleteCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled));
+				return ((this.isAuthenticated() && this.authApi.isPermittedDeleteCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled));
 			});
 			this.hasAccess = ko.pureComputed(() => {
 				if (!config.userAuthenticationEnabled) {
@@ -123,10 +123,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					return false;
 				}
 				if (isNew()) {
-					return authApi.isPermittedCreateCohort();
+					return this.authApi.isPermittedCreateCohort();
 				}
 
-				return authApi.isPermittedReadCohort(this.model.currentCohortDefinition().id());
+				return this.authApi.isPermittedReadCohort(this.model.currentCohortDefinition().id());
 			});
 		
 			this.hasAccessToGenerate = (sourceKey) => {
@@ -134,14 +134,14 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					return false;
 				}
 
-				return authApi.isPermittedGenerateCohort(this.model.currentCohortDefinition().id(), sourceKey);
+				return this.authApi.isPermittedGenerateCohort(this.model.currentCohortDefinition().id(), sourceKey);
 			}
 			this.hasAccessToReadCohortReport = (sourceKey) => {
 				if (isNew()) {
 					return false;
 				}
 
-				return this.isAuthenticated() && authApi.isPermittedReadCohortReport(this.model.currentCohortDefinition().id(), sourceKey);
+				return this.isAuthenticated() && this.authApi.isPermittedReadCohortReport(this.model.currentCohortDefinition().id(), sourceKey);
 			}
 			if (!this.hasAccess()) return;
 
@@ -354,8 +354,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.isSourceStopping = (source) => this.stopping[source.sourceKey];
 
 			this.pollForInfo = () => {
-				if (pollTimeout)
-					clearTimeout(pollTimeout);
+				if (this.pollTimeout)
+					clearTimeout(this.pollTimeout);
 
 				var id = pageModel.currentCohortDefinition().id();
 					cohortDefinitionAPI.getInfo(id).then((infoList) => {
@@ -400,7 +400,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					});
 
 					if (hasPending) {
-							pollTimeout = setTimeout(() => {
+							this.pollTimeout = setTimeout(() => {
 								this.pollForInfo();
 						}, 1000);
 					}
@@ -414,7 +414,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			});
 			
 			this.canCreateConceptSet = ko.computed( () => {
-				return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+				return ((this.authApi.isAuthenticated() && this.authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 			});
 			
 			this.cohortDefinitionLink = ko.computed(() => {
@@ -608,7 +608,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				if (!confirm("Delete cohort definition? Warning: deletion can not be undone!"))
 					return;
 
-				clearTimeout(pollTimeout);
+				clearTimeout(this.pollTimeout);
 
 				// reset view after save
 					cohortDefinitionAPI.deleteCohortDefinition(this.model.currentCohortDefinition().id()).then( (result) => {
@@ -618,7 +618,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			save () {
-				clearTimeout(pollTimeout);
+				clearTimeout(this.pollTimeout);
 					this.model.clearConceptSet();
 
 				// If we are saving a new cohort definition (id ==0) then clear
@@ -660,7 +660,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			copy () {
-				clearTimeout(pollTimeout);
+				clearTimeout(this.pollTimeout);
 
 				// reset view after save
 					cohortDefinitionAPI.copyCohortDefinition(this.model.currentCohortDefinition().id()).then((result) => {
@@ -777,7 +777,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				});
 
 				$.ajax(route, {
-					error: authApi.handleAccessDenied,
+					error: this.authApi.handleAccessDenied,
 						success:  (data) => {
 						job.status(data.status);
 						sharedState.jobListing.queue(job);
