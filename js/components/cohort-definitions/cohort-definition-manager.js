@@ -269,7 +269,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 		self.ancestors = ko.observableArray();
 		self.ancestorsModalIsShown = ko.observable(false);
-		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler(self);
+		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
+			includedConcepts: self.model.includedConcepts,
+			ancestors: self.ancestors,
+			ancestorsModalIsShown: self.ancestorsModalIsShown,
+		});
 		self.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ ...self, searchConceptsColumns: self.includedConceptsColumns });
 		
 		self.includedConceptsOptions = {

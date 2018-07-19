@@ -258,7 +258,16 @@ define(function (require, exports) {
 		return getComparedConceptSetPromise;
 	}
 
-	var api = {
+  function lookupIdentifiers(identifiers) {
+    return $.ajax({
+      url: sharedState.vocabularyUrl() + 'lookup/identifiers',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(identifiers),
+    });
+  }
+
+ 	var api = {
 		loaded: loadedPromise,
 		search: search,
 		getDomains: getDomains,
@@ -272,7 +281,8 @@ define(function (require, exports) {
 		getConceptSetExpressionSQL: getConceptSetExpressionSQL,
 		optimizeConceptSet: optimizeConceptSet,
 		compareConceptSet: compareConceptSet,
-		loadDensity: loadDensity
+		loadDensity: loadDensity,
+		lookupIdentifiers,
 	}
 
 	return api;

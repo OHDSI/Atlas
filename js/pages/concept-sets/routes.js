@@ -9,7 +9,6 @@ define(
               model: appModel
             };
             appModel.loadConceptSet(conceptSetId, 'conceptset-manager', 'repository', mode);
-            appModel.resolveConceptSetExpression();
           });
         },
         '/conceptsets': () => {

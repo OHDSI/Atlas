@@ -2120,3 +2120,9 @@ div#wrapper_ohdsi a {
   overflow-y: scroll;
   flex-grow: 1;
 }
+
+.conceptset-processing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}

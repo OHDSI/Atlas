@@ -204,6 +204,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		'vocabularyprovider',
 		'services/http',
 		'webapi/ExecutionAPI',
+		'webapi/ConceptSetAPI',
 		'databindings',
 		'director',
 		'localStorageExtender',
@@ -223,7 +224,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			sharedState,
 			vocabAPI,
 			httpService,
-			executionAPI
+			executionAPI,
+			conceptSetApi,
 		) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
@@ -314,35 +316,20 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 		});
 
-		pageModel.loadAncestors = function(ancestors, descendants) {
-			return $.ajax({
-				url: sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors',
-				method: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify({
-					ancestors: ancestors,
-					descendants: descendants
-				})
-			});
-		};
+		pageModel.loadAncestors = conceptSetApi.loadAncestors;
 		
 		pageModel.loadAndApplyAncestors = function(data) {
 			const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
-			const ids = [];
-			$.each(data, (i, element ) => {
-				if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
-					ids.push(element.CONCEPT_ID);
-				}
-			});
+			const ids = data.filter(e => _.isEmpty(e.ANCESTORS) && sharedState.selectedConceptsIndex[e.CONCEPT_ID] !== 1)
+				.map(e => e.CONCEPT_ID);
 			let resultPromise = $.Deferred();
 			if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
 				pageModel.loadAncestors(selectedConceptIds, ids).then(ancestors => {
 					const map = pageModel.includedConceptsMap();
-					$.each(data, (j, line) => {
-						const ancArray = ancestors[line.CONCEPT_ID];
-						if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
-							line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
-						}
+					data.filter(line => !_.isEmpty(ancestors[line.CONCEPT_ID]) && _.isEmpty(line.ANCESTORS))
+						.forEach(line => {
+              const ancArray = ancestors[line.CONCEPT_ID];
+              line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
 					});
 					resultPromise.resolve();
 				});
@@ -356,13 +343,9 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			pageModel.loadingIncluded(true);
 			var includedPromise = $.Deferred();
 
-			$.ajax({
-				url: sharedState.vocabularyUrl() + 'lookup/identifiers',
-				method: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify(identifiers ||pageModel.conceptSetInclusionIdentifiers()),
-				success: function (data) {
-					var densityPromise = vocabAPI.loadDensity(data);
+			vocabAPI.lookupIdentifiers(identifiers || pageModel.conceptSetInclusionIdentifiers())
+				.then(data => {
+          var densityPromise = vocabAPI.loadDensity(data);
 
           $.when(densityPromise)
             .done(function () {
@@ -370,17 +353,20 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
               includedPromise.resolve();
               pageModel.loadAndApplyAncestors(pageModel.includedConcepts());
               pageModel.loadingIncluded(false);
-              const map = data.reduce((result, item) => {
-                result[item.CONCEPT_ID] = item;
-                return result;
-              }, {});
-              pageModel.includedConceptsMap(map);
+              pageModel.setIncludedConceptsMap(data);
             });
-        }
-      });
+        });
 
       return includedPromise;
     }
+
+    pageModel.setIncludedConceptsMap = function(data) {
+      const map = data.reduce((result, item) => {
+        result[item.CONCEPT_ID] = item;
+        return result;
+      }, {});
+      pageModel.includedConceptsMap(map);
+		};
 		
 		pageModel.loadSourcecodes = function () {
 			pageModel.loadingSourcecodes(true);
@@ -392,16 +378,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				identifiers.push(concepts[i].CONCEPT_ID);
 			}
 
-			return $.ajax({
-				url: sharedState.vocabularyUrl() + 'lookup/mapped',
-				method: 'POST',
-				data: JSON.stringify(identifiers),
-				contentType: 'application/json',
-				success: function (sourcecodes) {
-					pageModel.includedSourcecodes(sourcecodes);
-					pageModel.loadingSourcecodes(false);
-				}
-			});
+			return vocabAPI.loadSourceCodes(identifiers);
 		}
 
 		function loadIncluded() {

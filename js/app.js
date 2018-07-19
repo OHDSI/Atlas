@@ -5,6 +5,7 @@ define([
 	'appConfig',
 	'webapi/AuthAPI',
 	'webapi/RoleAPI',
+	'webapi/ConceptSetAPI',
 	'atlas-state',
 	'querystring',
 	'd3',
@@ -24,6 +25,7 @@ define([
 		config,
 		authApi,
 		roleApi,
+		conceptSetApi,
 		sharedState,
 		querystring,
 		d3,
@@ -276,7 +278,8 @@ define([
 			}, {
 				title: 'Standard Concept Caption',
 				data: 'STANDARD_CONCEPT_CAPTION',
-				visible: false
+				visible: false,
+        searchable: false,
 			}, {
 				title: 'Domain',
 				data: 'DOMAIN_ID'
@@ -289,22 +292,27 @@ define([
 					'caption': 'Vocabulary',
 					'binding': function (o) {
 						return o.VOCABULARY_ID;
-					}
+					},
+					field: 'VOCABULARY_ID',
 				}, {
 					'caption': 'Invalid Reason',
 					'binding': function (o) {
 						return o.INVALID_REASON_CAPTION;
-					}
+					},
+					field: 'INVALID_REASON_CAPTION',
+					computed: true,
 				}, {
 					'caption': 'Class',
 					'binding': function (o) {
 						return o.CONCEPT_CLASS_ID;
-					}
+					},
+					field: 'CONCEPT_CLASS_ID',
 				}, {
 					'caption': 'Domain',
 					'binding': function (o) {
 						return o.DOMAIN_ID;
-					}
+					},
+					field: 'DOMAIN_ID',
 				}]
 			};
 			self.metatrix = {
@@ -601,30 +609,16 @@ define([
 				var conceptSetExpression = '{"items" :' + ko.toJSON(sharedState.selectedConcepts()) + '}';
 				var highlightedJson = self.syntaxHighlight(conceptSetExpression);
 				self.currentConceptSetExpressionJson(highlightedJson);
-				var conceptIdentifierList = [];
-				for (var i = 0; i < sharedState.selectedConcepts()
-					.length; i++) {
-					conceptIdentifierList.push(sharedState.selectedConcepts()[i].concept.CONCEPT_ID);
-				}
+				const conceptIdentifierList = self.getConceptIdentifierList();
 				self.currentConceptIdentifierList(conceptIdentifierList.join(','));
-				var resolvingPromise = $.ajax({
-					url: sharedState.vocabularyUrl() + 'resolveConceptSetExpression',
-					data: conceptSetExpression,
-					method: 'POST',
-					contentType: 'application/json',
-					success: function (info) {
-						var identifiers = info;
-						self.conceptSetInclusionIdentifiers(info);
-						self.currentIncludedConceptIdentifierList(info.join(','));
-						self.conceptSetInclusionCount(info.length);
-						self.resolvingConceptSetExpression(false);
-					},
-					error: function (err) {
-						self.resolvingConceptSetExpression(false);
-						document.location = '#/configure';
-					}
-				});
-				return resolvingPromise;
+				const callback = () => self.resolvingConceptSetExpression(false);
+				return conceptSetApi.resolveConceptSetExpression(conceptSetExpression)
+					.then(info => {
+            self.conceptSetInclusionIdentifiers(info);
+            self.currentIncludedConceptIdentifierList(info.join(','));
+            self.conceptSetInclusionCount(info.length);
+            callback();
+					}, callback);
 			};
 			self.resolveConceptSetExpressionSimple = function (expression, success) {
 				var resolvingPromise = $.ajax({
@@ -646,6 +640,38 @@ define([
 				});
 				return resolvingPromise;
 			};
+			self.getConceptIdentifierList = function() {
+        return sharedState.selectedConcepts().map(item => item.concept.CONCEPT_ID);
+      };
+			self.resolveInclusionConceptCount = function(conceptSetId) {
+        if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId) {
+			    return $.Deferred().resolve();
+        }
+			  self.resolvingConceptSetExpression(true);
+        const conceptSetExpression = {items: sharedState.selectedConcepts(),};
+			  return conceptSetApi.includedConceptSetCount(ko.toJSON(conceptSetExpression))
+          .then(count => {
+            self.resolvingConceptSetExpression(false);
+            self.conceptSetInclusionCount(count);
+           }, () => {
+            self.resolvingConceptSetExpression(false);
+            document.location = '#/configure';
+          });
+      };
+			self.resolveIncludedConcepts = function(conceptSetId) {
+        if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId && self.conceptSetInclusionIdentifiers().length > 0) {
+          return $.Deferred().resolve();
+        }
+			  self.resolvingConceptSetExpression(true);
+        self.currentConceptIdentifierList(self.getConceptIdentifierList().join(','));
+        const conceptSetExpression = {items: sharedState.selectedConcepts(),};
+        return conceptSetApi.resolveConceptSetExpression(conceptSetExpression)
+          .then(info => {
+            self.conceptSetInclusionIdentifiers(info);
+            self.currentIncludedConceptIdentifierList(info.join(','));
+            self.resolvingConceptSetExpression(false);
+          }, () => self.resolvingConceptSetExpression(false));
+      };
 			self.renderCheckbox = function (field) {
 				if (self.canEditCurrentConceptSet()) {
 					return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); pageModel.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
@@ -945,35 +971,24 @@ define([
 				// don't load if it is already loaded or a new concept set
 				if (self.currentConceptSet() && self.currentConceptSet()
 					.id == conceptSetId) {
-					self.currentConceptSetMode(mode);
-					self.currentView(viewToShow);
+          self.currentView(viewToShow);
+          self.currentConceptSetMode(mode);
 					return;
 				}
 				self.currentView('loading');
-				$.ajax({
-					url: config.api.url + 'conceptset/' + conceptSetId,
-					method: 'GET',
-					contentType: 'application/json',
-					error: self.authApi.handleAccessDenied,
-					success: function (conceptset) {
-						$.ajax({
-							url: config.api.url + 'conceptset/' + conceptSetId + '/expression',
-							method: 'GET',
-							contentType: 'application/json',
-							error: self.authApi.handleAccessDenied,
-							success: function (expression) {
-								self.setConceptSet(conceptset, expression.items);
-								self.currentView(viewToShow);
-								var resolvingPromise = self.resolveConceptSetExpression();
-								$.when(resolvingPromise)
-									.done(function () {
-										self.currentConceptSetMode(mode);
-										$('#conceptSetLoadDialog')
-											.modal('hide');
-									});
-							}
-						});
-					}
+				const getConceptSetPromise = conceptSetApi.getConceptSet(conceptSetId);
+				const getExpressionPromise = conceptSetApi.getConceptSetExpression(conceptSetId);
+				$.when(getConceptSetPromise, getExpressionPromise).done((conceptSet, expression) => {
+					self.setConceptSet(conceptSet[0], expression[0].items);
+					self.currentView(viewToShow);
+          var resolvingPromise = self.resolveConceptSetExpression();
+          $.when(resolvingPromise)
+            .done(function () {
+            	self.resolveInclusionConceptCount(conceptSetId);
+              self.currentConceptSetMode(mode);
+              $('#conceptSetLoadDialog')
+                .modal('hide');
+            });
 				});
 			}
 

@@ -51,8 +51,10 @@
 
   <div class="loading" data-bind="if:model.loadingSourcecodes() || model.loadingIncluded">loading</div>
 
-  <div data-bind="visible: model.currentConceptSetMode() == 'included' && !model.loadingIncluded()">
-    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: model.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
+  <div data-bind="if: model.currentConceptSetMode() == 'included'">
+    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, facetReference: $component.loadIncludedFacets,
+        filterCallback: $component.applyIncludedFilter, drawCallback: $component.includedDrawCallback, rowCallback: model.contextSensitiveLinkColor, serverSide: true,
+        ajax: $component.loadIncludedConcepts, processing: true, language: $component.tableLanguage, classes: $component.tableClasses }"></faceted-datatable>
     <div class="linkLegend">
       <div class="linkLegendItem">
         <div class="swatch standard">
@@ -73,8 +75,9 @@
     <div class="clear"></div>
   </div>
 
-  <div data-bind="visible: model.currentConceptSetMode() == 'sourcecodes' && !model.loadingSourcecodes() && !model.loadingIncluded()">
-    <faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
+  <div data-bind="if: model.currentConceptSetMode() == 'sourcecodes'">
+    <faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, facetReference: $component.loadSourceCodesFacets,
+      filterCallback: $component.applySourceCodesFilter, serverSide: true, ajax: $component.loadSourceCodes, processing: true, language: $component.tableLanguage, classes: $component.tableClasses}"></faceted-datatable>
   </div>
 
   <div data-bind="visible: model.currentConceptSetMode() == 'details'">

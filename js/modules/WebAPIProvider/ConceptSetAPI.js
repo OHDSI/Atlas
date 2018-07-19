@@ -4,6 +4,7 @@ define(function (require, exports) {
 	var ko = require('knockout');
 	var config = require('appConfig');
 	var authApi = require('webapi/AuthAPI');
+	var sharedState = require('atlas-state')
 
 	function getGenerationInfo(conceptSetId) {
 		var infoPromise = $.ajax({
@@ -67,7 +68,57 @@ define(function (require, exports) {
 		});
 		return promise;
   }
-    
+
+  function getConceptSetExpression(conceptSetId) {
+		return $.ajax({
+			url: config.webAPIRoot + 'conceptset/' + conceptSetId + '/expression',
+			method: 'GET',
+      contentType: 'application/json',
+      error: authApi.handleAccessDenied,
+		});
+	}
+
+  function resolveConceptSetExpression(conceptSetExpression, page) {
+    return $.ajax({
+      url: sharedState.vocabularyUrl() + 'resolveConceptSetExpression' + (page ? 'Page' : ''),
+      data: conceptSetExpression,
+      method: 'POST',
+      contentType: 'application/json',
+      error: authApi.handleAccessDenied,
+    });
+	}
+
+  function includedConceptSetCount(expression) {
+		return $.ajax({
+      url: sharedState.vocabularyUrl() + 'included-concepts/count',
+      data: expression,
+      method: 'POST',
+      contentType: 'application/json',
+			error: authApi.handleAccessDenied,
+		});
+	}
+
+  function loadAncestors(ancestors, descendants) {
+    return $.ajax({
+      url: sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        ancestors: ancestors,
+        descendants: descendants
+      })
+    });
+  }
+
+  function loadFacets(expression, url) {
+		return $.ajax({
+			url: sharedState.vocabularyUrl() +  (url || 'included-concepts/facets'),
+      method: 'POST',
+			contentType: 'application/json',
+      data: expression,
+		});
+	}
+
   var api = {
 		getConceptSet: getConceptSet,
 		getGenerationInfo: getGenerationInfo,
@@ -75,6 +126,11 @@ define(function (require, exports) {
 		exists: exists,
 		saveConceptSet,
 		saveConceptSetItems,
+		includedConceptSetCount,
+    getConceptSetExpression,
+    resolveConceptSetExpression,
+		loadAncestors,
+		loadFacets,
 	};
 
 	return api;

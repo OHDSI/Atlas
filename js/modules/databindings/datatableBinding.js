@@ -18,6 +18,10 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 		return selectedData;
 	}
 
+	function _ajaxReload(element, callback, resetPaging) {
+		$(element).DataTable().ajax.reload(callback || null, resetPaging || true);
+	}
+
   function isUrlAbsolute(url) {
     return (url.indexOf('://') > 0 || url.indexOf('//') === 0);
   }
@@ -88,7 +92,8 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 				{
 					// expose datatable API to context's api binding.
 					binding.api({
-						getSelectedData: function() { return _getSelectedData(element);}
+						getSelectedData: function() { return _getSelectedData(element);},
+						ajaxReload: (callback, resetPaging) => _ajaxReload(element, callback, resetPaging),
 					});
 				}
 			}
