@@ -1554,6 +1554,7 @@ li.current-asset {
 .configureSourceTable button.connection-check-button {
   padding-top: 0;
   padding-bottom: 0;
+  margin-top: 2px;
 }
 
 .configureSourceTable i.fa.fa-spinner.fa-spin {
