@@ -4,7 +4,7 @@ define(
       return {        
         '/iranalysis': () => {
           appModel.activePage(this.title);
-          require(['ir-browser'], function () {
+          require(['./ir-browser'], function () {
             appModel.componentParams = {
               model: appModel
             };
@@ -13,7 +13,7 @@ define(
         },
         '/iranalysis/new': (analysisId) => {
           appModel.activePage(this.title);
-          require(['ir-manager'], function () {
+          require(['./ir-manager'], function () {
             appModel.selectedIRAnalysisId(null);
             appModel.componentParams = {
               model: appModel
@@ -28,7 +28,7 @@ define(
           if (path.length > 0 && path[0] != "") {
             activeTab = path[0];
           }
-          require(['ir-manager'], function () {
+          require(['./ir-manager'], function () {
             appModel.selectedIRAnalysisId(+analysisId);
             appModel.componentParams = {
               model: appModel,

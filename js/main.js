@@ -27,10 +27,6 @@ requirejs.config({
 			location: "modules/circe"
 		},
 		{
-			name: "iranalysis",
-			location: "modules/iranalysis"
-		},
-		{
 			name: "extenders",
 			location: "extenders"
 		},
@@ -119,8 +115,6 @@ requirejs.config({
 		"cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
 		"user-bar": "components/user-bar",
 		"report-manager": "components/report-manager",
-		"ir-manager": "components/ir-manager",
-		"ir-browser": "components/ir-browser",
 		"faceted-datatable": "components/faceted-datatable",
 		"profile-manager": "components/profile/profile-manager",
 		"explore-cohort": "components/explore-cohort",
