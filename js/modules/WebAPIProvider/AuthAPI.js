@@ -367,7 +367,7 @@ define(function(require, exports) {
     }
 
     var isPermittedCheckSourceConnection = function(key) {
-      return isPermitted('source:connection' + key + ':get');
+      return isPermitted('source:connection:' + key + ':get');
     }
 
     var isPermittedEditSource = function(key) {
