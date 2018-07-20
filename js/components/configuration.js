@@ -40,6 +40,13 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadSource(source.sourceKey));
 			}
     };
+		self.canCheckConnection = function(source) {
+			if (!config.userAuthenticationEnabled) {
+				return false;
+			} else {
+				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCheckSourceConnection(source.sourceKey));
+			}
+		};
 		self.clearLocalStorageCache = function () {
 			localStorage.clear();
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")

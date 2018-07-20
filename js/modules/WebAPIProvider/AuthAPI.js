@@ -366,6 +366,10 @@ define(function(require, exports) {
         return isPermitted('source:' + key + ':get');
     }
 
+    var isPermittedCheckSourceConnection = function(key) {
+      return isPermitted('source:connection' + key + ':get');
+    }
+
     var isPermittedEditSource = function(key) {
         return isPermitted('source:' + key + ':put');
     }
@@ -476,6 +480,7 @@ define(function(require, exports) {
         isPermittedCreateSource: isPermittedCreateSource,
         isPermittedEditSource: isPermittedEditSource,
         isPermittedDeleteSource: isPermittedDeleteSource,
+        isPermittedCheckSourceConnection: isPermittedCheckSourceConnection,
     };
 
     return api;
