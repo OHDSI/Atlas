@@ -198,19 +198,19 @@ define(function (require, exports) {
     return servicePromise;
   }
 
-	function checkSourceConnection(sourceKey) {
-  	return httpService.doGet(config.webAPIRoot + 'source/connection/' + sourceKey)
-	}
+  function checkSourceConnection(sourceKey) {
+    return httpService.doGet(config.webAPIRoot + 'source/connection/' + sourceKey)
+  }
 
-	var api = {
-		getSources: getSources,
+  var api = {
+    getSources: getSources,
     getSource: getSource,
-		saveSource: saveSource,
-		getCacheKey: getCacheKey,
-		initSourcesConfig: initSourcesConfig,
+    saveSource: saveSource,
+    getCacheKey: getCacheKey,
+    initSourcesConfig: initSourcesConfig,
     deleteSource: deleteSource,
-		checkSourceConnection: checkSourceConnection,
-		connectionCheckState: connectionCheckState,
+    checkSourceConnection: checkSourceConnection,
+    connectionCheckState: connectionCheckState,
 	};
 
 	return api;
