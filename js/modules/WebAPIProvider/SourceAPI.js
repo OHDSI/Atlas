@@ -200,11 +200,6 @@ define(function (require, exports) {
 
 	function checkSourceConnection(sourceKey) {
   	return httpService.doGet(config.webAPIRoot + 'source/connection/' + sourceKey)
-		// return $.ajax({
-			// url: config.webAPIRoot + 'source/connection/' + sourceKey,
-			// method: 'GET',
-			// error: authApi.handleAccessDenied,
-		// });
 	}
 
 	var api = {
