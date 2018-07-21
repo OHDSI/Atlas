@@ -6,10 +6,14 @@ define([
     'webapi/AuthAPI',
     'providers/Component',
     'utils/CommonUtils',
+    'numeral',
+    'lodash',
     'components/visualizations/filter-panel/utils',
+    'text!pages/characterizations/stubs/characterization-results-data.json',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/line-chart',
+    'components/charts/scatterplot',
 ], function (
     ko,
     sharedState,
@@ -18,8 +22,16 @@ define([
     authApi,
     Component,
     commonUtils,
+    numeral,
+    lodash,
     filterUtils,
+    characterizationResultsDataStub,
 ) {
+    const AGG_MODES = {
+        COMPARE: 1,
+        SUM: 2,
+    };
+
     class CharacterizationViewEditResults extends Component {
         constructor(params) {
             super();
@@ -107,200 +119,69 @@ define([
                 name: 'SynPUF 110k (CDM v5.3)',
             };
 
-            this.data = [
-                {
-                    analysisId: 3,
-                    domain: 'Condition',
-                    analysisName: 'Charlson Index',
-                    type: 'distribution',
-                    reports: [
-                        {
-                            cohortId: 1,
-                            cohortName: 'First cohort',
-                            data: [
-                                {
-                                    covariateName: 'Charlson index - Romano adaptation',
-                                    count: '9434',
-                                    avg: '5.06',
-                                    stdDev: '5.14',
-                                    min: 0,
-                                    p10: 0,
-                                    p25: 0,
-                                    median: 3,
-                                    p75: 8,
-                                    p90: 13,
-                                    max: 31,
-                                },
-                            ]
-                        },
-                        {
-                            cohortId: 2,
-                            cohortName: 'Second cohort',
-                            data: [
-                                {
-                                    covariateName: 'Charlson index - Romano adaptation',
-                                    count: '3820',
-                                    avg: '5.4',
-                                    stdDev: '4.9',
-                                    min: 0,
-                                    p10: 1,
-                                    p25: 4,
-                                    median: 6,
-                                    p75: 6,
-                                    p90: 8,
-                                    max: 8,
-                                },
-                            ]
-                        }
-                    ]
-                },
-                {
-                    analysisId: 1,
-                    domain: 'Demographics',
-                    analysisName: 'Age',
-                    type: 'prevalence',
-                    reports: [
-                        {
-                            cohortId: 1,
-                            cohortName: 'First cohort',
-                            data: [
-                                {
-                                    covariateName: 'age group: 25-29',
-                                    count: '189',
-                                    pct: '0.80',
-                                },
-                                {
-                                    covariateName: 'age group: 30-34',
-                                    count: '230',
-                                    pct: '1.00',
-                                },
-                                {
-                                    covariateName: 'age group: 35-39',
-                                    count: '386',
-                                    pct: '1.70',
-                                }
-                            ]
-                        },
-                        {
-                            cohortId: 2,
-                            cohortName: 'Second cohort',
-                            data: [
-                                {
-                                    covariateName: 'age group: 25-29',
-                                    count: '189',
-                                    pct: '0.80',
-                                },
-                                {
-                                    covariateName: 'age group: 30-34',
-                                    count: '230',
-                                    pct: '1.00',
-                                },
-                                {
-                                    covariateName: 'age group: 35-39',
-                                    count: '386',
-                                    pct: '1.70',
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    analysisId: 2,
-                    domain: 'Demographics',
-                    analysisName: 'Gender',
-                    type: 'prevalence',
-                    reports: [
-                        {
-                            cohortId: 1,
-                            cohortName: 'First cohort',
-                            data: [
-                                {
-                                    covariateName: 'Male',
-                                    count: 9434,
-                                    pct: '39.30',
-                                },
-                                {
-                                    covariateName: 'Female',
-                                    count: '14584',
-                                    pct: '60.80',
-                                },
-                            ]
-                        },
-                        {
-                            cohortId: 2,
-                            cohortName: 'Second cohort',
-                            data: [
-                                {
-                                    covariateName: 'Male',
-                                    count: 1000,
-                                    pct: '10.00',
-                                },
-                                {
-                                    covariateName: 'Female',
-                                    count: '9000',
-                                    pct: '90.00',
-                                },
-                            ]
-                        }
-                    ]
-                },
-            ];
+            this.data = JSON.parse(characterizationResultsDataStub).analyses;
+
+            this.displayedAnalyses = ko.observableArray([1, 2, 3]);
+
+            this.cohorts = lodash.uniqBy(
+                lodash.flatten(
+                    this.data.map(a => a.reports.map(r => ({label: r.cohortName, value: r.cohortId})))
+                ),
+                'value'
+            );
+            this.analyses = this.data.map(a => ({label: a.analysisName, value: a.analysisId}));
 
             this.filterList = [
                 {
                     type: 'multiselect',
                     label: 'Cohorts',
                     name: 'cohorts',
-                    options: ko.observableArray([
-                        {
-                            label: 'First cohort',
-                            value: 1,
-                        },
-                        {
-                            label: 'Second cohort',
-                            value: 2,
-                        },
-                    ]),
-                    selectedValues: ko.observableArray([1,2]),
+                    options: ko.observableArray(this.cohorts),
+                    selectedValues: ko.observableArray(this.cohorts.map(c => c.value)),
                 },
                 {
                     type: 'multiselect',
                     label: 'Analyses',
                     name: 'analyses',
-                    options: ko.observableArray([
-                        {
-                            label: 'Condition / Charlson Index',
-                            value: 3,
-                        },
-                        {
-                            label: 'Demographics / Age',
-                            value: 1,
-                        },
-                        {
-                            label: 'Demographics / Gender',
-                            value: 2,
-                        },
-                    ]),
-                    selectedValues: ko.observableArray([1,2,3]),
+                    options: ko.observableArray(this.analyses),
+                    selectedValues: ko.observableArray(this.analyses.map(c => c.value)),
                 }
             ];
 
+            this.displayMode = ko.observable('table');
+
+            this.AGG_MODES = AGG_MODES;
+            this.selectedAggMode = ko.observable(this.AGG_MODES.COMPARE);
+
             this.reportList = ko.computed(() => {
-                const convertedData = this.data.map(analysis => {
-                    return {
-                        ...analysis,
-                        reports: analysis.reports.map(r => ({...r, columns: analysis.type === 'prevalence' ? prevalenceColumns : distributionColumns})),
-                    };
+                const filteredData = this.filterData(this.data, filterUtils.getSelectedFilterValues(this.filterList));
+
+                const convertedData = filteredData.map(analysis => {
+                    let convertedAnalysis;
+
+                    if (analysis.type === 'prevalence') {
+                        convertedAnalysis = this.convertPrevalenceAnalysis(analysis, this.selectedAggMode());
+                    } else {
+                        convertedAnalysis = {
+                            ...analysis,
+                            reports: analysis.reports.map(r => ({...r, data: r.stats, columns: distributionColumns})),
+                        };
+                    }
+                    return convertedAnalysis;
                 });
-                return this.filterData(convertedData, filterUtils.getSelectedFilterValues(this.filterList));
+
+                return convertedData;
             });
 
-            this.displayMode = ko.observable('table');
+            this.convertPrevalenceAnalysis = this.convertPrevalenceAnalysis.bind(this);
             this.showAsTable = this.showAsTable.bind(this);
             this.showAsChart = this.showAsChart.bind(this);
+            this.showAsComparison = this.showAsComparison.bind(this);
+            this.showAsSum = this.showAsSum.bind(this);
+            this.convertScatterplotData = this.convertScatterplotData.bind(this);
         }
 
-        filterData(data, { cohorts, analyses }) {
+        filterData(data, {cohorts, analyses}) {
             return data.map(analysis => {
                 if (!analyses.includes(analysis.analysisId)) {
                     return null;
@@ -312,13 +193,109 @@ define([
             }).filter(a => a);
         }
 
-        createLineChartData(data) {
-            return data.map((entry, idx) => ({
-                id: idx,
-                xValue: idx,
-                // xValue: entry.covariateName,
-                yValue: entry.count,
-            }));
+        convertScatterplotData(analysis) {
+            return ko.computed(() => {
+                return analysis.data.map(rd => ({ xValue: rd.sumValue[0], yValue: rd.sumValue[1] }));
+            });
+        }
+
+        convertPrevalenceAnalysis(analysis, aggMode) {
+            let columns = [
+                {
+                    title: 'Covariate',
+                    data: 'covariateName',
+                    className: this.classes('col-prev-title'),
+                },
+            ];
+
+            let data = {};
+
+            let colDef;
+            let aggFunc;
+
+            if (aggMode === AGG_MODES.COMPARE) {
+
+                colDef = (columns, i) => {
+                    columns.push({
+                        title: 'Count',
+                        render: (s, p, d) => d.sumValue[i],
+                    });
+                    columns.push({
+                        title: 'Pct',
+                        render: (s, p, d) => this.formatPct(d.pct[i]),
+                    });
+                }
+
+                aggFunc = (obj, field, value) => {
+                    if (typeof obj[field] === 'undefined') {
+                        obj[field] = [];
+                    }
+                    obj[field].push(value);
+                }
+            }
+
+            analysis.reports.forEach((r, i) => {
+
+                colDef(columns, i);
+
+                r.stats.forEach(rd => {
+                    if (data[rd.covariateName] === undefined) {
+                        data[rd.covariateName] = {
+                            covariateName: rd.covariateName,
+                        };
+                    }
+
+                    const cov = data[rd.covariateName];
+
+                    aggFunc(cov, 'sumValue', rd.sumValue);
+                    aggFunc(cov, 'pct', rd.pct);
+                });
+            });
+
+            data = Object.values(data);
+
+            if (analysis.reports.length === 2) {
+                columns.push(
+                    {
+                        title: 'Std diff',
+                        render: (s, p, d) => d.stdDiff,
+                        className: this.classes('col-prev-std-diff'),
+                    },
+                );
+                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiff(
+                    {sumValue: d.sumValue[0], pct: d.pct[0]},
+                    {sumValue: d.sumValue[1], pct: d.pct[1]}
+                )));
+            }
+
+            return {
+                ...analysis,
+                columns: columns,
+                data: data,
+            };
+        }
+
+        calcStdDiff(cov1, cov2) {
+            const n1 = cov1.sumValue / (cov1.pct / 100);
+            const n2 = cov2.sumValue / (cov2.pct / 100);
+
+            const mean1 = cov1.sumValue / n1;
+            const mean2 = cov2.sumValue / n2;
+
+            const sd1 = Math.sqrt((n1 * cov1.sumValue + cov1.sumValue) / (n1 * n1));
+            const sd2 = Math.sqrt((n2 * cov2.sumValue + cov2.sumValue) / (n2 * n2));
+
+            const sd = Math.sqrt(sd1 * sd1 + sd2 * sd2);
+
+            return (mean2 - mean1) / sd;
+        }
+
+        formatStdDiff(val) {
+            return numeral(val).format('0,0.0000');
+        }
+
+        formatPct(val) {
+            return numeral(val).format('0.00') + '%';
         }
 
         showAsTable() {
@@ -327,6 +304,14 @@ define([
 
         showAsChart() {
             this.displayMode('chart');
+        }
+
+        showAsComparison() {
+            this.selectedAggMode(this.AGG_MODES.COMPARE);
+        }
+
+        showAsSum() {
+            this.selectedAggMode(this.AGG_MODES.SUM);
         }
     }
 

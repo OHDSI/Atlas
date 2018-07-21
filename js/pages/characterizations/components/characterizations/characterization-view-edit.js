@@ -51,7 +51,7 @@ define([
                 case 'results':
                     this.selectedTab(1);
                     this.componentName = 'characterization-view-edit-results';
-                    this.componentParams = { ...this.componentParams, executionId: 0 };
+                    this.componentParams = { ...this.componentParams, executionId: params.subId };
                     break;
                 case 'utils':
                     this.selectedTab(2);

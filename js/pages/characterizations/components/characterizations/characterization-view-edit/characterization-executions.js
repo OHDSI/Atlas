@@ -61,7 +61,7 @@ define([
                         data: 'results',
                         className: this.classes('col-exec-results'),
                         render: (s, p, d) => {
-                            return d.status === STATUS_PROCESSING ? '-' : `<a>${d.reportCount} reports</a>`;
+                            return d.status === STATUS_PROCESSING ? '-' : `<a data-bind="click: $component.goToResults.bind(null, executionId)">${d.reportCount} reports</a>`;
                         }
                     }
                 ];
@@ -71,6 +71,7 @@ define([
                         dataSourceName: 'SynPUF 110k (CDM v5.3)',
                         executionList: [
                             {
+                                executionId: 1,
                                 date: moment('2018-07-12 15:05:00').format(),
                                 hash: 'ad5b054',
                                 status: STATUS_PROCESSING,
@@ -78,6 +79,7 @@ define([
                                 reportCount: 0
                             },
                             {
+                                executionId: 2,
                                 date: moment('2018-07-10 15:05:00').format(),
                                 hash: 'x6t21cda',
                                 status: 'Finished',
@@ -90,6 +92,7 @@ define([
                         dataSourceName: 'Truven',
                         executionList: [
                             {
+                                executionId: 3,
                                 date: moment('2018-07-10 15:05:00').format(),
                                 hash: 'ad5b054',
                                 status: 'Finished',
@@ -105,8 +108,8 @@ define([
                 this.expandedSection() === idx ? this.expandedSection(null) : this.expandedSection(idx);
             }
 
-            goToResults() {
-                commonUtils.routeTo('/cc/characterizations/' + 1 + '/results');
+            goToResults(executionId) {
+                commonUtils.routeTo('/cc/characterizations/' + 1 + '/results/' + executionId);
             }
         }
 

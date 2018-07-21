@@ -20,17 +20,20 @@
     margin-top: 2rem;
   }
 
-  &__detail-list {
+  &__detail-list, &__display-options-list {
     display: flex;
     list-style: none;
     margin-bottom: 0;
     padding: 0;
   }
 
-  &__detail {
+  &__detail, &__display-option {
     &:not(:last-child) {
       margin-right: 1.5rem;
     }
+  }
+
+  &__detail {
     &-label, &-value {
       font-size: 1.3rem;
       margin: 0;
@@ -40,13 +43,29 @@
     }
   }
 
-  &__display-selector {
-    font-size: 1.3rem;
+  &__display-options-list {
     margin-left: auto;
+  }
+
+  &__display-option {
+    font-size: 1.3rem;
+  }
+
+  &__display-option-label {
+    font-weight: 600;
+  }
+
+  &__display-option-link {
+    cursor: pointer;
   }
 
   &__filter {
     margin-top: 2rem;
+  }
+
+
+  th {
+    vertical-align: middle !important;
   }
 
   &__report {
@@ -66,5 +85,33 @@
 
   &__cohort-name {
     font-size: 1.4rem;
+  }
+
+  &__th-cohort-name {
+    text-align: center;
+  }
+
+  &__analysis-results {
+    align-items: center;
+    display: flex;
+  }
+
+  &__table-wrapper, &__chart-wrapper {
+    flex-shrink: 0;
+    flex-basis: 0;
+  }
+
+  &__table-wrapper {
+    flex-grow: 6;
+  }
+
+  &__chart-wrapper {
+    flex-grow: 4;
+    margin-left: 2rem;
+    border: 1px solid #ccc;
+    padding: 1.5rem 1.5rem 0.45rem 0;
+  }
+
+  &__scatterplot {
   }
 }

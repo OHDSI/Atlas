@@ -94,7 +94,7 @@ requirejs.config({
 		"knockout": "knockout.min",
 		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
 		"knockout-mapping": "knockout.mapping",
-		"datatables.net": "jquery.dataTables.min",
+		"datatables.net": "https://cdn.datatables.net/1.10.19/js/jquery.dataTables",//"jquery.dataTables.min",
 		"datatables.net-buttons": "jquery.dataTables.buttons.min",
 		"datatables.net-buttons-html5": "jquery.dataTables.buttons.html5.min",
 		"colvis": "jquery.dataTables.colVis.min",
@@ -127,7 +127,7 @@ requirejs.config({
 		"cohortcomparison": "modules/cohortcomparison",
 		"r-manager": "components/r-manager",
 		"negative-controls": "components/negative-controls",
-		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.4.1/dist/atlascharts.min",
+		"atlascharts": "atlascharts",//"https://unpkg.com/@ohdsi/atlascharts@1.4.1/dist/atlascharts",
 		"jnj_chart": "jnj.chart", // scatterplot is not ported to separate library
 		"lodash": "lodash.4.15.0.full",
 		"lscache": "lscache.min",

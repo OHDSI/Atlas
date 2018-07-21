@@ -34,10 +34,13 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
     );
 	}
 
+	let persistedBindingContext;
+
 	ko.bindingHandlers.dataTable = {
 	
 		init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-			
+			persistedBindingContext = bindingContext;
+
 			var binding = ko.utils.unwrapObservable(valueAccessor());
 			// If the binding is an object with an options field,
 			// initialise the dataTable with those options.
@@ -82,6 +85,11 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 					});
 				});
 
+                // For case of complex header which uses data-bindings (https://datatables.net/examples/advanced_init/complex_header.html)
+				if ($(element).find('thead')[0]) {
+                    ko.applyBindings(bindingContext, $(element).find('thead')[0]);
+				}
+
 				$(element).DataTable(binding.options);
 				
 				if (binding.api != null)
@@ -98,6 +106,8 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 			};			
 		},
 		update: function (element, valueAccessor) {
+            persistedBindingContext;
+
 			var binding = ko.utils.unwrapObservable(valueAccessor());
 			var table = $(element).DataTable();
 
