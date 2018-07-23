@@ -24,7 +24,7 @@ define(
             './cohort-definition-manager',
             'components/cohort-definition-browser',
             'conceptset-editor',
-            './components/report-manager',
+            './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
             'conceptset-list-modal',
           ], function () {
@@ -54,7 +54,7 @@ define(
             './cohort-definition-manager',
             'components/cohort-definition-browser',
             'conceptset-editor',
-            './components/report-manager',
+            './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
           ], function () {
             appModel.componentParams = {
@@ -68,7 +68,7 @@ define(
         '/reports': () => {
           appModel.activePage(this.title);
           require([
-            './components/report-manager',
+            './components/reporting/cost-utilization/report-manager',
             './cohort-definition-manager',
             'components/cohort-definition-browser',
           ], function () {

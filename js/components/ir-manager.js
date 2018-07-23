@@ -2,7 +2,7 @@ define(['knockout',
 				'text!./ir-manager.html', 
 				'webapi/IRAnalysisAPI',
 				'webapi/SourceAPI',
-				'webapi/CohortDefinitionAPI',
+				'services/CohortDefinition',
 				'iranalysis/IRAnalysisDefinition', 
 				'iranalysis/IRAnalysisExpression', 
 				'assets/ohdsi.util',
@@ -14,7 +14,7 @@ define(['knockout',
 				'databindings', 
 				'conceptsetbuilder/components', 
 				'circe'
-], function (ko, template, iraAPI, sourceAPI, cohortAPI, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil, config, sharedState, jobDetail, authAPI) {
+], function (ko, template, iraAPI, sourceAPI, cohortDefinitionService, IRAnalysisDefinition, IRAnalysisExpression, ohdsiUtil, config, sharedState, jobDetail, authAPI) {
 	function IRAnalysisManager(params) {
 		
 		// polling support
@@ -119,7 +119,7 @@ define(['knockout',
 		// model behaviors
 
 		self.refreshDefs = function() {
-			cohortAPI.getCohortDefinitionList().then(function(list) {
+			cohortDefinitionService.getCohortDefinitionList().then(function(list) {
 				self.cohortDefs(list);
 			});	
 		}

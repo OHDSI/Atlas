@@ -1,13 +1,13 @@
 define(['knockout', 'text!./cohort-definition-manager.html',
 	'appConfig',
 	'components/cohortbuilder/CohortDefinition',
-	'webapi/CohortDefinitionAPI',
+	'services/CohortDefinition',
 	'webapi/MomentAPI',
 	'webapi/ConceptSetAPI',
 	'components/conceptset/utils',
 	'components/cohortbuilder/CohortExpression',
 	'conceptsetbuilder/InputTypes/ConceptSet',
-	'webapi/CohortReportingAPI',
+	'services/CohortReporting',
 	'vocabularyprovider',
 	'atlas-state',
 	'clipboard',
@@ -34,13 +34,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	view,
 	config,
 	CohortDefinition,
-	cohortDefinitionAPI,
+	cohortDefinitionService,
 	momentApi,
 	conceptSetApi,
 	conceptSetUitls,
 	CohortExpression,
 	ConceptSet,
-	cohortReportingAPI,
+	cohortReportingService,
 	vocabularyApi,
 	sharedState,
 	clipboard,
@@ -358,7 +358,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					clearTimeout(this.pollTimeout);
 
 				var id = pageModel.currentCohortDefinition().id();
-					cohortDefinitionAPI.getInfo(id).then((infoList) => {
+					cohortDefinitionService.getInfo(id).then((infoList) => {
 					var hasPending = false;
 
 						infoList.forEach((info) => {
@@ -460,8 +460,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				// check which reports have required data
 					if (!this.reportingSourceStatusAvailable() && !this.reportingSourceStatusLoading()) {
 						this.reportingSourceStatusLoading(true);
-						cohortReportingAPI.getCompletedAnalyses(sourceInfo, this.model.currentCohortDefinition().id()).done(results => {
-						var reports = cohortReportingAPI.getAvailableReports(results);
+						cohortReportingService.getCompletedAnalyses(sourceInfo, this.model.currentCohortDefinition().id()).done(results => {
+						var reports = cohortReportingService.getAvailableReports(results);
 						if (reports.length == 0) {
 								this.reportingAvailableReports(reports);
 								this.generateReportsEnabled(false);
@@ -469,7 +469,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 								this.reportingSourceStatusLoading(false);
 							return "checking_status";
 						}
-							cohortReportingAPI.getCompletedHeraclesHeelAnalyses(sourceInfo, this.model.currentCohortDefinition().id()).done(heelResults => {
+							cohortReportingService.getCompletedHeraclesHeelAnalyses(sourceInfo, this.model.currentCohortDefinition().id()).done(heelResults => {
 							if (heelResults.length > 0) {
 								reports.push({name: "Heracles Heel", reportKey: "Heracles Heel", analyses: []});
 							}
@@ -534,7 +534,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.showUtilizationToRunModal = ko.observable(false);
 			this.checkedUtilReports = ko.observableArray([]);
 			
-			const reportPacks = cohortReportingAPI.visualizationPacks;
+			const reportPacks = cohortReportingService.visualizationPacks;
 			this.utilReportOptions = [
 				reportPacks.healthcareUtilPersonAndExposureBaseline,
 				reportPacks.healthcareUtilPersonAndExposureCohort,
@@ -611,7 +611,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				clearTimeout(this.pollTimeout);
 
 				// reset view after save
-					cohortDefinitionAPI.deleteCohortDefinition(this.model.currentCohortDefinition().id()).then( (result) => {
+					cohortDefinitionService.deleteCohortDefinition(this.model.currentCohortDefinition().id()).then( (result) => {
 						this.model.currentCohortDefinition(null);
 					document.location = "#/cohortdefinitions"
 				});
@@ -633,7 +633,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				definition.expression = ko.toJSON(definition.expression, pruneJSON);
 
 				// reset view after save
-					cohortDefinitionAPI.saveCohortDefinition(definition).then( (result) => {
+					cohortDefinitionService.saveCohortDefinition(definition).then( (result) => {
 					result.expression = JSON.parse(result.expression);
 					var definition = new CohortDefinition(result);
 						var redirectWhenComplete = definition.id() != this.model.currentCohortDefinition().id();
@@ -663,7 +663,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				clearTimeout(this.pollTimeout);
 
 				// reset view after save
-					cohortDefinitionAPI.copyCohortDefinition(this.model.currentCohortDefinition().id()).then((result) => {
+					cohortDefinitionService.copyCohortDefinition(this.model.currentCohortDefinition().id()).then((result) => {
 					document.location = "#/cohortdefinition/" + result.id;
 				});
 			}
@@ -698,7 +698,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				this.generatedSql.netezza('');
 
 				var expression = ko.toJS(this.model.currentCohortDefinition().expression, pruneJSON);
-				var templateSqlPromise = cohortDefinitionAPI.getSql(expression);
+				var templateSqlPromise = cohortDefinitionService.getSql(expression);
 
 				templateSqlPromise.then((result) => {
 					this.templateSql(result.templateSql);
@@ -790,7 +790,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			cancelGenerate (source) {
 				this.stopping[source.sourceKey](true);
-				cohortDefinitionAPI.cancelGenerate(this.model.currentCohortDefinition().id(), source.sourceKey);
+				cohortDefinitionService.cancelGenerate(this.model.currentCohortDefinition().id(), source.sourceKey);
 			};
 
 			hasCDM (source) {
@@ -996,7 +996,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				this.loadingReport(true);
 				this.selectedReportCaption(item.name);
 
-				cohortDefinitionAPI.getReport(this.model.currentCohortDefinition().id(), item.sourceKey).then( (report) => {
+				cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey).then( (report) => {
 				report.sourceKey = item.sourceKey;
 					this.selectedReport(report);
 					this.loadingReport(false);
@@ -1091,7 +1091,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				this.generateAnalyses({
 					descr: 'minimal analyses set to provide a quick overview of the cohort',
 					duration: '10 minutes',
-					analysisIdentifiers: cohortReportingAPI.getQuickAnalysisIdentifiers(),
+					analysisIdentifiers: cohortReportingService.getQuickAnalysisIdentifiers(),
 					runHeraclesHeel: false
 				});
 			}
@@ -1117,7 +1117,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				this.generateAnalyses({
 					descr: 'all analyses',
 					duration: '60-90 minutes',
-					analysisIdentifiers: cohortReportingAPI.getAnalysisIdentifiers(),
+					analysisIdentifiers: cohortReportingService.getAnalysisIdentifiers(),
 					runHeraclesHeel: true
 				});
 			};

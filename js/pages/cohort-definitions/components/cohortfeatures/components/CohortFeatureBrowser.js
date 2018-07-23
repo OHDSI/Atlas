@@ -9,7 +9,7 @@ define(['knockout',
 				'../tableConfig/DomainTableFilteredOptions',
 				'../tableConfig/DistributionTableColumns',
 				'../tableConfig/DistributionTableOptions',
-				'webapi/CohortFeaturesAPI'], 
+				'services/CohortFeatures'], 
 function (ko, 
 					template, 
 					config,
@@ -21,7 +21,7 @@ function (ko,
 					DomainTableFilteredOptions,
 					DistributionTableColumns,
 					DistributionTableOptions,
-					cohortFeaturesAPI) {
+					cohortFeaturesService) {
 	function CohortFeatureBrowser(params) {
 		var self = this;
 
@@ -133,7 +133,7 @@ function (ko,
 
 			if (!featureSection.byCovariate.has(selectedCovariateId)) {
 				// Go get the covariate ancestors/desendants
-				cohortFeaturesAPI.getStudyPrevalenceStatisticsByVocab(self.cohortId(), self.sourceKey(), covInfo.covariateId).then(function (data) {
+				cohortFeaturesService.getStudyPrevalenceStatisticsByVocab(self.cohortId(), self.sourceKey(), covInfo.covariateId).then(function (data) {
 					data.forEach(function (item) {
 						if (item.distance > 0) {
 							item.relationshipType = "Ancestor"
@@ -166,9 +166,9 @@ function (ko,
 			var sourceKey = self.sourceKey();
 			var promise;
 			if (featureSection.type == "dist") {
-				promise = cohortFeaturesAPI.getStudyDistributionStatistics(sourceKey, cohortId, domainList, analysisIdList, searchTerm);
+				promise = cohortFeaturesService.getStudyDistributionStatistics(sourceKey, cohortId, domainList, analysisIdList, searchTerm);
 			} else {
-				promise = cohortFeaturesAPI.getStudyPrevalenceStatistics(sourceKey, cohortId, domainList, analysisIdList, searchTerm);
+				promise = cohortFeaturesService.getStudyPrevalenceStatistics(sourceKey, cohortId, domainList, analysisIdList, searchTerm);
 			}
 
 			promise.then(function (data) {

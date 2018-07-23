@@ -2,7 +2,7 @@ define(
   [
     'knockout',
     'text!./drug-util-detailed.html',
-    'pages/cohort-definitions/components/base-report',
+    'pages/cohort-definitions/components/reporting/cost-utilization/base-report',
     'appConfig',
     'utils/BemHelper',
     'appConfig',

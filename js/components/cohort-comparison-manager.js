@@ -4,7 +4,7 @@ define([
 	'text!./cohort-comparison-manager.html',
 	'lodash',
 	'clipboard',
-	'webapi/CohortDefinitionAPI',
+	'services/CohortDefinition',
 	'appConfig',
 	'webapi/AuthAPI',
 	'assets/ohdsi.util',
@@ -24,7 +24,7 @@ define([
 		view,
 		_,
 		clipboard,
-		cohortDefinitionAPI,
+		cohortDefinitionService,
 		config,
 		authApi,
 		ohdsiUtil,
@@ -534,7 +534,7 @@ define([
 
 			self.cohortSelected = function (id) {
 				$('#modalCohortDefinition').modal('hide');
-				cohortDefinitionAPI.getCohortDefinition(id).then(function (cohortDefinition) {
+				cohortDefinitionService.getCohortDefinition(id).then(function (cohortDefinition) {
 					self.targetId(cohortDefinition.id);
 					self.targetCaption(cohortDefinition.name);
 					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);

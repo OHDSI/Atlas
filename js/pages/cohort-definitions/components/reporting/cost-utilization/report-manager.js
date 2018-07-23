@@ -6,7 +6,7 @@ define([
 	'colorbrewer',
 	'lodash',
 	'appConfig',
-	'webapi/CohortReportingAPI',
+	'services/CohortReporting',
 	'pages/cohort-definitions/const',
 	'providers/Component',
 	'utils/commonUtils',
@@ -25,7 +25,7 @@ define([
 		colorbrewer,
 		_,
 		config,
-		cohortReportingAPI,
+		cohortReportingService,
 		costUtilConst,
 		Component,
 		commonUtils
@@ -45,7 +45,7 @@ define([
 				[15, 30, 45, 100, -1],
 				[15, 30, 45, 100, 'All']
 			];
-			this.visualizationPacks = cohortReportingAPI.visualizationPacks;
+			this.visualizationPacks = cohortReportingService.visualizationPacks;
 			this.costUtilConst = costUtilConst;
 
 			const size4 = {
