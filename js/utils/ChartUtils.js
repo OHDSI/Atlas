@@ -196,11 +196,11 @@ define(
         var minValue = histogramData.min;
         var intervalSize = histogramData.intervalSize;
   
-        for (var i = 0; i <= histogramData.intervals; i++) {
+        for (var i = 0; i < histogramData.data.intervalIndex.length; i++) {
           var target = new Object();
-          target.x = minValue + 1.0 * i * intervalSize;
+          target.x = minValue + (1.0 * histogramData.data.intervalIndex[i] * intervalSize);
           target.dx = intervalSize;
-          target.y = histogramData.data.countValue[histogramData.data.intervalIndex.indexOf(i)] || 0;
+          target.y = histogramData.data.countValue[i] || 0;
           result.push(target);
         }
   
