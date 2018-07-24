@@ -1,8 +1,9 @@
 define(
   (require, factory) => {
+    const { AuthorizedRoute } = require('providers/Route');
     function routes(appModel) {
       return {        
-        '/estimation': () => {
+        '/estimation': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['cohort-comparison-browser'], function () {
             appModel.componentParams = {
@@ -10,8 +11,8 @@ define(
             };
             appModel.currentView('cohort-comparison-browser');
           });
-        },
-        '/estimation/:cohortComparisonId:': (cohortComparisonId) => {
+        }),
+        '/estimation/:cohortComparisonId:': new AuthorizedRoute((cohortComparisonId) => {
           appModel.activePage(this.title);
           require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
             appModel.currentCohortComparisonId(+cohortComparisonId);
@@ -22,7 +23,7 @@ define(
             };
             appModel.currentView('cohort-comparison-manager');
           });
-        },
+        }),
       };
     }
 

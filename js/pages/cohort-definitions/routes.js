@@ -1,8 +1,9 @@
 define(
   (require, factory) => {
+    const { AuthorizedRoute } = require('providers/Route');
     function routes(appModel) {
       return {        
-        '/cohortdefinitions': () => {
+        '/cohortdefinitions': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
             appModel.componentParams = {
@@ -10,8 +11,8 @@ define(
             };
             appModel.currentView('cohort-definitions');
           });
-        },
-        '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': (cohortDefinitionId, path) => {
+        }),
+        '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': new AuthorizedRoute((cohortDefinitionId, path) => {
           appModel.activePage(this.title);
           require(['cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'report-manager', 'explore-cohort', 'conceptset-list-modal'], function (CohortDefinition) {
             // Determine the view to show on the cohort manager screen based on the path
@@ -30,8 +31,8 @@ define(
             appModel.currentCohortDefinitionMode(view);
             appModel.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details', sourceKey);
           });
-        },
-        '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': (cohortDefinitionId, conceptSetId, mode) => {
+        }),
+        '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': new AuthorizedRoute((cohortDefinitionId, conceptSetId, mode) => {
           appModel.activePage(this.title);
           require(['report-manager', 'cohortbuilder/CohortDefinition', 'components/atlas.cohort-editor', 'cohort-definitions', 'cohort-definition-manager', 'cohort-definition-browser', 'conceptset-editor', 'explore-cohort'], function (CohortDefinition) {
             appModel.componentParams = {
@@ -41,8 +42,8 @@ define(
             appModel.currentCohortDefinitionMode('conceptsets');
             appModel.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
           });
-        },
-        '/reports': () => {
+        }),
+        '/reports': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['report-manager', 'cohort-definition-manager', 'cohort-definition-browser'], function () {
             appModel.componentParams = {
@@ -50,7 +51,7 @@ define(
             };
             appModel.currentView('report-manager');
           });
-        },
+        }),
       };
     }
 
