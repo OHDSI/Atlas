@@ -2,28 +2,30 @@ define(
   ['knockout'],
   function(ko) {
 
+    const periods = [
+      {
+        label: 'Weekly',
+        value: 'ww',
+      },
+      {
+        label: 'Monthly',
+        value: 'mm',
+      },
+      {
+        label: 'Quarterly',
+        value: 'qq',
+      },
+      {
+        label: 'Yearly',
+        value: 'yy',
+      },
+    ];
+    
     const getPeriodTypeFilter = () => ({
       type: 'select',
       label: 'Period type',
       name: 'periodType',
-      options: ko.observableArray([
-        {
-          label: 'Weekly',
-          value: 'ww',
-        },
-        {
-          label: 'Monthly',
-          value: 'mm',
-        },
-        {
-          label: 'Quarterly',
-          value: 'qq',
-        },
-        {
-          label: 'Yearly',
-          value: 'yy',
-        },
-      ]),
+      options: ko.observableArray(periods),
       selectedValue: ko.observable('mm'),
     });
 
@@ -43,6 +45,7 @@ define(
       visitStat,
       //
       getPeriodTypeFilter,
+      periods,
     };
   }
 );
