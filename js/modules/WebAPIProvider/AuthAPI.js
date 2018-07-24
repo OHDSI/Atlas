@@ -51,7 +51,8 @@ define(function(require, exports) {
 				permissions(info.permissions.map(p => p.permission));
 			},
 			error: function (err) {
-				console.log('User is not authed')
+				console.log('User is not authed');
+				subject(null);
 			}
 		});
 	};

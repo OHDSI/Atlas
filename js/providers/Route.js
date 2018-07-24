@@ -26,11 +26,28 @@ define([
 	}
 
 	class AuthorizedRoute extends Route {
-		checkPermission() {
-			if (authApi.token() === null) {
-				return new Promise((resolve, reject) => reject());
+		checkPermission() {			
+			if (authApi.subject() === undefined) {
+				return this.waitForSubject();
+			} else if (authApi.subject() === null) {
+				return Promise.reject();
+			} else {
+				return super.checkPermission();
 			}
-			return super.checkPermission();
+		}
+
+		waitForSubject() {
+			return new Promise((resolve, reject) => {
+				authApi.subject.subscribe((subject) => {
+					if (subject) {
+						super.checkPermission()
+							.then(() => resolve())
+							.catch(() => reject());
+					} else {
+						reject();
+					}
+				});
+			});
 		}
 	}
 
