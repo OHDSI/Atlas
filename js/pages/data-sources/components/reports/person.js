@@ -45,7 +45,6 @@ define([
 				histData.intervalSize = 1;
 				histData.min = data.yearOfBirthStats[0].minValue;
 				histData.max = data.yearOfBirthStats[0].maxValue;
-				histData.intervals = 100;
 				histData.data = (ChartUtils.normalizeArray(data.yearOfBirth));
 				this.yearHistogramData(ChartUtils.mapHistogram(histData));
 			}

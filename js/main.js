@@ -230,7 +230,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
 		httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
-		httpService.setUserTokenGetter(() => authApi.token());
+		httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
 
 		// establish base priorities for daimons
 		var evidencePriority = 0;

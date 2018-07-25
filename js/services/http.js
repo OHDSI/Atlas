@@ -49,8 +49,8 @@ define(function(require, exports) {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    handleUnexpectedError() {
-      alert('Oooops!.. Something went wrong :(');
+    handleUnexpectedError(event) {
+      console.error('Oooops!.. Something went wrong :(', event);
     }
 
     getHeaders() {
@@ -88,7 +88,7 @@ define(function(require, exports) {
           this.handleUnauthorized(response.json);
           break;
         default:
-          this.handleUnexpectedError();
+          this.handleUnexpectedError(response);
           break;
       }
 

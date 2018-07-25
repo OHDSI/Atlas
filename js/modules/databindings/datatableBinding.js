@@ -63,7 +63,7 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 				}
 				
 				const xssOptions = config.xssOptions;
-
+				
 				binding.options.columns = columns.map((column) => {
 					const originalRender = column.render;
 					const originalDataAccessor = column.data;
@@ -82,6 +82,11 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 					});
 				});
 
+				// For case of complex header which uses data-bindings (https://datatables.net/examples/advanced_init/complex_header.html)
+				if ($(element).find('thead')[0]) {
+					ko.applyBindings(bindingContext, $(element).find('thead')[0]);
+				}
+				
 				$(element).DataTable(binding.options);
 				
 				if (binding.api != null)

@@ -1,4 +1,4 @@
-define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'databindings', 'components/ac-access-denied'], function (ko, view, config, ohdsiUtils) {
+define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'databindings', 'components/ac-access-denied', 'less!./role-details.less',], function (ko, view, config, ohdsiUtils) {
     function roleDetails(params) {
         var self = this;
         var serviceUrl = config.api.url;
@@ -51,6 +51,11 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'ohdsi.util', 'data
         self.canDelete = ko.pureComputed(function() { return self.isAuthenticated() && self.roleId() && authApi.isPermittedDeleteRole(self.roleId()); });
         self.canSave = ko.pureComputed(function() { return self.canEditRole() || self.canEditRoleUsers() || self.canEditRolePermissions(); });
 
+        self.areUsersSelected = ko.pureComputed(function() { return !!self.userItems().find(user => user.isRoleUser()); });
+        
+        self.selectAllUsers = () => self.userItems().forEach(user => user.isRoleUser(true));
+        self.deselectAllUsers = () => self.userItems().forEach(user => user.isRoleUser(false));
+        
         self.renderCheckbox = function (field, editable) {
             return editable
                 ? '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); } , css: { selected: ' + field + '}" class="fa fa-check"></span>'
