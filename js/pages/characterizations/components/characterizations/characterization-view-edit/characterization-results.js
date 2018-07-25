@@ -376,7 +376,7 @@ define([
                         type: 'numberAbs'
                     },
                 );
-                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiffForPrevelanceCovs(
+                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiffForDistCovs(
                     analysis.reports[0].stats[0],
                     analysis.reports[1].stats[0]
                 )));
@@ -404,7 +404,7 @@ define([
             return (mean2 - mean1) / sd;
         }
 
-        calcStdDiffForPrevelanceCovs(cov1, cov2) {
+        calcStdDiffForDistCovs(cov1, cov2) {
             const n1 = cov1.sumValue / (cov1.pct / 100);
             const n2 = cov2.sumValue / (cov2.pct / 100);
 
