@@ -986,8 +986,6 @@ define([
             .done(function () {
             	self.resolveInclusionConceptCount(conceptSetId);
               self.currentConceptSetMode(mode);
-              $('#conceptSetLoadDialog')
-                .modal('hide');
             });
 				});
 			}
@@ -1043,8 +1041,6 @@ define([
 						$.when(resolvingPromise)
 							.done(function () {
 								self.currentConceptSetMode(mode);
-								$('#conceptSetLoadDialog')
-									.modal('hide');
 							});
 					});
 			}
