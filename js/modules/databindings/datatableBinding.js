@@ -34,12 +34,23 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
     );
 	}
 
-	let persistedBindingContext;
+	function sortAbs(x, y) {
+        const abxX = Math.abs(x);
+        const absY = Math.abs(y);
+        return abxX < absY ? -1 : abxX>absY ? 1 : 0;
+	}
 
 	ko.bindingHandlers.dataTable = {
 	
 		init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-			persistedBindingContext = bindingContext;
+
+            jQuery.fn.dataTableExt.oSort["numberAbs-desc"] = function(x, y) {
+                return -1 * sortAbs(x, y);
+            };
+
+            jQuery.fn.dataTableExt.oSort["numberAbs-asc"] = function(x, y) {
+                return sortAbs(x, y);
+            }
 
 			var binding = ko.utils.unwrapObservable(valueAccessor());
 			// If the binding is an object with an options field,
@@ -106,8 +117,6 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 			};			
 		},
 		update: function (element, valueAccessor) {
-            persistedBindingContext;
-
 			var binding = ko.utils.unwrapObservable(valueAccessor());
 			var table = $(element).DataTable();
 

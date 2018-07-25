@@ -8,12 +8,15 @@ define([
     'utils/CommonUtils',
     'numeral',
     'lodash',
+    'd3',
     'components/visualizations/filter-panel/utils',
     'text!pages/characterizations/stubs/characterization-results-data.json',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/line-chart',
     'components/charts/scatterplot',
+    'components/charts/boxplot',
+    'd3-scale-chromatic',
 ], function (
     ko,
     sharedState,
@@ -24,21 +27,15 @@ define([
     commonUtils,
     numeral,
     lodash,
+    d3,
     filterUtils,
     characterizationResultsDataStub,
 ) {
-    const AGG_MODES = {
-        COMPARE: 1,
-        SUM: 2,
-    };
 
     class CharacterizationViewEditResults extends Component {
-        constructor(params) {
-            super();
 
-            this.loading = ko.observable(false);
-
-            const prevalenceColumns = [
+        get prevalenceColumns() {
+            return [
                 {
                     title: 'Covariate',
                     data: 'covariateName',
@@ -55,8 +52,10 @@ define([
                     className: this.classes('col-prev-pct'),
                 },
             ];
+        };
 
-            const distributionColumns = [
+        get distributionColumns() {
+            return [
                 {
                     title: 'Covariate',
                     data: 'covariateName',
@@ -113,6 +112,12 @@ define([
                     className: this.classes('col-dist-max'),
                 },
             ];
+        }
+
+        constructor(params) {
+            super();
+
+            this.loading = ko.observable(false);
 
             this.dataSource = {
                 id: 1,
@@ -129,6 +134,8 @@ define([
                 ),
                 'value'
             );
+            this.selectedCohorts = ko.observableArray(this.cohorts.map(c => c.value));
+
             this.analyses = this.data.map(a => ({label: a.analysisName, value: a.analysisId}));
 
             this.filterList = [
@@ -137,7 +144,7 @@ define([
                     label: 'Cohorts',
                     name: 'cohorts',
                     options: ko.observableArray(this.cohorts),
-                    selectedValues: ko.observableArray(this.cohorts.map(c => c.value)),
+                    selectedValues: this.selectedCohorts,
                 },
                 {
                     type: 'multiselect',
@@ -148,37 +155,65 @@ define([
                 }
             ];
 
-            this.displayMode = ko.observable('table');
+            this.reportList = this.prepareTabularData(this.data, filterUtils.getSelectedFilterValues(this.filterList));
 
-            this.AGG_MODES = AGG_MODES;
-            this.selectedAggMode = ko.observable(this.AGG_MODES.COMPARE);
+            this.groupedScatterData = ko.computed(() => {
+                return this.reportList().filter(analysis => analysis.type === 'prevalence').map(analysis => ({
+                    name: analysis.analysisName,
+                    values: this.convertScatterplotData(analysis),
+                }));
+            });
+            this.groupedScatterColorScheme = d3.schemeCategory10;
 
-            this.reportList = ko.computed(() => {
-                const filteredData = this.filterData(this.data, filterUtils.getSelectedFilterValues(this.filterList));
+            this.groupedTabularData = ko.computed(() => {
+                const reportList = this.getPrevalenceReports(this.reportList());
+
+                if (reportList.length < 1) {
+                    return {};
+                }
+
+                return {
+                    columns: reportList[0].columns,
+                    data: lodash.flatten(reportList.map(a => a.data))
+                }
+            });
+
+            this.scatterXScale = d3.scaleLinear().domain([0, 100]);
+            this.scatterYScale = d3.scaleLinear().domain([0, 100]);
+
+            this.convertPrevalenceAnalysis = this.convertPrevalenceAnalysis.bind(this);
+            this.convertScatterplotData = this.convertScatterplotData.bind(this);
+            this.prepareTabularData = this.prepareTabularData.bind(this);
+        }
+
+        getPrevalenceReports(reports) {
+            return reports.filter(analysis => analysis.type === 'prevalence');
+        }
+
+        prepareTabularData(data, filters) {
+            return ko.computed(() => {
+                const filteredData = this.filterData(data, filters);
 
                 const convertedData = filteredData.map(analysis => {
                     let convertedAnalysis;
 
                     if (analysis.type === 'prevalence') {
-                        convertedAnalysis = this.convertPrevalenceAnalysis(analysis, this.selectedAggMode());
+                        convertedAnalysis = this.convertPrevalenceAnalysis(analysis);
                     } else {
-                        convertedAnalysis = {
-                            ...analysis,
-                            reports: analysis.reports.map(r => ({...r, data: r.stats, columns: distributionColumns})),
-                        };
+                        if (analysis.reports.length === 2) {
+                            convertedAnalysis = this.convertDistributionComparativeAnalysis(analysis);
+                        } else {
+                            convertedAnalysis = {
+                                ...analysis,
+                                reports: analysis.reports.map(r => ({...r, data: r.stats, columns: this.distributionColumns})),
+                            };
+                        }
                     }
                     return convertedAnalysis;
                 });
 
                 return convertedData;
             });
-
-            this.convertPrevalenceAnalysis = this.convertPrevalenceAnalysis.bind(this);
-            this.showAsTable = this.showAsTable.bind(this);
-            this.showAsChart = this.showAsChart.bind(this);
-            this.showAsComparison = this.showAsComparison.bind(this);
-            this.showAsSum = this.showAsSum.bind(this);
-            this.convertScatterplotData = this.convertScatterplotData.bind(this);
         }
 
         filterData(data, {cohorts, analyses}) {
@@ -194,12 +229,31 @@ define([
         }
 
         convertScatterplotData(analysis) {
-            return ko.computed(() => {
-                return analysis.data.map(rd => ({ xValue: rd.sumValue[0], yValue: rd.sumValue[1] }));
-            });
+            return analysis.data.map(rd => ({ xValue: rd.pct[0], yValue: rd.pct[1] }));
         }
 
-        convertPrevalenceAnalysis(analysis, aggMode) {
+        convertBoxplotData(analysis) {
+
+            return analysis.reports.map(r => ({
+                Category: r.cohortName,
+                min: r.stats[0].min,
+                max: r.stats[0].max,
+                median: r.stats[0].median,
+                LIF: r.stats[0].p10,
+                q1: r.stats[0].p25,
+                q3: r.stats[0].p75,
+                UIF: r.stats[0].p90
+            }));
+
+            /*return [
+                {"Category": "Type 1", "min": 1, "LIF":5, "q1":12, "median":15, "q3": 22, "UIF":30, "max": 35},
+                {"Category": "Type 2", "min": 3, "LIF":9, "q1":16, "median":22, "q3": 25, "UIF":29, "max": 38},
+                {"Category": "Type 3", "min": 2, "LIF":6, "q1":9, "median":13, "q3": 18, "UIF":22, "max": 25},
+                {"Category": "Type 4", "min": 4, "LIF":11, "q1":16, "median":22, "q3": 28, "UIF":34, "max": 39}
+            ]*/
+        }
+
+        convertPrevalenceAnalysis(analysis) {
             let columns = [
                 {
                     title: 'Covariate',
@@ -210,45 +264,30 @@ define([
 
             let data = {};
 
-            let colDef;
-            let aggFunc;
-
-            if (aggMode === AGG_MODES.COMPARE) {
-
-                colDef = (columns, i) => {
-                    columns.push({
-                        title: 'Count',
-                        render: (s, p, d) => d.sumValue[i],
-                    });
-                    columns.push({
-                        title: 'Pct',
-                        render: (s, p, d) => this.formatPct(d.pct[i]),
-                    });
-                }
-
-                aggFunc = (obj, field, value) => {
-                    if (typeof obj[field] === 'undefined') {
-                        obj[field] = [];
-                    }
-                    obj[field].push(value);
-                }
-            }
-
             analysis.reports.forEach((r, i) => {
 
-                colDef(columns, i);
+                columns.push({
+                    title: 'Count',
+                    render: (s, p, d) => d.sumValue[i],
+                });
+                columns.push({
+                    title: 'Pct',
+                    render: (s, p, d) => this.formatPct(d.pct[i]),
+                });
 
                 r.stats.forEach(rd => {
                     if (data[rd.covariateName] === undefined) {
                         data[rd.covariateName] = {
                             covariateName: rd.covariateName,
+                            sumValue: [],
+                            pct: [],
                         };
                     }
 
                     const cov = data[rd.covariateName];
 
-                    aggFunc(cov, 'sumValue', rd.sumValue);
-                    aggFunc(cov, 'pct', rd.pct);
+                    cov.sumValue.push(rd.sumValue);
+                    cov.pct.push(rd.pct);
                 });
             });
 
@@ -260,9 +299,10 @@ define([
                         title: 'Std diff',
                         render: (s, p, d) => d.stdDiff,
                         className: this.classes('col-prev-std-diff'),
+                        type: 'numberAbs'
                     },
                 );
-                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiff(
+                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiffForPrevelanceCovs(
                     {sumValue: d.sumValue[0], pct: d.pct[0]},
                     {sumValue: d.sumValue[1], pct: d.pct[1]}
                 )));
@@ -275,7 +315,81 @@ define([
             };
         }
 
-        calcStdDiff(cov1, cov2) {
+        convertDistributionComparativeAnalysis(analysis) {
+            let columns = [
+                {
+                    title: 'Covariate',
+                    data: 'covariateName',
+                    className: this.classes('col-dist-title'),
+                },
+            ];
+
+            let data = {};
+
+            analysis.reports.forEach((r, i) => {
+
+                columns.push({
+                    title: 'Count',
+                    render: (s, p, d) => d.count[i],
+                });
+                columns.push({
+                    title: 'Avg',
+                    render: (s, p, d) => d.avg[i],
+                });
+                columns.push({
+                    title: 'Std Dev',
+                    render: (s, p, d) => d.stdDev[i],
+                });
+                columns.push({
+                    title: 'Median',
+                    render: (s, p, d) => d.median[i],
+                });
+
+                r.stats.forEach(rd => {
+                    if (data[rd.covariateName] === undefined) {
+                        data[rd.covariateName] = {
+                            covariateName: rd.covariateName,
+                            count: [],
+                            avg: [],
+                            stdDev: [],
+                            median: [],
+                        };
+                    }
+
+                    const cov = data[rd.covariateName];
+
+                    cov.count.push(rd.count);
+                    cov.avg.push(rd.avg);
+                    cov.stdDev.push(rd.stdDev);
+                    cov.median.push(rd.median);
+                });
+            });
+
+            data = Object.values(data);
+
+            if (analysis.reports.length === 2) {
+                columns.push(
+                    {
+                        title: 'Std diff',
+                        render: (s, p, d) => d.stdDiff,
+                        className: this.classes('col-dist-std-diff'),
+                        type: 'numberAbs'
+                    },
+                );
+                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiffForPrevelanceCovs(
+                    analysis.reports[0].stats[0],
+                    analysis.reports[1].stats[0]
+                )));
+            }
+
+            return {
+                ...analysis,
+                columns: columns,
+                data: data,
+            };
+        }
+
+        calcStdDiffForPrevelanceCovs(cov1, cov2) {
             const n1 = cov1.sumValue / (cov1.pct / 100);
             const n2 = cov2.sumValue / (cov2.pct / 100);
 
@@ -290,28 +404,27 @@ define([
             return (mean2 - mean1) / sd;
         }
 
+        calcStdDiffForPrevelanceCovs(cov1, cov2) {
+            const n1 = cov1.sumValue / (cov1.pct / 100);
+            const n2 = cov2.sumValue / (cov2.pct / 100);
+
+            const mean1 = cov1.avg;
+            const mean2 = cov2.avg;
+
+            const sd1 = cov1.stdDev;
+            const sd2 = cov2.stdDev;
+
+            const sd = Math.sqrt(sd1 * sd1 + sd2 * sd2);
+
+            return (mean2 - mean1) / sd;
+        }
+
         formatStdDiff(val) {
             return numeral(val).format('0,0.0000');
         }
 
         formatPct(val) {
             return numeral(val).format('0.00') + '%';
-        }
-
-        showAsTable() {
-            this.displayMode('table');
-        }
-
-        showAsChart() {
-            this.displayMode('chart');
-        }
-
-        showAsComparison() {
-            this.selectedAggMode(this.AGG_MODES.COMPARE);
-        }
-
-        showAsSum() {
-            this.selectedAggMode(this.AGG_MODES.SUM);
         }
     }
 
