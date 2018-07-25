@@ -4,7 +4,7 @@ define([
 	'appConfig',
 	'atlas-state',
 	'providers/Component',
-	'utils/commonUtils',
+	'utils/CommonUtils',
 ], function (
 	ko,
 	view,
