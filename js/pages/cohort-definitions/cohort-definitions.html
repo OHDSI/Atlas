@@ -1,0 +1,16 @@
+<div class="flexed">
+	<heading-title params="name: 'Cohort definitions', icon: 'users', theme: 'dark'"></heading-title>
+	<div data-bind="if:$component.canReadCohorts, css: `${canReadCohorts() ? 'flexed' : ''}`">
+		<div class="paddedWrapper flexed">
+			<div class="row">
+				<div class="col-sm-offset-10 col-sm-1" data-bind="attr: {title: $component.newCohortButtonCaption()}">
+					<div class="btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined || !$component.canCreateCohort()}">New Cohort</div>
+				</div>
+			</div>
+			<cohort-definition-browser params="{cohortDefinitionSelected: cohortDefinitionId}"></cohort-definition-browser>
+		</div>
+	</div>
+	<div data-bind="ifnot:$component.canReadCohorts, css: `${canReadCohorts() ? '' : 'flexed'}`">
+		<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
+	</div>
+</div>
