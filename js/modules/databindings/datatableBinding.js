@@ -22,20 +22,20 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 		$(element).DataTable().ajax.reload(callback || null, resetPaging || true);
 	}
 
-  function isUrlAbsolute(url) {
-    return (url.indexOf('://') > 0 || url.indexOf('//') === 0);
-  }
+	function isUrlAbsolute(url) {
+		return (url.indexOf('://') > 0 || url.indexOf('//') === 0);
+	}
 
-  function filterAbsoluteUrls(html) {
-    return html.replace(/href="([^"]*)"|href='([^']*)'/g, function(match, p1, p2)
-    	{
-        const link = p1 || p2;
-        if (isUrlAbsolute(link)) {
-        	return match.replace(link, '#' + link);
-        }
-        return match;
-      }
-    );
+	function filterAbsoluteUrls(html) {
+		return html.replace(/href="([^"]*)"|href='([^']*)'/g, function(match, p1, p2)
+			{
+				const link = p1 || p2;
+				if (isUrlAbsolute(link)) {
+					return match.replace(link, '#' + link);
+				}
+				return match;
+			}
+			);
 	}
 
 	ko.bindingHandlers.dataTable = {

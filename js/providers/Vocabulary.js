@@ -258,14 +258,14 @@ define(function (require, exports) {
 		return getComparedConceptSetPromise;
 	}
 
-  function lookupIdentifiers(identifiers) {
-    return $.ajax({
-      url: sharedState.vocabularyUrl() + 'lookup/identifiers',
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify(identifiers),
-    });
-  }
+	function lookupIdentifiers(identifiers) {
+		return $.ajax({
+			url: sharedState.vocabularyUrl() + 'lookup/identifiers',
+			method: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify(identifiers),
+		});
+	}
 
  	var api = {
 		loaded: loadedPromise,

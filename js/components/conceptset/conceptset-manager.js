@@ -22,7 +22,7 @@ define(['knockout',
 	function conceptsetManager(params) {
 		var self = this;
 		var authApi = params.model.authApi;
-		self.model = params.model;
+		self.vmodel = params.model;
 		self.vocabularyApi = vocabularyAPI;
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
@@ -159,7 +159,7 @@ define(['knockout',
 		}, this);
 
 		self.tableLanguage = {
-      search: 'Filter: ',
+			search: 'Filter: ',
 			processing: '<div><img width="100px" height="100px" src="images/loading.svg" /><div class="conceptset-loading">Loading...</div></div>',
 		};
 
@@ -379,14 +379,14 @@ define(['knockout',
 			title: 'RC',
 			data: 'RECORD_COUNT',
 			className: 'numeric',
-      orderable: false,
-      searchable: false,
+			orderable: false,
+			searchable: false,
 		}, {
 			title: 'DRC',
 			data: 'DESCENDANT_RECORD_COUNT',
 			className: 'numeric',
-      orderable: false,
-      searchable: false,
+			orderable: false,
+			searchable: false,
 		}, {
 			title: 'Domain',
 			data: 'DOMAIN_ID'
@@ -397,8 +397,8 @@ define(['knockout',
 			title: 'Ancestors',
 			data: 'ANCESTORS',
 			render: conceptSetService.getAncestorsRenderFunction(),
-      orderable: false,
-      searchable: false,
+			orderable: false,
+			searchable: false,
 		}];
 
 		self.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback(self);
@@ -409,52 +409,52 @@ define(['knockout',
 				'binding': function (o) {
 					return o.VOCABULARY_ID;
 				},
-        'field': 'VOCABULARY_ID',
-        'computed': false,
+				'field': 'VOCABULARY_ID',
+				'computed': false,
 			}, {
 				'caption': 'Class',
 				'binding': function (o) {
 					return o.CONCEPT_CLASS_ID;
 				},
-        'field': 'CONCEPT_CLASS_ID',
-        'computed': false,
+				'field': 'CONCEPT_CLASS_ID',
+				'computed': false,
 			}, {
 				'caption': 'Domain',
 				'binding': function (o) {
 					return o.DOMAIN_ID;
 				},
-        'field': 'DOMAIN_ID',
-        'computed': false,
+				'field': 'DOMAIN_ID',
+				'computed': false,
 			}, {
 				'caption': 'Standard Concept',
 				'binding': function (o) {
 					return o.STANDARD_CONCEPT_CAPTION;
 				},
-        'field': 'STANDARD_CONCEPT_CAPTION',
-        'computed': true,
+				'field': 'STANDARD_CONCEPT_CAPTION',
+				'computed': true,
 			}, {
 				'caption': 'Invalid Reason',
 				'binding': function (o) {
 					return o.INVALID_REASON_CAPTION;
 				},
-        'field': 'INVALID_REASON_CAPTION',
-        'computed': true,
+				'field': 'INVALID_REASON_CAPTION',
+				'computed': true,
 			}, {
 				'caption': 'Has Records',
 				'binding': function (o) {
 					return parseInt(o.RECORD_COUNT.toString()
 						.replace(',', '')) > 0;
 				},
-        'field': 'RECORD_COUNT',
-        'computed': true,
+				'field': 'RECORD_COUNT',
+				'computed': true,
 			}, {
 				'caption': 'Has Descendant Records',
 				'binding': function (o) {
 					return parseInt(o.DESCENDANT_RECORD_COUNT.toString()
 						.replace(',', '')) > 0;
 				},
-        'field': 'DESCENDANT_RECORD_COUNT',
-        'computed': true,
+				'field': 'DESCENDANT_RECORD_COUNT',
+				'computed': true,
 			}]
 		};
 
@@ -565,57 +565,57 @@ define(['knockout',
 		self.sourceCodesFilter = {};
 
 		function applyFilter(data, filter) {
-      if (data.filtered.length === 0){
-        delete filter[data.facet.field];
-      } else {
-        filter[data.facet.field] = data.filtered.map(f => f.key);
-      }
-    }
+			if (data.filtered.length === 0){
+				delete filter[data.facet.field];
+			} else {
+				filter[data.facet.field] = data.filtered.map(f => f.key);
+			}
+		}
 
 		self.applyIncludedFilter = (data) => applyFilter(data, self.includedFilter);
 
 		self.applySourceCodesFilter = (data) => applyFilter(data, self.sourceCodesFilter);
 
 		function loadFacets(facets, url) {
-      const expression = {
-        items: sharedState.selectedConcepts(),
-      };
-      const columns = facets.map(f => ({columnName: f.field, computed: f.computed}));
-      return conceptSetAPI.loadFacets(ko.toJSON({ columns, expression, }), url);
+			const expression = {
+				items: sharedState.selectedConcepts(),
+			};
+			const columns = facets.map(f => ({columnName: f.field, computed: f.computed}));
+			return conceptSetAPI.loadFacets(ko.toJSON({ columns, expression, }), url);
 		}
 
-    self.loadIncludedFacets = () => {
-      return loadFacets(self.searchConceptsOptions.Facets);
-    };
+		self.loadIncludedFacets = () => {
+			return loadFacets(self.searchConceptsOptions.Facets);
+		};
 
 		self.loadSourceCodesFacets = () => {
 			return loadFacets(self.model.relatedSourcecodesOptions.Facets, 'lookup/mapped/facets');
 		};
 
-    function getExpression(data, filter) {
-      const f = filter || self.includedFilter;
-      const expression = {
-        items: sharedState.selectedConcepts(),
-      };
-      const filters = Object.keys(f).map(key => ({
-        columnName: key,
-        computed: self.searchConceptsOptions.Facets.find(f => f.field === key).computed,
-        values: f[key],
-      }));
-    	return ko.toJSON({
-        ...data,
-        expression,
-        filters,
-      });
+		function getExpression(data, filter) {
+			const f = filter || self.includedFilter;
+			const expression = {
+				items: sharedState.selectedConcepts(),
+			};
+			const filters = Object.keys(f).map(key => ({
+				columnName: key,
+				computed: self.searchConceptsOptions.Facets.find(f => f.field === key).computed,
+				values: f[key],
+			}));
+			return ko.toJSON({
+				...data,
+				expression,
+				filters,
+			});
 		}
 
 	self.loadIncludedConcepts = function(data, callback, settings) {
-    	conceptSetAPI.resolveConceptSetExpression(getExpression(data), true).then(concepts => {
-        	self.includedConcepts(concepts.data);
-        	self.model.setIncludedConceptsMap(concepts.data);
-        	callback(concepts);
-    });
-  };
+			conceptSetAPI.resolveConceptSetExpression(getExpression(data), true).then(concepts => {
+					self.includedConcepts(concepts.data);
+					self.model.setIncludedConceptsMap(concepts.data);
+					callback(concepts);
+		});
+	};
 
 	self.loadSourceCodes = function(data, callback, settings) {
 		vocabularyAPI.loadSourceCodes(getExpression(data, self.sourceCodesFilter), true).then(concepts => {
@@ -1047,10 +1047,10 @@ define(['knockout',
 			});
 		
 		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
-      includedConcepts: self.includedConcepts,
-      ancestors: self.ancestors,
-      ancestorsModalIsShown: self.ancestorsModalIsShown,
-    });
+			includedConcepts: self.includedConcepts,
+			ancestors: self.ancestors,
+			ancestorsModalIsShown: self.ancestorsModalIsShown,
+		});
 		
 		self.canSave = ko.computed(function () {
 			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());

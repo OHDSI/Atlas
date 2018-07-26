@@ -279,7 +279,7 @@ define([
 				title: 'Standard Concept Caption',
 				data: 'STANDARD_CONCEPT_CAPTION',
 				visible: false,
-        searchable: false,
+				searchable: false,
 			}, {
 				title: 'Domain',
 				data: 'DOMAIN_ID'
@@ -971,8 +971,8 @@ define([
 				// don't load if it is already loaded or a new concept set
 				if (self.currentConceptSet() && self.currentConceptSet()
 					.id == conceptSetId) {
-          self.currentView(viewToShow);
-          self.currentConceptSetMode(mode);
+					self.currentView(viewToShow);
+					self.currentConceptSetMode(mode);
 					return;
 				}
 				self.currentView('loading');
@@ -981,12 +981,12 @@ define([
 				$.when(getConceptSetPromise, getExpressionPromise).done((conceptSet, expression) => {
 					self.setConceptSet(conceptSet[0], expression[0].items);
 					self.currentView(viewToShow);
-          var resolvingPromise = self.resolveConceptSetExpression();
-          $.when(resolvingPromise)
-            .done(function () {
-            	self.resolveInclusionConceptCount(conceptSetId);
-              self.currentConceptSetMode(mode);
-            });
+					var resolvingPromise = self.resolveConceptSetExpression();
+					$.when(resolvingPromise)
+						.done(function () {
+							self.resolveInclusionConceptCount(conceptSetId);
+							self.currentConceptSetMode(mode);
+						});
 				});
 			}
 

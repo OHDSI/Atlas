@@ -329,8 +329,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					const map = pageModel.includedConceptsMap();
 					data.filter(line => !_.isEmpty(ancestors[line.CONCEPT_ID]) && _.isEmpty(line.ANCESTORS))
 						.forEach(line => {
-              const ancArray = ancestors[line.CONCEPT_ID];
-              line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
+							const ancArray = ancestors[line.CONCEPT_ID];
+							line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
 					});
 					resultPromise.resolve();
 				});
@@ -346,27 +346,27 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 			vocabAPI.lookupIdentifiers(identifiers || pageModel.conceptSetInclusionIdentifiers())
 				.then(data => {
-          var densityPromise = vocabAPI.loadDensity(data);
+					var densityPromise = vocabAPI.loadDensity(data);
 
-          $.when(densityPromise)
-            .done(function () {
-              pageModel.includedConcepts(data.map(v => ({...v, ANCESTORS: []})));
-              includedPromise.resolve();
-              pageModel.loadAndApplyAncestors(pageModel.includedConcepts());
-              pageModel.loadingIncluded(false);
-              pageModel.setIncludedConceptsMap(data);
-            });
-        });
+					$.when(densityPromise)
+						.done(function () {
+							pageModel.includedConcepts(data.map(v => ({...v, ANCESTORS: []})));
+							includedPromise.resolve();
+							pageModel.loadAndApplyAncestors(pageModel.includedConcepts());
+							pageModel.loadingIncluded(false);
+							pageModel.setIncludedConceptsMap(data);
+						});
+				});
 
-      return includedPromise;
-    }
+			return includedPromise;
+		}
 
-    pageModel.setIncludedConceptsMap = function(data) {
-      const map = data.reduce((result, item) => {
-        result[item.CONCEPT_ID] = item;
-        return result;
-      }, {});
-      pageModel.includedConceptsMap(map);
+		pageModel.setIncludedConceptsMap = function(data) {
+			const map = data.reduce((result, item) => {
+				result[item.CONCEPT_ID] = item;
+				return result;
+				}, {});
+			pageModel.includedConceptsMap(map);
 		};
 		
 		pageModel.loadSourcecodes = function () {
@@ -384,11 +384,11 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		function loadIncluded() {
 			var promise;
-      if (pageModel.includedConcepts().length == 0) {
-        promise = pageModel.loadIncluded();
-      } else {
-      	promise = $.Deferred();
-      	promise.resolve();
+			if (pageModel.includedConcepts().length == 0) {
+				promise = pageModel.loadIncluded();
+			} else {
+				promise = $.Deferred();
+				promise.resolve();
 			}
 			return promise;
 		}
@@ -402,8 +402,8 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					loadIncluded()
 						.then(function () {
 							if (pageModel.includedSourcecodes().length === 0) {
-                pageModel.loadSourcecodes();
-              }
+								pageModel.loadSourcecodes();
+							}
 						});
 					break;
 			}
@@ -486,11 +486,11 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 							return item.id === pageModel.currentConceptSet().id;
 						});
 					if (!$(this).hasClass("selected")) {
-            conceptSet.expression.items.remove(function (i) {
-              return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
-            });
-          }
-          conceptSet.expression.items.valueHasMutated();
+						conceptSet.expression.items.remove(function (i) {
+							return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
+						});
+					}
+					conceptSet.expression.items.valueHasMutated();
 					pageModel.resolveConceptSetExpressionSimple(ko.toJSON(conceptSet.expression))
 						.then(pageModel.loadIncluded)
 						.then(pageModel.loadSourcecodes);

@@ -276,29 +276,29 @@ define(function (require, exports) {
 	}
 
 	function lookupIdentifiers(identifiers) {
-    return $.ajax({
-      url: sharedState.vocabularyUrl() + 'lookup/identifiers',
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify(identifiers),
-   	});
+		return $.ajax({
+			url: sharedState.vocabularyUrl() + 'lookup/identifiers',
+			method: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify(identifiers),
+		});
 	}
 
-  function loadSourceCodes(identifiers, page) {
+	function loadSourceCodes(identifiers, page) {
 
-    return $.ajax({
-      url: sharedState.vocabularyUrl() + 'lookup/mapped' + (page ? 'Page' : ''),
-      method: 'POST',
-      data: page ? identifiers : JSON.stringify(identifiers),
-      contentType: 'application/json',
-      success: function (sourcecodes) {
-        if (!page) {
-          pageModel.includedSourcecodes(sourcecodes);
-        }
-        pageModel.loadingSourcecodes(false);
-      }
-    });
-  }
+		return $.ajax({
+			url: sharedState.vocabularyUrl() + 'lookup/mapped' + (page ? 'Page' : ''),
+			method: 'POST',
+			data: page ? identifiers : JSON.stringify(identifiers),
+			contentType: 'application/json',
+			success: function (sourcecodes) {
+				if (!page) {
+					pageModel.includedSourcecodes(sourcecodes);
+				}
+				pageModel.loadingSourcecodes(false);
+			}
+		});
+	}
 
 	var api = {
 		loaded: loadedPromise,
@@ -316,7 +316,7 @@ define(function (require, exports) {
 		compareConceptSet: compareConceptSet,
 		loadDensity: loadDensity,
 		lookupIdentifiers,
-    getConceptRecordCount,
+		getConceptRecordCount,
 		loadSourceCodes,
 	}
 
