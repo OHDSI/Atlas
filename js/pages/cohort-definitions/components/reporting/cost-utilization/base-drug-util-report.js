@@ -17,8 +17,8 @@ define(
 
     class BaseDrugUtilReport extends BaseCostUtilReport {
 
-      constructor(componentName, params) {
-        super(componentName, params);
+      constructor(params) {
+        super(params);
         this.setupDrugSourceConceptOptions = this.setupDrugSourceConceptOptions.bind(this);
 
         this.window = params.window;
