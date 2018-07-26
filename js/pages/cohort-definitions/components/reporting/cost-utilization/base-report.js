@@ -9,7 +9,7 @@ define(
     'webapi/MomentAPI',
     'utils/CsvUtils',
     'numeral',
-    'modules/cohortdefinition/services/CohortResultsService'
+    'services/CohortResultsService'
   ],
   function (
     ko,

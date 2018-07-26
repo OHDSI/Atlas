@@ -17,6 +17,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'services/ConceptSetService',
 	'providers/Component',
 	'utils/CommonUtils',
+	'pages/cohort-definitions/const',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -49,7 +50,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	cohortConst,
 	conceptSetService,
 	Component,
-	commonUtils
+	commonUtils,
+	costUtilConst
 ) {
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -535,7 +537,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.checkedUtilReports = ko.observableArray([]);
 			
 			const reportPacks = cohortReportingService.visualizationPacks;
-			this.utilReportOptions = [
+			const reports = [
 				reportPacks.healthcareUtilPersonAndExposureBaseline,
 				reportPacks.healthcareUtilPersonAndExposureCohort,
 				reportPacks.healthcareUtilVisitRecordsBaseline,
@@ -550,6 +552,19 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				label: item.name,
 				value: item.analyses,
 			}));
+
+			this.utilReportOptions = {
+				reports : {
+					title: 'Reports',
+					options: reports,
+					selectedOptions: ko.observableArray([]),
+				},
+				periods: {
+					title: 'Periods',
+					options: costUtilConst.periods,
+					selectedOptions: ko.observableArray([]),
+				}
+			};
 			
 			this.selectedCriteria = ko.observable();
 

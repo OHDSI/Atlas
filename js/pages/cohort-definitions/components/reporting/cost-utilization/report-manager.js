@@ -197,7 +197,7 @@ define([
 
 			this.currentAgeGroup = ko.observable();
 
-			this.reportTriggerRunSuscription = this.model.reportTriggerRun.subscribe(function (newValue) {
+			this.reportTriggerRunSuscription = this.model.reportTriggerRun.subscribe(newValue => {
 				if (newValue) {
 					this.runReport();
 				}
