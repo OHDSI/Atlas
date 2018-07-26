@@ -614,10 +614,10 @@ define([
 				const callback = () => self.resolvingConceptSetExpression(false);
 				return conceptSetApi.resolveConceptSetExpression(conceptSetExpression)
 					.then(info => {
-            self.conceptSetInclusionIdentifiers(info);
-            self.currentIncludedConceptIdentifierList(info.join(','));
-            self.conceptSetInclusionCount(info.length);
-            callback();
+						self.conceptSetInclusionIdentifiers(info);
+						self.currentIncludedConceptIdentifierList(info.join(','));
+						self.conceptSetInclusionCount(info.length);
+						callback();
 					}, callback);
 			};
 			self.resolveConceptSetExpressionSimple = function (expression, success) {
@@ -644,34 +644,34 @@ define([
         return sharedState.selectedConcepts().map(item => item.concept.CONCEPT_ID);
       };
 			self.resolveInclusionConceptCount = function(conceptSetId) {
-        if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId) {
-			    return $.Deferred().resolve();
-        }
+				if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId) {
+					return $.Deferred().resolve();
+				}
 			  self.resolvingConceptSetExpression(true);
-        const conceptSetExpression = {items: sharedState.selectedConcepts(),};
-			  return conceptSetApi.includedConceptSetCount(ko.toJSON(conceptSetExpression))
-          .then(count => {
-            self.resolvingConceptSetExpression(false);
-            self.conceptSetInclusionCount(count);
-           }, () => {
-            self.resolvingConceptSetExpression(false);
-            document.location = '#/configure';
-          });
-      };
+				const conceptSetExpression = {items: sharedState.selectedConcepts(),};
+				return conceptSetApi.includedConceptSetCount(ko.toJSON(conceptSetExpression))
+					.then(count => {
+						self.resolvingConceptSetExpression(false);
+						self.conceptSetInclusionCount(count);
+					}, () => {
+						self.resolvingConceptSetExpression(false);
+						document.location = '#/configure';
+					});
+			};
 			self.resolveIncludedConcepts = function(conceptSetId) {
-        if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId && self.conceptSetInclusionIdentifiers().length > 0) {
-          return $.Deferred().resolve();
-        }
+				if (self.currentConceptSet() && self.currentConceptSet().id == conceptSetId && self.conceptSetInclusionIdentifiers().length > 0) {
+					return $.Deferred().resolve();
+				}
 			  self.resolvingConceptSetExpression(true);
-        self.currentConceptIdentifierList(self.getConceptIdentifierList().join(','));
-        const conceptSetExpression = {items: sharedState.selectedConcepts(),};
-        return conceptSetApi.resolveConceptSetExpression(conceptSetExpression)
-          .then(info => {
-            self.conceptSetInclusionIdentifiers(info);
-            self.currentIncludedConceptIdentifierList(info.join(','));
-            self.resolvingConceptSetExpression(false);
-          }, () => self.resolvingConceptSetExpression(false));
-      };
+				self.currentConceptIdentifierList(self.getConceptIdentifierList().join(','));
+				const conceptSetExpression = {items: sharedState.selectedConcepts(),};
+				return conceptSetApi.resolveConceptSetExpression(conceptSetExpression)
+					.then(info => {
+						self.conceptSetInclusionIdentifiers(info);
+						self.currentIncludedConceptIdentifierList(info.join(','));
+						self.resolvingConceptSetExpression(false);
+						}, () => self.resolvingConceptSetExpression(false));
+			};
 			self.renderCheckbox = function (field) {
 				if (self.canEditCurrentConceptSet()) {
 					return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); pageModel.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
