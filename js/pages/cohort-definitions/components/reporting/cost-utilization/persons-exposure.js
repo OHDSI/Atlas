@@ -25,7 +25,7 @@ define(
     class PersonAndExposureReport extends BaseCostUtilReport {
 
       constructor(params) {
-        super(componentName, params);
+        super(params);
 
         this.mode = params.mode;
 
