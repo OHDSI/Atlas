@@ -135,14 +135,14 @@ define(function (require, exports) {
 	}
 
 	function runDiagnostics(id, expression) {
-    return $.ajax({
-      url: config.webAPIRoot + 'cohortdefinition/' + (id || '-1') + '/check',
-      contentType: 'application/json',
-      method: 'POST',
-      data: expression,
-      error: authApi.handleAccessDenied,
-    });
-  }
+		return $.ajax({
+			url: config.webAPIRoot + 'cohortdefinition/' + (id || '-1') + '/check',
+			contentType: 'application/json',
+			method: 'POST',
+			data: expression,
+			error: authApi.handleAccessDenied,
+		});
+	}
 	
 	var api = {
 		getCohortDefinitionList: getCohortDefinitionList,
@@ -155,7 +155,7 @@ define(function (require, exports) {
 		getInfo: getInfo,
 		getReport: getReport,
 		getWarnings: getWarnings,
-    runDiagnostics: runDiagnostics,
+		runDiagnostics: runDiagnostics,
 		cancelGenerate,
 	}
 
