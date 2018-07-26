@@ -22,6 +22,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'faceted-datatable',
 	'databindings/expressionCartoonBinding',
 	'./components/cohortfeatures/main',
+	'./components/checks/conceptset-warnings',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css',
 	'assets/ohdsi.util',
@@ -89,6 +90,22 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.config = config;
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.model = params.model;
+			this.warningsTotals = ko.observable(0);
+			this.warningCount = ko.observable(0);
+			this.infoCount = ko.observable(0);
+			this.criticalCount = ko.observable(0);
+			this.warningClass = ko.computed(() => {
+				if (this.warningsTotals() > 0){
+					if (this.criticalCount() > 0) {
+						return 'warning-alarm';
+					} else if (this.warningCount() > 0) {
+						return 'warning-warn';
+					} else {
+						return 'warning-info';
+					}
+				}
+				return '';
+			});
 
 			this.cohortDefinitionCaption = ko.computed(() => {
 				if (this.model.currentCohortDefinition()) {
@@ -569,6 +586,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.hasResults = this.hasResults.bind(this);
 			this.closeConceptSet = this.closeConceptSet.bind(this);
 			this.deleteConceptSet = this.deleteConceptSet.bind(this);
+			this.fixConceptSet = this.fixConceptSet.bind(this);
+			this.removeConceptSet = this.removeConceptSet.bind(this);
+			this.removeInclusionRule = this.removeInclusionRule.bind(this);
 			this.showSaveConceptSet = this.showSaveConceptSet.bind(this);
 			this.saveConceptSet = this.saveConceptSet.bind(this);
 			this.createConceptSet = this.createConceptSet.bind(this);
@@ -820,6 +840,28 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					return item.id == this.model.currentConceptSet().id;
 				});
 				this.closeConceptSet();
+			}
+
+			removeConceptSet(id) {
+				this.model.currentCohortDefinition().expression().ConceptSets.remove(
+					function (item) {
+						return item.id === id;
+					}
+				);
+			}
+
+			removeInclusionRule(name) {
+				this.model.currentCohortDefinition().expression().InclusionRules.remove(
+					(item) => item.name() === name
+				);
+			}
+
+			fixConceptSet(warning) {
+				if (warning.type === 'ConceptSetWarning' && warning.conceptSetId) {
+					this.removeConceptSet(warning.conceptSetId);
+				} else if (warning.type === 'IncompleteRuleWarning' && warning.ruleName) {
+					this.removeInclusionRule(warning.ruleName);
+				}
 			}
 
 			showSaveConceptSet () {

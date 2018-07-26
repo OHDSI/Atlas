@@ -1,5 +1,5 @@
-define(['knockout', 'text!components/cohort-definitions/checks/conceptset-warnings.html',
-    'webapi/CohortDefinitionAPI',
+define(['knockout', 'text!./conceptset-warnings.html',
+    'services/CohortDefinition',
     './const',
     './utils',
     'databindings',
@@ -14,6 +14,8 @@ define(['knockout', 'text!components/cohort-definitions/checks/conceptset-warnin
       self.cohortDefinitionId = self.model.currentCohortDefinition().id || ko.observable(-1);
       self.count = params.count || ko.observable();
       self.infoCount = params.infoCount || ko.observable();
+      self.warningCount = params.warningCount || ko.observable();
+      self.criticalCount = params.criticalCount || ko.observable();
       self.onFixCallback = params.onFixCallback || function() {};
       self.canDiagnose = params.canDiagnose || ko.observable(false);
       self.warnings = ko.observableArray();
@@ -53,8 +55,11 @@ define(['knockout', 'text!components/cohort-definitions/checks/conceptset-warnin
       };
 
       function showWarnings(result){
+      	const count = (severity) => result.warnings.filter(w => w.severity === severity).length;
         self.warnings(result.warnings);
-        self.infoCount(result.warnings.filter(w => w.severity === consts.WarningSeverity.INFO).length);
+        self.infoCount(count(consts.WarningSeverity.INFO));
+        self.warningCount(count(consts.WarningSeverity.WARNING));
+        self.criticalCount(count(consts.WarningSeverity.CRITICAL));
         self.count(result.warnings.length);
         self.loading(false);
       }
