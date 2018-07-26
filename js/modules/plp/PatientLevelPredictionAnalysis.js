@@ -1,7 +1,7 @@
 define(function (require, exports) {
 
 	var ko = require('knockout');
-	var CohortExpression = require('cohortbuilder/CohortExpression');
+	var CohortExpression = require('components/cohortbuilder/CohortExpression');
 	var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet')
 
 	function PatientLevelPredictionAnalysis(data) {

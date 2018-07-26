@@ -1,16 +1,23 @@
-define(['knockout',
-				'text!./atlas.cohort-editor.html',
-				'appConfig',
-				'cohortbuilder/CohortDefinition',
-				'conceptsetbuilder/InputTypes/ConceptSet',
-				'ohdsi.util',
-				'cohortbuilder/components',
-				'conceptsetbuilder/components',
-				'knockout-jqueryui/tabs',
-				'cohortdefinitionviewer',
-                'circe',
-				'databindings',
-], function (ko, view, config, CohortDefinition, ConceptSet) {
+define([
+	'knockout',
+	'text!./atlas.cohort-editor.html',
+	'appConfig',
+	'components/cohortbuilder/CohortDefinition',
+	'conceptsetbuilder/InputTypes/ConceptSet',
+	'assets/ohdsi.util',
+	'components/cohortbuilder/components',
+	'conceptsetbuilder/components',
+	'assets/knockout-jqueryui/tabs',
+	'cohortdefinitionviewer',
+	'circe',
+	'databindings',
+], function (
+	ko,
+	view,
+	config,
+	CohortDefinition,
+	ConceptSet
+) {
 
 	function cohortEditor(params) {
 		var self = this;
@@ -21,7 +28,7 @@ define(['knockout',
 		self.tabWidget = ko.observable();
 		self.cohortExpressionEditor = ko.observable();
 		self.showModal = ko.observable(false);
-        /*
+				/*
 		self.modifiedJSON = "";
 		self.expressionJSON = ko.pureComputed({
 			read: function () {
@@ -37,8 +44,8 @@ define(['knockout',
 				self.modifiedJSON = value;
 			}
 		});
-        */
-        
+				*/
+				
 		// model behaviors
 
 		self.handleConceptSetImport = function (item, context, event) {
@@ -59,16 +66,16 @@ define(['knockout',
 		
 
 		self.onAtlasConceptSetSelectAction = function(result, valueAccessor) {
-			  self.showModal(false);
+				self.showModal(false);
 
 				if (result.action === 'add') {
-            var newConceptSet = new ConceptSet();
-            var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
-				    newConceptSet.id = cohortConceptSets().length > 0 ? Math.max.apply(null, cohortConceptSets().map(function (d) {
-					   return d.id;
-				    })) + 1 : 0;
-				    cohortConceptSets.push(newConceptSet);
-				    self.model.loadConceptSet(newConceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
+						var newConceptSet = new ConceptSet();
+						var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
+						newConceptSet.id = cohortConceptSets().length > 0 ? Math.max.apply(null, cohortConceptSets().map(function (d) {
+						 return d.id;
+						})) + 1 : 0;
+						cohortConceptSets.push(newConceptSet);
+						self.model.loadConceptSet(newConceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
 						self.model.currentCohortDefinitionMode("conceptsets");
 						self.model.criteriaContext().conceptSetId(newConceptSet.id);
 				}
@@ -76,15 +83,15 @@ define(['knockout',
 				self.model.criteriaContext(null);
 		}
 
-        /*
+				/*
 		self.reload = function () {
 			var updatedExpression = JSON.parse(self.modifiedJSON);
 			self.model.currentCohortDefinition().expression(new CohortExpression(updatedExpression));
 		}
-        */
-        
+				*/
+				
 		self.onGenerate = function (generateComponent) {
-			var generatePromise = cohortDefinitionAPI.generate(self.model.currentCohortDefinition().id(), generateComponent.source.sourceKey);
+			var generatePromise = cohortDefinitionService.generate(self.model.currentCohortDefinition().id(), generateComponent.source.sourceKey);
 			generatePromise.then(function (result) {
 				pollForInfo();
 			});

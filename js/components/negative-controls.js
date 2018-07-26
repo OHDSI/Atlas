@@ -7,7 +7,7 @@ define(['knockout',
 	'atlas-state',
 	'job/jobDetail',
   'webapi/MomentAPI',
-	'ohdsi.util',
+	'assets/ohdsi.util',
 	'databindings'
 ], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, sharedState, jobDetail, momentApi) {
 	function negativeControls(params) {
