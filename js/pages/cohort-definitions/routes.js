@@ -1,8 +1,9 @@
 define(
   (require, factory) => {
+    const { AuthorizedRoute } = require('providers/Route');
     function routes(appModel) {
       return {        
-        '/cohortdefinitions': () => {
+        '/cohortdefinitions': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require([
             './cohort-definitions',
@@ -14,8 +15,8 @@ define(
             };
             appModel.currentView('cohort-definitions');
           });
-        },
-        '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': (cohortDefinitionId, path) => {
+        }),
+        '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': new AuthorizedRoute((cohortDefinitionId, path) => {
           appModel.activePage(this.title);
           require([
            'components/cohortbuilder/CohortDefinition',
@@ -44,8 +45,8 @@ define(
             appModel.currentCohortDefinitionMode(view);
             appModel.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details', sourceKey);
           });
-        },
-        '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': (cohortDefinitionId, conceptSetId, mode) => {
+        }),
+        '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': new AuthorizedRoute((cohortDefinitionId, conceptSetId, mode) => {
           appModel.activePage(this.title);
           require([
            'components/cohortbuilder/CohortDefinition',
@@ -64,8 +65,8 @@ define(
             appModel.currentCohortDefinitionMode('conceptsets');
             appModel.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
           });
-        },
-        '/reports': () => {
+        }),
+        '/reports': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require([
             './components/reporting/cost-utilization/report-manager',
@@ -77,7 +78,7 @@ define(
             };
             appModel.currentView('report-manager');
           });
-        },
+        }),
       };
     }
 

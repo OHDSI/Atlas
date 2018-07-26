@@ -195,7 +195,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			this.saveConceptSetShow = ko.observable(false);
 			this.newConceptSetName = ko.observable();
-
+			
 			this.canGenerate = ko.pureComputed(() => {
 				var isDirty = this.dirtyFlag() && this.dirtyFlag().isDirty();
 				var isNew = this.model.currentCohortDefinition() && (this.model.currentCohortDefinition().id() == 0);
@@ -1080,13 +1080,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					url: config.api.url + 'cohortanalysis',
 					data: JSON.stringify(cohortJob),
 					method: 'POST',
-					context: jobDetails,
 					contentType: 'application/json',
 						success: (info) => {
-						this.executionId = info.executionId;
-						this.status(info.status);
-						this.statusUrl = this.statusUrl + info.executionId;
-						sharedState.jobListing.queue(this);
+						jobDetails.executionId = info.executionId;
+						jobDetails.status(info.status);
+						jobDetails.statusUrl = this.statusUrl + info.executionId;
+						sharedState.jobListing.queue(jobDetails);
 					},
 						error: (xhr, status, error) => {
 							this.createReportJobFailed(true);
