@@ -3,7 +3,7 @@ define(['knockout',
 	'text!./plp-manager.html',
 	'appConfig',
 	'd3',
-	'ohdsi.util',
+	'assets/ohdsi.util',
 	'plp/PatientLevelPredictionAnalysis',
 	'webapi/PatientLevelPredictionAPI',
 	'webapi/ExecutionAPI',
@@ -33,7 +33,7 @@ define(['knockout',
 		self.patientLevelPrediction = params.currentPatientLevelPrediction;
 		self.patientLevelPredictionDirtyFlag = params.dirtyFlag;
 		self.loading = ko.observable(true);
-		self.tabMode = ko.observable('specification');
+		self.tabMode = ko.observable('results');
 		self.config = config;
 		self.performanceTabMode = ko.observable('discrimination');
 		self.expressionMode = ko.observable('print');

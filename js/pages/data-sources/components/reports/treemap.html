@@ -1,5 +1,5 @@
 <!-- ko if: !isLoading() -->
-<heading-title params="name: name, sourceKey: sourceKey"></heading-title>
+<heading-title params="name: `${name} report (${sourceKey})`, icon: 'area-chart'"></heading-title>
 <div class="panel panel-primary">
   <div class="panel-heading">
     <span data-bind="name"></span> Prevalence
@@ -19,23 +19,23 @@
         <div class="treemap_legend">Box Size: Prevalence, Color: <span data-bind="text: aggProperty.description"></span> (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom
         </div>
       </div>
-      <div role="tabpanel" class="tab-pane" id="table-panel" data-bind="eventListener: { event: 'click', selector: '.table_selector', callback: onReportTableRowClick}">
-          <table id="report_table" class="stripe compact hover dataTable no-footer" style="width:100%">
-          <thead>
-            <tr>
-              <th>Concept Id</th>
-              <th>Name</th>
-              <th>Person Count</th>
-              <th>Prevalence</th>
-              <th><span data-bind="text: aggProperty.description"></span></th>
-            </tr>
-          </thead>
-        </table>
+      <div role="tabpanel" class="tab-pane" id="table-panel">
+        <faceted-datatable params="
+          columns: chartFormats.table.columns,
+          reference: tableData,
+          rowClick: currentConcept,
+          dom: chartFormats.table.dom,
+          buttons: chartFormats.table.buttons,
+          rowCallback: chartFormats.table.rowCallback,
+          order: chartFormats.table.order,
+          autoWidth: chartFormats.table.autoWidth,
+          pageLength: chartFormats.table.pageLength,
+        "></faceted-datatable>
       </div>
     </div>
   </div>
 </div>
 <!-- ko if: currentConcept() -->
-  <treemap-drilldown params="context: context, currentReport: currentReport, currentConcept: currentConcept, byFrequency: byFrequency, byUnit: byUnit, byType: byType"></treemap-drilldown>
+  <report-treemap-drilldown params="context: context, currentReport: currentReport, currentConcept: currentConcept, byFrequency: byFrequency, byUnit: byUnit, byType: byType, byValueAsConcept: byValueAsConcept, byQualifier: byQualifier, byOperator: byOperator"></report-treemap-drilldown>
 <!-- /ko -->
 <!--/ko-->

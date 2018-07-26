@@ -1,6 +1,6 @@
 "use strict";
-define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/AuthAPI', 'webapi/ProfileAPI', 'atlas-state', 'lodash', 'crossfilter', 'ohdsi.util', 'cohortbuilder/CohortDefinition', 'webapi/CohortDefinitionAPI', 'd3-tip', 'databindings', 'faceted-datatable', 'components/profile/profileChart', 'css!components/profile/profileManager.css', 'access-denied', ],
-	function (ko, view, d3, config, authApi, profileApi, sharedState, _, crossfilter, util, CohortDefinition, cohortDefinitionAPI) {
+define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/AuthAPI', 'webapi/ProfileAPI', 'atlas-state', 'lodash', 'crossfilter', 'assets/ohdsi.util','components/cohortbuilder/CohortDefinition', 'services/CohortDefinition', 'd3-tip', 'databindings', 'faceted-datatable', 'components/profile/profileChart', 'css!components/profile/profileManager.css', 'components/ac-access-denied', ],
+	function (ko, view, d3, config, authApi, profileApi, sharedState, _, crossfilter, util, CohortDefinition, cohortDefinitionService) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
 			// is an array of recs in the group
@@ -35,7 +35,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 				// The cohort definition requested is already loaded into the page model - just reference it
 				self.currentCohortDefinition(self.model.currentCohortDefintion())
 			} else if (self.cohortDefinitionId()) {
-				cohortDefinitionAPI.getCohortDefinition(self.cohortDefinitionId())
+				cohortDefinitionService.getCohortDefinition(self.cohortDefinitionId())
 					.then(function (cohortDefinition) {
 						cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
 						self.currentCohortDefinition(new CohortDefinition(cohortDefinition));

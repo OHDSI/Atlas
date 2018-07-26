@@ -1,0 +1,48 @@
+.app {
+  &__menu-container {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 175px;
+    bottom: 0;
+    background-color: #003142;
+    border-right: solid 1px #888;
+  }
+  
+  &__menu {
+    padding: 0px;
+    margin-bottom: 0px;
+
+    & .panel {
+      border: 0px;
+    }
+
+    &-icon {
+      color: #fff;
+      margin-right: 7px;
+    }
+
+    &-title {
+      color: #fff;
+    }
+
+    &-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background-color: #003142;
+      border: none;
+      padding: 10px 7px;
+      font-size: 1.4rem;
+      text-decoration: none;
+      
+      &:focus, &:hover, &--selected {
+        background-color: #005471 !important;
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  } 
+}

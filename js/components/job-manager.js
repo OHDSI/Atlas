@@ -1,9 +1,19 @@
-define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/MomentAPI', 'databindings', 'access-denied'], function (ko, view, config, momentApi) {
+define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/MomentAPI', 'databindings', 'components/ac-access-denied'], function (ko, view, config, momentApi) {
 	function jobManager(params) {
 		var self = this;
 
 		var authApi = params.model.authApi;
 		self.model = params.model;
+		self.model.columns = ko.observableArray([
+			{title: 'ExecutionId', data: 'executionId'},
+			{title: 'Job Name', data: 'jobParameters.jobName'},
+			{title: 'Status', data: 'status'},
+			{title: 'Start Date', data: 'startDate', type: 'date'},
+			{title: 'End Date', data: 'endDate', type: 'date'}
+		]);
+		if (config.userAuthenticationEnabled) {
+			self.model.columns.splice(3, 0, {title: 'Author', data: 'jobParameters.jobAuthor', 'defaultContent': ''});
+		}
 		self.updateJobs = function () {
 			self.model.jobs([]);
 

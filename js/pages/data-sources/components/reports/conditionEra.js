@@ -1,33 +1,31 @@
 define([
 	'knockout',
 	'text!./treemap.html',
-  'pages/data-sources/classes/Treemap',
-  'pages/data-sources/const',
-  'components/heading',
-  'components/charts/treemap',
-  'pages/data-sources/components/reports/treemapDrilldown',
+	'providers/Component',
+	'pages/data-sources/classes/Treemap',
+	'pages/data-sources/const',
+	'utils/CommonUtils',
+	'components/heading',
+	'components/charts/treemap',
+	'pages/data-sources/components/reports/treemapDrilldown',
 ], function (
 	ko,
 	view,
-  TreemapReport,
-  helpers
+	Component,
+	TreemapReport,
+	constants,
+	commonUtils
 ) {
 	class ConditionEra extends TreemapReport {
-    constructor() {
-      super();
-      this.name = 'condition-era';
-      this.view = view;
-      this.currentReport = {};
+		constructor(params) {
+			super(params);
+			
+			this.name = 'Condition Era'; // header
 
-      this.aggProperty = helpers.aggProperties.byLengthOfEra;
-    }
+			this.aggProperty = constants.aggProperties.byLengthOfEra;
+		}
 
-    render(params) {
-      super.render(params);
-      return this;
-    }
-  }
+	}
 
-  const report = new ConditionEra();	
-	return report.build();
+	return commonUtils.build('report-condition-era', ConditionEra, view);
 });

@@ -2,27 +2,22 @@ define([
 	'knockout',
 	'text!./heading.html',
 	'providers/Component',
+	'utils/CommonUtils',
 	'less!./heading.less'
 ], function (
 	ko,
 	view,
-	Component
+	Component,
+	commonUtils
 ) {
 	class Heading extends Component {
-		constructor() {
-			super();
-			this.name = 'heading-title';
-			this.view = view;
+		constructor(params) {
+			super(params);
+			this.title = params.name;
+			this.icon = params.icon;
+			this.theme = params.theme || null;
 		}
+	}
 
-		render(params) {
-			super.render(params);
-			this.name = params.name;
-			this.sourceKey = params.sourceKey;
-			return this;
-		}
-  }
-
-	const heading = new Heading();
-	return heading.build();
+	return commonUtils.build('heading-title', Heading, view);
 });

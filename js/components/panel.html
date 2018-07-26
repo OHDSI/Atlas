@@ -1,0 +1,9 @@
+<div data-bind="css: classes({ extra: 'panel panel-primary' })">
+  <div data-bind="css: classes({
+    element: 'header',
+    extra: 'panel-heading'
+  }), text: title"></div>
+  <div data-bind="css: classes({ element: 'content', extra: 'panel-body' })">
+    <!-- ko template: { name: templateId, data: context } --><!-- /ko -->
+  </div>
+</div>

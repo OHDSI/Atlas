@@ -10,7 +10,7 @@
 
   <div data-bind="visible: !isError()">
     <!-- ko if: currentConcept() -->
-    <heading-title params="name: 'Drilldown', sourceKey: currentConcept().name"></heading-title>
+    <heading-title params="name: `Drilldown report (${currentConcept().name})`, icon: 'area-chart'"></heading-title>
     <!-- /ko -->
 
     <div class="col-xs-12">
@@ -35,29 +35,74 @@
       </div>
     </div>
 
-    <!-- ko if: byType -->
-    <div class="col-xs-6">
-      <div class="panel panel-primary">
-        <div class="panel-heading">
-          Type
-        </div>
-        <div class="panel-body">
-          <donut class="evidenceVisualization" params="data: prevalenceByTypeData, format: chartFormats.prevalenceByType"></donut>
+    <div class="row">
+      <!-- ko if: byType -->
+      <div class="col-xs-6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            Type
+          </div>
+          <div class="panel-body">
+            <donut class="evidenceVisualization" params="data: prevalenceByTypeData, format: chartFormats.prevalenceByType"></donut>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- /ko -->
+      <!-- /ko -->
 
-  <div class="col-xs-6">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        Age at First Occurrence
-      </div>
-      <div class="panel-body">
-        <boxplot class="evidenceVisualization" params="data: ageData, format: chartFormats.age"></boxplot>
+      <div class="col-xs-6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            Age at First Occurrence
+          </div>
+          <div class="panel-body">
+            <boxplot class="evidenceVisualization" params="data: ageData, format: chartFormats.age"></boxplot>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+
+
+    <div class="row">
+      <!-- ko if: byValueAsConcept -->
+      <div class="col-xs-6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            Value As Concept
+          </div>
+          <div class="panel-body">
+            <donut class="evidenceVisualization" params="data: prevalenceByValueAsConceptData, format: chartFormats.prevalenceByType"></donut>
+          </div>
+        </div>
+      </div>
+      <!-- /ko -->
+
+      <!-- ko if: byQualifier -->
+      <div class="col-xs-6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            Qualifier Concept
+          </div>
+          <div class="panel-body">
+            <donut class="evidenceVisualization" params="data: prevalenceByQualifierData, format: chartFormats.prevalenceByType"></donut>
+          </div>
+        </div>
+      </div>
+      <!-- /ko -->
+
+      <!-- ko if: byOperator -->
+      <div class="col-xs-6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            Operator Concept
+          </div>
+          <div class="panel-body">
+            <donut class="evidenceVisualization" params="data: prevalenceByOperatorData, format: chartFormats.prevalenceByType"></donut>
+          </div>
+        </div>
+      </div>
+      <!-- /ko -->
+
+    </div>
 
   <!-- ko if: byUnit -->
   <div class="row">

@@ -1,4 +1,4 @@
-<div data-bind="css: classes()">
-  <i class="fa fa-area-chart"></i>
-  <span data-bind="text: name"></span> Report (<span data-bind="text: sourceKey"></span>)
+<div data-bind="css: classes({ modifiers: theme })">
+  <i data-bind="attr: { class: `fa fa-${icon}` }"></i>
+  <span data-bind="text: title"></span>
 </div>
