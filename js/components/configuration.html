@@ -51,6 +51,7 @@
 						<th>Evidence</th>
 						<th>Record Counts (RC / DRC)</th>
 						<th>Incidence</th>
+						<th data-bind="if: $component.canCheckConnection($data)">Check connection</th>
 					</thead>
 					<tbody data-bind="foreach:$component.sources()">
 						<tr>
@@ -79,6 +80,12 @@
 							</td>
 							<td class="configureCheckbox">
 								<input type="checkbox" name="checkResults" data-bind="disable:!hasResults, checked:hasResults">
+							</td>
+							<td data-bind="if: $component.canCheckConnection($data)">
+								<button data-bind="css: $component.getCheckButtonStyles($data).buttonClass, click: function(){$component.checkSourceConnection($data);}" class="connection-check-button btn btn-sm">
+									<i data-bind="css : $component.getCheckButtonStyles($data).iconClass" class="fa"></i>
+									check
+								</button>
 							</td>
 						</tr>
 					</tbody>

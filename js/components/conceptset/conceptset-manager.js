@@ -1,7 +1,7 @@
 define(['knockout',
 	'text!./conceptset-manager.html',
 	'appConfig',
-	'ohdsi.util',
+	'assets/ohdsi.util',
 	'components/conceptset/utils',
 	'webapi/CDMResultsAPI',
 	'vocabularyprovider',
