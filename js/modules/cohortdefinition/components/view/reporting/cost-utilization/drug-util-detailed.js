@@ -48,7 +48,7 @@ define(
 
       getFilterList() {
         return [
-          costUtilConst.getPeriodTypeFilter(),
+          costUtilConst.getPeriodTypeFilter(this.periods),
           ...super.getFilterList(),
         ];
       }

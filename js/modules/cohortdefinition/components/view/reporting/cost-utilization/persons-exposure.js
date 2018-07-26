@@ -19,7 +19,7 @@ define(
       constructor(params) {
         super(componentName, params);
 
-        this.mode = params.mode;
+        this.window = params.window;
 
         this.summary = {
           personsCount: ko.observable(0),
@@ -33,7 +33,7 @@ define(
 
       getFilterList() {
         return [
-          costUtilConst.getPeriodTypeFilter(),
+          costUtilConst.getPeriodTypeFilter(this.periods),
         ];
       }
 
@@ -41,7 +41,7 @@ define(
         return CohortResultsService.loadPersonExposureReport({
             source: this.source,
             cohortId: this.cohortId,
-            mode: this.mode,
+            window: this.window,
             filters,
           })
           .then(({ summary, data }) => {

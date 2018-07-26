@@ -8,9 +8,10 @@ define(
     'd3',
     'webapi/MomentAPI',
     'utils/CsvUtils',
-    'numeral'
+    'numeral',
+    'modules/cohortdefinition/services/CohortResultsService'
   ],
-  function (ko, BemHelper, appConfig, filterPanelUtils, moment, d3, MomentAPI, CsvUtils, numeral) {
+  function (ko, BemHelper, appConfig, filterPanelUtils, moment, d3, MomentAPI, CsvUtils, numeral, CohortResultsService) {
 
     class BaseCostUtilReport {
 
@@ -50,9 +51,9 @@ define(
         };
         this.currentTab = ko.observable(this.visualizationTab);
 
-        // Filters and data
+        // Data
 
-        this.filterList = this.getFilterList();
+        this.filterList = ko.observableArray([]);
         this.dataList = ko.observableArray();
 
         // Charts formatters
@@ -156,19 +157,28 @@ define(
       buildSearchUrl() {
         throw new Error('Should be overriden!');
       }
-
+      
       async loadData(filters) {
         this.loading(true);
         try {
           const res = await this.fetchAPI({ filters });
-        } catch (e) {
+        } catch (e) {   
           console.error(e);
         }
         this.loading(false);
       }
+      
+      async initializePeriods() {
+        try {
+          this.periods = await CohortResultsService.loadPeriods({ source: this.source, cohortId: this.cohortId, window: this.window });
+          this.filterList(this.getFilterList());
+        } catch (e) {
+          console.error(e);
+        }
+      }
 
       getSelectedFilterValues() {
-        return filterPanelUtils.getSelectedFilterValues(this.filterList);
+        return filterPanelUtils.getSelectedFilterValues(this.filterList());
       }
 
       applyFilters() {
@@ -204,8 +214,9 @@ define(
         );
       }
 
-      init() {
-        this.loadData(this.getSelectedFilterValues());
+      async init() {
+        await this.initializePeriods();
+        await this.loadData(this.getSelectedFilterValues());
       }
 
     }

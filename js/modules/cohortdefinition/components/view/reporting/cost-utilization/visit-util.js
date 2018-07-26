@@ -129,8 +129,8 @@ define(
       }
 
       getFilterList() {
-        return [
-          costUtilConst.getPeriodTypeFilter(),
+        const filters = [
+          costUtilConst.getPeriodTypeFilter(this.periods),
           {
             type: 'select',
             label: 'Visit',
@@ -146,10 +146,11 @@ define(
             selectedValue: ko.observable(null),
           },
         ];
+        return filters;
       }
 
       setupVisitConceptOptions(conceptList) {
-        const filter = this.filterList.find(filter => filter.name === VISIT_CONCEPT);
+        const filter = this.filterList().find(filter => filter.name === VISIT_CONCEPT);
         filter.options([
           { label: 'All visits', value: null },
           ...VisitUtilReport.conceptsToOptions(conceptList)
@@ -157,7 +158,7 @@ define(
       }
 
       setupVisitTypeConceptOptions(conceptList) {
-        const filter = this.filterList.find(filter => filter.name === VISIT_TYPE_CONCEPT);
+        const filter = this.filterList().find(filter => filter.name === VISIT_TYPE_CONCEPT);
         filter.options([
           { label: 'All visit types', value: null },
           ...VisitUtilReport.conceptsToOptions(conceptList)

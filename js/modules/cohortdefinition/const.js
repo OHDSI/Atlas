@@ -1,6 +1,6 @@
 define(
-  ['knockout'],
-  function(ko) {
+  ['knockout', 'lodash'],
+  function(ko, _) {
 
     const periods = [
       {
@@ -21,12 +21,12 @@ define(
       },
     ];
     
-    const getPeriodTypeFilter = () => ({
+    const getPeriodTypeFilter = (chosenPeriods) => ({
       type: 'select',
       label: 'Period type',
       name: 'periodType',
-      options: ko.observableArray(periods),
-      selectedValue: ko.observable('mm'),
+      options: ko.observableArray(periods.filter(p => chosenPeriods.includes(p.value))),
+      selectedValue: ko.observable(_.first(chosenPeriods)),
     });
 
     const windowType = {

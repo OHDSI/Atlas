@@ -19,22 +19,25 @@ define(
       this.filterList = params.filterList;
       this.live = params.live || false;
       this.apply = params.apply;
-      this.clear = () => this.filterList.forEach(filter => filter.selectedValues([]));
+      this.clear = () => this.filterList().forEach(filter => filter.selectedValues([]));
 
       // Do not show "Apply" button in live mode and trigger filtering immediately
       if (this.live) {
-        Object.values(this.filterList).map(filter => {
-          let prevVal;
-          if (filter.type === 'select') {
-            prevVal = filter.selectedValue();
-            filter.selectedValue.subscribe(() => {
-              if (prevVal != filter.selectedValue()) {
-                prevVal = filter.selectedValue();
-                this.apply()
-              }
-            });
-          }
-        });
+        this.filterList.subscribe(newFilter => {
+          Object.values(newFilter).map(filter => {
+            let prevVal;
+            if (filter.type === 'select') {
+              prevVal = filter.selectedValue();
+              filter.selectedValue.subscribe(() => {
+                if (prevVal != filter.selectedValue()) {
+                  prevVal = filter.selectedValue();
+                  this.apply()
+                }
+              });
+            }
+          })
+        }
+        );
       }
     }
 
