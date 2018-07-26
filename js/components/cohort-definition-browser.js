@@ -5,7 +5,7 @@ define([
 	'webapi/AuthAPI',
 	'webapi/MomentAPI',
 	'providers/Component',
-	'utils/commonUtils',
+	'utils/CommonUtils',
 	'services/http',
 	'faceted-datatable',
 ], function (

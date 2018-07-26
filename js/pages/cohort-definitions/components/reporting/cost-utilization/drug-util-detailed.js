@@ -5,7 +5,7 @@ define(
     './base-drug-util-report',
     'services/CohortResultsService',
     'pages/cohort-definitions/const',
-    'utils/commonUtils',
+    'utils/CommonUtils',
     'components/visualizations/filter-panel/filter-panel',
     'less!./drug-util-detailed.less',
   ],

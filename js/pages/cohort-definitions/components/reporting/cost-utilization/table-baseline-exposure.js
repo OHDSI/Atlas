@@ -3,7 +3,7 @@ define(
     'knockout',
     'text!./table-baseline-exposure.html',
     'pages/cohort-definitions/components/reporting/cost-utilization/base-report',
-    'utils/commonUtils',
+    'utils/CommonUtils',
     'less!./table-baseline-exposure.less',
   ],
   function (
