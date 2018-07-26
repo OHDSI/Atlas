@@ -1,6 +1,6 @@
-define(['knockout', 'text!./editor.html','../inputTypes/StudyWindow', '../StratifyRule', 'cohortbuilder/options',
-				'conceptsetbuilder/components','cohort-definition-browser', 
-				'databindings', 'cohortbuilder/components'
+define(['knockout', 'text!./editor.html','../inputTypes/StudyWindow', '../StratifyRule','components/cohortbuilder/options',
+				'conceptsetbuilder/components','components/cohort-definition-browser', 
+				'databindings','components/cohortbuilder/components'
 ], function (ko, template, StudyWindow, StratifyRule, options) {
 	function IRAnalysisEditorModel(params) {
 		var self = this;

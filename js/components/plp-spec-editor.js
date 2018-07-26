@@ -1,9 +1,9 @@
 define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
-				'webapi/CohortDefinitionAPI', 'appConfig', 'ohdsi.util',
+				'services/CohortDefinition', 'appConfig', 'assets/ohdsi.util',
 				'plp/PatientLevelPredictionAnalysis', 'plp/options',
-				'cohortbuilder/CohortExpression', 'vocabularyprovider',
+				'components/cohortbuilder/CohortExpression', 'vocabularyprovider',
 				'conceptsetbuilder/InputTypes/ConceptSet'],
-	function ($, ko, view, clipboard, cohortDefinitionAPI, config, ohdsiUtil,
+	function ($, ko, view, clipboard, cohortDefinitionService, config, ohdsiUtil,
 		PatientLevelPredictionAnalysis, options, CohortExpression, vocabularyAPI,
 		ConceptSet) {
 		function plpSpecEditor(params) {
@@ -14,7 +14,7 @@ define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 
 			self.cohortSelected = function (id) {
 				$('#modalCohortDefinition').modal('hide');
-				cohortDefinitionAPI.getCohortDefinition(id).then(function (cohortDefinition) {
+				cohortDefinitionService.getCohortDefinition(id).then(function (cohortDefinition) {
 					self.targetId(cohortDefinition.id);
 					self.targetCaption(cohortDefinition.name);
 					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);

@@ -9,7 +9,7 @@ define([
 	'circe',
 	'conceptpicker/ConceptPicker',
 	'faceted-datatable',
-	'knockout-jqueryui/tabs',
+	'assets/knockout-jqueryui/tabs',
 	'css!styles/tabs.css'
 ], function (
 		$,
