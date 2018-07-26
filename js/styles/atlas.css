@@ -2118,10 +2118,6 @@ div#wrapper_ohdsi a {
   margin-bottom: 30px;
 }
 
-.command-pane {
-  display: flex;
-}
-
 #report {
   overflow-y: scroll;
   flex-grow: 1;

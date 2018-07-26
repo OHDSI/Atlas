@@ -30,6 +30,12 @@ define(
             appModel.currentView('role-details');
           });
         },
+        'import': () => {
+          appModel.activePage(this.title);
+          require(['users-import'], function() {
+            appModel.currentView('users-import');
+          });
+        }
       };
     }
 
