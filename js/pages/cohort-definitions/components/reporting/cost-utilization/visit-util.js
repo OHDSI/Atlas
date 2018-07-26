@@ -6,7 +6,7 @@ define(
     'pages/cohort-definitions/const',
     'services/CohortResultsService',
     'appConfig',
-    'utils/commonUtils',
+    'utils/CommonUtils',
     'components/visualizations/filter-panel/filter-panel',
     'pages/cohort-definitions/components/reporting/cost-utilization/table-baseline-exposure',
     'less!./visit-util.less',

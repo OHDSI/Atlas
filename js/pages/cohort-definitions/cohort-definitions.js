@@ -4,7 +4,7 @@ define([
 	'appConfig',
 	'webapi/AuthAPI',
 	'providers/Component',
-	'utils/commonUtils',
+	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
 	'databindings',
 	'faceted-datatable',
