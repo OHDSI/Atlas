@@ -26,10 +26,10 @@ define([
 	}
 
 	class AuthorizedRoute extends Route {
-		checkPermission() {			
-			if (authApi.subject() === undefined) {
+		checkPermission() {
+			if (appConfig.userAuthenticationEnabled && authApi.subject() === undefined) {
 				return this.waitForSubject();
-			} else if (authApi.subject() === null) {
+			} else if (appConfig.userAuthenticationEnabled && authApi.subject() === null) {
 				return Promise.reject();
 			} else {
 				return super.checkPermission();
