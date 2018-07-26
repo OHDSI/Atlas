@@ -52,7 +52,7 @@ define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, app
                     password: data.elements.lg_password.value
                 },
                 success: function (data, textStatus, jqXHR) {
-                    self.setAuthParams(jqXHR);
+                    self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER));
                     self.errorMsg(null);
                     self.isBadCredentials(false);
                 },
