@@ -1,0 +1,90 @@
+<div data-bind="css: classes()">
+    <div data-bind="css: classes('block')">
+        <visualizations-filter-panel params="{ filterList: $component.filterList, apply: $component.applyFilters, live: true }"/>
+    </div>
+    <div data-bind="visible: loading()">
+        <loading params="status:'loading'" />
+    </div>
+    <div data-bind="visible: !loading()">
+        <div data-bind="css: classes('block')">
+            <table data-bind="css: classes({ element: 'summary-table', extra: ['table', 'table-bordered', 'table-hover'] })">
+                <thead data-bind="css: classes('summary-table-head')">
+                    <tr>
+                        <th data-bind="css: classes('summary-table-cell')">Person Count</th>
+                        <th data-bind="css: classes('summary-table-cell')">Total Exposure in Years</th>
+                        <th data-bind="css: classes('summary-table-cell')">Average Exposure Years per 1,000 persons</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-bind="text: summary.personsCount"/>
+                        <td data-bind="text: summary.exposureTotal"/>
+                        <td data-bind="text: summary.exposureAvg"/>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <ul class="nav nav-tabs">
+            <!-- ko foreach: Object.keys(tabLabels) -->
+            <li role="presentation" data-bind="click: function() { $component.currentTab($data); }, attr: {class: $component.currentTab() == $data ? 'active' : ''}">
+                <a data-bind="text: $component.tabLabels[$data]" />
+            </li>
+            <!-- /ko -->
+            <li data-bind="css: classes('save-csv-tab'), click: $component.saveAsCsv">
+                <a data-bind="css: classes('save-csv-link')">Save as CSV</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
+                <div data-bind="css: classes('chart-line')">
+                    <line-chart data-bind="css: $component.classes('chart')"
+                        params="{lineChart: {
+                            data: $component.personsChartData,
+                            xLabel: '',
+                            xFormat: $component.formatDate,
+                            yLabel: 'Persons',
+                            yFormat: $component.formatRounded,
+                            tickFormat: $component.dateTickFormat,
+                            height: 250,
+                            showLegend: false,
+                            getTooltipBuilder: $component.getTooltipBuilder
+                        }}"
+                    />
+                </div>
+                <div data-bind="css: classes('chart-line')">
+                    <line-chart data-bind="css: $component.classes('chart')"
+                                params="{lineChart: {
+                            data: $component.totalExposureChartData,
+                            xLabel: '',
+                            xFormat: $component.formatDate,
+                            yLabel: 'Total Exposure in years',
+                            yFormat: $component.formatRounded,
+                            tickFormat: $component.dateTickFormat,
+                            height: 250,
+                            showLegend: false,
+                            getTooltipBuilder: $component.getTooltipBuilder
+                        }}"
+                    />
+                </div>
+                <div data-bind="css: classes('chart-line')">
+                    <line-chart data-bind="css: $component.classes('chart')"
+                                params="{lineChart: {
+                            data: $component.avgExposurePerPersonChartData,
+                            xLabel: 'Period start',
+                            xFormat: $component.formatDate,
+                            yLabel: 'Exposure/p 1k/year',
+                            yFormat: $component.formatRounded,
+                            tickFormat: $component.dateTickFormat,
+                            height: 250,
+                            showLegend: false,
+                            getTooltipBuilder: $component.getTooltipBuilder
+                        }}"
+                    />
+                </div>
+            </div>
+            <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading()">
+                <table-baseline-exposure params="{ dataList: dataList }"/>
+            </div>
+        </div>
+    </div>
+</div>

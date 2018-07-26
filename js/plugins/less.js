@@ -15,6 +15,7 @@ define(['appConfig'], function factory() {
 
         window.less.sheets.push(link);
         window.less.refresh();
+        window.less.options.logLevel = 0;
 
         onload();
       });
