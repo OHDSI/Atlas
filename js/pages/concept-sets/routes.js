@@ -4,7 +4,7 @@ define(
       return {        
         '/conceptset/:conceptSetId/:mode': (conceptSetId, mode) => {
           appModel.activePage(this.title);
-          require(['conceptset-manager', 'cohort-definition-browser', 'conceptset-list-modal'], function () {
+          require(['conceptset-manager', 'components/cohort-definition-browser', 'conceptset-list-modal'], function () {
             appModel.componentParams = {
               model: appModel
             };
