@@ -203,6 +203,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 		'lscache',
 		'atlas-state',
 		'vocabularyprovider',
+		'providers/Vocabulary',
 		'services/http',
 		'webapi/ExecutionAPI',
 		'webapi/ConceptSetAPI',
@@ -224,6 +225,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			lscache,
 			sharedState,
 			vocabAPI,
+			vocabProvider,
 			httpService,
 			executionAPI,
 			conceptSetApi,
@@ -344,7 +346,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			pageModel.loadingIncluded(true);
 			var includedPromise = $.Deferred();
 
-			vocabAPI.lookupIdentifiers(identifiers || pageModel.conceptSetInclusionIdentifiers())
+			vocabProvider.lookupIdentifiers(identifiers || pageModel.conceptSetInclusionIdentifiers())
 				.then(data => {
 					var densityPromise = vocabAPI.loadDensity(data);
 

@@ -46,6 +46,16 @@ define(function (require, exports) {
 		});
 	})
 
+	function getConceptRecordCount(identifiers) {
+		return $.ajax({
+			url: sharedState.resultsUrl() + 'conceptRecordCount',
+			method: 'POST',
+			contentType: 'application/json',
+			timeout: 10000,
+			data: JSON.stringify(identifiers),
+		});
+	}
+
 	function loadDensity(results) {
 		var densityPromise = $.Deferred();
 
@@ -65,13 +75,7 @@ define(function (require, exports) {
 			}
 		}
 		var densityIndex = {};
-		$.ajax({
-			url: sharedState.resultsUrl() + 'conceptRecordCount',
-			method: 'POST',
-			contentType: 'application/json',
-			timeout: 10000,
-			data: JSON.stringify(searchResultIdentifiers),
-			success: function (entries) {
+		getConceptRecordCount(searchResultIdentifiers).then(function (entries) {
 				var formatComma = "0,0";
 				for (var e = 0; e < entries.length; e++) {
 					densityIndex[Object.keys(entries[e])[0]] = Object.values(entries[e])[0];
@@ -84,15 +88,13 @@ define(function (require, exports) {
 					}
 				}
 				densityPromise.resolve();
-			},
-			error: function (error) {
+			}, function (error) {
 				for (var c = 0; c < results.length; c++) {
 					var concept = results[c];
 					concept.RECORD_COUNT = 'timeout';
 					concept.DESCENDANT_RECORD_COUNT = 'timeout';
 				}
 				densityPromise.resolve();
-			}
 		});
 		return densityPromise;
 	}
@@ -267,6 +269,21 @@ define(function (require, exports) {
 		});
 	}
 
+	function loadSourceCodes(identifiers, page) {
+		return $.ajax({
+			url: sharedState.vocabularyUrl() + 'lookup/mapped' + (page ? 'Page' : ''),
+			method: 'POST',
+			data: page ? identifiers : JSON.stringify(identifiers),
+			contentType: 'application/json',
+			success: function (sourcecodes) {
+				if (!page) {
+					pageModel.includedSourcecodes(sourcecodes);
+				}
+				pageModel.loadingSourcecodes(false);
+			}
+		});
+	}
+
  	var api = {
 		loaded: loadedPromise,
 		search: search,
@@ -283,6 +300,8 @@ define(function (require, exports) {
 		compareConceptSet: compareConceptSet,
 		loadDensity: loadDensity,
 		lookupIdentifiers,
+		getConceptRecordCount,
+		loadSourceCodes,
 	}
 
 	return api;

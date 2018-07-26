@@ -43,17 +43,7 @@ define(function (require, exports) {
 			});
 			domainPromise.resolve(domains);
 		});
-	});
-
-  function getConceptRecordCount(identifiers) {
-    return $.ajax({
-      url: sharedState.resultsUrl() + 'conceptRecordCount',
-      method: 'POST',
-      contentType: 'application/json',
-      timeout: 10000,
-      data: JSON.stringify(identifiers),
-    });
-  }
+	})
 
 	function loadDensity(results) {
 		var densityPromise = $.Deferred();
@@ -74,32 +64,39 @@ define(function (require, exports) {
 			}
 		}
 		var densityIndex = {};
-		getConceptRecordCount(searchResultIdentifiers)
-      .then(function (entries) {
-        var formatComma = "0,0";
-        for (var e = 0; e < entries.length; e++) {
-          densityIndex[Object.keys(entries[e])[0]] = Object.values(entries[e])[0];
-        }
-        for (var c = 0; c < resultsIndex.length; c++) {
-          var concept = results[resultsIndex[c]];
-          if (densityIndex[concept.CONCEPT_ID] != undefined) {
-            concept.RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][0]).format(formatComma);
-            concept.DESCENDANT_RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][1]).format(formatComma);
-          }
-        }
-        densityPromise.resolve();
-      }, function (error) {
-        for (var c = 0; c < results.length; c++) {
-          var concept = results[c];
-          concept.RECORD_COUNT = 'timeout';
-          concept.DESCENDANT_RECORD_COUNT = 'timeout';
-        }
-        densityPromise.resolve();
-      });
+		$.ajax({
+			url: sharedState.resultsUrl() + 'conceptRecordCount',
+			method: 'POST',
+			contentType: 'application/json',
+			timeout: 10000,
+			data: JSON.stringify(searchResultIdentifiers),
+			success: function (entries) {
+				var formatComma = "0,0";
+				for (var e = 0; e < entries.length; e++) {
+					densityIndex[Object.keys(entries[e])[0]] = Object.values(entries[e])[0];
+				}
+				for (var c = 0; c < resultsIndex.length; c++) {
+					var concept = results[resultsIndex[c]];
+					if (densityIndex[concept.CONCEPT_ID] != undefined) {
+						concept.RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][0]).format(formatComma);
+						concept.DESCENDANT_RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][1]).format(formatComma);
+					}
+				}
+				densityPromise.resolve();
+			},
+			error: function (error) {
+				for (var c = 0; c < results.length; c++) {
+					var concept = results[c];
+					concept.RECORD_COUNT = 'timeout';
+					concept.DESCENDANT_RECORD_COUNT = 'timeout';
+				}
+				densityPromise.resolve();
+			}
+		});
 		return densityPromise;
 	}
 
-  function search(searchString, options) {
+	function search(searchString, options) {
 		var deferred = $.Deferred();
 
 		var search = {
@@ -275,31 +272,6 @@ define(function (require, exports) {
 		return getComparedConceptSetPromise;
 	}
 
-	function lookupIdentifiers(identifiers) {
-		return $.ajax({
-			url: sharedState.vocabularyUrl() + 'lookup/identifiers',
-			method: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify(identifiers),
-		});
-	}
-
-	function loadSourceCodes(identifiers, page) {
-
-		return $.ajax({
-			url: sharedState.vocabularyUrl() + 'lookup/mapped' + (page ? 'Page' : ''),
-			method: 'POST',
-			data: page ? identifiers : JSON.stringify(identifiers),
-			contentType: 'application/json',
-			success: function (sourcecodes) {
-				if (!page) {
-					pageModel.includedSourcecodes(sourcecodes);
-				}
-				pageModel.loadingSourcecodes(false);
-			}
-		});
-	}
-
 	var api = {
 		loaded: loadedPromise,
 		search: search,
@@ -314,10 +286,7 @@ define(function (require, exports) {
 		getConceptSetExpressionSQL: getConceptSetExpressionSQL,
 		optimizeConceptSet: optimizeConceptSet,
 		compareConceptSet: compareConceptSet,
-		loadDensity: loadDensity,
-		lookupIdentifiers,
-		getConceptRecordCount,
-		loadSourceCodes,
+		loadDensity: loadDensity
 	}
 
 	return api;

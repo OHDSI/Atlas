@@ -22,7 +22,7 @@ define(['knockout',
 	function conceptsetManager(params) {
 		var self = this;
 		var authApi = params.model.authApi;
-		self.vmodel = params.model;
+		self.model = params.model;
 		self.vocabularyApi = vocabularyAPI;
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
