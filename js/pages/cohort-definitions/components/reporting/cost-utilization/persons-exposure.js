@@ -5,7 +5,7 @@ define(
     'pages/cohort-definitions/components/reporting/cost-utilization/base-report',
     'pages/cohort-definitions/const',
     'services/CohortResultsService',
-    'utils/commonUtils',
+    'utils/CommonUtils',
     'components/visualizations/filter-panel/filter-panel',
     'pages/cohort-definitions/components/reporting/cost-utilization/table-baseline-exposure',
     'less!./persons-exposure.less',

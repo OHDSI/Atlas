@@ -9,7 +9,7 @@ define([
 	'services/CohortReporting',
 	'pages/cohort-definitions/const',
 	'providers/Component',
-	'utils/commonUtils',
+	'utils/CommonUtils',
 	'databindings',
 	'faceted-datatable',
 	'colvis',

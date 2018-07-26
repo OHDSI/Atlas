@@ -3,7 +3,7 @@ define(
     'knockout',
     'text!./drug-util.html',
     './base-drug-util-report',
-    'utils/commonUtils',
+    'utils/CommonUtils',
     'appConfig',
     'less!./drug-util.less',
     './drug-util-summary',
