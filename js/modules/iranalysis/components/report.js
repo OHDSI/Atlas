@@ -5,7 +5,7 @@ define(['knockout',
 				'd3',
 				'databindings',
 				'../databindings/irTreemapLegend',
-				'css!cohortbuilder/css/report.css'
+				'css!components/cohortbuilder/css/report.css'
 ], function (
 	ko,
 	$,

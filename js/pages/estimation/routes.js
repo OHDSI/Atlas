@@ -14,7 +14,7 @@ define(
         }),
         '/estimation/:cohortComparisonId:': new AuthorizedRoute((cohortComparisonId) => {
           appModel.activePage(this.title);
-          require(['cohort-comparison-manager', 'cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
+          require(['cohort-comparison-manager', 'components/cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
             appModel.currentCohortComparisonId(+cohortComparisonId);
             appModel.componentParams = {
               currentCohortComparisonId: appModel.currentCohortComparisonId,
