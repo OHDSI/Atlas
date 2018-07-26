@@ -564,7 +564,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.getSourceInfo = this.getSourceInfo.bind(this);
 			this.getSourceId = this.getSourceId.bind(this);
 			this.generateCohort = this.generateCohort.bind(this);
-			this.cancelGenerate = this.delete.bind(this);
+			this.cancelGenerate = this.cancelGenerate.bind(this);
 			this.hasCDM = this.hasCDM.bind(this);
 			this.hasResults = this.hasResults.bind(this);
 			this.closeConceptSet = this.closeConceptSet.bind(this);
