@@ -32,6 +32,8 @@ define(
 
         this.cohortId = params.cohortId;
         this.window = params.window;
+        
+        this.source = params.source();
 
         //
         this.modes = modes;
