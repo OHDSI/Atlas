@@ -26,7 +26,7 @@ define(
     class DrugUtilReport extends BaseDrugUtilReport {
 
       constructor(params) {
-
+        super(params);
         this.onDrugSelect = this.onDrugSelect.bind(this);
         this.displaySummary = this.displaySummary.bind(this);
 
