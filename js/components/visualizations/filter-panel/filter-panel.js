@@ -23,7 +23,7 @@ define(
 
       // Do not show "Apply" button in live mode and trigger filtering immediately
       if (this.live) {
-        this.filterList.subscribe(newFilter => {
+        this.filterListSubscription = this.filterList.subscribe(newFilter => {
           Object.values(newFilter).map(filter => {
             let prevVal;
             if (filter.type === 'select') {
@@ -39,8 +39,12 @@ define(
         }
         );
       }
-    }
 
+      this.dispose = () => {
+        this.filterListSubscription.dispose();
+      };
+      
+    }
     const component = {
       viewModel: filterPanel,
       template: view
