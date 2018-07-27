@@ -1,0 +1,82 @@
+<div class="wrapperTitle">
+    <!-- ko if:loading -->
+    <i class="fa fa-circle-o-notch fa-spin"></i> Loading...
+    <!-- /ko -->
+    <!-- ko ifnot:loading -->
+    <i class="fa fa-users"></i> Import Users from LDAP/Active Directory
+    <!-- /ko -->
+</div>
+
+<div class="paddedWrapper">
+    <div class="panel panel-primary">
+        <div class="panel-heading padded">Importing users</div>
+        <div class="panel-body">
+
+            <!-- select sources -->
+            <div data-bind="if: hasMultipleProviders && wizardStep() === $component.WIZARD_STEPS.SOURCES">
+                <step-header params="header:'Please, select a source to import users from.'"></step-header>
+                    <div class="btn-group users-import__group">
+                        <label class="btn"><input name="importSource" id="cbActiveDirectory" type="radio" value="ad" data-bind="checked: importSource" /> Active Directory</label>
+                        <label class="btn"><input name="importSource" id="cbLdap" type="radio" value="ldap" data-bind="checked: importSource" /> LDAP server</label>
+                    </div>
+            </div>
+
+            <!-- Role mapping -->
+            <div data-bind="if: wizardStep() === WIZARD_STEPS.MAPPING">
+                <div class="padded">
+                    <step-header params="header:'Please, provide LDAP/Active Directory groups mapping to Atlas roles if required.'"></step-header>
+                    <div>
+                        <table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
+                            data: rolesMapping(),
+                            onRowClick: $component.onRowClick,
+                            options: {
+                                        dom: 'lfiprt',
+                                        language: {
+                                            search : 'Filter Roles:'
+                                        },
+                                        lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+                                        orderClasses: false,
+                                        deferRender: true,
+                                        autoWidth: true,
+                                        ordering: true,
+                                        order: [[ 0, 'asc' ]],
+                                        columns: [
+                                                { title: 'Role', data: 'role', render: renderRole },
+                                                { title: 'Group name', data: 'groupName' },
+                                        ],
+                                        stripeClasses : [ 'roleItem' ],
+                                }
+                              }">
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Import -->
+            <div data-bind="if: wizardStep() === WIZARD_STEPS.IMPORT">
+                <div class="padded">
+                    <step-header params="header:'Import users'"></step-header>
+                </div>
+            </div>
+
+            <div class="users-import__button-pane">
+                <button class="btn btn-sm btn-primary" data-bind="visible: hasPrevious, click: prevStep">Prev</button>
+                <button class="btn btn-sm btn-primary" data-bind="visible: hasNext, click: nextStep">Next</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Dialogs -->
+<div data-bind="modal: isSearchGroupDialog" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">Find Group</div>
+            <div class="paddedWrapper">
+                <ldap-groups></ldap-groups>
+            </div>
+        </div>
+    </div>
+</div>
+

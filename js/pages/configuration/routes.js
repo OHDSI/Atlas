@@ -4,7 +4,7 @@ define(
       return {
         '/configure': () => {
           appModel.activePage(this.title);
-          require(['configuration', 'source-manager'], function () {
+          require(['./configuration', './sources/source-manager'], function () {
             appModel.componentParams = {
               model: appModel
             };
@@ -13,7 +13,7 @@ define(
         },
         '/roles': () => {
           appModel.activePage(this.title);
-          require(['roles'], function () {
+          require(['./roles/roles'], function () {
             appModel.componentParams = {
               model: appModel
             };
@@ -22,7 +22,7 @@ define(
         },
         '/role/:id': (id) => {
           appModel.activePage(this.title);
-          require(['role-details'], function () {
+          require(['./roles/role-details'], function () {
             appModel.componentParams = {
               model: appModel
             };
@@ -32,7 +32,10 @@ define(
         },
         'import': () => {
           appModel.activePage(this.title);
-          require(['users-import'], function() {
+          require(['./users-import/users-import'], function() {
+            appModel.componentParams = {
+              model: appModel,
+            };
             appModel.currentView('users-import');
           });
         }
