@@ -3,6 +3,10 @@ define(function(require, exports) {
   const OHDSIApi = require('ohdsi-api').Api;
   
   class Api extends OHDSIApi {
+    handleUnexpectedError() {
+      console.error('Oooops!.. Something went wrong :(');
+    }
+
     isSecureUrl(url) {
       var authProviders = config.authProviders.reduce(function(result, current) {
         result[config.api.url + current.url] = current;

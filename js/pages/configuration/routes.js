@@ -31,6 +31,18 @@ define(
             appModel.currentView('role-details');
           });
         }),
+        '/source/:id': new AuthorizedRoute((id) => {
+          appModel.activePage(this.title);
+          require(['source-manager'], function () {
+            appModel.componentParams = {
+              model: appModel,
+            };
+            if (id !== 'new') {
+              appModel.selectedSourceId(id);
+            }
+            appModel.currentView('source-manager');
+          });
+        }),
       };
     }
 
