@@ -18,9 +18,17 @@ define([
 
 			constructor(params){
 				super(params);
-				this.searchResults = ko.observableArray();
+				this.searchResults = params.searchResults || ko.observableArray();
 				this.searchText = ko.observable("");
 				this.loading = ko.observable();
+				this.provider = params.provider || ko.observable("ad");
+				this.role = params.role || ko.observable();
+				this.dtApi = ko.observable();
+
+				this.role.subscribe((newRole) => {
+					this.searchResults([]);
+					this.searchText("");
+				});
 
 				this.onRowClick = this.onRowClick.bind(this);
 				this.searchGroups = this.searchGroups.bind(this);
@@ -30,14 +38,15 @@ define([
 
 			searchGroups() {
 				this.loading(true);
-				userApi.searchGroups("ad", this.searchText())
+				userApi.searchGroups(this.provider(), this.searchText())
 					.then(results => {
 						this.loading(false);
-						this.searchResults(results.map(group => ({...group, included: false })));
+						this.searchResults(results.map(group => ({...group, included: ko.observable() })));
 					});
 			}
 
 			onRowClick(data) {
+				console.log(data);
 			}
 
 			onSubmitSearch(data, event) {

@@ -23,8 +23,8 @@ define(['knockout',
 		Const) {
 
 		const transitions = {
-			'sources': {next: Const.WIZARD_STEPS.MAPPING,},
-			'mapping': {prev: Const.WIZARD_STEPS.SOURCES, next: Const.WIZARD_STEPS.IMPORT,},
+			'providers': {next: Const.WIZARD_STEPS.MAPPING,},
+			'mapping': {prev: Const.WIZARD_STEPS.PROVIDERS, next: Const.WIZARD_STEPS.IMPORT,},
 			'import' : {prev: Const.WIZARD_STEPS.MAPPING,},
 		};
 
@@ -37,14 +37,16 @@ define(['knockout',
 				this.isAuthenticated = authApi.isAuthenticated;
 				this.hasMultipleProviders = ko.pureComputed(() => this.providers() && !!this.providers().ldapUrl && !!this.providers().adUrl);
 				this.WIZARD_STEPS = Const.WIZARD_STEPS;
-				this.wizardStep = ko.observable(this.WIZARD_STEPS.SOURCES);
+				this.wizardStep = ko.observable(this.WIZARD_STEPS.PROVIDERS);
 				this.hasPrevious = ko.computed(() => !!this.getStep('prev'));
 				this.hasNext = ko.computed(() => !!this.getStep());
 				// form inputs
-				this.importSource = ko.observable(Const.SOURCES.ACTIVE_DIRECTORY);
+				this.importProvider = ko.observable(Const.PROVIDERS.ACTIVE_DIRECTORY);
 				this.updateRoles = params.model.updateRoles;
 				this.roles = sharedState.roles;
 				this.rolesMapping = ko.observableArray();
+				this.selectedRole = ko.observable();
+				this.ldapGroups = ko.observableArray();
 
 				this.isSearchGroupDialog = ko.observable();
 				//bindings
@@ -53,6 +55,8 @@ define(['knockout',
 				this.nextStep = this.nextStep.bind(this);
 				this.prevStep = this.prevStep.bind(this);
 				this.onRowClick = this.onRowClick.bind(this);
+				this.closeModal = this.closeModal.bind(this);
+				this.setGroupMapping = this.setGroupMapping.bind(this);
 
 				this.init();
 			}
@@ -79,11 +83,25 @@ define(['knockout',
 			}
 
 			onRowClick(data) {
+				this.selectedRole(data);
 				this.isSearchGroupDialog(true);
 			}
 
-			renderRole(data) {
-				return data.role;
+			renderGroups(data, type, row) {
+				return (row || []).groups().map(group => group.displayName).sort().join(", ");
+			}
+
+			closeModal() {
+				this.isSearchGroupDialog(false);
+			}
+
+			setGroupMapping() {
+				const selectedGroups = this.ldapGroups().filter(g => g.included()).map(g => {
+					delete g.included;
+					return g;
+				});
+				this.selectedRole().groups(selectedGroups);
+				this.closeModal();
 			}
 
 			init() {
@@ -95,8 +113,8 @@ define(['knockout',
 				this.updateRoles().then(() => {
 					const mapping = this.roles().map(role => (
 						{
-							role,
-							groupName: '',
+							...role,
+							groups: ko.observableArray(),
 						}
 					));
 					this.rolesMapping(mapping);

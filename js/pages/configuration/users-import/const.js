@@ -1,19 +1,19 @@
 define(['knockout'], function (ko) {
 
   const WIZARD_STEPS = {
-    SOURCES: 'sources',
+    PROVIDERS: 'providers',
     MAPPING: 'mapping',
 		IMPORT: 'import',
   };
 
-  const SOURCES = {
+  const PROVIDERS = {
     ACTIVE_DIRECTORY: "ad",
     LDAP: "ldap",
   };
 
   return {
     WIZARD_STEPS,
-    SOURCES,
+    PROVIDERS,
   };
 
 });

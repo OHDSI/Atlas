@@ -1,4 +1,4 @@
-<div class="wrapperTitle">
+<div data-bind="css: classes({extra: ['wrapperTitle']})">
     <!-- ko if:loading -->
     <i class="fa fa-circle-o-notch fa-spin"></i> Loading...
     <!-- /ko -->
@@ -7,26 +7,26 @@
     <!-- /ko -->
 </div>
 
-<div class="paddedWrapper">
-    <div class="panel panel-primary">
-        <div class="panel-heading padded">Importing users</div>
-        <div class="panel-body">
+<div data-bind="css: classes({extra: 'paddedWrapper'})">
+    <div data-bind="css: classes({extra: ['panel', 'panel-primary']})">
+        <div data-bind="css: classes({extra: ['panel-heading', 'padded']})">Importing users</div>
+        <div data-bind="css: classes({extra: ['panel-body']})">
 
             <!-- select sources -->
-            <div data-bind="if: hasMultipleProviders && wizardStep() === $component.WIZARD_STEPS.SOURCES">
-                <step-header params="header:'Please, select a source to import users from.'"></step-header>
+            <div data-bind="if: hasMultipleProviders && wizardStep() === $component.WIZARD_STEPS.PROVIDERS">
+                <step-header params="header:'Please, select a provider to import users from.'"></step-header>
                     <div class="btn-group users-import__group">
-                        <label class="btn"><input name="importSource" id="cbActiveDirectory" type="radio" value="ad" data-bind="checked: importSource" /> Active Directory</label>
-                        <label class="btn"><input name="importSource" id="cbLdap" type="radio" value="ldap" data-bind="checked: importSource" /> LDAP server</label>
+                        <label data-bind="css: classes({extra: ['btn']})" ><input name="importSource" id="cbActiveDirectory" type="radio" value="ad" data-bind="checked: importProvider" /> Active Directory</label>
+                        <label data-bind="css: classes({extra: ['btn']})"><input name="importSource" id="cbLdap" type="radio" value="ldap" data-bind="checked: importProvider" /> LDAP server</label>
                     </div>
             </div>
 
             <!-- Role mapping -->
             <div data-bind="if: wizardStep() === WIZARD_STEPS.MAPPING">
-                <div class="padded">
+                <div data-bind="css: classes({extra: ['padded']})">
                     <step-header params="header:'Please, provide LDAP/Active Directory groups mapping to Atlas roles if required.'"></step-header>
                     <div>
-                        <table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
+                        <table width="100%" cellspacing="0" data-bind="dataTable:{
                             data: rolesMapping(),
                             onRowClick: $component.onRowClick,
                             options: {
@@ -41,12 +41,12 @@
                                         ordering: true,
                                         order: [[ 0, 'asc' ]],
                                         columns: [
-                                                { title: 'Role', data: 'role', render: renderRole },
-                                                { title: 'Group name', data: 'groupName' },
+                                                { title: 'Role', data: 'role' },
+                                                { title: 'Group name', render: renderGroups },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
                                 }
-                              }">
+                              }, css: classes({extra: ['stripe', 'compact', 'hover']})">
                         </table>
                     </div>
                 </div>
@@ -54,14 +54,14 @@
 
             <!-- Import -->
             <div data-bind="if: wizardStep() === WIZARD_STEPS.IMPORT">
-                <div class="padded">
+                <div data-bind="css: classes({extra: ['padded']})">
                     <step-header params="header:'Import users'"></step-header>
                 </div>
             </div>
 
-            <div class="users-import__button-pane">
-                <button class="btn btn-sm btn-primary" data-bind="visible: hasPrevious, click: prevStep">Prev</button>
-                <button class="btn btn-sm btn-primary" data-bind="visible: hasNext, click: nextStep">Next</button>
+            <div data-bind="css: classes({ element: 'row', modifiers: 'footer' })">
+                <button data-bind="visible: hasPrevious, click: prevStep, css: classes({extra: ['btn', 'btn-sm', 'btn-primary']})">Prev</button>
+                <button data-bind="visible: hasNext, click: nextStep, css: classes({extra: ['btn', 'btn-sm', 'btn-primary']})">Next</button>
             </div>
         </div>
 
@@ -69,12 +69,16 @@
 </div>
 
 <!-- Dialogs -->
-<div data-bind="modal: isSearchGroupDialog" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">Find Group</div>
-            <div class="paddedWrapper">
-                <ldap-groups></ldap-groups>
+<div data-bind="modal: isSearchGroupDialog, css: classes({extra: ['modal', 'fade']})" tabindex="-1" role="dialog">
+    <div data-bind="css: classes({extra: ['modal-dialog', 'modal-lg']})">
+        <div data-bind="css: classes({extra: ['modal-content']})">
+            <div data-bind="css: classes({extra: ['modal-header']})">Find Group</div>
+            <div data-bind="css: classes({extra: ['paddedWrapper']})">
+                <ldap-groups params="provider: importProvider, role: selectedRole, searchResults: ldapGroups"></ldap-groups>
+                <div data-bind="css: classes({ element: 'row', modifiers: 'footer' })">
+                    <button data-bind="click: setGroupMapping, css: classes({extra: ['btn', 'btn-sm', 'btn-primary'] })">Set</button>
+                    <button data-bind="click: closeModal, css: classes({extra: ['btn', 'btn-sm', 'btn-success'] })">Cancel</button>
+                </div>
             </div>
         </div>
     </div>

@@ -9,6 +9,7 @@
     <div data-bind="if: !loading()">
         <table width="100%" cellspacing="0" data-bind="dataTable:{
                             data: searchResults(),
+                            api: dtApi,
                             onRowClick: $component.onRowClick,
                             options: {
                                         dom: 'liprt',
@@ -17,12 +18,12 @@
                                         lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
                                         orderClasses: false,
                                         deferRender: true,
-                                        autoWidth: true,
+                                        autoWidth: false,
                                         ordering: true,
-                                        order: [[ 0, 'asc' ]],
+                                        order: [[ 1, 'asc' ]],
                                         columns: [
-                                           { title: 'Selected', class: 'text-center', render: () => renderCheckbox('included') },
-                                           { title: 'Group name', data: 'displayName' },
+                                            { title: 'Selected', class: 'text-center', width: '1.5rem', render: function(){ return renderCheckbox('included'); } },
+                                            { title: 'Group name', width: '100%', data: 'displayName' },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
                                 }
