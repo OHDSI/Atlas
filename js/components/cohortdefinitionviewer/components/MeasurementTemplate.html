@@ -8,7 +8,7 @@ a measurement of <conceptset-reference params="{conceptSetId: CodesetId, concept
 	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(MeasurementType) != null -->
-	<li>measurement type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(MeasurementType)"></concept-list-viewer></li>
+	<li>measurement type <cycle-toggle-input-viewer params="{value: MeasurementTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(MeasurementType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Operator) != null -->
 	<li>measurement value operator is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Operator)"></concept-list-viewer></li>

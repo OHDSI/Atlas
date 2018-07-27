@@ -41,7 +41,7 @@
 			<tr data-bind="if: ObservationType() != null, visible: ObservationType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ObservationType') }" class="fa fa-times" /></td>
 				<td>
-					Observation Type is:
+					Observation Type <cycle-toggle-input params="{value: ObservationTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: ObservationType()"></concept-list>
 				</td>
 			</tr>

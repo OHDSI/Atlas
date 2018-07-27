@@ -8,7 +8,7 @@ an observation of <conceptset-reference params="{conceptSetId: CodesetId, concep
 	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(ObservationType) != null -->
-	<li>observation type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ObservationType)"></concept-list-viewer></li>
+	<li>observation type <cycle-toggle-input-viewer params="{value: ObservationTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ObservationType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(ValueAsNumber) != null -->
 	<li>with value as number <numeric-range-viewer params="Range: ValueAsNumber"></numeric-range-viewer></li>
