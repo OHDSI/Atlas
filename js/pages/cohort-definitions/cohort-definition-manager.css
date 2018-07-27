@@ -9,3 +9,33 @@
 .cohort-conceptset-button-pane button:last-child {
     margin-right: 0;
 }
+
+.nav-tabs li a.warning-alarm, .nav-tabs li a.warning-alarm:hover {
+    background-color: #ff001a;
+    color: #e3e3e3;
+}
+
+.nav-tabs li.active a.warning-alarm, .nav-tabs li.active a.warning-alarm:hover {
+    color: #fefefe;
+    border-color: #ff001a;
+}
+
+.nav-tabs li a.warning-info, .nav-tabs li a.warning-info:hover {
+    background-color: #337ab7;
+    color: #e3e3e3;
+}
+
+.nav-tabs li.active a.warning-info, .nav-tabs li.active a.warning-info:hover {
+    color: #fefefe;
+    border-color: #337ab7;
+}
+
+.nav-tabs li a.warning-warn, .nav-tabs li a.warning-info:hover {
+    background-color: #d82;
+    color: #e3e3e3;
+}
+
+.nav-tabs li.active a.warning-warn, .nav-tabs li.active a.warning-info:hover {
+    color: #fefefe;
+    border-color: #d82;
+}

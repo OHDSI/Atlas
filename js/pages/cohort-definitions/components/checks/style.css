@@ -1,0 +1,19 @@
+.conceptset-warnings .fa-info {
+    color: #0022ee;
+}
+
+.conceptset-warnings .fa-warning {
+    color: #dd9900;
+}
+
+.conceptset-warnings .fa-times-circle {
+    color: #dd0033;
+}
+
+.warnings-button-pane {
+    margin-bottom: 10px;
+}
+
+.warning-message {
+    margin-right: 5px;
+}
