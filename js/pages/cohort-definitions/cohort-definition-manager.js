@@ -1034,7 +1034,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return j.name == testName && j.status() != 'FAILED' && j.status() != 'COMPLETED';
 			}			
 
-			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel }) {
+			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods }) {
 				if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
 					return;
 				}
@@ -1060,6 +1060,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.observationConceptIds = [];
 				cohortJob.measurementConceptIds = [];
 
+				cohortJob.periods = periods;
+				
 				var jobDetails = new jobDetail({
 					name: cohortJob.jobName,
 					status: 'LOADING',
@@ -1121,7 +1123,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					descr: 'the Cost and Utilization analyses',
 					duration: '10-45 minutes',
 					analysisIdentifiers: analysisIds,
-					runHeraclesHeel: false
+					runHeraclesHeel: false,
+					periods: this.utilReportOptions.periods.selectedOptions(),
 				});
 
 				this.showUtilizationToRunModal(false);

@@ -180,7 +180,6 @@ define(
       async initializePeriods() {
         try {
           this.periods = await CohortResultsService.loadPeriods({ source: this.source, cohortId: this.cohortId, window: this.window });
-          this.filterList(this.getFilterList());
         } catch (e) {
           console.error(e);
         }
@@ -225,6 +224,7 @@ define(
 
       async init() {
         await this.initializePeriods();
+        await this.filterList(this.getFilterList());
         await this.loadData(this.getSelectedFilterValues());
       }
 

@@ -73,6 +73,7 @@ define(
       windowType,
       visitStat,
       getPeriodTypeFilter,
+      periods,
     };
   }
 );
