@@ -1,25 +1,7 @@
-define(['knockout', 'text!./CycleToggleInputTemplate.html'], function (ko, template) {
-
-	function CycleToggleInputViewModel(params) {
-		var self = this;
-		
-		function getOptionIndex(value, options) {
-			return (value == null) ? 0 : options.indexOf(self.options.filter((option) => option.value === value)[0]);
-		}
-		
-		self.value = params.value;
-		self.options = params.options;
-		
-		self.currentIndex = ko.pureComputed(() => getOptionIndex(self.value(), self.options));
-		self.selectedOptionText = ko.pureComputed(function() {
-			return self.options[self.currentIndex()].name;
-		});		
-	}
-	
-	// return compoonent definition
+define(['knockout', 'components/cohortbuilder/components/CycleToggleInput', 'text!./CycleToggleInputTemplate.html'], function (ko, viewModel, template) {
+	// reuse CycleToggleInput module from cohortBuilder, and use the read-only view template.
 	return {
-		viewModel: CycleToggleInputViewModel,
+		viewModel: viewModel,
 		template: template
 	};
-
 });
