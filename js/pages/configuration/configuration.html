@@ -102,7 +102,7 @@
 					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.hasAccess">
 						<a href="#/roles" class="btn btn-sm btn-primary configuration__manage-btn" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
 					</div>
-					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.hasAccess">
+					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.canImport">
 						<a href="#/import" class="btn btn-sm btn-primary configuration__import-btn">Import Users from LDAP/AD</a>
 					</div>
 				</div>

@@ -406,6 +406,10 @@ define(function(require, exports) {
         return isPermitted('role:' + roleId + ':permissions:*:put') && isPermitted('role:' + roleId + ':permissions:*:delete');
     }
 
+    const isPermittedImportUsers = function() {
+        return isPermitted('user:import:post') && isPermitted('user:import:*:post');
+    }
+
     var setAuthParams = function (jqXHR) {
         token(jqXHR.getResponseHeader(TOKEN_HEADER));
         loadUserInfo();
@@ -481,6 +485,8 @@ define(function(require, exports) {
         isPermittedEditSource: isPermittedEditSource,
         isPermittedDeleteSource: isPermittedDeleteSource,
         isPermittedCheckSourceConnection: isPermittedCheckSourceConnection,
+
+        isPermittedImportUsers,
     };
 
     return api;
