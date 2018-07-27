@@ -28,7 +28,7 @@ define(
             let prevVal;
             if (filter.type === 'select') {
               prevVal = filter.selectedValue();
-              filter.selectedValue.subscribe(() => {
+              filter.subscription = filter.selectedValue.subscribe(() => {
                 if (prevVal != filter.selectedValue()) {
                   prevVal = filter.selectedValue();
                   this.apply()
@@ -41,6 +41,11 @@ define(
       }
 
       this.dispose = () => {
+        this.filterList().forEach(filter => {
+          if (filter.subscription) {
+            filter.subscription.dispose();
+          }
+        });
         this.filterListSubscription.dispose();
       };
       
