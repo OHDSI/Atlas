@@ -35,10 +35,10 @@ define([
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
-			let appRoutes = {};
+			let routes = {};
 			self.pages = Object.values(pages);
 			self.pages.forEach((page) => {
-				appRoutes = { ...appRoutes, ...page.buildRoutes(self) };
+				routes = { ...routes, ...page.buildRoutes(self) };
 			});
 			self.activePage = ko.observable();
 			const bemHelper = new BemHelper('app');
@@ -89,26 +89,6 @@ define([
 					notfound: function () {
 						self.router.setRoute(vocabularyPage.baseUrl);
 					},
-				};
-				var routes = {
-					...appRoutes,
-					'/source/new': function () {
-						require(['source-manager'], function () {
-							self.componentParams = {
-								model: self,
-							};
-							self.currentView('source-manager');
-            });
-          },
-					'/source/:id': function (id) {
-            require(['source-manager'], function(){
-								self.componentParams = {
-									model: self,
-								};
-	              self.selectedSourceId(id);
-								self.currentView('source-manager');
-							});
-					},					
 				};
 
 				let onLoginSubscription;
