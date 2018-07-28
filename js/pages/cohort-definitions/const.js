@@ -1,5 +1,25 @@
 define(
-  (require, exports) => {
+  ['knockout', 'lodash', 'require', 'exports'],
+  (ko, _, require, exports) => {
+    const periods = [
+      {
+        label: 'Weekly',
+        value: 'ww',
+      },
+      {
+        label: 'Monthly',
+        value: 'mm',
+      },
+      {
+        label: 'Quarterly',
+        value: 'qq',
+      },
+      {
+        label: 'Yearly',
+        value: 'yy',
+      },
+    ];
+    
     const cohortTabModes = {
       definition: 'definition',
       conceptsets: 'conceptsets',
@@ -27,30 +47,13 @@ define(
       details: id => `#/cohortdefinition/${id}`,
     };
 
-    const getPeriodTypeFilter = () => ({
-      type: 'select',
-      label: 'Period type',
-      name: 'periodType',
-      options: ko.observableArray([
-        {
-          label: 'Weekly',
-          value: 'ww',
-        },
-        {
-          label: 'Monthly',
-          value: 'mm',
-        },
-        {
-          label: 'Quarterly',
-          value: 'qq',
-        },
-        {
-          label: 'Yearly',
-          value: 'yy',
-        },
-      ]),
-      selectedValue: ko.observable('mm'),
-    });
+		const getPeriodTypeFilter = (chosenPeriods) => ({
+			type: 'select',
+			label: 'Period type',
+			name: 'periodType',
+			options: ko.observableArray(periods.filter(p => chosenPeriods.includes(p.value))),
+			selectedValue: ko.observable(_.first(chosenPeriods)),
+		});
 
     const windowType = {
       baseline: 'baseline',
@@ -70,6 +73,7 @@ define(
       windowType,
       visitStat,
       getPeriodTypeFilter,
+      periods,
     };
   }
 );
