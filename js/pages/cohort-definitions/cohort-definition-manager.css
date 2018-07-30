@@ -35,7 +35,7 @@
     color: #e3e3e3;
 }
 
-.nav-tabs li.active a.warning-warn, .nav-tabs li.active a.warning-info:hover {
+.nav-tabs li.active a.warning-warn, .nav-tabs li.active a.warning-warn:hover {
     color: #fefefe;
     border-color: #d82;
 }
