@@ -10,8 +10,12 @@ define([
     function ModalPickOptions(params) {
         this.showModal = params.showModal;
         this.title = params.title;
+        // options object looks like:
+        // { 
+        //     section1: { title:'Section One Title', options: array, selectedOptions: observableArray }
+        //     section2: { title:'Second Section Title', options: array, selectedOptions: observableArray }
+        // }
         this.options = params.options;
-        this.selectedOptions = params.selectedOptions;
         this.submit = params.submit;
         this.submitLabel = params.submitLabel;
 

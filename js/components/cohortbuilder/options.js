@@ -80,5 +80,12 @@ define([], function () {
 		}];
 		
 
+		options.DomainTypeExcludeOptions = [{
+			name: 'is any of',
+			value: false
+		}, {
+			name: 'is not any of',
+			value: true
+		}]
     return options;
 });

@@ -27,6 +27,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.ObservationType = ko.observable(data.ObservationType && ko.observableArray(data.ObservationType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.ObservationTypeExclude = ko.observable(data.ObservationTypeExclude || null);				
 		self.ValueAsNumber = ko.observable(data.ValueAsNumber && new Range(data.ValueAsNumber));
 		self.ValueAsString = ko.observable(data.ValueAsString && new Text(data.ValueAsString));
 		self.ValueAsConcept = ko.observable(data.ValueAsConcept && ko.observableArray(data.ValueAsConcept.map(function (d) {

@@ -17,6 +17,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'services/ConceptSetService',
 	'providers/Component',
 	'utils/CommonUtils',
+	'pages/cohort-definitions/const',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -50,7 +51,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	cohortConst,
 	conceptSetService,
 	Component,
-	commonUtils
+	commonUtils,
+	costUtilConst
 ) {
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -210,7 +212,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			this.saveConceptSetShow = ko.observable(false);
 			this.newConceptSetName = ko.observable();
-
+			
 			this.canGenerate = ko.pureComputed(() => {
 				var isDirty = this.dirtyFlag() && this.dirtyFlag().isDirty();
 				var isNew = this.model.currentCohortDefinition() && (this.model.currentCohortDefinition().id() == 0);
@@ -552,7 +554,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.checkedUtilReports = ko.observableArray([]);
 			
 			const reportPacks = cohortReportingService.visualizationPacks;
-			this.utilReportOptions = [
+			const reports = [
 				reportPacks.healthcareUtilPersonAndExposureBaseline,
 				reportPacks.healthcareUtilPersonAndExposureCohort,
 				reportPacks.healthcareUtilVisitRecordsBaseline,
@@ -567,6 +569,19 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				label: item.name,
 				value: item.analyses,
 			}));
+
+			this.utilReportOptions = {
+				reports : {
+					title: 'Reports',
+					options: reports,
+					selectedOptions: ko.observableArray([]),
+				},
+				periods: {
+					title: 'Periods',
+					options: costUtilConst.periods,
+					selectedOptions: ko.observableArray([]),
+				}
+			};
 			
 			this.selectedCriteria = ko.observable();
 
@@ -1061,7 +1076,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return j.name == testName && j.status() != 'FAILED' && j.status() != 'COMPLETED';
 			}			
 
-			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel }) {
+			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods }) {
 				if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
 					return;
 				}
@@ -1087,6 +1102,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.observationConceptIds = [];
 				cohortJob.measurementConceptIds = [];
 
+				cohortJob.periods = periods;
+				
 				var jobDetails = new jobDetail({
 					name: cohortJob.jobName,
 					status: 'LOADING',
@@ -1107,13 +1124,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					url: config.api.url + 'cohortanalysis',
 					data: JSON.stringify(cohortJob),
 					method: 'POST',
-					context: jobDetails,
 					contentType: 'application/json',
 						success: (info) => {
-						this.executionId = info.executionId;
-						this.status(info.status);
-						this.statusUrl = this.statusUrl + info.executionId;
-						sharedState.jobListing.queue(this);
+						jobDetails.executionId = info.executionId;
+						jobDetails.status(info.status);
+						jobDetails.statusUrl = this.statusUrl + info.executionId;
+						sharedState.jobListing.queue(jobDetails);
 					},
 						error: (xhr, status, error) => {
 							this.createReportJobFailed(true);
@@ -1149,7 +1165,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					descr: 'the Cost and Utilization analyses',
 					duration: '10-45 minutes',
 					analysisIdentifiers: analysisIds,
-					runHeraclesHeel: false
+					runHeraclesHeel: false,
+					periods: this.utilReportOptions.periods.selectedOptions(),
 				});
 
 				this.showUtilizationToRunModal(false);

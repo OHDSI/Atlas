@@ -17,8 +17,8 @@ define(
 
     class BaseDrugUtilReport extends BaseCostUtilReport {
 
-      constructor(componentName, params) {
-        super(componentName, params);
+      constructor(params) {
+        super(params);
         this.setupDrugSourceConceptOptions = this.setupDrugSourceConceptOptions.bind(this);
 
         this.window = params.window;
@@ -109,6 +109,7 @@ define(
 
       getFilterList() {
         return [
+          costUtilConst.getPeriodTypeFilter(this.periods),
           {
             type: 'select',
             label: 'Drug Source',
@@ -120,7 +121,7 @@ define(
       }
 
       setupDrugSourceConceptOptions(conceptList) {
-        const filter = this.filterList.find(filter => filter.name === DRUG_SOURCE_TYPE);
+        const filter = this.filterList().find(filter => filter.name === DRUG_SOURCE_TYPE);
         filter.options([
           { label: 'All drug sources', value: null },
           ...BaseCostUtilReport.conceptsToOptions(conceptList)

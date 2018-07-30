@@ -11,7 +11,7 @@ a condition occurrence of <conceptset-reference params="{conceptSetId: CodesetId
 	<li>occurrence end is <date-range-viewer params="Range: OccurrenceEndDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(ConditionType) != null -->
-	<li>condition type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ConditionType)"></concept-list-viewer></li>
+	<li>condition type <cycle-toggle-input-viewer params="{value: ConditionTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ConditionType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(StopReason) != null -->
 	<li>with a Stop Reason <text-filter-viewer params="Filter: StopReason"></text-filter-viewer></li>
