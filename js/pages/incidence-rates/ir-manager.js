@@ -1,18 +1,18 @@
 define([
 	'knockout', 
 	'text!./ir-manager.html', 
-	'webapi/IRAnalysisAPI',
+	'services/IRAnalysis',
 	'webapi/SourceAPI',
-	'webapi/CohortDefinitionAPI',
+	'services/CohortDefinition',
 	'./components/iranalysis/IRAnalysisDefinition', 
 	'./components/iranalysis/IRAnalysisExpression', 
-	'ohdsi.util',
+	'assets/ohdsi.util',
 	'appConfig',
 	'atlas-state',
 	'job/jobDetail',
 	'webapi/AuthAPI',
 	'providers/Component',
-	'utils/commonUtils',
+	'utils/CommonUtils',
 	'./const',
 	'./components/iranalysis/main', 
 	'databindings', 
@@ -22,7 +22,7 @@ define([
 ], function (
 	ko,
 	view,
-	iraAPI,
+	IRAnalysisService,
 	sourceAPI,
 	cohortAPI,
 	IRAnalysisDefinition,
@@ -141,9 +141,9 @@ define([
 		}
 
 		pollForInfo() {
-			iraAPI.getInfo(this.selectedAnalysis().id()).then((infoList) => {
+			IRAnalysisService.getInfo(this.selectedAnalysisId()).then(({ data = [] }) => {
 				var hasPending = false;
-				infoList.forEach((info) => {
+				data.forEach((info) => {
 					var source = this.sources().filter((s) => { return s.source.sourceId == info.executionInfo.id.sourceId })[0];
 					if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
 						source.info(info);
@@ -176,7 +176,7 @@ define([
 		onAnalysisSelected() {
 			this.loading(true);
 			this.refreshDefs();
-			iraAPI.getAnalysis(this.selectedAnalysisId()).then((analysis) => {
+			IRAnalysisService.getAnalysis(this.selectedAnalysisId()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));				
 				this.loading(false);
@@ -202,7 +202,7 @@ define([
 
 		copy() {
 			this.loading(true);
-			iraAPI.copyAnalysis(this.selectedAnalysis().id()).then((analysis) => {
+			IRAnalysisService.copyAnalysis(this.selectedAnalysisId()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.selectedAnalysisId(analysis.id)
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
@@ -226,7 +226,7 @@ define([
 		
 		save() {
 			this.loading(true);
-			iraAPI.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
+			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				document.location =  constants.apiPaths.analysis(analysis.id)
@@ -239,7 +239,7 @@ define([
 				return;
 			
 			// reset view after save
-			iraAPI.deleteAnalysis(this.selectedAnalysis().id()).then(() => {
+			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
 				this.selectedAnalysis(null);
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				document.location = constants.apiPaths.analysis();
@@ -247,7 +247,7 @@ define([
 		}
 		
 		removeResult(analysisResult) {
-			iraAPI.deleteInfo(this.selectedAnalysis().id(),analysisResult.source.sourceKey).then(() => {
+			IRAnalysisService.deleteInfo(this.selectedAnalysisId(),analysisResult.source.sourceKey).then(() => {
 				var source = this.sources().filter(function (s) { return s.source.sourceId == analysisResult.source.sourceId })[0];
 				source.info(null);
 			});
@@ -260,7 +260,7 @@ define([
 		
 		onExecuteClick(sourceItem) {
 			this.queueJob(sourceItem);
-			var executePromise = iraAPI.execute(this.selectedAnalysis().id(), sourceItem.source.sourceKey);
+			var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 			executePromise.then(() => {
 				this.pollForInfo();
 			});			
@@ -272,11 +272,11 @@ define([
 				name: this.selectedAnalysis().name() + "_" + sourceItem.source.sourceKey,
 				type: 'ir-analysis',
 				status: 'PENDING',
-				executionId: String(this.selectedAnalysis().id()) + String(sourceItem.source.sourceId),
-				statusUrl: config.api.url + 'ir/' + this.selectedAnalysis().id() + '/info',
+				executionId: String(this.selectedAnalysisId()) + String(sourceItem.source.sourceId),
+				statusUrl: config.api.url + 'ir/' + this.selectedAnalysisId() + '/info',
 				statusValue: 'status',
 				viewed: false,
-				url: 'iranalysis/' + this.selectedAnalysis().id() + '/generation',
+				url: 'iranalysis/' + this.selectedAnalysisId() + '/generation',
 			});
 			sharedState.jobListing.queue(job);
 		}
@@ -291,7 +291,7 @@ define([
 		};
 
 		exportAnalysisCSV() {
-			window.open(config.api.url + 'ir/' + this.selectedAnalysis().id() + '/export');
+			window.open(config.api.url + 'ir/' + this.selectedAnalysisId() + '/export');
 		}
 		
 		init() {
@@ -330,7 +330,7 @@ define([
 								sourceItem.info(tempInfo);
 								this.queueJob(sourceItem);
 							}
-							var executePromise = iraAPI.execute(this.selectedAnalysis().id(), sourceItem.source.sourceKey);
+							var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 							executePromise.then(() => {
 								this.pollForInfo();
 							});
@@ -345,7 +345,7 @@ define([
 
 			if (this.selectedAnalysisId() == null) {
 				this.newAnalysis();
-			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysis().id())) {
+			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysisId())) {
 				this.onAnalysisSelected();
 			} else {
 				this.pollForInfo();

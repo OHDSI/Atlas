@@ -2,10 +2,10 @@ define([
 	'knockout',
 	'jquery',
 	'text!./report.html',
-	'webapi/IRAnalysisAPI',
+	'services/IRAnalysis',
 	'd3',
 	'providers/Component',
-	'utils/commonUtils',
+	'utils/CommonUtils',
 	'databindings',
 	'databindings/irTreemapLegend',
 	'css!cohortbuilder/css/report.css'
@@ -13,7 +13,7 @@ define([
 	ko,
 	$,
 	view,
-	irAPI,
+	IRAnalysisService,
 	d3,
 	Component,
 	commonUtils

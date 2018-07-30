@@ -2,7 +2,7 @@ define([
 	'knockout',
 	'text!./browser.html',
 	'providers/Component',
-	'utils/commonUtils',
+	'utils/CommonUtils',
 	'webapi/MomentAPI',
 	'faceted-datatable'
 ], function (

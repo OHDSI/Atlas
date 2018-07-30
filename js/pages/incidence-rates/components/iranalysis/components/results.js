@@ -2,16 +2,16 @@ define([
 	'knockout',
 	'jquery',
 	'text!./results.html',
-	'webapi/IRAnalysisAPI',
+	'services/IRAnalysis',
 	'webapi/MomentAPI',
 	'providers/Component',
-	'utils/commonUtils',
+	'utils/CommonUtils',
 	'databindings'
 ], function (
 	ko,
 	$,
 	view,
-	iraAPI,
+	IRAnalysisService,
 	momentApi,
 	Component,
 	commonUtils
@@ -104,7 +104,7 @@ define([
 			this.selectedSource(source);
 			this.isLoading(true);
 
-			iraAPI.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, this.selectedTarget(), this.selectedOutcome()).then((report) => {
+			IRAnalysisService.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, this.selectedTarget(), this.selectedOutcome()).then((report) => {
 				// ensure report results are sorted in correct order (by id)
 				report.stratifyStats.sort(function (a, b) {
 					return a.id - b.id;

@@ -2,10 +2,10 @@ define([
   'knockout',
   'text!./ir-browser.html',
   'appConfig',
-  'webapi/IRAnalysisAPI',
+  'services/IRAnalysis',
   'webapi/AuthAPI',
   'providers/Component',
-  'utils/commonUtils',
+  'utils/CommonUtils',
   './const',
   'components/ac-access-denied',
   'faceted-datatable',
@@ -15,7 +15,7 @@ define([
   ko,
   view,
   config,
-  iraAPI,
+  IRAnalysisService,
   authApi,
   Component,
   commonUtils,
@@ -41,10 +41,10 @@ define([
 
     refresh() {
       this.loading(true);
-      iraAPI
+      IRAnalysisService
         .getAnalysisList()
-        .then((result) => {
-          this.analysisList(result);
+        .then(({ data }) => {
+          this.analysisList(data);
           this.loading(false);
         });
     };

@@ -2,12 +2,13 @@ define([
 	'knockout',
 	'text!./editor.html','pages/incidence-rates/inputTypes/StudyWindow',
 	'../StratifyRule',
-	'cohortbuilder/options',
+	'components/cohortbuilder/options',
 	'providers/Component',
-	'utils/commonUtils',
-	'conceptsetbuilder/components','cohort-definition-browser',				
+	'utils/CommonUtils',
+	'conceptsetbuilder/components',
+	'components/cohort-definition-browser',				
 	'databindings',
-	'cohortbuilder/components'
+	'components/cohortbuilder/components'
 ], function (
 	ko,
 	view,
