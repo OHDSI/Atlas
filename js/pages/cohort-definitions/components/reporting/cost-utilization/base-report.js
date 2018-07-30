@@ -8,7 +8,8 @@ define(
     'd3',
     'webapi/MomentAPI',
     'utils/CsvUtils',
-    'numeral'
+    'numeral',
+    'services/CohortResultsService'
   ],
   function (
     ko,
@@ -20,7 +21,7 @@ define(
     MomentAPI,
     CsvUtils,
     numeral
-  ) {
+  , CohortResultsService) {
 
     class BaseCostUtilReport extends Component {
 
@@ -59,9 +60,9 @@ define(
         };
         this.currentTab = ko.observable(this.visualizationTab);
 
-        // Filters and data
+        // Data
 
-        this.filterList = this.getFilterList();
+        this.filterList = ko.observableArray([]);
         this.dataList = ko.observableArray();
 
         // Charts formatters
@@ -175,9 +176,17 @@ define(
         }
         this.loading(false);
       }
+      
+      async initializePeriods() {
+        try {
+          this.periods = await CohortResultsService.loadPeriods({ source: this.source, cohortId: this.cohortId, window: this.window });
+        } catch (e) {
+          console.error(e);
+        }
+      }
 
       getSelectedFilterValues() {
-        return filterPanelUtils.getSelectedFilterValues(this.filterList);
+        return filterPanelUtils.getSelectedFilterValues(this.filterList());
       }
 
       applyFilters() {
@@ -213,8 +222,10 @@ define(
         );
       }
 
-      init() {
-        this.loadData(this.getSelectedFilterValues());
+      async init() {
+        await this.initializePeriods();
+        await this.filterList(this.getFilterList());
+        await this.loadData(this.getSelectedFilterValues());
       }
 
     }

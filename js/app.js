@@ -14,6 +14,7 @@ define([
 	'less!app.less',
 	'facets',
 	'components/ac-access-denied',
+	'components/white-page',
 	'css!styles/tabs.css',
 	'css!styles/buttons.css',
 ],
@@ -34,11 +35,10 @@ define([
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
-			let appRoutes = {};
 			self.pages = Object.values(pages);
-			self.pages.forEach((page) => {
-				appRoutes = { ...appRoutes, ...page.buildRoutes(self) };
-			});
+			const routes = self.pages.reduce((routes, page) => {
+				return { ...routes, ...page.buildRoutes(self) };
+			}, {});
 			self.activePage = ko.observable();
 			const bemHelper = new BemHelper('app');
 			self.classes = bemHelper.run.bind(bemHelper);
@@ -89,41 +89,42 @@ define([
 						self.router.setRoute(vocabularyPage.baseUrl);
 					},
 				};
-				var routes = {
-					...appRoutes,
-					'/source/new': function () {
-						require(['source-manager'], function () {
-							self.componentParams = {
-								model: self,
-							};
-							self.currentView('source-manager');
-            });
-          },
-					'/source/:id': function (id) {
-            require(['source-manager'], function(){
-								self.componentParams = {
-									model: self,
-								};
-	              self.selectedSourceId(id);
-								self.currentView('source-manager');
-							});
-					},					
-				};
 
-                const asyncBefore = function() {
-                	// Refresh auth token
-                	return (self.config.userAuthenticationEnabled && authApi.token() != null && authApi.tokenExpirationDate() > new Date()) ? authApi.refreshToken() : new Promise(resolve => resolve());
-                };
-
-                // Since the router's "before" hook doesn't work with promises,
+				let onLoginSubscription;
+				self.activeRouteHandler = null;
+				// Since the router's "before" hook doesn't work with promises,
 				// there is a need to wrap the routes manually
-                const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
-                	accumulator[key] = function() {
-                        self.currentView('loading');
-                		asyncBefore().then(() => routes[key].apply(null, arguments));
-                    };
-                	return accumulator;
+				const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
+					accumulator[key] = function() {
+						self.currentView('loading');
+						if (onLoginSubscription) {
+							onLoginSubscription.dispose();
+						}
+						const handler = routes[key].handler.bind(null, ...arguments);
+						routes[key].checkPermission()
+							.then(() => handler())
+							.catch(() => {
+								// protected route didn't pass the token check -> show white page
+								self.currentView('white-page');
+								// wait until user authenticates
+								onLoginSubscription = authApi.isAuthenticated.subscribe((isAuthenticated) => {
+									if (isAuthenticated) {
+										handler();
+										onLoginSubscription.dispose();
+									}
+								});
+							});
+
+						self.activeRouteHandler = arguments.callee.bind(this, ...arguments);
+					};
+					return accumulator;
 				}, {});
+				// anyway, we should track the moment when the user exits and check permissions once again
+				authApi.isAuthenticated.subscribe((isAuthenticated) => {
+					if (!isAuthenticated) {
+						self.activeRouteHandler();
+					}
+				});
 
 				self.router = new Router(routesWithRefreshedToken)
 					.configure(routerOptions);

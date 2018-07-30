@@ -8,7 +8,7 @@ a a specimen of <conceptset-reference params="{conceptSetId: CodesetId, conceptS
 	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(SpecimenType) != null -->
-	<li>specimen type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(SpecimenType)"></concept-list-viewer></li>
+	<li>specimen type <cycle-toggle-input-viewer params="{value: SpecimenTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(SpecimenType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Quantity) != null -->
 	<li>with quantity <numeric-range-viewer params="Range: Quantity"></numeric-range-viewer></li>

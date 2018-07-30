@@ -34,7 +34,7 @@
 			<tr data-bind="if: DeathType() != null, visible: DeathType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DeathType') }" class="fa fa-times" /></td>
 				<td>
-					Death Type is:
+					Death Type <cycle-toggle-input params="{value:  DeathTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DeathType()"></concept-list>
 				</td>
 			</tr>

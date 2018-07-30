@@ -17,11 +17,13 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'services/ConceptSetService',
 	'providers/Component',
 	'utils/CommonUtils',
+	'pages/cohort-definitions/const',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
 	'databindings/expressionCartoonBinding',
 	'./components/cohortfeatures/main',
+	'./components/checks/conceptset-warnings',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css',
 	'assets/ohdsi.util',
@@ -49,7 +51,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	cohortConst,
 	conceptSetService,
 	Component,
-	commonUtils
+	commonUtils,
+	costUtilConst
 ) {
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -89,6 +92,22 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.config = config;
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.model = params.model;
+			this.warningsTotals = ko.observable(0);
+			this.warningCount = ko.observable(0);
+			this.infoCount = ko.observable(0);
+			this.criticalCount = ko.observable(0);
+			this.warningClass = ko.computed(() => {
+				if (this.warningsTotals() > 0){
+					if (this.criticalCount() > 0) {
+						return 'warning-alarm';
+					} else if (this.warningCount() > 0) {
+						return 'warning-warn';
+					} else {
+						return 'warning-info';
+					}
+				}
+				return '';
+			});
 
 			this.cohortDefinitionCaption = ko.computed(() => {
 				if (this.model.currentCohortDefinition()) {
@@ -193,7 +212,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			this.saveConceptSetShow = ko.observable(false);
 			this.newConceptSetName = ko.observable();
-
+			
 			this.canGenerate = ko.pureComputed(() => {
 				var isDirty = this.dirtyFlag() && this.dirtyFlag().isDirty();
 				var isNew = this.model.currentCohortDefinition() && (this.model.currentCohortDefinition().id() == 0);
@@ -535,7 +554,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.checkedUtilReports = ko.observableArray([]);
 			
 			const reportPacks = cohortReportingService.visualizationPacks;
-			this.utilReportOptions = [
+			const reports = [
 				reportPacks.healthcareUtilPersonAndExposureBaseline,
 				reportPacks.healthcareUtilPersonAndExposureCohort,
 				reportPacks.healthcareUtilVisitRecordsBaseline,
@@ -550,6 +569,19 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				label: item.name,
 				value: item.analyses,
 			}));
+
+			this.utilReportOptions = {
+				reports : {
+					title: 'Reports',
+					options: reports,
+					selectedOptions: ko.observableArray([]),
+				},
+				periods: {
+					title: 'Periods',
+					options: costUtilConst.periods,
+					selectedOptions: ko.observableArray([]),
+				}
+			};
 			
 			this.selectedCriteria = ko.observable();
 
@@ -569,6 +601,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.hasResults = this.hasResults.bind(this);
 			this.closeConceptSet = this.closeConceptSet.bind(this);
 			this.deleteConceptSet = this.deleteConceptSet.bind(this);
+			this.fixConceptSet = this.fixConceptSet.bind(this);
+			this.removeConceptSet = this.removeConceptSet.bind(this);
+			this.removeInclusionRule = this.removeInclusionRule.bind(this);
 			this.showSaveConceptSet = this.showSaveConceptSet.bind(this);
 			this.saveConceptSet = this.saveConceptSet.bind(this);
 			this.createConceptSet = this.createConceptSet.bind(this);
@@ -822,6 +857,28 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				this.closeConceptSet();
 			}
 
+			removeConceptSet(id) {
+				this.model.currentCohortDefinition().expression().ConceptSets.remove(
+					function (item) {
+						return item.id === id;
+					}
+				);
+			}
+
+			removeInclusionRule(name) {
+				this.model.currentCohortDefinition().expression().InclusionRules.remove(
+					(item) => item.name() === name
+				);
+			}
+
+			fixConceptSet(warning) {
+				if (warning.type === 'ConceptSetWarning' && warning.conceptSetId) {
+					this.removeConceptSet(warning.conceptSetId);
+				} else if (warning.type === 'IncompleteRuleWarning' && warning.ruleName) {
+					this.removeInclusionRule(warning.ruleName);
+				}
+			}
+
 			showSaveConceptSet () {
 				this.newConceptSetName(this.model.currentConceptSet().name());
 				this.saveConceptSetShow(true);
@@ -1019,7 +1076,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				return j.name == testName && j.status() != 'FAILED' && j.status() != 'COMPLETED';
 			}			
 
-			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel }) {
+			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods }) {
 				if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
 					return;
 				}
@@ -1045,6 +1102,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.observationConceptIds = [];
 				cohortJob.measurementConceptIds = [];
 
+				cohortJob.periods = periods;
+				
 				var jobDetails = new jobDetail({
 					name: cohortJob.jobName,
 					status: 'LOADING',
@@ -1065,13 +1124,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					url: config.api.url + 'cohortanalysis',
 					data: JSON.stringify(cohortJob),
 					method: 'POST',
-					context: jobDetails,
 					contentType: 'application/json',
 						success: (info) => {
-						this.executionId = info.executionId;
-						this.status(info.status);
-						this.statusUrl = this.statusUrl + info.executionId;
-						sharedState.jobListing.queue(this);
+						jobDetails.executionId = info.executionId;
+						jobDetails.status(info.status);
+						jobDetails.statusUrl = this.statusUrl + info.executionId;
+						sharedState.jobListing.queue(jobDetails);
 					},
 						error: (xhr, status, error) => {
 							this.createReportJobFailed(true);
@@ -1107,7 +1165,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 					descr: 'the Cost and Utilization analyses',
 					duration: '10-45 minutes',
 					analysisIdentifiers: analysisIds,
-					runHeraclesHeel: false
+					runHeraclesHeel: false,
+					periods: this.utilReportOptions.periods.selectedOptions(),
 				});
 
 				this.showUtilizationToRunModal(false);

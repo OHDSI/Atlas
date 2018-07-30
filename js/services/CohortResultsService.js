@@ -40,9 +40,14 @@ define(
         return loadData({ path, filters });
       }
 
-      static loadPersonExposureReport({ source, cohortId, mode, filters }) {
-        const path = `cohortresults/${source}/${cohortId}/healthcareutilization/exposure/${mode}`;
+      static loadPersonExposureReport({ source, cohortId, window, filters }) {
+        const path = `cohortresults/${source}/${cohortId}/healthcareutilization/exposure/${window}`;
         return loadData({ path, filters });
+      }
+
+      static loadPeriods({ source, cohortId, window }) {
+        const path = `cohortresults/${source}/${cohortId}/healthcareutilization/periods/${window}`;
+        return loadData({ path });
       }
 
     }

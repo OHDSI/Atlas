@@ -11,7 +11,7 @@ a device exposure of <conceptset-reference params="{conceptSetId: CodesetId, con
 	<li>occurrence end is <date-range-viewer params="Range: OccurrenceEndDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(DeviceType) != null -->
-	<li>device type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DeviceType)"></concept-list-viewer></li>
+	<li>device type <cycle-toggle-input-viewer params="{value: DeviceTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DeviceType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(UniqueDeviceId) != null -->
 	<li>with a unique device id <text-filter-viewer params="Filter: UniqueDeviceId"></text-filter-viewer></li>

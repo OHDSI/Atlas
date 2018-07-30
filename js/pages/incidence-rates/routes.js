@@ -1,8 +1,9 @@
 define(
   (require, factory) => {
+    const { AuthorizedRoute } = require('providers/Route');
     function routes(appModel) {
       return {        
-        '/iranalysis': () => {
+        '/iranalysis': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./ir-browser'], function () {
             appModel.componentParams = {
@@ -10,8 +11,8 @@ define(
             };
             appModel.currentView('ir-browser');
           });
-        },
-        '/iranalysis/new': (analysisId) => {
+        }),
+        '/iranalysis/new': new AuthorizedRoute((analysisId) => {
           appModel.activePage(this.title);
           require(['./ir-manager'], function () {
             appModel.selectedIRAnalysisId(null);
@@ -20,8 +21,8 @@ define(
             };
             appModel.currentView('ir-manager');
           });
-        },
-        '/iranalysis/:analysisId:/?((\w|.)*)': (analysisId, path) => {
+        }),
+        '/iranalysis/:analysisId:/?((\w|.)*)': new AuthorizedRoute((analysisId, path) => {
           appModel.activePage(this.title);
           path = path.split("/");
           var activeTab = null;
@@ -36,7 +37,7 @@ define(
             };
             appModel.currentView('ir-manager');
           });
-        },
+        }),
       };
     }
 
