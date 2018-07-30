@@ -30,12 +30,12 @@
     border-color: #337ab7;
 }
 
-.nav-tabs li a.warning-warn, .nav-tabs li a.warning-info:hover {
+.nav-tabs li a.warning-warn, .nav-tabs li a.warning-warn:hover {
     background-color: #d82;
     color: #e3e3e3;
 }
 
-.nav-tabs li.active a.warning-warn, .nav-tabs li.active a.warning-info:hover {
+.nav-tabs li.active a.warning-warn, .nav-tabs li.active a.warning-warn:hover {
     color: #fefefe;
     border-color: #d82;
 }
