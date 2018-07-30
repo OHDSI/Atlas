@@ -407,7 +407,7 @@
 				<!-- ko if: (loadingReport() || selectedReport())   -->
 				<div data-bind="visible:$component.loadingReport" class="loading">loading inclusion and feature reports</div>
 				<div data-bind="visible:!$component.loadingReport()">
-					<ul class="nav nav-tabs right-to-left">
+					<ul class="nav nav-tabs nospace">
 						<li role="presentation" data-bind="css: { active: $component.generationTabMode() == 'inclusion' }, click: function() { $component.generationTabMode('inclusion'); }">
 							<a>Inclusion Report</a>
 						</li>
@@ -416,9 +416,9 @@
 							<a>Cohort Features</a>
 						</li>
 					</ul>
-					<div class="tab-content" style="margin:0px">
+					<div class="tab-content nospace">
 						<div role="tabpanel" data-bind="css: {active: $component.generationTabMode() == 'inclusion'}" class="tab-pane">
-							<ul class="nav nav-tabs">
+							<ul class="nav nav-tabs nospace right-to-left">
 								<li class="pull-right" role="presentation" data-bind="css: { active: $component.inclusionTabMode() == 'person' }, click: function() { $component.inclusionTabMode('person'); }">
 									<a>By Person</a>
 								</li>
