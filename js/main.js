@@ -51,11 +51,17 @@ const localRefs = {
   "css": "plugins/css.min",
 };
 
-require(['./settings'], (settings) => {
-  const bundledRefs = {};
-  Object.keys(settings.paths).forEach((name) => {
-    bundledRefs[name] = 'assets/bundle/bundle';
-  })
+require([
+  './settings',
+  'plugins/optional', // require this plugin separately to check in advance whether we have a local config
+  'config'
+], (settings, optional, appConfig) => {
+  const cdnRefs = {};
+  Object.entries(settings.paths).forEach(([name, path]) => {
+    cdnRefs[name] = appConfig.useBundled3dPartyLibs
+      ? 'assets/bundle/bundle'
+      : path;
+  });
 
   requirejs.config({
     ...settings,
@@ -65,7 +71,7 @@ require(['./settings'], (settings) => {
     ],
     paths: {
       ...localRefs,
-      ...bundledRefs,
+      ...cdnRefs,
     },
   });
 

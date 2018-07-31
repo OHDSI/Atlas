@@ -8,7 +8,8 @@ define(['optional!config-local'], function (localConfig) {
 	config.api = {
 		name: 'Local',
 		url: 'http://localhost:8080/WebAPI/'
-	};
+  };
+  config.useBundled3dPartyLibs = true;
 	config.cohortComparisonResultsEnabled = false;
 	config.userAuthenticationEnabled = false;
 	config.plpResultsEnabled = false;
