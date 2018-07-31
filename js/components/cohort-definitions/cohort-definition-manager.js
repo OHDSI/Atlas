@@ -18,6 +18,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'components/cohort-definitions/const',
 	'webapi/ConceptSetAPI',
 	'services/ConceptSetService',
+	'modules/cohortdefinition/const',
 	'cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -26,7 +27,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css',
     'components/modal-pick-options'
-], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst, conceptSetAPI, conceptSetService) {
+], function (ko, view, config, CohortDefinition, cohortDefinitionAPI, momentApi, conceptSetApi, util, conceptSetUitls, CohortExpression, InclusionRule, ConceptSet, cohortReportingAPI, vocabularyApi, sharedState, clipboard, d3, jobDetail, cohortConst, conceptSetAPI, conceptSetService, costUtilConst) {
 
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -108,7 +109,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 			return authApi.isPermittedReadCohort(self.model.currentCohortDefinition().id());
 		});
-		
+
 		self.hasAccessToGenerate = function (sourceKey) {
 			if (isNew()) {
 				return false;
@@ -138,7 +139,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.cohortConst = cohortConst;
 		self.generationTabMode = ko.observable("inclusion")
 		self.exportTabMode = ko.observable('printfriendly');
-    self.importTabMode = ko.observable(cohortConst.importTabModes.identifiers);
+		self.importTabMode = ko.observable(cohortConst.importTabModes.identifiers);
 		self.exportSqlMode = ko.observable('ohdsisql');
 		self.importConceptSetJson = ko.observable();
 		self.conceptSetTabMode = self.model.currentConceptSetMode;
@@ -165,9 +166,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}
 			return path;
 		});
-    self.canSave = ko.pureComputed(function(){
-      return self.dirtyFlag().isDirty() && !self.isRunning() && self.canEdit();
-    });
+		self.canSave = ko.pureComputed(function () {
+			return self.dirtyFlag().isDirty() && !self.isRunning() && self.canEdit();
+		});
 
 		self.delayedCartoonUpdate = ko.observable(null);
 
@@ -270,8 +271,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.ancestors = ko.observableArray();
 		self.ancestorsModalIsShown = ko.observable(false);
 		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler(self);
-		self.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ ...self, searchConceptsColumns: self.includedConceptsColumns });
-		
+		self.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({
+			...self,
+			searchConceptsColumns: self.includedConceptsColumns
+		});
+
 		self.includedConceptsOptions = {
 			Facets: [{
 				'caption': 'Vocabulary',
@@ -311,7 +315,10 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			}]
 		};
 
-		self.stopping = self.model.cohortDefinitionSourceInfo().reduce((acc, target) => ({...acc, [target.sourceKey]: ko.observable(false)}), {});
+		self.stopping = self.model.cohortDefinitionSourceInfo().reduce((acc, target) => ({
+			...acc,
+			[target.sourceKey]: ko.observable(false)
+		}), {});
 		self.isSourceStopping = (source) => self.stopping[source.sourceKey];
 
 		self.pollForInfo = function () {
@@ -503,7 +510,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				});
 
 				var netezzaTranslatePromise = translateSql(result.templateSql, 'netezza');
-				netezzaTranslatePromise.then(function(result){
+				netezzaTranslatePromise.then(function (result) {
 					self.generatedSql.netezza(result.targetSQL);
 				});
 
@@ -558,9 +565,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			});
 		}
 
-		self.cancelGenerate = function(source) {
-      self.stopping[source.sourceKey](true);
-      cohortDefinitionAPI.cancelGenerate(self.model.currentCohortDefinition().id(), source.sourceKey);
+		self.cancelGenerate = function (source) {
+			self.stopping[source.sourceKey](true);
+			cohortDefinitionAPI.cancelGenerate(self.model.currentCohortDefinition().id(), source.sourceKey);
 		};
 
 		self.hasCDM = function (source) {
@@ -581,11 +588,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			return false;
 		}
 
-    self.canCreateConceptSet = ko.computed(function () {
-      return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
-    });
+		self.canCreateConceptSet = ko.computed(function () {
+			return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+		});
 
-    self.closeConceptSet = function () {
+		self.closeConceptSet = function () {
 			self.model.clearConceptSet();
 		}
 
@@ -598,64 +605,66 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			self.closeConceptSet();
 		}
 
-		self.showSaveConceptSet = function() {
-		  self.newConceptSetName(self.model.currentConceptSet().name());
-		  self.saveConceptSetShow(true);
+		self.showSaveConceptSet = function () {
+			self.newConceptSetName(self.model.currentConceptSet().name());
+			self.saveConceptSetShow(true);
 		};
 
 		self.saveConceptSet = function () {
-      self.saveConceptSetShow(false);
-      var conceptSet = {
-        id: 0,
-        name: self.newConceptSetName(),
-      };
-      var conceptSetItems = conceptSetUitls.toConceptSetItems(self.selectedConcepts());
-      var conceptSetId;
-      var itemsPromise = function(data) {
-        conceptSetId = data.id;
-        return conceptSetApi.saveConceptSetItems(data.id, conceptSetItems);
-      };
-      conceptSetApi.saveConceptSet(conceptSet)
-        .then(itemsPromise)
-    };
+			self.saveConceptSetShow(false);
+			var conceptSet = {
+				id: 0,
+				name: self.newConceptSetName(),
+			};
+			var conceptSetItems = conceptSetUitls.toConceptSetItems(self.selectedConcepts());
+			var conceptSetId;
+			var itemsPromise = function (data) {
+				conceptSetId = data.id;
+				return conceptSetApi.saveConceptSetItems(data.id, conceptSetItems);
+			};
+			conceptSetApi.saveConceptSet(conceptSet)
+				.then(itemsPromise)
+		};
 
 		function createConceptSet() {
-      var newConceptSet = new ConceptSet();
-      var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
-      newConceptSet.id = cohortConceptSets().reduce(function(max, val){ return Math.max(max, val.id) + 1; }, 0);
+			var newConceptSet = new ConceptSet();
+			var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
+			newConceptSet.id = cohortConceptSets().reduce(function (max, val) {
+				return Math.max(max, val.id) + 1;
+			}, 0);
 			return newConceptSet;
 		}
 
 		function loadConceptSet(conceptSet, view) {
-      var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
-      cohortConceptSets.push(conceptSet);
-      self.model.loadConceptSet(conceptSet.id, 'cohort-definition-manager', 'cohort', view || 'details');
-      self.model.currentCohortDefinitionMode("conceptsets");
-    }
+			var cohortConceptSets = self.model.currentCohortDefinition().expression().ConceptSets;
+			cohortConceptSets.push(conceptSet);
+			self.model.loadConceptSet(conceptSet.id, 'cohort-definition-manager', 'cohort', view || 'details');
+			self.model.currentCohortDefinitionMode("conceptsets");
+		}
 
 		self.newConceptSet = function () {
 			loadConceptSet(createConceptSet());
 		};
 
 		self.importConceptSet = function () {
-		  loadConceptSet(createConceptSet(), 'import');
-		  self.conceptSetTabMode(self.cohortConst.conceptSetTabModes.import);
-    };
+			loadConceptSet(createConceptSet(), 'import');
+			self.conceptSetTabMode(self.cohortConst.conceptSetTabModes.import);
+		};
 
-		self.importFromRepository = function() {
+		self.importFromRepository = function () {
 			self.showImportConceptSetModal(true);
 		};
 
-		self.onConceptSetRepositoryImport = function(newConceptSet, event){
+		self.onConceptSetRepositoryImport = function (newConceptSet, event) {
 			event.stopPropagation();
 			self.showImportConceptSetModal(false);
 			vocabularyApi.getConceptSetExpression(newConceptSet.id)
-				.done(function(result){
+				.done(function (result) {
 					var conceptSet = self.findConceptSet();
 					conceptSet.name(newConceptSet.name);
-					conceptSet.expression.items().forEach(function(item){
+					conceptSet.expression.items().forEach(function (item) {
 						sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 0;
-						sharedState.selectedConcepts.remove(function(v){
+						sharedState.selectedConcepts.remove(function (v) {
 							return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
 						});
 					});
@@ -664,31 +673,31 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				});
 		};
 
-		self.clearImportConceptSetJson = function(){
+		self.clearImportConceptSetJson = function () {
 			self.importConceptSetJson('');
 		};
 
-		self.findConceptSet = function(){
-      return self.model.currentCohortDefinition()
-        .expression()
-        .ConceptSets()
-        .find(function (item) {
-          return item.id === self.model.currentConceptSet().id;
-        });
+		self.findConceptSet = function () {
+			return self.model.currentCohortDefinition()
+				.expression()
+				.ConceptSets()
+				.find(function (item) {
+					return item.id === self.model.currentConceptSet().id;
+				});
 		};
 
-		self.importConceptSetExpression = function() {
-      var items = JSON.parse(self.importConceptSetJson()).items;
-      self.importConceptSetExpressionItems(items);
-    };
+		self.importConceptSetExpression = function () {
+			var items = JSON.parse(self.importConceptSetJson()).items;
+			self.importConceptSetExpressionItems(items);
+		};
 
-    self.importConceptSetExpressionItems = function(items) {
+		self.importConceptSetExpressionItems = function (items) {
 			var conceptSet = self.findConceptSet();
-			if (!conceptSet){
+			if (!conceptSet) {
 				return;
 			}
 
-			items.forEach(function(item){
+			items.forEach(function (item) {
 				var conceptSetItem = {};
 				conceptSetItem.concept = item.concept;
 				conceptSetItem.isExcluded = ko.observable(item.isExcluded);
@@ -703,48 +712,54 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			self.conceptSetTabMode(cohortConst.conceptSetTabModes.details);
 		};
 
-    function appendConcepts(data){
-      data.forEach(function(item){
-        sharedState.selectedConceptsIndex[item.CONCEPT_ID] = 1;
-        sharedState.selectedConcepts.push(self.model.createConceptSetItem(item));
-      });
-      if (self.model.currentCohortDefinition() && self.model.currentConceptSetSource() === "cohort") {
-        var conceptSet = self.model.currentCohortDefinition()
-          .expression()
-          .ConceptSets()
-          .find(function (item) {
-            return item.id === self.model.currentConceptSet().id;
-          });
-        if (conceptSet) {
-          conceptSet.expression.items.valueHasMutated();
-        }
-      }
-      self.conceptSetTabMode('details');
-    }
+		function appendConcepts(data) {
+			data.forEach(function (item) {
+				sharedState.selectedConceptsIndex[item.CONCEPT_ID] = 1;
+				sharedState.selectedConcepts.push(self.model.createConceptSetItem(item));
+			});
+			if (self.model.currentCohortDefinition() && self.model.currentConceptSetSource() === "cohort") {
+				var conceptSet = self.model.currentCohortDefinition()
+					.expression()
+					.ConceptSets()
+					.find(function (item) {
+						return item.id === self.model.currentConceptSet().id;
+					});
+				if (conceptSet) {
+					conceptSet.expression.items.valueHasMutated();
+				}
+			}
+			self.conceptSetTabMode('details');
+		}
 
-		self.importConceptIdentifiers = function() {
-      self.conceptLoading(true);
+		self.importConceptIdentifiers = function () {
+			self.conceptLoading(true);
 			vocabularyApi
-        .getConceptsById(self.identifiers().match(/[0-9]+/g))
-        .then(appendConcepts, function () { self.conceptLoading(false); })
-        .then(function(){ self.conceptLoading(false); })
-				.then(function(){ self.identifiers(''); });
+				.getConceptsById(self.identifiers().match(/[0-9]+/g))
+				.then(appendConcepts, function () {
+					self.conceptLoading(false);
+				})
+				.then(function () {
+					self.conceptLoading(false);
+				})
+				.then(function () {
+					self.identifiers('');
+				});
 		};
 
 		self.importSourceCodes = function () {
-      self.conceptLoading(true);
-      vocabularyApi
-        .getConceptsByCode(self.sourcecodes().match(/[0-9a-zA-Z\.-]+/g))
-        .then(appendConcepts, function () {
-          self.conceptLoading(false);
-        })
-        .then(function () {
-          self.conceptLoading(false);
-        })
-        .then(function () {
-          self.sourcecodes('');
-        });
-    }
+			self.conceptLoading(true);
+			vocabularyApi
+				.getConceptsByCode(self.sourcecodes().match(/[0-9a-zA-Z\.-]+/g))
+				.then(appendConcepts, function () {
+					self.conceptLoading(false);
+				})
+				.then(function () {
+					self.conceptLoading(false);
+				})
+				.then(function () {
+					self.sourcecodes('');
+				});
+		}
 
 		self.viewReport = function (sourceKey, reportName) {
 			// TODO: Should we prevent running an analysis on an unsaved cohort definition?
@@ -801,8 +816,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		self.currentJob = ko.observable();
 		self.reportingSourceStatusAvailable = ko.observable(false);
 		self.reportingSourceStatusLoading = ko.observable(false);
-		self.reportOptionCaption = ko.pureComputed(function() {
-			 return self.reportingSourceStatusLoading() ? "Loading Reports..." : "Select a Report";
+		self.reportOptionCaption = ko.pureComputed(function () {
+			return self.reportingSourceStatusLoading() ? "Loading Reports..." : "Select a Report";
 		});
 		self.reportingSourceStatus = ko.observable();
 		self.reportingAvailableReports = ko.observableArray();
@@ -909,7 +924,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				self.reportingState() != 'generating_reports';
 		});
 
-		self.generateAnalyses = function ({ descr, duration, analysisIdentifiers, runHeraclesHeel }) {
+		self.generateAnalyses = function ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods }) {
 			if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
 				return;
 			}
@@ -934,6 +949,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			cohortJob.procedureConceptIds = [];
 			cohortJob.observationConceptIds = [];
 			cohortJob.measurementConceptIds = [];
+			
+			cohortJob.periods = periods;
 
 			var jobDetails = new jobDetail({
 				name: cohortJob.jobName,
@@ -977,50 +994,62 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			});
 		};
 
-    self.generateQuickAnalysis = function () {
-      self.generateAnalyses({
-        descr: 'minimal analyses set to provide a quick overview of the cohort',
-        duration: '10 minutes',
+		self.generateQuickAnalysis = function () {
+			self.generateAnalyses({
+				descr: 'minimal analyses set to provide a quick overview of the cohort',
+				duration: '10 minutes',
 				analysisIdentifiers: cohortReportingAPI.getQuickAnalysisIdentifiers(),
 				runHeraclesHeel: false
-      });
-    };
+			});
+		};
 
-    self.showUtilizationToRunModal = ko.observable(false);
-    self.checkedUtilReports = ko.observableArray([]);
+		self.showUtilizationToRunModal = ko.observable(false);
 
-    const reportPacks = cohortReportingAPI.visualizationPacks;
-    self.utilReportOptions = [
-    	reportPacks.healthcareUtilPersonAndExposureBaseline,
-		reportPacks.healthcareUtilPersonAndExposureCohort,
-		reportPacks.healthcareUtilVisitRecordsBaseline,
-		reportPacks.healthcareUtilVisitDatesBaseline,
-		reportPacks.healthcareUtilCareSiteDatesBaseline,
-		reportPacks.healthcareUtilVisitRecordsCohort,
-		reportPacks.healthcareUtilVisitDatesCohort,
-		reportPacks.healthcareUtilCareSiteDatesCohort,
-		reportPacks.healthcareUtilDrugBaseline,
-		reportPacks.healthcareUtilDrugCohort,
-	].map(item => ({
-		label: item.name,
-		value: item.analyses,
-	}));
+		const reportPacks = cohortReportingAPI.visualizationPacks;
+
+		const reports = [
+			reportPacks.healthcareUtilPersonAndExposureBaseline,
+			reportPacks.healthcareUtilPersonAndExposureCohort,
+			reportPacks.healthcareUtilVisitRecordsBaseline,
+			reportPacks.healthcareUtilVisitDatesBaseline,
+			reportPacks.healthcareUtilCareSiteDatesBaseline,
+			reportPacks.healthcareUtilVisitRecordsCohort,
+			reportPacks.healthcareUtilVisitDatesCohort,
+			reportPacks.healthcareUtilCareSiteDatesCohort,
+			reportPacks.healthcareUtilDrugBaseline,
+			reportPacks.healthcareUtilDrugCohort,
+		].map(item => ({
+			label: item.name,
+			value: item.analyses,
+		}));
+
+		self.utilReportOptions = {
+			reports : {
+				title: 'Reports',
+				options: reports,
+				selectedOptions: ko.observableArray([]),
+			},
+			periods: {
+				title: 'Periods',
+				options: costUtilConst.periods,
+				selectedOptions: ko.observableArray([]),
+			}
+		};
 
     self.selectHealthcareAnalyses = function() {
         self.showUtilizationToRunModal(true);
-	}
+    };
 
     self.generateHealthcareAnalyses = function () {
-		const analysisIds = self.checkedUtilReports().reduce((acc, ids) => [...acc, ...ids], []);
-
-		self.generateAnalyses({
-		  descr: 'the Cost and Utilization analyses',
-		  duration: '10-45 minutes',
-		  analysisIdentifiers: analysisIds,
-		  runHeraclesHeel: false
-		});
-
-        self.showUtilizationToRunModal(false);
+      const analysisIds = self.utilReportOptions.reports.selectedOptions().reduce((acc, ids) => [...acc, ...ids], []);
+      self.generateAnalyses({
+        descr: 'the Cost and Utilization analyses',
+        duration: '10-45 minutes',
+        analysisIdentifiers: analysisIds,
+        periods: self.utilReportOptions.periods.selectedOptions(),
+        runHeraclesHeel: false,
+      });
+      self.showUtilizationToRunModal(false);
     };
 
     self.generateAllAnalyses = function () {
@@ -1028,7 +1057,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
         descr: 'all analyses',
         duration: '60-90 minutes',
 				analysisIdentifiers: cohortReportingAPI.getAnalysisIdentifiers(),
-				runHeraclesHeel: true
+				runHeraclesHeel: true,
       });
     };
 
