@@ -54,6 +54,12 @@
 															</div>
 														</div>
 													</div>
+												<div class="source-row">
+														<div class="form-group" style="width: 95px;">Kerberos keytab:</div>
+														<input type="file" id="keytabFile" name="keytabFile" accept=".keytab" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: selectedSource().shouldShowFileInput"/>
+                                                        <span data-bind="text: selectedSource().keytabName, visible: !selectedSource().shouldShowFileInput()"></span>
+                                                        <button type="button" class="btn btn-sm btn-danger" style="height:20px; margin-left:15px; padding-top:0" data-bind="visible: !selectedSource().shouldShowFileInput(), click: removeKeytab">Remove</button>
+												</div>
 											</div>
 											<div class="panel panel-primary">
 													<div class="panel-heading">Source daimons</div>

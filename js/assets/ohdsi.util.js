@@ -62,11 +62,15 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			return _isInitiallyDirty() || _initialState() !== ko.toJSON(root, _pruneJSON);
 		}).extend({
 			rateLimit: 200
-		});;
+		});
 
 		result.reset = function () {
 			_initialState(ko.toJSON(root, _pruneJSON));
 			_isInitiallyDirty(false);
+		};
+
+		result.makeDirty = function() {
+            _isInitiallyDirty(true);
 		};
 
 		return result;

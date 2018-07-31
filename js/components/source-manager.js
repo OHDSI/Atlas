@@ -41,6 +41,12 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.username = ko.observable(data.username || null);
     self.password = ko.observable(data.password || null);
     self.daimons = ko.observableArray(mapDaimons(data.daimons));
+    self.keytabName = ko.observable(data.keytabName);
+    if (data.keytabName === null){
+        self.shouldShowFileInput = ko.observable(true);
+    } else {
+        self.shouldShowFileInput = ko.observable(false);
+    }
     return self;
   }
 
@@ -50,6 +56,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.config = config;
     self.model = params.model;
     self.loading = ko.observable(false);
+    self.shouldShowFileInput = ko.observable();
     self.dirtyFlag = self.model.currentSourceDirtyFlag;
 
     self.selectedSource = params.model.currentSource;
@@ -113,6 +120,23 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
       self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
     };
 
+    self.removeKeytab = function () {
+        self.loading(true);
+        sourceApi.removeKeytab(self.selectedSourceId())
+            .then(function () {
+                self.selectedSource().shouldShowFileInput(true);
+                self.loading(false);
+            })
+            .catch(function () { self.loading(false); });
+    };
+
+    var keytab;
+
+      self.uploadFile = function (file) {
+          keytab = file;
+          self.dirtyFlag().makeDirty();
+      };
+
     self.save = function () {
       var source = {
         name: self.selectedSource().name() || null,
@@ -124,6 +148,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
         daimons: ko.toJS(self.selectedSource().daimons()).filter(function(d){ return d.enabled; }).map(function(d){
           return lodash.omit(d, ['enabled']);
         }),
+        keytab: keytab,
       };
       self.loading(true);
       sourceApi.saveSource(self.selectedSourceId(), source)
