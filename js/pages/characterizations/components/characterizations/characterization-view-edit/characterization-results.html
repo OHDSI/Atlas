@@ -155,8 +155,7 @@
 
                         <!-- ko if: reports.length !== 2 -->
                             <!-- ko foreach: reports -->
-                                <div data-bind="css: $component.classes('report', $parent.reports.length < 2 ? 'hidden-cohort-name' : null)">
-                                    <label data-bind="css: $component.classes('cohort-name'), text: $data.cohortName"></label>
+                                <div data-bind="css: $component.classes('table-wrapper', $parent.reports.length < 2 ? 'hidden-cohort-name' : null)">
                                     <table data-bind="
                                         css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                                         dataTable:{

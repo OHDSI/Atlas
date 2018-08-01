@@ -1,21 +1,54 @@
 <div data-bind="css: classes()">
     <div class="loading" data-bind="visible: loading()">loading</div>
+    <p data-bind="css: classes('descr')">
+        <b>Cohort characterization</b> is defined as the process of generating cohort level descriptive summary statistics from person level covariate data. Summary statistics of these person level covariates may be count, mean, sd, var, min, max, median, range, and quantiles. In addition, covariates during a period may be stratified into temporal units of time for time-series analysis such as fixed intervals of time relative to cohort_start_date (e.g. every 7 days, every 30 days etc.), or in absolute calendar intervals such as calendar-week, calendar-month, calendar-quarter, calendar-year.
+    </p>
     <div data-bind="
         template: {
             name: 'linked-entity-template',
-            data: Object.assign({}, $data, cohortDefinitions, { classes: classes })
+            data: Object.assign(
+                {},
+                $data,
+                {
+                    title: 'Cohort definitions',
+                    descr: '',
+                    newItemLabel: 'Import'
+                },
+                cohortDefinitions,
+                { classes: classes }
+            )
         }
     "></div>
     <div data-bind="
         template: {
             name: 'linked-entity-template',
-            data: Object.assign({}, this, featureAnalyses, { classes: classes })
+            data: Object.assign(
+                {},
+                $data,
+                {
+                    title: 'Feature analyses',
+                    descr: '',
+                    newItemLabel: 'Import'
+                },
+                featureAnalyses,
+                { classes: classes }
+            )
         }
     "></div>
     <div data-bind="
         template: {
             name: 'linked-entity-template',
-            data: Object.assign({}, this, featureAnalysesParams, { classes: classes })
+            data: Object.assign(
+                {},
+                $data,
+                {
+                    title: 'Feature analyses parameters',
+                    descr: '',
+                    newItemLabel: 'New parameter'
+                },
+                featureAnalysesParams,
+                { classes: classes }
+            )
         }
     "></div>
     <div data-bind="modal: showCohortDefinitionBrowser, css: classes({ element: 'cohort-def-modal', extra: 'modal fade' })" tabindex="-1" role="dialog">
@@ -31,12 +64,28 @@
             </div>
         </div>
     </div>
+    <div data-bind="modal: showFeatureAnalysesBrowser, css: classes({ element: 'feature-analyses-modal', extra: 'modal fade' })" tabindex="-1" role="dialog">
+        <div data-bind="css: classes({ element: 'feature-analyses-modal-content', extra: 'modal-dialog' })">
+            <div data-bind="css: 'modal-content'">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="modal-title">Choose a Feature analysis</div>
+                </div>
+                <div data-bind="if: showFeatureAnalysesBrowser, css: classes({ element: 'feature-analyses-modal-body', extra: 'modal-body' })">
+                    <feature-analyses-browser params="selectedAnalysis: featureAnalysesSelected"></feature-analyses-browser>
+                </div>
+            </div>
+        </div>
+    </div>
+    <characterization-params-create-modal params="showModal: isParameterCreateModalShown, submit: addParam"></characterization-params-create-modal>
 </div>
 
 <script type="text/html" id="linked-entity-template">
     <div data-bind="css: classes('linked-entities')">
         <h2 data-bind="css: classes('linked-entities-title'), text: title"></h2>
-        <p data-bind="css: classes('linked-entities-descr'), text: descr"></p>
+        <!-- ko if: descr && descr.length > 0 -->
+            <p data-bind="css: classes('linked-entities-descr'), text: descr"></p>
+        <!-- /ko -->
         <div data-bind="css: classes('linked-entities-actions')">
             <button type="button"
                     data-bind="css: classes({ element: 'linked-entities-btn', extra: ['btn btn-primary btn-sm']}), text: newItemLabel, click: newItemAction"></button>

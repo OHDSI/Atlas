@@ -124,7 +124,7 @@
 					<div class="modal-title">Choose a Cohort</div>
 				</div>
 				<div class="modal-body">
-					<cohort-definition-browser params="cohortDefinitionSelected: cohortSelected"></cohort-definition-browser>
+					<cohort-definition-browser params="cohortDefinitionSelected: data => cohortSelected(data.id)"></cohort-definition-browser>
 				</div>
 			</div>
 		</div>

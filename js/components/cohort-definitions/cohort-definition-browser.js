@@ -52,8 +52,8 @@ define(['knockout', 'text!./cohort-definition-browser.html', 'appConfig', 'webap
 			return '<span class="linkish">' + d.name + '</span>';
 		}
 
-		self.rowClick = function (d) {
-			self.selected(d.id);
+		self.rowClick = function (data) {
+			self.selected(data);
 		}
 
 		self.columns = [{

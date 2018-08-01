@@ -34,26 +34,6 @@ define([
 
     class CharacterizationViewEditResults extends Component {
 
-        get prevalenceColumns() {
-            return [
-                {
-                    title: 'Covariate',
-                    data: 'covariateName',
-                    className: this.classes('col-prev-title'),
-                },
-                {
-                    title: 'Count',
-                    data: 'count',
-                    className: this.classes('col-prev-count'),
-                },
-                {
-                    title: '% of cohort',
-                    data: 'pct',
-                    className: this.classes('col-prev-pct'),
-                },
-            ];
-        };
-
         get distributionColumns() {
             return [
                 {
@@ -155,7 +135,7 @@ define([
                 }
             ];
 
-            this.reportList = this.prepareTabularData(this.data, filterUtils.getSelectedFilterValues(this.filterList));
+            this.reportList = this.prepareTabularData(this.data, this.filterList);
 
             this.groupedScatterData = ko.computed(() => {
                 return this.reportList().filter(analysis => analysis.type === 'prevalence').map(analysis => ({
@@ -192,7 +172,7 @@ define([
 
         prepareTabularData(data, filters) {
             return ko.computed(() => {
-                const filteredData = this.filterData(data, filters);
+                const filteredData = this.filterData(data, filterUtils.getSelectedFilterValues(filters));
 
                 const convertedData = filteredData.map(analysis => {
                     let convertedAnalysis;
@@ -244,13 +224,6 @@ define([
                 q3: r.stats[0].p75,
                 UIF: r.stats[0].p90
             }));
-
-            /*return [
-                {"Category": "Type 1", "min": 1, "LIF":5, "q1":12, "median":15, "q3": 22, "UIF":30, "max": 35},
-                {"Category": "Type 2", "min": 3, "LIF":9, "q1":16, "median":22, "q3": 25, "UIF":29, "max": 38},
-                {"Category": "Type 3", "min": 2, "LIF":6, "q1":9, "median":13, "q3": 18, "UIF":22, "max": 25},
-                {"Category": "Type 4", "min": 4, "LIF":11, "q1":16, "median":22, "q3": 28, "UIF":34, "max": 39}
-            ]*/
         }
 
         convertPrevalenceAnalysis(analysis) {

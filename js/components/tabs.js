@@ -14,13 +14,13 @@ define([
 		constructor(params) {
 			super(params);
 
-			this.selectedTab = ko.observable(params.selectedTab ? params.selectedTab() : 0);
+			this.selectedTab = ko.computed(() => params.selectedTab ? params.selectedTab() : 0);
 			this.tabs = ko.observableArray(params.tabs || []);
 
 			this.selectTab = params.selectTab || (idx => this.selectedTab(idx));
 
-			this.componentName = params.componentName || ko.computed(() => this.tabs()[this.selectedTab()].componentName);
-            this.componentParams = params.componentParams || ko.computed(() => this.tabs()[this.selectedTab()].componentParams);
+			this.componentName = ko.computed(() => params.componentName ? params.componentName() : this.tabs()[this.selectedTab()].componentName);
+            this.componentParams = ko.computed(() => params.componentParams ? params.componentParams() : this.tabs()[this.selectedTab()].componentParams);
 		}
 	}
 

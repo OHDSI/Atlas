@@ -1,17 +1,28 @@
 define(
     (require, factory) => {
+
+        const ko = require('knockout');
+
         function routes(appModel) {
 
             const characterizationViewEdit = function(id, section, subId) {
                 appModel.activePage(this.title);
                 require(['./components/characterizations/characterization-view-edit'], function () {
-                    appModel.componentParams = {
-                        model: appModel,
-                        characterizationId: id,
-                        section: section,
-                        subId: subId,
-                    };
-                    appModel.currentView('characterization-view-edit');
+                    const view = 'characterization-view-edit';
+                    if (appModel.currentView() !== view) {
+                        appModel.componentParams = {
+                            model: appModel,
+                            characterizationId: ko.observable(),
+                            section: ko.observable(),
+                            subId: ko.observable(),
+                        };
+                    }
+
+                    appModel.componentParams.section(section);
+                    appModel.componentParams.characterizationId(id);
+                    appModel.componentParams.subId(subId);
+
+                    appModel.currentView(view);
                 });
             };
 

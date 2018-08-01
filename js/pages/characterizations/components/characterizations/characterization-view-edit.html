@@ -5,14 +5,17 @@
         <i class="fa fa-shopping-cart"></i> Characterization
     </div>
     <div class="asset-heading">
-        <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: 'Characterization'" />
+        <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name" />
         <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:!canSave()}"><i class="fa fa-save"></i></button>
-            <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { $component.closeCharacterization(); }"><i class="fa fa-times"></i></button>
+            <button type="button" class="btn btn-sm btn-success" data-bind="click: $component.save, css: {disabled:!canSave()}"><i class="fa fa-save"></i></button>
+            <button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.closeCharacterization"><i class="fa fa-times"></i></button>
             <button type="button" class="btn btn-sm btn-danger"  data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
         </div>
     </div>
-    <tabs params="
+
+    <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Cohort Characterization...'"></loading>
+
+    <tabs data-bind="visible: !$component.loading()" params="
         selectedTab: $component.selectedTab,
         selectTab: $component.selectTab,
         componentName: $component.componentName,

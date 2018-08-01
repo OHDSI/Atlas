@@ -9,7 +9,7 @@
 		<div class="modal-content">
 			<div class="modal-header">Choose Cohort Definition</div>
 			<div class="modal-body">
-				<cohort-definition-browser params="{cohortDefinitionSelected: $component.model.reportCohortDefinitionId}"></cohort-definition-browser>
+				<cohort-definition-browser params="{cohortDefinitionSelected: data => $component.model.reportCohortDefinitionId(data.id)}"></cohort-definition-browser>
 			</div>
 		</div>
 	</div>

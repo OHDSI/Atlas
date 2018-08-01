@@ -1,0 +1,55 @@
+{
+  "id": 1,
+  "name": "My first cohort characterization",
+  "createdBy": {
+    "name": "Pavel Grafkin"
+  },
+  "createdAt": "2018-07-01 12:00:00",
+  "updatedBy": {
+    "name": "Pavel Grafkin"
+  },
+  "updatedAt": "2018-07-30 15:33:01",
+  "cohorts": [
+    {
+      "id": 1,
+      "name": "Aspirin users"
+    },
+    {
+      "id": 2,
+      "name": "Clopidogrel users"
+    }
+  ],
+  "analyses": [
+    {
+      "id": 1,
+      "type": "PRESET",
+      "name": "Age Group",
+      "domain": "DEMOGRAPHICS",
+      "descr": "Age group of the subject."
+    },
+    {
+      "id": 2,
+      "type": "CRITERIA_SET",
+      "name": "Gender",
+      "domain": "DEMOGRAPHICS",
+      "descr": "Gender of the subject via criteria."
+    },
+    {
+      "id": 3,
+      "type": "PRESET",
+      "name": "Charlson Index",
+      "domain": "CONDITION",
+      "descr": "The Charlson comorbidity index (Romano adaptation) using all conditions prior to the window end."
+    }
+  ],
+  "parameters": [
+    {
+      "name": "mediumTermStartDays",
+      "value": -90
+    },
+    {
+      "name": "longTermStartDays",
+      "value": -180
+    }
+  ]
+}

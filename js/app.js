@@ -119,7 +119,7 @@ define([
 				// there is a need to wrap the routes manually
                 const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
                 	accumulator[key] = function() {
-                        self.currentView('loading');
+                        // self.currentView('loading');
                 		asyncBefore().then(() => routes[key].apply(null, arguments));
                     };
                 	return accumulator;

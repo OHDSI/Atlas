@@ -3,8 +3,12 @@ define(
 
         const momentApi = require('webapi/MomentAPI');
 
-        getDateFieldFormatter = () => (s, p, d) => {
-            return momentApi.formatDateTimeUTC(d.createdAt);
+        getLinkFormatter = ({ labelField = 'name' }) => (s, p, d) => {
+            return '<a>' + d[labelField] + '</a>';
+        };
+
+        getDateFieldFormatter = (field = 'createdAt') => (s, p, d) => {
+            return momentApi.formatDateTimeUTC(d[field]);
         };
 
         getFacetForDate = function(date) {
@@ -25,6 +29,7 @@ define(
         return {
             getDateFieldFormatter,
             getFacetForDate,
+            getLinkFormatter,
         };
     }
 );

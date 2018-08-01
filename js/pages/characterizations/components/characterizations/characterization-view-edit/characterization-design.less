@@ -1,5 +1,11 @@
 .characterization-design {
 
+  &__descr {
+    font-size: 1.4rem;
+    margin: 1rem 0 1rem;
+    text-align: justify;
+  }
+
   &__linked-entities {
     padding: 1rem 0rem;
 
@@ -20,11 +26,12 @@
 
   &__linked-entities-title {
     margin: 0;
+    margin-bottom: 1rem;
     font-size: 1.8rem;
   }
 
   &__linked-entities-descr {
-    margin: 1rem 0 1.75rem;
+    margin-bottom: 1.75rem;
   }
 
   &__linked-entities-actions {
@@ -38,39 +45,59 @@
     }
   }
 
+  //
+
   &__col-cohort-id {
-    width: 20%;
+    width: 10%;
   }
 
   &__col-cohort-name {
     width: 80%;
   }
 
+  &__col-cohort-remove {
+    width: 10%;
+  }
+
+  //
+
   &__col-feature-id {
     width: 10%;
   }
 
   &__col-feature-name {
-    width: 30%;
+    width: 35%;
   }
 
   &__col-feature-descr {
-    width: 60%;
+    width: 45%;
   }
 
+  &__col-feature-remove {
+    width: 10%;
+  }
+
+  //
+
   &__col-param-name {
-    width: 50%;
+    width: 45%;
   }
 
   &__col-param-value {
-    width: 50%;
+    width: 45%;
   }
+
+  &__col-param-remove {
+    width: 10%;
+  }
+
+  //
 
   &__cohort-def-modal-content {
     width: 80rem;
   }
 
-  &__cohort-def-modal-body {
+  &__cohort-def-modal-body, &__feature-analyses-modal-body {
     padding: 1rem;
 
     .feFilter {
