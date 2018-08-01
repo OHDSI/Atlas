@@ -30,8 +30,8 @@ define(
             appModel.currentRoleId(id);
             appModel.currentView('role-details');
           });
-        },
-        'import': () => {
+        }),
+        'import': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./users-import/users-import'], function() {
             appModel.componentParams = {
@@ -39,7 +39,6 @@ define(
             };
             appModel.currentView('users-import');
           });
-        }
         }),
         '/source/:id': new AuthorizedRoute((id) => {
           appModel.activePage(this.title);
