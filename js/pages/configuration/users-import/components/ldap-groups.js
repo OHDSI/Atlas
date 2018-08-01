@@ -3,7 +3,7 @@ define([
 	'text!./ldap-groups.html',
 	'providers/Component',
 	'utils/CommonUtils',
-	'providers/Users',
+	'services/UserService',
 	'./renderers',
 	'less!./ldap-groups.less',
 ],
@@ -40,9 +40,8 @@ define([
 				this.loading(true);
 				userApi.searchGroups(this.provider(), this.searchText())
 					.then(results => {
-						this.loading(false);
 						this.searchResults(results.map(group => ({...group, included: ko.observable() })));
-					});
+					}).finally(() => this.loading(false));
 			}
 
 			onSubmitSearch(data, event) {

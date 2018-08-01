@@ -3,7 +3,7 @@ define(['knockout',
 		'appConfig',
 		'atlas-state',
 		'webapi/AuthAPI',
-		'providers/Users',
+		'services/UserService',
 		'providers/Component',
 		'utils/CommonUtils',
 		'./components/renderers',
@@ -138,11 +138,10 @@ define(['knockout',
 					return false;
 				}
 				this.loading(true);
-				const finalize = () => this.loading(false);
 				const users = this.usersList()
 					.filter(u => !!u.included())
 					.map(u => ({ login: u.login, roles: u.roles(), }));
-				usersApi.importUsers(users).then(finalize, finalize);
+				usersApi.importUsers(users).finally(() => this.loading(false));
 				return true;
 			}
 
@@ -159,14 +158,12 @@ define(['knockout',
 					})),
 				};
 				usersApi.searchUsers(this.importProvider(), mapping)
-					.then(users => {
-						this.usersList(users.map(user => ({
+					.then(users => this.usersList(users.map(user => ({
 							...user,
 							roles: ko.observableArray(user.roles),
 							included: ko.observable(),
-						})));
-						this.loading(false);
-					}, () => this.loading(false));
+						})))
+					).finally(() => this.loading(false));
 				return true;
 			}
 
@@ -272,8 +269,7 @@ define(['knockout',
 				this.loading(true);
 				usersApi.getAuthenticationProviders().then(providers => {
 					this.providers(providers);
-					this.loading(false);
-				});
+				}).finally(() => this.loading(false));
 				this.updateRoles().then(() => {
 					const mapping = this.roles().map(role => (
 						{
