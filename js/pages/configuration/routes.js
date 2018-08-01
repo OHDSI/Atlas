@@ -1,8 +1,9 @@
 define(
   (require, factory) => {
+    const { AuthorizedRoute } = require('providers/Route');
     function routes(appModel) {
       return {
-        '/configure': () => {
+        '/configure': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./configuration', './sources/source-manager'], function () {
             appModel.componentParams = {
@@ -10,8 +11,8 @@ define(
             };
             appModel.currentView('ohdsi-configuration');
           });
-        },
-        '/roles': () => {
+        }),
+        '/roles': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./roles/roles'], function () {
             appModel.componentParams = {
@@ -19,8 +20,8 @@ define(
             };
             appModel.currentView('roles');
           });
-        },
-        '/role/:id': (id) => {
+        }),
+        '/role/:id': new AuthorizedRoute((id) => {
           appModel.activePage(this.title);
           require(['./roles/role-details'], function () {
             appModel.componentParams = {
@@ -39,6 +40,19 @@ define(
             appModel.currentView('users-import');
           });
         }
+        }),
+        '/source/:id': new AuthorizedRoute((id) => {
+          appModel.activePage(this.title);
+          require(['source-manager'], function () {
+            appModel.componentParams = {
+              model: appModel,
+            };
+            if (id !== 'new') {
+              appModel.selectedSourceId(id);
+            }
+            appModel.currentView('source-manager');
+          });
+        }),
       };
     }
 

@@ -68,6 +68,9 @@ define(function (require, exports) {
 	var periodInput = require('./components/Period');
 	ko.components.register('period-input',periodInput);
 
+	var cycleToggleInput = require('./components/CycleToggleInput');
+	ko.components.register('cycle-toggle-input', cycleToggleInput);
+
 	var conceptList = require('./components/ConceptList');
 	ko.components.register('concept-list',conceptList);
 	
@@ -79,5 +82,6 @@ define(function (require, exports) {
 	
 	var payerPlanPeriod = require('./components/PayerPlanPeriod');
 	ko.components.register('payer-plan-period-criteria', payerPlanPeriod);
+	
 	
 });

@@ -26,6 +26,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.SpecimenType = ko.observable(data.SpecimenType && ko.observableArray(data.SpecimenType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.SpecimenTypeExclude = ko.observable(data.SpecimenTypeExclude || null);				
 		self.Quantity = ko.observable(data.Quantity && new Range(data.Quantity));
 		self.Unit = ko.observable(data.Unit && ko.observableArray(data.Unit.map(function (d) {
 			return new Concept(d);

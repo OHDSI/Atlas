@@ -40,7 +40,7 @@
 			<tr data-bind="if: ProcedureType() != null, visible: ProcedureType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ProcedureType') }" class="fa fa-times" /></td>
 				<td>
-					Procedure Type is:
+					Procedure Type <cycle-toggle-input params="{value: ProcedureTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: ProcedureType()"></concept-list>
 				</td>
 			</tr>

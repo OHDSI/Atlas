@@ -27,6 +27,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.MeasurementType = ko.observable(data.MeasurementType && ko.observableArray(data.MeasurementType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.MeasurementTypeExclude = ko.observable(data.MeasurementTypeExclude || null);				
 		self.Operator = ko.observable(data.Operator && ko.observableArray(data.Operator.map(function (d) {
 			return new Concept(d);
 		})));

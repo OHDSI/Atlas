@@ -28,6 +28,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.VisitType = ko.observable(data.VisitType && ko.observableArray(data.VisitType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.VisitTypeExclude = ko.observable(data.VisitTypeExclude || null);				
 		self.VisitSourceConcept = ko.observable(data.VisitSourceConcept != null ? ko.observable(data.VisitSourceConcept) : null);
 		self.VisitLength = ko.observable(data.VisitLength && new Range(data.VisitLength));
 

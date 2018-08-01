@@ -64,7 +64,10 @@ define(function (require, exports) {
 	
 	var textFilter = require('./components/TextFilter');
 	ko.components.register('text-filter-viewer',textFilter);	
-	
+
+	var cycleToggleInput = require('./components/CycleToggleInput');
+	ko.components.register('cycle-toggle-input-viewer', cycleToggleInput);
+
 	var conceptList = require('./components/ConceptList');
 	ko.components.register('concept-list-viewer',conceptList);
 	
