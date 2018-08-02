@@ -101,6 +101,14 @@ define([
 		}
 		
 		selectSource(source) {
+			
+			// fail-fast if source/targets are not set, 
+			if (!(this.selectedTarget() && this.selectedOutcome())) {
+				this.selectedSource(null);
+				this.selectedReport(null);
+				return;
+			}
+			
 			this.selectedSource(source);
 			this.isLoading(true);
 

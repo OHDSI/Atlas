@@ -8,7 +8,7 @@ define([
 	'utils/CommonUtils',
 	'databindings',
 	'databindings/irTreemapLegend',
-	'css!cohortbuilder/css/report.css'
+	'css!components/cohortbuilder/css/report.css'
 ], function (
 	ko,
 	$,
@@ -54,7 +54,7 @@ define([
 			
 			// behaviors
 			
-			this.treeIRExtent = ko.pureComputed(function() {
+			this.treeIRExtent = ko.pureComputed(() => {
 				var rates = [];
 				function traverse(node) {
 					if (node.hasOwnProperty("timeAtRisk")  && node.timeAtRisk > 0 && node.cases > 0) {
@@ -72,7 +72,7 @@ define([
 				return [extent[0], Math.max(extent[0] * 1.001, extent[1])]; // padd the upper bound in the case where there is only 1 incidence rate calculated and we want to have an extent > 0
 			});
 			
-			this.colorPicker = ko.pureComputed(function() {
+			this.colorPicker = ko.pureComputed(() => {
 				
 				var extent = this.treeIRExtent();
 				
