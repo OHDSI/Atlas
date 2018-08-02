@@ -28,6 +28,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.DeviceType = ko.observable(data.DeviceType && ko.observableArray(data.DeviceType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.DeviceTypeExclude = ko.observable(data.DeviceTypeExclude || null);
 		self.UniqueDeviceId = ko.observable(data.UniqueDeviceId && new Text(data.StopReason));
 		self.Quantity = ko.observable(data.Quantity && new Range(data.Quantity));
 		self.DeviceSourceConcept = ko.observable(data.DeviceSourceConcept != null ? ko.observable(data.DeviceSourceConcept) : null);

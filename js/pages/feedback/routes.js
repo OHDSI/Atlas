@@ -1,8 +1,9 @@
 define(
   (require, factory) => {
+    const { Route } = require('providers/Route');
     function routes(appModel) {
       return {        
-        '/feedback': () => {
+        '/feedback': new Route(() => {
           appModel.activePage(this.title);
           require(['feedback'], function () {
             appModel.componentParams = {
@@ -10,7 +11,7 @@ define(
             };
             appModel.currentView('feedback');
           });
-        },
+        }),
       };
     }
 

@@ -11,7 +11,7 @@ a visit occurrence of <conceptset-reference params="{conceptSetId: CodesetId, co
 	<li>occurrence end is <date-range-viewer params="Range: OccurrenceEndDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(VisitType) != null -->
-	<li>visit type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
+	<li>visit type <cycle-toggle-input-viewer params="{value: VisitTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(VisitSourceConcept) != null -->
 	<li>Visit Source Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(VisitSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>

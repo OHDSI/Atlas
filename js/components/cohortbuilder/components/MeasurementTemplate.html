@@ -40,7 +40,7 @@
 			<tr data-bind="if: MeasurementType() != null, visible: MeasurementType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('MeasurementType') }" class="fa fa-times" /></td>
 				<td>
-					Measurement Type is:
+					Measurement Type <cycle-toggle-input params="{value:  MeasurementTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: MeasurementType()"></concept-list>
 				</td>
 			</tr>

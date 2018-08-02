@@ -28,6 +28,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.ConditionType = ko.observable(data.ConditionType && ko.observableArray(data.ConditionType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.ConditionTypeExclude = ko.observable(data.ConditionTypeExclude || null);
 		self.StopReason = ko.observable(data.StopReason && new Text(data.StopReason));
 		self.ConditionSourceConcept = ko.observable(data.ConditionSourceConcept != null ? ko.observable(data.ConditionSourceConcept) : null);
 

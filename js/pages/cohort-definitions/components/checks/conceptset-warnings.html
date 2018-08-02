@@ -1,0 +1,10 @@
+<div role="tabpanel" class="warnings-button-pane pull-right">
+    <button class="btn btn-sm btn-primary" type="button" data-bind="enable: canDiagnose, click: onDiagnose">Run diagnostics</button>
+</div>
+<div data-bind="eventListener:[{event:'click', selector: '.btn-fix', callback: fixRedundantConceptSet}]">
+    <div class="conceptset-warnings">
+        <faceted-datatable params="{columns: $component.warningsColumns, options: $component.warningsOptions,reference: $component.warnings, order: [],
+           drawCallback: $component.drawCallback}"></faceted-datatable>
+    </div>
+</div>
+<loading data-bind="visible: loading" params="status: 'Running Diagnostics'"></loading>

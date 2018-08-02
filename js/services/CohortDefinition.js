@@ -116,16 +116,33 @@ define(function (require, exports) {
 		return infoPromise;
 	}
 	
-	function getReport(cohortDefinitionId, sourceKey) {
+	function getReport(cohortDefinitionId, sourceKey, modeId) {
 		var reportPromise = $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/report/' + sourceKey,
+			url: `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}?mode=${modeId || 0}`,
 			error: function (error) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
 			}
 		});
 		return reportPromise;
-	}	
+	}
+
+	function getWarnings(cohortDefinitionId) {
+		return $.ajax({
+			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/check',
+			error: authApi.handleAccessDenied,
+		});
+	}
+
+	function runDiagnostics(id, expression) {
+		return $.ajax({
+			url: config.webAPIRoot + 'cohortdefinition/' + (id || '-1') + '/check',
+			contentType: 'application/json',
+			method: 'POST',
+			data: expression,
+			error: authApi.handleAccessDenied,
+		});
+	}
 	
 	var api = {
 		getCohortDefinitionList: getCohortDefinitionList,
@@ -137,6 +154,8 @@ define(function (require, exports) {
 		generate: generate,
 		getInfo: getInfo,
 		getReport: getReport,
+		getWarnings: getWarnings,
+		runDiagnostics: runDiagnostics,
 		cancelGenerate,
 	}
 

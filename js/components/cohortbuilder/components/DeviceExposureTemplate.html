@@ -47,7 +47,7 @@
 			<tr data-bind="if: DeviceType() != null, visible: DeviceType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DeviceType') }" class="fa fa-times" /></td>
 				<td>
-					Device Type is:
+					Device Type <cycle-toggle-input params="{value:  DeviceTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DeviceType()"></concept-list>
 				</td>
 			</tr>

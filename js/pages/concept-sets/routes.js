@@ -1,8 +1,9 @@
 define(
   (require, factory) => {
+    const { AuthorizedRoute } = require('providers/Route');
     function routes(appModel) {
       return {        
-        '/conceptset/:conceptSetId/:mode': (conceptSetId, mode) => {
+        '/conceptset/:conceptSetId/:mode': new AuthorizedRoute((conceptSetId, mode) => {
           appModel.activePage(this.title);
           require(['conceptset-manager', 'components/cohort-definition-browser', 'conceptset-list-modal'], function () {
             appModel.componentParams = {
@@ -10,8 +11,8 @@ define(
             };
             appModel.loadConceptSet(conceptSetId, 'conceptset-manager', 'repository', mode);
           });
-        },
-        '/conceptsets': () => {
+        }),
+        '/conceptsets': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['conceptset-browser'], function () {
             appModel.componentParams = {
@@ -19,8 +20,8 @@ define(
             };
             appModel.currentView('conceptset-browser');
           });
-        },
-        '/concept/:conceptId:': (conceptId) => {
+        }),
+        '/concept/:conceptId:': new AuthorizedRoute((conceptId) => {
           appModel.activePage(this.title);
           require(['concept-manager'], function () {
             appModel.currentConceptId(conceptId);
@@ -29,7 +30,7 @@ define(
             };
             appModel.currentView('concept-manager');
           });
-        },
+        }),
       };
     }
 

@@ -1,8 +1,9 @@
 define(
 	(require, factory) => {
+    const { Route } = require('providers/Route');
 		function routes(appModel) {
 			return {        
-				'/search/:query:': (query) => {
+				'/search/:query:': new Route((query) => {
 					appModel.activePage(this.title);
 					require(['./vocabulary'], function (search) {
 						appModel.componentParams = {
@@ -11,8 +12,8 @@ define(
 						};
 						appModel.currentView('vocabulary');
 					});
-				},
-				'/search': () => {
+				}),
+				'/search': new Route(() => {
 					appModel.activePage(this.title);
 					require(['./vocabulary'], function (search) {
 						appModel.componentParams = {
@@ -20,7 +21,7 @@ define(
 						};
 						appModel.currentView('vocabulary');
 					});
-				},
+				}),
 			};
 		}
 
