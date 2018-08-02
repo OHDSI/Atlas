@@ -1,0 +1,17 @@
+<heading-title params="name: 'Incidence Rate Analysis', icon: 'bolt', theme: 'dark'"></heading-title>
+
+<!-- ko if:$component.canReadIRs -->
+<div class="paddedWrapper flexed">
+	<div>
+		<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newAnalysis, css: {disabled: !$component.canCreateIR()}">New Analysis</span>
+	</div>
+	<div data-bind="eventListener: [{event: 'click', selector: '.linkish', callback: onAnalysisSelected}]">
+		<ir-analysis-browser params="analysisList: analysisList"></ir-analysis-browser>
+	</div>
+
+	<div data-bind="visible:loading()" class="loading">loading</div>
+</div>
+<!-- /ko -->
+<!-- ko ifnot:$component.canReadIRs -->
+	<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
+<!-- /ko -->
