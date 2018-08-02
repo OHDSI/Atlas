@@ -1,0 +1,13 @@
+.included-concepts {
+
+}
+
+.included-concepts__conceptset-processing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.included-concepts__conceptset-loading {
+  text-align: center;
+}

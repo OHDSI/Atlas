@@ -1,0 +1,13 @@
+.included-sourcecodes {
+
+}
+
+.included-sourcecodes__conceptset-processing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.included-sourcecodes__conceptset-loading {
+    text-align: center;
+}

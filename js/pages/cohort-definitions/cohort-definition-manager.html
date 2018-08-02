@@ -118,14 +118,12 @@
 					</div>
 				</div>
 
-				<div class="loading" data-bind="if:model.currentView() === 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
-
-				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !model.loadingIncluded()">
-					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: model.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
+				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included">
+					<included-concepts params="model: model, ancestors: ancestors, ancestorsModalIsShown: ancestorsModalIsShown"></included-concepts>
 				</div>
 
-				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes && !model.loadingSourcecodes() && !model.loadingIncluded()">
-					<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
+				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes">
+					<included-sourcecodes params="model: model"></included-sourcecodes>
 				</div>
 
 				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.export">

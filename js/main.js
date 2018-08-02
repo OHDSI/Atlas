@@ -381,7 +381,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 				identifiers.push(concepts[i].CONCEPT_ID);
 			}
 
-			return vocabAPI.loadSourceCodes(identifiers);
+			return vocabProvider.loadSourceCodes(identifiers);
 		}
 
 		function loadIncluded() {

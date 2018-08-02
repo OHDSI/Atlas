@@ -1,0 +1,23 @@
+<div>
+    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, facetReference: $component.loadIncludedFacets,
+            filterCallback: $component.applyIncludedFilter, drawCallback: $component.includedDrawCallback, rowCallback: model.contextSensitiveLinkColor, serverSide: true,
+            ajax: $component.loadIncludedConcepts, processing: true, language: $component.tableLanguage, classes: $component.tableClasses }"></faceted-datatable>
+    <div data-bind="css: classes({extra: ['linkLegend']})">
+        <div data-bind="css: classes({extra: ['linkLegendItem']})">
+            <div data-bind="css: classes({extra: ['swatch', 'standard']})">
+            </div>
+            <div data-bind="css: classes({extra: ['linkLegendTitle']})">Standard</div>
+        </div>
+        <div data-bind="css: classes({extra: ['linkLegendItem']})">
+            <div data-bind="css: classes({extra: ['swatch', 'nonStandard']})">
+            </div>
+            <div data-bind="css: classes({extra: ['linkLegendTitle']})">Non-Standard</div>
+        </div>
+        <div data-bind="css: classes({extra: ['linkLegendItem']})">
+            <div data-bind="css: classes({extra: ['swatch', 'classification']})">
+            </div>
+            <div data-bind="css: classes({extra: ['linkLegendTitle']})">Classification</div>
+        </div>
+    </div>
+    <div data-bind="css: classes({extra: ['clear']})"></div>
+</div>

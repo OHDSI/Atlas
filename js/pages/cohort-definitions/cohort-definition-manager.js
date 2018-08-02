@@ -31,6 +31,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'webapi/ConceptSetAPI',
 	'components/modal-pick-options',
 	'components/heading',
+	'components/conceptset/components/included-concepts',
+	'components/conceptset/components/included-sourcecodes',
 ], function (
 	$,
 	ko,
@@ -321,55 +323,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.ancestors = ko.observableArray();
 			this.ancestorsModalIsShown = ko.observable(false);
-			this.showAncestorsModal = conceptSetService.getAncestorsModalHandler(this);
-			this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ ...this, searchConceptsColumns: this.includedConceptsColumns });
-		
-			this.includedConceptsOptions = {
-				Facets: [
-					{
-					'caption': 'Vocabulary',
-						'binding': (o) => {
-							return o.VOCABULARY_ID;
-						}
-					},
-					{
-						'caption': 'Class',
-							'binding': (o) => {
-							return o.CONCEPT_CLASS_ID;
-						}
-					},
-					{
-						'caption': 'Domain',
-							'binding': (o) => {
-								return o.DOMAIN_ID;
-							}
-					},
-					{
-						'caption': 'Standard Concept',
-							'binding': (o) => {
-								return o.STANDARD_CONCEPT_CAPTION;
-							}
-					},
-					{
-						'caption': 'Invalid Reason',
-							'binding': (o) => {
-								return o.INVALID_REASON_CAPTION;
-							}
-					},
-					{
-						'caption': 'Has Records',
-							'binding': (o) => {
-								return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
-							}
-					},
-					{
-						'caption': 'Has Descendant Records',
-							'binding': (o) => {
-								return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
-							}
-					},
-				]
-		};
 
 			this.stopping = this.model.cohortDefinitionSourceInfo().reduce((acc, target) => ({...acc, [target.sourceKey]: ko.observable(false)}), {});
 			this.isSourceStopping = (source) => this.stopping[source.sourceKey];

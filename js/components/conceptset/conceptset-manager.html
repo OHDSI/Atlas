@@ -49,35 +49,12 @@
     <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: model.denseSiblings}"></faceted-datatable>
   </div>
 
-  <div class="loading" data-bind="if:model.loadingSourcecodes() || model.loadingIncluded">loading</div>
-
   <div data-bind="if: model.currentConceptSetMode() == 'included'">
-    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, facetReference: $component.loadIncludedFacets,
-        filterCallback: $component.applyIncludedFilter, drawCallback: $component.includedDrawCallback, rowCallback: model.contextSensitiveLinkColor, serverSide: true,
-        ajax: $component.loadIncludedConcepts, processing: true, language: $component.tableLanguage, classes: $component.tableClasses }"></faceted-datatable>
-    <div class="linkLegend">
-      <div class="linkLegendItem">
-        <div class="swatch standard">
-        </div>
-        <div class="linkLegendTitle">Standard</div>
-      </div>
-      <div class="linkLegendItem">
-        <div class="swatch nonStandard">
-        </div>
-        <div class="linkLegendTitle">Non-Standard</div>
-      </div>
-      <div class="linkLegendItem">
-        <div class="swatch classification">
-        </div>
-        <div class="linkLegendTitle">Classification</div>
-      </div>
-    </div>
-    <div class="clear"></div>
+    <included-concepts params="model: model, ancestors: ancestors, ancestorsModalIsShown: ancestorsModalIsShown"></included-concepts>
   </div>
 
   <div data-bind="if: model.currentConceptSetMode() == 'sourcecodes'">
-    <faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, facetReference: $component.loadSourceCodesFacets,
-      filterCallback: $component.applySourceCodesFilter, serverSide: true, ajax: $component.loadSourceCodes, processing: true, language: $component.tableLanguage, classes: $component.tableClasses}"></faceted-datatable>
+    <included-sourcecodes params="model: model"></included-sourcecodes>
   </div>
 
   <div data-bind="visible: model.currentConceptSetMode() == 'details'">
