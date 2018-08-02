@@ -99,6 +99,7 @@ define(function (require, exports) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/info`);
 		
 		return promise
+			.then(({ data }) => data)
 			.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;
@@ -120,6 +121,7 @@ define(function (require, exports) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/report/${sourceKey}?targetId=${targetId}&outcomeId=${outcomeId}`);
 		
 		return promise
+			.then(({ data }) => data)
 			.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;

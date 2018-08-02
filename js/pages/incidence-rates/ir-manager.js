@@ -141,7 +141,7 @@ define([
 		}
 
 		pollForInfo() {
-			IRAnalysisService.getInfo(this.selectedAnalysisId()).then(({ data = [] }) => {
+			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
 				var hasPending = false;
 				data.forEach((info) => {
 					var source = this.sources().filter((s) => { return s.source.sourceId == info.executionInfo.id.sourceId })[0];
