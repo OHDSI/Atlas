@@ -1,0 +1,38 @@
+<!-- ko with: Criteria -->
+a a specimen of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Specimen'}"></conceptset-reference>
+<ul>
+<!-- ko if: ko.utils.unwrapObservable(First) != null -->
+	<li>for the first time in the person's history</li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(OccurrenceStartDate) != null -->
+	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(SpecimenType) != null -->
+	<li>specimen type <cycle-toggle-input-viewer params="{value: SpecimenTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(SpecimenType)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Quantity) != null -->
+	<li>with quantity <numeric-range-viewer params="Range: Quantity"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Unit) != null -->
+	<li>unit is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Unit)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(AnatomicSite) != null -->
+	<li>anatomic site is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(AnatomicSite)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(DiseaseStatus) != null -->
+	<li>disease status is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DiseaseStatus)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(SourceId) != null -->
+	<li>with a source ID <text-filter-viewer params="Filter: SourceId"></text-filter-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Age) != null -->
+	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList:ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+<!-- /ko -->
+</ul>
+<!-- /ko -->

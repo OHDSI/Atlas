@@ -1,10 +1,11 @@
 define(
 	(require, factory) => {
         const ko = require('knockout');
+        const { Route } = require('providers/Route');
 
 		function routes(appModel) {
 
-            const search = function(query) {
+            const search = new Route((query) => {
                 appModel.activePage(this.title);
                 require(['./vocabulary'], function (search) {
                     const view = 'vocabulary';
@@ -20,7 +21,7 @@ define(
 
                     appModel.currentView(view);
                 });
-            };
+            });
 
 			return {        
 				'/search/:query:': search,

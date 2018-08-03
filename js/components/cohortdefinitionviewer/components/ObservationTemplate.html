@@ -1,0 +1,44 @@
+<!-- ko with: Criteria -->
+an observation of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Observation'}"></conceptset-reference>
+<ul>
+<!-- ko if: ko.utils.unwrapObservable(First) != null -->
+	<li>for the first time in the person's history</li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(OccurrenceStartDate) != null -->
+	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ObservationType) != null -->
+	<li>observation type <cycle-toggle-input-viewer params="{value: ObservationTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ObservationType)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ValueAsNumber) != null -->
+	<li>with value as number <numeric-range-viewer params="Range: ValueAsNumber"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ValueAsString) != null -->
+	<li>with value as string <text-filter-viewer params="Filter: ValueAsString"></text-filter-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ValueAsConcept) != null -->
+	<li>value as concept is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ValueAsConcept)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Qualifier) != null -->
+	<li>qualifier is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Qualifier)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Unit) != null -->
+	<li>unit is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Unit)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Age) != null -->
+	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ProviderSpecialty) != null -->
+	<li>provider specialty is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProviderSpecialty)"></concept-list></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(VisitType) != null -->
+	<li>visit occurrence is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+<!-- /ko -->
+</ul>
+<!-- /ko -->

@@ -1,8 +1,9 @@
 define(
   (require, factory) => {
     function routes(appModel) {
+      const { AuthorizedRoute } = require('providers/Route');
       return {        
-        '/plp': () => {
+        '/plp': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['plp-browser', 'plp-manager', 'plp-inspector'], function () {
             appModel.componentParams = {
@@ -10,10 +11,10 @@ define(
             };
             appModel.currentView('plp-browser');
           });
-        },
-        '/plp/:modelId:': (modelId) => {
+        }),
+        '/plp/:modelId:': new AuthorizedRoute((modelId) => {
           appModel.activePage(this.title);
-          require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
+          require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'components/cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
             appModel.currentPatientLevelPredictionId(+modelId);
             appModel.componentParams = {
               model: appModel,
@@ -23,7 +24,7 @@ define(
             };
             appModel.currentView('plp-manager');
           });
-        },
+        }),
       };
     }
 

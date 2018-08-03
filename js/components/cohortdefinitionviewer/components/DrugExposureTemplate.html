@@ -1,0 +1,59 @@
+<!-- ko with: Criteria -->
+a drug exposure of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Drug'}"></conceptset-reference>
+<ul>
+<!-- ko if: ko.utils.unwrapObservable(First) != null -->
+	<li>for the first time in the person's history</li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(OccurrenceStartDate) != null -->
+	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(OccurrenceEndDate) != null -->
+	<li>occurrence end is <date-range-viewer params="Range: OccurrenceEndDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(DrugType) != null -->
+	<li>drug type <cycle-toggle-input-viewer params="{value: DrugTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DrugType)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(StopReason) != null -->
+	<li>with a Stop Reason <text-filter-viewer params="Filter: StopReason"></text-filter-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Refills) != null -->
+	<li>with refills <numeric-range-viewer params="Range: Refills"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Quantity) != null -->
+	<li>with quantity <numeric-range-viewer params="Range: Quantity"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(DaysSupply) != null -->
+	<li>with days supply <numeric-range-viewer params="Range: DaysSupply"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(RouteConcept) != null -->
+	<li>route concept is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(RouteConcept)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(EffectiveDrugDose) != null -->
+	<li>with effective drug dose <numeric-range-viewer params="Range: EffectiveDrugDose"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(DoseUnit) != null -->
+	<li>dose unit is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DoseUnit)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(LotNumber) != null -->
+	<li>with a lot number <text-filter-viewer params="Filter: LotNumber"></text-filter-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(DrugSourceConcept) != null -->
+	<li>Drug Source Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(DrugSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Age) != null -->
+	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ProviderSpecialty) != null -->
+	<li>provider specialty is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProviderSpecialty)"></concept-list></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(VisitType) != null -->
+	<li>visit occurrence is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
+<!-- /ko -->
+</ul>
+<!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+<!-- /ko -->
+<!-- /ko -->

@@ -1,0 +1,59 @@
+<!-- ko with: Criteria -->
+a measurement of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Measurement'}"></conceptset-reference>
+<ul>
+<!-- ko if: ko.utils.unwrapObservable(First) != null -->
+	<li>for the first time in the person's history</li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(OccurrenceStartDate) != null -->
+	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(MeasurementType) != null -->
+	<li>measurement type <cycle-toggle-input-viewer params="{value: MeasurementTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(MeasurementType)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Operator) != null -->
+	<li>measurement value operator is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Operator)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ValueAsNumber) != null -->
+	<li>with value as number <numeric-range-viewer params="Range: ValueAsNumber"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ValueAsConcept) != null -->
+	<li>value as concept is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ValueAsConcept)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Unit) != null -->
+	<li>unit is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Unit)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(RangeLow) != null -->
+	<li>with lower range <numeric-range-viewer params="Range: RangeLow"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(RangeLowRatio) != null -->
+	<li>with lower range ratio <numeric-range-viewer params="Range: RangeLowRatio"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(RangeHigh) != null -->
+	<li>with high range <numeric-range-viewer params="Range: RangeHigh"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(RangeHighRatio) != null -->
+	<li>with high range ratio <numeric-range-viewer params="Range: RangeHighRatio"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Abnormal) != null -->
+	<li>with an abnormal result</li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(MeasurementSourceConcept) != null -->
+	<li>Measurement Source Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(MeasurementSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Age) != null -->
+	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
+	<li>gender is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ProviderSpecialty) != null -->
+	<li>provider specialty is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProviderSpecialty)"></concept-list></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(VisitType) != null -->
+	<li>visit occurrence is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+<!-- /ko -->
+</ul>
+<!-- /ko -->

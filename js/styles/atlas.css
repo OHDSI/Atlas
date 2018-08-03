@@ -860,6 +860,11 @@ div.loader {
   background-color: #fff;
 }
 
+.tab-content.nospace {
+  padding: 0px;
+  background-color: #fff;
+}
+
 table#analysisStatus {
   width: 100%;
 }
@@ -1007,6 +1012,15 @@ ul.nav.nav-tabs {
   border-bottom: solid 1px #FFFFFF;
   clear: right;
 }
+
+ul.nav.nav-tabs.nospace {
+  margin-bottom: 0px;
+  background-color: #333;
+  padding: 2px 2px, 1px, 2px;
+  border-bottom: solid 1px #FFFFFF;
+  clear: right;
+}
+
 
 ul.nav.nav-tabs {
   white-space: nowrap;
@@ -1550,6 +1564,12 @@ li.current-asset {
 /*#wrapperLeftMenu li.current-asset a {
   color: #000;
 }*/
+
+.configureSourceTable button.connection-check-button {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 2px;
+}
 
 .configureSourceTable i.fa.fa-spinner.fa-spin {
   font-size: 14px;

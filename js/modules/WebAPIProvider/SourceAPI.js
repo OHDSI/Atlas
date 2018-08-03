@@ -3,10 +3,11 @@ define(function (require, exports) {
 	var $ = require('jquery');
 	var config = require('appConfig');
 	var sharedState = require('atlas-state');
-	var ohdsiUtil = require('ohdsi.util');
+	var ohdsiUtil = require('assets/ohdsi.util');
 	var authApi = require('webapi/AuthAPI');
   var lscache = require('lscache');
   var ko = require('knockout');
+	const httpService = require('services/http');
 
 	var sources;
 
@@ -61,6 +62,13 @@ define(function (require, exports) {
     });
   }
 
+  const connectionCheckState = {
+    unknown: 'unknown',
+    success: 'success',
+    checking: 'checking',
+    failed: 'failed',
+  };
+  
   function initSourcesConfig() {
     config.api.available = true;
 
@@ -93,7 +101,7 @@ define(function (require, exports) {
           source.error = '';
           source.version = ko.observable('unknown');
           source.dialect = ko.observable();
-
+          source.connectionCheck = ko.observable(connectionCheckState.unknown);
           source.initialized = true;
           for (var d = 0; d < source.daimons.length; d++) {
             var daimon = source.daimons[d];
@@ -190,13 +198,19 @@ define(function (require, exports) {
     return servicePromise;
   }
 
-	var api = {
-		getSources: getSources,
+  function checkSourceConnection(sourceKey) {
+    return httpService.doGet(config.webAPIRoot + 'source/connection/' + sourceKey)
+  }
+
+  var api = {
+    getSources: getSources,
     getSource: getSource,
-		saveSource: saveSource,
-		getCacheKey: getCacheKey,
-		initSourcesConfig: initSourcesConfig,
+    saveSource: saveSource,
+    getCacheKey: getCacheKey,
+    initSourcesConfig: initSourcesConfig,
     deleteSource: deleteSource,
+    checkSourceConnection: checkSourceConnection,
+    connectionCheckState: connectionCheckState,
 	};
 
 	return api;

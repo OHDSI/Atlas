@@ -6,6 +6,7 @@ define(function(require, exports) {
     var cookie = require('webapi/CookieAPI');
     var TOKEN_HEADER = 'Bearer';
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
+    const httpService = require('services/http');
 
     var authProviders = config.authProviders.reduce(function(result, current) {
         result[config.api.url + current.url] = current;
@@ -50,7 +51,8 @@ define(function(require, exports) {
                 permissions(info.permissions.map(p => p.permission));
             },
             error: function (err) {
-                console.log('User is not authed')
+                console.log('User is not authed');
+                subject(null);
             }
         });
     };
@@ -212,23 +214,13 @@ define(function(require, exports) {
     var refreshToken = function() {
 
         if (!isPromisePending(refreshTokenPromise)) {
-            refreshTokenPromise = $.ajax({
-                url: getServiceUrl() + "user/refresh",
-                method: 'GET',
-                headers: {
-                    Authorization: getAuthorizationHeader()
-                },
-
-            }).then(
-                // success
-                function (data, textStatus, jqXHR) {
-                    setAuthParams(jqXHR);
-                },
-                // error
-                function (error) {
-                    resetAuthParams();
-                },
-            );
+          refreshTokenPromise = httpService.doGet(getServiceUrl() + "user/refresh");
+          refreshTokenPromise.then(({ data, headers }) => {
+            setAuthParams(headers.get(TOKEN_HEADER));
+          });
+          refreshTokenPromise.catch(() => {
+            resetAuthParams();
+          });
         }
 
         return refreshTokenPromise;
@@ -366,6 +358,10 @@ define(function(require, exports) {
         return isPermitted('source:' + key + ':get');
     }
 
+    var isPermittedCheckSourceConnection = function(key) {
+      return isPermitted('source:connection:' + key + ':get');
+    }
+
     var isPermittedEditSource = function(key) {
         return isPermitted('source:' + key + ':put');
     }
@@ -402,8 +398,8 @@ define(function(require, exports) {
         return isPermitted('role:' + roleId + ':permissions:*:put') && isPermitted('role:' + roleId + ':permissions:*:delete');
     }
 
-    var setAuthParams = function (jqXHR) {
-        token(jqXHR.getResponseHeader(TOKEN_HEADER));
+    var setAuthParams = function (tokenHeader) {
+        token(tokenHeader);
         loadUserInfo();
     };
 
@@ -476,6 +472,9 @@ define(function(require, exports) {
         isPermittedCreateSource: isPermittedCreateSource,
         isPermittedEditSource: isPermittedEditSource,
         isPermittedDeleteSource: isPermittedDeleteSource,
+        isPermittedCheckSourceConnection: isPermittedCheckSourceConnection,
+
+        TOKEN_HEADER,
     };
 
     return api;

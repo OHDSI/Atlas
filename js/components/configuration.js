@@ -40,6 +40,13 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadSource(source.sourceKey));
 			}
     };
+		self.canCheckConnection = function(source) {
+			if (!config.userAuthenticationEnabled) {
+				return false;
+			} else {
+				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCheckSourceConnection(source.sourceKey));
+			}
+		};
 		self.clearLocalStorageCache = function () {
 			localStorage.clear();
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
@@ -95,7 +102,38 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
       updateSourceDaimonPriority(selectedSource.sourceKey, 'Results');
       return true;
     };
-	}
+    
+    self.checkSourceConnection = function(source) {
+      sourceApi.checkSourceConnection(source.sourceKey).then(
+        () => source.connectionCheck(sourceApi.connectionCheckState.success), 
+        () => source.connectionCheck(sourceApi.connectionCheckState.failed)
+      );
+      source.connectionCheck(sourceApi.connectionCheckState.checking);
+    };
+    
+    self.getCheckButtonStyles = function(source) {
+      let iconClass = 'fa-caret-right';
+      let buttonClass = 'btn-primary';
+      switch(source.connectionCheck()) {
+        case sourceApi.connectionCheckState.success:
+          buttonClass = 'btn-success';
+          iconClass = 'fa-check-square';
+          break;
+        case sourceApi.connectionCheckState.failed:
+          buttonClass = 'btn-danger';
+          iconClass = 'fa-exclamation-circle';
+          break;
+        case sourceApi.connectionCheckState.checking:
+          buttonClass = 'btn-warning';
+          iconClass = 'fa-circle-o-notch fa-spin';
+          break;
+      }
+      return {
+        iconClass,
+        buttonClass,
+      }
+    }
+  }
 
 
 	var component = {

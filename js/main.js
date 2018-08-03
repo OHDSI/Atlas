@@ -4,202 +4,83 @@ const bustCache = (() => {
 	return '_=' + hash;
 })();
 
-requirejs.config({
-	baseUrl: 'js',
-	config: {
-		text: {
-			useXhr: function (url, protocol, hostname, port) {
-				return true;
-			}
-		},
-	},
-	urlArgs: bustCache,
-	packages: [{
-			name: "databindings",
-			location: "modules/databindings"
-		},
-		{
-			name: "cohortdefinitionviewer",
-			location: "modules/cohortdefinitionviewer"
-		},
-		{
-			name: "circe",
-			location: "modules/circe"
-		},
-		{
-			name: "iranalysis",
-			location: "modules/iranalysis"
-		},
-		{
-			name: "extenders",
-			location: "extenders"
-		},
-		{
-			name: "job",
-			location: "modules/job"
-		},
-		{
-			name: "plp",
-			location: "modules/plp"
-		},
-		{
-			name: "cohortfeatures",
-			location: "modules/cohortfeatures"
-		},
-		{
-			name: "pages",
-			location: "pages",
-		},
-	],
-	shim: {
-		"colorbrewer": {
-			exports: 'colorbrewer'
-		},
-		"bootstrap": {
-			"deps": [
-				'jquery'
-			]
-		},
-		"prism": {
-			"prism": {
-				"exports": "Prism"
-			}
-		},
-		"xss": {
-			exports: "filterXSS"
-		}
-	},
-	map: {
-		"*": {
-			'jquery-ui/ui/widgets/sortable': 'jquery-ui',
-			'jquery-ui/ui/widgets/draggable': 'jquery-ui',
-			'jquery-ui/ui/widgets/droppable': 'jquery-ui',
-			'jquery-ui/dialog': 'jquery-ui',
-			'jquery-ui/autocomplete': 'jquery-ui',
-			'jquery-ui/tabs': 'jquery-ui'
-		}
-	},
-	deps: ['css!styles/jquery.dataTables.min',
-		'css!styles/jquery.dataTables.colVis.css'
-	],
-	paths: {
-		"jquery": "https://code.jquery.com/jquery-1.11.2.min",
-		"jquery-ui": "https://code.jquery.com/ui/1.11.4/jquery-ui.min",
-		"bootstrap": "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min",
-		"text": "plugins/text",
-		"css": "plugins/css.min",
-    "less": "plugins/less",
-		"optional": "plugins/optional",
-		"clipboard": "clipboard.min",
-		"knockout": "knockout.min",
-		"ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
-		"knockout-mapping": "knockout.mapping",
-		"datatables.net": "https://cdn.datatables.net/1.10.19/js/jquery.dataTables",//"jquery.dataTables.min",
-		"datatables.net-buttons": "jquery.dataTables.buttons.min",
-		"datatables.net-buttons-html5": "jquery.dataTables.buttons.html5.min",
-		"colvis": "jquery.dataTables.colVis.min",
-		"crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.1/crossfilter.min",
-		"director": "director.min",
-		"configuration": "components/configuration",
-		"source-manager": "components/source-manager",
-		"concept-manager": "components/concept-manager",
-		"conceptset-browser": "components/conceptset/conceptset-browser",
-		"conceptset-editor": "components/conceptset/conceptset-editor",
-		"conceptset-manager": "components/conceptset/conceptset-manager",
-		"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
-		"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
-		"cohort-comparison-manager": "components/cohort-comparison-manager",
-		"job-manager": "components/job-manager",
-		"cohort-definitions": "components/cohort-definitions/cohort-definitions",
-		"cohort-definition-manager": "components/cohort-definitions/cohort-definition-manager",
-		"cohort-definition-browser": "components/cohort-definitions/cohort-definition-browser",
-		"cohort-comparison-browser": "components/cohort-comparison-browser",
-		"cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
-		"cohort-comparison-r-code": "components/cohort-comparison-r-code",
-		"cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
-		"user-bar": "components/user-bar",
-		"report-manager": "components/report-manager",
-		"ir-manager": "components/ir-manager",
-		"ir-browser": "components/ir-browser",
-		"faceted-datatable": "components/faceted-datatable",
-		"profile-manager": "components/profile/profile-manager",
-		"explore-cohort": "components/explore-cohort",
-		"cohortcomparison": "modules/cohortcomparison",
-		"r-manager": "components/r-manager",
-		"negative-controls": "components/negative-controls",
-		"atlascharts": "atlascharts",//"https://unpkg.com/@ohdsi/atlascharts@1.4.1/dist/atlascharts",
-		"jnj_chart": "jnj.chart", // scatterplot is not ported to separate library
-		"lodash": "lodash.4.15.0.full",
-		"lscache": "lscache.min",
-		"localStorageExtender": "localStorageExtender",
-		"cohortbuilder": "modules/cohortbuilder",
-		"conceptsetbuilder": "modules/conceptsetbuilder",
-		"conceptpicker": "modules/conceptpicker",
-		"webapi": "modules/WebAPIProvider",
-		"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
-		"appConfig": "config",
-		"home": "components/home",
-		"common": "components/datasources/app/common",
-		"reports": "components/datasources/app/reports",
-		"prism": "prism",
-		"sptest": "sptest/sptest",
-		"sptest_smoking": "sptest/sptest_smoking",
-		"welcome": "components/welcome",
-		"forbidden": "components/ac-forbidden",
-		"unauthenticated": "components/ac-unauthenticated",
-		"roles": "components/roles",
-		"role-details": "components/role-details",
-		"loading": "components/loading",
-		"atlas-state": "components/atlas-state",
-		"plp-manager": "components/plp-manager",
-		"plp-inspector": "components/plp-inspector",
-		"plp-browser": "components/plp-browser",
-		"plp-roc": "components/plp-roc",
-		"plp-calibration": "components/plp-calibration",
-		"plp-spec-editor": "components/plp-spec-editor",
-		"plp-r-code": "components/plp-r-code",
-		"plp-print-friendly": "components/plp-print-friendly",
-		"feedback": "components/feedback",
-    "js-cookie": "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min",
+const localRefs = {
+	"configuration": "components/configuration",
+	"source-manager": "components/source-manager",
+	"concept-manager": "components/concept-manager",
+	"conceptset-browser": "components/conceptset/conceptset-browser",
+	"conceptset-editor": "components/conceptset/conceptset-editor",
+	"conceptset-manager": "components/conceptset/conceptset-manager",
+	"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
+	"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
+	"cohort-comparison-manager": "components/cohort-comparison-manager",
+	"job-manager": "components/job-manager",
+	"cohort-comparison-browser": "components/cohort-comparison-browser",
+	"cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
+	"cohort-comparison-r-code": "components/cohort-comparison-r-code",
+	"cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
+	"user-bar": "components/user-bar",
+	"faceted-datatable": "components/faceted-datatable",
+	"profile-manager": "components/profile/profile-manager",
+	"explore-cohort": "components/explore-cohort",
+	"r-manager": "components/r-manager",
+	"negative-controls": "components/negative-controls",
+	"home": "components/home",
+	"welcome": "components/welcome",
+	"forbidden": "components/ac-forbidden",
+	"unauthenticated": "components/ac-unauthenticated",
+	"roles": "components/roles",
+	"role-details": "components/role-details",
+	"loading": "components/loading",
+	"atlas-state": "components/atlas-state",
+	"plp-manager": "components/plp-manager",
+	"plp-inspector": "components/plp-inspector",
+	"plp-browser": "components/plp-browser",
+	"plp-roc": "components/plp-roc",
+	"plp-calibration": "components/plp-calibration",
+	"plp-spec-editor": "components/plp-spec-editor",
+	"plp-r-code": "components/plp-r-code",
+	"plp-print-friendly": "components/plp-print-friendly",
+	"feedback": "components/feedback",
+	"conceptsetbuilder": "modules/conceptsetbuilder",
+	"conceptpicker": "modules/conceptpicker",
+	"webapi": "modules/WebAPIProvider",
+	"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
+	"css": "plugins/css.min",
+};
 
-    "d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.0/d3.min",
-		"d3-collection": "https://cdnjs.cloudflare.com/ajax/libs/d3-collection/1.0.4/d3-collection.min",
-		"d3-selection": "https://cdnjs.cloudflare.com/ajax/libs/d3-selection/1.1.0/d3-selection.min",
-		"d3-shape": "https://cdnjs.cloudflare.com/ajax/libs/d3-shape/1.2.0/d3-shape.min",
-		"d3-drag": "https://cdnjs.cloudflare.com/ajax/libs/d3-drag/1.1.1/d3-drag.min",
-		"d3-scale": "https://cdnjs.cloudflare.com/ajax/libs/d3-scale/1.0.6/d3-scale.min",
-		"d3-array": "https://cdnjs.cloudflare.com/ajax/libs/d3-array/1.2.0/d3-array.min",
-		"d3-interpolate": "https://cdnjs.cloudflare.com/ajax/libs/d3-interpolate/1.1.5/d3-interpolate.min",
-		"d3-format": "https://cdnjs.cloudflare.com/ajax/libs/d3-format/1.2.0/d3-format.min",
-		"d3-time": "https://cdnjs.cloudflare.com/ajax/libs/d3-time/1.0.7/d3-time.min",
-		"d3-time-format": "https://cdnjs.cloudflare.com/ajax/libs/d3-time-format/2.0.5/d3-time-format.min",
-		"d3-color": "https://cdnjs.cloudflare.com/ajax/libs/d3-color/1.0.3/d3-color.min",
-		"d3-path": "https://cdnjs.cloudflare.com/ajax/libs/d3-path/1.0.5/d3-path.min",
-		"d3-dispatch": "https://cdnjs.cloudflare.com/ajax/libs/d3-dispatch/1.0.3/d3-dispatch.min",
-		"d3-tip": "https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min",
-		"d3-slider": "d3.slider",
-		"d3-scale-chromatic": "https://cdn.jsdelivr.net/npm/d3-scale-chromatic@1.3.0/dist/d3-scale-chromatic.min",
-		"xss": "https://cdnjs.cloudflare.com/ajax/libs/js-xss/0.3.3/xss.min",
+require([
+	'./settings',
+	'plugins/optional', // require this plugin separately to check in advance whether we have a local config
+	'config'
+], (settings, optional, appConfig) => {
+	const cdnRefs = {};
+	Object.entries(settings.paths).forEach(([name, path]) => {
+		cdnRefs[name] = appConfig.useBundled3dPartyLibs
+			? 'assets/bundle/bundle'
+			: path;
+	});
 
-		"moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min",
-		"querystring": "https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min",
-
-    "bootstrap-select": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/js/bootstrap-select",
-    "bootstrap-select-css": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/css/bootstrap-select.min",
-    "less-js": "https://cdnjs.cloudflare.com/ajax/libs/less.js/3.0.1/less.min",
-		"file-saver": "FileSaver"//"https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min",
-	}
-});
-
-requirejs(['bootstrap'], function () { // bootstrap must come first
+	requirejs.config({
+		...settings,
+		urlArgs: bustCache,
+		deps: ['css!styles/jquery.dataTables.min',
+			'css!styles/jquery.dataTables.colVis.css'
+		],
+		paths: {
+			...localRefs,
+			...cdnRefs,
+		},
+	});
+	require(['bootstrap'], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
-	requirejs([
+	require([
 		'knockout',
 		'app',
 		'appConfig',
 		'webapi/AuthAPI',
 		'webapi/SourceAPI',
-		'ohdsi.util',
+		'assets/ohdsi.util',
 		'lscache',
 		'atlas-state',
 		'vocabularyprovider',
@@ -231,7 +112,7 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 
 		ko.applyBindings(pageModel, document.getElementsByTagName('html')[0]);
 		httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
-		httpService.setUserTokenGetter(() => authApi.token());
+		httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
 
 		// establish base priorities for daimons
 		var evidencePriority = 0;
@@ -542,4 +423,5 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 					return "Changes will be lost if you do not save.";
 			});
 	});
+});	
 });

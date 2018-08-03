@@ -1,0 +1,106 @@
+<heading-title params="name: 'Incidence Rate Analysis', icon: 'bolt', theme: 'dark'"></heading-title>
+<div data-bind="visible:!loading()">
+	<!-- ko if: selectedAnalysis() != null -->
+	<div>
+		<div class="asset-heading">
+			<input type="text" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !(selectedAnalysis().name() && (selectedAnalysis().name().length > 0)) }, enable: isEditable"></input>
+			<div class="btn-group" role="group">
+				<button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable: (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}"><i class="fa fa-save"></i></button>
+				<button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
+				<!-- ko if: selectedAnalysis().id() != null -->
+				<button class="btn btn-sm btn-primary" title="Create a copy" data-bind="click: copy, enable: canCreate && !dirtyFlag().isDirty()"><i class="fa fa-copy"></i></button>
+				<!-- ko ifnot: isRunning -->
+				<button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: isDeletable, css: { 'disabled': !isDeletable }"><i class="fa fa-trash-o"></i></button>
+				<!-- /ko -->
+				<!-- /ko -->
+				<!-- ko if: selectedAnalysis().id() != null && !dirtyFlag().isDirty() && !isRunning() && sources().length > 0 -->
+				<div class="btn-group" role="group">
+					<div>
+						<button class="btn btn-sm btn-default dropdown-toggle" type="button" id="generateSources" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Generate...
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="generateSources" data-bind="foreach: generateActionsSettings.actionOptions">
+							<li><a class="clickable" data-bind="click: $data.action, html: $data.text + '<br /><i class=\'disabled\'>' + $data.description + '</i>'"></a></li>
+							<li role="separator" class="divider" data-bind="visible: ($index() < ($parent.generateActionsSettings.actionOptions.length - 1))"></li>
+						</ul>
+					</div>
+				</div>
+				<!-- /ko -->
+			</div>
+		</div>
+	
+		<ul class="nav nav-tabs">
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'definition' }, click: function() { $component.activeTab('definition') };">
+				<a>Definition</a>
+			</li>
+
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'conceptsets' }, click: function() { $component.activeTab('conceptsets') };">
+				<a>Concept Sets</a>
+			</li>
+
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'generation' }, click: function() { $component.activeTab('generation') };">
+				<a>Generation</a>                
+			</li>
+            
+            <li role="presentation" data-bind="css: { active: $component.activeTab() == 'utilities' }, click: function() { $component.activeTab('utilities') };"><a>Utilities</a>
+            </li>
+            
+		</ul>
+		<div class="tab-content">
+			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'definition' }" class="tab-pane">
+				<div data-bind="eventListener: { event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}">
+					<ir-analysis-editor params="analysis: selectedAnalysis().expression, analysisCohorts: analysisCohorts"></ir-analysis-editor>
+				</div>
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'conceptsets' }" class="tab-pane">
+				<div style="padding-bottom: 10px;" class="pull-right">
+					<!-- Button is hidden since function exportConceptSetsCSV not yet implemented -->
+					<button type="button" style="display: none" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
+				</div>
+				<!-- ko with: selectedAnalysis().expression -->										
+					<concept-set-builder params="conceptSets: ConceptSets, ref: $parent.conceptSetEditor"></concept-set-builder>
+				<!-- /ko -->			
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'generation' }, 
+																			eventListener: [{ event: 'click', selector: 'button.removeResult', callback: removeResult}, {event: 'click', selector: 'button.execute', callback: onExecuteClick}]" class="tab-pane">
+				<button type="button" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportAnalysisCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export Analysis to CSV</button>
+				<ir-analysis-results params="sources: filteredSources, analysisCohorts: analysisCohorts"></ir-analysis-results>
+			</div>		
+            <div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'utilities' }" class="tab-pane">
+                <div class="paddedWrapper">
+                    <ul class="nav nav-pills">
+                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
+                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
+                    </ul>
+                    <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
+                        <div class="paddedWrapper">
+                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.importJSON"></textarea>
+                            <div style="text-align: right">
+                                <button class="btn btn-sm btn-primary" data-bind="click: $component.import">Import</button>
+                            </div>
+                        </div>
+                    </div>                
+                    <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'export'" class="tab-pane">
+                        <div class="paddedWrapper">
+                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>	
+	</div>
+
+	<div data-bind="modal: showConceptSetBrowser" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">Select Concept Set...</div>
+				<div class="paddedWrapper">
+					<cohort-concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: selectedAnalysis().expression().ConceptSets, onActionComplete: onConceptSetSelectAction"></cohort-concept-set-browser>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /ko -->
+</div>
+<div data-bind="visible:loading()" class="loading">loading</div>
