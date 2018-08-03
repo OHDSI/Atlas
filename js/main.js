@@ -20,8 +20,6 @@ const localRefs = {
 	"cohort-comparison-r-code": "components/cohort-comparison-r-code",
 	"cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
 	"user-bar": "components/user-bar",
-	"ir-manager": "components/ir-manager",
-	"ir-browser": "components/ir-browser",
 	"faceted-datatable": "components/faceted-datatable",
 	"profile-manager": "components/profile/profile-manager",
 	"explore-cohort": "components/explore-cohort",
