@@ -2,10 +2,11 @@ define(
     (require, factory) => {
 
         const ko = require('knockout');
+        const { AuthorizedRoute } = require('providers/Route');
 
         function routes(appModel) {
 
-            const characterizationViewEdit = function(id, section, subId) {
+            const characterizationViewEdit = new AuthorizedRoute((id, section, subId) => {
                 appModel.activePage(this.title);
                 require(['./components/characterizations/characterization-view-edit'], function () {
                     const view = 'characterization-view-edit';
@@ -24,10 +25,10 @@ define(
 
                     appModel.currentView(view);
                 });
-            };
+            });
 
             return {
-                'cc/characterizations': () => {
+                'cc/characterizations': new AuthorizedRoute(() => {
                     appModel.activePage(this.title);
                     require(['./components/characterizations/characterizations-list'], function () {
                         appModel.componentParams = {
@@ -35,10 +36,10 @@ define(
                         };
                         appModel.currentView('characterizations-list');
                     });
-                },
+                }),
                 'cc/characterizations/:id:/:section:': characterizationViewEdit,
                 'cc/characterizations/:id:/:section:/:subId:': characterizationViewEdit, // for executions
-                'cc/feature-analyses': () => {
+                'cc/feature-analyses': new AuthorizedRoute(() => {
                     appModel.activePage(this.title);
                     require(['./components/feature-analyses/feature-analyses-list'], function () {
                         appModel.componentParams = {
@@ -46,7 +47,7 @@ define(
                         };
                         appModel.currentView('feature-analyses-list');
                     });
-                },
+                }),
             };
         }
 

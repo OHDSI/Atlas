@@ -7,7 +7,7 @@ define([
     'providers/Component',
     'utils/CommonUtils',
     'lodash',
-    'cohort-definition-browser',
+    'components/cohort-definition-browser',
     'pages/characterizations/components/feature-analyses/feature-analyses-browser',
     './characterization-params-create-modal',
     'less!./characterization-design.less',

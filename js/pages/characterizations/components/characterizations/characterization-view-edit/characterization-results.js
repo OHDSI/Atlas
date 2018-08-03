@@ -118,7 +118,7 @@ define([
 
             this.analyses = this.data.map(a => ({label: a.analysisName, value: a.analysisId}));
 
-            this.filterList = [
+            this.filterList = ko.observableArray([
                 {
                     type: 'multiselect',
                     label: 'Cohorts',
@@ -133,7 +133,7 @@ define([
                     options: ko.observableArray(this.analyses),
                     selectedValues: ko.observableArray(this.analyses.map(c => c.value)),
                 }
-            ];
+            ]);
 
             this.reportList = this.prepareTabularData(this.data, this.filterList);
 
@@ -172,7 +172,7 @@ define([
 
         prepareTabularData(data, filters) {
             return ko.computed(() => {
-                const filteredData = this.filterData(data, filterUtils.getSelectedFilterValues(filters));
+                const filteredData = this.filterData(data, filterUtils.getSelectedFilterValues(filters()));
 
                 const convertedData = filteredData.map(analysis => {
                     let convertedAnalysis;

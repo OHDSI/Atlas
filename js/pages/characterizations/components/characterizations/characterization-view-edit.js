@@ -10,7 +10,7 @@ define([
     'webapi/AuthAPI',
     'providers/Component',
     'utils/CommonUtils',
-    'ohdsi.util',
+    'assets/ohdsi.util',
     'text!pages/characterizations/stubs/characterization-design-data.json',
     'less!./characterization-view-edit.less',
     'components/tabs',
@@ -79,14 +79,14 @@ define([
                 case 'results':
                     this.selectedTab(1);
                     this.componentName('characterization-view-edit-results');
-                    this.componentParams({ ...this.componentParams(), executionId: params.subId });
+                    this.componentParams({ ...this.componentParams(), executionId: this.params.subId });
                     break;
                 case 'utils':
                     this.selectedTab(2);
                     this.componentName('characterization-view-edit-utils');
                     break;
                 default:
-                    commonUtils.routeTo('/cc/characterizations/' + params.id + '/design');
+                    commonUtils.routeTo('/cc/characterizations/' + this.params.id + '/design');
                     break;
             }
         }
