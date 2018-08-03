@@ -14,7 +14,7 @@ define([
 		constructor(params) {
 			super(params);
 
-			this.selectedTab = ko.computed(() => params.selectedTab ? params.selectedTab() : 0);
+			this.selectedTab = params.selectedTab ? params.selectedTab : ko.observable(0);
 			this.tabs = ko.observableArray(params.tabs || []);
 
 			this.selectTab = params.selectTab || (idx => this.selectedTab(idx));

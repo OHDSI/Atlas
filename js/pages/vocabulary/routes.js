@@ -1,26 +1,30 @@
 define(
 	(require, factory) => {
+        const ko = require('knockout');
+
 		function routes(appModel) {
+
+            const search = function(query) {
+                appModel.activePage(this.title);
+                require(['./vocabulary'], function (search) {
+                    const view = 'vocabulary';
+
+                    if (appModel.currentView() !== view) {
+                        appModel.componentParams = {
+                            model: appModel,
+                            query: ko.observable(),
+                        };
+                    }
+
+                    appModel.componentParams.query(query ? unescape(query) : null);
+
+                    appModel.currentView(view);
+                });
+            };
+
 			return {        
-				'/search/:query:': (query) => {
-					appModel.activePage(this.title);
-					require(['./vocabulary'], function (search) {
-						appModel.componentParams = {
-							model: appModel,
-							query: unescape(query)
-						};
-						appModel.currentView('vocabulary');
-					});
-				},
-				'/search': () => {
-					appModel.activePage(this.title);
-					require(['./vocabulary'], function (search) {
-						appModel.componentParams = {
-							model: appModel
-						};
-						appModel.currentView('vocabulary');
-					});
-				},
+				'/search/:query:': search,
+				'/search': search,
 			};
 		}
 

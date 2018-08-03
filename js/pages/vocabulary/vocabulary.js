@@ -18,7 +18,7 @@ define([
 	class Vocabulary extends Component {
 		constructor(params) {
 			super(params);
-			this.componentParams = params;
+			this.componentParams = ko.computed(() => params);
 			return this;
 		}
 	}
