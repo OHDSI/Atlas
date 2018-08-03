@@ -321,8 +321,7 @@ define([
 
 				this.loadingStatus('loading profile data from database');
 				this.personRequest = this.personRequests[url] = profileService.getProfile(this.sourceKey(), this.personId(), this.cohortDefinitionId())
-					.then(({ data }) => {
-						const person = data;
+					.then((person) => {
 						if (this.personRequest !== this.personRequests[url]) {
 							return;
 						}

@@ -8,7 +8,7 @@ define(function (require, exports) {
     const data = {
       cohort: cohort || 0,
     };
-    const response = httpService.doGet(`${config.webAPIRoot}${sourceKey}/person/${personId}`, data);
+    const response = httpService.doGet(`${config.webAPIRoot}${sourceKey}/person/${personId}`, data).then(({ data }) => data);
     response.catch(er => authApi.handleUnauthorized(er));
 
     return response;
