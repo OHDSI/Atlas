@@ -20,10 +20,6 @@ const settingsObject = {
       location: "modules/circe"
     },
     {
-      name: "iranalysis",
-      location: "modules/iranalysis"
-    },
-    {
       name: "extenders",
       location: "extenders"
     },
