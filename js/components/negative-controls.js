@@ -6,9 +6,10 @@ define(['knockout',
 	'webapi/ConceptSetAPI',
 	'atlas-state',
 	'job/jobDetail',
-  'webapi/MomentAPI',
+  	'webapi/MomentAPI',
 	'assets/ohdsi.util',
-	'databindings'
+	'databindings',
+	'evidence',
 ], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, sharedState, jobDetail, momentApi) {
 	function negativeControls(params) {
 		var self = this;
@@ -37,6 +38,7 @@ define(['knockout',
 		self.loadingDrugLabelExists = ko.observable(false);
 		self.selectedReportCaption = ko.observable();
 		self.recordCountsRefreshing = ko.observable(false);
+		self.showEvidencePairs = ko.observable(false);
 		self.recordCountClass = ko.pureComputed(function () {
 			return self.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
 		});
@@ -44,6 +46,10 @@ define(['knockout',
 			.name() + " - Candidate Controls");
 		self.csTarget = ko.observable();
 		self.csTargetCaption = ko.observable();
+
+		self.rowClick = function(s, p, d) {
+			self.showEvidencePairs(true);
+		}
 
 		self.negControlColumns = [
 			{
@@ -84,10 +90,19 @@ define(['knockout',
 			},
 			{
 				title: 'Publication Count (Exact Concept Match)',
-				data: d => {
-					return d.exactPmidCount.toString()
-						.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				render: function(s, p, d) {
+					var count = d.exactPmidCount.toString();
+					var countFormatted = d.exactPmidCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					if (count == "0") {
+						return countFormatted;
+					} else {
+						return '<span class="linkish">' + countFormatted + '</span>';
+					}
+					// return d.exactPmidCount.toString()
+					// 	.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
+				orderable: true,
+				searchable: true
 			},
 			{
 				title: 'Publication Count (Parent Concept Match)',

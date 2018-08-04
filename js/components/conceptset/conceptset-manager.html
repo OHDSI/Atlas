@@ -148,7 +148,6 @@
   </div>
 
   <div data-bind="visible: model.currentConceptSetMode() == 'evidence'">
-    <evidence-pair-viewer params="{model: pageModel}"></evidence-pair-viewer>
     <negative-controls params="{model: pageModel, negativeControls: model.currentConceptSetNegativeControls, selectedConcepts: selectedConcepts, conceptSet: model.currentConceptSet, dirtyFlag: model.currentConceptSetDirtyFlag, conceptIds: model.conceptSetInclusionIdentifiers, defaultResultsUrl: model.resultsUrl, saveConceptSet: $component.saveConceptSet}"></negative-controls>
   </div>
 

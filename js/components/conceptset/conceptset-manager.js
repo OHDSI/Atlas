@@ -18,7 +18,6 @@ define(['knockout',
 	'circe',
 	'conceptset-modal',
 	'css!components/conceptset/style.css',
-	'evidence',
 ], function (ko, view, config, ohdsiUtil, utils, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard, conceptSetService) {
 	function conceptsetManager(params) {
 		var self = this;

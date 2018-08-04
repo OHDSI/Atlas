@@ -122,7 +122,7 @@
 		</div>
 	</div>
 	<div class="paddedWrapper" id="negControlResults">
-		<faceted-datatable params="{reference:$component.negativeControls, columns: negControlColumns, options:negControlOptions, order: $component.negControlOptions.order}">
+		<faceted-datatable params="{reference:$component.negativeControls, columns: negControlColumns, options:negControlOptions, order: $component.negControlOptions.order,rowClick:rowClick}">
 		</faceted-datatable>
 	</div>
 </div>
@@ -160,6 +160,19 @@
 			</div>
 			<div class="modal-body">
 				<cohort-concept-set-browser params="{onRespositoryConceptSetSelected: $component.conceptsetSelected, repositoryConceptSetTableId: 'negativeControlConceptSets', disableConceptSetButton: $component.disableNewConceptSetButton}"></cohort-concept-set-browser>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" data-bind="modal: $component.showEvidencePairs" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<div class="modal-title">Viewing Evidence</div>
+			</div>
+			<div class="modal-body">
+				<!-- <evidence-pair-viewer params="{model: pageModel}"></evidence-pair-viewer> -->
 			</div>
 		</div>
 	</div>
