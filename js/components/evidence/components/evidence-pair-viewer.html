@@ -1,0 +1,5 @@
+<h2>Evidence Pair Viewer</h2>
+<div class="loading" data-bind="if:$component.loading()">loading evidence pairs</div>
+<div class="paddedWrapper" data-bind="if:!$component.loading()">
+    Evidence Pairs: <span data-bind="text: $component.drugConditionPairs().length"></span>
+</div>
