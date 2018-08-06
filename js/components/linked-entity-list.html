@@ -1,0 +1,21 @@
+<div data-bind="css: classes('linked-entities')">
+	<h2 data-bind="css: classes('title'), text: $component.title"></h2>
+	<!-- ko if: descr && descr.length > 0 -->
+		<p data-bind="css: classes('descr'), text: $component.descr"></p>
+	<!-- /ko -->
+	<div data-bind="css: classes('actions')">
+		<button type="button"
+			data-bind="
+				css: classes({ element: 'btn', extra: ['btn btn-primary btn-sm']}),
+				text: $component.newItemLabel,
+				click: $component.newItemAction
+		"></button>
+	</div>
+	<table data-bind="
+		css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
+		dataTable:{
+			data: $component.data,
+			options: {columns: $component.columns}
+		}
+	"/>
+</div>
