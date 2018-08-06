@@ -58,18 +58,16 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.loading = ko.observable(false);
     self.shouldShowFileInput = ko.observable();
     self.dirtyFlag = self.model.currentSourceDirtyFlag;
-
     self.selectedSource = params.model.currentSource;
     self.selectedSourceId = params.model.selectedSourceId;
-
+    self.authType = ko.observable("password");
     self.options = {};
-
     self.isAuthenticated = authApi.isAuthenticated;
-		
+
 	self.hasAccess = ko.pureComputed(function () {
-		if (!config.userAuthenticationEnabled) { 
+		if (!config.userAuthenticationEnabled) {
 			return false;
-		} else {				
+		} else {
 			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
 		}
 	});
@@ -115,6 +113,10 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
         'Source ' + self.model.currentSource().name();
     });
 
+    self.showDiv = ko.computed(() => {
+        return self.authType() === 'keytab';
+    });
+
     self.newSource = function () {
       self.selectedSource(new Source());
       self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
@@ -126,8 +128,10 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
             .then(function () {
                 self.selectedSource().shouldShowFileInput(true);
                 self.loading(false);
-            })
-            .catch(function () { self.loading(false); });
+            },
+                function () {
+                self.loading(false);
+            });
     };
 
     var keytab;
@@ -191,7 +195,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     };
 
     self.init = function () {
-		if (self.hasAccess()) {				
+		if (self.hasAccess()) {
 			if (self.selectedSourceId() == null && self.selectedSource() == null) {
 				self.newSource();
 			} else {
