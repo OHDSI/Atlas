@@ -1,7 +1,7 @@
 define(
   (require, factory) => {
     const { AuthorizedRoute } = require('providers/Route');
-    function routes(appModel) {
+    function routes(appModel, router) {
       return {        
         '/cohortdefinitions': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
@@ -10,13 +10,10 @@ define(
             './cohort-definition-manager',
             'components/cohort-definition-browser',
           ], function () {
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('cohort-definitions');
           });
         }),
-        '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': new AuthorizedRoute((cohortDefinitionId, path) => {
+        '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': new AuthorizedRoute((cohortDefinitionId, path = 'definition') => {
           appModel.activePage(this.title);
           require([
            'components/cohortbuilder/CohortDefinition',
@@ -31,16 +28,13 @@ define(
           ], function () {
             // Determine the view to show on the cohort manager screen based on the path
             path = path.split("/");
-            var view = 'definition'
+            let view = 'definition';
             if (path.length > 0 && path[0] != "") {
               view = path[0];
             }
             // Determine any optional parameters to set based on the query string
-            qs = appModel.router.qs(); // Get the query string parameters
+            qs = router.qs(); // Get the query string parameters
             var sourceKey = qs.sourceKey || null;
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('cohort-definition-manager');
             appModel.currentCohortDefinitionMode(view);
             appModel.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details', sourceKey);
@@ -58,9 +52,6 @@ define(
             './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
           ], function () {
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('cohort-definition-manager');
             appModel.currentCohortDefinitionMode('conceptsets');
             appModel.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
@@ -73,9 +64,6 @@ define(
             './cohort-definition-manager',
             'components/cohort-definition-browser',
           ], function () {
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('report-manager');
           });
         }),

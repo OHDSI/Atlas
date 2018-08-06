@@ -1,5 +1,24 @@
-define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'components/ac-access-denied'],
-  function (ko, view, config, ohdsiUtil, sourceApi, roleApi, lodash) {
+define([
+  'knockout',
+  'text!./source-manager.html',
+  'appConfig',
+  'assets/ohdsi.util',
+  'webapi/SourceAPI',
+  'webapi/RoleAPI',
+  'lodash',
+  'webapi/AuthAPI',
+  'components/ac-access-denied'
+],
+  function (
+    ko,
+    view,
+    config,
+    ohdsiUtil,
+    sourceApi,
+    roleApi,
+    lodash,
+    authApi
+  ) {
 
   var defaultDaimons = {
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
@@ -46,7 +65,6 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
 
   function source(params) {
     var self = this;
-    var authApi = params.model.authApi;
     self.config = config;
     self.model = params.model;
     self.loading = ko.observable(false);

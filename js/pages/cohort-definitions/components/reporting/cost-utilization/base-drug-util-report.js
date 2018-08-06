@@ -7,7 +7,7 @@ define(
     'utils/BemHelper',
     'appConfig',
     'pages/cohort-definitions/const',
-    'services/CohortResultsService',
+    'services/CohortResults',
     'components/visualizations/filter-panel/filter-panel',
     'less!./drug-util-detailed.less',
   ],

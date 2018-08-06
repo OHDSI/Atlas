@@ -6,9 +6,6 @@ define(
         '/iranalysis': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./ir-browser'], function () {
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('ir-browser');
           });
         }),
@@ -16,9 +13,6 @@ define(
           appModel.activePage(this.title);
           require(['./ir-manager'], function () {
             appModel.selectedIRAnalysisId(null);
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('ir-manager');
           });
         }),
@@ -31,10 +25,6 @@ define(
           }
           require(['./ir-manager'], function () {
             appModel.selectedIRAnalysisId(+analysisId);
-            appModel.componentParams = {
-              model: appModel,
-              activeTab: activeTab
-            };
             appModel.currentView('ir-manager');
           });
         }),

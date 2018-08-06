@@ -6,9 +6,6 @@ define(
         '/estimation': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['cohort-comparison-browser'], function () {
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('cohort-comparison-browser');
           });
         }),

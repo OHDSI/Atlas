@@ -1,6 +1,8 @@
 define(function (require, exports) {
 
-	var ko = require('knockout');
+	const ko = require('knockout');
+	const httpService = require('services/http');
+	const sharedState = require('atlas-state');
 
 	function getIncludedConceptSetDrawCallback({ model, searchConceptsColumns }) {
 		return async function (settings) {
@@ -36,13 +38,37 @@ define(function (require, exports) {
 
 	function getAncestorsRenderFunction() {
 		return (s, p, d) => `<a data-bind="click: function() {$parents[1].showAncestorsModal(${d.CONCEPT_ID});}, tooltip: '${d.ANCESTORS.map(d => d.CONCEPT_NAME).join('<br>')}'" class="clickable">${d.ANCESTORS.length}</a>`;
+	}
 
+	function enchanceConceptSet(conceptSetItem) {
+		return {
+			...conceptSetItem,
+			isExcluded: ko.observable(conceptSetItem.isExcluded),
+			includeDescendants: ko.observable(conceptSetItem.includeDescendants),
+			includeMapped: ko.observable(conceptSetItem.includeMapped),
+		};
+	}
+
+	function loadConceptSet(id) {
+		return httpService.doGet(config.api.url + 'conceptset/' + id).then(({ data }) => data);
+	}
+
+	function loadConceptSetExpression(conceptSetId) {
+		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression').then(({data}) => data);
+	}
+
+	function lookupIdentifiers(identifiers) {
+		return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', JSON.stringify(identifiers));
 	}
 
 	const api = {
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
 		getAncestorsRenderFunction: getAncestorsRenderFunction,
+		enchanceConceptSet,
+		loadConceptSet,
+		loadConceptSetExpression,
+		lookupIdentifiers,
 	};
 
 	return api;

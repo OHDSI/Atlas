@@ -6,9 +6,6 @@ define(
         '/datasources': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./data-sources'], function () {
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('data-sources');
           });
         }),
@@ -16,7 +13,6 @@ define(
           appModel.activePage(this.title);
           require(['./data-sources'], function () {
             appModel.componentParams = {
-              model: appModel,
               reportName: reportName,
               sourceKey: sourceKey
             };

@@ -9,7 +9,8 @@ define(['knockout',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'clipboard',
-	'services/ConceptSetService',
+	'services/ConceptSet',
+	'webapi/AuthAPI',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -18,10 +19,23 @@ define(['knockout',
 	'circe',
 	'conceptset-modal',
 	'css!components/conceptset/style.css',
-], function (ko, view, config, ohdsiUtil, utils, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard, conceptSetService) {
+], function (
+	ko,
+	view,
+	config,
+	ohdsiUtil,
+	utils,
+	cdmResultsAPI,
+	vocabularyAPI,
+	conceptSetAPI,
+	ConceptSet,
+	sharedState,
+	clipboard,
+	conceptSetService,
+	authApi
+) {
 	function conceptsetManager(params) {
 		var self = this;
-		var authApi = params.model.authApi;
 		self.model = params.model;
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();

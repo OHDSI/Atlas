@@ -14,10 +14,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'd3',
 	'job/jobDetail',
 	'pages/cohort-definitions/const',
-	'services/ConceptSetService',
+	'services/ConceptSet',
 	'providers/Component',
+	'providers/AutoBind',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
+	'webapi/AuthAPI',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -52,8 +54,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	cohortConst,
 	conceptSetService,
 	Component,
+	AutoBind,
 	commonUtils,
-	costUtilConst
+	costUtilConst,
+	authApi,
 ) {
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -89,7 +93,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		constructor(params) {
 			super(params);
 			this.pollTimeout = null;
-			this.authApi = params.model.authApi;
+			this.authApi = authApi;
 			this.config = config;
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.model = params.model;
@@ -97,6 +101,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.warningCount = ko.observable(0);
 			this.infoCount = ko.observable(0);
 			this.criticalCount = ko.observable(0);
+			this.cdmSources = ko.computed(() => {
+				return sharedState.sources().filter(commonUtils.hasCDM);
+			});
 			this.warningClass = ko.computed(() => {
 				if (this.warningsTotals() > 0){
 					if (this.criticalCount() > 0) {
@@ -588,7 +595,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.selectedCriteria = ko.observable();
 
 			// preserve context to use in knockout bindings
-			this.delete = this.delete.bind(this);
+			/*this.delete = this.delete.bind(this);
 			this.save = this.save.bind(this);
 			this.close = this.close.bind(this);
 			this.copy = this.copy.bind(this);
@@ -636,7 +643,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.copyIncludedConceptIdentifierListToClipboard = this.copyIncludedConceptIdentifierListToClipboard.bind(this);
 			this.copyTextViewToClipboard = this.copyTextViewToClipboard.bind(this);
 			this.copyCohortExpressionJSONToClipboard = this.copyCohortExpressionJSONToClipboard.bind(this);
-			this.copyCohortSQLToClipboard = this.copyCohortSQLToClipboard.bind(this);
+			this.copyCohortSQLToClipboard = this.copyCohortSQLToClipboard.bind(this);*/
 		}
 
 			// METHODS

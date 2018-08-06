@@ -25,7 +25,7 @@
 		<div>
 			<label>Specify the statistical model used predict the outcome amongst the target cohort:</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: patientLevelPrediction().modelTypeOptions, optionsText:'name', optionsValue:'id', value: patientLevelPrediction().modelType, optionsCaption: 'Select a model...'"></select>
+				<select class="form-control" data-bind="options: patientLevelPrediction().modelTypeOptions, optionsText:'name', optionsValue:'id', value: patientLevelPrediction().modelType, optionsCaption: 'Select a $root...'"></select>
 			</div>
 		</div>
 		<div data-bind="visible: $component.patientLevelPrediction().modelTypeSettings().length > 0">

@@ -7,7 +7,6 @@ define(
 					appModel.activePage(this.title);
 					require(['./vocabulary'], function (search) {
 						appModel.componentParams = {
-							model: appModel,
 							query: unescape(query)
 						};
 						appModel.currentView('vocabulary');
@@ -16,9 +15,6 @@ define(
 				'/search': new Route(() => {
 					appModel.activePage(this.title);
 					require(['./vocabulary'], function (search) {
-						appModel.componentParams = {
-							model: appModel
-						};
 						appModel.currentView('vocabulary');
 					});
 				}),

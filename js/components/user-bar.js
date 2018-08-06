@@ -5,19 +5,20 @@ define([
 	'atlas-state',
 	'providers/Component',
 	'utils/CommonUtils',
+	'webapi/AuthAPI',
 ], function (
 	ko,
 	view,
 	appConfig,
 	state,
 	Component,
-	commonUtils
+	commonUtils,
+	authApi
 ) {
 	class UserBar extends Component {
 		constructor(params) {
 			super(params);			
-			const authApi = params.model.authApi;
-			
+			this.model = params.model;
 			this.appConfig = appConfig;
 			this.token = authApi.token;
 			this.tokenExpired = authApi.tokenExpired;    

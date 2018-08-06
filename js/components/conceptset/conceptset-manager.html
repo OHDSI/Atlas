@@ -12,47 +12,47 @@
     <div class="wrapperTitle">
       <i class="fa fa-shopping-cart"></i> Concept Set
     </div>
-    <div class="asset-heading" data-bind="if: model.currentConceptSet">
-      <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: canEdit() ? null : true }, textInput: model.currentConceptSet().name" />
+    <div class="asset-heading" data-bind="if: $root.currentConceptSet">
+      <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: canEdit() ? null : true }, textInput: $root.currentConceptSet().name" />
       <div class="btn-group">
         <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:!canSave()}"><i class="fa fa-save"></i></button>
         <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }"><i class="fa fa-times"></i></button>
-        <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: model.currentConceptSet() && model.currentConceptSet().id > 0, css: {disabled:!canCreate()}"><i class="fa fa-copy"></i></button>
+        <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: $root.currentConceptSet() && $root.currentConceptSet().id > 0, css: {disabled:!canCreate()}"><i class="fa fa-copy"></i></button>
         <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { optimize(); }, css: {disabled: !canEdit() && !canCreate()}">Optimize</button>
         <button type="button" class="btn btn-sm btn-danger"  data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
       </div>
     </div>
 
     <ul class="nav nav-tabs">
-      <li role="presentation" data-bind="click: function() {$component.routeTo('details');}, attr: {class: model.currentConceptSetMode() == 'details' ? 'active' : ''}"><a>Concept Set Expression</a>
+      <li role="presentation" data-bind="click: function() {$component.routeTo('details');}, attr: {class: $root.currentConceptSetMode() == 'details' ? 'active' : ''}"><a>Concept Set Expression</a>
       </li>
-      <li role="presentation" data-bind="click: function() {$component.routeTo('included');}, attr: {class: model.currentConceptSetMode() == 'included' ? 'active' : ''}">
+      <li role="presentation" data-bind="click: function() {$component.routeTo('included');}, attr: {class: $root.currentConceptSetMode() == 'included' ? 'active' : ''}">
         <a>Included Concepts
-                  <span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
-                  <span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-circle-o-notch fa-spin"></i></span></a>
+                  <span class="badge" data-bind="if: !$root.resolvingConceptSetExpression()"><span data-bind="text:$root.conceptSetInclusionCount()"></span></span>
+                  <span class="badge" data-bind="if: $root.resolvingConceptSetExpression();"><i class="fa fa-circle-o-notch fa-spin"></i></span></a>
       </li>
       </li>
-      <li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: model.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
+      <li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: $root.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
         <a>Included Source Codes</a>
       </li>
-      <li role="presentation" data-bind="visible: $component.displayEvidence(), click: function() {$component.routeTo('evidence');}, attr: {class: model.currentConceptSetMode() == 'evidence' ? 'active' : ''}">
+      <li role="presentation" data-bind="visible: $component.displayEvidence(), click: function() {$component.routeTo('evidence');}, attr: {class: $root.currentConceptSetMode() == 'evidence' ? 'active' : ''}">
         <a>Explore Evidence</a>
       </li>
-      <li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: model.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
+      <li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: $root.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
       </li>
-      <li role="presentation" data-bind="click: function() {$component.routeTo('compare');}, attr: {class: model.currentConceptSetMode() == 'compare' ? 'active' : ''}"><a>Compare</a>
+      <li role="presentation" data-bind="click: function() {$component.routeTo('compare');}, attr: {class: $root.currentConceptSetMode() == 'compare' ? 'active' : ''}"><a>Compare</a>
       </li>
     </ul>
   </div>
 
-  <div id="wrapperConceptSetAnalysis" data-bind="if: model.currentConceptSetMode() == 'analysis'">
-    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: model.denseSiblings}"></faceted-datatable>
+  <div id="wrapperConceptSetAnalysis" data-bind="if: $root.currentConceptSetMode() == 'analysis'">
+    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: $root.denseSiblings}"></faceted-datatable>
   </div>
 
-  <div class="loading" data-bind="if:model.loadingSourcecodes() || model.loadingIncluded">loading</div>
+  <div class="loading" data-bind="if:$root.loadingSourcecodes() || $root.loadingIncluded">loading</div>
 
-  <div data-bind="visible: model.currentConceptSetMode() == 'included' && !model.loadingIncluded()">
-    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: model.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
+  <div data-bind="visible: $root.currentConceptSetMode() == 'included' && !$root.loadingIncluded()">
+    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: $root.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: $root.contextSensitiveLinkColor}"></faceted-datatable>
     <div class="linkLegend">
       <div class="linkLegendItem">
         <div class="swatch standard">
@@ -73,11 +73,11 @@
     <div class="clear"></div>
   </div>
 
-  <div data-bind="visible: model.currentConceptSetMode() == 'sourcecodes' && !model.loadingSourcecodes() && !model.loadingIncluded()">
-    <faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
+  <div data-bind="visible: $root.currentConceptSetMode() == 'sourcecodes' && !$root.loadingSourcecodes() && !$root.loadingIncluded()">
+    <faceted-datatable params="{columns: $root.relatedSourcecodesColumns, options: $root.relatedSourcecodesOptions, reference: $root.includedSourcecodes}"></faceted-datatable>
   </div>
 
-  <div data-bind="visible: model.currentConceptSetMode() == 'details'">
+  <div data-bind="visible: $root.currentConceptSetMode() == 'details'">
     <div class="paddedWrapper">
       <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
               data: selectedConcepts(),
@@ -90,17 +90,17 @@
                                   showAll: 'Show All Columns',
                                   restore: 'Reset Columns'
                               },
-                              rowCallback: model.contextSensitiveLinkColor,
+                              rowCallback: $root.contextSensitiveLinkColor,
                               lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
                               orderClasses: false,
                               deferRender: true,
                               autoWidth: false,
                               order: [[3, 'desc']],
                 columns: [
-                                      { title: '<li class=\'fa fa-shopping-cart\'></li>', render: model.renderConceptSetItemSelector, orderable:false, searchable:false},
+                                      { title: '<li class=\'fa fa-shopping-cart\'></li>', render: $root.renderConceptSetItemSelector, orderable:false, searchable:false},
                                       { title: 'Concept Id', data: 'concept.CONCEPT_ID'},
                                       { title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-                    { title: 'Concept Name', render: model.renderBoundLink},
+                    { title: 'Concept Name', render: $root.renderBoundLink},
                     { title: 'Domain', data: 'concept.DOMAIN_ID' },
                                       { title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
                                       { title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
@@ -108,19 +108,19 @@
                                        title: canEdit() ? '<span id=\'selectAllExclude\' class=\'fa fa-check\'></span> Exclude' : 'Exclude'
                                        , class:'text-center'
                                        , orderable:false
-                                       , render: function() { return model.renderCheckbox('isExcluded');}
+                                       , render: function() { return $root.renderCheckbox('isExcluded');}
                                       },
                                       {
                                        title: canEdit() ? '<span id=\'selectAllDescendants\' class=\'fa fa-check\'></span> Descendants' : 'Descendants'
                                        , class:'text-center'
                                        , orderable:false
-                                       , render: function() { return model.renderCheckbox('includeDescendants');}
+                                       , render: function() { return $root.renderCheckbox('includeDescendants');}
                                       },
                                       {
                                        title: canEdit() ? '<span id=\'selectAllMapped\' class=\'fa fa-check\'></span> Mapped' : 'Mapped'
                                        , class:'text-center'
                                        , orderable:false
-                                       ,render: function() { return model.renderCheckbox('includeMapped');}
+                                       ,render: function() { return $root.renderCheckbox('includeMapped');}
                                       }
                 ]
              }
@@ -147,22 +147,22 @@
     </div>
   </div>
 
-  <div data-bind="visible: model.currentConceptSetMode() == 'evidence'">
-    <negative-controls params="{model: pageModel, negativeControls: model.currentConceptSetNegativeControls, selectedConcepts: selectedConcepts, conceptSet: model.currentConceptSet, dirtyFlag: model.currentConceptSetDirtyFlag, conceptIds: model.conceptSetInclusionIdentifiers, defaultResultsUrl: model.resultsUrl, saveConceptSet: $component.saveConceptSet}"></negative-controls>
+  <div data-bind="visible: $root.currentConceptSetMode() == 'evidence'">
+    <negative-controls params="{model: model, negativeControls: $root.currentConceptSetNegativeControls, selectedConcepts: selectedConcepts, conceptSet: $root.currentConceptSet, dirtyFlag: $root.currentConceptSetDirtyFlag, conceptIds: $root.conceptSetInclusionIdentifiers, defaultResultsUrl: $root.resultsUrl, saveConceptSet: $component.saveConceptSet}"></negative-controls>
   </div>
 
-<div id="wrapperConceptSetExport" data-bind="visible: model.currentConceptSetMode() == 'export'">
+<div id="wrapperConceptSetExport" data-bind="visible: $root.currentConceptSetMode() == 'export'">
   <div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
-  <pre id="conceptSetExpression" data-bind="html: model.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
+  <pre id="conceptSetExpression" data-bind="html: $root.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
   <div class="heading">Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
-  <pre id="conceptIdentifierList" data-bind="html: model.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+  <pre id="conceptIdentifierList" data-bind="html: $root.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
   <div class="heading">Included Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
-  <pre id="includedConceptIdentifierList" data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+  <pre id="includedConceptIdentifierList" data-bind="html: $root.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
   <br/>
-  <button type="button" class="btn btn-success" data-bind="click:function() { exportCSV(); }, css: {disabled:!(model.currentConceptSet() != null && !model.currentConceptSetDirtyFlag.isDirty())}"><i class="fa fa-download" aria-hidden="true"></i>Export To CSV</button>
+  <button type="button" class="btn btn-success" data-bind="click:function() { exportCSV(); }, css: {disabled:!($root.currentConceptSet() != null && !$root.currentConceptSetDirtyFlag.isDirty())}"><i class="fa fa-download" aria-hidden="true"></i>Export To CSV</button>
 </div>
 
-  <div data-bind="visible: model.currentConceptSetMode() == 'compare'">
+  <div data-bind="visible: $root.currentConceptSetMode() == 'compare'">
     <div class="paddedWrapper">
       <div class="heading"><b>Concept Set Comparison</b>: Use this utility to compare the contents of two concept sets to see which concepts they may share.</div>
       <br/>
@@ -192,7 +192,7 @@
           <button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.compareConceptSets;"><i data-bind="css: $component.compareLoadingClass"></i> Compare Concept Sets</button>
         </div>
       </div>
-      <div data-bind="if: !$component.compareReady() && model.currentConceptSetDirtyFlag.isDirty()">
+      <div data-bind="if: !$component.compareReady() && $root.currentConceptSetDirtyFlag.isDirty()">
         <div class="paddedWrapper compare-pane">
           <i class="fa fa-exclamation-triangle"></i> You must save the current concept set before you can perform this comparison.
         </div>
@@ -231,7 +231,7 @@
           <div class="modal-title">Choose a concept set</div>
         </div>
         <div class="modal-body">
-          <cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: null,onRespositoryConceptSetSelected: $component.conceptsetSelected, repositoryConceptSetTableId: 'csCompareConceptSets'"></cohort-concept-set-browser>
+          <cohort-concept-set-browser params="criteriaContext: $root.criteriaContext, cohortConceptSets: null,onRespositoryConceptSetSelected: $component.conceptsetSelected, repositoryConceptSetTableId: 'csCompareConceptSets'"></cohort-concept-set-browser>
         </div>
       </div>
     </div>
@@ -295,7 +295,7 @@
                                                           showAll: 'Show All Columns',
                                                           restore: 'Reset Columns'
                                                       },
-                                                      rowCallback: model.contextSensitiveLinkColor,
+                                                      rowCallback: $root.contextSensitiveLinkColor,
                                                       lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100,'All']],
                                                       orderClasses: false,
                                                       deferRender: true,
@@ -304,13 +304,13 @@
                                         columns: [
                                                               { title: 'Concept Id', data: 'concept.CONCEPT_ID'},
                                                               { title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-                                                              { title: 'Concept Name', render: model.renderBoundLink},
+                                                              { title: 'Concept Name', render: $root.renderBoundLink},
                                                               { title: 'Domain', data: 'concept.DOMAIN_ID' },
                                                               { title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
                                                               { title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
-                                                              { title: 'Exclude', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('isExcluded');} },
-                                                              { title: 'Descendants', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('includeDescendants');} },
-                                                              { title: 'Mapped', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('includeMapped');} }
+                                                              { title: 'Exclude', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('isExcluded');} },
+                                                              { title: 'Descendants', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('includeDescendants');} },
+                                                              { title: 'Mapped', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('includeMapped');} }
                                         ]
                                      }
                                   }">
@@ -333,7 +333,7 @@
                                                               showAll: 'Show All Columns',
                                                               restore: 'Reset Columns'
                                                           },
-                                                          rowCallback: model.contextSensitiveLinkColor,
+                                                          rowCallback: $root.contextSensitiveLinkColor,
                                                           lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100,'All']],
                                                           orderClasses: false,
                                                           deferRender: true,
@@ -342,13 +342,13 @@
                                             columns: [
                                                                   { title: 'Concept Id', data: 'concept.CONCEPT_ID'},
                                                                   { title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-                                                                  { title: 'Concept Name', render: model.renderBoundLink},
+                                                                  { title: 'Concept Name', render: $root.renderBoundLink},
                                                                   { title: 'Domain', data: 'concept.DOMAIN_ID' },
                                                                   { title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
                                                                   { title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
-                                                                  { title: 'Exclude', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('isExcluded');} },
-                                                                  { title: 'Descendants', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('includeDescendants');} },
-                                                                  { title: 'Mapped', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('includeMapped');} }
+                                                                  { title: 'Exclude', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('isExcluded');} },
+                                                                  { title: 'Descendants', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('includeDescendants');} },
+                                                                  { title: 'Mapped', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('includeMapped');} }
                                             ]
                                          }
                                       }">
