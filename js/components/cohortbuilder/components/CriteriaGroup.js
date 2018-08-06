@@ -325,7 +325,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 
 
 		self.addEndWindow = function (corelatedCriteria) {
-			corelatedCriteria.EndWindow(new Window({}));
+			corelatedCriteria.EndWindow(new Window({UseEventEnd:true}));
 		};
 
 		self.removeEndWindow = function (corelatedCriteria) {

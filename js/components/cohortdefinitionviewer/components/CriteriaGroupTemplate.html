@@ -20,12 +20,12 @@
 								name: $component.getCriteriaComponent($data.Criteria), 
 								params: {expression: $component.expression, criteria: $data.Criteria }
 							}"></span>
-			starting between <window-input-viewer params="Window: StartWindow"></window-input-viewer> <cycle-toggle-input-viewer params="{value: StartWindow.UseEndDate, options: $component.options.IndexDateOptions}">
+			where <cycle-toggle-input-viewer params="{rawExpression: StartWindow, value: StartWindow.UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input-viewer> between <window-input-viewer params="Window: StartWindow"></window-input-viewer> <cycle-toggle-input-viewer params="{rawExpression: StartWindow, value: StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input-viewer>
 			<!-- ko if: EndWindow -->
-			and ending between <window-input-viewer params="Window: EndWindow"></window-input-viewer> <cycle-toggle-input-viewer params="{value: EndWindow.UseEndDate, options: $component.options.IndexDateOptions}">
+			and <cycle-toggle-input-viewer params="{value: EndWindow().UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input-viewer> between <window-input-viewer params="Window: EndWindow"></window-input-viewer> <cycle-toggle-input-viewer params="{value: EndWindow().UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input-viewer>
 			<!-- /ko -->
 			<!-- ko if: RestrictVisit -->
-			<br><b>occurring within the same visit</b>
+			<br/><b>occurring within the same visit</b>
 			<!-- /ko -->
 		</div>	
 	</li>

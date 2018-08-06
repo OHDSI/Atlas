@@ -14,7 +14,9 @@ define(['knockout'], function (ko) {
 			Coeff: ko.observable((data.End && data.End.Coeff) === 0 ? 0 : (data.End && data.End.Coeff) || 1)
 		};
 		
-		self.UseEndDate = ko.observable(data.UseEndDate || false);
+		self.UseIndexEnd = ko.observable(data.UseIndexEnd || false);
+		self.UseEventEnd = ko.observable(data.UseEventEnd || false);
+		
 	}
 
 	return Window;
