@@ -5,7 +5,11 @@
     <!-- /ko -->
     <div data-bind="css: classes('actions')">
         <button type="button"
-                data-bind="css: classes({ element: 'btn', extra: ['btn btn-primary btn-sm']}), text: $component.newItemLabel, click: $component.newItemAction"></button>
+            data-bind="
+                css: classes({ element: 'btn', extra: ['btn btn-primary btn-sm']}),
+                text: $component.newItemLabel,
+                click: $component.newItemAction
+        "></button>
     </div>
     <table data-bind="
         css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
