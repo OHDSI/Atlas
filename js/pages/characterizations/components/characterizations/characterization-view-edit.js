@@ -51,12 +51,12 @@ define([
                 return true;
             });
 
-
+            this.sectionList = ['design', 'executions', 'results', 'utils'];
             this.selectedTab = ko.observable();
-            this.componentName = ko.observable();
             this.componentParams = ko.observable({
                 characterizationId: params.characterizationId,
                 design: this.design,
+                executionId: this.params.subId,
             });
 
             params.characterizationId.subscribe(id => this.loadDesignData(id));
@@ -67,27 +67,11 @@ define([
         }
 
         setupSection(section) {
-            switch (section) {
-                case 'design':
-                    this.selectedTab(0);
-                    this.componentName('characterization-design');
-                    break;
-                case 'executions':
-                    this.selectedTab(1);
-                    this.componentName('characterization-view-edit-executions');
-                    break;
-                case 'results':
-                    this.selectedTab(1);
-                    this.componentName('characterization-view-edit-results');
-                    this.componentParams({ ...this.componentParams(), executionId: this.params.subId });
-                    break;
-                case 'utils':
-                    this.selectedTab(2);
-                    this.componentName('characterization-view-edit-utils');
-                    break;
-                default:
-                    commonUtils.routeTo('/cc/characterizations/' + this.params.id + '/design');
-                    break;
+            const tabIdx = this.sectionList.indexOf(section);
+            if (tabIdx > -1) {
+                this.selectedTab(tabIdx);
+            } else {
+                commonUtils.routeTo('/cc/characterizations/' + this.componentParams().characterizationId() + '/design');
             }
         }
 
@@ -110,7 +94,7 @@ define([
         }
 
         selectTab(index) {
-            commonUtils.routeTo('/cc/characterizations/' + this.params.characterizationId() + '/' + ['design', 'executions', 'utils'][index]);
+            commonUtils.routeTo('/cc/characterizations/' + this.params.characterizationId() + '/' + this.sectionList[index]);
         }
 
         save() {

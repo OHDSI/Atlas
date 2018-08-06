@@ -7,9 +7,10 @@ define([
     'providers/Component',
     'utils/CommonUtils',
     'lodash',
-    'components/cohort-definition-browser',
     'pages/characterizations/components/feature-analyses/feature-analyses-browser',
     './characterization-params-create-modal',
+    'components/cohort/linked-cohort-list',
+    'components/linked-entity-list',
     'less!./characterization-design.less',
 ], function (
     ko,
@@ -25,31 +26,23 @@ define([
         constructor(params) {
             super();
 
+            this.showFeatureBrowser = this.showFeatureBrowser.bind(this);
+            this.removeFeature = this.removeFeature.bind(this);
+            this.showParameterCreateModal = this.showParameterCreateModal.bind(this);
+            this.addParam = this.addParam.bind(this);
+            this.removeParam = this.removeParam.bind(this);
+
             this.params = params;
 
             this.loading = ko.observable(false);
 
-            this.cohortDefinitions = {
-                newItemAction: this.showCohortBrowser,
-                columns: [
-                    {
-                        title: 'ID',
-                        data: 'id',
-                        className: this.classes('col-cohort-id'),
-                    },
-                    {
-                        title: 'Name',
-                        data: 'name',
-                        className: this.classes('col-cohort-name'),
-                    },
-                    {
-                        title: 'Actions',
-                        render: this.getRemoveCell('removeCohort'),
-                        className: this.classes('col-cohort-remove'),
-                    }
-                ],
-                data: ko.computed(() => params.design().cohorts || [])
-            };
+            this.cohorts = ko.computed({
+                read: () => params.design().cohorts || [],
+                write: (value) => params.design({
+                    ...params.design(),
+                    cohorts: value,
+                }),
+            });
 
             this.featureAnalyses = {
                 newItemAction: this.showFeatureBrowser,
@@ -100,54 +93,17 @@ define([
                 data: ko.computed(() => params.design().parameters || [])
             };
 
-            this.showCohortDefinitionBrowser = ko.observable(false);
-            this.cohortSelected = ko.observable();
-            this.cohortSelected.subscribe(cohort => this.attachCohort(cohort));
-
             this.showFeatureAnalysesBrowser = ko.observable(false);
             this.featureAnalysesSelected = ko.observable();
             this.featureAnalysesSelected.subscribe(feature => this.attachFeature(feature));
 
             this.isParameterCreateModalShown = ko.observable(false);
-
-            this.showCohortBrowser = this.showCohortBrowser.bind(this);
-            this.showFeatureBrowser = this.showFeatureBrowser.bind(this);
-            this.removeFeature = this.removeFeature.bind(this);
-            this.showParameterCreateModal = this.showParameterCreateModal.bind(this);
-            this.addParam = this.addParam.bind(this);
         }
 
         getRemoveCell(action, identifierField = 'id') {
             return (s, p, d) => {
-                return `<a data-bind="click: () => $component.${action}('${d[identifierField]}')">Remove</a>`;
+                return `<a data-bind="click: () => $component.params.${action}('${d[identifierField]}')">Remove</a>`;
             }
-        }
-
-        showCohortBrowser() {
-            this.showCohortDefinitionBrowser(true);
-        }
-
-        attachCohort({ id, name }) {
-            const ccDesign = this.params.design();
-            this.showCohortDefinitionBrowser(false);
-            this.params.design({
-                ...ccDesign,
-                cohorts: lodash.uniqBy(
-                    [
-                        ...ccDesign.cohorts,
-                        { id, name }
-                    ],
-                    'id'
-                )
-            });
-        }
-
-        removeCohort(id) {
-            const ccDesign = this.params.design();
-            this.params.design({
-                ...ccDesign,
-                cohorts: ccDesign.cohorts.filter(a => a.id !== parseInt(id)),
-            });
         }
 
         showFeatureBrowser() {

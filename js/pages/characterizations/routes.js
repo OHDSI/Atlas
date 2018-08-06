@@ -37,6 +37,7 @@ define(
                         appModel.currentView('characterizations-list');
                     });
                 }),
+                'cc/characterizations/:id:': characterizationViewEdit,
                 'cc/characterizations/:id:/:section:': characterizationViewEdit,
                 'cc/characterizations/:id:/:section:/:subId:': characterizationViewEdit, // for executions
                 'cc/feature-analyses': new AuthorizedRoute(() => {

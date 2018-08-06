@@ -1,17 +1,23 @@
 <div data-bind="css: classes()">
     <div data-bind="css: classes('header')">
-        <!-- ko foreach: tabs -->
-        <span
-                data-bind="css: $component.classes({
-          element: 'header-title',
-          modifiers: $component.selectedTab() == $index() ? 'selected' : null
-        }),
-        text: $data.title,
-        click: () => $component.selectTab($index())"
-        ></span>
+        <!-- ko foreach: $component.tabs -->
+            <!-- ko if: $data.title && $data.title.length > 0 -->
+                <span
+                        data-bind="css: $component.classes({
+                            element: 'header-title',
+                            modifiers: ($component.selectedTitleIndex() == $index() ? 'selected' : null)
+                        }),
+                        text: $data.title,
+                        click: () => $component.selectTab($index())"
+                ></span>
+            <!-- /ko -->
         <!-- /ko -->
     </div>
     <div data-bind="css: classes('tab')">
-        <div data-bind='component: { name: $component.componentName, params: $component.componentParams }'></div>
+        <!-- ko foreach: $component.previouslyLoadedTabs -->
+            <div data-bind="visible: $component.selectedTab() == $data">
+                <div data-bind='component: { name: $component.tabs()[$data].componentName, params: $component.tabs()[$data].componentParams }'></div>
+            </div>
+        <!-- /ko -->
     </div>
 </div>

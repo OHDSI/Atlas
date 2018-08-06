@@ -50,7 +50,7 @@ define([
                     data: 'name',
                     className: this.classes('tbl-col', 'name'),
                     render: function (s, p, d) {
-                        return '<a href="#/cc/characterizations/' + d.id + '/design">' + d.name + '</a>';
+                        return '<a href="#/cc/characterizations/' + d.id + '">' + d.name + '</a>';
                     },
                 },
                 {

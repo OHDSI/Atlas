@@ -18,17 +18,26 @@
     <tabs data-bind="visible: !$component.loading()" params="
         selectedTab: $component.selectedTab,
         selectTab: $component.selectTab,
-        componentName: $component.componentName,
-        componentParams: $component.componentParams,
         tabs: [
             {
                 title: 'Design',
+                componentName: 'characterization-design',
+                componentParams: $component.componentParams,
             },
             {
                 title: 'Executions',
+                componentName: 'characterization-view-edit-executions',
+                componentParams: $component.componentParams,
+            },
+            {
+                titleIndex: 1,
+                componentName: 'characterization-view-edit-results',
+                componentParams: $component.componentParams,
             },
             {
                 title: 'Utilities',
+                componentName: 'characterization-view-edit-utils',
+                componentParams: $component.componentParams,
             },
         ]">
     </tabs>
