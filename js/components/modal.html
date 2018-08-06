@@ -1,18 +1,18 @@
 <div data-bind="modal: $component.showModal, css: classes({ extra: 'modal fade' })" tabindex="-1" role="dialog">
-    <div data-bind="css: classes({ element: 'modal-dialog', extra: 'modal-dialog' })">
-        <div data-bind="css: 'modal-content'">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <div class="modal-title" data-bind="text: $component.title"></div>
-            </div>
-            <div data-bind="if: $component.showModal, css: classes({ element: 'modal-body', extra: 'modal-body' })">
-                <div data-bind="
-                    template: {
-                        name: $component.template,
-                        data: $component.data
-                    }
-                "></div>
-            </div>
-        </div>
-    </div>
+	<div data-bind="css: classes({ element: 'modal-dialog', extra: 'modal-dialog' })">
+		<div data-bind="css: 'modal-content'">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<div class="modal-title" data-bind="text: $component.title"></div>
+			</div>
+			<div data-bind="if: $component.showModal, css: classes({ element: 'modal-body', extra: 'modal-body' })">
+				<div data-bind="
+					template: {
+						name: $component.template,
+						data: $component.data
+					}
+				"></div>
+			</div>
+		</div>
+	</div>
 </div>
