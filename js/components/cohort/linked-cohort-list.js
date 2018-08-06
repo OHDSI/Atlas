@@ -50,7 +50,11 @@ define([
             this.showModal = ko.observable(false);
             this.cohortSelected = ko.observable();
 
-            this.cohortSelected.subscribe(cohort => this.attachCohort(cohort));
+            this.cohortSelectedSubscr = this.cohortSelected.subscribe(cohort => this.attachCohort(cohort));
+        }
+
+        dispose() {
+            this.cohortSelectedSubscr.dispose();
         }
 
         getRemoveCell(action, identifierField = 'id') {
