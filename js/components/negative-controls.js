@@ -39,6 +39,9 @@ define(['knockout',
 		self.selectedReportCaption = ko.observable();
 		self.recordCountsRefreshing = ko.observable(false);
 		self.showEvidencePairs = ko.observable(false);
+		self.linkoutDrugConceptIds = [];
+		self.linkoutConditionConceptIds = [];
+		self.sourceIds = config.evidenceLinkoutSources;
 		self.recordCountClass = ko.pureComputed(function () {
 			return self.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
 		});
@@ -48,6 +51,15 @@ define(['knockout',
 		self.csTargetCaption = ko.observable();
 
 		self.rowClick = function(s, p, d) {
+			self.linkoutDrugConceptIds = [];
+			self.linkoutConditionConceptIds = [];
+			if (self.targetDomainId == "Drug") {
+				self.linkoutDrugConceptIds = self.conceptIds();
+				self.linkoutConditionConceptIds.push(s.conceptId);
+			} else {
+				self.linkoutDrugConceptIds.push(s.conceptId);
+				self.linkoutConditionConceptIds = self.conceptIds();
+			}
 			self.showEvidencePairs(true);
 		}
 

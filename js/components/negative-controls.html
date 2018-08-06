@@ -164,7 +164,7 @@
 		</div>
 	</div>
 </div>
-<div class="modal fade" data-bind="modal: $component.showEvidencePairs" tabindex="-1" role="dialog">
+<div class="modal fade" data-bind="if: $component.showEvidencePairs(), modal: $component.showEvidencePairs" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -172,7 +172,7 @@
 				<div class="modal-title">Viewing Evidence</div>
 			</div>
 			<div class="modal-body">
-				<!-- <evidence-pair-viewer params="{model: pageModel}"></evidence-pair-viewer> -->
+				<evidence-pair-viewer params="{model: pageModel, sourceKey: $component.currentEvidenceService().sourceKey, sourceIds: $component.sourceIds, targetDomainId: $component.targetDomainId, drugConceptIds: $component.linkoutDrugConceptIds, conditionConceptIds: $component.linkoutConditionConceptIds}"></evidence-pair-viewer>
 			</div>
 		</div>
 	</div>

@@ -15,7 +15,10 @@ define(['optional!config-local'], function (localConfig) {
 	config.plpResultsEnabled = false;
 	config.useExecutionEngine = false;
 	config.viewProfileDates = false;
-	config.enableCosts = false;
+  config.enableCosts = false;
+  config.evidenceLinkoutSources = ["medline_winnenburg","splicer"]
+  config.evidenceGetPubmedMetadata = true;
+  config.evidencePubmedMetadataUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={@ids}&retmode=json&tool=ohdsi_atlas&email=admin@ohdsi.org";
 	config.supportUrl = "https://github.com/ohdsi/atlas/issues";
 	config.supportMail = "atlasadmin@your.org";
 	config.authProviders = [
