@@ -97,8 +97,8 @@ define([
 		}
 
 		rowClick(data) {
-            this.selected(data);
-        }
+			this.selected(data);
+		}
 	}
 
 	return commonUtils.build('cohort-definition-browser', CohortDefinitionBrowser, view);

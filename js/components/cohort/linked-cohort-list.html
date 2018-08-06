@@ -1,24 +1,24 @@
 <script type="text/html" id="linked-cohort-list-modal-content-template">
-    <cohort-definition-browser data-bind="css: classes('modal-cohort-list')" params="cohortDefinitionSelected: cohortSelected"></cohort-definition-browser>
+	<cohort-definition-browser data-bind="css: classes('modal-cohort-list')" params="cohortDefinitionSelected: data => cohortSelected(data)"></cohort-definition-browser>
 </script>
 
 <linked-entity-list params="
-    title: $component.title,
-    descr: $component.descr,
-    newItemLabel: $component.newItemLabel,
-    newItemAction: $component.newItemAction,
-    data: $component.data,
-    columns: $component.columns,
-    removeCohort: removeCohort,
+	title: $component.title,
+	descr: $component.descr,
+	newItemLabel: $component.newItemLabel,
+	newItemAction: $component.newItemAction,
+	data: $component.data,
+	columns: $component.columns,
+	removeCohort: removeCohort,
 "></linked-entity-list>
 
 <atlas-modal params="
-    showModal: $component.showModal,
-    template: 'linked-cohort-list-modal-content-template',
-    title: 'Choose a Cohort definition',
-    data: {
-        cohortSelected: $component.cohortSelected,
-        classes: $component.classes,
-    }
+	showModal: $component.showModal,
+	template: 'linked-cohort-list-modal-content-template',
+	title: 'Choose a Cohort definition',
+	data: {
+		cohortSelected: $component.cohortSelected,
+		classes: $component.classes,
+	}
 "
 ></atlas-modal>

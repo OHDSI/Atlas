@@ -59,10 +59,10 @@ define([
 				}
 			});
 			params.query.subscribe(() => {
-                if (!this.isInProgress()) {
-                	this.currentSearch(params.query());
-                	this.executeSearch();
-                }
+				if (!this.isInProgress()) {
+					this.currentSearch(params.query());
+					this.executeSearch();
+				}
 			});
 			this.currentSearch.subscribe(() => this.searchExecuted(false));
 			this.loadingMessage = ko.computed(() => {
