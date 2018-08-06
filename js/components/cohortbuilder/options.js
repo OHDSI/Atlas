@@ -86,6 +86,15 @@ define([], function () {
 		}, {
 			name: 'is not any of',
 			value: true
+		}];
+	
+		options.IndexDateOptions = [{
+			name: 'index start date',
+			value: false
+		}, {
+			name: 'index end date',
+			value: true
 		}]
+	
     return options;
 });

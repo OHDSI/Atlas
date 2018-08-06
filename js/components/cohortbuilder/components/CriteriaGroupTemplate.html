@@ -86,11 +86,11 @@
 
 								<div class="indexWindowSection">
 									starting between
-									<window-input params="Window: StartWindow"></window-input> event index date
+									<window-input params="Window: StartWindow"></window-input> <cycle-toggle-input params="{value: StartWindow.UseEndDate, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
 									<!-- ko if: EndWindow -->
 									<div>
 										<i data-bind="click: $component.removeEndWindow" class="fa fa-times" /> and ending between
-										<window-input params="Window: EndWindow"></window-input> event index date
+										<window-input params="Window: EndWindow"></window-input> <cycle-toggle-input params="{value: EndWindow().UseEndDate, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
 									</div>
 									<!-- /ko -->
 									<!-- ko ifnot: EndWindow -->

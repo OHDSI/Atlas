@@ -20,9 +20,9 @@
 								name: $component.getCriteriaComponent($data.Criteria), 
 								params: {expression: $component.expression, criteria: $data.Criteria }
 							}"></span>
-			starting between <window-input-viewer params="Window: StartWindow"></window-input-viewer> event index date
+			starting between <window-input-viewer params="Window: StartWindow"></window-input-viewer> <cycle-toggle-input-viewer params="{value: StartWindow.UseEndDate, options: $component.options.IndexDateOptions}">
 			<!-- ko if: EndWindow -->
-			and ending between <window-input-viewer params="Window: EndWindow"></window-input-viewer> event index date
+			and ending between <window-input-viewer params="Window: EndWindow"></window-input-viewer> <cycle-toggle-input-viewer params="{value: EndWindow.UseEndDate, options: $component.options.IndexDateOptions}">
 			<!-- /ko -->
 			<!-- ko if: RestrictVisit -->
 			<br><b>occurring within the same visit</b>
