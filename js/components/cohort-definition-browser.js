@@ -96,8 +96,8 @@ define([
 			return '<span class="linkish">' + d.name + '</span>';
 		}
 
-		rowClick (d) {
-			this.selected(d.id);
+		rowClick(data) {
+			this.selected(data);
 		}
 	}
 

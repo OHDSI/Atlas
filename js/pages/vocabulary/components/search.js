@@ -54,10 +54,16 @@ define([
 			});
 			this.isInProgress.subscribe((isInProgress) => {
 				if (!isInProgress) {
-					if (params.query) {
-						this.currentSearch(params.query);
+					if (params.query()) {
+						this.currentSearch(params.query());
 						this.executeSearch();
 					}
+				}
+			});
+			params.query.subscribe(() => {
+				if (!this.isInProgress()) {
+					this.currentSearch(params.query());
+					this.executeSearch();
 				}
 			});
 			this.currentSearch.subscribe(() => this.searchExecuted(false));

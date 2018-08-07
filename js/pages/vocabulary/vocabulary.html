@@ -1,20 +1,19 @@
-<div data-bind="html: tabs.search.template"></div>
-<div data-bind="html: tabs.import.template"></div>
-
 <div data-bind="css: classes()">
 	<div data-bind="css: classes('header')">
 		<heading-title params="name: 'Search', icon: 'search', theme: 'dark'"></heading-title>
 	</div>
-	<tabs params="tabs: [
-	{
-		title: 'Search',
-		templateId: 'vacabulary-search-tab',
-		context: tabs.search.viewModel
-	},
-	{
-		title: 'Import',
-		templateId: 'vacabulary-import-tab',
-		context: tabs.import.viewModel
-	}
+	<tabs params="
+		componentParams: $component.componentParams,
+		tabs: [
+			{
+				title: 'Search',
+				componentName: 'vocabulary-search',
+				componentParams: componentParams,
+			},
+			{
+				title: 'Import',
+				componentName: 'vocabulary-import',
+				componentParams: componentParams,
+			}
 	]"></tabs>
 </div>
