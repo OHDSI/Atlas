@@ -1,6 +1,6 @@
 define([
     'knockout',
-    'atlas-state',
+    'pages/characterizations/services/CharacterizationService',
     'text!./characterization-view-edit.html',
     './characterization-view-edit/characterization-design',
     './characterization-view-edit/characterization-executions',
@@ -11,13 +11,12 @@ define([
     'providers/Component',
     'utils/CommonUtils',
     'assets/ohdsi.util',
-    'text!pages/characterizations/stubs/characterization-design-data.json',
     'less!./characterization-view-edit.less',
     'components/tabs',
     'faceted-datatable',
 ], function (
     ko,
-    sharedState,
+    CharacterizationService,
     view,
     characterizationDesign,
     characterizationExecutions,
@@ -27,8 +26,7 @@ define([
     authApi,
     Component,
     commonUtils,
-    ohdsiUtil,
-    characterizationDesignData
+    ohdsiUtil
 ) {
     class CharacterizationViewEdit extends Component {
         constructor(params) {
@@ -77,20 +75,16 @@ define([
 
         loadDesignData() {
             this.loading(true);
-            return new Promise(resolve => {
-                setTimeout(
-                    () => {
-                        const designData = JSON.parse(characterizationDesignData);
-                        this.design({
-                            ...designData,
-                            name: ko.observable(designData.name),
-                        });
-                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
-                        this.loading(false);
-                    },
-                    2000
-                );
-            });
+            CharacterizationService
+                .loadCharacterizationDesign()
+                .then(res => {
+                    this.design({
+                        ...res,
+                        name: ko.observable(res.name),
+                    });
+                    this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+                    this.loading(false);
+                });
         }
 
         selectTab(index) {

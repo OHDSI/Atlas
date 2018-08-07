@@ -1,6 +1,6 @@
 define([
     'knockout',
-    'atlas-state',
+    'pages/characterizations/services/CharacterizationService',
     'text!./characterization-utils.html',
     'appConfig',
     'webapi/AuthAPI',
@@ -9,7 +9,7 @@ define([
     'less!./characterization-utils.less',
 ], function (
     ko,
-    sharedState,
+    CharacterizationService,
     view,
     config,
     authApi,
@@ -20,51 +20,42 @@ define([
         constructor(params) {
             super();
 
+            this.doImport = this.doImport.bind(this);
+
             this.loading = ko.observable(false);
 
             this.MODE_JSON = 0;
-            this.MODE_R_CODE = 1;
-            this.MODE_IMPORT = 2;
+            this.MODE_IMPORT = 1;
 
             this.mode = ko.observable(this.MODE_JSON);
 
             this.setMode = this.setMode.bind(this);
 
-            this.expression = {
-                featureAnalyses: [
-                    {
-                        type: "PRESET",
-                        name: "Gender",
-                        domain: "Demographics",
-                        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
-                        design: "useGender"
-                    },
-                    {
-                        type: "CRITERIA",
-                        name: "Age distribution",
-                        domain: "Demographics",
-                        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
-                        design: {
-                            "Type": "ANY",
-                            "CriteriaList": []
-                        }
-                    }
-                ],
-                parameters: [
-                    {
-                        name: "shortTermStartDays",
-                        value: "15",
-                    },
-                    {
-                        name: "mediumTermStartDays",
-                        value: "30",
-                    }
-                ]
-            }
+            this.exportEntity = ko.observable();
+            this.exportJSON = ko.computed(() => JSON.stringify(this.exportEntity(), null, 2));
+
+            this.importJSON = ko.observable();
+
+            this.loadExportJSON();
         }
 
         setMode(mode) {
             this.mode(mode);
+        }
+
+        loadExportJSON() {
+            this.loading(true);
+
+            CharacterizationService
+                .loadCharacterizationExportJson()
+                .then(res => {
+                    this.exportEntity(res);
+                    this.loading(false);
+                });
+        }
+
+        doImport() {
+            console.log('Importing:', this.importJSON());
         }
     }
 

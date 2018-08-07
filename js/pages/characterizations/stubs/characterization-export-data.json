@@ -1,0 +1,154 @@
+{
+  "cohortExpressions": [
+    {
+      "PrimaryCriteria": {
+        "CriteriaList": [
+          {
+            "DrugExposure": {
+              "CodesetId": 0,
+              "DrugTypeExclude": false
+            }
+          }
+        ],
+        "ObservationWindow": {
+          "PriorDays": 0,
+          "PostDays": 0
+        },
+        "PrimaryCriteriaLimit": {
+          "Type": "First"
+        }
+      },
+      "ConceptSets": [
+        {
+          "id": 0,
+          "name": "clopidogrel",
+          "expression": {
+            "items": [
+              {
+                "concept": {
+                  "CONCEPT_ID": 1322184,
+                  "CONCEPT_NAME": "clopidogrel",
+                  "STANDARD_CONCEPT": "S",
+                  "STANDARD_CONCEPT_CAPTION": "Standard",
+                  "INVALID_REASON": "V",
+                  "INVALID_REASON_CAPTION": "Valid",
+                  "CONCEPT_CODE": "32968",
+                  "DOMAIN_ID": "Drug",
+                  "VOCABULARY_ID": "RxNorm",
+                  "CONCEPT_CLASS_ID": "Ingredient"
+                },
+                "isExcluded": false,
+                "includeDescendants": true,
+                "includeMapped": false
+              }
+            ]
+          }
+        }
+      ],
+      "QualifiedLimit": {
+        "Type": "First"
+      },
+      "ExpressionLimit": {
+        "Type": "First"
+      },
+      "InclusionRules": [ ],
+      "CensoringCriteria": [ ],
+      "CollapseSettings": {
+        "CollapseType": "ERA",
+        "EraPad": 0
+      },
+      "CensorWindow": { }
+    }
+  ],
+  "featureAnalyses": [
+    {
+      "id": 1,
+      "type": "PRESET",
+      "name": "Demographics gender (preset)",
+      "domain": "DEMOGRAPHICS",
+      "descr": "Gender of the subject.",
+      "design": "DemographicsGender"
+    },
+    {
+      "id": 2,
+      "type": "CRITERIA_SET",
+      "name": "Demographics gender (via criteria)",
+      "domain": "DEMOGRAPHICS",
+      "descr": "Gender of the subject via criteria.",
+      "design": [
+        {
+          "name": "Male",
+          "expression": {
+            "empty": false,
+            "Type": "ALL",
+            "CriteriaList": [ ],
+            "DemographicCriteriaList": [
+              {
+                "Gender": [
+                  {
+                    "CONCEPT_ID": 8507,
+                    "CONCEPT_NAME": "MALE",
+                    "STANDARD_CONCEPT": "S",
+                    "STANDARD_CONCEPT_CAPTION": "Standard",
+                    "INVALID_REASON": "V",
+                    "INVALID_REASON_CAPTION": "Valid",
+                    "CONCEPT_CODE": "M",
+                    "DOMAIN_ID": "Gender",
+                    "VOCABULARY_ID": "Gender",
+                    "CONCEPT_CLASS_ID": "Gender"
+                  }
+                ]
+              }
+            ],
+            "Groups": [ ]
+          }
+        },
+        {
+          "name": "Female",
+          "expression": {
+            "empty": false,
+            "Type": "ALL",
+            "CriteriaList": [ ],
+            "DemographicCriteriaList": [
+              {
+                "Gender": [
+                  {
+                    "CONCEPT_ID": 8532,
+                    "CONCEPT_NAME": "FEMALE",
+                    "STANDARD_CONCEPT": "S",
+                    "STANDARD_CONCEPT_CAPTION": "Standard",
+                    "INVALID_REASON": "V",
+                    "INVALID_REASON_CAPTION": "Valid",
+                    "CONCEPT_CODE": "F",
+                    "DOMAIN_ID": "Gender",
+                    "VOCABULARY_ID": "Gender",
+                    "CONCEPT_CLASS_ID": "Gender"
+                  }
+                ]
+              }
+            ],
+            "Groups": [ ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "CUSTOM_FE",
+      "name": "Demographics gender (raw sql)",
+      "domain": "DEMOGRAPHICS",
+      "descr": "Gender of the subject.",
+      "design": "SELECT CAST(gender_concept_id AS BIGINT) * 1000 + @analysis_id AS covariate_id, COUNT(*) AS sum_value FROM @cohort_table cohort INNER JOIN @cdm_database_schema.person ON cohort.subject_id = person.person_id WHERE gender_concept_id != 0 AND cohort.cohort_definition_id = @cohort_definition_id GROUP BY gender_concept_id"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "mediumTermStartDays",
+      "value": -90
+    },
+    {
+      "name": "longTermStartDays",
+      "value": -180
+    }
+  ]
+}

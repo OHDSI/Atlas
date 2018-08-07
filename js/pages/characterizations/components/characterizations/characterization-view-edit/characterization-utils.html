@@ -1,16 +1,13 @@
-<div data-bind="css: classes()">
-    <div class="loading" data-bind="visible: loading()">loading</div>
+<div class="loading" data-bind="visible: loading()">loading</div>
+
+<div data-bind="css: classes(), visible: !loading()">
     <h2 data-bind="css: classes('title')">
         Utilities
     </h2>
     <ul data-bind="css: classes({ element: 'nav', extra: 'nav nav-pills' })">
         <li role="presentation"
             data-bind="css: classes({ element: 'nav-pill', extra: mode() == MODE_JSON ? 'active' : null }), click: setMode.bind(null, MODE_JSON)">
-            <a>JSON</a>
-        </li>
-        <li role="presentation"
-            data-bind="css: classes({ element: 'nav-pill', extra: mode() == MODE_R_CODE ? 'active' : null }), click: setMode.bind(null, MODE_R_CODE)">
-            <a>R Code</a>
+            <a>Export</a>
         </li>
         <li role="presentation"
             data-bind="css: classes({ element: 'nav-pill', extra: mode() == MODE_IMPORT ? 'active' : null }), click: setMode.bind(null, MODE_IMPORT)">
@@ -18,6 +15,10 @@
         </li>
     </ul>
     <div data-bind="if: mode() == MODE_JSON, css: classes('content')">
-        <textarea data-bind="css: classes('json-box'), text: JSON.stringify(expression, null, 2)"></textarea>
+        <textarea data-bind="css: classes('json-box'), text: $component.exportJSON"></textarea>
+    </div>
+    <div data-bind="if: mode() == MODE_IMPORT, css: classes('content')">
+        <button data-bind="css: classes({ element: 'import-btn', extra: 'btn btn-default btn-sm' }), click: doImport">Import</button>
+        <textarea data-bind="css: classes('json-box'), textInput: $component.importJSON"></textarea>
     </div>
 </div>

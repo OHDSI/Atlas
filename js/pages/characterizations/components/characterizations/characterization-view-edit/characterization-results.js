@@ -1,6 +1,6 @@
 define([
     'knockout',
-    'atlas-state',
+    'pages/characterizations/services/CharacterizationService',
     'text!./characterization-results.html',
     'appConfig',
     'webapi/AuthAPI',
@@ -10,7 +10,7 @@ define([
     'lodash',
     'd3',
     'components/visualizations/filter-panel/utils',
-    'text!pages/characterizations/stubs/characterization-results-data.json',
+    'webapi/MomentAPI',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/line-chart',
@@ -19,7 +19,7 @@ define([
     'd3-scale-chromatic',
 ], function (
     ko,
-    sharedState,
+    CharacterizationService,
     view,
     config,
     authApi,
@@ -29,7 +29,7 @@ define([
     lodash,
     d3,
     filterUtils,
-    characterizationResultsDataStub,
+    momentAPI,
 ) {
 
     class CharacterizationViewEditResults extends Component {
@@ -97,45 +97,16 @@ define([
         constructor(params) {
             super();
 
+            this.convertPrevalenceAnalysis = this.convertPrevalenceAnalysis.bind(this);
+            this.convertScatterplotData = this.convertScatterplotData.bind(this);
+            this.prepareTabularData = this.prepareTabularData.bind(this);
+
             this.loading = ko.observable(false);
 
-            this.dataSource = {
-                id: 1,
-                name: 'SynPUF 110k (CDM v5.3)',
-            };
+            this.data = ko.observable([]);
+            this.filterList = ko.observableArray([]);
 
-            this.data = JSON.parse(characterizationResultsDataStub).analyses;
-
-            this.displayedAnalyses = ko.observableArray([1, 2, 3]);
-
-            this.cohorts = lodash.uniqBy(
-                lodash.flatten(
-                    this.data.map(a => a.reports.map(r => ({label: r.cohortName, value: r.cohortId})))
-                ),
-                'value'
-            );
-            this.selectedCohorts = ko.observableArray(this.cohorts.map(c => c.value));
-
-            this.analyses = this.data.map(a => ({label: a.analysisName, value: a.analysisId}));
-
-            this.filterList = ko.observableArray([
-                {
-                    type: 'multiselect',
-                    label: 'Cohorts',
-                    name: 'cohorts',
-                    options: ko.observableArray(this.cohorts),
-                    selectedValues: this.selectedCohorts,
-                },
-                {
-                    type: 'multiselect',
-                    label: 'Analyses',
-                    name: 'analyses',
-                    options: ko.observableArray(this.analyses),
-                    selectedValues: ko.observableArray(this.analyses.map(c => c.value)),
-                }
-            ]);
-
-            this.reportList = this.prepareTabularData(this.data, this.filterList);
+            this.reportList = ko.computed(() => this.prepareTabularData(this.data().analyses, this.filterList()));
 
             this.groupedScatterData = ko.computed(() => {
                 return this.reportList().filter(analysis => analysis.type === 'prevalence').map(analysis => ({
@@ -143,13 +114,12 @@ define([
                     values: this.convertScatterplotData(analysis),
                 }));
             });
-            this.groupedScatterColorScheme = d3.schemeCategory10;
 
             this.groupedTabularData = ko.computed(() => {
                 const reportList = this.getPrevalenceReports(this.reportList());
 
                 if (reportList.length < 1) {
-                    return {};
+                    return { columns: [], data: [] };
                 }
 
                 return {
@@ -158,42 +128,88 @@ define([
                 }
             });
 
+            this.groupedScatterColorScheme = d3.schemeCategory10;
             this.scatterXScale = d3.scaleLinear().domain([0, 100]);
             this.scatterYScale = d3.scaleLinear().domain([0, 100]);
 
-            this.convertPrevalenceAnalysis = this.convertPrevalenceAnalysis.bind(this);
-            this.convertScatterplotData = this.convertScatterplotData.bind(this);
-            this.prepareTabularData = this.prepareTabularData.bind(this);
+            this.loadData();
+        }
+
+        formatDate(date) {
+            return momentAPI.formatDateTimeUTC(date);
+        }
+
+        loadData() {
+            this.loading(true);
+            CharacterizationService
+                .loadCharacterizationResults()
+                .then(res => {
+                    this.filterList(this.getFilterList(res.analyses));
+                    this.data(res);
+                    this.loading(false);
+                });
+        }
+
+        getFilterList(data) {
+            const cohorts = lodash.uniqBy(
+                lodash.flatten(
+                    data.map(a => a.reports.map(r => ({label: r.cohortName, value: r.cohortId})))
+                ),
+                'value'
+            );
+
+            return [
+                {
+                    type: 'multiselect',
+                    label: 'Cohorts',
+                    name: 'cohorts',
+                    options: ko.observable(cohorts),
+                    selectedValues: ko.observable(cohorts.map(c => c.value)),
+                },
+                {
+                    type: 'multiselect',
+                    label: 'Analyses',
+                    name: 'analyses',
+                    options: ko.observable(data.map(a => ({label: a.analysisName, value: a.analysisId}))),
+                    selectedValues: ko.observable(data.map(a => a.analysisId)),
+                }
+            ];
+        }
+
+        isComparatativeMode(filterList) {
+            const filter = filterList.find(f => f.name === 'cohorts');
+            if (!filter) {
+                return false;
+            }
+            return filter.selectedValues().length === 2;
         }
 
         getPrevalenceReports(reports) {
             return reports.filter(analysis => analysis.type === 'prevalence');
         }
 
-        prepareTabularData(data, filters) {
-            return ko.computed(() => {
-                const filteredData = this.filterData(data, filterUtils.getSelectedFilterValues(filters()));
+        prepareTabularData(data = [], filters = []) {
+            const filteredData = this.filterData(data, filterUtils.getSelectedFilterValues(filters));
 
-                const convertedData = filteredData.map(analysis => {
-                    let convertedAnalysis;
+            const convertedData = filteredData.map(analysis => {
+                let convertedAnalysis;
 
-                    if (analysis.type === 'prevalence') {
-                        convertedAnalysis = this.convertPrevalenceAnalysis(analysis);
+                if (analysis.type === 'prevalence') {
+                    convertedAnalysis = this.convertPrevalenceAnalysis(analysis);
+                } else {
+                    if (this.isComparatativeMode(filters)) {
+                        convertedAnalysis = this.convertDistributionComparativeAnalysis(analysis);
                     } else {
-                        if (analysis.reports.length === 2) {
-                            convertedAnalysis = this.convertDistributionComparativeAnalysis(analysis);
-                        } else {
-                            convertedAnalysis = {
-                                ...analysis,
-                                reports: analysis.reports.map(r => ({...r, data: r.stats, columns: this.distributionColumns})),
-                            };
-                        }
+                        convertedAnalysis = {
+                            ...analysis,
+                            reports: analysis.reports.map(r => ({...r, data: r.stats, columns: this.distributionColumns})),
+                        };
                     }
-                    return convertedAnalysis;
-                });
-
-                return convertedData;
+                }
+                return convertedAnalysis;
             });
+
+            return convertedData;
         }
 
         filterData(data, {cohorts, analyses}) {

@@ -1,4 +1,9 @@
 {
+  "sourceId": 1,
+  "sourceName": "SynPUF 110k (CDM v5.3)",
+  "date": "2018-07-12 15:05:00",
+  "designHash": "x6t21cda",
+  "reportCount": 10,
   "analyses": [
     {
       "analysisId": 1,

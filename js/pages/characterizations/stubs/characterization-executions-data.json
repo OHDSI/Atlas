@@ -1,0 +1,42 @@
+{
+  "sourceId": 1,
+  "sourceName": "SynPUF 110k (CDM v5.3)",
+  "executionGroups": [
+    {
+      "sourceId": 1,
+      "sourceName": "SynPUF 110k (CDM v5.3)",
+      "submissions": [
+        {
+          "id": 1,
+          "date": "2018-07-12T15:05:00-04:00",
+          "designHash": "ad5b054",
+          "status": "Processing",
+          "durationSec": 630,
+          "reportCount": null
+        },
+        {
+          "id": 2,
+          "date": "2018-07-10T15:05:00-04:00",
+          "designHash": "x6t21cda",
+          "status": "Finished",
+          "durationSec": 1335,
+          "reportCount": 10
+        }
+      ]
+    },
+    {
+      "sourceId": 2,
+      "sourceName": "Truven",
+      "submissions": [
+        {
+          "id": 3,
+          "date": "2018-07-10T15:05:00-04:00",
+          "designHash": "ad5b054",
+          "status": "Finished",
+          "durationSec": 12660,
+          "reportCount": 10
+        }
+      ]
+    }
+  ]
+}

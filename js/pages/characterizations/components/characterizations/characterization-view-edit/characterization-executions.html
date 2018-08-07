@@ -1,10 +1,11 @@
 <div data-bind="css: classes()">
     <div class="loading" data-bind="visible: loading()">loading</div>
-    <h2 data-bind="css: classes('title')">
-        Executions
-    </h2>
-    <div data-bind="css: classes('content')">
-        <!-- ko foreach: executionGroups -->
+    <div data-bind="visible: !loading()">
+        <h2 data-bind="css: classes('title')">
+            Executions
+        </h2>
+        <div data-bind="css: classes('content')">
+            <!-- ko foreach: executionGroups -->
             <div data-bind="
                 template: {
                     name: 'characterization-view-edit-execution-group',
@@ -16,14 +17,26 @@
                     })
                 }
             "></div>
-        <!-- /ko -->
+            <!-- /ko -->
+        </div>
     </div>
 </div>
+
+<atlas-modal params="
+        showModal: $component.isExecutionDesignShown,
+        template: 'cc-executions-used-design-template',
+        title: 'Design',
+        data: {
+            executionDesign: $component.executionDesign,
+            classes: $component.classes,
+        }
+    "
+></atlas-modal>
 
 <script type="text/html" id="characterization-view-edit-execution-group">
     <div data-bind="css: classes('group', isExpanded ? 'expanded': null )">
         <div data-bind="css: classes('heading')">
-            <label data-bind="css: classes('ds-title'), text: dataSourceName"></label>
+            <label data-bind="css: classes('ds-title'), text: sourceName"></label>
             <ul data-bind="css: classes({ element: 'action-list' })">
                 <li data-bind="css: classes({ element: 'action' })">
                     <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']})">
@@ -40,7 +53,7 @@
                 <li data-bind="css: classes({ element: 'action' })">
                     <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}), click: toggleSection">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
-                        <span data-bind="text: 'All executions (' + executionList.length + ')'"></span>
+                        <span data-bind="text: 'All executions (' + submissions.length + ')'"></span>
                     </button>
                 </li>
             </ul>
@@ -50,11 +63,19 @@
                 <table data-bind="
                     css: classes({ element: 'result-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                     dataTable:{
-                        data: executionList,
+                        data: submissions,
                         options: {columns: execColumns, order: [[ 0, 'desc' ]]}
                     }
                 "/>
             </li>
         </ul>
+    </div>
+</script>
+
+
+<script type="text/html" id="cc-executions-used-design-template">
+    <div class="loading" data-bind="visible: executionDesign() == null">loading</div>
+    <div data-bind="if: executionDesign() != null">
+        <textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
     </div>
 </script>
