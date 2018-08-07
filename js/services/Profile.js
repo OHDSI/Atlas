@@ -9,7 +9,9 @@ define(function (require, exports) {
       cohort: cohort || 0,
     };
     const response = httpService.doGet(`${config.webAPIRoot}${sourceKey}/person/${personId}`, data).then(({ data }) => data);
-    response.catch(er => authApi.handleUnauthorized(er));
+    response.catch((er) => {
+      console.error('Can\'t find person');
+    });
 
     return response;
   };

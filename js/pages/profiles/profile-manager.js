@@ -18,7 +18,7 @@ define([
 	'd3-tip',
 	'databindings',
 	'faceted-datatable',
-	'modules/databindings/profileChart',
+	'bindings/profileChart',
 	'less!./profile-manager.less',
 	'components/heading'
 ],
@@ -364,7 +364,8 @@ define([
 							});
 						this.shadedRegions(person.shadedRegions);
 						this.person(person);
-					}, function(){
+					})
+					.catch(() => {
             this.cantFindPerson(true);
             this.loadingPerson(false);
 					});
