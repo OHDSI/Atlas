@@ -8,6 +8,7 @@ define(
 		'services/ConceptSet',
 		'services/role',
 		'providers/AutoBind',
+		'providers/Vocabulary',
 		'components/cohortbuilder/CohortDefinition',
 		'assets/ohdsi.util',
 		'appConfig',
@@ -27,6 +28,7 @@ define(
 		conceptSetService,
 		roleService,
 		AutoBind,
+		vocabularyService,
 		CohortDefinition,
 		ohdsiUtil,
 		config,
@@ -715,7 +717,7 @@ define(
 			}
 
 			loadAncestors(ancestors, descendants) {
-				const data = JSON.stringify({ ancestors, descendants });
+				const data = { ancestors, descendants };
 				return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors', data);
 			};
 			
@@ -747,10 +749,10 @@ define(
 			
 			loadIncluded(identifiers) {
 				this.loadingIncluded(true);
-				const data = JSON.stringify(identifiers || this.conceptSetInclusionIdentifiers());
+				const data = identifiers || this.conceptSetInclusionIdentifiers();
 				return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', data)
 					.then(({ data }) => {
-						return vocabAPI.loadDensity(data)
+						return vocabularyService.loadDensity(data)
 							.then(() => {
 								this.includedConcepts(data.map(v => ({...v, ANCESTORS: []})));
 								this.loadAndApplyAncestors(this.includedConcepts());
@@ -774,7 +776,7 @@ define(
 					identifiers.push(concepts[i].CONCEPT_ID);
 				}
 				
-				const data = JSON.stringify(identifiers);
+				const data = identifiers;
 				return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/mapped', data)
 					.then(({ data: sourcecodes }) => {
 						this.includedSourcecodes(sourcecodes);

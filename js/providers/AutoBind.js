@@ -1,4 +1,6 @@
 define([], () => {
+  
+  // preserve context to use in knockout bindings
   const AutoBind = (C = class {}) => class AutoBind extends C {
     constructor(props) {
       super(props);

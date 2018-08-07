@@ -24,7 +24,7 @@
 	<div data-bind="if: $component.patientLevelPrediction().minimumWashoutPeriod() > 0">
 		<br /> We impose a requirement that patients must have at least <span data-bind="text: $component.patientLevelPrediction().minimumWashoutPeriod()"></span> days of continuous observation prior to cohort entry.
 	</div>
-	<br /> We consider <span data-bind="text: $component.patientLevelPrediction().firstExposureOnlyDescription()"></span> per subject in the prediction $root.
+	<br /> We consider <span data-bind="text: $component.patientLevelPrediction().firstExposureOnlyDescription()"></span> per subject in the prediction model.
 	<br/>
 	<br /> We <span data-bind="text: $component.patientLevelPrediction().includeAllOutcomesDescription()"></span> people with outcomes who are not observed for the whole at risk period.
 	<br/>
