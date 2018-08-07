@@ -26,12 +26,21 @@ define([
 
 		self.columns = [
 			{
-				title: 'Evidence Source',
-				data: d => d.evidenceSource,
+				title: 'Linkout',
+				render: function(s, p, d) {
+					return '<span class="linkish">' + d.evidenceTitle + '</span>';
+				},
+				width: "50%",
 			},
 			{
-				title: 'Mapping Type',
-				data: d => d.mappingType,
+				title: 'Unique Identifier',
+				data: d => d.uniqueIdentifier,
+				visible: false,
+			},
+			{
+				title: 'Evidence Source',
+				data: d => d.evidenceSource,
+				visible: false,
 			},
 			{
 				title: 'Drug Concept Id',
@@ -52,15 +61,9 @@ define([
 				data: d => d.hoiConceptName,
 			},
 			{
-				title: 'Unique Identifier',
-				data: d => d.uniqueIdentifier,
+				title: 'Mapping Type',
+				data: d => d.mappingType,
 			},
-			{
-				title: 'Linkout',
-				render: function(s, p, d) {
-					return '<span class="linkish">' + d.evidenceTitle + '</span>';
-				},
-			}
 		];
 
 		self.options = {
@@ -69,8 +72,7 @@ define([
 				['10', '25', '50', '100', 'All']
 			],
 			order: [
-				[3, 'asc'],
-				[5, 'asc']
+				[0, 'asc']
 			],
 			Facets: [{
 					'caption': 'Mapping Type',
@@ -97,12 +99,12 @@ define([
 					}
 				}).done(function(results) {
 					$.each(self.cemDrugConditionPairs, function(i, dcp) {
+						dcp.linkout = "https://www.ncbi.nlm.nih.gov/pubmed/" + dcp.uniqueIdentifier;
 						if (dcp.evidenceSource.indexOf("medline") !== -1) {
 							dcp.evidenceTitle = self.pubmedMetadata[dcp.uniqueIdentifier].title
 						} else {
-							dcp.evidenceTitle = "Not avaiable";
+							dcp.evidenceTitle = dcp.linkout;
 						}
-						dcp.linkout = "https://www.ncbi.nlm.nih.gov/pubmed/" + dcp.uniqueIdentifier;
 					});
 
 					self.drugConditionPairs(self.cemDrugConditionPairs);

@@ -53,12 +53,12 @@ define(['knockout',
 		self.rowClick = function(s, p, d) {
 			self.linkoutDrugConceptIds = [];
 			self.linkoutConditionConceptIds = [];
-			if (self.targetDomainId == "Drug") {
-				self.linkoutDrugConceptIds = self.conceptIds();
-				self.linkoutConditionConceptIds.push(s.conceptId);
-			} else {
+			if (self.targetDomainId() == "Drug") {
 				self.linkoutDrugConceptIds.push(s.conceptId);
 				self.linkoutConditionConceptIds = self.conceptIds();
+			} else {
+				self.linkoutDrugConceptIds = self.conceptIds();
+				self.linkoutConditionConceptIds.push(s.conceptId);
 			}
 			self.showEvidencePairs(true);
 		}
