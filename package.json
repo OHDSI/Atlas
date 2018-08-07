@@ -1,0 +1,41 @@
+{
+  "name": "atlas",
+  "version": "2.4.3",
+  "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
+  "main": "js/main.js",
+  "scripts": {
+    "build": "rimraf ./js/assets/bundle && npm run bundle",
+    "bundle": "node ./build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OHDSI/Atlas.git"
+  },
+  "author": "Chris Knoll",
+  "contributors": [
+    "Alexander Saltykov <a_salt@live.ru>",
+    "Sigfried Gold",
+    "Frank DeFalco",
+    "Anthony Sena",
+    "Pavel Grafkin",
+    "Vitaly Koulakov",
+    "Jungmi Han",
+    "Mark Velez",
+    "Anton Gackovka"
+  ],
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/OHDSI/Atlas/issues"
+  },
+  "homepage": "https://github.com/OHDSI/Atlas#readme",
+  "devDependencies": {
+    "ajax-request": "^1.2.3",
+    "requirejs": "^2.3.5",
+    "rimraf": "^2.6.2"
+  }
+}

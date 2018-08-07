@@ -28,7 +28,7 @@ define(function(require, exports) {
         params.body = payload;
       } else if (payload) {
         params.body = JSON.stringify(payload);
-        params.headers['Content-Type'] = JSON_RESPONSE_TYPE;
+        params.headers['Content-Type'] = 'application/json';
       }
 
       return fetch(path, params)

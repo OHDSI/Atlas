@@ -37,10 +37,12 @@
 					</table>
 				</td>
 			</tr>
-			<tr>
-				<td><div style="padding-top: 5px; display: flex;justify-content: center;"><button class="btn btn-sm btn-success" data-bind="click: addTargetCohort">Add Target Cohort</button></div></td>
-				<td><div style="padding-top: 5px; display: flex;justify-content: center;"><button style="margin:auto" class="btn btn-sm btn-danger" data-bind="click: addOutcomeCohort">Add Outcome Cohort</button></div></td>
-			</tr>
+			<!-- ko if: isEditable -->
+				<tr>
+					<td><div style="padding-top: 5px; display: flex;justify-content: center;"><button class="btn btn-sm btn-success" data-bind="click: addTargetCohort">Add Target Cohort</button></div></td>
+					<td><div style="padding-top: 5px; display: flex;justify-content: center;"><button style="margin:auto" class="btn btn-sm btn-danger" data-bind="click: addOutcomeCohort">Add Outcome Cohort</button></div></td>
+				</tr>
+			<!-- /ko -->
 		</table>
 	</div>
 
@@ -61,7 +63,7 @@
 		</div>
 	</div>
 
-	<div style="padding-top:10px" data-bind="if: analysis().studyWindow() == null">
+	<div style="padding-top:10px" data-bind="if: analysis().studyWindow() == null && isEditable()">
 	No study window defined. <button class="btn btn-sm btn-success" data-bind="click: addStudyWindow">Add Study Window</button>
 	</div>
 	<div data-bind="if: analysis().studyWindow() != null">
@@ -88,9 +90,11 @@
 			<tbody>
 				<tr>
 					<td style="vertical-align: top; padding-right: 20px;">
-						<div>
-							<button class="btn btn-sm btn-success" data-bind="click: addStrataRule">New stratify criteria</button>
-						</div>
+						<!-- ko if: isEditable -->
+							<div>
+								<button class="btn btn-sm btn-success" data-bind="click: addStrataRule">New stratify criteria</button>
+							</div>
+						<!-- /ko -->
 						<div>
 							<table style="width: 100%" class="inclusionRules">
 								<tbody data-bind="sortable: {data: analysis().strata, connectClass: 'inclusionRuleItem'}">
@@ -104,13 +108,15 @@
 						</div>
 					</td>
 					<td style="vertical-align: top; padding-left: 25px; border-left: 1px #eee solid;">
-						<!-- ko if: $component.selectedStrataRule() -->
-						<inclusion-rule-editor params="{IndexRule: analysis, InclusionRule: selectedStrataRule}"></inclusion-rule-editor>
+						<!-- ko if: isEditable -->
+							<!-- ko if: $component.selectedStrataRule() -->
+							<inclusion-rule-editor params="{IndexRule: analysis, InclusionRule: selectedStrataRule}"></inclusion-rule-editor>
+							<!-- /ko -->
+							<!-- ko ifnot: $component.selectedStrataRule() -->
+							<div>Please select a qualifying inclusion criteria to edit.</div>
+							<!-- /ko -->
 						<!-- /ko -->
-						<!-- ko ifnot: $component.selectedStrataRule() -->
-						<div>Please select a qualifying inclusion criteria to edit.</div>
-						<!-- /ko -->
-					</td>
+						</td>
 				</tr>
 			</tbody>
 		</table>
@@ -124,7 +130,7 @@
 					<div class="modal-title">Choose a Cohort</div>
 				</div>
 				<div class="modal-body">
-					<cohort-definition-browser params="cohortDefinitionSelected: cohortSelected"></cohort-definition-browser>
+					<cohort-definition-browser params="cohortDefinitionSelected: data => cohortSelected(data.id)"></cohort-definition-browser>
 				</div>
 			</div>
 		</div>
