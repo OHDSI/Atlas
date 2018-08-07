@@ -12,7 +12,7 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
     ];
 
 		self.isAuthenticated = authApi.isAuthenticated;
-		self.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === 'complete' || sharedState.appInitializationStatus() === 'no-sources-available');
+		self.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === 'running' || sharedState.appInitializationStatus() === 'no-sources-available');
 		self.hasAccess = ko.pureComputed(function () {
 			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
 		});

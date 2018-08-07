@@ -24,7 +24,7 @@ define(
       run() {
         const routerOptions = {
           notfound: () => this.handleNotFound(),
-          on: () => this.getModel().componentParams = {},
+          on: () => this.getModel().componentParams({}),
         };
         this.router = new Router(this.aggregateRoutes());
         this.router.qs = this.qs;

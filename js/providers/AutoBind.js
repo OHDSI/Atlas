@@ -2,7 +2,8 @@ define([], () => {
   const AutoBind = (C = class {}) => class AutoBind extends C {
     constructor(props) {
       super(props);
-      const ownMethods = Object.getOwnPropertyNames(this.__proto__).filter(method => method !== 'constructor');
+      const ownMethods = Object.getOwnPropertyNames(this.__proto__)
+        .filter(method => !(['constructor', 'componentName'].includes(method)));
       ownMethods.forEach(method => {
         this[method] = this[method].bind(this);
       });

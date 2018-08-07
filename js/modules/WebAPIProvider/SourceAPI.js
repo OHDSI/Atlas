@@ -20,7 +20,7 @@ define(function (require, exports) {
 			success: function (o) {
 				// this is the initial communication to WebAPI and if it succeeds
 				// the initialization is complete and the application is ready.
-				sharedState.appInitializationStatus('complete');
+				sharedState.appInitializationStatus('running');
 			}
 		});
 		return promise;
@@ -163,7 +163,6 @@ define(function (require, exports) {
               },
               error: function (err) {
                 completedSources++;
-                pageModel.initializationErrors++;
                 source.version('unknown');
                 source.dialect('unknown');
                 source.url = config.api.url + source.sourceKey + '/';

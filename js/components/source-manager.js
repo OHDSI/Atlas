@@ -4,7 +4,7 @@ define([
   'appConfig',
   'assets/ohdsi.util',
   'webapi/SourceAPI',
-  'webapi/RoleAPI',
+  'services/role',
   'lodash',
   'webapi/AuthAPI',
   'components/ac-access-denied'
@@ -15,7 +15,7 @@ define([
     config,
     ohdsiUtil,
     sourceApi,
-    roleApi,
+    roleService,
     lodash,
     authApi
   ) {
@@ -145,13 +145,16 @@ define([
       };
       self.loading(true);
       sourceApi.saveSource(self.selectedSourceId(), source)
-        .then(sourceApi.initSourcesConfig)
-        .then(roleApi.updateRoles)
-        .then(function () {
-          self.loading(false);
-          self.goToConfigure();
+        .then(() => sourceApi.initSourcesConfig())
+        .then(() => {
+          roleService.updateRoles()
+            .then(({ data: roles }) => {
+              self.model.roles(roles);
+              self.loading(false);
+              self.goToConfigure();
+            });
         })
-        .catch(function () { self.loading(false); });
+        .fail(function () { self.loading(false); });
     };
 
     self.close = function () {
@@ -171,8 +174,9 @@ define([
       self.loading(true);
       sourceApi.deleteSource(self.selectedSourceId())
         .then(sourceApi.initSourcesConfig)
-        .then(roleApi.updateRoles)
-        .then(function () {
+        .then(() => roleService.updateRoles())
+        .then(({ data: roles }) => {
+          self.model.roles(roles);
           self.loading(false);
           self.goToConfigure();
         })

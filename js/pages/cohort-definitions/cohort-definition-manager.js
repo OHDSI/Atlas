@@ -89,7 +89,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
 	}
 
-	class CohortDefinitionManager extends Component {
+	class CohortDefinitionManager extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
 			this.pollTimeout = null;
@@ -385,7 +385,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (this.pollTimeout)
 					clearTimeout(this.pollTimeout);
 
-				var id = pageModel.currentCohortDefinition().id();
+				var id = this.model.currentCohortDefinition().id();
 					cohortDefinitionService.getInfo(id).then((infoList) => {
 					var hasPending = false;
 
@@ -1095,7 +1095,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				this.generateReportsEnabled(false);
 				analysisIdentifiers = _.uniq(analysisIdentifiers);
-				var cohortDefinitionId = pageModel.currentCohortDefinition().id();
+				var cohortDefinitionId = this.model.currentCohortDefinition().id();
 				var cohortJob = {};
 
 				cohortJob.jobName = 'HERACLES_COHORT_' + cohortDefinitionId + '_' + this.model.reportSourceKey();

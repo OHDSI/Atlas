@@ -73,7 +73,7 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 				var conceptSets = ko.toJS(o.cohortDef.expression()
 					.ConceptSets());
 				conceptSets.forEach(function (conceptSet) {
-					pageModel.resolveConceptSetExpressionSimple(
+					self.model.resolveConceptSetExpressionSimple(
 						ko.toJSON(conceptSet.expression),
 						_.bind(self.loadedConceptSet, self, conceptSet))
 				});

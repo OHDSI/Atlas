@@ -205,7 +205,7 @@ define([
 
 			this.model.reportCohortDefinitionId.subscribe((d) => {
 				if (this.showSelectionArea) {
-					this.cohortCaption(pageModel.cohortDefinitions()
+					this.cohortCaption(this.model.cohortDefinitions()
 						.filter(function (value) {
 							return value.id == d;
 						})[0].name);

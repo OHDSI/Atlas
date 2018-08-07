@@ -30,7 +30,7 @@ define([
 
         if (self.canRead()) {
             self.loading(true);
-            self.updateRoles().always(function() { self.loading(false); });
+            self.updateRoles().then(() => { self.loading(false); });
         }
     }
 

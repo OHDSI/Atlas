@@ -6,6 +6,7 @@ define(
 		'services/http',
 		'services/CohortDefinition',
 		'services/ConceptSet',
+		'services/role',
 		'providers/AutoBind',
 		'components/cohortbuilder/CohortDefinition',
 		'assets/ohdsi.util',
@@ -24,6 +25,7 @@ define(
 		httpService,
 		cohortDefinitionService,
 		conceptSetService,
+		roleService,
 		AutoBind,
 		CohortDefinition,
 		ohdsiUtil,
@@ -49,7 +51,7 @@ define(
 				const bemHelper = new BemHelper('app');
 				this.classes = bemHelper.run.bind(bemHelper);
 				this.activePage = ko.observable();
-				this.componentParams = {};
+				this.componentParams = ko.observable({});
 				this.pendingSearch = ko.observable(false);
 				this.supportURL = config.supportUrl;
 				this.targetSupportURL = config.supportUrl.startsWith("#") ? "_this" : "_blank";
@@ -120,7 +122,6 @@ define(
 				this.resolvingConceptSetExpression = ko.observable();
 				this.resolvingSourcecodes = ko.observable();
 				this.evidence = ko.observableArray();
-				this.initializationErrors = 0;
 				this.currentConcept = ko.observable();
 				this.currentConceptId = ko.observable();
 				this.currentConceptMode = ko.observable('details');
@@ -354,7 +355,7 @@ define(
 				this.resolvingConceptSetExpression(true);
         this.includedConcepts.removeAll();
         this.includedSourcecodes.removeAll();
-				var conceptSetExpression = '{"items" :' + ko.toJSON(sharedState.selectedConcepts()) + '}';
+				var conceptSetExpression = { "items": sharedState.selectedConcepts() };
 				var highlightedJson = this.syntaxHighlight(conceptSetExpression);
 				this.currentConceptSetExpressionJson(highlightedJson);
 				var conceptIdentifierList = [];
@@ -369,7 +370,7 @@ define(
 			resolveConceptSetExpressionSimple(expression, success) {
 				const callback = typeof success === 'function'
 					? success
-					: (info) => {
+					: ({ data: info }) => {
 							this.conceptSetInclusionIdentifiers(info);
 							this.currentIncludedConceptIdentifierList(info.join(','));
 							this.conceptSetInclusionCount(info.length);
@@ -388,7 +389,7 @@ define(
 
 			renderCheckbox(field) {
 				if (this.canEditCurrentConceptSet()) {
-					return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); pageModel.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
+					return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); $root.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
 				} else {
 					return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check readonly"></span>';
 				}
@@ -633,7 +634,7 @@ define(
 			
 			loadRepositoryConceptSet(conceptSetId, viewToShow, mode) {
 				// $('body').removeClass('modal-open');
-				this.componentParams = {};
+				this.componentParams({});
 				if (conceptSetId == 0 && !this.currentConceptSet()) {
 					// Create a new concept set
 					this.currentConceptSet({
@@ -664,7 +665,7 @@ define(
 									});
 							});
 					})
-				.catch(er => this.authApi.handleAccessDenied(er));
+				.catch(er => authApi.handleAccessDenied(er));
 			}
 			
 			loadCohortConceptSet(conceptSetId, viewToShow, mode) {
@@ -721,7 +722,7 @@ define(
 			loadAndApplyAncestors(data) {
 				const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
 				const ids = [];
-				data.forEach((element) => {
+				$.each(data, (element) => {
 					if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
 						ids.push(element.CONCEPT_ID);
 					}
@@ -730,7 +731,7 @@ define(
 					if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
 						this.loadAncestors(selectedConceptIds, ids).then(({ ancestors: data }) => {
 							const map = this.includedConceptsMap();
-							data.forEach((line) => {
+							$.each(data, (line) => {
 								const ancArray = ancestors[line.CONCEPT_ID];
 								if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
 									line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
@@ -746,7 +747,7 @@ define(
 			
 			loadIncluded(identifiers) {
 				this.loadingIncluded(true);
-				const data = JSON.stringify(identifiers ||pageModel.conceptSetInclusionIdentifiers());
+				const data = JSON.stringify(identifiers || this.conceptSetInclusionIdentifiers());
 				return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', data)
 					.then(({ data }) => {
 						return vocabAPI.loadDensity(data)
@@ -805,6 +806,24 @@ define(
 								}
 							});
 						break;
+				}
+			}
+	
+			updateRoles() {
+				console.info('Updating roles');
+				if (!authApi.isAuthenticated()) {
+					console.warn('Roles are not updated');
+					return Promise.resolve();
+				}
+				if (this.roles() && this.roles().length > 0) {
+					console.info('Roles updated');
+					return Promise.resolve();
+				} else {
+					return roleService.updateRoles()
+						.then(({ data: roles }) => {
+							console.info('Roles updated');
+							this.roles(roles);
+						});
 				}
 			}
 	

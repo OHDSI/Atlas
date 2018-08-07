@@ -3,6 +3,7 @@ define(function (require, exports) {
 	const ko = require('knockout');
 	const httpService = require('services/http');
 	const sharedState = require('atlas-state');
+	const config = require('appConfig');
 
 	function getIncludedConceptSetDrawCallback({ model, searchConceptsColumns }) {
 		return async function (settings) {

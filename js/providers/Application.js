@@ -3,7 +3,6 @@ define(
 		'knockout',
 		'services/http',
 		'webapi/AuthAPI',
-		'webapi/RoleAPI',
 		'appConfig',
 		'lscache',
 		'atlas-state',
@@ -17,7 +16,6 @@ define(
 		ko,
 		httpService,
 		authApi,
-		roleApi,
 		config,
 		lscache,
 		sharedState,
@@ -71,7 +69,7 @@ define(
 			synchronize() {
 				const promise = Promise.all([
 					this.initServiceInformation(),
-					this.updateRoles(),
+					this.pageModel.updateRoles(),
 				]);
 				promise.then(() => {
 					this.router.run();
@@ -90,15 +88,16 @@ define(
 			// service methods
 
 			attachGlobalEventListeners() {
+				const self = this;
 				// handle select all
 					$(document)
 					.on('click', 'th i.fa.fa-shopping-cart', function () {
-						if (this.pageModel.currentConceptSet() == undefined) {
+						if (self.pageModel.currentConceptSet() == undefined) {
 							var newConceptSet = {
 								name: ko.observable("New Concept Set"),
 								id: 0
 							}
-							this.pageModel.currentConceptSet(newConceptSet);
+							self.pageModel.currentConceptSet(newConceptSet);
 						}
 
 						var table = $(this)
@@ -115,7 +114,7 @@ define(
 							if (sharedState.selectedConceptsIndex[concept.CONCEPT_ID]) {
 								// ignore if already selected
 							} else {
-								var conceptSetItem = this.pageModel.createConceptSetItem(concept);
+								var conceptSetItem = self.pageModel.createConceptSetItem(concept);
 								sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
 								selectedConcepts.push(conceptSetItem)
 							}
@@ -128,16 +127,16 @@ define(
 				// handling concept set selections
 				$(document)
 					.on('click', 'td i.fa.fa-shopping-cart, .asset-heading i.fa.fa-shopping-cart', function () {
-						if (this.pageModel.currentConceptSet() == undefined) {
+						if (self.pageModel.currentConceptSet() == undefined) {
 							var newConceptSet = {
 								name: ko.observable("New Concept Set"),
 								id: 0
 							}
-							this.pageModel.currentConceptSet({
+							self.pageModel.currentConceptSet({
 								name: ko.observable('New Concept Set'),
 								id: 0
 							});
-							this.pageModel.currentConceptSetSource('repository');
+							self.pageModel.currentConceptSetSource('repository');
 						}
 
 						$(this)
@@ -147,7 +146,7 @@ define(
 
 						if ($(this)
 							.hasClass('selected')) {
-							var conceptSetItem = this.pageModel.createConceptSetItem(concept);
+							var conceptSetItem = self.pageModel.createConceptSetItem(concept);
 							sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
 							sharedState.selectedConcepts.push(conceptSetItem);
 						} else {
@@ -159,12 +158,12 @@ define(
 
 						// If we are updating a concept set that is part of a cohort definition
 						// then we need to notify any dependent observables about this change in the concept set
-						if (this.pageModel.currentCohortDefinition() && this.pageModel.currentConceptSetSource() === "cohort") {
-							var conceptSet = this.pageModel.currentCohortDefinition()
+						if (self.pageModel.currentCohortDefinition() && self.pageModel.currentConceptSetSource() === "cohort") {
+							var conceptSet = self.pageModel.currentCohortDefinition()
 								.expression()
 								.ConceptSets()
 								.find(function (item) {
-									return item.id === this.pageModel.currentConceptSet().id;
+									return item.id === self.pageModel.currentConceptSet().id;
 								});
 							if (!$(this).hasClass("selected")) {
 								conceptSet.expression.items.remove(function (i) {
@@ -172,9 +171,9 @@ define(
 								});
 							}
 							conceptSet.expression.items.valueHasMutated();
-							this.pageModel.resolveConceptSetExpressionSimple(ko.toJSON(conceptSet.expression))
-								.then(this.pageModel.loadIncluded)
-								.then(this.pageModel.loadSourcecodes);
+							self.pageModel.resolveConceptSetExpressionSimple(ko.toJSON(conceptSet.expression))
+								.then(self.pageModel.loadIncluded)
+								.then(self.pageModel.loadSourcecodes);
 						}
 					});
 
@@ -191,12 +190,12 @@ define(
 							return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
 						});
 
-						this.pageModel.resolveConceptSetExpression();
+						self.pageModel.resolveConceptSetExpression();
 					});
 
 				$(window)
 					.bind('beforeunload', function () {
-						if (this.pageModel.hasUnsavedChanges())
+						if (self.pageModel.hasUnsavedChanges())
 							return "Changes will be lost if you do not save.";
 					});
 			}
@@ -212,7 +211,7 @@ define(
 					const cachedService = lscache.get(serviceCacheKey);
 
 					if (cachedService && cachedService.sources) {
-						console.log('cached service');
+						console.info('cached service');
 						config.api = cachedService;
 
 						for (var s = 0; s < cachedService.sources.length; s++) {
@@ -254,6 +253,9 @@ define(
 									console.info('Re-initialized service information');
 								}
 							});
+
+							resolve();
+							return;
 						}
 					}
 					console.info('Done initializing service information');
@@ -262,23 +264,6 @@ define(
 				});
 			}
 
-			updateRoles() {
-				console.log('Updating roles');
-				if (this.pageModel.roles() && this.pageModel.roles().length > 0) {
-					console.log('Roles updated');
-					return Promise.resolve();
-				} else {
-
-					return httpService.doGet(config.api.url + 'role')
-						.then(({ data }) => {
-							console.log('Roles updated');
-							this.pageModel.roles(data);
-						})
-						.catch(er => {
-							console.warn('Unable to update roles');
-						});
-				}
-			}
 		}
 	}
 )

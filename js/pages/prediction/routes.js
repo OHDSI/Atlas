@@ -13,11 +13,11 @@ define(
           appModel.activePage(this.title);
           require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'components/cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
             appModel.currentPatientLevelPredictionId(+modelId);
-            appModel.componentParams = {
+            appModel.componentParams({
               currentPatientLevelPredictionId: appModel.currentPatientLevelPredictionId,
               currentPatientLevelPrediction: appModel.currentPatientLevelPrediction,
               dirtyFlag: appModel.currentPatientLevelPredictionDirtyFlag,
-            };
+            });
             appModel.currentView('plp-manager');
           });
         }),

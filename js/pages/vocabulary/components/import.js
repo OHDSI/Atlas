@@ -2,6 +2,7 @@ define([
 	'knockout',
 	'text!./import.html',
 	'providers/Component',
+	'providers/AutoBind',
 	'providers/Vocabulary',
 	'utils/CommonUtils',
 	'less!./import.less',
@@ -9,10 +10,11 @@ define([
 	ko,
 	view,
 	Component,
+	AutoBind,
 	vocabularyProvider,
 	commonUtils
 ) {
-	class Import extends Component {
+	class Import extends AutoBind(Component) {
 		constructor(params) {
 			super(params);      
 			this.model = params.model;
@@ -36,12 +38,12 @@ define([
 				this.error('Unable to parse JSON');
 				return false;
 			}
-			if (pageModel.currentConceptSet() == undefined) {
-				pageModel.currentConceptSet({
+			if (this.model.currentConceptSet() == undefined) {
+				this.model.currentConceptSet({
 					name: ko.observable('New Concept Set'),
 					id: 0
 				});
-				pageModel.currentConceptSetSource('repository');
+				this.model.currentConceptSetSource('repository');
 			}
 
 			for (let i = 0; i < items.length; i++) {

@@ -523,7 +523,7 @@ define(['knockout',
 			if (self.model.currentConceptSetDirtyFlag.isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
 				return;
 			} else {
-				pageModel.clearConceptSet();
+				self.model.clearConceptSet();
 				document.location = "#/conceptsets";
 			}
 		};
