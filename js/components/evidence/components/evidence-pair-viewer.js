@@ -21,6 +21,7 @@ define([
 		self.sourceIds = params.sourceIds || config.evidenceLinkoutSources;
 		self.drugConditionPairs = ko.observableArray();
 		self.loading = ko.observable(true);
+		self.showHelpText = ko.observable(false);
 		self.cemDrugConditionPairs = null;
 		self.pubmedMetadata = {};
 
@@ -151,6 +152,18 @@ define([
 				metadataPromise.resolve();
 			}
 			return metadataPromise;
+		}
+
+		self.toggleHelpText = function() {
+			self.showHelpText(!self.showHelpText());
+		}
+
+		self.helpTextDisplay = function() {
+			if (!self.showHelpText()) {
+				return "Click here for more information about this evidence list"
+			} else {
+				return "Hide details"
+			}
 		}
 		
 		// startup actions

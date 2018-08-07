@@ -333,6 +333,12 @@ define(['knockout',
 					},
 				},
 				{
+					'caption': 'Found in Product Label Or Publications',
+					'binding': d => {
+						return self.hasEvidence(d) ? 'Yes' : 'No';
+					},
+				},
+				{
 					'caption': 'Signal in FAERS',
 					'binding': d => {
 						var desc = d.descenantFaersCount;
