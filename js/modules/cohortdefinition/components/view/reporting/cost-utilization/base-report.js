@@ -193,7 +193,7 @@ define(
           id: idx,
           xValue: moment(entry.periodStart).toDate(),
           periodEnd: moment(entry.periodEnd).toDate(),
-          yValue: parseFloat(entry[yValueField]),
+          yValue: parseFloat(entry[yValueField]) || 0,
         }));
       }
 
