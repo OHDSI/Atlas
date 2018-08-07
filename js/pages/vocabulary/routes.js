@@ -11,12 +11,12 @@ define(
                     const view = 'vocabulary';
 
                     if (appModel.currentView() !== view) {
-                        appModel.componentParams = {
+                        appModel.componentParams({
                             query: ko.observable(),
-                        };
+                        });
                     }
 
-                    appModel.componentParams.query(query ? unescape(query) : null);
+                    appModel.componentParams().query(query ? unescape(query) : null);
 
                     appModel.currentView(view);
                 });
