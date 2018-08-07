@@ -41,7 +41,7 @@ define(['knockout',
 		self.showEvidencePairs = ko.observable(false);
 		self.linkoutDrugConceptIds = [];
 		self.linkoutConditionConceptIds = [];
-		self.sourceIds = config.evidenceLinkoutSources;
+		self.sourceIds = config.cemOptions.evidenceLinkoutSources;
 		self.recordCountClass = ko.pureComputed(function () {
 			return self.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
 		});
@@ -50,23 +50,49 @@ define(['knockout',
 		self.csTarget = ko.observable();
 		self.csTargetCaption = ko.observable();
 
+		self.hasEvidence = function(row) {
+			return (
+				row.descendantPmidCount > 0 ||
+				row.exactPmidCount > 0 ||
+				row.parentPmidCount > 0 ||
+				row.ancestorPmidCount > 0 ||
+				row.descendantSplicerCount > 0 ||
+				row.exactSplicerCount > 0 ||
+				row.parentSplicerCount > 0 ||
+				row.ancestorSplicerCount > 0
+			)
+		}
+
+
 		self.rowClick = function(s, p, d) {
-			self.linkoutDrugConceptIds = [];
-			self.linkoutConditionConceptIds = [];
-			if (self.targetDomainId() == "Drug") {
-				self.linkoutDrugConceptIds.push(s.conceptId);
-				self.linkoutConditionConceptIds = self.conceptIds();
-			} else {
-				self.linkoutDrugConceptIds = self.conceptIds();
-				self.linkoutConditionConceptIds.push(s.conceptId);
+			if (self.hasEvidence(s)) {
+				self.linkoutDrugConceptIds = [];
+				self.linkoutConditionConceptIds = [];
+				if (self.targetDomainId() == "Drug") {
+					self.linkoutDrugConceptIds.push(s.conceptId);
+					self.linkoutConditionConceptIds = self.conceptIds();
+				} else {
+					self.linkoutDrugConceptIds = self.conceptIds();
+					self.linkoutConditionConceptIds.push(s.conceptId);
+				}
+				self.showEvidencePairs(true);	
 			}
-			self.showEvidencePairs(true);
 		}
 
 		self.negControlColumns = [
 			{
 				title: 'Id',
 				data: d => d.conceptId,
+				visible: false,
+			},
+			{
+				title: '',
+				data: d => {
+					if (self.hasEvidence(d)) {
+						return '<button type=\"button\" title=\"View Details\" class=\"btn btn-default btn-xs\"><i class=\"fa fa-external-link\" aria-hidden=\"true\"></i>&nbsp;</button>';
+					}
+				},
+				sortable: false,
 			},
 			{
 				title: 'Name',
@@ -103,15 +129,8 @@ define(['knockout',
 			{
 				title: 'Publication Count (Exact Concept Match)',
 				render: function(s, p, d) {
-					var count = d.exactPmidCount.toString();
-					var countFormatted = d.exactPmidCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					if (count == "0") {
-						return countFormatted;
-					} else {
-						return '<span class="linkish">' + countFormatted + '</span>';
-					}
-					// return d.exactPmidCount.toString()
-					// 	.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return d.exactPmidCount.toString()
+					 	.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 				},
 				orderable: true,
 				searchable: true
@@ -270,8 +289,8 @@ define(['knockout',
 				['10', '25', '50', '100', 'All']
 			],
 			order: [
-				[3, 'desc'],
-				[4, 'desc']
+				[4, 'desc'],
+				[5, 'desc']
 			],
 			Facets: [{
 					'caption': 'Suggested Negative Control',

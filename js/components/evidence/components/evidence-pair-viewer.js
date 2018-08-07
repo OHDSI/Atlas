@@ -74,9 +74,14 @@ define([
 			order: [
 				[0, 'asc']
 			],
-			Facets: [{
+			Facets: [
+				{
 					'caption': 'Mapping Type',
 					'binding': d => d.mappingType,
+				},
+				{
+					'caption': 'Source',
+					'binding': d => d.evidenceSource,
 				},
 			]
 		};
@@ -99,9 +104,16 @@ define([
 					}
 				}).done(function(results) {
 					$.each(self.cemDrugConditionPairs, function(i, dcp) {
-						dcp.linkout = "https://www.ncbi.nlm.nih.gov/pubmed/" + dcp.uniqueIdentifier;
+						var externalLink = config.cemOptions.externalLinks[dcp.evidenceSource];
+						if (externalLink && externalLink.length > 0) {
+							dcp.linkout = externalLink.replace("{@id}", dcp.uniqueIdentifier);
+						} else {
+							dcp.linkout = dcp.uniqueIdentifier;
+						}
 						if (dcp.evidenceSource.indexOf("medline") !== -1) {
 							dcp.evidenceTitle = self.pubmedMetadata[dcp.uniqueIdentifier].title
+						} else if (dcp.evidenceSource.indexOf("splicer") !== -1) {
+							dcp.evidenceTitle = dcp.drugConceptName;
 						} else {
 							dcp.evidenceTitle = dcp.linkout;
 						}
@@ -118,7 +130,8 @@ define([
 
 	    self.getMetadataFromPubmed = function() {
 			var metadataPromise = $.Deferred();
-			if (config.evidenceGetPubmedMetadata) {
+			var pubmedMetadataUrl = config.cemOptions.sourceRestEndpoints["medline_winnenburg"];
+			if (pubmedMetadataUrl && pubmedMetadataUrl.length > 0) {
 				// Get the medline related results
 				var medlineResults = self.cemDrugConditionPairs.filter(function (info) {
 					return info.evidenceSource.indexOf("medline") !== -1;
@@ -131,7 +144,7 @@ define([
 				// Retrieve the metadata
 				var ids = uniqueIdentifiers.join();
 				var metadataPromise = $.ajax({
-					url: config.evidencePubmedMetadataUrl.replace("{@ids}", ids),
+					url: pubmedMetadataUrl.replace("{@ids}", ids),
 					method: 'GET'
 				});
 			} else {
