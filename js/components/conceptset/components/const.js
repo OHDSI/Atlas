@@ -49,14 +49,14 @@ define([
 			title: 'RC',
 			data: 'RECORD_COUNT',
 			className: 'numeric',
-			orderable: false,
+			orderable: true,
 			searchable: false,
 		},
 		{
 			title: 'DRC',
 			data: 'DESCENDANT_RECORD_COUNT',
 			className: 'numeric',
-			orderable: false,
+			orderable: true,
 			searchable: false,
 		},
 		{
@@ -114,10 +114,10 @@ define([
 		}]
 	};
 
-	const tableLanguage = {
+	const tableLanguage = (className) => ({
 		search: 'Filter: ',
-		processing: '<div><img width="100px" height="100px" src="images/loading.svg" /><div data-bind="css: loadingClass">Loading...</div></div>',
-	};
+		processing: '<div><img width="100px" height="100px" src="images/loading.svg" /><div class="' + className + '">Loading...</div></div>',
+	});
 
 	return {
 		searchConceptsColumns,

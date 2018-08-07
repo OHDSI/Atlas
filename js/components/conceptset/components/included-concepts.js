@@ -36,7 +36,7 @@ define([
 			this.loadingClass = this.classes('conceptset-loading');
 			this.searchConceptsColumns = Const.searchConceptsColumns;
 			this.searchConceptsOptions = Const.searchConceptsOptions;
-			this.tableLanguage = Const.tableLanguage;
+			this.tableLanguage = Const.tableLanguage(this.loadingClass);
 
 			this.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
 				includedConcepts: this.includedConcepts,

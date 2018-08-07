@@ -24,9 +24,8 @@ define([
 
 				this.model = params.model;
 				this.sourceCodesFilter = {};
-				this.tableLanguage = Const.tableLanguage;
+				this.tableLanguage = Const.tableLanguage(this.classes('conceptset-loading'));
 				this.tableClasses = { sProcessing: this.classes('conceptset-processing'), };
-				this.loadingClass = this.classes('conceptset-loading');
 
 				this.applySourceCodesFilter = this.applySourceCodesFilter.bind(this);
 				this.loadSourceCodesFacets = this.loadSourceCodesFacets.bind(this);
