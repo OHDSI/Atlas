@@ -37,6 +37,7 @@ define([
 			this.searchConceptsColumns = Const.searchConceptsColumns;
 			this.searchConceptsOptions = Const.searchConceptsOptions;
 			this.tableLanguage = Const.tableLanguage(this.loadingClass);
+			this.dataTableClasses = this.classes('table');
 
 			this.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
 				includedConcepts: this.includedConcepts,
@@ -66,7 +67,7 @@ define([
 			conceptSetApi.resolveConceptSetExpression(utils.getExpression(data, this.includedFilter, this.searchConceptsOptions.Facets), true).then(concepts => {
 				this.includedConcepts(concepts.data);
 				this.model.setIncludedConceptsMap(concepts.data);
-				callback(concepts);
+				callback({...concepts, draw: data.draw});
 			});
 		}
 

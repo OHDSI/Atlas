@@ -9,6 +9,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.ajax = params.ajax || undefined;
 		self.processing = params.processing || false;
 		self.classes = params.classes || {};
+		self.tableClasses = ['facetedDataTable'].concat(params.tableClasses || []).join(' ');
 		self.data = params.xfObservable || ko.observable();
 		self.tableData = !self.serverSide ? ko.pureComputed(function () {
 			if (self.data() && self.data().size() && self.data().size() > 0) {

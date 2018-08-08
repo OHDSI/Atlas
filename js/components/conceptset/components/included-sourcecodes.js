@@ -26,6 +26,7 @@ define([
 				this.sourceCodesFilter = {};
 				this.tableLanguage = Const.tableLanguage(this.classes('conceptset-loading'));
 				this.tableClasses = { sProcessing: this.classes('conceptset-processing'), };
+				this.dataTableClasses = this.classes('table');
 
 				this.applySourceCodesFilter = this.applySourceCodesFilter.bind(this);
 				this.loadSourceCodesFacets = this.loadSourceCodesFacets.bind(this);
@@ -43,7 +44,7 @@ define([
 			loadSourceCodes(data, callback, settings) {
 				vocabularyAPI.loadSourceCodes(utils.getExpression(data, this.sourceCodesFilter, this.model.relatedSourcecodes.Facets), true)
 					.then(concepts => {
-						callback(concepts);
+						callback({...concepts, draw: data.draw});
 					});
 			}
 

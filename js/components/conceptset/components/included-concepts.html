@@ -1,5 +1,5 @@
 <div>
-    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, facetReference: $component.loadIncludedFacets,
+    <faceted-datatable params="{tableClasses: dataTableClasses, columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, facetReference: $component.loadIncludedFacets,
             filterCallback: $component.applyIncludedFilter, drawCallback: $component.includedDrawCallback, rowCallback: model.contextSensitiveLinkColor, serverSide: true,
             ajax: $component.loadIncludedConcepts, processing: true, language: $component.tableLanguage, classes: $component.tableClasses }"></faceted-datatable>
     <div data-bind="css: classes({extra: ['linkLegend']})">

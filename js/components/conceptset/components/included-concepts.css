@@ -1,14 +1,18 @@
 .included-concepts {
-
 }
 
 .included-concepts__conceptset-processing {
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   margin: -50px -50px 0 0;
+  background-color: transparent;
 }
 
 .included-concepts__conceptset-loading {
   text-align: center;
+}
+
+.included-concepts__table > div{
+  min-height: 300px;
 }

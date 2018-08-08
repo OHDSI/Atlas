@@ -16,7 +16,7 @@
 			</div>
 		</div>
 		<div data-bind="css: {'col-xs-10': $component.facets().length > 0, 'col-xs-12': $component.facets().length == 0}">
-			<div class="facetedDataTable">
+			<div data-bind="css: tableClasses">
 				<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" cellspacing="0" data-bind="dataTable:{
 							data: $component.tableData,
 							api: $component.dtApi,
