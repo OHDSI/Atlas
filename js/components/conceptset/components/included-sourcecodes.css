@@ -3,7 +3,7 @@
 }
 
 .included-sourcecodes__conceptset-processing {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
 }
