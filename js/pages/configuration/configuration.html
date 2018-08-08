@@ -20,7 +20,7 @@
 					</div>
 					<div class="right">
 						<div class="padded priority" data-bind="if:$component.canChangePriority">
-							<div class="priority-label">Change source priorities in: </div><select class="form-control" style="margin-bottom: 0" data-bind="options: $component.priorityOptions, optionsText:'name', optionsValue:'id', value: $component.sharedState.priorityScope" />
+							<div class="priority-label">Change source priorities in: </div><select class="form-control configuration__source-select" data-bind="options: $component.priorityOptions, optionsText:'name', optionsValue:'id', value: $component.sharedState.priorityScope" />
 						</div>
 						<span class="btn btn-sm btn-primary" data-bind="click: $component.newSource, visible: $component.config.userAuthenticationEnabled, css: {disabled: !$component.canCreateSource()}">New Source</span>
 					</div>
@@ -95,12 +95,15 @@
 					<loading params="theme: 'light'" />
 			</div>
 			<div>
-				<div class="command-pane">
-					<div class="padded">
+				<div class="configuration__command-pane">
+					<div class="configuration__padded">
 						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache">Clear Configuration Cache</a>
 					</div>
-					<div class="padded" data-bind="if: config.userAuthenticationEnabled && $component.hasAccess">
-						<a href="#/roles" class="btn btn-sm btn-primary" style="width: 175px" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
+					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.hasAccess">
+						<a href="#/roles" class="btn btn-sm btn-primary configuration__manage-btn" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
+					</div>
+					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.canImport">
+						<a href="#/import" class="btn btn-sm btn-primary configuration__import-btn">Import Users from LDAP/AD</a>
 					</div>
 				</div>
 			</div>

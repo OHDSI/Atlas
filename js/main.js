@@ -423,5 +423,5 @@ require([
 					return "Changes will be lost if you do not save.";
 			});
 	});
-});	
+});
 });

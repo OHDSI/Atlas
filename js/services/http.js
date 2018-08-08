@@ -1,7 +1,9 @@
 define(function(require, exports) {
   const config = require('appConfig');
   const OHDSIApi = require('ohdsi-api').Api;
-  
+
+  const JSON_RESPONSE_TYPE = "application/json";
+
   class Api extends OHDSIApi {
     handleUnexpectedError() {
       console.error('Oooops!.. Something went wrong :(');
