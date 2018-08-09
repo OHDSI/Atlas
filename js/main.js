@@ -49,6 +49,8 @@ const localRefs = {
 	"css": "plugins/css.min",
 };
 
+requirejs.config({paths: {"optional": "plugins/optional"}});
+
 require([
 	'./settings',
 	'optional', // require this plugin separately to check in advance whether we have a local config
