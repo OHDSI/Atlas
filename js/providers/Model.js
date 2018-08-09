@@ -812,6 +812,9 @@ define(
 			}
 	
 			updateRoles() {
+				if (!config.userAuthenticationEnabled)
+						return true;
+
 				console.info('Updating roles');
 				if (!authApi.isAuthenticated()) {
 					console.warn('Roles are not updated');
