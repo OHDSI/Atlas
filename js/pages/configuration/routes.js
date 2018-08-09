@@ -42,7 +42,7 @@ define(
         }),
         '/source/:id': new AuthorizedRoute((id) => {
           appModel.activePage(this.title);
-          require(['source-manager'], function () {
+          require(['./sources/source-manager'], function () {
             appModel.componentParams = {
               model: appModel,
             };
