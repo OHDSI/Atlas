@@ -587,17 +587,17 @@ define([
 								this.model.loadingReport(false);
 								var normalizedData = this.normalizeArray(data);
 								if (!normalizedData.empty) {
-									var table_data = normalizedData.conceptPath.map(function (d, i) {
-										conceptDetails = this.conceptPath[i].split('||');
+									var table_data = normalizedData.conceptPath.map((d, i) => {
+										conceptDetails = normalizedData.conceptPath[i].split('||');
 										return {
-											concept_id: this.conceptId[i],
+											concept_id: normalizedData.conceptId[i],
 											level_4: conceptDetails[0],
 											level_3: conceptDetails[1],
 											level_2: conceptDetails[2],
 											procedure_name: conceptDetails[3],
-											num_persons: this.formatComma(this.numPersons[i]),
-											percent_persons: this.formatPercent(this.percentPersons[i]),
-											records_per_person: this.formatFixed(this.recordsPerPerson[i])
+											num_persons: this.formatComma(normalizedData.numPersons[i]),
+											percent_persons: this.formatPercent(normalizedData.percentPersons[i]),
+											records_per_person: this.formatFixed(normalizedData.recordsPerPerson[i])
 										};
 									}, normalizedData);
 
@@ -649,19 +649,19 @@ define([
 									var tree = this.buildHierarchyFromJSON(normalizedData, threshold);
 									var treemap = new atlascharts.treemap();
 									treemap.render(tree, '#treemap_container', width, height, {
-										onclick: function (node) {
+										onclick: (node) => {
 											this.procedureDrilldown(node.id, node.name);
 										},
-										getsizevalue: function (node) {
+										getsizevalue: (node) => {
 											return node.num_persons;
 										},
-										getcolorvalue: function (node) {
+										getcolorvalue: (node) => {
 											return node.records_per_person;
 										},
-										getcolorrange: function () {
+										getcolorrange: () => {
 											return this.treemapGradient;
 										},
-										getcontent: function (node) {
+										getcontent: (node) => {
 											var result = '',
 												steps = node.path.split('||'),
 												i = steps.length - 1;
@@ -671,7 +671,7 @@ define([
 											result += '<div class="pathleafstat">Records per Person: ' + this.formatFixed(node.records_per_person) + '</div>';
 											return result;
 										},
-										gettitle: function (node) {
+										gettitle: (node) => {
 											var title = '',
 												steps = node.path.split('||');
 											for (var i = 0; i < steps.length - 1; i++) {
@@ -704,20 +704,20 @@ define([
 								var normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
 								data = normalizedData;
 								if (!data.empty) {
-									var table_data = normalizedData.conceptPath.map(function (d, i) {
-										conceptDetails = this.conceptPath[i].split('||');
+									var table_data = normalizedData.conceptPath.map((d, i) => {
+										conceptDetails = data.conceptPath[i].split('||');
 										return {
-											concept_id: this.conceptId[i],
+											concept_id: data.conceptId[i],
 											atc1: conceptDetails[0],
 											atc3: conceptDetails[1],
 											atc5: conceptDetails[2],
 											ingredient: conceptDetails[3],
 											rxnorm: conceptDetails[4],
-											num_persons: this.formatComma(this.numPersons[i]),
-											percent_persons: this.formatPercent(this.percentPersons[i]),
-											records_per_person: this.formatFixed(this.recordsPerPerson[i])
+											num_persons: this.formatComma(data.numPersons[i]),
+											percent_persons: this.formatPercent(data.percentPersons[i]),
+											records_per_person: this.formatFixed(data.recordsPerPerson[i])
 										};
-									}, data);
+									});
 
 									datatable = $('#drug_table')
 										.DataTable({
@@ -774,10 +774,10 @@ define([
 										onclick: (node) => {
 											this.drugExposureDrilldown(node.id, node.name);
 										},
-										getsizevalue: function (node) {
+										getsizevalue: (node) => {
 											return node.num_persons;
 										},
-										getcolorvalue: function (node) {
+										getcolorvalue: (node) => {
 											return node.records_per_person;
 										},
 										getcolorrange: () => {
@@ -793,7 +793,7 @@ define([
 											result += '<div class="pathleafstat">Records per Person: ' + this.formatFixed(node.records_per_person) + '</div>';
 											return result;
 										},
-										gettitle: function (node) {
+										gettitle: (node) => {
 											var title = '',
 												steps = node.path.split('||');
 											for (var i = 0; i < steps.length - 1; i++) {
@@ -824,19 +824,19 @@ define([
 								var normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
 								data = normalizedData;
 								if (!data.empty) {
-									var table_data = normalizedData.conceptPath.map(function (d, i) {
-										var conceptDetails = this.conceptPath[i].split('||');
+									var table_data = normalizedData.conceptPath.map((d, i) => {
+										var conceptDetails = data.conceptPath[i].split('||');
 										return {
-											concept_id: this.conceptId[i],
+											concept_id: data.conceptId[i],
 											atc1: conceptDetails[0],
 											atc3: conceptDetails[1],
 											atc5: conceptDetails[2],
 											ingredient: conceptDetails[3],
-											num_persons: this.formatComma(this.numPersons[i]),
-											percent_persons: this.formatPercent(this.percentPersons[i]),
-											length_of_era: this.formatFixed(this.lengthOfEra[i])
+											num_persons: this.formatComma(data.numPersons[i]),
+											percent_persons: this.formatPercent(data.percentPersons[i]),
+											length_of_era: this.formatFixed(data.lengthOfEra[i])
 										};
-									}, data);
+									});
 
 									datatable = $('#drugera_table')
 										.DataTable({
@@ -889,10 +889,10 @@ define([
 										onclick: (node) => {
 											this.drugeraDrilldown(node.id, node.name);
 										},
-										getsizevalue: function (node) {
+										getsizevalue: (node) => {
 											return node.num_persons;
 										},
-										getcolorvalue: function (node) {
+										getcolorvalue: (node) => {
 											return node.length_of_era;
 										},
 										getcolorrange: () => {
@@ -908,7 +908,7 @@ define([
 											result += '<div class="pathleafstat">Length of Era: ' + this.formatFixed(node.length_of_era) + '</div>';
 											return result;
 										},
-										gettitle: function (node) {
+										gettitle: (node) => {
 											var title = '',
 												steps = node.path.split('||');
 											for (var i = 0; i < steps.length - 1; i++) {
@@ -939,20 +939,20 @@ define([
 								var normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
 								data = normalizedData;
 								if (!data.empty) {
-									var table_data = normalizedData.conceptPath.map(function (d, i) {
-										conceptDetails = this.conceptPath[i].split('||');
+									var table_data = normalizedData.conceptPath.map((d, i) => {
+										conceptDetails = data.conceptPath[i].split('||');
 										return {
-											concept_id: this.conceptId[i],
+											concept_id: data.conceptId[i],
 											soc: conceptDetails[0],
 											hlgt: conceptDetails[1],
 											hlt: conceptDetails[2],
 											pt: conceptDetails[3],
 											snomed: conceptDetails[4],
-											num_persons: this.formatComma(this.numPersons[i]),
-											percent_persons: this.formatPercent(this.percentPersons[i]),
-											records_per_person: this.formatFixed(this.recordsPerPerson[i])
+											num_persons: this.formatComma(data.numPersons[i]),
+											percent_persons: this.formatPercent(data.percentPersons[i]),
+											records_per_person: this.formatFixed(data.recordsPerPerson[i])
 										};
-									}, data);
+									});
 
 									datatable = $('#condition_table')
 										.DataTable({
@@ -1010,13 +1010,13 @@ define([
 										onclick: (node) => {
 											this.conditionDrilldown(node.id, node.name);
 										},
-										getsizevalue: function (node) {
+										getsizevalue: (node) => {
 											return node.num_persons;
 										},
-										getcolorvalue: function (node) {
+										getcolorvalue: (node) => {
 											return node.records_per_person;
 										},
-										getcolorrange: function () {
+										getcolorrange: () => {
 											return this.treemapGradient;
 										},
 										getcontent: (node) => {
@@ -1029,7 +1029,7 @@ define([
 											result += '<div class="pathleafstat">Records per Person: ' + this.formatFixed(node.records_per_person) + '</div>';
 											return result;
 										},
-										gettitle: function (node) {
+										gettitle: (node) => {
 											var title = '',
 												steps = node.path.split('||');
 											for (var i = 0; i < steps.length - 1; i++) {
@@ -1055,7 +1055,7 @@ define([
 								if (!ageByGenderData.empty) {
 									var agegenderboxplot = new atlascharts.boxplot();
 									var agData = ageByGenderData.category
-										.map(function (d, i) {
+										.map((d, i) => {
 											var item = {
 												Category: this[i].category,
 												min: this[i].minValue,
@@ -1170,7 +1170,7 @@ define([
 										.remove();
 									var opbygenderboxplot = new atlascharts.boxplot();
 									var opgData = obsPeriodByGenderData.category
-										.map(function (d, i) {
+										.map((d, i) => {
 											var item = {
 												Category: this.category[i],
 												min: this.minValue[i],
@@ -1217,7 +1217,7 @@ define([
 								if (!obsPeriodByLenByAgeData.empty) {
 									var opbyageboxplot = new atlascharts.boxplot();
 									var opaData = obsPeriodByLenByAgeData.category
-										.map(function (d, i) {
+										.map((d, i) => {
 											var item = {
 												Category: this.category[i],
 												min: this.minValue[i],
@@ -1335,20 +1335,20 @@ define([
 								var normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
 								data = normalizedData;
 								if (!data.empty) {
-									var table_data = normalizedData.conceptPath.map(function (d, i) {
-										var conceptDetails = this.conceptPath[i].split('||');
+									var table_data = normalizedData.conceptPath.map((d, i) => {
+										var conceptDetails = data.conceptPath[i].split('||');
 										return {
-											concept_id: this.conceptId[i],
+											concept_id: data.conceptId[i],
 											soc: conceptDetails[0],
 											hlgt: conceptDetails[1],
 											hlt: conceptDetails[2],
 											pt: conceptDetails[3],
 											snomed: conceptDetails[4],
-											num_persons: this.formatComma(this.numPersons[i]),
-											percent_persons: this.formatPercent(this.percentPersons[i]),
-											length_of_era: this.lengthOfEra[i]
+											num_persons: this.formatComma(data.numPersons[i]),
+											percent_persons: this.formatPercent(data.percentPersons[i]),
+											length_of_era: data.lengthOfEra[i]
 										};
-									}, data);
+									});
 
 									datatable = $('#conditionera_table')
 										.DataTable({
@@ -1405,10 +1405,10 @@ define([
 										onclick: (node) => {
 											this.conditionEraDrilldown(node.id, node.name);
 										},
-										getsizevalue: function (node) {
+										getsizevalue: (node) => {
 											return node.num_persons;
 										},
-										getcolorvalue: function (node) {
+										getcolorvalue: (node) => {
 											return node.length_of_era;
 										},
 										getcolorrange: () => {
@@ -1424,7 +1424,7 @@ define([
 											result += '<div class="pathleafstat">Length of Era: ' + this.formatFixed(node.length_of_era) + '</div>';
 											return result;
 										},
-										gettitle: function (node) {
+										gettitle: (node) => {
 											var title = '',
 												steps = node.path.split('||');
 											for (var i = 0; i < steps.length - 1; i++) {
@@ -1458,34 +1458,34 @@ define([
 									var drugEraPrevalenceData = drugEraPrevalence;
 
 									if (!drugEraPrevalenceData.empty) {
-										table_data = drugEraPrevalence.conceptPath.map(function (d, i) {
-											var conceptDetails = this.conceptPath[i].split('||');
+										table_data = drugEraPrevalence.conceptPath.map((d, i) => {
+											var conceptDetails = drugEraPrevalenceData.conceptPath[i].split('||');
 											return {
-												concept_id: this.conceptId[i],
+												concept_id: drugEraPrevalenceData.conceptId[i],
 												atc1: conceptDetails[0],
 												atc3: conceptDetails[1],
 												atc5: conceptDetails[2],
 												ingredient: conceptDetails[3],
 												name: conceptDetails[3],
-												num_persons: this.formatComma(this.numPersons[i]),
-												percent_persons: this.formatPercent(this.percentPersons[i]),
-												relative_risk: this.formatFixed(this.logRRAfterBefore[i]),
-												percent_persons_before: this.formatPercent(this.percentPersons[i]),
-												percent_persons_after: this.formatPercent(this.percentPersons[i]),
-												risk_difference: this.formatFixed(this.riskDiffAfterBefore[i])
+												num_persons: this.formatComma(drugEraPrevalenceData.numPersons[i]),
+												percent_persons: this.formatPercent(drugEraPrevalenceData.percentPersons[i]),
+												relative_risk: this.formatFixed(drugEraPrevalenceData.logRRAfterBefore[i]),
+												percent_persons_before: this.formatPercent(drugEraPrevalenceData.percentPersons[i]),
+												percent_persons_after: this.formatPercent(drugEraPrevalenceData.percentPersons[i]),
+												risk_difference: this.formatFixed(drugEraPrevalenceData.riskDiffAfterBefore[i])
 											};
-										}, drugEraPrevalenceData);
+										});
 
 										$(document)
-											.on('click', '.treemap_table tbody tr', function () {
-												var datatable = this.datatables[$(this)
+											.on('click', '.treemap_table tbody tr', (event) => {
+												var datatable = this.datatables[$(event.target)
 													.parents('.treemap_table')
 													.attr('id')];
-												var data = datatable.data()[datatable.row(this)[0]];
+												var data = datatable.data()[datatable.row(event.target)[0]];
 												if (data) {
 													var did = data.concept_id;
 													var concept_name = data.name;
-													this.drilldown(did, concept_name, $(this)
+													this.drilldown(did, concept_name, $(event.target)
 														.parents('.treemap_table')
 														.attr('type'));
 												}
@@ -1539,16 +1539,16 @@ define([
 											onclick: (node) => {
 												this.drilldown(node.id, node.name, 'drug');
 											},
-											getsizevalue: function (node) {
+											getsizevalue: (node) => {
 												return node.num_persons;
 											},
-											getcolorvalue: function (node) {
+											getcolorvalue: (node) => {
 												return node.relative_risk;
 											},
-											getcolorrange: function () {
+											getcolorrange: () => {
 												return colorbrewer.RR[3];
 											},
-											getcolorscale: function () {
+											getcolorscale: () => {
 												return [-6, 0, 5];
 											},
 											getcontent: (node) => {
@@ -1564,7 +1564,7 @@ define([
 												result += '<div class="pathleafstat">Difference in Risk: ' + this.formatFixed(node.risk_difference) + '</div>';
 												return result;
 											},
-											gettitle: function (node) {
+											gettitle: (node) => {
 												var title = '',
 													steps = node.path.split('||');
 												for (var i = 0; i < steps.length - 1; i++) {
@@ -1600,35 +1600,35 @@ define([
 									var normalizedData = this.normalizeDataframe(this.normalizeArray(data.conditionOccurrencePrevalence, true));
 									var conditionOccurrencePrevalence = normalizedData;
 									if (!conditionOccurrencePrevalence.empty) {
-										table_data = normalizedData.conceptPath.map(function (d, i) {
-											var conceptDetails = this.conceptPath[i].split('||');
+										table_data = normalizedData.conceptPath.map((d, i) => {
+											var conceptDetails = conditionOccurrencePrevalence.conceptPath[i].split('||');
 											return {
-												concept_id: this.conceptId[i],
+												concept_id: conditionOccurrencePrevalence.conceptId[i],
 												soc: conceptDetails[0],
 												hlgt: conceptDetails[1],
 												hlt: conceptDetails[2],
 												pt: conceptDetails[3],
 												snomed: conceptDetails[4],
 												name: conceptDetails[4],
-												num_persons: this.formatComma(this.numPersons[i]),
-												percent_persons: this.formatPercent(this.percentPersons[i]),
-												relative_risk: this.formatFixed(this.logRRAfterBefore[i]),
-												percent_persons_before: this.formatPercent(this.percentPersons[i]),
-												percent_persons_after: this.formatPercent(this.percentPersons[i]),
-												risk_difference: this.formatFixed(this.riskDiffAfterBefore[i])
+												num_persons: this.formatComma(conditionOccurrencePrevalence.numPersons[i]),
+												percent_persons: this.formatPercent(conditionOccurrencePrevalence.percentPersons[i]),
+												relative_risk: this.formatFixed(conditionOccurrencePrevalence.logRRAfterBefore[i]),
+												percent_persons_before: this.formatPercent(conditionOccurrencePrevalence.percentPersons[i]),
+												percent_persons_after: this.formatPercent(conditionOccurrencePrevalence.percentPersons[i]),
+												risk_difference: this.formatFixed(conditionOccurrencePrevalence.riskDiffAfterBefore[i])
 											};
-										}, conditionOccurrencePrevalence);
+										});
 
 										$(document)
-											.on('click', '.treemap_table tbody tr', function () {
-												var datatable = this.datatables[$(this)
+											.on('click', '.treemap_table tbody tr', (event) => {
+												var datatable = this.datatables[$(event.target)
 													.parents('.treemap_table')
 													.attr('id')];
 												var data = datatable.data()[datatable.row(this)[0]];
 												if (data) {
 													var did = data.concept_id;
 													var concept_name = data.name;
-													this.drilldown(did, concept_name, $(this)
+													this.drilldown(did, concept_name, $(event.target)
 														.parents('.treemap_table')
 														.attr('type'));
 												}
@@ -1687,16 +1687,16 @@ define([
 											onclick: (node) => {
 												this.drilldown(node.id, node.name, 'condition');
 											},
-											getsizevalue: function (node) {
+											getsizevalue: (node) => {
 												return node.num_persons;
 											},
-											getcolorvalue: function (node) {
+											getcolorvalue: (node) => {
 												return node.relative_risk;
 											},
-											getcolorrange: function () {
+											getcolorrange: () => {
 												return colorbrewer.RR[3];
 											},
-											getcolorscale: function () {
+											getcolorscale: () => {
 												return [-6, 0, 5];
 											},
 											getcontent: (node) => {
@@ -1712,7 +1712,7 @@ define([
 												result += '<div class="pathleafstat">Difference in Risk: ' + this.formatFixed(node.risk_difference) + '</div>';
 												return result;
 											},
-											gettitle: function (node) {
+											gettitle: (node) => {
 												var title = '',
 													steps = node.path.split('||');
 												for (var i = 0; i < steps.length - 1; i++) {
@@ -1747,34 +1747,34 @@ define([
 									var normalizedData = this.normalizeDataframe(this.normalizeArray(data.procedureOccurrencePrevalence, true));
 									var procedureOccurrencePrevalence = normalizedData;
 									if (!procedureOccurrencePrevalence.empty) {
-										table_data = normalizedData.conceptPath.map(function (d, i) {
-											var conceptDetails = this.conceptPath[i].split('||');
+										table_data = normalizedData.conceptPath.map((d, i) => {
+											var conceptDetails = procedureOccurrencePrevalence.conceptPath[i].split('||');
 											return {
-												concept_id: this.conceptId[i],
+												concept_id: procedureOccurrencePrevalence.conceptId[i],
 												level_4: conceptDetails[0],
 												level_3: conceptDetails[1],
 												level_2: conceptDetails[2],
 												procedure_name: conceptDetails[3],
 												name: conceptDetails[3],
-												num_persons: this.formatComma(this.numPersons[i]),
-												percent_persons: this.formatPercent(this.percentPersons[i]),
-												relative_risk: this.formatFixed(this.logRRAfterBefore[i]),
-												percent_persons_before: this.formatPercent(this.percentPersons[i]),
-												percent_persons_after: this.formatPercent(this.percentPersons[i]),
-												risk_difference: this.formatFixed(this.riskDiffAfterBefore[i])
+												num_persons: this.formatComma(procedureOccurrencePrevalence.numPersons[i]),
+												percent_persons: this.formatPercent(procedureOccurrencePrevalence.percentPersons[i]),
+												relative_risk: this.formatFixed(procedureOccurrencePrevalence.logRRAfterBefore[i]),
+												percent_persons_before: this.formatPercent(procedureOccurrencePrevalence.percentPersons[i]),
+												percent_persons_after: this.formatPercent(procedureOccurrencePrevalence.percentPersons[i]),
+												risk_difference: this.formatFixed(procedureOccurrencePrevalence.riskDiffAfterBefore[i])
 											};
-										}, procedureOccurrencePrevalence);
+										});
 
 										$(document)
-											.on('click', '.treemap_table tbody tr', function () {
-												var datatable = this.datatables[$(this)
+											.on('click', '.treemap_table tbody tr', (event) => {
+												var datatable = this.datatables[$(event.target)
 													.parents('.treemap_table')
 													.attr('id')];
-												var data = datatable.data()[datatable.row(this)[0]];
+												var data = datatable.data()[datatable.row(event.target)[0]];
 												if (data) {
 													var did = data.concept_id;
 													var concept_name = data.name;
-													this.drilldown(did, concept_name, $(this)
+													this.drilldown(did, concept_name, $(event.target)
 														.parents('.treemap_table')
 														.attr('type'));
 												}
@@ -1828,16 +1828,16 @@ define([
 											onclick: (node) => {
 												this.drilldown(node.id, node.name, 'procedure');
 											},
-											getsizevalue: function (node) {
+											getsizevalue: (node) => {
 												return node.num_persons;
 											},
-											getcolorvalue: function (node) {
+											getcolorvalue: (node) => {
 												return node.relative_risk;
 											},
-											getcolorrange: function () {
+											getcolorrange: () => {
 												return colorbrewer.RR[3];
 											},
-											getcolorscale: function () {
+											getcolorscale: () => {
 												return [-6, 0, 5];
 											},
 											getcontent: (node) => {
@@ -1853,7 +1853,7 @@ define([
 												result += '<div class="pathleafstat">Difference in Risk: ' + this.formatFixed(node.risk_difference) + '</div>';
 												return result;
 											},
-											gettitle: function (node) {
+											gettitle: (node) => {
 												var title = '',
 													steps = node.path.split('||');
 												for (var i = 0; i < steps.length - 1; i++) {
@@ -1883,13 +1883,13 @@ define([
 								if (!result.empty) {
 									var personsByDurationData = this.normalizeDataframe(result)
 										.duration
-										.map(function (d, i) {
+										.map((d, i) => {
 											var item = {
-												xValue: this.duration[i],
-												yValue: this.pctPersons[i]
+												xValue: result.duration[i],
+												yValue: result.pctPersons[i]
 											};
 											return item;
-										}, result);
+										});
 
 									var personsByDurationSingle = new atlascharts.line();
 									personsByDurationSingle.render(personsByDurationData, "#personsByDurationFromStartToEnd", size12.width, size12.height, {
@@ -1940,7 +1940,7 @@ define([
 												max: ageAtIndexDistribution.maxValue[i]
 											};
 											return item;
-										}, ageAtIndexDistribution);
+										});
 									boxplot.render(agData, "#ageAtIndex", size6.width, size6.height, {
 										xLabel: "Gender",
 										yLabel: "Age"
@@ -1952,19 +1952,19 @@ define([
 								if (!distributionAgeCohortStartByCohortStartYear.empty) {
 									var boxplotCsy = new atlascharts.boxplot();
 									var csyData = distributionAgeCohortStartByCohortStartYear.category
-										.map(function (d, i) {
+										.map((d, i) => {
 											var item = {
-												Category: this.category[i],
-												min: this.minValue[i],
-												LIF: this.p10Value[i],
-												q1: this.p25Value[i],
-												median: this.medianValue[i],
-												q3: this.p75Value[i],
-												UIF: this.p90Value[i],
-												max: this.maxValue[i]
+												Category: distributionAgeCohortStartByCohortStartYear.category[i],
+												min: distributionAgeCohortStartByCohortStartYear.minValue[i],
+												LIF: distributionAgeCohortStartByCohortStartYear.p10Value[i],
+												q1: distributionAgeCohortStartByCohortStartYear.p25Value[i],
+												median: distributionAgeCohortStartByCohortStartYear.medianValue[i],
+												q3: distributionAgeCohortStartByCohortStartYear.p75Value[i],
+												UIF: distributionAgeCohortStartByCohortStartYear.p90Value[i],
+												max: distributionAgeCohortStartByCohortStartYear.maxValue[i]
 											};
 											return item;
-										}, distributionAgeCohortStartByCohortStartYear);
+										});
 									boxplotCsy.render(csyData, "#distributionAgeCohortStartByCohortStartYear", size4.width, size4.height, {
 										xLabel: "Cohort Start Year",
 										yLabel: "Age"
@@ -1976,19 +1976,19 @@ define([
 								if (!distributionAgeCohortStartByGender.empty) {
 									var boxplotBg = new atlascharts.boxplot();
 									var bgData = distributionAgeCohortStartByGender.category
-										.map(function (d, i) {
+										.map((d, i) => {
 											var item = {
-												Category: this.category[i],
-												min: this.minValue[i],
-												LIF: this.p10Value[i],
-												q1: this.p25Value[i],
-												median: this.medianValue[i],
-												q3: this.p75Value[i],
-												UIF: this.p90Value[i],
-												max: this.maxValue[i]
+												Category: distributionAgeCohortStartByGender.category[i],
+												min: distributionAgeCohortStartByGender.minValue[i],
+												LIF: distributionAgeCohortStartByGender.p10Value[i],
+												q1: distributionAgeCohortStartByGender.p25Value[i],
+												median: distributionAgeCohortStartByGender.medianValue[i],
+												q3: distributionAgeCohortStartByGender.p75Value[i],
+												UIF: distributionAgeCohortStartByGender.p90Value[i],
+												max: distributionAgeCohortStartByGender.maxValue[i]
 											};
 											return item;
-										}, distributionAgeCohortStartByGender);
+										});
 									boxplotBg.render(bgData, "#distributionAgeCohortStartByGender", size6.width, size6.height, {
 										xLabel: "Gender",
 										yLabel: "Age"
@@ -2186,11 +2186,11 @@ define([
 									destroy: true
 								});
 
-								$(document).on('click', '#care_site_table tbody tr', function () {
+								$(document).on('click', '#care_site_table tbody tr', (event) => {
 									$('#care_site_table tbody tr.selected').removeClass('selected');
-									$(this).addClass('selected');
+									$(event.target).addClass('selected');
 
-									var institution_id = this.careSiteDatatable.data()[this.careSiteDatatable.row(this)[0]].institution;
+									var institution_id = this.careSiteDatatable.data()[this.careSiteDatatable.row(event.target)[0]].institution;
 
 									var entropyData = this.normalizeArray(data.filter(function (d) {
 										return d.insitution == institution_id;
@@ -2327,7 +2327,7 @@ define([
 					});
 			}
 
-			this.dataCompleteRowClick = function (d) {
+			this.dataCompleteRowClick = (d) => {
 				this.showHorizontalBar(d);
 			}
 
@@ -3457,7 +3457,7 @@ define([
 				return obj;
 			}
 
-			this.boxplotHelper = function (data, target, width, height, xlabel, ylabel) {
+			this.boxplotHelper = (data, target, width, height, xlabel, ylabel) => {
 				var boxplot = new atlascharts.boxplot();
 				var yMax = 0;
 				var bpseries = [];
@@ -3489,11 +3489,11 @@ define([
 				}
 			}
 
-			this.dispose = function () {
+			this.dispose = () => {
 				this.reportTriggerRunSuscription.dispose();
 			}
 
-			this.handleDrugTableClick = function (data, context, event) {
+			this.handleDrugTableClick = (data, context, event) => {
 				var dataTable = $("#drug_table")
 					.DataTable();
 				var rowIndex = event.target._DT_CellIndex.row;
@@ -3503,7 +3503,7 @@ define([
 				this.drugExposureDrilldown(data.concept_id, data.rxnorm);
 			}
 
-			this.handleProcedureTableClick = function (data, context, event) {
+			this.handleProcedureTableClick = (data, context, event) => {
 				var dataTable = $("#procedure_table")
 					.DataTable();
 				var rowIndex = event.target._DT_CellIndex.row;
@@ -3513,7 +3513,7 @@ define([
 				this.procedureDrilldown(data.concept_id, data.procedure_name);
 			}
 
-			this.handleDrugEraTableClick = function (data, context, event) {
+			this.handleDrugEraTableClick = (data, context, event) => {
 				var dataTable = $("#drugera_table")
 					.DataTable();
 				var rowIndex = event.target._DT_CellIndex.row;
@@ -3523,7 +3523,7 @@ define([
 				this.drugeraDrilldown(data.concept_id, data.ingredient);
 			}
 
-			this.handleConditionTableClick = function (data, context, event) {
+			this.handleConditionTableClick = (data, context, event) => {
 				var dataTable = $("#condition_table")
 					.DataTable();
 				var rowIndex = event.target._DT_CellIndex.row;
@@ -3533,7 +3533,7 @@ define([
 				this.conditionDrilldown(data.concept_id, data.snomed);
 			}
 
-			this.handleConditionEraTableClick = function (data, context, event) {
+			this.handleConditionEraTableClick = (data, context, event) => {
 				var dataTable = $("#conditionera_table")
 					.DataTable();
 				var rowIndex = event.target._DT_CellIndex.row;
