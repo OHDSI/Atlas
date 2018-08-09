@@ -51,7 +51,7 @@ const localRefs = {
 
 require([
 	'./settings',
-	'plugins/optional', // require this plugin separately to check in advance whether we have a local config
+	'optional', // require this plugin separately to check in advance whether we have a local config
 	'config'
 ], (settings, optional, appConfig) => {
 	const cdnRefs = {};

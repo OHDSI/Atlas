@@ -313,6 +313,10 @@ define([
 					this.domainsLoading(false);
 				});
 		}
+
+		noResultsFoundMessage() {
+			return 'No results found for \"' + this.currentSearch() + '\"';
+		}
 	}
 
 	return commonUtils.build('vocabulary-search', Search, view);

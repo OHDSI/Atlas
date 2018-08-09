@@ -72,7 +72,6 @@ const settingsObject = {
     "bootstrap": "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min",
     "text": "plugins/text",
     "less": "plugins/less",
-    "optional": "plugins/optional",
     "clipboard": "assets/clipboard.min",
     "knockout": "assets/knockout.min",
     "ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
