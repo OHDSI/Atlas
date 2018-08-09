@@ -73,8 +73,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		return translatePromise;
 	}
 
+	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
-		if (value === 0 || value) {
+		if (value === 0 || value || includeKeys.includes(key) ) {
 			return value;
 		} else {
 			return

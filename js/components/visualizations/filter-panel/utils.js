@@ -9,7 +9,7 @@ define(
           selectedAgg[filterEntry.name] = filterEntry.selectedValue();
         }
         else if (filterEntry.type === 'multiselect') {
-          selectedAgg[filterEntry.name] = filterEntry.selectedValues()[0];
+          selectedAgg[filterEntry.name] = filterEntry.selectedValues();
         }
 
         return selectedAgg;

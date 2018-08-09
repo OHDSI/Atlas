@@ -49,7 +49,9 @@ define(function (require, exports) {
 					break;
 				case 'ir-analysis':
 					statusData = statusData.find(j => (String(j.executionInfo.id.analysisId) + String(j.executionInfo.id.sourceId)) == this.executionId);
-					statusData = statusData.executionInfo;
+					if (statusData) {
+						statusData = statusData.executionInfo;
+					}
 					break;
 				case 'negative-controls':
 					statusData = statusData.find(j => (String(j.conceptSetId) + String(j.sourceId)) == this.executionId);
