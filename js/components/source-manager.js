@@ -43,6 +43,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.daimons = ko.observableArray(mapDaimons(data.daimons));
     self.keytabName = ko.observable(data.keytabName);
     self.authType = ko.observable(data.authType);
+    self.krbAdminServer = ko.observable(data.krbAdminServer);
     if (data.keytabName === null){
         self.shouldShowFileInput = ko.observable(true);
     } else {
@@ -118,7 +119,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
       if (self.selectedSource() != null) {
           var str = self.selectedSource().connectionString();
           str = str.match(/KrbHostFQDN=(.*?);/)[0];
-          return str.substring(str.search("=")+1, str.length-1);
+          return str.substring(str.search("=") + 1, str.length - 1);
       }
     });
 
@@ -127,7 +128,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
       if (self.selectedSource() != null) {
           var str = self.selectedSource().connectionString();
           str = str.match(/KrbRealm=(.*?);/)[0];
-          return str.substring(str.search("=")+1, str.length-1);
+          return str.substring(str.search("=") + 1, str.length - 1);
       }
     });
 
@@ -170,6 +171,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
         dialect: self.selectedSource().dialect() || null,
         connectionString: self.selectedSource().connectionString() || null,
         authType: self.selectedSource().authType() || "password",
+        krbAdminServer: self.selectedSource().krbAdminServer() || null,
         username: self.selectedSource().username() || null,
         password: self.selectedSource().password() || null,
         daimons: ko.toJS(self.selectedSource().daimons()).filter(function(d){ return d.enabled; }).map(function(d){

@@ -56,18 +56,24 @@
 													</div>
 												</div>
 												<div class="source-row">
+                                                    <div class="control-group" style="width: 50%">
+                                                        <label>KrbRealm:</label>
+                                                        <div class="form-group">
+                                                            <input title="KrbRealm" data-bind="textInput: krbRealm, disable: true" class="form-control" type="text"/>
+                                                        </div>
+                                                    </div>
 													<div class="control-group" style="width: 50%">
 														<label>KrbHostFQDN:</label>
 														<div class="form-group">
 															<input title="KrbHostFQDN" data-bind="textInput: krbHostFQDN, disable: true" class="form-control" type="text"/>
 														</div>
 													</div>
-													<div class="control-group" style="width: 50%">
-														<label>KrbRealm:</label>
-														<div class="form-group">
-															<input title="KrbRealm" data-bind="textInput: krbRealm, disable: true" class="form-control" type="text"/>
-														</div>
-													</div>
+                                                    <div class="control-group" style="width: 50%">
+                                                        <label>KrbAdminServer:</label>
+                                                        <div class="form-group">
+                                                            <input title="KrbAdminServer" data-bind="textInput: selectedSource().krbAdminServer, enable: canEdit()" class="form-control" type="text"/>
+                                                        </div>
+                                                    </div>
 												</div>
 														<div class="form-group" >Authentication method:
                                                         <div><input type="radio" value="keytab"  data-bind="checked: selectedSource().authType"/>Keytab</div>
