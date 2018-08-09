@@ -1,6 +1,6 @@
 define([
     'knockout',
-    'atlas-state',
+    'pages/characterizations/services/CharacterizationService',
     'text!./characterizations-list.html',
     'appConfig',
     'webapi/AuthAPI',
@@ -12,7 +12,7 @@ define([
     'less!./characterizations-list.less',
 ], function (
     ko,
-    sharedState,
+    CharacterizationService,
     view,
     config,
     authApi,
@@ -27,22 +27,8 @@ define([
 
             this.gridTab = constants.characterizationsTab;
 
-            this.data = ko.observableArray([
-                {
-                    id: 1,
-                    name: 'Simple CC',
-                    createdBy: 'Pavel Grafkin',
-                    createdAt: '2018-07-07',
-                    updatedAt: '2018-07-09',
-                },
-                {
-                    id: 2,
-                    name: 'Cost & Util CC',
-                    createdBy: 'Gowtham Rao',
-                    createdAt: '2018-06-10',
-                    updatedAt: '2018-07-08',
-                }
-            ]);
+            this.loading = ko.observable(false);
+            this.data = ko.observableArray();
 
             this.gridColumns = [
                 {
@@ -67,7 +53,7 @@ define([
                 },
                 {
                     title: 'Author',
-                    data: 'createdBy',
+                    data: 'createdBy.name',
                     className: this.classes('tbl-col', 'author'),
                 },
 
@@ -84,10 +70,22 @@ define([
                     },
                     {
                         'caption': 'Author',
-                        'binding': o => o.createdBy,
+                        'binding': o => o.createdBy.name,
                     },
                 ]
             };
+
+            this.loadData();
+        }
+
+        loadData() {
+            this.loading(true);
+            CharacterizationService
+                .loadCharacterizationList()
+                .then(res => {
+                    this.data(res.characterizations);
+                    this.loading(false);
+                });
         }
     }
 

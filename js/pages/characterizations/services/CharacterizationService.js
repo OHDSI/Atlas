@@ -1,14 +1,27 @@
 define([
+    'text!pages/characterizations/stubs/characterization-list-data.json',
     'text!pages/characterizations/stubs/characterization-design-data.json',
     'text!pages/characterizations/stubs/characterization-executions-data.json',
     'text!pages/characterizations/stubs/characterization-results-data.json',
     'text!pages/characterizations/stubs/characterization-export-data.json',
 ], function (
+    characterizationListData,
     characterizationDesignData,
     executionsData,
     characterizationResultsData,
     characterizationExportData
 ) {
+    function loadCharacterizationList() {
+        return new Promise(resolve => {
+            setTimeout(
+                () => {
+                    resolve(JSON.parse(characterizationListData));
+                },
+                2000
+            );
+        });
+    }
+
     function loadCharacterizationDesign() {
         return new Promise(resolve => {
             setTimeout(
@@ -69,6 +82,7 @@ define([
     }
 
     return {
+        loadCharacterizationList,
         loadCharacterizationDesign,
         loadCharacterizationExecutions,
         loadExecutionDesign,

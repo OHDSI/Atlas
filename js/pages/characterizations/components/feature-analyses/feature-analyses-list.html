@@ -1,7 +1,11 @@
-<characterizations-tabbed-grid params="{
-    activeTab: $component.gridTab,
-    gridColumns: $component.gridColumns,
-    gridOptions: $component.gridOptions,
-    data: $component.data,
-    createNew: $component.createFeature,
-}"/>
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Feature Analysis list...'"></loading>
+
+<div data-bind="visible: !$component.loading()">
+    <characterizations-tabbed-grid params="{
+        activeTab: $component.gridTab,
+        gridColumns: $component.gridColumns,
+        gridOptions: $component.gridOptions,
+        data: $component.data,
+        createNew: $component.createFeature,
+    }"/>
+</div>

@@ -1,19 +1,19 @@
 define([
     'knockout',
-    'atlas-state',
+    'pages/characterizations/services/FeatureAnalysisService',
     'text!./feature-analyses-browser.html',
     'appConfig',
     'webapi/AuthAPI',
     'providers/Component',
     'utils/CommonUtils',
     'utils/DatatableUtils',
-    'text!pages/characterizations/stubs/feature-analyses-list.json',
+    'text!pages/characterizations/stubs/feature-analysis-list-data.json',
     'pages/characterizations/const',
     '../tabbed-grid',
     'less!./feature-analyses-browser.less',
 ], function (
     ko,
-    sharedState,
+    FeatureAnalysisService,
     view,
     config,
     authApi,
@@ -64,24 +64,19 @@ define([
                 }
             ];
 
-            this.loadAnalyses = this.loadAnalyses.bind(this);
             this.selectAnalysis = this.selectAnalysis.bind(this);
 
-            this.loadAnalyses();
+            this.loadData();
         }
 
-        loadAnalyses() {
+        loadData() {
             this.loading(true);
-
-            return new Promise(resolve => {
-                setTimeout(
-                    () => {
-                        this.data(JSON.parse(featureAnalysesList).analyses);
-                        this.loading(false);
-                    },
-                    2000
-                );
-            });
+            FeatureAnalysisService
+                .loadFeatureAnalysisList()
+                .then(res => {
+                    this.data(res);
+                    this.loading(false);
+                });
         }
 
         selectAnalysis(data) {

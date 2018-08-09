@@ -1,6 +1,6 @@
 define([
     'knockout',
-    'atlas-state',
+    'pages/characterizations/services/FeatureAnalysisService',
     'text!./feature-analyses-list.html',
     'appConfig',
     'webapi/AuthAPI',
@@ -12,7 +12,7 @@ define([
     'less!./feature-analyses-list.less',
 ], function (
     ko,
-    sharedState,
+    FeatureAnalysisService,
     view,
     config,
     authApi,
@@ -27,26 +27,19 @@ define([
 
             this.gridTab = constants.featureAnalysesTab;
 
-            this.data = ko.observableArray([
-                {
-                    name: 'Basic feature',
-                    createdBy: 'Pavel Grafkin',
-                    createdAt: '2018-07-07',
-                    updatedAt: '2018-07-09',
-                },
-                {
-                    name: 'Custom SQL feature',
-                    createdBy: 'Gowtham Rao',
-                    createdAt: '2018-06-10',
-                    updatedAt: '2018-07-08',
-                }
-            ]);
+            this.loading = ko.observable(false);
+            this.data = ko.observableArray();
 
             this.gridColumns = [
                 {
                     title: 'Name',
                     data: 'name',
                     className: this.classes('tbl-col', 'name'),
+                },
+                {
+                    title: 'Description',
+                    data: 'description',
+                    className: this.classes('tbl-col', 'descr'),
                 },
                 {
                     title: 'Created',
@@ -62,7 +55,7 @@ define([
                 },
                 {
                     title: 'Author',
-                    data: 'createdBy',
+                    data: 'createdBy.name',
                     className: this.classes('tbl-col', 'author'),
                 },
 
@@ -79,10 +72,22 @@ define([
                     },
                     {
                         'caption': 'Author',
-                        'binding': o => o.createdBy,
+                        'binding': o => o.createdBy.name,
                     },
                 ]
             };
+
+            this.loadData();
+        }
+
+        loadData() {
+            this.loading(true);
+            FeatureAnalysisService
+                .loadFeatureAnalysisList()
+                .then(res => {
+                    this.data(res);
+                    this.loading(false);
+                });
         }
     }
 
