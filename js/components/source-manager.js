@@ -113,7 +113,25 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
         'Source ' + self.model.currentSource().name();
     });
 
-    self.showDiv = ko.computed(() => {
+    self.krbHostFQDN = ko.computed(() => {
+
+      if (self.selectedSource() != null) {
+          var str = self.selectedSource().connectionString();
+          str = str.match(/KrbHostFQDN=(.*?);/)[0];
+          return str.substring(str.search("=")+1, str.length-1);
+      }
+    });
+
+    self.krbRealm = ko.computed(() => {
+
+      if (self.selectedSource() != null) {
+          var str = self.selectedSource().connectionString();
+          str = str.match(/KrbRealm=(.*?);/)[0];
+          return str.substring(str.search("=")+1, str.length-1);
+      }
+    });
+
+    self.showKeytabDiv = ko.computed(() => {
         return self.selectedSource() != null && self.selectedSource().authType() === 'keytab';
     });
 

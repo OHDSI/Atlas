@@ -40,6 +40,7 @@
 																<input title="Connection string" data-bind="textInput: selectedSource().connectionString, enable: canEdit()" class="form-control" type="text" id="connectionString"/>
 														</div>
 													</div>
+											<div data-bind="visible: showKrbAuth">
 												<div class="source-row">
 													<div class="control-group" style="width: 50%">
 														<label>Username:</label>
@@ -47,22 +48,37 @@
 															<input title="Username" data-bind="textInput: selectedSource().username, enable: canEdit()" class="form-control" type="text"/>
 														</div>
 													</div>
-													<div class="control-group" style="width: 50%">
+													<div class="control-group" style="width: 50%" data-bind="visible: !showKrbAuth() || !showKeytabDiv()">
 														<label>Password:</label>
 														<div class="form-group">
 															<input title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>
 														</div>
 													</div>
 												</div>
-														<div class="form-group" data-bind="visible: showKrbAuth">Authentication method:
-                                                        <div><input type="radio" value="keytab" name="test" title="test" data-bind="checked: selectedSource().authType"/>Keytab</div>
-                                                        <div data-bind="visible: showDiv">
+												<div class="source-row">
+													<div class="control-group" style="width: 50%">
+														<label>KrbHostFQDN:</label>
+														<div class="form-group">
+															<input title="KrbHostFQDN" data-bind="textInput: krbHostFQDN, disable: true" class="form-control" type="text"/>
+														</div>
+													</div>
+													<div class="control-group" style="width: 50%">
+														<label>KrbRealm:</label>
+														<div class="form-group">
+															<input title="KrbRealm" data-bind="textInput: krbRealm, disable: true" class="form-control" type="text"/>
+														</div>
+													</div>
+												</div>
+														<div class="form-group" >Authentication method:
+                                                        <div><input type="radio" value="keytab"  data-bind="checked: selectedSource().authType"/>Keytab</div>
+                                                        <div data-bind="visible: showKeytabDiv">
                                                             <input type="file" id="keytabFile" name="keytabFile" accept=".keytab" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: selectedSource().shouldShowFileInput()"/>
                                                             <span data-bind="text: selectedSource().keytabName, visible: !selectedSource().shouldShowFileInput()"></span>
                                                             <button type="button" class="btn btn-sm btn-danger" style="height:20px; margin-left:15px; padding-top:0" data-bind="visible: !selectedSource().shouldShowFileInput(), click: removeKeytab">Remove</button>
                                                          </div>
-														<div><input type="radio" title="test" value="password" data-bind="checked: selectedSource().authType"/>User name and password</div>
+														<div><input type="radio" value="password" data-bind="checked: selectedSource().authType"/>User name and password</div>
 														</div>
+												</div>
 											</div>
 											<div class="panel panel-primary">
 													<div class="panel-heading">Source daimons</div>
