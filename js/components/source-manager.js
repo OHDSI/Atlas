@@ -42,6 +42,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.password = ko.observable(data.password || null);
     self.daimons = ko.observableArray(mapDaimons(data.daimons));
     self.keytabName = ko.observable(data.keytabName);
+    self.authType = ko.observable(data.authType);
     if (data.keytabName === null){
         self.shouldShowFileInput = ko.observable(true);
     } else {
@@ -60,7 +61,6 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.dirtyFlag = self.model.currentSourceDirtyFlag;
     self.selectedSource = params.model.currentSource;
     self.selectedSourceId = params.model.selectedSourceId;
-    self.authType = ko.observable("password");
     self.options = {};
     self.isAuthenticated = authApi.isAuthenticated;
 
@@ -114,7 +114,11 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     });
 
     self.showDiv = ko.computed(() => {
-        return self.authType() === 'keytab';
+        return self.selectedSource() != null && self.selectedSource().authType() === 'keytab';
+    });
+
+    self.showKrbAuth = ko.computed(() => {
+        return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=1");
     });
 
     self.newSource = function () {
@@ -147,6 +151,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
         key: self.selectedSource().key() || null,
         dialect: self.selectedSource().dialect() || null,
         connectionString: self.selectedSource().connectionString() || null,
+        authType: self.selectedSource().authType() || "password",
         username: self.selectedSource().username() || null,
         password: self.selectedSource().password() || null,
         daimons: ko.toJS(self.selectedSource().daimons()).filter(function(d){ return d.enabled; }).map(function(d){
