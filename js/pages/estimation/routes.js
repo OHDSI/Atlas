@@ -5,18 +5,23 @@ define(
       return {        
         '/estimation': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['cohort-comparison-browser'], function () {
-            appModel.componentParams = {
-              model: appModel
-            };
+          require(['./cohort-comparison-browser'], function () {
             appModel.currentView('cohort-comparison-browser');
           });
         }),
         '/estimation/:cohortComparisonId:': new AuthorizedRoute((cohortComparisonId) => {
           appModel.activePage(this.title);
-          require(['cohort-comparison-manager', 'components/cohort-definition-browser', 'components/atlas.cohort-editor', 'cohort-comparison-print-friendly', 'cohort-comparison-r-code', 'cohort-comparison-multi-r-code'], function () {
+          require([
+            './cohort-comparison-manager',
+            'components/cohort-definition-browser',
+            'components/atlas.cohort-editor',
+            'components/cohort-comparison-print-friendly',
+            'components/cohort-comparison-r-code',
+            'components/cohort-comparison-multi-r-code'
+          ], function () {
             appModel.currentCohortComparisonId(+cohortComparisonId);
             appModel.componentParams = {
+              model: appModel,
               currentCohortComparisonId: appModel.currentCohortComparisonId,
               currentCohortComparison: appModel.currentCohortComparison,
               dirtyFlag: appModel.currentCohortComparisonDirtyFlag,
