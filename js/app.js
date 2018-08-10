@@ -36,9 +36,7 @@ define([
 			$.support.cors = true;
 			var self = this;
 			self.pages = Object.values(pages);
-			const routes = self.pages.reduce((routes, page) => {
-				return { ...routes, ...page.buildRoutes(self) };
-			}, {});
+			const routes = self.pages.reduce((routes, page) => ({ ...routes, ...page.buildRoutes(self) }), {});
 			self.activePage = ko.observable();
 			const bemHelper = new BemHelper('app');
 			self.classes = bemHelper.run.bind(bemHelper);

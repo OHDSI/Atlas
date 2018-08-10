@@ -1,4 +1,4 @@
-define(['knockout', 'text!./cohort-definition-manager.html',
+define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'appConfig',
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinition',
@@ -32,6 +32,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 	'components/modal-pick-options',
 	'components/heading',
 ], function (
+	$,
 	ko,
 	view,
 	config,
@@ -70,8 +71,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 		return translatePromise;
 	}
 
+	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
-		if (value === 0 || value) {
+		if (value === 0 || value || includeKeys.includes(key) ) {
 			return value;
 		} else {
 			return
@@ -175,7 +177,8 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			this.templateSql = ko.observable('');
 			this.tabMode = this.model.currentCohortDefinitionMode;
 			this.cohortConst = cohortConst;
-			this.generationTabMode = ko.observable("inclusion")
+			this.generationTabMode = ko.observable("inclusion");
+			this.inclusionTabMode = ko.observable("person");
 			this.exportTabMode = ko.observable('printfriendly');
 			this.importTabMode = ko.observable(cohortConst.importTabModes.identifiers);
 			this.exportSqlMode = ko.observable('ohdsisql');
@@ -1053,8 +1056,11 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				this.loadingReport(true);
 				this.selectedReportCaption(item.name);
 
-				cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey).then( (report) => {
-				report.sourceKey = item.sourceKey;
+				var byEventReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 0);
+				var byPersonReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 1);
+				
+				$.when(byEventReport, byPersonReport).done( (byEvent, byPerson) => {
+					var report = {sourceKey: item.sourceKey, byEvent: byEvent[0], byPerson: byPerson[0]};
 					this.selectedReport(report);
 					this.loadingReport(false);
 				});

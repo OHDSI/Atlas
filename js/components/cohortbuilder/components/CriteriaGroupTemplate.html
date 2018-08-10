@@ -85,16 +85,16 @@
 								}"></div>
 
 								<div class="indexWindowSection">
-									starting between
-									<window-input params="Window: StartWindow"></window-input> event index date
+									where <cycle-toggle-input params="{value: StartWindow.UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
+									<window-input params="Window: StartWindow"></window-input> <cycle-toggle-input params="{value: StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
 									<!-- ko if: EndWindow -->
 									<div>
-										<i data-bind="click: $component.removeEndWindow" class="fa fa-times" /> and ending between
-										<window-input params="Window: EndWindow"></window-input> event index date
+										<i data-bind="click: $component.removeEndWindow" class="fa fa-times" /> and <cycle-toggle-input params="{value: EndWindow().UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
+										<window-input params="Window: EndWindow"></window-input> <cycle-toggle-input params="{value: EndWindow().UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
 									</div>
 									<!-- /ko -->
 									<!-- ko ifnot: EndWindow -->
-									<span class="linkish" data-bind="click: $component.addEndWindow">and ending any time.</span>
+									<span class="linkish" data-bind="click: $component.addEndWindow"><i>add additional constraint</i></span>
 									<!-- /ko -->
 								</div>
 

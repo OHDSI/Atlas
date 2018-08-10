@@ -1,9 +1,12 @@
 define(
   (require, exports) => {
-    const pageTitle = 'Incidence Rates';
+    const apiPaths = {
+      analysis: id => `#/iranalysis${id ? `/${id}` : ''}`,
+      createAnalysis: () => '#/iranalysis/new',
+    };
 
     return {
-      pageTitle,
+      apiPaths,
     };
   }
 );
