@@ -1,6 +1,7 @@
 define(
 	(require, factory) => {
-		const ko = require('knockout');    
+		const ko = require('knockout');
+		const sharedState = require('atlas-state');
 		
 		const build = function(name, viewModelClass, template) {
 			const component = {
