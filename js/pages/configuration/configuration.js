@@ -1,4 +1,4 @@
-define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'atlas-state', 'components/ac-access-denied'], function (ko, view, config, authApi, sourceApi, sharedState) {
+define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'utils/BemHelper', 'atlas-state', 'components/ac-access-denied', 'databindings', 'less!./configuration.less'], function (ko, view, config, authApi, sourceApi, BemHelper, sharedState) {
 	function configuration(params) {
 		var self = this;
 		self.config = config;
@@ -47,6 +47,7 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCheckSourceConnection(source.sourceKey));
 			}
 		};
+		self.canImport = ko.pureComputed(() => self.isAuthenticated() && authApi.isPermittedImportUsers());
 		self.clearLocalStorageCache = function () {
 			localStorage.clear();
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")

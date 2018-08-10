@@ -1,6 +1,7 @@
 define([
 	'knockout',
-	'text!./editor.html','pages/incidence-rates/inputTypes/StudyWindow',
+	'text!./editor.html',
+	'pages/incidence-rates/inputTypes/StudyWindow',
 	'../StratifyRule',
 	'components/cohortbuilder/options',
 	'providers/Component',
@@ -30,7 +31,8 @@ define([
 			this.selectedCohortList = null;
 			this.selectedStrataRule = ko.observable();
 			this.selectedStrataRuleIndex = null;
-			
+			this.isEditable = params.isEditable;
+
 			this.fieldOptions = [{id: 'StartDate', name: 'start date'}, {id: 'EndDate', name: 'end date'}];
 			// Subscriptions
 		

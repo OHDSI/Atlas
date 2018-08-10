@@ -5,26 +5,35 @@ define(
       return {
         '/configure': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['configuration', 'source-manager'], function () {
+          require(['./configuration', './sources/source-manager'], function () {
             appModel.currentView('ohdsi-configuration');
           });
         }),
         '/roles': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['roles'], function () {
+          require(['./roles/roles'], function () {
             appModel.currentView('roles');
           });
         }),
         '/role/:id': new AuthorizedRoute((id) => {
           appModel.activePage(this.title);
-          require(['role-details'], function () {
+          require(['./roles/role-details'], function () {
             appModel.currentRoleId(id);
             appModel.currentView('role-details');
           });
         }),
+        'import': new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['./users-import/users-import'], function() {
+            appModel.componentParams = {
+              model: appModel,
+            };
+            appModel.currentView('users-import');
+          });
+        }),
         '/source/:id': new AuthorizedRoute((id) => {
           appModel.activePage(this.title);
-          require(['source-manager'], function () {
+          require(['./sources/source-manager'], function () {
             if (id !== 'new') {
               appModel.selectedSourceId(id);
             }

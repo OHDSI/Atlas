@@ -229,3 +229,7 @@ div.criteria-group-container {
     border:  solid 1px #ccc;
     padding: 5px;
 }
+
+.btn.btn-cycle {
+	vertical-align:baseline;
+}
