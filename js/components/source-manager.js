@@ -114,12 +114,26 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
         'Source ' + self.model.currentSource().name();
     });
 
+      self.newSource = function () {
+          self.selectedSource(new Source());
+          self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
+      };
+
+      self.showKrbAuth = ko.computed(() => {
+          return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=1");
+      });
+
     self.krbHostFQDN = ko.computed(() => {
 
       if (self.selectedSource() != null) {
           var str = self.selectedSource().connectionString();
-          str = str.match(/KrbHostFQDN=(.*?);/)[0];
-          return str.substring(str.search("=") + 1, str.length - 1);
+          var strArray = str.match(/KrbHostFQDN=(.*?);/);
+          if (strArray != null){
+              var matchedStr = strArray[0];
+              return matchedStr.substring(matchedStr.search("=") + 1, matchedStr.length - 1);
+          } else {
+              return "";
+          }
       }
     });
 
@@ -127,23 +141,46 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
 
       if (self.selectedSource() != null) {
           var str = self.selectedSource().connectionString();
-          str = str.match(/KrbRealm=(.*?);/)[0];
-          return str.substring(str.search("=") + 1, str.length - 1);
+          var strArray = str.match(/KrbRealm=(.*?);/);
+          if (strArray != null){
+            var matchedStr = strArray[0];
+            return matchedStr.substring(matchedStr.search("=") + 1, matchedStr.length - 1);
+          } else {
+            return "";
+          }
       }
+    });
+
+    self.showHostWarning  = ko.computed(() => {
+
+      var showWarning = self.showKrbAuth() && self.krbHostFQDN() === "";
+      if (showWarning){
+          self.dirtyFlag().reset();
+      }
+        return showWarning;
+    });
+
+    self.showRealmWarning = ko.computed(() => {
+
+        var showWarning = self.showKrbAuth() && self.krbRealm() === "";
+        if (showWarning){
+            self.dirtyFlag().reset();
+        }
+        return showWarning;
+    });
+
+    self.showUserWarning  = ko.computed(() => {
+
+        var showWarning = self.selectedSource() != null && self.selectedSource().username() === "";
+        if (showWarning){
+            self.dirtyFlag().reset();
+        }
+        return showWarning;
     });
 
     self.showKeytabDiv = ko.computed(() => {
         return self.selectedSource() != null && self.selectedSource().authType() === 'keytab';
     });
-
-    self.showKrbAuth = ko.computed(() => {
-        return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=1");
-    });
-
-    self.newSource = function () {
-      self.selectedSource(new Source());
-      self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
-    };
 
     self.removeKeytab = function () {
         self.loading(true);

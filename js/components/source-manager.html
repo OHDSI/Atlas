@@ -40,13 +40,16 @@
 																<input title="Connection string" data-bind="textInput: selectedSource().connectionString, enable: canEdit()" class="form-control" type="text" id="connectionString"/>
 														</div>
 													</div>
-											<div data-bind="visible: showKrbAuth">
+                                                <div data-bind="visible: showRealmWarning" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>"KrbRealm" is empty.</div>
+                                                <div data-bind="visible: showHostWarning" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>"KrbHostFQDN" is empty.</div>
+                                                <div data-bind="visible: showKrbAuth">
 												<div class="source-row">
 													<div class="control-group" style="width: 50%">
 														<label>Username:</label>
 														<div class="form-group">
 															<input title="Username" data-bind="textInput: selectedSource().username, enable: canEdit()" class="form-control" type="text"/>
 														</div>
+                                                        <div data-bind="visible: showUserWarning" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>"Username" is empty.</div>
 													</div>
 													<div class="control-group" style="width: 50%" data-bind="visible: !showKrbAuth() || !showKeytabDiv()">
 														<label>Password:</label>
