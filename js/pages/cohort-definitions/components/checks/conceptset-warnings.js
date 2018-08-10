@@ -77,6 +77,9 @@ define(['knockout', 'text!./conceptset-warnings.html',
       };
 
       self.getWarnings = function() {
+        if (parseInt(self.cohortDefinitionId(), 10) <= 0) {
+          return false;
+        }
         self.loading(true);
         cohortDefinitionApi.getWarnings(self.cohortDefinitionId())
           .then(showWarnings, handleError);
