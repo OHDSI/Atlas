@@ -55,54 +55,59 @@
             </table>
         </div>
         <div data-bind="css: classes('block')">
-            <ul class="nav nav-tabs">
-                <!-- ko foreach: Object.keys(tabLabels) -->
-                <li role="presentation" data-bind="click: function() { $component.currentTab($data); }, attr: {class: $component.currentTab() == $data ? 'active' : ''}">
-                    <a data-bind="text: $component.tabLabels[$data]" />
-                </li>
-                <!-- /ko -->
-                <li data-bind="css: classes('save-csv-tab'), click: $component.saveAsCsv">
-                    <a data-bind="css: classes('save-csv-link')">Save as CSV</a>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
-                    <div data-bind="css: $component.classes('chart-filter-line')">
-                        <div data-bind="css: $component.classes('chart-filter')">
-                            <label>Displayed charts:</label>
-                            <visualizations-multi-select params="{ options: chartOptions, selectedValues: displayedCharts, multiple: true, selectedTextFormat: 'count > 10' }"/>
-                        </div>
-                    </div>
-                    <!-- ko foreach: chartDataList -->
-                        <div data-bind="css: $component.classes('chart-line')">
-                            <line-chart data-bind="
-                                    css: $component.classes('chart'),
-                                    visible: $data.visible
-                                "
-                                params="{lineChart: {
-                                    data: $data.values,
-                                    xLabel: ($index() == ($component.chartDataList().length - 1)) ? 'Period start' : '',
-                                    xFormat: $component.formatDate,
-                                    yLabel: $data.name,
-                                    yFormat: $data.yFormat || $component.formatRounded,
-                                    tickFormat: $component.dateTickFormat,
-                                    height: 125,
-                                    ticks:6,
-                                    yTicks:2,
-                                    yAxisWidth:56,
-                                    showLegend: false,
-                                    getTooltipBuilder: $component.getTooltipBuilder
-                                    }
-                                }"
-                            />
-                        </div>
+            <div data-bind="if: $component.dataList().length <= 0, css: classes('block')">
+                Detailed statistics are not available
+            </div>
+            <div data-bind="if: $component.dataList().length > 0, css: classes('block')">
+                <ul class="nav nav-tabs">
+                    <!-- ko foreach: Object.keys(tabLabels) -->
+                    <li role="presentation" data-bind="click: function() { $component.currentTab($data); }, attr: {class: $component.currentTab() == $data ? 'active' : ''}">
+                        <a data-bind="text: $component.tabLabels[$data]" />
+                    </li>
                     <!-- /ko -->
-                </div>
-                <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading()">
-                    <div data-bind="css: classes('table-block')">
-                        <table data-bind="
-                            css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
-                            dataTable:{ data: $component.dataList, options: {columns: $component.tableColumns} } " />
+                    <li data-bind="css: classes('save-csv-tab'), click: $component.saveAsCsv">
+                        <a data-bind="css: classes('save-csv-link')">Save as CSV</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
+                        <div data-bind="css: $component.classes('chart-filter-line')">
+                            <div data-bind="css: $component.classes('chart-filter')">
+                                <label>Displayed charts:</label>
+                                <visualizations-multi-select params="{ options: chartOptions, selectedValues: displayedCharts, multiple: true, selectedTextFormat: 'count > 10' }"/>
+                            </div>
+                        </div>
+                        <!-- ko foreach: chartDataList -->
+                            <div data-bind="css: $component.classes('chart-line')">
+                                <line-chart data-bind="
+                                        css: $component.classes('chart'),
+                                        visible: $data.visible
+                                    "
+                                    params="{lineChart: {
+                                        data: $data.values,
+                                        xLabel: ($index() == ($component.chartDataList().length - 1)) ? 'Period start' : '',
+                                        xFormat: $component.formatDate,
+                                        yLabel: $data.name,
+                                        yFormat: $data.yFormat || $component.formatRounded,
+                                        tickFormat: $component.dateTickFormat,
+                                        height: 125,
+                                        ticks:6,
+                                        yTicks:2,
+                                        yAxisWidth:56,
+                                        showLegend: false,
+                                        getTooltipBuilder: $component.getTooltipBuilder
+                                        }
+                                    }"
+                                />
+                            </div>
+                        <!-- /ko -->
+                    </div>
+                    <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading()">
+                        <div data-bind="css: classes('table-block')">
+                            <table data-bind="
+                                css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                                dataTable:{ data: $component.dataList, options: {columns: $component.tableColumns} } " />
+                        </div>
                     </div>
                 </div>
             </div>
