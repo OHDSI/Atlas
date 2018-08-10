@@ -35,9 +35,10 @@ define([
                     title: 'Name',
                     data: 'name',
                     className: this.classes('tbl-col', 'name'),
-                    render: function (s, p, d) {
-                        return '<a href="#/cc/characterizations/' + d.id + '">' + d.name + '</a>';
-                    },
+                    render: datatableUtils.getLinkFormatter(d => ({
+                        link: '#/cc/characterizations/' + d.id,
+                        label: d['name']
+                    })),
                 },
                 {
                     title: 'Created',

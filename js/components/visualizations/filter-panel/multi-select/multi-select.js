@@ -27,5 +27,7 @@ define(
     };
 
     ko.components.register('visualizations-multi-select', component);
+    ko.components.register('multi-select', component);
+
     return component;
   });

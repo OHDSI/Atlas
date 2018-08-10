@@ -35,6 +35,10 @@ define([
                     title: 'Name',
                     data: 'name',
                     className: this.classes('tbl-col', 'name'),
+                    render: datatableUtils.getLinkFormatter(d => ({
+                        link: '#/cc/feature-analyses/' + d.id,
+                        label: d['name']
+                    })),
                 },
                 {
                     title: 'Description',

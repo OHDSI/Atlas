@@ -3,6 +3,6 @@
         <select data-bind="{ selectedOptions: selectedValues, options: optionVals, optionsText: optionsText, multiSelect: { liveSearch: true, selectedTextFormat: selectedTextFormat } }" multiple></select>
     <!-- /ko -->
     <!-- ko if: multiple == false -->
-        <select data-bind="{ value: selectedValue, multiSelect: { liveSearch: true, selectedTextFormat: 'count > 2' }, options: optionVals, optionsText: optionsText }"></select>
+        <select data-bind="{ options: options, value: selectedValue, optionsText: 'label', optionsValue: 'value', multiSelect: { liveSearch: true, selectedTextFormat: 'count > 2' }}"></select>
     <!-- /ko -->
 </div>

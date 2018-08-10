@@ -49,6 +49,16 @@ define(
                         appModel.currentView('feature-analyses-list');
                     });
                 }),
+                'cc/feature-analyses/:id:': new AuthorizedRoute((id) => {
+                    appModel.activePage(this.title);
+                    require(['./components/feature-analyses/feature-analysis-view-edit'], function () {
+                        appModel.componentParams = {
+                            model: appModel,
+                            id: ko.observable(id),
+                        };
+                        appModel.currentView('feature-analysis-view-edit');
+                    });
+                }),
             };
         }
 

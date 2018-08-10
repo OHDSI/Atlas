@@ -52,7 +52,7 @@ define([
                 },
                 {
                     title: 'Name',
-                    render: datatableUtils.getLinkFormatter({ labelField: 'name' }),
+                    render: datatableUtils.getLinkFormatter(d => ({ label: d['name'] })),
                 },
                 {
                     title: 'Description',

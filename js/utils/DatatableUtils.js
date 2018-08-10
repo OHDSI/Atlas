@@ -3,8 +3,12 @@ define(
 
         const momentApi = require('webapi/MomentAPI');
 
-        getLinkFormatter = ({ labelField = 'name' }) => (s, p, d) => {
-            return '<a>' + d[labelField] + '</a>';
+        getLinkFormatter = (builder) => (s, p, d) => {
+            const {
+                link,
+                label
+            } = builder(d);
+            return `<a ${link ? ('href="' + link + '"') : ''}>${label}</a>`;
         };
 
         getDateFieldFormatter = (field = 'createdAt') => (s, p, d) => {

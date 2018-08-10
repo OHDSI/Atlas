@@ -1,0 +1,36 @@
+{
+  "domains": [
+    {
+      "label": "Condition",
+      "value": "CONDITION"
+    },
+    {
+      "label": "Demographics",
+      "value": "DEMOGRAPHICS"
+    },
+    {
+      "label": "Device",
+      "value": "DEVICE"
+    },
+    {
+      "label": "Drug",
+      "value": "DRUG"
+    },
+    {
+      "label": "Measurement",
+      "value": "MEASUREMENT"
+    },
+    {
+      "label": "Observation",
+      "value": "OBSERVATION"
+    },
+    {
+      "label": "Procedure",
+      "value": "PROCEDURE"
+    },
+    {
+      "label": "Visit",
+      "value": "VISIT"
+    }
+  ]
+}
