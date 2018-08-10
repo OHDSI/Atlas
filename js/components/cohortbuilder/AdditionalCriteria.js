@@ -13,7 +13,14 @@ define(function (require, exports, module) {
 		data = data || {};
 		self.Criteria = CriteriaTypes.GetCriteriaFromObject(data.Criteria, conceptSets);
 		self.StartWindow = new Window(data.StartWindow);
-		self.EndWindow = ko.observable(data.EndWindow && new Window(data.EndWindow));
+
+		// for backwards compatability, if the data.EndWindow is populated, but useEventEnd is null, set useEventEnd = true
+		var endWindowData = data.EndWindow;
+		if (endWindowData && !endWindowData.hasOwnProperty("UseEventEnd")) {
+			endWindowData.UseEventEnd = true;
+		}		
+		self.EndWindow = ko.observable(data.EndWindow && new Window(endWindowData));
+		
 		self.Occurrence = new Occurrence(data.Occurrence);
 		self.RestrictVisit = ko.observable(data.RestrictVisit || false);
 	}

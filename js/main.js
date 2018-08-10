@@ -6,7 +6,6 @@ const bustCache = (() => {
 
 const localRefs = {
 	"configuration": "components/configuration",
-	"source-manager": "components/source-manager",
 	"concept-manager": "components/concept-manager",
 	"conceptset-browser": "components/conceptset/conceptset-browser",
 	"conceptset-editor": "components/conceptset/conceptset-editor",
@@ -423,5 +422,5 @@ require([
 					return "Changes will be lost if you do not save.";
 			});
 	});
-});	
+});
 });
