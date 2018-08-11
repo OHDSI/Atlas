@@ -24,7 +24,6 @@ const localRefs = {
 	"profile-manager": "components/profile/profile-manager",
 	"explore-cohort": "components/explore-cohort",
 	"r-manager": "components/r-manager",
-	"negative-controls": "components/negative-controls",
 	"home": "components/home",
 	"welcome": "components/welcome",
 	"forbidden": "components/ac-forbidden",

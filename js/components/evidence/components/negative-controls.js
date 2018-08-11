@@ -877,6 +877,5 @@ define(['knockout',
 		template: view
 	};
 
-	ko.components.register('negative-controls', component);
 	return component;
 });
