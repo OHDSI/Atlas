@@ -71,8 +71,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		return translatePromise;
 	}
 
+	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
-		if (value === 0 || value) {
+		if (value === 0 || value || includeKeys.includes(key) ) {
 			return value;
 		} else {
 			return
@@ -1164,7 +1165,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			generateHealthcareAnalyses () {
-				const analysisIds = this.checkedUtilReports().reduce((acc, ids) => [...acc, ...ids], []);
+				const analysisIds = this.utilReportOptions.reports.selectedOptions().reduce((acc, ids) => [...acc, ...ids], []);
 
 				this.generateAnalyses({
 					descr: 'the Cost and Utilization analyses',

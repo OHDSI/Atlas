@@ -1,0 +1,23 @@
+<div>
+    <table width="100%" cellspacing="0" data-bind="dataTable:{
+                            data: roles(),
+                            options: {
+                                        dom: 'Bliprt',
+                                        buttons: [],
+                                        language: {
+                                        },
+                                        lengthMenu: [[15, 25, 50, -1], [15, 25, 50, 'All']],
+                                        orderClasses: false,
+                                        deferRender: true,
+                                        autoWidth: false,
+                                        ordering: true,
+                                        order: [[ 1, 'asc' ]],
+                                        columns: [
+                                            { title: 'Selected', class: 'text-center', width: '1.5rem', render: function(){ return renderCheckbox('selected'); } },
+                                            { title: 'Atlas role', width: '100%', data: 'role' },
+                                        ],
+                                        stripeClasses : [ 'roleItem' ],
+                                }
+                              }, css: classes({ extra: ['stripe','compact','hover'] })">
+    </table>
+</div>
