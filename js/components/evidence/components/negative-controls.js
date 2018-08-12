@@ -2,6 +2,8 @@ define(['knockout',
 	'text!./negative-controls.html',
 	'providers/Component',
 	'appConfig',
+	'../options',
+	'components/evidence/utils',
 	'webapi/EvidenceAPI',
 	'webapi/CDMResultsAPI',
 	'webapi/ConceptSetAPI',
@@ -16,6 +18,8 @@ define(['knockout',
 	view,
 	Component,
 	config, 
+	options,
+	utils,
 	evidenceAPI, 
 	cdmResultsAPI, 
 	conceptSetAPI, 
@@ -63,22 +67,8 @@ define(['knockout',
 			this.csTarget = ko.observable();
 			this.csTargetCaption = ko.observable();
 
-			this.hasEvidence = function(row) {
-				return (
-					row.descendantPmidCount > 0 ||
-					row.exactPmidCount > 0 ||
-					row.parentPmidCount > 0 ||
-					row.ancestorPmidCount > 0 ||
-					row.descendantSplicerCount > 0 ||
-					row.exactSplicerCount > 0 ||
-					row.parentSplicerCount > 0 ||
-					row.ancestorSplicerCount > 0
-				)
-			}
-
-
 			this.rowClick = (s, p, d) => {
-				if (this.hasEvidence(s)) {
+				if (utils.hasEvidence(s)) {
 					this.linkoutDrugConceptIds = [];
 					this.linkoutConditionConceptIds = [];
 					if (this.targetDomainId() == "Drug") {
@@ -92,306 +82,17 @@ define(['knockout',
 				}
 			}
 
-			this.negControlColumns = [
-				{
-					title: 'Id',
-					data: d => d.conceptId,
-					visible: false,
-				},
-				{
-					title: '',
-					data: d => {
-						if (this.hasEvidence(d)) {
-							return '<button type=\"button\" title=\"View Details\" class=\"btn btn-default btn-xs\"><i class=\"fa fa-external-link\" aria-hidden=\"true\"></i>&nbsp;</button>';
-						}
-					},
-					sortable: false,
-				},
-				{
-					title: 'Name',
-					data: d => {
-						var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-						return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
-					},
-				},
-				{
-					title: 'Domain',
-					data: d => d.domainId,
-					visible: false,
-				},
-				{
-					title: 'Suggested Negative Control',
-					data: d => {
-						return d.negativeControl.toString() == "1" ? 'Y' : 'N';
-					},
-				},
-				{
-					title: 'Sort Order',
-					data: d => {
-						return d.sortOrder.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-				},
-				{
-					title: 'Publication Count (Descendant Concept Match)',
-					data: d => {
-						return d.descendantPmidCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-				},
-				{
-					title: 'Publication Count (Exact Concept Match)',
-					render: function(s, p, d) {
-						return d.exactPmidCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-					orderable: true,
-					searchable: true
-				},
-				{
-					title: 'Publication Count (Parent Concept Match)',
-					data: d => {
-						return d.parentPmidCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-				},
-				{
-					title: 'Publication Count (Ancestor Concept Match)',
-					data: d => {
-						return d.ancestorPmidCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-					visible: false,
-				},
-				{
-					title: 'Indicated / Contraindicated',
-					data: d => {
-						return d.indCi.toString() == "1" ? 'Y' : 'N';
-					},
-					visible: false,
-				},
-				{
-					title: 'Broad Concept',
-					data: d => {
-						return d.tooBroad.toString() == "1" ? 'Y' : 'N';
-					},
-					visible: false,
-				},
-				{
-					title: 'Drug Induced Concept',
-					data: d => {
-						return d.drugInduced.toString() == "1" ? 'Y' : 'N';
-					},
-					visible: false,
-				},
-				{
-					title: 'Pregnancy Concept',
-					data: d => {
-						return d.pregnancy.toString() == "1" ? 'Y' : 'N';
-					},
-					visible: false,
-				},
-				{
-					title: 'Product Label Count (Descendant Concept Match)',
-					data: d => {
-						return d.descendantSplicerCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-				},
-				{
-					title: 'Product Label (Exact Concept Match)',
-					data: d => {
-						return d.exactSplicerCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-				},
-				{
-					title: 'Product Label (Parent Concept Match)',
-					data: d => {
-						return d.parentSplicerCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-				},
-				{
-					title: 'Product Label (Ancestor Concept Match)',
-					data: d => {
-						return d.ancestorSplicerCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-					visible: false,
-				},
-				{
-					title: 'FAERS Count (Descendant Concept Match)',
-					data: d => {
-						return d.descendantFaersCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-				},
-				{
-					title: 'FAERS Count (Exact Concept Match)',
-					data: d => {
-						return d.exactFaersCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-				},
-				{
-					title: 'FAERS Count (Parent Concept Match)',
-					data: d => {
-						return d.parentFaersCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-				},
-				{
-					title: 'FAERS Count (Ancestor Concept Match)',
-					data: d => {
-						return d.ancestorFaersCount.toString()
-							.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					},
-					visible: false,
-				},
-				{
-					title: 'User Excluded',
-					data: d => {
-						return d.userExcluded.toString() == "1" ? 'Y' : 'N';
-					},
-				},
-				{
-					title: 'User Included',
-					data: d => {
-						return d.userIncluded.toString() == "1" ? 'Y' : 'N';
-					},
-				},
-				{
-					title: 'Optimized Out',
-					data: d => {
-						return d.optimizedOut.toString() == "1" ? 'Y' : 'N';
-					},
-					visible: false,
-				},
-				{
-					title: 'Not Prevalent',
-					data: d => {
-						return d.notPrevalent.toString() == "1" ? 'Y' : 'N';
-					},
-					visible: false,
-				},
-				{ 
-					title: 'Drug Label Exists',
-					data: d => {
-						return d.drugLabelExists.toString()
-					},
-					visible: true,
-				},
-				{
-					title: '<i id="dtNegCtrlRC" class="fa fa-database" aria-hidden="true"></i> RC',
-					data: d => {
-						return `<span class="ncRecordCount">${d.recordCount}</span>`;
-					},
-				},
-				{
-					title: '<i id="dtNegCtrlDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
-					data: d => {
-						return `<span class="ncRecordCount">${d.descendantRecordCount}</span>`;
-					},
-				},
-			];
+			this.negControlColumns = options.negControlTableColumns;
 
-			this.negControlOptions = {
-				lengthMenu: [
-					[10, 25, 50, 100, -1],
-					['10', '25', '50', '100', 'All']
-				],
-				order: [
-					[4, 'desc'],
-					[5, 'desc']
-				],
-				Facets: [{
-						'caption': 'Suggested Negative Control',
-						'binding': d => {
-							return d.negativeControl.toString() == "1" ? 'Yes' : 'No';
-						},
-					},
-					{
-						'caption': 'Found in Publications',
-						'binding': d => {
-							var desc = d.descenantPmidCount;
-							var exact = d.exactPmidCount;
-							var parent = d.parentPmidCount;
-							if (exact > 0) {
-								return 'Yes (Exact)'
-							} else if (desc > 0) {
-								return 'Yes (Descendant)'
-							} else if (parent > 0) {
-								return 'Yes (Parent)'
-							} else {
-								return 'No'
-							}
-						},
-					},
-					{
-						'caption': 'Found on Product Label',
-						'binding': d => {
-							var desc = d.descenantSplicerCount;
-							var exact = d.exactSplicerCount;
-							var parent = d.parentSplicerCount;
-							if (exact > 0) {
-								return 'Yes (Exact)'
-							} else if (desc > 0) {
-								return 'Yes (Descendant)'
-							} else if (parent > 0) {
-								return 'Yes (Parent)'
-							} else {
-								return 'No'
-							}
-						},
-					},
-					{
-						'caption': 'Found in Product Label Or Publications',
-						'binding': d => {
-							return this.hasEvidence(d) ? 'Yes' : 'No';
-						},
-					},
-					{
-						'caption': 'Signal in FAERS',
-						'binding': d => {
-							var desc = d.descenantFaersCount;
-							var exact = d.exactFaersCount;
-							var parent = d.parentFaersCount;
-							if (exact > 0) {
-								return 'Yes (Exact)'
-							} else if (desc > 0) {
-								return 'Yes (Descendant)'
-							} else if (parent > 0) {
-								return 'Yes (Parent)'
-							} else {
-								return 'No'
-							}
-						},
-					},
-					{
-						'caption': 'User Specified',
-						'binding': d => {
-							var inc = d.userIncluded;
-							var exc = d.userExcluded;
-							if (inc > 0) {
-								return 'Included'
-							} else if (exc > 0) {
-								return 'Excluded'
-							} else {
-								return 'None'
-							}
-						},
-					},
-				]
-			};
+			this.negControlOptions = options.negControlTableOptions;
 
-			this.selectedConceptsSubscription = this.selectedConcepts.subscribe(function (newValue) {
+			this.selectedConceptsSubscription = this.selectedConcepts.subscribe(newValue => {
 				if (newValue != null) {
 					this.evaluateConceptSet();
 				}
 			});
 
-			this.isRunning = ko.pureComputed(function () {
+			this.isRunning = ko.pureComputed(() => {
 				return this.evidenceSources()
 					.filter(function (info) {
 						return !(info.status() == "COMPLETE" || info.status() == "n/a");
@@ -399,7 +100,7 @@ define(['knockout',
 					.length > 0;
 			});
 
-			this.getSourceInfo = function (sourceKey) {
+			this.getSourceInfo = (sourceKey) => {
 				return this.evidenceSources()
 					.filter(function (d) {
 						return d.sourceKey() == sourceKey
@@ -415,7 +116,7 @@ define(['knockout',
 				return (canGenerate);
 			});
 
-			this.pollForInfo = function () {
+			this.pollForInfo = () => {
 				if (pollTimeout)
 					clearTimeout(pollTimeout);
 
@@ -501,11 +202,11 @@ define(['knockout',
 					});
 			}
 
-			this.isGenerating = function () {
+			this.isGenerating = () => {
 				return false;
 			}
 
-			this.evaluateConceptSet = function () {
+			this.evaluateConceptSet = () => {
 				// Determine if all of the concepts in the current concept set
 				// are all of the same type (CONDITION or DRUG) and if so, this
 				// concept set is valid and can be evaluated for negative controls
@@ -545,7 +246,7 @@ define(['knockout',
 				this.targetDomainId(targetDomainId);
 			}
 
-			this.getEvidenceSourcesFromConfig = function () {
+			this.getEvidenceSourcesFromConfig = () => {
 				var evidenceSources = [];
 
 				$.each(sharedState.sources(), function (i, source) {
@@ -570,7 +271,7 @@ define(['knockout',
 				return evidenceSources;
 			}
 
-			this.getEvidenceSources = function () {
+			this.getEvidenceSources = () => {
 				this.loadingEvidenceSources(true);
 				var resolvingPromise = conceptSetAPI.getGenerationInfo(this.conceptSet()
 					.id);
@@ -648,7 +349,7 @@ define(['knockout',
 				return resultSources;
 			});
 
-			this.refreshRecordCounts = function (obj, event) {
+			this.refreshRecordCounts = (obj, event) => {
 				if (event.originalEvent) {
 					// User changed event
 					this.recordCountsRefreshing(true);
@@ -708,7 +409,7 @@ define(['knockout',
 					});
 			}
 
-			this.addDrugLabelToResults = function(drugLabelExists, negativeControls, targetDomainId) {
+			this.addDrugLabelToResults = (drugLabelExists, negativeControls, targetDomainId) => {
 				var drugLabelExistsIndex = {};
 				for (var i = 0; i < negativeControls.length; i++) {
 					negativeControls[i].drugLabelExists = 'N/A';
@@ -730,7 +431,7 @@ define(['knockout',
 				return negativeControls;
 			}
 
-			this.getDrugLabelExistsByBoolean = function(filter) {
+			this.getDrugLabelExistsByBoolean = (filter) => {
 				return this.drugLabelExists()
 					.filter(function (elem) {
 						return elem.usaProductLabelExists == filter;
@@ -757,7 +458,7 @@ define(['knockout',
 				}
 			});
 
-			this.toggleLabelDetails = function() {
+			this.toggleLabelDetails = () => {
 				var newDisplay = !this.drugLabelDetailsDisplay();
 				this.drugLabelDetailsDisplay(newDisplay);
 			}
@@ -767,7 +468,7 @@ define(['knockout',
 				return displayVal;
 			})
 
-			this.isSourceRunning = function (source) {
+			this.isSourceRunning = (source) => {
 				if (source) {
 					switch (source.status()) {
 					case 'COMPLETE':
@@ -787,7 +488,7 @@ define(['knockout',
 				}
 			}
 
-			this.showNegControlsSaveNewModal = function () {
+			this.showNegControlsSaveNewModal = () => {
 				$('negative-controls #modalNegControlsSaveNew')
 					.modal('show');
 			}
@@ -828,51 +529,37 @@ define(['knockout',
 					.modal('hide');
 			}
 			
-			this.chooseIncludeConceptSet = function (source) {
+			this.chooseIncludeConceptSet = (source) => {
 				$('#ncModalConceptSetSelect').modal('show');
 				this.csTarget = source.csToInclude;
 				this.csTargetCaption = source.csToIncludeCaption;
 			}
 			
-			this.clearIncludeConceptSet = function (source) {
+			this.clearIncludeConceptSet = (source) => {
 				source.csToInclude(0);
 				source.csToIncludeCaption(null);
 			}
 			
-			this.chooseExcludeConceptSet = function (source) {
+			this.chooseExcludeConceptSet = (source) => {
 				$('#ncModalConceptSetSelect').modal('show');
 				this.csTarget = source.csToExclude;
 				this.csTargetCaption = source.csToExcludeCaption;
 			}
 			
-			this.clearExcludeConceptSet = function (source) {
+			this.clearExcludeConceptSet = (source) => {
 				source.csToExclude(0);
 				source.csToExcludeCaption(null);
 			}
 			
-			this.conceptsetSelected = function(d) {
+			this.conceptsetSelected = (d) => {
 				$('#ncModalConceptSetSelect').modal('hide');
-				conceptSetAPI.getConceptSet(d.id).then(function (csInfo) {
+				conceptSetAPI.getConceptSet(d.id).then((csInfo) => {
 					this.csTarget(csInfo.id);
 					this.csTargetCaption(csInfo.name);
-					/*
-					var conceptSetData = new ConceptSet({
-						id: d.id,
-						name: d.name,
-						expression: csExpression
-					});
-					this.targetExpression.removeAll();
-					this.targetExpression.push(conceptSetData);
-
-					vocabularyAPI.getConceptSetExpressionSQL(csExpression).then(
-						function (data) {
-							this.targetConceptSetSQL(data);
-						});
-					*/
 				});
 			}
 			
-			this.disableNewConceptSetButton = function() {
+			this.disableNewConceptSetButton = () => {
 				return true;
 			}
 
