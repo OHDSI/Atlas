@@ -1,0 +1,17 @@
+<div class="loading" data-bind="if:$component.loading()">loading evidence pairs</div>
+<div class="paddedWrapper" data-bind="if:!$component.loading()">
+	<i class="fa fa-question-circle-o"></i>&nbsp;<span class="linkish" data-bind="click: toggleHelpText, text: helpTextDisplay()"></span>
+	<div data-bind="visible: $component.showHelpText()">
+		If CommonEvidenceModel has indicated there is product label information for the selected drug-condition pair (1 = true, 0 = false) 
+		you may see many product labels below. The count of labels is non-informative since an adverse event on one label is 
+		supposed to be on all product labels. So, this page will show all product labels for the selected drug-condition pair.
+		<br/><br/>
+		If the CommonEvidenceModel has listed a number of publications, on the “Viewing Evidence” pop-up, one publication 
+		may occur multiple times in the results below.  This is because for every drug-condition pair a publication matches, 
+		the publication will show up in “View Evidence” list.<br/>
+		<br/>
+	</div>
+	<hr/>
+	<faceted-datatable params="{reference:$component.drugConditionPairs, columns: columns, options:options,rowClick:rowClick}">
+	</faceted-datatable>
+</div>

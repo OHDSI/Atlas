@@ -20,6 +20,10 @@ const settingsObject = {
       location: "modules/circe"
     },
     {
+      name: "evidence",
+      location: "components/evidence"
+    },
+    {
       name: "extenders",
       location: "extenders"
     },
