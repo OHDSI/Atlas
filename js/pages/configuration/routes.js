@@ -5,7 +5,7 @@ define(
       return {
         '/configure': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['configuration', 'source-manager'], function () {
+          require(['./configuration', './sources/source-manager'], function () {
             appModel.componentParams = {
               model: appModel
             };
@@ -14,7 +14,7 @@ define(
         }),
         '/roles': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['roles'], function () {
+          require(['./roles/roles'], function () {
             appModel.componentParams = {
               model: appModel
             };
@@ -23,7 +23,7 @@ define(
         }),
         '/role/:id': new AuthorizedRoute((id) => {
           appModel.activePage(this.title);
-          require(['role-details'], function () {
+          require(['./roles/role-details'], function () {
             appModel.componentParams = {
               model: appModel
             };
@@ -31,9 +31,18 @@ define(
             appModel.currentView('role-details');
           });
         }),
+        'import': new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['./users-import/users-import'], function() {
+            appModel.componentParams = {
+              model: appModel,
+            };
+            appModel.currentView('users-import');
+          });
+        }),
         '/source/:id': new AuthorizedRoute((id) => {
           appModel.activePage(this.title);
-          require(['source-manager'], function () {
+          require(['./sources/source-manager'], function () {
             appModel.componentParams = {
               model: appModel,
             };

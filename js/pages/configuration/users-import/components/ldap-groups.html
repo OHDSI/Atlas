@@ -1,0 +1,34 @@
+<div data-bind="css: classes({ extra: ['paddedWrapper'] })">
+    <div data-bind="css: classes({ extra: ['form-group'] })">
+        <label>Search group:</label>
+        <div data-bind="css: classes({ element: 'row', extra: ['input-group'] })">
+            <input type="text" data-bind="textInput: searchText, css: classes({ extra: ['form-control'] }), event: { 'keyup': onSubmitSearch }, keyupBubble: false" />
+            <button data-bind="click: searchGroups, css: classes({ extra: ['btn', 'btn-sm', 'btn-primary'] })"><i class="fa fa-search"></i> Search</button>
+        </div>
+    </div>
+    <div data-bind="if: !loading() && hasResults()">
+        <table width="100%" cellspacing="0" data-bind="dataTable:{
+                            data: searchResults(),
+                            options: {
+                                        dom: 'liprt',
+                                        language: {
+                                        },
+                                        lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+                                        orderClasses: false,
+                                        deferRender: true,
+                                        autoWidth: false,
+                                        ordering: true,
+                                        order: [[ 1, 'asc' ]],
+                                        columns: [
+                                            { title: 'Selected', class: 'text-center', width: '1.5rem', render: function(){ return renderCheckbox('included'); } },
+                                            { title: 'Group name', width: '100%', data: 'displayName' },
+                                        ],
+                                        stripeClasses : [ 'roleItem' ],
+                                }
+                              }, css: classes({ extra: ['stripe','compact','hover'] })">
+        </table>
+    </div>
+    <div data-bind="css: classes('loader'), if: loading()">
+        <loading params="status:'loading'" />
+    </div>
+</div>

@@ -54,7 +54,10 @@
                 </tbody>
             </table>
         </div>
-        <div data-bind="css: classes('block')">
+        <div data-bind="if: $component.dataList().length <= 0, css: classes('block')">
+            Detailed statistics are not available
+        </div>
+        <div data-bind="if: $component.dataList().length > 0, css: classes('block')">
             <ul class="nav nav-tabs">
                 <!-- ko foreach: Object.keys(tabLabels) -->
                 <li role="presentation" data-bind="click: function() { $component.currentTab($data); }, attr: {class: $component.currentTab() == $data ? 'active' : ''}">

@@ -6,7 +6,6 @@ const bustCache = (() => {
 
 const localRefs = {
 	"configuration": "components/configuration",
-	"source-manager": "components/source-manager",
 	"concept-manager": "components/concept-manager",
 	"conceptset-browser": "components/conceptset/conceptset-browser",
 	"conceptset-editor": "components/conceptset/conceptset-editor",
@@ -23,7 +22,6 @@ const localRefs = {
 	"faceted-datatable": "components/faceted-datatable",
 	"explore-cohort": "components/explore-cohort",
 	"r-manager": "components/r-manager",
-	"negative-controls": "components/negative-controls",
 	"home": "components/home",
 	"welcome": "components/welcome",
 	"forbidden": "components/ac-forbidden",
@@ -139,7 +137,7 @@ require([
 						}
 					}
 
-					if (daimon.daimonType == 'Evidence') {
+					if (daimon.daimonType == 'CEM') {
 						if (daimon.priority >= evidencePriority) {
 							evidencePriority = daimon.priority;
 							sharedState.evidenceUrl(source.evidenceUrl);
@@ -422,5 +420,5 @@ require([
 					return "Changes will be lost if you do not save.";
 			});
 	});
-});	
+});
 });

@@ -1,0 +1,55 @@
+define(function (require, exports) {
+
+  const $ = require('jquery');
+  const config = require('appConfig');
+  const authApi = require('webapi/AuthAPI');
+  const ko = require('knockout');
+  const httpService = require('./http');
+
+  const importRoot = config.webAPIRoot + 'user/import';
+  const importProvider = provider => importRoot + '/' + provider;
+
+  function getAuthenticationProviders() {
+  	return httpService.doGet(config.webAPIRoot + 'user/providers');
+  }
+
+  function searchGroups(provider, search) {
+  	return httpService.doGet(importProvider(provider) + '/groups', { search });
+	}
+
+	function searchUsers(provider, mapping) {
+	 	return httpService.doPost(importProvider(provider), ko.toJS(mapping));
+	}
+
+	function importUsers(users) {
+  	return httpService.doPost(importRoot, users);
+	}
+
+	function saveMapping(provider, mapping) {
+  	return httpService.doPost(importProvider(provider) + '/mapping', ko.toJS(mapping));
+	}
+
+	function getMapping(provider) {
+  	return httpService.doGet(importProvider(provider) + '/mapping');
+	}
+
+	function getUsers() {
+		return httpService.doGet(config.webAPIRoot + 'user');
+	}
+
+	function entity(method) {
+	 	return (...params) => method(...params).then(response => response.data);
+	}
+
+	const api = {
+		getAuthenticationProviders: entity(getAuthenticationProviders),
+		searchGroups: entity(searchGroups),
+		searchUsers: entity(searchUsers),
+		importUsers: entity(importUsers),
+		saveMapping: entity(saveMapping),
+		getMapping: entity(getMapping),
+		getUsers: entity(getUsers),
+	};
+
+  return api;
+});

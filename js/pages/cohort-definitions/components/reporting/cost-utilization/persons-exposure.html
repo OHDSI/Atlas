@@ -24,21 +24,25 @@
                 </tbody>
             </table>
         </div>
-        <ul class="nav nav-tabs">
-            <!-- ko foreach: Object.keys(tabLabels) -->
-            <li role="presentation" data-bind="click: function() { $component.currentTab($data); }, attr: {class: $component.currentTab() == $data ? 'active' : ''}">
-                <a data-bind="text: $component.tabLabels[$data]" />
-            </li>
-            <!-- /ko -->
-            <li data-bind="css: classes('save-csv-tab'), click: $component.saveAsCsv">
-                <a data-bind="css: classes('save-csv-link')">Save as CSV</a>
-            </li>
-        </ul>
-        <div class="tab-content">
-            <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
-                <div data-bind="css: classes('chart-line')">
-                    <line-chart data-bind="css: $component.classes('chart')"
-                        params="{lineChart: {
+        <div data-bind="if: $component.dataList().length <= 0">
+            Detailed statistics are not available
+        </div>
+        <div data-bind="if: $component.dataList().length > 0">
+            <ul class="nav nav-tabs">
+                <!-- ko foreach: Object.keys(tabLabels) -->
+                <li role="presentation" data-bind="click: function() { $component.currentTab($data); }, attr: {class: $component.currentTab() == $data ? 'active' : ''}">
+                    <a data-bind="text: $component.tabLabels[$data]" />
+                </li>
+                <!-- /ko -->
+                <li data-bind="css: classes('save-csv-tab'), click: $component.saveAsCsv">
+                    <a data-bind="css: classes('save-csv-link')">Save as CSV</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
+                    <div data-bind="css: classes('chart-line')">
+                        <line-chart data-bind="css: $component.classes('chart')"
+                                    params="{lineChart: {
                             data: $component.personsChartData,
                             xLabel: '',
                             xFormat: $component.formatDate,
@@ -49,11 +53,11 @@
                             showLegend: false,
                             getTooltipBuilder: $component.getTooltipBuilder
                         }}"
-                    />
-                </div>
-                <div data-bind="css: classes('chart-line')">
-                    <line-chart data-bind="css: $component.classes('chart')"
-                                params="{lineChart: {
+                        />
+                    </div>
+                    <div data-bind="css: classes('chart-line')">
+                        <line-chart data-bind="css: $component.classes('chart')"
+                                    params="{lineChart: {
                             data: $component.totalExposureChartData,
                             xLabel: '',
                             xFormat: $component.formatDate,
@@ -64,11 +68,11 @@
                             showLegend: false,
                             getTooltipBuilder: $component.getTooltipBuilder
                         }}"
-                    />
-                </div>
-                <div data-bind="css: classes('chart-line')">
-                    <line-chart data-bind="css: $component.classes('chart')"
-                                params="{lineChart: {
+                        />
+                    </div>
+                    <div data-bind="css: classes('chart-line')">
+                        <line-chart data-bind="css: $component.classes('chart')"
+                                    params="{lineChart: {
                             data: $component.avgExposurePerPersonChartData,
                             xLabel: 'Period start',
                             xFormat: $component.formatDate,
@@ -79,11 +83,12 @@
                             showLegend: false,
                             getTooltipBuilder: $component.getTooltipBuilder
                         }}"
-                    />
+                        />
+                    </div>
                 </div>
-            </div>
-            <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading()">
-                <table-baseline-exposure params="{ dataList: dataList }"/>
+                <div role="tabpanel" data-bind="if: $component.currentTab() == $component.rawDataTab && !loading()">
+                    <table-baseline-exposure params="{ dataList: dataList }"/>
+                </div>
             </div>
         </div>
     </div>

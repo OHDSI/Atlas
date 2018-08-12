@@ -13,6 +13,10 @@ define(['knockout'], function (ko) {
 			Days: ko.observable((data.End && data.End.Days) === 0 ? 0 : (data.End && data.End.Days) || null),
 			Coeff: ko.observable((data.End && data.End.Coeff) === 0 ? 0 : (data.End && data.End.Coeff) || 1)
 		};
+		
+		self.UseIndexEnd = ko.observable(data.UseIndexEnd || false);
+		self.UseEventEnd = ko.observable(data.UseEventEnd || false);
+		
 	}
 
 	return Window;
