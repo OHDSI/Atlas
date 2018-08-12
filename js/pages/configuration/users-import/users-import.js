@@ -141,7 +141,9 @@ define(['knockout',
 				this.loading(true);
 				const users = this.usersList()
 					.filter(u => !!u.included())
-					.map(u => ({ login: u.login, roles: u.roles(), }));
+					.map(u => ({
+							login: u.login, roles: u.roles(),
+					}));
 				usersApi.importUsers(users).finally(() => {
 						this.loading(false);
 						usersApi.getUsers().then(data => this.model.users(data));

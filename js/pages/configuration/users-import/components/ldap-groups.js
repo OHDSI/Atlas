@@ -44,7 +44,7 @@ define([
 						this.searchResults(results.map(group => ({...group, included: ko.observable() })));
 					}).finally(() => {
 						this.hasResults(true);
-	        	        this.loading(false);
+						this.loading(false);
 					});
 			}
 
