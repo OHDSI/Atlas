@@ -60,6 +60,7 @@ define(['knockout',
 				this.nextClasses = ko.computed(() => this.classes({ extra: this.getNextClasses(), }));
 				// form inputs
 				this.importProvider = ko.observable(Const.PROVIDERS.ACTIVE_DIRECTORY);
+				this.model = params.model;
 				this.updateRoles = params.model.updateRoles;
 				this.roles = sharedState.roles;
 				this.rolesMapping = ko.observableArray();
@@ -140,8 +141,13 @@ define(['knockout',
 				this.loading(true);
 				const users = this.usersList()
 					.filter(u => !!u.included())
-					.map(u => ({ login: u.login, roles: u.roles(), }));
-				usersApi.importUsers(users).finally(() => this.loading(false));
+					.map(u => ({
+							login: u.login, roles: u.roles(),
+					}));
+				usersApi.importUsers(users).finally(() => {
+						this.loading(false);
+						usersApi.getUsers().then(data => this.model.users(data));
+				});
 				return true;
 			}
 

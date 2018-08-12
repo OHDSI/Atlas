@@ -33,6 +33,10 @@ define(function (require, exports) {
   	return httpService.doGet(importProvider(provider) + '/mapping');
 	}
 
+	function getUsers() {
+		return httpService.doGet(config.webAPIRoot + 'user');
+	}
+
 	function entity(method) {
 	 	return (...params) => method(...params).then(response => response.data);
 	}
@@ -44,6 +48,7 @@ define(function (require, exports) {
 		importUsers: entity(importUsers),
 		saveMapping: entity(saveMapping),
 		getMapping: entity(getMapping),
+		getUsers: entity(getUsers),
 	};
 
   return api;
