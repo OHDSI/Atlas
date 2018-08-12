@@ -25,6 +25,7 @@ define([
 				this.loading = ko.observable();
 				this.provider = params.provider || ko.observable("ad");
 				this.role = params.role || ko.observable();
+				this.hasResults = ko.observable(false);
 
 				this.role.subscribe((newRole) => {
 					this.searchResults([]);
@@ -41,7 +42,10 @@ define([
 				userApi.searchGroups(this.provider(), this.searchText())
 					.then(results => {
 						this.searchResults(results.map(group => ({...group, included: ko.observable() })));
-					}).finally(() => this.loading(false));
+					}).finally(() => {
+						this.hasResults(true);
+	        	        this.loading(false);
+					});
 			}
 
 			onSubmitSearch(data, event) {
