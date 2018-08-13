@@ -217,7 +217,7 @@ define(['knockout',
 
 			renderRoles(data, type, row) {
 				const label = (row && row.roles && row.roles().length > 0) ? row.roles().map(role => role.role).sort().join(", ") : 'No roles';
-				return '<a data-bind="click: function(d){ $component.onUsersRowClick(d) }, css: $component.linkClasses">' + label + '</a>';
+				return '<span data-bind="click: function(d){ $component.onUsersRowClick(d) }, css: $component.linkClasses">' + label + '</span>';
 			}
 
 			renderStatus(data, type, row) {
