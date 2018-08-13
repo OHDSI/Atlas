@@ -123,6 +123,14 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
           return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=1");
       });
 
+      self.showUsernameAuth = ko.computed(() => {
+          return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=2");
+      });
+
+      self.showUsernamePwdAuth = ko.computed(() => {
+          return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=3");
+      });
+
     self.krbHostFQDN = ko.computed(() => {
 
       if (self.selectedSource() != null) {
