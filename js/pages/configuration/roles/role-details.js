@@ -1,4 +1,4 @@
-define(['knockout', 'text!./role-details.html', 'appConfig', 'assets/ohdsi.util', 'databindings', 'components/ac-access-denied', 'less!./role-details.less',], function (ko, view, config, ohdsiUtils) {
+define(['knockout', 'text!./role-details.html', 'appConfig', 'assets/ohdsi.util', 'services/UserService', 'databindings', 'components/ac-access-denied', 'less!./role-details.less',], function (ko, view, config, ohdsiUtils, userService) {
     function roleDetails(params) {
         var self = this;
         var serviceUrl = config.api.url;
@@ -76,15 +76,7 @@ define(['knockout', 'text!./role-details.html', 'appConfig', 'assets/ohdsi.util'
 
         var getUsers = function() {
             if (!self.users() || self.users().length == 0) {
-                return $.ajax({
-                    url: serviceUrl + 'user',
-                    method: 'GET',
-                    contentType: 'application/json',
-                    error: authApi.handleAccessDenied,
-                    success: function(data) {
-                        self.users(data);
-                    }
-                });
+                return userService.getUsers().then((data) => self.users(data));
             } else {
                 return null;
             }
