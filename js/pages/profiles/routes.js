@@ -5,7 +5,7 @@ define(
       return {        
         '/profiles/?((\w|.)*)': new AuthorizedRoute((path) => {
           appModel.activePage(this.title);
-          require(['profile-manager', 'components/cohort-definition-browser'], function () {
+          require(['./profile-manager', 'components/cohort-definition-browser'], function () {
             path = path.split("/");
             appModel.componentParams = {
               model: appModel,

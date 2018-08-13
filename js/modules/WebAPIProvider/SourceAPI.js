@@ -116,14 +116,20 @@ define(function (require, exports) {
               }
             }
 
-            // evaluate evidence daimons
-            if (daimon.daimonType == 'Evidence') {
+            // evaluate cem daimons
+            if (daimon.daimonType == 'CEM') {
               source.hasEvidence = true;
               source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
               if (daimon.priority >= evidencePriority) {
                 evidencePriority = daimon.priority;
                 sharedState.evidenceUrl(source.evidenceUrl);
               }
+            }
+
+            // evaluate cem daimons
+            if (daimon.daimonType == 'CEMResults') {
+              source.hasResults = true;
+              source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
             }
 
             // evaluate results daimons
