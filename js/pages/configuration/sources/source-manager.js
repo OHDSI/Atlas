@@ -1,4 +1,4 @@
-define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'components/ac-access-denied'],
+define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'components/ac-access-denied', 'less!./source-manager.less'],
   function (ko, view, config, ohdsiUtil, sourceApi, roleApi, lodash) {
 
   var defaultDaimons = {
@@ -41,6 +41,14 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.username = ko.observable(data.username || null);
     self.password = ko.observable(data.password || null);
     self.daimons = ko.observableArray(mapDaimons(data.daimons));
+    self.keytabName = ko.observable(data.keytabName);
+    self.krbAuthMethod = ko.observable(data.krbAuthMethod);
+    self.krbAdminServer = ko.observable(data.krbAdminServer);
+    if (data.keytabName === null){
+        self.shouldShowFileInput = ko.observable(true);
+    } else {
+        self.shouldShowFileInput = ko.observable(false);
+    }
     return self;
   }
 
@@ -50,19 +58,17 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.config = config;
     self.model = params.model;
     self.loading = ko.observable(false);
+    self.shouldShowFileInput = ko.observable();
     self.dirtyFlag = self.model.currentSourceDirtyFlag;
-
     self.selectedSource = params.model.currentSource;
     self.selectedSourceId = params.model.selectedSourceId;
-
     self.options = {};
-
     self.isAuthenticated = authApi.isAuthenticated;
-		
+
 	self.hasAccess = ko.pureComputed(function () {
-		if (!config.userAuthenticationEnabled) { 
+		if (!config.userAuthenticationEnabled) {
 			return false;
-		} else {				
+		} else {
 			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
 		}
 	});
@@ -108,10 +114,100 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
         'Source ' + self.model.currentSource().name();
     });
 
-    self.newSource = function () {
-      self.selectedSource(new Source());
-      self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
+      self.newSource = function () {
+          self.selectedSource(new Source());
+          self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
+      };
+
+      self.showKrbAuth = ko.computed(() => {
+          return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=1");
+      });
+
+      self.showUsernameAuth = ko.computed(() => {
+          return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=2");
+      });
+
+      self.showUsernamePwdAuth = ko.computed(() => {
+          return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=3");
+      });
+
+    self.krbHostFQDN = ko.computed(() => {
+
+      if (self.selectedSource() != null) {
+          var str = self.selectedSource().connectionString();
+          var strArray = str.match(/KrbHostFQDN=(.*?);/);
+          if (strArray != null){
+              var matchedStr = strArray[0];
+              return matchedStr.substring(matchedStr.search("=") + 1, matchedStr.length - 1);
+          } else {
+              return "";
+          }
+      }
+    });
+
+    self.krbRealm = ko.computed(() => {
+
+      if (self.selectedSource() != null) {
+          var str = self.selectedSource().connectionString();
+          var strArray = str.match(/KrbRealm=(.*?);/);
+          if (strArray != null){
+            var matchedStr = strArray[0];
+            return matchedStr.substring(matchedStr.search("=") + 1, matchedStr.length - 1);
+          } else {
+            return "";
+          }
+      }
+    });
+
+    self.showHostWarning  = ko.computed(() => {
+
+      var showWarning = self.showKrbAuth() && self.krbHostFQDN() === "";
+      if (showWarning){
+          self.dirtyFlag().reset();
+      }
+        return showWarning;
+    });
+
+    self.showRealmWarning = ko.computed(() => {
+
+        var showWarning = self.showKrbAuth() && self.krbRealm() === "";
+        if (showWarning){
+            self.dirtyFlag().reset();
+        }
+        return showWarning;
+    });
+
+    self.showUserWarning  = ko.computed(() => {
+
+        var showWarning = self.selectedSource() != null && self.selectedSource().username() === "";
+        if (showWarning){
+            self.dirtyFlag().reset();
+        }
+        return showWarning;
+    });
+
+    self.showKeytabDiv = ko.computed(() => {
+        return self.selectedSource() != null && self.selectedSource().krbAuthMethod() === 'keytab';
+    });
+
+    self.removeKeytab = function () {
+        self.loading(true);
+        sourceApi.removeKeytab(self.selectedSourceId())
+            .then(function () {
+                self.selectedSource().shouldShowFileInput(true);
+                self.loading(false);
+            },
+                function () {
+                self.loading(false);
+            });
     };
+
+    let keytab;
+
+      self.uploadFile = function (file) {
+          keytab = file;
+          self.selectedSource().keytabName(file.name)
+      };
 
     self.save = function () {
       var source = {
@@ -119,11 +215,14 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
         key: self.selectedSource().key() || null,
         dialect: self.selectedSource().dialect() || null,
         connectionString: self.selectedSource().connectionString() || null,
+        krbAuthMethod: self.selectedSource().krbAuthMethod() || "password",
+        krbAdminServer: self.selectedSource().krbAdminServer() || null,
         username: self.selectedSource().username() || null,
         password: self.selectedSource().password() || null,
         daimons: ko.toJS(self.selectedSource().daimons()).filter(function(d){ return d.enabled; }).map(function(d){
           return lodash.omit(d, ['enabled']);
         }),
+        keytab: keytab,
       };
       self.loading(true);
       sourceApi.saveSource(self.selectedSourceId(), source)
@@ -166,7 +265,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     };
 
     self.init = function () {
-		if (self.hasAccess()) {				
+		if (self.hasAccess()) {
 			if (self.selectedSourceId() == null && self.selectedSource() == null) {
 				self.newSource();
 			} else {
