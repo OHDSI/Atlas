@@ -6,7 +6,7 @@
             <button data-bind="click: searchGroups, css: classes({ extra: ['btn', 'btn-sm', 'btn-primary'] })"><i class="fa fa-search"></i> Search</button>
         </div>
     </div>
-    <div data-bind="if: !loading()">
+    <div data-bind="if: !loading() && hasResults()">
         <table width="100%" cellspacing="0" data-bind="dataTable:{
                             data: searchResults(),
                             options: {

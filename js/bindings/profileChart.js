@@ -1,12 +1,31 @@
 "use strict";
-define(['knockout', 'd3', 'd3-tip', 'lodash', 'd3-selection', 'webapi/MomentAPI', 'webapi/AuthAPI', 'appConfig', 'D3-Labeler/labeler'], function (ko, d3, d3tip, _, d3Selection, momentApi, authApi, config) {
+define([
+	'knockout',
+	'd3',
+	'd3-tip',
+	'lodash',
+	'd3-selection',
+	'webapi/MomentAPI',
+	'webapi/AuthAPI',
+	'appConfig',
+	'D3-Labeler/labeler',
+], function (
+	ko,
+	d3,
+	d3tip,
+	_,
+	d3Selection,
+	momentApi,
+	authApi,
+	config
+) {
 
 	function canViewProfileDates() {
 		return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()));
   }
 
 	var margin = {
-		get top(){ return canViewProfileDates() ? 30 : 10; },
+		get top() { return canViewProfileDates() ? 30 : 10; },
 		right: 20,
 		bottom: 30,
 		left: 20

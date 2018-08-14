@@ -20,10 +20,8 @@ const localRefs = {
 	"cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
 	"user-bar": "components/user-bar",
 	"faceted-datatable": "components/faceted-datatable",
-	"profile-manager": "components/profile/profile-manager",
 	"explore-cohort": "components/explore-cohort",
 	"r-manager": "components/r-manager",
-	"negative-controls": "components/negative-controls",
 	"home": "components/home",
 	"welcome": "components/welcome",
 	"forbidden": "components/ac-forbidden",
@@ -48,9 +46,12 @@ const localRefs = {
 	"css": "plugins/css.min",
 };
 
+// set 'optional' path prior to first call to require
+requirejs.config({paths: {"optional": "plugins/optional"}});
+
 require([
 	'./settings',
-	'plugins/optional', // require this plugin separately to check in advance whether we have a local config
+	'optional', // require this plugin separately to check in advance whether we have a local config
 	'config'
 ], (settings, optional, appConfig) => {
 	const cdnRefs = {};
@@ -139,7 +140,7 @@ require([
 						}
 					}
 
-					if (daimon.daimonType == 'Evidence') {
+					if (daimon.daimonType == 'CEM') {
 						if (daimon.priority >= evidencePriority) {
 							evidencePriority = daimon.priority;
 							sharedState.evidenceUrl(source.evidenceUrl);

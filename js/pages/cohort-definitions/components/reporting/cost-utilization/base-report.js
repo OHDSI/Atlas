@@ -63,7 +63,7 @@ define(
         // Data
 
         this.filterList = ko.observableArray([]);
-        this.dataList = ko.observableArray();
+        this.dataList = ko.observableArray([]);
 
         // Charts formatters
 
