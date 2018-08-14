@@ -32,7 +32,7 @@ define(function (require, exports) {
 
   function saveSource(sourceKey, source) {
       var formData = new FormData();
-      formData.append("fileToUpload", source.keytab);
+      formData.append("keytab", source.keytab);
       formData.append("source", new Blob([JSON.stringify(source)],{type: "application/json"}));
 
       lscache.remove(getCacheKey());
@@ -42,16 +42,6 @@ define(function (require, exports) {
         return httpService.doPost(config.api.url + 'source/' + (''), formData);
       }
   }
-
-   function removeKeytab(sourceKey) {
-       const promise = httpService.doDelete(`${config.webAPIRoot}source/${sourceKey}/keytab`);
-
-       return promise
-           .catch(response => {
-               authApi.handleAccessDenied(response);
-               return response;
-           });
-   }
 
   function getSource(sourceKey) {
 	  return ohdsiUtil.cachedAjax({
@@ -221,7 +211,6 @@ define(function (require, exports) {
     getSources: getSources,
     getSource: getSource,
     saveSource: saveSource,
-    removeKeytab: removeKeytab,
     getCacheKey: getCacheKey,
     initSourcesConfig: initSourcesConfig,
     deleteSource: deleteSource,
