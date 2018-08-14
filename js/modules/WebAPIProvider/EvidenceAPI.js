@@ -11,7 +11,35 @@ define(function (require, exports) {
 			}
 		});
 		return infoPromise;
-	}
+    }
+    
+    function getDrugLabelExists(sourceKey, conceptIds) {
+		var infoPromise = $.ajax({
+            url: config.webAPIRoot + 'evidence/' + sourceKey + '/druglabel',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(conceptIds),
+			error: function (error) {
+				console.log("Error: " + error);
+			}
+		});
+		return infoPromise;
+    }
+
+    function getDrugConditionPairs(sourceKey, targetDomainId, drugConceptIds, conditionConceptIds, sourceIds) {
+        var pairPromise = $.ajax({
+            url: config.webAPIRoot + 'evidence/' + sourceKey + '/drugconditionpairs',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                targetDomain: targetDomainId,
+                drugConceptIds: drugConceptIds,
+                conditionConceptIds: conditionConceptIds,
+                sourceIds: sourceIds,
+            })
+        });
+        return pairPromise;
+    }
     
     function generateNegativeControls(sourceKey, conceptSetId, conceptSetName, conceptDomainId, targetDomainId, conceptIds, csToInclude, csToExclude) {
         var negativeControlsJob = $.ajax({
@@ -38,6 +66,8 @@ define(function (require, exports) {
     }
     
     var api = {
+        getDrugConditionPairs: getDrugConditionPairs,
+        getDrugLabelExists: getDrugLabelExists,
 		getNegativeControls: getNegativeControls,
         generateNegativeControls: generateNegativeControls
 	}

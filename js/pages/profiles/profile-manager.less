@@ -1,0 +1,206 @@
+.profile-manager {
+	&__chart {
+		display: inline-block;
+		width: 100%;
+		vertical-align: top;
+		overflow: hidden;
+		text-align: center;
+		shape-rendering: crispEdges;
+		border-bottom: solid 1px #ccc;
+		-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Safari */
+			-khtml-user-select: none; /* Konqueror HTML */
+				-moz-user-select: none; /* Firefox */
+					-ms-user-select: none; /* Internet Explorer/Edge */
+							user-select: none; /* Non-prefixed version, currently */
+
+		& .brush .extent {
+			stroke: #f19119;
+			fill: #f19119;
+			fill-opacity: 0.15;
+			shape-rendering: crispEdges;
+		}
+		
+		& .observation-period {
+			fill: none;
+			stroke: #b7cbdc;
+			opacity: 0.7;
+			stroke-width: 2;
+		}
+		
+		& svg {
+			display: inline-block;
+			left: 0;
+			background-color: #eee;
+		}
+		& .axis text {
+			font-size: 10px;
+		}
+		
+		& .axis path, .axis line {
+				stroke: #666 !important;
+				stroke-width: 1px !important;
+		}
+
+		& path {
+			opacity: 0.3;
+			&.drug {
+				fill:#337AB7;
+			}
+			&.condition {
+				fill:rgb(166,206,227);
+			}
+			&.observation {
+				fill:rgb(31,120,180);
+			}
+			&.visit {
+				fill:rgb(178,223,138);
+			}
+			&.conditionera {
+				fill:rgb(51,160,44);
+			}
+			&.drugera {
+				fill:rgb(251,154,153);
+			}
+			&.doseera {
+				fill:rgb(227,26,28);
+			}
+			&.procedure {
+				fill:rgb(253,191,111);
+			}
+			&.device {
+				fill:rgb(255,127,0);
+			}
+			&.measurement {
+				fill:rgb(202,178,214);
+			}
+			&.specimen {
+				fill:rgb(106,61,154);
+			}
+			&.death {
+				fill:rgb(255,255,153);
+			}
+		}
+		
+		& rect {
+			&.point {
+				opacity: 0.8;
+				fill: #337AB7;
+				stroke-width:1px;
+			}
+			
+			&.dim {
+				opacity: 0.2 !important;
+			}
+			
+			&.category {
+				fill: #222;
+				stroke:#eee;
+				stroke-width:1px;
+			}
+		}
+
+		& .link {
+			stroke: #444;
+		}
+
+		& .highlighted {
+				& path, line, rect {
+				stroke-width: 1;
+				opacity:0.7;
+			}
+		}
+		& text.unhighlighted {
+			opacity: 0.3;
+		}
+		& g {
+			&.inset {
+				& rect {
+					&.inset-point {
+						fill: black;
+					}
+					&.background {
+						fill: #fff;
+						stroke: gray;
+						stroke-width: 2;
+					}
+					&.highlighted {
+						width: 3px;
+						height: 3px;
+					}
+					&.insetZoom {
+						opacity: 1;
+						cursor: -webkit-grab;
+						fill: transparent;
+						stroke:#f19119;
+						stroke-width: 2;
+					}
+					&.resizeLeft,
+					&.resizeRight {
+						opacity: 0;
+						cursor: ew-resize;
+					}
+					&.filteredout {
+						fill: lightgray;
+					}
+				}
+			}
+			&.unhighlighted {
+				& rect {
+					opacity: 0.5;
+					fill: #ccc;
+				}
+			}
+		}
+		& text {
+			&.category {
+				fill: #ddd;
+				font-weight:normal;
+			}
+			&.label {
+				fill: #ccc;				
+				&.highlighted {
+					font-size:1.1em;
+					stroke-width:0.3
+				}
+			}
+		}
+		& #cohortPeople {
+			display: inline-block;
+		}
+	}
+	
+	& #wordcloud {
+		overflow: auto;
+		height: 100%;
+	}
+
+	& .wordcloud {
+		& span {
+			margin: 2px;
+			padding: 3px;
+			display: block;
+			cursor: pointer;
+			border: solid 1px #ccc;
+		}
+		&-help {
+			text-align:center;
+			color:#aaa;
+			font-size:10px;
+		}
+	}
+
+	&__profile-control {
+		& .feFilter .facetScrollBox {
+			max-height: none;
+		}
+	}
+		
+	&__profile-manager-table {
+		padding-right: 10px;
+	}
+	
+	& .highlight-pane {
+		text-align: center;
+	}
+}

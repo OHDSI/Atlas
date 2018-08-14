@@ -1121,7 +1121,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			generateHealthcareAnalyses () {
-				const analysisIds = this.checkedUtilReports().reduce((acc, ids) => [...acc, ...ids], []);
+				const analysisIds = this.utilReportOptions.reports.selectedOptions().reduce((acc, ids) => [...acc, ...ids], []);
 
 				this.generateAnalyses({
 					descr: 'the Cost and Utilization analyses',
