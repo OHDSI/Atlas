@@ -285,8 +285,11 @@ define(
 					return sharedState.appInitializationStatus() != GlobalModel.applicationStatuses.initializing;
 				});
 				this.currentViewAccessible = ko.pureComputed(() => {
-					return this.currentView && (sharedState.appInitializationStatus() !== GlobalModel.applicationStatuses.failed &&
-						(sharedState.appInitializationStatus() !== GlobalModel.applicationStatuses.noSourcesAvailable || this.currentView() === 'ohdsi-configuration'));
+					return this.currentView && (
+						sharedState.appInitializationStatus() !== GlobalModel.applicationStatuses.failed
+						&& (sharedState.appInitializationStatus() !== GlobalModel.applicationStatuses.noSourcesAvailable
+						|| ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
+					));
 				});
 				this.noSourcesAvailable = ko.pureComputed(() => {
 					return sharedState.appInitializationStatus() == GlobalModel.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
@@ -395,6 +398,10 @@ define(
 				} else {
 					return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check readonly"></span>';
 				}
+			}
+
+			renderBoundLink(s, p, d) {
+				return commonUtils.renderBoundLink(s, p, d);
 			}
 
 			getSourceInfo(source) {

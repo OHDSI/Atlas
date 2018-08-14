@@ -5,6 +5,7 @@ define([
 	'providers/AutoBind',
 	'providers/Vocabulary',
 	'utils/CommonUtils',
+	'atlas-state',
 	'less!./import.less',
 ], function (
 	ko,
@@ -12,7 +13,8 @@ define([
 	Component,
 	AutoBind,
 	vocabularyProvider,
-	commonUtils
+	commonUtils,
+	sharedState,
 ) {
 	class Import extends AutoBind(Component) {
 		constructor(params) {
@@ -67,7 +69,7 @@ define([
 			this.error('');
 			const identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
 			vocabularyProvider.getConceptsById(identifers)
-				.then(items => this.initConceptSet(items))
+				.then(({ data: items }) => { this.initConceptSet(items) })
 				.then(() => this.showConceptSet())
 				.catch((er) => {
 					this.error(er);
@@ -82,7 +84,7 @@ define([
 			this.error('');
 			const sourcecodes = $('#textImportSourcecodes').val().match(/[0-9a-zA-Z\.-]+/g);
 			vocabularyProvider.getConceptsByCode(sourcecodes)
-				.then(items => this.initConceptSet(items))
+				.then(({ data: items }) => { this.initConceptSet(items) })
 				.then(() => this.showConceptSet())
 				.catch((er) => {
 					this.error(er);

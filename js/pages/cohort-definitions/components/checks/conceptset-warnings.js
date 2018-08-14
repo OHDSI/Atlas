@@ -77,7 +77,7 @@ define(['knockout', 'text!./conceptset-warnings.html',
       };
 
       self.getWarnings = function() {
-        if (parseInt(self.cohortDefinitionId(), 10) <= 0) {
+        if (parseInt(self.cohortDefinitionId(), 10) <= 0 || isNaN(self.cohortDefinitionId())) {
           return false;
         }
         self.loading(true);
