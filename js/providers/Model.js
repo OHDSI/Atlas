@@ -516,8 +516,8 @@ define(
 								this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
 									// Update each of the concept set items
 									currentConceptSet.expression.items().forEach((item) => {
-										var selectedConcept = data.find(() => {
-											return this.CONCEPT_ID == item.concept.CONCEPT_ID
+										var selectedConcept = data.find((d) => {
+											return d.CONCEPT_ID == item.concept.CONCEPT_ID
 										});
 										if (selectedConcept)
 											item.concept = selectedConcept;
