@@ -44,11 +44,13 @@ define(function (require, exports) {
   }
 
    function removeKeytab(sourceKey) {
-       return $.ajax({
-           url: config.webAPIRoot + 'source/' + sourceKey + '/keytab',
-           method: 'DELETE',
-           error: authApi.handleAccessDenied,
-       });
+       const promise = httpService.doDelete(`${config.webAPIRoot}source/${sourceKey}/keytab`);
+
+       return promise
+           .catch(response => {
+               authApi.handleAccessDenied(response);
+               return response;
+           });
    }
 
   function getSource(sourceKey) {
