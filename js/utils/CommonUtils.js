@@ -37,7 +37,7 @@ define(
 			return false;
 		}
 
-		function contextSensitiveLinkColorfunction (row, data) {
+		function contextSensitiveLinkColor (row, data) {
 			var switchContext;
 			if (data.STANDARD_CONCEPT == undefined) {
 				switchContext = data.concept.STANDARD_CONCEPT;
@@ -136,7 +136,7 @@ define(
 		return {
 			build,
 			hasRelationship,
-			contextSensitiveLinkColorfunction,
+			contextSensitiveLinkColor,
 			hasCDM,
 			hasResults,
 			renderConceptSetItemSelector,

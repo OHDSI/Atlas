@@ -404,6 +404,10 @@ define(
 				return commonUtils.renderBoundLink(s, p, d);
 			}
 
+			contextSensitiveLinkColor(element, rowData) {
+				return commonUtils.contextSensitiveLinkColor(element, rowData);
+			}
+
 			getSourceInfo(source) {
 				const info = this.currentCohortDefinitionInfo();
 				for (var i = 0; i < info.length; i++) {
@@ -738,7 +742,7 @@ define(
 				});
 				return new Promise((resolve, reject) => {
 					if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
-						this.loadAncestors(selectedConceptIds, ids).then(({ ancestors: data }) => {
+						this.loadAncestors(selectedConceptIds, ids).then(({ data: ancestors }) => {
 							const map = this.includedConceptsMap();
 							$.each(data, (line) => {
 								const ancArray = ancestors[line.CONCEPT_ID];
