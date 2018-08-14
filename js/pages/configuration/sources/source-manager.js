@@ -1,4 +1,4 @@
-define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'components/ac-access-denied'],
+define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'components/ac-access-denied', 'less!./source-manager.less'],
   function (ko, view, config, ohdsiUtil, sourceApi, roleApi, lodash) {
 
   var defaultDaimons = {
@@ -42,7 +42,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.password = ko.observable(data.password || null);
     self.daimons = ko.observableArray(mapDaimons(data.daimons));
     self.keytabName = ko.observable(data.keytabName);
-    self.authType = ko.observable(data.authType);
+    self.krbAuthMethod = ko.observable(data.krbAuthMethod);
     self.krbAdminServer = ko.observable(data.krbAdminServer);
     if (data.keytabName === null){
         self.shouldShowFileInput = ko.observable(true);
@@ -187,7 +187,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     });
 
     self.showKeytabDiv = ko.computed(() => {
-        return self.selectedSource() != null && self.selectedSource().authType() === 'keytab';
+        return self.selectedSource() != null && self.selectedSource().krbAuthMethod() === 'keytab';
     });
 
     self.removeKeytab = function () {
@@ -202,11 +202,11 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
             });
     };
 
-    var keytab;
+    let keytab;
 
       self.uploadFile = function (file) {
           keytab = file;
-          self.dirtyFlag().makeDirty();
+          self.selectedSource().keytabName(file.name)
       };
 
     self.save = function () {
@@ -215,7 +215,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
         key: self.selectedSource().key() || null,
         dialect: self.selectedSource().dialect() || null,
         connectionString: self.selectedSource().connectionString() || null,
-        authType: self.selectedSource().authType() || "password",
+        krbAuthMethod: self.selectedSource().krbAuthMethod() || "password",
         krbAdminServer: self.selectedSource().krbAdminServer() || null,
         username: self.selectedSource().username() || null,
         password: self.selectedSource().password() || null,
