@@ -44,11 +44,11 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.keytabName = ko.observable(data.keytabName);
     self.krbAuthMethod = ko.observable(data.krbAuthMethod);
     self.krbAdminServer = ko.observable(data.krbAdminServer);
-    if (data.keytabName === null){
-        self.shouldShowFileInput = ko.observable(true);
-    } else {
-        self.shouldShowFileInput = ko.observable(false);
-    }
+
+    self.shouldShowFileInput = ko.computed(() => {
+        return typeof self.keytabName() !== 'string' || self.keytabName().length === 0;
+    });
+
     return self;
   }
 
@@ -58,7 +58,6 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.config = config;
     self.model = params.model;
     self.loading = ko.observable(false);
-    self.shouldShowFileInput = ko.observable();
     self.dirtyFlag = self.model.currentSourceDirtyFlag;
     self.selectedSource = params.model.currentSource;
     self.selectedSourceId = params.model.selectedSourceId;
@@ -119,21 +118,29 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
           self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
       };
 
+      function isNonEmptyImpalaConnectionString() {
+          return self.selectedSource() != null && self.selectedSource().dialect() === 'impala' && typeof self.selectedSource().connectionString() === 'string' && self.selectedSource().connectionString().length > 0;
+      }
+
+      function impalaConnectionStringIncludes(substr) {
+          return isNonEmptyImpalaConnectionString() && self.selectedSource().connectionString().includes(substr);
+      }
+
       self.showKrbAuth = ko.computed(() => {
-          return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=1");
+          return impalaConnectionStringIncludes("AuthMech=1");
       });
 
       self.showUsernameAuth = ko.computed(() => {
-          return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=2");
+          return impalaConnectionStringIncludes("AuthMech=2");
       });
 
       self.showUsernamePwdAuth = ko.computed(() => {
-          return self.selectedSource() != null && self.selectedSource().connectionString().includes("AuthMech=3");
+          return impalaConnectionStringIncludes("AuthMech=3");
       });
 
     self.krbHostFQDN = ko.computed(() => {
 
-      if (self.selectedSource() != null) {
+      if (isNonEmptyImpalaConnectionString()) {
           var str = self.selectedSource().connectionString();
           var strArray = str.match(/KrbHostFQDN=(.*?);/);
           if (strArray != null){
@@ -143,11 +150,12 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
               return "";
           }
       }
+      return "";
     });
 
     self.krbRealm = ko.computed(() => {
 
-      if (self.selectedSource() != null) {
+        if (isNonEmptyImpalaConnectionString()) {
           var str = self.selectedSource().connectionString();
           var strArray = str.match(/KrbRealm=(.*?);/);
           if (strArray != null){
@@ -157,6 +165,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
             return "";
           }
       }
+      return "";
     });
 
     self.showHostWarning  = ko.computed(() => {
@@ -191,15 +200,9 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     });
 
     self.removeKeytab = function () {
-        self.loading(true);
-        sourceApi.removeKeytab(self.selectedSourceId())
-            .then(function () {
-                self.selectedSource().shouldShowFileInput(true);
-                self.loading(false);
-            },
-                function () {
-                self.loading(false);
-            });
+        $('#keytabFile').val(''); // TODO: create "ref" directive
+        keytab = null;
+        self.selectedSource().keytabName(null);
     };
 
     let keytab;
@@ -222,6 +225,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
         daimons: ko.toJS(self.selectedSource().daimons()).filter(function(d){ return d.enabled; }).map(function(d){
           return lodash.omit(d, ['enabled']);
         }),
+        keytabName: self.selectedSource().keytabName(),
         keytab: keytab,
       };
       self.loading(true);
