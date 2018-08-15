@@ -83,7 +83,6 @@ const settingsObject = {
     "knockout-mapping": "assets/knockout.mapping",
     "datatables.net": "assets/jquery.dataTables.min",
     "datatables.net-buttons": "assets/jquery.dataTables.buttons.min",
-    "datatables.net-colvis": "assets/jquery.dataTables.colVis.min",
     "datatables.net-buttons-html5": "assets/jquery.dataTables.buttons.html5.min",
     "colvis": "assets/jquery.dataTables.colVis.min",
     "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.1/crossfilter.min",
