@@ -9,9 +9,10 @@ define(
     'webapi/MomentAPI',
     'utils/CsvUtils',
     'numeral',
-    'modules/cohortdefinition/services/CohortResultsService'
+    'modules/cohortdefinition/services/CohortResultsService',
+    'lodash'
   ],
-  function (ko, BemHelper, appConfig, filterPanelUtils, moment, d3, MomentAPI, CsvUtils, numeral, CohortResultsService) {
+  function (ko, BemHelper, appConfig, filterPanelUtils, moment, d3, MomentAPI, CsvUtils, numeral, CohortResultsService, lodash) {
 
     class BaseCostUtilReport {
 
@@ -65,7 +66,10 @@ define(
       }
 
       static conceptsToOptions(conceptList) {
-        return conceptList.map(el => ({ label: el.conceptName, value: el.conceptId }));
+        return lodash.sortBy(
+            conceptList.map(el => ({ label: el.conceptName, value: el.conceptId })),
+            ['label']
+        );
       }
 
       static formatFullNumber(val) {

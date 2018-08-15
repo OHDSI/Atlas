@@ -73,7 +73,7 @@ define(
             data: 'daysSupplyAvg',
             className: this.classes('tbl-col', 'avg-days-supply'),
             showInChart: true,
-            render: BaseCostUtilReport.formatFullNumber,
+            render: BaseCostUtilReport.formatPreciseNumber,
           },
           {
             title: 'Days of Supply /1K /Year',
