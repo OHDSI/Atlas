@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.net-buttons', 'datatables.net-colvis', 'datatables.net-buttons-html5'], function ($, ko, dataTables, config, filterXSS) {
+define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.net-buttons', 'colvis', 'datatables.net-buttons-html5'], function ($, ko, dataTables, config, filterXSS) {
 
 	function renderSelected(s, p, d) {
 		return '<span class="fa fa-check-circle"></span>';

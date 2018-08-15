@@ -590,6 +590,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					title: 'Periods',
 					options: costUtilConst.periods,
 					selectedOptions: ko.observableArray([]),
+				},
+				rollups: {
+					title: 'Rollups',
+                    options: costUtilConst.rollups,
+                    selectedOptions: ko.observableArray([]),
 				}
 			};
 			
@@ -1038,7 +1043,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return j.name == testName && j.status() != 'FAILED' && j.status() != 'COMPLETED';
 			}			
 
-			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods }) {
+			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {
 				if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
 					return;
 				}
@@ -1065,6 +1070,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.measurementConceptIds = [];
 
 				cohortJob.periods = periods;
+
+				cohortJob.rollupUtilizationVisit = rollupUtilizationVisit;
+				cohortJob.rollupUtilizationDrug = rollupUtilizationDrug;
 				
 				var jobDetails = new jobDetail({
 					name: cohortJob.jobName,
@@ -1122,13 +1130,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			generateHealthcareAnalyses () {
 				const analysisIds = this.utilReportOptions.reports.selectedOptions().reduce((acc, ids) => [...acc, ...ids], []);
-
 				this.generateAnalyses({
 					descr: 'the Cost and Utilization analyses',
 					duration: '10-45 minutes',
 					analysisIdentifiers: analysisIds,
 					runHeraclesHeel: false,
 					periods: this.utilReportOptions.periods.selectedOptions(),
+					...this.utilReportOptions.rollups.selectedOptions().reduce((acc, current) => { acc[current] = true; return acc }, {}),
 				});
 
 				this.showUtilizationToRunModal(false);
