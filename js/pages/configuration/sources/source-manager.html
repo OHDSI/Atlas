@@ -40,39 +40,39 @@
 																<input title="Connection string" data-bind="textInput: selectedSource().connectionString, enable: canEdit()" class="form-control" type="text" id="connectionString"/>
 														</div>
 													</div>
-                                                <div data-bind="visible: showRealmWarning" class="source-manager__error">
+                                                <div data-bind="visible: fieldsVisibility.realmWarning" class="source-manager__error">
 													<i class="source-manager__error-ico fa fa-exclamation-circle" aria-hidden="true"></i>
 													<label>"KrbRealm" is empty.</label>
 												</div>
-                                                <div data-bind="visible: showHostWarning" class="source-manager__error">
+                                                <div data-bind="visible: fieldsVisibility.hostWarning" class="source-manager__error">
 													<i class="source-manager__error-ico fa fa-exclamation-circle" aria-hidden="true"></i>
 													<label>"KrbHostFQDN" is empty.</label>
 												</div>
 												<div class="source-row">
-													<div class="source-manager__control-group control-group" data-bind="visible: showKrbAuth() || showUsernameAuth() || showUsernamePwdAuth() || !isImpalaDialect()">
+													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.username">
 														<label>Username:</label>
 														<div class="form-group">
 															<input title="Username" data-bind="textInput: selectedSource().username, enable: canEdit()" class="form-control" type="text"/>
 														</div>
-                                                        <div data-bind="visible: showUserWarning" class="source-manager__error">
+                                                        <div data-bind="visible: fieldsVisibility.userWarning" class="source-manager__error">
 															<i class="source-manager__error-ico fa fa-exclamation-circle" aria-hidden="true"></i>
 															<label>"Username" is empty.</label>
 														</div>
 													</div>
-													<div class="source-manager__control-group control-group" data-bind="visible: showUsernameAuth() || showUsernamePwdAuth() || !isImpalaDialect()">
+													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.password">
 														<label>Password:</label>
 														<div class="form-group">
 															<input title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>
 														</div>
 													</div>
-													<div class="source-manager__control-group control-group" data-bind="visible: showKrbAuth">
+													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.krbAuthSettings">
 														<label>KrbAdminServer:</label>
 														<div class="form-group">
 															<input title="KrbAdminServer" data-bind="textInput: selectedSource().krbAdminServer, enable: canEdit()" class="form-control" type="text"/>
 														</div>
 													</div>
 												</div>
-											<div data-bind="visible: showKrbAuth">
+											<div data-bind="visible: fieldsVisibility.krbAuthSettings">
 												<div class="source-row">
                                                     <div class="source-manager__control-group control-group">
                                                         <label>KrbRealm:</label>
@@ -94,16 +94,16 @@
 													<input type="radio" value="keytab" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
 													<span class="source-manager__radio-btn-label">Keytab</span>
 												</label>
-												<div data-bind="visible: showKeytabDiv" class="source-manager__keytab">
-													<input type="file" id="keytabFile" name="keytabFile" accept=".keytab" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: selectedSource().shouldShowFileInput()"/>
-													<span data-bind="text: selectedSource().keytabName, visible: !selectedSource().shouldShowFileInput()"></span>
-													<button type="button" class="btn btn-sm btn-danger source-manager__remove-btn" data-bind="visible: !selectedSource().shouldShowFileInput(), click: removeKeytab">Remove</button>
+												<div data-bind="visible: fieldsVisibility.showKeytab" class="source-manager__keytab">
+													<input type="file" id="keytabFile" name="keytabFile" accept=".keytab" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.krbFileInput()"/>
+													<span data-bind="text: selectedSource().keytabName, visible: !fieldsVisibility.krbFileInput()"></span>
+													<button type="button" class="btn btn-sm btn-danger source-manager__remove-btn" data-bind="visible: !fieldsVisibility.krbFileInput(), click: removeKeytab">Remove</button>
 												 </div>
 												<label class="source-manager__pwd-label">
 													<input type="radio" value="password" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
 													<span class="source-manager__radio-btn-label">User name and password</span>
 												</label>
-												<div class="source-manager__control-group control-group" data-bind="visible: showKrbAuth() && !showKeytabDiv()">
+												<div class="source-manager__control-group control-group" data-bind="visible: !fieldsVisibility.showKeytab()">
 													<label>Password:</label>
 													<div class="form-group">
 														<input title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>

@@ -119,7 +119,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
       };
 
       function isImpalaDS() {
-          return isNonEmptyConnectionString() && self.selectedSource().dialect() === 'impala';
+          return self.selectedSource() && self.selectedSource().dialect() === 'impala';
       }
 
       function isNonEmptyConnectionString() {
@@ -127,28 +127,16 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
       }
 
       function impalaConnectionStringIncludes(substr) {
-          return isImpalaDS() && self.selectedSource().connectionString().includes(substr);
+          return isImpalaDS() && isNonEmptyConnectionString() && self.selectedSource().connectionString().includes(substr);
       }
 
-      self.isImpalaDialect = ko.computed(() => {
-          return isImpalaDS();
-      });
-
-      self.showKrbAuth = ko.computed(() => {
+      self.isKrbAuth = ko.computed(() => {
           return impalaConnectionStringIncludes("AuthMech=1");
-      });
-
-      self.showUsernameAuth = ko.computed(() => {
-          return impalaConnectionStringIncludes("AuthMech=2");
-      });
-
-      self.showUsernamePwdAuth = ko.computed(() => {
-          return impalaConnectionStringIncludes("AuthMech=3");
       });
 
     self.krbHostFQDN = ko.computed(() => {
 
-      if (isImpalaDS()) {
+      if (isImpalaDS() && isNonEmptyConnectionString()) {
           var str = self.selectedSource().connectionString();
           var strArray = str.match(/KrbHostFQDN=(.*?);/);
           if (strArray != null){
@@ -163,7 +151,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
 
     self.krbRealm = ko.computed(() => {
 
-        if (isImpalaDS()) {
+        if (isImpalaDS() && isNonEmptyConnectionString()) {
           var str = self.selectedSource().connectionString();
           var strArray = str.match(/KrbRealm=(.*?);/);
           if (strArray != null){
@@ -174,37 +162,6 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
           }
       }
       return "";
-    });
-
-    self.showHostWarning  = ko.computed(() => {
-
-      var showWarning = self.showKrbAuth() && self.krbHostFQDN() === "";
-      if (showWarning){
-          self.dirtyFlag().reset();
-      }
-        return showWarning;
-    });
-
-    self.showRealmWarning = ko.computed(() => {
-
-        var showWarning = self.showKrbAuth() && self.krbRealm() === "";
-        if (showWarning){
-            self.dirtyFlag().reset();
-        }
-        return showWarning;
-    });
-
-    self.showUserWarning  = ko.computed(() => {
-
-        var showWarning = self.selectedSource() != null && self.selectedSource().username() === "";
-        if (showWarning){
-            self.dirtyFlag().reset();
-        }
-        return showWarning;
-    });
-
-    self.showKeytabDiv = ko.computed(() => {
-        return self.selectedSource() != null && self.selectedSource().krbAuthMethod() === 'keytab';
     });
 
     self.removeKeytab = function () {
@@ -293,6 +250,43 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     };
 
     self.init();
+
+    self.fieldsVisibility = {
+        username: ko.computed(() => !isImpalaDS() || self.isKrbAuth()),
+        password: ko.computed(() => !isImpalaDS()),
+        krbAuthSettings: self.isKrbAuth,
+        showKeytab: ko.computed(() => {
+            return self.isKrbAuth() && self.selectedSource().krbAuthMethod() === 'keytab';
+        }),
+        krbFileInput: ko.computed(() => {
+            return self.isKrbAuth() && (typeof self.selectedSource().keytabName() !== 'string' || self.selectedSource().keytabName().length === 0);
+        }),
+        // warnings
+        hostWarning: ko.computed(() => {
+            var showWarning = self.isKrbAuth() && self.krbHostFQDN() === "";
+            if (showWarning){
+                self.dirtyFlag().reset();
+            }
+            return showWarning;
+        }),
+        realmWarning: ko.computed(() => {
+
+            var showWarning = self.isKrbAuth() && self.krbRealm() === "";
+            if (showWarning){
+                self.dirtyFlag().reset();
+            }
+            return showWarning;
+        }),
+        userWarning: ko.computed(() => {
+
+            var showWarning = self.selectedSource() != null && self.selectedSource().username() === "";
+            if (showWarning){
+                self.dirtyFlag().reset();
+            }
+            return showWarning;
+        }),
+    };
+
     self.dispose = function () {
 
     };
