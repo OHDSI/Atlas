@@ -17,7 +17,6 @@ define([
 		constructor(params) {
 			super(params);
 
-			this.model = params.model;
 			this.sourceKey = ko.isObservable(params.sourceKey) ? params.sourceKey() : params.sourceKey;
 			this.targetDomainId = ko.isObservable(params.targetDomainId) ? params.targetDomainId() : params.targetDomainId;
 			this.drugConceptIds = params.drugConceptIds || [42904205];
