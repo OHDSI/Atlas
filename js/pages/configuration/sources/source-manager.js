@@ -45,10 +45,6 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.krbAuthMethod = ko.observable(data.krbAuthMethod);
     self.krbAdminServer = ko.observable(data.krbAdminServer);
 
-    self.shouldShowFileInput = ko.computed(() => {
-        return typeof self.keytabName() !== 'string' || self.keytabName().length === 0;
-    });
-
     return self;
   }
 
