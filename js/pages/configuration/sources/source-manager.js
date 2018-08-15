@@ -251,14 +251,14 @@ define([
       sourceApi.saveSource(self.selectedSourceId(), source)
         .then(() => sourceApi.initSourcesConfig())
         .then(() => {
-          roleService.updateRoles()
+          roleService.getRoles()
             .then(({ data: roles }) => {
               self.model.roles(roles);
               self.loading(false);
               self.goToConfigure();
             });
         })
-        .fail(function () { self.loading(false); });
+        .catch(function () { self.loading(false); });
     };
 
     self.close = function () {
@@ -278,7 +278,7 @@ define([
       self.loading(true);
       sourceApi.deleteSource(self.selectedSourceId())
         .then(sourceApi.initSourcesConfig)
-        .then(() => roleService.updateRoles())
+        .then(() => roleService.getRoles())
         .then(({ data: roles }) => {
           self.model.roles(roles);
           self.loading(false);

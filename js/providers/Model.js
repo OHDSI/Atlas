@@ -835,7 +835,7 @@ define(
 					console.info('Roles updated');
 					return Promise.resolve();
 				} else {
-					return roleService.updateRoles()
+					return roleService.getRoles()
 						.then(({ data: roles }) => {
 							console.info('Roles updated');
 							this.roles(roles);
