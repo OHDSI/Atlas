@@ -118,13 +118,21 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
           self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
       };
 
-      function isNonEmptyImpalaConnectionString() {
-          return self.selectedSource() != null && self.selectedSource().dialect() === 'impala' && typeof self.selectedSource().connectionString() === 'string' && self.selectedSource().connectionString().length > 0;
+      function isImpalaDS() {
+          return isNonEmptyConnectionString() && self.selectedSource().dialect() === 'impala';
+      }
+
+      function isNonEmptyConnectionString() {
+          return self.selectedSource() != null && typeof self.selectedSource().connectionString() === 'string' && self.selectedSource().connectionString().length > 0;
       }
 
       function impalaConnectionStringIncludes(substr) {
-          return isNonEmptyImpalaConnectionString() && self.selectedSource().connectionString().includes(substr);
+          return isImpalaDS() && self.selectedSource().connectionString().includes(substr);
       }
+
+      self.isImpalaDialect = ko.computed(() => {
+          return isImpalaDS();
+      });
 
       self.showKrbAuth = ko.computed(() => {
           return impalaConnectionStringIncludes("AuthMech=1");
@@ -140,7 +148,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
 
     self.krbHostFQDN = ko.computed(() => {
 
-      if (isNonEmptyImpalaConnectionString()) {
+      if (isImpalaDS()) {
           var str = self.selectedSource().connectionString();
           var strArray = str.match(/KrbHostFQDN=(.*?);/);
           if (strArray != null){
@@ -155,7 +163,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
 
     self.krbRealm = ko.computed(() => {
 
-        if (isNonEmptyImpalaConnectionString()) {
+        if (isImpalaDS()) {
           var str = self.selectedSource().connectionString();
           var strArray = str.match(/KrbRealm=(.*?);/);
           if (strArray != null){

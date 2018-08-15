@@ -49,7 +49,7 @@
 													<label>"KrbHostFQDN" is empty.</label>
 												</div>
 												<div class="source-row">
-													<div class="source-manager__control-group control-group" data-bind="visible: showKrbAuth() || showUsernameAuth() || showUsernamePwdAuth()">
+													<div class="source-manager__control-group control-group" data-bind="visible: showKrbAuth() || showUsernameAuth() || showUsernamePwdAuth() || !isImpalaDialect()">
 														<label>Username:</label>
 														<div class="form-group">
 															<input title="Username" data-bind="textInput: selectedSource().username, enable: canEdit()" class="form-control" type="text"/>
@@ -59,7 +59,7 @@
 															<label>"Username" is empty.</label>
 														</div>
 													</div>
-													<div class="source-manager__control-group control-group" data-bind="visible: showUsernameAuth() || showUsernamePwdAuth()">
+													<div class="source-manager__control-group control-group" data-bind="visible: showUsernameAuth() || showUsernamePwdAuth() || !isImpalaDialect()">
 														<label>Password:</label>
 														<div class="form-group">
 															<input title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>
