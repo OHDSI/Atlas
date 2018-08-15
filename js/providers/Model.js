@@ -153,13 +153,13 @@ define(
 					return url;
 				});
 	
-				this.currentConceptSetDirtyFlag = new ohdsiUtil.dirtyFlag({
+				this.currentConceptSetDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({
 					header: this.currentConceptSet,
 					details: sharedState.selectedConcepts
-				});
+				}));
 				this.conceptSetCss = ko.pureComputed(() => {
 					if (this.currentConceptSet())
-						return this.currentConceptSetDirtyFlag.isDirty() ? "unsaved" : "open";
+						return this.currentConceptSetDirtyFlag().isDirty() ? "unsaved" : "open";
 				});
 				this.conceptSetURL = ko.pureComputed(() => {
 					var url = "#/";
@@ -272,10 +272,7 @@ define(
 						this.currentCohortDefinitionDirtyFlag()
 						&& this.currentCohortDefinitionDirtyFlag().isDirty()
 					)
-					|| (
-							this.currentConceptSetDirtyFlag
-							&& this.currentConceptSetDirtyFlag.isDirty()
-						)
+						|| this.currentConceptSetDirtyFlag().isDirty()
 						|| this.currentIRAnalysisDirtyFlag().isDirty()
 						|| this.currentCohortComparisonDirtyFlag().isDirty()
 					);
@@ -321,10 +318,10 @@ define(
 				
 				this.currentConceptSetSubscription = this.currentConceptSet.subscribe((newValue) => {
 					if (newValue != null) {
-						this.currentConceptSetDirtyFlag = new ohdsiUtil.dirtyFlag({
+						this.currentConceptSetDirtyFlag(new ohdsiUtil.dirtyFlag({
 							header: this.currentConceptSet,
 							details: sharedState.selectedConcepts
-						});
+						}));
 					}
 				});
 				this.currentCohortDefinitionSubscription = this.currentCohortDefinition.subscribe((newValue) => {
@@ -623,7 +620,7 @@ define(
 					this.currentConceptSetSource() == "repository"
 					&& this.currentConceptSet()
 					&& loadingSource == "repository"
-					&& this.currentConceptSetDirtyFlag.isDirty()
+					&& this.currentConceptSetDirtyFlag().isDirty()
 					&& !confirm("Concept set changes are not saved. Would you like to continue?")
 				) {
 					// If we're attempting to load a new repository concept set and
@@ -803,7 +800,7 @@ define(
 				this.currentConceptSet(null);
 				sharedState.clearSelectedConcepts();
 				this.resolveConceptSetExpression();
-				this.currentConceptSetDirtyFlag.reset();
+				this.currentConceptSetDirtyFlag().reset();
 			}
 
 			onCurrentConceptSetModeChanged(newMode) {

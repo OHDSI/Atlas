@@ -159,7 +159,7 @@
   <div class="heading">Included Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
   <pre id="includedConceptIdentifierList" data-bind="html: $root.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
   <br/>
-  <button type="button" class="btn btn-success" data-bind="click:function() { exportCSV(); }, css: {disabled:!($root.currentConceptSet() != null && !$root.currentConceptSetDirtyFlag.isDirty())}"><i class="fa fa-download" aria-hidden="true"></i>Export To CSV</button>
+  <button type="button" class="btn btn-success" data-bind="click:function() { exportCSV(); }, css: {disabled:!($root.currentConceptSet() != null && !$root.currentConceptSetDirtyFlag().isDirty())}"><i class="fa fa-download" aria-hidden="true"></i>Export To CSV</button>
 </div>
 
   <div data-bind="visible: $root.currentConceptSetMode() == 'compare'">
@@ -192,7 +192,7 @@
           <button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.compareConceptSets;"><i data-bind="css: $component.compareLoadingClass"></i> Compare Concept Sets</button>
         </div>
       </div>
-      <div data-bind="if: !$component.compareReady() && $root.currentConceptSetDirtyFlag.isDirty()">
+      <div data-bind="if: !$component.compareReady() && $root.currentConceptSetDirtyFlag().isDirty()">
         <div class="paddedWrapper compare-pane">
           <i class="fa fa-exclamation-triangle"></i> You must save the current concept set before you can perform this comparison.
         </div>

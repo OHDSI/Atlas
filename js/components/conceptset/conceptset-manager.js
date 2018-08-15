@@ -119,7 +119,7 @@ define(['knockout',
 					.id) {
 					// One of the concept sets that is involved in the comparison
 					// is the one that is currently loaded; check to see if it is dirty
-					currentConceptSetClean = !self.model.currentConceptSetDirtyFlag.isDirty();
+					currentConceptSetClean = !self.model.currentConceptSetDirtyFlag().isDirty();
 				}
 			}
 
@@ -965,7 +965,7 @@ define(['knockout',
 		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler(self);
 		
 		self.canSave = ko.computed(function () {
-			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());
+			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag().isDirty());
 		});
 		self.canEdit = self.model.canEditCurrentConceptSet;
 		self.canCreate = ko.computed(function () {
