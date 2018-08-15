@@ -32,7 +32,7 @@ define(['knockout',
 		self.patientLevelPrediction = params.currentPatientLevelPrediction;
 		self.patientLevelPredictionDirtyFlag = params.dirtyFlag;
 		self.loading = ko.observable(true);
-		self.tabMode = ko.observable('results');
+		self.tabMode = ko.observable('specification');
 		self.config = config;
 		self.performanceTabMode = ko.observable('discrimination');
 		self.expressionMode = ko.observable('print');

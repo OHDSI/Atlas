@@ -31,17 +31,16 @@ define(function (require, exports) {
   }
 
   function saveSource(sourceKey, source) {
-		var json = JSON.stringify(source);
-		lscache.remove(getCacheKey());
-		var promise = ohdsiUtil.cachedAjax({
-			method: sourceKey ? 'PUT' : 'POST',
-			url: config.api.url + 'source/' + (sourceKey || ''),
-			contentType: 'application/json',
-			data: json,
-			dataType: 'json',
-			error: authApi.handleAccessDenied,
-		});
-		return promise;
+      var formData = new FormData();
+      formData.append("keytab", source.keytab);
+      formData.append("source", new Blob([JSON.stringify(source)],{type: "application/json"}));
+
+      lscache.remove(getCacheKey());
+      if (sourceKey) {
+        return httpService.doPut(config.api.url + 'source/' + (sourceKey), formData);
+      } else {
+        return httpService.doPost(config.api.url + 'source/' + (''), formData);
+      }
   }
 
   function getSource(sourceKey) {
