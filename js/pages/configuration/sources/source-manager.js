@@ -99,7 +99,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
 
     self.options.dialectOptions = [
       { name: 'PostgreSQL', id: 'postgresql' },
-      { name: 'SQL server', id: 'sqlserver' },
+      { name: 'SQL server', id: 'sql server' },
       { name: 'Oracle', id: 'oracle' },
       { name: 'Amazon Redshift', id: 'redshift' },
       { name: 'Google BigQuery', id: 'bigquery' },
