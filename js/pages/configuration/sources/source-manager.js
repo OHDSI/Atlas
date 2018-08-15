@@ -1,5 +1,25 @@
-define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'components/ac-access-denied', 'less!./source-manager.less'],
-  function (ko, view, config, ohdsiUtil, sourceApi, roleApi, lodash) {
+define([
+  'knockout',
+  'text!./source-manager.html',
+  'appConfig',
+  'assets/ohdsi.util',
+  'webapi/SourceAPI',
+  'services/role',
+  'lodash',
+  'webapi/AuthAPI',
+  'components/ac-access-denied',
+  'less!./source-manager.less'
+],
+  function (
+    ko,
+    view,
+    config,
+    ohdsiUtil,
+    sourceApi,
+    roleService,
+    lodash,
+    authApi
+  ) {
 
   var defaultDaimons = {
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
@@ -50,7 +70,6 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
 
   function source(params) {
     var self = this;
-    var authApi = params.model.authApi;
     self.config = config;
     self.model = params.model;
     self.loading = ko.observable(false);
@@ -191,11 +210,14 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
       };
       self.loading(true);
       sourceApi.saveSource(self.selectedSourceId(), source)
-        .then(sourceApi.initSourcesConfig)
-        .then(roleApi.updateRoles)
-        .then(function () {
-          self.loading(false);
-          self.goToConfigure();
+        .then(() => sourceApi.initSourcesConfig())
+        .then(() => {
+          roleService.getRoles()
+            .then(({ data: roles }) => {
+              self.model.roles(roles);
+              self.loading(false);
+              self.goToConfigure();
+            });
         })
         .catch(function () { self.loading(false); });
     };
@@ -217,8 +239,9 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
       self.loading(true);
       sourceApi.deleteSource(self.selectedSourceId())
         .then(sourceApi.initSourcesConfig)
-        .then(roleApi.updateRoles)
-        .then(function () {
+        .then(() => roleService.getRoles())
+        .then(({ data: roles }) => {
+          self.model.roles(roles);
           self.loading(false);
           self.goToConfigure();
         })

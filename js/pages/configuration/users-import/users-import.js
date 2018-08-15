@@ -3,7 +3,7 @@ define(['knockout',
 		'appConfig',
 		'atlas-state',
 		'webapi/AuthAPI',
-		'services/UserService',
+		'services/User',
 		'providers/Component',
 		'utils/CommonUtils',
 		'./components/renderers',
@@ -20,7 +20,7 @@ define(['knockout',
 		config,
 		sharedState,
 		authApi, 
-		usersApi,
+		userService,
 		Component,
 		commonUtils,
 		renderers,
@@ -144,9 +144,9 @@ define(['knockout',
 					.map(u => ({
 							login: u.login, roles: u.roles(),
 					}));
-				usersApi.importUsers(users).finally(() => {
+				userService.importUsers(users).finally(() => {
 						this.loading(false);
-						usersApi.getUsers().then(data => this.model.users(data));
+						userService.getUsers().then(data => this.model.users(data));
 				});
 				return true;
 			}
@@ -163,7 +163,7 @@ define(['knockout',
 						groups: m.groups,
 					})),
 				};
-				usersApi.searchUsers(this.importProvider(), mapping)
+				userService.searchUsers(this.importProvider(), mapping)
 					.then(users => this.usersList(users.map(user => ({
 							...user,
 							roles: ko.observableArray(user.roles),
@@ -182,12 +182,12 @@ define(['knockout',
 							groups: item.groups,
 						})),
 					};
-					usersApi.saveMapping(this.importProvider(), mapping);
+					userService.saveMapping(this.importProvider(), mapping);
 				}
 			}
 
 			loadMapping() {
-				usersApi.getMapping(this.importProvider()).then(mapping => {
+				userService.getMapping(this.importProvider()).then(mapping => {
 					const roles = this.rolesMapping();
 					roles.forEach(role => {
 						const mapped = mapping.roleGroups.find(m => m.role.id === role.id);
@@ -273,7 +273,7 @@ define(['knockout',
 
 			init() {
 				this.loading(true);
-				usersApi.getAuthenticationProviders().then(providers => {
+				userService.getAuthenticationProviders().then(providers => {
 					this.providers(providers);
 				}).finally(() => this.loading(false));
 				this.updateRoles().then(() => {

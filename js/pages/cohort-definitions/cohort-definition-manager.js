@@ -14,10 +14,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'd3',
 	'job/jobDetail',
 	'pages/cohort-definitions/const',
-	'services/ConceptSetService',
+	'services/ConceptSet',
 	'providers/Component',
+	'providers/AutoBind',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
+	'webapi/AuthAPI',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -52,8 +54,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	cohortConst,
 	conceptSetService,
 	Component,
+	AutoBind,
 	commonUtils,
-	costUtilConst
+	costUtilConst,
+	authApi,
 ) {
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -86,11 +90,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
 	}
 
-	class CohortDefinitionManager extends Component {
+	class CohortDefinitionManager extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
 			this.pollTimeout = null;
-			this.authApi = params.model.authApi;
+			this.authApi = authApi;
 			this.config = config;
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.model = params.model;
@@ -98,6 +102,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.warningCount = ko.observable(0);
 			this.infoCount = ko.observable(0);
 			this.criticalCount = ko.observable(0);
+			this.cdmSources = ko.computed(() => {
+				return sharedState.sources().filter(commonUtils.hasCDM);
+			});
 			this.warningClass = ko.computed(() => {
 				if (this.warningsTotals() > 0){
 					if (this.criticalCount() > 0) {
@@ -379,7 +386,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (this.pollTimeout)
 					clearTimeout(this.pollTimeout);
 
-				var id = pageModel.currentCohortDefinition().id();
+				var id = this.model.currentCohortDefinition().id();
 					cohortDefinitionService.getInfo(id).then((infoList) => {
 					var hasPending = false;
 
@@ -587,57 +594,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			};
 			
 			this.selectedCriteria = ko.observable();
-
-			// preserve context to use in knockout bindings
-			this.delete = this.delete.bind(this);
-			this.save = this.save.bind(this);
-			this.close = this.close.bind(this);
-			this.copy = this.copy.bind(this);
-			this.isSourceRunning = this.isSourceRunning.bind(this);
-			this.isSourceStopping = this.isSourceStopping.bind(this);
-			this.showSql = this.showSql.bind(this);
-			this.getSourceInfo = this.getSourceInfo.bind(this);
-			this.getSourceId = this.getSourceId.bind(this);
-			this.generateCohort = this.generateCohort.bind(this);
-			this.cancelGenerate = this.cancelGenerate.bind(this);
-			this.hasCDM = this.hasCDM.bind(this);
-			this.hasResults = this.hasResults.bind(this);
-			this.closeConceptSet = this.closeConceptSet.bind(this);
-			this.deleteConceptSet = this.deleteConceptSet.bind(this);
-			this.fixConceptSet = this.fixConceptSet.bind(this);
-			this.removeConceptSet = this.removeConceptSet.bind(this);
-			this.removeInclusionRule = this.removeInclusionRule.bind(this);
-			this.showSaveConceptSet = this.showSaveConceptSet.bind(this);
-			this.saveConceptSet = this.saveConceptSet.bind(this);
-			this.createConceptSet = this.createConceptSet.bind(this);
-			this.loadConceptSet = this.loadConceptSet.bind(this);
-			this.newConceptSet = this.newConceptSet.bind(this);
-			this.importConceptSet = this.importConceptSet.bind(this);
-			this.importFromRepository = this.importFromRepository.bind(this);
-			this.onConceptSetRepositoryImport = this.onConceptSetRepositoryImport.bind(this);
-			this.clearImportConceptSetJson = this.clearImportConceptSetJson.bind(this);
-			this.findConceptSet = this.findConceptSet.bind(this);
-			this.importConceptSetExpression = this.importConceptSetExpression.bind(this);
-			this.importConceptSetExpressionItems = this.importConceptSetExpressionItems.bind(this);
-			this.appendConcepts = this.appendConcepts.bind(this);
-			this.importConceptIdentifiers = this.importConceptIdentifiers.bind(this);
-			this.importSourceCodes = this.importSourceCodes.bind(this);
-			this.viewReport = this.viewReport.bind(this);
-			this.reload = this.reload.bind(this);
-			this.selectViewReport = this.selectViewReport.bind(this);
-			this.isActiveJob = this.isActiveJob.bind(this);
-			this.generateAnalyses = this.generateAnalyses.bind(this);
-			this.generateQuickAnalysis = this.generateQuickAnalysis.bind(this);
-			this.selectHealthcareAnalyses = this.selectHealthcareAnalyses.bind(this);
-			this.generateHealthcareAnalyses = this.generateHealthcareAnalyses.bind(this);
-			this.generateAllAnalyses = this.generateAllAnalyses.bind(this);
-			this.dispose = this.dispose.bind(this);
-			this.copyExpressionToClipboard = this.copyExpressionToClipboard.bind(this);			
-			this.copyIdentifierListToClipboard = this.copyIdentifierListToClipboard.bind(this);
-			this.copyIncludedConceptIdentifierListToClipboard = this.copyIncludedConceptIdentifierListToClipboard.bind(this);
-			this.copyTextViewToClipboard = this.copyTextViewToClipboard.bind(this);
-			this.copyCohortExpressionJSONToClipboard = this.copyCohortExpressionJSONToClipboard.bind(this);
-			this.copyCohortSQLToClipboard = this.copyCohortSQLToClipboard.bind(this);
 		}
 
 			// METHODS
@@ -1089,7 +1045,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				this.generateReportsEnabled(false);
 				analysisIdentifiers = _.uniq(analysisIdentifiers);
-				var cohortDefinitionId = pageModel.currentCohortDefinition().id();
+				var cohortDefinitionId = this.model.currentCohortDefinition().id();
 				var cohortJob = {};
 
 				cohortJob.jobName = 'HERACLES_COHORT_' + cohortDefinitionId + '_' + this.model.reportSourceKey();

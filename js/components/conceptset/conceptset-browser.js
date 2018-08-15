@@ -75,8 +75,8 @@ define([
 		}
 
 		self.newConceptSet = function () {
-			if (pageModel.currentConceptSet() == undefined) {
-				pageModel.currentConceptSetSource('repository');
+			if (self.model.currentConceptSet() == undefined) {
+				self.model.currentConceptSetSource('repository');
 				document.location = '#/conceptset/0/details';
 			}
 		}

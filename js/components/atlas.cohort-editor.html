@@ -1,21 +1,21 @@
 <div class="paddedWrapper">
-	<div placeholder="enter a cohort definition description here" class="divtext cohort-description" data-bind="contentEditable:model.currentCohortDefinition().description"></div>
+	<div placeholder="enter a cohort definition description here" class="divtext cohort-description" data-bind="contentEditable:$root.currentCohortDefinition().description"></div>
 	<div data-bind="eventListener: [
 									{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport},
 									{ event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}
 									]">
 		<!-- ko if:canEdit-->
-		<cohort-expression-editor params="expression: model.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
+		<cohort-expression-editor params="expression: $root.currentCohortDefinition().expression, widget: $component.cohortExpressionEditor"></cohort-expression-editor>
 		<!-- /ko -->
 		<!-- ko ifnot:canEdit-->
-		<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
+		<cohort-expression-viewer params="expression: $root.currentCohortDefinition().expression"></cohort-expression-viewer>
 		<!-- /ko -->
 		<div class="modal fade" data-bind="modal: showModal" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<div class="modal-header">Import Concept Set From Repository...</div>
 					<div class="paddedWrapper">
-						<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction, buttonActionEnabled: true"></cohort-concept-set-browser>
+						<cohort-concept-set-browser params="criteriaContext: $root.criteriaContext, cohortConceptSets: $root.currentCohortDefinition().expression().ConceptSets, onActionComplete: onAtlasConceptSetSelectAction, buttonActionEnabled: true"></cohort-concept-set-browser>
 					</div>
 				</div>
 			</div>

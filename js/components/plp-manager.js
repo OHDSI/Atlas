@@ -27,7 +27,6 @@ define(['knockout',
 	function plpManager(params) {
 		//console.log("manager:" + params.model.currentModelId());
 		var self = this;
-		var authApi = params.model.authApi;
 
 		self.patientLevelPredictionId = params.currentPatientLevelPredictionId;
 		self.patientLevelPrediction = params.currentPatientLevelPrediction;

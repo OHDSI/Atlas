@@ -1,7 +1,17 @@
-define(['knockout', 'text!./welcome.html', 'appConfig'], function (ko, view, appConfig) {
+define([
+    'knockout',
+    'text!./welcome.html',
+    'appConfig',
+    'webapi/AuthAPI',
+],
+    function (
+    ko,
+    view,
+    appConfig,
+    authApi
+    ) {
     function welcome(params) {
         var self = this;
-        var authApi = params.model.authApi;
         self.token = authApi.token;
         self.setAuthParams = authApi.setAuthParams;
         self.resetAuthParams = authApi.resetAuthParams;

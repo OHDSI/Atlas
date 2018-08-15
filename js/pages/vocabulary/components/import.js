@@ -2,17 +2,21 @@ define([
 	'knockout',
 	'text!./import.html',
 	'providers/Component',
+	'providers/AutoBind',
 	'providers/Vocabulary',
 	'utils/CommonUtils',
+	'atlas-state',
 	'less!./import.less',
 ], function (
 	ko,
 	view,
 	Component,
+	AutoBind,
 	vocabularyProvider,
-	commonUtils
+	commonUtils,
+	sharedState,
 ) {
-	class Import extends Component {
+	class Import extends AutoBind(Component) {
 		constructor(params) {
 			super(params);      
 			this.model = params.model;
@@ -36,12 +40,12 @@ define([
 				this.error('Unable to parse JSON');
 				return false;
 			}
-			if (pageModel.currentConceptSet() == undefined) {
-				pageModel.currentConceptSet({
+			if (this.model.currentConceptSet() == undefined) {
+				this.model.currentConceptSet({
 					name: ko.observable('New Concept Set'),
 					id: 0
 				});
-				pageModel.currentConceptSetSource('repository');
+				this.model.currentConceptSetSource('repository');
 			}
 
 			for (let i = 0; i < items.length; i++) {
@@ -65,7 +69,7 @@ define([
 			this.error('');
 			const identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
 			vocabularyProvider.getConceptsById(identifers)
-				.then(items => this.initConceptSet(items))
+				.then(({ data: items }) => { this.initConceptSet(items) })
 				.then(() => this.showConceptSet())
 				.catch((er) => {
 					this.error(er);
@@ -80,7 +84,7 @@ define([
 			this.error('');
 			const sourcecodes = $('#textImportSourcecodes').val().match(/[0-9a-zA-Z\.-]+/g);
 			vocabularyProvider.getConceptsByCode(sourcecodes)
-				.then(items => this.initConceptSet(items))
+				.then(({ data: items }) => { this.initConceptSet(items) })
 				.then(() => this.showConceptSet())
 				.catch((er) => {
 					this.error(er);
