@@ -45,10 +45,6 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     self.krbAuthMethod = ko.observable(data.krbAuthMethod);
     self.krbAdminServer = ko.observable(data.krbAdminServer);
 
-    self.shouldShowFileInput = ko.computed(() => {
-        return typeof self.keytabName() !== 'string' || self.keytabName().length === 0;
-    });
-
     return self;
   }
 
@@ -118,29 +114,25 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
           self.dirtyFlag(new ohdsiUtil.dirtyFlag(self.selectedSource()));
       };
 
-      function isNonEmptyImpalaConnectionString() {
-          return self.selectedSource() != null && self.selectedSource().dialect() === 'impala' && typeof self.selectedSource().connectionString() === 'string' && self.selectedSource().connectionString().length > 0;
+      function isImpalaDS() {
+          return self.selectedSource() && self.selectedSource().dialect() === 'impala';
+      }
+
+      function isNonEmptyConnectionString() {
+          return self.selectedSource() != null && typeof self.selectedSource().connectionString() === 'string' && self.selectedSource().connectionString().length > 0;
       }
 
       function impalaConnectionStringIncludes(substr) {
-          return isNonEmptyImpalaConnectionString() && self.selectedSource().connectionString().includes(substr);
+          return isImpalaDS() && isNonEmptyConnectionString() && self.selectedSource().connectionString().includes(substr);
       }
 
-      self.showKrbAuth = ko.computed(() => {
+      self.isKrbAuth = ko.computed(() => {
           return impalaConnectionStringIncludes("AuthMech=1");
-      });
-
-      self.showUsernameAuth = ko.computed(() => {
-          return impalaConnectionStringIncludes("AuthMech=2");
-      });
-
-      self.showUsernamePwdAuth = ko.computed(() => {
-          return impalaConnectionStringIncludes("AuthMech=3");
       });
 
     self.krbHostFQDN = ko.computed(() => {
 
-      if (isNonEmptyImpalaConnectionString()) {
+      if (isImpalaDS() && isNonEmptyConnectionString()) {
           var str = self.selectedSource().connectionString();
           var strArray = str.match(/KrbHostFQDN=(.*?);/);
           if (strArray != null){
@@ -155,7 +147,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
 
     self.krbRealm = ko.computed(() => {
 
-        if (isNonEmptyImpalaConnectionString()) {
+        if (isImpalaDS() && isNonEmptyConnectionString()) {
           var str = self.selectedSource().connectionString();
           var strArray = str.match(/KrbRealm=(.*?);/);
           if (strArray != null){
@@ -166,37 +158,6 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
           }
       }
       return "";
-    });
-
-    self.showHostWarning  = ko.computed(() => {
-
-      var showWarning = self.showKrbAuth() && self.krbHostFQDN() === "";
-      if (showWarning){
-          self.dirtyFlag().reset();
-      }
-        return showWarning;
-    });
-
-    self.showRealmWarning = ko.computed(() => {
-
-        var showWarning = self.showKrbAuth() && self.krbRealm() === "";
-        if (showWarning){
-            self.dirtyFlag().reset();
-        }
-        return showWarning;
-    });
-
-    self.showUserWarning  = ko.computed(() => {
-
-        var showWarning = self.selectedSource() != null && self.selectedSource().username() === "";
-        if (showWarning){
-            self.dirtyFlag().reset();
-        }
-        return showWarning;
-    });
-
-    self.showKeytabDiv = ko.computed(() => {
-        return self.selectedSource() != null && self.selectedSource().krbAuthMethod() === 'keytab';
     });
 
     self.removeKeytab = function () {
@@ -285,6 +246,43 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'assets/ohdsi.uti
     };
 
     self.init();
+
+    self.fieldsVisibility = {
+        username: ko.computed(() => !isImpalaDS() || self.isKrbAuth()),
+        password: ko.computed(() => !isImpalaDS()),
+        krbAuthSettings: self.isKrbAuth,
+        showKeytab: ko.computed(() => {
+            return self.isKrbAuth() && self.selectedSource().krbAuthMethod() === 'keytab';
+        }),
+        krbFileInput: ko.computed(() => {
+            return self.isKrbAuth() && (typeof self.selectedSource().keytabName() !== 'string' || self.selectedSource().keytabName().length === 0);
+        }),
+        // warnings
+        hostWarning: ko.computed(() => {
+            var showWarning = self.isKrbAuth() && self.krbHostFQDN() === "";
+            if (showWarning){
+                self.dirtyFlag().reset();
+            }
+            return showWarning;
+        }),
+        realmWarning: ko.computed(() => {
+
+            var showWarning = self.isKrbAuth() && self.krbRealm() === "";
+            if (showWarning){
+                self.dirtyFlag().reset();
+            }
+            return showWarning;
+        }),
+        userWarning: ko.computed(() => {
+
+            var showWarning = self.selectedSource() != null && self.selectedSource().username() === "";
+            if (showWarning){
+                self.dirtyFlag().reset();
+            }
+            return showWarning;
+        }),
+    };
+
     self.dispose = function () {
 
     };
