@@ -520,7 +520,7 @@ define(['knockout',
 		}
 
 		self.closeConceptSet = function () {
-			if (self.model.currentConceptSetDirtyFlag.isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
+			if (self.model.currentConceptSetDirtyFlag().isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
 				return;
 			} else {
 				self.model.clearConceptSet();
@@ -592,7 +592,7 @@ define(['knockout',
 						.then(function(){
               document.location = '#/conceptset/' + conceptSetId + '/details';
               self.compareResults(null);
-              self.model.currentConceptSetDirtyFlag.reset();
+              self.model.currentConceptSetDirtyFlag().reset();
 						});
 				});
 		}
