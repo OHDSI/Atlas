@@ -213,39 +213,12 @@ define(
 					if (cachedService && cachedService.sources) {
 						console.info('cached service');
 						config.api = cachedService;
-
-						for (var s = 0; s < cachedService.sources.length; s++) {
-							var source = cachedService.sources[s];
-
-							for (var d = 0; d < source.daimons.length; d++) {
-								var daimon = source.daimons[d];
-
-								if (daimon.daimonType == 'Vocabulary') {
-									if (daimon.priority >= this.vocabularyPriority) {
-										this.vocabularyPriority = daimon.priority;
-										sharedState.vocabularyUrl(source.vocabularyUrl);
-									}
-								}
-
-								if (daimon.daimonType == 'Evidence') {
-									if (daimon.priority >= this.evidencePriority) {
-										this.evidencePriority = daimon.priority;
-										sharedState.evidenceUrl(source.evidenceUrl);
-									}
-								}
-
-								if (daimon.daimonType == 'Results') {
-									if (daimon.priority >= this.densityPriority) {
-										this.densityPriority = daimon.priority;
-										sharedState.resultsUrl(source.resultsUrl);
-									}
-								}
-							}
-						}
+						sourceApi.setSharedStateSources(cachedService.sources);
+						resolve();
 					} else {
 						sharedState.sources([]);
 
-						if (!authApi.isAuthenticated()) {
+						if (config.userAuthenticationEnabled && !authApi.isAuthenticated()) {
 							this.authSubscription = authApi.isAuthenticated.subscribe(async (isAuthed) => {
 								if (isAuthed) {
 									await sourceApi.initSourcesConfig();
@@ -256,11 +229,13 @@ define(
 
 							resolve();
 							return;
+						} else {
+							sourceApi.initSourcesConfig().then(() => {
+								console.info('Init sources from server');
+								resolve();
+							});
 						}
 					}
-					console.info('Done initializing service information');
-					sourceApi.initSourcesConfig();
-					resolve();
 				});
 			}
 

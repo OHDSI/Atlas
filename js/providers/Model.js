@@ -461,7 +461,7 @@ define(
 				// a respository. If it is dirty, prompt the user to save and exit.
 				if (this.currentConceptSet()) {
 					if (this.currentConceptSetSource() == 'repository') {
-						if (this.currentConceptSetDirtyFlag && this.currentConceptSetDirtyFlag.isDirty() && !confirm("Concept set changes are not saved. Would you like to continue?")) {
+						if (this.currentConceptSetDirtyFlag() && this.currentConceptSetDirtyFlag().isDirty() && !confirm("Concept set changes are not saved. Would you like to continue?")) {
 							window.location.href = "#/cohortdefinitions";
 							return;
 						};
