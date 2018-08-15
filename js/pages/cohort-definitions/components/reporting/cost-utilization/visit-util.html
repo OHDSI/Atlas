@@ -105,7 +105,7 @@
                     <div data-bind="css: classes('table-block')">
                         <table data-bind="
                             css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
-                            dataTable:{ data: $component.dataList, options: {columns: $component.tableColumns} } " />
+                            dataTable:{ data: $component.dataList, options: {columns: $component.tableColumns, pageLength: 100} }
                     </div>
                 </div>
             </div>

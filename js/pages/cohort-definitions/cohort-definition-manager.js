@@ -584,7 +584,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				reports : {
 					title: 'Reports',
 					options: reports,
-					selectedOptions: ko.observableArray([]),
+                    selectedOptions: ko.observableArray([
+                        reportPacks.healthcareUtilPersonAndExposureCohort.analyses,
+                        reportPacks.healthcareUtilVisitRecordsCohort.analyses,
+                    ]),
 				},
 				periods: {
 					title: 'Periods',

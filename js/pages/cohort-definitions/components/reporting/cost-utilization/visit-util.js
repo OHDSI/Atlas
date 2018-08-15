@@ -123,7 +123,7 @@ define(
             data: 'lengthOfStayAvg',
             className: this.classes('tbl-col', 'total-length-avg'),
             showInChart: true,
-            render: BaseCostUtilReport.formatFullNumber,
+            render: BaseCostUtilReport.formatPreciseNumber,
           },
           ...(appConfig.enableCosts ? this.getCostColumns() : [])
         ];
@@ -132,6 +132,8 @@ define(
 
         this.chartOptions = ko.observableArray(chartList.map(c => ({ label: c.title, value: c.title })));
         this.displayedCharts = ko.observableArray(this.chartOptions().map(o => o.value));
+
+        this.currentTab(this.rawDataTab);
 
         this.setupChartsData(chartList);
         this.init();
