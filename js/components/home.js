@@ -17,6 +17,7 @@ define([
 			url: "https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=13",
 			method: 'GET',
 			contentType: 'application/json',
+			timeout: 5000,
 			success: function (data) {
 				self.github_status(data);
 			}
