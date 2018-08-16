@@ -23,7 +23,7 @@ define([
 
 			this.getInclusionCount = this.getInclusionCount.bind(this);
 			this.conceptSetExpression.subscribe(this.getInclusionCount);
-			this.conceptSetExpression.valueHasMutated();
+			this.getInclusionCount();
 		}
 
 		getInclusionCount() {
