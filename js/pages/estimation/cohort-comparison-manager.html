@@ -31,7 +31,7 @@
       <div>error loading selected results</div>
     </div>
 
-    <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'results' }" class="tab-pane">
+    <div role="tabpanel" data-bind="if: $component.config.useExecutionEngine, css: { active: $component.tabMode() == 'results' }" class="tab-pane">
       <div class="padded-wrapper" data-bind="visible:$component.resultsMode() == 'sources'">
         <div class="heading">Available Data Sources</div>
         <div data-bind="foreach:$component.sources" class="results-tab-pane">
@@ -556,8 +556,8 @@
         <ul class="nav nav-pills">
           <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'print' }, click: function() {$component.expressionMode('print') };"><a>Print Friendly</a></li>
           <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'rcode' }, click: function() {$component.expressionMode('rcode') };"><a>R Code</a></li>
-          <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
-          <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
+          <li role="presentation" data-bind="visible: false, css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
+          <li role="presentation" data-bind="visible: false, css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
         </ul>
         <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'print'" class="tab-pane">
           <div class="paddedWrapper">

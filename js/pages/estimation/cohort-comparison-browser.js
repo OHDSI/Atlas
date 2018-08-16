@@ -30,7 +30,7 @@ define([
 			super();
 			this.model = params.model;
 			this.reference = ko.observableArray();
-			this.loading = ko.observable(false);
+			this.loading = ko.observable(true);
 
 			this.canReadEstimations = ko.pureComputed(() => {
 				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedReadEstimations()) || !config.userAuthenticationEnabled;
