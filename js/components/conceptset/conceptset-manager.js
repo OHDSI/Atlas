@@ -488,8 +488,8 @@ define(['knockout',
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
 			conceptSetService.exists(conceptSet.name, conceptSet.id)
-				.then(function(results){
-          if (results.length > 0) {
+				.then(function({ data }){
+          if (data.length > 0) {
             self.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
             abortSave = true;
           }
@@ -503,7 +503,7 @@ define(['knockout',
 
 					var conceptSetItems = utils.toConceptSetItems(selectedConcepts);
 					var conceptSetId;
-					var itemsPromise = function(data) {
+					var itemsPromise = function({ data }) {
 						conceptSetId = data.id;
 						return conceptSetService.saveConceptSetItems(data.id, conceptSetItems);
 					};

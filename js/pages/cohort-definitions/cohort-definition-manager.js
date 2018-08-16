@@ -811,7 +811,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
       	};
 				var conceptSetItems = conceptSetUitls.toConceptSetItems(this.selectedConcepts());
 				var conceptSetId;
-				var itemsPromise = (data) => {
+				var itemsPromise = ({ data }) => {
 					conceptSetId = data.id;
 					return conceptSetService.saveConceptSetItems(data.id, conceptSetItems);
 				};

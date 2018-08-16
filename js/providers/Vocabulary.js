@@ -274,13 +274,7 @@ define(function (require, exports) {
 			url: sharedState.vocabularyUrl() + 'lookup/mapped' + (page ? 'Page' : ''),
 			method: 'POST',
 			data: page ? identifiers : JSON.stringify(identifiers),
-			contentType: 'application/json',
-			success: function (sourcecodes) {
-				if (!page) {
-					pageModel.includedSourcecodes(sourcecodes);
-				}
-				pageModel.loadingSourcecodes(false);
-			}
+			contentType: 'application/json'
 		});
 	}
 

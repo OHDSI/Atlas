@@ -791,7 +791,7 @@ define(
 				this.loadingIncluded(true);
 				const data = identifiers || this.conceptSetInclusionIdentifiers();
 				return vocabularyService.lookupIdentifiers(data)
-					.then(({ data }) => {
+					.then((data) => {
 						return vocabularyService.loadDensity(data)
 							.then(() => {
 								this.includedConcepts(data.map(v => ({...v, ANCESTORS: []})));

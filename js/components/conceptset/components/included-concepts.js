@@ -39,7 +39,7 @@ define([
 			this.tableLanguage = Const.tableLanguage(this.loadingClass);
 			this.dataTableClasses = this.classes('table');
 
-			this.showAncestorsModal = conceptSetApi.getAncestorsModalHandler({
+			this.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
 				includedConcepts: this.includedConcepts,
 				ancestors: this.ancestors,
 				ancestorsModalIsShown: this.ancestorsModalIsShown,

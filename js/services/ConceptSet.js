@@ -84,6 +84,24 @@ define(function (require, exports) {
 		return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
 	}
 
+	function exists(name, id) {
+		return httpService.doGet(config.api.url + 'conceptset/exists?name=' + name + ",id=" +id);
+	}
+
+	function saveConceptSet(conceptSet) {
+		const json = ko.toJS(conceptSet);
+		if (conceptSet.id) {
+			return httpService.doPut(config.api.url + 'conceptset/' + conceptSet.id, json);
+		} else {
+			return httpService.doPost(config.api.url + 'conceptset/' + conceptSet.id, json);
+		}
+	}
+
+	function saveConceptSetItems(id, conceptSetItems) {
+		const json = ko.toJS(conceptSetItems);
+		return httpService.doPut(config.api.url + 'conceptset/' + id + '/items', json);
+	}
+
 	const api = {
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
@@ -96,6 +114,9 @@ define(function (require, exports) {
 		resolveConceptSetExpression,
 		loadAncestors,
 		loadFacets,
+		exists,
+		saveConceptSet,
+		saveConceptSetItems,
 	};
 
 	return api;

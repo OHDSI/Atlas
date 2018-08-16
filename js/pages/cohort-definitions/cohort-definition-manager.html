@@ -118,23 +118,12 @@
 					</div>
 				</div>
 
-<<<<<<< HEAD
 				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included">
 					<included-concepts params="model: model, ancestors: ancestors, ancestorsModalIsShown: ancestorsModalIsShown"></included-concepts>
 				</div>
 
 				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes">
 					<included-sourcecodes params="model: model"></included-sourcecodes>
-=======
-				<div class="loading" data-bind="if:$root.currentView() === 'loading' || $root.loadingSourcecodes() || $root.loadingIncluded">loading</div>
-
-				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !$root.loadingIncluded()">
-					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: $root.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: $root.contextSensitiveLinkColor}"></faceted-datatable>
-				</div>
-
-				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes && !$root.loadingSourcecodes() && !$root.loadingIncluded()">
-					<faceted-datatable params="{columns: $root.relatedSourcecodesColumns, options: $root.relatedSourcecodesOptions, reference: $root.includedSourcecodes}"></faceted-datatable>
->>>>>>> master
 				</div>
 
 				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.export">
@@ -639,3 +628,4 @@
 </div>
 
 <conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model, title: 'Common Ancestors'}"></conceptset-list-modal>
+</div>

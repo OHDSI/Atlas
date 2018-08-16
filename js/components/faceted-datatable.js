@@ -181,12 +181,12 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 
 		if (typeof self.facetReference === 'function') {
 			self.componentLoading(true);
-			self.facetReference().then(facetResponse => {
+			self.facetReference().then(({ data }) => {
 				self.facets.removeAll();
 				if (self.options && self.options.Facets) {
 					const facets = self.options.Facets.map(facetConfig => {
 						const facet = createFacet(facetConfig);
-						const facetValues = facetResponse.facets[facetConfig.field] || [];
+						const facetValues = data.facets[facetConfig.field] || [];
 						facet.facetItems = facetValues.map(item => ({
 							key: item.value,
 							value: item.count,
