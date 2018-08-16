@@ -10,6 +10,7 @@ define([
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinition',
 	'providers/Component',
+	'providers/AutoBind',
 	'utils/CommonUtils',
 	'./const',
 	'lodash',
@@ -33,6 +34,7 @@ define([
 		CohortDefinition,
 		cohortDefinitionService,
 		Component,
+		AutoBind,
 		commonUtils,
 		constants,
 		_,
@@ -47,7 +49,7 @@ define([
 			() => []
 		];
 
-		class ProfileManager extends Component {
+		class ProfileManager extends AutoBind(Component) {
 			constructor(params) {
 				super(params);
 				this.model = params.model;
@@ -302,15 +304,6 @@ define([
 				if (this.personId()) {
 					this.loadPerson();
 				}
-
-				this.loadPerson = this.loadPerson.bind(this);
-				this.removeHighlight = this.removeHighlight.bind(this);
-				this.highlight = this.highlight.bind(this);
-				this.dispToggle = this.dispToggle.bind(this);
-				this.setHighlights = this.setHighlights.bind(this);				
-				this.getHighlightColor = this.getHighlightColor.bind(this);
-				this.getHighlightBackground = this.getHighlightBackground.bind(this);
-				this.clearHighlights = this.clearHighlights.bind(this);
 			}
 			
 			loadPerson () {

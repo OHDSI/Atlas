@@ -49,14 +49,8 @@ define(function(require, exports){
     });
   }
 
-	function getEngineStatus(callback) {
-		return $.ajax({
-			url: `${config.api.url}${executionPath}/status`,
-			method: 'GET',
-			contentType: 'application/json',
-			error: authApi.handleAccessDenied,
-      success: callback
-		});
+	function getEngineStatus() {
+    return httpService.doGet(`${config.api.url}${executionPath}/status`);
   }
 
   function viewResults(executionId){
@@ -65,7 +59,7 @@ define(function(require, exports){
 
   function checkExecutionEngineStatus(isAuthenticated) {
     if (isAuthenticated && config.useExecutionEngine) {
-      getEngineStatus(v => {
+      getEngineStatus.then(({ data: v }) => {
         config.api.isExecutionEngineAvailable(v.status === 'ONLINE')
       });
     }

@@ -24,7 +24,7 @@ define([
 ) {
 	class PlpBrowser extends AutoBind(Component) {
 		constructor(params) {
-			super();			
+		super();			
 		
 		this.loading = ko.observable(true);
 		this.analysisList = ko.observableArray();

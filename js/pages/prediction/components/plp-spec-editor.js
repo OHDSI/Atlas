@@ -8,7 +8,7 @@ define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 		ConceptSet) {
 		function plpSpecEditor(params) {
 			var self = this;
-			self.patientLevelPrediction = params.patientLevelPrediction;
+			self.curentPlpAnalysis = params.curentPlpAnalysis;
 			self.patientLevelPredictionDirtyFlag = params.dirtyFlag;
 			self.options = options;
 
@@ -44,69 +44,69 @@ define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 
 			self.chooseTreatment = function () {
 				$('#modalCohortDefinition').modal('show');
-				self.targetId = self.patientLevelPrediction().treatmentId;
-				self.targetCaption = self.patientLevelPrediction().treatmentCaption;
-				self.targetCohortDefinition = self.patientLevelPrediction().treatmentCohortDefinition;
+				self.targetId = self.curentPlpAnalysis().treatmentId;
+				self.targetCaption = self.curentPlpAnalysis().treatmentCaption;
+				self.targetCohortDefinition = self.curentPlpAnalysis().treatmentCohortDefinition;
 			}
 
 			self.chooseOutcome = function () {
 				$('#modalCohortDefinition').modal('show');
-				self.targetId = self.patientLevelPrediction().outcomeId;
-				self.targetCaption = self.patientLevelPrediction().outcomeCaption;
-				self.targetCohortDefinition = self.patientLevelPrediction().outcomeCohortDefinition;
+				self.targetId = self.curentPlpAnalysis().outcomeId;
+				self.targetCaption = self.curentPlpAnalysis().outcomeCaption;
+				self.targetCohortDefinition = self.curentPlpAnalysis().outcomeCohortDefinition;
 			}
 
 			self.choosePsExclusion = function () {
 				$('#modalConceptSet').modal('show');
-				self.targetId = self.patientLevelPrediction().cvExclusionId;
-				self.targetCaption = self.patientLevelPrediction().cvExclusionCaption;
-				self.targetExpression = self.patientLevelPrediction().cvExclusionConceptSet;
-				self.targetConceptSetSQL = self.patientLevelPrediction().cvExclusionConceptSetSQL;
+				self.targetId = self.curentPlpAnalysis().cvExclusionId;
+				self.targetCaption = self.curentPlpAnalysis().cvExclusionCaption;
+				self.targetExpression = self.curentPlpAnalysis().cvExclusionConceptSet;
+				self.targetConceptSetSQL = self.curentPlpAnalysis().cvExclusionConceptSetSQL;
 			}
 
 			self.choosePsInclusion = function () {
 				$('#modalConceptSet').modal('show');
-				self.targetId = self.patientLevelPrediction().cvInclusionId;
-				self.targetCaption = self.patientLevelPrediction().cvInclusionCaption;
-				self.targetExpression = self.patientLevelPrediction().cvInclusionConceptSet;
-				self.targetConceptSetSQL = self.patientLevelPrediction().cvInclusionConceptSetSQL;
+				self.targetId = self.curentPlpAnalysis().cvInclusionId;
+				self.targetCaption = self.curentPlpAnalysis().cvInclusionCaption;
+				self.targetExpression = self.curentPlpAnalysis().cvInclusionConceptSet;
+				self.targetConceptSetSQL = self.curentPlpAnalysis().cvInclusionConceptSetSQL;
 			}
 
 			self.clearPsExclusion = function () {
-				self.patientLevelPrediction().cvExclusionId(0);
-				self.patientLevelPrediction().cvExclusionCaption(null);
-				self.patientLevelPrediction().cvExclusionConceptSet.removeAll();
-				self.patientLevelPrediction().cvExclusionConceptSetSQL(null);
+				self.curentPlpAnalysis().cvExclusionId(0);
+				self.curentPlpAnalysis().cvExclusionCaption(null);
+				self.curentPlpAnalysis().cvExclusionConceptSet.removeAll();
+				self.curentPlpAnalysis().cvExclusionConceptSetSQL(null);
 			}
 
 			self.clearPsInclusion = function () {
-				self.patientLevelPrediction().cvInclusionId(0);
-				self.patientLevelPrediction().cvInclusionCaption(null);
-				self.patientLevelPrediction().cvInclusionConceptSet.removeAll();
-				self.patientLevelPrediction().cvInclusionConceptSetSQL(null);
+				self.curentPlpAnalysis().cvInclusionId(0);
+				self.curentPlpAnalysis().cvInclusionCaption(null);
+				self.curentPlpAnalysis().cvInclusionConceptSet.removeAll();
+				self.curentPlpAnalysis().cvInclusionConceptSetSQL(null);
 			}
 
 			self.clearTreatment = function () {
-				self.patientLevelPrediction().treatmentId(0);
-				self.patientLevelPrediction().treatmentCaption(null);
-				self.patientLevelPrediction().treatmentCohortDefinition(null);
+				self.curentPlpAnalysis().treatmentId(0);
+				self.curentPlpAnalysis().treatmentCaption(null);
+				self.curentPlpAnalysis().treatmentCohortDefinition(null);
 			}
 
 			self.clearOutcome = function () {
-				self.patientLevelPrediction().outcomeId(0);
-				self.patientLevelPrediction().outcomeCaption(null);
-				self.patientLevelPrediction().outcomeCohortDefinition(null);
+				self.curentPlpAnalysis().outcomeId(0);
+				self.curentPlpAnalysis().outcomeCaption(null);
+				self.curentPlpAnalysis().outcomeCohortDefinition(null);
 			}
 
 			self.modelSettingExists = function (settingName) {
-				settingList = self.patientLevelPrediction().modelTypeSettings().filter(function (item) {
+				settingList = self.curentPlpAnalysis().modelTypeSettings().filter(function (item) {
 					return item.setting == settingName;
 				});
 				return (settingList.length > 0);
 			}
 
 			self.modelSettingDescription = function (settingName) {
-				settingList = self.patientLevelPrediction().modelTypeSettings().filter(function (item) {
+				settingList = self.curentPlpAnalysis().modelTypeSettings().filter(function (item) {
 					return item.setting == settingName;
 				});
 				if (settingList.length > 0) {
@@ -117,7 +117,7 @@ define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 			}
 
 			self.resetToDefault = function (settingName) {
-				var currentSetting = self.patientLevelPrediction().getCurrentModelSettingsByName(settingName);
+				var currentSetting = self.curentPlpAnalysis().getCurrentModelSettingsByName(settingName);
 				if (currentSetting && currentSetting.length > 0) {
 					currentSetting[0].reference(currentSetting[0].defaultValue);
 				}

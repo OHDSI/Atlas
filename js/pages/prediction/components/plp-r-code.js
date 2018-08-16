@@ -3,7 +3,7 @@ define(['jquery', 'knockout', 'text!./plp-r-code.html', 'appConfig', 'plp/Patien
 		function plpRCode(params) {
 			var self = this;
 			self.config = config;
-			self.patientLevelPrediction = params.patientLevelPrediction;
+			self.curentPlpAnalysis = params.curentPlpAnalysis;
 			self.codeElementId = params.codeElementId || 'plp-r-code';
 		}
 

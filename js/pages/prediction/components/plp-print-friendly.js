@@ -4,7 +4,7 @@ define(['jquery', 'knockout', 'text!./plp-print-friendly.html', 'appConfig', 'pl
 			var self = this;
 			self.config = config;
 			self.loading = ko.observable(true);
-			self.patientLevelPrediction = params.patientLevelPrediction;
+			self.curentPlpAnalysis = params.curentPlpAnalysis;
 		}
 
 		var component = {

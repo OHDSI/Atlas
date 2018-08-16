@@ -13,7 +13,7 @@
 
 		<faceted-datatable params="order: [[3, 'desc']], reference: analysisList, columns: columns, options:options, rowClick:rowClick, visible: analysisList.length"></faceted-datatable>
 		
-		<div data-bind="visible: loading()" class="loading">loading</div>		
+		<loading data-bind="visible: loading"></loading>
 		<div data-bind="if: !analysisList.length, css: classes({ element: 'empty-state', extra: 'flexed' })">
 			<empty-state params="message: 'No PLP analyses created yet'"></empty-state>
 		</div>
