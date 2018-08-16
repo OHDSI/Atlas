@@ -65,7 +65,18 @@ define(
       visitdate: 'visitdate',
       caresitedate: 'caresitedate',
     };
-    
+
+    const rollups = [
+      {
+        label: 'Visits',
+        value: 'rollupUtilizationVisit',
+      },
+      {
+        label: 'Drugs',
+        value: 'rollupUtilizationDrug',
+      },
+    ];
+
     return {
       importTabModes,
       conceptSetTabModes,
@@ -74,6 +85,7 @@ define(
       visitStat,
       getPeriodTypeFilter,
       periods,
+      rollups,
     };
   }
 );

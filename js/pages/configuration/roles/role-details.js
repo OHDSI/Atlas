@@ -1,9 +1,23 @@
-define(['knockout', 'text!./role-details.html', 'appConfig', 'assets/ohdsi.util', 'services/UserService', 'databindings', 'components/ac-access-denied', 'less!./role-details.less',], function (ko, view, config, ohdsiUtils, userService) {
+define([
+    'knockout',
+    'text!./role-details.html',
+    'appConfig',
+    'assets/ohdsi.util',
+    'services/User',
+    'databindings',
+    'components/ac-access-denied',
+    'less!./role-details.less',
+], function (
+    ko,
+    view,
+    config,
+    ohdsiUtils,
+    userService
+) {
     function roleDetails(params) {
         var self = this;
         var serviceUrl = config.api.url;
         var defaultRoleName = null;
-        var authApi = params.model.authApi;
 
         self.currentTab = ko.observable('users');
 

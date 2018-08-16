@@ -3,7 +3,7 @@ define([
 	'text!./ldap-groups.html',
 	'providers/Component',
 	'utils/CommonUtils',
-	'services/UserService',
+	'services/User',
 	'./renderers',
 	'less!./ldap-groups.less',
 ],

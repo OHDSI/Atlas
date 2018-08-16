@@ -7,7 +7,7 @@ define([
 		'utils/CommonUtils',
 		'atlas-state',
 		'webapi/ConceptSetAPI',
-		'services/ConceptSetService',
+		'services/ConceptSet',
 		'css!./included-concepts.css',
 		'faceted-datatable',
 	],
@@ -39,7 +39,7 @@ define([
 			this.tableLanguage = Const.tableLanguage(this.loadingClass);
 			this.dataTableClasses = this.classes('table');
 
-			this.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
+			this.showAncestorsModal = conceptSetApi.getAncestorsModalHandler({
 				includedConcepts: this.includedConcepts,
 				ancestors: this.ancestors,
 				ancestorsModalIsShown: this.ancestorsModalIsShown,

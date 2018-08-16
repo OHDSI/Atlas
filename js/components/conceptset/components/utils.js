@@ -1,11 +1,11 @@
 define([
 	'knockout',
 	'atlas-state',
-	'webapi/ConceptSetAPI',
+	'services/ConceptSet',
 ], function(
 	ko,
 	sharedState,
-	conceptSetApi,
+	conceptSetService,
 ){
 
 	const applyFilter = function(data, filter) {
@@ -21,7 +21,7 @@ define([
 			items: sharedState.selectedConcepts(),
 		};
 		const columns = facets.map(f => ({columnName: f.field, computed: f.computed}));
-		return conceptSetApi.loadFacets(ko.toJSON({columns, expression,}), url);
+		return conceptSetService.loadFacets({columns, expression,}, url);
 	};
 
 	const getExpression = function(data, filter, facets) {

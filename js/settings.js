@@ -77,7 +77,7 @@ const settingsObject = {
     "text": "plugins/text",
     "less": "plugins/less",
     "optional": "plugins/optional",
-    "clipboard": "assets/clipboard.min",
+		"clipboard": "assets/clipboard.min",
     "knockout": "assets/knockout.min",
     "ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
     "knockout-mapping": "assets/knockout.mapping",
@@ -118,7 +118,6 @@ const settingsObject = {
     "querystring": "https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min",
 
     "bootstrap-select": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/js/bootstrap-select",
-    "bootstrap-select-css": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/css/bootstrap-select.min",
     "less-js": "https://cdnjs.cloudflare.com/ajax/libs/less.js/3.0.1/less.min",
     "file-saver": "assets/FileSaver", //"https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min",
     "numeral": "assets/numeral",

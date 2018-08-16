@@ -3,6 +3,7 @@ define(function (require, exports) {
 	var $ = require('jquery');
 	var config = require('appConfig');
 	var authApi = require('webapi/AuthAPI');
+	const httpService = require('services/http');
 	
 	function pruneJSON(key, value) {
 		if (value === 0 || value) {
@@ -143,6 +144,11 @@ define(function (require, exports) {
 			error: authApi.handleAccessDenied,
 		});
 	}
+
+	function getCohortCount(sourceKey, cohortDefinitionId) {
+		return httpService.doGet(config.api.url + 'cohortresults/' + sourceKey + '/' + cohortDefinitionId + '/distinctPersonCount')
+			.then(({ data }) => data);
+	}
 	
 	var api = {
 		getCohortDefinitionList: getCohortDefinitionList,
@@ -157,6 +163,7 @@ define(function (require, exports) {
 		getWarnings: getWarnings,
 		runDiagnostics: runDiagnostics,
 		cancelGenerate,
+		getCohortCount,
 	}
 
 	return api;

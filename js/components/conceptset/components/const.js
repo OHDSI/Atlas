@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'atlas-state',
-	'services/ConceptSetService',
+	'services/ConceptSet',
 ],
 	function(
 		ko,

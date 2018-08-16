@@ -5,6 +5,7 @@ define([
 	'appConfig',
 	'webapi/AuthAPI',
 	'providers/Component',
+	'providers/AutoBind',
 	'services/http',
 	'pages/vocabulary/const',
 	'utils/CommonUtils',
@@ -21,12 +22,13 @@ define([
 	config,
 	authApi,
 	Component,
+	AutoBind,
 	httpService,
 	contstants,
 	commonUtils,
 	vocabularyProvider
 ) {
-	class Search extends Component {
+	class Search extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
 			this.currentSearch = ko.observable('');
@@ -165,13 +167,6 @@ define([
 					}
 				}]
 			};
-
-			this.searchClick = this.searchClick.bind(this);
-			this.clearAllAdvanced = this.clearAllAdvanced.bind(this); 
-			this.toggleAdvanced = this.toggleAdvanced.bind(this);
-			this.toggleVocabulary = this.toggleVocabulary.bind(this);
-			this.toggleDomain = this.toggleDomain.bind(this);
-			this.updateSearchFilters = this.updateSearchFilters.bind(this);
 
 			this.getDomains();
 			this.getVocabularies();
@@ -317,6 +312,10 @@ define([
 				.finally(() => {
 					this.domainsLoading(false);
 				});
+		}
+
+		noResultsFoundMessage() {
+			return 'No results found for \"' + this.currentSearch() + '\"';
 		}
 	}
 

@@ -5,11 +5,11 @@ define(['knockout',
 	'components/conceptset/utils',
 	'webapi/CDMResultsAPI',
 	'vocabularyprovider',
-	'webapi/ConceptSetAPI',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'clipboard',
-	'services/ConceptSetService',
+	'services/ConceptSet',
+	'webapi/AuthAPI',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -20,10 +20,22 @@ define(['knockout',
 	'components/conceptset/components/included-concepts',
 	'components/conceptset/components/included-sourcecodes',
 	'css!components/conceptset/style.css',
-], function (ko, view, config, ohdsiUtil, utils, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard, conceptSetService) {
+], function (
+	ko,
+	view,
+	config,
+	ohdsiUtil,
+	utils,
+	cdmResultsAPI,
+	vocabularyAPI,
+	ConceptSet,
+	sharedState,
+	clipboard,
+	conceptSetService,
+	authApi
+) {
 	function conceptsetManager(params) {
 		var self = this;
-		var authApi = params.model.authApi;
 		self.model = params.model;
 		self.vocabularyApi = vocabularyAPI;
 		self.conceptSetName = ko.observable();
@@ -109,7 +121,7 @@ define(['knockout',
 					.id) {
 					// One of the concept sets that is involved in the comparison
 					// is the one that is currently loaded; check to see if it is dirty
-					currentConceptSetClean = !self.model.currentConceptSetDirtyFlag.isDirty();
+					currentConceptSetClean = !self.model.currentConceptSetDirtyFlag().isDirty();
 				}
 			}
 
@@ -424,10 +436,10 @@ define(['knockout',
 		}
 
 		self.closeConceptSet = function () {
-			if (self.model.currentConceptSetDirtyFlag.isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
+			if (self.model.currentConceptSetDirtyFlag().isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
 				return;
 			} else {
-				pageModel.clearConceptSet();
+				self.model.clearConceptSet();
 				document.location = "#/conceptsets";
 			}
 		};
@@ -475,7 +487,7 @@ define(['knockout',
 			// Next check to see that a concept set with this name does not already exist
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
-			conceptSetAPI.exists(conceptSet.name, conceptSet.id)
+			conceptSetService.exists(conceptSet.name, conceptSet.id)
 				.then(function(results){
           if (results.length > 0) {
             self.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
@@ -493,14 +505,14 @@ define(['knockout',
 					var conceptSetId;
 					var itemsPromise = function(data) {
 						conceptSetId = data.id;
-						return conceptSetAPI.saveConceptSetItems(data.id, conceptSetItems);
+						return conceptSetService.saveConceptSetItems(data.id, conceptSetItems);
 					};
-					conceptSetAPI.saveConceptSet(conceptSet)
+					conceptSetService.saveConceptSet(conceptSet)
 						.then(itemsPromise)
 						.then(function(){
               document.location = '#/conceptset/' + conceptSetId + '/details';
               self.compareResults(null);
-              self.model.currentConceptSetDirtyFlag.reset();
+              self.model.currentConceptSetDirtyFlag().reset();
 						});
 				});
 		}
@@ -803,7 +815,7 @@ define(['knockout',
 				return;
 
 			// reset view after save
-			conceptSetAPI.deleteConceptSet(self.model.currentConceptSet()
+			conceptSetService.deleteConceptSet(self.model.currentConceptSet()
 					.id)
 				.then(function (result) {
 					self.model.currentConceptSet(null);
@@ -877,7 +889,7 @@ define(['knockout',
 		});
 		
 		self.canSave = ko.computed(function () {
-			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());
+			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag().isDirty());
 		});
 		self.canEdit = self.model.canEditCurrentConceptSet;
 		self.canCreate = ko.computed(function () {
