@@ -1,15 +1,18 @@
 <heading-title params="name: 'Population Level Effect Estimation', icon: 'balance-scale', theme: 'dark'"></heading-title>
 
-<div data-bind="if:$component.canReadEstimations" class="paddedWrapper">
-	<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newCohortComparison, css: {disabled: !$component.canCreateEstimation()}">New Population Level Effect Estimation</span>
+<div data-bind="if: canReadEstimations, css: classes({ extra: 'paddedWrapper flexed' })">
+	<span data-bind="click: newCohortComparison,
+	css: classes({
+		element: 'new-btn',
+		extra: `pull-right btn btn-sm btn-primary ${canCreateEstimation() ? '' : 'disabled'}`,
+	})">New Population Level Effect Estimation</span>
 
-	<faceted-datatable data-bind="visible:loading()==false" params="orderColumn: 3, reference:reference, columns: columns, options:options, rowClick:rowClick">
-	</faceted-datatable>
+	<!-- ko if: reference().length -->
+		<faceted-datatable data-bind="visible: loading()==false" params="orderColumn: 3, reference: reference, columns: columns, options:options, rowClick:rowClick"></faceted-datatable>
+	<!-- /ko-->
 
 	<div data-bind="visible:loading()" class="loading">loading</div>
-</div>
-<div data-bind="ifnot:$component.canReadEstimations">
-	<div class="padded">
-		<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+	<div data-bind="if: !reference().length, css: classes({ element: 'empty-state', extra: 'flexed' })">
+		<empty-state params="message: 'No PLE analyses created yet'"></empty-state>
 	</div>
 </div>

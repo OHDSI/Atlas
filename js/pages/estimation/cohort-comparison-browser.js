@@ -12,6 +12,8 @@ define([
 	'faceted-datatable',
 	'components/ac-access-denied',
 	'components/heading',
+	'components/empty-state',
+	'less!./cohort-comparison-browser.less'
 ], function(
 	ko,
 	view,
