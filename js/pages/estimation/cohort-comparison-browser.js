@@ -5,7 +5,7 @@ define([
 	'webapi/MomentAPI',
 	'webapi/AuthAPI',
 	'providers/Component',
-	// 'providers/AutoBind',
+	'providers/AutoBind',
 	'utils/CommonUtils',
 	'services/http',
 	'components/cohortcomparison/ComparativeCohortAnalysis',
@@ -19,11 +19,11 @@ define([
 	momentApi,
 	authApi,
 	Component,
-	// AutoBind,
+	AutoBind,
 	commonUtils,
 	httpService,
 ) {
-  class CohortComparisonBrowser extends Component {
+  class CohortComparisonBrowser extends AutoBind(Component) {
 		constructor(params) {
 			super();
 			this.model = params.model;
@@ -103,7 +103,7 @@ define([
 		}
 
 		newCohortComparison() {
-			document.location = '#/estimation/0'	;
+			document.location = '#/estimation/0';
 		}
 	}
 

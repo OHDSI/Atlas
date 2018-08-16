@@ -18,7 +18,7 @@ define([
 	'atlas-state',
 	'webapi/ExecutionAPI',
 	'providers/Component',
-	// 'providers/AutoBind',
+	'providers/AutoBind',
 	'utils/CommonUtils',
 	'databindings/d3ChartBinding',
 	'components/heading',
@@ -43,10 +43,10 @@ define([
 		sharedState,
 		executionAPI,
 		Component,
-		// AutoBind,
+		AutoBind,
 		commonUtils,
 	) {
-		class CohortComparisonManager extends Component {
+		class CohortComparisonManager extends AutoBind(Component) {
 			constructor(params) {
 				super();
 				this.cohortComparisonId = params.currentCohortComparisonId;
@@ -259,7 +259,19 @@ define([
 				this.resultsMode = ko.observable('sources');
 				this.pillMode = ko.observable('covariates');
 				this.canSave = ko.pureComputed(() => {
-					return (this.cohortComparison().name() && this.cohortComparison().comparatorId() && this.cohortComparison().comparatorId() > 0 && this.cohortComparison().treatmentId() && this.cohortComparison().treatmentId() > 0 && this.cohortComparison().outcomeId() && this.cohortComparison().outcomeId() > 0 && this.cohortComparison().modelType && this.cohortComparison().modelType() > 0 && this.cohortComparisonDirtyFlag() && this.cohortComparisonDirtyFlag().isDirty());
+					return (
+						this.cohortComparison().name()
+						&& this.cohortComparison().comparatorId()
+						&& this.cohortComparison().comparatorId() > 0
+						&& this.cohortComparison().treatmentId()
+						&& this.cohortComparison().treatmentId() > 0
+						&& this.cohortComparison().outcomeId()
+						&& this.cohortComparison().outcomeId() > 0
+						&& this.cohortComparison().modelType()
+						&& this.cohortComparison().modelType() > 0
+						&& this.cohortComparisonDirtyFlag()
+						&& this.cohortComparisonDirtyFlag().isDirty()
+					);
 				});	
 				this.canDelete = ko.pureComputed(() => {
 					return (this.cohortComparisonId() && this.cohortComparisonId() > 0);
@@ -546,11 +558,15 @@ define([
 				this.loading(true);
 				httpService.doDelete(config.api.url + 'comparativecohortanalysis/' + this.cohortComparisonId())
 					.then(() => {
-						document.location = "#/estimation"
+						document.location = "#/estimation";
 					})
 					.catch((error) => {
-						console.log("Error: " + error);
-						authApi.handleAccessDenied(error);
+						if (error.status !== 204) {
+							console.log("Error: " + error);
+							authApi.handleAccessDenied(error);
+						} else {
+							document.location = "#/estimation";
+						}
 					})
 					.finally(() => this.loading(false));
 			}
