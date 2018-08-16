@@ -475,7 +475,7 @@ define([
 
 									// create svg with range bands based on the trellis names
 									var chart = new atlascharts.trellisline();
-									chart.render(dataByDecile, "#trellisLinePlot", 1000, 300, {
+									chart.render(dataByDecile, "#death_trellisLinePlot", 1000, 300, {
 										trellisSet: allDeciles,
 										trellisLabel: "Age Decile",
 										seriesLabel: "Year of Observation",
@@ -585,25 +585,24 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								var self = this;
 								
-								var normalizedData = this.normalizeArray(data);
+								let normalizedData = this.normalizeArray(data);
 								if (!normalizedData.empty) {
-									var table_data = normalizedData.conceptPath.map(function (d, i) {
-										var conceptDetails = this.conceptPath[i].split('||');
+									let table_data = normalizedData.conceptPath.map((d, i) => {
+										let conceptDetails = normalizedData.conceptPath[i].split('||');
 										return {
-											concept_id: this.conceptId[i],
+											concept_id: normalizedData.conceptId[i],
 											level_4: conceptDetails[0],
 											level_3: conceptDetails[1],
 											level_2: conceptDetails[2],
 											procedure_name: conceptDetails[3],
-											num_persons: self.formatComma(this.numPersons[i]),
-											percent_persons: self.formatPercent(this.percentPersons[i]),
-											records_per_person: self.formatFixed(this.recordsPerPerson[i])
+											num_persons: this.formatComma(normalizedData.numPersons[i]),
+											percent_persons: this.formatPercent(normalizedData.percentPersons[i]),
+											records_per_person: this.formatFixed(normalizedData.recordsPerPerson[i])
 										};
-									}, normalizedData);
+									});
 
-									var datatable = $('#procedure_table')
+									let datatable = $('#procedure_table')
 										.DataTable({
 											order: [5, 'desc'],
 											dom: this.dom,
@@ -650,8 +649,8 @@ define([
 
 									var tree = this.buildHierarchyFromJSON(normalizedData, threshold);
 									var treemap = new atlascharts.treemap();
-									treemap.render(tree, '#treemap_container', width, height, {
-										onclick: function (node) {
+									treemap.render(tree, '#procedure_treemap_container', width, height, {
+										onclick: (node) => {
 											this.procedureDrilldown(node.id, node.name);
 										},
 										getsizevalue: function (node) {
@@ -660,17 +659,17 @@ define([
 										getcolorvalue: function (node) {
 											return node.records_per_person;
 										},
-										getcolorrange: function () {
-											return self.treemapGradient;
+										getcolorrange: () => {
+											return this.treemapGradient;
 										},
-										getcontent: function (node) {
+										getcontent: (node) => {
 											var result = '',
 												steps = node.path.split('||'),
 												i = steps.length - 1;
 											result += '<div class="pathleaf">' + steps[i] + '</div>';
-											result += '<div class="pathleafstat">Prevalence: ' + self.formatPercent(node.pct_persons) + '</div>';
-											result += '<div class="pathleafstat">Number of People: ' + self.formatComma(node.num_persons) + '</div>';
-											result += '<div class="pathleafstat">Records per Person: ' + self.formatFixed(node.records_per_person) + '</div>';
+											result += '<div class="pathleafstat">Prevalence: ' + this.formatPercent(node.pct_persons) + '</div>';
+											result += '<div class="pathleafstat">Number of People: ' + this.formatComma(node.num_persons) + '</div>';
+											result += '<div class="pathleafstat">Records per Person: ' + this.formatFixed(node.records_per_person) + '</div>';
 											return result;
 										},
 										gettitle: function (node) {
@@ -702,25 +701,22 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								var self = this;
-
-								var normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
-								data = normalizedData;
-								if (!data.empty) {
-									var table_data = normalizedData.conceptPath.map(function (d, i) {
-										var conceptDetails = this.conceptPath[i].split('||');
+								let normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
+								if (!normalizedData.empty) {
+									let table_data = normalizedData.conceptPath.map((d, i) => {
+										let conceptDetails = normalizedData.conceptPath[i].split('||');
 										return {
-											concept_id: this.conceptId[i],
+											concept_id: normalizedData.conceptId[i],
 											atc1: conceptDetails[0],
 											atc3: conceptDetails[1],
 											atc5: conceptDetails[2],
 											ingredient: conceptDetails[3],
 											rxnorm: conceptDetails[4],
-											num_persons: self.formatComma(this.numPersons[i]),
-											percent_persons: self.formatPercent(this.percentPersons[i]),
-											records_per_person: self.formatFixed(this.recordsPerPerson[i])
+											num_persons: this.formatComma(normalizedData.numPersons[i]),
+											percent_persons: this.formatPercent(normalizedData.percentPersons[i]),
+											records_per_person: this.formatFixed(normalizedData.recordsPerPerson[i])
 										};
-									}, data);
+									});
 
 									var datatable = $('#drug_table')
 										.DataTable({
@@ -771,9 +767,9 @@ define([
 											destroy: true
 										});
 
-									var tree = this.buildHierarchyFromJSON(data, threshold);
-									var treemap = new atlascharts.treemap();
-									treemap.render(tree, '#treemap_container', width, height, {
+									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
+									let treemap = new atlascharts.treemap();
+									treemap.render(tree, '#drug_treemap_container', width, height, {
 										onclick: (node) => {
 											this.drugExposureDrilldown(node.id, node.name);
 										},
@@ -784,16 +780,16 @@ define([
 											return node.records_per_person;
 										},
 										getcolorrange: () => {
-											return self.treemapGradient;
+											return this.treemapGradient;
 										},
 										getcontent: (node) => {
 											var result = '',
 												steps = node.path.split('||'),
 												i = steps.length - 1;
 											result += '<div class="pathleaf">' + steps[i] + '</div>';
-											result += '<div class="pathleafstat">Prevalence: ' + self.formatPercent(node.pct_persons) + '</div>';
-											result += '<div class="pathleafstat">Number of People: ' + self.formatComma(node.num_persons) + '</div>';
-											result += '<div class="pathleafstat">Records per Person: ' + self.formatFixed(node.records_per_person) + '</div>';
+											result += '<div class="pathleafstat">Prevalence: ' + this.formatPercent(node.pct_persons) + '</div>';
+											result += '<div class="pathleafstat">Number of People: ' + this.formatComma(node.num_persons) + '</div>';
+											result += '<div class="pathleafstat">Records per Person: ' + this.formatFixed(node.records_per_person) + '</div>';
 											return result;
 										},
 										gettitle: function (node) {
@@ -823,26 +819,24 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								var self = this;
 
-								var normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
-								data = normalizedData;
-								if (!data.empty) {
-									var table_data = normalizedData.conceptPath.map(function (d, i) {
-										var conceptDetails = this.conceptPath[i].split('||');
+								let normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
+								if (!normalizedData.empty) {
+									let table_data = normalizedData.conceptPath.map((d, i) => {
+										let conceptDetails = normalizedData.conceptPath[i].split('||');
 										return {
-											concept_id: this.conceptId[i],
+											concept_id: normalizedData.conceptId[i],
 											atc1: conceptDetails[0],
 											atc3: conceptDetails[1],
 											atc5: conceptDetails[2],
 											ingredient: conceptDetails[3],
-											num_persons: self.formatComma(this.numPersons[i]),
-											percent_persons: self.formatPercent(this.percentPersons[i]),
-											length_of_era: self.formatFixed(this.lengthOfEra[i])
+											num_persons: this.formatComma(normalizedData.numPersons[i]),
+											percent_persons: this.formatPercent(normalizedData.percentPersons[i]),
+											length_of_era: this.formatFixed(normalizedData.lengthOfEra[i])
 										};
-									}, data);
+									});
 
-									var datatable = $('#drugera_table')
+									let datatable = $('#drugera_table')
 										.DataTable({
 											order: [5, 'desc'],
 											dom: this.dom,
@@ -887,9 +881,9 @@ define([
 											destroy: true
 										});
 
-									var tree = this.eraBuildHierarchyFromJSON(data, threshold);
+									var tree = this.eraBuildHierarchyFromJSON(normalizedData, threshold);
 									var treemap = new atlascharts.treemap();
-									treemap.render(tree, '#treemap_container', width, height, {
+									treemap.render(tree, '#drugera_treemap_container', width, height, {
 										onclick: (node) => {
 											this.drugeraDrilldown(node.id, node.name);
 										},
@@ -900,16 +894,16 @@ define([
 											return node.length_of_era;
 										},
 										getcolorrange: () => {
-											return self.treemapGradient;
+											return this.treemapGradient;
 										},
 										getcontent: (node) => {
 											var result = '',
 												steps = node.path.split('||'),
 												i = steps.length - 1;
 											result += '<div class="pathleaf">' + steps[i] + '</div>';
-											result += '<div class="pathleafstat">Prevalence: ' + self.formatPercent(node.pct_persons) + '</div>';
-											result += '<div class="pathleafstat">Number of People: ' + self.formatComma(node.num_persons) + '</div>';
-											result += '<div class="pathleafstat">Length of Era: ' + self.formatFixed(node.length_of_era) + '</div>';
+											result += '<div class="pathleafstat">Prevalence: ' + this.formatPercent(node.pct_persons) + '</div>';
+											result += '<div class="pathleafstat">Number of People: ' + this.formatComma(node.num_persons) + '</div>';
+											result += '<div class="pathleafstat">Length of Era: ' + this.formatFixed(node.length_of_era) + '</div>';
 											return result;
 										},
 										gettitle: function (node) {
@@ -939,26 +933,24 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								var self = this;
-								var normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
-								data = normalizedData;
-								if (!data.empty) {
-									var table_data = normalizedData.conceptPath.map(function (d, i) {
-										var conceptDetails = this.conceptPath[i].split('||');
+								let normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
+								if (!normalizedData.empty) {
+									let table_data = normalizedData.conceptPath.map((d, i) => {
+										let conceptDetails = normalizedData.conceptPath[i].split('||');
 										return {
-											concept_id: this.conceptId[i],
+											concept_id: normalizedData.conceptId[i],
 											soc: conceptDetails[0],
 											hlgt: conceptDetails[1],
 											hlt: conceptDetails[2],
 											pt: conceptDetails[3],
 											snomed: conceptDetails[4],
-											num_persons: self.formatComma(this.numPersons[i]),
-											percent_persons: self.formatPercent(this.percentPersons[i]),
-											records_per_person: self.formatFixed(this.recordsPerPerson[i])
+											num_persons: this.formatComma(normalizedData.numPersons[i]),
+											percent_persons: this.formatPercent(normalizedData.percentPersons[i]),
+											records_per_person: this.formatFixed(normalizedData.recordsPerPerson[i])
 										};
-									}, data);
+									});
 
-									var datatable = $('#condition_table')
+									let datatable = $('#condition_table')
 										.DataTable({
 											dom: this.dom,
 											buttons: this.buttons,
@@ -1008,9 +1000,9 @@ define([
 											destroy: true
 										});
 
-									var tree = this.buildHierarchyFromJSON(data, threshold);
-									var treemap = new atlascharts.treemap();
-									treemap.render(tree, '#treemap_container', width, height, {
+									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
+									let treemap = new atlascharts.treemap();
+									treemap.render(tree, '#condition_treemap_container', width, height, {
 										onclick: (node) => {
 											this.conditionDrilldown(node.id, node.name);
 										},
@@ -1020,17 +1012,17 @@ define([
 										getcolorvalue: function (node) {
 											return node.records_per_person;
 										},
-										getcolorrange: function () {
-											return self.treemapGradient;
+										getcolorrange: () => {
+											return this.treemapGradient;
 										},
 										getcontent: (node) => {
 											var result = '',
 												steps = node.path.split('||'),
 												i = steps.length - 1;
 											result += '<div class="pathleaf">' + steps[i] + '</div>';
-											result += '<div class="pathleafstat">Prevalence: ' + self.formatPercent(node.pct_persons) + '</div>';
-											result += '<div class="pathleafstat">Number of People: ' + self.formatComma(node.num_persons) + '</div>';
-											result += '<div class="pathleafstat">Records per Person: ' + self.formatFixed(node.records_per_person) + '</div>';
+											result += '<div class="pathleafstat">Prevalence: ' + this.formatPercent(node.pct_persons) + '</div>';
+											result += '<div class="pathleafstat">Number of People: ' + this.formatComma(node.num_persons) + '</div>';
+											result += '<div class="pathleafstat">Records per Person: ' + this.formatFixed(node.records_per_person) + '</div>';
 											return result;
 										},
 										gettitle: function (node) {
@@ -1335,26 +1327,24 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								var self = this;
-								var normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
-								data = normalizedData;
-								if (!data.empty) {
-									var table_data = normalizedData.conceptPath.map(function (d, i) {
-										var conceptDetails = this.conceptPath[i].split('||');
+								let normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
+								if (!normalizedData.empty) {
+									let table_data = normalizedData.conceptPath.map((d, i) => {
+										let conceptDetails = normalizedData.conceptPath[i].split('||');
 										return {
-											concept_id: this.conceptId[i],
+											concept_id: normalizedData.conceptId[i],
 											soc: conceptDetails[0],
 											hlgt: conceptDetails[1],
 											hlt: conceptDetails[2],
 											pt: conceptDetails[3],
 											snomed: conceptDetails[4],
-											num_persons: self.formatComma(this.numPersons[i]),
-											percent_persons: self.formatPercent(this.percentPersons[i]),
-											length_of_era: this.lengthOfEra[i]
+											num_persons: this.formatComma(normalizedData.numPersons[i]),
+											percent_persons: this.formatPercent(normalizedData.percentPersons[i]),
+											length_of_era: normalizedData.lengthOfEra[i]
 										};
-									}, data);
+									});
 
-									var datatable = $('#conditionera_table')
+									let datatable = $('#conditionera_table')
 										.DataTable({
 											order: [6, 'desc'],
 											dom: this.dom,
@@ -1403,9 +1393,9 @@ define([
 											destroy: true
 										});
 
-									var tree = this.eraBuildHierarchyFromJSON(data, threshold);
+									var tree = this.eraBuildHierarchyFromJSON(normalizedData, threshold);
 									var treemap = new atlascharts.treemap();
-									treemap.render(tree, '#treemap_container', width, height, {
+									treemap.render(tree, '#conditionera_treemap_container', width, height, {
 										onclick: (node) => {
 											this.conditionEraDrilldown(node.id, node.name);
 										},
@@ -1416,16 +1406,16 @@ define([
 											return node.length_of_era;
 										},
 										getcolorrange: () => {
-											return self.treemapGradient;
+											return this.treemapGradient;
 										},
 										getcontent: (node) => {
 											var result = '',
 												steps = node.path.split('||'),
 												i = steps.length - 1;
 											result += '<div class="pathleaf">' + steps[i] + '</div>';
-											result += '<div class="pathleafstat">Prevalence: ' + self.formatPercent(node.pct_persons) + '</div>';
-											result += '<div class="pathleafstat">Number of People: ' + self.formatComma(node.num_persons) + '</div>';
-											result += '<div class="pathleafstat">Length of Era: ' + self.formatFixed(node.length_of_era) + '</div>';
+											result += '<div class="pathleafstat">Prevalence: ' + this.formatPercent(node.pct_persons) + '</div>';
+											result += '<div class="pathleafstat">Number of People: ' + this.formatComma(node.num_persons) + '</div>';
+											result += '<div class="pathleafstat">Length of Era: ' + this.formatFixed(node.length_of_era) + '</div>';
 											return result;
 										},
 										gettitle: function (node) {
@@ -1458,27 +1448,26 @@ define([
 
 								var table_data, datatable, tree, treemap;
 								if (data.drugEraPrevalence) {
-									var drugEraPrevalence = this.normalizeDataframe(this.normalizeArray(data.drugEraPrevalence, true));
-									var drugEraPrevalenceData = drugEraPrevalence;
+									let drugEraPrevalence = this.normalizeDataframe(this.normalizeArray(data.drugEraPrevalence, true));
 
-									if (!drugEraPrevalenceData.empty) {
-										table_data = drugEraPrevalence.conceptPath.map(function (d, i) {
+									if (!drugEraPrevalence.empty) {
+										table_data = drugEraPrevalence.conceptPath.map((d, i) => {
 											var conceptDetails = this.conceptPath[i].split('||');
 											return {
-												concept_id: this.conceptId[i],
+												concept_id: drugEraPrevalence.conceptId[i],
 												atc1: conceptDetails[0],
 												atc3: conceptDetails[1],
 												atc5: conceptDetails[2],
 												ingredient: conceptDetails[3],
 												name: conceptDetails[3],
-												num_persons: this.formatComma(this.numPersons[i]),
-												percent_persons: this.formatPercent(this.percentPersons[i]),
-												relative_risk: this.formatFixed(this.logRRAfterBefore[i]),
-												percent_persons_before: this.formatPercent(this.percentPersons[i]),
-												percent_persons_after: this.formatPercent(this.percentPersons[i]),
-												risk_difference: this.formatFixed(this.riskDiffAfterBefore[i])
+												num_persons: this.formatComma(drugEraPrevalence.numPersons[i]),
+												percent_persons: this.formatPercent(drugEraPrevalence.percentPersons[i]),
+												relative_risk: this.formatFixed(drugEraPrevalence.logRRAfterBefore[i]),
+												percent_persons_before: this.formatPercent(drugEraPrevalence.percentPersons[i]),
+												percent_persons_after: this.formatPercent(drugEraPrevalence.percentPersons[i]),
+												risk_difference: this.formatFixed(drugEraPrevalence.riskDiffAfterBefore[i])
 											};
-										}, drugEraPrevalenceData);
+										});
 
 										$(document)
 											.on('click', '.treemap_table tbody tr', function () {
@@ -1539,7 +1528,7 @@ define([
 
 										var tree = this.buildHierarchyFromJSON(drugEraPrevalence, threshold);
 										var treemap = new atlascharts.treemap();
-										treemap.render(tree, '#treemap_container', width, height, {
+										treemap.render(tree, '#drugindex_treemap_container', width, height, {
 											onclick: (node) => {
 												this.drilldown(node.id, node.name, 'drug');
 											},
@@ -1592,8 +1581,6 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								var self = this;
-
 								var width = 1000;
 								var height = 250;
 								var minimum_area = 50;
@@ -1603,29 +1590,28 @@ define([
 								// condition prevalence
 								if (data.conditionOccurrencePrevalence) {
 									var normalizedData = this.normalizeDataframe(this.normalizeArray(data.conditionOccurrencePrevalence, true));
-									var conditionOccurrencePrevalence = normalizedData;
-									if (!conditionOccurrencePrevalence.empty) {
-										table_data = normalizedData.conceptPath.map(function (d, i) {
-											var conceptDetails = this.conceptPath[i].split('||');
+									if (!normalizedData.empty) {
+										table_data = normalizedData.conceptPath.map((d, i) => {
+											let conceptDetails = normalizedData.conceptPath[i].split('||');
 											return {
-												concept_id: this.conceptId[i],
+												concept_id: normalizedData.conceptId[i],
 												soc: conceptDetails[0],
 												hlgt: conceptDetails[1],
 												hlt: conceptDetails[2],
 												pt: conceptDetails[3],
 												snomed: conceptDetails[4],
 												name: conceptDetails[4],
-												num_persons: self.formatComma(this.numPersons[i]),
-												percent_persons: self.formatPercent(this.percentPersons[i]),
-												relative_risk: self.formatFixed(this.logRRAfterBefore[i]),
-												percent_persons_before: self.formatPercent(this.percentPersons[i]),
-												percent_persons_after: self.formatPercent(this.percentPersons[i]),
-												risk_difference: self.formatFixed(this.riskDiffAfterBefore[i])
+												num_persons: this.formatComma(normalizedData.numPersons[i]),
+												percent_persons: this.formatPercent(normalizedData.percentPersons[i]),
+												relative_risk: this.formatFixed(normalizedData.logRRAfterBefore[i]),
+												percent_persons_before: this.formatPercent(normalizedData.percentPersons[i]),
+												percent_persons_after: this.formatPercent(normalizedData.percentPersons[i]),
+												risk_difference: this.formatFixed(normalizedData.riskDiffAfterBefore[i])
 											};
-										}, conditionOccurrencePrevalence);
+										});
 
 										$(document)
-											.on('click', '.treemap_table tbody tr', function () {
+											.on('click', '.treemap_table tbody tr', () => {
 												var datatable = this.datatables[$(this)
 													.parents('.treemap_table')
 													.attr('id')];
@@ -1686,9 +1672,9 @@ define([
 											});
 										this.datatables['condition_table'] = datatable;
 
-										var tree = this.buildHierarchyFromJSON(conditionOccurrencePrevalence, threshold);
+										var tree = this.buildHierarchyFromJSON(normalizedData, threshold);
 										var treemap = new atlascharts.treemap();
-										treemap.render(tree, '#treemap_container', width, height, {
+										treemap.render(tree, '#conditionindex_treemap_container', width, height, {
 											onclick: (node) => {
 												this.drilldown(node.id, node.name, 'condition');
 											},
@@ -1741,7 +1727,6 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								var self = this;
 
 								var width = 1000;
 								var height = 250;
@@ -1750,29 +1735,28 @@ define([
 
 								var table_data, datatable, tree, treemap;
 								if (data.procedureOccurrencePrevalence) {
-									var normalizedData = this.normalizeDataframe(this.normalizeArray(data.procedureOccurrencePrevalence, true));
-									var procedureOccurrencePrevalence = normalizedData;
-									if (!procedureOccurrencePrevalence.empty) {
-										table_data = normalizedData.conceptPath.map(function (d, i) {
-											var conceptDetails = this.conceptPath[i].split('||');
+									let normalizedData = this.normalizeDataframe(this.normalizeArray(data.procedureOccurrencePrevalence, true));
+									if (!normalizedData.empty) {
+										table_data = normalizedData.conceptPath.map((d, i) => {
+											var conceptDetails = normalizedData.conceptPath[i].split('||');
 											return {
-												concept_id: this.conceptId[i],
+												concept_id: normalizedData.conceptId[i],
 												level_4: conceptDetails[0],
 												level_3: conceptDetails[1],
 												level_2: conceptDetails[2],
 												procedure_name: conceptDetails[3],
 												name: conceptDetails[3],
-												num_persons: self.formatComma(this.numPersons[i]),
-												percent_persons: self.formatPercent(this.percentPersons[i]),
-												relative_risk: self.formatFixed(this.logRRAfterBefore[i]),
-												percent_persons_before: self.formatPercent(this.percentPersons[i]),
-												percent_persons_after: self.formatPercent(this.percentPersons[i]),
-												risk_difference: self.formatFixed(this.riskDiffAfterBefore[i])
+												num_persons: this.formatComma(normalizedData.numPersons[i]),
+												percent_persons: this.formatPercent(normalizedData.percentPersons[i]),
+												relative_risk: this.formatFixed(normalizedData.logRRAfterBefore[i]),
+												percent_persons_before: this.formatPercent(normalizedData.percentPersons[i]),
+												percent_persons_after: this.formatPercent(normalizedData.percentPersons[i]),
+												risk_difference: this.formatFixed(normalizedData.riskDiffAfterBefore[i])
 											};
-										}, procedureOccurrencePrevalence);
+										});
 
 										$(document)
-											.on('click', '.treemap_table tbody tr', function () {
+											.on('click', '.treemap_table tbody tr', () => {
 												var datatable = this.datatables[$(this)
 													.parents('.treemap_table')
 													.attr('id')];
@@ -1828,9 +1812,9 @@ define([
 											});
 										this.datatables['procedure_table'] = datatable;
 
-										var tree = this.buildHierarchyFromJSON(procedureOccurrencePrevalence, threshold);
+										var tree = this.buildHierarchyFromJSON(normalizedData, threshold);
 										var treemap = new atlascharts.treemap();
-										treemap.render(tree, '#treemap_container', width, height, {
+										treemap.render(tree, '#procedureindex_treemap_container', width, height, {
 											onclick: (node) => {
 												this.drilldown(node.id, node.name, 'procedure');
 											},
@@ -1889,13 +1873,13 @@ define([
 								if (!result.empty) {
 									var personsByDurationData = this.normalizeDataframe(result)
 										.duration
-										.map(function (d, i) {
+										.map((d, i) => {
 											var item = {
-												xValue: this.duration[i],
-												yValue: this.pctPersons[i]
+												xValue: result.duration[i],
+												yValue: result.pctPersons[i]
 											};
 											return item;
-										}, result);
+										});
 
 									var personsByDurationSingle = new atlascharts.line();
 									personsByDurationSingle.render(personsByDurationData, "#personsByDurationFromStartToEnd", size12.width, size12.height, {
@@ -2077,7 +2061,7 @@ define([
 
 									// create svg with range bands based on the trellis names
 									var chart = new atlascharts.trellisline();
-									chart.render(dataByDecile, "#trellisLinePlot", size12.width, size12.height, {
+									chart.render(dataByDecile, "#cohort_trellisLinePlot", size12.width, size12.height, {
 										trellisSet: allDeciles,
 										trellisLabel: "Age Decile",
 										seriesLabel: "Year",
@@ -2426,7 +2410,7 @@ define([
 						}
 
 						// render trellis
-						d3.selectAll("#trellisLinePlot svg")
+						d3.selectAll("#condition_trellisLinePlot svg")
 							.remove();
 						var trellisData = this.normalizeArray(data.prevalenceByGenderAgeYear, true);
 
@@ -2484,8 +2468,8 @@ define([
 
 							// create svg with range bands based on the trellis names
 							var chart = new atlascharts.trellisline();
-							const size = this.breakpoints.guessFromNode("#trellisLinePlot");
-							chart.render(dataByDecile, "#trellisLinePlot", size.width, this.breakpoints.wide.height, {
+							const size = this.breakpoints.guessFromNode("#condition_trellisLinePlot");
+							chart.render(dataByDecile, "#condition_trellisLinePlot", size.width, this.breakpoints.wide.height, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
 								seriesLabel: "Year of Observation",
@@ -2618,7 +2602,7 @@ define([
 
 							// create svg with range bands based on the trellis names
 							var chart = new atlascharts.trellisline();
-							chart.render(dataByDecile, "#trellisLinePlot", 1000, 300, {
+							chart.render(dataByDecile, "#drug_trellisLinePlot", 1000, 300, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
 								seriesLabel: "Year of Observation",
@@ -2734,8 +2718,8 @@ define([
 
 							// create svg with range bands based on the trellis names
 							var chart = new atlascharts.trellisline();
-							const size = this.breakpoints.guessFromNode("#trellisLinePlot");
-							chart.render(dataByDecile, "#trellisLinePlot", size.width, this.breakpoints.wide.height, {
+							const size = this.breakpoints.guessFromNode("#conditoinera_trellisLinePlot");
+							chart.render(dataByDecile, "#conditionera_trellisLinePlot", size.width, this.breakpoints.wide.height, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
 								seriesLabel: "Year of Observation",
@@ -2853,8 +2837,8 @@ define([
 
 							// create svg with range bands based on the trellis names
 							var chart = new atlascharts.trellisline();
-							const size = this.breakpoints.guessFromNode("#trellisLinePlot");
-							chart.render(dataByDecile, "#trellisLinePlot", size.width, size.breakpoints.wide.height, {
+							const size = this.breakpoints.guessFromNode("#drugera_trellisLinePlot");
+							chart.render(dataByDecile, "#drugera_trellisLinePlot", size.width, size.breakpoints.wide.height, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
 								seriesLabel: "Year of Observation",
@@ -3003,8 +2987,8 @@ define([
 
 							// create svg with range bands based on the trellis names
 							var chart = new atlascharts.trellisline();
-							const size = this.breakpoints.guessFromNode("#trellisLinePlot");
-							chart.render(dataByDecile, "#trellisLinePlot", size.width, this.breakpoints.wide.height, {
+							const size = this.breakpoints.guessFromNode("#procedure_trellisLinePlot");
+							chart.render(dataByDecile, "#procedure_trellisLinePlot", size.width, this.breakpoints.wide.height, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
 								seriesLabel: "Year of Observation",

@@ -139,7 +139,7 @@
 				Cohort Start<i data-bind="click:setHelpContent('cohort-specific-cohort-start')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="trellisLinePlot"></div>
+				<div class="evidenceVisualization" id="cohort_trellisLinePlot"></div>
 			</div>
 		</div>
 
@@ -239,7 +239,7 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="condition-treemap-panel">
-						<div id="treemap_container">
+						<div id="condition_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
@@ -298,7 +298,7 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="drugs-by-index-treemap-panel">
-						<div id="treemap_container">
+						<div id="drugindex_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
@@ -449,7 +449,7 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="conditionera-treemap-panel">
-						<div id="treemap_container">
+						<div id="conditionera_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
@@ -484,7 +484,7 @@
 					Condition Era Prevalence
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="trellisLinePlot"></div>
+					<div class="evidenceVisualization" id="conditionera_trellisLinePlot"></div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -532,7 +532,7 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="procedure-treemap-panel">
-						<div id="treemap_container">
+						<div id="procedureindex_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
@@ -591,7 +591,7 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="condition-treemap-panel">
-						<div id="treemap_container">
+						<div id="condition_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
@@ -627,7 +627,7 @@
 					Condition Prevalence
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="trellisLinePlot"></div>
+					<div class="evidenceVisualization" id="condition_trellisLinePlot"></div>
 				</div>
 			</div>
 
@@ -676,7 +676,7 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="drugera-treemap-panel">
-						<div id="treemap_container">
+						<div id="drugera_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
@@ -713,7 +713,7 @@
 					Drug Era Prevalence
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="trellisLinePlot"></div>
+					<div class="evidenceVisualization" id="drugera_trellisLinePlot"></div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -759,7 +759,7 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div class="tab-pane" id="drug_treemap_panel">
-						<div id="treemap_container">
+						<div id="drug_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
@@ -796,7 +796,7 @@
 					Drug Exposure Prevalence
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="trellisLinePlot"></div>
+					<div class="evidenceVisualization" id="drug_trellisLinePlot"></div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -866,7 +866,7 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div class="tab-pane" role="tabpanel" id="procedure-treemap-panel">
-						<div id="treemap_container">
+						<div id="procedure_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
@@ -902,7 +902,7 @@
 					Procedure Prevalence
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="trellisLinePlot"></div>
+					<div class="evidenceVisualization" id="procedure_trellisLinePlot"></div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -940,7 +940,7 @@
 				Death Prevalence by Age, Gender, Year<i data-bind="click:setHelpContent('death-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="trellisLinePlot"></div>
+				<div class="evidenceVisualization" id="death_trellisLinePlot"></div>
 			</div>
 		</div>
 
