@@ -28,8 +28,8 @@
       </li>
       <li role="presentation" data-bind="click: function() {$component.routeTo('included');}, attr: {class: $root.currentConceptSetMode() == 'included' ? 'active' : ''}">
         <a>Included Concepts
-                  <span class="badge" data-bind="if: !$root.resolvingConceptSetExpression()"><span data-bind="text:$root.conceptSetInclusionCount()"></span></span>
-                  <span class="badge" data-bind="if: $root.resolvingConceptSetExpression();"><i class="fa fa-circle-o-notch fa-spin"></i></span></a>
+          <conceptset-inclusion-count params="conceptSetExpression: currentConceptSet"></conceptset-inclusion-count>
+        </a>
       </li>
       </li>
       <li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: $root.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
