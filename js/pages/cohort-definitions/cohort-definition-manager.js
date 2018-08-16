@@ -33,6 +33,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'webapi/ConceptSetAPI',
 	'components/modal-pick-options',
 	'components/heading',
+	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 ], function (
 	$,
 	ko,

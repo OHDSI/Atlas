@@ -18,6 +18,7 @@ define(['knockout',
 	'evidence',
 	'circe',
 	'conceptset-modal',
+	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 	'css!components/conceptset/style.css',
 ], function (
 	ko,
