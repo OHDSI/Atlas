@@ -6,9 +6,6 @@ define(
         '/feedback': new Route(() => {
           appModel.activePage(this.title);
           require(['feedback'], function () {
-            appModel.componentParams = {
-              model: appModel,
-            };
             appModel.currentView('feedback');
           });
         }),

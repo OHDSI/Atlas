@@ -1,7 +1,18 @@
-define(['knockout', 'text!./roles.html', 'appConfig', 'atlas-state', 'databindings', 'components/ac-access-denied'], function (ko, view, config, sharedState) {
+define([
+    'knockout',
+    'text!./roles.html',
+    'webapi/AuthAPI',
+    'atlas-state',
+    'databindings',
+    'components/ac-access-denied'
+], function (
+    ko,
+    view,
+    authApi,
+    sharedState
+) {
     function roles(params) {
         var self = this;
-        var authApi = params.model.authApi;
         self.roles = sharedState.roles;
         self.updateRoles = params.model.updateRoles;
         self.loading = ko.observable();
@@ -19,7 +30,7 @@ define(['knockout', 'text!./roles.html', 'appConfig', 'atlas-state', 'databindin
 
         if (self.canRead()) {
             self.loading(true);
-            self.updateRoles().always(function() { self.loading(false); });
+            self.updateRoles().then(() => { self.loading(false); });
         }
     }
 

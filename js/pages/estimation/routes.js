@@ -20,12 +20,11 @@ define(
             'components/cohort-comparison-multi-r-code'
           ], function () {
             appModel.currentCohortComparisonId(+cohortComparisonId);
-            appModel.componentParams = {
-              model: appModel,
+            appModel.componentParams({
               currentCohortComparisonId: appModel.currentCohortComparisonId,
               currentCohortComparison: appModel.currentCohortComparison,
               dirtyFlag: appModel.currentCohortComparisonDirtyFlag,
-            };
+            });
             appModel.currentView('cohort-comparison-manager');
           });
         }),

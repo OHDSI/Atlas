@@ -1,8 +1,8 @@
 define(function(require, exports) {
+  const ko = require('knockout');
   const config = require('appConfig');
   const OHDSIApi = require('ohdsi-api').Api;
-
-  const JSON_RESPONSE_TYPE = "application/json";
+  const JSON_RESPONSE_TYPE = 'application/json';
 
   class Api extends OHDSIApi {
     handleUnexpectedError() {
@@ -27,7 +27,7 @@ define(function(require, exports) {
       if (payload && payload instanceof FormData) {
         params.body = payload;
       } else if (payload) {
-        params.body = JSON.stringify(payload);
+        params.body = ko.toJSON(payload);
         params.headers['Content-Type'] = 'application/json';
       }
 

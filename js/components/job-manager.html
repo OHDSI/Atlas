@@ -7,7 +7,7 @@
 		<div class="clear"></div>
 
 		<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-			data: model.jobs(),
+			data: $root.jobs(),
 			options: {
 						dom: 'Blfiprt',
 						language: {
@@ -22,7 +22,7 @@
 						autoWidth: false,
 						ordering: true,
 						order: [[ 0, 'desc' ]],
-						columns: model.columns()
+						columns: $root.columns()
 				}
 		}"></table>
 	</div>

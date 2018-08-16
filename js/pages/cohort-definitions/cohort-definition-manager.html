@@ -1,17 +1,17 @@
-<div data-bind="if: model.currentCohortDefinition() && model.currentView() == 'cohort-definition-manager'" class="flexed">
+<div data-bind="if: $root.currentCohortDefinition() && $root.currentView() == 'cohort-definition-manager'" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
 	<!-- ko ifnot: hasAccess -->
 		<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
 	<!-- /ko -->
 	<!-- ko if: hasAccess -->
-	<div data-bind="model.currentCohortDefinition() != null">
+	<div data-bind="$root.currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
-				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: model.currentCohortDefinition().name, css: { emptyInput: !(model.currentCohortDefinition().name() && (model.currentCohortDefinition().name().length > 0)) }"></input>
+				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: $root.currentCohortDefinition().name, css: { emptyInput: !($root.currentCohortDefinition().name() && ($root.currentCohortDefinition().name().length > 0)) }"></input>
 				<div class="input-group-btn">
 					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: canSave"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
-					<!-- ko if: model.currentCohortDefinition().id() != null && model.currentCohortDefinition().id() != 0 -->
+					<!-- ko if: $root.currentCohortDefinition().id() != null && $root.currentCohortDefinition().id() != 0 -->
 					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()"><i class="fa fa-copy"></i></button>
 					<button data-toggle="modal" data-target="#linkModal" class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty()"><i class="fa fa-link"></i></button>
 					<!-- ko if: !isRunning() -->
@@ -59,7 +59,7 @@
 					<button type="button" class="btn btn-sm btn-success" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
 				</div>
 				<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
-											data: model.currentCohortDefinition() && model.currentCohortDefinition().expression().ConceptSets,
+											data: $root.currentCohortDefinition() && $root.currentCohortDefinition().expression().ConceptSets,
 											options: {
 													deferRender: true,
 													orderClasses: false,
@@ -80,7 +80,7 @@
 											}
 									 }">
 				</table>
-				<!-- ko if: model.currentConceptSet() && model.currentConceptSetSource() == 'cohort' -->
+				<!-- ko if: $root.currentConceptSet() && $root.currentConceptSetSource() == 'cohort' -->
 				<hr/>
 				<ul class="nav nav-pills">
 					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == cohortConst.conceptSetTabModes.details}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.details)};">
@@ -88,8 +88,8 @@
 					</li>
 					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == cohortConst.conceptSetTabModes.included}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.included)};">
 						<a>Included Concepts
-					<span class="badge" data-bind="if: !model.resolvingConceptSetExpression()"><span data-bind="text:model.conceptSetInclusionCount()"></span></span>
-					<span class="badge" data-bind="if: model.resolvingConceptSetExpression();"><i class="fa fa-circle-o-notch fa-spin"></i></span></a>
+					<span class="badge" data-bind="if: !$root.resolvingConceptSetExpression()"><span data-bind="text:$root.conceptSetInclusionCount()"></span></span>
+					<span class="badge" data-bind="if: $root.resolvingConceptSetExpression();"><i class="fa fa-circle-o-notch fa-spin"></i></span></a>
 					</li>
 					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.sourcecodes)};">
 						<a>Included Source Codes</a>
@@ -101,12 +101,12 @@
 					</li>
 				</ul>
 
-				<div data-bind="if: model.currentView() != 'loading' && $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.details">
+				<div data-bind="if: $root.currentView() != 'loading' && $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.details">
 					<div class="paddedWrapper">
 						<div class="heading">
 							Name:
 						</div>
-						<div class="divtext" data-bind="attr: { contenteditable:canEdit() }, htmlValue:model.currentConceptSet().name"></div>
+						<div class="divtext" data-bind="attr: { contenteditable:canEdit() }, htmlValue:$root.currentConceptSet().name"></div>
 						<conceptset-editor params="model: model, conceptSets:selectedConcepts"></conceptset-editor>
 
 						<div class="clear"></div>
@@ -118,29 +118,29 @@
 					</div>
 				</div>
 
-				<div class="loading" data-bind="if:model.currentView() === 'loading' || model.loadingSourcecodes() || model.loadingIncluded">loading</div>
+				<div class="loading" data-bind="if:$root.currentView() === 'loading' || $root.loadingSourcecodes() || $root.loadingIncluded">loading</div>
 
-				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !model.loadingIncluded()">
-					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: model.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: model.contextSensitiveLinkColor}"></faceted-datatable>
+				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !$root.loadingIncluded()">
+					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: $root.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: $root.contextSensitiveLinkColor}"></faceted-datatable>
 				</div>
 
-				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes && !model.loadingSourcecodes() && !model.loadingIncluded()">
-					<faceted-datatable params="{columns: model.relatedSourcecodesColumns, options: model.relatedSourcecodesOptions, reference: model.includedSourcecodes}"></faceted-datatable>
+				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes && !$root.loadingSourcecodes() && !$root.loadingIncluded()">
+					<faceted-datatable params="{columns: $root.relatedSourcecodesColumns, options: $root.relatedSourcecodesOptions, reference: $root.includedSourcecodes}"></faceted-datatable>
 				</div>
 
 				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.export">
 					<div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
 						<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
 					</div>
-					<pre id="conceptSetExpression" data-bind="html: model.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
+					<pre id="conceptSetExpression" data-bind="html: $root.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
 					<div class="heading">Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
 						<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
 					</div>
-					<pre id="conceptIdentifierList" data-bind="html: model.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+					<pre id="conceptIdentifierList" data-bind="html: $root.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 					<div class="heading">Included Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
 						<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
 					</div>
-					<pre id="includedConceptIdentifierList" data-bind="html: model.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+					<pre id="includedConceptIdentifierList" data-bind="html: $root.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 				</div>
 
 				<div id="wrapperConceptSetImport" data-bind="if:$component.conceptSetTabMode() === cohortConst.conceptSetTabModes.import">
@@ -173,7 +173,7 @@
 					<div class="paddedWrapper form-group" data-bind="if:$component.importTabMode() === cohortConst.importTabModes.conceptset">
 						<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $component.clearImportConceptSetJson(); }">click to clear</a>)</div>
 						<textarea class="form-control" rows="5" data-bind="value: importConceptSetJson"></textarea>
-						<div type="button" data-bind="css: {disabled: !model.currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
+						<div type="button" data-bind="css: {disabled: !$root.currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 						<div class="clear"></div>
 					</div>
 					<div class="modal fade" data-bind="modal: showImportConceptSetModal" tabindex="-1" role="dialog">
@@ -181,7 +181,7 @@
 							<div class="modal-content">
 								<div class="modal-header">Import Concept Set From Repository...</div>
 								<div class="paddedWrapper">
-									<cohort-concept-set-browser params="criteriaContext: model.criteriaContext, cohortConceptSets: model.currentCohortDefinition().expression().ConceptSets, onRespositoryConceptSetSelected: onConceptSetRepositoryImport, buttonActionEnabled: false"></cohort-concept-set-browser>
+									<cohort-concept-set-browser params="criteriaContext: $root.criteriaContext, cohortConceptSets: $root.currentCohortDefinition().expression().ConceptSets, onRespositoryConceptSetSelected: onConceptSetRepositoryImport, buttonActionEnabled: false"></cohort-concept-set-browser>
 								</div>
 							</div>
 						</div>
@@ -215,9 +215,9 @@
 							<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyTextViewClipboard" data-bind="click: copyTextViewToClipboard" data-clipboard-target="#cohortTextView"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;
 							<span id="copyTextViewMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
 							<div id="cohortTextView" class="pad-10">
-								<div class="heading" data-bind="text:model.currentCohortDefinition().name"></div>
-								<div data-bind="text:model.currentCohortDefinition().description"></div>
-								<cohort-expression-viewer params="expression: model.currentCohortDefinition().expression"></cohort-expression-viewer>
+								<div class="heading" data-bind="text:$root.currentCohortDefinition().name"></div>
+								<div data-bind="text:$root.currentCohortDefinition().description"></div>
+								<cohort-expression-viewer params="expression: $root.currentCohortDefinition().expression"></cohort-expression-viewer>
 								<br/>
 								<div class="heading">Appendix 1: Concept Set Definitions</div>
 								<br/>
@@ -239,7 +239,7 @@
 									<!-- ko ifnot: $data.Criteria -->
 									<div data-bind='component: {
 													name: $component.getCriteriaIndexComponent($data),
-													params: {expression: $component.model.currentCohortDefinition().expression(),
+													params: {expression: $root.currentCohortDefinition().expression(),
 																		criteria: $data} }'></div>
 									<!-- /ko -->
 									<!-- ko if: $data.Criteria -->
@@ -247,7 +247,7 @@
 									<span data-bind="text: Occurrence.Count != 1 ? 's' : ''"></span> of
 									<span data-bind="component: {
 																				name: $component.getCriteriaIndexComponent($data.Criteria),
-																				params: {expression: $component.model.currentCohortDefinition().expression(),
+																				params: {expression: $root.currentCohortDefinition().expression(),
 																				criteria: $data.Criteria }
 																			}"></span> occurring between
 									<window-input-viewer params="Window: StartWindow"></window-input-viewer> index
@@ -255,7 +255,7 @@
 								</div>
 							</div>
 							<!-- /ko -->
-							<div data-bind="cohortExpressionCartoon:{expression:model.currentCohortDefinition().expression,
+							<div data-bind="cohortExpressionCartoon:{expression:$root.currentCohortDefinition().expression,
 														selectedCriteria: $component.selectedCriteria,
 														tabPath: $component.tabPath,
 														delayedCartoonUpdate: $component.delayedCartoonUpdate}"></div>
@@ -355,13 +355,13 @@
 						<th>Generation Duration</th>
 						<th></th>
 					</thead>
-					<tbody data-bind="foreach:model.cohortDefinitionSourceInfo, css: {overflow: model.cohortDefinitionSourceInfo().length > 3}">
+					<tbody data-bind="foreach:$root.cohortDefinitionSourceInfo, css: {overflow: $root.cohortDefinitionSourceInfo().length > 3}">
 						<tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
 							<td>
 								<div style="position:relative"
 									 class="btn-group btn-group-sm thumb-dropdown"
 									 data-bind="
-									 	css: {dropup: ($index() > 0 && $index() === $parent.model.cohortDefinitionSourceInfo().length-1)},
+									 	css: {dropup: ($index() > 0 && $index() === $root.cohortDefinitionSourceInfo().length-1)},
 									 	visible:!$component.isSourceRunning($data),
 									 	attr: {'disabled':!$component.canGenerate()},
 									 	tooltip: !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null,
@@ -440,7 +440,7 @@
 							<!-- ko if: $component.selectedSource() && $component.selectedSource().includeFeatures -->
 							<div class="heading">Feature Report for <span data-bind="text:selectedReportCaption"></span></div>
 							<div><b>Features are baseline characteristics (e.g collected before /on cohort start)</b></div>
-							<cohort-feature-browser params="cohortId: $component.model.currentCohortDefinition().id, sourceKey: $component.selectedSourceKey"></cohort-feature-browser>
+							<cohort-feature-browser params="cohortId: $root.currentCohortDefinition().id, sourceKey: $component.selectedSourceKey"></cohort-feature-browser>
 							<!-- /ko -->
 							<!-- ko ifnot: $component.selectedSource() && $component.selectedSource().includeFeatures -->
 							<div class="heading">Features were not generated for this source.</div>
@@ -468,12 +468,12 @@
 
 							<div class="row">
 								<div class="col-sm-12">
-									<select class="form-control" data-bind="css : { invalid: $component.model.reportSourceKey()==undefined }, options:$component.sharedState.sources().filter($component.model.hasCDM), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.model.reportSourceKey, optionsCaption:'Select a Source'"></select>
+									<select class="form-control" data-bind="css : { invalid: $root.reportSourceKey()==undefined }, options: $component.cdmSources(), optionsValue:'sourceKey', optionsText:'sourceName', value:$root.reportSourceKey, optionsCaption:'Select a Source'"></select>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-sm-12">
-									<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $component.model.loadingReport, attr:{disabled: $component.model.loadingReport}, css : {invalid: $component.model.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:$component.reportOptionCaption, optionsText:'name', optionsValue:'name', value:$component.model.reportReportName"></select>
+									<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $root.loadingReport, attr:{disabled: $root.loadingReport}, css : {invalid: $root.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:$component.reportOptionCaption, optionsText:'name', optionsValue:'name', value:$root.reportReportName"></select>
 								</div>
 							</div>
 						</div>
@@ -568,13 +568,13 @@
 						</div>
 					</div>
 				</div>
-				<loading params="status:'loading'" data-bind="visible:model.currentView() == 'loading' || model.loadingReport()">
+				<loading params="status:'loading'" data-bind="visible:$root.currentView() == 'loading' || $root.loadingReport()">
 				</loading>
-				<report-manager data-bind="visible:$component.reportingState()=='report_active' " params="{model: pageModel, showSelectionArea: false} "></report-manager>
+				<report-manager data-bind="visible:$component.reportingState()=='report_active' " params="{model: model, showSelectionArea: false} "></report-manager>
 			</div>
 			<div role="tabpanel " data-bind="css: { active: $component.tabMode()=='explore' } " class="tab-pane ">
 				<div class="paddedWrapper ">
-					<explore-cohort params="{model: pageModel, showSelectionArea: false } "></explore-cohort>
+					<explore-cohort params="{model: model, showSelectionArea: false } "></explore-cohort>
 				</div>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() === 'warnings' }" class="tab-pane">

@@ -6,20 +6,16 @@ define(
         '/datasources': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./data-sources'], function () {
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('data-sources');
           });
         }),
         '/datasources/:sourceKey/:reportName': new AuthorizedRoute((sourceKey, reportName) => {
           appModel.activePage(this.title);
           require(['./data-sources'], function () {
-            appModel.componentParams = {
-              model: appModel,
+            appModel.componentParams({
               reportName: reportName,
               sourceKey: sourceKey
-            };
+            });
             appModel.currentView('data-sources');
           });
         }),

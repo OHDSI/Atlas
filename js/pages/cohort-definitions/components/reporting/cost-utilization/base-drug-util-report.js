@@ -7,7 +7,7 @@ define(
     'utils/BemHelper',
     'appConfig',
     'pages/cohort-definitions/const',
-    'services/CohortResultsService',
+    'services/CohortResults',
     'components/visualizations/filter-panel/filter-panel',
     'less!./drug-util-detailed.less',
   ],
@@ -73,7 +73,7 @@ define(
             data: 'daysSupplyAvg',
             className: this.classes('tbl-col', 'avg-days-supply'),
             showInChart: true,
-            render: BaseCostUtilReport.formatFullNumber,
+            render: BaseCostUtilReport.formatPreciseNumber,
           },
           {
             title: 'Days of Supply /1K /Year',
