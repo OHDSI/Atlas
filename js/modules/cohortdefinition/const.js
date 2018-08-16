@@ -40,12 +40,24 @@ define(
       caresitedate: 'caresitedate',
     };
 
+    const rollups = [
+      {
+        label: 'Visits',
+        value: 'rollupUtilizationVisit',
+      },
+      {
+        label: 'Drugs',
+        value: 'rollupUtilizationDrug',
+      },
+    ];
+
     return {
       windowType,
       visitStat,
       //
       getPeriodTypeFilter,
       periods,
+      rollups,
     };
   }
 );

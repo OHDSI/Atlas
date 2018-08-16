@@ -924,7 +924,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				self.reportingState() != 'generating_reports';
 		});
 
-		self.generateAnalyses = function ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods }) {
+		self.generateAnalyses = function ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {
 			if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
 				return;
 			}
@@ -951,6 +951,9 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 			cohortJob.measurementConceptIds = [];
 			
 			cohortJob.periods = periods;
+
+            cohortJob.rollupUtilizationVisit = rollupUtilizationVisit;
+            cohortJob.rollupUtilizationDrug = rollupUtilizationDrug;
 
 			var jobDetails = new jobDetail({
 				name: cohortJob.jobName,
@@ -1036,7 +1039,12 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 				title: 'Periods',
 				options: costUtilConst.periods,
 				selectedOptions: ko.observableArray([]),
-			}
+			},
+            rollups: {
+                title: 'Rollups',
+                options: costUtilConst.rollups,
+                selectedOptions: ko.observableArray([]),
+            }
 		};
 
     self.selectHealthcareAnalyses = function() {
@@ -1051,6 +1059,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
         analysisIdentifiers: analysisIds,
         periods: self.utilReportOptions.periods.selectedOptions(),
         runHeraclesHeel: false,
+        ...self.utilReportOptions.rollups.selectedOptions().reduce((acc, current) => { acc[current] = true; return acc }, {}),
       });
       self.showUtilizationToRunModal(false);
     };
