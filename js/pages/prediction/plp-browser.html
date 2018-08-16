@@ -1,10 +1,21 @@
 <heading-title params="name: 'Population level prediction', icon: 'heartbeat', theme: 'dark'"></heading-title>
 
-<div data-bind="if:$component.canReadPlps">
-	<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newPatientLevelPrediction, css: {disabled: !$component.canCreatePlp()}">New Patient Level Prediction</span>
+<div data-bind="if: canReadPlps, css: classes({ extra: 'paddedWrapper flexed' })">
+	<span data-bind="click: newPatientLevelPrediction, css: classes({
+		element: 'new-btn',
+		extra: `pull-right btn btn-sm btn-primary ${canCreatePlp() ? '' : 'disabled'}`,
+	})">New Patient Level Prediction</span>
 
-	<faceted-datatable data-bind="visible: !loading()" params="order: [[3, 'desc']], reference:analysisList, columns: columns, options:options, rowClick:rowClick">
-	</faceted-datatable>
+	<div data-bind="css: classes({
+		element: 'content',
+		extra: 'flexed'
+	})">
 
-	<div data-bind="visible:loading()" class="loading">loading</div>
+		<faceted-datatable params="order: [[3, 'desc']], reference: analysisList, columns: columns, options:options, rowClick:rowClick, visible: analysisList.length"></faceted-datatable>
+		
+		<div data-bind="visible: loading()" class="loading">loading</div>		
+		<div data-bind="if: !analysisList.length, css: classes({ element: 'empty-state', extra: 'flexed' })">
+			<empty-state params="message: 'No PLP analyses created yet'"></empty-state>
+		</div>
+	</div>
 </div>

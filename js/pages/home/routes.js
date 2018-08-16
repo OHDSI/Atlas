@@ -10,9 +10,6 @@ define(
         '/home': new Route(() => {
           appModel.activePage(this.title);
           require(['home'], function () {
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('home');
           });
         }),

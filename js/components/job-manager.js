@@ -1,8 +1,22 @@
-define(['knockout', 'text!./job-manager.html', 'appConfig', 'webapi/MomentAPI', 'databindings', 'components/ac-access-denied'], function (ko, view, config, momentApi) {
+define([
+	'knockout',
+	'text!./job-manager.html',
+	'appConfig',
+	'webapi/MomentAPI',
+	'webapi/AuthAPI',
+	'databindings',
+	'components/ac-access-denied',
+],
+	function (
+		ko,
+		view,
+		config,
+		momentApi,
+		authApi
+	) {
 	function jobManager(params) {
 		var self = this;
 
-		var authApi = params.model.authApi;
 		self.model = params.model;
 		self.model.columns = ko.observableArray([
 			{title: 'ExecutionId', data: 'executionId'},

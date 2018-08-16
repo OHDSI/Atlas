@@ -9,7 +9,8 @@ define(
     'webapi/MomentAPI',
     'utils/CsvUtils',
     'numeral',
-    'services/CohortResultsService'
+    'services/CohortResults',
+    'lodash'
   ],
   function (
     ko,
@@ -21,7 +22,7 @@ define(
     MomentAPI,
     CsvUtils,
     numeral
-  , CohortResultsService) {
+  , CohortResultsService, lodash) {
 
     class BaseCostUtilReport extends Component {
 
@@ -63,7 +64,7 @@ define(
         // Data
 
         this.filterList = ko.observableArray([]);
-        this.dataList = ko.observableArray();
+        this.dataList = ko.observableArray([]);
 
         // Charts formatters
 
@@ -74,7 +75,10 @@ define(
       }
 
       static conceptsToOptions(conceptList) {
-        return conceptList.map(el => ({ label: el.conceptName, value: el.conceptId }));
+        return lodash.sortBy(
+            conceptList.map(el => ({ label: el.conceptName, value: el.conceptId })),
+            ['label']
+        );
       }
 
       static formatFullNumber(val) {

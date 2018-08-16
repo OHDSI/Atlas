@@ -3,7 +3,7 @@ define(['knockout',
 		'appConfig',
 		'atlas-state',
 		'webapi/AuthAPI',
-		'services/UserService',
+		'services/User',
 		'providers/Component',
 		'utils/CommonUtils',
 		'./components/renderers',
@@ -20,7 +20,7 @@ define(['knockout',
 		config,
 		sharedState,
 		authApi, 
-		usersApi,
+		userService,
 		Component,
 		commonUtils,
 		renderers,
@@ -60,6 +60,7 @@ define(['knockout',
 				this.nextClasses = ko.computed(() => this.classes({ extra: this.getNextClasses(), }));
 				// form inputs
 				this.importProvider = ko.observable(Const.PROVIDERS.ACTIVE_DIRECTORY);
+				this.model = params.model;
 				this.updateRoles = params.model.updateRoles;
 				this.roles = sharedState.roles;
 				this.rolesMapping = ko.observableArray();
@@ -140,8 +141,13 @@ define(['knockout',
 				this.loading(true);
 				const users = this.usersList()
 					.filter(u => !!u.included())
-					.map(u => ({ login: u.login, roles: u.roles(), }));
-				usersApi.importUsers(users).finally(() => this.loading(false));
+					.map(u => ({
+							login: u.login, roles: u.roles(),
+					}));
+				userService.importUsers(users).finally(() => {
+						this.loading(false);
+						userService.getUsers().then(data => this.model.users(data));
+				});
 				return true;
 			}
 
@@ -157,7 +163,7 @@ define(['knockout',
 						groups: m.groups,
 					})),
 				};
-				usersApi.searchUsers(this.importProvider(), mapping)
+				userService.searchUsers(this.importProvider(), mapping)
 					.then(users => this.usersList(users.map(user => ({
 							...user,
 							roles: ko.observableArray(user.roles),
@@ -176,12 +182,12 @@ define(['knockout',
 							groups: item.groups,
 						})),
 					};
-					usersApi.saveMapping(this.importProvider(), mapping);
+					userService.saveMapping(this.importProvider(), mapping);
 				}
 			}
 
 			loadMapping() {
-				usersApi.getMapping(this.importProvider()).then(mapping => {
+				userService.getMapping(this.importProvider()).then(mapping => {
 					const roles = this.rolesMapping();
 					roles.forEach(role => {
 						const mapped = mapping.roleGroups.find(m => m.role.id === role.id);
@@ -211,7 +217,7 @@ define(['knockout',
 
 			renderRoles(data, type, row) {
 				const label = (row && row.roles && row.roles().length > 0) ? row.roles().map(role => role.role).sort().join(", ") : 'No roles';
-				return '<a data-bind="click: function(d){ $component.onUsersRowClick(d) }, css: $component.linkClasses">' + label + '</a>';
+				return '<span data-bind="click: function(d){ $component.onUsersRowClick(d) }, css: $component.linkClasses">' + label + '</span>';
 			}
 
 			renderStatus(data, type, row) {
@@ -267,7 +273,7 @@ define(['knockout',
 
 			init() {
 				this.loading(true);
-				usersApi.getAuthenticationProviders().then(providers => {
+				userService.getAuthenticationProviders().then(providers => {
 					this.providers(providers);
 				}).finally(() => this.loading(false));
 				this.updateRoles().then(() => {

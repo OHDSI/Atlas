@@ -9,13 +9,14 @@ define(['optional!config-local'], function (localConfig) {
 		name: 'Local',
 		url: 'http://localhost:8080/WebAPI/'
   };
+  config.cacheSources = false;
   config.useBundled3dPartyLibs = false;
 	config.cohortComparisonResultsEnabled = false;
 	config.userAuthenticationEnabled = false;
 	config.plpResultsEnabled = false;
 	config.useExecutionEngine = false;
 	config.viewProfileDates = false;
-	config.enableCosts = false;
+  config.enableCosts = false;
 	config.supportUrl = "https://github.com/ohdsi/atlas/issues";
 	config.supportMail = "atlasadmin@your.org";
 	config.authProviders = [
@@ -86,6 +87,16 @@ define(['optional!config-local'], function (localConfig) {
     },
     "stripIgnoreTag": true,
     "stripIgnoreTagBody": ['script'],
+  };
+  config.cemOptions = {
+    "evidenceLinkoutSources": ["medline_winnenburg","splicer"],
+    "sourceRestEndpoints": {
+      "medline_winnenburg": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={@ids}&retmode=json&tool=ohdsi_atlas&email=admin@ohdsi.org",
+    },
+    "externalLinks": {
+      "medline_winnenburg": "https://www.ncbi.nlm.nih.gov/pubmed/{@id}",
+      "splicer": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid={@id}"
+    },
   };
 
 	Object.assign(config, localConfig);

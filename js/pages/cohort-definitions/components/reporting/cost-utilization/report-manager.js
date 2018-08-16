@@ -205,7 +205,7 @@ define([
 
 			this.model.reportCohortDefinitionId.subscribe((d) => {
 				if (this.showSelectionArea) {
-					this.cohortCaption(pageModel.cohortDefinitions()
+					this.cohortCaption(this.model.cohortDefinitions()
 						.filter(function (value) {
 							return value.id == d;
 						})[0].name);
@@ -291,10 +291,10 @@ define([
 					.append("g")
 					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-				xExtent = d3.extent(data, d => {
+				var xExtent = d3.extent(data, d => {
 					return d.personCount;
 				});
-				xMax = Math.max(Math.abs(xExtent[0]), Math.abs(xExtent[1]));
+				var xMax = Math.max(Math.abs(xExtent[0]), Math.abs(xExtent[1]));
 				x.domain([-1 * xMax, xMax]);
 				y.domain([100, 0]);
 

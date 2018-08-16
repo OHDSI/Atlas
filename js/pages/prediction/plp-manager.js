@@ -5,35 +5,36 @@ define(['knockout',
 	'd3',
 	'assets/ohdsi.util',
 	'plp/PatientLevelPredictionAnalysis',
-	'webapi/PatientLevelPredictionAPI',
-	'webapi/ExecutionAPI',
+	'services/PatientLevelPrediction',
+	'services/Execution',
 	'webapi/AuthAPI',
 	'clipboard',
 	'atlas-state',
 	'services/JobDetailsService'],
-	function (ko,
-						$,
-						view,
-						config,
-						d3,
-						ohdsiUtil,
-						PatientLevelPredictionAnalysis,
-						plpAPI,
-						executionAPI,
-						authAPI,
-						clipboard,
-						sharedState,
-						jobDetailsService) {
+	function (
+		ko,
+		$,
+		view,
+		config,
+		d3,
+		ohdsiUtil,
+		PatientLevelPredictionAnalysis,
+		plpService,
+		executionService,
+		authAPI,
+		clipboard,
+		sharedState,
+		jobDetailsService
+	) {
 	function plpManager(params) {
 		//console.log("manager:" + params.model.currentModelId());
 		var self = this;
-		var authApi = params.model.authApi;
 
 		self.patientLevelPredictionId = params.currentPatientLevelPredictionId;
 		self.patientLevelPrediction = params.currentPatientLevelPrediction;
 		self.patientLevelPredictionDirtyFlag = params.dirtyFlag;
 		self.loading = ko.observable(true);
-		self.tabMode = ko.observable('results');
+		self.tabMode = ko.observable('specification');
 		self.config = config;
 		self.performanceTabMode = ko.observable('discrimination');
 		self.expressionMode = ko.observable('print');
@@ -59,7 +60,7 @@ define(['knockout',
           self.sourceExecutions[s.sourceKey].removeAll();
         }
 
-        executionAPI.loadExecutions('PLP', self.patientLevelPredictionId(), function(exec){
+        executionService.loadExecutions('PLP', self.patientLevelPredictionId(), function(exec){
           var source = self.sources().find(s => s.sourceId == exec.sourceId);
           if (source) {
               var sourceKey = source.sourceKey;
@@ -91,7 +92,7 @@ define(['knockout',
     self.executePLP = function (sourceKey) {
       if (config.useExecutionEngine) {
         self.sourceProcessingStatus[sourceKey](true);
-        executionAPI.runExecution(sourceKey, self.patientLevelPredictionId(), 'PLP',
+        executionService.runExecution(sourceKey, self.patientLevelPredictionId(), 'PLP',
           $('.language-r').text(),
           function (c, status, xhr) {
             self.monitorEEJobExecution(c.executionId, 100);
@@ -122,7 +123,7 @@ define(['knockout',
 
     self.executionSelected = function (execution) {
       if(config.useExecutionEngine){
-        executionAPI.viewResults(execution.id);
+        executionService.viewResults(execution.id);
       }
     };
 
@@ -161,7 +162,7 @@ define(['knockout',
 			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
 				return;
 
-			plpAPI.deletePlp(self.patientLevelPredictionId()).then(function () {
+			plpService.deletePlp(self.patientLevelPredictionId()).then(function () {
 				self.patientLevelPrediction(null);
 				self.patientLevelPredictionId(null);
 				self.patientLevelPredictionDirtyFlag(new ohdsiUtil.dirtyFlag(self.patientLevelPrediction()));
@@ -267,7 +268,7 @@ define(['knockout',
 				delCovariatesSmallCount: self.patientLevelPrediction().delCovariatesSmallCount(),
 			};
 
-			plpAPI.savePlp(plpAnalysis).then(function (saveResult) {
+			plpService.savePlp(plpAnalysis).then(function (saveResult) {
 				var redirectWhenComplete = saveResult.analysisId != self.patientLevelPrediction().analysisId;
 				self.patientLevelPredictionId(saveResult.analysisId);
 				self.patientLevelPrediction().analysisId = saveResult.analysisId;
@@ -291,7 +292,7 @@ define(['knockout',
 		}
 
 		self.copy = function () {
-			plpAPI.copyPlp(self.patientLevelPredictionId()).then(function (result) {
+			plpService.copyPlp(self.patientLevelPredictionId()).then(function (result) {
 				document.location = "#/plp/" + result.analysisId;
 			});
 		}
@@ -311,7 +312,7 @@ define(['knockout',
 		}
 
 		self.loadPatientLevelPrediction = function () {
-			plpAPI.getPlp(self.patientLevelPredictionId()).then(function (plp) {
+			plpService.getPlp(self.patientLevelPredictionId()).then(function (plp) {
 				setTimeout(function () {
 					self.loading(false);
 					self.patientLevelPrediction(new PatientLevelPredictionAnalysis(plp));

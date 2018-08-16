@@ -9,7 +9,7 @@
 			<b>Explore Evidence:</b> Evidence comes from the
 			<a href="https://github.com/OHDSI/CommonEvidenceModel"></a>Common Evidence Model</a> (CEM). The evidence base is comprised of evidence found in published literature, product labels and spontaneous reports. Use the evidence sources below to find out what evidence has been associated to the concepts included in this concept set.
 			<br/><br/>
-			<strong>Additional Information:</strong> <a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/blob/master/postProcessingNegativeControls/README-ATLAS.md">Obtaining Negative Controls from ATLAS</a>&nbsp;|&nbsp;<a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/blob/master/postProcessingNegativeControls/README.md">High level information on negative controls processing</a>&nbsp;|&nbsp;<a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/blob/master/postProcessingNegativeControlsPrep/README.md">Additional resources</a>
+			<strong>Additional Information:</strong> <a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/wiki/Negative-Controls-In-ATLAS">Obtaining Negative Controls from ATLAS</a>&nbsp;|&nbsp;<a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/blob/master/postProcessingNegativeControls/README.md">High level information on negative controls processing</a>&nbsp;|&nbsp;<a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/blob/master/postProcessingNegativeControlsPrep/README.md">Additional resources</a>
 		</div>
 		<br/>
 		<div class="heading">Evidence Sources</div>
@@ -81,7 +81,37 @@
 	</div>
 </div>
 <div class="loading" data-bind="if:$component.loadingResults()">loading evidence</div>
-<div data-bind="if: $component.negativeControls() && $component.negativeControls().length > 0 && $component.currentEvidenceService() && $component.currentResultSource() && $component.conceptSet() && !$component.loadingResults()">
+<div class="paddedWrapper" data-bind="if: $component.negativeControls() && $component.negativeControls().length > 0 && $component.currentEvidenceService() && $component.currentResultSource() && $component.conceptSet() && !$component.loadingResults()">
+	<div data-bind="if:$component.drugLabelExists().length > 0">
+		<div class="heading">
+			Drug Label Evidence: Found <span data-bind="text: $component.drugLabelExistsIsTrue().length"></span> of <span data-bind="text: $component.drugLabelExists().length"></span> (<span data-bind="text: $component.drugLabelExistsPercentage"></span>%) drug labels in CEM. (<span class="linkish" data-bind="click:toggleLabelDetails"><span data-bind="text:toggleLabelDisplay"></span> details</span>)
+		</div>
+		<div data-bind="visible: $component.drugLabelDetailsDisplay()">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="panel panel-success">
+							<div class="panel-heading">Drug Labels Found (<span data-bind="text: $component.drugLabelExistsIsTrue().length"</span></span>)</div>
+							<ul class="list-group">
+								<li class="list-group-item" data-bind="foreach:$component.drugLabelExistsIsTrue">
+									<a data-bind="text:$data.conceptName, attr: {href: '#/concept/' + $data.conceptId, title: $data.conceptName}" target="_blank" /><span data-bind="if:($index() < $component.drugLabelExistsIsTrue().length - 1)">,</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="panel panel-danger">
+							<div class="panel-heading">Drug Labels Not Found (<span data-bind="text: $component.drugLabelExistsIsFalse().length"</span></span>)</div>
+							<li class="list-group-item" data-bind="foreach:$component.drugLabelExistsIsFalse">
+								<a data-bind="text:$data.conceptName, attr: {href: '#/concept/' + $data.conceptId, title: $data.conceptName}" target="_blank" /><span data-bind="if:($index() < $component.drugLabelExistsIsTrue().length - 1)">,</span>
+							</li>
+						</div>				
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br/>
 	<div class="paddedWrapper">
 		<div class="heading">Evidence for all <span style="text-transform: lowercase;" data-bind="text: $component.targetDomainId()"></span>s for <span data-bind="text: $component.conceptSet().name()"></span></div>
 	</div>
@@ -92,7 +122,7 @@
 		</div>
 	</div>
 	<div class="paddedWrapper" id="negControlResults">
-		<faceted-datatable params="{reference:$component.negativeControls, columns: negControlColumns, options:negControlOptions, order: $component.negControlOptions.order}">
+		<faceted-datatable params="{reference:$component.negativeControls, columns: negControlColumns, options:negControlOptions, order: $component.negControlOptions.order,rowClick:rowClick}">
 		</faceted-datatable>
 	</div>
 </div>
@@ -130,6 +160,19 @@
 			</div>
 			<div class="modal-body">
 				<cohort-concept-set-browser params="{onRespositoryConceptSetSelected: $component.conceptsetSelected, repositoryConceptSetTableId: 'negativeControlConceptSets', disableConceptSetButton: $component.disableNewConceptSetButton}"></cohort-concept-set-browser>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" data-bind="if: $component.showEvidencePairs(), modal: $component.showEvidencePairs" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<div class="modal-title">Viewing Evidence</div>
+			</div>
+			<div class="modal-body">
+				<evidence-pair-viewer params="{sourceKey: $component.currentEvidenceService().sourceKey, sourceIds: $component.sourceIds, targetDomainId: $component.targetDomainId, drugConceptIds: $component.linkoutDrugConceptIds, conditionConceptIds: $component.linkoutConditionConceptIds}"></evidence-pair-viewer>
 			</div>
 		</div>
 	</div>

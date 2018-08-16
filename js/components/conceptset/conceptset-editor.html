@@ -9,23 +9,23 @@
 								showAll: 'Show All Columns',
 								restore: 'Reset Columns'
 							},
-							rowCallback: model.contextSensitiveLinkColor,
+							rowCallback: $root.contextSensitiveLinkColor,
 							lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
 							orderClasses: false,
 							deferRender: true,
 							autoWidth: false,
 							order: [[3, 'desc']],
               columns: [
-									{ title: '<li class=\'fa fa-shopping-cart\'></li>', render: model.renderConceptSetItemSelector, orderable:false, searchable:false},
+									{ title: '<li class=\'fa fa-shopping-cart\'></li>', render: $root.renderConceptSetItemSelector, orderable:false, searchable:false},
 									{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
 									{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-                  { title: 'Concept Name', render: model.renderBoundLink},
+                  { title: 'Concept Name', render: $root.renderBoundLink},
                   { title: 'Domain', data: 'concept.DOMAIN_ID' },
 									{ title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
 									{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
-									{ title: 'Exclude', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('isExcluded');} },
-									{ title: 'Descendants', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('includeDescendants');} },
-									{ title: 'Mapped', class:'text-center', orderable:false,render: function() { return model.renderCheckbox('includeMapped');} }
+									{ title: 'Exclude', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('isExcluded');} },
+									{ title: 'Descendants', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('includeDescendants');} },
+									{ title: 'Mapped', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('includeMapped');} }
               ]
            }
         }">

@@ -6,9 +6,11 @@ define([
 	'services/PatientLevelPrediction',
 	'webapi/AuthAPI',
 	'providers/Component',
-	// 'providers/AutoBind',
+	'providers/AutoBind',
 	'utils/CommonUtils',
-	'components/heading'
+	'components/heading',
+	'components/empty-state',
+	'less!./plp-browser.less'
 ], function (
 	ko,
 	view,
@@ -17,13 +19,12 @@ define([
 	plpService,
 	authApi,
 	Component,
-	// AutoBind,
+	AutoBind,
 	commonUtils
 ) {
-	class PlpBrowser extends Component {
+	class PlpBrowser extends AutoBind(Component) {
 		constructor(params) {
-			super();
-			
+			super();			
 		
 		this.loading = ko.observable(true);
 		this.analysisList = ko.observableArray();
