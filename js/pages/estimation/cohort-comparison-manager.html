@@ -17,7 +17,7 @@
   <ul class="nav nav-tabs">
     <li role="presentation" data-bind="css: { active: $component.tabMode() == 'specification' }, click: function() { $component.tabMode('specification') };"><a>Specification</a>
     </li>
-    <li role="presentation" data-bind="visible: config.cohortComparisonResultsEnabled, css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a>
+    <li role="presentation" data-bind="visible: $component.cohortComparisonResultsEnabled, css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a>
     </li>
     <li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>Utilities</a>
     </li>
@@ -31,7 +31,7 @@
       <div>error loading selected results</div>
     </div>
 
-    <div role="tabpanel" data-bind="if: $component.config.useExecutionEngine, css: { active: $component.tabMode() == 'results' }" class="tab-pane">
+    <div role="tabpanel" data-bind="if: $component.useExecutionEngine, css: { active: $component.tabMode() == 'results' }" class="tab-pane">
       <div class="padded-wrapper" data-bind="visible:$component.resultsMode() == 'sources'">
         <div class="heading">Available Data Sources</div>
         <div data-bind="foreach:$component.sources" class="results-tab-pane">
@@ -39,7 +39,7 @@
             <div class="col-sm-8" data-bind="text:sourceName"></div>
             <div class="col-sm-4 text-right">
               <span class="btn-group">
-								<button data-bind="css:{disabled: $component.config.api.isExecutionEngineAvailable()==false}, click:function() {$component.executeCohortComparison(sourceKey)}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
+								<button data-bind="css:{disabled: $component.isExecutionEngineAvailable() == false}, click:function() {$component.executeCohortComparison(sourceKey)}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
 								<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
 								<button class="btn btn-sm btn-primary" data-bind="click: $component.viewLastExecution, attr: { disabled: $component.isResultAvailable(sourceKey, true) }"><i class="fa fa-eye"></i> View</button>
 								<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}, attr: { disabled: $component.isResultAvailable(sourceKey) }" class="btn btn-sm btn-primary">
@@ -58,7 +58,7 @@
               <div class="col-sm-2 text-right" data-bind="text:executionStatus"></div>
               <div class="col-sm-4 text-right">
                 <button class="btn btn-sm btn-primary"
-                        data-bind="css:{disabled:(executionStatus!='COMPLETED' && (!$component.config.useExecutionEngine || executionStatus!='FAILED'))},click:$component.executionSelected"><i class="fa fa-eye"></i> View</button>
+                        data-bind="css:{disabled:(executionStatus!='COMPLETED' && (!$component.useExecutionEngine || executionStatus!='FAILED'))},click:$component.executionSelected"><i class="fa fa-eye"></i> View</button>
               </div>
             </div>
           </div>

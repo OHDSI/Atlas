@@ -52,8 +52,10 @@ define([
 				this.cohortComparisonId = params.currentCohortComparisonId;
 				this.cohortComparison = params.currentCohortComparison;
 				this.cohortComparisonDirtyFlag = params.dirtyFlag;
+				this.cohortComparisonResultsEnabled = config.cohortComparisonResultsEnabled;
+				this.useExecutionEngine = config.useExecutionEngine;
+				this.isExecutionEngineAvailable = config.api.isExecutionEngineAvailable;
 
-				this.config = config;
 				this.loading = ko.observable(true);
 				this.loadingExecution = ko.observable(false);
 				this.loadingExecutionFailure = ko.observable(false);
@@ -902,7 +904,7 @@ define([
 								type: 'cca',
 								status: 'PENDING',
 								executionId: c.executionId,
-								statusUrl: `${this.config.api.url}executionservice/execution/status/${c.executionId}`,
+								statusUrl: `${config.api.url}executionservice/execution/status/${c.executionId}`,
 								statusValue: 'status',
 								viewed: false,
 								url: 'estimation/' + this.cohortComparisonId(),
