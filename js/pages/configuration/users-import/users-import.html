@@ -16,9 +16,12 @@
             <!-- select sources -->
             <div data-bind="if: hasMultipleProviders && wizardStep() === $component.WIZARD_STEPS.PROVIDERS">
                 <step-header params="header:'Please, select a provider to import users from.'"></step-header>
-                    <div class="btn-group users-import__group">
+                    <div data-bind="css: classes({extra: ['btn-group', 'users-import__group']})">
                         <label data-bind="css: classes({extra: ['btn']})" ><input name="importSource" id="cbActiveDirectory" type="radio" value="ad" data-bind="checked: importProvider" /> Active Directory</label>
                         <label data-bind="css: classes({extra: ['btn']})"><input name="importSource" id="cbLdap" type="radio" value="ldap" data-bind="checked: importProvider" /> LDAP server</label>
+                    </div>
+                    <div data-bind="css: classes('provider-buttons')">
+                        <button data-bind="click: testConnection, css: classes({extra: ['btn', 'btn-sm', 'btn-success']})"><i data-bind="css: classes({ extra: ['fa', 'fa-plug']})"></i> Test connection</button>
                     </div>
             </div>
 

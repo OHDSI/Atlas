@@ -100,6 +100,7 @@ define(['knockout',
 				this.setRoles = this.setRoles.bind(this);
 				this.saveMapping = this.saveMapping.bind(this);
 				this.loadMapping = this.loadMapping.bind(this);
+				this.testConnection = this.testConnection.bind(this);
 
 				this.init();
 			}
@@ -132,6 +133,11 @@ define(['knockout',
 
 			isImportEnabled() {
 				return this.usersList() && this.usersList().some(u => !!u.included());
+			}
+
+			testConnection() {
+				userService.testConnection(this.importProvider())
+					.then(() => true);
 			}
 
 			startImport() {
