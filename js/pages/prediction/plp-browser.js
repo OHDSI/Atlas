@@ -6,10 +6,10 @@ define([
 	'services/PatientLevelPrediction',
 	'webapi/AuthAPI',
 	'providers/Component',
-	'providers/AutoBind',
 	'utils/CommonUtils',
 	'components/heading',
 	'components/empty-state',
+	'faceted-datatable',
 	'less!./plp-browser.less'
 ], function (
 	ko,
@@ -19,22 +19,21 @@ define([
 	plpService,
 	authApi,
 	Component,
-	AutoBind,
 	commonUtils
 ) {
-	class PlpBrowser extends AutoBind(Component) {
+	class PlpBrowser extends Component {
 		constructor(params) {
 		super();			
 		
 		this.loading = ko.observable(true);
-		this.analysisList = ko.observableArray();
+		this.analysisList = ko.observable([]);
 
 		this.canReadPlps = ko.pureComputed(() => {
 		  return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedReadPlps()) || !config.userAuthenticationEnabled;
 		});
 		this.canCreatePlp = ko.pureComputed(() => {
 			return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedCreatePlp()) || !config.userAuthenticationEnabled;
-			});
+		});
 
 		this.options = {
 			Facets: [

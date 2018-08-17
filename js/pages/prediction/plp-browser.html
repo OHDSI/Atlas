@@ -11,10 +11,12 @@
 		extra: 'flexed'
 	})">
 
-		<faceted-datatable params="order: [[3, 'desc']], reference: analysisList, columns: columns, options:options, rowClick:rowClick, visible: analysisList.length"></faceted-datatable>
+		<!-- ko if: analysisList().length -->
+			<faceted-datatable params="order: [[3, 'desc']], reference: analysisList, columns: columns, options: options, rowClick: rowClick"></faceted-datatable>
+		<!-- /ko -->
 		
 		<loading data-bind="visible: loading"></loading>
-		<div data-bind="if: !analysisList.length, css: classes({ element: 'empty-state', extra: 'flexed' })">
+		<div data-bind="if: !analysisList().length, css: classes({ element: 'empty-state', extra: 'flexed' })">
 			<empty-state params="message: 'No PLP analyses created yet'"></empty-state>
 		</div>
 	</div>

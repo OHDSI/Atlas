@@ -3,211 +3,211 @@
 		<div>
 			<label>Choose your target cohort:</label>
 			<div class="input-group">
-				<input class="form-control" type="text" disabled data-bind="value: curentPlpAnalysis().treatmentCaption" />
+				<input class="form-control" type="text" disabled data-bind="value: currentPlpAnalysis().treatmentCaption" />
 				<span class="input-group-btn">
 									<button class="btn btn-primary" data-bind="click:chooseTreatment"><i class="fa fa-folder-open"></i></button>
-									<button class="btn btn-danger" data-bind="disable:curentPlpAnalysis().treatmentId() == 0, click:clearTreatment" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+									<button class="btn btn-danger" data-bind="disable:currentPlpAnalysis().treatmentId() == 0, click:clearTreatment" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 							</span>
 			</div>
-			<div data-bind="visible: curentPlpAnalysis().treatmentId() > 0 && curentPlpAnalysis().treatmentCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The target cohort specified (#<span data-bind="text:curentPlpAnalysis().treatmentId()"></span>) was deleted. Please select a different cohort.</div>
+			<div data-bind="visible: currentPlpAnalysis().treatmentId() > 0 && currentPlpAnalysis().treatmentCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The target cohort specified (#<span data-bind="text:currentPlpAnalysis().treatmentId()"></span>) was deleted. Please select a different cohort.</div>
 		</div>
 		<div>
 			<label>Choose your outcome cohort:</label>
 			<div class="input-group">
-				<input class="form-control" type="text" disabled data-bind="value: curentPlpAnalysis().outcomeCaption" />
+				<input class="form-control" type="text" disabled data-bind="value: currentPlpAnalysis().outcomeCaption" />
 				<span class="input-group-btn">
 								<button class="btn btn-primary" data-bind="click:chooseOutcome"><i class="fa fa-folder-open"></i></button>
-								<button class="btn btn-danger" data-bind="disable:curentPlpAnalysis().outcomeId() == 0,click:clearOutcome" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+								<button class="btn btn-danger" data-bind="disable:currentPlpAnalysis().outcomeId() == 0,click:clearOutcome" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 							</span>
 			</div>
-			<div data-bind="visible: curentPlpAnalysis().outcomeId() > 0 && curentPlpAnalysis().outcomeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The outcome cohort specified (#<span data-bind="text:curentPlpAnalysis().outcomeId()"></span>) was deleted. Please select a different cohort.</div>
+			<div data-bind="visible: currentPlpAnalysis().outcomeId() > 0 && currentPlpAnalysis().outcomeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The outcome cohort specified (#<span data-bind="text:currentPlpAnalysis().outcomeId()"></span>) was deleted. Please select a different cohort.</div>
 		</div>
 		<div>
 			<label>Specify the statistical model used predict the outcome amongst the target cohort:</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: curentPlpAnalysis().modelTypeOptions, optionsText:'name', optionsValue:'id', value: curentPlpAnalysis().modelType, optionsCaption: 'Select a model...'"></select>
+				<select class="form-control" data-bind="options: currentPlpAnalysis().modelTypeOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().modelType, optionsCaption: 'Select a model...'"></select>
 			</div>
 		</div>
-		<div data-bind="visible: $component.curentPlpAnalysis().modelTypeSettings().length > 0">
+		<div data-bind="visible: $component.currentPlpAnalysis().modelTypeSettings().length > 0">
 			<div class="radius-border">
-				<strong><span data-bind="text: $component.curentPlpAnalysis().modelTypeName()"></span> model options:</strong>
+				<strong><span data-bind="text: $component.currentPlpAnalysis().modelTypeName()"></span> model options:</strong>
 				<div data-bind="if: $component.modelSettingExists('moAlpha')">
 					<label data-bind="text: $component.modelSettingDescription('moAlpha')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moAlpha" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moAlpha" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moAlphaIsDefault(), click: function(data, event) { resetToDefault('moAlpha') }, css: {'btn-danger': !($component.curentPlpAnalysis().moAlphaIsDefault())}, text: $component.curentPlpAnalysis().moAlphaIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moAlphaIsDefault(), click: function(data, event) { resetToDefault('moAlpha') }, css: {'btn-danger': !($component.currentPlpAnalysis().moAlphaIsDefault())}, text: $component.currentPlpAnalysis().moAlphaIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moClassWeight')">
 					<label data-bind="text: $component.modelSettingDescription('moClassWeight')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moClassWeight" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moClassWeight" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moClassWeightIsDefault(), click: function(data, event) { resetToDefault('moClassWeight') }, css: {'btn-danger': !($component.curentPlpAnalysis().moClassWeightIsDefault())}, text: $component.curentPlpAnalysis().moClassWeightIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moClassWeightIsDefault(), click: function(data, event) { resetToDefault('moClassWeight') }, css: {'btn-danger': !($component.currentPlpAnalysis().moClassWeightIsDefault())}, text: $component.currentPlpAnalysis().moClassWeightIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moIndexFolder')">
 					<label data-bind="text: $component.modelSettingDescription('moIndexFolder')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moIndexFolder" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moIndexFolder" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moIndexFolderIsDefault(), click: function(data, event) { resetToDefault('moIndexFolder') }, css: {'btn-danger': !($component.curentPlpAnalysis().moIndexFolderIsDefault())}, text: $component.curentPlpAnalysis().moIndexFolderIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moIndexFolderIsDefault(), click: function(data, event) { resetToDefault('moIndexFolder') }, css: {'btn-danger': !($component.currentPlpAnalysis().moIndexFolderIsDefault())}, text: $component.currentPlpAnalysis().moIndexFolderIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moK')">
 					<label data-bind="text: $component.modelSettingDescription('moK')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moK" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moK" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moKIsDefault(), click: function(data, event) { resetToDefault('moK') }, css: {'btn-danger': !($component.curentPlpAnalysis().moKIsDefault())}, text: $component.curentPlpAnalysis().moKIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moKIsDefault(), click: function(data, event) { resetToDefault('moK') }, css: {'btn-danger': !($component.currentPlpAnalysis().moKIsDefault())}, text: $component.currentPlpAnalysis().moKIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moLearnRate')">
 					<label data-bind="text: $component.modelSettingDescription('moLearnRate')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moLearnRate" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moLearnRate" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moLearnRateIsDefault(), click: function(data, event) { resetToDefault('moLearnRate') }, css: {'btn-danger': !($component.curentPlpAnalysis().moLearnRateIsDefault())}, text: $component.curentPlpAnalysis().moLearnRateIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moLearnRateIsDefault(), click: function(data, event) { resetToDefault('moLearnRate') }, css: {'btn-danger': !($component.currentPlpAnalysis().moLearnRateIsDefault())}, text: $component.currentPlpAnalysis().moLearnRateIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moLearningRate')">
 					<label data-bind="text: $component.modelSettingDescription('moLearningRate')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moLearningRate" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moLearningRate" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moLearningRateIsDefault(), click: function(data, event) { resetToDefault('moLearningRate') }, css: {'btn-danger': !($component.curentPlpAnalysis().moLearningRateIsDefault())}, text: $component.curentPlpAnalysis().moLearningRateIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moLearningRateIsDefault(), click: function(data, event) { resetToDefault('moLearningRate') }, css: {'btn-danger': !($component.currentPlpAnalysis().moLearningRateIsDefault())}, text: $component.currentPlpAnalysis().moLearningRateIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moMaxDepth')">
 					<label data-bind="text: $component.modelSettingDescription('moMaxDepth')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moMaxDepth" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moMaxDepth" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moMaxDepthIsDefault(), click: function(data, event) { resetToDefault('moMaxDepth') }, css: {'btn-danger': !($component.curentPlpAnalysis().moMaxDepthIsDefault())}, text: $component.curentPlpAnalysis().moMaxDepthIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moMaxDepthIsDefault(), click: function(data, event) { resetToDefault('moMaxDepth') }, css: {'btn-danger': !($component.currentPlpAnalysis().moMaxDepthIsDefault())}, text: $component.currentPlpAnalysis().moMaxDepthIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moMinImpuritySplit')">
 					<label data-bind="text: $component.modelSettingDescription('moMinImpuritySplit')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moMinImpuritySplit" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moMinImpuritySplit" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moMinImpuritySplitIsDefault(), click: function(data, event) { resetToDefault('moMinImpuritySplit') }, css: {'btn-danger': !($component.curentPlpAnalysis().moMinImpuritySplitIsDefault())}, text: $component.curentPlpAnalysis().moMinImpuritySplitIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moMinImpuritySplitIsDefault(), click: function(data, event) { resetToDefault('moMinImpuritySplit') }, css: {'btn-danger': !($component.currentPlpAnalysis().moMinImpuritySplitIsDefault())}, text: $component.currentPlpAnalysis().moMinImpuritySplitIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moMinRows')">
 					<label data-bind="text: $component.modelSettingDescription('moMinRows')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moMinRows" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moMinRows" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moMinRowsIsDefault(), click: function(data, event) { resetToDefault('moMinRows') }, css: {'btn-danger': !($component.curentPlpAnalysis().moMinRowsIsDefault())}, text: $component.curentPlpAnalysis().moMinRowsIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moMinRowsIsDefault(), click: function(data, event) { resetToDefault('moMinRows') }, css: {'btn-danger': !($component.currentPlpAnalysis().moMinRowsIsDefault())}, text: $component.currentPlpAnalysis().moMinRowsIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moMinSamplesLeaf')">
 					<label data-bind="text: $component.modelSettingDescription('moMinSamplesLeaf')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moMinSamplesLeaf" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moMinSamplesLeaf" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moMinSamplesLeafIsDefault(), click: function(data, event) { resetToDefault('moMinSamplesLeaf') }, css: {'btn-danger': !($component.curentPlpAnalysis().moMinSamplesLeafIsDefault())}, text: $component.curentPlpAnalysis().moMinSamplesLeafIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moMinSamplesLeafIsDefault(), click: function(data, event) { resetToDefault('moMinSamplesLeaf') }, css: {'btn-danger': !($component.currentPlpAnalysis().moMinSamplesLeafIsDefault())}, text: $component.currentPlpAnalysis().moMinSamplesLeafIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moMinSamplesSplit')">
 					<label data-bind="text: $component.modelSettingDescription('moMinSamplesSplit')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moMinSamplesSplit" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moMinSamplesSplit" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moMinSamplesSplitIsDefault(), click: function(data, event) { resetToDefault('moMinSamplesSplit') }, css: {'btn-danger': !($component.curentPlpAnalysis().moMinSamplesSplitIsDefault())}, text: $component.curentPlpAnalysis().moMinSamplesSplitIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moMinSamplesSplitIsDefault(), click: function(data, event) { resetToDefault('moMinSamplesSplit') }, css: {'btn-danger': !($component.currentPlpAnalysis().moMinSamplesSplitIsDefault())}, text: $component.currentPlpAnalysis().moMinSamplesSplitIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moMTries')">
 					<label data-bind="text: $component.modelSettingDescription('moMTries')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moMTries" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moMTries" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moMTriesIsDefault(), click: function(data, event) { resetToDefault('moMTries') }, css: {'btn-danger': !($component.curentPlpAnalysis().moMTriesIsDefault())}, text: $component.curentPlpAnalysis().moMTriesIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moMTriesIsDefault(), click: function(data, event) { resetToDefault('moMTries') }, css: {'btn-danger': !($component.currentPlpAnalysis().moMTriesIsDefault())}, text: $component.currentPlpAnalysis().moMTriesIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moNEstimators')">
 					<label data-bind="text: $component.modelSettingDescription('moNEstimators')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moNEstimators" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moNEstimators" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moNEstimatorsIsDefault(), click: function(data, event) { resetToDefault('moNEstimators') }, css: {'btn-danger': !($component.curentPlpAnalysis().moNEstimatorsIsDefault())}, text: $component.curentPlpAnalysis().moNEstimatorsIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moNEstimatorsIsDefault(), click: function(data, event) { resetToDefault('moNEstimators') }, css: {'btn-danger': !($component.currentPlpAnalysis().moNEstimatorsIsDefault())}, text: $component.currentPlpAnalysis().moNEstimatorsIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moNThread')">
 					<label data-bind="text: $component.modelSettingDescription('moNThread')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moNThread" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moNThread" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moNThreadIsDefault(), click: function(data, event) { resetToDefault('moNThread') }, css: {'btn-danger': !($component.curentPlpAnalysis().moNThreadIsDefault())}, text: $component.curentPlpAnalysis().moNThreadIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moNThreadIsDefault(), click: function(data, event) { resetToDefault('moNThread') }, css: {'btn-danger': !($component.currentPlpAnalysis().moNThreadIsDefault())}, text: $component.currentPlpAnalysis().moNThreadIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moNTrees')">
 					<label data-bind="text: $component.modelSettingDescription('moNTrees')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moNTrees" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moNTrees" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moNTreesIsDefault(), click: function(data, event) { resetToDefault('moNTrees') }, css: {'btn-danger': !($component.curentPlpAnalysis().moNTreesIsDefault())}, text: $component.curentPlpAnalysis().moNTreesIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moNTreesIsDefault(), click: function(data, event) { resetToDefault('moNTrees') }, css: {'btn-danger': !($component.currentPlpAnalysis().moNTreesIsDefault())}, text: $component.currentPlpAnalysis().moNTreesIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moPlot')">
 					<label data-bind="text: $component.modelSettingDescription('moPlot')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moPlot" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moPlot" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moPlotIsDefault(), click: function(data, event) { resetToDefault('moPlot') }, css: {'btn-danger': !($component.curentPlpAnalysis().moPlotIsDefault())}, text: $component.curentPlpAnalysis().moPlotIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moPlotIsDefault(), click: function(data, event) { resetToDefault('moPlot') }, css: {'btn-danger': !($component.currentPlpAnalysis().moPlotIsDefault())}, text: $component.currentPlpAnalysis().moPlotIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moSeed')">
 					<label data-bind="text: $component.modelSettingDescription('moSeed')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moSeed" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moSeed" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moSeedIsDefault(), click: function(data, event) { resetToDefault('moSeed') }, css: {'btn-danger': !($component.curentPlpAnalysis().moSeedIsDefault())}, text: $component.curentPlpAnalysis().moSeedIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moSeedIsDefault(), click: function(data, event) { resetToDefault('moSeed') }, css: {'btn-danger': !($component.currentPlpAnalysis().moSeedIsDefault())}, text: $component.currentPlpAnalysis().moSeedIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moSize')">
 					<label data-bind="text: $component.modelSettingDescription('moSize')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moSize" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moSize" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moSizeIsDefault(), click: function(data, event) { resetToDefault('moSize') }, css: {'btn-danger': !($component.curentPlpAnalysis().moSizeIsDefault())}, text: $component.curentPlpAnalysis().moSizeIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moSizeIsDefault(), click: function(data, event) { resetToDefault('moSize') }, css: {'btn-danger': !($component.currentPlpAnalysis().moSizeIsDefault())}, text: $component.currentPlpAnalysis().moSizeIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moVariance')">
 					<label data-bind="text: $component.modelSettingDescription('moVariance')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moVariance" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moVariance" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moVarianceIsDefault(), click: function(data, event) { resetToDefault('moVariance') }, css: {'btn-danger': !($component.curentPlpAnalysis().moVarianceIsDefault())}, text: $component.curentPlpAnalysis().moVarianceIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moVarianceIsDefault(), click: function(data, event) { resetToDefault('moVariance') }, css: {'btn-danger': !($component.currentPlpAnalysis().moVarianceIsDefault())}, text: $component.currentPlpAnalysis().moVarianceIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
 				<div data-bind="if: $component.modelSettingExists('moVarImp')">
 					<label data-bind="text: $component.modelSettingDescription('moVarImp')"></label>
 					<div class="input-group">
-						<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().moVarImp" />
+						<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().moVarImp" />
 						<span class="input-group-btn">
-								<button class="btn" data-bind="disable: $component.curentPlpAnalysis().moVarImpIsDefault(), click: function(data, event) { resetToDefault('moVarImp') }, css: {'btn-danger': !($component.curentPlpAnalysis().moVarImpIsDefault())}, text: $component.curentPlpAnalysis().moVarImpIsDefault() ? 'Using default' : 'Reset to default'"></button>
+								<button class="btn" data-bind="disable: $component.currentPlpAnalysis().moVarImpIsDefault(), click: function(data, event) { resetToDefault('moVarImp') }, css: {'btn-danger': !($component.currentPlpAnalysis().moVarImpIsDefault())}, text: $component.currentPlpAnalysis().moVarImpIsDefault() ? 'Using default' : 'Reset to default'"></button>
 						</span>
 					</div>
 				</div>
@@ -216,79 +216,79 @@
 		<div>
 			<label>Define the time-at-risk window start, relative to target cohort entry:</label>
 			<div class="input-group">
-				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: curentPlpAnalysis().timeAtRiskStart.numeric(), eventType:'blur', ko_autocomplete: { value: curentPlpAnalysis().timeAtRiskStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from cohort start date
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: currentPlpAnalysis().timeAtRiskStart.numeric(), eventType:'blur', ko_autocomplete: { value: currentPlpAnalysis().timeAtRiskStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from cohort start date
 			</div>
 		</div>
 		<div>
 			<label>Define the time-at-risk window end:</label>
 			<div class="input-group">
-				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: curentPlpAnalysis().timeAtRiskEnd.numeric(), eventType:'blur', ko_autocomplete: { value: curentPlpAnalysis().timeAtRiskEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from cohort start date
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: currentPlpAnalysis().timeAtRiskEnd.numeric(), eventType:'blur', ko_autocomplete: { value: currentPlpAnalysis().timeAtRiskEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from cohort start date
 			</div>
 		</div>
 		<div>
 			<label>Minimum lookback period applied to target cohort:</label>
 			<div class="input-group">
-				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: curentPlpAnalysis().minimumWashoutPeriod.numeric(), eventType:'blur', ko_autocomplete: { value: curentPlpAnalysis().minimumWashoutPeriod, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: currentPlpAnalysis().minimumWashoutPeriod.numeric(), eventType:'blur', ko_autocomplete: { value: currentPlpAnalysis().minimumWashoutPeriod, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
 			</div>
 		</div>
 		<div>
 			<label>Should subjects without time at risk be removed?</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: curentPlpAnalysis().requireTimeAtRisk"></select>
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().requireTimeAtRisk"></select>
 			</div>
 		</div>
 		<div>
 			<label>Should only the first exposure per subject be included?</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: curentPlpAnalysis().firstExposureOnly"></select>
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().firstExposureOnly"></select>
 			</div>
 		</div>
 		<div>
 			<label>Include people with outcomes who are not observed for the whole at risk period?</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: curentPlpAnalysis().includeAllOutcomes"></select>
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().includeAllOutcomes"></select>
 			</div>
 		</div>
 		<div>
 			<label>Sample a subset of the target group for testing?</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: curentPlpAnalysis().sample"></select>
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().sample"></select>
 			</div>
-			<div data-bind="visible: curentPlpAnalysis().sample() == 1">
+			<div data-bind="visible: currentPlpAnalysis().sample() == 1">
 				<div class="input-group">
 					<label>How many patients to use for a subset?&nbsp;&nbsp;</label>
-					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: curentPlpAnalysis().sampleSize.numeric(), eventType:'blur', ko_autocomplete: { value: curentPlpAnalysis().sampleSize, source: $component.options.sampleSizeOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> patients
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: currentPlpAnalysis().sampleSize.numeric(), eventType:'blur', ko_autocomplete: { value: currentPlpAnalysis().sampleSize, source: $component.options.sampleSizeOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> patients
 				</div>
 			</div>
 		</div>
 		<div>
 			<label>Remove patients who have observed the outcome prior to cohort entry?</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: curentPlpAnalysis().rmPriorOutcomes"></select>
+				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().rmPriorOutcomes"></select>
 			</div>
-			<div data-bind="visible: curentPlpAnalysis().rmPriorOutcomes() == 1">
+			<div data-bind="visible: currentPlpAnalysis().rmPriorOutcomes() == 1">
 				<div class="input-group">
 					<label>How many days to look back from cohort entry for the outcome?&nbsp;&nbsp;</label>
-					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: curentPlpAnalysis().priorOutcomeLookback.numeric(), eventType:'blur', ko_autocomplete: { value: curentPlpAnalysis().priorOutcomeLookback, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days prior to cohort start
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: currentPlpAnalysis().priorOutcomeLookback.numeric(), eventType:'blur', ko_autocomplete: { value: currentPlpAnalysis().priorOutcomeLookback, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days prior to cohort start
 				</div>
 			</div>
 		</div>
 		<div>
 			<label>Specify how to split the test/train set:</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: curentPlpAnalysis().testSplitOptions, optionsText:'desc', optionsValue:'id', value: curentPlpAnalysis().testSplit"></select>
+				<select class="form-control" data-bind="options: currentPlpAnalysis().testSplitOptions, optionsText:'desc', optionsValue:'id', value: currentPlpAnalysis().testSplit"></select>
 			</div>
 		</div>
 		<div class="input-group">
 			<label>Percentage of the data to be used as the test set (0-100%):</label>
 			<div class="input-group">
-				<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().testFraction" />
+				<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().testFraction" />
 			</div>
 		</div>
 		<div class="input-group">
 			<label>The number of folds used in the cross validation:</label>
 			<div class="input-group">
-				<input class="form-control" type="text" data-bind="value: curentPlpAnalysis().nFold" />
+				<input class="form-control" type="text" data-bind="value: currentPlpAnalysis().nFold" />
 			</div>
 		</div>
 		<div>
@@ -298,76 +298,76 @@
 					<li>Demographics</li>
 					<ul>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvDemographicsGender" />Gender</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvDemographicsGender" />Gender</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvDemographicsAge" />Age group (5-year bands)</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvDemographicsAge" />Age group (5-year bands)</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvDemographicsYear" />Index year</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvDemographicsYear" />Index year</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvDemographicsMonth" />Index month</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvDemographicsMonth" />Index month</li>
 						<li>
-							<input type="checkbox" data-bind="checked: curentPlpAnalysis().cvDemographicsRace" />Race</li>
+							<input type="checkbox" data-bind="checked: currentPlpAnalysis().cvDemographicsRace" />Race</li>
 						<li>
-							<input type="checkbox" data-bind="checked: curentPlpAnalysis().cvDemographicsEthnicity" />Ethnicity</li>
+							<input type="checkbox" data-bind="checked: currentPlpAnalysis().cvDemographicsEthnicity" />Ethnicity</li>
 					</ul>
 				</ul>
 				<ul>
 					<li>Conditions</li>
 					<ul>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvConditionOcc30d" />In prior 30d</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvConditionOcc30d" />In prior 30d</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvConditionOcc365d" />In prior 365d</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvConditionOcc365d" />In prior 365d</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvConditionOccInpt180d" />In prior 180d within inpatient setting</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvConditionOccInpt180d" />In prior 180d within inpatient setting</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvConditionEraEver" />All time prior</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvConditionEraEver" />All time prior</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvConditionEraOverlap" />Overlapping index date</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvConditionEraOverlap" />Overlapping index date</li>
 					</ul>
 				</ul>
 				<ul>
 					<li>Drugs</li>
 					<ul>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvDrugInPrior30d" />In prior 30d</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvDrugInPrior30d" />In prior 30d</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvDrugInPrior365d" />In prior 365d</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvDrugInPrior365d" />In prior 365d</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvDrugEraEver" />All time prior</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvDrugEraEver" />All time prior</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvDrugEraOverlap" />Overlapping index date</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvDrugEraOverlap" />Overlapping index date</li>
 					</ul>
 				</ul>
 				<ul>
 					<li>Procedures</li>
 					<ul>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvProcedureOcc30d" />In prior 30d</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvProcedureOcc30d" />In prior 30d</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvProcedureOcc365d" />In prior 365d</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvProcedureOcc365d" />In prior 365d</li>
 					</ul>
 				</ul>
 				<ul>
 					<li>Measurement</li>
 					<ul>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvMeasurement30d" />Existence in prior 30d</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvMeasurement30d" />Existence in prior 30d</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvMeasurement365d" />Existence in prior 365d</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvMeasurement365d" />Existence in prior 365d</li>
 					</ul>
 				</ul>
 				<ul>
 					<li>Risk scores</li>
 					<ul>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvRiskScoresCharlson" />Charlson</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvRiskScoresCharlson" />Charlson</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvRiskScoresChads2" />CHADS2</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvRiskScoresChads2" />CHADS2</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvRiskScoresChads2vasc" />CHADS2VASc</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvRiskScoresChads2vasc" />CHADS2VASc</li>
 						<li>
-							<input type="checkbox" data-bind="checked:curentPlpAnalysis().cvRiskScoresDcsi" />DCSI</li>
+							<input type="checkbox" data-bind="checked:currentPlpAnalysis().cvRiskScoresDcsi" />DCSI</li>
 					</ul>
 				</ul>
 			</div>
@@ -375,30 +375,30 @@
 		<div>
 			<label>Specify the minimum number of subjects for a covariate to enter the model:</label>
 			<div class="input-group">
-				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: curentPlpAnalysis().delCovariatesSmallCount.numeric(), eventType:'blur', ko_autocomplete: { value: curentPlpAnalysis().delCovariatesSmallCount, source: $component.options.delCovariatesSmallCount, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: currentPlpAnalysis().delCovariatesSmallCount.numeric(), eventType:'blur', ko_autocomplete: { value: currentPlpAnalysis().delCovariatesSmallCount, source: $component.options.delCovariatesSmallCount, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;
 			</div>
 		</div>
 		<div>
 			<label>What concepts do you want to include as covariates? (Leave blank if you want to include everything)</label>
 			<div class="input-group">
-				<input class="form-control" type="text" disabled data-bind="value: curentPlpAnalysis().cvInclusionCaption" />
+				<input class="form-control" type="text" disabled data-bind="value: currentPlpAnalysis().cvInclusionCaption" />
 				<span class="input-group-btn">
 									<button class="btn btn-primary" data-bind="click:choosePsInclusion"><i class="fa fa-folder-open"></i></button>
-									<button class="btn btn-danger" data-bind="disable: curentPlpAnalysis().cvInclusionId() == 0, click:clearPsInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+									<button class="btn btn-danger" data-bind="disable: currentPlpAnalysis().cvInclusionId() == 0, click:clearPsInclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 								</span>
 			</div>
-			<div data-bind="visible: curentPlpAnalysis().cvInclusionId() > 0 && curentPlpAnalysis().cvInclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:curentPlpAnalysis().cvInclusionId()"></span>) was deleted. Please select a different concept set.</div>
+			<div data-bind="visible: currentPlpAnalysis().cvInclusionId() > 0 && currentPlpAnalysis().cvInclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:currentPlpAnalysis().cvInclusionId()"></span>) was deleted. Please select a different concept set.</div>
 		</div>
 		<div>
 			<label>What concepts do you want to exclude? (Leave blank if you want to include everything)</label>
 			<div class="input-group">
-				<input class="form-control" type="text" disabled data-bind="value: curentPlpAnalysis().cvExclusionCaption" />
+				<input class="form-control" type="text" disabled data-bind="value: currentPlpAnalysis().cvExclusionCaption" />
 				<span class="input-group-btn">
 									<button class="btn btn-primary" data-bind="click:choosePsExclusion"><i class="fa fa-folder-open"></i></button>
-									<button class="btn btn-danger" data-bind="disable:curentPlpAnalysis().cvExclusionId() == 0, click:clearPsExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+									<button class="btn btn-danger" data-bind="disable:currentPlpAnalysis().cvExclusionId() == 0, click:clearPsExclusion" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 								</span>
 			</div>
-			<div data-bind="visible: curentPlpAnalysis().cvExclusionId() > 0 && curentPlpAnalysis().cvExclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:curentPlpAnalysis().cvExclusionId()"></span>) was deleted. Please select a different concept set.</div>
+			<div data-bind="visible: currentPlpAnalysis().cvExclusionId() > 0 && currentPlpAnalysis().cvExclusionCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text:currentPlpAnalysis().cvExclusionId()"></span>) was deleted. Please select a different concept set.</div>
 		</div>
 	</div>
 	<div class="col-md-4"></div>

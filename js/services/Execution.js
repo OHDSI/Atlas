@@ -59,7 +59,7 @@ define(function(require, exports){
 
   function checkExecutionEngineStatus(isAuthenticated) {
     if (isAuthenticated && config.useExecutionEngine) {
-      getEngineStatus.then(({ data: v }) => {
+      getEngineStatus().then(({ data: v }) => {
         config.api.isExecutionEngineAvailable(v.status === 'ONLINE')
       });
     }

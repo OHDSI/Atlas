@@ -8,7 +8,7 @@ define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 		ConceptSet) {
 		function plpSpecEditor(params) {
 			var self = this;
-			self.curentPlpAnalysis = params.curentPlpAnalysis;
+			self.currentPlpAnalysis = params.currentPlpAnalysis;
 			self.patientLevelPredictionDirtyFlag = params.dirtyFlag;
 			self.options = options;
 
@@ -44,69 +44,69 @@ define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 
 			self.chooseTreatment = function () {
 				$('#modalCohortDefinition').modal('show');
-				self.targetId = self.curentPlpAnalysis().treatmentId;
-				self.targetCaption = self.curentPlpAnalysis().treatmentCaption;
-				self.targetCohortDefinition = self.curentPlpAnalysis().treatmentCohortDefinition;
+				self.targetId = self.currentPlpAnalysis().treatmentId;
+				self.targetCaption = self.currentPlpAnalysis().treatmentCaption;
+				self.targetCohortDefinition = self.currentPlpAnalysis().treatmentCohortDefinition;
 			}
 
 			self.chooseOutcome = function () {
 				$('#modalCohortDefinition').modal('show');
-				self.targetId = self.curentPlpAnalysis().outcomeId;
-				self.targetCaption = self.curentPlpAnalysis().outcomeCaption;
-				self.targetCohortDefinition = self.curentPlpAnalysis().outcomeCohortDefinition;
+				self.targetId = self.currentPlpAnalysis().outcomeId;
+				self.targetCaption = self.currentPlpAnalysis().outcomeCaption;
+				self.targetCohortDefinition = self.currentPlpAnalysis().outcomeCohortDefinition;
 			}
 
 			self.choosePsExclusion = function () {
 				$('#modalConceptSet').modal('show');
-				self.targetId = self.curentPlpAnalysis().cvExclusionId;
-				self.targetCaption = self.curentPlpAnalysis().cvExclusionCaption;
-				self.targetExpression = self.curentPlpAnalysis().cvExclusionConceptSet;
-				self.targetConceptSetSQL = self.curentPlpAnalysis().cvExclusionConceptSetSQL;
+				self.targetId = self.currentPlpAnalysis().cvExclusionId;
+				self.targetCaption = self.currentPlpAnalysis().cvExclusionCaption;
+				self.targetExpression = self.currentPlpAnalysis().cvExclusionConceptSet;
+				self.targetConceptSetSQL = self.currentPlpAnalysis().cvExclusionConceptSetSQL;
 			}
 
 			self.choosePsInclusion = function () {
 				$('#modalConceptSet').modal('show');
-				self.targetId = self.curentPlpAnalysis().cvInclusionId;
-				self.targetCaption = self.curentPlpAnalysis().cvInclusionCaption;
-				self.targetExpression = self.curentPlpAnalysis().cvInclusionConceptSet;
-				self.targetConceptSetSQL = self.curentPlpAnalysis().cvInclusionConceptSetSQL;
+				self.targetId = self.currentPlpAnalysis().cvInclusionId;
+				self.targetCaption = self.currentPlpAnalysis().cvInclusionCaption;
+				self.targetExpression = self.currentPlpAnalysis().cvInclusionConceptSet;
+				self.targetConceptSetSQL = self.currentPlpAnalysis().cvInclusionConceptSetSQL;
 			}
 
 			self.clearPsExclusion = function () {
-				self.curentPlpAnalysis().cvExclusionId(0);
-				self.curentPlpAnalysis().cvExclusionCaption(null);
-				self.curentPlpAnalysis().cvExclusionConceptSet.removeAll();
-				self.curentPlpAnalysis().cvExclusionConceptSetSQL(null);
+				self.currentPlpAnalysis().cvExclusionId(0);
+				self.currentPlpAnalysis().cvExclusionCaption(null);
+				self.currentPlpAnalysis().cvExclusionConceptSet.removeAll();
+				self.currentPlpAnalysis().cvExclusionConceptSetSQL(null);
 			}
 
 			self.clearPsInclusion = function () {
-				self.curentPlpAnalysis().cvInclusionId(0);
-				self.curentPlpAnalysis().cvInclusionCaption(null);
-				self.curentPlpAnalysis().cvInclusionConceptSet.removeAll();
-				self.curentPlpAnalysis().cvInclusionConceptSetSQL(null);
+				self.currentPlpAnalysis().cvInclusionId(0);
+				self.currentPlpAnalysis().cvInclusionCaption(null);
+				self.currentPlpAnalysis().cvInclusionConceptSet.removeAll();
+				self.currentPlpAnalysis().cvInclusionConceptSetSQL(null);
 			}
 
 			self.clearTreatment = function () {
-				self.curentPlpAnalysis().treatmentId(0);
-				self.curentPlpAnalysis().treatmentCaption(null);
-				self.curentPlpAnalysis().treatmentCohortDefinition(null);
+				self.currentPlpAnalysis().treatmentId(0);
+				self.currentPlpAnalysis().treatmentCaption(null);
+				self.currentPlpAnalysis().treatmentCohortDefinition(null);
 			}
 
 			self.clearOutcome = function () {
-				self.curentPlpAnalysis().outcomeId(0);
-				self.curentPlpAnalysis().outcomeCaption(null);
-				self.curentPlpAnalysis().outcomeCohortDefinition(null);
+				self.currentPlpAnalysis().outcomeId(0);
+				self.currentPlpAnalysis().outcomeCaption(null);
+				self.currentPlpAnalysis().outcomeCohortDefinition(null);
 			}
 
 			self.modelSettingExists = function (settingName) {
-				settingList = self.curentPlpAnalysis().modelTypeSettings().filter(function (item) {
+				settingList = self.currentPlpAnalysis().modelTypeSettings().filter(function (item) {
 					return item.setting == settingName;
 				});
 				return (settingList.length > 0);
 			}
 
 			self.modelSettingDescription = function (settingName) {
-				settingList = self.curentPlpAnalysis().modelTypeSettings().filter(function (item) {
+				settingList = self.currentPlpAnalysis().modelTypeSettings().filter(function (item) {
 					return item.setting == settingName;
 				});
 				if (settingList.length > 0) {
@@ -117,7 +117,7 @@ define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 			}
 
 			self.resetToDefault = function (settingName) {
-				var currentSetting = self.curentPlpAnalysis().getCurrentModelSettingsByName(settingName);
+				var currentSetting = self.currentPlpAnalysis().getCurrentModelSettingsByName(settingName);
 				if (currentSetting && currentSetting.length > 0) {
 					currentSetting[0].reference(currentSetting[0].defaultValue);
 				}
