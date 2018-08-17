@@ -16,13 +16,27 @@
             <!-- select sources -->
             <div data-bind="if: hasMultipleProviders && wizardStep() === $component.WIZARD_STEPS.PROVIDERS">
                 <step-header params="header:'Please, select a provider to import users from.'"></step-header>
-                    <div data-bind="css: classes({extra: ['btn-group', 'users-import__group']})">
-                        <label data-bind="css: classes({extra: ['btn']})" ><input name="importSource" id="cbActiveDirectory" type="radio" value="ad" data-bind="checked: importProvider" /> Active Directory</label>
-                        <label data-bind="css: classes({extra: ['btn']})"><input name="importSource" id="cbLdap" type="radio" value="ldap" data-bind="checked: importProvider" /> LDAP server</label>
+                <div data-bind="if: connectionCheck()">
+                    <div data-bind="css: classes({extra: ['panel', 'panel-warning', 'padded']})">
+                        <div data-bind="css: classes({extra: ['panel-body']})">
+                            <div data-bind="css: infoMessageClass(), text: connectionCheck().message"></div>
+                            <div data-bind="if: connectionCheck() && connectionCheck().state === 'FAILED'">
+                                <button data-bind="click: toggleConnectionDetails, css: classes({extra: ['btn', 'btn-sm', 'btn-info']}), text: detailsButtonText">Details >>></button>
+                                <div data-bind="if: showConnectionDetails(), css: classes('connection-details')">
+                                    <pre data-bind="text: connectionCheck().details, css: classes({extra: 'radius-border'})">
+                                    </pre>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div data-bind="css: classes('provider-buttons')">
-                        <button data-bind="click: testConnection, css: classes({extra: ['btn', 'btn-sm', 'btn-success']})"><i data-bind="css: classes({ extra: ['fa', 'fa-plug']})"></i> Test connection</button>
-                    </div>
+                </div>
+                <div data-bind="css: classes({extra: ['btn-group', 'users-import__group']})">
+                    <label data-bind="css: classes({extra: ['btn']})" ><input name="importSource" id="cbActiveDirectory" type="radio" value="ad" data-bind="checked: importProvider" /> Active Directory</label>
+                    <label data-bind="css: classes({extra: ['btn']})"><input name="importSource" id="cbLdap" type="radio" value="ldap" data-bind="checked: importProvider" /> LDAP server</label>
+                </div>
+                <div data-bind="css: classes('provider-buttons')">
+                    <button data-bind="click: testConnectionClick, css: classes({extra: ['btn', 'btn-sm', 'btn-success']})"><i data-bind="css: classes({ extra: ['fa', 'fa-plug']})"></i> Test connection</button>
+                </div>
             </div>
 
             <!-- Role mapping -->
@@ -84,12 +98,13 @@
                                         order: [[ 1, 'asc' ]],
                                         columns: [
                                                 { title: 'Selected', class: 'text-center', width: '1.5rem', render: function(){ return renderCheckbox('included'); } },
-                                                { title: 'AD/LDAP username', data: 'displayName', },
-                                                { title: 'Atlas Login', data: 'login', },
+                                                { title: renderUsernameTitle(), data: 'displayName' },
+                                                { title: renderLoginTitle(), data: 'login', },
                                                 { title: 'Atlas roles', render: renderRoles, },
                                                 { title: 'Status', render: renderStatus, },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
+                                        initComplete: function() { onTableInit(); },
                                 }
                               }, css: classes({extra: ['stripe', 'compact', 'hover']})">
                         </table>
@@ -149,6 +164,33 @@
                     <button data-bind="click: setRoles, css: classes({extra: ['btn', 'btn-sm', 'btn-primary'] })">Set</button>
                     <button data-bind="click: closeRolesModal, css: classes({extra: ['btn', 'btn-sm', 'btn-success'] })">Cancel</button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Help -->
+<div data-bind="modal: isShowUsernameHelp, css: classes({extra: ['modal', 'fade']})" tabindex="-1 " role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                AD/LDAP Username
+            </div>
+            <div class="modal-body">
+                This field is mapped from LDAP/AD <strong>Display Name</strong> field.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div data-bind="modal: isShowLoginHelp, css: classes({extra: ['modal', 'fade']})" tabindex="-1 " role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                Atlas Login
+            </div>
+            <div class="modal-body">
+                This field is mapped directly from LDAP/AD <strong>login</strong> field and would be used as login for Atlas.
             </div>
         </div>
     </div>

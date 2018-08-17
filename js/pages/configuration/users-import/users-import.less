@@ -27,4 +27,24 @@
     display: flex;
     justify-content: center;
   }
+  &__connection-details {
+    max-height: 30rem;
+    overflow: auto;
+    margin-top: 1rem;
+  }
+  &__info-message {
+    margin-bottom: 1rem;
+
+    &--success {
+      color: green;
+    }
+    &--failed {
+      color: red;
+    }
+  }
+  &__helpIcon, th &__helpIcon {
+    margin-left: 0.5rem;
+    font-size: 1.5em;
+    color: #000080;
+  }
 }
