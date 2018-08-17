@@ -97,16 +97,27 @@
                                         ordering: true,
                                         order: [[ 1, 'asc' ]],
                                         columns: [
-                                                { title: 'Selected', class: 'text-center', width: '1.5rem', render: function(){ return renderCheckbox('included'); } },
-                                                { title: renderUsernameTitle(), data: 'displayName' },
-                                                { title: renderLoginTitle(), data: 'login', },
-                                                { title: 'Atlas roles', render: renderRoles, },
-                                                { title: 'Status', render: renderStatus, },
+                                                { class: 'text-center', width: '1.5rem', render: function(){ return renderCheckbox('included'); } },
+                                                { data: 'displayName' },
+                                                { data: 'login', },
+                                                { render: renderRoles, },
+                                                { render: renderStatus, },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
                                         initComplete: function() { onTableInit(); },
                                 }
                               }, css: classes({extra: ['stripe', 'compact', 'hover']})">
+                            <thead>
+                                <th>Selected</th>
+                                <th>
+                                    <span>AD/LDAP username <i data-bind="click: $component.showUsernameHelp, clickBubble: false" class="users-import__helpIcon fa fa-question-circle"></i></span>
+                                </th>
+                                <th>
+                                    <span>Atlas Login <i data-bind="click: $component.showLoginHelp, clickBubble: false" class="users-import__helpIcon fa fa-question-circle"></i></span>
+                                </th>
+                                <th>Atlas roles</th>
+                                <th>Status</th>
+                            </thead>
                         </table>
                     </div>
                 </div>
@@ -170,28 +181,22 @@
 </div>
 
 <!-- Help -->
-<div data-bind="modal: isShowUsernameHelp, css: classes({extra: ['modal', 'fade']})" tabindex="-1 " role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                AD/LDAP Username
-            </div>
-            <div class="modal-body">
-                This field is mapped from LDAP/AD <strong>Display Name</strong> field.
-            </div>
-        </div>
-    </div>
-</div>
+<atlas-modal params="
+    showModal: $component.isShowUsernameHelp,
+    title: 'AD/LDAP Username',
+    template: 'user-import-username-help-template',
+"></atlas-modal>
 
-<div data-bind="modal: isShowLoginHelp, css: classes({extra: ['modal', 'fade']})" tabindex="-1 " role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                Atlas Login
-            </div>
-            <div class="modal-body">
-                This field is mapped directly from LDAP/AD <strong>login</strong> field and would be used as login for Atlas.
-            </div>
-        </div>
-    </div>
-</div>
+<atlas-modal params="
+    showModal: $component.isShowLoginHelp,
+    title: 'Atlas Login',
+    template: 'user-import-login-help-template',
+"></atlas-modal>
+
+<script type="text/html" id="user-import-username-help-template">
+    This field is mapped from LDAP/AD <strong>Display Name</strong> field.
+</script>
+
+<script type="text/html" id="user-import-login-help-template">
+    This field is mapped directly from LDAP/AD <strong>login</strong> field and would be used as login for Atlas.
+</script>

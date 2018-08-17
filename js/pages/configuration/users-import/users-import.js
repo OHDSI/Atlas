@@ -14,6 +14,7 @@ define(['knockout',
 		'./components/atlas-roles',
 		'components/ac-access-denied',
 		'less!./users-import.less',
+		'components/modal'
 	],
 	function (
 		ko, 
@@ -123,7 +124,6 @@ define(['knockout',
 				this.loadMapping = this.loadMapping.bind(this);
 				this.testConnection = this.testConnection.bind(this);
 				this.testConnectionClick = this.testConnectionClick.bind(this);
-				this.renderUsernameTitle = this.renderUsernameTitle.bind(this);
 				this.onTableInit = this.onTableInit.bind(this);
 				this.showUsernameHelp = this.showUsernameHelp.bind(this);
 				this.showLoginHelp = this.showLoginHelp.bind(this);
@@ -313,28 +313,16 @@ define(['knockout',
 				this.closeRolesModal();
 			}
 
-			renderUsernameTitle(){
-				return '<span>AD/LDAP username <i id="usernameHelp" class="users-import__helpIcon fa fa-question-circle"></i></span>';
-			}
-
-			renderLoginTitle() {
-				return '<span>Atlas Login <i id="loginHelp" class="users-import__helpIcon fa fa-question-circle"></i></span>';
-			}
-
 			onTableInit(settings) {
 				$('#usernameHelp').click(this.showUsernameHelp);
 				$('#loginHelp').click(this.showLoginHelp);
 			}
 
-			showUsernameHelp(event, context) {
-				event.preventDefault();
-				event.stopPropagation();
+			showUsernameHelp() {
 				this.isShowUsernameHelp(true);
 			}
 
-			showLoginHelp(event, context) {
-				event.preventDefault();
-				event.stopPropagation();
+			showLoginHelp() {
 				this.isShowLoginHelp(true);
 			}
 
