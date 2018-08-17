@@ -6,7 +6,6 @@ define(['knockout',
 		'services/User',
 		'providers/Component',
 		'utils/CommonUtils',
-		'jquery',
 		'./components/renderers',
 		'./const',
 		'./components/step-header',
@@ -25,7 +24,6 @@ define(['knockout',
 		userService,
 		Component,
 		commonUtils,
-		$,
 		renderers,
 		Const) {
 
@@ -124,7 +122,6 @@ define(['knockout',
 				this.loadMapping = this.loadMapping.bind(this);
 				this.testConnection = this.testConnection.bind(this);
 				this.testConnectionClick = this.testConnectionClick.bind(this);
-				this.onTableInit = this.onTableInit.bind(this);
 				this.showUsernameHelp = this.showUsernameHelp.bind(this);
 				this.showLoginHelp = this.showLoginHelp.bind(this);
 
@@ -311,11 +308,6 @@ define(['knockout',
 					this.usersList.valueHasMutated();
 				}
 				this.closeRolesModal();
-			}
-
-			onTableInit(settings) {
-				$('#usernameHelp').click(this.showUsernameHelp);
-				$('#loginHelp').click(this.showLoginHelp);
 			}
 
 			showUsernameHelp() {
