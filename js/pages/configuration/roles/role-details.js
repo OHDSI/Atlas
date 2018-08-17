@@ -4,6 +4,7 @@ define([
     'appConfig',
     'assets/ohdsi.util',
     'services/User',
+    'webapi/AuthAPI',
     'databindings',
     'components/ac-access-denied',
     'less!./role-details.less',
@@ -12,7 +13,8 @@ define([
     view,
     config,
     ohdsiUtils,
-    userService
+    userService,
+    authApi,
 ) {
     function roleDetails(params) {
         var self = this;
