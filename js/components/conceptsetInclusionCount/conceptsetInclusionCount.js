@@ -22,12 +22,7 @@ define([
 			this.conceptSetExpression = params.conceptSetExpression || ko.observableArray();
 
 			this.getInclusionCount = this.getInclusionCount.bind(this);
-			this.conceptSetExpression.subscribe(this.getInclusionCount);
-			this.conceptSetExpression().forEach((item) => {
-				item.includeDescendants.subscribe(this.getInclusionCount);
-				item.includeMapped.subscribe(this.getInclusionCount);
-				item.isExcluded.subscribe(this.getInclusionCount);
-			});
+			ko.computed(() => ko.toJSON(this.conceptSetExpression)).subscribe(this.getInclusionCount);
 			this.getInclusionCount();
 		}
 
