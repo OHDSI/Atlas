@@ -592,9 +592,9 @@ define([
 										let conceptDetails = normalizedData.conceptPath[i].split('||');
 										return {
 											concept_id: normalizedData.conceptId[i],
-											level_4: conceptDetails[0],
-											level_3: conceptDetails[1],
-											level_2: conceptDetails[2],
+											level_3: conceptDetails[0],
+											level_2: conceptDetails[1],
+											level_1: conceptDetails[2],
 											procedure_name: conceptDetails[3],
 											num_persons: this.formatComma(normalizedData.numPersons[i]),
 											percent_persons: this.formatPercent(normalizedData.percentPersons[i]),
@@ -618,14 +618,14 @@ define([
 													data: 'concept_id'
 												},
 												{
-													data: 'level_4'
+													data: 'level_3'
 												},
 												{
-													data: 'level_3',
+													data: 'level_2',
 													visible: false
 												},
 												{
-													data: 'level_2'
+													data: 'level_1'
 												},
 												{
 													data: 'procedure_name'
@@ -2943,7 +2943,7 @@ define([
 							dataByDecile.forEach(function (trellis) {
 								trellis.values.forEach(function (series) {
 									series.values = yearRange.map(function (year) {
-										yearData = series.values.filter(function (f) {
+										let yearData = series.values.filter(function (f) {
 											return f.xCalendarYear === year;
 										})[0] || seriesInitializer(trellis.key, series.key, year, 0);
 										yearData.date = new Date(year, 0, 1);
