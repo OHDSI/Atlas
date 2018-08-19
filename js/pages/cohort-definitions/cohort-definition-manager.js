@@ -653,7 +653,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				} else {
 					document.location = "#/cohortdefinitions"
 						this.model.currentConceptSet(null);
-						this.model.currentConceptSetDirtyFlag.reset();
+						this.model.currentConceptSetDirtyFlag().reset();
 						this.model.currentCohortDefinition(null);
 						this.model.currentCohortDefinitionDirtyFlag().reset();
 						this.model.reportCohortDefinitionId(null);
