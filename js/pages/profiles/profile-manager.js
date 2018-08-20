@@ -111,8 +111,8 @@ define([
 					var conceptSets = ko.toJS(o.cohortDef.expression()
 						.ConceptSets());
 					conceptSets.forEach((conceptSet) => {
-						pageModel.resolveConceptSetExpressionSimple(
-							ko.toJSON(conceptSet.expression),
+						this.model.resolveConceptSetExpressionSimple(
+							ko.toJS(conceptSet.expression),
 							_.bind(this.loadedConceptSet, this, conceptSet))
 					});
 				};
