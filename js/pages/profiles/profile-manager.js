@@ -111,8 +111,8 @@ define([
 					var conceptSets = ko.toJS(o.cohortDef.expression()
 						.ConceptSets());
 					conceptSets.forEach((conceptSet) => {
-						pageModel.resolveConceptSetExpressionSimple(
-							ko.toJSON(conceptSet.expression),
+						this.model.resolveConceptSetExpressionSimple(
+							ko.toJS(conceptSet.expression),
 							_.bind(this.loadedConceptSet, this, conceptSet))
 					});
 				};
@@ -149,9 +149,6 @@ define([
 							return "fa fa-question";
 						}
 					}
-				});
-				this.age = ko.computed(() => {
-					if (this.person()) {}
 				});
 				this.dimensions = {
 					'Domain': {
@@ -344,8 +341,6 @@ define([
 									.value()
 							};
 						}
-						person.age = new Date(cohort.startDate)
-							.getFullYear() - person.yearOfBirth;
 						person.records.forEach((rec) => {
 							// have to get startDate from person.cohorts
 							// rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));

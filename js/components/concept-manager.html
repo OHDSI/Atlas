@@ -61,7 +61,10 @@
 	</div>
 
 	<div id="wrapperConceptHierarchy" data-bind="if:$root.currentConceptMode() == 'hierarchy' && !loadingRelated()">
-
+	<!-- ko ifnot: $root.currentConcept().STANDARD_CONCEPT == 'S' -->
+		<div>No hiearchy found for non-standard concepts.</div>
+	<!-- /ko -->
+	<!-- ko if: $root.currentConcept().STANDARD_CONCEPT == 'S' -->
 		<div id="wrapperParents">
 			<div class="heading">Parents</div>
 			<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
@@ -71,7 +74,7 @@
 									language: {
 										search: 'Filter Broader Concepts: '
 									},
-									rowCallback: $root.contextSensitiveLinkColor,
+									rowCallback: commonUtils.contextSensitiveLinkColor,
 									lengthMenu: [[-1], ['All']],
 									orderClasses: false,
 									ordering: true,
@@ -80,7 +83,7 @@
 											{ title: '', render: $root.renderConceptSelector, orderable:false, searchable:false},
 											{ title: 'Id', data: 'CONCEPT_ID'},
 											{ title: 'Code', data: 'CONCEPT_CODE'},
-											{ title: 'Name', data: 'CONCEPT_NAME', render: $root.renderLink, width: '50%'},
+											{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'RC', data: 'RECORD_COUNT'},
 											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
@@ -100,7 +103,7 @@
 										language: {
 											search: 'Filter Broader Concepts: '
 										},
-										rowCallback: $root.contextSensitiveLinkColor,
+										rowCallback: commonUtils.contextSensitiveLinkColor,
 										lengthMenu: [[-1], ['All']],
 										orderClasses: false,
 										ordering: true,
@@ -108,7 +111,7 @@
 										columns: [
 												{ title: 'Id', data: 'CONCEPT_ID'},
 												{ title: 'Code', data: 'CONCEPT_CODE'},
-												{ title: 'Name', data: 'CONCEPT_NAME', render: $root.renderLink, width: '50%'},
+												{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
 												{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 												{ title: 'RC', data: 'RECORD_COUNT'},
 												{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
@@ -129,7 +132,7 @@
 								},
 								options: {
 									dom: 't',
-									rowCallback: $root.contextSensitiveLinkColor,
+									rowCallback: commonUtils.contextSensitiveLinkColor,
 									lengthMenu: [[-1], ['All']],
 									orderClasses: false,
 									ordering: true,
@@ -138,7 +141,7 @@
 											{ title: '', render: $root.renderConceptSelector, orderable:false, searchable:false},
 											{ title: 'Id', data: 'CONCEPT_ID'},
 											{ title: 'Code', data: 'CONCEPT_CODE'},
-											{ title: 'Name', data: 'CONCEPT_NAME', render: $root.renderLink, width: '50%'},
+											{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'RC', data: 'RECORD_COUNT'},
 											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
@@ -150,6 +153,7 @@
 						}">
 			</table>
 		</div>
+	<!-- /ko -->
 	</div>
 
 	<div id="wrapperConceptDetails" data-bind="if:$root.currentConceptMode() == 'details'">
