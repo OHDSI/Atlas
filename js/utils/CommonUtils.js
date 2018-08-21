@@ -4,6 +4,10 @@ define(
 		const sharedState = require('atlas-state');
 		const Page = require('providers/Page');
 		
+
+		const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
+		const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
+
 		const build = function(name, viewModelClass, template) {
 			const component = {
 				viewModel: {
@@ -150,6 +154,7 @@ define(
 		return {
 			build,
             routeTo,
+			cartesian,
 			hasRelationship,
 			contextSensitiveLinkColor,
 			hasCDM,

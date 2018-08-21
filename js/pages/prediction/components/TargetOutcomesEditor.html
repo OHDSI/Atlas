@@ -1,0 +1,24 @@
+<div class="paddedWrapper">
+    <div>
+        <label>Choose your target cohort:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" disabled data-bind="value: targetOutcomes.targetId" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" data-bind="click:chooseTarget"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable:targetOutcomes.targetId() == 0, click:clearTarget" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+            </span>
+        </div>
+        <!--<div data-bind="visible: targetOutcomes().targetId() > 0 && targetOutcomes().targetName() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The target cohort specified (#<span data-bind="text:targetOutcomes().targetId()"></span>) was deleted. Please select a different cohort.</div>-->
+    </div>
+    <div>
+        <label>Choose your outcome cohorts <b>(NOTE: This experience will be replaced by the linked cohort experience)</b>:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" disabled data-bind="value: targetOutcomes.outcomeIds().length" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" data-bind="click:chooseOutcome"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable:targetOutcomes.outcomeIds() == 0,click:clearOutcome" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+            </span>
+        </div>
+        <!--<div data-bind="visible: patientLevelPrediction().outcomeId() > 0 && patientLevelPrediction().outcomeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The outcome cohort specified (#<span data-bind="text:patientLevelPrediction().outcomeId()"></span>) was deleted. Please select a different cohort.</div>-->
+    </div>
+</div>

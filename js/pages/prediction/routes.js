@@ -31,6 +31,12 @@ define(
             router.setCurrentView('plp-manager', params);
           });
         }),
+        '/prediction': new AuthorizedRoute((modelId) => {
+          appModel.activePage(this.title);
+          require(['./prediction-manager', './components/TargetOutcomesEditor', './components/ModelSettingsEditor', './components/PopulationSettingsEditor'], function () {
+            appModel.currentView('prediction-manager');
+          });
+        }),
       };
     }
 

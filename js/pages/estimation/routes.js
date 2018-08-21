@@ -30,6 +30,18 @@ define(
             router.setCurrentView('cohort-comparison-manager', params);
           });
         }),
+        '/fe': new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['components/featureextraction/components/CovariateSettingsEditor'], function () {
+            appModel.currentView('covar-settings-editor');
+          });
+        }),
+       '/est': new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['./cca-manager'], function () {
+            appModel.currentView('cca-manager');
+          });
+        }),
       };
     }
 
