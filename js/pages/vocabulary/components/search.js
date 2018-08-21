@@ -47,7 +47,6 @@ define([
 			this.searchExecuted = ko.observable(false);
 			this.searchColumns = ko.observableArray([]);
 			this.searchOptions = ko.observable();
-//			this.contextSensitiveLinkColor = ko.observable();
 
 			this.isInProgress = ko.computed(() => {
 				return this.domainsLoading() === true && this.vocabulariesLoading() === true;

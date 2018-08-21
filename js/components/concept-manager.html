@@ -74,7 +74,7 @@
 									language: {
 										search: 'Filter Broader Concepts: '
 									},
-									rowCallback: $root.contextSensitiveLinkColor,
+									rowCallback: commonUtils.contextSensitiveLinkColor,
 									lengthMenu: [[-1], ['All']],
 									orderClasses: false,
 									ordering: true,
@@ -83,7 +83,7 @@
 											{ title: '', render: $root.renderConceptSelector, orderable:false, searchable:false},
 											{ title: 'Id', data: 'CONCEPT_ID'},
 											{ title: 'Code', data: 'CONCEPT_CODE'},
-											{ title: 'Name', data: 'CONCEPT_NAME', render: $root.renderLink, width: '50%'},
+											{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'RC', data: 'RECORD_COUNT'},
 											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
@@ -103,7 +103,7 @@
 										language: {
 											search: 'Filter Broader Concepts: '
 										},
-										rowCallback: $root.contextSensitiveLinkColor,
+										rowCallback: commonUtils.contextSensitiveLinkColor,
 										lengthMenu: [[-1], ['All']],
 										orderClasses: false,
 										ordering: true,
@@ -111,7 +111,7 @@
 										columns: [
 												{ title: 'Id', data: 'CONCEPT_ID'},
 												{ title: 'Code', data: 'CONCEPT_CODE'},
-												{ title: 'Name', data: 'CONCEPT_NAME', render: $root.renderLink, width: '50%'},
+												{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
 												{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 												{ title: 'RC', data: 'RECORD_COUNT'},
 												{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
@@ -132,7 +132,7 @@
 								},
 								options: {
 									dom: 't',
-									rowCallback: $root.contextSensitiveLinkColor,
+									rowCallback: commonUtils.contextSensitiveLinkColor,
 									lengthMenu: [[-1], ['All']],
 									orderClasses: false,
 									ordering: true,
@@ -141,7 +141,7 @@
 											{ title: '', render: $root.renderConceptSelector, orderable:false, searchable:false},
 											{ title: 'Id', data: 'CONCEPT_ID'},
 											{ title: 'Code', data: 'CONCEPT_CODE'},
-											{ title: 'Name', data: 'CONCEPT_NAME', render: $root.renderLink, width: '50%'},
+											{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'RC', data: 'RECORD_COUNT'},
 											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
