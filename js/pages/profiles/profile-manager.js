@@ -150,9 +150,6 @@ define([
 						}
 					}
 				});
-				this.age = ko.computed(() => {
-					if (this.person()) {}
-				});
 				this.dimensions = {
 					'Domain': {
 						caption: 'Domain',
@@ -344,8 +341,6 @@ define([
 									.value()
 							};
 						}
-						person.age = new Date(cohort.startDate)
-							.getFullYear() - person.yearOfBirth;
 						person.records.forEach((rec) => {
 							// have to get startDate from person.cohorts
 							// rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
