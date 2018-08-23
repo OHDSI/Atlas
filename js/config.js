@@ -10,6 +10,7 @@ define(['optional!config-local'], function (localConfig) {
 		url: 'http://localhost:8080/WebAPI/'
   };
   config.cacheSources = false;
+  config.pollInterval = 60000;
   config.useBundled3dPartyLibs = false;
 	config.cohortComparisonResultsEnabled = false;
 	config.userAuthenticationEnabled = false;
