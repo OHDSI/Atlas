@@ -517,10 +517,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					var listing = sharedState.jobListing;
 						var tempJob = listing().find(this.isActiveJob)
 					if (tempJob) {
-						if (tempJob.status() == 'STARTED' || tempJob.status() == 'STARTING') {
+						if (tempJob.status() == 'STARTED' || tempJob.status() == 'STARTING' || tempJob.status() == 'RUNNING') {
 								this.currentJob(tempJob);
 								this.generateReportsEnabled(false);
 							return "generating_reports";
+						}
+						if (tempJob.status() == 'COMPLETE') {
+							return "awaiting_selection";
 						}
 					}
 				}

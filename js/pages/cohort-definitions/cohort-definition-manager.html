@@ -493,7 +493,7 @@
 							Reports have not yet been generated for this cohort. Please click the generate button below to generate the reports.
 						</div>
 					</div>
-					<div class="panel panel-info" data-bind="visible: $component.reportingState()=='awaiting_selection'">
+					<div class="panel panel-info" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='awaiting_selection')">
 						<div class="panel-heading ">
 							Make a Selection
 						</div>
