@@ -522,9 +522,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 								this.generateReportsEnabled(false);
 							return "generating_reports";
 						}
-						if (tempJob.status() == 'COMPLETE') {
-							return "awaiting_selection";
-						}
 					}
 				}
 	
