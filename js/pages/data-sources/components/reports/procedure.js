@@ -22,10 +22,13 @@ define([
 
 			this.name = 'Procedure'; // header
 
-			this.aggProperty = constants.aggProperties.byPerson;
 			this.byFrequency = true;
 			this.byType = true;
 		}
+
+        get aggProperty() {
+            return constants.aggProperties.byPerson;
+        }
 
 	}
 

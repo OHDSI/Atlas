@@ -23,10 +23,6 @@ define([
       this.tableData = ko.observable();
       this.currentConcept = ko.observable();
 
-      this.aggProperty = {
-        name: '',
-        description: '',
-      };
       this.byFrequency = false;
       this.byUnit = false;
       this.byType = false;
@@ -69,22 +65,27 @@ define([
             $(row).addClass('table_selector');
           },
           columns: [{
+              title: 'Concept Id',
               data: 'concept_id'
             },
             {
+              title: 'Name',
               data: 'name'
             },
             {
+              title: 'Person Count',
               data: 'num_persons',
               className: 'numeric',
               orderSequence: ['desc','asc']
             },
             {
+              title: 'Prevalence',
               data: 'percent_persons',
               className: 'numeric',
               orderSequence: ['desc','asc']
             },
             {
+              title: this.aggProperty.description,
               data: 'agg_value',
               className: 'numeric',
               orderSequence: ['desc','asc']
@@ -105,6 +106,13 @@ define([
           this.isLoading(false);      
         });
     }
+
+    get aggProperty() {
+      return {
+        name: '',
+        description: '',
+      }
+    };
     
     selectTab(tab) {
       
