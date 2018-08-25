@@ -21,9 +21,11 @@ define([
 			super(params);
 			
 			this.name = 'Condition Era'; // header
-
-			this.aggProperty = constants.aggProperties.byLengthOfEra;
 		}
+
+        get aggProperty() {
+            return constants.aggProperties.byLengthOfEra;
+        }
 
 	}
 

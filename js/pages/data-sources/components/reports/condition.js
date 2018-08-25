@@ -22,8 +22,11 @@ define([
 
 			this.name = 'Condition'; // header
 
-			this.aggProperty = constants.aggProperties.byPerson;
 			this.byType = true;
+		}
+
+		get aggProperty() {
+			return constants.aggProperties.byPerson;
 		}
 
 	}
