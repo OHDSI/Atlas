@@ -16,7 +16,7 @@
 		</div>
 		<div class="row">
 			<div class="col-xs-12">
-				<select class="form-control" data-bind="css : { invalid:  currentReport()==undefined }, options: reports, optionsCaption:'Select a Report', optionsText:'name', value: currentReport"></select>
+				<select class="form-control" data-bind="css : { invalid:  currentReport()==undefined }, options: reports, optionsCaption:'Select a Report', optionsText:'name', value: currentReport, disable: !currentSource()"></select>
 			</div>
 		</div>
 		<div class="clear"></div>
