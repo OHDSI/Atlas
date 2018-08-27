@@ -11,12 +11,25 @@
 	<div class="reportControls pad-5">
 		<div class="row">
 			<div class="col-xs-12">
-				<select class="form-control" data-bind="css : { invalid:  currentSource()==undefined }, options: sources, optionsText:'sourceName', value: currentSource, optionsCaption:'Select a Source'"></select>
+				<select class="form-control" data-bind="
+				css: { invalid: !currentSource() },
+				options: sources,
+				optionsCaption:'Select a Source',
+				optionsText:'sourceName',
+				value: currentSource,
+				"></select>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-12">
-				<select class="form-control" data-bind="css : { invalid:  currentReport()==undefined }, options: reports, optionsCaption:'Select a Report', optionsText:'name', value: currentReport"></select>
+				<select class="form-control" data-bind="
+				css: { invalid: !currentReport() },
+				options: reports,
+				optionsCaption:'Select a Report',
+				optionsText:'name',
+				value: currentReport,
+				attr: { disabled: !currentSource() },
+				"></select>
 			</div>
 		</div>
 		<div class="clear"></div>

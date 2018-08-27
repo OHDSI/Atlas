@@ -122,6 +122,10 @@ define([
 			this.currentSource = ko.observable(this.sources[0]);
 			this.currentReport = ko.observable();
 			this.currentConcept = ko.observable();
+
+			this.currentSource.subscribe(() => {
+				this.currentReport.valueHasMutated();
+			});
 		}
 	}
 
