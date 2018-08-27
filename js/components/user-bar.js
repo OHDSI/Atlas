@@ -5,32 +5,42 @@ define([
 	'atlas-state',
 	'providers/Component',
 	'utils/CommonUtils',
+	'webapi/AuthAPI',
 ], function (
 	ko,
 	view,
 	appConfig,
 	state,
 	Component,
-	commonUtils
+	commonUtils,
+	authApi
 ) {
 	class UserBar extends Component {
 		constructor(params) {
 			super(params);			
-			const authApi = params.model.authApi;
-			
+			this.model = params.model;
 			this.appConfig = appConfig;
 			this.token = authApi.token;
 			this.tokenExpired = authApi.tokenExpired;    
 			this.authLogin = authApi.subject;		
+			this.pollInterval = null;
 			this.isLoggedIn = ko.computed(() => {
 				return authApi.isAuthenticated();
 			});
 
+			this.startPolling = () => {
+				this.pollInterval = setInterval(this.updateJobStatus, appConfig.pollInterval);
+			}
+
+			this.stopPolling = () => {
+				clearInterval(this.pollInterval);
+			}
+
 			this.isLoggedIn.subscribe((isLoggedIn) => {
 				if (isLoggedIn) {
-					this.pollInterval = setInterval(this.updateJobStatus, 60000);					
+					this.startPolling();
 				} else {
-					clearInterval(this.pollInterval);
+					this.stopPolling();
 				}
 			});
 			
@@ -47,6 +57,10 @@ define([
 			this.updateJobStatus = this.updateJobStatus.bind(this);
 			this.clearJobNotifications = this.clearJobNotifications.bind(this);
 			this.clearJobNotificationsPending = this.clearJobNotificationsPending.bind(this);
+
+			if (!appConfig.userAuthenticationEnabled) {
+				this.startPolling();
+			}
 		}
 
 		updateJobStatus () {
@@ -60,8 +74,9 @@ define([
 						$.ajax(job.progressUrl, {
 							context: job,
 							success: (progressData) => {
-								if (job.progress() != progressData.length) {
-									job.progress(progressData[job.progressValue]);
+								if (job.progress() != progressData.progress) {
+									var currentStatus = job.getStatusFromResponse(progressData);
+									job.status(currentStatus);
 									job.viewed(false);
 									this.jobListing.valueHasMutated();
 								}

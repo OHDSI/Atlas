@@ -6,9 +6,6 @@ define(
         '/jobs': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['job-manager'], function () {
-            appModel.componentParams = {
-              model: appModel
-            };
             appModel.currentView('job-manager');
           });
         }),

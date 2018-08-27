@@ -9,19 +9,34 @@ define(['knockout',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'clipboard',
-	'services/ConceptSetService',
+	'services/ConceptSet',
+	'webapi/AuthAPI',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
 	'databindings',
-	'negative-controls',
+	'evidence',
 	'circe',
 	'conceptset-modal',
+	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 	'css!components/conceptset/style.css',
-], function (ko, view, config, ohdsiUtil, utils, cdmResultsAPI, vocabularyAPI, conceptSetAPI, ConceptSet, sharedState, clipboard, conceptSetService) {
+], function (
+	ko,
+	view,
+	config,
+	ohdsiUtil,
+	utils,
+	cdmResultsAPI,
+	vocabularyAPI,
+	conceptSetAPI,
+	ConceptSet,
+	sharedState,
+	clipboard,
+	conceptSetService,
+	authApi
+) {
 	function conceptsetManager(params) {
 		var self = this;
-		var authApi = params.model.authApi;
 		self.model = params.model;
 		self.conceptSetName = ko.observable();
 		self.conceptSets = ko.observableArray();
@@ -105,7 +120,7 @@ define(['knockout',
 					.id) {
 					// One of the concept sets that is involved in the comparison
 					// is the one that is currently loaded; check to see if it is dirty
-					currentConceptSetClean = !self.model.currentConceptSetDirtyFlag.isDirty();
+					currentConceptSetClean = !self.model.currentConceptSetDirtyFlag().isDirty();
 				}
 			}
 
@@ -506,10 +521,10 @@ define(['knockout',
 		}
 
 		self.closeConceptSet = function () {
-			if (self.model.currentConceptSetDirtyFlag.isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
+			if (self.model.currentConceptSetDirtyFlag().isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
 				return;
 			} else {
-				pageModel.clearConceptSet();
+				self.model.clearConceptSet();
 				document.location = "#/conceptsets";
 			}
 		};
@@ -578,7 +593,7 @@ define(['knockout',
 						.then(function(){
               document.location = '#/conceptset/' + conceptSetId + '/details';
               self.compareResults(null);
-              self.model.currentConceptSetDirtyFlag.reset();
+              self.model.currentConceptSetDirtyFlag().reset();
 						});
 				});
 		}
@@ -951,7 +966,7 @@ define(['knockout',
 		self.showAncestorsModal = conceptSetService.getAncestorsModalHandler(self);
 		
 		self.canSave = ko.computed(function () {
-			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag.isDirty());
+			return (self.model.currentConceptSet() != null && self.model.currentConceptSetDirtyFlag().isDirty());
 		});
 		self.canEdit = self.model.canEditCurrentConceptSet;
 		self.canCreate = ko.computed(function () {

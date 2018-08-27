@@ -7,14 +7,25 @@ define(['knockout',
 	'atlas-state',
 	'job/jobDetail',
   'webapi/MomentAPI',
+	'webapi/AuthAPI',
 	'assets/ohdsi.util',
 	'databindings'
-], function (ko, view, config, evidenceAPI, cdmResultsAPI, conceptSetAPI, sharedState, jobDetail, momentApi) {
+], function (
+	ko,
+	view,
+	config,
+	evidenceAPI,
+	cdmResultsAPI,
+	conceptSetAPI,
+	sharedState,
+	jobDetail,
+	momentApi,
+	authApi
+) {
 	function negativeControls(params) {
 		var self = this;
 
 		var pollTimeout = null;
-		var authApi = params.model.authApi;
 		self.model = params.model;
 		self.selectedConcepts = params.selectedConcepts;
 		self.conceptSet = params.conceptSet;

@@ -3,7 +3,7 @@ define(['knockout',
 		'appConfig',
 		'atlas-state',
 		'webapi/AuthAPI',
-		'services/UserService',
+		'services/User',
 		'providers/Component',
 		'utils/CommonUtils',
 		'./components/renderers',
@@ -13,6 +13,7 @@ define(['knockout',
 		'./components/atlas-roles',
 		'components/ac-access-denied',
 		'less!./users-import.less',
+		'components/modal'
 	],
 	function (
 		ko, 
@@ -20,7 +21,7 @@ define(['knockout',
 		config,
 		sharedState,
 		authApi, 
-		usersApi,
+		userService,
 		Component,
 		commonUtils,
 		renderers,
@@ -31,7 +32,7 @@ define(['knockout',
 			get transitions() {
 				return {
 					'providers': {next: Const.WIZARD_STEPS.MAPPING,},
-					'mapping': {prev: Const.WIZARD_STEPS.PROVIDERS, next: Const.WIZARD_STEPS.IMPORT, handler: this.loadMapping,},
+					'mapping': {prev: Const.WIZARD_STEPS.PROVIDERS, next: Const.WIZARD_STEPS.IMPORT, handler: this.testConnection,},
 					'import' : {prev: Const.WIZARD_STEPS.MAPPING, next: Const.WIZARD_STEPS.FINISH, handler: () => { this.saveMapping(); this.findUsers(); return true; },},
 					'finish' : {handler: this.startImport, enabled: this.isImportEnabled },
 				};
@@ -60,6 +61,7 @@ define(['knockout',
 				this.nextClasses = ko.computed(() => this.classes({ extra: this.getNextClasses(), }));
 				// form inputs
 				this.importProvider = ko.observable(Const.PROVIDERS.ACTIVE_DIRECTORY);
+				this.model = params.model;
 				this.updateRoles = params.model.updateRoles;
 				this.roles = sharedState.roles;
 				this.rolesMapping = ko.observableArray();
@@ -69,10 +71,29 @@ define(['knockout',
 				this.ldapGroups = ko.observableArray();
 				this.usersList = ko.observableArray();
 				this.linkClasses = this.classes('link');
+				this.connectionCheck = ko.observable();
+				this.showConnectionDetails = ko.observable();
+				this.detailsButtonText = ko.computed(() => "Details " + (this.showConnectionDetails() ? "<<<" : ">>>"))
+				this.infoMessageClass = ko.computed(() => {
+					const modifier = this.connectionCheck() ? String(this.connectionCheck().state).toLowerCase() : '';
+					return this.classes('info-message', modifier);
+				});
+				this.preventNext = false;
+				this.isShowLoginHelp = ko.observable();
+				this.isShowUsernameHelp = ko.observable();
 
 				this.importProvider.subscribe(() => {
 					this.rolesMapping().forEach(row => row.groups = ko.observableArray());
 					this.usersList.removeAll();
+				});
+
+				this.connectionCheck.subscribe(() => {
+					if (this.connectionCheck() && this.connectionCheck().state === 'SUCCESS') {
+						this.loadMapping();
+						if (!this.preventNext) {
+							this.wizardStep(Const.WIZARD_STEPS.MAPPING);
+						}
+					}
 				});
 
 				this.isSearchGroupDialog = ko.observable();
@@ -99,6 +120,10 @@ define(['knockout',
 				this.setRoles = this.setRoles.bind(this);
 				this.saveMapping = this.saveMapping.bind(this);
 				this.loadMapping = this.loadMapping.bind(this);
+				this.testConnection = this.testConnection.bind(this);
+				this.testConnectionClick = this.testConnectionClick.bind(this);
+				this.showUsernameHelp = this.showUsernameHelp.bind(this);
+				this.showLoginHelp = this.showLoginHelp.bind(this);
 
 				this.init();
 			}
@@ -113,6 +138,7 @@ define(['knockout',
 
 			nextStep() {
 				const next = this.getStep();
+				this.preventNext = false;
 				if (next) {
 					const handler = this.transitions[next].handler;
 					const handlerType = typeof handler;
@@ -133,6 +159,20 @@ define(['knockout',
 				return this.usersList() && this.usersList().some(u => !!u.included());
 			}
 
+			testConnection() {
+				userService.testConnection(this.importProvider())
+					.then((data) => this.connectionCheck(data));
+			}
+
+			testConnectionClick() {
+				this.preventNext = true;
+				this.testConnection();
+			}
+
+			toggleConnectionDetails() {
+				this.showConnectionDetails(!this.showConnectionDetails());
+			}
+
 			startImport() {
 				if (!this.isImportEnabled()) {
 					return false;
@@ -140,8 +180,13 @@ define(['knockout',
 				this.loading(true);
 				const users = this.usersList()
 					.filter(u => !!u.included())
-					.map(u => ({ login: u.login, roles: u.roles(), }));
-				usersApi.importUsers(users).finally(() => this.loading(false));
+					.map(u => ({
+							login: u.login, roles: u.roles(),
+					}));
+				userService.importUsers(users).finally(() => {
+						this.loading(false);
+						userService.getUsers().then(data => this.model.users(data));
+				});
 				return true;
 			}
 
@@ -157,7 +202,7 @@ define(['knockout',
 						groups: m.groups,
 					})),
 				};
-				usersApi.searchUsers(this.importProvider(), mapping)
+				userService.searchUsers(this.importProvider(), mapping)
 					.then(users => this.usersList(users.map(user => ({
 							...user,
 							roles: ko.observableArray(user.roles),
@@ -176,12 +221,12 @@ define(['knockout',
 							groups: item.groups,
 						})),
 					};
-					usersApi.saveMapping(this.importProvider(), mapping);
+					userService.saveMapping(this.importProvider(), mapping);
 				}
 			}
 
 			loadMapping() {
-				usersApi.getMapping(this.importProvider()).then(mapping => {
+				userService.getMapping(this.importProvider()).then(mapping => {
 					const roles = this.rolesMapping();
 					roles.forEach(role => {
 						const mapped = mapping.roleGroups.find(m => m.role.id === role.id);
@@ -211,7 +256,7 @@ define(['knockout',
 
 			renderRoles(data, type, row) {
 				const label = (row && row.roles && row.roles().length > 0) ? row.roles().map(role => role.role).sort().join(", ") : 'No roles';
-				return '<a data-bind="click: function(d){ $component.onUsersRowClick(d) }, css: $component.linkClasses">' + label + '</a>';
+				return '<span data-bind="click: function(d){ $component.onUsersRowClick(d) }, css: $component.linkClasses">' + label + '</span>';
 			}
 
 			renderStatus(data, type, row) {
@@ -265,9 +310,17 @@ define(['knockout',
 				this.closeRolesModal();
 			}
 
+			showUsernameHelp() {
+				this.isShowUsernameHelp(true);
+			}
+
+			showLoginHelp() {
+				this.isShowLoginHelp(true);
+			}
+
 			init() {
 				this.loading(true);
-				usersApi.getAuthenticationProviders().then(providers => {
+				userService.getAuthenticationProviders().then(providers => {
 					this.providers(providers);
 				}).finally(() => this.loading(false));
 				this.updateRoles().then(() => {

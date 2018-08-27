@@ -66,7 +66,7 @@
 		<panel params="title: 'Vocabularies', templateId: 'vocabulary-vocab-list', context: $data"></panel>
 	</div>
 	<!-- ko if: searchExecuted() && data().length === 0 -->
-		<empty-state params="message: 'No vocabularies found'"></empty-state>
+		<empty-state params="message: noResultsFoundMessage()"></empty-state>
 	<!-- /ko -->
 	<div data-bind="visible: data().length > 0">
 		<faceted-datatable params="{
@@ -74,7 +74,7 @@
 			columns: searchColumns,
 			options: searchOptions,
 			reference: data,
-			rowCallback: contextSensitiveLinkColor
+			rowCallback: $root.contextSensitiveLinkColor
 		}"></faceted-datatable>
 		<div class="linkLegend">
 			<div class="linkLegendItem">

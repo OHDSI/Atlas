@@ -4,7 +4,7 @@
 		<div class="paddedWrapper flexed">
 			<div class="row">
 				<div class="col-sm-offset-10 col-sm-1" data-bind="attr: {title: $component.newCohortButtonCaption()}">
-					<div class="btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: pageModel.currentCohortDefinition() != undefined || !$component.canCreateCohort()}">New Cohort</div>
+					<div class="btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: $root.currentCohortDefinition() != undefined || !$component.canCreateCohort()}">New Cohort</div>
 				</div>
 			</div>
 			<cohort-definition-browser params="{cohortDefinitionSelected: data => cohortDefinitionId(data.id)}"></cohort-definition-browser>

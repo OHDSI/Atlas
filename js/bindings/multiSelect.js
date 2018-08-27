@@ -2,7 +2,7 @@ define(
   [
     'knockout',
     'bootstrap-select',
-    'css!bootstrap-select-css',
+    'css!styles/bootstrap-select.min.css',
   ],
   function (ko) {
     ko.bindingHandlers.multiSelect = {
