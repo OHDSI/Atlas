@@ -22,7 +22,7 @@ define([
             : '';
         return title;
       });
-      this.sourceKey = ko.computed(() => (this.context.currentSource() || {}).sourceKey);
+      this.sourceKey = ko.computed(() => this.context.currentSource() ? this.context.currentSource().sourceKey : null);
       this.path = this.context.currentReport().path;
       this.conceptId = null;
 
