@@ -65,7 +65,7 @@ define([
 					yFormat: d3.format(',.1s'),
 				},
 			};
-			this.getData().then(rawData => this.parseData(rawData));
+			this.loadData();
 
 		}
 		

@@ -55,7 +55,7 @@ define([
 				},
 			};
 			
-			this.getData().then(rawData => this.parseData(rawData));
+			this.loadData();
 		}
 
 		parseData({ data }) {
