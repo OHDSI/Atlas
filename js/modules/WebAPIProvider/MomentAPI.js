@@ -22,7 +22,7 @@ define(function (require, exports) {
     return m.isValid() ? m.format(DURATION_FORMAT) : EMPTY_DATE;
   }
 
-  function formatDateTime(timestamp, outFormat) {
+  function formatDateTimeWithFormat(timestamp, outFormat) {
     var m = moment(timestamp);
     return m.isValid() ? m.format(outFormat) : EMPTY_DATE;
   }
@@ -37,6 +37,7 @@ define(function (require, exports) {
     formatDate: formatDate,
     formatDuration: formatDuration,
     formatDateTimeUTC: formatDateTimeUTC,
+    formatDateTimeWithFormat: formatDateTimeWithFormat,
   };
 
   return api;
