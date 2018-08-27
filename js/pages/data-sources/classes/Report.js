@@ -26,13 +26,17 @@ define([
       this.path = this.context.currentReport().path;
       this.conceptId = null;
 
-      this.sourceKey.subscribe(newSource => {
+      this.sourceKeySubscription = this.sourceKey.subscribe(newSource => {
         if (!newSource) {
           this.context.currentReport(null);
         } else {
           this.loadData();
         }
       });
+    }
+
+    dispose () {
+      this.sourceKeySubscription.dispose();
     }
 
     getData() {
