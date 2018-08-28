@@ -276,7 +276,7 @@ define([
 					);
 				});	
 				this.canDelete = ko.pureComputed(() => {
-					return (this.cohortComparisonId() && this.cohortComparisonId() > 0);
+					return authApi.isPermittedDeleteEstimation(this.cohortComparisonId());
 				});
 				// startup actions
 				if (this.cohortComparisonId() == 0 && this.cohortComparison() == null) {
