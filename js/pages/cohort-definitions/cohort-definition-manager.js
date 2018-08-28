@@ -384,8 +384,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isSourceStopping = (source) => this.stopping[source.sourceKey];
 
 			this.pollForInfo = () => {
-				if (this.pollTimeout)
+				if (this.pollTimeout) {
 					clearTimeout(this.pollTimeout);
+					this.pollTimeout = null;
+				}
 
 				var id = this.model.currentCohortDefinition().id();
 					cohortDefinitionService.getInfo(id).then((infoList) => {
@@ -784,8 +786,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						success:  (data) => {
 						job.status(data.status);
 						sharedState.jobListing.queue(job);
-							setTimeout( () => {
+						setTimeout( () => {
+							if (!this.pollTimeout) {
 								this.pollForInfo();
+							}
 						}, 3000);
 					}
 				});
