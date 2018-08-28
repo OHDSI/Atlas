@@ -12,6 +12,7 @@ define([
 	'job/jobDetail',
 	'webapi/AuthAPI',
 	'providers/Component',
+	'providers/AutoBind',
 	'utils/CommonUtils',
 	'./const',
 	'./components/iranalysis/main', 
@@ -33,28 +34,58 @@ define([
 	jobDetail,
 	authAPI,
 	Component,
+	AutoBind,
 	commonUtils,
 	constants
 ) {
-	class IRAnalysisManager extends Component {
+	class IRAnalysisManager extends AutoBind(Component) {
 		constructor(params) {
 			super(params);				
 			// polling support
 			this.pollTimeout = null;
 			this.model = params.model;
 			this.loading = ko.observable(false);
-			this.analysisList = ko.observableArray();
 			this.selectedAnalysis = this.model.currentIRAnalysis;
 			this.selectedAnalysisId = this.model.selectedIRAnalysisId;
-			this.canCreate = ko.observable(!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authAPI.isAuthenticated && authAPI.isPermittedCreateIR()));
-			this.isDeletable = ko.observable(!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authAPI.isAuthenticated && authAPI.isPermittedDeleteIR(this.selectedAnalysisId())));
-			this.isEditable = ko.observable(this.selectedAnalysisId() === null || !config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authAPI.isAuthenticated && authAPI.isPermittedEditIR(this.selectedAnalysisId())));
+			this.dirtyFlag = this.model.currentIRAnalysisDirtyFlag;
+			this.canCreate = ko.pureComputed(() => {
+				return !config.userAuthenticationEnabled
+				|| (
+					config.userAuthenticationEnabled
+					&& authAPI.isAuthenticated
+					&& authAPI.isPermittedCreateIR()
+				)
+			});
+			this.isDeletable = ko.pureComputed(() => {
+				return !config.userAuthenticationEnabled
+				|| (
+					config.userAuthenticationEnabled
+					&& authAPI.isAuthenticated
+					&& authAPI.isPermittedDeleteIR(this.selectedAnalysisId())
+				)
+			});
+			this.isEditable = ko.pureComputed(() => {
+				return this.selectedAnalysisId() === null
+				|| !config.userAuthenticationEnabled
+				|| (
+					config.userAuthenticationEnabled
+					&& authAPI.isAuthenticated
+					&& authAPI.isPermittedEditIR(this.selectedAnalysisId())
+				)
+			});
+			this.canCopy = ko.pureComputed(() => {
+				return !config.userAuthenticationEnabled
+				|| (
+					config.userAuthenticationEnabled
+					&& authAPI.isAuthenticated
+					&& authAPI.isPermittedCopyIR(this.selectedAnalysisId())
+					&& !this.dirtyFlag().isDirty()
+				)
+			});
 			this.selectedAnalysisId.subscribe((id) => {
-				this.isDeletable(id);
-				this.isEditable(id);
+				authAPI.loadUserInfo();
 			});
 			
-			this.dirtyFlag = this.model.currentIRAnalysisDirtyFlag;
 			this.isRunning = ko.observable(false);
 			this.activeTab = ko.observable(params.activeTab || 'definition');
 			this.conceptSetEditor = ko.observable(); // stores a refrence to the concept set editor
@@ -116,24 +147,6 @@ define([
 					this.onAnalysisSelected();
 				}
 			});
-
-			this.pollForInfo = this.pollForInfo.bind(this);
-			this.resolveCohortId = this.resolveCohortId.bind(this);
-			this.refreshDefs = this.refreshDefs.bind(this);
-			this.onAnalysisSelected = this.onAnalysisSelected.bind(this);
-			this.handleConceptSetImport = this.handleConceptSetImport.bind(this);
-			this.onConceptSetSelectAction = this.onConceptSetSelectAction.bind(this);
-			this.copy = this.copy.bind(this);
-			this.close = this.close.bind(this);
-			this.save = this.save.bind(this);
-			this.delete = this.delete.bind(this);
-			this.removeResult = this.removeResult.bind(this);
-			this.newAnalysis = this.newAnalysis.bind(this);
-			this.onExecuteClick = this.onExecuteClick.bind(this);
-			this.queueJob = this.queueJob.bind(this);
-			this.import = this.import.bind(this);
-			this.init = this.init.bind(this);
-			this.dispose = this.dispose.bind(this);
 			this.error = ko.observable();
 			
 			// startup actions        
@@ -156,6 +169,8 @@ define([
 					this.pollTimeout = setTimeout(() => {
 						this.pollForInfo();
 					},10000);
+				} else {
+					this.isRunning(false);
 				}
 			});
 		}
@@ -330,6 +345,7 @@ define([
 								sourceItem.info(tempInfo);
 								this.queueJob(sourceItem);
 							}
+							this.isRunning(true);
 							var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 							executePromise.then(() => {
 								this.pollForInfo();
