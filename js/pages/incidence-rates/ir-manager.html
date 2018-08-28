@@ -5,7 +5,7 @@
 		<div class="asset-heading">
 			<input type="text" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !(selectedAnalysis().name() && (selectedAnalysis().name().length > 0)) }, enable: isEditable"></input>
 			<div class="btn-group" role="group">
-				<button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable: isEditable() && dirtyFlag().isDirty(), css: {'disabled': !isEditable() || !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}"><i class="fa fa-save"></i></button>
+				<button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable: isEditable() && dirtyFlag().isDirty() && !isRunning(), css: {'disabled': !isEditable() || !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}"><i class="fa fa-save"></i></button>
 				<button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
 				<!-- ko if: selectedAnalysis().id() != null -->
 				<button class="btn btn-sm btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy, css: {'disabled': !canCopy()}"><i class="fa fa-copy"></i></button>

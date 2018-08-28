@@ -343,9 +343,11 @@ define([
 								sourceItem.info(tempInfo);
 								this.queueJob(sourceItem);
 							}
+							this.isRunning(true);
 							var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 							executePromise.then(() => {
 								this.pollForInfo();
+								this.isRunning(false);
 							});
 						}
 					}
