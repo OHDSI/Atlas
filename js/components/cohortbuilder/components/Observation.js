@@ -154,15 +154,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 			}
 		];
 
-		self.addCriterionSettings = {
-			selectText: "Add criteria attribute…",
-			height: 300,
-			actionOptions: self.addActions,
-			onAction: function (data) {
-				data.selectedData.action();
-			}
-		};
-
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.Observation;
 		self.options = options;
