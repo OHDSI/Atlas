@@ -7,7 +7,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				'<div class="optionDescription">' + d.description + '</div>';
 		};
 		self.addCriteriaActions = [{
-				text: "Add Demographic Criteria",
+				text: "Add Demographic",
 				selected: false,
 				description: "Filter events based on demographic criteria.",
 				action: function () {
@@ -15,7 +15,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Condition Era Criteria",
+				text: "Add Condition Era",
 				selected: false,
 				description: "Find patients with specific condition era.",
 				action: function () {
@@ -23,7 +23,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Condition Occurrence Criteria",
+				text: "Add Condition Occurrence",
 				selected: false,
 				description: "Find patients with specific conditions.",
 				action: function () {
@@ -31,7 +31,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Death Criteria",
+				text: "Add Death",
 				selected: false,
 				description: "Find patients based on death.",
 				action: function () {
@@ -39,7 +39,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Device Exposure Criteria",
+				text: "Add Device Exposure",
 				selected: false,
 				description: "Find patients based on device exposure.",
 				action: function () {
@@ -47,7 +47,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Dose Era Criteria",
+				text: "Add Dose Era",
 				selected: false,
 				description: "Find patients with dose eras.",
 				action: function () {
@@ -55,7 +55,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Drug Era Criteria",
+				text: "Add Drug Era",
 				selected: false,
 				description: "Find patients with with drug eras.",
 				action: function () {
@@ -63,7 +63,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Drug Exposure Criteria",
+				text: "Add Drug Exposure",
 				selected: false,
 				description: "Find patients with exposure to specific drugs or drug classes.",
 				action: function () {
@@ -71,7 +71,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Measurement Criteria",
+				text: "Add Measurement",
 				selected: false,
 				description: "Find patients based on measurements.",
 				action: function () {
@@ -79,7 +79,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Observation Criteria",
+				text: "Add Observation",
 				selected: false,
 				description: "Find patients based on observations.",
 				action: function () {
@@ -87,7 +87,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Observation Period Criteria",
+				text: "Add Observation Period",
 				selected: false,
 				description: "Find patients based on observation periods.",
 				action: function () {
@@ -95,7 +95,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Payer Plan Period Criteria",
+				text: "Add Payer Plan Period",
 				selected: false,
 				description: "Find patients based on Payer Plan Period.",
 				action: function () {
@@ -103,7 +103,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Procedure Occurrence Criteria",
+				text: "Add Procedure Occurrence",
 				selected: false,
 				description: "Find patients that experienced a specific procedure.",
 				action: function () {
@@ -111,7 +111,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Specimen Criteria",
+				text: "Add Specimen",
 				selected: false,
 				description: "Find patients based on specimen.",
 				action: function () {
@@ -119,7 +119,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 				}
 			},
 			{
-				text: "Add Visit Criteria",
+				text: "Add Visit",
 				selected: false,
 				description: "Find patients based on visit information.",
 				action: function () {
