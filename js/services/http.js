@@ -3,8 +3,9 @@ define(function(require, exports) {
   const config = require('appConfig');
   const OHDSIApi = require('ohdsi-api').Api;
   const JSON_RESPONSE_TYPE = 'application/json';
+  const TEXT_RESPONSE_TYPE = 'text/plain';
 
-  class Api extends OHDSIApi {
+  class Api extends OHDSIApi {    
     handleUnexpectedError() {
       console.error('Oooops!.. Something went wrong :(');
     }
@@ -18,39 +19,51 @@ define(function(require, exports) {
       return !authProviders[url] && url.startsWith(config.api.url);
     }
 
+    getHeaders(requestUrl) {
+      return this.isSecureUrl(requestUrl) ? super.getHeaders() : {};
+    }
+
     sendRequest(method, path, payload) {
-      const params = {
-        method,
-        headers: this.isSecureUrl(path) ? this.getHeaders() : {},
+      return super.sendRequest(method, path, ko.toJS(payload));
+    }
+
+    sendResult(res, parsedResponse) {
+      return {
+        ...super.sendResult(res, parsedResponse),
+        data: parsedResponse,
+        headers: res.headers,
       };
+    }
 
-      if (payload && payload instanceof FormData) {
-        params.body = payload;
-      } else if (payload) {
-        params.body = ko.toJSON(payload);
-        params.headers['Content-Type'] = 'application/json';
+    afterRequestHook(res) {
+      if (!this.checkStatusError(res)) {
+        throw res;
       }
+      return res;
+    }
+  }
 
-      return fetch(path, params)
-        .then(res => {
-          const headers = res.headers;
-          return res.text()
-            // Protection from empty response
-            .then(text => text ? JSON.parse(text) : {})
-            .then(data => ({ ok: res.ok, status: res.status, data, headers }))
-        })
-        .then((res) => {
-          if (!this.checkStatusError(res)) {
-            throw res;
-          }
-          return res;
-        });
+  class PlainTextApi extends Api {
+    get headers() {
+      return {
+        'Accept': TEXT_RESPONSE_TYPE,
+      };
+    }
+
+    parseResponse(text) {
+      return text;
     }
   }
 
   const singletonApi = new Api();
-  // singletonApi.setApiHost(config.api.url);
   singletonApi.setAuthTokenHeader('Authorization');
+  
+  const plainTextService = new PlainTextApi();
+  plainTextService.setAuthTokenHeader(singletonApi.AUTH_TOKEN_HEADER);  
+  plainTextService.setUnauthorizedHandler(() => singletonApi.handleUnauthorized());
+  plainTextService.setUserTokenGetter(() => singletonApi.getUserToken());
+
+  singletonApi.plainTextService = plainTextService;
 
   return singletonApi;
 });

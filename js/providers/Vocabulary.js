@@ -180,7 +180,7 @@ define(function (require, exports) {
 	function getConceptSetExpressionSQL(expression, url) {
 		const repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/conceptSetExpressionSQL';
 
-		return httpService.doPost(repositoryUrl, expression);
+		return httpService.plainTextService.doPost(repositoryUrl, expression);
 	}
 
 	function getConceptsById(identifiers, url, sourceKey) {
