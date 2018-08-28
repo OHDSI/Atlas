@@ -5,12 +5,12 @@
 		<div class="asset-heading">
 			<input type="text" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !(selectedAnalysis().name() && (selectedAnalysis().name().length > 0)) }, enable: isEditable"></input>
 			<div class="btn-group" role="group">
-				<button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable: isEditable() && (dirtyFlag().isDirty() && !isRunning()), css: {'disabled': !isEditable() || !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}"><i class="fa fa-save"></i></button>
-				<button class="btn btn-sm btn-primary" title="Close" data-bind="click: close, enable: isEditable(), css: {'disabled': !isEditable()}"><i class="fa fa-times"></i></button>
+				<button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable: isEditable() && dirtyFlag().isDirty(), css: {'disabled': !isEditable() || !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}"><i class="fa fa-save"></i></button>
+				<button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
 				<!-- ko if: selectedAnalysis().id() != null -->
-				<button class="btn btn-sm btn-primary" title="Create a copy" data-bind="click: copy, enable: isEditable() && canCreate() && !dirtyFlag().isDirty(), css: {'disabled': !isEditable()}"><i class="fa fa-copy"></i></button>
+				<button class="btn btn-sm btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy, css: {'disabled': !canCopy()}"><i class="fa fa-copy"></i></button>
 				<!-- ko ifnot: isRunning -->
-				<button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: isEditable() && isDeletable(), css: { 'disabled': !isDeletable() || !isEditable }"><i class="fa fa-trash-o"></i></button>
+				<button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: isDeletable, css: { 'disabled': !isDeletable() }"><i class="fa fa-trash-o"></i></button>
 				<!-- /ko -->
 				<!-- /ko -->
 				<!-- ko if: selectedAnalysis().id() != null && !dirtyFlag().isDirty() && !isRunning() && sources().length > 0 -->

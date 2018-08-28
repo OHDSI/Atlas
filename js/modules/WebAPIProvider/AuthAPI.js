@@ -43,7 +43,7 @@ define(function(require, exports) {
     var permissions = ko.observable();
 
     const loadUserInfo = function() {
-        $.ajax({
+        return $.ajax({
             url: config.api.url + 'user/me',
             method: 'GET',
             success: function (info) {
@@ -254,8 +254,12 @@ define(function(require, exports) {
       return isPermitted('ir:post');
     };
 
-    var isPermittedDeleteIR = function(id){
+    var isPermittedDeleteIR = function(id) {
         return isPermitted('ir:' + id + ':delete');
+    };
+    
+    var isPermittedCopyIR = function(id) {
+        return isPermitted('ir:' + id + ':copy:get');
     };
 
     var isPermittedReadEstimations = function () {
@@ -457,6 +461,7 @@ define(function(require, exports) {
         isPermittedCreateIR: isPermittedCreateIR,
         isPermittedEditIR: isPermittedEditIR,
         isPermittedDeleteIR: isPermittedDeleteIR,
+        isPermittedCopyIR,
 
         isPermittedReadEstimations: isPermittedReadEstimations,
         isPermittedReadEstimation: isPermittedReadEstimation,
@@ -480,6 +485,7 @@ define(function(require, exports) {
 
         isPermittedImportUsers,
 
+        loadUserInfo,
         TOKEN_HEADER,
     };
 
