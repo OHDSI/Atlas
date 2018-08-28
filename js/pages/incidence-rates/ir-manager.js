@@ -169,6 +169,8 @@ define([
 					this.pollTimeout = setTimeout(() => {
 						this.pollForInfo();
 					},10000);
+				} else {
+					this.isRunning(false);
 				}
 			});
 		}
@@ -347,7 +349,6 @@ define([
 							var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 							executePromise.then(() => {
 								this.pollForInfo();
-								this.isRunning(false);
 							});
 						}
 					}
