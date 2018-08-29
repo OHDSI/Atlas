@@ -8,6 +8,7 @@ define([
 	'services/PatientLevelPrediction',
 	'services/Execution',
 	'services/JobDetailsService',
+	'webapi/AuthAPI',
 	'jquery',
 	'appConfig',
 	'assets/ohdsi.util',
@@ -25,6 +26,7 @@ define([
 		plpService,
 		executionService,
 		jobDetailsService,
+		authApi,
 		$,
 		config,
 		ohdsiUtil,
@@ -65,14 +67,11 @@ define([
 					&& this.currentPlpAnalysis().modelType() > 0
 					&& this.patientLevelPredictionDirtyFlag()
 					&& this.patientLevelPredictionDirtyFlag().isDirty());
+			});			
+			this.canDelete = ko.pureComputed(() => {
+				return authApi.isPermittedDeletePlp(this.patientLevelPredictionId);
 			});
 
-			this.canDelete = ko.pureComputed(() => {
-				return (
-					this.patientLevelPredictionId()
-					&& this.patientLevelPredictionId() > 0
-				);
-			});
 			this.plpResultsEnabled = config.plpResultsEnabled;
 			this.isExecutionEngineAvailable = config.api.isExecutionEngineAvailable;
 			this.useExecutionEngine = config.useExecutionEngine;
@@ -341,7 +340,9 @@ define([
 			plpService.getPlp(this.patientLevelPredictionId()).then(({ data: plp }) => {
 				this.loading(false);
 				this.currentPlpAnalysis(new PatientLevelPredictionAnalysis(plp));
-				this.patientLevelPredictionDirtyFlag(new ohdsiUtil.dirtyFlag(this.currentPlpAnalysis()));
+				setTimeout(() => {
+					this.patientLevelPredictionDirtyFlag(new ohdsiUtil.dirtyFlag(this.currentPlpAnalysis()));
+				}, 0);
 			});
 		}
 	}
