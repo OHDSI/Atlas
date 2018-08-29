@@ -62,6 +62,11 @@ define(function (require, exports) {
 		return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', JSON.stringify(identifiers));
 	}
 
+	function getInclusionCount(expression) {
+		const data = { items: ko.toJS(expression), };
+		return httpService.doPost(sharedState.vocabularyUrl() + 'included-concepts/count', data);
+	}
+
 	const api = {
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
@@ -70,6 +75,7 @@ define(function (require, exports) {
 		loadConceptSet,
 		loadConceptSetExpression,
 		lookupIdentifiers,
+		getInclusionCount,
 	};
 
 	return api;

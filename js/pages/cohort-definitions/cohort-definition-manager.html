@@ -87,9 +87,8 @@
 						<a>Concept Set Expression</a>
 					</li>
 					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == cohortConst.conceptSetTabModes.included}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.included)};">
-						<a>Included Concepts
-					<span class="badge" data-bind="if: !$root.resolvingConceptSetExpression()"><span data-bind="text:$root.conceptSetInclusionCount()"></span></span>
-					<span class="badge" data-bind="if: $root.resolvingConceptSetExpression();"><i class="fa fa-circle-o-notch fa-spin"></i></span></a>
+						<a>Included Concepts <conceptset-inclusion-count params="conceptSetExpression: selectedConcepts"></conceptset-inclusion-count>
+						</a>
 					</li>
 					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.sourcecodes)};">
 						<a>Included Source Codes</a>
@@ -348,18 +347,17 @@
 					<thead>
 						<th></th>
 						<th>Source Name</th>
-						<th>Generation Status</th>
-						<th>People</th>
-						<th>Records</th>
-						<th>Generated</th>
-						<th>Generation Duration</th>
+						<th class="text-right nowrap">Generation Status</th>
+						<th class="text-right nowrap">People</th>
+						<th class="text-right nowrap">Records</th>
+						<th class="text-right nowrap">Generated</th>
+						<th class="text-right nowrap">Generation Duration</th>
 						<th></th>
 					</thead>
-					<tbody data-bind="foreach:$root.cohortDefinitionSourceInfo, css: {overflow: $root.cohortDefinitionSourceInfo().length > 3}">
+					<tbody data-bind="foreach:$root.cohortDefinitionSourceInfo, css: {overflow: $root.cohortDefinitionSourceInfo().length > 3, 'max-height': $component.loadingReport() || $component.selectedReport()}">
 						<tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
 							<td>
-								<div style="position:relative"
-									 class="btn-group btn-group-sm thumb-dropdown"
+								<div class="btn-group btn-group-sm thumb-dropdown btn-generate"
 									 data-bind="
 									 	css: {dropup: ($index() > 0 && $index() === $root.cohortDefinitionSourceInfo().length-1)},
 									 	visible:!$component.isSourceRunning($data),
@@ -386,17 +384,17 @@
 								<div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i> </div>
                                 <a role="button" class="btn btn-sm btn-danger" data-bind="click:$component.cancelGenerate,visible: $component.isSourceRunning($data),attr: {disabled: $component.isSourceStopping($data)}">Cancel</a>
 							</td>
-							<td data-bind="text:name"></td>
-							<td class="statusIndicator text-right">
+							<td class="nowrap" data-bind="text:name"></td>
+							<td class="statusIndicator text-right nowrap">
 								<span data-bind="text: $component.getStatusMessage($data)"></span>
 							</td>
-							<td class="text-right" data-bind="html: personCount">
+							<td class="text-right nowrap" data-bind="html: personCount">
 							</td>
-							<td class="text-right" data-bind="html: recordCount">
+							<td class="text-right nowrap" data-bind="html: recordCount">
 							</td>
-							<td class="text-right" data-bind="text: startTime">
+							<td class="text-right nowrap" data-bind="text: startTime">
 							</td>
-							<td class="text-right" data-bind="text: executionDuration">
+							<td class="text-right nowrap" data-bind="text: executionDuration">
 							</td>
 							<td>
 								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.selectViewReport"><i class="fa fa-eye"></i>&nbsp;View Reports</div>

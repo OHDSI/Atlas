@@ -1,9 +1,10 @@
-define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovider', 'atlas-state', 'faceted-datatable'], function (ko, view, config, vocabAPI, sharedState) {
+define(['knockout', 'text!./concept-manager.html', 'appConfig', 'vocabularyprovider', 'atlas-state', 'utils/CommonUtils', 'faceted-datatable'], function (ko, view, config, vocabAPI, sharedState, commonUtils) {
 	function conceptManager(params) {
 		var self = this;
 		self.model = params.model;
 		self.subscriptions = [];
 
+		self.commonUtils = commonUtils;
 		self.sourceCounts = ko.observableArray();
 		self.loadingSourceCounts = ko.observable(false);
 		self.loadingRelated = ko.observable(false);

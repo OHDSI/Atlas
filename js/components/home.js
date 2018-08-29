@@ -14,9 +14,10 @@ define([
 		self.github_status = ko.observableArray();
 
 		$.ajax({
-			url: "https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=13",
+			url: "https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=18",
 			method: 'GET',
 			contentType: 'application/json',
+			timeout: 5000,
 			success: function (data) {
 				self.github_status(data);
 			}

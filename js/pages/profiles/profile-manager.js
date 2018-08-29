@@ -113,8 +113,8 @@ define([
 					var conceptSets = ko.toJS(o.cohortDef.expression()
 						.ConceptSets());
 					conceptSets.forEach((conceptSet) => {
-						pageModel.resolveConceptSetExpressionSimple(
-							ko.toJSON(conceptSet.expression),
+						this.model.resolveConceptSetExpressionSimple(
+							ko.toJS(conceptSet.expression),
 							_.bind(this.loadedConceptSet, this, conceptSet))
 					});
 				};
@@ -151,9 +151,6 @@ define([
 							return "fa fa-question";
 						}
 					}
-				});
-				this.age = ko.computed(() => {
-					if (this.person()) {}
 				});
 				this.dimensions = {
 					'Domain': {
@@ -239,7 +236,8 @@ define([
 				this.showSection = {
 					profileChart: ko.observable(true),
 					datatable: ko.observable(true),
-				};this.highlightDom = '<<"row vertical-align"<"col-xs-6"><"col-xs-6 search"f>><t><"row vertical-align"<"col-xs-6"i><"col-xs-6"p>>>';
+				};
+				this.highlightDom = '<<"row vertical-align"<"col-xs-6"><"col-xs-6 search"f>><t><"row vertical-align"<"col-xs-6"i><"col-xs-6"p>>>';
 				this.highlightColumns = ['select', {
 					render: this.swatch,
 					data: 'highlight()',
@@ -337,8 +335,6 @@ define([
 									.value()
 							};
 						}
-						person.age = new Date(cohort.startDate)
-							.getFullYear() - person.yearOfBirth;
 						person.records.forEach((rec) => {
 							// have to get startDate from person.cohorts
 							// rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
@@ -434,7 +430,7 @@ define([
 
 			clearHighlights () {
 				const selectedData = $('#highlight-table table').DataTable().data();
-				for (const i = 0; i < selectedData.length; i++) {
+				for (let i = 0; i < selectedData.length; i++) {
 					selectedData[i].highlight(this.defaultColor); // set the swatch color
 					selectedData[i].recs.forEach(r => {
 						r.highlight = this.defaultColor; // set the record colors

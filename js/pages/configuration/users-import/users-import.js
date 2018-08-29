@@ -13,6 +13,7 @@ define(['knockout',
 		'./components/atlas-roles',
 		'components/ac-access-denied',
 		'less!./users-import.less',
+		'components/modal'
 	],
 	function (
 		ko, 
@@ -31,7 +32,7 @@ define(['knockout',
 			get transitions() {
 				return {
 					'providers': {next: Const.WIZARD_STEPS.MAPPING,},
-					'mapping': {prev: Const.WIZARD_STEPS.PROVIDERS, next: Const.WIZARD_STEPS.IMPORT, handler: this.loadMapping,},
+					'mapping': {prev: Const.WIZARD_STEPS.PROVIDERS, next: Const.WIZARD_STEPS.IMPORT, handler: this.testConnection,},
 					'import' : {prev: Const.WIZARD_STEPS.MAPPING, next: Const.WIZARD_STEPS.FINISH, handler: () => { this.saveMapping(); this.findUsers(); return true; },},
 					'finish' : {handler: this.startImport, enabled: this.isImportEnabled },
 				};
@@ -70,10 +71,29 @@ define(['knockout',
 				this.ldapGroups = ko.observableArray();
 				this.usersList = ko.observableArray();
 				this.linkClasses = this.classes('link');
+				this.connectionCheck = ko.observable();
+				this.showConnectionDetails = ko.observable();
+				this.detailsButtonText = ko.computed(() => "Details " + (this.showConnectionDetails() ? "<<<" : ">>>"))
+				this.infoMessageClass = ko.computed(() => {
+					const modifier = this.connectionCheck() ? String(this.connectionCheck().state).toLowerCase() : '';
+					return this.classes('info-message', modifier);
+				});
+				this.preventNext = false;
+				this.isShowLoginHelp = ko.observable();
+				this.isShowUsernameHelp = ko.observable();
 
 				this.importProvider.subscribe(() => {
 					this.rolesMapping().forEach(row => row.groups = ko.observableArray());
 					this.usersList.removeAll();
+				});
+
+				this.connectionCheck.subscribe(() => {
+					if (this.connectionCheck() && this.connectionCheck().state === 'SUCCESS') {
+						this.loadMapping();
+						if (!this.preventNext) {
+							this.wizardStep(Const.WIZARD_STEPS.MAPPING);
+						}
+					}
 				});
 
 				this.isSearchGroupDialog = ko.observable();
@@ -100,6 +120,10 @@ define(['knockout',
 				this.setRoles = this.setRoles.bind(this);
 				this.saveMapping = this.saveMapping.bind(this);
 				this.loadMapping = this.loadMapping.bind(this);
+				this.testConnection = this.testConnection.bind(this);
+				this.testConnectionClick = this.testConnectionClick.bind(this);
+				this.showUsernameHelp = this.showUsernameHelp.bind(this);
+				this.showLoginHelp = this.showLoginHelp.bind(this);
 
 				this.init();
 			}
@@ -114,6 +138,7 @@ define(['knockout',
 
 			nextStep() {
 				const next = this.getStep();
+				this.preventNext = false;
 				if (next) {
 					const handler = this.transitions[next].handler;
 					const handlerType = typeof handler;
@@ -132,6 +157,20 @@ define(['knockout',
 
 			isImportEnabled() {
 				return this.usersList() && this.usersList().some(u => !!u.included());
+			}
+
+			testConnection() {
+				userService.testConnection(this.importProvider())
+					.then((data) => this.connectionCheck(data));
+			}
+
+			testConnectionClick() {
+				this.preventNext = true;
+				this.testConnection();
+			}
+
+			toggleConnectionDetails() {
+				this.showConnectionDetails(!this.showConnectionDetails());
 			}
 
 			startImport() {
@@ -269,6 +308,14 @@ define(['knockout',
 					this.usersList.valueHasMutated();
 				}
 				this.closeRolesModal();
+			}
+
+			showUsernameHelp() {
+				this.isShowUsernameHelp(true);
+			}
+
+			showLoginHelp() {
+				this.isShowLoginHelp(true);
 			}
 
 			init() {
