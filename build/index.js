@@ -1,8 +1,19 @@
 const ajaxRequest = require('ajax-request');
-let settings = require('../js/settings');
+const settings = require('../js/settings');
 const requirejs = require('requirejs');
 const fs = require('fs');
 
+const baseOptimizationSettings = {
+  ...settings,
+  baseUrl: './js',
+  paths: {
+    'config-local': 'empty:',
+    'css-builder': 'empty:',
+  },
+  excludeShallow: [],
+  findNestedDependencies: false,
+  optimize: 'uglify2',
+};
 const jsBundlePath = './js/assets/bundle/bundle.js';
 const cssBundlePath = './js/assets/bundle/bundle.css';
 
@@ -55,18 +66,13 @@ function downloadLibs(aliasesMap, isJs = true) {
 function optimizeJs() {
   const { libs, cdnLibs, paths } = downloadLibs(settings.paths);
   const jsSettings = {
-    ...settings,
-    baseUrl: './js',
+    ...baseOptimizationSettings,
     include: libs,
     paths: {
       ...paths,
-      'config-local': 'empty:',
-      'css-builder': 'empty:',
+      ...baseOptimizationSettings.paths,
     },
-    excludeShallow: [],
-    findNestedDependencies: false,
     out: jsBundlePath,
-    optimize: 'uglify2',
   };
 
   const promise = new Promise((resolve, reject) => {
@@ -101,8 +107,8 @@ function optimizeCss() {
         fileHandle.write(css);
         fileHandle.write('\n');
       });
-      console.log('Success');
       fileHandle.end();
+      return Promise.resolve();
     });
 }
 

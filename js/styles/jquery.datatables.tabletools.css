@@ -180,31 +180,31 @@ a.DTTT_button_print span {
 }
 
 
-a.DTTT_button_csv span { background: url(../images/csv.png) no-repeat bottom right; }
-a.DTTT_button_csv:hover span { background: url(../images/csv_hover.png) no-repeat center right; }
+a.DTTT_button_csv span { background: url(/js/assets/images/csv.png) no-repeat bottom right; }
+a.DTTT_button_csv:hover span { background: url(/js/assets/images/csv_hover.png) no-repeat center right; }
 
-a.DTTT_button_xls span { background: url(../images/xls.png) no-repeat center right; }
-a.DTTT_button_xls:hover span { background: #f0f0f0 url(../images/xls_hover.png) no-repeat center right; }
+a.DTTT_button_xls span { background: url(/js/assets/images/xls.png) no-repeat center right; }
+a.DTTT_button_xls:hover span { background: #f0f0f0 url(/js/assets/images/xls_hover.png) no-repeat center right; }
 
-a.DTTT_button_copy span { background: url(../images/copy.png) no-repeat center right; }
-a.DTTT_button_copy:hover span { background: #f0f0f0 url(../images/copy_hover.png) no-repeat center right; }
+a.DTTT_button_copy span { background: url(/js/assets/images/copy.png) no-repeat center right; }
+a.DTTT_button_copy:hover span { background: #f0f0f0 url(/js/assets/images/copy_hover.png) no-repeat center right; }
 
-a.DTTT_button_pdf span { background: url(../images/pdf.png) no-repeat center right; }
-a.DTTT_button_pdf:hover span { background: #f0f0f0 url(../images/pdf_hover.png) no-repeat center right; }
+a.DTTT_button_pdf span { background: url(/js/assets/images/pdf.png) no-repeat center right; }
+a.DTTT_button_pdf:hover span { background: #f0f0f0 url(/js/assets/images/pdf_hover.png) no-repeat center right; }
 
-a.DTTT_button_print span { background: url(../images/print.png) no-repeat center right; }
-a.DTTT_button_print:hover span { background: #f0f0f0 url(../images/print_hover.png) no-repeat center right; }
+a.DTTT_button_print span { background: url(/js/assets/images/print.png) no-repeat center right; }
+a.DTTT_button_print:hover span { background: #f0f0f0 url(/js/assets/images/print_hover.png) no-repeat center right; }
 
  */
 
 button.DTTT_button_collection span {
 	padding-right: 17px;
-	background: url(../images/collection.png) no-repeat center right;
+	background: url(/js/assets/images/collection.png) no-repeat center right;
 }
 
 button.DTTT_button_collection:hover span {
 	padding-right: 17px;
-	background: #f0f0f0 url(../images/collection_hover.png) no-repeat center right;
+	background: #f0f0f0 url(/js/assets/images/collection_hover.png) no-repeat center right;
 }
 
 
@@ -280,7 +280,7 @@ div.DTTT_collection {
 }
 
 div.DTTT_collection_background {
-	background: transparent url(../images/background.png) repeat top left;
+	background: transparent url(/js/assets/images/background.png) repeat top left;
 	z-index: 2001;
 }
 

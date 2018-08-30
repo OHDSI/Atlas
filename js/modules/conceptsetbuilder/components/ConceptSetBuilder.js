@@ -10,7 +10,6 @@ define([
 	'conceptpicker/ConceptPicker',
 	'faceted-datatable',
 	'assets/knockout-jqueryui/tabs',
-	'css!tabs.css'
 ], function (
 		$,
 		ko,

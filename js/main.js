@@ -74,9 +74,6 @@ require([
 	requirejs.config({
 		...settings,
 		urlArgs: bustCache,
-		deps: ['css!jquery.dataTables.min',
-			'css!jquery.dataTables.colVis.css'
-		],
 		paths: {
 			...localRefs,
 			...cdnRefs.js,
@@ -87,7 +84,7 @@ require([
 				...cdnRefs.css,
 			},
 		}
-	});
+	});	
 	require(['bootstrap', ...styles], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
 		require([

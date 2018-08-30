@@ -18,7 +18,7 @@
 				<a data-bind="attr: { title: 'Concept Sets', href: '#csIncluded' }">
 					Included Concepts
 					<!-- ko if: includedConceptsComponent() && includedConceptsComponent().isLoading() -->
-					<img class="spin" style="width: 14px; height: 14px" src="images/running.png" />
+					<img class="spin" style="width: 14px; height: 14px" src="/js/assets/images/running.png" />
 					<!-- /ko -->
 					<!-- ko if: !(includedConceptsComponent() && includedConceptsComponent().isLoading()) -->
 					<span style="font-size: .75em" class="badge" data-bind="text: includedConceptsComponent() && includedConceptsComponent().includedConcepts().length"></span>
@@ -29,7 +29,7 @@
 				<a data-bind="attr: { title: 'Mapped Concepts', href: '#csMapped' }">
 					Mapped Concepts
 					<!-- ko if: mappedConceptsComponent() && mappedConceptsComponent().isLoading() -->
-					<img class="spin" style="width: 14px; height: 14px" src="images/running.png" />
+					<img class="spin" style="width: 14px; height: 14px" src="/js/assets/images/running.png" />
 					<!-- /ko -->
 					<!-- ko if: !(mappedConceptsComponent() && mappedConceptsComponent().isLoading()) -->
 					<span style="font-size: .75em" class="badge" data-bind="text: mappedConceptsComponent() && mappedConceptsComponent().mappedConcepts().length"></span>
