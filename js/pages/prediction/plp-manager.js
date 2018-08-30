@@ -71,6 +71,9 @@ define([
 			this.canDelete = ko.pureComputed(() => {
 				return authApi.isPermittedDeletePlp(this.patientLevelPredictionId);
 			});
+			this.canCopy = ko.pureComputed(() => {
+				return authApi.isPermittedCopyPlp(this.patientLevelPredictionId);
+			});
 
 			this.plpResultsEnabled = config.plpResultsEnabled;
 			this.isExecutionEngineAvailable = config.api.isExecutionEngineAvailable;
