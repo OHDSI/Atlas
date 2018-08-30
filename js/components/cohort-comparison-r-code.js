@@ -6,7 +6,7 @@ define([
 	'components/cohortcomparison/ComparativeCohortAnalysis',
 	'vocabularyprovider',
 	'prism',
-	'css!./styles/prism.css'
+	'css!prism.css'
 ],
 	function (
 		$,
