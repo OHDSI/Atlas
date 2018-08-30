@@ -21,13 +21,16 @@ define([
 			super(params);   
 			
 			this.name = 'Observation'; // header
-			
-			this.aggProperty = constants.aggProperties.byPerson;
+
 			this.byFrequency = true;
 			this.byType = true;
 			this.byValueAsConcept = true;
 			this.byQualifier = true;
 		}
+
+        get aggProperty() {
+            return constants.aggProperties.byPerson;
+        }
 
 	}
 

@@ -28,7 +28,7 @@
       </li>
       <li role="presentation" data-bind="click: function() {$component.routeTo('included');}, attr: {class: $root.currentConceptSetMode() == 'included' ? 'active' : ''}">
         <a>Included Concepts
-          <conceptset-inclusion-count params="conceptSetExpression: currentConceptSet"></conceptset-inclusion-count>
+          <conceptset-inclusion-count params="conceptSetExpression: selectedConcepts"></conceptset-inclusion-count>
         </a>
       </li>
       </li>

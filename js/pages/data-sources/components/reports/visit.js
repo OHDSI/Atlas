@@ -21,9 +21,11 @@ define([
 			super(params);    
 			
 			this.name = 'Visit'; // header
-			
-			this.aggProperty = constants.aggProperties.byPerson;
 		}
+
+        get aggProperty() {
+            return constants.aggProperties.byPerson;
+        }
 
 	}
 

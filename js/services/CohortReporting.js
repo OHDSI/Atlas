@@ -285,7 +285,13 @@ define(function (require, exports) {
 	}
 
 	function getQuickAnalysisIdentifiers() {
-    return [0, 1, 2, 3, 4, 5, 900, 907, 1000, 1007, 3000, 3001];
+		return visualizationPacks.default.analyses
+			.concat(visualizationPacks.person.analyses)
+			.concat(visualizationPacks.conditionEras.analyses)
+			.concat(visualizationPacks.drugEras.analyses)
+			.concat(visualizationPacks.procedure.analyses)
+			.concat(visualizationPacks.tornado.analyses)
+			.filter((d,i, arr) => arr.indexOf(d) == i);
 	}
 
   function getHealthcareAnalysesIdentifiers() {

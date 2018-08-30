@@ -384,8 +384,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isSourceStopping = (source) => this.stopping[source.sourceKey];
 
 			this.pollForInfo = () => {
-				if (this.pollTimeout)
+				if (this.pollTimeout) {
 					clearTimeout(this.pollTimeout);
+					this.pollTimeout = null;
+				}
 
 				var id = this.model.currentCohortDefinition().id();
 					cohortDefinitionService.getInfo(id).then((infoList) => {
@@ -517,7 +519,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					var listing = sharedState.jobListing;
 						var tempJob = listing().find(this.isActiveJob)
 					if (tempJob) {
-						if (tempJob.status() == 'STARTED' || tempJob.status() == 'STARTING') {
+						if (tempJob.status() == 'STARTED' || tempJob.status() == 'STARTING' || tempJob.status() == 'RUNNING') {
 								this.currentJob(tempJob);
 								this.generateReportsEnabled(false);
 							return "generating_reports";
@@ -653,7 +655,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				} else {
 					document.location = "#/cohortdefinitions"
 						this.model.currentConceptSet(null);
-						this.model.currentConceptSetDirtyFlag.reset();
+						this.model.currentConceptSetDirtyFlag().reset();
 						this.model.currentCohortDefinition(null);
 						this.model.currentCohortDefinitionDirtyFlag().reset();
 						this.model.reportCohortDefinitionId(null);
@@ -784,8 +786,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						success:  (data) => {
 						job.status(data.status);
 						sharedState.jobListing.queue(job);
-							setTimeout( () => {
+						setTimeout( () => {
+							if (!this.pollTimeout) {
 								this.pollForInfo();
+							}
 						}, 3000);
 					}
 				});

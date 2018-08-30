@@ -134,8 +134,8 @@ define([
 			this.byValueAsConcept = params.byValueAsConcept;
 			this.byOperator = params.byOperator;
 			this.byQualifier = params.byQualifier;
-			params.currentConcept.subscribe(this.loadDrilldown.bind(this));
-			this.loadDrilldown(params.currentConcept());
+			params.currentConcept.subscribe(this.loadData.bind(this));
+			this.loadData(params.currentConcept());
 		}
 
 		parseAgeData(rawAgeData) {
@@ -287,7 +287,7 @@ define([
 			return response;
 		}
 
-		loadDrilldown(selectedConcept) {
+		loadData(selectedConcept) {
 			this.conceptId = selectedConcept.concept_id;
 			this.currentConcept(selectedConcept);
 			this.isError(false);

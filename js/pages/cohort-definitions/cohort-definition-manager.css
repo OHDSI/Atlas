@@ -39,3 +39,12 @@
     color: #fefefe;
     border-color: #d82;
 }
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.btn-generate {
+    position:relative;
+    min-width: 110px
+}

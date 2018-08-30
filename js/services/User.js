@@ -37,6 +37,10 @@ define(function (require, exports) {
 		return httpService.doGet(config.webAPIRoot + 'user');
 	}
 
+	function testConnection(provider) {
+  	return httpService.doGet(importProvider(provider) + '/test');
+	}
+
 	function entity(method) {
 	 	return (...params) => method(...params).then(response => response.data);
 	}
@@ -49,6 +53,7 @@ define(function (require, exports) {
 		saveMapping: entity(saveMapping),
 		getMapping: entity(getMapping),
 		getUsers: entity(getUsers),
+		testConnection: entity(testConnection),
 	};
 
   return api;
