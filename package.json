@@ -4,7 +4,8 @@
   "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
   "main": "js/main.js",
   "scripts": {
-    "build": "npm i && rimraf ./js/assets/bundle && npm run bundle",
+    "clean": "rimraf ./js/assets/bundle && rimraf ./js/assets/fonts && rimraf ./js/assets/images",
+    "build": "npm i && npm run clean && npm run bundle",
     "bundle": "node ./build/index.js"
   },
   "repository": {
@@ -35,6 +36,7 @@
   "homepage": "https://github.com/OHDSI/Atlas#readme",
   "devDependencies": {
     "ajax-request": "^1.2.3",
+    "fs-extra": "^7.0.0",
     "requirejs": "^2.3.5",
     "rimraf": "^2.6.2"
   }

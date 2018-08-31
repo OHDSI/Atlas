@@ -2,6 +2,7 @@ const ajaxRequest = require('ajax-request');
 const settings = require('../js/settings');
 const requirejs = require('requirejs');
 const fs = require('fs');
+const extras = require('fs-extra');
 
 const baseOptimizationSettings = {
   ...settings,
@@ -78,11 +79,12 @@ function optimizeJs() {
   const promise = new Promise((resolve, reject) => {
     Promise.all(cdnLibs)
       .then(() => {
+        console.log('');
         console.log('Optimizing JS bundle...');
         requirejs.optimize(
           jsSettings,
           () => {
-            console.log('success');
+            console.log('Success');
             resolve();
           },
           (er) => {
@@ -98,18 +100,31 @@ function optimizeJs() {
 
 function optimizeCss() {
   const { libs, cdnLibs, paths } = downloadLibs(settings.cssPaths, false);
-  Promise.all(cdnLibs)
-    .then(() => {
-      console.log('Optimizing CSS bundle...');
-      const fileHandle = fs.createWriteStream(cssBundlePath);
-      Object.values(paths).map(path => {
-        const css = fs.readFileSync('js/' + path);
-        fileHandle.write(css);
-        fileHandle.write('\n');
+  
+  const promise = new Promise((resolve, reject) => {
+    Promise.all(cdnLibs)
+      .then(() => {
+        console.log('');
+        console.log('Optimizing CSS bundle...');
+        const fileHandle = fs.createWriteStream(cssBundlePath);
+        Object.values(paths).map(path => {
+          const css = fs.readFileSync('js/' + path);
+          fileHandle.write(css);
+          fileHandle.write('\n');
+        });
+        fileHandle.end();
+        console.log('Success');
+        resolve();
       });
-      fileHandle.end();
-      return Promise.resolve();
-    });
+  });
 }
 
-optimizeJs().then(optimizeCss);
+function copyAssets() {
+  console.log('');
+  console.log('Copying assets...');
+  extras.copySync('./js/images', './js/assets/images');
+  extras.copySync('./js/fonts', './js/assets/fonts');
+  console.log('Success');
+}
+
+optimizeJs().then(() => optimizeCss()).then(copyAssets);
