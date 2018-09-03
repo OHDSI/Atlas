@@ -7,9 +7,7 @@ const bustCache = (() => {
 const localRefs = {
 	"configuration": "components/configuration",
 	"concept-manager": "components/concept-manager",
-	"conceptset-browser": "components/conceptset/conceptset-browser",
 	"conceptset-editor": "components/conceptset/conceptset-editor",
-	"conceptset-manager": "components/conceptset/conceptset-manager",
 	"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
 	"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
 	"cohort-comparison-manager": "components/cohort-comparison-manager",

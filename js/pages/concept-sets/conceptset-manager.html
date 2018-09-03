@@ -1,28 +1,86 @@
-<div data-bind="ifnot:$component.canReadConceptsets">
-  <div class="wrapperTitle">
-    <i class="fa fa-shopping-cart"></i> Concept Set
+<heading-title params="name: conceptSetName(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
+
+<div data-bind="css: classes()">
+  <div class="asset-heading" data-bind="if: $root.currentConceptSet">
+    <input
+      id="txtConceptSetName"
+      type="text"
+      data-bind="attr: { disabled: canEdit() ? null : true },
+      textInput: $root.currentConceptSet().name"
+    />
+    <div class="btn-group">
+      <button
+        type="button"
+        class="btn btn-sm btn-success"
+        data-bind="click: saveClick, css: { disabled: !canSave() }">
+          <i class="fa fa-save"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        data-bind="click: closeConceptSet">
+          <i class="fa fa-times"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        data-bind="click: copy,
+          visible: $root.currentConceptSet() && $root.currentConceptSet().id > 0,
+          css: { disabled: !canCreate() }">
+          <i class="fa fa-copy"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        data-bind="click: optimize,
+          css: { disabled: !canEdit() && !canCreate() }">
+          Optimize
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm btn-danger"
+        data-bind="click: $component.delete,
+        css: { disabled: !canDelete() }">
+          <i class="fa fa-trash-o"></i>
+        </button>
+    </div>
   </div>
-  <div class="padded">
-    <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-  </div>
+  <tabs params="
+      componentParams: $component.componentParams,
+      tabs: [
+          {
+              title: 'Concept Set Expression',
+              componentName: 'conceptset-expression',
+              componentParams: componentParams,
+          },
+          {
+              title: 'Included Concepts',
+              componentName: 'included-conceptsets',
+              componentParams: componentParams,
+          },
+          {
+              title: 'Included Source Codes',
+              componentName: 'included-codesets',
+              componentParams: componentParams,
+          },
+          {
+              title: 'Explore Evidence',
+              componentName: 'explore-evidence',
+              componentParams: componentParams,
+          },
+          {
+              title: 'Export',
+              componentName: 'conceptset-export',
+              componentParams: componentParams,
+          },
+          {
+              title: 'Compare',
+              componentName: 'conceptset-compare',
+              componentParams: componentParams,
+          }
+  ]"></tabs>
 </div>
-
-<div data-bind="if:$component.canReadConceptsets">
-  <div>
-    <div class="wrapperTitle">
-      <i class="fa fa-shopping-cart"></i> Concept Set
-    </div>
-    <div class="asset-heading" data-bind="if: $root.currentConceptSet">
-      <input id="txtConceptSetName" type="text" data-bind="attr: { disabled: canEdit() ? null : true }, textInput: $root.currentConceptSet().name" />
-      <div class="btn-group">
-        <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { saveClick(); }, css: {disabled:!canSave()}"><i class="fa fa-save"></i></button>
-        <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { closeConceptSet(); }"><i class="fa fa-times"></i></button>
-        <button type="button" class="btn btn-sm btn-primary" data-bind="click: copy, visible: $root.currentConceptSet() && $root.currentConceptSet().id > 0, css: {disabled:!canCreate()}"><i class="fa fa-copy"></i></button>
-        <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { optimize(); }, css: {disabled: !canEdit() && !canCreate()}">Optimize</button>
-        <button type="button" class="btn btn-sm btn-danger"  data-bind="click:function() { $component.delete(); }, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
-      </div>
-    </div>
-
+    <!--
     <ul class="nav nav-tabs">
       <li role="presentation" data-bind="click: function() {$component.routeTo('details');}, attr: {class: $root.currentConceptSetMode() == 'details' ? 'active' : ''}"><a>Concept Set Expression</a>
       </li>
@@ -365,3 +423,4 @@
 </div>
 
 <conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model, title: 'Common Ancestors'}"></conceptset-list-modal>
+-->
