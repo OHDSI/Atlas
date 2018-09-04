@@ -6,7 +6,7 @@ define(['knockout',
 	'components/evidence/utils',
 	'webapi/EvidenceAPI',
 	'webapi/CDMResultsAPI',
-	'webapi/ConceptSetAPI',
+	'services/ConceptSet',
 	'atlas-state',
 	'job/jobDetail',
   	'webapi/MomentAPI',
@@ -22,7 +22,7 @@ define(['knockout',
 	utils,
 	evidenceAPI, 
 	cdmResultsAPI, 
-	conceptSetAPI, 
+	conceptSetService, 
 	sharedState, 
 	jobDetail, 
 	momentApi
@@ -121,8 +121,8 @@ define(['knockout',
 					clearTimeout(pollTimeout);
 
 				var id = this.conceptSet().id;
-				conceptSetAPI.getGenerationInfo(id)
-					.then(infoList => {
+				conceptSetService.getGenerationInfo(id)
+					.then((infoList) => {
 						var hasPending = false;
 						console.log("poll for evidence....")
 
@@ -273,7 +273,7 @@ define(['knockout',
 
 			this.getEvidenceSources = () => {
 				this.loadingEvidenceSources(true);
-				var resolvingPromise = conceptSetAPI.getGenerationInfo(this.conceptSet()
+				var resolvingPromise = conceptSetService.getGenerationInfo(this.conceptSet()
 					.id);
 				$.when(resolvingPromise)
 					.done(generationInfo => {
@@ -295,14 +295,14 @@ define(['knockout',
 								
 								var csToIncludePromise = $.Deferred();
 								if (evidenceSources[i].csToInclude() > 0) {
-									csToIncludePromise = conceptSetAPI.getConceptSet(evidenceSources[i].csToInclude());
+									csToIncludePromise = conceptSetService.getConceptSet(evidenceSources[i].csToInclude());
 								} else {
 									csToIncludePromise.resolve();
 									evidenceSources[i].csToIncludeLoading(false);
 								}
 								var csToExcludePromise = $.Deferred();
 								if (evidenceSources[i].csToExclude() > 0) {
-									csToExcludePromise = conceptSetAPI.getConceptSet(evidenceSources[i].csToExclude());
+									csToExcludePromise = conceptSetService.getConceptSet(evidenceSources[i].csToExclude());
 								} else {
 									csToExcludePromise.resolve();
 									evidenceSources[i].csToExcludeLoading(false);
@@ -553,7 +553,7 @@ define(['knockout',
 			
 			this.conceptsetSelected = (d) => {
 				$('#ncModalConceptSetSelect').modal('hide');
-				conceptSetAPI.getConceptSet(d.id).then((csInfo) => {
+				conceptSetService.getConceptSet(d.id).then((csInfo) => {
 					this.csTarget(csInfo.id);
 					this.csTargetCaption(csInfo.name);
 				});

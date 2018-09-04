@@ -5,12 +5,11 @@ define([
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'appConfig',
+	'./const',
 	'components/conceptset/utils',
-	'webapi/CDMResultsAPI',
 	'providers/Vocabulary',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
-	'clipboard',
 	'services/ConceptSet',
 	'webapi/AuthAPI',
 	'databindings',
@@ -20,10 +19,15 @@ define([
 	'evidence',
 	'circe',
 	'conceptset-modal',
-	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 	'less!./conceptset-manager.less',
 	'components/heading',
 	'components/tabs',
+	'./components/tabs/conceptset-expression',
+	'./components/tabs/included-conceptsets',
+	'./components/tabs/included-sourcecodes',
+	'./components/tabs/explore-evidence',
+	'./components/tabs/conceptset-export',
+	'./components/tabs/conceptset-compare',
 ], function (
 	ko,
 	view,
@@ -31,12 +35,11 @@ define([
 	AutoBind,
 	commonUtils,
 	config,
+	constants,
 	utils,
-	cdmResultsAPI,
 	vocabularyAPI,
 	conceptSet,
 	sharedState,
-	clipboard,
 	conceptSetService,
 	authApi
 ) {
@@ -73,6 +76,52 @@ define([
 				}
 				return returnVal;
 			});
+			this.saveConceptSetShow = ko.observable(false);
+
+			this.tabs = [
+				{
+						title: 'Concept Set Expression',
+						componentName: 'conceptset-expression',
+						componentParams: params,
+				},
+				{
+						title: 'Included Concepts',
+						componentName: 'included-conceptsets',
+						componentParams: params,
+						hasBadge: true,
+				},
+				{
+						title: 'Included Source Codes',
+						componentName: 'included-sourcecodes',
+						componentParams: params,
+				},
+				{
+						title: 'Explore Evidence',
+						componentName: 'explore-evidence',
+						componentParams: {
+							...params,
+							saveConceptSet: this.saveConceptSet,
+						},
+				},
+				{
+						title: 'Export',
+						componentName: 'conceptset-export',
+						componentParams: params,
+				},
+				{
+						title: 'Compare',
+						componentName: 'conceptset-compare',
+						componentParams: {
+							...params,
+							saveConceptSetFn: this.saveConceptSet,
+							saveConceptSetShow: this.saveConceptSetShow,
+						},
+				}
+			];
+			this.selectedTab = ko.pureComputed(() => {
+				return this.getIndexByComponentName(params.mode);
+			});
+			this.activeUtility = ko.observable("");
 		}
 		
 		saveClick() {
@@ -119,7 +168,7 @@ define([
 
 					var conceptSetItems = utils.toConceptSetItems(selectedConcepts);
 					var conceptSetId;
-					var itemsPromise = function(data) {
+					var itemsPromise = function({ data }) {
 						conceptSetId = data.id;
 						return conceptSetService.saveConceptSetItems(data.id, conceptSetItems);
 					};
@@ -127,8 +176,10 @@ define([
 						.then(itemsPromise)
 						.then(() => {
               document.location = '#/conceptset/' + conceptSetId + '/details';
-              this.compareResults(null);
               this.model.currentConceptSetDirtyFlag().reset();
+						})
+						.catch(() => {
+							alert('Unable to save concept set');
 						});
 				});
 		}
@@ -196,7 +247,7 @@ define([
 					this.optimalConceptSet(optimizedConcepts);
 					this.optimizerRemovedConceptSet(removedConcepts);
 					this.loading(false);
-					// this.activeUtility("");
+					this.activeUtility("");
 				});
 		}
 
@@ -212,6 +263,28 @@ define([
 				});
 		}
 
+		getIndexByComponentName(name = 'conceptset-expression') {
+			let index = this.tabs
+				.map(tab => tab.componentName)
+				.indexOf(name);				
+			if (index === -1) {
+				index = 0;
+			}
+
+			return index;
+		}
+
+		getComponentNameByTabIndex(idx) {
+			return this.tabs[idx] ? this.tabs[idx].componentName : this.tabs[0].componentName;
+		}
+
+		selectTab(index) {
+			const id = this.model.currentConceptSet()
+				? this.model.currentConceptSet().id
+				: 0;
+			const mode = this.getComponentNameByTabIndex(index);
+			document.location = constants.paths.mode(id, mode);
+		}
 		/*
 		var this = this;
 		this.conceptSets = ko.observableArray();
@@ -226,7 +299,6 @@ define([
 			return (sharedState.evidenceUrl() && sharedState.evidenceUrl()
 				.length > 0);
 		});
-		this.activeUtility = ko.observable("");
 		this.loading = ko.observable(false);
 		this.optimalConceptSet = ko.observable(null);
 		this.optimizerRemovedConceptSet = ko.observable(null);
@@ -246,86 +318,13 @@ define([
 			}
 			return returnVal;
 		});
-		this.saveConceptSetShow = ko.observable(false);
 		// Set the default concept set to be the current concept set
-		this.currentConceptSet = ko.observableArray();
-		_.each(this.selectedConcepts(), (conceptSetItem) => {
-			var item = {
-				concept: conceptSetItem.concept,
-				includeDescendants: conceptSetItem.includeDescendants(),
-				includeMapped: conceptSetItem.includeMapped(),
-				isExcluded: conceptSetItem.isExcluded(),
-			}
-			this.currentConceptSet()
-				.push(item);
-		});
-		this.compareCS1Id = ko.observable(this.model.currentConceptSet()
-			.id); // Init to the currently loaded cs
-		this.compareCS1Caption = ko.observable(this.model.currentConceptSet()
-			.name());
-		this.compareCS1ConceptSet = ko.observableArray(this.currentConceptSet());
-		this.compareCS2Id = ko.observable(0);
-		this.compareCS2Caption = ko.observable();
-		this.compareCS2ConceptSet = ko.observableArray(null);
-		this.compareResults = ko.observable();
-		this.compareIds = ko.observable(null);
-		this.compareError = ko.pureComputed(function () {
-			return (this.compareCS1Id() == this.compareCS2Id())
-		});
+		
+		
 
 		this.ancestors = ko.observableArray([]);
 		
-		this.compareReady = ko.pureComputed(function () {
-			// both are specified & not the same
-			var conceptSetsSpecifiedAndDifferent = (
-				(this.compareCS1Id() > 0 && this.compareCS2Id() > 0) &&
-				(this.compareCS1Id() != this.compareCS2Id())
-			);
-
-			// Check to see if one of the concept sets is the one
-			// that is currently open. If so, check to see if it is
-			// "dirty" and if so, we are not ready to compare.
-			var currentConceptSetClean = true;
-			if (conceptSetsSpecifiedAndDifferent && this.model.currentConceptSet()) {
-				// If we passed the check above, then we'll enforce this condition
-				// which also ensures that we have 2 valid concept sets specified
-				if (this.compareCS1Id() == this.model.currentConceptSet()
-					.id ||
-					this.compareCS2Id() == this.model.currentConceptSet()
-					.id) {
-					// One of the concept sets that is involved in the comparison
-					// is the one that is currently loaded; check to see if it is dirty
-					currentConceptSetClean = !this.model.currentConceptSetDirtyFlag().isDirty();
-				}
-			}
-
-
-			return (conceptSetsSpecifiedAndDifferent && currentConceptSetClean);
-		});
-		this.compareUnchanged = ko.pureComputed(function () {
-			// both are specified & not the same
-			var conceptSetsSpecifiedAndDifferent = (
-				(this.compareCS1Id() > 0 && this.compareCS2Id() > 0) &&
-				(this.compareCS1Id() != this.compareCS2Id())
-			);
-
-			// Next, determine if one of the concept sets that was used to show
-			// results was changed. In that case, we do not want to show the
-			// current results
-			var currentComparisonCriteriaUnchanged = true;
-			if (conceptSetsSpecifiedAndDifferent && this.compareIds()) {
-				// Check to see if the comparison crtieria has changed
-				currentComparisonCriteriaUnchanged = (this.compareIds() == (this.compareCS1Id() + "-" + this.compareCS2Id()))
-			}
-
-			return (conceptSetsSpecifiedAndDifferent && currentComparisonCriteriaUnchanged);
-		});
-		this.compareLoading = ko.observable(false);
-		this.compareLoadingClass = ko.pureComputed(function () {
-			return this.compareLoading() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-question-circle fa-lg"
-		})
-		this.compareNewConceptSetName = ko.observable(this.model.currentConceptSet()
-			.name() + " - From Comparison");
+		
 		this.currentResultSource = ko.observable();
 		this.recordCountsRefreshing = ko.observable(false);
 		this.recordCountClass = ko.pureComputed(function () {
@@ -472,212 +471,6 @@ define([
 			},
 		}
 
-		this.compareResultsColumns = [{
-				title: 'Match',
-				data: d => {
-					if (d.conceptIn1Only == 1) {
-						return '1 Only'
-					} else if (d.conceptIn2Only == 1) {
-						return '2 Only'
-					} else {
-						return 'Both'
-					}
-				},
-			},
-			{
-				title: 'Id',
-				data: d => d.conceptId,
-			},
-			{
-				title: 'Code',
-				data: d => d.conceptCode,
-			},
-			{
-				title: 'Name',
-				data: d => {
-					var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-					return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
-				},
-			},
-			{
-				title: 'Class',
-				data: d => d.conceptClassId,
-			},
-			{
-				title: '<i id="dtConeptManagerRC" class="fa fa-database" aria-hidden="true"></i> RC',
-				data: d => d.recordCount,
-			},
-			{
-				title: '<i id="dtConeptManagerDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
-				data: d => d.descendantRecordCount,
-			},
-			{
-				title: 'Domain Id',
-				data: d => d.domainId,
-			},
-			{
-				title: 'Vocabulary',
-				data: d => d.vocabularyId,
-			},
-		];
-
-		this.searchConceptsColumns = [{
-			title: '<i class="fa fa-shopping-cart"></i>',
-			render: function (s, p, d) {
-				var css = '';
-				var icon = 'fa-shopping-cart';
-				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-					css = ' selected';
-				}
-				return '<i class="fa ' + icon + ' ' + css + '"></i>';
-			},
-			orderable: false,
-			searchable: false
-		}, {
-			title: 'Id',
-			data: 'CONCEPT_ID'
-		}, {
-			title: 'Code',
-			data: 'CONCEPT_CODE'
-		}, {
-			title: 'Name',
-			data: 'CONCEPT_NAME',
-			render: function (s, p, d) {
-				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-			}
-		}, {
-			title: 'Class',
-			data: 'CONCEPT_CLASS_ID'
-		}, {
-			title: 'Standard Concept Caption',
-			data: 'STANDARD_CONCEPT_CAPTION',
-			visible: false
-		}, {
-			title: 'RC',
-			data: 'RECORD_COUNT',
-			className: 'numeric'
-		}, {
-			title: 'DRC',
-			data: 'DESCENDANT_RECORD_COUNT',
-			className: 'numeric'
-		}, {
-			title: 'Domain',
-			data: 'DOMAIN_ID'
-		}, {
-			title: 'Vocabulary',
-			data: 'VOCABULARY_ID'
-		}, {
-			title: 'Ancestors',
-			data: 'ANCESTORS',
-			render: conceptSetService.getAncestorsRenderFunction()
-		}];
-
-		this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback(this);
-		
-		this.searchConceptsOptions = {
-			Facets: [{
-				'caption': 'Vocabulary',
-				'binding': function (o) {
-					return o.VOCABULARY_ID;
-				}
-			}, {
-				'caption': 'Class',
-				'binding': function (o) {
-					return o.CONCEPT_CLASS_ID;
-				}
-			}, {
-				'caption': 'Domain',
-				'binding': function (o) {
-					return o.DOMAIN_ID;
-				}
-			}, {
-				'caption': 'Standard Concept',
-				'binding': function (o) {
-					return o.STANDARD_CONCEPT_CAPTION;
-				}
-			}, {
-				'caption': 'Invalid Reason',
-				'binding': function (o) {
-					return o.INVALID_REASON_CAPTION;
-				}
-			}, {
-				'caption': 'Has Records',
-				'binding': function (o) {
-					return parseInt(o.RECORD_COUNT.toString()
-						.replace(',', '')) > 0;
-				}
-			}, {
-				'caption': 'Has Descendant Records',
-				'binding': function (o) {
-					return parseInt(o.DESCENDANT_RECORD_COUNT.toString()
-						.replace(',', '')) > 0;
-				}
-			}]
-		};
-
-		this.compareResultsOptions = {
-			lengthMenu: [
-				[10, 25, 50, 100, -1],
-				['10', '25', '50', '100', 'All']
-			],
-			order: [
-				[1, 'asc'],
-				[2, 'desc']
-			],
-			Facets: [{
-					'caption': 'Match',
-					'binding': d => {
-						if (d.conceptIn1Only == 1) {
-							return '1 Only'
-						} else if (d.conceptIn2Only == 1) {
-							return '2 Only'
-						} else {
-							return 'Both'
-						}
-					},
-				},
-				{
-					'caption': 'Class',
-					'binding': d => d.conceptClassId,
-				},
-				{
-					'caption': 'Domain',
-					'binding': d => d.domainId,
-				},
-				{
-					'caption': 'Vocabulary',
-					'binding': d => d.vocabularyId,
-				},
-				{
-					'caption': 'Has Records',
-					'binding': d => {
-						var val = d.recordCount;
-						if (val.replace)
-							val = parseInt(val.replace(/\,/g, '')); // Remove comma formatting and treat as int
-						if (val > 0) {
-							return 'true'
-						} else {
-							return 'false'
-						}
-					},
-				},
-				{
-					'caption': 'Has Descendant Records',
-					'binding': d => {
-						var val = d.descendantRecordCount;
-						if (val.replace)
-							val = parseInt(val.replace(/\,/g, '')); // Remove comma formatting and treat as int
-						if (val > 0) {
-							return 'true'
-						} else {
-							return 'false'
-						}
-					},
-				},
-			]
-		};
-
 		this.renderLink = function (s, p, d) {
 			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
 		}
@@ -711,10 +504,7 @@ define([
 
 		this.
 
-		this.exportCSV = function () {
-			window.open(config.api.url + 'conceptset/' + this.model.currentConceptSet()
-				.id + '/export');
-		}
+		this.
 
 		this.
 
@@ -770,35 +560,7 @@ define([
 			this.optimizerSavingNew(false);
 		}
 
-		this.chooseCS1 = function () {
-			$('#modalCS')
-				.modal('show');
-			this.targetId = this.compareCS1Id;
-			this.targetCaption = this.compareCS1Caption;
-			this.targetExpression = this.compareCS1ConceptSet;
-		}
-
-		this.clearCS1 = function () {
-			this.compareCS1Id(0);
-			this.compareCS1Caption(null);
-			this.compareCS1ConceptSet.removeAll();
-			this.compareResults(null);
-		}
-
-		this.chooseCS2 = function () {
-			$('#modalCS')
-				.modal('show');
-			this.targetId = this.compareCS2Id;
-			this.targetCaption = this.compareCS2Caption;
-			this.targetExpression = this.compareCS2ConceptSet;
-		}
-
-		this.clearCS2 = function () {
-			this.compareCS2Id(0);
-			this.compareCS2Caption(null);
-			this.compareCS2ConceptSet.removeAll();
-			this.compareResults(null);
-		}
+		
 
 		this.conceptsetSelected = function (d) {
 			$('#modalCS')
@@ -811,67 +573,10 @@ define([
 				});
 		}
 
-		this.compareConceptSets = function () {
-			this.compareLoading(true);
-			var compareTargets = [{
-				items: this.compareCS1ConceptSet()
-			}, {
-				items: this.compareCS2ConceptSet()
-			}];
-			vocabularyAPI.compareConceptSet(compareTargets)
-				.then(function (compareResults) {
-					var conceptIds = $.map(compareResults, function (o, n) {
-						return o.conceptId;
-					});
-					cdmResultsAPI.getConceptRecordCount(this.currentResultSource()
-							.sourceKey, conceptIds, compareResults)
-						.then(function (rowcounts) {
-							//this.compareResults(null);
-							this.compareResults(compareResults);
-							this.compareIds(this.compareCS1Id() + "-" + this.compareCS2Id()); // Stash the currently selected concept ids so we can use this to determine when to show/hide results
-							this.compareLoading(false);
-						});
-				});
-		}
 
-		this.showSaveNewModal = function () {
-			this.saveConceptSetShow(true);
-		}
+		this.
 
-		this.compareCreateNewConceptSet = function () {
-			var dtItems = $('#compareResults table')
-				.DataTable()
-				.data();
-			var conceptSet = {};
-			conceptSet.id = 0;
-			conceptSet.name = this.compareNewConceptSetName;
-			var selectedConcepts = [];
-			_.each(dtItems, (item) => {
-				var concept;
-				concept = {
-					CONCEPT_CLASS_ID: item.conceptClassId,
-					CONCEPT_CODE: item.conceptCode,
-					CONCEPT_ID: item.conceptId,
-					CONCEPT_NAME: item.conceptName,
-					DOMAIN_ID: item.domainId,
-					INVALID_REASON: null,
-					INVALID_REASON_CAPTION: null,
-					STANDARD_CONCEPT: null,
-					STANDARD_CONCEPT_CAPTION: null,
-					VOCABULARY_ID: null,
-				}
-				var newItem;
-				newItem = {
-					concept: concept,
-					isExcluded: ko.observable(false),
-					includeDescendants: ko.observable(false),
-					includeMapped: ko.observable(false),
-				}
-				selectedConcepts.push(newItem);
-			})
-			this.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
-			this.saveConceptSetShow(false);
-		}
+		this.
 
 		this.toggleOnSelectAllCheckbox = function (selector, selectAllElement) {
 			$(document)
@@ -1015,36 +720,15 @@ define([
 		this.canEdit = this.model.canEditCurrentConceptSet;
 		
 		
-		this.copyToClipboard = function(clipboardButtonId, clipboardButtonMessageId) {
-			var currentClipboard = new clipboard(clipboardButtonId);
-
-			currentClipboard.on('success', function (e) {
-				console.log('Copied to clipboard');
-				e.clearSelection();
-				$(clipboardButtonMessageId).fadeIn();
-				setTimeout(function () {
-					$(clipboardButtonMessageId).fadeOut();
-				}, 1500);
-			});
-
-			currentClipboard.on('error', function (e) {
-				console.log('Error copying to clipboard');
-				console.log(e);
-			});			
-		}
-		
-		this.copyExpressionToClipboard = function() {
-			this.copyToClipboard('#btnCopyExpressionClipboard', '#copyExpressionToClipboardMessage');
-		}
+		this.copyToClipboard = function
 		
 		this.copyIdentifierListToClipboard = function() {
-			this.copyToClipboard('#btnCopyIdentifierListClipboard', '#copyIdentifierListMessage');
+			
 		}
 		
 		this.copyIncludedConceptIdentifierListToClipboard = function() {
-			this.copyToClipboard('#btnCopyIncludedConceptIdentifierListClipboard', '#copyIncludedConceptIdentifierListMessage');
+			
 		}
-	}
 
 	var component = {
 		viewModel: conceptsetManager,

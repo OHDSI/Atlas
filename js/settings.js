@@ -119,7 +119,7 @@ const settingsObject = {
 
     "bootstrap-select": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/js/bootstrap-select",
     "less-js": "https://cdnjs.cloudflare.com/ajax/libs/less.js/3.0.1/less.min",
-    "file-saver": "assets/FileSaver", //"https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min",
+    "file-saver": "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min",
     "numeral": "assets/numeral",
     "lz-string": "assets/lz-string",
     "jquery.ui.autocomplete.scroll": "assets/jquery.ui.autocomplete.scroll",

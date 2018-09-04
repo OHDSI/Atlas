@@ -3,7 +3,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinition',
 	'webapi/MomentAPI',
-	'webapi/ConceptSetAPI',
+	'services/ConceptSet',
 	'components/conceptset/utils',
 	'components/cohortbuilder/CohortExpression',
 	'conceptsetbuilder/InputTypes/ConceptSet',
@@ -30,7 +30,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'css!./cohort-definition-manager.css',
 	'assets/ohdsi.util',
 	'components/cohortbuilder/InclusionRule',
-	'webapi/ConceptSetAPI',
 	'components/modal-pick-options',
 	'components/heading',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
@@ -42,7 +41,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	CohortDefinition,
 	cohortDefinitionService,
 	momentApi,
-	conceptSetApi,
+	conceptSetService,
 	conceptSetUitls,
 	CohortExpression,
 	ConceptSet,
@@ -866,9 +865,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				var conceptSetId;
 				var itemsPromise = (data) => {
 					conceptSetId = data.id;
-					return conceptSetApi.saveConceptSetItems(data.id, conceptSetItems);
+					return conceptSetService.saveConceptSetItems(data.id, conceptSetItems);
 				};
-				conceptSetApi.saveConceptSet(conceptSet)
+				conceptSetService.saveConceptSet(conceptSet)
 					.then(itemsPromise);
     	};
 

@@ -4,6 +4,7 @@ define(function (require, exports) {
 	const httpService = require('services/http');
 	const sharedState = require('atlas-state');
 	const config = require('appConfig');
+	const authApi = require('webapi/AuthAPI');
 
 	function getIncludedConceptSetDrawCallback({ model, searchConceptsColumns }) {
 		return async function (settings) {
@@ -67,6 +68,44 @@ define(function (require, exports) {
 		return httpService.doPost(sharedState.vocabularyUrl() + 'included-concepts/count', data);
 	}
 
+	function getGenerationInfo(conceptSetId) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + + (conceptSetId || '-1') + '/generationinfo')
+			.catch(authApi.handleAccessDenied);
+	}
+    
+    function deleteConceptSet(conceptSetId) {
+		return httpService.doDelete(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
+			.catch(authApi.handleAccessDenied);
+    }
+
+  function exists(name, id) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/exists', { name, id })
+			.catch(authApi.handleAccessDenied);
+  }
+
+  function saveConceptSet(conceptSet) {
+		let promise = new Promise(r => r());
+		const url = `${config.api.url}conceptset/${conceptSet.id ? conceptSet.id : ''}`;
+		if (conceptSet.id) {
+			promise = httpService.doPut(url, conceptSet);
+		} else {
+			promise = httpService.doPost(url, conceptSet);
+		}
+		promise.catch(authApi.handleAccessDenied);
+
+		return promise;
+	}
+
+	function saveConceptSetItems(id, conceptSetItems) {
+		return httpService.doPut(config.api.url + 'conceptset/' + id + '/items', conceptSetItems)
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function getConceptSet(conceptSetId) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
+			.catch(authApi.handleAccessDenied);
+	}
+	
 	const api = {
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
@@ -76,6 +115,13 @@ define(function (require, exports) {
 		loadConceptSetExpression,
 		lookupIdentifiers,
 		getInclusionCount,
+		
+		getConceptSet: getConceptSet,
+		getGenerationInfo: getGenerationInfo,
+		deleteConceptSet: deleteConceptSet,
+		exists: exists,
+		saveConceptSet,
+		saveConceptSetItems,
 	};
 
 	return api;

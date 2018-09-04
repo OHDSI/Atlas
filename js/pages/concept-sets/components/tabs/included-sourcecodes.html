@@ -1,0 +1,8 @@
+<!-- ko if: $root.loadingSourcecodes -->
+  <loading></loading>
+<!-- /ko -->
+<faceted-datatable params="{
+  columns: $root.relatedSourcecodesColumns,
+  options: $root.relatedSourcecodesOptions,
+  reference: $root.includedSourcecodes
+}"></faceted-datatable>

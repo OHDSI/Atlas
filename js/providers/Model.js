@@ -167,7 +167,7 @@ define(
 					var url = "#/";
 					if (this.currentConceptSet())
 						url = url + "conceptset/" + (this.currentConceptSet()
-							.id || '0') + '/details';
+							.id || '0') + '/conceptset-expression';
 					else
 						url = url + "conceptsets";
 					return url;
@@ -806,6 +806,7 @@ define(
 			}
 
 			onCurrentConceptSetModeChanged(newMode) {
+				console.warn('onCurrentConceptSetModeChanged is deprecated. moved to pages/concept-sets/components/tabs');
 				switch (newMode) {
 					case 'included':
 						this.loadIncluded();

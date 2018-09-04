@@ -5,6 +5,7 @@ define([
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'webapi/AuthAPI',
+	'../const',
   'components/tabs',
   'circe'
 ], function (
@@ -14,6 +15,7 @@ define([
 	AutoBind,
 	commonUtils,
 	authApi,
+	constants,
 ) {
 	class ConceptsetList extends AutoBind(Component) {
 		constructor(params) {
@@ -26,7 +28,7 @@ define([
 		}		
 
 		onRespositoryConceptSetSelected (conceptSet) {
-			window.location.href = "#/conceptset/" + conceptSet.id + '/details';
+			window.location.href = constants.paths.mode(conceptSet.id);
 		}
 
 		onConceptSetBrowserAction (result) {
@@ -40,7 +42,7 @@ define([
 		newConceptSet() {
 			if (this.model.currentConceptSet() == undefined) {
 				this.model.currentConceptSetSource('repository');
-				document.location = '#/conceptset/0/details';
+				document.location = constants.paths.mode();
 			}
 		}
 
