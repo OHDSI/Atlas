@@ -112,6 +112,10 @@ define([
       return (self.selectedSource() && self.selectedSource().key() && self.isDeletePermitted());
     };
 
+    self.canEditKey = ko.pureComputed(function () {
+      return !self.selectedSourceId();
+		});
+
     self.options.dialectOptions = [
       { name: 'PostgreSQL', id: 'postgresql' },
       { name: 'SQL server', id: 'sqlserver' },
