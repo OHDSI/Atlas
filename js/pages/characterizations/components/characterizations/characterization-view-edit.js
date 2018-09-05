@@ -35,6 +35,7 @@ define([
             this.params = params;
 
             this.selectTab = this.selectTab.bind(this);
+            this.setupDesign = this.setupDesign.bind(this);
             this.setupSection = this.setupSection.bind(this);
             this.loadDesignData = this.loadDesignData.bind(this);
 
@@ -73,18 +74,26 @@ define([
             }
         }
 
-        loadDesignData() {
-            this.loading(true);
-            CharacterizationService
-                .loadCharacterizationDesign()
-                .then(res => {
-                    this.design({
-                        ...res,
-                        name: ko.observable(res.name),
+        setupDesign(design) {
+            this.design({
+                ...design,
+                name: ko.observable(design.name),
+            });
+            this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+        }
+
+        loadDesignData(id) {
+            if (id < 1) {
+                this.setupDesign({})
+            } else {
+                this.loading(true);
+                CharacterizationService
+                    .loadCharacterizationDesign(id)
+                    .then(res => {
+                        this.setupDesign(res);
+                        this.loading(false);
                     });
-                    this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
-                    this.loading(false);
-                });
+            }
         }
 
         selectTab(index) {
@@ -92,7 +101,32 @@ define([
         }
 
         save() {
-            console.log('Saving: ', JSON.parse(ko.toJSON(this.design)));
+            const ccId = this.params.characterizationId();
+
+            if (ccId < 1) {
+                CharacterizationService
+                    .createCharacterization(this.design())
+                    .then(res => commonUtils.routeTo('/cc/characterizations/' + res.id + '/design'));
+            } else {
+                CharacterizationService
+                    .updateCharacterization(ccId, this.design())
+                    .then(res => {
+                        this.setupDesign(res);
+                        this.loading(false);
+                    });
+            }
+        }
+
+        deleteCc() {
+            if (confirm('Are you sure?')) {
+                this.loading(true);
+                CharacterizationService
+                    .deleteCharacterization(this.params.characterizationId())
+                    .then(res => {
+                        this.loading(false);
+                        this.closeCharacterization();
+                    });
+            }
         }
 
         closeCharacterization() {

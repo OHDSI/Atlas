@@ -39,9 +39,15 @@
             <label data-bind="css: classes('ds-title'), text: sourceName"></label>
             <ul data-bind="css: classes({ element: 'action-list' })">
                 <li data-bind="css: classes({ element: 'action' })">
-                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']})">
-                        <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
-                        Generate
+                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}), click: () => $component.generate(sourceKey)">
+                        <!-- ko if: $component.ccGenerationStatusOptions.STARTED === status -->
+                            <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-circle-o-notch fa-spin']})"></i>
+                            <span data-bind="css: classes('action-text')">Generating...</span>
+                        <!-- /ko -->
+                        <!-- ko if: $component.ccGenerationStatusOptions.COMPLETED === status -->
+                            <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
+                            <span data-bind="css: classes('action-text')">Generate</span>
+                        <!-- /ko -->
                     </button>
                 </li>
                 <li data-bind="css: classes({ element: 'action' })">

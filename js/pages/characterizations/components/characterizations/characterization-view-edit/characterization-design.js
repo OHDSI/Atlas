@@ -59,7 +59,7 @@ define([
                     },
                     {
                         title: 'Description',
-                        data: 'descr',
+                        data: 'description',
                         className: this.classes('col-feature-descr'),
                     },
                     {
@@ -68,7 +68,7 @@ define([
                         className: this.classes('col-feature-remove'),
                     }
                 ],
-                data: ko.computed(() => params.design().analyses || [])
+                data: ko.computed(() => params.design().featureAnalyses || [])
             };
 
             this.featureAnalysesParams = {
@@ -115,10 +115,10 @@ define([
             this.showFeatureAnalysesBrowser(false);
             this.params.design({
                 ...ccDesign,
-                analyses: lodash.uniqBy(
+                featureAnalyses: lodash.uniqBy(
                     [
-                        ...ccDesign.analyses,
-                        { id, name, descr: description }
+                        ...(ccDesign.featureAnalyses || []),
+                        { id, name, description }
                     ],
                     'id'
                 ),
@@ -129,7 +129,7 @@ define([
             const ccDesign = this.params.design();
             this.params.design({
                 ...ccDesign,
-                analyses: ccDesign.analyses.filter(a => a.id !== parseInt(id)),
+                featureAnalyses: ccDesign.featureAnalyses.filter(a => a.id !== parseInt(id)),
             });
         }
 
@@ -140,7 +140,7 @@ define([
                 ...ccDesign,
                 parameters: lodash.uniqBy(
                     [
-                        ...ccDesign.parameters,
+                        ...(ccDesign.parameters || []),
                         { name, value }
                     ],
                     'name'

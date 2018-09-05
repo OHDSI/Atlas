@@ -1,6 +1,6 @@
 <faceted-datatable
         data-bind="visible:loading()==false"
-        params="orderColumn: 3, reference: data, columns: columns, options: options, rowClick: selectAnalysis"
+        params="order: [1, 'asc'], reference: data, columns: columns, options: options, rowClick: selectAnalysis"
 ></faceted-datatable>
 
 <loading data-bind="css: classes('loading-panel'), visible:loading()" params="status: 'Retrieving feature analyses list...'"></loading>

@@ -11,6 +11,7 @@ define([
     'd3',
     'components/visualizations/filter-panel/utils',
     'webapi/MomentAPI',
+    'services/Source',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/line-chart',
@@ -30,6 +31,7 @@ define([
     d3,
     filterUtils,
     momentAPI,
+    SourceService
 ) {
 
     class CharacterizationViewEditResults extends Component {
@@ -94,6 +96,14 @@ define([
             ];
         }
 
+        get covNameColumn() {
+            return {
+                title: 'Covariate',
+                data: 'covariateName',
+                className: this.classes('col-prev-title'),
+            };
+        }
+
         constructor(params) {
             super();
 
@@ -103,35 +113,18 @@ define([
 
             this.loading = ko.observable(false);
 
+            this.design = ko.observable({});
+            this.executionId = params.executionId;
             this.data = ko.observable([]);
             this.filterList = ko.observableArray([]);
 
-            this.reportList = ko.computed(() => this.prepareTabularData(this.data().analyses, this.filterList()));
-
-            this.groupedScatterData = ko.computed(() => {
-                return this.reportList().filter(analysis => analysis.type === 'prevalence').map(analysis => ({
-                    name: analysis.analysisName,
-                    values: this.convertScatterplotData(analysis),
-                }));
-            });
-
-            this.groupedTabularData = ko.computed(() => {
-                const reportList = this.getPrevalenceReports(this.reportList());
-
-                if (reportList.length < 1) {
-                    return { columns: [], data: [] };
-                }
-
-                return {
-                    columns: reportList[0].columns,
-                    data: lodash.flatten(reportList.map(a => a.data))
-                }
-            });
+            this.analysisList = ko.computed(() => this.prepareTabularData(this.data().analyses, this.filterList()));
 
             this.groupedScatterColorScheme = d3.schemeCategory10;
             this.scatterXScale = d3.scaleLinear().domain([0, 100]);
             this.scatterYScale = d3.scaleLinear().domain([0, 100]);
 
+            this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
         }
 
@@ -139,15 +132,93 @@ define([
             return momentAPI.formatDateTimeUTC(date);
         }
 
+        getCountColumn(idx) {
+            return {
+                title: 'Count',
+                render: (s, p, d) => d.sumValue[idx],
+            };
+        }
+
+        getPctColumn(idx) {
+            return {
+                title: 'Pct',
+                render: (s, p, d) => this.formatPct(d.pct[idx]),
+            };
+        }
+
         loadData() {
             this.loading(true);
-            CharacterizationService
-                .loadCharacterizationResults()
-                .then(res => {
-                    this.filterList(this.getFilterList(res.analyses));
-                    this.data(res);
-                    this.loading(false);
+
+            Promise.all([
+                SourceService.loadSourceList(),
+                CharacterizationService.loadCharacterizationDesignByGeneration(this.executionId()),
+                CharacterizationService.loadCharacterizationExecution(this.executionId()),
+                CharacterizationService.loadCharacterizationResults(this.executionId())
+            ]).then(([
+                 sourceList,
+                 design,
+                 execution,
+                 resultsList
+            ]) => {
+
+                this.design(design);
+
+                const source = sourceList.find(s => execution.sourceKey);
+
+                const result = {
+                    sourceId: source.sourceId,
+                    sourceName: source.sourceName,
+                    date: execution.endTime,
+                    designHash: execution.hashCode,
+                    analyses: lodash.uniqBy(
+                        resultsList.map(r => ({
+                            analysisId: r.analysisId,
+                            // TODO
+                            domainId: null, // "Demographics",
+                            analysisName: r.analysisName,
+                            type: r.resultType.toLowerCase(),
+                        })),
+                        'analysisId'
+                    )
+                };
+
+                resultsList.forEach(r => {
+
+                    const analysis = result.analyses.find(a => a.analysisId === r.analysisId);
+                    if (!analysis.reports) {
+                        analysis.reports = []
+                    };
+                    let report = analysis.reports.find(report => report.cohortId === r.cohortId);
+                    if (!report) {
+                        report = {
+                            cohortId: r.cohortId,
+                            cohortName: this.design().cohorts.find(c => c.id === r.cohortId).name,
+                            stats: []
+                        };
+                        analysis.reports.push(report);
+                    }
+                    report.stats.push({
+                        covariateId: r.covariateId,
+                        covariateName: r.covariateName,
+                        conceptId: r.conceptId,
+                        avg: r.avg,
+                        ...(r.resultType.toLowerCase() === 'prevalence' ? {sumValue: r.count} : {count: r.count }),
+                        pct: r.avg * 100,
+                        min: r.min,
+                        p10: r.p10,
+                        p25: r.p25,
+                        median: r.median,
+                        p75: r.p75,
+                        p90: r.p90,
+                        max: r.max,
+                        stdDev: r.stdDev
+                    });
                 });
+
+                this.filterList(this.getFilterList(result.analyses));
+                this.data(result);
+                this.loading(false);
+            });
         }
 
         getFilterList(data) {
@@ -188,8 +259,38 @@ define([
             return reports.filter(analysis => analysis.type === 'prevalence');
         }
 
+        getCovariatesSummaryAnalysis(analyses) {
+            if (analyses.length > 1 && analyses[0].reports.length === 2) {
+
+                const getAllCohortStats = (cohortId) => {
+                    return lodash.flatten(analyses.map(a => {
+                        const analysisName = a.analysisName;
+                        const stats = lodash.flatten(a.reports.filter(r => r.cohortId === cohortId).map(r => r.stats));
+                        return stats.map(s => ({ ...s, analysisName }));
+                    }));
+                };
+
+                const firstCohort = analyses[0].reports[0];
+                const secondCohort = analyses[0].reports[1];
+
+                return {
+                    analysisName: 'All covariates',
+                    type: 'prevalence',
+                    reports: [
+                        { ...firstCohort, stats: getAllCohortStats(firstCohort.cohortId) },
+                        { ...secondCohort, stats: getAllCohortStats(secondCohort.cohortId) }
+                    ]
+                };
+            }
+        }
+
         prepareTabularData(data = [], filters = []) {
             const filteredData = this.filterData(data, filterUtils.getSelectedFilterValues(filters));
+
+            const summaryAnalysis = this.getCovariatesSummaryAnalysis(filteredData, filters);
+            if (summaryAnalysis) {
+                filteredData.unshift(summaryAnalysis);
+            }
 
             const convertedData = filteredData.map(analysis => {
                 let convertedAnalysis;
@@ -202,7 +303,11 @@ define([
                     } else {
                         convertedAnalysis = {
                             ...analysis,
-                            reports: analysis.reports.map(r => ({...r, data: r.stats, columns: this.distributionColumns})),
+                            reports: analysis.reports.map(r => ({
+                                ...r,
+                                data: r.stats,
+                                columns: this.distributionColumns
+                            })),
                         };
                     }
                 }
@@ -224,8 +329,25 @@ define([
             }).filter(a => a);
         }
 
+        tooltipBuilder(d) {
+            return `
+                <div>Series: ${d.seriesName}</div>
+                <div>Covariate: ${d.covariateName}</div>
+                <div>X: ${d.xValue}</div>
+                <div>Y: ${d.yValue}</div>
+            `;
+        }
+
         convertScatterplotData(analysis) {
-            return analysis.data.map(rd => ({ xValue: rd.pct[0], yValue: rd.pct[1] }));
+            const seriesData = lodash.groupBy(analysis.data, 'analysisName');
+            return Object.keys(seriesData).map(key => ({
+                name: key,
+                values: seriesData[key].filter(rd => rd.pct[0] && rd.pct[1]).map(rd => ({
+                    covariateName: rd.covariateName,
+                    xValue: rd.pct[0] || 0,
+                    yValue: rd.pct[1] || 0
+                })),
+            }));
         }
 
         convertBoxplotData(analysis) {
@@ -243,30 +365,19 @@ define([
         }
 
         convertPrevalenceAnalysis(analysis) {
-            let columns = [
-                {
-                    title: 'Covariate',
-                    data: 'covariateName',
-                    className: this.classes('col-prev-title'),
-                },
-            ];
+            let columns = [ this.covNameColumn ];
 
             let data = {};
 
             analysis.reports.forEach((r, i) => {
 
-                columns.push({
-                    title: 'Count',
-                    render: (s, p, d) => d.sumValue[i],
-                });
-                columns.push({
-                    title: 'Pct',
-                    render: (s, p, d) => this.formatPct(d.pct[i]),
-                });
+                columns.push(this.getCountColumn(i));
+                columns.push(this.getPctColumn(i));
 
                 r.stats.forEach(rd => {
                     if (data[rd.covariateName] === undefined) {
                         data[rd.covariateName] = {
+                            analysisName: rd.analysisName || analysis.analysisName,
                             covariateName: rd.covariateName,
                             sumValue: [],
                             pct: [],

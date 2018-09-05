@@ -20,9 +20,14 @@ define(
             },
         ];
 
+        const ccGenerationStatus = {
+            STARTED: 'STARTED',
+            COMPLETED: 'COMPLETED',
+        };
+
         return {
             pageTitle,
-
+            ccGenerationStatus,
             characterizationsTab,
             featureAnalysesTab,
             gridTabs,

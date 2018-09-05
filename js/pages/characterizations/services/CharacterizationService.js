@@ -1,92 +1,83 @@
 define([
-    'text!pages/characterizations/stubs/characterization-list-data.json',
-    'text!pages/characterizations/stubs/characterization-design-data.json',
-    'text!pages/characterizations/stubs/characterization-executions-data.json',
-    'text!pages/characterizations/stubs/characterization-results-data.json',
-    'text!pages/characterizations/stubs/characterization-export-data.json',
+    'services/http',
+    'appConfig',
 ], function (
-    characterizationListData,
-    characterizationDesignData,
-    executionsData,
-    characterizationResultsData,
-    characterizationExportData
+    httpService,
+    config,
 ) {
     function loadCharacterizationList() {
-        return new Promise(resolve => {
-            setTimeout(
-                () => {
-                    resolve(JSON.parse(characterizationListData));
-                },
-                2000
-            );
-        });
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterizations')
+            .then(res => res.data);
     }
 
-    function loadCharacterizationDesign() {
-        return new Promise(resolve => {
-            setTimeout(
-                () => {
-                    resolve(JSON.parse(characterizationDesignData));
-                },
-                2000
-            );
-        });
+    function loadCharacterization(id) {
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterizations/' + id)
+            .then(res => res.data);
     }
 
-    function loadCharacterizationExecutions() {
-        return new Promise(resolve => {
-            setTimeout(
-                () => {
-                    const executions = JSON.parse(executionsData);
-                    resolve(executions.executionGroups);
-                },
-                2000
-            );
-        });
+    function deleteCharacterization(id) {
+        return httpService
+            .doDelete(config.webAPIRoot + 'cohort-characterizations/' + id)
+            .then(res => res.data);
     }
 
-    function loadExecutionDesign() {
-        return new Promise(resolve => {
-            setTimeout(
-                () => {
-                    const characterizationExportJson = JSON.parse(characterizationExportData);
-                    resolve(characterizationExportJson);
-                },
-                2000
-            );
-        });
+    function loadCharacterizationDesign(id) {
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterizations/' + id + '/design')
+            .then(res => res.data);
     }
 
-    function loadCharacterizationResults() {
-        return new Promise(resolve => {
-            setTimeout(
-                () => {
-                    const characterizationResults = JSON.parse(characterizationResultsData);
-                    resolve(characterizationResults);
-                },
-                2000
-            );
-        });
+    function createCharacterization(design) {
+        return request = httpService.doPost(config.webAPIRoot + 'cohort-characterizations', design).then(res => res.data);
     }
 
-    function loadCharacterizationExportJson() {
-        return new Promise(resolve => {
-            setTimeout(
-                () => {
-                    const characterizationExportJson = JSON.parse(characterizationExportData);
-                    resolve(characterizationExportJson);
-                },
-                2000
-            );
-        });
+    function updateCharacterization(id, design) {
+        return httpService.doPut(config.webAPIRoot + 'cohort-characterizations/' + id, design).then(res => res.data);
+    }
+
+    function loadCharacterizationExecutionList(id) {
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterizations/' + id + '/generations')
+            .then(res => res.data);
+    }
+
+    function loadCharacterizationExecution(id) {
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterizations/generations/' + id)
+            .then(res => res.data);
+    }
+
+    function loadCharacterizationResults(generationId) {
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterizations/generations/' + generationId + '/results')
+            .then(res => res.data);
+    }
+
+    function loadCharacterizationDesignByGeneration(generationId) {
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterizations/generations/' + generationId + '/design')
+            .then(res => res.data);
+    }
+
+    function runGeneration(ccId, sourcekey) {
+        return httpService
+            .doPost(config.webAPIRoot + 'cohort-characterizations/' + ccId + '/generate/' + sourcekey)
+            .then(res => res.data);
     }
 
     return {
         loadCharacterizationList,
+        loadCharacterization,
         loadCharacterizationDesign,
-        loadCharacterizationExecutions,
-        loadExecutionDesign,
+        createCharacterization,
+        updateCharacterization,
+        deleteCharacterization,
+        loadCharacterizationExecutionList,
+        loadCharacterizationExecution,
         loadCharacterizationResults,
-        loadCharacterizationExportJson,
+        loadCharacterizationDesignByGeneration,
+        runGeneration,
     };
 });

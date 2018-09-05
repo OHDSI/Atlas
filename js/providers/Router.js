@@ -24,7 +24,8 @@ define(
       run() {
         const routerOptions = {
           notfound: () => this.handleNotFound(),
-          on: () => this.getModel().componentParams({}),
+            // TODO:
+          // on: () => this.getModel().componentParams({}),
         };
         this.router = new Router(this.aggregateRoutes());
         this.router.qs = this.qs;
@@ -49,7 +50,8 @@ define(
         }, {});
         const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
 					accumulator[key] = (...args) => {
-            this.setCurrentView('loading');
+                        // TODO:
+					    //this.setCurrentView('loading');
 						if (this.onLoginSubscription) {
 							this.onLoginSubscription.dispose();
             }

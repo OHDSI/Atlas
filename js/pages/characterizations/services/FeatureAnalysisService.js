@@ -1,22 +1,18 @@
 define([
+    'services/http',
+    'appConfig',
     'text!pages/characterizations/stubs/feature-analysis-list-data.json',
     'text!pages/characterizations/stubs/feature-analysis-data.json',
     'text!pages/characterizations/stubs/feature-analysis-domains-data.json',
 ], function (
+    httpService,
+    config,
     featureAnalysisListData,
     featureAnalysisData,
     featureAnalysisDomainsData
 ) {
     function loadFeatureAnalysisList() {
-        return new Promise(resolve => {
-            setTimeout(
-                () => {
-                    const data = JSON.parse(featureAnalysisListData);
-                    resolve(data.analyses);
-                },
-                2000
-            );
-        });
+        return httpService.doGet(config.webAPIRoot + 'feature-analyses?size=100000').then(res => res.data);
     }
 
     function loadFeatureAnalysis() {

@@ -17,7 +17,8 @@
     <div data-bind="css: classes({ element: 'toolbar-btns' })">
         <button data-bind="
             css: classes({ element: 'new-entity-btn', extra: 'btn btn-primary btn-sm' }),
-            text: 'New ' + $component.tabs.find(t => t.value === $component.activeTab).newEntityLabel
+            text: 'New ' + $component.tabs.find(t => t.value === $component.activeTab).newEntityLabel,
+            click: $component.createNew
         "></button>
     </div>
 </div>

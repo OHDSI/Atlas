@@ -27,6 +27,7 @@ define([
             this.MODE_JSON = 0;
             this.MODE_IMPORT = 1;
 
+            this.characterizationId = params.characterizationId;
             this.mode = ko.observable(this.MODE_JSON);
 
             this.setMode = this.setMode.bind(this);
@@ -47,7 +48,7 @@ define([
             this.loading(true);
 
             CharacterizationService
-                .loadCharacterizationExportJson()
+                .loadCharacterizationDesign(this.characterizationId())
                 .then(res => {
                     this.exportEntity(res);
                     this.loading(false);

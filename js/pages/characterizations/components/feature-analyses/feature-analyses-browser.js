@@ -57,10 +57,6 @@ define([
                 {
                     title: 'Description',
                     data: 'description'
-                },
-                {
-                    title: 'Author',
-                    data: 'createdBy.name'
                 }
             ];
 
@@ -74,7 +70,7 @@ define([
             FeatureAnalysisService
                 .loadFeatureAnalysisList()
                 .then(res => {
-                    this.data(res);
+                    this.data(res.content);
                     this.loading(false);
                 });
         }

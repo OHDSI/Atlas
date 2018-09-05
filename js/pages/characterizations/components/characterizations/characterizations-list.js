@@ -54,7 +54,7 @@ define([
                 },
                 {
                     title: 'Author',
-                    data: 'createdBy.name',
+                    data: 'createdBy.login',
                     className: this.classes('tbl-col', 'author'),
                 },
 
@@ -71,7 +71,7 @@ define([
                     },
                     {
                         'caption': 'Author',
-                        'binding': o => o.createdBy.name,
+                        'binding': o => o.createdBy.login,
                     },
                 ]
             };
@@ -84,9 +84,13 @@ define([
             CharacterizationService
                 .loadCharacterizationList()
                 .then(res => {
-                    this.data(res.characterizations);
+                    this.data(res.content);
                     this.loading(false);
                 });
+        }
+
+        createCharacterization() {
+            commonUtils.routeTo('/cc/characterizations/0');
         }
     }
 

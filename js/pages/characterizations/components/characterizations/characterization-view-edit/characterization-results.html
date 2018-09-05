@@ -2,7 +2,7 @@
 
 <div data-bind="css: classes(), visible: !loading()">
     <h2 data-bind="css: classes('title')">
-        <a href="#/cc/characterizations/1/executions">Executions</a>
+        <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.design().id + '/executions') }">Executions</a>
         <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
         <span data-bind="text: 'Reports for ' + $component.data().sourceName"></span>
     </h2>
@@ -18,7 +18,7 @@
             </li>
             <li data-bind="css: classes('detail')">
                 <label data-bind="css: classes('detail-label')">Results:</label>
-                <span data-bind="css: classes('detail-value'), text: $component.data().reportCount + ' reports'"></span>
+                <span data-bind="css: classes('detail-value'), text: ($component.data().analyses || []).length + ' reports'"></span>
             </li>
         </ul>
     </div>
@@ -26,40 +26,9 @@
         <visualizations-filter-panel params="{ filterList: $component.filterList, live: true }"/>
     </div>
     <div data-bind="css: classes('report-section')">
-        <!-- ko if: $component.isComparatativeMode($component.filterList()) && groupedTabularData().columns.length > 0 -->
+        <!-- ko foreach: analysisList -->
             <div data-bind="css: $component.classes('report-group')">
-                <h3 data-bind="css: $component.classes('analysis-name'), text: 'All covariates'"></h3>
-                <div data-bind="css: $component.classes('analysis-results')">
-                    <div data-bind="css: $component.classes('table-wrapper')">
-                        <table style="width:100%" data-bind="
-                                css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
-                                dataTable:{
-                                    data: groupedTabularData().data,
-                                    options: {columns: groupedTabularData().columns}
-                                }
-                            "/>
-                    </div>
-                    <div data-bind="css: $component.classes('chart-wrapper')">
-                        <scatterplot data-bind="css: $component.classes('scatterplot')" params="
-                                            data: $component.groupedScatterData,
-                                            minHeight: 400,
-                                            format: {
-                                                xLabel: 'Aspirin users',
-                                                yLabel: 'Сlopidogrel users',
-                                                circleRadius: 4,
-                                                colors: $component.groupedScatterColorScheme,
-                                                addDiagonal: true,
-                                                xScale: $component.scatterXScale,
-                                                yScale: $component.scatterYScale
-                                            }"
-                        />
-                    </div>
-                </div>
-            </div>
-        <!-- /ko -->
-        <!-- ko foreach: reportList -->
-            <div data-bind="css: $component.classes('report-group')">
-                <h3 data-bind="css: $component.classes('analysis-name'), text: $data.domainId + ' / ' + $data.analysisName"></h3>
+                <h3 data-bind="css: $component.classes('analysis-name'), text: ($data.domainId ? ($data.domainId + ' / ') : '') + $data.analysisName"></h3>
                 <!-- ko if: $data.type === 'prevalence' -->
                     <div data-bind="css: $component.classes('analysis-results')">
                         <div data-bind="css: $component.classes('table-wrapper')">
@@ -100,13 +69,14 @@
                                     data: () => $component.convertScatterplotData($data),
                                     minHeight: 400,
                                     format: {
-                                        xLabel: 'Aspirin users',
-                                        yLabel: 'Сlopidogrel users',
+                                        xLabel: reports[0].cohortName,
+                                        yLabel: reports[1].cohortName,
                                         circleRadius: 4,
-                                        colors: { '': '#2e6da4'},
+                                        colors: $component.groupedScatterColorScheme,
                                         addDiagonal: true,
                                         xScale: $component.scatterXScale,
-                                        yScale: $component.scatterYScale
+                                        yScale: $component.scatterYScale,
+                                        tooltip: $component.tooltipBuilder
                                     }"
                                 />
                             </div>
@@ -173,34 +143,3 @@
         <!-- /ko -->
     </div>
 </div>
-
-<script type="text/html" id="cc-execution-result-thead-compare">
-    <!-- ko if: reports.length > 1 -->
-        <tr>
-            <th rowspan="2">Covariate</th>
-            <!-- ko foreach: reports -->
-                <th colspan="2" data-bind="text: cohortName"></th>
-            <!-- /ko -->
-        </tr>
-    <!-- /ko -->
-    <tr>
-        <!-- ko if: reports.length <= 1 -->
-            <th>Covariate</th>
-        <!-- /ko -->
-        <!-- ko foreach: reports -->
-            <th>Count</th>
-            <th>%</th>
-        <!-- /ko -->
-    </tr>
-</script>
-
-<script type="text/html" id="cc-execution-result-thead-sum">
-    <tr>
-        <th rowspan="2">Covariate</th>
-        <th colspan="2" data-bind="text: reports.map(r => r.cohortName).join(' & ')"></th>
-    </tr>
-    <tr>
-        <th>Count</th>
-        <th>%</th>
-    </tr>
-</script>
