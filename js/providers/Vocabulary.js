@@ -150,7 +150,7 @@ define(function (require, exports) {
 	}
 
 	function getConceptSetExpression(id, url) {
-		var repositoryUrl;
+		let repositoryUrl;
 
 		if (url)
 			repositoryUrl = url + 'conceptset/';
@@ -159,12 +159,7 @@ define(function (require, exports) {
 
 		repositoryUrl += id + '/expression';
 
-		var getConceptSetPromise = $.ajax({
-			url: repositoryUrl,
-			error: authAPI.handleAccessDenied,
-		});
-
-		return getConceptSetPromise;
+		return httpService.doGet(repositoryUrl);
 	}
 
 	function resolveConceptSetExpression(expression, url, sourceKey) {
@@ -183,17 +178,9 @@ define(function (require, exports) {
 	}
 
 	function getConceptSetExpressionSQL(expression, url) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/conceptSetExpressionSQL';
+		const repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/conceptSetExpressionSQL';
 
-		var conceptSetExpressionSQLPromise = $.ajax({
-			url: repositoryUrl,
-			data: JSON.stringify(expression),
-			method: 'POST',
-			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
-	});
-
-		return conceptSetExpressionSQLPromise;
+		return httpService.plainTextService.doPost(repositoryUrl, expression);
 	}
 
 	function getConceptsById(identifiers, url, sourceKey) {

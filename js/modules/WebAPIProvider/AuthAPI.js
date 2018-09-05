@@ -278,6 +278,10 @@ define(function(require, exports) {
         return isPermitted('comparativecohortanalysis:post');
     };
 
+    const isPermittedDeleteEstimation = function(id) {
+        return isPermitted(`comparativecohortanalysis:${id}:delete`);
+    }
+
     var isPermittedReadPlps = function() {
         return isPermitted('plp:get');
     };
@@ -466,6 +470,7 @@ define(function(require, exports) {
         isPermittedReadEstimations: isPermittedReadEstimations,
         isPermittedReadEstimation: isPermittedReadEstimation,
         isPermittedCreateEstimation: isPermittedCreateEstimation,
+        isPermittedDeleteEstimation,
 
         isPermittedReadPlps: isPermittedReadPlps,
         isPermittedReadPlp: isPermittedReadPlp,

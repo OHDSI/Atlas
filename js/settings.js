@@ -125,7 +125,7 @@ const settingsObject = {
     "jquery.ui.autocomplete.scroll": "assets/jquery.ui.autocomplete.scroll",
     "facets": "assets/facets",
     "colorbrewer": "assets/colorbrewer",
-    "ohdsi-api": "https://unpkg.com/@ohdsi/ui-toolbox@1.0.0/lib/umd/api/index",
+    "ohdsi-api": "https://unpkg.com/@ohdsi/ui-toolbox@1.0.1/lib/umd/api/index",
     // needed for @ohdsi/ui-toolbox Api
     "urijs": "https://unpkg.com/urijs@1.19.1/src/URI",
     "punycode": "https://unpkg.com/urijs@1.19.1/src/punycode",
