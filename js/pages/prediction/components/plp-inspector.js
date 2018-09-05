@@ -1,4 +1,4 @@
-define(['knockout', 'jquery', 'text!./plp-inspector.html', 'appConfig', 'd3', 'css!../../../styles/plp.css'],
+define(['knockout', 'jquery', 'text!./plp-inspector.html', 'appConfig', 'd3', 'css!styles/plp.css'],
 	function (ko, $, view, appConfig, d3) {
 		function plpInspector(params) {
 			var self = this;
