@@ -15,6 +15,7 @@ define([
 	'plp/PatientLevelPredictionAnalysis',
 	'clipboard',
 	'atlas-state',
+	'components/heading',
 ],
 	function (
 		ko,

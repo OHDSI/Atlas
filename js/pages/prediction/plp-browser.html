@@ -1,4 +1,4 @@
-<heading-title params="name: 'Population level prediction', icon: 'heartbeat', theme: 'dark'"></heading-title>
+<heading-title params="name: 'Patient Level Prediction', icon: 'heartbeat', theme: 'dark'"></heading-title>
 
 <div data-bind="if: canReadPlps, css: classes({ extra: 'paddedWrapper flexed' })">
 	<span data-bind="click: newPatientLevelPrediction, css: classes({
@@ -6,18 +6,9 @@
 		extra: `pull-right btn btn-sm btn-primary ${canCreatePlp() ? '' : 'disabled'}`,
 	})">New Patient Level Prediction</span>
 
-	<div data-bind="css: classes({
-		element: 'content',
-		extra: 'flexed'
-	})">
-
-		<!-- ko if: analysisList().length -->
-			<faceted-datatable params="order: [[3, 'desc']], reference: analysisList, columns: columns, options: options, rowClick: rowClick"></faceted-datatable>
-		<!-- /ko -->
-		
-		<loading data-bind="visible: loading"></loading>
-		<div data-bind="if: !analysisList().length, css: classes({ element: 'empty-state', extra: 'flexed' })">
-			<empty-state params="message: 'No PLP analyses created yet'"></empty-state>
-		</div>
-	</div>
+	<!-- ko if: analysisList().length -->
+		<faceted-datatable params="order: [[3, 'desc']], reference: analysisList, columns: columns, options: options, rowClick: rowClick"></faceted-datatable>
+	<!-- /ko -->
+	
+	<loading data-bind="visible: loading" params="status: 'retrieving information'"></loading>
 </div>
