@@ -16,7 +16,7 @@ define([
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/line-chart',
     'components/charts/scatterplot',
-    'components/charts/boxplot',
+    'components/charts/splitBoxplot',
     'd3-scale-chromatic',
 ], function (
     ko,
@@ -352,7 +352,7 @@ define([
 
         convertBoxplotData(analysis) {
 
-            return analysis.reports.map(r => ({
+            const getBoxplotStruct = r => ({
                 Category: r.cohortName,
                 min: r.stats[0].min,
                 max: r.stats[0].max,
@@ -361,7 +361,12 @@ define([
                 q1: r.stats[0].p25,
                 q3: r.stats[0].p75,
                 UIF: r.stats[0].p90
-            }));
+            });
+
+            return [{
+                target: getBoxplotStruct(analysis.reports[0]),
+                compare: getBoxplotStruct(analysis.reports[1]),
+            }]
         }
 
         convertPrevalenceAnalysis(analysis) {
