@@ -5,7 +5,7 @@
     <input
       id="txtConceptSetName"
       type="text"
-      data-bind="attr: { disabled: canEdit() ? null : true },
+      data-bind="attr: { disabled: !canEdit() },
       textInput: $root.currentConceptSet().name"
     />
     <div class="btn-group">
@@ -52,59 +52,15 @@
     tabs: $component.tabs
   "></tabs>
 </div>
-    <!--
-    <ul class="nav nav-tabs">
-      <li role="presentation" data-bind="click: function() {$component.routeTo('details');}, attr: {class: $root.currentConceptSetMode() == 'details' ? 'active' : ''}"><a>Concept Set Expression</a>
-      </li>
-      <li role="presentation" data-bind="click: function() {$component.routeTo('included');}, attr: {class: $root.currentConceptSetMode() == 'included' ? 'active' : ''}">
-        <a>Included Concepts
-          
-        </a>
-      </li>
-      </li>
-      <li role="presentation" data-bind="click: function() {$component.routeTo('sourcecodes');}, attr: {class: $root.currentConceptSetMode() == 'sourcecodes' ? 'active' : ''}">
-        <a>Included Source Codes</a>
-      </li>
-      <li role="presentation" data-bind="visible: $component.displayEvidence(), click: function() {$component.routeTo('evidence');}, attr: {class: $root.currentConceptSetMode() == 'evidence' ? 'active' : ''}">
-        <a>Explore Evidence</a>
-      </li>
-      <li role="presentation" data-bind="click: function() {$component.routeTo('export');}, attr: {class: $root.currentConceptSetMode() == 'export' ? 'active' : ''}"><a>Export</a>
-      </li>
-      <li role="presentation" data-bind="click: function() {$component.routeTo('compare');}, attr: {class: $root.currentConceptSetMode() == 'compare' ? 'active' : ''}"><a>Compare</a>
-      </li>
-    </ul>
-  </div>
-
+<!--
   <div id="wrapperConceptSetAnalysis" data-bind="if: $root.currentConceptSetMode() == 'analysis'">
-    <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: $root.denseSiblings}"></faceted-datatable>
+    <faceted-datatable params="{
+      columns: $component.searchConceptsColumns,
+      options: $component.searchConceptsOptions,
+      reference: $root.denseSiblings
+    }"></faceted-datatable>
   </div>
-
-  <div class="loading" data-bind="if:$root.loadingSourcecodes() || $root.loadingIncluded">loading</div>
-
-  <div data-bind="visible: $root.currentConceptSetMode() == 'included' && !$root.loadingIncluded()">
-    
-    <div class="clear"></div>
-  </div>
-
-  <div data-bind="visible: $root.currentConceptSetMode() == 'sourcecodes' && !$root.loadingSourcecodes() && !$root.loadingIncluded()">
-    
-  </div>
-
   
-
-  <div data-bind="visible: $root.currentConceptSetMode() == 'evidence'">
-    
-  </div>
-
-<div id="wrapperConceptSetExport" data-bind="visible: $root.currentConceptSetMode() == 'export'">
-</div>
-
-  <div data-bind="visible: $root.currentConceptSetMode() == 'compare'">
-    
-  </div>
-
-  
-
   <div id="modalConceptSetOptimize" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -231,5 +187,4 @@
 
 </div>
 
-<conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model, title: 'Common Ancestors'}"></conceptset-list-modal>
 -->

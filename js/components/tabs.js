@@ -17,7 +17,7 @@ define([
 			this.selectedTab = params.selectedTab ? params.selectedTab : ko.observable(0);
 			this.tabs = ko.observableArray(params.tabs || []);
 
-						// There can be nested components for a single tab, which will be displayed under parent tab
+			// There can be nested components for a single tab, which will be displayed under parent tab
 			this.selectedTitleIndex = ko.computed(() => {
 				if (typeof this.tabs()[this.selectedTab()] === 'undefined') {
 					return this.selectedTab();

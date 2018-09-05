@@ -220,6 +220,10 @@ define([
   
         return resultSources;
       });
+      this.recordCountsRefreshing = ko.observable(false);
+      this.recordCountClass = ko.pureComputed(() => {
+        return this.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
+      });
     }
 
     chooseCS1() {
@@ -317,6 +321,38 @@ define([
     
     showSaveNewModal() {
 			this.saveConceptSetShow(true);
+    }
+
+    refreshRecordCounts(obj, event) {
+			if (event.originalEvent) {
+				// User changed event
+				this.recordCountsRefreshing(true);
+				$("#dtConeptManagerRC")
+					.toggleClass("fa-database")
+					.toggleClass("fa-circle-o-notch")
+					.toggleClass("fa-spin");
+				$("#dtConeptManagerDRC")
+					.toggleClass("fa-database")
+					.toggleClass("fa-circle-o-notch")
+					.toggleClass("fa-spin");
+				var compareResults = this.compareResults();
+				var conceptIds = $.map(compareResults, function (o, n) {
+					return o.conceptId;
+				});
+				cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
+					.then((rowcounts) => {
+						this.compareResults(compareResults);
+						this.recordCountsRefreshing(false);
+						$("#dtConeptManagerRC")
+							.toggleClass("fa-database")
+							.toggleClass("fa-circle-o-notch")
+							.toggleClass("fa-spin");
+						$("#dtConeptManagerDRC")
+							.toggleClass("fa-database")
+							.toggleClass("fa-circle-o-notch")
+							.toggleClass("fa-spin");
+					});
+			}
 		}
 	}
 

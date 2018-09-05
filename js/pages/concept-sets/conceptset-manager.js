@@ -219,8 +219,7 @@ define([
 
 			var conceptSetItems = [];
 
-			for (var i = 0; i < this.selectedConcepts()
-				.length; i++) {
+			for (var i = 0; i < this.selectedConcepts().length; i++) {
 				var item = this.selectedConcepts()[i];
 				conceptSetItems.push({
 					concept: item.concept,
@@ -237,11 +236,11 @@ define([
 			vocabularyAPI.optimizeConceptSet(conceptSetItems)
 				.then((optimizationResults) => {
 					var optimizedConcepts = [];
-					_.each(optimizationResults.optimizedConceptSet.items, (item) => {
+					optimizationResults.optimizedConceptSet.items.forEach((item) => {
 						optimizedConcepts.push(item);
 					});
 					var removedConcepts = [];
-					_.each(optimizationResults.removedConceptSet.items, (item) => {
+					optimizationResults.removedConceptSet.items.forEach((item) => {
 						removedConcepts.push(item);
 					});
 					this.optimalConceptSet(optimizedConcepts);
@@ -285,66 +284,56 @@ define([
 			const mode = this.getComponentNameByTabIndex(index);
 			document.location = constants.paths.mode(id, mode);
 		}
-		/*
-		var this = this;
-		this.conceptSets = ko.observableArray();
-		this.defaultConceptSetName = ;
-		this.ancestorsModalIsShown = ko.observable(false);
-		this.isAuthenticated = authApi.isAuthenticated;
-		this.canReadConceptsets = ko.pureComputed(function () {
-			return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
-		});
-		this.selectedConcepts = sharedState.selectedConcepts;
-		this.displayEvidence = ko.pureComputed(function () {
-			return (sharedState.evidenceUrl() && sharedState.evidenceUrl()
-				.length > 0);
-		});
-		this.loading = ko.observable(false);
-		this.optimalConceptSet = ko.observable(null);
-		this.optimizerRemovedConceptSet = ko.observable(null);
-		this.optimizerSavingNew = ko.observable(false);
-		this.optimizerSavingNewName = ko.observable();
-		this.optimizerFoundSomething = ko.pureComputed(function () {
-			var returnVal = false;
-			if (this.optimalConceptSet() &&
-				this.optimalConceptSet()
-				.length > 0 &&
-				this.selectedConcepts() &&
-				this.selectedConcepts()
-				.length > 0) {
-				returnVal = this.optimalConceptSet()
-					.length != this.selectedConcepts()
-					.length;
-			}
-			return returnVal;
-		});
-		// Set the default concept set to be the current concept set
 		
-		
-
-		this.ancestors = ko.observableArray([]);
-		
-		
-		this.currentResultSource = ko.observable();
-		this.recordCountsRefreshing = ko.observable(false);
-		this.recordCountClass = ko.pureComputed(function () {
-			return this.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
-		});
-
-		this.resultSources = ko.computed(function () {
-			var resultSources = [];
-			$.each(sharedState.sources(), function (i, source) {
-				if (source.hasResults) {
-					resultSources.push(source);
-					if (source.resultsUrl == sharedState.resultsUrl()) {
-						this.currentResultSource(source);
-					}
+		overwriteConceptSet() {
+			var newConceptSet = [];
+			this.optimalConceptSet().forEach((item) => {
+				var newItem;
+				newItem = {
+					concept: item.concept,
+					isExcluded: ko.observable(item.isExcluded),
+					includeDescendants: ko.observable(item.includeDescendants),
+					includeMapped: ko.observable(item.includeMapped),
 				}
+				newConceptSet.push(newItem);
 			})
+			this.selectedConcepts(newConceptSet);
+			$('#modalConceptSetOptimize').modal('hide');
+		}
+		copyOptimizedConceptSet () {
+			if (this.model.currentConceptSet() == undefined) {
+				this.optimizerSavingNewName(this.conceptSetName());
+			} else {
+				this.optimizerSavingNewName(this.model.currentConceptSet().name() + " - OPTIMIZED");
+			}
+			this.optimizerSavingNew(true);
+		}
 
-			return resultSources;
-		}, this);
+		saveNewOptimizedConceptSet() {
+			var conceptSet = {};
+			conceptSet.id = 0;
+			conceptSet.name = this.optimizerSavingNewName;
+			var selectedConcepts = [];
+			this.optimalConceptSet().forEach((item) => {
+				var newItem;
+				newItem = {
+					concept: item.concept,
+					isExcluded: ko.observable(item.isExcluded),
+					includeDescendants: ko.observable(item.includeDescendants),
+					includeMapped: ko.observable(item.includeMapped),
+				}
+				selectedConcepts.push(newItem);
+			});
+			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, selectedConcepts);
+			this.optimizerSavingNew(false);
+		}
 
+		cancelSaveNewOptimizedConceptSet() {
+			this.optimizerSavingNew(false);
+		}
+
+	}
+		/*
 		this.fields = {
 			membership: {
 				propName: 'conceptIn1And2',
@@ -470,275 +459,7 @@ define([
 				isFacet: true,
 			},
 		}
-
-		this.renderLink = function (s, p, d) {
-			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
-		}
-
-		this.routeTo = function (mode) {
-			if (this.model.currentConceptSet() == undefined) {
-				document.location = '#/conceptset/0/' + mode;
-			} else {
-				document.location = '#/conceptset/' + this.model.currentConceptSet()
-					.id + '/' + mode;
-			}
-		}
-
-		this.;
-
-		this.conceptSetNameChanged = this.model.currentConceptSet()
-			.name.subscribe(function (newValue) {
-				if ($.trim(newValue) == this.defaultConceptSetName) {
-					$("#txtConceptSetName")
-						.css({
-							'background-color': '#FF0000'
-						});
-				} else {
-					$("#txtConceptSetName")
-						.css({
-							'background-color': ''
-						});
-				}
-			});
-
-
-		this.
-
-		this.
-
-		this.
-
-		this.
-
-		this.overwriteConceptSet = function () {
-			var newConceptSet = [];
-			_.each(this.optimalConceptSet(), (item) => {
-				var newItem;
-				newItem = {
-					concept: item.concept,
-					isExcluded: ko.observable(item.isExcluded),
-					includeDescendants: ko.observable(item.includeDescendants),
-					includeMapped: ko.observable(item.includeMapped),
-				}
-				newConceptSet.push(newItem);
-			})
-			this.selectedConcepts(newConceptSet);
-			$('#modalConceptSetOptimize')
-				.modal('hide');
-		}
-
-		this.copyOptimizedConceptSet = function () {
-			if (this.model.currentConceptSet() == undefined) {
-				this.optimizerSavingNewName(this.conceptSetName());
-			} else {
-				this.optimizerSavingNewName(this.model.currentConceptSet()
-					.name() + " - OPTIMIZED");
-			}
-			this.optimizerSavingNew(true);
-		}
-
-		this.saveNewOptimizedConceptSet = function () {
-			var conceptSet = {};
-			conceptSet.id = 0;
-			conceptSet.name = this.optimizerSavingNewName;
-			var selectedConcepts = [];
-			_.each(this.optimalConceptSet(), (item) => {
-				var newItem;
-				newItem = {
-					concept: item.concept,
-					isExcluded: ko.observable(item.isExcluded),
-					includeDescendants: ko.observable(item.includeDescendants),
-					includeMapped: ko.observable(item.includeMapped),
-				}
-				selectedConcepts.push(newItem);
-			})
-			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, selectedConcepts);
-			this.optimizerSavingNew(false);
-		}
-
-		this.cancelSaveNewOptimizedConceptSet = function () {
-			this.optimizerSavingNew(false);
-		}
-
-		
-
-		this.conceptsetSelected = function (d) {
-			$('#modalCS')
-				.modal('hide');
-			vocabularyAPI.getConceptSetExpression(d.id)
-				.then(function (csExpression) {
-					this.targetId(d.id);
-					this.targetCaption(d.name);
-					this.targetExpression(csExpression.items);
-				});
-		}
-
-
-		this.
-
-		this.
-
-		this.toggleOnSelectAllCheckbox = function (selector, selectAllElement) {
-			$(document)
-				.on('init.dt', selector, function (e, settings) {
-					$(selectAllElement)
-						.addClass("selected");
-				});
-		}
-
-		this.toggleOffSelectAllCheckbox = function (selector, selectAllElement) {
-			$(document)
-				.on('init.dt', selector, function (e, settings) {
-					$(selectAllElement)
-						.removeClass("selected");
-				});
-		}
-
-		this.selectAllConceptSetItems = function (selector, props) {
-			if (!this.canEdit()) {
-				return;
-			}
-			props = props || {};
-			props.isExcluded = props.isExcluded || null;
-			props.includeDescendants = props.includeDescendants || null;
-			props.includeMapped = props.includeMapped || null;
-			var selectAllValue = !($(selector)
-				.hasClass("selected"));
-			$(selector)
-				.toggleClass("selected");
-			_.each(this.selectedConcepts(), (conceptSetItem) => {
-				if (props.isExcluded !== null) {
-					conceptSetItem.isExcluded(selectAllValue);
-				}
-				if (props.includeDescendants !== null) {
-					conceptSetItem.includeDescendants(selectAllValue);
-				}
-				if (props.includeMapped !== null) {
-					conceptSetItem.includeMapped(selectAllValue);
-				}
-			});
-			this.model.resolveConceptSetExpression();
-		}
-
-		this.refreshRecordCounts = function (obj, event) {
-			if (event.originalEvent) {
-				// User changed event
-				this.recordCountsRefreshing(true);
-				$("#dtConeptManagerRC")
-					.toggleClass("fa-database")
-					.toggleClass("fa-circle-o-notch")
-					.toggleClass("fa-spin");
-				$("#dtConeptManagerDRC")
-					.toggleClass("fa-database")
-					.toggleClass("fa-circle-o-notch")
-					.toggleClass("fa-spin");
-				var compareResults = this.compareResults();
-				var conceptIds = $.map(compareResults, function (o, n) {
-					return o.conceptId;
-				});
-				cdmResultsAPI.getConceptRecordCount(this.currentResultSource()
-						.sourceKey, conceptIds, compareResults)
-					.then(function (rowcounts) {
-						this.compareResults(compareResults);
-						this.recordCountsRefreshing(false);
-						$("#dtConeptManagerRC")
-							.toggleClass("fa-database")
-							.toggleClass("fa-circle-o-notch")
-							.toggleClass("fa-spin");
-						$("#dtConeptManagerDRC")
-							.toggleClass("fa-database")
-							.toggleClass("fa-circle-o-notch")
-							.toggleClass("fa-spin");
-					});
-			}
-		}
-
-		this.
-
-		// Initialize the select all checkboxes
-		var excludeCount = 0;
-		var descendantCount = 0;
-		var mappedCount = 0;
-		_.each(this.selectedConcepts(), (conceptSetItem) => {
-			if (conceptSetItem.isExcluded()) {
-				excludeCount++;
-			}
-			if (conceptSetItem.includeDescendants()) {
-				descendantCount++;
-			}
-			if (conceptSetItem.includeMapped()) {
-				mappedCount++;
-			}
-		});
-		if (excludeCount == this.selectedConcepts()
-			.length) {
-			this.toggleOnSelectAllCheckbox('.conceptSetTable', '#selectAllExclude');
-		} else {
-			this.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllExclude');
-		}
-		if (descendantCount == this.selectedConcepts()
-			.length) {
-			this.toggleOnSelectAllCheckbox('.conceptSetTable', '#selectAllDescendants');
-		} else {
-			this.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllDescendants');
-		}
-		if (mappedCount == this.selectedConcepts()
-			.length) {
-			this.toggleOnSelectAllCheckbox('.conceptSetTable', '#selectAllMapped');
-		} else {
-			this.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllMapped');
-		}
-		// Create event handlers for all of the select all elements
-		$(document)
-			.off('click', '#selectAllExclude');
-		$(document)
-			.on('click', '#selectAllExclude', function () {
-				this.selectAllConceptSetItems("#selectAllExclude", {
-					isExcluded: true
-				})
-			});
-		$(document)
-			.off('click', '#selectAllDescendants');
-		$(document)
-			.on('click', '#selectAllDescendants', function () {
-				this.selectAllConceptSetItems("#selectAllDescendants", {
-					includeDescendants: true
-				})
-			});
-		$(document)
-			.off('click', '#selectAllMapped');
-		$(document)
-			.on('click', '#selectAllMapped', function () {
-				this.selectAllConceptSetItems("#selectAllMapped", {
-					includeMapped: true
-				})
-			});
-		
-		this.showAncestorsModal = conceptSetService.getAncestorsModalHandler(this);
-		
-		
-		this.canEdit = this.model.canEditCurrentConceptSet;
-		
-		
-		this.copyToClipboard = function
-		
-		this.copyIdentifierListToClipboard = function() {
-			
-		}
-		
-		this.copyIncludedConceptIdentifierListToClipboard = function() {
-			
-		}
-
-	var component = {
-		viewModel: conceptsetManager,
-		template: view
-	};
-
-	ko.components.register('', component);
-	return component;
-	*/
-	}
+	}*/
 
 	return commonUtils.build('conceptset-manager', ConceptsetManager, view);
 });

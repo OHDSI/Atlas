@@ -18,6 +18,13 @@ define([
 		constructor(params) {
 			super(params);
       this.model = params.model;
+      this.ancestorsModalIsShown = ko.observable(false);
+      this.ancestors = ko.observableArray([]);		
+      this.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
+        model: params.model,
+        ancestors: this.ancestors,
+        ancestorsModalIsShown: this.ancestorsModalIsShown,
+      });
       this.searchConceptsColumns = [{
         title: '<i class="fa fa-shopping-cart"></i>',
         render: function (s, p, d) {
