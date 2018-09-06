@@ -64,8 +64,7 @@ function downloadLibs(aliasesMap, isJs = true) {
   };
 }
 
-function optimizeJs() {
-  const { libs, cdnLibs, paths } = downloadLibs(settings.paths);
+function optimizeJs({ libs, cdnLibs, paths }) {
   const jsSettings = {
     ...baseOptimizationSettings,
     include: libs,
@@ -98,9 +97,7 @@ function optimizeJs() {
   return promise;
 }
 
-function optimizeCss() {
-  const { libs, cdnLibs, paths } = downloadLibs(settings.cssPaths, false);
-  
+function optimizeCss({ libs, cdnLibs, paths }) {  
   const promise = new Promise((resolve, reject) => {
     Promise.all(cdnLibs)
       .then(() => {
@@ -127,4 +124,6 @@ function copyAssets() {
   console.log('Success');
 }
 
-optimizeJs().then(() => optimizeCss()).then(copyAssets);
+optimizeJs(downloadLibs(settings.paths))
+  .then(() => optimizeCss(downloadLibs(settings.cssPaths, false)))
+  .then(copyAssets);
