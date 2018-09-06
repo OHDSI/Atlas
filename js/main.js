@@ -12,7 +12,6 @@ const localRefs = {
 	"conceptset-manager": "components/conceptset/conceptset-manager",
 	"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
 	"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
-	"job-manager": "components/job-manager",
 	"user-bar": "components/user-bar",
 	"faceted-datatable": "components/faceted-datatable",
 	"explore-cohort": "components/explore-cohort",
