@@ -117,4 +117,25 @@
 
   &__scatterplot {
   }
+
+  &__boxplot {
+    svg {
+      padding-left: 1rem;
+    }
+
+    .boxplot .compare {
+      .median, line, rect, circle, .whisker {
+        stroke: #ff9315;
+      }
+      line, rect, circle {
+         stroke-width: 1px;
+      }
+      rect, circle {
+        fill: rgba(255, 147, 21, 0.67);
+      }
+      .whisker {
+        stroke-dasharray: 3, 3;
+      }
+    }
+  }
 }
