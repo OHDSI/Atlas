@@ -127,7 +127,7 @@ const settingsObject = {
 
     "bootstrap-select": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0-beta/js/bootstrap-select",
     "less-js": "https://cdnjs.cloudflare.com/ajax/libs/less.js/3.0.1/less.min",
-    "ohdsi-api": "https://unpkg.com/@ohdsi/ui-toolbox@1.0.0/lib/umd/api/index",
+    "ohdsi-api": "https://unpkg.com/@ohdsi/ui-toolbox@1.0.1/lib/umd/api/index",
     // needed for @ohdsi/ui-toolbox Api
     "urijs": "https://unpkg.com/urijs@1.19.1/src/URI",
     "punycode": "https://unpkg.com/urijs@1.19.1/src/punycode",
