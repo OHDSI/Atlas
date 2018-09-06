@@ -24,7 +24,10 @@ define(function(require, exports) {
     }
 
     sendRequest(method, path, payload) {
-      return super.sendRequest(method, path, ko.toJS(payload));
+      const data = payload instanceof FormData
+        ? payload
+        : ko.toJS(payload);
+      return super.sendRequest(method, path, data);
     }
 
     sendResult(res, parsedResponse) {

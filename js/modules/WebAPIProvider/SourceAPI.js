@@ -76,7 +76,7 @@ define(function (require, exports) {
       contentType: 'application/json',
       success: (sources) => {
         config.api.available = true;
-        this.setSharedStateSources(sources);
+        setSharedStateSources(sources);
         servicePromise.resolve();
       },
       error: function (xhr, ajaxOptions, thrownError) {

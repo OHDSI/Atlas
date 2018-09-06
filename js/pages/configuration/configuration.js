@@ -1,110 +1,135 @@
-define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'utils/BemHelper', 'atlas-state', 'components/ac-access-denied', 'databindings', 'less!./configuration.less'], function (ko, view, config, authApi, sourceApi, BemHelper, sharedState) {
-	function configuration(params) {
-		var self = this;
-		self.config = config;
-		self.api = config.api;
-		self.sharedState = sharedState;
-    self.isInProgress = ko.observable(false);
-		self.sources = sharedState.sources;
-		self.priorityOptions = [
-      {name: 'Current Session', id: 'session'},
-      {name: 'Whole Application', id: 'application'},
-    ];
+define([
+  'knockout',
+  'text!./configuration.html',
+  'providers/Component',
+  'providers/AutoBind',
+  'utils/CommonUtils',
+  'services/http',
+  'appConfig',
+  'webapi/AuthAPI',
+  'webapi/SourceAPI',
+  'atlas-state',
+  'less!./configuration.less',
+  'components/heading'
+], function (
+  ko,
+  view,
+  Component,
+  AutoBind,
+  commonUtils,
+  httpService,
+  config,
+  authApi,
+  sourceApi,
+  sharedState
+) {
+	class Configuration extends AutoBind(Component) {
+    constructor(params) {
+      super(params);
+      this.config = config;
+      this.api = config.api;
+      this.sharedState = sharedState;
+      this.isInProgress = ko.observable(false);
+      this.sources = sharedState.sources;
+      this.priorityOptions = [
+        {name: 'Current Session', id: 'session'},
+        {name: 'Whole Application', id: 'application'},
+      ];
+  
+      this.isAuthenticated = authApi.isAuthenticated;
+      this.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === 'running' || sharedState.appInitializationStatus() === 'no-sources-available');
+      this.hasAccess = ko.pureComputed(() => {
+        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
+      });
+      this.canReadRoles = ko.pureComputed(() => {
+        return this.isAuthenticated() && authApi.isPermittedReadRoles();
+      });
+      this.canCreateSource = ko.pureComputed(() => {
+        if (!config.userAuthenticationEnabled) {
+          return false;
+        } else {
+          return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateSource());
+        }
+      });
+      this.canChangePriority = ko.pureComputed(() => {
+        if (!config.userAuthenticationEnabled) {
+          return false;
+        } else {
+          return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedEditSourcePriority())
+        }
+      });
+      
+		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+    }
 
-		self.isAuthenticated = authApi.isAuthenticated;
-		self.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === 'running' || sharedState.appInitializationStatus() === 'no-sources-available');
-		self.hasAccess = ko.pureComputed(function () {
-			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
-		});
-		self.canReadRoles = ko.pureComputed(function () {
-			return self.isAuthenticated() && authApi.isPermittedReadRoles();
-		});
-		self.canCreateSource = ko.pureComputed(function () {
+    canReadSource(source) {
 			if (!config.userAuthenticationEnabled) {
 				return false;
 			} else {
-				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCreateSource());
+				return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedReadSource(source.sourceKey));
 			}
-    });
-    self.canChangePriority = ko.pureComputed(function () {
+    }
+
+		canCheckConnection(source) {
 			if (!config.userAuthenticationEnabled) {
 				return false;
 			} else {
-				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditSourcePriority())
+				return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCheckSourceConnection(source.sourceKey));
 			}
-    });
-    self.canReadSource = function(source) {
-			if (!config.userAuthenticationEnabled) {
-				return false;
-			} else {
-				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadSource(source.sourceKey));
-			}
-    };
-		self.canCheckConnection = function(source) {
-			if (!config.userAuthenticationEnabled) {
-				return false;
-			} else {
-				return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedCheckSourceConnection(source.sourceKey));
-			}
-		};
-		self.canImport = ko.pureComputed(() => self.isAuthenticated() && authApi.isPermittedImportUsers());
-		self.clearLocalStorageCache = function () {
+    }
+    
+		clearLocalStorageCache() {
 			localStorage.clear();
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
 		};
 
-		self.newSource = function () {
+		newSource() {
 			document.location = "#/source/new";
     };
 
-		self.selectSource = function(source) {
+		selectSource(source) {
 			document.location = "#/source/" + source.sourceId;
 		};
 
-    function updateSourceDaimonPriority(sourceKey, daimonType) {
-      if (self.sharedState.priorityScope() !== 'application') {
+    updateSourceDaimonPriority(sourceKey, daimonType) {
+      if (sharedState.priorityScope() !== 'application') {
         return;
       }
-      self.isInProgress(true);
-      $.ajax({
-        url: config.api.url + 'source/' + sourceKey + '/daimons/' + daimonType + '/set-priority',
-        timeout: 20000,
-        method: 'POST',
-        contentType: 'application/json',
-        success: function () {
+      this.isInProgress(true);
+      httpService.doPost(config.api.url + 'source/' + sourceKey + '/daimons/' + daimonType + '/set-priority')
+        .then(() => {
           sourceApi.initSourcesConfig();
-        },
-        error: function (err) {
+        })
+        .catch((err) => {
           alert('Failed to update priority source daimon');
-        },
-        complete: function () {
-          self.isInProgress(false);
-        }
-      });
+        })
+        .finally(() => {
+          this.isInProgress(false);
+        });
     }
 
-    self.updateVocabPriority = function() {
-      var newVocabUrl = self.sharedState.vocabularyUrl();
-      var selectedSource = self.sharedState.sources().find(function(item){ return item.vocabularyUrl === newVocabUrl; });
+    updateVocabPriority() {
+      var newVocabUrl = sharedState.vocabularyUrl();
+      var selectedSource = sharedState.sources().find((item) => { return item.vocabularyUrl === newVocabUrl; });
       updateSourceDaimonPriority(selectedSource.sourceKey, 'Vocabulary');
       return true;
     };
 
-    self.updateEvidencePriority = function() {
-      var newEvidenceUrl = self.sharedState.evidenceUrl();
-      var selectedSource = self.sharedState.sources().find(function(item){ return item.evidenceUrl === newEvidenceUrl; });
+    updateEvidencePriority() {
+      var newEvidenceUrl = sharedState.evidenceUrl();
+      var selectedSource = sharedState.sources().find((item) => { return item.evidenceUrl === newEvidenceUrl; });
       updateSourceDaimonPriority(selectedSource.sourceKey, 'Evidence');
       return true;
     };
 
-    self.updateResultsPriority = function() {
-      var newResultsUrl = self.sharedState.resultsUrl();
-      var selectedSource = self.sharedState.sources().find(function(item){ return item.resultsUrl === newResultsUrl; });
+    updateResultsPriority() {
+      var newResultsUrl = sharedState.resultsUrl();
+      var selectedSource = sharedState.sources().find((item) => { return item.resultsUrl === newResultsUrl; });
       updateSourceDaimonPriority(selectedSource.sourceKey, 'Results');
       return true;
     };
     
-    self.checkSourceConnection = function(source) {
+    checkSourceConnection(source) {
       sourceApi.checkSourceConnection(source.sourceKey).then(
         () => source.connectionCheck(sourceApi.connectionCheckState.success), 
         () => source.connectionCheck(sourceApi.connectionCheckState.failed)
@@ -112,7 +137,7 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
       source.connectionCheck(sourceApi.connectionCheckState.checking);
     };
     
-    self.getCheckButtonStyles = function(source) {
+    getCheckButtonStyles(source) {
       let iconClass = 'fa-caret-right';
       let buttonClass = 'btn-primary';
       switch(source.connectionCheck()) {
@@ -136,12 +161,5 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
     }
   }
 
-
-	var component = {
-		viewModel: configuration,
-		template: view
-	};
-
-	ko.components.register('ohdsi-configuration', component);
-	return component;
+  return commonUtils.build('ohdsi-configuration', Configuration, view);
 });
