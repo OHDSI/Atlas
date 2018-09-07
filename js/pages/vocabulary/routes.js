@@ -3,22 +3,21 @@ define(
         const ko = require('knockout');
         const { Route } = require('providers/Route');
 
-		function routes(appModel) {
+		function routes(appModel, router) {
 
             const search = new Route((query) => {
                 appModel.activePage(this.title);
                 require(['./vocabulary'], function (search) {
                     const view = 'vocabulary';
+                    let params = undefined;
 
                     if (appModel.currentView() !== view) {
-                        appModel.componentParams({
-                            query: ko.observable(),
-                        });
+                        params = {
+                            query: ko.observable(query ? unescape(query) : null),
+                        };
                     }
 
-                    appModel.componentParams().query(query ? unescape(query) : null);
-
-                    appModel.currentView(view);
+                    router.setCurrentView(view, params);
                 });
             });
 
