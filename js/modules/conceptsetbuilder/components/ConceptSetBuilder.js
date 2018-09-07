@@ -13,7 +13,6 @@ define([
 	'faceted-datatable',
 	'assets/knockout-jqueryui/tabs',
 	'components/modal',
-	'css!styles/tabs.css'
 ], function (
 		ko,
 		view,
