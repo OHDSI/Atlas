@@ -3,18 +3,16 @@ define(
 
         const ko = require('knockout');
         const { AuthorizedRoute } = require('providers/Route');
+        require('./components/characterizations/characterization-view-edit');
 
         function routes(appModel, router) {
 
             const characterizationViewEdit = new AuthorizedRoute((id, section, subId) => {
                 appModel.activePage(this.title);
-                require(['./components/characterizations/characterization-view-edit'], function () {
-                    const view = 'characterization-view-edit';
-                    router.setCurrentView(view, {
-                        characterizationId: ko.observable(id),
-                        section: ko.observable(section),
-                        subId: ko.observable(subId),
-                    });
+                router.setCurrentView('characterization-view-edit', {
+                    characterizationId: ko.observable(id),
+                    section: ko.observable(section),
+                    subId: ko.observable(subId),
                 });
             });
 
