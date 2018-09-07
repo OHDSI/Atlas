@@ -1,12 +1,12 @@
 define(
   (require, factory) => {
     const { AuthorizedRoute } = require('providers/Route');
-    function routes(appModel) {
+    function routes(appModel, router) {
       return {        
         '/jobs': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['job-manager'], function () {
-            appModel.currentView('job-manager');
+            router.setCurrentView('job-manager');
           });
         }),
       };

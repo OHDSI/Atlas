@@ -350,6 +350,13 @@ define(
 			*/
 			}
 
+			handleViewChange(view, componentParams = {}) {
+				if (componentParams !== false) {
+					this.componentParams(componentParams);
+				}
+				this.currentView(view);
+			}
+
 			// for the current selected concepts:
 			// update the export panel
 			// resolve the included concepts and update the include concept set identifier list
