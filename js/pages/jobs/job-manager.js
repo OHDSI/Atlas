@@ -4,8 +4,7 @@ define([
 	'providers/Component',
 	'providers/AutoBind',
 	'utils/CommonUtils',
-	'./const',
-	'services/http',
+	'services/Jobs',
 	'appConfig',
 	'webapi/MomentAPI',
 	'webapi/AuthAPI',
@@ -19,8 +18,7 @@ define([
 		Component,
 		AutoBind,
 		commonUtils,
-		constants,
-		httpService,
+		jobsService,
 		config,
 		momentApi,
 		authApi
@@ -49,24 +47,22 @@ define([
 			}
 		}
 
-		updateJobs() {
+		async updateJobs() {
 			this.model.jobs([]);
 
-			httpService.doGet(constants.paths.jobs())
-				.then(({ data: jobs }) => {
-					for (var j = 0; j < jobs.content.length; j++) {
-						var startDate = new Date(jobs.content[j].startDate);
-						jobs.content[j].startDate = momentApi.formatDateTime(startDate);
+			const jobs = await jobsService.getList();
+			this.model.jobs(jobs.map((job) => {
+				const startDate = new Date(job.startDate);
+				job.startDate = momentApi.formatDateTime(startDate);
 
-						var endDate = new Date(jobs.content[j].endDate);
-						jobs.content[j].endDate = momentApi.formatDateTime(endDate);
+				const endDate = new Date(job.endDate);
+				job.endDate = momentApi.formatDateTime(endDate);
 
-						if (jobs.content[j].jobParameters.jobName == undefined) {
-							jobs.content[j].jobParameters.jobName = 'n/a';
-						}
-					}
-					this.model.jobs(jobs.content);
-				});
+				if (job.jobParameters.jobName == undefined) {
+					job.jobParameters.jobName = 'n/a';
+				}
+				return job;
+			}));
 		}
 
 	}
