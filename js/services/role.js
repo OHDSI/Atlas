@@ -19,7 +19,7 @@ define(function(require, exports) {
         .then(({ data = [] }) => data);
     }
 
-    static getPermissions(id) {
+    static getPermissions() {
       return httpService.doGet(constants.apiPaths.permissions())
         .then(({ data = [] }) => data);
     }

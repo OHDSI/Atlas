@@ -120,8 +120,6 @@ define([
             if (!this.permissions() || this.permissions().length == 0) {
                 const permissions = await roleService.getPermissions();
                 this.permissions(permissions);                
-            } else {
-                return Promise.resolve();
             }
         }
 
