@@ -4,7 +4,7 @@ define([
     'providers/Component',
     'providers/AutoBind',
     'utils/CommonUtils',
-    'services/http',
+    'services/role',
     '../const',
     'appConfig',
     'assets/ohdsi.util',
@@ -20,7 +20,7 @@ define([
     Component,
     AutoBind,
     commonUtils,
-    httpService,
+    roleService,
     constants,
     config,
     ohdsiUtils,
@@ -98,47 +98,38 @@ define([
                 : '<span data-bind="css: { selected: ' + field + '}" class="fa fa-check readonly"></span>';
         }
 
-        getRole() {
-            return httpService.doGet(constants.paths.role(this.roleId()))
-                .then(({ data }) => {
-                    this.roleName(data.role);
-                });
+        async getRole() {
+            const role = await roleService.load(this.roleId());            
+            this.roleName(role.role);
         }
 
-        getUsers() {
+        async getUsers() {
             if (!this.users() || this.users().length == 0) {
-                return userService.getUsers().then((data) => this.users(data));
-            } else {
-                return Promise.resolve();
+                const users = await userService.getUsers();
+                this.users(users);
             }
         }
-        getRoleUsers() {
-            return httpService.doGet(constants.paths.roleUsers(this.roleId()))
-                .then(({ data: roleUsers }) => {
-                    roleUsers.forEach((user) => {
-                        this.roleUserIds.push(user.id);
-                    });
-                });
+        async getRoleUsers() {
+            const roleUsers = await roleService.getRoleUsers(this.roleId());
+            roleUsers.forEach((user) => {
+                this.roleUserIds.push(user.id);
+            });
         }
 
-        getPermissions() {
+        async getPermissions() {
             if (!this.permissions() || this.permissions().length == 0) {
-                return httpService.doGet(constants.paths.permissions())
-                .then(({ data }) => {
-                    this.permissions(data);
-                });                
+                const permissions = await roleService.getPermissions();
+                this.permissions(permissions);                
             } else {
                 return Promise.resolve();
             }
         }
 
-        getRolePermissions() {
-            return httpService.doGet(constants.paths.rolePermissions(this.roleId()))
-                .then(({ data: rolePermissions }) => {
-                    rolePermissions.forEach((permission) => {
-                        this.rolePermissionIds.push(permission.id);
-                    });
-                });
+        async getRolePermissions() {
+            const rolePermissions = await roleService.getRolePermissions(this.roleId());
+            rolePermissions.forEach((permission) => {
+                this.rolePermissionIds.push(permission.id);
+            });
         }
 
         updateUserItems() {
@@ -204,32 +195,30 @@ define([
             this.loading(false);
         }
 
-        addRelations(ids, relation) {
-            return ids.length > 0
-                ? httpService.doPut(constants.paths.relations(this.roleId(), relation, ids))
-                : Promise.resolve();
+        async addRelations(ids, relation) {
+            if (ids.length > 0) {
+                return await roleService.addRelations(this.roleId(), relation, ids);
+            }
         }
-        removeRelations(ids, relation) {
-            return ids.length > 0
-                ? httpService.doDelete(constants.paths.relations(this.roleId(), relation, ids))
-                : Promise.resolve();
+        async removeRelations(ids, relation) {
+            if (ids.length > 0) {
+                return await roleService.removeRelations(this.roleId(), relation, ids);
+            }
         }
 
-        saveUsers() {
+        async saveUsers() {
             const currentRoleUserIds = this.userItems()
                 .filter(user => user.isRoleUser());
 
             var userIdsToAdd = constants.arraysDiff(currentRoleUserIds, this.roleUserIds).map(u => u.id);
             var userIdsToRemove = constants.arraysDiff(this.roleUserIds, currentRoleUserIds).map(u => u.id);
             this.roleUserIds = currentRoleUserIds;
-
-            return Promise.all([
-                this.addRelations(userIdsToAdd, 'users', 'PUT'),
-                this.removeRelations(userIdsToRemove, 'users', 'DELETE'),
-            ]);
+            
+            await this.addRelations(userIdsToAdd, 'users');
+            await this.removeRelations(userIdsToRemove, 'users');            
         }
 
-        savePermissions() {
+        async savePermissions() {
             var currentRolePermissionIds = this.permissionItems()
                 .filter(permission => permission.isRolePermission());
 
@@ -237,13 +226,12 @@ define([
             var permissionIdsToRemove = constants.arraysDiff(this.rolePermissionIds, currentRolePermissionIds).map(u => u.id);
             this.rolePermissionIds = currentRolePermissionIds;
 
-            return Promise.all([
-                this.addRelations(permissionIdsToAdd, 'permissions', 'PUT'),
-                this.removeRelations(permissionIdsToRemove, 'permissions', 'DELETE'),
-            ]);
+            await this.addRelations(permissionIdsToAdd, 'permissions');
+            await this.removeRelations(permissionIdsToRemove, 'permissions');
+            
         }
 
-        saveRole() {
+        async saveRole() {
             if (!this.roleDirtyFlag.isDirty()) {
                 return null;
             }
@@ -252,14 +240,15 @@ define([
                 id: this.roleId(),
                 role: this.roleName()
             };
+            let role;
 
-            const promise = this.isNewRole()
-                ? httpService.doPost(constants.paths.role(), data)
-                : httpService.doPut(constants.paths.role(this.roleId()), data);
+            if (this.isNewRole()) {
+                role = await roleService.create(data);
+            } else {
+                role = await roleService.update(data);
+            }
 
-            return promise.then(({ data }) => {
-                this.roleId(data.id);
-            });
+            this.roleId(role.id);
         }
 
         async save() {
@@ -316,7 +305,7 @@ define([
 
         async delete() {
             this.loading(true);
-            await httpService.doDelete(constants.paths.role(this.roleId()));
+            await roleService.delete(this.roleId());
             var roles = this.model.roles().filter((role) => {
                 return role.id != this.roleId();
             });

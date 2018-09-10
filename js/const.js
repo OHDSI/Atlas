@@ -2,6 +2,7 @@ define(
   (require, factory) => {
 		const ko = require('knockout');
 		const sharedState = require('atlas-state');
+    const config = require('appConfig');
 
 		const minChartHeight = 300;
 		const treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
@@ -372,6 +373,14 @@ define(
 			data: 'VOCABULARY_ID'
 		}];
 
+		const apiPaths = {
+			role: (id = '') => `${config.api.url}role/${id}`,
+      roleUsers: roleId => `${config.api.url}role/${roleId}/users`,
+      permissions: () => `${config.api.url}permission`,
+      rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`,
+      relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,
+		};
+
     return {
 			minChartHeight,
 			treemapGradient,
@@ -381,6 +390,7 @@ define(
 			relatedSourcecodesOptions,
 			metatrix,
 			getRelatedSourcecodesColumns,
+			apiPaths,
     };
   }
 );

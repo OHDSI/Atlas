@@ -260,8 +260,8 @@ define([
       sourceApi.saveSource(this.selectedSourceId(), source)
         .then(() => sourceApi.initSourcesConfig())
         .then(() => {
-          roleService.getRoles()
-            .then(({ data: roles }) => {
+          roleService.getList()
+            .then((roles) => {
               this.model.roles(roles);
               this.loading(false);
               this.goToConfigure();
@@ -287,8 +287,8 @@ define([
       this.loading(true);
       sourceApi.deleteSource(this.selectedSourceId())
         .then(sourceApi.initSourcesConfig)
-        .then(() => roleService.getRoles())
-        .then(({ data: roles }) => {
+        .then(() => roleService.getList())
+        .then((roles) => {
           this.model.roles(roles);
           this.loading(false);
           this.goToConfigure();
