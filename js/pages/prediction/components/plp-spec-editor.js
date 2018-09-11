@@ -36,7 +36,7 @@ define([
 
 			cohortSelected(id) {
 				$('#modalCohortDefinition').modal('hide');
-				cohortDefinitionService.getCohortDefinition(id).then(({ data: cohortDefinition }) => {
+				cohortDefinitionService.getCohortDefinition(id).then((cohortDefinition) => {
 					this.targetId(cohortDefinition.id);
 					this.targetCaption(cohortDefinition.name);
 					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
