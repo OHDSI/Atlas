@@ -30,36 +30,6 @@ define([
         return this.selectedConcepts().find(item => !item.includeMapped()) === undefined;
       });
       
-      // Initialize the select all checkboxes
-      var excludeCount = 0;
-      var descendantCount = 0;
-      var mappedCount = 0;
-      this.selectedConcepts().forEach((conceptSetItem) => {
-        if (conceptSetItem.isExcluded()) {
-          excludeCount++;
-        }
-        if (conceptSetItem.includeDescendants()) {
-          descendantCount++;
-        }
-        if (conceptSetItem.includeMapped()) {
-          mappedCount++;
-        }
-      });
-      if (excludeCount == this.selectedConcepts().length) {
-        this.toggleOnSelectAllCheckbox('.conceptSetTable', '#selectAllExclude');
-      } else {
-        this.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllExclude');
-      }
-      if (descendantCount == this.selectedConcepts().length) {
-        this.toggleOnSelectAllCheckbox('.conceptSetTable', '#selectAllDescendants');
-      } else {
-        this.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllDescendants');
-      }
-      if (mappedCount == this.selectedConcepts().length) {
-        this.toggleOnSelectAllCheckbox('.conceptSetTable', '#selectAllMapped');
-      } else {
-        this.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllMapped');
-      }
     }
 
     toggleExcluded() {
