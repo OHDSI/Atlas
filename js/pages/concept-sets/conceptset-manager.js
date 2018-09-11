@@ -22,6 +22,7 @@ define([
 	'less!./conceptset-manager.less',
 	'components/heading',
 	'components/tabs',
+	'components/modal',
 	'./components/tabs/conceptset-expression',
 	'./components/tabs/included-conceptsets',
 	'./components/tabs/included-sourcecodes',
@@ -48,6 +49,7 @@ define([
 			super(params);
 			this.componentParams = params;			
 			this.model = params.model;
+			this.isOptimizeModalShown = ko.observable(false);
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.conceptSetName = ko.observable("New Concept Set");
 			this.canEdit = this.model.canEditCurrentConceptSet;
@@ -214,10 +216,9 @@ define([
 			this.loading(true);
 			this.optimalConceptSet(null);
 			this.optimizerRemovedConceptSet(null);
-			$('#modalConceptSetOptimize')
-				.modal('show');
+			this.isOptimizeModalShown(true);
 
-			var conceptSetItems = [];
+			let conceptSetItems = [];
 
 			for (var i = 0; i < this.selectedConcepts().length; i++) {
 				var item = this.selectedConcepts()[i];
@@ -298,7 +299,7 @@ define([
 				newConceptSet.push(newItem);
 			})
 			this.selectedConcepts(newConceptSet);
-			$('#modalConceptSetOptimize').modal('hide');
+			this.isOptimizeModalShown(false);
 		}
 		copyOptimizedConceptSet () {
 			if (this.model.currentConceptSet() == undefined) {
@@ -333,133 +334,5 @@ define([
 		}
 
 	}
-		/*
-		this.fields = {
-			membership: {
-				propName: 'conceptIn1And2',
-				value: d => {
-					if (d.conceptIn1Only == 1) {
-						return '1 Only'
-					} else if (d.conceptIn2Only == 1) {
-						return '2 Only'
-					} else {
-						return 'Both'
-					}
-				},
-				isColumn: true,
-				isFacet: true,
-				label: 'Match',
-				isField: true,
-			},
-			id: {
-				propName: 'conceptId',
-				value: 'conceptId',
-				isColumn: true,
-				isFacet: false,
-				label: 'Id',
-				isField: true,
-			},
-			code: {
-				propName: 'conceptCode',
-				value: 'conceptCode',
-				isColumn: true,
-				isFacet: false,
-				label: 'Code',
-				isField: true,
-			},
-			name: {
-				propName: 'conceptName',
-				value: d => {
-					var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-					return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
-				},
-				isColumn: true,
-				isFacet: false,
-				label: 'Name',
-				isField: true,
-			},
-			class: {
-				propName: 'conceptClassId',
-					value: 'conceptClassId',
-					isColumn: true,
-					isFacet: true,
-					label: 'Class',
-					isField: true,
-			},
-			RC: {
-				propName: 'recordCount',
-				value: 'recordCount',
-				isColumn: true,
-				isFacet: false,
-				label: '<i id="dtConeptManagerRC" class="fa fa-database" aria-hidden="true"></i> RC',
-				isField: true,
-			},
-			DRC: {
-				propName: 'descendantRecordCount',
-				value: 'descendantRecordCount',
-				isColumn: true,
-				isFacet: false,
-				label: '<i id="dtConeptManagerDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
-				isField: true,
-			},
-			domainId: {
-				propName: 'domainId',
-				value: 'domainId',
-				isColumn: true,
-				isFacet: true,
-				label: 'Domain',
-				isField: true,
-			},
-			vocabularyId: {
-				propName: 'vocabularyId',
-				value: 'vocabularyId',
-				isColumn: true,
-				isFacet: true,
-				label: 'Vocabulary',
-				isField: true,
-			},
-			fRC: {
-				propName: 'fRecordCount',
-				label: 'Has Records',
-				value: d => {
-					var val = 0;
-					if (d.recordCount.replace) {
-						val = parseInt(d.recordCount.replace(/\,/g, '')); // Remove comma formatting and treat as int
-					} else {
-						val = d.recordCount;
-					}
-					if (val > 0) {
-						return 'true'
-					} else {
-						return 'false'
-					}
-				},
-				isField: true,
-				isColumn: false,
-				isFacet: true,
-			},
-			fDRC: {
-				propName: 'fDescendantRecordCount',
-				label: 'Has Descendant Records',
-				value: d => {
-					var val = 0;
-					if (d.descendantRecordCount.replace) {
-						val = parseInt(d.descendantRecordCount.replace(/\,/g, '')); // Remove comma formatting and treat as int
-					} else {
-						val = d.descendantRecordCount;
-					}
-					if (val > 0) {
-						return 'true'
-					} else {
-						return 'false'
-					}
-				},
-				isField: true,
-				isColumn: false,
-				isFacet: true,
-			},
-		}
-	}*/
-
 	return commonUtils.build('conceptset-manager', ConceptsetManager, view);
 });

@@ -5,7 +5,6 @@ define([
 	'providers/AutoBind',
   'utils/CommonUtils',
   'atlas-state',
-  'jquery',
 ], function (
 	ko,
 	view,
@@ -13,14 +12,23 @@ define([
   AutoBind,
   commonUtils,
   sharedState,
-  $,
 ) {
 	class ConceptsetExpression extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
       this.model = params.model;
 			this.selectedConcepts = sharedState.selectedConcepts;
-			this.canEdit = this.model.canEditCurrentConceptSet;
+      this.canEdit = this.model.canEditCurrentConceptSet;
+      
+      this.allExcludedChecked = ko.pureComputed(() => {
+        return this.selectedConcepts().find(item => !item.isExcluded()) === undefined;
+      });
+      this.allDescendantsChecked = ko.pureComputed(() => {
+        return this.selectedConcepts().find(item => !item.includeDescendants()) === undefined;
+      });
+      this.allMappedChecked = ko.pureComputed(() => {
+        return this.selectedConcepts().find(item => !item.includeMapped()) === undefined;
+      });
       
       // Initialize the select all checkboxes
       var excludeCount = 0;
@@ -52,62 +60,49 @@ define([
       } else {
         this.toggleOffSelectAllCheckbox('.conceptSetTable', '#selectAllMapped');
       }
-      // Create event handlers for all of the select all elements
-      $(document).off('click', '#selectAllExclude');
-      $(document).on('click', '#selectAllExclude', () => {
-        this.selectAllConceptSetItems("#selectAllExclude", {
-          isExcluded: true
-        })
-      });
-      $(document).off('click', '#selectAllDescendants');
-      $(document).on('click', '#selectAllDescendants', () => {
-        this.selectAllConceptSetItems("#selectAllDescendants", {
-          includeDescendants: true
-        })
-      });
-      $(document).off('click', '#selectAllMapped');
-      $(document).on('click', '#selectAllMapped', () => {
-        this.selectAllConceptSetItems("#selectAllMapped", {
-          includeMapped: true
-        })
-      });
     }
+
+    toggleExcluded() {
+      this.selectAllConceptSetItems(
+        !this.allExcludedChecked(),
+        this.allDescendantsChecked(),
+        this.allMappedChecked()
+      );
+    }
+
+    toggleDescendants() {
+      this.selectAllConceptSetItems(
+        this.allExcludedChecked(),
+        !this.allDescendantsChecked(),
+        this.allMappedChecked()
+      );
+    }
+
+    toggleMapped() {
+      this.selectAllConceptSetItems(
+        this.allExcludedChecked(),
+        this.allDescendantsChecked(),
+        !this.allMappedChecked()
+      );
+    }    
     
-		selectAllConceptSetItems(selector, props) {
+		selectAllConceptSetItems(isExcluded = null, includeDescendants = null, includeMapped = null) {
 			if (!this.canEdit()) {
 				return;
 			}
-			props = props || {};
-			props.isExcluded = props.isExcluded || null;
-			props.includeDescendants = props.includeDescendants || null;
-			props.includeMapped = props.includeMapped || null;
-			var selectAllValue = !($(selector).hasClass("selected"));
-			$(selector).toggleClass("selected");
 			this.selectedConcepts().forEach((conceptSetItem) => {
-				if (props.isExcluded !== null) {
-					conceptSetItem.isExcluded(selectAllValue);
+				if (isExcluded !== null) {
+					conceptSetItem.isExcluded(isExcluded);
 				}
-				if (props.includeDescendants !== null) {
-					conceptSetItem.includeDescendants(selectAllValue);
+				if (includeDescendants !== null) {
+					conceptSetItem.includeDescendants(includeDescendants);
 				}
-				if (props.includeMapped !== null) {
-					conceptSetItem.includeMapped(selectAllValue);
+				if (includeMapped !== null) {
+					conceptSetItem.includeMapped(includeMapped);
 				}
 			});
 			this.model.resolveConceptSetExpression();
-    }
-    
-		toggleOnSelectAllCheckbox(selector, selectAllElement) {
-			$(document).on('init.dt', selector, function (e, settings) {
-				$(selectAllElement).addClass("selected");
-			});
-		}
-
-		toggleOffSelectAllCheckbox(selector, selectAllElement) {
-			$(document).on('init.dt', selector, function (e, settings) {
-				$(selectAllElement).removeClass("selected");
-			});
-		}
+    }    
 
 	}
 

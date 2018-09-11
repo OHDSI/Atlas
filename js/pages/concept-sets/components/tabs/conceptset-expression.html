@@ -17,34 +17,73 @@
           autoWidth: false,
           order: [[3, 'desc']],
           columns: [
-            { title: '<li class=\'fa fa-shopping-cart\'></li>', render: $root.renderConceptSetItemSelector, orderable:false, searchable:false},
-            { title: 'Concept Id', data: 'concept.CONCEPT_ID'},
-            { title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-            { title: 'Concept Name', render: $root.renderBoundLink},
-            { title: 'Domain', data: 'concept.DOMAIN_ID' },
-            { title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
-            { title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
+            { render: $root.renderConceptSetItemSelector, orderable:false, searchable:false},
+            { data: 'concept.CONCEPT_ID'},
+            { data: 'concept.CONCEPT_CODE'},
+            { render: $root.renderBoundLink},
+            { data: 'concept.DOMAIN_ID' },
+            { data: 'concept.STANDARD_CONCEPT', visible:false },
+            { data: 'concept.STANDARD_CONCEPT_CAPTION' },
             {
-              title: canEdit() ? '<span id=\'selectAllExclude\' class=\'fa fa-check\'></span> Exclude' : 'Exclude'
-              , class:'text-center'
-              , orderable:false
-              , render: function() { return $root.renderCheckbox('isExcluded');}
+              class: 'text-center',
+              orderable: false,
+              render: function() { return $root.renderCheckbox('isExcluded');}
             },
             {
-              title: canEdit() ? '<span id=\'selectAllDescendants\' class=\'fa fa-check\'></span> Descendants' : 'Descendants'
-              , class:'text-center'
-              , orderable:false
-              , render: function() { return $root.renderCheckbox('includeDescendants');}
+              class: 'text-center',
+              orderable: false,
+              render: function() { return $root.renderCheckbox('includeDescendants');}
             },
             {
-              title: canEdit() ? '<span id=\'selectAllMapped\' class=\'fa fa-check\'></span> Mapped' : 'Mapped'
-              , class:'text-center'
-              , orderable:false
-              ,render: function() { return $root.renderCheckbox('includeMapped');}
+              class: 'text-center',
+              orderable: false,
+              render: function() { return $root.renderCheckbox('includeMapped');}
             }
           ]
         }
       }">
+      <thead>
+        <th><li class='fa fa-shopping-cart'></li></th>
+        <th>Concept Id</th>
+        <th>Concept Code</th>
+        <th>Concept Name</th>
+        <th>Domain</th>
+        <th>Standard Concept Code</th>
+        <th>Standard Concept Caption</th>
+        <th>
+          <!-- ko if: canEdit -->
+            <span data-bind="
+              css: classes({
+                  element: 'checkmark',
+                  extra: `fa fa-check ${allExcludedChecked() ? 'selected' : ''}`
+              }),
+              click: toggleExcluded
+            "></span>
+          <!-- /ko --> Exclude
+        </th>
+        <th>
+          <!-- ko if: canEdit -->
+          <span data-bind="
+            css: classes({
+                element: 'checkmark',
+                extra: `fa fa-check ${allDescendantsChecked() ? 'selected' : ''}`
+            }),
+            click: toggleDescendants
+          "></span>
+          <!-- /ko --> Descendants
+        </th>
+        <th>
+            <!-- ko if: canEdit -->
+              <span data-bind="
+                css: classes({
+                    element: 'checkmark',
+                    extra: `fa fa-check ${allMappedChecked() ? 'selected' : ''}`
+                }),
+                click: toggleMapped
+              "></span>
+            <!-- /ko --> Mapped
+        </th>
+      </thead>
   </table>
 
   <div class="linkLegend">
