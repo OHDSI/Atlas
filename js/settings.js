@@ -70,7 +70,7 @@ const settingsObject = {
       'jqueryui/autoGrowInput': 'assets/jqueryui/autoGrowInput',
     }
   },
-  paths: {
+  paths: {    
     "jquery": "https://code.jquery.com/jquery-1.11.2.min",
     "jquery-ui": "https://code.jquery.com/ui/1.11.4/jquery-ui.min",
     "bootstrap": "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min",
@@ -125,13 +125,34 @@ const settingsObject = {
     "jquery.ui.autocomplete.scroll": "assets/jquery.ui.autocomplete.scroll",
     "facets": "assets/facets",
     "colorbrewer": "assets/colorbrewer",
-    "ohdsi-api": "https://unpkg.com/@ohdsi/ui-toolbox@1.0.0/lib/umd/api/index",
+    "ohdsi-api": "https://unpkg.com/@ohdsi/ui-toolbox@1.0.1/lib/umd/api/index",
     // needed for @ohdsi/ui-toolbox Api
     "urijs": "https://unpkg.com/urijs@1.19.1/src/URI",
     "punycode": "https://unpkg.com/urijs@1.19.1/src/punycode",
     "SecondLevelDomains": "https://unpkg.com/urijs@1.19.1/src/SecondLevelDomains",		
     "IPv6": "https://unpkg.com/urijs@1.19.1/src/IPv6",
-  }
+  },
+  cssPaths: {
+    "font-awesome.min.css": "styles/font-awesome.min.css",
+    "bootstrap.min.css": "styles/bootstrap.min.css",
+    "bootstrap-theme.min.css": "styles/bootstrap-theme.min.css",
+    "jquery.dataTables.min.css": "styles/jquery.dataTables.min.css",
+    "tabs.css": "styles/tabs.css",
+    "jquery-ui.css": "styles/jquery-ui.css",
+    "buttons.dataTables.min.css": "styles/buttons.dataTables.min.css",
+    "atlas.css": "styles/atlas.css",
+    "chart.css": "styles/chart.css",
+    "achilles.css": "styles/achilles.css",
+    "bootstrap-select.min.css": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css",
+    "buttons.css": "styles/buttons.css",
+    "cartoon.css": "styles/cartoon.css",
+    "d3.slider.css": "styles/d3.slider.css",
+    "exploreCohort.css": "styles/exploreCohort.css",
+    "jquery.dataTables.colVis.css": "styles/jquery.dataTables.colVis.css",
+    "jquery.datatables.tabletools.css": "styles/jquery.datatables.tabletools.css",
+    "plp.css": "styles/plp.css",
+    "prism.css": "styles/prism.css",
+  },
 };
 
 if (typeof define !== 'undefined') {

@@ -24,7 +24,7 @@
 															<div class="control-group" style="width: 50%">
 																	<label for="sourceKey">Source Key:</label>
 																	<div class="form-group">
-																			<input title="Source key" data-bind="textInput: selectedSource().key, enable: canEdit()" class="form-control" type="text" id="sourceKey"/>
+																			<input title="Source key" data-bind="textInput: selectedSource().key, enable: canEdit() && canEditKey()" class="form-control" type="text" id="sourceKey"/>
 																	</div>
 															</div>
 															<div class="control-group" style="width: 50%">

@@ -1,7 +1,7 @@
 define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 				'services/CohortDefinition', 'appConfig', 'assets/ohdsi.util',
 				'plp/PatientLevelPredictionAnalysis', 'plp/options',
-				'components/cohortbuilder/CohortExpression', 'vocabularyprovider',
+				'components/cohortbuilder/CohortExpression', 'providers/Vocabulary',
 				'conceptsetbuilder/InputTypes/ConceptSet'],
 	function ($, ko, view, clipboard, cohortDefinitionService, config, ohdsiUtil,
 		PatientLevelPredictionAnalysis, options, CohortExpression, vocabularyAPI,
@@ -36,7 +36,7 @@ define(['jquery', 'knockout', 'text!./plp-spec-editor.html', 'clipboard',
 					self.targetExpression.push(conceptSetData);
 
 					vocabularyAPI.getConceptSetExpressionSQL(csExpression).then(
-						function (data) {
+						function ({ data }) {
 							self.targetConceptSetSQL(data);
 						});
 				});
