@@ -1,6 +1,7 @@
 define(
   (require, factory) => {
     const { Route } = require('providers/Route');
+    const authApi = require('webapi/AuthAPI');
     function routes(appModel) {
       return {
         '/': new Route(() => {

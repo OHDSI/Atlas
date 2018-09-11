@@ -12,7 +12,6 @@ const localRefs = {
 	"conceptset-manager": "components/conceptset/conceptset-manager",
 	"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
 	"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
-	"job-manager": "components/job-manager",
 	"user-bar": "components/user-bar",
 	"faceted-datatable": "components/faceted-datatable",
 	"explore-cohort": "components/explore-cohort",
@@ -49,25 +48,38 @@ require([
 	'optional', // require this plugin separately to check in advance whether we have a local config
 	'config'
 ], (settings, optional, appConfig) => {
-	const cdnRefs = {};
+	const cdnRefs = {
+		css: {},
+		js: {},
+	};
+	const styles = [];
 	Object.entries(settings.paths).forEach(([name, path]) => {
-		cdnRefs[name] = appConfig.useBundled3dPartyLibs
+		cdnRefs.js[name] = appConfig.useBundled3dPartyLibs
 			? 'assets/bundle/bundle'
 			: path;
+	});
+	Object.entries(settings.cssPaths).forEach(([name, path]) => {
+		cdnRefs.css[name] = appConfig.useBundled3dPartyLibs
+			? 'assets/bundle/bundle.css'
+			: path;
+		styles.push(`css!${name}`);
 	});
 
 	requirejs.config({
 		...settings,
 		urlArgs: bustCache,
-		deps: ['css!styles/jquery.dataTables.min',
-			'css!styles/jquery.dataTables.colVis.css'
-		],
 		paths: {
 			...localRefs,
-			...cdnRefs,
+			...cdnRefs.js,
 		},
-	});
-	require(['bootstrap'], function () { // bootstrap must come first
+		map: {
+			'*': {
+				...settings.map['*'],
+				...cdnRefs.css,
+			},
+		}
+	});	
+	require(['bootstrap', ...styles], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
 		require([
 			'providers/Application',
