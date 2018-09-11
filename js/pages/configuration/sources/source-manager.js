@@ -149,7 +149,7 @@ define([
         
       this.krbHostFQDN = ko.computed(() => {
 
-        if (this.isImpalaDS() && isNonEmptyConnectionString()) {
+        if (this.isImpalaDS() && this.isNonEmptyConnectionString()) {
             var str = this.selectedSource().connectionString();
             var strArray = str.match(/KrbHostFQDN=(.*?);/);
             if (strArray != null){
@@ -164,7 +164,7 @@ define([
 
       this.krbRealm = ko.computed(() => {
 
-          if (this.isImpalaDS() && isNonEmptyConnectionString()) {
+          if (this.isImpalaDS() && this.isNonEmptyConnectionString()) {
             var str = this.selectedSource().connectionString();
             var strArray = str.match(/KrbRealm=(.*?);/);
             if (strArray != null){
