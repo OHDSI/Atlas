@@ -373,10 +373,14 @@ define(
 			data: 'VOCABULARY_ID'
 		}];
 
-		
-    const apiPaths = {
-      jobs: () => `${config.api.url}job/execution?comprehensivePage=true`
-    };
+		const apiPaths = {
+			role: (id = '') => `${config.api.url}role/${id}`,
+      roleUsers: roleId => `${config.api.url}role/${roleId}/users`,
+      permissions: () => `${config.api.url}permission`,
+      rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`,
+      relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,
+			jobs: () => `${config.api.url}job/execution?comprehensivePage=true`,
+		};
 
     return {
 			minChartHeight,

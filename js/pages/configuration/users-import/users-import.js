@@ -13,7 +13,8 @@ define(['knockout',
 		'./components/atlas-roles',
 		'components/ac-access-denied',
 		'less!./users-import.less',
-		'components/modal'
+		'components/modal',
+		'components/heading'
 	],
 	function (
 		ko, 
@@ -27,7 +28,7 @@ define(['knockout',
 		renderers,
 		Const) {
 
-		class UsersImport extends Component{
+		class UsersImport extends Component {
 
 			get transitions() {
 				return {

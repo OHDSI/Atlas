@@ -1,44 +1,48 @@
 define([
     'knockout',
     'text!./roles.html',
+    'providers/Component',
+    'providers/AutoBind',
+    'utils/CommonUtils',
     'webapi/AuthAPI',
     'atlas-state',
     'databindings',
-    'components/ac-access-denied'
+    'components/ac-access-denied',
+    'components/heading'
 ], function (
     ko,
     view,
+    Component,
+    AutoBind,
+    commonUtils,
     authApi,
     sharedState
 ) {
-    function roles(params) {
-        var self = this;
-        self.roles = sharedState.roles;
-        self.updateRoles = params.model.updateRoles;
-        self.loading = ko.observable();
-        self.selectRole = function(data) {
+    class Roles extends AutoBind(Component) {
+        constructor(params) {
+            super(params);
+            this.roles = sharedState.roles;
+            this.updateRoles = params.model.updateRoles;
+            this.loading = ko.observable();
+    
+            this.isAuthenticated = authApi.isAuthenticated;
+            this.canRead = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedReadRoles(); });
+            this.canCreate = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedCreateRole(); });
+    
+            if (this.canRead()) {
+                this.loading(true);
+                this.updateRoles().then(() => { this.loading(false); });
+            }            
+        }
+        
+        selectRole(data) {
             document.location = '#/role/' + data.id;
         }
 
-        self.newRole = function() {
+        newRole() {
             document.location = '#/role/0'
-        }
-
-        self.isAuthenticated = authApi.isAuthenticated;
-        self.canRead = ko.pureComputed(function() { return self.isAuthenticated() && authApi.isPermittedReadRoles(); });
-        self.canCreate = ko.pureComputed(function() { return self.isAuthenticated() && authApi.isPermittedCreateRole(); });
-
-        if (self.canRead()) {
-            self.loading(true);
-            self.updateRoles().then(() => { self.loading(false); });
         }
     }
 
-    var component = {
-        viewModel: roles,
-        template: view
-    };
-
-    ko.components.register('roles', component);
-    return component;
+    return commonUtils.build('roles', Roles, view);
 });

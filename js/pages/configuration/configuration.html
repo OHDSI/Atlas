@@ -1,8 +1,5 @@
-<div class="wrapperTitle">
-	<i class="fa fa-cogs"></i>Configuration
-</div>
-<div id="configuration" data-bind="if:$component.hasAccess()">
-	<div id="wrapperConfigure">
+<heading-title params="name: 'Configuration', icon: 'cogs', theme: 'dark'"></heading-title>
+<div data-bind="if: $component.hasAccess(), css: classes({ extra: 'paddedWrapper' })">
 		<div data-bind="if: $component.initializationCompleted()">
 			<div data-bind="with:config.api">
 				<div class="configureHeader">
@@ -108,11 +105,5 @@
 				</div>
 			</div>
 		</div>
-	</div>
-</div>
-<div data-bind="ifnot:$component.hasAccess">
-	<div class="padded">
-		<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-	</div>
 </div>
 

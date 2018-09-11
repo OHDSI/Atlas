@@ -1,6 +1,4 @@
-<div data-bind="css: classes({extra: ['wrapperTitle']})">
-    <i data-bind="css: classes({extra: ['fa', 'fa-users']})"></i> Import Users from LDAP/Active Directory
-</div>
+<heading-title params="name: 'Import Users from LDAP/Active Directory', icon: 'users', theme: 'dark'"></heading-title>
 
 <div data-bind="ifnot: config.userAuthenticationEnabled && canImport">
     <div data-bind="css: classes({extra: ['padded']})">
