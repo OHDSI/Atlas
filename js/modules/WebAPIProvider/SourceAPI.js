@@ -194,6 +194,10 @@ define(function (require, exports) {
     return httpService.doGet(config.webAPIRoot + 'source/connection/' + sourceKey)
   }
 
+  function updateSourceDaimonPriority(sourceKey, daimonType) {
+    return httpService.doPost(config.api.url + 'source/' + sourceKey + '/daimons/' + daimonType + '/set-priority');
+  }
+
   var api = {
     getSources: getSources,
     getSource: getSource,
@@ -204,6 +208,7 @@ define(function (require, exports) {
     checkSourceConnection: checkSourceConnection,
     connectionCheckState: connectionCheckState,
     setSharedStateSources: setSharedStateSources,
+    updateSourceDaimonPriority,
 	};
 
 	return api;

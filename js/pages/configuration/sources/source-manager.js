@@ -90,37 +90,38 @@ define([
         if (!config.userAuthenticationEnabled) {
           return false;
         } else {
-          return (
-            config.userAuthenticationEnabled && this.isAuthenticated()
-            && authApi.isPermittedEditConfiguration()
-          )
-          || !config.userAuthenticationEnabled;
+          return this.isAuthenticated() && authApi.isPermittedEditConfiguration();
         }
       });
 
       this.canReadSource = ko.pureComputed(() => {
-        return (config.userAuthenticationEnabled && this.isAuthenticated()
-          && authApi.isPermittedReadSource(this.selectedSourceId())) || !config.userAuthenticationEnabled
-          || !this.selectedSourceId();
+        return authApi.isPermittedReadSource(this.selectedSourceId()) || !this.selectedSourceId();
       });
 
       this.isDeletePermitted = ko.pureComputed(() => {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() &&
-          authApi.isPermittedDeleteSource(this.selectedSource().key())) || !config.userAuthenticationEnabled;
+        return authApi.isPermittedDeleteSource(this.selectedSource().key());
       });
 
       this.canEdit = ko.pureComputed(() => {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() &&
-          authApi.isPermittedEditSource(this.selectedSourceId())) || !config.userAuthenticationEnabled;
+        return authApi.isPermittedEditSource(this.selectedSourceId());
       });
 
       this.canSave = ko.pureComputed(() => {
-        return (this.selectedSource() && this.selectedSource().name() && this.selectedSource().key()
-          && this.selectedSource().connectionString() && this.canEdit());
+        return (
+          this.selectedSource()
+          && this.selectedSource().name()
+          && this.selectedSource().key()
+          && this.selectedSource().connectionString()
+          && this.canEdit()
+        );
       });
 
       this.canDelete = () => {
-        return (this.selectedSource() && this.selectedSource().key() && this.isDeletePermitted());
+        return (
+          this.selectedSource()
+          && this.selectedSource().key()
+          && this.isDeletePermitted()
+        );
       };
 
       this.canEditKey = ko.pureComputed(() => {

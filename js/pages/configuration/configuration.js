@@ -4,7 +4,6 @@ define([
   'providers/Component',
   'providers/AutoBind',
   'utils/CommonUtils',
-  'services/http',
   'appConfig',
   'webapi/AuthAPI',
   'webapi/SourceAPI',
@@ -17,7 +16,6 @@ define([
   Component,
   AutoBind,
   commonUtils,
-  httpService,
   config,
   authApi,
   sourceApi,
@@ -91,21 +89,18 @@ define([
 			document.location = "#/source/" + source.sourceId;
 		};
 
-    updateSourceDaimonPriority(sourceKey, daimonType) {
+    async updateSourceDaimonPriority(sourceKey, daimonType) {
       if (sharedState.priorityScope() !== 'application') {
         return;
       }
       this.isInProgress(true);
-      httpService.doPost(config.api.url + 'source/' + sourceKey + '/daimons/' + daimonType + '/set-priority')
-        .then(() => {
-          sourceApi.initSourcesConfig();
-        })
-        .catch((err) => {
-          alert('Failed to update priority source daimon');
-        })
-        .finally(() => {
-          this.isInProgress(false);
-        });
+      try {
+        await sourceApi.updateSourceDaimonPriority(sourceKey, daimonType);
+        sourceApi.initSourcesConfig();
+      } catch(err) {
+        alert('Failed to update priority source daimon');
+      }        
+      this.isInProgress(false);
     }
 
     updateVocabPriority() {

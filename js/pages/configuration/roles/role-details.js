@@ -5,8 +5,7 @@ define([
     'providers/AutoBind',
     'utils/CommonUtils',
     'services/role',
-    '../const',
-    'appConfig',
+    'lodash',
     'assets/ohdsi.util',
     'services/User',
     'webapi/AuthAPI',
@@ -21,8 +20,7 @@ define([
     AutoBind,
     commonUtils,
     roleService,
-    constants,
-    config,
+    _,
     ohdsiUtils,
     userService,
     authApi,
@@ -208,8 +206,8 @@ define([
             const currentRoleUserIds = this.userItems()
                 .filter(user => user.isRoleUser());
 
-            var userIdsToAdd = constants.arraysDiff(currentRoleUserIds, this.roleUserIds).map(u => u.id);
-            var userIdsToRemove = constants.arraysDiff(this.roleUserIds, currentRoleUserIds).map(u => u.id);
+            var userIdsToAdd = _.difference(currentRoleUserIds, this.roleUserIds).map(u => u.id);
+            var userIdsToRemove = _.difference(this.roleUserIds, currentRoleUserIds).map(u => u.id);
             this.roleUserIds = currentRoleUserIds;
             
             await this.addRelations(userIdsToAdd, 'users');
@@ -220,8 +218,8 @@ define([
             var currentRolePermissionIds = this.permissionItems()
                 .filter(permission => permission.isRolePermission());
 
-            var permissionIdsToAdd = constants.arraysDiff(currentRolePermissionIds, this.rolePermissionIds).map(u => u.id);
-            var permissionIdsToRemove = constants.arraysDiff(this.rolePermissionIds, currentRolePermissionIds).map(u => u.id);
+            var permissionIdsToAdd = _.difference(currentRolePermissionIds, this.rolePermissionIds).map(u => u.id);
+            var permissionIdsToRemove = _.difference(this.rolePermissionIds, currentRolePermissionIds).map(u => u.id);
             this.rolePermissionIds = currentRolePermissionIds;
 
             await this.addRelations(permissionIdsToAdd, 'permissions');
