@@ -46,7 +46,7 @@ requirejs.config({paths: {"optional": "plugins/optional"}});
 require([
 	'./settings',
 	'optional', // require this plugin separately to check in advance whether we have a local config
-	'config'
+	'config/app.config',
 ], (settings, optional, appConfig) => {
 	const cdnRefs = {
 		css: {},
@@ -90,7 +90,8 @@ require([
 			'loading',
 			'user-bar',
 			'welcome',
-			'components/white-page'
+			'components/white-page',
+			'components/terms-and-conditions/terms-and-conditions',
 		],
 			(
 				Application,
