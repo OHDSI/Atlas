@@ -65,6 +65,7 @@ define(
 				this.metatrix = constants.metatrix;
 				this.relatedSourcecodesColumns = constants.getRelatedSourcecodesColumns(this);
 				this.enableRecordCounts = ko.observable(true);
+				this.loading = ko.observable(false);
 				this.loadingIncluded = ko.observable(false);
 				this.loadingSourcecodes = ko.observable(false);
 				this.loadingEvidence = ko.observable(false);

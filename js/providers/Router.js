@@ -48,7 +48,7 @@ define(
         }, {});
         const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
 					accumulator[key] = (...args) => {
-            this.setCurrentView('loading');
+            this.getModel().loading(true);
 						if (this.onLoginSubscription) {
 							this.onLoginSubscription.dispose();
             }
@@ -65,7 +65,10 @@ define(
 										this.onLoginSubscription.dispose();
 									}
 								});
-							});
+              })
+              .finally(() => {
+                this.getModel().loading(false);
+              });
 
 						this.activeRouteHandler = handler;
 					};
