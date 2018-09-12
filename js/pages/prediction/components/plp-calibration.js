@@ -1,71 +1,70 @@
-define(['knockout', 'jquery', 'text!./plp-calibration.html', 'appConfig', 'd3', 'd3-slider'], function (ko, $, view, appConfig, d3, d3slider) {
+define([
+	'knockout',
+	'text!./plp-calibration.html',
+	'providers/Component',
+	'utils/CommonUtils',
+	'd3',
+	'd3-slider',
+	'less!./plp-calibration.less'
+], function (
+	ko,
+	view,
+	Component,
+	commonUtils,
+	d3
+) {
 
+	class PlpCalibration extends Component {
+		constructor(params) {
+			super(params);
+			this.modelId = 1; //params.modelId; //TODO: RE-ENABLE LATER - CURRENTLY USING DEMO DATA
+			this.sample = ko.observable('hello world');
+			this.model = {
+				name: 'calibration',
+			};
 
-	function plpCalibration(params) {
-		console.log('plp calib init');
-		//console.log(d3slider);
-		var self = this;
-		self.modelId = 1; //params.modelId; //TODO: RE-ENABLE LATER - CURRENTLY USING DEMO DATA
-		self.appConfig = appConfig;
-		self.sample = ko.observable('hello world');
+			// PLOTTING THE calibration
+			//================================================================
+			// Set the dimensions of the canvas / graph
+			const margin = {
+				top: 30,
+				right: 30,
+				bottom: 30,
+				left: 30
+			};
+			const padding = 50;
+			const width = 800 - margin.left - margin.right - padding,
+				height = 500;
 
+			// Set the ranges
+			const x = d3.scaleLinear().range([0, width]);
+			const y = d3.scaleLinear().range([height, 0]);
 
+			// Define the axes
+			const xAxis = d3.axisBottom().scale(x).ticks(10);
+			const yAxis = d3.axisLeft().scale(y).ticks(10);
 
-		// PLOTTING THE calibration
-		//================================================================
-		// Set the dimensions of the canvas / graph
-		var margin = {
-			top: 30,
-			right: 30,
-			bottom: 30,
-			left: 30
-		};
-		var padding = 50;
-		var width = 800 - margin.left - margin.right - padding,
-			height = 500;
+			// Adds the svg canvas
+			const svg = d3.select("#calibration_wrapper")
+				.append("svg")
+				.attr("width", width + margin.left + margin.right + padding)
+				.attr("height", height + margin.top + margin.bottom + padding)
+				.append("g")
+				.attr("transform",
+					"translate(" + (margin.left + padding) + "," + margin.top + ")");
 
-		// Set the ranges
-		var x = d3.scaleLinear().range([0, width]);
-		var y = d3.scaleLinear().range([height, 0]);
+			// Define the div for the tooltip
+			const div = d3.select("#calibration_wrapper").append("div")
+				.attr("class", "tooltip")
+				.style("opacity", 0);
 
-		// Define the axes
-		var xAxis = d3.axisBottom().scale(x).ticks(10);
-		var yAxis = d3.axisLeft().scale(y).ticks(10);
-
-		// Adds the svg canvas
-		var svg = d3.select("#calibration_wrapper")
-			.append("svg")
-			.attr("width", width + margin.left + margin.right + padding)
-			.attr("height", height + margin.top + margin.bottom + padding)
-			.append("g")
-			.attr("transform",
-				"translate(" + (margin.left + padding) + "," + margin.top + ")");
-
-		// Define the div for the tooltip
-		var div = d3.select("#calibration_wrapper").append("div")
-			.attr("class", "tooltip")
-			.style("opacity", 0);
-
-		// Define the div for the main tooltip
-		var divMain = d3.select("#calibration_wrapper").append("div")
-			.attr("class", "tooltipMain")
-			.style("opacity", 0);
-
-		// grid
-		function make_x_axis() {
-			return d3.axisBottom()
-				.scale(x)
-				.ticks(10)
-		}
-
-		function make_y_axis() {
-			return d3.axisLeft()
-				.scale(y)
-				.ticks(10)
-		}
-
-		// Define the line
-		var valueline = d3.line().curve(d3.curveLinear)
+			// Define the div for the main tooltip
+			const divMain = d3.select("#calibration_wrapper").append("div")
+				.attr("class", "tooltipMain")
+				.style("opacity", 0);
+				
+			// Define the line
+			const valueline = d3.line().curve(d3.curveLinear)
 			.y(function (d) {
 				//console.log(y(d.observedIncidence));
 				return y(d.observedIncidence);
@@ -75,20 +74,21 @@ define(['knockout', 'jquery', 'text!./plp-calibration.html', 'appConfig', 'd3', 
 			});
 
 
-		d3.csv("./js/data/plp/" + self.modelId + "_calibration.csv", function (error, dataset) { // NEW
+
+		d3.csv("./js/data/plp/" + this.modelId + "_calibration.csv", (error, dataset) => { // NEW
 			dataset.forEach(function (d) {
 				d.observedIncidence = +d.observedIncidence; // NEW
 				d.averagePredictedProbability = +d.averagePredictedProbability;
 			});
 
 			// add the chart
-			var oMax = d3.max(dataset, function (d) {
+			const oMax = d3.max(dataset, function (d) {
 				return d.observedIncidence;
 			});
-			var pMax = d3.max(dataset, function (d) {
+			const pMax = d3.max(dataset, function (d) {
 				return d.averagePredictedProbability;
 			});
-			var allMax = Math.max(oMax, pMax);
+			const allMax = Math.max(oMax, pMax);
 			// Scale the range of the data
 			x.domain([0, allMax]);
 			y.domain([0, allMax]);
@@ -98,7 +98,7 @@ define(['knockout', 'jquery', 'text!./plp-calibration.html', 'appConfig', 'd3', 
 				.attr("class", "line")
 				.attr("d", valueline(dataset));
 
-			var formatter = d3.format(",.2f");
+			const formatter = d3.format(",.2f");
 
 			// Add the scatterplot
 			svg.selectAll("dot")
@@ -189,7 +189,7 @@ define(['knockout', 'jquery', 'text!./plp-calibration.html', 'appConfig', 'd3', 
 
 			svg.append("g")
 				.attr("class", "grid")
-				.call(make_y_axis()
+				.call(this.make_y_axis()
 					.tickSize(-width, 0, 0)
 					.tickFormat("")
 				)
@@ -217,18 +217,24 @@ define(['knockout', 'jquery', 'text!./plp-calibration.html', 'appConfig', 'd3', 
 			;
 
 		}); // end of the data section
+		}
 
-		self.model = {
-			name: 'calibration'
-		};
+		// grid
+		make_x_axis() {
+			return d3.axisBottom()
+				.scale(x)
+				.ticks(10)
+		}
+
+		make_y_axis() {
+			return d3.axisLeft()
+				.scale(y)
+				.ticks(10)
+		}
+
+
 	}
 
-	var component = {
-		viewModel: plpCalibration,
-		template: view
-	};
-
-	ko.components.register('plp-calibration', component);
-	return component;
+	return commonUtils.build('plp-calibration', PlpCalibration, view);
 
 });

@@ -16,7 +16,7 @@ define([
 	'providers/Vocabulary',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
-	'webapi/ExecutionAPI',
+	'services/Execution',
 	'providers/Component',
 	'providers/AutoBind',
 	'utils/CommonUtils',
@@ -41,7 +41,7 @@ define([
 		vocabularyProvider,
 		ConceptSet,
 		sharedState,
-		executionAPI,
+		executionService,
 		Component,
 		AutoBind,
 		commonUtils,
@@ -315,7 +315,7 @@ define([
 					}
 				});
 
-				executionAPI.loadExecutions('CCA', this.cohortComparisonId(), (exec) => {
+				executionService.loadExecutions('CCA', this.cohortComparisonId(), (exec) => {
 					const source = this.sources().find(s => s.sourceId == exec.sourceId);
 					if (source) {
 						const sourceKey = source.sourceKey;
@@ -362,7 +362,7 @@ define([
 
 			executionSelected(d) {
 				if(config.useExecutionEngine) {
-					executionAPI.viewResults(d.id);
+					executionService.viewResults(d.id);
 				} else {
 					this.loadingExecutionFailure(false);
 					this.resultsMode('execution');
@@ -896,8 +896,8 @@ define([
 			executeCohortComparison(sourceKey) {
 				if (config.useExecutionEngine) {
 					this.sourceProcessingStatus[sourceKey](true);
-					executionAPI.runExecution(sourceKey, this.cohortComparisonId(), 'CCA', $('.language-r').text(),
-						function (c, status, xhr) {
+					executionService.runExecution(sourceKey, this.cohortComparisonId(), 'CCA', $('.language-r').text())
+						.then(({ data: c }) => {
 							this.monitorEEJobExecution(c.executionId, 100);
 							jobDetailsService.createJob({
 								name: this.cohortComparison().name() + "_" + sourceKey,
@@ -909,8 +909,7 @@ define([
 								viewed: false,
 								url: 'estimation/' + this.cohortComparisonId(),
 							})
-						}
-					);
+						});
 				} else {
 					this.sourceProcessingStatus[sourceKey](true);
 				}
