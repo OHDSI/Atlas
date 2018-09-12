@@ -1,19 +1,14 @@
-<div class="wrapperTitle" data-bind="visible:loading">
-	<i class="fa fa-circle-o-notch fa-spin"></i> Loading...
-</div>
+<heading-title params="name: 'Patient Level Prediction', icon: 'heartbeat', theme: 'dark'"></heading-title>
 
-<div data-bind="if:!loading() && patientLevelPrediction()">
-	<div class="wrapperTitle">
-		<i class="fa fa-heartbeat"></i>Patient Level Prediction
-	</div>
-
+<loading data-bind="visible: loading"></loading>
+<div data-bind="if:!loading() && currentPlpAnalysis()">
 	<div class="asset-heading">
-		<input type="text" data-bind="textInput: patientLevelPrediction().name, css: { emptyInput: !(patientLevelPrediction().name() && (patientLevelPrediction().name().length > 0)) }" />
+		<input type="text" data-bind="textInput: currentPlpAnalysis().name, css: { emptyInput: !(currentPlpAnalysis().name() && (currentPlpAnalysis().name().length > 0)) }" />
 		<div class="btn-group" role="group">
 			<button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable:canSave"><i class="fa fa-save"></i></button>
 			<button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
-			<button class="btn btn-sm btn-primary" title="Copy" data-bind="click: copy"><i class="fa fa-copy"></i></button>
-			<button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
+			<button class="btn btn-sm btn-primary" title="Copy" data-bind="click: copy, enable: canCopy"><i class="fa fa-copy"></i></button>
+			<button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete"><i class="fa fa-trash-o"></i></button>
 		</div>
 	</div>
 
@@ -27,14 +22,14 @@
 		<li role="presentation" data-bind="visible: false, css: { active: $component.tabMode() == 'performance' }, click: function() { $component.tabMode('performance'); }">
 			<a>Performance</a>
 		</li>
-		<li role="presentation" data-bind="visible: config.plpResultsEnabled,css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a></li>
+		<li role="presentation" data-bind="visible: plpResultsEnabled, css: { active: $component.tabMode() == 'results' }, click: function() { $component.tabMode('results') };"><a>Results</a></li>
 		<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>Utilities</a>
 		</li>
 	</ul>
 
 	<div class="tab-content">
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'specification' }" class="tab-pane">
-			<plp-spec-editor params="patientLevelPrediction: patientLevelPrediction"></plp-spec-editor>
+			<plp-spec-editor params="currentPlpAnalysis: currentPlpAnalysis"></plp-spec-editor>
 		</div>
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'inspector' }" class="tab-pane">
 			<plp-inspector params="modelId:$component.patientLevelPredictionId()"></plp-inspector>
@@ -69,14 +64,14 @@
 					<div class="paddedWrapper">
 						<button class="btn btn-sm btn-primary" id="btnCopyToClipboard" data-bind="click: copyToClipboard" data-clipboard-target="#plp-print-friendly"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span class="copyToClipboardMessage"  style="display:none;"><strong>Copied!</strong></span>
 						<div class="radius-border" id="plp-print-friendly">
-							<plp-print-friendly params="patientLevelPrediction: $component.patientLevelPrediction"></plp-print-friendly>
+							<plp-print-friendly params="currentPlpAnalysis: currentPlpAnalysis"></plp-print-friendly>
 						</div>
 					</div>
 				</div>
 				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'rcode'" class="tab-pane">
 					<div class="paddedWrapper">
 						<button class="btn btn-sm btn-primary" id="btnCopyToClipboard" data-bind="click: copyToClipboard" data-clipboard-target="#plp-r-code"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;<span class="copyToClipboardMessage"  style="display:none;"><strong>Copied!</strong></span>
-						<plp-r-code params="patientLevelPrediction: $component.patientLevelPrediction, codeElementId: 'plp-r-code'"></plp-r-code>
+						<plp-r-code params="currentPlpAnalysis: currentPlpAnalysis, codeElementId: 'plp-r-code'"></plp-r-code>
 					</div>
 				</div>
 				<div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
@@ -101,11 +96,11 @@
 					<div class="col-sm-8" data-bind="text:sourceName"></div>
 					<div class="col-sm-4 text-right">
 					  <span class="btn-group">
-										<button data-bind="css:{disabled: $component.config.api.isExecutionEngineAvailable()==false}, click:function() {$component.executePLP(sourceKey)}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
-										<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
-										<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
-										<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">
-											&nbsp;(<span data-bind="text:$component.sourceExecutions[sourceKey]().length"></span> Results)
+							<button data-bind="css:{disabled: $component.isExecutionEngineAvailable()==false}, click:function() {$component.executePLP(sourceKey)}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
+							<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
+							<button class="btn btn-sm btn-primary" data-bind="click:$component.viewLastExecution"><i class="fa fa-eye"></i> View</button>
+							<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}" class="btn btn-sm btn-primary">
+							&nbsp;(<span data-bind="text:$component.sourceExecutions[sourceKey]().length"></span> Results)
 					  <i data-bind="visible:!$component.sourceHistoryDisplay[sourceKey]()" class="fa fa-angle-double-down"></i>
 					  <i data-bind="visible:$component.sourceHistoryDisplay[sourceKey]" class="fa fa-angle-double-up"></i>
 					  </button>
@@ -120,7 +115,7 @@
 						<div class="col-sm-2 text-right" data-bind="text:executionStatus"></div>
 						<div class="col-sm-4 text-right">
 							<button class="btn btn-sm btn-primary"
-									data-bind="css:{disabled:(executionStatus!='COMPLETED' && (!$component.config.useExecutionEngine || executionStatus!='FAILED'))},click:$component.executionSelected"><i class="fa fa-eye"></i> View</button>
+									data-bind="css:{disabled:(executionStatus!='COMPLETED' && (!$component.useExecutionEngine || executionStatus!='FAILED'))},click:$component.executionSelected"><i class="fa fa-eye"></i> View</button>
 						</div>
 					</div>
 				</div>
