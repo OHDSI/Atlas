@@ -1,6 +1,6 @@
 .idea
 /web.config
-js/config-local.js
+js/config/config-local.js
 /node_modules/
 /js/assets/bundle
 /js/assets/fonts
