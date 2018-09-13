@@ -1,19 +1,36 @@
 define([
 	'knockout', 
 	'text!./RandomForest.html',	
-	'providers/Component',
+	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
 	ko, 
 	view, 
-	Component,
+	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class RandomForest extends Component {
+	class RandomForest extends ModelSettingsEditorComponent {
 		constructor(params) {
-            super(params);
+			super(params);
+			
+			this.mtries = {
+				name: 'mtries',
+				value: this.modelSettings.mtries,
+			};
+			this.ntrees = {
+				name: 'ntrees',
+				value: this.modelSettings.ntrees,
+			};
+			this.maxDepth = {
+				name: 'maxDepth',
+				value: this.modelSettings.maxDepth,
+			};
+			this.varImp = {
+				name: 'varImp',
+				value: this.modelSettings.varImp,
+			};
 		}
 	}
 
-	return commonUtils.build('RandomForest', RandomForest, view);;
+	return commonUtils.build('RandomForest', RandomForest, view);
 });

@@ -4,7 +4,7 @@ define(['knockout'], function (ko) {
 		var self = this;
 		data = data || {};
 
-        self.priorType = ko.observable(data.priorType === 0 ? "laplace" : data.priorType || "laplace");
+        self.priorType = ko.observable(data.priorType || "laplace");
         self.variance = ko.observable(data.variance === 0 ? 1 : data.variance || 1);
         self.exclude = ko.observable(data.exclude === 0 ? "" : data.exclude || "");
         self.graph = ko.observable(data.graph === 0 ? "" : data.graph || "");

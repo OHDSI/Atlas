@@ -11,9 +11,14 @@ define([
 	'./inputTypes/ModelSettings',
 	'./inputTypes/CreateStudyPopulationArgs',
 	'featureextraction/InputTypes/CovariateSettings',
+	'featureextraction/InputTypes/TemporalCovariateSettings',
 	'./inputTypes/TargetOutcome',
 	'./inputTypes/ModelCovarPopTuple',
 	'./inputTypes/FullAnalysis',
+	'services/FeatureExtraction',
+	'featureextraction/components/CovariateSettingsEditor',
+	'featureextraction/components/TemporalCovariateSettingsEditor',
+	'components/cohort-definition-browser',
 	'faceted-datatable',
 	'less!./prediction-manager.less',
 ], function (
@@ -29,16 +34,17 @@ define([
 	modelSettings,
 	CreateStudyPopulationArgs,
 	CovariateSettings,
+	TemporalCovariateSettings,
 	TargetOutcome,
 	ModelCovarPopTuple,
 	FullAnalysis,
+	FeatureExtractionService,
 ) {
 	class PatientLevelPredictionManager extends Component {
 		constructor(params) {
             super(params);
             
 			this.patientLevelPredictionAnalysis = new PatientLevelPredictionAnalysis();
-			//this.estimationOptions = estimationOptions;
 			this.options = options;
             this.config = config;
 			this.editorComponentName = ko.observable(null);
@@ -55,11 +61,64 @@ define([
 			this.utilityPillMode = ko.observable('download');
 			this.targetCohorts = ko.observableArray();
 			this.outcomeCohorts = ko.observableArray();
+			this.currentCohortList = null;
 			this.targetOutcomePairs = ko.observableArray();
 			this.modelCovarPopTuple = ko.observableArray();
 			this.fullAnalysisList = ko.observableArray();
-			
-			this.patientLevelPredictionAnalysisJson = function() {
+			this.showCohortSelector = ko.observable(false);
+			this.defaultCovariateSettings = null;
+			this.defaultTemporalCovariateSettings = null;
+
+			this.removeTargetCohort = (data, obj, tableRow, rowIndex) => {
+				this.deleteFromTable(this.targetCohorts, obj, rowIndex);
+			}
+
+			this.removeOutcomeCohort = (data, obj, tableRow, rowIndex) => {
+				this.deleteFromTable(this.outcomeCohorts, obj, rowIndex);
+			}
+
+			this.removeModelSetting = (data, obj, tableRow, rowIndex) => {
+				this.deleteFromTable(this.patientLevelPredictionAnalysis.modelSettings, obj, rowIndex);
+			}
+
+			this.removeCovariateSetting = (data, obj, tableRow, rowIndex) => {
+				this.deleteFromTable(this.patientLevelPredictionAnalysis.covariateSettings, obj, rowIndex);
+			}
+
+			this.removePopulationSetting = (data, obj, tableRow, rowIndex) => {
+				this.deleteFromTable(this.patientLevelPredictionAnalysis.populationSettings, obj, rowIndex);
+			}
+
+			this.deleteFromTable = (list, obj, index) => {
+				// Check if the button or inner element were clicked
+				if (
+					obj.target.className.indexOf("btn-remove") >= 0 ||
+					obj.target.className.indexOf("fa-times") >= 0
+				) {
+					list.splice(index, 1);
+				}
+			}
+
+			this.addTarget = () => {
+				this.currentCohortList = this.targetCohorts;
+				this.showCohortSelector(true);
+			}
+
+			this.addOutcome = () => {
+				this.currentCohortList = this.outcomeCohorts;
+				this.showCohortSelector(true);
+			}
+
+			this.cohortSelected = (id, name) => {
+				console.log(id + ": " + name);
+				if (this.currentCohortList().filter(a => a.id === parseInt(id)).length == 0) {
+					this.currentCohortList.push(new Cohort({id: id, name: name}));
+				}
+				this.showCohortSelector(false);
+			}
+
+					
+			this.patientLevelPredictionAnalysisJson = () => {
 				return commonUtils.syntaxHighlight(ko.toJSON(this.patientLevelPredictionAnalysis));
             }
 
@@ -117,8 +176,8 @@ define([
 			this.addModelSettings = (d) => {
 				this.patientLevelPredictionAnalysis.modelSettings.push(d.action());
 				var index = this.patientLevelPredictionAnalysis.modelSettings().length - 1;
-				this.editorHeading('Model Settings');
-				this.editorDescription('Add or update the model settings');
+				this.editorHeading(d.name + ' Model Settings');
+				this.editorDescription('Use the options below to edit the model settings');
 				this.editorComponentName('model-settings-editor');
 				this.editorComponentParams({ 
 					modelSettings: this.patientLevelPredictionAnalysis.modelSettings()[index], 
@@ -130,7 +189,7 @@ define([
 				this.patientLevelPredictionAnalysis.populationSettings.push(
 					new CreateStudyPopulationArgs()
 				);
-				var index = this.patientLevelPredictionAnalysis.modelSettings().length - 1;
+				var index = this.patientLevelPredictionAnalysis.populationSettings().length - 1;
 				this.editorHeading('Population Settings');
 				this.editorDescription('Add or update the population settings');
 				this.editorComponentName('population-settings-editor');
@@ -140,11 +199,35 @@ define([
 				this.managerMode('editor');
 			}
 
+			this.addCovariateSettings = (setting) => {
+				const covariateSettings = (setting == 'Temporal') ? new TemporalCovariateSettings(this.defaultTemporalCovariateSettings) : new CovariateSettings(this.defaultCovariateSettings);
+				const headingPrefix = (setting == 'Temporal') ? 'Temporal ' : '';
+				const editorNamePrefix = (setting == 'Temporal') ? 'temporal-' : '';
+				this.patientLevelPredictionAnalysis.covariateSettings.push(
+					covariateSettings
+				);
+				var index = this.patientLevelPredictionAnalysis.covariateSettings().length - 1;
+				this.editorHeading(headingPrefix + 'Covariate Settings');
+				this.editorDescription('Add or update the covariate settings');
+				this.editorComponentName(editorNamePrefix + 'covar-settings-editor');
+				this.editorComponentParams({ 
+					covariateSettings: this.patientLevelPredictionAnalysis.covariateSettings()[index], 
+				});
+				this.managerMode('editor');
+			}
+
 			this.closeEditor = () => {
 				this.managerMode('summary');
 			}
 			
 			this.load = () => {
+				FeatureExtractionService.getDefaultCovariateSettings().then(({ data }) => {
+					this.defaultCovariateSettings = data;
+				});
+				FeatureExtractionService.getDefaultCovariateSettings(true).then(({ data }) => {
+					this.defaultTemporalCovariateSettings = data;
+				});
+	
 				// Set Up Dummy PLP Settings
 				this.patientLevelPredictionAnalysis.cohortDefinitions.push([
 					{id: 1, name: 'Type 2 Diabetes'},
@@ -156,18 +239,26 @@ define([
 					//{id: 7, name: 'Outcome 4'},
 				]);
 
+				/*
 				this.targetCohorts.push(
 					new Cohort({id: 1, name: 'Type 2 Diabetes'})
 				);
 				this.targetCohorts.push(
 					new Cohort({id: 2, name: 'Type 2 Diabetes With Prior Stroke'})
 				);
+				*/
 
 				this.outcomeCohorts.push(
 					new Cohort({id: 4, name: 'Heart Failure'})
 				)
 				this.outcomeCohorts.push(
-					new Cohort({id: 5, name: 'Stroke'})
+					new Cohort({id: 5, name: 'Stroke 1'})
+				);
+				this.outcomeCohorts.push(
+					new Cohort({id: 6, name: 'Stroke 2'})
+				);
+				this.outcomeCohorts.push(
+					new Cohort({id: 7, name: 'Stroke 3'})
 				);
 
 				this.patientLevelPredictionAnalysis.targetOutcomes.push(
@@ -307,5 +398,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('prediction-manager', PatientLevelPredictionManager, view);;
+	return commonUtils.build('prediction-manager', PatientLevelPredictionManager, view);
 });

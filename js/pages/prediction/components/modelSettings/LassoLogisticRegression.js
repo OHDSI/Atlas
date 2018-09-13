@@ -1,19 +1,24 @@
 define([
 	'knockout', 
 	'text!./LassoLogisticRegression.html',	
-	'providers/Component',
+	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
 	ko, 
 	view, 
-	Component,
+	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class LassoLogisticRegression extends Component {
+	class LassoLogisticRegression extends ModelSettingsEditorComponent {
 		constructor(params) {
-            super(params);
+			super(params);
+
+			this.variance = {
+				name: 'variance',
+				value: this.modelSettings.variance,
+			};
 		}
 	}
 
-	return commonUtils.build('LassoLogisticRegression', LassoLogisticRegression, view);;
+	return commonUtils.build('LassoLogisticRegression', LassoLogisticRegression, view);
 });

@@ -1,19 +1,25 @@
 define([
 	'knockout', 
 	'text!./KNearestNeighbors.html',	
-	'providers/Component',
+	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
 	ko, 
 	view, 
-	Component,
+	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class KNearestNeighbors extends Component {
+	class KNearestNeighbors extends ModelSettingsEditorComponent {
 		constructor(params) {
-            super(params);
+			super(params);
+			
+			this.k = {
+				name: 'k',
+				value: this.modelSettings.k,
+			};
+
 		}
 	}
 
-	return commonUtils.build('KNearestNeighbors', KNearestNeighbors, view);;
+	return commonUtils.build('KNearestNeighbors', KNearestNeighbors, view);
 });

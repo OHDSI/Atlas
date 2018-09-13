@@ -13,8 +13,8 @@ define(function (require, exports) {
         self.maxCohortSizeForFitting = ko.observable(data.maxCohortSizeForFitting || 250000);
         self.errorOnHighCorrelation = ko.observable(data.errorOnHighCorrelation || true);
         self.stopOnError = ko.observable(data.stopOnError || true);
-        self.prior = ko.observable(new Prior(data.prior));
-        self.control = ko.observable(new Control(data.control));
+        self.prior = new Prior(data.prior);
+        self.control = new Control(data.control);
         self.attr_class = data.attr_class || "args";
 	}
 	

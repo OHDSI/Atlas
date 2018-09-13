@@ -48,7 +48,7 @@
                         <div class="panel panel-default">
                           <div class="panel-heading">
                             <i class="fa fa-users"></i> Target Cohorts
-                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addTargetOutcome"><i class="fa fa-plus"></i> Add Target Cohort</button>
+                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addTarget"><i class="fa fa-plus"></i> Add Target Cohort</button>
                           </div>
                           <div class="panel-body">
                               <faceted-datatable params="{ 
@@ -56,15 +56,16 @@
                                 options: options.specificationSummaryTableOptions, 
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                                dom: options.specificationSummaryTableOptions.dom,
-                                reference: $component.targetCohorts
+                                dom: options.specificationSummaryTableOptions.domNoButtons,
+                                reference: $component.targetCohorts,
+                                rowClick: $component.removeTargetCohort
                               }"></faceted-datatable>
                           </div>
                         </div>
                         <div class="panel panel-default">
                           <div class="panel-heading">
                             <i class="fa fa-users"></i> Outcome Cohorts
-                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addTargetOutcome"><i class="fa fa-plus"></i> Add Outcome Cohort</button>
+                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addOutcome"><i class="fa fa-plus"></i> Add Outcome Cohort</button>
                           </div>
                           <div class="panel-body">
                               <faceted-datatable params="{ 
@@ -72,8 +73,9 @@
                                 options: options.specificationSummaryTableOptions, 
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                                dom: options.specificationSummaryTableOptions.dom,
-                                reference: $component.outcomeCohorts
+                                dom: options.specificationSummaryTableOptions.domNoButtons,
+                                reference: $component.outcomeCohorts,
+                                rowClick: $component.removeOutcomeCohort
                               }"></faceted-datatable>
                           </div>
                         </div>
@@ -107,14 +109,21 @@
                               pageLength: options.specificationSummaryTableOptions.pageLength,
                               lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                               dom: options.specificationSummaryTableOptions.domNoButtons,
-                              reference: $component.patientLevelPredictionAnalysis.modelSettings
+                              reference: $component.patientLevelPredictionAnalysis.modelSettings,
+                              rowClick: $component.removeModelSetting,
                             }"></faceted-datatable>
                           </div>
                         </div>
                         <div class="panel panel-default">
                           <div class="panel-heading">
                             Covariate Settings
-                            <button type="button" class="btn btn-primary btn-sm pull-right"><i class="fa fa-plus"></i> Add Covariate Settings</button>
+                            <div class="btn-group pull-right">
+                              <button type="button" class="btn btn-primary btn-sm pull-right" data-toggle="dropdown" aria-expanded="true"><i class="fa fa-plus"></i> Add Covariate Settings <span class="caret"></span></button>
+                              <ul class="dropdown-menu">
+                                  <li><a data-bind="click:function() {$component.addCovariateSettings('Default')}" href="#">Non-Temporal</a></li>
+                                  <li><a data-bind="click:function() {$component.addCovariateSettings('Temporal')}" href="#">Temporal</a></li>
+                              </ul>
+                            </div>
                           </div>
                           <div class="panel-body">
                               <faceted-datatable params="{ 
@@ -123,7 +132,8 @@
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.dom,
-                                reference: $component.patientLevelPredictionAnalysis.covariateSettings
+                                reference: $component.patientLevelPredictionAnalysis.covariateSettings,
+                                rowClick: $component.removeCovariateSetting,
                               }"></faceted-datatable>
                               </div>
                         </div>
@@ -139,7 +149,8 @@
                               pageLength: options.specificationSummaryTableOptions.pageLength,
                               lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                               dom: options.specificationSummaryTableOptions.dom,
-                              reference: $component.patientLevelPredictionAnalysis.populationSettings
+                              reference: $component.patientLevelPredictionAnalysis.populationSettings,
+                              rowClick: $component.removePopulationSetting,
                             }"></faceted-datatable>
                           </div>
                         </div>
@@ -155,7 +166,7 @@
                       <i class="fa fa-cog"></i> Execution Settings
                     </div>
                     <div class="panel-body">
-                        getPlpDataArgs and runPlpArgs would go here
+                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis.getPlpDataArgs"></execution-settings-editor>
                     </div>
                   </div>
               </div>
@@ -167,7 +178,7 @@
                     <i class="fa fa-cog"></i> Evaluation Settings
                   </div>
                   <div class="panel-body">
-                    
+                      <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis.runPlpArgs"></evaluation-settings-editor>
                   </div>
                 </div>
               </div>
@@ -264,4 +275,14 @@
         </div>
       </div>
   </div>
+	<div data-bind="modal: showCohortSelector" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">Select Cohort...</div>
+				<div class="paddedWrapper">
+					<cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data.id, data.name)}"></cohort-definition-browser>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

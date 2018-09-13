@@ -8,6 +8,7 @@ define(function (require, exports) {
         
         self.caliper = ko.observable(data.caliper || 0.2);
         self.caliperScale = ko.observable(data.caliperScale || "standardized logit");
+        self.maxRatio = ko.observable(data.maxRatio || 1);
         self.stratificationColumns = (data.stratificationColumns && Array.isArray(data.stratificationColumns)) ? data.stratificationColumns : [];
         self.attr_class = data.attr_class || "args";
 	}

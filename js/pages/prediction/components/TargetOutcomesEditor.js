@@ -54,5 +54,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('target-outcomes-editor', TargetOutcomesEditor, view);;
+	return commonUtils.build('target-outcomes-editor', TargetOutcomesEditor, view);
 });

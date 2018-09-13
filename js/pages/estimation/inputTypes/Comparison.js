@@ -1,19 +1,19 @@
 define(function (require, exports) {
 
     var ko = require('knockout');
+    var Cohort = require('./Cohort');
+    var ConceptSet = require('./ConceptSet');
 
 	function Comparison(data) {
 		var self = this;
         data = data || {};
         
-        self.targetId = data.targetId || null;
-        self.targetName = data.targetName || null;
-        self.comparatorId = data.comparatorId || null;
-        self.comparatorName = data.comparatorName || null;
-        self.outcomeIds = (data.outcomeIds && Array.isArray(data.outcomeIds)) ? data.outcomeIds : [];
-        self.negativeControlOutcomeIds = (data.negativeControlOutcomeIds && Array.isArray(data.negativeControlOutcomeIds)) ? data.negativeControlOutcomeIds : [];
-        self.excludedCovariateConceptIds = (data.excludedCovariateConceptIds && Array.isArray(data.excludedCovariateConceptIds)) ? data.excludedCovariateConceptIds : [];
-        self.includedCovariateConceptIds = (data.includedCovariateConceptIds && Array.isArray(data.includedCovariateConceptIds)) ? data.includedCovariateConceptIds : [];
+        self.target = ko.observable(data.target !== null ? new Cohort(data.target) : new Cohort());
+        self.comparator = ko.observable(data.comparator !== null ? new Cohort(data.comparator) : new Cohort());
+        self.outcomes = ko.observableArray(data.outcomes && data.outcomes.map(function(d) { return new Cohort(d) }));
+        self.negativeControlOutcomes = ko.observable(data.negativeControlOutcomes !== null ? new ConceptSet(data.negativeControlOutcomes) : new ConceptSet());
+        self.excludedCovariateConceptIds = ko.observableArray((data.excludedCovariateConceptIds && Array.isArray(data.excludedCovariateConceptIds)) ? data.excludedCovariateConceptIds : []);
+        self.includedCovariateConceptIds = ko.observableArray((data.includedCovariateConceptIds && Array.isArray(data.includedCovariateConceptIds)) ? data.includedCovariateConceptIds : []);
 	}
 	
 	return Comparison;

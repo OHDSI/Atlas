@@ -7,7 +7,7 @@ define(function (require, exports) {
         data = data || {};
 
         self.nEstimators = ko.observable(data.nEstimators || 50);
-        self.learningRate = ko.observable(data.minSampleSplit || 1);
+        self.learningRate = ko.observable(data.learningRate || 1);
         self.seed = ko.observable(data.seed || null);
     }
 	

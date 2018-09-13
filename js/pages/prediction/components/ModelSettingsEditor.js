@@ -26,5 +26,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('model-settings-editor', ModelSettingsEditor, view);;
+	return commonUtils.build('model-settings-editor', ModelSettingsEditor, view);
 });

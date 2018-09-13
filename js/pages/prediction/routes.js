@@ -33,7 +33,14 @@ define(
         }),
         '/prediction': new AuthorizedRoute((modelId) => {
           appModel.activePage(this.title);
-          require(['./prediction-manager', './components/TargetOutcomesEditor', './components/ModelSettingsEditor', './components/PopulationSettingsEditor'], function () {
+          require([
+            './prediction-manager', 
+            './components/EvaluationSettingsEditor',
+            './components/ExecutionSettingsEditor', 
+            './components/ModelSettingsEditor', 
+            './components/PopulationSettingsEditor',
+            './components/TargetOutcomesEditor'
+          ], function () {
             appModel.currentView('prediction-manager');
           });
         }),

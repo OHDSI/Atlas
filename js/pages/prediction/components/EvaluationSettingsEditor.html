@@ -1,0 +1,42 @@
+<div>
+    <label>Specify how to split the test/train set:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.testSplit, optionsText:'desc', optionsValue:'name', value: $component.runPlpArgs().testSplit"></select>
+    </div>
+</div>
+<div class="input-group">
+    <label>Percentage of the data to be used as the test set (0-100%):</label>
+    <div class="input-group">
+        <input class="form-control" type="text" data-bind="value: $component.runPlpArgs().testFraction" />
+    </div>
+</div>
+<div class="input-group">
+    <label>The number of folds used in the cross validation:</label>
+    <div class="input-group">
+        <input class="form-control" type="text" data-bind="value: $component.runPlpArgs().nfold" />
+    </div>
+</div>
+<div>
+    <label>Save Data:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.runPlpArgs().savePlpData"></select>
+    </div>
+</div>
+<div>
+    <label>Save Results:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.runPlpArgs().savePlpResults"></select>
+    </div>
+</div>
+<div>
+    <label>Save Plots:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.runPlpArgs().savePlpPlots"></select>
+    </div>
+</div>
+<div>
+    <label>Save Evaluation:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.runPlpArgs().saveEvaluation"></select>
+    </div>
+</div>

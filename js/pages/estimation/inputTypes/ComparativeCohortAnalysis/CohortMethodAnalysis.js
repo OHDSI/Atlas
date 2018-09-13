@@ -20,25 +20,25 @@ define(function (require, exports) {
         self.description = ko.observable(data.description || null);
         self.targetType = ko.observable(data.targetType || null);
         self.comparatorType = ko.observable(data.comparatorType || null);
-        self.getDbCohortMethodDataArgs = ko.observable(new GetDbCohortMethodDataArgs(data.getDbCohortMethodDataArgs));
-        self.createStudyPopulationArgs = ko.observable(new CreateStudyPopulationArgs(data.createStudyPopulationArgs));
-        self.createPs = ko.observable(data.createPs || false);
-        self.createPsArgs = ko.observable(new CreatePsArgs(data.createPsArgs));
+        self.getDbCohortMethodDataArgs = new GetDbCohortMethodDataArgs(data.getDbCohortMethodDataArgs);
+        self.createStudyPopulationArgs = new CreateStudyPopulationArgs(data.createStudyPopulationArgs);
+        self.createPs = ko.observable(data.createPs || true);
+        self.createPsArgs = new CreatePsArgs(data.createPsArgs);
         self.trimByPs = ko.observable(data.trimByPs || false);
-        self.trimByPsArgs = ko.observable(new TrimByPsArgs(data.trimByPsArgs));
+        self.trimByPsArgs = new TrimByPsArgs(data.trimByPsArgs);
         self.trimByPsToEquipoise = ko.observable(data.trimByPsToEquipoise || false);
-        self.trimByPsToEquipoiseArgs = ko.observable(new TrimByPsToEquipoiseArgs(data.trimByPsToEquipoiseArgs));
+        self.trimByPsToEquipoiseArgs = new TrimByPsToEquipoiseArgs(data.trimByPsToEquipoiseArgs);
         self.matchOnPs = ko.observable(data.matchOnPs || false);
-        self.matchOnPsArgs = ko.observable(new MatchOnPsArgs(data.matchOnPsArgs));
+        self.matchOnPsArgs = new MatchOnPsArgs(data.matchOnPsArgs);
         self.matchOnPsAndCovariates = ko.observable(data.matchOnPsAndCovariates || false);
-        self.matchOnPsAndCovariatesArgs = ko.observable(new MatchOnPsAndCovariatesArgs(data.matchOnPsAndCovariatesArgs));
+        self.matchOnPsAndCovariatesArgs = new MatchOnPsAndCovariatesArgs(data.matchOnPsAndCovariatesArgs);
         self.stratifyByPs = ko.observable(data.stratifyByPs || false);
-        self.stratifyByPsArgs = ko.observable(new StratifyByPsArgs(data.stratifyByPsArgs));
+        self.stratifyByPsArgs = new StratifyByPsArgs(data.stratifyByPsArgs);
         self.stratifyByPsAndCovariates = ko.observable(data.stratifyByPsAndCovariates || false);
-        self.stratifyByPsAndCovariatesArgs = ko.observable(new StratifyByPsAndCovariatesArgs(data.stratifyByPsAndCovariatesArgs));
+        self.stratifyByPsAndCovariatesArgs = new StratifyByPsAndCovariatesArgs(data.stratifyByPsAndCovariatesArgs);
         self.computeCovariateBalance = ko.observable(data.computeCovariateBalance || false);
-        self.fitOutcomeModel = ko.observable(data.fitOutcomeModel || false);
-        self.FitOutcomeModelArgs = ko.observable(new FitOutcomeModelArgs(data.fitOutcomeModelArgs));
+        self.fitOutcomeModel = ko.observable(data.fitOutcomeModel || true);
+        self.fitOutcomeModelArgs = new FitOutcomeModelArgs(data.fitOutcomeModelArgs);
         self.attr_class = data.attr_class || "cmAnalysis";
 	}
 	

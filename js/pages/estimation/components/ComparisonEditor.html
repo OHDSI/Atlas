@@ -1,0 +1,62 @@
+<div class="paddedWrapper">
+    <div>
+        <label>Choose your target cohort:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" disabled data-bind="value: comparison.target().name" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" data-bind="click:chooseTarget"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable:comparison.target().id == 0, click:clearTarget" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+            </span>
+        </div>
+        <!--<div data-bind="visible: comparison.target().id > 0 && comparison.target().name == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The target cohort specified (#<span data-bind="text:comparison.target().id"></span>) was deleted. Please select a different cohort.</div>-->
+    </div>
+    <div>
+        <label>Choose your comparator cohort:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" disabled data-bind="value: comparison.comparator().name" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" data-bind="click:chooseComparator"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable:comparison.comparator().id == 0,click:clearComparator" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+            </span>
+        </div>
+        <!--<div data-bind="visible: comparison.comparator().id > 0 && comparison.comparator().name == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The comparator cohort specified (#<span data-bind="text:comparison.comparator().id"></span>) was deleted. Please select a different cohort.</div>-->
+    </div>
+    <div>
+        <label>Choose your outcome cohorts:</label>
+    </div>
+    <div>
+        <linked-cohort-list params="{title: ' ', newItemLabel: 'Add Outcome', data: $component.comparison.outcomes}"></linked-cohort-list>
+    </div>
+    <div>
+        <label>Choose your negative control outcomes:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" disabled data-bind="value: comparison.negativeControlOutcomes().name" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" data-bind="click:chooseNegativeControlOutcomes"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable:comparison.negativeControlOutcomes().id == 0,click:clearNegativeControlOutcomes" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+            </span>
+        </div>
+        <!--<div data-bind="visible: comparison.comparator().id > 0 && comparison.comparator().name == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The comparator cohort specified (#<span data-bind="text:comparison.comparator().id"></span>) was deleted. Please select a different cohort.</div>-->
+    </div>
+</div>
+<div data-bind="modal: showCohortSelector" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">Select Cohort...</div>
+            <div class="paddedWrapper">
+                <cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data.id, data.name)}"></cohort-definition-browser>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-bind="modal: showConceptSetSelector" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">Select Concept Set...</div>
+            <div class="paddedWrapper">
+                <cohort-concept-set-browser params="{onRespositoryConceptSetSelected: data => $component.conceptsetSelected(data)}"></cohort-concept-set-browser>
+            </div>
+        </div>
+    </div>
+</div>
+

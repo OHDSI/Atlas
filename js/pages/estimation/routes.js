@@ -36,6 +36,12 @@ define(
             appModel.currentView('covar-settings-editor');
           });
         }),
+        '/tempfe': new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['featureextraction/components/TemporalCovariateSettingsEditor'], function () {
+            appModel.currentView('temporal-covar-settings-editor');
+          });
+        }),
        '/est': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./cca-manager'], function () {

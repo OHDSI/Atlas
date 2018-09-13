@@ -15,8 +15,8 @@ define(function (require, exports) {
         self.interactionCovariateIds = (data.interactionCovariateIds && Array.isArray(data.interactionCovariateIds)) ? data.interactionCovariateIds : [];
         self.excludeCovariateIds = (data.excludeCovariateIds && Array.isArray(data.excludeCovariateIds)) ? data.excludeCovariateIds : [];
         self.includeCovariateIds = (data.includeCovariateIds && Array.isArray(data.includeCovariateIds)) ? data.includeCovariateIds : [];
-        self.prior = ko.observable(new Prior(data.prior));
-        self.control = ko.observable(new Control(data.control));
+        self.prior = new Prior(data.prior);
+        self.control = new Control(data.control);
         self.attr_class = data.attr_class || "args";
 	}
 	

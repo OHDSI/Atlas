@@ -5,17 +5,19 @@ define(function (require, exports) {
     var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
     var PositiveControlSynthesisArgs = require("./PositiveControlSynthesisArgs");
     var NegativeControl = require('./NegativeControl');
-    var NegativeControlCohortDefinition = require('./NegativeControlCohortDefinition');
+    var NegativeControlExposureCohortDefinition = require('./NegativeControlExposureCohortDefinition'); 
+    var NegativeControlOutcomeCohortDefinition = require('./NegativeControlOutcomeCohortDefinition');
     var EstimationAnalysisSettings = require('./EstimationAnalysisSettings');
-    var EstimationOutputSettings = require("./EstimationOutputSettings");
 
+    // TODO LATER: Update constructor to support estimationType as a parameter
+    // to support creating different estimation analysis specifications
 	function EstimationAnalysis(data) {
 		var self = this;
 		data = data || {};
 
         self.id = ko.observable(data.id || null);
         self.name = ko.observable(data.name || null);
-        self.version = ko.observable(data.name || null); // Default to spec version
+        self.version = ko.observable(data.name || "v0.9.0");
         self.packageName = ko.observable(data.packageName || null);
         self.skeletonType = data.skeletonType || "ComparativeEffectStudy"; 
         self.skeletonVersion = data.skeletonVersion || "v0.0.1";
@@ -27,10 +29,10 @@ define(function (require, exports) {
         self.conceptSets = ko.observableArray(data.conceptSets && data.conceptSets.map(function(d) { return new ConceptSet(d) }));
         self.negativeControls  = ko.observableArray(data.negativeControls && data.negativeControls.map(function(d) { return new NegativeControl(d) }));
         self.doPositiveControlSynthesis = ko.observable(data.doPositiveControlSynthesis || false);
-        self.positiveControlSynthesisArgs = ko.observable(new PositiveControlSynthesisArgs(data.positiveControlSynthesisArgs));
-        self.negativeControlCohortDefinition = ko.observable(new NegativeControlCohortDefinition(data.negativeControlCohortDefinition));
-        self.estimationAnalysisSettings = ko.observable(new EstimationAnalysisSettings(data.estimationAnalysisSettings));
-        self.estimationOutputSettings = ko.observable(new EstimationOutputSettings(data.estimationOutputSettings));
+        self.positiveControlSynthesisArgs = new PositiveControlSynthesisArgs(data.positiveControlSynthesisArgs);
+        self.negativeControlOutcomeCohortDefinition = new NegativeControlOutcomeCohortDefinition(data.negativeControlOutcomeCohortDefinition);
+        self.negativeControlExposureCohortDefinition = new NegativeControlExposureCohortDefinition(data.negativeControlExposureCohortDefinition);
+        self.estimationAnalysisSettings = new EstimationAnalysisSettings(data.estimationAnalysisSettings);
 	}
 	
 	return EstimationAnalysis;

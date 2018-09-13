@@ -1,19 +1,40 @@
 define([
 	'knockout', 
 	'text!./GradientBoostingMachine.html',	
-	'providers/Component',
+	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
 	ko, 
 	view, 
-	Component,
+	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class GradientBoostingMachine extends Component {
+	class GradientBoostingMachine extends ModelSettingsEditorComponent {
 		constructor(params) {
-            super(params);
+			super(params);
+			
+			this.ntrees = {
+				name: 'ntrees',
+				value: this.modelSettings.ntrees,
+			};
+			this.nthread = {
+				name: 'nthread',
+				value: this.modelSettings.nthread,
+			};
+			this.maxDepth = {
+				name: 'maxDepth',
+				value: this.modelSettings.maxDepth,
+			};
+			this.minRows = {
+				name: 'minRows',
+				value: this.modelSettings.minRows,
+			};
+			this.learnRate = {
+				name: 'learnRate',
+				value: this.modelSettings.learnRate,
+			};
 		}
 	}
 
-	return commonUtils.build('GradientBoostingMachine', GradientBoostingMachine, view);;
+	return commonUtils.build('GradientBoostingMachine', GradientBoostingMachine, view);
 });

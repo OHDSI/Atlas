@@ -1,19 +1,28 @@
 define([
 	'knockout', 
 	'text!./AdaBoost.html',	
-	'providers/Component',
+	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
 	ko, 
 	view, 
-	Component,
+	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class AdaBoost extends Component {
+	class AdaBoost extends ModelSettingsEditorComponent {
 		constructor(params) {
-            super(params);
+			super(params);
+
+			this.learningRate = {
+				name: 'learningRate',
+				value: this.modelSettings.learningRate,
+			};
+			this.nEstimators = {
+				name: 'nEstimators',
+				value: this.modelSettings.nEstimators,
+			};
 		}
 	}
 
-	return commonUtils.build('AdaBoost', AdaBoost, view);;
+	return commonUtils.build('AdaBoost', AdaBoost, view);
 });

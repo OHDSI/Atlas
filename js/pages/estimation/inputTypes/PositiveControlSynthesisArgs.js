@@ -14,8 +14,8 @@ define(function (require, exports) {
 		self.minOutcomeCountForModel = ko.observable(data.minOutcomeCountForModel || 100);
 		self.minOutcomeCountForInjection = ko.observable(data.minOutcomeCountForInjection || 25);
         self.covariateSettings = ko.observable(new CovariateSettings(data.covariateSettings));
-        self.prior = ko.observable(new Prior(data.prior));
-        self.control = ko.observable(new Control(data.control));
+        self.prior = new Prior(data.prior);
+        self.control = new Control(data.control);
 		self.firstExposureOnly = ko.observable(data.firstExposureOnly || false);
 		self.washoutPeriod = ko.observable(data.washoutPeriod || 183);
 		self.riskWindowStart = ko.observable(data.riskWindowStart || 0);

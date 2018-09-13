@@ -5,7 +5,7 @@ define([
 	'utils/CommonUtils',
     'appConfig',
     '../InputTypes/CovariateSettings',
-    'less!./CovariateSettingsEditor.less',
+    'less!./featureextraction.less',
 ], function (
 	ko, 
 	view, 
@@ -18,8 +18,7 @@ define([
 		constructor(params) {
             super(params);
             
-            this.covariateSettings = new CovariateSettings();
-            this.covariateSettings.useDemographicsGender(true);
+            this.covariateSettings = (params.covariateSettings == null ? new CovariateSettings() : params.covariateSettings);
 
             this.longTermLabel = ko.pureComputed(() => {
                 return this.getWindowLabel(this.covariateSettings.longTermStartDays());
@@ -40,5 +39,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('covar-settings-editor', CovariateSettingsEditor, view);;
+	return commonUtils.build('covar-settings-editor', CovariateSettingsEditor, view);
 });
