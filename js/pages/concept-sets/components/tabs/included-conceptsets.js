@@ -26,7 +26,6 @@ define([
         ancestorsModalIsShown: this.ancestorsModalIsShown,
       });
       this.searchConceptsColumns = [{
-        title: '<i class="fa fa-shopping-cart"></i>',
         render: function (s, p, d) {
           var css = '';
           var icon = 'fa-shopping-cart';
@@ -38,41 +37,31 @@ define([
         orderable: false,
         searchable: false
       }, {
-        title: 'Id',
         data: 'CONCEPT_ID'
       }, {
-        title: 'Code',
         data: 'CONCEPT_CODE'
       }, {
-        title: 'Name',
         data: 'CONCEPT_NAME',
         render: function (s, p, d) {
           var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
           return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
         }
       }, {
-        title: 'Class',
         data: 'CONCEPT_CLASS_ID'
       }, {
-        title: 'Standard Concept Caption',
         data: 'STANDARD_CONCEPT_CAPTION',
         visible: false
       }, {
-        title: 'RC',
         data: 'RECORD_COUNT',
         className: 'numeric'
       }, {
-        title: 'DRC',
         data: 'DESCENDANT_RECORD_COUNT',
         className: 'numeric'
       }, {
-        title: 'Domain',
         data: 'DOMAIN_ID'
       }, {
-        title: 'Vocabulary',
         data: 'VOCABULARY_ID'
       }, {
-        title: 'Ancestors',
         data: 'ANCESTORS',
         render: conceptSetService.getAncestorsRenderFunction()
       }];

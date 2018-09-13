@@ -97,7 +97,6 @@ define([
       })
       this.compareNewConceptSetName = ko.observable(this.model.currentConceptSet().name() + " - From Comparison");
       this.compareResultsColumns = [{
-        title: 'Match',
         data: d => {
             if (d.conceptIn1Only == 1) {
               return '1 Only'
@@ -109,38 +108,30 @@ define([
           },
         },
         {
-          title: 'Id',
           data: d => d.conceptId,
         },
         {
-          title: 'Code',
           data: d => d.conceptCode,
         },
         {
-          title: 'Name',
           data: d => {
             var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
             return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
           },
         },
         {
-          title: 'Class',
           data: d => d.conceptClassId,
         },
         {
-          title: '<i id="dtConeptManagerRC" class="fa fa-database" aria-hidden="true"></i> RC',
           data: d => d.recordCount,
         },
         {
-          title: '<i id="dtConeptManagerDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
           data: d => d.descendantRecordCount,
         },
         {
-          title: 'Domain Id',
           data: d => d.domainId,
         },
         {
-          title: 'Vocabulary',
           data: d => d.vocabularyId,
         },
       ];
