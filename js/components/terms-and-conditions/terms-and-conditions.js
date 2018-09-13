@@ -5,6 +5,7 @@ define([
   'providers/AutoBind',
   'utils/CommonUtils',
   'webapi/MomentAPI',
+  'webapi/AuthAPI',
   'moment',
   'config/terms-and-conditions.config',
   'less!./terms-and-conditions.less',
@@ -16,6 +17,7 @@ define([
   AutoBind,
   commonUtils,
   momentApi,
+  authApi,
   momentjs,
   termsAndConditionsConfig,
 ) {
@@ -24,7 +26,7 @@ define([
       super(params);
       this.isModalShown = ko.pureComputed({
         read: () => {
-          return !this.isAccepted();
+          return authApi.isAuthenticated() && !this.isAccepted();
         },
         write: (value) => {
           return false;
@@ -34,10 +36,10 @@ define([
       this.description = termsAndConditionsConfig.description;
       this.content = termsAndConditionsConfig.content;
       this.isAccepted = ko.observable(true);
-      
-      setTimeout(() => {
+
+      params.model.currentView.subscribe(() => {
         this.isAccepted(this.checkAcceptance());
-      }, 300);
+      });
     }
     
     checkAcceptance() {
