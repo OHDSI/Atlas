@@ -1,0 +1,168 @@
+.pathway-results {
+
+  &__title {
+    align-items: center;
+    display: flex;
+    margin: 0;
+    margin-top: 1rem;
+    font-size: 1.8rem;
+  }
+
+  &__title-separator {
+    font-size: 1rem;
+    padding-left: 1rem;
+    padding-right: .75rem;
+  }
+
+	&__chart-title {
+		text-align: center;
+		font-size: 1.5rem;
+		font-weight:bold;
+	} 
+	
+  &__toolbar {
+    align-items: center;
+    display: flex;
+    margin-top: 2rem;
+  }
+
+  &__detail-list, &__display-options-list {
+    display: flex;
+    list-style: none;
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  &__detail, &__display-option {
+    &:not(:last-child) {
+      margin-right: 1.5rem;
+    }
+  }
+
+  &__detail {
+    &-label, &-value {
+      font-size: 1.3rem;
+      margin: 0;
+    }
+    &-label {
+      font-weight: 500;
+    }
+  }
+
+  &__filter {
+    margin-top: 2rem;
+  }
+
+  &__report {
+    margin-top: 2rem;
+
+  }
+	
+  &__analysis-name {
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+
+  &__cohort-name {
+    font-size: 1.4rem;
+  }
+
+	&__report-group {
+    margin-bottom: 3rem;
+		display:flex;
+		flex-wrap: nowrap;
+		justify-content:center;
+  }
+
+  &__plot-wrapper {
+		flex-basis:600px;
+			
+		.info-wrapper {
+			margin:auto;
+		}
+					
+	}
+
+	&__sunburst > div {
+		width:550px;
+		height:550px;
+	}
+	
+  &__legend-wrapper {
+  
+		.swatch {
+			width: 20px;
+			height: 20px;
+			margin: 7px;
+		}		
+		
+		.legend-item {
+			font-size: 1.5rem;
+			clear: both;
+		}
+
+		flex-grow: 10;
+    border: 1px solid #ccc;
+    padding: .5rem;
+		max-width:300px;
+  }
+	
+	&__info-wrapper, &__plot-wrapper .info-wrapper {
+		flex-grow: 90;
+		max-width:400px;
+		
+		.title {
+			font-size: 2.0rem;
+		}
+		.sub-title {
+			font-size: 1.2rem;
+		}
+	}
+	
+	&__detail-table {
+		tr td:nth-child(2), tr td:nth-child(3), tr th:nth-child(2), tr th:nth-child(3), {
+			text-align: right;
+  	}
+		
+		span.name {
+			border-radius:2px;
+			padding: 2px;
+			margin: 1px;
+			display: inline-block;
+		}
+		
+		div.group {
+			border: solid 1px #222;
+			
+		}
+	}
+
+	
+	
+	&__sunburst .node {
+		stroke: #fff;
+		stroke-width: 2;
+	}
+
+  &__debug {
+    width: 100%;
+    height: 600px;
+  }
+	
+	&__tip-name {
+		border-radius: 5px;
+		color:white;
+		font-size: 1.3rem;
+		padding:2px;
+		margin:2px;
+		display: inline-block;
+	} 
+	
+	&__d3-tip {
+		padding: 5px;
+		border-radius: 4px;
+		background-color: white;
+		border: solid 1px black;
+	}
+	
+}

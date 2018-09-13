@@ -1,0 +1,24 @@
+<heading-title params="name: 'Cohort Pathways', icon: 'sitemap', theme: 'dark'"></heading-title>
+
+<!-- ko if:$component.canRead -->
+<div class="paddedWrapper flexed">
+	<div>
+		<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newAnalysis, css: {disabled: !$component.canCreate()}">New Pathway Analysis</span>
+	</div>
+	<div data-bind="eventListener: [{event: 'click', selector: '.linkish', callback: onAnalysisSelected}]">
+		<div data-bind="css: classes('grid')">
+				<faceted-datatable params="{
+						buttons: [],
+						order: [[0, 'asc']],
+						columns: $component.gridColumns,
+						options: $component.gridOptions,
+						reference: $component.analysisList
+				}"></faceted-datatable>
+		</div>
+	</div>
+	<div data-bind="visible:loading()" class="loading">loading</div>
+</div>
+<!-- /ko -->
+<!-- ko ifnot:$component.canReadPathways -->
+	<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
+<!-- /ko -->
