@@ -17,7 +17,7 @@ define(
 		'lodash',
 		'd3',
 		'webapi/AuthAPI',
-        'webapi/MomentAPI',
+		'webapi/MomentAPI',
 		'less!app.less',
 	],
 	(

@@ -14,10 +14,19 @@ define([
 		constructor(params) {
 			super();
 
-			this.showModal = params.showModal;
-			this.title = params.title;
-			this.template = params.template;
-			this.data = params.data;
+			const {
+				showModal,
+				title,
+				template,
+				data,
+				backdropClosable = true,
+			} = params;
+
+			this.showModal = showModal;
+			this.title = title;
+			this.template = template;
+			this.data = data;
+			this.backdropClosable = backdropClosable;
 		}
 	}
 
