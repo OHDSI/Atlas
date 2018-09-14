@@ -1,7 +1,10 @@
-define(['optional!config-local'], function (localConfig) {
+define(['optional!config/local.config', 'optional!config-local'], function (localConfig, compatConfig) {
 	var config = {};
-	if (JSON.stringify(localConfig) == JSON.stringify({})) {
-		console.warn('Local configuration not found.  Using default values. To use a local configuration and suppress 404 errors, create a file called config-local.js under the /js directory');
+  if (
+    JSON.stringify(localConfig) == JSON.stringify({})
+    || JSON.stringify(compatConfig) == JSON.stringify({})
+  ) {
+		console.warn('Local configuration not found.  Using default values. To use a local configuration and suppress 404 errors, create a file called config/local.config.js under the /js directory');
 	}
 
 	// default configuration
@@ -100,7 +103,7 @@ define(['optional!config-local'], function (localConfig) {
     },
   };
 
-	Object.assign(config, localConfig);
+	Object.assign(config, compatConfig, localConfig);
 	config.webAPIRoot = config.api.url;
 	return config;
 });

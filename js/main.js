@@ -10,7 +10,6 @@ const localRefs = {
 	"conceptset-editor": "components/conceptset/conceptset-editor",
 	"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
 	"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
-	"job-manager": "components/job-manager",
 	"user-bar": "components/user-bar",
 	"faceted-datatable": "components/faceted-datatable",
 	"explore-cohort": "components/explore-cohort",
@@ -23,14 +22,6 @@ const localRefs = {
 	"role-details": "components/role-details",
 	"loading": "components/loading",
 	"atlas-state": "components/atlas-state",
-	"plp-manager": "components/plp-manager",
-	"plp-inspector": "components/plp-inspector",
-	"plp-browser": "components/plp-browser",
-	"plp-roc": "components/plp-roc",
-	"plp-calibration": "components/plp-calibration",
-	"plp-spec-editor": "components/plp-spec-editor",
-	"plp-r-code": "components/plp-r-code",
-	"plp-print-friendly": "components/plp-print-friendly",
 	"feedback": "components/feedback",
 	"conceptsetbuilder": "modules/conceptsetbuilder",
 	"conceptpicker": "modules/conceptpicker",
@@ -45,7 +36,7 @@ requirejs.config({paths: {"optional": "plugins/optional"}});
 require([
 	'./settings',
 	'optional', // require this plugin separately to check in advance whether we have a local config
-	'config'
+	'config/app.config',
 ], (settings, optional, appConfig) => {
 	const cdnRefs = {
 		css: {},
@@ -89,7 +80,8 @@ require([
 			'loading',
 			'user-bar',
 			'welcome',
-			'components/white-page'
+			'components/white-page',
+			'components/terms-and-conditions/terms-and-conditions',
 		],
 			(
 				Application,

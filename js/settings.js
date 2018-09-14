@@ -92,7 +92,7 @@ const settingsObject = {
     "lodash": "assets/lodash.4.15.0.full",
     "lscache": "assets/lscache.min",
     "localStorageExtender": "assets/localStorageExtender",
-    "appConfig": "config",
+    "appConfig": "config/app.config",
     "prism": "assets/prism",
     "js-cookie": "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min",
 
@@ -125,7 +125,7 @@ const settingsObject = {
     "jquery.ui.autocomplete.scroll": "assets/jquery.ui.autocomplete.scroll",
     "facets": "assets/facets",
     "colorbrewer": "assets/colorbrewer",
-    "ohdsi-api": "https://unpkg.com/@ohdsi/ui-toolbox@1.0.1/lib/umd/api/index",
+    "ohdsi-api": "https://unpkg.com/@ohdsi/ui-toolbox@1.0.2/lib/umd/api/index",
     // needed for @ohdsi/ui-toolbox Api
     "urijs": "https://unpkg.com/urijs@1.19.1/src/URI",
     "punycode": "https://unpkg.com/urijs@1.19.1/src/punycode",

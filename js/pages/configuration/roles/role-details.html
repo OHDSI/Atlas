@@ -1,11 +1,11 @@
+<!-- ko if:loading -->
 <div class="wrapperTitle">
-    <!-- ko if:loading -->
     <i class="fa fa-circle-o-notch fa-spin"></i> Loading...
-    <!-- /ko -->
-    <!-- ko ifnot:loading -->
-    <i class="fa fa-cogs"></i> Role
-    <!-- /ko -->
 </div>
+<!-- /ko -->
+<!-- ko ifnot:loading -->
+    <heading-title params="name: 'Role', icon: 'cogs', theme: 'dark'"></heading-title>
+<!-- /ko -->
 <div data-bind="ifnot:loading">
     <div data-bind="if:$component.hasAccess">
         <div class="asset-heading">
@@ -73,11 +73,6 @@
                         ]
                 }
         }"></table>
-        </div>
-    </div>
-    <div data-bind="ifnot:$component.hasAccess">
-        <div class="padded">
-            <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
         </div>
     </div>
 </div>

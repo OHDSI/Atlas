@@ -298,6 +298,10 @@ define(function(require, exports) {
         return isPermitted('plp:' + id + ':delete');
     };
 
+    var isPermittedCopyPlp = function(id) {
+        return isPermitted(`plp:${id}:copy:get`);
+    }
+
     var isPermittedSearch = function() {
       return isPermitted('vocabulary:*:search:*:get');
     };
@@ -476,6 +480,7 @@ define(function(require, exports) {
         isPermittedReadPlp: isPermittedReadPlp,
         isPermittedCreatePlp: isPermittedCreatePlp,
         isPermittedDeletePlp: isPermittedDeletePlp,
+        isPermittedCopyPlp: isPermittedCopyPlp,
 
         isPermittedSearch: isPermittedSearch,
         isPermittedViewCdmResults: isPermittedViewCdmResults,

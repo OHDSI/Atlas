@@ -1,4 +1,4 @@
-define(['knockout', 'jquery', 'text!./plp-roc.html', 'appConfig', 'd3', 'd3-slider', 'd3-tip', 'css!plp.css'], function (ko, $, view, appConfig, d3, d3slider, d3tip) {
+define(['knockout', 'jquery', 'text!./plp-roc.html', 'appConfig', 'd3', 'd3-slider', 'd3-tip'], function (ko, $, view, appConfig, d3, d3slider, d3tip) {
 
 
 	function plpRoc(params) {

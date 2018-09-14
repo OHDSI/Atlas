@@ -1,11 +1,11 @@
+<!-- ko if:loading -->
 <div class="wrapperTitle">
-    <!-- ko if:loading -->
     <i class="fa fa-circle-o-notch fa-spin"></i> Loading...
-    <!-- /ko -->
-    <!-- ko ifnot:loading -->
-    <i class="fa fa-cogs"></i> Roles
-    <!-- /ko -->
 </div>
+<!-- /ko -->
+<!-- ko ifnot:loading -->
+    <heading-title params="name: 'Roles', icon: 'cogs', theme: 'dark'"></heading-title>
+<!-- /ko -->
 <div data-bind="if:$component.canRead">
     <div class="paddedWrapper">
         <span class="pull-right btn btn-sm btn-primary new-role" data-bind="click:newRole, css: { disabled: !canCreate() }">New Role</span>
