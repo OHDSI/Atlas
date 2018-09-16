@@ -5,8 +5,9 @@ define(
     return {
       title: 'Prediction',
       buildRoutes,
-      baseUrl: 'plp', // todo: css: plpCss, attr: {href: plpURL}
+      navUrl: () => '#/plp', // todo: css: plpCss, attr: {href: plpURL}
       icon: 'heartbeat',
+			statusCss: () => '',
     };
   }
 );

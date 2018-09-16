@@ -5,8 +5,9 @@ define(
     return {
       title: 'Estimation',
       buildRoutes,
-      baseUrl: 'estimation',
+      navUrl: () => '#/estimation',
       icon: 'balance-scale',
+			statusCss: () => ''
     };
   }
 );

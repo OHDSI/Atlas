@@ -1,4 +1,4 @@
-define(['knockout', 'lscache', 'job/jobDetail'], function (ko, cache, jobDetail) {
+define(['knockout', 'lscache', 'job/jobDetail', 'assets/ohdsi.util'], function (ko, cache, jobDetail, ohdsiUtil) {
 	var state = {};
 	state.resultsUrl = ko.observable();
 	state.vocabularyUrl = ko.observable();
@@ -42,6 +42,12 @@ define(['knockout', 'lscache', 'job/jobDetail'], function (ko, cache, jobDetail)
 		this.selectedConceptsIndex = {};
 		this.selectedConcepts([]);
 	}
+	
+	state.IRAnalysis = {
+		current: ko.observable(null),
+		selectedId: ko.observable(null)
+	}
+	state.IRAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.IRAnalysis.current()));
 
 	return state;
 });

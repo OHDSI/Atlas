@@ -275,7 +275,7 @@ define(
 						&& this.currentCohortDefinitionDirtyFlag().isDirty()
 					)
 						|| this.currentConceptSetDirtyFlag().isDirty()
-						|| this.currentIRAnalysisDirtyFlag().isDirty()
+						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
 						|| this.currentCohortComparisonDirtyFlag().isDirty()
 					);
 				});

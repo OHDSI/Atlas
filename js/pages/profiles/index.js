@@ -5,8 +5,9 @@ define(
     return {
       title: 'Profiles',
       buildRoutes,
-      baseUrl: 'profiles',
+      navUrl: () => '#/profiles',
       icon: 'user',
+			statusCss: () => ''
     };
   }
 );

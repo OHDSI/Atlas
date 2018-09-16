@@ -5,8 +5,9 @@ define(
 		return {
 			title: 'Search',
 			buildRoutes,
-			baseUrl: 'search',
+			navUrl: () => '#/search',
 			icon: 'search',
+			statusCss: () => ''
 		};
 	}
 );

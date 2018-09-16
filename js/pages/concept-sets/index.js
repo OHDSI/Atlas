@@ -5,8 +5,9 @@ define(
     return {
       title: 'Concept Sets',
       buildRoutes,
-      baseUrl: 'conceptsets',
+      navUrl: () => '#/conceptsets',
       icon: 'shopping-cart',
+			statusCss: () => ''
     };
   }
 );

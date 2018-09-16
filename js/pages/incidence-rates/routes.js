@@ -1,6 +1,8 @@
 define(
   (require, factory) => {
     const { AuthorizedRoute } = require('providers/Route');
+		const atlasState = require('atlas-state');
+		
     function routes(appModel) {
       return {        
         '/iranalysis': new AuthorizedRoute(() => {
@@ -12,7 +14,7 @@ define(
         '/iranalysis/new': new AuthorizedRoute((analysisId) => {
           appModel.activePage(this.title);
           require(['./ir-manager'], function () {
-            appModel.selectedIRAnalysisId(null);
+            atlasState.IRAnalysis.selectedId(null);
             appModel.currentView('ir-manager');
           });
         }),
@@ -24,7 +26,7 @@ define(
             activeTab = path[0];
           }
           require(['./ir-manager'], function () {
-            appModel.selectedIRAnalysisId(+analysisId);
+            atlasState.IRAnalysis.selectedId(+analysisId);
             appModel.currentView('ir-manager');
           });
         }),

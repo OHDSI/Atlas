@@ -49,7 +49,7 @@ define(
         }, {});
         const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
 					accumulator[key] = (...args) => {
-            this.setCurrentView('loading');
+            //this.setCurrentView('loading');
 						if (this.onLoginSubscription) {
 							this.onLoginSubscription.dispose();
             }

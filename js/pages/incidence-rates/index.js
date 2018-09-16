@@ -1,12 +1,29 @@
-define(
-  (require, exports) => {
-    const buildRoutes = require('./routes');
+define((require, exports) => {
+	const ko = require('knockout');
+	const buildRoutes = require('./routes');
+	const appState = require('atlas-state');
 
-    return {
-      title: 'Incidence Rates',
-      buildRoutes,
-      baseUrl: 'iranalysis', // todo: css: irStatusCss, attr: {href: irAnalysisURL}
-      icon: 'bolt',
-    };
-  }
-);
+	const statusCss = ko.pureComputed(function () {
+		if (appState.IRAnalysis.current())
+			return appState.IRAnalysis.dirtyFlag()
+				.isDirty() ? "unsaved" : "open";
+		return "";
+	});
+
+	const navUrl = ko.pureComputed(function () {
+		let url = "#/iranalysis";
+		if (appState.IRAnalysis.current()) {
+			url = url + `/${(appState.IRAnalysis.current().id() || 'new')}`;
+		}
+		return url;
+	});
+
+
+	return {
+		title: 'Incidence Rates',
+		buildRoutes,
+		icon: 'bolt',
+		statusCss,
+		navUrl
+	};
+});
