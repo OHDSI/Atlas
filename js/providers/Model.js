@@ -56,6 +56,7 @@ define(
 				this.classes = bemHelper.run.bind(bemHelper);
 				this.activePage = ko.observable();
 				this.componentParams = ko.observable({});
+				this.routerParams = ko.observable();
 				this.pendingSearch = ko.observable(false);
 				this.supportURL = config.supportUrl;
 				this.targetSupportURL = config.supportUrl.startsWith("#") ? "_this" : "_blank";
@@ -353,9 +354,9 @@ define(
 			*/
 			}
 
-			handleViewChange(view, componentParams = {}) {
-				if (componentParams !== false) {
-					this.componentParams(componentParams);
+			handleViewChange(view, routerParams = {}) {
+				if (routerParams !== false) {
+					this.routerParams(routerParams);
 				}
 				this.currentView(view);
 			}
