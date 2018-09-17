@@ -1,101 +1,104 @@
 define([
-	'jquery',
 	'knockout',
 	'text!./ConceptSetBuilderTemplate.html',
 	'../InputTypes/ConceptSet',
 	'../InputTypes/ConceptSetItem',
-	'vocabularyprovider',
+	'providers/Vocabulary',
+	'providers/Component',
+	'providers/AutoBind',
+	'utils/CommonUtils',
 	'databindings',
 	'circe',
 	'conceptpicker/ConceptPicker',
 	'faceted-datatable',
 	'assets/knockout-jqueryui/tabs',
-	'css!styles/tabs.css'
+	'components/modal',
 ], function (
-		$,
 		ko,
-		template,
+		view,
 		ConceptSet,
 		ConceptSetItem,
-		VocabularyAPI) {
+		VocabularyAPI,
+		Component,
+		AutoBind,
+		commonUtils,
+	) {
 
-	function conceptSetSorter(a,b)
-	{
-		var textA = a.name().toUpperCase();
-		var textB = b.name().toUpperCase();
-		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-	}
-	
-	function CodesetBuilderViewModel(params) {
-			var self = this;
-			params.ref(this); // assign refrence to self to ref's param
-
-			self.conceptSets = params.conceptSets.extend({sorted: conceptSetSorter});;
-			self.selectedConceptSet = ko.observable();
-			self.tabWidget = ko.observable();		
-			self.nameHasFocus = ko.observable();
-			self.isImportEnabled = ko.observable(false);
-			self.isExportEnabled = ko.observable(false);
-			self.isLoadEnabled = ko.observable(false);
-			self.importValues = ko.observable();
-			self.dtApi = ko.observable(); // store reference to datatable
-			self.includedConceptsComponent = ko.observable();
-			self.mappedConceptsComponent = ko.observable();
+		function conceptSetSorter(a,b)
+		{
+			var textA = a.name().toUpperCase();
+			var textB = b.name().toUpperCase();
+			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+		}
 		
+		class CodesetBuilder extends AutoBind(Component) {
+			constructor(params) {
+				super();
 
-			// model behaviors
-			self.createConceptSet = function () {
+				params.ref(this); // assign refrence to this to ref's param
+				this.rawConceptSets = params.$raw.conceptSets;
+
+				this.conceptSets = params.conceptSets.extend({sorted: conceptSetSorter});;
+				this.selectedConceptSet = ko.observable();
+				this.tabWidget = ko.observable();		
+				this.nameHasFocus = ko.observable();
+				this.isImportEnabled = ko.observable(false);
+				this.isModalOpened = ko.observable(false);
+				this.isExportEnabled = ko.observable(false);
+				this.isLoadEnabled = ko.observable(false);
+				this.importValues = ko.observable();
+				this.dtApi = ko.observable(); // store reference to datatable
+				this.includedConceptsComponent = ko.observable();
+				this.mappedConceptsComponent = ko.observable();			
+			}		
+		
+			createConceptSet () {
 				var newConceptSet = new ConceptSet();
-				newConceptSet.id = self.conceptSets().length > 0 ? Math.max.apply(null, self.conceptSets().map(function (d) {
-					return d.id;
-				})) + 1 : 0;
-				params.$raw.conceptSets().push(newConceptSet);
-				self.selectedConceptSet(newConceptSet);
-				self.nameHasFocus(true);
+				newConceptSet.id = this.conceptSets().length > 0 ? Math.max(this.conceptSets().map(d => d.id)) + 1 : 0;
+				this.rawConceptSets().push(newConceptSet);
+				this.selectedConceptSet(newConceptSet);
+				this.nameHasFocus(true);
 				return newConceptSet;
 			}
 			
-			self.doImport = function() {
+			doImport() {
 				var parsedItems, importedConceptSetItems;
-				parsedItems = JSON.parse(self.importValues());
+				parsedItems = JSON.parse(this.importValues());
 				
-				importedConceptSetItems = parsedItems.items.map(function (item) {
-					return new ConceptSetItem(item);
-				});
+				importedConceptSetItems = parsedItems.items.map(item => new ConceptSetItem(item));
 				
 				// only add new concepts.
-				ixConcepts = {};
-				self.selectedConceptSet().expression.items().forEach(function(item) {
-					ixConcepts[item.concept.CONCEPT_ID] = true;
-				});
+				const ixConcepts = {};
+				this.selectedConceptSet().expression.items().forEach(item => ixConcepts[item.concept.CONCEPT_ID] = true);				
+				this.selectedConceptSet().expression.items(
+					this.selectedConceptSet().expression.items().concat(
+						importedConceptSetItems.filter(item => !ixConcepts[item.concept.CONCEPT_ID])
+					)
+				);
 				
-				self.selectedConceptSet().expression.items(self.selectedConceptSet().expression.items().concat(importedConceptSetItems.filter(function (item){
-					return !ixConcepts[item.concept.CONCEPT_ID];
-				})));
-				
-				self.isImportEnabled(false);
-			};
+				this.isImportEnabled(false);
+			}
 
-			self.deleteConceptSet = function () {
-				 params.$raw.conceptSets().remove(self.selectedConceptSet());
+			deleteConceptSet() {
+					this.rawConceptSets().remove(this.selectedConceptSet());
 			}
 
 			// concept picker handlers
-			self.addConcepts = function (conceptList) {
+			addConcepts(conceptList) {
 				// only add new concepts.
-				var selectedConceptSetItems = self.selectedConceptSet().expression.items;
-				var ixConcepts = {};
-				selectedConceptSetItems().forEach(function(item) {
+				const selectedConceptSetItems = this.selectedConceptSet().expression.items;
+				const ixConcepts = {};
+				selectedConceptSetItems().forEach((item) => {
 					ixConcepts[item.concept.CONCEPT_ID] = true;
 				});
 
-				var importedConcepts = [];
-				conceptList.forEach(function(item) {
+				const importedConcepts = [];
+				conceptList.forEach((item) => {
 					if (!ixConcepts[item.CONCEPT_ID])
 						importedConcepts.push(item);
 				});
 
-				var newConceptSetItems = importedConcepts.map(function (c) {
+				const newConceptSetItems = importedConcepts.map((c) => {
 					return new ConceptSetItem({
 						concept: c,
 						includeDescendants: true
@@ -104,39 +107,33 @@ define([
 				selectedConceptSetItems(selectedConceptSetItems().concat(newConceptSetItems));
 			}
 
-			self.removeSelected = function() {
-				var selectedItems = self.dtApi().getSelectedData();
-				self.selectedConceptSet().expression.items.removeAll(selectedItems);
+			removeSelected() {
+				var selectedItems = this.dtApi().getSelectedData();
+				this.selectedConceptSet().expression.items.removeAll(selectedItems);
 			}
 			
-			self.renderCheckbox = function (field) {
+			renderCheckbox(field) {
 				return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
 			}
 			
-			self.getConceptSetJson = function() {
-				if (self.selectedConceptSet())
-					return ko.toJSON(self.selectedConceptSet().expression, null, 2);
+			getConceptSetJson() {
+				if (this.selectedConceptSet())
+					return ko.toJSON(this.selectedConceptSet().expression, null, 2);
 				else
 					return "";
 			}
 			
-			self.repositoryConceptsetSelected = function(conceptSet) {
-				console.log(conceptSet);
-				VocabularyAPI.getConceptSetExpression(conceptSet.id).then(function (expression) {
-					var newConceptSet = self.createConceptSet();
+			repositoryConceptsetSelected(conceptSet) {
+				VocabularyAPI.getConceptSetExpression(conceptSet.id).then((expression) => {
+					var newConceptSet = this.createConceptSet();
 					newConceptSet.name(conceptSet.name);
-					newConceptSet.expression.items(expression.items.map(function(conceptSetItem) {
-						return new ConceptSetItem(conceptSetItem);
-					}));
-					self.isLoadEnabled(false);
+					newConceptSet.expression.items(expression.items.map(conceptSetItem => new ConceptSetItem(conceptSetItem)));
+					this.isModalOpened(false);
+					this.selectedConceptSet(newConceptSet);
 				});
 			}
-			
+				
 		}
 
-		// return compoonent definition
-		return {
-			viewModel: CodesetBuilderViewModel,
-			template: template
-		};
+		return commonUtils.build('concept-set-builder', CodesetBuilder, view);
 	});

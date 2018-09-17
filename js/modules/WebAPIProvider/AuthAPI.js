@@ -43,7 +43,7 @@ define(function(require, exports) {
     var permissions = ko.observable();
 
     const loadUserInfo = function() {
-        $.ajax({
+        return $.ajax({
             url: config.api.url + 'user/me',
             method: 'GET',
             success: function (info) {
@@ -254,8 +254,12 @@ define(function(require, exports) {
       return isPermitted('ir:post');
     };
 
-    var isPermittedDeleteIR = function(id){
+    var isPermittedDeleteIR = function(id) {
         return isPermitted('ir:' + id + ':delete');
+    };
+    
+    var isPermittedCopyIR = function(id) {
+        return isPermitted('ir:' + id + ':copy:get');
     };
 
     var isPermittedReadEstimations = function () {
@@ -274,6 +278,10 @@ define(function(require, exports) {
         return isPermitted('comparativecohortanalysis:post');
     };
 
+    const isPermittedDeleteEstimation = function(id) {
+        return isPermitted(`comparativecohortanalysis:${id}:delete`);
+    }
+
     var isPermittedReadPlps = function() {
         return isPermitted('plp:get');
     };
@@ -289,6 +297,10 @@ define(function(require, exports) {
     var isPermittedDeletePlp = function(id) {
         return isPermitted('plp:' + id + ':delete');
     };
+
+    var isPermittedCopyPlp = function(id) {
+        return isPermitted(`plp:${id}:copy:get`);
+    }
 
     var isPermittedSearch = function() {
       return isPermitted('vocabulary:*:search:*:get');
@@ -457,15 +469,18 @@ define(function(require, exports) {
         isPermittedCreateIR: isPermittedCreateIR,
         isPermittedEditIR: isPermittedEditIR,
         isPermittedDeleteIR: isPermittedDeleteIR,
+        isPermittedCopyIR,
 
         isPermittedReadEstimations: isPermittedReadEstimations,
         isPermittedReadEstimation: isPermittedReadEstimation,
         isPermittedCreateEstimation: isPermittedCreateEstimation,
+        isPermittedDeleteEstimation,
 
         isPermittedReadPlps: isPermittedReadPlps,
         isPermittedReadPlp: isPermittedReadPlp,
         isPermittedCreatePlp: isPermittedCreatePlp,
         isPermittedDeletePlp: isPermittedDeletePlp,
+        isPermittedCopyPlp: isPermittedCopyPlp,
 
         isPermittedSearch: isPermittedSearch,
         isPermittedViewCdmResults: isPermittedViewCdmResults,
@@ -480,6 +495,7 @@ define(function(require, exports) {
 
         isPermittedImportUsers,
 
+        loadUserInfo,
         TOKEN_HEADER,
     };
 

@@ -10,8 +10,11 @@ table.cohort-generate-sources td {
 
 table.cohort-generate-sources tbody.overflow {
   display: block;
-  max-height: 210px;
   overflow: auto;
+}
+
+table.cohort-generate-sources tbody.max-height {
+  max-height: 210px;
 }
 
 table.cohort-generate-sources thead, table.cohort-generate-sources tbody tr {
@@ -614,6 +617,11 @@ ul.ColVis_collection li {
 
 .ColVis_Special {
   background: #eee;
+}
+
+.conceptTable div.swatch {
+  width: 12px;
+  height: 12px;
 }
 
 .linkLegend {

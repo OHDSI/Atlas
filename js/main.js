@@ -12,12 +12,6 @@ const localRefs = {
 	"conceptset-manager": "components/conceptset/conceptset-manager",
 	"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
 	"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
-	"cohort-comparison-manager": "components/cohort-comparison-manager",
-	"job-manager": "components/job-manager",
-	"cohort-comparison-browser": "components/cohort-comparison-browser",
-	"cohort-comparison-print-friendly": "components/cohort-comparison-print-friendly",
-	"cohort-comparison-r-code": "components/cohort-comparison-r-code",
-	"cohort-comparison-multi-r-code": "components/cohort-comparison-multi-r-code",
 	"user-bar": "components/user-bar",
 	"faceted-datatable": "components/faceted-datatable",
 	"explore-cohort": "components/explore-cohort",
@@ -30,14 +24,6 @@ const localRefs = {
 	"role-details": "components/role-details",
 	"loading": "components/loading",
 	"atlas-state": "components/atlas-state",
-	"plp-manager": "components/plp-manager",
-	"plp-inspector": "components/plp-inspector",
-	"plp-browser": "components/plp-browser",
-	"plp-roc": "components/plp-roc",
-	"plp-calibration": "components/plp-calibration",
-	"plp-spec-editor": "components/plp-spec-editor",
-	"plp-r-code": "components/plp-r-code",
-	"plp-print-friendly": "components/plp-print-friendly",
 	"feedback": "components/feedback",
 	"conceptsetbuilder": "modules/conceptsetbuilder",
 	"conceptpicker": "modules/conceptpicker",
@@ -54,25 +40,38 @@ require([
 	'optional', // require this plugin separately to check in advance whether we have a local config
 	'config'
 ], (settings, optional, appConfig) => {
-	const cdnRefs = {};
+	const cdnRefs = {
+		css: {},
+		js: {},
+	};
+	const styles = [];
 	Object.entries(settings.paths).forEach(([name, path]) => {
-		cdnRefs[name] = appConfig.useBundled3dPartyLibs
+		cdnRefs.js[name] = appConfig.useBundled3dPartyLibs
 			? 'assets/bundle/bundle'
 			: path;
+	});
+	Object.entries(settings.cssPaths).forEach(([name, path]) => {
+		cdnRefs.css[name] = appConfig.useBundled3dPartyLibs
+			? 'assets/bundle/bundle.css'
+			: path;
+		styles.push(`css!${name}`);
 	});
 
 	requirejs.config({
 		...settings,
 		urlArgs: bustCache,
-		deps: ['css!styles/jquery.dataTables.min',
-			'css!styles/jquery.dataTables.colVis.css'
-		],
 		paths: {
 			...localRefs,
-			...cdnRefs,
+			...cdnRefs.js,
 		},
-	});
-	require(['bootstrap'], function () { // bootstrap must come first
+		map: {
+			'*': {
+				...settings.map['*'],
+				...cdnRefs.css,
+			},
+		}
+	});	
+	require(['bootstrap', ...styles], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
 		require([
 			'providers/Application',

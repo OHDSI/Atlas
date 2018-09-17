@@ -5,7 +5,7 @@ define(
       return {        
         '/jobs': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['job-manager'], function () {
+          require(['./job-manager'], function () {
             router.setCurrentView('job-manager');
           });
         }),

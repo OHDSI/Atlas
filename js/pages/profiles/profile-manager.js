@@ -10,6 +10,7 @@ define([
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinition',
 	'providers/Component',
+	'providers/AutoBind',
 	'utils/CommonUtils',
 	'./const',
 	'lodash',
@@ -33,6 +34,7 @@ define([
 		CohortDefinition,
 		cohortDefinitionService,
 		Component,
+		AutoBind,
 		commonUtils,
 		constants,
 		_,
@@ -47,7 +49,7 @@ define([
 			() => []
 		];
 
-		class ProfileManager extends Component {
+		class ProfileManager extends AutoBind(Component) {
 			constructor(params) {
 				super(params);
 				this.model = params.model;
@@ -234,7 +236,8 @@ define([
 				this.showSection = {
 					profileChart: ko.observable(true),
 					datatable: ko.observable(true),
-				};this.highlightDom = '<<"row vertical-align"<"col-xs-6"><"col-xs-6 search"f>><t><"row vertical-align"<"col-xs-6"i><"col-xs-6"p>>>';
+				};
+				this.highlightDom = '<<"row vertical-align"<"col-xs-6"><"col-xs-6 search"f>><t><"row vertical-align"<"col-xs-6"i><"col-xs-6"p>>>';
 				this.highlightColumns = ['select', {
 					render: this.swatch,
 					data: 'highlight()',
@@ -299,15 +302,6 @@ define([
 				if (this.personId()) {
 					this.loadPerson();
 				}
-
-				this.loadPerson = this.loadPerson.bind(this);
-				this.removeHighlight = this.removeHighlight.bind(this);
-				this.highlight = this.highlight.bind(this);
-				this.dispToggle = this.dispToggle.bind(this);
-				this.setHighlights = this.setHighlights.bind(this);				
-				this.getHighlightColor = this.getHighlightColor.bind(this);
-				this.getHighlightBackground = this.getHighlightBackground.bind(this);
-				this.clearHighlights = this.clearHighlights.bind(this);
 			}
 			
 			loadPerson () {
@@ -436,7 +430,7 @@ define([
 
 			clearHighlights () {
 				const selectedData = $('#highlight-table table').DataTable().data();
-				for (const i = 0; i < selectedData.length; i++) {
+				for (let i = 0; i < selectedData.length; i++) {
 					selectedData[i].highlight(this.defaultColor); // set the swatch color
 					selectedData[i].recs.forEach(r => {
 						r.highlight = this.defaultColor; // set the record colors

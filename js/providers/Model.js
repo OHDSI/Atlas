@@ -17,7 +17,8 @@ define(
 		'lodash',
 		'd3',
 		'webapi/AuthAPI',
-		'less!app.less'
+        'webapi/MomentAPI',
+		'less!app.less',
 	],
 	(
 		ko,
@@ -37,6 +38,7 @@ define(
 		_,
 		d3,
 		authApi,
+        momentApi,
 	) => {
 		return class GlobalModel extends AutoBind() {
 			static get applicationStatuses() {
@@ -63,6 +65,7 @@ define(
 				this.metatrix = constants.metatrix;
 				this.relatedSourcecodesColumns = constants.getRelatedSourcecodesColumns(this);
 				this.enableRecordCounts = ko.observable(true);
+				this.loading = ko.observable(false);
 				this.loadingIncluded = ko.observable(false);
 				this.loadingSourcecodes = ko.observable(false);
 				this.loadingEvidence = ko.observable(false);
@@ -556,7 +559,7 @@ define(
 										cdsi.sourceId = sourceInfo.id.sourceId;
 										cdsi.status = ko.observable(sourceInfo.status);
 										var date = new Date(sourceInfo.startTime);
-										cdsi.startTime = ko.observable(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+										cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
 										cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
 										var commaFormatted = d3.format(",");
 										// For backwards compatability, query personCount from cdm if not populated in sourceInfo
@@ -839,8 +842,8 @@ define(
 					console.info('Roles updated');
 					return Promise.resolve();
 				} else {
-					return roleService.getRoles()
-						.then(({ data: roles }) => {
+					return roleService.getList()
+						.then((roles) => {
 							console.info('Roles updated');
 							this.roles(roles);
 						});

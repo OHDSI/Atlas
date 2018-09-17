@@ -7,7 +7,7 @@ define(
 		'lscache',
 		'atlas-state',
 		'jquery',
-		'webapi/ExecutionAPI',
+		'services/Execution',
 		'webapi/SourceAPI',
 		'providers/Model',
 		'databindings',
@@ -20,7 +20,7 @@ define(
 		lscache,
 		sharedState,
 		$, // TODO: get rid of jquery
-		executionAPI,
+		executionService,
 		sourceApi,
 		GlobalModel,
 	) => {
@@ -50,11 +50,11 @@ define(
 					}, document.getElementsByTagName('html')[0]);
 					httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
 					httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
-					authApi.isAuthenticated.subscribe(executionAPI.checkExecutionEngineStatus);
+					authApi.isAuthenticated.subscribe(executionService.checkExecutionEngineStatus);
 					this.router.setCurrentViewHandler(this.pageModel.handleViewChange);
 					this.router.setModelGetter(() => this.pageModel);
 					this.attachGlobalEventListeners();
-					await executionAPI.checkExecutionEngineStatus(authApi.isAuthenticated());
+					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
 
 					resolve();
 				});
@@ -171,9 +171,9 @@ define(
 								});
 							}
 							conceptSet.expression.items.valueHasMutated();
-							self.pageModel.resolveConceptSetExpressionSimple(ko.toJSON(conceptSet.expression))
-								.then(self.pageModel.loadIncluded)
-								.then(self.pageModel.loadSourcecodes);
+							self.pageModel.resolveConceptSetExpressionSimple(conceptSet.expression)
+								.then(res => self.pageModel.loadIncluded(res.data))
+								.then(res => self.pageModel.loadSourcecodes());
 						}
 					});
 

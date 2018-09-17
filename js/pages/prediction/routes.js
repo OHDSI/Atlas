@@ -11,7 +11,17 @@ define(
         }),
         '/plp/:modelId:': new AuthorizedRoute((modelId) => {
           appModel.activePage(this.title);
-          require(['plp-manager', 'plp-inspector', 'plp-roc', 'plp-calibration', 'plp-spec-editor', 'plp-r-code', 'plp-print-friendly', 'components/cohort-definition-browser', 'components/atlas.cohort-editor'], function () {
+          require([
+            './plp-manager',
+            './components/plp-inspector',
+            './components/plp-roc',
+            './components/plp-calibration',
+            './components/plp-spec-editor',
+            './components/plp-r-code',
+            './components/plp-print-friendly',
+            'components/cohort-definition-browser',
+            'components/atlas.cohort-editor'
+          ], function () {
             appModel.currentPatientLevelPredictionId(+modelId);
             router.setCurrentView('plp-manager', {
               currentPatientLevelPredictionId: appModel.currentPatientLevelPredictionId,

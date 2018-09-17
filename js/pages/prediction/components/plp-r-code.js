@@ -1,9 +1,9 @@
-define(['jquery', 'knockout', 'text!./plp-r-code.html', 'appConfig', 'plp/PatientLevelPredictionAnalysis', 'prism', 'css!./styles/prism.css'],
+define(['jquery', 'knockout', 'text!./plp-r-code.html', 'appConfig', 'plp/PatientLevelPredictionAnalysis', 'prism'],
 	function ($, ko, view, config, cohortComparison) {
 		function plpRCode(params) {
 			var self = this;
 			self.config = config;
-			self.patientLevelPrediction = params.patientLevelPrediction;
+			self.currentPlpAnalysis = params.currentPlpAnalysis;
 			self.codeElementId = params.codeElementId || 'plp-r-code';
 		}
 
