@@ -56,7 +56,7 @@ define(function (require, exports) {
 	}
 
 	function loadConceptSetExpression(conceptSetId) {
-		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression').then(({data}) => data);
+		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression').then(({ data }) => data);
 	}
 
 	function lookupIdentifiers(identifiers) {
@@ -70,6 +70,7 @@ define(function (require, exports) {
 
 	function getGenerationInfo(conceptSetId) {
 		return httpService.doGet(config.webAPIRoot + 'conceptset/' + + (conceptSetId || '-1') + '/generationinfo')
+			.then(({ data }) => data)
 			.catch(authApi.handleAccessDenied);
 	}
     

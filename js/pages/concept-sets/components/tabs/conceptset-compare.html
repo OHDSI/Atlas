@@ -1,3 +1,17 @@
+<script type='text/html' id='conceptsets-comparison-headers'>
+  <tr>
+    <th>Match</th>
+    <th>Id</th>
+    <th>Code</th>
+    <th>Name</th>
+    <th>Class</th>
+    <th><i id="dtConeptManagerRC" class="fa fa-database" aria-hidden="true"></i> RC</th>
+    <th><i id="dtConeptManagerDRC" class="fa fa-database" aria-hidden="true"></i> DRC</th>
+    <th>Domain Id</th>
+    <th>Vocabulary</th>
+  </tr>
+</script>
+
 <div class="paddedWrapper">
   <div class="heading">
     <b>Concept Set Comparison</b>: Use this utility to compare the contents of two concept sets to see which concepts they may share.
@@ -85,22 +99,12 @@
         reference:$component.compareResults,
         columns: compareResultsColumns,
         options:compareResultsOptions,
-        order: $component.compareResultsOptions.order
+        order: $component.compareResultsOptions.order,
+        headersTemplateId: 'conceptsets-comparison-headers',
       }">
-        <thead>
-          <th>Match</th>
-          <th>Id</th>
-          <th>Code</th>
-          <th>Name</th>
-          <th>Class</th>
-          <th><i id="dtConeptManagerRC" class="fa fa-database" aria-hidden="true"></i> RC</th>
-          <th><i id="dtConeptManagerDRC" class="fa fa-database" aria-hidden="true"></i> DRC</th>
-          <th>Domain Id</th>
-          <th>Vocabulary</th>
-        </thead>
-      </faceted-datatable>
-    </div>
+    </faceted-datatable>
   </div>
+</div>
 </div>
 
 <script type='template' id='conceptset-compare-modal'>

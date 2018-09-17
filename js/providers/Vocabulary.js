@@ -159,7 +159,7 @@ define(function (require, exports) {
 
 		repositoryUrl += id + '/expression';
 
-		return httpService.doGet(repositoryUrl);
+		return httpService.doGet(repositoryUrl).then(({ data }) => data);
 	}
 
 	function resolveConceptSetExpression(expression, url, sourceKey) {

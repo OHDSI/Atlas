@@ -1,14 +1,5 @@
-<!-- ko if: $root.loadingIncluded -->
-  <loading></loading>
-<!-- /ko -->
-<faceted-datatable params="{
-  columns: $component.searchConceptsColumns,
-  options: $component.searchConceptsOptions,
-  reference: $root.includedConcepts,
-  drawCallback: $component.includedDrawCallback,
-  rowCallback: $root.contextSensitiveLinkColor
-}">
-  <thead>
+<script type="text/html" id="included-conceptsets-headers">
+  <tr>
     <th><i class="fa fa-shopping-cart"></i></th>
     <th>Id</th>
     <th>Code</th>
@@ -20,7 +11,20 @@
     <th>Domain</th>
     <th>Vocabulary</th>
     <th>Ancestors</th>
-  </thead>
+  </tr>
+</script>
+<!-- ko if: $root.loadingIncluded -->
+  <loading></loading>
+<!-- /ko -->
+<!-- ko ifnot: $root.loadingIncluded -->
+<faceted-datatable params="{
+  columns: $component.searchConceptsColumns,
+  options: $component.searchConceptsOptions,
+  reference: $root.includedConcepts,
+  drawCallback: $component.includedDrawCallback,
+  rowCallback: $root.contextSensitiveLinkColor,
+  headersTemplateId: 'included-conceptsets-headers',
+}"> 
 </faceted-datatable>
 <div class="linkLegend">
   <div class="linkLegendItem">
@@ -39,7 +43,7 @@
     <div class="linkLegendTitle">Classification</div>
   </div>
 </div>
-
+<!-- /ko -->
 <conceptset-list-modal params="{
   isShown: $component.ancestorsModalIsShown,
   conceptSetList: $component.ancestors,
