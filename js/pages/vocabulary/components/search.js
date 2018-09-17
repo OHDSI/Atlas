@@ -53,15 +53,15 @@ define([
 			});
 			this.isInProgress.subscribe((isInProgress) => {
 				if (!isInProgress) {
-					if (params.query()) {
-						this.currentSearch(params.query());
+					if (params.routerParams().query()) {
+						this.currentSearch(params.routerParams().query());
 						this.executeSearch();
 					}
 				}
 			});
-			params.query.subscribe(() => {
+			params.routerParams().query.subscribe(() => {
 				if (!this.isInProgress()) {
-					this.currentSearch(params.query());
+					this.currentSearch(params.routerParams().query());
 					this.executeSearch();
 				}
 			});
