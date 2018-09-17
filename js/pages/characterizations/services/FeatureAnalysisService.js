@@ -12,7 +12,7 @@ define([
     featureAnalysisDomainsData
 ) {
     function loadFeatureAnalysisList() {
-        return httpService.doGet(config.webAPIRoot + 'feature-analyses?size=100000').then(res => res.data);
+        return httpService.doGet(config.webAPIRoot + 'feature-analysis?size=100000').then(res => res.data);
     }
 
     function loadFeatureAnalysis() {
