@@ -37,10 +37,10 @@ define([
 	) {
 	class PlpManager extends AutoBind(Component) {
 		constructor(params) {
-			super();			
-			this.patientLevelPredictionId = params.currentPatientLevelPredictionId;
-			this.currentPlpAnalysis = params.currentPatientLevelPrediction;
-			this.patientLevelPredictionDirtyFlag = params.dirtyFlag;
+			super(params);		
+			this.patientLevelPredictionId = params.routerParams().currentPatientLevelPredictionId;
+			this.currentPlpAnalysis = params.routerParams().currentPatientLevelPrediction;
+			this.patientLevelPredictionDirtyFlag = params.routerParams().dirtyFlag;
 			this.loading = ko.observable(true);
 			this.tabMode = ko.observable('specification');
 			this.performanceTabMode = ko.observable('discrimination');

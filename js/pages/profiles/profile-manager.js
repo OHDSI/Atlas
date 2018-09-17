@@ -58,11 +58,11 @@ define([
 				this.filterHighlightsText = ko.observable();
 				this.loadingStatus = ko.observable('loading');
 
-				this.sourceKey = ko.observable(params.sourceKey);
-				this.personId = ko.observable(params.personId);
+				this.sourceKey = ko.observable(params.routerParams().sourceKey);
+				this.personId = ko.observable(params.routerParams().personId);
 				this.personRecords = ko.observableArray();
 
-				this.cohortDefinitionId = ko.observable(params.cohortDefinitionId);
+				this.cohortDefinitionId = ko.observable(params.routerParams().cohortDefinitionId);
 				this.currentCohortDefinition = ko.observable(null);
 				// if a cohort definition id has been specified, see if it is
 				// already loaded into the page model. If not, load it from the

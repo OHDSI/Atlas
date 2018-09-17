@@ -48,10 +48,10 @@ define([
 	) {
 		class CohortComparisonManager extends AutoBind(Component) {
 			constructor(params) {
-				super();
-				this.cohortComparisonId = params.currentCohortComparisonId;
-				this.cohortComparison = params.currentCohortComparison;
-				this.cohortComparisonDirtyFlag = params.dirtyFlag;
+				super(params);
+				this.cohortComparisonId = params.routerParams().currentCohortComparisonId;
+				this.cohortComparison = params.routerParams().currentCohortComparison;
+				this.cohortComparisonDirtyFlag = params.routerParams().dirtyFlag;
 				this.cohortComparisonResultsEnabled = config.cohortComparisonResultsEnabled;
 				this.useExecutionEngine = config.useExecutionEngine;
 				this.isExecutionEngineAvailable = config.api.isExecutionEngineAvailable;
