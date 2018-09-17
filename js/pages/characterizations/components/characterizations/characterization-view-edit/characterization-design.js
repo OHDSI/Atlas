@@ -32,7 +32,7 @@ define([
             this.addParam = this.addParam.bind(this);
             this.removeParam = this.removeParam.bind(this);
 
-            this.params = params;
+            this.design = params.design;
 
             this.loading = ko.observable(false);
 
@@ -111,9 +111,9 @@ define([
         }
 
         attachFeature({ id, name, description }) {
-            const ccDesign = this.params.design();
+            const ccDesign = this.design();
             this.showFeatureAnalysesBrowser(false);
-            this.params.design({
+            this.design({
                 ...ccDesign,
                 featureAnalyses: lodash.uniqBy(
                     [
@@ -126,17 +126,17 @@ define([
         }
 
         removeFeature(id) {
-            const ccDesign = this.params.design();
-            this.params.design({
+            const ccDesign = this.design();
+            this.design({
                 ...ccDesign,
                 featureAnalyses: ccDesign.featureAnalyses.filter(a => a.id !== parseInt(id)),
             });
         }
 
         addParam({ name, value }) {
-            const ccDesign = this.params.design();
+            const ccDesign = this.design();
             this.isParameterCreateModalShown(false);
-            this.params.design({
+            this.design({
                 ...ccDesign,
                 parameters: lodash.uniqBy(
                     [
@@ -149,8 +149,8 @@ define([
         }
 
         removeParam(name) {
-            const ccDesign = this.params.design();
-            this.params.design({
+            const ccDesign = this.design();
+            this.design({
                 ...ccDesign,
                 parameters: ccDesign.parameters.filter(a => a.name !== name),
             });

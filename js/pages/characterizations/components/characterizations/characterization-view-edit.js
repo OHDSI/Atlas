@@ -32,7 +32,8 @@ define([
         constructor(params) {
             super();
 
-            this.params = params;
+            this.routerParams = params.routerParams;
+            this.prevRouterParams = {};
 
             this.selectTab = this.selectTab.bind(this);
             this.setupDesign = this.setupDesign.bind(this);
@@ -53,16 +54,27 @@ define([
             this.sectionList = ['design', 'executions', 'results', 'utils'];
             this.selectedTab = ko.observable();
             this.componentParams = ko.observable({
-                characterizationId: params.characterizationId,
+                characterizationId: ko.computed(() => this.routerParams().characterizationId),
                 design: this.design,
-                executionId: this.params.subId,
+                executionId: ko.computed(() => this.routerParams().subId),
             });
 
-            params.characterizationId.subscribe(id => this.loadDesignData(id));
-            this.loadDesignData(params.characterizationId());
+            this.routerParamsSubscr = this.routerParams.subscribe(params => this.onRouterParamsChange(params));
+            this.onRouterParamsChange(this.routerParams());
+        }
 
-            params.section.subscribe(value => this.setupSection(value));
-            this.setupSection(params.section());
+        onRouterParamsChange(newRouterParams) {
+            if (newRouterParams.characterizationId !== this.prevRouterParams.characterizationId) {
+                this.loadDesignData(newRouterParams.characterizationId);
+            }
+            if (!newRouterParams.section || newRouterParams.section !== this.prevRouterParams.section) {
+                this.setupSection(newRouterParams.section);
+            }
+            this.prevRouterParams = newRouterParams;
+        }
+
+        dispose() {
+            this.routerParamsSubscr.dispose();
         }
 
         setupSection(section) {
@@ -97,11 +109,11 @@ define([
         }
 
         selectTab(index) {
-            commonUtils.routeTo('/cc/characterizations/' + this.params.characterizationId() + '/' + this.sectionList[index]);
+            commonUtils.routeTo('/cc/characterizations/' + this.componentParams().characterizationId() + '/' + this.sectionList[index]);
         }
 
         save() {
-            const ccId = this.params.characterizationId();
+            const ccId = this.componentParams().characterizationId();
 
             if (ccId < 1) {
                 CharacterizationService
@@ -121,7 +133,7 @@ define([
             if (confirm('Are you sure?')) {
                 this.loading(true);
                 CharacterizationService
-                    .deleteCharacterization(this.params.characterizationId())
+                    .deleteCharacterization(this.componentParams().characterizationId())
                     .then(res => {
                         this.loading(false);
                         this.closeCharacterization();

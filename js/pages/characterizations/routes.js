@@ -10,9 +10,9 @@ define(
             const characterizationViewEdit = new AuthorizedRoute((id, section, subId) => {
                 appModel.activePage(this.title);
                 router.setCurrentView('characterization-view-edit', {
-                    characterizationId: ko.observable(id),
-                    section: ko.observable(section),
-                    subId: ko.observable(subId),
+                    characterizationId: id,
+                    section: section,
+                    subId: subId,
                 });
             });
 
