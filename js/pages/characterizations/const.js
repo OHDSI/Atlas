@@ -12,12 +12,15 @@ define(
                 newEntityLabel: 'Characterization',
                 value: characterizationsTab,
             },
+            /*
+            TODO:
+            Disabled until full implementation is in place
             {
                 link: '#/cc/feature-analyses',
                 tabLabel: 'Feature analyses',
                 newEntityLabel: 'Feature analysis',
                 value: featureAnalysesTab,
-            },
+            },*/
         ];
 
         const ccGenerationStatus = {

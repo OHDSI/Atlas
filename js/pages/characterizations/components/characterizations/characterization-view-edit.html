@@ -5,11 +5,11 @@
         <i class="fa fa-shopping-cart"></i> Characterization
     </div>
     <div class="asset-heading">
-        <input type="text" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name" />
+        <input type="text" data-bind="attr: { disabled: $component.isEditPermitted() ? null : true }, textInput: design().name" />
         <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-success" data-bind="click: $component.save, css: {disabled:!canSave()}"><i class="fa fa-save"></i></button>
+            <button type="button" class="btn btn-sm btn-success" data-bind="click: $component.save, css: {disabled:!$component.isSavePermitted()}"><i class="fa fa-save"></i></button>
             <button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.closeCharacterization"><i class="fa fa-times"></i></button>
-            <button type="button" class="btn btn-sm btn-danger"  data-bind="click: $component.deleteCc, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
+            <button type="button" class="btn btn-sm btn-danger"  data-bind="click: $component.deleteCc, css: {disabled: !$component.isDeletePermitted()}"><i class="fa fa-trash-o"></i></button>
         </div>
     </div>
 

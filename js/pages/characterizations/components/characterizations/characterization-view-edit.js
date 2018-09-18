@@ -1,6 +1,7 @@
 define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
+    'pages/characterizations/services/PermissionService',
     'text!./characterization-view-edit.html',
     './characterization-view-edit/characterization-design',
     './characterization-view-edit/characterization-executions',
@@ -17,6 +18,7 @@ define([
 ], function (
     ko,
     CharacterizationService,
+    PermissionService,
     view,
     characterizationDesign,
     characterizationExecutions,
@@ -40,23 +42,22 @@ define([
             this.setupSection = this.setupSection.bind(this);
             this.loadDesignData = this.loadDesignData.bind(this);
 
-            this.designDirtyFlag = ko.observable({ isDirty: () => false });
+            this.characterizationId = ko.observable();
+            this.executionId = ko.observable();
             this.design = ko.observable({});
 
+            this.designDirtyFlag = ko.observable({ isDirty: () => false });
             this.loading = ko.observable(false);
-            this.canSave = ko.computed(() => {
-               return this.designDirtyFlag().isDirty();
-            });
-            this.canEdit = this.canDelete = ko.computed(function () {
-                return true;
-            });
+            this.isEditPermitted = this.isEditPermittedResolver();
+            this.isSavePermitted = this.isSavePermittedResolver();
+            this.isDeletePermitted = this.isDeletePermittedResolver();
 
             this.sectionList = ['design', 'executions', 'results', 'utils'];
             this.selectedTab = ko.observable();
             this.componentParams = ko.observable({
-                characterizationId: ko.computed(() => this.routerParams().characterizationId),
+                characterizationId: this.characterizationId,
                 design: this.design,
-                executionId: ko.computed(() => this.routerParams().subId),
+                executionId: this.executionId,
             });
 
             this.routerParamsSubscr = this.routerParams.subscribe(params => this.onRouterParamsChange(params));
@@ -65,16 +66,40 @@ define([
 
         onRouterParamsChange(newRouterParams) {
             if (newRouterParams.characterizationId !== this.prevRouterParams.characterizationId) {
-                this.loadDesignData(newRouterParams.characterizationId);
+                this.characterizationId(parseInt(newRouterParams.characterizationId));
+                if (newRouterParams.characterizationId) {
+                    this.loadDesignData(this.characterizationId());
+                } else {
+                    this.setupDesign({});
+                }
             }
-            if (!newRouterParams.section || newRouterParams.section !== this.prevRouterParams.section) {
+            if (newRouterParams.section !== this.prevRouterParams.section && newRouterParams.section) {
                 this.setupSection(newRouterParams.section);
+            }
+            if (newRouterParams.subId !== this.prevRouterParams.subId) {
+                this.executionId(newRouterParams.subId);
             }
             this.prevRouterParams = newRouterParams;
         }
 
         dispose() {
             this.routerParamsSubscr.dispose();
+        }
+
+        isEditPermittedResolver() {
+            return ko.computed(
+                () => (this.characterizationId() ? PermissionService.isPermittedUpdateCC(this.characterizationId()) : PermissionService.isPermittedCreateCC())
+            );
+        }
+
+        isSavePermittedResolver() {
+            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty())
+        }
+
+        isDeletePermittedResolver() {
+            return ko.computed(
+                () => (this.characterizationId() ? PermissionService.isPermittedDeleteCC(this.characterizationId()) : false)
+            );
         }
 
         setupSection(section) {
