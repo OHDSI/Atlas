@@ -309,7 +309,7 @@ define([
 				if (currentCohortComparisonId !== undefined) {
 					this.cohortComparisonId(currentCohortComparisonId);
 				}
-				if (cohortComparison !== undefined) {
+				if (currentCohortComparison !== undefined) {
 					this.cohortComparison(currentCohortComparison);
 				}
 				if (dirtyFlag !== undefined) {
