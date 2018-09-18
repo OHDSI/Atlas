@@ -163,7 +163,7 @@ define([
 
                 this.design(design);
 
-                const source = sourceList.find(s => execution.sourceKey);
+                const source = sourceList.find(s => s.sourceKey === execution.sourceKey);
 
                 const result = {
                     sourceId: source.sourceId,

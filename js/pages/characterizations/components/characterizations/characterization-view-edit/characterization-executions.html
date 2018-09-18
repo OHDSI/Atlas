@@ -51,7 +51,7 @@
                     </button>
                 </li>
                 <li data-bind="css: classes({ element: 'action' })">
-                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}), click: $component.goToResults">
+                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}), click: () => $component.goToLatestResults(sourceKey)">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
                         View latest result
                     </button>

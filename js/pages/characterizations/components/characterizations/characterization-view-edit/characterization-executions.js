@@ -34,10 +34,11 @@ define([
                 this.showExecutionDesign = this.showExecutionDesign.bind(this);
                 this.toggleSection = this.toggleSection.bind(this);
                 this.goToResults = this.goToResults.bind(this);
+                this.goToLatestResults = this.goToLatestResults.bind(this);
 
                 this.params = params;
 
-                const STATUS_PROCESSING = 'Processing';
+                this.characterizationId = params.characterizationId;
                 const currentHash = ko.computed(() => params.design().hash);
 
                 this.loading = ko.observable(false);
@@ -67,7 +68,7 @@ define([
                         title: 'Duration',
                         className: this.classes('col-exec-duration'),
                         render: (s, p, d) => {
-                            const durationSec = (d.endTime - d.startTime) / 1000;
+                            const durationSec = ((d.endTime || (new Date()).getTime())- d.startTime) / 1000;
                             return `${Math.floor(durationSec / 60)} min ${Math.round(durationSec % 60)} sec`;
                         }
                     },
@@ -96,7 +97,7 @@ define([
             loadData({ silently = false } = {}) {
                 !silently && this.loading(true);
 
-                const ccId = this.params.characterizationId();
+                const ccId = this.characterizationId();
 
                 Promise.all([
                     SourceService.loadSourceList(),
@@ -138,7 +139,7 @@ define([
                 }
 
                 confirmPromise
-                    .then(() => CharacterizationService.runGeneration(this.params.characterizationId(), source))
+                    .then(() => CharacterizationService.runGeneration(this.characterizationId(), source))
                     .then(() => this.loadData())
                     .catch(() => {});
             }
@@ -160,7 +161,14 @@ define([
             }
 
             goToResults(executionId) {
-                commonUtils.routeTo('/cc/characterizations/' + 1 + '/results/' + executionId);
+                commonUtils.routeTo('/cc/characterizations/' + this.characterizationId() + '/results/' + executionId);
+            }
+
+            goToLatestResults(sourceKey) {
+                const submissions = [ ...this.executionGroups().find(g => g.sourceKey === sourceKey).submissions ];
+                submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
+                const latestExecutedSubmission = submissions.find(s => s.status === this.ccGenerationStatusOptions.COMPLETED);
+                this.goToResults(latestExecutedSubmission.id);
             }
         }
 

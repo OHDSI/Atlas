@@ -3,10 +3,6 @@ define([
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
     'text!./characterization-view-edit.html',
-    './characterization-view-edit/characterization-design',
-    './characterization-view-edit/characterization-executions',
-    './characterization-view-edit/characterization-results',
-    './characterization-view-edit/characterization-utils',
     'appConfig',
     'webapi/AuthAPI',
     'providers/Component',
@@ -15,15 +11,14 @@ define([
     'less!./characterization-view-edit.less',
     'components/tabs',
     'faceted-datatable',
+    './characterization-view-edit/characterization-design',
+    './characterization-view-edit/characterization-exec-wrapper',
+    './characterization-view-edit/characterization-utils',
 ], function (
     ko,
     CharacterizationService,
     PermissionService,
     view,
-    characterizationDesign,
-    characterizationExecutions,
-    characterizationResults,
-    characterizationUtils,
     config,
     authApi,
     Component,
@@ -52,8 +47,7 @@ define([
             this.isSavePermitted = this.isSavePermittedResolver();
             this.isDeletePermitted = this.isDeletePermittedResolver();
 
-            this.sectionList = ['design', 'executions', 'results', 'utils'];
-            this.selectedTab = ko.observable();
+            this.selectedTabKey = ko.observable();
             this.componentParams = ko.observable({
                 characterizationId: this.characterizationId,
                 design: this.design,
@@ -103,12 +97,8 @@ define([
         }
 
         setupSection(section) {
-            const tabIdx = this.sectionList.indexOf(section);
-            if (tabIdx > -1) {
-                this.selectedTab(tabIdx);
-            } else {
-                commonUtils.routeTo('/cc/characterizations/' + this.componentParams().characterizationId() + '/design');
-            }
+            const tabKey = section === 'results' ? 'executions' : section;
+            this.selectedTabKey(tabKey);
         }
 
         setupDesign(design) {
@@ -133,8 +123,8 @@ define([
             }
         }
 
-        selectTab(index) {
-            commonUtils.routeTo('/cc/characterizations/' + this.componentParams().characterizationId() + '/' + this.sectionList[index]);
+        selectTab(index, { key }) {
+            commonUtils.routeTo('/cc/characterizations/' + this.componentParams().characterizationId() + '/' + key);
         }
 
         save() {

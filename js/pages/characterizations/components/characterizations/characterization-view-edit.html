@@ -16,26 +16,24 @@
     <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Cohort Characterization...'"></loading>
 
     <tabs data-bind="visible: !$component.loading()" params="
-        selectedTab: $component.selectedTab,
+        selectedTabKey: $component.selectedTabKey,
         selectTab: $component.selectTab,
         tabs: [
             {
                 title: 'Design',
+                key: 'design',
                 componentName: 'characterization-design',
                 componentParams: $component.componentParams,
             },
             {
                 title: 'Executions',
-                componentName: 'characterization-view-edit-executions',
-                componentParams: $component.componentParams,
-            },
-            {
-                titleIndex: 1,
-                componentName: 'characterization-view-edit-results',
+                key: 'executions',
+                componentName: 'characterization-exec-wrapper',
                 componentParams: $component.componentParams,
             },
             {
                 title: 'Utilities',
+                key: 'utilities',
                 componentName: 'characterization-view-edit-utils',
                 componentParams: $component.componentParams,
             },
