@@ -63,7 +63,7 @@ define([
 
     function runGeneration(ccId, sourcekey) {
         return httpService
-            .doPost(config.webAPIRoot + 'cohort-characterization/' + ccId + '/generate/' + sourcekey)
+            .doPost(config.webAPIRoot + 'cohort-characterization/' + ccId + '/generation/' + sourcekey)
             .then(res => res.data);
     }
 
