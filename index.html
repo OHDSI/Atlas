@@ -1,28 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="">
-	<meta name="author" content="">
-
-	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" type="text/css" href="js/styles/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap-theme.min.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/jquery-ui.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.min.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/buttons.dataTables.min.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/chart.css">
-	<link rel="stylesheet" type="text/css" href="js/styles/achilles.css">
-
-	<title data-bind="text: pageTitle">ATLAS</title>
-</head>
-
-<body class="app">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		
+		<title data-bind="text: pageTitle">ATLAS</title>
+	</head>
+	
+	<body class="app">
 	<div id="splash" data-bind="if:!initializationComplete()">
 		<div id="stage">
 			<img src="images/atlas_loading.svg" />
@@ -132,6 +123,9 @@
 			</div>
 		</div>
 	</div>
+	<!-- ko if: appInitializationStatus() === 'running' -->
+		<terms-and-conditions params="model: $data"></terms-and-conditions>
+	<!-- /ko -->
 	<script data-main="js/main" src="js/require.js"></script>
 </body>
 
