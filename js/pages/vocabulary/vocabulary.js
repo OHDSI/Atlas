@@ -18,7 +18,17 @@ define([
 	class Vocabulary extends Page {
 		constructor(params) {
 			super(params);
+
+			this.searchParams = {
+				query: ko.observable(),
+			};
 		}
+
+        onRouterParamsChanged({ query }) {
+			if (query !== undefined) {
+                this.searchParams.query(query);
+			}
+        }
 	}
 
 	return commonUtils.build('vocabulary', Vocabulary, view);

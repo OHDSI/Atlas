@@ -33,6 +33,7 @@ define([
         const changedParamsMap = changedParams.reduce((map, value) => { map[value[0]] = value[1]; return map; }, {});
         
         this.onRouterParamsChanged(changedParamsMap, newParams);
+        this.routerParams = newParams;
       });
     }
 

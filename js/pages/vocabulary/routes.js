@@ -9,14 +9,9 @@ define(
                 appModel.activePage(this.title);
                 require(['./vocabulary'], function (search) {
                     const view = 'vocabulary';
-                    let params = undefined;
-
-                    if (appModel.currentView() !== view) {
-                        params = {
-                            query: ko.observable(query ? unescape(query) : null),
-                        };
-                    }
-
+                    let params = {
+                        query:query ? unescape(query) : null,
+                    };
                     router.setCurrentView(view, params);
                 });
             });
