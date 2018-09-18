@@ -7,11 +7,12 @@ define(
           appModel.activePage(this.title);
           require(['./profile-manager', 'components/cohort-definition-browser'], function () {
             path = path.split("/");
-            router.setCurrentView('profile-manager', {
-              sourceKey: (path[0] || null),
-              personId: (path[1] || null),
-              cohortDefinitionId: (path[2] || null)
-            });
+            const params = {};
+            params.sourceKey = (path[0] || null);
+            params.personId = (path[1] || null);
+            params.cohortDefinitionId = (path[2] || null);
+
+            router.setCurrentView('profile-manager', params);
           });
         }),
       };

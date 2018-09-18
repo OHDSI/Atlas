@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./vocabulary.html',
-	'providers/Component',
+	'providers/Page',
 	'./components/search',
 	'./components/import',
 	'utils/CommonUtils',
@@ -10,16 +10,14 @@ define([
 ], function (
 	ko,
 	view,
-	Component,
+	Page,
 	searchTab,
 	importTab,
 	commonUtils
 ) {
-	class Vocabulary extends Component {
+	class Vocabulary extends Page {
 		constructor(params) {
 			super(params);
-			this.componentParams = ko.computed(() => params);
-			return this;
 		}
 	}
 

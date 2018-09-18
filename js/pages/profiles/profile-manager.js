@@ -9,7 +9,7 @@ define([
 	'atlas-state',
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinition',
-	'providers/Component',
+	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'./const',
@@ -33,7 +33,7 @@ define([
 		sharedState,
 		CohortDefinition,
 		cohortDefinitionService,
-		Component,
+		Page,
 		AutoBind,
 		commonUtils,
 		constants,
@@ -49,7 +49,7 @@ define([
 			() => []
 		];
 
-		class ProfileManager extends AutoBind(Component) {
+		class ProfileManager extends AutoBind(Page) {
 			constructor(params) {
 				super(params);
 				this.model = params.model;

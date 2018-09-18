@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./plp-manager.html',
-	'providers/Component',
+	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'services/http',
@@ -20,7 +20,7 @@ define([
 	function (
 		ko,
 		view,
-		Component,
+		Page,
 		AutoBind,
 		commonUtils,
 		httpService,
@@ -35,12 +35,12 @@ define([
 		clipboard,
 		sharedState,
 	) {
-	class PlpManager extends AutoBind(Component) {
+	class PlpManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);		
-			this.patientLevelPredictionId = params.routerParams().currentPatientLevelPredictionId;
-			this.currentPlpAnalysis = params.routerParams().currentPatientLevelPrediction;
-			this.patientLevelPredictionDirtyFlag = params.routerParams().dirtyFlag;
+			this.patientLevelPredictionId = ko.observable();
+			this.currentPlpAnalysis = ko.observable();
+			this.patientLevelPredictionDirtyFlag = ko.observable();
 			this.loading = ko.observable(true);
 			this.tabMode = ko.observable('specification');
 			this.performanceTabMode = ko.observable('discrimination');
@@ -70,15 +70,31 @@ define([
 					&& this.patientLevelPredictionDirtyFlag().isDirty());
 			});			
 			this.canDelete = ko.pureComputed(() => {
-				return authApi.isPermittedDeletePlp(this.patientLevelPredictionId);
+				return authApi.isPermittedDeletePlp(this.patientLevelPredictionId());
 			});
 			this.canCopy = ko.pureComputed(() => {
-				return authApi.isPermittedCopyPlp(this.patientLevelPredictionId);
+				return authApi.isPermittedCopyPlp(this.patientLevelPredictionId());
 			});
 
 			this.plpResultsEnabled = config.plpResultsEnabled;
 			this.isExecutionEngineAvailable = config.api.isExecutionEngineAvailable;
 			this.useExecutionEngine = config.useExecutionEngine;
+		}
+
+		onRouterParamsChanged({					
+			currentPatientLevelPredictionId,
+			currentPatientLevelPrediction,
+			dirtyFlag,
+		}) {
+			if (currentPatientLevelPredictionId !== undefined) {
+				this.patientLevelPredictionId(currentPatientLevelPredictionId);
+			}
+			if (currentPatientLevelPrediction !== undefined) {
+				this.currentPlpAnalysis(currentPatientLevelPrediction);
+			}
+			if (dirtyFlag !== undefined) {
+				this.patientLevelPredictionDirtyFlag(dirtyFlag);
+			}
 			
 			// startup actions
 			if (this.patientLevelPredictionId() == 0 && this.currentPlpAnalysis() == null) {

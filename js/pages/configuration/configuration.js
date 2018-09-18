@@ -1,7 +1,7 @@
 define([
   'knockout',
   'text!./configuration.html',
-  'providers/Component',
+  'providers/Page',
   'providers/AutoBind',
   'utils/CommonUtils',
   'appConfig',
@@ -13,7 +13,7 @@ define([
 ], function (
   ko,
   view,
-  Component,
+  Page,
   AutoBind,
   commonUtils,
   config,
@@ -21,7 +21,7 @@ define([
   sourceApi,
   sharedState
 ) {
-	class Configuration extends AutoBind(Component) {
+	class Configuration extends AutoBind(Page) {
     constructor(params) {
       super(params);
       this.config = config;

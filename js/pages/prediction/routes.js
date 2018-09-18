@@ -27,11 +27,12 @@ define(
             'components/atlas.cohort-editor'
           ], function () {
             appModel.currentPatientLevelPredictionId(+modelId);
-            router.setCurrentView('plp-manager', {
-              currentPatientLevelPredictionId: appModel.currentPatientLevelPredictionId,
-              currentPatientLevelPrediction: appModel.currentPatientLevelPrediction,
-              dirtyFlag: appModel.currentPatientLevelPredictionDirtyFlag,
-            });
+            const params = {};
+            params.currentPatientLevelPredictionId = appModel.currentPatientLevelPredictionId();
+            params.currentPatientLevelPrediction = appModel.currentPatientLevelPrediction();
+            params.dirtyFlag = appModel.currentPatientLevelPredictionDirtyFlag();
+
+            router.setCurrentView('plp-manager', params);
           });
         }),
       };
