@@ -125,10 +125,10 @@ define([
 					}));
 				};
 				this.loadConceptSets(this.cohortDefSource());
-	
+
 				this.sourceKeyCaption = ko.computed(() => {
 					return this.sourceKey() || "Select a Data Source";
-				});				
+				});
 				this.personRequests = {};
 				this.personRequest;
 				this.xfObservable = ko.observable();
@@ -138,7 +138,7 @@ define([
 				this.filteredRecs = ko.observableArray([]);
 				this.filtersChanged = ko.observable();
 				this.facetsObs = ko.observableArray([]);
-				this.highlightRecs = ko.observableArray([]);				
+				this.highlightRecs = ko.observableArray([]);
 				this.getGenderClass = ko.computed(() => {
 					if (this.person()) {
 						if (this.person()
@@ -190,17 +190,17 @@ define([
 				this.highlightData = ko.observableArray();
 				this.defaultColor = '#888';this.words = ko.computed(() => {
 					if (!this.xfObservable()) {
-						return;	
+						return;
 					}
 					if (this.xfDimensions.length == 0) {
 						this.xfDimensions.push(this.xfObservable().dimension(d => d.startDay));
-					}	
-					// var recs = this.xfObservable().allFiltered();	
+					}
+					// var recs = this.xfObservable().allFiltered();
 					// var conceptSets = this.conceptSets();
-					this.dimensionSetup(this.dimensions.concepts, this.xfObservable());	
+					this.dimensionSetup(this.dimensions.concepts, this.xfObservable());
 					const stopWords = [
 						'Outpatient Visit', 'No matching concept',
-					];	
+					];
 					let words = this.dimensions.concepts.group.all()
 						.filter(d => {
 							let filtered = true;
@@ -232,7 +232,7 @@ define([
 						this.highlight([]);
 				});
 				this.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
-	
+
 				this.showSection = {
 					profileChart: ko.observable(true),
 					datatable: ko.observable(true),
@@ -252,7 +252,7 @@ define([
 					title: 'Total Records',
 					data: 'count'
 				}];
-	
+
 				this.columns = [{
 						title: 'Concept Id',
 						data: 'conceptId'
@@ -276,19 +276,19 @@ define([
 				];
 				// d3.schemePaired
 				this.palette = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ff9', '#b15928'];
-	
-	
+
+
 				this.sourceKey.subscribe((sourceKey) => {
 					document.location = constants.paths.source(sourceKey);
 				});
 				this.personId.subscribe((personId) => {
 					document.location = constants.paths.person(this.sourceKey(), personId);
 				});
-					
+
 				$('.highlight-filter').on('click', function (evt) {
 					return false;
 				});
-				
+
 				this.highlightOptions = {};
 				this.options = {
 					Facets: [{
@@ -302,8 +302,14 @@ define([
 				if (this.personId()) {
 					this.loadPerson();
 				}
+
+				//ANNOTATION
+				$('.annotation-toggle').on('click', function (evt) {
+					$('.profile-manager__annotation').toggleClass('open');
+				});
+
 			}
-			
+
 			loadPerson () {
 				this.cantFindPerson(false);
 				this.loadingPerson(true);
@@ -363,7 +369,7 @@ define([
 			removeHighlight () {
 				this.highlight([]);
 			}
-			
+
 		  highlight (recs, evt) {
 				if (recs && recs.length > 0) {
 					this.highlightEnabled(true);
@@ -384,7 +390,7 @@ define([
 				dim.group.reduce(...reduceToRecs);
 				dim.groupAll = dim.dimension.groupAll();
 				dim.groupAll.reduce(...reduceToRecs);
-			}			
+			}
 
 			dispToggle (pm, evt) {
 				let section = evt.target.value;
@@ -393,7 +399,7 @@ define([
 
 			swatch (d) {
 				return '<div class="swatch" style="background-color:' + d + '"></div>';
-			}			
+			}
 
 			daysBeforeIndex (d) {
 				if (d.startDay >= -30 && d.startDay <= 0) {
@@ -444,7 +450,7 @@ define([
 			highlightRowClick (data, evt, row) {
 				evt.stopPropagation();
 				$(row).toggleClass('selected');
-			}			
+			}
 		}
 
 		return commonUtils.build('profile-manager', ProfileManager, view);

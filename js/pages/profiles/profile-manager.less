@@ -1,4 +1,7 @@
 .profile-manager {
+	height: auto;
+	overflow: hidden;
+	display: flex;
 	&__chart {
 		display: inline-block;
 		width: 100%;
@@ -20,14 +23,14 @@
 			fill-opacity: 0.15;
 			shape-rendering: crispEdges;
 		}
-		
+
 		& .observation-period {
 			fill: none;
 			stroke: #b7cbdc;
 			opacity: 0.7;
 			stroke-width: 2;
 		}
-		
+
 		& svg {
 			display: inline-block;
 			left: 0;
@@ -36,7 +39,7 @@
 		& .axis text {
 			font-size: 10px;
 		}
-		
+
 		& .axis path, .axis line {
 				stroke: #666 !important;
 				stroke-width: 1px !important;
@@ -81,18 +84,18 @@
 				fill:rgb(255,255,153);
 			}
 		}
-		
+
 		& rect {
 			&.point {
 				opacity: 0.8;
 				fill: #337AB7;
 				stroke-width:1px;
 			}
-			
+
 			&.dim {
 				opacity: 0.2 !important;
 			}
-			
+
 			&.category {
 				fill: #222;
 				stroke:#eee;
@@ -158,7 +161,7 @@
 				font-weight:normal;
 			}
 			&.label {
-				fill: #ccc;				
+				fill: #ccc;
 				&.highlighted {
 					font-size:1.1em;
 					stroke-width:0.3
@@ -169,7 +172,7 @@
 			display: inline-block;
 		}
 	}
-	
+
 	& #wordcloud {
 		overflow: auto;
 		height: 100%;
@@ -191,15 +194,42 @@
 	}
 
 	&__profile-control {
+		width: 100%;
+		overflow: hidden;
 		& .feFilter .facetScrollBox {
 			max-height: none;
 		}
 	}
-		
+
+	&__annotation {
+		width: 300px;
+		float: right;
+		margin-right: -300px;
+		transition: margin 700ms;
+		background-color: green;
+		position: relative;
+		&.open {
+			margin-right: 0px;
+		}
+		.annotation-toggle {
+			position: absolute;
+    	left: 0px;
+			transform: rotate(270deg);
+			left: -48px;
+			top: 66px;
+			text-transform: uppercase;
+			border-bottom-left-radius: 0px;
+			border-bottom-right-radius: 0px;
+			&:focus {
+				outline: 0;
+			}
+		}
+	}
+
 	&__profile-manager-table {
 		padding-right: 10px;
 	}
-	
+
 	& .highlight-pane {
 		text-align: center;
 	}
