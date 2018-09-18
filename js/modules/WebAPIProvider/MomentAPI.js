@@ -32,12 +32,20 @@ define(function (require, exports) {
     return m.isValid() ? m.format(DATE_TIME_FORMAT) : EMPTY_DATE;
   }
 
+  function diffInDays(fromDate, toDate) {
+    const fd = moment(fromDate);
+    const td = moment(toDate);
+
+    return td.diff(fd, 'days');
+  }
+
   var api = {
     formatDateTime: formatDateTime,
     formatDate: formatDate,
     formatDuration: formatDuration,
     formatDateTimeUTC: formatDateTimeUTC,
     formatDateTimeWithFormat: formatDateTimeWithFormat,
+    diffInDays,
   };
 
   return api;

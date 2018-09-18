@@ -1,6 +1,7 @@
 define(
   (require, factory) => {
     const { AuthorizedRoute } = require('providers/Route');
+
     function routes(appModel, router) {
       return {        
         '/estimation': new AuthorizedRoute(() => {
@@ -20,11 +21,13 @@ define(
             'components/cohort-comparison-multi-r-code'
           ], function () {
             appModel.currentCohortComparisonId(+cohortComparisonId);
-            router.setCurrentView('cohort-comparison-manager', {
-              currentCohortComparisonId: appModel.currentCohortComparisonId,
-              currentCohortComparison: appModel.currentCohortComparison,
-              dirtyFlag: appModel.currentCohortComparisonDirtyFlag,
-            });
+
+            const params = {};
+            params.currentCohortComparisonId = appModel.currentCohortComparisonId();
+            params.currentCohortComparison = appModel.currentCohortComparison();
+            params.dirtyFlag = appModel.currentCohortComparisonDirtyFlag();
+
+            router.setCurrentView('cohort-comparison-manager', params);
           });
         }),
       };

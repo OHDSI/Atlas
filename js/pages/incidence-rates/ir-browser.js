@@ -4,7 +4,7 @@ define([
   'appConfig',
   'services/IRAnalysis',
   'webapi/AuthAPI',
-  'providers/Component',
+  'providers/Page',
   'utils/CommonUtils',
   './const',
   'components/ac-access-denied',
@@ -17,11 +17,11 @@ define([
   config,
   IRAnalysisService,
   authApi,
-  Component,
+  Page,
   commonUtils,
   constants
 ) {
-  class IRBrowser extends Component {
+  class IRBrowser extends Page {
     constructor(params) {
       super(params);      
       this.loading = ko.observable(false);

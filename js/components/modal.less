@@ -5,4 +5,12 @@
 	&__modal-body {
 		padding: 1rem;
 	}
+
+	&--unclosable {
+		pointer-events: none;
+
+		& .modal-content {
+			pointer-events: all;
+		}
+	}
 }

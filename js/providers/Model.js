@@ -17,7 +17,7 @@ define(
 		'lodash',
 		'd3',
 		'webapi/AuthAPI',
-        'webapi/MomentAPI',
+		'webapi/MomentAPI',
 		'less!app.less',
 	],
 	(
@@ -354,7 +354,10 @@ define(
 			*/
 			}
 
-			handleViewChange(view, routerParams = {}) {
+			handleViewChange(view, routerParams = false) {
+				if (view !== this.currentView()) {
+					this.currentView('loading');
+				}
 				if (routerParams !== false) {
 					this.routerParams(routerParams);
 				}

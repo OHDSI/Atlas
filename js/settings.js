@@ -92,7 +92,7 @@ const settingsObject = {
     "lodash": "assets/lodash.4.15.0.full",
     "lscache": "assets/lscache.min",
     "localStorageExtender": "assets/localStorageExtender",
-    "appConfig": "config",
+    "appConfig": "config/app.config",
     "prism": "assets/prism",
     "js-cookie": "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min",
 

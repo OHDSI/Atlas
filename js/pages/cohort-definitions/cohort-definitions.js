@@ -3,7 +3,7 @@ define([
 	'text!./cohort-definitions.html',
 	'appConfig',
 	'webapi/AuthAPI',
-	'providers/Component',
+	'providers/Page',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
 	'databindings',
@@ -14,11 +14,11 @@ define([
 	view,
 	config,
 	authApi,
-	Component,
+	Page,
 	commonUtils,
 	constants,
 ) {
-	class CohortDefinitions extends Component {
+	class CohortDefinitions extends Page {
 		constructor(params) {
 			super(params);
 			this.model = params.model;
