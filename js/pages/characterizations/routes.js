@@ -12,7 +12,7 @@ define(
                 router.setCurrentView('characterization-view-edit', {
                     characterizationId: id,
                     section: section || 'design',
-                    subId: subId,
+                    subId: subId || null,
                 });
             });
 

@@ -5,7 +5,7 @@ define([
     'text!./characterization-view-edit.html',
     'appConfig',
     'webapi/AuthAPI',
-    'providers/Component',
+    'providers/Page',
     'utils/CommonUtils',
     'assets/ohdsi.util',
     'less!./characterization-view-edit.less',
@@ -21,16 +21,13 @@ define([
     view,
     config,
     authApi,
-    Component,
+    Page,
     commonUtils,
     ohdsiUtil
 ) {
-    class CharacterizationViewEdit extends Component {
+    class CharacterizationViewEdit extends Page {
         constructor(params) {
-            super();
-
-            this.routerParams = params.routerParams;
-            this.prevRouterParams = {};
+            super(params);
 
             this.selectTab = this.selectTab.bind(this);
             this.setupDesign = this.setupDesign.bind(this);
@@ -53,31 +50,25 @@ define([
                 design: this.design,
                 executionId: this.executionId,
             });
-
-            this.routerParamsSubscr = this.routerParams.subscribe(params => this.onRouterParamsChange(params));
-            this.onRouterParamsChange(this.routerParams());
         }
 
-        onRouterParamsChange(newRouterParams) {
-            if (newRouterParams.characterizationId !== this.prevRouterParams.characterizationId) {
-                this.characterizationId(parseInt(newRouterParams.characterizationId));
-                if (newRouterParams.characterizationId) {
+        onRouterParamsChanged({ characterizationId, section, subId }) {
+            if (characterizationId !== undefined) {
+                this.characterizationId(parseInt(characterizationId));
+                if (characterizationId) {
                     this.loadDesignData(this.characterizationId());
                 } else {
                     this.setupDesign({});
                 }
             }
-            if (newRouterParams.section !== this.prevRouterParams.section && newRouterParams.section) {
-                this.setupSection(newRouterParams.section);
-            }
-            if (newRouterParams.subId !== this.prevRouterParams.subId) {
-                this.executionId(newRouterParams.subId);
-            }
-            this.prevRouterParams = newRouterParams;
-        }
 
-        dispose() {
-            this.routerParamsSubscr.dispose();
+            if (section !== undefined) {
+                this.setupSection(section);
+            }
+
+            if (subId !== undefined) {
+                this.executionId(subId);
+            }
         }
 
         isEditPermittedResolver() {
