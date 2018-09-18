@@ -2,7 +2,7 @@ define(
   (require, factory) => {
     const { Route } = require('providers/Route');
     const authApi = require('webapi/AuthAPI');
-    function routes(appModel) {
+    function routes(appModel, router) {
       return {
         '/': new Route(() => {
           appModel.activePage(this.title);
@@ -11,7 +11,7 @@ define(
         '/home': new Route(() => {
           appModel.activePage(this.title);
           require(['home'], function () {
-            appModel.currentView('home');
+            router.setCurrentView('home');
           });
         }),
         '/welcome/:token': new Route((token) => {

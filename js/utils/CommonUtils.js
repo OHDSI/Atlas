@@ -2,10 +2,20 @@ define(
 	(require, factory) => {
 		const ko = require('knockout');
 		const sharedState = require('atlas-state');
+		const Page = require('providers/Page');
 		
 		const build = function(name, viewModelClass, template) {
 			const component = {
-				viewModel: viewModelClass,
+				viewModel: {
+					createViewModel: (params, info) => {
+						const vm = new viewModelClass(params, info);
+						if (vm instanceof Page) {
+							vm.onPageCreated();
+						}
+
+						return vm;
+					},
+				},
 				template,
 			};
 			viewModelClass.prototype.componentName = name;

@@ -51,7 +51,7 @@ define(
 					httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
 					httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
 					authApi.isAuthenticated.subscribe(executionService.checkExecutionEngineStatus);
-					this.router.setCurrentViewHandler(view => this.pageModel.currentView(view));
+					this.router.setCurrentViewHandler(this.pageModel.handleViewChange);
 					this.router.setModelGetter(() => this.pageModel);
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());

@@ -1,6 +1,6 @@
 define(
   (require, factory) => {
-    function routes(appModel) {
+    function routes(appModel, router) {
       const { AuthorizedRoute } = require('providers/Route');
       return {        
         '/plp': new AuthorizedRoute(() => {
@@ -10,7 +10,7 @@ define(
             // 'plp-manager',
             // 'plp-inspector'
           ], function () {
-            appModel.currentView('plp-browser');
+            router.setCurrentView('plp-browser');
           });
         }),
         '/plp/:modelId:': new AuthorizedRoute((modelId) => {
@@ -27,12 +27,12 @@ define(
             'components/atlas.cohort-editor'
           ], function () {
             appModel.currentPatientLevelPredictionId(+modelId);
-            appModel.componentParams({
-              currentPatientLevelPredictionId: appModel.currentPatientLevelPredictionId,
-              currentPatientLevelPrediction: appModel.currentPatientLevelPrediction,
-              dirtyFlag: appModel.currentPatientLevelPredictionDirtyFlag,
-            });
-            appModel.currentView('plp-manager');
+            const params = {};
+            params.currentPatientLevelPredictionId = appModel.currentPatientLevelPredictionId();
+            params.currentPatientLevelPrediction = appModel.currentPatientLevelPrediction();
+            params.dirtyFlag = appModel.currentPatientLevelPredictionDirtyFlag();
+
+            router.setCurrentView('plp-manager', params);
           });
         }),
       };

@@ -1,34 +1,31 @@
 define(
   (require, factory) => {
     const { AuthorizedRoute } = require('providers/Route');
-    function routes(appModel) {
+    function routes(appModel, router) {
       return {
         '/configure': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./configuration', './sources/source-manager'], function () {
-            appModel.currentView('ohdsi-configuration');
+            router.setCurrentView('ohdsi-configuration');
           });
         }),
         '/roles': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./roles/roles'], function () {
-            appModel.currentView('roles');
+            router.setCurrentView('roles');
           });
         }),
         '/role/:id': new AuthorizedRoute((id) => {
           appModel.activePage(this.title);
           require(['./roles/role-details'], function () {
             appModel.currentRoleId(id);
-            appModel.currentView('role-details');
+            router.setCurrentView('role-details');
           });
         }),
         'import': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./users-import/users-import'], function() {
-            appModel.componentParams = {
-              model: appModel,
-            };
-            appModel.currentView('users-import');
+            router.setCurrentView('users-import');
           });
         }),
         '/source/:id': new AuthorizedRoute((id) => {
@@ -37,7 +34,7 @@ define(
             if (id !== 'new') {
               appModel.selectedSourceId(id);
             }
-            appModel.currentView('source-manager');
+            router.setCurrentView('source-manager');
           });
         }),
       };

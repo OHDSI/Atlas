@@ -56,6 +56,7 @@ define(
 				this.classes = bemHelper.run.bind(bemHelper);
 				this.activePage = ko.observable();
 				this.componentParams = ko.observable({});
+				this.routerParams = ko.observable();
 				this.pendingSearch = ko.observable(false);
 				this.supportURL = config.supportUrl;
 				this.targetSupportURL = config.supportUrl.startsWith("#") ? "_this" : "_blank";
@@ -65,6 +66,7 @@ define(
 				this.metatrix = constants.metatrix;
 				this.relatedSourcecodesColumns = constants.getRelatedSourcecodesColumns(this);
 				this.enableRecordCounts = ko.observable(true);
+				this.loading = ko.observable(false);
 				this.loadingIncluded = ko.observable(false);
 				this.loadingSourcecodes = ko.observable(false);
 				this.loadingEvidence = ko.observable(false);
@@ -350,6 +352,16 @@ define(
 						}
 					});
 			*/
+			}
+
+			handleViewChange(view, routerParams = false) {
+				if (view !== this.currentView()) {
+					this.currentView('loading');					
+				}
+				if (routerParams !== false) {
+					this.routerParams(routerParams);
+				}
+				this.currentView(view);
 			}
 
 			// for the current selected concepts:

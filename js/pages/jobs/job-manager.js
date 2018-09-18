@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./job-manager.html',
-	'providers/Component',
+	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'services/Jobs',
@@ -15,7 +15,7 @@ define([
 	function (
 		ko,
 		view,
-		Component,
+		Page,
 		AutoBind,
 		commonUtils,
 		jobsService,
@@ -23,7 +23,7 @@ define([
 		momentApi,
 		authApi
 	) {
-	class JobManager extends AutoBind(Component) {
+	class JobManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);			
 			this.model = params.model;
