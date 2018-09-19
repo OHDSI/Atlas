@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./conceptset-manager.html',
-	'providers/Component',
+	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'appConfig',
@@ -32,7 +32,7 @@ define([
 ], function (
 	ko,
 	view,
-	Component,
+	Page,
 	AutoBind,
 	commonUtils,
 	config,
@@ -44,7 +44,7 @@ define([
 	conceptSetService,
 	authApi
 ) {
-	class ConceptsetManager extends AutoBind(Component) {
+	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
 			this.componentParams = params;			
@@ -121,7 +121,7 @@ define([
 				}
 			];
 			this.selectedTab = ko.pureComputed(() => {
-				return this.getIndexByComponentName(params.mode);
+				return this.getIndexByComponentName(this.model.currentConceptSetMode());
 			});
 			this.activeUtility = ko.observable("");
 		}

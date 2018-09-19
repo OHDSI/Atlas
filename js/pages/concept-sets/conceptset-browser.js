@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./conceptset-browser.html',
-	'providers/Component',
+	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'components/heading',
@@ -11,11 +11,11 @@ define([
 ], function (
 	ko,
 	view,
-	Component,
+	Page,
 	AutoBind,
 	commonUtils,
 ) {
-	class ConceptsetBrowser extends AutoBind(Component) {
+	class ConceptsetBrowser extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
 			this.model = params.model;
