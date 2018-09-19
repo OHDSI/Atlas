@@ -10,7 +10,7 @@ define(
         }),
         '/home': new Route(() => {
           appModel.activePage(this.title);
-          require(['home'], function () {
+          require(['./home'], function () {
             router.setCurrentView('home');
           });
         }),
