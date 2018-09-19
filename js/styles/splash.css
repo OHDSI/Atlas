@@ -1,0 +1,43 @@
+body.splash {
+  font-size: 12px;
+  margin: 0px;
+  padding: 0px;
+  background: none;
+}
+
+#splash {
+  padding-top: 50px;
+}
+
+#splash #heading {
+  color: #20425A;
+  font-size: 20px;
+  text-align: center;
+  font-variant: small-caps;
+  padding-top: 10px;
+  letter-spacing: 5px;
+}
+
+#splash #status {
+  color: #A5B3BD;
+  font-size: 14px;
+  text-align: center;
+  font-variant: small-caps;
+  padding-top: 10px;
+}
+
+#splash a, #splash a:hover {
+  text-shadow: #888 1px 1px 1px;
+  text-decoration: none;
+}	
+div#stage {
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 25px;
+  width: 400px;
+}
+
+div#stage img {
+  width: 400px;
+  height: 500px;
+}
