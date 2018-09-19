@@ -19,6 +19,17 @@ define([
 
 			this.settings = params.settings;
             this.options = options.positiveControlSynthesisArgs;
+			this.showCovariateSelector = ko.observable(false);
+			this.showControlDisplay = ko.observable(false);
+			this.showPriorDisplay = ko.observable(false);
+		}
+
+		toggleControlDisplay() {
+			this.showControlDisplay(!this.showControlDisplay());
+		}
+
+		togglePriorDisplay() {
+			this.showPriorDisplay(!this.showPriorDisplay());
 		}
 	}
 

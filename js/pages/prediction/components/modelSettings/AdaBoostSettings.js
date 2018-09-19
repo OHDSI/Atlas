@@ -1,6 +1,6 @@
 define([
 	'knockout', 
-	'text!./AdaBoost.html',	
+	'text!./AdaBoostSettings.html',	
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
@@ -9,7 +9,7 @@ define([
 	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class AdaBoost extends ModelSettingsEditorComponent {
+	class AdaBoostSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 
@@ -24,5 +24,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('AdaBoost', AdaBoost, view);
+	return commonUtils.build('AdaBoostSettings', AdaBoostSettings, view);
 });

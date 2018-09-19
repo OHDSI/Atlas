@@ -166,7 +166,7 @@
                       <i class="fa fa-cog"></i> Execution Settings
                     </div>
                     <div class="panel-body">
-                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis.getPlpDataArgs"></execution-settings-editor>
+                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis.getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis.runPlpArgs"></execution-settings-editor>
                     </div>
                   </div>
               </div>
@@ -248,7 +248,10 @@
           </div>
           <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'export'" class="tab-pane">
             <div class="paddedWrapper">
+              KO.toJSON
               <pre id="patientLevelPredictionAnalysisExport" data-bind="html: $component.patientLevelPredictionAnalysisJson(), selectOnFocus: {events: ['click']}"></pre>
+              JSON.stringify <button class="btn btn-sm" data-bind="click: prepForSave">Prep for save</button> 
+              <pre id="patientLevelPredictionAnalysisExportJSON" data-bind="html: $component.patientLevelPredictionAnalysisForWebAPI(), selectOnFocus: {events: ['click']}"></pre>
             </div>
         </div>
         </div>

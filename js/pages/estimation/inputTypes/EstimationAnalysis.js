@@ -3,15 +3,14 @@ define(function (require, exports) {
     var ko = require('knockout');
     var CohortDefinition = require('../../../components/cohortbuilder/CohortDefinition');
     var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
+    var ConceptSetCrossReference = require('./ConceptSetCrossReference');
     var PositiveControlSynthesisArgs = require("./PositiveControlSynthesisArgs");
     var NegativeControl = require('./NegativeControl');
     var NegativeControlExposureCohortDefinition = require('./NegativeControlExposureCohortDefinition'); 
     var NegativeControlOutcomeCohortDefinition = require('./NegativeControlOutcomeCohortDefinition');
     var EstimationAnalysisSettings = require('./EstimationAnalysisSettings');
 
-    // TODO LATER: Update constructor to support estimationType as a parameter
-    // to support creating different estimation analysis specifications
-	function EstimationAnalysis(data) {
+	function EstimationAnalysis(data, estimationType, defaultCovariateSettings) {
 		var self = this;
 		data = data || {};
 
@@ -27,12 +26,13 @@ define(function (require, exports) {
         self.modifiedDate = data.modifiedDate;
         self.cohortDefinitions = ko.observableArray(data.cohortDefinitions && data.cohortDefinitions.map(function(d) { return new CohortDefinition(d) }));
         self.conceptSets = ko.observableArray(data.conceptSets && data.conceptSets.map(function(d) { return new ConceptSet(d) }));
+        self.conceptSetCrossReference = ko.observableArray(data.conceptSetCrossReference && data.conceptSetCrossReference.map(function(d) { return new ConceptSetCrossReference(d) }));
         self.negativeControls  = ko.observableArray(data.negativeControls && data.negativeControls.map(function(d) { return new NegativeControl(d) }));
         self.doPositiveControlSynthesis = ko.observable(data.doPositiveControlSynthesis || false);
-        self.positiveControlSynthesisArgs = new PositiveControlSynthesisArgs(data.positiveControlSynthesisArgs);
+        self.positiveControlSynthesisArgs = new PositiveControlSynthesisArgs(data.positiveControlSynthesisArgs, defaultCovariateSettings);
         self.negativeControlOutcomeCohortDefinition = new NegativeControlOutcomeCohortDefinition(data.negativeControlOutcomeCohortDefinition);
         self.negativeControlExposureCohortDefinition = new NegativeControlExposureCohortDefinition(data.negativeControlExposureCohortDefinition);
-        self.estimationAnalysisSettings = new EstimationAnalysisSettings(data.estimationAnalysisSettings);
+        self.estimationAnalysisSettings = new EstimationAnalysisSettings(data.estimationAnalysisSettings, estimationType, defaultCovariateSettings);
 	}
 	
 	return EstimationAnalysis;

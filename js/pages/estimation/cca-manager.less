@@ -78,3 +78,79 @@ input.dateField {
 .analysisName {
 	font-size: 14px;
 }
+
+.panel-heading-collapsible {
+	cursor: pointer;
+}
+
+.panel-heading  span:before {
+	font-family: 'Glyphicons Halflings';
+	content: "\e114";
+	float: right;
+	transition: all 0.5s;
+}
+
+.panel-heading.active span:before {
+	 -webkit-transform: rotate(180deg);
+	 -moz-transform: rotate(180deg);
+	 transform: rotate(180deg);
+}
+
+/* Tooltip container */
+.tool-tip {
+	cursor: help;
+    position: relative;
+    display: inline-block;
+	border-bottom: 1px dotted #ccc;
+	color: #006080;
+}
+
+/* Tooltip text */
+.tool-tip .tooltiptext {
+    visibility: hidden;
+    position: absolute;
+    width: 400px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+	padding: 5px;
+	margin: 5px;
+    border-radius: 6px;
+    z-index: 1;
+    opacity: 0;
+	transition: opacity .6s;
+	
+	top: 105%;
+	left: 50%;
+	margin-left: -200px;
+}
+
+.tool-tip .tooltiptext .tooltipitem {
+	text-align: left;
+	display: list-item;
+	list-style-type: disc;
+	list-style-position: inside;
+	margin-top: 2px;
+	padding-bottom: 2px;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tool-tip:hover .tooltiptext {
+	visibility: visible;
+	opacity: 1;
+}
+
+.panel-buffer {
+	margin-top: 15px;
+}
+
+.panel-buffer-left {
+	margin-left: 5px;
+}
+
+.info-message {
+	padding: 5px;
+	margin: 5px;
+	font-style: italic;
+	font-size: 12px;
+}

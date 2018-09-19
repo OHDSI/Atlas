@@ -2,7 +2,7 @@ define(function (require, exports) {
 
     var ko = require('knockout');
 
-	function MultilayerPerceptionModel(data) {
+	function MultilayerPerceptionModelSettings(data) {
 		var self = this;
         data = data || {};
 
@@ -11,5 +11,5 @@ define(function (require, exports) {
         self.seed = ko.observable(data.seed || null);
     }
 	
-	return MultilayerPerceptionModel;
+	return MultilayerPerceptionModelSettings;
 });

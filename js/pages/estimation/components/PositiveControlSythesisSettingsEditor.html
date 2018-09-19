@@ -6,6 +6,9 @@
         </div>
     </div>
     <div>
+        <label>Using OHDSI covariates for model. (<span class="linkish" data-bind="click: () => { showCovariateSelector(true) }">Click to view details</span>)</label>
+    </div>
+    <div>
         <label>Define the time-at-risk window start, relative to target/comparator cohort entry:</label>
         <div class="input-group">
             <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings.riskWindowStart, eventType:'blur', ko_autocomplete: { value: $component.settings.riskWindowStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
@@ -15,12 +18,6 @@
         <label>Define the time-at-risk window end:</label>
         <div class="input-group">
             <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings.riskWindowEnd, eventType:'blur', ko_autocomplete: { value: $component.settings.riskWindowEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
-        </div>
-    </div>
-    <div>
-        <label>Add the length of exposure the start of the risk window?</label>
-        <div class="input-group">
-            <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.settings.addExposureDaysToStart"></select>
         </div>
     </div>
     <div>
@@ -66,9 +63,6 @@
         </div>
     </div>
     <div>
-        <label><b>TODO: Covariate Settings Editor goes here!</b>></label>
-    </div>
-    <div>
         <label>Minimum number of outcome events required to build a model</label>
         <div class="input-group">
             <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings.minOutcomeCountForModel, eventType:'blur', ko_autocomplete: { value: $component.settings.minOutcomeCountForModel, source: $component.options.minOutcomeCountForModelOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
@@ -92,12 +86,37 @@
             <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings.washoutPeriod, eventType:'blur', ko_autocomplete: { value: $component.settings.washoutPeriod, source: $component.options.washoutPeriodOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
         </div>
     </div>
-    <div>
-        <h4>Prior</h4>
-        <cyclops-prior-editor params="prior: $component.settings.prior"></cyclops-prior-editor>
-    </div>
-    <div>
-        <h4>Control</h4>
-        <cyclops-control-editor params="control: $component.settings.control"></cyclops-control-editor>
+    <div class="row subsection">
+        <div class="col-md-6">
+            <div class="panel panel-default" data-bind="collapsable: showControlDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
+                <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: toggleControlDisplay">
+                    <span><i class="fa fa-cogs"></i> Control Settings</span>
+                </div>
+                <div class="panel-body collapse">
+                    <cyclops-control-editor params="control: $component.settings.control"></cyclops-control-editor>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default" data-bind="collapsable: showPriorDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
+                <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: togglePriorDisplay">
+                    <span><i class="fa fa-cogs"></i> Prior</span>
+                </div>
+                <div class="panel-body collapse">
+                    <cyclops-prior-editor params="prior: $component.settings.prior"></cyclops-prior-editor>    
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<div data-bind="modal: showCovariateSelector" class="modal fade" tabindex="-100" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">Select Covariates...</div>
+            <div class="paddedWrapper">
+                <covar-settings-editor params="covariateSettings: $component.settings.covariateSettings"></covar-settings-editor>
+            </div>
+        </div>
+    </div>
+</div>
+    

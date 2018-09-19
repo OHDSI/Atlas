@@ -1,6 +1,6 @@
 define([
 	'knockout', 
-	'text!./RandomForest.html',	
+	'text!./RandomForestSettings.html',	
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
@@ -9,7 +9,7 @@ define([
 	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class RandomForest extends ModelSettingsEditorComponent {
+	class RandomForestSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 			
@@ -32,5 +32,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('RandomForest', RandomForest, view);
+	return commonUtils.build('RandomForestSettings', RandomForestSettings, view);
 });

@@ -39,7 +39,7 @@ define(
             './components/ExecutionSettingsEditor', 
             './components/ModelSettingsEditor', 
             './components/PopulationSettingsEditor',
-            './components/TargetOutcomesEditor'
+            './components/PredictionCovariateSettingsEditor',
           ], function () {
             appModel.currentView('prediction-manager');
           });

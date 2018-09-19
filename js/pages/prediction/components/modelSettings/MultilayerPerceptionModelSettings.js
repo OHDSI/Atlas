@@ -1,6 +1,6 @@
 define([
 	'knockout', 
-	'text!./MultilayerPerceptionModel.html',	
+	'text!./MultilayerPerceptionModelSettings.html',	
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
@@ -9,7 +9,7 @@ define([
 	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class MultilayerPerceptionModel extends ModelSettingsEditorComponent {
+	class MultilayerPerceptionModelSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 			this.size = {
@@ -23,5 +23,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('MultilayerPerceptionModel', MultilayerPerceptionModel, view);
+	return commonUtils.build('MultilayerPerceptionModelSettings', MultilayerPerceptionModelSettings, view);
 });

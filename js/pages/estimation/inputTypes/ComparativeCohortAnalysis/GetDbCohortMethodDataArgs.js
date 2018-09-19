@@ -3,7 +3,7 @@ define(function (require, exports) {
     var ko = require('knockout');
     var CovariateSettings = require('featureextraction/InputTypes/CovariateSettings');
 
-	function GetDbCohortMethodDataArgs(data) {
+	function GetDbCohortMethodDataArgs(data, defaultCovariateSettings) {
 		var self = this;
         data = data || {};
 
@@ -15,7 +15,7 @@ define(function (require, exports) {
         self.restrictToCommonPeriod = ko.observable(data.restrictToCommonPeriod || false);
         self.washoutPeriod = ko.observable(data.washoutPeriod || 0);
         self.maxCohortSize = ko.observable(data.maxCohortSize || 0);
-        self.covariateSettings = ko.observable(new CovariateSettings(data.covariateSettings));
+        self.covariateSettings = new CovariateSettings(data.covariateSettings || defaultCovariateSettings);
         self.attr_class = data.attr_class || "args";   
 	}
 	

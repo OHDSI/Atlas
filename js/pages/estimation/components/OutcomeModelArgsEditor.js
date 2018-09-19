@@ -6,6 +6,7 @@ define([
 	'../options',
 	'databindings',
 	'cyclops',
+	'less!../cca-manager.less',
 ], function (
 	ko, 
 	view, 
@@ -19,6 +20,21 @@ define([
 
 			this.outcomeModelArgs = params.outcomeModelArgs;
             this.options = options;
+			this.showControlDisplay = ko.observable(false);
+			this.showPriorDisplay = ko.observable(false);
+			this.showCovariateDisplay = ko.observable(false);
+		}
+
+		toggleControlDisplay() {
+			this.showControlDisplay(!this.showControlDisplay());
+		}
+	
+		togglePriorDisplay() {
+			this.showPriorDisplay(!this.showPriorDisplay());
+		}
+
+		toggleCovariateDisplay() {
+			this.showCovariateDisplay(!this.showCovariateDisplay());
 		}
 	}
 

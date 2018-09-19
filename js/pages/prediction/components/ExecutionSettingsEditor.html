@@ -6,20 +6,20 @@
     <div data-bind="visible: $component.maxSampleSizeToggle()">
         <div class="input-group">
             <label>How many patients to use for a subset? &nbsp;&nbsp;</label>
-            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.getPlpDataArgs().maxSampleSize, eventType:'blur', ko_autocomplete: { value: $component.getPlpDataArgs().maxSampleSize, source: $component.options.sampleSizeOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> patients
+            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.getPlpDataArgs.maxSampleSize, eventType:'blur', ko_autocomplete: { value: $component.getPlpDataArgs.maxSampleSize, source: $component.options.sampleSizeOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> patients
         </div>
     </div>
 </div>
 <div>
-    <label>Study Start Date:</label>
+    <label>Minimum covariate occurrence: If a covariate occurs in a fraction of the target population less than this value, it will be removed:</label>
     <div class="input-group">
-        <input placeholder="YYYY-MM-DD" class="form-control dateField" data-bind="datepicker:  $component.getPlpDataArgs().studyStartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }">
+        <input class="form-control" type="text" data-bind="value: $component.runPlpArgs.minCovariateFraction" />
     </div>
 </div>
 <div>
-    <label>Study End Date:</label>
+    <label>Minimum covariate occurrence: If a covariate occurs in a fraction of the target population less than this value, it will be removed:</label>
     <div class="input-group">
-        <input placeholder="YYYY-MM-DD" class="form-control dateField" data-bind="datepicker:  $component.getPlpDataArgs().studyEndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.runPlpArgs.normalizeData"></select>
     </div>
 </div>
     

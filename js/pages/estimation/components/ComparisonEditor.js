@@ -24,6 +24,7 @@ define([
 			this.currentCohort = null;
 			this.showCohortSelector = ko.observable(false);
 			this.showConceptSetSelector = ko.observable(false);
+			this.currentConceptSet = null;
 		}
 
 		cohortSelected(id, name) {
@@ -50,17 +51,36 @@ define([
 			this.comparison.comparator(new Cohort());
 		}
 
-		chooseNegativeControlOutcomes() {
+		chooseNegativeControlOutcomesConceptSet() {
+			this.currentConceptSet = this.comparison.negativeControlOutcomesConceptSet;
 			this.showConceptSetSelector(true);
 		}
 
-		clearNegativeControlOutcomes() {
-			this.comparison.negativeControlOutcomes(new ConceptSet());
+		clearNegativeControlOutcomesConceptSet() {
+			this.comparison.negativeControlOutcomesConceptSet(new ConceptSet());
+		}
+
+		chooseIncludedCovariateConceptSet() {
+			this.currentConceptSet = this.comparison.includedCovariateConceptSet;
+			this.showConceptSetSelector(true);
+		}
+
+		clearIncludedCovariateConceptSet() {
+			this.comparison.includedCovariateConceptSet(new ConceptSet());
+		}
+
+		chooseExcludedCovariateConceptSet() {
+			this.currentConceptSet = this.comparison.excludedCovariateConceptSet;
+			this.showConceptSetSelector(true);
+		}
+
+		clearExcludedCovariateConceptSet() {
+			this.comparison.excludedCovariateConceptSet(new ConceptSet());
 		}
 
 		conceptsetSelected(d) {
 			console.log(d.id + ": " + d.name);
-			this.comparison.negativeControlOutcomes(new ConceptSet({id: d.id, name: d.name}));
+			this.currentConceptSet(new ConceptSet({id: d.id, name: d.name}));
 			this.showConceptSetSelector(false);
 		}
 	}

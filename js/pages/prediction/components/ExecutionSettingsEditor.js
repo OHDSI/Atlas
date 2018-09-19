@@ -17,14 +17,15 @@ define([
 			super(params);
 			
 			this.getPlpDataArgs = params.getPlpDataArgs;
+			this.runPlpArgs = params.runPlpArgs;
 			this.options = options;
 
-			this.maxSampleSizeToggle = ko.observable(this.getPlpDataArgs().maxSampleSize() != null || false);
+			this.maxSampleSizeToggle = ko.observable(this.getPlpDataArgs.maxSampleSize() != null || false);
 			this.maxSampleSizeToggle.subscribe(optionVal => {
 				if (optionVal == false) {
-					this.getPlpDataArgs().maxSampleSize(null);
+					this.getPlpDataArgs.maxSampleSize(null);
 				} else {
-					this.getPlpDataArgs().maxSampleSize(10000);
+					this.getPlpDataArgs.maxSampleSize(10000);
 				}
 			});
 		}

@@ -5,7 +5,7 @@ define(['knockout'], function (ko) {
 		data = data || {};
 
         self.maxIterations = ko.observable(data.maxIterations === 0 ? 1000 : data.maxIterations || 1000);
-        self.tolerance = ko.observable(data.tolerance === 0 ? 1000000 : data.tolerance || 1000000);
+        self.tolerance = ko.observable(data.tolerance === 0 ? .000001 : data.tolerance || .000001);
         self.convergenceType = ko.observable(data.convergenceType === 0 ? "gradient" : data.convergenceType || "gradient");
         self.cvType = ko.observable(data.cvType === 0 ? "auto" : data.cvType || "auto");
         self.fold = ko.observable(data.fold === 0 ? 10 : data.fold || 10);

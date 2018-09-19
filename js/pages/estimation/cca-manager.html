@@ -126,8 +126,6 @@
                                   </div>
                               </div>
                               <div data-bind="visible: $component.estimationAnalysis.doPositiveControlSynthesis">
-                                <hr/>
-                                <b>Confidence Interval Calibration Settings</b>
                                 <positive-control-synthesis-settings-editor params="settings: $component.estimationAnalysis.positiveControlSynthesisArgs"></positive-control-synthesis-settings-editor>
                               </div>
                             </div>
@@ -165,6 +163,8 @@
             <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'export'" class="tab-pane">
               <div class="paddedWrapper">
                 <pre id="estimationSpecificationExport" data-bind="html: $component.estimationAnalysisJson(), selectOnFocus: {events: ['click']}"></pre>
+                JSON.stringify <button class="btn btn-sm" data-bind="click: prepForSave">Prep for save</button> 
+                <pre id="exportJSON" data-bind="html: $component.estimationAnalysisForWebAPI(), selectOnFocus: {events: ['click']}"></pre>
               </div>
           </div>
           </div>

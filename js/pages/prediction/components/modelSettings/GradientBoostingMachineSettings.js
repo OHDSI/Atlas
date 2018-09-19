@@ -1,6 +1,6 @@
 define([
 	'knockout', 
-	'text!./GradientBoostingMachine.html',	
+	'text!./GradientBoostingMachineSettings.html',	
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
@@ -9,7 +9,7 @@ define([
 	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class GradientBoostingMachine extends ModelSettingsEditorComponent {
+	class GradientBoostingMachineSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 			
@@ -36,5 +36,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('GradientBoostingMachine', GradientBoostingMachine, view);
+	return commonUtils.build('GradientBoostingMachineSettings', GradientBoostingMachineSettings, view);
 });

@@ -18,7 +18,8 @@ define(function (require, exports) {
         self.addExposureDaysToStart = ko.observable(data.addExposureDaysToStart || false);
         self.riskWindowEnd = ko.observable(data.riskWindowEnd || 365);
         self.addExposureDaysToEnd = ko.observable(data.addExposureDaysToEnd || true);
-        self.attr_class = data.attr_class || "args";
+        self.attr_class = data.addExposureDaysToEnd || "populationSettings";
+
 	}
 	
 	return CreateStudyPopulationArgs;

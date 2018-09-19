@@ -1,6 +1,6 @@
 define([
 	'knockout', 
-	'text!./LassoLogisticRegression.html',	
+	'text!./LassoLogisticRegressionSettings.html',	
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
@@ -9,7 +9,7 @@ define([
 	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class LassoLogisticRegression extends ModelSettingsEditorComponent {
+	class LassoLogisticRegressionSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 
@@ -20,5 +20,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('LassoLogisticRegression', LassoLogisticRegression, view);
+	return commonUtils.build('LassoLogisticRegressionSettings', LassoLogisticRegressionSettings, view);
 });

@@ -8,7 +8,7 @@ define(function (require, exports) {
 
 		self.occurrenceType = ko.observable(data.occurrenceType || "all");
 		self.detectOnDescendants = ko.observable(data.occurrenceType || true);
-		self.domains  = ko.observableArray(data.domains && data.domains.map(function(d) { return d }));
+		self.domains  = ko.observableArray(data.domains && data.domains.map(function(d) { return d }) || ['condition','procedure']);
 	}
 	
 	return NegativeControlOutcomeCohortDefinition;

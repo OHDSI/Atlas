@@ -10,7 +10,7 @@ define(
     options.cvRepetitions = ['1','2','3','4','5'];
     options.minCVData = ['100', '200', '300'];
     options.maxIterationOptions = ['1000', '500', '100'];
-    options.toleranceOptions = ['1000000', '500000', '100000', '50000', '10000'];
+    options.toleranceOptions = ['0.000001', '0.00001', '0.0001', '0.001', '0.01', '0.1'];
     options.startingVariance = ['-1', '0', '1', '2', '3'];
 
     options.yesNoOptions = [{

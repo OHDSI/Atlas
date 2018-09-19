@@ -277,6 +277,7 @@ define(
         //'<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';
     };
 
+    options.nfoldOptions = ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
 	options.dayOptions = ['0', '1', '7', '14', '21', '30', '60', '90', '120', '180', '365', '548', '730', '1095'];
 	options.sampleSizeOptions = ['1000', '5000', '10000', '50000', '100000'];
 	options.delCovariatesSmallCount = ['5', '10', '15', '20', '25', '50', '75', '100', '150', '200', '500'];

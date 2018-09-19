@@ -7,7 +7,6 @@ define([
 	'./options',
 	'./inputTypes/Cohort',
 	'./inputTypes/PatientLevelPredictionAnalysis',
-	'./inputTypes/TargetOutcomes',
 	'./inputTypes/ModelSettings',
 	'./inputTypes/CreateStudyPopulationArgs',
 	'featureextraction/InputTypes/CovariateSettings',
@@ -15,6 +14,7 @@ define([
 	'./inputTypes/TargetOutcome',
 	'./inputTypes/ModelCovarPopTuple',
 	'./inputTypes/FullAnalysis',
+	'./inputTypes/ConceptSetCrossReference',
 	'services/FeatureExtraction',
 	'featureextraction/components/CovariateSettingsEditor',
 	'featureextraction/components/TemporalCovariateSettingsEditor',
@@ -30,7 +30,6 @@ define([
 	options,
 	Cohort,
 	PatientLevelPredictionAnalysis,
-	TargetOutcomes,
 	modelSettings,
 	CreateStudyPopulationArgs,
 	CovariateSettings,
@@ -38,12 +37,13 @@ define([
 	TargetOutcome,
 	ModelCovarPopTuple,
 	FullAnalysis,
+	ConceptSetCrossReference,
 	FeatureExtractionService,
 ) {
 	class PatientLevelPredictionManager extends Component {
 		constructor(params) {
             super(params);
-            
+
 			this.patientLevelPredictionAnalysis = new PatientLevelPredictionAnalysis();
 			this.options = options;
             this.config = config;
@@ -68,6 +68,7 @@ define([
 			this.showCohortSelector = ko.observable(false);
 			this.defaultCovariateSettings = null;
 			this.defaultTemporalCovariateSettings = null;
+
 
 			this.removeTargetCohort = (data, obj, tableRow, rowIndex) => {
 				this.deleteFromTable(this.targetCohorts, obj, rowIndex);
@@ -120,7 +121,13 @@ define([
 					
 			this.patientLevelPredictionAnalysisJson = () => {
 				return commonUtils.syntaxHighlight(ko.toJSON(this.patientLevelPredictionAnalysis));
-            }
+			}
+			
+			this.patientLevelPredictionAnalysisForWebAPI = () => {
+				var definition = ko.toJS(this.patientLevelPredictionAnalysis);
+				definition = ko.toJSON(definition);
+				return JSON.stringify(definition);
+			}
 
 			this.canSave = ko.pureComputed(function () {
                 //return (self.cohortComparison().name() && self.cohortComparison().comparatorId() && self.cohortComparison().comparatorId() > 0 && self.cohortComparison().treatmentId() && self.cohortComparison().treatmentId() > 0 && self.cohortComparison().outcomeId() && self.cohortComparison().outcomeId() > 0 && self.cohortComparison().modelType && self.cohortComparison().modelType() > 0 && self.cohortComparisonDirtyFlag() && self.cohortComparisonDirtyFlag().isDirty());
@@ -156,21 +163,53 @@ define([
                 console.warn("Not implemented yet");
 			}
 
-			this.addTargetOutcome = () => {
-				// Add a new T+O
-				this.patientLevelPredictionAnalysis.targetOutcomes.push(
-					new TargetOutcomes({targetId: 1, outcomeIds: [4,5,6]})
-				);
-				// Get the index
-				var index = this.patientLevelPredictionAnalysis.targetOutcomes().length - 1;
-				this.editorHeading('Prediction');
-				this.editorDescription('Add or update the target and outcome cohorts');
-				this.editorComponentName('target-outcomes-editor');
-				this.editorComponentParams({ 
-					cohortDefinitions: this.patientLevelPredictionAnalysis.cohortDefinitions, 
-					targetOutcomes: this.patientLevelPredictionAnalysis.targetOutcomes()[index],
+			this.prepForSave = () => {
+				console.log('prep for save');
+				var outcomeIds = [];
+				this.outcomeCohorts().forEach(o => { outcomeIds.push(o.id) });
+				this.patientLevelPredictionAnalysis.targetIds.removeAll();
+				this.patientLevelPredictionAnalysis.outcomeIds.removeAll();
+				this.patientLevelPredictionAnalysis.cohortDefinitions.removeAll();
+				this.patientLevelPredictionAnalysis.conceptSets.removeAll();
+				this.patientLevelPredictionAnalysis.conceptSetCrossReference.removeAll();
+				this.outcomeCohorts().forEach(o => {
+					this.patientLevelPredictionAnalysis.outcomeIds.push(o.id);
+					this.patientLevelPredictionAnalysis.cohortDefinitions.push(o);
 				});
-				this.managerMode('editor')
+				this.targetCohorts().forEach(t => {
+					this.patientLevelPredictionAnalysis.targetIds.push(t.id);
+					this.patientLevelPredictionAnalysis.cohortDefinitions.push(t);
+				});
+				this.patientLevelPredictionAnalysis.covariateSettings().forEach((cs, index) => {
+					if (cs.includedCovariateConceptSet() !== null && cs.includedCovariateConceptSet().id > 0) {
+						if (this.patientLevelPredictionAnalysis.conceptSets().filter(element => element.id === cs.includedCovariateConceptSet().id).length == 0) {
+							this.patientLevelPredictionAnalysis.conceptSets.push(cs.includedCovariateConceptSet());
+						}
+						this.patientLevelPredictionAnalysis.conceptSetCrossReference.push(
+							new ConceptSetCrossReference({
+								conceptSetId: cs.includedCovariateConceptSet().id,
+								targetName: "covariateSettings",
+								targetIndex: index,
+								propertyName: "includedCovariateConceptIds"
+							})
+						);
+
+					}
+					if (cs.excludedCovariateConceptSet() !== null && cs.excludedCovariateConceptSet().id > 0) {
+						if (this.patientLevelPredictionAnalysis.conceptSets().filter(element => element.id === cs.excludedCovariateConceptSet().id).length == 0) {
+							this.patientLevelPredictionAnalysis.conceptSets.push(cs.excludedCovariateConceptSet());
+						}
+						this.patientLevelPredictionAnalysis.conceptSetCrossReference.push(
+							new ConceptSetCrossReference({
+								conceptSetId: cs.excludedCovariateConceptSet().id,
+								targetName: "covariateSettings",
+								targetIndex: index,
+								propertyName: "excludedCovariateConceptIds"
+							})
+						);
+					}
+				});
+				console.log('how we lookin?');
 			}
 
 			this.addModelSettings = (d) => {
@@ -209,7 +248,7 @@ define([
 				var index = this.patientLevelPredictionAnalysis.covariateSettings().length - 1;
 				this.editorHeading(headingPrefix + 'Covariate Settings');
 				this.editorDescription('Add or update the covariate settings');
-				this.editorComponentName(editorNamePrefix + 'covar-settings-editor');
+				this.editorComponentName(editorNamePrefix + 'prediction-covar-settings-editor');
 				this.editorComponentParams({ 
 					covariateSettings: this.patientLevelPredictionAnalysis.covariateSettings()[index], 
 				});
@@ -227,8 +266,25 @@ define([
 				FeatureExtractionService.getDefaultCovariateSettings(true).then(({ data }) => {
 					this.defaultTemporalCovariateSettings = data;
 				});
+
+				this.patientLevelPredictionAnalysis.targetIds().forEach(c => {
+					var name = "NOT FOUND";
+					if (this.patientLevelPredictionAnalysis.cohortDefinitions().filter(a => a.id() === parseInt(c)).length > 0) {
+						name = this.patientLevelPredictionAnalysis.cohortDefinitions().filter(a => a.id() === parseInt(c))[0].name();
+						this.targetCohorts.push(new Cohort({id: c, name: name}));
+					}
+				});
 	
+				this.patientLevelPredictionAnalysis.outcomeIds().forEach(c => {
+					var name = "NOT FOUND";
+					if (this.patientLevelPredictionAnalysis.cohortDefinitions().filter(a => a.id() === parseInt(c)).length > 0) {
+						name = this.patientLevelPredictionAnalysis.cohortDefinitions().filter(a => a.id() === parseInt(c))[0].name();
+						this.outcomeCohorts.push(new Cohort({id: c, name: name}));
+					}
+				});
+
 				// Set Up Dummy PLP Settings
+				/*
 				this.patientLevelPredictionAnalysis.cohortDefinitions.push([
 					{id: 1, name: 'Type 2 Diabetes'},
 					{id: 2, name: 'Type 2 Diabetes With Prior Stroke'},
@@ -239,14 +295,12 @@ define([
 					//{id: 7, name: 'Outcome 4'},
 				]);
 
-				/*
 				this.targetCohorts.push(
 					new Cohort({id: 1, name: 'Type 2 Diabetes'})
 				);
 				this.targetCohorts.push(
 					new Cohort({id: 2, name: 'Type 2 Diabetes With Prior Stroke'})
 				);
-				*/
 
 				this.outcomeCohorts.push(
 					new Cohort({id: 4, name: 'Heart Failure'})
@@ -295,7 +349,6 @@ define([
 				this.patientLevelPredictionAnalysis.modelSettings.push({
 					LassoLogisticRegression: new modelSettings.LassoLogisticRegression(null)
 				});
-				*/
 				this.patientLevelPredictionAnalysis.covariateSettings.push(
 					new	CovariateSettings({useDemographicsRace: 1})
 				);
@@ -308,6 +361,8 @@ define([
 				this.patientLevelPredictionAnalysis.populationSettings.push(
 					new CreateStudyPopulationArgs({riskWindowStart: 1, riskWindowEnd: 365, washoutPeriod: 180, removeSubjectsWithPriorOutcome: true})
 				);
+				*/
+
 				this.loading(false);
 			}
 
@@ -382,18 +437,6 @@ define([
 				this.loadingDownload(false);
 			}
 
-/* 			this.targetCohorts = ko.pureComputed(() => {
-				var targetCohorts = [];
-				if (this.patientLevelPredictionAnalysis.targetOutcomes() && this.patientLevelPredictionAnalysis.targetOutcomes().length > 0) {
-					this.patientLevelPredictionAnalysis.targetOutcomes().forEach(element => {
-						// Look up the cohort information from the main cohortDefinitions object
-						targetCohorts.push(this.patientLevelPredictionAnalysis.cohortDefinitions().filter(cohort => cohort.id == element.id));
-					});
-				}
-				return targetCohorts;
-			});
-
- */		
             this.load();
 		}
 	}

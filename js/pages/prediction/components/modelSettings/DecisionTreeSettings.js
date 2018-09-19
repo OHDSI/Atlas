@@ -1,6 +1,6 @@
 define([
 	'knockout', 
-	'text!./DecisionTree.html',
+	'text!./DecisionTreeSettings.html',
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
@@ -9,7 +9,7 @@ define([
 	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class DecisionTree extends ModelSettingsEditorComponent {
+	class DecisionTreeSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 			this.maxDepth = {
@@ -39,5 +39,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('DecisionTree', DecisionTree, view);
+	return commonUtils.build('DecisionTreeSettings', DecisionTreeSettings, view);
 });

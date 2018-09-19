@@ -16,4 +16,5 @@ define(function (require) {
 	var d3ChartBinding = require("./d3ChartBinding");
 	var tooltipBinding = require("./tooltipBinding");
 	var chart = require('./chart');
+	var bootstrapCollapsable = require('./bootstrapCollapsable');
 });

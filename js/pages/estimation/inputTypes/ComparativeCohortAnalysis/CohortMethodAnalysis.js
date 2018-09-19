@@ -12,7 +12,7 @@ define(function (require, exports) {
     var StratifyByPsAndCovariatesArgs = require('./StratifyByPsAndCovariatesArgs');
     var FitOutcomeModelArgs = require('./FitOutcomeModelArgs');
 
-	function CohortMethodAnalysis(data) {
+	function CohortMethodAnalysis(data, defaultCovariateSettings) {
 		var self = this;
         data = data || {};
         
@@ -20,8 +20,8 @@ define(function (require, exports) {
         self.description = ko.observable(data.description || null);
         self.targetType = ko.observable(data.targetType || null);
         self.comparatorType = ko.observable(data.comparatorType || null);
-        self.getDbCohortMethodDataArgs = new GetDbCohortMethodDataArgs(data.getDbCohortMethodDataArgs);
-        self.createStudyPopulationArgs = new CreateStudyPopulationArgs(data.createStudyPopulationArgs);
+        self.getDbCohortMethodDataArgs = new GetDbCohortMethodDataArgs(data.getDbCohortMethodDataArgs, defaultCovariateSettings);
+        self.createStudyPopArgs = new CreateStudyPopulationArgs(data.createStudyPopArgs);
         self.createPs = ko.observable(data.createPs || true);
         self.createPsArgs = new CreatePsArgs(data.createPsArgs);
         self.trimByPs = ko.observable(data.trimByPs || false);

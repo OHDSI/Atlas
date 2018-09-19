@@ -2,7 +2,7 @@ define(function (require, exports) {
 
     var ko = require('knockout');
 
-	function GradientBoostingMachine(data) {
+	function GradientBoostingMachineSettings(data) {
 		var self = this;
         data = data || {};
 
@@ -14,5 +14,5 @@ define(function (require, exports) {
         self.seed = ko.observable(data.seed || null);
     }
 	
-	return GradientBoostingMachine;
+	return GradientBoostingMachineSettings;
 });

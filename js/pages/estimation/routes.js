@@ -6,8 +6,8 @@ define(
       return {        
         '/estimation': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['./cohort-comparison-browser'], function () {
-            router.setCurrentView('cohort-comparison-browser');
+          require(['./estimation-browser'], function () {
+            router.setCurrentView('estimation-browser');
           });
         }),
         '/estimation/:cohortComparisonId:': new AuthorizedRoute((cohortComparisonId) => {
@@ -42,10 +42,14 @@ define(
             appModel.currentView('temporal-covar-settings-editor');
           });
         }),
-       '/est': new AuthorizedRoute(() => {
+        '/estimation/cca/:estimationId:': new AuthorizedRoute((estimationId) => {
           appModel.activePage(this.title);
           require(['./cca-manager'], function () {
-            appModel.currentView('cca-manager');
+            const params = {};
+            params.estimationId = estimationId;
+
+            router.setCurrentView('cca-manager', params);
+            //appModel.currentView('cca-manager');
           });
         }),
       };

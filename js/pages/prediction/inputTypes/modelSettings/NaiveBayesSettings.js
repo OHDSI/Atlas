@@ -2,10 +2,10 @@ define(function (require, exports) {
 
     var ko = require('knockout');
 
-	function NaiveBayes(data) {
+	function NaiveBayesSettings(data) {
 		var self = this;
         data = data || {};
     }
 	
-	return NaiveBayes;
+	return NaiveBayesSettings;
 });

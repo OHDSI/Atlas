@@ -35,20 +35,35 @@ define(
             },
             {
                 title: 'Outcomes',
-                data: d => d.outcomes().length,
+                render: (s, p, d, a, b, c) => {
+                    if (d.outcomes().length > 1) {
+                        var tooltipText = ""; 
+                        d.outcomes().forEach((element, index) => {
+                            if (index > 0) {
+                                tooltipText += ("<span class=\"tooltipitem\">" + element.name + "</span>");
+                            }
+                        });
+                        const outcomeDisplay = d.outcomes().length == 2 ? "outcome" : "outcomes";
+                        return d.outcomes()[0].name + "<br/><div class=\"tool-tip\">(" + (d.outcomes().length - 1) + "+ more " + outcomeDisplay + "<span class=\"tooltiptext\">" + tooltipText + "</span>)</div>";
+                    } else if (d.outcomes().length == 1) {
+                        return d.outcomes()[0].name;
+                    } else {
+                        return 0;
+                    }
+                }
             },
             {
                 title: 'NC Outcomes',
-                data: d => d.negativeControlOutcomes().name,
+                data: d => d.negativeControlOutcomesConceptSet().name,
             },
             {
                 title: 'Incl Covariates',
-                data: d => d.includedCovariateConceptIds().length,
+                data: d => d.includedCovariateConceptSet().length,
                 visible: false,
             },
             {
                 title: 'Excl Covariates',
-                data: d => d.excludedCovariateConceptIds().length,
+                data: d => d.excludedCovariateConceptSet().length,
                 visible: false,
             },
         ],
@@ -127,14 +142,8 @@ define(
 		name: "Match on propensity score",
 		id: 'matchOnPs'
     }, {
-		name: "Match on propensity score and covariates",
-		id: 'matchOnPsAndCovariates'
-    }, {
 		name: "Stratify on propensity score",
 		id: 'stratifyByPs'
-    }, {
-        name: "Stratify on propensity score and covariates",
-        id: 'stratifyOnPsAndCovariates'
     }];
 
     options.caliperScaleOptions = [{
@@ -169,7 +178,6 @@ define(
 		name: "Cox proportional hazards",
 		id: 'cox'
     }];
-
 
     options.occurrenceTypeOptions = [{
 		name: "All occurrences",
@@ -214,7 +222,7 @@ define(
         minOutcomeCountForInjectionOptions: ['100', '75', '50', '25', '10'],
         washoutPeriodOptions: ['0', '1', '7', '14', '21', '30', '60', '90', '120', '180', '183', '365', '548', '730', '1095'],
         dayOptions: ['0', '1', '7', '14', '21', '30', '60', '90', '120', '180', '365', '548', '730', '1095'],
-        maxSubjectsForModelOptions: ['0', '1000', '5000', '10000', '50000', '100000'],
+        maxSubjectsForModelOptions: ['0', '1000', '5000', '10000', '50000', '100000', , '150000', '200000', '250000'],
         yesNoOptions: [{
             name: "Yes",
             id: true,

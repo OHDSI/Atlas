@@ -2,7 +2,7 @@ define(function (require, exports) {
 
     var ko = require('knockout');
 
-	function RandomForest(data) {
+	function RandomForestSettings(data) {
 		var self = this;
         data = data || {};
 
@@ -13,5 +13,5 @@ define(function (require, exports) {
         self.seed = ko.observable(data.seed || null);
     }
 	
-	return RandomForest;
+	return RandomForestSettings;
 });
