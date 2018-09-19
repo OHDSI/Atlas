@@ -15,7 +15,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'job/jobDetail',
 	'pages/cohort-definitions/const',
 	'services/ConceptSet',
-	'providers/Component',
+	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
@@ -53,7 +53,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	jobDetail,
 	cohortConst,
 	conceptSetService,
-	Component,
+	Page,
 	AutoBind,
 	commonUtils,
 	costUtilConst,
@@ -90,7 +90,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
 	}
 
-	class CohortDefinitionManager extends AutoBind(Component) {
+	class CohortDefinitionManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
 			this.pollTimeout = null;

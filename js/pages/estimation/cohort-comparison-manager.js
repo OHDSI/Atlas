@@ -17,7 +17,7 @@ define([
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'services/Execution',
-	'providers/Component',
+	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'databindings/d3ChartBinding',
@@ -42,16 +42,16 @@ define([
 		ConceptSet,
 		sharedState,
 		executionService,
-		Component,
+		Page,
 		AutoBind,
 		commonUtils,
 	) {
-		class CohortComparisonManager extends AutoBind(Component) {
+		class CohortComparisonManager extends AutoBind(Page) {
 			constructor(params) {
-				super();
-				this.cohortComparisonId = params.currentCohortComparisonId;
-				this.cohortComparison = params.currentCohortComparison;
-				this.cohortComparisonDirtyFlag = params.dirtyFlag;
+				super(params);
+				this.cohortComparisonId = ko.observable();
+				this.cohortComparison = ko.observable();
+				this.cohortComparisonDirtyFlag = ko.observable();
 				this.cohortComparisonResultsEnabled = config.cohortComparisonResultsEnabled;
 				this.useExecutionEngine = config.useExecutionEngine;
 				this.isExecutionEngineAvailable = config.api.isExecutionEngineAvailable;
@@ -299,8 +299,44 @@ define([
 					});
 
 				this.sources(initSources);
-				this.loadExecutions();
+			}
 
+			onRouterParamsChanged({
+				currentCohortComparisonId,
+				currentCohortComparison,
+				dirtyFlag,
+			}) {
+				if (currentCohortComparisonId !== undefined) {
+					this.cohortComparisonId(currentCohortComparisonId);
+				}
+				if (currentCohortComparison !== undefined) {
+					this.cohortComparison(currentCohortComparison);
+				}
+				if (dirtyFlag !== undefined) {
+					this.cohortComparisonDirtyFlag(dirtyFlag);
+				}
+				// startup actions
+				if (this.cohortComparisonId() == 0 && this.cohortComparison() == null) {
+					this.newCohortComparison();
+					this.loading(false);
+				} else if (this.cohortComparisonId() > 0 && this.cohortComparisonId() != (this.cohortComparison() && this.cohortComparison().analysisId)) {
+					this.loadCohortComparison();
+					this.loading(false);
+				} else {
+					// already loaded
+					this.loading(false);
+				}
+
+				const initSources = sharedState.sources()
+					.filter(s => s.hasCDM)
+					.map((source) => {
+						this.sourceHistoryDisplay[source.sourceKey] = ko.observable(false);
+						this.sourceProcessingStatus[source.sourceKey] = ko.observable(false);
+						return source;
+					});
+
+				this.sources(initSources);
+				this.loadExecutions();
 			}
 
 

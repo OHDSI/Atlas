@@ -1,4 +1,9 @@
 <div class="wrapperHeader">
+	<!-- ko if: loading -->
+		<div data-bind="css: classes('loading')">
+			<i class="fa fa-circle-o-notch fa-spin"></i>
+		</div>
+	<!-- /ko -->
 	<!-- for notifications, job completion, etc. -->
 	<div class="user-bar-container">
 		<!-- ko if: isLoggedIn -->

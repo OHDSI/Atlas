@@ -226,6 +226,11 @@ define([
 		}
 		
 		executeSearch() {
+			if (!this.currentSearch()) {
+                this.data([]);
+                return;
+			}
+
 			this.searchExecuted(false);
 			const vocabElements = this.selected.vocabularies;
 			const domainElements = this.selected.domains;

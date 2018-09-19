@@ -3,22 +3,16 @@ define(
         const ko = require('knockout');
         const { AuthorizedRoute } = require('providers/Route');
 
-		function routes(appModel) {
+		function routes(appModel, router) {
 
             const search = new AuthorizedRoute((query) => {
                 appModel.activePage(this.title);
                 require(['./vocabulary'], function (search) {
                     const view = 'vocabulary';
-
-                    if (appModel.currentView() !== view) {
-                        appModel.componentParams({
-                            query: ko.observable(),
-                        });
-                    }
-
-                    appModel.componentParams().query(query ? unescape(query) : null);
-
-                    appModel.currentView(view);
+                    let params = {
+                        query:query ? unescape(query) : null,
+                    };
+                    router.setCurrentView(view, params);
                 });
             });
 

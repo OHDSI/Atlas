@@ -1,19 +1,19 @@
 define(
   (require, factory) => {
     const { AuthorizedRoute } = require('providers/Route');
-    function routes(appModel) {
+    function routes(appModel, router) {
       return {        
         '/iranalysis': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./ir-browser'], function () {
-            appModel.currentView('ir-browser');
+            router.setCurrentView('ir-browser');
           });
         }),
         '/iranalysis/new': new AuthorizedRoute((analysisId) => {
           appModel.activePage(this.title);
           require(['./ir-manager'], function () {
             appModel.selectedIRAnalysisId(null);
-            appModel.currentView('ir-manager');
+            router.setCurrentView('ir-manager');
           });
         }),
         '/iranalysis/:analysisId:/?((\w|.)*)': new AuthorizedRoute((analysisId, path) => {
@@ -25,7 +25,7 @@ define(
           }
           require(['./ir-manager'], function () {
             appModel.selectedIRAnalysisId(+analysisId);
-            appModel.currentView('ir-manager');
+            router.setCurrentView('ir-manager');
           });
         }),
       };

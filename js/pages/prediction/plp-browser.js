@@ -5,7 +5,7 @@ define([
 	'webapi/MomentAPI',
 	'services/PatientLevelPrediction',
 	'webapi/AuthAPI',
-	'providers/Component',
+	'providers/Page',
 	'utils/CommonUtils',
 	'components/heading',
 	'components/empty-state',
@@ -18,12 +18,12 @@ define([
 	momentApi,
 	plpService,
 	authApi,
-	Component,
+	Page,
 	commonUtils
 ) {
-	class PlpBrowser extends Component {
+	class PlpBrowser extends Page {
 		constructor(params) {
-			super();
+			super(params);
 			this.loading = ko.observable(true);
 			this.analysisList = ko.observableArray([]);
 

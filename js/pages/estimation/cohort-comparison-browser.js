@@ -4,7 +4,7 @@ define([
 	'appConfig',
 	'webapi/MomentAPI',
 	'webapi/AuthAPI',
-	'providers/Component',
+	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'services/http',
@@ -20,14 +20,14 @@ define([
 	config,
 	momentApi,
 	authApi,
-	Component,
+	Page,
 	AutoBind,
 	commonUtils,
 	httpService,
 ) {
-  class CohortComparisonBrowser extends AutoBind(Component) {
+  class CohortComparisonBrowser extends AutoBind(Page) {
 		constructor(params) {
-			super();
+			super(params);
 			this.model = params.model;
 			this.reference = ko.observableArray();
 			this.loading = ko.observable(true);

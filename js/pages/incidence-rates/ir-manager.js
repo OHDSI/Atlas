@@ -11,7 +11,7 @@ define([
 	'atlas-state',
 	'job/jobDetail',
 	'webapi/AuthAPI',
-	'providers/Component',
+	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'./const',
@@ -33,12 +33,12 @@ define([
 	sharedState,
 	jobDetail,
 	authAPI,
-	Component,
+	Page,
 	AutoBind,
 	commonUtils,
 	constants
 ) {
-	class IRAnalysisManager extends AutoBind(Component) {
+	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);				
 			// polling support
