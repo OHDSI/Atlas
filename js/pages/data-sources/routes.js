@@ -12,11 +12,10 @@ define(
         '/datasources/:sourceKey/:reportName': new AuthorizedRoute((sourceKey, reportName) => {
           appModel.activePage(this.title);
           require(['./data-sources'], function () {
-            appModel.componentParams({
+            router.setCurrentView('data-sources', {
               reportName: reportName,
               sourceKey: sourceKey
             });
-            router.setCurrentView('data-sources');
           });
         }),
       };
