@@ -61,7 +61,7 @@ define([
             this.loading(true);
 
             CharacterizationService
-                .loadCharacterizationDesign(this.characterizationId())
+                .loadCharacterizationExportDesign(this.characterizationId())
                 .then(res => {
                     this.exportEntity(res);
                     this.loading(false);
@@ -69,7 +69,14 @@ define([
         }
 
         doImport() {
-            console.log('Importing:', this.importJSON());
+            this.loading(true);
+
+            CharacterizationService
+                .importCharacterization(JSON.parse(this.importJSON()))
+                .then(res => {
+                    this.loading(false);
+                    commonUtils.routeTo('/cc/characterizations/' + res.id);
+                });
         }
     }
 

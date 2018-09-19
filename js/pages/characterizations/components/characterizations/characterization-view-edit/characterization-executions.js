@@ -173,7 +173,7 @@ define([
                 this.isExecutionDesignShown(true);
 
                 CharacterizationService
-                    .loadCharacterizationDesignByGeneration(executionId)
+                    .loadCharacterizationExportDesignByGeneration(executionId)
                     .then(res => {
                         this.executionDesign(res);
                         this.loading(false);

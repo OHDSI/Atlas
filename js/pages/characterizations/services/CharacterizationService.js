@@ -11,12 +11,6 @@ define([
             .then(res => res.data);
     }
 
-    function loadCharacterization(id) {
-        return httpService
-            .doGet(config.webAPIRoot + 'cohort-characterization/' + id)
-            .then(res => res.data);
-    }
-
     function deleteCharacterization(id) {
         return httpService
             .doDelete(config.webAPIRoot + 'cohort-characterization/' + id)
@@ -26,6 +20,12 @@ define([
     function loadCharacterizationDesign(id) {
         return httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/' + id + '/design')
+            .then(res => res.data);
+    }
+
+    function loadCharacterizationExportDesign(id) {
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterization/' + id + '/export')
             .then(res => res.data);
     }
 
@@ -55,7 +55,7 @@ define([
             .then(res => res.data);
     }
 
-    function loadCharacterizationDesignByGeneration(generationId) {
+    function loadCharacterizationExportDesignByGeneration(generationId) {
         return httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/design')
             .then(res => res.data);
@@ -67,17 +67,24 @@ define([
             .then(res => res.data);
     }
 
+    function importCharacterization(design) {
+        return httpService
+            .doPost(config.webAPIRoot + 'cohort-characterization/import', design)
+            .then(res => res.data);
+    }
+
     return {
         loadCharacterizationList,
-        loadCharacterization,
+        importCharacterization,
         loadCharacterizationDesign,
+        loadCharacterizationExportDesign,
         createCharacterization,
         updateCharacterization,
         deleteCharacterization,
         loadCharacterizationExecutionList,
         loadCharacterizationExecution,
         loadCharacterizationResults,
-        loadCharacterizationDesignByGeneration,
+        loadCharacterizationExportDesignByGeneration,
         runGeneration,
     };
 });

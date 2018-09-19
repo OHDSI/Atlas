@@ -41,8 +41,7 @@ define([
     }
 
     function isPermittedExportGenerationDesign(id) {
-        // TODO: check when permission will be available
-        return AuthAPI.isPermitted(`cohort-characterization:generation:${id}:result:get`);
+        return AuthAPI.isPermitted(`cohort-characterization:generation:${id}:design:get`);
     }
 
     function isPermittedExportCC(id) {
