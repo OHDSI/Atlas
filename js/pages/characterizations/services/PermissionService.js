@@ -36,12 +36,17 @@ define([
         return AuthAPI.isPermitted(`cohort-characterization:${id}:generation:*:post`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
     }
 
-    function isPermittedGetCCGenerationResults(id) {
+    function isPermittedGetCCGenerationResults(sourceKey) {
+        return AuthAPI.isPermitted(`cohort-characterization:generation:*:result:get`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
+    }
+
+    function isPermittedExportGenerationDesign(id) {
+        // TODO: check when permission will be available
         return AuthAPI.isPermitted(`cohort-characterization:generation:${id}:result:get`);
     }
 
-    function isPermittedExportCC() {
-        return AuthAPI.isPermitted(`cohort-characterization:export:get`);
+    function isPermittedExportCC(id) {
+        return AuthAPI.isPermitted(`cohort-characterization:${id}:export:get`);
     }
 
 
@@ -55,6 +60,7 @@ define([
         isPermittedGetCCGenerations,
         isPermittedGenerateCC,
         isPermittedGetCCGenerationResults,
+        isPermittedExportGenerationDesign,
         isPermittedExportCC
     };
 });

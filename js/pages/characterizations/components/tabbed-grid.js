@@ -34,6 +34,7 @@ define([
             this.gridOptions = params.gridOptions;
 
             this.createNew = params.createNew;
+            this.createNewEnabled = typeof params.createNewEnabled === 'undefined' ? () => true : params.createNewEnabled;
             this.createNewLabel = constants.gridTabs.filter(t => t.value === params.activeTab).newEntityLabel;
         }
     }

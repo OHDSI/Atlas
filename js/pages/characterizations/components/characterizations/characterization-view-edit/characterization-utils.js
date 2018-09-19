@@ -1,6 +1,7 @@
 define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
+    'pages/characterizations/services/PermissionService',
     'text!./characterization-utils.html',
     'appConfig',
     'webapi/AuthAPI',
@@ -10,6 +11,7 @@ define([
 ], function (
     ko,
     CharacterizationService,
+    PermissionService,
     view,
     config,
     authApi,
@@ -30,6 +32,9 @@ define([
             this.characterizationId = params.characterizationId;
             this.mode = ko.observable(this.MODE_JSON);
 
+            this.isExportPermitted = this.isExportPermittedResolver();
+            this.isImportPermitted = this.isImportPermittedResolver();
+
             this.setMode = this.setMode.bind(this);
 
             this.exportEntity = ko.observable();
@@ -37,7 +42,15 @@ define([
 
             this.importJSON = ko.observable();
 
-            this.loadExportJSON();
+            this.isExportPermitted() && this.loadExportJSON();
+        }
+
+        isExportPermittedResolver() {
+            return ko.computed(() => PermissionService.isPermittedExportCC(this.characterizationId()));
+        }
+
+        isImportPermittedResolver() {
+            return PermissionService.isPermittedImportCC;
         }
 
         setMode(mode) {

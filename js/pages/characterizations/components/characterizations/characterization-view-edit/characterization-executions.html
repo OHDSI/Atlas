@@ -1,4 +1,8 @@
-<div data-bind="css: classes()">
+<div data-bind="ifnot: $component.isViewGenerationsPermitted(), css: `${$component.isViewGenerationsPermitted() ? '' : 'flexed'}`">
+    <access-denied params="isAuthenticated: $component.isAuthenticated" class="flexed"></access-denied>
+</div>
+
+<div data-bind="if: $component.isViewGenerationsPermitted(), css: classes()">
     <div class="loading" data-bind="visible: loading()">loading</div>
     <div data-bind="visible: !loading()">
         <h2 data-bind="css: classes('title')">
@@ -38,8 +42,15 @@
         <div data-bind="css: classes('heading')">
             <label data-bind="css: classes('ds-title'), text: sourceName"></label>
             <ul data-bind="css: classes({ element: 'action-list' })">
-                <li data-bind="css: classes({ element: 'action' })">
-                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}), click: () => $component.generate(sourceKey)">
+                <li data-bind="
+                    css: classes({ element: 'action' }),
+                    tooltip: !$component.isExecutionPermitted(sourceKey) ? 'Not enough permissions to generate' : null,
+                ">
+                    <button data-bind="
+                        css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+						attr: { 'disabled': !$component.isExecutionPermitted(sourceKey) },
+                        click: () => $component.generate(sourceKey)"
+                    >
                         <!-- ko if: $component.ccGenerationStatusOptions.STARTED === status -->
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-circle-o-notch fa-spin']})"></i>
                             <span data-bind="css: classes('action-text')">Generating...</span>
@@ -50,14 +61,29 @@
                         <!-- /ko -->
                     </button>
                 </li>
-                <li data-bind="css: classes({ element: 'action' })">
-                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}), click: () => $component.goToLatestResults(sourceKey)">
+                <li data-bind="
+                    css: classes({ element: 'action' }),
+                    tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null,
+                ">
+                    <button data-bind="
+                        css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+						attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
+						click: () => $component.goToLatestResults(sourceKey)
+                    ">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
                         View latest result
                     </button>
+
                 </li>
-                <li data-bind="css: classes({ element: 'action' })">
-                    <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}), click: toggleSection">
+                <li data-bind="
+                    css: classes({ element: 'action' }),
+                    tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null,
+                 ">
+                    <button data-bind="
+                        css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+						attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
+                        click: toggleSection
+                    ">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
                         <span data-bind="text: 'All executions (' + submissions.length + ')'"></span>
                     </button>

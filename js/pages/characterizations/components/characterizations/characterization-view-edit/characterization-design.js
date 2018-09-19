@@ -1,6 +1,7 @@
 define([
     'knockout',
     'atlas-state',
+    'pages/characterizations/services/PermissionService',
     'text!./characterization-design.html',
     'appConfig',
     'webapi/AuthAPI',
@@ -12,9 +13,11 @@ define([
     'components/cohort/linked-cohort-list',
     'components/linked-entity-list',
     'less!./characterization-design.less',
+    'components/ac-access-denied',
 ], function (
     ko,
     sharedState,
+    PermissionService,
     view,
     config,
     authApi,
@@ -33,8 +36,11 @@ define([
             this.removeParam = this.removeParam.bind(this);
 
             this.design = params.design;
+            this.characterizationId = params.characterizationId;
 
             this.loading = ko.observable(false);
+
+            this.isViewPermitted = this.isPermittedViewResolver();
 
             this.cohorts = ko.computed({
                 read: () => params.design().cohorts || [],
@@ -98,6 +104,12 @@ define([
             this.featureAnalysesSelected.subscribe(feature => this.attachFeature(feature));
 
             this.isParameterCreateModalShown = ko.observable(false);
+        }
+
+        isPermittedViewResolver() {
+            return ko.computed(
+                () => (this.characterizationId() ? PermissionService.isPermittedGetCC(this.characterizationId()) : true)
+            );
         }
 
         getRemoveCell(action, identifierField = 'id') {

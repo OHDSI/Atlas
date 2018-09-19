@@ -18,6 +18,7 @@
         <button data-bind="
             css: classes({ element: 'new-entity-btn', extra: 'btn btn-primary btn-sm' }),
             text: 'New ' + $component.tabs.find(t => t.value === $component.activeTab).newEntityLabel,
+            attr: { 'disabled': !$component.createNewEnabled() },
             click: $component.createNew
         "></button>
     </div>

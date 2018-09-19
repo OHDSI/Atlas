@@ -1,6 +1,7 @@
 define([
         'knockout',
         'pages/characterizations/services/CharacterizationService',
+        'pages/characterizations/services/PermissionService',
         'pages/characterizations/const',
         'text!./characterization-executions.html',
         'appConfig',
@@ -12,9 +13,11 @@ define([
         'services/Source',
         'less!./characterization-executions.less',
         './characterization-results',
+        'databindings/tooltipBinding'
 ], function (
     ko,
     CharacterizationService,
+    PermissionService,
     consts,
     view,
     config,
@@ -36,10 +39,12 @@ define([
                 this.goToResults = this.goToResults.bind(this);
                 this.goToLatestResults = this.goToLatestResults.bind(this);
 
-                this.params = params;
-
                 this.characterizationId = params.characterizationId;
                 const currentHash = ko.computed(() => params.design().hash);
+
+                this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
+                this.isExecutionPermitted = this.isExecutionPermitted.bind(this);
+                this.isResultsViewPermitted = this.isResultsViewPermitted.bind(this);
 
                 this.loading = ko.observable(false);
                 this.expandedSection = ko.observable();
@@ -56,7 +61,11 @@ define([
                         title: 'Design',
                         className: this.classes('col-exec-checksum'),
                         render: (s, p, d) => {
-                            return `<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${d.hashCode}</a>${currentHash() === d.hashCode ? ' (same as now)' : ''}`;
+                            return (
+                                PermissionService.isPermittedExportGenerationDesign(d.id)
+                                    ? `<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${d.hashCode}</a>${currentHash() === d.hashCode ? ' (same as now)' : ''}`
+                                    : d.hashCode
+                            );
                         }
                     },
                     {
@@ -85,13 +94,28 @@ define([
                 this.executionGroups = ko.observable([]);
                 this.executionDesign = ko.observable(null);
 
-                this.loadData();
-
-                this.intervalId = setInterval(() => this.loadData({ silently: true }), 10000)
+                if (this.isViewGenerationsPermitted()) {
+                    this.loadData();
+                    this.intervalId = setInterval(() => this.loadData({ silently: true }), 10000)
+                }
             }
 
             dispose() {
                 clearInterval(this.intervalId);
+            }
+
+            isViewGenerationsPermittedResolver() {
+                return ko.computed(
+                    () => (this.characterizationId() ? PermissionService.isPermittedGetCCGenerations(this.characterizationId()) : true)
+                );
+            }
+
+            isExecutionPermitted(sourceKey) {
+                return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey);
+            }
+
+            isResultsViewPermitted(sourceKey) {
+                return PermissionService.isPermittedGetCCGenerationResults(sourceKey);
             }
 
             loadData({ silently = false } = {}) {

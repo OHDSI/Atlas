@@ -1,6 +1,7 @@
 define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
+    'pages/characterizations/services/PermissionService',
     'text!./characterizations-list.html',
     'appConfig',
     'webapi/AuthAPI',
@@ -10,9 +11,11 @@ define([
     'pages/characterizations/const',
     '../tabbed-grid',
     'less!./characterizations-list.less',
+    'components/ac-access-denied',
 ], function (
     ko,
     CharacterizationService,
+    PermissionService,
     view,
     config,
     authApi,
@@ -29,6 +32,9 @@ define([
 
             this.loading = ko.observable(false);
             this.data = ko.observableArray();
+
+            this.isGetCCListPermitted = PermissionService.isPermittedGetCCList;
+            this.isCreatePermitted = PermissionService.isPermittedCreateCC;
 
             this.gridColumns = [
                 {
@@ -76,7 +82,7 @@ define([
                 ]
             };
 
-            this.loadData();
+            this.isGetCCListPermitted() && this.loadData();
         }
 
         loadData() {

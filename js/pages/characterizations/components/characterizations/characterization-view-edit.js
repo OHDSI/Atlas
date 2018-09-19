@@ -14,6 +14,7 @@ define([
     './characterization-view-edit/characterization-design',
     './characterization-view-edit/characterization-exec-wrapper',
     './characterization-view-edit/characterization-utils',
+    'components/ac-access-denied',
 ], function (
     ko,
     CharacterizationService,
