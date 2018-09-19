@@ -4,11 +4,7 @@ define(
     function routes(appModel, router) {
       const detailsRoute = new AuthorizedRoute((conceptSetId, mode = 'conceptset-expression') => {
         appModel.activePage(this.title);
-        require(['./conceptset-manager', 'components/cohort-definition-browser', 'conceptset-list-modal'], function () {            
-          appModel.componentParams({
-            conceptSetId,
-            mode,
-          });
+        require(['./conceptset-manager', 'components/cohort-definition-browser', 'conceptset-list-modal'], function () {
           appModel.loadConceptSet(conceptSetId, 'conceptset-manager', 'repository', mode);
           appModel.resolveConceptSetExpression();
         });
