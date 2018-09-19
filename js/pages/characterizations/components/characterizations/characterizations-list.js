@@ -60,8 +60,8 @@ define([
                 },
                 {
                     title: 'Author',
-                    data: 'createdBy.login',
                     className: this.classes('tbl-col', 'author'),
+                    render: (s, p, d) => (d.createdBy !== null ? d.createdBy.login : 'anonymous'),
                 },
 
             ];
@@ -77,7 +77,7 @@ define([
                     },
                     {
                         'caption': 'Author',
-                        'binding': o => o.createdBy.login,
+                        'binding': o => (o.createdBy !== null ? o.createdBy.login : 'anonymous'),
                     },
                 ]
             };
