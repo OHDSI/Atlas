@@ -1,46 +1,49 @@
 define([
 	'knockout',
 	'text!./home.html',
+	'providers/Page',
+	'utils/CommonUtils',
+	'services/http',
 	'appConfig',
 	'webapi/AuthAPI',
+	'components/heading',
 ], function (
 	ko,
 	view,
+	Page,
+	commonUtils,
+	httpService,
 	config,
 	authApi
 ) {
-	function home(params) {
-		var self = this;
-		self.github_status = ko.observableArray();
+	class Home extends Page {
+		constructor(params) {
+			super(params);
+			this.github_status = ko.observableArray();
+			
+			this.canCreateCohort = ko.pureComputed(() => {
+				return (authApi.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled;
+			});
 
-		$.ajax({
-			url: "https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=18",
-			method: 'GET',
-			contentType: 'application/json',
-			timeout: 5000,
-			success: function (data) {
-				self.github_status(data);
-			}
-		});
+			this.canSearch = ko.computed(() => {
+				return authApi.isAuthenticated();
+			});
+		}
 
-		self.newCohortDefinition = function () {
+		async onPageCreated() {
+			const { data } = await httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=18");
+			this.github_status(data);
+		}
+
+		newCohortDefinition() {
 			document.location = "#/cohortdefinition/0";
 		}
 
-		self.browseVocabulary = function () {
+		browseVocabulary() {
 			document.location = "#/search";
 		}
 
-		self.canCreateCohort = ko.pureComputed(function () {
-			return (authApi.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled;
-		});
 	}
 
-	var component = {
-		viewModel: home,
-		template: view
-	};
-
-	ko.components.register('home', component);
-	return component;
+	return commonUtils.build('home', Home, view);
 });

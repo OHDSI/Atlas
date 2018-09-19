@@ -1,6 +1,4 @@
-<div class="wrapperTitle">
-	<i class="fa fa-home"></i> Home
-</div>
+<heading-title params="name: 'Home', icon: 'home', theme: 'dark'"></heading-title>
 
 <div class="paddedWrapper">
 	<div class="home-welcome">
@@ -20,7 +18,7 @@
 			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.newCohortDefinition, css: {disabled: $root.currentCohortDefinition() != undefined || !canCreateCohort()}">Define a New Cohort</span> Begin performing research by defining the group of people you intend to study
 		</div>
 		<div>
-			<span class="btn btn-sm btn-success" data-bind="click:$component.browseVocabulary">Search the Vocabulary</span> Search the different ontologies used to describe patient level data around the world
+			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.browseVocabulary, css: {disabled: !canSearch()}">Search the Vocabulary</span> Search the different ontologies used to describe patient level data around the world
 		</div>
 	</div>
 
