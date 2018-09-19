@@ -59,12 +59,7 @@ define(
 								// protected route didn't pass the token check -> show white page
 								this.setCurrentView('white-page');
 								// wait until user authenticates
-								this.onLoginSubscription = authApi.isAuthenticated.subscribe((isAuthenticated) => {
-									if (isAuthenticated) {
-										handler();
-										this.onLoginSubscription.dispose();
-									}
-								});
+								this.schedulePageUpdateOnLogin(handler);
               })
               .finally(() => {
                 this.getModel().loading(false);
@@ -77,11 +72,21 @@ define(
         // anyway, we should track the moment when the user exits and check permissions once again
 				authApi.isAuthenticated.subscribe((isAuthenticated) => {
 					if (!isAuthenticated) {
-						this.activeRouteHandler();
+            this.setCurrentView('white-page');
+						this.schedulePageUpdateOnLogin(this.activeRouteHandler);
 					}
 				});
         
         return routesWithRefreshedToken;
+      }
+
+      schedulePageUpdateOnLogin(routeHandler) {
+        this.onLoginSubscription = authApi.isAuthenticated.subscribe((isAuthenticated) => {
+          if (isAuthenticated) {
+            routeHandler();
+            this.onLoginSubscription.dispose();
+          }
+        });
       }
 
       /**
