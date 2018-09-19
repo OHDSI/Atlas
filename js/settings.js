@@ -150,7 +150,6 @@ const settingsObject = {
     "exploreCohort.css": "styles/exploreCohort.css",
     "jquery.dataTables.colVis.css": "styles/jquery.dataTables.colVis.css",
     "jquery.datatables.tabletools.css": "styles/jquery.datatables.tabletools.css",
-    "plp.css": "styles/plp.css",
     "prism.css": "styles/prism.css",
   },
 };

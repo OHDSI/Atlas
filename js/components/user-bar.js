@@ -6,6 +6,7 @@ define([
 	'providers/Component',
 	'utils/CommonUtils',
 	'webapi/AuthAPI',
+	'less!./user-bar.less'
 ], function (
 	ko,
 	view,
@@ -27,6 +28,7 @@ define([
 			this.isLoggedIn = ko.computed(() => {
 				return authApi.isAuthenticated();
 			});
+			this.loading = params.model.loading;
 
 			this.startPolling = () => {
 				this.pollInterval = setInterval(this.updateJobStatus, appConfig.pollInterval);

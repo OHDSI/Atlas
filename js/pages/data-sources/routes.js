@@ -1,12 +1,12 @@
 define(
   (require, factory) => {
     const { AuthorizedRoute } = require('providers/Route');
-    function routes(appModel) {
+    function routes(appModel, router) {
       return {
         '/datasources': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./data-sources'], function () {
-            appModel.currentView('data-sources');
+            router.setCurrentView('data-sources');
           });
         }),
         '/datasources/:sourceKey/:reportName': new AuthorizedRoute((sourceKey, reportName) => {
@@ -16,7 +16,7 @@ define(
               reportName: reportName,
               sourceKey: sourceKey
             });
-            appModel.currentView('data-sources');
+            router.setCurrentView('data-sources');
           });
         }),
       };

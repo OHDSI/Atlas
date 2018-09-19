@@ -9,6 +9,7 @@
 		<meta name="author" content="">
 		
 		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+		<link rel="stylesheet" href="js/styles/splash.css" />
 		
 		<title data-bind="text: pageTitle">ATLAS</title>
 	</head>
@@ -119,7 +120,7 @@
 			<!-- /ko -->
 
 			<div data-bind="if: currentViewAccessible" class="flexed">
-				<div id="currentComponent" class="flexed" data-bind='component: {name: $data.currentView, params: { ...$data.componentParams(), model: $data } }'></div>
+				<div id="currentComponent" class="flexed" data-bind='component: {name: $data.currentView, params: { routerParams: routerParams, model: $data } }'></div>
 			</div>
 		</div>
 	</div>

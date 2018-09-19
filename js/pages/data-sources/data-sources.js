@@ -4,7 +4,7 @@ define([
 	'text!./data-sources.html',
 	'appConfig',
 	'webapi/AuthAPI',
-	'providers/Component',
+	'providers/Page',
 	'utils/CommonUtils',
 	'databindings',
 	'./components/reports/person',
@@ -28,12 +28,12 @@ define([
 	view,
 	config,
 	authApi,
-	Component,
+	Page,
 	commonUtils
 ) {
-	class DataSources extends Component {
+	class DataSources extends Page {
 		constructor(params) {
-			super();
+			super(params);
 
 			this.reports = [
 				{

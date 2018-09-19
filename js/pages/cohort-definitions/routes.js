@@ -10,7 +10,7 @@ define(
             './cohort-definition-manager',
             'components/cohort-definition-browser',
           ], function () {
-            appModel.currentView('cohort-definitions');
+            router.setCurrentView('cohort-definitions');
           });
         }),
         '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': new AuthorizedRoute((cohortDefinitionId, path = 'definition') => {
@@ -35,7 +35,7 @@ define(
             // Determine any optional parameters to set based on the query string
             qs = router.qs(); // Get the query string parameters
             var sourceKey = qs.sourceKey || null;
-            appModel.currentView('cohort-definition-manager');
+            router.setCurrentView('cohort-definition-manager');
             appModel.currentCohortDefinitionMode(view);
             appModel.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details', sourceKey);
           });
@@ -52,7 +52,7 @@ define(
             './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
           ], function () {
-            appModel.currentView('cohort-definition-manager');
+            router.setCurrentView('cohort-definition-manager');
             appModel.currentCohortDefinitionMode('conceptsets');
             appModel.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
           });
@@ -64,7 +64,7 @@ define(
             './cohort-definition-manager',
             'components/cohort-definition-browser',
           ], function () {
-            appModel.currentView('report-manager');
+            router.setCurrentView('report-manager');
           });
         }),
       };
