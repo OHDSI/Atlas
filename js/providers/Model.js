@@ -611,7 +611,7 @@ define(
 					&& this.currentConceptSet()
 					&& this.currentConceptSet().id == conceptSetId
 				) {
-					this.currentView(viewToShow);
+					this.handleViewChange(viewToShow, { conceptSetId, mode });
 					this.currentConceptSetMode(mode);
 					return;
 				}
@@ -672,7 +672,7 @@ define(
 					&& this.currentConceptSet().id == conceptSetId
 				) {
 					this.currentConceptSetMode(mode);
-					this.currentView(viewToShow);
+					this.handleViewChange(viewToShow, { conceptSetId, mode });
 					return;
 				}
 				this.currentView('loading');
@@ -681,7 +681,7 @@ define(
 						return conceptSetService.loadConceptSetExpression(conceptSetId)
 							.then((expression) => {
 								this.setConceptSet(conceptset, expression.items);
-								this.currentView(viewToShow);
+								this.handleViewChange(viewToShow, { conceptSetId, mode });
 								return this.resolveConceptSetExpression()
 									.then(() => {
 										this.currentConceptSetMode(mode);

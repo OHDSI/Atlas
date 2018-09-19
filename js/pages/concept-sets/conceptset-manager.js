@@ -120,10 +120,17 @@ define([
 						},
 				}
 			];
-			this.selectedTab = ko.pureComputed(() => {
-				return this.getIndexByComponentName(this.model.currentConceptSetMode());
-			});
+			this.selectedTab = ko.observable(this.routerParams.mode);
 			this.activeUtility = ko.observable("");
+		}
+
+		onRouterParamsChanged({ conceptSetId, mode }) {
+			if (conceptSetId !== undefined) {
+				this.model.currentConceptSetMode('conceptset-expression');
+			}
+			if (mode !== undefined) {
+				this.selectedTab(this.getIndexByComponentName(mode));
+			}
 		}
 		
 		saveClick() {
