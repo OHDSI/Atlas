@@ -151,7 +151,7 @@ define([
 
             Promise.all([
                 SourceService.loadSourceList(),
-                CharacterizationService.loadCharacterizationDesignByGeneration(this.executionId()),
+                CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
                 CharacterizationService.loadCharacterizationResults(this.executionId())
             ]).then(([
