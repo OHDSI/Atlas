@@ -273,10 +273,8 @@ define(['knockout',
 
 			this.getEvidenceSources = () => {
 				this.loadingEvidenceSources(true);
-				var resolvingPromise = conceptSetService.getGenerationInfo(this.conceptSet()
-					.id);
-				$.when(resolvingPromise)
-					.done(generationInfo => {
+				conceptSetService.getGenerationInfo(this.conceptSet().id)
+					.then((generationInfo) => {
 						var evidenceSources = this.getEvidenceSourcesFromConfig();
 						evidenceSources.forEach((evidenceSource, i) => {
 							var gi = $.grep(generationInfo, function (a) {
@@ -368,7 +366,7 @@ define(['knockout',
 					});
 					cdmResultsAPI.getConceptRecordCount(this.currentResultSource()
 							.sourceKey, conceptIdsForNegativeControls, negativeControls)
-						.then(function (rowcounts) {
+						.then((rowcounts) => {
 							this.negativeControls(negativeControls);
 							this.recordCountsRefreshing(false);
 						});
