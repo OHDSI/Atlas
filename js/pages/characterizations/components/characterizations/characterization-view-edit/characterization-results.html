@@ -2,7 +2,7 @@
 
 <div data-bind="css: classes(), visible: !loading()">
     <h2 data-bind="css: classes('title')">
-        <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.design().id + '/executions') }">Executions</a>
+        <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }">Executions</a>
         <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
         <span data-bind="text: 'Reports for ' + $component.data().sourceName"></span>
     </h2>

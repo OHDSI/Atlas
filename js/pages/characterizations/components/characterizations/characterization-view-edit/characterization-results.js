@@ -112,6 +112,7 @@ define([
             this.prepareTabularData = this.prepareTabularData.bind(this);
 
             this.loading = ko.observable(false);
+            this.characterizationId = params.characterizationId;
 
             this.design = ko.observable({});
             this.executionId = params.executionId;
