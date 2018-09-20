@@ -1,29 +1,23 @@
-define(['optional!config/local.config', 'optional!config-local'], function (localConfig, compatConfig) {
-	var config = {};
-  if (
-    JSON.stringify(localConfig) == JSON.stringify({})
-    || JSON.stringify(compatConfig) == JSON.stringify({})
-  ) {
-		console.warn('Local configuration not found.  Using default values. To use a local configuration and suppress 404 errors, create a file called config/local.config.js under the /js directory');
-	}
+define(function () {
+	var appConfig = {};
 
 	// default configuration
-	config.api = {
+	appConfig.api = {
 		name: 'Local',
 		url: 'http://localhost:8080/WebAPI/'
   };
-  config.cacheSources = false;
-  config.pollInterval = 60000;
-  config.useBundled3dPartyLibs = false;
-	config.cohortComparisonResultsEnabled = false;
-	config.userAuthenticationEnabled = false;
-	config.plpResultsEnabled = false;
-	config.useExecutionEngine = false;
-	config.viewProfileDates = false;
-  config.enableCosts = false;
-	config.supportUrl = "https://github.com/ohdsi/atlas/issues";
-	config.supportMail = "atlasadmin@your.org";
-	config.authProviders = [
+  appConfig.cacheSources = false;
+  appConfig.pollInterval = 60000;
+  appConfig.useBundled3dPartyLibs = false;
+	appConfig.cohortComparisonResultsEnabled = false;
+	appConfig.userAuthenticationEnabled = false;
+	appConfig.plpResultsEnabled = false;
+	appConfig.useExecutionEngine = false;
+	appConfig.viewProfileDates = false;
+  appConfig.enableCosts = false;
+	appConfig.supportUrl = "https://github.com/ohdsi/atlas/issues";
+	appConfig.supportMail = "atlasadmin@your.org";
+	appConfig.authProviders = [
     {
       "name": "Windows",
       "url": "user/login/windows",
@@ -76,7 +70,7 @@ define(['optional!config/local.config', 'optional!config-local'], function (loca
       "isUseCredentialsForm": true
     }
   ];
-  config.xssOptions = {
+  appConfig.xssOptions = {
     "whiteList": {
       "a": ["href", "class", "data-bind"],
 			"button": ["class", "type"],
@@ -92,7 +86,7 @@ define(['optional!config/local.config', 'optional!config-local'], function (loca
     "stripIgnoreTag": true,
     "stripIgnoreTagBody": ['script'],
   };
-  config.cemOptions = {
+  appConfig.cemOptions = {
     "evidenceLinkoutSources": ["medline_winnenburg","splicer"],
     "sourceRestEndpoints": {
       "medline_winnenburg": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={@ids}&retmode=json&tool=ohdsi_atlas&email=admin@ohdsi.org",
@@ -102,8 +96,8 @@ define(['optional!config/local.config', 'optional!config-local'], function (loca
       "splicer": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid={@id}"
     },
   };
-
-	Object.assign(config, compatConfig, localConfig);
-	config.webAPIRoot = config.api.url;
-	return config;
+	
+	appConfig.webAPIRoot = appConfig.api.url;
+	
+	return appConfig;
 });
