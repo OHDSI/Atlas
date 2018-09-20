@@ -7,7 +7,6 @@ define([
     'providers/Component',
     'utils/CommonUtils',
     'utils/DatatableUtils',
-    'text!pages/characterizations/stubs/feature-analysis-list-data.json',
     'pages/characterizations/const',
     '../tabbed-grid',
     'less!./feature-analyses-browser.less',
@@ -19,8 +18,7 @@ define([
     authApi,
     Component,
     commonUtils,
-    datatableUtils,
-    featureAnalysesList
+    datatableUtils
 ) {
     class FeatureAnalysesBrowser extends Component {
         constructor(params) {

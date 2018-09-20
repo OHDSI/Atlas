@@ -1,16 +1,15 @@
 define([
     'services/http',
-    'appConfig',
-    'text!pages/characterizations/stubs/feature-analysis-list-data.json',
-    'text!pages/characterizations/stubs/feature-analysis-data.json',
-    'text!pages/characterizations/stubs/feature-analysis-domains-data.json',
+    'appConfig'
 ], function (
     httpService,
-    config,
-    featureAnalysisListData,
-    featureAnalysisData,
-    featureAnalysisDomainsData
+    config
 ) {
+	
+    var featureAnalysisListData = "{}";
+		var featureAnalysisData = "{}";
+		var featureAnalysisDomainsData = "{}";
+	
     function loadFeatureAnalysisList() {
         return httpService.doGet(config.webAPIRoot + 'feature-analysis?size=100000').then(res => res.data);
     }
