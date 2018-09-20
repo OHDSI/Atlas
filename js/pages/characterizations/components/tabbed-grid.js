@@ -24,7 +24,6 @@ define([
     class CharacterizationsTabbedGrid extends Component {
         constructor(params) {
             super();
-            this.isAuthenticated = authApi.isAuthenticated;
 
             this.tabs = constants.gridTabs;
             this.activeTab = params.activeTab;

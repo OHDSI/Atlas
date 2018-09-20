@@ -5,7 +5,7 @@ define([], () => {
     constructor(props) {
       super(props);
       const ownMethods = Object.getOwnPropertyNames(this.__proto__)
-        .filter(method => !(['constructor', 'componentName'].includes(method)));
+        .filter(method => !(['constructor', 'componentName'].includes(method)) && typeof this[method] === 'function');
       ownMethods.forEach(method => {
         this[method] = this[method].bind(this);
       });

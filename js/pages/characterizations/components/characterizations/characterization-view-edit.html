@@ -1,13 +1,13 @@
 <div data-bind="css: classes()">
-    <div class="wrapperTitle">
-        <i class="fa fa-shopping-cart"></i> Characterization
-    </div>
+    <heading-title params="name: 'Characterization', icon: 'shopping-cart', theme: 'dark'"></heading-title>
     <div class="asset-heading">
-        <input type="text" data-bind="attr: { disabled: $component.isEditPermitted() ? null : true }, textInput: design().name" />
-        <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-success" data-bind="click: $component.save, css: {disabled:!$component.isSavePermitted()}"><i class="fa fa-save"></i></button>
-            <button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.closeCharacterization"><i class="fa fa-times"></i></button>
-            <button type="button" class="btn btn-sm btn-danger"  data-bind="click: $component.deleteCc, css: {disabled: !$component.isDeletePermitted()}"><i class="fa fa-trash-o"></i></button>
+        <div class="input-group">
+            <input type="text" data-bind="css: 'form-control', attr: { disabled: $component.isEditPermitted() ? null : true }, textInput: design().name" />
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!$component.isSavePermitted()}"><i class="fa fa-save"></i></button>
+                <button type="button" class="btn btn-primary" data-bind="click: $component.closeCharacterization"><i class="fa fa-times"></i></button>
+                <button type="button" class="btn btn-danger"  data-bind="click: $component.deleteCc, css: {disabled: !$component.isDeletePermitted()}"><i class="fa fa-trash-o"></i></button>
+            </div>
         </div>
     </div>
 

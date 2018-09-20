@@ -56,7 +56,7 @@ define(
 						routes[key].checkPermission()
 							.then(() => handler())
 							.catch((ex) => {
-							    console.log(ex);
+							    console.error(ex);
 								// protected route didn't pass the token check -> show white page
 								this.setCurrentView('white-page');
 								// wait until user authenticates

@@ -6,6 +6,7 @@ define([
     'appConfig',
     'webapi/AuthAPI',
     'providers/Component',
+    'providers/AutoBind',
     'utils/CommonUtils',
     'less!./characterization-utils.less',
 ], function (
@@ -16,13 +17,12 @@ define([
     config,
     authApi,
     Component,
+    AutoBind,
     commonUtils,
 ) {
-    class CharacterizationViewEditUtils extends Component {
+    class CharacterizationViewEditUtils extends AutoBind(Component) {
         constructor(params) {
             super();
-
-            this.doImport = this.doImport.bind(this);
 
             this.loading = ko.observable(false);
 

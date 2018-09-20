@@ -5,6 +5,7 @@ define([
     'appConfig',
     'webapi/AuthAPI',
     'providers/Component',
+    'providers/AutoBind',
     'utils/CommonUtils',
     'numeral',
     'lodash',
@@ -25,6 +26,7 @@ define([
     config,
     authApi,
     Component,
+    AutoBind,
     commonUtils,
     numeral,
     lodash,
@@ -34,7 +36,7 @@ define([
     SourceService
 ) {
 
-    class CharacterizationViewEditResults extends Component {
+    class CharacterizationViewEditResults extends AutoBind(Component) {
 
         get distributionColumns() {
             return [
@@ -106,10 +108,6 @@ define([
 
         constructor(params) {
             super();
-
-            this.convertPrevalenceAnalysis = this.convertPrevalenceAnalysis.bind(this);
-            this.convertScatterplotData = this.convertScatterplotData.bind(this);
-            this.prepareTabularData = this.prepareTabularData.bind(this);
 
             this.loading = ko.observable(false);
             this.characterizationId = params.characterizationId;

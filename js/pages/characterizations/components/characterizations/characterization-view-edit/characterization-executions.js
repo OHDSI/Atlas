@@ -8,6 +8,7 @@ define([
         'webapi/AuthAPI',
         'moment',
         'providers/Component',
+        'providers/AutoBind',
         'utils/CommonUtils',
         'utils/DatatableUtils',
         'services/Source',
@@ -24,20 +25,16 @@ define([
     authApi,
     moment,
     Component,
+    AutoBind,
     commonUtils,
     datatableUtils,
     SourceService
 ) {
-        class CharacterizationViewEditExecutions extends Component {
+        class CharacterizationViewEditExecutions extends AutoBind(Component) {
             constructor(params) {
                 super();
 
                 this.ccGenerationStatusOptions = consts.ccGenerationStatus;
-
-                this.showExecutionDesign = this.showExecutionDesign.bind(this);
-                this.toggleSection = this.toggleSection.bind(this);
-                this.goToResults = this.goToResults.bind(this);
-                this.goToLatestResults = this.goToLatestResults.bind(this);
 
                 this.characterizationId = params.characterizationId;
                 const currentHash = ko.computed(() => params.design().hash);
@@ -150,7 +147,7 @@ define([
             generate(source) {
                 let confirmPromise;
 
-                if (this.executionGroups().find(g => g.sourceKey === source).status === this.ccGenerationStatusOptions.STARTED) {
+                if ((this.executionGroups().find(g => g.sourceKey === source) || {}).status === this.ccGenerationStatusOptions.STARTED) {
                     confirmPromise = new Promise((resolve, reject) => {
                         if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
                             resolve();
@@ -190,9 +187,15 @@ define([
 
             goToLatestResults(sourceKey) {
                 const submissions = [ ...this.executionGroups().find(g => g.sourceKey === sourceKey).submissions ];
-                submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
-                const latestExecutedSubmission = submissions.find(s => s.status === this.ccGenerationStatusOptions.COMPLETED);
-                this.goToResults(latestExecutedSubmission.id);
+                if (submissions.length > 0) {
+                    submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
+                    const latestExecutedSubmission = submissions.find(s => s.status === this.ccGenerationStatusOptions.COMPLETED);
+                    if (latestExecutedSubmission) {
+                        this.goToResults(latestExecutedSubmission.id);
+                        return;
+                    }
+                }
+                alert('There is no completed executions for the data source yet');
             }
         }
 

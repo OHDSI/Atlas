@@ -6,6 +6,7 @@ define([
     'appConfig',
     'webapi/AuthAPI',
     'providers/Component',
+    'providers/AutoBind',
     'utils/CommonUtils',
     'lodash',
     'pages/characterizations/components/feature-analyses/feature-analyses-browser',
@@ -22,18 +23,13 @@ define([
     config,
     authApi,
     Component,
+    AutoBind,
     commonUtils,
     lodash
 ) {
-    class CharacterizationDesign extends Component {
+    class CharacterizationDesign extends AutoBind(Component) {
         constructor(params) {
             super();
-
-            this.showFeatureBrowser = this.showFeatureBrowser.bind(this);
-            this.removeFeature = this.removeFeature.bind(this);
-            this.showParameterCreateModal = this.showParameterCreateModal.bind(this);
-            this.addParam = this.addParam.bind(this);
-            this.removeParam = this.removeParam.bind(this);
 
             this.design = params.design;
             this.characterizationId = params.characterizationId;
