@@ -60,8 +60,8 @@ define([
                         render: (s, p, d) => {
                             return (
                                 PermissionService.isPermittedExportGenerationDesign(d.id)
-                                    ? `<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${d.hashCode}</a>${currentHash() === d.hashCode ? ' (same as now)' : ''}`
-                                    : d.hashCode
+                                    ? `<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.hashCode || '-')}</a>${currentHash() === d.hashCode ? ' (same as now)' : ''}`
+                                    : (d.hashCode || '-')
                             );
                         }
                     },
