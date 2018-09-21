@@ -13,6 +13,8 @@ define([
 		...localConfig
 	};
 
+    config.webAPIRoot = config.api.url;
+
 	return config;
 	
 });
