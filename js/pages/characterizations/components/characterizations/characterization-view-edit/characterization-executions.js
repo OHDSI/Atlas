@@ -186,13 +186,16 @@ define([
             }
 
             goToLatestResults(sourceKey) {
-                const submissions = [ ...this.executionGroups().find(g => g.sourceKey === sourceKey).submissions ];
-                if (submissions.length > 0) {
-                    submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
-                    const latestExecutedSubmission = submissions.find(s => s.status === this.ccGenerationStatusOptions.COMPLETED);
-                    if (latestExecutedSubmission) {
-                        this.goToResults(latestExecutedSubmission.id);
-                        return;
+                const sg = this.executionGroups().find(g => g.sourceKey === sourceKey);
+                if (sg) {
+                    const submissions = [ ...sg.submissions ];
+                    if (submissions.length > 0) {
+                        submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
+                        const latestExecutedSubmission = submissions.find(s => s.status === this.ccGenerationStatusOptions.COMPLETED);
+                        if (latestExecutedSubmission) {
+                            this.goToResults(latestExecutedSubmission.id);
+                            return;
+                        }
                     }
                 }
                 alert('There is no completed executions for the data source yet');
