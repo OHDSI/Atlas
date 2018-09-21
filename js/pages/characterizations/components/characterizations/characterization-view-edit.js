@@ -84,7 +84,7 @@ define([
 
         isDeletePermittedResolver() {
             return ko.computed(
-                () => (this.characterizationId() ? PermissionService.isPermittedDeleteCC(this.characterizationId()) : false)
+                () => PermissionService.isPermittedDeleteCC(this.characterizationId())
             );
         }
 
