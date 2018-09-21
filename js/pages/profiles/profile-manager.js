@@ -64,24 +64,7 @@ define([
 
 				this.cohortDefinitionId = ko.observable(params.routerParams().cohortDefinitionId);
 				this.currentCohortDefinition = ko.observable(null);
-				// if a cohort definition id has been specified, see if it is
-				// already loaded into the page model. If not, load it from the
-				// server
-				if (this.cohortDefinitionId()
-				&& (
-					this.model.currentCohortDefinition()
-					&& this.model.currentCohortDefinition().id() === this.cohortDefinitionId
-					)
-				) {
-					// The cohort definition requested is already loaded into the page model - just reference it
-					this.currentCohortDefinition(this.model.currentCohortDefintion())
-					} else if (this.cohortDefinitionId()) {
-						cohortDefinitionService.getCohortDefinition(this.cohortDefinitionId())
-							.then((cohortDefinition) => {
-								cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
-								this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
-							});
-					}
+				
 				this.isAuthenticated = authApi.isAuthenticated;
 				this.canViewProfiles = ko.pureComputed(() => {
 					return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedViewProfiles()) || !config.userAuthenticationEnabled;
@@ -302,6 +285,25 @@ define([
 				if (this.personId()) {
 					this.loadPerson();
 				}
+			}
+
+			async onPageCreated() {
+				// if a cohort definition id has been specified, see if it is
+				// already loaded into the page model. If not, load it from the
+				// server
+				if (this.cohortDefinitionId()
+				&& (
+					this.model.currentCohortDefinition()
+					&& this.model.currentCohortDefinition().id() === this.cohortDefinitionId
+					)
+				) {
+					// The cohort definition requested is already loaded into the page model - just reference it
+					this.currentCohortDefinition(this.model.currentCohortDefintion())
+					} else if (this.cohortDefinitionId()) {
+						const cohortDefinition = await cohortDefinitionService.findOne(this.cohortDefinitionId());
+						cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+						this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
+					}
 			}
 			
 			loadPerson () {

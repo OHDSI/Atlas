@@ -6,7 +6,7 @@ define(['knockout', 'text!./conceptset-warnings.html',
     'faceted-datatable',
     'css!./style.css',
   ],
-  function (ko, view, cohortDefinitionApi, consts, utils) {
+  function (ko, view, cohortDefinitionService, consts, utils) {
 
     function conceptSetWarnings(params){
       var self = this;
@@ -70,19 +70,29 @@ define(['knockout', 'text!./conceptset-warnings.html',
         self.loading(false);
       }
 
-      self.runDiagnostics = function(id, expression){
+      self.runDiagnostics = async (id, expression) => {
         self.loading(true);
-        cohortDefinitionApi.runDiagnostics(id, expression)
-          .then(showWarnings, handleError);
+        try {
+          const result = await cohortDefinitionService.runDiagnostics(id, expression);
+          showWarnings(result);
+        } catch(er) {
+          console.error('Error when running diagnostics', er);          
+          handleError();
+        }
       };
 
-      self.getWarnings = function() {
+      self.getWarnings = async () => {
         if (parseInt(self.cohortDefinitionId(), 10) <= 0 || isNaN(self.cohortDefinitionId())) {
           return false;
         }
         self.loading(true);
-        cohortDefinitionApi.getWarnings(self.cohortDefinitionId())
-          .then(showWarnings, handleError);
+        try {
+          const warnings = await cohortDefinitionService.getWarnings(self.cohortDefinitionId());
+          showWarnings(warnings);
+        } catch(er) {
+          console.error('Error when getting warnings', er);          
+          handleError();
+        }
       };
 
       self.onDiagnose = function(){

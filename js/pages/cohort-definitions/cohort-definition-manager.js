@@ -383,60 +383,59 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.stopping = this.model.cohortDefinitionSourceInfo().reduce((acc, target) => ({...acc, [target.sourceKey]: ko.observable(false)}), {});
 			this.isSourceStopping = (source) => this.stopping[source.sourceKey];
 
-			this.pollForInfo = () => {
+			this.pollForInfo = async () => {
 				if (this.pollTimeout) {
 					clearTimeout(this.pollTimeout);
 					this.pollTimeout = null;
 				}
 
 				var id = this.model.currentCohortDefinition().id();
-					cohortDefinitionService.getInfo(id).then((infoList) => {
-					var hasPending = false;
+				const infoList = await cohortDefinitionService.getInfo(id);
+				var hasPending = false;
 
-						infoList.forEach((info) => {
-						// obtain source reference
-							var source = this.model.cohortDefinitionSourceInfo().filter((cdsi) => {
-							var sourceId = sharedState.sources().find(source => source.sourceKey == cdsi.sourceKey).sourceId;
-							return sourceId === info.id.sourceId;
-						})[0];
+				infoList.forEach((info) => {
+					// obtain source reference
+					var source = this.model.cohortDefinitionSourceInfo().filter((cdsi) => {
+						var sourceId = sharedState.sources().find(source => source.sourceKey == cdsi.sourceKey).sourceId;
+						return sourceId === info.id.sourceId;
+					})[0];
 
-						if (source) {
-							// only bother updating those sources that we know are running
-								if (this.isSourceRunning(source)) {
-								source.status(info.status);
-								source.includeFeatures(info.includeFeatures);
-								source.isValid(info.isValid);
-								source.startTime(momentApi.formatDateTime(new Date(info.startTime)));
-								source.executionDuration('...');
-								source.personCount('...');
-								source.recordCount('...');
+					if (source) {
+						// only bother updating those sources that we know are running
+							if (this.isSourceRunning(source)) {
+							source.status(info.status);
+							source.includeFeatures(info.includeFeatures);
+							source.isValid(info.isValid);
+							source.startTime(momentApi.formatDateTime(new Date(info.startTime)));
+							source.executionDuration('...');
+							source.personCount('...');
+							source.recordCount('...');
 
-								if (info.status != "COMPLETE" && info.status != "FAILED") {
-									hasPending = true;
-										if (this.selectedSource() && source.sourceId === this.selectedSource().sourceId) {
-											this.loadingReport(true);
-									}
-								} else {
-										if (this.selectedSource() && source.sourceId === this.selectedSource().sourceId) {
-											this.loadingReport(false);
-											this.selectViewReport(source);
-									}
-									var commaFormatted = d3.format(",");
-									source.executionDuration(momentApi.formatDuration(info.executionDuration));
-									source.personCount(commaFormatted(info.personCount));
-									source.recordCount(commaFormatted(info.recordCount));
-									source.failMessage(info.failMessage);
+							if (info.status != "COMPLETE" && info.status != "FAILED") {
+								hasPending = true;
+									if (this.selectedSource() && source.sourceId === this.selectedSource().sourceId) {
+										this.loadingReport(true);
 								}
+							} else {
+									if (this.selectedSource() && source.sourceId === this.selectedSource().sourceId) {
+										this.loadingReport(false);
+										this.selectViewReport(source);
+								}
+								var commaFormatted = d3.format(",");
+								source.executionDuration(momentApi.formatDuration(info.executionDuration));
+								source.personCount(commaFormatted(info.personCount));
+								source.recordCount(commaFormatted(info.recordCount));
+								source.failMessage(info.failMessage);
 							}
 						}
-					});
-
-					if (hasPending) {
-							this.pollTimeout = setTimeout(() => {
-								this.pollForInfo();
-						}, 1000);
 					}
 				});
+
+				if (hasPending) {
+						this.pollTimeout = setTimeout(() => {
+							this.pollForInfo();
+					}, 1000);
+				}
 			}
 			
 			this.isRunning = ko.pureComputed(() => {
@@ -609,20 +608,19 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			// METHODS
 
-			delete () {
+			async delete () {
 				if (!confirm("Delete cohort definition? Warning: deletion can not be undone!"))
 					return;
 
 				clearTimeout(this.pollTimeout);
 
 				// reset view after save
-					cohortDefinitionService.deleteCohortDefinition(this.model.currentCohortDefinition().id()).then( (result) => {
-						this.model.currentCohortDefinition(null);
-					document.location = "#/cohortdefinitions"
-				});
+				await cohortDefinitionService.delete(this.model.currentCohortDefinition().id());
+				this.model.currentCohortDefinition(null);
+				document.location = "#/cohortdefinitions";
 			}
 
-			save () {
+			async save () {
 				clearTimeout(this.pollTimeout);
 					this.model.clearConceptSet();
 
@@ -638,15 +636,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				definition.expression = ko.toJSON(definition.expression, pruneJSON);
 
 				// reset view after save
-					cohortDefinitionService.saveCohortDefinition(definition).then( (result) => {
-					result.expression = JSON.parse(result.expression);
-					var definition = new CohortDefinition(result);
-						var redirectWhenComplete = definition.id() != this.model.currentCohortDefinition().id();
-						this.model.currentCohortDefinition(definition);
-					if (redirectWhenComplete) {
-						document.location = "#/cohortdefinition/" + definition.id();
-					}
-				});
+				const result = await cohortDefinitionService.save(definition);
+				result.expression = JSON.parse(result.expression);
+				var definition = new CohortDefinition(result);
+				var redirectWhenComplete = definition.id() != this.model.currentCohortDefinition().id();
+				this.model.currentCohortDefinition(definition);
+				if (redirectWhenComplete) {
+					document.location = "#/cohortdefinition/" + definition.id();
+				}
 			}
 
 			close () {
@@ -664,13 +661,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			copy () {
+			async copy () {
 				clearTimeout(this.pollTimeout);
-
 				// reset view after save
-					cohortDefinitionService.copyCohortDefinition(this.model.currentCohortDefinition().id()).then((result) => {
-					document.location = "#/cohortdefinition/" + result.id;
-				});
+					const newDefinition = await cohortDefinitionService.copy(this.model.currentCohortDefinition().id());
+					document.location = "#/cohortdefinition/" + newDefinition.id;
 			}
 
 			isSourceRunning(source) {
@@ -690,7 +685,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			showSql () {
+			async showSql () {
 				this.isLoadingSql(true);
 
 				this.templateSql('');
@@ -703,48 +698,46 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.generatedSql.netezza('');
 
 				var expression = ko.toJS(this.model.currentCohortDefinition().expression, pruneJSON);
-				var templateSqlPromise = cohortDefinitionService.getSql(expression);
+				const result = await cohortDefinitionService.getSql(expression);
 
-				templateSqlPromise.then((result) => {
-					this.templateSql(result.templateSql);
-					var mssqlTranslatePromise = translateSql(result.templateSql, 'sql server');
-						mssqlTranslatePromise.then((result) => {
-							this.generatedSql.mssql(result.targetSQL);
-					});
+				this.templateSql(result.templateSql);
+				var mssqlTranslatePromise = translateSql(result.templateSql, 'sql server');
+					mssqlTranslatePromise.then((result) => {
+						this.generatedSql.mssql(result.targetSQL);
+				});
 
-					var msapsTranslatePromise = translateSql(result.templateSql, 'pdw');
-						msapsTranslatePromise.then((result) => {
-							this.generatedSql.msaps(result.targetSQL);
-					});
+				var msapsTranslatePromise = translateSql(result.templateSql, 'pdw');
+					msapsTranslatePromise.then((result) => {
+						this.generatedSql.msaps(result.targetSQL);
+				});
 
-					var oracleTranslatePromise = translateSql(result.templateSql, 'oracle');
-						oracleTranslatePromise.then((result) => {
-							this.generatedSql.oracle(result.targetSQL);
-					});
+				var oracleTranslatePromise = translateSql(result.templateSql, 'oracle');
+					oracleTranslatePromise.then((result) => {
+						this.generatedSql.oracle(result.targetSQL);
+				});
 
-					var postgresTranslatePromise = translateSql(result.templateSql, 'postgresql');
-						postgresTranslatePromise.then((result) => {
-							this.generatedSql.postgresql(result.targetSQL);
-					});
+				var postgresTranslatePromise = translateSql(result.templateSql, 'postgresql');
+					postgresTranslatePromise.then((result) => {
+						this.generatedSql.postgresql(result.targetSQL);
+				});
 
-					var redshiftTranslatePromise = translateSql(result.templateSql, 'redshift');
-						redshiftTranslatePromise.then((result) => {
-							this.generatedSql.redshift(result.targetSQL);
-					});
+				var redshiftTranslatePromise = translateSql(result.templateSql, 'redshift');
+					redshiftTranslatePromise.then((result) => {
+						this.generatedSql.redshift(result.targetSQL);
+				});
 
-					var impalaTranslatePromise = translateSql(result.templateSql, 'impala');
-						impalaTranslatePromise.then((result) => {
-							this.generatedSql.impala(result.targetSQL);
-					});
+				var impalaTranslatePromise = translateSql(result.templateSql, 'impala');
+					impalaTranslatePromise.then((result) => {
+						this.generatedSql.impala(result.targetSQL);
+				});
 
-					var netezzaTranslatePromise = translateSql(result.templateSql, 'netezza');
-					netezzaTranslatePromise.then((result)=> {
-							this.generatedSql.netezza(result.targetSQL);
-					});
+				var netezzaTranslatePromise = translateSql(result.templateSql, 'netezza');
+				netezzaTranslatePromise.then((result)=> {
+						this.generatedSql.netezza(result.targetSQL);
+				});
 
-					$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise, netezzaTranslatePromise).then(() => {
-							this.isLoadingSql(false);
-					});
+				$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise, netezzaTranslatePromise).then(() => {
+						this.isLoadingSql(false);
 				});
 			}
 
@@ -1020,19 +1013,17 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				window.open(config.api.url + 'cohortdefinition/' + this.model.currentCohortDefinition().id() + '/export/conceptset');
 			}
 
-			selectViewReport (item) {
+			async selectViewReport (item) {
 				this.selectedSource(item);
 				this.loadingReport(true);
 				this.selectedReportCaption(item.name);
 
-				var byEventReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 0);
-				var byPersonReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 1);
+				const byEventReport = await cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 0);
+				const byPersonReport = await cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 1);
 				
-				$.when(byEventReport, byPersonReport).done( (byEvent, byPerson) => {
-					var report = {sourceKey: item.sourceKey, byEvent: byEvent[0], byPerson: byPerson[0]};
-					this.selectedReport(report);
-					this.loadingReport(false);
-				});
+				const report = {sourceKey: item.sourceKey, byEvent: byEventReport[0], byPerson: byPersonReport[0]};
+				this.selectedReport(report);
+				this.loadingReport(false);
 			}
 
 			getStatusMessage (info) {

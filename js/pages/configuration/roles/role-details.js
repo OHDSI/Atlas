@@ -97,7 +97,7 @@ define([
         }
 
         async getRole() {
-            const role = await roleService.load(this.roleId());            
+            const role = await roleService.findOne(this.roleId());            
             this.roleName(role.role);
         }
 

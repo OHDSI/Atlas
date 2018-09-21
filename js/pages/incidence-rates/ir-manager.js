@@ -25,7 +25,7 @@ define([
 	view,
 	IRAnalysisService,
 	sourceAPI,
-	cohortAPI,
+	cohortDefinitionService,
 	IRAnalysisDefinition,
 	IRAnalysisExpression,
 	ohdsiUtil,
@@ -182,10 +182,9 @@ define([
 			return (cohortDef && cohortDef.name) || "Unknown Cohort";	
 		}
 
-		refreshDefs() {
-			cohortAPI.getCohortDefinitionList().then((list) => {
-				this.cohortDefs(list);
-			});	
+		async refreshDefs() {
+			const list = await cohortDefinitionService.find();
+			this.cohortDefs(list);
 		}
 		
 		onAnalysisSelected() {

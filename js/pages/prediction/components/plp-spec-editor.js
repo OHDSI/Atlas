@@ -34,14 +34,13 @@ define([
 				this.options = options;
 			}
 
-			cohortSelected(id) {
+			async cohortSelected(id) {
 				$('#modalCohortDefinition').modal('hide');
-				cohortDefinitionService.getCohortDefinition(id).then((cohortDefinition) => {
-					this.targetId(cohortDefinition.id);
-					this.targetCaption(cohortDefinition.name);
-					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
-					this.targetCohortDefinition(new CohortExpression(cohortDefinition));
-				});
+				const cohortDefinition = await cohortDefinitionService.findOne(id);
+				this.targetId(cohortDefinition.id);
+				this.targetCaption(cohortDefinition.name);
+				cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+				this.targetCohortDefinition(new CohortExpression(cohortDefinition));
 			}
 
 			conceptsetSelected(d) {

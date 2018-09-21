@@ -241,7 +241,7 @@ define([
       this.selectedSource().keytabName(file.name)
     }
 
-    save() {
+    async save() {
       var source = {
         name: this.selectedSource().name() || null,
         key: this.selectedSource().key() || null,
@@ -258,17 +258,17 @@ define([
         keytab: this.keytab,
       };
       this.loading(true);
-      sourceApi.saveSource(this.selectedSourceId(), source)
-        .then(() => sourceApi.initSourcesConfig())
-        .then(() => {
-          roleService.getList()
-            .then((roles) => {
-              this.model.roles(roles);
-              this.loading(false);
-              this.goToConfigure();
-            });
-        })
-        .catch(() => { this.loading(false); });
+      try {
+        await sourceApi.saveSource(this.selectedSourceId(), source);
+        await sourceApi.initSourcesConfig();
+        const roles = await roleService.find();
+        this.model.roles(roles);
+        this.loading(false);
+        this.goToConfigure();
+      } catch(er) {
+        console.error('Error updating role', er);
+        this.loading(false);
+      }
     }
 
     close() {
@@ -281,20 +281,22 @@ define([
       this.goToConfigure();
     }
 
-    delete() {
+    async delete() {
       if (!confirm('Delete source? Warning: deletion can not be undone!')) {
         return;
       }
       this.loading(true);
-      sourceApi.deleteSource(this.selectedSourceId())
-        .then(sourceApi.initSourcesConfig)
-        .then(() => roleService.getList())
-        .then((roles) => {
-          this.model.roles(roles);
-          this.loading(false);
-          this.goToConfigure();
-        })
-        .catch(() => this.loading(false));
+      try {
+        await sourceApi.deleteSource(this.selectedSourceId())
+        await sourceApi.initSourcesConfig();
+        const roles = await roleService.find();
+        this.model.roles(roles);
+        this.loading(false);
+        this.goToConfigure();
+      } catch(er) {
+        console.error('Error deleting source', er);        
+        this.loading(false);
+      }
     }
 
     goToConfigure() {

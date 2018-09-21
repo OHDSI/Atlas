@@ -432,7 +432,7 @@ define(
 				var sourceKey = source.sourceKey;
 				var cohortDefinitionId = this.currentCohortDefinition() && this.currentCohortDefinition().id();
 				if (cohortDefinitionId != undefined) {
-					return cohortDefinitionService.getCohortCount(sourceKey, cohortDefinitionId);
+					return cohortDefinitionService.getCohortCount(cohortDefinitionId, sourceKey);
 				}
 
 				return Promise.reject();
@@ -544,7 +544,7 @@ define(
 							conceptPromise = Promise.resolve();
 						}
 						conceptPromise
-							.then(() => {
+							.then(async () => {
 								// now that we have required information lets compile them into data objects for our view
 								var cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
 								var results = [];
@@ -569,7 +569,8 @@ define(
 										// For backwards compatability, query personCount from cdm if not populated in sourceInfo
 										if (sourceInfo.personCount == null) {
 											cdsi.personCount = ko.observable('...');
-											this.getCohortCount(source).then(count => cdsi.personCount(count));
+											const count = await this.getCohortCount(source);
+											cdsi.personCount(count);
 										} else {
 											cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
 										}
@@ -833,7 +834,7 @@ define(
 				}
 			}
 	
-			updateRoles() {
+			async updateRoles() {
 				if (!config.userAuthenticationEnabled)
 						return true;
 
@@ -846,11 +847,9 @@ define(
 					console.info('Roles updated');
 					return Promise.resolve();
 				} else {
-					return roleService.getList()
-						.then((roles) => {
-							console.info('Roles updated');
-							this.roles(roles);
-						});
+					const roles = await roleService.find();
+					console.info('Roles updated');
+					this.roles(roles);
 				}
 			}
 	

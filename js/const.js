@@ -380,6 +380,7 @@ define(
       rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`,
       relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,
 			jobs: () => `${config.api.url}job/execution?comprehensivePage=true`,
+			cohortDefinition: () => `${config.api.url}cohortdefinition`,
 		};
 
     return {
