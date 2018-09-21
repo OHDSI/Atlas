@@ -101,17 +101,14 @@ define([
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
         }
 
-        loadDesignData(id) {
+        async loadDesignData(id) {
             if (id < 1) {
                 this.setupDesign({})
             } else {
                 this.loading(true);
-                CharacterizationService
-                    .loadCharacterizationDesign(id)
-                    .then(res => {
-                        this.setupDesign(res);
-                        this.loading(false);
-                    });
+                const res = await CharacterizationService.loadCharacterizationDesign(id);
+                this.setupDesign(res);
+                this.loading(false);
             }
         }
 
