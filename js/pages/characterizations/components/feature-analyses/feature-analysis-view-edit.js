@@ -13,7 +13,7 @@ define([
     'less!./feature-analysis-view-edit.less',
     'components/cohortbuilder/components',
     'modules/circe/main',
-    'components/visualizations/filter-panel/multi-select/multi-select'
+    'components/multi-select'
 ], function (
     ko,
     FeatureAnalysisService,

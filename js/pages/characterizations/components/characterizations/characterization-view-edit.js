@@ -56,7 +56,7 @@ define([
         onRouterParamsChanged({ characterizationId, section, subId }) {
             if (characterizationId !== undefined) {
                 this.characterizationId(parseInt(characterizationId));
-                if (characterizationId() === 0) {
+                if (this.characterizationId() === 0) {
                     this.setupDesign({});
                 } else {
                     this.loadDesignData(this.characterizationId());
