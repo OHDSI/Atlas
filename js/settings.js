@@ -87,7 +87,7 @@ const settingsObject = {
     "colvis": "assets/jquery.dataTables.colVis.min",
     "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.1/crossfilter.min",
     "director": "assets/director.min",
-    "atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.4.1/dist/atlascharts.min",
+    "atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.5.0-alpha.0/dist/atlascharts.min",
     "jnj_chart": "assets/jnj.chart", // scatterplot is not ported to separate library
     "lodash": "assets/lodash.4.15.0.full",
     "lscache": "assets/lscache.min",
