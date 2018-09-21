@@ -26,7 +26,7 @@ define(
             params.currentCohortComparisonId = appModel.currentCohortComparisonId();
             params.currentCohortComparison = appModel.currentCohortComparison();
             params.dirtyFlag = appModel.currentCohortComparisonDirtyFlag();
-            
+
             router.setCurrentView('cohort-comparison-manager', params);
           });
         }),

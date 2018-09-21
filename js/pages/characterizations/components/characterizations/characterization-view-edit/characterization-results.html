@@ -1,0 +1,146 @@
+<div class="loading" data-bind="visible: loading()">loading</div>
+
+<div data-bind="css: classes(), visible: !loading()">
+    <h2 data-bind="css: classes('title')">
+        <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }">Executions</a>
+        <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
+        <span data-bind="text: 'Reports for ' + $component.data().sourceName"></span>
+    </h2>
+    <div data-bind="css: classes('toolbar')">
+        <ul data-bind="css: classes('detail-list')">
+            <li data-bind="css: classes('detail')">
+                <label data-bind="css: classes('detail-label')">Date:</label>
+                <span data-bind="css: classes('detail-value'), text: $component.formatDate($component.data().date)"></span>
+            </li>
+            <li data-bind="css: classes('detail')">
+                <label data-bind="css: classes('detail-label')">Design:</label>
+                <a data-bind="css: classes('detail-value'), text: $component.data().designHash">x6t21cda</a>
+            </li>
+            <li data-bind="css: classes('detail')">
+                <label data-bind="css: classes('detail-label')">Results:</label>
+                <span data-bind="css: classes('detail-value'), text: ($component.data().analyses || []).length + ' reports'"></span>
+            </li>
+        </ul>
+    </div>
+    <div data-bind="css: classes('filter')">
+        <visualizations-filter-panel params="{ filterList: $component.filterList, live: true }"/>
+    </div>
+    <div data-bind="css: classes('report-section')">
+        <!-- ko foreach: analysisList -->
+            <div data-bind="css: $component.classes('report-group')">
+                <h3 data-bind="css: $component.classes('analysis-name'), text: ($data.domainId ? ($data.domainId + ' / ') : '') + $data.analysisName"></h3>
+                <!-- ko if: $data.type === 'prevalence' -->
+                    <div data-bind="css: $component.classes('analysis-results')">
+                        <div data-bind="css: $component.classes('table-wrapper')">
+                            <table style="width:100%" data-bind="
+                                css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                                dataTable:{
+                                    data: $data.data,
+                                    options: {columns: $data.columns}
+                                }
+                            ">
+                                <thead>
+                                    <!-- ko if: reports.length > 1 -->
+                                    <tr>
+                                        <th rowspan="2">Covariate</th>
+                                        <!-- ko foreach: reports -->
+                                            <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: cohortName"></th>
+                                        <!-- /ko -->
+                                        <!-- ko if: reports.length == 2 -->
+                                            <th rowspan="2">Std Diff</th>
+                                        <!-- /ko -->
+                                    </tr>
+                                    <!-- /ko -->
+                                    <tr>
+                                        <!-- ko if: reports.length <= 1 -->
+                                            <th>Covariate</th>
+                                        <!-- /ko -->
+                                        <!-- ko foreach: reports -->
+                                            <th>Count</th>
+                                            <th>%</th>
+                                        <!-- /ko -->
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- ko if: reports.length === 2 -->
+                            <div data-bind="css: $component.classes('chart-wrapper')">
+                                <scatterplot data-bind="css: $component.classes('scatterplot')" params="
+                                    data: () => $component.convertScatterplotData($data),
+                                    minHeight: 400,
+                                    format: {
+                                        xLabel: reports[0].cohortName,
+                                        yLabel: reports[1].cohortName,
+                                        circleRadius: 4,
+                                        colors: $component.groupedScatterColorScheme,
+                                        addDiagonal: true,
+                                        xScale: $component.scatterXScale,
+                                        yScale: $component.scatterYScale,
+                                        tooltip: $component.tooltipBuilder
+                                    }"
+                                />
+                            </div>
+                        <!-- /ko -->
+                    </div>
+                <!-- /ko -->
+                <!-- ko if: $data.type === 'distribution' -->
+                    <div data-bind="css: $component.classes('analysis-results')">
+                        <!-- ko if: reports.length === 2 -->
+                            <div data-bind="css: $component.classes('table-wrapper')">
+                                <table style="width:100%" data-bind="
+                                    css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                                    dataTable:{
+                                        data: $data.data,
+                                        options: {columns: $data.columns}
+                                    }
+                                ">
+                                    <thead>
+                                    <tr>
+                                        <th rowspan="2">Covariate</th>
+                                        <!-- ko foreach: reports -->
+                                            <th colspan="4" data-bind="css: $component.classes('th-cohort-name'), text: cohortName"></th>
+                                        <!-- /ko -->
+                                        <th rowspan="2">Std Diff</th>
+                                    </tr>
+                                    <tr>
+                                        <!-- ko foreach: reports -->
+                                        <th>Count</th>
+                                        <th>Avg</th>
+                                        <th>Std Dev</th>
+                                        <th>Median</th>
+                                        <!-- /ko -->
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div data-bind="css: $component.classes('chart-wrapper')">
+                                <split-boxplot data-bind="css: $component.classes('boxplot')" params="
+                                            data: () => $component.convertBoxplotData($data),
+                                            minHeight: 125,
+                                            format: {
+                                                valueFormatter: v => v,
+                                                boxHeight: 40,
+                                            }"
+                                />
+                            </div>
+                        <!-- /ko -->
+
+                        <!-- ko if: reports.length !== 2 -->
+                            <!-- ko foreach: reports -->
+                                <div data-bind="css: $component.classes('table-wrapper', $parent.reports.length < 2 ? 'hidden-cohort-name' : null)">
+                                    <table data-bind="
+                                        css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                                        dataTable:{
+                                            data: $data.data,
+                                            options: {columns: $data.columns}
+                                        }
+                                    "/>
+                                </div>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                    </div>
+                <!-- /ko -->
+            </div>
+        <!-- /ko -->
+    </div>
+</div>

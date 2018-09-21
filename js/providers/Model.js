@@ -356,7 +356,7 @@ define(
 
 			handleViewChange(view, routerParams = false) {
 				if (view !== this.currentView()) {
-					this.currentView('loading');					
+					this.currentView('loading');
 				}
 				if (routerParams !== false) {
 					this.routerParams(routerParams);

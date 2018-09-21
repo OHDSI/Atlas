@@ -34,10 +34,24 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
     );
 	}
 
+	function sortAbs(x, y) {
+        const abxX = Math.abs(x);
+        const absY = Math.abs(y);
+        return abxX < absY ? -1 : abxX>absY ? 1 : 0;
+	}
+
 	ko.bindingHandlers.dataTable = {
 	
 		init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-			
+
+            jQuery.fn.dataTableExt.oSort["numberAbs-desc"] = function(x, y) {
+                return -1 * sortAbs(x, y);
+            };
+
+            jQuery.fn.dataTableExt.oSort["numberAbs-asc"] = function(x, y) {
+                return sortAbs(x, y);
+            }
+
 			var binding = ko.utils.unwrapObservable(valueAccessor());
 			// If the binding is an object with an options field,
 			// initialise the dataTable with those options.
@@ -63,7 +77,7 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 				}
 				
 				const xssOptions = config.xssOptions;
-				
+
 				binding.options.columns = columns.map((column) => {
 					const originalRender = column.render;
 					const originalDataAccessor = column.data;
@@ -86,7 +100,7 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 				if ($(element).find('thead')[0]) {
 					ko.applyBindings(bindingContext, $(element).find('thead')[0]);
 				}
-				
+
 				$(element).DataTable(binding.options);
 				
 				if (binding.api != null)
