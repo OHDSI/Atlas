@@ -57,15 +57,13 @@ define([
             this.mode(mode);
         }
 
-        loadExportJSON() {
-            this.loading(true);
-
-            CharacterizationService
-                .loadCharacterizationExportDesign(this.characterizationId())
-                .then(res => {
-                    this.exportEntity(res);
-                    this.loading(false);
-                });
+        async loadExportJSON() {
+            if (this.characterizationId() !== 0) {
+                this.loading(true);
+                const res = await CharacterizationService.loadCharacterizationExportDesign(this.characterizationId());
+                this.exportEntity(res);
+                this.loading(false);
+            }
         }
 
         doImport() {
