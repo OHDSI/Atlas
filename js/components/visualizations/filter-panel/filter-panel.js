@@ -4,7 +4,7 @@ define(
     'text!./filter-panel.html',
     'utils/BemHelper',
     'less!./filter-panel.less',
-    './multi-select/multi-select'
+    'components/multi-select'
   ],
   function (ko, view, BemHelper) {
     const componentName = 'visualizations-filter-panel';

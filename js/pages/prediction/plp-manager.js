@@ -16,6 +16,7 @@ define([
 	'clipboard',
 	'atlas-state',
 	'components/heading',
+	'less!./plp-manager.less'
 ],
 	function (
 		ko,
