@@ -6,8 +6,9 @@ define(
     return {
       title: constants.pageTitle,
       buildRoutes,
-      baseUrl: 'cc/characterizations',
+      navUrl: () => '#/cc/characterizations',
       icon: 'line-chart',
+      statusCss: () => '',
     };
   }
 );
