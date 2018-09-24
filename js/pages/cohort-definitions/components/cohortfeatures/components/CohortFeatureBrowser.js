@@ -9,7 +9,7 @@ define(['knockout',
 				'../tableConfig/DomainTableFilteredOptions',
 				'../tableConfig/DistributionTableColumns',
 				'../tableConfig/DistributionTableOptions',
-				'services/CohortFeatures'], 
+				'services/CohortFeaturesService'], 
 function (ko, 
 					template, 
 					config,
@@ -122,7 +122,7 @@ function (ko,
 			}
 		}
 
-		self.exploreByFeature = function (covInfo, featureSection) {
+		self.exploreByFeature = async function (covInfo, featureSection) {
 			if (featureSection == null) {
 				featureSection = self.getFeatureSection(self.chrMode()).featureSection;
 			}
@@ -133,7 +133,8 @@ function (ko,
 
 			if (!featureSection.byCovariate.has(selectedCovariateId)) {
 				// Go get the covariate ancestors/desendants
-				cohortFeaturesService.getStudyPrevalenceStatisticsByVocab(self.cohortId(), self.sourceKey(), covInfo.covariateId).then(function (data) {
+				try {
+					const data = await cohortFeaturesService.getStudyPrevalenceStatisticsByVocab(self.cohortId(), self.sourceKey(), covInfo.covariateId);
 					data.forEach(function (item) {
 						if (item.distance > 0) {
 							item.relationshipType = "Ancestor"
@@ -147,10 +148,10 @@ function (ko,
 					featureSection.filteredFlag(true);
 					featureSection.byCovariate.set(selectedCovariateId, data);
 					featureSection.loadingFlag(false);
-				}, function (err) {
-					console.log(err);
+				} catch(err) {
+					console.error(err);
 					featureSection.loadingFlag(false);
-				});
+				}
 			} else {
 				featureSection.dataFiltered(featureSection.byCovariate.get(selectedCovariateId));
 				featureSection.filteredFlag(true);
@@ -158,20 +159,19 @@ function (ko,
 			}
 		}
 
-		self.getCohortFeatures = function (featureSection, searchTerm) {
+		self.getCohortFeatures = async function (featureSection, searchTerm) {
 			featureSection.loadingFlag(true);
 			var domainList = self.getDomainList(featureSection.type);
 			var analysisIdList = null; //self.getAnalysisIdList(featureSection.chrType);
 			var cohortId = self.cohortId()
 			var sourceKey = self.sourceKey();
-			var promise;
-			if (featureSection.type == "dist") {
-				promise = cohortFeaturesService.getStudyDistributionStatistics(sourceKey, cohortId, domainList, analysisIdList, searchTerm);
-			} else {
-				promise = cohortFeaturesService.getStudyPrevalenceStatistics(sourceKey, cohortId, domainList, analysisIdList, searchTerm);
-			}
-
-			promise.then(function (data) {
+			let data;
+			try {
+				if (featureSection.type == "dist") {
+					data = await cohortFeaturesService.getStudyDistributionStatistics(sourceKey, cohortId, domainList, analysisIdList, searchTerm);
+				} else {
+					data = await cohortFeaturesService.getStudyPrevalenceStatistics(sourceKey, cohortId, domainList, analysisIdList, searchTerm);
+				}
 				featureSection.data(data);
 				featureSection.dataLoaded(true);
 				if (featureSection.loadingFlag() && featureSection.currentFilter() && featureSection.currentFilter().covariateId != null) {
@@ -179,10 +179,11 @@ function (ko,
 				} else {
 					featureSection.loadingFlag(false);
 				}
-			}, function (err) {
+
+		 	} catch(err) {
 				featureSection.loadingFlag(false);
 				console.error("An error occurred when retrieving prevalance results for the cohort." + err)
-			});
+			}
 		}
 
 		self.clearFilter = function () {

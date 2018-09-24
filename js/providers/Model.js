@@ -4,7 +4,7 @@ define(
 		'utils/CommonUtils',
 		'const',
 		'services/http',
-		'services/CohortDefinition',
+		'services/CohortDefinitionService',
 		'services/ConceptSet',
 		'services/role',
 		'providers/AutoBind',

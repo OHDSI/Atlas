@@ -4,7 +4,7 @@ define(
     'text!./persons-exposure.html',
     'pages/cohort-definitions/components/reporting/cost-utilization/base-report',
     'pages/cohort-definitions/const',
-    'services/CohortResults',
+    'services/CohortResultsService',
     'utils/CommonUtils',
     'components/visualizations/filter-panel/filter-panel',
     'pages/cohort-definitions/components/reporting/cost-utilization/table-baseline-exposure',

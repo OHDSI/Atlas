@@ -1,12 +1,12 @@
 define([
-  'services/http',
+  'providers/Service',
 ], (
-  httpService,
+  Service,
 ) => {
 
-  return class CRUDService {
+  return class CRUDService extends Service {
     constructor(baseUrl = 'crud-endpoint') {
-      this.httpService = httpService;
+      super();
       this.baseUrl = baseUrl;
     }
     

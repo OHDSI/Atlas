@@ -5,7 +5,7 @@ define([
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'text!./plp-spec-editor.html',
-	'services/CohortDefinition',
+	'services/CohortDefinitionService',
 	'plp/PatientLevelPredictionAnalysis',
 	'plp/options',
 	'components/cohortbuilder/CohortExpression',

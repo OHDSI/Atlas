@@ -4,7 +4,7 @@ define([
 	'text!./cohort-comparison-manager.html',
 	'lodash',
 	'clipboard',
-	'services/CohortDefinition',
+	'services/CohortDefinitionService',
 	'services/JobDetailsService',
 	'services/http',
 	'appConfig',

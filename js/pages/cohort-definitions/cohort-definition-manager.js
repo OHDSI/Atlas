@@ -1,13 +1,13 @@
 define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'appConfig',
 	'components/cohortbuilder/CohortDefinition',
-	'services/CohortDefinition',
+	'services/CohortDefinitionService',
 	'webapi/MomentAPI',
 	'webapi/ConceptSetAPI',
 	'components/conceptset/utils',
 	'components/cohortbuilder/CohortExpression',
 	'conceptsetbuilder/InputTypes/ConceptSet',
-	'services/CohortReporting',
+	'services/CohortReportingService',
 	'vocabularyprovider',
 	'atlas-state',
 	'clipboard',
@@ -474,7 +474,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportingAvailableReports.removeAll();
 			});
 
-			this.reportingState = ko.computed(() => {
+			this.reportingState = ko.computed(async () => {
 				// require a data source selection
 					if (this.model.reportSourceKey() == undefined) {
 						this.generateReportsEnabled(false);
@@ -491,26 +491,24 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				// check which reports have required data
 					if (!this.reportingSourceStatusAvailable() && !this.reportingSourceStatusLoading()) {
 						this.reportingSourceStatusLoading(true);
-						cohortReportingService.getCompletedAnalyses(sourceInfo, this.model.currentCohortDefinition().id()).done(results => {
+						const results = await cohortReportingService.getCompletedAnalyses(sourceInfo, this.model.currentCohortDefinition().id());
 						var reports = cohortReportingService.getAvailableReports(results);
 						if (reports.length == 0) {
-								this.reportingAvailableReports(reports);
-								this.generateReportsEnabled(false);
-								this.reportingSourceStatusAvailable(true);
-								this.reportingSourceStatusLoading(false);
+							this.reportingAvailableReports(reports);
+							this.generateReportsEnabled(false);
+							this.reportingSourceStatusAvailable(true);
+							this.reportingSourceStatusLoading(false);
 							return "checking_status";
 						}
-							cohortReportingService.getCompletedHeraclesHeelAnalyses(sourceInfo, this.model.currentCohortDefinition().id()).done(heelResults => {
-							if (heelResults.length > 0) {
-								reports.push({name: "Heracles Heel", reportKey: "Heracles Heel", analyses: []});
-							}
-								this.reportingAvailableReports(reports);
-								this.generateReportsEnabled(false);
-								this.reportingSourceStatusAvailable(true);
-								this.reportingSourceStatusLoading(false);
-							return "checking_status";
-						});
-					});
+						const heelResults = await cohortReportingService.getCompletedHeraclesHeelAnalyses(sourceInfo, this.model.currentCohortDefinition().id());
+						if (heelResults.length > 0) {
+							reports.push({name: "Heracles Heel", reportKey: "Heracles Heel", analyses: []});
+						}
+						this.reportingAvailableReports(reports);
+						this.generateReportsEnabled(false);
+						this.reportingSourceStatusAvailable(true);
+						this.reportingSourceStatusLoading(false);
+						return "checking_status";
 				}
 	
 				// check if we can tell if the job to generate the reports is already running

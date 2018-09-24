@@ -6,7 +6,7 @@ define([
 	'colorbrewer',
 	'lodash',
 	'appConfig',
-	'services/CohortReporting',
+	'services/CohortReportingService',
 	'pages/cohort-definitions/const',
 	'providers/Component',
 	'utils/CommonUtils',

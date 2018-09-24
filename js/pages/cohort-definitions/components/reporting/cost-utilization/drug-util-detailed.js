@@ -3,7 +3,7 @@ define(
     'knockout',
     'text!./drug-util-detailed.html',
     './base-drug-util-report',
-    'services/CohortResults',
+    'services/CohortResultsService',
     'pages/cohort-definitions/const',
     'utils/CommonUtils',
     'components/visualizations/filter-panel/filter-panel',

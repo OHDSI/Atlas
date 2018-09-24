@@ -8,7 +8,7 @@ define([
 	'services/Profile',
 	'atlas-state',
 	'components/cohortbuilder/CohortDefinition',
-	'services/CohortDefinition',
+	'services/CohortDefinitionService',
 	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',

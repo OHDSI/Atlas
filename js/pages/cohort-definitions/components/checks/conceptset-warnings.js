@@ -1,5 +1,5 @@
 define(['knockout', 'text!./conceptset-warnings.html',
-    'services/CohortDefinition',
+    'services/CohortDefinitionService',
     './const',
     './utils',
     'databindings',

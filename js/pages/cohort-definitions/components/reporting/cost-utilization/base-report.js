@@ -9,7 +9,7 @@ define(
     'webapi/MomentAPI',
     'utils/CsvUtils',
     'numeral',
-    'services/CohortResults',
+    'services/CohortResultsService',
     'lodash'
   ],
   function (

@@ -3,7 +3,7 @@ define([
 	'text!./ir-manager.html', 
 	'services/IRAnalysis',
 	'webapi/SourceAPI',
-	'services/CohortDefinition',
+	'services/CohortDefinitionService',
 	'./components/iranalysis/IRAnalysisDefinition', 
 	'./components/iranalysis/IRAnalysisExpression', 
 	'assets/ohdsi.util',
