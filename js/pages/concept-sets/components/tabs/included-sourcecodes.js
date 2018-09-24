@@ -13,6 +13,9 @@ define([
 		constructor(params) {
 			super(params);
 			this.model = params.model;
+			this.loading = ko.pureComputed(() => {
+				return this.model.loadingSourcecodes() || this.model.loadingIncluded();
+			});
 
 			// on activate
 			this.model.loadIncluded()

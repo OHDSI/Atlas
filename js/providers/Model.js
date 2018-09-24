@@ -818,12 +818,11 @@ define(
 			}
 
 			onCurrentConceptSetModeChanged(newMode) {
-				console.warn('onCurrentConceptSetModeChanged is deprecated. moved to pages/concept-sets/components/tabs');
 				switch (newMode) {
 					case 'included':
 						this.loadIncluded();
 						break;
-					case 'sourcecodes':
+					case 'included-sourcecodes':
 						this.loadIncluded()
 							.then(() => {
 								if (this.includedSourcecodes().length === 0) {
