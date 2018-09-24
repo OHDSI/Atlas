@@ -258,7 +258,7 @@ define([
 
     self.init = function () {
 		if (self.hasAccess()) {
-			if (self.selectedSourceId() == null && self.selectedSource() == null) {
+			if (self.selectedSourceId() == null) {
 				self.newSource();
 			} else {
 				self.loading(true);
