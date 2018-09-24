@@ -14,6 +14,10 @@ define(
           data.selectedValues.subscribe(() => $(element).selectpicker('refresh'));
         }
 
+        if (data.selectedValue) {
+            data.selectedValue.subscribe(() => $(element).selectpicker('refresh'));
+        }
+
         ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
           $(element).selectpicker('destroy');
         });

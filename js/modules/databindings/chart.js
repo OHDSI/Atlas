@@ -20,7 +20,12 @@ define(['knockout'], (ko) => {
   ko.bindingHandlers.chart = {
 		update: function (element, valueAccessor) {
       const chart = valueAccessor();
-			draw(chart.data(), element, chart.minHeight, chart.format, chart.renderer);
+      try {
+        draw(chart.data(), element, chart.minHeight, chart.format, chart.renderer);
+      } catch(er) {
+        console.error('Error when rendering chart');
+        draw(null, element, chart.minHeight, chart.format, chart.renderer);
+      }
 		}
 	};
 });

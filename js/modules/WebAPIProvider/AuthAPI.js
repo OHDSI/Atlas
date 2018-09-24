@@ -437,6 +437,7 @@ define(function(require, exports) {
         refreshToken: refreshToken,
 
         isAuthenticated: isAuthenticated,
+        isPermitted: isPermitted,
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,
         isPermittedUpdateConceptset: isPermittedUpdateConceptset,

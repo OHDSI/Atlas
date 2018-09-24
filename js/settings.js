@@ -77,7 +77,7 @@ const settingsObject = {
     "text": "plugins/text",
     "less": "plugins/less",
     "optional": "plugins/optional",
-		"clipboard": "assets/clipboard.min",
+    "clipboard": "assets/clipboard.min",
     "knockout": "assets/knockout.min",
     "ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
     "knockout-mapping": "assets/knockout.mapping",
@@ -87,12 +87,12 @@ const settingsObject = {
     "colvis": "assets/jquery.dataTables.colVis.min",
     "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.1/crossfilter.min",
     "director": "assets/director.min",
-    "atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.4.1/dist/atlascharts.min",
+    "atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.5.0-alpha.0/dist/atlascharts.min",
     "jnj_chart": "assets/jnj.chart", // scatterplot is not ported to separate library
     "lodash": "assets/lodash.4.15.0.full",
     "lscache": "assets/lscache.min",
     "localStorageExtender": "assets/localStorageExtender",
-    "appConfig": "config/app.config",
+    "appConfig": "config",
     "prism": "assets/prism",
     "js-cookie": "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min",
 
@@ -112,6 +112,7 @@ const settingsObject = {
     "d3-dispatch": "https://cdnjs.cloudflare.com/ajax/libs/d3-dispatch/1.0.3/d3-dispatch.min",
     "d3-tip": "https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min",
     "d3-slider": "assets/d3.slider",
+    "d3-scale-chromatic": "https://cdn.jsdelivr.net/npm/d3-scale-chromatic@1.3.0/dist/d3-scale-chromatic.min",
     "xss": "https://cdnjs.cloudflare.com/ajax/libs/js-xss/0.3.3/xss.min",
 
     "moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min",

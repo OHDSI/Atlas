@@ -1,0 +1,8 @@
+<div>
+    <div data-bind="visible: executionId() == null">
+        <div data-bind='component: { name: "characterization-view-edit-executions", params: componentParams } ' />
+    </div>
+    <!--  ko if: !!executionId() -->
+        <div data-bind='component: { name: "characterization-view-edit-results", params: componentParams } ' />
+    <!-- /ko -->
+</div>
