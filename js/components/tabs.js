@@ -13,19 +13,18 @@ define([
 	class Tabs extends Component {
 		constructor(params) {
 			super(params);
+			this.subscriptions = [];
 
 			this.selectedTab = params.selectedTab ? params.selectedTab : ko.observable(0);
 			this.tabs = ko.observableArray(params.tabs || []);
 
-						// There can be nested components for a single tab, which will be displayed under parent tab
-			this.selectedTitleIndex = ko.computed(() => {
-				if (typeof this.tabs()[this.selectedTab()] === 'undefined') {
-					return this.selectedTab();
-				}
-				return this.tabs()[this.selectedTab()].titleIndex || this.selectedTab()
-			});
+            if (params.selectedTabKey) {
+                const selectedTabKeySubscr = params.selectedTabKey.subscribe(newKey => this.onSelectedTabKeyUpdate(newKey));
+                this.subscriptions.push(selectedTabKeySubscr);
+                this.onSelectedTabKeyUpdate(params.selectedTabKey());
+            }
 
-			this.selectTab = params.selectTab || (idx => this.selectedTab(idx));
+			this.selectTab = params.selectTab || ((idx, tabData) => this.selectedTab(idx, tabData));
 
 			// User can go back and forwards between tabs - no need to re-initialize them each time
 			this.previouslyLoadedTabs = typeof this.selectedTab() !== 'undefined' ? ko.observable([this.selectedTab()]) : ko.observable([]);
@@ -35,6 +34,15 @@ define([
 					this.previouslyLoadedTabs([ ...indexes, idx ]);
 				}
 			});
+		}
+
+		onSelectedTabKeyUpdate(newVal) {
+            let tabIdx = this.tabs().indexOf(this.tabs().find(t => t.key === newVal));
+            this.selectedTab(tabIdx);
+		}
+
+		dispose() {
+            this.subscriptions.forEach(s => s.dispose());
 		}
 	}
 

@@ -31,7 +31,7 @@
                     <div data-bind="css: $component.classes('chart-filter-line')">
                         <div data-bind="css: $component.classes('chart-filter')">
                             <label>Displayed charts:</label>
-                            <visualizations-multi-select params="{ options: chartOptions, selectedValues: displayedCharts, multiple: true, selectedTextFormat: 'count > 10' }"/>
+                            <multi-select params="{ options: chartOptions, selectedValues: displayedCharts, multiple: true, selectedTextFormat: 'count > 10' }"/>
                         </div>
                     </div>
                     <!-- ko foreach: chartDataList -->

@@ -1,0 +1,40 @@
+<div data-bind="css: classes()">
+    <heading-title params="name: 'Characterization', icon: 'shopping-cart', theme: 'dark'"></heading-title>
+    <div class="asset-heading">
+        <div class="input-group">
+            <input type="text" data-bind="css: 'form-control', attr: { disabled: $component.isEditPermitted() ? null : true }, textInput: design().name" />
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!$component.isSavePermitted()}"><i class="fa fa-save"></i></button>
+                <button type="button" class="btn btn-primary" data-bind="click: $component.closeCharacterization"><i class="fa fa-times"></i></button>
+                <button type="button" class="btn btn-danger"  data-bind="click: $component.deleteCc, css: {disabled: !$component.isDeletePermitted()}"><i class="fa fa-trash-o"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Cohort Characterization...'"></loading>
+
+    <tabs data-bind="visible: !$component.loading()" params="
+        selectedTabKey: $component.selectedTabKey,
+        selectTab: $component.selectTab,
+        tabs: [
+            {
+                title: 'Design',
+                key: 'design',
+                componentName: 'characterization-design',
+                componentParams: $component.componentParams,
+            },
+            {
+                title: 'Executions',
+                key: 'executions',
+                componentName: 'characterization-exec-wrapper',
+                componentParams: $component.componentParams,
+            },
+            {
+                title: 'Utilities',
+                key: 'utilities',
+                componentName: 'characterization-view-edit-utils',
+                componentParams: $component.componentParams,
+            },
+        ]">
+    </tabs>
+</div>

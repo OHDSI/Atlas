@@ -1,0 +1,34 @@
+<div class="loading" data-bind="visible: loading()">loading</div>
+
+<div data-bind="css: classes(), visible: !loading()">
+    <h2 data-bind="css: classes('title')">
+        Utilities
+    </h2>
+    <ul data-bind="css: classes({ element: 'nav', extra: 'nav nav-pills' })">
+        <li role="presentation"
+            data-bind="css: classes({ element: 'nav-pill', extra: mode() == MODE_JSON ? 'active' : null }), click: setMode.bind(null, MODE_JSON)">
+            <a>Export</a>
+        </li>
+        <li role="presentation"
+            data-bind="css: classes({ element: 'nav-pill', extra: mode() == MODE_IMPORT ? 'active' : null }), click: setMode.bind(null, MODE_IMPORT)">
+            <a>Import</a>
+        </li>
+    </ul>
+    <div data-bind="if: mode() == MODE_JSON, css: classes('content')">
+        <!-- ko if: isExportPermitted() -->
+            <textarea data-bind="css: classes('json-box'), text: $component.exportJSON"></textarea>
+        <!-- /ko -->
+        <!-- ko if: !isExportPermitted() -->
+            Export is not permitted
+        <!-- /ko -->
+    </div>
+    <div data-bind="if: mode() == MODE_IMPORT, css: classes('content')">
+        <!-- ko if: isImportPermitted() -->
+            <button data-bind="css: classes({ element: 'import-btn', extra: 'btn btn-default btn-sm' }), click: doImport">Import</button>
+            <textarea data-bind="css: classes('json-box'), textInput: $component.importJSON"></textarea>
+        <!-- /ko -->
+        <!-- ko if: !isImportPermitted() -->
+            Import is not permitted
+        <!-- /ko -->
+    </div>
+</div>

@@ -5,10 +5,10 @@
 				<span
 						data-bind="css: $component.classes({
 							element: 'header-title',
-							modifiers: ($component.selectedTitleIndex() == $index() ? 'selected' : null)
+							modifiers: ($component.selectedTab() == $index() ? 'selected' : null)
 						}),
 						text: $data.title,
-						click: () => $component.selectTab($index())"
+						click: () => $component.selectTab($index(), $data)"
 				></span>
 			<!-- /ko -->
 		<!-- /ko -->

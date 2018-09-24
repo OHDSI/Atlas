@@ -1,14 +1,17 @@
 define([
   'knockout',
-  'utils/BemHelper',  
+  'utils/BemHelper',
+  'webapi/AuthAPI',
 ], function (
   ko,
-  BemHelper
+  BemHelper,
+  AuthAPI
 ) {
   class Component {
     constructor() {
       const bemHelper = new BemHelper(this.componentName);
       this.classes = bemHelper.run.bind(bemHelper);
+      this.isAuthenticated = AuthAPI.isAuthenticated;
     }
   }
 

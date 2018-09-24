@@ -22,7 +22,11 @@ define(
 		
 			ko.components.register(name, component);
 			return component;
-		}
+		};
+
+        const routeTo = function (path) {
+            document.location = '#' + path;
+        };
 
 		// service methods for model
 
@@ -65,7 +69,7 @@ define(
 					break;
 			}
 		}
-		
+
 		function hasCDM(source) {
 			return source.daimons.find(daimon => daimon.daimonType == 'CDM') !== undefined;
 		}
@@ -95,7 +99,7 @@ define(
 		function renderBoundLink(s, p, d) {
 			return '<a href=\"#/concept/' + d.concept.CONCEPT_ID + '\">' + d.concept.CONCEPT_NAME + '</a>';
 		}
-		
+
 		const renderConceptSelector = function(s, p, d) {
 			var css = '';
 			var icon = 'fa-shopping-cart';
@@ -145,6 +149,7 @@ define(
 
 		return {
 			build,
+            routeTo,
 			hasRelationship,
 			contextSensitiveLinkColor,
 			hasCDM,
