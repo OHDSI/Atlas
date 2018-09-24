@@ -5,7 +5,7 @@
 				<span
 					data-bind="css: $component.classes({
 						element: 'header-title',
-						modifiers: ($component.selectedTitleIndex() == $index() ? 'selected' : null)
+						modifiers: ($component.selectedTab() == $index() ? 'selected' : null)
 					}),
 					click: () => $component.selectTab($index(), $data)"
 				>
