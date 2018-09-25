@@ -193,12 +193,11 @@ define(
         if (!histogramData.data || histogramData.data.empty) {
           return result;
         }
-        var minValue = histogramData.min;
         var intervalSize = histogramData.intervalSize;
   
         for (var i = 0; i < histogramData.data.intervalIndex.length; i++) {
           var target = new Object();
-          target.x = minValue + (1.0 * histogramData.data.intervalIndex[i] * intervalSize);
+          target.x = 1.0 * histogramData.data.intervalIndex[i] * intervalSize;
           target.dx = intervalSize;
           target.y = histogramData.data.countValue[i] || 0;
           result.push(target);
