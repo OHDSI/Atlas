@@ -3,7 +3,7 @@ define([
 	'text!./cohort-definition-browser.html',
 	'appConfig',
 	'webapi/AuthAPI',
-	'webapi/MomentAPI',
+	'utils/MomentUtils',
 	'providers/Component',
 	'utils/CommonUtils',
 	'services/httpService',
@@ -13,7 +13,7 @@ define([
 	view,
 	config,
 	authApi,
-	momentApi,
+	momentUtils,
 	Component,
 	commonUtils,
 	httpService
@@ -72,14 +72,14 @@ define([
 					title: 'Created',
 					type: 'date',
 					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.createdDate);
+						return momentUtils.formatDateTimeUTC(d.createdDate);
 					}
 				},
 				{
 					title: 'Updated',
 					type: 'date',
 					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.modifiedDate);
+						return momentUtils.formatDateTimeUTC(d.modifiedDate);
 					}
 				},
 				{

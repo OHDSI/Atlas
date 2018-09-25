@@ -3,34 +3,35 @@ define(function(require, exports) {
     var $ = require('jquery');
     var config = require('appConfig');
     var ko = require('knockout');
-    var cookie = require('webapi/CookieAPI');
+    var cookie = require('utils/CookieUtils');
     var TOKEN_HEADER = 'Bearer';
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
     const httpService = require('services/httpService');
-
+    
     var authProviders = config.authProviders.reduce(function(result, current) {
         result[config.api.url + current.url] = current;
         return result;
     }, {});
-
+    
     var getServiceUrl = function () {
         return config.webAPIRoot;
     };
-
+    
     var token = ko.observable();
     if (localStorage.bearerToken && localStorage.bearerToken != 'null') {
         token(localStorage.bearerToken);
     } else {
         token(null);
     }
-
+    
     var getAuthorizationHeader = function () {
         if (!token()) {
             return null;
         }
         return TOKEN_HEADER + ' ' + token();
     };
-
+    
+    // httpService itself depends on AuthService, so we can't use it here
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {

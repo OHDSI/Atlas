@@ -1,4 +1,4 @@
-define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/Concept', 'vocabularyprovider', 'assets/knockout-jqueryui/dialog'], function ($, ko, template, Concept, VocabularyProvider) {
+define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/Concept', 'services/VocabularyService', 'assets/knockout-jqueryui/dialog'], function ($, ko, template, Concept, VocabularyService) {
 	
 	function _mapConceptRowToConcept (row)
 	{
@@ -26,13 +26,13 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 		self.importValues = ko.observable("");
 		self.dtApi = ko.observable();
 
-		VocabularyProvider.getDomains().then(function (domains) {
+		VocabularyService.getDomains().then(function (domains) {
 			self.DomainOptions(domains);
 			if (params.DefaultQuery != null)
 				self.search();
 		});
 
-		VocabularyProvider.loaded.then(function () {
+		VocabularyService.loaded.then(function () {
 			self.ProviderReady(true);
 		});
 	};
@@ -60,7 +60,7 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 
 	ConceptPickerViewModel.prototype.search = function () {
 		var self = this;
-		VocabularyProvider.search(this.searchText, {
+		VocabularyService.search(this.searchText, {
 			domains: [this.SelectedDomain],
 			maxResults: this.MaxResults
 		})
@@ -99,7 +99,7 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 			var p = new $.Deferred().resolve();	
 			uniqueConceptIds.forEach(function(cId) {
 				p = p.then(function() {
-					return VocabularyProvider.getConcept(cId);
+					return VocabularyService.getConcept(cId);
 				}).then(function(data) {
 					if (data != "")
 						results.push(_mapConceptRowToConcept(data));

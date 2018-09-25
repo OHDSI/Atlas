@@ -8,7 +8,7 @@ define(
 		'services/ConceptSet',
 		'services/RoleService',
 		'providers/AutoBind',
-		'providers/Vocabulary',
+		'services/VocabularyService',
 		'components/cohortbuilder/CohortDefinition',
 		'assets/ohdsi.util',
 		'appConfig',
@@ -17,7 +17,7 @@ define(
 		'lodash',
 		'd3',
 		'webapi/AuthAPI',
-		'webapi/MomentAPI',
+		'utils/MomentUtils',
 		'less!app.less',
 	],
 	(
@@ -38,7 +38,7 @@ define(
 		_,
 		d3,
 		authApi,
-        momentApi,
+        momentUtils,
 	) => {
 		return class GlobalModel extends AutoBind() {
 			static get applicationStatuses() {
@@ -563,7 +563,7 @@ define(
 										cdsi.sourceId = sourceInfo.id.sourceId;
 										cdsi.status = ko.observable(sourceInfo.status);
 										var date = new Date(sourceInfo.startTime);
-										cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
+										cdsi.startTime = ko.observable(momentUtils.formatDateTime(date));
 										cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
 										var commaFormatted = d3.format(",");
 										// For backwards compatability, query personCount from cdm if not populated in sourceInfo

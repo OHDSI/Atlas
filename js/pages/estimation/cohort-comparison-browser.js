@@ -2,7 +2,7 @@ define([
 	'knockout',
 	'text!./cohort-comparison-browser.html',
 	'appConfig',
-	'webapi/MomentAPI',
+	'utils/MomentUtils',
 	'webapi/AuthAPI',
 	'providers/Page',
 	'providers/AutoBind',
@@ -18,7 +18,7 @@ define([
 	ko,
 	view,
 	config,
-	momentApi,
+	momentUtils,
 	authApi,
 	Page,
 	AutoBind,
@@ -76,14 +76,14 @@ define([
 					title: 'Created',
 					type: 'date',
 					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.createdDate);
+						return momentUtils.formatDateTimeUTC(d.createdDate);
 					}
 				},
 				{
 					title: 'Modified',
 					type: 'date',
 					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.modifiedDate);
+						return momentUtils.formatDateTimeUTC(d.modifiedDate);
 					}
 				},
 				{

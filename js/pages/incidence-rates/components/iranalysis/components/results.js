@@ -3,7 +3,7 @@ define([
 	'jquery',
 	'text!./results.html',
 	'services/IRAnalysisService',
-	'webapi/MomentAPI',
+	'utils/MomentUtils',
 	'providers/Component',
 	'utils/CommonUtils',
 	'databindings'
@@ -12,7 +12,7 @@ define([
 	$,
 	view,
 	IRAnalysisService,
-	momentApi,
+	momentUtils,
 	Component,
 	commonUtils
 ) {
@@ -30,7 +30,7 @@ define([
 			this.selectedOutcome = ko.observable();
 			this.isLoading = ko.observable();
 			this.formatDateTime = function(date){
-				return momentApi.formatDateTime(new Date(date));
+				return momentUtils.formatDateTime(new Date(date));
 			};
 			
 			this.irCaption = ko.pureComputed(() => {
@@ -126,7 +126,7 @@ define([
 		};
 
 		msToTime(s) {
-			return momentApi.formatDuration(s);
+			return momentUtils.formatDuration(s);
 		};	
 		
 		dispose() {

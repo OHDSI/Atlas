@@ -2,7 +2,7 @@ define([
 	'knockout',
 	'text!./plp-browser.html',
 	'appConfig',
-	'webapi/MomentAPI',
+	'utils/MomentUtils',
 	'services/PatientLevelPredictionService',
 	'webapi/AuthAPI',
 	'providers/Page',
@@ -15,7 +15,7 @@ define([
 	ko,
 	view,
 	config,
-	momentApi,
+	momentUtils,
 	plpService,
 	authApi,
 	Page,
@@ -68,14 +68,14 @@ define([
 				{
 					title: 'Created',
 					render: function(s, p, d){
-						return momentApi.formatDateTimeUTC(d.createdDate);
+						return momentUtils.formatDateTimeUTC(d.createdDate);
 					},
 					sType: 'date-uk'
 				},
 				{
 					title: 'Modified',
 					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.modifiedDate);
+						return momentUtils.formatDateTimeUTC(d.modifiedDate);
 					},
 					sType: 'date-uk'
 				},

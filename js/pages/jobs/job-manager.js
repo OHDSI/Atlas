@@ -6,7 +6,7 @@ define([
 	'utils/CommonUtils',
 	'services/JobsService',
 	'appConfig',
-	'webapi/MomentAPI',
+	'utils/MomentUtils',
 	'webapi/AuthAPI',
 	'databindings',
 	'components/ac-access-denied',
@@ -20,7 +20,7 @@ define([
 		commonUtils,
 		jobsService,
 		config,
-		momentApi,
+		momentUtils,
 		authApi
 	) {
 	class JobManager extends AutoBind(Page) {
@@ -54,10 +54,10 @@ define([
 				const jobs = await jobsService.find();
 				this.model.jobs(jobs.content.map((job) => {
 					const startDate = new Date(job.startDate);
-					job.startDate = momentApi.formatDateTime(startDate);
+					job.startDate = momentUtils.formatDateTime(startDate);
 
 					const endDate = new Date(job.endDate);
-					job.endDate = momentApi.formatDateTime(endDate);
+					job.endDate = momentUtils.formatDateTime(endDate);
 
 					if (job.jobParameters.jobName == undefined) {
 						job.jobParameters.jobName = 'n/a';

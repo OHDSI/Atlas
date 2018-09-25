@@ -28,7 +28,6 @@ const localRefs = {
 	"conceptsetbuilder": "modules/conceptsetbuilder",
 	"conceptpicker": "modules/conceptpicker",
 	"webapi": "modules/WebAPIProvider",
-	"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
 	"css": "plugins/css.min",
 };
 

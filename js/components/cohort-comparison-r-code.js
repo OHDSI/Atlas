@@ -4,7 +4,7 @@ define([
 	'text!./cohort-comparison-r-code.html',
 	'appConfig',
 	'components/cohortcomparison/ComparativeCohortAnalysis',
-	'vocabularyprovider',
+	'services/VocabularyService',
 	'prism',
 ],
 	function (
@@ -13,7 +13,7 @@ define([
 		view,
 		config,
 		cohortComparison,
-		vocabularyAPI,
+		VocabularyService,
 		options
 	) {
 		function cohortComparisonRCode(params) {

@@ -643,9 +643,16 @@ define(
 			},
 		};
 
+		const connectionCheckState = {
+			unknown: 'unknown',
+			success: 'success',
+			checking: 'checking',
+			failed: 'failed',
+		};
+
 		const apiPaths = {
 			users: () => `${config.api.url}user`,
-			role: (id = '') => `${config.api.url}role/${id}`,
+			role: (id = '') => `${config.api.url}role${id === '' ? '' : `/${id}`}`,
       roleUsers: roleId => `${config.api.url}role/${roleId}/users`,
       permissions: () => `${config.api.url}permission`,
       rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`,
@@ -656,6 +663,9 @@ define(
 			execution: () => `${config.api.url}executionservice`,
 			ir: () => `${config.api.url}ir`,
 			plp: () => `${config.api.url}plp`,
+			evidence: () => `${config.api.url}evidence`,
+			cdmResults: () => `${config.api.url}cdmresults`,
+			source: () => `${config.api.url}source`,
 		};
 
     return {
@@ -669,6 +679,7 @@ define(
 			getRelatedSourcecodesColumns,
 			apiPaths,
 			visualizationPacks,
+			connectionCheckState,
     };
   }
 );

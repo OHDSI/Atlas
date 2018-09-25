@@ -9,7 +9,7 @@ define([
 	'plp/PatientLevelPredictionAnalysis',
 	'plp/options',
 	'components/cohortbuilder/CohortExpression',
-	'providers/Vocabulary',
+	'services/VocabularyService',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 ],
 	function (
@@ -23,7 +23,7 @@ define([
 		PatientLevelPredictionAnalysis,
 		options,
 		CohortExpression,
-		vocabularyProvider,
+		VocabularyService,
 		ConceptSet,
 	) {
 		class PlpSpecEditor extends AutoBind(Component) {
@@ -45,7 +45,7 @@ define([
 
 			conceptsetSelected(d) {
 				$('#modalConceptSet').modal('hide');
-				vocabularyProvider.getConceptSetExpression(d.id).then(({ data: csExpression }) => {
+				VocabularyService.getConceptSetExpression(d.id).then(({ data: csExpression }) => {
 					this.targetId(d.id);
 					this.targetCaption(d.name);
 					var conceptSetData = new ConceptSet({
@@ -56,7 +56,7 @@ define([
 					this.targetExpression.removeAll();
 					this.targetExpression.push(conceptSetData);
 
-					vocabularyProvider.getConceptSetExpressionSQL(csExpression).then(
+					VocabularyService.getConceptSetExpressionSQL(csExpression).then(
 						({ data }) => {
 							this.targetConceptSetSQL(data);
 						});

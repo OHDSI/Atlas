@@ -6,7 +6,7 @@ define([
   'utils/CommonUtils',
   'appConfig',
   'webapi/AuthAPI',
-  'webapi/SourceAPI',
+  'services/SourceService',
   'atlas-state',
   'less!./configuration.less',
   'components/heading'
@@ -18,7 +18,7 @@ define([
   commonUtils,
   config,
   authApi,
-  sourceApi,
+  sourceService,
   sharedState
 ) {
 	class Configuration extends AutoBind(Page) {
@@ -95,8 +95,8 @@ define([
       }
       this.isInProgress(true);
       try {
-        await sourceApi.updateSourceDaimonPriority(sourceKey, daimonType);
-        sourceApi.initSourcesConfig();
+        await sourceService.updateSourceDaimonPriority(sourceKey, daimonType);
+        sourceService.initSourcesConfig();
       } catch(err) {
         alert('Failed to update priority source daimon');
       }        
@@ -124,27 +124,29 @@ define([
       return true;
     };
     
-    checkSourceConnection(source) {
-      sourceApi.checkSourceConnection(source.sourceKey).then(
-        () => source.connectionCheck(sourceApi.connectionCheckState.success), 
-        () => source.connectionCheck(sourceApi.connectionCheckState.failed)
-      );
-      source.connectionCheck(sourceApi.connectionCheckState.checking);
+    async checkSourceConnection(source) {
+      source.connectionCheck(sourceService.connectionCheckState.checking);
+      try {
+        await sourceService.checkSourceConnection(source.sourceKey);
+        source.connectionCheck(sourceService.connectionCheckState.success);
+      } catch(er) {
+        source.connectionCheck(sourceService.connectionCheckState.failed);
+      }
     };
     
     getCheckButtonStyles(source) {
       let iconClass = 'fa-caret-right';
       let buttonClass = 'btn-primary';
       switch(source.connectionCheck()) {
-        case sourceApi.connectionCheckState.success:
+        case sourceService.connectionCheckState.success:
           buttonClass = 'btn-success';
           iconClass = 'fa-check-square';
           break;
-        case sourceApi.connectionCheckState.failed:
+        case sourceService.connectionCheckState.failed:
           buttonClass = 'btn-danger';
           iconClass = 'fa-exclamation-circle';
           break;
-        case sourceApi.connectionCheckState.checking:
+        case sourceService.connectionCheckState.checking:
           buttonClass = 'btn-warning';
           iconClass = 'fa-circle-o-notch fa-spin';
           break;

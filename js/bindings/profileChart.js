@@ -5,7 +5,7 @@ define([
 	'd3-tip',
 	'lodash',
 	'd3-selection',
-	'webapi/MomentAPI',
+	'utils/MomentUtils',
 	'webapi/AuthAPI',
 	'appConfig',
 	'D3-Labeler/labeler',
@@ -15,7 +15,7 @@ define([
 	d3tip,
 	_,
 	d3Selection,
-	momentApi,
+	momentUtils,
 	authApi,
 	config
 ) {
@@ -45,7 +45,7 @@ define([
 	var htmlTipText = d => {
 		var tipText = '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p>';
 		if (authApi.isPermittedViewProfileDates() && d.startDate != null) {
-			tipText += '<p>Start Date: '	+ momentApi.formatDate(new Date(d.startDate)) + '</p>'
+			tipText += '<p>Start Date: '	+ momentUtils.formatDate(new Date(d.startDate)) + '</p>'
 		}
 		return tipText;
 	};

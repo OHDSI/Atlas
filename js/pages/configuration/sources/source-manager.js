@@ -6,7 +6,7 @@ define([
   'utils/CommonUtils',
   'appConfig',
   'assets/ohdsi.util',
-  'webapi/SourceAPI',
+  'services/SourceService',
   'services/RoleService',
   'lodash',
   'webapi/AuthAPI',
@@ -22,7 +22,7 @@ define([
     commonUtils,
     config,
     ohdsiUtil,
-    sourceApi,
+    sourceService,
     roleService,
     lodash,
     authApi
@@ -259,8 +259,8 @@ define([
       };
       this.loading(true);
       try {
-        await sourceApi.saveSource(this.selectedSourceId(), source);
-        await sourceApi.initSourcesConfig();
+        await sourceService.save(this.selectedSourceId(), source);
+        await sourceService.initSourcesConfig();
         const roles = await roleService.find();
         this.model.roles(roles);
         this.loading(false);
@@ -287,8 +287,8 @@ define([
       }
       this.loading(true);
       try {
-        await sourceApi.deleteSource(this.selectedSourceId())
-        await sourceApi.initSourcesConfig();
+        await sourceService.delete(this.selectedSourceId())
+        await sourceService.initSourcesConfig();
         const roles = await roleService.find();
         this.model.roles(roles);
         this.loading(false);
@@ -303,18 +303,16 @@ define([
       document.location = '#/configure';
     }
 
-    init() {
+    async init() {
       if (this.hasAccess()) {
         if (this.selectedSourceId() == null && this.selectedSource() == null) {
           this.newSource();
         } else {
           this.loading(true);
-          sourceApi.getSource(this.selectedSourceId())
-            .then((source) => {
-              this.selectedSource(new Source(source));
-              this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedSource()));
-              this.loading(false);
-            });
+          const source = await sourceService.findOne(this.selectedSourceId())
+          this.selectedSource(new Source(source));
+          this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedSource()));
+          this.loading(false);
         }
       }
     }

@@ -4,12 +4,12 @@ define(['knockout',
 	'appConfig',
 	'../options',
 	'components/evidence/utils',
-	'webapi/EvidenceAPI',
-	'webapi/CDMResultsAPI',
+	'services/EvidenceService',
+	'services/CDMResultsService',
 	'webapi/ConceptSetAPI',
 	'atlas-state',
 	'job/jobDetail',
-  	'webapi/MomentAPI',
+  	'utils/MomentUtils',
 	'assets/ohdsi.util',
 	'databindings',
 	'evidence',
@@ -20,12 +20,12 @@ define(['knockout',
 	config, 
 	options,
 	utils,
-	evidenceAPI, 
-	cdmResultsAPI, 
+	EvidenceService, 
+	CDMResultsService, 
 	conceptSetAPI, 
 	sharedState, 
 	jobDetail, 
-	momentApi
+	momentUtils
 ) {
 	class NegativeControls extends Component {
 		constructor(params) {
@@ -139,7 +139,7 @@ define(['knockout',
 									source.status(info.status);
 									source.isValid(info.isValid);
 									var date = new Date(info.startTime);
-									source.startTime(momentApi.formatDateTime(date));
+									source.startTime(momentUtils.formatDateTime(date));
 									source.executionDuration('...');
 
 									if (info.status != "COMPLETE") {
@@ -159,7 +159,7 @@ define(['knockout',
 					});
 			}
 
-			this.generate = (service, event) => {
+			this.generate = async (service, event) => {
 				// Check to make sure the concept set is valid before calling the service
 				if (!this.conceptSetValid()) {
 					alert("The concept set is not marked as valid to generate results. Please make sure this concept set contains only CONDITIONS or DRUGS.");
@@ -167,39 +167,44 @@ define(['knockout',
 				}
 
 				// Call the ajax service to generate the results
-				var negativeControlsJob = evidenceAPI.generateNegativeControls(service.sourceKey(), this.conceptSet()
-					.id, this.conceptSet()
-					.name(), this.conceptDomainId(), this.targetDomainId(), this.conceptIds(), service.csToInclude(), service.csToExclude());
+				try {
+					await EvidenceService.generateNegativeControls(
+						service.sourceKey(),
+						this.conceptSet().id,
+						this.conceptSet().name(),
+						this.conceptDomainId(),
+						this.targetDomainId(),
+						this.conceptIds(),
+						service.csToInclude(),
+						service.csToExclude()
+					);
 
-				// Mark as pending results
-				this.getSourceInfo(service.sourceKey()).status('PENDING');
-				this.negativeControls(null);
-				this.loadingResults(false);
+					// Mark as pending results
+					this.getSourceInfo(service.sourceKey()).status('PENDING');
+					this.negativeControls(null);
+					this.loadingResults(false);
 
-				// Create a job to monitor progress
-				var job = new jobDetail({
-					name: this.conceptSet().name() + "_" + service.sourceKey(),
-					type: 'negative-controls',
-					status: 'PENDING',
-					executionId: String(this.conceptSet().id) + String(service.sourceId()),
-					statusUrl: config.api.url + 'conceptset/' + this.conceptSet().id + '/generationinfo',
-					statusValue: 'status',
-					viewed: false,
-					url: 'conceptset/' + this.conceptSet().id + '/evidence',
-				});
-
-				// Kick the job off
-				$.when(negativeControlsJob)
-					.done(jobInfo => {
-						pollTimeout = setTimeout(() => {
-							sharedState.jobListing.queue(job);
-							this.pollForInfo();
-						}, 5000);
-					})
-					.fail(info => {
-						authApi.handleAccessDenied;
-						console.error("Job failed: " + JSON.stringify(info));
+					// Create a job to monitor progress
+					var job = new jobDetail({
+						name: this.conceptSet().name() + "_" + service.sourceKey(),
+						type: 'negative-controls',
+						status: 'PENDING',
+						executionId: String(this.conceptSet().id) + String(service.sourceId()),
+						statusUrl: config.api.url + 'conceptset/' + this.conceptSet().id + '/generationinfo',
+						statusValue: 'status',
+						viewed: false,
+						url: 'conceptset/' + this.conceptSet().id + '/evidence',
 					});
+
+					// Kick the job off
+					pollTimeout = setTimeout(() => {
+						sharedState.jobListing.queue(job);
+						this.pollForInfo();
+					}, 5000);
+				} catch(er) {
+					console.error("Job failed: ", er);
+				}
+
 			}
 
 			this.isGenerating = () => {
@@ -285,7 +290,7 @@ define(['knockout',
 							if (gi.length > 0) {
 								var date = new Date(gi[0].startTime);
 								var execDuration = (gi[0].executionDuration / 1000) + 's'
-								evidenceSources[i].startTime(momentApi.formatDateTime(date));
+								evidenceSources[i].startTime(momentUtils.formatDateTime(date));
 								evidenceSources[i].executionDuration(execDuration);
 								evidenceSources[i].status(gi[0].status);
 								evidenceSources[i].isValid(gi[0].isValid);
@@ -349,7 +354,7 @@ define(['knockout',
 				return resultSources;
 			});
 
-			this.refreshRecordCounts = (obj, event) => {
+			this.refreshRecordCounts = async (obj, event) => {
 				if (event.originalEvent) {
 					// User changed event
 					this.recordCountsRefreshing(true);
@@ -366,47 +371,45 @@ define(['knockout',
 					var conceptIdsForNegativeControls = $.map(negativeControls, function (o, n) {
 						return o.conceptId;
 					});
-					cdmResultsAPI.getConceptRecordCount(this.currentResultSource()
-							.sourceKey, conceptIdsForNegativeControls, negativeControls)
-						.then(function (rowcounts) {
-							this.negativeControls(negativeControls);
-							this.recordCountsRefreshing(false);
-						});
+					await CDMResultsService.getConceptRecordCount(
+						this.currentResultSource().sourceKey,
+						conceptIdsForNegativeControls,
+						negativeControls
+					);
+					this.negativeControls(negativeControls);
+					this.recordCountsRefreshing(false);
 				}
 			}
 
-			this.loadResults = service => {
+			this.loadResults = async (service) => {
 				this.loadingResults(true);
 				this.currentEvidenceService(service);
 				this.selectedReportCaption(service.name);
-				evidenceAPI.getNegativeControls(service.sourceKey(), this.conceptSet()
-						.id)
-					.then(results => {
-						console.log("Get negative controls");
-						var conceptIdsForNegativeControls = $.map(results, function (o, n) {
-							return o.conceptId;
-						});
-						cdmResultsAPI.getConceptRecordCount(this.currentResultSource()
-								.sourceKey, conceptIdsForNegativeControls, results)
-							.then(rowcounts => {
-								this.negativeControls(results);
-								// Get the drug label information
-								var conceptIdsForLabels = null;
-								if (this.targetDomainId() == "Drug") {
-									// Take the list of drugs from the results
-									conceptIdsForLabels = conceptIdsForNegativeControls;
-								} else {
-									// Take the list of drugs from the concept set
-									conceptIdsForLabels = this.conceptIds(); 
-								}
-								evidenceAPI.getDrugLabelExists(service.sourceKey(), conceptIdsForLabels).then(results => {
-									var negativeControls = this.addDrugLabelToResults(results, this.negativeControls(), this.targetDomainId());
-									this.negativeControls(negativeControls);
-									this.drugLabelExists(results);								
-									this.loadingResults(false);
-								});				
-							});
-					});
+				let results = await EvidenceService.getNegativeControls(service.sourceKey(), this.conceptSet().id);
+				console.log("Get negative controls");
+				var conceptIdsForNegativeControls = $.map(results, function (o, n) {
+					return o.conceptId;
+				});
+				await CDMResultsService.getConceptRecordCount(
+					this.currentResultSource().sourceKey,
+					conceptIdsForNegativeControls,
+					results
+				)
+				this.negativeControls(results);
+				// Get the drug label information
+				var conceptIdsForLabels = null;
+				if (this.targetDomainId() == "Drug") {
+					// Take the list of drugs from the results
+					conceptIdsForLabels = conceptIdsForNegativeControls;
+				} else {
+					// Take the list of drugs from the concept set
+					conceptIdsForLabels = this.conceptIds(); 
+				}
+				results = await EvidenceService.getDrugLabelExists(service.sourceKey(), conceptIdsForLabels);
+				var negativeControls = this.addDrugLabelToResults(results, this.negativeControls(), this.targetDomainId());
+				this.negativeControls(negativeControls);
+				this.drugLabelExists(results);								
+				this.loadingResults(false);		
 			}
 
 			this.addDrugLabelToResults = (drugLabelExists, negativeControls, targetDomainId) => {

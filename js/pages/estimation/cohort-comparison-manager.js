@@ -13,7 +13,7 @@ define([
 	'components/cohortcomparison/ComparativeCohortAnalysis',
 	'components/cohortbuilder/options',
 	'components/cohortbuilder/CohortExpression',
-	'providers/Vocabulary',
+	'services/VocabularyService',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'services/ExecutionService',
@@ -38,7 +38,7 @@ define([
 		ComparativeCohortAnalysis,
 		options,
 		CohortExpression,
-		vocabularyProvider,
+		VocabularyService,
 		ConceptSet,
 		sharedState,
 		executionService,
@@ -776,7 +776,7 @@ define([
 
 			conceptsetSelected(d) {
 				$('#modalConceptSet').modal('hide');
-				vocabularyProvider.getConceptSetExpression(d.id).then(({ data: csExpression }) => {
+				VocabularyService.getConceptSetExpression(d.id).then(({ data: csExpression }) => {
 					this.targetId(d.id);
 					this.targetCaption(d.name);
 					var conceptSetData = new ConceptSet({
@@ -787,7 +787,7 @@ define([
 					this.targetExpression.removeAll();
 					this.targetExpression.push(conceptSetData);
 
-					vocabularyProvider.getConceptSetExpressionSQL(csExpression).then(
+					VocabularyService.getConceptSetExpressionSQL(csExpression).then(
 						({ data }) => {
 							this.targetConceptSetSQL(data);
 						});

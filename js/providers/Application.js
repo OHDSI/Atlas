@@ -8,7 +8,7 @@ define(
 		'atlas-state',
 		'jquery',
 		'services/ExecutionService',
-		'webapi/SourceAPI',
+		'services/SourceService',
 		'providers/Model',
 		'databindings',
 	],
@@ -21,7 +21,7 @@ define(
 		sharedState,
 		$, // TODO: get rid of jquery
 		executionService,
-		sourceApi,
+		sourceService,
 		GlobalModel,
 	) => {
 		return class Application {
@@ -213,7 +213,7 @@ define(
 					if (cachedService && cachedService.sources) {
 						console.info('cached service');
 						config.api = cachedService;
-						sourceApi.setSharedStateSources(cachedService.sources);
+						sourceService.setSharedStateSources(cachedService.sources);
 						resolve();
 					} else {
 						sharedState.sources([]);
@@ -221,7 +221,7 @@ define(
 						if (config.userAuthenticationEnabled && !authApi.isAuthenticated()) {
 							this.authSubscription = authApi.isAuthenticated.subscribe(async (isAuthed) => {
 								if (isAuthed) {
-									await sourceApi.initSourcesConfig();
+									await sourceService.initSourcesConfig();
 									this.authSubscription.dispose();
 									console.info('Re-initialized service information');
 								}
@@ -230,7 +230,7 @@ define(
 							resolve();
 							return;
 						} else {
-							sourceApi.initSourcesConfig().then(() => {
+							sourceService.initSourcesConfig().then(() => {
 								console.info('Init sources from server');
 								resolve();
 							});

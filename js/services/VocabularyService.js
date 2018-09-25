@@ -2,7 +2,7 @@ define(function (require, exports) {
 
 	var $ = require('jquery');
 	var config = require('appConfig');
-	var sourceAPI = require('webapi/SourceAPI');
+	var sourceService = require('services/SourceService');
 	var sharedState = require('atlas-state');
 	var numeral = require('numeral');
 	var authAPI = require('webapi/AuthAPI');
@@ -15,7 +15,7 @@ define(function (require, exports) {
 	var domainPromise = $.Deferred();
 	var domains = [];
 
-	sourceAPI.getSources().then(function (sources) {
+	sourceService.find().then(function (sources) {
 		if (sources.length == 0) {
 			sharedState.appInitializationStatus('no-sources-available');
 			return;
@@ -44,6 +44,9 @@ define(function (require, exports) {
 			});
 			domainPromise.resolve(domains);
 		});
+	})
+	.catch(() => {
+		sharedState.appInitializationStatus('failed');
 	})
 
 	function loadDensity(results) {

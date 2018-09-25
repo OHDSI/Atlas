@@ -4,7 +4,7 @@ define([
   'providers/Component',
   'providers/AutoBind',
   'utils/CommonUtils',
-  'webapi/MomentAPI',
+  'utils/MomentUtils',
   'webapi/AuthAPI',
   'moment',
   'config/terms-and-conditions.config',
@@ -16,7 +16,7 @@ define([
   Component,
   AutoBind,
   commonUtils,
-  momentApi,
+  momentUtils,
   authApi,
   momentjs,
   termsAndConditionsConfig,
@@ -45,7 +45,7 @@ define([
     checkAcceptance() {
       const acceptanceDate = localStorage.getItem('terms-and-conditions-acceptance-date');
       if (acceptanceDate !== null) {
-        const isExpired = momentApi.diffInDays(parseInt(acceptanceDate, 10), momentjs().add(termsAndConditionsConfig.acceptanceExpiresInDays, 'days')) <= 0;
+        const isExpired = momentUtils.diffInDays(parseInt(acceptanceDate, 10), momentjs().add(termsAndConditionsConfig.acceptanceExpiresInDays, 'days')) <= 0;
         return !isExpired;
       }
       return false;

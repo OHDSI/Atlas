@@ -1,25 +1,20 @@
 define(function (require, exports) {
 
-	var $ = require('jquery');
-	var config = require('appConfig');
+	const Service = require('providers/Service');
+	const { apiPaths } = require('const');
 	var d3 = require('d3');
 
-	function getConceptRecordCount(sourceKey, conceptIds, results) {
-		var densityPromise = $.Deferred();
-		var densityIndex = {};
+	class CDMResultsService extends Service {
+		async getConceptRecordCount(sourceKey, conceptIds, results) {
+			var densityIndex = {};
+	
+			for (c = 0; c < results.length; c++) {
+				results[c].recordCount = '-';
+				results[c].descendantRecordCount = '-';
+			}
 
-		for (c = 0; c < results.length; c++) {
-			results[c].recordCount = '-';
-			results[c].descendantRecordCount = '-';
-		}
-
-		$.ajax({
-			url: config.webAPIRoot + 'cdmresults/' + sourceKey + '/conceptRecordCount',
-			method: 'POST',
-			contentType: 'application/json',
-			timeout: 10000,
-			data: JSON.stringify(conceptIds),
-			success: function (entries) {
+			try {
+				const { data: entries } = await this.httpService.doPost(`${apiPaths.cdmResults()}/${sourceKey}/conceptRecordCount`, conceptIds);
 				var formatComma = d3.format(',');
 
 				for (var e = 0; e < entries.length; e++) {
@@ -37,25 +32,16 @@ define(function (require, exports) {
 					}
 				}
 
-				densityPromise.resolve();
-			},
-			error: function (error) {
+			} catch(error) {
 				for (var c = 0; c < results.length; c++) {
 					var concept = results[c];
 					concept.recordCount = 'timeout';
 					concept.descendantRecordCount = 'timeout';
 				}
-
-				densityPromise.resolve();
 			}
-		});
+		}
 
-		return densityPromise;
 	}
 
-	var api = {
-		getConceptRecordCount: getConceptRecordCount
-	}
-
-	return api;
+	return new CDMResultsService();
 });

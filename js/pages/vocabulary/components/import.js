@@ -3,7 +3,7 @@ define([
 	'text!./import.html',
 	'providers/Component',
 	'providers/AutoBind',
-	'providers/Vocabulary',
+	'services/VocabularyService',
 	'utils/CommonUtils',
 	'atlas-state',
 	'less!./import.less',
@@ -12,7 +12,7 @@ define([
 	view,
 	Component,
 	AutoBind,
-	vocabularyProvider,
+	VocabularyService,
 	commonUtils,
 	sharedState,
 ) {
@@ -68,7 +68,7 @@ define([
 			this.loading(true);
 			this.error('');
 			const identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
-			vocabularyProvider.getConceptsById(identifers)
+			VocabularyService.getConceptsById(identifers)
 				.then(({ data: items }) => { this.initConceptSet(items) })
 				.then(() => this.showConceptSet())
 				.catch((er) => {
@@ -83,7 +83,7 @@ define([
 			this.loading(true);
 			this.error('');
 			const sourcecodes = $('#textImportSourcecodes').val().match(/[0-9a-zA-Z\.-]+/g);
-			vocabularyProvider.getConceptsByCode(sourcecodes)
+			VocabularyService.getConceptsByCode(sourcecodes)
 				.then(({ data: items }) => { this.initConceptSet(items) })
 				.then(() => this.showConceptSet())
 				.catch((er) => {

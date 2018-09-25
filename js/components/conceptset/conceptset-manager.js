@@ -3,8 +3,8 @@ define(['knockout',
 	'appConfig',
 	'assets/ohdsi.util',
 	'components/conceptset/utils',
-	'webapi/CDMResultsAPI',
-	'vocabularyprovider',
+	'services/CDMResultsService',
+	'services/VocabularyService',
 	'webapi/ConceptSetAPI',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
@@ -26,8 +26,8 @@ define(['knockout',
 	config,
 	ohdsiUtil,
 	utils,
-	cdmResultsAPI,
-	vocabularyAPI,
+	CDMResultsService,
+	VocabularyService,
 	conceptSetAPI,
 	ConceptSet,
 	sharedState,
@@ -646,7 +646,7 @@ define(['knockout',
 				items: conceptSetItems
 			}
 
-			vocabularyAPI.optimizeConceptSet(conceptSetItems)
+			VocabularyService.optimizeConceptSet(conceptSetItems)
 				.then(function (optimizationResults) {
 					var optimizedConcepts = [];
 					_.each(optimizationResults.optimizedConceptSet.items, (item) => {
@@ -746,7 +746,7 @@ define(['knockout',
 		self.conceptsetSelected = function (d) {
 			$('#modalCS')
 				.modal('hide');
-			vocabularyAPI.getConceptSetExpression(d.id)
+			VocabularyService.getConceptSetExpression(d.id)
 				.then(function (csExpression) {
 					self.targetId(d.id);
 					self.targetCaption(d.name);
@@ -761,12 +761,12 @@ define(['knockout',
 			}, {
 				items: self.compareCS2ConceptSet()
 			}];
-			vocabularyAPI.compareConceptSet(compareTargets)
+			VocabularyService.compareConceptSet(compareTargets)
 				.then(function (compareResults) {
 					var conceptIds = $.map(compareResults, function (o, n) {
 						return o.conceptId;
 					});
-					cdmResultsAPI.getConceptRecordCount(self.currentResultSource()
+					CDMResultsService.getConceptRecordCount(self.currentResultSource()
 							.sourceKey, conceptIds, compareResults)
 						.then(function (rowcounts) {
 							//self.compareResults(null);
@@ -874,7 +874,7 @@ define(['knockout',
 				var conceptIds = $.map(compareResults, function (o, n) {
 					return o.conceptId;
 				});
-				cdmResultsAPI.getConceptRecordCount(self.currentResultSource()
+				CDMResultsService.getConceptRecordCount(self.currentResultSource()
 						.sourceKey, conceptIds, compareResults)
 					.then(function (rowcounts) {
 						self.compareResults(compareResults);

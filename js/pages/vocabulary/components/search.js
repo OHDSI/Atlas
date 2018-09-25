@@ -9,7 +9,7 @@ define([
 	'services/httpService',
 	'pages/vocabulary/const',
 	'utils/CommonUtils',
-	'providers/Vocabulary',
+	'services/VocabularyService',
 	'components/tabs',
 	'components/panel',
 	'faceted-datatable',
@@ -26,7 +26,7 @@ define([
 	httpService,
 	contstants,
 	commonUtils,
-	vocabularyProvider
+	VocabularyService
 ) {
 	class Search extends AutoBind(Component) {
 		constructor(params) {
@@ -285,7 +285,7 @@ define([
 				throw { message: 'No results found', results };
 			}
 
-			const promise = vocabularyProvider.loadDensity(results);
+			const promise = VocabularyService.loadDensity(results);
 			promise.then(() => {
 				this.data(results);
 			});

@@ -1,12 +1,12 @@
 define(['knockout',
 	'text!./negative-controls.html',
 	'appConfig',
-	'webapi/EvidenceAPI',
-	'webapi/CDMResultsAPI',
+	'services/EvidenceService',
+	'services/CDMResultsService',
 	'webapi/ConceptSetAPI',
 	'atlas-state',
 	'job/jobDetail',
-  'webapi/MomentAPI',
+  'utils/MomentUtils',
 	'webapi/AuthAPI',
 	'assets/ohdsi.util',
 	'databindings'
@@ -14,12 +14,12 @@ define(['knockout',
 	ko,
 	view,
 	config,
-	evidenceAPI,
-	cdmResultsAPI,
+	EvidenceService,
+	CDMResultsService,
 	conceptSetAPI,
 	sharedState,
 	jobDetail,
-	momentApi,
+	momentUtils,
 	authApi
 ) {
 	function negativeControls(params) {
@@ -374,7 +374,7 @@ define(['knockout',
 								source.status(info.status);
 								source.isValid(info.isValid);
 								var date = new Date(info.startTime);
-								source.startTime(momentApi.formatDateTime(date));
+								source.startTime(momentUtils.formatDateTime(date));
 								source.executionDuration('...');
 
 								if (info.status != "COMPLETE") {
@@ -402,7 +402,7 @@ define(['knockout',
 			}
 
 			// Call the ajax service to generate the results
-			var negativeControlsJob = evidenceAPI.generateNegativeControls(service.sourceKey(), self.conceptSet()
+			var negativeControlsJob = EvidenceService.generateNegativeControls(service.sourceKey(), self.conceptSet()
 				.id, self.conceptSet()
 				.name(), self.conceptDomainId(), self.targetDomainId(), self.conceptIds(), service.csToInclude(), service.csToExclude());
 
@@ -520,7 +520,7 @@ define(['knockout',
 						if (gi.length > 0) {
 							var date = new Date(gi[0].startTime);
 							var execDuration = (gi[0].executionDuration / 1000) + 's'
-							evidenceSources[i].startTime(momentApi.formatDateTime(date));
+							evidenceSources[i].startTime(momentUtils.formatDateTime(date));
 							evidenceSources[i].executionDuration(execDuration);
 							evidenceSources[i].status(gi[0].status);
 							evidenceSources[i].isValid(gi[0].isValid);
@@ -586,7 +586,7 @@ define(['knockout',
 			return resultSources;
 		}, this);
 
-		self.refreshRecordCounts = function (obj, event) {
+		self.refreshRecordCounts = async function (obj, event) {
 			if (event.originalEvent) {
 				// User changed event
 				self.recordCountsRefreshing(true);
@@ -603,33 +603,32 @@ define(['knockout',
 				var conceptIdsForNegativeControls = $.map(negativeControls, function (o, n) {
 					return o.conceptId;
 				});
-				cdmResultsAPI.getConceptRecordCount(self.currentResultSource()
-						.sourceKey, conceptIdsForNegativeControls, negativeControls)
-					.then(function (rowcounts) {
-						self.negativeControls(negativeControls);
-						self.recordCountsRefreshing(false);
-					});
+				await CDMResultsService.getConceptRecordCount(
+					self.currentResultSource().sourceKey,
+					conceptIdsForNegativeControls,
+					negativeControls
+				);
+				self.negativeControls(negativeControls);
+				self.recordCountsRefreshing(false);
 			}
 		}
 
-		self.loadResults = function (service) {
+		self.loadResults = async function (service) {
 			self.loadingResults(true);
 			self.currentEvidenceService(service);
 			self.selectedReportCaption(service.name);
-			evidenceAPI.getNegativeControls(service.sourceKey(), self.conceptSet()
-					.id)
-				.then(function (results) {
-					console.log("Get negative controls");
-					var conceptIdsForNegativeControls = $.map(results, function (o, n) {
-						return o.conceptId;
-					});
-					cdmResultsAPI.getConceptRecordCount(self.currentResultSource()
-							.sourceKey, conceptIdsForNegativeControls, results)
-						.then(function (rowcounts) {
-							self.negativeControls(results);
-							self.loadingResults(false);
-						});
-				});
+			const results = await EvidenceService.getNegativeControls(service.sourceKey(), self.conceptSet().id);
+			console.log("Get negative controls");
+			var conceptIdsForNegativeControls = $.map(results, function (o, n) {
+				return o.conceptId;
+			});
+			await CDMResultsService.getConceptRecordCount(
+				self.currentResultSource().sourceKey,
+				conceptIdsForNegativeControls,
+				results
+			);
+			self.negativeControls(results);
+			self.loadingResults(false);
 		}
 
 		self.isSourceRunning = function (source) {
@@ -729,7 +728,7 @@ define(['knockout',
 				self.targetExpression.removeAll();
 				self.targetExpression.push(conceptSetData);
 
-				vocabularyAPI.getConceptSetExpressionSQL(csExpression).then(
+				VocabularyService.getConceptSetExpressionSQL(csExpression).then(
 					function (data) {
 						self.targetConceptSetSQL(data);
 					});

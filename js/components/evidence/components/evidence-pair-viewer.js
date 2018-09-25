@@ -4,14 +4,16 @@ define([
 	'providers/Component',
 	'appConfig', 
 	'webapi/AuthAPI', 
-	'webapi/EvidenceAPI', 
+	'services/EvidenceService', 
+	'services/httpService',
 ], function (
 	ko, 
 	view, 
 	Component,
 	config, 
 	authApi, 
-	evidenceAPI
+	EvidenceService,
+	httpService,
 ) {
 	class EvidencePairViewer extends Component {
 		constructor(params) {
@@ -94,45 +96,40 @@ define([
 				window.open(s.linkout);
 			}
 
-			this.loadDrugConditionPairs = function() { 
+			this.loadDrugConditionPairs = async function() { 
 				this.loading(true);
 
-				evidenceAPI.getDrugConditionPairs(this.sourceKey, this.targetDomainId, this.drugConceptIds, this.conditionConceptIds, this.sourceIds)
-					.done((results) => {
-						this.cemDrugConditionPairs = results;
-						this.getMetadataFromPubmed().done((metadata) => {
-						if (metadata.result) {
-							this.pubmedMetadata = metadata.result;
+				try {
+					this.cemDrugConditionPairs = await EvidenceService.getDrugConditionPairs(this.sourceKey, this.targetDomainId, this.drugConceptIds, this.conditionConceptIds, this.sourceIds);
+					const metadata = await this.getMetadataFromPubmed();
+					if (metadata.result) {
+						this.pubmedMetadata = metadata.result;
+					} else {
+						this.pubmedMetadata = {};
+					}
+					this.cemDrugConditionPairs.forEach(dcp => {
+						var externalLink = config.cemOptions.externalLinks[dcp.evidenceSource];
+						if (externalLink && externalLink.length > 0) {
+							dcp.linkout = externalLink.replace("{@id}", dcp.uniqueIdentifier);
 						} else {
-							this.pubmedMetadata = {};
+							dcp.linkout = dcp.uniqueIdentifier;
 						}
-					}).done((results) => {
-						this.cemDrugConditionPairs.forEach(dcp => {
-							var externalLink = config.cemOptions.externalLinks[dcp.evidenceSource];
-							if (externalLink && externalLink.length > 0) {
-								dcp.linkout = externalLink.replace("{@id}", dcp.uniqueIdentifier);
-							} else {
-								dcp.linkout = dcp.uniqueIdentifier;
-							}
-							if (dcp.evidenceSource.indexOf("medline") !== -1) {
-								dcp.evidenceTitle = this.pubmedMetadata[dcp.uniqueIdentifier].title
-							} else if (dcp.evidenceSource.indexOf("splicer") !== -1) {
-								dcp.evidenceTitle = dcp.drugConceptName;
-							} else {
-								dcp.evidenceTitle = dcp.linkout;
-							}
-						});
-						this.drugConditionPairs(this.cemDrugConditionPairs);
-						this.loading(false);
-					})
-					.fail(function (err) {
-						console.log(err);
-					})
-				});
+						if (dcp.evidenceSource.indexOf("medline") !== -1) {
+							dcp.evidenceTitle = this.pubmedMetadata[dcp.uniqueIdentifier].title
+						} else if (dcp.evidenceSource.indexOf("splicer") !== -1) {
+							dcp.evidenceTitle = dcp.drugConceptName;
+						} else {
+							dcp.evidenceTitle = dcp.linkout;
+						}
+					});
+					this.drugConditionPairs(this.cemDrugConditionPairs);
+					this.loading(false);
+				} catch (err) {
+					console.log(err);
+				}
 			}
 
-			this.getMetadataFromPubmed = function() {
-				var metadataPromise = $.Deferred();
+			this.getMetadataFromPubmed = async function() {
 				var pubmedMetadataUrl = config.cemOptions.sourceRestEndpoints["medline_winnenburg"];
 				if (pubmedMetadataUrl && pubmedMetadataUrl.length > 0) {
 					// Get the medline related results
@@ -146,14 +143,9 @@ define([
 					});
 					// Retrieve the metadata
 					var ids = uniqueIdentifiers.join();
-					var metadataPromise = $.ajax({
-						url: pubmedMetadataUrl.replace("{@ids}", ids),
-						method: 'GET'
-					});
-				} else {
-					metadataPromise.resolve();
+					const { data } = httpService.doGet(pubmedMetadataUrl.replace("{@ids}", ids));
+					return data;
 				}
-				return metadataPromise;
 			}
 
 			this.toggleHelpText = function() {

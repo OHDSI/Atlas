@@ -3,7 +3,7 @@ define([
 	'text!./ConceptSetBuilderTemplate.html',
 	'../InputTypes/ConceptSet',
 	'../InputTypes/ConceptSetItem',
-	'providers/Vocabulary',
+	'services/VocabularyService',
 	'providers/Component',
 	'providers/AutoBind',
 	'utils/CommonUtils',
@@ -18,7 +18,7 @@ define([
 		view,
 		ConceptSet,
 		ConceptSetItem,
-		VocabularyAPI,
+		VocabularyService,
 		Component,
 		AutoBind,
 		commonUtils,
@@ -124,7 +124,7 @@ define([
 			}
 			
 			repositoryConceptsetSelected(conceptSet) {
-				VocabularyAPI.getConceptSetExpression(conceptSet.id).then((expression) => {
+				VocabularyService.getConceptSetExpression(conceptSet.id).then((expression) => {
 					var newConceptSet = this.createConceptSet();
 					newConceptSet.name(conceptSet.name);
 					newConceptSet.expression.items(expression.items.map(conceptSetItem => new ConceptSetItem(conceptSetItem)));

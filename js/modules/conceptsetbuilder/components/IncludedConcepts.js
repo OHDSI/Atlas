@@ -2,13 +2,13 @@ define([
 	'jquery',
 	'knockout',
 	'text!./IncludedConcepts.html',
-	'vocabularyprovider',
+	'services/VocabularyService',
 	'faceted-datatable'
 ], function (
 		$,
 		ko,
 		template,
-		VocabularyAPI) {
+		VocabularyService) {
 	
 	function IncludedConcepts(params) {
 		
@@ -165,8 +165,8 @@ define([
 		self.refresh = function() {
 			self.isLoading(true);
 			self.selectedConcepts([]);
-			VocabularyAPI.resolveConceptSetExpression(self.conceptSet()).then(function (identifiers) {
-				VocabularyAPI.getConceptsById(identifiers).then(function (concepts) {
+			VocabularyService.resolveConceptSetExpression(self.conceptSet()).then(function (identifiers) {
+				VocabularyService.getConceptsById(identifiers).then(function (concepts) {
 					concepts.forEach(function (concept) {
 						concept.RECORD_COUNT = 'timeout';
 						concept.DESCENDANT_RECORD_COUNT = 'timeout';

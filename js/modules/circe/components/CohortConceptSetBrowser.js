@@ -1,10 +1,10 @@
-define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularyprovider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'webapi/AuthAPI', 'webapi/MomentAPI', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, momentApi) {
+define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/VocabularyService', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'webapi/AuthAPI', 'utils/MomentUtils', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyService, appConfig, ConceptSet, authApi, momentUtils) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
 		function defaultRepositoryConceptSetSelected(conceptSet) {
 			// Default functionality
-			VocabularyProvider.getConceptSetExpression(conceptSet.id, self.selectedSource()
+			VocabularyService.getConceptSetExpression(conceptSet.id, self.selectedSource()
 					.url)
 				.done(function (result) {
 					var newId = self.cohortConceptSets()
@@ -42,7 +42,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 		}
 
     self.formatDate = function(data, type, row) {
-    	return momentApi.formatDateTimeUTC(data);
+    	return momentUtils.formatDateTimeUTC(data);
 		};
 
 		self.criteriaContext = params.criteriaContext;
@@ -72,7 +72,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'vocabularypr
 		self.loadConceptSetsFromRepository = function (url) {
 			self.loading(true);
 
-			VocabularyProvider.getConceptSetList(url)
+			VocabularyService.getConceptSetList(url)
 				.done(function (results) {
 					self.repositoryConceptSets(results);
 					self.loading(false);

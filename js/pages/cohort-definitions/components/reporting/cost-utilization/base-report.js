@@ -6,7 +6,7 @@ define(
     'components/visualizations/filter-panel/utils',
     'moment',
     'd3',
-    'webapi/MomentAPI',
+    'utils/MomentUtils',
     'utils/CsvUtils',
     'numeral',
     'services/CohortResultsService',
@@ -19,7 +19,7 @@ define(
     filterPanelUtils,
     moment,
     d3,
-    MomentAPI,
+    momentUtils,
     CsvUtils,
     numeral
   , CohortResultsService, lodash) {
@@ -70,7 +70,7 @@ define(
 
         this.dateTickFormat = d3.timeFormat('%Y-%m-%d');
         this.emptyTickFormat = () => null;
-        this.formatDate = val => MomentAPI.formatDate(val, 'D MMM Y'); // TODO: display interval
+        this.formatDate = val => momentUtils.formatDate(val, 'D MMM Y'); // TODO: display interval
         this.formatRounded = d3.format(".0s");
       }
 

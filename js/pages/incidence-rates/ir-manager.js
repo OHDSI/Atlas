@@ -2,7 +2,7 @@ define([
 	'knockout', 
 	'text!./ir-manager.html', 
 	'services/IRAnalysisService',
-	'webapi/SourceAPI',
+	'services/SourceService',
 	'services/CohortDefinitionService',
 	'./components/iranalysis/IRAnalysisDefinition', 
 	'./components/iranalysis/IRAnalysisExpression', 
@@ -24,7 +24,7 @@ define([
 	ko,
 	view,
 	IRAnalysisService,
-	sourceAPI,
+	sourceService,
 	cohortDefinitionService,
 	IRAnalysisDefinition,
 	IRAnalysisExpression,
@@ -320,53 +320,52 @@ define([
 			window.open(config.api.url + 'ir/' + this.selectedAnalysisId() + '/export');
 		}
 		
-		init() {
+		async init() {
 			this.refreshDefs();
-			sourceAPI.getSources().then((sources) => {
-				var sourceList = [];
-				sources.forEach(function(source) {
-					if (source.daimons.filter(function (daimon) { return daimon.daimonType == "CDM"; }).length > 0
-							&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0)
-					{
-						sourceList.push({
-							source: source,
-							info: ko.observable()
-						});
-					}
-				});
-				this.generateActionsSettings.actionOptions = sourceList.map((sourceItem) => {
-					return {
-						text: sourceItem.source.sourceName,
-						selected: false,
-						description: "Perform Study on source: " + sourceItem.source.sourceName,
-						action: async () => {
-							if (sourceItem.info()) {
-								sourceItem.info().executionInfo.status = "PENDING";
-								sourceItem.info.notifySubscribers();
-							} 
-							else {
-								// creating 'fake' temporary source info makes the UI respond to the generate action.
-								const tempInfo = { 
-									source: sourceItem,
-									executionInfo : {
-										id : { sourceId: sourceItem.source.sourceId }
-									}, 
-									summaryList: []
-								};
-								sourceItem.info(tempInfo);
-								this.queueJob(sourceItem);
-							}
-							this.isRunning(true);
-							await IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
-							this.pollForInfo();
-						}
-					}
-				});		
-
-				// set sources observable, which will show the Generate action dropdown.
-				this.sources(sourceList);
-
+			const sources = await sourceService.find();
+			var sourceList = [];
+			sources.forEach(function(source) {
+				if (source.daimons.filter(function (daimon) { return daimon.daimonType == "CDM"; }).length > 0
+						&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0)
+				{
+					sourceList.push({
+						source: source,
+						info: ko.observable()
+					});
+				}
 			});
+			this.generateActionsSettings.actionOptions = sourceList.map((sourceItem) => {
+				return {
+					text: sourceItem.source.sourceName,
+					selected: false,
+					description: "Perform Study on source: " + sourceItem.source.sourceName,
+					action: async () => {
+						if (sourceItem.info()) {
+							sourceItem.info().executionInfo.status = "PENDING";
+							sourceItem.info.notifySubscribers();
+						} 
+						else {
+							// creating 'fake' temporary source info makes the UI respond to the generate action.
+							const tempInfo = { 
+								source: sourceItem,
+								executionInfo : {
+									id : { sourceId: sourceItem.source.sourceId }
+								}, 
+								summaryList: []
+							};
+							sourceItem.info(tempInfo);
+							this.queueJob(sourceItem);
+						}
+						this.isRunning(true);
+						await IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
+						this.pollForInfo();
+					}
+				}
+			});		
+
+			// set sources observable, which will show the Generate action dropdown.
+			this.sources(sourceList);
+
 
 			if (this.selectedAnalysisId() == null) {
 				this.newAnalysis();

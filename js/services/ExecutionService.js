@@ -1,7 +1,7 @@
 define(function(require, exports){
 
   const config = require('appConfig');
-  const momentApi = require('webapi/MomentAPI');
+  const momentUtils = require('utils/MomentUtils');
   const CRUDService = require('providers/CRUDService');
   const { apiPaths } = require('const');
 
@@ -27,10 +27,10 @@ define(function(require, exports){
         .sort((a, b) => a.executed - b.executed)
         .map((d) => {
           var executedTimestamp = new Date(d.executed);
-          d.executedCaption = momentApi.formatDateTime(executedTimestamp);
+          d.executedCaption = momentUtils.formatDateTime(executedTimestamp);
   
           if (d.duration > 0) {
-            d.durationCaption = momentApi.formatDuration(d.duration * 1000);
+            d.durationCaption = momentUtils.formatDuration(d.duration * 1000);
           } else {
             d.durationCaption = 'n/a';
           }

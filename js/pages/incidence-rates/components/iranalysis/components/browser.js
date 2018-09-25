@@ -3,14 +3,14 @@ define([
 	'text!./browser.html',
 	'providers/Component',
 	'utils/CommonUtils',
-	'webapi/MomentAPI',
+	'utils/MomentUtils',
 	'faceted-datatable'
 ], function (
 	ko,
 	view,
 	Component,
 	commonUtils,
-	momentApi
+	momentUtils
 ) {
 	
 	class IRAnalysisBrowserModel extends Component {
@@ -57,14 +57,14 @@ define([
 					title: 'Created',
 					type: 'date',
 					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.createdDate);
+						return momentUtils.formatDateTimeUTC(d.createdDate);
 					}
 				},
 				{
 					title: 'Updated',
 					type: 'date',
 					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.modifiedDate);
+						return momentUtils.formatDateTimeUTC(d.modifiedDate);
 					}
 				},
 				{

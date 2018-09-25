@@ -2,13 +2,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'appConfig',
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinitionService',
-	'webapi/MomentAPI',
+	'utils/MomentUtils',
 	'webapi/ConceptSetAPI',
 	'components/conceptset/utils',
 	'components/cohortbuilder/CohortExpression',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'services/CohortReportingService',
-	'vocabularyprovider',
+	'services/VocabularyService',
 	'atlas-state',
 	'clipboard',
 	'd3',
@@ -42,13 +42,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	config,
 	CohortDefinition,
 	cohortDefinitionService,
-	momentApi,
+	momentUtils,
 	conceptSetApi,
 	conceptSetUitls,
 	CohortExpression,
 	ConceptSet,
 	cohortReportingService,
-	vocabularyApi,
+	VocabularyService,
 	sharedState,
 	clipboard,
 	d3,
@@ -408,7 +408,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 							source.status(info.status);
 							source.includeFeatures(info.includeFeatures);
 							source.isValid(info.isValid);
-							source.startTime(momentApi.formatDateTime(new Date(info.startTime)));
+							source.startTime(momentUtils.formatDateTime(new Date(info.startTime)));
 							source.executionDuration('...');
 							source.personCount('...');
 							source.recordCount('...');
@@ -424,7 +424,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 										this.selectViewReport(source);
 								}
 								var commaFormatted = d3.format(",");
-								source.executionDuration(momentApi.formatDuration(info.executionDuration));
+								source.executionDuration(momentUtils.formatDuration(info.executionDuration));
 								source.personCount(commaFormatted(info.personCount));
 								source.recordCount(commaFormatted(info.recordCount));
 								source.failMessage(info.failMessage);
@@ -895,7 +895,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			onConceptSetRepositoryImport (newConceptSet, event) {
 				event.stopPropagation();
 				this.showImportConceptSetModal(false);
-				vocabularyApi.getConceptSetExpression(newConceptSet.id)
+				VocabularyService.getConceptSetExpression(newConceptSet.id)
 					.done((result)=> {
 						var conceptSet = this.findConceptSet();
 						conceptSet.name(newConceptSet.name);
@@ -970,7 +970,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			importConceptIdentifiers () {
 				this.conceptLoading(true);
-				vocabularyApi
+				VocabularyService
 					.getConceptsById(this.identifiers().match(/[0-9]+/g))
 					.then(this.appendConcepts, () => { this.conceptLoading(false); })
 					.then(() => { this.conceptLoading(false); })
@@ -979,7 +979,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			importSourceCodes () {
 				this.conceptLoading(true);
-				vocabularyApi
+				VocabularyService
 					.getConceptsByCode(this.sourcecodes().match(/[0-9a-zA-Z\.-]+/g))
 					.then(this.appendConcepts, () => {
 						this.conceptLoading(false);
