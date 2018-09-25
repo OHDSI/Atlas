@@ -6,7 +6,7 @@ define([
 	'webapi/MomentAPI',
 	'providers/Component',
 	'utils/CommonUtils',
-	'services/http',
+	'services/httpService',
 	'faceted-datatable',
 ], function (
 	ko,

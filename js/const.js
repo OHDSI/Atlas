@@ -644,6 +644,7 @@ define(
 		};
 
 		const apiPaths = {
+			users: () => `${config.api.url}user`,
 			role: (id = '') => `${config.api.url}role/${id}`,
       roleUsers: roleId => `${config.api.url}role/${roleId}/users`,
       permissions: () => `${config.api.url}permission`,
@@ -652,6 +653,9 @@ define(
 			jobs: () => `${config.api.url}job/execution?comprehensivePage=true`,
 			cohortDefinition: () => `${config.api.url}cohortdefinition`,
 			cohortResults: (source, cohortId) => `${config.api.url}cohortresults/${source}/${cohortId}`,
+			execution: () => `${config.api.url}executionservice`,
+			ir: () => `${config.api.url}ir`,
+			plp: () => `${config.api.url}plp`,
 		};
 
     return {

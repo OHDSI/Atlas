@@ -2,7 +2,7 @@ define([
 	'knockout',
 	'jquery',
 	'text!./report.html',
-	'services/IRAnalysis',
+	'services/IRAnalysisService',
 	'd3',
 	'providers/Component',
 	'utils/CommonUtils',

@@ -6,7 +6,7 @@ define(function (require, exports) {
 	var sharedState = require('atlas-state');
 	var numeral = require('numeral');
 	var authAPI = require('webapi/AuthAPI');
-	const httpService = require('services/http');
+	const httpService = require('services/httpService');
 
 	var loadedPromise = $.Deferred();
 	loadedPromise.resolve();

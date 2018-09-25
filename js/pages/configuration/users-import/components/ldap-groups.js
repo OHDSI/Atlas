@@ -3,7 +3,7 @@ define([
 	'text!./ldap-groups.html',
 	'providers/Component',
 	'utils/CommonUtils',
-	'services/User',
+	'services/UserService',
 	'./renderers',
 	'less!./ldap-groups.less',
 ],
@@ -12,7 +12,7 @@ define([
 		view,
 		Component,
 		commonUtils,
-		userApi,
+		userService,
 		renderers,
 	){
 
@@ -37,15 +37,16 @@ define([
 				this.renderCheckbox = this.renderCheckbox.bind(this);
 			}
 
-			searchGroups() {
+			async searchGroups() {
 				this.loading(true);
-				userApi.searchGroups(this.provider(), this.searchText())
-					.then(results => {
-						this.searchResults(results.map(group => ({...group, included: ko.observable() })));
-					}).finally(() => {
-						this.hasResults(true);
-						this.loading(false);
-					});
+				try {
+					const results = await userService.searchGroups(this.provider(), this.searchText());
+					this.searchResults(results.map(group => ({...group, included: ko.observable() })));
+				} catch(er) {
+					console.error(er);
+				}
+				this.hasResults(true);
+				this.loading(false);
 			}
 
 			onSubmitSearch(data, event) {

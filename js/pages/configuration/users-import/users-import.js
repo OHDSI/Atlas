@@ -3,8 +3,9 @@ define(['knockout',
 		'appConfig',
 		'atlas-state',
 		'webapi/AuthAPI',
-		'services/User',
+		'services/UserService',
 		'providers/Component',
+		'providers/AutoBind',
 		'utils/CommonUtils',
 		'./components/renderers',
 		'./const',
@@ -24,11 +25,12 @@ define(['knockout',
 		authApi, 
 		userService,
 		Component,
+		AutoBind,
 		commonUtils,
 		renderers,
 		Const) {
 
-		class UsersImport extends Component {
+		class UsersImport extends AutoBind(Component) {
 
 			get transitions() {
 				return {
@@ -99,32 +101,6 @@ define(['knockout',
 
 				this.isSearchGroupDialog = ko.observable();
 				this.isAtlasRolesDialog = ko.observable();
-				//bindings
-				this.init = this.init.bind(this);
-				this.getStep = this.getStep.bind(this);
-				this.nextStep = this.nextStep.bind(this);
-				this.prevStep = this.prevStep.bind(this);
-				this.onRolesRowClick = this.onRolesRowClick.bind(this);
-				this.onUsersRowClick = this.onUsersRowClick.bind(this);
-				this.closeGroupModal = this.closeGroupModal.bind(this);
-				this.closeRolesModal = this.closeRolesModal.bind(this);
-				this.setGroupMapping = this.setGroupMapping.bind(this);
-				this.findUsers = this.findUsers.bind(this);
-				this.renderGroups = this.renderGroups.bind(this);
-				this.renderRoles = this.renderRoles.bind(this);
-				this.renderCheckbox = this.renderCheckbox.bind(this);
-				this.checkAll = this.checkAll.bind(this);
-				this.uncheckAll = this.uncheckAll.bind(this);
-				this.toggleAll = this.toggleAll.bind(this);
-				this.isImportEnabled = this.isImportEnabled.bind(this);
-				this.startImport = this.startImport.bind(this);
-				this.setRoles = this.setRoles.bind(this);
-				this.saveMapping = this.saveMapping.bind(this);
-				this.loadMapping = this.loadMapping.bind(this);
-				this.testConnection = this.testConnection.bind(this);
-				this.testConnectionClick = this.testConnectionClick.bind(this);
-				this.showUsernameHelp = this.showUsernameHelp.bind(this);
-				this.showLoginHelp = this.showLoginHelp.bind(this);
 
 				this.init();
 			}
@@ -160,9 +136,9 @@ define(['knockout',
 				return this.usersList() && this.usersList().some(u => !!u.included());
 			}
 
-			testConnection() {
-				userService.testConnection(this.importProvider())
-					.then((data) => this.connectionCheck(data));
+			async testConnection() {
+				const data = await userService.testConnection(this.importProvider());
+				this.connectionCheck(data);
 			}
 
 			testConnectionClick() {
@@ -174,7 +150,7 @@ define(['knockout',
 				this.showConnectionDetails(!this.showConnectionDetails());
 			}
 
-			startImport() {
+			async startImport() {
 				if (!this.isImportEnabled()) {
 					return false;
 				}
@@ -184,14 +160,18 @@ define(['knockout',
 					.map(u => ({
 							login: u.login, roles: u.roles(),
 					}));
-				userService.importUsers(users).finally(() => {
-						this.loading(false);
-						userService.getUsers().then(data => this.model.users(data));
-				});
+				try {
+					await userService.importUsers(users);
+				} catch(er) {
+					console.error(er);
+				}
+				this.loading(false);
+				const list = await userService.find();
+				this.model.users(list);
 				return true;
 			}
 
-			findUsers() {
+			async findUsers() {
 				this.loading(true);
 				const mapping = {
 					provider: this.importProvider(),
@@ -203,17 +183,21 @@ define(['knockout',
 						groups: m.groups,
 					})),
 				};
-				userService.searchUsers(this.importProvider(), mapping)
-					.then(users => this.usersList(users.map(user => ({
-							...user,
-							roles: ko.observableArray(user.roles),
-							included: ko.observable(),
-						})))
-					).finally(() => this.loading(false));
+				try {
+					const users = await userService.searchUsers(this.importProvider(), mapping)
+					this.usersList(users.map(user => ({
+						...user,
+						roles: ko.observableArray(user.roles),
+						included: ko.observable(),
+					})));
+				} catch(er) {
+					console.error(er);
+				}
+				this.loading(false);
 				return true;
 			}
 
-			saveMapping() {
+			async saveMapping() {
 				if (this.rolesMapping()) {
 					const mapping = {
 						provider: this.importProvider(),
@@ -222,18 +206,18 @@ define(['knockout',
 							groups: item.groups,
 						})),
 					};
-					userService.saveMapping(this.importProvider(), mapping);
+					await userService.saveMapping(this.importProvider(), mapping);
 				}
 			}
 
-			loadMapping() {
-				userService.getMapping(this.importProvider()).then(mapping => {
-					const roles = this.rolesMapping();
-					roles.forEach(role => {
-						const mapped = mapping.roleGroups.find(m => m.role.id === role.id);
-						role.groups(mapped ? mapped.groups : []);
-					});
+			async loadMapping() {
+				const mapping = await userService.getMapping(this.importProvider());
+				const roles = this.rolesMapping();
+				roles.forEach(role => {
+					const mapped = mapping.roleGroups.find(m => m.role.id === role.id);
+					role.groups(mapped ? mapped.groups : []);
 				});
+				
 				return true;
 			}
 
@@ -319,12 +303,12 @@ define(['knockout',
 				this.isShowLoginHelp(true);
 			}
 
-			init() {
+			async init() {
 				this.loading(true);
-				userService.getAuthenticationProviders().then(providers => {
+				try {
+					const providers = await userService.getAuthenticationProviders();
 					this.providers(providers);
-				}).finally(() => this.loading(false));
-				this.updateRoles().then(() => {
+					await this.updateRoles();
 					const mapping = this.roles().map(role => (
 						{
 							...role,
@@ -332,7 +316,10 @@ define(['knockout',
 						}
 					));
 					this.rolesMapping(mapping);
-				});
+				} catch(er) {
+					console.error(er);
+				}
+				this.loading(false)
 			}
 		}
 

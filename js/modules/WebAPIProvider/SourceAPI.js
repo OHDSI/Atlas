@@ -7,7 +7,7 @@ define(function (require, exports) {
 	var authApi = require('webapi/AuthAPI');
   var lscache = require('lscache');
   var ko = require('knockout');
-	const httpService = require('services/http');
+	const httpService = require('services/httpService');
 
 	var sources;
 

@@ -2,7 +2,7 @@ define([
   'knockout',
 	'utils/ChartUtils',
   'const',
-  'services/http',
+  'services/httpService',
   './Report',
   'text!components/charts/datatableTemplate.html',
   'faceted-datatable'

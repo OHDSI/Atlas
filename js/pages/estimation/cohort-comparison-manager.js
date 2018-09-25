@@ -5,8 +5,8 @@ define([
 	'lodash',
 	'clipboard',
 	'services/CohortDefinitionService',
-	'services/JobDetailsService',
-	'services/http',
+	'utils/JobDetailsUtils',
+	'services/httpService',
 	'appConfig',
 	'webapi/AuthAPI',
 	'assets/ohdsi.util',
@@ -16,7 +16,7 @@ define([
 	'providers/Vocabulary',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
-	'services/Execution',
+	'services/ExecutionService',
 	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
@@ -30,7 +30,7 @@ define([
 		_,
 		clipboard,
 		cohortDefinitionService,
-		jobDetailsService,
+		jobDetailsUtils,
 		httpService,
 		config,
 		authApi,
@@ -340,7 +340,7 @@ define([
 			}
 
 
-			loadExecutions() {
+			async loadExecutions() {
 				// reset before load
 				const sources = this.sources() || [];
 				sources.forEach((source) => {
@@ -351,7 +351,8 @@ define([
 					}
 				});
 
-				executionService.loadExecutions('CCA', this.cohortComparisonId(), (exec) => {
+				const executions = await executionService.find('CCA', this.cohortComparisonId());
+				executions.forEach((exec) => {
 					const source = this.sources().find(s => s.sourceId == exec.sourceId);
 					if (source) {
 						const sourceKey = source.sourceKey;
@@ -931,10 +932,10 @@ define([
 			executeCohortComparison(sourceKey) {
 				if (config.useExecutionEngine) {
 					this.sourceProcessingStatus[sourceKey](true);
-					executionService.runExecution(sourceKey, this.cohortComparisonId(), 'CCA', $('.language-r').text())
+					executionService.run(sourceKey, this.cohortComparisonId(), 'CCA', $('.language-r').text())
 						.then(({ data: c }) => {
 							this.monitorEEJobExecution(c.executionId, 100);
-							jobDetailsService.createJob({
+							jobDetailsUtils.createJob({
 								name: this.cohortComparison().name() + "_" + sourceKey,
 								type: 'cca',
 								status: 'PENDING',

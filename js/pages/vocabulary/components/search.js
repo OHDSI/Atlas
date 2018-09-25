@@ -6,7 +6,7 @@ define([
 	'webapi/AuthAPI',
 	'providers/Component',
 	'providers/AutoBind',
-	'services/http',
+	'services/httpService',
 	'pages/vocabulary/const',
 	'utils/CommonUtils',
 	'providers/Vocabulary',

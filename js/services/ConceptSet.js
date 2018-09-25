@@ -1,7 +1,7 @@
 define(function (require, exports) {
 
 	const ko = require('knockout');
-	const httpService = require('services/http');
+	const httpService = require('services/httpService');
 	const sharedState = require('atlas-state');
 	const config = require('appConfig');
 

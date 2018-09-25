@@ -4,10 +4,10 @@ define([
 	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
-	'services/http',
-	'services/PatientLevelPrediction',
-	'services/Execution',
-	'services/JobDetailsService',
+	'services/httpService',
+	'services/PatientLevelPredictionService',
+	'services/ExecutionService',
+	'utils/JobDetailsUtils',
 	'webapi/AuthAPI',
 	'jquery',
 	'appConfig',
@@ -27,7 +27,7 @@ define([
 		httpService,
 		plpService,
 		executionService,
-		jobDetailsService,
+		jobDetailsUtils,
 		authApi,
 		$,
 		config,
@@ -109,7 +109,7 @@ define([
 			this.loadExecutions();
 		}
 
-		loadExecutions () {
+		async loadExecutions () {
 			// reset before load
 			this.sources().forEach((s) => {
 				if (!this.sourceExecutions[s.sourceKey]) {
@@ -118,7 +118,8 @@ define([
 					this.sourceExecutions[s.sourceKey].removeAll();
 				}
 
-				executionService.loadExecutions('PLP', this.patientLevelPredictionId(), (exec) => {
+				const executions = await executionService.find('PLP', this.patientLevelPredictionId());
+				executions.forEach((exec) => {
 					const source = this.sources().find(s => s.sourceId == exec.sourceId);
 					if (source) {
 							const sourceKey = source.sourceKey;
@@ -145,7 +146,7 @@ define([
 		executePLP (sourceKey) {
 			if (config.useExecutionEngine) {
 				this.sourceProcessingStatus[sourceKey](true);
-				executionService.runExecution(
+				executionService.run(
 					sourceKey,
 					this.patientLevelPredictionId(),
 					'PLP',
@@ -153,7 +154,7 @@ define([
 				)
 					.then(({ data }) => {
 						this.monitorEEJobExecution(data.executionId, 100);
-						jobDetailsService.createJob({
+						jobDetailsUtils.createJob({
 							name: this.currentPlpAnalysis().name() + "_" + sourceKey,
 							type: 'plp',
 							status: 'PENDING',
@@ -207,21 +208,22 @@ define([
 			});
 		}
 
-		delete () {
+		async delete () {
 			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
 				return;
 
-			plpService.deletePlp(this.patientLevelPredictionId()).then(() => {
+			try {
+				await plpService.delete(this.patientLevelPredictionId());
 				this.currentPlpAnalysis(null);
 				this.patientLevelPredictionId(null);
 				this.patientLevelPredictionDirtyFlag(new ohdsiUtil.dirtyFlag(this.currentPlpAnalysis()));
 				document.location = "#/plp"
-			}, function (err) {
-				console.log("Error during delete", err);
-			});
+			} catch (err) {
+				console.error("Error during delete", err);
+			}
 		}
 
-		save () {
+		async save () {
 			const plpAnalysis = {
 				analysisId: this.currentPlpAnalysis().analysisId || null,
 				name: this.currentPlpAnalysis().name(),
@@ -316,7 +318,8 @@ define([
 				cvInteractionMonth: this.currentPlpAnalysis().cvInteractionMonth() | 0,
 				delCovariatesSmallCount: this.currentPlpAnalysis().delCovariatesSmallCount(),
 			};
-			plpService.savePlp(plpAnalysis).then(({ data: saveResult }) => {
+			try {
+				const saveResult = await plpService.save(plpAnalysis);
 				const redirectWhenComplete = saveResult.analysisId != this.currentPlpAnalysis().analysisId;
 				this.patientLevelPredictionId(saveResult.analysisId);
 				this.currentPlpAnalysis().analysisId = saveResult.analysisId;
@@ -325,7 +328,9 @@ define([
 				}
 				this.patientLevelPredictionDirtyFlag().reset();
 				this.currentPlpAnalysis.valueHasMutated();
-			});
+			} catch(er) {
+				console.error(er);
+			}
 		}
 
 		close () {
@@ -338,10 +343,13 @@ define([
 			document.location = '#/plp';
 		}
 
-		copy () {
-			plpService.copyPlp(this.patientLevelPredictionId()).then(({ data: result }) => {
+		async copy () {
+			try {
+				const result = await plpService.copy(this.patientLevelPredictionId());
 				document.location = "#/plp/" + result.analysisId;
-			});
+			} catch(er) {
+				console.error(er);
+			}
 		}
 
 		newPatientLevelPrediction () {
@@ -357,14 +365,17 @@ define([
 			}, 0);
 		}
 
-		loadPatientLevelPrediction () {
-			plpService.getPlp(this.patientLevelPredictionId()).then(({ data: plp }) => {
+		async loadPatientLevelPrediction () {
+			try {
+				const plp = await plpService.findOne(this.patientLevelPredictionId());
 				this.loading(false);
 				this.currentPlpAnalysis(new PatientLevelPredictionAnalysis(plp));
 				setTimeout(() => {
 					this.patientLevelPredictionDirtyFlag(new ohdsiUtil.dirtyFlag(this.currentPlpAnalysis()));
 				}, 0);
-			});
+			} catch(er) {
+				console.error(er);
+			}
 		}
 	}
 

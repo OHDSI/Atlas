@@ -3,7 +3,7 @@ define([
 	'text!./conceptset-browser.html',
 	'appConfig',
 	'webapi/AuthAPI',
-	'services/file',
+	'services/FileService',
 	'bootstrap',
 	'circe',
 ], function (

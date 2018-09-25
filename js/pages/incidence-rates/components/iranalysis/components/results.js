@@ -2,7 +2,7 @@ define([
 	'knockout',
 	'jquery',
 	'text!./results.html',
-	'services/IRAnalysis',
+	'services/IRAnalysisService',
 	'webapi/MomentAPI',
 	'providers/Component',
 	'utils/CommonUtils',
@@ -100,7 +100,7 @@ define([
 			this.rateMultiplier(Math.max(this.rateMultiplier() / 10, 100));	
 		}
 		
-		selectSource(source) {
+		async selectSource(source) {
 			
 			// fail-fast if source/targets are not set, 
 			if (!(this.selectedTarget() && this.selectedOutcome())) {
@@ -112,14 +112,17 @@ define([
 			this.selectedSource(source);
 			this.isLoading(true);
 
-			IRAnalysisService.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, this.selectedTarget(), this.selectedOutcome()).then((report) => {
+			try {
+				const report = await IRAnalysisService.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, this.selectedTarget(), this.selectedOutcome());
 				// ensure report results are sorted in correct order (by id)
 				report.stratifyStats.sort(function (a, b) {
 					return a.id - b.id;
 				});
 				this.selectedReport(report);
 				this.isLoading(false);
-			});
+			} catch(er) {
+				console.error(er);
+			}
 		};
 
 		msToTime(s) {

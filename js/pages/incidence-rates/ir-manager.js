@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./ir-manager.html', 
-	'services/IRAnalysis',
+	'services/IRAnalysisService',
 	'webapi/SourceAPI',
 	'services/CohortDefinitionService',
 	'./components/iranalysis/IRAnalysisDefinition', 
@@ -153,8 +153,9 @@ define([
 			this.init();
 		}
 
-		pollForInfo() {
-			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
+		async pollForInfo() {
+			try {
+				const data = await IRAnalysisService.getInfo(this.selectedAnalysisId());
 				var hasPending = false;
 				data.forEach((info) => {
 					var source = this.sources().filter((s) => { return s.source.sourceId == info.executionInfo.id.sourceId })[0];
@@ -172,7 +173,9 @@ define([
 				} else {
 					this.isRunning(false);
 				}
-			});
+			} catch(er) {
+				console.error(er);
+			}
 		}
 		
 		resolveCohortId(cohortId) {
@@ -187,15 +190,18 @@ define([
 			this.cohortDefs(list);
 		}
 		
-		onAnalysisSelected() {
+		async onAnalysisSelected() {
 			this.loading(true);
 			this.refreshDefs();
-			IRAnalysisService.getAnalysis(this.selectedAnalysisId()).then((analysis) => {
+			try {
+				const analysis = await IRAnalysisService.findOne(this.selectedAnalysisId());
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));				
 				this.loading(false);
 				this.pollForInfo();
-			});
+			} catch(er) {
+				console.error(er);
+			}
 		};
 		
 		handleConceptSetImport(item) {
@@ -214,15 +220,18 @@ define([
 			this.criteriaContext(null);
 		}				
 
-		copy() {
+		async copy() {
 			this.loading(true);
-			IRAnalysisService.copyAnalysis(this.selectedAnalysisId()).then((analysis) => {
+			try {
+				const analysis = await IRAnalysisService.copy(this.selectedAnalysisId());
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.selectedAnalysisId(analysis.id)
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				this.loading(false);
 				document.location = constants.apiPaths.analysis(analysis.id);
-			});	
+			} catch(er) {
+				console.error(er);
+			}
+			this.loading(false);
 		}
 		
 		close() {
@@ -238,33 +247,38 @@ define([
 			document.location = constants.apiPaths.analysis();
 		}
 		
-		save() {
+		async save() {
 			this.loading(true);
-			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
-				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location =  constants.apiPaths.analysis(analysis.id)
-				this.loading(false);
-			});
+			const analysis = await IRAnalysisService.save(this.selectedAnalysis());
+			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
+			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+			document.location =  constants.apiPaths.analysis(analysis.id)
+			this.loading(false);
 		}
 		
-		delete() {
+		async delete() {
 			if (!confirm("Delete incidence rate analysis? Warning: deletion can not be undone!"))
 				return;
 			
 			// reset view after save
-			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
+			try {
+				await IRAnalysisService.delete(this.selectedAnalysisId());
 				this.selectedAnalysis(null);
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				document.location = constants.apiPaths.analysis();
-			});
+			} catch(er) {
+				console.error(er);
+			}
 		}
 		
-		removeResult(analysisResult) {
-			IRAnalysisService.deleteInfo(this.selectedAnalysisId(),analysisResult.source.sourceKey).then(() => {
+		async removeResult(analysisResult) {
+			try {
+				await IRAnalysisService.deleteInfo(this.selectedAnalysisId(),analysisResult.source.sourceKey);
 				var source = this.sources().filter(function (s) { return s.source.sourceId == analysisResult.source.sourceId })[0];
 				source.info(null);
-			});
+			} catch (er) {
+				console.error(er);
+			}
 		}
 		
 		newAnalysis() {
@@ -272,12 +286,10 @@ define([
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 		};
 		
-		onExecuteClick(sourceItem) {
+		async onExecuteClick(sourceItem) {
 			this.queueJob(sourceItem);
-			var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
-			executePromise.then(() => {
-				this.pollForInfo();
-			});			
+			await IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
+			this.pollForInfo();
 		}
 		
 		queueJob(sourceItem) {
@@ -327,7 +339,7 @@ define([
 						text: sourceItem.source.sourceName,
 						selected: false,
 						description: "Perform Study on source: " + sourceItem.source.sourceName,
-						action: () => {
+						action: async () => {
 							if (sourceItem.info()) {
 								sourceItem.info().executionInfo.status = "PENDING";
 								sourceItem.info.notifySubscribers();
@@ -345,10 +357,8 @@ define([
 								this.queueJob(sourceItem);
 							}
 							this.isRunning(true);
-							var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
-							executePromise.then(() => {
-								this.pollForInfo();
-							});
+							await IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
+							this.pollForInfo();
 						}
 					}
 				});		

@@ -3,7 +3,7 @@ define([
 	'text!./home.html',
 	'providers/Page',
 	'utils/CommonUtils',
-	'services/http',
+	'services/httpService',
 	'appConfig',
 	'webapi/AuthAPI',
 	'components/heading',

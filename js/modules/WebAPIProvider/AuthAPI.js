@@ -6,7 +6,7 @@ define(function(require, exports) {
     var cookie = require('webapi/CookieAPI');
     var TOKEN_HEADER = 'Bearer';
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
-    const httpService = require('services/http');
+    const httpService = require('services/httpService');
 
     var authProviders = config.authProviders.reduce(function(result, current) {
         result[config.api.url + current.url] = current;

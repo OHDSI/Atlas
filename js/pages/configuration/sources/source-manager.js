@@ -7,7 +7,7 @@ define([
   'appConfig',
   'assets/ohdsi.util',
   'webapi/SourceAPI',
-  'services/role',
+  'services/RoleService',
   'lodash',
   'webapi/AuthAPI',
   'components/ac-access-denied',

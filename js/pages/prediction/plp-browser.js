@@ -3,7 +3,7 @@ define([
 	'text!./plp-browser.html',
 	'appConfig',
 	'webapi/MomentAPI',
-	'services/PatientLevelPrediction',
+	'services/PatientLevelPredictionService',
 	'webapi/AuthAPI',
 	'providers/Page',
 	'utils/CommonUtils',
@@ -85,11 +85,13 @@ define([
 				}
 			];
 			
+		}
+		
+		async onPageCreated() {
 			// Load data from server
-			plpService.getPlpList().then(({ data }) => {
-				this.analysisList(data);
-				this.loading(false);
-			});
+			const list = await plpService.find();
+			this.analysisList(list);
+			this.loading(false);			
 		}
 
 		rowClick(d) {

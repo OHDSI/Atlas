@@ -7,7 +7,7 @@ define([
 	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
-	'services/http',
+	'services/httpService',
 	'components/cohortcomparison/ComparativeCohortAnalysis',
 	'faceted-datatable',
 	'components/ac-access-denied',

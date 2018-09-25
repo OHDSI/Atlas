@@ -4,10 +4,10 @@ define([
     'providers/Component',
     'providers/AutoBind',
     'utils/CommonUtils',
-    'services/role',
+    'services/RoleService',
     'lodash',
     'assets/ohdsi.util',
-    'services/User',
+    'services/UserService',
     'webapi/AuthAPI',
     'databindings',
     'components/ac-access-denied',
@@ -103,7 +103,7 @@ define([
 
         async getUsers() {
             if (!this.users() || this.users().length == 0) {
-                const users = await userService.getUsers();
+                const users = await userService.find();
                 this.users(users);
             }
         }

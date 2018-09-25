@@ -5,7 +5,7 @@ define([
 	'd3',
 	'appConfig',
 	'webapi/AuthAPI',
-	'services/Profile',
+	'services/ProfileService',
 	'atlas-state',
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinitionService',
@@ -306,60 +306,57 @@ define([
 					}
 			}
 			
-			loadPerson () {
+			async loadPerson () {
 				this.cantFindPerson(false);
 				this.loadingPerson(true);
 
-				let url = constants.paths.person(this.sourceKey(), this.personId());
+				// let url = constants.paths.person(this.sourceKey(), this.personId());
 
 				this.loadingStatus('loading profile data from database');
-				this.personRequest = this.personRequests[url] = profileService.getProfile(this.sourceKey(), this.personId(), this.cohortDefinitionId())
-					.then((person) => {
-						if (this.personRequest !== this.personRequests[url]) {
-							return;
-						}
-						this.loadingStatus('processing profile data');
-						person.personId = this.personId();
-						this.loadingPerson(false);
-						let cohort;
-						let cohortDefinitionId = this.cohortDefinitionId();
-						if (cohortDefinitionId) {
-							cohort = _.find(person.cohorts, function (o) {
-								return o.cohortDefinitionId == cohortDefinitionId;
-							});
-						}
-						// In the event that we could not find the matching cohort in the person object or the cohort definition id is not specified default it
-						if (typeof cohort === "undefined") {
-							cohort = {
-								startDate: _.chain(person.records)
-									.map(d => d.startDate)
-									.min()
-									.value()
-							};
-						}
-						person.records.forEach((rec) => {
-							// have to get startDate from person.cohorts
-							// rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
-							// rec.endDay = rec.endDate ? Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
-							rec.highlight = this.defaultColor;
-							rec.stroke = this.defaultColor;
+				try {
+					const person = await profileService.find(this.sourceKey(), this.personId(), this.cohortDefinitionId());
+					this.loadingStatus('processing profile data');
+					person.personId = this.personId();
+					let cohort;
+					let cohortDefinitionId = this.cohortDefinitionId();
+					if (cohortDefinitionId) {
+						cohort = _.find(person.cohorts, function (o) {
+							return o.cohortDefinitionId == cohortDefinitionId;
 						});
-						this.personRecords(person.records);
-						person.shadedRegions =
-							person.observationPeriods.map(op => {
-								return {
-									x1: op.x1,
-									x2: op.x2,
-									className: 'observation-period',
-								};
-							});
-						this.shadedRegions(person.shadedRegions);
-						this.person(person);
-					})
-					.catch(() => {
-            this.cantFindPerson(true);
-            this.loadingPerson(false);
+					}
+					// In the event that we could not find the matching cohort in the person object or the cohort definition id is not specified default it
+					if (typeof cohort === "undefined") {
+						cohort = {
+							startDate: _.chain(person.records)
+								.map(d => d.startDate)
+								.min()
+								.value()
+						};
+					}
+					person.records.forEach((rec) => {
+						// have to get startDate from person.cohorts
+						// rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
+						// rec.endDay = rec.endDate ? Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
+						rec.highlight = this.defaultColor;
+						rec.stroke = this.defaultColor;
 					});
+					this.personRecords(person.records);
+					person.shadedRegions =
+						person.observationPeriods.map(op => {
+							return {
+								x1: op.x1,
+								x2: op.x2,
+								className: 'observation-period',
+							};
+						});
+					this.shadedRegions(person.shadedRegions);
+					this.person(person);
+				}
+				catch(err) {
+					this.cantFindPerson(true);
+					console.error(err);
+				}
+				this.loadingPerson(false);
 			}
 
 			removeHighlight () {

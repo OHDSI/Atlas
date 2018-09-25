@@ -20,6 +20,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
 	'webapi/AuthAPI',
+	'const',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -59,6 +60,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	commonUtils,
 	costUtilConst,
 	authApi,
+	{ visualizationPacks }
 ) {
 	function translateSql(sql, dialect) {
 		translatePromise = $.ajax({
@@ -563,7 +565,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.showUtilizationToRunModal = ko.observable(false);
 			this.checkedUtilReports = ko.observableArray([]);
 			
-			const reportPacks = cohortReportingService.visualizationPacks;
+			const reportPacks = visualizationPacks;
 			const reports = [
 				reportPacks.healthcareUtilPersonAndExposureBaseline,
 				reportPacks.healthcareUtilPersonAndExposureCohort,

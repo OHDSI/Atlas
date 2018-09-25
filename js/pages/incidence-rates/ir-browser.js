@@ -2,7 +2,7 @@ define([
   'knockout',
   'text!./ir-browser.html',
   'appConfig',
-  'services/IRAnalysis',
+  'services/IRAnalysisService',
   'webapi/AuthAPI',
   'providers/Page',
   'utils/CommonUtils',
@@ -39,14 +39,15 @@ define([
       this.refresh();
     }
 
-    refresh() {
+    async refresh() {
       this.loading(true);
-      IRAnalysisService
-        .getAnalysisList()
-        .then(({ data }) => {
-          this.analysisList(data);
-          this.loading(false);
-        });
+      try {
+        const list = await IRAnalysisService.find();
+        this.analysisList(list);
+      } catch(er) {
+        console.error(er);        
+      }
+      this.loading(false);
     };
 
     onAnalysisSelected(d) {

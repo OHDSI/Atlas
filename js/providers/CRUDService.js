@@ -15,8 +15,8 @@ define([
       return data;
     }
 
-    async find() {
-      const { data = [] } = await this.httpService.doGet(`${this.baseUrl}`);
+    async find(...params) {
+      const { data = [] } = await this.httpService.doGet(`${this.baseUrl}/${params.join('/')}`);
       return data;
     }
 
@@ -24,6 +24,11 @@ define([
       const { data } = await this.httpService.doPost(`${this.baseUrl}`, definition);
       return data;
     }
+    
+		async copy(id) {
+			const { data } = await this.httpService.doGet(`${this.baseUrl}/${id}/copy`);
+			return data;
+		}
 
     async update(definition) {
       const { data } = await this.httpService.doPut(`${this.baseUrl}`, definition);
