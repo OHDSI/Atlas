@@ -303,7 +303,7 @@ define([
 
     init() {
       if (this.hasAccess()) {
-        if (this.selectedSourceId() == null && this.selectedSource() == null) {
+        if (this.selectedSourceId() == null) {
           this.newSource();
         } else {
           this.loading(true);
