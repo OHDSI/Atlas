@@ -5,7 +5,7 @@ define(
       return {        
         '/plp': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['plp-browser'], function () {
+          require(['./plp-browser'], function () {
             router.setCurrentView('plp-browser');
           });
         }),
