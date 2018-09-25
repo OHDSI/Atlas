@@ -1,6 +1,6 @@
 define([
 	'knockout', 
-	'text!./ir-manager.html', 
+	'text!./ir-manager.html',
 	'services/IRAnalysis',
 	'webapi/SourceAPI',
 	'services/CohortDefinition',
@@ -45,9 +45,9 @@ define([
 			this.pollTimeout = null;
 			this.model = params.model;
 			this.loading = ko.observable(false);
-			this.selectedAnalysis = this.model.currentIRAnalysis;
-			this.selectedAnalysisId = this.model.selectedIRAnalysisId;
-			this.dirtyFlag = this.model.currentIRAnalysisDirtyFlag;
+			this.selectedAnalysis = sharedState.IRAnalysis.current;
+			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
+			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -188,9 +188,14 @@ define([
 			});	
 		}
 		
+		clearResults() {
+			this.sources().forEach(source => source.info(null));
+		}
+		
 		onAnalysisSelected() {
 			this.loading(true);
 			this.refreshDefs();
+			this.clearResults();
 			IRAnalysisService.getAnalysis(this.selectedAnalysisId()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));				
@@ -361,7 +366,7 @@ define([
 
 			if (this.selectedAnalysisId() == null) {
 				this.newAnalysis();
-			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysisId())) {
+			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
 			} else {
 				this.pollForInfo();

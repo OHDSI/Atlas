@@ -5,8 +5,9 @@ define(
     return {
       title: 'Data Sources',
       buildRoutes,
-      baseUrl: 'datasources',
+      navUrl: () => '#/datasources',
       icon: 'database',
+			statusCss: () => ''
     };
   }
 );

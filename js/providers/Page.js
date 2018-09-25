@@ -24,8 +24,8 @@ define([
       super(params);
       this.routerParams = params.routerParams();
       this.routerParamsSub = params.routerParams.subscribe(newParams => {
-        const np = Object.entries(newParams);
-        const op = Object.entries(this.routerParams);
+        const np = Object.entries(newParams === undefined ? {} : newParams);
+        const op = Object.entries(this.routerParams === undefined ? {} : this.routerParams);
         const changedParams = _.differenceWith(np, op, detectChanges);
         if (changedParams.length === 0) {
           return;

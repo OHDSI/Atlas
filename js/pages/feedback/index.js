@@ -5,8 +5,9 @@ define(
     return {
       title: 'Feedback',
       buildRoutes,
-      baseUrl: 'feedback', // todo: {href: supportURL, target: targetSupportURL}
+      navUrl: () => '#/feedback',
       icon: 'comment',
+			statusCss: () => ''
     };
   }
 );

@@ -5,8 +5,9 @@ define(
     return {
       title: 'Cohort Definitions',
       buildRoutes,
-      baseUrl: 'cohortdefinitions',
+      navUrl: () => '#/cohortdefinitions',
       icon: 'users',
+			statusCss: () => ''
     };
   }
 );
