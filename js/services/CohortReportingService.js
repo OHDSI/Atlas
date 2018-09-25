@@ -61,7 +61,7 @@ define(function (require, exports) {
       return data;
     }
   
-    getCompletedHeraclesHeelAnalyses(source, cohortDefinitionId) {
+    async getCompletedHeraclesHeelAnalyses(source, cohortDefinitionId) {
       const { data } = await this.httpService.doGet(config.api.url + 'cohortresults/' + source.sourceKey + '/' + cohortDefinitionId + '/heraclesheel?refresh=true');
       return data;
     }
