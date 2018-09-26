@@ -16,7 +16,9 @@ define(
 		'utils/BemHelper',
 		'lodash',
 		'd3',
-		'webapi/AuthAPI',
+		'services/AuthService',
+		'services/permissions/CohortPermissionService',
+		'services/permissions/ConceptSetPermissionService',
 		'utils/MomentUtils',
 		'less!app.less',
 	],
@@ -37,8 +39,10 @@ define(
 		BemHelper,
 		_,
 		d3,
-		authApi,
-        momentUtils,
+		AuthService,
+		CohortPermissionService,
+		ConceptSetPermissionService,
+		momentUtils,
 	) => {
 		return class GlobalModel extends AutoBind() {
 			static get applicationStatuses() {
@@ -179,16 +183,16 @@ define(
 					if (this.currentConceptSetSource() == 'cohort') {
 						return this.canEditCurrentCohortDefinition();
 					} else if (this.currentConceptSetSource() == 'repository') {
-						if (!authApi.isAuthenticated()) {
+						if (!AuthService.isAuthenticated()) {
 							return false;
 						}
 	
 						if (this.currentConceptSet() && (this.currentConceptSet()
 								.id != 0)) {
-							return authApi.isPermittedUpdateConceptset(this.currentConceptSet()
+							return ConceptSetPermissionService.isPermittedUpdateConceptset(this.currentConceptSet()
 								.id) || !config.userAuthenticationEnabled;
 						} else {
-							return authApi.isPermittedCreateConceptset() || !config.userAuthenticationEnabled;
+							return ConceptSetPermissionService.isPermittedCreateConceptset() || !config.userAuthenticationEnabled;
 						}
 					} else {
 						return false;
@@ -205,7 +209,7 @@ define(
 						} else
 					*/
 					if (this.currentConceptSetSource() == 'repository') {
-						return authApi.isPermittedDeleteConceptset(this.currentConceptSet().id);
+						return ConceptSetPermissionService.isPermittedDeleteConceptset(this.currentConceptSet().id);
 					} else {
 						return false;
 					}
@@ -227,16 +231,16 @@ define(
 				});
 	
 				this.canEditCurrentCohortDefinition = ko.pureComputed(() => {
-					if (!authApi.isAuthenticated()) {
+					if (!AuthService.isAuthenticated()) {
 						return false;
 					}
 	
 					if (this.currentCohortDefinition() && (this.currentCohortDefinition()
 							.id() != 0)) {
-						return authApi.isPermittedUpdateCohort(this.currentCohortDefinition()
+						return CohortPermissionService.isPermittedUpdateCohort(this.currentCohortDefinition()
 							.id()) || !config.userAuthenticationEnabled;
 					} else {
-						return authApi.isPermittedCreateCohort() || !config.userAuthenticationEnabled;
+						return CohortPermissionService.isPermittedCreateCohort() || !config.userAuthenticationEnabled;
 					}
 				});
 				this.ccaCss = ko.pureComputed(() => {
@@ -690,7 +694,7 @@ define(
 									});
 							});
 					})
-				.catch(er => authApi.handleAccessDenied(er));
+				.catch(er => AuthService.handleAccessDenied(er));
 			}
 			
 			loadCohortConceptSet(conceptSetId, viewToShow, mode) {
@@ -839,7 +843,7 @@ define(
 						return true;
 
 				console.info('Updating roles');
-				if (!authApi.isAuthenticated()) {
+				if (!AuthService.isAuthenticated()) {
 					console.warn('Roles are not updated');
 					return Promise.resolve();
 				}

@@ -8,7 +8,8 @@ define([
     'lodash',
     'assets/ohdsi.util',
     'services/UserService',
-    'webapi/AuthAPI',
+    'services/AuthService',
+    'services/permissions/RolePermissionService',
     'databindings',
     'components/ac-access-denied',
     'less!./role-details.less',
@@ -23,7 +24,8 @@ define([
     _,
     ohdsiUtils,
     userService,
-    authApi,
+    AuthService,
+    RolePermissionService,
 ) {
     const defaultRoleName = null;
     class RoleDetails extends AutoBind(Component) {
@@ -56,24 +58,24 @@ define([
 
             this.isNewRole = ko.pureComputed(() => { return this.roleId() == 0; });
 
-            this.isAuthenticated = authApi.isAuthenticated;
-            this.canReadRoles = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedReadRoles(); });
+            this.isAuthenticated = AuthService.isAuthenticated;
+            this.canReadRoles = ko.pureComputed(() => { return this.isAuthenticated() && RolePermissionService.isPermittedReadRoles(); });
             this.canReadRole = ko.pureComputed(() => {
                 return this.isAuthenticated() &&
                     this.isNewRole()
-                    ? authApi.isPermittedCreateRole()
-                    : authApi.isPermittedReadRole(this.roleId());
+                    ? RolePermissionService.isPermittedCreateRole()
+                    : RolePermissionService.isPermittedReadRole(this.roleId());
             });
             this.canEditRole = ko.pureComputed(() => {
                 return this.isAuthenticated() &&
                     this.isNewRole()
-                    ? authApi.isPermittedCreateRole()
-                    : authApi.isPermittedEditRole(this.roleId());
+                    ? RolePermissionService.isPermittedCreateRole()
+                    : RolePermissionService.isPermittedEditRole(this.roleId());
             });
-            this.canEditRoleUsers = ko.pureComputed(() => { return this.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRoleUsers(this.roleId())); });
-            this.canEditRolePermissions = ko.pureComputed(() => { return this.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRolePermissions(this.roleId())); });
+            this.canEditRoleUsers = ko.pureComputed(() => { return this.isAuthenticated() && (this.isNewRole() || RolePermissionService.isPermittedEditRoleUsers(this.roleId())); });
+            this.canEditRolePermissions = ko.pureComputed(() => { return this.isAuthenticated() && (this.isNewRole() || RolePermissionService.isPermittedEditRolePermissions(this.roleId())); });
             this.hasAccess = ko.pureComputed(() => { return this.canReadRole(); });
-            this.canDelete = ko.pureComputed(() => { return this.isAuthenticated() && this.roleId() && authApi.isPermittedDeleteRole(this.roleId()); });
+            this.canDelete = ko.pureComputed(() => { return this.isAuthenticated() && this.roleId() && RolePermissionService.isPermittedDeleteRole(this.roleId()); });
             this.canSave = ko.pureComputed(() => { return this.canEditRole() || this.canEditRoleUsers() || this.canEditRolePermissions(); });
 
             this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });        

@@ -10,7 +10,7 @@ define([
 	view,
 	Component,
 	commonUtils,
-	authApi
+	AuthService
 ) {
 	class WhitePage extends Component {
 		constructor(params) {

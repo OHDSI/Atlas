@@ -3,7 +3,8 @@ define([
 	'text!./cohort-comparison-browser.html',
 	'appConfig',
 	'utils/MomentUtils',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/EstimationPermissionService',
 	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
@@ -19,7 +20,8 @@ define([
 	view,
 	config,
 	momentUtils,
-	authApi,
+	AuthService,
+	EstimationPermissionService,
 	Page,
 	AutoBind,
 	commonUtils,
@@ -33,10 +35,10 @@ define([
 			this.loading = ko.observable(true);
 
 			this.canReadEstimations = ko.pureComputed(() => {
-				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedReadEstimations()) || !config.userAuthenticationEnabled;
+				return (config.userAuthenticationEnabled && AuthService.isAuthenticated() && EstimationPermissionService.isPermittedReadEstimations()) || !config.userAuthenticationEnabled;
 			});
 			this.canCreateEstimation = ko.pureComputed(() => {
-				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedCreateEstimation()) || !config.userAuthenticationEnabled;
+				return (config.userAuthenticationEnabled && AuthService.isAuthenticated() && EstimationPermissionService.isPermittedCreateEstimation()) || !config.userAuthenticationEnabled;
 			});
 
 			this.options = {
@@ -97,7 +99,7 @@ define([
 					this.loading(false);
 					this.reference(data);
 				})
-				.catch(authApi.handleAccessDenied);
+				.catch(AuthService.handleAccessDenied);
 		}
 
 		rowClick(d) {

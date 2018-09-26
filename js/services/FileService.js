@@ -1,10 +1,10 @@
 define(
   [
-    'webapi/AuthAPI',
+    'services/AuthService',
     'file-saver',
   ],
   (
-    authApi,
+    AuthService,
     FileSaver
   ) => {
     class FileService {
@@ -13,7 +13,7 @@ define(
         const promise = new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open("GET", url, true);
-          xhr.setRequestHeader("Authorization", authApi.getAuthorizationHeader());
+          xhr.setRequestHeader("Authorization", AuthService.getAuthorizationHeader());
           xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200) {
               resolve();

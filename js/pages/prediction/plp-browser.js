@@ -4,7 +4,8 @@ define([
 	'appConfig',
 	'utils/MomentUtils',
 	'services/PatientLevelPredictionService',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/PlpPermissionService',
 	'providers/Page',
 	'utils/CommonUtils',
 	'components/heading',
@@ -17,7 +18,8 @@ define([
 	config,
 	momentUtils,
 	plpService,
-	authApi,
+	AuthService,
+	PlpPermissionService,
 	Page,
 	commonUtils
 ) {
@@ -28,10 +30,10 @@ define([
 			this.analysisList = ko.observableArray([]);
 
 			this.canReadPlps = ko.pureComputed(() => {
-				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedReadPlps()) || !config.userAuthenticationEnabled;
+				return (config.userAuthenticationEnabled && AuthService.isAuthenticated() && PlpPermissionService.isPermittedReadPlps()) || !config.userAuthenticationEnabled;
 			});
 			this.canCreatePlp = ko.pureComputed(() => {
-				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedCreatePlp()) || !config.userAuthenticationEnabled;
+				return (config.userAuthenticationEnabled && AuthService.isAuthenticated() && PlpPermissionService.isPermittedCreatePlp()) || !config.userAuthenticationEnabled;
 			});
 
 			this.options = {

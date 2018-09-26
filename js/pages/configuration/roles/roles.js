@@ -4,7 +4,8 @@ define([
     'providers/Component',
     'providers/AutoBind',
     'utils/CommonUtils',
-    'webapi/AuthAPI',
+    'services/AuthService',
+    'services/permissions/RolePermissionService',
     'atlas-state',
     'databindings',
     'components/ac-access-denied',
@@ -15,7 +16,8 @@ define([
     Component,
     AutoBind,
     commonUtils,
-    authApi,
+    AuthService,
+    RolePermissionService,
     sharedState
 ) {
     class Roles extends AutoBind(Component) {
@@ -25,9 +27,9 @@ define([
             this.updateRoles = params.model.updateRoles;
             this.loading = ko.observable();
     
-            this.isAuthenticated = authApi.isAuthenticated;
-            this.canRead = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedReadRoles(); });
-            this.canCreate = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedCreateRole(); });
+            this.isAuthenticated = AuthService.isAuthenticated;
+            this.canRead = ko.pureComputed(() => { return this.isAuthenticated() && RolePermissionService.isPermittedReadRoles(); });
+            this.canCreate = ko.pureComputed(() => { return this.isAuthenticated() && RolePermissionService.isPermittedCreateRole(); });
     
             if (this.canRead()) {
                 this.loading(true);

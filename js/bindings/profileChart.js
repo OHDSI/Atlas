@@ -6,7 +6,7 @@ define([
 	'lodash',
 	'd3-selection',
 	'utils/MomentUtils',
-	'webapi/AuthAPI',
+	'services/permissions/ProfilePermissionService',
 	'appConfig',
 	'D3-Labeler/labeler',
 ], function (
@@ -16,12 +16,12 @@ define([
 	_,
 	d3Selection,
 	momentUtils,
-	authApi,
+	ProfilePermissionService,
 	config
 ) {
 
 	function canViewProfileDates() {
-		return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()));
+		return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && ProfilePermissionService.isPermittedViewProfileDates()));
   }
 
 	var margin = {
@@ -44,7 +44,7 @@ define([
 
 	var htmlTipText = d => {
 		var tipText = '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p>';
-		if (authApi.isPermittedViewProfileDates() && d.startDate != null) {
+		if (ProfilePermissionService.isPermittedViewProfileDates() && d.startDate != null) {
 			tipText += '<p>Start Date: '	+ momentUtils.formatDate(new Date(d.startDate)) + '</p>'
 		}
 		return tipText;

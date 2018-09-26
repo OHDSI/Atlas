@@ -5,13 +5,13 @@ define([
         'pages/characterizations/const',
         'text!./characterization-executions.html',
         'appConfig',
-        'webapi/AuthAPI',
+        'services/AuthService',
         'moment',
         'providers/Component',
         'providers/AutoBind',
         'utils/CommonUtils',
         'utils/DatatableUtils',
-        'services/Source',
+        'services/SourceService',
         'less!./characterization-executions.less',
         './characterization-results',
         'databindings/tooltipBinding'
@@ -22,7 +22,7 @@ define([
     consts,
     view,
     config,
-    authApi,
+    AuthService,
     moment,
     Component,
     AutoBind,
@@ -121,7 +121,7 @@ define([
                 const ccId = this.characterizationId();
 
                 Promise.all([
-                    SourceService.loadSourceList(),
+                    SourceService.find(),
                     CharacterizationService.loadCharacterizationExecutionList(ccId)
                 ]).then(([
                     sourceList,

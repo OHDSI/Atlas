@@ -3,7 +3,7 @@ define([
     'pages/characterizations/services/CharacterizationService',
     'text!./characterization-results.html',
     'appConfig',
-    'webapi/AuthAPI',
+    'services/AuthService',
     'providers/Component',
     'providers/AutoBind',
     'utils/CommonUtils',
@@ -11,8 +11,8 @@ define([
     'lodash',
     'd3',
     'components/visualizations/filter-panel/utils',
-    'webapi/MomentAPI',
-    'services/Source',
+    'utils/MomentUtils',
+    'services/SourceService',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/line-chart',
@@ -24,7 +24,7 @@ define([
     CharacterizationService,
     view,
     config,
-    authApi,
+    AuthService,
     Component,
     AutoBind,
     commonUtils,
@@ -149,7 +149,7 @@ define([
             this.loading(true);
 
             Promise.all([
-                SourceService.loadSourceList(),
+                SourceService.find(),
                 CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
                 CharacterizationService.loadCharacterizationResults(this.executionId())

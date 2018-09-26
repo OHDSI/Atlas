@@ -7,7 +7,8 @@ define([
 	'services/JobsService',
 	'appConfig',
 	'utils/MomentUtils',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/JobPermissionService',
 	'databindings',
 	'components/ac-access-denied',
 	'components/heading',
@@ -21,7 +22,8 @@ define([
 		jobsService,
 		config,
 		momentUtils,
-		authApi
+		AuthService,
+		JobPermissionService,
 	) {
 	class JobManager extends AutoBind(Page) {
 		constructor(params) {
@@ -37,9 +39,9 @@ define([
 			if (config.userAuthenticationEnabled) {
 				this.model.columns.splice(3, 0, {title: 'Author', data: 'jobParameters.jobAuthor', 'defaultContent': ''});
 			}
-			this.isAuthenticated = authApi.isAuthenticated;
+			this.isAuthenticated = AuthService.isAuthenticated;
 			this.canReadJobs = ko.pureComputed(() => {
-				return authApi.isPermittedReadJobs();
+				return JobPermissionService.isPermittedReadJobs();
 			});
 
 			if (this.canReadJobs()) {

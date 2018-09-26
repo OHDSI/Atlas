@@ -2,7 +2,8 @@ define([
 	'knockout',
 	'text!./cohort-definitions.html',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/CohortPermissionService',
 	'providers/Page',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
@@ -13,7 +14,8 @@ define([
 	ko,
 	view,
 	config,
-	authApi,
+	AuthService,
+	CohortPermissionService,
 	Page,
 	commonUtils,
 	constants,
@@ -42,9 +44,9 @@ define([
 				}
 			});
 		
-			this.isAuthenticated 	= authApi.isAuthenticated;
-			this.canReadCohorts 	= ko.pureComputed(() => (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled);
-			this.canCreateCohort 	= ko.pureComputed(() => (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled);			
+			this.isAuthenticated 	= AuthService.isAuthenticated;
+			this.canReadCohorts 	= ko.pureComputed(() => (config.userAuthenticationEnabled && this.isAuthenticated() && CohortPermissionService.isPermittedReadCohorts()) || !config.userAuthenticationEnabled);
+			this.canCreateCohort 	= ko.pureComputed(() => (config.userAuthenticationEnabled && this.isAuthenticated() && CohortPermissionService.isPermittedCreateCohort()) || !config.userAuthenticationEnabled);			
 		}
 
 		newDefinition(data, event) {

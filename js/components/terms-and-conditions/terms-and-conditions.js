@@ -5,7 +5,7 @@ define([
   'providers/AutoBind',
   'utils/CommonUtils',
   'utils/MomentUtils',
-  'webapi/AuthAPI',
+  'services/AuthService',
   'moment',
   'config',
   'less!./terms-and-conditions.less',
@@ -17,7 +17,7 @@ define([
   AutoBind,
   commonUtils,
   momentUtils,
-  authApi,
+  AuthService,
   momentjs,
   appConfig,
 ) {
@@ -26,7 +26,7 @@ define([
       super(params);
       this.isModalShown = ko.pureComputed({
         read: () => {
-          return authApi.isAuthenticated() && !this.isAccepted();
+          return AuthService.isAuthenticated() && !this.isAccepted();
         },
         write: (value) => {
           return false;
@@ -45,7 +45,7 @@ define([
     checkAcceptance() {
       const acceptanceDate = localStorage.getItem('terms-and-conditions-acceptance-date');
       if (acceptanceDate !== null) {
-        const isExpired = momentUtils.diffInDays(parseInt(acceptanceDate, 10), momentjs().add(appConfig.termsAndConditionsConfig.acceptanceExpiresInDays, 'days')) <= 0;
+        const isExpired = momentUtils.diffInDays(parseInt(acceptanceDate, 10), momentjs().add(appConfig.termsAndConditions.acceptanceExpiresInDays, 'days')) <= 0;
         return !isExpired;
       }
       return false;

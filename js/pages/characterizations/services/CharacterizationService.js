@@ -1,5 +1,5 @@
 define([
-    'services/http',
+    'services/httpService',
     'appConfig',
 ], function (
     httpService,

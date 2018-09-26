@@ -1,65 +1,58 @@
 define([
-    'webapi/AuthAPI',
+    'providers/PermissionService',
+    'providers/AutoBind',
 ], function (
-    AuthAPI,
+    PermissionService,
+    AutoBind,
 ) {
 
-    function isPermittedCreateCC() {
-        return AuthAPI.isPermitted(`cohort-characterization:post`);
+    class CharacterizationPermissionService extends AutoBind(PermissionService) {
+        isPermittedCreateCC() {
+            return this.isPermitted(`cohort-characterization:post`);
+        }
+
+        isPermittedImportCC() {
+            return this.isPermitted(`cohort-characterization:import:post`);
+        }
+
+        isPermittedGetCCList() {
+            return this.isPermitted(`cohort-characterization:get`);
+        }
+
+        isPermittedGetCC(id) {
+            return this.isPermitted(`cohort-characterization:${id}:get`);
+        }
+
+        isPermittedUpdateCC(id) {
+            return this.isPermitted(`cohort-characterization:${id}:put`);
+        }
+
+        isPermittedDeleteCC(id) {
+            return this.isPermitted(`cohort-characterization:${id}:delete`);
+        }
+
+        isPermittedGetCCGenerations(id) {
+            return this.isPermitted(`cohort-characterization:${id}:generation:get`);
+        }
+
+        isPermittedGenerateCC(id, sourceKey) {
+            return this.isPermitted(`cohort-characterization:${id}:generation:*:post`) && this.isPermitted(`source:${sourceKey}:access`);
+        }
+
+        isPermittedGetCCGenerationResults(sourceKey) {
+            return this.isPermitted(`cohort-characterization:generation:*:result:get`) && this.isPermitted(`source:${sourceKey}:access`);
+        }
+
+        isPermittedExportGenerationDesign(id) {
+            return this.isPermitted(`cohort-characterization:generation:${id}:design:get`);
+        }
+
+        isPermittedExportCC(id) {
+            return this.isPermitted(`cohort-characterization:${id}:export:get`);
+        }
     }
 
-    function isPermittedImportCC() {
-        return AuthAPI.isPermitted(`cohort-characterization:import:post`);
-    }
-
-    function isPermittedGetCCList() {
-        return AuthAPI.isPermitted(`cohort-characterization:get`);
-    }
-
-    function isPermittedGetCC(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:get`);
-    }
-
-    function isPermittedUpdateCC(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:put`);
-    }
-
-    function isPermittedDeleteCC(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:delete`);
-    }
-
-    function isPermittedGetCCGenerations(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:generation:get`);
-    }
-
-    function isPermittedGenerateCC(id, sourceKey) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:generation:*:post`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
-    }
-
-    function isPermittedGetCCGenerationResults(sourceKey) {
-        return AuthAPI.isPermitted(`cohort-characterization:generation:*:result:get`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
-    }
-
-    function isPermittedExportGenerationDesign(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:generation:${id}:design:get`);
-    }
-
-    function isPermittedExportCC(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:export:get`);
-    }
 
 
-    return {
-        isPermittedCreateCC,
-        isPermittedImportCC,
-        isPermittedGetCCList,
-        isPermittedGetCC,
-        isPermittedUpdateCC,
-        isPermittedDeleteCC,
-        isPermittedGetCCGenerations,
-        isPermittedGenerateCC,
-        isPermittedGetCCGenerationResults,
-        isPermittedExportGenerationDesign,
-        isPermittedExportCC
-    };
+    return new CharacterizationPermissionService();
 });

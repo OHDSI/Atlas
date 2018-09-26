@@ -7,7 +7,7 @@ define(['knockout',
 	'atlas-state',
 	'job/jobDetail',
   'utils/MomentUtils',
-	'webapi/AuthAPI',
+	'services/AuthService',
 	'assets/ohdsi.util',
 	'databindings'
 ], function (
@@ -20,7 +20,7 @@ define(['knockout',
 	sharedState,
 	jobDetail,
 	momentUtils,
-	authApi
+	AuthService
 ) {
 	function negativeControls(params) {
 		var self = this;
@@ -432,7 +432,7 @@ define(['knockout',
 					}, 5000);
 				})
 				.fail(function(info) {
-					authApi.handleAccessDenied;
+					AuthService.handleAccessDenied;
 					console.error("Job failed: " + JSON.stringify(info));
 				});
 		}

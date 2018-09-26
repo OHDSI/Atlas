@@ -4,7 +4,7 @@ define([
     'pages/characterizations/services/PermissionService',
     'text!./characterization-view-edit.html',
     'appConfig',
-    'webapi/AuthAPI',
+    'services/AuthService',
     'providers/Page',
     'utils/CommonUtils',
     'assets/ohdsi.util',
@@ -21,7 +21,7 @@ define([
     PermissionService,
     view,
     config,
-    authApi,
+    AuthService,
     Page,
     commonUtils,
     ohdsiUtil

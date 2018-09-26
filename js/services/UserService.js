@@ -10,37 +10,37 @@ define(function (require, exports) {
 
 	class UserService extends CRUDService {
 		async getAuthenticationProviders() {
-			const { data } = await httpService.doGet(config.api.url + 'user/providers');
+			const { data } = await this.httpService.doGet(config.api.url + 'user/providers');
 			return data;
 		}
 	
 		async searchGroups(provider, search) {
-			const { data } = await httpService.doGet(importProvider(provider) + '/groups', { search });
+			const { data } = await this.httpService.doGet(importProvider(provider) + '/groups', { search });
 			return data;
 		}
 	
 		async searchUsers(provider, mapping) {
-			 const { data } = await httpService.doPost(importProvider(provider), ko.toJS(mapping));
+			 const { data } = await this.httpService.doPost(importProvider(provider), ko.toJS(mapping));
 			 return data;
 		}
 	
 		async importUsers(users) {
-			const { data } = await httpService.doPost(importRoot, users);
+			const { data } = await this.httpService.doPost(importRoot, users);
 			return data;
 		}
 	
 		async saveMapping(provider, mapping) {
-			const { data } = await httpService.doPost(importProvider(provider) + '/mapping', ko.toJS(mapping));
+			const { data } = await this.httpService.doPost(importProvider(provider) + '/mapping', ko.toJS(mapping));
 			return data;
 		}
 	
 		async getMapping(provider) {
-			const { data } = await httpService.doGet(importProvider(provider) + '/mapping');
+			const { data } = await this.httpService.doGet(importProvider(provider) + '/mapping');
 			return data;
 		}
 	
 		async testConnection(provider) {
-			const { data } = await httpService.doGet(importProvider(provider) + '/test');
+			const { data } = await this.httpService.doGet(importProvider(provider) + '/test');
 			return data;
 		}
 	}

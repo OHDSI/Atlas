@@ -3,12 +3,12 @@ define(function (require, exports) {
 	var $ = require('jquery');
 	var ko = require('knockout');
 	var config = require('appConfig');
-	var authApi = require('webapi/AuthAPI');
+	var AuthService = require('services/AuthService');
 
 	function getGenerationInfo(conceptSetId) {
 		var infoPromise = $.ajax({
 			url: config.webAPIRoot + 'conceptset/' + + (conceptSetId || '-1') + '/generationinfo',
-			error: authApi.handleAccessDenied,
+			error: AuthService.handleAccessDenied,
 		});
 		return infoPromise;
 	}
@@ -18,7 +18,7 @@ define(function (require, exports) {
 			url: config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') ,
 			method: 'DELETE',
 			contentType: 'application/json',
-			error: authApi.handleAccessDenied,
+			error: AuthService.handleAccessDenied,
 		});
 		return promise;
     }
@@ -31,7 +31,7 @@ define(function (require, exports) {
 				id,
 			},
 			method: 'GET',
-			error: authApi.handleAccessDenied,
+			error: AuthService.handleAccessDenied,
     });
   }
 
@@ -43,7 +43,7 @@ define(function (require, exports) {
       contentType: 'application/json',
       data: json,
       dataType: 'json',
-      error: authApi.handleAccessDenied,
+      error: AuthService.handleAccessDenied,
 		});
 	}
 
@@ -54,7 +54,7 @@ define(function (require, exports) {
       data: JSON.stringify(conceptSetItems),
       dataType: 'json',
       contentType: 'application/json',
-      error: authApi.handleAccessDenied,
+      error: AuthService.handleAccessDenied,
 		});
 	}
 
@@ -63,7 +63,7 @@ define(function (require, exports) {
 			url: config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') ,
 			method: 'GET',
 			contentType: 'application/json',
-			error: authApi.handleAccessDenied,
+			error: AuthService.handleAccessDenied,
 		});
 		return promise;
   }

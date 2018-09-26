@@ -42,7 +42,7 @@ define(function(require, exports){
     }
 
     async getEngineStatus() {
-      const { data } = await httpService.doGet(`${this.baseUrl}/status`);
+      const { data } = await this.httpService.doGet(`${this.baseUrl}/status`);
       return data;
     }
 

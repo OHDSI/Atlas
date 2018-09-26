@@ -10,7 +10,8 @@ define(['knockout',
 	'atlas-state',
 	'clipboard',
 	'services/ConceptSet',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/ConceptSetPermissionService',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -33,7 +34,8 @@ define(['knockout',
 	sharedState,
 	clipboard,
 	conceptSetService,
-	authApi
+	AuthService,
+	ConceptSetPermissionService,
 ) {
 	function conceptsetManager(params) {
 		var self = this;
@@ -42,9 +44,9 @@ define(['knockout',
 		self.conceptSets = ko.observableArray();
 		self.defaultConceptSetName = "New Concept Set";
 		self.ancestorsModalIsShown = ko.observable(false);
-		self.isAuthenticated = authApi.isAuthenticated;
+		self.isAuthenticated = AuthService.isAuthenticated;
 		self.canReadConceptsets = ko.pureComputed(function () {
-			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && ConceptSetPermissionService.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
 		});
 		self.selectedConcepts = sharedState.selectedConcepts;
 		self.displayEvidence = ko.pureComputed(function () {
@@ -970,7 +972,7 @@ define(['knockout',
 		});
 		self.canEdit = self.model.canEditCurrentConceptSet;
 		self.canCreate = ko.computed(function () {
-			return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+			return ((AuthService.isAuthenticated() && ConceptSetPermissionService.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 		});
 		self.canDelete = self.model.canDeleteCurrentConceptSet;
 		

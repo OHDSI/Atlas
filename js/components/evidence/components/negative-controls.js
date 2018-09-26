@@ -32,7 +32,7 @@ define(['knockout',
 			super(params);
 			
 			var pollTimeout = null;
-			var authApi = params.model.authApi;
+			var AuthService = params.model.AuthService;
 			this.model = params.model;
 			this.selectedConcepts = params.selectedConcepts;
 			this.conceptSet = params.conceptSet;

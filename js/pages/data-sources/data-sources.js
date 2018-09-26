@@ -3,7 +3,8 @@ define([
 	'atlas-state',
 	'text!./data-sources.html',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/ResultPermissionService',
 	'providers/Page',
 	'utils/CommonUtils',
 	'databindings',
@@ -27,7 +28,8 @@ define([
 	sharedState,
 	view,
 	config,
-	authApi,
+	AuthService,
+	ResultPermissionService,
 	Page,
 	commonUtils
 ) {
@@ -113,9 +115,9 @@ define([
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
 
-			this.isAuthenticated = authApi.isAuthenticated;
+			this.isAuthenticated = AuthService.isAuthenticated;
 			this.canViewCdmResults = ko.pureComputed(() => {
-				return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedViewCdmResults()) || !config.userAuthenticationEnabled;
+				return (config.userAuthenticationEnabled && this.isAuthenticated() && ResultPermissionService.isPermittedViewCdmResults()) || !config.userAuthenticationEnabled;
 			});
 
 			this.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;

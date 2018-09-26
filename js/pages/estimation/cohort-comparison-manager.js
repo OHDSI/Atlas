@@ -8,7 +8,8 @@ define([
 	'utils/JobDetailsUtils',
 	'services/httpService',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/EstimationPermissionService',
 	'assets/ohdsi.util',
 	'components/cohortcomparison/ComparativeCohortAnalysis',
 	'components/cohortbuilder/options',
@@ -33,7 +34,8 @@ define([
 		jobDetailsUtils,
 		httpService,
 		config,
-		authApi,
+		AuthService,
+		EstimationPermissionService,
 		ohdsiUtil,
 		ComparativeCohortAnalysis,
 		options,
@@ -276,7 +278,7 @@ define([
 					);
 				});	
 				this.canDelete = ko.pureComputed(() => {
-					return authApi.isPermittedDeleteEstimation(this.cohortComparisonId());
+					return EstimationPermissionService.isPermittedDeleteEstimation(this.cohortComparisonId());
 				});
 				// startup actions
 				if (this.cohortComparisonId() == 0 && this.cohortComparison() == null) {
@@ -414,13 +416,13 @@ define([
 							this.currentExecutionAuc(response.auc);
 							this.covariates(response.covariates);
 						})
-						.catch(authApi.handleAccessDenied);
+						.catch(AuthService.handleAccessDenied);
 
 					var p2 = httpService.doGet(config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/attrition')
 						.then(({ data: response }) => {
 							this.attrition(response);
 						})
-						.catch(authApi.handleAccessDenied);
+						.catch(AuthService.handleAccessDenied);
 
 					var p3 = httpService.doGet(config.api.url + 'comparativecohortanalysis/execution/' + d.executionId + '/balance')
 						.then(({ data: response }) => {
@@ -570,7 +572,7 @@ define([
 							this.loadingExecution(false);
 						})
 						.catch(error => {
-							authApi.handleAccessDenied(error);
+							AuthService.handleAccessDenied(error);
 							this.loadingExecution(false);
 							this.resultsMode('sources');
 							this.loadingExecutionFailure(true);
@@ -601,7 +603,7 @@ define([
 					.catch((error) => {
 						if (error.status !== 204) {
 							console.log("Error: " + error);
-							authApi.handleAccessDenied(error);
+							AuthService.handleAccessDenied(error);
 						} else {
 							document.location = "#/estimation";
 						}
@@ -761,7 +763,7 @@ define([
 					this.cohortComparison.valueHasMutated();
 					console.log(saveResult);
 				})
-				.catch(authApi.handleAccessDenied);
+				.catch(AuthService.handleAccessDenied);
 			}
 
 			close() {

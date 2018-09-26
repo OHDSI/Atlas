@@ -4,8 +4,6 @@ define(function (require, exports) {
   const { apiPaths, connectionCheckState } = require('const');  
 	var config = require('appConfig');
 	var sharedState = require('atlas-state');
-	var ohdsiUtil = require('assets/ohdsi.util');
-	var authApi = require('webapi/AuthAPI');
   var lscache = require('lscache');
   var ko = require('knockout');
 
@@ -149,12 +147,12 @@ define(function (require, exports) {
     }
 
     async checkSourceConnection(sourceKey) {
-      const { data } = await httpService.doGet(`${this.baseUrl}connection/${sourceKey}`);
+      const { data } = await this.httpService.doGet(`${this.baseUrl}connection/${sourceKey}`);
       return data;
     }
   
     async updateSourceDaimonPriority(sourceKey, daimonType) {
-      const { data } = await httpService.doPost(`${this.baseUrl}${sourceKey}/daimons/${daimonType}/set-priority`);
+      const { data } = await this.httpService.doPost(`${this.baseUrl}${sourceKey}/daimons/${daimonType}/set-priority`);
       return data;
     }
   }

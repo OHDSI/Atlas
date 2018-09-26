@@ -2,34 +2,34 @@ define([
     'knockout',
     'text!./welcome.html',
     'appConfig',
-    'webapi/AuthAPI',
+    'services/AuthService',
 ],
     function (
     ko,
     view,
     appConfig,
-    authApi
+    AuthService
     ) {
     function welcome(params) {
         var self = this;
-        self.token = authApi.token;
-        self.setAuthParams = authApi.setAuthParams;
-        self.resetAuthParams = authApi.resetAuthParams;
+        self.token = AuthService.token;
+        self.setAuthParams = AuthService.setAuthParams;
+        self.resetAuthParams = AuthService.resetAuthParams;
         self.serviceUrl = appConfig.webAPIRoot;
         self.errorMsg = ko.observable();
         self.isInProgress = ko.observable(false);
-        self.login = authApi.subject;
+        self.login = AuthService.subject;
         self.isDbLoginAtt = ko.observable(false);
         self.authUrl=ko.observable();
         self.isBadCredentials=ko.observable(false);
         self.expiration = ko.computed(function () {
-            var expDate = authApi.tokenExpirationDate();
+            var expDate = AuthService.tokenExpirationDate();
             return expDate
                 ? expDate.toLocaleString()
                 : null;
         });
-        self.tokenExpired = authApi.tokenExpired;
-        self.isLoggedIn = authApi.isAuthenticated;
+        self.tokenExpired = AuthService.tokenExpired;
+        self.isLoggedIn = AuthService.isAuthenticated;
         self.status = ko.computed(function () {
             if (self.isInProgress())
                 return "Please wait...";
@@ -62,7 +62,7 @@ define([
                     password: data.elements.lg_password.value
                 },
                 success: function (data, textStatus, jqXHR) {
-                    self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER));
+                    self.setAuthParams(jqXHR.getResponseHeader(AuthService.TOKEN_HEADER));
                     self.errorMsg(null);
                     self.isBadCredentials(false);
                 },

@@ -1,7 +1,7 @@
 define(
     (require, factory) => {
 
-        const momentApi = require('webapi/MomentAPI');
+        const momentApi = require('utils/MomentUtils');
 
         getLinkFormatter = (builder) => (s, p, d) => {
             const {

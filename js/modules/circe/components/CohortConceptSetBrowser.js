@@ -1,4 +1,27 @@
-define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/VocabularyService', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'webapi/AuthAPI', 'utils/MomentUtils', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyService, appConfig, ConceptSet, authApi, momentUtils) {
+define([
+	'knockout',
+	'text!./CohortConceptSetBrowserTemplate.html',
+	'services/VocabularyService',
+	'appConfig',
+	'conceptsetbuilder/InputTypes/ConceptSet',
+	'services/AuthService',
+	'services/permissions/ConceptSetPermissionService',
+	'services/permissions/CohortPermissionService',
+	'utils/MomentUtils',
+	'components/ac-access-denied',
+	'databindings',
+	'css!./style.css',
+], function (
+	ko,
+	template,
+	VocabularyService,
+	appConfig,
+	ConceptSet,
+	AuthService,
+	ConceptSetPermissionService,
+	CohortPermissionService,
+	momentUtils,
+) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
@@ -61,12 +84,12 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 		self.sources.push(appConfig.api);
 		self.selectedSource = ko.observable(self.sources[0]);
 
-		self.isAuthenticated = authApi.isAuthenticated;
+		self.isAuthenticated = AuthService.isAuthenticated;
 		self.canReadConceptsets = ko.pureComputed(function () {
-		  return (appConfig.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !appConfig.userAuthenticationEnabled;
+		  return (appConfig.userAuthenticationEnabled && self.isAuthenticated() && ConceptSetPermissionService.isPermittedReadConceptsets()) || !appConfig.userAuthenticationEnabled;
 		});
 		self.canReadCohorts = ko.pureComputed(function () {
-		  return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled;
+		  return (config.userAuthenticationEnabled && self.isAuthenticated() && CohortPermissionService.isPermittedReadCohorts()) || !config.userAuthenticationEnabled;
 		});
 
 		self.loadConceptSetsFromRepository = function (url) {

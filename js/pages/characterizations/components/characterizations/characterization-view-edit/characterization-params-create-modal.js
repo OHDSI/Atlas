@@ -3,7 +3,7 @@ define([
     'atlas-state',
     'text!./characterization-params-create-modal.html',
     'appConfig',
-    'webapi/AuthAPI',
+    'services/AuthService',
     'providers/Component',
     'utils/CommonUtils',
     'utils/DatatableUtils',
@@ -14,7 +14,7 @@ define([
     sharedState,
     view,
     config,
-    authApi,
+    AuthService,
     Component,
     commonUtils
 ) {

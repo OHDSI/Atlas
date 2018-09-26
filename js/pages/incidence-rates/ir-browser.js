@@ -3,7 +3,8 @@ define([
   'text!./ir-browser.html',
   'appConfig',
   'services/IRAnalysisService',
-  'webapi/AuthAPI',
+  'services/AuthService',
+  'services/permissions/IRPermissionService',
   'providers/Page',
   'utils/CommonUtils',
   './const',
@@ -16,7 +17,8 @@ define([
   view,
   config,
   IRAnalysisService,
-  authApi,
+  AuthService,
+  IRPermissionService,
   Page,
   commonUtils,
   constants
@@ -27,12 +29,12 @@ define([
       this.loading = ko.observable(false);
       this.config = config;
       this.analysisList = ko.observableArray();
-      this.isAuthenticated = authApi.isAuthenticated;
+      this.isAuthenticated = AuthService.isAuthenticated;
       this.canReadIRs = ko.pureComputed(() => {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedReadIRs()) || !config.userAuthenticationEnabled;
+        return (config.userAuthenticationEnabled && this.isAuthenticated() && IRPermissionService.isPermittedReadIRs()) || !config.userAuthenticationEnabled;
       });
       this.canCreateIR = ko.pureComputed(() => {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateIR()) || !config.userAuthenticationEnabled;
+        return (config.userAuthenticationEnabled && this.isAuthenticated() && IRPermissionService.isPermittedCreateIR()) || !config.userAuthenticationEnabled;
       });
       
       // startup actions

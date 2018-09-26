@@ -5,7 +5,11 @@ define([
   'providers/AutoBind',
   'utils/CommonUtils',
   'appConfig',
-  'webapi/AuthAPI',
+  'services/AuthService',
+  'services/permissions/ConfigurationPermissionService',
+  'services/permissions/RolePermissionService',
+  'services/permissions/UserPermissionService',
+  'services/permissions/SourcePermissionService',
   'services/SourceService',
   'atlas-state',
   'less!./configuration.less',
@@ -17,7 +21,11 @@ define([
   AutoBind,
   commonUtils,
   config,
-  authApi,
+  AuthService,
+  ConfigurationPermissionService,
+  RolePermissionService,
+  UserPermissionService,
+  SourcePermissionService,
   sourceService,
   sharedState
 ) {
@@ -34,37 +42,37 @@ define([
         {name: 'Whole Application', id: 'application'},
       ];
   
-      this.isAuthenticated = authApi.isAuthenticated;
+      this.isAuthenticated = AuthService.isAuthenticated;
       this.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === 'running' || sharedState.appInitializationStatus() === 'no-sources-available');
       this.hasAccess = ko.pureComputed(() => {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
+        return (config.userAuthenticationEnabled && this.isAuthenticated() && ConfigurationPermissionService.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
       });
       this.canReadRoles = ko.pureComputed(() => {
-        return this.isAuthenticated() && authApi.isPermittedReadRoles();
+        return this.isAuthenticated() && RolePermissionService.isPermittedReadRoles();
       });
       this.canCreateSource = ko.pureComputed(() => {
         if (!config.userAuthenticationEnabled) {
           return false;
         } else {
-          return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateSource());
+          return (config.userAuthenticationEnabled && this.isAuthenticated() && SourcePermissionService.isPermittedCreateSource());
         }
       });
       this.canChangePriority = ko.pureComputed(() => {
         if (!config.userAuthenticationEnabled) {
           return false;
         } else {
-          return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedEditSourcePriority())
+          return (config.userAuthenticationEnabled && this.isAuthenticated() && SourcePermissionService.isPermittedEditSourcePriority())
         }
       });
       
-		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && UserPermissionService.isPermittedImportUsers());
     }
 
     canReadSource(source) {
 			if (!config.userAuthenticationEnabled) {
 				return false;
 			} else {
-				return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedReadSource(source.sourceKey));
+				return (config.userAuthenticationEnabled && this.isAuthenticated() && SourcePermissionService.isPermittedReadSource(source.sourceKey));
 			}
     }
 
@@ -72,7 +80,7 @@ define([
 			if (!config.userAuthenticationEnabled) {
 				return false;
 			} else {
-				return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCheckSourceConnection(source.sourceKey));
+				return (config.userAuthenticationEnabled && this.isAuthenticated() && SourcePermissionService.isPermittedCheckSourceConnection(source.sourceKey));
 			}
     }
     

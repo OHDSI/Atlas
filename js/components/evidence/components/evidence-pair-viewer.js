@@ -3,7 +3,7 @@ define([
 	'text!./evidence-pair-viewer.html',	
 	'providers/Component',
 	'appConfig', 
-	'webapi/AuthAPI', 
+	'services/AuthService', 
 	'services/EvidenceService', 
 	'services/httpService',
 ], function (
@@ -11,7 +11,7 @@ define([
 	view, 
 	Component,
 	config, 
-	authApi, 
+	AuthService, 
 	EvidenceService,
 	httpService,
 ) {

@@ -19,7 +19,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/ConceptSetPermissionService',
+	'services/permissions/CohortPermissionService',
 	'const',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
@@ -59,7 +61,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	AutoBind,
 	commonUtils,
 	costUtilConst,
-	authApi,
+	AuthService,
+	ConceptSetPermissionService,
+	CohortPermissionService,
 	{ visualizationPacks }
 ) {
 	function translateSql(sql, dialect) {
@@ -97,7 +101,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		constructor(params) {
 			super(params);
 			this.pollTimeout = null;
-			this.authApi = authApi;
+			this.AuthService = AuthService;
 			this.config = config;
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.model = params.model;
@@ -131,20 +135,20 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 			});
 			this.isAuthenticated = ko.pureComputed(() => {
-				return this.authApi.isAuthenticated();
+				return this.AuthService.isAuthenticated();
 			});
 			var isNew = ko.pureComputed(() => {
 				return !this.model.currentCohortDefinition() || (this.model.currentCohortDefinition().id() == 0);
 			});
 			this.canEdit = this.model.canEditCurrentCohortDefinition;
 			this.canCopy = ko.pureComputed(() => {
-				return !isNew() && (this.isAuthenticated() && this.authApi.isPermittedCopyCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled);
+				return !isNew() && (this.isAuthenticated() && CohortPermissionService.isPermittedCopyCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled);
 			});
 			this.canDelete = ko.pureComputed(() => {
 				if (isNew()) {
 					return false;
 				}
-				return ((this.isAuthenticated() && this.authApi.isPermittedDeleteCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled));
+				return ((this.isAuthenticated() && CohortPermissionService.isPermittedDeleteCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled));
 			});
 			this.hasAccess = ko.pureComputed(() => {
 				if (!config.userAuthenticationEnabled) {
@@ -154,10 +158,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					return false;
 				}
 				if (isNew()) {
-					return this.authApi.isPermittedCreateCohort();
+					return CohortPermissionService.isPermittedCreateCohort();
 				}
 
-				return this.authApi.isPermittedReadCohort(this.model.currentCohortDefinition().id());
+				return CohortPermissionService.isPermittedReadCohort(this.model.currentCohortDefinition().id());
 			});
 		
 			this.hasAccessToGenerate = (sourceKey) => {
@@ -165,14 +169,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					return false;
 				}
 
-				return this.authApi.isPermittedGenerateCohort(this.model.currentCohortDefinition().id(), sourceKey);
+				return CohortPermissionService.isPermittedGenerateCohort(this.model.currentCohortDefinition().id(), sourceKey);
 			}
 			this.hasAccessToReadCohortReport = (sourceKey) => {
 				if (isNew()) {
 					return false;
 				}
 
-				return this.isAuthenticated() && this.authApi.isPermittedReadCohortReport(this.model.currentCohortDefinition().id(), sourceKey);
+				return this.isAuthenticated() && CohortPermissionService.isPermittedReadCohortReport(this.model.currentCohortDefinition().id(), sourceKey);
 			}
 			if (!this.hasAccess()) return;
 
@@ -447,7 +451,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 			
 			this.canCreateConceptSet = ko.computed( () => {
-				return ((this.authApi.isAuthenticated() && this.authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+				return ((this.AuthService.isAuthenticated() && ConceptSetPermissionService.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 			});
 			
 			this.cohortDefinitionLink = ko.computed(() => {
@@ -775,7 +779,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				});
 
 				$.ajax(route, {
-					error: this.authApi.handleAccessDenied,
+					error: this.AuthService.handleAccessDenied,
 						success:  (data) => {
 						job.status(data.status);
 						sharedState.jobListing.queue(job);

@@ -3,14 +3,14 @@ define(
     'pages',
     'pages/vocabulary/index', // for not found route
     'querystring',
-    'webapi/AuthAPI',
+    'services/AuthService',
     'director',
 	],
 	(
     pages,
     vocabularyPage,
     querystring,
-    authApi,
+    AuthService,
 	) => {
     return class AtlasRouter {
       constructor() {
@@ -71,7 +71,7 @@ define(
 					return accumulator;
         }, {});
         // anyway, we should track the moment when the user exits and check permissions once again
-				authApi.isAuthenticated.subscribe((isAuthenticated) => {
+				AuthService.isAuthenticated.subscribe((isAuthenticated) => {
 					if (!isAuthenticated) {
             this.setCurrentView('white-page');
 						this.schedulePageUpdateOnLogin(this.activeRouteHandler);
@@ -82,7 +82,7 @@ define(
       }
 
       schedulePageUpdateOnLogin(routeHandler) {
-        this.onLoginSubscription = authApi.isAuthenticated.subscribe((isAuthenticated) => {
+        this.onLoginSubscription = AuthService.isAuthenticated.subscribe((isAuthenticated) => {
           if (isAuthenticated) {
             routeHandler();
             this.onLoginSubscription.dispose();

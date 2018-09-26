@@ -5,7 +5,7 @@ define([
 	'atlas-state',
 	'providers/Component',
 	'utils/CommonUtils',
-	'webapi/AuthAPI',
+	'services/AuthService',
 	'less!./user-bar.less'
 ], function (
 	ko,
@@ -14,19 +14,19 @@ define([
 	state,
 	Component,
 	commonUtils,
-	authApi
+	AuthService
 ) {
 	class UserBar extends Component {
 		constructor(params) {
 			super(params);			
 			this.model = params.model;
 			this.appConfig = appConfig;
-			this.token = authApi.token;
-			this.tokenExpired = authApi.tokenExpired;    
-			this.authLogin = authApi.subject;		
+			this.token = AuthService.token;
+			this.tokenExpired = AuthService.tokenExpired;    
+			this.authLogin = AuthService.subject;		
 			this.pollInterval = null;
 			this.isLoggedIn = ko.computed(() => {
-				return authApi.isAuthenticated();
+				return AuthService.isAuthenticated();
 			});
 			this.loading = params.model.loading;
 

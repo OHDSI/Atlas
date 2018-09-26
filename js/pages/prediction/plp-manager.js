@@ -8,7 +8,7 @@ define([
 	'services/PatientLevelPredictionService',
 	'services/ExecutionService',
 	'utils/JobDetailsUtils',
-	'webapi/AuthAPI',
+	'services/permissions/PlpPermissionService',
 	'jquery',
 	'appConfig',
 	'assets/ohdsi.util',
@@ -28,7 +28,7 @@ define([
 		plpService,
 		executionService,
 		jobDetailsUtils,
-		authApi,
+		PlpPermissionService,
 		$,
 		config,
 		ohdsiUtil,
@@ -71,10 +71,10 @@ define([
 					&& this.patientLevelPredictionDirtyFlag().isDirty());
 			});			
 			this.canDelete = ko.pureComputed(() => {
-				return authApi.isPermittedDeletePlp(this.patientLevelPredictionId());
+				return PlpPermissionService.isPermittedDeletePlp(this.patientLevelPredictionId());
 			});
 			this.canCopy = ko.pureComputed(() => {
-				return authApi.isPermittedCopyPlp(this.patientLevelPredictionId());
+				return PlpPermissionService.isPermittedCopyPlp(this.patientLevelPredictionId());
 			});
 
 			this.plpResultsEnabled = config.plpResultsEnabled;

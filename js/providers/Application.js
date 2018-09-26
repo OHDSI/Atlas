@@ -2,7 +2,7 @@ define(
 	[
 		'knockout',
 		'services/httpService',
-		'webapi/AuthAPI',
+		'services/AuthService',
 		'appConfig',
 		'lscache',
 		'atlas-state',
@@ -15,7 +15,7 @@ define(
 	(
 		ko,
 		httpService,
-		authApi,
+		AuthService,
 		config,
 		lscache,
 		sharedState,
@@ -48,13 +48,13 @@ define(
 						...this.pageModel,
 						...this,
 					}, document.getElementsByTagName('html')[0]);
-					httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
-					httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
-					authApi.isAuthenticated.subscribe(executionService.checkExecutionEngineStatus);
+					httpService.setUnauthorizedHandler(() => AuthService.resetAuthParams());
+					httpService.setUserTokenGetter(() => AuthService.getAuthorizationHeader());
+					AuthService.isAuthenticated.subscribe(executionService.checkExecutionEngineStatus);
 					this.router.setCurrentViewHandler(this.pageModel.handleViewChange);
 					this.router.setModelGetter(() => this.pageModel);
 					this.attachGlobalEventListeners();
-					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
+					await executionService.checkExecutionEngineStatus(AuthService.isAuthenticated());
 
 					resolve();
 				});
@@ -218,8 +218,8 @@ define(
 					} else {
 						sharedState.sources([]);
 
-						if (config.userAuthenticationEnabled && !authApi.isAuthenticated()) {
-							this.authSubscription = authApi.isAuthenticated.subscribe(async (isAuthed) => {
+						if (config.userAuthenticationEnabled && !AuthService.isAuthenticated()) {
+							this.authSubscription = AuthService.isAuthenticated.subscribe(async (isAuthed) => {
 								if (isAuthed) {
 									await sourceService.initSourcesConfig();
 									this.authSubscription.dispose();

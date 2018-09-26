@@ -1,16 +1,16 @@
 define([
 	'knockout',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthService',
 ], function (
 	ko,
 	appConfig,
-	authApi
+	AuthService
 ) {
 	class Route {
 		checkPermission() {
-			if (appConfig.userAuthenticationEnabled && authApi.token() != null && authApi.tokenExpirationDate() > new Date()) {
-				return authApi.refreshToken();
+			if (appConfig.userAuthenticationEnabled && AuthService.token() != null && AuthService.tokenExpirationDate() > new Date()) {
+				return AuthService.refreshToken();
 			} else {
 				return new Promise(resolve => resolve());
 			}      
@@ -27,9 +27,9 @@ define([
 
 	class AuthorizedRoute extends Route {
 		checkPermission() {
-			if (appConfig.userAuthenticationEnabled && authApi.subject() === undefined) {
+			if (appConfig.userAuthenticationEnabled && AuthService.subject() === undefined) {
 				return this.waitForSubject();
-			} else if (appConfig.userAuthenticationEnabled && authApi.subject() === null) {
+			} else if (appConfig.userAuthenticationEnabled && AuthService.subject() === null) {
 				return Promise.reject();
 			} else {
 				return super.checkPermission();
@@ -38,7 +38,7 @@ define([
 
 		waitForSubject() {
 			return new Promise((resolve, reject) => {
-				authApi.subject.subscribe((subject) => {
+				AuthService.subject.subscribe((subject) => {
 					if (subject) {
 						super.checkPermission()
 							.then(() => resolve())

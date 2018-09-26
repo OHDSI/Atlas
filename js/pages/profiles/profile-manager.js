@@ -4,7 +4,8 @@ define([
 	'text!./profile-manager.html',
 	'd3',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/ProfilePermissionService',
 	'services/ProfileService',
 	'atlas-state',
 	'components/cohortbuilder/CohortDefinition',
@@ -28,7 +29,8 @@ define([
 		view,
 		d3,
 		config,
-		authApi,
+		AuthService,
+		ProfilePermissionService,
 		profileService,
 		sharedState,
 		CohortDefinition,
@@ -65,9 +67,9 @@ define([
 				this.cohortDefinitionId = ko.observable(params.routerParams().cohortDefinitionId);
 				this.currentCohortDefinition = ko.observable(null);
 				
-				this.isAuthenticated = authApi.isAuthenticated;
+				this.isAuthenticated = AuthService.isAuthenticated;
 				this.canViewProfiles = ko.pureComputed(() => {
-					return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedViewProfiles()) || !config.userAuthenticationEnabled;
+					return (config.userAuthenticationEnabled && this.isAuthenticated() && ProfilePermissionService.isPermittedViewProfiles()) || !config.userAuthenticationEnabled;
 				});
 				this.sharedState = sharedState;
 

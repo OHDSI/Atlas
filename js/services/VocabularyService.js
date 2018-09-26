@@ -5,7 +5,7 @@ define(function (require, exports) {
 	var sourceService = require('services/SourceService');
 	var sharedState = require('atlas-state');
 	var numeral = require('numeral');
-	var authAPI = require('webapi/AuthAPI');
+	var AuthService = require('services/AuthService');
 	const httpService = require('services/httpService');
 
 	var loadedPromise = $.Deferred();
@@ -130,7 +130,7 @@ define(function (require, exports) {
 	function getConcept(id) {
 		var getConceptPromise = $.ajax({
 			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/concept/' + id,
-			error: authAPI.handleAccessDenied,
+			error: AuthService.handleAccessDenied,
 		});
 
 		return getConceptPromise;
@@ -146,7 +146,7 @@ define(function (require, exports) {
 
 		var getConceptSetListPromise = $.ajax({
 			url: repositoryUrl,
-			error: authAPI.handleAccessDenied,
+			error: AuthService.handleAccessDenied,
 		});
 
 		return getConceptSetListPromise;
@@ -174,7 +174,7 @@ define(function (require, exports) {
 			data: JSON.stringify(expression),
 			method: 'POST',
 			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
+			error: AuthService.handleAccessDenied,
 	});
 
 		return resolveConceptSetExpressionPromise;
@@ -214,7 +214,7 @@ define(function (require, exports) {
 			data: JSON.stringify(identifiers),
 			method: 'POST',
 			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
+			error: AuthService.handleAccessDenied,
 	});
 
 		return getMappedConceptsByIdPromise;
@@ -228,7 +228,7 @@ define(function (require, exports) {
 			data: JSON.stringify(conceptSetItems),
 			method: 'POST',
 			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
+			error: AuthService.handleAccessDenied,
 	});
 
 		return getOptimizedConceptSetPromise;
@@ -242,7 +242,7 @@ define(function (require, exports) {
 			data: JSON.stringify(compareTargets),
 			method: 'POST',
 			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
+			error: AuthService.handleAccessDenied,
 	});
 
 		return getComparedConceptSetPromise;

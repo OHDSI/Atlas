@@ -2,7 +2,8 @@ define([
 	'knockout',
 	'text!./conceptset-browser.html',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/ConceptSetPermissionService',
 	'services/FileService',
 	'bootstrap',
 	'circe',
@@ -10,7 +11,8 @@ define([
 	ko,
 	view,
 	config,
-	authApi,
+	AuthService,
+	ConceptSetPermissionService,
 	fileService
 ) {
 	function conceptsetBrowser(params) {
@@ -23,9 +25,9 @@ define([
 		self.exportConceptSets = [];
 		self.isInProgress = ko.observable(false);
 
-		self.isAuthenticated = authApi.isAuthenticated;
+		self.isAuthenticated = AuthService.isAuthenticated;
 		self.canReadConceptsets = ko.pureComputed(function () {
-			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
+			return (config.userAuthenticationEnabled && self.isAuthenticated() && ConceptSetPermissionService.isPermittedReadConceptsets()) || !config.userAuthenticationEnabled;
 		});
 
 		self.onRespositoryConceptSetSelected = function (conceptSet) {
@@ -82,7 +84,7 @@ define([
 		}
 
 		self.canCreateConceptSet = ko.pureComputed(function () {
-			return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+			return ((AuthService.isAuthenticated() && ConceptSetPermissionService.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 		});
 	}
 

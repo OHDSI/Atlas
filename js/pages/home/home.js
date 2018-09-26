@@ -5,7 +5,8 @@ define([
 	'utils/CommonUtils',
 	'services/httpService',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/CohortPermissionService',
 	'components/heading',
 ], function (
 	ko,
@@ -14,7 +15,8 @@ define([
 	commonUtils,
 	httpService,
 	config,
-	authApi
+	AuthService,
+	CohortPermissionService,
 ) {
 	class Home extends Page {
 		constructor(params) {
@@ -22,11 +24,11 @@ define([
 			this.github_status = ko.observableArray();
 			
 			this.canCreateCohort = ko.pureComputed(() => {
-				return (authApi.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled;
+				return (AuthService.isAuthenticated() && CohortPermissionService.isPermittedCreateCohort()) || !config.userAuthenticationEnabled;
 			});
 
 			this.canSearch = ko.computed(() => {
-				return authApi.isAuthenticated();
+				return AuthService.isAuthenticated();
 			});
 		}
 

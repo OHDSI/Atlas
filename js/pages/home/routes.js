@@ -1,7 +1,7 @@
 define(
   (require, factory) => {
     const { Route } = require('providers/Route');
-    const authApi = require('webapi/AuthAPI');
+    const AuthService = require('services/AuthService');
     function routes(appModel, router) {
       return {
         '/': new Route(() => {
@@ -17,7 +17,7 @@ define(
         '/welcome/:token': new Route((token) => {
           appModel.activePage(this.title);
           require(['welcome'], function () {
-            authApi.token(token);
+            AuthService.token(token);
             document.location = "#/welcome";
           });
         }),

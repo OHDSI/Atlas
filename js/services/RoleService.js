@@ -4,27 +4,27 @@ define(function(require, exports) {
   const CRUDService = require('providers/CRUDService');
 
   class RolesService extends CRUDService {
-    getRoleUsers(id) {
-      return this.httpService.doGet(constants.apiPaths.roleUsers(id))
-        .then(({ data = [] }) => data);
+    async getRoleUsers(id) {
+      const { data } = await this.httpService.doGet(constants.apiPaths.roleUsers(id));
+      return data;
     }
 
-    getPermissions() {
-      return this.httpService.doGet(constants.apiPaths.permissions())
-        .then(({ data = [] }) => data);
+    async getPermissions() {
+      const { data } = await this.httpService.doGet(constants.apiPaths.permissions());
+      return data;
     }
 
-    getRolePermissions(id) {
-      return this.httpService.doGet(constants.apiPaths.rolePermissions(id))
-        .then(({ data = []}) => data);
+    async getRolePermissions(id) {
+      const { data } = await this.httpService.doGet(constants.apiPaths.rolePermissions(id));
+      return data;
     }
 
-    addRelations(roleId, relation, ids) {
-      return this.httpService.doPut(constants.apiPaths.relations(roleId, relation, ids));
+    async addRelations(roleId, relation, ids) {
+      return await this.httpService.doPut(constants.apiPaths.relations(roleId, relation, ids));
     }
 
-    removeRelations(roleId, relation, ids) {
-      return this.httpService.doDelete(constants.apiPaths.relations(roleId, relation, ids));
+    async removeRelations(roleId, relation, ids) {
+      return await this.httpService.doDelete(constants.apiPaths.relations(roleId, relation, ids));
     }
   }
 

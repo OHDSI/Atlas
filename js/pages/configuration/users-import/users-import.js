@@ -2,7 +2,8 @@ define(['knockout',
 		'text!./users-import.html',
 		'appConfig',
 		'atlas-state',
-		'webapi/AuthAPI',
+		'services/AuthService',
+		'services/permissions/UserPermissionService',
 		'services/UserService',
 		'providers/Component',
 		'providers/AutoBind',
@@ -22,7 +23,8 @@ define(['knockout',
 		view, 
 		config,
 		sharedState,
-		authApi, 
+		AuthService, 
+		UserPermissionService,
 		userService,
 		Component,
 		AutoBind,
@@ -47,8 +49,8 @@ define(['knockout',
 				this.config = config;
 				this.loading = ko.observable();
 				this.providers = ko.observable();
-				this.isAuthenticated = authApi.isAuthenticated;
-				this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+				this.isAuthenticated = AuthService.isAuthenticated;
+				this.canImport = ko.pureComputed(() => this.isAuthenticated() && UserPermissionService.isPermittedImportUsers());
 				this.hasMultipleProviders = ko.pureComputed(() => this.providers() && !!this.providers().ldapUrl && !!this.providers().adUrl);
 				this.hasMultipleProviders.subscribe((newValue) => {
 					this.wizardStep(newValue ? this.WIZARD_STEPS.PROVIDERS : this.WIZARD_STEPS.MAPPING);

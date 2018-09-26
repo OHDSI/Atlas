@@ -10,7 +10,8 @@ define([
 	'appConfig',
 	'atlas-state',
 	'job/jobDetail',
-	'webapi/AuthAPI',
+	'services/AuthService',
+	'services/permissions/IRPermissionService',
 	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
@@ -32,7 +33,8 @@ define([
 	config,
 	sharedState,
 	jobDetail,
-	authAPI,
+	AuthService,
+	IRPermissionService,
 	Page,
 	AutoBind,
 	commonUtils,
@@ -52,16 +54,16 @@ define([
 				return !config.userAuthenticationEnabled
 				|| (
 					config.userAuthenticationEnabled
-					&& authAPI.isAuthenticated
-					&& authAPI.isPermittedCreateIR()
+					&& AuthService.isAuthenticated
+					&& IRPermissionService.isPermittedCreateIR()
 				)
 			});
 			this.isDeletable = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
 					config.userAuthenticationEnabled
-					&& authAPI.isAuthenticated
-					&& authAPI.isPermittedDeleteIR(this.selectedAnalysisId())
+					&& AuthService.isAuthenticated
+					&& IRPermissionService.isPermittedDeleteIR(this.selectedAnalysisId())
 				)
 			});
 			this.isEditable = ko.pureComputed(() => {
@@ -69,21 +71,21 @@ define([
 				|| !config.userAuthenticationEnabled
 				|| (
 					config.userAuthenticationEnabled
-					&& authAPI.isAuthenticated
-					&& authAPI.isPermittedEditIR(this.selectedAnalysisId())
+					&& AuthService.isAuthenticated
+					&& IRPermissionService.isPermittedEditIR(this.selectedAnalysisId())
 				)
 			});
 			this.canCopy = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
 					config.userAuthenticationEnabled
-					&& authAPI.isAuthenticated
-					&& authAPI.isPermittedCopyIR(this.selectedAnalysisId())
+					&& AuthService.isAuthenticated
+					&& IRPermissionService.isPermittedCopyIR(this.selectedAnalysisId())
 					&& !this.dirtyFlag().isDirty()
 				)
 			});
 			this.selectedAnalysisId.subscribe((id) => {
-				authAPI.loadUserInfo();
+				AuthService.loadUserInfo();
 			});
 			
 			this.isRunning = ko.observable(false);

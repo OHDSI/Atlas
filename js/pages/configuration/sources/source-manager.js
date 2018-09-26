@@ -9,7 +9,9 @@ define([
   'services/SourceService',
   'services/RoleService',
   'lodash',
-  'webapi/AuthAPI',
+  'services/AuthService',
+  'services/permissions/SourcePermissionService',
+  'services/permissions/ConfigurationPermissionService',
   'components/ac-access-denied',
   'less!./source-manager.less',
   'components/heading',
@@ -25,7 +27,9 @@ define([
     sourceService,
     roleService,
     lodash,
-    authApi
+    AuthService,
+    SourcePermissionService,
+    ConfigurationPermissionService,
   ) {
 
   var defaultDaimons = {
@@ -84,26 +88,26 @@ define([
       this.selectedSource = params.model.currentSource;
       this.selectedSourceId = params.model.selectedSourceId;
       this.options = {};
-      this.isAuthenticated = authApi.isAuthenticated;
+      this.isAuthenticated = AuthService.isAuthenticated;
 
       this.hasAccess = ko.pureComputed(() => {
         if (!config.userAuthenticationEnabled) {
           return false;
         } else {
-          return this.isAuthenticated() && authApi.isPermittedEditConfiguration();
+          return this.isAuthenticated() && ConfigurationPermissionService.isPermittedEditConfiguration();
         }
       });
 
       this.canReadSource = ko.pureComputed(() => {
-        return authApi.isPermittedReadSource(this.selectedSourceId()) || !this.selectedSourceId();
+        return SourcePermissionService.isPermittedReadSource(this.selectedSourceId()) || !this.selectedSourceId();
       });
 
       this.isDeletePermitted = ko.pureComputed(() => {
-        return authApi.isPermittedDeleteSource(this.selectedSource().key());
+        return SourcePermissionService.isPermittedDeleteSource(this.selectedSource().key());
       });
 
       this.canEdit = ko.pureComputed(() => {
-        return authApi.isPermittedEditSource(this.selectedSourceId());
+        return SourcePermissionService.isPermittedEditSource(this.selectedSourceId());
       });
 
       this.canSave = ko.pureComputed(() => {
