@@ -1,0 +1,52 @@
+<div data-bind="ifnot: $component.isViewPermitted(), css: `${$component.isViewPermitted() ? '' : 'flexed'}`">
+    <access-denied params="isAuthenticated: $component.isAuthenticated" class="flexed"></access-denied>
+</div>
+<div data-bind="if: $component.isViewPermitted(), css: classes()">
+    <div class="loading" data-bind="visible: loading()">loading</div>
+    <p data-bind="css: classes('descr')">
+        <b>Cohort characterization</b> is defined as the process of generating cohort level descriptive summary statistics from person level covariate data. Summary statistics of these person level covariates may be count, mean, sd, var, min, max, median, range, and quantiles. In addition, covariates during a period may be stratified into temporal units of time for time-series analysis such as fixed intervals of time relative to cohort_start_date (e.g. every 7 days, every 30 days etc.), or in absolute calendar intervals such as calendar-week, calendar-month, calendar-quarter, calendar-year.
+    </p>
+    <div data-bind="css: classes('linked-entities')">
+        <linked-cohort-list params="data: $component.cohorts"></linked-cohort-list>
+    </div>
+    <div data-bind="css: classes('linked-entities')">
+        <linked-entity-list params="
+            title: 'Feature analyses',
+            columns: $component.featureAnalyses.columns,
+            data: $component.featureAnalyses.data,
+            newItemAction: $component.featureAnalyses.newItemAction,
+
+            removeFeature: $component.removeFeature,
+        "></linked-entity-list>
+    </div>
+    <div data-bind="css: classes('linked-entities')">
+        <linked-entity-list params="
+            title: 'Feature analyses parameters',
+            columns: $component.featureAnalysesParams.columns,
+            data: $component.featureAnalysesParams.data,
+            newItemLabel: 'New parameter',
+            newItemAction: $component.featureAnalysesParams.newItemAction,
+
+            removeParam: $component.removeParam,
+        "></linked-entity-list>
+    </div>
+
+    <atlas-modal params="
+        showModal: $component.showFeatureAnalysesBrowser,
+        template: 'cc-design-feature-analyses-browser-template',
+        title: 'Choose a Feature analysis',
+        data: {
+            selectedAnalysis: $component.featureAnalysesSelected,
+            classes: $component.classes,
+        }
+    "
+    ></atlas-modal>
+
+    <characterization-params-create-modal params="showModal: isParameterCreateModalShown, submit: addParam"></characterization-params-create-modal>
+</div>
+
+<script type="text/html" id="cc-design-feature-analyses-browser-template">
+    <div data-bind="css: classes('feature-analyses-list')">
+        <feature-analyses-browser params="selectedAnalysis: selectedAnalysis"></feature-analyses-browser>
+    </div>
+</script>

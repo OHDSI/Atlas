@@ -5,8 +5,9 @@ define(
     return {
       title: 'Jobs',
       buildRoutes,
-      baseUrl: 'jobs',
+      navUrl: () => '#/jobs',
       icon: 'tasks',
+			statusCss: () => ''
     };
   }
 );

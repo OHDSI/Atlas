@@ -5,11 +5,7 @@ define(
       return {        
         '/plp': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require([
-            './plp-browser',
-            // 'plp-manager',
-            // 'plp-inspector'
-          ], function () {
+          require(['./plp-browser'], function () {
             router.setCurrentView('plp-browser');
           });
         }),

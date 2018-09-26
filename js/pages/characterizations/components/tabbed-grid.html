@@ -1,0 +1,32 @@
+<heading-title params="name: 'Cohort Characterizations', icon: 'line-chart', theme: 'dark'"></heading-title>
+
+<!-- ko ifnot: true -->
+<access-denied class="flexed" params="isAuthenticated: $component.isAuthenticated"></access-denied>
+<!-- /ko -->
+
+<div data-bind="css: classes({ element: 'toolbar' })">
+    <ul data-bind="css: classes({ element: 'toolbar-nav', extra: 'nav nav-tabs' })">
+        <!-- ko foreach: $component.tabs -->
+            <li role="presentation" data-bind="css: $component.classes({ element: 'toolbar-nav-pill', extra: $data.value === $component.activeTab ? 'active' : '' })">
+                <a data-bind="attr: { href: $data.link }, text: $data.tabLabel"></a>
+            </li>
+        <!-- /ko -->
+    </ul>
+    <div data-bind="css: classes({ element: 'toolbar-btns' })">
+        <button data-bind="
+            css: classes({ element: 'new-entity-btn', extra: 'btn btn-primary btn-sm' }),
+            text: 'New ' + $component.tabs.find(t => t.value === $component.activeTab).newEntityLabel,
+            attr: { 'disabled': !$component.createNewEnabled() },
+            click: $component.createNew
+        "></button>
+    </div>
+</div>
+
+<div data-bind="css: classes('grid')">
+    <faceted-datatable params="{
+        order: [[0, 'asc']],
+        columns: $component.gridColumns,
+        options: $component.gridOptions,
+        reference: $component.data
+    }"></faceted-datatable>
+</div>

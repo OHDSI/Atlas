@@ -1,0 +1,141 @@
+.characterization-view-edit-results {
+
+  &__title {
+    align-items: center;
+    display: flex;
+    margin: 0;
+    margin-top: 1rem;
+    font-size: 1.8rem;
+  }
+
+  &__title-separator {
+    font-size: 1rem;
+    padding-left: 1rem;
+    padding-right: .75rem;
+  }
+
+  &__toolbar {
+    align-items: center;
+    display: flex;
+    margin-top: 2rem;
+  }
+
+  &__detail-list, &__display-options-list {
+    display: flex;
+    list-style: none;
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  &__detail, &__display-option {
+    &:not(:last-child) {
+      margin-right: 1.5rem;
+    }
+  }
+
+  &__detail {
+    &-label, &-value {
+      font-size: 1.3rem;
+      margin: 0;
+    }
+    &-label {
+      font-weight: 500;
+    }
+  }
+
+  &__display-options-list {
+    margin-left: auto;
+  }
+
+  &__display-option {
+    font-size: 1.3rem;
+  }
+
+  &__display-option-label {
+    font-weight: 600;
+  }
+
+  &__display-option-link {
+    cursor: pointer;
+  }
+
+  &__filter {
+    margin-top: 2rem;
+  }
+
+  &__report-group {
+    margin-bottom: 3rem;
+  }
+
+  th {
+    vertical-align: middle !important;
+  }
+
+  &__report {
+    margin-top: 2rem;
+
+    &--hidden-cohort-name {
+      .characterization-view-edit-results__cohort-name {
+        display: none;
+      }
+    }
+  }
+
+  &__analysis-name {
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+
+  &__cohort-name {
+    font-size: 1.4rem;
+  }
+
+  &__th-cohort-name {
+    text-align: center;
+  }
+
+  &__analysis-results {
+    align-items: center;
+    display: flex;
+  }
+
+  &__table-wrapper, &__chart-wrapper {
+    flex-shrink: 0;
+    flex-basis: 0;
+  }
+
+  &__table-wrapper {
+    flex-grow: 65;
+  }
+
+  &__chart-wrapper {
+    flex-grow: 35;
+    margin-left: 2rem;
+    border: 1px solid #ccc;
+    padding: 1.5rem 1.5rem 0.45rem 0;
+  }
+
+  &__scatterplot {
+  }
+
+  &__boxplot {
+    svg {
+      padding-left: 1rem;
+    }
+
+    .boxplot .compare {
+      .median, line, rect, circle, .whisker {
+        stroke: #ff9315;
+      }
+      line, rect, circle {
+         stroke-width: 1px;
+      }
+      rect, circle {
+        fill: rgba(255, 147, 21, 0.67);
+      }
+      .whisker {
+        stroke-dasharray: 3, 3;
+      }
+    }
+  }
+}

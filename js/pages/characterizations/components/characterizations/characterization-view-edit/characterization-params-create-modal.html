@@ -1,0 +1,21 @@
+<div data-bind="modal: showModal, css: classes({ extra: 'modal fade' })" tabindex="-1" role="dialog">
+    <div data-bind="css: classes({ element: 'modal-dialog', extra: 'modal-dialog' })">
+        <div data-bind="css: 'modal-content'">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div class="modal-title">Create new parameter</div>
+            </div>
+            <div data-bind="css: classes({ element: 'modal-body', extra: 'modal-body' })">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <input data-bind="value: $component.paramName" type="text" class="form-control" placeholder="Name"/>
+                    </div>
+                    <div class="form-group">
+                        <input data-bind="value: $component.paramValue" type="text" class="form-control" placeholder="Value"/>
+                    </div>
+                    <button data-bind="click: $component.submitParam" type="button" class="btn btn-default">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

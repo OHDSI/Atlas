@@ -277,7 +277,7 @@ define(
 						&& this.currentCohortDefinitionDirtyFlag().isDirty()
 					)
 						|| this.currentConceptSetDirtyFlag().isDirty()
-						|| this.currentIRAnalysisDirtyFlag().isDirty()
+						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
 						|| this.currentCohortComparisonDirtyFlag().isDirty()
 					);
 				});
@@ -356,7 +356,7 @@ define(
 
 			handleViewChange(view, routerParams = false) {
 				if (view !== this.currentView()) {
-					this.currentView('loading');					
+					this.currentView('loading');
 				}
 				if (routerParams !== false) {
 					this.routerParams(routerParams);

@@ -5,8 +5,9 @@ define(
     return {
       title: 'Configuration',
       buildRoutes,
-      baseUrl: 'configure',
+      navUrl: () => '#/configure',
       icon: 'cogs',
+			statusCss: () => ''
     };
   }
 );

@@ -45,9 +45,9 @@ define([
 			this.pollTimeout = null;
 			this.model = params.model;
 			this.loading = ko.observable(false);
-			this.selectedAnalysis = this.model.currentIRAnalysis;
-			this.selectedAnalysisId = this.model.selectedIRAnalysisId;
-			this.dirtyFlag = this.model.currentIRAnalysisDirtyFlag;
+			this.selectedAnalysis = sharedState.IRAnalysis.current;
+			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
+			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -190,9 +190,13 @@ define([
 			this.cohortDefs(list);
 		}
 		
+		clearResults() {
+			this.sources().forEach(source => source.info(null));
+		}
 		async onAnalysisSelected() {
 			this.loading(true);
 			this.refreshDefs();
+			this.clearResults();
 			try {
 				const analysis = await IRAnalysisService.findOne(this.selectedAnalysisId());
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
@@ -369,7 +373,7 @@ define([
 
 			if (this.selectedAnalysisId() == null) {
 				this.newAnalysis();
-			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysisId())) {
+			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
 			} else {
 				this.pollForInfo();

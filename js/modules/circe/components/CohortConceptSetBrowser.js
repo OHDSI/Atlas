@@ -85,7 +85,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 		// datatable callbacks:
 
 		self.selectRepositoryConceptSet = function (data, context, event) {
-			self.onRespositoryConceptSetSelected(data, event);
+			self.onRespositoryConceptSetSelected(data, self.selectedSource(), event);
 		}
 
 		self.addConceptSet = function () {

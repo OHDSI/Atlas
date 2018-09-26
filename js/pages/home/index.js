@@ -5,8 +5,9 @@ define(
     return {
       title: 'Home',
       buildRoutes,
-      baseUrl: 'home',
+      navUrl: () => '#/home',
       icon: 'home',
+			statusCss: () => ""
     };
   }
 );

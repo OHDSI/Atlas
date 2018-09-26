@@ -7,7 +7,7 @@ define([
   'utils/MomentUtils',
   'webapi/AuthAPI',
   'moment',
-  'config/terms-and-conditions.config',
+  'config',
   'less!./terms-and-conditions.less',
   'components/modal'
 ], function (
@@ -19,7 +19,7 @@ define([
   momentUtils,
   authApi,
   momentjs,
-  termsAndConditionsConfig,
+  appConfig,
 ) {
 	class TermsAndConditions extends AutoBind(Component) {
 		constructor(params) {
@@ -32,9 +32,9 @@ define([
           return false;
         }
       });
-      this.title = termsAndConditionsConfig.header;
-      this.description = termsAndConditionsConfig.description;
-      this.content = termsAndConditionsConfig.content;
+      this.title = appConfig.termsAndConditions.header;
+      this.description = appConfig.termsAndConditions.description;
+      this.content = appConfig.termsAndConditions.content;
       this.isAccepted = ko.observable(true);
 
       params.model.currentView.subscribe(() => {
@@ -45,7 +45,7 @@ define([
     checkAcceptance() {
       const acceptanceDate = localStorage.getItem('terms-and-conditions-acceptance-date');
       if (acceptanceDate !== null) {
-        const isExpired = momentUtils.diffInDays(parseInt(acceptanceDate, 10), momentjs().add(termsAndConditionsConfig.acceptanceExpiresInDays, 'days')) <= 0;
+        const isExpired = momentUtils.diffInDays(parseInt(acceptanceDate, 10), momentjs().add(appConfig.termsAndConditionsConfig.acceptanceExpiresInDays, 'days')) <= 0;
         return !isExpired;
       }
       return false;
