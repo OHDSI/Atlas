@@ -112,7 +112,7 @@ const settingsObject = {
     "d3-dispatch": "https://cdnjs.cloudflare.com/ajax/libs/d3-dispatch/1.0.3/d3-dispatch.min",
     "d3-tip": "https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min",
     "d3-slider": "assets/d3.slider",
-    "d3-scale-chromatic": "https://cdn.jsdelivr.net/npm/d3-scale-chromatic@1.3.0/dist/d3-scale-chromatic.min",
+    "d3-scale-chromatic": "assets/d3-scale-chromatic.1.3.0.min",
     "xss": "https://cdnjs.cloudflare.com/ajax/libs/js-xss/0.3.3/xss.min",
 
     "moment": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min",
