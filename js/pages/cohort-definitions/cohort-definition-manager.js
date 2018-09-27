@@ -33,6 +33,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/modal-pick-options',
 	'components/heading',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
+	'components/modal',
 ], function (
 	$,
 	ko,
@@ -260,6 +261,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		// model behaviors
 			this.onConceptSetTabRespositoryConceptSetSelected = (conceptSet) => {
+				this.showImportConceptSetModal(false);
+				this.model.currentCohortDefinition().expression().ConceptSets().push(new ConceptSet(conceptSet));
 				this.model.loadConceptSet(conceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
 			}
 
@@ -898,8 +901,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.showImportConceptSetModal(true);
 			};
 
-			onConceptSetRepositoryImport (newConceptSet, event) {
-				event.stopPropagation();
+			onConceptSetRepositoryImport (newConceptSet) {
 				this.showImportConceptSetModal(false);
 				vocabularyApi.getConceptSetExpression(newConceptSet.id)
 					.done((result)=> {
