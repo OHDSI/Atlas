@@ -1,80 +1,68 @@
 define(function (require, exports) {
 
-	var $ = require('jquery');
-	var config = require('appConfig');
+	const Service = require('providers/Service');
 	var sourceService = require('services/SourceService');
+	
+	var config = require('appConfig');
 	var sharedState = require('atlas-state');
 	var numeral = require('numeral');
-	var AuthService = require('services/AuthService');
-	const httpService = require('services/httpService');
 
-	var loadedPromise = $.Deferred();
-	loadedPromise.resolve();
-
-	var defaultSource;
-	var domainPromise = $.Deferred();
-	var domains = [];
-
-	sourceService.find().then(function (sources) {
-		if (sources.length == 0) {
-			sharedState.appInitializationStatus('no-sources-available');
-			return;
+	class VocabularyService extends Service {
+		constructor(props) {
+			super(props)
+			this.domains = [];
+			this.defaultSource = '';
+			this.init();
 		}
-		// find the source which has a Vocabulary Daimon with priority = 1
-		var prioritySources = sources.filter(function (source) {
-			return source.daimons.filter(function (daimon) {
-				return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
-			}).length > 0
-		});
-		if (prioritySources.length > 0)
-			defaultSource = prioritySources[0];
-		else // find the first vocabulary or CDM daimon
-			defaultSource = sources.filter(function (source) {
-				return source.daimons.filter(function (daimon) {
-					return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
-				}).length > 0
-			})[0];
 
-		// preload domain list once for all future calls to getDomains()
-		$.ajax({
-			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
-		}).then(function (results) {
-			$.each(results, function (i, v) {
-				domains.push(v.DOMAIN_ID);
-			});
-			domainPromise.resolve(domains);
-		});
-	})
-	.catch(() => {
-		sharedState.appInitializationStatus('failed');
-	})
-
-	function loadDensity(results) {
-		var densityPromise = $.Deferred();
-
-		if (results.length == 0) {
-			densityPromise.resolve();
-			return densityPromise;
-		}
-		var searchResultIdentifiers = [];
-		var resultsIndex = [];
-		for (c = 0; c < results.length; c++) {
-			// optimization - only lookup standard concepts as non standard concepts will not have records
-			results[c].RECORD_COUNT = 0;
-			results[c].DESCENDANT_RECORD_COUNT = 0;
-			if (results[c].STANDARD_CONCEPT_CAPTION == 'Standard' || results[c].STANDARD_CONCEPT_CAPTION == 'Classification') {
-				searchResultIdentifiers.push(results[c].CONCEPT_ID);
-				resultsIndex.push(c);
+		async init() {
+			try {
+				const sources = await sourceService.find();
+				if (sources.length == 0) {
+					sharedState.appInitializationStatus('no-sources-available');
+					return;
+				}
+				// find the source which has a Vocabulary Daimon with priority = 1
+				var prioritySources = sources.filter(function (source) {
+					return source.daimons.filter(function (daimon) {
+						return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
+					}).length > 0
+				});
+				if (prioritySources.length > 0)
+					this.defaultSource = prioritySources[0];
+				else // find the first vocabulary or CDM daimon
+					this.defaultSource = sources.filter(function (source) {
+						return source.daimons.filter(function (daimon) {
+							return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
+						}).length > 0
+					})[0];
+		
+				// preload domain list once for all future calls to getDomains()
+				const { data: results } = await this.httpService.doGet(`${config.api.url}vocabulary/${this.defaultSource.sourceKey}/domains`);
+				this.domains = results.map(v => v.DOMAIN_ID);
+			} catch(er) {
+				sharedState.appInitializationStatus('failed');
 			}
 		}
-		var densityIndex = {};
-		$.ajax({
-			url: sharedState.resultsUrl() + 'conceptRecordCount',
-			method: 'POST',
-			contentType: 'application/json',
-			timeout: 10000,
-			data: JSON.stringify(searchResultIdentifiers),
-			success: function (entries) {
+
+		async loadDensity(results) {
+			if (results.length == 0) {
+				return 0;
+			}
+			var searchResultIdentifiers = [];
+			var resultsIndex = [];
+			for (c = 0; c < results.length; c++) {
+				// optimization - only lookup standard concepts as non standard concepts will not have records
+				results[c].RECORD_COUNT = 0;
+				results[c].DESCENDANT_RECORD_COUNT = 0;
+				if (results[c].STANDARD_CONCEPT_CAPTION == 'Standard' || results[c].STANDARD_CONCEPT_CAPTION == 'Classification') {
+					searchResultIdentifiers.push(results[c].CONCEPT_ID);
+					resultsIndex.push(c);
+				}
+			}
+			var densityIndex = {};
+			try {
+				const { data: entries } = await this.httpService.doPost(`${sharedState.resultsUrl()}conceptRecordCount`, searchResultIdentifiers);
 				var formatComma = "0,0";
 				for (var e = 0; e < entries.length; e++) {
 					densityIndex[Object.keys(entries[e])[0]] = Object.values(entries[e])[0];
@@ -86,184 +74,110 @@ define(function (require, exports) {
 						concept.DESCENDANT_RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][1]).format(formatComma);
 					}
 				}
-				densityPromise.resolve();
-			},
-			error: function (error) {
+			} catch(er) {
 				for (var c = 0; c < results.length; c++) {
 					var concept = results[c];
 					concept.RECORD_COUNT = 'timeout';
 					concept.DESCENDANT_RECORD_COUNT = 'timeout';
-				}
-				densityPromise.resolve();
+				}				
 			}
-		});
-		return densityPromise;
-	}
-
-	function search(searchString, options) {
-		var deferred = $.Deferred();
-
-		var search = {
-			QUERY: searchString,
-			DOMAIN_ID: options.domains,
-			INVALID_REASON: 'V'
 		}
 
-		$.ajax({
-			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/search',
-			method: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify(search),
-			success: function (results) {
-				deferred.resolve(results)
+		async search(searchString, options) {	
+			var search = {
+				QUERY: searchString,
+				DOMAIN_ID: options.domains,
+				INVALID_REASON: 'V'
 			}
-		});
-
-		return deferred.promise();
-	}
-
-	function getDomains() {
-		// this is initliazed once for all calls
-		return domainPromise;
-	}
-
-	function getConcept(id) {
-		var getConceptPromise = $.ajax({
-			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/concept/' + id,
-			error: AuthService.handleAccessDenied,
-		});
-
-		return getConceptPromise;
-	}
-
-	function getConceptSetList(url) {
-		var repositoryUrl;
-
-		if (url)
-			repositoryUrl = url + 'conceptset/';
-		else
-			repositoryUrl = config.webAPIRoot + 'conceptset/';
-
-		var getConceptSetListPromise = $.ajax({
-			url: repositoryUrl,
-			error: AuthService.handleAccessDenied,
-		});
-
-		return getConceptSetListPromise;
-	}
-
-	function getConceptSetExpression(id, url) {
-		let repositoryUrl;
-
-		if (url)
-			repositoryUrl = url + 'conceptset/';
-		else
-			repositoryUrl = config.webAPIRoot + 'conceptset/';
-
-		repositoryUrl += id + '/expression';
-
-		return httpService.doGet(repositoryUrl);
-	}
-
-	function resolveConceptSetExpression(expression, url, sourceKey) {
-
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/resolveConceptSetExpression';
-
-		var resolveConceptSetExpressionPromise = $.ajax({
-			url: repositoryUrl,
-			data: JSON.stringify(expression),
-			method: 'POST',
-			contentType: 'application/json',
-			error: AuthService.handleAccessDenied,
-	});
-
-		return resolveConceptSetExpressionPromise;
-	}
-
-	function getConceptSetExpressionSQL(expression, url) {
-		const repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/conceptSetExpressionSQL';
-
-		return httpService.plainTextService.doPost(repositoryUrl, expression);
-	}
-
-	function getConceptsById(identifiers, url, sourceKey) {
-		var repositoryUrl;
-		if (url || sourceKey) {
-      repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/lookup/identifiers';
-    } else {
-			repositoryUrl = sharedState.vocabularyUrl() + 'lookup/identifiers';
+	
+			const { data } = await this.httpService.doPost(`${config.api.url}vocabulary/${this.defaultSource.sourceKey}/search`, search);
+			return data;	
 		}
 
-		var getConceptsByIdPromise = httpService.doPost(repositoryUrl, identifiers);
+		async getConcept(id) {
+			const { data } = await this.httpService.doGet(`${config.api.url}vocabulary/${this.defaultSource.sourceKey}/concept/${id}`);
+			return data;
+		}
 
-		return getConceptsByIdPromise;
+		async getConceptSetList(url) {
+			let repositoryUrl;
+	
+			if (url)
+				repositoryUrl = url + 'conceptset/';
+			else
+				repositoryUrl = config.api.url + 'conceptset/';
+	
+			const { data } = await this.httpService.doGet(repositoryUrl);
+			return data;
+		}
+
+		async getConceptSetExpression(id, url) {
+			let repositoryUrl;
+	
+			if (url)
+				repositoryUrl = url + 'conceptset/';
+			else
+				repositoryUrl = config.api.url + 'conceptset/';
+	
+			repositoryUrl += id + '/expression';
+	
+			const { data } = await this.httpService.doGet(repositoryUrl);
+			return data;
+		}
+
+		async resolveConceptSetExpression(expression, url, sourceKey) {
+			var repositoryUrl = (url || config.api.url) + 'vocabulary/' + (sourceKey || this.defaultSource.sourceKey) + '/resolveConceptSetExpression';
+	
+			const { data } = await this.httpService.doPost(repositoryUrl, expression);
+			return data;	
+		}
+		
+		async getConceptSetExpressionSQL(expression, url) {
+			const repositoryUrl = (url || config.api.url) + 'vocabulary/conceptSetExpressionSQL';
+	
+			const { data } = await this.httpService.plainTextService.doPost(repositoryUrl, expression);
+			return data;
+		}
+
+		async getConceptsById(identifiers, url, sourceKey) {
+			var repositoryUrl;
+			if (url || sourceKey) {
+				repositoryUrl = (url || config.api.url) + 'vocabulary/' + (sourceKey || this.defaultSource.sourceKey) + '/lookup/identifiers';
+			} else {
+				repositoryUrl = sharedState.vocabularyUrl() + 'lookup/identifiers';
+			}
+	
+			const { data } = await this.httpService.doPost(repositoryUrl, identifiers);
+			return data;
+		}
+
+		async getConceptsByCode(codes) {
+			var url = sharedState.vocabularyUrl() + 'lookup/sourcecodes';
+			const { data } = await this.httpService.doPost(url, codes);
+			return data;
+		}
+
+		async getMappedConceptsById(identifiers, url, sourceKey) {
+			var repositoryUrl = (url || config.api.url) + 'vocabulary/' + (sourceKey || this.defaultSource.sourceKey) + '/lookup/mapped';
+	
+			const { data } = await this.httpService.doPost(repositoryUrl, identifiers);
+			return data;	
+		}
+
+		async optimizeConceptSet(conceptSetItems, url, sourceKey) {
+			var repositoryUrl = (url || config.api.url) + 'vocabulary/' + (sourceKey || this.defaultSource.sourceKey) + '/optimize';
+	
+			const { data } = await this.httpService.doPost(repositoryUrl, conceptSetItems);
+			return data;
+		}
+
+		async compareConceptSet(compareTargets, url, sourceKey) {
+			var repositoryUrl = (url || config.api.url) + 'vocabulary/' + (sourceKey || this.defaultSource.sourceKey) + '/compare';
+	
+			const { data } = await this.httpService.doPost(repositoryUrl, compareTargets);
+			return data;
+		}		
 	}
 
-	function getConceptsByCode(codes) {
-		var url = sharedState.vocabularyUrl() + 'lookup/sourcecodes';
-		const promise = httpService.doPost(url, codes);
-
-		return promise;
-	}
-
-	function getMappedConceptsById(identifiers, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/lookup/mapped';
-
-		var getMappedConceptsByIdPromise = $.ajax({
-			url: repositoryUrl,
-			data: JSON.stringify(identifiers),
-			method: 'POST',
-			contentType: 'application/json',
-			error: AuthService.handleAccessDenied,
-	});
-
-		return getMappedConceptsByIdPromise;
-	}
-
-	function optimizeConceptSet(conceptSetItems, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/optimize';
-
-		var getOptimizedConceptSetPromise = $.ajax({
-			url: repositoryUrl,
-			data: JSON.stringify(conceptSetItems),
-			method: 'POST',
-			contentType: 'application/json',
-			error: AuthService.handleAccessDenied,
-	});
-
-		return getOptimizedConceptSetPromise;
-	}
-
-	function compareConceptSet(compareTargets, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/compare';
-
-		var getComparedConceptSetPromise = $.ajax({
-			url: repositoryUrl,
-			data: JSON.stringify(compareTargets),
-			method: 'POST',
-			contentType: 'application/json',
-			error: AuthService.handleAccessDenied,
-	});
-
-		return getComparedConceptSetPromise;
-	}
-
-	var api = {
-		loaded: loadedPromise,
-		search: search,
-		getDomains: getDomains,
-		getConcept: getConcept,
-		getConceptSetList: getConceptSetList,
-		getConceptSetExpression: getConceptSetExpression,
-		resolveConceptSetExpression: resolveConceptSetExpression,
-		getConceptsById: getConceptsById,
-		getConceptsByCode: getConceptsByCode,
-		getMappedConceptsById: getMappedConceptsById,
-		getConceptSetExpressionSQL: getConceptSetExpressionSQL,
-		optimizeConceptSet: optimizeConceptSet,
-		compareConceptSet: compareConceptSet,
-		loadDensity: loadDensity
-	}
-
-	return api;
+	return new VocabularyService();
 });

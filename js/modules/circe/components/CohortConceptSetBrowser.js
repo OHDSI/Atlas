@@ -92,17 +92,12 @@ define([
 		  return (config.userAuthenticationEnabled && self.isAuthenticated() && CohortPermissionService.isPermittedReadCohorts()) || !config.userAuthenticationEnabled;
 		});
 
-		self.loadConceptSetsFromRepository = function (url) {
+		self.loadConceptSetsFromRepository = async function (url) {
 			self.loading(true);
 
-			VocabularyService.getConceptSetList(url)
-				.done(function (results) {
-					self.repositoryConceptSets(results);
-					self.loading(false);
-				})
-				.fail(function (err) {
-					console.log(err);
-				});
+			const results = await VocabularyService.getConceptSetList(url);
+			self.repositoryConceptSets(results);
+			self.loading(false);
 		}
 
 		// datatable callbacks:

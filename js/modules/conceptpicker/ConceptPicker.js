@@ -26,11 +26,9 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 		self.importValues = ko.observable("");
 		self.dtApi = ko.observable();
 
-		VocabularyService.getDomains().then(function (domains) {
-			self.DomainOptions(domains);
-			if (params.DefaultQuery != null)
-				self.search();
-		});
+		self.DomainOptions(VocabularyService.domains);
+		if (params.DefaultQuery != null)
+			self.search();
 
 		VocabularyService.loaded.then(function () {
 			self.ProviderReady(true);
@@ -58,15 +56,13 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 	this.isOpen(false);
  }
 
-	ConceptPickerViewModel.prototype.search = function () {
+	ConceptPickerViewModel.prototype.search = async function () {
 		var self = this;
-		VocabularyService.search(this.searchText, {
+		const searchResults = await VocabularyService.search(this.searchText, {
 			domains: [this.SelectedDomain],
 			maxResults: this.MaxResults
 		})
-		.then(function (searchResults) {
-			self.results(searchResults);
-		});
+		self.results(searchResults);
 	}
 
 	ConceptPickerViewModel.prototype.searchKeyUp = function (d, e) {
