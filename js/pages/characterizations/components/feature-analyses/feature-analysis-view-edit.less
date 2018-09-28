@@ -1,5 +1,9 @@
 .feature-analysis-view-edit {
 
+  &__save-btn{
+    pointer-events: auto !important; // to be able to show tooltip while button is marked as disabled
+  }
+
   &__content {
     padding: 1rem;
   }
@@ -14,6 +18,10 @@
 
   .filter-option {
     padding: .5rem 1rem !important;
+  }
+
+  &__read-only-domain-info {
+    margin-bottom: .75rem;
   }
 
   &__domain-selector {
@@ -49,10 +57,21 @@
     margin-bottom: 1rem;
   }
 
+  &__criteria-heading {
+    display: flex;
+    margin-bottom: 1rem;
+  }
+
   &__criteria-name {
     display: block;
     border-radius: 4px;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
+  }
+
+  &__criteria-delete {
+    margin-left: .75rem;
+    margin-top: .1rem;
+    margin-bottom: .1rem;
   }
 
   &__criteria-descr {
