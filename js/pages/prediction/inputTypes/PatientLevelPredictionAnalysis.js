@@ -16,7 +16,8 @@ define(function (require, exports) {
 
         self.id = ko.observable(data.id || null);
         self.name = ko.observable(data.name || null);
-        self.version = ko.observable(data.name || null); // Default to spec version
+        self.version = ko.observable(data.name || null);
+        self.description = ko.observable(data.description || null);
         self.packageName = ko.observable(data.packageName || null);
         self.skeletonType = data.skeletonType || "PatientLevelPredictionStudy"; 
         self.skeletonVersion = data.skeletonVersion || "v0.0.1";

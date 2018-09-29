@@ -1,7 +1,7 @@
 define(
   (require, factory) => {
     const { AuthorizedRoute } = require('providers/Route');
-
+    const atlasState = require('atlas-state');		
     function routes(appModel, router) {
       return {        
         '/estimation': new AuthorizedRoute(() => {
@@ -46,10 +46,9 @@ define(
           appModel.activePage(this.title);
           require(['./cca-manager'], function () {
             const params = {};
-            params.estimationId = estimationId;
+            atlasState.estimationAnalysis.selectedId(estimationId);
 
             router.setCurrentView('cca-manager', params);
-            //appModel.currentView('cca-manager');
           });
         }),
       };

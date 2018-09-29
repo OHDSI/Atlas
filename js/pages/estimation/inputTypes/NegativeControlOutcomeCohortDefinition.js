@@ -7,7 +7,7 @@ define(function (require, exports) {
 		data = data || {};
 
 		self.occurrenceType = ko.observable(data.occurrenceType || "all");
-		self.detectOnDescendants = ko.observable(data.occurrenceType || true);
+		self.detectOnDescendants = ko.observable(data.detectOnDescendants || true);
 		self.domains  = ko.observableArray(data.domains && data.domains.map(function(d) { return d }) || ['condition','procedure']);
 	}
 	

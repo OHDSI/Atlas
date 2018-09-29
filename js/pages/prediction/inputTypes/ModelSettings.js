@@ -9,44 +9,80 @@ define(function (require, exports) {
 	var AdaBoostSettings = require("./modelSettings/AdaBoostSettings");
     var LassoLogisticRegressionSettings = require("./modelSettings/LassoLogisticRegressionSettings");
     var utils = require('../utils');
+
+    function GetSettingNameFromObject(data) {
+		if (data.hasOwnProperty("NaiveBayesSettings")) {
+			return "NaiveBayesSettings";
+        } else if (data.hasOwnProperty("RandomForestSettings")) {
+			return "RandomForestSettings";
+		} else if (data.hasOwnProperty("MultilayerPerceptionModelSettings")) {
+			return "MultilayerPerceptionModelSettings";
+		} else if (data.hasOwnProperty("KNearestNeighborsSettings")) {
+			return "KNearestNeighborsSettings";
+		} else if (data.hasOwnProperty("GradientBoostingMachineSettings")) {
+			return "GradientBoostingMachineSettings";
+		} else if (data.hasOwnProperty("DecisionTreeSettings")) {
+			return "DecisionTreeSettings";
+		} else if (data.hasOwnProperty("AdaBoostSettings")) {
+			return "AdaBoostSettings";
+		} else if (data.hasOwnProperty("LassoLogisticRegressionSettings")) {
+			return "LassoLogisticRegressionSettings";
+		};
+    }
 	
 	function GetSettingsFromObject (data)
 	{
-		var result;
-		
-		if (data.hasOwnProperty("NaiveBayesSettings")) {
-			return {
-				NaiveBayesSettings: new exports.NaiveBayesSettings(data.NaiveBayesSettings)
-			};
-        } else if (data.hasOwnProperty("RandomForestSettings")) {
-			return {
-				RandomForestSettings: new exports.RandomForestSettings(data.RandomForestSettings)
-			};
-		} else if (data.hasOwnProperty("MultilayerPerceptionModelSettings")) {
-			return {
-				MultilayerPerceptionModelSettings: new exports.MultilayerPerceptionModelSettings(data.MultilayerPerceptionModelSettings)
-			};
-		} else if (data.hasOwnProperty("KNearestNeighborsSettings")) {
-			return {
-				KNearestNeighborsSettings: new exports.KNearestNeighborsSettings(data.KNearestNeighborsSettings)
-			};
-		} else if (data.hasOwnProperty("GradientBoostingMachineSettings")) {
-			return {
-				GradientBoostingMachineSettings: new exports.GradientBoostingMachineSettings(data.GradientBoostingMachineSettings)
-			};
-		} else if (data.hasOwnProperty("DecisionTreeSettings")) {
-			return {
-				DecisionTreeSettings: new exports.DecisionTreeSettings(data.DecisionTreeSettings)
-			};
-		} else if (data.hasOwnProperty("AdaBoostSettings")) {
-			return {
-				AdaBoostSettings: new exports.AdaBoostSettings(data.AdaBoostSettings)
-			};
-		} else if (data.hasOwnProperty("LassoLogisticRegressionSettings")) {
-			return {
-				LassoLogisticRegressionSettings: new exports.LassoLogisticRegressionSettings(data.LassoLogisticRegressionSettings)
-			};
-		};	
+		switch (this.GetSettingNameFromObject(data)) {
+            case 'NaiveBayesSettings':
+                return {
+                    NaiveBayesSettings: new exports.NaiveBayesSettings(data.NaiveBayesSettings)
+                }
+                break;
+            case 'RandomForestSettings':
+                return {
+                    RandomForestSettings: new exports.RandomForestSettings(data.RandomForestSettings)
+                };
+                break;
+            case 'MultilayerPerceptionModelSettings':
+                return {
+                    MultilayerPerceptionModelSettings: new exports.MultilayerPerceptionModelSettings(data.MultilayerPerceptionModelSettings)
+                };
+                break;
+            case 'KNearestNeighborsSettings':
+                return {
+                    KNearestNeighborsSettings: new exports.KNearestNeighborsSettings(data.KNearestNeighborsSettings)
+                };
+                break;
+            case 'GradientBoostingMachineSettings':
+                return {
+                    GradientBoostingMachineSettings: new exports.GradientBoostingMachineSettings(data.GradientBoostingMachineSettings)
+                };
+                break;
+            case 'DecisionTreeSettings':
+                return {
+                    DecisionTreeSettings: new exports.DecisionTreeSettings(data.DecisionTreeSettings)
+                };
+                break;
+            case 'AdaBoostSettings':
+                return {
+                    AdaBoostSettings: new exports.AdaBoostSettings(data.AdaBoostSettings)
+                };
+                break;
+            case 'LassoLogisticRegressionSettings':
+                return {
+                    LassoLogisticRegressionSettings: new exports.LassoLogisticRegressionSettings(data.LassoLogisticRegressionSettings)
+                };
+                break;
+            default:
+                console.error("Model Settings not found!");
+                break;
+        }
+    }
+
+    function GetOptionsFromObject (data) 
+    {
+        var settingName = this.GetSettingNameFromObject(data);
+        return exports.options.filter((f) => { return f.key === settingName})[0];
     }
     
 	
@@ -58,11 +94,14 @@ define(function (require, exports) {
 	exports.DecisionTreeSettings = DecisionTreeSettings;
 	exports.AdaBoostSettings = AdaBoostSettings;	
 	exports.LassoLogisticRegressionSettings = LassoLogisticRegressionSettings;
-	
+    
+    exports.GetSettingNameFromObject = GetSettingNameFromObject
     exports.GetSettingsFromObject = GetSettingsFromObject;
+    exports.GetOptionsFromObject = GetOptionsFromObject;
 
     exports.options = [
         {
+            key: 'NaiveBayesSettings',
             name: 'Naive Bayes',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('NaiveBayesSettings');
@@ -72,6 +111,7 @@ define(function (require, exports) {
             },
         },
         {
+            key: 'RandomForestSettings',
             name: 'Random Forest',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('RandomForestSettings');
@@ -81,6 +121,7 @@ define(function (require, exports) {
             },
         },
         {
+            key: 'MultilayerPerceptionModelSettings',
             name: 'Multilayer Perception Model',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('MultilayerPerceptionModelSettings');
@@ -90,6 +131,7 @@ define(function (require, exports) {
             },
         },
         {
+            key: 'KNearestNeighborsSettings',
             name: 'K Nearest Neighbors',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('KNearestNeighborsSettings');
@@ -99,6 +141,7 @@ define(function (require, exports) {
             },
         },
         {
+            key: 'GradientBoostingMachineSettings',
             name: 'Gradient Boosting Machine',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('GradientBoostingMachineSettings');
@@ -108,6 +151,7 @@ define(function (require, exports) {
             },
         },
         {
+            key: 'DecisionTreeSettings',
             name: 'Decision Tree',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('DecisionTreeSettings');
@@ -117,6 +161,7 @@ define(function (require, exports) {
             },
         },
         {
+            key: 'AdaBoostSettings',
             name: 'Ada Boost',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('AdaBoostSettings');
@@ -126,6 +171,7 @@ define(function (require, exports) {
             },
         },
         {
+            key: 'LassoLogisticRegressionSettings',
             name: 'Lasso Logistic Regression',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('LassoLogisticRegressionSettings');

@@ -66,12 +66,7 @@
         <select class="form-control" data-bind="options: $component.options.noiseLevel, optionsText:'name', optionsValue:'id', value: $component.control.noiseLevel"></select>
     </div>
 </div>
-<div>
-    <label>Specify the number of CPU threads to employ in cross validation (auto = -1):</label>
-    <div class="input-group">
-        <select class="form-control" data-bind="options: $component.options.threads, optionsText:'name', optionsValue:'id', value: $component.control.threads"></select>
-    </div>
-</div>
+<!-- -->
 <div>
     <label>Reset all coefficients to 0 between model fits under cross-validation:</label>
     <div class="input-group">
@@ -93,7 +88,7 @@
 <div data-bind="visible: $component.control.useKKTSwindle()">
     <label>Size multiplier for active set:</label>
     <div class="input-group">
-        <select class="form-control" data-bind="options: $component.options.threads, optionsText:'name', optionsValue:'id', value: $component.control.threads"></select>
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.tuneSwindle, eventType:'blur', ko_autocomplete: { value: $component.control.tuneSwindle, source: $component.options.tuneSwindle, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>
@@ -114,4 +109,3 @@
         <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.maxBoundCount, eventType:'blur', ko_autocomplete: { value: $component.control.maxBoundCount, source: $component.options.maxBoundCount, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
-    

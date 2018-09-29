@@ -16,7 +16,7 @@ define([
 		constructor(params) {
 			super(params);
 			
-			this.runPlpArgs = params.runPlpArgs;
+			this.runPlpArgs = params.runPlpArgs();
 			this.options = options;
 		}
 	}

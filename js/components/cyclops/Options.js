@@ -12,6 +12,7 @@ define(
     options.maxIterationOptions = ['1000', '500', '100'];
     options.toleranceOptions = ['0.000001', '0.00001', '0.0001', '0.001', '0.01', '0.1'];
     options.startingVariance = ['-1', '0', '1', '2', '3'];
+    options.tuneSwindle = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
 
     options.yesNoOptions = [{
 		name: "Yes",
@@ -63,23 +64,6 @@ define(
     }, {
 		name: "Noisy",
 		id: 'noisy'
-    }];
-
-    options.threads = [{
-		name: "Auto",
-		id: -1,
-    }, {
-		name: "1",
-		id: '1'
-    }, {
-		name: "2",
-		id: 2
-    }, {
-		name: "4",
-		id: 4
-    }, {
-        name: "8",
-        id: 8
     }];
 
     options.selectorType = [{

@@ -16,6 +16,7 @@ define(function (require, exports) {
 
         self.id = ko.observable(data.id || null);
         self.name = ko.observable(data.name || null);
+        self.description = ko.observable(data.description || null);
         self.version = ko.observable(data.name || "v0.9.0");
         self.packageName = ko.observable(data.packageName || null);
         self.skeletonType = data.skeletonType || "ComparativeEffectStudy"; 
@@ -29,9 +30,9 @@ define(function (require, exports) {
         self.conceptSetCrossReference = ko.observableArray(data.conceptSetCrossReference && data.conceptSetCrossReference.map(function(d) { return new ConceptSetCrossReference(d) }));
         self.negativeControls  = ko.observableArray(data.negativeControls && data.negativeControls.map(function(d) { return new NegativeControl(d) }));
         self.doPositiveControlSynthesis = ko.observable(data.doPositiveControlSynthesis || false);
-        self.positiveControlSynthesisArgs = new PositiveControlSynthesisArgs(data.positiveControlSynthesisArgs, defaultCovariateSettings);
-        self.negativeControlOutcomeCohortDefinition = new NegativeControlOutcomeCohortDefinition(data.negativeControlOutcomeCohortDefinition);
-        self.negativeControlExposureCohortDefinition = new NegativeControlExposureCohortDefinition(data.negativeControlExposureCohortDefinition);
+        self.positiveControlSynthesisArgs = ko.observable(new PositiveControlSynthesisArgs(data.positiveControlSynthesisArgs, defaultCovariateSettings));
+        self.negativeControlOutcomeCohortDefinition = ko.observable(new NegativeControlOutcomeCohortDefinition(data.negativeControlOutcomeCohortDefinition));
+        self.negativeControlExposureCohortDefinition = ko.observable(new NegativeControlExposureCohortDefinition(data.negativeControlExposureCohortDefinition));
         self.estimationAnalysisSettings = new EstimationAnalysisSettings(data.estimationAnalysisSettings, estimationType, defaultCovariateSettings);
 	}
 	

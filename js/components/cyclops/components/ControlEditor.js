@@ -17,7 +17,7 @@ define([
 		constructor(params) {
             super(params);
 
-			this.control = params.control;
+			this.control = ko.isObservable(params.control) ? params.control() : params.control;
 			this.options = options;
 		}
 	}

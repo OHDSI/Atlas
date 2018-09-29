@@ -98,6 +98,65 @@ define(
             ],
             dom: '<<"row vertical-align"<"col-xs-6"l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
         },
+        fullAnalysisTableColumns: [
+            {
+                title: 'Target Id',
+                data: d => d.targetComparatorOutcome.target.id,
+                visible: false,
+            },
+            {
+                title: 'Target Cohort Name',
+                data: d => d.targetComparatorOutcome.target.name,
+            },
+            {
+                title: 'Comparator Id',
+                data: d => d.targetComparatorOutcome.comparator.id,
+                visible: false,
+            },
+            {
+                title: 'Comparator Cohort Name',
+                data: d => d.targetComparatorOutcome.comparator.name,
+            },
+            {
+                title: 'Outcomes',
+                data: d => d.targetComparatorOutcome.outcome.id,
+                visible: false,
+            },
+            {
+                title: 'Outcome Cohort Name',
+                data: d => d.targetComparatorOutcome.outcome.name,
+            },
+            {
+                title: 'Analysis Name',
+                data: d => d.cohortMethodAnalysis.description(),
+            },
+        ],
+        fullAnalysisTableOptions: {        
+            pageLength: 10,
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                ['10', '25', '50', '100', 'All']
+            ],
+            dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
+            domNoButtons: '<<"row vertical-align"<"col-xs-6"l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
+            Facets: [{
+                'caption': 'Target Cohorts',
+                'binding': d => d.targetComparatorOutcome.target.name,
+            },
+            {
+                'caption': 'Comparator Cohorts',
+                'binding': d => d.targetComparatorOutcome.comparator.name,
+            },
+            {
+                'caption': 'Outcome Cohorts',
+                'binding': d => d.targetComparatorOutcome.outcome.name,
+            },
+            {
+                'caption': 'Analysis Name',
+                'binding': d => d.cohortMethodAnalysis.description(),
+            },
+            ]
+        }        
     }
 
     options.numberOfStrataOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];

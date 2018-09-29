@@ -15,7 +15,6 @@ define(['knockout'], function (ko) {
         self.cvRepetitions = ko.observable(data.cvRepetitions === 0 ? 1 : data.cvRepetitions || 1);
         self.minCVData = ko.observable(data.minCVData === 0 ? 100 : data.minCVData || 100);
         self.noiseLevel = ko.observable(data.noiseLevel === 0 ? "silent" : data.noiseLevel || "silent");
-        self.threads = ko.observable(data.threads === 0 ? 1 : data.threads || 1);
         self.seed = ko.observable(data.seed === 0 ? null : data.seed || null);
         self.resetCoefficients = ko.observable(data.resetCoefficients === 0 ? false : data.resetCoefficients || false);
         self.startingVariance = ko.observable(data.startingVariance === 0 ? -1 : data.startingVariance || -1);

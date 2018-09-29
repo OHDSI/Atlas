@@ -17,7 +17,7 @@ define([
 		constructor(params) {
             super(params);
 
-			this.prior = params.prior;
+			this.prior = ko.isObservable(params.prior) ? params.prior() : params.prior;
 			this.options = options;
 		}
 	}

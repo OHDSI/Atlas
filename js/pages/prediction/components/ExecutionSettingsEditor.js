@@ -16,8 +16,8 @@ define([
 		constructor(params) {
 			super(params);
 			
-			this.getPlpDataArgs = params.getPlpDataArgs;
-			this.runPlpArgs = params.runPlpArgs;
+			this.getPlpDataArgs = params.getPlpDataArgs();
+			this.runPlpArgs = params.runPlpArgs();
 			this.options = options;
 
 			this.maxSampleSizeToggle = ko.observable(this.getPlpDataArgs.maxSampleSize() != null || false);

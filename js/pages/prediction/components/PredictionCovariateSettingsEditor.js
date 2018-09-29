@@ -34,7 +34,6 @@ define([
 		}
 
 		conceptsetSelected(d) {
-			console.log(d.id + ": " + d.name);
 			this.currentConceptSet(new ConceptSet({id: d.id, name: d.name}));
 			this.showConceptSetSelector(false);
 		}

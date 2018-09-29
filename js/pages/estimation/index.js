@@ -1,13 +1,31 @@
 define(
   (require, exports) => {
+	  const ko = require('knockout');  	
     const buildRoutes = require('./routes');
+    const appState = require('atlas-state');
+    const constants = require('./const');
 
+    const statusCss = ko.pureComputed(function () {
+      if (appState.estimationAnalysis.current())
+        return appState.estimationAnalysis.dirtyFlag()
+          .isDirty() ? "unsaved" : "open";
+      return "";
+    });
+
+    const navUrl = ko.pureComputed(function () {
+      let url = constants.apiPaths.browser();
+      if (appState.estimationAnalysis.current()) {
+        url = constants.apiPaths.ccaAnalysis(appState.estimationAnalysis.current().id());
+      }
+      return url;
+    });
+ 
     return {
       title: 'Estimation',
       buildRoutes,
-      navUrl: () => '#/estimation',
+      navUrl: navUrl,
       icon: 'balance-scale',
-			statusCss: () => ''
+			statusCss: statusCss
     };
   }
 );

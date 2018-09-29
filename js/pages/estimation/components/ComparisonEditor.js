@@ -28,7 +28,6 @@ define([
 		}
 
 		cohortSelected(id, name) {
-			console.log(id + ": " + name);
 			this.currentCohort(new Cohort({id: id, name: name}));
 			this.showCohortSelector(false);
 		}
@@ -79,7 +78,6 @@ define([
 		}
 
 		conceptsetSelected(d) {
-			console.log(d.id + ": " + d.name);
 			this.currentConceptSet(new ConceptSet({id: d.id, name: d.name}));
 			this.showConceptSetSelector(false);
 		}
