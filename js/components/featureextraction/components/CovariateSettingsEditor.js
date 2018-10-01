@@ -18,7 +18,7 @@ define([
 		constructor(params) {
             super(params);
             
-            this.covariateSettings = (params.covariateSettings == null ? new CovariateSettings() : params.covariateSettings);
+            this.covariateSettings = (params.covariateSettings == null ? new CovariateSettings() : (ko.isObservable(params.covariateSettings) ? params.covariateSettings() : params.covariateSettings));
 
             this.longTermLabel = ko.pureComputed(() => {
                 return this.getWindowLabel(this.covariateSettings.longTermStartDays());

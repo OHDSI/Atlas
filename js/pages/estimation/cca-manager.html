@@ -1,5 +1,5 @@
 <div class="wrapperTitle" data-bind="visible:loading">
-    <i class="fa fa-circle-o-notch fa-spin"></i> Loading...
+    <i class="fa fa-circle-o-notch fa-spin"></i> <span data-bind="text: loadingMessage"></span>
   </div>
   <div data-bind="if:!loading()">
     <div class="wrapperTitle">
@@ -157,6 +157,9 @@
                       <li data-bind="visible: !($component.specificationMeetsMinimumRequirements())">
                         You must specify at least 1 valid comparison and analysis setting.
                       </li>
+                      <li data-bind="visible: $component.specificationMeetsMinimumRequirements() && !($component.specificationHasFullComparisons())">
+                        You must specify at least 1 target, comparator and outcome in your comparison settings.
+                      </li>
                       <li data-bind="visible: $component.specificationMeetsMinimumRequirements() && !($component.specificationHasUniqueSettings())">
                         Your study contains duplicate values in one of the following areas: Comparisons or Analysis Settings.
                       </li>
@@ -185,7 +188,7 @@
                         <h2>Step 2. Download the study package</h2>
                         <div style="padding-bottom: 50px;">
                             <div>
-                                <label>Please provide a name for the study package:</label>
+                                <label>Please provide a name for the study package.</label>
                                 <div class="input-group">
                                     <input class="form-control" type="text" data-bind="textInput: $component.estimationAnalysis().packageName" />
                                 </div>    
@@ -205,10 +208,25 @@
             </div>
             <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'export'" class="tab-pane">
               <div class="paddedWrapper">
-                <pre id="estimationSpecificationExport" data-bind="html: $component.estimationAnalysisJson(), selectOnFocus: {events: ['click']}"></pre>
-                JSON.stringify <button class="btn btn-sm" data-bind="click: prepForSave">Prep for save</button> 
-                <pre id="exportJSON" data-bind="html: $component.estimationAnalysisForWebAPI(), selectOnFocus: {events: ['click']}"></pre>
+                <div data-bind="if: !$component.specificationValid()">
+                  Please see the downloads area to review problems with your analysis specification. These must be corrected before you can export your definition.
+                </div>
+                <div data-bind="if: $component.dirtyFlag().isDirty()">
+                  You must save your analysis before you can export the definition.
+                </div>
+                <div data-bind="if: $component.specificationValid() && !($component.dirtyFlag().isDirty())">
+                  <div data-bind="if: $component.fullSpecification() == null">
+                    <br/>
+                    <button class="btn btn-primary" data-bind="enable: !isExporting(), click: exportFullSpecification"><i data-bind="visible: isExporting()" class="fa fa-circle-o-notch fa-spin"></i> Export Definition</button>
+                  </div>
+                  <div data-bind="visible: $component.fullSpecification() != null">
+                    <h4>Full Study Specification</h4>
+                    <button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyFullSpecificationClipboard" data-bind="click: copyFullSpecificationToClipboard" data-clipboard-target="#estimationFullSpecificationExport"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy Specification To Clipboard</button>&nbsp;&nbsp;<span id="copyFullSpecificationToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+                    <pre id="estimationFullSpecificationExport" data-bind="html: $component.fullSpecification(), selectOnFocus: {events: ['click']}"></pre>
+                  </div>
+                </div>
               </div>
+            </div>
           </div>
           </div>
         </div>

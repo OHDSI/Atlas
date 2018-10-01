@@ -7,6 +7,7 @@ define([
 	'appConfig',
 	'./const',
 	'atlas-state',	
+	'clipboard',
 	'webapi/AuthAPI',
 	'services/Estimation',
     './inputTypes/EstimationAnalysis',
@@ -35,6 +36,7 @@ define([
 	config,
 	constants,
 	sharedState,
+	clipboard,
 	authApi,
 	EstimationService,
 	EstimationAnalysis,
@@ -53,6 +55,7 @@ define([
 		constructor(params) {
             super(params);
 			
+			this.defaultLoadingMessage = "Loading...";
 			this.estimationType = 'ComparativeCohortAnalysis';
 			this.cohortMethodAnalysisList = null;
 			this.defaultCovariateSettings = null;
@@ -73,6 +76,9 @@ define([
 			this.editorHeading = ko.observable();
 			this.loadingDownload = ko.observable(false);
 			this.fullAnalysisList = ko.observableArray();
+			this.fullSpecification = ko.observable(null);
+			this.isExporting = ko.observable(false);
+			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
 
 			this.canSave = ko.pureComputed(() => {
 				//return (self.cohortComparison().name() && self.cohortComparison().comparatorId() && self.cohortComparison().comparatorId() > 0 && self.cohortComparison().treatmentId() && self.cohortComparison().treatmentId() > 0 && self.cohortComparison().outcomeId() && self.cohortComparison().outcomeId() > 0 && self.cohortComparison().modelType && self.cohortComparison().modelType() > 0 && self.cohortComparisonDirtyFlag() && self.cohortComparisonDirtyFlag().isDirty());
@@ -95,11 +101,25 @@ define([
 				);
 			});
 
+			this.specificationHasFullComparisons = ko.pureComputed(() => {
+				var result = this.specificationMeetsMinimumRequirements(); 
+				if (result) {
+					for(var i = 0; i < this.comparisons().length; i++) {
+						var currentComparison = this.comparisons()[i];
+						if (currentComparison.target().id == 0 || currentComparison.comparator().id == 0 || currentComparison.outcomes().length == 0) {
+							result = false;
+							break;
+						}
+					}
+				}
+				return result;
+			});
+
 			this.specificationHasUniqueSettings = ko.pureComputed(() => {
-				var result = this.specificationMeetsMinimumRequirements();
+				var result = this.specificationMeetsMinimumRequirements() && this.specificationHasFullComparisons();
 				if (result) {
 					// Check to make sure the other settings are unique
-					var uniqueComparisons = new Set(this.comparisons().map((c) => { return {targetId: c.target().id, comparatorId: c.comparator().id}}));
+					var uniqueComparisons = new Set(this.comparisons().map((c) => { return (c.target().id + ',' + c.comparator().id) }));
 					var uniqueAnalysisList = new Set(this.cohortMethodAnalysisList().map((a) => { return ko.toJSON(a)}));
 					result = (
 							this.comparisons().length == uniqueComparisons.size &&
@@ -112,6 +132,7 @@ define([
 			this.specificationValid = ko.pureComputed(() => {
 				return (
 					this.specificationMeetsMinimumRequirements() && 
+					this.specificationHasFullComparisons() &&
 					this.specificationHasUniqueSettings()
 				)
 			});
@@ -144,22 +165,13 @@ define([
 	
 			this.init();
 		}
-
-		estimationAnalysisJson() {
-			return commonUtils.syntaxHighlight(ko.toJSON(this.estimationAnalysis()));
-		}
-
-		estimationAnalysisForWebAPI() {
-			var definition = ko.toJS(this.estimationAnalysis());
-			definition = ko.toJSON(definition);
-			return JSON.stringify(definition);
-		}
 		
 		delete() {
 			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
 				return;
 
 			EstimationService.deleteEstimation(this.selectedAnalysisId()).then((analysis) => {
+				this.loading(true);
 				this.estimationAnalysis(null);
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.estimationAnalysis()));
 				document.location = constants.apiPaths.browser()
@@ -168,14 +180,7 @@ define([
 
 		save() {
 			this.loading(true);
-			this.prepForSave();
-			var payload = {
-				id: this.estimationAnalysis().id(),
-				name: this.estimationAnalysis().name(),
-				type: this.estimationType,
-				description: this.estimationAnalysis().description(),
-				specification: ko.toJSON(this.estimationAnalysis()),
-			}
+			var payload = this.prepForSave();
 			EstimationService.saveEstimation(payload).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
 				document.location =  constants.apiPaths.ccaAnalysis(this.estimationAnalysis().id());
@@ -251,6 +256,14 @@ define([
 						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName.includedCovariateConcepts);
 				}
 			}
+
+			return {
+				id: this.estimationAnalysis().id(),
+				name: this.estimationAnalysis().name(),
+				type: this.estimationType,
+				description: this.estimationAnalysis().description(),
+				specification: ko.toJSON(this.estimationAnalysis()),
+			};
 		}
 
 
@@ -325,7 +338,7 @@ define([
 
 		newAnalysis() {
 			this.loading(true);
-			this.estimationAnalysis(new EstimationAnalysis({}, this.estimationType, this.defaultCovariateSettings));
+			this.estimationAnalysis(new EstimationAnalysis({id: 0, name: 'New Population Level Estimation Analysis'}, this.estimationType, this.defaultCovariateSettings));
 			// EstimationAnalysis takes time to load - use the setTimeout({}, 0) 
 			// to allow the event loop to catch up.
 			// http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
@@ -353,6 +366,7 @@ define([
 			this.estimationAnalysis().description(header.description);
 			this.setCohortMethodAnalysisList();
 			this.setUserInterfaceDependencies();
+			this.fullSpecification(null);
 			this.resetDirtyFlag();
 		}
 
@@ -446,9 +460,9 @@ define([
 		init() {
 			FeatureExtractionService.getDefaultCovariateSettings().then(({ data }) => {
 				this.defaultCovariateSettings = data;
-				if (this.selectedAnalysisId() == 0) {
+				if (this.selectedAnalysisId() == 0 && !this.dirtyFlag().isDirty()) {
 					this.newAnalysis();
-				} else if (this.selectedAnalysisId() != (this.estimationAnalysis() && this.estimationAnalysis().id())) {
+				} else if (this.selectedAnalysisId() > 0 && this.selectedAnalysisId() != (this.estimationAnalysis() && this.estimationAnalysis().id())) {
 					this.onAnalysisSelected();
 				} else {
 					this.setCohortMethodAnalysisList();
@@ -518,9 +532,48 @@ define([
 		}
 
 		downloadPackage() {
-			console.warn("TODO: Not implemented");
+			this.loadingMessage("Starting download...");
+			this.loading(true);
+			var payload = this.prepForSave();
+			EstimationService.saveEstimation(payload).then((analysis) => {
+				this.resetDirtyFlag();
+				window.open(config.api.url + constants.apiPaths.downloadCcaAnalysisPackage(this.selectedAnalysisId()));
+				this.loadingMessage(this.defaultLoadingMessage);
+				this.loading(false);
+			}).catch((e) => {
+				console.error("error when exporting: " + e);
+				this.loading(false);
+			});
 		}
 
+		exportFullSpecification() {
+			this.isExporting(true);
+			EstimationService.exportFullSpecification(this.selectedAnalysisId()).then((analysis) => {
+				this.fullSpecification(commonUtils.syntaxHighlight(ko.toJSON(analysis.data)));
+				this.isExporting(false);
+			}).catch((e) => {
+				console.error("error when exporting: " + e)
+				this.isExporting(false);
+			});
+		}
+
+		copyFullSpecificationToClipboard() {
+			var currentClipboard = new clipboard('#btnCopyFullSpecificationClipboard');
+
+			currentClipboard.on('success', function (e) {
+				console.log('Copied to clipboard');
+				e.clearSelection();
+				$('#copyFullSpecificationToClipboardMessage').fadeIn();
+				setTimeout(function () {
+					$('#copyFullSpecificationToClipboardMessage').fadeOut();
+				}, 1500);
+			});
+
+			currentClipboard.on('error', function (e) {
+				console.log('Error copying to clipboard');
+				console.log(e);
+			});			
+		}
 	}
 
 	return commonUtils.build('cca-manager', ComparativeCohortAnalysisManager, view);;

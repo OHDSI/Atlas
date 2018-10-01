@@ -9,7 +9,7 @@ define(function (require, exports) {
 
         self.studyStartDate = ko.observable(data.studyStartDate || null);
         self.studyEndDate = ko.observable(data.studyEndDate || null);
-        self.excludeDrugsFromCovariates = ko.observable(data.excludeDrugsFromCovariates || true);
+        self.excludeDrugsFromCovariates = ko.observable(data.excludeDrugsFromCovariates || false);
         self.firstExposureOnly = ko.observable(data.firstExposureOnly || false);
         self.removeDuplicateSubjects = ko.observable(data.removeDuplicateSubjects || "keep all");
         self.restrictToCommonPeriod = ko.observable(data.restrictToCommonPeriod || false);

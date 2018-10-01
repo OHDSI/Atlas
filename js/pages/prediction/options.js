@@ -241,17 +241,51 @@ define(
             className: 'col-remove',
         },
         {
-            title: 'Model',
-            data: d => Object.keys(d)[0],
+            title: 'Temporal',
+            render: (s, p, d) => {
+              return Object.keys(d)[0] == 'temporal' ? 'Yes': 'No'  
+            },
             visible: false,
         },
         {
             title: 'Options',
-            data: d => {
-                //var key = Object.keys(d)[0];
-                //return ko.toJSON(d[key]);
-                return ko.toJSON(d).substring(1,250) + "...";
-            },
+            render: (s, p, d, a, b, c) => {
+                const keys = Object.keys(d);
+                const vals = Object.values(d);
+                var settings = [];
+                const defaultDisplayLength = 5;
+                for (var i = 0; i < keys.length; i++) {
+                    const currentVal = ko.isObservable(vals[i]) ? vals[i]() : vals[i];
+                    if (currentVal === true) {
+                        settings.push(keys[i]);
+                    }
+                }
+                if (settings.length > 1) {
+                    var displayVal = "";
+                    var tooltipText = ""; 
+                    settings.forEach((element, index) => {
+                        if (index < defaultDisplayLength) {
+                            if (index < settings.length - 1) {
+                                displayVal += (element + ", ");
+                            } else {
+                                displayVal += element;
+                            }
+                        } else if (index == defaultDisplayLength) {
+                            displayVal = displayVal + element + "&nbsp;&nbsp;<div class=\"tool-tip\">(+" + (settings.length - defaultDisplayLength - 1) + " more covariate settings<span class=\"tooltiptext\">";
+                        } else if (index > defaultDisplayLength) {
+                            displayVal += ("<span class=\"tooltipitem\">" + element + "</span>");
+                        }
+                    });
+                    if (settings.length > defaultDisplayLength) {
+                        displayVal += "</span>)</div>";
+                    }
+                    return displayVal;
+                } else if (settings.length == 1) {
+                    return settings[0];
+                } else {
+                    return 'No covariate settings selected';
+                }
+            }
         },
     ];
 

@@ -32,7 +32,7 @@ define(function (require, exports) {
         self.matchOnPsArgs = new MatchOnPsArgs(data.matchOnPsArgs);
         self.matchOnPsAndCovariates = ko.observable(data.matchOnPsAndCovariates || false);
         self.matchOnPsAndCovariatesArgs = new MatchOnPsAndCovariatesArgs(data.matchOnPsAndCovariatesArgs);
-        self.stratifyByPs = ko.observable(data.stratifyByPs || false);
+        self.stratifyByPs = ko.observable(data.stratifyByPs || true);
         self.stratifyByPsArgs = new StratifyByPsArgs(data.stratifyByPsArgs);
         self.stratifyByPsAndCovariates = ko.observable(data.stratifyByPsAndCovariates || false);
         self.stratifyByPsAndCovariatesArgs = new StratifyByPsAndCovariatesArgs(data.stratifyByPsAndCovariatesArgs);

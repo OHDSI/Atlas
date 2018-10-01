@@ -4,7 +4,7 @@
         <select class="form-control" data-bind="options: $component.options.outcomeModelTypeOptions, optionsText:'name', optionsValue:'id', value: $component.outcomeModelArgs.modelType"></select>
     </div>
 </div>
-<div>
+<div data-bind="visible: $component.stratified">
     <label>Should the regression be conditioned on the strata defined in the population object (e.g. by matching or stratifying on propensity scores)?</label>
     <div class="input-group">
         <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.outcomeModelArgs.stratified"></select>

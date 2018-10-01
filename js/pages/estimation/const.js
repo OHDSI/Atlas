@@ -4,6 +4,7 @@ define(
 
     const apiPaths = {
       ccaAnalysis: id => `#/estimation/cca/${id}`,
+      downloadCcaAnalysisPackage: id => `estimation/${id}/download`,
       createCcaAnalysis: () => '#/estimation/cca/0',
       browser: () => '#/estimation',
     };

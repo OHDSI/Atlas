@@ -4,6 +4,7 @@ define(
 
     const apiPaths = {
       analysis: id => `#/prediction/${id}`,
+      downloadPackage: id => `prediction/${id}/download`,
       createAnalysis: () => '#/prediction/0',
       browser: () => '#/prediction',
     };

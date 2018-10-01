@@ -7,6 +7,7 @@ define([
     'appConfig',
 	'./const',
 	'atlas-state',
+	'clipboard',
 	'webapi/AuthAPI',
 	'services/Prediction',
 	'./options',
@@ -36,6 +37,7 @@ define([
 	config,
 	constants,
 	sharedState,
+	clipboard,
 	authApi,
 	PredictionService,
 	options,
@@ -56,7 +58,6 @@ define([
 		constructor(params) {
             super(params);
 
-			//this.patientLevelPredictionAnalysis = new PatientLevelPredictionAnalysis();
 			this.options = options;
 			this.config = config;
 			this.covariateSettings = null;
@@ -86,6 +87,9 @@ define([
 			this.showCohortSelector = ko.observable(false);
 			this.defaultCovariateSettings = null;
 			this.defaultTemporalCovariateSettings = null;
+			this.fullSpecification = ko.observable(null);
+			this.isExporting = ko.observable(false);
+			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
 
 			this.canDelete = ko.pureComputed(() => {
 				return authApi.isPermittedDeletePlp(this.selectedAnalysisId());
@@ -229,6 +233,7 @@ define([
 				return;
 
 			PredictionService.deletePrediction(this.selectedAnalysisId()).then((analysis) => {
+				this.loading(true);
 				this.patientLevelPredictionAnalysis(null);
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
 				document.location = constants.apiPaths.browser()
@@ -246,13 +251,7 @@ define([
 
 		save() {
 			this.loading(true);
-			this.prepForSave();
-			var payload = {
-				id: this.patientLevelPredictionAnalysis().id(),
-				name: this.patientLevelPredictionAnalysis().name(),
-				description: this.patientLevelPredictionAnalysis().description(),
-				specification: ko.toJSON(this.patientLevelPredictionAnalysis()),
-			}
+			var payload = this.prepForSave();
 			PredictionService.savePrediction(payload).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
 				document.location =  constants.apiPaths.analysis(this.patientLevelPredictionAnalysis().id());
@@ -261,7 +260,18 @@ define([
 		}
 
 		downloadPackage() {
-			console.warn("TODO: Not implemented");
+			this.loadingMessage("Starting download...");
+			this.loading(true);
+			var payload = this.prepForSave();
+			PredictionService.savePrediction(payload).then((analysis) => {
+				this.resetDirtyFlag();
+				window.open(config.api.url + constants.apiPaths.downloadPackage(this.selectedAnalysisId()));
+				this.loadingMessage(this.defaultLoadingMessage);
+				this.loading(false);
+			}).catch((e) => {
+				console.error("error when exporting: " + e);
+				this.loading(false);
+			});
 		}
 
 		prepForSave() {
@@ -309,6 +319,13 @@ define([
 					);
 				}
 			});
+
+			return {
+				id: this.patientLevelPredictionAnalysis().id(),
+				name: this.patientLevelPredictionAnalysis().name(),
+				description: this.patientLevelPredictionAnalysis().description(),
+				specification: ko.toJSON(this.patientLevelPredictionAnalysis()),
+			};
 		}
 
 		addModelSettings(d) {
@@ -391,7 +408,7 @@ define([
 
 		newAnalysis() {
 			this.loading(true);
-			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis());
+			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({id: 0, name: 'New Patient Level Prediction Analysis'}));
 			// PatientLevelPredictionAnalysis takes time to load - use the setTimeout({}, 0) 
 			// to allow the event loop to catch up.
 			// http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
@@ -422,7 +439,8 @@ define([
 			this.patientLevelPredictionAnalysis().name(header.name);
 			this.patientLevelPredictionAnalysis().description(header.description);
 			this.setUserInterfaceDependencies();
-			this.setAnalysisSettingsLists();			
+			this.setAnalysisSettingsLists();	
+			this.fullSpecification(null);
 			this.resetDirtyFlag();
 		}
 
@@ -477,9 +495,9 @@ define([
 				//FeatureExtractionService.getDefaultCovariateSettings(true).then(({ data }) => {
 				//	this.defaultTemporalCovariateSettings = data;
 				//});
-				if (this.selectedAnalysisId() == 0) {
+				if (this.selectedAnalysisId() == 0 && !this.dirtyFlag().isDirty()) {
 					this.newAnalysis();
-				} else if (this.selectedAnalysisId() != (this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().id())) {
+				} else if (this.selectedAnalysisId() > 0 && this.selectedAnalysisId() != (this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().id())) {
 					this.onAnalysisSelected();
 				} else {
 					this.setAnalysisSettingsLists();		
@@ -554,6 +572,36 @@ define([
 			this.fullAnalysisList.valueHasMutated();
 			this.loadingDownload(false);
 		}
+
+		exportFullSpecification() {
+			this.isExporting(true);
+			PredictionService.exportFullSpecification(this.selectedAnalysisId()).then((analysis) => {
+				this.fullSpecification(commonUtils.syntaxHighlight(ko.toJSON(analysis.data)));
+				this.isExporting(false);
+			}).catch((e) => {
+				console.error("error when exporting: " + e)
+				this.isExporting(false);
+			});
+		}
+
+		copyFullSpecificationToClipboard() {
+			var currentClipboard = new clipboard('#btnCopyFullSpecificationClipboard');
+
+			currentClipboard.on('success', function (e) {
+				console.log('Copied to clipboard');
+				e.clearSelection();
+				$('#copyFullSpecificationToClipboardMessage').fadeIn();
+				setTimeout(function () {
+					$('#copyFullSpecificationToClipboardMessage').fadeOut();
+				}, 1500);
+			});
+
+			currentClipboard.on('error', function (e) {
+				console.log('Error copying to clipboard');
+				console.log(e);
+			});			
+		}
+
 	}
 
 	return commonUtils.build('prediction-manager', PatientLevelPredictionManager, view);

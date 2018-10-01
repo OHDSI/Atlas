@@ -19,10 +19,16 @@ define([
             super(params);
 
 			this.outcomeModelArgs = params.outcomeModelArgs;
+			this.matchStratifySelection = params.matchStratifySelection;
             this.options = options;
 			this.showControlDisplay = ko.observable(false);
 			this.showPriorDisplay = ko.observable(false);
 			this.showCovariateDisplay = ko.observable(false);
+			this.stratified = ko.pureComputed(() => {
+				var stratified = (this.matchStratifySelection() !== "none");
+				this.outcomeModelArgs.stratified(stratified);
+				return stratified; 
+			});
 		}
 
 		toggleControlDisplay() {

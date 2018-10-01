@@ -33,11 +33,13 @@ define([
 			this.showConceptSetSelector = ko.observable(false);
 			this.showPsCovariateDisplay = ko.observable(false);
 			this.currentConceptSet = null;
-	
 			this.trimSelection = ko.observable();
+			this.matchStratifySelection = ko.observable();
+	
 			this.trimSelection.subscribe(newValue => {
 				this.analysis.trimByPs(this.trimSelection() == "byPercent");
 				this.analysis.trimByPsToEquipoise(this.trimSelection() == "toEquipoise");
+				this.setCreatePs();
 			});
 			// Initialize trimSelection
 			if (this.analysis.trimByPs()) {
@@ -48,13 +50,14 @@ define([
 				this.trimSelection("none")
 			}
 			
-			this.matchStratifySelection = ko.observable();
 			this.matchStratifySelection.subscribe(newValue => {
 				this.analysis.matchOnPs(this.matchStratifySelection() == "matchOnPs");
 				this.analysis.matchOnPsAndCovariates(this.matchStratifySelection() == "matchOnPsAndCovariates");
 				this.analysis.stratifyByPs(this.matchStratifySelection() == "stratifyByPs");
 				this.analysis.stratifyByPsAndCovariates(this.matchStratifySelection() == "stratifyOnPsAndCovariates");
-			})
+				this.setCreatePs();
+			});
+
 			// Initialize matchStratifySelection
 			if (this.analysis.matchOnPs()) {
 				this.matchStratifySelection("matchOnPs")
@@ -109,6 +112,12 @@ define([
 
 		togglePsCovariateDisplay() {
 			this.showPsCovariateDisplay(!this.showPsCovariateDisplay());
+		}
+		
+		setCreatePs() {
+			this.analysis.createPs(
+				!(this.matchStratifySelection() == "none" && this.trimSelection() == "none")
+			);
 		}
 	
 	}

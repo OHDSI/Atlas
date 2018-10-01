@@ -49,12 +49,21 @@ define(function (require, exports) {
 			});
 	}
 
+	function exportFullSpecification(id) {
+		return httpService.doGet(config.webAPIRoot + predictionEndpoint + id + "/export")
+			.catch((error) => {
+				console.log("Error: " + error);
+				authApi.handleAccessDenied(error);
+			});
+	}
+
     var api = {
 		getPredictionList: getPredictionList,
 		savePrediction: savePrediction,
 		copyPrediction: copyPrediction,
 		deletePrediction: deletePrediction,
 		getPrediction: getPrediction,
+		exportFullSpecification: exportFullSpecification,
 	};
 
 	return api;
