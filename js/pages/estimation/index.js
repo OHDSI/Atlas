@@ -14,10 +14,12 @@ define(
 
     const navUrl = ko.pureComputed(function () {
       let url = constants.apiPaths.browser();
-      if (appState.estimationAnalysis.current().id() != null && appState.estimationAnalysis.current().id() > 0) {
-        url = constants.apiPaths.ccaAnalysis(appState.estimationAnalysis.current().id());
-      } else {
-        url = constants.apiPaths.createCcaAnalysis();
+      if (appState.estimationAnalysis.current()) {
+        if (appState.estimationAnalysis.current().id() != null && appState.estimationAnalysis.current().id() > 0) {
+          url = constants.apiPaths.ccaAnalysis(appState.estimationAnalysis.current().id());
+        } else {
+          url = constants.apiPaths.createCcaAnalysis();
+        }  
       }
       return url;
     });
