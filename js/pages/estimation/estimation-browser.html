@@ -7,9 +7,7 @@
 		extra: `pull-right btn btn-sm btn-primary ${canCreateEstimation() ? '' : 'disabled'}`,
 	})">New Population Level Effect Estimation</span>
 
-	<!-- ko if: reference().length -->
-		<faceted-datatable data-bind="visible: loading()==false" params="orderColumn: 3, reference: reference, columns: columns, options:options, rowClick:rowClick"></faceted-datatable>
-	<!-- /ko-->
+	<faceted-datatable data-bind="visible: loading()==false" params="orderColumn: 3, reference: reference, columns: columns, options:options, rowClick:rowClick"></faceted-datatable>
 
 	<loading data-bind="visible:loading()" params="status: 'retrieving estimations'"></loading>
 </div>

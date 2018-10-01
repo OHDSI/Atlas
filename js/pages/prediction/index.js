@@ -15,7 +15,11 @@ define(
     const navUrl = ko.pureComputed(function () {
       let url = constants.apiPaths.browser();
       if (appState.predictionAnalysis.current()) {
-        url = constants.apiPaths.analysis(appState.predictionAnalysis.current().id());
+        if (appState.predictionAnalysis.current().id() != null && appState.predictionAnalysis.current().id() > 0) {
+          url = constants.apiPaths.analysis(appState.predictionAnalysis.current().id());
+        } else {
+          url = constants.apiPaths.createAnalysis();
+        }
       }
       return url;
     });
