@@ -262,7 +262,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		// model behaviors
 			this.onConceptSetTabRespositoryConceptSetSelected = (conceptSet) => {
 				this.showImportConceptSetModal(false);
-				this.model.currentCohortDefinition().expression().ConceptSets().push(new ConceptSet(ko.toJSON(conceptSet)));
+				this.model.currentCohortDefinition().expression().ConceptSets().push(new ConceptSet(ko.toJS(conceptSet)));
 				this.model.loadConceptSet(conceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
 			}
 
