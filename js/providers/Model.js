@@ -552,7 +552,7 @@ define(
 										cdsi.status = ko.observable(sourceInfo.status);
 										var date = new Date(sourceInfo.startTime);
 										cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
-										cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
+										cdsi.executionDuration = ko.observable(momentApi.formatDuration(sourceInfo.executionDuration));
 										var commaFormatted = d3.format(",");
 										// For backwards compatability, query personCount from cdm if not populated in sourceInfo
 										if (sourceInfo.personCount == null) {
