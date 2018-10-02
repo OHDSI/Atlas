@@ -48,20 +48,21 @@
 					<table class="pad-5" style="width:100%;">
 						<thead>
 							<th>Job Name</th>
-							<th>Progress</th>
+							<!--TODO - no progress support on server-side-->
+							<!--<th>Progress</th>-->
 							<th>Status</th>
 						</thead>
 						<tbody>
 							<!-- ko foreach: jobListing -->
 							<tr>
 								<td class="pad-5"><i class="fa fa-tasks"></i> <a data-bind="click:function() {$component.jobNameClick($data)}, text: $data.name" class="linkish"></a></td>
-								<td class="pad-5">
-									<div data-bind="if:$data.progress">
-										<div class="progress">
-											<div class="progress-bar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" role="progressbar" data-bind="style:{ width: $component.calculateProgress($data)}, text: $component.calculateProgress($data)"></div>
-										</div>
-									</div>
-								</td>
+								<!--<td class="pad-5">-->
+									<!--<div data-bind="if:$data.progress">-->
+										<!--<div class="progress">-->
+											<!--<div class="progress-bar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" role="progressbar" data-bind="style:{ width: $component.calculateProgress($data)}, text: $component.calculateProgress($data)"></div>-->
+										<!--</div>-->
+									<!--</div>-->
+								<!--</td>-->
 								<td class="pad-5" data-bind="html: status"></td>
 							</tr>
 							<!-- /ko -->
@@ -70,7 +71,6 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-sm btn-default" data-bind="click:clearJobNotifications">Stop Watching These Jobs</button>
 				<button type="button" data-bind="click:clearJobNotificationsPending" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
 			</div>
 		</div>
