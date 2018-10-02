@@ -2,8 +2,8 @@ define(function (require, exports) {
 
 	var NaiveBayesSettings = require("./modelSettings/NaiveBayesSettings");
 	var RandomForestSettings = require("./modelSettings/RandomForestSettings");
-	var MultilayerPerceptionModelSettings = require("./modelSettings/MultilayerPerceptionModelSettings");
-	var KNearestNeighborsSettings = require("./modelSettings/KNearestNeighborsSettings");
+	var MLPSettings = require("./modelSettings/MLPSettings");
+	var KNNSettings = require("./modelSettings/KNNSettings");
 	var GradientBoostingMachineSettings = require("./modelSettings/GradientBoostingMachineSettings");
 	var DecisionTreeSettings = require("./modelSettings/DecisionTreeSettings");
 	var AdaBoostSettings = require("./modelSettings/AdaBoostSettings");
@@ -15,10 +15,10 @@ define(function (require, exports) {
 			return "NaiveBayesSettings";
         } else if (data.hasOwnProperty("RandomForestSettings")) {
 			return "RandomForestSettings";
-		} else if (data.hasOwnProperty("MultilayerPerceptionModelSettings")) {
-			return "MultilayerPerceptionModelSettings";
-		} else if (data.hasOwnProperty("KNearestNeighborsSettings")) {
-			return "KNearestNeighborsSettings";
+		} else if (data.hasOwnProperty("MLPSettings")) {
+			return "MLPSettings";
+		} else if (data.hasOwnProperty("KNNSettings")) {
+			return "KNNSettings";
 		} else if (data.hasOwnProperty("GradientBoostingMachineSettings")) {
 			return "GradientBoostingMachineSettings";
 		} else if (data.hasOwnProperty("DecisionTreeSettings")) {
@@ -43,14 +43,14 @@ define(function (require, exports) {
                     RandomForestSettings: new exports.RandomForestSettings(data.RandomForestSettings)
                 };
                 break;
-            case 'MultilayerPerceptionModelSettings':
+            case 'MLPSettings':
                 return {
-                    MultilayerPerceptionModelSettings: new exports.MultilayerPerceptionModelSettings(data.MultilayerPerceptionModelSettings)
+                    MLPSettings: new exports.MLPSettings(data.MLPSettings)
                 };
                 break;
-            case 'KNearestNeighborsSettings':
+            case 'KNNSettings':
                 return {
-                    KNearestNeighborsSettings: new exports.KNearestNeighborsSettings(data.KNearestNeighborsSettings)
+                    KNNSettings: new exports.KNNSettings(data.KNNSettings)
                 };
                 break;
             case 'GradientBoostingMachineSettings':
@@ -88,8 +88,8 @@ define(function (require, exports) {
 	
 	exports.NaiveBayesSettings = NaiveBayesSettings;
 	exports.RandomForestSettings = RandomForestSettings;
-	exports.MultilayerPerceptionModelSettings = MultilayerPerceptionModelSettings;
-	exports.KNearestNeighborsSettings = KNearestNeighborsSettings;
+	exports.MLPSettings = MLPSettings;
+	exports.KNNSettings = KNNSettings;
 	exports.GradientBoostingMachineSettings = GradientBoostingMachineSettings;
 	exports.DecisionTreeSettings = DecisionTreeSettings;
 	exports.AdaBoostSettings = AdaBoostSettings;	
@@ -121,22 +121,22 @@ define(function (require, exports) {
             },
         },
         {
-            key: 'MultilayerPerceptionModelSettings',
+            key: 'MLPSettings',
             name: 'Multilayer Perception Model',
             action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('MultilayerPerceptionModelSettings');
+                var defaultValues = utils.getDefaultModelSettingsValueList('MLPSettings');
                 return {
-                    MultilayerPerceptionModelSettings: new MultilayerPerceptionModelSettings(defaultValues)
+                    MLPSettings: new MLPSettings(defaultValues)
                 };
             },
         },
         {
-            key: 'KNearestNeighborsSettings',
+            key: 'KNNSettings',
             name: 'K Nearest Neighbors',
             action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('KNearestNeighborsSettings');
+                var defaultValues = utils.getDefaultModelSettingsValueList('KNNSettings');
                 return {
-                    KNearestNeighborsSettings: new KNearestNeighborsSettings(defaultValues)
+                    KNNSettings: new KNNSettings(defaultValues)
                 };
             },
         },
@@ -217,7 +217,7 @@ define(function (require, exports) {
             modelSettings: []
         },
         {
-            name: 'MultilayerPerceptionModelSettings',
+            name: 'MLPSettings',
             modelSettings: [
                 {
                     setting: 'alpha',
@@ -234,7 +234,7 @@ define(function (require, exports) {
             ]
         },
         {
-            name: 'KNearestNeighborsSettings',
+            name: 'KNNSettings',
             id: 4,
             modelSettings: [
                 {

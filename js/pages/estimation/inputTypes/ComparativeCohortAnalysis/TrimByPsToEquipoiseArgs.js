@@ -1,6 +1,7 @@
-define(function (require, exports) {
-
-    var ko = require('knockout');
+define([
+	'knockout', 
+	'databindings',
+], function (ko) {
 
 	function TrimByPsToEquipoiseArgs(data) {
 		var self = this;

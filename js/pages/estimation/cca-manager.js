@@ -274,6 +274,7 @@ define([
 			this.loading(true);
 			this.estimationAnalysis(null);
 			this.selectedAnalysisId(null);
+			this.comparisons.removeAll();
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.estimationAnalysis()));
 			document.location = constants.apiPaths.browser();
 		}

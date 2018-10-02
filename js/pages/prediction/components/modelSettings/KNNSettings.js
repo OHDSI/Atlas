@@ -1,6 +1,6 @@
 define([
 	'knockout', 
-	'text!./KNearestNeighborsSettings.html',	
+	'text!./KNNSettings.html',	
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 ], function (
@@ -9,7 +9,7 @@ define([
 	ModelSettingsEditorComponent,
 	commonUtils,
 ) {
-	class KNearestNeighborsSettings extends ModelSettingsEditorComponent {
+	class KNNSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 			
@@ -21,5 +21,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('KNearestNeighborsSettings', KNearestNeighborsSettings, view);
+	return commonUtils.build('KNNSettings', KNNSettings, view);
 });

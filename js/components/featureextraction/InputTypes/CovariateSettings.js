@@ -1,4 +1,4 @@
-define(['knockout'], function (ko) {
+define(['knockout', 'databindings'], function (ko) {
 
 	function CovariateSettings(data) {
 		var self = this;
@@ -109,10 +109,10 @@ define(['knockout'], function (ko) {
         self.VisitConceptCountLongTerm = ko.observable(data.VisitConceptCountLongTerm === 0 ? false : data.VisitConceptCountLongTerm || false);
         self.VisitConceptCountMediumTerm = ko.observable(data.VisitConceptCountMediumTerm === 0 ? false : data.VisitConceptCountMediumTerm || false);
         self.VisitConceptCountShortTerm = ko.observable(data.VisitConceptCountShortTerm === 0 ? false : data.VisitConceptCountShortTerm || false);
-        self.longTermStartDays = ko.observable(data.longTermStartDays || -365);
-        self.mediumTermStartDays = ko.observable(data.mediumTermStartDays || -180);
-        self.shortTermStartDays = ko.observable(data.shortTermStartDays || -30);
-        self.endDays = ko.observable(data.endDays || 0);
+        self.longTermStartDays = ko.observable(data.longTermStartDays || -365).extend({ numeric: 0});
+        self.mediumTermStartDays = ko.observable(data.mediumTermStartDays || -180).extend({ numeric: 0});
+        self.shortTermStartDays = ko.observable(data.shortTermStartDays || -30).extend({ numeric: 0});
+        self.endDays = ko.observable(data.endDays || 0).extend({ numeric: 0});
         self.includedCovariateConceptIds = ko.observableArray((data.includedCovariateConceptIds && Array.isArray(data.includedCovariateConceptIds)) ? data.includedCovariateConceptIds : []);
         self.includedCovariateConceptSet = ko.observable(data.includedCovariateConceptSet || {});
         self.addDescendantsToInclude = ko.observable(data.addDescendantsToInclude === 0 ? false : data.addDescendantsToInclude  || false);

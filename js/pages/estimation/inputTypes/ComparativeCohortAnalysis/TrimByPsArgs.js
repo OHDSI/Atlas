@@ -1,4 +1,7 @@
-define(function (require, exports) {
+define([
+	'knockout', 
+	'databindings',
+], function (ko) {
 
     var ko = require('knockout');
 
@@ -6,7 +9,7 @@ define(function (require, exports) {
 		var self = this;
         data = data || {};
         
-		self.trimFraction = ko.observable(data.trimFraction || 0.05);
+		self.trimFraction = ko.observable(data.trimFraction || 0.05).extend({ numeric: 2});
         self.attr_class = data.attr_class || "args";		
 	}
 	

@@ -85,7 +85,7 @@ define([
 			this.modelCovarPopTuple = ko.observableArray();
 			this.fullAnalysisList = ko.observableArray();
 			this.showCohortSelector = ko.observable(false);
-			this.defaultCovariateSettings = null;
+			this.defaultCovariateSettings = constants.defaultNontemporalCovariates;
 			this.defaultTemporalCovariateSettings = null;
 			this.fullSpecification = ko.observable(null);
 			this.isExporting = ko.observable(false);
@@ -224,6 +224,8 @@ define([
 			this.loading(true);
 			this.patientLevelPredictionAnalysis(null);
 			this.selectedAnalysisId(null);
+			this.targetCohorts.removeAll();
+			this.outcomeCohorts.removeAll();
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
 			document.location = constants.apiPaths.browser();
 		}
@@ -489,8 +491,8 @@ define([
 		}
 		
 		init() {
-			FeatureExtractionService.getDefaultCovariateSettings().then(({ data }) => {
-				this.defaultCovariateSettings = data;
+			//FeatureExtractionService.getDefaultCovariateSettings().then(({ data }) => {
+			//	this.defaultCovariateSettings = data;
 				// This will be needed for temporal covariates
 				//FeatureExtractionService.getDefaultCovariateSettings(true).then(({ data }) => {
 				//	this.defaultTemporalCovariateSettings = data;
@@ -503,7 +505,7 @@ define([
 					this.setAnalysisSettingsLists();		
 					this.loading(false);
 				}
-			});
+			//});
 		}
 
 		computeCartesian() {

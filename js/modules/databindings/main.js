@@ -17,4 +17,5 @@ define(function (require) {
 	var tooltipBinding = require("./tooltipBinding");
 	var chart = require('./chart');
 	var bootstrapCollapsable = require('./bootstrapCollapsable');
+	var numericExtender = require('./numericExtender');
 });

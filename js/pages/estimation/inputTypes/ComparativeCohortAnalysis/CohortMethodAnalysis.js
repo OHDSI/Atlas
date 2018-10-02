@@ -36,7 +36,6 @@ define(function (require, exports) {
         self.stratifyByPsArgs = new StratifyByPsArgs(data.stratifyByPsArgs);
         self.stratifyByPsAndCovariates = ko.observable(data.stratifyByPsAndCovariates || false);
         self.stratifyByPsAndCovariatesArgs = new StratifyByPsAndCovariatesArgs(data.stratifyByPsAndCovariatesArgs);
-        self.computeCovariateBalance = ko.observable(data.computeCovariateBalance || false);
         self.fitOutcomeModel = ko.observable(data.fitOutcomeModel || true);
         self.fitOutcomeModelArgs = new FitOutcomeModelArgs(data.fitOutcomeModelArgs);
         self.attr_class = data.attr_class || "cmAnalysis";

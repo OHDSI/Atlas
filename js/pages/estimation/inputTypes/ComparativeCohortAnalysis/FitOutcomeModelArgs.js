@@ -10,7 +10,7 @@ define(function (require, exports) {
         
         self.modelType = ko.observable(data.modelType || "cox");
         self.stratified = ko.observable(data.stratified || true);
-        self.useCovariates = ko.observable(data.useCovariates || true);
+        self.useCovariates = ko.observable(data.useCovariates || false);
         self.inversePtWeighting = ko.observable(data.inversePtWeighting || false);
         self.interactionCovariateIds = (data.interactionCovariateIds && Array.isArray(data.interactionCovariateIds)) ? data.interactionCovariateIds : [];
         self.excludeCovariateIds = (data.excludeCovariateIds && Array.isArray(data.excludeCovariateIds)) ? data.excludeCovariateIds : [];

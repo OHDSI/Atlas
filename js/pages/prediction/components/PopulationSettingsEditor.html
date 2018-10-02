@@ -7,9 +7,21 @@
     </div>
 </div>
 <div>
+    <label>Add exposure days to start?</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.populationSettings.addExposureDaysToStart"></select>
+    </div>
+</div>
+<div>
     <label>Define the time-at-risk window end:</label>
     <div class="input-group">
         <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.populationSettings.riskWindowEnd, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.riskWindowEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from cohort start date
+    </div>
+</div>
+<div>
+    <label>Add exposure days to end?</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.populationSettings.addExposureDaysToEnd"></select>
     </div>
 </div>
 <div>
@@ -40,18 +52,6 @@
     <label>Include people with outcomes who are not observed for the whole at risk period?</label>
     <div class="input-group">
         <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.populationSettings.includeAllOutcomes"></select>
-    </div>
-</div>
-<div>
-    <label>Add exposure days to start?</label>
-    <div class="input-group">
-        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.populationSettings.addExposureDaysToStart"></select>
-    </div>
-</div>
-<div>
-    <label>Add exposure days to end?</label>
-    <div class="input-group">
-        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.populationSettings.addExposureDaysToEnd"></select>
     </div>
 </div>
 <div>

@@ -23,6 +23,8 @@ define(['knockout'], function (ko) {
         self.selectorType = ko.observable(data.selectorType === 0 ? "auto" : data.selectorType || "auto");
         self.initialBound = ko.observable(data.initialBound === 0 ? 2 : data.initialBound || 2);
         self.maxBoundCount = ko.observable(data.maxBoundCount === 0 ? 5 : data.maxBoundCount || 5);
+        self.autoSearch = ko.observable(data.autoSearch === 0 ? true : data.autoSearch || true);
+        self.algorithm = ko.observable(data.algorithm == null ? "ccd" : data.algorithm);
         self.attr_class = data.attr_class || "cyclopsControl";
 	}
 	

@@ -165,7 +165,10 @@
                       </li>
                     </ul>
                   </div>
-                  <div data-bind="if: $component.specificationValid()">
+                  <div data-bind="if: $component.dirtyFlag().isDirty()">
+                    You must save your analysis before you can perform a download.
+                  </div>    
+                  <div data-bind="if: $component.specificationValid() && !($component.dirtyFlag().isDirty())">
                       Please click the button below to view the full study specifications. Once reviewed, scroll down to download the study package.
                       <button type="button" class="btn btn-primary btn-sm" data-bind="click: computeCartesian, enabled: !loadingDownload">Click here to review the full study specifications</button>
                       <br/>

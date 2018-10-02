@@ -2,7 +2,7 @@ define(function (require, exports) {
 
     var ko = require('knockout');
 
-	function KNearestNeighborsSettings(data) {
+	function KNNSettings(data) {
 		var self = this;
         data = data || {};
 
@@ -10,5 +10,5 @@ define(function (require, exports) {
         self.indexFolder = ko.observable(data.indexFolder || null);
     }
 	
-	return KNearestNeighborsSettings;
+	return KNNSettings;
 });
