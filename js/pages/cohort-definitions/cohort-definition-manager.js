@@ -954,7 +954,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				});
 				conceptSet.expression.items.valueHasMutated();
 				this.clearImportConceptSetJson();
-				this.conceptSetTabMode(cohortConst.conceptSetTabModes.details);
 			};
 
 			appendConcepts(data) {
