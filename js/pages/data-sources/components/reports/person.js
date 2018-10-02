@@ -2,7 +2,8 @@ define([
 	'knockout',
 	'text!./person.html',
 	'd3',
-	'utils/CommonUtils',
+    'atlascharts',
+    'utils/CommonUtils',
 	'utils/ChartUtils',
 	'pages/data-sources/classes/Report',
 	'providers/Component',
@@ -13,7 +14,8 @@ define([
 	ko,
 	view,
 	d3,
-	commonUtils,
+    atlascharts,
+    commonUtils,
 	ChartUtils,
 	Report,
 	Component
@@ -42,11 +44,12 @@ define([
 		parseData({ data }) {
 			if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
 				var histData = {};
-				histData.intervalSize = 1;
-				histData.min = data.yearOfBirthStats[0].minValue;
-				histData.max = data.yearOfBirthStats[0].maxValue;
-				histData.data = (ChartUtils.normalizeArray(data.yearOfBirth));
-				this.yearHistogramData(ChartUtils.mapHistogram(histData));
+				histData.INTERVAL_SIZE = 1;
+				histData.OFFSET = data.yearOfBirthStats[0].minValue;
+				let mappedHistData = data.yearOfBirth.map(each => ({ INTERVAL_INDEX: each.intervalIndex, COUNT_VALUE: each.countValue }));
+				histData.DATA = ChartUtils.normalizeArray(mappedHistData);
+				histData.INTERVALS = data.yearOfBirth.length;
+				this.yearHistogramData(atlascharts.histogram.mapHistogram(histData));
 			}
 
 			this.genderData(ChartUtils.mapConceptData(data.gender));

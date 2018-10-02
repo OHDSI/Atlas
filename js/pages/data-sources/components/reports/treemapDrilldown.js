@@ -2,7 +2,8 @@ define([
 	'knockout',
 	'text!./treemapDrilldown.html',
 	'd3',
-	'utils/CommonUtils',
+    'atlascharts',
+    'utils/CommonUtils',
 	'utils/ChartUtils',
 	'const',
 	'pages/data-sources/classes/Report',
@@ -20,7 +21,8 @@ define([
 	ko,
 	view,
 	d3,
-	commonUtils,
+    atlascharts,
+    commonUtils,
 	ChartUtils,
 	constants,
 	Report,
@@ -178,20 +180,19 @@ define([
 					for (let i in freqData.yNumPersons) {
 						totalCnt += freqData.yNumPersons[i];
 					}
-					frequencyHistData.countValue = freqData.yNumPersons.slice();
-					frequencyHistData.intervalIndex = freqData.xCount.slice();
-					frequencyHistData.percentValue = freqData.yNumPersons.map(function (value) {
+					frequencyHistData.COUNT_VALUE = freqData.yNumPersons.slice();
+					frequencyHistData.INTERVAL_INDEX = freqData.xCount.slice();
+					frequencyHistData.PERCENT_VALUE = freqData.yNumPersons.map(function (value) {
 						return (value / totalCnt) * 100;
 					});
-					frequencyHistogram.data = frequencyHistData;
-					frequencyHistogram.min = 0;
-					frequencyHistogram.max = 10;
-					frequencyHistogram.intervals = 10;
-					frequencyHistogram.intervalSize = 1;
+					frequencyHistogram.DATA = frequencyHistData;
+					frequencyHistogram.OFFSET = 0;
+					frequencyHistogram.INTERVALS = frequencyHistData.INTERVAL_INDEX.length;
+					frequencyHistogram.INTERVAL_SIZE = 1;
 					const yScaleMax = (Math.floor((Math.max.apply(null, freqData.yNumPersons) + 5) / 10) + 1) * 10;
 					this.chartFormats.frequencyDistribution.yMax = yScaleMax;
 					this.chartFormats.frequencyDistribution.xLabel = `Count ('x' or more ${report}s)`;
-					const freqHistData = ChartUtils.mapHistogram(frequencyHistogram);
+					const freqHistData = atlascharts.histogram.mapHistogram(frequencyHistogram);
 					this.frequencyDistributionData(freqHistData);
 				}
 			}
