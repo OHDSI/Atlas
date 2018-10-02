@@ -175,37 +175,7 @@ define(
   
         return obj;
       };
-      
-      static normalizeDataframe(dataframe) {
-        // rjson serializes dataframes with 1 row as single element properties.  This function ensures fields are always arrays.
-        var keys = d3.keys(dataframe);
-        keys.forEach(function (key) {
-          if (!(dataframe[key] instanceof Array)) {
-            dataframe[key] = [dataframe[key]];
-          }
-        });
-        return dataframe;
-      };
-  
-      static mapHistogram(histogramData) {
-        // result is an array of arrays, each element in the array is another array containing information about each bar of the histogram.
-        var result = new Array();
-        if (!histogramData.data || histogramData.data.empty) {
-          return result;
-        }
-        var intervalSize = histogramData.intervalSize;
-  
-        for (var i = 0; i < histogramData.data.intervalIndex.length; i++) {
-          var target = new Object();
-          target.x = 1.0 * histogramData.data.intervalIndex[i] * intervalSize;
-          target.dx = intervalSize;
-          target.y = histogramData.data.countValue[i] || 0;
-          result.push(target);
-        }
-  
-        return result;
-      };
-  
+
       static mapMonthYearDataToSeries(data, options) {
         var defaults = {
           dateField: "x",
