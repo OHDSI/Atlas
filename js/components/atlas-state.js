@@ -20,19 +20,6 @@ define(['knockout', 'lscache', 'job/jobDetail', 'assets/ohdsi.util'], function (
 		}
 	}
 
-	// job listing notification management
-	var jobListingCacheKey = "atlas:jobListing";
-	var jobListingCache = cache.get(jobListingCacheKey);
-	if (jobListingCache) {
-		jobListingCache.forEach(j => {
-			state.jobListing.push(new jobDetail(j));
-		})
-	}
-
-	state.jobListing.subscribe(function (data) {
-		cache.set(jobListingCacheKey, ko.toJSON(data));
-	});
-
 	// shared concept selection state
 	state.selectedConceptsIndex = {};
 	state.selectedConcepts = ko.observableArray(null);
