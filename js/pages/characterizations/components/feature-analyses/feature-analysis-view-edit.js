@@ -92,7 +92,7 @@ define([
         }
 
         isUpdatePermittedResolver() {
-            return ko.computed(() => PermissionService.isPermittedUpdateFa(this.featureId()));
+            return ko.computed(() => this.featureId() === 0 || PermissionService.isPermittedUpdateFa(this.featureId()));
         }
 
         isDeletePermittedResolver(id) {
@@ -203,7 +203,7 @@ define([
                 const newConceptSet = new ConceptSet({
                     id: newId,
                     name: conceptSet.name,
-                    expression: result
+                    expression: result.data
                 });
                 featureCriteria.conceptSets([...featureCriteria.conceptSets(), newConceptSet]);
                 context.conceptSetId(newConceptSet.id);
