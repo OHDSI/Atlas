@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./manager.html',
-	'../PathwayService',
-	'../PermissionService',
+	'../services/PathwayService',
+	'../services/PermissionService',
 	'../PathwayAnalysis',
 	'atlas-state',
 	'appConfig',

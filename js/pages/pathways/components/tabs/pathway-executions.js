@@ -1,7 +1,7 @@
 define([
 	'knockout',
-	'../../PathwayService',
-	'../../PermissionService',
+	'../../services/PathwayService',
+	'../../services/PermissionService',
 	'../../const',
 	'text!./pathway-executions.html',
 	'appConfig',
