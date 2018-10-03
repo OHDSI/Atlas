@@ -112,7 +112,11 @@ define([
         getJobURL(n) {
             switch (n.jobInstance.name) {
                 case "generateCohort":
-                    return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation'
+                    return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation';
+                case "cca":
+                    return 'estimation/' + n.jobParameters.cohortId;
+                case 'PLP':
+                    return 'plp/' + n.jobParameters.cohortId;
             }
             return null;
         }
