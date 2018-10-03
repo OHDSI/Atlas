@@ -9,8 +9,8 @@ define([
 		var self = this;
         data = data || {};
         
-		self.trimFraction = ko.observable(data.trimFraction || 0.05).extend({ numeric: 2});
-        self.attr_class = data.attr_class || "args";		
+		self.trimFraction = ko.observable(data.trimFraction === 0 ? 0 : data.trimFraction || 0.05).extend({ numeric: 2});
+        self.attr_class = data.attr_class || "args";
 	}
 	
 	return TrimByPsArgs;

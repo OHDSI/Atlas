@@ -35,7 +35,7 @@
                       <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'predictions' }, click: function() {$component.specificationPillMode('predictions') };"><a>Prediction Problem Settings</a></li>
                       <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'analysisSettings' }, click: function() {$component.specificationPillMode('analysisSettings') };"><a>Analysis Settings</a></li>
                       <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'executionSettings' }, click: function() {$component.specificationPillMode('executionSettings') };"><a>Execution Settings</a></li>
-                      <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'evaluationSettings' }, click: function() {$component.specificationPillMode('evaluationSettings') };"><a>Evaluation Settings</a></li>
+                      <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'trainingSettings' }, click: function() {$component.specificationPillMode('trainingSettings') };"><a>Training Settings</a></li>
                     </ul>        
                   </div>
               </div>
@@ -170,7 +170,7 @@
                   </div>
               </div>
             </div>
-            <div role="tabpanel" data-bind="visible: $component.specificationPillMode() == 'all' || $component.specificationPillMode() == 'evaluationSettings'" class="tab-pane">
+            <div role="tabpanel" data-bind="visible: $component.specificationPillMode() == 'all' || $component.specificationPillMode() == 'trainingSettings'" class="tab-pane">
               <div class="paddedWrapper">
                 <div class="panel panel-primary">
                   <div class="panel-heading">
@@ -188,7 +188,7 @@
         <div class="paddedWrapper">
           <ul class="nav nav-pills">
             <li role="presentation" data-bind="css: {active: $component.utilityPillMode() == 'download' }, click: function() {$component.utilityPillMode('download') };"><a>Download</a></li>
-            <li role="presentation" data-bind="css: {active: $component.utilityPillMode() == 'import' }, click: function() {$component.utilityPillMode('import') };"><a>Import</a></li>
+            <!--<li role="presentation" data-bind="css: {active: $component.utilityPillMode() == 'import' }, click: function() {$component.utilityPillMode('import') };"><a>Import</a></li>-->
             <li role="presentation" data-bind="css: {active: $component.utilityPillMode() == 'export' }, click: function() {$component.utilityPillMode('export') };"><a>Export</a></li>
           </ul>
           <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'download'" class="tab-pane">
@@ -258,7 +258,7 @@
                           <div>
                               <label>Please provide a name for the study package:</label>
                               <div class="input-group">
-                                  <input class="form-control" type="text" data-bind="textInput: $component.patientLevelPredictionAnalysis().packageName" />
+                                  <input class="form-control" type="text" data-bind="textInput: $component.packageName" />
                               </div>    
                           </div>                        
                           <div style="padding-top: 10px;">
@@ -270,10 +270,10 @@
               </div>
             </div>
           </div>
-          <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'import'" class="tab-pane">
+          <!--<div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'import'" class="tab-pane">
             <div class="paddedWrapper">
               import
-            </div>
+            </div>-->
           </div>
           <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'export'" class="tab-pane">
             <div class="paddedWrapper">

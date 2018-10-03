@@ -49,14 +49,6 @@ define([
 			} else {
 				this.trimSelection("none")
 			}
-			
-			this.matchStratifySelection.subscribe(newValue => {
-				this.analysis.matchOnPs(this.matchStratifySelection() == "matchOnPs");
-				this.analysis.matchOnPsAndCovariates(this.matchStratifySelection() == "matchOnPsAndCovariates");
-				this.analysis.stratifyByPs(this.matchStratifySelection() == "stratifyByPs");
-				this.analysis.stratifyByPsAndCovariates(this.matchStratifySelection() == "stratifyOnPsAndCovariates");
-				this.setCreatePs();
-			});
 
 			// Initialize matchStratifySelection
 			if (this.analysis.matchOnPs()) {
@@ -71,12 +63,23 @@ define([
 				this.matchStratifySelection("none")
 			}
 
+			// Set the subscription
+			this.matchStratifySelection.subscribe(newValue => {
+				this.analysis.matchOnPs(this.matchStratifySelection() == "matchOnPs");
+				this.analysis.matchOnPsAndCovariates(this.matchStratifySelection() == "matchOnPsAndCovariates");
+				this.analysis.stratifyByPs(this.matchStratifySelection() == "stratifyByPs");
+				this.analysis.stratifyByPsAndCovariates(this.matchStratifySelection() == "stratifyOnPsAndCovariates");
+				this.setCreatePs();
+			});
+
+
 			if (this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet().id === undefined) {
 				this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet(new ConceptSet());
 			}
 			if (this.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet().id === undefined) {
 				this.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet(new ConceptSet());
 			}
+			
 		}
 
 		toggleControlDisplay() {
@@ -115,9 +118,11 @@ define([
 		}
 		
 		setCreatePs() {
-			this.analysis.createPs(
-				!(this.matchStratifySelection() == "none" && this.trimSelection() == "none")
-			);
+			if (this.matchStratifySelection() && this.trimSelection()) {				
+				this.analysis.createPs(
+					!(this.matchStratifySelection() == "none" && this.trimSelection() == "none")
+				);
+			}
 		}
 	
 	}

@@ -15,6 +15,7 @@ define([
 	'./inputTypes/PatientLevelPredictionAnalysis',
 	'./inputTypes/ModelSettings',
 	'./inputTypes/CreateStudyPopulationArgs',
+	'./inputTypes/PredictionCovariateSettings',
 	'featureextraction/InputTypes/CovariateSettings',
 	'featureextraction/InputTypes/TemporalCovariateSettings',
 	'./inputTypes/ConceptSet',
@@ -45,6 +46,7 @@ define([
 	PatientLevelPredictionAnalysis,
 	ModelSettings,
 	CreateStudyPopulationArgs,
+	PredictionCovariateSettings,
 	CovariateSettings,
 	TemporalCovariateSettings,
 	ConceptSet,
@@ -90,9 +92,10 @@ define([
 			this.fullSpecification = ko.observable(null);
 			this.isExporting = ko.observable(false);
 			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
+			this.packageName = ko.observable();
 
 			this.canDelete = ko.pureComputed(() => {
-				return authApi.isPermittedDeletePlp(this.selectedAnalysisId());
+				return authApi.isPermittedDeletePlp(this.selectedAnalysisId())  && this.selectedAnalysisId() > 0;
 			});
 
 			this.canCopy = ko.pureComputed(() => {
@@ -133,7 +136,7 @@ define([
 			});
 
 			this.validPackageName = ko.pureComputed(() => {
-				return (this.patientLevelPredictionAnalysis().packageName() && this.patientLevelPredictionAnalysis().packageName().length > 0)
+				return (this.packageName() && this.packageName().length > 0)
 			});
 
 			this.removeTargetCohort = (data, obj, tableRow, rowIndex) => {
@@ -237,6 +240,9 @@ define([
 			PredictionService.deletePrediction(this.selectedAnalysisId()).then((analysis) => {
 				this.loading(true);
 				this.patientLevelPredictionAnalysis(null);
+				this.selectedAnalysisId(null);
+				this.targetCohorts.removeAll();
+				this.outcomeCohorts.removeAll();
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
 				document.location = constants.apiPaths.browser()
 			});
@@ -277,29 +283,29 @@ define([
 		}
 
 		prepForSave() {
-			var outcomeIds = [];
-			this.outcomeCohorts().forEach(o => { outcomeIds.push(o.id) });
-			this.patientLevelPredictionAnalysis().targetIds.removeAll();
-			this.patientLevelPredictionAnalysis().outcomeIds.removeAll();
-			this.patientLevelPredictionAnalysis().cohortDefinitions.removeAll();
-			this.patientLevelPredictionAnalysis().conceptSets.removeAll();
-			this.patientLevelPredictionAnalysis().conceptSetCrossReference.removeAll();
+			var specification = ko.toJS(this.patientLevelPredictionAnalysis());
+			specification.targetIds = [];
+			specification.outcomeIds = [];
+			specification.cohortDefinitions = [];
+			specification.conceptSets = [];
+			specification.conceptSetCrossReference = [];
+			specification.packageName = this.packageName();
 			this.outcomeCohorts().forEach(o => {
-				this.patientLevelPredictionAnalysis().outcomeIds.push(o.id);
-				this.patientLevelPredictionAnalysis().cohortDefinitions.push(o);
+				specification.outcomeIds.push(o.id);
+				specification.cohortDefinitions.push(o);
 			});
 			this.targetCohorts().forEach(t => {
-				this.patientLevelPredictionAnalysis().targetIds.push(t.id);
-				this.patientLevelPredictionAnalysis().cohortDefinitions.push(t);
+				specification.targetIds.push(t.id);
+				specification.cohortDefinitions.push(t);
 			});
-			this.patientLevelPredictionAnalysis().covariateSettings().forEach((cs, index) => {
-				if (cs.includedCovariateConceptSet() !== null && cs.includedCovariateConceptSet().id > 0) {
-					if (this.patientLevelPredictionAnalysis().conceptSets().filter(element => element.id === cs.includedCovariateConceptSet().id).length == 0) {
-						this.patientLevelPredictionAnalysis().conceptSets.push(cs.includedCovariateConceptSet());
+			specification.covariateSettings.forEach((cs, index) => {
+				if (cs.includedCovariateConceptSet !== null && cs.includedCovariateConceptSet.id > 0) {
+					if (specification.conceptSets.filter(element => element.id === cs.includedCovariateConceptSet.id).length == 0) {
+						specification.conceptSets.push(cs.includedCovariateConceptSet);
 					}
-					this.patientLevelPredictionAnalysis().conceptSetCrossReference.push(
+					specification.conceptSetCrossReference.push(
 						new ConceptSetCrossReference({
-							conceptSetId: cs.includedCovariateConceptSet().id,
+							conceptSetId: cs.includedCovariateConceptSet.id,
 							targetName: constants.conceptSetCrossReference.covariateSettings.targetName,
 							targetIndex: index,
 							propertyName: constants.conceptSetCrossReference.covariateSettings.propertyName.includedCovariateConcepts,
@@ -307,26 +313,28 @@ define([
 					);
 
 				}
-				if (cs.excludedCovariateConceptSet() !== null && cs.excludedCovariateConceptSet().id > 0) {
-					if (this.patientLevelPredictionAnalysis().conceptSets().filter(element => element.id === cs.excludedCovariateConceptSet().id).length == 0) {
-						this.patientLevelPredictionAnalysis().conceptSets.push(cs.excludedCovariateConceptSet());
+				if (cs.excludedCovariateConceptSet !== null && cs.excludedCovariateConceptSet.id > 0) {
+					if (specification.conceptSets.filter(element => element.id === cs.excludedCovariateConceptSet.id).length == 0) {
+						specification.conceptSets.push(cs.excludedCovariateConceptSet);
 					}
-					this.patientLevelPredictionAnalysis().conceptSetCrossReference.push(
+					specification.conceptSetCrossReference.push(
 						new ConceptSetCrossReference({
-							conceptSetId: cs.excludedCovariateConceptSet().id,
+							conceptSetId: cs.excludedCovariateConceptSet.id,
 							targetName: constants.conceptSetCrossReference.covariateSettings.targetName,
 							targetIndex: index,
 							propertyName: constants.conceptSetCrossReference.covariateSettings.propertyName.excludedCovariateConcepts,
 						})
 					);
 				}
+
+				cs = ko.toJS(new CovariateSettings(cs));
 			});
 
 			return {
 				id: this.patientLevelPredictionAnalysis().id(),
 				name: this.patientLevelPredictionAnalysis().name(),
 				description: this.patientLevelPredictionAnalysis().description(),
-				specification: ko.toJSON(this.patientLevelPredictionAnalysis()),
+				specification: ko.toJSON(specification),
 			};
 		}
 
@@ -368,7 +376,7 @@ define([
 		// For later when we support temporal and non-temporal covariate settings
 		/*
 		addCovariateSettings(setting) {
-			const covariateSettings = (setting == 'Temporal') ? new TemporalCovariateSettings(this.defaultTemporalCovariateSettings) : new CovariateSettings(this.defaultCovariateSettings);
+			const covariateSettings = (setting == 'Temporal') ? new TemporalCovariateSettings(this.defaultTemporalCovariateSettings) : new PredictionCovariateSettings(this.defaultCovariateSettings);
 			const headingPrefix = (setting == 'Temporal') ? 'Temporal ' : '';
 			const editorNamePrefix = (setting == 'Temporal') ? 'temporal-' : '';
 			this.patientLevelPredictionAnalysis().covariateSettings.push(
@@ -386,7 +394,7 @@ define([
 		*/
 
 		addCovariateSettings() {
-			const covariateSettings = new CovariateSettings(this.defaultCovariateSettings);
+			const covariateSettings = new PredictionCovariateSettings(this.defaultCovariateSettings);
 			this.patientLevelPredictionAnalysis().covariateSettings.push(
 				covariateSettings
 			);
@@ -440,6 +448,7 @@ define([
 			this.patientLevelPredictionAnalysis().id(header.id);
 			this.patientLevelPredictionAnalysis().name(header.name);
 			this.patientLevelPredictionAnalysis().description(header.description);
+			this.packageName(header.packageName);
 			this.setUserInterfaceDependencies();
 			this.setAnalysisSettingsLists();	
 			this.fullSpecification(null);

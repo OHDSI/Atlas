@@ -6,7 +6,7 @@ define(function (require, exports) {
 		var self = this;
         data = data || {};
         
-        self.id = ko.observable(data.id || null);
+        self.id = ko.observable(data.id === 0 ? 0 : data.id || null);
         self.description = ko.observable(data.description || null);
 	}
 	

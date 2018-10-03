@@ -4,7 +4,7 @@ define(function (require, exports) {
     var CohortDefinition = require('../../../components/cohortbuilder/CohortDefinition');
     var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
     var ConceptSetCrossReference = require('./ConceptSetCrossReference');
-    var CovariateSettings = require('featureextraction/InputTypes/CovariateSettings');
+    var CovariateSettings = require('./PredictionCovariateSettings');
     var CreateStudyPopulationArgs = require("./CreateStudyPopulationArgs");
     var GetDbPlpDataArgs = require('./GetDbPlpDataArgs');
     var ModelSettings = require('./ModelSettings');

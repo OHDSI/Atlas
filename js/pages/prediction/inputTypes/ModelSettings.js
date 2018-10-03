@@ -101,12 +101,12 @@ define(function (require, exports) {
 
     exports.options = [
         {
-            key: 'NaiveBayesSettings',
-            name: 'Naive Bayes',
+            key: 'LassoLogisticRegressionSettings',
+            name: 'Lasso Logistic Regression',
             action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('NaiveBayesSettings');
+                var defaultValues = utils.getDefaultModelSettingsValueList('LassoLogisticRegressionSettings');
                 return {
-                    NaiveBayesSettings: new NaiveBayesSettings(defaultValues)
+                    LassoLogisticRegressionSettings: new LassoLogisticRegressionSettings(defaultValues)
                 };
             },
         },
@@ -117,6 +117,46 @@ define(function (require, exports) {
                 var defaultValues = utils.getDefaultModelSettingsValueList('RandomForestSettings');
                 return {
                     RandomForestSettings: new RandomForestSettings(defaultValues)
+                };
+            },
+        },
+        {
+            key: 'GradientBoostingMachineSettings',
+            name: 'Gradient Boosting Machine',
+            action: () => {
+                var defaultValues = utils.getDefaultModelSettingsValueList('GradientBoostingMachineSettings');
+                return {
+                    GradientBoostingMachineSettings: new GradientBoostingMachineSettings(defaultValues)
+                };
+            },
+        },
+        {
+            key: 'AdaBoostSettings',
+            name: 'Ada Boost',
+            action: () => {
+                var defaultValues = utils.getDefaultModelSettingsValueList('AdaBoostSettings');
+                return {
+                    AdaBoostSettings: new AdaBoostSettings(defaultValues)
+                };
+            },
+        },
+        {
+            key: 'DecisionTreeSettings',
+            name: 'Decision Tree',
+            action: () => {
+                var defaultValues = utils.getDefaultModelSettingsValueList('DecisionTreeSettings');
+                return {
+                    DecisionTreeSettings: new DecisionTreeSettings(defaultValues)
+                };
+            },
+        },
+        {
+            key: 'NaiveBayesSettings',
+            name: 'Naive Bayes',
+            action: () => {
+                var defaultValues = utils.getDefaultModelSettingsValueList('NaiveBayesSettings');
+                return {
+                    NaiveBayesSettings: new NaiveBayesSettings(defaultValues)
                 };
             },
         },
@@ -137,46 +177,6 @@ define(function (require, exports) {
                 var defaultValues = utils.getDefaultModelSettingsValueList('KNNSettings');
                 return {
                     KNNSettings: new KNNSettings(defaultValues)
-                };
-            },
-        },
-        {
-            key: 'GradientBoostingMachineSettings',
-            name: 'Gradient Boosting Machine',
-            action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('GradientBoostingMachineSettings');
-                return {
-                    GradientBoostingMachineSettings: new GradientBoostingMachineSettings(defaultValues)
-                };
-            },
-        },
-        {
-            key: 'DecisionTreeSettings',
-            name: 'Decision Tree',
-            action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('DecisionTreeSettings');
-                return {
-                    DecisionTreeSettings: new DecisionTreeSettings(defaultValues)
-                };
-            },
-        },
-        {
-            key: 'AdaBoostSettings',
-            name: 'Ada Boost',
-            action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('AdaBoostSettings');
-                return {
-                    AdaBoostSettings: new AdaBoostSettings(defaultValues)
-                };
-            },
-        },
-        {
-            key: 'LassoLogisticRegressionSettings',
-            name: 'Lasso Logistic Regression',
-            action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('LassoLogisticRegressionSettings');
-                return {
-                    LassoLogisticRegressionSettings: new LassoLogisticRegressionSettings(defaultValues)
                 };
             },
         },

@@ -265,17 +265,25 @@
         <table class="table table-bordered table-condensed">
             <thead>
                 <tr>
-                    <th>CHADS<sub>2</sub></th>
-                    <th>CHA<sub>2</sub>DS<sub>2</sub>VASc</th>
-                    <th>DCSI</th>
-                    <th>Charlson</th>
+                    <th>Index Score Type</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
+                    <td>CHADS<sub>2</sub></td>
                     <td><input type="checkbox" data-bind="checked: $component.covariateSettings.Chads2" /></td>
+                </tr>
+                <tr>
+                    <td>CHA<sub>2</sub>DS<sub>2</sub>VASc</td>
                     <td><input type="checkbox" data-bind="checked: $component.covariateSettings.Chads2Vasc" /></td>
+                </tr>
+                <tr>
+                    <td>DCSI</td>
                     <td><input type="checkbox" data-bind="checked: $component.covariateSettings.Dcsi" /></td>
+                </tr>
+                <tr>
+                    <td>Charlson</td>
                     <td><input type="checkbox" data-bind="checked: $component.covariateSettings.CharlsonIndex" /></td>
                 </tr>
             </tbody>
