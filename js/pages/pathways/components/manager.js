@@ -71,7 +71,7 @@ define([
 		}
 
 		selectTab(index, { key }) {
-			commonUtils.routeTo(`/pathways/${this.componentParams.analysisId()}/${key}`);
+			commonUtils.routeTo(commonUtils.getPathwaysUrl(this.componentParams.analysisId(), key));
 		}
 		
 		setupDesign(design) {
@@ -101,51 +101,38 @@ define([
 		}
 		
 
-		load(id) {
+		async load(id) {
 			if(this.dirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?"))
 				return;
 			
 			if (id < 1) {
 				this.setupDesign(new PathwayAnalysis());
 			} else {
-				this.loading(true);
-				PathwayService
-					.load(id)
-					.then(res => {
-						this.setupDesign(new PathwayAnalysis(res))
-						this.loading(false);
-					});
+				const analysis = await PathwayService.load(id);
+				this.setupDesign(new PathwayAnalysis(analysis));
+				this.loading(false);
 			}
 		}
 		
-		save() {
+		async save() {
 			if (!this.design().id) {
-				PathwayService
-					.create(this.design())
-					.then(res => {
-						this.dirtyFlag().reset();
-						commonUtils.routeTo(`pathways/${res.id}/design`);
-				});
+				const newAnalysis = await PathwayService.create(this.design());
+				this.dirtyFlag().reset();
+				commonUtils.routeTo(commonUtils.getPathwaysUrl(res.id, 'design'));
 			} else {
-				PathwayService
-					.save(this.design().id, this.design())
-					.then(res => {
-						this.setupDesign(new PathwayAnalysis(res));
-						this.loading(false);
-					});
+				const updatedAnalysis = await PathwayService.save(this.design().id, this.design());
+				this.setupDesign(new PathwayAnalysis(updatedAnalysis));
+				this.loading(false);
 			}
 		}
 
-		del() {
+		async del() {
 			if (confirm('Are you sure?')) {
 				this.loading(true);
-				PathwayService
-					.del(this.design().id)
-					.then(res => {
-						this.dirtyFlag().reset();					
-						this.loading(false);
-						this.close();
-					});
+				await PathwayService.del(this.design().id);
+				this.dirtyFlag().reset();					
+				this.loading(false);
+				this.close();
 			}
 		}
 

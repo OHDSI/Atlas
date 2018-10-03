@@ -6,9 +6,19 @@
 	&__col-cohort-name {
 		width: 80%;
 	}
-
+	
 	&__col-cohort-remove {
 		width: 10%;
+	}
+
+	&__col-cohort-name {
+		&-edit  span {
+			cursor: pointer;
+		}
+		
+		&-edit input {
+		width: 100%;
+		}		
 	}
 
 	&__modal-cohort-list {
@@ -21,14 +31,4 @@
 			padding-left: 1rem;
 		}
 	}
-	
-	&__table.edit span {
-		cursor: pointer;
-	}
-
-	&__table.edit input {
-		width: 100%;
-	}
-
-	
 }

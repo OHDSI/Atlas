@@ -70,10 +70,10 @@
 								<span class="name" data-bind="text: name, style: {backgroundColor: color}"></span>
 							</div>
 						</td>
-						<td>
+						<td data-bind="css: $component.classes('detail-table-col-remain')">
 							<span data-bind="text: $component.formatPct(remainPct)"></span>
 						</td>
-						<td>
+						<td data-bind="css: $component.classes('detail-table-col-diff')">
 							<span data-bind="text: $component.formatPct(diffPct)"></span>
 						</td>
 					</tr>

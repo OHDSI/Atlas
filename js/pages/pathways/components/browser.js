@@ -4,6 +4,7 @@ define([
 	'../const',
 	'appConfig',
 	'../PathwayService',
+	'../PermissionService',
 	'webapi/AuthAPI',
 	'providers/Component',
 	'utils/CommonUtils',
@@ -15,45 +16,39 @@ define([
 	constants,
 	config,
 	PathwayService,
+	PermissionService,
 	authApi,
 	Component,
 	commonUtils,
 	datatableUtils
 ) {
 	class PathwaysBrowser extends Component {
-    constructor(params) {
+		constructor(params) {
       super(params);      
       this.loading = ko.observable(false);
       this.config = config;
       this.analysisList = ko.observableArray();
-      this.isAuthenticated = authApi.isAuthenticated;
-      this.canRead = ko.pureComputed(() => {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedReadIRs()) || !config.userAuthenticationEnabled;
-      });
-      this.canCreate = ko.pureComputed(() => {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateIR()) || !config.userAuthenticationEnabled;
-      });
+
+			this.canList = PermissionService.isPermittedList;
+			this.canCreate = PermissionService.isPermittedCreate;
       
       // startup actions
       this.refresh();
     }
 
-		refresh() {
+		async refresh() {
 			this.loading(true);
-			PathwayService
-				.list()
-				.then(res => {
-					this.analysisList(res.content);
-					this.loading(false);
-				});
+			const analysisList = await PathwayService.list();
+			this.analysisList(analysisList.content);
+			this.loading(false);
 		}
 
 		newAnalysis() {
-			commonUtils.routeTo('/pathways/0/design');
+			commonUtils.routeTo(commonUtils.getPathwaysUrl(0, 'design'));
 		}
 		
 		onAnalysisSelected(d) {
-     commonUtils.routeTo(`/pathways/${d.id}/design`);
+     commonUtils.routeTo(commonUtils.getPathwaysUrl(d.id, 'design'));
     };
 		
 		get gridColumns()  {

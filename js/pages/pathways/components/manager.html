@@ -1,9 +1,7 @@
-<div data-bind="html: $component.template"></div>
-
-<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Cohort Pathway Analysis...'"></loading>
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading" params="status: 'Loading Cohort Pathway Analysis...'"></loading>
 
 <!-- ko if: design -->
-<div data-bind="css: classes()">
+<div data-bind="css: classes(), visible: !$component.loading()">
 	<div class="wrapperTitle">
 		<i class="fa fa-sitemap"></i> Cohort Pathways
 	</div>

@@ -1,7 +1,8 @@
 <heading-title params="name: 'Cohort Pathways', icon: 'sitemap', theme: 'dark'"></heading-title>
 
-<!-- ko if:$component.canRead -->
-<div class="paddedWrapper flexed">
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Pathway Analysis list...'"></loading>
+
+<div data-bind="if: $component.canList(), visible: !$component.loading()" class="paddedWrapper flexed">
 	<div>
 		<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newAnalysis, css: {disabled: !$component.canCreate()}">New Pathway Analysis</span>
 	</div>
@@ -16,9 +17,8 @@
 				}"></faceted-datatable>
 		</div>
 	</div>
-	<div data-bind="visible:loading()" class="loading">loading</div>
 </div>
-<!-- /ko -->
-<!-- ko ifnot:$component.canReadPathways -->
+
+<!-- ko ifnot:$component.canList() -->
 	<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
 <!-- /ko -->

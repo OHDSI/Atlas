@@ -93,7 +93,6 @@ require([
 				Router,
 				sharedState,
 			) => {
-				//ko.options.deferUpdates = true;
 				const app = new Application(new Model(), new Router());
 
 				app.bootstrap()
