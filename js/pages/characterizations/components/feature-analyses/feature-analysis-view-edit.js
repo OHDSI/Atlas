@@ -134,11 +134,12 @@ define([
             let parsedDesign;
             if (type === this.featureTypes.CRITERIA_SET) {
                 parsedDesign = design.map(c => {
+                    const cs = ko.observable(c.conceptSets.map(set => ({ ...set, name: ko.observable(set.name) })));
                     return {
                         id: c.id,
                         name: ko.observable(c.name),
-                        conceptSets: ko.observable(c.conceptSets),
-                        expression: ko.observable(new CriteriaGroup(c.expression, c.conceptSets)),
+                        conceptSets: cs,
+                        expression: ko.observable(new CriteriaGroup(c.expression, cs)),
                     }
                 });
             } else {
@@ -220,7 +221,7 @@ define([
             console.log('Saving: ', JSON.parse(ko.toJSON(this.data)));
 
             if (this.featureId() < 1) {
-                await FeatureAnalysisService.createFeatureAnalysis(this.data);
+                const res = await FeatureAnalysisService.createFeatureAnalysis(this.data);
                 commonUtils.routeTo('/cc/feature-analyses/' + res.id);
             } else {
                 const res = await FeatureAnalysisService.updateFeatureAnalysis(this.featureId(), this.data);

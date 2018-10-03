@@ -100,14 +100,11 @@ define([
             return PermissionService.isPermittedCreateFa();
         }
 
-        loadData() {
+        async loadData() {
             this.loading(true);
-            FeatureAnalysisService
-                .loadFeatureAnalysisList()
-                .then(res => {
-                    this.data(res.content);
-                    this.loading(false);
-                });
+            const res = await FeatureAnalysisService.loadFeatureAnalysisList();
+            this.data(res.content);
+            this.loading(false);
         }
 
         createFeature() {
