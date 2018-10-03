@@ -122,7 +122,7 @@ define([
                 case 'negative-controls':
                     return 'conceptset/' + n.jobParameters.concept_set_id + '/evidence';
                 case 'generateCohortCharacterization':
-                    return '/cc/characterizations' + n.jobParameters.cohort_characterization_id;
+                    return 'cc/characterizations' + n.jobParameters.cohort_characterization_id;
             }
             return null;
         }
