@@ -16,11 +16,13 @@ define([
 	'lodash',
 	'crossfilter',
 	'assets/ohdsi.util',
+	'./annotation/view-models/AnnotationWidget',
 	'd3-tip',
 	'databindings',
 	'faceted-datatable',
 	'bindings/profileChart',
 	'less!./profile-manager.less',
+	'less!./annotation/annotation.less',
 	'components/heading'
 ],
 	function (
@@ -40,6 +42,7 @@ define([
 		_,
 		crossfilter,
 		util,
+		AnnotationWidget
 	) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
@@ -303,11 +306,9 @@ define([
 					this.loadPerson();
 				}
 
-				//ANNOTATION
-				$('.annotation-toggle').on('click', function (evt) {
-					$('.profile-manager__annotation').toggleClass('open');
-				});
-
+				if (this.cohortDefinitionId()) {
+					this.annotationWidget = new AnnotationWidget(this.cohortDefinitionId(), this.personId(), this.sourceKey());
+				}
 			}
 
 			loadPerson () {

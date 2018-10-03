@@ -124,8 +124,98 @@
 			</div>
 		</div>
 	</div>
-	<div data-bind="css: classes({ element: 'annotation', extra: 'open' })">
-		<button type="button" class="annotation-toggle btn btn-primary btn-xs">Annotate</button>
-		<div class="annotation-content">Some content...</div>
+	<div data-bind="if: person">
+		<div data-bind="with: annotationWidget" style="height: 100%">
+			<div data-bind="if: isVisable" style="height: 100%">
+				<div data-bind="css: { open: annotationToggleState() == 'open' }" class="annotation-widget">
+					<button type="button" class="annotation-toggle btn btn-primary btn-xs" data-bind="click: toggleAnnotationPanel">Annotate</button>
+					<div data-bind="if: currentView() == 'annotationView'">
+						<div data-bind="with: annotationView">
+							<div class="annotation-view">
+								<div data-bind="with: setSelect">
+									<select data-bind="options: sets, optionsText: 'name', value: currentSet" class="form-control"></select>
+								</div>
+								<div data-bind="with: navigation">
+									<div class="btn-group btn-group-justified annotation-next-prev" disable role="group">
+									  <div class="btn-group" role="group">
+											<a class="btn btn-default" data-bind="attr: { href: prevLink(), disabled: !navigationLoaded() }, html: !navigationLoaded() ? 'Loading': '<span>Prev</span><span class=\'nav-subject-id\'>(#' + prevSubjectId() +')</span>'" role="button"></a>
+									  </div>
+									  <div class="btn-group" role="group">
+											<a class="btn btn-default" data-bind="attr: { href: nextLink(), disabled: !navigationLoaded() }, html: !navigationLoaded() ? 'Loading': '<span>Next</span><span class=\'nav-subject-id\'>(#' + nextSubjectId() +')</span>'" role="button">Next</a>
+									  </div>
+									</div>
+									<div class="annotation-progress">
+										<div class="progress">
+										  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" data-bind="style: { width: completionPercent() + '%' }"></div>
+										</div>
+										<div class="progress-word">
+											<div data-bind="if: navigationLoaded">
+												<span>Annotations Complete:&nbsp;</span>
+												<span data-bind="text: numAnnotations"></span>
+												<span>/</span>
+												<span data-bind="text: numProfileSamples"></span>
+											</div>
+											<div data-bind="ifnot: navigationLoaded">
+												Loading progress...
+											</div>
+										</div>
+									</div>
+								</div>
+								<div data-bind="with: content">
+									<div data-bind="if: annotationLoaded">
+										<div data-bind="with: annotation">
+											<div data-bind="with: set">
+												<ol class="questions" data-bind="foreach: questions">
+													<li class="question">
+														<p class="question-text" data-bind="text: text()"></p>
+														<div class="answers answer-multi-select" data-bind="if: type() == 'MULTI_SELECT'">
+															<div data-bind="foreach: answers">
+																<label class="checkbox-inline">
+																	<input type="checkbox" data-bind="attr: { value: value() }, checked: $parents[2].results['question_'+$parent.id()].value"/>
+																	<span data-bind="text: text()"></span>
+																</label>
+															</div>
+														</div>
+														<div class="answers answer-single-select" data-bind="if: type() == 'SINGLE_SELECT'">
+															<div data-bind="foreach: answers">
+																<label class="radio-inline">
+																	<input type="radio" data-bind="attr: { value: value() }, checked: $parents[2].results['question_'+$parent.id()].value" />
+																	<span data-bind="text: text()"></span>
+																</label>
+															</div>
+														</div>
+														<div class="answers answer-textarea" data-bind="if: type() == 'TEXTAREA'">
+															<div data-bind="foreach: answers">
+																<textarea class="form-control" rows="3" data-bind="textInput: $parents[2].results['question_'+$parent.id()].value"></textarea>
+															</div>
+														</div>
+														<div class="answers answer-numeric" data-bind="if: type() == 'NUMERIC'">
+															<div data-bind="foreach: answers">
+																<input type="numeric" data-bind="textInput: $parents[2].results['question_'+$parent.id()].value"/>
+															</div>
+														</div>
+													</li>
+												</ol>
+											</div>
+											<button type="button" class="btn btn-primary btn-block" data-bind="click: createOrUpdate, text: annotationId() ? 'Update' : 'Submit'"></button>
+										</div>
+									</div>
+									<div data-bind="ifnot: annotationLoaded">
+										<div class="annotation-loading">
+											<i class="fa fa-spinner fa-pulse fa-fw annotation-loading-icon"></i><span class="annotation-loading-text">Loading content...</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div data-bind="if: currentView() == 'settingsView'">
+						<div data-bind="with: settingsView">
+							Settings View
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

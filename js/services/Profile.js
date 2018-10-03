@@ -17,6 +17,6 @@ define(function (require, exports) {
   };
 
   return {
-    getProfile,
+    getProfile
   };
 });
