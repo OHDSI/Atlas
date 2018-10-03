@@ -230,9 +230,15 @@ define([
 				const pathway = this.buildHierarchy(pathwayGroup.pathways);
 				const targetCohort = results.design.targetCohorts.find(c => id == c.id);
 				const summary = {...this.summarizeHierarchy(pathway), cohortPersons: pathwayGroup.targetCohortCount, pathwayPersons: pathwayGroup.totalPathwaysCount};
-				const title = targetCohort.name;
-				const subTitle = `N=${this.formatNumber(summary.cohortPersons)} Persons Reported=${this.formatNumber(summary.pathwayPersons)} (${this.formatPct(summary.pathwayPersons/summary.cohortPersons)})`;				
-				return { pathway, title, subTitle, summary, pathDetails: ko.observable()};
+				return {
+					pathway,
+					targetCohortName: targetCohort.name,
+					targetCohortCount: this.formatNumber(summary.cohortPersons),
+					personsReported: this.formatNumber(summary.pathwayPersons),
+					personsReportedPct: this.formatPct(summary.pathwayPersons/summary.cohortPersons),
+					summary,
+					pathDetails: ko.observable()
+				};
 			});
 
 			const eventCohorts = results.data.eventCodes.filter(ec => !ec.isCombo)

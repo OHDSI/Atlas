@@ -24,19 +24,20 @@ define([
 ) {
 	class PathwaysBrowser extends Page {
 		constructor(params) {
-      super(params);      
-      this.loading = ko.observable(false);
-      this.config = config;
-      this.analysisList = ko.observableArray();
+			super(params);
+			this.loading = ko.observable(false);
+			this.config = config;
+			this.analysisList = ko.observableArray();
 
 			this.canList = PermissionService.isPermittedList;
 			this.canCreate = PermissionService.isPermittedCreate;
-      
-      // startup actions
-      this.refresh();
-    }
+		}
 
-		async refresh() {
+		onRouterParamsChanged() {
+			this.canList() && this.loadData();
+		}
+
+		async loadData() {
 			this.loading(true);
 			const analysisList = await PathwayService.list();
 			this.analysisList(analysisList.content);
@@ -46,13 +47,10 @@ define([
 		newAnalysis() {
 			commonUtils.routeTo(commonUtils.getPathwaysUrl(0, 'design'));
 		}
-		
-		onAnalysisSelected(d) {
-     commonUtils.routeTo(commonUtils.getPathwaysUrl(d.id, 'design'));
-    };
-		
-		get gridColumns()  {
-			return [{
+
+		get gridColumns() {
+			return [
+				{
 					title: 'Name',
 					data: 'name',
 					className: this.classes('tbl-col', 'name'),
@@ -80,13 +78,13 @@ define([
 				}
 			];
 		}
-			
+
 		get gridOptions() {
 			return {
 				Facets: [{
-						'caption': 'Created',
-						'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
-					},
+					'caption': 'Created',
+					'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
+				},
 					{
 						'caption': 'Updated',
 						'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)

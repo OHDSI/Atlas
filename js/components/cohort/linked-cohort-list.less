@@ -4,21 +4,22 @@
 	}
 
 	&__col-cohort-name {
-		width: 80%;
+		width: 70%;
+
+		&--editable {
+			span {
+				cursor: pointer;
+				color: #0070dd;
+				border-bottom: 1px dashed;
+			}
+			input {
+				width: 100%;
+			}
+		}
 	}
 	
-	&__col-cohort-remove {
+	&__col-cohort-edit, &__col-cohort-remove {
 		width: 10%;
-	}
-
-	&__col-cohort-name {
-		&-edit  span {
-			cursor: pointer;
-		}
-		
-		&-edit input {
-		width: 100%;
-		}		
 	}
 
 	&__modal-cohort-list {

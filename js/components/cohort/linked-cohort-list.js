@@ -29,7 +29,7 @@ define([
 			
 			if (params.canEditName) {
 				nameCol.render = (s,p,d) => `<span data-bind="clickToEdit: name"/>`;
-				nameCol.className = this.classes('col-cohort-name-edit');
+				nameCol.className = this.classes('col-cohort-name', 'editable');
 			} else {
 				nameCol.data = 'name',
 				nameCol.className = this.classes('col-cohort-name')
@@ -50,14 +50,14 @@ define([
 				nameCol,
 				{
 					title: '',
-					render: this.getRemoveCell('removeCohort'),
-					className: this.classes('col-cohort-remove'),
+					render: this.getEditCell('editCohort'),
+					className: this.classes('col-cohort-edit'),
 				},
 				{
 					title: '',
-					render: this.getEditCell('editCohort'),
-					className: this.classes('col-cohort-edit'),
-				}
+					render: this.getRemoveCell('removeCohort'),
+					className: this.classes('col-cohort-remove'),
+				},
 				
 			];
 			
@@ -81,7 +81,7 @@ define([
 		
 		getEditCell(action, identifierField = 'id') {
 			return (s, p, d) => {
-				return `<a href="#/cohortdefinition/${d[identifierField]}">Edit</a>`;
+				return `<a href="#/cohortdefinition/${d[identifierField]}">Edit cohort</a>`;
 			}
 		}
 		

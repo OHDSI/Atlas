@@ -3,11 +3,11 @@
 		<b>Cohort Pathway</b> is defined as the process of generating an aggregated sequence of transitions between the Event Cohorts among those people in the Target Cohorts.
 	</p>
 	<div data-bind="css: classes('linked-entities')">
-		<linked-cohort-list params="title: 'Target Cohorts', 
+		<linked-cohort-list params="title: 'Target Cohorts',
 																descr: 'Each of the Target Cohorts will be analyized for the pathways through the event cohorts.',
 																canEditName: true,
 																data: design().targetCohorts">
-			
+
 		</linked-cohort-list>
 	</div>
 	<div data-bind="css: classes('linked-entities')">
@@ -18,33 +18,52 @@
 		</linked-cohort-list>
 	</div>
 
-<div data-bind="css: classes()">
-	<h2 data-bind="css: classes('title')">Analysis Settings</h2>
-	<p data-bind="css: classes('descr')">The following set of paramaters will be used when performign the pathway analysis.</p>
-	<div data-bind="css: classes('settings')">
-		<table>
-			<tr>
-					<td>Combination Window:</td>
-					<td><span contenteditable="true" class="numericInputField dropdown" 
-										data-bind="htmlValue: design().combinationWindow.numericValue, 
-						eventType: 'blur', 
-						ko_autocomplete: { value: design().combinationWindow, source: combinationWindowOptions, minLength: 0, maxShowItems: 10, scroll: true }" /></td>
-			</tr>
-			<tr>
-					<td>Min Cell Count:</td>
-					<td><span contenteditable="true" class="numericInputField dropdown" 
-										data-bind="htmlValue: design().minCellCount.numericValue, 
-						eventType: 'blur', 
-						ko_autocomplete: { value: design().minCellCount, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }" /></td>
-			</tr>
-			<tr>
-					<td>Max Depth:</td>
-					<td><span contenteditable="true" class="numericInputField dropdown" 
-										data-bind="htmlValue: design().maxDepth.numericValue, 
-						eventType: 'blur', 
-						ko_autocomplete: { value: design().maxDepth, source: maxDepthOptions, minLength: 0, maxShowItems: 10, scroll: true }" /></td>
-			</tr>
-		</table>
+	<div data-bind="css: classes('analysis-settings-block')">
+		<h2 data-bind="css: classes('title')">Analysis Settings</h2>
+		<p data-bind="css: classes('descr')">The following set of paramaters will be used when performign the pathway analysis.</p>
+		<div data-bind="css: classes('settings')">
+			<table>
+				<tr data-bind="css: classes('setting-line')">
+						<td data-bind="css: classes('setting-title')">Combination Window:</td>
+						<td>
+							<input
+									class="form-control"
+									data-bind="
+										css: classes('setting-input'),
+										value: design().combinationWindow.numericValue,
+										eventType: 'blur',
+										ko_autocomplete: { value: design().combinationWindow, source: combinationWindowOptions, minLength: 0, maxShowItems: 10, scroll: true }"
+							/>
+						</td>
+				</tr>
+				<tr data-bind="css: classes('setting-line')">
+					<td data-bind="css: classes('setting-title')">Minimum cell count:</td>
+					<td>
+						<input
+								class="form-control"
+								data-bind="
+										css: classes('setting-input'),
+										value: design().minCellCount.numericValue,
+										eventType: 'blur',
+										ko_autocomplete: { value: design().minCellCount, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }"
+						/>
+					</td>
+				</tr>
+				<tr data-bind="css: classes('setting-line')">
+					<td data-bind="css: classes('setting-title')">Maximum path length:</td>
+					<td>
+						<input
+								class="form-control"
+								data-bind="
+										css: classes('setting-input'),
+										value: design().maxDepth.numericValue,
+										eventType: 'blur',
+										ko_autocomplete: { value: design().maxDepth, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }"
+						/>
+					</td>
+				</tr>
+			</table>
+		</div>
 	</div>
+	<div data-bind="css:classes('bottom-padding')"></div>
 </div>
-<div data-bind="css:classes('bottom-padding')"></div>

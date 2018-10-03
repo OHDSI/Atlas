@@ -2,20 +2,23 @@
 
 <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Pathway Analysis list...'"></loading>
 
-<div data-bind="if: $component.canList(), visible: !$component.loading()" class="paddedWrapper flexed">
-	<div>
-		<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newAnalysis, css: {disabled: !$component.canCreate()}">New Pathway Analysis</span>
+<div data-bind="css: classes('grid'), if: $component.canList(), visible: !$component.loading()">
+	<div data-bind="css: classes('toolbar')">
+		<button
+				type="button"
+				data-bind="css: classes({ element: 'create-btn', extra: ['btn btn-sm btn-primary', !$component.canCreate() ? 'disabled' : ''] }), click:$component.newAnalysis"
+		>
+			New Pathway Analysis
+		</button>
 	</div>
-	<div data-bind="eventListener: [{event: 'click', selector: '.linkish', callback: onAnalysisSelected}]">
-		<div data-bind="css: classes('grid')">
-				<faceted-datatable params="{
-						buttons: [],
-						order: [[0, 'asc']],
-						columns: $component.gridColumns,
-						options: $component.gridOptions,
-						reference: $component.analysisList
-				}"></faceted-datatable>
-		</div>
+	<div data-bind="css: classes('list')">
+		<faceted-datatable params="{
+				buttons: [],
+				order: [[0, 'asc']],
+				columns: $component.gridColumns,
+				options: $component.gridOptions,
+				reference: $component.analysisList
+		}"></faceted-datatable>
 	</div>
 </div>
 

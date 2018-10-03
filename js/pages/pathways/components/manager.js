@@ -112,7 +112,7 @@ define([
 			if (!this.design().id) {
 				const newAnalysis = await PathwayService.create(this.design());
 				this.dirtyFlag().reset();
-				commonUtils.routeTo(commonUtils.getPathwaysUrl(res.id, 'design'));
+				commonUtils.routeTo(commonUtils.getPathwaysUrl(newAnalysis.id, 'design'));
 			} else {
 				const updatedAnalysis = await PathwayService.save(this.design().id, this.design());
 				this.setupDesign(new PathwayAnalysis(updatedAnalysis));
