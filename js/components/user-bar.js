@@ -117,6 +117,10 @@ define([
                     return 'estimation/' + n.jobParameters.cohortId;
                 case 'PLP':
                     return 'plp/' + n.jobParameters.cohortId;
+                case 'ir-analysis':
+                    return 'iranalysis/' +n.jobParameters.analysis_id + '/generation';
+                case 'negative-controls':
+                    return 'conceptset/' + n.jobParameters.concept_set_id + '/evidence';
             }
             return null;
         }
