@@ -819,7 +819,7 @@ define(
 
 			onCurrentConceptSetModeChanged(newMode) {
 				switch (newMode) {
-					case 'included':
+					case 'included-conceptsets': case 'included':
 						this.loadIncluded();
 						break;
 					case 'included-sourcecodes':
