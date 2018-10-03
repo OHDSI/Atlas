@@ -39,7 +39,7 @@ define(
       included: 'included',
       import: 'import',
       included: 'included',
-      sourcecodes: 'sourcecodes',
+      sourcecodes: 'included-sourcecodes',
       export: 'export',
     };
 

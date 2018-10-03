@@ -1,0 +1,106 @@
+<div class="paddedWrapper">
+  <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+        data: selectedConcepts(),
+        options: {
+          dom: 'Clfiprt',
+          colVis: {
+            buttonText: 'Change Columns',
+            align: 'right',
+            overlayFade: 0,
+            showAll: 'Show All Columns',
+            restore: 'Reset Columns'
+          },
+          rowCallback: $root.contextSensitiveLinkColor,
+          lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+          orderClasses: false,
+          deferRender: true,
+          autoWidth: false,
+          order: [[3, 'desc']],
+          columns: [
+            { render: $root.renderConceptSetItemSelector, orderable:false, searchable:false},
+            { data: 'concept.CONCEPT_ID'},
+            { data: 'concept.CONCEPT_CODE'},
+            { render: $root.renderBoundLink},
+            { data: 'concept.DOMAIN_ID' },
+            { data: 'concept.STANDARD_CONCEPT', visible:false },
+            { data: 'concept.STANDARD_CONCEPT_CAPTION' },
+            {
+              class: 'text-center',
+              orderable: false,
+              render: function() { return $root.renderCheckbox('isExcluded');}
+            },
+            {
+              class: 'text-center',
+              orderable: false,
+              render: function() { return $root.renderCheckbox('includeDescendants');}
+            },
+            {
+              class: 'text-center',
+              orderable: false,
+              render: function() { return $root.renderCheckbox('includeMapped');}
+            }
+          ]
+        }
+      }">
+      <thead>
+        <th><li class='fa fa-shopping-cart'></li></th>
+        <th>Concept Id</th>
+        <th>Concept Code</th>
+        <th>Concept Name</th>
+        <th>Domain</th>
+        <th>Standard Concept Code</th>
+        <th>Standard Concept Caption</th>
+        <th>
+          <!-- ko if: canEdit -->
+            <span data-bind="
+              css: classes({
+                  element: 'checkmark',
+                  extra: `fa fa-check ${allExcludedChecked() ? 'selected' : ''}`
+              }),
+              click: toggleExcluded
+            "></span>
+          <!-- /ko --> Exclude
+        </th>
+        <th>
+          <!-- ko if: canEdit -->
+          <span data-bind="
+            css: classes({
+                element: 'checkmark',
+                extra: `fa fa-check ${allDescendantsChecked() ? 'selected' : ''}`
+            }),
+            click: toggleDescendants
+          "></span>
+          <!-- /ko --> Descendants
+        </th>
+        <th>
+            <!-- ko if: canEdit -->
+              <span data-bind="
+                css: classes({
+                    element: 'checkmark',
+                    extra: `fa fa-check ${allMappedChecked() ? 'selected' : ''}`
+                }),
+                click: toggleMapped
+              "></span>
+            <!-- /ko --> Mapped
+        </th>
+      </thead>
+  </table>
+
+  <div class="linkLegend">
+    <div class="linkLegendItem">
+      <div class="swatch standard">
+      </div>
+      <div class="linkLegendTitle">Standard</div>
+    </div>
+    <div class="linkLegendItem">
+      <div class="swatch nonStandard">
+      </div>
+      <div class="linkLegendTitle">Non-Standard</div>
+    </div>
+    <div class="linkLegendItem">
+      <div class="swatch classification">
+      </div>
+      <div class="linkLegendTitle">Classification</div>
+    </div>
+  </div>
+</div>
