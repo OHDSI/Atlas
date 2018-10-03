@@ -8,6 +8,7 @@ define([
 	'appConfig',
 	'webapi/AuthAPI',
 	'providers/Page',
+	'providers/AutoBind',
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
 	'less!./manager.less',
@@ -27,20 +28,13 @@ define([
 	config,
 	authApi,
 	Page,
+	AutoBind,
 	commonUtils,
 	ohdsiUtil
 ) {
-	class PathwaysManager extends Page {
+	class PathwaysManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
-
-			// bind to class methods
-			this.selectTab = this.selectTab.bind(this);
-			this.setupDesign = this.setupDesign.bind(this);
-			this.setupSection = this.setupSection.bind(this);			
-			this.load = this.load.bind(this);
-			this.del = this.del.bind(this);
-			this.close = this.close.bind(this);
 
 			this.design = sharedState.CohortPathways.current;
 			this.dirtyFlag = sharedState.CohortPathways.dirtyFlag;

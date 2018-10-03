@@ -6,7 +6,7 @@ define([
 	'../PathwayService',
 	'../PermissionService',
 	'webapi/AuthAPI',
-	'providers/Component',
+	'providers/Page',
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
 	'less!./browser.less'
@@ -18,11 +18,11 @@ define([
 	PathwayService,
 	PermissionService,
 	authApi,
-	Component,
+	Page,
 	commonUtils,
 	datatableUtils
 ) {
-	class PathwaysBrowser extends Component {
+	class PathwaysBrowser extends Page {
 		constructor(params) {
       super(params);      
       this.loading = ko.observable(false);
