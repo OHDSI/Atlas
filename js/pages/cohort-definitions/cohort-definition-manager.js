@@ -262,7 +262,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		// model behaviors
 			this.onConceptSetTabRespositoryConceptSetSelected = (conceptSet) => {
 				this.showImportConceptSetModal(false);
-				this.model.currentCohortDefinition().expression().ConceptSets().push(new ConceptSet(ko.toJS(conceptSet)));
 				this.model.loadConceptSet(conceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
 			}
 
@@ -877,7 +876,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			createConceptSet() {
 				var newConceptSet = new ConceptSet();
 				var cohortConceptSets = this.model.currentCohortDefinition().expression().ConceptSets;
-				newConceptSet.id = cohortConceptSets().reduce(function(max, val) { return Math.max(max, val.id) + 1; }, 0);
+				newConceptSet.id = cohortConceptSets().length > 0 ? Math.max(...cohortConceptSets().map(c => c.id)) + 1 : 0;
 				return newConceptSet;
 			}
 
