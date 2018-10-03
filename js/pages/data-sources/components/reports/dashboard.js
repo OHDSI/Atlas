@@ -70,20 +70,21 @@ define([
 				this.summary(data.summary);
 			}
 			this.genderConceptData(ChartUtils.mapConceptData(data.gender));
-			const ageAtFirstData = ChartUtils.normalizeArray(data.ageAtFirstObservation);
+
+			const ageAtFirstData = data.ageAtFirstObservation;
 			if (!ageAtFirstData.empty) {
 				const histData = {};
-				histData.intervalSize = 1;
-				histData.min = Math.min(0, d3.min(ageAtFirstData.intervalIndex));
-				histData.max = Math.max(90, d3.max(ageAtFirstData.intervalIndex));
-				histData.data = ageAtFirstData;
-
-				this.ageAtFirstObservationData(ChartUtils.mapHistogram(histData));
+				histData.INTERVAL_SIZE = 1;
+				let ageAtFirstDataMapped = ageAtFirstData.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue }));
+				histData.DATA = ChartUtils.normalizeArray(ageAtFirstDataMapped);
+				histData.OFFSET = 0;
+				histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
+				this.ageAtFirstObservationData(atlascharts.histogram.mapHistogram(histData));
 			}
 			const cumObsData = ChartUtils.normalizeArray(data.cumulativeObservation);
 			let cumulativeData = {};
 			if (!cumObsData.empty) {
-				cumulativeData = ChartUtils.normalizeDataframe(cumObsData).xLengthOfObservation
+				cumulativeData = atlascharts.chart.normalizeDataframe(cumObsData).xLengthOfObservation
 					.map(function (d, i) {
 						const item = {
 							xValue: this.xLengthOfObservation[i],
