@@ -1,4 +1,4 @@
-define(['knockout', 'text!./concept-by-index.html','d3', 'jnj_chart'], function (ko, view, d3, jnj_chart) {
+define(['knockout', 'text!./concept-by-index.html','d3', 'jnj_chart', 'utils/ChartUtils',], function (ko, view, d3, jnj_chart, ChartUtils) {
 	function conceptByIndex(params) {
 		var self = this;
 		self.model = params.model;
@@ -27,36 +27,6 @@ define(['knockout', 'text!./concept-by-index.html','d3', 'jnj_chart'], function 
 			return result;
 		}
 		
-		self.normalizeArray = function (ary, numerify) {
-			var obj = {};
-			var keys;
-
-			if (ary && ary.length > 0 && ary instanceof Array) {
-				keys = d3.keys(ary[0]);
-
-				$.each(keys, function () {
-					obj[this] = [];
-				});
-
-				$.each(ary, function () {
-					var thisAryObj = this;
-					$.each(keys, function () {
-						var val = thisAryObj[this];
-						if (numerify) {
-							if (_.isFinite(+val)) {
-								val = (+val);
-							}
-						}
-						obj[this].push(val);
-					});
-				});
-			} else {
-				obj.empty = true;
-			}
-
-			return obj;
-		}
-		
 		self.render = function () {
 			$('#concept-by-index-caption').html(self.caption);
 			
@@ -68,7 +38,7 @@ define(['knockout', 'text!./concept-by-index.html','d3', 'jnj_chart'], function 
 					
 					
 					if (result && result.length > 0) {
-						var normalized = self.dataframeToArray(self.normalizeArray(result));
+						var normalized = self.dataframeToArray(ChartUtils.normalizeArray(result));
 
 						// nest dataframe data into key->values pair
 						var totalRecordsData = d3.nest()

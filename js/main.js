@@ -125,7 +125,7 @@ requirejs.config({
 		"cohortcomparison": "modules/cohortcomparison",
 		"r-manager": "components/r-manager",
 		"negative-controls": "components/negative-controls",
-		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.4.1/dist/atlascharts.min",
+		"atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.5.0-beta.1/dist/atlascharts.min",
 		"jnj_chart": "jnj.chart", // scatterplot is not ported to separate library
 		"lodash": "lodash.4.15.0.full",
 		"lscache": "lscache.min",

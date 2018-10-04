@@ -1,10 +1,10 @@
-define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig',
+define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'utils/ChartUtils', 'colorbrewer', 'lodash', 'appConfig',
     'webapi/CohortReportingAPI', 'modules/cohortdefinition/const', 'databindings', 'faceted-datatable', 'colvis',
 		'modules/cohortdefinition/components/view/reporting/cost-utilization/persons-exposure',
 		'modules/cohortdefinition/components/view/reporting/cost-utilization/visit-util',
     'modules/cohortdefinition/components/view/reporting/cost-utilization/drug-util'
 	],
-	function (ko, view, d3, atlascharts, colorbrewer, _, config, cohortReportingAPI, costUtilConst) {
+	function (ko, view, d3, atlascharts, ChartUtils, colorbrewer, _, config, cohortReportingAPI, costUtilConst) {
 	function reportManager(params) {
 		var self = this;
 		self.model = params.model;
@@ -393,7 +393,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							self.model.loadingReport(false);
 
 							// render trellis
-							var trellisData = self.normalizeArray(data.prevalenceByGenderAgeYear, true);
+							var trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear, true);
 							if (!trellisData.empty) {
 
 								var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -464,7 +464,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							}
 
 							// prevalence by month
-							var byMonthData = self.normalizeArray(data.prevalenceByMonth, true);
+							var byMonthData = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 							if (!byMonthData.empty) {
 								var byMonthSeries = self.mapMonthYearDataToSeries(byMonthData, {
 									dateField: 'xCalendarMonth',
@@ -499,7 +499,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							}
 
 							// Age At Death
-							var bpdata = self.normalizeArray(data.agetAtDeath);
+							var bpdata = ChartUtils.normalizeArray(data.agetAtDeath);
 							if (!bpdata.empty) {
 								var boxplot = new atlascharts.boxplot();
 								var bpseries = [];
@@ -559,7 +559,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						success: function (data) {
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
-							var normalizedData = self.normalizeArray(data);
+							var normalizedData = ChartUtils.normalizeArray(data);
 							if (!normalizedData.empty) {
 								var table_data = normalizedData.conceptPath.map(function (d, i) {
 									conceptDetails = this.conceptPath[i].split('||');
@@ -675,7 +675,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
 
-							var normalizedData = self.normalizeDataframe(self.normalizeArray(data, true));
+							var normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 							data = normalizedData;
 							if (!data.empty) {
 								var table_data = normalizedData.conceptPath.map(function (d, i) {
@@ -795,7 +795,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
 
-							var normalizedData = self.normalizeDataframe(self.normalizeArray(data, true));
+							var normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 							data = normalizedData;
 							if (!data.empty) {
 								var table_data = normalizedData.conceptPath.map(function (d, i) {
@@ -910,7 +910,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
 
-							var normalizedData = self.normalizeDataframe(self.normalizeArray(data, true));
+							var normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 							data = normalizedData;
 							if (!data.empty) {
 								var table_data = normalizedData.conceptPath.map(function (d, i) {
@@ -1025,7 +1025,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
 							// age by gender
-							var ageByGenderData = self.normalizeArray(data.ageByGender);
+							var ageByGenderData = ChartUtils.normalizeArray(data.ageByGender);
 							if (!ageByGenderData.empty) {
 								var agegenderboxplot = new atlascharts.boxplot();
 								var agData = ageByGenderData.category
@@ -1050,17 +1050,16 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							}
 
 							// age at first obs
-							var ageAtFirstData = self.normalizeArray(data.ageAtFirst);
+							var ageAtFirstData = data.ageAtFirst;
 							if (!ageAtFirstData.empty) {
 								var histData = {};
-								histData.intervalSize = 1;
-								histData.min = d3.min(ageAtFirstData.countValue);
-								histData.max = d3.max(ageAtFirstData.countValue);
-								histData.intervals = 120;
-								histData.data = ageAtFirstData;
+								histData.INTERVAL_SIZE = 1;
+								histData.DATA = ChartUtils.normalizeArray(ageAtFirstData.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue })));
+								histData.OFFSET = 0;
+								histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
+								var ageAtFirstObservationData = atlascharts.histogram.mapHistogram(histData);
 								d3.selectAll("#ageatfirstobservation svg")
 									.remove();
-								var ageAtFirstObservationData = self.mapHistogram(histData);
 								var ageAtFirstObservationHistogram = new atlascharts.histogram();
 								ageAtFirstObservationHistogram.render(ageAtFirstObservationData, "#ageatfirstobservation", size12.width, size12.height, {
 									xFormat: d3.format('0.0d'),
@@ -1072,15 +1071,17 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							// observation length
 							if (data.observationLength && data.observationLength.length > 0 && data.observationLengthStats) {
 								var histData2 = {};
-								histData2.data = self.normalizeArray(data.observationLength);
-								histData2.intervalSize = +data.observationLengthStats[0].intervalSize;
-								histData2.min = +data.observationLengthStats[0].minValue;
-								histData2.max = +data.observationLengthStats[0].maxValue;
-								histData2.intervals = Math.round((histData2.max - histData2.min + 1) / histData2.intervalSize) + histData2.intervalSize;
+								var observationDataMapped = data.observationLength.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue }));
+								
+								histData2.DATA = ChartUtils.normalizeArray(observationDataMapped);
+								histData2.INTERVAL_SIZE = +data.observationLengthStats[0].intervalSize;
+								histData2.OFFSET = 0;
+								histData2.MAX = +data.observationLengthStats[0].maxValue;
+								histData2.INTERVALS =  histData2.DATA.INTERVAL_INDEX.length;
 								d3.selectAll("#observationlength svg")
 									.remove();
-								if (!histData2.data.empty) {
-									var observationLengthData = self.mapHistogram(histData2);
+								if (!histData2.DATA.empty) {
+									var observationLengthData = atlascharts.histogram.mapHistogram(histData2);
 									var observationLengthXLabel = 'Days';
 									if (observationLengthData.length > 0) {
 										if (observationLengthData[observationLengthData.length - 1].x - observationLengthData[0].x > 1000) {
@@ -1104,10 +1105,10 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							// cumulative observation
 							d3.selectAll("#cumulativeobservation svg")
 								.remove();
-							var cumObsData = self.normalizeArray(data.cumulativeObservation);
+							var cumObsData = ChartUtils.normalizeArray(data.cumulativeObservation);
 							if (!cumObsData.empty) {
 								var cumulativeObservationLine = new atlascharts.line();
-								var cumulativeData = self.normalizeDataframe(cumObsData)
+								var cumulativeData = atlascharts.chart.normalizeDataframe(cumObsData)
 									.xLengthOfObservation
 									.map(function (d, i) {
 										var item = {
@@ -1138,7 +1139,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							*/
 
 							// observation period length by gender
-							var obsPeriodByGenderData = self.normalizeArray(data.durationByGender);
+							var obsPeriodByGenderData = ChartUtils.normalizeArray(data.durationByGender);
 							if (!obsPeriodByGenderData.empty) {
 								d3.selectAll("#opbygender svg")
 									.remove();
@@ -1187,7 +1188,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							// observation period length by age
 							d3.selectAll("#opbyage svg")
 								.remove();
-							var obsPeriodByLenByAgeData = self.normalizeArray(data.durationByAgeDecile);
+							var obsPeriodByLenByAgeData = ChartUtils.normalizeArray(data.durationByAgeDecile);
 							if (!obsPeriodByLenByAgeData.empty) {
 								var opbyageboxplot = new atlascharts.boxplot();
 								var opaData = obsPeriodByLenByAgeData.category
@@ -1234,18 +1235,18 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							// observed by year
 							// tooltip bug
 							/*
-							var obsByYearData = self.normalizeArray(data.personsWithContinuousObservationsByYear);
-							if (!obsByYearData.empty && data.personsWithContinuousObservationsByYearStats) {
+							if (!data.personsWithContinuousObservationsByYear.empty && data.personsWithContinuousObservationsByYearStats) {
 								var histData3 = {};
-								histData3.data = obsByYearData;
-								histData3.intervalSize = +data.personsWithContinuousObservationsByYearStats[0].intervalSize;
-								histData3.min = +data.personsWithContinuousObservationsByYearStats[0].minValue;
-								histData3.max = +data.personsWithContinuousObservationsByYearStats[0].maxValue;
-								histData3.intervals = Math.round((histData3.max - histData3.min + histData3.intervalSize) / histData3.intervalSize) + histData3.intervalSize;
+								var obsByYearDataMapped = data.personsWithContinuousObservationsByYear.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue }));
+								histData3.DATA = ChartUtils.normalizeArray(obsByYearDataMapped);
+								histData3.INTERVAL_SIZE = +data.personsWithContinuousObservationsByYearStats[0].intervalSize;
+								histData3.OFFSET = +data.personsWithContinuousObservationsByYearStats[0].minValue;
+								histData3.MAX = +data.personsWithContinuousObservationsByYearStats[0].maxValue;
+								histData3.INTERVALS = Math.round((histData3.MAX - histData3.OFFSET + histData3.intervalSize) / histData3.INTERVAL_SIZE) + histData3.INTERVAL_SIZE;
 								d3.selectAll("#oppeoplebyyear svg")
 									.remove();
 								var observationLengthByYearHistogram = new atlascharts.histogram();
-								observationLengthByYearHistogram.render(self.mapHistogram(histData3), "#oppeoplebyyear", size12.width, size12.height, {
+								observationLengthByYearHistogram.render(atlascharts.histogram.mapHistogram(histData3), "#oppeoplebyyear", size12.width, size12.height, {
 									xLabel: 'Year',
 									yLabel: 'People'
 								});
@@ -1253,7 +1254,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							*/
 
 							// observed by month
-							var obsByMonthData = self.normalizeArray(data.observedByMonth);
+							var obsByMonthData = ChartUtils.normalizeArray(data.observedByMonth);
 							if (!obsByMonthData.empty) {
 								var byMonthSeries = self.mapMonthYearDataToSeries(obsByMonthData, {
 									dateField: 'monthYear',
@@ -1277,7 +1278,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							}
 
 							// obs period per person
-							var personPeriodData = self.normalizeArray(data.observationPeriodsPerPerson);
+							var personPeriodData = ChartUtils.normalizeArray(data.observationPeriodsPerPerson);
 							if (!personPeriodData.empty) {
 								d3.selectAll("#opperperson svg")
 									.remove();
@@ -1306,7 +1307,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							self.model.currentReport(self.model.reportReportName());
 							self.model.loadingReport(false);
 
-							var normalizedData = self.normalizeDataframe(self.normalizeArray(data, true));
+							var normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 							data = normalizedData;
 							if (!data.empty) {
 								var table_data = normalizedData.conceptPath.map(function (d, i) {
@@ -1428,7 +1429,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 							var table_data, datatable, tree, treemap;
 							if (data.drugEraPrevalence) {
-								var drugEraPrevalence = self.normalizeDataframe(self.normalizeArray(data.drugEraPrevalence, true));
+								var drugEraPrevalence = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data.drugEraPrevalence, true));
 								var drugEraPrevalenceData = drugEraPrevalence;
 
 								if (!drugEraPrevalenceData.empty) {
@@ -1571,7 +1572,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							var table_data, datatable, tree, treemap;
 							// condition prevalence
 							if (data.conditionOccurrencePrevalence) {
-								var normalizedData = self.normalizeDataframe(self.normalizeArray(data.conditionOccurrencePrevalence, true));
+								var normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data.conditionOccurrencePrevalence, true));
 								var conditionOccurrencePrevalence = normalizedData;
 								if (!conditionOccurrencePrevalence.empty) {
 									table_data = normalizedData.conceptPath.map(function (d, i) {
@@ -1718,7 +1719,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 							var table_data, datatable, tree, treemap;
 							if (data.procedureOccurrencePrevalence) {
-								var normalizedData = self.normalizeDataframe(self.normalizeArray(data.procedureOccurrencePrevalence, true));
+								var normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data.procedureOccurrencePrevalence, true));
 								var procedureOccurrencePrevalence = normalizedData;
 								if (!procedureOccurrencePrevalence.empty) {
 									table_data = normalizedData.conceptPath.map(function (d, i) {
@@ -1853,9 +1854,9 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							self.model.loadingReport(false);
 
 							// Persons By Duration From Start To End
-							var result = self.normalizeArray(data.personsByDurationFromStartToEnd, false);
+							var result = ChartUtils.normalizeArray(data.personsByDurationFromStartToEnd, false);
 							if (!result.empty) {
-								var personsByDurationData = self.normalizeDataframe(result)
+								var personsByDurationData = atlascharts.chart.normalizeDataframe(result)
 									.duration
 									.map(function (d, i) {
 										var item = {
@@ -1876,7 +1877,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							}
 
 							// prevalence by month
-							var byMonthData = self.normalizeArray(data.prevalenceByMonth, true);
+							var byMonthData = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 							if (!byMonthData.empty) {
 								var byMonthSeries = self.mapMonthYearDataToSeries(byMonthData, {
 									dateField: 'xCalendarMonth',
@@ -1898,7 +1899,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							}
 
 							// age at index
-							var ageAtIndexDistribution = self.normalizeArray(data.ageAtIndexDistribution);
+							var ageAtIndexDistribution = ChartUtils.normalizeArray(data.ageAtIndexDistribution);
 							if (!ageAtIndexDistribution.empty) {
 								var boxplot = new atlascharts.boxplot();
 								var agData = ageAtIndexDistribution.category
@@ -1922,7 +1923,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							}
 
 							// distributionAgeCohortStartByCohortStartYear
-							var distributionAgeCohortStartByCohortStartYear = self.normalizeArray(data.distributionAgeCohortStartByCohortStartYear);
+							var distributionAgeCohortStartByCohortStartYear = ChartUtils.normalizeArray(data.distributionAgeCohortStartByCohortStartYear);
 							if (!distributionAgeCohortStartByCohortStartYear.empty) {
 								var boxplotCsy = new atlascharts.boxplot();
 								var csyData = distributionAgeCohortStartByCohortStartYear.category
@@ -1946,7 +1947,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							}
 
 							// distributionAgeCohortStartByGender
-							var distributionAgeCohortStartByGender = self.normalizeArray(data.distributionAgeCohortStartByGender);
+							var distributionAgeCohortStartByGender = ChartUtils.normalizeArray(data.distributionAgeCohortStartByGender);
 							if (!distributionAgeCohortStartByGender.empty) {
 								var boxplotBg = new atlascharts.boxplot();
 								var bgData = distributionAgeCohortStartByGender.category
@@ -1970,7 +1971,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							}
 
 							// persons in cohort from start to end
-							var personsInCohortFromCohortStartToEnd = self.normalizeArray(data.personsInCohortFromCohortStartToEnd);
+							var personsInCohortFromCohortStartToEnd = ChartUtils.normalizeArray(data.personsInCohortFromCohortStartToEnd);
 							if (!personsInCohortFromCohortStartToEnd.empty) {
 								var personsInCohortFromCohortStartToEndSeries = self.map30DayDataToSeries(personsInCohortFromCohortStartToEnd, {
 									dateField: 'monthYear',
@@ -1989,7 +1990,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							}
 
 							// render trellis
-							var trellisData = self.normalizeArray(data.numPersonsByCohortStartByGenderByAge, true);
+							var trellisData = ChartUtils.normalizeArray(data.numPersonsByCohortStartByGenderByAge, true);
 
 							if (!trellisData.empty) {
 								var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -2073,12 +2074,11 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 							if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
 								var yearHistogram = new atlascharts.histogram();
 								var histData = {};
-								histData.intervalSize = 1;
-								histData.min = data.yearOfBirthStats[0].minValue;
-								histData.max = data.yearOfBirthStats[0].maxValue;
-								histData.intervals = 100;
-								histData.data = (self.normalizeArray(data.yearOfBirth));
-								yearHistogram.render(self.mapHistogram(histData), "#hist", size12.width, size12.height, {
+								histData.INTERVAL_SIZE = 1;
+								histData.OFFSET = data.yearOfBirthStats[0].minValue;
+								histData.DATA = (ChartUtils.normalizeArray(data.yearOfBirth.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue }))));
+								histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;;
+								yearHistogram.render(atlascharts.histogram.mapHistogram(histData), "#hist", size12.width, size12.height, {
 									xFormat: d3.format('d'),
 									yFormat: d3.format(',.1s'),
 									xLabel: 'Year',
@@ -2116,7 +2116,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 							self.dataCompleteReference(data);
 
-							var initOneBarData = self.normalizeArray(data.filter(function (d) {
+							var initOneBarData = ChartUtils.normalizeArray(data.filter(function (d) {
 								return d.covariance == "0~10";
 							}), true);
 
@@ -2166,7 +2166,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 
 								var institution_id = self.careSiteDatatable.data()[self.careSiteDatatable.row(this)[0]].institution;
 
-								var entropyData = self.normalizeArray(data.filter(function (d) {
+								var entropyData = ChartUtils.normalizeArray(data.filter(function (d) {
 									return d.insitution == institution_id;
 								}), true);
 								if (!entropyData.empty) {
@@ -2324,7 +2324,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 						.remove();
 					var boxplot = new atlascharts.boxplot();
 					var bpseries = [];
-					var bpdata = self.normalizeArray(data.ageAtFirstDiagnosis, true);
+					var bpdata = ChartUtils.normalizeArray(data.ageAtFirstDiagnosis, true);
 					if (!bpdata.empty) {
 						for (var i = 0; i < bpdata.category.length; i++) {
 							bpseries.push({
@@ -2351,7 +2351,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					// prevalence by month
 					d3.selectAll("#conditionPrevalenceByMonth svg")
 						.remove();
-					var byMonthData = self.normalizeArray(data.prevalenceByMonth, true);
+					var byMonthData = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 					if (!byMonthData.empty) {
 						var byMonthSeries = self.mapMonthYearDataToSeries(byMonthData, {
 
@@ -2396,7 +2396,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					// render trellis
 					d3.selectAll("#trellisLinePlot svg")
 						.remove();
-					var trellisData = self.normalizeArray(data.prevalenceByGenderAgeYear, true);
+					var trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear, true);
 
 					if (!trellisData.empty) {
 						var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -2505,7 +2505,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					});
 
 					// prevalence by month
-					var prevByMonth = self.normalizeArray(data.prevalenceByMonth, true);
+					var prevByMonth = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 					if (!prevByMonth.empty) {
 						var byMonthSeries = self.mapMonthYearDataToSeries(prevByMonth, {
 							dateField: 'xCalendarMonth',
@@ -2529,7 +2529,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					}
 
 					// render trellis
-					var trellisData = self.normalizeArray(data.prevalenceByGenderAgeYear, true);
+					var trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear, true);
 
 					if (!trellisData.empty) {
 
@@ -2621,7 +2621,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					self.boxplotHelper(data.lengthOfEra, '#conditioneras_length_of_era', 500, 300, '', 'Days');
 
 					// prevalence by month
-					var byMonth = self.normalizeArray(data.prevalenceByMonth, true);
+					var byMonth = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 					if (!byMonth.empty) {
 						var byMonthSeries = self.mapMonthYearDataToSeries(byMonth, {
 							dateField: 'xCalendarMonth',
@@ -2646,7 +2646,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					}
 
 					// render trellis
-					var trellisData = self.normalizeArray(data.prevalenceByGenderAgeYear, true);
+					var trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear, true);
 					if (!trellisData.empty) {
 
 						var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -2739,7 +2739,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					self.boxplotHelper(data.lengthOfEra, '#drugeras_length_of_era', 500, 200, '', 'Days');
 
 					// prevalence by month
-					var byMonth = self.normalizeArray(data.prevalenceByMonth, true);
+					var byMonth = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 					if (!byMonth.empty) {
 						var byMonthSeries = self.mapMonthYearDataToSeries(byMonth, {
 							dateField: 'xCalendarMonth',
@@ -2765,7 +2765,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					}
 
 					// render trellis
-					var trellisData = self.normalizeArray(data.prevalenceByGenderAgeYear, true);
+					var trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear, true);
 					if (!trellisData.empty) {
 
 						var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -2855,7 +2855,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					// age at first diagnosis visualization
 					var boxplot = new atlascharts.boxplot();
 					var bpseries = [];
-					var bpdata = self.normalizeArray(data.ageAtFirstOccurrence);
+					var bpdata = ChartUtils.normalizeArray(data.ageAtFirstOccurrence);
 					if (!bpdata.empty) {
 						for (var i = 0; i < bpdata.category.length; i++) {
 							bpseries.push({
@@ -2880,7 +2880,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					}
 
 					// prevalence by month
-					var prevData = self.normalizeArray(data.prevalenceByMonth);
+					var prevData = ChartUtils.normalizeArray(data.prevalenceByMonth);
 					if (!prevData.empty) {
 						var byMonthSeries = self.mapMonthYearDataToSeries(prevData, {
 							dateField: 'xCalendarMonth',
@@ -2915,7 +2915,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					}
 
 					// render trellis
-					var trellisData = self.normalizeArray(data.prevalenceByGenderAgeYear);
+					var trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear);
 					if (!trellisData.empty) {
 
 						var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -3003,7 +3003,7 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 					if (result && result.length > 0) {
 						$("#" + type + "DrilldownScatterplot")
 							.empty();
-						var normalized = self.dataframeToArray(self.normalizeArray(result));
+						var normalized = self.dataframeToArray(ChartUtils.normalizeArray(result));
 
 						// nest dataframe data into key->values pair
 						var totalRecordsData = d3.nest()
@@ -3231,26 +3231,6 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			return result;
 		}
 
-		self.mapHistogram = function (histogramData) {
-			// result is an array of arrays, each element in the array is another array containing information about each bar of the histogram.
-			var result = new Array();
-			if (!histogramData.data || histogramData.data.empty) {
-				return result;
-			}
-			var minValue = histogramData.min;
-			var intervalSize = histogramData.intervalSize;
-
-			for (var i = 0; i <= histogramData.intervals; i++) {
-				var target = new Object();
-				target.x = minValue + 1.0 * i * intervalSize;
-				target.dx = intervalSize;
-				target.y = histogramData.data.countValue[histogramData.data.intervalIndex.indexOf(i)] || 0;
-				result.push(target);
-			};
-
-			return result;
-		}
-
 		self.map30DayDataToSeries = function (data, options) {
 			var defaults = {
 				dateField: "x",
@@ -3390,54 +3370,13 @@ define(['knockout', 'text!./report-manager.html', 'd3', 'atlascharts', 'colorbre
 			return result;
 		}
 
-		self.normalizeDataframe = function (dataframe) {
-			// rjson serializes dataframes with 1 row as single element properties.  This function ensures fields are always arrays.
-			var keys = d3.keys(dataframe);
-			keys.forEach(function (key) {
-				if (!(dataframe[key] instanceof Array)) {
-					dataframe[key] = [dataframe[key]];
-				}
-			});
-			return dataframe;
-		}
-
-		self.normalizeArray = function (ary, numerify) {
-			var obj = {};
-			var keys;
-
-			if (ary && ary.length > 0 && ary instanceof Array) {
-				keys = d3.keys(ary[0]);
-
-				$.each(keys, function () {
-					obj[this] = [];
-				});
-
-				$.each(ary, function () {
-					var thisAryObj = this;
-					$.each(keys, function () {
-						var val = thisAryObj[this];
-						if (numerify) {
-							if (_.isFinite(+val)) {
-								val = (+val);
-							}
-						}
-						obj[this].push(val);
-					});
-				});
-			} else {
-				obj.empty = true;
-			}
-
-			return obj;
-		}
-
 		self.boxplotHelper = function (data, target, width, height, xlabel, ylabel) {
 			var boxplot = new atlascharts.boxplot();
 			var yMax = 0;
 			var bpseries = [];
-			data = self.normalizeArray(data);
+			data = ChartUtils.normalizeArray(data);
 			if (!data.empty) {
-				var bpdata = self.normalizeDataframe(data);
+				var bpdata = atlascharts.chart.normalizeDataframe(data);
 
 				for (var i = 0; i < bpdata.category.length; i++) {
 					bpseries.push({

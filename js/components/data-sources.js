@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', 'atlascharts', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'databindings', 'access-denied'], function ($, ko, sharedState, view, d3, atlascharts, colorbrewer, _, config, authApi, d3tip) {
+define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', 'atlascharts', 'utils/ChartUtils', 'colorbrewer', 'lodash', 'appConfig', 'webapi/AuthAPI', 'd3-tip', 'databindings', 'access-denied'], function ($, ko, sharedState, view, d3, atlascharts, ChartUtils, colorbrewer, _, config, authApi, d3tip) {
 	function dataSources(params) {
 		var self = this;
 
@@ -212,17 +212,15 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 						size = self.breakpoints.guessFromNode('#populationByGender');
 						populationDonut.render(genderConceptData, "#populationByGender", size.width, self.breakpoints.narrow.height, self.chartOptions);
 
-						var ageAtFirstData = self.normalizeArray(data.ageAtFirstObservation);
+						var ageAtFirstData = data.ageAtFirstObservation;
 						if (!ageAtFirstData.empty) {
 							var histData = {};
-							histData.intervalSize = 1;
-							histData.min = Math.min(0, d3.min(ageAtFirstData.intervalIndex));
-							histData.max = Math.max(90, d3.max(ageAtFirstData.intervalIndex));
-							histData.intervals = 120;
-							histData.data = ageAtFirstData;
-
-							var ageAtFirstObservationData = self.mapHistogram(histData);
-
+							histData.INTERVAL_SIZE = 1;
+							var ageAtFirstDataMapped = ageAtFirstData.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue }));
+							histData.DATA = ChartUtils.normalizeArray(ageAtFirstDataMapped);
+							histData.OFFSET = 0;
+							histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
+							var ageAtFirstObservationData = atlascharts.histogram.mapHistogram(histData);
 							var ageHistogram = new atlascharts.histogram();
 							size = self.breakpoints.guessFromNode('#ageAtFirstObservation');
 							ageHistogram.render(ageAtFirstObservationData, "#ageAtFirstObservation", size.width, self.breakpoints.wide.height, {
@@ -230,15 +228,13 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Age',
 								yLabel: 'People',
-                                xDomain: [histData.min, histData.max],
-								...self.chartOptions,
 							});
 						}
 
 						d3.selectAll("#cumulativeObservation svg").remove();
-						var cumObsData = self.normalizeArray(data.cumulativeObservation);
+						var cumObsData = ChartUtils.normalizeArray(data.cumulativeObservation);
 						if (!cumObsData.empty) {
-							var cumulativeData = self.normalizeDataframe(cumObsData).xLengthOfObservation
+							var cumulativeData = atlascharts.chart.normalizeDataframe(cumObsData).xLengthOfObservation
 								.map(function (d, i) {
 									var item = {
 										xValue: this.xLengthOfObservation[i],
@@ -269,7 +265,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 						}
 
 						d3.selectAll("#oppeoplebymonthsingle svg").remove();
-						var obsByMonthData = self.normalizeArray(data.observedByMonth);
+						var obsByMonthData = ChartUtils.normalizeArray(data.observedByMonth);
 						if (!obsByMonthData.empty) {
 							var byMonthSeries = self.mapMonthYearDataToSeries(obsByMonthData, {
 								dateField: 'monthYear',
@@ -308,13 +304,14 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 						if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
 							var yearHistogram = new atlascharts.histogram();
 							var histData = {};
-							histData.intervalSize = 1;
-							histData.min = data.yearOfBirthStats[0].minValue;
-							histData.max = data.yearOfBirthStats[0].maxValue;
-							histData.intervals = 100;
-							histData.data = (self.normalizeArray(data.yearOfBirth));
+							histData.INTERVAL_SIZE = 1;
+							histData.OFFSET = data.yearOfBirthStats[0].minValue;
+							let mappedHistData = data.yearOfBirth.map(each => ({ INTERVAL_INDEX: each.intervalIndex, COUNT_VALUE: each.countValue }));
+							
+							histData.INTERVALS = data.yearOfBirth.length;
+							histData.DATA = ChartUtils.normalizeArray(mappedHistData);
 							size = self.breakpoints.guessFromNode('#hist');
-							yearHistogram.render(self.mapHistogram(histData), "#hist", size.width, self.breakpoints.wide.height, {
+							yearHistogram.render(atlascharts.histogram.mapHistogram(histData), "#hist", size.width, self.breakpoints.wide.height, {
 								xFormat: d3.format('d'),
 								yFormat: d3.format(',.1s'),
 								xLabel: 'Year',
@@ -477,7 +474,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 						if (!!data.conceptsPerPerson) {
 
 							var conceptsSeries = [];
-							var conceptsData = self.normalizeArray(data.conceptsPerPerson);
+							var conceptsData = ChartUtils.normalizeArray(data.conceptsPerPerson);
 							for (i = 0; i < conceptsData.category.length; i++) {
 								conceptsSeries.push({
 									Category: conceptsData.category[i],
@@ -543,7 +540,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					console.log(error);
 				},
 				success: function (data) {
-					var normalizedData = self.normalizeDataframe(self.normalizeArray(data, true));
+					var normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 					data = normalizedData;
 					self.loadingReport(false);
 
@@ -682,7 +679,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 		};
 
 		self.prevalenceByGenderAgeYear = function (data, selector) {
-			var trellisData = self.normalizeArray(data);
+			var trellisData = ChartUtils.normalizeArray(data);
 			if (!trellisData.empty) {
 
 				var allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -755,7 +752,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 		};
 
 		self.prevalenceByMonth = function (data, selector) {
-			var prevData = self.normalizeArray(data);
+			var prevData = ChartUtils.normalizeArray(data);
 			if (!prevData.empty) {
 				var byMonthSeries = self.mapMonthYearDataToSeries(prevData, {
 					dateField: 'xCalendarMonth',
@@ -795,7 +792,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 		self.ageBoxplot = function (data, selector, yLabel) {
 			yLabel = yLabel ? yLabel : 'Age at First Occurrence';
 			var bpseries = [];
-			var bpdata = self.normalizeArray(data);
+			var bpdata = ChartUtils.normalizeArray(data);
 			if (!bpdata.empty) {
 				for (var i = 0; i < bpdata.category.length; i++) {
 					bpseries.push({
@@ -822,7 +819,7 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 
 		self.frequencyDistribution = function (data, selector, report) {
 			if (!!data) {
-				var freqData = self.normalizeArray(data.frequencyDistribution);
+				var freqData = ChartUtils.normalizeArray(data.frequencyDistribution);
 				if (!freqData.empty) {
 					// Histogram
 					var frequencyHistogram = new Object();
@@ -831,18 +828,17 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 					for (var i in freqData.yNumPersons) {
 						totalCnt += freqData.yNumPersons[i];
 					}
-					frequencyHistData.countValue = freqData.yNumPersons.slice();
-					frequencyHistData.intervalIndex = freqData.xCount.slice();
-					frequencyHistData.percentValue = freqData.yNumPersons.map(function (value) {
+					frequencyHistData.COUNT_VALUE = freqData.yNumPersons.slice();
+					frequencyHistData.INTERVAL_INDEX = freqData.xCount.slice();
+					frequencyHistData.PERCENT_VALUE = freqData.yNumPersons.map(function (value) {
 						return (value / totalCnt) * 100;
 					});
-					frequencyHistogram.data = frequencyHistData;
-					frequencyHistogram.min = 0;
-					frequencyHistogram.max = 10;
-					frequencyHistogram.intervals = 10;
-					frequencyHistogram.intervalSize = 1;
+					frequencyHistogram.DATA = frequencyHistData;
+					frequencyHistogram.OFFSET = 0;
+                    frequencyHistogram.INTERVALS = frequencyHistData.INTERVAL_INDEX.length;
+					frequencyHistogram.INTERVAL_SIZE = 1;
 					var yScaleMax = (Math.floor((Math.max.apply(null, freqData.yNumPersons) + 5) / 10) + 1) * 10;
-					var freqHistData = self.mapHistogram(frequencyHistogram);
+					var freqHistData = atlascharts.histogram.mapHistogram(frequencyHistogram);
 					var freqHistChart = new self.freqhistogram();
 					const size = self.breakpoints.guessFromNode(selector);
 					freqHistChart.render(freqHistData, selector, size.width, self.breakpoints.wide.height, {
@@ -897,8 +893,8 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 		
 		self.boxplotChart = function(data, selector, conceptId) {
 		  var measurementValues = new atlascharts.boxplot();
-		  var ndata = self.normalizeArray(data.filter(filterByConcept(conceptId)));
-		  var bpdata = self.normalizeDataframe(ndata);
+		  var ndata = ChartUtils.normalizeArray(data.filter(filterByConcept(conceptId)));
+		  var bpdata = atlascharts.chart.normalizeDataframe(ndata);
 		  if (!bpdata.empty) {
         var bpseries = bpdata.category.map(function (v, i) {
           return {
@@ -958,47 +954,6 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 		//
 		// Utility functions
 		//
-
-		self.normalizeDataframe = function (dataframe) {
-			// rjson serializes dataframes with 1 row as single element properties.  This function ensures fields are always arrays.
-			var keys = d3.keys(dataframe);
-			keys.forEach(function (key) {
-				if (!(dataframe[key] instanceof Array)) {
-					dataframe[key] = [dataframe[key]];
-				}
-			});
-			return dataframe;
-		};
-
-		self.normalizeArray = function (ary, numerify) {
-			var obj = {};
-			var keys;
-
-			if (ary && ary.length > 0 && ary instanceof Array) {
-				keys = d3.keys(ary[0]);
-
-				$.each(keys, function () {
-					obj[this] = [];
-				});
-
-				$.each(ary, function () {
-					var thisAryObj = this;
-					$.each(keys, function () {
-						var val = thisAryObj[this];
-						if (numerify) {
-							if (_.isFinite(+val)) {
-								val = (+val);
-							}
-						}
-						obj[this].push(val);
-					});
-				});
-			} else {
-				obj.empty = true;
-			}
-
-			return obj;
-		};
 
 		self.buildHierarchyFromJSON = function (data, threshold) {
 			var total = 0;
@@ -1122,26 +1077,6 @@ define(['jquery', 'knockout', 'atlas-state', 'text!./data-sources.html', 'd3', '
 			result = result.sort(function (a, b) {
 				return b.label < a.label ? 1 : -1;
 			});
-
-			return result;
-		};
-
-		self.mapHistogram = function (histogramData) {
-			// result is an array of arrays, each element in the array is another array containing information about each bar of the histogram.
-			var result = new Array();
-			if (!histogramData.data || histogramData.data.empty) {
-				return result;
-			}
-			var minValue = histogramData.min;
-			var intervalSize = histogramData.intervalSize;
-
-			for (var i = 0; i < histogramData.data.intervalIndex.length; i++) {
-				var target = new Object();
-				target.x = minValue + (1.0 * histogramData.data.intervalIndex[i] * intervalSize);
-				target.dx = intervalSize;
-				target.y = histogramData.data.countValue[i] || 0;
-				result.push(target);
-			}
 
 			return result;
 		};

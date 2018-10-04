@@ -96,7 +96,37 @@ define(
           }
         };
         img.src = url;
-      }
+      };
+
+        static normalizeArray(ary, numerify) {
+            var obj = {};
+            var keys;
+
+            if (ary && ary.length > 0 && ary instanceof Array) {
+                keys = d3.keys(ary[0]);
+
+                keys.forEach(function (key) {
+                    obj[key] = [];
+                });
+
+                ary.forEach(function (item) {
+                    var thisAryObj = item;
+                    keys.forEach(function (key) {
+                        var val = thisAryObj[key];
+                        if (numerify) {
+                            if (_.isFinite(+val)) {
+                                val = (+val);
+                            }
+                        }
+                        obj[key].push(val);
+                    });
+                });
+            } else {
+                obj.empty = true;
+            }
+
+            return obj;
+        };
     }
 
     return ChartUtils;
