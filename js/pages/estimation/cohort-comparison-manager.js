@@ -936,7 +936,7 @@ define([
 						.then(({ data: c }) => {
 							this.monitorEEJobExecution(c.executionId, 100);
 							jobDetailsService.createJob({
-								name: this.cohortComparison().name() + "_" + sourceKey,
+                                name: data.jobParameters.jobName,
 								type: 'cca',
 								status: 'PENDING',
 								executionId: c.executionId,
