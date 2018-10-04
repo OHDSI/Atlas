@@ -3,7 +3,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinition',
 	'webapi/MomentAPI',
-	'webapi/ConceptSetAPI',
+	'services/ConceptSet',
 	'components/conceptset/utils',
 	'components/cohortbuilder/CohortExpression',
 	'conceptsetbuilder/InputTypes/ConceptSet',
@@ -30,10 +30,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'css!./cohort-definition-manager.css',
 	'assets/ohdsi.util',
 	'components/cohortbuilder/InclusionRule',
-	'webapi/ConceptSetAPI',
 	'components/modal-pick-options',
 	'components/heading',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
+	'components/modal',
 ], function (
 	$,
 	ko,
@@ -42,7 +42,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	CohortDefinition,
 	cohortDefinitionService,
 	momentApi,
-	conceptSetApi,
+	conceptSetService,
 	conceptSetUitls,
 	CohortExpression,
 	ConceptSet,
@@ -264,6 +264,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		// model behaviors
 			this.onConceptSetTabRespositoryConceptSetSelected = (conceptSet) => {
+				this.showImportConceptSetModal(false);
 				this.model.loadConceptSet(conceptSet.id, 'cohort-definition-manager', 'cohort', 'details');
 			}
 
@@ -869,16 +870,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				var conceptSetId;
 				var itemsPromise = (data) => {
 					conceptSetId = data.id;
-					return conceptSetApi.saveConceptSetItems(data.id, conceptSetItems);
+					return conceptSetService.saveConceptSetItems(data.id, conceptSetItems);
 				};
-				conceptSetApi.saveConceptSet(conceptSet)
+				conceptSetService.saveConceptSet(conceptSet)
 					.then(itemsPromise);
     	};
 
 			createConceptSet() {
 				var newConceptSet = new ConceptSet();
 				var cohortConceptSets = this.model.currentCohortDefinition().expression().ConceptSets;
-				newConceptSet.id = cohortConceptSets().reduce(function(max, val) { return Math.max(max, val.id) + 1; }, 0);
+				newConceptSet.id = cohortConceptSets().length > 0 ? Math.max(...cohortConceptSets().map(c => c.id)) + 1 : 0;
 				return newConceptSet;
 			}
 
@@ -902,8 +903,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.showImportConceptSetModal(true);
 			};
 
-			onConceptSetRepositoryImport (newConceptSet, event) {
-				event.stopPropagation();
+			onConceptSetRepositoryImport (newConceptSet) {
 				this.showImportConceptSetModal(false);
 				vocabularyApi.getConceptSetExpression(newConceptSet.id)
 					.done((result)=> {
@@ -956,7 +956,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				});
 				conceptSet.expression.items.valueHasMutated();
 				this.clearImportConceptSetJson();
-				this.conceptSetTabMode(cohortConst.conceptSetTabModes.details);
 			};
 
 			appendConcepts(data) {

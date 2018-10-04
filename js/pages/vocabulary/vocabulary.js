@@ -19,6 +19,7 @@ define([
 		constructor(params) {
 			super(params);
 
+			this.model = params.model;
 			this.searchParams = {
 				query: ko.observable(),
 			};

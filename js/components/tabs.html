@@ -3,13 +3,24 @@
 		<!-- ko foreach: $component.tabs -->
 			<!-- ko if: $data.title && $data.title.length > 0 -->
 				<span
-						data-bind="css: $component.classes({
-							element: 'header-title',
-							modifiers: ($component.selectedTab() == $index() ? 'selected' : null)
-						}),
-						text: $data.title,
-						click: () => $component.selectTab($index(), $data)"
-				></span>
+					data-bind="css: $component.classes({
+						element: 'header-title',
+						modifiers: ($component.selectedTab() == $index() ? 'selected' : null)
+					}),
+					click: () => $component.selectTab($index(), $data)"
+				>
+					<div data-bind="text: $data.title"></div>
+					<!-- ko if: $data.hasBadge -->
+						<div data-bind="css: $component.classes('header-badge')">
+							<div data-bind="
+								component: {
+									name: `${$data.componentName}-badge`,
+									params: $data.componentParams
+								}
+								"></div>
+							</div>
+					<!-- /ko -->
+			</span>
 			<!-- /ko -->
 		<!-- /ko -->
 	</div>
