@@ -51,11 +51,11 @@
 						attr: { 'disabled': !$component.isExecutionPermitted(sourceKey) },
                         click: () => $component.generate(sourceKey)"
                     >
-                        <!-- ko if: $component.ccGenerationStatusOptions.STARTED === status -->
+                        <!-- ko if: $component.ccGenerationStatusOptions.STARTED === status() -->
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-circle-o-notch fa-spin']})"></i>
                             <span data-bind="css: classes('action-text')">Generating...</span>
                         <!-- /ko -->
-                        <!-- ko if: $component.ccGenerationStatusOptions.COMPLETED === status -->
+                        <!-- ko if: $component.ccGenerationStatusOptions.COMPLETED === status() -->
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
                             <span data-bind="css: classes('action-text')">Generate</span>
                         <!-- /ko -->
@@ -85,7 +85,7 @@
                         click: toggleSection
                     ">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
-                        <span data-bind="text: 'All executions (' + submissions.length + ')'"></span>
+                        <span data-bind="text: 'All executions (' + submissions().length + ')'"></span>
                     </button>
                 </li>
             </ul>

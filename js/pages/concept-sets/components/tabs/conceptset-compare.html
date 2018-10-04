@@ -1,0 +1,134 @@
+<script type='text/html' id='conceptsets-comparison-headers'>
+  <tr>
+    <th>Match</th>
+    <th>Id</th>
+    <th>Code</th>
+    <th>Name</th>
+    <th>Class</th>
+    <th><i id="dtConeptManagerRC" class="fa fa-database" aria-hidden="true"></i> RC</th>
+    <th><i id="dtConeptManagerDRC" class="fa fa-database" aria-hidden="true"></i> DRC</th>
+    <th>Domain Id</th>
+    <th>Vocabulary</th>
+  </tr>
+</script>
+
+<div class="paddedWrapper">
+  <div class="heading">
+    <b>Concept Set Comparison</b>: Use this utility to compare the contents of two concept sets to see which concepts they may share.
+  </div>
+  <div>
+    <label>Concept Set 1:</label>
+    <div class="input-group">
+      <input class="form-control" type="text" disabled data-bind="value: $component.compareCS1Caption" />
+      <span class="input-group-btn">
+        <button class="btn btn-primary" data-bind="click: chooseCS1">
+          <i class="fa fa-folder-open"></i>
+        </button>
+        <button class="btn btn-danger" data-bind="
+          disable: $component.compareCS1Id() == 0,
+          click: clearCS1
+        " type="button">
+          <i class="fa fa-times-circle" aria-hidden="true"></i>
+        </button>
+      </span>
+    </div>
+  </div>
+  <br/>
+  <div>
+    <label>Concept Set 2:</label>
+    <div class="input-group">
+      <input class="form-control" type="text" disabled data-bind="
+        value: $component.compareCS2Caption
+      " />
+      <span class="input-group-btn">
+        <button class="btn btn-primary" data-bind="click:chooseCS2">
+          <i class="fa fa-folder-open"></i>
+        </button>
+        <button class="btn btn-danger" data-bind="
+          disable: $component.compareCS2Id() == 0,
+          click: clearCS2
+        " type="button">
+          <i class="fa fa-times-circle" aria-hidden="true"></i>
+      </button>
+      </span>
+    </div>
+  </div>
+  <div data-bind="if: $component.compareReady()">
+    <div class="paddedWrapper compare-pane">
+      <button type="button" class="btn btn-sm btn-primary" data-bind="
+        click: $component.compareConceptSets;
+      ">
+        <i data-bind="css: $component.compareLoadingClass"></i> Compare Concept Sets
+      </button>
+    </div>
+  </div>
+  <div data-bind="if: !$component.compareReady() && $root.currentConceptSetDirtyFlag().isDirty()">
+    <div class="paddedWrapper compare-pane">
+      <i class="fa fa-exclamation-triangle"></i> You must save the current concept set before you can perform this comparison.
+    </div>
+  </div>
+  <div data-bind="if: $component.compareError()">
+    <div class="paddedWrapper">
+      <span class="compare-message">You cannot compare the same concept sets.</span>
+    </div>
+  </div>
+  <div data-bind="if: $component.compareReady() && $component.compareUnchanged() && $component.compareResults()">
+    <div class="heading compare-results">
+      <b>Comparison Results</b>
+    </div>
+    <div class="container-fluid">
+      <div class="pull-left">
+        <button class="btn btn-sm btn-primary" data-bind="
+          click: showSaveNewModal,
+        ">Save New Concept Set From Selection Below</button>
+      </div>
+      <div class="pull-right compare-results">
+        <i data-bind="attr: { class: $component.recordCountClass }" aria-hidden="true">          
+        </i> View database record counts (RC) and descendant record counts (DRC) for:
+        <select data-bind="
+          options: $component.resultSources,
+          optionsText: 'sourceName',
+          optionsValue: 'sourceKey',
+          value: $component.currentResultSource().sourceKey,
+          event: { change: $component.refreshRecordCounts }
+        "></select>
+      </div>
+    </div>
+    <div id="compareResults">
+      <faceted-datatable params="{
+        reference:$component.compareResults,
+        columns: compareResultsColumns,
+        options:compareResultsOptions,
+        order: $component.compareResultsOptions.order,
+        headersTemplateId: 'conceptsets-comparison-headers',
+      }">
+    </faceted-datatable>
+  </div>
+</div>
+</div>
+
+<script type='template' id='conceptset-compare-modal'>
+  <cohort-concept-set-browser params="
+    criteriaContext: $root.criteriaContext,
+    cohortConceptSets: null,
+    onRespositoryConceptSetSelected: conceptsetSelected,
+    repositoryConceptSetTableId: 'csCompareConceptSets'
+  "></cohort-concept-set-browser>
+</script>
+
+<atlas-modal
+  params="{
+    showModal: isModalShown,
+    title: 'Choose a concept set',
+    template: 'conceptset-compare-modal',
+    data: {
+      conceptsetSelected: conceptsetSelected
+    },
+  }"
+></atlas-modal>
+
+<conceptset-save params="
+  conceptSetName: compareNewConceptSetName,
+  onSave: compareCreateNewConceptSet,
+  show: saveConceptSetShow"
+></conceptset-save>

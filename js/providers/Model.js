@@ -172,7 +172,7 @@ define(
 					var url = "#/";
 					if (this.currentConceptSet())
 						url = url + "conceptset/" + (this.currentConceptSet()
-							.id || '0') + '/details';
+							.id || '0') + '/conceptset-expression';
 					else
 						url = url + "conceptsets";
 					return url;
@@ -569,7 +569,7 @@ define(
 										cdsi.status = ko.observable(sourceInfo.status);
 										var date = new Date(sourceInfo.startTime);
 										cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
-										cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
+										cdsi.executionDuration = ko.observable(momentApi.formatDuration(sourceInfo.executionDuration));
 										var commaFormatted = d3.format(",");
 										// For backwards compatability, query personCount from cdm if not populated in sourceInfo
 										if (sourceInfo.personCount == null) {
@@ -616,7 +616,7 @@ define(
 					&& this.currentConceptSet()
 					&& this.currentConceptSet().id == conceptSetId
 				) {
-					this.currentView(viewToShow);
+					this.handleViewChange(viewToShow, { conceptSetId, mode });
 					this.currentConceptSetMode(mode);
 					return;
 				}
@@ -677,7 +677,7 @@ define(
 					&& this.currentConceptSet().id == conceptSetId
 				) {
 					this.currentConceptSetMode(mode);
-					this.currentView(viewToShow);
+					this.handleViewChange(viewToShow, { conceptSetId, mode });
 					return;
 				}
 				this.currentView('loading');
@@ -686,7 +686,7 @@ define(
 						return conceptSetService.loadConceptSetExpression(conceptSetId)
 							.then((expression) => {
 								this.setConceptSet(conceptset, expression.items);
-								this.currentView(viewToShow);
+								this.handleViewChange(viewToShow, { conceptSetId, mode });
 								return this.resolveConceptSetExpression()
 									.then(() => {
 										this.currentConceptSetMode(mode);
@@ -824,10 +824,10 @@ define(
 
 			onCurrentConceptSetModeChanged(newMode) {
 				switch (newMode) {
-					case 'included':
+					case 'included-conceptsets': case 'included':
 						this.loadIncluded();
 						break;
-					case 'sourcecodes':
+					case 'included-sourcecodes':
 						this.loadIncluded()
 							.then(() => {
 								if (this.includedSourcecodes().length === 0) {

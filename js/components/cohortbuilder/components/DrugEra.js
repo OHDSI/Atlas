@@ -97,15 +97,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 			}
 		];
 
-		self.addCriterionSettings = {
-			selectText: "Add criteria attribute…",
-			height: 300,
-			actionOptions: self.addActions,
-			onAction: function (data) {
-				data.selectedData.action();
-			}
-		};
-
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}

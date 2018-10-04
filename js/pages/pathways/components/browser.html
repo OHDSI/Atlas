@@ -1,0 +1,27 @@
+<heading-title params="name: 'Cohort Pathways', icon: 'sitemap', theme: 'dark'"></heading-title>
+
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Pathway Analysis list...'"></loading>
+
+<div data-bind="css: classes('grid'), if: $component.canList(), visible: !$component.loading()">
+	<div data-bind="css: classes('toolbar')">
+		<button
+				type="button"
+				data-bind="css: classes({ element: 'create-btn', extra: ['btn btn-sm btn-primary', !$component.canCreate() ? 'disabled' : ''] }), click:$component.newAnalysis"
+		>
+			New Pathway Analysis
+		</button>
+	</div>
+	<div data-bind="css: classes('list')">
+		<faceted-datatable params="{
+				buttons: [],
+				order: [[0, 'asc']],
+				columns: $component.gridColumns,
+				options: $component.gridOptions,
+				reference: $component.analysisList
+		}"></faceted-datatable>
+	</div>
+</div>
+
+<!-- ko ifnot:$component.canList() -->
+	<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
+<!-- /ko -->

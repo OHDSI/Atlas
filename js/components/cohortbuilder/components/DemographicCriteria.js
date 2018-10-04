@@ -69,15 +69,6 @@ define(['knockout', '../options', '../InputTypes/Range', 'text!./DemographicCrit
 			}
 		];
 
-		self.addCriterionSettings = {
-			selectText: "Add criteria attribute…",
-			height: 250,
-			actionOptions: self.addActions,
-			onAction: function (data) {
-				data.selectedData.action();
-			}
-		};
-
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}

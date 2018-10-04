@@ -1,6 +1,6 @@
-define(['knockout', 'appConfig', 'webapi/AuthAPI', 'webapi/ConceptSetAPI', 'text!./components/conceptsetmodal/conceptSetSaveModal.html',
+define(['knockout', 'appConfig', 'webapi/AuthAPI', 'services/ConceptSet', 'text!./components/conceptsetmodal/conceptSetSaveModal.html',
     'css!./components/conceptsetmodal/style.css'],
-  function(ko, config, authApi, conceptSetApi, view){
+  function(ko, config, authApi, conceptSetService, view){
     function ConceptSetSaveModal(params){
       var self = this;
       self.conceptSetName = params.conceptSetName;
@@ -19,11 +19,12 @@ define(['knockout', 'appConfig', 'webapi/AuthAPI', 'webapi/ConceptSetAPI', 'text
         return self.isNameVerified() && !self.isNameUnique();
       });
       self.checkName = ko.computed(function () {
-        conceptSetApi.exists(self.conceptSetName())
-          .then(function(data){
+        conceptSetService.exists(self.conceptSetName())
+          .then(({ data }) => {
             self.isNameVerified(true);
             self.isNameUnique(!data || data.length === 0);
-          }, function(){
+          })
+          .catch(() => {
             self.isNameVerified(false);
             self.isNameUnique(false);
           });

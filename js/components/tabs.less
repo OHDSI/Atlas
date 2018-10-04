@@ -8,21 +8,26 @@
     background: #333;
     padding: 5px 10px 0 10px;
     display: flex;
-  }
 
-  &__header-title {
-    font-size: 1.4rem;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    padding: 5px 12px;
-    margin-right: 5px;
-    cursor: pointer;
-    color: #ccc;
-    background-color: #888;
+    &-badge {
+      margin-left: 1rem;
+    }
     
-    &--selected {
-      background: #fff;
-      color: initial;
+    &-title {
+      display: flex;
+      font-size: 1.4rem;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      padding: 5px 12px;
+      margin-right: 5px;
+      cursor: pointer;
+      color: #ccc;
+      background-color: #888;
+      
+      &--selected {
+        background: #fff;
+        color: initial;
+      }
     }
   }
 }

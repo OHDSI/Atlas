@@ -80,6 +80,10 @@ body {
   margin: 12px 0px 3px 0px;
 }
 
+.heading.strong {
+  font-weight: bold;
+}
+
 .subheading {
   font-size: 12px;
   color: #000;

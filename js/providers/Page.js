@@ -22,8 +22,9 @@ define([
   class Page extends Component {
     constructor(params) {
       super(params);
+			this.subscriptions = [];			
       this.routerParams = params.routerParams();
-      this.routerParamsSub = params.routerParams.subscribe(newParams => {
+      this.subscriptions.push(params.routerParams.subscribe(newParams => {
         const np = Object.entries(newParams === undefined ? {} : newParams);
         const op = Object.entries(this.routerParams === undefined ? {} : this.routerParams);
         const changedParams = _.differenceWith(np, op, detectChanges);
@@ -34,7 +35,7 @@ define([
         
         this.onRouterParamsChanged(changedParamsMap, newParams);
         this.routerParams = newParams;
-      });
+      }));
     }
 
     onRouterParamsChanged(newParams) {
@@ -46,7 +47,7 @@ define([
     }
 
     dispose() {
-      this.routerParamsSub.dispose();
+      this.subscriptions.forEach(sub => sub.dispose());
     }
   }
 
