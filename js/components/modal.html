@@ -7,6 +7,7 @@
 				<!-- /ko -->
 				<div class="modal-title" data-bind="text: $component.title"></div>
 			</div>
+<!-- ko if: $component.template -->			
 			<div data-bind="if: $component.showModal, css: classes({ element: 'modal-body', extra: 'modal-body' })">
 				<div data-bind="
 					template: {
@@ -15,6 +16,10 @@
 					}
 				"></div>
 			</div>
+<!-- /ko -->
+<!-- ko if: $componentTemplateNodes -->			
+<!-- ko template: { nodes: $componentTemplateNodes, data: $component.data } --><!-- /ko -->		
+<!-- /ko -->
 		</div>
 	</div>
 </div>

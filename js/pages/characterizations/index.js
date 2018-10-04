@@ -1,7 +1,7 @@
 define(
-  (require, exports) => {
-    const constants = require('./const');
-    const buildRoutes = require('./routes');
+	(require, exports) => {
+		const constants = require('./const');
+		const buildRoutes = require('./routes');
 
     return {
       title: constants.pageTitle,

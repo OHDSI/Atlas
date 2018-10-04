@@ -11,7 +11,7 @@ define(['knockout'], (ko) => {
         data,
         container,
         container.getBoundingClientRect().width,
-        minHeight,
+        Math.max(container.getBoundingClientRect().height, minHeight),
         format
       );
     }

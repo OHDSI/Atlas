@@ -4,10 +4,21 @@
 	}
 
 	&__col-cohort-name {
-		width: 80%;
-	}
+		width: 70%;
 
-	&__col-cohort-remove {
+		&--editable {
+			span {
+				cursor: pointer;
+				color: #0070dd;
+				border-bottom: 1px dashed;
+			}
+			input {
+				width: 100%;
+			}
+		}
+	}
+	
+	&__col-cohort-edit, &__col-cohort-remove {
 		width: 10%;
 	}
 

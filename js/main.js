@@ -71,6 +71,7 @@ require([
 	require(['bootstrap', ...styles], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
 		require([
+			'knockout',
 			'providers/Application',
 			'providers/Model',
 			'providers/Router',
@@ -83,6 +84,7 @@ require([
 			'components/terms-and-conditions/terms-and-conditions',
 		],
 			(
+				ko,
 				Application,
 				Model,
 				Router,

@@ -1,9 +1,9 @@
 define([
 	'knockout',
-	'pages/characterizations/services/CharacterizationService',
-	'pages/characterizations/services/PermissionService',
-	'pages/characterizations/const',
-	'text!./characterization-executions.html',
+	'../../PathwayService',
+	'../../PermissionService',
+	'../../const',
+	'text!./pathway-executions.html',
 	'appConfig',
 	'webapi/AuthAPI',
 	'moment',
@@ -12,12 +12,11 @@ define([
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
 	'services/Source',
-	'less!./characterization-executions.less',
-	'./characterization-results',
-	'databindings/tooltipBinding'
+	'less!./pathway-executions.less',
+	//'./pathway-results'
 ], function(
 	ko,
-	CharacterizationService,
+	PathwayService,
 	PermissionService,
 	consts,
 	view,
@@ -30,18 +29,16 @@ define([
 	datatableUtils,
 	SourceService
 ) {
-	class CharacterizationViewEditExecutions extends AutoBind(Component) {
+	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
 			super();
 
-			this.ccGenerationStatusOptions = consts.ccGenerationStatus;
+			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
-			this.characterizationId = params.characterizationId;
-			const currentHash = ko.computed(() => params.design().hash);
+			this.analysisId = params.analysisId;
+			const currentHash = ko.pureComputed(() => params.design().hash);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
-			this.isExecutionPermitted = this.isExecutionPermitted.bind(this);
-			this.isResultsViewPermitted = this.isResultsViewPermitted.bind(this);
 
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
@@ -58,7 +55,7 @@ define([
 					className: this.classes('col-exec-checksum'),
 					render: (s, p, d) => {
 						return (
-							PermissionService.isPermittedExportGenerationDesign(d.id) ?
+							PermissionService.isPermittedExportByGeneration(d.id) ?
 							`<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.hashCode || '-')}</a>${currentHash() === d.hashCode ? ' (same as now)' : ''}` :
 							(d.hashCode || '-')
 						);
@@ -82,7 +79,7 @@ define([
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return d.status === this.ccGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">View reports</a>` : '-'; // ${d.reportCount}
+						return d.status === this.pathwayGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">View reports</a>` : '-';
 					}
 				}
 			];
@@ -104,41 +101,35 @@ define([
 
 		isViewGenerationsPermittedResolver() {
 			return ko.computed(
-				() => (this.characterizationId() ? PermissionService.isPermittedGetCCGenerations(this.characterizationId()) : true)
+				() => (this.analysisId() ? PermissionService.isPermittedListGenerations(this.analysisId()) : true)
 			);
 		}
 
-		isExecutionPermitted(sourceKey) {
-			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey);
+		isGenerationPermitted(sourceKey) {
+			return PermissionService.isPermittedGenerate(this.analysisId(), sourceKey);
 		}
 
 		isResultsViewPermitted(sourceKey) {
-			return PermissionService.isPermittedGetCCGenerationResults(sourceKey);
+			return PermissionService.isPermittedResults(sourceKey);
 		}
 
-		loadData({
-			silently = false
-		} = {}) {
+		loadData({silently = false} = {}) {
 			!silently && this.loading(true);
 
-			const ccId = this.characterizationId();
+			const analysisId = this.analysisId();
 
 			Promise.all([
 				SourceService.loadSourceList(),
-				CharacterizationService.loadCharacterizationExecutionList(ccId)
+				PathwayService.listExecutions(analysisId)
 			]).then(([
 				allSources,
 				executionList
 			]) => {
 				const sourceList = allSources.filter(source => {
-					return (source.daimons.filter(function(daimon) {
-							return daimon.daimonType == "CDM";
-						}).length > 0 &&
-						source.daimons.filter(function(daimon) {
-							return daimon.daimonType == "Results";
-						}).length > 0)
-				});
-
+					return (source.daimons.filter(function (daimon) { return daimon.daimonType == "CDM"; }).length > 0
+							&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0)
+				});				
+				
 				sourceList.forEach(s => {
 					let group = this.executionGroups().find(g => g.sourceKey == s.sourceKey);
 					if (!group) {
@@ -150,14 +141,15 @@ define([
 						}
 						this.executionGroups.push(group);
 					}
-
-
+					
+					
 					group.submissions(executionList.filter(e => e.sourceKey === s.sourceKey));
-					group.status(group.submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED) ?
-						this.ccGenerationStatusOptions.STARTED :
-						this.ccGenerationStatusOptions.COMPLETED);
-
-				})
+					group.status(group.submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED) ?
+						this.pathwayGenerationStatusOptions.STARTED :
+						this.pathwayGenerationStatusOptions.COMPLETED);
+					
+				});
+				
 				this.loading(false);
 			});
 		}
@@ -165,7 +157,7 @@ define([
 		generate(source) {
 			let confirmPromise;
 
-			if ((this.executionGroups().find(g => g.sourceKey === source) || {}).status === this.ccGenerationStatusOptions.STARTED) {
+			if ((this.executionGroups().find(g => g.sourceKey === source) || {}).status === this.pathwayGenerationStatusOptions.STARTED) {
 				confirmPromise = new Promise((resolve, reject) => {
 					if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
 						resolve();
@@ -178,7 +170,7 @@ define([
 			}
 
 			confirmPromise
-				.then(() => CharacterizationService.runGeneration(this.characterizationId(), source))
+				.then(() => PathwayService.generate(this.analysisId(), source))
 				.then(() => this.loadData())
 				.catch(() => {});
 		}
@@ -187,8 +179,8 @@ define([
 			this.executionDesign(null);
 			this.isExecutionDesignShown(true);
 
-			CharacterizationService
-				.loadCharacterizationExportDesignByGeneration(executionId)
+			PathwayService
+				.loadExportDesignByGeneration(executionId)
 				.then(res => {
 					this.executionDesign(res);
 					this.loading(false);
@@ -200,7 +192,7 @@ define([
 		}
 
 		goToResults(executionId) {
-			commonUtils.routeTo('/cc/characterizations/' + this.characterizationId() + '/results/' + executionId);
+			commonUtils.routeTo(`/pathways/${this.analysisId()}/results/${executionId}`);
 		}
 
 		goToLatestResults(sourceKey) {
@@ -209,7 +201,7 @@ define([
 				const submissions = [...sg.submissions()];
 				if (submissions.length > 0) {
 					submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
-					const latestExecutedSubmission = submissions.find(s => s.status === this.ccGenerationStatusOptions.COMPLETED);
+					const latestExecutedSubmission = submissions.find(s => s.status === this.pathwayGenerationStatusOptions.COMPLETED);
 					if (latestExecutedSubmission) {
 						this.goToResults(latestExecutedSubmission.id);
 						return;
@@ -220,5 +212,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('characterization-view-edit-executions', CharacterizationViewEditExecutions, view);
+	return commonUtils.build('pathway-executions', PathwayExecutions, view);
 });

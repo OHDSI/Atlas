@@ -234,6 +234,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.modifiedJSON = "";
 			this.expressionJSON = ko.pureComputed({
 				read: () => {
+					if (!this.model.currentCohortDefinition()){
+						return ko.toJSON(null);
+					}
 					return ko.toJSON(this.model.currentCohortDefinition().expression(), (key, value) => {
 					if (value === 0 || value) {
 						return value;
