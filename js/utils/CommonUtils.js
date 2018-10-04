@@ -148,31 +148,30 @@ define((require, factory) => {
 
 	const getPathwaysUrl = (id, section) => `/pathways/${id}/${section}`;
 
-		async function confirmAndDelete({ loading, remove, redirect }) {
-            if (confirm('Are you sure?')) {
-                loading(true);
-                await remove()
-                loading(false);
-                redirect();
-            }
-        }
-
-		return {
-			build,
-            confirmAndDelete,
-            routeTo,
-			hasRelationship,
-			contextSensitiveLinkColor,
-			hasCDM,
-			hasResults,
-			renderConceptSetItemSelector,
-			renderLink,
-			renderBoundLink,
-			renderConceptSelector,
-			renderHierarchyLink,
-			createConceptSetItem,
-			syntaxHighlight,
-			getPathwaysUrl
-		};
+	async function confirmAndDelete({ loading, remove, redirect }) {
+		if (confirm('Are you sure?')) {
+			loading(true);
+			await remove()
+			loading(false);
+			redirect();
+		}
 	}
-);
+
+	return {
+		build,
+		confirmAndDelete,
+		routeTo,
+		hasRelationship,
+		contextSensitiveLinkColor,
+		hasCDM,
+		hasResults,
+		renderConceptSetItemSelector,
+		renderLink,
+		renderBoundLink,
+		renderConceptSelector,
+		renderHierarchyLink,
+		createConceptSetItem,
+		syntaxHighlight,
+		getPathwaysUrl
+	};
+});
