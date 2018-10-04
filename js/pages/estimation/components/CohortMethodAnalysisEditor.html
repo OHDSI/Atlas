@@ -99,7 +99,7 @@
                     <label>Using OHDSI covariates for propensity score model. (<span class="linkish" data-bind="click: () => { showCovariateSelector(true) }">Click to view details</span>)</label>
                 </div>
                 <div>
-                    <label>What concepts do you want to include in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+                    <label>What concepts do you want to <b>include</b>b in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
                     <div class="input-group">
                         <input class="form-control" type="text" disabled data-bind="value: $component.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet().name" />
                         <span class="input-group-btn">
@@ -116,7 +116,7 @@
                     </div>
                 </div>
                 <div>
-                    <label>What concepts do you want to exclude in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+                    <label>What concepts do you want to <b>exclude</b> in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
                     <div class="input-group">
                         <input class="form-control" type="text" disabled data-bind="value: $component.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet().name" />
                         <span class="input-group-btn">
