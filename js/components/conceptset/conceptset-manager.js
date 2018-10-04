@@ -5,11 +5,10 @@ define(['knockout',
 	'components/conceptset/utils',
 	'services/CDMResultsService',
 	'services/VocabularyService',
-	'webapi/ConceptSetAPI',
+	'services/ConceptSetService',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'clipboard',
-	'services/ConceptSet',
 	'services/AuthService',
 	'services/permissions/ConceptSetPermissionService',
 	'databindings',
@@ -29,11 +28,10 @@ define(['knockout',
 	utils,
 	CDMResultsService,
 	VocabularyService,
-	conceptSetAPI,
+	conceptSetService,
 	ConceptSet,
 	sharedState,
 	clipboard,
-	conceptSetService,
 	AuthService,
 	ConceptSetPermissionService,
 ) {
@@ -570,7 +568,7 @@ define(['knockout',
 			// Next check to see that a concept set with this name does not already exist
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
-			conceptSetAPI.exists(conceptSet.name, conceptSet.id)
+			conceptSetService.exists(conceptSet.name, conceptSet.id)
 				.then(function(results){
           if (results.length > 0) {
             self.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
@@ -588,9 +586,9 @@ define(['knockout',
 					var conceptSetId;
 					var itemsPromise = function(data) {
 						conceptSetId = data.id;
-						return conceptSetAPI.saveConceptSetItems(data.id, conceptSetItems);
+						return conceptSetService.saveConceptSetItems(data.id, conceptSetItems);
 					};
-					conceptSetAPI.saveConceptSet(conceptSet)
+					conceptSetService.saveConceptSet(conceptSet)
 						.then(itemsPromise)
 						.then(function(){
               document.location = '#/conceptset/' + conceptSetId + '/details';
@@ -898,7 +896,7 @@ define(['knockout',
 				return;
 
 			// reset view after save
-			conceptSetAPI.deleteConceptSet(self.model.currentConceptSet()
+			conceptSetService.deleteConceptSet(self.model.currentConceptSet()
 					.id)
 				.then(function (result) {
 					self.model.currentConceptSet(null);

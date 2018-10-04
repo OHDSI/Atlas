@@ -10,6 +10,7 @@ define([
 	'pages/cohort-definitions/const',
 	'providers/Component',
 	'utils/CommonUtils',
+	'utils/ChartUtils',
 	'databindings',
 	'faceted-datatable',
 	'colvis',
@@ -28,7 +29,8 @@ define([
 		{ visualizationPacks },
 		costUtilConst,
 		Component,
-		commonUtils
+		commonUtils,
+		ChartUtils
 	) {
 	class ReportManager extends Component {
 		constructor(params) {
@@ -424,7 +426,7 @@ define([
 								this.model.loadingReport(false);
 
 								// render trellis
-								let trellisData = this.normalizeArray(data.prevalenceByGenderAgeYear, true);
+								let trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear, true);
 								if (!trellisData.empty) {
 
 									let allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -495,7 +497,7 @@ define([
 								}
 
 								// prevalence by month
-								let byMonthData = this.normalizeArray(data.prevalenceByMonth, true);
+								let byMonthData = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 								if (!byMonthData.empty) {
 									let byMonthSeries = this.mapMonthYearDataToSeries(byMonthData, {
 										dateField: 'xCalendarMonth',
@@ -530,7 +532,7 @@ define([
 								}
 
 								// Age At Death
-								let bpdata = this.normalizeArray(data.agetAtDeath);
+								let bpdata = ChartUtils.normalizeArray(data.agetAtDeath);
 								if (!bpdata.empty) {
 									let boxplot = new atlascharts.boxplot();
 									let bpseries = [];
@@ -585,8 +587,8 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								
-								let normalizedData = this.normalizeArray(data);
+
+								let normalizedData = ChartUtils.normalizeArray(data);
 								if (!normalizedData.empty) {
 									let table_data = normalizedData.conceptPath.map((d, i) => {
 										let conceptDetails = normalizedData.conceptPath[i].split('||');
@@ -696,7 +698,7 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								let normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
+								let normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 								if (!normalizedData.empty) {
 									let table_data = normalizedData.conceptPath.map((d, i) => {
 										let conceptDetails = normalizedData.conceptPath[i].split('||');
@@ -811,7 +813,7 @@ define([
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
 
-								let normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
+								let normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 								if (!normalizedData.empty) {
 									let table_data = normalizedData.conceptPath.map((d, i) => {
 										let conceptDetails = normalizedData.conceptPath[i].split('||');
@@ -919,7 +921,7 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								let normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
+								let normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 								if (!normalizedData.empty) {
 									let table_data = normalizedData.conceptPath.map((d, i) => {
 										let conceptDetails = normalizedData.conceptPath[i].split('||');
@@ -1033,7 +1035,7 @@ define([
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
 								// age by gender
-								let ageByGenderData = this.normalizeArray(data.ageByGender);
+								let ageByGenderData = ChartUtils.normalizeArray(data.ageByGender);
 								if (!ageByGenderData.empty) {
 									let agegenderboxplot = new atlascharts.boxplot();
 									let agData = ageByGenderData.category
@@ -1058,17 +1060,16 @@ define([
 								}
 
 								// age at first obs
-								let ageAtFirstData = this.normalizeArray(data.ageAtFirst);
+								let ageAtFirstData = data.ageAtFirst;
 								if (!ageAtFirstData.empty) {
 									let histData = {};
-									histData.intervalSize = 1;
-									histData.min = d3.min(ageAtFirstData.countValue);
-									histData.max = d3.max(ageAtFirstData.countValue);
-									histData.intervals = 120;
-									histData.data = ageAtFirstData;
-									d3.selectAll("#ageatfirstobservation svg")
-										.remove();
-									let ageAtFirstObservationData = this.mapHistogram(histData);
+									d3.selectAll("#ageatfirstobservation svg").remove();
+									histData.INTERVAL_SIZE = 1;
+									histData.DATA = ChartUtils.normalizeArray(ageAtFirstData.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue })));
+									histData.OFFSET = 0;
+									histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
+
+									let ageAtFirstObservationData = atlascharts.histogram.mapHistogram(histData);
 									let ageAtFirstObservationHistogram = new atlascharts.histogram();
 									ageAtFirstObservationHistogram.render(ageAtFirstObservationData, "#ageatfirstobservation", size12.width, size12.height, {
 										xFormat: d3.format('0.0d'),
@@ -1080,15 +1081,16 @@ define([
 								// observation length
 								if (data.observationLength && data.observationLength.length > 0 && data.observationLengthStats) {
 									let histData2 = {};
-									histData2.data = this.normalizeArray(data.observationLength);
-									histData2.intervalSize = +data.observationLengthStats[0].intervalSize;
-									histData2.min = +data.observationLengthStats[0].minValue;
-									histData2.max = +data.observationLengthStats[0].maxValue;
-									histData2.intervals = Math.round((histData2.max - histData2.min + 1) / histData2.intervalSize) + histData2.intervalSize;
+									let observationDataMapped = data.observationLength.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue }));
+									histData2.DATA = ChartUtils.normalizeArray(observationDataMapped);
+									histData2.INTERVAL_SIZE = +data.observationLengthStats[0].intervalSize;
+									histData2.OFFSET = 0;
+									histData2.MAX = +data.observationLengthStats[0].maxValue;
+									histData2.INTERVALS =  histData2.DATA.INTERVAL_INDEX.length;
 									d3.selectAll("#observationlength svg")
 										.remove();
-									if (!histData2.data.empty) {
-										let observationLengthData = this.mapHistogram(histData2);
+									if (!histData2.DATA.empty) {
+										let observationLengthData = atlascharts.histogram.mapHistogram(histData2);
 										let observationLengthXLabel = 'Days';
 										if (observationLengthData.length > 0) {
 											if (observationLengthData[observationLengthData.length - 1].x - observationLengthData[0].x > 1000) {
@@ -1112,10 +1114,10 @@ define([
 								// cumulative observation
 								d3.selectAll("#cumulativeobservation svg")
 									.remove();
-								let cumObsData = this.normalizeArray(data.cumulativeObservation);
+								let cumObsData = ChartUtils.normalizeArray(data.cumulativeObservation);
 								if (!cumObsData.empty) {
 									let cumulativeObservationLine = new atlascharts.line();
-									let cumulativeData = this.normalizeDataframe(cumObsData)
+									let cumulativeData = atlascharts.histogram.normalizeDataframe(cumObsData)
 										.xLengthOfObservation
 										.map(function (d, i) {
 											let item = {
@@ -1146,7 +1148,7 @@ define([
 								*/
 
 								// observation period length by gender
-								let obsPeriodByGenderData = this.normalizeArray(data.durationByGender);
+								let obsPeriodByGenderData = ChartUtils.normalizeArray(data.durationByGender);
 								if (!obsPeriodByGenderData.empty) {
 									d3.selectAll("#opbygender svg")
 										.remove();
@@ -1195,7 +1197,7 @@ define([
 								// observation period length by age
 								d3.selectAll("#opbyage svg")
 									.remove();
-								let obsPeriodByLenByAgeData = this.normalizeArray(data.durationByAgeDecile);
+								let obsPeriodByLenByAgeData = ChartUtils.normalizeArray(data.durationByAgeDecile);
 								if (!obsPeriodByLenByAgeData.empty) {
 									let opbyageboxplot = new atlascharts.boxplot();
 									let opaData = obsPeriodByLenByAgeData.category
@@ -1242,18 +1244,17 @@ define([
 								// observed by year
 								// tooltip bug
 								/*
-								let obsByYearData = this.normalizeArray(data.personsWithContinuousObservationsByYear);
-								if (!obsByYearData.empty && data.personsWithContinuousObservationsByYearStats) {
+								if (!data.personsWithContinuousObservationsByYear.empty && data.personsWithContinuousObservationsByYearStats) {
 									let histData3 = {};
-									histData3.data = obsByYearData;
-									histData3.intervalSize = +data.personsWithContinuousObservationsByYearStats[0].intervalSize;
-									histData3.min = +data.personsWithContinuousObservationsByYearStats[0].minValue;
-									histData3.max = +data.personsWithContinuousObservationsByYearStats[0].maxValue;
-									histData3.intervals = Math.round((histData3.max - histData3.min + histData3.intervalSize) / histData3.intervalSize) + histData3.intervalSize;
-									d3.selectAll("#oppeoplebyyear svg")
-										.remove();
+									let obsByYearDataMapped = data.personsWithContinuousObservationsByYear.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue }));
+									histData2.DATA = ChartUtils.normalizeArray(obsByYearDataMapped);
+									histData3.INTERVAL_SIZE = +data.personsWithContinuousObservationsByYearStats[0].intervalSize;
+									histData3.OFFSET = +data.personsWithContinuousObservationsByYearStats[0].minValue;
+									histData3.MAX = +data.personsWithContinuousObservationsByYearStats[0].maxValue;
+									histData3.INTERVALS = Math.round((histData3.MAX - histData3.OFFSET + histData3.intervalSize) / histData3.INTERVAL_SIZE) + histData3.INTERVAL_SIZE;
+									d3.selectAll("#oppeoplebyyear svg").remove();
 									let observationLengthByYearHistogram = new atlascharts.histogram();
-									observationLengthByYearHistogram.render(this.mapHistogram(histData3), "#oppeoplebyyear", size12.width, size12.height, {
+									observationLengthByYearHistogram.render(atlascharts.histogram.mapHistogram(histData3), "#oppeoplebyyear", size12.width, size12.height, {
 										xLabel: 'Year',
 										yLabel: 'People'
 									});
@@ -1261,7 +1262,7 @@ define([
 								*/
 
 								// observed by month
-								let obsByMonthData = this.normalizeArray(data.observedByMonth);
+								let obsByMonthData = ChartUtils.normalizeArray(data.observedByMonth);
 								if (!obsByMonthData.empty) {
 									let byMonthSeries = this.mapMonthYearDataToSeries(obsByMonthData, {
 										dateField: 'monthYear',
@@ -1285,7 +1286,7 @@ define([
 								}
 
 								// obs period per person
-								let personPeriodData = this.normalizeArray(data.observationPeriodsPerPerson);
+								let personPeriodData = ChartUtils.normalizeArray(data.observationPeriodsPerPerson);
 								if (!personPeriodData.empty) {
 									d3.selectAll("#opperperson svg")
 										.remove();
@@ -1308,7 +1309,7 @@ define([
 							success: (data) => {
 								this.model.currentReport(this.model.reportReportName());
 								this.model.loadingReport(false);
-								let normalizedData = this.normalizeDataframe(this.normalizeArray(data, true));
+								let normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 								if (!normalizedData.empty) {
 									let table_data = normalizedData.conceptPath.map((d, i) => {
 										let conceptDetails = normalizedData.conceptPath[i].split('||');
@@ -1424,7 +1425,7 @@ define([
 
 								let table_data, datatable, tree, treemap;
 								if (data.drugEraPrevalence) {
-									let drugEraPrevalence = this.normalizeDataframe(this.normalizeArray(data.drugEraPrevalence, true));
+									let drugEraPrevalence = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data.drugEraPrevalence, true));
 
 									if (!drugEraPrevalence.empty) {
 										table_data = drugEraPrevalence.conceptPath.map((d, i) => {
@@ -1561,7 +1562,7 @@ define([
 								let table_data, datatable, tree, treemap;
 								// condition prevalence
 								if (data.conditionOccurrencePrevalence) {
-									let normalizedData = this.normalizeDataframe(this.normalizeArray(data.conditionOccurrencePrevalence, true));
+									let normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data.conditionOccurrencePrevalence, true));
 									if (!normalizedData.empty) {
 										table_data = normalizedData.conceptPath.map((d, i) => {
 											let conceptDetails = normalizedData.conceptPath[i].split('||');
@@ -1702,7 +1703,7 @@ define([
 
 								let table_data, datatable, tree, treemap;
 								if (data.procedureOccurrencePrevalence) {
-									let normalizedData = this.normalizeDataframe(this.normalizeArray(data.procedureOccurrencePrevalence, true));
+									let normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data.procedureOccurrencePrevalence, true));
 									if (!normalizedData.empty) {
 										table_data = normalizedData.conceptPath.map((d, i) => {
 											let conceptDetails = normalizedData.conceptPath[i].split('||');
@@ -1836,9 +1837,9 @@ define([
 								this.model.loadingReport(false);
 
 								// Persons By Duration From Start To End
-								let result = this.normalizeArray(data.personsByDurationFromStartToEnd, false);
+								let result = ChartUtils.normalizeArray(data.personsByDurationFromStartToEnd, false);
 								if (!result.empty) {
-									let personsByDurationData = this.normalizeDataframe(result)
+									let personsByDurationData = atlascharts.chart.normalizeDataframe(result)
 										.duration
 										.map((d, i) => {
 											let item = {
@@ -1859,7 +1860,7 @@ define([
 								}
 
 								// prevalence by month
-								let byMonthData = this.normalizeArray(data.prevalenceByMonth, true);
+								let byMonthData = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 								if (!byMonthData.empty) {
 									let byMonthSeries = this.mapMonthYearDataToSeries(byMonthData, {
 										dateField: 'xCalendarMonth',
@@ -1881,7 +1882,7 @@ define([
 								}
 
 								// age at index
-								let ageAtIndexDistribution = this.normalizeArray(data.ageAtIndexDistribution);
+								let ageAtIndexDistribution = ChartUtils.normalizeArray(data.ageAtIndexDistribution);
 								if (!ageAtIndexDistribution.empty) {
 									let boxplot = new atlascharts.boxplot();
 									let agData = ageAtIndexDistribution.category
@@ -1905,7 +1906,7 @@ define([
 								}
 
 								// distributionAgeCohortStartByCohortStartYear
-								let distributionAgeCohortStartByCohortStartYear = this.normalizeArray(data.distributionAgeCohortStartByCohortStartYear);
+								let distributionAgeCohortStartByCohortStartYear = ChartUtils.normalizeArray(data.distributionAgeCohortStartByCohortStartYear);
 								if (!distributionAgeCohortStartByCohortStartYear.empty) {
 									let boxplotCsy = new atlascharts.boxplot();
 									let csyData = distributionAgeCohortStartByCohortStartYear.category
@@ -1929,7 +1930,7 @@ define([
 								}
 
 								// distributionAgeCohortStartByGender
-								let distributionAgeCohortStartByGender = this.normalizeArray(data.distributionAgeCohortStartByGender);
+								let distributionAgeCohortStartByGender = ChartUtils.normalizeArray(data.distributionAgeCohortStartByGender);
 								if (!distributionAgeCohortStartByGender.empty) {
 									let boxplotBg = new atlascharts.boxplot();
 									let bgData = distributionAgeCohortStartByGender.category
@@ -1953,7 +1954,7 @@ define([
 								}
 
 								// persons in cohort from start to end
-								let personsInCohortFromCohortStartToEnd = this.normalizeArray(data.personsInCohortFromCohortStartToEnd);
+								let personsInCohortFromCohortStartToEnd = ChartUtils.normalizeArray(data.personsInCohortFromCohortStartToEnd);
 								if (!personsInCohortFromCohortStartToEnd.empty) {
 									let personsInCohortFromCohortStartToEndSeries = this.map30DayDataToSeries(personsInCohortFromCohortStartToEnd, {
 										dateField: 'monthYear',
@@ -1972,7 +1973,7 @@ define([
 								}
 
 								// render trellis
-								let trellisData = this.normalizeArray(data.numPersonsByCohortStartByGenderByAge, true);
+								let trellisData = ChartUtils.normalizeArray(data.numPersonsByCohortStartByGenderByAge, true);
 
 								if (!trellisData.empty) {
 									let allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -2056,12 +2057,11 @@ define([
 								if (data.yearOfBirth.length > 0 && data.yearOfBirthStats.length > 0) {
 									let yearHistogram = new atlascharts.histogram();
 									let histData = {};
-									histData.intervalSize = 1;
-									histData.min = data.yearOfBirthStats[0].minValue;
-									histData.max = data.yearOfBirthStats[0].maxValue;
-									histData.intervals = 100;
-									histData.data = (this.normalizeArray(data.yearOfBirth));
-									yearHistogram.render(this.mapHistogram(histData), "#hist", size12.width, size12.height, {
+									histData.INTERVAL_SIZE = 1;
+									histData.OFFSET = data.yearOfBirthStats[0].minValue;
+									histData.DATA = (ChartUtils.normalizeArray(data.yearOfBirth.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue }))));
+                                    histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
+                                    yearHistogram.render(atlascharts.histogram.mapHistogram(histData), "#hist", size12.width, size12.height, {
 										xFormat: d3.format('d'),
 										yFormat: d3.format(',.1s'),
 										xLabel: 'Year',
@@ -2099,7 +2099,7 @@ define([
 
 								this.dataCompleteReference(data);
 
-								let initOneBarData = this.normalizeArray(data.filter(function (d) {
+								let initOneBarData = ChartUtils.normalizeArray(data.filter(function (d) {
 									return d.covariance == "0~10";
 								}), true);
 
@@ -2149,7 +2149,7 @@ define([
 
 									let institution_id = this.careSiteDatatable.data()[this.careSiteDatatable.row(this)[0]].institution;
 
-									let entropyData = this.normalizeArray(data.filter(function (d) {
+									let entropyData = ChartUtils.normalizeArray(data.filter(function (d) {
 										return d.insitution == institution_id;
 									}), true);
 									if (!entropyData.empty) {
@@ -2307,7 +2307,7 @@ define([
 							.remove();
 						let boxplot = new atlascharts.boxplot();
 						let bpseries = [];
-						let bpdata = this.normalizeArray(data.ageAtFirstDiagnosis, true);
+						let bpdata = ChartUtils.normalizeArray(data.ageAtFirstDiagnosis, true);
 						if (!bpdata.empty) {
 							for (let i = 0; i < bpdata.category.length; i++) {
 								bpseries.push({
@@ -2334,7 +2334,7 @@ define([
 						// prevalence by month
 						d3.selectAll("#conditionPrevalenceByMonth svg")
 							.remove();
-						let byMonthData = this.normalizeArray(data.prevalenceByMonth, true);
+						let byMonthData = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 						if (!byMonthData.empty) {
 							let byMonthSeries = this.mapMonthYearDataToSeries(byMonthData, {
 
@@ -2379,7 +2379,7 @@ define([
 						// render trellis
 						d3.selectAll("#condition_trellisLinePlot svg")
 							.remove();
-						let trellisData = this.normalizeArray(data.prevalenceByGenderAgeYear, true);
+						let trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear, true);
 
 						if (!trellisData.empty) {
 							let allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -2488,7 +2488,7 @@ define([
 						});
 
 						// prevalence by month
-						let prevByMonth = this.normalizeArray(data.prevalenceByMonth, true);
+						let prevByMonth = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 						if (!prevByMonth.empty) {
 							let byMonthSeries = this.mapMonthYearDataToSeries(prevByMonth, {
 								dateField: 'xCalendarMonth',
@@ -2512,7 +2512,7 @@ define([
 						}
 
 						// render trellis
-						let trellisData = this.normalizeArray(data.prevalenceByGenderAgeYear, true);
+						let trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear, true);
 
 						if (!trellisData.empty) {
 
@@ -2604,7 +2604,7 @@ define([
 						this.boxplotHelper(data.lengthOfEra, '#conditioneras_length_of_era', 500, 300, '', 'Days');
 
 						// prevalence by month
-						let byMonth = this.normalizeArray(data.prevalenceByMonth, true);
+						let byMonth = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 						if (!byMonth.empty) {
 							let byMonthSeries = this.mapMonthYearDataToSeries(byMonth, {
 								dateField: 'xCalendarMonth',
@@ -2629,7 +2629,7 @@ define([
 						}
 
 						// render trellis
-						let trellisData = this.normalizeArray(data.prevalenceByGenderAgeYear, true);
+						let trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear, true);
 						if (!trellisData.empty) {
 
 							let allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -2722,7 +2722,7 @@ define([
 						this.boxplotHelper(data.lengthOfEra, '#drugeras_length_of_era', 500, 200, '', 'Days');
 
 						// prevalence by month
-						let byMonth = this.normalizeArray(data.prevalenceByMonth, true);
+						let byMonth = ChartUtils.normalizeArray(data.prevalenceByMonth, true);
 						if (!byMonth.empty) {
 							let byMonthSeries = this.mapMonthYearDataToSeries(byMonth, {
 								dateField: 'xCalendarMonth',
@@ -2748,7 +2748,7 @@ define([
 						}
 
 						// render trellis
-						let trellisData = this.normalizeArray(data.prevalenceByGenderAgeYear, true);
+						let trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear, true);
 						if (!trellisData.empty) {
 
 							let allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -2838,7 +2838,7 @@ define([
 						// age at first diagnosis visualization
 						let boxplot = new atlascharts.boxplot();
 						let bpseries = [];
-						let bpdata = this.normalizeArray(data.ageAtFirstOccurrence);
+						let bpdata = ChartUtils.normalizeArray(data.ageAtFirstOccurrence);
 						if (!bpdata.empty) {
 							for (let i = 0; i < bpdata.category.length; i++) {
 								bpseries.push({
@@ -2863,7 +2863,7 @@ define([
 						}
 
 						// prevalence by month
-						let prevData = this.normalizeArray(data.prevalenceByMonth);
+						let prevData = ChartUtils.normalizeArray(data.prevalenceByMonth);
 						if (!prevData.empty) {
 							let byMonthSeries = this.mapMonthYearDataToSeries(prevData, {
 								dateField: 'xCalendarMonth',
@@ -2898,7 +2898,7 @@ define([
 						}
 
 						// render trellis
-						let trellisData = this.normalizeArray(data.prevalenceByGenderAgeYear);
+						let trellisData = ChartUtils.normalizeArray(data.prevalenceByGenderAgeYear);
 						if (!trellisData.empty) {
 
 							let allDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
@@ -2986,7 +2986,7 @@ define([
 						if (result && result.length > 0) {
 							$("#" + type + "DrilldownScatterplot")
 								.empty();
-							let normalized = this.dataframeToArray(this.normalizeArray(result));
+							let normalized = this.dataframeToArray(ChartUtils.normalizeArray(result));
 
 							// nest dataframe data into key->values pair
 							let totalRecordsData = d3.nest()
@@ -3214,26 +3214,6 @@ define([
 				return result;
 			}
 
-			this.mapHistogram = function (histogramData) {
-				// result is an array of arrays, each element in the array is another array containing information about each bar of the histogram.
-				let result = new Array();
-				if (!histogramData.data || histogramData.data.empty) {
-					return result;
-				}
-				let minValue = histogramData.min;
-				let intervalSize = histogramData.intervalSize;
-
-				for (let i = 0; i <= histogramData.intervals; i++) {
-					let target = new Object();
-					target.x = minValue + 1.0 * i * intervalSize;
-					target.dx = intervalSize;
-					target.y = histogramData.data.countValue[histogramData.data.intervalIndex.indexOf(i)] || 0;
-					result.push(target);
-				};
-
-				return result;
-			}
-
 			this.map30DayDataToSeries = function (data, opts) {
 				let defaults = {
 					dateField: "x",
@@ -3261,7 +3241,7 @@ define([
 				return [series]; // return series wrapped in an array
 			}
 
-			this.mapMonthYearDataToSeries = function (data, opts) {
+			this.mapMonthYearDataToSeries = function (data, opts) { //copy paste from chartutils
 				let defaults = {
 					dateField: "x",
 					yValue: "y",
@@ -3373,54 +3353,13 @@ define([
 				return result;
 			}
 
-			this.normalizeDataframe = function (dataframe) {
-				// rjson serializes dataframes with 1 row as single element properties.  This function ensures fields are always arrays.
-				let keys = d3.keys(dataframe);
-				keys.forEach(function (key) {
-					if (!(dataframe[key] instanceof Array)) {
-						dataframe[key] = [dataframe[key]];
-					}
-				});
-				return dataframe;
-			}
-
-			this.normalizeArray = function (ary, numerify) {
-				let obj = {};
-				let keys;
-
-				if (ary && ary.length > 0 && ary instanceof Array) {
-					keys = d3.keys(ary[0]);
-
-					$.each(keys, function () {
-						obj[this] = [];
-					});
-
-					$.each(ary, function () {
-						let thisAryObj = this;
-						$.each(keys, function () {
-							let val = thisAryObj[this];
-							if (numerify) {
-								if (_.isFinite(+val)) {
-									val = (+val);
-								}
-							}
-							obj[this].push(val);
-						});
-					});
-				} else {
-					obj.empty = true;
-				}
-
-				return obj;
-			}
-
 			this.boxplotHelper = function (data, target, width, height, xlabel, ylabel) {
 				let boxplot = new atlascharts.boxplot();
 				let yMax = 0;
 				let bpseries = [];
-				data = this.normalizeArray(data);
+				data = ChartUtils.normalizeArray(data);
 				if (!data.empty) {
-					let bpdata = this.normalizeDataframe(data);
+					let bpdata = atlascharts.chart.normalizeDataframe(data);
 
 					for (let i = 0; i < bpdata.category.length; i++) {
 						bpseries.push({

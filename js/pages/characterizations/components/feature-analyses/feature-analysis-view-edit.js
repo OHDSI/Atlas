@@ -3,9 +3,7 @@ define([
     'pages/characterizations/services/FeatureAnalysisService',
     'components/cohortbuilder/CriteriaGroup',
     'text!./feature-analysis-view-edit.html',
-    'appConfig',
-    'services/AuthService',
-    'providers/Vocabulary',
+    'services/VocabularyService',
     'conceptsetbuilder/InputTypes/ConceptSet',
     'providers/Component',
     'utils/CommonUtils',
@@ -19,9 +17,7 @@ define([
     FeatureAnalysisService,
     CriteriaGroup,
     view,
-    config,
-    AuthService,
-    VocabularyAPI,
+    VocabularyService,
     ConceptSet,
     Component,
     commonUtils,
@@ -135,7 +131,7 @@ define([
             const context = this.criteriaContext();
             const featureCriteria = this.data.design()[context.criteriaIdx];
 
-            VocabularyAPI.getConceptSetExpression(conceptSet.id, source.url).done((result) => {
+            VocabularyService.getConceptSetExpression(conceptSet.id, source.url).done((result) => {
                 const newId = featureCriteria.conceptSets().length > 0 ? Math.max(...featureCriteria.conceptSets().map(c => c.id)) + 1 : 0;
                 const newConceptSet = new ConceptSet({
                     id: newId,

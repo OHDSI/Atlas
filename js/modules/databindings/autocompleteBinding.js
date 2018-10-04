@@ -7,7 +7,13 @@ define(['jquery', 'knockout', 'jquery-ui'], function ($, ko) {
 			});
 
 			$(element).on("autocompleteselect", function (event, ui) {
-				element.innerText = ui.item.value.trim().length == 0 ? null : ui.item.value.trim();
+				const newVal = ui.item.value.trim().length == 0 ? null : ui.item.value.trim();
+				if (element.tagName.toLocaleLowerCase() === 'input') {
+					element.value = newVal;
+					element.dispatchEvent(new Event('change'));
+				} else {
+					element.innerText = newVal;
+				}
 				$(element).blur();
 				return false;
 			});

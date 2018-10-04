@@ -3,7 +3,7 @@ define([
 	'text!./conceptsetInclusionCount.html',
 	'providers/Component',
 	'utils/CommonUtils',
-	'services/ConceptSet',
+	'services/ConceptSetService',
 ], function(
 	ko,
 	view,

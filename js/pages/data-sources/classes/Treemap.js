@@ -1,6 +1,7 @@
 define([
   'knockout',
-	'utils/ChartUtils',
+  'atlascharts',
+  'utils/ChartUtils',
   'const',
   'services/httpService',
   './Report',
@@ -8,6 +9,7 @@ define([
   'faceted-datatable'
 ], function (
   ko,
+  atlascharts,
   ChartUtils,
   constants,
   httpService,
@@ -118,8 +120,8 @@ define([
       
     }
 
-    parseData({ data }) {			
-      const normalizedData = ChartUtils.normalizeDataframe(ChartUtils.normalizeArray(data, true));
+    parseData({ data }) {
+      const normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 
       if (!normalizedData.empty) {
         const tableData = normalizedData.conceptPath.map((d, i) => {

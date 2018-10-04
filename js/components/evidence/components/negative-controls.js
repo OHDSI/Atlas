@@ -6,7 +6,7 @@ define(['knockout',
 	'components/evidence/utils',
 	'services/EvidenceService',
 	'services/CDMResultsService',
-	'webapi/ConceptSetAPI',
+	'services/ConceptSetService',
 	'atlas-state',
 	'job/jobDetail',
   	'utils/MomentUtils',
@@ -22,7 +22,7 @@ define(['knockout',
 	utils,
 	EvidenceService, 
 	CDMResultsService, 
-	conceptSetAPI, 
+	conceptSetService, 
 	sharedState, 
 	jobDetail, 
 	momentUtils
@@ -32,7 +32,6 @@ define(['knockout',
 			super(params);
 			
 			var pollTimeout = null;
-			var AuthService = params.model.AuthService;
 			this.model = params.model;
 			this.selectedConcepts = params.selectedConcepts;
 			this.conceptSet = params.conceptSet;
@@ -121,8 +120,8 @@ define(['knockout',
 					clearTimeout(pollTimeout);
 
 				var id = this.conceptSet().id;
-				conceptSetAPI.getGenerationInfo(id)
-					.then(infoList => {
+				conceptSetService.getGenerationInfo(id)
+					.then((infoList) => {
 						var hasPending = false;
 						console.log("poll for evidence....")
 
@@ -278,10 +277,8 @@ define(['knockout',
 
 			this.getEvidenceSources = () => {
 				this.loadingEvidenceSources(true);
-				var resolvingPromise = conceptSetAPI.getGenerationInfo(this.conceptSet()
-					.id);
-				$.when(resolvingPromise)
-					.done(generationInfo => {
+				conceptSetService.getGenerationInfo(this.conceptSet().id)
+					.then((generationInfo) => {
 						var evidenceSources = this.getEvidenceSourcesFromConfig();
 						evidenceSources.forEach((evidenceSource, i) => {
 							var gi = $.grep(generationInfo, function (a) {
@@ -300,14 +297,14 @@ define(['knockout',
 								
 								var csToIncludePromise = $.Deferred();
 								if (evidenceSources[i].csToInclude() > 0) {
-									csToIncludePromise = conceptSetAPI.getConceptSet(evidenceSources[i].csToInclude());
+									csToIncludePromise = conceptSetService.getConceptSet(evidenceSources[i].csToInclude());
 								} else {
 									csToIncludePromise.resolve();
 									evidenceSources[i].csToIncludeLoading(false);
 								}
 								var csToExcludePromise = $.Deferred();
 								if (evidenceSources[i].csToExclude() > 0) {
-									csToExcludePromise = conceptSetAPI.getConceptSet(evidenceSources[i].csToExclude());
+									csToExcludePromise = conceptSetService.getConceptSet(evidenceSources[i].csToExclude());
 								} else {
 									csToExcludePromise.resolve();
 									evidenceSources[i].csToExcludeLoading(false);
@@ -556,7 +553,7 @@ define(['knockout',
 			
 			this.conceptsetSelected = (d) => {
 				$('#ncModalConceptSetSelect').modal('hide');
-				conceptSetAPI.getConceptSet(d.id).then((csInfo) => {
+				conceptSetService.getConceptSet(d.id).then((csInfo) => {
 					this.csTarget(csInfo.id);
 					this.csTargetCaption(csInfo.name);
 				});

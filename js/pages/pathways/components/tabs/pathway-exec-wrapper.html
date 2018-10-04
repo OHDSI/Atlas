@@ -1,0 +1,8 @@
+<div>
+    <div data-bind="visible: executionId() == null">
+        <div data-bind='component: { name: "pathway-executions", params: componentParams } ' />
+    </div>
+    <!--  ko if: !!executionId() -->
+        <div data-bind='component: { name: "pathway-results", params: componentParams } ' />
+    <!-- /ko -->
+</div>

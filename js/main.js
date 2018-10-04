@@ -6,10 +6,7 @@ const bustCache = (() => {
 
 const localRefs = {
 	"configuration": "components/configuration",
-	"concept-manager": "components/concept-manager",
-	"conceptset-browser": "components/conceptset/conceptset-browser",
 	"conceptset-editor": "components/conceptset/conceptset-editor",
-	"conceptset-manager": "components/conceptset/conceptset-manager",
 	"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
 	"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
 	"user-bar": "components/user-bar",
@@ -73,6 +70,7 @@ require([
 	require(['bootstrap', ...styles], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
 		require([
+			'knockout',
 			'providers/Application',
 			'providers/Model',
 			'providers/Router',
@@ -85,6 +83,7 @@ require([
 			'components/terms-and-conditions/terms-and-conditions',
 		],
 			(
+				ko,
 				Application,
 				Model,
 				Router,

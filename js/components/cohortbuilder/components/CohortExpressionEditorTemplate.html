@@ -2,11 +2,11 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				Initial event cohort
+				Cohort Entry Events
 			</div>
 			<div class="modal-body">
 				Events are recorded time-stamped observations for the persons, such as drug exposures, conditions, procedures, measurements and visits. All events have a start date and end date, though some events may have a start date and end date with the same value
-				(such as procedures or measurements). The event index date is set to be equal to the event start date.
+				(such as procedures or measurements).
 			</div>
 		</div>
 	</div>
@@ -16,7 +16,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				Additional Qualifying Inclusion Criteria
+				Inclusion Criteria
 			</div>
 			<div class="modal-body">
 				The qualifying cohort will be defined as all persons who have an initial event, satisfy the initial event inclusion criteria, and fulfill all additional qualifying inclusion criteria. Each qualifying inclusion criteria will be evaluated to determine the
@@ -26,37 +26,44 @@
 	</div>
 </div>
 
-<div class="modal" id="helpModalCensoringEvents" tabindex="-1 " role="dialog">
+<div class="modal" id="helpModalCohortExit" tabindex="-1 " role="dialog">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				Censoring Events
+				Cohort Exit
 			</div>
 			<div class="modal-body">
-				<p>
-					Censoring events are used to indicate when a person will exit the cohort due to one or more event triggers.
-				</p>
-				<p>
-					The first censoring event found after entering the cohort will be used to exit the cohort.
-				</p>
-				<p>
-					<i>Note: censoring events occurring prior to cohort entry will not exclude the person from the cohort.  Use inclusion criteria to filter the people that have the censoring event prior to index.</i>
-				</p>
+				<div>
+						For all qualifying events, there must be a specification of when each event ends presence in the cohort. 
+						By default, an event ends at the end of the observation period containing the qualifying initial event, 
+						but event end dates may be also be specified:
+				</div>
+				<div class="heading strong">Event End Dates</div>
+				<div>
+					The qualifying intial event can be set to end after a fixed time period relative to the event start or end date, 
+					or the end date can be based on the end of a continuous exposure to a set of drugs identified by a concept set.
+				</div>
+				<div class="heading strong">Censoring Events</div>
+				<div>
+					Criteria can be used to signal the end of an event.  If a censoring event is identified between a qualifying event's start and end date, 
+					the date of the censoring event will be used as the exit date.
+				</div>				
 			</div>
 		</div>
 	</div>
 </div>
 
+
 <div class="panel panel-primary cohort-definition-panel">
 	<div class="panel-heading">
-		Initial Event Cohort <i data-toggle="modal" data-target="#helpModalInitialEventCohort" class="fa fa-question-circle pull-right"></i>
+		Cohort Entry Events <i data-toggle="modal" data-target="#helpModalInitialEventCohort" class="fa fa-question-circle pull-right"></i>
 	</div>
 	<div class="panel-body">
 		<div class="criteriaGroup">
 			<div class="criteriaHeading">
 				<div class="row">
 					<div class="col-sm-4">
-						People having any of the following:
+						Events having any of the following criteria:
 					</div>
 					<div class="col-sm-8">
 						<div class="btn-group pull-right">
@@ -103,19 +110,19 @@
 		</div>
 		<div data-bind="with: expression">
 			<div data-bind="if: AdditionalCriteria">
-				<div><b>Initial event inclusion criteria:</b> From among the initial events, include:</div>
+				<div><b>Restrict intial events to:</b></div>
 				<criteria-group params="{expression: $data, group: AdditionalCriteria}"> </criteria-group>
-				<div style="padding: 3px 0px" data-bind="with: QualifiedLimit">Limit cohort of initial events to:
+				<div style="padding: 3px 0px" data-bind="with: QualifiedLimit">Limit initial events to:
 					<select data-bind="options: $component.options.resultLimitOptions,
 					optionsText: function(item) { return item.name },
 					optionsValue: 'id',
 					value: Type">
 					</select> per person.
 				</div>
-				<button class="btn btn-sm btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove initial event inclusion criteria</button>
+				<button class="btn btn-sm btn-danger" data-bind="click: function () { $component.removeAdditionalCriteria() }">Remove initial event restriction</button>
 			</div>
 			<div data-bind="ifnot: AdditionalCriteria">
-				<button class="btn btn-sm btn-success" data-bind="click: function () { $component.addAdditionalCriteria() }">Add initial event inclusion criteria</button>
+				<button class="btn btn-sm btn-success" data-bind="click: function () { $component.addAdditionalCriteria() }">Restrict initial events</button>
 			</div>
 		</div>
 	</div>
@@ -124,7 +131,7 @@
 
 <div class="panel panel-primary cohort-definition-panel">
 	<div class="panel-heading">
-		Additional Qualifying Inclusion Criteria <i data-toggle="modal" data-target="#helpModalAdditionalQualifyingInclusionCritiera" class="fa fa-question-circle pull-right"></i>
+		Inclusion Criteria <i data-toggle="modal" data-target="#helpModalAdditionalQualifyingInclusionCritiera" class="fa fa-question-circle pull-right"></i>
 	</div>
 	<div class="panel-body">
 		<div data-bind="eventListener: [
@@ -136,7 +143,7 @@
 
 					<div style="position:absolute; top:0px; bottom:0px; left:0px; right:2px;">
 						<div>
-							<button class="btn btn-sm btn-success" data-bind="click: addInclusionRule">New qualifying inclusion criteria</button>
+							<button class="btn btn-sm btn-success" data-bind="click: addInclusionRule">New inclusion criteria</button>
 						</div>
 						<div>
 							<table style="width: 100%" class="inclusionRules">
@@ -162,13 +169,10 @@
 					<!-- ko if: $component.selectedInclusionRule() -->
 					<inclusion-rule-editor params="{IndexRule: expression, InclusionRule: selectedInclusionRule}"></inclusion-rule-editor>
 					<!-- /ko -->
-					<!-- ko ifnot: $component.selectedInclusionRule() -->
-					<div>Please select a qualifying inclusion criteria to edit.</div>
-					<!-- /ko -->							
 				</div>
 			</div>
 		</div>
-		<div style="padding-top: 3px" data-bind="with: expression().ExpressionLimit">Limit qualifying cohort to:
+		<div style="padding-top: 3px" data-bind="with: expression().ExpressionLimit">Limit qualifying events to:
 			<select data-bind="options: $component.options.resultLimitOptions,
 			optionsText: function(item) { return item.name },
 			optionsValue: 'id',
@@ -178,13 +182,15 @@
 	</div>
 </div>
 
-<end-strategy-editor params="strategy: $component.expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-editor>
 
 <div class="panel panel-primary cohort-definition-panel">
 	<div class="panel-heading">
-		Censoring Events <i data-toggle="modal" data-target="#helpModalCensoringEvents" class="fa fa-question-circle pull-right"></i>
+		Cohort Exit <i data-toggle="modal" data-target="#helpModalCohortExit" class="fa fa-question-circle pull-right"></i>
 	</div>
 	<div class="panel-body">
+		<div class="heading strong">Event Persistence:</div>
+		<end-strategy-editor params="strategy: $component.expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-editor>
+		<div class="heading strong">Censoring Events:</div>
 		<div class="criteriaGroup">
 			<div class="criteriaHeading">
 				<table>
@@ -195,7 +201,7 @@
 					<tbody>
 						<tr>
 							<td>
-								Exit Cohort based on the following:
+								Exit Cohort based on the following criteria:
 							</td>
 							<td>
 								<div class="btn-group pull-right">
@@ -240,35 +246,31 @@
 
 <div class="panel panel-primary cohort-definition-panel">
 	<div class="panel-heading">
-		Cohort Collapse Strategy
+		Cohort Eras
 	</div>
 	<div class="panel-body">
-		<div data-bind="with: expression().CollapseSettings">
+		<div data-bind="with: expression">
 			<ul>
 				<li>
 					Specify era collapse gap size:
-					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />					days
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: CollapseSettings.EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: CollapseSettings.EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days
 				</li>
+				<!-- ko if: $component.showCensorWindow -->
+				<li>
+					Left censor cohort start dates to <input placeholder="No Censoring" class="dateField" data-bind="datepicker: CensorWindow().StartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" /> <i data-bind="visible:CensorWindow().StartDate(),  click: () => CensorWindow().StartDate(null)" class="fa fa-times"></i>
+				</li>				
+				<li>
+					Right censor cohort end dates to <input placeholder="No Censoring" class="dateField" data-bind="datepicker: CensorWindow().EndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" /> <i data-bind="visible:CensorWindow().EndDate(),  click: () => CensorWindow().EndDate(null)" class="fa fa-times"></i>
+				</li>
+				<!-- /ko -->
+				<!-- ko ifnot: $component.showCensorWindow -->
+				<li>
+					<span class="linkish" data-bind="click: () => $component.showCensorWindow(!$component.showCensorWindow())"><i>add trimming options...</i></span>				
+				</li>
+				<!-- /ko -->
 			</ul>
 		</div>
-	</div>
-	<div class="panel-footer">
-		This strategy collapses events into eras of a continous period and eliminates the duplicate rows for the same subjects.
+
 	</div>
 </div>
 
-<div class="panel panel-primary cohort-definition-panel">
-	<div class="panel-heading">
-		Cohort Censor Window
-	</div>
-	<div class="panel-body">
-		<div class="row">
-			<div class="col-xs-12">
-				Drops all persons, who do no fall inside the censor window.
-			</div>
-			<div class="col-xs-12">
-				<period-input params="Period: expression().CensorWindow"></period-input>
-			</div>
-		</div>
-	</div>
-</div>

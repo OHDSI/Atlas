@@ -18,7 +18,7 @@ define(
             if (xhr.readyState == 4 && xhr.status == 200) {
               resolve();
               const blob = new Blob([xhr.response], { type: "octet/stream" });
-              FileSaver(blob, filename);
+              saveAs(blob, filename);
             }
           }
           xhr.onerror = reject;

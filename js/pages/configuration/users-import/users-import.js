@@ -230,7 +230,7 @@ define(['knockout',
 
 			onUsersRowClick(data) {
 				this.selectedUser(data);
-				this.selectedRoles(this.roles().map(r => ({
+				this.selectedRoles(this.roles().filter(role => !role.defaultImported).map(r => ({
 					...r,
 					selected: ko.observable(data.roles().find(role => role.role === r.role)),
 				})));
@@ -311,7 +311,7 @@ define(['knockout',
 					const providers = await userService.getAuthenticationProviders();
 					this.providers(providers);
 					await this.updateRoles();
-					const mapping = this.roles().map(role => (
+					const mapping = this.roles().filter(role => !role.defaultImported).map(role => (
 						{
 							...role,
 							groups: ko.observableArray(),
