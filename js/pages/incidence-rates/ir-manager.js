@@ -200,7 +200,7 @@ define([
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));				
 				this.loading(false);
-				this.pollForInfo();
+				// this.pollForInfo();
 			});
 		};
 		
@@ -279,27 +279,29 @@ define([
 		};
 		
 		onExecuteClick(sourceItem) {
-			this.queueJob(sourceItem);
-			var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
-			executePromise.then(() => {
-				this.pollForInfo();
-			});			
-		}
-		
-		queueJob(sourceItem) {
-			// Create a job to monitor progress
-			var job = new jobDetail({
-				name: this.selectedAnalysis().name() + "_" + sourceItem.source.sourceKey,
-				type: 'ir-analysis',
-				status: 'PENDING',
-				executionId: String(this.selectedAnalysisId()) + String(sourceItem.source.sourceId),
-				statusUrl: config.api.url + 'ir/' + this.selectedAnalysisId() + '/info',
-				statusValue: 'status',
-				viewed: false,
-				url: 'iranalysis/' + this.selectedAnalysisId() + '/generation',
+            var jobDetails = this.createJobDetails(sourceItem);
+            var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
+			executePromise.then((info) => {
+                jobDetails.executionId = info.data.executionId;
+                jobDetails.status(info.data.status);
+                sharedState.jobListing.queue(jobDetails);
+				// this.pollForInfo();
 			});
-			sharedState.jobListing.queue(job);
 		}
+
+        createJobDetails(sourceItem) {
+            var jobDetails = new jobDetail({
+                name: this.selectedAnalysis().name() + "_" + sourceItem.source.sourceKey,
+                type: 'ir-analysis',
+                status: 'PENDING',
+                // executionId: String(this.selectedAnalysisId()) + String(sourceItem.source.sourceId),
+                statusUrl: config.api.url + 'ir/' + this.selectedAnalysisId() + '/info',
+                statusValue: 'status',
+                viewed: false,
+                url: 'iranalysis/' + this.selectedAnalysisId() + '/generation',
+            });
+            return jobDetails;
+        }
 
 		import() {
 			if (this.importJSON() && this.importJSON().length > 0) {
@@ -348,13 +350,16 @@ define([
 									summaryList: []
 								};
 								sourceItem.info(tempInfo);
-								this.queueJob(sourceItem);
 							}
 							this.isRunning(true);
-							var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
-							executePromise.then(() => {
-								this.pollForInfo();
-							});
+                            var jobDetails = this.createJobDetails(sourceItem);
+                            var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
+                            executePromise.then((info) => {
+                                jobDetails.executionId = info.data.executionId;
+                                jobDetails.status(info.data.status);
+                                sharedState.jobListing.queue(jobDetails);
+                                this.pollForInfo();
+                            });
 						}
 					}
 				});		
@@ -369,7 +374,7 @@ define([
 			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
 			} else {
-				this.pollForInfo();
+				// this.pollForInfo();
 			}
 		}		
 		
