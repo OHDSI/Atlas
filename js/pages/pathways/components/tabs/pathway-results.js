@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'../../services/PathwayService',
+	'../../PathwayService',
 	'services/Source',
 	'text!./pathway-results.html',
 	'appConfig',
