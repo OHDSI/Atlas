@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, roleApi, sharedState, querystring, d3) {
+define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'webapi/MomentAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
+	function ($, ko, ohdsiUtil, config, authApi, roleApi, momentAPI, sharedState, querystring, d3) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
@@ -1088,7 +1088,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 											cdsi.status = ko.observable(sourceInfo.status);
 											var date = new Date(sourceInfo.startTime);
 											cdsi.startTime = ko.observable(date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
-											cdsi.executionDuration = ko.observable((sourceInfo.executionDuration / 1000) + 's');
+											cdsi.executionDuration = ko.observable(momentApi.formatDuration(sourceInfo.executionDuration));
 											var commaFormatted = d3.format(",");
 											// For backwards compatability, query personCount from cdm if not populated in sourceInfo
 											if (sourceInfo.personCount == null) {
