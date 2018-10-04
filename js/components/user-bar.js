@@ -123,6 +123,8 @@ define([
                     return 'conceptset/' + n.jobParameters.concept_set_id + '/evidence';
                 case 'generateCohortCharacterization':
                     return 'cc/characterizations' + n.jobParameters.cohort_characterization_id;
+                case "":
+                    return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/reporting?sourceKey=' + n.jobParameters.sourceKey;
             }
             return null;
         }
