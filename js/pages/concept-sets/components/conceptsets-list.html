@@ -1,0 +1,6 @@
+<cohort-concept-set-browser params="
+  criteriaContext: $root.criteriaContext,
+  onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
+  onActionComplete: onConceptSetBrowserAction,
+  disableConceptSetButton: $root.currentConceptSet() != undefined || !canCreateConceptSet()
+"></cohort-concept-set-browser>

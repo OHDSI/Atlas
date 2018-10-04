@@ -1,0 +1,15 @@
+<div data-bind="css: classes()">
+  <loading data-bind="visible: isInProgress, css: classes('loader')"></loading>
+  <b>Instructions:</b>
+  Select the concept sets for export by selecting each row in the grid. When done, use the 'Export Concept Sets' button which will start the download in a new window.
+  <hr/>
+  <cohort-concept-set-browser params="
+    criteriaContext: $root.criteriaContext,
+    onRespositoryConceptSetSelected: exportOnConceptSetSelected,
+    onActionComplete: onExportAction,
+    buttonActionText: 'Export Concept Sets',
+    repositoryConceptSetTableId: 'exportConceptSetTable'
+  "></cohort-concept-set-browser>            
+  <hr/>
+  <b><span data-bind="text: exportRowCount()"></span></b> concept sets selected for export.
+</div>

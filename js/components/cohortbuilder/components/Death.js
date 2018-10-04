@@ -89,23 +89,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));
 					break;
-					/*
-									case 8:
-										if (typeof self.Criteria.PriorEnrollDays() != "number")
-											self.Criteria.PriorEnrollDays(0);
-										break;
-									case 9:
-										if (typeof self.Criteria.AfterEnrollDays() != "number")
-											self.Criteria.AfterEnrollDays(0);
-										break;
-					*/
 			};
-			self.addCriterionSettings = {
-				selectText: "Add criteria attribute…",
-				height: 300,
-				actionOptions: self.addActions,
-				onAction: self.actionHandler
-			}
 		};
 
 		self.expression = ko.utils.unwrapObservable(params.expression);

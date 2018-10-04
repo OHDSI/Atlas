@@ -1,41 +1,14 @@
-<div class="modal" id="helpModalCohortExitCriteria" tabindex="-1 " role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				Cohort Exit Criteria
-			</div>
-			<div class="modal-body">
-				For all persons who entered the cohort, there must be a specification of when each person exits the cohort. A person must exit the cohort at the end of the observation period spanning the qualifying initial event start date, but additional cohort exit
-				criteria may be also considered.
-			</div>
-		</div>
-	</div>
+<div>
+	Event will persist until: 
+	<select data-bind="options: $component.strategyOptions,
+		optionsText: function(item) { return item.text },
+		optionsValue: 'name',
+		value: strategyType">
+	</select>
 </div>
-
-<div class="panel panel-primary cohort-definition-panel">
-	<div class="panel-heading">
-		Cohort Exit Criteria <i data-toggle="modal" data-target="#helpModalCohortExitCriteria" class="fa fa-question-circle pull-right"></i>
-	</div>
-	<div class="panel-body">
-		<div data-bind="if: ko.utils.unwrapObservable(strategy) == null">
-			<div>
-				Add a cohort exit criteria:
-			</div>
-			<ul>
-				<li><span class="linkish" data-bind="click: function() { setStrategy('dateOffset'); }">Based on a fixed time period relative to initial event start or end date</span></li>
-				<li><span class="linkish" data-bind="click: function() { setStrategy('customEra'); }">Based on the end of an era of persistent exposure to any drug within a defined concept set</span></li>
-			</ul>
-			<div>
-				The minimum date from amongst the selected cohort exit criteria occurring after the cohort entry date will be selected as the end date for the person's episode.
-			</div>
-		</div>
-
-		<div data-bind="if: ko.utils.unwrapObservable(strategy) != null">
-			<div data-bind="component: {
-	name: strategyComponentName,
-	params: {strategy: strategy, conceptSets: conceptSets }
+<div data-bind="if: ko.utils.unwrapObservable(strategy) != null">
+	<div data-bind="component: {
+name: strategyComponentName,
+params: {strategy: strategy, conceptSets: conceptSets }
 }"></div>
-			<button class="btn btn-sm btn-danger" data-bind="click: function () { $component.clearStrategy() }">Remove Cohort Exit Criteria</button>
-		</div>
-	</div>
 </div>

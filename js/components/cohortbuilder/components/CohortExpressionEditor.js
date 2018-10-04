@@ -11,7 +11,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 		};
 
 		self.primaryCriteriaOptions = [{
-				text: "Add Condition Era Criteria",
+				text: "Add Condition Era",
 				selected: false,
 				description: "Find patients with specific diagosis era.",
 				action: function () {
@@ -21,7 +21,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Condition Occurrence Criteria",
+				text: "Add Condition Occurrence",
 				selected: false,
 				description: "Find patients with specific diagnoses.",
 				action: function () {
@@ -31,7 +31,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Death Criteria",
+				text: "Add Death",
 				selected: false,
 				description: "Find patients based on death.",
 				action: function () {
@@ -41,7 +41,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Device Exposure Criteria",
+				text: "Add Device Exposure",
 				selected: false,
 				description: "Find patients based on device exposure.",
 				action: function () {
@@ -51,7 +51,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Dose Era Criteria",
+				text: "Add Dose Era",
 				selected: false,
 				description: "Find patients with dose eras.",
 				action: function () {
@@ -61,7 +61,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Drug Era Criteria",
+				text: "Add Drug Era",
 				selected: false,
 				description: "Find patients with with exposure to drugs over time.",
 				action: function () {
@@ -71,7 +71,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Drug Exposure Criteria",
+				text: "Add Drug Exposure",
 				selected: false,
 				description: "Find patients with exposure to specific drugs or drug classes.",
 				action: function () {
@@ -81,7 +81,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Measurement Criteria",
+				text: "Add Measurement",
 				selected: false,
 				description: "Find patients based on Measurement.",
 				action: function () {
@@ -91,7 +91,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Observation Criteria",
+				text: "Add Observation",
 				selected: false,
 				description: "Find patients based on lab tests or other observations.",
 				action: function () {
@@ -101,7 +101,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Observation Period Criteria",
+				text: "Add Observation Period",
 				selected: false,
 				description: "Find patients based on Observation Period.",
 				action: function () {
@@ -111,7 +111,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Payer Plan Period Criteria",
+				text: "Add Payer Plan Period",
 				selected: false,
 				description: "Find patients based on Payer Plan Period.",
 				action: function () {
@@ -121,7 +121,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Procedure Occurrence Criteria",
+				text: "Add Procedure Occurrence",
 				selected: false,
 				description: "Find patients that experienced a specific procedure.",
 				action: function () {
@@ -131,7 +131,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Specimen Criteria",
+				text: "Add Specimen",
 				selected: false,
 				description: "Find patients based on Specimen.",
 				action: function () {
@@ -141,7 +141,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Visit Criteria",
+				text: "Add Visit",
 				selected: false,
 				description: "Find patients based on visit information.",
 				action: function () {
@@ -153,7 +153,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 		];
 
 		self.censorCriteriaOptions = [{
-				text: "Add Condition Era Criteria",
+				text: "Add Condition Era",
 				selected: false,
 				description: "Exit cohort based on diagosis era.",
 				action: function () {
@@ -163,7 +163,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Condition Occurrence Criteria",
+				text: "Add Condition Occurrence",
 				selected: false,
 				description: "Exit cohort based on  diagnoses.",
 				action: function () {
@@ -173,7 +173,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Death Criteria",
+				text: "Add Death",
 				selected: false,
 				description: "Exit cohort based on  death.",
 				action: function () {
@@ -183,7 +183,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Device Exposure Criteria",
+				text: "Add Device Exposure",
 				selected: false,
 				description: "Exit cohort based on  device exposure.",
 				action: function () {
@@ -193,7 +193,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Dose Era Criteria",
+				text: "Add Dose Era",
 				selected: false,
 				description: "Exit cohort based on dose eras.",
 				action: function () {
@@ -203,7 +203,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Drug Era Criteria",
+				text: "Add Drug Era",
 				selected: false,
 				description: "Exit cohort based on drugs over time.",
 				action: function () {
@@ -213,7 +213,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Drug Exposure Criteria",
+				text: "Add Drug Exposure",
 				selected: false,
 				description: "Exit cohort based on exposure to specific drugs or drug classes.",
 				action: function () {
@@ -223,7 +223,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Measurement Criteria",
+				text: "Add Measurement",
 				selected: false,
 				description: "Exit cohort based on Measurement.",
 				action: function () {
@@ -233,7 +233,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Observation Criteria",
+				text: "Add Observation",
 				selected: false,
 				description: "Exit cohort based on lab tests or other observations.",
 				action: function () {
@@ -243,7 +243,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Payer Plan Period Criteria",
+				text: "Add Payer Plan Period",
 				selected: false,
 				description: "Find patients based on Payer Plan Period.",
 				action: function () {
@@ -253,7 +253,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Procedure Occurrence Criteria",
+				text: "Add Procedure Occurrence",
 				selected: false,
 				description: "Exit cohort based on procedures.",
 				action: function () {
@@ -263,7 +263,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Specimen Criteria",
+				text: "Add Specimen",
 				selected: false,
 				description: "Find patients based on Specimen.",
 				action: function () {
@@ -273,7 +273,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Visit Criteria",
+				text: "Add Visit",
 				selected: false,
 				description: "Exit cohort based on visit information.",
 				action: function () {
@@ -291,6 +291,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 		self.expression = params.expression;
 		self.options = options;
 
+		self.showCensorWindow = ko.observable(self.expression().CensorWindow().StartDate() || self.expression().CensorWindow().EndDate());
 		self.selectedInclusionRule = ko.observable(null);
 		self.selectedInclusionRuleIndex = null;
 
@@ -402,6 +403,7 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 		self.inclusionRuleNavMinHeight = function() {
 			return Math.max(75, Math.min(550, self.expression().InclusionRules().length * 40) ) + "px";
 		}
+		
 
 		// Subscriptions
 

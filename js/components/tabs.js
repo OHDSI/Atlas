@@ -23,7 +23,6 @@ define([
                 this.subscriptions.push(selectedTabKeySubscr);
                 this.onSelectedTabKeyUpdate(params.selectedTabKey());
             }
-
 			this.selectTab = params.selectTab || ((idx, tabData) => this.selectedTab(idx, tabData));
 
 			// User can go back and forwards between tabs - no need to re-initialize them each time

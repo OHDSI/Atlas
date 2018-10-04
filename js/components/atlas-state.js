@@ -49,5 +49,13 @@ define(['knockout', 'lscache', 'job/jobDetail', 'assets/ohdsi.util'], function (
 	}
 	state.IRAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.IRAnalysis.current()));
 
+	// Pathways State
+	state.CohortPathways = {
+		current: ko.observable(null),
+		selectedId: ko.observable(null)
+	};	
+	state.CohortPathways.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortPathways.current()));
+	
+	
 	return state;
 });
