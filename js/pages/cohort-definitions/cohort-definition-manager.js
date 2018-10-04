@@ -770,21 +770,23 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 					this.loadingReport(true);
 				}
-				var job = new jobDetail({
-					name: this.model.currentCohortDefinition().name() + "_" + source.sourceKey,
+                let cohortDefinition = this.model.currentCohortDefinition();
+                var job = new jobDetail({
+					name: `Generating cohort ${cohortDefinition.id()} : ${source.name()} (${source.sourceKey})`,
 					type: 'cohort-generation',
 					status: 'PENDING',
-					executionId: String(this.model.currentCohortDefinition().id()) + String(this.getSourceId(source.sourceKey)),
+					// executionId: String(this.model.currentCohortDefinition().id()) + String(this.getSourceId(source.sourceKey)),
 					statusUrl: this.config.api.url + 'cohortdefinition/' + this.model.currentCohortDefinition().id() + '/info',
 					statusValue: 'status',
 					viewed: false,
-					url: 'cohortdefinition/' + this.model.currentCohortDefinition().id() + '/generation',
+					url: 'cohortdefinition/' + cohortDefinition.id() + '/generation',
 				});
 
 				$.ajax(route, {
 					error: this.authApi.handleAccessDenied,
 						success:  (data) => {
 						job.status(data.status);
+						job.executionId = data.executionId;
 						sharedState.jobListing.queue(job);
 						setTimeout( () => {
 							if (!this.pollTimeout) {

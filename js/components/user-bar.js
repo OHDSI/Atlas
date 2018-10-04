@@ -71,7 +71,7 @@ define([
 
         getExisting(n) {
             for (const job of this.jobListing()) {
-                if (job.executionId === n.executionId) {
+                if (job.executionId == n.executionId) {
                     return job;
                 }
             }
