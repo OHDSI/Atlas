@@ -71,15 +71,6 @@ define([
 				this.analysis.stratifyByPsAndCovariates(this.matchStratifySelection() == "stratifyOnPsAndCovariates");
 				this.setCreatePs();
 			});
-
-
-			if (this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet().id === undefined) {
-				this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet(new ConceptSet());
-			}
-			if (this.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet().id === undefined) {
-				this.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet(new ConceptSet());
-			}
-			
 		}
 
 		toggleControlDisplay() {
