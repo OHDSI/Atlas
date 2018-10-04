@@ -9,6 +9,7 @@ define([
     'providers/Vocabulary',
     'conceptsetbuilder/InputTypes/ConceptSet',
     'providers/Page',
+	'pages/characterizations/const',
     'providers/AutoBind',
     'utils/CommonUtils',
     'assets/ohdsi.util',
@@ -27,6 +28,7 @@ define([
     VocabularyAPI,
     ConceptSet,
     Page,
+	constants,
     AutoBind,
     commonUtils,
     ohdsiUtil
@@ -69,6 +71,7 @@ define([
             this.showConceptSetBrowser = ko.observable();
 
             this.featureTypes = featureTypes;
+            this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
         }
 
         onPageCreated() {

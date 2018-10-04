@@ -118,12 +118,28 @@
                     <!-- /ko -->
                 </div>
                 <div data-bind="if: $component.data.type() === $component.featureTypes.CUSTOM_FE, css: classes('design')">
-                    <span data-bind="css: classes('criteria-descr')">SQL for FeatureExtraction custom covariate builder:</span>
-                    <textarea data-bind="
-                        css: classes({ element: 'raw-sql-box', extra: 'form-control' }),
-                        attr: { disabled: $component.canEdit() ? null : true },
-                        textInput: $component.data.design
-                    "></textarea>
+                    <div data-bind="css: classes('design-section')">
+                        <span data-bind="css: classes('design-section-title')">Analysis SQL:</span>
+                        <span data-bind="css: classes('criteria-sql')">SELECT covariate_id, covariate_name, concept_id, sum_value, average_value FROM (</span>
+                        <textarea data-bind="
+                            css: classes({ element: 'raw-sql-box', extra: 'form-control' }),
+                            attr: { disabled: $component.canEdit() ? null : true, placeholder: demoCustomSqlAnalysisDesign },
+                            textInput: $component.data.design
+                        "></textarea>
+                        <span data-bind="css: classes('criteria-sql')">)</span>
+                    </div>
+                    <div data-bind="css: classes('design-section')">
+                        <span data-bind="css: classes('design-section-title')">
+                            Available variables:
+                        </span>
+                        <ul>
+                            <li>@cdm_database_schema</li>
+                            <li>@cohort_table</li>
+                            <li>@cohort_id</li>
+                            <li>@analysis_id</li>
+                            <li>all variables specified in Cohort Characterization parameters</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
