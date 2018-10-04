@@ -5,6 +5,7 @@ define(
     
     var options = {};
     options.removeButton = `<button type="button" class="btn btn-danger btn-xs btn-remove"><i class="fa fa-times" aria-hidden="true"></i></button>`;
+    options.copyButton = `<button type="button" class="btn btn-primary btn-xs btn-copy"><i class="fa fa-clone" aria-hidden="true"></i>&nbsp;Copy</button>`;
 
     options.cca = {
         comparisonTableColumns: [
@@ -69,6 +70,15 @@ define(
                 data: d => d.excludedCovariateConceptSet().length,
                 visible: false,
             },
+            {
+                title: 'Copy',
+                render: (s, p, d) => {
+                    return options.copyButton;
+                },
+                orderable: false,
+                searchable: false,
+                className: 'col-copy',
+            },
         ],
         comparisonTableOptions: {
             pageLength: 10,
@@ -91,6 +101,15 @@ define(
             {
                 title: 'Description',
                 data: d => d.description(),
+            },
+            {
+                title: 'Copy',
+                render: (s, p, d) => {
+                    return options.copyButton;
+                },
+                orderable: false,
+                searchable: false,
+                className: 'col-copy',
             },
         ],
         analysisSettingsTableOptions: {
