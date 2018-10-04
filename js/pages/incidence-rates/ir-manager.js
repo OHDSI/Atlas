@@ -285,16 +285,15 @@ define([
                 jobDetails.executionId = info.data.executionId;
                 jobDetails.status(info.data.status);
                 sharedState.jobListing.queue(jobDetails);
-				// this.pollForInfo();
+				this.pollForInfo();
 			});
 		}
 
         createJobDetails(sourceItem) {
             var jobDetails = new jobDetail({
-                name: this.selectedAnalysis().name() + "_" + sourceItem.source.sourceKey,
+				name: `IR Analysis: ${this.selectedAnalysisId()}: ${sourceItem.source.sourceName} (${sourceItem.source.sourceKey})`,
                 type: 'ir-analysis',
                 status: 'PENDING',
-                // executionId: String(this.selectedAnalysisId()) + String(sourceItem.source.sourceId),
                 statusUrl: config.api.url + 'ir/' + this.selectedAnalysisId() + '/info',
                 statusValue: 'status',
                 viewed: false,
