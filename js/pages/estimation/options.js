@@ -1,6 +1,8 @@
 define(
     (require, exports) => {
-  
+
+    const ko = require('knockout');  
+    
     var options = {};
     options.removeButton = `<button type="button" class="btn btn-danger btn-xs btn-remove"><i class="fa fa-times" aria-hidden="true"></i></button>`;
 
@@ -39,14 +41,15 @@ define(
                     if (d.outcomes().length > 1) {
                         var tooltipText = ""; 
                         d.outcomes().forEach((element, index) => {
+                        	element = ko.toJS(element); 
                             if (index > 0) {
                                 tooltipText += ("<span class=\"tooltipitem\">" + element.name + "</span>");
                             }
                         });
                         const outcomeDisplay = d.outcomes().length == 2 ? "outcome" : "outcomes";
-                        return d.outcomes()[0].name + "<br/><div class=\"tool-tip\">(" + (d.outcomes().length - 1) + "+ more " + outcomeDisplay + "<span class=\"tooltiptext\">" + tooltipText + "</span>)</div>";
+                        return ko.toJS(d.outcomes()[0]).name + "<br/><div class=\"tool-tip\">(" + (d.outcomes().length - 1) + "+ more " + outcomeDisplay + "<span class=\"tooltiptext\">" + tooltipText + "</span>)</div>";
                     } else if (d.outcomes().length == 1) {
-                        return d.outcomes()[0].name;
+                        return ko.toJS(d.outcomes()[0]).name;
                     } else {
                         return 0;
                     }
