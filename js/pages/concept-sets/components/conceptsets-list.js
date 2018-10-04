@@ -4,7 +4,7 @@ define([
 	'providers/Component',
 	'providers/AutoBind',
 	'utils/CommonUtils',
-	'services/AuthService',
+	'services/permissions/ConceptSetPermissionService',
 	'../const',
   'components/tabs',
   'circe'
@@ -14,7 +14,7 @@ define([
 	Component,
 	AutoBind,
 	commonUtils,
-	authService,
+	ConceptSetPermissionService,
 	constants,
 ) {
 	class ConceptsetList extends AutoBind(Component) {
@@ -23,7 +23,7 @@ define([
 			this.model = params.model;
 	
 			this.canCreateConceptSet = ko.pureComputed(function () {
-				return authService.isPermittedCreateConceptset();
+				return ConceptSetPermissionService.isPermittedCreateConceptset();
 			});
 		}		
 

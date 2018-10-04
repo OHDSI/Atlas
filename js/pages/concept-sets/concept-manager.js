@@ -6,7 +6,7 @@ define([
 	'services/VocabularyService',
 	'utils/CommonUtils',
 	'atlas-state',
-	'services/http',
+	'services/httpService',
 	'faceted-datatable',
 	'components/heading',
 ], function (

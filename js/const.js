@@ -666,6 +666,7 @@ define(
 			evidence: () => `${config.api.url}evidence`,
 			cdmResults: () => `${config.api.url}cdmresults`,
 			source: () => `${config.api.url}source`,
+			pathway: () => `${config.api.url}pathway-analysis`,
 		};
 
     return {

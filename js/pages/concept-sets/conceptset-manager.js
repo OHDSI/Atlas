@@ -11,7 +11,7 @@ define([
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'services/ConceptSetService',
-	'services/AuthService',
+	'services/permissions/ConceptSetPermissionService',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -42,7 +42,7 @@ define([
 	conceptSet,
 	sharedState,
 	conceptSetService,
-	authService
+	ConceptSetPermissionService
 ) {
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -60,7 +60,7 @@ define([
 				);
 			});
 			this.canCreate = ko.computed(() => {
-				return authService.isPermittedCreateConceptset();
+				return ConceptSetPermissionService.isPermittedCreateConceptset();
 			});
 			this.canDelete = this.model.canDeleteCurrentConceptSet;
 			this.loading = ko.observable();

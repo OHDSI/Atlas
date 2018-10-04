@@ -37,7 +37,7 @@ define([
 
 		async loadData() {
 			this.loading(true);
-			const analysisList = await PathwayService.list();
+			const analysisList = await PathwayService.find();
 			this.analysisList(analysisList.content);
 			this.loading(false);
 		}

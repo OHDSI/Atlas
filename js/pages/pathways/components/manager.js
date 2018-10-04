@@ -98,7 +98,7 @@ define([
 			if (id < 1) {
 				this.setupDesign(new PathwayAnalysis());
 			} else {
-				const analysis = await PathwayService.load(id);
+				const analysis = await PathwayService.findOne(id);
 				this.setupDesign(new PathwayAnalysis(analysis));
 				this.loading(false);
 			}
@@ -119,7 +119,7 @@ define([
 		async del() {
 			if (confirm('Are you sure?')) {
 				this.loading(true);
-				await PathwayService.del(this.design().id);
+				await PathwayService.delete(this.design().id);
 				this.dirtyFlag().reset();					
 				this.loading(false);
 				this.close();
