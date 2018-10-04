@@ -154,7 +154,7 @@ define([
 					.then(({ data }) => {
 						this.monitorEEJobExecution(data.executionId, 100);
 						jobDetailsService.createJob({
-							name: this.currentPlpAnalysis().name() + "_" + sourceKey,
+                            name: data.jobParameters.jobName,
 							type: 'plp',
 							status: 'PENDING',
 							executionId: data.executionId,

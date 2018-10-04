@@ -1,11 +1,11 @@
 define([
-	'knockout', 
+	'knockout',
 	'text!./ir-manager.html',
 	'services/IRAnalysis',
 	'webapi/SourceAPI',
 	'services/CohortDefinition',
-	'./components/iranalysis/IRAnalysisDefinition', 
-	'./components/iranalysis/IRAnalysisExpression', 
+	'./components/iranalysis/IRAnalysisDefinition',
+	'./components/iranalysis/IRAnalysisExpression',
 	'assets/ohdsi.util',
 	'appConfig',
 	'atlas-state',
@@ -15,9 +15,9 @@ define([
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'./const',
-	'./components/iranalysis/main', 
-	'databindings', 
-	'conceptsetbuilder/components', 
+	'./components/iranalysis/main',
+	'databindings',
+	'conceptsetbuilder/components',
 	'circe',
 	'components/heading',
 ], function (
@@ -40,7 +40,7 @@ define([
 ) {
 	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
-			super(params);				
+			super(params);
 			// polling support
 			this.pollTimeout = null;
 			this.model = params.model;
@@ -85,7 +85,7 @@ define([
 			this.selectedAnalysisId.subscribe((id) => {
 				authAPI.loadUserInfo();
 			});
-			
+
 			this.isRunning = ko.observable(false);
 			this.activeTab = ko.observable(params.activeTab || 'definition');
 			this.conceptSetEditor = ko.observable(); // stores a refrence to the concept set editor
@@ -95,7 +95,7 @@ define([
 					return source.info();
 				});
 			});
-			
+
 			this.cohortDefs = ko.observableArray();
 			this.analysisCohorts = ko.pureComputed(() => {
 				var analysisCohorts = { targetCohorts: ko.observableArray(), outcomeCohorts: ko.observableArray() };
@@ -104,14 +104,14 @@ define([
 					analysisCohorts.targetCohorts(this.selectedAnalysis().expression().targetIds().map((targetId) => {
 						return ({ id: targetId, name: this.resolveCohortId(targetId) });
 					}));
-					
+
 					analysisCohorts.outcomeCohorts(this.selectedAnalysis().expression().outcomeIds().map((outcomeId) => {
 						return ({ id: outcomeId, name: this.resolveCohortId(outcomeId) });
 					}));
 				}
 				return analysisCohorts;
 			});
-			
+
 			this.showConceptSetBrowser = ko.observable(false);
 			this.criteriaContext = ko.observable();
 			this.generateActionsSettings = {
@@ -121,8 +121,8 @@ define([
 				onAction: function (data) {
 					data.selectedData.action();
 				}
-			};		
-					
+			};
+
 			this.modifiedJSON = "";
 			this.importJSON = ko.observable();
 			this.expressionJSON = ko.pureComputed({
@@ -140,16 +140,16 @@ define([
 				}
 			});
 			this.expressionMode = ko.observable('import');
-			
-			// subscriptions		
+
+			// subscriptions
 			this.selectedAnalysisIdSub = this.selectedAnalysisId.subscribe((newVal) => {
 				if (newVal) {
 					this.onAnalysisSelected();
 				}
 			});
 			this.error = ko.observable();
-			
-			// startup actions        
+
+			// startup actions
 			this.init();
 		}
 
@@ -174,41 +174,41 @@ define([
 				}
 			});
 		}
-		
+
 		resolveCohortId(cohortId) {
-			var cohortDef = this.cohortDefs().filter(function(def) { 
+			var cohortDef = this.cohortDefs().filter(function(def) {
 				return def.id == cohortId;
 			})[0];
-			return (cohortDef && cohortDef.name) || "Unknown Cohort";	
+			return (cohortDef && cohortDef.name) || "Unknown Cohort";
 		}
 
 		refreshDefs() {
 			cohortAPI.getCohortDefinitionList().then((list) => {
 				this.cohortDefs(list);
-			});	
+			});
 		}
-		
+
 		clearResults() {
 			this.sources().forEach(source => source.info(null));
 		}
-		
+
 		onAnalysisSelected() {
 			this.loading(true);
 			this.refreshDefs();
 			this.clearResults();
 			IRAnalysisService.getAnalysis(this.selectedAnalysisId()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));				
+				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
 				// this.pollForInfo();
 			});
 		};
-		
+
 		handleConceptSetImport(item) {
 			this.criteriaContext(item);
 			this.showConceptSetBrowser(true);
 		}
-		
+
 		onConceptSetSelectAction(result, valueAccessor) {
 			this.showConceptSetBrowser(false);
 
@@ -218,7 +218,7 @@ define([
 				this.activeTab('conceptsets');
 			}
 			this.criteriaContext(null);
-		}				
+		}
 
 		copy() {
 			this.loading(true);
@@ -228,9 +228,9 @@ define([
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
 				document.location = constants.apiPaths.analysis(analysis.id);
-			});	
+			});
 		}
-		
+
 		close() {
 			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
 				return;
@@ -243,7 +243,7 @@ define([
 			});
 			document.location = constants.apiPaths.analysis();
 		}
-		
+
 		save() {
 			this.loading(true);
 			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
@@ -253,11 +253,11 @@ define([
 				this.loading(false);
 			});
 		}
-		
+
 		delete() {
 			if (!confirm("Delete incidence rate analysis? Warning: deletion can not be undone!"))
 				return;
-			
+
 			// reset view after save
 			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
 				this.selectedAnalysis(null);
@@ -265,23 +265,24 @@ define([
 				document.location = constants.apiPaths.analysis();
 			});
 		}
-		
+
 		removeResult(analysisResult) {
 			IRAnalysisService.deleteInfo(this.selectedAnalysisId(),analysisResult.source.sourceKey).then(() => {
 				var source = this.sources().filter(function (s) { return s.source.sourceId == analysisResult.source.sourceId })[0];
 				source.info(null);
 			});
 		}
-		
+
 		newAnalysis() {
 			this.selectedAnalysis(new IRAnalysisDefinition());
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 		};
-		
+
 		onExecuteClick(sourceItem) {
             var jobDetails = this.createJobDetails(sourceItem);
             var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 			executePromise.then((info) => {
+                jobDetails.name = info.data.jobParameters.jobName;
                 jobDetails.executionId = info.data.executionId;
                 jobDetails.status(info.data.status);
                 sharedState.jobListing.queue(jobDetails);
@@ -291,7 +292,6 @@ define([
 
         createJobDetails(sourceItem) {
             var jobDetails = new jobDetail({
-				name: `IR Analysis: ${this.selectedAnalysisId()}: ${sourceItem.source.sourceName} (${sourceItem.source.sourceKey})`,
                 type: 'ir-analysis',
                 status: 'PENDING',
                 statusUrl: config.api.url + 'ir/' + this.selectedAnalysisId() + '/info',
@@ -314,7 +314,7 @@ define([
 		exportAnalysisCSV() {
 			window.open(config.api.url + 'ir/' + this.selectedAnalysisId() + '/export');
 		}
-		
+
 		init() {
 			this.refreshDefs();
 			sourceAPI.getSources().then((sources) => {
@@ -338,14 +338,14 @@ define([
 							if (sourceItem.info()) {
 								sourceItem.info().executionInfo.status = "PENDING";
 								sourceItem.info.notifySubscribers();
-							} 
+							}
 							else {
 								// creating 'fake' temporary source info makes the UI respond to the generate action.
-								const tempInfo = { 
+								const tempInfo = {
 									source: sourceItem,
 									executionInfo : {
 										id : { sourceId: sourceItem.source.sourceId }
-									}, 
+									},
 									summaryList: []
 								};
 								sourceItem.info(tempInfo);
@@ -354,6 +354,7 @@ define([
                             var jobDetails = this.createJobDetails(sourceItem);
                             var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
                             executePromise.then((info) => {
+                                jobDetails.name = info.data.jobParameters.jobName;
                                 jobDetails.executionId = info.data.executionId;
                                 jobDetails.status(info.data.status);
                                 sharedState.jobListing.queue(jobDetails);
@@ -361,7 +362,7 @@ define([
                             });
 						}
 					}
-				});		
+				});
 
 				// set sources observable, which will show the Generate action dropdown.
 				this.sources(sourceList);
@@ -375,8 +376,8 @@ define([
 			} else {
 				// this.pollForInfo();
 			}
-		}		
-		
+		}
+
 		// cleanup
 		dispose() {
 			this.selectedAnalysisIdSub.dispose();
