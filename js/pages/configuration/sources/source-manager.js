@@ -33,7 +33,6 @@ define([
     Vocabulary: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Results: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Evidence: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
-    Temp: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
   };
 
   function Source(data) {
