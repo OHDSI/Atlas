@@ -12,7 +12,7 @@
       <button
         type="button"
         class="btn btn-sm btn-success"
-        data-bind="click: saveClick, css: { disabled: !canSave() }">
+        data-bind="click: saveClick, enable: canSave">
           <i class="fa fa-save"></i>
       </button>
       <button
