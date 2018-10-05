@@ -90,16 +90,17 @@ define([
                                 this.jobListing.valueHasMutated();
                             }
                         } else {
-                            job = {};
-                            job.type = n.jobInstance.name;
-                            job.name = n.jobParameters.jobName;
-                            job.status = ko.observable(n.status);
-                            job.executionId = n.executionId;
-                            job.viewed = ko.observable(false);
-                            job.executionUniqueId = ko.pureComputed(function () {
-                                return job.type + "-" + job.executionId;
-                            });
-                            job.url = this.getJobURL(n);
+                            job = {
+                                type: n.jobInstance.name,
+                                name: n.jobParameters.jobName,
+                                status: ko.observable(n.status),
+                                executionId: n.executionId,
+                                viewed: ko.observable(false),
+                                url: this.getJobURL(n),
+                                executionUniqueId: ko.pureComputed(function () {
+                                    return job.type + "-" + job.executionId;
+                                })
+                            };
                             this.jobListing.queue(job);
                             this.jobListing.valueHasMutated();
 
