@@ -15,7 +15,7 @@ define([
     'assets/ohdsi.util',
     'less!./feature-analysis-view-edit.less',
     'components/cohortbuilder/components',
-    'modules/circe/main',
+    'circe',
     'components/multi-select'
 ], function (
     ko,
@@ -166,7 +166,7 @@ define([
                 let newDesign = this.previousDesign[type] || [this.getEmptyCriteriaFeatureDesign()];
                 this.data.design(newDesign);
             } else {
-                let newDesign = this.previousDesign[type] || '';
+                let newDesign = this.previousDesign[type] || null;
                 this.data.design(newDesign);
             }
             this.data.type(type);
@@ -207,7 +207,7 @@ define([
                 const newConceptSet = new ConceptSet({
                     id: newId,
                     name: conceptSet.name,
-                    expression: result.data
+                    expression: result
                 });
                 featureCriteria.conceptSets([...featureCriteria.conceptSets(), newConceptSet]);
                 context.conceptSetId(newConceptSet.id);
