@@ -61,7 +61,7 @@ define([
                 {
                     title: 'Author',
                     className: this.classes('tbl-col', 'author'),
-                    render: (s, p, d) => (d.createdBy !== null ? d.createdBy.login : 'anonymous'),
+                    render: datatableUtils.getCreatedByFormatter(),
                 },
 
             ];
@@ -77,7 +77,7 @@ define([
                     },
                     {
                         'caption': 'Author',
-                        'binding': o => (o.createdBy !== null ? o.createdBy.login : 'anonymous'),
+                        'binding': datatableUtils.getFacetForCreatedBy,
                     },
                 ]
             };
