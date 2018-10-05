@@ -113,18 +113,21 @@ define([
             switch (n.jobInstance.name) {
                 case "generateCohort":
                     return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation';
-                case "cca":
-                    return 'estimation/' + n.jobParameters.cohortId;
-                case 'PLP':
-                    return 'plp/' + n.jobParameters.cohortId;
-                case 'ir-analysis':
+                case 'irAnalysis':
                     return 'iranalysis/' +n.jobParameters.analysis_id + '/generation';
                 case 'negative-controls':
                     return 'conceptset/' + n.jobParameters.concept_set_id + '/evidence';
                 case 'generateCohortCharacterization':
                     return 'cc/characterizations' + n.jobParameters.cohort_characterization_id;
-                case "":
-                    return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/reporting?sourceKey=' + n.jobParameters.sourceKey;
+                case "cohortAnalysisJob":
+                    return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/report?sourceKey=' + n.jobParameters.sourceKey;
+                case 'executionEngine':
+                    switch (n.jobParameters.scriptType) {
+                        case "CCA":
+                            return 'estimation/' + n.jobParameters.cohortId;
+                        case 'PLP':
+                            return 'plp/' + n.jobParameters.cohortId;
+                    }
             }
             return null;
         }
