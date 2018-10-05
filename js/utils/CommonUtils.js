@@ -145,28 +145,38 @@ define((require, factory) => {
 			return '<span class="' + cls + '">' + match + '</span>';
 		});
 	}
-	
+
 	const getPathwaysUrl = (id, section) => `/pathways/${id}/${section}`;
+
+	async function confirmAndDelete({ loading, remove, redirect }) {
+		if (confirm('Are you sure?')) {
+			loading(true);
+			await remove()
+			loading(false);
+			redirect();
+		}
+	}
 
 		const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
 		const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
 
-		return {
-			build,
-			routeTo,
-			cartesian,
-			hasRelationship,
-			contextSensitiveLinkColor,
-			hasCDM,
-			hasResults,
-			renderConceptSetItemSelector,
-			renderLink,
-			renderBoundLink,
-			renderConceptSelector,
-			renderHierarchyLink,
-			createConceptSetItem,
-			syntaxHighlight,
-			getPathwaysUrl,
-		};
-	}
-);
+
+	return {
+		build,
+		confirmAndDelete,
+		cartesian,
+		routeTo,
+		hasRelationship,
+		contextSensitiveLinkColor,
+		hasCDM,
+		hasResults,
+		renderConceptSetItemSelector,
+		renderLink,
+		renderBoundLink,
+		renderConceptSelector,
+		renderHierarchyLink,
+		createConceptSetItem,
+		syntaxHighlight,
+		getPathwaysUrl
+	};
+});
