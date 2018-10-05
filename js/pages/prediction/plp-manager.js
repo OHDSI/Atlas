@@ -153,16 +153,7 @@ define([
 				)
 					.then(({ data }) => {
 						this.monitorEEJobExecution(data.executionId, 100);
-						jobDetailsService.createJob({
-                            name: data.jobParameters.jobName,
-							type: 'plp',
-							status: 'PENDING',
-							executionId: data.executionId,
-							statusUrl: `${config.api.url}executionservice/execution/status/${data.executionId}`,
-							statusValue: 'status',
-							viewed: false,
-							url: 'plp/' + this.patientLevelPredictionId(),
-						})
+						jobDetailsService.createJob(data);
 					});
 			}
 		};

@@ -1,12 +1,15 @@
-define(['job/jobDetail', 'atlas-state', 'webapi/AuthAPI'], function (jobDetail, sharedState, authApi) {
+define(['job/jobDetail', 'atlas-state'], function (jobDetail, sharedState) {
 	
-	function createJob(details) {
-		const job = new jobDetail(details);
-		job.status(details.status);
+	function updateJob(updated) {
+		let job = new jobDetail();
+		job.type = updated.jobInstance.name;
+		job.status(updated.status);
+		job.name = updated.jobParameters.jobName;
+		job.executionId = updated.executionId;
 		sharedState.jobListing.queue(job);
 	}
 	
 	return {
-		createJob: createJob
+		createJob: updateJob
 	}
 });

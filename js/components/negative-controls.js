@@ -6,7 +6,8 @@ define(['knockout',
 	'services/ConceptSet',
 	'atlas-state',
 	'job/jobDetail',
-  'webapi/MomentAPI',
+	'services/JobDetailsService',
+	'webapi/MomentAPI',
 	'webapi/AuthAPI',
 	'assets/ohdsi.util',
 	'databindings'
@@ -19,6 +20,7 @@ define(['knockout',
 	conceptSetService,
 	sharedState,
 	jobDetail,
+	jobDetailsService,
 	momentApi,
 	authApi
 ) {
@@ -411,24 +413,11 @@ define(['knockout',
 			self.negativeControls(null);
 			self.loadingResults(false);
 
-			// Create a job to monitor progress
-			var job = new jobDetail({
-				type: 'negative-controls',
-				status: 'PENDING',
-				statusUrl: config.api.url + 'conceptset/' + self.conceptSet().id + '/generationinfo',
-				statusValue: 'status',
-				viewed: false,
-				url: 'conceptset/' + self.conceptSet().id + '/evidence',
-			});
-
 			// Kick the job off
 			$.when(negativeControlsJob)
 				.done(function (info) {
-                    job.name = info.data.jobParameters.jobName;
-                    job.executionId = info.data.executionId;
-                    job.status(info.data.status);
-                    sharedState.jobListing.queue(job);
-                    pollTimeout = setTimeout(function () {
+					jobDetailsService.createJob(info);
+					pollTimeout = setTimeout(function () {
  						self.pollForInfo();
 					}, 5000);
 				})

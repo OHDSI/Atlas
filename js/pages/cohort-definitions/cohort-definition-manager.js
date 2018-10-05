@@ -13,6 +13,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'clipboard',
 	'd3',
 	'job/jobDetail',
+	'services/JobDetailsService',
 	'pages/cohort-definitions/const',
 	'services/ConceptSet',
 	'providers/Page',
@@ -52,6 +53,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	clipboard,
 	d3,
 	jobDetail,
+	jobDetailsService,
 	cohortConst,
 	conceptSetService,
 	Page,
@@ -774,24 +776,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 					this.loadingReport(true);
 				}
-                let cohortDefinition = this.model.currentCohortDefinition();
-                var job = new jobDetail({
-					name: `Generating cohort ${cohortDefinition.id()} : ${source.name()} (${source.sourceKey})`,
-					type: 'cohort-generation',
-					status: 'PENDING',
-					// executionId: String(this.model.currentCohortDefinition().id()) + String(this.getSourceId(source.sourceKey)),
-					statusUrl: this.config.api.url + 'cohortdefinition/' + this.model.currentCohortDefinition().id() + '/info',
-					statusValue: 'status',
-					viewed: false,
-					url: 'cohortdefinition/' + cohortDefinition.id() + '/generation',
-				});
-
 				$.ajax(route, {
 					error: this.authApi.handleAccessDenied,
-						success:  (data) => {
-						job.status(data.status);
-						job.executionId = data.executionId;
-						sharedState.jobListing.queue(job);
+					success:  (data) => {
+						jobDetailsService.createJob(data);
 						setTimeout( () => {
 							if (!this.pollTimeout) {
 								this.pollForInfo();
@@ -1086,21 +1074,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.rollupUtilizationVisit = rollupUtilizationVisit;
 				cohortJob.rollupUtilizationDrug = rollupUtilizationDrug;
 				
-				var jobDetails = new jobDetail({
-					name: cohortJob.jobName,
-					status: 'LOADING',
-					executionId: null,
-						statusUrl: this.config.api.url + 'job/execution/',
-					statusValue: 'status',
-					progress: 0,
-						progressUrl: this.config.api.url + 'cohortresults/' + this.model.reportSourceKey() + '/' + cohortDefinitionId + '/info',
-					progressValue: 'progress',
-					progressMax: 100,
-					viewed: false,
-						url: 'cohortdefinition/' + cohortDefinitionId + '/reporting?sourceKey=' + this.model.reportSourceKey(),
-				});
-
-					this.createReportJobFailed(false);
+				this.createReportJobFailed(false);
 
 				$.ajax({
 					url: config.api.url + 'cohortanalysis',
@@ -1108,10 +1082,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					method: 'POST',
 					contentType: 'application/json',
 						success: (info) => {
-						jobDetails.executionId = info.executionId;
-						jobDetails.status(info.status);
-						jobDetails.statusUrl = this.statusUrl + info.executionId;
-						sharedState.jobListing.queue(jobDetails);
+							jobDetailsService.createJob(info);
 					},
 						error: (xhr, status, error) => {
 							this.createReportJobFailed(true);

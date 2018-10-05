@@ -935,16 +935,7 @@ define([
 					executionService.runExecution(sourceKey, this.cohortComparisonId(), 'CCA', $('.language-r').text())
 						.then(({ data: c }) => {
 							this.monitorEEJobExecution(c.executionId, 100);
-							jobDetailsService.createJob({
-                                name: c.jobParameters.jobName,
-								type: 'cca',
-								status: 'PENDING',
-								executionId: c.executionId,
-								statusUrl: `${config.api.url}executionservice/execution/status/${c.executionId}`,
-								statusValue: 'status',
-								viewed: false,
-								url: 'estimation/' + this.cohortComparisonId(),
-							})
+							jobDetailsService.createJob(c);
 						});
 				} else {
 					this.sourceProcessingStatus[sourceKey](true);

@@ -9,7 +9,7 @@ define([
 	'assets/ohdsi.util',
 	'appConfig',
 	'atlas-state',
-	'job/jobDetail',
+	'services/JobDetailsService',
 	'webapi/AuthAPI',
 	'providers/Page',
 	'providers/AutoBind',
@@ -20,24 +20,22 @@ define([
 	'conceptsetbuilder/components',
 	'circe',
 	'components/heading',
-], function (
-	ko,
-	view,
-	IRAnalysisService,
-	sourceAPI,
-	cohortAPI,
-	IRAnalysisDefinition,
-	IRAnalysisExpression,
-	ohdsiUtil,
-	config,
-	sharedState,
-	jobDetail,
-	authAPI,
-	Page,
-	AutoBind,
-	commonUtils,
-	constants
-) {
+], function (ko,
+             view,
+             IRAnalysisService,
+             sourceAPI,
+             cohortAPI,
+             IRAnalysisDefinition,
+             IRAnalysisExpression,
+             ohdsiUtil,
+             config,
+             sharedState,
+             jobDetailsService,
+             authAPI,
+             Page,
+             AutoBind,
+             commonUtils,
+             constants) {
 	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
@@ -50,37 +48,37 @@ define([
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
-				|| (
-					config.userAuthenticationEnabled
-					&& authAPI.isAuthenticated
-					&& authAPI.isPermittedCreateIR()
-				)
+					|| (
+						config.userAuthenticationEnabled
+						&& authAPI.isAuthenticated
+						&& authAPI.isPermittedCreateIR()
+					)
 			});
 			this.isDeletable = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
-				|| (
-					config.userAuthenticationEnabled
-					&& authAPI.isAuthenticated
-					&& authAPI.isPermittedDeleteIR(this.selectedAnalysisId())
-				)
+					|| (
+						config.userAuthenticationEnabled
+						&& authAPI.isAuthenticated
+						&& authAPI.isPermittedDeleteIR(this.selectedAnalysisId())
+					)
 			});
 			this.isEditable = ko.pureComputed(() => {
 				return this.selectedAnalysisId() === null
-				|| !config.userAuthenticationEnabled
-				|| (
-					config.userAuthenticationEnabled
-					&& authAPI.isAuthenticated
-					&& authAPI.isPermittedEditIR(this.selectedAnalysisId())
-				)
+					|| !config.userAuthenticationEnabled
+					|| (
+						config.userAuthenticationEnabled
+						&& authAPI.isAuthenticated
+						&& authAPI.isPermittedEditIR(this.selectedAnalysisId())
+					)
 			});
 			this.canCopy = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
-				|| (
-					config.userAuthenticationEnabled
-					&& authAPI.isAuthenticated
-					&& authAPI.isPermittedCopyIR(this.selectedAnalysisId())
-					&& !this.dirtyFlag().isDirty()
-				)
+					|| (
+						config.userAuthenticationEnabled
+						&& authAPI.isAuthenticated
+						&& authAPI.isPermittedCopyIR(this.selectedAnalysisId())
+						&& !this.dirtyFlag().isDirty()
+					)
 			});
 			this.selectedAnalysisId.subscribe((id) => {
 				authAPI.loadUserInfo();
@@ -98,15 +96,14 @@ define([
 
 			this.cohortDefs = ko.observableArray();
 			this.analysisCohorts = ko.pureComputed(() => {
-				var analysisCohorts = { targetCohorts: ko.observableArray(), outcomeCohorts: ko.observableArray() };
-				if (this.selectedAnalysis())
-				{
+				var analysisCohorts = {targetCohorts: ko.observableArray(), outcomeCohorts: ko.observableArray()};
+				if (this.selectedAnalysis()) {
 					analysisCohorts.targetCohorts(this.selectedAnalysis().expression().targetIds().map((targetId) => {
-						return ({ id: targetId, name: this.resolveCohortId(targetId) });
+						return ({id: targetId, name: this.resolveCohortId(targetId)});
 					}));
 
 					analysisCohorts.outcomeCohorts(this.selectedAnalysis().expression().outcomeIds().map((outcomeId) => {
-						return ({ id: outcomeId, name: this.resolveCohortId(outcomeId) });
+						return ({id: outcomeId, name: this.resolveCohortId(outcomeId)});
 					}));
 				}
 				return analysisCohorts;
@@ -157,18 +154,19 @@ define([
 			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
 				var hasPending = false;
 				data.forEach((info) => {
-					var source = this.sources().filter((s) => { return s.source.sourceId == info.executionInfo.id.sourceId })[0];
+					var source = this.sources().filter((s) => {
+						return s.source.sourceId == info.executionInfo.id.sourceId
+					})[0];
 					if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
 						source.info(info);
 					if (info.executionInfo.status != "COMPLETE")
 						hasPending = true;
 				});
 
-				if (hasPending)
-				{
+				if (hasPending) {
 					this.pollTimeout = setTimeout(() => {
 						this.pollForInfo();
-					},10000);
+					}, 10000);
 				} else {
 					this.isRunning(false);
 				}
@@ -176,7 +174,7 @@ define([
 		}
 
 		resolveCohortId(cohortId) {
-			var cohortDef = this.cohortDefs().filter(function(def) {
+			var cohortDef = this.cohortDefs().filter(function (def) {
 				return def.id == cohortId;
 			})[0];
 			return (cohortDef && cohortDef.name) || "Unknown Cohort";
@@ -212,7 +210,7 @@ define([
 		onConceptSetSelectAction(result, valueAccessor) {
 			this.showConceptSetBrowser(false);
 
-			if (result.action=='add') {
+			if (result.action == 'add') {
 				var newConceptSet = this.conceptSetEditor().createConceptSet();
 				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
 				this.activeTab('conceptsets');
@@ -238,7 +236,7 @@ define([
 			this.selectedAnalysis(null);
 			this.selectedAnalysisId(null);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-			this.sources().forEach(function(source) {
+			this.sources().forEach(function (source) {
 				source.info(null);
 			});
 			document.location = constants.apiPaths.analysis();
@@ -249,7 +247,7 @@ define([
 			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location =  constants.apiPaths.analysis(analysis.id)
+				document.location = constants.apiPaths.analysis(analysis.id)
 				this.loading(false);
 			});
 		}
@@ -267,8 +265,10 @@ define([
 		}
 
 		removeResult(analysisResult) {
-			IRAnalysisService.deleteInfo(this.selectedAnalysisId(),analysisResult.source.sourceKey).then(() => {
-				var source = this.sources().filter(function (s) { return s.source.sourceId == analysisResult.source.sourceId })[0];
+			IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
+				var source = this.sources().filter(function (s) {
+					return s.source.sourceId == analysisResult.source.sourceId
+				})[0];
 				source.info(null);
 			});
 		}
@@ -279,28 +279,12 @@ define([
 		};
 
 		onExecuteClick(sourceItem) {
-            var jobDetails = this.createJobDetails(sourceItem);
-            var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
+			var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 			executePromise.then((info) => {
-                jobDetails.name = info.data.jobParameters.jobName;
-                jobDetails.executionId = info.data.executionId;
-                jobDetails.status(info.data.status);
-                sharedState.jobListing.queue(jobDetails);
+				jobDetailsService.createJob(info);
 				this.pollForInfo();
 			});
 		}
-
-        createJobDetails(sourceItem) {
-            var jobDetails = new jobDetail({
-                type: 'ir-analysis',
-                status: 'PENDING',
-                statusUrl: config.api.url + 'ir/' + this.selectedAnalysisId() + '/info',
-                statusValue: 'status',
-                viewed: false,
-                url: 'iranalysis/' + this.selectedAnalysisId() + '/generation',
-            });
-            return jobDetails;
-        }
 
 		import() {
 			if (this.importJSON() && this.importJSON().length > 0) {
@@ -319,10 +303,13 @@ define([
 			this.refreshDefs();
 			sourceAPI.getSources().then((sources) => {
 				var sourceList = [];
-				sources.forEach(function(source) {
-					if (source.daimons.filter(function (daimon) { return daimon.daimonType == "CDM"; }).length > 0
-							&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0)
-					{
+				sources.forEach(function (source) {
+					if (source.daimons.filter(function (daimon) {
+							return daimon.daimonType == "CDM";
+						}).length > 0
+						&& source.daimons.filter(function (daimon) {
+							return daimon.daimonType == "Results";
+						}).length > 0) {
 						sourceList.push({
 							source: source,
 							info: ko.observable()
@@ -343,23 +330,19 @@ define([
 								// creating 'fake' temporary source info makes the UI respond to the generate action.
 								const tempInfo = {
 									source: sourceItem,
-									executionInfo : {
-										id : { sourceId: sourceItem.source.sourceId }
+									executionInfo: {
+										id: {sourceId: sourceItem.source.sourceId}
 									},
 									summaryList: []
 								};
 								sourceItem.info(tempInfo);
 							}
 							this.isRunning(true);
-                            var jobDetails = this.createJobDetails(sourceItem);
-                            var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
-                            executePromise.then((info) => {
-                                jobDetails.name = info.data.jobParameters.jobName;
-                                jobDetails.executionId = info.data.executionId;
-                                jobDetails.status(info.data.status);
-                                sharedState.jobListing.queue(jobDetails);
-                                this.pollForInfo();
-                            });
+							IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
+								.then((info) => {
+									jobDetailsService.createJob(info.data);
+									this.pollForInfo();
+								});
 						}
 					}
 				});
