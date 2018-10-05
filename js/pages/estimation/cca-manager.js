@@ -94,7 +94,7 @@ define([
 
 			this.canCopy = ko.pureComputed(() => {
 				// TODO: Add in AuthApi call for permission check
-				return true;
+				return this.selectedAnalysisId() > 0;
 			});
 
 			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {

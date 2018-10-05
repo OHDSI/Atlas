@@ -1,6 +1,7 @@
-define(function (require, exports) {
-
-    var ko = require('knockout');
+define([
+	'knockout', 
+	'databindings',
+], function (ko) {
 
 	function RunPlpArgs(data) {
 		var self = this;
@@ -10,7 +11,7 @@ define(function (require, exports) {
         self.normalizeData = ko.observable(data.normalizeData === undefined ? true : data.normalizeData);
         self.testSplit = ko.observable(data.testSplit || "person");
         self.testFraction = ko.observable(data.testFraction === 0 ? 0 : data.testFraction || 0.25).extend({numeric: 2});
-        self.splitSeed = ko.observable(data.splitSeed || null);
+        self.splitSeed = ko.observable(data.splitSeed || null).extend({numeric: 0});
         self.nfold = ko.observable(data.nfold || 3);
 	}
 	

@@ -95,11 +95,11 @@ define([
 			this.packageName = ko.observable();
 
 			this.canDelete = ko.pureComputed(() => {
-				return authApi.isPermittedDeletePlp(this.selectedAnalysisId())  && this.selectedAnalysisId() > 0;
+				return authApi.isPermittedDeletePlp(this.selectedAnalysisId()) && this.selectedAnalysisId() > 0;
 			});
 
 			this.canCopy = ko.pureComputed(() => {
-				return authApi.isPermittedCopyPlp(this.selectedAnalysisId());
+				return authApi.isPermittedCopyPlp(this.selectedAnalysisId()) && this.selectedAnalysisId() > 0;
 			});
 
 			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {
