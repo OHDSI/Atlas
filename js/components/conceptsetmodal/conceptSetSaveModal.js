@@ -1,6 +1,20 @@
-define(['knockout', 'appConfig', 'services/permissions/ConceptSetPermissionService', 'services/ConceptSetService', 'text!./components/conceptsetmodal/conceptSetSaveModal.html',
-    'css!./components/conceptsetmodal/style.css'],
-  function(ko, config, ConceptSetPermissionService, conceptSetService, view){
+define([
+  'knockout',
+  'appConfig',
+  'services/permissions/ConceptSetPermissionService',
+  'services/AuthService',
+  'services/ConceptSetService',
+  'text!./components/conceptsetmodal/conceptSetSaveModal.html',
+  'css!./components/conceptsetmodal/style.css',
+  ],
+  function(
+    ko,
+    config,
+    ConceptSetPermissionService,
+    AuthService,
+    conceptSetService,
+    view
+  ){
     function ConceptSetSaveModal(params){
       var self = this;
       self.conceptSetName = params.conceptSetName;
@@ -13,7 +27,7 @@ define(['knockout', 'appConfig', 'services/permissions/ConceptSetPermissionServi
         return self.canCreate() && self.conceptSetName() && self.conceptSetName().length > 0 && self.isNameUnique();
       });
       self.canCreate = ko.computed(function () {
-        return ((ConceptSetPermissionService.isAuthenticated() && ConceptSetPermissionService.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+        return ((AuthService.isAuthenticated() && ConceptSetPermissionService.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
       });
       self.notUniqueName = ko.computed(function(){
         return self.isNameVerified() && !self.isNameUnique();

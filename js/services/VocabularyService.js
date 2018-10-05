@@ -11,7 +11,7 @@ define(function (require, exports) {
 		constructor(props) {
 			super(props)
 			this.domains = [];
-			this.defaultSource = '';
+			this.defaultSource = { sourceKey: '' };
 			this.init();
 		}
 
@@ -171,7 +171,7 @@ define(function (require, exports) {
 			return data;
 		}
 
-		async compareConceptSet(compareTargets, url, sourceKey) {
+		async compareConceptSet(compareTargets, url, sourceKey = false) {
 			var repositoryUrl = (url || config.api.url) + 'vocabulary/' + (sourceKey || this.defaultSource.sourceKey) + '/compare';
 	
 			const { data } = await this.httpService.doPost(repositoryUrl, compareTargets);

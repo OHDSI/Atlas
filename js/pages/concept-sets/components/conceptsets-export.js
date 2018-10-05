@@ -5,7 +5,7 @@ define([
 	'providers/AutoBind',
 	'utils/CommonUtils',
 	'appConfig',
-	'services/file',
+	'services/fileService',
   'components/tabs',
   'circe',
   'less!./conceptsets-export.less'
@@ -44,10 +44,10 @@ define([
 			}
 		}
 
-		exportOnConceptSetSelected(conceptSet, valueAccessor) {
-			$(valueAccessor.currentTarget).toggleClass('selected');
+		exportOnConceptSetSelected(conceptSet, source, event) {
+			$(event.currentTarget).toggleClass('selected');
 			if (this.exportTable == null) {
-				this.exportTable = $(valueAccessor.currentTarget.parentElement.parentElement).DataTable();
+				this.exportTable = $(event.currentTarget.parentElement.parentElement).DataTable();
 			}
 			this.exportRowCount(this.exportTable.rows('.selected').data().length);
 		}

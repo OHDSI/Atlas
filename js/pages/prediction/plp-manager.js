@@ -111,7 +111,7 @@ define([
 
 		async loadExecutions () {
 			// reset before load
-			this.sources().forEach((s) => {
+			this.sources().forEach(async (s) => {
 				if (!this.sourceExecutions[s.sourceKey]) {
 					this.sourceExecutions[s.sourceKey] = ko.observableArray();
 				} else {
