@@ -106,21 +106,21 @@ define([
     updateVocabPriority() {
       var newVocabUrl = sharedState.vocabularyUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.vocabularyUrl === newVocabUrl; });
-      updateSourceDaimonPriority(selectedSource.sourceKey, 'Vocabulary');
+      this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Vocabulary');
       return true;
     };
 
     updateEvidencePriority() {
       var newEvidenceUrl = sharedState.evidenceUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.evidenceUrl === newEvidenceUrl; });
-      updateSourceDaimonPriority(selectedSource.sourceKey, 'Evidence');
+      this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Evidence');
       return true;
     };
 
     updateResultsPriority() {
       var newResultsUrl = sharedState.resultsUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.resultsUrl === newResultsUrl; });
-      updateSourceDaimonPriority(selectedSource.sourceKey, 'Results');
+      this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Results');
       return true;
     };
     
