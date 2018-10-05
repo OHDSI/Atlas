@@ -24,7 +24,7 @@
     <div id="specificationSummary" class="tab-content">
       <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'specification'}" class="tab-pane">
         <div class="paddedWrapper">
-            <div placeholder="enter a description here" class="divtext" data-bind="contentEditable: $component.patientLevelPredictionAnalysis().description" contenteditable="true"></div>
+            <textarea placeholder="enter a description here (1000 characters max)" class="descriptionEntry" data-bind="value: $component.patientLevelPredictionAnalysis().description" maxlength="1000"></textarea>
             <hr/>
             <div id="filters">
               <div class="row">
