@@ -28,6 +28,7 @@ define([
             this.tabs = constants.gridTabs;
             this.activeTab = params.activeTab;
 
+            this.isViewPermitted = params.isViewPermitted;
             this.data = params.data;
             this.gridColumns = params.gridColumns;
             this.gridOptions = params.gridOptions;

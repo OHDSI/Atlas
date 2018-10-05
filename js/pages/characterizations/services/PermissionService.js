@@ -50,8 +50,27 @@ define([
         isPermittedExportCC(id) {
             return this.isPermitted(`cohort-characterization:${id}:export:get`);
         }
-    }
+          
+        isPermittedGetFaList() {
+            return this.isPermitted(`feature-analysis:get`);
+        }
 
+        isPermittedCreateFa() {
+            return this.isPermitted(`feature-analysis:post`);
+        }
+
+        isPermittedGetFa(id) {
+            return this.isPermitted(`feature-analysis:${id}:get`);
+        }
+
+        isPermittedUpdateFa(id) {
+            return this.isPermitted(`feature-analysis:${id}:put`);
+        }
+
+        isPermittedDeleteFa(id) {
+            return this.isPermitted(`feature-analysis:${id}:delete`);
+        }
+    }
 
 
     return new CharacterizationPermissionService();

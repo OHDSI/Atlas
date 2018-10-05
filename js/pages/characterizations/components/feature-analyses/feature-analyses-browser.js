@@ -63,14 +63,11 @@ define([
             this.loadData();
         }
 
-        loadData() {
+        async loadData() {
             this.loading(true);
-            FeatureAnalysisService
-                .loadFeatureAnalysisList()
-                .then(res => {
-                    this.data(res.content);
-                    this.loading(false);
-                });
+            const res = await FeatureAnalysisService.loadFeatureAnalysisList();
+            this.data(res.content);
+            this.loading(false);
         }
 
         selectAnalysis(data) {
