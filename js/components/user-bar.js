@@ -115,7 +115,7 @@ define([
                     return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation';
                 case 'irAnalysis':
                     return 'iranalysis/' +n.jobParameters.analysis_id + '/generation';
-                case 'negative-controls':
+                case 'negativeControlsAnalysisJob':
                     return 'conceptset/' + n.jobParameters.concept_set_id + '/evidence';
                 case 'generateCohortCharacterization':
                     return 'cc/characterizations' + n.jobParameters.cohort_characterization_id;
