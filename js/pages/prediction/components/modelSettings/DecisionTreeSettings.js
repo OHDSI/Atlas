@@ -3,30 +3,33 @@ define([
 	'text!./DecisionTreeSettings.html',
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
+	'utils/DataTypeConverterUtils'
 ], function (
 	ko, 
 	view, 
 	ModelSettingsEditorComponent,
 	commonUtils,
+	dataTypeConverterUtils
 ) {
 	class DecisionTreeSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
+
 			this.maxDepth = {
 				name: 'maxDepth',
-				value: this.modelSettings.maxDepth,
+				value: ko.observable(this.modelSettings.maxDepth() && this.modelSettings.maxDepth().length > 0 ? this.modelSettings.maxDepth().join() : ''),
 			};
 			this.minSamplesSplit = {
 				name: 'minSamplesSplit',
-				value: this.modelSettings.minSamplesSplit,
+				value: ko.observable(this.modelSettings.minSamplesSplit() && this.modelSettings.minSamplesSplit().length > 0 ? this.modelSettings.minSamplesSplit().join() : ''),
 			};
 			this.minSamplesLeaf = {
 				name: 'minSamplesLeaf',
-				value: this.modelSettings.minSamplesLeaf,
+				value: ko.observable(this.modelSettings.minSamplesLeaf() && this.modelSettings.minSamplesLeaf().length > 0 ? this.modelSettings.minSamplesLeaf().join() : ''),
 			};
 			this.minImpurityDecrease = {
 				name: 'minImpurityDecrease',
-				value: this.modelSettings.minImpurityDecrease,
+				value: ko.observable(this.modelSettings.minImpurityDecrease() && this.modelSettings.minImpurityDecrease().length > 0 ? this.modelSettings.minImpurityDecrease().join() : ''),
 			};
 			this.classWeight = {
 				name: 'classWeight',
@@ -36,6 +39,22 @@ define([
 				name: 'plot',
 				value: this.modelSettings.plot,
 			};
+
+			this.maxDepth.value.subscribe(newValue => {
+				this.modelSettings.maxDepth(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
+
+			this.minSamplesSplit.value.subscribe(newValue => {
+				this.modelSettings.minSamplesSplit(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
+
+			this.minSamplesLeaf.value.subscribe(newValue => {
+				this.modelSettings.minSamplesLeaf(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
+
+			this.minImpurityDecrease.value.subscribe(newValue => {
+				this.modelSettings.minImpurityDecrease(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
 		}
 	}
 

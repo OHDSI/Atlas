@@ -1,15 +1,17 @@
 define([
     'knockout', 
-    'featureextraction/InputTypes/CovariateSettings'
+    'featureextraction/InputTypes/CovariateSettings',
+    './ConceptSet',
 ], function (
     ko,
-    CovariateSettings
+    CovariateSettings,
+    ConceptSet
 ){
     class PredictionCovariateSettings extends CovariateSettings {
         constructor(data) {
             super(data);
-            this.includedCovariateConceptSet = ko.observable(data.includedCovariateConceptSet || {});
-            this.excludedCovariateConceptSet = ko.observable(data.excludedCovariateConceptSet || {});
+            this.includedCovariateConceptSet = ko.observable(data.includedCovariateConceptSet !== null ? new ConceptSet(data.includedCovariateConceptSet) : new ConceptSet());
+            this.excludedCovariateConceptSet = ko.observable(data.excludedCovariateConceptSet !== null ? new ConceptSet(data.excludedCovariateConceptSet) : new ConceptSet());
         }
     }
 	return PredictionCovariateSettings;

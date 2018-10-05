@@ -7,10 +7,10 @@ define([
 		var self = this;
         data = data || {};
 
-        self.maxDepth = ko.observable(data.maxDepth === 0 ? 0 : data.maxDepth || 10);
-        self.minSamplesSplit = ko.observable(data.minSamplesSplit === 0 ? 0 : data.minSamplesSplit || 2);
-        self.minSamplesLeaf = ko.observable(data.minSamplesLeaf === 0 ? 0 : data.minSamplesLeaf || 10);
-        self.minImpurityDecrease = ko.observable(data.minImpurityDecrease === 0 ? 0 : data.minImpurityDecrease || 0.0000001);
+        self.maxDepth = ko.observableArray((data.maxDepth && Array.isArray(data.maxDepth)) ? data.maxDepth : [10]);
+        self.minSamplesSplit = ko.observableArray((data.minSamplesSplit && Array.isArray(data.minSamplesSplit)) ? data.minSamplesSplit : [2]);
+        self.minSamplesLeaf = ko.observableArray((data.minSamplesLeaf && Array.isArray(data.minSamplesLeaf)) ? data.minSamplesLeaf : [10]);
+        self.minImpurityDecrease = ko.observableArray((data.minImpurityDecrease && Array.isArray(data.minImpurityDecrease)) ? data.minImpurityDecrease : [0.0000001]);
         self.seed = ko.observable(data.seed || null);
         self.classWeight = ko.observable(data.classWeight || "None");
         self.plot = ko.observable(data.plot === undefined ? false : data.plot);

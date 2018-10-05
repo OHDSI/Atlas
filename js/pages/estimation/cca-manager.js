@@ -331,7 +331,6 @@ define([
 		}
 
 		copyAnalysisSettings(obj, index) {
-			console.log('copy analysis settings');
 			var newAnalysis = ko.toJS(this.cohortMethodAnalysisList()[index]);
 			newAnalysis.analysisId = this.cohortMethodAnalysisList().length + 1;
 			newAnalysis.description = "COPY OF: " + newAnalysis.description;
@@ -358,7 +357,6 @@ define([
 		}
 
 		copyComparison(obj, index) {
-			console.log('copy comparison');
 			var newComparison = ko.toJS(this.comparisons()[index]);
 			newComparison.target = null;
 			newComparison.comparator = null;
@@ -609,7 +607,6 @@ define([
 
 			currentClipboard.on('error', function (e) {
 				console.error('Error copying to clipboard');
-				console.log(e);
 			});			
 		}
 	}

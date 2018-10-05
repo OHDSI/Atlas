@@ -7,8 +7,8 @@ define([
 		var self = this;
         data = data || {};
 
-        self.nEstimators = ko.observable(data.nEstimators === 0 ? 0 : data.nEstimators || 50);
-        self.learningRate = ko.observable(data.learningRate === 0 ? 0 : data.learningRate || 1).extend({numeric: 3});
+        self.nEstimators = ko.observableArray((data.nEstimators && Array.isArray(data.nEstimators)) ? data.nEstimators : [50]);
+        self.learningRate = ko.observableArray((data.learningRate && Array.isArray(data.learningRate)) ? data.learningRate : [1]);
         self.seed = ko.observable(data.seed || null);
     }
 	

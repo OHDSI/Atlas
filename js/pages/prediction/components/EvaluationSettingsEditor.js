@@ -3,6 +3,7 @@ define([
 	'text!./EvaluationSettingsEditor.html',	
 	'providers/Component',
 	'utils/CommonUtils',
+	'utils/DataTypeConverterUtils',
 	'../options',
 	'databindings'
 ], function (
@@ -10,6 +11,7 @@ define([
 	view, 
 	Component,
 	commonUtils,
+	dataTypeConverterUtils,
 	options,
 ) {
 	class EvaluationSettingsEditor extends Component {
@@ -20,6 +22,7 @@ define([
 			this.runPlpArgs = params.runPlpArgs();
 			this.options = options;
 			this.splitSeed = ko.observable(this.runPlpArgs.splitSeed() !== null && this.runPlpArgs.splitSeed() !== 0 ? this.runPlpArgs.splitSeed() : '');
+			this.testFraction = ko.observable(this.runPlpArgs.testFraction() ? dataTypeConverterUtils.convertFromPercent(this.runPlpArgs.testFraction()) : '');
 
 			this.splitSeed.subscribe(newValue => {
 				if (newValue === '' || !this.isInteger.test(newValue)) {
@@ -28,9 +31,11 @@ define([
 				} else {
 					this.runPlpArgs.splitSeed(newValue);
 				}
-				console.log(this.runPlpArgs.splitSeed());
 			});
 
+			this.testFraction.subscribe(newValue => {
+				this.runPlpArgs.testFraction(dataTypeConverterUtils.convertToPercent(newValue));
+			});
 		}
 	}
 

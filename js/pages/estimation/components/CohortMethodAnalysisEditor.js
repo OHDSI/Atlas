@@ -4,6 +4,7 @@ define([
 	'providers/Component',
 	'utils/CommonUtils',
 	'../options',
+	'utils/DataTypeConverterUtils',
 	'../inputTypes/ConceptSet',
 	'databindings',
 	'cyclops',
@@ -18,6 +19,7 @@ define([
 	Component,
 	commonUtils,
 	options,
+	dataTypeConverterUtils,
 	ConceptSet,
 ) {
 	class CohortMethodAnalysisEditor extends Component {
@@ -35,7 +37,42 @@ define([
 			this.currentConceptSet = null;
 			this.trimSelection = ko.observable();
 			this.matchStratifySelection = ko.observable();
-	
+			this.excludeCovariateIds = ko.observable(this.analysis.createPsArgs.excludeCovariateIds() && this.analysis.createPsArgs.excludeCovariateIds().length > 0 ? this.analysis.createPsArgs.excludeCovariateIds().join() : '');
+			this.includeCovariateIds = ko.observable(this.analysis.createPsArgs.includeCovariateIds() && this.analysis.createPsArgs.includeCovariateIds().length > 0 ? this.analysis.createPsArgs.includeCovariateIds().join() : '');
+			this.cvIncludeCovariateIds = ko.observable(this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateIds() && this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateIds().length > 0 ? this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateIds().join() : '');
+			this.trimFraction = ko.observable(this.analysis.trimByPsArgs.trimFraction() ? dataTypeConverterUtils.convertFromPercent(this.analysis.trimByPsArgs.trimFraction()) : '');
+			this.bounds = ko.observable(this.analysis.trimByPsToEquipoiseArgs.bounds() && this.analysis.trimByPsToEquipoiseArgs.bounds().length > 0 ? dataTypeConverterUtils.percentArrayToCommaDelimitedList(this.analysis.trimByPsToEquipoiseArgs.bounds()) : '');
+			this.studyStartDate = ko.observable(this.analysis.getDbCohortMethodDataArgs.studyStartDate() !== null ? dataTypeConverterUtils.convertFromRDateToDate(this.analysis.getDbCohortMethodDataArgs.studyStartDate()) : null);
+			this.studyEndDate = ko.observable(this.analysis.getDbCohortMethodDataArgs.studyEndDate() !== null ? dataTypeConverterUtils.convertFromRDateToDate(this.analysis.getDbCohortMethodDataArgs.studyEndDate()) : null);
+
+			this.includeCovariateIds.subscribe(newValue => {
+				this.analysis.createPsArgs.includeCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
+
+			this.excludeCovariateIds.subscribe(newValue => {
+				this.analysis.createPsArgs.excludeCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
+
+			this.cvIncludeCovariateIds.subscribe(newValue => {
+				this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
+
+			this.trimFraction.subscribe(newValue => {
+				this.analysis.trimByPsArgs.trimFraction(dataTypeConverterUtils.convertToPercent(newValue));
+			});
+
+			this.bounds.subscribe(newValue => {
+				this.analysis.trimByPsToEquipoiseArgs.bounds(dataTypeConverterUtils.commaDelimitedListToPercentArray(newValue));
+			});
+
+			this.studyStartDate.subscribe(newValue => {
+				this.analysis.getDbCohortMethodDataArgs.studyStartDate(dataTypeConverterUtils.convertToDateForR(newValue));
+			});
+
+			this.studyEndDate.subscribe(newValue => {
+				this.analysis.getDbCohortMethodDataArgs.studyEndDate(dataTypeConverterUtils.convertToDateForR(newValue));
+			});
+			
 			this.trimSelection.subscribe(newValue => {
 				this.analysis.trimByPs(this.trimSelection() == "byPercent");
 				this.analysis.trimByPsToEquipoise(this.trimSelection() == "toEquipoise");

@@ -4,6 +4,7 @@ define([
 	'providers/Component',
 	'utils/CommonUtils',
 	'../options',
+	'utils/DataTypeConverterUtils',
 	'databindings',
 	'cyclops',
 ], function (
@@ -12,6 +13,7 @@ define([
 	Component,
 	commonUtils,
 	options,
+	dataTypeConverterUtils
 ) {
 	class PositiveControlSythesisSettingsEditor extends Component {
 		constructor(params) {
@@ -22,6 +24,11 @@ define([
 			this.showCovariateSelector = ko.observable(false);
 			this.showControlDisplay = ko.observable(false);
 			this.showPriorDisplay = ko.observable(false);
+			this.effectSizes = ko.observable(this.settings().effectSizes() && this.settings().effectSizes().length > 0 ? this.settings().effectSizes().join() : '');
+
+			this.effectSizes.subscribe(newValue => {
+				this.settings().effectSizes(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
 		}
 
 		toggleControlDisplay() {

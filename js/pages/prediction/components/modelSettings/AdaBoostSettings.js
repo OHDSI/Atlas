@@ -3,11 +3,13 @@ define([
 	'text!./AdaBoostSettings.html',	
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
+	'utils/DataTypeConverterUtils',
 ], function (
 	ko, 
 	view, 
 	ModelSettingsEditorComponent,
 	commonUtils,
+	dataTypeConverterUtils,
 ) {
 	class AdaBoostSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
@@ -15,12 +17,20 @@ define([
 
 			this.learningRate = {
 				name: 'learningRate',
-				value: this.modelSettings.learningRate,
+				value: ko.observable(this.modelSettings.learningRate() && this.modelSettings.learningRate().length > 0 ? this.modelSettings.learningRate().join() : ''),
 			};
 			this.nEstimators = {
 				name: 'nEstimators',
-				value: this.modelSettings.nEstimators,
+				value: ko.observable(this.modelSettings.nEstimators() && this.modelSettings.nEstimators().length > 0 ? this.modelSettings.nEstimators().join() : ''),
 			};
+
+			this.learningRate.value.subscribe(newValue => {
+				this.modelSettings.learningRate(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
+
+			this.nEstimators.value.subscribe(newValue => {
+				this.modelSettings.nEstimators(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
 		}
 	}
 

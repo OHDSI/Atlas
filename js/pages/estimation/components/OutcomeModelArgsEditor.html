@@ -25,7 +25,7 @@
 <div>
     <label>An optional vector of covariate IDs to use to estimate interactions with the main treatment effect.</label>
     <div class="input-group">
-        <textarea class="form-control" rows="1" cols="80" data-bind="textInput: $component.outcomeModelArgs.interactionCovariateIds"></textarea>
+        <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.interactionCovariateIds"></textarea>
     </div>
 </div>
 <div class="panel panel-primary panel-buffer panel-buffer-left" data-bind="collapsable: showCovariateDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
@@ -36,13 +36,13 @@
         <div>
             <label>Include only these covariates in the outcome model.</label>
             <div class="input-group">
-                <textarea class="form-control" rows="1" cols="80" data-bind="textInput: $component.outcomeModelArgs.includeCovariateIds"></textarea>
+                <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.includeCovariateIds"></textarea>
             </div>
         </div>
         <div>
             <label>Exclude these covariates from the outcome model.</label>
             <div class="input-group">
-                <textarea class="form-control" rows="1" cols="80" data-bind="textInput: $component.outcomeModelArgs.excludeCovariateIds"></textarea>
+                <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.excludeCovariateIds"></textarea>
             </div>
         </div>
     </div>

@@ -3,6 +3,7 @@ define([
 	'text!./PredictionCovariateSettingsEditor.html',	
 	'providers/Component',
 	'utils/CommonUtils',
+	'utils/DataTypeConverterUtils',
 	'../options',
 	'../inputTypes/ConceptSet',
 	'databindings',
@@ -13,6 +14,7 @@ define([
 	view, 
 	Component,
 	commonUtils,
+	dataTypeConverterUtils,
 	options,
 	ConceptSet,
 ) {
@@ -23,14 +25,11 @@ define([
 			this.covariateSettings = params.covariateSettings;
 			this.options = options;
 			this.showConceptSetSelector = ko.observable(false);
+			this.includedCovariateIds = ko.observable(this.covariateSettings.includedCovariateIds() && this.covariateSettings.includedCovariateIds().length > 0 ? this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateIds().join() : '');
 
-			if (this.covariateSettings.includedCovariateConceptSet().id === undefined) {
-				this.covariateSettings.includedCovariateConceptSet(new ConceptSet());
-			}
-			if (this.covariateSettings.excludedCovariateConceptSet().id === undefined) {
-				this.covariateSettings.excludedCovariateConceptSet(new ConceptSet());
-			}
-
+			this.includedCovariateIds.subscribe(newValue => {
+				this.covariateSettings.includedCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+			});
 		}
 
 		conceptsetSelected(d) {

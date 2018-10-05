@@ -29,13 +29,13 @@
                 <div>
                     <label>Study start date - a calendar date specifying the minimum date that a cohort index can appear (leave blank to use all time):</label>
                     <div class="input-group">
-                        <input placeholder="YYYY-MM-DD" class="form-control dateField" data-bind="datepicker:  $component.analysis.getDbCohortMethodDataArgs.studyStartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }">
+                        <input placeholder="YYYY-MM-DD" class="form-control dateField" data-bind="datepicker: $component.studyStartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }">
                     </div>
                 </div>
                 <div>
                     <label>Study end date - a calendar date specifying the maximum date that a cohort index can appear (leave blank to use all time). <b>Important</b>: the study end date is also used to truncate risk windows, meaning no outcomes beyond the study end date will be considered.</label>
                     <div class="input-group">
-                        <input placeholder="YYYY-MM-DD" class="form-control dateField" data-bind="datepicker:  $component.analysis.getDbCohortMethodDataArgs.studyEndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }">
+                        <input placeholder="YYYY-MM-DD" class="form-control dateField" data-bind="datepicker:  $component.studyEndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }">
                     </div>
                 </div>
                 <div>
@@ -132,9 +132,9 @@
                     </div>
                 </div>
                 <div>
-                    <label>A list of covariate IDs that should be restricted to:</label>
+                    <label>A comma delimited list of covariate IDs that should be restricted to:</label>
                     <div class="input-group">
-                        <input class="form-control" type="text" data-bind="textInput: $component.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateIds" />
+                        <input class="form-control" type="text" data-bind="value: $component.cvIncludeCovariateIds" />
                     </div>
                 </div>
             </div>        
@@ -194,13 +194,13 @@
                 <div data-bind="visible: $component.trimSelection() == 'byPercent'">
                     <label>Trim Fraction (1-100%):</label>
                     <div class="input-group">
-                        <input class="form-control" type="text" data-bind="textInput: $component.analysis.trimByPsArgs.trimFraction" />
+                        <input class="form-control" type="text" data-bind="value: $component.trimFraction" />
                     </div>
                 </div>
                 <div data-bind="visible: $component.trimSelection() == 'toEquipoise'">
                     <label>Bounds (1-100%):</label>
                     <div class="input-group">
-                        <input class="form-control" type="text" data-bind="textInput: $component.analysis.trimByPsToEquipoiseArgs.bounds" />
+                        <input class="form-control" type="text" data-bind="value: $component.bounds" />
                     </div>
                 </div>
                 <div>
@@ -245,15 +245,15 @@
                     </div>
                     <div class="panel-body collapse">
                         <div>
-                            <label>Exclude covariate Ids:</label>
+                            <label>A comma-delimited list of covariate IDs to <b>exclude</b>:</label>
                             <div class="input-group">
-                                <textarea class="form-control" rows="1" cols="80" data-bind="textInput: $component.analysis.createPsArgs.excludeCovariateIds"></textarea>
+                                <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.excludeCovariateIds"></textarea>
                             </div>
                         </div>
                         <div>
-                            <label>Include covariate Ids:</label>
+                            <label>A comma-delimited list of covariate IDs to <b>include</b>:</label>
                             <div class="input-group">
-                                <textarea class="form-control" rows="1" cols="80" data-bind="textInput: $component.analysis.createPsArgs.includeCovariateIds"></textarea>
+                                <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.includeCovariateIds"></textarea>
                             </div>
                         </div>
                     </div>                    
