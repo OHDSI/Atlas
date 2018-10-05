@@ -175,16 +175,25 @@
 						<div type="button" data-bind="css: {disabled: !$root.currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 						<div class="clear"></div>
 					</div>
-					<div class="modal fade" data-bind="modal: showImportConceptSetModal" tabindex="-1" role="dialog">
-						<div class="modal-dialog modal-lg">
-							<div class="modal-content">
-								<div class="modal-header">Import Concept Set From Repository...</div>
-								<div class="paddedWrapper">
-									<cohort-concept-set-browser params="criteriaContext: $root.criteriaContext, cohortConceptSets: $root.currentCohortDefinition().expression().ConceptSets, onRespositoryConceptSetSelected: onConceptSetRepositoryImport, buttonActionEnabled: false"></cohort-concept-set-browser>
-								</div>
-							</div>
-						</div>
-					</div>
+					<atlas-modal params="
+						showModal: $component.showImportConceptSetModal,
+						template: 'import-conceptset-template',
+						title: 'Import Concept Set From Repository...',
+						data: {
+							onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
+							criteriaContext: $root.criteriaContext,
+							cohortConceptSets: $root.currentCohortDefinition().expression().ConceptSets,
+						}
+					"
+					></atlas-modal>
+					<script type='text/html' id="import-conceptset-template">
+						<cohort-concept-set-browser params="
+							criteriaContext: criteriaContext,
+							cohortConceptSets: cohortConceptSets,
+							onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
+							buttonActionEnabled: false
+						"></cohort-concept-set-browser>
+					</script>
 				</div>
                 <loading data-bind="visible: conceptLoading()" params="status: 'retrieving concepts'"></loading>
 				<!-- /ko -->

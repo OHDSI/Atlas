@@ -8,6 +8,7 @@ define([
 	'less!./linked-cohort-list.less',
 	'components/linked-entity-list',
 	'components/modal',
+	'databindings'
 ], function (
 	ko,
 	Component,
@@ -22,6 +23,18 @@ define([
 			this.showCohortModal = this.showCohortModal.bind(this);
 			this.removeCohort = this.removeCohort.bind(this);
 
+			const nameCol = {
+				title: 'Name'
+			};
+			
+			if (params.canEditName) {
+				nameCol.render = (s,p,d) => `<span data-bind="clickToEdit: name"/>`;
+				nameCol.className = this.classes('col-cohort-name', 'editable');
+			} else {
+				nameCol.data = 'name',
+				nameCol.className = this.classes('col-cohort-name')
+			}
+			
 			// Linked entity list props
 			this.title = params.title || 'Cohort definitions';
 			this.descr = params.descr;
@@ -34,22 +47,25 @@ define([
 					data: 'id',
 					className: this.classes('col-cohort-id'),
 				},
+				nameCol,
 				{
-					title: 'Name',
-					data: 'name',
-					className: this.classes('col-cohort-name'),
+					title: '',
+					render: this.getEditCell('editCohort'),
+					className: this.classes('col-cohort-edit'),
 				},
 				{
-					title: 'Actions',
+					title: '',
 					render: this.getRemoveCell('removeCohort'),
 					className: this.classes('col-cohort-remove'),
-				}
+				},
+				
 			];
-
+			
 			// Modal props
 			this.showModal = ko.observable(false);
 			this.cohortSelected = ko.observable();
 
+			// subscriptions
 			this.cohortSelectedSubscr = this.cohortSelected.subscribe(cohort => this.attachCohort(cohort));
 		}
 
@@ -62,6 +78,13 @@ define([
 				return `<a data-bind="click: () => $component.params.${action}('${d[identifierField]}')">Remove</a>`;
 			}
 		}
+		
+		getEditCell(action, identifierField = 'id') {
+			return (s, p, d) => {
+				return `<a href="#/cohortdefinition/${d[identifierField]}">Edit cohort</a>`;
+			}
+		}
+		
 
 		showCohortModal() {
 			this.showModal(true);
@@ -77,13 +100,14 @@ define([
 						{ id, name }
 					],
 					'id'
-				)
+				).map(d => { d.name = ko.observable(ko.utils.unwrapObservable(d.name)); return d})
 			);
 		}
 
 		removeCohort(id) {
 			this.data(this.data().filter(a => a.id !== parseInt(id)));
 		}
+		
 	}
 
 	return commonUtils.build('linked-cohort-list', LinkedCohortList, view);

@@ -46,7 +46,7 @@ define([
 
 			conceptsetSelected(d) {
 				$('#modalConceptSet').modal('hide');
-				vocabularyProvider.getConceptSetExpression(d.id).then(({ data: csExpression }) => {
+				vocabularyProvider.getConceptSetExpression(d.id).then((csExpression) => {
 					this.targetId(d.id);
 					this.targetCaption(d.name);
 					var conceptSetData = new ConceptSet({

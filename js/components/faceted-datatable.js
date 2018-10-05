@@ -3,6 +3,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 	function facetedDatatable(params) {
 		var self = this;
 
+		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
 		self.data = params.xfObservable || ko.observable();
 		self.tableData = ko.pureComputed(function () {
