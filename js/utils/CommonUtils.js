@@ -145,11 +145,21 @@ define((require, factory) => {
 			return '<span class="' + cls + '">' + match + '</span>';
 		});
 	}
-	
+
 	const getPathwaysUrl = (id, section) => `/pathways/${id}/${section}`;
+
+	async function confirmAndDelete({ loading, remove, redirect }) {
+		if (confirm('Are you sure?')) {
+			loading(true);
+			await remove()
+			loading(false);
+			redirect();
+		}
+	}
 
 	return {
 		build,
+		confirmAndDelete,
 		routeTo,
 		hasRelationship,
 		contextSensitiveLinkColor,

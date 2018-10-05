@@ -48,6 +48,27 @@ define([
         return AuthAPI.isPermitted(`cohort-characterization:${id}:export:get`);
     }
 
+    //
+
+    function isPermittedGetFaList() {
+        return AuthAPI.isPermitted(`feature-analysis:get`);
+    }
+
+    function isPermittedCreateFa() {
+        return AuthAPI.isPermitted(`feature-analysis:post`);
+    }
+
+    function isPermittedGetFa(id) {
+        return AuthAPI.isPermitted(`feature-analysis:${id}:get`);
+    }
+
+    function isPermittedUpdateFa(id) {
+        return AuthAPI.isPermitted(`feature-analysis:${id}:put`);
+    }
+
+    function isPermittedDeleteFa(id) {
+        return AuthAPI.isPermitted(`feature-analysis:${id}:delete`);
+    }
 
     return {
         isPermittedCreateCC,
@@ -60,6 +81,12 @@ define([
         isPermittedGenerateCC,
         isPermittedGetCCGenerationResults,
         isPermittedExportGenerationDesign,
-        isPermittedExportCC
+        isPermittedExportCC,
+        //
+        isPermittedGetFaList,
+        isPermittedCreateFa,
+        isPermittedGetFa,
+        isPermittedUpdateFa,
+        isPermittedDeleteFa
     };
 });
