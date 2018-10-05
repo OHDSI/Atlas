@@ -51,6 +51,7 @@ define([
                 descr: ko.observable(),
                 type: ko.observable(),
                 design: ko.observable(),
+                conceptSets: ko.observableArray(),
             };
             this.domains = ko.observable([]);
             this.previousDesign = {};
@@ -133,16 +134,16 @@ define([
             this.loading(false);
         }
 
-        setupAnalysisData({ name = '', descr = '', domain = '', type = '', design= '' }) {
+        setupAnalysisData({ name = '', descr = '', domain = '', type = '', design= '', conceptSets = [] }) {
             let parsedDesign;
+            this.data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name) })));
+
             if (type === this.featureTypes.CRITERIA_SET) {
                 parsedDesign = design.map(c => {
-                    const cs = ko.observable(c.conceptSets.map(set => ({ ...set, name: ko.observable(set.name) })));
                     return {
                         id: c.id,
                         name: ko.observable(c.name),
-                        conceptSets: cs,
-                        expression: ko.observable(new CriteriaGroup(c.expression, cs)),
+                        expression: ko.observable(new CriteriaGroup(c.expression, this.data.conceptSets)),
                     }
                 });
             } else {
@@ -175,11 +176,10 @@ define([
         }
 
         getEmptyCriteriaFeatureDesign() {
-            const conceptSets = ko.observable([]);
             return {
                 name: ko.observable(''),
-                conceptSets,
-                expression: ko.observable(new CriteriaGroup(null, conceptSets)),
+                conceptSets: this.data.conceptSets,
+                expression: ko.observable(new CriteriaGroup(null, this.data.conceptSets)),
             };
         }
 
@@ -201,15 +201,16 @@ define([
         onRespositoryConceptSetSelected(conceptSet, source) {
             const context = this.criteriaContext();
             const featureCriteria = this.data.design()[context.criteriaIdx];
+            const conceptSets = this.data.conceptSets();
 
             VocabularyAPI.getConceptSetExpression(conceptSet.id, source.url).done((result) => {
-                const newId = featureCriteria.conceptSets().length > 0 ? Math.max(...featureCriteria.conceptSets().map(c => c.id)) + 1 : 0;
+                const newId = conceptSets.length > 0 ? Math.max(...conceptSets.map(c => c.id)) + 1 : 0;
                 const newConceptSet = new ConceptSet({
                     id: newId,
                     name: conceptSet.name,
                     expression: result
                 });
-                featureCriteria.conceptSets([...featureCriteria.conceptSets(), newConceptSet]);
+                this.data.conceptSets([...conceptSets, newConceptSet]);
                 context.conceptSetId(newConceptSet.id);
 
                 this.showConceptSetBrowser(false);
