@@ -282,6 +282,7 @@ define(
 						|| this.currentConceptSetDirtyFlag().isDirty()
 						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
 						|| this.currentCohortComparisonDirtyFlag().isDirty()
+						|| sharedState.CohortPathways.dirtyFlag().isDirty()
 						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
 						|| sharedState.predictionAnalysis.dirtyFlag().isDirty()
 					);
