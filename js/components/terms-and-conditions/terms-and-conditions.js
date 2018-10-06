@@ -26,7 +26,7 @@ define([
       super(params);
       this.isModalShown = ko.pureComputed({
         read: () => {
-          return authApi.isAuthenticated() && !this.isAccepted();
+          return authApi.isAuthenticated() && appConfig.enableTermsAndConditions && !this.isAccepted();
         },
         write: (value) => {
           return false;
