@@ -96,6 +96,7 @@ define(function () {
       "splicer": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid={@id}"
     },
   };
+  appConfig.enableTermsAndConditions = true;
 	
 	appConfig.webAPIRoot = appConfig.api.url;
 	
