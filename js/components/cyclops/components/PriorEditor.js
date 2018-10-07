@@ -5,7 +5,6 @@ define([
 	'utils/CommonUtils',
 	'../options',
 	'databindings',
-    'less!../cyclops.less',
 ], function (
 	ko, 
 	view, 

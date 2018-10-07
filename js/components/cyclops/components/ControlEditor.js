@@ -4,14 +4,14 @@ define([
 	'providers/Component',
 	'utils/CommonUtils',
 	'../options',
-    'databindings',
-    'less!../cyclops.less',
+	'databindings',
 ], function (
 	ko, 
 	view, 
 	Component,
 	commonUtils,
 	options,
+	consts,
 ) {
 	class ControlEditor extends Component {
 		constructor(params) {

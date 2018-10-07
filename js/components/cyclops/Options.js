@@ -1,20 +1,25 @@
-define(
-    (require, exports) => {
-  
-    var options = {};
+define((require, exports) => {
 
-    options.foldOptions = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-    options.initialBound = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-    options.maxBoundCount = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-    options.foldOptions = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-    options.cvRepetitions = ['1','2','3','4','5'];
-    options.minCVData = ['100', '200', '300'];
-    options.maxIterationOptions = ['1000', '500', '100'];
-    options.toleranceOptions = ['0.000001', '0.00001', '0.0001', '0.001', '0.01', '0.1'];
-    options.startingVariance = ['-1', '0', '1', '2', '3'];
-    options.tuneSwindle = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
+	require('less!./cyclops.less');
+	
+	const BemHelper = require('utils/BemHelper');
 
-    options.yesNoOptions = [{
+	var options = {};
+	const bemHelper = new BemHelper('cyclops');
+	options.classes = bemHelper.run.bind(bemHelper);
+	
+	options.foldOptions = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
+	options.initialBound = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
+	options.maxBoundCount = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
+	options.foldOptions = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
+	options.cvRepetitions = ['1', '2', '3', '4', '5'];
+	options.minCVData = ['100', '200', '300'];
+	options.maxIterationOptions = ['1000', '500', '100'];
+	options.toleranceOptions = ['0.000001', '0.00001', '0.0001', '0.001', '0.01', '0.1'];
+	options.startingVariance = ['-1', '0', '1', '2', '3'];
+	options.tuneSwindle = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
+
+	options.yesNoOptions = [{
 		name: "Yes",
 		id: true,
     }, {
@@ -22,7 +27,7 @@ define(
 		id: false
     }];
 
-    options.priorType = [{
+	options.priorType = [{
 		name: "None",
 		id: 'none',
     }, {
@@ -32,19 +37,19 @@ define(
 		name: "Laplace",
 		id: 'laplace'
     }, {
-        name: "Normal",
-        id: 'normal'
+		name: "Normal",
+		id: 'normal'
     }];
 
-    options.cvType = [{
-        name: "Auto",
-        id: 'auto'
+	options.cvType = [{
+		name: "Auto",
+		id: 'auto'
     }, {
-        name: "Grid",
-        id: 'grid'
+		name: "Grid",
+		id: 'grid'
     }];
 
-    options.convergenceType = [{
+	options.convergenceType = [{
 		name: "Gradient",
 		id: 'gradient',
     }, {
@@ -55,7 +60,7 @@ define(
 		id: 'lange'
     }];
 
-    options.noiseLevel = [{
+	options.noiseLevel = [{
 		name: "Silent",
 		id: 'silent',
     }, {
@@ -66,9 +71,9 @@ define(
 		id: 'noisy'
     }];
 
-    options.selectorType = [{
-        name: "byPid", 
-        id: "byPid"
+	options.selectorType = [{
+		name: "byPid",
+		id: "byPid"
     }, {
 		name: "byRow",
 		id: 'byRow'
@@ -77,5 +82,5 @@ define(
 		id: 'auto'
     }];
 
-    return options;    
+	return options;
 });
