@@ -132,7 +132,7 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 				{
 					if (this._DT_RowIndex != null)
 					{
-						binding.onRowClick(data[this._DT_RowIndex], evt, this);
+						binding.onRowClick(data[this._DT_RowIndex], evt, this, this._DT_RowIndex);
 					}
 				});
 			}

@@ -1,0 +1,43 @@
+<div>
+    <label>Specify the prior distribution:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.priorType, optionsText:'name', optionsValue:'id', value: $component.prior.priorType"></select>
+    </div>
+</div>
+<div data-bind="visible: $component.prior.priorType() == 'hierarchical'">
+    <label>Child-to-parent mapping for a hierarchical prior:</label>
+    <div class="input-group">
+        <input class="form-control" type="text" data-bind="textInput: $component.prior.graph" />
+    </div>
+</div>
+<div>
+    <label>Perform cross-validation to determine prior-variance:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.prior.useCrossValidation"></select>
+    </div>
+</div>    
+<div>
+    <label>Force intercept coefficient into prior:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.prior.forceIntercept"></select>
+    </div>
+</div>    
+<div>
+    <label>Specify the prior distribution variance:</label>
+    <div class="input-group">
+        <input class="form-control" type="text" data-bind="value: $component.prior.variance" />
+    </div>
+</div>
+<div>
+    <label>Specify a vector of numbers or covariate Ids to exclude from prior:</label>
+    <div class="input-group">
+        <input class="form-control" type="text" data-bind="value: $component.prior.exclude" />
+    </div>
+</div>
+<div>
+    <label>A list of first-order neighborhoods for a partially fused prior:</label>
+    <div class="input-group">
+        <input class="form-control" type="text" data-bind="textInput: $component.prior.neighborhood" />
+    </div>
+</div>
+

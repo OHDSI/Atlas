@@ -157,9 +157,14 @@ define((require, factory) => {
 		}
 	}
 
+	const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
+	const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
+
+
 	return {
 		build,
 		confirmAndDelete,
+		cartesian,
 		routeTo,
 		hasRelationship,
 		contextSensitiveLinkColor,

@@ -20,12 +20,20 @@ const settingsObject = {
       location: "modules/circe"
     },
     {
+      name: "cyclops",
+      location: "components/cyclops"
+    },
+    {
       name: "evidence",
       location: "components/evidence"
     },
     {
       name: "extenders",
       location: "extenders"
+    },
+    {
+      name: "featureextraction",
+      location: "components/featureextraction"
     },
     {
       name: "job",

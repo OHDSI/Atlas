@@ -1,0 +1,111 @@
+<div>
+    <label>Maximum iterations of Cyclops to attempt before returning a failed-to-converge error.</label>
+    <div class="input-group">
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.maxIterations, eventType:'blur', ko_autocomplete: { value: $component.control.maxIterations, source: $component.options.maxIterationOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+    </div>
+</div>
+<div>
+    <label>Maximum relative change in convergence criterion from successive iterations to achieve convergence.</label>
+    <div class="input-group">
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.tolerance, eventType:'blur', ko_autocomplete: { value: $component.control.tolerance, source: $component.options.toleranceOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+    </div>
+</div>
+<div>
+    <label>Select the convergence type:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.convergenceType, optionsText:'name', optionsValue:'id', value: $component.control.convergenceType"></select>
+    </div>
+</div>    
+<div>
+    <label>Select the cross validation search type:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.cvType, optionsText:'name', optionsValue:'id', value: $component.control.cvType"></select>
+    </div>
+</div>    
+<div data-bind="if: $component.control.cvType() == 'grid'">
+    <div>
+        <label>Lower prior variance limit:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" data-bind="textInput: $component.control.lowerLimit" />
+        </div>
+    </div>
+    <div>
+        <label>Upper prior variance limit:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" data-bind="textInput: $component.control.upperLimit" />
+        </div>
+    </div>
+    <div>
+        <label>Number of steps:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" data-bind="textInput: $component.control.gridSteps" />
+        </div>
+    </div>
+</div>
+<div>
+    <label>Number of random folds to employ in cross validation:</label>
+    <div class="input-group">
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.fold, eventType:'blur', ko_autocomplete: { value: $component.control.fold, source: $component.options.foldOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+    </div>
+</div>
+<div>
+    <label>Number of repetitions of <span data-bind="text: $component.control.fold"></span>-fold cross validation:</label>
+    <div class="input-group">
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.cvRepetitions, eventType:'blur', ko_autocomplete: { value: $component.control.cvRepetitions, source: $component.options.cvRepetitions, minLength: 0, maxShowItems: 10, scroll: true }" />
+    </div>
+</div>
+<div>
+    <label>Number of repetitions of data for cross validation:</label>
+    <div class="input-group">
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.minCVData, eventType:'blur', ko_autocomplete: { value: $component.control.minCVData, source: $component.options.minCVData, minLength: 0, maxShowItems: 10, scroll: true }" />
+    </div>
+</div>
+<div>
+    <label>Noise level for Cyclops screen output:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.noiseLevel, optionsText:'name', optionsValue:'id', value: $component.control.noiseLevel"></select>
+    </div>
+</div>
+<!-- -->
+<div>
+    <label>Reset all coefficients to 0 between model fits under cross-validation:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.control.resetCoefficients"></select>
+    </div>
+</div>
+<div>
+    <label>Starting variance for auto-search cross-validation; -1 = use estimate based on data:</label>
+    <div class="input-group">
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.startingVariance, eventType:'blur', ko_autocomplete: { value: $component.control.startingVariance, source: $component.options.startingVariance, minLength: 0, maxShowItems: 10, scroll: true }" />
+    </div>
+</div>
+<div>
+    <label>Use the Karush-Kuhn-Tucker conditions to limit search:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.control.useKKTSwindle"></select>
+    </div>
+</div>
+<div data-bind="visible: $component.control.useKKTSwindle()">
+    <label>Size multiplier for active set:</label>
+    <div class="input-group">
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.tuneSwindle, eventType:'blur', ko_autocomplete: { value: $component.control.tuneSwindle, source: $component.options.tuneSwindle, minLength: 0, maxShowItems: 10, scroll: true }" />
+    </div>
+</div>
+<div>
+    <label>Name of exchangeable sampling unit. Option "byPid" selects entire strata. Option "byRow" selects single rows. If set to "auto", "byRow" will be used for all models except conditional models where the average number of rows per stratum is smaller than the number of strata.:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.selectorType, optionsText:'name', optionsValue:'id', value: $component.control.selectorType"></select>
+    </div>
+</div>
+<div>
+    <label>Initial bound:</label>
+    <div class="input-group">
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.initialBound, eventType:'blur', ko_autocomplete: { value: $component.control.initialBound, source: $component.options.initialBound, minLength: 0, maxShowItems: 10, scroll: true }" />
+    </div>
+</div>
+<div>
+    <label>Max bound count:</label>
+    <div class="input-group">
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.maxBoundCount, eventType:'blur', ko_autocomplete: { value: $component.control.maxBoundCount, source: $component.options.maxBoundCount, minLength: 0, maxShowItems: 10, scroll: true }" />
+    </div>
+</div>

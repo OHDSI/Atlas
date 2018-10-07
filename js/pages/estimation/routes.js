@@ -1,13 +1,13 @@
 define(
   (require, factory) => {
     const { AuthorizedRoute } = require('providers/Route');
-
+    const atlasState = require('atlas-state');		
     function routes(appModel, router) {
       return {        
         '/estimation': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['./cohort-comparison-browser'], function () {
-            router.setCurrentView('cohort-comparison-browser');
+          require(['./estimation-browser'], function () {
+            router.setCurrentView('estimation-browser');
           });
         }),
         '/estimation/:cohortComparisonId:': new AuthorizedRoute((cohortComparisonId) => {
@@ -28,6 +28,27 @@ define(
             params.dirtyFlag = appModel.currentCohortComparisonDirtyFlag();
 
             router.setCurrentView('cohort-comparison-manager', params);
+          });
+        }),
+        '/fe': new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['components/featureextraction/components/CovariateSettingsEditor'], function () {
+            appModel.currentView('covar-settings-editor');
+          });
+        }),
+        '/tempfe': new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['featureextraction/components/TemporalCovariateSettingsEditor'], function () {
+            appModel.currentView('temporal-covar-settings-editor');
+          });
+        }),
+        '/estimation/cca/:estimationId:': new AuthorizedRoute((estimationId) => {
+          appModel.activePage(this.title);
+          require(['./cca-manager'], function () {
+            const params = {};
+            atlasState.estimationAnalysis.selectedId(estimationId);
+
+            router.setCurrentView('cca-manager', params);
           });
         }),
       };
