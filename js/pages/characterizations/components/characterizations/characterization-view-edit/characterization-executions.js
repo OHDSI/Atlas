@@ -12,6 +12,7 @@ define([
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
 	'services/Source',
+	'lodash',
 	'less!./characterization-executions.less',
 	'./characterization-results',
 	'databindings/tooltipBinding'
@@ -28,7 +29,8 @@ define([
 	AutoBind,
 	commonUtils,
 	datatableUtils,
-	SourceService
+	SourceService,
+	lodash
 ) {
 	class CharacterizationViewEditExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -130,7 +132,7 @@ define([
 				allSources,
 				executionList
 			]) => {
-				const sourceList = allSources.filter(source => {
+				let sourceList = allSources.filter(source => {
 					return (source.daimons.filter(function(daimon) {
 							return daimon.daimonType == "CDM";
 						}).length > 0 &&
@@ -138,6 +140,8 @@ define([
 							return daimon.daimonType == "Results";
 						}).length > 0)
 				});
+				
+				sourceList = lodash.sortBy(sourceList, ["sourceName"]);
 
 				sourceList.forEach(s => {
 					let group = this.executionGroups().find(g => g.sourceKey == s.sourceKey);
