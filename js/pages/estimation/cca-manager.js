@@ -195,6 +195,7 @@ define([
 
 		save() {
 			this.loading(true);
+			this.fullAnalysisList.removeAll();
 			var payload = this.prepForSave();
 			EstimationService.saveEstimation(payload).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);

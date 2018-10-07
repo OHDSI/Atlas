@@ -259,6 +259,7 @@ define([
 
 		save() {
 			this.loading(true);
+			this.fullAnalysisList.removeAll();
 			var payload = this.prepForSave();
 			PredictionService.savePrediction(payload).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
