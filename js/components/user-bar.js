@@ -6,7 +6,6 @@ define([
 	'providers/Component',
 	'utils/CommonUtils',
 	'webapi/AuthAPI',
-	'less!./user-bar.less',
 	'services/http',
 ], function (ko,
 	view,
@@ -32,14 +31,30 @@ define([
 			});
 			this.loading = params.model.loading;
 
+			this.showJobModal = ko.observable(false);
+			this.jobListing = state.jobListing;
+
+			this.jobNotificationsPending = ko.computed(() => {
+				var unviewedNotificationCount = this.jobListing().filter(j => {
+					return !j.viewed();
+				}).length;
+				return unviewedNotificationCount;
+			});
+
+			this.clearJobNotificationsPending = this.clearJobNotificationsPending.bind(this);
+
+			this.updateJobStatus = this.updateJobStatus.bind(this);
 			this.startPolling = () => {
 				this.pollInterval = setInterval(() => this.updateJobStatus(endpoint), appConfig.pollInterval);
-			}
+			};
 
 			this.stopPolling = () => {
 				clearInterval(this.pollInterval);
-			}
+			};
 
+			if (!appConfig.userAuthenticationEnabled) {
+				this.startPolling();
+			}
 			this.isLoggedIn.subscribe((isLoggedIn) => {
 				if (isLoggedIn) {
 					this.startPolling();
@@ -53,22 +68,6 @@ define([
 				this.updateJobStatus(endpoint)
 			}
 
-			this.showJobModal = ko.observable(false);
-			this.jobListing = state.jobListing;
-
-			this.jobNotificationsPending = ko.computed(() => {
-				var unviewedNotificationCount = this.jobListing().filter(j => {
-					return !j.viewed();
-				}).length;
-				return unviewedNotificationCount;
-			});
-
-			this.updateJobStatus = this.updateJobStatus.bind(this);
-			this.clearJobNotificationsPending = this.clearJobNotificationsPending.bind(this);
-
-			if (!appConfig.userAuthenticationEnabled) {
-				this.startPolling();
-			}
 
 		}
 
@@ -84,7 +83,7 @@ define([
 		updateJobStatus(endpoint) {
 			httpService.doGet(endpoint)
 				.then(notifications => {
-					notifications.forEach(n => {
+					notifications.data.forEach(n => {
 						let job = this.getExisting(n);
 						if (job) {
 							if (job.status() !== n.status) {
