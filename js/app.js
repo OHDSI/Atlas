@@ -1,5 +1,5 @@
 define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'webapi/MomentAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, roleApi, momentAPI, sharedState, querystring, d3) {
+	function ($, ko, ohdsiUtil, config, authApi, roleApi, momentApi, sharedState, querystring, d3) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
