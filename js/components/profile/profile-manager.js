@@ -130,8 +130,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 									.value()
 							};
 						}
-						person.age = new Date(cohort.startDate)
-							.getFullYear() - person.yearOfBirth;
 						person.records.forEach(function (rec) {
 							// have to get startDate from person.cohorts
 							// rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
@@ -191,9 +189,6 @@ define(['knockout', 'text!./profile-manager.html', 'd3', 'appConfig', 'webapi/Au
 						return "fa fa-question";
 					}
 				}
-			});
-			self.age = ko.computed(function () {
-				if (self.person()) {}
 			});
 
 			$('.highlight-filter').on('click', function (evt) {
