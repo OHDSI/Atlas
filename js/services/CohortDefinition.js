@@ -87,7 +87,25 @@ define(function (require, exports) {
 		});	
 		return getSqlPromise;
 	}
-	
+
+	function translateSql(sql, dialect) {
+		translatePromise = $.ajax({
+			url: config.webAPIRoot + 'sqlrender/translate',
+			method: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				SQL: sql,
+				targetdialect: dialect
+			}),
+			error: function (error) {
+				console.log("Error: " + error);
+			}
+		});
+		return translatePromise;
+	}
+
+
+
 	function generate(cohortDefinitionId, sourceKey) {
 		var generatePromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/generate/' + sourceKey,
@@ -157,6 +175,7 @@ define(function (require, exports) {
 		deleteCohortDefinition: deleteCohortDefinition,
 		getCohortDefinition: getCohortDefinition,
 		getSql: getSql,
+		translateSql: translateSql,
 		generate: generate,
 		getInfo: getInfo,
 		getReport: getReport,

@@ -62,17 +62,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	authApi,
 	httpService,
 ) {
-	function translateSql(sql, dialect) {
-		let promise = httpService.doPost(config.webAPIRoot + 'sqlrender/translate', JSON.stringify({
-			SQL: sql,
-			targetdialect: dialect
-		}));
-		promise.catch(response => {
-			console.log("Error: " + response);
-		});
-		return promise;
-	}
-
 	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
 		if (value === 0 || value || includeKeys.includes(key) ) {
@@ -100,6 +89,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.warningCount = ko.observable(0);
 			this.infoCount = ko.observable(0);
 			this.criticalCount = ko.observable(0);
+			this.service = cohortDefinitionService;
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter(commonUtils.hasCDM);
 			});
@@ -703,42 +693,41 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.generatedSql.impala('');
 				this.generatedSql.netezza('');
 
-				var expression = ko.toJS(this.model.currentCohortDefinition().expression, pruneJSON);
-				var templateSqlPromise = cohortDefinitionService.getSql(expression);
+				var templateSqlPromise = this.service.getSql(ko.toJS(this.model.currentCohortDefinition().expression, pruneJSON));
 
 				templateSqlPromise.then((result) => {
 					this.templateSql(result.templateSql);
-					var mssqlTranslatePromise = translateSql(result.templateSql, 'sql server');
+					var mssqlTranslatePromise = this.service.translateSql(result.templateSql, 'sql server');
 						mssqlTranslatePromise.then((result) => {
 							this.generatedSql.mssql(result.targetSQL);
 					});
 
-					var msapsTranslatePromise = translateSql(result.templateSql, 'pdw');
+					var msapsTranslatePromise = this.service.translateSql(result.templateSql, 'pdw');
 						msapsTranslatePromise.then((result) => {
 							this.generatedSql.msaps(result.targetSQL);
 					});
 
-					var oracleTranslatePromise = translateSql(result.templateSql, 'oracle');
+					var oracleTranslatePromise = this.service.translateSql(result.templateSql, 'oracle');
 						oracleTranslatePromise.then((result) => {
 							this.generatedSql.oracle(result.targetSQL);
 					});
 
-					var postgresTranslatePromise = translateSql(result.templateSql, 'postgresql');
+					var postgresTranslatePromise = this.service.translateSql(result.templateSql, 'postgresql');
 						postgresTranslatePromise.then((result) => {
 							this.generatedSql.postgresql(result.targetSQL);
 					});
 
-					var redshiftTranslatePromise = translateSql(result.templateSql, 'redshift');
+					var redshiftTranslatePromise = this.service.translateSql(result.templateSql, 'redshift');
 						redshiftTranslatePromise.then((result) => {
 							this.generatedSql.redshift(result.targetSQL);
 					});
 
-					var impalaTranslatePromise = translateSql(result.templateSql, 'impala');
+					var impalaTranslatePromise = this.service.translateSql(result.templateSql, 'impala');
 						impalaTranslatePromise.then((result) => {
 							this.generatedSql.impala(result.targetSQL);
 					});
 
-					var netezzaTranslatePromise = translateSql(result.templateSql, 'netezza');
+					var netezzaTranslatePromise = this.service.translateSql(result.templateSql, 'netezza');
 					netezzaTranslatePromise.then((result)=> {
 							this.generatedSql.netezza(result.targetSQL);
 					});
