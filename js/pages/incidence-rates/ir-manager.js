@@ -198,7 +198,7 @@ define([
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
-				// this.pollForInfo();
+				this.pollForInfo();
 			});
 		};
 
@@ -357,7 +357,7 @@ define([
 			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
 			} else {
-				// this.pollForInfo();
+				this.pollForInfo();
 			}
 		}
 
