@@ -15,7 +15,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'job/jobDetail',
 	'services/JobDetailsService',
 	'pages/cohort-definitions/const',
-	'services/ConceptSet',
 	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
@@ -35,6 +34,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/heading',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 	'components/modal',
+	'services/http',
 ], function (
 	$,
 	ko,
@@ -55,27 +55,22 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	jobDetail,
 	jobDetailsService,
 	cohortConst,
-	conceptSetService,
 	Page,
 	AutoBind,
 	commonUtils,
 	costUtilConst,
 	authApi,
+	httpService,
 ) {
 	function translateSql(sql, dialect) {
-		translatePromise = $.ajax({
-			url: config.webAPIRoot + 'sqlrender/translate',
-			method: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				SQL: sql,
-				targetdialect: dialect
-			}),
-			error: function (error) {
-				console.log("Error: " + error);
-			}
+		let promise = httpService.doPost(config.webAPIRoot + 'sqlrender/translate', JSON.stringify({
+			SQL: sql,
+			targetdialect: dialect
+		}));
+		promise.catch(response => {
+			console.log("Error: " + response);
 		});
-		return translatePromise;
+		return promise;
 	}
 
 	const includeKeys = ["UseEventEnd"];
@@ -159,7 +154,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				return this.authApi.isPermittedReadCohort(this.model.currentCohortDefinition().id());
 			});
-		
+
 			this.hasAccessToGenerate = (sourceKey) => {
 				if (isNew()) {
 					return false;
@@ -225,7 +220,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.saveConceptSetShow = ko.observable(false);
 			this.newConceptSetName = ko.observable();
-			
+
 			this.canGenerate = ko.pureComputed(() => {
 				var isDirty = this.dirtyFlag() && this.dirtyFlag().isDirty();
 				var isNew = this.model.currentCohortDefinition() && (this.model.currentCohortDefinition().id() == 0);
@@ -338,7 +333,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.ancestorsModalIsShown = ko.observable(false);
 			this.showAncestorsModal = conceptSetService.getAncestorsModalHandler(this);
 			this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ ...this, searchConceptsColumns: this.includedConceptsColumns });
-		
+
 			this.includedConceptsOptions = {
 				Facets: [
 					{
@@ -444,23 +439,23 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					}
 				});
 			}
-			
+
 			this.isRunning = ko.pureComputed(() => {
 				return this.model.cohortDefinitionSourceInfo().filter( (info) => {
 					return !(info.status() == "COMPLETE" || info.status() == "n/a");
 				}).length > 0;
 			});
-			
+
 			this.canCreateConceptSet = ko.computed( () => {
 				return ((this.authApi.isAuthenticated() && this.authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 			});
-			
+
 			this.cohortDefinitionLink = ko.computed(() => {
 				if (this.model.currentCohortDefinition()) {
 					return this.config.api.url + "/cohortdefinition/" + this.model.currentCohortDefinition().id();
 				}
 			});
-			
+
 			// reporting sub-system
 			this.generateButtonCaption = ko.observable('Generate Reports');
 			this.generateReportsEnabled = ko.observable(false);
@@ -475,7 +470,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 			this.reportingSourceStatus = ko.observable();
 			this.reportingAvailableReports = ko.observableArray();
-			
+
 			this.model.reportSourceKey.subscribe(s => {
 				this.reportingSourceStatusAvailable(false);
 				this.reportingAvailableReports.removeAll();
@@ -487,14 +482,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						this.generateReportsEnabled(false);
 					return "awaiting_selection";
 				}
-	
+
 				// check if the cohort has been generated
 					var sourceInfo = this.model.cohortDefinitionSourceInfo().find(d => d.sourceKey == this.model.reportSourceKey());
 					if (this.getStatusMessage(sourceInfo) != 'COMPLETE') {
 						this.generateReportsEnabled(false);
 					return "cohort_not_generated";
 				}
-	
+
 				// check which reports have required data
 					if (!this.reportingSourceStatusAvailable() && !this.reportingSourceStatusLoading()) {
 						this.reportingSourceStatusLoading(true);
@@ -519,7 +514,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						});
 					});
 				}
-	
+
 				// check if we can tell if the job to generate the reports is already running
 					if (this.model.currentCohortDefinition()) {
 					var listing = sharedState.jobListing;
@@ -532,26 +527,26 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						}
 					}
 				}
-	
+
 					if (this.reportingAvailableReports().length == 0) {
 					// reset button to allow generation
 						this.generateReportsEnabled(true);
 					return "report_unavailable";
 				}
-	
+
 					if (this.model.reportReportName() == undefined) {
 					// reset button to allow regeneration
 						this.generateReportsEnabled(true);
 					return "awaiting_selection";
 				}
-	
+
 					if (this.model.currentCohortDefinition()) {
 						this.generateReportsEnabled(true);
 						this.model.reportCohortDefinitionId(this.model.currentCohortDefinition().id());
 						this.model.reportTriggerRun(true);
 					return "report_active";
 				}
-	
+
 				var errorPackage = {};
 					errorPackage.sourceAnalysesStatus = this.model.sourceAnalysesStatus[this.model.reportSourceKey()]();
 					errorPackage.report = this.model.reportReportName();
@@ -560,7 +555,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.generateReportsEnabled(false);
 				return "unknown_cohort_report_state";
 			});
-	
+
 			this.showReportNameDropdown = ko.computed(() => {
 				return this.model.reportSourceKey() != undefined &&
 					this.reportingState() != 'checking_status' &&
@@ -568,10 +563,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.reportingState() != 'reports_not_generated' &&
 					this.reportingState() != 'generating_reports';
 			});
-			
+
 			this.showUtilizationToRunModal = ko.observable(false);
 			this.checkedUtilReports = ko.observableArray([]);
-			
+
 			const reportPacks = cohortReportingService.visualizationPacks;
 			const reports = [
 				reportPacks.healthcareUtilPersonAndExposureBaseline,
@@ -609,7 +604,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
                     selectedOptions: ko.observableArray([]),
 				}
 			};
-			
+
 			this.selectedCriteria = ko.observable();
 		}
 
@@ -776,17 +771,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 					this.loadingReport(true);
 				}
-				$.ajax(route, {
-					error: this.authApi.handleAccessDenied,
-					success:  (data) => {
+				httpService.doGet(route)
+					.catch(this.authApi.handleAccessDenied)
+					.then(data => {
 						jobDetailsService.createJob(data);
 						setTimeout( () => {
 							if (!this.pollTimeout) {
 								this.pollForInfo();
 							}
 						}, 3000);
-					}
-				});
+					});
 			}
 
 			cancelGenerate (source) {
@@ -1019,7 +1013,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				var byEventReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 0);
 				var byPersonReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 1);
-				
+
 				$.when(byEventReport, byPersonReport).done( (byEvent, byPerson) => {
 					var report = {sourceKey: item.sourceKey, byEvent: byEvent[0], byPerson: byPerson[0]};
 					this.selectedReport(report);
@@ -1041,7 +1035,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			isActiveJob (j) {
 				var testName = "HERACLES_COHORT_" + this.model.currentCohortDefinition().id() + "_" + this.model.reportSourceKey();
 				return j.name == testName && j.status() != 'FAILED' && j.status() != 'COMPLETED';
-			}			
+			}
 
 			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {
 				if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
@@ -1073,29 +1067,21 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				cohortJob.rollupUtilizationVisit = rollupUtilizationVisit;
 				cohortJob.rollupUtilizationDrug = rollupUtilizationDrug;
-				
-				this.createReportJobFailed(false);
 
-				$.ajax({
-					url: config.api.url + 'cohortanalysis',
-					data: JSON.stringify(cohortJob),
-					method: 'POST',
-					contentType: 'application/json',
-						success: (info) => {
-							jobDetailsService.createJob(info);
-					},
-						error: (xhr, status, error) => {
-							this.createReportJobFailed(true);
-							var createReportJobErrorPackage = {};
-							createReportJobErrorPackage.status = status;
-							createReportJobErrorPackage.error = xhr.responseText;
-							this.createReportJobError(JSON.stringify(createReportJobErrorPackage));
+				this.createReportJobFailed(false);
+				return httpService.doPost(config.api.url + 'cohortanalysis', JSON.stringify(cohortJob))
+					.then(info => jobDetailsService.createJob(info))
+					.catch(response => {
+						this.createReportJobFailed(true);
+						var createReportJobErrorPackage = {};
+						createReportJobErrorPackage.status = status;
+						createReportJobErrorPackage.error = xhr.responseText;
+						this.createReportJobError(JSON.stringify(createReportJobErrorPackage));
 
 						// reset button to allow generation attempt
-							this.generateReportsEnabled(true);
-							this.generateButtonCaption('Generate');
-					}
-				});
+						this.generateReportsEnabled(true);
+						this.generateButtonCaption('Generate');
+					});
 			}
 
 			generateQuickAnalysis () {
@@ -1141,7 +1127,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.tabPath.dispose();
 				this.sortedConceptSets.dispose();
 				this.reportingState.dispose();
-				this.showReportNameDropdown.dispose();			
+				this.showReportNameDropdown.dispose();
 			}
 
 			getCriteriaIndexComponent (data) {
@@ -1220,7 +1206,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			copyCohortSQLToClipboard () {
 				this.copyToClipboard('#btnCopyCohortSQLClipboard', '#copyCopyCohortSQLMessage');
 			}
-		
+
 	}
 
 	return commonUtils.build('cohort-definition-manager', CohortDefinitionManager, view);

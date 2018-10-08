@@ -1,6 +1,6 @@
 define(['job/jobDetail', 'atlas-state'], function (jobDetail, sharedState) {
 	
-	function updateJob(updated) {
+	function createJob(updated) {
 		let job = new jobDetail();
 		job.type = updated.jobInstance.name;
 		job.status(updated.status);
@@ -10,6 +10,6 @@ define(['job/jobDetail', 'atlas-state'], function (jobDetail, sharedState) {
 	}
 	
 	return {
-		createJob: updateJob
+		createJob: createJob
 	}
 });
