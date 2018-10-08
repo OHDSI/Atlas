@@ -532,6 +532,7 @@ define(
 										var selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
 										if (selectedConcept)
 											item.concept = selectedConcept;
+										// TODO performance issues on big dataset
 										// else
 											// console.error("Concept not found: " + item.concept.CONCEPT_ID + "," + item.concept.CONCEPT_NAME);
 									});
