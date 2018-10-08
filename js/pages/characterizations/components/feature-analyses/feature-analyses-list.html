@@ -3,9 +3,11 @@
 <div data-bind="visible: !$component.loading()">
     <characterizations-tabbed-grid params="{
         activeTab: $component.gridTab,
+        isViewPermitted: $component.isGetListPermitted(),
         gridColumns: $component.gridColumns,
         gridOptions: $component.gridOptions,
         data: $component.data,
         createNew: $component.createFeature,
+        createNewEnabled: $component.isCreatePermitted
     }"/>
 </div>
