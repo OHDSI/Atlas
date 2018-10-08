@@ -6,7 +6,7 @@ define([
 	'providers/Component',
 	'utils/CommonUtils',
 	'webapi/AuthAPI',
-	'services/http',
+	'services/JobDetailsService',
 ], function (ko,
 	view,
 	appConfig,
@@ -14,12 +14,11 @@ define([
 	Component,
 	commonUtils,
 	authApi,
-	httpService,
+	jobDetailsService,
 ) {
 	class UserBar extends Component {
 		constructor(params) {
 			super(params);
-			var endpoint = appConfig.api.url + 'notifications';
 			this.model = params.model;
 			this.appConfig = appConfig;
 			this.token = authApi.token;
@@ -45,7 +44,7 @@ define([
 
 			this.updateJobStatus = this.updateJobStatus.bind(this);
 			this.startPolling = () => {
-				this.pollInterval = setInterval(() => this.updateJobStatus(endpoint), appConfig.pollInterval);
+				this.pollInterval = setInterval(() => this.updateJobStatus(), appConfig.pollInterval);
 			};
 
 			this.stopPolling = () => {
@@ -58,14 +57,14 @@ define([
 			this.isLoggedIn.subscribe((isLoggedIn) => {
 				if (isLoggedIn) {
 					this.startPolling();
-					this.updateJobStatus(endpoint)
+					this.updateJobStatus()
 				} else {
 					this.stopPolling();
 				}
 			});
 			if (this.isLoggedIn) {
 				this.startPolling();
-				this.updateJobStatus(endpoint)
+				this.updateJobStatus()
 			}
 
 
@@ -80,8 +79,8 @@ define([
 			return null;
 		}
 
-		updateJobStatus(endpoint) {
-			httpService.doGet(endpoint)
+		updateJobStatus() {
+			jobDetailsService.list()
 				.then(notifications => {
 					notifications.data.forEach(n => {
 						let job = this.getExisting(n);

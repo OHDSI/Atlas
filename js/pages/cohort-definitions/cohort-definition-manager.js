@@ -34,7 +34,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/heading',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 	'components/modal',
-	'services/http',
 ], function (
 	$,
 	ko,
@@ -60,7 +59,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	commonUtils,
 	costUtilConst,
 	authApi,
-	httpService,
 ) {
 	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
@@ -750,17 +748,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			generateCohort (source, includeFeatures) {
 				this.stopping[source.sourceKey](false);
-				var route = `${config.api.url}cohortdefinition/${this.model.currentCohortDefinition().id()}/generate/${source.sourceKey}`;
-
-				if (includeFeatures) {
-					route = `${route}?includeFeatures`;
-				}
-
 				this.getSourceInfo(source.sourceKey).status('PENDING');
 				if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 					this.loadingReport(true);
 				}
-				httpService.doGet(route)
+				cohortDefinitionService.generate(this.model.currentCohortDefinition().id(), source.sourceKey, includeFeatures)
 					.catch(this.authApi.handleAccessDenied)
 					.then(data => {
 						jobDetailsService.createJob(data);
@@ -1058,7 +1050,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.rollupUtilizationDrug = rollupUtilizationDrug;
 
 				this.createReportJobFailed(false);
-				return httpService.doPost(config.api.url + 'cohortanalysis', JSON.stringify(cohortJob))
+				return cohortDefinitionService.getCohortAnalyses(JSON.stringify(cohortJob))
 					.then(info => jobDetailsService.createJob(info))
 					.catch(response => {
 						this.createReportJobFailed(true);

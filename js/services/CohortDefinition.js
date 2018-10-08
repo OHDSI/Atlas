@@ -106,16 +106,14 @@ define(function (require, exports) {
 
 
 
-	function generate(cohortDefinitionId, sourceKey) {
-		var generatePromise = $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/generate/' + sourceKey,
-			error: function (error) {
-				console.log("Error: " + error);
-				authApi.handleAccessDenied(error);
-			}
-		});
-		return generatePromise;
+	function generate(cohortDefinitionId, sourceKey, includeFeatures) {
+		var route = `${config.api.url}cohortdefinition/${this.model.currentCohortDefinition().id()}/generate/${sourceKey}`;
+		if (includeFeatures) {
+			route = `${route}?includeFeatures`;
+		}
+		return httpService.doGet(route);
 	}
+
 
 	function cancelGenerate(cohortDefinitionId, sourceKey) {
     return $.ajax({
@@ -167,7 +165,11 @@ define(function (require, exports) {
 		return httpService.doGet(config.api.url + 'cohortresults/' + sourceKey + '/' + cohortDefinitionId + '/distinctPersonCount')
 			.then(({ data }) => data);
 	}
-	
+
+	function getCohortAnalyses(cohortJob) {
+		return httpService.doPost(config.api.url + 'cohortanalysis', cohortJob);
+	}
+
 	var api = {
 		getCohortDefinitionList: getCohortDefinitionList,
 		saveCohortDefinition: saveCohortDefinition,
@@ -183,6 +185,7 @@ define(function (require, exports) {
 		runDiagnostics: runDiagnostics,
 		cancelGenerate,
 		getCohortCount,
+		getCohortAnalyses: getCohortAnalyses,
 	}
 
 	return api;
