@@ -1,6 +1,6 @@
 <heading-title params="name: 'Patient Level Prediction', icon: 'heartbeat', theme: 'dark'"></heading-title>
 
-<div data-bind="if: canReadPredictions, css: classes({ extra: 'paddedWrapper flexed' })">
+<div data-bind="if: canReadPredictions(), css: classes({ extra: 'paddedWrapper flexed' })">
 	<span data-bind="click: newPrediction, css: classes({
 		element: 'new-btn',
 		extra: `pull-right btn btn-sm btn-primary ${canCreatePrediction() ? '' : 'disabled'}`,

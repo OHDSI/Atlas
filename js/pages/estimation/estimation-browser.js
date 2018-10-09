@@ -4,7 +4,7 @@ define([
 	'appConfig',
 	'./const',
 	'webapi/MomentAPI',
-	'webapi/AuthAPI',
+	'./PermissionService',
 	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
@@ -21,7 +21,7 @@ define([
 	config,
 	constants,
 	momentApi,
-	authApi,
+	PermissionService,
 	Page,
 	AutoBind,
 	commonUtils,
@@ -32,14 +32,10 @@ define([
 			super(params);
 			this.model = params.model;
 			this.reference = ko.observableArray();
-			this.loading = ko.observable(true);
+			this.loading = ko.observable(false);
 
-			this.canReadEstimations = ko.pureComputed(() => {
-				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedReadEstimations()) || !config.userAuthenticationEnabled;
-			});
-			this.canCreateEstimation = ko.pureComputed(() => {
-				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedCreateEstimation()) || !config.userAuthenticationEnabled;
-			});
+			this.canReadEstimations = PermissionService.isPermittedList;
+			this.canCreateEstimation = PermissionService.isPermittedCreate;
 
 			this.options = {
 				Facets: [
@@ -98,13 +94,15 @@ define([
 					data: 'createdBy'
 				}
 			];
-			
-			EstimationService.getEstimationList()
-				.then(({ data }) => {
-					this.loading(false);
-					this.reference(data);
-				})
-				.catch(authApi.handleAccessDenied);
+
+			if (this.canReadEstimations()) {
+				this.loading(true);
+				EstimationService.getEstimationList()
+					.then(({data}) => {
+						this.loading(false);
+						this.reference(data);
+					});
+			}
 		}
 
 		rowClick(d) {
