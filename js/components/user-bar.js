@@ -1,6 +1,7 @@
 define([
 	'knockout',
 	'text!./user-bar.html',
+	'providers/AutoBind',
 	'appConfig',
 	'atlas-state',
 	'providers/Component',
@@ -9,6 +10,7 @@ define([
 	'services/JobDetailsService',
 ], function (ko,
 	view,
+	AutoBind,
 	appConfig,
 	state,
 	Component,
@@ -16,7 +18,7 @@ define([
 	authApi,
 	jobDetailsService,
 ) {
-	class UserBar extends Component {
+	class UserBar extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
 			this.model = params.model;
@@ -48,10 +50,6 @@ define([
 				return unviewedNotificationCount;
 			});
 
-			this.clearJobNotificationsPending = this.clearJobNotificationsPending.bind(this);
-			this.jobNameClick = this.jobNameClick.bind(this);
-
-			this.updateJobStatus = this.updateJobStatus.bind(this);
 			this.startPolling = () => {
 				this.pollInterval = setInterval(() => this.updateJobStatus(), appConfig.pollInterval);
 			};
