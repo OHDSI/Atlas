@@ -29,9 +29,17 @@ define([
 				return authApi.isAuthenticated();
 			});
 			this.loading = params.model.loading;
+			this.jobListing = state.jobListing;
 
 			this.showJobModal = ko.observable(false);
-			this.jobListing = state.jobListing;
+			this.showJobModal.subscribe(show => {
+				if (!show) {
+					this.jobListing().forEach(j => {
+						j.viewed(true);
+					});
+					this.jobListing.valueHasMutated();
+				}
+			});
 
 			this.jobNotificationsPending = ko.computed(() => {
 				var unviewedNotificationCount = this.jobListing().filter(j => {
@@ -41,6 +49,7 @@ define([
 			});
 
 			this.clearJobNotificationsPending = this.clearJobNotificationsPending.bind(this);
+			this.jobNameClick = this.jobNameClick.bind(this);
 
 			this.updateJobStatus = this.updateJobStatus.bind(this);
 			this.startPolling = () => {
@@ -133,19 +142,12 @@ define([
 			return null;
 		}
 
-		clearJobNotifications() {
-			this.jobListing.removeAll();
-		}
-
 		clearJobNotificationsPending() {
-			this.jobListing().forEach(j => {
-				j.viewed(true);
-			});
-			this.jobListing.valueHasMutated();
+			this.showJobModal(false);
 		}
 
 		jobNameClick(j) {
-			$('#jobModal').modal('hide');
+			this.showJobModal(false);
 			window.location = '#/' + j.url;
 		}
 	}
