@@ -50,13 +50,6 @@ define([
 				return unviewedNotificationCount;
 			});
 
-			this.startPolling = () => {
-				this.pollInterval = setInterval(() => this.updateJobStatus(), appConfig.pollInterval);
-			};
-
-			this.stopPolling = () => {
-				clearInterval(this.pollInterval);
-			};
 
 			if (!appConfig.userAuthenticationEnabled) {
 				this.startPolling();
@@ -77,6 +70,13 @@ define([
 
 		}
 
+		startPolling() {
+			this.pollInterval = setInterval(() => this.updateJobStatus(), appConfig.pollInterval);
+		};
+
+		stopPolling() {
+			clearInterval(this.pollInterval);
+		};
 		getExisting(n) {
 			for (const job of this.jobListing()) {
 				if (job.executionId == n.executionId) {
