@@ -1038,8 +1038,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			getStatusMessage (info) {
-				if (info.status() == "COMPLETE" && !info.isValid())
-					return "FAILED";
+				if (info.status() === "COMPLETE" && !info.isValid())
+					return !info.isCanceled() ? "FAILED" : "CANCELED";
 				else
 					return info.status();
 			}
