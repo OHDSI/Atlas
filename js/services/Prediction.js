@@ -10,9 +10,9 @@ define(function (require, exports) {
 	}
 
 	function savePrediction(analysis) {
-		const url = config.webAPIRoot + predictionEndpoint + (analysis.analysisId || "");
+		const url = config.webAPIRoot + predictionEndpoint + (analysis.id || "");
 		let promise;
-		if (analysis.analysisId) {
+		if (analysis.id) {
 			promise = httpService.doPut(url, analysis);
 		} else {
 			promise = httpService.doPost(url, analysis);

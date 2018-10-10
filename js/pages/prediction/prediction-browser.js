@@ -4,7 +4,7 @@ define([
 	'appConfig',
 	'./const',
 	'webapi/MomentAPI',
-	'webapi/AuthAPI',
+	'./PermissionService',
 	'providers/Page',
 	'providers/AutoBind',
 	'utils/CommonUtils',
@@ -21,7 +21,7 @@ define([
 	config,
 	constants,
 	momentApi,
-	authApi,
+	PermissionService,
 	Page,
 	AutoBind,
 	commonUtils,
@@ -32,14 +32,10 @@ define([
 			super(params);
 			this.model = params.model;
 			this.reference = ko.observableArray();
-			this.loading = ko.observable(true);
+			this.loading = ko.observable(false);
 
-			this.canReadPredictions = ko.pureComputed(() => {
-				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedReadPlps()) || !config.userAuthenticationEnabled;
-			});
-			this.canCreatePrediction = ko.pureComputed(() => {
-				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedCreatePlps()) || !config.userAuthenticationEnabled;
-			});
+			this.canReadPredictions = PermissionService.isPermittedList;
+			this.canCreatePrediction = PermissionService.isPermittedCreate;
 
 			this.options = {
 				Facets: [
@@ -98,13 +94,15 @@ define([
 					data: 'createdBy'
 				}
 			];
-			
-			PredictionService.getPredictionList()
-				.then(({ data }) => {
-					this.loading(false);
-					this.reference(data);
-				})
-				.catch(authApi.handleAccessDenied);
+
+			if (this.canReadPredictions()) {
+				this.loading(true);
+				PredictionService.getPredictionList()
+					.then(({ data }) => {
+						this.loading(false);
+						this.reference(data);
+					});
+			}
 		}
 
 		rowClick(d) {

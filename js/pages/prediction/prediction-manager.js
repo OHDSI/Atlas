@@ -3,12 +3,13 @@ define([
 	'text!./prediction-manager.html',	
 	'providers/Component',
 	'utils/CommonUtils',
+	'services/file',
 	'assets/ohdsi.util',
     'appConfig',
 	'./const',
 	'atlas-state',
 	'clipboard',
-	'webapi/AuthAPI',
+	'./PermissionService',
 	'services/Prediction',
 	'./options',
 	'./inputTypes/Cohort',
@@ -34,12 +35,13 @@ define([
 	view, 
 	Component,
 	commonUtils,
+	fileService,
 	ohdsiUtil,
 	config,
 	constants,
 	sharedState,
 	clipboard,
-	authApi,
+	PermissionService,
 	PredictionService,
 	options,
 	Cohort,
@@ -95,11 +97,11 @@ define([
 			this.packageName = ko.observable();
 
 			this.canDelete = ko.pureComputed(() => {
-				return authApi.isPermittedDeletePlp(this.selectedAnalysisId()) && this.selectedAnalysisId() > 0;
+				return PermissionService.isPermittedDelete(this.selectedAnalysisId());
 			});
 
 			this.canCopy = ko.pureComputed(() => {
-				return authApi.isPermittedCopyPlp(this.selectedAnalysisId()) && this.selectedAnalysisId() > 0;
+				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
 			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {
@@ -272,15 +274,17 @@ define([
 			this.loadingMessage("Starting download...");
 			this.loading(true);
 			var payload = this.prepForSave();
-			PredictionService.savePrediction(payload).then((analysis) => {
-				this.resetDirtyFlag();
-				window.open(config.api.url + constants.apiPaths.downloadPackage(this.selectedAnalysisId()));
-				this.loadingMessage(this.defaultLoadingMessage);
-				this.loading(false);
-			}).catch((e) => {
-				console.error("error when exporting: " + e);
-				this.loading(false);
-			});
+			PredictionService.savePrediction(payload)
+				.then((analysis) => {
+					this.resetDirtyFlag();
+					this.loadingMessage(this.defaultLoadingMessage);
+					return fileService.loadZip(
+						config.api.url + constants.apiPaths.downloadPackage(this.selectedAnalysisId()),
+						`prediction_study_${this.selectedAnalysisId()}_export.zip`
+					);
+				})
+				.catch((e) => console.error("error when exporting: " + e))
+				.finally(() => this.loading(false));
 		}
 
 		prepForSave() {

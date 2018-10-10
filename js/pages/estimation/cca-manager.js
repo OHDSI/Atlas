@@ -3,12 +3,13 @@ define([
 	'text!./cca-manager.html',	
 	'providers/Component',
 	'utils/CommonUtils',
+	'services/file',
 	'assets/ohdsi.util',
 	'appConfig',
 	'./const',
 	'atlas-state',	
 	'clipboard',
-	'webapi/AuthAPI',
+	'./PermissionService',
 	'services/Estimation',
     './inputTypes/EstimationAnalysis',
     './inputTypes/ComparativeCohortAnalysis/CohortMethodAnalysis',
@@ -33,12 +34,13 @@ define([
 	view, 
 	Component,
 	commonUtils,
+	fileService,
 	ohdsiUtil,
 	config,
 	constants,
 	sharedState,
 	clipboard,
-	authApi,
+	PermissionService,
 	EstimationService,
 	EstimationAnalysis,
 	CohortMethodAnalysis,
@@ -89,12 +91,11 @@ define([
 			});
 
 			this.canDelete = ko.pureComputed(() => {
-				return authApi.isPermittedDeleteEstimation(this.selectedAnalysisId()) && this.selectedAnalysisId() > 0;
+				return PermissionService.isPermittedDelete(this.selectedAnalysisId());
 			});
 
 			this.canCopy = ko.pureComputed(() => {
-				// TODO: Add in AuthApi call for permission check
-				return this.selectedAnalysisId() > 0;
+				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
 			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {
@@ -573,15 +574,18 @@ define([
 			this.loadingMessage("Starting download...");
 			this.loading(true);
 			var payload = this.prepForSave();
-			EstimationService.saveEstimation(payload).then((analysis) => {
-				this.resetDirtyFlag();
-				window.open(config.api.url + constants.apiPaths.downloadCcaAnalysisPackage(this.selectedAnalysisId()));
-				this.loadingMessage(this.defaultLoadingMessage);
-				this.loading(false);
-			}).catch((e) => {
-				console.error("error when exporting: " + e);
-				this.loading(false);
-			});
+
+			EstimationService.saveEstimation(payload)
+				.then((analysis) => {
+					this.resetDirtyFlag();
+					this.loadingMessage(this.defaultLoadingMessage);
+					return fileService.loadZip(
+						config.api.url + constants.apiPaths.downloadCcaAnalysisPackage(this.selectedAnalysisId()),
+						`estimation_study_${this.selectedAnalysisId()}_export.zip`
+					);
+				})
+				.catch((e) => console.error("error when exporting: " + e))
+				.finally(() => this.loading(false));
 		}
 
 		exportFullSpecification() {

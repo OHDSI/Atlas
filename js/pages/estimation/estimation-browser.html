@@ -1,6 +1,6 @@
 <heading-title params="name: 'Population Level Effect Estimation', icon: 'balance-scale', theme: 'dark'"></heading-title>
 
-<div data-bind="if: canReadEstimations, css: classes({ extra: 'paddedWrapper flexed' })">
+<div data-bind="if: canReadEstimations(), css: classes({ extra: 'paddedWrapper flexed' })">
 	<span data-bind="click: newEstimation,
 	css: classes({
 		element: 'new-btn',
