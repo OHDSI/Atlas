@@ -27,9 +27,6 @@ define([
 			this.tokenExpired = authApi.tokenExpired;
 			this.authLogin = authApi.subject;
 			this.pollInterval = null;
-			this.isLoggedIn = ko.computed(() => {
-				return authApi.isAuthenticated();
-			});
 			this.loading = params.model.loading;
 			this.jobListing = state.jobListing;
 
@@ -50,10 +47,9 @@ define([
 				return unviewedNotificationCount;
 			});
 
-
-			if (!appConfig.userAuthenticationEnabled) {
-				this.startPolling();
-			}
+			this.isLoggedIn = ko.computed(() => {
+				return authApi.isAuthenticated();
+			});
 			this.isLoggedIn.subscribe((isLoggedIn) => {
 				if (isLoggedIn) {
 					this.startPolling();
@@ -62,12 +58,10 @@ define([
 					this.stopPolling();
 				}
 			});
-			if (this.isLoggedIn) {
+			if (this.isLoggedIn() || !appConfig.userAuthenticationEnabled) {
 				this.startPolling();
 				this.updateJobStatus()
 			}
-
-
 		}
 
 		startPolling() {
