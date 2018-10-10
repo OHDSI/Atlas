@@ -46,13 +46,13 @@
 ></atlas-modal>
 
 <script type="text/html" id="notifications-browser-template">
-    <div class="modal-body">
+    <div>
         <div data-bind="if: jobListing.length == 0">
             Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class="fa fa-bell pending"></i> if you
             have new notifications available.
         </div>
         <div data-bind="if: jobListing.length > 0">
-            <table class="pad-5" style="width:100%;">
+            <table style="width:100%;">
                 <thead>
                 <th>Job Name</th>
                 <th>Status</th>
@@ -68,52 +68,10 @@
             </table>
         </div>
     </div>
-    <div class="modal-footer">
+    <div style="justify-content: flex-end; display: flex;">
         <button type="button" data-bind="click:clearJobNotificationsPending" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
     </div>
+    <!--<div class="modal-footer">-->
+        <!--<button type="button" data-bind="click:clearJobNotificationsPending" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>-->
+    <!--</div>-->
 </script>
-
-
-<!--<div class="modal" id="jobModal" tabindex="-1" role="dialog">-->
-	<!--<div class="modal-dialog" role="document">-->
-		<!--<div class="modal-content">-->
-			<!--<div class="modal-header">-->
-				<!--<i class="fa fa-bell"></i> Notifications-->
-			<!--</div>-->
-			<!--<div class="modal-body">-->
-				<!--<div data-bind="if: $component.jobListing().length == 0">-->
-					<!--Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class="fa fa-bell pending"></i> if you-->
-					<!--have new notifications available.-->
-				<!--</div>-->
-				<!--<div data-bind="if: $component.jobListing().length > 0">-->
-					<!--<table class="pad-5" style="width:100%;">-->
-						<!--<thead>-->
-							<!--<th>Job Name</th>-->
-							<!--&lt;!&ndash;TODO - no progress support on server-side&ndash;&gt;-->
-							<!--&lt;!&ndash;<th>Progress</th>&ndash;&gt;-->
-							<!--<th>Status</th>-->
-						<!--</thead>-->
-						<!--<tbody>-->
-							<!--&lt;!&ndash; ko foreach: jobListing &ndash;&gt;-->
-							<!--<tr>-->
-								<!--<td class="pad-5"><i class="fa fa-tasks"></i> <a data-bind="click:function() {$component.jobNameClick($data)}, text: $data.name" class="linkish"></a></td>-->
-								<!--&lt;!&ndash;<td class="pad-5">&ndash;&gt;-->
-									<!--&lt;!&ndash;<div data-bind="if:$data.progress">&ndash;&gt;-->
-										<!--&lt;!&ndash;<div class="progress">&ndash;&gt;-->
-											<!--&lt;!&ndash;<div class="progress-bar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" role="progressbar" data-bind="style:{ width: $component.calculateProgress($data)}, text: $component.calculateProgress($data)"></div>&ndash;&gt;-->
-										<!--&lt;!&ndash;</div>&ndash;&gt;-->
-									<!--&lt;!&ndash;</div>&ndash;&gt;-->
-								<!--&lt;!&ndash;</td>&ndash;&gt;-->
-								<!--<td class="pad-5" data-bind="html: status"></td>-->
-							<!--</tr>-->
-							<!--&lt;!&ndash; /ko &ndash;&gt;-->
-						<!--</tbody>-->
-					<!--</table>-->
-				<!--</div>-->
-			<!--</div>-->
-			<!--<div class="modal-footer">-->
-				<!--<button type="button" data-bind="click:clearJobNotificationsPending" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>-->
-			<!--</div>-->
-		<!--</div>-->
-	<!--</div>-->
-<!--</div>-->
