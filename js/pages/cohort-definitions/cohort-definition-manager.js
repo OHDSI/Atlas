@@ -696,38 +696,38 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				templateSqlPromise.then((result) => {
 					this.templateSql(result.templateSql);
 					var mssqlTranslatePromise = this.service.translateSql(result.templateSql, 'sql server');
-						mssqlTranslatePromise.then((result) => {
-							this.generatedSql.mssql(result.targetSQL);
+						mssqlTranslatePromise.then(({data}) => {
+							this.generatedSql.mssql(data.targetSQL);
 					});
 
 					var msapsTranslatePromise = this.service.translateSql(result.templateSql, 'pdw');
-						msapsTranslatePromise.then((result) => {
-							this.generatedSql.msaps(result.targetSQL);
+						msapsTranslatePromise.then(({data}) => {
+							this.generatedSql.msaps(data.targetSQL);
 					});
 
 					var oracleTranslatePromise = this.service.translateSql(result.templateSql, 'oracle');
-						oracleTranslatePromise.then((result) => {
-							this.generatedSql.oracle(result.targetSQL);
+						oracleTranslatePromise.then(({data}) => {
+							this.generatedSql.oracle(data.targetSQL);
 					});
 
 					var postgresTranslatePromise = this.service.translateSql(result.templateSql, 'postgresql');
-						postgresTranslatePromise.then((result) => {
-							this.generatedSql.postgresql(result.targetSQL);
+						postgresTranslatePromise.then(({data}) => {
+							this.generatedSql.postgresql(data.targetSQL);
 					});
 
 					var redshiftTranslatePromise = this.service.translateSql(result.templateSql, 'redshift');
-						redshiftTranslatePromise.then((result) => {
-							this.generatedSql.redshift(result.targetSQL);
+						redshiftTranslatePromise.then(({data}) => {
+							this.generatedSql.redshift(data.targetSQL);
 					});
 
 					var impalaTranslatePromise = this.service.translateSql(result.templateSql, 'impala');
-						impalaTranslatePromise.then((result) => {
-							this.generatedSql.impala(result.targetSQL);
+						impalaTranslatePromise.then(({data}) => {
+							this.generatedSql.impala(data.targetSQL);
 					});
 
 					var netezzaTranslatePromise = this.service.translateSql(result.templateSql, 'netezza');
-					netezzaTranslatePromise.then((result)=> {
-							this.generatedSql.netezza(result.targetSQL);
+					netezzaTranslatePromise.then(({data})=> {
+							this.generatedSql.netezza(data.targetSQL);
 					});
 
 					$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise, netezzaTranslatePromise).then(() => {

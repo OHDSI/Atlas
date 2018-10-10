@@ -1,6 +1,7 @@
 define(function (require, exports) {
 
 	var $ = require('jquery');
+	var ko = require('knockout');
 	var config = require('appConfig');
 	var authApi = require('webapi/AuthAPI');
 	const httpService = require('services/http');
@@ -89,21 +90,12 @@ define(function (require, exports) {
 	}
 
 	function translateSql(sql, dialect) {
-		translatePromise = $.ajax({
-			url: config.webAPIRoot + 'sqlrender/translate',
-			method: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				SQL: sql,
-				targetdialect: dialect
-			}),
-			error: function (error) {
-				console.log("Error: " + error);
-			}
-		});
-		return translatePromise;
+		return httpService.doPost(config.webAPIRoot + 'sqlrender/translate', ko.toJS({
+			SQL: sql,
+			targetdialect: dialect
+		}))
+			.catch(error => console.log("Error: " + error));
 	}
-
 
 
 	function generate(cohortDefinitionId, sourceKey, includeFeatures) {
