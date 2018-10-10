@@ -754,7 +754,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 				cohortDefinitionService.generate(this.model.currentCohortDefinition().id(), source.sourceKey, includeFeatures)
 					.catch(this.authApi.handleAccessDenied)
-					.then(data => {
+					.then(({data}) => {
 						jobDetailsService.createJob(data);
 						setTimeout( () => {
 							if (!this.pollTimeout) {
@@ -1051,7 +1051,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				this.createReportJobFailed(false);
 				return cohortDefinitionService.getCohortAnalyses(JSON.stringify(cohortJob))
-					.then(info => jobDetailsService.createJob(info))
+					.then(({data}) => jobDetailsService.createJob(data))
 					.catch(response => {
 						this.createReportJobFailed(true);
 						var createReportJobErrorPackage = {};

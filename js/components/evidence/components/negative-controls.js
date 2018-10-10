@@ -178,8 +178,8 @@ define(['knockout',
 
 				// Kick the job off
 				$.when(negativeControlsJob)
-					.done(info => {
-						jobDetailsService.createJob(info);
+					.done(({ data }) => {
+						jobDetailsService.createJob(data);
 						pollTimeout = setTimeout(() => {
 							this.pollForInfo();
 						}, 5000);

@@ -933,9 +933,9 @@ define([
 				if (config.useExecutionEngine) {
 					this.sourceProcessingStatus[sourceKey](true);
 					executionService.runExecution(sourceKey, this.cohortComparisonId(), 'CCA', $('.language-r').text())
-						.then(({ data: c }) => {
-							this.monitorEEJobExecution(c.executionId, 100);
-							jobDetailsService.createJob(c);
+						.then(({ data }) => {
+							this.monitorEEJobExecution(data.executionId, 100);
+							jobDetailsService.createJob(data);
 						});
 				} else {
 					this.sourceProcessingStatus[sourceKey](true);

@@ -279,11 +279,11 @@ define([
 		};
 
 		onExecuteClick(sourceItem) {
-			var executePromise = IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey);
-			executePromise.then((info) => {
-				jobDetailsService.createJob(info);
-				this.pollForInfo();
-			});
+			IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
+				.then(({data}) => {
+					jobDetailsService.createJob(data);
+					this.pollForInfo();
+				});
 		}
 
 		import() {
@@ -339,8 +339,8 @@ define([
 							}
 							this.isRunning(true);
 							IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
-								.then((info) => {
-									jobDetailsService.createJob(info.data);
+								.then(({data}) => {
+									jobDetailsService.createJob(data);
 									this.pollForInfo();
 								});
 						}
