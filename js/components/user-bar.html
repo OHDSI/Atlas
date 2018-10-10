@@ -4,16 +4,18 @@
 			<i class="fa fa-circle-o-notch fa-spin"></i>
 		</div>
 	<!-- /ko -->
+    <!-- ko ifnot: loading -->
 	<!-- for notifications, job completion, etc. -->
 	<div class="user-bar-container">
 		<!-- ko if: isLoggedIn -->
 			<a data-bind="click: () => $component.showJobModal(true)"><i data-bind="css: {pending: jobNotificationsPending}" class="fa fa-bell"></i></a>
 		<!-- /ko -->
-		<span data-bind="if:appConfig.userAuthenticationEnabled===true" style="display: inline-block;">
+		<div data-bind="if:appConfig.userAuthenticationEnabled===true" style="display: inline-block;">
 			<div title="Sign In" data-bind="if: !isLoggedIn() || tokenExpired()"><span class="pipe">|</span><a data-toggle="modal" data-target="#myModal"><i class="fa fa-sign-in"></i>Sign In</a></div>
 			<div title="Sign Out" data-bind="if: isLoggedIn() && !tokenExpired()"><span class="pipe">|</span><a data-toggle="modal" data-target="#myModal"><strong data-bind="text: authLogin"></strong><i class="fa fa-user-circle fa-lg" aria-hidden="true"></i></a></div>
-		</span>
+		</div>
 	</div>
+    <!-- /ko -->
 </div>
 
 <div data-bind="if:appConfig.userAuthenticationEnabled===true" class="modal fade" id="myModal" tabindex="-1" role="dialog">
