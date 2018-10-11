@@ -54,10 +54,10 @@ define([
 			this.model.jobs(jobs.map((job) => {
 				const startDate = new Date(job.startDate);
 				job.startDate = momentApi.formatDateTime(startDate);
-
-				const endDate = new Date(job.endDate);
-				job.endDate = momentApi.formatDateTime(endDate);
-
+				if (job.endDate > startDate){
+                    const endDate = new Date(job.endDate);
+                    job.endDate = momentApi.formatDateTime(endDate);
+				}
 				if (job.jobParameters.jobName == undefined) {
 					job.jobParameters.jobName = 'n/a';
 				}
