@@ -5,10 +5,8 @@ define([
     httpService,
     config,
 ) {
-    function loadCharacterizationList() {
-        return httpService
-            .doGet(config.webAPIRoot + 'cohort-characterization')
-            .then(res => res.data);
+    function loadCharacterizationList(params) {
+	    return httpService.doGet(config.webAPIRoot + 'cohort-characterization', params)
     }
 
     function deleteCharacterization(id) {

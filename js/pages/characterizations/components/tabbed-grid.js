@@ -28,7 +28,8 @@ define([
             this.tabs = constants.gridTabs;
             this.activeTab = params.activeTab;
 
-            this.data = params.data;
+            // this.data = params.data;
+            this.ajax = params.ajax;
             this.gridColumns = params.gridColumns;
             this.gridOptions = params.gridOptions;
 

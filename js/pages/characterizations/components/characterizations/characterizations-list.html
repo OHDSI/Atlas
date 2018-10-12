@@ -7,7 +7,8 @@
         gridOptions: $component.gridOptions,
         data: $component.data,
         createNew: $component.createCharacterization,
-        createNewEnabled: $component.isCreatePermitted
+        createNewEnabled: $component.isCreatePermitted,
+        ajax: $component.ajax
     }"/>
 </div>
 <div data-bind="ifnot: $component.isGetCCListPermitted(), css: `${$component.isGetCCListPermitted() ? '' : 'flexed'}`">

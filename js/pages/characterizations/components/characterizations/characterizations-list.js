@@ -31,7 +31,7 @@ define([
             this.gridTab = constants.characterizationsTab;
 
             this.loading = ko.observable(false);
-            this.data = ko.observableArray();
+            // this.data = ko.observableArray();
 
             this.isGetCCListPermitted = PermissionService.isPermittedGetCCList;
             this.isCreatePermitted = PermissionService.isPermittedCreateCC;
@@ -82,17 +82,9 @@ define([
                 ]
             };
 
-            this.isGetCCListPermitted() && this.loadData();
-        }
-
-        loadData() {
-            this.loading(true);
-            CharacterizationService
-                .loadCharacterizationList()
-                .then(res => {
-                    this.data(res.content);
-                    this.loading(false);
-                });
+            if (this.isGetCCListPermitted()) {
+                this.ajax = CharacterizationService.loadCharacterizationList
+            }
         }
 
         createCharacterization() {

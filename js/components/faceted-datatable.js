@@ -6,14 +6,24 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
 		self.data = params.xfObservable || ko.observable();
-		self.tableData = ko.pureComputed(function () {
-			if (self.data() && self.data().size() && self.data().size() > 0) {
-				return self.data().allFiltered();
-			} else {
-				return [];
-			}
-		});
+		self.service = params.ajax;
 		self.componentLoading = ko.observable(true);
+		self.ajax = (d, callback, settings) => {
+			self.componentLoading(true);
+			params.ajax({
+				page: d.start / d.length,
+				size: d.length
+			})
+				.then(({data}) => {
+					callback({
+						draw: d.draw,
+						recordsTotal: data.totalElements,
+						recordsFiltered: data.totalElements,
+						data: data.content
+					});
+					self.componentLoading(false);
+			})
+		};
 		self.facets = ko.observableArray();
 
 		self.nullFacetLabel = params.nullFacetLabel || 'NULL';
@@ -88,53 +98,53 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			return ret;
 		}
 
-		self.reference.subscribe(function (newValue) {
-			if (self.reference() != null) {
-				self.componentLoading(true);
-				self.data(new crossfilter(self.reference()));
-				self.facets.removeAll();
-				if (self.options && self.options.Facets) {
-					// Iterate over the facets and set the dimensions
-					$.each(self.options.Facets, function (i, facetConfig) {
-						var isArray = facetConfig.isArray || false;
-						var dimension = self.data().dimension(function (d) {
-							return self.facetDimensionHelper(facetConfig.binding(d));
-						}, isArray);
-						var facet = {
-							'caption': facetConfig.caption,
-							'binding': facetConfig.binding,
-							'dimension': dimension,
-							'facetItems': [],
-							'selectedItems': new Object(),
-						};
-						// Add a selected observable to each dimension
-						$.each(dimension.group().top(Number.POSITIVE_INFINITY), function (i, facetItem) {
-							facetItem.dimension = dimension;
-							facetItem.selected = ko.observable(false);
-							facetItem.facet = facet;
-							facet.facetItems.push(facetItem);
+		if (self.reference != null) {
+			self.reference.subscribe(function (newValue) {
+				if (self.reference() != null) {
+					self.componentLoading(true);
+					self.data(new crossfilter(self.reference()));
+					self.facets.removeAll();
+					if (self.options && self.options.Facets) {
+						// Iterate over the facets and set the dimensions
+						$.each(self.options.Facets, function (i, facetConfig) {
+							var isArray = facetConfig.isArray || false;
+							var dimension = self.data().dimension(function (d) {
+								return self.facetDimensionHelper(facetConfig.binding(d));
+							}, isArray);
+							var facet = {
+								'caption': facetConfig.caption,
+								'binding': facetConfig.binding,
+								'dimension': dimension,
+								'facetItems': [],
+								'selectedItems': new Object(),
+							};
+							// Add a selected observable to each dimension
+							$.each(dimension.group().top(Number.POSITIVE_INFINITY), function (i, facetItem) {
+								facetItem.dimension = dimension;
+								facetItem.selected = ko.observable(false);
+								facetItem.facet = facet;
+								facet.facetItems.push(facetItem);
+							});
+							self.facets.push(facet);
 						});
-						self.facets.push(facet);
-					});
-					// Iterate over the facets and set any defaults
-					$.each(self.options.Facets, function (i, facetConfig) {
-						if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
-							$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
-								var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
-									return f.key == defaultFacet;
-								});
-								if (facetItem.length > 0) {
-									self.updateFilters(facetItem[0], null);
-								}
-							})
-						}
-					});
+						// Iterate over the facets and set any defaults
+						$.each(self.options.Facets, function (i, facetConfig) {
+							if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
+								$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
+									var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
+										return f.key == defaultFacet;
+									});
+									if (facetItem.length > 0) {
+										self.updateFilters(facetItem[0], null);
+									}
+								})
+							}
+						});
+					}
+					self.componentLoading(false);
 				}
-				self.componentLoading(false);
-			}
-		});
-
-		self.reference.valueHasMutated(); // init component
+			});
+		}
 	};
 
 	var component = {
