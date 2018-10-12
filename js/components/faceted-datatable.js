@@ -22,6 +22,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 						data: data.content
 					});
 					self.componentLoading(false);
+					self.createFilters(data.content)
 			})
 		};
 		self.facets = ko.observableArray();
@@ -98,52 +99,46 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			return ret;
 		}
 
-		if (self.reference != null) {
-			self.reference.subscribe(function (newValue) {
-				if (self.reference() != null) {
-					self.componentLoading(true);
-					self.data(new crossfilter(self.reference()));
-					self.facets.removeAll();
-					if (self.options && self.options.Facets) {
-						// Iterate over the facets and set the dimensions
-						$.each(self.options.Facets, function (i, facetConfig) {
-							var isArray = facetConfig.isArray || false;
-							var dimension = self.data().dimension(function (d) {
-								return self.facetDimensionHelper(facetConfig.binding(d));
-							}, isArray);
-							var facet = {
-								'caption': facetConfig.caption,
-								'binding': facetConfig.binding,
-								'dimension': dimension,
-								'facetItems': [],
-								'selectedItems': new Object(),
-							};
-							// Add a selected observable to each dimension
-							$.each(dimension.group().top(Number.POSITIVE_INFINITY), function (i, facetItem) {
-								facetItem.dimension = dimension;
-								facetItem.selected = ko.observable(false);
-								facetItem.facet = facet;
-								facet.facetItems.push(facetItem);
+		self.createFilters = (data) => {
+			self.data(new crossfilter(data));
+			self.facets.removeAll();
+			if (self.options && self.options.Facets) {
+				// Iterate over the facets and set the dimensions
+				$.each(self.options.Facets, function (i, facetConfig) {
+					var isArray = facetConfig.isArray || false;
+					var dimension = self.data().dimension(function (d) {
+						return self.facetDimensionHelper(facetConfig.binding(d));
+					}, isArray);
+					var facet = {
+						'caption': facetConfig.caption,
+						'binding': facetConfig.binding,
+						'dimension': dimension,
+						'facetItems': [],
+						'selectedItems': new Object(),
+					};
+					// Add a selected observable to each dimension
+					$.each(dimension.group().top(Number.POSITIVE_INFINITY), function (i, facetItem) {
+						facetItem.dimension = dimension;
+						facetItem.selected = ko.observable(false);
+						facetItem.facet = facet;
+						facet.facetItems.push(facetItem);
+					});
+					self.facets.push(facet);
+				});
+				// Iterate over the facets and set any defaults
+				$.each(self.options.Facets, function (i, facetConfig) {
+					if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
+						$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
+							var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
+								return f.key == defaultFacet;
 							});
-							self.facets.push(facet);
-						});
-						// Iterate over the facets and set any defaults
-						$.each(self.options.Facets, function (i, facetConfig) {
-							if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
-								$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
-									var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
-										return f.key == defaultFacet;
-									});
-									if (facetItem.length > 0) {
-										self.updateFilters(facetItem[0], null);
-									}
-								})
+							if (facetItem.length > 0) {
+								self.updateFilters(facetItem[0], null);
 							}
-						});
+						})
 					}
-					self.componentLoading(false);
-				}
-			});
+				});
+			}
 		}
 	};
 
