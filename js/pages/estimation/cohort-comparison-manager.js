@@ -932,9 +932,12 @@ define([
 			executeCohortComparison(sourceKey) {
 				if (config.useExecutionEngine) {
 					this.sourceProcessingStatus[sourceKey](true);
-					executionService.runExecution(sourceKey, this.cohortComparisonId(), 'CCA', $('.language-r').text())
+					let analysisId = this.cohortComparisonId();
+					executionService.runExecution(sourceKey, analysisId, 'CCA', $('.language-r').text())
 						.then(({ data }) => {
 							this.monitorEEJobExecution(data.executionId, 100);
+							data.scriptType = 'CCA';
+							data.cohortId = analysisId;
 							jobDetailsService.createJob(data);
 						});
 				} else {

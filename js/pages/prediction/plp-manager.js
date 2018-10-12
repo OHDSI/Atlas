@@ -145,14 +145,17 @@ define([
 		executePLP (sourceKey) {
 			if (config.useExecutionEngine) {
 				this.sourceProcessingStatus[sourceKey](true);
+				let analysisId = this.patientLevelPredictionId();
 				executionService.runExecution(
 					sourceKey,
-					this.patientLevelPredictionId(),
+					analysisId,
 					'PLP',
 					$('.language-r').text()
 				)
 					.then(({ data }) => {
 						this.monitorEEJobExecution(data.executionId, 100);
+						data.scriptType = 'PLP';
+						data.cohortId = analysisId;
 						jobDetailsService.createJob(data);
 					});
 			}
