@@ -57,6 +57,8 @@ define([
 				if (job.endDate > startDate){
 					const endDate = new Date(job.endDate);
 					job.endDate = momentApi.formatDateTime(endDate);
+				} else {
+					job.endDate = '-';
 				}
 				if (job.jobParameters.jobName == undefined) {
 					job.jobParameters.jobName = 'n/a';
