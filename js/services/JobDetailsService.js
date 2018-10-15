@@ -10,6 +10,8 @@ define(['appConfig','job/jobDetail', 'atlas-state', 'services/http'], function (
 		job.status(updated.status);
 		job.name = updated.jobParameters.jobName;
 		job.executionId = updated.executionId;
+		job.duration = '';
+		job.endDate = '';
 		sharedState.jobListing.queue(job);
 	}
 	
