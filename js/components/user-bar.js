@@ -120,7 +120,7 @@ define([
 				case 'negativeControlsAnalysisJob':
 					return 'conceptset/' + n.jobParameters.concept_set_id + '/evidence';
 				case 'generateCohortCharacterization':
-					return 'cc/characterizations' + n.jobParameters.cohort_characterization_id;
+					return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id;
 				case "cohortAnalysisJob":
 					return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/report?sourceKey=' + n.jobParameters.sourceKey;
 				case 'executionEngine':
