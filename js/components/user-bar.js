@@ -8,16 +8,17 @@ define([
 	'utils/CommonUtils',
 	'webapi/AuthAPI',
 	'services/JobDetailsService',
+	'webapi/MomentAPI',
 ], function (ko,
-	view,
-	AutoBind,
-	appConfig,
-	state,
-	Component,
-	commonUtils,
-	authApi,
-	jobDetailsService,
-) {
+             view,
+             AutoBind,
+             appConfig,
+             state,
+             Component,
+             commonUtils,
+             authApi,
+             jobDetailsService,
+             momentApi) {
 	class UserBar extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
@@ -71,6 +72,7 @@ define([
 		stopPolling() {
 			clearInterval(this.pollInterval);
 		};
+
 		getExisting(n) {
 			for (const job of this.jobListing()) {
 				if (job.executionId == n.executionId) {
@@ -107,6 +109,9 @@ define([
 							this.jobListing.valueHasMutated();
 
 						}
+						let endDate = (n.endDate ? n.endDate : Date.now());
+						job.duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
+						job.endDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
 					});
 				});
 		};
