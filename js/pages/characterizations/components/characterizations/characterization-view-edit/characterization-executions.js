@@ -12,6 +12,7 @@ define([
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
 	'services/Source',
+	'services/JobDetailsService',
 	'less!./characterization-executions.less',
 	'./characterization-results',
 	'databindings/tooltipBinding'
@@ -28,7 +29,8 @@ define([
 	AutoBind,
 	commonUtils,
 	datatableUtils,
-	SourceService
+	SourceService,
+	jobDetailsService,
 ) {
 	class CharacterizationViewEditExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -179,7 +181,10 @@ define([
 
 			confirmPromise
 				.then(() => CharacterizationService.runGeneration(this.characterizationId(), source))
-				.then(() => this.loadData())
+				.then((data) => {
+					jobDetailsService.createJob(data);
+					this.loadData()
+				})
 				.catch(() => {});
 		}
 
