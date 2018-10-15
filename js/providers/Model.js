@@ -567,6 +567,7 @@ define(
 									cdsi.sourceKey = cdmSources[s].sourceKey;
 									if (sourceInfo != null) {
 										cdsi.isValid = ko.observable(sourceInfo.isValid);
+										cdsi.isCanceled = ko.observable(sourceInfo.isCanceled);
 										cdsi.sourceId = sourceInfo.id.sourceId;
 										cdsi.status = ko.observable(sourceInfo.status);
 										var date = new Date(sourceInfo.startTime);
@@ -580,11 +581,16 @@ define(
 										} else {
 											cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
 										}
-										cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
+										if (sourceInfo.recordCount) {
+											cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
+										} else {
+											cdsi.recordCount = ko.observable('...');
+										}
 										cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
 										cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 									} else {
 										cdsi.isValid = ko.observable(false);
+										cdsi.isCanceled = ko.observable(false);
 										cdsi.status = ko.observable('n/a');
 										cdsi.startTime = ko.observable('n/a');
 										cdsi.executionDuration = ko.observable('n/a');
