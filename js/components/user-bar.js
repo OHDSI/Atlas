@@ -9,6 +9,7 @@ define([
 	'webapi/AuthAPI',
 	'services/JobDetailsService',
 	'webapi/MomentAPI',
+	'less!./user-bar.less',
 ], function (ko,
              view,
              AutoBind,
@@ -33,12 +34,7 @@ define([
 
 			this.showJobModal = ko.observable(false);
 			this.showJobModal.subscribe(show => {
-				if (!show) {
-					this.jobListing().forEach(j => {
-						j.viewed(true);
-					});
-					this.jobListing.valueHasMutated();
-				}
+				!show && this.clearUnviewedJobNotifications();
 			});
 
 			this.jobNotificationsPending = ko.computed(() => {
@@ -74,12 +70,7 @@ define([
 		};
 
 		getExisting(n) {
-			for (const job of this.jobListing()) {
-				if (job.executionId == n.executionId) {
-					return job;
-				}
-			}
-			return null;
+			return this.jobListing().find(j => j.executionId === n.executionId);
 		}
 
 		updateJobStatus() {
@@ -87,10 +78,17 @@ define([
 				.then(notifications => {
 					notifications.data.forEach(n => {
 						let job = this.getExisting(n);
+
+						const endDate = (n.endDate ? n.endDate : Date.now());
+						const duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
+						const displayedEndDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
+
 						if (job) {
 							if (job.status() !== n.status) {
 								job.status(n.status);
 								job.viewed(false);
+								job.duration(duration);
+								job.endDate(displayedEndDate);
 								this.jobListing.valueHasMutated();
 							}
 						} else {
@@ -103,21 +101,21 @@ define([
 								url: jobDetailsService.getJobURL(n),
 								executionUniqueId: ko.pureComputed(function () {
 									return job.type + "-" + job.executionId;
-								})
+								}),
+								duration,
+								endDate: displayedEndDate,
 							};
 							this.jobListing.push(job);
 							this.jobListing.valueHasMutated();
 
 						}
-						let endDate = (n.endDate ? n.endDate : Date.now());
-						job.duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
-						job.endDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
 					});
 				});
 		};
 
-		clearJobNotificationsPending() {
-			this.showJobModal(false);
+		clearUnviewedJobNotifications() {
+			this.jobListing().forEach(j => j.viewed(true));
+			this.jobListing.valueHasMutated();
 		}
 
 		jobNameClick(j) {
