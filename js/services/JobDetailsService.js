@@ -1,4 +1,4 @@
-define(['appConfig','job/jobDetail', 'atlas-state', 'services/http'], function (appConfig, jobDetail, sharedState, httpService) {
+define(['appConfig', 'job/jobDetail', 'atlas-state', 'services/http'], function (appConfig, jobDetail, sharedState, httpService) {
 
 	function list() {
 		return httpService.doGet(appConfig.api.url + 'notifications');
@@ -10,13 +10,52 @@ define(['appConfig','job/jobDetail', 'atlas-state', 'services/http'], function (
 		job.status(updated.status);
 		job.name = updated.jobParameters.jobName;
 		job.executionId = updated.executionId;
+		job.url = getJobURL(updated)
 		job.duration = '';
 		job.endDate = '';
-		sharedState.jobListing.queue(job);
+		queue(job);
 	}
-	
+
+	function queue(newItem) {
+		var oldItem = sharedState.jobListing().find(j => j.url === newItem.url);
+		if (oldItem != null) {
+			sharedState.jobListing.replace(oldItem, newItem);
+		} else {
+			sharedState.jobListing.unshift(newItem);
+			if (sharedState.jobListing.length > 20) {
+				sharedState.jobListing.pop()
+			}
+		}
+	}
+
+	function getJobURL(n) {
+		switch (n.jobInstance.name) {
+			case "generateCohort":
+				return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation';
+			case 'irAnalysis':
+				return 'iranalysis/' + n.jobParameters.analysis_id + '/generation';
+			case 'negativeControlsAnalysisJob':
+				return 'conceptset/' + n.jobParameters.concept_set_id + '/evidence';
+			case 'generateCohortCharacterization':
+				return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id;
+			case "cohortAnalysisJob":
+				return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/report?sourceKey=' + n.jobParameters.sourceKey;
+			case 'executionEngine':
+				switch (n.jobParameters.scriptType) {
+					case "CCA":
+						return 'estimation/' + n.jobParameters.cohortId;
+					case 'PLP':
+						return 'plp/' + n.jobParameters.cohortId;
+				}
+		}
+		return null;
+	}
+
+
+
 	return {
 		createJob: createJob,
-		list: list
+		list: list,
+		getJobURL: getJobURL
 	}
 });
