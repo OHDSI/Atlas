@@ -581,7 +581,11 @@ define(
 										} else {
 											cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
 										}
-										cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
+										if (sourceInfo.recordCount) {
+											cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
+										} else {
+											cdsi.recordCount = ko.observable('...');
+										}
 										cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
 										cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 									} else {

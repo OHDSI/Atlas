@@ -383,9 +383,9 @@
 							<td class="statusIndicator text-right nowrap">
 								<span data-bind="text: $component.getStatusMessage($data)"></span>
 							</td>
-							<td class="text-right nowrap" data-bind="html: personCount">
+							<td class="text-right nowrap" data-bind="html: $component.renderCountColumn($data.personCount)">
 							</td>
-							<td class="text-right nowrap" data-bind="html: recordCount">
+							<td class="text-right nowrap" data-bind="html: $component.renderCountColumn($data.recordCount)">
 							</td>
 							<td class="text-right nowrap" data-bind="text: startTime">
 							</td>

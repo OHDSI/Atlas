@@ -5,6 +5,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'webapi/MomentAPI',
 	'services/ConceptSet',
 	'components/conceptset/utils',
+	'utils/DatatableUtils',
 	'components/cohortbuilder/CohortExpression',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'services/CohortReporting',
@@ -44,6 +45,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	momentApi,
 	conceptSetService,
 	conceptSetUitls,
+	datatableUtils,
 	CohortExpression,
 	ConceptSet,
 	cohortReportingService,
@@ -173,6 +175,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return this.isAuthenticated() && this.authApi.isPermittedReadCohortReport(this.model.currentCohortDefinition().id(), sourceKey);
 			}
 			if (!this.hasAccess()) return;
+
+			this.renderCountColumn = datatableUtils.renderCountColumn;
 
 			this.generatedSql = {};
 			this.generatedSql.mssql = ko.observable('');
