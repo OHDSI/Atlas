@@ -22,7 +22,21 @@ define(
             router.setCurrentView('role-details');
           });
         }),
-        'import': new AuthorizedRoute(() => {
+        'import' : new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['./users-import/browser'], function () {
+            router.setCurrentView('user-import-browser');
+					});
+        }),
+        'import/job/:id' : new AuthorizedRoute((id) => {
+          appModel.activePage(this.title);
+          require(['./users-import/job-view-edit'], function () {
+						router.setCurrentView('import-job-view-edit', {
+							jobId: id,
+						});
+					});
+        }),
+        'import/wizard': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./users-import/users-import'], function() {
             router.setCurrentView('users-import');

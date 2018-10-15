@@ -7,6 +7,7 @@ define(function (require) {
 	var ddSlickAction = require("./ddSlickActionBinding");
 	var clickToEdit = require("./clickToEditBinding");
 	var datePicker = require("./datepickerBinding");
+	var dateTimePicker = require("./datetimepickerBinding");
 	var dataTable = require("./datatableBinding");
 	var eventListener = require("./eventListenerBinding");
 	var selectOnFocus = require("./knockout.selectOnFocus");
