@@ -423,7 +423,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					if (hasPending) {
 							this.pollTimeout = setTimeout(() => {
 								this.pollForInfo();
-						}, 1000);
+						}, 10000);
 					}
 				});
 			}

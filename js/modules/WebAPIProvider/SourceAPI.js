@@ -7,6 +7,7 @@ define(function (require, exports) {
 	var authApi = require('webapi/AuthAPI');
   var lscache = require('lscache');
   var ko = require('knockout');
+    const lodash = require('lodash');
 	const httpService = require('services/http');
 
 	var sources;
@@ -182,6 +183,8 @@ define(function (require, exports) {
         source.version = 'not available'
       }
     });
+
+    sourceList = lodash.sortBy(sourceList, ['sourceName']);
 
     sharedState.sources(sourceList);
     if (config.cacheSources) {

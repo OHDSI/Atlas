@@ -366,32 +366,18 @@
 					<tbody data-bind="foreach:$root.cohortDefinitionSourceInfo, css: {overflow: $root.cohortDefinitionSourceInfo().length > 3, 'max-height': $component.loadingReport() || $component.selectedReport()}">
 						<tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
 							<td>
-								<div class="btn-group btn-group-sm thumb-dropdown btn-generate"
-									 data-bind="
-									 	css: {dropup: ($index() > 0 && $index() === $root.cohortDefinitionSourceInfo().length-1)},
-									 	visible:!$component.isSourceRunning($data),
-									 	attr: {'disabled':!$component.canGenerate()},
-									 	tooltip: !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null,
-								">
-									<a role="button"
-									   class="btn btn-sm btn-primary"
-									   style="max-width:200px; overflow-x: hidden; text-overflow:ellipsis; white-space:nowrap"
-									   data-bind="
-									   		attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
-									   		click:(data, event) => $component.generateCohort(data, false)"
-									>
-										<i class="fa fa-play"></i>&nbsp;Generate
-									</a>
-									<a role="button" class="btn btn-sm btn-primary dropdown-toggle" data-bind="attr: {'disabled':$component.canGenerate()==false || !$component.hasAccessToGenerate($data.sourceKey)}" data-toggle="dropdown">
-										<span class="caret"></span>  <!-- caret -->
-										<span class="sr-only">Generate</span>
-									</a>
-									<ul class="dropdown-menu" style="height: auto; max-height:200px; width:200px; overflow-x: hidden; padding:4px" role="menu">
-										<li style="cursor:pointer" data-bind="click:(data, event) => $component.generateCohort(data, true)">Generate With Features</li>
-									</ul>
-								</div>
-								<div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i> </div>
-                                <a role="button" class="btn btn-sm btn-danger" data-bind="click:$component.cancelGenerate,visible: $component.isSourceRunning($data),attr: {disabled: $component.isSourceStopping($data)}">Cancel</a>
+								<button class="btn btn-sm btn-primary"
+												data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
+																	 visible:!$component.isSourceRunning($data),
+																	 tooltip: !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null,
+																	 click:(data, event) => $component.generateCohort(data, false)">
+									<i class="fa fa-play"></i>&nbsp;Generate
+								</button>
+								<a role="button" class="btn btn-sm btn-danger" 
+									 data-bind="click:$component.cancelGenerate,
+															visible: $component.isSourceRunning($data),
+															attr: {disabled: $component.isSourceStopping($data)}"><i class="fa fa-spinner fa-spin"></i> Cancel
+								</a>
 							</td>
 							<td class="nowrap" data-bind="text:name"></td>
 							<td class="statusIndicator text-right nowrap">
@@ -412,17 +398,8 @@
 					</tbody>
 				</table>
 				<!-- ko if: (loadingReport() || selectedReport())   -->
-				<div data-bind="visible:$component.loadingReport" class="loading">loading inclusion and feature reports</div>
+				<div data-bind="visible:$component.loadingReport" class="loading">loading inclusion report</div>
 				<div data-bind="visible:!$component.loadingReport()">
-					<ul class="nav nav-tabs nospace">
-						<li role="presentation" data-bind="css: { active: $component.generationTabMode() == 'inclusion' }, click: function() { $component.generationTabMode('inclusion'); }">
-							<a>Inclusion Report</a>
-						</li>
-
-						<li role="presentation" data-bind="css: { active: $component.generationTabMode() == 'features' }, click: function() { $component.generationTabMode('features'); }">
-							<a>Cohort Features</a>
-						</li>
-					</ul>
 					<div class="tab-content nospace">
 						<div role="tabpanel" data-bind="css: {active: $component.generationTabMode() == 'inclusion'}" class="tab-pane">
 							<ul class="nav nav-tabs nospace right-to-left">
@@ -442,16 +419,6 @@
 									<feasibility-report-viewer params="report: selectedReport() && selectedReport().byEvent"></feasibility-report-viewer>
 								</div>
 							</div>
-						</div>
-						<div role="tabpanel" data-bind="css: {active: $component.generationTabMode() == 'features'}" class="tab-pane">
-							<!-- ko if: $component.selectedSource() && $component.selectedSource().includeFeatures -->
-							<div class="heading">Feature Report for <span data-bind="text:selectedReportCaption"></span></div>
-							<div><b>Features are baseline characteristics (e.g collected before /on cohort start)</b></div>
-							<cohort-feature-browser params="cohortId: $root.currentCohortDefinition().id, sourceKey: $component.selectedSourceKey"></cohort-feature-browser>
-							<!-- /ko -->
-							<!-- ko ifnot: $component.selectedSource() && $component.selectedSource().includeFeatures -->
-							<div class="heading">Features were not generated for this source.</div>
-							<!-- /ko -->
 						</div>
 					</div>
 				</div>

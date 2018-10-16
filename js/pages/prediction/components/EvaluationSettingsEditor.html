@@ -1,0 +1,24 @@
+<div>
+    <label>Specify how to split the test/train set:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.testSplit, optionsText:'desc', optionsValue:'name', value: $component.runPlpArgs.testSplit"></select>
+    </div>
+</div>
+<div class="input-group">
+    <label>Percentage of the data to be used as the test set (0-100%):</label>
+    <div class="input-group">
+        <input class="form-control" type="text" data-bind="value: $component.testFraction" />
+    </div>
+</div>
+<div class="input-group">
+    <label>The number of folds used in the cross validation:</label>
+    <div class="input-group">
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.runPlpArgs.nfold, eventType:'blur', ko_autocomplete: { value: $component.runPlpArgs.nfold, source: $component.options.nfoldOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> folds
+    </div>
+</div>
+<div class="input-group">
+    <label>The seed used to split the test/train set when using a person type testSplit (optional):</label>
+    <div class="input-group">
+        <input class="form-control" type="text" data-bind="value: $component.splitSeed" />
+    </div>
+</div>

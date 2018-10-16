@@ -124,7 +124,7 @@ define((require, factory) => {
 
 	const syntaxHighlight = function (json) {
 		if (typeof json != 'string') {
-			json = JSON.stringify(json, undefined, 2);
+			json = ko.toJSON(json, undefined, 2);
 		}
 		json = json.replace(/&/g, '&amp;')
 			.replace(/</g, '&lt;')
@@ -157,9 +157,14 @@ define((require, factory) => {
 		}
 	}
 
+	const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
+	const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
+
+
 	return {
 		build,
 		confirmAndDelete,
+		cartesian,
 		routeTo,
 		hasRelationship,
 		contextSensitiveLinkColor,
