@@ -30,6 +30,7 @@ define([
 			this.pollInterval = null;
 			this.loading = params.model.loading;
 			this.jobListing = state.jobListing;
+			this.jobsLoaded = false;
 
 			this.showJobModal = ko.observable(false);
 			this.showJobModal.subscribe(show => {
@@ -99,7 +100,7 @@ define([
 								name: n.jobParameters.jobName,
 								status: ko.observable(n.status),
 								executionId: n.executionId,
-								viewed: ko.observable(false),
+								viewed: ko.observable(!this.jobsLoaded),
 								url: jobDetailsService.getJobURL(n),
 								executionUniqueId: ko.pureComputed(function () {
 									return job.type + "-" + job.executionId;
@@ -113,6 +114,7 @@ define([
 						job.duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
 						job.endDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
 					});
+					this.jobsLoaded = true;
 				});
 		};
 
