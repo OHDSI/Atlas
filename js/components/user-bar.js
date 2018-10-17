@@ -126,13 +126,8 @@ define([
 
 						}
 					});
-					this.jobsLoaded = true;
 				});
 		};
-
-		clearJobNotificationsPending() {
-			this.showJobModal(false);
-		}
 
 		jobNameClick(j) {
 			this.showJobModal(false);
