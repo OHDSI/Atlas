@@ -31,8 +31,8 @@ define([
 	commonUtils,
 	datatableUtils,
 	SourceService,
-	lodash
-	jobDetailsService,
+	lodash,
+	jobDetailsService
 ) {
 	class CharacterizationViewEditExecutions extends AutoBind(Component) {
 		constructor(params) {
