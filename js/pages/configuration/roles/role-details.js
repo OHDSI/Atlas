@@ -291,6 +291,7 @@ define([
             }
             this.model.roles(roles);
 
+            await authApi.loadUserInfo();
             await this.saveUsers();
             await this.savePermissions();
             this.roleDirtyFlag.reset();
