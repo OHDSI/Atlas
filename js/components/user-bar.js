@@ -30,15 +30,18 @@ define([
 			this.pollInterval = null;
 			this.loading = params.model.loading;
 			this.jobListing = state.jobListing;
-			this.jobsLoaded = false;
+			this.lastViewedTime=null;
 
 			this.showJobModal = ko.observable(false);
 			this.showJobModal.subscribe(show => {
 				if (!show) {
+					jobDetailsService.setLastViewedTime(this.lastViewedTime);
 					this.jobListing().forEach(j => {
 						j.viewed(true);
 					});
 					this.jobListing.valueHasMutated();
+				} else {
+					this.lastViewedTime = Date.now()
 				}
 			});
 
@@ -54,16 +57,23 @@ define([
 			});
 			this.isLoggedIn.subscribe((isLoggedIn) => {
 				if (isLoggedIn) {
-					this.startPolling();
-					this.updateJobStatus()
+					this.start();
 				} else {
 					this.stopPolling();
 				}
 			});
 			if (this.isLoggedIn() || !appConfig.userAuthenticationEnabled) {
-				this.startPolling();
-				this.updateJobStatus()
+				this.start()
 			}
+		}
+
+		start() {
+			jobDetailsService.getLastViewedTime()
+				.then(({data}) => {
+					this.lastViewedTime = new Date(data);
+					this.startPolling();
+					this.updateJobStatus()
+				})
 		}
 
 		startPolling() {
@@ -100,7 +110,7 @@ define([
 								name: n.jobParameters.jobName,
 								status: ko.observable(n.status),
 								executionId: n.executionId,
-								viewed: ko.observable(!this.jobsLoaded),
+								viewed: ko.observable(n.startDate && this.lastViewedTime && n.startDate < this.lastViewedTime),
 								url: jobDetailsService.getJobURL(n),
 								executionUniqueId: ko.pureComputed(function () {
 									return job.type + "-" + job.executionId;

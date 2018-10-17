@@ -51,11 +51,20 @@ define(['appConfig', 'job/jobDetail', 'atlas-state', 'services/http'], function 
 		return null;
 	}
 
+	function setLastViewedTime(lastViewedTime) {
+		return httpService.doPost(appConfig.api.url + 'notifications/viewed', JSON.stringify(lastViewedTime))
+	}
+
+	function getLastViewedTime() {
+		return httpService.doGet(appConfig.api.url + 'notifications/viewed')
+	}
 
 
 	return {
 		createJob: createJob,
 		list: list,
-		getJobURL: getJobURL
+		getJobURL: getJobURL,
+		setLastViewedTime: setLastViewedTime,
+		getLastViewedTime: getLastViewedTime
 	}
 });
