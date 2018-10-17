@@ -1054,7 +1054,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.rollupUtilizationDrug = rollupUtilizationDrug;
 
 				this.createReportJobFailed(false);
-				return cohortDefinitionService.getCohortAnalyses(JSON.stringify(cohortJob))
+				return cohortDefinitionService.getCohortAnalyses(cohortJob)
 					.then(({data}) => jobDetailsService.createJob(data))
 					.catch(response => {
 						this.createReportJobFailed(true);

@@ -113,7 +113,7 @@ define([
 								name: n.jobParameters.jobName,
 								status: ko.observable(n.status),
 								executionId: n.executionId,
-								viewed: ko.observable(n.startDate && this.lastViewedTime && n.startDate < this.lastViewedTime),
+								viewed: ko.observable(n.startDate && this.lastViewedTime && (n.endDate || n.startDate) < this.lastViewedTime),
 								url: jobDetailsService.getJobURL(n),
 								executionUniqueId: ko.pureComputed(function () {
 									return job.type + "-" + job.executionId;
