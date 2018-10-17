@@ -60,7 +60,7 @@
 				</thead>
 				<tbody>
 					<!-- ko foreach: jobListing -->
-						<tr>
+						<tr data-bind="css: { warning: !viewed() }">
 							<td data-bind="css: $parent.classes('job-name')">
 								<i data-bind="css: $parent.classes({ element: 'job-ico', extra: ['fa fa-tasks'] })"></i> <a data-bind="click: () => { $component.data().jobNameClick($data); }, text: $data.name" class="linkish"></a>
 							</td>
