@@ -103,8 +103,8 @@ define([
 							if (job.status() !== n.status) {
 								job.status(n.status);
 								job.viewed(false);
-								job.duration(duration);
-								job.endDate(displayedEndDate);
+								job.duration = duration;
+								job.endDate = displayedEndDate;
 								this.jobListing.valueHasMutated();
 							}
 						} else {
