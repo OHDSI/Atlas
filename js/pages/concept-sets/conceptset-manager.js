@@ -53,6 +53,7 @@ define([
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.conceptSetName = ko.observable("New Concept Set");
 			this.loading = ko.observable();
+			this.fade = ko.observable(true);
 			this.canEdit = this.model.canEditCurrentConceptSet;
 			this.canSave = ko.computed(() => {
 				return (
@@ -132,6 +133,11 @@ define([
 			if (mode !== undefined) {
 				this.selectedTab(this.getIndexByComponentName(mode));
 			}
+		}
+
+		dispose() {
+			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
+			this.isOptimizeModalShown(false);
 		}
 		
 		saveClick() {
