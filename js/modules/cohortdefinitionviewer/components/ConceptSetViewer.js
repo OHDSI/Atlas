@@ -1,18 +1,19 @@
 define([
 	'knockout',
 	'text!./ConceptSetViewerTemplate.html',
-	'providers/Component',
+	'utils/BemHelper',
 	'less!./ConceptSetViewer.less'
 ], function (
 	ko,
 	template,
-	Component
+	BemHelper
 ) {
 
-	class ConceptSetViewer extends Component {
+	class ConceptSetViewer {
 		constructor(params) {
-			super(params);
 			this.data = params.conceptSet.expression.items;
+			const bemHelper = new BemHelper("conceptset-viewer");
+			this.classes = bemHelper.run.bind(bemHelper);
 			this.columns = [
 				{
 					title: 'Concept Id',
