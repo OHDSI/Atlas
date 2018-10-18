@@ -149,7 +149,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
     };
 
     self.hasSelectedPriotirizableDaimons = function() {
-        const otherSources = sharedState.sources().filter(s => s.sourceId !== this.selectedSource().sourceId);
+        const otherSources = sharedState.sources().filter(s => s.sourceId !== self.selectedSource().sourceId);
         const otherPriotirizableDaimons = lodash.flatten(
             otherSources.map(s => s.daimons.filter(d => priotirizableDaimonTypes.includes(d.daimonType)))
         );
