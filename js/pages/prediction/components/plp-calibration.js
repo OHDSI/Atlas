@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./plp-calibration.html',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'd3',
 	'd3-slider',

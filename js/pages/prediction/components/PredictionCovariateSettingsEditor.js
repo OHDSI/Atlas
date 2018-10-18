@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./PredictionCovariateSettingsEditor.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'utils/DataTypeConverterUtils',
 	'../options',

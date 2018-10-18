@@ -2,10 +2,10 @@ define(function (require, exports) {
   console.warn('deprecated, moved to /providers/Vocabulary')
 	var $ = require('jquery');
 	var config = require('appConfig');
-	var sourceAPI = require('webapi/SourceAPI');
+	var sourceAPI = require('services/SourceAPI');
 	var sharedState = require('atlas-state');
 	var numeral = require('numeral');
-	var authAPI = require('webapi/AuthAPI');
+	var authAPI = require('services/AuthAPI');
 
 	var loadedPromise = $.Deferred();
 	loadedPromise.resolve();

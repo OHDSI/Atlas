@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./ComparisonEditor.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'../inputTypes/Cohort',
 	'../inputTypes/ConceptSet',

@@ -1,6 +1,6 @@
 define(
   (require, factory) => {
-    const { AuthorizedRoute } = require('providers/Route');
+    const { AuthorizedRoute } = require('pages/Route');
     function routes(appModel, router) {
       return {
         '/configure': new AuthorizedRoute(() => {

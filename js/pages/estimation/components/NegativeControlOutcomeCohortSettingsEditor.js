@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./NegativeControlOutcomeCohortSettingsEditor.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'../options',
 	'databindings',

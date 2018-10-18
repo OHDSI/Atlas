@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./included-conceptsets.html',
-	'providers/Component',
+	'components/Component',
   'utils/CommonUtils',
   'atlas-state',
 	'services/ConceptSet',

@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./conceptset-export.html',
-	'providers/Component',
-	'providers/AutoBind',
+	'components/Component',
+	'utils/AutoBind',
 	'utils/CommonUtils',
   'clipboard',
   '../../const',

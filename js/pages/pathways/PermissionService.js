@@ -1,5 +1,5 @@
 define([
-    'webapi/AuthAPI',
+    'services/AuthAPI',
 ], function (
 	AuthAPI,
 ) {

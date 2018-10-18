@@ -6,7 +6,7 @@ define([
     'utils/CommonUtils',
 	'utils/ChartUtils',
 	'pages/data-sources/classes/Report',
-	'providers/Component',
+	'components/Component',
 	'components/heading',
 	'components/charts/histogram',
 	'components/charts/donut',

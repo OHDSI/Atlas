@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./ConceptSetViewerTemplate.html',
-	'providers/Component',
+	'components/Component',
 	'less!./ConceptSetViewer.less'
 ], function (
 	ko,

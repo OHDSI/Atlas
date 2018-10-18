@@ -1,4 +1,4 @@
-define(['job/jobDetail', 'atlas-state', 'webapi/AuthAPI'], function (jobDetail, sharedState, authApi) {
+define(['services/job/jobDetail', 'atlas-state', 'services/AuthAPI'], function (jobDetail, sharedState, authApi) {
 	
 	function createJob(details) {
 		const job = new jobDetail(details);

@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./prediction-manager.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'services/file',
 	'assets/ohdsi.util',
