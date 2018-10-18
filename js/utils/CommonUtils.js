@@ -2,6 +2,7 @@ define((require, factory) => {
 	const ko = require('knockout');
 	const sharedState = require('atlas-state');
 	const Page = require('providers/Page');
+	const URI = require('urijs');
 
 	const build = function (name, viewModelClass, template) {
 		const component = {
@@ -157,6 +158,8 @@ define((require, factory) => {
 		}
 	}
 
+	const normalizeUrl = (...parts) => URI(parts.join('/')).normalizePathname().toString();
+
 	const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
 	const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
 
@@ -177,6 +180,7 @@ define((require, factory) => {
 		renderHierarchyLink,
 		createConceptSetItem,
 		syntaxHighlight,
-		getPathwaysUrl
+		getPathwaysUrl,
+		normalizeUrl
 	};
 });
