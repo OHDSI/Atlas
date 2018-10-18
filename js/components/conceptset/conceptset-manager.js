@@ -53,6 +53,7 @@ define(['knockout',
 		});
 		self.activeUtility = ko.observable("");
 		self.loading = ko.observable(false);
+		self.fade = ko.observable(true);
 		self.optimalConceptSet = ko.observable(null);
 		self.optimizerRemovedConceptSet = ko.observable(null);
 		self.optimizerSavingNew = ko.observable(false);
@@ -1002,6 +1003,11 @@ define(['knockout',
 		
 		self.copyIncludedConceptIdentifierListToClipboard = function() {
 			self.copyToClipboard('#btnCopyIncludedConceptIdentifierListClipboard', '#copyIncludedConceptIdentifierListMessage');
+		}
+
+		self.dispose = function () {
+			self.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
+			$('#modalConceptSetOptimize').modal('hide');
 		}
 	}
 
