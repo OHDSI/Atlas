@@ -1,4 +1,4 @@
-define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ], function (ko, view, crossfilter) {
+define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/http', 'appConfig', 'colvis'], function (ko, view, crossfilter, httpService, config) {
 
 	function facetedDatatable(params) {
 		var self = this;
@@ -105,26 +105,28 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			if (self.options && self.options.Facets) {
 				// Iterate over the facets and set the dimensions
 				$.each(self.options.Facets, function (i, facetConfig) {
-					var isArray = facetConfig.isArray || false;
-					var dimension = self.data().dimension(function (d) {
-						return self.facetDimensionHelper(facetConfig.binding(d));
-					}, isArray);
-					var facet = {
-						'caption': facetConfig.caption,
-						'binding': facetConfig.binding,
-						'dimension': dimension,
-						'facetItems': [],
-						'selectedItems': new Object(),
-					};
-					// Add a selected observable to each dimension
-					$.each(dimension.group().top(Number.POSITIVE_INFINITY), function (i, facetItem) {
-						facetItem.dimension = dimension;
-						facetItem.selected = ko.observable(false);
-						facetItem.facet = facet;
-						facet.facetItems.push(facetItem);
-					});
-					self.facets.push(facet);
-				});
+					httpService.doGet(config.webAPIRoot + "facets?facet=" + facetConfig.caption + '&entityName=' + self.options.entityName)
+						.then(({data}) => {
+							var isArray = facetConfig.isArray || false;
+							var dimension = data;
+							var facet = {
+								'caption': facetConfig.caption,
+								'binding': facetConfig.binding,
+								'dimension': dimension,
+								'facetItems': [],
+								'selectedItems': new Object(),
+							};
+							// Add a selected observable to each dimension
+							$.each(dimension, function (i, facetItem) {
+								facetItem.dimension = dimension;
+								facetItem.selected = ko.observable(false);
+								facetItem.facet = facet;
+								facet.facetItems.push(facetItem);
+							});
+							self.facets.push(facet);
+						})
+						.catch(() => {})
+			});
 				// Iterate over the facets and set any defaults
 				$.each(self.options.Facets, function (i, facetConfig) {
 					if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {

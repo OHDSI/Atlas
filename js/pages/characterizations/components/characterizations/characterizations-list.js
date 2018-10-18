@@ -66,6 +66,7 @@ define([
 
             ];
             this.gridOptions = {
+                entityName: 'cohort_characterization',
                 Facets: [
                     {
                         'caption': 'Created',
