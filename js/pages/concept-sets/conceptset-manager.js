@@ -345,6 +345,7 @@ define([
 			});
 			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, selectedConcepts);
 			this.optimizerSavingNew(false);
+			this.isOptimizeModalShown(false);
 		}
 
 		cancelSaveNewOptimizedConceptSet() {
