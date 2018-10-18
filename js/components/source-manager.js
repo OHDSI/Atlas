@@ -1,5 +1,5 @@
-define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'access-denied'],
-  function (ko, view, config, ohdsiUtil, sourceApi, roleApi, lodash) {
+define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'atlas-state', 'access-denied'],
+  function (ko, view, config, ohdsiUtil, sourceApi, roleApi, lodash, sharedState) {
 
   var defaultDaimons = {
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
@@ -7,6 +7,8 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
     Results: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Evidence: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
   };
+
+  const priotirizableDaimonTypes = ['Vocabulary', 'Results', 'CEM'];
 
   function Source(data) {
 
@@ -146,7 +148,24 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
       self.goToConfigure();
     };
 
+    self.hasSelectedPriotirizableDaimons = function() {
+        const otherSources = sharedState.sources().filter(s => s.sourceId !== this.selectedSource().sourceId);
+        const otherPriotirizableDaimons = lodash.flatten(
+            otherSources.map(s => s.daimons.filter(d => priotirizableDaimonTypes.includes(d.daimonType)))
+        );
+        const currenPriotirizableDaimons = self.selectedSource().daimons().filter(d => priotirizableDaimonTypes.includes(d.daimonType));
+        const notSelectedCurrentDaimons = currenPriotirizableDaimons.filter(currentDaimon => {
+            // Diamon of the type with higher priority exists
+            return  otherPriotirizableDaimons.find(otherDaimon => currentDaimon.daimonType === otherDaimon.daimonType && currentDaimon.priority < otherDaimon.priority);
+        });
+        return notSelectedCurrentDaimons.length !== currenPriotirizableDaimons.length;
+    };
+
     self.delete = function () {
+      if (self.hasSelectedPriotirizableDaimons()) {
+          alert('Some daimons of this source were given highest priority and are in use by application. Select new top-priority diamons to delete the source');
+          return;
+      }
       if (!confirm('Delete source? Warning: deletion can not be undone!')){
         return;
       }
