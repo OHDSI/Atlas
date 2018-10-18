@@ -34,14 +34,49 @@ define([
     userImportJob: config.webAPIRoot + 'user/import/job',
   };
 
+  const JobExecution = {
+    ONCE: 'ONCE',
+    HOURLY: 'HOURLY',
+    DAILY: 'DAILY',
+    WEEKLY: 'WEEKLY',
+    MONTHLY: 'MONTHLY',
+    YEARLY: 'YEARLY'
+  };
+
+  const JobStatuses = {
+    COMPLETED: "COMPLETED",
+    FAILED: "FAILED",
+    STARTED: "STARTED",
+    STARTING: "STARTING",
+    STOPPED: "STOPPED",
+    STOPPING: "STOPPING",
+    UNKNOWN: "UNKNOWN",
+  };
+
+  const JobStatusLabels = {
+    "COMPLETED": "Completed",
+    "FAILED": "Failed",
+    "STARTED": "Started",
+    "STARTING": "Starting",
+    "STOPPED": "Stopped",
+    "STOPPING": "Stopping",
+    "UNKNOWN": "Unknown",
+  };
+
   const JobExecutionOptions = [
-    {value: 'ONCE', label: 'Once'},
-		{value: 'HOURLY', label: 'Hourly'},
-    {value: 'DAILY', label: 'Daily'},
-    {value: 'WEEKLY', label: 'Weekly'},
-    {value: 'MONTHLY', label: 'Monthly'},
-    {value: 'YEARLY', label: 'Annually'},
+    {value: JobExecution.ONCE, label: 'Once'},
+		{value: JobExecution.HOURLY, label: 'Hourly'},
+    {value: JobExecution.DAILY, label: 'Daily'},
+    {value: JobExecution.WEEKLY, label: 'Weekly'},
+    {value: JobExecution.MONTHLY, label: 'Monthly'},
+    {value: JobExecution.YEARLY, label: 'Annually'},
   ];
+
+  const JobEndOptions = {
+    NEVER: 'never',
+    AFTER: 'after',
+    ON: 'on',
+  };
 
   return {
     WIZARD_STEPS,
@@ -49,7 +84,11 @@ define([
     IMPORT_STATUS,
     Api,
     AuthenticationProviders,
+    JobExecution,
     JobExecutionOptions,
+    JobEndOptions,
+    JobStatuses,
+    JobStatusLabels,
   };
 
 });

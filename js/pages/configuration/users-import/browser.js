@@ -9,6 +9,7 @@ define([
 		'utils/DatatableUtils',
 		'./services/JobService',
 		'./const',
+		'./utils',
 		'less!./browser.less',
 ], function(
 		ko,
@@ -21,6 +22,7 @@ define([
 		datatableUtils,
 		jobService,
 		Const,
+		Utils,
 ) {
 		class UserImportBrowser extends AutoBind(Component) {
 
@@ -46,6 +48,7 @@ define([
 						title: 'Enabled',
 						data: 'enabled',
 						className: this.classes('tbl-col', 'created'),
+						render: data => data ? 'Yes' : 'No',
 					},
 					{
 						title: 'Start date',
@@ -53,9 +56,24 @@ define([
 						type: 'date',
 						render: datatableUtils.getDateFieldFormatter('startDate'),
 					},
+					{
+						title: 'Execute',
+						data: 'frequency',
+						className: this.classes('tbl-col'),
+						render: Utils.ExecuteRender,
+					},
+					{
+						title: 'Ends',
+						className: this.classes('tbl-col'),
+						render: Utils.EndsRender,
+					}
 				];
 				this.gridOptions = {
 					Facets: [
+						{
+							caption: 'Provider',
+							'binding': (o) => o.providerType,
+						},
 						{
 							'caption': 'Start date',
 							'binding': (o) => datatableUtils.getFacetForDate(o.startDate)

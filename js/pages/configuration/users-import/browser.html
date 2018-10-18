@@ -19,10 +19,12 @@
 <div data-bind="if: config.userAuthenticationEnabled && canImport, css: classes('grid')">
     <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading User Import Job list...'"></loading>
 
-    <faceted-datatable params="{
-        order: [[0, 'asc']],
-        columns: $component.gridColumns,
-        options: $component.gridOptions,
-        reference: $component.data
-    }"></faceted-datatable>
+    <div data-bind="visible: !$component.loading()">
+        <faceted-datatable params="{
+            order: [[0, 'asc']],
+            columns: $component.gridColumns,
+            options: $component.gridOptions,
+            reference: $component.data
+        }"></faceted-datatable>
+    </div>
 </div>

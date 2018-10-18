@@ -38,11 +38,27 @@ define([
 			.then(res => res.data);
 	}
 
+	function mapRoleGroups(rolesList) {
+
+		return rolesList.map(item => ({
+			role: { id: item.id, role: item.role },
+			groups: item.groups,
+		}));
+	}
+
+	function getJobHistory(provider) {
+		return httpService
+			.doGet(consts.Api.userImportJob + `/${provider}/history`)
+			.then(res => res.data);
+	}
+
 	return {
 		listJobs,
 		getJob,
 		createJob,
 		updateJob,
 		deleteJob,
+		mapRoleGroups,
+		getJobHistory,
 	};
 });

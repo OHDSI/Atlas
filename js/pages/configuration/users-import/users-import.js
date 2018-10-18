@@ -4,13 +4,16 @@ define(['knockout',
 		'atlas-state',
 		'webapi/AuthAPI',
 		'services/User',
+		'providers/AutoBind',
 		'providers/Component',
 		'utils/CommonUtils',
 		'./components/renderers',
 		'./const',
+		'./services/JobService',
 		'./components/step-header',
 		'./components/ldap-groups',
 		'./components/atlas-roles',
+		'./components/role-group-mapping',
 		'components/ac-access-denied',
 		'less!./users-import.less',
 		'components/modal',
@@ -23,12 +26,15 @@ define(['knockout',
 		sharedState,
 		authApi, 
 		userService,
+		AutoBind,
 		Component,
 		commonUtils,
 		renderers,
-		Const) {
+		Const,
+		jobService,
+	) {
 
-		class UsersImport extends Component {
+		class UsersImport extends AutoBind(Component) {
 
 			get transitions() {
 				return {
@@ -99,32 +105,6 @@ define(['knockout',
 
 				this.isSearchGroupDialog = ko.observable();
 				this.isAtlasRolesDialog = ko.observable();
-				//bindings
-				this.init = this.init.bind(this);
-				this.getStep = this.getStep.bind(this);
-				this.nextStep = this.nextStep.bind(this);
-				this.prevStep = this.prevStep.bind(this);
-				this.onRolesRowClick = this.onRolesRowClick.bind(this);
-				this.onUsersRowClick = this.onUsersRowClick.bind(this);
-				this.closeGroupModal = this.closeGroupModal.bind(this);
-				this.closeRolesModal = this.closeRolesModal.bind(this);
-				this.setGroupMapping = this.setGroupMapping.bind(this);
-				this.findUsers = this.findUsers.bind(this);
-				this.renderGroups = this.renderGroups.bind(this);
-				this.renderRoles = this.renderRoles.bind(this);
-				this.renderCheckbox = this.renderCheckbox.bind(this);
-				this.checkAll = this.checkAll.bind(this);
-				this.uncheckAll = this.uncheckAll.bind(this);
-				this.toggleAll = this.toggleAll.bind(this);
-				this.isImportEnabled = this.isImportEnabled.bind(this);
-				this.startImport = this.startImport.bind(this);
-				this.setRoles = this.setRoles.bind(this);
-				this.saveMapping = this.saveMapping.bind(this);
-				this.loadMapping = this.loadMapping.bind(this);
-				this.testConnection = this.testConnection.bind(this);
-				this.testConnectionClick = this.testConnectionClick.bind(this);
-				this.showUsernameHelp = this.showUsernameHelp.bind(this);
-				this.showLoginHelp = this.showLoginHelp.bind(this);
 
 				this.init();
 			}
@@ -184,7 +164,7 @@ define(['knockout',
 					.map(u => ({
 							login: u.login, roles: u.roles(),
 					}));
-				userService.importUsers(users).finally(() => {
+				userService.importUsers(users, this.importProvider()).finally(() => {
 						this.loading(false);
 						userService.getUsers().then(data => this.model.users(data));
 				});
@@ -217,10 +197,7 @@ define(['knockout',
 				if (this.rolesMapping()) {
 					const mapping = {
 						provider: this.importProvider(),
-						roleGroups: this.rolesMapping().map(item => ({
-							role: { id: item.id, role: item.role },
-							groups: item.groups,
-						})),
+						roleGroups: jobService.mapRoleGroups(this.rolesMapping()),
 					};
 					userService.saveMapping(this.importProvider(), mapping);
 				}

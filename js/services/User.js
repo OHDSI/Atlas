@@ -8,6 +8,8 @@ define(function (require, exports) {
 
   const importRoot = config.webAPIRoot + 'user/import';
   const importProvider = provider => importRoot + '/' + provider;
+  const startImport = (provider, preserve) => importRoot + `?provider=${provider}`
+		+ (preserve ? `&preserve=${preserve}` : '');
 
   function getAuthenticationProviders() {
   	return httpService.doGet(config.webAPIRoot + 'user/providers');
@@ -21,8 +23,8 @@ define(function (require, exports) {
 	 	return httpService.doPost(importProvider(provider), ko.toJS(mapping));
 	}
 
-	function importUsers(users) {
-  	return httpService.doPost(importRoot, users);
+	function importUsers(users, provider, preserve) {
+  	return httpService.doPost(startImport(provider, preserve || true), users);
 	}
 
 	function saveMapping(provider, mapping) {

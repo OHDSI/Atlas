@@ -1,0 +1,44 @@
+<div data-bind="css: classes('button-group')">
+    <button data-bind="css: classes({extra: ['btn', 'btn-sm', 'btn-success']}), click: loadHistory">Refresh</button>
+</div>
+
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading User Import Job History...'"></loading>
+
+<table width="100%" cellspacing="0" data-bind="visible: !$component.loading(), dataTable:{
+                            data: jobHistory(),
+                            options: {
+                                        dom: 'lfiprt',
+                                        language: {
+                                            search : 'Filter:'
+                                        },
+                                        lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+                                        orderClasses: false,
+                                        deferRender: true,
+                                        autoWidth: false,
+                                        ordering: true,
+                                        order: [[ 4, 'desc' ]],
+                                        columns: [
+                                                { title: 'Status', data: 'status', render: utils.JobStatusRender },
+                                                { title: 'Provider', data: 'providerType', render: utils.ProviderRender },
+                                                { title: 'Title', data: 'jobTitle', },
+                                                { title: 'Author', data: 'author', },
+                                                { title: 'Started', type: 'date', render: datatableUtils.getDateFieldFormatter('startTime') },
+                                                { title: 'Finished', type: 'date', render: datatableUtils.getDateFieldFormatter('endTime') },
+                                                { title: 'Message', data: 'exitMessage', render: utils.ExitMessageRender },
+                                        ],
+                                        stripeClasses : [ 'roleItem' ],
+                                }
+                              }, css: classes({extra: ['stripe', 'compact', 'hover']})">
+</table>
+
+<script type="text/html" id="exit-message-template">
+<div data-bind="text: message"></div>
+</script>
+
+<atlas-modal params="
+    showModal: messageModal,
+    title: 'Job Exit Message',
+    template: 'exit-message-template',
+    data: { message },
+">
+</atlas-modal>
