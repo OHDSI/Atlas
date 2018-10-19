@@ -787,9 +787,8 @@ ul.ColVis_collection li {
   color: #c00;
 }
 
-.readonly {
-  background-color: #eee;
-  opacity: 1;
+.form-control.text-cursor {
+  cursor: text;
 }
 
 .form-control option {
@@ -2116,7 +2115,7 @@ div#wrapper_ohdsi a {
   color: #454D57;
   border: 1px solid #CBCED1;
   padding-left: 3px;
-  padding-right: 3px; 
+  padding-right: 3px;
   padding-bottom: 5px;
   padding-top: 5px;
   background-color: #F2F3F4;
