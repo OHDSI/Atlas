@@ -12,7 +12,7 @@ define([
 	class ConceptSetViewer extends Component {
 		constructor(params) {
 			super(params);
-			this.data = params.conceptSet.expression.items;
+			this.data = params.conceptSet? params.conceptSet.expression.items : null;
 			this.columns = [
 				{
 					title: 'Concept Id',
