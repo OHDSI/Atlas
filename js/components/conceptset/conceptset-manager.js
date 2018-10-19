@@ -708,6 +708,7 @@ define(['knockout',
 			})
 			self.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, selectedConcepts);
 			self.optimizerSavingNew(false);
+			$('#modalConceptSetOptimize').modal('hide');
 		}
 
 		self.cancelSaveNewOptimizedConceptSet = function () {
