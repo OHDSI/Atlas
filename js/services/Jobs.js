@@ -13,5 +13,9 @@ define(function (require, exports) {
     static get(id) {
 	    return httpService.doGet(constants.apiPaths.job(id));
     }
+
+    static getByName(name, type) {
+	    return httpService.doGet(constants.apiPaths.jobByName(name,  type));
+    }
   }
 });

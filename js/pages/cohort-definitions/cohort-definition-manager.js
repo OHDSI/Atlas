@@ -511,9 +511,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				// check if we can tell if the job to generate the reports is already running
 				if (this.model.currentCohortDefinition()) {
-					jobService.get(this.model.currentCohortDefinition())
+					var testName = "HERACLES_COHORT_" + this.model.currentCohortDefinition().id() + "_" + this.model.reportSourceKey();
+					jobService.getByName(testName, "cohortAnalysisJob")
 						.then(({data}) =>  {
-							if (data.status() == 'STARTED' || data.status() == 'STARTING' || data.status() == 'RUNNING') {
+							if (data.status && (data.status == 'STARTED' || data.status == 'STARTING' || data.status == 'RUNNING')) {
 								this.currentJob(data);
 								this.generateReportsEnabled(false);
 								return "generating_reports";
