@@ -13,6 +13,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'atlas-state',
 	'clipboard',
 	'd3',
+	'services/Jobs',
 	'job/jobDetail',
 	'services/JobDetailsService',
 	'pages/cohort-definitions/const',
@@ -53,6 +54,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	sharedState,
 	clipboard,
 	d3,
+	jobService,
 	jobDetail,
 	jobDetailsService,
 	cohortConst,
@@ -508,16 +510,15 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 
 				// check if we can tell if the job to generate the reports is already running
-					if (this.model.currentCohortDefinition()) {
-					var listing = sharedState.jobListing;
-						var tempJob = listing().find(this.isActiveJob)
-					if (tempJob) {
-						if (tempJob.status() == 'STARTED' || tempJob.status() == 'STARTING' || tempJob.status() == 'RUNNING') {
-								this.currentJob(tempJob);
+				if (this.model.currentCohortDefinition()) {
+					jobService.get(this.model.currentCohortDefinition())
+						.then(({data}) =>  {
+							if (data.status() == 'STARTED' || data.status() == 'STARTING' || data.status() == 'RUNNING') {
+								this.currentJob(data);
 								this.generateReportsEnabled(false);
-							return "generating_reports";
-						}
-					}
+								return "generating_reports";
+							}
+						});
 				}
 
 					if (this.reportingAvailableReports().length == 0) {

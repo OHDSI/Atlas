@@ -9,5 +9,9 @@ define(function (require, exports) {
       return httpService.doGet(constants.apiPaths.jobs())
 				.then(({ data: jobs } = { data: { content: [] } }) => jobs.content);
     }
+
+    static get(id) {
+	    return httpService.doGet(constants.apiPaths.job(id));
+    }
   }
 });
