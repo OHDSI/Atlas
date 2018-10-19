@@ -1,8 +1,7 @@
 define(function (require, exports) {
 	
 	var ko = require('knockout');
-	const commonUtils = require('utils/CommonUtils');
-	
+
 	var expressionViewer = require('./components/CohortExpressionViewer');
 	ko.components.register('cohort-expression-viewer', expressionViewer);
 	
@@ -76,7 +75,7 @@ define(function (require, exports) {
 	ko.components.register('conceptset-reference',conceptSetReference);
 	
 	var conceptSetViewer = require('./components/ConceptSetViewer');
-	commonUtils.build('conceptset-viewer', conceptSetViewer.viewModel, conceptSetViewer.template);
+	ko.components.register('conceptset-viewer', conceptSetViewer);
 
 	var endStrategyViewer = require('./components/EndStrategyViewer');
 	ko.components.register('end-strategy-viewer', endStrategyViewer);
