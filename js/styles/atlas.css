@@ -787,6 +787,11 @@ ul.ColVis_collection li {
   color: #c00;
 }
 
+.readonly {
+  background-color: #eee;
+  opacity: 1;
+}
+
 .form-control option {
   color: #000;
 }
