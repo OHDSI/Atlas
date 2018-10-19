@@ -512,6 +512,7 @@ define(
 							conceptPromise = httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
 							conceptPromise.then(({ data }) => {
 								// Update each concept set
+								let conceptsNotFound = 0;
 								this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
 									// Update each of the concept set items
 									currentConceptSet.expression.items().forEach((item) => {
@@ -521,10 +522,13 @@ define(
 										if (selectedConcept)
 											item.concept = selectedConcept;
 										else
-											console.error("Concept not found: " + item.concept.CONCEPT_ID + "," + item.concept.CONCEPT_NAME);
+											conceptsNotFound++;
 									});
 									currentConceptSet.expression.items.valueHasMutated();
 								});
+								if (conceptsNotFound > 0) {
+									console.error("Concepts not found: " + conceptsNotFound);
+								}
 								this.currentCohortDefinitionDirtyFlag().reset();
 							}
 						);
