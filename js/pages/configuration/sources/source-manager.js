@@ -10,6 +10,8 @@ define([
   'services/role',
   'lodash',
   'webapi/AuthAPI',
+  'atlas-state',
+  'pages/configuration/const',
   'components/ac-access-denied',
   'less!./source-manager.less',
   'components/heading',
@@ -25,7 +27,9 @@ define([
     sourceApi,
     roleService,
     lodash,
-    authApi
+    authApi,
+    sharedState,
+    constants
   ) {
 
   var defaultDaimons = {
@@ -282,7 +286,25 @@ define([
       this.goToConfigure();
     }
 
+    hasSelectedPriotirizableDaimons() {
+		const otherSources = sharedState.sources().filter(s => s.sourceId !== this.selectedSource().sourceId);
+		const otherPriotirizableDaimons = lodash.flatten(
+			otherSources.map(s => s.daimons.filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType)))
+		);
+		const currenPriotirizableDaimons = this.selectedSource().daimons().filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType));
+		const notSelectedCurrentDaimons = currenPriotirizableDaimons.filter(currentDaimon => {
+			// Diamon of the type with higher priority exists
+			return  otherPriotirizableDaimons.find(otherDaimon => currentDaimon.daimonType === otherDaimon.daimonType && currentDaimon.priority < otherDaimon.priority);
+		});
+		return notSelectedCurrentDaimons.length !== currenPriotirizableDaimons.length;
+    }
+
     delete() {
+      if (this.hasSelectedPriotirizableDaimons()) {
+        alert('Some daimons of this source were given highest priority and are in use by application. Select new top-priority diamons to delete the source');
+        return;
+      }
+
       if (!confirm('Delete source? Warning: deletion can not be undone!')) {
         return;
       }

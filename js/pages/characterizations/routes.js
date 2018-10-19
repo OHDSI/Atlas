@@ -37,9 +37,7 @@ define(
 				'cc/feature-analyses/:id:': new AuthorizedRoute((id) => {
 					appModel.activePage(this.title);
 					require(['./components/feature-analyses/feature-analysis-view-edit'], function () {
-						router.setCurrentView('feature-analysis-view-edit', {
-							id: ko.observable(id),
-						});
+						router.setCurrentView('feature-analysis-view-edit', { id });
 					});
 				}),
 			};

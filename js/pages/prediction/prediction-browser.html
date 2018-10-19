@@ -1,0 +1,12 @@
+<heading-title params="name: 'Patient Level Prediction', icon: 'heartbeat', theme: 'dark'"></heading-title>
+
+<div data-bind="if: canReadPredictions(), css: classes({ extra: 'paddedWrapper flexed' })">
+	<span data-bind="click: newPrediction, css: classes({
+		element: 'new-btn',
+		extra: `pull-right btn btn-sm btn-primary ${canCreatePrediction() ? '' : 'disabled'}`,
+	})">New Patient Level Prediction</span>
+
+	<faceted-datatable params="order: [[3, 'desc']], reference: reference, columns: columns, options: options, rowClick: rowClick"></faceted-datatable>
+	
+	<loading data-bind="visible: loading" params="status: 'retrieving information'"></loading>
+</div>

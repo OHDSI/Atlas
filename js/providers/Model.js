@@ -116,6 +116,9 @@ define(
 				this.currentCohortComparisonId = ko.observable();
 				this.currentCohortComparison = ko.observable();
 				this.currentCohortComparisonDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.currentCohortComparison()));
+				this.currentEstimationId = ko.observable();
+				this.currentEstimation = ko.observable();
+				this.currentEstimationDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.currentEstimation()));
 				this.selectedSourceId = ko.observable();
 				this.currentSource = ko.observable();
 				this.currentSourceDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.currentSource()))
@@ -279,6 +282,9 @@ define(
 						|| this.currentConceptSetDirtyFlag().isDirty()
 						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
 						|| this.currentCohortComparisonDirtyFlag().isDirty()
+						|| sharedState.CohortPathways.dirtyFlag().isDirty()
+						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
+						|| sharedState.predictionAnalysis.dirtyFlag().isDirty()
 					);
 				});
 	
@@ -523,17 +529,18 @@ define(
 								});
 							conceptPromise = httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
 							conceptPromise.then(({ data }) => {
+								var identifiersByConceptId = new Map();
+								data.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
 								// Update each concept set
 								this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
 									// Update each of the concept set items
 									currentConceptSet.expression.items().forEach((item) => {
-										var selectedConcept = data.find((d) => {
-											return d.CONCEPT_ID == item.concept.CONCEPT_ID
-										});
+										var selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
 										if (selectedConcept)
 											item.concept = selectedConcept;
-										else
-											console.error("Concept not found: " + item.concept.CONCEPT_ID + "," + item.concept.CONCEPT_NAME);
+										// TODO performance issues on big dataset
+										// else
+											// console.error("Concept not found: " + item.concept.CONCEPT_ID + "," + item.concept.CONCEPT_NAME);
 									});
 									currentConceptSet.expression.items.valueHasMutated();
 								});
@@ -560,6 +567,7 @@ define(
 									cdsi.sourceKey = cdmSources[s].sourceKey;
 									if (sourceInfo != null) {
 										cdsi.isValid = ko.observable(sourceInfo.isValid);
+										cdsi.isCanceled = ko.observable(sourceInfo.isCanceled);
 										cdsi.sourceId = sourceInfo.id.sourceId;
 										cdsi.status = ko.observable(sourceInfo.status);
 										var date = new Date(sourceInfo.startTime);
@@ -573,11 +581,16 @@ define(
 										} else {
 											cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
 										}
-										cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
+										if (sourceInfo.recordCount) {
+											cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
+										} else {
+											cdsi.recordCount = ko.observable('...');
+										}
 										cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
 										cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 									} else {
 										cdsi.isValid = ko.observable(false);
+										cdsi.isCanceled = ko.observable(false);
 										cdsi.status = ko.observable('n/a');
 										cdsi.startTime = ko.observable('n/a');
 										cdsi.executionDuration = ko.observable('n/a');

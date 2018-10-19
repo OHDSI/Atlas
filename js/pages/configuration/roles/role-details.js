@@ -203,28 +203,32 @@ define([
         }
 
         async saveUsers() {
-            const currentRoleUserIds = this.userItems()
-                .filter(user => user.isRoleUser());
+            if (this.canEditRoleUsers()){
+                const currentRoleUserIds = this.userItems()
+                    .filter(user => user.isRoleUser())
+                    .map(u => u.id);
+                var userIdsToAdd = _.difference(currentRoleUserIds, this.roleUserIds);
+                var userIdsToRemove = _.difference(this.roleUserIds, currentRoleUserIds);
+                this.roleUserIds = currentRoleUserIds;
 
-            var userIdsToAdd = _.difference(currentRoleUserIds, this.roleUserIds).map(u => u.id);
-            var userIdsToRemove = _.difference(this.roleUserIds, currentRoleUserIds).map(u => u.id);
-            this.roleUserIds = currentRoleUserIds;
-            
-            await this.addRelations(userIdsToAdd, 'users');
-            await this.removeRelations(userIdsToRemove, 'users');            
+                await this.addRelations(userIdsToAdd, 'users');
+                await this.removeRelations(userIdsToRemove, 'users');
+            }
         }
 
         async savePermissions() {
-            var currentRolePermissionIds = this.permissionItems()
-                .filter(permission => permission.isRolePermission());
+            if (this.canEditRolePermissions()){
+                var currentRolePermissionIds = this.permissionItems()
+                    .filter(permission => permission.isRolePermission())
+                    .map(u => u.id);
 
-            var permissionIdsToAdd = _.difference(currentRolePermissionIds, this.rolePermissionIds).map(u => u.id);
-            var permissionIdsToRemove = _.difference(this.rolePermissionIds, currentRolePermissionIds).map(u => u.id);
-            this.rolePermissionIds = currentRolePermissionIds;
+                var permissionIdsToAdd = _.difference(currentRolePermissionIds, this.rolePermissionIds);
+                var permissionIdsToRemove = _.difference(this.rolePermissionIds, currentRolePermissionIds);
+                this.rolePermissionIds = currentRolePermissionIds;
 
-            await this.addRelations(permissionIdsToAdd, 'permissions');
-            await this.removeRelations(permissionIdsToRemove, 'permissions');
-            
+                await this.addRelations(permissionIdsToAdd, 'permissions');
+                await this.removeRelations(permissionIdsToRemove, 'permissions');
+            }
         }
 
         async saveRole() {
@@ -248,7 +252,7 @@ define([
         }
 
         async save() {
-            if (!this.roleName) {
+            if (!this.roleName()) {
                 alert("Please, specify Role name");
                 return;
             }
@@ -287,6 +291,7 @@ define([
             }
             this.model.roles(roles);
 
+            await authApi.loadUserInfo();
             await this.saveUsers();
             await this.savePermissions();
             this.roleDirtyFlag.reset();

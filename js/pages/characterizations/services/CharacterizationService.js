@@ -7,7 +7,7 @@ define([
 ) {
     function loadCharacterizationList() {
         return httpService
-            .doGet(config.webAPIRoot + 'cohort-characterization')
+            .doGet(config.webAPIRoot + 'cohort-characterization?size=10000')
             .then(res => res.data);
     }
 

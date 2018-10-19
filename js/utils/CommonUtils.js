@@ -124,7 +124,7 @@ define((require, factory) => {
 
 	const syntaxHighlight = function (json) {
 		if (typeof json != 'string') {
-			json = JSON.stringify(json, undefined, 2);
+			json = ko.toJSON(json, undefined, 2);
 		}
 		json = json.replace(/&/g, '&amp;')
 			.replace(/</g, '&lt;')
@@ -145,11 +145,26 @@ define((require, factory) => {
 			return '<span class="' + cls + '">' + match + '</span>';
 		});
 	}
-	
+
 	const getPathwaysUrl = (id, section) => `/pathways/${id}/${section}`;
+
+	async function confirmAndDelete({ loading, remove, redirect }) {
+		if (confirm('Are you sure?')) {
+			loading(true);
+			await remove()
+			loading(false);
+			redirect();
+		}
+	}
+
+	const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
+	const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
+
 
 	return {
 		build,
+		confirmAndDelete,
+		cartesian,
 		routeTo,
 		hasRelationship,
 		contextSensitiveLinkColor,

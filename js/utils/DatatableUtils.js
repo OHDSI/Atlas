@@ -3,7 +3,7 @@ define(
 
         const momentApi = require('webapi/MomentAPI');
 
-        getLinkFormatter = (builder) => (s, p, d) => {
+        const getLinkFormatter = (builder) => (s, p, d) => {
             const {
                 link,
                 label
@@ -11,11 +11,11 @@ define(
             return `<a ${link ? ('href="' + link + '"') : ''}>${label}</a>`;
         };
 
-        getDateFieldFormatter = (field = 'createdAt') => (s, p, d) => {
+        const getDateFieldFormatter = (field = 'createdAt') => (s, p, d) => {
             return momentApi.formatDateTimeUTC(d[field]);
         };
 
-        getFacetForDate = function(date) {
+        const getFacetForDate = function(date) {
             const daysSinceCreated = (new Date().getTime() - new Date(date).getTime()) / 1000 / 60 / 60 / 24;
             if (daysSinceCreated < .01) {
                 return 'Just Now';
@@ -30,10 +30,21 @@ define(
             }
         };
 
+        const getCreatedByLogin = (d) => d.hasOwnProperty('createdBy') && d.createdBy !== null ? d.createdBy.login : 'anonymous';
+
+        const getCreatedByFormatter = () => (s, p, d) => getCreatedByLogin(d);
+
+        const getFacetForCreatedBy = getCreatedByLogin;
+
+        const renderCountColumn = (value) => value ? value : '...';
+
         return {
             getDateFieldFormatter,
             getFacetForDate,
             getLinkFormatter,
+            getCreatedByFormatter,
+            getFacetForCreatedBy,
+            renderCountColumn,
         };
     }
 );

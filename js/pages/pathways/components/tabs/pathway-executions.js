@@ -12,8 +12,8 @@ define([
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
 	'services/Source',
-	'less!./pathway-executions.less',
-	//'./pathway-results'
+	'lodash',
+	'less!./pathway-executions.less'
 ], function(
 	ko,
 	PathwayService,
@@ -27,7 +27,8 @@ define([
 	AutoBind,
 	commonUtils,
 	datatableUtils,
-	SourceService
+	SourceService,
+	lodash
 ) {
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -125,10 +126,12 @@ define([
 				allSources,
 				executionList
 			]) => {
-				const sourceList = allSources.filter(source => {
+				let sourceList = allSources.filter(source => {
 					return (source.daimons.filter(function (daimon) { return daimon.daimonType == "CDM"; }).length > 0
 							&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0)
-				});				
+				});
+				
+				sourceList = lodash.sortBy(sourceList, ["sourceName"]);
 				
 				sourceList.forEach(s => {
 					let group = this.executionGroups().find(g => g.sourceKey == s.sourceKey);

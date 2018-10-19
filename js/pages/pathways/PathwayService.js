@@ -9,7 +9,7 @@ define([
 
 	function list() {
 		return httpService
-			.doGet(servicePath)
+			.doGet(servicePath + '?size=10000')
 			.then(res => res.data);
 	}
 
