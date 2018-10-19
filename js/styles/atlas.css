@@ -762,7 +762,7 @@ ul.ColVis_collection li {
 }
 
 /*#wrapperLeftMenu i.fa {
-   line-height: 7px; 
+   line-height: 7px;
 }*/
 
 #wrapperReportMenu {
@@ -784,6 +784,11 @@ ul.ColVis_collection li {
   margin-bottom: 3px;
   font-size: 12px;
   color: #000;
+}
+
+.readonly {
+  background-color: #eee;
+  opacity: 1;
 }
 
 .form-control.invalid {
