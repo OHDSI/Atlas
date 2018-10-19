@@ -451,7 +451,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			
 			this.cohortDefinitionLink = ko.computed(() => {
 				if (this.model.currentCohortDefinition()) {
-					return this.config.api.url + "/cohortdefinition/" + this.model.currentCohortDefinition().id();
+					return this.config.api.url + "cohortdefinition/" + this.model.currentCohortDefinition().id();
 				}
 			});
 			
