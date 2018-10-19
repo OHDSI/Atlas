@@ -1038,6 +1038,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 									error: authApi.handleAccessDenied,
 									success: function (data) {
 										// Update each concept set
+										let conceptsNotFound = 0;
 										for (var i = 0; i < self.currentCohortDefinition()
 											.expression()
 											.ConceptSets()
@@ -1055,9 +1056,12 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 												if (selectedConcept.length == 1)
 													currentConceptSet.expression.items()[j].concept = selectedConcept[0];
 												else
-													console.error("Concept not found: " + currentConceptSet.expression.items()[j].concept.CONCEPT_ID + "," + currentConceptSet.expression.items()[j].concept.CONCEPT_NAME);
+													conceptsNotFound++;
 											}
 											currentConceptSet.expression.items.valueHasMutated();
+										}
+										if (conceptsNotFound > 0) {
+											console.error("Concepts not found: " + conceptsNotFound);
 										}
 										self.currentCohortDefinitionDirtyFlag()
 											.reset();
