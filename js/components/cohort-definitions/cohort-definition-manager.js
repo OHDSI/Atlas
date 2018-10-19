@@ -803,7 +803,7 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 		self.cohortDefinitionLink = ko.computed(() => {
 			if (self.model.currentCohortDefinition()) {
-				return self.config.api.url + "/cohortdefinition/" + self.model.currentCohortDefinition().id();
+				return self.config.api.url + "cohortdefinition/" + self.model.currentCohortDefinition().id();
 			}
 		});
 
