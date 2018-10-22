@@ -3,7 +3,7 @@ define(
     'pages',
     'pages/vocabulary/index', // for not found route
     'querystring',
-    'webapi/AuthAPI',
+    'services/AuthAPI',
     'director',
 	],
 	(

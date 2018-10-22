@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./vocabulary.html',
-	'providers/Page',
+	'pages/Page',
 	'./components/search',
 	'./components/import',
 	'utils/CommonUtils',

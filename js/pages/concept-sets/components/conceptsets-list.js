@@ -1,10 +1,10 @@
 define([
 	'knockout',
 	'text!./conceptsets-list.html',
-	'providers/Component',
-	'providers/AutoBind',
+	'components/Component',
+	'utils/AutoBind',
 	'utils/CommonUtils',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 	'../const',
   'components/tabs',
   'circe'

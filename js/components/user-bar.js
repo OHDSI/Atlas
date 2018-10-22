@@ -3,9 +3,9 @@ define([
 	'text!./user-bar.html',
 	'appConfig',
 	'atlas-state',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 	'less!./user-bar.less'
 ], function (
 	ko,

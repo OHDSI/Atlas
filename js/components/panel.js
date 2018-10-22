@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./panel.html',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'less!./panel.less',
 ], function (

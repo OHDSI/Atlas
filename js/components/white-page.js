@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./white-page.html',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'unauthenticated',
 	'less!./white-page.less',

@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'text!./modal.html',
 	'less!./modal.less',

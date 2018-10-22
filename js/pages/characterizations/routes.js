@@ -4,7 +4,7 @@ define(
 		const ko = require('knockout');
 		const {
 			AuthorizedRoute
-		} = require('providers/Route');
+		} = require('pages/Route');
 		require('./components/characterizations/characterization-view-edit');
 
 		function routes(appModel, router) {

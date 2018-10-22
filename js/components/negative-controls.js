@@ -1,13 +1,13 @@
 define(['knockout',
 	'text!./negative-controls.html',
 	'appConfig',
-	'webapi/EvidenceAPI',
-	'webapi/CDMResultsAPI',
+	'services/EvidenceAPI',
+	'services/CDMResultsAPI',
 	'services/ConceptSet',
 	'atlas-state',
-	'job/jobDetail',
-  'webapi/MomentAPI',
-	'webapi/AuthAPI',
+	'services/job/jobDetail',
+  'services/MomentAPI',
+	'services/AuthAPI',
 	'assets/ohdsi.util',
 	'databindings'
 ], function (
