@@ -470,6 +470,20 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportingAvailableReports.removeAll();
 			});
 
+			let pollHeraclesStatus = null;
+			this.model.reportSourceKey.subscribe(source => {
+				const cd = this.model.currentCohortDefinition();
+				if ((!cd || !cd.id() || !source) && pollHeraclesStatus) {
+					clearInterval(pollHeraclesStatus);
+				} else if (source) {
+					if (pollHeraclesStatus) {
+						clearInterval(pollHeraclesStatus);
+					}
+					this.queryHeraclesJob(cd, source);
+					pollHeraclesStatus = setInterval(() => this.queryHeraclesJob(cd, source), 3000);
+				}
+			});
+
 			this.reportingState = ko.computed(() => {
 				// require a data source selection
 					if (this.model.reportSourceKey() == undefined) {
@@ -510,16 +524,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 
 				// check if we can tell if the job to generate the reports is already running
-				if (this.model.currentCohortDefinition()) {
-					var testName = "HERACLES_COHORT_" + this.model.currentCohortDefinition().id() + "_" + this.model.reportSourceKey();
-					jobService.getByName(testName, "cohortAnalysisJob")
-						.then(({data}) =>  {
-							if (data.status && (data.status == 'STARTED' || data.status == 'STARTING' || data.status == 'RUNNING')) {
-								this.currentJob(data);
-								this.generateReportsEnabled(false);
-								return "generating_reports";
-							}
-						});
+				if (this.model.currentCohortDefinition() && this.currentJob()) {
+					if (this.currentJob().status && (this.currentJob().status == 'STARTED' || this.currentJob().status == 'STARTING' || this.currentJob().status == 'RUNNING')) {
+						this.generateReportsEnabled(false);
+						return "generating_reports";
+					}
 				}
 
 					if (this.reportingAvailableReports().length == 0) {
@@ -603,6 +612,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 			// METHODS
+
+		queryHeraclesJob(cd, source) {
+			const testName = "HERACLES_COHORT_" + cd.id() + "_" + source;
+			jobService.getByName(testName, "cohortAnalysisJob")
+				.then(({data}) => data.jobParameters ? this.currentJob({ ...data, name: data.jobParameters.jobName }) : this.currentJob(null));
+		}
 
 			delete () {
 				if (!confirm("Delete cohort definition? Warning: deletion can not be undone!"))
@@ -1017,11 +1032,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			calculateProgress (j) {
 				return j.progress() + '%';
-			}
-
-			isActiveJob (j) {
-				var testName = "HERACLES_COHORT_" + this.model.currentCohortDefinition().id() + "_" + this.model.reportSourceKey();
-				return j.name == testName && j.status() != 'FAILED' && j.status() != 'COMPLETED';
 			}
 
 			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {
