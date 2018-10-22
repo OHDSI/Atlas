@@ -474,7 +474,7 @@ define(['knockout',
 					self.conceptSetValidText("Your saved concepts come from multiple Domains (Condition, Drug). The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
 				}
 			} else {
-				self.conceptSetValidText("You must define a concept set with drugs found in the RxNorm vocbulary at the Ingredient class level OR Conditions from SNOMED. The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
+				self.conceptSetValidText("You must define a concept set with drugs found in the RxNorm vocabulary at the Ingredient class level OR Conditions from SNOMED. The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
 			}
 			self.conceptSetValid(conceptSetValid);
 			self.conceptDomainId(conceptDomainId);
