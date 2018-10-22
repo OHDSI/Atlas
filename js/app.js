@@ -1039,27 +1039,19 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 									success: function (data) {
 										// Update each concept set
 										let conceptsNotFound = 0;
-										for (var i = 0; i < self.currentCohortDefinition()
-											.expression()
-											.ConceptSets()
-											.length; i++) {
+										const identifiersByConceptId = new Map();
+										data.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
+										self.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
 											// Update each of the concept set items
-											var currentConceptSet = self.currentCohortDefinition()
-												.expression()
-												.ConceptSets()[i];
-											for (var j = 0; j < currentConceptSet.expression.items()
-												.length; j++) {
-												var selectedConcept = $(data)
-													.filter(function (item) {
-														return this.CONCEPT_ID == currentConceptSet.expression.items()[j].concept.CONCEPT_ID
-													});
-												if (selectedConcept.length == 1)
-													currentConceptSet.expression.items()[j].concept = selectedConcept[0];
+											currentConceptSet.expression.items().forEach((item) => {
+												var selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
+												if (selectedConcept)
+													item.concept = selectedConcept;
 												else
 													conceptsNotFound++;
-											}
+											});
 											currentConceptSet.expression.items.valueHasMutated();
-										}
+										});
 										if (conceptsNotFound > 0) {
 											console.error("Concepts not found: " + conceptsNotFound);
 										}
