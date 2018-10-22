@@ -825,6 +825,10 @@ ul.ColVis_collection li {
   color: #000;
 }
 
+.form-control.text-cursor {
+  cursor: text;
+}
+
 .form-control.invalid {
   color: #c00;
 }
