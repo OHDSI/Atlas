@@ -1,10 +1,11 @@
 {
   "name": "atlas",
-  "version": "2.4.3",
+  "version": "2.5.2",
   "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
   "main": "js/main.js",
   "scripts": {
-    "build": "rimraf ./js/assets/bundle && npm run bundle",
+    "build": "npm i && npm run clean && npm run bundle",
+    "clean": "rimraf ./js/assets/bundle && rimraf ./js/assets/fonts && rimraf ./js/assets/images",
     "bundle": "node ./build/index.js"
   },
   "repository": {
