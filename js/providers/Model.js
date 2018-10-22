@@ -513,12 +513,12 @@ define(
 							conceptPromise.then(({ data }) => {
 								// Update each concept set
 								let conceptsNotFound = 0;
+								const identifiersByConceptId = new Map();
+								data.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
 								this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
 									// Update each of the concept set items
 									currentConceptSet.expression.items().forEach((item) => {
-										var selectedConcept = data.find((d) => {
-											return d.CONCEPT_ID == item.concept.CONCEPT_ID
-										});
+										var selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
 										if (selectedConcept)
 											item.concept = selectedConcept;
 										else
