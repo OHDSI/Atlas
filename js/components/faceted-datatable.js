@@ -104,28 +104,36 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/ht
 			self.facets.removeAll();
 			if (self.options && self.options.Facets) {
 				// Iterate over the facets and set the dimensions
-				$.each(self.options.Facets, function (i, facetConfig) {
+				self.options.Facets.forEach(facetConfig => {
 					httpService.doGet(config.webAPIRoot + "facets?facet=" + facetConfig.caption + '&entityName=' + self.options.entityName)
 						.then(({data}) => {
 							var isArray = facetConfig.isArray || false;
-							var dimension = data;
+							var dimension = data.map((d) => {
+								let text = self.facetDimensionHelper(facetConfig.binding(d.key));
+								return {key: text, value: d.value};
+							}, isArray);
 							var facet = {
 								'caption': facetConfig.caption,
 								'binding': facetConfig.binding,
 								'dimension': dimension,
 								'facetItems': [],
-								'selectedItems': new Object(),
+								'selectedItems': {},
 							};
 							// Add a selected observable to each dimension
-							$.each(dimension, function (i, facetItem) {
-								facetItem.dimension = dimension;
-								facetItem.selected = ko.observable(false);
-								facetItem.facet = facet;
-								facet.facetItems.push(facetItem);
-							});
+							dimension.forEach((d) =>
+								facet.facetItems.push({
+									key: d.key,
+									value: d.value,
+									dimension: dimension,
+									selected: ko.observable(false),
+									facet: facet
+								})
+							);
 							self.facets.push(facet);
 						})
-						.catch(() => {})
+						.catch((e) => {
+							console.log(e);
+						})
 			});
 				// Iterate over the facets and set any defaults
 				$.each(self.options.Facets, function (i, facetConfig) {
