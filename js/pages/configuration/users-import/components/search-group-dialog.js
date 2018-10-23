@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./search-group-dialog.html',
-	'providers/AutoBind',
-	'providers/Component',
+	'utils/AutoBind',
+	'components/Component',
 	'utils/CommonUtils',
 	'components/modal',
 	'./ldap-groups',

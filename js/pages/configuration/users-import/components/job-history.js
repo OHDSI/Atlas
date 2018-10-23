@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./job-history.html',
-	'providers/AutoBind',
-	'providers/Component',
+	'utils/AutoBind',
+	'components/Component',
 	'utils/CommonUtils',
 	'../services/JobService',
 	'utils/DatatableUtils',

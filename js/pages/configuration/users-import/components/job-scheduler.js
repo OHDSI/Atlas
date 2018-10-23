@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./job-scheduler.html',
-	'providers/AutoBind',
-	'providers/Component',
+	'utils/AutoBind',
+	'components/Component',
 	'utils/CommonUtils',
 	'../const',
 	'./weekdays',

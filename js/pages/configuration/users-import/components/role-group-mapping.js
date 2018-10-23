@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./role-group-mapping.html',
-	'providers/AutoBind',
-	'providers/Component',
+	'utils/AutoBind',
+	'components/Component',
 	'utils/CommonUtils',
 	'./search-group-dialog',
 ], function(

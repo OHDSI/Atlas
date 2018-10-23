@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./weekdays.html',
-	'providers/AutoBind',
-	'providers/Component',
+	'utils/AutoBind',
+	'components/Component',
 	'utils/CommonUtils',
 	'./const',
 	'less!./weekdays.less',

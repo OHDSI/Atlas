@@ -4,7 +4,7 @@ define([
 	Const,
 ){
 
-	const momentApi = require('webapi/MomentAPI');
+	const momentApi = require('services/MomentAPI');
 
 	const ExecuteRender = (data) => {
 		const result = Const.JobExecutionOptions.find(op => op.value === data);
