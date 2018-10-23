@@ -2,7 +2,7 @@ define([
 	'knockout',
   'pages/data-sources/const',
   'services/http',
-  'providers/Component',
+  'components/Component',
 ], function (
 	ko,
   constants,

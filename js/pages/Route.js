@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 ], function (
 	ko,
 	appConfig,

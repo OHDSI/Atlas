@@ -9,7 +9,7 @@ const settingsObject = {
   },    
   packages: [{
       name: "databindings",
-      location: "modules/databindings"
+      location: "extensions/bindings"
     },
     {
       name: "cohortdefinitionviewer",
@@ -17,7 +17,7 @@ const settingsObject = {
     },
     {
       name: "circe",
-      location: "modules/circe"
+      location: "components/circe"
     },
     {
       name: "cyclops",
@@ -34,14 +34,6 @@ const settingsObject = {
     {
       name: "featureextraction",
       location: "components/featureextraction"
-    },
-    {
-      name: "job",
-      location: "modules/job"
-    },
-    {
-      name: "plp",
-      location: "modules/plp"
     },
     {
       name: "pages",
@@ -82,9 +74,9 @@ const settingsObject = {
     "jquery": "https://code.jquery.com/jquery-1.11.2.min",
     "jquery-ui": "https://code.jquery.com/ui/1.11.4/jquery-ui.min",
     "bootstrap": "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min",
-    "text": "plugins/text",
-    "less": "plugins/less",
-    "optional": "plugins/optional",
+    "text": "extensions/plugins/text",
+    "less": "extensions/plugins/less",
+    "optional": "extensions/plugins/optional",
     "clipboard": "assets/clipboard.min",
     "knockout": "assets/knockout.min",
     "ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",

@@ -1,13 +1,13 @@
 define([
 	'knockout',
 	'text!./job-manager.html',
-	'providers/Page',
-	'providers/AutoBind',
+	'pages/Page',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'services/Jobs',
 	'appConfig',
-	'webapi/MomentAPI',
-	'webapi/AuthAPI',
+	'services/MomentAPI',
+	'services/AuthAPI',
 	'databindings',
 	'components/ac-access-denied',
 	'components/heading',
@@ -54,10 +54,12 @@ define([
 			this.model.jobs(jobs.map((job) => {
 				const startDate = new Date(job.startDate);
 				job.startDate = momentApi.formatDateTime(startDate);
-
-				const endDate = new Date(job.endDate);
-				job.endDate = momentApi.formatDateTime(endDate);
-
+				if (job.endDate > startDate){
+					const endDate = new Date(job.endDate);
+					job.endDate = momentApi.formatDateTime(endDate);
+				} else {
+					job.endDate = '-';
+				}
 				if (job.jobParameters.jobName == undefined) {
 					job.jobParameters.jobName = 'n/a';
 				}

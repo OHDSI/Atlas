@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'text!./modal.html',
 	'less!./modal.less',
@@ -20,12 +20,14 @@ define([
 				template,
 				data,
 				backdropClosable = true,
+				fade = ko.observable(true),
 			} = params;
 
 			this.showModal = showModal;
 			this.title = title;
 			this.template = template;
 			this.data = data;
+			this.fade = fade;
 			this.backdropClosable = backdropClosable;
 		}
 	}

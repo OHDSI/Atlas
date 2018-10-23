@@ -1,12 +1,12 @@
 define(
   [
     'knockout',
-    'providers/Component',
+    'components/Component',
     'appConfig',
     'components/visualizations/filter-panel/utils',
     'moment',
     'd3',
-    'webapi/MomentAPI',
+    'services/MomentAPI',
     'utils/CsvUtils',
     'numeral',
     'services/CohortResults',

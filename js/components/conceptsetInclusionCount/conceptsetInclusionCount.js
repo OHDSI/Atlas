@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./conceptsetInclusionCount.html',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'services/ConceptSet',
 ], function(

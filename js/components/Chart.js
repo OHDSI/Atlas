@@ -1,6 +1,6 @@
 define([
   'knockout',
-  'providers/Component',
+  'components/Component',
   'const',
   'components/empty-state',
 ], function (

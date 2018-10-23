@@ -1,15 +1,15 @@
 define([
 	'jquery',
 	'knockout',
-	'providers/Component',
-	'providers/AutoBind',
+	'components/Component',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'text!./plp-spec-editor.html',
 	'services/CohortDefinition',
 	'plp/PatientLevelPredictionAnalysis',
 	'plp/options',
 	'components/cohortbuilder/CohortExpression',
-	'providers/Vocabulary',
+	'services/Vocabulary',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 ],
 	function (

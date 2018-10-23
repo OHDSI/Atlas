@@ -1,7 +1,7 @@
 define(
   (require, factory) => {
     function routes(appModel, router) {
-      const { AuthorizedRoute } = require('providers/Route');
+      const { AuthorizedRoute } = require('pages/Route');
       const atlasState = require('atlas-state');		
       return {        
         '/plp': new AuthorizedRoute(() => {

@@ -1,7 +1,7 @@
 define([
     'knockout',
     'text!./pathway-exec-wrapper.html',
-    'providers/Component',
+    'components/Component',
     'utils/CommonUtils',
     './pathway-executions',
     './pathway-results',

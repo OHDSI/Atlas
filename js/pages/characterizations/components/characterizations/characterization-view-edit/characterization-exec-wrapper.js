@@ -1,7 +1,7 @@
 define([
     'knockout',
     'text!./characterization-exec-wrapper.html',
-    'providers/Component',
+    'components/Component',
     'utils/CommonUtils',
     './characterization-executions',
     './characterization-results',

@@ -5,10 +5,10 @@ define([
 	'd3-tip',
 	'lodash',
 	'd3-selection',
-	'webapi/MomentAPI',
-	'webapi/AuthAPI',
+	'services/MomentAPI',
+	'services/AuthAPI',
 	'appConfig',
-	'D3-Labeler/labeler',
+	'extensions/d3-labeler',
 ], function (
 	ko,
 	d3,

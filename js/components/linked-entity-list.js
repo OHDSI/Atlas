@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'text!./linked-entity-list.html',
 	'components/cohort-definition-browser',

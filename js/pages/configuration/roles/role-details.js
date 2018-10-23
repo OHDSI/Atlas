@@ -1,14 +1,14 @@
 define([
     'knockout',
     'text!./role-details.html',
-    'providers/Component',
-    'providers/AutoBind',
+    'components/Component',
+    'utils/AutoBind',
     'utils/CommonUtils',
     'services/role',
     'lodash',
     'assets/ohdsi.util',
     'services/User',
-    'webapi/AuthAPI',
+    'services/AuthAPI',
     'databindings',
     'components/ac-access-denied',
     'less!./role-details.less',
@@ -291,6 +291,7 @@ define([
             }
             this.model.roles(roles);
 
+            await authApi.loadUserInfo();
             await this.saveUsers();
             await this.savePermissions();
             this.roleDirtyFlag.reset();

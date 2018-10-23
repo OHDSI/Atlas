@@ -2,24 +2,25 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'appConfig',
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinition',
-	'webapi/MomentAPI',
+	'services/MomentAPI',
 	'services/ConceptSet',
 	'components/conceptset/utils',
+	'utils/DatatableUtils',
 	'components/cohortbuilder/CohortExpression',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'services/CohortReporting',
-	'vocabularyprovider',
+	'services/VocabularyProvider',
 	'atlas-state',
 	'clipboard',
 	'd3',
-	'job/jobDetail',
+	'services/job/jobDetail',
 	'pages/cohort-definitions/const',
 	'services/ConceptSet',
-	'providers/Page',
-	'providers/AutoBind',
+	'pages/Page',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -44,6 +45,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	momentApi,
 	conceptSetService,
 	conceptSetUitls,
+	datatableUtils,
 	CohortExpression,
 	ConceptSet,
 	cohortReportingService,
@@ -173,6 +175,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return this.isAuthenticated() && this.authApi.isPermittedReadCohortReport(this.model.currentCohortDefinition().id(), sourceKey);
 			}
 			if (!this.hasAccess()) return;
+
+			this.renderCountColumn = datatableUtils.renderCountColumn;
 
 			this.generatedSql = {};
 			this.generatedSql.mssql = ko.observable('');
@@ -455,7 +459,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			
 			this.cohortDefinitionLink = ko.computed(() => {
 				if (this.model.currentCohortDefinition()) {
-					return this.config.api.url + "/cohortdefinition/" + this.model.currentCohortDefinition().id();
+					return commonUtils.normalizeUrl(this.config.api.url, "cohortdefinition", this.model.currentCohortDefinition().id());
 				}
 			});
 			
@@ -1038,8 +1042,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			getStatusMessage (info) {
-				if (info.status() == "COMPLETE" && !info.isValid())
-					return "FAILED";
+				if (info.status() === "COMPLETE" && !info.isValid())
+					return !info.isCanceled() ? "FAILED" : "CANCELED";
 				else
 					return info.status();
 			}

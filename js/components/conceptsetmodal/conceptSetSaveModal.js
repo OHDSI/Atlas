@@ -1,4 +1,4 @@
-define(['knockout', 'appConfig', 'webapi/AuthAPI', 'services/ConceptSet', 'text!./components/conceptsetmodal/conceptSetSaveModal.html',
+define(['knockout', 'appConfig', 'services/AuthAPI', 'services/ConceptSet', 'text!./components/conceptsetmodal/conceptSetSaveModal.html',
     'css!./components/conceptsetmodal/style.css'],
   function(ko, config, authApi, conceptSetService, view){
     function ConceptSetSaveModal(params){

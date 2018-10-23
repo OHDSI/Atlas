@@ -4,7 +4,7 @@ define(function (require, exports) {
 	const httpService = require('services/http');
 	const sharedState = require('atlas-state');
 	const config = require('appConfig');
-	const authApi = require('webapi/AuthAPI');
+	const authApi = require('services/AuthAPI');
 
 	function getIncludedConceptSetDrawCallback({ model, searchConceptsColumns }) {
 		return async function (settings) {

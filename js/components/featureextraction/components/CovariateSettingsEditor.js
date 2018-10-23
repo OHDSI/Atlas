@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./CovariateSettingsEditor.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
     'appConfig',
     '../InputTypes/CovariateSettings',

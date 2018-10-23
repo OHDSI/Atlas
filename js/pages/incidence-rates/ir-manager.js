@@ -2,17 +2,17 @@ define([
 	'knockout', 
 	'text!./ir-manager.html',
 	'services/IRAnalysis',
-	'webapi/SourceAPI',
+	'services/SourceAPI',
 	'services/CohortDefinition',
 	'./components/iranalysis/IRAnalysisDefinition', 
 	'./components/iranalysis/IRAnalysisExpression', 
 	'assets/ohdsi.util',
 	'appConfig',
 	'atlas-state',
-	'job/jobDetail',
-	'webapi/AuthAPI',
-	'providers/Page',
-	'providers/AutoBind',
+	'services/job/jobDetail',
+	'services/AuthAPI',
+	'pages/Page',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'./const',
 	'./components/iranalysis/main', 
@@ -157,11 +157,13 @@ define([
 			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
 				var hasPending = false;
 				data.forEach((info) => {
-					var source = this.sources().filter((s) => { return s.source.sourceId == info.executionInfo.id.sourceId })[0];
-					if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
-						source.info(info);
-					if (info.executionInfo.status != "COMPLETE")
-						hasPending = true;
+					var source = this.sources().find((s) => { return s.source.sourceId == info.executionInfo.id.sourceId });
+					if (source) {
+						if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
+							source.info(info);
+						if (info.executionInfo.status != "COMPLETE")
+							hasPending = true;
+					}
 				});
 
 				if (hasPending)
