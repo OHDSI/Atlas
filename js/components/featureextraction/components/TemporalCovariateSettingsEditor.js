@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./TemporalCovariateSettingsEditor.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
     'appConfig',
     '../InputTypes/TemporalCovariateSettings',

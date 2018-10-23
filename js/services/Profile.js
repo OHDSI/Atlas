@@ -2,7 +2,7 @@ define(function (require, exports) {
 
   const httpService = require('services/http');
   const config = require('appConfig');
-  const authApi = require('webapi/AuthAPI');
+  const authApi = require('services/AuthAPI');
 
   const getProfile = function(sourceKey, personId, cohort) {
     const data = {

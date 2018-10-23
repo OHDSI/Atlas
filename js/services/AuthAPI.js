@@ -3,7 +3,7 @@ define(function(require, exports) {
     var $ = require('jquery');
     var config = require('appConfig');
     var ko = require('knockout');
-    var cookie = require('webapi/CookieAPI');
+    var cookie = require('services/CookieAPI');
     var TOKEN_HEADER = 'Bearer';
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
     const httpService = require('services/http');

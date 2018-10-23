@@ -2,7 +2,7 @@ define([
     'knockout',
     'text!./welcome.html',
     'appConfig',
-    'webapi/AuthAPI',
+    'services/AuthAPI',
 ],
     function (
     ko,

@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./StratifyArgsEditor.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'../options',
 	'databindings',

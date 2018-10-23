@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./EvaluationSettingsEditor.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'utils/DataTypeConverterUtils',
 	'../options',

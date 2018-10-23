@@ -8,7 +8,7 @@ define([
 	'appConfig',
 	'services/CohortReporting',
 	'pages/cohort-definitions/const',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'utils/ChartUtils',
 	'databindings',

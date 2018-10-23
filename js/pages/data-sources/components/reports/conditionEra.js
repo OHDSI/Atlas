@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./treemap.html',
-	'providers/Component',
+	'components/Component',
 	'pages/data-sources/classes/Treemap',
 	'pages/data-sources/const',
 	'utils/CommonUtils',

@@ -1,44 +1,47 @@
 define([
-	'knockout',
+	'knockout', 
 	'text!./ir-manager.html',
 	'services/IRAnalysis',
-	'webapi/SourceAPI',
+	'services/SourceAPI',
 	'services/CohortDefinition',
-	'./components/iranalysis/IRAnalysisDefinition',
-	'./components/iranalysis/IRAnalysisExpression',
+	'./components/iranalysis/IRAnalysisDefinition', 
+	'./components/iranalysis/IRAnalysisExpression', 
 	'assets/ohdsi.util',
 	'appConfig',
 	'atlas-state',
 	'services/JobDetailsService',
-	'webapi/AuthAPI',
-	'providers/Page',
-	'providers/AutoBind',
+	'services/job/jobDetail',
+	'services/AuthAPI',
+	'pages/Page',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'./const',
-	'./components/iranalysis/main',
-	'databindings',
-	'conceptsetbuilder/components',
+	'./components/iranalysis/main', 
+	'databindings', 
+	'conceptsetbuilder/components', 
 	'circe',
 	'components/heading',
-], function (ko,
-             view,
-             IRAnalysisService,
-             sourceAPI,
-             cohortAPI,
-             IRAnalysisDefinition,
-             IRAnalysisExpression,
-             ohdsiUtil,
-             config,
-             sharedState,
-             jobDetailsService,
-             authAPI,
-             Page,
-             AutoBind,
-             commonUtils,
-             constants) {
+], function (
+	ko,
+	view,
+	IRAnalysisService,
+	sourceAPI,
+	cohortAPI,
+	IRAnalysisDefinition,
+	IRAnalysisExpression,
+	ohdsiUtil,
+	config,
+	sharedState,
+	jobDetail,
+	authAPI,
+	Page,
+	AutoBind,
+	commonUtils,
+	constants
+) {
 	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
-			super(params);
+			super(params);				
 			// polling support
 			this.pollTimeout = null;
 			this.model = params.model;
@@ -48,11 +51,11 @@ define([
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
-					|| (
-						config.userAuthenticationEnabled
-						&& authAPI.isAuthenticated
-						&& authAPI.isPermittedCreateIR()
-					)
+				|| (
+					config.userAuthenticationEnabled
+					&& authAPI.isAuthenticated
+					&& authAPI.isPermittedCreateIR()
+				)
 			});
 			this.isDeletable = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
@@ -154,13 +157,15 @@ define([
 			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
 				var hasPending = false;
 				data.forEach((info) => {
-					var source = this.sources().filter((s) => {
+					var source = this.sources().find((s) => {
 						return s.source.sourceId == info.executionInfo.id.sourceId
-					})[0];
-					if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
-						source.info(info);
-					if (info.executionInfo.status != "COMPLETE")
-						hasPending = true;
+					});
+					if (source) {
+						if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
+							source.info(info);
+						if (info.executionInfo.status != "COMPLETE")
+							hasPending = true;
+					}
 				});
 
 				if (hasPending) {

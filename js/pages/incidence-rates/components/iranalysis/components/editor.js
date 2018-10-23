@@ -4,7 +4,7 @@ define([
 	'pages/incidence-rates/inputTypes/StudyWindow',
 	'../StratifyRule',
 	'components/cohortbuilder/options',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'conceptsetbuilder/components',
 	'components/cohort-definition-browser',				

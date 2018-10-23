@@ -4,12 +4,12 @@ define([
 	'providers/AutoBind',
 	'appConfig',
 	'atlas-state',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 	'services/JobDetailsService',
 	'webapi/MomentAPI',
-	'less!./user-bar.less',
+	'less!./user-bar.less'
 ], function (ko,
              view,
              AutoBind,
@@ -20,7 +20,7 @@ define([
              authApi,
              jobDetailsService,
              momentApi) {
-	class UserBar extends AutoBind(Component) {
+	class UserBar extends Component {
 		constructor(params) {
 			super(params);
 			this.model = params.model;

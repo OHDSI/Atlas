@@ -1,4 +1,4 @@
-define(['appConfig', 'job/jobDetail', 'atlas-state', 'services/http'], function (appConfig, jobDetail, sharedState, httpService) {
+define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], function (appConfig, jobDetail, sharedState, httpService) {
 
 	function list() {
 		return httpService.doGet(appConfig.api.url + 'notifications');

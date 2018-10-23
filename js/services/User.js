@@ -2,7 +2,7 @@ define(function (require, exports) {
 
   const $ = require('jquery');
   const config = require('appConfig');
-  const authApi = require('webapi/AuthAPI');
+  const authApi = require('services/AuthAPI');
   const ko = require('knockout');
   const httpService = require('./http');
 

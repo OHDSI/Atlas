@@ -57,54 +57,52 @@
   params="{
     showModal: isOptimizeModalShown,
     title: 'Concept Set Optimization',
-    template: 'conceptset-optimize-modal',
     data: $component,
+    fade: $component.fade,
   }"
 >
-</atlas-modal>
-
-<script type='template' id='conceptset-optimize-modal'>
-  <div data-bind="if: loading()">
-    <i class="fa fa-circle-o-notch fa-spin fa-lg">      
-    </i> Attempting to find an optimal definition for this concept set....
-  </div>
-  <div data-bind="if: !loading() && !optimizerFoundSomething()">
-    The current concept set definition is fully optimized.
-  </div>
-  <div data-bind="if: !loading() && optimizerFoundSomething()">
-    <div data-bind="if: !optimizerSavingNew()">
-      <div class="row heading optimizer-saving-new">
-        <div class="col-md-8">Please review the optimized definition and options for saving. </div>
-        <div class="col-md-4">
-          <div class="btn-group pull-right" role="group">
-            <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  Save Options <span class="caret"></span>
-                              </button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="btnGroupDrop1">
-              <li><a class="dropdown-item" href="#" data-bind="click: overwriteConceptSet">Overwrite Current Concept Set</a></li>
-              <li><a class="dropdown-item" href="#" data-bind="click: copyOptimizedConceptSet">Create New Concept Set</a></li>
-            </ul>
+  <div data-bind="css: classes('optimize-modal-content')">
+    <div data-bind="if: loading()">
+      <i class="fa fa-circle-o-notch fa-spin fa-lg">
+      </i> Attempting to find an optimal definition for this concept set....
+    </div>
+    <div data-bind="if: !loading() && !optimizerFoundSomething()">
+      The current concept set definition is fully optimized.
+    </div>
+    <div data-bind="if: !loading() && optimizerFoundSomething()">
+      <div data-bind="if: !optimizerSavingNew()">
+        <div class="row heading optimizer-saving-new">
+          <div class="col-md-8">Please review the optimized definition and options for saving. </div>
+          <div class="col-md-4">
+            <div class="btn-group pull-right" role="group">
+              <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Save Options <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="btnGroupDrop1">
+                <li><a class="dropdown-item" href="#" data-bind="click: overwriteConceptSet">Overwrite Current Concept Set</a></li>
+                <li><a class="dropdown-item" href="#" data-bind="click: copyOptimizedConceptSet">Create New Concept Set</a></li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="clearfix"></div>
-    <div data-bind="if: optimizerSavingNew()">
-      <div class="heading">
-        <div class="form-group">
-          <label for="txtOptimizerSavingNewName">Please provide a name for your new concept set:</label>
-          </br>
-          <input id="txtOptimizerSavingNewName" class="form-control optimizer-new-name" type="text" data-bind="textInput: optimizerSavingNewName" />
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-primary" data-bind="click: saveNewOptimizedConceptSet">Save</button>
-            <button type="button" class="btn btn-sm btn-danger" data-bind="click: cancelSaveNewOptimizedConceptSet">Cancel</button>
+      <div class="clearfix"></div>
+      <div data-bind="if: optimizerSavingNew()">
+        <div class="heading">
+          <div class="form-group">
+            <label for="txtOptimizerSavingNewName">Please provide a name for your new concept set:</label>
+            </br>
+            <input id="txtOptimizerSavingNewName" class="form-control optimizer-new-name" type="text" data-bind="textInput: optimizerSavingNewName" />
+            <div class="btn-group">
+              <button type="button" class="btn btn-sm btn-primary" data-bind="click: saveNewOptimizedConceptSet">Save</button>
+              <button type="button" class="btn btn-sm btn-danger" data-bind="click: cancelSaveNewOptimizedConceptSet">Cancel</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="heading">Optimized Concept Set</div>
-    <div class="paddedWrapper">
-      <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+      <div class="heading">Optimized Concept Set</div>
+      <div class="paddedWrapper">
+        <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
                               data: optimalConceptSet(),
                               options: {
                                               dom: 'Clfiprt',
@@ -134,15 +132,15 @@
                                 ]
                               }
                           }">
-      </table>
-    </div>
-    <div data-bind="if: optimizerRemovedConceptSet() && !optimizerSavingNew()">
-      <div class="heading optimizer-header">Concepts Removed</div>
-      <div class="optimizer-message">
-        The following concepts were removed since the optimized version already includes them.
+        </table>
       </div>
-      <div class="paddedWrapper">
-        <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+      <div data-bind="if: optimizerRemovedConceptSet() && !optimizerSavingNew()">
+        <div class="heading optimizer-header">Concepts Removed</div>
+        <div class="optimizer-message">
+          The following concepts were removed since the optimized version already includes them.
+        </div>
+        <div class="paddedWrapper">
+          <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
                                   data: optimizerRemovedConceptSet(),
                                   options: {
                                                   dom: 'Clfiprt',
@@ -172,8 +170,9 @@
                                     ]
                                   }
                               }">
-        </table>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-</script>
+</atlas-modal>

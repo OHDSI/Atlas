@@ -1,17 +1,17 @@
 define([
 	'knockout',
 	'text!./conceptset-manager.html',
-	'providers/Page',
-	'providers/AutoBind',
+	'pages/Page',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'appConfig',
 	'./const',
 	'components/conceptset/utils',
-	'providers/Vocabulary',
+	'services/Vocabulary',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'services/ConceptSet',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -53,6 +53,7 @@ define([
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.conceptSetName = ko.observable("New Concept Set");
 			this.loading = ko.observable();
+			this.fade = ko.observable(true);
 			this.canEdit = this.model.canEditCurrentConceptSet;
 			this.canSave = ko.computed(() => {
 				return (
@@ -132,6 +133,11 @@ define([
 			if (mode !== undefined) {
 				this.selectedTab(this.getIndexByComponentName(mode));
 			}
+		}
+
+		dispose() {
+			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
+			this.isOptimizeModalShown(false);
 		}
 		
 		saveClick() {
@@ -339,6 +345,7 @@ define([
 			});
 			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, selectedConcepts);
 			this.optimizerSavingNew(false);
+			this.isOptimizeModalShown(false);
 		}
 
 		cancelSaveNewOptimizedConceptSet() {

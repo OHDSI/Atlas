@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./ModelSettingsEditor.html',	
-	'providers/Component',
+	'components/Component',
     'utils/CommonUtils',
     './modelSettings/NaiveBayesSettings',
     './modelSettings/RandomForestSettings',

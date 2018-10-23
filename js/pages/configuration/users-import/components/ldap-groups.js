@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./ldap-groups.html',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'services/User',
 	'./renderers',

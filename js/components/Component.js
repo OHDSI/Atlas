@@ -1,7 +1,7 @@
 define([
   'knockout',
   'utils/BemHelper',
-  'webapi/AuthAPI',
+  'services/AuthAPI',
 ], function (
   ko,
   BemHelper,
