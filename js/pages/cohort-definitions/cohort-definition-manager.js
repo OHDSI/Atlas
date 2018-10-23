@@ -466,6 +466,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.reportingAvailableReports = ko.observableArray();
 
 			this.model.reportSourceKey.subscribe(s => {
+				this.model.reportReportName(null);
 				this.reportingSourceStatusAvailable(false);
 				this.reportingAvailableReports.removeAll();
 			});
