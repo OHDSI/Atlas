@@ -1,14 +1,14 @@
 define([
 	'knockout',
 	'text!./user-bar.html',
-	'providers/AutoBind',
+	'utils/AutoBind',
 	'appConfig',
 	'atlas-state',
 	'components/Component',
 	'utils/CommonUtils',
 	'services/AuthAPI',
 	'services/JobDetailsService',
-	'webapi/MomentAPI',
+	'services/MomentAPI',
 	'less!./user-bar.less'
 ], function (ko,
              view,
