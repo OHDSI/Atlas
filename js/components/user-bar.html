@@ -39,7 +39,7 @@
 		showModal: $component.showJobModal,
 		title: 'Notifications (last ' + $component.jobListing().length + ')',
 		data: {
-			jobListing: $component.jobListing(),
+			jobListing: $component.sortedJobListing(),
 			clearJobNotificationsPending: $component.clearJobNotificationsPending,
 			jobNameClick: $component.jobNameClick,
 			classes: $component.classes

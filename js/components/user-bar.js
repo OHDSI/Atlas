@@ -9,6 +9,7 @@ define([
 	'services/AuthAPI',
 	'services/JobDetailsService',
 	'services/MomentAPI',
+	'lodash',
 	'less!./user-bar.less'
 ], function (ko,
              view,
@@ -19,7 +20,8 @@ define([
              commonUtils,
              authApi,
              jobDetailsService,
-             momentApi) {
+             momentApi,
+			 lodash) {
 	class UserBar extends Component {
 		constructor(params) {
 			super(params);
@@ -31,6 +33,7 @@ define([
 			this.pollInterval = null;
 			this.loading = params.model.loading;
 			this.jobListing = state.jobListing;
+			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
 			this.lastViewedTime=null;
 
 			this.showJobModal = ko.observable(false);
