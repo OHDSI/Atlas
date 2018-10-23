@@ -176,23 +176,11 @@ define(['knockout',
 				this.negativeControls(null);
 				this.loadingResults(false);
 
-				// Create a job to monitor progress
-				var job = new jobDetail({
-					name: this.conceptSet().name() + "_" + service.sourceKey(),
-					type: 'negative-controls',
-					status: 'PENDING',
-					executionId: String(this.conceptSet().id) + String(service.sourceId()),
-					statusUrl: config.api.url + 'conceptset/' + this.conceptSet().id + '/generationinfo',
-					statusValue: 'status',
-					viewed: false,
-					url: 'conceptset/' + this.conceptSet().id + '/evidence',
-				});
-
 				// Kick the job off
 				$.when(negativeControlsJob)
-					.done(jobInfo => {
+					.done(info => {
+						jobDetailsService.createJob(info);
 						pollTimeout = setTimeout(() => {
-							sharedState.jobListing.queue(job);
 							this.pollForInfo();
 						}, 5000);
 					})

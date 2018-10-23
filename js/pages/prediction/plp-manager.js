@@ -145,24 +145,18 @@ define([
 		executePLP (sourceKey) {
 			if (config.useExecutionEngine) {
 				this.sourceProcessingStatus[sourceKey](true);
+				let analysisId = this.patientLevelPredictionId();
 				executionService.runExecution(
 					sourceKey,
-					this.patientLevelPredictionId(),
+					analysisId,
 					'PLP',
 					$('.language-r').text()
 				)
 					.then(({ data }) => {
 						this.monitorEEJobExecution(data.executionId, 100);
-						jobDetailsService.createJob({
-							name: this.currentPlpAnalysis().name() + "_" + sourceKey,
-							type: 'plp',
-							status: 'PENDING',
-							executionId: data.executionId,
-							statusUrl: `${config.api.url}executionservice/execution/status/${data.executionId}`,
-							statusValue: 'status',
-							viewed: false,
-							url: 'plp/' + this.patientLevelPredictionId(),
-						})
+						data.scriptType = 'PLP';
+						data.cohortId = analysisId;
+						jobDetailsService.createJob(data);
 					});
 			}
 		};

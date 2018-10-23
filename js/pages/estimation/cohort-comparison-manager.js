@@ -932,19 +932,13 @@ define([
 			executeCohortComparison(sourceKey) {
 				if (config.useExecutionEngine) {
 					this.sourceProcessingStatus[sourceKey](true);
-					executionService.runExecution(sourceKey, this.cohortComparisonId(), 'CCA', $('.language-r').text())
-						.then(({ data: c }) => {
-							this.monitorEEJobExecution(c.executionId, 100);
-							jobDetailsService.createJob({
-								name: this.cohortComparison().name() + "_" + sourceKey,
-								type: 'cca',
-								status: 'PENDING',
-								executionId: c.executionId,
-								statusUrl: `${config.api.url}executionservice/execution/status/${c.executionId}`,
-								statusValue: 'status',
-								viewed: false,
-								url: 'estimation/' + this.cohortComparisonId(),
-							})
+					let analysisId = this.cohortComparisonId();
+					executionService.runExecution(sourceKey, analysisId, 'CCA', $('.language-r').text())
+						.then(({ data }) => {
+							this.monitorEEJobExecution(data.executionId, 100);
+							data.scriptType = 'CCA';
+							data.cohortId = analysisId;
+							jobDetailsService.createJob(data);
 						});
 				} else {
 					this.sourceProcessingStatus[sourceKey](true);
