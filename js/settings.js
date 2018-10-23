@@ -86,7 +86,7 @@ const settingsObject = {
     "less": "plugins/less",
     "optional": "plugins/optional",
     "clipboard": "assets/clipboard.min",
-    "knockout": "assets/knockout.min",
+    "knockout": "../node_modules/knockout/build/output/knockout-latest",
     "ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
     "knockout-mapping": "assets/knockout.mapping",
     "datatables.net": "assets/jquery.dataTables.min",
