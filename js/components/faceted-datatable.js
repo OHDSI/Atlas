@@ -6,13 +6,23 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/ht
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
 		self.data = params.xfObservable || ko.observable();
-		self.service = params.ajax;
-		self.componentLoading = ko.observable(true);
+		self.componentLoading = ko.observable(false);
 		self.ajax = (d, callback, settings) => {
 			self.componentLoading(true);
 			params.ajax({
 				page: d.start / d.length,
-				size: d.length
+				size: d.length,
+				filter: JSON.stringify(this.facets().map((f) => {
+					return {
+						name: f.caption,
+						selectedItems: Object.keys(f.selectedItems).map(item => {
+							return {
+								text: f.selectedItems[item].text,
+								key: f.selectedItems[item].key,
+							}
+						})
+					}
+				}))
 			})
 				.then(({data}) => {
 					callback({
@@ -22,9 +32,60 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/ht
 						data: data.content
 					});
 					self.componentLoading(false);
-					self.createFilters(data.content)
 			})
 		};
+		self.createFilters = () => {
+			self.facets.removeAll();
+			if (self.options && self.options.Facets) {
+				self.options.Facets.forEach(facetConfig => {
+					httpService.doGet(config.webAPIRoot + "facets?facet=" + facetConfig.caption + '&entityName=' + self.options.entityName)
+						.then(({data}) => {
+							var isArray = facetConfig.isArray || false;
+							var dimension = data.map((d) => {
+								let text = self.facetDimensionHelper(facetConfig.binding(d.key));
+								return {key: d.key, text: text, count: d.value};
+							}, isArray);
+							var facet = {
+								'caption': facetConfig.caption,
+								'binding': facetConfig.binding,
+								'dimension': dimension,
+								'facetItems': [],
+								'selectedItems': {},
+							};
+							// Add a selected observable to each dimension
+							dimension.forEach((d) =>
+								facet.facetItems.push({
+									key: d.key,
+									text: d.text,
+									count: d.count,
+									dimension: dimension,
+									selected: ko.observable(false),
+									facet: facet
+								})
+							);
+							self.facets.push(facet);
+						})
+						.catch((e) => {
+							console.log(e);
+						})
+				});
+				// Iterate over the facets and set any defaults
+				/*
+								$.each(self.options.Facets, function (i, facetConfig) {
+									if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
+										$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
+											var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
+												return f.key == defaultFacet;
+											});
+											if (facetItem.length > 0) {
+												self.updateFilters(facetItem[0], null);
+											}
+										})
+									}
+								});
+				*/
+			}
+		}
 		self.facets = ko.observableArray();
 
 		self.nullFacetLabel = params.nullFacetLabel || 'NULL';
@@ -74,23 +135,13 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/ht
 			data.selected(!data.selected());
 			if (data.selected()) {
 				if (!facet.selectedItems.hasOwnProperty(data.key)) {
-					facet.selectedItems[data.key] = data;
+					facet.selectedItems[data.text] = data;
 				}
 			} else {
-				delete facet.selectedItems[data.key];
+				delete facet.selectedItems[data.text];
 			}
-			var filter = [];
-			$.each(facet.selectedItems, function (i, n) {
-				filter.push(n.key);
-			});
-			if (filter.length <= 0) {
-				facet.dimension.filterAll();
-			} else {
-				facet.dimension.filter(function (d) {
-					return filter.indexOf(d) > -1;
-				});
-			}
-			self.data.valueHasMutated();
+			self.facets.valueHasMutated();
+			// self.ajax.reload();
 		}
 
 		// additional helper function to help with crossfilter-ing dimensions that contain nulls
@@ -98,58 +149,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/ht
 			var ret = val === null ? self.nullFacetLabel : val;
 			return ret;
 		}
-
-		self.createFilters = (data) => {
-			self.data(new crossfilter(data));
-			self.facets.removeAll();
-			if (self.options && self.options.Facets) {
-				// Iterate over the facets and set the dimensions
-				self.options.Facets.forEach(facetConfig => {
-					httpService.doGet(config.webAPIRoot + "facets?facet=" + facetConfig.caption + '&entityName=' + self.options.entityName)
-						.then(({data}) => {
-							var isArray = facetConfig.isArray || false;
-							var dimension = data.map((d) => {
-								let text = self.facetDimensionHelper(facetConfig.binding(d.key));
-								return {key: text, value: d.value};
-							}, isArray);
-							var facet = {
-								'caption': facetConfig.caption,
-								'binding': facetConfig.binding,
-								'dimension': dimension,
-								'facetItems': [],
-								'selectedItems': {},
-							};
-							// Add a selected observable to each dimension
-							dimension.forEach((d) =>
-								facet.facetItems.push({
-									key: d.key,
-									value: d.value,
-									dimension: dimension,
-									selected: ko.observable(false),
-									facet: facet
-								})
-							);
-							self.facets.push(facet);
-						})
-						.catch((e) => {
-							console.log(e);
-						})
-			});
-				// Iterate over the facets and set any defaults
-				$.each(self.options.Facets, function (i, facetConfig) {
-					if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
-						$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
-							var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
-								return f.key == defaultFacet;
-							});
-							if (facetItem.length > 0) {
-								self.updateFilters(facetItem[0], null);
-							}
-						})
-					}
-				});
-			}
-		}
+		self.createFilters();
 	};
 
 	var component = {
