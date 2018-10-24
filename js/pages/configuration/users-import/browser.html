@@ -5,18 +5,20 @@
         <button data-bind="
              css: classes({ element: 'do-import-btn', extra: 'btn btn-success btn-sm' }),
              text: 'Import Now',
-             click: $component.importNow
+             click: $component.importNow,
+             enabled: canImport
            ">
         </button>
         <button data-bind="
             css: classes({ element: 'new-entity-btn', extra: 'btn btn-primary btn-sm' }),
             text: 'New Scheduled Import',
-            click: $component.newScheduledImport
+            click: $component.newScheduledImport,
+            enabled: canCreate
         "></button>
     </div>
 </div>
 
-<div data-bind="if: config.userAuthenticationEnabled && canImport, css: classes('grid')">
+<div data-bind="if: canImport, css: classes('grid')">
     <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading User Import Job list...'"></loading>
 
     <div data-bind="visible: !$component.loading()">

@@ -31,14 +31,10 @@
                               }, css: classes({extra: ['stripe', 'compact', 'hover']})">
 </table>
 
-<script type="text/html" id="exit-message-template">
-<div data-bind="text: message"></div>
-</script>
-
 <atlas-modal params="
     showModal: messageModal,
     title: 'Job Exit Message',
-    template: 'exit-message-template',
     data: { message },
 ">
+    <div data-bind="text: message, css: $root.classes({extra: 'panel-body'})"></div>
 </atlas-modal>

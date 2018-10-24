@@ -3,6 +3,7 @@ define([
 		'appConfig',
 		'text!./browser.html',
 		'services/AuthAPI',
+		'./services/PermissionService',
 		'utils/AutoBind',
 		'components/Component',
 		'utils/CommonUtils',
@@ -16,6 +17,7 @@ define([
 		config,
 		view,
 		authApi,
+		permissionService,
 		AutoBind,
 		Component,
 		commonUtils,
@@ -29,8 +31,8 @@ define([
 			constructor(params) {
 				super();
 				this.config = config;
-				this.isAuthenticated = authApi.isAuthenticated;
-				this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+				this.canImport = ko.pureComputed(() => authApi.isPermittedImportUsers());
+				this.canCreate = ko.pureComputed(() => permissionService.isPermittedCreate());
 				this.loading = ko.observable();
 				this.data = ko.observableArray();
 
@@ -81,7 +83,7 @@ define([
 					]
 				};
 
-				this.canImport() && this.loadJobs();
+				permissionService.isPermittedList() && this.loadJobs();
 			}
 
 			loadJobs() {

@@ -28,7 +28,6 @@ define([
 		isPermittedCreate,
 		isPermittedList,
 		isPermittedEdit,
-		isPermittedView,
 		isPermittedDelete,
 	};
 });
