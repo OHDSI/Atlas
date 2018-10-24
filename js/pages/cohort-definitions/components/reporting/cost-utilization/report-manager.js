@@ -137,8 +137,10 @@ define([
 
 			this.helpTitle = ko.observable();
 			this.helpContent = ko.observable();
+            this.helpModalOpened = ko.observable(false);
 
 			this.setHelpContent = (h) => {
+                this.helpModalOpened(true);
 				if (typeof h === 'string') {
 					switch (h) {
 						case 'condition-prevalence':

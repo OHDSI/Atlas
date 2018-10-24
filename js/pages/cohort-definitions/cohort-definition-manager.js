@@ -613,6 +613,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			};
 			
 			this.selectedCriteria = ko.observable();
+            this.cohortLinkModalOpened = ko.observable(false);
+            this.cohortDefinitionOpened = ko.observable(false);
+            this.analysisTypesOpened = ko.observable(false);
 		}
 
 			// METHODS

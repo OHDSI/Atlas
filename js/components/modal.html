@@ -5,6 +5,7 @@
 				<!-- ko if: backdropClosable -->
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<!-- /ko -->
+				<i data-bind="css: $component.iconClass"></i>
 				<div class="modal-title" data-bind="text: $component.title"></div>
 			</div>
 <!-- ko if: $component.template -->			
@@ -13,6 +14,14 @@
 					template: {
 						name: $component.template,
 						data: $component.data
+					}
+				"></div>
+			</div>
+			<div class="modal-footer" data-bind="visible: $component.footerTemplate">
+				<div data-bind="
+					template: {
+						name: $component.footerTemplate,
+						data: $component.footerData
 					}
 				"></div>
 			</div>

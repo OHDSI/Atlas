@@ -45,8 +45,8 @@ define([
 					this.stopPolling();
 				}
 			});
-			
-			this.showJobModal = ko.observable(false);
+
+			this.jobModalOpened = ko.observable(false);
 			this.jobListing = state.jobListing;
 
 			this.jobNotificationsPending = ko.computed(() => {
@@ -120,7 +120,6 @@ define([
 		}
 		
 		jobNameClick (j) {
-			$('#jobModal').modal('hide');
 			window.location = '#/' + j.url;
 		}
 	}
