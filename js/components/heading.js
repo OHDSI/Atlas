@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./heading.html',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'less!./heading.less'
 ], function (

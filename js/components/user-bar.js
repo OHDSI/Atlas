@@ -1,53 +1,53 @@
 define([
 	'knockout',
 	'text!./user-bar.html',
+	'utils/AutoBind',
 	'appConfig',
 	'atlas-state',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
+	'services/JobDetailsService',
+	'services/MomentAPI',
+	'lodash',
 	'less!./user-bar.less'
-], function (
-	ko,
-	view,
-	appConfig,
-	state,
-	Component,
-	commonUtils,
-	authApi
-) {
+], function (ko,
+             view,
+             AutoBind,
+             appConfig,
+             state,
+             Component,
+             commonUtils,
+             authApi,
+             jobDetailsService,
+             momentApi,
+			 lodash) {
 	class UserBar extends Component {
 		constructor(params) {
-			super(params);			
+			super(params);
 			this.model = params.model;
 			this.appConfig = appConfig;
 			this.token = authApi.token;
-			this.tokenExpired = authApi.tokenExpired;    
-			this.authLogin = authApi.subject;		
+			this.tokenExpired = authApi.tokenExpired;
+			this.authLogin = authApi.subject;
 			this.pollInterval = null;
-			this.isLoggedIn = ko.computed(() => {
-				return authApi.isAuthenticated();
-			});
 			this.loading = params.model.loading;
-
-			this.startPolling = () => {
-				this.pollInterval = setInterval(this.updateJobStatus, appConfig.pollInterval);
-			}
-
-			this.stopPolling = () => {
-				clearInterval(this.pollInterval);
-			}
-
-			this.isLoggedIn.subscribe((isLoggedIn) => {
-				if (isLoggedIn) {
-					this.startPolling();
-				} else {
-					this.stopPolling();
-				}
-			});
+			this.jobListing = state.jobListing;
+			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
+			this.lastViewedTime=null;
 
 			this.jobModalOpened = ko.observable(false);
-			this.jobListing = state.jobListing;
+			this.jobModalOpened.subscribe(show => {
+				if (!show) {
+					jobDetailsService.setLastViewedTime(this.lastViewedTime);
+					this.jobListing().forEach(j => {
+						j.viewed(true);
+					});
+					this.jobListing.valueHasMutated();
+				} else {
+					this.lastViewedTime = Date.now()
+				}
+			});
 
 			this.jobNotificationsPending = ko.computed(() => {
 				var unviewedNotificationCount = this.jobListing().filter(j => {
@@ -56,70 +56,84 @@ define([
 				return unviewedNotificationCount;
 			});
 
-			this.updateJobStatus = this.updateJobStatus.bind(this);
-			this.clearJobNotifications = this.clearJobNotifications.bind(this);
-			this.clearJobNotificationsPending = this.clearJobNotificationsPending.bind(this);
-
-			if (!appConfig.userAuthenticationEnabled) {
-				this.startPolling();
+			this.isLoggedIn = ko.computed(() => {
+				return authApi.isAuthenticated();
+			});
+			this.isLoggedIn.subscribe((isLoggedIn) => {
+				if (isLoggedIn) {
+					this.start();
+				} else {
+					this.stopPolling();
+				}
+			});
+			if (this.isLoggedIn() || !appConfig.userAuthenticationEnabled) {
+				this.start()
 			}
 		}
 
-		updateJobStatus () {
-			if (this.jobListing().length > 0) {
-				this.jobListing().forEach(job => {
-					if (job.isComplete() || job.isFailed()) {
-						return;
-					}
-					
-					if (job.progressUrl) {
-						$.ajax(job.progressUrl, {
-							context: job,
-							success: (progressData) => {
-								if (job.progress() != progressData.progress) {
-									var currentStatus = job.getStatusFromResponse(progressData);
-									job.status(currentStatus);
-									job.viewed(false);
-									this.jobListing.valueHasMutated();
-								}
-							}
-						});
-					}
+		start() {
+			jobDetailsService.getLastViewedTime()
+				.then(({data}) => {
+					this.lastViewedTime = new Date(data);
+					this.startPolling();
+					this.updateJobStatus()
+				})
+		}
 
-					if (job.statusUrl) {
-						$.ajax(job.statusUrl, {
-							context: job,
-							success: (statusData) => {
-								var currentStatus = job.getStatusFromResponse(statusData);
-								//console.log(job.executionUniqueId() + "::" + currentStatus);
-								if (job.status() != currentStatus) {
-									job.status(currentStatus);
-									job.viewed(false);
-									this.jobListing.valueHasMutated();
-								}
-							}
-						});
-					}
-				});
-			}
+		startPolling() {
+			this.pollInterval = setInterval(() => this.updateJobStatus(), appConfig.pollInterval);
 		};
 
-		calculateProgress (j) {
-			return Math.round(j.progress() / j.progressMax * 100) + '%';
-		}
-		
-		clearJobNotifications () {
-			this.jobListing.removeAll();
+		stopPolling() {
+			clearInterval(this.pollInterval);
+		};
+
+		getExisting(n) {
+			return this.jobListing().find(j => j.executionId === n.executionId);
 		}
 
-		clearJobNotificationsPending () {
-			this.jobListing().forEach(j => {
-				j.viewed(true);
-			});
-			this.jobListing.valueHasMutated();
-		}
-		
-		jobNameClick (j) {
+		updateJobStatus() {
+			jobDetailsService.list()
+				.then(notifications => {
+					notifications.data.forEach(n => {
+						let job = this.getExisting(n);
+
+						const endDate = (n.endDate ? n.endDate : Date.now());
+						const duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
+						const displayedEndDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
+
+						if (job) {
+							if (job.status() !== n.status) {
+								job.status(n.status);
+								job.viewed(false);
+								job.duration = duration;
+								job.endDate = displayedEndDate;
+								this.jobListing.valueHasMutated();
+							}
+						} else {
+							job = {
+								type: n.jobInstance.name,
+								name: n.jobParameters.jobName,
+								status: ko.observable(n.status),
+								executionId: n.executionId,
+								viewed: ko.observable(n.startDate && this.lastViewedTime && (n.endDate || n.startDate) < this.lastViewedTime),
+								url: jobDetailsService.getJobURL(n),
+								executionUniqueId: ko.pureComputed(function () {
+									return job.type + "-" + job.executionId;
+								}),
+								duration,
+								endDate: displayedEndDate,
+							};
+							this.jobListing.push(job);
+							this.jobListing.valueHasMutated();
+
+						}
+					});
+				});
+		};
+
+		jobNameClick(j) {
+			//this.showJobModal(false);
 			window.location = '#/' + j.url;
 		}
 	}

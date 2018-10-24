@@ -2,25 +2,26 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'appConfig',
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinition',
-	'webapi/MomentAPI',
+	'services/MomentAPI',
 	'services/ConceptSet',
 	'components/conceptset/utils',
 	'utils/DatatableUtils',
 	'components/cohortbuilder/CohortExpression',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'services/CohortReporting',
-	'vocabularyprovider',
+	'services/VocabularyProvider',
 	'atlas-state',
 	'clipboard',
 	'd3',
-	'job/jobDetail',
+	'services/Jobs',
+	'services/job/jobDetail',
+	'services/JobDetailsService',
 	'pages/cohort-definitions/const',
-	'services/ConceptSet',
-	'providers/Page',
-	'providers/AutoBind',
+	'pages/Page',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -53,31 +54,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	sharedState,
 	clipboard,
 	d3,
+	jobService,
 	jobDetail,
+	jobDetailsService,
 	cohortConst,
-	conceptSetService,
 	Page,
 	AutoBind,
 	commonUtils,
 	costUtilConst,
 	authApi,
 ) {
-	function translateSql(sql, dialect) {
-		translatePromise = $.ajax({
-			url: config.webAPIRoot + 'sqlrender/translate',
-			method: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				SQL: sql,
-				targetdialect: dialect
-			}),
-			error: function (error) {
-				console.log("Error: " + error);
-			}
-		});
-		return translatePromise;
-	}
-
 	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
 		if (value === 0 || value || includeKeys.includes(key) ) {
@@ -105,6 +91,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.warningCount = ko.observable(0);
 			this.infoCount = ko.observable(0);
 			this.criticalCount = ko.observable(0);
+			this.service = cohortDefinitionService;
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter(commonUtils.hasCDM);
 			});
@@ -159,7 +146,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				return this.authApi.isPermittedReadCohort(this.model.currentCohortDefinition().id());
 			});
-		
+
 			this.hasAccessToGenerate = (sourceKey) => {
 				if (isNew()) {
 					return false;
@@ -227,7 +214,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.saveConceptSetShow = ko.observable(false);
 			this.newConceptSetName = ko.observable();
-			
+
 			this.canGenerate = ko.pureComputed(() => {
 				var isDirty = this.dirtyFlag() && this.dirtyFlag().isDirty();
 				var isNew = this.model.currentCohortDefinition() && (this.model.currentCohortDefinition().id() == 0);
@@ -340,7 +327,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.ancestorsModalIsShown = ko.observable(false);
 			this.showAncestorsModal = conceptSetService.getAncestorsModalHandler(this);
 			this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ ...this, searchConceptsColumns: this.includedConceptsColumns });
-		
+
 			this.includedConceptsOptions = {
 				Facets: [
 					{
@@ -446,23 +433,23 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					}
 				});
 			}
-			
+
 			this.isRunning = ko.pureComputed(() => {
 				return this.model.cohortDefinitionSourceInfo().filter( (info) => {
 					return !(info.status() == "COMPLETE" || info.status() == "n/a");
 				}).length > 0;
 			});
-			
+
 			this.canCreateConceptSet = ko.computed( () => {
 				return ((this.authApi.isAuthenticated() && this.authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 			});
-			
+
 			this.cohortDefinitionLink = ko.computed(() => {
 				if (this.model.currentCohortDefinition()) {
 					return commonUtils.normalizeUrl(this.config.api.url, "cohortdefinition", this.model.currentCohortDefinition().id());
 				}
 			});
-			
+
 			// reporting sub-system
 			this.generateButtonCaption = ko.observable('Generate Reports');
 			this.generateReportsEnabled = ko.observable(false);
@@ -477,10 +464,25 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 			this.reportingSourceStatus = ko.observable();
 			this.reportingAvailableReports = ko.observableArray();
-			
+
 			this.model.reportSourceKey.subscribe(s => {
+				this.model.reportReportName(null);
 				this.reportingSourceStatusAvailable(false);
 				this.reportingAvailableReports.removeAll();
+			});
+
+			let pollHeraclesStatus = null;
+			this.model.reportSourceKey.subscribe(source => {
+				const cd = this.model.currentCohortDefinition();
+				if ((!cd || !cd.id() || !source) && pollHeraclesStatus) {
+					clearInterval(pollHeraclesStatus);
+				} else if (source) {
+					if (pollHeraclesStatus) {
+						clearInterval(pollHeraclesStatus);
+					}
+					this.queryHeraclesJob(cd, source);
+					pollHeraclesStatus = setInterval(() => this.queryHeraclesJob(cd, source), 3000);
+				}
 			});
 
 			this.reportingState = ko.computed(() => {
@@ -489,14 +491,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						this.generateReportsEnabled(false);
 					return "awaiting_selection";
 				}
-	
+
 				// check if the cohort has been generated
 					var sourceInfo = this.model.cohortDefinitionSourceInfo().find(d => d.sourceKey == this.model.reportSourceKey());
 					if (this.getStatusMessage(sourceInfo) != 'COMPLETE') {
 						this.generateReportsEnabled(false);
 					return "cohort_not_generated";
 				}
-	
+
 				// check which reports have required data
 					if (!this.reportingSourceStatusAvailable() && !this.reportingSourceStatusLoading()) {
 						this.reportingSourceStatusLoading(true);
@@ -521,39 +523,34 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						});
 					});
 				}
-	
+
 				// check if we can tell if the job to generate the reports is already running
-					if (this.model.currentCohortDefinition()) {
-					var listing = sharedState.jobListing;
-						var tempJob = listing().find(this.isActiveJob)
-					if (tempJob) {
-						if (tempJob.status() == 'STARTED' || tempJob.status() == 'STARTING' || tempJob.status() == 'RUNNING') {
-								this.currentJob(tempJob);
-								this.generateReportsEnabled(false);
-							return "generating_reports";
-						}
+				if (this.model.currentCohortDefinition() && this.currentJob()) {
+					if (this.currentJob().status && (this.currentJob().status == 'STARTED' || this.currentJob().status == 'STARTING' || this.currentJob().status == 'RUNNING')) {
+						this.generateReportsEnabled(false);
+						return "generating_reports";
 					}
 				}
-	
+
 					if (this.reportingAvailableReports().length == 0) {
 					// reset button to allow generation
 						this.generateReportsEnabled(true);
 					return "report_unavailable";
 				}
-	
+
 					if (this.model.reportReportName() == undefined) {
 					// reset button to allow regeneration
 						this.generateReportsEnabled(true);
 					return "awaiting_selection";
 				}
-	
+
 					if (this.model.currentCohortDefinition()) {
 						this.generateReportsEnabled(true);
 						this.model.reportCohortDefinitionId(this.model.currentCohortDefinition().id());
 						this.model.reportTriggerRun(true);
 					return "report_active";
 				}
-	
+
 				var errorPackage = {};
 					errorPackage.sourceAnalysesStatus = this.model.sourceAnalysesStatus[this.model.reportSourceKey()]();
 					errorPackage.report = this.model.reportReportName();
@@ -562,7 +559,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.generateReportsEnabled(false);
 				return "unknown_cohort_report_state";
 			});
-	
+
 			this.showReportNameDropdown = ko.computed(() => {
 				return this.model.reportSourceKey() != undefined &&
 					this.reportingState() != 'checking_status' &&
@@ -570,10 +567,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.reportingState() != 'reports_not_generated' &&
 					this.reportingState() != 'generating_reports';
 			});
-			
+
 			this.showUtilizationToRunModal = ko.observable(false);
 			this.checkedUtilReports = ko.observableArray([]);
-			
+
 			const reportPacks = cohortReportingService.visualizationPacks;
 			const reports = [
 				reportPacks.healthcareUtilPersonAndExposureBaseline,
@@ -611,7 +608,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
                     selectedOptions: ko.observableArray([]),
 				}
 			};
-			
+
 			this.selectedCriteria = ko.observable();
             this.cohortLinkModalOpened = ko.observable(false);
             this.cohortDefinitionOpened = ko.observable(false);
@@ -619,6 +616,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 			// METHODS
+
+		queryHeraclesJob(cd, source) {
+			const testName = "HERACLES_COHORT_" + cd.id() + "_" + source;
+			jobService.getByName(testName, "cohortAnalysisJob")
+				.then(({data}) => data.jobParameters ? this.currentJob({ ...data, name: data.jobParameters.jobName }) : this.currentJob(null));
+		}
 
 			delete () {
 				if (!confirm("Delete cohort definition? Warning: deletion can not be undone!"))
@@ -713,44 +716,43 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.generatedSql.impala('');
 				this.generatedSql.netezza('');
 
-				var expression = ko.toJS(this.model.currentCohortDefinition().expression, pruneJSON);
-				var templateSqlPromise = cohortDefinitionService.getSql(expression);
+				var templateSqlPromise = this.service.getSql(ko.toJS(this.model.currentCohortDefinition().expression, pruneJSON));
 
 				templateSqlPromise.then((result) => {
 					this.templateSql(result.templateSql);
-					var mssqlTranslatePromise = translateSql(result.templateSql, 'sql server');
-						mssqlTranslatePromise.then((result) => {
-							this.generatedSql.mssql(result.targetSQL);
+					var mssqlTranslatePromise = this.service.translateSql(result.templateSql, 'sql server');
+						mssqlTranslatePromise.then(({data}) => {
+							this.generatedSql.mssql(data.targetSQL);
 					});
 
-					var msapsTranslatePromise = translateSql(result.templateSql, 'pdw');
-						msapsTranslatePromise.then((result) => {
-							this.generatedSql.msaps(result.targetSQL);
+					var msapsTranslatePromise = this.service.translateSql(result.templateSql, 'pdw');
+						msapsTranslatePromise.then(({data}) => {
+							this.generatedSql.msaps(data.targetSQL);
 					});
 
-					var oracleTranslatePromise = translateSql(result.templateSql, 'oracle');
-						oracleTranslatePromise.then((result) => {
-							this.generatedSql.oracle(result.targetSQL);
+					var oracleTranslatePromise = this.service.translateSql(result.templateSql, 'oracle');
+						oracleTranslatePromise.then(({data}) => {
+							this.generatedSql.oracle(data.targetSQL);
 					});
 
-					var postgresTranslatePromise = translateSql(result.templateSql, 'postgresql');
-						postgresTranslatePromise.then((result) => {
-							this.generatedSql.postgresql(result.targetSQL);
+					var postgresTranslatePromise = this.service.translateSql(result.templateSql, 'postgresql');
+						postgresTranslatePromise.then(({data}) => {
+							this.generatedSql.postgresql(data.targetSQL);
 					});
 
-					var redshiftTranslatePromise = translateSql(result.templateSql, 'redshift');
-						redshiftTranslatePromise.then((result) => {
-							this.generatedSql.redshift(result.targetSQL);
+					var redshiftTranslatePromise = this.service.translateSql(result.templateSql, 'redshift');
+						redshiftTranslatePromise.then(({data}) => {
+							this.generatedSql.redshift(data.targetSQL);
 					});
 
-					var impalaTranslatePromise = translateSql(result.templateSql, 'impala');
-						impalaTranslatePromise.then((result) => {
-							this.generatedSql.impala(result.targetSQL);
+					var impalaTranslatePromise = this.service.translateSql(result.templateSql, 'impala');
+						impalaTranslatePromise.then(({data}) => {
+							this.generatedSql.impala(data.targetSQL);
 					});
 
-					var netezzaTranslatePromise = translateSql(result.templateSql, 'netezza');
-					netezzaTranslatePromise.then((result)=> {
-							this.generatedSql.netezza(result.targetSQL);
+					var netezzaTranslatePromise = this.service.translateSql(result.templateSql, 'netezza');
+					netezzaTranslatePromise.then(({data})=> {
+							this.generatedSql.netezza(data.targetSQL);
 					});
 
 					$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise, netezzaTranslatePromise).then(() => {
@@ -771,39 +773,20 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			generateCohort (source, includeFeatures) {
 				this.stopping[source.sourceKey](false);
-				var route = `${config.api.url}cohortdefinition/${this.model.currentCohortDefinition().id()}/generate/${source.sourceKey}`;
-
-				if (includeFeatures) {
-					route = `${route}?includeFeatures`;
-				}
-
 				this.getSourceInfo(source.sourceKey).status('PENDING');
 				if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 					this.loadingReport(true);
 				}
-				var job = new jobDetail({
-					name: this.model.currentCohortDefinition().name() + "_" + source.sourceKey,
-					type: 'cohort-generation',
-					status: 'PENDING',
-					executionId: String(this.model.currentCohortDefinition().id()) + String(this.getSourceId(source.sourceKey)),
-					statusUrl: this.config.api.url + 'cohortdefinition/' + this.model.currentCohortDefinition().id() + '/info',
-					statusValue: 'status',
-					viewed: false,
-					url: 'cohortdefinition/' + this.model.currentCohortDefinition().id() + '/generation',
-				});
-
-				$.ajax(route, {
-					error: this.authApi.handleAccessDenied,
-						success:  (data) => {
-						job.status(data.status);
-						sharedState.jobListing.queue(job);
+				cohortDefinitionService.generate(this.model.currentCohortDefinition().id(), source.sourceKey, includeFeatures)
+					.catch(this.authApi.handleAccessDenied)
+					.then(({data}) => {
+						jobDetailsService.createJob(data);
 						setTimeout( () => {
 							if (!this.pollTimeout) {
 								this.pollForInfo();
 							}
 						}, 3000);
-					}
-				});
+					});
 			}
 
 			cancelGenerate (source) {
@@ -1036,7 +1019,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				var byEventReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 0);
 				var byPersonReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 1);
-				
+
 				$.when(byEventReport, byPersonReport).done( (byEvent, byPerson) => {
 					var report = {sourceKey: item.sourceKey, byEvent: byEvent[0], byPerson: byPerson[0]};
 					this.selectedReport(report);
@@ -1054,11 +1037,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			calculateProgress (j) {
 				return j.progress() + '%';
 			}
-
-			isActiveJob (j) {
-				var testName = "HERACLES_COHORT_" + this.model.currentCohortDefinition().id() + "_" + this.model.reportSourceKey();
-				return j.name == testName && j.status() != 'FAILED' && j.status() != 'COMPLETED';
-			}			
 
 			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {
 				if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
@@ -1090,46 +1068,21 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				cohortJob.rollupUtilizationVisit = rollupUtilizationVisit;
 				cohortJob.rollupUtilizationDrug = rollupUtilizationDrug;
-				
-				var jobDetails = new jobDetail({
-					name: cohortJob.jobName,
-					status: 'LOADING',
-					executionId: null,
-						statusUrl: this.config.api.url + 'job/execution/',
-					statusValue: 'status',
-					progress: 0,
-						progressUrl: this.config.api.url + 'cohortresults/' + this.model.reportSourceKey() + '/' + cohortDefinitionId + '/info',
-					progressValue: 'progress',
-					progressMax: 100,
-					viewed: false,
-						url: 'cohortdefinition/' + cohortDefinitionId + '/reporting?sourceKey=' + this.model.reportSourceKey(),
-				});
 
-					this.createReportJobFailed(false);
-
-				$.ajax({
-					url: config.api.url + 'cohortanalysis',
-					data: JSON.stringify(cohortJob),
-					method: 'POST',
-					contentType: 'application/json',
-						success: (info) => {
-						jobDetails.executionId = info.executionId;
-						jobDetails.status(info.status);
-						jobDetails.statusUrl = this.statusUrl + info.executionId;
-						sharedState.jobListing.queue(jobDetails);
-					},
-						error: (xhr, status, error) => {
-							this.createReportJobFailed(true);
-							var createReportJobErrorPackage = {};
-							createReportJobErrorPackage.status = status;
-							createReportJobErrorPackage.error = xhr.responseText;
-							this.createReportJobError(JSON.stringify(createReportJobErrorPackage));
+				this.createReportJobFailed(false);
+				return cohortDefinitionService.getCohortAnalyses(cohortJob)
+					.then(({data}) => jobDetailsService.createJob(data))
+					.catch(response => {
+						this.createReportJobFailed(true);
+						var createReportJobErrorPackage = {};
+						createReportJobErrorPackage.status = status;
+						createReportJobErrorPackage.error = xhr.responseText;
+						this.createReportJobError(JSON.stringify(createReportJobErrorPackage));
 
 						// reset button to allow generation attempt
-							this.generateReportsEnabled(true);
-							this.generateButtonCaption('Generate');
-					}
-				});
+						this.generateReportsEnabled(true);
+						this.generateButtonCaption('Generate');
+					});
 			}
 
 			generateQuickAnalysis () {
@@ -1175,7 +1128,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.tabPath.dispose();
 				this.sortedConceptSets.dispose();
 				this.reportingState.dispose();
-				this.showReportNameDropdown.dispose();			
+				this.showReportNameDropdown.dispose();
 			}
 
 			getCriteriaIndexComponent (data) {
@@ -1254,7 +1207,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			copyCohortSQLToClipboard () {
 				this.copyToClipboard('#btnCopyCohortSQLClipboard', '#copyCopyCohortSQLMessage');
 			}
-		
+
 	}
 
 	return commonUtils.build('cohort-definition-manager', CohortDefinitionManager, view);

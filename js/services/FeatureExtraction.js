@@ -1,7 +1,7 @@
 define(function (require, exports) {
 
 	const config = require('appConfig');
-	const authApi = require('webapi/AuthAPI');
+	const authApi = require('services/AuthAPI');
 	const httpService = require('services/http');
 
 	function getDefaultCovariateSettings(temporal = false) {

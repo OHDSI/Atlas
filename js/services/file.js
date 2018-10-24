@@ -1,6 +1,6 @@
 define(
   [
-    'webapi/AuthAPI',
+    'services/AuthAPI',
     'file-saver',
   ],
   (

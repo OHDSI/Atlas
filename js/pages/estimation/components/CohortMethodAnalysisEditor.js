@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./CohortMethodAnalysisEditor.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'../options',
 	'utils/DataTypeConverterUtils',

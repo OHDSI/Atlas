@@ -2,14 +2,14 @@ define(
 	[
 		'knockout',
 		'services/http',
-		'webapi/AuthAPI',
+		'services/AuthAPI',
 		'appConfig',
 		'lscache',
 		'atlas-state',
 		'jquery',
 		'services/Execution',
-		'webapi/SourceAPI',
-		'providers/Model',
+		'services/SourceAPI',
+		'Model',
 		'databindings',
 	],
 	(

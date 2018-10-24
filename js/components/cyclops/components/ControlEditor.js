@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./ControlEditor.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'../options',
     'databindings',

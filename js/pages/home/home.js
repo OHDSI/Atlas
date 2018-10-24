@@ -1,11 +1,11 @@
 define([
 	'knockout',
 	'text!./home.html',
-	'providers/Page',
+	'pages/Page',
 	'utils/CommonUtils',
 	'services/http',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 	'components/heading',
 ], function (
 	ko,

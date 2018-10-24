@@ -6,7 +6,7 @@ define([
 	'utils/ChartUtils',
 	'const',
 	'pages/data-sources/classes/Report',
-	'providers/Component',
+	'components/Component',
 	'components/heading',
 	'components/charts/donut',
 	'components/charts/line',

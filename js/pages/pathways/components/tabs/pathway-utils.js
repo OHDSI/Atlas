@@ -4,9 +4,9 @@ define([
 		'../../PermissionService',
     'text!./pathway-utils.html',
     'appConfig',
-    'webapi/AuthAPI',
-    'providers/Component',
-    'providers/AutoBind',
+    'services/AuthAPI',
+    'components/Component',
+    'utils/AutoBind',
 		'utils/CommonUtils',
     'less!./pathway-utils.less',
 ], function (

@@ -3,7 +3,7 @@ define([
 	'text!./cohort-comparison-multi-r-code.html',
 	'appConfig',
 	'components/cohortcomparison/ComparativeCohortAnalysis',
-	'vocabularyprovider',
+	'services/VocabularyProvider',
 	'prism',
 ],
 	function (

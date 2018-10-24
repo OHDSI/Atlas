@@ -22,15 +22,14 @@ const localRefs = {
 	"loading": "components/loading",
 	"atlas-state": "components/atlas-state",
 	"feedback": "components/feedback",
-	"conceptsetbuilder": "modules/conceptsetbuilder",
-	"conceptpicker": "modules/conceptpicker",
-	"webapi": "modules/WebAPIProvider",
+	"conceptsetbuilder": "components/conceptsetbuilder",
+	"conceptpicker": "components/conceptpicker",
 	"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
-	"css": "plugins/css.min",
+	"css": "extensions/plugins/css.min",
 };
 
 // set 'optional' path prior to first call to require
-requirejs.config({paths: {"optional": "plugins/optional", "text": "plugins/text"}});
+requirejs.config({paths: {"optional": "extensions/plugins/optional", "text": "extensions/plugins/text"}});
 
 require([
 	'./settings',
@@ -72,9 +71,9 @@ require([
     $.fn.bstooltip = $.fn.tooltip;
 		require([
 			'knockout',
-			'providers/Application',
-			'providers/Model',
-			'providers/Router',
+			'Application',
+			'Model',
+			'pages/Router',
 			'atlas-state',
 			'jquery.ui.autocomplete.scroll',
 			'loading',

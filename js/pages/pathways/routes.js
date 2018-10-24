@@ -2,7 +2,7 @@ define((require, factory) => {
 	const ko = require('knockout');
 	const {
 		AuthorizedRoute
-	} = require('providers/Route');
+	} = require('pages/Route');
 
 	// return the routes that #/pathways responds to
 	function routes(appModel, router) {

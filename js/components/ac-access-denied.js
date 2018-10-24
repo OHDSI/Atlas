@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./ac-access-denied.html',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'forbidden',
 	'unauthenticated',

@@ -1,7 +1,7 @@
 define(
 	(require, factory) => {
         const ko = require('knockout');
-        const { AuthorizedRoute } = require('providers/Route');
+        const { AuthorizedRoute } = require('pages/Route');
 
 		function routes(appModel, router) {
 

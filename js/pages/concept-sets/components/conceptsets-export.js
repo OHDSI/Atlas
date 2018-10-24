@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./conceptsets-export.html',
-	'providers/Component',
-	'providers/AutoBind',
+	'components/Component',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'appConfig',
 	'services/file',

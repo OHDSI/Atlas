@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./included-conceptsets-badge.html',
-	'providers/Component',
-	'providers/AutoBind',
+	'components/Component',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'atlas-state',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',

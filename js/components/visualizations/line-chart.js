@@ -5,7 +5,7 @@ define(
     'utils/BemHelper',
     'utils/ChartUtils',
     'less!./line-chart.less',
-    'bindings/lineChart',
+    'extensions/bindings/lineChart',
   ],
   function (ko, view, BemHelper, ChartUtils) {
 

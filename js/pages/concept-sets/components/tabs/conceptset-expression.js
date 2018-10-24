@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./conceptset-expression.html',
-	'providers/Component',
-	'providers/AutoBind',
+	'components/Component',
+	'utils/AutoBind',
   'utils/CommonUtils',
   'atlas-state',
 ], function (

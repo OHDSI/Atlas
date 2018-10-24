@@ -1,8 +1,8 @@
 define([
 	'jquery',
 	'knockout',
-	'text!./MappedConcepts.html',
-	'vocabularyprovider',
+	'text!./IncludedConcepts.html',
+	'services/VocabularyProvider',
 	'faceted-datatable'
 ], function (
 		$,
@@ -10,7 +10,8 @@ define([
 		template,
 		VocabularyAPI) {
 	
-	function MappedConcepts(params) {
+	function IncludedConcepts(params) {
+		
 		var self = this;
 		
 		self.conceptSet = ko.pureComputed(function () {
@@ -29,7 +30,7 @@ define([
 			return index;
 		});
 		
-		self.mappedConcepts = ko.observableArray();
+		self.includedConcepts = ko.observableArray();
 		if (params.widget)
 			params.widget(self);
 		
@@ -165,12 +166,12 @@ define([
 			self.isLoading(true);
 			self.selectedConcepts([]);
 			VocabularyAPI.resolveConceptSetExpression(self.conceptSet()).then(function (identifiers) {
-				VocabularyAPI.getMappedConceptsById(identifiers).then(function (concepts) {
+				VocabularyAPI.getConceptsById(identifiers).then(function (concepts) {
 					concepts.forEach(function (concept) {
 						concept.RECORD_COUNT = 'timeout';
 						concept.DESCENDANT_RECORD_COUNT = 'timeout';
 					});
-					self.mappedConcepts(concepts);
+					self.includedConcepts(concepts);
 				})
 				.fail(function (err) {
 					console.log("lookupByIds failed: " + err);
@@ -200,12 +201,12 @@ define([
 		
 		// startup actions
 		self.refresh();
-		
 	}
-	
+
 	// return compoonent definition
 	return {
-		viewModel: MappedConcepts,
+		viewModel: IncludedConcepts,
 		template: template
 	};
+	
 });
