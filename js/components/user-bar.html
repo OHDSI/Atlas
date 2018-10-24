@@ -34,93 +34,44 @@
 		</div>
 	</div>
 </div>
-
-<atlas-modal params="
-		showModal: $component.showJobModal,
-		title: 'Notifications (last ' + $component.jobListing().length + ')',
-		data: {
-			jobListing: $component.sortedJobListing(),
-			clearJobNotificationsPending: $component.clearJobNotificationsPending,
-			jobNameClick: $component.jobNameClick,
-			classes: $component.classes
-		}
-">
-	<div  data-bind="css: classes('jobs-modal-content')">
-		<div data-bind="if: jobListing.length == 0">
-			Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class="fa fa-bell pending"></i> if you
-			have new notifications available.
-		</div>
-		<div data-bind="if: jobListing.length > 0">
-			<table data-bind="css: classes({ element: 'jobs-table', extra: ['table'] })">
-				<thead>
-					<th>Job Name</th>
-					<th>Duration</th>
-					<th>End time</th>
-					<th>Status</th>
-				</thead>
-				<tbody>
-					<!-- ko foreach: jobListing -->
-						<tr data-bind="css: { warning: !viewed() }">
-							<td data-bind="css: $parent.classes('job-name')">
-								<i data-bind="css: $parent.classes({ element: 'job-ico', extra: ['fa fa-tasks'] })"></i> <a data-bind="click: () => { $component.data().jobNameClick($data); }, text: $data.name" class="linkish"></a>
-							</td>
-							<td data-bind="css: $parent.classes('job-duration'), html: duration"></td>
-							<td data-bind="css: $parent.classes('job-end'), html: endDate"></td>
-							<td data-bind="css: $parent.classes('job-status'), html: status"></td>
-						</tr>
-					<!-- /ko -->
-				</tbody>
-			</table>
-		</div>
-	</div>
-</atlas-modal>
 <script type="text/html" id="user-bar">
 	<div data-bind="if: jobListing().length == 0">
 		Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class="fa fa-bell pending"></i> if you
 		have new notifications available.
 	</div>
 	<div data-bind="if: jobListing().length > 0">
-		<table class="pad-5" style="width:100%;">
+		<table data-bind="css: classes({ element: 'jobs-table', extra: ['table'] })">
 			<thead>
-			<th>Job Name</th>
-			<th>Progress</th>
-			<th>Status</th>
+				<th>Job Name</th>
+				<th>Duration</th>
+				<th>End time</th>
+				<th>Status</th>
 			</thead>
 			<tbody>
 			<!-- ko foreach: jobListing -->
-			<tr>
-				<td class="pad-5"><i class="fa fa-tasks"></i> <a data-bind="click:function() {$parent.jobNameClick($data)}, text: $data.name" class="linkish"></a></td>
-				<td class="pad-5">
-					<div data-bind="if:$data.progress">
-						<div class="progress">
-							<div class="progress-bar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" role="progressbar" data-bind="style:{ width: $parent.calculateProgress($data)}, text: $parent.calculateProgress($data)"></div>
-						</div>
-					</div>
+			<tr data-bind="css: { warning: !viewed() }">
+				<td data-bind="css: $parent.classes('job-name')">
+					<i data-bind="css: $parent.classes({ element: 'job-ico', extra: ['fa fa-tasks'] })"></i> <a data-bind="click: () => { $parent.jobNameClick($data); }, text: $data.name" class="linkish"></a>
 				</td>
-				<td class="pad-5" data-bind="html: status"></td>
+				<td data-bind="css: $parent.classes('job-duration'), html: duration"></td>
+				<td data-bind="css: $parent.classes('job-end'), html: endDate"></td>
+				<td data-bind="css: $parent.classes('job-status'), html: status"></td>
 			</tr>
 			<!-- /ko -->
 			</tbody>
 		</table>
 	</div>
 </script>
-<script type="text/html" id="user-bar-footer">
-	<button type="button" class="btn btn-sm btn-default" data-bind="click:clearJobNotifications">Stop Watching These Jobs</button>
-</script>
 <atlas-modal params="{
 		showModal: jobModalOpened,
 		iconClass: 'fa fa-bell',
-		title: 'Notifications',
+		title: 'Notifications (last ' + $component.jobListing().length + ')',
 		template: 'user-bar',
 		data: {
-			jobListing: $component.jobListing,
+			jobListing: $component.sortedJobListing,
 			jobNameClick: $component.jobNameClick,
 			calculateProgress: $component.calculateProgress,
 			jobModalOpened: $component.jobModalOpened,
-		},
-		footerTemplate: 'user-bar-footer',
-		footerData: {
-			clearJobNotifications: $component.clearJobNotifications,
-			clearJobNotificationsPending: $component.clearJobNotificationsPending
+			classes: $component.classes
 		}
 	}"></atlas-modal>
