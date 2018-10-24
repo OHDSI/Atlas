@@ -40,7 +40,7 @@ define([
 					{
 						title: 'Provider',
 						data: 'providerType',
-						className: this.classes('tbl-col', 'name'),
+						className: this.classes('tbl-col', 'provider'),
 						render: datatableUtils.getLinkFormatter(d => ({
 							link: '#/import/job/' + d.id,
 							label: Const.AuthenticationProviders.find(p => p.value === d.providerType).label,
@@ -49,24 +49,36 @@ define([
 					{
 						title: 'Enabled',
 						data: 'enabled',
-						className: this.classes('tbl-col', 'created'),
+						className: this.classes('tbl-col', 'enabled'),
 						render: data => data ? 'Yes' : 'No',
 					},
 					{
 						title: 'Start date',
-						className: this.classes('tbl-col', 'updated'),
+						className: this.classes('tbl-col', 'start-date'),
 						type: 'date',
 						render: datatableUtils.getDateFieldFormatter('startDate'),
 					},
 					{
+						title: 'Last executed',
+						className: this.classes('tbl-col', 'last-executed'),
+						type: 'date',
+						render: datatableUtils.getDateFieldFormatter('lastExecuted', '-'),
+					},
+					{
+						title: 'Next execution',
+						className: this.classes('tbl0col', 'next-execution'),
+						type: 'date',
+						render: datatableUtils.getDateFieldFormatter('nextExecution', '-'),
+					},
+					{
 						title: 'Execute',
 						data: 'frequency',
-						className: this.classes('tbl-col'),
+						className: this.classes('tbl-col', 'frequency'),
 						render: Utils.ExecuteRender,
 					},
 					{
 						title: 'Ends',
-						className: this.classes('tbl-col'),
+						className: this.classes('tbl-col', 'ends'),
 						render: Utils.EndsRender,
 					}
 				];
