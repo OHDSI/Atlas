@@ -62,7 +62,7 @@ define([
 					width: 1000,
 					height: 250
 				};
-			
+
 			this.breakpoints = {
 				wide: {
 					width: 1000,
@@ -78,14 +78,14 @@ define([
 				},
 				guessFromNode: (selector) => {
 					const bounds = document.querySelector(selector).getBoundingClientRect();
-					
+
 					return {
 						width: bounds.width,
 						height: bounds.height,
 					};
 				},
 			};
-			
+
 			this.chartOptions = {
 				margins: {
 					top: 20,
@@ -137,10 +137,10 @@ define([
 
 			this.helpTitle = ko.observable();
 			this.helpContent = ko.observable();
-            this.helpModalOpened = ko.observable(false);
+			this.helpModalOpened = ko.observable(false);
 
 			this.setHelpContent = (h) => {
-                this.helpModalOpened(true);
+				this.helpModalOpened(true);
 				if (typeof h === 'string') {
 					switch (h) {
 						case 'condition-prevalence':
