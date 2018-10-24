@@ -16,14 +16,14 @@ define([
 
 			const {
 				showModal,
-                iconClass,
+				iconClass,
 				title,
 				template,
 				data,
 				backdropClosable = true,
 				fade = ko.observable(true),
-                footerTemplate,
-                footerData,
+				footerTemplate,
+				footerData,
 			} = params;
 
 			this.showModal = showModal;
