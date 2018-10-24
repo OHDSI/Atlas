@@ -133,7 +133,7 @@ define([
 		};
 
 		jobNameClick(j) {
-			//this.showJobModal(false);
+			this.jobModalOpened(false);
 			window.location = '#/' + j.url;
 		}
 	}

@@ -89,7 +89,7 @@
 			<tbody>
 			<!-- ko foreach: jobListing -->
 			<tr>
-				<td class="pad-5"><i class="fa fa-tasks"></i> <a data-bind="click:function() {$parent.jobModalOpened(false); $parent.jobNameClick($data)}, text: $data.name" class="linkish"></a></td>
+				<td class="pad-5"><i class="fa fa-tasks"></i> <a data-bind="click:function() {$parent.jobNameClick($data)}, text: $data.name" class="linkish"></a></td>
 				<td class="pad-5">
 					<div data-bind="if:$data.progress">
 						<div class="progress">
