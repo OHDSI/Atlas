@@ -132,7 +132,7 @@ const settingsObject = {
     "punycode": "https://unpkg.com/urijs@1.19.1/src/punycode",
     "SecondLevelDomains": "https://unpkg.com/urijs@1.19.1/src/SecondLevelDomains",		
     "IPv6": "https://unpkg.com/urijs@1.19.1/src/IPv6",
-    "bootstrap-datetimepicker": "assets/bootstrap-datetimepicker.min",
+    "bootstrap-datetimepicker": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min",
   },
   cssPaths: {
     "font-awesome.min.css": "styles/font-awesome.min.css",
@@ -153,7 +153,7 @@ const settingsObject = {
     "jquery.dataTables.colVis.css": "styles/jquery.dataTables.colVis.css",
     "jquery.datatables.tabletools.css": "styles/jquery.datatables.tabletools.css",
     "prism.css": "styles/prism.css",
-    "bootstrap-datetimepicker.css": "styles/bootstrap-datetimepicker.min.css",
+    "bootstrap-datetimepicker.css": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css",
   },
 };
 
