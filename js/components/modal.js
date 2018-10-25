@@ -23,7 +23,6 @@ define([
 				backdropClosable = true,
 				fade = ko.observable(true),
 				footerTemplate,
-				footerData,
 			} = params;
 
 			this.showModal = showModal;
@@ -34,7 +33,6 @@ define([
 			this.fade = fade;
 			this.backdropClosable = backdropClosable;
 			this.footerTemplate = footerTemplate;
-			this.footerData = footerData;
 		}
 	}
 
