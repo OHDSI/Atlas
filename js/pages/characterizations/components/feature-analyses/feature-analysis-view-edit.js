@@ -9,7 +9,7 @@ define([
     'services/Vocabulary',
     'conceptsetbuilder/InputTypes/ConceptSet',
     'pages/Page',
-	'pages/characterizations/const',
+    'pages/characterizations/const',
     'utils/AutoBind',
     'utils/CommonUtils',
     'assets/ohdsi.util',
@@ -28,7 +28,7 @@ define([
     VocabularyAPI,
     ConceptSet,
     Page,
-	constants,
+    constants,
     AutoBind,
     commonUtils,
     ohdsiUtil
@@ -39,6 +39,11 @@ define([
         CRITERIA_SET: 'CRITERIA_SET',
         CUSTOM_FE: 'CUSTOM_FE',
     };
+
+    const statTypeOptions = [
+      { label: 'Prevalence', value: 'PREVALENCE' },
+      { label: 'Distribution', value: 'DISTRIBUTION' },
+    ];
 
     class FeatureAnalysisViewEdit extends AutoBind(Page) {
         constructor(params) {
@@ -51,6 +56,7 @@ define([
                 descr: ko.observable(),
                 type: ko.observable(),
                 design: ko.observable(),
+                statType: ko.observable(),
                 conceptSets: ko.observableArray(),
             };
             this.domains = ko.observable([]);
@@ -72,6 +78,7 @@ define([
             this.showConceptSetBrowser = ko.observable();
 
             this.featureTypes = featureTypes;
+            this.statTypeOptions = ko.observableArray(statTypeOptions);
             this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
         }
 
@@ -134,7 +141,7 @@ define([
             this.loading(false);
         }
 
-        setupAnalysisData({ name = '', descr = '', domain = '', type = '', design= '', conceptSets = [] }) {
+        setupAnalysisData({ name = '', descr = '', domain = '', type = '', design= '', conceptSets = [], statType = 'PREVALENCE' }) {
             let parsedDesign;
             this.data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name) })));
 
@@ -155,6 +162,7 @@ define([
             this.data.domain(domain);
             this.data.type(type);
             this.data.design(parsedDesign);
+            this.data.statType(statType);
             this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data));
             this.previousDesign = { [type]: parsedDesign };
         }

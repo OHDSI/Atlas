@@ -92,9 +92,18 @@
                 <div data-bind="
                     if: $component.data.type() === $component.featureTypes.CRITERIA_SET, css: classes('design')
                 ">
+                    <div>
                     <button data-bind="css: classes({ element: 'add-criteria', extra: 'btn btn-success' }), click: addCriteria">
                         Add Criteria feature
                     </button>
+                        <div data-bind="css: classes('analysis-type')">
+                            <label>Analysis type:</label>
+                            <multi-select
+                                data-bind="css: classes('stat-type-selector')"
+                                params="options: $component.statTypeOptions,
+                                    selectedValue: $component.data.statType, multiple: false"></multi-select>
+                        </div>
+                    </div>
                     <!-- ko foreach: $component.data.design -->
                         <div data-bind="
                             css: $component.classes('criteria'),
