@@ -40,11 +40,11 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/ht
 				self.options.Facets.forEach(facetConfig => {
 					httpService.doGet(config.webAPIRoot + "facets?facet=" + facetConfig.caption + '&entityName=' + self.options.entityName)
 						.then(({data}) => {
-							var isArray = facetConfig.isArray || false;
+							// var isArray = facetConfig.isArray || false;
 							var dimension = data.map((d) => {
-								let text = self.facetDimensionHelper(facetConfig.binding(d.key));
-								return {key: d.key, text: text, count: d.value};
-							}, isArray);
+								let text = self.facetDimensionHelper(facetConfig.binding(d.key, d.text));
+								return {key: d.key, text: text, count: d.count};
+							});
 							var facet = {
 								'caption': facetConfig.caption,
 								'binding': facetConfig.binding,
