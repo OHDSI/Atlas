@@ -15,6 +15,11 @@
             click: $component.newScheduledImport,
             enabled: canCreate
         "></button>
+        <button data-bind="
+            css: classes({ element: 'refresh-btn', extra: 'btn btn-primary btn-sm' }),
+            text: 'Refresh',
+            click: $component.loadJobs,
+        "></button>
     </div>
 </div>
 
