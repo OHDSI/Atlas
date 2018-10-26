@@ -1,0 +1,42 @@
+<div data-bind="css: classes()">
+    <heading-title params="name: 'User Import Job', icon: 'users', theme: 'dark'"></heading-title>
+
+    <div data-bind="css: classes({ extra: 'asset-heading' })">
+        <div data-bind="css: classes({ element: 'button-panel', extra: 'input-group' })">
+            <select data-bind="css: classes({ element: 'provider-select' }), options: providers, optionsText: 'label', optionsValue: 'value', value: job().providerType">
+            </select>
+            <div data-bind="css: classes({ element: 'button-group', extra: 'input-group-btn' })">
+                <button type="button" class="btn btn-success" data-bind="click: $component.saveJob, css: {disabled:!$component.isSavePermitted()}"><i class="fa fa-save"></i></button>
+                <button type="button" class="btn btn-primary" data-bind="click: $component.closeJob"><i class="fa fa-times"></i></button>
+                <button type="button" class="btn btn-danger"  data-bind="click: $component.deleteJob, css: {disabled: !$component.isDeletePermitted()}"><i class="fa fa-trash-o"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <tabs data-bind="visible: !$component.loading()" params="
+            selectedTabKey: $component.selectedTabKey,
+		    selectTab: $component.selectTab,
+		    tabs: [
+		        {
+		            title: 'Scheduler',
+		            key: 'scheduler',
+		            componentName: 'job-scheduler',
+		            componentParams: $component.componentParams,
+		        },
+		        {
+		            title: 'Role Mapping',
+		            key: 'mapping',
+		            componentName: 'role-group-mapping',
+		            componentParams: $component.componentParams,
+		        },
+		        {
+		            title: 'Job History',
+		            key: 'job-history',
+		            componentName: 'user-import-job-history',
+		            componentParams: $component.componentParams,
+		        },
+		    ]
+        ">
+
+    </tabs>
+</div>

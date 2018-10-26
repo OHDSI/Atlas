@@ -2,6 +2,15 @@ define(
   (require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
     function routes(appModel, router) {
+      const JobViewEdit = new AuthorizedRoute((id, section) => {
+				appModel.activePage(this.title);
+				require(['./users-import/job-view-edit'], function () {
+					router.setCurrentView('import-job-view-edit', {
+						jobId: id,
+						section: section,
+					});
+				});
+			});
       return {
         '/configure': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
@@ -22,7 +31,15 @@ define(
             router.setCurrentView('role-details');
           });
         }),
-        'import': new AuthorizedRoute(() => {
+        'import' : new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['./users-import/browser'], function () {
+            router.setCurrentView('user-import-browser');
+					});
+        }),
+        'import/job/:id:' : JobViewEdit,
+        'import/job/:id:/:section:': JobViewEdit,
+        'import/wizard': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./users-import/users-import'], function() {
             router.setCurrentView('users-import');
