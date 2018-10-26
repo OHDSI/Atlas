@@ -59,6 +59,17 @@ define([
 						render: datatableUtils.getDateFieldFormatter('startDate'),
 					},
 					{
+						title: 'Execute',
+						data: 'frequency',
+						className: this.classes('tbl-col', 'frequency'),
+						render: Utils.ExecuteRender,
+					},
+					{
+						title: 'Ends',
+						className: this.classes('tbl-col', 'ends'),
+						render: Utils.EndsRender,
+					},
+					{
 						title: 'Last executed',
 						className: this.classes('tbl-col', 'last-executed'),
 						type: 'date',
@@ -70,17 +81,6 @@ define([
 						type: 'date',
 						render: datatableUtils.getDateFieldFormatter('nextExecution', '-'),
 					},
-					{
-						title: 'Execute',
-						data: 'frequency',
-						className: this.classes('tbl-col', 'frequency'),
-						render: Utils.ExecuteRender,
-					},
-					{
-						title: 'Ends',
-						className: this.classes('tbl-col', 'ends'),
-						render: Utils.EndsRender,
-					}
 				];
 				this.gridOptions = {
 					Facets: [

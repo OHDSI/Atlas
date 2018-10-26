@@ -34,7 +34,13 @@
 <atlas-modal params="
     showModal: messageModal,
     title: 'Job Exit Message',
-    data: { message },
+    data: { classes, exitMessageItems },
 ">
-    <div data-bind="text: message, css: $root.classes({extra: 'panel-body'})"></div>
+    <div data-bind="css: $root.classes({extra: 'panel-body'})">
+        <ul data-bind="css: classes('messages-list')">
+            <!-- ko foreach: exitMessageItems -->
+                <li data-bind="text: $data"></li>
+            <!-- /ko -->
+        </ul>
+    </div>
 </atlas-modal>

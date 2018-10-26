@@ -32,7 +32,7 @@ define([
 			this.jobId.subscribe(() => this.loadHistory());
 			this.utils = utils;
 			this.messageModal = ko.observable();
-			this.message = ko.observable();
+			this.exitMessageItems = ko.observable();
 		}
 
 		loadHistory() {
@@ -44,7 +44,7 @@ define([
 
 		onMessageClick(data) {
 			if (data && data.exitMessage) {
-				this.message(data.exitMessage);
+				this.exitMessageItems(data.exitMessage.split(',').map(l => l.trim()));
 				this.messageModal(true);
 			}
 		}
