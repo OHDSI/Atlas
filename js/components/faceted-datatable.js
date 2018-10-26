@@ -50,23 +50,38 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 		self.ordering = params.ordering || true;
 		self.scrollOptions = params.scrollOptions || null;
 
+		function buildFilter(search) {
+			let filter = self.facets().map((f) => {
+				return {
+					name: f.caption,
+					selectedItems: Object.keys(f.selectedItems).map(item => {
+						return {
+							text: f.selectedItems[item].text,
+							key: f.selectedItems[item].key,
+						}
+					})
+				}
+			});
+			if (search.value !== "") {
+				self.columns.forEach(c => {
+					if (c.searchable) {
+						filter.push({
+							name: c.data,
+							selectedItems:[{text: search.value, key: ""}]
+						})
+					}
+				})
+			}
+			return filter;
+		}
+
 		if (params.ajax) {
 			self.ajax = (d, callback, settings) => {
 				self.componentLoading(true);
 				params.ajax({
 						page: d.start / d.length,
 						size: d.length,
-						filter: JSON.stringify(this.facets().map((f) => {
-							return {
-								name: f.caption,
-								selectedItems: Object.keys(f.selectedItems).map(item => {
-									return {
-										text: f.selectedItems[item].text,
-										key: f.selectedItems[item].key,
-									}
-								})
-							}
-						})),
+						filter: JSON.stringify(buildFilter(d.search)),
 						sort: self.order.map(s => {
 							return [params.columns[s[0]].data, s[1]]
 						})

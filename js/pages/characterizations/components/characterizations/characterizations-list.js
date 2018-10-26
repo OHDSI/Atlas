@@ -40,6 +40,7 @@ define([
                 {
                     title: 'Name',
                     data: 'name',
+                    searchable: true,
                     className: this.classes('tbl-col', 'name'),
                     render: datatableUtils.getLinkFormatter(d => ({
                         link: '#/cc/characterizations/' + d.id,
