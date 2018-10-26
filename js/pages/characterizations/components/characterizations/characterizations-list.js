@@ -48,18 +48,21 @@ define([
                 },
                 {
                     title: 'Created',
+                    data: 'createdDate',
                     className: this.classes('tbl-col', 'created'),
                     type: 'date',
                     render: datatableUtils.getDateFieldFormatter(),
                 },
                 {
                     title: 'Updated',
-                    className: this.classes('tbl-col', 'updated'),
+	                data: 'modifiedDate',
+	                className: this.classes('tbl-col', 'updated'),
                     type: 'date',
                     render: datatableUtils.getDateFieldFormatter(),
                 },
                 {
                     title: 'Author',
+                    data: 'createdBy',
                     className: this.classes('tbl-col', 'author'),
                     render: (s, p, d) => (d.createdBy !== null ? d.createdBy.login : 'anonymous'),
                 },

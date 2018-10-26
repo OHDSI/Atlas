@@ -54,20 +54,24 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 			self.ajax = (d, callback, settings) => {
 				self.componentLoading(true);
 				params.ajax({
-					page: d.start / d.length,
-					size: d.length,
-					filter: JSON.stringify(this.facets().map((f) => {
-						return {
-							name: f.caption,
-							selectedItems: Object.keys(f.selectedItems).map(item => {
-								return {
-									text: f.selectedItems[item].text,
-									key: f.selectedItems[item].key,
-								}
-							})
-						}
-					}))
-				})
+						page: d.start / d.length,
+						size: d.length,
+						filter: JSON.stringify(this.facets().map((f) => {
+							return {
+								name: f.caption,
+								selectedItems: Object.keys(f.selectedItems).map(item => {
+									return {
+										text: f.selectedItems[item].text,
+										key: f.selectedItems[item].key,
+									}
+								})
+							}
+						})),
+						sort: self.order.map(s => {
+							return [params.columns[s[0]].data, s[1]]
+						})
+					}
+				)
 					.then(({data}) => {
 						callback({
 							draw: d.draw,
