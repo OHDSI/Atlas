@@ -70,15 +70,12 @@ define([
                 Facets: [
                     {
                         'caption': 'Created',
-                        'binding': (key, text) => datatableUtils.getFacetForDate(key)
                     },
                     {
                         'caption': 'Updated',
-                        'binding': (key, text) => datatableUtils.getFacetForDate(key)
                     },
                     {
                         'caption': 'Author',
-                        'binding': (key, text) => (text  !== null ? text : 'anonymous'),
                     },
                 ]
             };

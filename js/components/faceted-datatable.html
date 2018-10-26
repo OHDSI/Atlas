@@ -34,7 +34,7 @@
 								deferRender: $component.deferRender,
 								pageLength: $component.pageLength,
 								drawCallback: $component.drawCallback,
-								serverSide:true,
+								serverSide:$component.ajax != null,
 								ajax: $component.ajax
 							},
 							scrollOptions: $component.scrollOptions,
