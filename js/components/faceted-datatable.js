@@ -1,7 +1,7 @@
 define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/http', 'appConfig', 'colvis'], function (ko, view, crossfilter, httpService, config) {
 
 	function facetedDatatable(params) {
-		var self = this;
+		const self = this;
 
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
@@ -41,24 +41,20 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/ht
 					httpService.doGet(config.webAPIRoot + "facets?facet=" + facetConfig.caption + '&entityName=' + self.options.entityName)
 						.then(({data}) => {
 							// var isArray = facetConfig.isArray || false;
-							var dimension = data.map((d) => {
-								let text = self.facetDimensionHelper(facetConfig.binding(d.key, d.text));
-								return {key: d.key, text: text, count: d.count};
-							});
-							var facet = {
+							let facet = {
 								'caption': facetConfig.caption,
 								'binding': facetConfig.binding,
-								'dimension': dimension,
+								'dimension': data,
 								'facetItems': [],
 								'selectedItems': {},
 							};
 							// Add a selected observable to each dimension
-							dimension.forEach((d) =>
+							data.forEach((d) =>
 								facet.facetItems.push({
 									key: d.key,
 									text: d.text,
 									count: d.count,
-									dimension: dimension,
+									dimension: data,
 									selected: ko.observable(false),
 									facet: facet
 								})
@@ -85,7 +81,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/ht
 								});
 				*/
 			}
-		}
+		};
 		self.facets = ko.observableArray();
 
 		self.nullFacetLabel = params.nullFacetLabel || 'NULL';
@@ -131,7 +127,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/ht
 		self.scrollOptions = params.scrollOptions || null;
 
 		self.updateFilters = function (data, event) {
-			var facet = data.facet;
+			let facet = data.facet;
 			data.selected(!data.selected());
 			if (data.selected()) {
 				if (!facet.selectedItems.hasOwnProperty(data.key)) {
@@ -141,14 +137,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'services/ht
 				delete facet.selectedItems[data.text];
 			}
 			self.facets.valueHasMutated();
-			// self.ajax.reload();
-		}
-
-		// additional helper function to help with crossfilter-ing dimensions that contain nulls
-		self.facetDimensionHelper = function facetDimensionHelper(val) {
-			var ret = val === null ? self.nullFacetLabel : val;
-			return ret;
-		}
+		};
 		self.createFilters();
 	};
 
