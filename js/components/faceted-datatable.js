@@ -62,17 +62,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 					})
 				}
 			});
-			if (search.value !== "") {
-				self.columns.forEach(c => {
-					if (c.searchable) {
-						filter.push({
-							name: c.data,
-							selectedItems:[{text: search.value, key: ""}]
-						})
-					}
-				})
-			}
-			return filter;
+			return {facets: filter, text: search.value, searchableFields: self.columns.filter(c => c.searchable).map(c => c.title)};
 		}
 
 		if (params.ajax) {

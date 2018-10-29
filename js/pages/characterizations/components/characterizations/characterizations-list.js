@@ -64,7 +64,8 @@ define([
                 {
                     title: 'Author',
                     data: 'createdBy',
-                    className: this.classes('tbl-col', 'author'),
+	                searchable: true,
+	                className: this.classes('tbl-col', 'author'),
                     render: (s, p, d) => (d.createdBy !== null ? d.createdBy.login : 'anonymous'),
                 },
 
