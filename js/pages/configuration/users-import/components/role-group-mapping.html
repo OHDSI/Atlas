@@ -1,0 +1,25 @@
+<table width="100%" cellspacing="0" data-bind="dataTable:{
+                            data: rolesMapping(),
+                            onRowClick: $component.onRolesRowClick,
+                            options: {
+                                        dom: 'lfiprt',
+                                        language: {
+                                            search : 'Filter:'
+                                        },
+                                        lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+                                        orderClasses: false,
+                                        deferRender: true,
+                                        autoWidth: true,
+                                        ordering: true,
+                                        order: [[ 0, 'asc' ]],
+                                        columns: [
+                                                { title: 'Role', data: 'role' },
+                                                { title: 'Group name', render: renderGroups },
+                                        ],
+                                        stripeClasses : [ 'roleItem' ],
+                                }
+                              }, css: classes({extra: ['stripe', 'compact', 'hover']})">
+</table>
+
+<search-group-dialog params="open: isSearchGroupDialog, importProvider: provider, selectedRole: selectedRole, searchResults: searchResults">
+</search-group-dialog>

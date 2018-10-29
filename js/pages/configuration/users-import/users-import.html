@@ -42,28 +42,8 @@
                 <div data-bind="css: classes({extra: ['padded']})">
                     <step-header params="header:'Please, provide LDAP/Active Directory groups mapping to Atlas roles if required.'"></step-header>
                     <div>
-                        <table width="100%" cellspacing="0" data-bind="dataTable:{
-                            data: rolesMapping(),
-                            onRowClick: $component.onRolesRowClick,
-                            options: {
-                                        dom: 'lfiprt',
-                                        language: {
-                                            search : 'Filter:'
-                                        },
-                                        lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
-                                        orderClasses: false,
-                                        deferRender: true,
-                                        autoWidth: true,
-                                        ordering: true,
-                                        order: [[ 0, 'asc' ]],
-                                        columns: [
-                                                { title: 'Role', data: 'role' },
-                                                { title: 'Group name', render: renderGroups },
-                                        ],
-                                        stripeClasses : [ 'roleItem' ],
-                                }
-                              }, css: classes({extra: ['stripe', 'compact', 'hover']})">
-                        </table>
+                        <role-group-mapping params="rolesMapping: rolesMapping, provider: importProvider">
+                        </role-group-mapping>
                     </div>
                 </div>
             </div>
@@ -143,22 +123,6 @@
 </div>
 
 <!-- Dialogs -->
-
-<!-- Ldap search -->
-<div data-bind="modal: isSearchGroupDialog, css: classes({extra: ['modal', 'fade']})" tabindex="-1" role="dialog">
-    <div data-bind="css: classes({extra: ['modal-dialog', 'modal-lg']})">
-        <div data-bind="css: classes({extra: ['modal-content']})">
-            <div data-bind="css: classes({extra: ['modal-header']})">Find Group</div>
-            <div data-bind="css: classes({extra: ['paddedWrapper']})">
-                <ldap-groups params="provider: importProvider, role: selectedRole, searchResults: ldapGroups"></ldap-groups>
-                <div data-bind="css: classes({ element: 'row', modifiers: 'footer' })">
-                    <button data-bind="click: setGroupMapping, css: classes({extra: ['btn', 'btn-sm', 'btn-primary'] })">Set</button>
-                    <button data-bind="click: closeGroupModal, css: classes({extra: ['btn', 'btn-sm', 'btn-success'] })">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Atlas roles -->
 <div data-bind="modal: isAtlasRolesDialog, css: classes({extra: ['modal', 'fade']})" tabindex="-1" role="dialog">
