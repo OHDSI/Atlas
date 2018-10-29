@@ -32,7 +32,7 @@ define([
 			this.authLogin = authApi.subject;
 			this.pollInterval = null;
 			this.loading = params.model.loading;
-			this.signInOpened = ko.observable(false);
+			this.signInOpened = params.model.signInOpened;
 			this.jobListing = state.jobListing;
 			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
 			this.lastViewedTime=null;
