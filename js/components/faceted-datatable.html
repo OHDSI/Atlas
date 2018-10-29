@@ -1,23 +1,27 @@
-<div class="text-center" data-bind="if: $component.componentLoading(), css: {visible:componentLoading(), hidden: !componentLoading()}">
-	<h3><i class="fa fa-spinner fa-spin"></i> Loading ...</h3>
-</div>
-<div>
-	<div class="row">
-		<div class="feFilter" data-bind="visible:$component.facets().length > 0, css: {'col-xs-2': $component.facets().length > 0}">
-			<div data-bind="with: $component.facets">
-				<div data-bind="foreach:$data">
-					<div class="facetName"><i class="fa fa-filter"></i><span data-bind="text:caption"></span></div>
-					<div class="facetScrollBox" data-bind="foreach:$data.facetItems">
-						<div class="facetMemberName" data-bind="click: function(data, event) { $component.updateFilters($data, event);}, css : {selected: selected}">
-							<span data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, text:text + ' (' + count + ')'"></span>
+<div style="position: relative">
+	<div class="text-center" style="position: absolute; left: 50%; height: 50%; z-index: 100"  data-bind="if: $component.componentLoading(), css: {visible:componentLoading(), hidden: !componentLoading()}" >
+		<h3><i class="fa fa-spinner fa-spin"></i> Loading ...</h3>
+	</div>
+	<div>
+		<div class="row">
+			<div class="feFilter"
+				 data-bind="visible:$component.facets().length > 0, css: {'col-xs-2': $component.facets().length > 0}">
+				<div data-bind="with: $component.facets">
+					<div data-bind="foreach:$data">
+						<div class="facetName"><i class="fa fa-filter"></i><span data-bind="text:caption"></span></div>
+						<div class="facetScrollBox" data-bind="foreach:$data.facetItems">
+							<div class="facetMemberName"
+								 data-bind="click: function(data, event) { $component.updateFilters($data, event);}, css : {selected: selected}">
+								<span data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, text:text + ' (' + count + ')'"></span>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div data-bind="css: {'faceted-data-table-wrapper': true, 'col-xs-10': $component.facets().length > 0, 'col-xs-12': $component.facets().length == 0}">
-			<div class="facetedDataTable">
-				<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" cellspacing="0" data-bind="dataTable:{
+			<div data-bind="css: {'faceted-data-table-wrapper': true, 'col-xs-10': $component.facets().length > 0, 'col-xs-12': $component.facets().length == 0}">
+				<div class="facetedDataTable">
+					<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" cellspacing="0"
+						   data-bind="dataTable:{
 							data: $component.tableData,
 							options: {
 								dom: $component.dom,
@@ -41,7 +45,8 @@
 							onRowClick: $component.rowClick
 					} ">
 						<thead data-bind="template: { name: $component.headersTemplateId }"></thead>
-				</table>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
