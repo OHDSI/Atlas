@@ -11,65 +11,63 @@
 		<a data-bind="click: function () { $component.jobModalOpened(true) }"><i data-bind="css: {pending: jobNotificationsPending}" class="fa fa-bell"></i></a>
 		<!-- /ko -->
 		<div data-bind="if:appConfig.userAuthenticationEnabled===true" style="display: inline-block;">
-			<div title="Sign In" data-bind="if: !isLoggedIn() || tokenExpired()"><span class="pipe">|</span><a data-toggle="modal" data-target="#myModal"><i class="fa fa-sign-in"></i>Sign In</a></div>
-			<div title="Sign Out" data-bind="if: isLoggedIn() && !tokenExpired()"><span class="pipe">|</span><a data-toggle="modal" data-target="#myModal"><strong data-bind="text: authLogin"></strong><i class="fa fa-user-circle fa-lg" aria-hidden="true"></i></a></div>
+			<div title="Sign In" data-bind="if: !isLoggedIn() || tokenExpired()"><span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><i class="fa fa-sign-in"></i>Sign In</a></div>
+			<div title="Sign Out" data-bind="if: isLoggedIn() && !tokenExpired()"><span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><strong data-bind="text: authLogin"></strong><i class="fa fa-user-circle fa-lg" aria-hidden="true"></i></a></div>
 		</div>
 	</div>
 	<!-- /ko -->
 </div>
 
-<div data-bind="if:appConfig.userAuthenticationEnabled===true" class="modal fade" id="myModal" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<div class="modal-title" id="myModalLabel"><i class="fa fa-sign-in"></i> Sign In</div>
-			</div>
-			<div class="modal-body">
-				<welcome params="{model: model}"></welcome>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
-</div>
-<script type="text/html" id="user-bar">
-	<div data-bind="if: jobListing().length == 0">
-		Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class="fa fa-bell pending"></i> if you
-		have new notifications available.
-	</div>
-	<div data-bind="if: jobListing().length > 0">
-		<table data-bind="css: classes({ element: 'jobs-table', extra: ['table'] })">
-			<thead>
-				<th>Job Name</th>
-				<th>Duration</th>
-				<th>End time</th>
-				<th>Status</th>
-			</thead>
-			<tbody>
-			<!-- ko foreach: jobListing -->
-			<tr data-bind="css: { warning: !viewed() }">
-				<td data-bind="css: $parent.classes('job-name')">
-					<i data-bind="css: $parent.classes({ element: 'job-ico', extra: ['fa fa-tasks'] })"></i> <a data-bind="click: () => { $parent.jobNameClick($data); }, text: $data.name" class="linkish"></a>
-				</td>
-				<td data-bind="css: $parent.classes('job-duration'), html: duration"></td>
-				<td data-bind="css: $parent.classes('job-end'), html: endDate"></td>
-				<td data-bind="css: $parent.classes('job-status'), html: status"></td>
-			</tr>
-			<!-- /ko -->
-			</tbody>
-		</table>
-	</div>
-</script>
+<atlas-modal params="{
+		if:appConfig.userAuthenticationEnabled === true,
+		showModal: signInOpened,
+		modifiers: ['sm'],
+		iconClass: 'fa fa-sign-in',
+		title: 'Sign In',
+		data: {
+			model: model
+		}
+}">
+	<welcome params="{model: model}"></welcome>
+</atlas-modal>
+
 <atlas-modal params="{
 		showModal: jobModalOpened,
 		title: 'Notifications (last ' + $component.jobListing().length + ')',
-		template: 'user-bar',
+		templateWrapperClass: {},
 		data: {
 			jobListing: $component.sortedJobListing,
 			jobNameClick: $component.jobNameClick,
 			jobModalOpened: $component.jobModalOpened,
 			classes: $component.classes
 		}
-	}"></atlas-modal>
+}">
+	<div data-bind="css: classes('jobs-modal-content')">
+		<div data-bind="if: jobListing().length == 0">
+			Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class="fa fa-bell pending"></i> if you
+			have new notifications available.
+		</div>
+		<div data-bind="if: jobListing().length > 0">
+			<table data-bind="css: classes({ element: 'jobs-table', extra: ['table'] })">
+				<thead>
+				<th>Job Name</th>
+				<th>Duration</th>
+				<th>End time</th>
+				<th>Status</th>
+				</thead>
+				<tbody>
+				<!-- ko foreach: jobListing -->
+				<tr data-bind="css: { warning: !viewed() }">
+					<td data-bind="css: $parent.classes('job-name')">
+						<i data-bind="css: $parent.classes({ element: 'job-ico', extra: ['fa fa-tasks'] })"></i> <a data-bind="click: () => { $parent.jobNameClick($data); }, text: $data.name" class="linkish"></a>
+					</td>
+					<td data-bind="css: $parent.classes('job-duration'), html: duration"></td>
+					<td data-bind="css: $parent.classes('job-end'), html: endDate"></td>
+					<td data-bind="css: $parent.classes('job-status'), html: status"></td>
+				</tr>
+				<!-- /ko -->
+				</tbody>
+			</table>
+		</div>
+	</div>
+</atlas-modal>

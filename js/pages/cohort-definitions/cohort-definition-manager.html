@@ -560,50 +560,46 @@
 			</div>
 		</div>
 	</div>
-	<script type="text/html" id="analysis-types">
+	<atlas-modal params="{
+		showModal: analysisTypesOpened,
+		iconClass: 'fa fa-group',
+		title: 'Analysis Types',
+		data: {}
+	}">
 		<b>Quick Analysis</b>
 		<p>Runs minimal analysis to provide a quick overview of this cohort's year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)</p>
 		<b>Healthcare Utilization</b>
 		<p>Runs analyses to provide Exposure, Visit and Drug Utilization reports. (estimated: 10 - 40 minutes)</p>
 		<b>Full Analysis</b>
 		<p>Runs a complete set of characterization reports. (estimated: 60 minutes)</p>
-	</script>
-	<atlas-modal params="{
-		showModal: analysisTypesOpened,
-		iconClass: 'fa fa-group',
-		title: 'Analysis Types',
-		template: 'analysis-types',
-		data: {}
-	}"></atlas-modal>
+	</atlas-modal>
 	<!-- /ko -->
-	<script type="text/html" id="cohort-definition-link">
-		<input readonly data-bind="value: cohortDefinitionLink" type="text" class="form-control text-cursor">
-	</script>
-	<script type="text/html" id="cohort-definition-link-footer">
-		This link can be used to access this cohort definition directly from the WebAPI from other tools like R as well as for importing across ATLAS instances.
-	</script>
 	<atlas-modal params="{
 		showModal: cohortLinkModalOpened,
 		iconClass: 'fa fa-group',
 		title: 'Link to Cohort Definition',
-		template: 'cohort-definition-link',
+		templateWrapperClass: {},
 		data: {
 			cohortDefinitionLink: $component.cohortDefinitionLink,
-		},
-		footerTemplate: 'cohort-definition-link-footer'
-	}"></atlas-modal>
+		}
+	}">
+		<div data-bind="css: $parent.classes({ element: 'modal-body', extra: 'modal-body' })">
+			<input readonly data-bind="value: cohortDefinitionLink" type="text" class="form-control text-cursor">
+		</div>
+		<div data-bind="css: $parent.classes({ element: 'modal-footer', extra: 'modal-footer' })">
+			This link can be used to access this cohort definition directly from the WebAPI from other tools like R as well as for importing across ATLAS instances.
+		</div>
+	</atlas-modal>
 
-	<script type="text/html" id="help-modal-cohort-definition">
-		A cohort is defined as the set of persons satisfying one or more inclusion criteria for a duration of time. One person may qualify for one cohort multiple times during non-overlapping time intervals. Cohorts are constructed in ATLAS by specifying cohort
-		entry criteria and cohort exit criteria. Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, and optionally specifying additional inclusion criteria which filter to the qualifying events.
-		Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer qualifies for the cohort.
-	</script>
 	<atlas-modal params="{
 		showModal: cohortDefinitionOpened,
 		title: 'Cohort Definition',
-		template: 'help-modal-cohort-definition',
 		data: {}
-	}"></atlas-modal>
+	}">
+		A cohort is defined as the set of persons satisfying one or more inclusion criteria for a duration of time. One person may qualify for one cohort multiple times during non-overlapping time intervals. Cohorts are constructed in ATLAS by specifying cohort
+		entry criteria and cohort exit criteria. Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, and optionally specifying additional inclusion criteria which filter to the qualifying events.
+		Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer qualifies for the cohort.
+	</atlas-modal>
 
 	<modal-pick-options params="{
 		showModal: $component.showUtilizationToRunModal,

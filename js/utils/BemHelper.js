@@ -9,10 +9,14 @@ define(
       }
 
       parseModifiers(val) {
-        const list = [];
+        let list = [];
 
         if (typeof val === 'string') {
           list.push(val);
+        }
+
+        if (typeof val === 'object' && Array.isArray(val)) {
+            list = list.concat(val);
         }
 
         return list;

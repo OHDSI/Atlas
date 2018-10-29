@@ -16,13 +16,14 @@ define([
 
 			const {
 				showModal,
+				modifiers = [],
 				iconClass,
 				title,
 				template,
 				data,
 				backdropClosable = true,
 				fade = ko.observable(true),
-				footerTemplate,
+				templateWrapperClass = { element: 'modal-body', extra: 'modal-body' }
 			} = params;
 
 			this.showModal = showModal;
@@ -32,7 +33,8 @@ define([
 			this.data = data;
 			this.fade = fade;
 			this.backdropClosable = backdropClosable;
-			this.footerTemplate = footerTemplate;
+			this.templateWrapperClass = templateWrapperClass;
+			this.modifiers = [ ...modifiers, backdropClosable ? null : 'unclosable' ];
 		}
 	}
 

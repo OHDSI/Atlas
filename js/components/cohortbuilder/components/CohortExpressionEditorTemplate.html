@@ -1,26 +1,25 @@
-<script type="text/html" id="cohort-events">
-	Events are recorded time-stamped observations for the persons, such as drug exposures, conditions, procedures, measurements and visits. All events have a start date and end date, though some events may have a start date and end date with the same value
-	(such as procedures or measurements).
-</script>
 <atlas-modal params="{
 		showModal: helpCohortEventsOpened,
 		title: 'Cohort Entry Events',
-		template: 'cohort-events',
 		data: {}
-	}"></atlas-modal>
-
-<script type="text/html" id="inclusion-criteria">
-	The qualifying cohort will be defined as all persons who have an initial event, satisfy the initial event inclusion criteria, and fulfill all additional qualifying inclusion criteria. Each qualifying inclusion criteria will be evaluated to determine the
-	impact of the criteria on the attrition of persons from the initial cohort.
-</script>
+}">
+	Events are recorded time-stamped observations for the persons, such as drug exposures, conditions, procedures, measurements and visits. All events have a start date and end date, though some events may have a start date and end date with the same value
+	(such as procedures or measurements).
+</atlas-modal>
 <atlas-modal params="{
 		showModal: helpInclusionCriteriaOpened,
 		title: 'Inclusion Criteria',
 		template: 'inclusion-criteria',
 		data: {}
-	}"></atlas-modal>
-
-<script type="text/html" id="cohort-exit">
+}">
+	The qualifying cohort will be defined as all persons who have an initial event, satisfy the initial event inclusion criteria, and fulfill all additional qualifying inclusion criteria. Each qualifying inclusion criteria will be evaluated to determine the
+	impact of the criteria on the attrition of persons from the initial cohort.
+</atlas-modal>
+<atlas-modal params="{
+		showModal: helpCohortExitOpened,
+		title: 'Cohort Exit',
+		data: {}
+}">
 	<div>
 		For all qualifying events, there must be a specification of when each event ends presence in the cohort.
 		By default, an event ends at the end of the observation period containing the qualifying initial event,
@@ -36,13 +35,7 @@
 		Criteria can be used to signal the end of an event.  If a censoring event is identified between a qualifying event's start and end date,
 		the date of the censoring event will be used as the exit date.
 	</div>
-</script>
-<atlas-modal params="{
-		showModal: helpCohortExitOpened,
-		title: 'Cohort Exit',
-		template: 'cohort-exit',
-		data: {}
-	}"></atlas-modal>
+</atlas-modal>
 
 <div class="panel panel-primary cohort-definition-panel">
 	<div class="panel-heading">
