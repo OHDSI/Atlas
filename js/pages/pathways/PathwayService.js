@@ -7,10 +7,8 @@ define([
 ) {
 	const servicePath = config.webAPIRoot + 'pathway-analysis';
 
-	function list() {
-		return httpService
-			.doGet(servicePath)
-			.then(res => res.data);
+	function list(params) {
+		return httpService.doGet(servicePath, params)
 	}
 
 	function create(design) {

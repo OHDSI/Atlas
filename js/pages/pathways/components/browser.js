@@ -31,17 +31,9 @@ define([
 
 			this.canList = PermissionService.isPermittedList;
 			this.canCreate = PermissionService.isPermittedCreate;
-		}
-
-		onRouterParamsChanged() {
-			this.canList() && this.loadData();
-		}
-
-		async loadData() {
-			this.loading(true);
-			const analysisList = await PathwayService.list();
-			this.analysisList(analysisList.content);
-			this.loading(false);
+			if (this.canList) {
+				this.ajax = PathwayService.list;
+			}
 		}
 
 		newAnalysis() {
@@ -53,6 +45,7 @@ define([
 				{
 					title: 'Name',
 					data: 'name',
+					searchable: true,
 					className: this.classes('tbl-col', 'name'),
 					render: datatableUtils.getLinkFormatter(d => ({
 						link: '#/pathways/' + d.id,
@@ -61,26 +54,31 @@ define([
 				},
 				{
 					title: 'Created',
+					data: 'createdDate',
 					className: this.classes('tbl-col', 'created'),
 					type: 'date',
 					render: datatableUtils.getDateFieldFormatter(),
 				},
 				{
 					title: 'Updated',
+					data: 'modifiedDate',
 					className: this.classes('tbl-col', 'updated'),
 					type: 'date',
 					render: datatableUtils.getDateFieldFormatter(),
 				},
 				{
 					title: 'Author',
-					data: (d) => (d.createdBy && d.createdBy.login) || "",
+					data: 'createdBy',
+					searchable: true,
 					className: this.classes('tbl-col', 'author'),
+					render: (s, p, d) => (d.createdBy !== null ? d.createdBy.login : 'anonymous'),
 				}
 			];
 		}
 
 		get gridOptions() {
 			return {
+				entityName: 'pathway_analysis',
 				Facets: [{
 					'caption': 'Created',
 					'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
