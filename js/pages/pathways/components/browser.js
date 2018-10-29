@@ -5,8 +5,8 @@ define([
 	'appConfig',
 	'../PathwayService',
 	'../PermissionService',
-	'webapi/AuthAPI',
-	'providers/Page',
+	'services/AuthAPI',
+	'pages/Page',
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
 	'less!./browser.less'

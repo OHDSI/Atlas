@@ -2,8 +2,8 @@ define(function(require, exports){
 
   const config = require('appConfig');
   const ohdsiUtil = require('assets/ohdsi.util');
-  const authApi = require('webapi/AuthAPI');
-  const momentApi = require('webapi/MomentAPI');
+  const authApi = require('services/AuthAPI');
+  const momentApi = require('services/MomentAPI');
   const httpService = require('services/http');
 
   const executionPath  = 'executionservice';

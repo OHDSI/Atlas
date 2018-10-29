@@ -1,10 +1,10 @@
 define([
     'knockout',
     'text!./roles.html',
-    'providers/Component',
-    'providers/AutoBind',
+    'components/Component',
+    'utils/AutoBind',
     'utils/CommonUtils',
-    'webapi/AuthAPI',
+    'services/AuthAPI',
     'atlas-state',
     'databindings',
     'components/ac-access-denied',

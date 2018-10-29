@@ -6,9 +6,9 @@ define([
 	'../PathwayAnalysis',
 	'atlas-state',
 	'appConfig',
-	'webapi/AuthAPI',
-	'providers/Page',
-	'providers/AutoBind',
+	'services/AuthAPI',
+	'pages/Page',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
 	'less!./manager.less',
@@ -96,6 +96,8 @@ define([
 		
 
 		async load(id) {
+			if (this.design() && (this.design().id || 0 == id)) return; // this design is already loaded.
+			
 			if(this.dirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?"))
 				return;
 			

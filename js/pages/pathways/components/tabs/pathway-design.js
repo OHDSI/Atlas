@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./pathway-design.html',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'../../const',
 	'components/cohort/linked-cohort-list',

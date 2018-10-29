@@ -3,7 +3,7 @@ define(
     'knockout',
     'text!./multi-select.html',
     'less!./multi-select.less',
-    'bindings/multiSelect',
+    'extensions/bindings/multiSelect',
   ],
   function (ko, view) {
 

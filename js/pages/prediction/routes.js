@@ -1,7 +1,8 @@
 define(
   (require, factory) => {
     function routes(appModel, router) {
-      const { AuthorizedRoute } = require('providers/Route');
+      const { AuthorizedRoute } = require('pages/Route');
+      const atlasState = require('atlas-state');		
       return {        
         '/plp': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
@@ -30,6 +31,26 @@ define(
 
             router.setCurrentView('plp-manager', params);
           });
+        }),
+        '/prediction/:analysisId:': new AuthorizedRoute((analysisId) => {
+          appModel.activePage(this.title);
+          require([
+            './prediction-manager', 
+            './components/EvaluationSettingsEditor',
+            './components/ExecutionSettingsEditor', 
+            './components/ModelSettingsEditor', 
+            './components/PopulationSettingsEditor',
+            './components/PredictionCovariateSettingsEditor',
+          ], function () {
+            atlasState.predictionAnalysis.selectedId(analysisId);
+            appModel.currentView('prediction-manager');
+          });
+        }),
+        '/prediction': new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['./prediction-browser'], function() {
+            appModel.currentView('prediction-browser');
+          })
         }),
       };
     }

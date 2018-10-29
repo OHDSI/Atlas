@@ -1,8 +1,9 @@
 define(function (require, exports) {
 
 	var $ = require('jquery');
+	var ko = require('knockout');
 	var config = require('appConfig');
-	var authApi = require('webapi/AuthAPI');
+	var authApi = require('services/AuthAPI');
 	const httpService = require('services/http');
 	
 	function pruneJSON(key, value) {
@@ -87,17 +88,24 @@ define(function (require, exports) {
 		});	
 		return getSqlPromise;
 	}
-	
-	function generate(cohortDefinitionId, sourceKey) {
-		var generatePromise = $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/generate/' + sourceKey,
-			error: function (error) {
-				console.log("Error: " + error);
-				authApi.handleAccessDenied(error);
-			}
-		});
-		return generatePromise;
+
+	function translateSql(sql, dialect) {
+		return httpService.doPost(config.webAPIRoot + 'sqlrender/translate', ko.toJS({
+			SQL: sql,
+			targetdialect: dialect
+		}))
+			.catch(error => console.log("Error: " + error));
 	}
+
+
+	function generate(cohortDefinitionId, sourceKey, includeFeatures) {
+		var route = config.webAPIRoot + 'cohortdefinition/' + cohortDefinitionId + '/generate/' + sourceKey;
+		if (includeFeatures) {
+			route = `${route}?includeFeatures`;
+		}
+		return httpService.doGet(route);
+	}
+
 
 	function cancelGenerate(cohortDefinitionId, sourceKey) {
     return $.ajax({
@@ -149,7 +157,11 @@ define(function (require, exports) {
 		return httpService.doGet(config.api.url + 'cohortresults/' + sourceKey + '/' + cohortDefinitionId + '/distinctPersonCount')
 			.then(({ data }) => data);
 	}
-	
+
+	function getCohortAnalyses(cohortJob) {
+		return httpService.doPost(config.api.url + 'cohortanalysis', cohortJob);
+	}
+
 	var api = {
 		getCohortDefinitionList: getCohortDefinitionList,
 		saveCohortDefinition: saveCohortDefinition,
@@ -157,6 +169,7 @@ define(function (require, exports) {
 		deleteCohortDefinition: deleteCohortDefinition,
 		getCohortDefinition: getCohortDefinition,
 		getSql: getSql,
+		translateSql: translateSql,
 		generate: generate,
 		getInfo: getInfo,
 		getReport: getReport,
@@ -164,6 +177,7 @@ define(function (require, exports) {
 		runDiagnostics: runDiagnostics,
 		cancelGenerate,
 		getCohortCount,
+		getCohortAnalyses: getCohortAnalyses,
 	}
 
 	return api;

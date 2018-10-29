@@ -3,8 +3,8 @@ define([
     'pages/characterizations/services/FeatureAnalysisService',
     'text!./feature-analyses-browser.html',
     'appConfig',
-    'webapi/AuthAPI',
-    'providers/Component',
+    'services/AuthAPI',
+    'components/Component',
     'utils/CommonUtils',
     'utils/DatatableUtils',
     'pages/characterizations/const',
@@ -63,14 +63,11 @@ define([
             this.loadData();
         }
 
-        loadData() {
+        async loadData() {
             this.loading(true);
-            FeatureAnalysisService
-                .loadFeatureAnalysisList()
-                .then(res => {
-                    this.data(res.content);
-                    this.loading(false);
-                });
+            const res = await FeatureAnalysisService.loadFeatureAnalysisList();
+            this.data(res.content);
+            this.loading(false);
         }
 
         selectAnalysis(data) {

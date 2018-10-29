@@ -9,7 +9,7 @@ const settingsObject = {
   },    
   packages: [{
       name: "databindings",
-      location: "modules/databindings"
+      location: "extensions/bindings"
     },
     {
       name: "cohortdefinitionviewer",
@@ -17,7 +17,11 @@ const settingsObject = {
     },
     {
       name: "circe",
-      location: "modules/circe"
+      location: "components/circe"
+    },
+    {
+      name: "cyclops",
+      location: "components/cyclops"
     },
     {
       name: "evidence",
@@ -28,12 +32,8 @@ const settingsObject = {
       location: "extenders"
     },
     {
-      name: "job",
-      location: "modules/job"
-    },
-    {
-      name: "plp",
-      location: "modules/plp"
+      name: "featureextraction",
+      location: "components/featureextraction"
     },
     {
       name: "pages",
@@ -74,9 +74,9 @@ const settingsObject = {
     "jquery": "https://code.jquery.com/jquery-1.11.2.min",
     "jquery-ui": "https://code.jquery.com/ui/1.11.4/jquery-ui.min",
     "bootstrap": "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min",
-    "text": "plugins/text",
-    "less": "plugins/less",
-    "optional": "plugins/optional",
+    "text": "extensions/plugins/text",
+    "less": "extensions/plugins/less",
+    "optional": "extensions/plugins/optional",
     "clipboard": "assets/clipboard.min",
     "knockout": "assets/knockout.min",
     "ko.sortable": "https://cdnjs.cloudflare.com/ajax/libs/knockout-sortable/1.1.0/knockout-sortable.min",
@@ -87,7 +87,7 @@ const settingsObject = {
     "colvis": "assets/jquery.dataTables.colVis.min",
     "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.1/crossfilter.min",
     "director": "assets/director.min",
-    "atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.5.0-beta.1/dist/atlascharts.min",
+    "atlascharts": "https://unpkg.com/@ohdsi/atlascharts@1.5.0/dist/atlascharts.min",
     "jnj_chart": "assets/jnj.chart", // scatterplot is not ported to separate library
     "lodash": "assets/lodash.4.15.0.full",
     "lscache": "assets/lscache.min",

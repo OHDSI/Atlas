@@ -1,7 +1,7 @@
 define([
 	'knockout',
-	'providers/Chart',
-	'providers/Component',
+	'components/Chart',
+	'components/Component',
 	'atlascharts',
 	'text!components/charts/chart.html',
 	'utils/CommonUtils'

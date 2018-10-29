@@ -1,11 +1,11 @@
 define([
 	'knockout',
 	'text!./home.html',
-	'providers/Page',
+	'pages/Page',
 	'utils/CommonUtils',
 	'services/http',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 	'components/heading',
 ], function (
 	ko,
@@ -31,7 +31,7 @@ define([
 		}
 
 		async onPageCreated() {
-			const { data } = await httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=18");
+			const { data } = await httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=14");
 			this.github_status(data);
 		}
 

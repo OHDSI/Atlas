@@ -1,0 +1,13 @@
+<heading-title params="name: 'Population Level Effect Estimation', icon: 'balance-scale', theme: 'dark'"></heading-title>
+
+<div data-bind="if: canReadEstimations(), css: classes({ extra: 'paddedWrapper flexed' })">
+	<span data-bind="click: newEstimation,
+	css: classes({
+		element: 'new-btn',
+		extra: `pull-right btn btn-sm btn-primary ${canCreateEstimation() ? '' : 'disabled'}`,
+	})">New Population Level Effect Estimation</span>
+
+	<faceted-datatable data-bind="visible: loading()==false" params="orderColumn: 3, reference: reference, columns: columns, options:options, rowClick:rowClick"></faceted-datatable>
+
+	<loading data-bind="visible:loading()" params="status: 'retrieving estimations'"></loading>
+</div>

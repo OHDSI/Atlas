@@ -3,8 +3,8 @@ define([
 	'jquery',
 	'text!./results.html',
 	'services/IRAnalysis',
-	'webapi/MomentAPI',
-	'providers/Component',
+	'services/MomentAPI',
+	'components/Component',
 	'utils/CommonUtils',
 	'databindings'
 ], function (

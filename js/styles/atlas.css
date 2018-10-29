@@ -787,6 +787,10 @@ ul.ColVis_collection li {
   color: #c00;
 }
 
+.form-control.text-cursor {
+  cursor: text;
+}
+
 .form-control option {
   color: #000;
 }
@@ -2102,4 +2106,29 @@ div#wrapper_ohdsi a {
 #report {
   overflow-y: scroll;
   flex-grow: 1;
+}
+
+.editor-back-icon {
+  width: 50px;
+  float: left;
+  border-radius: 4px;
+  color: #454D57;
+  border: 1px solid #CBCED1;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  background-color: #F2F3F4;
+  text-align: center;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.editor-container {
+  border-top: 2px solid #485563;
+}
+
+.editor-heading {
+  font-weight: bold;
+  height: 17px;
 }

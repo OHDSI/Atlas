@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'text!./included-sourcecodes.html',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 ], function (
 	ko,

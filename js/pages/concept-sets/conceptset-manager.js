@@ -1,17 +1,17 @@
 define([
 	'knockout',
 	'text!./conceptset-manager.html',
-	'providers/Page',
-	'providers/AutoBind',
+	'pages/Page',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'appConfig',
 	'./const',
 	'components/conceptset/utils',
-	'providers/Vocabulary',
+	'services/Vocabulary',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'services/ConceptSet',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -52,10 +52,13 @@ define([
 			this.isOptimizeModalShown = ko.observable(false);
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.conceptSetName = ko.observable("New Concept Set");
+			this.loading = ko.observable();
+			this.fade = ko.observable(true);
 			this.canEdit = this.model.canEditCurrentConceptSet;
 			this.canSave = ko.computed(() => {
 				return (
-					this.model.currentConceptSet() != null
+					!this.loading()
+					&& this.model.currentConceptSet() != null
 					&& this.model.currentConceptSetDirtyFlag().isDirty()
 				);
 			});
@@ -63,7 +66,6 @@ define([
 				return authApi.isPermittedCreateConceptset();
 			});
 			this.canDelete = this.model.canDeleteCurrentConceptSet;
-			this.loading = ko.observable();
 			this.optimalConceptSet = ko.observable(null);
 			this.optimizerRemovedConceptSet = ko.observable(null);
 			this.optimizerSavingNew = ko.observable(false);
@@ -132,12 +134,18 @@ define([
 				this.selectedTab(this.getIndexByComponentName(mode));
 			}
 		}
+
+		dispose() {
+			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
+			this.isOptimizeModalShown(false);
+		}
 		
 		saveClick() {
 			this.saveConceptSet("#txtConceptSetName");
 		}
 
 		saveConceptSet(txtElem, conceptSet, selectedConcepts) {
+			this.loading(true);
 			if (conceptSet === undefined) {
 				conceptSet = {};
 				if (this.model.currentConceptSet() == undefined) {
@@ -155,6 +163,7 @@ define([
 			// Do not allow someone to save a concept set with the default name of "New Concept Set
 			if (conceptSet && conceptSet.name() === this.defaultConceptSetName) {
 				this.raiseConceptSetNameProblem('Please provide a different name for your concept set', txtElem);
+				this.loading(false);
 				return;
 			}
 
@@ -172,6 +181,7 @@ define([
 				})
 				.then(() => {
 					if (abortSave) {
+						this.loading(false);
 						return;
 					}
 
@@ -184,6 +194,7 @@ define([
 					conceptSetService.saveConceptSet(conceptSet)
 						.then(itemsPromise)
 						.then(() => {
+							this.loading(false);
               document.location = '#/conceptset/' + conceptSetId + '/details';
               this.model.currentConceptSetDirtyFlag().reset();
 						})
@@ -334,6 +345,7 @@ define([
 			});
 			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, selectedConcepts);
 			this.optimizerSavingNew(false);
+			this.isOptimizeModalShown(false);
 		}
 
 		cancelSaveNewOptimizedConceptSet() {

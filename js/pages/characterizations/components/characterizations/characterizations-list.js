@@ -4,8 +4,8 @@ define([
     'pages/characterizations/services/PermissionService',
     'text!./characterizations-list.html',
     'appConfig',
-    'webapi/AuthAPI',
-    'providers/Component',
+    'services/AuthAPI',
+    'components/Component',
     'utils/CommonUtils',
     'utils/DatatableUtils',
     'pages/characterizations/const',
@@ -63,10 +63,10 @@ define([
                 },
                 {
                     title: 'Author',
+	                className: this.classes('tbl-col', 'author'),
                     data: 'createdBy',
 	                searchable: true,
-	                className: this.classes('tbl-col', 'author'),
-                    render: (s, p, d) => (d.createdBy !== null ? d.createdBy.login : 'anonymous'),
+	                render: datatableUtils.getCreatedByFormatter(),
                 },
 
             ];

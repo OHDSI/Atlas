@@ -4,7 +4,7 @@ define([
 	'd3',
 	'utils/CommonUtils',
 	'pages/data-sources/classes/Report',
-	'providers/Component',
+	'components/Component',
 	'components/heading',
 	'faceted-datatable'
 ], function (

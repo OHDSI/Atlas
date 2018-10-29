@@ -1,10 +1,11 @@
 define([
     'knockout',
     'pages/characterizations/services/FeatureAnalysisService',
+    'pages/characterizations/services/PermissionService',
     'text!./feature-analyses-list.html',
     'appConfig',
-    'webapi/AuthAPI',
-    'providers/Component',
+    'services/AuthAPI',
+    'pages/Page',
     'utils/CommonUtils',
     'utils/DatatableUtils',
     'pages/characterizations/const',
@@ -13,17 +14,18 @@ define([
 ], function (
     ko,
     FeatureAnalysisService,
+    PermissionService,
     view,
     config,
     authApi,
-    Component,
+    Page,
     commonUtils,
     datatableUtils,
     constants,
 ) {
-    class FeatureAnalyses extends Component {
+    class FeatureAnalyses extends Page {
         constructor(params) {
-            super();
+            super(params);
 
             this.gridTab = constants.featureAnalysesTab;
 
@@ -59,13 +61,17 @@ define([
                 },
                 {
                     title: 'Author',
-                    data: 'createdBy.name',
                     className: this.classes('tbl-col', 'author'),
+                    render: datatableUtils.getCreatedByFormatter(),
                 },
 
             ];
             this.gridOptions = {
                 Facets: [
+                    {
+                        'caption': 'Type',
+                        'binding': (o) => constants.feAnalysisTypes[o.type]
+                    },
                     {
                         'caption': 'Created',
                         'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
@@ -76,22 +82,33 @@ define([
                     },
                     {
                         'caption': 'Author',
-                        'binding': o => o.createdBy.name,
+                        'binding': datatableUtils.getFacetForCreatedBy,
                     },
                 ]
             };
-
-            this.loadData();
         }
 
-        loadData() {
+        onRouterParamsChanged() {
+            this.isGetListPermitted() && this.loadData();
+        }
+
+        isGetListPermitted() {
+            return PermissionService.isPermittedGetFaList();
+        }
+
+        isCreatePermitted() {
+            return PermissionService.isPermittedCreateFa();
+        }
+
+        async loadData() {
             this.loading(true);
-            FeatureAnalysisService
-                .loadFeatureAnalysisList()
-                .then(res => {
-                    this.data(res);
-                    this.loading(false);
-                });
+            const res = await FeatureAnalysisService.loadFeatureAnalysisList();
+            this.data(res.content);
+            this.loading(false);
+        }
+
+        createFeature() {
+            commonUtils.routeTo('/cc/feature-analyses/0');
         }
     }
 

@@ -1,9 +1,9 @@
 define([
 	'knockout',
 	'text!./concept-manager.html',
-	'providers/Component',
-	'providers/AutoBind',
-	'providers/Vocabulary',
+	'components/Component',
+	'utils/AutoBind',
+	'services/Vocabulary',
 	'utils/CommonUtils',
 	'atlas-state',
 	'services/http',
@@ -352,7 +352,7 @@ define([
 				const recordCountObject = Object.values(data[0])[0];
 				if (recordCountObject) {
 					sourceData.push({
-						sourceName: this.source.sourceName,
+						sourceName: source.sourceName,
 						recordCount: recordCountObject[0],
 						descendantRecordCount: recordCountObject[1]
 					});

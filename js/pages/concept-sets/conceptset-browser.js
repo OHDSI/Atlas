@@ -1,8 +1,8 @@
 define([
 	'knockout',
 	'text!./conceptset-browser.html',
-	'providers/Page',
-	'providers/AutoBind',
+	'pages/Page',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'components/heading',
 	'components/tabs',

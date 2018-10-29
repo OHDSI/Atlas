@@ -1,29 +1,35 @@
 define([
     'knockout',
     'pages/characterizations/services/FeatureAnalysisService',
+    'pages/characterizations/services/PermissionService',
     'components/cohortbuilder/CriteriaGroup',
     'text!./feature-analysis-view-edit.html',
     'appConfig',
-    'webapi/AuthAPI',
-    'providers/Vocabulary',
+    'services/AuthAPI',
+    'services/Vocabulary',
     'conceptsetbuilder/InputTypes/ConceptSet',
-    'providers/Component',
+    'pages/Page',
+	'pages/characterizations/const',
+    'utils/AutoBind',
     'utils/CommonUtils',
     'assets/ohdsi.util',
     'less!./feature-analysis-view-edit.less',
     'components/cohortbuilder/components',
-    'modules/circe/main',
+    'circe',
     'components/multi-select'
 ], function (
     ko,
     FeatureAnalysisService,
+    PermissionService,
     CriteriaGroup,
     view,
     config,
     authApi,
     VocabularyAPI,
     ConceptSet,
-    Component,
+    Page,
+	constants,
+    AutoBind,
     commonUtils,
     ohdsiUtil
 ) {
@@ -34,96 +40,157 @@ define([
         CUSTOM_FE: 'CUSTOM_FE',
     };
 
-    class FeatureAnalysisViewEdit extends Component {
+    class FeatureAnalysisViewEdit extends AutoBind(Page) {
         constructor(params) {
-            super();
+            super(params);
 
-            this.setType = this.setType.bind(this);
-            this.save = this.save.bind(this);
-            this.handleConceptSetImport = this.handleConceptSetImport.bind(this);
-            this.onRespositoryConceptSetSelected = this.onRespositoryConceptSetSelected.bind(this);
-
+            this.featureId = ko.observable();
             this.data = {
                 name: ko.observable(),
                 domain: ko.observable(),
                 descr: ko.observable(),
                 type: ko.observable(),
                 design: ko.observable(),
+                conceptSets: ko.observableArray(),
             };
             this.domains = ko.observable([]);
+            this.previousDesign = {};
 
             this.dataDirtyFlag = ko.observable({isDirty: () => false});
             this.loading = ko.observable(false);
+
+            this.canEdit = this.isUpdatePermittedResolver();
             this.canSave = ko.computed(() => {
-                return this.dataDirtyFlag().isDirty();
+                return this.dataDirtyFlag().isDirty() && this.areRequiredFieldsFilled() && (this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit());
             });
-            this.canEdit = this.canDelete = ko.computed(function () {
-                return true;
-            });
+            this.canDelete = this.isDeletePermittedResolver();
+
+            this.saveTooltipText = this.getSaveTooltipTextComputed();
 
             // Concept set import for criteria
             this.criteriaContext = ko.observable();
             this.showConceptSetBrowser = ko.observable();
 
             this.featureTypes = featureTypes;
-
-            this.loadData();
+            this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
         }
 
-        loadData() {
-            this.loading(true);
-            Promise.all([
-                FeatureAnalysisService.loadFeatureAnalysis(),
-                FeatureAnalysisService.loadFeatureAnalysisDomains()
-            ]).then(([featureAnalysis, domains]) => {
+        onPageCreated() {
+            this.loadDomains();
+            super.onPageCreated();
+        }
 
-                this.domains(domains);
-
-                this.data.name(featureAnalysis.name);
-                this.data.descr(featureAnalysis.descr);
-                this.data.domain(featureAnalysis.domain);
-                this.data.type(featureAnalysis.type);
-
-                if (featureAnalysis.type === this.featureTypes.CRITERIA_SET) {
-                    this.data.design(
-                        featureAnalysis.design.map(c => {
-                            return {
-                                name: ko.observable(c.name),
-                                conceptSets: ko.observable(c.conceptSets),
-                                expression: ko.observable(new CriteriaGroup(c.expression, c.conceptSets)),
-                            }
-                        })
-                    );
+        onRouterParamsChanged({ id }) {
+            if (id !== undefined) {
+                this.featureId(parseInt(id));
+                if (this.featureId() === 0) {
+                    this.setupAnalysisData({});
                 } else {
-                    this.data.design(featureAnalysis.design);
+                    this.loadDesign(this.featureId());
                 }
+            }
+        }
 
-                this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data));
+        isCreatePermitted() {
+            return PermissionService.isPermittedCreateFa();
+        }
 
-                this.loading(false);
+        isUpdatePermittedResolver() {
+            return ko.computed(() => this.featureId() === 0 || PermissionService.isPermittedUpdateFa(this.featureId()));
+        }
+
+        isDeletePermittedResolver(id) {
+            return ko.computed(() => PermissionService.isPermittedDeleteFa(this.featureId()));
+        }
+
+        areRequiredFieldsFilled() {
+            const isDesignFilled = (typeof this.data.design() === 'string' || Array.isArray(this.data.design())) && this.data.design().length > 0;
+            return typeof this.data.name() === 'string' && this.data.name().length > 0 && typeof this.data.type() === 'string' && this.data.type().length > 0 && isDesignFilled;
+        }
+
+        getSaveTooltipTextComputed() {
+            return ko.computed(() => {
+               if (!(this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit())) {
+                   return 'Not enough permissions';
+               } else if (this.areRequiredFieldsFilled()) {
+                   return 'No changes to persist';
+               } else {
+                   return 'Name and design should not be empty';
+               }
             });
         }
 
-        setType(type) {
+        async loadDomains() {
+            const domains = await FeatureAnalysisService.loadFeatureAnalysisDomains();
+            this.domains(domains.map(d => ({ label: d.name, value: d.id })));
+        }
+
+        async loadDesign(id) {
+            this.loading(true);
+
+            const featureAnalysis = await FeatureAnalysisService.loadFeatureAnalysis(id);
+            this.setupAnalysisData(featureAnalysis);
+
+            this.loading(false);
+        }
+
+        setupAnalysisData({ name = '', descr = '', domain = '', type = '', design= '', conceptSets = [] }) {
+            let parsedDesign;
+            this.data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name) })));
+
             if (type === this.featureTypes.CRITERIA_SET) {
-                this.data.design([this.getEmptyCriteriaFeatureDesign()]);
+                parsedDesign = design.map(c => {
+                    return {
+                        id: c.id,
+                        name: ko.observable(c.name),
+                        expression: ko.observable(new CriteriaGroup(c.expression, this.data.conceptSets)),
+                    }
+                });
             } else {
-                this.data.design('');
+                parsedDesign = design;
+            }
+
+            this.data.name(name);
+            this.data.descr(descr);
+            this.data.domain(domain);
+            this.data.type(type);
+            this.data.design(parsedDesign);
+            this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data));
+            this.previousDesign = { [type]: parsedDesign };
+        }
+
+        setType(type) {
+            let prevType = this.data.type();
+            let prevDesign = this.data.design();
+
+            if (type === this.featureTypes.CRITERIA_SET) {
+                let newDesign = this.previousDesign[type] || [this.getEmptyCriteriaFeatureDesign()];
+                this.data.design(newDesign);
+            } else {
+                let newDesign = this.previousDesign[type] || null;
+                this.data.design(newDesign);
             }
             this.data.type(type);
+
+            this.previousDesign[prevType] = prevDesign;
         }
 
         getEmptyCriteriaFeatureDesign() {
-            const conceptSets = ko.observable([]);
             return {
                 name: ko.observable(''),
-                conceptSets,
-                expression: ko.observable(new CriteriaGroup(null, conceptSets)),
+                conceptSets: this.data.conceptSets,
+                expression: ko.observable(new CriteriaGroup(null, this.data.conceptSets)),
             };
         }
 
-        addCriteriaFeature() {
+        addCriteria() {
             this.data.design([...this.data.design(), this.getEmptyCriteriaFeatureDesign()]);
+        }
+
+        removeCriteria(index) {
+            const criteriaList = this.data.design();
+            criteriaList.splice(index, 1);
+            this.data.design(criteriaList);
         }
 
         handleConceptSetImport(criteriaIdx, item) {
@@ -134,15 +201,16 @@ define([
         onRespositoryConceptSetSelected(conceptSet, source) {
             const context = this.criteriaContext();
             const featureCriteria = this.data.design()[context.criteriaIdx];
+            const conceptSets = this.data.conceptSets();
 
             VocabularyAPI.getConceptSetExpression(conceptSet.id, source.url).done((result) => {
-                const newId = featureCriteria.conceptSets().length > 0 ? Math.max(...featureCriteria.conceptSets().map(c => c.id)) + 1 : 0;
+                const newId = conceptSets.length > 0 ? Math.max(...conceptSets.map(c => c.id)) + 1 : 0;
                 const newConceptSet = new ConceptSet({
                     id: newId,
                     name: conceptSet.name,
                     expression: result
                 });
-                featureCriteria.conceptSets([...featureCriteria.conceptSets(), newConceptSet]);
+                this.data.conceptSets([...conceptSets, newConceptSet]);
                 context.conceptSetId(newConceptSet.id);
 
                 this.showConceptSetBrowser(false);
@@ -153,8 +221,25 @@ define([
 
         }
 
-        save() {
+        async save() {
             console.log('Saving: ', JSON.parse(ko.toJSON(this.data)));
+
+            if (this.featureId() < 1) {
+                const res = await FeatureAnalysisService.createFeatureAnalysis(this.data);
+                commonUtils.routeTo('/cc/feature-analyses/' + res.id);
+            } else {
+                const res = await FeatureAnalysisService.updateFeatureAnalysis(this.featureId(), this.data);
+                this.setupAnalysisData(res);
+                this.loading(false);
+            }
+        }
+
+        deleteFeature() {
+            commonUtils.confirmAndDelete({
+                loading: this.loading,
+                remove: () => FeatureAnalysisService.deleteFeatureAnalysis(this.featureId()),
+                redirect: this.closeAnalysis
+            });
         }
 
         closeAnalysis() {

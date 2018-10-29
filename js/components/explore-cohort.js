@@ -1,4 +1,4 @@
-define(['knockout', 'text!./explore-cohort.html', 'd3', 'atlas-state', 'appConfig', 'webapi/AuthAPI', 'lodash', 'crossfilter', 'd3-tip', 'databindings', 'components/faceted-datatable-cf-profile'],
+define(['knockout', 'text!./explore-cohort.html', 'd3', 'atlas-state', 'appConfig', 'services/AuthAPI', 'lodash', 'crossfilter', 'd3-tip', 'databindings', 'components/faceted-datatable-cf-profile'],
 	function (ko, view, d3, sharedState, config, authApi, lodash, crossfilter) {
 
 		function exploreCohort(params) {

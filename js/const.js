@@ -380,6 +380,8 @@ define(
       rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`,
       relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,
 			jobs: () => `${config.api.url}job/execution?comprehensivePage=true`,
+			job: (id) => `${config.api.url}job/${id}`,
+			jobByName: (name,  type) => `${config.api.url}job/type/${type}/name/${name}`,
 		};
 
     return {

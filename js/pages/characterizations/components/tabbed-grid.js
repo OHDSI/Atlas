@@ -3,8 +3,8 @@ define([
     'atlas-state',
     'text!./tabbed-grid.html',
     'appConfig',
-    'webapi/AuthAPI',
-    'providers/Component',
+    'services/AuthAPI',
+    'components/Component',
     'utils/CommonUtils',
     'pages/characterizations/const',
     'databindings',
@@ -28,7 +28,7 @@ define([
             this.tabs = constants.gridTabs;
             this.activeTab = params.activeTab;
 
-            // this.data = params.data;
+            this.isViewPermitted = params.isViewPermitted;
             this.ajax = params.ajax;
             this.gridColumns = params.gridColumns;
             this.gridOptions = params.gridOptions;

@@ -5,13 +5,15 @@ define([
 	'pages/characterizations/const',
 	'text!./characterization-executions.html',
 	'appConfig',
-	'webapi/AuthAPI',
+	'services/AuthAPI',
 	'moment',
-	'providers/Component',
-	'providers/AutoBind',
+	'components/Component',
+	'utils/AutoBind',
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
 	'services/Source',
+	'lodash',
+	'services/JobDetailsService',
 	'less!./characterization-executions.less',
 	'./characterization-results',
 	'databindings/tooltipBinding'
@@ -28,7 +30,9 @@ define([
 	AutoBind,
 	commonUtils,
 	datatableUtils,
-	SourceService
+	SourceService,
+	lodash,
+	jobDetailsService
 ) {
 	class CharacterizationViewEditExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -130,7 +134,7 @@ define([
 				allSources,
 				executionList
 			]) => {
-				const sourceList = allSources.filter(source => {
+				let sourceList = allSources.filter(source => {
 					return (source.daimons.filter(function(daimon) {
 							return daimon.daimonType == "CDM";
 						}).length > 0 &&
@@ -138,6 +142,8 @@ define([
 							return daimon.daimonType == "Results";
 						}).length > 0)
 				});
+
+				sourceList = lodash.sortBy(sourceList, ["sourceName"]);
 
 				sourceList.forEach(s => {
 					let group = this.executionGroups().find(g => g.sourceKey == s.sourceKey);
@@ -179,7 +185,10 @@ define([
 
 			confirmPromise
 				.then(() => CharacterizationService.runGeneration(this.characterizationId(), source))
-				.then(() => this.loadData())
+				.then((data) => {
+					jobDetailsService.createJob(data);
+					this.loadData()
+				})
 				.catch(() => {});
 		}
 

@@ -3,15 +3,15 @@ define([
     'pages/characterizations/services/CharacterizationService',
     'text!./characterization-results.html',
     'appConfig',
-    'webapi/AuthAPI',
-    'providers/Component',
-    'providers/AutoBind',
+    'services/AuthAPI',
+    'components/Component',
+    'utils/AutoBind',
     'utils/CommonUtils',
     'numeral',
     'lodash',
     'd3',
     'components/visualizations/filter-panel/utils',
-    'webapi/MomentAPI',
+    'services/MomentAPI',
     'services/Source',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
@@ -262,7 +262,7 @@ define([
             if (analyses.length > 1 && analyses[0].reports.length === 2) {
 
                 const getAllCohortStats = (cohortId) => {
-                    return lodash.flatten(analyses.map(a => {
+                    return lodash.flatten(analyses.filter(a => a.type=="prevalence").map(a => {
                         const analysisName = a.analysisName;
                         const stats = lodash.flatten(a.reports.filter(r => r.cohortId === cohortId).map(r => r.stats));
                         return stats.map(s => ({ ...s, analysisName }));
@@ -273,14 +273,14 @@ define([
                 const secondCohort = analyses[0].reports[1];
 
                 return {
-                    analysisName: 'All covariates',
+                    analysisName: 'All prevalence covariates',
                     type: 'prevalence',
                     reports: [
                         { ...firstCohort, stats: getAllCohortStats(firstCohort.cohortId) },
                         { ...secondCohort, stats: getAllCohortStats(secondCohort.cohortId) }
                     ]
                 };
-            }
+            }            
         }
 
         prepareTabularData(data = [], filters = []) {

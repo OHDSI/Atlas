@@ -1,8 +1,9 @@
 <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Cohort Characterization list...'"></loading>
 
-<div data-bind="if: $component.isGetCCListPermitted(), visible: !$component.loading()">
+<div data-bind="visible: !$component.loading()">
     <characterizations-tabbed-grid params="{
         activeTab: $component.gridTab,
+        isViewPermitted: $component.isGetCCListPermitted(),
         gridColumns: $component.gridColumns,
         gridOptions: $component.gridOptions,
         data: $component.data,
@@ -10,7 +11,4 @@
         createNewEnabled: $component.isCreatePermitted,
         ajax: $component.ajax
     }"/>
-</div>
-<div data-bind="ifnot: $component.isGetCCListPermitted(), css: `${$component.isGetCCListPermitted() ? '' : 'flexed'}`">
-    <access-denied params="isAuthenticated: $component.isAuthenticated" class="flexed"></access-denied>
 </div>

@@ -91,10 +91,10 @@ define([
 				*/
 				
 		self.onGenerate = function (generateComponent) {
-			var generatePromise = cohortDefinitionService.generate(self.model.currentCohortDefinition().id(), generateComponent.source.sourceKey);
-			generatePromise.then(function (result) {
-				pollForInfo();
-			});
+			CohortDefinition.generate(self.model.currentCohortDefinition().id(), generateComponent.source.sourceKey, false)
+				.then(function (result) {
+					pollForInfo();
+				});
 		}
 
 		self.getExpressionJSON = function () {
