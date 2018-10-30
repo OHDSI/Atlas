@@ -32,6 +32,10 @@ define([
             this.ajax = params.ajax;
             this.gridColumns = params.gridColumns;
             this.gridOptions = params.gridOptions;
+	        this.dtApi = ko.observable(); // store reference to datatable
+	        if (params.api) {
+		        this.dtApi.subscribe(a => params.api(a));
+	        }
 
             this.createNew = params.createNew;
             this.createNewEnabled = typeof params.createNewEnabled === 'undefined' ? () => true : params.createNewEnabled;

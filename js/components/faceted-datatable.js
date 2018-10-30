@@ -50,6 +50,13 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 		self.ordering = params.ordering || true;
 		self.scrollOptions = params.scrollOptions || null;
 
+		self.dtApi = ko.observable(); // store reference to datatable
+		if (params.api) {
+			self.dtApi.subscribe(a => {
+				params.api(a)
+			});
+		}
+
 		function buildFilter(search) {
 			let filter = self.facets().map((f) => {
 				return {

@@ -1,5 +1,6 @@
 <div style="position: relative">
-	<div class="text-center" style="position: absolute; left: 50%; height: 50%; z-index: 100"  data-bind="if: $component.componentLoading(), css: {visible:componentLoading(), hidden: !componentLoading()}" >
+	<div class="text-center" style="position: absolute; left: 50%; height: 50%; z-index: 100"
+		 data-bind="if: $component.componentLoading(), css: {visible:componentLoading(), hidden: !componentLoading()}">
 		<h3><i class="fa fa-spinner fa-spin"></i> Loading ...</h3>
 	</div>
 	<div>
@@ -23,6 +24,7 @@
 					<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" cellspacing="0"
 						   data-bind="dataTable:{
 							data: $component.tableData,
+							api: $component.dtApi,
 							options: {
 								dom: $component.dom,
 								colVis: $component.colVis,
@@ -44,7 +46,7 @@
 							scrollOptions: $component.scrollOptions,
 							onRowClick: $component.rowClick
 					} "><!-- ko if: $component.headersTemplateId -->
-							<thead data-bind="template: { name: $component.headersTemplateId }"></thead>
+						<thead data-bind="template: { name: $component.headersTemplateId }"></thead>
 						<!-- /ko -->
 					</table>
 				</div>

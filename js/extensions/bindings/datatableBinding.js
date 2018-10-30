@@ -107,7 +107,8 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 				{
 					// expose datatable API to context's api binding.
 					binding.api({
-						getSelectedData: function() { return _getSelectedData(element);}
+						getSelectedData: function() { return _getSelectedData(element);},
+						reload: function () {$(element).DataTable().ajax.reload();}
 					});
 				}
 			}
