@@ -144,6 +144,10 @@ define([
                 render: (s, p, d) => this.formatPct(d.pct[idx]),
             };
         }
+        
+        roundDecimal2(d){
+            return (Math.round(d * 100) / 100);
+        }
 
         loadData() {
             this.loading(true);
@@ -438,11 +442,11 @@ define([
                 });
                 columns.push({
                     title: 'Avg',
-                    render: (s, p, d) => d.avg[i],
+                    render: (s, p, d) =>  this.roundDecimal2(d.avg[i]),
                 });
                 columns.push({
                     title: 'Std Dev',
-                    render: (s, p, d) => d.stdDev[i],
+                    render: (s, p, d) => this.roundDecimal2(d.stdDev[i]),
                 });
                 columns.push({
                     title: 'Median',
