@@ -9,12 +9,12 @@ define(function (require, exports) {
 
   function formatDateTime(date) {
     var m = moment(date, PARSE_FORMAT);
-    return m.isValid() ? m.format(DATE_TIME_FORMAT) : EMPTY_DATE;
+    return date && m.isValid() ? m.format(DATE_TIME_FORMAT) : EMPTY_DATE;
   }
 
   function formatDate(date, outFormat) {
     var m = moment(date, PARSE_FORMAT);
-    return m.isValid() ? m.format(outFormat || DATE_FORMAT) : EMPTY_DATE;
+    return date && m.isValid() ? m.format(outFormat || DATE_FORMAT) : EMPTY_DATE;
   }
 
   function formatDuration(ms) {
@@ -24,12 +24,12 @@ define(function (require, exports) {
 
   function formatDateTimeWithFormat(timestamp, outFormat) {
     var m = moment(timestamp);
-    return m.isValid() ? m.format(outFormat) : EMPTY_DATE;
+    return timestamp && m.isValid() ? m.format(outFormat) : EMPTY_DATE;
   }
 
   function formatDateTimeUTC(timestamp) {
     var m = moment(timestamp);
-    return m.isValid() ? m.format(DATE_TIME_FORMAT) : EMPTY_DATE;
+    return timestamp && m.isValid() ? m.format(DATE_TIME_FORMAT) : EMPTY_DATE;
   }
 
   function diffInDays(fromDate, toDate) {
