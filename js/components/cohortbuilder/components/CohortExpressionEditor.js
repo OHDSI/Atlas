@@ -9,6 +9,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 			return '<div class="optionText">' + d.text + '</div>' +
 				'<div class="optionDescription">' + d.description + '</div>';
 		};
+		self.helpCohortEventsOpened = ko.observable(false);
+		self.helpInclusionCriteriaOpened = ko.observable(false);
+		self.helpCohortExitOpened = ko.observable(false);
 
 		self.primaryCriteriaOptions = [{
 				text: "Add Condition Era",
