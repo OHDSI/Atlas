@@ -48,7 +48,8 @@ define([
                 {
                     title: 'Description',
                     data: 'descr',
-                    className: this.classes('tbl-col', 'descr'),
+	                searchable: true,
+	                className: this.classes('tbl-col', 'descr'),
                 },
                 // {
                 //     title: 'Created',
