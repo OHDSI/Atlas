@@ -6,8 +6,8 @@ define([
     config
 ) {
 	
-    function loadFeatureAnalysisList() {
-        return httpService.doGet(config.webAPIRoot + 'feature-analysis?size=100000').then(res => res.data);
+    function loadFeatureAnalysisList(params) {
+        return httpService.doGet(config.webAPIRoot + 'feature-analysis', params);
     }
 
     function loadFeatureAnalysis(id) {

@@ -30,12 +30,15 @@ define([
             this.gridTab = constants.featureAnalysesTab;
 
             this.loading = ko.observable(false);
-            this.data = ko.observableArray();
+            if (this.isGetListPermitted()) {
+                this.ajax = FeatureAnalysisService.loadFeatureAnalysisList;
+            }
 
             this.gridColumns = [
                 {
                     title: 'Name',
                     data: 'name',
+                    searchable: true,
                     className: this.classes('tbl-col', 'name'),
                     render: datatableUtils.getLinkFormatter(d => ({
                         link: '#/cc/feature-analyses/' + d.id,
@@ -44,67 +47,57 @@ define([
                 },
                 {
                     title: 'Description',
-                    data: 'description',
+                    data: 'descr',
                     className: this.classes('tbl-col', 'descr'),
                 },
-                {
-                    title: 'Created',
-                    className: this.classes('tbl-col', 'created'),
-                    type: 'date',
-                    render: datatableUtils.getDateFieldFormatter(),
-                },
-                {
-                    title: 'Updated',
-                    className: this.classes('tbl-col', 'updated'),
-                    type: 'date',
-                    render: datatableUtils.getDateFieldFormatter(),
-                },
-                {
-                    title: 'Author',
-                    className: this.classes('tbl-col', 'author'),
-                    render: datatableUtils.getCreatedByFormatter(),
-                },
+                // {
+                //     title: 'Created',
+                //     className: this.classes('tbl-col', 'created'),
+                //     type: 'date',
+                //     render: datatableUtils.getDateFieldFormatter(),
+                // },
+                // {
+                //     title: 'Updated',
+                //     className: this.classes('tbl-col', 'updated'),
+                //     type: 'date',
+                //     render: datatableUtils.getDateFieldFormatter(),
+                // },
+                // {
+                //     title: 'Author',
+                //     className: this.classes('tbl-col', 'author'),
+                //     render: datatableUtils.getCreatedByFormatter(),
+                // },
 
             ];
             this.gridOptions = {
+	            entityName: 'fe_analysis',
                 Facets: [
                     {
                         'caption': 'Type',
                         'binding': (o) => constants.feAnalysisTypes[o.type]
                     },
-                    {
-                        'caption': 'Created',
-                        'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
-                    },
-                    {
-                        'caption': 'Updated',
-                        'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
-                    },
-                    {
-                        'caption': 'Author',
-                        'binding': datatableUtils.getFacetForCreatedBy,
-                    },
+                    // {
+                    //     'caption': 'Created',
+                    //     'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
+                    // },
+                    // {
+                    //     'caption': 'Updated',
+                    //     'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
+                    // },
+                    // {
+                    //     'caption': 'Author',
+                    //     'binding': datatableUtils.getFacetForCreatedBy,
+                    // },
                 ]
             };
         }
 
-        onRouterParamsChanged() {
-            this.isGetListPermitted() && this.loadData();
-        }
-
-        isGetListPermitted() {
+         isGetListPermitted() {
             return PermissionService.isPermittedGetFaList();
         }
 
         isCreatePermitted() {
             return PermissionService.isPermittedCreateFa();
-        }
-
-        async loadData() {
-            this.loading(true);
-            const res = await FeatureAnalysisService.loadFeatureAnalysisList();
-            this.data(res.content);
-            this.loading(false);
         }
 
         createFeature() {
