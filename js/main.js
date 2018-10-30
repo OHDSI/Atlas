@@ -68,7 +68,12 @@ require([
 			},
 		}
 	});	
-	require(['bootstrap', ...styles], function () { // bootstrap must come first
+	require([
+		'bootstrap',
+		'jquery-ui/ui/widgets/autocomplete',
+		'ko.sortable',
+		...styles
+	], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
 		require([
 			'knockout',

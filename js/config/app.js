@@ -10,7 +10,7 @@ define(function () {
   appConfig.pollInterval = 60000;
   appConfig.useBundled3dPartyLibs = false;
 	appConfig.cohortComparisonResultsEnabled = false;
-	appConfig.userAuthenticationEnabled = false;
+	appConfig.userAuthenticationEnabled = true;
 	appConfig.plpResultsEnabled = false;
 	appConfig.useExecutionEngine = false;
 	appConfig.viewProfileDates = false;

@@ -61,7 +61,7 @@ define([
         table: {
           order: [2, 'desc'],
           dom: datatableTemplate,
-          buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
+          buttons: [/*'colvis', */'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
           autoWidth: false,
           createdRow: function (row) {
             $(row).addClass('table_selector');
