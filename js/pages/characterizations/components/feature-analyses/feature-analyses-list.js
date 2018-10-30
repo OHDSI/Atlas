@@ -51,23 +51,27 @@ define([
 	                searchable: true,
 	                className: this.classes('tbl-col', 'descr'),
                 },
-                // {
-                //     title: 'Created',
-                //     className: this.classes('tbl-col', 'created'),
-                //     type: 'date',
-                //     render: datatableUtils.getDateFieldFormatter(),
-                // },
-                // {
-                //     title: 'Updated',
-                //     className: this.classes('tbl-col', 'updated'),
-                //     type: 'date',
-                //     render: datatableUtils.getDateFieldFormatter(),
-                // },
-                // {
-                //     title: 'Author',
-                //     className: this.classes('tbl-col', 'author'),
-                //     render: datatableUtils.getCreatedByFormatter(),
-                // },
+                {
+                    title: 'Created',
+	                data: 'createdDate',
+	                className: this.classes('tbl-col', 'created'),
+                    type: 'date',
+                    render: datatableUtils.getDateFieldFormatter(),
+                },
+                {
+                    title: 'Updated',
+	                data: 'modifiedDate',
+	                className: this.classes('tbl-col', 'updated'),
+                    type: 'date',
+                    render: datatableUtils.getDateFieldFormatter(),
+                },
+                {
+                    title: 'Author',
+	                data: 'createdBy',
+	                searchable: true,
+	                className: this.classes('tbl-col', 'author'),
+                    render: datatableUtils.getCreatedByFormatter(),
+                },
 
             ];
             this.gridOptions = {
@@ -75,20 +79,16 @@ define([
                 Facets: [
                     {
                         'caption': 'Type',
-                        'binding': (o) => constants.feAnalysisTypes[o.type]
                     },
-                    // {
-                    //     'caption': 'Created',
-                    //     'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
-                    // },
-                    // {
-                    //     'caption': 'Updated',
-                    //     'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
-                    // },
-                    // {
-                    //     'caption': 'Author',
-                    //     'binding': datatableUtils.getFacetForCreatedBy,
-                    // },
+                    {
+                        'caption': 'Created',
+                    },
+                    {
+                        'caption': 'Updated',
+                    },
+                    {
+                        'caption': 'Author',
+                    },
                 ]
             };
         }
