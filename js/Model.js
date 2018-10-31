@@ -148,6 +148,7 @@ define(
 				this.currentConceptSet = ko.observable();
 				this.currentRoleId = ko.observable();
 				this.roles = sharedState.roles;
+				this.signInOpened = authApi.signInOpened;
 
 				this.plpCss = ko.pureComputed(() => {
 					if (this.currentPatientLevelPrediction())

@@ -32,12 +32,13 @@ define([
 			this.authLogin = authApi.subject;
 			this.pollInterval = null;
 			this.loading = params.model.loading;
+			this.signInOpened = params.model.signInOpened;
 			this.jobListing = state.jobListing;
 			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
 			this.lastViewedTime=null;
 
-			this.showJobModal = ko.observable(false);
-			this.showJobModal.subscribe(show => {
+			this.jobModalOpened = ko.observable(false);
+			this.jobModalOpened.subscribe(show => {
 				if (!show) {
 					jobDetailsService.setLastViewedTime(this.lastViewedTime);
 					this.jobListing().forEach(j => {
@@ -133,7 +134,7 @@ define([
 		};
 
 		jobNameClick(j) {
-			this.showJobModal(false);
+			this.jobModalOpened(false);
 			window.location = '#/' + j.url;
 		}
 	}

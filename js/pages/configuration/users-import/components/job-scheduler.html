@@ -1,0 +1,45 @@
+<div data-bind="css: classes({extra: ['panel', 'panel-primary']})">
+    <div data-bind="css: classes({extra: ['panel-heading']})">
+        Schedule
+    </div>
+    <div data-bind="css: classes({ extra: 'panel-body' })">
+        <label data-bind="css: classes({extra: 'btn'})"><input data-bind="checked: job().enabled" type="checkbox" /> Enabled</label>
+        <label data-bind="css: classes({extra: 'btn'})"><input data-bind="checked: job().preserveRoles" type="checkbox" /> Preserve assigned roles</label>
+        <div data-bind="css: classes({ element: 'schedule', extra: 'form-group'})">
+            <label data-bind="css: classes({extra: 'btn'})">Start on:</label>
+            <div data-bind="css: classes({extra: ['input-group', 'date']})">
+                <input placeholder="YYYY-MM-DD" data-bind="dateTimePicker: job().startDate, format: 'yyyy-mm-dd hh:ii', css: classes({extra: 'form-control'}) " />
+                <span data-bind="css: classes({extra: 'input-group-addon'})">
+                    <span data-bind="css: classes({extra: ['fa', 'fa-calendar']})"></span>
+                </span>
+            </div>
+        </div>
+        <div data-bind="css: classes({ element: 'schedule', extra: 'form-group' })">
+            <label data-bind="css: classes({extra: 'btn'})">Execute:</label>
+            <select data-bind="css: classes({ extra: 'form-control' }), options: executionOptions, optionsText: 'label', optionsValue: 'value', value: job().frequency"></select>
+        </div>
+        <div data-bind="css: classes({ element: 'schedule', extra: 'form-group'}), visible: weeklyVisible">
+            <label data-bind="css: classes({extra: 'btn'})">Repeat on:</label>
+            <weekdays params="weekdays: weekdays"></weekdays>
+        </div>
+        <div data-bind="css: classes({ extra: ['panel', 'panel-primary'] }), visible: notOnceVisible">
+            <div data-bind="css: classes({ extra: 'panel-heading' })">Ends</div>
+            <div data-bind="css: classes({ element: 'ends', extra: 'panel-body' })">
+                <div data-bind="css: classes('ends-label')">
+                    <label data-bind="css: classes({extra: ['btn']})"><input name="ends" value="never" type="radio" data-bind="checked: jobEnds" /> Never</label>
+                </div>
+                <div data-bind="css: classes('ends-label')">
+                    <label data-bind="css: classes({extra: 'btn'})"><input name="ends" value="after" data-bind="checked: jobEnds" type="radio" /> After
+                        <input data-bind="value: job().recurringTimes, css: classes('ends-after'), enable: jobEnds() === jobEndOptions.AFTER">
+                        <label data-bind="css: classes({extra: 'btn'})">executions</label>
+                    </label>
+                </div>
+                <div data-bind="css: classes('ends-label')">
+                    <label data-bind="css: classes({ extra: 'btn'})"><input name="ends" value="on" data-bind="checked: jobEnds" type="radio" /> On
+                        <input placeholder="YYYY-MM-DD" data-bind="enable: jobEnds() === jobEndOptions.ON, dateTimePicker: job().recurringUntilDate, format: 'yyyy-mm-dd hh:ii', css: classes({element: 'ends-on', extra: 'form-control'}) " />
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
