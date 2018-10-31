@@ -33,20 +33,24 @@
 
     <atlas-modal params="
         showModal: $component.showFeatureAnalysesBrowser,
-        template: 'cc-design-feature-analyses-browser-template',
-        title: 'Choose a Feature analysis',
+        title: 'Choose a Feature analyses',
         data: {
-            selectedAnalysis: $component.featureAnalysesSelected,
+            selectedAnalyses: $component.featureAnalysesSelected,
             classes: $component.classes,
+            closeFeatureBrowser: $component.closeFeatureBrowser,
+            importFeatures: $component.importFeatures,
+            importEnabled: $component.featureAnalysesAvailable
         }
     "
-    ></atlas-modal>
+    >
+        <div data-bind="css: classes('feature-analyses-list')">
+            <feature-analyses-browser params="selectedAnalyses: selectedAnalyses"></feature-analyses-browser>
+            <div data-bind="css: classes('button-panel')">
+                <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-primary'}), click: importFeatures, enable: importEnabled">Import</button>
+                <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-danger'}), click: closeFeatureBrowser">Cancel</button>
+            </div>
+        </div>
+    </atlas-modal>
 
     <characterization-params-create-modal params="showModal: isParameterCreateModalShown, submit: addParam"></characterization-params-create-modal>
 </div>
-
-<script type="text/html" id="cc-design-feature-analyses-browser-template">
-    <div data-bind="css: classes('feature-analyses-list')">
-        <feature-analyses-browser params="selectedAnalysis: selectedAnalysis"></feature-analyses-browser>
-    </div>
-</script>
