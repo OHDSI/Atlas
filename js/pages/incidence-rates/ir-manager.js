@@ -287,7 +287,7 @@ define([
 		onExecuteClick(sourceItem) {
 			IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
 				.then(({data}) => {
-					jobDetailsService.createJob(data);
+					JobDetailsService.createJob(data);
 					this.pollForInfo();
 				});
 		}
