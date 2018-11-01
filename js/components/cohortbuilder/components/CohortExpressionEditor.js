@@ -1,5 +1,5 @@
 define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaTypes', '../CohortExpression', '../InclusionRule', 'text!./CohortExpressionEditorTemplate.html', './EndStrategyEditor',
-	'databindings', 'conceptpicker/ConceptPicker', 'css!../css/builder.css', 'ko.sortable'
+	'databindings', 'conceptpicker/ConceptPicker', 'css!../css/builder.css', 'ko.sortable', 'less!./CohortExpressionEditor.less'
 ], function (ko, $, options, CriteriaGroup, criteriaTypes, CohortExpression, InclusionRule, template) {
 
 	function CohortExpressionEditorViewModel(params) {
