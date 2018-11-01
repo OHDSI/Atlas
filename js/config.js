@@ -1,7 +1,7 @@
 define([
 	'./config/app',
 	'./config/terms-and-conditions',
-	'optional!config-local'
+	'config-local'
 ], function (app, termsAndConditions, localConfig) {
 
 	if (JSON.stringify(localConfig) == JSON.stringify({})) {

@@ -95,7 +95,7 @@ define([
 				},
 			};
 
-			this.buttons = [/*'colvis', */'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'];
+			this.buttons = ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'];
 			this.heelOptions = {
 				Facets: [{
 					'caption': 'Error Msg',

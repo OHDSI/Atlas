@@ -7,7 +7,7 @@ define([
   'webapi/MomentAPI',
   'webapi/AuthAPI',
   'moment',
-  'config',
+  'appConfig',
   'less!./terms-and-conditions.less',
   'components/modal'
 ], function (

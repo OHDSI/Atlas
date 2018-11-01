@@ -62,6 +62,11 @@ const settingsObject = {
       location: "../node_modules/urijs/src",
       main: "URI"
     },
+    {
+      name: "facets",
+      location: "../node_modules/facets",
+      main: "facets"
+    },
   ],
   shim: {
     "colorbrewer": {
@@ -94,7 +99,6 @@ const settingsObject = {
     "bootstrap": "../node_modules/bootstrap/dist/js/bootstrap",
     "text": "plugins/text",
     "less": "plugins/less",
-    "optional": "plugins/optional",
     "clipboard": "../node_modules/clipboard/dist/clipboard",
     "knockout": "../node_modules/knockout/build/output/knockout-latest",
     "ko.sortable": "../node_modules/knockout-sortable/src/knockout-sortable",
@@ -103,7 +107,7 @@ const settingsObject = {
     "datatables.net": "../node_modules/datatables.net/js/jquery.dataTables",
     "datatables.net-buttons": "../node_modules/datatables.net-buttons/js/dataTables.buttons",
     "datatables.net-buttons-html5": "../node_modules/ouanalyse-datatables.net-buttons-html5/js/buttons.html5",
-    "colvis": "../node_modules/drmonty-datatables-colvis/js/dataTables.colVis",
+    "colvis": "../node_modules/datatables.net-buttons/js/buttons.colVis.min",
     "crossfilter": "../node_modules/crossfilter2/crossfilter",
     "director": "../node_modules/director/build/director",
     "atlascharts": "../node_modules/@ohdsi/atlascharts/dist/atlascharts",
@@ -124,7 +128,7 @@ const settingsObject = {
     "d3-interpolate": "../node_modules/d3-interpolate/build/d3-interpolate",
     "d3-format": "../node_modules/d3-format/build/d3-format",
     "d3-time": "../node_modules/d3-time/build/d3-time",
-    "d3-time-format": "../node_modules/d3-time-buildt/2.0.5/d3-time-format",
+    "d3-time-format": "../node_modules/d3-time-format/build/d3-time-format",
     "d3-color": "../node_modules/d3-color/build/d3-color",
     "d3-path": "../node_modules/d3-path/build/d3-path",
     "d3-dispatch": "../node_modules/d3-dispatch/build/d3-dispatch",
@@ -134,15 +138,14 @@ const settingsObject = {
     "xss": "../node_modules/xss/dist/xss",
 
     "moment": "../node_modules/moment/moment",
-    "querystring": "https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs",
+    "querystring": "../node_modules/qs/dist/qs",
 
     "bootstrap-select": "../node_modules/bootstrap-select/dist/js/bootstrap-select",
     "less-js": "../node_modules/less/dist/less",
     "file-saver": "../node_modules/file-saver/FileSaver",
     "numeral": "../node_modules/numeral/numeral",
-    "lz-string": "assets/lz-string",
+    "lz-string": "../node_modules/lz-string/libs/lz-string",
     "jquery.ui.autocomplete.scroll": "../node_modules/jquery-ui.autocomplete.scroll/jquery.ui.autocomplete.scroll.min",
-    "facets": "../node_modules/facets/facets",
     "colorbrewer": "../node_modules/colorbrewer/index",
     "ohdsi-api": "../node_modules/@ohdsi/ui-toolbox/lib/umd/api/index",
   },

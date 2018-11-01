@@ -30,13 +30,12 @@ const localRefs = {
 };
 
 // set 'optional' path prior to first call to require
-requirejs.config({paths: {"optional": "plugins/optional", "text": "plugins/text"}});
+requirejs.config({paths: {"appConfig": "config", "text": "plugins/text"}});
 
 require([
 	'./settings',
-	'optional', // require this plugin separately to check in advance whether we have a local config
 	'config',
-], (settings, optional, appConfig) => {
+], (settings, appConfig) => {
 	const cdnRefs = {
 		css: {},
 		js: {},

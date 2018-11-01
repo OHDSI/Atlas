@@ -4,9 +4,13 @@
   "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
   "main": "js/main.js",
   "scripts": {
+    "prep": "npm i && npm run clean",
     "clean": "rimraf ./js/assets/bundle && rimraf ./js/assets/fonts && rimraf ./js/assets/images",
-    "build": "npm i && npm run clean && npm run bundle",
-    "bundle": "node ./build/index.js"
+    "build": "npm run prep && npm run bundle",
+    "bundle": "node ./build/index.js",
+    "build:amd": "npm run prep && npm run build:amd:dev",
+    "build:amd:dev": "node build/optimize.js",
+    "build:amd:min": "google-closure-compiler-js js/assets/bundle/bundle.dev.js > js/assets/bundle/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -35,10 +39,14 @@
   },
   "homepage": "https://github.com/OHDSI/Atlas#readme",
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "ajax-request": "^1.2.3",
+    "esprima": "^4.0.1",
     "fs-extra": "^7.0.0",
-    "requirejs": "^2.3.5",
-    "rimraf": "^2.6.2"
+    "requirejs": "^2.3.4",
+    "rimraf": "^2.6.2",
+    "google-closure-compiler-js": "*"
   },
   "dependencies": {
     "@ohdsi/atlascharts": "*",
@@ -68,7 +76,6 @@
     "datatables.net": "1.10.15",
     "datatables.net-buttons": "*",
     "director": "*",
-    "drmonty-datatables-colvis": "*",
     "facets": "*",
     "file-saver": "*",
     "jquery": "1.11.2",
@@ -81,11 +88,12 @@
     "less": "^3.8.1",
     "lodash": "*",
     "lscache": "*",
-    "lz-string": "*",
+    "lz-string": "^1.4.4",
     "moment": "*",
     "numeral": "*",
     "ouanalyse-datatables.net-buttons-html5": "*",
     "prismjs": "*",
+    "qs": "^6.5.2",
     "querystring": "*",
     "urijs": "^1.19.1",
     "xss": "*"
