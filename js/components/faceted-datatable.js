@@ -96,31 +96,25 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 			};
 			self.createFilters = () => {
 				self.facets.removeAll();
-				if (self.options && self.options.Facets) {
-					self.options.Facets.forEach(facetConfig => {
-						httpService.doGet(config.webAPIRoot + "facets?facet=" + facetConfig.caption + '&entityName=' + self.options.entityName)
-							.then(({data}) => {
+				if (self.options && self.options.entityName) {
+					httpService.doGet(config.webAPIRoot + 'facets?&entityName=' + self.options.entityName)
+						.then(({data}) => {
+							self.facets(data.map(facet => {
 								// var isArray = facetConfig.isArray || false;
-								let facet = {
-									'caption': facetConfig.caption,
-									'binding': facetConfig.binding,
-									'dimension': data,
-									'facetItems': [],
+								return {
+									'caption': facet.name,
 									'selectedItems': {},
+									'facetItems': facet.selectedItems.map(item => {
+										return {
+											key: item.key,
+											text: item.text,
+											count: item.count,
+											selected: ko.observable(false),
+											facet: facet
+										}
+									}),
 								};
-								// Add a selected observable to each dimension
-								data.forEach((d) =>
-									facet.facetItems.push({
-										key: d.key,
-										text: d.text,
-										count: d.count,
-										dimension: data,
-										selected: ko.observable(false),
-										facet: facet
-									})
-								);
-								self.facets.push(facet);
-							})
+							}))
 							.catch((e) => {
 								console.log(e);
 							})

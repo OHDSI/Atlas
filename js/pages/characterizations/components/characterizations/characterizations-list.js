@@ -72,17 +72,6 @@ define([
             ];
             this.gridOptions = {
                 entityName: 'cohort_characterization',
-                Facets: [
-                    {
-                        'caption': 'Created',
-                    },
-                    {
-                        'caption': 'Updated',
-                    },
-                    {
-                        'caption': 'Author',
-                    },
-                ]
             };
 
             if (this.isGetCCListPermitted()) {

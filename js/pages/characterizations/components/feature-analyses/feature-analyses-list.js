@@ -76,20 +76,6 @@ define([
             ];
             this.gridOptions = {
 	            entityName: 'fe_analysis',
-                Facets: [
-                    {
-                        'caption': 'Type',
-                    },
-                    {
-                        'caption': 'Created',
-                    },
-                    {
-                        'caption': 'Updated',
-                    },
-                    {
-                        'caption': 'Author',
-                    },
-                ]
             };
         }
 

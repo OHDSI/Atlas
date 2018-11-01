@@ -79,19 +79,6 @@ define([
 		get gridOptions() {
 			return {
 				entityName: 'pathway_analysis',
-				Facets: [{
-					'caption': 'Created',
-					'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
-				},
-					{
-						'caption': 'Updated',
-						'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
-					},
-					{
-						'caption': 'Author',
-						'binding': (o) => (o.createdBy && o.createdBy.login) || "",
-					},
-				]
 			};
 		}
 	}
