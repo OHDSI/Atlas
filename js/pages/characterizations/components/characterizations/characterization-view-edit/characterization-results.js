@@ -438,11 +438,11 @@ define([
                 });
                 columns.push({
                     title: 'Avg',
-                    render: (s, p, d) => d.avg[i],
+                    render: (s, p, d) => this.formatDecimal2(d.avg[i]),
                 });
                 columns.push({
                     title: 'Std Dev',
-                    render: (s, p, d) => d.stdDev[i],
+                    render: (s, p, d) => this.formatDecimal2(d.stdDev[i]),
                 });
                 columns.push({
                     title: 'Median',
@@ -525,6 +525,10 @@ define([
 
         formatStdDiff(val) {
             return numeral(val).format('0,0.0000');
+        }
+        
+        formatDecimal2(val) {
+            return numeral(val).format('0.00');
         }
 
         formatPct(val) {
