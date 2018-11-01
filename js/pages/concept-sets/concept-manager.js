@@ -1,7 +1,7 @@
 define([
 	'knockout',
-	'text!./concept-manager.html',
-	'components/Component',
+	'text!./concept-manager.html', 
+	'pages/Page',
 	'utils/AutoBind',
 	'services/Vocabulary',
 	'utils/CommonUtils',
@@ -12,14 +12,14 @@ define([
 ], function (
 	ko,
 	view,
-	Component,
+	Page,
 	AutoBind,
 	vocabularyProvider,
 	commonUtils,
 	sharedState,
 	httpService,
 ) {
-	class ConceptManager extends AutoBind(Component) {
+	class ConceptManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
 			this.model = params.model;
@@ -28,7 +28,7 @@ define([
 			this.commonUtils = commonUtils;
 			this.sourceCounts = ko.observableArray();
 			this.loadingSourceCounts = ko.observable(false);
-			this.loadingRelated = ko.observable(false);
+			this.loadingRelated = ko.observable(true);
 
 			this.currentConceptId = params.model.currentConceptId;
 
@@ -341,8 +341,12 @@ define([
 					}]
 				}
 			};
-			this.currentConceptArray = ko.observableArray();			
+			this.currentConceptArray = ko.observableArray();
+		}
+		
+		async onPageCreated() {
 			this.loadConcept(this.model.currentConceptId());
+			super.onPageCreated();
 		}
 
 		async fetchRecordCounts(sources) {
@@ -398,6 +402,7 @@ define([
 		}
 
 		async loadConcept(conceptId) {
+			this.currentConceptArray().length = 0;
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
 			var exists = false;
 			for (var i = 0; i < this.model.recentConcept().length; i++) {
