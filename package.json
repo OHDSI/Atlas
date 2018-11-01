@@ -1,6 +1,6 @@
 {
   "name": "atlas",
-  "version": "2.4.3",
+  "version": "2.6.0",
   "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
   "main": "js/main.js",
   "scripts": {
@@ -52,6 +52,7 @@
     "@ohdsi/atlascharts": "*",
     "@ohdsi/ui-toolbox": "*",
     "bootstrap": "3.3.7",
+    "bootstrap-datetimepicker": "0.0.7",
     "bootstrap-select": "*",
     "clipboard": "^1.5.16",
     "colorbrewer": "*",

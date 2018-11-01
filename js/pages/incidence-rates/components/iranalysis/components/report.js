@@ -4,7 +4,7 @@ define([
 	'text!./report.html',
 	'services/IRAnalysis',
 	'd3',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'databindings',
 	'databindings/irTreemapLegend',

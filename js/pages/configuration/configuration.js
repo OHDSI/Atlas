@@ -1,12 +1,12 @@
 define([
   'knockout',
   'text!./configuration.html',
-  'providers/Page',
-  'providers/AutoBind',
+  'pages/Page',
+  'utils/AutoBind',
   'utils/CommonUtils',
   'appConfig',
-  'webapi/AuthAPI',
-  'webapi/SourceAPI',
+  'services/AuthAPI',
+  'services/SourceAPI',
   'atlas-state',
   'less!./configuration.less',
   'components/heading'

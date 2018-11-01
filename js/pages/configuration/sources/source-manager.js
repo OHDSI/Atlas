@@ -1,15 +1,15 @@
 define([
   'knockout',
   'text!./source-manager.html',
-  'providers/Component',
-  'providers/AutoBind',
+  'components/Component',
+  'utils/AutoBind',
   'utils/CommonUtils',
   'appConfig',
   'assets/ohdsi.util',
-  'webapi/SourceAPI',
+  'services/SourceAPI',
   'services/role',
   'lodash',
-  'webapi/AuthAPI',
+  'services/AuthAPI',
   'atlas-state',
   'pages/configuration/const',
   'components/ac-access-denied',
@@ -135,7 +135,7 @@ define([
 
       this.options.dialectOptions = [
         { name: 'PostgreSQL', id: 'postgresql' },
-        { name: 'SQL server', id: 'sqlserver' },
+        { name: 'SQL server', id: 'sql server' },
         { name: 'Oracle', id: 'oracle' },
         { name: 'Amazon Redshift', id: 'redshift' },
         { name: 'Google BigQuery', id: 'bigquery' },

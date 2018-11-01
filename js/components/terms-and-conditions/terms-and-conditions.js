@@ -1,11 +1,11 @@
 define([
   'knockout',
 	'text!./terms-and-conditions.html',
-  'providers/Component',
-  'providers/AutoBind',
+  'components/Component',
+  'utils/AutoBind',
   'utils/CommonUtils',
-  'webapi/MomentAPI',
-  'webapi/AuthAPI',
+  'services/MomentAPI',
+  'services/AuthAPI',
   'moment',
   'appConfig',
   'less!./terms-and-conditions.less',
@@ -26,7 +26,7 @@ define([
       super(params);
       this.isModalShown = ko.pureComputed({
         read: () => {
-          return authApi.isAuthenticated() && appConfig.enableTermsAndConditions && !this.isAccepted();
+          return appConfig.enableTermsAndConditions && !this.isAccepted();
         },
         write: (value) => {
           return false;

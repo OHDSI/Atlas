@@ -9,7 +9,7 @@ const settingsObject = {
   },    
   packages: [{
       name: "databindings",
-      location: "modules/databindings"
+      location: "extensions/bindings"
     },
     {
       name: "cohortdefinitionviewer",
@@ -17,7 +17,7 @@ const settingsObject = {
     },
     {
       name: "circe",
-      location: "modules/circe"
+      location: "components/circe"
     },
     {
       name: "cyclops",
@@ -34,14 +34,6 @@ const settingsObject = {
     {
       name: "featureextraction",
       location: "components/featureextraction"
-    },
-    {
-      name: "job",
-      location: "modules/job"
-    },
-    {
-      name: "plp",
-      location: "modules/plp"
     },
     {
       name: "pages",
@@ -148,6 +140,7 @@ const settingsObject = {
     "jquery.ui.autocomplete.scroll": "../node_modules/jquery-ui.autocomplete.scroll/jquery.ui.autocomplete.scroll.min",
     "colorbrewer": "../node_modules/colorbrewer/index",
     "ohdsi-api": "../node_modules/@ohdsi/ui-toolbox/lib/umd/api/index",
+    "bootstrap-datetimepicker": "../node_modules/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
   },
   cssPaths: {
     "font-awesome.min.css": "styles/font-awesome.min.css",
@@ -168,6 +161,7 @@ const settingsObject = {
     "jquery.dataTables.colVis.css": "styles/jquery.dataTables.colVis.css",
     "jquery.datatables.tabletools.css": "styles/jquery.datatables.tabletools.css",
     "prism.css": "styles/prism.css",
+    "bootstrap-datetimepicker.css": "less!../node_modules/bootstrap-datetimepicker/src/less/bootsrtap-datetimepicker.less",
   },
 };
 

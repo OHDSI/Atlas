@@ -78,7 +78,8 @@ define(function (require, exports) {
 	var conceptSetViewer = require('./components/ConceptSetViewer');
 	commonUtils.build('conceptset-viewer', conceptSetViewer.viewModel, conceptSetViewer.template);
 
-	ko.components.register('end-strategy-viewer',conceptSetViewer);
+	var endStrategyViewer = require('./components/EndStrategyViewer');
+	ko.components.register('end-strategy-viewer', endStrategyViewer);
 	
 	var payerPlanPeriod = require('./components/PayerPlanPeriod');
 	ko.components.register('payer-plan-period-criteria-viewer', payerPlanPeriod);

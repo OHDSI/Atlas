@@ -1,0 +1,37 @@
+<heading-title params="name: 'Import Users from LDAP/Active Directory', icon: 'users', theme: 'dark'"></heading-title>
+
+<div data-bind="css: classes({ element: 'toolbar' })">
+    <div data-bind="css: classes({ element: 'toolbar-btns' })">
+        <button data-bind="
+             css: classes({ element: 'do-import-btn', extra: 'btn btn-success btn-sm' }),
+             text: 'Import Now',
+             click: $component.importNow,
+             enabled: canImport
+           ">
+        </button>
+        <button data-bind="
+            css: classes({ element: 'new-entity-btn', extra: 'btn btn-primary btn-sm' }),
+            text: 'New Scheduled Import',
+            click: $component.newScheduledImport,
+            enabled: canCreate
+        "></button>
+        <button data-bind="
+            css: classes({ element: 'refresh-btn', extra: 'btn btn-primary btn-sm' }),
+            text: 'Refresh',
+            click: $component.loadJobs,
+        "></button>
+    </div>
+</div>
+
+<div data-bind="if: canImport, css: classes('grid')">
+    <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading User Import Job list...'"></loading>
+
+    <div data-bind="visible: !$component.loading()">
+        <faceted-datatable params="{
+            order: [[0, 'asc']],
+            columns: $component.gridColumns,
+            options: $component.gridOptions,
+            reference: $component.data
+        }"></faceted-datatable>
+    </div>
+</div>

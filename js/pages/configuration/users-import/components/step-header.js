@@ -1,6 +1,6 @@
 define(['knockout',
 		'text!./step-header.html',
-		'providers/Component',
+		'components/Component',
 		'utils/CommonUtils',],
 	function(
 		ko,

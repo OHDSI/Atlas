@@ -1,4 +1,4 @@
-define(['knockout', 'lscache', 'job/jobDetail', 'assets/ohdsi.util'], function (ko, cache, jobDetail, ohdsiUtil) {
+define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util'], function (ko, cache, jobDetail, ohdsiUtil) {
 	var state = {};
 	state.resultsUrl = ko.observable();
 	state.vocabularyUrl = ko.observable();
@@ -7,31 +7,6 @@ define(['knockout', 'lscache', 'job/jobDetail', 'assets/ohdsi.util'], function (
 	state.priorityScope = ko.observable('session');
 	state.roles = ko.observableArray();
 	state.sources = ko.observableArray([]);
-
-	// Extending the jobListing array to include a 'queue' 
-	// function that will check if an existing job is 
-	// already present in the list and replace it.
-	state.jobListing.queue = function(newItem) {
-		var oldItem = state.jobListing().find(j => j.executionUniqueId() == newItem.executionUniqueId());
-		if (oldItem != null) {
-			state.jobListing.replace(oldItem, newItem);
-		} else {
-			state.jobListing.push(newItem);
-		}
-	}
-
-	// job listing notification management
-	var jobListingCacheKey = "atlas:jobListing";
-	var jobListingCache = cache.get(jobListingCacheKey);
-	if (jobListingCache) {
-		jobListingCache.forEach(j => {
-			state.jobListing.push(new jobDetail(j));
-		})
-	}
-
-	state.jobListing.subscribe(function (data) {
-		cache.set(jobListingCacheKey, ko.toJSON(data));
-	});
 
 	// shared concept selection state
 	state.selectedConceptsIndex = {};

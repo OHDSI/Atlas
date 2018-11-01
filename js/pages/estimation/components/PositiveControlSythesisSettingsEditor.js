@@ -1,7 +1,7 @@
 define([
 	'knockout', 
 	'text!./PositiveControlSythesisSettingsEditor.html',	
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'../options',
 	'utils/DataTypeConverterUtils',

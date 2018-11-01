@@ -1,0 +1,14 @@
+<div data-bind="modal: open, css: classes({extra: ['modal', 'fade']})" tabindex="-1" role="dialog">
+    <div data-bind="css: classes({extra: ['modal-dialog', 'modal-lg']})">
+        <div data-bind="css: classes({extra: ['modal-content']})">
+            <div data-bind="css: classes({extra: ['modal-header']})">Find Group</div>
+            <div data-bind="css: classes({extra: ['paddedWrapper']})">
+                <ldap-groups params="provider: importProvider, role: selectedRole, searchResults: searchResults"></ldap-groups>
+                <div data-bind="css: classes({ element: 'row', modifiers: 'footer' })">
+                    <button data-bind="click: setGroupMapping, css: classes({extra: ['btn', 'btn-sm', 'btn-primary'] })">Set</button>
+                    <button data-bind="click: closeModal, css: classes({extra: ['btn', 'btn-sm', 'btn-success'] })">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

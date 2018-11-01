@@ -1,7 +1,7 @@
 define(
     (require, factory) => {
 
-        const momentApi = require('webapi/MomentAPI');
+        const momentApi = require('services/MomentAPI');
 
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {
@@ -11,8 +11,8 @@ define(
             return `<a ${link ? ('href="' + link + '"') : ''}>${label}</a>`;
         };
 
-        const getDateFieldFormatter = (field = 'createdAt') => (s, p, d) => {
-            return momentApi.formatDateTimeUTC(d[field]);
+        const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, p, d) => {
+            return (defaultValue && d[field]) || d[field] ? momentApi.formatDateTimeUTC(d[field]) : defaultValue;
         };
 
         const getFacetForDate = function(date) {

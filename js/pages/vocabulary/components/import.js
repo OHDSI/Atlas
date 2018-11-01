@@ -1,9 +1,9 @@
 define([
 	'knockout',
 	'text!./import.html',
-	'providers/Component',
-	'providers/AutoBind',
-	'providers/Vocabulary',
+	'components/Component',
+	'utils/AutoBind',
+	'services/Vocabulary',
 	'utils/CommonUtils',
 	'atlas-state',
 	'less!./import.less',

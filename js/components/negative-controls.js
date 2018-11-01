@@ -1,13 +1,14 @@
 define(['knockout',
 	'text!./negative-controls.html',
 	'appConfig',
-	'webapi/EvidenceAPI',
-	'webapi/CDMResultsAPI',
+	'services/EvidenceAPI',
+	'services/CDMResultsAPI',
 	'services/ConceptSet',
 	'atlas-state',
-	'job/jobDetail',
-  'webapi/MomentAPI',
-	'webapi/AuthAPI',
+	'services/job/jobDetail',
+	'services/JobDetailsService',
+  'services/MomentAPI',
+	'services/AuthAPI',
 	'assets/ohdsi.util',
 	'databindings'
 ], function (
@@ -19,6 +20,7 @@ define(['knockout',
 	conceptSetService,
 	sharedState,
 	jobDetail,
+	jobDetailsService,
 	momentApi,
 	authApi
 ) {
@@ -411,24 +413,12 @@ define(['knockout',
 			self.negativeControls(null);
 			self.loadingResults(false);
 
-			// Create a job to monitor progress
-			var job = new jobDetail({
-				name: self.conceptSet().name() + "_" + service.sourceKey(),
-				type: 'negative-controls',
-				status: 'PENDING',
-				executionId: String(self.conceptSet().id) + String(service.sourceId()),
-				statusUrl: config.api.url + 'conceptset/' + self.conceptSet().id + '/generationinfo',
-				statusValue: 'status',
-				viewed: false,
-				url: 'conceptset/' + self.conceptSet().id + '/evidence',
-			});
-
 			// Kick the job off
 			$.when(negativeControlsJob)
-				.done(function (jobInfo) {
+				.done(function (info) {
+					jobDetailsService.createJob(info);
 					pollTimeout = setTimeout(function () {
-						sharedState.jobListing.queue(job);
-						self.pollForInfo();
+ 						self.pollForInfo();
 					}, 5000);
 				})
 				.fail(function(info) {
@@ -474,7 +464,7 @@ define(['knockout',
 					self.conceptSetValidText("Your saved concepts come from multiple Domains (Condition, Drug). The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
 				}
 			} else {
-				self.conceptSetValidText("You must define a concept set with drugs found in the RxNorm vocbulary at the Ingredient class level OR Conditions from SNOMED. The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
+				self.conceptSetValidText("You must define a concept set with drugs found in the RxNorm vocabulary at the Ingredient class level OR Conditions from SNOMED. The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
 			}
 			self.conceptSetValid(conceptSetValid);
 			self.conceptDomainId(conceptDomainId);

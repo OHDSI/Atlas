@@ -1,10 +1,10 @@
 define([
 	'knockout', 
 	'text!./evidence-pair-viewer.html',	
-	'providers/Component',
+	'components/Component',
 	'appConfig', 
-	'webapi/AuthAPI', 
-	'webapi/EvidenceAPI', 
+	'services/AuthAPI', 
+	'services/EvidenceAPI',
 ], function (
 	ko, 
 	view, 

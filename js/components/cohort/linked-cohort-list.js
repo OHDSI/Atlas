@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'providers/Component',
+	'components/Component',
 	'utils/CommonUtils',
 	'lodash',
 	'text!./linked-cohort-list.html',
