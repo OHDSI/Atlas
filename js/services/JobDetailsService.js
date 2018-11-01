@@ -52,11 +52,22 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 	}
 
 	function setLastViewedTime(lastViewedTime) {
-		return httpService.doPost(appConfig.api.url + 'notifications/viewed', JSON.stringify(lastViewedTime))
+		if (appConfig.userAuthenticationEnabled) {
+			return httpService.doPost(appConfig.api.url + 'notifications/viewed', JSON.stringify(lastViewedTime))
+		} else {
+			localStorage.setItem('notifications-last-viewed-time', Date.now());
+		}
 	}
 
 	function getLastViewedTime() {
-		return httpService.doGet(appConfig.api.url + 'notifications/viewed')
+		if (appConfig.userAuthenticationEnabled) {
+			return httpService.doGet(appConfig.api.url + 'notifications/viewed')
+		} else {
+			return new Promise(function(resolve, reject) {
+				let date = localStorage.getItem('notifications-last-viewed-time');
+				resolve({data: date ? parseInt(date) : null})
+			});
+		}
 	}
 
 
