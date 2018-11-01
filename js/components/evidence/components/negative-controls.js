@@ -238,7 +238,7 @@ define(['knockout',
 				var evidenceSources = [];
 
 				$.each(sharedState.sources(), function (i, source) {
-					if (source.hasEvidence) {
+					if (source.hasEvidence && source.hasCEMResults) {
 						var sourceInfo = {};
 						sourceInfo.sourceId = ko.observable(source.sourceId);
 						sourceInfo.sourceKey = ko.observable(source.sourceKey);
