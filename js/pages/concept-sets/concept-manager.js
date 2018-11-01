@@ -34,7 +34,6 @@ define([
 
 			this.subscriptions.push(
 				this.currentConceptId.subscribe((value) => {
-					this.loadingRelated(true);
 					if (this.model.currentConceptMode() == 'recordcounts') {
 						this.loadRecordCounts();
 					}
@@ -342,7 +341,12 @@ define([
 					}]
 				}
 			};
+			this.currentConceptArray = ko.observableArray();
+		}
+		
+		async onPageCreated() {
 			this.loadConcept(this.model.currentConceptId());
+			super.onPageCreated();
 		}
 
 		async fetchRecordCounts(sources) {
@@ -398,7 +402,7 @@ define([
 		}
 
 		async loadConcept(conceptId) {
-			this.currentConceptArray = ko.observableArray();
+			this.currentConceptArray().length = 0;
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
 			var exists = false;
 			for (var i = 0; i < this.model.recentConcept().length; i++) {
@@ -413,6 +417,7 @@ define([
 			}
 			this.model.currentConcept(data);
 			// load related concepts once the concept is loaded
+            this.loadingRelated(true);
 			this.metarchy = {
 				parents: ko.observableArray(),
 				children: ko.observableArray(),
