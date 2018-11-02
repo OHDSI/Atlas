@@ -173,7 +173,7 @@ define([
                         resultsList.map(r => ({
                             analysisId: r.analysisId,
                             // TODO
-                            domainId: null, // "Demographics",
+                            domainId: design.featureAnalyses.find(fa => fa.design.find(d => d.id === r.covariateId)).domain, // "Demographics",
                             analysisName: r.analysisName,
                             type: r.resultType.toLowerCase(),
                         })),
@@ -228,6 +228,10 @@ define([
                 'value'
             );
 
+            const domains = lodash.uniqBy(
+              data.map(a => a.domainId)
+            );
+
             return [
                 {
                     type: 'multiselect',
@@ -242,6 +246,13 @@ define([
                     name: 'analyses',
                     options: ko.observable(data.map(a => ({label: a.analysisName, value: a.analysisId}))),
                     selectedValues: ko.observable(data.map(a => a.analysisId)),
+                },
+                {
+                    type: 'multiselect',
+                    label: 'Domains',
+                    name: 'domains',
+                    options: ko.observable(domains),
+                    selectedValues: ko.observable([]),
                 }
             ];
         }

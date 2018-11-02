@@ -39,7 +39,7 @@ define([
 			this.isViewPermitted = this.isPermittedViewResolver();
 
 			this.cohorts = ko.computed({
-				read: () => params.design().cohorts || [],
+				read: () => params.design() && params.design().cohorts || [],
 				write: (value) => params.design({
 					...params.design(),
 					cohorts: value,
@@ -70,7 +70,7 @@ define([
 						className: this.classes('col-feature-remove'),
 					}
 				],
-				data: ko.computed(() => params.design().featureAnalyses || [])
+				data: ko.computed(() => params.design() && params.design().featureAnalyses || [])
 			};
 
 			this.featureAnalysesParams = {
@@ -92,7 +92,7 @@ define([
 						className: this.classes('col-param-remove'),
 					}
 				],
-				data: ko.computed(() => params.design().parameters || [])
+				data: ko.computed(() => params.design() && params.design().parameters || [])
 			};
 
 			this.showFeatureAnalysesBrowser = ko.observable(false);

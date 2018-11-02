@@ -1,11 +1,14 @@
 <div data-bind="html: $component.template"></div>
 
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Feature Analysis...'"></loading>
+
+<!-- ko if:data -->
 <div data-bind="css: classes()">
     <div class="wrapperTitle">
         <i class="fa fa-shopping-cart"></i> Feature analysis
     </div>
     <div class="asset-heading">
-        <input type="text" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: $component.data.name" />
+        <input type="text" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: $component.data().name" />
         <div class="btn-group">
             <button
                     type="button"
@@ -19,8 +22,6 @@
         </div>
     </div>
 
-    <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Feature Analysis...'"></loading>
-
     <div data-bind="css: classes('content'), visible: !$component.loading()">
 
         <div data-bind="css: classes({ element: 'descr-panel', extra: 'panel panel-primary' })">
@@ -31,18 +32,18 @@
                 <!-- ko if: $component.canEdit() -->
                     <multi-select
                             data-bind="css: classes('domain-selector')"
-                            params="options: $component.domains, selectedValue: $component.data.domain, multiple: false"
+                            params="options: $component.domains, selectedValue: $component.data().domain, multiple: false"
                     ></multi-select>
                 <!-- /ko -->
                 <!-- ko if: !$component.canEdit() -->
                     <div data-bind="css: classes('read-only-domain-info')">
-                        <b>Domain: </b><span data-bind="text: ($component.domains().find(o => o.value === $component.data.domain()) || {}).label"></span>
+                        <b>Domain: </b><span data-bind="text: ($component.domains().find(o => o.value === $component.data().domain()) || {}).label"></span>
                     </div>
                 <!-- /ko -->
                 <textarea data-bind="
                     css: classes({ element: 'descr', extra: 'form-control' }),
                     attr: { disabled: $component.canEdit() ? null : true },
-                    textInput: $component.data.descr
+                    textInput: $component.data().descr
                 "></textarea>
             </div>
         </div>
@@ -56,24 +57,24 @@
                     <ul data-bind="css: classes({ element: 'nav', extra: 'nav nav-pills' })">
                         <li role="presentation"
                             data-bind="
-                            if: $component.canEdit() || $component.data.type() === $component.featureTypes.PRESET,
-                            css: classes({ element: 'nav-pill', extra: $component.data.type() === $component.featureTypes.PRESET ? 'active' : null }),
+                            if: $component.canEdit() || $component.data().type() === $component.featureTypes.PRESET,
+                            css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.PRESET ? 'active' : null }),
                             click: setType.bind(null, $component.featureTypes.PRESET)
                         ">
                             <a>Preset</a>
                         </li>
                         <li role="presentation"
                             data-bind="
-                            if: $component.canEdit() || $component.data.type() === $component.featureTypes.CRITERIA_SET,
-                            css: classes({ element: 'nav-pill', extra: $component.data.type() === $component.featureTypes.CRITERIA_SET ? 'active' : null }),
+                            if: $component.canEdit() || $component.data().type() === $component.featureTypes.CRITERIA_SET,
+                            css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.CRITERIA_SET ? 'active' : null }),
                             click: setType.bind(null, $component.featureTypes.CRITERIA_SET)
                         ">
                             <a>Criteria</a>
                         </li>
                         <li role="presentation"
                             data-bind="
-                            if: $component.canEdit() || $component.data.type() === $component.featureTypes.CUSTOM_FE,
-                            css: classes({ element: 'nav-pill', extra: $component.data.type() === $component.featureTypes.CUSTOM_FE ? 'active' : null }),
+                            if: $component.canEdit() || $component.data().type() === $component.featureTypes.CUSTOM_FE,
+                            css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.CUSTOM_FE ? 'active' : null }),
                             click: setType.bind(null, $component.featureTypes.CUSTOM_FE)
                         ">
                             <a>Custom</a>
@@ -81,21 +82,21 @@
                     </ul>
                 </div>
 
-                <div data-bind="if: $component.data.type() === $component.featureTypes.PRESET, css: classes('design')">
+                <div data-bind="if: $component.data().type() === $component.featureTypes.PRESET, css: classes('design')">
                     <span data-bind="css: classes('criteria-descr')">FeatureExtraction preset name:</span>
                     <input data-bind="
                         css: classes({ element: 'preset-input', extra: 'form-control' }),
                         attr: { disabled: $component.canEdit() ? null : true },
-                        textInput: $component.data.design
+                        textInput: $component.data().design
                     " />
                 </div>
                 <div data-bind="
-                    if: $component.data.type() === $component.featureTypes.CRITERIA_SET, css: classes('design')
+                    if: $component.data().type() === $component.featureTypes.CRITERIA_SET, css: classes('design')
                 ">
                     <button data-bind="css: classes({ element: 'add-criteria', extra: 'btn btn-success' }), click: addCriteria">
                         Add Criteria feature
                     </button>
-                    <!-- ko foreach: $component.data.design -->
+                    <!-- ko foreach: $component.data().design -->
                         <div data-bind="
                             css: $component.classes('criteria'),
                             eventListener: [
@@ -113,18 +114,18 @@
                                         data-bind="css: $component.classes({ element: 'criteria-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeCriteria($index())"
                                 ><i class="fa fa-trash-o"></i></button>
                             </div>
-                            <criteria-group params="{ expression: { ConceptSets: $component.data.conceptSets }, group: $data.expression }"></criteria-group>
+                            <criteria-group params="{ expression: { ConceptSets: $component.data().conceptSets }, group: $data.expression }"></criteria-group>
                         </div>
                     <!-- /ko -->
                 </div>
-                <div data-bind="if: $component.data.type() === $component.featureTypes.CUSTOM_FE, css: classes('design')">
+                <div data-bind="if: $component.data().type() === $component.featureTypes.CUSTOM_FE, css: classes('design')">
                     <div data-bind="css: classes('design-section')">
                         <span data-bind="css: classes('design-section-title')">Analysis SQL:</span>
                         <span data-bind="css: classes('criteria-sql')">SELECT covariate_id, covariate_name, concept_id, sum_value, average_value FROM (</span>
                         <textarea data-bind="
                             css: classes({ element: 'raw-sql-box', extra: 'form-control' }),
                             attr: { disabled: $component.canEdit() ? null : true, placeholder: demoCustomSqlAnalysisDesign },
-                            textInput: $component.data.design
+                            textInput: $component.data().design
                         "></textarea>
                         <span data-bind="css: classes('criteria-sql')">)</span>
                     </div>
@@ -158,3 +159,4 @@
         </div>
     </div>
 </div>
+<!-- /ko -->

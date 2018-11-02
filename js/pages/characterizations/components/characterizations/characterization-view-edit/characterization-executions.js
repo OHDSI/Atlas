@@ -41,7 +41,7 @@ define([
 			this.ccGenerationStatusOptions = consts.ccGenerationStatus;
 
 			this.characterizationId = params.characterizationId;
-			const currentHash = ko.computed(() => params.design().hash);
+			const currentHash = ko.computed(() => params.design() ? params.design().hash : 0);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 			this.isExecutionPermitted = this.isExecutionPermitted.bind(this);

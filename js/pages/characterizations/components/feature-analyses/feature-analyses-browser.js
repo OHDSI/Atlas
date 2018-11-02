@@ -107,10 +107,6 @@ define([
 				return result;
 			});
 		}
-
-		selectAnalysis(data) {
-			this.selectedAnalysis(data);
-		}
 	}
 
 	return commonUtils.build('feature-analyses-browser', FeatureAnalysesBrowser, view);

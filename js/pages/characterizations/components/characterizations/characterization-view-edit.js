@@ -4,8 +4,10 @@ define([
     'pages/characterizations/services/PermissionService',
     'text!./characterization-view-edit.html',
     'appConfig',
+    'atlas-state',
     'services/AuthAPI',
     'pages/Page',
+    'utils/AutoBind',
     'utils/CommonUtils',
     'assets/ohdsi.util',
     'less!./characterization-view-edit.less',
@@ -21,25 +23,22 @@ define([
     PermissionService,
     view,
     config,
+    sharedState,
     authApi,
     Page,
+    AutoBind,
     commonUtils,
     ohdsiUtil
 ) {
-    class CharacterizationViewEdit extends Page {
+    class CharacterizationViewEdit extends AutoBind(Page) {
         constructor(params) {
             super(params);
 
-            this.selectTab = this.selectTab.bind(this);
-            this.setupDesign = this.setupDesign.bind(this);
-            this.setupSection = this.setupSection.bind(this);
-            this.loadDesignData = this.loadDesignData.bind(this);
-
-            this.characterizationId = ko.observable();
+            this.characterizationId = sharedState.CohortCharacterization.selectedId;
             this.executionId = ko.observable();
-            this.design = ko.observable({});
+            this.design = sharedState.CohortCharacterization.current;
 
-            this.designDirtyFlag = ko.observable({ isDirty: () => false });
+            this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
@@ -102,14 +101,19 @@ define([
         }
 
         async loadDesignData(id) {
-            if (id < 1) {
+
+					if (this.design() && (this.design().id || 0 === id)) return;
+          if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+            return;
+          }
+					if (id < 1) {
                 this.setupDesign({})
-            } else {
-                this.loading(true);
-                const res = await CharacterizationService.loadCharacterizationDesign(id);
-                this.setupDesign(res);
-                this.loading(false);
-            }
+          } else {
+            this.loading(true);
+            const res = await CharacterizationService.loadCharacterizationDesign(id);
+            this.setupDesign(res);
+            this.loading(false);
+          }
         }
 
         selectTab(index, { key }) {
@@ -129,6 +133,7 @@ define([
                     .then(res => {
                         this.setupDesign(res);
                         this.loading(false);
+                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
                     });
             }
         }
@@ -140,12 +145,18 @@ define([
                     .deleteCharacterization(this.componentParams().characterizationId())
                     .then(res => {
                         this.loading(false);
+											  this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
                         this.closeCharacterization();
                     });
             }
         }
 
         closeCharacterization() {
+					  if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+						    return;
+					  }
+            this.design(null);
+            this.designDirtyFlag().reset();
             commonUtils.routeTo('/cc/characterizations');
         }
     }
