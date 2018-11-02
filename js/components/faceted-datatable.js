@@ -10,8 +10,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 		self.nullFacetLabel = params.nullFacetLabel || 'NULL';
 		self.options = params.options;
 		self.columns = params.columns;
-		self.rowCallback = params.rowCallback || function () {
-		};
+		self.rowCallback = params.rowCallback || function () {};
 		self.rowClick = params.rowClick;
 		self.drawCallback = params.drawCallback;
 
@@ -114,23 +113,22 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 										}
 									}),
 								};
-							}))
-					});
-					// Iterate over the facets and set any defaults
-					/*
-									$.each(self.options.Facets, function (i, facetConfig) {
-										if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
-											$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
-												var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
-													return f.key == defaultFacet;
-												});
-												if (facetItem.length > 0) {
-													self.updateFilters(facetItem[0], null);
+							}));
+							if (self.options.Facets) {
+								self.options.Facets.forEach(facet => {
+									if (facet.defaultFacets) {
+										facet.defaultFacets.forEach(defaultFacet => {
+											self.facets().forEach(f => {
+												let facetItem = f.facetItems.find(f => f.key === defaultFacet);
+												if (facetItem) {
+													self.updateFilters(facetItem, null);
 												}
 											})
-										}
-									});
-					*/
+										})
+									}
+								});
+							}
+						});
 				}
 			};
 			self.updateFilters = function (data, event) {
