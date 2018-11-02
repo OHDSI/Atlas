@@ -96,7 +96,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 			self.createFilters = () => {
 				self.facets.removeAll();
 				if (self.options && self.options.entityName) {
-					httpService.doGet(config.webAPIRoot + 'facets?&entityName=' + self.options.entityName)
+					httpService.doGet(config.webAPIRoot + 'facets/' + self.options.entityName)
 						.then(({data}) => {
 							self.facets(data.map(facet => {
 								// var isArray = facetConfig.isArray || false;
