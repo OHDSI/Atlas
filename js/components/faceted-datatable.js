@@ -128,7 +128,11 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 									}
 								});
 							}
-						});
+						})
+						.catch(e => {
+							console.error(e)
+						})
+					;
 				}
 			};
 			self.updateFilters = function (data, event) {
