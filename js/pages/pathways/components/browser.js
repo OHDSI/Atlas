@@ -45,7 +45,6 @@ define([
 				{
 					title: 'Name',
 					data: 'name',
-					searchable: true,
 					className: this.classes('tbl-col', 'name'),
 					render: datatableUtils.getLinkFormatter(d => ({
 						link: '#/pathways/' + d.id,
@@ -69,7 +68,6 @@ define([
 				{
 					title: 'Author',
 					data: 'createdBy',
-					searchable: true,
 					className: this.classes('tbl-col', 'author'),
 					render: (s, p, d) => (d.createdBy !== null ? d.createdBy.login : 'anonymous'),
 				}

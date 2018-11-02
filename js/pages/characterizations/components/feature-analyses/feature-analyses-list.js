@@ -38,7 +38,6 @@ define([
                 {
                     title: 'Name',
                     data: 'name',
-                    searchable: true,
                     className: this.classes('tbl-col', 'name'),
                     render: datatableUtils.getLinkFormatter(d => ({
                         link: '#/cc/feature-analyses/' + d.id,
@@ -48,7 +47,6 @@ define([
                 {
                     title: 'Description',
                     data: 'descr',
-	                searchable: true,
 	                className: this.classes('tbl-col', 'descr'),
                 },
                 {
@@ -68,7 +66,6 @@ define([
                 {
                     title: 'Author',
 	                data: 'createdBy',
-	                searchable: true,
 	                className: this.classes('tbl-col', 'author'),
                     render: datatableUtils.getCreatedByFormatter(),
                 },
