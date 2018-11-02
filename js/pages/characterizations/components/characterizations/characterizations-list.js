@@ -31,7 +31,6 @@ define([
             this.gridTab = constants.characterizationsTab;
 
             this.loading = ko.observable(false);
-            // this.data = ko.observableArray();
 
             this.isGetCCListPermitted = PermissionService.isPermittedGetCCList;
             this.isCreatePermitted = PermissionService.isPermittedCreateCC;

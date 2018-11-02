@@ -115,9 +115,6 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 									}),
 								};
 							}))
-							.catch((e) => {
-								console.log(e);
-							})
 					});
 					// Iterate over the facets and set any defaults
 					/*

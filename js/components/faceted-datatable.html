@@ -1,8 +1,5 @@
-<div style="position: relative">
-	<div class="text-center" style="position: absolute; left: 50%; height: 50%; z-index: 100"
-		 data-bind="if: $component.componentLoading(), css: {visible:componentLoading(), hidden: !componentLoading()}">
-		<h3><i class="fa fa-spinner fa-spin"></i> Loading ...</h3>
-	</div>
+<div>
+	<loading data-bind="visible:$component.componentLoading()" params="status: 'Loading ...', class: 'loading-above'"></loading>
 	<div>
 		<div class="row">
 			<div class="feFilter"
