@@ -402,7 +402,6 @@ define([
 		}
 
 		async loadConcept(conceptId) {
-			this.currentConceptArray().length = 0;
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
 			var exists = false;
 			for (var i = 0; i < this.model.recentConcept().length; i++) {
