@@ -82,7 +82,7 @@ define(['knockout', 'jquery', 'text!./plp-roc.html', 'appConfig', 'd3', 'd3-slid
 		//================================================================
 		var datas;
 
-		d3.csv("./js/data/plp/" + self.modelId + "_roc.csv", function (error, dataset) { // NEW
+		d3.csv("./js/resources/data/plp/" + self.modelId + "_roc.csv", function (error, dataset) { // NEW
 			datas = dataset;
 			dataset.forEach(function (d) {
 				d.sensitivity = +d.sensitivity; // NEW

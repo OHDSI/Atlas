@@ -2,10 +2,11 @@ define([
 	'knockout',
 	'text!./cohort-comparison-browser.html',
 	'appConfig',
+	'./const',
+	'utils/DatatableUtils',
 	'services/MomentAPI',
 	'services/AuthAPI',
 	'pages/Page',
-	'utils/AutoBind',
 	'utils/CommonUtils',
 	'services/http',
 	'components/cohortcomparison/ComparativeCohortAnalysis',
@@ -18,19 +19,21 @@ define([
 	ko,
 	view,
 	config,
+	constants,
+	datatableUtils,
 	momentApi,
 	authApi,
 	Page,
-	AutoBind,
 	commonUtils,
 	httpService,
 ) {
-  class CohortComparisonBrowser extends AutoBind(Page) {
+  class CohortComparisonBrowser extends Page {
 		constructor(params) {
 			super(params);
 			this.model = params.model;
 			this.reference = ko.observableArray();
 			this.loading = ko.observable(true);
+			this.config = config;
 
 			this.canReadEstimations = ko.pureComputed(() => {
 				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedReadEstimations()) || !config.userAuthenticationEnabled;
@@ -41,23 +44,18 @@ define([
 
 			this.options = {
 				Facets: [
-					{
-						'caption': 'Last Modified',
-						'binding': function (o) {
-							var daysSinceModification = (new Date().getTime() - new Date(o.modified).getTime()) / 1000 / 60 / 60 / 24;
-							if (daysSinceModification < .01) {					
-								return 'Just Now';
-							} else if (daysSinceModification < 1) {					
-								return 'Within 24 Hours';
-							} else if (daysSinceModification < 7) {
-								return 'This Week';
-							} else if (daysSinceModification < 14) {
-								return 'Last Week';
-							} else {
-								return '2+ Weeks Ago';
-							}
-						}
-					}
+                    {
+                        'caption': 'Created',
+                        'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+                    },
+                    {
+                        'caption': 'Updated',
+                        'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
+                    },
+                    {
+                        'caption': 'Author',
+                        'binding': datatableUtils.getFacetForCreatedBy,
+                    },
 				]
 			};
 			
@@ -68,9 +66,10 @@ define([
 				},
 				{
 					title: 'Name',
-					data: d => {
-						return '<span class=\'linkish\'>' + d.name + '</span>';
-					},
+					render: datatableUtils.getLinkFormatter(d => ({
+						link: constants.singleAnalysisPaths.ccaAnalysis(d.analysisId),
+						label: d['name']
+					})),
 				},
 				{
 					title: 'Created',
@@ -91,7 +90,9 @@ define([
 					data: 'createdBy'
 				}
 			];
-			
+		}
+
+		onPageCreated() {
 			httpService.doGet(config.api.url + 'comparativecohortanalysis')
 				.then(({ data }) => {
 					this.loading(false);
@@ -100,12 +101,12 @@ define([
 				.catch(authApi.handleAccessDenied);
 		}
 
-		rowClick(d) {
-			document.location = '#/estimation/' + d.analysisId;
+		newCohortComparison() {
+			document.location = constants.singleAnalysisPaths.createCcaAnalysis();
 		}
 
-		newCohortComparison() {
-			document.location = '#/estimation/0';
+		goToMultiAnalysisEstimation() {
+			document.location = constants.multiAnalysisPaths.browser();
 		}
 	}
 

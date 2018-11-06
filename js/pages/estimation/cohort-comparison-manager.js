@@ -8,6 +8,7 @@ define([
 	'services/JobDetailsService',
 	'services/http',
 	'appConfig',
+	'./const',
 	'services/AuthAPI',
 	'assets/ohdsi.util',
 	'components/cohortcomparison/ComparativeCohortAnalysis',
@@ -33,6 +34,7 @@ define([
 		jobDetailsService,
 		httpService,
 		config,
+		constants,
 		authApi,
 		ohdsiUtil,
 		ComparativeCohortAnalysis,
@@ -49,9 +51,10 @@ define([
 		class CohortComparisonManager extends AutoBind(Page) {
 			constructor(params) {
 				super(params);
-				this.cohortComparisonId = ko.observable();
-				this.cohortComparison = ko.observable();
-				this.cohortComparisonDirtyFlag = ko.observable();
+				sharedState.estimationAnalysis.analysisPath = constants.singleAnalysisPaths.ccaAnalysis;
+				this.cohortComparisonId = sharedState.estimationAnalysis.selectedId; //ko.observable();
+				this.cohortComparison = sharedState.estimationAnalysis.current; //ko.observable();
+				this.cohortComparisonDirtyFlag = sharedState.estimationAnalysis.dirtyFlag; //ko.observable();
 				this.cohortComparisonResultsEnabled = config.cohortComparisonResultsEnabled;
 				this.useExecutionEngine = config.useExecutionEngine;
 				this.isExecutionEngineAvailable = config.api.isExecutionEngineAvailable;
@@ -596,14 +599,14 @@ define([
 				this.loading(true);
 				httpService.doDelete(config.api.url + 'comparativecohortanalysis/' + this.cohortComparisonId())
 					.then(() => {
-						document.location = "#/estimation";
+						document.location = constants.singleAnalysisPaths.browser();
 					})
 					.catch((error) => {
 						if (error.status !== 204) {
 							console.log("Error: " + error);
 							authApi.handleAccessDenied(error);
 						} else {
-							document.location = "#/estimation";
+							document.location = constants.singleAnalysisPaths.browser();
 						}
 					})
 					.finally(() => this.loading(false));
@@ -755,7 +758,7 @@ define([
 					this.cohortComparisonId(saveResult.analysisId);
 					this.cohortComparison().analysisId = saveResult.analysisId;
 					if (redirectWhenComplete) {
-						document.location = "#/estimation/" + this.cohortComparisonId();
+						document.location = constants.singleAnalysisPaths.ccaAnalysis(this.cohortComparisonId());
 					}
 					this.cohortComparisonDirtyFlag().reset();
 					this.cohortComparison.valueHasMutated();
@@ -771,7 +774,7 @@ define([
 				this.cohortComparison(null);
 				this.cohortComparisonId(null);
 				this.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(this.cohortComparison()));
-				document.location = '#/estimation';
+				document.location = constants.singleAnalysisPaths.browser();
 			}
 
 			conceptsetSelected(d) {

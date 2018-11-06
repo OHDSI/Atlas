@@ -1,4 +1,4 @@
-<heading-title params="name: 'Patient Level Prediction', icon: 'heartbeat', theme: 'dark'"></heading-title>
+<heading-title params="name: 'Patient Level Prediction - Single Analysis', icon: 'heartbeat', theme: 'dark'"></heading-title>
 
 <loading data-bind="visible: loading"></loading>
 <div data-bind="if:!loading() && currentPlpAnalysis()">
@@ -31,10 +31,10 @@
 		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'specification' }" class="tab-pane">
 			<plp-spec-editor params="currentPlpAnalysis: currentPlpAnalysis"></plp-spec-editor>
 		</div>
-		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'inspector' }" class="tab-pane">
+		<div role="tabpanel" data-bind="if: false, css: { active: $component.tabMode() == 'inspector' }" class="tab-pane">
 			<plp-inspector params="modelId:$component.patientLevelPredictionId()"></plp-inspector>
 		</div>
-		<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'performance' }" class="tab-pane">
+		<div role="tabpanel" data-bind="if: false, css: { active: $component.tabMode() == 'performance' }" class="tab-pane">
 
 			<ul class="nav nav-pills">
 				<li role="presentation" data-bind="css: {active: $component.performanceTabMode() == 'discrimination'}, click: function() {$component.performanceTabMode('discrimination')};">

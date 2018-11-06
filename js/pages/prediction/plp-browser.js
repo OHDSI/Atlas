@@ -2,6 +2,8 @@ define([
 	'knockout',
 	'text!./plp-browser.html',
 	'appConfig',
+	'./const',
+	'utils/DatatableUtils',
 	'services/MomentAPI',
 	'services/PatientLevelPrediction',
 	'services/AuthAPI',
@@ -15,6 +17,8 @@ define([
 	ko,
 	view,
 	config,
+	constants,
+	datatableUtils,
 	momentApi,
 	plpService,
 	authApi,
@@ -26,6 +30,7 @@ define([
 			super(params);
 			this.loading = ko.observable(true);
 			this.analysisList = ko.observableArray([]);
+			this.config = config;
 
 			this.canReadPlps = ko.pureComputed(() => {
 				return (config.userAuthenticationEnabled && authApi.isAuthenticated() && authApi.isPermittedReadPlps()) || !config.userAuthenticationEnabled;
@@ -36,24 +41,21 @@ define([
 
 			this.options = {
 				Facets: [
-					{
-						'caption': 'Last Modified',
-						'binding': function (o) {
-							var createDate = new Date(o.createdDate);
-							var modDate = new Date(o.modifiedDate);
-							var dateForCompare = (createDate > modDate) ? createDate : modDate;
-							var daysSinceModification = (new Date().getTime() - dateForCompare.getTime()) / 1000 / 60 / 60 / 24;
-							if (daysSinceModification < 7) {
-								return 'This Week';
-							} else if (daysSinceModification < 14) {
-								return 'Last Week';
-							} else {
-								return '2+ Weeks Ago';
-							}
-						}
-					}
+                    {
+                        'caption': 'Created',
+                        'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+                    },
+                    {
+                        'caption': 'Updated',
+                        'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
+                    },
+                    {
+                        'caption': 'Author',
+                        'binding': datatableUtils.getFacetForCreatedBy,
+                    },
 				]
 			};
+			
 			this.columns = [
 				{
 					title: 'Id',
@@ -61,9 +63,10 @@ define([
 				},
 				{
 					title: 'Name',
-					data: d => {
-						return '<span class=\'linkish\'>' + d.name + '</span>';
-					},
+					render: datatableUtils.getLinkFormatter(d => ({
+						link: constants.singleAnalysisPaths.analysis(d.analysisId),
+						label: d['name']
+					})),
 				},
 				{
 					title: 'Created',
@@ -84,21 +87,25 @@ define([
 					data: 'createdBy'
 				}
 			];
-			
-			// Load data from server
-			plpService.getPlpList().then(({ data }) => {
-				this.analysisList(data);
-				this.loading(false);
-			});
 		}
 
-		rowClick(d) {
-			document.location = "#/plp/" + d.analysisId;
+		onPageCreated() {
+			if (this.canReadPlps()) {
+				this.loading(true);
+				plpService.getPlpList().then(({ data }) => {
+					this.analysisList(data);
+					this.loading(false);
+				});
+			}
 		}
 
 
 		newPatientLevelPrediction() {
-			document.location = '#/plp/0';
+			document.location = constants.singleAnalysisPaths.createAnalysis();
+		}
+
+		goToMultiAnalysisPrediction() {
+			document.location = constants.multiAnalysisPaths.browser();
 		}
 
 	}

@@ -6,8 +6,8 @@ define([
 	'services/MomentAPI',
 	'./PermissionService',
 	'pages/Page',
-	'utils/AutoBind',
 	'utils/CommonUtils',
+    'utils/DatatableUtils',
 	'services/Estimation',
 	'components/cohortcomparison/ComparativeCohortAnalysis',
 	'faceted-datatable',
@@ -23,39 +23,35 @@ define([
 	momentApi,
 	PermissionService,
 	Page,
-	AutoBind,
 	commonUtils,
+    datatableUtils,
 	EstimationService,
 ) {
-  class EstimationBrowser extends AutoBind(Page) {
+  class EstimationBrowser extends Page {
 		constructor(params) {
 			super(params);
 			this.model = params.model;
 			this.reference = ko.observableArray();
 			this.loading = ko.observable(false);
+			this.config = config;
 
 			this.canReadEstimations = PermissionService.isPermittedList;
 			this.canCreateEstimation = PermissionService.isPermittedCreate;
 
 			this.options = {
 				Facets: [
-					{
-						'caption': 'Last Modified',
-						'binding': function (o) {
-							var daysSinceModification = (new Date().getTime() - new Date(o.modified).getTime()) / 1000 / 60 / 60 / 24;
-							if (daysSinceModification < .01) {					
-								return 'Just Now';
-							} else if (daysSinceModification < 1) {					
-								return 'Within 24 Hours';
-							} else if (daysSinceModification < 7) {
-								return 'This Week';
-							} else if (daysSinceModification < 14) {
-								return 'Last Week';
-							} else {
-								return '2+ Weeks Ago';
-							}
-						}
-					}
+                    {
+                        'caption': 'Created',
+                        'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+                    },
+                    {
+                        'caption': 'Updated',
+                        'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
+                    },
+                    {
+                        'caption': 'Author',
+                        'binding': datatableUtils.getFacetForCreatedBy,
+                    },
 				]
 			};
 			
@@ -71,9 +67,10 @@ define([
 				},
 				{
 					title: 'Name',
-					data: d => {
-						return '<span class=\'linkish\'>' + d.name + '</span>';
-					},
+					render: datatableUtils.getLinkFormatter(d => ({
+						link: constants.multiAnalysisPaths.ccaAnalysis(d.estimationId),
+						label: d['name']
+					})),
 				},
 				{
 					title: 'Created',
@@ -94,7 +91,9 @@ define([
 					data: 'createdBy'
 				}
 			];
+		}
 
+		onPageCreated() {
 			if (this.canReadEstimations()) {
 				this.loading(true);
 				EstimationService.getEstimationList()
@@ -105,12 +104,12 @@ define([
 			}
 		}
 
-		rowClick(d) {
-			document.location = constants.apiPaths.ccaAnalysis(d.estimationId);
+		newEstimation() {
+			document.location = constants.multiAnalysisPaths.createCcaAnalysis();
 		}
 
-		newEstimation() {
-			document.location = constants.apiPaths.createCcaAnalysis();
+		goToSingleAnalysisEstimation() {
+			document.location = constants.singleAnalysisPaths.browser();
 		}
 	}
 

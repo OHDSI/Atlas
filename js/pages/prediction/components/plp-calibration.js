@@ -75,7 +75,7 @@ define([
 
 
 
-		d3.csv("./js/data/plp/" + this.modelId + "_calibration.csv", (error, dataset) => { // NEW
+		d3.csv("./js/resources/data/plp/" + this.modelId + "_calibration.csv", (error, dataset) => { // NEW
 			dataset.forEach(function (d) {
 				d.observedIncidence = +d.observedIncidence; // NEW
 				d.averagePredictedProbability = +d.averagePredictedProbability;

@@ -1,6 +1,7 @@
 define([
 	'knockout',
 	'text!./plp-manager.html',
+	'./const',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -12,7 +13,7 @@ define([
 	'jquery',
 	'appConfig',
 	'assets/ohdsi.util',
-	'./inputTypes/PatientLevelPredictionAnalysis',
+	'services/plp/PatientLevelPredictionAnalysis',
 	'clipboard',
 	'atlas-state',
 	'components/heading',
@@ -21,6 +22,7 @@ define([
 	function (
 		ko,
 		view,
+		constants,
 		Page,
 		AutoBind,
 		commonUtils,
@@ -38,10 +40,11 @@ define([
 	) {
 	class PlpManager extends AutoBind(Page) {
 		constructor(params) {
-			super(params);		
-			this.patientLevelPredictionId = ko.observable();
-			this.currentPlpAnalysis = ko.observable();
-			this.patientLevelPredictionDirtyFlag = ko.observable();
+			super(params);
+			sharedState.predictionAnalysis.analysisPath = constants.singleAnalysisPaths.analysis;
+			this.patientLevelPredictionId = sharedState.predictionAnalysis.selectedId;
+			this.currentPlpAnalysis = sharedState.predictionAnalysis.current;
+			this.patientLevelPredictionDirtyFlag = sharedState.predictionAnalysis.dirtyFlag;
 			this.loading = ko.observable(true);
 			this.tabMode = ko.observable('specification');
 			this.performanceTabMode = ko.observable('discrimination');
@@ -82,21 +85,7 @@ define([
 			this.useExecutionEngine = config.useExecutionEngine;
 		}
 
-		onRouterParamsChanged({					
-			currentPatientLevelPredictionId,
-			currentPatientLevelPrediction,
-			dirtyFlag,
-		}) {
-			if (currentPatientLevelPredictionId !== undefined) {
-				this.patientLevelPredictionId(currentPatientLevelPredictionId);
-			}
-			if (currentPatientLevelPrediction !== undefined) {
-				this.currentPlpAnalysis(currentPatientLevelPrediction);
-			}
-			if (dirtyFlag !== undefined) {
-				this.patientLevelPredictionDirtyFlag(dirtyFlag);
-			}
-			
+		onRouterParamsChanged() {
 			// startup actions
 			if (this.patientLevelPredictionId() == 0 && this.currentPlpAnalysis() == null) {
 				this.newPatientLevelPrediction();

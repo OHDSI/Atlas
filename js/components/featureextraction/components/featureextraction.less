@@ -1,15 +1,22 @@
-.table td {
-    text-align: center;
-}
-.table th {
-    text-align: center;
-}
-.window {
-    width: 35px;
-}
-.temporal-window {
-    width: 200px;
-}
-.table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
-    padding: 2px;
+.temporal-covar-settings-editor, .covar-settings-editor {
+    &__covariate-selection {
+        td, th {
+            text-align: center;
+        }
+    }
+    &__window {
+        width: 35px;
+    }
+    &__temporal-window {
+        width: 200px;
+    }
+    .table-condensed {
+        thead, tbody, tfoot {
+            tr {
+                th, td {
+                    padding: 2px;
+                }
+            }
+        }
+    }
 }

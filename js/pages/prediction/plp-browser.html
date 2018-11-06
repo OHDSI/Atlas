@@ -1,4 +1,4 @@
-<heading-title params="name: 'Patient Level Prediction', icon: 'heartbeat', theme: 'dark'"></heading-title>
+<heading-title params="name: 'Patient Level Prediction - Single Analysis', icon: 'heartbeat', theme: 'dark'"></heading-title>
 
 <div data-bind="if: canReadPlps, css: classes({ extra: 'paddedWrapper flexed' })">
 	<span data-bind="click: newPatientLevelPrediction, css: classes({
@@ -7,8 +7,13 @@
 	})">New Patient Level Prediction</span>
 
 	<!-- ko if: analysisList().length -->
-		<faceted-datatable params="order: [[3, 'desc']], reference: analysisList, columns: columns, options: options, rowClick: rowClick"></faceted-datatable>
+		<faceted-datatable params="order: [[3, 'desc']], reference: analysisList, columns: columns, options: options"></faceted-datatable>
 	<!-- /ko -->
-	
+	<div data-bind="if: config.predictionSettings.toggle,css: classes({element: 'toggle-prediction-browser'})">
+		<span data-bind="click: goToMultiAnalysisPrediction, css: classes({
+			element: 'new-btn',
+			extra: 'pull-right btn btn-sm btn-primary'})">Go To Multi-Analysis Prediction Specification
+		</span>
+	</div>
 	<loading data-bind="visible: loading" params="status: 'retrieving information'"></loading>
 </div>

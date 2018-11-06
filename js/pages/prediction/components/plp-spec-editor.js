@@ -7,7 +7,7 @@ define([
 	'text!./plp-spec-editor.html',
 	'services/CohortDefinition',
 	'../inputTypes/PatientLevelPredictionAnalysis',
-	'../options',
+	'../const',
 	'components/cohortbuilder/CohortExpression',
 	'services/Vocabulary',
 	'conceptsetbuilder/InputTypes/ConceptSet',
@@ -21,7 +21,7 @@ define([
 		view,
 		cohortDefinitionService,
 		PatientLevelPredictionAnalysis,
-		options,
+		constants,
 		CohortExpression,
 		vocabularyProvider,
 		ConceptSet,
@@ -31,7 +31,7 @@ define([
 				super(params);
 				this.currentPlpAnalysis = params.currentPlpAnalysis;
 				this.patientLevelPredictionDirtyFlag = params.dirtyFlag;
-				this.options = options;
+				this.options = constants.options;
 			}
 
 			cohortSelected(id) {

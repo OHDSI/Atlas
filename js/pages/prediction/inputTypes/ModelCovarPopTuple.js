@@ -1,14 +1,16 @@
-define(function (require, exports) {
-
-	function ModelCovarPopTuple(data) {
-		var self = this;
-        data = data || {};
-        
-        self.modelName = data.modelName || null;
-        self.modelSettings = data.modelSettings || null;
-        self.covariateSettings = data.covariateSettings ||null;
-        self.popRiskWindowStart = data.popRiskWindowStart || null;
-        self.popRiskWindowEnd = data.popRiskWindowEnd || null;
+define([
+	'knockout',
+], function (
+	ko
+) {
+	class ModelCovarPopTuple {
+        constructor(data = {}) {
+            this.modelName = data.modelName || null;
+            this.modelSettings = data.modelSettings || null;
+            this.covariateSettings = data.covariateSettings ||null;
+            this.popRiskWindowStart = data.popRiskWindowStart || null;
+            this.popRiskWindowEnd = data.popRiskWindowEnd || null;
+        }
 	}
 	
 	return ModelCovarPopTuple;

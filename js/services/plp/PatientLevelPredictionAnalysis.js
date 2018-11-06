@@ -244,6 +244,9 @@ define(function (require, exports) {
 
 		// Properties
 		self.analysisId = data.analysisId || null;
+		self.id = ko.pureComputed(function() {
+			return self.analysisId;
+		});
 		self.name = ko.observable(data.name || null);
 		self.nameMultiLine = ko.pureComputed(function () {
 			var maxLength = 45;

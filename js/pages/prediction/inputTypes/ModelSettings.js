@@ -103,6 +103,7 @@ define(function (require, exports) {
         {
             key: 'LassoLogisticRegressionSettings',
             name: 'Lasso Logistic Regression',
+            editor: 'lasso-logistic-regression-settings',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('LassoLogisticRegressionSettings');
                 return {
@@ -113,6 +114,7 @@ define(function (require, exports) {
         {
             key: 'RandomForestSettings',
             name: 'Random Forest',
+            editor: 'random-forest-settings',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('RandomForestSettings');
                 return {
@@ -123,6 +125,7 @@ define(function (require, exports) {
         {
             key: 'GradientBoostingMachineSettings',
             name: 'Gradient Boosting Machine',
+            editor: 'gradient-boosting-machine-settings',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('GradientBoostingMachineSettings');
                 return {
@@ -133,6 +136,7 @@ define(function (require, exports) {
         {
             key: 'AdaBoostSettings',
             name: 'Ada Boost',
+            editor: 'ada-boost-settings',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('AdaBoostSettings');
                 return {
@@ -143,6 +147,7 @@ define(function (require, exports) {
         {
             key: 'DecisionTreeSettings',
             name: 'Decision Tree',
+            editor: 'decision-tree-settings',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('DecisionTreeSettings');
                 return {
@@ -153,6 +158,7 @@ define(function (require, exports) {
         {
             key: 'NaiveBayesSettings',
             name: 'Naive Bayes',
+            editor: 'naive-bayes-settings',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('NaiveBayesSettings');
                 return {
@@ -163,6 +169,7 @@ define(function (require, exports) {
         {
             key: 'MLPSettings',
             name: 'Multilayer Perception Model',
+            editor: 'mlp-settings',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('MLPSettings');
                 return {
@@ -173,6 +180,7 @@ define(function (require, exports) {
         {
             key: 'KNNSettings',
             name: 'K Nearest Neighbors',
+            editor: 'knn-settings',
             action: () => {
                 var defaultValues = utils.getDefaultModelSettingsValueList('KNNSettings');
                 return {

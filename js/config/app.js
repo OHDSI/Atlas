@@ -96,7 +96,14 @@ define(function () {
     },
   };
   appConfig.enableTermsAndConditions = true;
-	
+  appConfig.predictionSettings = {
+    multiAnalysisEnabled: true,
+    toggle: false
+  };
+  appConfig.estimationSettings = {
+    multiAnalysisEnabled: true,
+    toggle: false
+  };
 	appConfig.webAPIRoot = appConfig.api.url;
 	
 	return appConfig;

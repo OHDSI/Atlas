@@ -234,25 +234,25 @@
 		<div>
 			<label>Should subjects without time at risk be removed?</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().requireTimeAtRisk"></select>
+				<select class="form-control" data-bind="options: $component.options.yesNoIntOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().requireTimeAtRisk"></select>
 			</div>
 		</div>
 		<div>
 			<label>Should only the first exposure per subject be included?</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().firstExposureOnly"></select>
+				<select class="form-control" data-bind="options: $component.options.yesNoIntOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().firstExposureOnly"></select>
 			</div>
 		</div>
 		<div>
 			<label>Include people with outcomes who are not observed for the whole at risk period?</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().includeAllOutcomes"></select>
+				<select class="form-control" data-bind="options: $component.options.yesNoIntOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().includeAllOutcomes"></select>
 			</div>
 		</div>
 		<div>
 			<label>Sample a subset of the target group for testing?</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().sample"></select>
+				<select class="form-control" data-bind="options: $component.options.yesNoIntOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().sample"></select>
 			</div>
 			<div data-bind="visible: currentPlpAnalysis().sample() == 1">
 				<div class="input-group">
@@ -264,7 +264,7 @@
 		<div>
 			<label>Remove patients who have observed the outcome prior to cohort entry?</label>
 			<div class="input-group">
-				<select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().rmPriorOutcomes"></select>
+				<select class="form-control" data-bind="options: $component.options.yesNoIntOptions, optionsText:'name', optionsValue:'id', value: currentPlpAnalysis().rmPriorOutcomes"></select>
 			</div>
 			<div data-bind="visible: currentPlpAnalysis().rmPriorOutcomes() == 1">
 				<div class="input-group">

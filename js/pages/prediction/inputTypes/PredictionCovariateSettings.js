@@ -1,7 +1,7 @@
 define([
     'knockout', 
     'featureextraction/InputTypes/CovariateSettings',
-    './ConceptSet',
+    'analysis/ConceptSet',
 ], function (
     ko,
     CovariateSettings,

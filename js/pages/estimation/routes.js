@@ -2,14 +2,25 @@ define((require, factory) => {
   const { AuthorizedRoute } = require('pages/Route');
   const atlasState = require('atlas-state');
     function routes(appModel, router) {
-      return {        
-        '/estimation': new AuthorizedRoute(() => {
+
+      const ccaViewEdit = new AuthorizedRoute((estimationId, section) => {
+        appModel.activePage(this.title);
+        require(['./cca-manager'], function () {
+          atlasState.estimationAnalysis.selectedId(estimationId);
+          router.setCurrentView('cca-manager', {
+            section: section || 'specification',
+          });
+        });
+      });
+
+      return {
+        '/cca': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['./estimation-browser'], function () {
-            router.setCurrentView('estimation-browser');
+          require(['./cohort-comparison-browser'], function() {
+            router.setCurrentView('cohort-comparison-browser');
           });
         }),
-        '/estimation/:cohortComparisonId:': new AuthorizedRoute((cohortComparisonId) => {
+        '/cca/:cohortComparisonId:': new AuthorizedRoute((cohortComparisonId) => {
           appModel.activePage(this.title);
           require([
             './cohort-comparison-manager',
@@ -29,27 +40,14 @@ define((require, factory) => {
             router.setCurrentView('cohort-comparison-manager', params);
           });
         }),
-        '/fe': new AuthorizedRoute(() => {
+        '/estimation': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['featureextraction/components/CovariateSettingsEditor'], function () {
-            appModel.currentView('covar-settings-editor');
+          require(['./estimation-browser'], function () {
+            router.setCurrentView('estimation-browser');
           });
         }),
-        '/tempfe': new AuthorizedRoute(() => {
-          appModel.activePage(this.title);
-          require(['featureextraction/components/TemporalCovariateSettingsEditor'], function () {
-            appModel.currentView('temporal-covar-settings-editor');
-          });
-        }),
-        '/estimation/cca/:estimationId:': new AuthorizedRoute((estimationId) => {
-          appModel.activePage(this.title);
-          require(['./cca-manager'], function () {
-            const params = {};
-            atlasState.estimationAnalysis.selectedId(estimationId);
-
-            router.setCurrentView('cca-manager', params);
-          });
-        }),
+        '/estimation/cca/:estimationId:': ccaViewEdit,
+        '/estimation/cca/:estimationId:/:section:': ccaViewEdit,
       };
     }
 

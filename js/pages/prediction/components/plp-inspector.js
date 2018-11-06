@@ -234,7 +234,7 @@ define(['knockout', 'jquery', 'text!./plp-inspector.html', 'appConfig', 'd3'],
 
 				// data
 				//================================================================
-				d3.csv("./js/data/plp/" + self.modelId() + "_inspector.csv", function (error, dataset) { // NEW
+				d3.csv("./js/resources/data/plp/" + self.modelId() + "_inspector.csv", function (error, dataset) { // NEW
 					dataset.forEach(function (d) {
 						d.covariateValue = +d.covariateValue;
 						d.CovariateMeanWithOutcome = +d.CovariateMeanWithOutcome;
