@@ -402,7 +402,6 @@ define([
 		}
 
 		async loadConcept(conceptId) {
-			this.currentConceptArray().length = 0;
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
 			var exists = false;
 			for (var i = 0; i < this.model.recentConcept().length; i++) {
@@ -431,7 +430,9 @@ define([
 			
 			await vocabularyProvider.loadDensity(related);
 			var currentConceptObject = _.find(related, c => c.CONCEPT_ID == this.currentConceptId());
-			this.currentConceptArray.push(currentConceptObject);
+			if (currentConceptObject !== undefined){
+			    this.currentConceptArray.push(currentConceptObject);
+			}
 			this.model.relatedConcepts(related);
 
 			this.loadingRelated(false);
