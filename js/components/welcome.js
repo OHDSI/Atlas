@@ -3,15 +3,22 @@ define([
     'text!./welcome.html',
     'appConfig',
     'services/AuthAPI',
+	'utils/BemHelper',
+    'less!welcome.less'
 ],
     function (
     ko,
     view,
     appConfig,
-    authApi
+    authApi,
+	BemHelper
     ) {
+    const componentName = 'welcome';
+
     function welcome(params) {
         var self = this;
+        const bemHelper = new BemHelper(componentName);
+		this.classes = bemHelper.run.bind(bemHelper);
         self.token = authApi.token;
         self.setAuthParams = authApi.setAuthParams;
         self.resetAuthParams = authApi.resetAuthParams;
@@ -140,6 +147,6 @@ define([
         template: view
     };
 
-    ko.components.register('welcome', component);
+    ko.components.register(componentName, component);
     return component;
 });

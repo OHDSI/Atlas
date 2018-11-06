@@ -13,7 +13,7 @@
 					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
 					<!-- ko if: $root.currentCohortDefinition().id() != null && $root.currentCohortDefinition().id() != 0 -->
 					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()"><i class="fa fa-copy"></i></button>
-					<button data-toggle="modal" data-target="#linkModal" class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty()"><i class="fa fa-link"></i></button>
+					<button class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
 					<!-- ko if: !isRunning() -->
 					<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
@@ -24,7 +24,7 @@
 
 		<ul class="nav nav-tabs">
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition'); }">
-				<a>Definition <i data-toggle="modal" data-target="#helpModalCohortDefinition" class="fa fa-question-circle-o"></i></a>
+				<a>Definition <i data-bind="click: function () { $component.cohortDefinitionOpened(true) }" class="fa fa-question-circle-o"></i></a>
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets'); }">
@@ -436,7 +436,7 @@
 									<button class="btn btn-primary btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateAllAnalyses">Full Analysis</button>
 									<button class="btn btn-success btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateQuickAnalysis">Quick Analysis</button>
 									<button class="btn btn-info btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.selectHealthcareAnalyses">Utilization</button>
-									<button class="btn btn-default btn-sm" data-bind="visible: $component.generateReportsEnabled" data-toggle="modal" data-target="#analysisHelpModal"><i class="fa fa-question-circle text-primary"></i></button>
+									<button class="btn btn-default btn-sm" data-bind="visible: $component.generateReportsEnabled, click: function () { $component.analysisTypesOpened(true) }"><i class="fa fa-question-circle text-primary"></i></button>
 								</div>
 							</div>
 
@@ -560,39 +560,47 @@
 			</div>
 		</div>
 	</div>
-	<div class="modal" id="analysisHelpModal" tabindex="-1 " role="dialog">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<i class="fa fa-group"></i> Analysis Types
-				</div>
-				<div class="modal-body">
-					<b>Quick Analysis</b>
-					<p>Runs minimal analysis to provide a quick overview of this cohort's year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)</p>
-					<b>Healthcare Utilization</b>
-					<p>Runs analyses to provide Exposure, Visit and Drug Utilization reports. (estimated: 10 - 40 minutes)</p>
-					<b>Full Analysis</b>
-					<p>Runs a complete set of characterization reports. (estimated: 60 minutes)</p>
-				</div>
-			</div>
-		</div>
-	</div>
+	<atlas-modal params="{
+		showModal: analysisTypesOpened,
+		iconClass: 'fa fa-group',
+		title: 'Analysis Types',
+		data: {}
+	}">
+		<b>Quick Analysis</b>
+		<p>Runs minimal analysis to provide a quick overview of this cohort's year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)</p>
+		<b>Healthcare Utilization</b>
+		<p>Runs analyses to provide Exposure, Visit and Drug Utilization reports. (estimated: 10 - 40 minutes)</p>
+		<b>Full Analysis</b>
+		<p>Runs a complete set of characterization reports. (estimated: 60 minutes)</p>
+	</atlas-modal>
 	<!-- /ko -->
-	<div class="modal" id="linkModal" tabindex="-1 " role="dialog">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<i class="fa fa-group"></i> Link to Cohort Definition
-				</div>
-				<div class="modal-body">
-					<input readonly data-bind="value:cohortDefinitionLink" type="text" class="form-control text-cursor">
-				</div>
-				<div class="modal-footer">
-					This link can be used to access this cohort definition directly from the WebAPI from other tools like R as well as for importing across ATLAS instances.
-				</div>
-			</div>
+	<atlas-modal params="{
+		showModal: cohortLinkModalOpened,
+		iconClass: 'fa fa-group',
+		title: 'Link to Cohort Definition',
+		templateWrapperClass: {},
+		data: {
+			cohortDefinitionLink: $component.cohortDefinitionLink,
+		}
+	}">
+		<div data-bind="css: $parent.classes({ element: 'modal-body', extra: 'modal-body' })">
+			<input readonly data-bind="value: cohortDefinitionLink" type="text" class="form-control text-cursor">
 		</div>
-	</div>
+		<div data-bind="css: $parent.classes({ element: 'modal-footer', extra: 'modal-footer' })">
+			This link can be used to access this cohort definition directly from the WebAPI from other tools like R as well as for importing across ATLAS instances.
+		</div>
+	</atlas-modal>
+
+	<atlas-modal params="{
+		showModal: cohortDefinitionOpened,
+		title: 'Cohort Definition',
+		data: {}
+	}">
+		A cohort is defined as the set of persons satisfying one or more inclusion criteria for a duration of time. One person may qualify for one cohort multiple times during non-overlapping time intervals. Cohorts are constructed in ATLAS by specifying cohort
+		entry criteria and cohort exit criteria. Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, and optionally specifying additional inclusion criteria which filter to the qualifying events.
+		Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer qualifies for the cohort.
+	</atlas-modal>
+
 	<modal-pick-options params="{
 		showModal: $component.showUtilizationToRunModal,
 		title: 'Configure reports to run',

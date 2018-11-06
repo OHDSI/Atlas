@@ -99,12 +99,11 @@
 	</div>
 	<!-- /ko -->
 </div>
-<script type="text/html" id="concept-set-selector-modal-content-template">
-	<cohort-concept-set-browser params="{onRespositoryConceptSetSelected: repositoryConceptsetSelected}"></cohort-concept-set-browser>
-</script>
+
 <atlas-modal params="
 	showModal: isModalOpened,
 	title: 'Select Concept Set...',
-	template: 'concept-set-selector-modal-content-template',
 	data: { repositoryConceptsetSelected }
-"></atlas-modal>
+">
+	<cohort-concept-set-browser params="{onRespositoryConceptSetSelected: repositoryConceptsetSelected}"></cohort-concept-set-browser>
+</atlas-modal>

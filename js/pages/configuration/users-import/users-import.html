@@ -144,20 +144,14 @@
 <!-- Help -->
 <atlas-modal params="
     showModal: $component.isShowUsernameHelp,
-    title: 'AD/LDAP Username',
-    template: 'user-import-username-help-template',
-"></atlas-modal>
+    title: 'AD/LDAP Username'
+">
+    This field is mapped from LDAP/AD <strong>Display Name</strong> field.
+</atlas-modal>
 
 <atlas-modal params="
     showModal: $component.isShowLoginHelp,
-    title: 'Atlas Login',
-    template: 'user-import-login-help-template',
-"></atlas-modal>
-
-<script type="text/html" id="user-import-username-help-template">
-    This field is mapped from LDAP/AD <strong>Display Name</strong> field.
-</script>
-
-<script type="text/html" id="user-import-login-help-template">
+    title: 'Atlas Login'
+">
     This field is mapped directly from LDAP/AD <strong>login</strong> field and would be used as login for Atlas.
-</script>
+</atlas-modal>
