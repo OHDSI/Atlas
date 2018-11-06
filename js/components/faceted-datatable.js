@@ -56,20 +56,21 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 			});
 		}
 
-		if (params.ajax) {
+		if (params.ajax && self.options && self.options.entityName) {
 			self.ajax = (d, callback, settings) => {
-				self.componentLoading(true);
-				params.ajax({
-					page: d.start / d.length,
-					size: d.length,
-					text:d.search.value,
-					facets: self.facets()
-						.filter(f => Object.keys(f.selectedItems).length !== 0)
-						.map(f => f.caption + '=' + Object.keys(f.selectedItems)).join('&'),
-					sort: self.order.map(s => {
-						return [params.columns[s[0]].data, s[1]]
+				if (self.facets().length !== 0) {
+					self.componentLoading(true);
+					params.ajax({
+						page: d.start / d.length,
+						size: d.length,
+						text:d.search.value,
+						facets: self.facets()
+							.filter(f => Object.keys(f.selectedItems).length !== 0)
+							.map(f => f.caption + '=' + Object.keys(f.selectedItems)).join('&'),
+						sort: self.order.map(s => {
+							return [params.columns[s[0]].data, s[1]]
+						})
 					})
-				})
 					.then(({data}) => {
 						callback({
 							draw: d.draw,
@@ -79,48 +80,48 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 						});
 						self.componentLoading(false);
 					})
+					.catch(e => {
+						console.error(e);
+						self.componentLoading(false);
+					})
+				}
 			};
 			self.createFilters = () => {
-				self.facets.removeAll();
-				if (self.options && self.options.entityName) {
-					httpService.doGet(config.webAPIRoot + 'facets/' + self.options.entityName)
-						.then(({data}) => {
-							self.facets(data.map(facet => {
-								// var isArray = facetConfig.isArray || false;
-								return {
-									'caption': facet.name,
-									'selectedItems': {},
-									'facetItems': facet.selectedItems.map(item => {
-										return {
-											key: item.key,
-											text: item.text,
-											count: item.count,
-											selected: ko.observable(false),
-											facet: facet
-										}
-									}),
-								};
-							}));
-							if (self.options.Facets) {
-								self.options.Facets.forEach(facet => {
-									if (facet.defaultFacets) {
-										facet.defaultFacets.forEach(defaultFacet => {
-											self.facets().forEach(f => {
-												let facetItem = f.facetItems.find(f => f.key === defaultFacet);
-												if (facetItem) {
-													self.updateFilters(facetItem, null);
-												}
-											})
-										})
+				httpService.doGet(config.webAPIRoot + 'facets/' + self.options.entityName)
+					.then(({data}) => {
+						self.facets(data.map(facet => {
+							return {
+								'caption': facet.name,
+								'selectedItems': {},
+								'facetItems': facet.selectedItems.map(item => {
+									return {
+										key: item.key,
+										text: item.text,
+										count: item.count,
+										selected: ko.observable(false),
+										facet: facet
 									}
-								});
-							}
-						})
-						.catch(e => {
-							console.error(e)
-						})
-					;
-				}
+								}),
+							};
+						}));
+						if (self.options.Facets) {
+							self.options.Facets.forEach(facet => {
+								if (facet.defaultFacets) {
+									facet.defaultFacets.forEach(defaultFacet => {
+										self.facets().forEach(f => {
+											let facetItem = f.facetItems.find(f => f.key === defaultFacet);
+											if (facetItem) {
+												self.updateFilters(facetItem, null);
+											}
+										})
+									})
+								}
+							});
+						}
+					})
+					.catch(e => {
+						console.error(e)
+					})
 			};
 			self.updateFilters = function (data, event) {
 				let facet = self.facets().find(f => f.caption === data.facet.name);
