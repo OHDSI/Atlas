@@ -94,9 +94,9 @@
                 ">
                     <div data-bind="css: classes({extra: 'panel panel-primary'})">
                         <div data-bind="css: classes({ extra: 'panel-heading' })">Analysis type:</div>
-                        <div data-bind="css: classes({ extra: 'padded' })">
+                        <div data-bind="css: classes('stat-type-selector')">
                             <multi-select
-                                data-bind="css: classes({element: 'stat-type-selector'})"
+                                data-bind="css: classes()"
                                 params="options: $component.statTypeOptions,
                                 selectedValue: $component.data.statType, multiple: false"></multi-select>
                         </div>
