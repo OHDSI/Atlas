@@ -23,7 +23,7 @@ define(
           appModel.activePage(this.title);
           require(['./concept-manager'], function () {
             appModel.currentConceptId(conceptId);
-            router.setCurrentView('concept-manager');
+            router.setCurrentView('concept-manager', { conceptId });
           });
         }),
       };

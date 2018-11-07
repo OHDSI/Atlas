@@ -1,7 +1,10 @@
 <div data-bind="modal: $component.showModal, css: $component.classes({ extra: 'modal fade' })" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" data-bind="text: $component.title"></div>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div data-bind="text: $component.title"></div>
+            </div>
             <div data-bind="css: $component.classes('content')">
                 <ul data-bind="foreach: Object.values($component.options), css: $component.classes('sections')">
                     <li data-bind="css: $component.classes('section')">

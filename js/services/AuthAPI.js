@@ -8,6 +8,8 @@ define(function(require, exports) {
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
     const httpService = require('services/http');
 
+    const signInOpened = ko.observable(false);
+
     var authProviders = config.authProviders.reduce(function(result, current) {
         result[config.api.url + current.url] = current;
         return result;
@@ -91,7 +93,7 @@ define(function(require, exports) {
                 expirationTimeout = setTimeout(
                     () => {
                         tokenExpired(true);
-                        $('#myModal').modal('show');
+						signInOpened(true);
                         expirationTimeout = null;
                     },
                     tokenExpirationDate() - new Date()
@@ -437,6 +439,7 @@ define(function(require, exports) {
         refreshToken: refreshToken,
 
         isAuthenticated: isAuthenticated,
+		signInOpened: signInOpened,
         isPermitted: isPermitted,
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,

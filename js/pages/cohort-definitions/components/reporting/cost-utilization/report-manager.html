@@ -80,7 +80,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Year of Birth <i data-bind="click:setHelpContent('year-of-birth')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Year of Birth <i data-bind="click:function(){ setHelpContent('year-of-birth') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="hist"></div>
@@ -90,7 +90,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Demographics <i data-bind="click:setHelpContent('demographics')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Demographics <i data-bind="click:function(){ setHelpContent('demographics') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="row">
@@ -127,7 +127,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Prevalence by Month <i data-bind="click:setHelpContent('cohort-specific-prevalence-per-month')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Prevalence by Month <i data-bind="click:function(){ setHelpContent('cohort-specific-prevalence-per-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="prevalenceByMonth"></div>
@@ -136,7 +136,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Cohort Start<i data-bind="click:setHelpContent('cohort-specific-cohort-start')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Cohort Start<i data-bind="click:function(){ setHelpContent('cohort-specific-cohort-start') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="cohort_trellisLinePlot"></div>
@@ -145,7 +145,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Persons in Cohort from Start to End<i data-bind="click:setHelpContent('cohort-specific-start-to-end')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Persons in Cohort from Start to End<i data-bind="click:function(){ setHelpContent('cohort-specific-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="personinCohortFromStartToEnd"></div>
@@ -154,7 +154,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Number of Persons by Duration from Cohort Start to Cohort End<i data-bind="click:setHelpContent('cohort-specific-duration-start-to-end')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Number of Persons by Duration from Cohort Start to Cohort End<i data-bind="click:function(){ setHelpContent('cohort-specific-duration-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="personsByDurationFromStartToEnd"></div>
@@ -163,7 +163,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Distribution of Age at Cohort Start by Cohort Start Year<i data-bind="click:setHelpContent('cohort-specific-duration-start-to-end')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Distribution of Age at Cohort Start by Cohort Start Year<i data-bind="click:function(){ setHelpContent('cohort-specific-duration-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="distributionAgeCohortStartByCohortStartYear"></div>
@@ -172,7 +172,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Age Distributions<i data-bind="click:setHelpContent('cohort-specific-age-distributions')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Age Distributions<i data-bind="click:function(){ setHelpContent('cohort-specific-age-distributions') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="row">
@@ -194,7 +194,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Tornado<i data-bind="click:setHelpContent('tornado')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Tornado<i data-bind="click:function(){ setHelpContent('tornado') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body pad-5">
 				<div id="tornadoPlot" class="text-center"><svg width="1000" height="300" preserveAspectRatio></svg></div>
@@ -203,7 +203,7 @@
 	</div>
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			Sample Profiles<i data-bind="click:setHelpContent('tornado')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			Sample Profiles<i data-bind="click:function(){ setHelpContent('tornado') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 		</div>
 		<div class="panel-body" style="background-color:#222;">
 			<div id="tornadoProfiles" class="text-center">
@@ -228,7 +228,7 @@
 	<div class="pad-5 report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Condition Prevalence<i data-bind="click:setHelpContent('conditions-by-index-condition-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Condition Prevalence<i data-bind="click:function(){ setHelpContent('conditions-by-index-condition-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -287,7 +287,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Drugs by Index Date <i data-bind="click:setHelpContent('drugs-by-index')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Drugs by Index Date <i data-bind="click:function(){ setHelpContent('drugs-by-index') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -340,7 +340,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Age at First Observation <i data-bind="click:setHelpContent('observation-periods-age-at-first-observation')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Age at First Observation <i data-bind="click:function(){ setHelpContent('observation-periods-age-at-first-observation') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="ageatfirstobservation"></div>
@@ -352,7 +352,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Age by Gender <i data-bind="click:setHelpContent('observation-periods-age-by-gender')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Age by Gender <i data-bind="click:function(){ setHelpContent('observation-periods-age-by-gender') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="agebygender"></div>
@@ -364,7 +364,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Observation Length<i data-bind="click:setHelpContent('observation-periods-length')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Observation Length<i data-bind="click:function(){ setHelpContent('observation-periods-length') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="observationlength"></div>
@@ -376,7 +376,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Observation Length by Gender<i data-bind="click:setHelpContent('observation-periods-length-by-gender')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Observation Length by Gender<i data-bind="click:function(){ setHelpContent('observation-periods-length-by-gender') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="opbygender"></div>
@@ -395,7 +395,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Observation Length by Age Decile<i data-bind="click:setHelpContent('observation-periods-length-by-age-decile')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Observation Length by Age Decile<i data-bind="click:function(){ setHelpContent('observation-periods-length-by-age-decile') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="opbyage"></div>
@@ -415,7 +415,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Observation Periods per Person<i data-bind="click:setHelpContent('observation-periods-per-person')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Observation Periods per Person<i data-bind="click:function(){ setHelpContent('observation-periods-per-person') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="opperperson"></div>
@@ -424,7 +424,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Persons With Continuous Observation By Month<i data-bind="click:setHelpContent('observation-periods-continuous-by-month')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Persons With Continuous Observation By Month<i data-bind="click:function(){ setHelpContent('observation-periods-continuous-by-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="oppeoplebymonthsingle"></div>
@@ -438,7 +438,8 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Condition Era Prevalence<i data-bind="click:setHelpContent('condition-era-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Condition Era Prevalence<i data-bind="click: function(){ setHelpContent('condition-era-prevalence') }"  class="fa fa-question-circle pull-right"></i>
+
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -521,7 +522,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Procedure Prevalence<i data-bind="click:setHelpContent('procedure-by-index-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Procedure Prevalence<i data-bind="click:function(){ setHelpContent('procedure-by-index-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -567,22 +568,23 @@
 	</div>
 </div>
 
-<div class="modal" id="helpModal" tabindex="-1 " role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header" data-bind="html:helpTitle">
-			</div>
-			<div class="modal-body" data-bind="html:helpContent">
-			</div>
-		</div>
-	</div>
-</div>
+<script type="text/html" id="help-modal">
+	<div data-bind="html:helpContent"></div>
+</script>
+<atlas-modal params="{
+		showModal: helpModalOpened,
+		title: helpTitle,
+		template: 'help-modal',
+		data: {
+			helpContent: helpContent,
+		}
+	}"></atlas-modal>
 
 <div id="reportCondition" data-bind="visible: $root.currentReport() == 'Condition' && !$root.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Condition Prevalence <i data-bind="click:setHelpContent('condition-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Condition Prevalence <i data-bind="click:function(){ setHelpContent('condition-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -665,7 +667,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Drug Era Prevalence<i data-bind="click:setHelpContent('drug-era-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Drug Era Prevalence<i data-bind="click:function(){ setHelpContent('drug-era-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -748,7 +750,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Drug Exposure<i data-bind="click:setHelpContent('drug-exposure')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Drug Exposure<i data-bind="click:function(){ setHelpContent('drug-exposure') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -855,7 +857,7 @@
 	<div class=" report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Procedure Prevalence<i data-bind="click:setHelpContent('procedure-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Procedure Prevalence<i data-bind="click:function(){ setHelpContent('procedure-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -937,7 +939,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Death Prevalence by Age, Gender, Year<i data-bind="click:setHelpContent('death-prevalence')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Death Prevalence by Age, Gender, Year<i data-bind="click:function(){ setHelpContent('death-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="death_trellisLinePlot"></div>
@@ -946,7 +948,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Death Prevalence by Month<i data-bind="click:setHelpContent('death-prevalence-by-month')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Death Prevalence by Month<i data-bind="click:function(){ setHelpContent('death-prevalence-by-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="deathPrevalenceByMonth"></div>
@@ -955,7 +957,7 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Death Details<i data-bind="click:setHelpContent('death-details')" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				Death Details<i data-bind="click:function(){ setHelpContent('death-details') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="row">
@@ -977,7 +979,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<span data-bind="text: visualizationPacks.healthcareUtilPersonAndExposureBaseline.name" /><i data-bind="click:setHelpContent(visualizationPacks.healthcareUtilPersonAndExposureBaseline)" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilPersonAndExposureBaseline.name" /><i data-bind="click:function(){ setHelpContent(visualizationPacks.healthcareUtilPersonAndExposureBaseline) }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-persons-exposure params="{
@@ -994,7 +996,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<span data-bind="text: visualizationPacks.healthcareUtilPersonAndExposureCohort.name" /><i data-bind="click:setHelpContent(visualizationPacks.healthcareUtilPersonAndExposureCohort)" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilPersonAndExposureCohort.name" /><i data-bind="click:function(){ setHelpContent(visualizationPacks.healthcareUtilPersonAndExposureCohort) }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-persons-exposure params="{
@@ -1011,7 +1013,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<span data-bind="text: visualizationPacks.healthcareUtilVisitRecordsBaseline.name" /><i data-bind="click:setHelpContent(visualizationPacks.healthcareUtilVisitRecordsBaseline)" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilVisitRecordsBaseline.name" /><i data-bind="click:function(){ setHelpContent(visualizationPacks.healthcareUtilVisitRecordsBaseline) }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-visit-util params="{
@@ -1029,7 +1031,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<span data-bind="text: visualizationPacks.healthcareUtilVisitDatesBaseline.name" /><i data-bind="click:setHelpContent(visualizationPacks.healthcareUtilVisitDatesBaseline)" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilVisitDatesBaseline.name" /><i data-bind="click:function(){ setHelpContent(visualizationPacks.healthcareUtilVisitDatesBaseline) }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-visit-util params="{
@@ -1047,7 +1049,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<span data-bind="text: visualizationPacks.healthcareUtilCareSiteDatesBaseline.name" /><i data-bind="click:setHelpContent(visualizationPacks.healthcareUtilCareSiteDatesBaseline)" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilCareSiteDatesBaseline.name" /><i data-bind="click:function(){ setHelpContent(visualizationPacks.healthcareUtilCareSiteDatesBaseline) }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-visit-util params="{
@@ -1065,7 +1067,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<span data-bind="text: visualizationPacks.healthcareUtilVisitRecordsCohort.name" /><i data-bind="click:setHelpContent(visualizationPacks.healthcareUtilVisitRecordsCohort)" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilVisitRecordsCohort.name" /><i data-bind="click:function(){ setHelpContent(visualizationPacks.healthcareUtilVisitRecordsCohort) }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-visit-util params="{
@@ -1082,7 +1084,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<span data-bind="text: visualizationPacks.healthcareUtilVisitDatesCohort.name" /><i data-bind="click:setHelpContent(visualizationPacks.healthcareUtilVisitDatesCohort)" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilVisitDatesCohort.name" /><i data-bind="click:function(){ setHelpContent(visualizationPacks.healthcareUtilVisitDatesCohort) }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-visit-util params="{
@@ -1099,7 +1101,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<span data-bind="text: visualizationPacks.healthcareUtilCareSiteDatesCohort.name" /><i data-bind="click:setHelpContent(visualizationPacks.healthcareUtilCareSiteDatesCohort)" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilCareSiteDatesCohort.name" /><i data-bind="click:function(){ setHelpContent(visualizationPacks.healthcareUtilCareSiteDatesCohort) }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-visit-util params="{
@@ -1116,7 +1118,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<span data-bind="text: visualizationPacks.healthcareUtilDrugBaseline.name" /><i data-bind="click:setHelpContent(visualizationPacks.healthcareUtilDrugBaseline)" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilDrugBaseline.name" /><i data-bind="click:function(){ setHelpContent(visualizationPacks.healthcareUtilDrugBaseline) }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-drug-util params="{
@@ -1132,7 +1134,7 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<span data-bind="text: visualizationPacks.healthcareUtilDrugCohort.name" /><i data-bind="click:setHelpContent(visualizationPacks.healthcareUtilDrugCohort)" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: visualizationPacks.healthcareUtilDrugCohort.name" /><i data-bind="click:function(){ setHelpContent(visualizationPacks.healthcareUtilDrugCohort) }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<cost-utilization-drug-util params="{
