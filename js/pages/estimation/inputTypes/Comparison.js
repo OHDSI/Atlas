@@ -1,8 +1,12 @@
-define(function (require, exports) {
-
-    var ko = require('knockout');
-    var Cohort = require('./Cohort');
-    var ConceptSet = require('./ConceptSet');
+define([
+    'knockout',
+    './Cohort',
+    './ConceptSet'
+], function (
+    ko,
+    Cohort,
+    ConceptSet
+) {
 
 	function Comparison(data) {
 		var self = this;

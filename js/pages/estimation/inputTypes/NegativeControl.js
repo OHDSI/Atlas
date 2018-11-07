@@ -1,6 +1,4 @@
-define(function (require, exports) {
-
-    var ko = require('knockout');
+define([], function () {
 
 	function NegativeControl(data) {
 		var self = this;

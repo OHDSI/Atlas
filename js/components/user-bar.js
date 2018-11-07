@@ -10,7 +10,7 @@ define([
 	'services/JobDetailsService',
 	'services/MomentAPI',
 	'lodash',
-	'less!./user-bar.less'
+	'less!components/user-bar.less'
 ], function (ko,
              view,
              AutoBind,

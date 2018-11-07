@@ -1,7 +1,10 @@
 define(
-  (require, factory) => {
-    const { Route } = require('pages/Route');
-    const authApi = require('services/AuthAPI');
+	[
+    'pages/Route',
+    'services/AuthAPI'
+	],
+	({ Route }, authApi) => {
+    
     function routes(appModel, router) {
       return {
         '/': new Route(() => {
@@ -10,7 +13,7 @@ define(
         }),
         '/home': new Route(() => {
           appModel.activePage(this.title);
-          require(['./home'], function () {
+          require(['pages/home/home'], function () {
             router.setCurrentView('home');
           });
         }),

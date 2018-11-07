@@ -1,11 +1,9 @@
 define(
-	(require, factory) => {
-
-		const ko = require('knockout');
-		const {
-			AuthorizedRoute
-		} = require('pages/Route');
-		require('./components/characterizations/characterization-view-edit');
+	[
+		'pages/Route',
+		'pages/characterizations/components/characterizations/characterization-view-edit'
+	],
+	({ AuthorizedRoute }) => {
 
 		function routes(appModel, router) {
 
@@ -21,7 +19,7 @@ define(
 			return {
 				'cc/characterizations': new AuthorizedRoute(() => {
 					appModel.activePage(this.title);
-					require(['./components/characterizations/characterizations-list'], function () {
+					require(['pages/characterizations/components/characterizations/characterizations-list'], function () {
 						router.setCurrentView('characterizations-list');
 					});
 				}),
@@ -30,13 +28,13 @@ define(
 				'cc/characterizations/:id:/:section:/:subId:': characterizationViewEdit, // for executions
 				'cc/feature-analyses': new AuthorizedRoute(() => {
 					appModel.activePage(this.title);
-					require(['./components/feature-analyses/feature-analyses-list'], function () {
+					require(['pages/characterizations/components/feature-analyses/feature-analyses-list'], function () {
 						router.setCurrentView('feature-analyses-list');
 					});
 				}),
 				'cc/feature-analyses/:id:': new AuthorizedRoute((id) => {
 					appModel.activePage(this.title);
-					require(['./components/feature-analyses/feature-analysis-view-edit'], function () {
+					require(['pages/characterizations/components/feature-analyses/feature-analysis-view-edit'], function () {
 						router.setCurrentView('feature-analysis-view-edit', { id });
 					});
 				}),

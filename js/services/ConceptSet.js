@@ -1,11 +1,16 @@
-define(function (require, exports) {
-
-	const ko = require('knockout');
-	const httpService = require('services/http');
-	const sharedState = require('atlas-state');
-	const config = require('appConfig');
-	const authApi = require('services/AuthAPI');
-
+define([
+	'knockout',
+	'services/http',
+	'atlas-state',
+	'appConfig',
+	'services/AuthAPI',
+	], function (
+		ko,
+		httpService,
+		sharedState,
+		config,
+		authApi,
+	) {
 	function getIncludedConceptSetDrawCallback({ model, searchConceptsColumns }) {
 		return async function (settings) {
 			if (settings.aoData) {

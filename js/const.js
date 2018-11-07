@@ -1,8 +1,12 @@
 define(
-  (require, factory) => {
-		const ko = require('knockout');
-		const sharedState = require('atlas-state');
-    const config = require('appConfig');
+	[
+		'atlas-state',
+		'appConfig',
+	],
+  (
+		sharedState,
+		config,
+	) => {
 
 		const minChartHeight = 300;
 		const treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];

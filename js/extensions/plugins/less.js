@@ -5,18 +5,19 @@ define(['appConfig'], function factory() {
       req(['less-js'], function () {
         const url = req.toUrl(name);
 
-        const head = document.getElementsByTagName('head')[0];
+        if (typeof document !== 'undefined') { // for requirejs optimizer
+          const head = document.getElementsByTagName('head')[0];
 
-        const link = document.createElement('link');
-        link.rel = 'stylesheet/less';
-        link.type = 'text/css';
-        link.href = url;
-        head.appendChild(link);
+          const link = document.createElement('link');
+          link.rel = 'stylesheet/less';
+          link.type = 'text/css';
+          link.href = url;
+          head.appendChild(link);
 
-        window.less.sheets.push(link);
-        window.less.refresh();
-        window.less.options.logLevel = 0;
-
+          window.less.sheets.push(link);
+          window.less.refresh();
+          window.less.options.logLevel = 0;
+        }
         onload();
       });
     }

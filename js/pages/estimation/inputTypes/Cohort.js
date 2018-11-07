@@ -1,6 +1,4 @@
-define(function (require, exports) {
-
-    var ko = require('knockout');
+define(['knockout'], function (ko) {
 
 	function Cohort(data) {
 		var self = this;

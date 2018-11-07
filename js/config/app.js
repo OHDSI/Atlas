@@ -8,7 +8,6 @@ define(function () {
   };
   appConfig.cacheSources = false;
   appConfig.pollInterval = 60000;
-  appConfig.useBundled3dPartyLibs = false;
 	appConfig.cohortComparisonResultsEnabled = false;
 	appConfig.userAuthenticationEnabled = true;
 	appConfig.plpResultsEnabled = false;

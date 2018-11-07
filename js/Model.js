@@ -18,7 +18,7 @@ define(
 		'd3',
 		'services/AuthAPI',
 		'services/MomentAPI',
-		'less!app.less',
+		'less!./app.less',
 	],
 	(
 		ko,
@@ -38,7 +38,7 @@ define(
 		_,
 		d3,
 		authApi,
-        momentApi,
+		momentApi,
 	) => {
 		return class GlobalModel extends AutoBind() {
 			static get applicationStatuses() {

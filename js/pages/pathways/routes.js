@@ -1,15 +1,15 @@
-define((require, factory) => {
-	const ko = require('knockout');
-	const {
-		AuthorizedRoute
-	} = require('pages/Route');
+define(
+	[
+		'pages/Route'
+	],
+	({ AuthorizedRoute }) => {
 
 	// return the routes that #/pathways responds to
 	function routes(appModel, router) {
 
 		const pathwaysManager = new AuthorizedRoute((id, section, subId) => {
 			appModel.activePage(this.title);
-			require(['./components/manager'], function () {
+			require(['pages/pathways/components/manager'], function () {
 				router.setCurrentView('pathways-manager', {
 					analysisId: id,
 					section: section,
@@ -20,7 +20,7 @@ define((require, factory) => {
 
 		const pathwaysBrowser = new AuthorizedRoute(() => {
 			appModel.activePage(this.title);
-			require(['./components/browser'], function () {
+			require(['pages/pathways/components/browser'], function () {
 				router.setCurrentView('pathways-browser');
 			});
 		})

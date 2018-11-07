@@ -1,6 +1,5 @@
-define(function (require, exports) {
+define([], function () {
 
-    var ko = require('knockout');
 
 	function NegativeControlExposureCohortDefinition(data) {
 		var self = this;

@@ -4,73 +4,29 @@ const bustCache = (() => {
 	return '_=' + hash;
 })();
 
-const localRefs = {
-	"configuration": "components/configuration",
-	"conceptset-editor": "components/conceptset/conceptset-editor",
-	"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
-	"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
-	"user-bar": "components/user-bar",
-	"faceted-datatable": "components/faceted-datatable",
-	"explore-cohort": "components/explore-cohort",
-	"r-manager": "components/r-manager",
-	"home": "components/home",
-	"welcome": "components/welcome",
-	"forbidden": "components/ac-forbidden",
-	"unauthenticated": "components/ac-unauthenticated",
-	"roles": "components/roles",
-	"role-details": "components/role-details",
-	"loading": "components/loading",
-	"atlas-state": "components/atlas-state",
-	"feedback": "components/feedback",
-	"conceptsetbuilder": "components/conceptsetbuilder",
-	"conceptpicker": "components/conceptpicker",
-	"vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
-	"css": "extensions/plugins/css.min",
-};
-
 // set 'optional' path prior to first call to require
-requirejs.config({paths: {"text": "extensions/plugins/text"}});
+requirejs.config({paths: { "text": "extensions/plugins/text", "appConfig": "./config" }});
 
-require([
-	'./settings',
-	'config',
-], (settings, appConfig) => {
-	const cdnRefs = {
-		css: {},
-		js: {},
-	};
-	const styles = [];
-	Object.entries(settings.paths).forEach(([name, path]) => {
-		cdnRefs.js[name] = appConfig.useBundled3dPartyLibs
-			? 'assets/bundle/bundle'
-			: path;
-	});
-	Object.entries(settings.cssPaths).forEach(([name, path]) => {
-		cdnRefs.css[name] = appConfig.useBundled3dPartyLibs
-			? 'assets/bundle/bundle.css'
-			: path;
-		styles.push(`css!${name}`);
-	});
+const initialDeps = ['./settings'];
+if (typeof document === 'undefined') {
+	// if bundling
+	initialDeps.push('@babel/polyfill');
+}
 
+require(initialDeps, (settings) => {
 	requirejs.config({
 		...settings,
-		urlArgs: bustCache,
 		paths: {
-			...localRefs,
-			...cdnRefs.js,
+			...settings.paths,
+			...settings.localRefs,
 		},
-		map: {
-			'*': {
-				...settings.map['*'],
-				...cdnRefs.css,
-			},
-		}
+		urlArgs: bustCache,
 	});	
 	require([
 		'bootstrap',
-		'jquery-ui/ui/widgets/autocomplete',
+		'jquery-ui',
 		'ko.sortable',
-		...styles
+		...Object.values(settings.cssPaths),
 	], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
 		require([
@@ -79,7 +35,6 @@ require([
 			'Model',
 			'pages/Router',
 			'atlas-state',
-			'jquery.ui.autocomplete.scroll',
 			'loading',
 			'user-bar',
 			'welcome',

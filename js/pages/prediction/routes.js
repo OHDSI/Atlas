@@ -1,25 +1,27 @@
 define(
-  (require, factory) => {
+	[
+    'pages/Route',
+    'atlas-state',
+	],
+	({ AuthorizedRoute }, atlasState) => {
     function routes(appModel, router) {
-      const { AuthorizedRoute } = require('pages/Route');
-      const atlasState = require('atlas-state');		
       return {        
         '/plp': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['./plp-browser'], function () {
+          require(['pages/prediction/plp-browser'], function () {
             router.setCurrentView('plp-browser');
           });
         }),
         '/plp/:modelId:': new AuthorizedRoute((modelId) => {
           appModel.activePage(this.title);
           require([
-            './plp-manager',
-            './components/plp-inspector',
-            './components/plp-roc',
-            './components/plp-calibration',
-            './components/plp-spec-editor',
-            './components/plp-r-code',
-            './components/plp-print-friendly',
+            'pages/prediction/plp-manager',
+            'pages/prediction/components/plp-inspector',
+            'pages/prediction/components/plp-roc',
+            'pages/prediction/components/plp-calibration',
+            'pages/prediction/components/plp-spec-editor',
+            'pages/prediction/components/plp-r-code',
+            'pages/prediction/components/plp-print-friendly',
             'components/cohort-definition-browser',
             'components/atlas.cohort-editor'
           ], function () {
@@ -35,12 +37,12 @@ define(
         '/prediction/:analysisId:': new AuthorizedRoute((analysisId) => {
           appModel.activePage(this.title);
           require([
-            './prediction-manager', 
-            './components/EvaluationSettingsEditor',
-            './components/ExecutionSettingsEditor', 
-            './components/ModelSettingsEditor', 
-            './components/PopulationSettingsEditor',
-            './components/PredictionCovariateSettingsEditor',
+            'pages/prediction/prediction-manager', 
+            'pages/prediction/components/EvaluationSettingsEditor',
+            'pages/prediction/components/ExecutionSettingsEditor', 
+            'pages/prediction/components/ModelSettingsEditor', 
+            'pages/prediction/components/PopulationSettingsEditor',
+            'pages/prediction/components/PredictionCovariateSettingsEditor',
           ], function () {
             atlasState.predictionAnalysis.selectedId(analysisId);
             appModel.currentView('prediction-manager');
@@ -48,7 +50,7 @@ define(
         }),
         '/prediction': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['./prediction-browser'], function() {
+          require(['pages/prediction/prediction-browser'], function() {
             appModel.currentView('prediction-browser');
           })
         }),

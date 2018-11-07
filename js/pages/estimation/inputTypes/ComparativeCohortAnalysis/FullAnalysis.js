@@ -1,4 +1,4 @@
-define(function (require, exports) {
+define([], function () {
 
 	function FullAnalysis(targetComparatorOutcome, cohortMethodAnalysis) {
         var self = this;

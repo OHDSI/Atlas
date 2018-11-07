@@ -1,7 +1,5 @@
-define(
-  (require, exports) => {
-    const buildRoutes = require('./routes');
-
+define(['./routes'],
+  (buildRoutes) => {
     return {
       title: 'Concept Sets',
       buildRoutes,

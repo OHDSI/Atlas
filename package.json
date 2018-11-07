@@ -1,16 +1,13 @@
 {
   "name": "atlas",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
   "main": "js/main.js",
   "scripts": {
     "prep": "npm i && npm run clean",
     "clean": "rimraf ./js/assets/bundle && rimraf ./js/assets/fonts && rimraf ./js/assets/images",
-    "build": "npm run prep && npm run bundle",
-    "bundle": "node ./build/index.js",
-    "build:amd": "npm run prep && npm run build:amd:dev",
-    "build:amd:dev": "node build/optimize.js",
-    "build:amd:min": "google-closure-compiler-js js/assets/bundle/bundle.dev.js > js/assets/bundle/bundle.js"
+    "build": "npm run prep && npm run build:dev",
+    "build:dev": "node build/optimize.js"
   },
   "repository": {
     "type": "git",
@@ -41,12 +38,12 @@
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "ajax-request": "^1.2.3",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.1.5",
     "esprima": "^4.0.1",
-    "fs-extra": "^7.0.0",
+    "html-document": "^0.8.1",
     "requirejs": "^2.3.4",
-    "rimraf": "^2.6.2",
-    "google-closure-compiler-js": "*"
+    "rimraf": "^2.6.2"
   },
   "dependencies": {
     "@ohdsi/atlascharts": "*",
@@ -96,7 +93,7 @@
     "prismjs": "*",
     "qs": "^6.5.2",
     "querystring": "*",
-    "urijs": "^1.19.1",
+    "urijs": "1.19.1",
     "xss": "*"
   }
 }

@@ -1,9 +1,15 @@
-define(
-  (require, exports) => {
-	  const ko = require('knockout');  	
-    const buildRoutes = require('./routes');
-    const appState = require('atlas-state');
-    const constants = require('./const');
+define([
+  'knockout',
+  './routes',
+  'atlas-state',
+  './const',
+  ],
+  (
+    ko,
+    buildRoutes,
+    appState,
+    constants,
+  ) => {
 
     const statusCss = ko.pureComputed(function () {
       if (appState.estimationAnalysis.current())

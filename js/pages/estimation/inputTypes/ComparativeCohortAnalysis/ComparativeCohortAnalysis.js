@@ -1,8 +1,12 @@
-define(function (require, exports) {
-
-    var ko = require('knockout');
-    var TargetComparatorOutcomes = require('../TargetComparatorOutcomes');
-    var CohortMethodAnalysis = require('./CohortMethodAnalysis');
+define([
+    'knockout',
+    '../TargetComparatorOutcomes',
+    './CohortMethodAnalysis'
+], function (
+    ko,
+    TargetComparatorOutcomes,
+    CohortMethodAnalysis
+    ) {
 
 	function ComparativeCohortAnalysis(data, defaultCovariateSettings) {
 		var self = this;

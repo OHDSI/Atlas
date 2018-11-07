@@ -12,7 +12,7 @@ define([
 	'jquery',
 	'appConfig',
 	'assets/ohdsi.util',
-	'plp/PatientLevelPredictionAnalysis',
+	'./inputTypes/PatientLevelPredictionAnalysis',
 	'clipboard',
 	'atlas-state',
 	'components/heading',

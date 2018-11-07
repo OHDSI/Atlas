@@ -1,6 +1,5 @@
-define(
-	(require, exports) => {
-		const sharedState = require('atlas-state');
+define(['atlas-state'],
+	(sharedState) => {
 
 		const pageTitle = 'Search';
 		const apiPaths = {

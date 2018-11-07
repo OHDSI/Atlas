@@ -1,4 +1,4 @@
-define(function (require, exports) {
+define([], function () {
 
 	function ConceptSetCrossReference(data) {
 		var self = this;

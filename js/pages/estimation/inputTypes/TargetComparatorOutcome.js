@@ -1,7 +1,4 @@
-define(function (require, exports) {
-
-    var ko = require('knockout');
-    var Cohort = require('./Cohort');
+define(['./Cohort'], function (Cohort) {
 
 	function TargetComparatorOutcome(data) {
 		var self = this;

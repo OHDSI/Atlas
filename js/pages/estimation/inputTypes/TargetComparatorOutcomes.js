@@ -1,6 +1,5 @@
-define(function (require, exports) {
+define(['knockout'], function (ko) {
 
-    var ko = require('knockout');
 
 	function TargetComparatorOutcomes(data) {
 		var self = this;

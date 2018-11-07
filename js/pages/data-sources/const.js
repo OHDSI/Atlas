@@ -1,6 +1,5 @@
-define(
-  (require, factory) => {
-    const config = require('appConfig');
+define(['appConfig'],
+  (config) => {
 
     const apiPaths = {
       report: ({ sourceKey, path, conceptId }) => `${config.api.url}cdmresults/${sourceKey}/${path}${conceptId !== null ? `/${conceptId}` : ''}`,
