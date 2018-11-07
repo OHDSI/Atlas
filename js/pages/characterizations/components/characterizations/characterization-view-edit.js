@@ -126,7 +126,10 @@ define([
             if (ccId < 1) {
                 CharacterizationService
                     .createCharacterization(this.design())
-                    .then(res => commonUtils.routeTo('/cc/characterizations/' + res.id + '/design'));
+                    .then(res => {
+											  this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+                        commonUtils.routeTo('/cc/characterizations/' + res.id + '/design')
+										});
             } else {
                 CharacterizationService
                     .updateCharacterization(ccId, this.design())

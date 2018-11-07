@@ -3,7 +3,7 @@
 </div>
 
 <div data-bind="if: $component.isViewGenerationsPermitted(), css: classes()">
-    <div class="loading" data-bind="visible: loading()">loading</div>
+    <loading data-bind="visible: loading()" params="status: 'Loading executions...'"></loading>
     <div data-bind="visible: !loading()">
         <h2 data-bind="css: classes('title')">
             Executions

@@ -1,4 +1,4 @@
-<div class="loading" data-bind="visible: loading()">loading</div>
+<loading data-bind="visible: loading()" params="status: 'Loading execution results...'"></loading>
 
 <div data-bind="css: classes(), visible: !loading()">
     <h2 data-bind="css: classes('title')">
@@ -14,7 +14,7 @@
             </li>
             <li data-bind="css: classes('detail')">
                 <label data-bind="css: classes('detail-label')">Design:</label>
-                <a data-bind="css: classes('detail-value'), text: $component.data().designHash">x6t21cda</a>
+                <a data-bind="css: classes('detail-value'), click: showExecutionDesign, text: $component.data().designHash">x6t21cda</a>
             </li>
             <li data-bind="css: classes('detail')">
                 <label data-bind="css: classes('detail-label')">Results:</label>
@@ -143,4 +143,17 @@
             </div>
         <!-- /ko -->
     </div>
+    <atlas-modal params="
+        showModal: $component.isExecutionDesignShown,
+        title: 'Design',
+        data: {
+            executionDesign: $component.executionDesign,
+            classes: $component.classes,
+        }
+    ">
+        <div class="loading" data-bind="visible: executionDesign() == null">loading</div>
+        <div data-bind="if: executionDesign() != null">
+            <textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
+        </div>
+    </atlas-modal>
 </div>

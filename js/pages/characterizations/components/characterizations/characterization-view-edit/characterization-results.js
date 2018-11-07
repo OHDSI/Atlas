@@ -1,9 +1,11 @@
 define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
+	  'pages/characterizations/services/FeatureAnalysisService',
     'text!./characterization-results.html',
     'appConfig',
     'services/AuthAPI',
+    'services/CohortFeatures',
     'components/Component',
     'utils/AutoBind',
     'utils/CommonUtils',
@@ -22,9 +24,11 @@ define([
 ], function (
     ko,
     CharacterizationService,
+    FeatureAnalysisService,
     view,
     config,
     authApi,
+    cohortFeaturesService,
     Component,
     AutoBind,
     commonUtils,
@@ -103,6 +107,7 @@ define([
                 title: 'Covariate',
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
+                render: (d, t, r) => { return "<span class='btn btn-sm btn-primary' data-bind='click: () => $component.exploreByFeature($data)'>Explore</span> " + d; },
             };
         }
 
@@ -115,6 +120,7 @@ define([
             this.design = ko.observable({});
             this.executionId = params.executionId;
             this.data = ko.observable([]);
+            this.domains = ko.observableArray();
             this.filterList = ko.observableArray([]);
 
             this.analysisList = ko.computed(() => this.prepareTabularData(this.data().analyses, this.filterList()));
@@ -123,12 +129,30 @@ define([
             this.scatterXScale = d3.scaleLinear().domain([0, 100]);
             this.scatterYScale = d3.scaleLinear().domain([0, 100]);
 
+            this.executionDesign = ko.observable();
+            this.isExecutionDesignShown = ko.observable();
+
             this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
         }
 
         formatDate(date) {
             return momentAPI.formatDateTimeUTC(date);
+        }
+
+        showExecutionDesign() {
+          this.executionDesign(null);
+          this.isExecutionDesignShown(true);
+					CharacterizationService
+						.loadCharacterizationExportDesignByGeneration(this.executionId())
+						.then(res => {
+							this.executionDesign(res);
+							this.loading(false);
+						});
+        }
+
+        exploreByFeature({cohortId, covariateId}) {
+            cohortFeaturesService.getStudyPrevalenceStatisticsByVocab(cohortId, this.data().sourceKey, covariateId);
         }
 
         getCountColumn(idx) {
@@ -150,11 +174,13 @@ define([
 
             Promise.all([
                 SourceService.loadSourceList(),
+                FeatureAnalysisService.loadFeatureAnalysisDomains(),
                 CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
                 CharacterizationService.loadCharacterizationResults(this.executionId())
             ]).then(([
                  sourceList,
+                 domains,
                  design,
                  execution,
                  resultsList
@@ -162,18 +188,20 @@ define([
 
                 this.design(design);
 
+                this.domains(domains);
+
                 const source = sourceList.find(s => s.sourceKey === execution.sourceKey);
 
                 const result = {
                     sourceId: source.sourceId,
+                    sourceKey: source.sourceKey,
                     sourceName: source.sourceName,
                     date: execution.endTime,
                     designHash: execution.hashCode,
                     analyses: lodash.uniqBy(
                         resultsList.map(r => ({
                             analysisId: r.analysisId,
-                            // TODO
-                            domainId: design.featureAnalyses.find(fa => fa.design.find(d => d.id === r.covariateId)).domain, // "Demographics",
+                            domainId: design.featureAnalyses ? design.featureAnalyses.find(fa => fa.name === r.analysisName).domain : null,
                             analysisName: r.analysisName,
                             type: r.resultType.toLowerCase(),
                         })),
@@ -220,6 +248,11 @@ define([
             });
         }
 
+        findDomainById(domainId) {
+            const domain = this.domains().find(d => d.id === domainId);
+            return domain || {name: 'Unknown'};
+        }
+
         getFilterList(data) {
             const cohorts = lodash.uniqBy(
                 lodash.flatten(
@@ -229,7 +262,8 @@ define([
             );
 
             const domains = lodash.uniqBy(
-              data.map(a => a.domainId)
+              data.map(a => ({label: this.findDomainById(a.domainId).name, value: a.domainId})),
+              "value"
             );
 
             return [
@@ -252,7 +286,7 @@ define([
                     label: 'Domains',
                     name: 'domains',
                     options: ko.observable(domains),
-                    selectedValues: ko.observable([]),
+                    selectedValues: ko.observable(data.map(a => a.domainId)),
                 }
             ];
         }
@@ -275,8 +309,9 @@ define([
                 const getAllCohortStats = (cohortId) => {
                     return lodash.flatten(analyses.filter(a => a.type=="prevalence").map(a => {
                         const analysisName = a.analysisName;
+                        const analysisId = a.analysisId;
                         const stats = lodash.flatten(a.reports.filter(r => r.cohortId === cohortId).map(r => r.stats));
-                        return stats.map(s => ({ ...s, analysisName }));
+                        return stats.map(s => ({ ...s, analysisName, analysisId }));
                     }));
                 };
 
@@ -327,9 +362,12 @@ define([
             return convertedData;
         }
 
-        filterData(data, {cohorts, analyses}) {
+        filterData(data, {cohorts, analyses, domains}) {
             return data.map(analysis => {
                 if (!analyses.includes(analysis.analysisId)) {
+                    return null;
+                }
+                if (!domains.includes(analysis.domainId)) {
                     return null;
                 }
                 return {
@@ -384,6 +422,8 @@ define([
 
             let data = {};
 
+            console.log('prevalence analysis', analysis);
+
             analysis.reports.forEach((r, i) => {
 
                 columns.push(this.getCountColumn(i));
@@ -394,6 +434,9 @@ define([
                         data[rd.covariateName] = {
                             analysisName: rd.analysisName || analysis.analysisName,
                             covariateName: rd.covariateName,
+                            covariateId: rd.covariateId,
+                            cohortId: r.cohortId,
+                            analysisId: analysis.analysisId,
                             sumValue: [],
                             pct: [],
                         };
