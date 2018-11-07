@@ -1,4 +1,4 @@
-define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 'services/http', 'appConfig'], function (ko, view, crossfilter, colvis, httpService, config) {
+define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 'services/Facets'], function (ko, view, crossfilter, colvis, facetService) {
 
 	function facetedDatatable(params) {
 		const self = this;
@@ -87,7 +87,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 				}
 			};
 			self.createFilters = () => {
-				httpService.doGet(config.webAPIRoot + 'facets/' + self.options.entityName)
+				facetService.getFacets(self.options.entityName)
 					.then(({data}) => {
 						self.facets(data.map(facet => {
 							return {
