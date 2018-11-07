@@ -1,4 +1,4 @@
-define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 'services/http', 'appConfig', 'urijs'], function (ko, view, crossfilter, colvis, httpService, config, urijs) {
+define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 'services/http', 'appConfig'], function (ko, view, crossfilter, colvis, httpService, config) {
 
 	function facetedDatatable(params) {
 		const self = this;
