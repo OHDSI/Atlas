@@ -4,16 +4,7 @@ const bustCache = (() => {
 	return '_=' + hash;
 })();
 
-// set 'optional' path prior to first call to require
-requirejs.config({paths: { "text": "extensions/plugins/text", "appConfig": "./config" }});
-
-const initialDeps = ['./settings'];
-if (typeof document === 'undefined') {
-	// if bundling
-	initialDeps.push('@babel/polyfill');
-}
-
-require(initialDeps, (settings) => {
+require(["./settings"], (settings) => {
 	requirejs.config({
 		...settings,
 		paths: {

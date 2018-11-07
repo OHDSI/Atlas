@@ -20,6 +20,7 @@ const settings = {
 		...projectSettings.paths,
 		...projectSettings.localRefs,
 	},
+	include: ["../build/polyfill"],
 	normalizeDirDefines: "skip",
 	name: 'main',
 	out: bundleName,
@@ -27,12 +28,7 @@ const settings = {
 		return babel.transform(
       content, {
 				plugins: [ "@babel/plugin-proposal-object-rest-spread" ],
-				presets: [
-					[
-						"@babel/preset-env",
-						// { exclude: [ "transform-async-to-generator", "transform-regenerator" ] }
-					]
-				],
+				presets: [ "@babel/preset-env" ],
 			}
     ).code;
   },
