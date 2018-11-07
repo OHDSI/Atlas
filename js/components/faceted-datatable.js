@@ -89,6 +89,9 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', 's
 			self.createFilters = () => {
 				facetService.getFacets(self.options.entityName)
 					.then(({data}) => {
+						if (data.length === 0) {
+							console.error("no facets for entity " + self.options.entityName)
+						}
 						self.facets(data.map(facet => {
 							return {
 								'caption': facet.name,
