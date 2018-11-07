@@ -5,7 +5,7 @@ define(['knockout', './Content', './Navigation', './SetSelect'], function (ko, C
     self.content = ko.observable();
     self.navigation = ko.observable();
     self.initContent = function(set, cohortId, personId, sourceKey) {
-      self.content(new Content(set, cohortId, personId, sourceKey));
+      self.content(new Content(set, cohortId, personId, sourceKey, self));
     }
     self.initNavigation = function(set, cohortId, personId, sourceKey) {
       self.navigation(new Navigation(set, cohortId, personId, sourceKey));

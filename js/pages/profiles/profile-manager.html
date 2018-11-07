@@ -166,7 +166,7 @@
 										<div data-bind="with: annotation">
 											<div data-bind="with: set">
 												<ol class="questions" data-bind="foreach: questions">
-													<li class="question">
+													<li class="question" data-bind="css: {'has-error': !$parents[1].results['question_'+id()].valid() && $parents[1].results['question_'+id()].required()}">
 														<p class="question-text" data-bind="text: text()"></p>
 														<div class="answers answer-multi-select" data-bind="if: type() == 'MULTI_SELECT'">
 															<div data-bind="foreach: answers">

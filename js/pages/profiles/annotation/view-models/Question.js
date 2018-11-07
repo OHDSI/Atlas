@@ -6,6 +6,7 @@ define(['knockout', './Answer'], function (ko, Answer) {
     self.id = ko.observable(question.id);
     self.text = ko.observable(question.text);
     self.type = ko.observable(question.type);
+    self.required = ko.observable(question.required);
     self.answers = ko.observableArray();
 
     for (var i = 0; i < question.answers.length; i ++) {

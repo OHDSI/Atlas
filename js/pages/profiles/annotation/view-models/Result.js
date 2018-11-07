@@ -16,6 +16,17 @@ define(['knockout'], function (ko) {
     self.answerId = result.answerId;
     self.type = result.type;
     self.setId = result.setId;
+
+    self.validate = function(value) {
+      return ((value && !Array.isArray(value)) || (Array.isArray(value) && value.length > 0)) ? true : false;
+    }
+
+    self.required = ko.observable(result.required);
+    self.valid = ko.observable(true);
+
+    self.value.subscribe(function(newValue) {
+      self.valid(self.validate(newValue));
+    });
   }
 
   Result.prototype.constructor = Result;
