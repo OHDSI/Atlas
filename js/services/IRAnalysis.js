@@ -20,8 +20,8 @@ define(function (require, exports) {
 		});
 	}
 	
-	function getAnalysisList() {
-		const promise = httpService.doGet(`${config.webAPIRoot}ir`);
+	function getAnalysisList(params) {
+		const promise = httpService.doGet(`${config.webAPIRoot}ir`, params);
 		promise.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;

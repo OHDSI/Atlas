@@ -3,6 +3,8 @@ define([
 	'text!./browser.html',
 	'components/Component',
 	'utils/CommonUtils',
+	'utils/DatatableUtils',
+	'services/IRAnalysis',
 	'services/MomentAPI',
 	'faceted-datatable'
 ], function (
@@ -10,6 +12,8 @@ define([
 	view,
 	Component,
 	commonUtils,
+	datatableUtils,
+	IRAnalysisService,
 	momentApi
 ) {
 	
@@ -17,29 +21,9 @@ define([
 		constructor(params) {
 			super(params);
 			this.analysisList = params.analysisList;
-			
+
 			this.options = {
-				Facets: [
-					{
-						'caption': 'Last Modified',
-						'binding': function (o) {
-							var daysSinceModification = (new Date().getTime() - new Date(o.modifiedDate || o.createdDate).getTime()) / 1000 / 60 / 60 / 24;
-							if (daysSinceModification < 7) {
-								return 'This Week';
-							} else if (daysSinceModification < 14) {
-								return 'Last Week';
-							} else {
-								return '2+ Weeks Ago';
-							}
-						}
-					},
-					{
-						'caption': 'Author',
-						'binding': function (o) {
-							return o.createdBy;
-						}
-					}
-				]
+				entityName: 'ir_analysis'
 			};
 
 			this.columns = [
@@ -49,12 +33,14 @@ define([
 				},
 				{
 					title: 'Name',
+					data: "name",
 					render: (s, p, d) => {
 						return '<span class="linkish">' + d.name + '</span>';
 					}
 				},
 				{
 					title: 'Created',
+					data: 'createdDate',
 					type: 'date',
 					render: function (s, p, d) {
 						return momentApi.formatDateTimeUTC(d.createdDate);
@@ -62,6 +48,7 @@ define([
 				},
 				{
 					title: 'Updated',
+					data: 'modifiedDate',
 					type: 'date',
 					render: function (s, p, d) {
 						return momentApi.formatDateTimeUTC(d.modifiedDate);
@@ -72,6 +59,7 @@ define([
 					data: 'createdBy'
 				}
 			];
+			this.ajax = IRAnalysisService.getAnalysisList;
 
 			this.rowClick = this.rowClick.bind(this);
 		}
