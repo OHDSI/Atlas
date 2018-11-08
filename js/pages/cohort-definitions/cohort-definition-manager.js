@@ -223,7 +223,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.modifiedJSON = "";
-			this.expressionJSON = ko.pureComputed({
+			this.expressionJSON = ko.computed(() => '');/*ko.pureComputed({
 				read: () => {
 					if (!this.model.currentCohortDefinition()){
 						return ko.toJSON(null);
@@ -239,7 +239,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				write: (value) => {
 					this.modifiedJSON = value;
 				}
-			});
+			})*/;
 
 			this.selectedSource = ko.observable();
 			this.selectedReport = ko.observable();

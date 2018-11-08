@@ -54,19 +54,65 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 
 	// module functions
 	function dirtyFlag(root, isInitiallyDirty) {
-		var result = function () {},
-			_initialState = ko.observable(ko.toJSON(root, _pruneJSON)),
+
+		let origState;
+		let changedObservablesCount = ko.observable();
+
+		const getObjectObservables = function (obj, res, currentPath = '') {
+			if (typeof obj === 'object') {
+				for (let key in obj)
+				{
+					if (obj.hasOwnProperty(key)) {
+						let path = `${currentPath}.${key}`.replace(/^\./, '');
+						if (typeof obj[key].subscribe === 'function') {
+							res[path] = obj[key];
+						}
+						let variable = ko.utils.unwrapObservable(obj[key]);
+						if (typeof variable === 'object') {
+							getObjectObservables(variable, res, path);
+						}
+					}
+				}
+			}
+			return res;
+		};
+
+		const setNewState = function (newState) {
+			let observables = getObjectObservables(newState, {});
+			origState = new Map();
+			for (let i in observables) {
+				(function(key) {
+					let subscription = observables[key].subscribe(newVal => {
+						const origStateEntry = origState.get(key);
+						const isTypeChanged = ko.toJSON(newVal) === '""' && origStateEntry.origVal === 'null';
+						if (ko.toJSON(newVal) !== origStateEntry.origVal && !isTypeChanged && !origStateEntry.wasChanged) {
+							origStateEntry.wasChanged = true;
+							changedObservablesCount(changedObservablesCount() + 1);
+						} else if ((ko.toJSON(newVal) === origStateEntry.origVal || isTypeChanged) && origStateEntry.wasChanged) {
+							origStateEntry.wasChanged = false;
+							changedObservablesCount(changedObservablesCount() - 1);
+						}
+					});
+					origState.set(key, { subscription, wasChanged: false, origVal: ko.toJSON(observables[key]) });
+				})(i);
+			}
+			changedObservablesCount(0);
+		};
+		
+		const result = function () {},
 			_isInitiallyDirty = ko.observable(isInitiallyDirty);
 
+		setNewState(root);
+
 		result.isDirty = ko.pureComputed(function () {
-			return _isInitiallyDirty() || _initialState() !== ko.toJSON(root, _pruneJSON);
+			return _isInitiallyDirty() || changedObservablesCount();
 		}).extend({
 			rateLimit: 200
-		});;
+		});
 
 		result.reset = function () {
-			_initialState(ko.toJSON(root, _pruneJSON));
 			_isInitiallyDirty(false);
+			setNewState(root);
 		};
 
 		return result;
