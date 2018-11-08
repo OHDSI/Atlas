@@ -68,11 +68,11 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 
 			self.currentViewAccessible = ko.pureComputed(function() {
         return self.currentView && (sharedState.appInitializationStatus() !== 'failed' &&
-					(sharedState.appInitializationStatus() !== 'no-sources-available' || self.currentView() === 'ohdsi-configuration'));
+					(sharedState.appInitializationStatus() !== 'no-sources-available' || self.currentView() === 'ohdsi-configuration' || self.currentView() === 'source-manager'));
 			});
 
 			self.noSourcesAvailable = ko.pureComputed(function() {
-				return sharedState.appInitializationStatus() == 'no-sources-available' && self.currentView() !== 'ohdsi-configuration';
+				return sharedState.appInitializationStatus() == 'no-sources-available' && self.currentView() !== 'ohdsi-configuration' && self.currentView() !== 'source-manager';
 			});
 
 			self.initComplete = function () {

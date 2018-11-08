@@ -35,14 +35,16 @@ define(function (require, exports) {
 			})[0];
 
 		// preload domain list once for all future calls to getDomains()
-		$.ajax({
-			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
-		}).then(function (results) {
-			$.each(results, function (i, v) {
-				domains.push(v.DOMAIN_ID);
-			});
-			domainPromise.resolve(domains);
-		});
+		if (defaultSource !== undefined){
+            $.ajax({
+                url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
+            }).then(function (results) {
+                $.each(results, function (i, v) {
+                    domains.push(v.DOMAIN_ID);
+                });
+                domainPromise.resolve(domains);
+            });
+		}
 	})
 
 	function loadDensity(results) {

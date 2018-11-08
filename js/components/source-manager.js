@@ -132,10 +132,14 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
         .then(sourceApi.initSourcesConfig)
         .then(roleApi.updateRoles)
         .then(function () {
-          self.loading(false);
           self.goToConfigure();
         })
-        .catch(function () { self.loading(false); });
+        .always(function () { 
+          self.loading(false);
+          self.selectedSource(null);
+          self.selectedSourceId(null);
+          self.dirtyFlag().reset();
+        });
     };
 
     self.close = function () {
