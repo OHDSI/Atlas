@@ -223,23 +223,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.modifiedJSON = "";
-			this.expressionJSON = ko.computed(() => '');/*ko.pureComputed({
-				read: () => {
-					if (!this.model.currentCohortDefinition()){
-						return ko.toJSON(null);
-					}
-					return ko.toJSON(this.model.currentCohortDefinition().expression(), (key, value) => {
-					if (value === 0 || value) {
-						return value;
-					} else {
-						return
-					}
-				}, 2);
-				},
-				write: (value) => {
-					this.modifiedJSON = value;
-				}
-			})*/;
+			Object.defineProperty(this, 'expressionJSON', {
+				get: () => this.getExpressionJson(),
+				set: (val) => this.setExpressionJson(val),
+			});
 
 			this.selectedSource = ko.observable();
 			this.selectedReport = ko.observable();
@@ -1208,6 +1195,22 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.copyToClipboard('#btnCopyCohortSQLClipboard', '#copyCopyCohortSQLMessage');
 			}
 
+			getExpressionJson() {
+				if (!this.model.currentCohortDefinition()) {
+					return ko.toJSON(null);
+				}
+				return ko.toJSON(this.model.currentCohortDefinition().expression(), (key, value) => {
+					if (value === 0 || value) {
+						return value;
+					} else {
+						return;
+					}
+				}, 2);
+			}
+
+			setExpressionJson(value) {
+				this.modifiedJSON = value;
+			}
 	}
 
 	return commonUtils.build('cohort-definition-manager', CohortDefinitionManager, view);

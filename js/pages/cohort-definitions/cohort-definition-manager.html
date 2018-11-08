@@ -269,7 +269,7 @@
 														delayedCartoonUpdate: $component.delayedCartoonUpdate}"></div>
 						</div>
 					</div>
-					<div role="tabpanel" data-bind="css: { active: $component.exportTabMode() == 'json' }" class="tab-pane">
+					<div role="tabpanel" data-bind="if: $component.tabMode() === 'export' && $component.exportTabMode() == 'json', css: { active: $component.exportTabMode() == 'json' }" class="tab-pane">
 						<textarea id="cohortExpressionJSON" class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
 						<div class="row">
 							<div class="col-md-6" style="float: left">

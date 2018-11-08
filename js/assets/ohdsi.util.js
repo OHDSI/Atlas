@@ -55,7 +55,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	// module functions
 	function dirtyFlag(root, isInitiallyDirty) {
 
-		let origState;
+		let origState = new Map();
 		let changedObservablesCount = ko.observable();
 
 		const getObjectObservables = function (obj, res, currentPath = '') {
@@ -78,6 +78,10 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 		};
 
 		const setNewState = function (newState) {
+			// clean up prev data
+			origState.forEach(entry => entry.subscription.dispose());
+			
+			// setup new data
 			let observables = getObjectObservables(newState, {});
 			origState = new Map();
 			for (let i in observables) {
