@@ -1,14 +1,12 @@
-define(['knockout', '../options', '../InputTypes/Range', 'text!./DemographicCriteriaTemplate.html', './ConceptSetSelector'], function (ko, options, Range, template) {
+define(['knockout', '../options', '../InputTypes/Range', './utils', 'text!./DemographicCriteriaTemplate.html', './ConceptSetSelector'],
+	function (ko, options, Range, utils, template) {
 
 	function DemographicCriteriaViewModel(params) {
 
 		var self = this;
-		self.Criteria = params.criteria;
+		self.Criteria = ko.utils.unwrapObservable(params.criteria);
 		self.options = options;
-		self.formatOption = function (d) {
-			return '<div class="optionText">' + d.text + '</div>' +
-				'<div class="optionDescription">' + d.description + '</div>';
-		};
+		self.formatOption = utils.formatDropDownOption;
 		self.addActions = [{
 				text: "Add Age Criteria",
 				selected: false,

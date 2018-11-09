@@ -101,9 +101,14 @@
                                 selectedValue: $component.data.statType, multiple: false"></multi-select>
                         </div>
                     </div>
-                    <button data-bind="css: classes({ element: 'add-criteria', extra: 'btn btn-success' }), click: addCriteria">
-                        Add Criteria feature
-                    </button>
+                    <span data-bind="if: data.statType() === 'PREVALENCE'">
+                        <button data-bind="css: classes({ element: 'add-criteria-group', extra: 'btn btn-success' }), click: addCriteria">
+                            Add Criteria feature
+                        </button>
+                    </span>
+                    <span data-bind="if: data.statType() === 'DISTRIBUTION', css: classes('add-criteria-windowed')">
+                        <drop-down-menu params="actions: $component.windowedActions, title: 'Add New Criteria...', cssClasses: 'btn-group', formatOption: formatCriteriaOption"></drop-down-menu>
+                    </span>
                     <!-- ko foreach: $component.data.design -->
                         <div data-bind="
                             css: $component.classes('criteria'),
@@ -122,7 +127,15 @@
                                         data-bind="css: $component.classes({ element: 'criteria-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeCriteria($index())"
                                 ><i class="fa fa-trash-o"></i></button>
                             </div>
-                            <criteria-group params="{ expression: { ConceptSets: $component.data.conceptSets }, group: $data.expression }"></criteria-group>
+                            <div data-bind="if: $data.criteriaType === 'CriteriaGroup'">
+                                <criteria-group params="{ expression: { ConceptSets: $component.data.conceptSets }, group: $data.expression }"></criteria-group>
+                            </div>
+                            <div data-bind="if: $data.criteriaType === 'DemographicCriteria'">
+                                <demographic-criteria params="{ criteria: $data.expression }"></demographic-criteria>
+                            </div>
+                            <div data-bind="if: $data.criteriaType === 'WindowedCriteria'">
+                                <windowed-criteria params="{ expression: { ConceptSets: $component.data.conceptSets }, criteria: $data.expression}"></windowed-criteria>
+                            </div>
                         </div>
                     <!-- /ko -->
                 </div>

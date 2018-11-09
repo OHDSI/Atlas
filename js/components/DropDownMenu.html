@@ -1,0 +1,6 @@
+<div data-bind="css: classes({extra: $component.dropDownClasses})">
+    <button type="button" data-bind="css: classes({extra: $component.buttonClasses})" data-toggle="dropdown"><span data-bind="html: icon"></span> <span data-bind="text: title">Add criteria to group…</span><span class="caret"></span></button>
+    <ul data-bind="css: classes({extra: 'dropdown-menu'}), foreach:$component.actions">
+        <li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+    </ul>
+</div>
