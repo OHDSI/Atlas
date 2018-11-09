@@ -1,20 +1,18 @@
 define(
-	[
-    'pages/Route',
-    'atlas-state',
-	],
-	({ AuthorizedRoute }, atlasState) => {
+	(require, factory) => {
+    const { AuthorizedRoute } = require('pages/Route');
+		const atlasState = require('atlas-state');
     function routes(appModel, router) {
       return {        
         '/iranalysis': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['pages/incidence-rates/ir-browser'], function () {
+          require(['./ir-browser'], function () {
             router.setCurrentView('ir-browser');
           });
         }),
         '/iranalysis/new': new AuthorizedRoute((analysisId) => {
           appModel.activePage(this.title);
-          require(['pages/incidence-rates/ir-manager'], function () {
+          require(['./ir-manager'], function () {
             atlasState.IRAnalysis.selectedId(null);
             router.setCurrentView('ir-manager');
           });
@@ -26,7 +24,7 @@ define(
           if (path.length > 0 && path[0] != "") {
             activeTab = path[0];
           }
-          require(['pages/incidence-rates/ir-manager'], function () {
+          require(['./ir-manager'], function () {
             atlasState.IRAnalysis.selectedId(+analysisId);
             router.setCurrentView('ir-manager');
           });

@@ -1,4 +1,5 @@
-define(['knockout'], function (ko) {
+define(function (require, exports) {
+	var ko = require('knockout');
 
 	function TargetOutcomes(data) {
 		var self = this;

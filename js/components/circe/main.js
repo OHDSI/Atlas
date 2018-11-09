@@ -1,15 +1,11 @@
-define([
-		'knockout',
-		'./components/GenerateComponent',
-		'./components/CohortConceptSetBrowser'
-	],
-	function (
-		ko,
-		generateComponent,
-		cohortConceptSetBrowser
-	) {
-		
-	ko.components.register('generate-component', generateComponent);	
+define(function (require, exports) {
+	
+	var ko = require('knockout')
+	
+	var generateComponent = require('./components/GenerateComponent');
+	ko.components.register('generate-component', generateComponent);
+	
+	var cohortConceptSetBrowser = require('./components/CohortConceptSetBrowser');
 	ko.components.register('cohort-concept-set-browser', cohortConceptSetBrowser);
 	
 });

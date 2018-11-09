@@ -1,21 +1,18 @@
-define(
-	[
-    'pages/Route',
-    'atlas-state'
-	],
-	({ AuthorizedRoute }, atlasState) => {
+define((require, factory) => {
+  const { AuthorizedRoute } = require('pages/Route');
+  const atlasState = require('atlas-state');
     function routes(appModel, router) {
       return {        
         '/estimation': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['pages/estimation/estimation-browser'], function () {
+          require(['./estimation-browser'], function () {
             router.setCurrentView('estimation-browser');
           });
         }),
         '/estimation/:cohortComparisonId:': new AuthorizedRoute((cohortComparisonId) => {
           appModel.activePage(this.title);
           require([
-            'pages/estimation/cohort-comparison-manager',
+            './cohort-comparison-manager',
             'components/cohort-definition-browser',
             'components/atlas.cohort-editor',
             'components/cohort-comparison-print-friendly',
@@ -46,7 +43,7 @@ define(
         }),
         '/estimation/cca/:estimationId:': new AuthorizedRoute((estimationId) => {
           appModel.activePage(this.title);
-          require(['pages/estimation/cca-manager'], function () {
+          require(['./cca-manager'], function () {
             const params = {};
             atlasState.estimationAnalysis.selectedId(estimationId);
 

@@ -1,24 +1,13 @@
-define([
-    'knockout',
-    '../../../components/cohortbuilder/CohortDefinition',
-    'conceptsetbuilder/InputTypes/ConceptSet',
-    './ConceptSetCrossReference',
-    "./PositiveControlSynthesisArgs",
-    './NegativeControl',
-    './NegativeControlExposureCohortDefinition',
-    './NegativeControlOutcomeCohortDefinition',
-    './EstimationAnalysisSettings',
-], function (
-    ko,
-    CohortDefinition,
-    ConceptSet,
-    ConceptSetCrossReference,
-    PositiveControlSynthesisArgs,
-    NegativeControl,
-    NegativeControlExposureCohortDefinition,
-    NegativeControlOutcomeCohortDefinition,
-    EstimationAnalysisSettings,
-) {
+define(function (require, exports) {
+    var ko = require('knockout');
+   var CohortDefinition = require('../../../components/cohortbuilder/CohortDefinition');
+   var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
+   var ConceptSetCrossReference = require('./ConceptSetCrossReference');
+   var PositiveControlSynthesisArgs = require("./PositiveControlSynthesisArgs");
+   var NegativeControl = require('./NegativeControl');
+   var NegativeControlExposureCohortDefinition = require('./NegativeControlExposureCohortDefinition'); 
+   var NegativeControlOutcomeCohortDefinition = require('./NegativeControlOutcomeCohortDefinition');
+   var EstimationAnalysisSettings = require('./EstimationAnalysisSettings');
 
 	function EstimationAnalysis(data, estimationType, defaultCovariateSettings) {
 		var self = this;

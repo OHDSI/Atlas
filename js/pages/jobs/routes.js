@@ -1,8 +1,6 @@
 define(
-	[
-		'pages/Route'
-	],
-	({ AuthorizedRoute }) => {
+	(require, factory) => {
+    const { AuthorizedRoute } = require('pages/Route');
     function routes(appModel, router) {
       return {        
         '/jobs': new AuthorizedRoute(() => {

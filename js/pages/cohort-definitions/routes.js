@@ -1,15 +1,13 @@
 define(
-	[
-		'pages/Route'
-	],
-	({ AuthorizedRoute }) => {
+	(require, factory) => {
+    const { AuthorizedRoute } = require('pages/Route');
     function routes(appModel, router) {
       return {        
         '/cohortdefinitions': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require([
-            'pages/cohort-definitions/cohort-definitions',
-            'pages/cohort-definitions/cohort-definition-manager',
+            './cohort-definitions',
+            './cohort-definition-manager',
             'components/cohort-definition-browser',
           ], function () {
             router.setCurrentView('cohort-definitions');
@@ -20,11 +18,11 @@ define(
           require([
            'components/cohortbuilder/CohortDefinition',
             'components/atlas.cohort-editor',
-            'pages/cohort-definitions/cohort-definitions',
-            'pages/cohort-definitions/cohort-definition-manager',
+            './cohort-definitions',
+            './cohort-definition-manager',
             'components/cohort-definition-browser',
             'conceptset-editor',
-            'pages/cohort-definitions/components/reporting/cost-utilization/report-manager',
+            './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
             'conceptset-list-modal',
           ], function () {
@@ -47,11 +45,11 @@ define(
           require([
            'components/cohortbuilder/CohortDefinition',
             'components/atlas.cohort-editor',
-            'pages/cohort-definitions/cohort-definitions',
-            'pages/cohort-definitions/cohort-definition-manager',
+            './cohort-definitions',
+            './cohort-definition-manager',
             'components/cohort-definition-browser',
             'conceptset-editor',
-            'pages/cohort-definitions/components/reporting/cost-utilization/report-manager',
+            './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
           ], function () {
             router.setCurrentView('cohort-definition-manager');
@@ -62,8 +60,8 @@ define(
         '/reports': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require([
-            'pages/cohort-definitions/components/reporting/cost-utilization/report-manager',
-            'pages/cohort-definitions/cohort-definition-manager',
+            './components/reporting/cost-utilization/report-manager',
+            './cohort-definition-manager',
             'components/cohort-definition-browser',
           ], function () {
             router.setCurrentView('report-manager');

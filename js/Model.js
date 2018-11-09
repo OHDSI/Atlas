@@ -18,7 +18,7 @@ define(
 		'd3',
 		'services/AuthAPI',
 		'services/MomentAPI',
-		'less!./app.less',
+		'less!app.less',
 	],
 	(
 		ko,

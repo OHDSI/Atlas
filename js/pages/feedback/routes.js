@@ -1,8 +1,6 @@
 define(
-	[
-		'pages/Route'
-	],
-	({ Route }) => {
+  (require, factory) => {
+    const { Route } = require('pages/Route');
     function routes(appModel, router) {
       return {        
         '/feedback': new Route(() => {

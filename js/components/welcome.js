@@ -4,7 +4,7 @@ define([
     'appConfig',
     'services/AuthAPI',
 	'utils/BemHelper',
-    'less!components/welcome.less'
+    'less!welcome.less'
 ],
     function (
     ko,

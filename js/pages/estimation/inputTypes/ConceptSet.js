@@ -1,8 +1,5 @@
-define([
-    'knockout'
-], function (
-    ko
-) {
+define(function (require, exports) {
+    var ko = require('knockout');
 
 	function ConceptSet(data) {
 		var self = this;
