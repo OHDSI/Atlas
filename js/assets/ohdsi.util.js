@@ -64,7 +64,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 				{
 					if (obj.hasOwnProperty(key)) {
 						let path = `${currentPath}.${key}`.replace(/^\./, '');
-						if (typeof obj[key].subscribe === 'function') {
+						if (typeof obj[key] !== 'undefined' && obj[key] !== null && typeof obj[key].subscribe === 'function') {
 							res[path] = obj[key];
 						}
 						let variable = ko.utils.unwrapObservable(obj[key]);
