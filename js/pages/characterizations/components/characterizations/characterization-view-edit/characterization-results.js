@@ -189,9 +189,10 @@ define([
                     };
                     let report = analysis.reports.find(report => report.cohortId === r.cohortId);
                     if (!report) {
+                    		const cohort = this.design().cohorts.find(c => c.id === r.cohortId);
                         report = {
                             cohortId: r.cohortId,
-                            cohortName: this.design().cohorts.find(c => c.id === r.cohortId).name,
+                            cohortName: cohort ? cohort.name : '',
                             stats: []
                         };
                         analysis.reports.push(report);
