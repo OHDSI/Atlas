@@ -77,6 +77,26 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			return res;
 		};
 
+		const addObservablesToState = function (state, observables) {
+			for (let i in observables) {
+				(function(key) {
+					let subscription = observables[key].subscribe(newVal => {
+						const stateEntry = state.get(key);
+						const isTypeChanged = ko.toJSON(newVal) === '""' && stateEntry.origVal === 'null';
+						if (ko.toJSON(newVal) !== stateEntry.origVal && !isTypeChanged && !stateEntry.wasChanged) {
+							stateEntry.wasChanged = true;
+							changedObservablesCount(changedObservablesCount() + 1);
+							addObservablesToState(state, getObjectObservables(newVal, {}));
+						} else if ((ko.toJSON(newVal) === stateEntry.origVal || isTypeChanged) && stateEntry.wasChanged) {
+							stateEntry.wasChanged = false;
+							changedObservablesCount(changedObservablesCount() - 1);
+						}
+					});
+					state.set(key, { subscription, wasChanged: false, origVal: ko.toJSON(observables[key]) });
+				})(i);
+			}
+		};
+
 		const setNewState = function (newState) {
 			// clean up prev data
 			origState.forEach(entry => entry.subscription.dispose());
@@ -84,22 +104,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			// setup new data
 			let observables = getObjectObservables(newState, {});
 			origState = new Map();
-			for (let i in observables) {
-				(function(key) {
-					let subscription = observables[key].subscribe(newVal => {
-						const origStateEntry = origState.get(key);
-						const isTypeChanged = ko.toJSON(newVal) === '""' && origStateEntry.origVal === 'null';
-						if (ko.toJSON(newVal) !== origStateEntry.origVal && !isTypeChanged && !origStateEntry.wasChanged) {
-							origStateEntry.wasChanged = true;
-							changedObservablesCount(changedObservablesCount() + 1);
-						} else if ((ko.toJSON(newVal) === origStateEntry.origVal || isTypeChanged) && origStateEntry.wasChanged) {
-							origStateEntry.wasChanged = false;
-							changedObservablesCount(changedObservablesCount() - 1);
-						}
-					});
-					origState.set(key, { subscription, wasChanged: false, origVal: ko.toJSON(observables[key]) });
-				})(i);
-			}
+			addObservablesToState(origState, observables);
 			changedObservablesCount(0);
 		};
 		
