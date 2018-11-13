@@ -96,6 +96,7 @@ const settingsObject = {
     "bootstrap": "../node_modules/bootstrap/dist/js/bootstrap",
     "text": "extensions/plugins/text",
     "less": "extensions/plugins/less",
+    "optional": "extensions/plugins/optional",
     "clipboard": "../node_modules/clipboard/dist/clipboard",
     "knockout": "../node_modules/knockout/build/output/knockout-latest",
     "ko.sortable": "../node_modules/knockout-sortable/src/knockout-sortable",

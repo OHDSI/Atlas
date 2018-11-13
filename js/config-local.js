@@ -1,3 +1,0 @@
-define('config-local', () => {
-  return {};
-});
