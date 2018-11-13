@@ -184,20 +184,27 @@ define(['knockout', 'text!./cohort-definition-manager.html',
 
 
 		self.modifiedJSON = "";
-		self.expressionJSON = ko.pureComputed({
-			read: function () {
-				return ko.toJSON(self.model.currentCohortDefinition().expression(), function (key, value) {
-					if (value === 0 || value) {
-						return value;
-					} else {
-						return
-					}
-				}, 2);
-			},
-			write: function (value) {
-				self.modifiedJSON = value;
-			}
+		Object.defineProperty(self, 'expressionJSON', {
+			get: () => self.getExpressionJson(),
+			set: (val) => self.setExpressionJson(val),
 		});
+
+		self.getExpressionJson = function() {
+			if (!self.model.currentCohortDefinition()) {
+				return ko.toJSON(null);
+			}
+			return ko.toJSON(self.model.currentCohortDefinition().expression(), (key, value) => {
+				if (value === 0 || value) {
+					return value;
+				} else {
+					return;
+				}
+			}, 2);
+		};
+
+		self.setExpressionJson = function(value) {
+			self.modifiedJSON = value;
+		};
 
 		self.selectedSource = ko.observable();
 		self.selectedReport = ko.observable();
