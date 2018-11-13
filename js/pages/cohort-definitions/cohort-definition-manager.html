@@ -366,13 +366,14 @@
 					<tbody data-bind="foreach:$root.cohortDefinitionSourceInfo, css: {overflow: $root.cohortDefinitionSourceInfo().length > 3, 'max-height': $component.loadingReport() || $component.selectedReport()}">
 						<tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
 							<td>
-								<button class="btn btn-sm btn-primary"
-												data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
+								<span data-bind="tooltip: !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null">
+									<button class="btn btn-sm btn-primary"
+											data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
 																	 visible:!$component.isSourceRunning($data),
-																	 tooltip: !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null,
 																	 click:(data, event) => $component.generateCohort(data, false)">
-									<i class="fa fa-play"></i>&nbsp;Generate
-								</button>
+									    <i class="fa fa-play"></i>&nbsp;Generate
+								    </button>
+								</span>
 								<a role="button" class="btn btn-sm btn-danger" 
 									 data-bind="click:$component.cancelGenerate,
 															visible: $component.isSourceRunning($data),
