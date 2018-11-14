@@ -1,9 +1,17 @@
 <div>
+    <loading data-bind="visible: loading()" params="status: 'Loading prevalence stats...'"></loading>
+    <div data-bind="visible: exploring() && !loading()">
+        <div data-bind="css: classes('exploring-pane')">
+            <i title="Reset exploring hierarchy" data-bind="click: resetExploring, css: classes({element: 'reset', extra: 'fa fa-close'})"></i>
+            <span data-bind="text: exploringTitle, css: classes('exploring-title')"></span>
+        </div>
+    </div>
     <table data-bind="
+        visible: !loading(),
         css: classes(),
         dataTable: {
             data: $component.data,
-            options: { columns: $component.tableColumns }
+            options: { autoWidth: false, order: [1, 'desc'], columns: $component.tableColumns }
         }
     ">
     </table>

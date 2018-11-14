@@ -9,6 +9,7 @@ define([
     'components/Component',
     'utils/AutoBind',
     'utils/CommonUtils',
+    './utils',
     'numeral',
     'lodash',
     'd3',
@@ -33,6 +34,7 @@ define([
     Component,
     AutoBind,
     commonUtils,
+    utils,
     numeral,
     lodash,
     d3,
@@ -104,11 +106,16 @@ define([
         }
 
         get covNameColumn() {
+            const exploreBtn = "<span class='" + this.classes({element: 'explore', extra: 'btn btn-sm btn-primary'}) +
+							"' data-bind='click: () => $component.exploreByFeature($data)'>Explore</span> ";
             return {
                 title: 'Covariate',
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
-                render: (d, t, r) => { return "<span class='btn btn-sm btn-primary' data-bind='click: () => $component.exploreByFeature($data)'>Explore</span> " + d; },
+                render: (d, t, r) => {
+                    const analysis = this.data().analyses.find(a => a.analysisId === r.analysisId);
+                    return ((analysis && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') ? exploreBtn : "") + d;
+                 },
             };
         }
 
@@ -133,7 +140,9 @@ define([
             this.executionDesign = ko.observable();
             this.isExecutionDesignShown = ko.observable();
             this.isExplorePrevalenceShown = ko.observable();
+            this.explorePrevalence = ko.observable();
             this.explorePrevalenceTitle = ko.observable();
+            this.prevalenceStatData = ko.observableArray();
 
             this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
@@ -155,9 +164,9 @@ define([
         }
 
         exploreByFeature({covariateName, covariateId}) {
-            CharacterizationService.getPrevalenceStatsByGeneration(this.executionId(), covariateId);
-            this.explorePrevalenceTitle('Explore ' + covariateName);
-            this.isExplorePrevalenceShown(true);
+					this.explorePrevalence({executionId: this.executionId(), covariateId});
+					this.explorePrevalenceTitle('Exploring ' + covariateName);
+					this.isExplorePrevalenceShown(true);
         }
 
         getCountColumn(idx) {
@@ -170,7 +179,7 @@ define([
         getPctColumn(idx) {
             return {
                 title: 'Pct',
-                render: (s, p, d) => this.formatPct(d.pct[idx]),
+                render: (s, p, d) => utils.formatPct(d.pct[idx]),
             };
         }
 
@@ -463,7 +472,7 @@ define([
                         type: 'numberAbs'
                     },
                 );
-                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiffForPrevelanceCovs(
+                data.forEach(d => d.stdDiff = utils.formatStdDiff(this.calcStdDiffForPrevelanceCovs(
                     {sumValue: d.sumValue[0], pct: d.pct[0]},
                     {sumValue: d.sumValue[1], pct: d.pct[1]}
                 )));
@@ -537,7 +546,7 @@ define([
                         type: 'numberAbs'
                     },
                 );
-                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiffForDistCovs(
+                data.forEach(d => d.stdDiff = utils.formatStdDiff(this.calcStdDiffForDistCovs(
                     analysis.reports[0].stats[0],
                     analysis.reports[1].stats[0]
                 )));
@@ -580,13 +589,6 @@ define([
             return (mean2 - mean1) / sd;
         }
 
-        formatStdDiff(val) {
-            return numeral(val).format('0,0.0000');
-        }
-
-        formatPct(val) {
-            return numeral(val).format('0.00') + '%';
-        }
     }
 
     return commonUtils.build('characterization-view-edit-results', CharacterizationViewEditResults, view);

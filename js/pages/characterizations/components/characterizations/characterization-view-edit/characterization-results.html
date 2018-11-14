@@ -160,8 +160,9 @@
             showModal: $component.isExplorePrevalenceShown,
             title: $component.explorePrevalenceTitle,
             data: {
+                explore: $component.explorePrevalence(),
             }
         ">
-        <explore-prevalence params=""></explore-prevalence>
+        <explore-prevalence params="explore: explore"></explore-prevalence>
     </atlas-modal>
 </div>
