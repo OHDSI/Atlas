@@ -15,7 +15,7 @@ define([
 			this.StartWindow = new Window(data.StartWindow);
 			this.EndWindow = ko.observable(data.EndWindow && new Window(data.EndWindow));
 			this.RestrictVisit = ko.observable(data.RestrictVisit || false);
-			this.IgnoreObservationPeriod = ko.observable(data.IgnoreObservationPeriod || true);
+			this.IgnoreObservationPeriod = ko.observable(data.IgnoreObservationPeriod);
 		}
 	}
 

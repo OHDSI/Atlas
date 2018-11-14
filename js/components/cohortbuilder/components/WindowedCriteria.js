@@ -25,6 +25,10 @@ define([
 			super(params);
 			this.expression = params.expression;
 			this.criteria = params.criteria;
+			this.disableObservationPeriod = params.disableObservationPeriod || false;
+			if (this.disableObservationPeriod && params.defaultObservationPeriod) {
+				this.criteria().IgnoreObservationPeriod(params.defaultObservationPeriod);
+			}
 			this.options = options;
 		}
 

@@ -21,6 +21,6 @@
         <input type="checkbox" data-bind="checked: criteria().RestrictVisit"> restrict to the same visit occurrence
     </div>
     <div data-bind="css: classes('IgnoreObservationPeriodSection')">
-        <input type="checkbox" data-bind="checked: criteria().IgnoreObservationPeriod, disable: true"> ignore observation period
+        <input type="checkbox" data-bind="checked: criteria().IgnoreObservationPeriod, disable: disableObservationPeriod"> ignore observation period
     </div>
 </div>

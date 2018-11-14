@@ -134,7 +134,7 @@
                                 <demographic-criteria params="{ criteria: $data.expression }"></demographic-criteria>
                             </div>
                             <div data-bind="if: $data.criteriaType === 'WindowedCriteria'">
-                                <windowed-criteria params="{ expression: { ConceptSets: $component.data.conceptSets }, criteria: $data.expression}"></windowed-criteria>
+                                <windowed-criteria params="{ expression: { ConceptSets: $component.data.conceptSets }, criteria: $data.expression, disableObservationPeriod: true, defaultObservationPeriod: true }"></windowed-criteria>
                             </div>
                         </div>
                     <!-- /ko -->

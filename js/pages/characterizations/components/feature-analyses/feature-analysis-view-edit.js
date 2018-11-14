@@ -229,7 +229,7 @@ define([
 
         getEmptyWindowedCriteria(type) {
         	const data = { Criteria: {} };
-        	data.Criteria[type] = {};
+        	data.Criteria[type] = { IgnoreObservationPeriod: true, };
         	return {
         		name: ko.observable(''),
 						criteriaType: 'WindowedCriteria',
