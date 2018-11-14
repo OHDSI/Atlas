@@ -156,4 +156,12 @@
             <textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
         </div>
     </atlas-modal>
+    <atlas-modal params="
+            showModal: $component.isExplorePrevalenceShown,
+            title: $component.explorePrevalenceTitle,
+            data: {
+            }
+        ">
+        <explore-prevalence params=""></explore-prevalence>
+    </atlas-modal>
 </div>

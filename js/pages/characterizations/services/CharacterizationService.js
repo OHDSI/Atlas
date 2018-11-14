@@ -73,6 +73,12 @@ define([
             .then(res => res.data);
     }
 
+    function getPrevalenceStatsByGeneration(generationId, covariateId) {
+        return httpService
+          .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/explore/prevalence/' + covariateId)
+          .then(res => res.data);
+    }
+
     return {
         loadCharacterizationList,
         importCharacterization,
@@ -86,5 +92,6 @@ define([
         loadCharacterizationResults,
         loadCharacterizationExportDesignByGeneration,
         runGeneration,
+        getPrevalenceStatsByGeneration,
     };
 });

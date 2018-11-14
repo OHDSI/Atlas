@@ -15,6 +15,7 @@ define([
     'components/visualizations/filter-panel/utils',
     'services/MomentAPI',
     'services/Source',
+    './explore-prevalence',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/line-chart',
@@ -131,6 +132,8 @@ define([
 
             this.executionDesign = ko.observable();
             this.isExecutionDesignShown = ko.observable();
+            this.isExplorePrevalenceShown = ko.observable();
+            this.explorePrevalenceTitle = ko.observable();
 
             this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
@@ -151,8 +154,10 @@ define([
 						});
         }
 
-        exploreByFeature({cohortId, covariateId}) {
-            cohortFeaturesService.getStudyPrevalenceStatisticsByVocab(cohortId, this.data().sourceKey, covariateId);
+        exploreByFeature({covariateName, covariateId}) {
+            CharacterizationService.getPrevalenceStatsByGeneration(this.executionId(), covariateId);
+            this.explorePrevalenceTitle('Explore ' + covariateName);
+            this.isExplorePrevalenceShown(true);
         }
 
         getCountColumn(idx) {
@@ -307,7 +312,7 @@ define([
             if (analyses.length > 1 && analyses[0].reports.length === 2) {
 
                 const getAllCohortStats = (cohortId) => {
-                    return lodash.flatten(analyses.filter(a => a.type=="prevalence").map(a => {
+                    return lodash.flatten(analyses.filter(a => a.type === "prevalence").map(a => {
                         const analysisName = a.analysisName;
                         const analysisId = a.analysisId;
                         const stats = lodash.flatten(a.reports.filter(r => r.cohortId === cohortId).map(r => r.stats));
@@ -421,8 +426,6 @@ define([
             let columns = [ this.covNameColumn ];
 
             let data = {};
-
-            console.log('prevalence analysis', analysis);
 
             analysis.reports.forEach((r, i) => {
 
