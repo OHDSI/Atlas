@@ -11,11 +11,10 @@ require(["./settings"], (settings) => {
 			...settings.paths,
 			...settings.localRefs,
 		},
-		urlArgs: bustCache,
+//		urlArgs: bustCache,
 	});	
 	require([
 		'bootstrap',
-		'jquery-ui',
 		'ko.sortable',
 		...Object.values(settings.cssPaths),
 	], function () { // bootstrap must come first

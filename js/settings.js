@@ -40,11 +40,6 @@ const settingsObject = {
       location: "pages",
     },
     {
-      name: "jquery-ui",
-      location: "../node_modules/jquery-ui",
-      main: "ui/widget",
-    },
-    {
       name: "lodash",
       location: "../node_modules/lodash",
       main: "lodash",
@@ -85,14 +80,13 @@ const settingsObject = {
   },
   map: {
     "*": {
-      'jquery-ui/dialog': 'jquery-ui',
-      'jquery-ui/tabs': 'jquery-ui',
       'jqueryui/jquery.ddslick': 'assets/jqueryui/jquery.ddslick',
       'jqueryui/autoGrowInput': 'assets/jqueryui/autoGrowInput',
     }
   },
   paths: {    
     "jquery": "../node_modules/jquery/dist/jquery",
+		"jquery-ui": "../node_modules/jquery-ui",
     "bootstrap": "../node_modules/bootstrap/dist/js/bootstrap",
     "text": "extensions/plugins/text",
     "less": "extensions/plugins/less",
