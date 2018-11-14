@@ -215,6 +215,8 @@ define([
                     });
                 });
 
+                result.analyses.forEach(a => a.reports.sort((a,b) => a.cohortName.localeCompare(b.cohortName)));
+
                 this.filterList(this.getFilterList(result.analyses));
                 this.data(result);
                 this.loading(false);
