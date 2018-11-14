@@ -9,7 +9,6 @@
 <atlas-modal params="{
 		showModal: helpInclusionCriteriaOpened,
 		title: 'Inclusion Criteria',
-		template: 'inclusion-criteria',
 		data: {}
 }">
 	The qualifying cohort will be defined as all persons who have an initial event, satisfy the initial event inclusion criteria, and fulfill all additional qualifying inclusion criteria. Each qualifying inclusion criteria will be evaluated to determine the
@@ -148,7 +147,7 @@
 					
 				</div>
 
-				<div>
+				<div class="inclusion-criteria__rules-block">
 					<!-- ko if: $component.selectedInclusionRule() -->
 					<inclusion-rule-editor params="{IndexRule: expression, InclusionRule: selectedInclusionRule}"></inclusion-rule-editor>
 					<!-- /ko -->
