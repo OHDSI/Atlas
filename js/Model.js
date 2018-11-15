@@ -850,23 +850,25 @@ define(
 			}
 	
 			updateRoles() {
-				if (!config.userAuthenticationEnabled)
-						return true;
-
-				console.info('Updating roles');
-				if (!authApi.isAuthenticated()) {
-					console.warn('Roles are not updated');
-					return Promise.resolve();
-				}
-				if (this.roles() && this.roles().length > 0) {
-					console.info('Roles updated');
-					return Promise.resolve();
-				} else {
-					return roleService.getList()
-						.then((roles) => {
-							console.info('Roles updated');
-							this.roles(roles);
-						});
+				if (authApi.isPermittedReadRoles()){
+					if (!config.userAuthenticationEnabled)
+							return true;
+	
+					console.info('Updating roles');
+					if (!authApi.isAuthenticated()) {
+						console.warn('Roles are not updated');
+						return Promise.resolve();
+					}
+					if (this.roles() && this.roles().length > 0) {
+						console.info('Roles updated');
+						return Promise.resolve();
+					} else {
+						return roleService.getList()
+							.then((roles) => {
+								console.info('Roles updated');
+								this.roles(roles);
+							});
+					}
 				}
 			}
 	
