@@ -35,8 +35,7 @@ define([
 		constructor(params) {
 			super(params);
 
-			this.reports = [
-				{
+			this.reports = [{
 					name: "Dashboard",
 					path: "dashboard",
 					component: "report-dashboard",
@@ -121,7 +120,27 @@ define([
 			this.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 			this.currentSource = ko.observable(this.sources[0]);
 			this.currentReport = ko.observable();
+			this.selectedReport = ko.observable();
+
+			this.selectedReport.subscribe(r => {
+				document.location = "#/datasources/" + this.currentSource().sourceKey + "/" + this.selectedReport().path;
+			});
+
 			this.currentConcept = ko.observable();
+
+			this.onRouterParamsChanged = function (changedParams, newParams) {
+				if (newParams == null) {
+					// initial page load direct from URL
+					this.currentSource(this.sources().find(s => s.sourceKey == changedParams.sourceKey));
+					this.currentReport(this.reports.find(r => r.path == changedParams.reportName));
+					this.selectedReport(this.reports.find(r => r.path == changedParams.reportName));
+				} else {
+					this.currentSource(this.sources().find(s => s.sourceKey == newParams.sourceKey));
+					this.currentReport(this.reports.find(r => r.path == newParams.reportName));
+					this.selectedReport(this.reports.find(r => r.path == newParams.reportName));
+				}
+
+			}
 		}
 	}
 

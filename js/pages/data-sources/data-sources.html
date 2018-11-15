@@ -1,7 +1,7 @@
 <heading-title params="name: 'Data Sources reports', icon: 'area-chart', theme: 'dark'"></heading-title>
 
 <!-- ko ifnot: canViewCdmResults -->
-	<access-denied class="flexed" params="isAuthenticated: $component.isAuthenticated"></access-denied>
+<access-denied class="flexed" params="isAuthenticated: $component.isAuthenticated"></access-denied>
 <!-- /ko -->
 
 <div data-bind="if: canViewCdmResults">
@@ -14,7 +14,7 @@
 		</div>
 		<div class="row">
 			<div class="col-xs-12">
-				<select class="form-control" data-bind="css : { invalid:  currentReport()==undefined }, options: reports, optionsCaption:'Select a Report', optionsText:'name', value: currentReport, disable: !currentSource()"></select>
+				<select class="form-control" data-bind="css : { invalid:  selectedReport()==undefined }, options: reports, optionsCaption:'Select a Report', optionsText:'name', value: selectedReport, disable: !currentSource()"></select>
 			</div>
 		</div>
 		<div class="clear"></div>
