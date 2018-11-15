@@ -106,15 +106,18 @@ define([
         }
 
         get covNameColumn() {
-            const exploreBtn = "<span class='" + this.classes({element: 'explore', extra: 'btn btn-sm btn-primary'}) +
-							"' data-bind='click: () => $component.exploreByFeature($data)'>Explore</span> ";
+            const exploreBtn = `
+                <div class='${this.classes({element: 'explore'})}'>
+                    <a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data)'>Explore</a>
+                </div>
+            `;
             return {
                 title: 'Covariate',
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
                 render: (d, t, r) => {
                     const analysis = this.data().analyses.find(a => a.analysisId === r.analysisId);
-                    return ((analysis && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') ? exploreBtn : "") + d;
+                    return d + ((analysis && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') ? exploreBtn : "");
                  },
             };
         }
