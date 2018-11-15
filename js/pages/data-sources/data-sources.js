@@ -122,11 +122,15 @@ define([
 			this.currentReport = ko.observable();
 			this.selectedReport = ko.observable();
 
-			this.selectedReport.subscribe(r => {
+			this.selectedReportSubscription = this.selectedReport.subscribe(r => {
 				if (this.currentSource() && this.selectedReport()) {
 					document.location = "#/datasources/" + this.currentSource().sourceKey + "/" + this.selectedReport().path;
 				}
 			});
+
+			this.dispose = function () {
+				this.selectedReportSubscription.dispose();
+			}
 
 			this.currentConcept = ko.observable();
 
