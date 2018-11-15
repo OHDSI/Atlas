@@ -1,26 +1,26 @@
 <!-- ko if: !isLoading() -->
-<heading-title params="name: title, icon: 'area-chart'"></heading-title>
+<div class="dataSourceReportHeading" data-bind="text:title"> </div>
 <div class="panel panel-primary">
-  <div class="panel-heading">
-    <span data-bind="name"></span> Prevalence
-  </div>
-  <div class="panel-body">
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-      <li class="active" id="treemap-tab">
-        <a href="#treemap-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('tree')">Treemap</a>
-      </li>
-      <li>
-        <a href="#table-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('table')">Table</a>
-      </li>
-    </ul>
-    <div id='content' class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="treemap-panel">
-        <treemap params="data: treeData, format: chartFormats.treemap, aggProperty: aggProperty"></treemap>
-        <div class="treemap_legend">Box Size: Prevalence, Color: <span data-bind="text: aggProperty.description"></span> (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom
-        </div>
-      </div>
-      <div role="tabpanel" class="tab-pane" id="table-panel">
-        <faceted-datatable params="
+	<div class="panel-heading">
+		<span data-bind="name"></span> Prevalence
+	</div>
+	<div class="panel-body">
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="active" id="treemap-tab">
+				<a href="#treemap-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('tree')">Treemap</a>
+			</li>
+			<li>
+				<a href="#table-panel" role="tab" data-toggle="tab" data-bind="click: selectTab('table')">Table</a>
+			</li>
+		</ul>
+		<div id='content' class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="treemap-panel">
+				<treemap params="data: treeData, format: chartFormats.treemap, aggProperty: aggProperty"></treemap>
+				<div class="treemap_legend">Box Size: Prevalence, Color: <span data-bind="text: aggProperty.description"></span> (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="table-panel">
+				<faceted-datatable params="
           columns: chartFormats.table.columns,
           reference: tableData,
           rowClick: currentConcept,
@@ -31,11 +31,11 @@
           autoWidth: chartFormats.table.autoWidth,
           pageLength: chartFormats.table.pageLength,
         "></faceted-datatable>
-      </div>
-    </div>
-  </div>
+			</div>
+		</div>
+	</div>
 </div>
 <!-- ko if: currentConcept() -->
-  <report-treemap-drilldown params="context: context, currentReport: currentReport, currentConcept: currentConcept, byFrequency: byFrequency, byUnit: byUnit, byType: byType, byValueAsConcept: byValueAsConcept, byQualifier: byQualifier, byOperator: byOperator"></report-treemap-drilldown>
+<report-treemap-drilldown params="context: context, currentReport: currentReport, currentConcept: currentConcept, byFrequency: byFrequency, byUnit: byUnit, byType: byType, byValueAsConcept: byValueAsConcept, byQualifier: byQualifier, byOperator: byOperator"></report-treemap-drilldown>
 <!-- /ko -->
 <!--/ko-->

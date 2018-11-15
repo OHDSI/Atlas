@@ -123,12 +123,17 @@ define([
 			this.selectedReport = ko.observable();
 
 			this.selectedReport.subscribe(r => {
-				document.location = "#/datasources/" + this.currentSource().sourceKey + "/" + this.selectedReport().path;
+				if (this.currentSource() && this.selectedReport()) {
+					document.location = "#/datasources/" + this.currentSource().sourceKey + "/" + this.selectedReport().path;
+				}
 			});
 
 			this.currentConcept = ko.observable();
 
 			this.onRouterParamsChanged = function (changedParams, newParams) {
+				if (newParams == null && changedParams == null)
+					return;
+
 				if (newParams == null) {
 					// initial page load direct from URL
 					this.currentSource(this.sources().find(s => s.sourceKey == changedParams.sourceKey));

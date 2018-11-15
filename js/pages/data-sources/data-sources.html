@@ -1,10 +1,10 @@
-<heading-title params="name: 'Data Sources reports', icon: 'area-chart', theme: 'dark'"></heading-title>
+<heading-title params="name: 'Data Sources', icon: 'area-chart', theme: 'dark'"></heading-title>
 
 <!-- ko ifnot: canViewCdmResults -->
 <access-denied class="flexed" params="isAuthenticated: $component.isAuthenticated"></access-denied>
 <!-- /ko -->
 
-<div data-bind="if: canViewCdmResults">
+<div class="data-sources" data-bind="if: canViewCdmResults">
 	<!-- ko if: showSelectionArea -->
 	<div class="reportControls pad-5">
 		<div class="row">
