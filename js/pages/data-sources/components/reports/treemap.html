@@ -14,12 +14,12 @@
 			</li>
 		</ul>
 		<div id='content' class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="treemap-panel">
+			<div role="tabpanel" class="tab-pane active drilldown-enabled" id="treemap-panel">
 				<treemap params="data: treeData, format: chartFormats.treemap, aggProperty: aggProperty"></treemap>
 				<div class="treemap_legend">Box Size: Prevalence, Color: <span data-bind="text: aggProperty.description"></span> (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom
 				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="table-panel">
+			<div role="tabpanel" class="tab-pane drilldown-enabled" id="table-panel">
 				<faceted-datatable params="
           columns: chartFormats.table.columns,
           reference: tableData,

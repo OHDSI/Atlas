@@ -1,4 +1,8 @@
 .data-sources {
+	& .drilldown-enabled tr,rect {
+		cursor: pointer;
+	}
+
   &.hidden {
     display: none;
   }
@@ -29,10 +33,6 @@
 		margin-right: auto;
 		margin-top: 0px;
 	}
-
-  & #data-sources-treemap_container rect {
-    cursor: pointer;
-  }
 
   & #datasourceTitle {
     margin-top: 10px;
