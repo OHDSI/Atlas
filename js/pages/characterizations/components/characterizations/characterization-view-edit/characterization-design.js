@@ -39,11 +39,8 @@ define([
 			this.isViewPermitted = this.isPermittedViewResolver();
 
 			this.cohorts = ko.computed({
-				read: () => params.design() && params.design().cohorts || [],
-				write: (value) => params.design({
-					...params.design(),
-					cohorts: value,
-				}),
+				read: () => params.design() && params.design().cohorts() || [],
+				write: (value) => params.design().cohorts(value),
 			});
 
 			this.featureAnalyses = {
@@ -70,7 +67,7 @@ define([
 						className: this.classes('col-feature-remove'),
 					}
 				],
-				data: ko.computed(() => params.design() && params.design().featureAnalyses || [])
+				data: ko.computed(() => params.design() && params.design().featureAnalyses() || [])
 			};
 
 			this.featureAnalysesParams = {
@@ -92,7 +89,7 @@ define([
 						className: this.classes('col-param-remove'),
 					}
 				],
-				data: ko.computed(() => params.design() && params.design().parameters || [])
+				data: ko.computed(() => params.design() && params.design().parameters() || [])
 			};
 
 			this.showFeatureAnalysesBrowser = ko.observable(false);
@@ -129,47 +126,33 @@ define([
 
 		attachFeature({id, name, description}) {
 			const ccDesign = this.design();
-			this.design({
-				...ccDesign,
-				featureAnalyses: lodash.uniqBy(
-					[
-						...(ccDesign.featureAnalyses || []),
-						{id, name, description}
-					],
-					'id'
-				),
-			});
+			ccDesign.featureAnalyses(lodash.uniqBy(
+				[
+					...(ccDesign.featureAnalyses() || []),
+					{id, name, description}
+				],
+				'id'
+			));
 		}
 
 		removeFeature(id) {
-			const ccDesign = this.design();
-			this.design({
-				...ccDesign,
-				featureAnalyses: ccDesign.featureAnalyses.filter(a => a.id !== parseInt(id)),
-			});
+			this.design().featureAnalyses.remove(a => a.id === parseInt(id));
 		}
 
 		addParam({name, value}) {
 			const ccDesign = this.design();
 			this.isParameterCreateModalShown(false);
-			this.design({
-				...ccDesign,
-				parameters: lodash.uniqBy(
-					[
-						...(ccDesign.parameters || []),
-						{name, value}
-					],
-					'name'
-				)
-			});
+			ccDesign.parameters(lodash.uniqBy(
+				[
+					...(ccDesign.parameters() || []),
+					{name, value}
+				],
+				'name'
+			));
 		}
 
 		removeParam(name) {
-			const ccDesign = this.design();
-			this.design({
-				...ccDesign,
-				parameters: ccDesign.parameters.filter(a => a.name !== name),
-			});
+			this.design().parameters.remove(a => a.name === name);
 		}
 
 
