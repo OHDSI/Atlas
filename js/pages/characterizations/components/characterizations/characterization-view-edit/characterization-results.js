@@ -166,8 +166,8 @@ define([
 						});
         }
 
-        exploreByFeature({covariateName, covariateId}) {
-					this.explorePrevalence({executionId: this.executionId(), covariateId});
+        exploreByFeature({covariateName, analysisId, covariateId}) {
+					this.explorePrevalence({executionId: this.executionId(), analysisId, covariateId});
 					this.explorePrevalenceTitle('Exploring ' + covariateName);
 					this.isExplorePrevalenceShown(true);
         }

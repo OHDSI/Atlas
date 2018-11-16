@@ -36,9 +36,9 @@ define([
 			this.loadData(this.explore);
 		}
 
-		loadData({executionId, covariateId}) {
+		loadData({executionId, analysisId, covariateId}) {
 			this.loading(true);
-			return CharacterizationService.getPrevalenceStatsByGeneration(executionId, covariateId)
+			return CharacterizationService.getPrevalenceStatsByGeneration(executionId, analysisId, covariateId)
 				.then(res => this.data(res.map(v => ({...v, executionId}))))
 				.finally(() => this.loading(false));
 		}
@@ -54,8 +54,9 @@ define([
 		renderRelationship(data, type, row) {
 			const distance = row.distance;
 			const rel = distance > 0 ? 'Ancestor' : distance < 0 ? 'Descendant' : 'Selected';
-			const cls = this.classes({element: 'explore', extra: 'btn btn-sm btn-primary'});
-			return "<span class='"+ cls + "' data-bind='click: () => $component.exploreByFeature($data)'>Explore</span> " + rel;
+			const cls = this.classes({element: 'explore', modifiers: distance === 0 ? 'disabled' : '', extra: 'btn btn-sm btn-primary'});
+			const binding = distance !== 0 ? 'click: () => $component.exploreByFeature($data)' : '';
+			return "<span class='"+ cls + "' data-bind='" + binding + "'>Explore</span> " + rel;
 		}
 
 	}

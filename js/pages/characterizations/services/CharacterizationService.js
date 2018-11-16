@@ -73,9 +73,9 @@ define([
             .then(res => res.data);
     }
 
-    function getPrevalenceStatsByGeneration(generationId, covariateId) {
+    function getPrevalenceStatsByGeneration(generationId, analysisId, covariateId) {
         return httpService
-          .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/explore/prevalence/' + covariateId)
+          .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/explore/prevalence/' + analysisId + '/' + covariateId)
           .then(res => res.data);
     }
 
