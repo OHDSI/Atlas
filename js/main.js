@@ -93,7 +93,6 @@ require([
 
 				app.bootstrap()
 					.then(() => app.synchronize())
-					.then(() => app.run())
 					.catch(er => {
 						sharedState.appInitializationStatus(Model.applicationStatuses.failed);
 						console.error('App initialization failed', er);

@@ -77,14 +77,6 @@ define(
 
 				return promise;
 			}
-
-			/**
-			 * Starts business logic
-			 */
-			run() {
-				sharedState.appInitializationStatus(GlobalModel.applicationStatuses.running);
-			}
-
 			// service methods
 
 			attachGlobalEventListeners() {

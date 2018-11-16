@@ -15,13 +15,11 @@ define(function (require, exports) {
 	function getSources() {
 		var promise = $.ajax({
 			url: config.webAPIRoot + 'source/sources/',
-			error: function (error) {
+			error: function () {
 				sharedState.appInitializationStatus('failed');
 			},
-			success: function (o) {
-				// this is the initial communication to WebAPI and if it succeeds
-				// the initialization is complete and the application is ready.
-				sharedState.appInitializationStatus('running');
+			success: function (sources) {
+			  getSourcesSuccess(sources);
 			}
 		});
 		return promise;
@@ -78,6 +76,9 @@ define(function (require, exports) {
       success: (sources) => {
         config.api.available = true;
         setSharedStateSources(sources);
+          // this is the initial communication to WebAPI and if it succeeds
+          // the initialization is complete and the application is ready.
+        getSourcesSuccess(sources);
         servicePromise.resolve();
       },
       error: function (xhr, ajaxOptions, thrownError) {
@@ -94,7 +95,13 @@ define(function (require, exports) {
 
     return servicePromise;
   }
-
+  function getSourcesSuccess(sources){
+      if (sources.length !== 0){
+          sharedState.appInitializationStatus('running');
+      } else {
+          sharedState.appInitializationStatus('no-sources-available');
+      }
+  }
   function setSharedStateSources(sources) {
     sharedState.sources([]);
     var serviceCacheKey = getCacheKey();
