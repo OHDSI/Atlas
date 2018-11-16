@@ -19,7 +19,7 @@ define(function (require, exports) {
 				sharedState.appInitializationStatus('failed');
 			},
 			success: function (sources) {
-			  getSourcesSuccess(sources);
+			  setAppInitStatus(sources);
 			}
 		});
 		return promise;
@@ -78,7 +78,7 @@ define(function (require, exports) {
         setSharedStateSources(sources);
           // this is the initial communication to WebAPI and if it succeeds
           // the initialization is complete and the application is ready.
-        getSourcesSuccess(sources);
+        setAppInitStatus(sources);
         servicePromise.resolve();
       },
       error: function (xhr, ajaxOptions, thrownError) {
@@ -95,7 +95,7 @@ define(function (require, exports) {
 
     return servicePromise;
   }
-  function getSourcesSuccess(sources){
+  function setAppInitStatus(sources){
       if (sources.length !== 0){
           sharedState.appInitializationStatus('running');
       } else {
