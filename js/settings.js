@@ -133,6 +133,7 @@ const settingsObject = {
     "SecondLevelDomains": "https://unpkg.com/urijs@1.19.1/src/SecondLevelDomains",		
     "IPv6": "https://unpkg.com/urijs@1.19.1/src/IPv6",
     "bootstrap-datetimepicker": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min",
+    "detect-browser": "https://cdnjs.cloudflare.com/ajax/libs/Detect.js/2.2.2/detect",
   },
   cssPaths: {
     "font-awesome.min.css": "styles/font-awesome.min.css",

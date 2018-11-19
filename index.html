@@ -15,7 +15,14 @@
 	</head>
 	
 	<body class="app">
-	<div id="splash" data-bind="if:!initializationComplete()">
+	<div class="browser-alarm" style="display:none;" data-bind="visible: isBrowserWarningShown()">
+		<div class="warning-text">
+			Note that only Chrome browser newer than v.63 is officially supported
+		</div>
+		<button type="button" class="close" data-bind="click: function () { isBrowserWarningShown(false) }">&times;</button>
+	</div>
+	<!-- ko if: !initializationComplete() -->
+	<div id="splash">
 		<div id="stage">
 			<img src="images/atlas_loading.svg" />
 		</div>
@@ -24,8 +31,9 @@
 		</div>
 		<div data-bind="text:applicationStatus" id="status"></div>
 	</div>
+	<!-- /ko -->
 
-	<div style="display:none;" data-bind="visible: initializationComplete(), css: classes('menu-container')">
+	<div style="display:none;" data-bind="visible: initializationComplete(), css: classes(isBrowserWarningShown() ? 'menu-container-with-warning' : 'menu-container-without-warning')">
 		<div id="wrapperLogo">
 			<a href="#/home">ATLAS</a>
 		</div>
@@ -49,7 +57,7 @@
 		</div>
 	</div>
 
-	<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete()">
+	<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete(), attr: {class: isBrowserWarningShown() ? 'mainWindowWithWarning' : 'mainWindowWithoutWarning'}">
 		<div id="wrapperMainWindowContainer">
 			<user-bar params="{model: $data}"></user-bar>
 			<div data-bind="if: appInitializationStatus() == 'failed'">

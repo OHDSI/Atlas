@@ -236,10 +236,18 @@ pre span.key {
   margin-top: -5px;
 }
 
-#wrapperMainWindow {
+.mainWindowWithoutWarning {
   position: absolute;
   left: 174px;
   top: 0px;
+  right: 0px;
+  height: 100%;
+}
+
+.mainWindowWithWarning {
+  position: absolute;
+  left: 174px;
+  top: 30px;
   right: 0px;
   height: 100%;
 }
@@ -250,6 +258,27 @@ pre span.key {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.browser-alarm {
+  background-color: #ce8483;
+  color: darkred;
+  height: 30px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.browser-alarm .warning-text {
+  justify-content: center;
+  margin-left: auto;
+}
+
+.browser-alarm .close {
+  color: darkred;
+  opacity: .8;
+  margin-left: auto;
+  margin-right: 7px;
 }
 
 .flexed {
