@@ -104,11 +104,10 @@ define([
 			];
 
 			this.model = params.model;
-			this.sources = ko.computed(() => {
-				return sharedState.sources().filter(function (s) {
-					return s.hasResults && s.hasCDM;
-				});
+			this.sources = sharedState.sources().filter(function (s) {
+				return s.hasResults && s.hasCDM;
 			});
+
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
 
@@ -123,13 +122,22 @@ define([
 			this.selectedReport = ko.observable();
 
 			this.selectedReportSubscription = this.selectedReport.subscribe(r => {
+				this.updateLocation();
+			});
+
+			this.selectedSourceSubscription = this.currentSource.subscribe(r => {
+				this.updateLocation();
+			})
+
+			this.updateLocation = function () {
 				if (this.currentSource() && this.selectedReport()) {
 					document.location = "#/datasources/" + this.currentSource().sourceKey + "/" + this.selectedReport().path;
 				}
-			});
+			}
 
 			this.dispose = function () {
 				this.selectedReportSubscription.dispose();
+				this.selectedSourceSubscription.dispose();
 			}
 
 			this.currentConcept = ko.observable();
@@ -140,13 +148,17 @@ define([
 
 				if (newParams == null) {
 					// initial page load direct from URL
-					this.currentSource(this.sources().find(s => s.sourceKey == changedParams.sourceKey));
+					this.currentSource(this.sources.find(s => s.sourceKey == changedParams.sourceKey));
 					this.currentReport(this.reports.find(r => r.path == changedParams.reportName));
 					this.selectedReport(this.reports.find(r => r.path == changedParams.reportName));
 				} else {
-					this.currentSource(this.sources().find(s => s.sourceKey == newParams.sourceKey));
-					this.currentReport(this.reports.find(r => r.path == newParams.reportName));
-					this.selectedReport(this.reports.find(r => r.path == newParams.reportName));
+					if (changedParams.sourceKey) {
+						this.currentSource(this.sources.find(s => s.sourceKey == newParams.sourceKey));
+					}
+					if (changedParams.reportName) {
+						this.currentReport(this.reports.find(r => r.path == newParams.reportName));
+						this.selectedReport(this.reports.find(r => r.path == newParams.reportName));
+					}
 				}
 
 			}
