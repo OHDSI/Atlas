@@ -57,7 +57,7 @@ define([
 					component: "report-visit",
 				},
 				{
-					name: "Condition",
+					name: "Condition Occurrence",
 					path: "condition",
 					component: "report-condition",
 				},
@@ -72,7 +72,7 @@ define([
 					component: "report-procedure",
 				},
 				{
-					name: "Drug",
+					name: "Drug Exposure",
 					path: "drug",
 					component: "report-drug",
 				},
