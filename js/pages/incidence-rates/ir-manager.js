@@ -32,7 +32,7 @@ define([
 	ohdsiUtil,
 	config,
 	sharedState,
-	JobDetailsService,
+	jobDetailsService,
 	jobDetail,
 	authAPI,
 	Page,
