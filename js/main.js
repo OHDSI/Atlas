@@ -158,8 +158,9 @@ requirejs.config({
 		"plp-spec-editor": "components/plp-spec-editor",
 		"plp-r-code": "components/plp-r-code",
 		"plp-print-friendly": "components/plp-print-friendly",
-		"feedback": "components/feedback",
-    "js-cookie": "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min",
+		"feedback": "components/feedback", 
+		"js-cookie": "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min", 
+		"detect-browser": "https://cdnjs.cloudflare.com/ajax/libs/Detect.js/2.2.2/detect",
 
     "d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.0/d3.min",
 		"d3-collection": "https://cdnjs.cloudflare.com/ajax/libs/d3-collection/1.0.4/d3-collection.min",

@@ -72,10 +72,20 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
-#wrapperLeftMenu {
+.menuContainerWithoutWarning {
   position: fixed;
   left: 0px;
   top: 0px;
+  width: 150px;
+  bottom: 0;
+  background-color: #003142;
+  border-right: solid 1px #888;
+}
+
+.menuContainerWithWarning {
+  position: fixed;
+  left: 0px;
+  top: 30px;
   width: 150px;
   bottom: 0;
   background-color: #003142;
@@ -263,10 +273,18 @@ pre span.key {
   margin-top: -5px;
 }
 
-#wrapperMainWindow {
+.mainWindowWithoutWarning  {
   position: absolute;
   left: 149px;
   top: 0px;
+  right: 0px;
+  height: 100%;
+}
+
+.mainWindowWithWarning {
+  position: absolute;
+  left: 149px;
+  top: 30px;
   right: 0px;
   height: 100%;
 }
@@ -277,6 +295,27 @@ pre span.key {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.browser-alarm {
+  background-color: #ce8483;
+  color: darkred;
+  height: 30px;
+  position: absolute;
+  display: flex;
+  left: 0px;
+  right: 0px;
+  align-items: center;
+}
+.browser-alarm .warning-text {
+  justify-content: center;
+  margin-left: auto;
+}
+.browser-alarm .close {
+  color: darkred;
+  opacity: .8;
+  margin-left: auto;
+  margin-right: 7px;
 }
 
 .flexed {
