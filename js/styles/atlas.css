@@ -264,7 +264,9 @@ pre span.key {
   background-color: #ce8483;
   color: darkred;
   height: 30px;
-  position: relative;
+  position: absolute;
+  left: 0px;
+  right: 0px;
   display: flex;
   align-items: center;
 }
