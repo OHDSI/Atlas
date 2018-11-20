@@ -1,5 +1,5 @@
-define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'atlas-state', 'access-denied'],
-  function (ko, view, config, ohdsiUtil, sourceApi, roleApi, lodash, sharedState) {
+define(['knockout', 'text!./source-manager.html', 'appConfig', 'vocabularyprovider', 'ohdsi.util', 'webapi/SourceAPI', 'webapi/RoleAPI', 'lodash', 'atlas-state', 'access-denied'],
+  function (ko, view, config, vocabularyProvider, ohdsiUtil, sourceApi, roleApi, lodash, sharedState) {
 
   var defaultDaimons = {
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
@@ -130,6 +130,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'ohdsi.util', 'we
       self.loading(true);
       sourceApi.saveSource(self.selectedSourceId(), source)
         .then(sourceApi.initSourcesConfig)
+        .then(vocabularyProvider.getDomains)
         .then(roleApi.updateRoles)
         .then(function () {
           self.goToConfigure();

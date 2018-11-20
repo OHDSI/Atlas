@@ -16,10 +16,10 @@ define(function (require, exports) {
 			error: function (error) {
 				sharedState.appInitializationStatus('failed');
 			},
-			success: function (o) {
+			success: function (sources) {
 				// this is the initial communication to WebAPI and if it succeeds
 				// the initialization is complete and the application is ready.
-				sharedState.appInitializationStatus('complete');
+                setAppInitStatus(sources);
 			}
 		});
 		return promise;
@@ -61,6 +61,14 @@ define(function (require, exports) {
     });
   }
 
+  function setAppInitStatus(sources){
+    if (sources.length !== 0){
+        sharedState.appInitializationStatus('complete');
+    } else {
+        sharedState.appInitializationStatus('no-sources-available');
+    }
+}
+
   function initSourcesConfig() {
     config.api.available = true;
 
@@ -78,6 +86,7 @@ define(function (require, exports) {
       contentType: 'application/json',
       success: function (sources) {
         sharedState.sources([]);
+        setAppInitStatus(sources);
         config.api.available = true;
         var completedSources = 0;
         var result = [];
