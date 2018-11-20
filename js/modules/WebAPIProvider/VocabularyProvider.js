@@ -292,8 +292,8 @@ define(function (require, exports) {
 		getConceptSetExpressionSQL: getConceptSetExpressionSQL,
 		optimizeConceptSet: optimizeConceptSet,
 		compareConceptSet: compareConceptSet,
-		loadDensity: loadDensity,
-        getDomains: getDomains,
+		loadDensity: loadDensity, 
+		getDomains: getDomains,
 	}
 
 	return api;

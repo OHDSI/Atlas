@@ -17,9 +17,9 @@ define(function (require, exports) {
 				sharedState.appInitializationStatus('failed');
 			},
 			success: function (sources) {
-				// this is the initial communication to WebAPI and if it succeeds
-				// the initialization is complete and the application is ready.
-                setAppInitStatus(sources);
+			    // this is the initial communication to WebAPI and if it succeeds
+                // the initialization is complete and the application is ready.
+			    setAppInitStatus(sources);
 			}
 		});
 		return promise;
