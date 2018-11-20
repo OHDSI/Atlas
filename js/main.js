@@ -73,6 +73,7 @@ require([
 			'knockout',
 			'Application',
 			'Model',
+			'const',
 			'pages/Router',
 			'atlas-state',
 			'jquery.ui.autocomplete.scroll',
@@ -86,6 +87,7 @@ require([
 				ko,
 				Application,
 				Model,
+				constants,
 				Router,
 				sharedState,
 			) => {
@@ -94,7 +96,7 @@ require([
 				app.bootstrap()
 					.then(() => app.synchronize())
 					.catch(er => {
-						sharedState.appInitializationStatus(Model.applicationStatuses.failed);
+						sharedState.appInitializationStatus(constants.applicationStatuses.failed);
 						console.error('App initialization failed', er);
 					});
 

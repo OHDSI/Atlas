@@ -9,6 +9,7 @@ define(function (require, exports) {
   var ko = require('knockout');
     const lodash = require('lodash');
 	const httpService = require('services/http');
+	const constants = require('const');
 
 	var sources;
 
@@ -16,7 +17,7 @@ define(function (require, exports) {
 		var promise = $.ajax({
 			url: config.webAPIRoot + 'source/sources/',
 			error: function () {
-				sharedState.appInitializationStatus('failed');
+				 sharedState.appInitializationStatus(constants.applicationStatuses.failed);
 			},
 			success: function (sources) {
 			  setAppInitStatus(sources);
@@ -97,9 +98,9 @@ define(function (require, exports) {
   }
   function setAppInitStatus(sources){
       if (sources.length !== 0){
-          sharedState.appInitializationStatus('running');
+          sharedState.appInitializationStatus(constants.applicationStatuses.running);
       } else {
-          sharedState.appInitializationStatus('no-sources-available');
+          sharedState.appInitializationStatus(constants.applicationStatuses.noSourcesAvailable);
       }
   }
   function setSharedStateSources(sources) {

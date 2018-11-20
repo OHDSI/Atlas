@@ -5,6 +5,7 @@ define([
   'utils/AutoBind',
   'utils/CommonUtils',
   'appConfig',
+  'services/Vocabulary',
   'assets/ohdsi.util',
   'services/SourceAPI',
   'services/role',
@@ -23,6 +24,7 @@ define([
     AutoBind,
     commonUtils,
     config,
+    vocabularyProvider,
     ohdsiUtil,
     sourceApi,
     roleService,
@@ -265,6 +267,7 @@ define([
       this.loading(true);
       sourceApi.saveSource(this.selectedSourceId(), source)
         .then(() => sourceApi.initSourcesConfig())
+        .then(() => vocabularyProvider.getDomains())
         .then(() => {
           roleService.getList()
             .then((roles) => {
