@@ -1,6 +1,7 @@
 define(
 	[
-		'knockout',
+		'knockout', 
+		'detect-browser',
 		'utils/CommonUtils',
 		'const',
 		'services/http',
@@ -21,7 +22,8 @@ define(
 		'less!app.less',
 	],
 	(
-		ko,
+		ko, 
+		detect,
 		commonUtils,
 		constants,
 		httpService,
@@ -53,6 +55,9 @@ define(
 			constructor() {
 				super();
 				const bemHelper = new BemHelper('app');
+				const browser = detect.parse(navigator.userAgent);
+				this.isBrowserSupported = browser.browser.family.toLowerCase() === 'chrome' && parseInt(browser.browser.version) > 63;
+				this.isBrowserWarningShown = ko.observable(!this.isBrowserSupported);
 				this.classes = bemHelper.run.bind(bemHelper);
 				this.activePage = ko.observable();
 				this.componentParams = ko.observable({});

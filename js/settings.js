@@ -124,6 +124,7 @@ const settingsObject = {
     "lz-string": "assets/lz-string",
     "jquery.ui.autocomplete.scroll": "assets/jquery.ui.autocomplete.scroll",
     "facets": "assets/facets",
+    "detect-browser": "https://cdnjs.cloudflare.com/ajax/libs/Detect.js/2.2.2/detect",
     "colorbrewer": "assets/colorbrewer",
     "ohdsi-api": "https://unpkg.com/@ohdsi/ui-toolbox@1.0.0/lib/umd/api/index",
     // needed for @ohdsi/ui-toolbox Api
