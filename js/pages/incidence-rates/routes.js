@@ -1,7 +1,7 @@
 define(
-  (require, factory) => {
+	(require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
-		const atlasState = require('atlas-state');		
+		const atlasState = require('atlas-state');
     function routes(appModel, router) {
       return {        
         '/iranalysis': new AuthorizedRoute(() => {

@@ -1,6 +1,5 @@
 define([
 	'knockout',
-	'pages/data-sources/const',
 	'components/Chart',
 	'components/Component',
 	'atlascharts',
@@ -9,7 +8,6 @@ define([
 	'utils/CommonUtils'
 ], function (
 	ko,
-	commonUtils,
 	Chart,
 	Component,
 	atlascharts,

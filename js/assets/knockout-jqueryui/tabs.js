@@ -2,10 +2,11 @@
 define(
 
     [
-        'jquery',
-        'knockout',
-        './bindingHandler',
-        './utils'
+			'jquery',
+			'knockout',
+			'./bindingHandler',
+			'./utils',
+			'jquery-ui/ui/widgets/tabs'
     ],
 
     function ($, ko, BindingHandler, utils) {

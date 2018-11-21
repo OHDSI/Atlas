@@ -135,7 +135,13 @@
 	<!-- ko if: appInitializationStatus() === 'running' -->
 		<terms-and-conditions params="model: $data"></terms-and-conditions>
 	<!-- /ko -->
+
+	<!-- non-bundled mode -->	
 	<script data-main="js/main" src="js/require.js"></script>
+
+	<!-- bundled mode -->	
+	<!-- <script data-main="js/assets/bundle/bundle" src="js/require.js"></script>-->
+		
 </body>
 
 </html>
