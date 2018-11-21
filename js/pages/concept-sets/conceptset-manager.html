@@ -1,4 +1,4 @@
-<heading-title params="name: conceptSetName(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
+<heading-title params="name: $root.currentConceptSet().name, icon: 'shopping-cart', theme: 'dark'"></heading-title>
 
 <div data-bind="css: classes()">
   <div class="asset-heading" data-bind="if: $root.currentConceptSet">
