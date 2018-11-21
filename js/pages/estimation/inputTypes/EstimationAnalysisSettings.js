@@ -1,7 +1,6 @@
 define(function (require, exports) {
-
     var ko = require('knockout');
-    var ComparativeCohortAnalysis = require('./ComparativeCohortAnalysis/ComparativeCohortAnalysis');
+   var ComparativeCohortAnalysis = require('./ComparativeCohortAnalysis/ComparativeCohortAnalysis');
 
 	function EstimationAnalysisSettings(data, estimationType, defaultCovariateSettings) {
 		var self = this;

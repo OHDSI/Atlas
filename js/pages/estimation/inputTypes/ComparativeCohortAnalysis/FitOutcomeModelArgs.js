@@ -1,8 +1,7 @@
 define(function (require, exports) {
-
     var ko = require('knockout');
-    var Prior = require('cyclops/InputTypes/Prior');
-    var Control = require('cyclops/InputTypes/Control');
+   var Prior = require('cyclops/InputTypes/Prior');
+   var Control = require('cyclops/InputTypes/Control');
 
 	function FitOutcomeModelArgs(data) {
 		var self = this;
