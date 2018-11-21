@@ -14,8 +14,8 @@ define(function (require, exports) {
 		var densityIndex = {};
 
 		for (c = 0; c < results.length; c++) {
-			results[c].recordCount = '-';
-			results[c].descendantRecordCount = '-';
+			setRecordCount(results[c], 'loading');
+			setDescendantRecordCount(results[c], 'loading');
 		}
 
 		$.ajax({
