@@ -239,22 +239,6 @@ pre span.key {
   margin-top: -5px;
 }
 
-.mainWindowWithoutWarning {
-  position: absolute;
-  left: 174px;
-  top: 0px;
-  right: 0px;
-  height: 100%;
-}
-
-.mainWindowWithWarning {
-  position: absolute;
-  left: 174px;
-  top: 30px;
-  right: 0px;
-  height: 100%;
-}
-
 #wrapperMainWindowContainer {
   position: relative;
   margin-left: 1px;
