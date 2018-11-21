@@ -26,7 +26,7 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 		self.importValues = ko.observable("");
 		self.dtApi = ko.observable();
 
-		VocabularyProvider.getDomainPromise().then(function (domains) {
+		VocabularyProvider.getDomains().then(function (domains) {
 			self.DomainOptions(domains);
 			if (params.DefaultQuery != null)
 				self.search();

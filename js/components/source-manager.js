@@ -130,6 +130,9 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'vocabularyprovid
       self.loading(true);
       sourceApi.saveSource(self.selectedSourceId(), source)
         .then(sourceApi.initSourcesConfig)
+        .then(function (appStatus) {
+          sharedState.appInitializationStatus(appStatus);
+        })
         .then(vocabularyProvider.getDomains)
         .then(roleApi.updateRoles)
         .then(function () {
@@ -160,7 +163,7 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'vocabularyprovid
         );
         const currenPriotirizableDaimons = self.selectedSource().daimons().filter(d => priotirizableDaimonTypes.includes(d.daimonType));
         const notSelectedCurrentDaimons = currenPriotirizableDaimons.filter(currentDaimon => {
-            // Diamon of the type with higher priority exists
+            // Daimon of the type with higher priority exists
             return  otherPriotirizableDaimons.find(otherDaimon => currentDaimon.daimonType === otherDaimon.daimonType && currentDaimon.priority < otherDaimon.priority);
         });
         return notSelectedCurrentDaimons.length !== currenPriotirizableDaimons.length;
@@ -177,6 +180,9 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'vocabularyprovid
       self.loading(true);
       sourceApi.deleteSource(self.selectedSourceId())
         .then(sourceApi.initSourcesConfig)
+        .then(function (appStatus) {
+            sharedState.appInitializationStatus(appStatus);
+        })
         .then(roleApi.updateRoles)
         .then(function () {
           self.loading(false);

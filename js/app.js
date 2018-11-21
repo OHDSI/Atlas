@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'webapi/MomentAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, ohdsiUtil, config, authApi, roleApi, momentApi, sharedState, querystring, d3) {
+define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'webapi/MomentAPI', 'atlas-state', 'querystring', 'd3', 'const', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
+	function ($, ko, ohdsiUtil, config, authApi, roleApi, momentApi, sharedState, querystring, d3, constants) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
@@ -18,9 +18,9 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 					case 'home':
 						pageTitle = pageTitle + ": Home";
 						break;
-          case 'feedback':
-            pageTitle = pageTitle + ": Feedback";
-            break;
+					case 'feedback':
+						pageTitle = pageTitle + ": Feedback";
+						break;
 					case 'search':
 						pageTitle = pageTitle + ": Search";
 						break;
@@ -63,16 +63,16 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 			self.sharedState = sharedState;
 
 			self.initializationComplete = ko.pureComputed(function () {
-				return sharedState.appInitializationStatus() != 'initializing';
+				return sharedState.appInitializationStatus() !== constants.applicationStatuses.initializing;
 			});
 
 			self.currentViewAccessible = ko.pureComputed(function() {
-        return self.currentView && (sharedState.appInitializationStatus() !== 'failed' &&
-					(sharedState.appInitializationStatus() !== 'no-sources-available' || self.currentView() === 'ohdsi-configuration' || self.currentView() === 'source-manager'));
+				return self.currentView && (sharedState.appInitializationStatus() !== constants.applicationStatuses.failed &&
+					(sharedState.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable || self.currentView() === 'ohdsi-configuration' || self.currentView() === 'source-manager'));
 			});
 
 			self.noSourcesAvailable = ko.pureComputed(function() {
-				return sharedState.appInitializationStatus() == 'no-sources-available' && self.currentView() !== 'ohdsi-configuration' && self.currentView() !== 'source-manager';
+				return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && self.currentView() !== 'ohdsi-configuration' && self.currentView() !== 'source-manager';
 			});
 
 			self.initComplete = function () {
@@ -369,7 +369,7 @@ define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'weba
 					return querystring.parse(window.location.href.split('?')[1]);
 				};
 				self.router.init('/');
-				self.applicationStatus('running');
+				self.applicationStatus(constants.applicationStatuses.running);
 			};
 
 			self.relatedConceptsOptions = {

@@ -5,24 +5,16 @@ define(function (require, exports) {
 	var sharedState = require('atlas-state');
 	var ohdsiUtil = require('ohdsi.util');
 	var authApi = require('webapi/AuthAPI');
-  var lscache = require('lscache');
-  var ko = require('knockout');
+	var lscache = require('lscache');
+	var ko = require('knockout');
+	var constants = require('const');
 
 	var sources;
 
 	function getSources() {
-		var promise = $.ajax({
-			url: config.webAPIRoot + 'source/sources/',
-			error: function (error) {
-				sharedState.appInitializationStatus('failed');
-			},
-			success: function (sources) {
-				// this is the initial communication to WebAPI and if it succeeds
-				// the initialization is complete and the application is ready.
-				setAppInitStatus(sources);
-			}
+		return $.ajax({
+			url: config.webAPIRoot + 'source/sources/'
 		});
-		return promise;
 	}
 
   function getCacheKey() {
@@ -61,14 +53,6 @@ define(function (require, exports) {
     });
   }
 
-  function setAppInitStatus(sources){
-    if (sources.length !== 0){
-        sharedState.appInitializationStatus('complete');
-    } else {
-        sharedState.appInitializationStatus('no-sources-available');
-    }
-}
-
   function initSourcesConfig() {
     config.api.available = true;
 
@@ -86,8 +70,10 @@ define(function (require, exports) {
       contentType: 'application/json',
       success: function (sources) {
         sharedState.sources([]);
-        setAppInitStatus(sources);
         config.api.available = true;
+        if (sources.length === 0) {
+            servicePromise.resolve(constants.applicationStatuses.noSourcesAvailable);
+        }
         var completedSources = 0;
         var result = [];
 
@@ -159,7 +145,7 @@ define(function (require, exports) {
 
                 if (completedSources == sources.length) {
                   lscache.set(serviceCacheKey, config.api, 720);
-                  servicePromise.resolve();
+                  servicePromise.resolve(constants.applicationStatuses.complete);
                 }
               },
               error: function (err) {
@@ -170,7 +156,7 @@ define(function (require, exports) {
                 source.url = config.api.url + source.sourceKey + '/';
                 if (completedSources == sources.length) {
                   lscache.set(serviceCacheKey, config.api, 720);
-                  servicePromise.resolve();
+                  servicePromise.resolve(constants.applicationStatuses.complete);
                 }
               }
             });
@@ -178,7 +164,7 @@ define(function (require, exports) {
             completedSources++;
             source.version = 'not available'
             if (completedSources == sources.length) {
-              servicePromise.resolve();
+              servicePromise.resolve(constants.applicationStatuses.complete);
             }
           }
         });
@@ -188,11 +174,10 @@ define(function (require, exports) {
         config.api.available = false;
         config.api.xhr = xhr;
         config.api.thrownError = thrownError;
-
-        sharedState.appInitializationStatus('failed');
+        
         document.location = '#/configure';
 
-        servicePromise.resolve();
+        servicePromise.resolve(constants.applicationStatuses.failed);
       }
     });
 
@@ -201,11 +186,11 @@ define(function (require, exports) {
 
 	var api = {
 		getSources: getSources,
-    getSource: getSource,
+		getSource: getSource,
 		saveSource: saveSource,
 		getCacheKey: getCacheKey,
 		initSourcesConfig: initSourcesConfig,
-    deleteSource: deleteSource,
+		deleteSource: deleteSource,
 	};
 
 	return api;

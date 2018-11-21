@@ -18,7 +18,6 @@ define(['knockout'], function(ko){
     details: 'details',
     included: 'included',
     import: 'import',
-    included: 'included',
     sourcecodes: 'sourcecodes',
     export: 'export',
   };
