@@ -72,26 +72,6 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
-.menuContainerWithoutWarning {
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  width: 150px;
-  bottom: 0;
-  background-color: #003142;
-  border-right: solid 1px #888;
-}
-
-.menuContainerWithWarning {
-  position: fixed;
-  left: 0px;
-  top: 30px;
-  width: 150px;
-  bottom: 0;
-  background-color: #003142;
-  border-right: solid 1px #888;
-}
-
 #wrapperLeftMenu a.list-group-item {
   color: #fff;
 }
@@ -271,22 +251,6 @@ pre span.key {
   margin-right: 10px;
   margin-left: 20px;
   margin-top: -5px;
-}
-
-.mainWindowWithoutWarning  {
-  position: absolute;
-  left: 149px;
-  top: 0px;
-  right: 0px;
-  height: 100%;
-}
-
-.mainWindowWithWarning {
-  position: absolute;
-  left: 149px;
-  top: 30px;
-  right: 0px;
-  height: 100%;
 }
 
 #wrapperMainWindowContainer {

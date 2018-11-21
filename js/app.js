@@ -1,8 +1,10 @@
-define(['jquery', 'knockout', 'detect-browser', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'webapi/MomentAPI', 'atlas-state', 'querystring', 'd3', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css'],
-	function ($, ko, detect, ohdsiUtil, config, authApi, roleApi, momentApi, sharedState, querystring, d3) {
+define(['jquery', 'knockout', 'detect-browser', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'webapi/MomentAPI', 'atlas-state', 'querystring', 'd3', 'utils/BemHelper', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css', 'less!app.less'],
+	function ($, ko, detect, ohdsiUtil, config, authApi, roleApi, momentApi, sharedState, querystring, d3, BemHelper) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
+			const bemHelper = new BemHelper('app');
+			self.classes = bemHelper.run.bind(bemHelper);
 			self.authApi = authApi;
 			self.componentParams = {};
 			const browser = detect.parse(navigator.userAgent);
