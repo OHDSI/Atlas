@@ -6,6 +6,7 @@ define(function (require, exports) {
 	var sharedState = require('atlas-state');
 	var numeral = require('numeral');
 	var authAPI = require('services/AuthAPI');
+	const CDMResultAPI = require('services/CDMResultsAPI');
 
 	var loadedPromise = $.Deferred();
 	loadedPromise.resolve();
@@ -63,37 +64,8 @@ define(function (require, exports) {
 				resultsIndex.push(c);
 			}
 		}
-		var densityIndex = {};
-		$.ajax({
-			url: sharedState.resultsUrl() + 'conceptRecordCount',
-			method: 'POST',
-			contentType: 'application/json',
-			timeout: 10000,
-			data: JSON.stringify(searchResultIdentifiers),
-			success: function (entries) {
-				var formatComma = "0,0";
-				for (var e = 0; e < entries.length; e++) {
-					densityIndex[Object.keys(entries[e])[0]] = Object.values(entries[e])[0];
-				}
-				for (var c = 0; c < resultsIndex.length; c++) {
-					var concept = results[resultsIndex[c]];
-					if (densityIndex[concept.CONCEPT_ID] != undefined) {
-						concept.RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][0]).format(formatComma);
-						concept.DESCENDANT_RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][1]).format(formatComma);
-					}
-				}
-				densityPromise.resolve();
-			},
-			error: function (error) {
-				for (var c = 0; c < results.length; c++) {
-					var concept = results[c];
-					concept.RECORD_COUNT = 'timeout';
-					concept.DESCENDANT_RECORD_COUNT = 'timeout';
-				}
-				densityPromise.resolve();
-			}
-		});
-		return densityPromise;
+
+		return CDMResultAPI.getConceptRecordCountWithResultsUrl(sharedState.resultsUrl(), searchResultIdentifiers, results, false);
 	}
 
 	function search(searchString, options) {

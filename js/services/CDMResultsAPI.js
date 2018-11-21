@@ -4,20 +4,24 @@ define(function (require, exports) {
 	var config = require('appConfig');
 	var d3 = require('d3');
 
-	function getConceptRecordCount(sourceKey, conceptIds, results) {
+	function getConceptRecordCountWithResultsUrl(resultsUrl, conceptIds, results, isCamelCaseProps = true) {
+
+		const getConceptId = (concept) => isCamelCaseProps ? concept.conceptId : concept.CONCEPT_ID;
+		const setRecordCount = (concept, val) => isCamelCaseProps ? (concept.recordCount = val) : (concept.RECORD_COUNT = val);
+		const setDescendantRecordCount = (concept, val) => isCamelCaseProps ? (concept.descendantRecordCount = val) : (concept.DESCENDANT_RECORD_COUNT = val);
+
 		var densityPromise = $.Deferred();
 		var densityIndex = {};
 
 		for (c = 0; c < results.length; c++) {
-			results[c].recordCount = '-';
-			results[c].descendantRecordCount = '-';
+			setRecordCount(results[c], 'loading');
+			setDescendantRecordCount(results[c], 'loading');
 		}
 
 		$.ajax({
-			url: config.webAPIRoot + 'cdmresults/' + sourceKey + '/conceptRecordCount',
+			url: resultsUrl + 'conceptRecordCount',
 			method: 'POST',
 			contentType: 'application/json',
-			timeout: 10000,
 			data: JSON.stringify(conceptIds),
 			success: function (entries) {
 				var formatComma = d3.format(',');
@@ -28,12 +32,12 @@ define(function (require, exports) {
 
 				for (var c = 0; c < results.length; c++) {
 					var concept = results[c];
-					if (densityIndex[concept.conceptId] != undefined) {
-						concept.recordCount = formatComma(densityIndex[concept.conceptId][0]);
-						concept.descendantRecordCount = formatComma(densityIndex[concept.conceptId][1]);
+					if (densityIndex[getConceptId(concept)] != undefined) {
+						setRecordCount(concept, formatComma(densityIndex[getConceptId(concept)][0]));
+						setDescendantRecordCount(concept, formatComma(densityIndex[getConceptId(concept)][1]));
 					} else {
-						concept.recordCount = 0;
-						concept.descendantRecordCount = 0;
+						setRecordCount(concept, 0);
+						setDescendantRecordCount(concept, 0);
 					}
 				}
 
@@ -42,8 +46,8 @@ define(function (require, exports) {
 			error: function (error) {
 				for (var c = 0; c < results.length; c++) {
 					var concept = results[c];
-					concept.recordCount = 'timeout';
-					concept.descendantRecordCount = 'timeout';
+					setRecordCount(concept, 'timeout');
+					setDescendantRecordCount(concept, 'timeout');
 				}
 
 				densityPromise.resolve();
@@ -53,9 +57,14 @@ define(function (require, exports) {
 		return densityPromise;
 	}
 
-	var api = {
-		getConceptRecordCount: getConceptRecordCount
+	function getConceptRecordCount(sourceKey, conceptIds, results) {
+		return getConceptRecordCountWithResultsUrl(config.webAPIRoot + 'cdmresults/' + sourceKey + '/');
 	}
+
+	var api = {
+		getConceptRecordCount: getConceptRecordCount,
+		getConceptRecordCountWithResultsUrl: getConceptRecordCountWithResultsUrl,
+	};
 
 	return api;
 });
