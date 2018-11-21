@@ -1,6 +1,6 @@
 define(
-  ['knockout', 'lodash', 'require', 'exports'],
-  (ko, _, require, exports) => {
+  ['knockout', 'lodash', 'exports'],
+  (ko, _, exports) => {
     const periods = [
       {
         label: 'Weekly',

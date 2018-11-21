@@ -1,5 +1,5 @@
 define(
-  (require, factory) => {
+	(require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
     function routes(appModel, router) {
       const detailsRoute = new AuthorizedRoute((conceptSetId, mode = 'conceptset-expression') => {

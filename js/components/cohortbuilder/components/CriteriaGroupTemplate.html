@@ -21,12 +21,7 @@
 						of the following criteria:
 					</td>
 					<td>
-						<div class="btn-group pull-right">
-							<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add criteria to group…<span class="caret"></span></button>
-							<ul class="dropdown-menu" data-bind="foreach:$component.addCriteriaActions">
-								<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
-							</ul>
-						</div>
+						<drop-down-menu params="actions: $component.addCriteriaActions, title: 'Add criteria to group...', formatOption: $component.formatOption"></drop-down-menu>
 					</td>
 				</tr>
 			</tbody>

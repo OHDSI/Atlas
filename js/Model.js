@@ -38,7 +38,7 @@ define(
 		_,
 		d3,
 		authApi,
-        momentApi,
+		momentApi,
 	) => {
 		return class GlobalModel extends AutoBind() {
 			constructor() {

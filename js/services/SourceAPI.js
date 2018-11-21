@@ -100,6 +100,7 @@ define(function (require, exports) {
       source.hasVocabulary = false;
       source.hasEvidence = false;
       source.hasResults = false;
+      source.hasCEMResults = false;
       source.hasCDM = false;
       source.vocabularyUrl = '';
       source.evidenceUrl = '';
@@ -134,7 +135,7 @@ define(function (require, exports) {
 
         // evaluate cem daimons
         if (daimon.daimonType == 'CEMResults') {
-          source.hasResults = true;
+          source.hasCEMResults = true;
           source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
         }
 

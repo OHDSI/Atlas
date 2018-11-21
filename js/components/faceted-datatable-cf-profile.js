@@ -19,7 +19,7 @@ define(['knockout', 'text!./faceted-datatable-cf-profile.html', 'databindings', 
         // Set some defaults for the data table
 		self.autoWidth = params.autoWidth || true;
 		self.buttons = params.buttons || [
-				'colvis','copyHtml5','excelHtml5','csvHtml5','pdfHtml5'
+				'colvis', 'copyHtml5','excelHtml5','csvHtml5','pdfHtml5'
 		];
 		self.colVis = params.colVis || {
 						buttonText: 'Change Columns',

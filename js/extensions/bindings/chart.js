@@ -23,7 +23,7 @@ define(['knockout'], (ko) => {
       try {
         draw(chart.data(), element, chart.minHeight, chart.format, chart.renderer);
       } catch(er) {
-        console.error('Error when rendering chart');
+        console.error('Error when rendering chart', er);
         draw(null, element, chart.minHeight, chart.format, chart.renderer);
       }
 		}
