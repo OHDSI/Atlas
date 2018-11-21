@@ -3,32 +3,43 @@ define([
     'pages/characterizations/services/FeatureAnalysisService',
     'pages/characterizations/services/PermissionService',
     'components/cohortbuilder/CriteriaGroup',
+    'components/cohortbuilder/AdditionalCriteria',
+    'components/cohortbuilder/WindowedCriteria',
+    'components/cohortbuilder/CriteriaTypes/DemographicCriteria',
+    'components/cohortbuilder/components/const',
+    'components/cohortbuilder/components/utils',
     'text!./feature-analysis-view-edit.html',
     'appConfig',
     'services/AuthAPI',
     'services/Vocabulary',
     'conceptsetbuilder/InputTypes/ConceptSet',
     'pages/Page',
-	'pages/characterizations/const',
+    'pages/characterizations/const',
     'utils/AutoBind',
     'utils/CommonUtils',
     'assets/ohdsi.util',
     'less!./feature-analysis-view-edit.less',
     'components/cohortbuilder/components',
     'circe',
-    'components/multi-select'
+    'components/multi-select',
+		'components/DropDownMenu',
 ], function (
     ko,
     FeatureAnalysisService,
     PermissionService,
     CriteriaGroup,
+    AdditionalCriteria,
+    WindowedCriteria,
+    DemographicGriteria,
+    cohortbuilderConsts,
+    cohortbuilderUtils,
     view,
     config,
     authApi,
     VocabularyAPI,
     ConceptSet,
     Page,
-	constants,
+    constants,
     AutoBind,
     commonUtils,
     ohdsiUtil
@@ -39,6 +50,11 @@ define([
         CRITERIA_SET: 'CRITERIA_SET',
         CUSTOM_FE: 'CUSTOM_FE',
     };
+
+    const statTypeOptions = [
+      { label: 'Prevalence', value: 'PREVALENCE' },
+      { label: 'Distribution', value: 'DISTRIBUTION' },
+    ];
 
     class FeatureAnalysisViewEdit extends AutoBind(Page) {
         constructor(params) {
@@ -51,6 +67,7 @@ define([
                 descr: ko.observable(),
                 type: ko.observable(),
                 design: ko.observable(),
+                statType: ko.observable(),
                 conceptSets: ko.observableArray(),
             };
             this.domains = ko.observable([]);
@@ -72,7 +89,11 @@ define([
             this.showConceptSetBrowser = ko.observable();
 
             this.featureTypes = featureTypes;
+            this.statTypeOptions = ko.observableArray(statTypeOptions);
             this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
+
+            this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
+            this.formatCriteriaOption = cohortbuilderUtils.formatDropDownOption;
         }
 
         onPageCreated() {
@@ -90,6 +111,10 @@ define([
                 }
             }
         }
+
+        buildAddCriteriaAction(type) {
+					return () => this.addWindowedCriteria(type);
+				}
 
         isCreatePermitted() {
             return PermissionService.isPermittedCreateFa();
@@ -134,18 +159,34 @@ define([
             this.loading(false);
         }
 
-        setupAnalysisData({ name = '', descr = '', domain = '', type = '', design= '', conceptSets = [] }) {
+        setupAnalysisData({ name = '', descr = '', domain = '', type = '', design= '', conceptSets = [], statType = 'PREVALENCE' }) {
             let parsedDesign;
             this.data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name) })));
 
             if (type === this.featureTypes.CRITERIA_SET) {
                 parsedDesign = design.map(c => {
-                    return {
-                        id: c.id,
-                        name: ko.observable(c.name),
-                        expression: ko.observable(new CriteriaGroup(c.expression, this.data.conceptSets)),
-                    }
-                });
+										const commonDesign = {
+											id: c.id,
+											name: ko.observable(c.name),
+											criteriaType: c.criteriaType,
+										};
+                		if (c.criteriaType === 'CriteriaGroup') {
+											return {
+												...commonDesign,
+												expression: ko.observable(new CriteriaGroup(c.expression, this.data.conceptSets)),
+											};
+										} else if (c.criteriaType === 'DemographicCriteria') {
+											return {
+												...commonDesign,
+												expression: ko.observable(new DemographicGriteria(c.expression, this.data.conceptSets)),
+											};
+										} else if (c.criteriaType === 'WindowedCriteria' && c.expression.Criteria) {
+                			return {
+												...commonDesign,
+												expression: ko.observable(new WindowedCriteria(c.expression, this.data.conceptSets)),
+											};
+										}
+                }).filter(c => c);
             } else {
                 parsedDesign = design;
             }
@@ -155,9 +196,11 @@ define([
             this.data.domain(domain);
             this.data.type(type);
             this.data.design(parsedDesign);
+            this.data.statType(statType);
             this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data));
             this.previousDesign = { [type]: parsedDesign };
-        }
+    				this.data.statType.subscribe(() => this.data.design([]));
+				}
 
         setType(type) {
             let prevType = this.data.type();
@@ -178,14 +221,38 @@ define([
         getEmptyCriteriaFeatureDesign() {
             return {
                 name: ko.observable(''),
+								criteriaType: 'CriteriaGroup',
                 conceptSets: this.data.conceptSets,
                 expression: ko.observable(new CriteriaGroup(null, this.data.conceptSets)),
+            };
+        }
+
+        getEmptyWindowedCriteria(type) {
+        	const data = { Criteria: {} };
+        	data.Criteria[type] = { IgnoreObservationPeriod: true, };
+        	return {
+        		name: ko.observable(''),
+						criteriaType: 'WindowedCriteria',
+						expression: ko.observable(new WindowedCriteria(data, this.data.conceptSets)),
+					};
+				}
+
+				getEmptyDemographicCriteria() {
+            return {
+              name: ko.observable(''),
+              criteriaType: 'DemographicCriteria',
+              expression: ko.observable(new DemographicGriteria()),
             };
         }
 
         addCriteria() {
             this.data.design([...this.data.design(), this.getEmptyCriteriaFeatureDesign()]);
         }
+
+        addWindowedCriteria(type) {
+        	const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
+        	this.data.design([...this.data.design(), criteria]);
+				}
 
         removeCriteria(index) {
             const criteriaList = this.data.design();

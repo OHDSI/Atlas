@@ -1,140 +1,19 @@
-define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Window', '../AdditionalCriteria', '../options', 'text!./CriteriaGroupTemplate.html'], function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, template) {
+define([
+		'knockout',
+		'../CriteriaTypes',
+		'../CriteriaGroup',
+		'../InputTypes/Window',
+		'../AdditionalCriteria',
+		'../options',
+		'./utils',
+		'./const',
+		'text!./CriteriaGroupTemplate.html',
+		'components/DropDownMenu'],
+	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, consts, template) {
 
 	function CriteriaGroupViewModel(params) {
-		var self = this;
-		self.formatOption = function (d) {
-			return '<div class="optionText">' + d.text + '</div>' +
-				'<div class="optionDescription">' + d.description + '</div>';
-		};
-		self.addCriteriaActions = [{
-				text: "Add Demographic",
-				selected: false,
-				description: "Filter events based on demographic criteria.",
-				action: function () {
-					self.addDemographicCriteria();
-				}
-			},
-			{
-				text: "Add Condition Era",
-				selected: false,
-				description: "Find patients with specific condition era.",
-				action: function () {
-					self.addConditionEraCriteria();
-				}
-			},
-			{
-				text: "Add Condition Occurrence",
-				selected: false,
-				description: "Find patients with specific conditions.",
-				action: function () {
-					self.addConditionCriteria();
-				}
-			},
-			{
-				text: "Add Death",
-				selected: false,
-				description: "Find patients based on death.",
-				action: function () {
-					self.addDeathCriteria();
-				}
-			},
-			{
-				text: "Add Device Exposure",
-				selected: false,
-				description: "Find patients based on device exposure.",
-				action: function () {
-					self.addDeviceCriteria();
-				}
-			},
-			{
-				text: "Add Dose Era",
-				selected: false,
-				description: "Find patients with dose eras.",
-				action: function () {
-					self.addDoseEraCriteria();
-				}
-			},
-			{
-				text: "Add Drug Era",
-				selected: false,
-				description: "Find patients with with drug eras.",
-				action: function () {
-					self.addDrugEraCriteria();
-				}
-			},
-			{
-				text: "Add Drug Exposure",
-				selected: false,
-				description: "Find patients with exposure to specific drugs or drug classes.",
-				action: function () {
-					self.addDrugExposureCriteria();
-				}
-			},
-			{
-				text: "Add Measurement",
-				selected: false,
-				description: "Find patients based on measurements.",
-				action: function () {
-					self.addMeasurementCriteria();
-				}
-			},
-			{
-				text: "Add Observation",
-				selected: false,
-				description: "Find patients based on observations.",
-				action: function () {
-					self.addObservationCriteria();
-				}
-			},
-			{
-				text: "Add Observation Period",
-				selected: false,
-				description: "Find patients based on observation periods.",
-				action: function () {
-					self.addObservationPeriodCriteria();
-				}
-			},
-			{
-				text: "Add Payer Plan Period",
-				selected: false,
-				description: "Find patients based on Payer Plan Period.",
-				action: function () {
-					self.addPayerPlanPeriodCriteria();
-				}
-			},
-			{
-				text: "Add Procedure Occurrence",
-				selected: false,
-				description: "Find patients that experienced a specific procedure.",
-				action: function () {
-					self.addProcedureCriteria();
-				}
-			},
-			{
-				text: "Add Specimen",
-				selected: false,
-				description: "Find patients based on specimen.",
-				action: function () {
-					self.addSpecimenCriteria();
-				}
-			},
-			{
-				text: "Add Visit",
-				selected: false,
-				description: "Find patients based on visit information.",
-				action: function () {
-					self.addVisitCriteria();
-				}
-			},
-			{
-				text: "Add Group",
-				selected: false,
-				description: "Add a group to combine criteria using and/or relationships.",
-				action: function () {
-					self.addAdditionalCriteria();
-				}
-			}
-		];
+		const self = this;
+		self.formatOption = utils.formatDropDownOption;
 
 		self.expression = params.expression;
 		self.group = params.group;
@@ -148,41 +27,7 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 			return optionsArray;
 		});
 
-		self.getCriteriaComponent = function (data) {
-
-			if (data.hasOwnProperty("Person"))
-				return "person-criteria";
-			else if (data.hasOwnProperty("ConditionOccurrence"))
-				return "condition-occurrence-criteria";
-			else if (data.hasOwnProperty("ConditionEra"))
-				return "condition-era-criteria";
-			else if (data.hasOwnProperty("DrugExposure"))
-				return "drug-exposure-criteria";
-			else if (data.hasOwnProperty("DrugEra"))
-				return "drug-era-criteria";
-			else if (data.hasOwnProperty("DoseEra"))
-				return "dose-era-criteria";
-			else if (data.hasOwnProperty("PayerPlanPeriod"))
-				return "payer-plan-period-criteria";			
-			else if (data.hasOwnProperty("ProcedureOccurrence"))
-				return "procedure-occurrence-criteria";
-			else if (data.hasOwnProperty("VisitOccurrence"))
-				return "visit-occurrence-criteria";
-			else if (data.hasOwnProperty("Observation"))
-				return "observation-criteria";
-			else if (data.hasOwnProperty("DeviceExposure"))
-				return "device-exposure-criteria";
-			else if (data.hasOwnProperty("Measurement"))
-				return "measurement-criteria";
-			else if (data.hasOwnProperty("Specimen"))
-				return "specimen-criteria";
-			else if (data.hasOwnProperty("ObservationPeriod"))
-				return "observation-period-criteria";
-			else if (data.hasOwnProperty("Death"))
-				return "death-criteria";
-			else
-				return "unknown-criteria";
-		};
+		self.getCriteriaComponent = utils.getCriteriaComponent;
 
 		self.addAdditionalCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
@@ -331,6 +176,26 @@ define(['knockout', '../CriteriaTypes', '../CriteriaGroup', '../InputTypes/Windo
 		self.removeEndWindow = function (corelatedCriteria) {
 			corelatedCriteria.EndWindow(null);
 		};
+
+		self.actions = {};
+
+		self.actions[consts.CriteriaTypes.DEMOGRAPHIC] = self.addDemographicCriteria;
+		self.actions[consts.CriteriaTypes.CONDITION_ERA] = self.addConditionEraCriteria;
+		self.actions[consts.CriteriaTypes.CONDITION_OCCURRENCE] = self.addConditionCriteria;
+		self.actions[consts.CriteriaTypes.DEATH] = self.addDeathCriteria;
+		self.actions[consts.CriteriaTypes.DEVICE_EXPOSURE] = self.addDeviceCriteria;
+		self.actions[consts.CriteriaTypes.DRUG_ERA] = self.addDrugEraCriteria;
+		self.actions[consts.CriteriaTypes.DRUG_EXPOSURE] = self.addDrugExposureCriteria;
+		self.actions[consts.CriteriaTypes.MEASUREMENT] = self.addMeasurementCriteria;
+		self.actions[consts.CriteriaTypes.OBSERVATION] = self.addObservationCriteria;
+		self.actions[consts.CriteriaTypes.OBSERVATION_PERIOD] = self.addObservationPeriodCriteria;
+		self.actions[consts.CriteriaTypes.PAYER_PLAN_PERIOD] = self.addPayerPlanPeriodCriteria;
+		self.actions[consts.CriteriaTypes.PROCEDURE_OCCURRENCE] = self.addProcedureCriteria;
+		self.actions[consts.CriteriaTypes.SPECIMEN] = self.addSpecimenCriteria;
+		self.actions[consts.CriteriaTypes.VISIT] = self.addVisitCriteria;
+		self.actions[consts.CriteriaTypes.GROUP] = self.addAdditionalCriteria;
+
+		self.addCriteriaActions = consts.AddCriteriaActions.map(a => ({...a, action: self.actions[a.type]}));
 
 		self.addCriteriaSettings = {
 			selectText: "Add New Criteria...",

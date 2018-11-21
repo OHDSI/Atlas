@@ -1,0 +1,26 @@
+<div>
+    <div data-bind="component: {
+            name: $component.getCriteriaComponent($component.criteria().Criteria),
+            params: {expression: $component.expression, criteria: $component.criteria().Criteria }
+        }">
+    </div>
+    <div data-bind="css: classes('indexWindowSection')">
+        where <cycle-toggle-input params="{value: criteria().StartWindow.UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
+        <window-input params="Window: criteria().StartWindow"></window-input> <cycle-toggle-input params="{value: criteria().StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
+        <!-- ko if: criteria().EndWindow -->
+        <div>
+            <i data-bind="click: $component.removeEndWindow, css: classes({element: 'removeEndWindow', extra: 'fa fa-times'})" /> and <cycle-toggle-input params="{value: criteria().EndWindow().UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
+            <window-input params="Window: criteria().EndWindow()"></window-input> <cycle-toggle-input params="{value: criteria().EndWindow().UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
+        </div>
+        <!-- /ko -->
+        <!-- ko ifnot: criteria().EndWindow -->
+        <span class="linkish" data-bind="click: $component.addEndWindow"><i>add additional constraint</i></span>
+        <!-- /ko -->
+    </div>
+    <div data-bind="css: classes('restrictVisitSection')">
+        <input type="checkbox" data-bind="checked: criteria().RestrictVisit"> restrict to the same visit occurrence
+    </div>
+    <div data-bind="css: classes('IgnoreObservationPeriodSection')">
+        <input type="checkbox" data-bind="checked: criteria().IgnoreObservationPeriod, disable: disableObservationPeriod"> ignore observation period
+    </div>
+</div>
