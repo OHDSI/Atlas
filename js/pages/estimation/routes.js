@@ -1,7 +1,6 @@
-define(
-  (require, factory) => {
-    const { AuthorizedRoute } = require('pages/Route');
-    const atlasState = require('atlas-state');		
+define((require, factory) => {
+  const { AuthorizedRoute } = require('pages/Route');
+  const atlasState = require('atlas-state');
     function routes(appModel, router) {
       return {        
         '/estimation': new AuthorizedRoute(() => {
@@ -32,7 +31,7 @@ define(
         }),
         '/fe': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
-          require(['components/featureextraction/components/CovariateSettingsEditor'], function () {
+          require(['featureextraction/components/CovariateSettingsEditor'], function () {
             appModel.currentView('covar-settings-editor');
           });
         }),

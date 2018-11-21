@@ -1,4 +1,4 @@
-define(['require', 'knockout'], function(require, ko){
+define(['knockout'], function(ko){
 
     function hasEvidence(row){
         return (

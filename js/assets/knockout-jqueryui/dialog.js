@@ -3,10 +3,11 @@
 define(
 
     [
-        'jquery',
-        'knockout',
-        './bindingHandler',
-        './utils'
+			'jquery',
+			'knockout',
+			'./bindingHandler',
+			'./utils',
+			'jquery-ui/ui/widgets/dialog'
     ],
 
     function ($, ko, BindingHandler, utils) {

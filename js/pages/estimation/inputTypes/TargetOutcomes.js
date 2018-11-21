@@ -1,6 +1,5 @@
 define(function (require, exports) {
-
-    var ko = require('knockout');
+	var ko = require('knockout');
 
 	function TargetOutcomes(data) {
 		var self = this;

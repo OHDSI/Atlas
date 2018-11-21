@@ -1,5 +1,5 @@
 define(
-  (require, factory) => {
+	(require, factory) => {
 		const ko = require('knockout');
 		const sharedState = require('atlas-state');
     const config = require('appConfig');

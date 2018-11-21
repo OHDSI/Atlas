@@ -1,11 +1,10 @@
 define(
 	(require, factory) => {
-
 		const ko = require('knockout');
-		const {
-			AuthorizedRoute
-		} = require('pages/Route');
-		require('./components/characterizations/characterization-view-edit');
+	   const {
+		   AuthorizedRoute
+	   } = require('pages/Route');
+	   require('./components/characterizations/characterization-view-edit');
 
 		function routes(appModel, router) {
 
