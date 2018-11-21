@@ -16,12 +16,10 @@ define(function (require, exports) {
 	var domainsPromise = null;
 	var domains = [];
 
-	getDomains();
-
 	function getDomains() {
 		// if domains haven't yet been requested, create the promise
 		if (!domainsPromise) {
-			domainsPromise = new Promise((resolve, reject) => {
+			let loadPromise = new Promise((resolve, reject) => {
 				sourceAPI.getSources().then(function (sources) {
 					if (sources.length === 0) {
 						resolve(domains);
@@ -51,10 +49,12 @@ define(function (require, exports) {
 								domains.push(v.DOMAIN_ID);
 							});
 							resolve(domains);
+							domainsPromise = loadPromise;
 						});
 					}
-				})
+				});
 			});
+			return loadPromise;
 		}
 		return domainsPromise;
 	}
