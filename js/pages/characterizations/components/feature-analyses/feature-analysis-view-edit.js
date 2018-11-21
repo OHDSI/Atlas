@@ -166,9 +166,10 @@ define([
               descr: ko.observable(),
               type: ko.observable(),
               design: ko.observable(),
+							statType: ko.observable(),
               conceptSets: ko.observableArray(),
             };
-            data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name) })));
+            data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name), })));
 
             if (type === this.featureTypes.CRITERIA_SET) {
                 parsedDesign = design.map(c => {
@@ -180,17 +181,17 @@ define([
                 		if (c.criteriaType === 'CriteriaGroup') {
 											return {
 												...commonDesign,
-												expression: ko.observable(new CriteriaGroup(c.expression, this.data.conceptSets)),
+												expression: ko.observable(new CriteriaGroup(c.expression, data.conceptSets)),
 											};
 										} else if (c.criteriaType === 'DemographicCriteria') {
 											return {
 												...commonDesign,
-												expression: ko.observable(new DemographicGriteria(c.expression, this.data.conceptSets)),
+												expression: ko.observable(new DemographicGriteria(c.expression, data.conceptSets)),
 											};
 										} else if (c.criteriaType === 'WindowedCriteria' && c.expression.Criteria) {
                 			return {
 												...commonDesign,
-												expression: ko.observable(new WindowedCriteria(c.expression, this.data.conceptSets)),
+												expression: ko.observable(new WindowedCriteria(c.expression, data.conceptSets)),
 											};
 										}
                 }).filter(c => c);
@@ -205,9 +206,9 @@ define([
             data.design(parsedDesign);
             data.statType(statType);
 						data.statType.subscribe(() => this.data.design([]));
-						this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data()));
-						this.previousDesign = { [type]: parsedDesign };
-						this.data(data);
+            this.data(data);
+            this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data()));
+            this.previousDesign = { [type]: parsedDesign };
         }
 
         setType(type) {

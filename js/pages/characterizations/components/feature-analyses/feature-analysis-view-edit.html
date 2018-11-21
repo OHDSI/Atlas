@@ -99,15 +99,15 @@
                             <multi-select
                                 data-bind="css: classes()"
                                 params="options: $component.statTypeOptions,
-                                selectedValue: $component.data.statType, multiple: false"></multi-select>
+                                selectedValue: $component.data().statType, multiple: false"></multi-select>
                         </div>
                     </div>
-                    <span data-bind="if: data.statType() === 'PREVALENCE'">
+                    <span data-bind="if: data().statType() === 'PREVALENCE'">
                         <button data-bind="css: classes({ element: 'add-criteria-group', extra: 'btn btn-success' }), click: addCriteria">
                             Add Criteria feature
                         </button>
                     </span>
-                    <span data-bind="if: data.statType() === 'DISTRIBUTION', css: classes('add-criteria-windowed')">
+                    <span data-bind="if: data().statType() === 'DISTRIBUTION', css: classes('add-criteria-windowed')">
                         <drop-down-menu params="actions: $component.windowedActions, title: 'Add New Criteria...', cssClasses: 'btn-group', formatOption: formatCriteriaOption"></drop-down-menu>
                     </span>
                     <!-- ko foreach: $component.data().design -->
