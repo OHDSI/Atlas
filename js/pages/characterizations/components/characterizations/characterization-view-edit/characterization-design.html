@@ -19,6 +19,33 @@
             removeFeature: $component.removeFeature,
         "></linked-entity-list>
     </div>
+    <div data-bind="css: classes('linked-entities'), eventListener: [
+                                { event: 'click', selector: '.conceptset_import', callback: (item) => $component.handleConceptSetImport($index(), item) },
+                                { event: 'click', selector: '.conceptset_edit', callback: $component.handleEditConceptSet }
+                            ]">
+        <h2 data-bind="css: classes('strata-title')">Stratas</h2>
+        <button data-bind="css: classes({extra: 'btn btn-sm btn-primary'}), click: addStrata">New strata</button>
+        <div data-bind="css: classes('strata'), visible: stratas().length === 0">
+            <span>No stratas defined</span>
+        </div>
+        <!-- ko if: stratas().length > 0 -->
+        <input type="text" placeholder="Stratified by" data-bind="css: classes({ element: 'stratified-by', extra: 'form-control'}), textInput: design().stratifiedBy" />
+        <!-- /ko -->
+        <div data-bind="foreach: stratas">
+            <div data-bind="css: $component.classes('strata')">
+                <div data-bind="css: $component.classes('strata-heading')">
+                    <input type="text" data-bind="css: $component.classes({element: 'strata-name', extra: 'form-control'}), value: $data.name" placeholder="Strata name">
+                    <button
+                            type="button"
+                            data-bind="css: $component.classes({ element: 'strata-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeStrata($index())"
+                    ><i class="fa fa-trash-o"></i></button>
+                </div>
+                <div>
+                    <criteria-group params="{ expression: { ConceptSets: $component.conceptSets() }, group: $data.criteria }"></criteria-group>
+                </div>
+            </div>
+        </div>
+    </div>
     <div data-bind="css: classes('linked-entities')">
         <linked-entity-list params="
             title: 'Feature analyses parameters',
@@ -50,3 +77,16 @@
         <feature-analyses-browser params="selectedAnalysis: selectedAnalysis"></feature-analyses-browser>
     </div>
 </script>
+
+<atlas-modal params="{
+    showModal: showConceptSetBrowser,
+    title: 'Select Concept Set...',
+    modifiers: ['lg'],
+    data: {
+        onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected
+    }
+}">
+    <cohort-concept-set-browser params="
+                    onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
+                "></cohort-concept-set-browser>
+</atlas-modal>

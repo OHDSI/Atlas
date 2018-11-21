@@ -8,12 +8,17 @@ define([
     'components/Component',
     'utils/AutoBind',
     'utils/CommonUtils',
+    'components/cohortbuilder/CriteriaGroup',
+	  'conceptsetbuilder/InputTypes/ConceptSet',
+	  'services/Vocabulary',
     'lodash',
     'pages/characterizations/components/feature-analyses/feature-analyses-browser',
     './characterization-params-create-modal',
     'components/cohort/linked-cohort-list',
     'components/linked-entity-list',
     'less!./characterization-design.less',
+	  'components/cohortbuilder/components',
+    'circe',
     'components/ac-access-denied',
 ], function (
     ko,
@@ -25,6 +30,9 @@ define([
     Component,
     AutoBind,
     commonUtils,
+    CriteriaGroup,
+    ConceptSet,
+    VocabularyAPI,
     lodash
 ) {
     class CharacterizationDesign extends AutoBind(Component) {
@@ -45,6 +53,13 @@ define([
                     cohorts: value,
                 }),
             });
+
+            this.conceptSets = ko.pureComputed({
+							read: () => params.design().conceptSets,
+              write: (value) => params.design().conceptSets(value)
+						});
+
+            this.stratas = ko.computed(() => params.design().stratas || []);
 
             this.featureAnalyses = {
                 newItemAction: this.showFeatureBrowser,
@@ -100,6 +115,8 @@ define([
             this.featureAnalysesSelected.subscribe(feature => this.attachFeature(feature));
 
             this.isParameterCreateModalShown = ko.observable(false);
+					  this.showConceptSetBrowser = ko.observable(false);
+					  this.criteriaContext = ko.observable();
         }
 
         isPermittedViewResolver() {
@@ -164,10 +181,57 @@ define([
             });
         }
 
+        addStrata() {
+            const strata = {
+              name: ko.observable(),
+              criteria: ko.observable(new CriteriaGroup(null, this.conceptSets))
+				    };
+            const ccDesign = this.design();
+            this.design({
+              ...ccDesign,
+              stratas: [
+                ...(ccDesign.stratas || []),
+                strata
+              ],
+						})
+        }
+
+        removeStrata(index) {
+            const ccDesign = this.design();
+            this.design({
+              ...ccDesign,
+              stratas: ccDesign.stratas.filter((s, i) => i !== index)
+            });
+        }
 
         showParameterCreateModal() {
             this.isParameterCreateModalShown(true);
         }
+
+        handleConceptSetImport(criteriaIdx, item) {
+          console.log('import', item);
+          this.criteriaContext({...item, criteriaIdx});
+          this.showConceptSetBrowser(true);
+        }
+
+			onRespositoryConceptSetSelected(conceptSet, source) {
+				const context = this.criteriaContext();
+				const strata = this.design().stratas[context.criteriaIdx];
+				const conceptSets = this.conceptSets()();
+
+				VocabularyAPI.getConceptSetExpression(conceptSet.id, source.url).done((result) => {
+					const newId = conceptSets.length > 0 ? Math.max(...conceptSets.map(c => c.id)) + 1 : 0;
+					const newConceptSet = new ConceptSet({
+						id: newId,
+						name: conceptSet.name,
+						expression: result
+					});
+					this.conceptSets([...conceptSets, newConceptSet]);
+					context.conceptSetId(newConceptSet.id);
+
+					this.showConceptSetBrowser(false);
+				});
+			}
     }
 
     return commonUtils.build('characterization-design', CharacterizationDesign, view);

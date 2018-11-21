@@ -2,10 +2,13 @@ define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
+	  'components/cohortbuilder/CriteriaGroup',
+	  'conceptsetbuilder/InputTypes/ConceptSet',
     'text!./characterization-view-edit.html',
     'appConfig',
     'services/AuthAPI',
     'pages/Page',
+    'utils/AutoBind',
     'utils/CommonUtils',
     'assets/ohdsi.util',
     'less!./characterization-view-edit.less',
@@ -19,21 +22,19 @@ define([
     ko,
     CharacterizationService,
     PermissionService,
+    CriteriaGroup,
+    ConceptSet,
     view,
     config,
     authApi,
     Page,
+    AutoBind,
     commonUtils,
     ohdsiUtil
 ) {
-    class CharacterizationViewEdit extends Page {
+    class CharacterizationViewEdit extends AutoBind(Page) {
         constructor(params) {
             super(params);
-
-            this.selectTab = this.selectTab.bind(this);
-            this.setupDesign = this.setupDesign.bind(this);
-            this.setupSection = this.setupSection.bind(this);
-            this.loadDesignData = this.loadDesignData.bind(this);
 
             this.characterizationId = ko.observable();
             this.executionId = ko.observable();
@@ -94,9 +95,16 @@ define([
         }
 
         setupDesign(design) {
+            const conceptSets = ko.observableArray((design.conceptSets && design.conceptSets.map(cs => new ConceptSet(cs))) || []);
             this.design({
                 ...design,
                 name: ko.observable(design.name),
+								stratifiedBy: ko.observable(design.stratifiedBy),
+                stratas: (design.stratas && design.stratas.map(s => ({
+                  name: ko.observable(s.name),
+                  criteria: ko.observable(new CriteriaGroup(s.criteria, conceptSets)),
+                }))) || [],
+                conceptSets,
             });
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
         }

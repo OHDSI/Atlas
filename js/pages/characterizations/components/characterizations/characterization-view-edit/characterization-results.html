@@ -82,6 +82,35 @@
                             </div>
                         <!-- /ko -->
                     </div>
+
+                    <!-- ko foreach: $data.stratas -->
+                    <h3 data-bind="css: $component.classes('analysis-name'), text: $data.cohortName + ' / ' + ($data.domainId ? ($data.domainId + ' / ') : '') + $data.analysisName + ' / stratified by ' + $component.stratifiedByTitle()"></h3>
+                    <div data-bind="css: $component.classes('analysis-results')">
+                        <div data-bind="css: $component.classes('table-wrapper')">
+                            <table data-bind="css: $component.classes({ element: 'report-table', extra: 'table table-bordered table-hover' }),
+                                                        dataTable: {
+                                                           data: $data.data,
+                                                           options: {autoWidth: false, columns: $data.strataColumns}
+                                                        }
+                                                    ">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Covariate</th>
+                                        <!-- ko foreach: $data.strataNames -->
+                                            <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: $data.strataName"></th>
+                                        <!-- /ko -->
+                                    </tr>
+                                    <tr>
+                                        <!-- ko foreach: $data.strataNames -->
+                                            <th>Count</th>
+                                            <th>Pct</th>
+                                        <!-- /ko -->
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /ko -->
                 <!-- /ko -->
                 <!-- ko if: $data.type === 'distribution' -->
                     <div data-bind="css: $component.classes('analysis-results')">
@@ -139,6 +168,52 @@
                             <!-- /ko -->
                         <!-- /ko -->
                     </div>
+                    <!-- ko if: reports.length !== 2 -->
+                        <!-- ko foreach: reports -->
+                            <h3 data-bind="css: $component.classes('analysis-name'), text: $data.cohortName + ' / ' + ($data.domainId ? ($data.domainId + ' / ') : '') + $parent.analysisName + ' / stratified by ' + $component.stratifiedByTitle()"></h3>
+                            <div data-bind="css: $component.classes('analysis-results')">
+                                <div data-bind="css: $component.classes('table-wrapper', $parent.reports.length < 2 ? 'hidden-cohort-name' : null)">
+                                    <table data-bind="
+                                            css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                                            dataTable:{
+                                                data: $data.stratas,
+                                                options: {columns: $data.strataColumns, ordering: false}
+                                            }
+                                        "></table>
+                                </div>
+                            </div>
+                        <!-- /ko -->
+                    <!-- /ko -->
+                    <!-- ko if: reports.length === 2 -->
+                        <h3 data-bind="css: $component.classes('analysis-name'), text: ($data.domainId ? ($data.domainId + ' / ') : '') + $data.analysisName + ' / stratified by ' + $component.stratifiedByTitle()"></h3>
+                        <div data-bind="css: $component.classes('analysis-results')">
+                            <div data-bind="css: $component.classes('table-wrapper')">
+                                <table data-bind="
+                                        css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                                        dataTable:{
+                                            data: $data.stratas,
+                                            options: {columns: $data.strataColumns, ordering: false}
+                                        }
+                                    ">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Value</th>
+                                            <!-- ko foreach: reports -->
+                                                <th data-bind="css: $component.classes('th-cohort-name'), text: cohortName, attr: {colspan: $parent.strataNames.length}"></th>
+                                            <!-- /ko -->
+                                        </tr>
+                                        <tr>
+                                            <!-- ko foreach: reports -->
+                                                <!-- ko foreach: $parent.strataNames -->
+                                                <th data-bind="text: strataName"></th>
+                                                <!-- /ko -->
+                                            <!-- /ko -->
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    <!-- /ko -->
                 <!-- /ko -->
             </div>
         <!-- /ko -->
