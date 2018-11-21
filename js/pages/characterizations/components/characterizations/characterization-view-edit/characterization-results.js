@@ -234,9 +234,10 @@ define([
                     };
                     let report = analysis.reports.find(report => report.cohortId === r.cohortId);
                     if (!report) {
+                    		const cohort = this.design().cohorts.find(c => c.id === r.cohortId);
                         report = {
                             cohortId: r.cohortId,
-                            cohortName: this.design().cohorts.find(c => c.id === r.cohortId).name,
+                            cohortName: cohort ? cohort.name : '',
                             stats: []
                         };
                         analysis.reports.push(report);
@@ -258,6 +259,8 @@ define([
                         stdDev: r.stdDev
                     });
                 });
+
+                result.analyses.forEach(a => a.reports.sort((a,b) => a.cohortName.localeCompare(b.cohortName)));
 
                 this.filterList(this.getFilterList(result.analyses));
                 this.data(result);
