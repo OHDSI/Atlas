@@ -291,7 +291,7 @@ define(
 					));
 				});
 				this.noSourcesAvailable = ko.pureComputed(() => {
-					return sharedState.appInitializationStatus() == constants.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
+					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
 				});
 				this.appInitializationStatus = ko.computed(() => sharedState.appInitializationStatus());
 				this.pageTitle = ko.pureComputed(() => {

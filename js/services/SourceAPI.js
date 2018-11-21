@@ -5,25 +5,18 @@ define(function (require, exports) {
 	var sharedState = require('atlas-state');
 	var ohdsiUtil = require('assets/ohdsi.util');
 	var authApi = require('services/AuthAPI');
-  var lscache = require('lscache');
-  var ko = require('knockout');
-    const lodash = require('lodash');
+	var lscache = require('lscache');
+	var ko = require('knockout');
+	const lodash = require('lodash');
 	const httpService = require('services/http');
 	const constants = require('const');
 
 	var sources;
 
 	function getSources() {
-		var promise = $.ajax({
-			url: config.webAPIRoot + 'source/sources/',
-			error: function () {
-				 sharedState.appInitializationStatus(constants.applicationStatuses.failed);
-			},
-			success: function (sources) {
-			  setAppInitStatus(sources);
-			}
+		return $.ajax({
+			url: config.webAPIRoot + 'source/sources/'
 		});
-		return promise;
 	}
 
   function getCacheKey() {
@@ -76,33 +69,25 @@ define(function (require, exports) {
       contentType: 'application/json',
       success: (sources) => {
         config.api.available = true;
+        if (sources.length === 0) {
+            servicePromise.resolve(constants.applicationStatuses.noSourcesAvailable);
+        }
         setSharedStateSources(sources);
-          // this is the initial communication to WebAPI and if it succeeds
-          // the initialization is complete and the application is ready.
-        setAppInitStatus(sources);
-        servicePromise.resolve();
+        servicePromise.resolve(constants.applicationStatuses.running);
       },
       error: function (xhr, ajaxOptions, thrownError) {
         config.api.available = false;
         config.api.xhr = xhr;
         config.api.thrownError = thrownError;
-
-        sharedState.appInitializationStatus('failed');
         document.location = '#/configure';
 
-        servicePromise.resolve();
+        servicePromise.resolve(constants.applicationStatuses.failed);
       }
     });
 
     return servicePromise;
   }
-  function setAppInitStatus(sources){
-      if (sources.length !== 0){
-          sharedState.appInitializationStatus(constants.applicationStatuses.running);
-      } else {
-          sharedState.appInitializationStatus(constants.applicationStatuses.noSourcesAvailable);
-      }
-  }
+
   function setSharedStateSources(sources) {
     sharedState.sources([]);
     var serviceCacheKey = getCacheKey();

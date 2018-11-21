@@ -10,6 +10,7 @@ define(
 		'services/Execution',
 		'services/SourceAPI',
 		'Model',
+		'const',
 		'databindings',
 	],
 	(
@@ -23,6 +24,7 @@ define(
 		executionService,
 		sourceApi,
 		GlobalModel,
+		constants,
 	) => {
 		return class Application {
 			constructor(model, router) {
@@ -41,7 +43,7 @@ define(
 			bootstrap() {
 				const promise = new Promise(async (resolve, reject) => {
 					$.support.cors = true;
-					sharedState.appInitializationStatus(ko.observable('initializing'));
+					sharedState.appInitializationStatus(ko.observable(constants.applicationStatuses.initializing));
 					config.api.isExecutionEngineAvailable = ko.observable(false);
 					ko.applyBindings({
 						// provide to a view access to both model and the router via this.router
@@ -213,19 +215,23 @@ define(
 						if (config.userAuthenticationEnabled && !authApi.isAuthenticated()) {
 							this.authSubscription = authApi.isAuthenticated.subscribe(async (isAuthed) => {
 								if (isAuthed) {
-									await sourceApi.initSourcesConfig();
+									sharedState.appInitializationStatus(await sourceApi.initSourcesConfig());
 									this.authSubscription.dispose();
 									console.info('Re-initialized service information');
 								}
 							});
-
+							sharedState.appInitializationStatus(constants.applicationStatuses.running);
 							resolve();
 							return;
 						} else {
-							sourceApi.initSourcesConfig().then(() => {
-								console.info('Init sources from server');
-								resolve();
-							});
+							sourceApi.initSourcesConfig()
+								.then(function (appStatus) {
+									sharedState.appInitializationStatus(appStatus);
+								})
+								.then(() => {
+									console.info('Init sources from server');
+									resolve();
+								});
 						}
 					}
 				});
