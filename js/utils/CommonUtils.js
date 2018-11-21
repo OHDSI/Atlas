@@ -9,8 +9,7 @@ define([
 		ko,
 		sharedState,
 		Page,
-		URI, 
-		detect,
+		URI,
 	) => {
 
 	const build = function (name, viewModelClass, template) {
@@ -133,9 +132,9 @@ define([
 	}
 	
 	const isBrowserSupported = function () {
-        const browser = detect();
-        return browser.browser.family.toLowerCase() === 'chrome' && parseInt(browser.browser.version) > 63;
-    }
+		const browser = detect();
+		return browser.name.toLowerCase() === 'chrome' && parseInt(browser.version) > 63;
+	}
 
 	const syntaxHighlight = function (json) {
 		if (typeof json != 'string') {

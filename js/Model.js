@@ -53,7 +53,7 @@ define(
 			constructor() {
 				super();
 				const bemHelper = new BemHelper('app');
-				this.isBrowserWarningShown = ko.observable(!commonUtils.isBrowserSupported);
+				this.isBrowserWarningShown = ko.observable(!commonUtils.isBrowserSupported());
 				this.classes = bemHelper.run.bind(bemHelper);
 				this.activePage = ko.observable();
 				this.componentParams = ko.observable({});
