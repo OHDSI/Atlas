@@ -49,8 +49,10 @@ define(function (require, exports) {
 								domains.push(v.DOMAIN_ID);
 							});
 							resolve(domains);
-							domainsPromise = loadPromise;
+							domainsPromise = loadPromise; // store promise for future invocations
 						});
+					} else {
+						resolve(domains);	
 					}
 				});
 			});
