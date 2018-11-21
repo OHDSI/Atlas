@@ -82,6 +82,9 @@ const settingsObject = {
     "*": {
       'jqueryui/jquery.ddslick': 'assets/jqueryui/jquery.ddslick',
       'jqueryui/autoGrowInput': 'assets/jqueryui/autoGrowInput',
+			'd3-color': 'd3',
+			'd3-interpolate': 'd3',
+			'd3-selection' : 'd3'
     }
   },
   paths: {    
@@ -111,19 +114,6 @@ const settingsObject = {
     "js-cookie": "../node_modules/js-cookie/src/js.cookie",
 
     "d3": "../node_modules/d3/build/d3",
-    "d3-collection": "../node_modules/d3-collection/build/d3-collection",
-    "d3-selection": "../node_modules/d3-selection/build/d3-selection",
-    "d3-shape": "../node_modules/d3-shape/build/d3-shape",
-    "d3-drag": "../node_modules/d3-drag/build/d3-drag",
-    "d3-scale": "../node_modules/d3-scale/build/d3-scale",
-    "d3-array": "../node_modules/d3-array/build/d3-array",
-    "d3-interpolate": "../node_modules/d3-interpolate/build/d3-interpolate",
-    "d3-format": "../node_modules/d3-format/build/d3-format",
-    "d3-time": "../node_modules/d3-time/build/d3-time",
-    "d3-time-format": "../node_modules/d3-time-format/build/d3-time-format",
-    "d3-color": "../node_modules/d3-color/build/d3-color",
-    "d3-path": "../node_modules/d3-path/build/d3-path",
-    "d3-dispatch": "../node_modules/d3-dispatch/build/d3-dispatch",
     "d3-tip": "../node_modules/d3-tip/index",
     "d3-slider": "assets/d3.slider",
     "d3-scale-chromatic": "assets/d3-scale-chromatic.1.3.0.min",
