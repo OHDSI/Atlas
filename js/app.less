@@ -1,5 +1,5 @@
 .app {
-  &__menu-container-without-warning {
+  &__menu-container {
     position: fixed;
     left: 0px;
     top: 0px;
@@ -7,16 +7,22 @@
     bottom: 0;
     background-color: #003142;
     border-right: solid 1px #888;
+
+    &--with-warning {
+      top: 30px;
+    }
   }
 
-  &__menu-container-with-warning {
-    position: fixed;
-    left: 0px;
-    top: 30px;
-    width: 175px;
-    bottom: 0;
-    background-color: #003142;
-    border-right: solid 1px #888;
+  &__main-window {
+    position: absolute;
+    left: 174px;
+    top: 0px;
+    right: 0px;
+    height: 100%;
+
+    &--with-warning {
+      top: 30px;
+    }
   }
   
   &__menu {
