@@ -1293,6 +1293,10 @@ ul.ColVis_collection li {
   padding: 7px;
 }
 
+ .app.modal-open {
+  padding-right: 0px!important;
+}
+
 circle {
   fill: #fff;
   transition: fill .5s;

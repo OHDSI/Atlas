@@ -129,8 +129,8 @@ const settingsObject = {
     "lz-string": "../node_modules/lz-string/libs/lz-string",    
     "colorbrewer": "../node_modules/colorbrewer/index",
     "ohdsi-api": "../node_modules/@ohdsi/ui-toolbox/lib/umd/api/index",
-    "bootstrap-datetimepicker": "../node_modules/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
-    "detect-browser": "https://cdnjs.cloudflare.com/ajax/libs/Detect.js/2.2.2/detect",
+    "bootstrap-datetimepicker": "../node_modules/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker", 
+    "detect-browser": "../node_modules/detect-browser/index",
   },
   cssPaths: {
     "font-awesome.min.css": "css!styles/font-awesome.min.css",

@@ -2,13 +2,15 @@ define([
 		'knockout',
 		'atlas-state',
 		'pages/Page',
-		'urijs'
+		'urijs', 
+		'detect-browser',
 	],
 	(
 		ko,
 		sharedState,
 		Page,
-		URI,
+		URI, 
+		detect,
 	) => {
 
 	const build = function (name, viewModelClass, template) {
@@ -129,6 +131,11 @@ define([
 		conceptSetItem.includeMapped = ko.observable(false);
 		return conceptSetItem;
 	}
+	
+	const isBrowserSupported = function () {
+        const browser = detect();
+        return browser.browser.family.toLowerCase() === 'chrome' && parseInt(browser.browser.version) > 63;
+    }
 
 	const syntaxHighlight = function (json) {
 		if (typeof json != 'string') {
@@ -188,6 +195,7 @@ define([
 		createConceptSetItem,
 		syntaxHighlight,
 		getPathwaysUrl,
-		normalizeUrl
+		normalizeUrl, 
+		isBrowserSupported
 	};
 });
