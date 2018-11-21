@@ -12,46 +12,50 @@ define(function (require, exports) {
 	loadedPromise.resolve();
 
 	var defaultSource;
+	var domainsPromise = null;
 	var domains = [];
 
 	getDomains();
 
 	function getDomains() {
-		const domainsPromise = new Promise((resolve, reject) => {
-			sourceAPI.getSources().then(function (sources) {
-				if (sources.length === 0) {
-					resolve(domains);
-					return;
-				}
-				// find the source which has a Vocabulary Daimon with priority = 1
-				var prioritySources = sources.filter(function (source) {
-					return source.daimons.filter(function (daimon) {
-						return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
-					}).length > 0
-				});
-				if (prioritySources.length > 0)
-					defaultSource = prioritySources[0];
-				else // find the first vocabulary or CDM daimon
-					defaultSource = sources.filter(function (source) {
-						return source.daimons.filter(function (daimon) {
-							return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
-						}).length > 0
-					})[0];
-	
-				// preload domain list once for all future calls to getDomainPromise()
-				if (defaultSource !== undefined) {
-					$.ajax({
-						url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
-					}).then(function (results) {
-						$.each(results, function (i, v) {
-							domains.push(v.DOMAIN_ID);
-						});
+		// if domains haven't yet been requested, create the promise
+		if (!domainsPromise) {
+			domainsPromise = new Promise((resolve, reject) => {
+				sourceAPI.getSources().then(function (sources) {
+					if (sources.length === 0) {
 						resolve(domains);
+						return;
+					}
+					// find the source which has a Vocabulary Daimon with priority = 1
+					var prioritySources = sources.filter(function (source) {
+						return source.daimons.filter(function (daimon) {
+							return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
+						}).length > 0
 					});
-				}
-			})
-		});
-        return domainsPromise;
+					if (prioritySources.length > 0)
+						defaultSource = prioritySources[0];
+					else // find the first vocabulary or CDM daimon
+						defaultSource = sources.filter(function (source) {
+							return source.daimons.filter(function (daimon) {
+								return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
+							}).length > 0
+						})[0];
+
+					// preload domain list once for all future calls to getDomainPromise()
+					if (defaultSource !== undefined) {
+						$.ajax({
+							url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
+						}).then(function (results) {
+							$.each(results, function (i, v) {
+								domains.push(v.DOMAIN_ID);
+							});
+							resolve(domains);
+						});
+					}
+				})
+			});
+		}
+		return domainsPromise;
 	}
 
 	function loadDensity(results) {

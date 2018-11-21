@@ -68,6 +68,7 @@ const settingsObject = {
       'jquery-ui/tabs': 'jquery-ui',
       'jqueryui/jquery.ddslick': 'assets/jqueryui/jquery.ddslick',
       'jqueryui/autoGrowInput': 'assets/jqueryui/autoGrowInput',
+			'services/VocabularyProvider': 'services/Vocabulary'
     }
   },
   paths: {    
