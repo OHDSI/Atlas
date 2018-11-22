@@ -50,6 +50,7 @@ define([
                 characterizationId: this.characterizationId,
                 design: this.design,
                 executionId: this.executionId,
+                designDirtyFlag: this.designDirtyFlag,
             });
         }
 
