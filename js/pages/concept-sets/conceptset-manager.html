@@ -1,12 +1,12 @@
-<heading-title params="name: $root.currentConceptSet().name, icon: 'shopping-cart', theme: 'dark'"></heading-title>
+<heading-title params="name: currentConceptSet().name, icon: 'shopping-cart', theme: 'dark'"></heading-title>
 
 <div data-bind="css: classes()">
-  <div class="asset-heading" data-bind="if: $root.currentConceptSet">
+  <div class="asset-heading" data-bind="if: currentConceptSet">
     <input
       id="txtConceptSetName"
       type="text"
       data-bind="attr: { disabled: !canEdit() },
-      textInput: $root.currentConceptSet().name"
+      textInput: currentConceptSet().name"
     />
     <div class="btn-group">
       <button
@@ -25,7 +25,7 @@
         type="button"
         class="btn btn-sm btn-primary"
         data-bind="click: copy,
-          visible: $root.currentConceptSet() && $root.currentConceptSet().id > 0,
+          visible: currentConceptSet() && currentConceptSet().id > 0,
           css: { disabled: !canCreate() }">
           <i class="fa fa-copy"></i>
       </button>
