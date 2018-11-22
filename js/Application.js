@@ -227,8 +227,6 @@ define(
 							sourceApi.initSourcesConfig()
 								.then(function (appStatus) {
 									sharedState.appInitializationStatus(appStatus);
-								})
-								.then(() => {
 									console.info('Init sources from server');
 									resolve();
 								});

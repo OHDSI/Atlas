@@ -269,8 +269,8 @@ define([
         .then(() => sourceApi.initSourcesConfig())
         .then(function (appStatus) {
             sharedState.appInitializationStatus(appStatus);
+            vocabularyProvider.getDomains();
         })
-        .then(() => vocabularyProvider.getDomains())
         .then(() => {
           roleService.getList()
             .then((roles) => {
@@ -319,8 +319,8 @@ define([
         .then(sourceApi.initSourcesConfig)
         .then(function (appStatus) {
             sharedState.appInitializationStatus(appStatus);
+            roleService.getList();
         })
-        .then(() => roleService.getList())
         .then((roles) => {
           this.model.roles(roles);
           this.loading(false);
