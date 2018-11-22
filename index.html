@@ -10,16 +10,18 @@
 		
 		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 		<link rel="stylesheet" href="js/styles/splash.css" />
+		<link rel="stylesheet" href="js/styles/browserWarning.css" />
 		
 		<title data-bind="text: pageTitle">ATLAS</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Detect.js/2.2.2/detect.js"></script>
 	</head>
 	
 	<body class="app">
-	<div class="browser-alarm" style="display:none;" data-bind="visible: isBrowserWarningShown()">
+	<div id="b-alarm" style="visibility: hidden" class="browser-alarm">
 		<div class="warning-text">
 			Note that only Chrome browser newer than v.63 is officially supported
 		</div>
-		<button type="button" class="close" data-bind="click: function () { isBrowserWarningShown(false) }">&times;</button>
+		<button type="button" class="close" onclick="hideWarning()">&times;</button>
 	</div>
 	<!-- ko if: !initializationComplete() -->
 	<div id="splash">
@@ -142,6 +144,7 @@
 
 	<!-- bundled mode -->	
 	<!-- <script data-main="js/assets/bundle/bundle" src="js/require.js"></script>-->
+	<script src="js/utils/BrowserDetection.js"></script>
 		
 </body>
 

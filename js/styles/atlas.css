@@ -249,26 +249,6 @@ pre span.key {
   flex-direction: column;
 }
 
-.browser-alarm {
-  background-color: #ce8483;
-  color: darkred;
-  height: 30px;
-  display: flex;
-  align-items: center;
-}
-
-.browser-alarm .warning-text {
-  justify-content: center;
-  margin-left: auto;
-}
-
-.browser-alarm .close {
-  color: darkred;
-  opacity: .8;
-  margin-left: auto;
-  margin-right: 7px;
-}
-
 .flexed {
   flex-grow: 1;
   display: flex;

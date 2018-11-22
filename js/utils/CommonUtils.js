@@ -2,8 +2,7 @@ define([
 		'knockout',
 		'atlas-state',
 		'pages/Page',
-		'urijs', 
-		'detect-browser',
+		'urijs',
 	],
 	(
 		ko,
@@ -131,11 +130,6 @@ define([
 		return conceptSetItem;
 	}
 	
-	const isBrowserSupported = function () {
-		const browser = detect();
-		return browser.name.toLowerCase() === 'chrome' && parseInt(browser.version) > 63;
-	}
-
 	const syntaxHighlight = function (json) {
 		if (typeof json != 'string') {
 			json = ko.toJSON(json, undefined, 2);
