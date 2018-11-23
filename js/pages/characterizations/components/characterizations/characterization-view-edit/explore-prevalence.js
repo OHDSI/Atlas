@@ -31,14 +31,15 @@ define([
 			this.data = ko.observableArray();
 			this.loading = ko.observable();
 			this.explore = params.explore;
+			this.cohortId = this.explore.cohortId;
 			this.exploring = ko.observable();
 			this.exploringTitle = ko.pureComputed(() => this.exploring() ? 'Exploring concept hierarchy for: ' + this.exploring() : null );
 			this.loadData(this.explore);
 		}
 
-		loadData({executionId, analysisId, covariateId}) {
+		loadData({executionId, analysisId, cohortId, covariateId}) {
 			this.loading(true);
-			return CharacterizationService.getPrevalenceStatsByGeneration(executionId, analysisId, covariateId)
+			return CharacterizationService.getPrevalenceStatsByGeneration(executionId, analysisId, cohortId, covariateId)
 				.then(res => this.data(res.map(v => ({...v, executionId}))))
 				.finally(() => this.loading(false));
 		}
@@ -55,7 +56,7 @@ define([
 			const distance = row.distance;
 			const rel = distance > 0 ? 'Ancestor' : distance < 0 ? 'Descendant' : 'Selected';
 			const cls = this.classes({element: 'explore', modifiers: distance === 0 ? 'disabled' : '', extra: 'btn btn-sm btn-primary'});
-			const binding = distance !== 0 ? 'click: () => $component.exploreByFeature($data)' : '';
+			const binding = distance !== 0 ? 'click: () => $component.exploreByFeature({...$data, cohortId: $component.cohortId})' : '';
 			return "<span class='"+ cls + "' data-bind='" + binding + "'>Explore</span> " + rel;
 		}
 
