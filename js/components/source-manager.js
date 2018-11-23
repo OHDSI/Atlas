@@ -132,8 +132,8 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'vocabularyprovid
         .then(sourceApi.initSourcesConfig)
         .then(function (appStatus) {
           sharedState.appInitializationStatus(appStatus);
+          return vocabularyProvider.getDomains();
         })
-        .then(vocabularyProvider.getDomains)
         .then(roleApi.updateRoles)
         .then(function () {
           self.goToConfigure();
@@ -182,8 +182,8 @@ define(['knockout', 'text!./source-manager.html', 'appConfig', 'vocabularyprovid
         .then(sourceApi.initSourcesConfig)
         .then(function (appStatus) {
             sharedState.appInitializationStatus(appStatus);
+            return roleApi.updateRoles();
         })
-        .then(roleApi.updateRoles)
         .then(function () {
           self.loading(false);
           self.goToConfigure();
