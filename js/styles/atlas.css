@@ -1,3 +1,8 @@
+html, body {
+  height: 100%;
+  min-height: 1px;
+}
+
 table.cohort-generate-sources {
   width: 100%;
   border-bottom: solid 1px #888;
@@ -247,25 +252,8 @@ pre span.key {
   flex-direction: column;
 }
 
-.browser-alarm {
-  background-color: #ce8483;
-  color: darkred;
-  height: 30px;
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  display: flex;
-  align-items: center;
-}
-.browser-alarm .warning-text {
-  justify-content: center;
-  margin-left: auto;
-}
-.browser-alarm .close {
-  color: darkred;
-  opacity: .8;
-  margin-left: auto;
-  margin-right: 7px;
+.app.modal-open {
+  padding-right: 0px!important;
 }
 
 .flexed {
