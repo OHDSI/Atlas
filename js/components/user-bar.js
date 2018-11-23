@@ -39,14 +39,18 @@ define([
 
 			this.jobModalOpened = ko.observable(false);
 			this.jobModalOpened.subscribe(show => {
-				if (!show) {
-					jobDetailsService.setLastViewedTime(this.lastViewedTime);
-					this.jobListing().forEach(j => {
-						j.viewed(true);
-					});
-					this.jobListing.valueHasMutated();
+				if (authApi.isPermittedPostViewedNotifications()){
+					if (!show) {
+						jobDetailsService.setLastViewedTime(this.lastViewedTime);
+						this.jobListing().forEach(j => {
+							j.viewed(true);
+						});
+						this.jobListing.valueHasMutated();
+					} else {
+						this.lastViewedTime = Date.now()
+					}
 				} else {
-					this.lastViewedTime = Date.now()
+					console.warn('There isn\'t permission to post viewed notification');
 				}
 			});
 
@@ -73,12 +77,19 @@ define([
 		}
 
 		start() {
-			jobDetailsService.getLastViewedTime()
-				.then(({data}) => {
-					this.lastViewedTime = new Date(data);
-					this.startPolling();
-					this.updateJobStatus()
-				})
+			if (authApi.isPermittedGetViewedNotifications()) {
+				jobDetailsService.getLastViewedTime()
+					.then(({data}) => {
+						this.lastViewedTime = new Date(data);
+						this.startPolling();
+						this.updateJobStatus()
+					})
+					.catch(() => {
+							console.warn('The server error occurred while getting viewed notifications');
+					});
+			} else {
+				console.warn('There isn\'t permission to get viewed notifications');
+			}
 		}
 
 		startPolling() {
@@ -94,43 +105,50 @@ define([
 		}
 
 		updateJobStatus() {
-			jobDetailsService.list()
-				.then(notifications => {
-					notifications.data.forEach(n => {
-						let job = this.getExisting(n);
-
-						const endDate = (n.endDate ? n.endDate : Date.now());
-						const duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
-						const displayedEndDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
-
-						if (job) {
-							if (job.status() !== n.status) {
-								job.status(n.status);
-								job.viewed(false);
-								job.duration = duration;
-								job.endDate = displayedEndDate;
+			if (!authApi.isPermittedGetAllNotifications()) {
+				jobDetailsService.list()
+					.then(notifications => {
+						notifications.data.forEach(n => {
+							let job = this.getExisting(n);
+	
+							const endDate = (n.endDate ? n.endDate : Date.now());
+							const duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
+							const displayedEndDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
+	
+							if (job) {
+								if (job.status() !== n.status) {
+									job.status(n.status);
+									job.viewed(false);
+									job.duration = duration;
+									job.endDate = displayedEndDate;
+									this.jobListing.valueHasMutated();
+								}
+							} else {
+								job = {
+									type: n.jobInstance.name,
+									name: n.jobParameters.jobName,
+									status: ko.observable(n.status),
+									executionId: n.executionId,
+									viewed: ko.observable(n.startDate && this.lastViewedTime && (n.endDate || n.startDate) < this.lastViewedTime),
+									url: jobDetailsService.getJobURL(n),
+									executionUniqueId: ko.pureComputed(function () {
+										return job.type + "-" + job.executionId;
+									}),
+									duration,
+									endDate: displayedEndDate,
+								};
+								this.jobListing.push(job);
 								this.jobListing.valueHasMutated();
+	
 							}
-						} else {
-							job = {
-								type: n.jobInstance.name,
-								name: n.jobParameters.jobName,
-								status: ko.observable(n.status),
-								executionId: n.executionId,
-								viewed: ko.observable(n.startDate && this.lastViewedTime && (n.endDate || n.startDate) < this.lastViewedTime),
-								url: jobDetailsService.getJobURL(n),
-								executionUniqueId: ko.pureComputed(function () {
-									return job.type + "-" + job.executionId;
-								}),
-								duration,
-								endDate: displayedEndDate,
-							};
-							this.jobListing.push(job);
-							this.jobListing.valueHasMutated();
-
-						}
+						});
+					})
+					.catch(() => {
+						console.warn('The server error occurred while getting all notifications');                        
 					});
-				});
+			} else {
+				console.warn('There isn\'t permission to get all notifications');
+			}
 		};
 
 		jobNameClick(j) {
