@@ -84,7 +84,8 @@ const settingsObject = {
       'jqueryui/autoGrowInput': 'assets/jqueryui/autoGrowInput',
 			'd3-color': 'd3',
 			'd3-interpolate': 'd3',
-			'd3-selection' : 'd3'
+			'd3-selection' : 'd3',
+			'services/VocabularyProvider': 'services/Vocabulary'
     }
   },
   paths: {    
@@ -171,7 +172,6 @@ const settingsObject = {
     "feedback": "components/feedback",
     "conceptsetbuilder": "components/conceptsetbuilder",
     "conceptpicker": "components/conceptpicker",
-    "vocabularyprovider": "modules/WebAPIProvider/VocabularyProvider",
     "css": "extensions/plugins/css",
   },
 };

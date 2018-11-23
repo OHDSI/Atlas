@@ -5,6 +5,7 @@ define([
   'utils/AutoBind',
   'utils/CommonUtils',
   'appConfig',
+  'services/Vocabulary',
   'assets/ohdsi.util',
   'services/SourceAPI',
   'services/role',
@@ -23,6 +24,7 @@ define([
     AutoBind,
     commonUtils,
     config,
+    vocabularyProvider,
     ohdsiUtil,
     sourceApi,
     roleService,
@@ -265,6 +267,10 @@ define([
       this.loading(true);
       sourceApi.saveSource(this.selectedSourceId(), source)
         .then(() => sourceApi.initSourcesConfig())
+        .then(function (appStatus) {
+            sharedState.appInitializationStatus(appStatus);
+            return vocabularyProvider.getDomains();
+        })
         .then(() => {
           roleService.getList()
             .then((roles) => {
@@ -293,7 +299,7 @@ define([
 		);
 		const currenPriotirizableDaimons = this.selectedSource().daimons().filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType));
 		const notSelectedCurrentDaimons = currenPriotirizableDaimons.filter(currentDaimon => {
-			// Diamon of the type with higher priority exists
+			// Daimon of the type with higher priority exists
 			return  otherPriotirizableDaimons.find(otherDaimon => currentDaimon.daimonType === otherDaimon.daimonType && currentDaimon.priority < otherDaimon.priority);
 		});
 		return notSelectedCurrentDaimons.length !== currenPriotirizableDaimons.length;
@@ -311,7 +317,10 @@ define([
       this.loading(true);
       sourceApi.deleteSource(this.selectedSourceId())
         .then(sourceApi.initSourcesConfig)
-        .then(() => roleService.getList())
+        .then(function (appStatus) {
+            sharedState.appInitializationStatus(appStatus);
+            return roleService.getList();
+        })
         .then((roles) => {
           this.model.roles(roles);
           this.loading(false);

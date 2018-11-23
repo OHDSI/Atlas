@@ -23,6 +23,7 @@ require(["./settings"], (settings) => {
 			'knockout',
 			'Application',
 			'Model',
+			'const',
 			'pages/Router',
 			'atlas-state',
 			'loading',
@@ -35,6 +36,7 @@ require(["./settings"], (settings) => {
 				ko,
 				Application,
 				Model,
+				constants,
 				Router,
 				sharedState,
 			) => {
@@ -42,9 +44,8 @@ require(["./settings"], (settings) => {
 
 				app.bootstrap()
 					.then(() => app.synchronize())
-					.then(() => app.run())
 					.catch(er => {
-						sharedState.appInitializationStatus(Model.applicationStatuses.failed);
+						sharedState.appInitializationStatus(constants.applicationStatuses.failed);
 						console.error('App initialization failed', er);
 					});
 

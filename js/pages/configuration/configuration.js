@@ -8,6 +8,7 @@ define([
   'services/AuthAPI',
   'services/SourceAPI',
   'atlas-state',
+  'const',
   'less!./configuration.less',
   'components/heading'
 ], function (
@@ -19,7 +20,8 @@ define([
   config,
   authApi,
   sourceApi,
-  sharedState
+  sharedState,
+  constants
 ) {
 	class Configuration extends AutoBind(Page) {
     constructor(params) {
@@ -35,7 +37,8 @@ define([
       ];
   
       this.isAuthenticated = authApi.isAuthenticated;
-      this.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === 'running' || sharedState.appInitializationStatus() === 'no-sources-available');
+      this.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === constants.applicationStatuses.running || 
+          sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable);
       this.hasAccess = ko.pureComputed(() => {
         return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
       });
