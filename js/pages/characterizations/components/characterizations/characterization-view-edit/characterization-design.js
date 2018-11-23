@@ -110,7 +110,7 @@ define([
 
         getRemoveCell(action, identifierField = 'id') {
             return (s, p, d) => {
-                return `<a data-bind="click: () => $component.params.${action}('${d[identifierField]}')">Remove</a>`;
+                return `<a href='#' data-bind="click: () => $component.params.${action}('${d[identifierField]}')">Remove</a>`;
             }
         }
 
