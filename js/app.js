@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'detect-browser', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'webapi/MomentAPI', 'atlas-state', 'querystring', 'd3', 'utils/BemHelper', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css', 'less!app.less'],
-	function ($, ko, detect, ohdsiUtil, config, authApi, roleApi, momentApi, sharedState, querystring, d3, BemHelper) {
+define(['jquery', 'knockout', 'ohdsi.util', 'appConfig', 'webapi/AuthAPI', 'webapi/RoleAPI', 'webapi/MomentAPI', 'atlas-state', 'querystring', 'd3', 'utils/BemHelper', 'facets', 'css!styles/tabs.css', 'css!styles/buttons.css', 'less!app.less'],
+	function ($, ko, ohdsiUtil, config, authApi, roleApi, momentApi, sharedState, querystring, d3, BemHelper) {
 		var appModel = function () {
 			$.support.cors = true;
 			var self = this;
@@ -7,9 +7,6 @@ define(['jquery', 'knockout', 'detect-browser', 'ohdsi.util', 'appConfig', 'weba
 			self.classes = bemHelper.run.bind(bemHelper);
 			self.authApi = authApi;
 			self.componentParams = {};
-			const browser = detect.parse(navigator.userAgent);
-			self.isBrowserSupported = browser.browser.family.toLowerCase() === 'chrome' && parseInt(browser.browser.version) > 63;
-			self.isBrowserWarningShown = ko.observable(!this.isBrowserSupported);
 			self.config = config;
 			self.initPromises = [];
 			self.applicationStatus = ko.observable('initializing');
