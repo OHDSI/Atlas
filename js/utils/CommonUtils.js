@@ -2,7 +2,7 @@ define([
 		'knockout',
 		'atlas-state',
 		'pages/Page',
-		'urijs',
+		'urijs'
 	],
 	(
 		ko,
@@ -129,7 +129,7 @@ define([
 		conceptSetItem.includeMapped = ko.observable(false);
 		return conceptSetItem;
 	}
-	
+
 	const syntaxHighlight = function (json) {
 		if (typeof json != 'string') {
 			json = ko.toJSON(json, undefined, 2);
@@ -188,7 +188,6 @@ define([
 		createConceptSetItem,
 		syntaxHighlight,
 		getPathwaysUrl,
-		normalizeUrl, 
-		isBrowserSupported
+		normalizeUrl
 	};
 });
