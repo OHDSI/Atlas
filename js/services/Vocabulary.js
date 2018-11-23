@@ -40,7 +40,7 @@ define(function (require, exports) {
 							}).length > 0
 						})[0];
 
-					// preload domain list once for all future calls to getDomainPromise()
+					// preload domain list once for all future calls to getDomains()
 					if (defaultSource !== undefined) {
 						$.ajax({
 							url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
