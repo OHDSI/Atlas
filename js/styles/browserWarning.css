@@ -1,0 +1,23 @@
+.browser-alarm {
+    background-color: #ce8483;
+    color: darkred;
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.browser-alarm__warning-text {
+    justify-content: center;
+    margin-left: auto;
+}
+
+.browser-alarm__close {
+    color: darkred;
+    opacity: .8;
+    margin-left: auto;
+    margin-right: 7px;
+}
+
+body {
+    margin: 0;
+}

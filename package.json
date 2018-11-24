@@ -51,6 +51,7 @@
     "bootstrap": "^3.3.7",
     "bootstrap-datetimepicker": "^0.0.7",
     "bootstrap-select": "^1.13.3",
+    "bowser": "2.0.0-beta.3",
     "clipboard": "^1.5.16",
     "colorbrewer": "^1.3.0",
     "crossfilter2": "^1.4.6",
