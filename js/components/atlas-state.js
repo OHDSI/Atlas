@@ -1,4 +1,4 @@
-define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util'], function (ko, cache, jobDetail, ohdsiUtil) {
+define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
 	var state = {};
 	state.resultsUrl = ko.observable();
 	state.vocabularyUrl = ko.observable();
@@ -11,7 +11,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util'], f
 	// shared concept selection state
 	state.selectedConceptsIndex = {};
 	state.selectedConcepts = ko.observableArray(null);
-	state.appInitializationStatus = ko.observable('initializing');
+	state.appInitializationStatus = ko.observable(constants.applicationStatuses.initializing);
 
 	state.clearSelectedConcepts = function () {
 		this.selectedConceptsIndex = {};
