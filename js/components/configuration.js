@@ -1,4 +1,4 @@
-define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'atlas-state', 'access-denied'], function (ko, view, config, authApi, sourceApi, sharedState) {
+define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'atlas-state', 'const', 'access-denied'], function (ko, view, config, authApi, sourceApi, sharedState, constants) {
 	function configuration(params) {
 		var self = this;
 		self.config = config;
@@ -12,7 +12,8 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
     ];
 
 		self.isAuthenticated = authApi.isAuthenticated;
-		self.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === 'complete' || sharedState.appInitializationStatus() === 'no-sources-available');
+		self.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === constants.applicationStatuses.complete || 
+     		sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable);
 		self.hasAccess = ko.pureComputed(function () {
 			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
 		});

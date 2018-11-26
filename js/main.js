@@ -191,7 +191,7 @@ requirejs.config({
 
 requirejs(['bootstrap'], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
-	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'webapi/ExecutionAPI', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, sourceApi, util, lscache, sharedState, vocabAPI, executionAPI) {
+	requirejs(['knockout', 'app', 'appConfig', 'webapi/AuthAPI', 'webapi/SourceAPI', 'ohdsi.util', 'lscache', 'atlas-state', 'vocabularyprovider', 'webapi/ExecutionAPI', 'const', 'director', 'search', 'localStorageExtender', 'jquery.ui.autocomplete.scroll', 'loading', 'user-bar', 'welcome'], function (ko, app, config, authApi, sourceApi, util, lscache, sharedState, vocabAPI, executionAPI, constants) {
 		var pageModel = new app();
 		window.pageModel = pageModel;
 
@@ -240,18 +240,23 @@ requirejs(['bootstrap'], function () { // bootstrap must come first
 			}
 		} else {
 			sharedState.sources([]);
-
-      if (authApi.isAuthenticated()) {
-        sourceApi.initSourcesConfig();
-      } else {
-        var wasInitialized = false;
-        authApi.isAuthenticated.subscribe(function(isAuthed) {
-          if (isAuthed && !wasInitialized) {
-            sourceApi.initSourcesConfig();
-            wasInitialized = true;
-          }
-        });
-      }
+			
+			if (authApi.isAuthenticated()) {
+				sourceApi.initSourcesConfig().then(function (appStatus) {
+					sharedState.appInitializationStatus(appStatus);
+				});
+			} else {
+				var wasInitialized = false;
+				authApi.isAuthenticated.subscribe(function(isAuthed) {
+					if (isAuthed && !wasInitialized) {
+						sourceApi.initSourcesConfig().then(function (appStatus) {
+							sharedState.appInitializationStatus(appStatus);
+						});
+						wasInitialized = true;
+					}
+				});
+				sharedState.appInitializationStatus(constants.applicationStatuses.running);
+			}
 		}
 
 
