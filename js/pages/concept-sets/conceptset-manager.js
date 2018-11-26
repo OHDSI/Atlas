@@ -49,6 +49,7 @@ define([
 			super(params);
 			this.componentParams = params;			
 			this.model = params.model;
+			this.currentConceptSet = this.model.currentConceptSet;
 			this.isOptimizeModalShown = ko.observable(false);
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.conceptSetName = ko.observable("New Concept Set");

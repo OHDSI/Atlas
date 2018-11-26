@@ -1,5 +1,6 @@
 <div>
     <loading data-bind="visible: loading()" params="status: 'Loading prevalence stats...'"></loading>
+    <div>Cohort: <span data-bind="text: cohortName"></span></div>
     <div data-bind="visible: exploring() && !loading()">
         <div data-bind="css: classes('exploring-pane')">
             <i title="Reset exploring hierarchy" data-bind="click: resetExploring, css: classes({element: 'reset', extra: 'fa fa-close'})"></i>

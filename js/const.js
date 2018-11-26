@@ -384,6 +384,14 @@ define(
 			jobByName: (name,  type) => `${config.api.url}job/type/${type}/name/${name}`,
 		};
 
+     const applicationStatuses = {
+		  initializing: 'initializing',
+		  running: 'running',
+		  noSourcesAvailable: 'no-sources-available',
+		  failed: 'failed',
+	  };
+      
+
     return {
 			minChartHeight,
 			treemapGradient,
@@ -394,6 +402,7 @@ define(
 			metatrix,
 			getRelatedSourcecodesColumns,
 			apiPaths,
+			applicationStatuses,
     };
   }
 );
