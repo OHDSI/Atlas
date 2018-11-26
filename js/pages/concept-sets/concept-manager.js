@@ -33,15 +33,6 @@ define([
 			this.currentConceptId = params.model.currentConceptId;
 
 			this.subscriptions.push(
-				this.currentConceptId.subscribe((value) => {
-					if (this.model.currentConceptMode() == 'recordcounts') {
-						this.loadRecordCounts();
-					}
-					this.loadConcept(value);
-				})
-			);
-
-			this.subscriptions.push(
 				this.model.currentConceptMode.subscribe((mode) => {
 					switch (mode) {
 						case 'recordcounts':
@@ -347,6 +338,13 @@ define([
 		async onPageCreated() {
 			this.loadConcept(this.model.currentConceptId());
 			super.onPageCreated();
+		}
+
+		onRouterParamsChanged({ conceptId }) {
+			if (this.model.currentConceptMode() == 'recordcounts') {
+				this.loadRecordCounts();
+			}
+			this.loadConcept(value);
 		}
 
 		async fetchRecordCounts(sources) {
