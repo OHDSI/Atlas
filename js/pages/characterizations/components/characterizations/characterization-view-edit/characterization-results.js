@@ -117,6 +117,16 @@ define([
                 className: this.classes('col-prev-title'),
                 render: (d, t, r) => {
                     const analysis = this.data().analyses.find(a => a.analysisId === r.analysisId);
+                    if (analysis && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') {
+                      return d + r.cohorts.map((c, idx) => {
+                          const data = {...r, cohortId: c.cohortId, cohortName: c.cohortName};
+                          return `<div class='${this.classes({element: 'explore'})}'>
+                            <a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>Explore ${c.cohortName}</a>
+                        </div>`;
+                      }).join('');
+                    } else {
+                        return d;
+                    }
                     return d + ((analysis && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') ? exploreBtn : "");
                  },
             };
@@ -166,8 +176,9 @@ define([
 						});
         }
 
-        exploreByFeature({covariateName, analysisId, cohortId, covariateId}) {
-					this.explorePrevalence({executionId: this.executionId(), analysisId, cohortId, covariateId});
+        exploreByFeature({covariateName, analysisId, covariateId, cohorts}, index) {
+          const {cohortId, cohortName} = cohorts[index];
+					this.explorePrevalence({executionId: this.executionId(), analysisId, cohortId, covariateId, cohortName});
 					this.explorePrevalenceTitle('Exploring ' + covariateName);
 					this.isExplorePrevalenceShown(true);
         }
@@ -453,7 +464,7 @@ define([
                             analysisName: rd.analysisName || analysis.analysisName,
                             covariateName: rd.covariateName,
                             covariateId: rd.covariateId,
-                            cohortId: r.cohortId,
+                            cohorts: [],
                             analysisId: analysis.analysisId,
                             sumValue: [],
                             pct: [],
@@ -462,6 +473,7 @@ define([
 
                     const cov = data[rd.covariateName];
 
+                    cov.cohorts.push({ cohortId: r.cohortId, cohortName: r.cohortName});
                     cov.sumValue.push(rd.sumValue);
                     cov.pct.push(rd.pct);
                 });

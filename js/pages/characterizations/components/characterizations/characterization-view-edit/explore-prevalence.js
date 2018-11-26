@@ -32,6 +32,7 @@ define([
 			this.loading = ko.observable();
 			this.explore = params.explore;
 			this.cohortId = this.explore.cohortId;
+			this.cohortName = this.explore.cohortName;
 			this.exploring = ko.observable();
 			this.exploringTitle = ko.pureComputed(() => this.exploring() ? 'Exploring concept hierarchy for: ' + this.exploring() : null );
 			this.loadData(this.explore);
