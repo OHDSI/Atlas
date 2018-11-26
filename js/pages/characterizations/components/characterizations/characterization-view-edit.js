@@ -122,7 +122,7 @@ define([
             if (ccId < 1) {
                 CharacterizationService
                     .createCharacterization(this.design())
-                    .then(res => commonUtils.routeTo('/cc/characterizations/' + res.id + '/design'));
+                    .then(res => commonUtils.routeTo(`/cc/characterizations/${res.id}/${this.selectedTabKey()}`));
             } else {
                 CharacterizationService
                     .updateCharacterization(ccId, this.design())
