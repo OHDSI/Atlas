@@ -432,7 +432,9 @@ define([
 			await vocabularyProvider.loadDensity(related);
 			var currentConceptObject = _.find(related, c => c.CONCEPT_ID == this.currentConceptId);
 			if (currentConceptObject !== undefined){
-			    this.currentConceptArray.push(currentConceptObject);
+			    this.currentConceptArray([currentConceptObject]);
+			} else {
+				this.currentConceptArray([]);
 			}
 			this.model.relatedConcepts(related);
 
