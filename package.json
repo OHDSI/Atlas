@@ -37,6 +37,7 @@
   "devDependencies": {
     "ajax-request": "^1.2.3",
     "requirejs": "^2.3.5",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "bowser": "2.0.0-beta.3"
   }
 }

@@ -18,12 +18,21 @@
 	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/chart.css">
 	<link rel="stylesheet" type="text/css" href="js/styles/achilles.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/browserWarning.css" />
 
 	<title data-bind="text: pageTitle">ATLAS</title>
+	<script src="node_modules/bowser/bundled.js"></script>
 </head>
 
 <body class="app">
-	<div id="splash" data-bind="if:!initializationComplete()">
+	<div id="b-alarm" class="browser-alarm" style="display:none;">
+		<div class="browser-alarm__warning-text">
+			Note that only Chrome browser newer than v.63 is officially supported
+		</div>
+		<button type="button" class="close browser-alarm__close" onclick="toggleWarning(true)">&times;</button>
+	</div>
+	<!-- ko if: !initializationComplete() -->
+	<div id="splash">
 		<div id="stage">
 			<img src="images/atlas_loading.svg" />
 		</div>
@@ -32,14 +41,16 @@
 		</div>
 		<div data-bind="text:applicationStatus" id="status"></div>
 	</div>
+	<!-- /ko -->
 
-	<div style="display:none;" data-bind="visible: initializationComplete(), css: classes('menu-container')">
-		<div id="wrapperLogo">
-			<a href="#/home">ATLAS</a>
-		</div>
+	<div data-bind="css: classes('container')">
+		<div style="display:none;" data-bind="visible: initializationComplete(), css: classes({ element: 'menu-container'})">
+			<div id="wrapperLogo">
+				<a href="#/home">ATLAS</a>
+			</div>
 
-		<div class="app__menu">
-			<!-- ko foreach: router.pages -->
+			<div class="app__menu">
+				<!-- ko foreach: router.pages -->
 				<a data-bind="attr: { href: `#/${$data.baseUrl}` }, css: $parent.classes({ element: 'menu-item', modifiers: $parent.activePage() === $data.title ? 'selected' : '' })">
 					<i data-bind="css: $parent.classes({ element: 'menu-icon', extra: `fa fa-fw fa-${$data.icon}` })" aria-hidden="true"></i>
 					<span data-bind="text: $data.title, css: $parent.classes('menu-title')"></span>
@@ -47,92 +58,94 @@
 			<!-- /ko -->
 		</div>
 
-		<div id="wrapper_ohdsi">
-			<div><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></div>
-			<div style="margin-bottom:10px;">open source software</div>
+			<div id="wrapper_ohdsi">
+				<div><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></div>
+				<div style="margin-bottom:10px;">open source software</div>
 
-			<div>provided by</div>
-			<div><a href="http://www.ohdsi.org"><img src="images/ohdsi_color.png"></a></div>
-			<div><a href="http://www.ohdsi.org">join the journey</a></div>
+				<div>provided by</div>
+				<div><a href="http://www.ohdsi.org"><img src="images/ohdsi_color.png"></a></div>
+				<div><a href="http://www.ohdsi.org">join the journey</a></div>
+			</div>
 		</div>
-	</div>
 
-	<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete()">
-		<div id="wrapperMainWindowContainer">
-			<user-bar params="{model: $data}"></user-bar>
-			<div data-bind="if: appInitializationStatus() == 'failed'">
-				<div style="width:100px;margin-left:auto;margin-right:auto;">
-					<svg width="100" height="100" viewBox="0 -200 400 400">
-					<g id="rings">
-						<circle cx="205" cy="17" r="165" stroke="#800" fill="none" stroke-width="15px"></circle>
+		<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete(), css: classes({ element: 'main-window'})">
+			<div id="wrapperMainWindowContainer">
+				<user-bar params="{model: $data}"></user-bar>
+				<div data-bind="if: appInitializationStatus() == 'failed'">
+					<div style="width:100px;margin-left:auto;margin-right:auto;">
+						<svg width="100" height="100" viewBox="0 -200 400 400">
+							<g id="rings">
+								<circle cx="205" cy="17" r="165" stroke="#800" fill="none" stroke-width="15px"></circle>
 
-						<ellipse cx="205" cy="17" rx="70" ry="70" stroke="#f00" fill="none" stroke-width="6px" stroke-opacity="0.4">
-						</ellipse>
+								<ellipse cx="205" cy="17" rx="70" ry="70" stroke="#f00" fill="none" stroke-width="6px" stroke-opacity="0.4">
+								</ellipse>
 
-						<ellipse cx="205" cy="17" rx="100" ry="100" stroke="#c00" fill="none" stroke-width="10px" stroke-opacity="0.4">
-						</ellipse>
+								<ellipse cx="205" cy="17" rx="100" ry="100" stroke="#c00" fill="none" stroke-width="10px" stroke-opacity="0.4">
+								</ellipse>
 
-						<ellipse cx="205" cy="17" rx="135" ry="135" stroke="#800" fill="none" stroke-width="12px" stroke-opacity="0.4">
-						</ellipse>
-					</g>
-				</svg>
+								<ellipse cx="205" cy="17" rx="135" ry="135" stroke="#800" fill="none" stroke-width="12px" stroke-opacity="0.4">
+								</ellipse>
+							</g>
+						</svg>
+					</div>
+					<div class="error">application initialization failed</div>
+					<div class="error">
+						<p>unable to connect to an instance of the webapi.</p>
+						<p>please contact your administrator to resolve this issue.</p>
+					</div>
 				</div>
-				<div class="error">application initialization failed</div>
-				<div class="error">
-					<p>unable to connect to an instance of the webapi.</p>
-					<p>please contact your administrator to resolve this issue.</p>
+
+				<div data-bind="if: noSourcesAvailable && !currentViewAccessible()">
+					<div style="width:100px;margin-left:auto;margin-right:auto;">
+						<svg width="100" height="100" viewBox="0 -200 400 400">
+							<g id="rings">
+								<circle cx="205" cy="17" r="165" stroke="#800" fill="none" stroke-width="15px"></circle>
+
+								<ellipse cx="205" cy="17" rx="70" ry="70" stroke="#f00" fill="none" stroke-width="6px" stroke-opacity="0.4">
+								</ellipse>
+
+								<ellipse cx="205" cy="17" rx="100" ry="100" stroke="#c00" fill="none" stroke-width="10px" stroke-opacity="0.4">
+								</ellipse>
+
+								<ellipse cx="205" cy="17" rx="135" ry="135" stroke="#800" fill="none" stroke-width="12px" stroke-opacity="0.4">
+								</ellipse>
+							</g>
+						</svg>
+					</div>
+					<div class="error">application initialization failed</div>
+					<div class="error">
+						<p>the current webapi has no sources defined.</p>
+						<p>please add one or more on <a href="#/configure">configuration</a> page.</p>
+					</div>
 				</div>
-			</div>
 
-			<div data-bind="if: noSourcesAvailable && !currentViewAccessible()">
-				<div style="width:100px;margin-left:auto;margin-right:auto;">
-					<svg width="100" height="100" viewBox="0 -200 400 400">
-					<g id="rings">
-						<circle cx="205" cy="17" r="165" stroke="#800" fill="none" stroke-width="15px"></circle>
-
-						<ellipse cx="205" cy="17" rx="70" ry="70" stroke="#f00" fill="none" stroke-width="6px" stroke-opacity="0.4">
-						</ellipse>
-
-						<ellipse cx="205" cy="17" rx="100" ry="100" stroke="#c00" fill="none" stroke-width="10px" stroke-opacity="0.4">
-						</ellipse>
-
-						<ellipse cx="205" cy="17" rx="135" ry="135" stroke="#800" fill="none" stroke-width="12px" stroke-opacity="0.4">
-						</ellipse>
-					</g>
-				</svg>
+				<!-- ko if: $data.currentCohortDefinition() || $data.currentConceptSet() -->
+				<!-- ko if: $data.currentCohortDefinition() != null && $data.currentView() !='cohort-definition-manager' && $data.currentView() != 'loading' -->
+				<div class="breadcrumb-container">
+					<i class="fa fa-arrow-left"></i>
+					<a data-bind="attr: { href: '#/cohortdefinition/' + $data.currentCohortDefinition().id()}, text: $data.currentCohortDefinition().name"></a>
+					<!-- ko if: $data.currentConceptSet() != null && $data.currentConceptSetSource() == 'cohort' -->
+					<i class="fa fa-chevron-right"></i>
+					<a data-bind="attr: { href: '#/cohortdefinition/' + $data.currentCohortDefinition().id() + '/conceptsets/' + $data.currentConceptSet().id + '/details'}, text:$data.currentConceptSet().name()"></a>
+					<!-- /ko -->
 				</div>
-				<div class="error">application initialization failed</div>
-				<div class="error">
-					<p>the current webapi has no sources defined.</p>
-                    <p>please add one or more on <a href="#/configure">configuration</a> page.</p>
-				</div>
-			</div>
-
-			<!-- ko if: $data.currentCohortDefinition() || $data.currentConceptSet() -->
-			<!-- ko if: $data.currentCohortDefinition() != null && $data.currentView() !='cohort-definition-manager' && $data.currentView() != 'loading' -->
-			<div class="breadcrumb-container">
-				<i class="fa fa-arrow-left"></i>
-				<a data-bind="attr: { href: '#/cohortdefinition/' + $data.currentCohortDefinition().id()}, text: $data.currentCohortDefinition().name"></a>
-				<!-- ko if: $data.currentConceptSet() != null && $data.currentConceptSetSource() == 'cohort' -->
-				<i class="fa fa-chevron-right"></i>
-				<a data-bind="attr: { href: '#/cohortdefinition/' + $data.currentCohortDefinition().id() + '/conceptsets/' + $data.currentConceptSet().id + '/details'}, text:$data.currentConceptSet().name()"></a>
 				<!-- /ko -->
-			</div>
-			<!-- /ko -->
-			<!-- ko if: $data.currentConceptSet() && $data.currentConceptSetSource() == 'repository' && $data.currentView() != 'conceptset-manager' -->
-			<div class="breadcrumb-container">
-				<i class="fa fa-arrow-left"></i>
-				<a data-bind="attr: { href: '#/conceptset/' + $data.currentConceptSet().id + '/details'}, text:$data.currentConceptSet().name"></a>
-			</div>
-			<!-- /ko -->
-			<!-- /ko -->
+				<!-- ko if: $data.currentConceptSet() && $data.currentConceptSetSource() == 'repository' && $data.currentView() != 'conceptset-manager' -->
+				<div class="breadcrumb-container">
+					<i class="fa fa-arrow-left"></i>
+					<a data-bind="attr: { href: '#/conceptset/' + $data.currentConceptSet().id + '/details'}, text:$data.currentConceptSet().name"></a>
+				</div>
+				<!-- /ko -->
+				<!-- /ko -->
 
-			<div data-bind="if: currentViewAccessible" class="flexed">
-				<div id="currentComponent" class="flexed" data-bind='component: {name: $data.currentView, params: { ...$data.componentParams(), model: $data } }'></div>
+				<div data-bind="if: currentViewAccessible" class="flexed">
+					<div id="currentComponent" class="flexed" data-bind='component: {name: $data.currentView, params: { ...$data.componentParams(), model: $data } }'></div>
+				</div>
 			</div>
 		</div>
 	</div>
 	<script data-main="js/main" src="js/require.js"></script>
+	<script src="js/utils/BrowserDetection.js"></script>
 </body>
 
 </html>
