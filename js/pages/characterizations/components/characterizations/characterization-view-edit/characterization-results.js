@@ -118,12 +118,10 @@ define([
                 render: (d, t, r) => {
                     const analysis = this.data().analyses.find(a => a.analysisId === r.analysisId);
                     if (analysis && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') {
-                      return d + r.cohorts.map((c, idx) => {
+                      return d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + r.cohorts.map((c, idx) => {
                           const data = {...r, cohortId: c.cohortId, cohortName: c.cohortName};
-                          return `<div class='${this.classes({element: 'explore'})}'>
-                            <a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>Explore ${c.cohortName}</a>
-                        </div>`;
-                      }).join('');
+                          return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;
+                      }).join('&nbsp;&bull;&nbsp;') + '</div>';
                     } else {
                         return d;
                     }
