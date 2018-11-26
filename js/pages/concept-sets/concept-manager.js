@@ -30,8 +30,6 @@ define([
 			this.loadingSourceCounts = ko.observable(false);
 			this.loadingRelated = ko.observable(true);
 
-			this.currentConceptId = params.model.currentConceptId;
-
 			this.subscriptions.push(
 				this.model.currentConceptMode.subscribe((mode) => {
 					switch (mode) {
@@ -336,21 +334,26 @@ define([
 		}
 		
 		async onPageCreated() {
-			this.loadConcept(this.model.currentConceptId());
+			this.currentConceptId = this.routerParams.conceptId;
+			
+			this.loadConcept(this.currentConceptId);
 			super.onPageCreated();
 		}
 
-		onRouterParamsChanged({ conceptId }) {
-			if (this.model.currentConceptMode() == 'recordcounts') {
-				this.loadRecordCounts();
+		onRouterParamsChanged({ conceptId }) {			
+			if (conceptId !== this.currentConceptId) {
+				if (this.model.currentConceptMode() == 'recordcounts') {
+					this.loadRecordCounts();
+				}
+				this.loadConcept(conceptId);
+				this.currentConceptId = conceptId;
 			}
-			this.loadConcept(conceptId);
 		}
 
 		async fetchRecordCounts(sources) {
 			const sourceData = [];
 			for (const source of sources) {
-				const { data } = await httpService.doPost(`${source.resultsUrl}conceptRecordCount`, [this.currentConceptId()]);
+				const { data } = await httpService.doPost(`${source.resultsUrl}conceptRecordCount`, [this.currentConceptId]);
 				const recordCountObject = Object.values(data[0])[0];
 				if (recordCountObject) {
 					sourceData.push({
@@ -427,7 +430,7 @@ define([
 			}
 			
 			await vocabularyProvider.loadDensity(related);
-			var currentConceptObject = _.find(related, c => c.CONCEPT_ID == this.currentConceptId());
+			var currentConceptObject = _.find(related, c => c.CONCEPT_ID == this.currentConceptId);
 			if (currentConceptObject !== undefined){
 			    this.currentConceptArray.push(currentConceptObject);
 			}
