@@ -1,0 +1,22 @@
+.app {
+  &__container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+  }
+  
+  &__menu-container {
+    width: 150px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    bottom: 0;
+    background-color: #003142;
+    border-right: solid 1px #888;
+  }
+
+  &__main-window {
+    height: 100%;
+    flex-grow: 1;
+    overflow: auto;
+  }
+}
