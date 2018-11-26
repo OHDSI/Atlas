@@ -35,6 +35,15 @@
 		</div>
 	</div>
 </div>
+<atlas-modal params="{
+		showModal: context.model.loadingReportDrilldown,
+		iconClass: 'fa fa-chart',
+		title: 'Loading Drilldown Report',
+		backdropClosable: false,
+		fade: ko.observable(false)
+}">
+	<loading params="status: 'Loading Drilldown Report'"></loading>
+</atlas-modal>
 <!-- ko if: currentConcept() -->
 <report-treemap-drilldown params="context: context, currentReport: currentReport, currentConcept: currentConcept, byFrequency: byFrequency, byUnit: byUnit, byType: byType, byValueAsConcept: byValueAsConcept, byQualifier: byQualifier, byOperator: byOperator"></report-treemap-drilldown>
 <!-- /ko -->

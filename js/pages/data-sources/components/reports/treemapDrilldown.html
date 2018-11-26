@@ -1,16 +1,11 @@
-<div class="loader" data-bind="if: isLoading()">
-	<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown Report:
-	<span data-bind="text: currentConcept().name"></span>
-	...
-</div>
-<!-- ko ifnot: isLoading() -->
+<!-- ko ifnot: context.model.loadingReportDrilldown() -->
 <!-- ko if: isError -->
 <empty-state params="message: 'No data'"></empty-state>
 <!-- /ko -->
 
 <div data-bind="visible: !isError()">
 	<!-- ko if: currentConcept() -->
-	<div class="dataSourceReportHeading" data-bind="text:` ${currentConcept().name} Drilldown Report`"> </div>
+	<div id="datasourceReportDrilldownTitle" class="dataSourceReportHeading" data-bind="text:` ${currentConcept().name} Drilldown Report`"> </div>
 	<!-- /ko -->
 
 	<div class="col-xs-12">

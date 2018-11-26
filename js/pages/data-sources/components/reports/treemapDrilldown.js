@@ -129,6 +129,13 @@ define([
 				},
 			};
 
+			this.scrollTo = function (s) {
+				var e = $(s);
+				if (e.length > 0) {
+					e[0].scrollIntoView();
+				}
+			}
+
 			this.currentReport = params.currentReport;
 			this.byFrequency = params.byFrequency;
 			this.byUnit = params.byUnit;
@@ -136,7 +143,11 @@ define([
 			this.byValueAsConcept = params.byValueAsConcept;
 			this.byOperator = params.byOperator;
 			this.byQualifier = params.byQualifier;
-			params.currentConcept.subscribe(this.loadData.bind(this));
+			this.context = params.context;
+			this.currentConceptSubscription = params.currentConcept.subscribe(this.loadData.bind(this));
+			this.dispose = function () {
+				this.currentConceptSubscription.dispose();
+			}
 			this.loadData(params.currentConcept());
 		}
 
@@ -294,9 +305,6 @@ define([
 
 		getData() {
 			const response = super.getData();
-			// immediately hide report loader
-			this.context.loadingReport(false);
-
 			return response;
 		}
 
@@ -304,15 +312,19 @@ define([
 			this.conceptId = selectedConcept.concept_id;
 			this.currentConcept(selectedConcept);
 			this.isError(false);
-			this.isLoading(true);
 			this.getData()
-				.then((data) => this.parseData(data))
+				.then((data) => {
+					this.parseData(data);
+					this.context.model.loadingReportDrilldown(false);
+					this.scrollTo("#datasourceReportDrilldownTitle");
+				})
 				.catch((er) => {
+					this.context.model.loadingReportDrilldown(false);
+					this.scrollTo("#datasourceReportDrilldownTitle");
 					this.isError(true);
 					console.error(er);
 				});
 		}
-
 	}
 
 	return commonUtils.build('report-treemap-drilldown', TreemapDrilldown, view);

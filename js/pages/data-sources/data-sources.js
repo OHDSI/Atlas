@@ -111,6 +111,10 @@ define([
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
 
+			this.isReportLoading = ko.pureComputed(function () {
+				return this.loadingReport() && !this.hasError() && !this.model.loadingReportDrilldown();
+			}, this);
+
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.canViewCdmResults = ko.pureComputed(() => {
 				return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedViewCdmResults()) || !config.userAuthenticationEnabled;

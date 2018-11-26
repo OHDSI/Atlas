@@ -21,7 +21,7 @@
 	</div>
 	<!-- /ko -->
 
-	<loading params="status: 'loading report'" data-bind="visible: loadingReport() && ! hasError()">
+	<loading params="status: 'loading report'" data-bind="visible: isReportLoading()">
 	</loading>
 
 	<div class="paddedWrapper text-center error" data-bind="visible: hasError()">
