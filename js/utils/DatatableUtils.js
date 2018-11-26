@@ -1,7 +1,5 @@
-define(
-    (require, factory) => {
-
-        const momentApi = require('services/MomentAPI');
+define(['services/MomentAPI'],
+    (momentApi) => {
 
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {

@@ -38,18 +38,9 @@ define(
 		_,
 		d3,
 		authApi,
-        momentApi,
+		momentApi,
 	) => {
 		return class GlobalModel extends AutoBind() {
-			static get applicationStatuses() {
-				return {
-					initializing: 'initializing',
-					running: 'running',
-					noSourcesAvailable: 'no-sources-available',
-					failed: 'failed',
-				};
-			}
-
 			constructor() {
 				super();
 				const bemHelper = new BemHelper('app');
@@ -290,17 +281,17 @@ define(
 				});
 	
 				this.initializationComplete = ko.pureComputed(() => {
-					return sharedState.appInitializationStatus() != GlobalModel.applicationStatuses.initializing;
+					return sharedState.appInitializationStatus() != constants.applicationStatuses.initializing;
 				});
 				this.currentViewAccessible = ko.pureComputed(() => {
 					return this.currentView && (
-						sharedState.appInitializationStatus() !== GlobalModel.applicationStatuses.failed
-						&& (sharedState.appInitializationStatus() !== GlobalModel.applicationStatuses.noSourcesAvailable
+						sharedState.appInitializationStatus() !== constants.applicationStatuses.failed
+						&& (sharedState.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable
 						|| ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
 					));
 				});
 				this.noSourcesAvailable = ko.pureComputed(() => {
-					return sharedState.appInitializationStatus() == GlobalModel.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
+					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
 				});
 				this.appInitializationStatus = ko.computed(() => sharedState.appInitializationStatus());
 				this.pageTitle = ko.pureComputed(() => {
@@ -850,23 +841,25 @@ define(
 			}
 	
 			updateRoles() {
-				if (!config.userAuthenticationEnabled)
-						return true;
-
-				console.info('Updating roles');
-				if (!authApi.isAuthenticated()) {
-					console.warn('Roles are not updated');
-					return Promise.resolve();
-				}
-				if (this.roles() && this.roles().length > 0) {
-					console.info('Roles updated');
-					return Promise.resolve();
-				} else {
-					return roleService.getList()
-						.then((roles) => {
-							console.info('Roles updated');
-							this.roles(roles);
-						});
+				if (authApi.isPermittedReadRoles()){
+					if (!config.userAuthenticationEnabled)
+							return true;
+	
+					console.info('Updating roles');
+					if (!authApi.isAuthenticated()) {
+						console.warn('Roles are not updated');
+						return Promise.resolve();
+					}
+					if (this.roles() && this.roles().length > 0) {
+						console.info('Roles updated');
+						return Promise.resolve();
+					} else {
+						return roleService.getList()
+							.then((roles) => {
+								console.info('Roles updated');
+								this.roles(roles);
+							});
+					}
 				}
 			}
 	

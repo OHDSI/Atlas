@@ -1,4 +1,4 @@
-define(['knockout'], function (ko) {
+define(['knockout', 'jquery-ui/ui/widgets/datepicker'], function (ko) {
 	ko.bindingHandlers.datepicker = {
 		init: function (element, valueAccessor, allBindingsAccessor) {
 			//initialize datepicker with some optional options
