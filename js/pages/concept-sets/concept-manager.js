@@ -344,7 +344,7 @@ define([
 			if (this.model.currentConceptMode() == 'recordcounts') {
 				this.loadRecordCounts();
 			}
-			this.loadConcept(value);
+			this.loadConcept(conceptId);
 		}
 
 		async fetchRecordCounts(sources) {
@@ -403,7 +403,7 @@ define([
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
 			var exists = false;
 			for (var i = 0; i < this.model.recentConcept().length; i++) {
-				if (this.model.recentConcept()[i].CONCEPT_ID == c.CONCEPT_ID)
+				if (this.model.recentConcept()[i].CONCEPT_ID == data.CONCEPT_ID)
 					exists = true;
 			}
 			if (!exists) {
