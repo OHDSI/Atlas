@@ -12,6 +12,7 @@ define([
 	  'conceptsetbuilder/InputTypes/ConceptSet',
 	  'services/Vocabulary',
     'lodash',
+    '../../../utils',
     'pages/characterizations/components/feature-analyses/feature-analyses-browser',
     './characterization-params-create-modal',
     'components/cohort/linked-cohort-list',
@@ -33,7 +34,8 @@ define([
     CriteriaGroup,
     ConceptSet,
     VocabularyAPI,
-    lodash
+    lodash,
+    utils,
 ) {
     class CharacterizationDesign extends AutoBind(Component) {
         constructor(params) {
@@ -54,9 +56,9 @@ define([
                 }),
             });
 
-            this.conceptSets = ko.pureComputed({
-							read: () => params.design().conceptSets,
-              write: (value) => params.design().conceptSets(value)
+            this.strataConceptSets = ko.pureComputed({
+							read: () => params.design().strataConceptSets,
+              write: (value) => params.design().strataConceptSets(value)
 						});
 
             this.stratas = ko.computed(() => params.design().stratas || []);
@@ -184,7 +186,7 @@ define([
         addStrata() {
             const strata = {
               name: ko.observable(),
-              criteria: ko.observable(new CriteriaGroup(null, this.conceptSets))
+              criteria: ko.observable(new CriteriaGroup(null, this.strataConceptSets))
 				    };
             const ccDesign = this.design();
             this.design({
@@ -214,24 +216,11 @@ define([
           this.showConceptSetBrowser(true);
         }
 
-			onRespositoryConceptSetSelected(conceptSet, source) {
-				const context = this.criteriaContext();
-				const strata = this.design().stratas[context.criteriaIdx];
-				const conceptSets = this.conceptSets()();
+			  onRespositoryConceptSetSelected(conceptSet, source) {
 
-				VocabularyAPI.getConceptSetExpression(conceptSet.id, source.url).done((result) => {
-					const newId = conceptSets.length > 0 ? Math.max(...conceptSets.map(c => c.id)) + 1 : 0;
-					const newConceptSet = new ConceptSet({
-						id: newId,
-						name: conceptSet.name,
-						expression: result
-					});
-					this.conceptSets([...conceptSets, newConceptSet]);
-					context.conceptSetId(newConceptSet.id);
-
-					this.showConceptSetBrowser(false);
-				});
-			}
+				    utils.conceptSetSelectionHandler(this.strataConceptSets(), this.criteriaContext(), conceptSet, source)
+					      .done(() => this.showConceptSetBrowser(false));
+        }
     }
 
     return commonUtils.build('characterization-design', CharacterizationDesign, view);

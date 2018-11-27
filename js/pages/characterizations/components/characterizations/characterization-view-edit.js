@@ -40,7 +40,7 @@ define([
             this.executionId = ko.observable();
             this.design = ko.observable({});
 
-            this.designDirtyFlag = ko.observable({ isDirty: () => false });
+            this.designDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.design()));
             this.loading = ko.observable(false);
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
@@ -95,18 +95,18 @@ define([
         }
 
         setupDesign(design) {
-            const conceptSets = ko.observableArray((design.conceptSets && design.conceptSets.map(cs => new ConceptSet(cs))) || []);
+            const strataConceptSets = ko.observableArray((design.strataConceptSets && design.strataConceptSets.map(cs => new ConceptSet(cs))) || []);
             this.design({
                 ...design,
                 name: ko.observable(design.name),
 								stratifiedBy: ko.observable(design.stratifiedBy),
                 stratas: (design.stratas && design.stratas.map(s => ({
                   name: ko.observable(s.name),
-                  criteria: ko.observable(new CriteriaGroup(s.criteria, conceptSets)),
+                  criteria: ko.observable(new CriteriaGroup(s.criteria, strataConceptSets)),
                 }))) || [],
-                conceptSets,
+                strataConceptSets,
             });
-            this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+            this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
 
         async loadDesignData(id) {
@@ -137,6 +137,7 @@ define([
                     .then(res => {
                         this.setupDesign(res);
                         this.loading(false);
+                        this.designDirtyFlag().reset();
                     });
             }
         }
