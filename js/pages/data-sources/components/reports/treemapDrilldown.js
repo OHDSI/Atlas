@@ -315,14 +315,14 @@ define([
 			this.getData()
 				.then((data) => {
 					this.parseData(data);
-					this.context.model.loadingReportDrilldown(false);
-					this.scrollTo("#datasourceReportDrilldownTitle");
 				})
 				.catch((er) => {
-					this.context.model.loadingReportDrilldown(false);
-					this.scrollTo("#datasourceReportDrilldownTitle");
 					this.isError(true);
 					console.error(er);
+				})
+				.finally(() => {
+					this.context.model.loadingReportDrilldown(false);
+					this.scrollTo("#datasourceReportDrilldownTitle");
 				});
 		}
 	}
