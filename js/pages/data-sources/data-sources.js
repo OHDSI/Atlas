@@ -133,38 +133,37 @@ define([
 				this.updateLocation();
 			})
 
-			this.updateLocation = function () {
-				if (this.currentSource() && this.selectedReport()) {
-					document.location = "#/datasources/" + this.currentSource().sourceKey + "/" + this.selectedReport().path;
-				}
-			}
-
-			this.dispose = function () {
-				this.selectedReportSubscription.dispose();
-				this.selectedSourceSubscription.dispose();
-			}
-
 			this.currentConcept = ko.observable();
+		}
 
-			this.onRouterParamsChanged = function (changedParams, newParams) {
-				if (newParams == null && changedParams == null)
-					return;
+		dispose() {
+			this.selectedReportSubscription.dispose();
+			this.selectedSourceSubscription.dispose();
+		}
 
-				if (newParams == null) {
-					// initial page load direct from URL
-					this.currentSource(this.sources.find(s => s.sourceKey == changedParams.sourceKey));
-					this.currentReport(this.reports.find(r => r.path == changedParams.reportName));
-					this.selectedReport(this.reports.find(r => r.path == changedParams.reportName));
-				} else {
-					if (changedParams.sourceKey) {
-						this.currentSource(this.sources.find(s => s.sourceKey == newParams.sourceKey));
-					}
-					if (changedParams.reportName) {
-						this.currentReport(this.reports.find(r => r.path == newParams.reportName));
-						this.selectedReport(this.reports.find(r => r.path == newParams.reportName));
-					}
+		updateLocation() {
+			if (this.currentSource() && this.selectedReport()) {
+				document.location = "#/datasources/" + this.currentSource().sourceKey + "/" + this.selectedReport().path;
+			}
+		}
+
+		onRouterParamsChanged(changedParams, newParams) {
+			if (newParams == null && changedParams == null)
+				return;
+
+			if (newParams == null) {
+				// initial page load direct from URL
+				this.currentSource(this.sources.find(s => s.sourceKey == changedParams.sourceKey));
+				this.currentReport(this.reports.find(r => r.path == changedParams.reportName));
+				this.selectedReport(this.reports.find(r => r.path == changedParams.reportName));
+			} else {
+				if (changedParams.sourceKey) {
+					this.currentSource(this.sources.find(s => s.sourceKey == newParams.sourceKey));
 				}
-
+				if (changedParams.reportName) {
+					this.currentReport(this.reports.find(r => r.path == newParams.reportName));
+					this.selectedReport(this.reports.find(r => r.path == newParams.reportName));
+				}
 			}
 		}
 	}
