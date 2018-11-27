@@ -600,6 +600,20 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.cohortLinkModalOpened = ko.observable(false);
 			this.cohortDefinitionOpened = ko.observable(false);
 			this.analysisTypesOpened = ko.observable(false);
+			this.detectTag = function (data, event) {
+				var keycode = event.keyCode
+				switch(keycode) {
+					case 188:
+						alert("Don't use <>")
+						$(".divtext").text('')
+						break
+		
+					case 190:
+						alert("Don't use <>")
+						$(".divtext").text('')
+						break
+				}
+			}
 		}
 
 			// METHODS
@@ -640,7 +654,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				// reset view after save
 					cohortDefinitionService.saveCohortDefinition(definition).then( (result) => {
-					result.expression = JSON.parse(result.expression);
+					result.expression = JSON.parse(result.expression.replace(/<(\/)?([a-zA-Z]*)(\s[a-zA-Z]*=[^>]*)?(\s)*(\/)?>/ig, ""));
 					var definition = new CohortDefinition(result);
 						var redirectWhenComplete = definition.id() != this.model.currentCohortDefinition().id();
 						this.model.currentCohortDefinition(definition);

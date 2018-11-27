@@ -23,6 +23,7 @@ define(function (require, exports) {
 	}
 	
 	function saveCohortDefinition(definition) {
+		definition.expression = definition.expression.replace(/<(\/)?([a-zA-Z]*)(\s[a-zA-Z]*=[^>]*)?(\s)*(\/)?>/ig, "")
 		var savePromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (definition.id || ""),
 			method: definition.id ? 'PUT' : 'POST',
