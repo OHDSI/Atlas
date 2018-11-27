@@ -24,6 +24,11 @@ define([
 
 			this.byFrequency = true;
 			this.byType = true;
+			this.chartFormats.table.columns.splice(1, 0,
+				{
+					title: 'Ingredient',
+					data: 'ingredient'
+				});
 		}
 
         get aggProperty() {

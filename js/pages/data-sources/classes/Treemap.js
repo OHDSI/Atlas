@@ -129,6 +129,7 @@ define([
           return {
             concept_id: normalizedData.conceptId[i],
             name: pathParts[pathParts.length - 1],
+            ingredient: pathParts[3],
             num_persons: ChartUtils.formatComma(normalizedData.numPersons[i]),
             percent_persons: ChartUtils.formatPercent(normalizedData.percentPersons[i]),
             agg_value: ChartUtils.formatFixed(normalizedData[this.aggProperty.name][i])
