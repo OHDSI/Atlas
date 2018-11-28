@@ -145,10 +145,11 @@ define([
 			this.byQualifier = params.byQualifier;
 			this.context = params.context;
 			this.currentConceptSubscription = params.currentConcept.subscribe(this.loadData.bind(this));
-			this.dispose = function () {
-				this.currentConceptSubscription.dispose();
-			}
 			this.loadData(params.currentConcept());
+		}
+
+		dispose() {
+			this.currentConceptSubscription.dispose();
 		}
 
 		parseAgeData(rawAgeData) {
