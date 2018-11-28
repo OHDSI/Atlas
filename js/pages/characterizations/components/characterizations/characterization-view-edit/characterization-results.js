@@ -106,6 +106,23 @@ define([
             };
         }
 
+        get strataNameColumn() {
+            return {
+              title: 'Strata',
+              data: 'strataName',
+              className: this.classes('col-distr-title'),
+            };
+        }
+
+        get stdDiffColumn() {
+            return {
+              title: 'Std diff',
+              render: (s, p, d) => d.stdDiff,
+              className: this.classes('col-dist-std-diff'),
+              type: 'numberAbs'
+            };
+        }
+
         constructor(params) {
             super();
 
@@ -132,17 +149,17 @@ define([
             return momentAPI.formatDateTimeUTC(date);
         }
 
-        getCountColumn(idx) {
+        getCountColumn(strata, idx) {
             return {
                 title: 'Count',
-                render: (s, p, d) => numeral(d.sumValue[idx]).format(),
+                render: (s, p, d) => numeral(d.sumValue[strata] && d.sumValue[strata][idx] || 0).format(),
             };
         }
 
-        getPctColumn(idx) {
+        getPctColumn(strata, idx) {
             return {
                 title: 'Pct',
-                render: (s, p, d) => this.formatPct(d.pct[idx]),
+                render: (s, p, d) => this.formatPct(d.pct[strata] && d.pct[strata][idx] || 0),
             };
         }
 
@@ -195,7 +212,6 @@ define([
                             cohortId: r.cohortId,
                             cohortName: cohort ? cohort.name : '',
                             stats: [],
-                            stratas: []
                         };
                         analysis.reports.push(report);
                     }
@@ -213,13 +229,11 @@ define([
                         p75: r.p75,
                         p90: r.p90,
                         max: r.max,
-                        stdDev: r.stdDev
+                        stdDev: r.stdDev,
+                        strataId: r.strataId,
+                        strataName: r.strataName || 'All stratas',
                     };
-                    if (r.strataId > 0) {
-                      report.stratas.push({...stat, strataId: r.strataId, strataName: r.strataName});
-                    } else {
-                      report.stats.push(stat);
-                    }
+                    report.stats.push(stat);
                 });
 
                 result.analyses.forEach(a => a.reports.sort((a,b) => a.cohortName.localeCompare(b.cohortName)));
@@ -271,25 +285,28 @@ define([
         getCovariatesSummaryAnalysis(analyses) {
             if (analyses.length > 1 && analyses[0].reports.length === 2) {
 
-                const getAllCohortStats = (cohortId) => {
-                    return lodash.flatten(analyses.filter(a => a.type=="prevalence").map(a => {
-                        const analysisName = a.analysisName;
-                        const stats = lodash.flatten(a.reports.filter(r => r.cohortId === cohortId).map(r => r.stats));
-                        return stats.map(s => ({ ...s, analysisName }));
+                const prevalenceAnalyses = analyses.filter(a => a.type=="prevalence");
+                if (prevalenceAnalyses.length > 0) {
+                  const getAllCohortStats = (cohortId) => {
+                    return lodash.flatten(prevalenceAnalyses.map(a => {
+                      const analysisName = a.analysisName;
+                      const stats = lodash.flatten(a.reports.filter(r => r.cohortId === cohortId).map(r => r.stats));
+                      return stats.map(s => ({...s, analysisName}));
                     }));
-                };
+                  };
 
-                const firstCohort = analyses[0].reports[0];
-                const secondCohort = analyses[0].reports[1];
+                  const firstCohort = analyses[0].reports[0];
+                  const secondCohort = analyses[0].reports[1];
 
-                return {
+                  return {
                     analysisName: 'All prevalence covariates',
                     type: 'prevalence',
                     reports: [
-                        { ...firstCohort, stats: getAllCohortStats(firstCohort.cohortId) },
-                        { ...secondCohort, stats: getAllCohortStats(secondCohort.cohortId) }
+                      {...firstCohort, stats: getAllCohortStats(firstCohort.cohortId)},
+                      {...secondCohort, stats: getAllCohortStats(secondCohort.cohortId)}
                     ]
-                };
+                  };
+                }
             }            
         }
 
@@ -303,6 +320,12 @@ define([
 
             const convertedData = filteredData.map(analysis => {
                 let convertedAnalysis;
+
+                analysis.strataOnly = true;
+                analysis.reports.forEach(r => {
+                    analysis.stratified = analysis.stratified || r.stats.filter(stat => stat.strataId > 0).length > 0;
+                    analysis.strataOnly = analysis.strataOnly && r.stats.filter(stat => stat.strataId === 0).length === 0;
+                });
 
                 if (analysis.type === 'prevalence') {
                     convertedAnalysis = this.convertPrevalenceAnalysis(analysis);
@@ -344,10 +367,10 @@ define([
             const seriesData = lodash.groupBy(analysis.data, 'analysisName');
             return Object.keys(seriesData).map(key => ({
                 name: key,
-                values: seriesData[key].filter(rd => rd.pct[0] && rd.pct[1]).map(rd => ({
+                values: seriesData[key].filter(rd => rd.pct[0][0] && rd.pct[0][1]).map(rd => ({
                     covariateName: rd.covariateName,
-                    xValue: rd.pct[0] || 0,
-                    yValue: rd.pct[1] || 0
+                    xValue: rd.pct[0][0] || 0,
+                    yValue: rd.pct[0][1] || 0
                 })),
             }));
         }
@@ -376,11 +399,7 @@ define([
 
             let data = {};
 
-            let stratas = {};
-
-            let strataColumns = [ this.covNameColumn ];
-
-            let strataNames = [];
+            let strataNames = {};
 
             function PrevalenceStat(rd = {}) {
                 this.analysisName = rd.analysisName || analysis.analysisName;
@@ -388,8 +407,8 @@ define([
                 this.domainId = rd.domainId;
                 this.cohortId = rd.cohortId;
                 this.cohortName = rd.cohortName;
-                this.sumValue = [];
-                this.pct = [];
+                this.sumValue = {};
+                this.pct = {};
             }
 
             const mapCovariate = (data) => (rd) => {
@@ -398,63 +417,43 @@ define([
                 }
 
                 const cov = data[rd.covariateName];
-
-                cov.sumValue.push(rd.sumValue);
-                cov.pct.push(rd.pct);
-            };
-
-            const mapStrata = (rd) => {
-              if (stratas[rd.cohortId] === undefined) {
-                  const {analysisName, domainId, cohortId, cohortName } = new PrevalenceStat(rd);
-                  stratas[rd.cohortId] = {
-                    analysisName, domainId, cohortId, cohortName, data: {},
-                  };
-              }
-              const data = stratas[rd.cohortId].data;
-              if (data[rd.covariateName] === undefined) {
-                  const { covariateName } = new PrevalenceStat(rd);
-                  data[rd.covariateName] = { covariateName, sumValue: {}, pct: {} };
-              }
-              const cov = data[rd.covariateName];
-
-              cov.sumValue[rd.strataId] = rd.sumValue;
-              cov.pct[rd.strataId] = rd.pct;
-            };
-
-            analysis.reports.forEach((r, i) => {
-
-                columns.push(this.getCountColumn(i));
-                columns.push(this.getPctColumn(i));
-
-                r.stats.forEach(mapCovariate(data));
-                r.stratas.forEach(st => mapStrata({...st, cohortId: r.cohortId, cohortName: r.cohortName }));
-
-                if (i < 1) {
-                    strataNames = lodash.uniqBy(r.stratas.map(st => ({
-                        strataId: st.strataId,
-                        strataName: st.strataName
-                    })), "strataId");
-                    const countCols = lodash.flatten(strataNames.map(st => [this.getCountColumn(st.strataId), this.getPctColumn(st.strataId)]));
-                    strataColumns = [...strataColumns, ...countCols];
+                if (cov.sumValue[rd.strataId] === undefined) {
+                    cov.sumValue[rd.strataId] = [];
                 }
+                cov.sumValue[rd.strataId].push(rd.sumValue);
+                if (cov.pct[rd.strataId] === undefined) {
+                    cov.pct[rd.strataId] = [];
+                }
+                cov.pct[rd.strataId].push(rd.pct);
+                if (rd.strataId > 0 && strataNames[rd.strataId] === undefined) {
+                    strataNames[rd.strataId] = {
+                        strataId: rd.strataId,
+                        strataName: rd.strataName,
+                    }
+                }
+            };
+
+            analysis.reports.forEach((r, i) => r.stats.forEach(mapCovariate(data)));
+            strataNames = Object.values(strataNames);
+            analysis.reports.forEach((r, i) => {
+              if (!analysis.strataOnly) {
+                columns.push(this.getCountColumn(0, i));
+                columns.push(this.getPctColumn(0, i));
+              }
+              strataNames.forEach(st => {
+                columns.push(this.getCountColumn(st.strataId, i));
+                columns.push(this.getPctColumn(st.strataId, i));
+              });
             });
 
             data = Object.values(data);
-            stratas = Object.values(stratas);
-            stratas = stratas.map(r => ({...r, data: Object.values(r.data), strataColumns, strataNames}));
+            analysis.strataOnly = analysis.strataOnly && data.length > 0;
 
-            if (analysis.reports.length === 2) {
-                columns.push(
-                    {
-                        title: 'Std diff',
-                        render: (s, p, d) => d.stdDiff,
-                        className: this.classes('col-prev-std-diff'),
-                        type: 'numberAbs'
-                    },
-                );
+            if (!analysis.strataOnly && analysis.reports.length === 2) {
+                columns.push(this.stdDiffColumn);
                 data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiffForPrevelanceCovs(
-                    {sumValue: d.sumValue[0], pct: d.pct[0]},
-                    {sumValue: d.sumValue[1], pct: d.pct[1]}
+                    {sumValue: d.sumValue[0][0], pct: d.pct[0][0]},
+                    {sumValue: d.sumValue[0][1], pct: d.pct[0][1]}
                 )));
             }
 
@@ -462,20 +461,20 @@ define([
                 ...analysis,
                 columns: columns,
                 data: data,
-                stratas,
-                strataColumns,
                 strataNames,
             };
         }
 
         convertDistributionComparativeAnalysis(analysis) {
-            let columns = [
-                {
+            let columns = [];
+            if (analysis.stratified) {
+                columns.push(this.strataNameColumn)
+            }
+            columns.push({
                     title: 'Covariate',
                     data: 'covariateName',
                     className: this.classes('col-dist-title'),
-                },
-            ];
+                });
 
             let data = {};
 
@@ -499,8 +498,10 @@ define([
                 });
 
                 r.stats.forEach(rd => {
-                    if (data[rd.covariateName] === undefined) {
-                        data[rd.covariateName] = {
+                    const key = rd.covariateName + '_' + rd.strataName;
+                    if (data[key] === undefined) {
+                        data[key] = {
+                            strataName: rd.strataName,
                             covariateName: rd.covariateName,
                             count: [],
                             avg: [],
@@ -509,7 +510,7 @@ define([
                         };
                     }
 
-                    const cov = data[rd.covariateName];
+                    const cov = data[key];
 
                     cov.count.push(rd.count);
                     cov.avg.push(rd.avg);
@@ -521,116 +522,38 @@ define([
             data = Object.values(data);
 
             if (analysis.reports.length === 2) {
-                columns.push(
-                    {
-                        title: 'Std diff',
-                        render: (s, p, d) => d.stdDiff,
-                        className: this.classes('col-dist-std-diff'),
-                        type: 'numberAbs'
-                    },
-                );
+                columns.push(this.stdDiffColumn);
                 data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiffForDistCovs(
                     analysis.reports[0].stats[0],
                     analysis.reports[1].stats[0]
                 )));
             }
 
-            analysis.reports = analysis.reports.map(r => ({ ...r, ...this.mapDistributionStratas(r)}));
-            let stratas = {};
-            const strataNames = lodash.uniqBy(lodash.flatten(analysis.reports.map(r => r.strataNames)), 'strataId');
-            const strataColumns = [{
-							title: 'Value',
-							data: 'name',
-							className: this.classes('col-distr-title'),
-						}];
-            analysis.reports.forEach(r => {
-              r.stratas.forEach(st => {
-                if (stratas[st.name] === undefined) {
-                    stratas[st.name] = {
-                        name: st.name,
-                        data: {},
-                    }
-                }
-                const strata = stratas[st.name];
-                if (strata.data[r.cohortId] === undefined) {
-									strata.data[r.cohortId] = {};
-								}
-								const data = strata.data[r.cohortId];
-                const {name, ...values} = st;
-								strata.data[r.cohortId] = {...data, ...values};
-              });
-              strataNames.forEach(st => {
-                strataColumns.push({
-									title: st.strataName,
-									render: (s, p, d) => d.data[r.cohortId][st.strataId] || '0',
-                });
-              });
-            });
-            stratas = Object.values(stratas);
-
             return {
                 ...analysis,
                 columns: columns,
                 data: data,
-                strataNames,
-                strataColumns,
-                stratas,
             };
         }
 
         convertDistributionAnalysis(analysis) {
+
+            const columns = (r) => {
+                if (analysis.stratified) {
+                    return [this.strataNameColumn, ...this.distributionColumns];
+                } else {
+                    return this.distributionColumns;
+                }
+            };
 
             return {
                 ...analysis,
                 reports: analysis.reports.map(r => ({
                     ...r,
                     data: r.stats,
-                    columns: this.distributionColumns,
-                    ...this.mapDistributionStratas(r),
+                    columns: columns(r),
                 })),
             };
-        }
-
-        mapDistributionStratas(r) {
-
-            let stratas = {
-              count: {name: 'Count'},
-              avg: {name: 'Average'},
-              stdDev: {name: 'Std Dev'},
-              min: {name: 'Min'},
-              p10: {name: 'P10'},
-              p25: {name: 'P25'},
-              median: {name: 'Median'},
-              p75: {name: 'P75'},
-              p90: {name: 'P90'},
-              max: {name: 'Max'}
-            };
-
-            Object.keys(stratas).forEach(prop => {
-              const row = stratas[prop];
-              r.stratas.forEach(st => {
-                if (row[st.strataId] === undefined) {
-                  row[st.strataId] = st[prop];
-                }
-              });
-            });
-
-            let strataColumns = [{
-              title: 'Value',
-              data: 'name',
-              className: this.classes('col-distr-title'),
-            }];
-            const strataNames = lodash.uniqBy(lodash.flatten(r.stratas.map(st => ({
-              strataId: st.strataId,
-              strataName: st.strataName
-            }))), 'strataId');
-            stratas = Object.values(stratas);
-            strataColumns = [...strataColumns, ...strataNames.map(st => ({
-              title: st.strataName,
-              render: (s, p, d) => d[st.strataId] || '0',
-            }))];
-
-            return { stratas, strataColumns, strataNames };
         }
 
         calcStdDiffForPrevelanceCovs(cov1, cov2) {
@@ -673,6 +596,11 @@ define([
 
         formatPct(val) {
             return numeral(val).format('0.00') + '%';
+        }
+
+        analysisTitle(data) {
+            const strata = data.stratified ? (' / stratified by ' + this.stratifiedByTitle()): '';
+            return ko.computed(() => (data.domainId ? (data.domainId + ' / ') : '') + data.analysisName + strata);
         }
     }
 

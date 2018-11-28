@@ -100,6 +100,7 @@ define([
                 ...design,
                 name: ko.observable(design.name),
 								stratifiedBy: ko.observable(design.stratifiedBy),
+                strataOnly: ko.observable(design.strataOnly),
                 stratas: (design.stratas && design.stratas.map(s => ({
                   name: ko.observable(s.name),
                   criteria: ko.observable(new CriteriaGroup(s.criteria, strataConceptSets)),

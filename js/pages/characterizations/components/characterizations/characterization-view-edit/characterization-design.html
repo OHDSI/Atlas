@@ -30,6 +30,9 @@
         </div>
         <!-- ko if: stratas().length > 0 -->
         <input type="text" placeholder="Stratified by" data-bind="css: classes({ element: 'stratified-by', extra: 'form-control'}), textInput: design().stratifiedBy" />
+        <label data-bind="css: classes('strata-checkbox')">
+            <input type="checkbox" data-bind="checked: design().strataOnly" /> Calculate stratified analyses only
+        </label>
         <!-- /ko -->
         <div data-bind="foreach: stratas">
             <div data-bind="css: $component.classes('strata')">
