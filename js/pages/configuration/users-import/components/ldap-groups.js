@@ -4,7 +4,7 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'services/User',
-	'./renderers',
+	'utils/Renderers',
 	'less!./ldap-groups.less',
 ],
 	function(

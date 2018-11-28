@@ -1,3 +1,6 @@
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Cohort Characterization...'"></loading>
+
+<!-- ko if:design -->
 <div data-bind="css: classes()">
     <heading-title params="name: 'Characterization', icon: 'shopping-cart', theme: 'dark'"></heading-title>
     <div class="asset-heading">
@@ -10,8 +13,6 @@
             </div>
         </div>
     </div>
-
-    <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Cohort Characterization...'"></loading>
 
     <tabs data-bind="visible: !$component.loading()" params="
         selectedTabKey: $component.selectedTabKey,
@@ -38,3 +39,4 @@
         ]">
     </tabs>
 </div>
+<!-- /ko -->

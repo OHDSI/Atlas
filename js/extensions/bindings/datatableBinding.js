@@ -70,7 +70,7 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
 				const columns = binding.options.columns;
 				
 				if (columns && columns[0] == 'select') {
-					columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected }	
+					columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected };
 					$(element).on("click","td > span.fa.fa-check-circle", function () {
 						$(this).toggleClass('selected');
 					});
