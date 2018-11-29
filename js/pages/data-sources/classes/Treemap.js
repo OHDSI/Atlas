@@ -68,28 +68,29 @@ define([
           },
           columns: [{
               title: 'Concept Id',
-              data: 'concept_id'
+              data: 'concept_id',
+              className: 'treemap__tbl-col--narrow numeric'
             },
             {
               title: 'Name',
-              data: 'name'
+              data: 'name',
             },
             {
               title: 'Person Count',
               data: 'num_persons',
-              className: 'numeric',
+              className: 'treemap__tbl-col--narrow numeric',
               orderSequence: ['desc','asc']
             },
             {
               title: 'Prevalence',
               data: 'percent_persons',
-              className: 'numeric',
+              className: 'treemap__tbl-col--narrow numeric',
               orderSequence: ['desc','asc']
             },
             {
               title: this.aggProperty.description,
               data: 'agg_value',
-              className: 'numeric',
+              className: 'treemap__tbl-col--narrow numeric',
               orderSequence: ['desc','asc']
             }
           ],

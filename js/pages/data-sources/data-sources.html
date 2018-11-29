@@ -4,7 +4,7 @@
 	<access-denied class="flexed" params="isAuthenticated: $component.isAuthenticated"></access-denied>
 <!-- /ko -->
 
-<div data-bind="if: canViewCdmResults">
+<div data-bind="if: canViewCdmResults, css:classes()">
 	<!-- ko if: showSelectionArea -->
 	<div class="reportControls pad-5">
 		<div class="row">

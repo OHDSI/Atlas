@@ -27,7 +27,8 @@ define([
 			this.chartFormats.table.columns.splice(1, 0,
 				{
 					title: 'Ingredient',
-					data: 'ingredient'
+					data: 'ingredient',
+					className: 'treemap__tbl-col--medium'
 				});
 		}
 
