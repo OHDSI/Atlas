@@ -106,26 +106,22 @@ define([
         }
 
         get covNameColumn() {
-            const exploreBtn = `
-                <div class='${this.classes({element: 'explore'})}'>
-                    <a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data)'>Explore</a>
-                </div>
-            `;
             return {
                 title: 'Covariate',
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
                 render: (d, t, r) => {
                     const analysis = this.analysisList().find(a => a.analysisId === r.analysisId);
+                    let html;
                     if (analysis && analysis.analysisId && !analysis.strataOnly && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') {
-                      return d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + r.cohorts.map((c, idx) => {
+                      html = d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + r.cohorts.map((c, idx) => {
                           const data = {...r, cohortId: c.cohortId, cohortName: c.cohortName};
                           return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;
                       }).join('&nbsp;&bull;&nbsp;') + '</div>';
                     } else {
-                        return d;
+						html = d;
                     }
-                    return d + ((analysis && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') ? exploreBtn : "");
+                    return html;
                  },
             };
         }
