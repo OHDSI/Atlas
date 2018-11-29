@@ -58,7 +58,7 @@ define([
               write: (value) => params.design().strataConceptSets(value)
 						});
 
-            this.stratas = ko.computed(() => params.design().stratas || []);
+            this.stratas = ko.computed(() => params.design() && params.design().stratas || []);
 
             this.featureAnalyses = {
                 newItemAction: this.showFeatureBrowser,

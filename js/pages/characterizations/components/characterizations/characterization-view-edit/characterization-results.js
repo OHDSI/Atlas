@@ -116,8 +116,8 @@ define([
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
                 render: (d, t, r) => {
-                    const analysis = this.data().analyses.find(a => a.analysisId === r.analysisId);
-                    if (analysis && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') {
+                    const analysis = this.analysisList().find(a => a.analysisId === r.analysisId);
+                    if (analysis && analysis.analysisId && !analysis.strataOnly && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') {
                       return d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + r.cohorts.map((c, idx) => {
                           const data = {...r, cohortId: c.cohortId, cohortName: c.cohortName};
                           return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;
@@ -192,7 +192,7 @@ define([
 						});
         }
 
-        exploreByFeature({covariateName, analysisId, covariateId, cohorts}, index) {
+        exploreByFeature({covariateName, analysisId, covariateId, cohorts, ...o}, index) {
           const {cohortId, cohortName} = cohorts[index];
 					this.explorePrevalence({executionId: this.executionId(), analysisId, cohortId, covariateId, cohortName});
 					this.explorePrevalenceTitle('Exploring ' + covariateName);
@@ -479,20 +479,23 @@ define([
             function PrevalenceStat(rd = {}) {
                 this.analysisName = rd.analysisName || analysis.analysisName;
                 this.analysisId = analysis.analysisId;
+                this.covariateId = rd.covariateId;
                 this.covariateName = rd.covariateName;
                 this.domainId = rd.domainId;
-                this.cohortId = rd.cohortId;
-                this.cohortName = rd.cohortName;
+                this.cohorts = [];
                 this.sumValue = {};
                 this.pct = {};
             }
 
-            const mapCovariate = (data) => (rd) => {
+            const mapCovariate = (data, report) => (rd) => {
                 if (data[rd.covariateName] === undefined) {
                     data[rd.covariateName] = new PrevalenceStat(rd);
                 }
 
                 const cov = data[rd.covariateName];
+                if (cov.cohorts.filter(c => c.cohortId === report.cohortId).length === 0) {
+									cov.cohorts.push({cohortId: report.cohortId, cohortName: report.cohortName});
+								}
                 if (cov.sumValue[rd.strataId] === undefined) {
                     cov.sumValue[rd.strataId] = [];
                 }
@@ -509,7 +512,7 @@ define([
                 }
             };
 
-            analysis.reports.forEach((r, i) => r.stats.forEach(mapCovariate(data)));
+            analysis.reports.forEach((r, i) => r.stats.forEach(mapCovariate(data, r)));
             strataNames = Object.values(strataNames);
             analysis.reports.forEach((r, i) => {
               if (!analysis.strataOnly) {
