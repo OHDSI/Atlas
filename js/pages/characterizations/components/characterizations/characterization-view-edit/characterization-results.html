@@ -47,7 +47,7 @@
                                             <th data-bind="css: $component.classes('th-cohort-name'), text: cohortName, attr: {colspan: ($parent.strataNames.length + (1 - $parent.strataOnly)) * 2}"></th>
                                         <!-- /ko -->
                                         <!-- ko if: !strataOnly && reports.length == 2 -->
-                                            <th data-bind="attr: { rowspan: stratified ? 3 : 2 }">Std Diff</th>
+                                            <th data-bind="css: $component.classes('th-diff'), attr: { rowspan: stratified ? 3 : 2 }">Std Diff</th>
                                         <!-- /ko -->
                                     </tr>
                                     <!-- /ko -->
@@ -57,8 +57,8 @@
                                         <!-- /ko -->
                                         <!-- ko foreach: reports -->
                                             <!-- ko ifnot: $parent.strataOnly -->
-                                                <th data-bind="attr: { rowspan: $parent.stratified ? 2 : 1 }">Count</th>
-                                                <th data-bind="attr: { rowspan: $parent.stratified ? 2 : 1 }">%</th>
+                                                <th data-bind="css: $component.classes('th-cov-count'), attr: { rowspan: $parent.stratified ? 2 : 1 }">Count</th>
+                                                <th data-bind="css: $component.classes('th-cov-pct'), attr: { rowspan: $parent.stratified ? 2 : 1 }">%</th>
                                             <!-- /ko -->
                                             <!-- ko foreach: $parent.strataNames -->
                                             <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: strataName"></th>
@@ -69,8 +69,8 @@
                                     <tr>
                                         <!-- ko foreach: reports -->
                                             <!-- ko foreach: $parent.strataNames -->
-                                            <th>Count</th>
-                                            <th>%</th>
+                                            <th data-bind="css: $component.classes('th-cov-count')">Count</th>
+                                            <th data-bind="css: $component.classes('th-cov-pct')">%</th>
                                             <!-- /ko -->
                                         <!-- /ko -->
                                     </tr>
