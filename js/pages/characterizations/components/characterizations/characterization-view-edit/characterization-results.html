@@ -28,7 +28,7 @@
     <div data-bind="css: classes('report-section')">
         <!-- ko foreach: analysisList -->
             <div data-bind="css: $component.classes('report-group')">
-                <h3 data-bind="css: $component.classes('analysis-name'), text: ($data.domainId ? ($data.domainId + ' / ') : '') + $data.analysisName"></h3>
+                <h3 data-bind="css: $component.classes('analysis-name'), text: $component.analysisTitle($data) "></h3>
                 <!-- ko if: $data.type === 'prevalence' -->
                     <div data-bind="css: $component.classes('analysis-results')">
                         <div data-bind="css: $component.classes('table-wrapper')">
@@ -42,28 +42,43 @@
                                 <thead>
                                     <!-- ko if: reports.length > 1 -->
                                     <tr>
-                                        <th rowspan="2">Covariate</th>
+                                        <th data-bind="attr: { rowspan: stratified ? 3 : 2 }">Covariate</th>
                                         <!-- ko foreach: reports -->
-                                            <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: cohortName"></th>
+                                            <th data-bind="css: $component.classes('th-cohort-name'), text: cohortName, attr: {colspan: ($parent.strataNames.length + (1 - $parent.strataOnly)) * 2}"></th>
                                         <!-- /ko -->
-                                        <!-- ko if: reports.length == 2 -->
-                                            <th rowspan="2">Std Diff</th>
+                                        <!-- ko if: !strataOnly && reports.length == 2 -->
+                                            <th data-bind="attr: { rowspan: stratified ? 3 : 2 }">Std Diff</th>
                                         <!-- /ko -->
                                     </tr>
                                     <!-- /ko -->
                                     <tr>
                                         <!-- ko if: reports.length <= 1 -->
-                                            <th>Covariate</th>
+                                            <th data-bind="attr: {rowspan: stratified ? 2 : 1 }">Covariate</th>
                                         <!-- /ko -->
                                         <!-- ko foreach: reports -->
-                                            <th>Count</th>
-                                            <th>%</th>
+                                            <!-- ko ifnot: $parent.strataOnly -->
+                                                <th data-bind="attr: { rowspan: $parent.stratified ? 2 : 1 }">Count</th>
+                                                <th data-bind="attr: { rowspan: $parent.stratified ? 2 : 1 }">%</th>
+                                            <!-- /ko -->
+                                            <!-- ko foreach: $parent.strataNames -->
+                                            <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: strataName"></th>
+                                            <!-- /ko -->
                                         <!-- /ko -->
                                     </tr>
+                                    <!-- ko if: stratified -->
+                                    <tr>
+                                        <!-- ko foreach: reports -->
+                                            <!-- ko foreach: $parent.strataNames -->
+                                            <th>Count</th>
+                                            <th>%</th>
+                                            <!-- /ko -->
+                                        <!-- /ko -->
+                                    </tr>
+                                    <!-- /ko -->
                                 </thead>
                             </table>
                         </div>
-                        <!-- ko if: reports.length === 2 -->
+                        <!-- ko if: !stratified && reports.length === 2 -->
                             <div data-bind="css: $component.classes('chart-wrapper')">
                                 <scatterplot data-bind="css: $component.classes('scatterplot')" params="
                                     data: () => $component.convertScatterplotData($data),
@@ -96,6 +111,9 @@
                                 ">
                                     <thead>
                                     <tr>
+                                        <!-- ko if: stratified -->
+                                            <th rowspan="2">Strata</th>
+                                        <!-- /ko -->
                                         <th rowspan="2">Covariate</th>
                                         <!-- ko foreach: reports -->
                                             <th colspan="4" data-bind="css: $component.classes('th-cohort-name'), text: cohortName"></th>

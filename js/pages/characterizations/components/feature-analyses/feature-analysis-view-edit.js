@@ -19,6 +19,7 @@ define([
     'utils/AutoBind',
     'utils/CommonUtils',
     'assets/ohdsi.util',
+    '../../utils',
     'less!./feature-analysis-view-edit.less',
     'components/cohortbuilder/components',
     'circe',
@@ -44,7 +45,8 @@ define([
 	  constants,
     AutoBind,
     commonUtils,
-    ohdsiUtil
+    ohdsiUtil,
+    utils,
 ) {
 
     const featureTypes = {
@@ -275,22 +277,8 @@ define([
         }
 
         onRespositoryConceptSetSelected(conceptSet, source) {
-            const context = this.criteriaContext();
-            const featureCriteria = this.data().design()[context.criteriaIdx];
-            const conceptSets = this.data().conceptSets();
-
-            VocabularyAPI.getConceptSetExpression(conceptSet.id, source.url).done((result) => {
-                const newId = conceptSets.length > 0 ? Math.max(...conceptSets.map(c => c.id)) + 1 : 0;
-                const newConceptSet = new ConceptSet({
-                    id: newId,
-                    name: conceptSet.name,
-                    expression: result
-                });
-                this.data().conceptSets([...conceptSets, newConceptSet]);
-                context.conceptSetId(newConceptSet.id);
-
-                this.showConceptSetBrowser(false);
-            });
+            utils.conceptSetSelectionHandler(this.data().conceptSets, this.criteriaContext(), conceptSet, source)
+              .done(() => this.showConceptSetBrowser(false));
         }
 
         handleEditConceptSet() {

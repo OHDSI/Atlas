@@ -8,12 +8,18 @@ define([
     'components/Component',
     'utils/AutoBind',
     'utils/CommonUtils',
+    'components/cohortbuilder/CriteriaGroup',
+	  'conceptsetbuilder/InputTypes/ConceptSet',
+	  'services/Vocabulary',
     'lodash',
+    '../../../utils',
     'pages/characterizations/components/feature-analyses/feature-analyses-browser',
     './characterization-params-create-modal',
     'components/cohort/linked-cohort-list',
     'components/linked-entity-list',
     'less!./characterization-design.less',
+	  'components/cohortbuilder/components',
+    'circe',
     'components/ac-access-denied',
 ], function (
     ko,
@@ -25,7 +31,11 @@ define([
     Component,
     AutoBind,
     commonUtils,
-    lodash
+    CriteriaGroup,
+    ConceptSet,
+    VocabularyAPI,
+    lodash,
+    utils,
 ) {
     class CharacterizationDesign extends AutoBind(Component) {
         constructor(params) {
@@ -42,6 +52,16 @@ define([
                 read: () => params.design() && params.design().cohorts() || [],
                 write: (value) => params.design().cohorts(value),
             });
+
+            this.strataConceptSets = ko.pureComputed({
+							read: () => params.design().strataConceptSets,
+              write: (value) => params.design().strataConceptSets(value)
+						});
+
+            this.stratas = ko.computed({
+				read: () => params.design() && params.design().stratas() || [],
+				write: (value) => params.design().stratas(value),
+			});
 
             this.featureAnalyses = {
                 newItemAction: this.showFeatureBrowser,
@@ -97,6 +117,8 @@ define([
             this.featureAnalysesAvailable = ko.pureComputed(() => this.featureAnalysesSelected().length > 0);
 
             this.isParameterCreateModalShown = ko.observable(false);
+					  this.showConceptSetBrowser = ko.observable(false);
+					  this.criteriaContext = ko.observable();
         }
 
         isPermittedViewResolver() {
@@ -138,7 +160,6 @@ define([
         }
 
         removeFeature(id) {
-            const ccDesign = this.design();
             this.design().featureAnalyses.remove(a => a.id === parseInt(id));
         }
 
@@ -159,9 +180,36 @@ define([
             this.design().parameters.remove(a => a.name === name);
         }
 
+        addStrata() {
+            const strata = {
+              name: ko.observable(),
+              criteria: ko.observable(new CriteriaGroup(null, this.strataConceptSets))
+				    };
+            const ccDesign = this.design();
+			ccDesign.stratas([
+                ...(ccDesign.stratas() || []),
+                strata
+			]);
+        }
+
+        removeStrata(index) {
+			this.design().stratas.remove((s, i) => i === index);
+        }
 
         showParameterCreateModal() {
             this.isParameterCreateModalShown(true);
+        }
+
+        handleConceptSetImport(criteriaIdx, item) {
+          console.log('import', item);
+          this.criteriaContext({...item, criteriaIdx});
+          this.showConceptSetBrowser(true);
+        }
+
+			  onRespositoryConceptSetSelected(conceptSet, source) {
+
+				    utils.conceptSetSelectionHandler(this.strataConceptSets(), this.criteriaContext(), conceptSet, source)
+					      .done(() => this.showConceptSetBrowser(false));
         }
     }
 
