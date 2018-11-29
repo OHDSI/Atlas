@@ -394,7 +394,7 @@ define([
                 let convertedAnalysis;
 
                 const stats = analysis.reports.flatMap(r => r.stats);
-                const stratifiedCnt = stats.find(stat => stat.strataId > 0);
+                const stratifiedCnt = stats.filter(stat => stat.strataId > 0).length;
                 analysis.stratified = stratifiedCnt > 0;
                 analysis.strataOnly = stratifiedCnt === stats.length;
 
