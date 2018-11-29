@@ -16,10 +16,10 @@ define(function(require, exports){
 			this.parameters = ko.observableArray(data.parameters);
 			this.strataConceptSets = ko.observableArray((data.strataConceptSets && data.strataConceptSets.map(cs => new ConceptSet(cs))) || []);
 			this.strataOnly = ko.observable(design.strataOnly);
-			this.stratas = (data.stratas && data.stratas.map(s => ({
+			this.stratas = ko.observableArray((data.stratas && data.stratas.map(s => ({
 				name: ko.observable(s.name),
 				criteria: ko.observable(new CriteriaGroup(s.criteria, this.strataConceptSets)),
-			}))) || [];
+			}))) || []);
 		}
 	}
 
