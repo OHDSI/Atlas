@@ -393,11 +393,10 @@ define([
             const convertedData = filteredData.map(analysis => {
                 let convertedAnalysis;
 
-                analysis.strataOnly = true;
-                analysis.reports.forEach(r => {
-                    analysis.stratified = analysis.stratified || r.stats.filter(stat => stat.strataId > 0).length > 0;
-                    analysis.strataOnly = analysis.strataOnly && r.stats.filter(stat => stat.strataId === 0).length === 0;
-                });
+                const stats = analysis.reports.flatMap(r => r.stats);
+                const stratifiedCnt = stats.find(stat => stat.strataId > 0);
+                analysis.stratified = stratifiedCnt > 0;
+                analysis.strataOnly = stratifiedCnt === stats.length;
 
                 if (analysis.type === 'prevalence') {
                     convertedAnalysis = this.convertPrevalenceAnalysis(analysis);
