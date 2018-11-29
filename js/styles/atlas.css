@@ -835,12 +835,6 @@ input.btn.btn-default {
   padding: 10px;
 }
 
-.report table {
-  width: 100%;
-  background-color: #fff;
-  margin-bottom: 15px;
-}
-
 .report svg {
   margin-left: auto;
   margin-right: auto;

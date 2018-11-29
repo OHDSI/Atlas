@@ -2,8 +2,8 @@ define([
 	'knockout',
 	'text!./treemapDrilldown.html',
 	'd3',
-    'atlascharts',
-    'utils/CommonUtils',
+	'atlascharts',
+	'utils/CommonUtils',
 	'utils/ChartUtils',
 	'const',
 	'pages/data-sources/classes/Report',
@@ -21,8 +21,8 @@ define([
 	ko,
 	view,
 	d3,
-    atlascharts,
-    commonUtils,
+	atlascharts,
+	commonUtils,
 	ChartUtils,
 	constants,
 	Report,
@@ -31,7 +31,7 @@ define([
 	class TreemapDrilldown extends Report {
 		constructor(params) {
 			super(params);
-			 
+
 			this.currentConcept = ko.observable({
 				name: '',
 			});
@@ -59,13 +59,13 @@ define([
 			this.upperLimitDistributionData = ko.observable();
 			this.recordsByUnitData = ko.observable();
 			this.valuesRelativeToNormData = ko.observable();
-			
+
 			this.commonBoxplotChartOptions = {
 				yMax: 0,
 				xLabel: 'Unit',
 				yLabel: 'Measurement Value',
 			};
-			
+
 			this.chartFormats = {
 				prevalenceByMonth: {
 					xScale: null,
@@ -128,7 +128,14 @@ define([
 					}
 				},
 			};
-			
+
+			this.scrollTo = function (s) {
+				var e = $(s);
+				if (e.length > 0) {
+					e[0].scrollIntoView();
+				}
+			}
+
 			this.currentReport = params.currentReport;
 			this.byFrequency = params.byFrequency;
 			this.byUnit = params.byUnit;
@@ -136,12 +143,17 @@ define([
 			this.byValueAsConcept = params.byValueAsConcept;
 			this.byOperator = params.byOperator;
 			this.byQualifier = params.byQualifier;
-			params.currentConcept.subscribe(this.loadData.bind(this));
+			this.context = params.context;
+			this.currentConceptSubscription = params.currentConcept.subscribe(this.loadData.bind(this));
 			this.loadData(params.currentConcept());
 		}
 
+		dispose() {
+			this.currentConceptSubscription.dispose();
+		}
+
 		parseAgeData(rawAgeData) {
-				this.ageData(this.parseBoxplotData(rawAgeData).data);
+			this.ageData(this.parseBoxplotData(rawAgeData).data);
 		}
 
 		parsePrevalenceByMonth(rawPrevalenceByMonth) {
@@ -199,49 +211,55 @@ define([
 		}
 
 		parseBoxplotData(rawData) {
-			let bpseries = {};
-			const ndata = ChartUtils.normalizeArray(rawData);
-			if (!ndata.empty) {
-				bpseries = ndata.category.map(function (v, i) {
-					return {
-						Category: ndata.category[i],
-						min: ndata.minValue[i],
-						max: ndata.maxValue[i],
-						median: ndata.medianValue[i],
-						LIF: ndata.p10Value[i],
-						q1: ndata.p25Value[i],
-						q3: ndata.p75Value[i],
-						UIF: ndata.p90Value[i],
-					};
-				});
-			}
+			if (!!rawData && rawData.length > 0) {
+				let bpseries = {};
+				const ndata = ChartUtils.normalizeArray(rawData);
+				if (!ndata.empty) {
+					bpseries = ndata.category.map(function (v, i) {
+						return {
+							Category: ndata.category[i],
+							min: ndata.minValue[i],
+							max: ndata.maxValue[i],
+							median: ndata.medianValue[i],
+							LIF: ndata.p10Value[i],
+							q1: ndata.p25Value[i],
+							q3: ndata.p75Value[i],
+							UIF: ndata.p90Value[i],
+						};
+					});
+				}
 
-			return {
-				chartFormat: {
-					yMax: d3.max(rawData, d => d.p90Value) || ndata.p90Value
-				},
-				data: bpseries
+				return {
+					chartFormat: {
+						yMax: d3.max(rawData, d => d.p90Value) || ndata.p90Value
+					},
+					data: bpseries
+				}
+			} else {
+				return null;
 			}
 		}
 
 		parseDonutData(rawData) {
-				if (!!rawData && rawData.length > 0) {
-						let mappedData = ChartUtils.mapConceptData(rawData);
-						mappedData.sort(function (a, b) {
-								const nameA = a.label.toLowerCase();
-								const nameB = b.label.toLowerCase();
-								if (nameA < nameB) //sort string ascending
-										return -1;
-								if (nameA > nameB)
-										return 1;
-								return 0; //default return value (no sorting)
-						});
-						return mappedData;
-				}
-				return null;
+			if (!!rawData && rawData.length > 0) {
+				let mappedData = ChartUtils.mapConceptData(rawData);
+				mappedData.sort(function (a, b) {
+					const nameA = a.label.toLowerCase();
+					const nameB = b.label.toLowerCase();
+					if (nameA < nameB) //sort string ascending
+						return -1;
+					if (nameA > nameB)
+						return 1;
+					return 0; //default return value (no sorting)
+				});
+				return mappedData;
+			}
+			return null;
 		};
 
-		parseData({ data }) {
+		parseData({
+			data
+		}) {
 			this.parseAgeData(data.ageAtFirstOccurrence);
 			this.parsePrevalenceByMonth(data.prevalenceByMonth);
 			this.parsePrevalenceByType(data.byType);
@@ -251,29 +269,35 @@ define([
 			}
 
 			if (this.byValueAsConcept) {
-					this.prevalenceByValueAsConceptData(this.parseDonutData(data.byValueAsConcept));
+				this.prevalenceByValueAsConceptData(this.parseDonutData(data.byValueAsConcept));
 			}
 
 			if (this.byQualifier) {
-					this.prevalenceByQualifierData(this.parseDonutData(data.byQualifier));
+				this.prevalenceByQualifierData(this.parseDonutData(data.byQualifier));
 			}
 
 			if (this.byOperator) {
-					this.prevalenceByOperatorData(this.parseDonutData(data.byOperator));
+				this.prevalenceByOperatorData(this.parseDonutData(data.byOperator));
 			}
 
 			if (this.byUnit) {
 				let boxplot = this.parseBoxplotData(data.measurementValueDistribution);
-				this.chartFormats.measurementValueDistribution.yMax = boxplot.chartFormat.yMax;
-				this.measurementValueDistributionData(boxplot.data);
+				if (boxplot != null) {
+					this.chartFormats.measurementValueDistribution.yMax = boxplot.chartFormat.yMax;
+					this.measurementValueDistributionData(boxplot.data);
+				}
 
 				boxplot = this.parseBoxplotData(data.lowerLimitDistribution);
-				this.chartFormats.lowerLimitDistribution.yMax = boxplot.chartFormat.yMax;
-				this.lowerLimitDistributionData(boxplot.data);
+				if (boxplot != null) {
+					this.chartFormats.lowerLimitDistribution.yMax = boxplot.chartFormat.yMax;
+					this.lowerLimitDistributionData(boxplot.data);
+				}
 
 				boxplot = this.parseBoxplotData(data.upperLimitDistribution);
-				this.chartFormats.upperLimitDistribution.yMax = boxplot.chartFormat.yMax;
-				this.upperLimitDistributionData(boxplot.data);
+				if (boxplot != null) {
+					this.chartFormats.upperLimitDistribution.yMax = boxplot.chartFormat.yMax;
+					this.upperLimitDistributionData(boxplot.data);
+				}
 
 				this.recordsByUnitData(this.parseDonutData(data.recordsByUnit));
 				this.valuesRelativeToNormData(this.parseDonutData(data.valuesRelativeToNorm));
@@ -282,9 +306,6 @@ define([
 
 		getData() {
 			const response = super.getData();
-			// immediately hide report loader
-			this.context.loadingReport(false);
-
 			return response;
 		}
 
@@ -292,15 +313,19 @@ define([
 			this.conceptId = selectedConcept.concept_id;
 			this.currentConcept(selectedConcept);
 			this.isError(false);
-			this.isLoading(true);
 			this.getData()
-				.then((data) => this.parseData(data))
+				.then((data) => {
+					this.parseData(data);
+				})
 				.catch((er) => {
 					this.isError(true);
 					console.error(er);
+				})
+				.finally(() => {
+					this.context.model.loadingReportDrilldown(false);
+					this.scrollTo("#datasourceReportDrilldownTitle");
 				});
 		}
-
 	}
 
 	return commonUtils.build('report-treemap-drilldown', TreemapDrilldown, view);

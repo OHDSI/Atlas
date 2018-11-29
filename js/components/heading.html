@@ -1,4 +1,6 @@
 <div data-bind="css: classes({ modifiers: theme })">
-  <i data-bind="attr: { class: `fa fa-${icon}` }"></i>
-  <span data-bind="text: title"></span>
+	<!-- ko if: hasIcon() -->
+	<i data-bind="attr: { class: `fa fa-${icon}` }"></i>
+	<!-- /ko -->
+	<span data-bind="text: title"></span>
 </div>

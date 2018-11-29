@@ -1,51 +1,51 @@
 <!-- ko if: !isLoading() -->
-<heading-title params="name: title, icon: 'area-chart'"></heading-title>
+<heading-title params="name: title"></heading-title>
 <div class="col-sm-12">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Death Prevalence by Age, Gender, Year
-    </div>
-    <div class="panel-body">
-      <div class="evidenceVisualization">
-        <trellisline class="evidenceVisualization" params="data: prevalenceByGenderAgeYearData, format: chartFormats.prevalenceByGenderAgeYear"></trellisline>
-      </div>
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Death Prevalence by Age, Gender, Year
+		</div>
+		<div class="panel-body">
+			<div class="evidenceVisualization">
+				<trellisline class="evidenceVisualization" params="data: prevalenceByGenderAgeYearData, format: chartFormats.prevalenceByGenderAgeYear"></trellisline>
+			</div>
+		</div>
+	</div>
 </div>
 <div class="col-sm-12">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Death Prevalence by Month
-    </div>
-    <div class="panel-body">
-      <div class="evidenceVisualization">
-        <atlasline class="evidenceVisualization" params="data: byMonthSeriesLineData, format: chartFormats.byMonthSeriesLine"></atlasline>
-      </div>
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Death Prevalence by Month
+		</div>
+		<div class="panel-body">
+			<div class="evidenceVisualization">
+				<atlasline class="evidenceVisualization" params="data: byMonthSeriesLineData, format: chartFormats.byMonthSeriesLine"></atlasline>
+			</div>
+		</div>
+	</div>
 </div>
 <div class="col-sm-12 col-md-6">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Death by Type
-    </div>
-    <div class="panel-body">
-      <div class="evidenceVisualization">
-        <donut class="evidenceVisualization" params="data: prevalenceByTypeDonutData, format: chartFormats.prevalenceByTypeDonut"></donut>
-      </div>
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Death by Type
+		</div>
+		<div class="panel-body">
+			<div class="evidenceVisualization">
+				<donut class="evidenceVisualization" params="data: prevalenceByTypeDonutData, format: chartFormats.prevalenceByTypeDonut"></donut>
+			</div>
+		</div>
+	</div>
 </div>
 <div class="col-sm-12 col-md-6">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Age at Death
-    </div>
-    <div class="panel-body">
-      <div class="evidenceVisualization">
-        <boxplot class="evidenceVisualization" params="data: ageBoxplotData, format: chartFormats.ageBoxplot"></boxplot>
-      </div>
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Age at Death
+		</div>
+		<div class="panel-body">
+			<div class="evidenceVisualization">
+				<boxplot class="evidenceVisualization" params="data: ageBoxplotData, format: chartFormats.ageBoxplot"></boxplot>
+			</div>
+		</div>
+	</div>
 </div>
 <!--/ko-->

@@ -1,64 +1,64 @@
 <!-- ko if: !isLoading() -->
-<heading-title params="name: title, icon: 'area-chart'"></heading-title>
+<heading-title params="name: title"></heading-title>
 <div class="col-sm-12 col-md-6">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        CDM Summary
-      </div>
-      <div class="panel-body">
-        <table class="stripe compact hover dataTable no-footer">
-          <tbody data-bind="foreach: summary()">
-            <tr>
-              <td data-bind="text: attributeName"></td>
-              <td data-bind="text: attributeValue"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			CDM Summary
+		</div>
+		<div class="panel-body">
+			<table class="stripe compact hover dataTable no-footer">
+				<tbody data-bind="foreach: summary()">
+					<tr>
+						<td data-bind="text: attributeName"></td>
+						<td data-bind="text: attributeValue"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 
 <div class="col-xs-12 col-md-6">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Population by Gender
-    </div>
-    <div class="panel-body">
-      <donut params="data: genderConceptData"></donut>
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Population by Gender
+		</div>
+		<div class="panel-body">
+			<donut params="data: genderConceptData"></donut>
+		</div>
+	</div>
 </div>
 
 <div class="col-xs-12 col-md-12">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Age at First Observation
-    </div>
-    <div class="panel-body">
-      <histogram class="evidenceVisualization" params="data: ageAtFirstObservationData, format: chartFormats.ageAtFirstObservation"></histogram>
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Age at First Observation
+		</div>
+		<div class="panel-body">
+			<histogram class="evidenceVisualization" params="data: ageAtFirstObservationData, format: chartFormats.ageAtFirstObservation"></histogram>
+		</div>
+	</div>
 </div>
 
 <div class="col-xs-12 col-md-12">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Cumulative Observation
-    </div>
-    <div class="panel-body">
-      <atlasline class="evidenceVisualization" params="data: observationLineData, format: chartFormats.observationLine"></atlasline>
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Cumulative Observation
+		</div>
+		<div class="panel-body">
+			<atlasline class="evidenceVisualization" params="data: observationLineData, format: chartFormats.observationLine"></atlasline>
+		</div>
+	</div>
 </div>
 
 <div class="col-xs-12 col-md-12">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Persons With Continuous Observation By Month
-    </div>
-    <div class="panel-body">
-      <atlasline class="evidenceVisualization" params="data: byMonthSeriesData, format: chartFormats.byMonthSeries"></atlasline>
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Persons With Continuous Observation By Month
+		</div>
+		<div class="panel-body">
+			<atlasline class="evidenceVisualization" params="data: byMonthSeriesData, format: chartFormats.byMonthSeries"></atlasline>
+		</div>
+	</div>
 </div>
 <!-- /ko -->
