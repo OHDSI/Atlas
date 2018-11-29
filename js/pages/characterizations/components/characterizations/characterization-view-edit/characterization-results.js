@@ -1,18 +1,22 @@
 define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
+	  'pages/characterizations/services/FeatureAnalysisService',
     'text!./characterization-results.html',
     'appConfig',
     'services/AuthAPI',
+    'services/CohortFeatures',
     'components/Component',
     'utils/AutoBind',
     'utils/CommonUtils',
+    './utils',
     'numeral',
     'lodash',
     'd3',
     'components/visualizations/filter-panel/utils',
     'services/MomentAPI',
     'services/Source',
+    './explore-prevalence',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/line-chart',
@@ -22,12 +26,15 @@ define([
 ], function (
     ko,
     CharacterizationService,
+    FeatureAnalysisService,
     view,
     config,
     authApi,
+    cohortFeaturesService,
     Component,
     AutoBind,
     commonUtils,
+    utils,
     numeral,
     lodash,
     d3,
@@ -99,10 +106,27 @@ define([
         }
 
         get covNameColumn() {
+            const exploreBtn = `
+                <div class='${this.classes({element: 'explore'})}'>
+                    <a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data)'>Explore</a>
+                </div>
+            `;
             return {
                 title: 'Covariate',
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
+                render: (d, t, r) => {
+                    const analysis = this.data().analyses.find(a => a.analysisId === r.analysisId);
+                    if (analysis && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') {
+                      return d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + r.cohorts.map((c, idx) => {
+                          const data = {...r, cohortId: c.cohortId, cohortName: c.cohortName};
+                          return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;
+                      }).join('&nbsp;&bull;&nbsp;') + '</div>';
+                    } else {
+                        return d;
+                    }
+                    return d + ((analysis && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') ? exploreBtn : "");
+                 },
             };
         }
 
@@ -132,6 +156,7 @@ define([
             this.design = ko.observable({});
             this.executionId = params.executionId;
             this.data = ko.observable([]);
+            this.domains = ko.observableArray();
             this.filterList = ko.observableArray([]);
 
             this.analysisList = ko.computed(() => this.prepareTabularData(this.data().analyses, this.filterList()));
@@ -141,12 +166,37 @@ define([
             this.scatterXScale = d3.scaleLinear().domain([0, 100]);
             this.scatterYScale = d3.scaleLinear().domain([0, 100]);
 
+            this.executionDesign = ko.observable();
+            this.isExecutionDesignShown = ko.observable();
+            this.isExplorePrevalenceShown = ko.observable();
+            this.explorePrevalence = ko.observable();
+            this.explorePrevalenceTitle = ko.observable();
+            this.prevalenceStatData = ko.observableArray();
+
             this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
         }
 
         formatDate(date) {
             return momentAPI.formatDateTimeUTC(date);
+        }
+
+        showExecutionDesign() {
+          this.executionDesign(null);
+          this.isExecutionDesignShown(true);
+					CharacterizationService
+						.loadCharacterizationExportDesignByGeneration(this.executionId())
+						.then(res => {
+							this.executionDesign(res);
+							this.loading(false);
+						});
+        }
+
+        exploreByFeature({covariateName, analysisId, covariateId, cohorts}, index) {
+          const {cohortId, cohortName} = cohorts[index];
+					this.explorePrevalence({executionId: this.executionId(), analysisId, cohortId, covariateId, cohortName});
+					this.explorePrevalenceTitle('Exploring ' + covariateName);
+					this.isExplorePrevalenceShown(true);
         }
 
         getCountColumn(strata, idx) {
@@ -159,7 +209,7 @@ define([
         getPctColumn(strata, idx) {
             return {
                 title: 'Pct',
-                render: (s, p, d) => this.formatPct(d.pct[strata] && d.pct[strata][idx] || 0),
+                render: (s, p, d) => utils.formatPct(d.pct[strata] && d.pct[strata][idx] || 0),
             };
         }
 
@@ -168,11 +218,13 @@ define([
 
             Promise.all([
                 SourceService.loadSourceList(),
+                FeatureAnalysisService.loadFeatureAnalysisDomains(),
                 CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
                 CharacterizationService.loadCharacterizationResults(this.executionId())
             ]).then(([
                  sourceList,
+                 domains,
                  design,
                  execution,
                  resultsList
@@ -180,18 +232,20 @@ define([
 
                 this.design(design);
 
+                this.domains(domains);
+
                 const source = sourceList.find(s => s.sourceKey === execution.sourceKey);
 
                 const result = {
                     sourceId: source.sourceId,
+                    sourceKey: source.sourceKey,
                     sourceName: source.sourceName,
                     date: execution.endTime,
                     designHash: execution.hashCode,
                     analyses: lodash.uniqBy(
                         resultsList.map(r => ({
                             analysisId: r.analysisId,
-                            // TODO
-                            domainId: null, // "Demographics",
+                            domainId: design.featureAnalyses ? design.featureAnalyses.find(fa => fa.name === r.analysisName).domain : null,
                             analysisName: r.analysisName,
                             type: r.resultType.toLowerCase(),
                         })),
@@ -244,12 +298,22 @@ define([
             });
         }
 
+        findDomainById(domainId) {
+            const domain = this.domains().find(d => d.id === domainId);
+            return domain || {name: 'Unknown'};
+        }
+
         getFilterList(data) {
             const cohorts = lodash.uniqBy(
                 lodash.flatten(
                     data.map(a => a.reports.map(r => ({label: r.cohortName, value: r.cohortId})))
                 ),
                 'value'
+            );
+
+            const domains = lodash.uniqBy(
+              data.map(a => ({label: this.findDomainById(a.domainId).name, value: a.domainId})),
+              "value"
             );
 
             return [
@@ -266,6 +330,13 @@ define([
                     name: 'analyses',
                     options: ko.observable(data.map(a => ({label: a.analysisName, value: a.analysisId}))),
                     selectedValues: ko.observable(data.map(a => a.analysisId)),
+                },
+                {
+                    type: 'multiselect',
+                    label: 'Domains',
+                    name: 'domains',
+                    options: ko.observable(domains),
+                    selectedValues: ko.observable(data.map(a => a.domainId)),
                 }
             ];
         }
@@ -285,13 +356,14 @@ define([
         getCovariatesSummaryAnalysis(analyses) {
             if (analyses.length > 1 && analyses[0].reports.length === 2) {
 
-                const prevalenceAnalyses = analyses.filter(a => a.type=="prevalence");
+                const prevalenceAnalyses = analyses.filter(a => a.type === "prevalence");
                 if (prevalenceAnalyses.length > 0) {
                   const getAllCohortStats = (cohortId) => {
                     return lodash.flatten(prevalenceAnalyses.map(a => {
                       const analysisName = a.analysisName;
+                      const analysisId = a.analysisId;
                       const stats = lodash.flatten(a.reports.filter(r => r.cohortId === cohortId).map(r => r.stats));
-                      return stats.map(s => ({...s, analysisName}));
+                      return stats.map(s => ({...s, analysisName, analysisId}));
                     }));
                   };
 
@@ -342,9 +414,12 @@ define([
             return convertedData;
         }
 
-        filterData(data, {cohorts, analyses}) {
+        filterData(data, {cohorts, analyses, domains}) {
             return data.map(analysis => {
                 if (!analyses.includes(analysis.analysisId)) {
+                    return null;
+                }
+                if (!domains.includes(analysis.domainId)) {
                     return null;
                 }
                 return {
@@ -403,6 +478,7 @@ define([
 
             function PrevalenceStat(rd = {}) {
                 this.analysisName = rd.analysisName || analysis.analysisName;
+                this.analysisId = analysis.analysisId;
                 this.covariateName = rd.covariateName;
                 this.domainId = rd.domainId;
                 this.cohortId = rd.cohortId;
@@ -451,7 +527,7 @@ define([
 
             if (!analysis.strataOnly && analysis.reports.length === 2) {
                 columns.push(this.stdDiffColumn);
-                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiffForPrevelanceCovs(
+                data.forEach(d => d.stdDiff = utils.formatStdDiff(this.calcStdDiffForPrevelanceCovs(
                     {sumValue: d.sumValue[0][0], pct: d.pct[0][0]},
                     {sumValue: d.sumValue[0][1], pct: d.pct[0][1]}
                 )));
@@ -523,7 +599,7 @@ define([
 
             if (analysis.reports.length === 2) {
                 columns.push(this.stdDiffColumn);
-                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiffForDistCovs(
+                data.forEach(d => d.stdDiff = utils.formatStdDiff(this.calcStdDiffForDistCovs(
                     analysis.reports[0].stats[0],
                     analysis.reports[1].stats[0]
                 )));
@@ -586,17 +662,9 @@ define([
             return (mean2 - mean1) / sd;
         }
 
-        formatStdDiff(val) {
-            return numeral(val).format('0,0.0000');
-        }
-        
-        formatDecimal2(val) {
-            return numeral(val).format('0.00');
-        }
-
-        formatPct(val) {
-            return numeral(val).format('0.00') + '%';
-        }
+				formatDecimal2(val) {
+					return numeral(val).format('0.00');
+				}
 
         analysisTitle(data) {
             const strata = data.stratified ? (' / stratified by ' + this.stratifiedByTitle()): '';

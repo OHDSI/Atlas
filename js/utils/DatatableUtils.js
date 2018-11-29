@@ -34,6 +34,8 @@ define(['services/MomentAPI'],
 
         const getFacetForCreatedBy = getCreatedByLogin;
 
+        const getFacetForDomain = (domain) => domain !== null ? domain : 'None';
+
         const renderCountColumn = (value) => value ? value : '...';
 
         return {
@@ -43,6 +45,7 @@ define(['services/MomentAPI'],
             getCreatedByFormatter,
             getFacetForCreatedBy,
             renderCountColumn,
+            getFacetForDomain,
         };
     }
 );

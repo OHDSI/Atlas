@@ -17,6 +17,7 @@ define([
 			const {
 				showModal,
 				modifiers = [],
+				dialogExtraClasses = [],
 				iconClass,
 				title,
 				template,
@@ -27,6 +28,7 @@ define([
 			} = params;
 
 			this.showModal = showModal;
+			this.dialogExtraClasses = dialogExtraClasses;
 			this.iconClass = iconClass;
 			this.title = title;
 			this.template = template;

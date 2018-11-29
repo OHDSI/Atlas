@@ -4,8 +4,10 @@ define([
     'pages/characterizations/services/PermissionService',
 	  'components/cohortbuilder/CriteriaGroup',
 	  'conceptsetbuilder/InputTypes/ConceptSet',
+    './CharacterizationAnalysis',
     'text!./characterization-view-edit.html',
     'appConfig',
+    'atlas-state',
     'services/AuthAPI',
     'pages/Page',
     'utils/AutoBind',
@@ -24,8 +26,10 @@ define([
     PermissionService,
     CriteriaGroup,
     ConceptSet,
+    CharacterizationAnalysis,
     view,
     config,
+    sharedState,
     authApi,
     Page,
     AutoBind,
@@ -36,11 +40,11 @@ define([
         constructor(params) {
             super(params);
 
-            this.characterizationId = ko.observable();
+            this.characterizationId = sharedState.CohortCharacterization.selectedId;
             this.executionId = ko.observable();
-            this.design = ko.observable({});
+            this.design = sharedState.CohortCharacterization.current;
 
-            this.designDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.design()));
+            this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
@@ -57,11 +61,7 @@ define([
         onRouterParamsChanged({ characterizationId, section, subId }) {
             if (characterizationId !== undefined) {
                 this.characterizationId(parseInt(characterizationId));
-                if (this.characterizationId() === 0) {
-                    this.setupDesign({});
-                } else {
-                    this.loadDesignData(this.characterizationId());
-                }
+                this.loadDesignData(this.characterizationId() || 0);
             }
 
             if (section !== undefined) {
@@ -80,7 +80,7 @@ define([
         }
 
         isSavePermittedResolver() {
-            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty())
+            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty());
         }
 
         isDeletePermittedResolver() {
@@ -95,30 +95,24 @@ define([
         }
 
         setupDesign(design) {
-            const strataConceptSets = ko.observableArray((design.strataConceptSets && design.strataConceptSets.map(cs => new ConceptSet(cs))) || []);
-            this.design({
-                ...design,
-                name: ko.observable(design.name),
-								stratifiedBy: ko.observable(design.stratifiedBy),
-                strataOnly: ko.observable(design.strataOnly),
-                stratas: (design.stratas && design.stratas.map(s => ({
-                  name: ko.observable(s.name),
-                  criteria: ko.observable(new CriteriaGroup(s.criteria, strataConceptSets)),
-                }))) || [],
-                strataConceptSets,
-            });
+            this.design(design);
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
 
         async loadDesignData(id) {
-            if (id < 1) {
-                this.setupDesign({})
-            } else {
-                this.loading(true);
-                const res = await CharacterizationService.loadCharacterizationDesign(id);
-                this.setupDesign(res);
-                this.loading(false);
-            }
+
+					if (this.design() && (this.design().id || 0 === id)) return;
+          if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+            return;
+          }
+					if (id < 1) {
+                this.setupDesign(new CharacterizationAnalysis());
+          } else {
+            this.loading(true);
+            const res = await CharacterizationService.loadCharacterizationDesign(id);
+            this.setupDesign(new CharacterizationAnalysis(res));
+            this.loading(false);
+          }
         }
 
         selectTab(index, { key }) {
@@ -131,14 +125,16 @@ define([
             if (ccId < 1) {
                 CharacterizationService
                     .createCharacterization(this.design())
-                    .then(res => commonUtils.routeTo('/cc/characterizations/' + res.id + '/design'));
+                    .then(res => {
+											  this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+                        commonUtils.routeTo('/cc/characterizations/' + res.id + '/design');
+										});
             } else {
                 CharacterizationService
                     .updateCharacterization(ccId, this.design())
                     .then(res => {
-                        this.setupDesign(res);
+                        this.setupDesign(new CharacterizationAnalysis(res));
                         this.loading(false);
-                        this.designDirtyFlag().reset();
                     });
             }
         }
@@ -150,12 +146,18 @@ define([
                     .deleteCharacterization(this.componentParams().characterizationId())
                     .then(res => {
                         this.loading(false);
+											  this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
                         this.closeCharacterization();
                     });
             }
         }
 
         closeCharacterization() {
+					  if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+						    return;
+					  }
+            this.design(null);
+            this.designDirtyFlag().reset();
             commonUtils.routeTo('/cc/characterizations');
         }
     }
