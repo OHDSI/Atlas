@@ -96,12 +96,7 @@ define([
         }
 
         setupDesign(design) {
-            this.design({
-                ...design,
-                name: ko.observable(design.name),
-                cohorts: ko.observableArray(design.cohorts),
-                featureAnalyses: ko.observableArray(design.featureAnalyses),
-                parameters: ko.observableArray(design.parameters),
+            this.design(design);
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
 

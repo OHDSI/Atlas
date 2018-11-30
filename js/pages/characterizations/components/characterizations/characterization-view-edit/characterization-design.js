@@ -49,14 +49,14 @@ define([
             this.isViewPermitted = this.isPermittedViewResolver();
 
             this.cohorts = ko.computed({
-                read: () => params.design().cohorts ? params.design().cohorts() : [],
+                read: () => params.design() && params.design().cohorts() || [],
                 write: (value) => params.design().cohorts(value),
             });
 
             this.strataConceptSets = ko.pureComputed({
-							read: () => params.design().strataConceptSets,
-              write: (value) => params.design().strataConceptSets(value)
-						});
+                read: () => params.design().strataConceptSets,
+                write: (value) => params.design().strataConceptSets(value)
+            });
 
             this.stratas = ko.computed({
 				read: () => params.design() && params.design().stratas() || [],
@@ -87,7 +87,7 @@ define([
                         className: this.classes('col-feature-remove'),
                     }
                 ],
-                data: ko.computed(() => params.design().featureAnalyses ? params.design().featureAnalyses() : [])
+                data: ko.computed(() => params.design() && params.design().featureAnalyses() || [])
             };
 
             this.featureAnalysesParams = {
@@ -109,11 +109,11 @@ define([
                         className: this.classes('col-param-remove'),
                     }
                 ],
-                data: ko.computed(() => params.design().parameters ? params.design().parameters() : [])
+                data: ko.computed(() => params.design() && params.design().parameters() || [])
             };
 
             this.showFeatureAnalysesBrowser = ko.observable(false);
-            this.featureAnalysesSelected = ko.observable();
+            this.featureAnalysesSelected = ko.observableArray();
             this.featureAnalysesAvailable = ko.pureComputed(() => this.featureAnalysesSelected().length > 0);
 
             this.isParameterCreateModalShown = ko.observable(false);
