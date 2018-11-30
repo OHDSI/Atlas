@@ -1,7 +1,7 @@
 define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
-	  'pages/characterizations/services/FeatureAnalysisService',
+    'pages/characterizations/services/FeatureAnalysisService',
     'text!./characterization-results.html',
     'appConfig',
     'services/AuthAPI',
@@ -114,12 +114,16 @@ define([
                     const analysis = this.analysisList().find(a => a.analysisId === r.analysisId);
                     let html;
                     if (analysis && analysis.analysisId && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') {
-                      html = d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + r.cohorts.map((c, idx) => {
-                          const data = {...r, cohortId: c.cohortId, cohortName: c.cohortName};
-                          return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;
-                      }).join('&nbsp;&bull;&nbsp;') + '</div>';
+                        if (r.cohorts.length > 1) {
+                          html = d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + r.cohorts.map((c, idx) => {
+                            const data = {...r, cohortId: c.cohortId, cohortName: c.cohortName};
+                            return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;
+                          }).join('&nbsp;&bull;&nbsp;') + '</div>';
+                        } else {
+                            html = d + `<div><a class='${this.classes('explore-link')}' data-bind='click: () => $component.exploreByFeature($data, 0)'>Explore</a></div>`;
+                        }
                     } else {
-						html = d;
+                        html = d;
                     }
                     return html;
                  },
@@ -180,19 +184,19 @@ define([
         showExecutionDesign() {
           this.executionDesign(null);
           this.isExecutionDesignShown(true);
-					CharacterizationService
-						.loadCharacterizationExportDesignByGeneration(this.executionId())
-						.then(res => {
-							this.executionDesign(res);
-							this.loading(false);
-						});
+          CharacterizationService
+            .loadCharacterizationExportDesignByGeneration(this.executionId())
+            .then(res => {
+              this.executionDesign(res);
+              this.loading(false);
+            });
         }
 
         exploreByFeature({covariateName, analysisId, covariateId, cohorts, ...o}, index) {
           const {cohortId, cohortName} = cohorts[index];
-					this.explorePrevalence({executionId: this.executionId(), analysisId, cohortId, covariateId, cohortName});
-					this.explorePrevalenceTitle('Exploring ' + covariateName);
-					this.isExplorePrevalenceShown(true);
+          this.explorePrevalence({executionId: this.executionId(), analysisId, cohortId, covariateId, cohortName});
+          this.explorePrevalenceTitle('Exploring ' + covariateName);
+          this.isExplorePrevalenceShown(true);
         }
 
         getCountColumn(strata, idx) {
@@ -489,8 +493,8 @@ define([
 
                 const cov = data[rd.covariateName];
                 if (cov.cohorts.filter(c => c.cohortId === report.cohortId).length === 0) {
-									cov.cohorts.push({cohortId: report.cohortId, cohortName: report.cohortName});
-								}
+                  cov.cohorts.push({cohortId: report.cohortId, cohortName: report.cohortName});
+                }
                 if (cov.sumValue[rd.strataId] === undefined) {
                     cov.sumValue[rd.strataId] = [];
                 }
@@ -660,9 +664,9 @@ define([
             return (mean2 - mean1) / sd;
         }
 
-				formatDecimal2(val) {
-					return numeral(val).format('0.00');
-				}
+        formatDecimal2(val) {
+          return numeral(val).format('0.00');
+        }
 
         analysisTitle(data) {
             const strata = data.stratified ? (' / stratified by ' + this.stratifiedByTitle()): '';
