@@ -113,7 +113,7 @@ define([
                 render: (d, t, r) => {
                     const analysis = this.analysisList().find(a => a.analysisId === r.analysisId);
                     let html;
-                    if (analysis && analysis.analysisId && !analysis.strataOnly && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') {
+                    if (analysis && analysis.analysisId && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') {
                       html = d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + r.cohorts.map((c, idx) => {
                           const data = {...r, cohortId: c.cohortId, cohortName: c.cohortName};
                           return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;
