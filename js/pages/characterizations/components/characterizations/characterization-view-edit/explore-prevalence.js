@@ -98,7 +98,13 @@ define([
 		}
 
 		exploreByFeature(data) {
-			this.loadData(data).then(() => this.exploring(data.covariateName));
+			this.loadData(data).then(() => {
+				if (data.covariateId !== this.explore.covariateId) {
+					this.exploring(data.covariateName);
+				} else {
+					this.exploring(null);
+				}
+			});
 		}
 
 		resetExploring() {
