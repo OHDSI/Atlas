@@ -26,7 +26,7 @@ define([
 	class Dashboard extends Report {
 		constructor(params) {
 			super(params);
-			
+
 			this.summary = ko.observableArray();
 			this.genderConceptData = ko.observable();
 			this.ageAtFirstObservationData = ko.observable();
@@ -42,6 +42,13 @@ define([
 				},
 				observationLine: {
 					yFormat: d3.format('0.0%'),
+					xFormat: function (d) {
+						if (d < 10) {
+							return d3.format('.2n')(d)
+						} else {
+							return d3.format('d')(d)
+						}
+					},
 					interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
 					xLabel: 'x label',
 					yLabel: 'Percent of Population'
@@ -56,10 +63,12 @@ define([
 				},
 			};
 
-            this.loadData();
+			this.loadData();
 		}
 
-		parseData({ data }) {
+		parseData({
+			data
+		}) {
 			if (!!data.summary) {
 				var formatter = d3.format(".5s");
 				data.summary.forEach(function (d) {
@@ -75,7 +84,10 @@ define([
 			if (!ageAtFirstData.empty) {
 				const histData = {};
 				histData.INTERVAL_SIZE = 1;
-				let ageAtFirstDataMapped = ageAtFirstData.map(value => ({ INTERVAL_INDEX: value.intervalIndex, COUNT_VALUE: value.countValue }));
+				let ageAtFirstDataMapped = ageAtFirstData.map(value => ({
+					INTERVAL_INDEX: value.intervalIndex,
+					COUNT_VALUE: value.countValue
+				}));
 				histData.DATA = ChartUtils.normalizeArray(ageAtFirstDataMapped);
 				histData.OFFSET = 0;
 				histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
@@ -117,9 +129,8 @@ define([
 					.domain(
 						d3.extent(this.byMonthSeriesData()[0].values, function (d) {
 							return d.xValue;
-						}
-					)
-				);
+						})
+					);
 			}
 		}
 

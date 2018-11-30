@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'text!./plp-print-friendly.html', 'appConfig', 'plp/PatientLevelPredictionAnalysis'],
+define(['jquery', 'knockout', 'text!./plp-print-friendly.html', 'appConfig', '../inputTypes/PatientLevelPredictionAnalysis'],
 	function ($, ko, view, config, cohortComparison) {
 		function plpPrintFriendly(params) {
 			var self = this;

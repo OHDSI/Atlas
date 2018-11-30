@@ -1,10 +1,10 @@
-<heading-title params="name: 'Data Sources reports', icon: 'area-chart', theme: 'dark'"></heading-title>
+<heading-title params="name: 'Data Sources', icon: 'area-chart', theme: 'dark'"></heading-title>
 
 <!-- ko ifnot: canViewCdmResults -->
-	<access-denied class="flexed" params="isAuthenticated: $component.isAuthenticated"></access-denied>
+<access-denied class="flexed" params="isAuthenticated: $component.isAuthenticated"></access-denied>
 <!-- /ko -->
 
-<div data-bind="if: canViewCdmResults, css:classes()">
+<div class="data-sources" data-bind="if: canViewCdmResults, css:classes()">
 	<!-- ko if: showSelectionArea -->
 	<div class="reportControls pad-5">
 		<div class="row">
@@ -14,14 +14,14 @@
 		</div>
 		<div class="row">
 			<div class="col-xs-12">
-				<select class="form-control" data-bind="css : { invalid:  currentReport()==undefined }, options: reports, optionsCaption:'Select a Report', optionsText:'name', value: currentReport, disable: !currentSource()"></select>
+				<select class="form-control" data-bind="css : { invalid:  selectedReport()==undefined }, options: reports, optionsCaption:'Select a Report', optionsText:'name', value: selectedReport, disable: !currentSource()"></select>
 			</div>
 		</div>
 		<div class="clear"></div>
 	</div>
 	<!-- /ko -->
 
-	<loading params="status: 'loading report'" data-bind="visible: loadingReport() && ! hasError()">
+	<loading params="status: 'loading report'" data-bind="visible: isReportLoading()">
 	</loading>
 
 	<div class="paddedWrapper text-center error" data-bind="visible: hasError()">

@@ -7,44 +7,59 @@ define(function (require, exports) {
 	var numeral = require('numeral');
 	var authAPI = require('services/AuthAPI');
 	const httpService = require('services/http');
+	const CDMResultAPI = require('services/CDMResultsAPI');
 
 	var loadedPromise = $.Deferred();
 	loadedPromise.resolve();
 
 	var defaultSource;
-	var domainPromise = $.Deferred();
+	var domainsPromise = null;
 	var domains = [];
 
-	sourceAPI.getSources().then(function (sources) {
-		if (sources.length == 0) {
-			sharedState.appInitializationStatus('no-sources-available');
-			return;
-		}
-		// find the source which has a Vocabulary Daimon with priority = 1
-		var prioritySources = sources.filter(function (source) {
-			return source.daimons.filter(function (daimon) {
-				return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
-			}).length > 0
-		});
-		if (prioritySources.length > 0)
-			defaultSource = prioritySources[0];
-		else // find the first vocabulary or CDM daimon
-			defaultSource = sources.filter(function (source) {
-				return source.daimons.filter(function (daimon) {
-					return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
-				}).length > 0
-			})[0];
+	function getDomains() {
+		// if domains haven't yet been requested, create the promise
+		if (!domainsPromise) {
+			let loadPromise = new Promise((resolve, reject) => {
+				sourceAPI.getSources().then(function (sources) {
+					if (sources.length === 0) {
+						resolve(domains);
+						return;
+					}
+					// find the source which has a Vocabulary Daimon with priority = 1
+					var prioritySources = sources.filter(function (source) {
+						return source.daimons.filter(function (daimon) {
+							return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
+						}).length > 0
+					});
+					if (prioritySources.length > 0)
+						defaultSource = prioritySources[0];
+					else // find the first vocabulary or CDM daimon
+						defaultSource = sources.filter(function (source) {
+							return source.daimons.filter(function (daimon) {
+								return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
+							}).length > 0
+						})[0];
 
-		// preload domain list once for all future calls to getDomains()
-		$.ajax({
-			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
-		}).then(function (results) {
-			$.each(results, function (i, v) {
-				domains.push(v.DOMAIN_ID);
+					// preload domain list once for all future calls to getDomains()
+					if (defaultSource !== undefined) {
+						$.ajax({
+							url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
+						}).then(function (results) {
+							$.each(results, function (i, v) {
+								domains.push(v.DOMAIN_ID);
+							});
+							resolve(domains);
+							domainsPromise = loadPromise; // store promise for future invocations
+						});
+					} else {
+						resolve(domains);	
+					}
+				});
 			});
-			domainPromise.resolve(domains);
-		});
-	})
+			return loadPromise;
+		}
+		return domainsPromise;
+	}
 
 	function loadDensity(results) {
 		var densityPromise = $.Deferred();
@@ -64,37 +79,7 @@ define(function (require, exports) {
 				resultsIndex.push(c);
 			}
 		}
-		var densityIndex = {};
-		$.ajax({
-			url: sharedState.resultsUrl() + 'conceptRecordCount',
-			method: 'POST',
-			contentType: 'application/json',
-			timeout: 10000,
-			data: JSON.stringify(searchResultIdentifiers),
-			success: function (entries) {
-				var formatComma = "0,0";
-				for (var e = 0; e < entries.length; e++) {
-					densityIndex[Object.keys(entries[e])[0]] = Object.values(entries[e])[0];
-				}
-				for (var c = 0; c < resultsIndex.length; c++) {
-					var concept = results[resultsIndex[c]];
-					if (densityIndex[concept.CONCEPT_ID] != undefined) {
-						concept.RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][0]).format(formatComma);
-						concept.DESCENDANT_RECORD_COUNT = numeral(densityIndex[concept.CONCEPT_ID][1]).format(formatComma);
-					}
-				}
-				densityPromise.resolve();
-			},
-			error: function (error) {
-				for (var c = 0; c < results.length; c++) {
-					var concept = results[c];
-					concept.RECORD_COUNT = 'timeout';
-					concept.DESCENDANT_RECORD_COUNT = 'timeout';
-				}
-				densityPromise.resolve();
-			}
-		});
-		return densityPromise;
+		return CDMResultAPI.getConceptRecordCountWithResultsUrl(sharedState.resultsUrl(), searchResultIdentifiers, results, false);
 	}
 
 	function search(searchString, options) {
@@ -117,11 +102,6 @@ define(function (require, exports) {
 		});
 
 		return deferred.promise();
-	}
-
-	function getDomains() {
-		// this is initliazed once for all calls
-		return domainPromise;
 	}
 
 	function getConcept(id) {

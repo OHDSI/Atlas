@@ -1,7 +1,5 @@
-define(
-    (require, factory) => {
-
-        const momentApi = require('services/MomentAPI');
+define(['services/MomentAPI'],
+    (momentApi) => {
 
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {
@@ -36,6 +34,8 @@ define(
 
         const getFacetForCreatedBy = getCreatedByLogin;
 
+        const getFacetForDomain = (domain) => domain !== null ? domain : 'None';
+
         const renderCountColumn = (value) => value ? value : '...';
 
         return {
@@ -45,6 +45,7 @@ define(
             getCreatedByFormatter,
             getFacetForCreatedBy,
             renderCountColumn,
+            getFacetForDomain,
         };
     }
 );

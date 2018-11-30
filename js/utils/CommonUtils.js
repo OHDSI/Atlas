@@ -1,8 +1,15 @@
-define((require, factory) => {
-	const ko = require('knockout');
-	const sharedState = require('atlas-state');
-	const Page = require('pages/Page');
-	const URI = require('urijs');
+define([
+		'knockout',
+		'atlas-state',
+		'pages/Page',
+		'urijs'
+	],
+	(
+		ko,
+		sharedState,
+		Page,
+		URI,
+	) => {
 
 	const build = function (name, viewModelClass, template) {
 		const component = {

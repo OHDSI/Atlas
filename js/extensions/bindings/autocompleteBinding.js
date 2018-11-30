@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'jquery-ui'], function ($, ko) {
+define(['jquery', 'knockout', 'jquery-ui/ui/widgets/autocomplete'], function ($, ko) {
 	ko.bindingHandlers.ko_autocomplete = {
 		init: function (element, valueAccessor, allBindingsAccessor) {
 			var autoWidget = $(element).autocomplete(valueAccessor());

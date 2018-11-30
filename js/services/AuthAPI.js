@@ -411,6 +411,15 @@ define(function(require, exports) {
     var isPermittedEditRolePermissions = function(roleId) {
         return isPermitted('role:' + roleId + ':permissions:*:put') && isPermitted('role:' + roleId + ':permissions:*:delete');
     }
+    const isPermittedGetAllNotifications = function() {
+        return isPermitted('notifications:get');
+    };
+    const isPermittedGetViewedNotifications = function() {
+        return isPermitted('notifications:viewed:get');
+    };
+    const isPermittedPostViewedNotifications = function() {
+        return isPermitted('notifications:viewed:post');
+    };
 
 		const isPermittedImportUsers = function() {
 			return isPermitted('user:import:post') && isPermitted('user:import:*:post');
@@ -441,6 +450,10 @@ define(function(require, exports) {
         isAuthenticated: isAuthenticated,
 		signInOpened: signInOpened,
         isPermitted: isPermitted,
+
+        isPermittedGetAllNotifications: isPermittedGetAllNotifications,
+        isPermittedGetViewedNotifications: isPermittedGetViewedNotifications,
+        isPermittedPostViewedNotifications: isPermittedPostViewedNotifications,
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,
         isPermittedUpdateConceptset: isPermittedUpdateConceptset,

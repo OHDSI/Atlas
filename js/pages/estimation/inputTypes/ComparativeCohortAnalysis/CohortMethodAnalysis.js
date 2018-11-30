@@ -1,17 +1,16 @@
 define(function (require, exports) {
-
     var ko = require('knockout');
-    var GetDbCohortMethodDataArgs = require('./GetDbCohortMethodDataArgs');
-    var CreateStudyPopulationArgs = require('./CreateStudyPopulationArgs');
-    var CreatePsArgs = require('./CreatePsArgs');
-    var TrimByPsArgs = require('./TrimByPsArgs');
-    var TrimByPsToEquipoiseArgs = require('./TrimByPsToEquipoiseArgs');
-    var MatchOnPsArgs = require('./MatchOnPsArgs');
-    var MatchOnPsAndCovariatesArgs = require('./MatchOnPsAndCovariateArgs');
-    var StratifyByPsArgs = require('./StratifyByPsArgs');
-    var StratifyByPsAndCovariatesArgs = require('./StratifyByPsAndCovariatesArgs');
-    var FitOutcomeModelArgs = require('./FitOutcomeModelArgs');
-
+   var GetDbCohortMethodDataArgs = require('./GetDbCohortMethodDataArgs');
+   var CreateStudyPopulationArgs = require('./CreateStudyPopulationArgs');
+   var CreatePsArgs = require('./CreatePsArgs');
+   var TrimByPsArgs = require('./TrimByPsArgs');
+   var TrimByPsToEquipoiseArgs = require('./TrimByPsToEquipoiseArgs');
+   var MatchOnPsArgs = require('./MatchOnPsArgs');
+   var MatchOnPsAndCovariatesArgs = require('./MatchOnPsAndCovariateArgs');
+   var StratifyByPsArgs = require('./StratifyByPsArgs');
+   var StratifyByPsAndCovariatesArgs = require('./StratifyByPsAndCovariatesArgs');
+   var FitOutcomeModelArgs = require('./FitOutcomeModelArgs');
+   
 	function CohortMethodAnalysis(data, defaultCovariateSettings) {
 		var self = this;
         data = data || {};

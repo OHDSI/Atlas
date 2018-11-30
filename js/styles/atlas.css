@@ -1,3 +1,8 @@
+html, body {
+  height: 100%;
+  min-height: 1px;
+}
+
 table.cohort-generate-sources {
   width: 100%;
   border-bottom: solid 1px #888;
@@ -234,14 +239,6 @@ pre span.key {
   margin-right: 10px;
   margin-left: 20px;
   margin-top: -5px;
-}
-
-#wrapperMainWindow {
-  position: absolute;
-  left: 174px;
-  top: 0px;
-  right: 0px;
-  height: 100%;
 }
 
 #wrapperMainWindowContainer {
@@ -838,12 +835,6 @@ input.btn.btn-default {
   padding: 10px;
 }
 
-.report table {
-  width: 100%;
-  background-color: #fff;
-  margin-bottom: 15px;
-}
-
 .report svg {
   margin-left: auto;
   margin-right: auto;
@@ -1274,6 +1265,10 @@ ul.ColVis_collection li {
   border-bottom: none;
   font-size: 14px;
   padding: 7px;
+}
+
+ .app.modal-open {
+  padding-right: 0px!important;
 }
 
 circle {

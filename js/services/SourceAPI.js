@@ -5,26 +5,18 @@ define(function (require, exports) {
 	var sharedState = require('atlas-state');
 	var ohdsiUtil = require('assets/ohdsi.util');
 	var authApi = require('services/AuthAPI');
-  var lscache = require('lscache');
-  var ko = require('knockout');
-    const lodash = require('lodash');
+	var lscache = require('lscache');
+	var ko = require('knockout');
+	const lodash = require('lodash');
 	const httpService = require('services/http');
+	const constants = require('const');
 
 	var sources;
 
 	function getSources() {
-		var promise = $.ajax({
-			url: config.webAPIRoot + 'source/sources/',
-			error: function (error) {
-				sharedState.appInitializationStatus('failed');
-			},
-			success: function (o) {
-				// this is the initial communication to WebAPI and if it succeeds
-				// the initialization is complete and the application is ready.
-				sharedState.appInitializationStatus('running');
-			}
+		return $.ajax({
+			url: config.webAPIRoot + 'source/sources/'
 		});
-		return promise;
 	}
 
   function getCacheKey() {
@@ -77,18 +69,19 @@ define(function (require, exports) {
       contentType: 'application/json',
       success: (sources) => {
         config.api.available = true;
+        if (sources.length === 0) {
+            servicePromise.resolve(constants.applicationStatuses.noSourcesAvailable);
+        }
         setSharedStateSources(sources);
-        servicePromise.resolve();
+        servicePromise.resolve(constants.applicationStatuses.running);
       },
       error: function (xhr, ajaxOptions, thrownError) {
         config.api.available = false;
         config.api.xhr = xhr;
         config.api.thrownError = thrownError;
-
-        sharedState.appInitializationStatus('failed');
         document.location = '#/configure';
 
-        servicePromise.resolve();
+        servicePromise.resolve(constants.applicationStatuses.failed);
       }
     });
 
@@ -107,6 +100,7 @@ define(function (require, exports) {
       source.hasVocabulary = false;
       source.hasEvidence = false;
       source.hasResults = false;
+      source.hasCEMResults = false;
       source.hasCDM = false;
       source.vocabularyUrl = '';
       source.evidenceUrl = '';
@@ -141,7 +135,7 @@ define(function (require, exports) {
 
         // evaluate cem daimons
         if (daimon.daimonType == 'CEMResults') {
-          source.hasResults = true;
+          source.hasCEMResults = true;
           source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
         }
 

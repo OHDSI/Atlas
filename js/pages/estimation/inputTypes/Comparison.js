@@ -1,8 +1,7 @@
 define(function (require, exports) {
-
     var ko = require('knockout');
-    var Cohort = require('./Cohort');
-    var ConceptSet = require('./ConceptSet');
+   var Cohort = require('./Cohort');
+   var ConceptSet = require('./ConceptSet');
 
 	function Comparison(data) {
 		var self = this;

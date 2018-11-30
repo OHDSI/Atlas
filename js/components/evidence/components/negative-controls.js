@@ -224,10 +224,10 @@ define(['knockout',
 						conceptDomainId = "Drug";
 						targetDomainId = "Condition";
 					} else {
-						this.conceptSetValidText("Your saved concepts come from multiple Domains (Condition, Drug). The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
+						this.conceptSetValidText("Your saved concepts come from multiple domains or from a domain outside of conditions or drugs. The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
 					}
 				} else {
-					this.conceptSetValidText("You must define a concept set with drugs found in the RxNorm vocbulary at the Ingredient class level OR Conditions from SNOMED. The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
+					this.conceptSetValidText("You must define a concept set with drugs found in the RxNorm vocabulary at the Ingredient class level OR Conditions from SNOMED. The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
 				}
 				this.conceptSetValid(conceptSetValid);
 				this.conceptDomainId(conceptDomainId);
@@ -238,7 +238,7 @@ define(['knockout',
 				var evidenceSources = [];
 
 				$.each(sharedState.sources(), function (i, source) {
-					if (source.hasEvidence) {
+					if (source.hasEvidence && source.hasCEMResults) {
 						var sourceInfo = {};
 						sourceInfo.sourceId = ko.observable(source.sourceId);
 						sourceInfo.sourceKey = ko.observable(source.sourceKey);

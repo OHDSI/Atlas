@@ -1,4 +1,21 @@
 .data-sources {
+	& .drilldown-enabled {
+		tr, rect {
+			cursor: pointer;
+		}
+	}
+
+	& .report {
+		& table {
+	  	width: 100%;
+	  	background-color: #fff;
+		}
+
+		& .panel-body {
+  		padding: 0px 0px 0px 0px;
+		}
+	}
+
   & .hidden {
     display: none;
   }
@@ -17,16 +34,12 @@
     }
   }
 
-  & .dataSourceReport {
-    width: 96%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 0px;
-  }
-
-  & #data-sources-treemap_container rect {
-    cursor: pointer;
-  }
+	&.dataSourceReport {
+		width: 96%;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 0px;
+	}
 
   & #datasourceTitle {
     margin-top: 10px;

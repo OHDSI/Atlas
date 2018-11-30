@@ -14,8 +14,11 @@ define([
 		constructor(params) {
 			super(params);
 			this.title = params.name;
-			this.icon = params.icon;
+			this.icon = params.icon || null;
 			this.theme = params.theme || null;
+			this.hasIcon = ko.computed(() => {
+				return this.icon != null;
+			});
 		}
 	}
 

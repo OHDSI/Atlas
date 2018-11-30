@@ -1,0 +1,1 @@
+define(['../node_modules/@babel/polyfill/dist/polyfill'], () => {});
