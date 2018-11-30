@@ -77,7 +77,7 @@ define([
 							title: 'Concept Id',
 							data: 'concept_id',
 							className: 'treemap__tbl-col--narrow numeric'
-					},
+						},
 						{
 							title: 'Name',
 							data: 'name'
