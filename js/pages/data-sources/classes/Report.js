@@ -1,69 +1,69 @@
 define([
 	'knockout',
-  'pages/data-sources/const',
-  'services/http',
-  'components/Component',
+	'pages/data-sources/const',
+	'services/http',
+	'components/Component',
 ], function (
 	ko,
-  constants,
-  httpService,
-  Component
+	constants,
+	httpService,
+	Component
 ) {
-  class Report extends Component {
-    constructor(params) {
-      super(params);
-      this.isLoading = ko.observable(true);
-      this.chartFormats = {};
+	class Report extends Component {
+		constructor(params) {
+			super(params);
+			this.isLoading = ko.observable(true);
+			this.chartFormats = {};
 
-      this.context = params.context;
-      this.title = ko.computed(() => {
-        const title = this.context.currentReport()
-            ? `${this.context.currentReport().name} report ${this.context.currentSource() ? ('(' + this.context.currentSource().sourceKey + ')') : ''}`
-            : '';
-        return title;
-      });
-      this.sourceKey = ko.computed(() => this.context.currentSource() ? this.context.currentSource().sourceKey : null);
-      this.path = this.context.currentReport().path;
-      this.conceptId = null;
+			this.context = params.context;
+			this.title = ko.computed(() => {
+				const title = this.context.currentReport() ?
+					`${this.context.currentSource() ? (this.context.currentSource().sourceName) : ''} ${this.context.currentReport().name} Report` :
+					'';
+				return title;
+			});
+			this.sourceKey = ko.computed(() => this.context.currentSource() ? this.context.currentSource().sourceKey : null);
+			this.path = this.context.currentReport().path;
+			this.conceptId = null;
 
-      this.sourceKeySubscription = this.sourceKey.subscribe(newSource => {
-        if (!newSource) {
-          this.context.currentReport(null);
-        } else {
-          this.loadData();
-        }
-      });
-    }
+			this.sourceKeySubscription = this.sourceKey.subscribe(newSource => {
+				if (!newSource) {
+					this.context.currentReport(null);
+				} else {
+					this.loadData();
+				}
+			});
+		}
 
-    dispose () {
-      this.sourceKeySubscription.dispose();
-    }
+		dispose() {
+			this.sourceKeySubscription.dispose();
+		}
 
-    getData() {
-      const url = constants.apiPaths.report({
-        sourceKey: this.sourceKey(),
-        path: this.path,
-        conceptId: this.conceptId,
-      });
-      this.context.loadingReport(true);
-      this.isLoading(true);
-      const response = httpService.doGet(url);
-      response.catch((error) => {
-          this.context.hasError(true);
-          console.error(error);
-        })
-        .finally(() => {
-          this.context.loadingReport(false);
-          this.isLoading(false);
-        });
+		getData() {
+			const url = constants.apiPaths.report({
+				sourceKey: this.sourceKey(),
+				path: this.path,
+				conceptId: this.conceptId,
+			});
+			this.context.loadingReport(true);
+			this.isLoading(true);
+			const response = httpService.doGet(url);
+			response.catch((error) => {
+					this.context.hasError(true);
+					console.error(error);
+				})
+				.finally(() => {
+					this.context.loadingReport(false);
+					this.isLoading(false);
+				});
 
-      return response;
-    }
+			return response;
+		}
 
-    loadData() {
-      this.getData().then(rawData => this.parseData(rawData));
-    }
-  }
+		loadData() {
+			this.getData().then(rawData => this.parseData(rawData));
+		}
+	}
 
-  return Report;
+	return Report;
 });

@@ -35,8 +35,7 @@ define([
 		constructor(params) {
 			super(params);
 
-			this.reports = [
-				{
+			this.reports = [{
 					name: "Dashboard",
 					path: "dashboard",
 					component: "report-dashboard",
@@ -58,7 +57,7 @@ define([
 					component: "report-visit",
 				},
 				{
-					name: "Condition",
+					name: "Condition Occurrence",
 					path: "condition",
 					component: "report-condition",
 				},
@@ -73,7 +72,7 @@ define([
 					component: "report-procedure",
 				},
 				{
-					name: "Drug",
+					name: "Drug Exposure",
 					path: "drug",
 					component: "report-drug",
 				},
@@ -105,13 +104,16 @@ define([
 			];
 
 			this.model = params.model;
-			this.sources = ko.computed(() => {
-				return sharedState.sources().filter(function (s) {
-					return s.hasResults && s.hasCDM;
-				});
+			this.sources = sharedState.sources().filter(function (s) {
+				return s.hasResults && s.hasCDM;
 			});
+
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
+
+			this.isReportLoading = ko.pureComputed(function () {
+				return this.loadingReport() && !this.hasError() && !this.model.loadingReportDrilldown();
+			}, this);
 
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.canViewCdmResults = ko.pureComputed(() => {
@@ -121,7 +123,48 @@ define([
 			this.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 			this.currentSource = ko.observable(this.sources[0]);
 			this.currentReport = ko.observable();
+			this.selectedReport = ko.observable();
+
+			this.selectedReportSubscription = this.selectedReport.subscribe(r => {
+				this.updateLocation();
+			});
+
+			this.selectedSourceSubscription = this.currentSource.subscribe(r => {
+				this.updateLocation();
+			})
+
 			this.currentConcept = ko.observable();
+		}
+
+		dispose() {
+			this.selectedReportSubscription.dispose();
+			this.selectedSourceSubscription.dispose();
+		}
+
+		updateLocation() {
+			if (this.currentSource() && this.selectedReport()) {
+				document.location = "#/datasources/" + this.currentSource().sourceKey + "/" + this.selectedReport().path;
+			}
+		}
+
+		onRouterParamsChanged(changedParams, newParams) {
+			if (newParams == null && changedParams == null)
+				return;
+
+			if (newParams == null) {
+				// initial page load direct from URL
+				this.currentSource(this.sources.find(s => s.sourceKey == changedParams.sourceKey));
+				this.currentReport(this.reports.find(r => r.path == changedParams.reportName));
+				this.selectedReport(this.reports.find(r => r.path == changedParams.reportName));
+			} else {
+				if (changedParams.sourceKey) {
+					this.currentSource(this.sources.find(s => s.sourceKey == newParams.sourceKey));
+				}
+				if (changedParams.reportName) {
+					this.currentReport(this.reports.find(r => r.path == newParams.reportName));
+					this.selectedReport(this.reports.find(r => r.path == newParams.reportName));
+				}
+			}
 		}
 	}
 

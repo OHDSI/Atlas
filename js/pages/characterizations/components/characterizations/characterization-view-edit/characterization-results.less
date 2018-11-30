@@ -41,6 +41,9 @@
     &-label {
       font-weight: 500;
     }
+    a&-value {
+      cursor: pointer;
+    }
   }
 
   &__display-options-list {
@@ -90,6 +93,10 @@
     font-size: 1.4rem;
   }
 
+  &__th-cov-count, &__th-cov-pct, &__th-diff {
+    width: 7.5rem !important;
+  }
+
   &__th-cohort-name {
     text-align: center;
   }
@@ -137,5 +144,19 @@
         stroke-dasharray: 3, 3;
       }
     }
+  }
+  &__execution-design {
+    width: 100%;
+    height: 600px;
+  }
+  &__explore {
+    margin-top: .5rem;
+    &-link {
+      cursor: pointer;
+    }
+  }
+
+  &__report-table {
+    width: 100% !important;
   }
 }
