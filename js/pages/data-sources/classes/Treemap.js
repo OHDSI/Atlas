@@ -75,7 +75,8 @@ define([
 					},
 					columns: [{
 							title: 'Concept Id',
-							data: 'concept_id'
+							data: 'concept_id',
+							className: 'treemap__tbl-col--narrow numeric'
 						},
 						{
 							title: 'Name',
@@ -84,19 +85,19 @@ define([
 						{
 							title: 'Person Count',
 							data: 'num_persons',
-							className: 'numeric',
+							className: 'treemap__tbl-col--narrow numeric',
 							orderSequence: ['desc', 'asc']
 						},
 						{
 							title: 'Prevalence',
 							data: 'percent_persons',
-							className: 'numeric',
+							className: 'treemap__tbl-col--narrow numeric',
 							orderSequence: ['desc', 'asc']
 						},
 						{
 							title: this.aggProperty.description,
 							data: 'agg_value',
-							className: 'numeric',
+							className: 'treemap__tbl-col--narrow numeric',
 							orderSequence: ['desc', 'asc']
 						}
 					],
@@ -138,6 +139,7 @@ define([
 					return {
 						concept_id: normalizedData.conceptId[i],
 						name: pathParts[pathParts.length - 1],
+						ingredient: pathParts[3],
 						num_persons: ChartUtils.formatComma(normalizedData.numPersons[i]),
 						percent_persons: ChartUtils.formatPercent(normalizedData.percentPersons[i]),
 						agg_value: ChartUtils.formatFixed(normalizedData[this.aggProperty.name][i])
