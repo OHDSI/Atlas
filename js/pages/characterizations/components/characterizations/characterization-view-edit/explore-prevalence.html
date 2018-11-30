@@ -7,13 +7,32 @@
             <span data-bind="text: exploringTitle, css: classes('exploring-title')"></span>
         </div>
     </div>
+    <!-- ko ifnot: loading() -->
     <table data-bind="
-        visible: !loading(),
         css: classes(),
         dataTable: {
-            data: $component.data,
-            options: { autoWidth: false, order: [1, 'desc'], columns: $component.tableColumns }
+            data: relations().stats,
+            options: { autoWidth: false, order: [1, 'desc'], columns: relations().columns }
         }
     ">
+        <thead>
+            <!-- ko if: relations().stratas.length > 1 -->
+            <tr>
+                <th rowspan="2">Relation</th>
+                <th rowspan="2">Distance</th>
+                <th rowspan="2">Concept name</th>
+                <!-- ko foreach: relations().stratas -->
+                    <th colspan="2" data-bind="text: $data"></th>
+                <!-- /ko -->
+            </tr>
+            <tr>
+                <!-- ko foreach: relations().stratas -->
+                    <th>Count</th>
+                    <th>Pct</th>
+                <!-- /ko -->
+            </tr>
+            <!-- /ko -->
+        </thead>
     </table>
+    <!-- /ko -->
 </div>
