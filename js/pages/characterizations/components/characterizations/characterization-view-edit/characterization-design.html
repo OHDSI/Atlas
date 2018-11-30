@@ -2,7 +2,7 @@
     <access-denied params="isAuthenticated: $component.isAuthenticated" class="flexed"></access-denied>
 </div>
 <div data-bind="if: $component.isViewPermitted(), css: classes()">
-    <div class="loading" data-bind="visible: loading()">loading</div>
+    <loading data-bind="visible: loading()" params="status: 'Loading Cohort Characterization design...'">loading</loading>
     <p data-bind="css: classes('descr')">
         <b>Cohort characterization</b> is defined as the process of generating cohort level descriptive summary statistics from person level covariate data. Summary statistics of these person level covariates may be count, mean, sd, var, min, max, median, range, and quantiles. In addition, covariates during a period may be stratified into temporal units of time for time-series analysis such as fixed intervals of time relative to cohort_start_date (e.g. every 7 days, every 30 days etc.), or in absolute calendar intervals such as calendar-week, calendar-month, calendar-quarter, calendar-year.
     </p>
@@ -19,6 +19,36 @@
             removeFeature: $component.removeFeature,
         "></linked-entity-list>
     </div>
+    <div data-bind="css: classes('linked-entities'), eventListener: [
+                                { event: 'click', selector: '.conceptset_import', callback: (item) => $component.handleConceptSetImport($index(), item) },
+                                { event: 'click', selector: '.conceptset_edit', callback: $component.handleEditConceptSet }
+                            ]">
+        <h2 data-bind="css: classes('strata-title')">Stratas</h2>
+        <button data-bind="css: classes({extra: 'btn btn-sm btn-primary'}), click: addStrata">New strata</button>
+        <div data-bind="css: classes('strata'), visible: stratas().length === 0">
+            <span>No stratas defined</span>
+        </div>
+        <!-- ko if: stratas().length > 0 -->
+        <input type="text" placeholder="Stratified by" data-bind="css: classes({ element: 'stratified-by', extra: 'form-control'}), textInput: design().stratifiedBy" />
+        <label data-bind="css: classes('strata-checkbox')">
+            <input type="checkbox" data-bind="checked: design().strataOnly" /> Calculate stratified analyses only
+        </label>
+        <!-- /ko -->
+        <div data-bind="foreach: stratas">
+            <div data-bind="css: $component.classes('strata')">
+                <div data-bind="css: $component.classes('strata-heading')">
+                    <input type="text" data-bind="css: $component.classes({element: 'strata-name', extra: 'form-control'}), value: $data.name" placeholder="Strata name">
+                    <button
+                            type="button"
+                            data-bind="css: $component.classes({ element: 'strata-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeStrata($index())"
+                    ><i class="fa fa-trash-o"></i></button>
+                </div>
+                <div>
+                    <criteria-group params="{ expression: { ConceptSets: $component.strataConceptSets() }, group: $data.criteria }"></criteria-group>
+                </div>
+            </div>
+        </div>
+    </div>
     <div data-bind="css: classes('linked-entities')">
         <linked-entity-list params="
             title: 'Feature analyses parameters',
@@ -33,20 +63,39 @@
 
     <atlas-modal params="
         showModal: $component.showFeatureAnalysesBrowser,
-        template: 'cc-design-feature-analyses-browser-template',
-        title: 'Choose a Feature analysis',
+        title: 'Choose a Feature analyses',
+        dialogExtraClasses: [ $component.classes('feature-analyses-modal') ],
         data: {
-            selectedAnalysis: $component.featureAnalysesSelected,
+            selectedAnalyses: $component.featureAnalysesSelected,
             classes: $component.classes,
+            closeFeatureBrowser: $component.closeFeatureBrowser,
+            importFeatures: $component.importFeatures,
+            importEnabled: $component.featureAnalysesAvailable
         }
     "
-    ></atlas-modal>
+    >
+        <div data-bind="css: classes('feature-analyses-list')">
+            <feature-analyses-browser params="selectedAnalyses: selectedAnalyses"></feature-analyses-browser>
+            <div data-bind="css: classes('button-panel')">
+                <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-primary'}), click: importFeatures, enable: importEnabled">Import</button>
+                <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-danger'}), click: closeFeatureBrowser">Cancel</button>
+            </div>
+        </div>
+    </atlas-modal>
+
+    <atlas-modal params="{
+    showModal: showConceptSetBrowser,
+    title: 'Select Concept Set...',
+    modifiers: ['lg'],
+    data: {
+        onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected
+    }
+}">
+        <cohort-concept-set-browser params="
+                    onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
+                "></cohort-concept-set-browser>
+    </atlas-modal>
+
 
     <characterization-params-create-modal params="showModal: isParameterCreateModalShown, submit: addParam"></characterization-params-create-modal>
 </div>
-
-<script type="text/html" id="cc-design-feature-analyses-browser-template">
-    <div data-bind="css: classes('feature-analyses-list')">
-        <feature-analyses-browser params="selectedAnalysis: selectedAnalysis"></feature-analyses-browser>
-    </div>
-</script>

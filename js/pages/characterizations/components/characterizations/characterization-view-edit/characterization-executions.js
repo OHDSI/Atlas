@@ -41,8 +41,8 @@ define([
 			this.ccGenerationStatusOptions = consts.ccGenerationStatus;
 
 			this.characterizationId = params.characterizationId;
-			const currentHash = ko.computed(() => params.design().hash);
 			this.designDirtyFlag = params.designDirtyFlag;
+			const currentHash = ko.computed(() => params.design() ? params.design().hash : 0);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 			this.isExecutionPermitted = this.isExecutionPermitted.bind(this);
@@ -64,7 +64,7 @@ define([
 					render: (s, p, d) => {
 						return (
 							PermissionService.isPermittedExportGenerationDesign(d.id) ?
-							`<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.hashCode || '-')}</a>${currentHash() === d.hashCode ? ' (same as now)' : ''}` :
+							`<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.hashCode || '-')}</a>${currentHash() === d.hashCode ? ' (same as now)' : ''}` :
 							(d.hashCode || '-')
 						);
 					}
@@ -87,7 +87,7 @@ define([
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return d.status === this.ccGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">View reports</a>` : '-'; // ${d.reportCount}
+						return d.status === this.ccGenerationStatusOptions.COMPLETED ? `<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">View reports</a>` : '-'; // ${d.reportCount}
 					}
 				}
 			];

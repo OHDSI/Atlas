@@ -1,56 +1,56 @@
 <!-- ko if: !isLoading() -->
-<heading-title params="name: title, icon: 'area-chart'"></heading-title>
+<heading-title params="name: title"></heading-title>
 <div class="col-xs-12">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Year of Birth
-    </div>
-    <div class="panel-body">
-      <histogram params="data: yearHistogramData, format: chartFormats.yearHistogram"></histogram>
-    </div>
-    <div class="panel-footer">
-      The number of people in this cohort shown with respect to their year of birth.
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Year of Birth
+		</div>
+		<div class="panel-body">
+			<histogram params="data: yearHistogramData, format: chartFormats.yearHistogram"></histogram>
+		</div>
+		<div class="panel-footer">
+			The number of people in this cohort shown with respect to their year of birth.
+		</div>
+	</div>
 </div>
 
 <div class="col-xs-4">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Gender
-    </div>
-    <div class="panel-body">
-      <donut params="data: genderData"></donut>
-    </div>
-    <div class="panel-footer">
-      The number of people in this cohort stratified by gender.
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Gender
+		</div>
+		<div class="panel-body">
+			<donut params="data: genderData"></donut>
+		</div>
+		<div class="panel-footer">
+			The number of people in this cohort stratified by gender.
+		</div>
+	</div>
 </div>
 <div class="col-xs-4">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Race
-    </div>
-    <div class="panel-body">
-      <donut params="data: raceData"></donut>
-    </div>
-    <div class="panel-footer">
-      The number of people in this cohort stratified by race.
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Race
+		</div>
+		<div class="panel-body">
+			<donut params="data: raceData"></donut>
+		</div>
+		<div class="panel-footer">
+			The number of people in this cohort stratified by race.
+		</div>
+	</div>
 </div>
 <div class="col-xs-4">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      Ethnicity
-    </div>
-    <div class="panel-body">
-      <donut params="data: ethnicityData"></donut>
-    </div>
-    <div class="panel-footer">
-      The number of people in this cohort stratified by ethnicity.
-    </div>
-  </div>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Ethnicity
+		</div>
+		<div class="panel-body">
+			<donut params="data: ethnicityData"></donut>
+		</div>
+		<div class="panel-footer">
+			The number of people in this cohort stratified by ethnicity.
+		</div>
+	</div>
 </div>
 <!--/ko-->

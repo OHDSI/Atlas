@@ -1,4 +1,4 @@
-define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util'], function (ko, cache, jobDetail, ohdsiUtil) {
+define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
 	var state = {};
 	state.resultsUrl = ko.observable();
 	state.vocabularyUrl = ko.observable();
@@ -11,7 +11,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util'], f
 	// shared concept selection state
 	state.selectedConceptsIndex = {};
 	state.selectedConcepts = ko.observableArray(null);
-	state.appInitializationStatus = ko.observable('initializing');
+	state.appInitializationStatus = ko.observable(constants.applicationStatuses.initializing);
 
 	state.clearSelectedConcepts = function () {
 		this.selectedConceptsIndex = {};
@@ -23,6 +23,19 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util'], f
 		selectedId: ko.observable(null)
 	}
 	state.IRAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.IRAnalysis.current()));
+
+	//Cohort characterizations
+	state.CohortCharacterization = {
+		current: ko.observable(null),
+		selectedId: ko.observable(null),
+	};
+	state.CohortCharacterization.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortCharacterization.current()));
+
+	state.FeatureAnalysis = {
+		current: ko.observable(null),
+		selectedId: ko.observable(null),
+	};
+	state.FeatureAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.FeatureAnalysis.current()));
 
 	// Pathways State
 	state.CohortPathways = {

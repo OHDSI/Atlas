@@ -3,7 +3,7 @@ define([
 	'text!./atlas-roles.html',
 	'components/Component',
 	'utils/CommonUtils',
-	'./renderers',
+	'utils/Renderers',
 ],
 	function(
 		ko,
