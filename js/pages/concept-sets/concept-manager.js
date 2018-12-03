@@ -7,6 +7,7 @@ define([
 	'utils/CommonUtils',
 	'atlas-state',
 	'services/http',
+	'./const',
 	'faceted-datatable',
 	'components/heading',
 ], function (
@@ -18,6 +19,7 @@ define([
 	commonUtils,
 	sharedState,
 	httpService,
+	constants
 ) {
 	class ConceptManager extends AutoBind(Page) {
 		constructor(params) {
@@ -331,17 +333,6 @@ define([
 				}
 			};
 
-			this.defaultRelationships = {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			};
-
 			this.currentConceptArray = ko.observableArray();
 		}
 		
@@ -403,7 +394,7 @@ define([
 		metagorize(metarchy, related) {
 			var concept = this.model.currentConcept();
 			var key = concept.VOCABULARY_ID + '.' + concept.CONCEPT_CLASS_ID;
-			var meta = this.metatrix[key] || this.defaultRelationships;
+			var meta = this.metatrix[key] || constants.defaultConceptHierarchyRelationships;
 			if (this.hasRelationship(related, meta.childRelationships)) {
 				metarchy.children.push(related);
 			}
