@@ -330,6 +330,18 @@ define([
 					}]
 				}
 			};
+
+			this.defaultRelationships = {
+				childRelationships: [{
+					name: 'Has descendant of',
+					range: [0, 1]
+				}],
+				parentRelationships: [{
+					name: 'Has ancestor of',
+					range: [0, 1]
+				}]
+			};
+
 			this.currentConceptArray = ko.observableArray();
 		}
 		
@@ -391,14 +403,12 @@ define([
 		metagorize(metarchy, related) {
 			var concept = this.model.currentConcept();
 			var key = concept.VOCABULARY_ID + '.' + concept.CONCEPT_CLASS_ID;
-			if (this.metatrix[key] != undefined) {
-				var meta = this.metatrix[key];
-				if (this.hasRelationship(related, meta.childRelationships)) {
-					metarchy.children.push(related);
-				}
-				if (this.hasRelationship(related, meta.parentRelationships)) {
-					metarchy.parents.push(related);
-				}
+			var meta = this.metatrix[key] || this.defaultRelationships;
+			if (this.hasRelationship(related, meta.childRelationships)) {
+				metarchy.children.push(related);
+			}
+			if (this.hasRelationship(related, meta.parentRelationships)) {
+				metarchy.parents.push(related);
 			}
 		}
 
