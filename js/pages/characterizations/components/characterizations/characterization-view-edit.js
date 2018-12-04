@@ -128,7 +128,7 @@ define([
                     .createCharacterization(this.design())
                     .then(res => {
 											  this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
-                        commonUtils.routeTo('/cc/characterizations/' + res.id + '/design');
+                        commonUtils.routeTo(`/cc/characterizations/${res.id}/${this.selectedTabKey()}`);
 										});
             } else {
                 CharacterizationService
