@@ -8,7 +8,7 @@
   <div class="asset-heading">
     <input type="text" data-bind="textInput: $component.patientLevelPredictionAnalysis().name, css: { emptyInput: !($component.patientLevelPredictionAnalysis().name() && ($component.patientLevelPredictionAnalysis().name().length > 0)) }" />
 		<div class="btn-group" role="group">
-      <button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable:$component.dirtyFlag().isDirty() && patientLevelPredictionAnalysis().name()"><i class="fa fa-save"></i></button>
+      <button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable:$component.dirtyFlag().isDirty() && patientLevelPredictionAnalysis() && patientLevelPredictionAnalysis().name()"><i class="fa fa-save"></i></button>
       <button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
       <button class="btn btn-sm btn-primary" title="Copy" data-bind="click: copy, enable: canCopy"><i class="fa fa-copy"></i></button>
       <button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete"><i class="fa fa-trash-o"></i></button>
