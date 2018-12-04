@@ -85,7 +85,7 @@ define([
 		}
 
 		isSavePermittedResolver() {
-				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty())
+				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty() && this.design() && this.design().name())
 		}
 
 		isDeletePermittedResolver() {

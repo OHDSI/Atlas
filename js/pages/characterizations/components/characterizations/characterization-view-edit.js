@@ -2,8 +2,8 @@ define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
-	  'components/cohortbuilder/CriteriaGroup',
-	  'conceptsetbuilder/InputTypes/ConceptSet',
+    'components/cohortbuilder/CriteriaGroup',
+    'conceptsetbuilder/InputTypes/ConceptSet',
     './CharacterizationAnalysis',
     'text!./characterization-view-edit.html',
     'appConfig',
@@ -80,7 +80,7 @@ define([
         }
 
         isSavePermittedResolver() {
-            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty());
+            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty() && this.design() && this.design().name());
         }
 
         isDeletePermittedResolver() {
@@ -101,11 +101,11 @@ define([
 
         async loadDesignData(id) {
 
-					if (this.design() && (this.design().id || 0 === id)) return;
+        if (this.design() && (this.design().id || 0 === id)) return;
           if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
             return;
           }
-					if (id < 1) {
+            if (id < 1) {
                 this.setupDesign(new CharacterizationAnalysis());
           } else {
             this.loading(true);
@@ -126,9 +126,9 @@ define([
                 CharacterizationService
                     .createCharacterization(this.design())
                     .then(res => {
-											  this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
                         commonUtils.routeTo('/cc/characterizations/' + res.id + '/design');
-										});
+                    });
             } else {
                 CharacterizationService
                     .updateCharacterization(ccId, this.design())

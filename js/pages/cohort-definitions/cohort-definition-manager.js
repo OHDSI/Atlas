@@ -207,7 +207,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return path;
 			});
 			this.canSave = ko.pureComputed(()=> {
-				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit();
+				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.model.currentCohortDefinition() && this.model.currentCohortDefinition().name();
 			});
 
 			this.delayedCartoonUpdate = ko.observable(null);

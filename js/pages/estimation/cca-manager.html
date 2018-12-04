@@ -9,7 +9,7 @@
     <div class="asset-heading">
       <input type="text" data-bind="textInput: $component.estimationAnalysis().name, css: { emptyInput: !($component.estimationAnalysis().name() && ($component.estimationAnalysis().name().length > 0)) }" />
       <div class="btn-group" role="group">
-        <button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable:$component.dirtyFlag().isDirty()"><i class="fa fa-save"></i></button>
+        <button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable:$component.dirtyFlag().isDirty() && estimationAnalysis().name()"><i class="fa fa-save"></i></button>
         <button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
 				<!-- ko if: ($component.estimationAnalysis().id() != null && $component.estimationAnalysis().id() > 0) -->
         <button class="btn btn-sm btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy, css: {'disabled': !canCopy()}"><i class="fa fa-copy"></i></button>

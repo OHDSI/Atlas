@@ -61,6 +61,8 @@ define([
 					!this.loading()
 					&& this.model.currentConceptSet() != null
 					&& this.model.currentConceptSetDirtyFlag().isDirty()
+					&& this.currentConceptSet()
+					&& this.currentConceptSet().name()
 				);
 			});
 			this.canCreate = ko.computed(() => {

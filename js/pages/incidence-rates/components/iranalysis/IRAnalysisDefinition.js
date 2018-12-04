@@ -9,7 +9,7 @@ define(function (require, exports) {
 		var data = data || {};
 
 		self.id = ko.observable(data.id || null);
-		self.name = ko.observable(data.name || null);
+		self.name = ko.observable(data.name || "New Incidence Rate Analysis");
 		self.description = ko.observable(data.description || null);
 		self.expression = ko.observable(new IRAnalysisExpression(data.expression))
 	}
