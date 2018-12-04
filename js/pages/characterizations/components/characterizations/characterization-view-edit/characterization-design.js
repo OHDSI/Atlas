@@ -149,7 +149,7 @@ define([
         attachFeature({ id, name, description }) {
             const ccDesign = this.design();
             this.showFeatureAnalysesBrowser(false);
-            this.design().featureAnalyses(lodash.uniqBy(
+			ccDesign.featureAnalyses(lodash.uniqBy(
                     [
                         ...(ccDesign.featureAnalyses() || []),
                         { id, name, description }
@@ -160,8 +160,7 @@ define([
         }
 
         removeFeature(id) {
-            const ccDesign = this.design();
-            this.design().featureAnalyses(ccDesign.featureAnalyses().filter(a => a.id !== parseInt(id)));
+			this.design().featureAnalyses.remove(a => a.id === parseInt(id));
         }
 
         addParam({ name, value }) {
@@ -178,8 +177,7 @@ define([
         }
 
         removeParam(name) {
-            const ccDesign = this.design();          
-            this.design().parameters(ccDesign.parameters().filter(a => a.name !== name));
+			this.design().parameters.remove(a => a.name === name);
         }
 
         addStrata() {
