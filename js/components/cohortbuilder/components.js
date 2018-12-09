@@ -83,6 +83,9 @@ define(function (require, exports) {
 	var payerPlanPeriod = require('./components/PayerPlanPeriod');
 	ko.components.register('payer-plan-period-criteria', payerPlanPeriod);
 
+	var locationArea = require('./components/LocationArea');
+	ko.components.register('location-area-criteria', locationArea);
+
 	require('./components/WindowedCriteria');
 	
 });

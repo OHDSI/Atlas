@@ -34,6 +34,8 @@ function(
 			return "observation-period-criteria";
 		else if (data.hasOwnProperty("Death"))
 			return "death-criteria";
+		else if (data.hasOwnProperty("LocationArea"))
+			return "location-area-criteria";
 		else
 			return "unknown-criteria";
 	}

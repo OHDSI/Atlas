@@ -15,6 +15,7 @@ define(function (require, exports) {
 	var Death = require("./CriteriaTypes/Death");
 	var DemographicCriteria = require("./CriteriaTypes/DemographicCriteria");
 	var PayerPlanPeriod = require("./CriteriaTypes/PayerPlanPeriod");
+	var LocationArea = require("./CriteriaTypes/LocationArea");
 	
 	function GetCriteriaFromObject (data, conceptSets)
 	{
@@ -80,7 +81,11 @@ define(function (require, exports) {
 			return {
 				PayerPlanPeriod: new exports.PayerPlanPeriod(data.PayerPlanPeriod, conceptSets)
 			};
-		};	
+		}	else if (data.hasOwnProperty("LocationArea")) {
+			return {
+				LocationArea: new exports.LocationArea(data.LocationArea, conceptSets)
+			};
+		};
 	}
 	
 	exports.ConditionOccurrence = ConditionOccurrence;
@@ -98,6 +103,7 @@ define(function (require, exports) {
 	exports.Death = Death;
 	exports.DemographicCriteria = DemographicCriteria;
 	exports.PayerPlanPeriod = PayerPlanPeriod;
+	exports.LocationArea = LocationArea;
 	
 	exports.GetCriteriaFromObject = GetCriteriaFromObject;
 

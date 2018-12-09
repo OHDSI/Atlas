@@ -84,6 +84,16 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
+				text: "Add Location area",
+				selected: false,
+				description: "Find patients based on their location.",
+				action: function () {
+					self.expression().PrimaryCriteria().CriteriaList.push({
+						LocationArea: new criteriaTypes.LocationArea(null, self.expression().ConceptSets)
+					});
+				}
+			},
+			{
 				text: "Add Measurement",
 				selected: false,
 				description: "Find patients based on Measurement.",
@@ -389,6 +399,8 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				return "payer-plan-period-criteria";
 			else if (data.hasOwnProperty("Death"))
 				return "death-criteria";
+			else if (data.hasOwnProperty("LocationArea"))
+				return "location-area-criteria";
 			else
 				return "unknownCriteriaType";
 		};
