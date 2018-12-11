@@ -42,7 +42,7 @@ define([
 ) {
 	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
-			super(params);				
+			super(params);
 			// polling support
 			this.pollTimeout = null;
 			this.model = params.model;
@@ -123,6 +123,12 @@ define([
 					data.selectedData.action();
 				}
 			};
+			this.incidenceRateCaption = ko.computed(() => {
+				if (this.selectedAnalysis() && this.selectedAnalysisId() !== null && this.selectedAnalysisId() !== 0) {
+					return 'Incidence Rate Analysis #' + this.selectedAnalysisId();
+				}
+				return 'New Incidence Rate Analysis';
+			});
 
 			this.modifiedJSON = "";
 			this.importJSON = ko.observable();
@@ -369,6 +375,7 @@ define([
 
 		// cleanup
 		dispose() {
+			this.incidenceRateCaption.dispose();
 			this.selectedAnalysisIdSub.dispose();
 			clearTimeout(this.pollTimeout);
 		}

@@ -2,17 +2,21 @@
   <i class="fa fa-circle-o-notch fa-spin"></i> <span data-bind="text: loadingMessage"></span>
 </div>
 <div data-bind="if:!loading()">
-  <div class="wrapperTitle">
-    <i class="fa fa-heartbeat"></i> Patient Level Prediction
-  </div>
+  <heading-title params="name: predictionCaption(), icon: 'heartbeat', theme: 'dark'"></heading-title>
   <div class="asset-heading">
-    <input type="text" data-bind="textInput: $component.patientLevelPredictionAnalysis().name, css: { emptyInput: !($component.patientLevelPredictionAnalysis().name() && ($component.patientLevelPredictionAnalysis().name().length > 0)) }" />
-		<div class="btn-group" role="group">
-      <button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable:$component.dirtyFlag().isDirty() && patientLevelPredictionAnalysis() && patientLevelPredictionAnalysis().name()"><i class="fa fa-save"></i></button>
-      <button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
-      <button class="btn btn-sm btn-primary" title="Copy" data-bind="click: copy, enable: canCopy"><i class="fa fa-copy"></i></button>
-      <button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete"><i class="fa fa-trash-o"></i></button>
-    </div>
+      <div class="input-group">
+        <input type="text" class="form-control" data-bind="textInput: $component.patientLevelPredictionAnalysis().name, css: { emptyInput: !($component.patientLevelPredictionAnalysis() && ($component.patientLevelPredictionAnalysis().name())) }" />
+        <div class="input-group-btn" role="group">
+          <button class="btn btn-success" title="Save" data-bind="click: save, enable:$component.dirtyFlag().isDirty() && patientLevelPredictionAnalysis() && patientLevelPredictionAnalysis().name()"><i class="fa fa-save"></i></button>
+          <button class="btn btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
+          <button class="btn btn-primary" title="Copy" data-bind="click: copy, enable: canCopy"><i class="fa fa-copy"></i></button>
+          <button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete"><i class="fa fa-trash-o"></i></button>
+        </div>
+      </div>
+      <div data-bind="visible: !($component.patientLevelPredictionAnalysis() && ($component.patientLevelPredictionAnalysis().name()))" class="empty-name-error">
+          <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+          <label>Patient Level Prediction name is empty.</label>
+      </div>
   </div>
   <div id="summary" data-bind="visible: $component.managerMode() == 'summary'">
     <ul class="nav nav-tabs">

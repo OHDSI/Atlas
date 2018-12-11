@@ -132,6 +132,15 @@ define([
 				}
 				return result;
 			});
+			this.populationCaption = ko.computed(() => {
+				if (this.estimationAnalysis()) {
+					if (this.selectedAnalysisId() === '0') {
+						return 'New Population Level Effect Estimation - Comparative Cohort Analysis';
+					} else {
+						return 'Population Level Effect Estimation - Comparative Cohort Analysis #' + this.selectedAnalysisId();
+					}
+				}
+			});
 
 			this.specificationValid = ko.pureComputed(() => {
 				return (

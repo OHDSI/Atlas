@@ -129,6 +129,16 @@ define([
 				}
 				return result;
 			});
+			
+			this.predictionCaption = ko.computed(() => {
+				if (this.patientLevelPredictionAnalysis()) {
+					if (this.selectedAnalysisId() === '0') {
+						return 'New Patient Level Prediction';
+					} else {
+						return 'Patient Level Prediction #' + this.selectedAnalysisId();
+					}
+				}
+			});
 
 			this.specificationValid = ko.pureComputed(() => {
 				return (

@@ -67,7 +67,7 @@ define([
 
     var data = data || {};
 
-    this.name = ko.observable(data.sourceName || null);
+    this.name = ko.observable(data.sourceName || "New Source");
     this.key = ko.observable(data.sourceKey || null);
     this.dialect = ko.observable(data.sourceDialect || null);
     this.connectionString = ko.observable(data.connectionString || null);
@@ -147,8 +147,7 @@ define([
       ];
 
       this.sourceCaption = ko.computed(() => {
-        return (this.model.currentSource() == null || this.model.currentSource().key() == null) ? 'New source' :
-          'Source ' + this.model.currentSource().name();
+        return (this.model.currentSource() == null || this.model.currentSource().key() == null) ? 'New source' : 'Source ' + this.model.currentSource().name();
       });
       this.isKrbAuth = ko.computed(() => {
           return this.impalaConnectionStringIncludes("AuthMech=1");

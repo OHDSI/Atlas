@@ -56,6 +56,15 @@ define([
                 design: this.design,
                 executionId: this.executionId,
             });
+            this.characterizationCaption = ko.computed(() => {
+                if (this.design()) {
+                    if (this.characterizationId() === 0) {
+                        return 'New Characterization';
+                    } else {
+                        return 'Characterization #' + this.characterizationId();
+                    }
+                }
+            });
         }
 
         onRouterParamsChanged({ characterizationId, section, subId }) {
