@@ -277,6 +277,7 @@ define(
 						|| sharedState.CohortPathways.dirtyFlag().isDirty()
 						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
 						|| sharedState.predictionAnalysis.dirtyFlag().isDirty()
+						|| sharedState.CohortCharacterization.dirtyFlag().isDirty()
 					);
 				});
 	
