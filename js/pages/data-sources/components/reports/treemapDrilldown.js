@@ -204,7 +204,7 @@ define([
 					const yScaleMax = (Math.floor((Math.max.apply(null, freqData.yNumPersons) + 5) / 10) + 1) * 10;
 					this.chartFormats.frequencyDistribution.yMax = yScaleMax;
 					this.chartFormats.frequencyDistribution.xLabel = `Count ('x' or more ${report}s)`;
-					this.chartFormats.frequencyDistribution.ticks = frequencyHistogram.INTERVALS;
+					this.chartFormats.frequencyDistribution.ticks = Math.min(5, frequencyHistogram.INTERVALS);
 					const freqHistData = atlascharts.histogram.mapHistogram(frequencyHistogram);
 					this.frequencyDistributionData(freqHistData);
 				}
