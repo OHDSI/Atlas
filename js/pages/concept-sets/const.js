@@ -8,7 +8,19 @@ define(
       export: id => `${config.api.url}conceptset/${id}/export`,
     };
 
+    const defaultConceptHierarchyRelationships = {
+		childRelationships: [{
+			name: 'Has descendant of',
+			range: [0, 1]
+		}],
+		parentRelationships: [{
+			name: 'Has ancestor of',
+			range: [0, 1]
+		}]
+	};
+
     return {
+	    defaultConceptHierarchyRelationships,
       pageTitle,
       paths,
     };

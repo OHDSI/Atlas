@@ -55,6 +55,7 @@ define([
                 characterizationId: this.characterizationId,
                 design: this.design,
                 executionId: this.executionId,
+                designDirtyFlag: this.designDirtyFlag,
             });
             this.showWarning = ko.computed(() => {
                 return !(this.design() && this.design().name());
@@ -139,7 +140,7 @@ define([
                     .createCharacterization(this.design())
                     .then(res => {
                         this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
-                        commonUtils.routeTo('/cc/characterizations/' + res.id + '/design');
+                        commonUtils.routeTo(`/cc/characterizations/${res.id}/${this.selectedTabKey()}`);
                     });
             } else {
                 CharacterizationService

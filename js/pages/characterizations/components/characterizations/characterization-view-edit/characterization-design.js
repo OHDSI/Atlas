@@ -54,9 +54,9 @@ define([
             });
 
             this.strataConceptSets = ko.pureComputed({
-							read: () => params.design().strataConceptSets,
-              write: (value) => params.design().strataConceptSets(value)
-						});
+                read: () => params.design().strataConceptSets,
+                write: (value) => params.design().strataConceptSets(value)
+            });
 
             this.stratas = ko.computed({
 				read: () => params.design() && params.design().stratas() || [],
@@ -113,7 +113,7 @@ define([
             };
 
             this.showFeatureAnalysesBrowser = ko.observable(false);
-            this.featureAnalysesSelected = ko.observable();
+            this.featureAnalysesSelected = ko.observableArray();
             this.featureAnalysesAvailable = ko.pureComputed(() => this.featureAnalysesSelected().length > 0);
 
             this.isParameterCreateModalShown = ko.observable(false);
@@ -148,8 +148,8 @@ define([
 
         attachFeature({ id, name, description }) {
             const ccDesign = this.design();
-            ccDesign.featureAnalyses(
-                lodash.uniqBy(
+            this.showFeatureAnalysesBrowser(false);
+			ccDesign.featureAnalyses(lodash.uniqBy(
                     [
                         ...(ccDesign.featureAnalyses() || []),
                         { id, name, description }
@@ -160,7 +160,7 @@ define([
         }
 
         removeFeature(id) {
-            this.design().featureAnalyses.remove(a => a.id === parseInt(id));
+			this.design().featureAnalyses.remove(a => a.id === parseInt(id));
         }
 
         addParam({ name, value }) {
@@ -177,7 +177,7 @@ define([
         }
 
         removeParam(name) {
-            this.design().parameters.remove(a => a.name === name);
+			this.design().parameters.remove(a => a.name === name);
         }
 
         addStrata() {

@@ -41,6 +41,7 @@ define([
 			this.ccGenerationStatusOptions = consts.ccGenerationStatus;
 
 			this.characterizationId = params.characterizationId;
+			this.designDirtyFlag = params.designDirtyFlag;
 			const currentHash = ko.computed(() => params.design() ? params.design().hash : 0);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
@@ -113,7 +114,7 @@ define([
 		}
 
 		isExecutionPermitted(sourceKey) {
-			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey);
+			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey) && !this.designDirtyFlag().isDirty();
 		}
 
 		isResultsViewPermitted(sourceKey) {
