@@ -180,6 +180,14 @@ define([
 					this.editCovariateSettings(data);
 				}
 			}
+
+			this.showWarning = ko.computed(() => {
+				return !(this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name());
+			});
+
+			this.canSave = ko.computed(() => {
+				return this.dirtyFlag().isDirty() && this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
+			});
 	
 			this.populationSettingRowClickHandler = (data, obj, tableRow, rowIndex) => {
 				if (

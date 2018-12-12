@@ -7,7 +7,7 @@
 	<div data-bind="$root.currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
-				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: $root.currentCohortDefinition().name, css: { emptyInput: !($root.currentCohortDefinition() && $root.currentCohortDefinition().name()) }"/>
+				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: $root.currentCohortDefinition().name, css: { emptyInput: showWarning() }"/>
 				<div class="input-group-btn">
 					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: canSave"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
@@ -20,7 +20,7 @@
 					<!-- /ko -->
 				</div>
 			</div>
-				<div data-bind="visible: !($root.currentCohortDefinition() && $root.currentCohortDefinition().name())" class="empty-name-error">
+				<div data-bind="visible: showWarning()" class="empty-name-error">
 					<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
 					<label>Cohort Definition name is empty.</label>
 				</div>

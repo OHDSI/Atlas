@@ -58,6 +58,9 @@ define([
 				}
 				return 'New Cohort Pathway';
 			});
+			this.showWarning = ko.computed(() => {
+				return !(this.design() && this.design().name());
+			});
 		}
 
 		onRouterParamsChanged({analysisId, section, subId}) {
@@ -78,7 +81,7 @@ define([
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
 		}
 		
-	 setupSection(section) {
+		setupSection(section) {
 				const tabKey = section === 'results' ? 'executions' : section;
 				this.selectedTabKey(tabKey || 'design');
 		}

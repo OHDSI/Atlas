@@ -56,6 +56,9 @@ define([
                 design: this.design,
                 executionId: this.executionId,
             });
+            this.showWarning = ko.computed(() => {
+                return !(this.design() && this.design().name());
+            });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
                     if (this.characterizationId() === 0) {

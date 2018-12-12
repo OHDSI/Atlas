@@ -5,14 +5,14 @@
 	<heading-title params="name: pathwayCaption(), icon: 'sitemap', theme: 'dark'"></heading-title>
 	<div class="asset-heading">
 		<div class="input-group">
-			<input type="text" class="form-control" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !(design() && design().name())}" />
+			<input type="text" class="form-control" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: showWarning()}" />
 			<div class="input-group-btn">
 				<button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!canSave()}"><i class="fa fa-save"></i></button>
 				<button type="button" class="btn btn-primary" data-bind="click: $component.close"><i class="fa fa-times"></i></button>
 				<button type="button" class="btn btn-danger" data-bind="click: $component.del, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
 			</div>
 		</div>
-		<div data-bind="visible: !(design() && design().name())" class="empty-name-error">
+		<div data-bind="visible: showWarning()" class="empty-name-error">
 			<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
 			<label>Cohort Pathway name is empty.</label>
 		</div>

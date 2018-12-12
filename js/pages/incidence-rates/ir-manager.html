@@ -3,11 +3,10 @@
 	<!-- ko if: selectedAnalysis() != null -->
 	<div>
 		<div class="asset-heading">
-			<div class="input-group input-group-ir">
-				<input type="text" class="form-control" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !(selectedAnalysis().name() && (selectedAnalysis().name().length > 0)) }, enable: isEditable"/>
+			<div class="input-group ir-header">
+				<input type="text" class="form-control ir-name" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: showWarning() }, enable: isEditable"/>
 				<div class="input-group-btn" role="group">
-					<button class="btn btn-success" title="Save" data-bind="click: save, enable: isEditable() && selectedAnalysis() && selectedAnalysis().name() && dirtyFlag().isDirty() && !isRunning(),
-							css: {'btn-success': dirtyFlag().isDirty() && selectedAnalysis().name()}"><i class="fa fa-save"></i></button>
+					<button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave(), css: {'btn-success': canSave()}"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
 					<!-- ko if: selectedAnalysis().id() != null -->
 					<button class="btn btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy, css: {'disabled': !canCopy()}"><i class="fa fa-copy"></i></button>
@@ -31,7 +30,7 @@
 					<!-- /ko -->
 				</div>
 			</div>
-			<div data-bind="visible: !(selectedAnalysis().name() && (selectedAnalysis().name().length > 0))" class="empty-name-error">
+			<div data-bind="visible: showWarning()" class="empty-name-error">
 				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
 				<label>Incidence Rate Analysis name is empty.</label>
 			</div>

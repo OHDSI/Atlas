@@ -90,7 +90,7 @@ define([
 
 			this.isRunning = ko.observable(false);
 			this.activeTab = ko.observable(params.activeTab || 'definition');
-			this.conceptSetEditor = ko.observable(); // stores a refrence to the concept set editor
+			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
 			this.filteredSources = ko.pureComputed(() => {
 				return this.sources().filter(function (source) {
@@ -153,6 +153,12 @@ define([
 				if (newVal) {
 					this.onAnalysisSelected();
 				}
+			});
+			this.showWarning = ko.computed(() => {
+				return !(this.selectedAnalysis() && (this.selectedAnalysis().name()));
+			});
+			this.canSave = ko.computed(() => {
+				return this.isEditable() && this.selectedAnalysis() && this.selectedAnalysis().name() && this.dirtyFlag().isDirty() && !this.isRunning();
 			});
 			this.error = ko.observable();
 

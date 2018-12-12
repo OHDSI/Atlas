@@ -117,6 +117,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 			});
+			this.showWarning = ko.computed(() => {
+				return !(this.model.currentCohortDefinition() && this.model.currentCohortDefinition().name());
+			});
 			this.isAuthenticated = ko.pureComputed(() => {
 				return this.authApi.isAuthenticated();
 			});

@@ -93,6 +93,12 @@ define([
 				return returnVal;
 			});
 			this.saveConceptSetShow = ko.observable(false);
+			this.showWarning = ko.computed(() => {
+				return !(this.currentConceptSet() && this.currentConceptSet().name());
+			});
+			this.canCopy = ko.computed(() => {
+				return this.currentConceptSet() && this.currentConceptSet().id > 0;
+			});
 
 			this.tabs = [
 				{
