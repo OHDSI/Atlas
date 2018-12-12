@@ -2,8 +2,8 @@ define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
-	  'components/cohortbuilder/CriteriaGroup',
-	  'conceptsetbuilder/InputTypes/ConceptSet',
+    'components/cohortbuilder/CriteriaGroup',
+    'conceptsetbuilder/InputTypes/ConceptSet',
     './CharacterizationAnalysis',
     'text!./characterization-view-edit.html',
     'appConfig',
@@ -57,6 +57,18 @@ define([
                 executionId: this.executionId,
                 designDirtyFlag: this.designDirtyFlag,
             });
+            this.isNameCorrect = ko.computed(() => {
+                return this.design() && this.design().name();
+            });
+            this.characterizationCaption = ko.computed(() => {
+                if (this.design()) {
+                    if (this.characterizationId() === 0) {
+                        return 'New Characterization';
+                    } else {
+                        return 'Characterization #' + this.characterizationId();
+                    }
+                }
+            });
         }
 
         onRouterParamsChanged({ characterizationId, section, subId }) {
@@ -81,7 +93,7 @@ define([
         }
 
         isSavePermittedResolver() {
-            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty());
+            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty() && this.isNameCorrect());
         }
 
         isDeletePermittedResolver() {
@@ -102,11 +114,11 @@ define([
 
         async loadDesignData(id) {
 
-					if (this.design() && (this.design().id || 0 === id)) return;
+        if (this.design() && (this.design().id || 0 === id)) return;
           if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
             return;
           }
-					if (id < 1) {
+            if (id < 1) {
                 this.setupDesign(new CharacterizationAnalysis());
           } else {
             this.loading(true);
@@ -127,9 +139,9 @@ define([
                 CharacterizationService
                     .createCharacterization(this.design())
                     .then(res => {
-											  this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
                         commonUtils.routeTo(`/cc/characterizations/${res.id}/${this.selectedTabKey()}`);
-										});
+                    });
             } else {
                 CharacterizationService
                     .updateCharacterization(ccId, this.design())

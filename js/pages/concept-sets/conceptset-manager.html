@@ -1,49 +1,23 @@
 <!-- ko if: currentConceptSet() != null -->
-<heading-title params="name: currentConceptSet().name, icon: 'shopping-cart', theme: 'dark'"></heading-title>
+<heading-title params="name: conceptSetCaption(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
 
 <div data-bind="css: classes()">
   <div class="asset-heading" data-bind="if: currentConceptSet">
-    <input
-      id="txtConceptSetName"
-      type="text"
-      data-bind="attr: { disabled: !canEdit() },
-      textInput: currentConceptSet().name"
-    />
-    <div class="btn-group">
-      <button
-        type="button"
-        class="btn btn-sm btn-success"
-        data-bind="click: saveClick, css: { disabled: !canSave() }">
-          <i class="fa fa-save"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-sm btn-primary"
-        data-bind="click: closeConceptSet">
-          <i class="fa fa-times"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-sm btn-primary"
-        data-bind="click: copy,
-          visible: currentConceptSet() && currentConceptSet().id > 0,
-          css: { disabled: !canCreate() }">
+    <div class="input-group">
+      <input class="form-control" id="txtConceptSetName" type="text" data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameCorrect() }"/>
+      <div class="input-group-btn">
+        <button type="button" class="btn btn-success" data-bind="click: saveClick, css: { disabled: !canSave() }"><i class="fa fa-save"></i></button>
+        <button type="button" class="btn btn-primary" data-bind="click: closeConceptSet"><i class="fa fa-times"></i></button>
+        <button type="button" class="btn btn-primary" data-bind="click: copy, visible: canCopy(), css: { disabled: !canCreate() }">
           <i class="fa fa-copy"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-sm btn-primary"
-        data-bind="click: optimize,
-          css: { disabled: !canEdit() && !canCreate() }">
-          Optimize
-      </button>
-      <button
-        type="button"
-        class="btn btn-sm btn-danger"
-        data-bind="click: $component.delete,
-        css: { disabled: !canDelete() }">
-          <i class="fa fa-trash-o"></i>
         </button>
+        <button type="button" class="btn btn-primary" data-bind="click: optimize, css: { disabled: !canEdit() && !canCreate() }">Optimize</button>
+        <button type="button" class="btn btn-danger" data-bind="click: $component.delete, css: { disabled: !canDelete() }"><i class="fa fa-trash-o"></i></button>
+      </div>
+    </div>
+    <div data-bind="visible: !isNameCorrect()" class="empty-name-error">
+      <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+      <label>Concept Set name is empty.</label>
     </div>
   </div>
   <tabs params="

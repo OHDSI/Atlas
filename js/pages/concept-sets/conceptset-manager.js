@@ -61,10 +61,20 @@ define([
 					!this.loading()
 					&& this.model.currentConceptSet() != null
 					&& this.model.currentConceptSetDirtyFlag().isDirty()
+					&& this.isNameCorrect()
 				);
 			});
 			this.canCreate = ko.computed(() => {
 				return authApi.isPermittedCreateConceptset();
+			});
+			this.conceptSetCaption = ko.computed(() => {
+				if (this.model.currentConceptSet()) {
+					if (this.model.currentConceptSet().id === 0) {
+						return 'New Concept Set';
+					} else {
+						return 'Concept Set #' + this.model.currentConceptSet().id;
+					}
+				}
 			});
 			this.canDelete = this.model.canDeleteCurrentConceptSet;
 			this.optimalConceptSet = ko.observable(null);
@@ -82,6 +92,12 @@ define([
 				return returnVal;
 			});
 			this.saveConceptSetShow = ko.observable(false);
+			this.isNameCorrect = ko.computed(() => {
+				return this.currentConceptSet() && this.currentConceptSet().name();
+			});
+			this.canCopy = ko.computed(() => {
+				return this.currentConceptSet() && this.currentConceptSet().id > 0;
+			});
 
 			this.tabs = [
 				{
@@ -139,6 +155,7 @@ define([
 		dispose() {
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
 			this.isOptimizeModalShown(false);
+			this.conceptSetCaption.dispose();
 		}
 		
 		saveClick() {

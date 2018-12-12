@@ -129,6 +129,16 @@ define([
 				}
 				return result;
 			});
+			
+			this.predictionCaption = ko.computed(() => {
+				if (this.patientLevelPredictionAnalysis()) {
+					if (this.selectedAnalysisId() === '0') {
+						return 'New Patient Level Prediction';
+					} else {
+						return 'Patient Level Prediction #' + this.selectedAnalysisId();
+					}
+				}
+			});
 
 			this.specificationValid = ko.pureComputed(() => {
 				return (
@@ -170,6 +180,14 @@ define([
 					this.editCovariateSettings(data);
 				}
 			}
+
+			this.isNameCorrect = ko.computed(() => {
+				return this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
+			});
+
+			this.canSave = ko.computed(() => {
+				return this.dirtyFlag().isDirty() && this.isNameCorrect();
+			});
 	
 			this.populationSettingRowClickHandler = (data, obj, tableRow, rowIndex) => {
 				if (

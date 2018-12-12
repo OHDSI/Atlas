@@ -110,18 +110,21 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.cohortDefinitionCaption = ko.computed(() => {
 				if (this.model.currentCohortDefinition()) {
-					if (this.model.currentCohortDefinition().id() == 0) {
-					return 'New Cohort';
+					if (this.model.currentCohortDefinition().id() === 0) {
+					return 'New Cohort Definition';
 				} else {
 						return 'Cohort #' + this.model.currentCohortDefinition().id();
 				}
 			}
 			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.model.currentCohortDefinition() && this.model.currentCohortDefinition().name();
+			});
 			this.isAuthenticated = ko.pureComputed(() => {
 				return this.authApi.isAuthenticated();
 			});
 			var isNew = ko.pureComputed(() => {
-				return !this.model.currentCohortDefinition() || (this.model.currentCohortDefinition().id() == 0);
+				return !this.model.currentCohortDefinition() || (this.model.currentCohortDefinition().id() === 0);
 			});
 			this.canEdit = this.model.canEditCurrentCohortDefinition;
 			this.canCopy = ko.pureComputed(() => {
@@ -207,7 +210,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return path;
 			});
 			this.canSave = ko.pureComputed(()=> {
-				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit();
+				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.isNameCorrect();
 			});
 
 			this.delayedCartoonUpdate = ko.observable(null);

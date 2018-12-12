@@ -463,6 +463,15 @@ table.datatable thead th {
   display: none;
 }
 
+.empty-name-error {
+   font-size: 1.4rem;
+   color: #F44;
+}
+
+.empty-name-error .i {
+   margin-right: 0.5rem
+ }
+
 .conceptDetail {
   background-color: #505050;
   padding: 2px 7px 2px 7px;
@@ -979,6 +988,14 @@ pre {
 
 .input-group-addon.input-lg {
   border-radius: 0
+}
+
+.ir-header {
+  display: block;
+}
+
+.ir-name {
+  width: 600px !important;
 }
 
 @media(min-width:768px) {
@@ -1507,11 +1524,14 @@ textarea.code {
   padding: 4px;
 }*/
 
-.asset-heading input {
-  width: 500px;
+.asset-heading input {  
   padding: 3px;
   color: #003142;
   font-size: 12px;
+}
+
+.asset-heading-restricted {
+  width: 500px;
 }
 
 .nav-tabs>li>a:hover {

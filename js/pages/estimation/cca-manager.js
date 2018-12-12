@@ -86,8 +86,7 @@ define([
 			this.packageName = ko.observable();
 
 			this.canSave = ko.pureComputed(() => {
-				//return (self.cohortComparison().name() && self.cohortComparison().comparatorId() && self.cohortComparison().comparatorId() > 0 && self.cohortComparison().treatmentId() && self.cohortComparison().treatmentId() > 0 && self.cohortComparison().outcomeId() && self.cohortComparison().outcomeId() > 0 && self.cohortComparison().modelType && self.cohortComparison().modelType() > 0 && self.cohortComparisonDirtyFlag() && self.cohortComparisonDirtyFlag().isDirty());
-				return false;
+				return this.dirtyFlag().isDirty() && this.isNameCorrect();
 			});
 
 			this.canDelete = ko.pureComputed(() => {
@@ -131,6 +130,18 @@ define([
 					)
 				}
 				return result;
+			});
+			this.populationCaption = ko.computed(() => {
+				if (this.estimationAnalysis()) {
+					if (this.selectedAnalysisId() === '0') {
+						return 'New Population Level Effect Estimation - Comparative Cohort Analysis';
+					} else {
+						return 'Population Level Effect Estimation - Comparative Cohort Analysis #' + this.selectedAnalysisId();
+					}
+				}
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.estimationAnalysis() && this.estimationAnalysis().name();
 			});
 
 			this.specificationValid = ko.pureComputed(() => {

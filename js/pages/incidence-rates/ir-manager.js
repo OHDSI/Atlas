@@ -42,7 +42,7 @@ define([
 ) {
 	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
-			super(params);				
+			super(params);
 			// polling support
 			this.pollTimeout = null;
 			this.model = params.model;
@@ -90,7 +90,7 @@ define([
 
 			this.isRunning = ko.observable(false);
 			this.activeTab = ko.observable(params.activeTab || 'definition');
-			this.conceptSetEditor = ko.observable(); // stores a refrence to the concept set editor
+			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
 			this.filteredSources = ko.pureComputed(() => {
 				return this.sources().filter(function (source) {
@@ -123,6 +123,12 @@ define([
 					data.selectedData.action();
 				}
 			};
+			this.incidenceRateCaption = ko.computed(() => {
+				if (this.selectedAnalysis() && this.selectedAnalysisId() !== null && this.selectedAnalysisId() !== 0) {
+					return 'Incidence Rate Analysis #' + this.selectedAnalysisId();
+				}
+				return 'New Incidence Rate Analysis';
+			});
 
 			this.modifiedJSON = "";
 			this.importJSON = ko.observable();
@@ -147,6 +153,12 @@ define([
 				if (newVal) {
 					this.onAnalysisSelected();
 				}
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.selectedAnalysis() && this.selectedAnalysis().name();
+			});
+			this.canSave = ko.computed(() => {
+				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
 			});
 			this.error = ko.observable();
 
@@ -287,7 +299,7 @@ define([
 		onExecuteClick(sourceItem) {
 			IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
 				.then(({data}) => {
-					JobDetailsService.createJob(data);
+					jobDetailsService.createJob(data);
 					this.pollForInfo();
 				});
 		}
@@ -346,7 +358,7 @@ define([
 							this.isRunning(true);
 							IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
 								.then(({data}) => {
-									JobDetailsService.createJob(data);
+									jobDetailsService.createJob(data);
 									this.pollForInfo();
 								});
 						}
@@ -369,6 +381,7 @@ define([
 
 		// cleanup
 		dispose() {
+			this.incidenceRateCaption.dispose();
 			this.selectedAnalysisIdSub.dispose();
 			clearTimeout(this.pollTimeout);
 		}

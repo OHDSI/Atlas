@@ -25,7 +25,7 @@ define([
     userService,
     authApi,
 ) {
-    const defaultRoleName = null;
+    const defaultRoleName = "New Role";
     class RoleDetails extends AutoBind(Component) {
         constructor(params) {
             super(params);        
@@ -54,7 +54,11 @@ define([
                 role: this.roleName
             });
 
-            this.isNewRole = ko.pureComputed(() => { return this.roleId() == 0; });
+            this.isNewRole = ko.pureComputed(() => { return this.roleId() === '0'; });
+
+            this.roleCaption = ko.computed(() => {
+                return this.isNewRole() ? 'New Role' : 'Role #' + this.roleId();
+            });
 
             this.isAuthenticated = authApi.isAuthenticated;
             this.canReadRoles = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedReadRoles(); });
@@ -74,7 +78,7 @@ define([
             this.canEditRolePermissions = ko.pureComputed(() => { return this.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRolePermissions(this.roleId())); });
             this.hasAccess = ko.pureComputed(() => { return this.canReadRole(); });
             this.canDelete = ko.pureComputed(() => { return this.isAuthenticated() && this.roleId() && authApi.isPermittedDeleteRole(this.roleId()); });
-            this.canSave = ko.pureComputed(() => { return this.canEditRole() || this.canEditRoleUsers() || this.canEditRolePermissions(); });
+            this.canSave = ko.pureComputed(() => { return (this.canEditRole() || this.canEditRoleUsers() || this.canEditRolePermissions()) && this.roleName(); });
 
             this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });        
                 
