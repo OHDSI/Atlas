@@ -86,7 +86,7 @@ define([
 			this.packageName = ko.observable();
 
 			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.estimationAnalysis() && this.estimationAnalysis().name();
+				return this.dirtyFlag().isDirty() && this.isNameCorrect();
 			});
 
 			this.canDelete = ko.pureComputed(() => {
@@ -140,8 +140,8 @@ define([
 					}
 				}
 			});
-			this.showNameWarning = ko.computed(() => {
-				return !(this.estimationAnalysis() && (this.estimationAnalysis().name()));
+			this.isNameCorrect = ko.computed(() => {
+				return this.estimationAnalysis() && this.estimationAnalysis().name();
 			});
 
 			this.specificationValid = ko.pureComputed(() => {

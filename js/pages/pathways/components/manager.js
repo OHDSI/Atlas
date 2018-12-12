@@ -58,8 +58,8 @@ define([
 				}
 				return 'New Cohort Pathway';
 			});
-			this.showNameWarning = ko.computed(() => {
-				return !(this.design() && this.design().name());
+			this.isNameCorrect = ko.computed(() => {
+				return this.design() && this.design().name();
 			});
 		}
 
@@ -93,7 +93,7 @@ define([
 		}
 
 		isSavePermittedResolver() {
-				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty() && this.design() && this.design().name())
+				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty() && this.isNameCorrect())
 		}
 
 		isDeletePermittedResolver() {

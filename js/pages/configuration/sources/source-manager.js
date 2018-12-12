@@ -113,14 +113,13 @@ define([
         return authApi.isPermittedEditSource(this.selectedSourceId());
       });
 
-      this.showNameWarning = ko.computed(() => {
-          return !(this.selectedSource() && (this.selectedSource().name()));
+      this.isNameCorrect = ko.computed(() => {
+          return this.selectedSource() && this.selectedSource().name();
       });
 
       this.canSave = ko.pureComputed(() => {
         return (
-          this.selectedSource()
-          && this.selectedSource().name()
+          this.isNameCorrect()
           && this.selectedSource().key()
           && this.selectedSource().connectionString()
           && this.canEdit()

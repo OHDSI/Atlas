@@ -181,12 +181,12 @@ define([
 				}
 			}
 
-			this.showNameWarning = ko.computed(() => {
-				return !(this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name());
+			this.isNameCorrect = ko.computed(() => {
+				return this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
 			});
 
 			this.canSave = ko.computed(() => {
-				return this.dirtyFlag().isDirty() && this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
+				return this.dirtyFlag().isDirty() && this.isNameCorrect();
 			});
 	
 			this.populationSettingRowClickHandler = (data, obj, tableRow, rowIndex) => {

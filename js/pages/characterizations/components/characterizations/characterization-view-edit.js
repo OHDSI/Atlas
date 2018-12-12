@@ -57,8 +57,8 @@ define([
                 executionId: this.executionId,
                 designDirtyFlag: this.designDirtyFlag,
             });
-            this.showNameWarning = ko.computed(() => {
-                return !(this.design() && this.design().name());
+            this.isNameCorrect = ko.computed(() => {
+                return this.design() && this.design().name();
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
@@ -93,7 +93,7 @@ define([
         }
 
         isSavePermittedResolver() {
-            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty() && this.design() && this.design().name());
+            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty() && this.isNameCorrect());
         }
 
         isDeletePermittedResolver() {

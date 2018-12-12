@@ -154,11 +154,11 @@ define([
 					this.onAnalysisSelected();
 				}
 			});
-			this.showNameWarning = ko.computed(() => {
-				return !(this.selectedAnalysis() && (this.selectedAnalysis().name()));
+			this.isNameCorrect = ko.computed(() => {
+				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
 			this.canSave = ko.computed(() => {
-				return this.isEditable() && this.selectedAnalysis() && this.selectedAnalysis().name() && this.dirtyFlag().isDirty() && !this.isRunning();
+				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
 			});
 			this.error = ko.observable();
 

@@ -117,8 +117,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 			});
-			this.showNameWarning = ko.computed(() => {
-				return !(this.model.currentCohortDefinition() && this.model.currentCohortDefinition().name());
+			this.isNameCorrect = ko.computed(() => {
+				return this.model.currentCohortDefinition() && this.model.currentCohortDefinition().name();
 			});
 			this.isAuthenticated = ko.pureComputed(() => {
 				return this.authApi.isAuthenticated();
@@ -210,7 +210,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return path;
 			});
 			this.canSave = ko.pureComputed(()=> {
-				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.model.currentCohortDefinition() && this.model.currentCohortDefinition().name();
+				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.isNameCorrect();
 			});
 
 			this.delayedCartoonUpdate = ko.observable(null);

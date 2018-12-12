@@ -61,8 +61,7 @@ define([
 					!this.loading()
 					&& this.model.currentConceptSet() != null
 					&& this.model.currentConceptSetDirtyFlag().isDirty()
-					&& this.currentConceptSet()
-					&& this.currentConceptSet().name()
+					&& this.isNameCorrect()
 				);
 			});
 			this.canCreate = ko.computed(() => {
@@ -93,8 +92,8 @@ define([
 				return returnVal;
 			});
 			this.saveConceptSetShow = ko.observable(false);
-			this.showNameWarning = ko.computed(() => {
-				return !(this.currentConceptSet() && this.currentConceptSet().name());
+			this.isNameCorrect = ko.computed(() => {
+				return this.currentConceptSet() && this.currentConceptSet().name();
 			});
 			this.canCopy = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().id > 0;
