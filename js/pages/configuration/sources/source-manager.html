@@ -5,7 +5,7 @@
 			<div data-bind="if:$component.canReadSource">
 					<div class="asset-heading">
 						<div class="input-group">
-							<input type="text" class="form-control" data-bind="textInput: selectedSource().name, enable: canEdit(), css: { emptyInput: showWarning() }"/>
+							<input type="text" class="form-control" data-bind="textInput: selectedSource().name, enable: canEdit(), css: { emptyInput: showNameWarning() }"/>
 							<div class="input-group-btn" role="group">
 									<button class="btn btn-success" title="Save"
 													data-bind="click: save, enable: dirtyFlag().isDirty() && canSave(), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">
@@ -15,7 +15,7 @@
 									<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
 							</div>
 						</div>
-						<div data-bind="visible: showWarning()" class="empty-name-error">
+						<div data-bind="visible: showNameWarning()" class="empty-name-error">
 							<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
 							<label>Source name is empty.</label>
 						</div>

@@ -93,7 +93,7 @@ define([
 				return returnVal;
 			});
 			this.saveConceptSetShow = ko.observable(false);
-			this.showWarning = ko.computed(() => {
+			this.showNameWarning = ko.computed(() => {
 				return !(this.currentConceptSet() && this.currentConceptSet().name());
 			});
 			this.canCopy = ko.computed(() => {

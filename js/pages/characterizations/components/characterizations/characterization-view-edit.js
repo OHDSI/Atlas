@@ -57,7 +57,7 @@ define([
                 executionId: this.executionId,
                 designDirtyFlag: this.designDirtyFlag,
             });
-            this.showWarning = ko.computed(() => {
+            this.showNameWarning = ko.computed(() => {
                 return !(this.design() && this.design().name());
             });
             this.characterizationCaption = ko.computed(() => {

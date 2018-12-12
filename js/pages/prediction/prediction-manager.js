@@ -181,7 +181,7 @@ define([
 				}
 			}
 
-			this.showWarning = ko.computed(() => {
+			this.showNameWarning = ko.computed(() => {
 				return !(this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name());
 			});
 

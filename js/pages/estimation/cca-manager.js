@@ -140,7 +140,7 @@ define([
 					}
 				}
 			});
-			this.showWarning = ko.computed(() => {
+			this.showNameWarning = ko.computed(() => {
 				return !(this.estimationAnalysis() && (this.estimationAnalysis().name()));
 			});
 

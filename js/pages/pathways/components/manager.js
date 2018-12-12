@@ -58,7 +58,7 @@ define([
 				}
 				return 'New Cohort Pathway';
 			});
-			this.showWarning = ko.computed(() => {
+			this.showNameWarning = ko.computed(() => {
 				return !(this.design() && this.design().name());
 			});
 		}

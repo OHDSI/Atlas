@@ -154,7 +154,7 @@ define([
 					this.onAnalysisSelected();
 				}
 			});
-			this.showWarning = ko.computed(() => {
+			this.showNameWarning = ko.computed(() => {
 				return !(this.selectedAnalysis() && (this.selectedAnalysis().name()));
 			});
 			this.canSave = ko.computed(() => {
