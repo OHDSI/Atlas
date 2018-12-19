@@ -135,16 +135,15 @@ define([
 		var points = xfo().allFiltered();
 
 		// prevent filtering to no data and error in chart
-		console.log(points.length);
 		if (points.length == 0) {
 			xfd[0].filter(null);
 			points = xfo().allFiltered();
 		}
 
-		var fullDomain = d3.extent([].concat.apply([], points.map(d => [d.startDay,d.endDay])));
+		var fullDomain = d3.extent([].concat.apply([], points.map(d => [d.startDay, d.endDay])));
 		xScale.domain(fullDomain).range([0, width]);
 
-		var fullDateDomain = d3.extent([].concat.apply([], points.map(d => [d.startDate,d.endDate])));
+		var fullDateDomain = d3.extent([].concat.apply([], points.map(d => [d.startDate, d.endDate])));
 		x2Scale.domain(fullDateDomain).range([0, width]);
 
 		xfObservable = xfo;
