@@ -22,10 +22,12 @@ define([
 
 	function canViewProfileDates() {
 		return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()));
-  }
+	}
 
 	var margin = {
-		get top() { return canViewProfileDates() ? 30 : 10; },
+		get top() {
+			return canViewProfileDates() ? 30 : 10;
+		},
 		right: 20,
 		bottom: 30,
 		left: 20
@@ -45,7 +47,7 @@ define([
 	var htmlTipText = d => {
 		var tipText = '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p>';
 		if (authApi.isPermittedViewProfileDates() && d.startDate != null) {
-			tipText += '<p>Start Date: '	+ momentApi.formatDate(new Date(d.startDate)) + '</p>'
+			tipText += '<p>Start Date: ' + momentApi.formatDate(new Date(d.startDate)) + '</p>'
 		}
 		return tipText;
 	};
@@ -122,16 +124,27 @@ define([
 			if (s === null) {
 				xfd[0].filter(null);
 			} else {
-				xfd[0].filterRange([xScale.invert(s[0]), xScale.invert(s[1])]);
+				xfd[0].filterFunction(function (d) {
+					return xScale.invert(s[0]) <= d.startDay && d.startDay <= xScale.invert(s[1]) ||
+						xScale.invert(s[0]) <= d.endDay && d.endDay <= xScale.invert(s[1]);
+				}); // start day
 			}
 			xfObservable.valueHasMutated();
 		}
 
 		var points = xfo().allFiltered();
-		var fullDomain = d3.extent(points.map(d => d.startDay));
+
+		// prevent filtering to no data and error in chart
+		console.log(points.length);
+		if (points.length == 0) {
+			xfd[0].filter(null);
+			points = xfo().allFiltered();
+		}
+
+		var fullDomain = d3.extent([].concat.apply([], points.map(d => [d.startDay,d.endDay])));
 		xScale.domain(fullDomain).range([0, width]);
-		
-		var fullDateDomain = d3.extent(points.map(d => d.startDate));
+
+		var fullDateDomain = d3.extent([].concat.apply([], points.map(d => [d.startDate,d.endDate])));
 		x2Scale.domain(fullDateDomain).range([0, width]);
 
 		xfObservable = xfo;
@@ -303,13 +316,13 @@ define([
 		}
 
 		function addAxis(axis, top) {
-      profilePlot.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + top + ")")
-        .call(axis);
-    }
+			profilePlot.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + top + ")")
+				.call(axis);
+		}
 
-    addAxis(xAxis, vizHeight + 2);
+		addAxis(xAxis, vizHeight + 2);
 
 		if (canViewProfileDates()) {
 			addAxis(x2Axis, 0);
