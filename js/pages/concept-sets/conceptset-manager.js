@@ -56,6 +56,9 @@ define([
 			this.loading = ko.observable();
 			this.fade = ko.observable(true);
 			this.canEdit = this.model.canEditCurrentConceptSet;
+			this.isNameCorrect = ko.computed(() => {
+				return this.currentConceptSet() && this.currentConceptSet().name();
+			});
 			this.canSave = ko.computed(() => {
 				return (
 					!this.loading()
@@ -92,9 +95,6 @@ define([
 				return returnVal;
 			});
 			this.saveConceptSetShow = ko.observable(false);
-			this.isNameCorrect = ko.computed(() => {
-				return this.currentConceptSet() && this.currentConceptSet().name();
-			});
 			this.canCopy = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().id > 0;
 			});
