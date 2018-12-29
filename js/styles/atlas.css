@@ -998,6 +998,10 @@ pre {
   width: 600px !important;
 }
 
+.fe-save-btn {
+  display: inline-block;
+}
+
 @media(min-width:768px) {
   .navbar {
     border-radius: 0

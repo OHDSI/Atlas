@@ -57,14 +57,14 @@ define([
 ) {
 	class ComparativeCohortAnalysisManager extends Component {
 		constructor(params) {
-            super(params);
+			super(params);
 			
 			this.defaultLoadingMessage = "Loading...";
 			this.estimationType = 'ComparativeCohortAnalysis';
 			this.cohortMethodAnalysisList = null;
 			this.defaultCovariateSettings = null;
 			this.options = options;
-            this.config = config;
+			this.config = config;
 			this.loading = ko.observable(true);
 			this.estimationAnalysis = sharedState.estimationAnalysis.current;
 			this.selectedAnalysisId = sharedState.estimationAnalysis.selectedId;
