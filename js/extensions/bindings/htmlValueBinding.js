@@ -1,12 +1,12 @@
-define(['knockout'], function (ko) {
-
+define(['knockout', 'appConfig', 'xss'], function (ko, config, filterXSS) {
 	ko.bindingHandlers.htmlValue = {
 		init: function (element, valueAccessor, allBindingsAccessor) {
+			const xssOptions = config.xssOptions;
 			var eventType = allBindingsAccessor().eventType || "input";
 			
 			ko.utils.registerEventHandler(element, eventType, function () {
 				var modelValue = valueAccessor();
-				var elementValue = element.innerText;
+				var elementValue = filterXSS(element.innerText, xssOptions);
 				if (ko.isWriteableObservable(modelValue)) {
 					modelValue(elementValue);
 				} else { //handle non-observable one-way binding
