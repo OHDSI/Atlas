@@ -58,7 +58,7 @@ define(function (require, exports) {
 	}
 
 	function getConceptRecordCount(sourceKey, conceptIds, results) {
-		return getConceptRecordCountWithResultsUrl(config.webAPIRoot + 'cdmresults/' + sourceKey + '/');
+		return getConceptRecordCountWithResultsUrl(config.webAPIRoot + 'cdmresults/' + sourceKey + '/', conceptIds, results);
 	}
 
 	var api = {
