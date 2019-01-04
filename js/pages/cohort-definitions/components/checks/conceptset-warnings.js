@@ -98,7 +98,6 @@ define(['knockout', 'text!./conceptset-warnings.html',
       self.getWarnings();
 
       self.dispose = function() {
-        console.log("dispose conceptset warning");
         self.warningSubscription.dispose();
       }
     }
