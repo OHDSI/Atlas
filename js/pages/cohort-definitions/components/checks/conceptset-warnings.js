@@ -92,9 +92,15 @@ define(['knockout', 'text!./conceptset-warnings.html',
         self.runDiagnostics(self.cohortDefinitionId(), expressionJSON);
       };
 
-      self.model.currentCohortDefinition.subscribe(() => self.getWarnings());
+
+      self.warningSubscription = self.model.currentCohortDefinition.subscribe(() => self.getWarnings());
 
       self.getWarnings();
+
+      self.dispose = function() {
+        console.log("dispose conceptset warning");
+        self.warningSubscription.dispose();
+      }
     }
 
     var component = {
