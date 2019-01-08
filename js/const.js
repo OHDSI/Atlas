@@ -1,12 +1,10 @@
 define([
 	'knockout',
-	'atlas-state',
 	'appConfig',
 	],
 	(
 		ko,
-		sharedState,
-    config,
+    	config,
 	) => {
 
 		const minChartHeight = 300;
@@ -333,7 +331,7 @@ define([
 			}
 		};
 
-		const getRelatedSourcecodesColumns = (context) => [{
+		const getRelatedSourcecodesColumns = (sharedState, context) => [{
 			title: '',
 			render: (s, p, d) => {
 				var css = '';
