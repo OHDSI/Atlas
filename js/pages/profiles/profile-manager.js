@@ -1,28 +1,28 @@
 "use strict";
 define([
-	'knockout',
-	'text!./profile-manager.html',
-	'd3',
-	'appConfig',
-	'services/AuthAPI',
-	'services/Profile',
-	'atlas-state',
-	'components/cohortbuilder/CohortDefinition',
-	'services/CohortDefinition',
-	'pages/Page',
-	'utils/AutoBind',
-	'utils/CommonUtils',
-	'./const',
-	'lodash',
-	'crossfilter',
-	'assets/ohdsi.util',
-	'd3-tip',
-	'databindings',
-	'faceted-datatable',
-	'extensions/bindings/profileChart',
-	'less!./profile-manager.less',
-	'components/heading'
-],
+		'knockout',
+		'text!./profile-manager.html',
+		'd3',
+		'appConfig',
+		'services/AuthAPI',
+		'services/Profile',
+		'atlas-state',
+		'components/cohortbuilder/CohortDefinition',
+		'services/CohortDefinition',
+		'pages/Page',
+		'utils/AutoBind',
+		'utils/CommonUtils',
+		'./const',
+		'lodash',
+		'crossfilter',
+		'assets/ohdsi.util',
+		'd3-tip',
+		'databindings',
+		'faceted-datatable',
+		'extensions/bindings/profileChart',
+		'less!./profile-manager.less',
+		'components/heading'
+	],
 	function (
 		ko,
 		view,
@@ -67,21 +67,21 @@ define([
 				// if a cohort definition id has been specified, see if it is
 				// already loaded into the page model. If not, load it from the
 				// server
-				if (this.cohortDefinitionId()
-				&& (
-					this.model.currentCohortDefinition()
-					&& this.model.currentCohortDefinition().id() === this.cohortDefinitionId
+				if (this.cohortDefinitionId() &&
+					(
+						this.model.currentCohortDefinition() &&
+						this.model.currentCohortDefinition().id() === this.cohortDefinitionId
 					)
 				) {
 					// The cohort definition requested is already loaded into the page model - just reference it
 					this.currentCohortDefinition(this.model.currentCohortDefintion())
-					} else if (this.cohortDefinitionId()) {
-						cohortDefinitionService.getCohortDefinition(this.cohortDefinitionId())
-							.then((cohortDefinition) => {
-								cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
-								this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
-							});
-					}
+				} else if (this.cohortDefinitionId()) {
+					cohortDefinitionService.getCohortDefinition(this.cohortDefinitionId())
+						.then((cohortDefinition) => {
+							cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+							this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
+						});
+				}
 				this.isAuthenticated = authApi.isAuthenticated;
 				this.canViewProfiles = ko.pureComputed(() => {
 					return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedViewProfiles()) || !config.userAuthenticationEnabled;
@@ -125,10 +125,10 @@ define([
 					}));
 				};
 				this.loadConceptSets(this.cohortDefSource());
-	
+
 				this.sourceKeyCaption = ko.computed(() => {
 					return this.sourceKey() || "Select a Data Source";
-				});				
+				});
 				this.personRequests = {};
 				this.personRequest;
 				this.xfObservable = ko.observable();
@@ -138,7 +138,7 @@ define([
 				this.filteredRecs = ko.observableArray([]);
 				this.filtersChanged = ko.observable();
 				this.facetsObs = ko.observableArray([]);
-				this.highlightRecs = ko.observableArray([]);				
+				this.highlightRecs = ko.observableArray([]);
 				this.getGenderClass = ko.computed(() => {
 					if (this.person()) {
 						if (this.person()
@@ -188,19 +188,22 @@ define([
 				};
 				this.searchHighlight = ko.observable();
 				this.highlightData = ko.observableArray();
-				this.defaultColor = '#888';this.words = ko.computed(() => {
+				this.defaultColor = '#888';
+				this.words = ko.computed(() => {
 					if (!this.xfObservable()) {
-						return;	
+						return;
 					}
 					if (this.xfDimensions.length == 0) {
-						this.xfDimensions.push(this.xfObservable().dimension(d => d.startDay));
-					}	
-					// var recs = this.xfObservable().allFiltered();	
+						this.xfDimensions.push(this.xfObservable().dimension(function (d) {
+							return d;
+						}));
+					}
+					// var recs = this.xfObservable().allFiltered();
 					// var conceptSets = this.conceptSets();
-					this.dimensionSetup(this.dimensions.concepts, this.xfObservable());	
+					this.dimensionSetup(this.dimensions.concepts, this.xfObservable());
 					const stopWords = [
 						'Outpatient Visit', 'No matching concept',
-					];	
+					];
 					let words = this.dimensions.concepts.group.all()
 						.filter(d => {
 							let filtered = true;
@@ -232,7 +235,7 @@ define([
 						this.highlight([]);
 				});
 				this.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
-	
+
 				this.showSection = {
 					profileChart: ko.observable(true),
 					datatable: ko.observable(true),
@@ -252,7 +255,7 @@ define([
 					title: 'Total Records',
 					data: 'count'
 				}];
-	
+
 				this.columns = [{
 						title: 'Concept Id',
 						data: 'conceptId'
@@ -276,19 +279,19 @@ define([
 				];
 				// d3.schemePaired
 				this.palette = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ff9', '#b15928'];
-	
-	
+
+
 				this.sourceKey.subscribe((sourceKey) => {
 					document.location = constants.paths.source(sourceKey);
 				});
 				this.personId.subscribe((personId) => {
 					document.location = constants.paths.person(this.sourceKey(), personId);
 				});
-					
+
 				$('.highlight-filter').on('click', function (evt) {
 					return false;
 				});
-				
+
 				this.highlightOptions = {};
 				this.options = {
 					Facets: [{
@@ -303,8 +306,8 @@ define([
 					this.loadPerson();
 				}
 			}
-			
-			loadPerson () {
+
+			loadPerson() {
 				this.cantFindPerson(false);
 				this.loadingPerson(true);
 
@@ -355,16 +358,16 @@ define([
 						this.person(person);
 					})
 					.catch(() => {
-            this.cantFindPerson(true);
-            this.loadingPerson(false);
+						this.cantFindPerson(true);
+						this.loadingPerson(false);
 					});
 			}
 
-			removeHighlight () {
+			removeHighlight() {
 				this.highlight([]);
 			}
-			
-		  highlight (recs, evt) {
+
+			highlight(recs, evt) {
 				if (recs && recs.length > 0) {
 					this.highlightEnabled(true);
 				} else {
@@ -376,7 +379,7 @@ define([
 				}] || []);
 			}
 
-			dimensionSetup (dim, cf) {
+			dimensionSetup(dim, cf) {
 				if (!cf) return;
 				dim.dimension = cf.dimension(dim.func, dim.isArray);
 				dim.filter(null);
@@ -384,18 +387,18 @@ define([
 				dim.group.reduce(...reduceToRecs);
 				dim.groupAll = dim.dimension.groupAll();
 				dim.groupAll.reduce(...reduceToRecs);
-			}			
+			}
 
-			dispToggle (pm, evt) {
+			dispToggle(pm, evt) {
 				let section = evt.target.value;
 				this.showSection[section](!this.showSection[section]());
 			}
 
-			swatch (d) {
+			swatch(d) {
 				return '<div class="swatch" style="background-color:' + d + '"></div>';
-			}			
+			}
 
-			daysBeforeIndex (d) {
+			daysBeforeIndex(d) {
 				if (d.startDay >= -30 && d.startDay <= 0) {
 					return '0-30 days';
 				} else if (d.startDay >= -60 && d.startDay < -30) {
@@ -407,7 +410,7 @@ define([
 				}
 			}
 
-			setHighlights (colorIndex) {
+			setHighlights(colorIndex) {
 				var selectedData = $('#highlight-table table').DataTable().rows('.selected').data();
 				for (var i = 0; i < selectedData.length; i++) {
 					selectedData[i].highlight(this.getHighlightBackground(colorIndex)); // set the swatch color
@@ -420,15 +423,15 @@ define([
 				this.highlightRecs.valueHasMutated();
 			};
 
-			getHighlightColor (i) {
+			getHighlightColor(i) {
 				return this.palette[i * 2];
 			}
 
-			getHighlightBackground (i) {
+			getHighlightBackground(i) {
 				return this.palette[i * 2 + 1];
 			}
 
-			clearHighlights () {
+			clearHighlights() {
 				const selectedData = $('#highlight-table table').DataTable().data();
 				for (let i = 0; i < selectedData.length; i++) {
 					selectedData[i].highlight(this.defaultColor); // set the swatch color
@@ -441,10 +444,10 @@ define([
 				this.highlightRecs.valueHasMutated();
 			}
 
-			highlightRowClick (data, evt, row) {
+			highlightRowClick(data, evt, row) {
 				evt.stopPropagation();
 				$(row).toggleClass('selected');
-			}			
+			}
 		}
 
 		return commonUtils.build('profile-manager', ProfileManager, view);
