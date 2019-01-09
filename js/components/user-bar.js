@@ -36,6 +36,7 @@ define([
 			this.jobListing = state.jobListing;
 			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
 			this.lastViewedTime=null;
+			this.permissionCheckWarningShown = false;
 
 			this.jobModalOpened = ko.observable(false);
 			this.jobModalOpened.subscribe(show => {
@@ -146,8 +147,9 @@ define([
 					.catch(() => {
 						console.warn('The server error occurred while getting all notifications');                        
 					});
-			} else {
+			} else if (!this.permissionCheckWarningShown) {
 				console.warn('There isn\'t permission to get all notifications');
+				this.permissionCheckWarningShown = true;
 			}
 		};
 

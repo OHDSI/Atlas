@@ -12,7 +12,7 @@ define([
 	conceptSetApi,
 ){
 
-	class ConceptSetInclusionCount extends Component{
+	class ConceptSetInclusionCount extends Component {
 
 		constructor(params) {
 			super(params);
@@ -20,9 +20,10 @@ define([
 			this.inclusionCount = ko.observable(0);
 
 			this.conceptSetExpression = params.conceptSetExpression || ko.observableArray();
+			this.conceptSetSubscriptionRateLimit = params.conceptSetSubscriptionRateLimit || 1000;
 
 			this.getInclusionCount = this.getInclusionCount.bind(this);
-			ko.computed(() => ko.toJSON(this.conceptSetExpression)).subscribe(this.getInclusionCount);
+			this.conceptSetExpressionSub = ko.pureComputed(() => ko.toJSON(this.conceptSetExpression)).extend({rateLimit: this.conceptSetSubscriptionRateLimit}).subscribe(this.getInclusionCount);
 			this.getInclusionCount();
 		}
 
@@ -31,6 +32,10 @@ define([
 			conceptSetApi.getInclusionCount(this.conceptSetExpression())
 				.then(({data}) => this.inclusionCount(data))
 				.finally(() => this.countLoading(false));
+		}
+
+		dispose() {
+			this.conceptSetExpressionSub.dispose();
 		}
 
 	}

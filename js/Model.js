@@ -55,7 +55,7 @@ define(
 				this.relatedConceptsOptions = constants.relatedConceptsOptions;
 				this.relatedSourcecodesOptions = constants.relatedSourcecodesOptions;
 				this.metatrix = constants.metatrix;
-				this.relatedSourcecodesColumns = constants.getRelatedSourcecodesColumns(this);
+				this.relatedSourcecodesColumns = constants.getRelatedSourcecodesColumns(sharedState, this);
 				this.enableRecordCounts = ko.observable(true);
 				this.loading = ko.observable(false);
 				this.loadingIncluded = ko.observable(false);

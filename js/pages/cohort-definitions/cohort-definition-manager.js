@@ -374,54 +374,56 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.pollTimeout = null;
 				}
 
-				var id = this.model.currentCohortDefinition().id();
+				if (this.model.currentCohortDefinition()) {
+					var id = this.model.currentCohortDefinition().id();
 					cohortDefinitionService.getInfo(id).then((infoList) => {
-					var hasPending = false;
+						var hasPending = false;
 
-						infoList.forEach((info) => {
-						// obtain source reference
-							var source = this.model.cohortDefinitionSourceInfo().filter((cdsi) => {
-							var sourceId = sharedState.sources().find(source => source.sourceKey == cdsi.sourceKey).sourceId;
-							return sourceId === info.id.sourceId;
-						})[0];
+							infoList.forEach((info) => {
+							// obtain source reference
+								var source = this.model.cohortDefinitionSourceInfo().filter((cdsi) => {
+								var sourceId = sharedState.sources().find(source => source.sourceKey == cdsi.sourceKey).sourceId;
+								return sourceId === info.id.sourceId;
+							})[0];
 
-						if (source) {
-							// only bother updating those sources that we know are running
-								if (this.isSourceRunning(source)) {
-								source.status(info.status);
-								source.includeFeatures(info.includeFeatures);
-								source.isValid(info.isValid);
-								source.startTime(momentApi.formatDateTime(new Date(info.startTime)));
-								source.executionDuration('...');
-								source.personCount('...');
-								source.recordCount('...');
+							if (source) {
+								// only bother updating those sources that we know are running
+									if (this.isSourceRunning(source)) {
+									source.status(info.status);
+									source.includeFeatures(info.includeFeatures);
+									source.isValid(info.isValid);
+									source.startTime(momentApi.formatDateTime(new Date(info.startTime)));
+									source.executionDuration('...');
+									source.personCount('...');
+									source.recordCount('...');
 
-								if (info.status != "COMPLETE" && info.status != "FAILED") {
-									hasPending = true;
-										if (this.selectedSource() && source.sourceId === this.selectedSource().sourceId) {
-											this.loadingReport(true);
+									if (info.status != "COMPLETE" && info.status != "FAILED") {
+										hasPending = true;
+											if (this.selectedSource() && source.sourceId === this.selectedSource().sourceId) {
+												this.loadingReport(true);
+										}
+									} else {
+											if (this.selectedSource() && source.sourceId === this.selectedSource().sourceId) {
+												this.loadingReport(false);
+												this.selectViewReport(source);
+										}
+										var commaFormatted = d3.format(",");
+										source.executionDuration(momentApi.formatDuration(info.executionDuration));
+										source.personCount(commaFormatted(info.personCount));
+										source.recordCount(commaFormatted(info.recordCount));
+										source.failMessage(info.failMessage);
 									}
-								} else {
-										if (this.selectedSource() && source.sourceId === this.selectedSource().sourceId) {
-											this.loadingReport(false);
-											this.selectViewReport(source);
-									}
-									var commaFormatted = d3.format(",");
-									source.executionDuration(momentApi.formatDuration(info.executionDuration));
-									source.personCount(commaFormatted(info.personCount));
-									source.recordCount(commaFormatted(info.recordCount));
-									source.failMessage(info.failMessage);
 								}
 							}
+						});
+
+						if (hasPending) {
+								this.pollTimeout = setTimeout(() => {
+									this.pollForInfo();
+							}, 10000);
 						}
 					});
-
-					if (hasPending) {
-							this.pollTimeout = setTimeout(() => {
-								this.pollForInfo();
-						}, 10000);
-					}
-				});
+				}
 			}
 
 			this.isRunning = ko.pureComputed(() => {

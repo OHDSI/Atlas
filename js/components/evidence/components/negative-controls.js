@@ -8,7 +8,7 @@ define(['knockout',
 	'services/CDMResultsAPI',
 	'services/ConceptSet',
 	'atlas-state',
-	'services/job/jobDetail',
+	'services/JobDetailsService',
   	'services/MomentAPI',
 	'assets/ohdsi.util',
 	'databindings',
@@ -24,7 +24,7 @@ define(['knockout',
 	cdmResultsAPI, 
 	conceptSetService, 
 	sharedState, 
-	jobDetail, 
+	jobDetailsService, 
 	momentApi
 ) {
 	class NegativeControls extends Component {
