@@ -217,7 +217,7 @@ define([
                 parsedDesign = design;
             }
 
-            data.name(name);
+            data.name(name || 'New Feature Analysis');
             data.descr(descr);
             data.domain(domain);
             data.type(type);

@@ -110,7 +110,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.cohortDefinitionCaption = ko.computed(() => {
 				if (this.model.currentCohortDefinition()) {
-					if (this.model.currentCohortDefinition().id() === 0) {
+					if (this.model.currentCohortDefinition().id() === "0") {
 					return 'New Cohort Definition';
 				} else {
 						return 'Cohort #' + this.model.currentCohortDefinition().id();
